@@ -37,7 +37,7 @@ layer at (0,0) size 800x982
                 text run at (0,128) width 10: "Z"
             RenderInline {FONT} at (0,128) size 784x838
               RenderText {#text} at (0,0) size 0x0
-              RenderInline {FONT} at (0,164) size 784x806
+              RenderInline {FONT} at (0,164) size 784x802
                 RenderInline {A} at (0,164) size 12x18
                   RenderText {#text} at (0,164) size 12x18
                     text run at (0,164) width 12: "X"
@@ -52,9 +52,9 @@ layer at (0,0) size 800x982
                 RenderInline {A} at (95,210) size 11x18
                   RenderText {#text} at (95,210) size 11x18
                     text run at (95,210) width 11: "Z"
-                RenderInline {FONT} at (0,210) size 784x768
+                RenderInline {FONT} at (0,210) size 784x756
                   RenderText {#text} at (0,0) size 0x0
-                  RenderInline {FONT} at (0,246) size 784x740
+                  RenderInline {FONT} at (0,246) size 784x720
                     RenderText {#text} at (0,246) size 104x18
                       text run at (0,246) width 104: "line before table"
                     RenderTable {TABLE} at (0,264) size 55x28 [border: (1px outset #000000)]
@@ -66,9 +66,9 @@ layer at (0,0) size 800x982
                     RenderInline {A} at (0,292) size 10x18
                       RenderText {#text} at (0,292) size 10x18
                         text run at (0,292) width 10: "Z"
-                    RenderInline {FONT} at (0,292) size 784x702
+                    RenderInline {FONT} at (0,292) size 784x674
                       RenderText {#text} at (0,0) size 0x0
-                      RenderInline {FONT} at (0,328) size 784x674
+                      RenderInline {FONT} at (0,328) size 784x638
                         RenderTable {TABLE} at (0,328) size 55x28 [border: (1px outset #000000)]
                           RenderTableSection {TBODY} at (1,1) size 53x26
                             RenderTableRow {TR} at (0,2) size 53x22
@@ -80,9 +80,9 @@ layer at (0,0) size 800x982
                         RenderInline {A} at (96,356) size 11x18
                           RenderText {#text} at (96,356) size 11x18
                             text run at (96,356) width 11: "Z"
-                        RenderInline {FONT} at (0,356) size 784x654
+                        RenderInline {FONT} at (0,356) size 784x610
                           RenderText {#text} at (0,0) size 0x0
-                          RenderInline {FONT} at (0,392) size 784x626
+                          RenderInline {FONT} at (0,392) size 784x574
                             RenderText {#text} at (0,392) size 104x18
                               text run at (0,392) width 104: "line before table"
                             RenderTable {TABLE} at (0,410) size 55x28 [border: (1px outset #000000)]
@@ -91,9 +91,9 @@ layer at (0,0) size 800x982
                                   RenderTableCell {TD} at (2,2) size 49x22 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                                     RenderText {#text} at (2,2) size 45x18
                                       text run at (2,2) width 45: "table-6"
-                            RenderInline {FONT} at (0,438) size 784x588
+                            RenderInline {FONT} at (0,438) size 784x528
                               RenderText {#text} at (0,0) size 0x0
-                              RenderInline {FONT} at (0,456) size 784x578
+                              RenderInline {FONT} at (0,456) size 784x510
                                 RenderBlock {DIV} at (0,456) size 784x18
                                   RenderText {#text} at (0,0) size 81x18
                                     text run at (0,0) width 81: "div before X"
@@ -109,9 +109,9 @@ layer at (0,0) size 800x982
                                 RenderInline {A} at (0,520) size 10x18
                                   RenderText {#text} at (0,520) size 10x18
                                     text run at (0,520) width 10: "Z"
-                                RenderInline {FONT} at (0,520) size 784x522
+                                RenderInline {FONT} at (0,520) size 784x446
                                   RenderText {#text} at (0,0) size 0x0
-                                  RenderInline {FONT} at (0,556) size 784x494
+                                  RenderInline {FONT} at (0,556) size 784x410
                                     RenderInline {A} at (0,556) size 12x18
                                       RenderText {#text} at (0,556) size 12x18
                                         text run at (0,556) width 12: "X"
@@ -127,9 +127,9 @@ layer at (0,0) size 800x982
                                     RenderInline {A} at (0,620) size 10x18
                                       RenderText {#text} at (0,620) size 10x18
                                         text run at (0,620) width 10: "Z"
-                                    RenderInline {FONT} at (0,620) size 784x438
+                                    RenderInline {FONT} at (0,620) size 784x346
                                       RenderText {#text} at (0,0) size 0x0
-                                      RenderInline {FONT} at (0,656) size 784x410
+                                      RenderInline {FONT} at (0,656) size 784x310
                                         RenderInline {A} at (0,656) size 12x18
                                           RenderText {#text} at (0,656) size 12x18
                                             text run at (0,656) width 12: "X"
@@ -145,9 +145,9 @@ layer at (0,0) size 800x982
                                         RenderInline {A} at (0,720) size 10x18
                                           RenderText {#text} at (0,720) size 10x18
                                             text run at (0,720) width 10: "Z"
-                                        RenderInline {FONT} at (0,720) size 784x354
+                                        RenderInline {FONT} at (0,720) size 784x246
                                           RenderText {#text} at (0,0) size 0x0
-                                          RenderInline {FONT} at (0,756) size 784x326
+                                          RenderInline {FONT} at (0,756) size 784x210
                                             RenderBlock {DIV} at (0,756) size 784x18
                                               RenderText {#text} at (0,0) size 101x18
                                                 text run at (0,0) width 101: "div before table"
@@ -160,9 +160,9 @@ layer at (0,0) size 800x982
                                             RenderInline {A} at (0,802) size 10x18
                                               RenderText {#text} at (0,802) size 10x18
                                                 text run at (0,802) width 10: "Z"
-                                            RenderInline {FONT} at (0,802) size 784x288
+                                            RenderInline {FONT} at (0,802) size 784x164
                                               RenderText {#text} at (0,0) size 0x0
-                                              RenderInline {FONT} at (0,838) size 784x260
+                                              RenderInline {FONT} at (0,838) size 784x128
                                                 RenderTable {TABLE} at (0,838) size 62x28 [border: (1px outset #000000)]
                                                   RenderTableSection {TBODY} at (1,1) size 60x26
                                                     RenderTableRow {TR} at (0,2) size 60x22
@@ -175,9 +175,9 @@ layer at (0,0) size 800x982
                                                 RenderInline {A} at (0,884) size 10x18
                                                   RenderText {#text} at (0,884) size 10x18
                                                     text run at (0,884) width 10: "Z"
-                                                RenderInline {FONT} at (0,884) size 784x222
+                                                RenderInline {FONT} at (0,884) size 784x82
                                                   RenderText {#text} at (0,0) size 0x0
-                                                  RenderInline {FONT} at (0,920) size 784x194
+                                                  RenderInline {FONT} at (0,920) size 784x46
                                                     RenderBlock {DIV} at (0,920) size 784x18
                                                       RenderText {#text} at (0,0) size 101x18
                                                         text run at (0,0) width 101: "div before table"

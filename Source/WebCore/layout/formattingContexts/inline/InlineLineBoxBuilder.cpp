@@ -560,7 +560,9 @@ void LineBoxBuilder::constructBlockContent(LineBox& lineBox)
             auto inlineBoxWidth = blockRun.logicalWidth() ? lineLayoutResult.lineGeometry.logicalWidth : 0.f;
             auto lineSpanningInlineBox = InlineLevelBox::createInlineBox(run.layoutBox(), run.layoutBox().style(), lineLayoutResult.contentGeometry.logicalLeft, inlineBoxWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
             setVerticalPropertiesForInlineLevelBox(lineBox, lineSpanningInlineBox);
-            lineSpanningInlineBox.setLogicalTop(blockGeometry.marginBefore());
+            // An inline level box's logical top is relative to its parent inline box (see LineBox::inlineLevelBoxAbsoluteTop), so only the outermost spanning box may carry the block's offset within the line.
+            auto isOutermostInlineBox = &run.layoutBox().parent() == &rootBox();
+            lineSpanningInlineBox.setLogicalTop(isOutermostInlineBox ? InlineLayoutUnit(blockGeometry.marginBefore()) : 0.f);
             lineSpanningInlineBox.setLogicalHeight(InlineLayoutUnit(blockGeometry.borderBoxHeight()));
             lineBox.addInlineLevelBox(WTF::move(lineSpanningInlineBox));
             continue;
