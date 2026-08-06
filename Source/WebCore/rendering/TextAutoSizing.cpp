@@ -256,24 +256,21 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             [&](const CSS::Keyword::Normal&) {
                 return 0;
             },
-            [&](const Style::LineHeight::Fixed& fixed) {
-                return Style::evaluate<LayoutUnit>(fixed, Style::ZoomFactor { 1.0f }).toInt();
+            [&](const Style::LineHeight::Length& length) {
+                return Style::evaluate<LayoutUnit>(length, Style::ZoomFactor::none()).toInt();
             },
-            [&](const Style::LineHeight::Percentage& percentage) {
-                return Style::evaluate<LayoutUnit>(percentage, LayoutUnit { fontDescription.specifiedSize() }).toInt();
-            },
-            [&](const Style::LineHeight::Calc&) {
-                return 0;
+            [&](const Style::LineHeight::Number& number) {
+                return LayoutUnit { number.value * LayoutUnit { fontDescription.specifiedSize() } }.toInt();
             }
         );
 
         // This calculation matches the line-height computed size calculation in StyleBuilderCustom::applyValueLineHeight().
         int lineHeight = specifiedLineHeight * scaleChange;
-        if (auto fixedLineHeight = lineHeightLength.tryFixed(); fixedLineHeight && fixedLineHeight->resolveZoom(Style::ZoomFactor { 1.0f }) == lineHeight)
+        if (auto fixedLineHeight = lineHeightLength.tryLength(); fixedLineHeight && fixedLineHeight->resolveZoom(Style::ZoomFactor::none()) == lineHeight)
             continue;
 
         auto newParentStyle = cloneRenderStyleWithState(parentStyle);
-        newParentStyle.setLineHeight(lineHeightLength.isNormal() ? Style::LineHeight { lineHeightLength } : Style::LineHeight { Style::LineHeight::Fixed { static_cast<float>(lineHeight) } });
+        newParentStyle.setLineHeight(lineHeightLength.isNormal() ? Style::LineHeight { lineHeightLength } : Style::LineHeight { Style::LineHeight::Length { static_cast<float>(lineHeight) } });
         newParentStyle.setSpecifiedLineHeight(Style::LineHeight { lineHeightLength });
         newParentStyle.setFontDescription(WTF::move(fontDescription));
         parentRenderer->setStyle(WTF::move(newParentStyle));

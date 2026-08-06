@@ -403,14 +403,11 @@ String PrintContext::pageProperty(LocalFrame* frame, const String& propertyName,
             [&](const CSS::Keyword::Normal&) -> String {
                 return "0"_s;
             },
-            [&](const Style::LineHeight::Fixed& fixed) -> String {
-                return makeString(fixed.resolveZoom(style->usedZoomForLength()));
+            [&](const Style::LineHeight::Length& length) -> String {
+                return makeString(length.resolveZoom(style->usedZoomForLength()));
             },
-            [&](const Style::LineHeight::Percentage& percentage) -> String {
-                return makeString(percentage.value);
-            },
-            [&](const Style::LineHeight::Calc&) -> String {
-                return "0"_s;
+            [&](const Style::LineHeight::Number& number) -> String {
+                return makeString(number.value);
             }
         );
     }

@@ -144,10 +144,10 @@ auto AutosizeStatus::isIdempotentTextAutosizingCandidate(const Style::ComputedSt
 
 bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const Style::ComputedStyle& style)
 {
-    auto& lineHeightAsLength = style.specifiedLineHeight();
-    auto lineHeightAsFixed = lineHeightAsLength.tryFixed();
-    auto lineHeightAsPercentage = lineHeightAsLength.tryPercentage();
-    if (!lineHeightAsFixed && !lineHeightAsPercentage)
+    auto& specifiedLineHeight = style.specifiedLineHeight();
+    auto lineHeightAsLength = specifiedLineHeight.tryLength();
+    auto lineHeightAsNumber = specifiedLineHeight.tryNumber();
+    if (!lineHeightAsLength && !lineHeightAsNumber)
         return false;
 
     auto zoomFactor = style.usedZoomForLength();
@@ -165,7 +165,7 @@ bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const Style::Compu
     if (heightOrMaxHeight <= 0)
         return false;
 
-    float approximateLineHeight = lineHeightAsPercentage ? lineHeightAsPercentage->value * style.specifiedFontSize() / 100 : lineHeightAsFixed->resolveZoom(zoomFactor);
+    float approximateLineHeight = lineHeightAsNumber ? lineHeightAsNumber->value * style.specifiedFontSize() : lineHeightAsLength->resolveZoom(zoomFactor);
     if (approximateLineHeight <= 0)
         return false;
 

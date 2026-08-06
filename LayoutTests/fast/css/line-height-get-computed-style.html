@@ -23,18 +23,18 @@
         }, `with font-size: 10px, #target.style['line-height'] = ${line_height_percent} should result in a used line-height of ${expected_line_height}`)
     }
     
-    test_line_height(1e+26, '999999914697178458896728064px')
+    test_line_height(1e+26, '1000000062271131048573140992px')
     
     // Per spec, CSS numbers shouldn't serialize with more than 6 decimal places.
     test_line_height(2.53821, '25.382099px')
-    test_line_height(2.6666667, '26.666664px')
+    test_line_height(2.6666667, '26.666668px')
     // 20 decimals.
     test_line_height(2.12345678912345678912, '21.234568px')
     test_line_height(2.5, '25px')
     test_line_height(2, '20px')
     test_line_height(1.05, '10.5px')
     test_line_height(1.049, '10.49px')
-    test_line_height(1.0491, '10.491001px')
+    test_line_height(1.0491, '10.491px')
     test_line_height(0, '0px')
     test_line_height(1, '10px')
     

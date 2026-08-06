@@ -57,44 +57,45 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
         .cssToLengthConversionData()
         .copyForLineHeight();
 
-    auto zoomFactor = Style::ZoomFactor { state.zoomWithTextZoomFactor() };
-
-    auto percentageBasis = [&] {
-        return state.style().fontDescription().unzoomedComputedSize();
-    };
-
-    using StyleSpecified = typename LineHeight::Specified;
-    using CSSRaw = typename StyleSpecified::CSS::Raw;
+    using StyleLengthPercentage = LengthPercentage<CSS::Nonnegative>;
+    using CSSRaw = typename StyleLengthPercentage::CSS::Raw;
     using CSSDimensionRaw = typename CSSRaw::Dimension;
     using CSSPercentageRaw = typename CSSRaw::Percentage;
 
     using StyleNumber = Number<CSS::Nonnegative>;
     using CSSNumberRaw = typename StyleNumber::CSS::Raw;;
 
-    auto handleFixed = [&](const StyleSpecified::Dimension& fixed) {
-        return LineHeight::Fixed { CSS::clampToRangeOf<LineHeight::Fixed>(fixed.unresolvedValue() * multiplier) };
+    auto handleLength = [&](const auto& length) {
+        return CSS::clampingToRangeOf<LineHeight::Length>(
+            length.unresolvedValue() * multiplier
+        );
     };
 
-    auto handlePercentage = [&](const StyleSpecified::Percentage& percentage) {
-        // Line-height percentages need to inherit as if they were pixel values. In the example:
-        // <div style="font-size: 10px; line-height: 150%;"><div style="font-size: 100px;"></div></div>
-        // the inner element should have line-height of 15px. However, in this example:
-        // <div style="font-size: 10px; line-height: 1.5;"><div style="font-size: 100px;"></div></div>
-        // the inner element should have a line-height of 150px. Therefore, we map percentages to Fixed
-        // values and raw numbers to percentages.
+    auto handlePercentage = [&](const auto& percentage) {
+        auto textZoomFactor = ZoomFactor { state.zoomWithTextZoomFactor() };
+        auto percentageBasis = state.style().fontDescription().unzoomedComputedSize();
 
         // FIXME: percentage should not be restricted to an integer here.
         auto percentageValue = static_cast<int>(percentage.value);
 
-        return LineHeight::Fixed { CSS::clampToRangeOf<LineHeight::Fixed>((percentageValue * percentageBasis() * zoomFactor.value) / 100.0) };
+        return CSS::clampingToRangeOf<LineHeight::Length>(
+            (percentageValue * percentageBasis * textZoomFactor.value) / 100.0
+        );
     };
 
-    auto handleCalc = [&](const StyleSpecified::Calc& calc) {
-        return LineHeight::Fixed { CSS::clampToRangeOf<LineHeight::Fixed>(calc.evaluate(percentageBasis(), zoomFactor) * multiplier) };
+    auto handleCalc = [&](const auto& calc) {
+        auto textZoomFactor = ZoomFactor { state.zoomWithTextZoomFactor() };
+        auto percentageBasis = state.style().fontDescription().unzoomedComputedSize();
+
+        return CSS::clampingToRangeOf<LineHeight::Length>(
+            evaluate<float>(calc, percentageBasis, textZoomFactor) * multiplier
+        );
     };
 
-    auto handleNumber = [&](const StyleNumber& number) {
-        return LineHeight::Percentage { CSS::clampToRangeOf<LineHeight::Percentage>(number.value * 100.0) };
+    auto handleNumber = [&](const auto& number) {
+        return CSS::clampingToRangeOf<LineHeight::Number>(
+            number.value
+        );
     };
 
     return WTF::switchOn(*primitiveValue,
@@ -109,13 +110,13 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
 
             auto convertedCalc = toStyle(CSS::UnevaluatedCalc<CSSRaw> { calc }, conversionData);
             return WTF::switchOn(convertedCalc,
-                [&](const StyleSpecified::Dimension& fixed) {
-                    return handleFixed(fixed);
+                [&](const StyleLengthPercentage::Dimension& length) {
+                    return handleLength(length);
                 },
-                [&](const StyleSpecified::Percentage& percentage) {
+                [&](const StyleLengthPercentage::Percentage& percentage) {
                     return handlePercentage(percentage);
                 },
-                [&](const StyleSpecified::Calc& calc) {
+                [&](const StyleLengthPercentage::Calc& calc) {
                     return handleCalc(calc);
                 }
             );
@@ -128,7 +129,7 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
                 return handlePercentage(toStyle(CSSPercentageRaw(*unit, raw.value), conversionData));
 
             if (auto unit = CSSDimensionRaw::UnitTraits::validate(raw.unit))
-                return handleFixed(toStyle(CSSDimensionRaw(*unit, raw.value), conversionData));
+                return handleLength(toStyle(CSSDimensionRaw(*unit, raw.value), conversionData));
 
             state.setCurrentPropertyInvalidAtComputedValueTime();
             return CSS::Keyword::Normal { };
@@ -140,20 +141,27 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
 
 auto Blending<LineHeight>::canBlend(const LineHeight& a, const LineHeight& b) -> bool
 {
-    return a.hasSameType(b) || (a.isCalculated() && b.isNumeric()) || (b.isCalculated() && a.isNumeric());
+    return a.hasSameType(b) && a.isNumeric() && b.isNumeric();
 }
 
 auto Blending<LineHeight>::requiresInterpolationForAccumulativeIteration(const LineHeight& a, const LineHeight& b) -> bool
 {
-    return !a.hasSameType(b) || a.isCalculated() || b.isCalculated();
+    return !a.hasSameType(b);
 }
 
 auto Blending<LineHeight>::blend(const LineHeight& a, const LineHeight& b, const BlendingContext& context) -> LineHeight
 {
-    if (!a.isNumeric() || !b.isNumeric())
+    if (!a.hasSameType(b) || !a.isNumeric() || !b.isNumeric())
         return context.progress < 0.5 ? a : b;
 
-    return Style::blend(get<LineHeight::Numeric>(a), get<LineHeight::Numeric>(b), context);
+    return WTF::visit(WTF::makeVisitor(
+        [&]<typename T>(const T& a, const T& b) -> LineHeight {
+            return LineHeight { WebCore::Style::blend(a, b, context) };
+        },
+        [](const auto&, const auto&) -> LineHeight {
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    ), a.m_value, b.m_value);
 }
 
 // MARK: - Evaluation
@@ -162,17 +170,14 @@ auto Evaluation<LineHeight, float>::operator()(
     const LineHeight& lineHeight, LineHeightEvaluationContext context, ZoomFactor zoom) -> float
 {
     return WTF::switchOn(lineHeight,
-        [&](const LineHeight::Fixed& fixed) {
-            return evaluate<LayoutUnit>(fixed, zoom).toFloat();
-        },
-        [&](const LineHeight::Percentage& percentage) {
-            return evaluate<LayoutUnit>(percentage, LayoutUnit { context.computedFontSize }).toFloat();
-        },
-        [&](const LineHeight::Calc& calc) {
-            return evaluate<LayoutUnit>(calc, LayoutUnit { context.computedFontSize }, zoom).toFloat();
-        },
         [&](const CSS::Keyword::Normal&) {
             return context.lineSpacing;
+        },
+        [&](const LineHeight::Length& length) {
+            return evaluate<LayoutUnit>(length, zoom).toFloat();
+        },
+        [&](const LineHeight::Number& number) {
+            return LayoutUnit { number.value * LayoutUnit { context.computedFontSize } }.toFloat();
         }
     );
 }

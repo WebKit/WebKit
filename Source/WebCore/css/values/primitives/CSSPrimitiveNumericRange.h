@@ -207,6 +207,12 @@ template<typename Numeric, Range range = Numeric::range, typename T = typename N
     return clampToRange<range, T, U>(value);
 }
 
+// Clamps a value to within `range` of the specified numeric type.
+template<typename Numeric, Range range = Numeric::range, typename T = typename Numeric::ResolvedValueType, typename U> constexpr Numeric clampingToRangeOf(U value)
+{
+    return Numeric { clampToRange<range, T, U>(value) };
+}
+
 // Checks if a floating point value is within `range`.
 template<Range range, std::floating_point T> constexpr bool isWithinRange(T value)
 {

@@ -197,14 +197,11 @@ inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
         [&](const CSS::Keyword::Normal&) -> InlineLayoutUnit {
             return 0;
         },
-        [&](const WebCore::Style::LineHeight::Fixed& fixed) -> InlineLayoutUnit {
-            return WebCore::Style::evaluate<InlineLayoutUnit>(fixed, m_style.zoomFactor);
+        [&](const WebCore::Style::LineHeight::Length& length) -> InlineLayoutUnit {
+            return WebCore::Style::evaluate<InlineLayoutUnit>(length, m_style.zoomFactor);
         },
-        [&](const WebCore::Style::LineHeight::Percentage& percentage) -> InlineLayoutUnit {
-            return WebCore::Style::evaluate<LayoutUnit>(percentage, LayoutUnit { fontSize() });
-        },
-        [&](const WebCore::Style::LineHeight::Calc& calc) -> InlineLayoutUnit {
-            return WebCore::Style::evaluate<LayoutUnit>(calc, LayoutUnit { fontSize() }, m_style.zoomFactor);
+        [&](const WebCore::Style::LineHeight::Number& number) -> InlineLayoutUnit {
+            return LayoutUnit { number.value * LayoutUnit { fontSize() } };
         }
     );
 }
@@ -215,5 +212,5 @@ inline bool InlineLevelBox::hasLineBoxRelativeAlignment() const
         || WTF::holdsAlternative<CSS::Keyword::Bottom>(m_style.verticalAlignment);
 }
 
-}
-}
+} // namespace Layout
+} // namespace WebCore

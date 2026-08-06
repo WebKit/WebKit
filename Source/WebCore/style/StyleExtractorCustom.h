@@ -758,26 +758,14 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyLineHeight> {
             [&](const CSS::Keyword::Normal& keyword) {
                 return functor(keyword);
             },
-            [&](const LineHeight::Fixed& fixed) {
+            [&](const LineHeight::Length& fixed) {
                 return functor(fixed);
             },
-            [&](const LineHeight::Percentage& percentage) {
-                // CSSValueConversion<LineHeight> will convert a percentage value to a fixed value,
-                // and a number value to a percentage value. To be able to roundtrip a number value, we thus
-                // look for a percent value and convert it back to a number.
+            [&](const LineHeight::Number& number) {
                 if (state.valueType == ExtractorState::PropertyValueType::Computed)
-                    return functor(Number<CSS::Nonnegative> { percentage.value / 100 });
+                    return functor(number);
 
-                // This is imperfect, because it doesn't include the zoom factor and the real computation
-                // for how high to be in pixels does include things like minimum font size and the zoom factor.
-                // On the other hand, since font-size doesn't include the zoom factor, we really can't do
-                // that here either.
-                return functor(Length<CSS::Nonnegative> { percentage.value * state.style.fontDescription().unzoomedComputedSize() / 100 });
-            },
-            [&](const LineHeight::Calc& calc) {
-                // FIXME: We pass ZoomFactor::none() but it really is not clear why we are even evaluating calc
-                // here. We should probably revisit this and figure out another way to do this.
-                return functor(Length<CSS::Nonnegative> { evaluate<float>(calc, 0.0f, ZoomFactor::none()) });
+                return functor(LineHeight::Length { number.value * state.style.fontDescription().unzoomedComputedSize() });
             }
         );
     }
