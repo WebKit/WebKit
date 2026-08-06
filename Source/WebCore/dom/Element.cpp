@@ -117,6 +117,7 @@
 #include "PointerLockOptions.h"
 #include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
@@ -1880,6 +1881,35 @@ inline RefPtr<const SVGElement> elementWithSVGLayoutBox(const Element& element)
     return svg;
 }
 
+// SVG containers such as <defs>, <mask> and <g display="none"> keep renderers for their
+// descendants so that resources remain referenceable, but none of that subtree generates
+// a box. Per CSSOM View, getClientRects() returns an empty list for an element with no
+// associated box, and that test precedes the SVG layout box branch, so it has to be asked
+// before dispatching on renderer type: descendants of a hidden container are spread across
+// RenderElement, RenderSVGModelObject and RenderBoxModelObject (SVG <text> is a
+// RenderBlockFlow), and each of those otherwise reports geometry through a different path.
+// The walk stops at the SVG root: hidden containers only exist inside an SVG fragment, and
+// <foreignObject> gets no renderer at all under one (SVGForeignObjectElement::rendererIsNeeded),
+// so there is no hidden container to find above a root.
+inline bool isInNonRenderedSVGSubtree(const Element& element)
+{
+    if (!element.isSVGElement())
+        return false;
+
+    CheckedPtr renderer = element.renderer();
+    if (!renderer)
+        return false;
+
+    for (auto& ancestor : lineageOfType<RenderElement>(*renderer)) {
+        if (ancestor.isRenderOrLegacyRenderSVGHiddenContainer())
+            return true;
+        if (ancestor.isRenderOrLegacyRenderSVGRoot())
+            return false;
+    }
+
+    return false;
+}
+
 inline bool NODELETE shouldObtainBoundsFromBoxModel(const Element* element)
 {
     ASSERT(element);
@@ -1902,6 +1932,9 @@ IntRect Element::boundsInRootViewSpace()
 
     RefPtr view = document->view();
     if (!view)
+        return IntRect();
+
+    if (isInNonRenderedSVGSubtree(*this))
         return IntRect();
 
     Vector<FloatQuad> quads;
@@ -2059,6 +2092,9 @@ Ref<DOMRectList> Element::getClientRects()
 {
     protect(document())->updateLayoutIgnorePendingStylesheets({ LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
+    if (isInNonRenderedSVGSubtree(*this))
+        return DOMRectList::create();
+
     CheckedPtr renderer = this->renderer();
 
     Vector<FloatQuad> quads;
@@ -2083,6 +2119,9 @@ Ref<DOMRectList> Element::getClientRects()
 
 std::optional<std::pair<CheckedPtr<RenderElement>, FloatRect>> Element::boundingAbsoluteRectWithoutLayout() const
 {
+    if (isInNonRenderedSVGSubtree(*this))
+        return std::nullopt;
+
     CheckedPtr renderer = this->renderer();
     Vector<FloatQuad> quads;
     if (RefPtr svgElement = elementWithSVGLayoutBox(*this)) {

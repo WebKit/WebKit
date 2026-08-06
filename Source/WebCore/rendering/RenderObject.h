@@ -600,6 +600,7 @@ public:
     bool isRenderOrLegacyRenderSVGImage() const { return isRenderSVGImage() || isLegacyRenderSVGImage(); }
     bool isRenderOrLegacyRenderSVGRect() const { return isRenderSVGRect() || isLegacyRenderSVGRect(); }
     bool isRenderOrLegacyRenderSVGForeignObject() const { return isRenderSVGForeignObject() || isLegacyRenderSVGForeignObject(); }
+    bool isRenderOrLegacyRenderSVGHiddenContainer() const { return isRenderSVGHiddenContainer() || isLegacyRenderSVGHiddenContainer(); }
     bool isRenderOrLegacyRenderSVGModelObject() const { return isRenderSVGModelObject() || isLegacyRenderSVGModelObject(); }
     bool isRenderOrLegacyRenderSVGResourceFilterPrimitive() const { return isRenderSVGResourceFilterPrimitive() || isLegacyRenderSVGResourceFilterPrimitive(); }
     bool isSVGLayerAwareRenderer() const { return isRenderSVGRoot() || isRenderSVGModelObject() || isRenderSVGText() || isRenderSVGInline() || isRenderSVGForeignObject(); }
