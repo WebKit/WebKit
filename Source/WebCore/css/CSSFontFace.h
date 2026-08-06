@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FontMetricsOverrides.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
 #include "RenderStyleConstants.h"
@@ -187,6 +188,7 @@ private:
     FontLoadingBehavior m_loadingBehavior { FontLoadingBehavior::Auto };
 
     float m_sizeAdjust { 1.0 };
+    FontMetricsOverrides m_metricsOverrides;
 
     Vector<std::unique_ptr<CSSFontFaceSource>, 0, CrashOnOverflow, 0> m_sources;
     WeakHashSet<CSSFontFaceClient> m_clients;

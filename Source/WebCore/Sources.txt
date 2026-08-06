@@ -3389,6 +3389,7 @@ style/values/flexbox/StyleFlexBasis.cpp
 style/values/fonts/StyleFontFamily.cpp
 style/values/fonts/StyleFontFamilyName.cpp
 style/values/fonts/StyleFontFeatureSettings.cpp
+style/values/fonts/StyleFontMetricsOverride.cpp
 style/values/fonts/StyleFontPalette.cpp
 style/values/fonts/StyleFontSizeAdjust.cpp @header:RenderStyleGetters @cost:5
 style/values/fonts/StyleFontStyle.cpp

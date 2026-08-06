@@ -738,7 +738,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
     auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription, options).boldObliquePair();
 
-    FontPlatformData platformData(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
+    FontPlatformData platformData(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode(), fontCreationContext.metricsOverrides());
 
     platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
     return makeUnique<FontPlatformData>(platformData);
@@ -831,7 +831,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     RefPtr<const FontCustomPlatformData> customPlatformData = nullptr;
     if (safeCFEqual(ctFont.get(), substituteFont.get()))
         customPlatformData = platformData.customPlatformData();
-    FontPlatformData alternateFont(substituteFont.get(), platformData.size(), syntheticBold, syntheticOblique, platformData.orientation(), platformData.widthVariant(), platformData.textRenderingMode(), customPlatformData.get());
+    FontPlatformData alternateFont(substituteFont.get(), platformData.size(), syntheticBold, syntheticOblique, platformData.orientation(), platformData.widthVariant(), platformData.textRenderingMode(), platformData.metricsOverrides(), customPlatformData.get());
 
     return fontForPlatformData(alternateFont);
 }

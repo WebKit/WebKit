@@ -2529,6 +2529,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/FontFeatureValues.h
     platform/graphics/FontGenericFamilies.h
     platform/graphics/FontMetrics.h
+    platform/graphics/FontMetricsOverrides.h
     platform/graphics/FontPalette.h
     platform/graphics/FontPaletteValues.h
     platform/graphics/FontPlatformData.h
@@ -3323,6 +3324,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/fonts/StyleFontFamily.h
     style/values/fonts/StyleFontFamilyName.h
     style/values/fonts/StyleFontFeatureSettings.h
+    style/values/fonts/StyleFontMetricsOverride.h
     style/values/fonts/StyleFontPalette.h
     style/values/fonts/StyleFontSizeAdjust.h
     style/values/fonts/StyleFontStyle.h

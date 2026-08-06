@@ -161,6 +161,7 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleF
         m_platformData.widthVariant(),
         m_platformData.textRenderingMode(),
         Vector<hb_feature_t> { m_platformData.features() },
+        m_platformData.metricsOverrides(),
         m_platformData.customPlatformData()),
         origin(), IsInterstitial::No);
 }
@@ -174,6 +175,7 @@ RefPtr<Font> Font::platformCreateHalfWidthFont() const
         FontWidthVariant::HalfWidth,
         m_platformData.textRenderingMode(),
         Vector<hb_feature_t> { m_platformData.features() },
+        m_platformData.metricsOverrides(),
         m_platformData.customPlatformData()),
         origin(), IsInterstitial::No);
 }

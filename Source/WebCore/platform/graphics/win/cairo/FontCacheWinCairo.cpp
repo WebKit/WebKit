@@ -38,7 +38,7 @@ GDIObject<HFONT> createGDIFont(const AtomString&, LONG, bool, int);
 LONG toGDIFontWeight(FontSelectionValue);
 bool isGDIFontWeightBold(LONG);
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext&, OptionSet<FontLookupOptions> options)
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
     LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
     auto hfont = createGDIFont(family, weight, isItalic(fontDescription.fontStyleSlope()),
@@ -55,7 +55,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool synthesizeItalic = !options.contains(FontLookupOptions::DisallowObliqueSynthesis)
         && isItalic(fontDescription.fontStyleSlope()) && !logFont.lfItalic;
 
-    auto result = makeUnique<FontPlatformData>(WTF::move(hfont), fontDescription.computedSize(), synthesizeBold, synthesizeItalic);
+    auto result = makeUnique<FontPlatformData>(WTF::move(hfont), fontDescription.computedSize(), synthesizeBold, synthesizeItalic, fontCreationContext.metricsOverrides());
 
     bool fontCreationFailed = !result->scaledFont();
 

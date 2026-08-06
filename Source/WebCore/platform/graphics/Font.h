@@ -271,6 +271,8 @@ private:
     void platformCharWidthInit();
     void NODELETE platformDestroy();
 
+    void applyFontMetricsOverrides();
+
     void initCharWidths();
 
     RefPtr<Font> createFontWithoutSynthesizableFeatures() const;

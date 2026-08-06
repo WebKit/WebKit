@@ -69,8 +69,8 @@ FontPlatformDataAttributes::FontPlatformDataAttributes(const FontMetadata& metad
     , m_psName(psName)
     { }
 
-FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, const FontCustomPlatformData* customPlatformData)
-    : FontPlatformData(WTF::move(font), FontMetadata { size, orientation, widthVariant, textRenderingMode, syntheticBold, syntheticOblique }, customPlatformData)
+FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, const FontMetricsOverrides& metricsOverrides, const FontCustomPlatformData* customPlatformData)
+    : FontPlatformData(WTF::move(font), FontMetadata { size, orientation, widthVariant, textRenderingMode, syntheticBold, syntheticOblique, metricsOverrides }, customPlatformData)
 {
 }
 

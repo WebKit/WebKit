@@ -116,8 +116,8 @@ static void setCairoFontOptionsFromFontConfigPattern(cairo_font_options_t* optio
 #endif
 }
 
-FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, RefPtr<FcPattern>&& pattern, float size, bool fixedWidth, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, const FontCustomPlatformData* customPlatformData)
-    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, FontWidthVariant::RegularWidth, TextRenderingMode::Auto, customPlatformData)
+FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, RefPtr<FcPattern>&& pattern, float size, bool fixedWidth, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, const FontMetricsOverrides& metricsOverrides, const FontCustomPlatformData* customPlatformData)
+    : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, FontWidthVariant::RegularWidth, TextRenderingMode::Auto, metricsOverrides, customPlatformData)
 {
     m_pattern = WTF::move(pattern);
     m_fixedWidth = fixedWidth;
@@ -340,7 +340,7 @@ FontPlatformData FontPlatformData::create(const Attributes& data, const FontCust
         fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(pattern));
     }
 
-    return FontPlatformData(fontFace.get(), pattern, data.m_metadata.pointSize, fixedWidth, data.m_metadata.isSyntheticBold, data.m_metadata.isSyntheticOblique, data.m_metadata.orientation, custom);
+    return FontPlatformData(fontFace.get(), pattern, data.m_metadata.pointSize, fixedWidth, data.m_metadata.isSyntheticBold, data.m_metadata.isSyntheticOblique, data.m_metadata.orientation, data.m_metadata.metricsOverrides, custom);
 }
 
 FontPlatformData::Attributes FontPlatformData::attributes() const

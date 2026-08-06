@@ -115,6 +115,7 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
         m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
     }
 #endif
+    applyFontMetricsOverrides();
 }
 
 Font::Font(IsSystemFallbackFontPlaceholder isSystemFontFallbackPlaceholder)
@@ -122,6 +123,25 @@ Font::Font(IsSystemFallbackFontPlaceholder isSystemFontFallbackPlaceholder)
 {
     // This ctor is to be used only for representing a system font fallback placeholder (createSystemFallbackFontPlaceholder)
     ASSERT(isSystemFontFallbackPlaceholder == IsSystemFallbackFontPlaceholder::Yes);
+}
+
+void Font::applyFontMetricsOverrides()
+{
+    if (m_platformData.metricsOverrides().ascentOverride.isNormal()
+        && m_platformData.metricsOverrides().descentOverride.isNormal()
+        && m_platformData.metricsOverrides().lineGapOverride.isNormal())
+        return;
+
+    if (!m_platformData.metricsOverrides().ascentOverride.isNormal())
+        m_fontMetrics.setAscent(*m_platformData.metricsOverrides().ascentOverride.value * platformData().size());
+
+    if (!m_platformData.metricsOverrides().descentOverride.isNormal())
+        m_fontMetrics.setDescent(*m_platformData.metricsOverrides().descentOverride.value * platformData().size());
+
+    if (!m_platformData.metricsOverrides().lineGapOverride.isNormal())
+        m_fontMetrics.setLineGap(*m_platformData.metricsOverrides().lineGapOverride.value * platformData().size());
+
+    m_fontMetrics.setLineSpacing(lroundf(m_fontMetrics.ascent()) + lroundf(m_fontMetrics.descent()) + lroundf(m_fontMetrics.lineGap()));
 }
 
 // Estimates of avgCharWidth and maxCharWidth for platforms that don't support accessing these values from the font.

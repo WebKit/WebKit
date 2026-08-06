@@ -51,6 +51,17 @@ enum class WebCore::TextRenderingMode : uint8_t {
     GeometricPrecision
 };
 
+header: <WebCore/FontMetricsOverrides.h>
+[CustomHeader] struct WebCore::FontMetricsOverride {
+    Markable<float> value;
+};
+
+[CustomHeader] struct WebCore::FontMetricsOverrides {
+    WebCore::FontMetricsOverride ascentOverride;
+    WebCore::FontMetricsOverride descentOverride;
+    WebCore::FontMetricsOverride lineGapOverride;
+};
+
 header: <WebCore/FontPlatformData.h>
 [CustomHeader] struct WebCore::FontMetadata {
     float pointSize;
@@ -59,6 +70,7 @@ header: <WebCore/FontPlatformData.h>
     WebCore::TextRenderingMode textRenderingMode;
     bool isSyntheticBold;
     bool isSyntheticOblique;
+    WebCore::FontMetricsOverrides metricsOverrides;
 }
 
 #if !USE(CORE_TEXT)

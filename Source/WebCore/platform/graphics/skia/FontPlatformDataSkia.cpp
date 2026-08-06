@@ -47,8 +47,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(sk_sp<SkTypeface>&& typeface, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, Vector<hb_feature_t>&& features, const FontCustomPlatformData* customPlatformData)
-    : FontPlatformData(WTF::move(typeface), FontMetadata { size, orientation, widthVariant, textRenderingMode, syntheticBold, syntheticOblique }, WTF::move(features), customPlatformData)
+FontPlatformData::FontPlatformData(sk_sp<SkTypeface>&& typeface, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, Vector<hb_feature_t>&& features, const FontMetricsOverrides& metricsOverrides, const FontCustomPlatformData* customPlatformData)
+    : FontPlatformData(WTF::move(typeface), FontMetadata { size, orientation, widthVariant, textRenderingMode, syntheticBold, syntheticOblique, metricsOverrides }, WTF::move(features), customPlatformData)
 {
 }
 
@@ -193,7 +193,7 @@ bool FontPlatformData::isFixedPitch() const
 unsigned FontPlatformData::hash() const
 {
     // FIXME: do we need to consider m_features for the hash?
-    return computeHash(m_font.getTypeface()->uniqueID(), m_isHashTableDeletedValue, m_metadata.widthVariant, m_metadata.textRenderingMode, m_metadata.orientation, m_metadata.isSyntheticBold, m_metadata.isSyntheticOblique);
+    return computeHash(m_font.getTypeface()->uniqueID(), m_isHashTableDeletedValue, m_metadata.widthVariant, m_metadata.textRenderingMode, m_metadata.orientation, m_metadata.isSyntheticBold, m_metadata.isSyntheticOblique, m_metadata.metricsOverrides);
 }
 
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const

@@ -100,8 +100,8 @@ void FontPlatformData::platformDataInit(HFONT font, float size)
     cairo_font_face_destroy(fontFace);
 }
 
-FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fontFace, float size, bool bold, bool oblique, const FontCustomPlatformData* customPlatformData)
-    : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::Auto, customPlatformData)
+FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fontFace, float size, bool bold, bool oblique, const FontMetricsOverrides& metricsOverrides, const FontCustomPlatformData* customPlatformData)
+    : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::Auto, metricsOverrides, customPlatformData)
 {
     m_hfont = SharedGDIObject<HFONT>::create(WTF::move(font));
 

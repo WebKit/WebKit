@@ -87,11 +87,7 @@ struct FontPlatformDataCacheKeyHashTraits : public SimpleClassHashTraits<FontPla
 };
 
 struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
-#if USE(SKIA)
     static constexpr bool emptyValueIsZero = false;
-#else
-    static constexpr bool emptyValueIsZero = true;
-#endif
 
     static const FontPlatformData& emptyValue()
     {

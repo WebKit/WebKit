@@ -4919,7 +4919,6 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/hiragana-katak
 imported/w3c/web-platform-tests/css/css-fonts/font-face-local-not-family.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-family-name-000.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-palette-23b.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-metrics-override.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-synthesis-position-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-variant-emoji-004.html [ ImageOnlyFailure ]
@@ -4939,12 +4938,6 @@ webkit.org/b/150081 imported/w3c/web-platform-tests/css/css-fonts/font-language-
 webkit.org/b/182042 imported/w3c/web-platform-tests/css/css-fonts/font-default-04.html [ ImageOnlyFailure ]
 webkit.org/b/182042 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-03.html [ ImageOnlyFailure ]
 webkit.org/b/86071 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-05.html [ ImageOnlyFailure ]
-
-# @font-face: ascent-override, descent-override, and line-gap-override
-webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/ascent-descent-override.html [ ImageOnlyFailure ]
-webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/line-gap-override.html [ ImageOnlyFailure ]
-webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-fonts/font-face-unicode-range-nbsp.html [ ImageOnlyFailure ]
-webkit.org/b/219735 imported/w3c/web-platform-tests/css/css-font-loading/fontface-override-descriptors.html [ ImageOnlyFailure ]
 
 # We intentionally do not want to allow disabling required ligatures, so we don't honor this optional test.
 imported/w3c/web-platform-tests/css/css-fonts/font-variant-ligatures-11.optional.html [ ImageOnlyFailure ]

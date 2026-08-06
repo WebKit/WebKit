@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold, bool oblique, const FontCustomPlatformData* customPlatformData)
-    : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::Auto, customPlatformData)
+FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold, bool oblique, const FontMetricsOverrides& metricsOverrides, const FontCustomPlatformData* customPlatformData)
+    : FontPlatformData(size, bold, oblique, FontOrientation::Horizontal, FontWidthVariant::RegularWidth, TextRenderingMode::Auto, metricsOverrides, customPlatformData)
 {
     m_hfont = SharedGDIObject<HFONT>::create(WTF::move(font));
     platformDataInit(m_hfont->get(), size);
@@ -68,7 +68,7 @@ FontPlatformData FontPlatformData::create(const Attributes& data, const FontCust
         wcscpy_s(logFont.lfFaceName, LF_FACESIZE, custom->name.wideCharacters().data());
 
     auto gdiFont = adoptGDIObject(CreateFontIndirect(&logFont));
-    return FontPlatformData(WTF::move(gdiFont), data.m_metadata.pointSize, data.m_metadata.isSyntheticBold, data.m_metadata.isSyntheticOblique, custom);
+    return FontPlatformData(WTF::move(gdiFont), data.m_metadata.pointSize, data.m_metadata.isSyntheticBold, data.m_metadata.isSyntheticOblique, data.m_metadata.metricsOverrides, custom);
 }
 
 FontPlatformData::Attributes FontPlatformData::attributes() const
@@ -84,7 +84,7 @@ std::optional<FontPlatformData> FontPlatformData::fromIPCData(const FontMetadata
     return WTF::switchOn(ipcData,
         [&] (const FontPlatformSerializedData& d) -> std::optional<FontPlatformData> {
             if (auto gdiFont = adoptGDIObject(CreateFontIndirect(&d.logFont)))
-                return FontPlatformData(WTF::move(gdiFont), metadata.pointSize, metadata.isSyntheticBold, metadata.isSyntheticOblique);
+                return FontPlatformData(WTF::move(gdiFont), metadata.pointSize, metadata.isSyntheticBold, metadata.isSyntheticOblique, metadata.metricsOverrides);
 
             return std::nullopt;
         },

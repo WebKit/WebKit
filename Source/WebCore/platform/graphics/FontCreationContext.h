@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/FontFeatureValues.h>
+#include <WebCore/FontMetricsOverrides.h>
 #include <WebCore/FontPaletteValues.h>
 #include <WebCore/FontSelectionAlgorithm.h>
 #include <WebCore/FontTaggedSettings.h>
@@ -35,9 +36,9 @@ namespace WebCore {
 
 class FontCreationContextRareData : public RefCounted<FontCreationContextRareData> {
 public:
-    static Ref<FontCreationContextRareData> create(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues, float sizeAdjust)
+    static Ref<FontCreationContextRareData> create(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues, float sizeAdjust, const FontMetricsOverrides& metricsOverrides)
     {
-        return adoptRef(*new FontCreationContextRareData(fontFaceFeatures, fontPaletteValues, fontFeatureValues, sizeAdjust));
+        return adoptRef(*new FontCreationContextRareData(fontFaceFeatures, fontPaletteValues, fontFeatureValues, sizeAdjust, metricsOverrides));
     }
 
     const FontFeatureSettings& fontFaceFeatures() const
@@ -48,6 +49,11 @@ public:
     float sizeAdjust() const
     {
         return m_sizeAdjust;
+    }
+
+    const FontMetricsOverrides& metricsOverrides() const
+    {
+        return m_metricsOverrides;
     }
 
     const FontPaletteValues& fontPaletteValues() const
@@ -65,15 +71,17 @@ public:
         return m_fontFaceFeatures == other.m_fontFaceFeatures
             && m_fontPaletteValues == other.m_fontPaletteValues
             && m_fontFeatureValues.get() == other.m_fontFeatureValues.get()
-            && m_sizeAdjust == other.m_sizeAdjust;
+            && m_sizeAdjust == other.m_sizeAdjust
+            && m_metricsOverrides == other.m_metricsOverrides;
     }
 
 private:
-    FontCreationContextRareData(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues, float sizeAdjust)
+    FontCreationContextRareData(const FontFeatureSettings& fontFaceFeatures, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues, float sizeAdjust, const FontMetricsOverrides& metricsOverrides)
         : m_fontFaceFeatures(fontFaceFeatures)
         , m_fontPaletteValues(fontPaletteValues)
         , m_fontFeatureValues(fontFeatureValues)
         , m_sizeAdjust(sizeAdjust)
+        , m_metricsOverrides(metricsOverrides)
     {
     }
 
@@ -81,17 +89,18 @@ private:
     FontPaletteValues m_fontPaletteValues;
     RefPtr<FontFeatureValues> m_fontFeatureValues;
     float m_sizeAdjust;
+    FontMetricsOverrides m_metricsOverrides;
 };
 
 class FontCreationContext {
 public:
     FontCreationContext() = default;
 
-    FontCreationContext(const FontFeatureSettings& fontFaceFeatures, const FontSelectionSpecifiedCapabilities& fontFaceCapabilities, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues, float sizeAdjust)
+    FontCreationContext(const FontFeatureSettings& fontFaceFeatures, const FontSelectionSpecifiedCapabilities& fontFaceCapabilities, const FontPaletteValues& fontPaletteValues, RefPtr<FontFeatureValues> fontFeatureValues, float sizeAdjust, const FontMetricsOverrides& metricsOverrides = { })
         : m_fontFaceCapabilities(fontFaceCapabilities)
     {
-        if (!fontFaceFeatures.isEmpty() || fontPaletteValues || (fontFeatureValues && !fontFeatureValues->isEmpty()) || sizeAdjust != 1.0)
-            m_rareData = FontCreationContextRareData::create(fontFaceFeatures, fontPaletteValues, fontFeatureValues, sizeAdjust);
+        if (!fontFaceFeatures.isEmpty() || fontPaletteValues || (fontFeatureValues && !fontFeatureValues->isEmpty()) || sizeAdjust != 1.0 || !metricsOverrides.isNormal())
+            m_rareData = FontCreationContextRareData::create(fontFaceFeatures, fontPaletteValues, fontFeatureValues, sizeAdjust, metricsOverrides);
     }
 
     const FontFeatureSettings* fontFaceFeatures() const
@@ -102,6 +111,11 @@ public:
     float sizeAdjust() const
     {
         return m_rareData ? m_rareData->sizeAdjust() : 1.0;
+    }
+
+    FontMetricsOverrides metricsOverrides() const
+    {
+        return m_rareData ? m_rareData->metricsOverrides() : FontMetricsOverrides { };
     }
 
     const FontSelectionSpecifiedCapabilities& fontFaceCapabilities() const
@@ -141,6 +155,8 @@ inline void add(Hasher& hasher, const FontCreationContext& fontCreationContext)
         add(hasher, *fontCreationContext.fontFeatureValues());
     if (fontCreationContext.sizeAdjust())
         add(hasher, fontCreationContext.sizeAdjust());
+    if (!fontCreationContext.metricsOverrides().isNormal())
+        add(hasher, fontCreationContext.metricsOverrides());
 }
 
 }

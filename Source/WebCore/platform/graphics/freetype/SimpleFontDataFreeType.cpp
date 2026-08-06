@@ -207,6 +207,7 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescripti
         m_platformData.syntheticBold(),
         m_platformData.syntheticOblique(),
         fontDescription.orientation(),
+        m_platformData.metricsOverrides(),
         m_platformData.customPlatformData()),
         origin(), IsInterstitial::No);
 }

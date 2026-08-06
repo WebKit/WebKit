@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <WebCore/FontMetricsOverrides.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ShouldLocalizeAxisNames.h>
 #include <WebCore/TextFlags.h>
@@ -98,6 +99,7 @@ struct FontMetadata {
     TextRenderingMode textRenderingMode = TextRenderingMode::Auto;
     bool isSyntheticBold = false;
     bool isSyntheticOblique = false;
+    FontMetricsOverrides metricsOverrides { };
 
     friend bool operator==(const FontMetadata&, const FontMetadata&) = default;
 };
@@ -306,23 +308,23 @@ public:
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();
 
-    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::Auto, const FontCustomPlatformData* = nullptr);
+    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::Auto, const FontMetricsOverrides& = { }, const FontCustomPlatformData* = nullptr);
     FontPlatformData(const FontMetadata&, const FontCustomPlatformData* = nullptr);
 
 #if USE(CORE_TEXT)
-    WEBCORE_EXPORT FontPlatformData(RetainPtr<CTFontRef>&&, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::Auto, const FontCustomPlatformData* = nullptr);
+    WEBCORE_EXPORT FontPlatformData(RetainPtr<CTFontRef>&&, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::Auto, const FontMetricsOverrides& = { }, const FontCustomPlatformData* = nullptr);
     WEBCORE_EXPORT FontPlatformData(RetainPtr<CTFontRef>&&, const FontMetadata&, const FontCustomPlatformData* = nullptr);
 #endif
 
 #if PLATFORM(WIN) && USE(CAIRO)
-    WEBCORE_EXPORT FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, const FontCustomPlatformData* = nullptr);
-    FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic, const FontCustomPlatformData* = nullptr);
+    WEBCORE_EXPORT FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, const FontMetricsOverrides& = { }, const FontCustomPlatformData* = nullptr);
+    FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic, const FontMetricsOverrides& = { }, const FontCustomPlatformData* = nullptr);
 #endif
 
 #if USE(FREETYPE) && USE(CAIRO)
-    FontPlatformData(cairo_font_face_t*, RefPtr<FcPattern>&&, float size, bool fixedWidth, bool syntheticBold, bool syntheticOblique, FontOrientation, const FontCustomPlatformData* = nullptr);
+    FontPlatformData(cairo_font_face_t*, RefPtr<FcPattern>&&, float size, bool fixedWidth, bool syntheticBold, bool syntheticOblique, FontOrientation, const FontMetricsOverrides& = { }, const FontCustomPlatformData* = nullptr);
 #elif USE(SKIA)
-    WEBCORE_EXPORT FontPlatformData(sk_sp<SkTypeface>&&, float size, bool syntheticBold, bool syntheticOblique, FontOrientation, FontWidthVariant, TextRenderingMode, Vector<hb_feature_t>&&, const FontCustomPlatformData* = nullptr);
+    WEBCORE_EXPORT FontPlatformData(sk_sp<SkTypeface>&&, float size, bool syntheticBold, bool syntheticOblique, FontOrientation, FontWidthVariant, TextRenderingMode, Vector<hb_feature_t>&&, const FontMetricsOverrides& = { }, const FontCustomPlatformData* = nullptr);
     WEBCORE_EXPORT FontPlatformData(sk_sp<SkTypeface>&&, const FontMetadata&, Vector<hb_feature_t>&&, const FontCustomPlatformData* = nullptr);
 #endif
 
@@ -376,6 +378,7 @@ public:
     FontOrientation orientation() const { return m_metadata.orientation; }
     FontWidthVariant widthVariant() const { return m_metadata.widthVariant; }
     TextRenderingMode textRenderingMode() const { return m_metadata.textRenderingMode; }
+    const FontMetricsOverrides& metricsOverrides() const { return m_metadata.metricsOverrides; }
     const FontMetadata& metadata() const { return m_metadata; }
     bool isForTextCombine() const { return widthVariant() != FontWidthVariant::RegularWidth; } // Keep in sync with callers of FontDescription::setWidthVariant().
 

@@ -466,7 +466,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 #endif
 
     auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
-    FontPlatformData platformData(fontFace.get(), WTF::move(resultPattern), size, fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation());
+    FontPlatformData platformData(fontFace.get(), WTF::move(resultPattern), size, fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation(), fontCreationContext.metricsOverrides());
 
     platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
     auto platformDataUniquePtr = makeUnique<FontPlatformData>(platformData);

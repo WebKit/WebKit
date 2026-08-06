@@ -59,7 +59,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
     cairo_font_face_t* fontFace = createCairoDWriteFontFace(hfont.get());
 
-    FontPlatformData fontPlatformData(WTF::move(hfont), fontFace, size, syntheticBold, syntheticItalic, this);
+    FontPlatformData fontPlatformData(WTF::move(hfont), fontFace, size, syntheticBold, syntheticItalic, fontCreationContext.metricsOverrides(), this);
 
     cairo_font_face_destroy(fontFace);
 
