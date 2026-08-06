@@ -2093,8 +2093,8 @@
 		A7E69BCC2B2117A100D43D3F /* BufferAndBackendInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7E69BCB2B21179600D43D3F /* BufferAndBackendInfo.h */; };
 		A7F35F5C2B194C0800E43D98 /* RemoteLayerWithRemoteRenderingBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F35F5B2B194C0800E43D98 /* RemoteLayerWithRemoteRenderingBackingStore.h */; };
 		A7F35F5F2B1959C000E43D98 /* RemoteLayerWithInProcessRenderingBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F35F5E2B1959B300E43D98 /* RemoteLayerWithInProcessRenderingBackingStore.h */; };
-		AA10570005 /* InspectorStorageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = AA10570002 /* InspectorStorageAgent.h */; };
-		AA10570006 /* InspectorCookieStoreHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AA10570004 /* InspectorCookieStoreHelpers.h */; };
+		AA1057000000000000000005 /* InspectorStorageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1057000000000000000002 /* InspectorStorageAgent.h */; };
+		AA1057000000000000000006 /* InspectorCookieStoreHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1057000000000000000004 /* InspectorCookieStoreHelpers.h */; };
 		AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB145E4223F931200E489D8 /* PrefetchCache.h */; };
 		AAFA634F234F7C6400FFA864 /* AsyncRevalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFA634E234F7C6300FFA864 /* AsyncRevalidation.h */; };
 		ABCC0C21BBF7F90D362ECEB4 /* GeneratedSerializersUIProcess.mm in Sources */ = {isa = PBXBuildFile; fileRef = F98D069BBFD9CAA8FCDA2943 /* GeneratedSerializersUIProcess.mm */; };
@@ -7885,10 +7885,10 @@
 		A7F35F5B2B194C0800E43D98 /* RemoteLayerWithRemoteRenderingBackingStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerWithRemoteRenderingBackingStore.h; sourceTree = "<group>"; };
 		A7F35F5D2B1958B200E43D98 /* RemoteLayerWithInProcessRenderingBackingStore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RemoteLayerWithInProcessRenderingBackingStore.mm; sourceTree = "<group>"; };
 		A7F35F5E2B1959B300E43D98 /* RemoteLayerWithInProcessRenderingBackingStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerWithInProcessRenderingBackingStore.h; sourceTree = "<group>"; };
-		AA10570001 /* InspectorStorageAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorStorageAgent.cpp; sourceTree = "<group>"; };
-		AA10570002 /* InspectorStorageAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorStorageAgent.h; sourceTree = "<group>"; };
-		AA10570003 /* InspectorCookieStoreHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCookieStoreHelpers.cpp; sourceTree = "<group>"; };
-		AA10570004 /* InspectorCookieStoreHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorCookieStoreHelpers.h; sourceTree = "<group>"; };
+		AA1057000000000000000001 /* InspectorStorageAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorStorageAgent.cpp; sourceTree = "<group>"; };
+		AA1057000000000000000002 /* InspectorStorageAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorStorageAgent.h; sourceTree = "<group>"; };
+		AA1057000000000000000003 /* InspectorCookieStoreHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCookieStoreHelpers.cpp; sourceTree = "<group>"; };
+		AA1057000000000000000004 /* InspectorCookieStoreHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorCookieStoreHelpers.h; sourceTree = "<group>"; };
 		AAB145E4223F931200E489D8 /* PrefetchCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefetchCache.h; sourceTree = "<group>"; };
 		AAB145E5223F931200E489D8 /* PrefetchCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrefetchCache.cpp; sourceTree = "<group>"; };
 		AAFA634E234F7C6300FFA864 /* AsyncRevalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncRevalidation.h; sourceTree = "<group>"; };
@@ -15233,14 +15233,14 @@
 		91D970D423DA6D250057DBC3 /* Inspector */ = {
 			isa = PBXGroup;
 			children = (
-				AA10570003 /* InspectorCookieStoreHelpers.cpp */,
-				AA10570004 /* InspectorCookieStoreHelpers.h */,
 				91D970D523DA6D500057DBC3 /* Agents */,
 				919793FE23DBC47400257892 /* Cocoa */,
 				91D970D723DA6D5B0057DBC3 /* ios */,
 				91D970D623DA6D550057DBC3 /* mac */,
 				F30EE4752E72227800935B60 /* FrameInspectorTargetProxy.cpp */,
 				F30EE4732E72226D00935B60 /* FrameInspectorTargetProxy.h */,
+				AA1057000000000000000003 /* InspectorCookieStoreHelpers.cpp */,
+				AA1057000000000000000004 /* InspectorCookieStoreHelpers.h */,
 				A5E391FB2183C1E900C8FB31 /* InspectorTargetProxy.cpp */,
 				A5E391FC2183C1E900C8FB31 /* InspectorTargetProxy.h */,
 				F30EE4722E72226A00935B60 /* PageInspectorTargetProxy.cpp */,
@@ -15273,10 +15273,10 @@
 		91D970D523DA6D500057DBC3 /* Agents */ = {
 			isa = PBXGroup;
 			children = (
-				AA10570001 /* InspectorStorageAgent.cpp */,
-				AA10570002 /* InspectorStorageAgent.h */,
 				9197940423DBC4BB00257892 /* InspectorBrowserAgent.cpp */,
 				9197940323DBC4BB00257892 /* InspectorBrowserAgent.h */,
+				AA1057000000000000000001 /* InspectorStorageAgent.cpp */,
+				AA1057000000000000000002 /* InspectorStorageAgent.h */,
 				D2CB01DAB4428B76CDA8AECC /* ProxyingNetworkAgent.cpp */,
 				EB43329193327F9D842EE004 /* ProxyingNetworkAgent.h */,
 				35541583DC2A3C24CD8C2D87 /* ProxyingNetworkAgent.messages.in */,
@@ -17893,8 +17893,6 @@
 			files = (
 				1A6280C51919949F006AD9F9 /* WebKit.h in Headers */,
 				1A6280C71919950C006AD9F9 /* WebKitPrivate.h in Headers */,
-				AA10570005 /* InspectorStorageAgent.h in Headers */,
-				AA10570006 /* InspectorCookieStoreHelpers.h in Headers */,
 				37A5E01418BBF93F000A081E /* _WKActivatedElementInfo.h in Headers */,
 				379A873618BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h in Headers */,
 				449316A325DC7DC400AA66DE /* _WKAppHighlight.h in Headers */,
@@ -18447,8 +18445,10 @@
 				BC14DF77120B5B7900826C0C /* InjectedBundleScriptWorld.h in Headers */,
 				CE550E152283752200D28791 /* InsertTextOptions.h in Headers */,
 				9197940523DBC4BB00257892 /* InspectorBrowserAgent.h in Headers */,
+				AA1057000000000000000006 /* InspectorCookieStoreHelpers.h in Headers */,
 				996B2B9D25E257FF00719379 /* InspectorExtensionDelegate.h in Headers */,
 				01840EDDFCFA4B829AA44670 /* InspectorPassthroughChannel.h in Headers */,
+				AA1057000000000000000005 /* InspectorStorageAgent.h in Headers */,
 				A5E391FD2183C1F800C8FB31 /* InspectorTargetProxy.h in Headers */,
 				07AE8FBD2F3BC4F300A4C0CA /* InteractionInformationAtPosition.h in Headers */,
 				07AE8FC22F3BC58200A4C0CA /* InteractionInformationRequest.h in Headers */,
