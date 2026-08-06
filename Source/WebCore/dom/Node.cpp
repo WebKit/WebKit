@@ -1525,6 +1525,11 @@ void Node::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemo
 
 void Node::movingSteps(bool, ContainerNode&)
 {
+    if (isInShadowTree())
+        setEventTargetFlag(EventTargetFlag::IsInShadowTree);
+    else
+        clearEventTargetFlag(EventTargetFlag::IsInShadowTree);
+
     invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::InsertedIntoAncestor);
 }
 
