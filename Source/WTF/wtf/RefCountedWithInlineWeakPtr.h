@@ -70,10 +70,13 @@ protected:
     // Returns true if the pointer should be freed.
     bool weakDerefBase() const
     {
+        // FIXME: The macros allow builds to succeed, but a proper fix would better; see https://bugs.webkit.org/show_bug.cgi?id=318247
+        IGNORE_GCC_WARNINGS_BEGIN("uninitialized")
         if (m_weakCount != 1) {
             --m_weakCount;
             return false;
         }
+        IGNORE_GCC_WARNINGS_END
 
         return true;
     }
