@@ -585,11 +585,18 @@ static void addPathsBlockedForSandboxExtensions(const WebsiteDataStoreParameters
 void NetworkProcess::addStorageSession(PAL::SessionID sessionID, const WebsiteDataStoreParameters& parameters)
 {
     auto addResult = m_networkStorageSessions.add(sessionID, nullptr);
-    if (!addResult.isNewEntry)
+    auto applyCookiesVersion = [&] {
+        CheckedPtr { addResult.iterator->value.get() }->setCookiesVersion(parameters.networkSessionParameters.cookiesVersion);
+    };
+
+    if (!addResult.isNewEntry) {
+        applyCookiesVersion();
         return;
+    }
 
     if (parameters.networkSessionParameters.shouldUseTestingNetworkSession) {
         addResult.iterator->value = newTestingSession(sessionID);
+        applyCookiesVersion();
         return;
     }
 
@@ -627,7 +634,7 @@ void NetworkProcess::addStorageSession(PAL::SessionID sessionID, const WebsiteDa
     addResult.iterator->value = makeUnique<NetworkStorageSession>(sessionID);
 #endif
 
-    CheckedPtr { addResult.iterator->value.get() }->setCookiesVersion(parameters.networkSessionParameters.cookiesVersion);
+    applyCookiesVersion();
 }
 
 void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)

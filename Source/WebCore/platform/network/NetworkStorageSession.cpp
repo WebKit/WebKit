@@ -658,7 +658,7 @@ void NetworkStorageSession::setCookiesVersion(uint64_t version)
 
 void NetworkStorageSession::addCookiesVersionChangeCallback(CookieVersionChangeCallback&& callback)
 {
-    ASSERT(callback.version < m_cookiesVersion);
+    ASSERT(callback.version > m_cookiesVersion);
     m_cookiesVersionChangeCallbacks.append(WTF::move(callback));
 }
 
