@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>margin-trim does not affect the resolved value of margin properties</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim">
+<link rel="help" href="https://drafts.csswg.org/cssom/#resolved-values">
+<meta name="assert" content="getComputedStyle returns the margin a box would have had without margin-trim, not the trimmed value.">
+<style>
+container {
+    display: block;
+    margin-trim: block;
+    border: 1px solid black;
+}
+item {
+    display: block;
+    inline-size: 50px;
+    block-size: 50px;
+    background-color: green;
+}
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+
+<container>
+    <item id="block-start" style="margin-top: 30px;"></item>
+    <item id="block-end" style="margin-bottom: 30px;"></item>
+</container>
+
+<container>
+    <div>
+        <item id="nested-block-start" style="margin-top: 30px;"></item>
+    </div>
+</container>
+
+<container style="inline-size: 400px;">
+    <item id="percentage-block-start" style="margin-top: 25%;"></item>
+</container>
+
+<container style="writing-mode: vertical-lr; block-size: 100px;">
+    <item id="vertical-block-start" style="margin-left: 30px;"></item>
+    <item id="vertical-block-end" style="margin-right: 30px;"></item>
+</container>
+
+<script>
+function resolvedMargin(id, property) {
+    return getComputedStyle(document.getElementById(id))[property];
+}
+
+test(() => {
+    assert_equals(resolvedMargin("block-start", "marginTop"), "30px");
+}, "Trimmed block-start margin resolves to its specified value");
+
+test(() => {
+    assert_equals(resolvedMargin("block-end", "marginBottom"), "30px");
+}, "Trimmed block-end margin resolves to its specified value");
+
+test(() => {
+    assert_equals(resolvedMargin("nested-block-start", "marginTop"), "30px");
+}, "Trimmed margin of a descendant collapsed through to the container edge resolves to its specified value");
+
+test(() => {
+    assert_equals(resolvedMargin("percentage-block-start", "marginTop"), "100px");
+}, "Trimmed percentage block-start margin resolves against the containing block inline size");
+
+test(() => {
+    assert_equals(resolvedMargin("vertical-block-start", "marginLeft"), "30px");
+}, "Trimmed block-start margin in a vertical-lr container resolves to its specified value");
+
+test(() => {
+    assert_equals(resolvedMargin("vertical-block-end", "marginRight"), "30px");
+}, "Trimmed block-end margin in a vertical-lr container resolves to its specified value");
+</script>
+</body>
+</html>

@@ -24,12 +24,36 @@ margin-top expected "25" but got "0"
 FAIL .test 6 assert_equals:
 <svg class="block-step test" viewBox="0 0 100 50" data-expected-margin-top="25" data-expected-margin-bottom="25"></svg>
 margin-top expected "25" but got "0"
-PASS .test 7
-PASS .test 8
-PASS .test 9
-PASS .test 10
-PASS .test 11
-PASS .test 12
-PASS .test 13
-PASS .test 14
+FAIL .test 7 assert_equals:
+<div class="container test" data-expected-height="100">
+  <embed type="text/xml" width="20" height="20" class="block-step test" data-expected-margin-top="40" data-expected-margin-bottom="40">
+</div>
+margin-top expected "40" but got "0"
+FAIL .test 8 assert_equals:
+<embed type="text/xml" width="20" height="20" class="block-step test" data-expected-margin-top="40" data-expected-margin-bottom="40">
+margin-top expected "40" but got "0"
+FAIL .test 9 assert_equals:
+<div class="container test" data-expected-height="100">
+  <iframe src="" width="20" height="20" class="block-step test" data-expected-margin-top="40" data-expected-margin-bottom="40"></iframe>
+</div>
+margin-top expected "40" but got "0"
+FAIL .test 10 assert_equals:
+<iframe src="" width="20" height="20" class="block-step test" data-expected-margin-top="40" data-expected-margin-bottom="40"></iframe>
+margin-top expected "40" but got "0"
+FAIL .test 11 assert_equals:
+<div class="container test" data-expected-height="100">
+  <object width="20" height="20" class="block-step test" data-expected-margin-top="40" data-expected-margin-bottom="40"></object>
+</div>
+margin-top expected "40" but got "0"
+FAIL .test 12 assert_equals:
+<object width="20" height="20" class="block-step test" data-expected-margin-top="40" data-expected-margin-bottom="40"></object>
+margin-top expected "40" but got "0"
+FAIL .test 13 assert_equals:
+<div class="container test" data-expected-height="100">
+  <video width="20" height="20" class="block-step test" data-expected-margin-top="40" data-expected-margin-bottom="40"></video>
+</div>
+margin-top expected "40" but got "0"
+FAIL .test 14 assert_equals:
+<video width="20" height="20" class="block-step test" data-expected-margin-top="40" data-expected-margin-bottom="40"></video>
+margin-top expected "40" but got "0"
 

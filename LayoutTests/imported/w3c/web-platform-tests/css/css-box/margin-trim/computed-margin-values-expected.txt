@@ -1,0 +1,8 @@
+
+PASS Trimmed block-start margin resolves to its specified value
+PASS Trimmed block-end margin resolves to its specified value
+PASS Trimmed margin of a descendant collapsed through to the container edge resolves to its specified value
+FAIL Trimmed percentage block-start margin resolves against the containing block inline size assert_equals: expected "100px" but got "0px"
+PASS Trimmed block-start margin in a vertical-lr container resolves to its specified value
+PASS Trimmed block-end margin in a vertical-lr container resolves to its specified value
+
