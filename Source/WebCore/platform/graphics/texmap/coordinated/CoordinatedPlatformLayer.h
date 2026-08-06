@@ -137,7 +137,7 @@ public:
 
     void setVisibleRect(const FloatRect&) WTF_REQUIRES_LOCK(m_lock);
     const FloatRect& visibleRect() const WTF_REQUIRES_LOCK(m_lock);
-    void setTransformedVisibleRect(IntRect&& visibleRect, IntRect&& visibleRectIncludingFuture) WTF_REQUIRES_LOCK(m_lock);
+    void setTransformedVisibleRect(IntRect&&) WTF_REQUIRES_LOCK(m_lock);
 
 #if ENABLE(SCROLLING_THREAD)
     void setScrollingNodeID(std::optional<ScrollingNodeID>) WTF_REQUIRES_LOCK(m_lock);
@@ -300,7 +300,6 @@ private:
     TransformationMatrix m_childrenTransform WTF_GUARDED_BY_LOCK(m_lock);
     FloatRect m_visibleRect WTF_GUARDED_BY_LOCK(m_lock);
     IntRect m_transformedVisibleRect WTF_GUARDED_BY_LOCK(m_lock);
-    IntRect m_transformedVisibleRectIncludingFuture WTF_GUARDED_BY_LOCK(m_lock);
     bool m_drawsContent WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_masksToBounds WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_preserves3D WTF_GUARDED_BY_LOCK(m_lock) { false };
