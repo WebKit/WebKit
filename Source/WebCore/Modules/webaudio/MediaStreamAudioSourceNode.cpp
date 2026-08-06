@@ -36,8 +36,10 @@
 #include "Logging.h"
 #include "MediaStreamAudioSourceOptions.h"
 #include "WebAudioSourceProvider.h"
+#include <algorithm>
 #include <wtf/Locker.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -51,12 +53,13 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
     if (audioTracks.isEmpty())
         return Exception { ExceptionCode::InvalidStateError, "Media stream has no audio tracks"_s };
 
-    RefPtr<WebAudioSourceProvider> provider;
-    for (auto& track : audioTracks) {
-        provider = track->createAudioSourceProvider();
-        if (provider)
-            break;
-    }
+    // https://webaudio.github.io/web-audio-api/#mediastreamaudiosourcenode: the input track is the
+    // first track in the media stream after sorting the audio tracks by their id using a code unit ordering.
+    Ref inputTrack = *std::min_element(audioTracks.begin(), audioTracks.end(), [](auto& a, auto& b) {
+        return codePointCompareLessThan(a->id(), b->id());
+    });
+
+    RefPtr provider = inputTrack->createAudioSourceProvider();
     if (!provider)
         return Exception { ExceptionCode::InvalidStateError, "Could not find an audio track with an audio source provider"_s };
 

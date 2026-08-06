@@ -104,8 +104,19 @@ void MediaStreamTrackAudioSourceProviderCocoa::trackEnabledChanged(MediaStreamTr
     m_enabled = track.enabled();
 }
 
+void MediaStreamTrackAudioSourceProviderCocoa::trackEnded(MediaStreamTrackPrivate&)
+{
+    // Once the captured track has ended, the node must output silence.
+    m_ended = true;
+}
+
 void MediaStreamTrackAudioSourceProviderCocoa::provideInput(AudioBus& bus, size_t framesToProcess)
 {
+    if (m_ended) {
+        bus.zero();
+        return;
+    }
+
     if (!m_lock.tryLock()) {
         bus.zero();
         return;

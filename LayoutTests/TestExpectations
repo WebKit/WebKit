@@ -541,7 +541,6 @@ imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening
 imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/fully_active_document.window.html [ Skip ]
 
 # Skip WPT webaudio tests that are timing out.
-imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourcenode-interface/mediastreamaudiosourcenode-routing.html [ Skip ]
 webkit.org/b/280303  imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-state-change.https.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/setSinkId-with-MediaElementAudioSourceNode.https.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-suspend-resume-close.html [ Skip ]

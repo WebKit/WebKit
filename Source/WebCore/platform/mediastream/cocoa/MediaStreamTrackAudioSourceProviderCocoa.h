@@ -85,7 +85,7 @@ private:
 #endif
 
     // MediaStreamTrackPrivateObserver
-    void trackEnded(MediaStreamTrackPrivate&) final { }
+    void trackEnded(MediaStreamTrackPrivate&) final;
     void trackMutedChanged(MediaStreamTrackPrivate&) final { }
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { }
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;
@@ -107,6 +107,7 @@ private:
     WeakPtr<MediaStreamTrackPrivate> m_captureSource;
     const Ref<RealtimeMediaSource> m_source;
     bool m_enabled { true };
+    bool m_ended { false };
     bool m_connected { false };
 };
 
