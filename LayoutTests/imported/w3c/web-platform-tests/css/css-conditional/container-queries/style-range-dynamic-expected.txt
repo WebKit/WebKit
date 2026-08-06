@@ -7,5 +7,5 @@ PASS After increasing root line-height
 PASS After increasing container font-size for em
 PASS After increasing container font-size for lh1
 PASS After increasing container line-height
-FAIL After changing container font-family to TallLineHeight assert_equals: color of div.test.lh3 expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS After changing container font-family to TallLineHeight
 
