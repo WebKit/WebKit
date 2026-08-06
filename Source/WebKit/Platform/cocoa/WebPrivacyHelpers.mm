@@ -733,18 +733,32 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
         return;
 
     setTrackerLookupCallback(context.get(), ^(nw_endpoint_t endpoint, const char** hostName, const char** owner, bool* canBlock) {
+        // The networking stack reads *owner and *hostName after this block returns (it copies them
+        // before the next lookup on this thread), but find() returns the matched entry by value, so
+        // pointers into its CStrings would dangle the moment the temporary is destroyed. Hold them in
+        // per-thread CStrings populated via isolatedCopy(): each copy owns its own CStringBuffer,
+        // referenced only by this thread, so nothing races the refresh of the lookup lists —
+        // CStringBuffer is not ThreadSafeRefCounted, so we must never share a buffer across threads.
+        // NeverDestroyed avoids an exit-time destructor; each assignment releases the previous copy's buffer.
+        static thread_local NeverDestroyed<CString> lastOwner;
+        static thread_local NeverDestroyed<CString> lastHost;
+
         if (auto address = ipAddress(endpoint)) {
             if (auto info = TrackerAddressLookupInfo::find(*address)) {
-                *owner = info->owner().data();
-                *hostName = info->host().data();
+                lastOwner.get() = info->owner().isolatedCopy();
+                lastHost.get() = info->host().isolatedCopy();
+                *owner = lastOwner.get().data();
+                *hostName = lastHost.get().data();
                 *canBlock = info->canBlock() == TrackerAddressLookupInfo::CanBlock::Yes;
+                return;
             }
         }
 
         if (auto host = hostname(endpoint)) {
             auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, String::fromLatin1(*host)) } };
             if (auto info = TrackerDomainLookupInfo::find(domain.string()); info.owner().length()) {
-                *owner = info.owner().data();
+                lastOwner.get() = info.owner().isolatedCopy();
+                *owner = lastOwner.get().data();
                 *hostName = *host;
                 *canBlock = info.canBlock() == TrackerDomainLookupInfo::CanBlock::Yes;
             }
