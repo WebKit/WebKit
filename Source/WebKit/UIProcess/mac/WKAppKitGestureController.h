@@ -43,8 +43,6 @@ class IntSize;
 }
 
 namespace WebKit {
-class WebPageProxy;
-class WebViewImpl;
 struct InteractionInformationAtPosition;
 }
 
@@ -60,7 +58,8 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 NS_SWIFT_UI_ACTOR
 @interface WKAppKitGestureController : NSObject <NSGestureRecognizerDelegate>
 
-- (instancetype)initWithPage:(std::reference_wrapper<WebKit::WebPageProxy>)page viewImpl:(std::reference_wrapper<WebKit::WebViewImpl>)viewImpl;
+- (instancetype)initWithView:(WKWebView *)view;
+- (void)setUp;
 - (void)enableGesturesIfNeeded;
 - (void)beginSuppressingSingleClickGestureForTextSelection;
 - (void)endSuppressingSingleClickGestureForTextSelection;

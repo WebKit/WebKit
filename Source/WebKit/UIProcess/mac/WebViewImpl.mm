@@ -1443,7 +1443,7 @@ WebViewImpl::WebViewImpl(WKWebView *view, WebProcessPool& processPool, Ref<API::
     }, viewStateHysteresis);
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-    m_appKitGestureController = adoptNS([[WKAppKitGestureController alloc] initWithPage:m_page viewImpl:*this]);
+    m_appKitGestureController = adoptNS([[WKAppKitGestureController alloc] initWithView:view]);
     m_textSelectionController = adoptNS([[WKTextSelectionController alloc] initWithView:view]);
 #endif
 
@@ -8254,6 +8254,11 @@ void WebViewImpl::showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier
 #endif
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
+void WebViewImpl::setUpGestureController()
+{
+    [m_appKitGestureController setUp];
+}
+
 void WebViewImpl::addTextSelectionManager()
 {
     [m_textSelectionController addTextSelectionManager];
