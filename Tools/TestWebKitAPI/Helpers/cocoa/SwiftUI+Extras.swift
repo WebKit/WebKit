@@ -84,6 +84,14 @@ public func render(
     }
 }
 
+/// Renders a SwiftUI view.
+///
+/// - Parameter rootView: The view to render.
+@MainActor
+public func render(@ViewBuilder rootView: () -> some View) {
+    render(rootView: rootView) { () }
+}
+
 #endif // ENABLE_SWIFTUI && !WTF_PLATFORM_WATCHOS
 
 extension Font {

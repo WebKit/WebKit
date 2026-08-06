@@ -62,4 +62,4 @@ private:
 
 }
 
-#endif
+#endif // __cplusplus

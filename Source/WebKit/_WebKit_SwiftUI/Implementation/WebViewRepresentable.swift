@@ -148,6 +148,29 @@ struct WebViewRepresentable {
         }
         #endif // WTF_PLATFORM_IOS_FAMILY
 
+        if let onAttachmentActivityPhase = environment.webViewOnAttachmentActivityPhaseContext?.action {
+            page.attachmentLifecycleListeners.didInsertAttachment = {
+                // This is safe because it is contractually guaranteed by us to be a _WKAttachment.
+                // swift-format-ignore: NeverForceUnwrap
+                onAttachmentActivityPhase(.init(attachment: $0 as! _WKAttachment, kind: .inserted($1)))
+            }
+            page.attachmentLifecycleListeners.didRemoveAttachment = {
+                // This is safe because it is contractually guaranteed by us to be a _WKAttachment.
+                // swift-format-ignore: NeverForceUnwrap
+                onAttachmentActivityPhase(.init(attachment: $0 as! _WKAttachment, kind: .removed))
+            }
+
+            page.attachmentLifecycleListeners.didInvalidateDataForAttachment = {
+                // This is safe because it is contractually guaranteed by us to be a _WKAttachment.
+                // swift-format-ignore: NeverForceUnwrap
+                onAttachmentActivityPhase(.init(attachment: $0 as! _WKAttachment, kind: .dataInvalidated))
+            }
+        } else {
+            page.attachmentLifecycleListeners.didInsertAttachment = nil
+            page.attachmentLifecycleListeners.didRemoveAttachment = nil
+            page.attachmentLifecycleListeners.didInvalidateDataForAttachment = nil
+        }
+
         platformView.onScrollGeometryChange = environment.webViewOnScrollGeometryChange
 
         #if ENABLE_MODEL_ELEMENT_IMMERSIVE

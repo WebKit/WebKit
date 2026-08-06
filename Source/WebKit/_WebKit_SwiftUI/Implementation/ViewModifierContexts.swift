@@ -59,4 +59,8 @@ struct ImmersiveEnvironmentRequestContext {
 }
 #endif
 
+struct OnAttachmentActivityPhaseContext {
+    let action: @MainActor (_ phase: WebView.AttachmentActivityPhase) -> Void
+}
+
 #endif

@@ -265,6 +265,17 @@ extension View {
 
         return environment(\.webViewViewportConfiguration, configuration)
     }
+
+    /// Adds an action to perform when an attachment in the web content changes its current activity phase.
+    ///
+    /// - Parameter action: The action to perform whenever an attachment's state is updated.
+    /// - Returns: A view that calls `action` when the attachment's state is updated..
+    @_spi(Experimental)
+    public nonisolated func webViewOnAttachmentActivityPhase(
+        _ action: @escaping @MainActor (_ phase: WebView.AttachmentActivityPhase) -> Void
+    ) -> some View {
+        environment(\.webViewOnAttachmentActivityPhaseContext, .init(action: action))
+    }
 }
 
 #endif

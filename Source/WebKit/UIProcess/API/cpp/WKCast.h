@@ -70,4 +70,4 @@ template<typename T, typename U> inline WKRetainPtr<T> dynamic_wk_cast(RetainPtr
 
 using WebKit::dynamic_wk_cast;
 
-#endif
+#endif // __cplusplus

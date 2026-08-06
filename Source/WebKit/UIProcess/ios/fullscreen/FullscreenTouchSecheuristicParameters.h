@@ -46,4 +46,4 @@ struct FullscreenTouchSecheuristicParameters {
 
 }
 
-#endif
+#endif // __cplusplus

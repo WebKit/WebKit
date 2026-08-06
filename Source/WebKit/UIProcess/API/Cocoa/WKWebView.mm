@@ -2224,6 +2224,22 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+- (void)_insertAttachmentWithFileWrapperAsync:(NSFileWrapper *)fileWrapper contentType:(NSString *)contentType completion:(void(^)(_WKAttachment *))completionHandler
+{
+    THROW_IF_SUSPENDED;
+#if ENABLE(ATTACHMENT_ELEMENT)
+    auto identifier = createVersion4UUIDString();
+    auto attachment = API::Attachment::create(identifier, *_page);
+    attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
+    _page->insertAttachment(attachment.copyRef(), [attachment, capturedHandler = makeBlockPtr(completionHandler)] {
+        if (capturedHandler)
+            capturedHandler(wrapper(attachment));
+    });
+#else
+    capturedHandler(nil);
+#endif
+}
+
 - (id <_WKAppHighlightDelegate>)_appHighlightDelegate
 {
 #if ENABLE(APP_HIGHLIGHTS)

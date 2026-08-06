@@ -25,6 +25,7 @@
 
 public import SwiftUI
 @_spi(CrossImportOverlay) public import WebKit
+@_spiOnly public import WebKit_Private
 
 /// A view that displays some web content.
 ///
@@ -266,6 +267,31 @@ extension WebView {
         public static let editable = Self(storage: .editable)
 
         let storage: Storage
+    }
+
+    /// The current attachment and its state.
+    @_spi(Experimental)
+    public struct AttachmentActivityPhase {
+        /// The possible kinds of phase an attachment may be in during its lifetime.
+        @_spi(Experimental)
+        public enum Kind: Sendable {
+            /// The attachment was inserted.
+            case inserted(_ source: String)
+
+            /// The attachment was removed.
+            case removed
+
+            /// The attachment has had its data invalidated.
+            case dataInvalidated
+        }
+
+        /// The attachment this activity phase belongs to.
+        @_spi(Experimental)
+        public let attachment: _WKAttachment
+
+        /// The kind of activity this phase represents.
+        @_spi(Experimental)
+        public let kind: Kind
     }
 }
 

@@ -73,6 +73,9 @@ extension EnvironmentValues {
 
     @Entry
     var webViewViewportConfiguration: WebView.ViewportConfiguration_v0? = nil
+
+    @Entry
+    var webViewOnAttachmentActivityPhaseContext: OnAttachmentActivityPhaseContext? = nil
 }
 
 #endif

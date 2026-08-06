@@ -389,6 +389,12 @@ final public class WebPage {
         return webView
     }()
 
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @ObservationIgnored
+    @_spi(CrossImportOverlay)
+    public var attachmentLifecycleListeners = AttachmentLifecycleListeners()
+
     // MARK: Loading functions
 
     @ObservationIgnored

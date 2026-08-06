@@ -267,4 +267,4 @@ template<typename P> struct HashTraits<WKRetainPtr<P>> : SimpleClassHashTraits<W
 
 } // namespace WTF
 
-#endif
+#endif // __cplusplus

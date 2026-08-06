@@ -153,6 +153,24 @@ final class WKUIDelegateAdapter: NSObject, WKUIDelegatePrivate {
     func _webView(_ webView: WKWebView, editorStateDidChange editorState: [AnyHashable: Any]) {
         owner?.addEditorStateUpdate(editorState)
     }
+
+    // swift-format-ignore: NoLeadingUnderscores
+    @objc(_webView:didRemoveAttachment:)
+    func _webView(_ webView: WKWebView, didRemove attachment: _WKAttachment) {
+        owner?.attachmentLifecycleListeners.didRemoveAttachment?(attachment)
+    }
+
+    // swift-format-ignore: NoLeadingUnderscores
+    @objc(_webView:didInsertAttachment:withSource:)
+    func _webView(_ webView: WKWebView, didInsert attachment: _WKAttachment, withSource source: String) {
+        owner?.attachmentLifecycleListeners.didInsertAttachment?(attachment, source)
+    }
+
+    // swift-format-ignore: NoLeadingUnderscores
+    @objc(_webView:didInvalidateDataForAttachment:)
+    func _webView(_ webView: WKWebView, didInvalidateDataFor attachment: _WKAttachment) {
+        owner?.attachmentLifecycleListeners.didInvalidateDataForAttachment?(attachment)
+    }
 }
 
 #endif

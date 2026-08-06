@@ -27,9 +27,11 @@ import Observation
 import SwiftUI
 import Testing
 @_spi(Testing) import WebKit
+import WebKit_Private.WKWebViewPrivate
 @_spi(Experimental) import _WebKit_SwiftUI
 private import TestWebKitAPILibrary
 import struct _Concurrency.Task
+import struct Swift.String
 #if WTF_PLATFORM_MAC
 import AppKit
 #else
@@ -39,7 +41,16 @@ import UIKit
 @Observable
 @MainActor
 private final class ViewModel {
-    let page = WebPage()
+    struct Attachments: Equatable {
+        var inserted: Set<_WKAttachment> = []
+        var removed: Set<_WKAttachment> = []
+    }
+
+    let page: WebPage = {
+        var configuration = WebPage.Configuration()
+        configuration.attachmentElementEnabled = true
+        return WebPage(configuration: configuration)
+    }()
 
     var isEditable: Bool = false
 
@@ -47,6 +58,8 @@ private final class ViewModel {
     // FIXME: Consider alternative designs to avoid this requirement.
     var viewportWidth: _WebKit_SwiftUI.WebView.ViewportConfiguration_v0.Width? = nil
     var viewportInitialScale: Float? = nil
+
+    var attachments = Attachments()
 }
 
 private struct TestView: View {
@@ -60,6 +73,21 @@ private struct TestView: View {
                 width: model.viewportWidth,
                 initialScale: model.viewportInitialScale
             )
+            .webViewOnAttachmentActivityPhase { phase in
+                switch phase.kind {
+                case .inserted(_):
+                    model.attachments.inserted.insert(phase.attachment)
+
+                case .removed:
+                    model.attachments.removed.insert(phase.attachment)
+
+                case .dataInvalidated:
+                    break
+
+                @unknown default:
+                    fatalError()
+                }
+            }
     }
 }
 
@@ -97,6 +125,52 @@ struct WebViewTests {
         await model.page.waitForNextPresentationUpdate()
 
         #expect(!(try await isContentEditable()))
+    }
+
+    @Test
+    func onAttachmentActivityPhaseAffectsListeners() async throws {
+        let html = """
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+            <script>
+            focus = () => document.body.focus()
+            </script>
+            <body onload=focus() contenteditable></body>
+            """
+
+        let model = ViewModel()
+
+        render {
+            TestView()
+                .environment(model)
+        }
+
+        try await model.page.load(html: html).wait()
+
+        let testHTMLData = try #require("<a href='#'>This is some HTML data</a>".data(using: .utf8))
+        let testImageFileURL = try #require(Bundle.testResources.url(forResource: "icon", withExtension: "png"))
+        let testImageData = try Data(contentsOf: testImageFileURL)
+
+        func insertAttachment(filename: String, contentType: String?, data: Data) async -> _WKAttachment? {
+            let fileWrapper = FileWrapper(regularFileWithContents: data)
+            fileWrapper.preferredFilename = filename
+
+            return await model.page.insertAttachment(fileWrapper: fileWrapper, contentType: contentType) as? _WKAttachment
+        }
+
+        let firstAttachment = await insertAttachment(filename: "foo", contentType: "text/html", data: testHTMLData)
+
+        #expect(model.attachments.removed == [])
+        #expect(model.attachments.inserted == [firstAttachment])
+
+        await model.page.executeEditCommand(.deleteBackward)
+
+        #expect(model.attachments.removed == [firstAttachment])
+        #expect(model.attachments.inserted == [firstAttachment])
+
+        let secondAttachment = await insertAttachment(filename: "bar.png", contentType: "text/html", data: testImageData)
+
+        #expect(model.attachments.removed == [firstAttachment])
+        #expect(model.attachments.inserted == [firstAttachment, secondAttachment])
     }
 
     #if WTF_PLATFORM_IOS_FAMILY

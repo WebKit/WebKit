@@ -777,6 +777,8 @@ struct LiveResizeSnapshotState {
 
 - (BOOL)_scrollPocketInFullscreenEnabled;
 
+- (void)_insertAttachmentWithFileWrapperAsync:(NSFileWrapper *)fileWrapper contentType:(nullable NSString *)contentType completion:(void(^)(_WKAttachment *))completionHandler;
+
 @end
 
 @interface WKWebView (WKTextExtraction)

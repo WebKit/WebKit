@@ -24,12 +24,26 @@
 #if ENABLE_SWIFTUI
 
 import Observation
-import WebKit_Private
+import WebKit_Private.WKWebViewPrivate
 import WebKit_Internal
 
 // MARK: CrossImportOverlay SPI
 
 extension WebPage {
+    // SPI for the cross-import overlay.
+    // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+    @_spi(CrossImportOverlay)
+    public struct AttachmentLifecycleListeners: ~Copyable {
+        // These have to be erased to `Any` from `_WKAttachment` due to a compiler bug.
+
+        public var didRemoveAttachment: ((_ attachment: Any) -> Void)? = nil
+        public var didInsertAttachment: ((_ attachment: Any, _ source: Swift.String) -> Void)? = nil
+        public var didInvalidateDataForAttachment: ((_ attachment: Any) -> Void)? = nil
+
+        init() {
+        }
+    }
+
     #if WTF_PLATFORM_MAC
     // SPI for the cross-import overlay.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
@@ -196,6 +210,32 @@ extension WebPage.EditorStateSnapshot {
             textAlignment: NSTextAlignment(rawValue: dictionary["text-alignment"] as! Int)!,
             textColor: dictionary["text-color"] as! String
         )
+    }
+}
+
+// MARK: Experimental SPI
+
+extension WebPage {
+    /// Inserts an `<attachment>` element into the page.
+    ///
+    /// - Parameters:
+    ///   - fileWrapper: The file wrapper containing the data that the attachment represents.
+    ///   - contentType: The UTI type of the file data, like `text/html`.
+    /// - Returns: The created attachment instance.
+    /// - Note: The return type is `_WKAttachment?` but due to a compiler bug, it has to be erased as an `Any?`.
+    @_spi(Experimental)
+    public func insertAttachment(fileWrapper: FileWrapper, contentType: Swift.String?) async -> Any? {
+        await backingWebView._insertAttachment(withFileWrapperAsync: fileWrapper, contentType: contentType)
+    }
+
+    /// Returns the attachment with the specified ID, if one exists.
+    ///
+    /// - Parameter id: The identifier of an attachment to look up.
+    /// - Returns: The existing attachment instance whose identifier is `id`, or `nil` if none exists.
+    /// - Note: The return type is `_WKAttachment?` but due to a compiler bug, it has to be erased as an `Any?`.
+    @_spi(Experimental)
+    public func attachment(id: Swift.String) -> Any? {
+        backingWebView._attachment(forIdentifier: id)
     }
 }
 

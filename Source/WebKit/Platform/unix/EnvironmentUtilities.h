@@ -42,4 +42,4 @@ WK_EXPORT void removeValuesEndingWith(const char* environmentVariable, const cha
 
 } // namespace WebKit
 
-#endif
+#endif // __cplusplus
