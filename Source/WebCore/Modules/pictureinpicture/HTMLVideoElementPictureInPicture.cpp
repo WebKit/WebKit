@@ -42,6 +42,7 @@
 #include "PictureInPictureWindow.h"
 #include "UserGestureIndicator.h"
 #include "VideoTrackList.h"
+#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -120,6 +121,12 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
         promise->reject(ExceptionCode::NotAllowedError, "The request is not triggered by a user activation."_s);
         return;
     }
+
+    // Consumed on exit rather than here because MediaElementSession::fullscreenPermitted(), reached through webkitSetPresentationMode() below, accepts this transient activation as the user gesture.
+    auto consumeUserActivation = makeScopeExit([&] {
+        if (userActivationRequired)
+            window->consumeTransientActivation();
+    });
 
     Ref videoElementPictureInPicture = HTMLVideoElementPictureInPicture::from(videoElement);
     if (protect(videoElement)->document().pictureInPictureElement() == &videoElement) {

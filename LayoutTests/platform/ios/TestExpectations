@@ -1301,6 +1301,7 @@ imported/w3c/web-platform-tests/picture-in-picture/picture-in-picture-window.htm
 imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-exits-existing.html [ Skip ]
 imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-twice.html [ Skip ]
 imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture.html [ Skip ]
+imported/w3c/web-platform-tests/picture-in-picture/request-picture-in-picture-consumes-user-activation.html [ Skip ]
 
 scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Skip ]
 scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Skip ]
