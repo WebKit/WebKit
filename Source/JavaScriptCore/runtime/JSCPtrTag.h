@@ -133,11 +133,22 @@ ALWAYS_INLINE static PtrType tagJSCCodePtrImpl(PtrType ptr)
         static_assert(tag == OperationPtrTag);
         JITOperationList::assertIsJITOperation(ptr);
 #if ENABLE(JIT_CAGE)
+#if ENABLE(JIT_OPERATION_VALIDATION)
         if (Options::useJITCage())
             return std::bit_cast<PtrType>(JITOperationList::singleton().map(ptr));
     } else {
         if (Options::useJITCage())
             return std::bit_cast<PtrType>(jitCagePtr(std::bit_cast<void*>(ptr), tag));
+#else // !ENABLE(JIT_OPERATION_VALIDATION)
+        if (Options::useJITCage()) {
+#if ENABLE(JIT_CAGE_RELAXATION)
+            constexpr uintptr_t diversifier = 0;
+#else
+            constexpr uintptr_t diversifier = tag;
+#endif
+            return std::bit_cast<PtrType>(ptrauth_sign_unauthenticated(std::bit_cast<void*>(ptr), ptrauth_key_process_independent_code, diversifier));
+        }
+#endif // ENABLE(JIT_OPERATION_VALIDATION)
 #endif // ENABLE(JIT_CAGE)
     }
     return WTF::tagNativeCodePtrImpl<tag>(ptr);

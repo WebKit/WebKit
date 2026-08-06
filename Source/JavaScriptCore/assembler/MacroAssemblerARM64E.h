@@ -120,7 +120,7 @@ public:
         m_assembler.xpaci(target);
     }
 
-    static constexpr RegisterID InvalidGPR  = static_cast<RegisterID>(-1);
+    static constexpr RegisterID InvalidGPR = static_cast<RegisterID>(-1);
 
     enum class CallSignatureType {
         JITCall,

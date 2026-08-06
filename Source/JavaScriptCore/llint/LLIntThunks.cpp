@@ -698,6 +698,19 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> jitCagePtrThunk()
     return codeRef;
 }
 
+MacroAssemblerCodeRef<NativeToJITGatePtrTag> jitCageProbeThunk()
+{
+    static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> codeRef;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        CCallHelpers jit;
+        JSC_JIT_CAGE_PROBE_IMPL(jit);
+        LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::LLIntThunk);
+        codeRef.construct(FINALIZE_CODE(patchBuffer, NativeToJITGatePtrTag, "jitCageProbe"_s, "jitCageProbe thunk"));
+    });
+    return codeRef;
+}
+
 #endif // ENABLE(JIT_CAGE)
 
 MacroAssemblerCodeRef<JSEntryPtrTag> normalOSRExitTrampolineThunk()
