@@ -30,7 +30,9 @@
 
         bufferSource.connect(context.destination);
         bufferSource.playbackRate.value = -0.75;
-        bufferSource.start(0);
+        // With a negative playbackRate, playback starts at the given offset and moves
+        // backwards, so start at the last sample to play the whole buffer in reverse.
+        bufferSource.start(0, (sourceFrames - 1) / sampleRate);
 
         context.oncomplete = checkAllTests;
         context.startRendering();
