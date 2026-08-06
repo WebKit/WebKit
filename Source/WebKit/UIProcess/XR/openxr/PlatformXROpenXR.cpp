@@ -186,7 +186,6 @@ bool OpenXRCoordinator::collectSwapchainFormatsIfNeeded()
 std::unique_ptr<OpenXRSwapchain> OpenXRCoordinator::createSwapchain(uint32_t width, uint32_t height, bool alpha, uint32_t faceCount) const
 {
     auto format = m_graphicsBinding->selectColorFormat(m_supportedSwapchainFormats, alpha);
-    auto sampleCount = m_viewConfigurationViews.isEmpty() ? 1 : m_viewConfigurationViews.first().recommendedSwapchainSampleCount;
 
     auto info = createOpenXRStruct<XrSwapchainCreateInfo, XR_TYPE_SWAPCHAIN_CREATE_INFO>();
     info.arraySize = 1;
@@ -195,7 +194,9 @@ std::unique_ptr<OpenXRSwapchain> OpenXRCoordinator::createSwapchain(uint32_t wid
     info.height = height;
     info.mipCount = 1;
     info.faceCount = faceCount;
-    info.sampleCount = sampleCount;
+    // Single-sampled, deliberately ignoring the view configuration's recommendedSwapchainSampleCount. Antialiasing is applied and
+    // resolved in the web process before the content reaches us.
+    info.sampleCount = 1;
     info.usageFlags = XR_SWAPCHAIN_USAGE_SAMPLED_BIT | XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT;
 
     return OpenXRSwapchain::create(m_session, info, alpha ? OpenXRSwapchain::HasAlpha::Yes : OpenXRSwapchain::HasAlpha::No, *m_graphicsBinding);
