@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<title>Navigating iframe loading='lazy' before it is loaded: form submit</title>
+<iframe name="iframe" src="http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html?src" loading="lazy" hidden></iframe>
+<form action="http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html" target="iframe"></form>
+<script>
+const iframe = document.querySelector('iframe');
+const iframeLoaded = new Promise(resolve => {
+  iframe.onload = resolve;
+});
+const loadedURLs = [];
+window.addEventListener("message", event => loadedURLs.push(event.data));
+const form = document.querySelector('form');
+form.submit();
+iframe.hidden = false;
+</script>
+<!-- Loading testharness.js here is intentional to reproduce a bug in WebKit. -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+setup({single_test: true});
+iframeLoaded.then(() => {
+  // Need a timeout to detect failure when there are two navigations.
+  step_timeout(() => {
+    // The "?" in the URL is there because the default method is "GET"
+    // and the form data (empty here) is populated into the query.
+    assert_equals(loadedURLs[loadedURLs.length - 1],
+        "http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html?");
+    done();
+  }, 1000);
+});
+</script>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<head>
+<title>Iframes with loading='lazy' in script disabled iframe are not handled
+       as 'lazy'</title>
+<link rel="help" href="https://github.com/scott-little/lazyload">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+
+<div style="height:1000vh;"></div>
+<iframe src="http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/iframe-loading-lazy-in-script-disabled-iframe-wrapper.html">
+</iframe>
+<script>
+  async_test(t => {
+    window.addEventListener("message", t.step_func_done(event => {
+      assert_equals(event.data, "Subframe",
+          "lazy-load iframe shouldn't be honored in script disabled iframe");
+    }));
+  });
+</script>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<head>
+  <title>Deferred iframes with loading='lazy' use the original
+         base URL specified at parse-time</title>
+  <link rel="author" title="Rob Buis" href="mailto:rbuis@igalia.com">
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+  <base href='http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/'>
+</head>
+
+<script>
+  let has_window_loaded = false;
+  const expected_url = 'http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html';
+
+  async_test(t => {
+    // Change the base URL and scroll down to load the deferred iframe.
+    window.addEventListener("load", t.step_func(() => {
+      const base = document.querySelector('base');
+      base.href = '/invalid-url-where-no-subresources-exist/';
+      has_window_loaded = true;
+      document.getElementById('below-viewport').scrollIntoView();
+    }));
+
+    window.addEventListener("message", t.step_func_done(event => {
+      assert_true(has_window_loaded, "Below-viewport loading=lazy iframes do not block the window load event");
+      assert_equals(event.data, expected_url, "The loading=lazy iframe loaded with the parse-time base URL");
+    }));
+
+  }, "When a loading=lazy iframe is loaded, it loads relative to the document's base URL computed at parse-time.");
+</script>
+
+<body>
+  <div style="height:1000vh"></div>
+  <iframe id="below-viewport" src="subframe-post-msg.html" loading="lazy"
+          width="200px" height="100px">
+  </iframe>
+</body>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<head>
+  <title>Deferred loading=lazy iframes load relative to the document's base URL
+         at parse-time</title>
+  <link rel="author" title="Dom Farolino" href="mailto:dom@chromium.org">
+  <link rel="author" title="Raj T" href="mailto:rajendrant@chromium.org">
+  <script src="/resources/testharness.js"></script>
+  <script src="/resources/testharnessreport.js"></script>
+</head>
+
+<script>
+  let has_window_loaded = false;
+  const expected_url = 'http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html';
+
+  async_test(t => {
+    // Change the document's base URL to a bogus one, and scroll the
+    // below-viewport iframe into view. When it loads, it should load relative
+    // to the old base URL computed at parse-time.
+    window.addEventListener("load", t.step_func(() => {
+      window.history.pushState(2, document.title,
+                               '/invalid-url-where-no-subresources-exist/');
+      has_window_loaded = true;
+      document.getElementById('below-viewport').scrollIntoView();
+    }));
+
+    window.addEventListener("message", t.step_func_done(event => {
+      assert_true(has_window_loaded,
+            "Below-viewport loading=lazy iframes do not block the " +
+            "window load event");
+      assert_equals(event.data, expected_url, "The loading=lazy iframe loaded with the parse-time base URL");
+    }));
+
+  }, "When a loading=lazy iframe is loaded, it loads relative to the document's base URL computed at parse-time.");
+</script>
+
+<body>
+  <div style="height:1000vh;"></div>
+  <script>
+    // Change the document's base URL so that the iframe request parses relative
+    // to it when it sets up the request at parse-time.
+    window.history.pushState(1, document.title, 'resources/');
+  </script>
+  <iframe id="below-viewport" src='http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html' loading="lazy" width="200px" height="100px"></iframe>
+</body>

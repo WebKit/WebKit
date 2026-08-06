@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<title>Navigating iframe loading='lazy' and then setting src: location.replace</title>
+<iframe data-src="http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html?nav" loading="lazy" hidden></iframe>
+<script>
+const iframe = document.querySelector('iframe');
+const iframeLoaded = new Promise(resolve => {
+  iframe.onload = resolve;
+});
+const loadedURLs = [];
+window.addEventListener("message", event => loadedURLs.push(event.data));
+iframe.contentWindow.location.replace(iframe.dataset.src);
+// Setting src invokes https://html.spec.whatwg.org/C#process-the-iframe-attributes
+iframe.src = 'http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html?src';
+iframe.hidden = false;
+</script>
+<!-- Loading testharness.js here is intentional to reproduce a bug in WebKit. -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+setup({single_test: true});
+iframeLoaded.then(() => {
+  // Need a timeout to detect failure when there are two navigations.
+  step_timeout(() => {
+    assert_array_equals(loadedURLs, [iframe.src]);
+    done();
+  }, 1000);
+});
+</script>

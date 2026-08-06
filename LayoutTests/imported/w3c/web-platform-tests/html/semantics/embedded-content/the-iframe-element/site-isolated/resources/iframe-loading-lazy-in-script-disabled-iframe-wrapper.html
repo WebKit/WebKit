@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<iframe id="iframe" sandbox="allow-same-origin"
+        src="/html/semantics/embedded-content/the-iframe-element/resources/iframe-loading-lazy-in-viewport.html">
+</iframe>
+
+<script>
+    iframe.addEventListener("load", () => {
+        const inner_iframe = iframe.contentDocument.querySelector("iframe");
+        parent.postMessage(inner_iframe.contentDocument.body.textContent.trim(), "*");
+    });
+</script>

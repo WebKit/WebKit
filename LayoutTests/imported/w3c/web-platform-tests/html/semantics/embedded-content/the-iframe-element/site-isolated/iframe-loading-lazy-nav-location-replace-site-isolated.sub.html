@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<title>Navigating iframe loading='lazy' before it is loaded: location.replace</title>
+<iframe data-src="http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html?nav" src="http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html?src" loading="lazy" hidden></iframe>
+<script>
+const iframe = document.querySelector('iframe');
+const iframeLoaded = new Promise(resolve => {
+  iframe.onload = resolve;
+});
+const loadedURLs = [];
+window.addEventListener("message", event => loadedURLs.push(event.data));
+iframe.contentWindow.location.replace(iframe.dataset.src);
+iframe.hidden = false;
+</script>
+<!-- Loading testharness.js here is intentional to reproduce a bug in WebKit. -->
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+setup({single_test: true});
+iframeLoaded.then(() => {
+  // Need a timeout to detect failure when there are two navigations.
+  step_timeout(() => {
+    assert_equals(loadedURLs[loadedURLs.length - 1],
+        "http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html?nav");
+    done();
+  }, 1000);
+});
+</script>

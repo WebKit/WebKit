@@ -1,0 +1,4 @@
+
+
+FAIL Navigating iframe loading='lazy' before it is loaded: navigation.navigate Error: assert_equals: expected "http://not-web-platform.test:8800/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html?nav" but got "http://not-web-platform.test:8800/html/semantics/embedded-content/the-iframe-element/site-isolated/resources/subframe-post-msg.html?src"
+
