@@ -185,7 +185,7 @@ void RenderTreeBuilder::Block::attach(RenderBlock& parent, RenderPtr<RenderObjec
     };
 
     if (!shouldBuildAnonymousBlock()) {
-        if (!parent.firstChild())
+        if (!parent.firstChild() && !child->isFloatingOrOutOfFlowPositioned())
             parent.setChildrenInline(child->isInline());
         else if (child->isInline())
             parent.setChildrenInline(true);
