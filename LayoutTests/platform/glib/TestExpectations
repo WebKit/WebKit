@@ -5327,6 +5327,8 @@ webkit.org/b/320647 [ Debug ] webrtc/canvas-to-peer-connection-vp8-2d.html [ Fai
 webkit.org/b/320648 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/computed-grid-column.html [ Timeout Pass ]
 webkit.org/b/320653 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-connectionState.https.html [ Crash Pass ]
 
+webkit.org/b/321170 imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html?interop-2026 [ Pass Crash ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
