@@ -59,7 +59,6 @@ class TextureMapperLayer;
 #if USE(SKIA)
 class SkiaCompositingLayer;
 class SkiaPaintingEngine;
-class SkiaRecordingResult;
 #endif
 #if USE(CAIRO)
 namespace Cairo {
@@ -205,11 +204,6 @@ public:
     RunLoop* compositingRunLoop() const;
     int maxTextureSize() const;
 
-    Ref<CoordinatedTileBuffer> paint(const IntRect&) WTF_REQUIRES_LOCK(m_lock);
-#if USE(SKIA)
-    Ref<SkiaRecordingResult> record(const IntRect&, unsigned dirtyTilesCount) WTF_REQUIRES_LOCK(m_lock);
-    Ref<CoordinatedTileBuffer> replay(Ref<SkiaRecordingResult>&&, const IntRect&, const IntRect&) WTF_REQUIRES_LOCK(m_lock);
-#endif
     void willPaintTile();
     void didPaintTile();
     void waitUntilPaintingComplete();
