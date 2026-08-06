@@ -2337,6 +2337,7 @@ MODERN_MEDIA_CONTROLS_SCRIPTS = \
     $(WebCore)/Modules/modern-media-controls/media/seek-forward-support.js \
     $(WebCore)/Modules/modern-media-controls/media/skip-back-support.js \
     $(WebCore)/Modules/modern-media-controls/media/skip-forward-support.js \
+    $(WebCore)/Modules/modern-media-controls/media/spatial-video-support.js \
     $(WebCore)/Modules/modern-media-controls/media/start-support.js \
     $(WebCore)/Modules/modern-media-controls/media/status-support.js \
     $(WebCore)/Modules/modern-media-controls/media/time-control-support.js \

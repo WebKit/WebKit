@@ -68,6 +68,7 @@ media/seek-backward-support.js
 media/seek-forward-support.js
 media/skip-back-support.js
 media/skip-forward-support.js
+media/spatial-video-support.js
 media/start-support.js
 media/status-support.js
 media/time-control-support.js

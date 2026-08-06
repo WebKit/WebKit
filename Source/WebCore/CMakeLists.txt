@@ -2765,6 +2765,7 @@ set(MODERN_MEDIA_CONTROLS_SCRIPTS
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/seek-forward-support.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/skip-back-support.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/skip-forward-support.js"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/media/spatial-video-support.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/start-support.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/status-support.js"
     "${WEBCORE_DIR}/Modules/modern-media-controls/media/time-control-support.js"

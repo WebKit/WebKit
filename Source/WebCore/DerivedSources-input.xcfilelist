@@ -790,6 +790,7 @@ $(PROJECT_DIR)/Modules/modern-media-controls/media/seek-forward-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/seek-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/skip-back-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/skip-forward-support.js
+$(PROJECT_DIR)/Modules/modern-media-controls/media/spatial-video-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/start-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/status-support.js
 $(PROJECT_DIR)/Modules/modern-media-controls/media/time-control-support.js

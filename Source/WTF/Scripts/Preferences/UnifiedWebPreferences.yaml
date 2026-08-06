@@ -8448,6 +8448,20 @@ SpatialPortalEnabled:
       default: false
   sharedPreferenceForWebProcess: true
 
+SpatialVideoRenderingEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "Spatial Video Rendering"
+  humanReadableDescription: "Render projected/spatial (APMP) video onto a draggable projection in the media controls"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 SpeakerSelectionRequiresUserGesture:
   type: bool

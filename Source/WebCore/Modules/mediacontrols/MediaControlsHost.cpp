@@ -70,6 +70,9 @@
 #include "TextTrackList.h"
 #include "UserGestureIndicator.h"
 #include "VTTCue.h"
+#include "VideoTrack.h"
+#include "VideoTrackConfiguration.h"
+#include "VideoTrackList.h"
 #include "VoidCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/Function.h>
@@ -352,6 +355,48 @@ bool MediaControlsHost::isMediaControlsMacInlineSizeSpecsEnabled() const
 #else
     return false;
 #endif
+}
+
+bool MediaControlsHost::spatialVideoRenderingEnabled() const
+{
+    return m_mediaElement->document().settings().spatialVideoRenderingEnabled();
+}
+
+static RefPtr<VideoTrackConfiguration> selectedVideoTrackConfiguration(HTMLMediaElement& mediaElement)
+{
+    RefPtr videoTracks = mediaElement.videoTracks();
+    if (!videoTracks)
+        return nullptr;
+    RefPtr selectedTrack = videoTracks->selectedItem();
+    if (!selectedTrack)
+        return nullptr;
+    return &selectedTrack->configuration();
+}
+
+String MediaControlsHost::spatialVideoProjectionKind() const
+{
+    RefPtr configuration = selectedVideoTrackConfiguration(protect(m_mediaElement));
+    if (!configuration)
+        return emptyString();
+
+    auto metadata = configuration->immersiveVideoMetadata();
+    if (!metadata)
+        return emptyString();
+
+    return convertEnumerationToString(metadata->kind);
+}
+
+std::optional<int32_t> MediaControlsHost::spatialVideoHorizontalFieldOfView() const
+{
+    RefPtr configuration = selectedVideoTrackConfiguration(protect(m_mediaElement));
+    if (!configuration)
+        return std::nullopt;
+
+    auto metadata = configuration->immersiveVideoMetadata();
+    if (!metadata)
+        return std::nullopt;
+
+    return metadata->horizontalFieldOfView;
 }
 
 bool MediaControlsHost::isAVExperienceControllerFullscreenEnabled() const
