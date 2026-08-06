@@ -300,7 +300,12 @@ public:
 #endif
 
     WEBCORE_EXPORT LayoutRect contentsBox() const;
-    
+
+    // Like contentsBox(), but for video, never applies the object-view-box crop-bypass or the
+    // object-fit: cover overflow — used as the fullscreen/PiP transition-anchor rect, which must
+    // reflect the video's true on-screen inline box, not compositing-only crop geometry.
+    WEBCORE_EXPORT LayoutRect inlineVideoContentsBox() const;
+
     // For informative purposes only.
     WEBCORE_EXPORT CompositingLayerType compositingLayerType() const;
     

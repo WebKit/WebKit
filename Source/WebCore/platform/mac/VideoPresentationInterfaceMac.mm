@@ -44,6 +44,7 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(AVKit, AVValueTiming)
 
@@ -313,8 +314,20 @@ enum class PIPState {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_pipViewController setUserCanResize:YES];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    [self setVideoDimensions:NSEqualSizes(_videoDimensions, NSZeroSize) ? frame.size : _videoDimensions];
     auto model = _videoPresentationInterfaceMac ? CheckedPtr { _videoPresentationInterfaceMac }->videoPresentationModel() : nullptr;
+    // _videoDimensions is normally kept up to date by videoDimensionsChanged(), but that notification
+    // can be dropped or arrive late relative to this call (e.g. it's delivered over an async,
+    // cross-process message that can race with the one that leads here, particularly on the video's
+    // first fullscreen/PiP entry). Always prefer the model's current natural size when it has one,
+    // rather than only catching up when _videoDimensions is still zero: since _videoDimensions persists
+    // across PiP sessions (it's only reset on full teardown), latching a stale/wrong value once — e.g.
+    // falling back to the possibly CSS-cropped inline frame size below because the model race was lost —
+    // would otherwise stick for every subsequent PiP entry on this video.
+    auto modelVideoDimensions = model ? model->videoDimensions() : WebCore::FloatSize();
+    if (!modelVideoDimensions.isZero())
+        [self setVideoDimensions:static_cast<NSSize>(modelVideoDimensions)];
+    else if (NSEqualSizes(_videoDimensions, NSZeroSize))
+        [self setVideoDimensions:frame.size];
     if (model)
         model->setVideoLayerGravity(MediaPlayerEnums::VideoGravity::ResizeAspectFill);
 
@@ -329,7 +342,18 @@ enum class PIPState {
     [_playerLayer setFrame:[_videoViewContainer layer].bounds];
     [_playerLayer setPresentationModel:model.get()];
     [_playerLayer setVideoSublayer:videoView.layer];
-    [_playerLayer setVideoDimensions:_videoDimensions];
+    // Use plain Resize gravity (no internal aspect-fit/crop) while the fly-to-PiP animation is in
+    // flight: WebAVPlayerLayer's -layoutSublayers otherwise reshapes videoView.layer's *current*
+    // bounds to fit _videoDimensions' aspect ratio before computing its scale-to-target-frame
+    // transform, assuming that reshape is a simple centered crop. For an object-view-box-cropped
+    // video, videoView.layer's actual bounds are WebProcess's internal (possibly asymmetric,
+    // non-natural-aspect) representation of the crop, not a centered crop of the natural frame —
+    // fitting to _videoDimensions' aspect ratio then picks the wrong sub-rect of that buffer,
+    // which is the "crops upper region" artifact this avoids. Resize sidesteps the whole problem:
+    // it never tries to select a sub-rect, it just uniformly stretches whatever's already correctly
+    // composited to fill the animating frame. -boundsDidChangeForVideoViewContainer: restores
+    // AspectFill once the transition has settled and the crop bypass has taken effect.
+    [_playerLayer setVideoGravity:AVLayerVideoGravityResize];
     [_playerLayer setAutoresizingMask:(kCALayerWidthSizable | kCALayerHeightSizable)];
 
     [retainPtr(videoView.layer) removeFromSuperlayer];
@@ -376,6 +400,11 @@ enum class PIPState {
         return;
 
     [_videoViewContainerController view].layer.backgroundColor = RetainPtr { CGColorGetConstantColor(kCGColorClear) }.get();
+    // Mirror -setUpPIPForVideoView:'s Resize gravity for the fly-from-PiP animation: the same
+    // -layoutSublayers aspect-crop-to-_videoDimensions issue applies here, and would otherwise
+    // crop object-view-box-cropped content while animating back. -pipDidClose: restores
+    // AspectFill once the animation (and this dismissal) has finished.
+    [_playerLayer setVideoGravity:AVLayerVideoGravityResize];
     [_pipViewController dismissViewController:_videoViewContainerController.get()];
     _pipState = PIPState::ExitingPIP;
 }
@@ -412,6 +441,12 @@ enum class PIPState {
         // take a completionHandler parameter, so we use the first bounds change event
         // as an indication that entering picture-in-picture is completed.
         _pipState = PIPState::InPIP;
+
+        // The fly-to-PiP animation has finished: restore AspectFill now that videoView.layer's
+        // hosted content is expected to settle into its steady-state shape (natural video for
+        // object-view-box crops, see the comment in -setUpPIPForVideoView:; already-correct
+        // shape otherwise), so -layoutSublayers' aspect-ratio-based fit is meaningful again.
+        [_playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
 
         if (auto model = videoPresentationInterfaceMac->videoPresentationModel()) {
             model->didEnterPictureInPicture();
@@ -482,6 +517,20 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
+    // The fly-from-PiP animation has finished: restore AspectFill now that videoView.layer's
+    // hosted content is expected to settle back into its steady-state shape; see the comment
+    // in -exitPIP for why Resize was used during the animation. That assumption only holds when
+    // the settled content is actually the full natural video: when returning all the way to
+    // inline display (not on the way into standard fullscreen) for an object-view-box-cropped
+    // video, videoView.layer's bounds represent that (non-natural-aspect) crop, not the natural
+    // video, since the crop is not bypassed for plain inline display. Applying AspectFill's
+    // natural-aspect-ratio-based fit to those bounds re-crops already-cropped content, producing
+    // a brief, visible content shift right before the overlay is torn down. Keep Resize in that
+    // case, matching RenderLayerBacking::updateVideoGravity()'s handling of the same content for
+    // the underlying inline layer.
+    if (!videoPresentationInterfaceMac->hasObjectViewBox() || self.isExitingToStandardFullscreen)
+        [_playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+
     if (auto model = videoPresentationInterfaceMac->videoPresentationModel()) {
         if (_videoViewContainer && _returningWindow && !NSEqualRects(_returningRect, NSZeroRect)) {
             [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
@@ -532,6 +581,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     if (CheckedPtr playbackSessionModel = videoPresentationInterfaceMac->playbackSessionModel())
         playbackSessionModel->pause();
 
+    // The native PIP window chrome's own dismiss animation is about to start here, bypassing
+    // -exitPIP (whose early-return guard would otherwise skip it once _pipState is updated
+    // below) — so set the same Resize gravity directly; see the comment in -exitPIP.
+    [_playerLayer setVideoGravity:AVLayerVideoGravityResize];
     videoPresentationInterfaceMac->requestHideAndExitPiP();
     _pipState = PIPState::ExitingPIP;
 }
@@ -689,7 +742,7 @@ WebVideoPresentationInterfaceMacObjC *VideoPresentationInterfaceMac::videoPresen
     return m_webVideoPresentationInterfaceObjC.get();
 }
 
-void VideoPresentationInterfaceMac::setupFullscreen(const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback)
+void VideoPresentationInterfaceMac::setupFullscreen(const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool hasObjectViewBox)
 {
     LOG(Fullscreen, "VideoPresentationInterfaceMac::setupFullscreen(%p), initialRect:{%d, %d, %d, %d}, parentWindow:%p, mode:%d", this, initialRect.x(), initialRect.y(), initialRect.width(), initialRect.height(), parentWindow, mode);
 
@@ -697,6 +750,7 @@ void VideoPresentationInterfaceMac::setupFullscreen(const IntRect& initialRect, 
     ASSERT(mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
 
     m_mode |= mode;
+    m_hasObjectViewBox = hasObjectViewBox;
 
     [protect(videoPresentationInterfaceObjC()) setUpPIPForVideoView:protect(layerHostView()).get() withFrame:(NSRect)initialRect inWindow:parentWindow];
 
@@ -848,6 +902,13 @@ void VideoPresentationInterfaceMac::videoDimensionsChanged(const FloatSize& vide
     // Width and height can be zero when we are transitioning from one video to another. Ignore zero values.
     if (!videoDimensions.isZero())
         [m_webVideoPresentationInterfaceObjC setVideoDimensions:videoDimensions];
+}
+
+void VideoPresentationInterfaceMac::hasObjectViewBoxChanged(bool hasObjectViewBox)
+{
+    LOG(Fullscreen, "VideoPresentationInterfaceMac::hasObjectViewBoxChanged(%p):%s", this, boolString(hasObjectViewBox));
+
+    m_hasObjectViewBox = hasObjectViewBox;
 }
 
 bool VideoPresentationInterfaceMac::isPlayingVideoInPictureInPicture() const

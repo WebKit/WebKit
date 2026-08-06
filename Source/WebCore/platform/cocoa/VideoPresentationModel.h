@@ -70,6 +70,7 @@ public:
     virtual FloatSize videoDimensions() const = 0;
     virtual bool hasVideo() const = 0;
     virtual bool isChildOfElementFullscreen() const = 0;
+    virtual bool hasObjectViewBox() const { return false; }
 
     virtual void willEnterPictureInPicture() = 0;
     virtual void didEnterPictureInPicture() = 0;
@@ -119,6 +120,7 @@ public:
     virtual ~VideoPresentationModelClient() = default;
 
     virtual void hasVideoChanged(bool) { }
+    virtual void hasObjectViewBoxChanged(bool) { }
     virtual void videoDimensionsChanged(const FloatSize&) { }
     virtual void willEnterPictureInPicture() { }
     virtual void didEnterPictureInPicture() { }

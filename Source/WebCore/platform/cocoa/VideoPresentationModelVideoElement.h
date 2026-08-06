@@ -81,6 +81,7 @@ public:
     FloatSize videoDimensions() const final { return m_videoDimensions; }
     bool hasVideo() const final { return m_hasVideo; }
     bool isChildOfElementFullscreen() const final { return m_isChildOfElementFullscreen; }
+    bool hasObjectViewBox() const final { return m_hasObjectViewBox; }
 
     WEBCORE_EXPORT void setVideoSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&);
 
@@ -138,6 +139,7 @@ private:
     // HTMLMediaElementClient
     void audioSessionCategoryChanged(AudioSessionCategory, AudioSessionMode, RouteSharingPolicy) final;
     void routingContextUIDChanged(const String&) final;
+    void hasObjectViewBoxChanged(bool) final;
 
     const Ref<VideoListener> m_videoListener;
     RefPtr<HTMLVideoElement> m_videoElement;
@@ -147,6 +149,7 @@ private:
     bool m_hasVideo { false };
     bool m_documentIsVisible { true };
     bool m_isChildOfElementFullscreen { false };
+    bool m_hasObjectViewBox { false };
     FloatSize m_videoDimensions;
     FloatRect m_videoFrame;
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;

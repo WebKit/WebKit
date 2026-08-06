@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CSSObjectViewBoxEnabled=true ] -->
+<html>
+<head>
+<style>
+    html {
+        writing-mode: vertical-lr;
+    }
+    video {
+        display: block;
+        width: 100px;
+        height: 100px;
+        object-fit: fill;
+        object-view-box: inset(25px 0px 0px 0px);
+        margin: 5px;
+    }
+</style>
+<script src="../../media/media-file.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function init()
+    {
+        setSrcByTagName("video", findMediaFile("video", "../../media/content/pure-color-green"));
+
+        var totalCount = document.getElementsByTagName('video').length;
+        var count = totalCount;
+        document.addEventListener("canplaythrough", function () {
+            if (!--count) {
+                if (window.testRunner)
+                    setTimeout(function() {
+                        if (window.internals)
+                            document.getElementById('results').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CONTENT_LAYERS);
+                        testRunner.notifyDone();
+                    }, totalCount * 150);
+            }
+        }, true);
+    }
+</script>
+</head>
+<body onload="init();">
+    <p>This test verifies that a &lt;video&gt; with no poster in a vertical writing mode is cropped for
+    compositing according to object-view-box, using the video's own natural (intrinsic) size.</p>
+    <video></video>
+<pre id="results"></pre>
+</body>
+</html>

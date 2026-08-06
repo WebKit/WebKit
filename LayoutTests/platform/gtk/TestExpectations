@@ -1090,6 +1090,12 @@ webkit.org/b/273196 imported/w3c/web-platform-tests/html/semantics/popovers/popo
 
 fast/scrolling/gtk/repeated-mouse-wheel-smooth.html [ Pass Timeout ]
 compositing/repaint/copy-forward-dirty-region.html [ ImageOnlyFailure ]
+
+# Video's contents/clipping GraphicsLayers aren't represented in layerTreeAsText() output, same as WPE.
+webkit.org/b/309572 compositing/video/video-object-view-box-dynamic-change.html [ Failure ]
+webkit.org/b/309572 compositing/video/video-object-view-box-no-poster.html [ Failure ]
+webkit.org/b/309572 compositing/video/video-object-view-box-object-position-no-poster.html [ Failure ]
+webkit.org/b/309572 compositing/video/video-object-view-box-writing-mode-no-poster.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
 
 http/tests/login-status/login-status-api-getter-setter-functions.html [ Failure ]

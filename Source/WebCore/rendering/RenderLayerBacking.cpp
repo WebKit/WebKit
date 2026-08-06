@@ -951,20 +951,26 @@ void RenderLayerBacking::updateVideoGravity(const Style::ComputedStyle& style)
         return;
 
     MediaPlayerVideoGravity videoGravity;
-    switch (style.objectFit()) {
-    case ObjectFit::None:
-    case ObjectFit::ScaleDown:
-        // FIXME: Add support for "None" and "ScaleDown" with video gravity modes
-        [[fallthrough]];
-    case ObjectFit::Fill:
+    if (!style.objectViewBox().isNone()) {
+        // The cropped-frame geometry computed for object-view-box already bakes in
+        // object-fit/object-position, so let it fill its (precomputed) contents rect as-is.
         videoGravity = MediaPlayerVideoGravity::Resize;
-        break;
-    case ObjectFit::Contain:
-        videoGravity = MediaPlayerVideoGravity::ResizeAspect;
-        break;
-    case ObjectFit::Cover:
-        videoGravity = MediaPlayerVideoGravity::ResizeAspectFill;
-        break;
+    } else {
+        switch (style.objectFit()) {
+        case ObjectFit::None:
+        case ObjectFit::ScaleDown:
+            // FIXME: Add support for "None" and "ScaleDown" with video gravity modes
+            [[fallthrough]];
+        case ObjectFit::Fill:
+            videoGravity = MediaPlayerVideoGravity::Resize;
+            break;
+        case ObjectFit::Contain:
+            videoGravity = MediaPlayerVideoGravity::ResizeAspect;
+            break;
+        case ObjectFit::Cover:
+            videoGravity = MediaPlayerVideoGravity::ResizeAspectFill;
+            break;
+        }
     }
     m_graphicsLayer->setVideoGravity(videoGravity);
 }
@@ -2107,6 +2113,41 @@ void RenderLayerBacking::updateInternalHierarchy()
 
 void RenderLayerBacking::updateContentsRects()
 {
+#if ENABLE(VIDEO)
+    if (auto* renderVideo = dynamicDowncast<RenderVideo>(renderer()); renderVideo && !renderVideo->style().objectViewBox().isNone()) {
+        auto croppedContentsRect = renderVideo->croppedVideoBoxForCompositing();
+        croppedContentsRect.move(contentOffsetInCompositingLayer());
+        m_graphicsLayer->setContentsRect(snapRectToDevicePixelsIfNeeded(croppedContentsRect, renderer()));
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+        if (RenderLayerCompositor::isSeparated(renderer())) {
+            auto borderShape = BorderShape::shapeForBorderRect(renderVideo->style(), renderVideo->borderBoxRect());
+            auto contentsClippingRect = borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor());
+            contentsClippingRect.move(contentOffsetInCompositingLayer());
+            m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
+            return;
+        }
+#endif
+
+        FloatRoundedRect contentsClippingRect;
+        if (renderVideo->isBypassingObjectViewBoxForPictureInPicture()) {
+            // Nothing to crop to: the contents rect above is already the full, uncropped
+            // natural-size rect. Clamping to the (small, pre-transition) border box below,
+            // as the cropping case does, would clip this PiP-sized layer down to the inline
+            // box size, showing only its top-left corner.
+            contentsClippingRect = FloatRoundedRect(m_graphicsLayer->contentsRect());
+        } else {
+            auto borderShape = renderVideo->borderShapeForContentClipping(renderVideo->borderBoxRect());
+            contentsClippingRect = borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor());
+            // Intersect with the (small) destination rect so the oversized contents layer is clipped to what's actually visible.
+            contentsClippingRect = FloatRoundedRect(intersection(contentsClippingRect.rect(), FloatRect(renderVideo->videoBox())), contentsClippingRect.radii());
+            contentsClippingRect.move(contentOffsetInCompositingLayer());
+        }
+        m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
+        return;
+    }
+#endif
+
     m_graphicsLayer->setContentsRect(snapRectToDevicePixelsIfNeeded(contentsBox(), renderer()));
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS) || ENABLE(SPATIAL_PORTAL)
@@ -3953,6 +3994,18 @@ LayoutRect RenderLayerBacking::contentsBox() const
 
     contentsRect.move(contentOffsetInCompositingLayer());
     return contentsRect;
+}
+
+LayoutRect RenderLayerBacking::inlineVideoContentsBox() const
+{
+#if ENABLE(VIDEO)
+    if (auto* renderVideo = dynamicDowncast<RenderVideo>(renderer())) {
+        auto contentsRect = renderVideo->inlineVideoBox();
+        contentsRect.move(contentOffsetInCompositingLayer());
+        return contentsRect;
+    }
+#endif
+    return contentsBox();
 }
 
 static LayoutRect backgroundRectForBox(const RenderBox& box)

@@ -44,6 +44,15 @@ public:
 
     IntRect videoBox() const;
     WEBCORE_EXPORT IntRect videoBoxInRootView() const;
+    LayoutRect croppedVideoBoxForCompositing() const;
+    LayoutRect inlineVideoBox() const;
+
+    // True once a fullscreen-to-Picture-in-Picture transition has settled, at which point
+    // object-view-box cropping is bypassed in favor of showing the full natural video (see
+    // videoBox()). Shared by RenderLayerBacking::updateContentsRects() so the compositing
+    // contents/clip rects agree with videoBox()/croppedVideoBoxForCompositing() on when the
+    // bypass is active.
+    bool isBypassingObjectViewBoxForPictureInPicture() const;
 
     static IntSize NODELETE defaultSize();
 
@@ -68,6 +77,9 @@ private:
     LayoutSize calculateIntrinsicSizeInternal();
     LayoutSize calculateIntrinsicSize();
     bool updateIntrinsicSize();
+
+    std::optional<LayoutRect> objectFitContentsRectForFullscreenCompositing(const LayoutRect&) const;
+    LayoutSize posterAwareIntrinsicSize() const;
 
     void imageChanged(WrappedImagePtr, const IntRect*) final;
 

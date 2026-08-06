@@ -91,6 +91,7 @@ private:
     void setVideoDimensions(const WebCore::FloatSize&);
     void audioSessionCategoryChanged(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
     void routingContextUIDChanged(const String&);
+    void setHasObjectViewBox(bool);
 
     // VideoPresentationModel
     void addClient(WebCore::VideoPresentationModelClient&) override;
@@ -102,6 +103,7 @@ private:
     void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode, ShouldNotifyMediaElement) override;
     bool hasVideo() const override { return m_hasVideo; }
     bool isChildOfElementFullscreen() const final { return m_isChildOfElementFullscreen; }
+    bool hasObjectViewBox() const final { return m_hasObjectViewBox; }
 
     WebCore::FloatSize videoDimensions() const override { return m_videoDimensions; }
 #if PLATFORM(IOS_FAMILY)
@@ -155,6 +157,7 @@ private:
     WebCore::FloatSize m_videoDimensions;
     bool m_hasVideo { false };
     bool m_isChildOfElementFullscreen { false };
+    bool m_hasObjectViewBox { false };
 
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
     RefPtr<LayerHostingVisibilityPropagator> m_layerHostingVisibilityPropagator;
@@ -252,7 +255,7 @@ private:
 #endif
 
     // Messages from VideoPresentationManager
-    void setupFullscreenWithID(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const WebCore::HostingContext&, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
+    void setupFullscreenWithID(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const WebCore::HostingContext&, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool hasObjectViewBox);
     void setInlineRect(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const WebCore::FloatRect& inlineRect, bool visible);
     void setHasVideoContentLayer(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool value);
     void setHasVideo(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);
@@ -262,6 +265,7 @@ private:
     void routingContextUIDChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const String&);
     void hasBeenInteractedWith(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
     void setVideoDimensions(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, const WebCore::FloatSize&);
+    void setHasObjectViewBox(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);
 #if !PLATFORM(IOS_FAMILY)
     void enterFullscreen(IPC::Connection&, WebCore::HTMLMediaElementIdentifier);
 #endif

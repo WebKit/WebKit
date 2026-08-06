@@ -337,6 +337,18 @@ void VideoPresentationModelContext::routingContextUIDChanged(const String& routi
     });
 }
 
+void VideoPresentationModelContext::setHasObjectViewBox(bool hasObjectViewBox)
+{
+    if (m_hasObjectViewBox == hasObjectViewBox)
+        return;
+
+    m_hasObjectViewBox = hasObjectViewBox;
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, hasObjectViewBox);
+    m_clients.forEach([&](auto& client) {
+        client.hasObjectViewBoxChanged(hasObjectViewBox);
+    });
+}
+
 void VideoPresentationModelContext::requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&& completionHandler)
 {
     RefPtr manager = m_manager.get();
@@ -1085,7 +1097,7 @@ Ref<WebCore::PlatformVideoPresentationInterface> VideoPresentationManagerProxy::
 
 #pragma mark Messages from VideoPresentationManager
 
-void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, const WebCore::HostingContext& hostingContext, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
+void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, const WebCore::HostingContext& hostingContext, const WebCore::FloatRect& screenRect, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& videoDimensions, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture, bool hasObjectViewBox)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -1146,15 +1158,22 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& conne
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(hasObjectViewBox);
     RefPtr rootNode = downcast<RemoteLayerTreeDrawingAreaProxy>(*page->drawingArea()).remoteLayerTreeHost().rootNode();
     RetainPtr parentView = rootNode ? rootNode->uiView() : nil;
     interface->setupFullscreen(screenRect, videoDimensions, parentView.get(), videoFullscreenMode, allowsPictureInPicture, standby, blocksReturnToFullscreenFromPictureInPicture);
 #else
-    UNUSED_PARAM(videoDimensions);
     UNUSED_PARAM(blocksReturnToFullscreenFromPictureInPicture);
+    // setVideoDimensions() here rather than relying on the separate, independently-timed
+    // SetVideoDimensions message: that message can still be in flight (or, for the very first
+    // fullscreen/PiP entry on a video, may not have fired yet at all) when this message is
+    // processed, which would otherwise leave model->videoDimensions() stale or zero right when
+    // -setUpPIPForVideoView:withFrame:inWindow: reads it to size the PiP window.
+    if (!videoDimensions.isEmpty())
+        model->setVideoDimensions(videoDimensions);
     IntRect initialWindowRect;
     page->rootViewToWindow(enclosingIntRect(screenRect), initialWindowRect);
-    interface->setupFullscreen(initialWindowRect, protect(page->platformWindow()).get(), videoFullscreenMode, allowsPictureInPicture);
+    interface->setupFullscreen(initialWindowRect, protect(page->platformWindow()).get(), videoFullscreenMode, allowsPictureInPicture, hasObjectViewBox);
     interface->setupCaptionsLayer(retainPtr([view layer]).get(), initialSize);
 #endif
 }
@@ -1213,6 +1232,11 @@ void VideoPresentationManagerProxy::enterFullscreen(IPC::Connection& connection,
     enterFullscreenForContext(contextId);
 }
 #endif
+
+void VideoPresentationManagerProxy::setHasObjectViewBox(IPC::Connection& connection, HTMLMediaElementIdentifier identifier, bool hasObjectViewBox)
+{
+    ensureModel(connection, identifier)->setHasObjectViewBox(hasObjectViewBox);
+}
 
 void VideoPresentationManagerProxy::enterFullscreenForContext(PlaybackSessionContextIdentifier contextId)
 {

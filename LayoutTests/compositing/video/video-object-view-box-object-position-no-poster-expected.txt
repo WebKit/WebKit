@@ -1,0 +1,101 @@
+This test verifies that a <video> with no poster combines object-view-box with object-position correctly for compositing, using the video's own natural (intrinsic) size.
+
+
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 6
+        (GraphicsLayer
+          (position 13.00 73.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents clipping layer
+            (position 2.00 2.00)
+            (bounds 120.00 200.00)
+          )
+          (contents layer (media)
+            (position 2.00 -21.00)
+            (bounds 120.00 223.00)
+          )
+        )
+        (GraphicsLayer
+          (position 151.00 73.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents clipping layer
+            (position 22.00 12.00)
+            (bounds 100.00 190.00)
+          )
+          (contents layer (media)
+            (position 22.00 -11.00)
+            (bounds 120.00 223.00)
+          )
+        )
+        (GraphicsLayer
+          (position 289.00 73.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents clipping layer
+            (position 2.00 2.00)
+            (bounds 120.00 200.00)
+          )
+          (contents layer (media)
+            (position 2.00 -21.00)
+            (bounds 120.00 223.00)
+          )
+        )
+        (GraphicsLayer
+          (position 13.00 291.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents clipping layer
+            (position 2.00 62.00)
+            (bounds 120.00 80.00)
+          )
+          (contents layer (media)
+            (position 2.00 53.00)
+            (bounds 120.00 89.00)
+          )
+        )
+        (GraphicsLayer
+          (position 151.00 291.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents clipping layer
+            (position 22.00 12.00)
+            (bounds 100.00 81.00)
+          )
+          (contents layer (media)
+            (position 22.00 3.00)
+            (bounds 120.00 90.00)
+          )
+        )
+        (GraphicsLayer
+          (position 289.00 291.00)
+          (bounds 124.00 204.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (contents clipping layer
+            (position 2.00 32.00)
+            (bounds 120.00 80.00)
+          )
+          (contents layer (media)
+            (position 2.00 23.00)
+            (bounds 120.00 89.00)
+          )
+        )
+      )
+    )
+  )
+)
+

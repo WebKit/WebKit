@@ -41,6 +41,7 @@
 #import "NodeDocument.h"
 #import "Page.h"
 #import "PlaybackSessionModelMediaElement.h"
+#import "RenderVideoInlines.h"
 #import "TextTrackList.h"
 #import "TimeRanges.h"
 #import "UserGestureIndicator.h"
@@ -135,6 +136,11 @@ void VideoPresentationModelVideoElement::updateForEventName(const WTF::AtomStrin
         || eventName == eventNames().resizeEvent) {
         setHasVideo(videoElement);
         setVideoDimensions(videoElement ? FloatSize(videoElement->videoWidth(), videoElement->videoHeight()) : FloatSize());
+    }
+
+    if (all) {
+        CheckedPtr renderer = videoElement ? videoElement->renderer() : nullptr;
+        hasObjectViewBoxChanged(renderer && renderer->hasObjectViewBoxSet());
     }
 
     if (all || eventName == eventNames().visibilitychangeEvent)
@@ -483,6 +489,18 @@ void VideoPresentationModelVideoElement::routingContextUIDChanged(const String& 
 {
     for (auto& client : copyToVector(m_clients))
         client->routingContextUIDChanged(routingContextUID);
+}
+
+void VideoPresentationModelVideoElement::hasObjectViewBoxChanged(bool hasObjectViewBox)
+{
+    if (hasObjectViewBox == m_hasObjectViewBox)
+        return;
+
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, hasObjectViewBox);
+    m_hasObjectViewBox = hasObjectViewBox;
+
+    for (auto& client : copyToVector(m_clients))
+        client->hasObjectViewBoxChanged(m_hasObjectViewBox);
 }
 
 #if !RELEASE_LOG_DISABLED

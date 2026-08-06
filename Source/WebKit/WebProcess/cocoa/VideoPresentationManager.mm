@@ -83,7 +83,7 @@ static FloatRect inlineVideoFrame(HTMLVideoElement& element)
         return { };
 
     if (renderer->hasLayer() && renderer->enclosingLayer()->isComposited()) {
-        FloatQuad contentsBox = static_cast<FloatRect>(renderer->enclosingLayer()->backing()->contentsBox());
+        FloatQuad contentsBox = static_cast<FloatRect>(renderer->enclosingLayer()->backing()->inlineVideoContentsBox());
         contentsBox = renderer->localToContainerQuad(contentsBox, nullptr);
         return protect(document->view())->contentsToRootView(contentsBox.boundingBox());
     }
@@ -143,6 +143,12 @@ void VideoPresentationInterfaceContext::routingContextUIDChanged(const String& r
 {
     if (RefPtr manager = m_manager.get())
         manager->routingContextUIDChanged(m_contextId, routingContextUID);
+}
+
+void VideoPresentationInterfaceContext::hasObjectViewBoxChanged(bool hasObjectViewBox)
+{
+    if (RefPtr manager = m_manager.get())
+        manager->hasObjectViewBoxChanged(m_contextId, hasObjectViewBox);
 }
 
 void VideoPresentationInterfaceContext::hasBeenInteractedWith()
@@ -477,7 +483,12 @@ void VideoPresentationManager::enterVideoFullscreenForVideoElement(HTMLVideoElem
     auto setupFullscreen = [protectedThis = Ref { *this }, page = WeakPtr { m_page }, contextId = contextId, initialSize = initialSize, videoRect = videoRect, videoElement = WeakPtr { videoElement }, allowsPictureInPicture = allowsPictureInPicture, standby = standby, fullscreenMode = interface->fullscreenMode()] (HostingContext hostingContext, const FloatSize& size) {
         if (!page || !videoElement)
             return;
-        page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(contextId, hostingContext, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, protect(videoElement->document())->quirks().blocksReturnToFullscreenFromPictureInPictureQuirk()));
+        // Re-fetch rather than capturing at call time: this lambda may run after an async
+        // requestHostingContext() round-trip, during which the element's object-view-box style
+        // (and hence its renderer's hasObjectViewBoxSet()) can change.
+        CheckedPtr videoRenderer = videoElement->renderer();
+        bool hasObjectViewBox = videoRenderer && videoRenderer->hasObjectViewBoxSet();
+        page->send(Messages::VideoPresentationManagerProxy::SetupFullscreenWithID(contextId, hostingContext, videoRect, initialSize, size, page->deviceScaleFactor(), fullscreenMode, allowsPictureInPicture, standby, protect(videoElement->document())->quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), hasObjectViewBox));
 
         if (RefPtr player = videoElement->player()) {
             if (auto identifier = player->identifier())
@@ -614,6 +625,12 @@ void VideoPresentationManager::routingContextUIDChanged(WebCore::MediaPlayerClie
 {
     if (RefPtr page = m_page.get())
         page->send(Messages::VideoPresentationManagerProxy::RoutingContextUIDChanged(contextId, routingContextUID));
+}
+
+void VideoPresentationManager::hasObjectViewBoxChanged(WebCore::MediaPlayerClientIdentifier contextId, bool hasObjectViewBox)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::VideoPresentationManagerProxy::SetHasObjectViewBox(contextId, hasObjectViewBox));
 }
 
 void VideoPresentationManager::hasBeenInteractedWith(WebCore::MediaPlayerClientIdentifier contextId)

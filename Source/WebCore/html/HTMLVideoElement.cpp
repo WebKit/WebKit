@@ -654,6 +654,13 @@ void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& siz
         m_enteringPictureInPicture = false;
         setChangingVideoFullscreenMode(false);
 
+        // The PiP transition just settled: RenderVideo's object-view-box crop-bypass is
+        // gated on isChangingVideoFullscreenMode(), so force a compositing update now to pick
+        // up the newly-unlocked bypass rather than waiting for some unrelated future update.
+        // Only needed when object-view-box is actually in play.
+        if (CheckedPtr renderer = this->renderer(); renderer && renderer->hasObjectViewBoxSet())
+            renderer->contentChanged(ContentChangeType::Video);
+
 #if ENABLE(PICTURE_IN_PICTURE_API)
         if (RefPtr observer = m_pictureInPictureObserver.get())
             observer->didEnterPictureInPicture(flooredIntSize(size));
@@ -682,6 +689,12 @@ void HTMLVideoElement::didExitFullscreenOrPictureInPicture()
     if (m_exitingPictureInPicture) {
         m_exitingPictureInPicture = false;
         setChangingVideoFullscreenMode(false);
+
+        // Same as the enter-PiP settle path above: force a compositing update so the crop
+        // (no longer bypassed, now that we're settled back to non-fullscreen) re-applies now.
+        // Only needed when object-view-box is actually in play.
+        if (CheckedPtr renderer = this->renderer(); renderer && renderer->hasObjectViewBoxSet())
+            renderer->contentChanged(ContentChangeType::Video);
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
         if (RefPtr observer = m_pictureInPictureObserver.get())
