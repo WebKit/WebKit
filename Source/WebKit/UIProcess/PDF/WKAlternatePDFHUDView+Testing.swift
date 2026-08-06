@@ -50,6 +50,11 @@ extension WKAlternatePDFHUDView {
             fatalError()
         }
     }
+
+    @objc(_hideForTesting)
+    private func hideForTesting() {
+        // FIXME: Implement `WKAlternatePDFHUDView.hide`.
+    }
 }
 
 #endif // ENABLE_PDF_HUD

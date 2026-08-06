@@ -45,6 +45,19 @@ extension WebPage {
         case toggleUnderline = "ToggleUnderline"
     }
 
+    /// The main frame tree node of this page.
+    public var mainFrame: _WKFrameTreeNode? {
+        get async {
+            await backingWebView._frames()
+        }
+    }
+
+    /// The scale factor by which the page scales content relative to its bounds.
+    public var pageZoom: Double {
+        get { backingWebView.pageZoom }
+        set { backingWebView.pageZoom = newValue }
+    }
+
     /// Suspends execution of the current context until the next presentation update has occurred for this page.
     public func waitForNextPresentationUpdate() async {
         await withCheckedContinuation { continuation in
@@ -53,6 +66,13 @@ extension WebPage {
             })
         }
     }
+
+    #if WTF_PLATFORM_MAC
+    /// The set of views containing the PDF HUDs within the page, if any.
+    public var pdfHUDs: Set<NSView> {
+        backingWebView._pdfHUDs()
+    }
+    #endif // WTF_PLATFORM_MAC
 
     /// Configures a specific preference for the engine to use.
     ///
@@ -94,13 +114,6 @@ extension WebPage {
         await waitForNextPresentationUpdate()
     }
 
-    /// The main frame tree node of this page.
-    public var mainFrame: _WKFrameTreeNode? {
-        get async {
-            await backingWebView._frames()
-        }
-    }
-
     /// Perform the specified edit command on the webpage, optionally with an argument provided to the command.
     ///
     /// - Parameters:
@@ -112,7 +125,6 @@ extension WebPage {
     }
 
     #if WTF_PLATFORM_MAC
-
     /// Determines if the specified point is located above a visible scrollbar.
     ///
     /// - Parameter locationInView: The point in view coordinates to test.
