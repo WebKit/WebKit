@@ -1088,7 +1088,7 @@ void RenderLayer::willUpdateLayerPositions()
         markers->invalidateRectsForAllMarkers();
 }
 
-#if !LOG_DISABLED || ENABLE(TREE_DEBUGGING)
+#if ENABLE(TREE_DEBUGGING)
 static inline bool compositingLogEnabledRenderLayer()
 {
     return LogCompositing.state == WTFLogChannelState::On;
