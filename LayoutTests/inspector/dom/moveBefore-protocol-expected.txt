@@ -1,0 +1,6 @@
+Testing that moveBefore() correctly triggers DOM.childNodeRemoved and DOM.childNodeInserted.
+
+PASS: onChildNodeRemoved called for #sibling-b
+PASS: onChildNodeInserted called for parent node #sibling-a
+PASS: onChildNodeInserted called for child node #sibling-b
+

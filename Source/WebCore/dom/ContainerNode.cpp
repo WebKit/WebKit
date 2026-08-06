@@ -1518,6 +1518,8 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
         }
 
         node.updateAncestorConnectedSubframeCountForRemoval();
+        // FIXME(319588): Handle inspector DOM breakpoints (e.g. InspectorInstrumentation::willRemoveDOMNode)
+        InspectorInstrumentation::didRemoveDOMNode(nodeDocument, node);
         node.setParentNode(nullptr);
 
         // FIXME(281223): Handle slot assignments and live ranges.
@@ -1526,6 +1528,8 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
             insertBeforeCommon(*refChild, node);
         else
             appendChildCommon(node);
+        // FIXME(319588): Handle inspector DOM breakpoints (e.g. InspectorInstrumentation::willInsertDOMNode)
+        InspectorInstrumentation::didInsertDOMNode(protect(document()), node);
 
         node.setTreeScopeRecursively(treeScope());
         node.updateAncestorConnectedSubframeCountForInsertion();

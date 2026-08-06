@@ -1,0 +1,108 @@
+<!-- webkit-test-runner [ MoveBeforeEnabled=true ] -->
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function moveSiblingIntoOther()
+{
+    let siblingA = document.getElementById("sibling-a");
+    let siblingB = document.getElementById("sibling-b");
+    siblingA.moveBefore(siblingB, null);
+}
+
+function moveChildBackToBeSibling()
+{
+    let container = document.getElementById("container");
+    let siblingB = document.getElementById("sibling-b");
+    container.moveBefore(siblingB, null);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("moveBefore");
+
+    async function ensureDocumentSubtree() {
+        let documentNode = await WI.domManager.requestDocument();
+
+        const entireSubtreeDepth = -1;
+        await WI.assumingMainTarget().DOMAgent.requestChildNodes(documentNode.id, entireSubtreeDepth);
+
+        return documentNode;
+    }
+
+    function logNode(node) {
+        let parent = node.parentNode;
+        InspectorTest.log("  " + node.unescapedSelector + " (parent: " + (parent ? parent.unescapedSelector : "none") + ")");
+    }
+
+    function logChildren(label, node) {
+        InspectorTest.log(label);
+        for (let child of (node.children || []))
+            logNode(child);
+    }
+
+    suite.addTestCase({
+        name: "DOM.moveBefore.SiblingBecomesChild",
+        description: "Ensure that moveBefore() updates the Web Inspector's DOM tree when moving a sibling element to become a child of another element.",
+        async test() {
+            let documentNode = await ensureDocumentSubtree();
+
+            let containerNode = WI.domManager.nodeForId(await documentNode.querySelector("#container"));
+            let siblingANode = WI.domManager.nodeForId(await documentNode.querySelector("#sibling-a"));
+
+            InspectorTest.log("Before moveBefore():");
+            logChildren("Children of #container:", containerNode);
+            logChildren("Children of #sibling-a:", siblingANode);
+
+            InspectorTest.log("Moving #sibling-b to be a child of #sibling-a via moveBefore()...");
+            await Promise.all([
+                WI.domManager.awaitEvent(WI.DOMManager.Event.NodeInserted),
+                InspectorTest.evaluateInPage(`moveSiblingIntoOther()`),
+            ]);
+            InspectorTest.log("Move complete.");
+
+            InspectorTest.log("After moveBefore():");
+            logChildren("Children of #container:", containerNode);
+            logChildren("Children of #sibling-a:", siblingANode);
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.moveBefore.ChildMovedBackToBeSibling",
+        description: "Ensure that moveBefore() updates the Web Inspector's DOM tree when moving a child element back out to be a sibling of its former parent.",
+        async test() {
+            let documentNode = await ensureDocumentSubtree();
+
+            let containerNode = WI.domManager.nodeForId(await documentNode.querySelector("#container"));
+            let siblingANode = WI.domManager.nodeForId(await documentNode.querySelector("#sibling-a"));
+
+            InspectorTest.log("Before moveBefore():");
+            logChildren("Children of #container:", containerNode);
+            logChildren("Children of #sibling-a:", siblingANode);
+
+            InspectorTest.log("Moving #sibling-b back out to be a child of #container via moveBefore()...");
+            await Promise.all([
+                WI.domManager.awaitEvent(WI.DOMManager.Event.NodeInserted),
+                InspectorTest.evaluateInPage(`moveChildBackToBeSibling()`),
+            ]);
+            InspectorTest.log("Move complete.");
+
+            InspectorTest.log("After moveBefore():");
+            logChildren("Children of #container:", containerNode);
+            logChildren("Children of #sibling-a:", siblingANode);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p id="test-description">Tests that moveBefore() correctly updates the Web Inspector's DOM tree.</p>
+<div id="container">
+    <div id="sibling-a"></div>
+    <div id="sibling-b"></div>
+</div>
+</body>
+</html>

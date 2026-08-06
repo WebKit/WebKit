@@ -1,0 +1,95 @@
+<!-- webkit-test-runner [ MoveBeforeEnabled=true ] -->
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function moveSiblingIntoOther()
+{
+    var siblingA = document.getElementById("sibling-a");
+    var siblingB = document.getElementById("sibling-b");
+    siblingA.moveBefore(siblingB, null);
+}
+
+function test()
+{
+    var nodesById = {};
+
+    InspectorProtocol.eventHandler["DOM.setChildNodes"] = onSetChildNodes;
+    InspectorProtocol.eventHandler["DOM.childNodeRemoved"] = onChildNodeRemoved;
+    InspectorProtocol.eventHandler["DOM.childNodeInserted"] = onChildNodeInserted;
+
+    function createNodeAttributesMap(node)
+    {
+        var attributes = {};
+        if (!node.attributes)
+            return attributes;
+        for (var i = 0; i < node.attributes.length; i += 2)
+            attributes[node.attributes[i]] = node.attributes[i + 1];
+        return attributes;
+    }
+
+    function collectNode(node)
+    {
+        nodesById[node.nodeId] = createNodeAttributesMap(node);
+        if (node.children)
+            node.children.forEach(collectNode);
+    }
+
+    function getNodeIdentifier(nodeId)
+    {
+        var node = nodesById[nodeId];
+        return node ? node.id : "<unknown node>";
+    }
+
+    function onSetChildNodes(response)
+    {
+        response.params.nodes.forEach(collectNode);
+    }
+
+    function onChildNodeRemoved(response)
+    {
+        var nodeId = response.params.nodeId;
+        ProtocolTest.expectThat(getNodeIdentifier(nodeId) === "sibling-b", "onChildNodeRemoved called for #sibling-b");
+        delete nodesById[nodeId];
+    }
+
+    function onChildNodeInserted(response)
+    {
+        collectNode(response.params.node);
+        ProtocolTest.expectThat(getNodeIdentifier(response.params.parentNodeId) === "sibling-a", "onChildNodeInserted called for parent node #sibling-a");
+        ProtocolTest.expectThat(getNodeIdentifier(response.params.node.nodeId) === "sibling-b", "onChildNodeInserted called for child node #sibling-b");
+    }
+
+    InspectorProtocol.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+    function onGotDocument(msg)
+    {
+        InspectorProtocol.checkForError(msg);
+        InspectorProtocol.sendCommand("DOM.querySelector", {"nodeId": msg.result.root.nodeId, "selector": "#container"}, onQuerySelector);
+    }
+
+    function onQuerySelector(response)
+    {
+        // Make sure we receive the children of "#container" and "#sibling-a" as they change.
+        InspectorProtocol.sendCommand("DOM.requestChildNodes", {nodeId: response.result.nodeId, depth: -1});
+        InspectorProtocol.sendCommand("Runtime.evaluate", {"expression": "moveSiblingIntoOther()"}, function() {
+            delete InspectorProtocol.eventHandler["DOM.setChildNodes"];
+            delete InspectorProtocol.eventHandler["DOM.childNodeRemoved"];
+            delete InspectorProtocol.eventHandler["DOM.childNodeInserted"];
+            ProtocolTest.completeTest();
+        });
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+
+<p>Testing that moveBefore() correctly triggers DOM.childNodeRemoved and DOM.childNodeInserted.</p>
+
+<div id="container">
+    <div id="sibling-a"></div>
+    <div id="sibling-b"></div>
+</div>
+
+</body>
+</html>
