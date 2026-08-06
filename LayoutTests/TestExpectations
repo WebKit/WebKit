@@ -5531,7 +5531,6 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-width-005.html [ Image
 imported/w3c/web-platform-tests/css/css-multicol/with-custom-layout-on-same-element.https.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-003.html [ Skip ] # times out
 imported/w3c/web-platform-tests/css/css-multicol/multicol-breaking-006.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-nested-000.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-nested-008.html [ ImageOnlyFailure ]

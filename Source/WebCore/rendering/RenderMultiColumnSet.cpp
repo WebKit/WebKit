@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
@@ -433,7 +433,9 @@ LayoutUnit RenderMultiColumnSet::calculateMaxColumnHeight() const
     RenderBlockFlow* multicolBlock = multiColumnBlockFlow();
     const Style::ComputedStyle& multicolStyle = multicolBlock->style();
     LayoutUnit availableHeight = multiColumnFlow()->columnHeightAvailable();
-    LayoutUnit maxColumnHeight = availableHeight ? availableHeight : RenderFragmentedFlow::maxLogicalHeight();
+    if (availableHeight)
+        return heightAdjustedForSetOffset(availableHeight);
+    LayoutUnit maxColumnHeight = RenderFragmentedFlow::maxLogicalHeight();
     if (!multicolStyle.logicalMaxHeight().isNone())
         maxColumnHeight = std::min(maxColumnHeight, multicolBlock->computeContentLogicalHeight(multicolStyle.logicalMaxHeight(), std::nullopt).value_or(maxColumnHeight));
     return heightAdjustedForSetOffset(maxColumnHeight);
