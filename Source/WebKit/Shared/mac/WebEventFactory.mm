@@ -41,9 +41,9 @@
 
 namespace WebKit {
 
-static WebWheelEvent::Phase phaseForEvent(NSEvent *event)
+WebEventPhase WebEventFactory::phaseForEvent(NSEvent *event)
 {
-    using enum WebWheelEvent::Phase;
+    using enum WebEventPhase;
 
     auto phase = None;
     if ([event phase] & NSEventPhaseBegan)

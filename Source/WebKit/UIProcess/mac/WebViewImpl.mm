@@ -5740,16 +5740,18 @@ void WebViewImpl::magnifyWithEvent(NSEvent *event)
 
     Ref gestureController = ensureGestureController();
 
+    auto magnification = event.magnification;
+    auto phase = WebEventFactory::phaseForEvent(event);
 #if ENABLE(MAC_GESTURE_EVENTS)
     if (gestureController->hasActiveMagnificationGesture()) {
-        gestureController->handleMagnificationGestureEvent(event, [m_view.get() convertPoint:event.locationInWindow fromView:nil]);
+        gestureController->handleMagnificationGesture(magnification, phase, [m_view.get() convertPoint:event.locationInWindow fromView:nil]);
         return;
     }
 
     if (auto webEvent = NativeWebGestureEvent::create(event, m_view.getAutoreleased()))
         m_page->handleGestureEvent(*webEvent);
 #else
-    gestureController->handleMagnificationGestureEvent(event, [m_view.get() convertPoint:event.locationInWindow fromView:nil]);
+    gestureController->handleMagnificationGesture(magnification, phase, [m_view.get() convertPoint:event.locationInWindow fromView:nil]);
 #endif
 }
 

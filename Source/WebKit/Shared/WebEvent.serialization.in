@@ -225,7 +225,7 @@ class WebKit::WebGestureEvent : WebKit::WebEvent {
     ScrollByPixelWheelEvent
 };
 
-[Nested] enum class WebKit::WebWheelEvent::Phase : uint8_t {
+enum class WebKit::WebEventPhase : uint8_t {
     None,
     Began,
     Stationary,

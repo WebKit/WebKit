@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,49 +25,17 @@
 
 #pragma once
 
-#if ENABLE(MAC_GESTURE_EVENTS)
-
-#include "WebEvent.h"
-#include "WebEventPhase.h"
-#include <WebCore/FloatPoint.h>
-#include <WebCore/FloatSize.h>
-#include <WebCore/IntPoint.h>
-#include <WebCore/IntSize.h>
-#include <wtf/text/WTFString.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
-class WebGestureEvent : public WebEvent {
-public:
-    using Phase = WebEventPhase;
-
-    WebGestureEvent(WebEvent&& event, WebCore::IntPoint position, float gestureScale, float gestureRotation)
-        : WebEvent(WTF::move(event))
-        , m_position(position)
-        , m_gestureScale(gestureScale)
-        , m_gestureRotation(gestureRotation)
-    {
-        ASSERT(isGestureEventType(type()));
-    }
-
-    WebCore::IntPoint position() const { return m_position; }
-
-    float gestureScale() const { return m_gestureScale; }
-    float gestureRotation() const { return m_gestureRotation; }
-
-private:
-    bool isGestureEventType(WebEventType) const;
-
-    WebCore::IntPoint m_position;
-    float m_gestureScale;
-    float m_gestureRotation;
+enum class WebEventPhase : uint8_t {
+    None,
+    Began,
+    Stationary,
+    Changed,
+    Ended,
+    Cancelled,
+    MayBegin,
+    WillBegin,
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(MAC_GESTURE_EVENTS)
