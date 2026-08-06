@@ -352,6 +352,12 @@ void CoordinatedPlatformLayer::setMasksToBounds(bool masksToBounds)
     notifyCompositionRequired();
 }
 
+bool CoordinatedPlatformLayer::masksToBounds() const
+{
+    assertIsHeld(m_lock);
+    return m_masksToBounds;
+}
+
 void CoordinatedPlatformLayer::setPreserves3D(bool preserves3D)
 {
     assertIsHeld(m_lock);
@@ -647,6 +653,12 @@ void CoordinatedPlatformLayer::setMask(CoordinatedPlatformLayer* mask)
     notifyCompositionRequired();
 }
 
+CoordinatedPlatformLayer* CoordinatedPlatformLayer::mask() const
+{
+    assertIsHeld(m_lock);
+    return m_mask;
+}
+
 void CoordinatedPlatformLayer::setReplica(CoordinatedPlatformLayer* replica)
 {
     assertIsHeld(m_lock);
@@ -708,15 +720,48 @@ void CoordinatedPlatformLayer::setAnimations(const TextureMapperAnimations& anim
     notifyCompositionRequired();
 }
 
+RefPtr<CoordinatedPlatformLayer> CoordinatedPlatformLayer::parent() const
+{
+    assertIsHeld(m_lock);
+    return m_parent;
+}
+
 void CoordinatedPlatformLayer::setChildren(Vector<Ref<CoordinatedPlatformLayer>>&& children)
 {
     assertIsHeld(m_lock);
     if (m_children == children)
         return;
 
+    while (!m_children.isEmpty()) {
+        auto child = m_children.takeLast();
+        Locker childLocker { child->m_lock };
+        child->m_parent = nullptr;
+    }
+
     m_children = WTF::move(children);
+
+    for (auto& child : m_children) {
+        Locker childLocker { child->m_lock };
+        child->removeFromParent();
+        child->m_parent = this;
+    }
+
     m_pendingChanges.add(Change::Children);
     notifyCompositionRequired();
+}
+
+void CoordinatedPlatformLayer::removeFromParent()
+{
+    assertIsHeld(m_lock);
+    RefPtr parent = std::exchange(m_parent, nullptr);
+    if (!parent)
+        return;
+
+    Locker parentLocker { parent->m_lock };
+
+    parent->m_children.removeFirstMatching([this](auto& layer) {
+        return layer.ptr() == this;
+    });
 }
 
 const Vector<Ref<CoordinatedPlatformLayer>>& CoordinatedPlatformLayer::children() const
