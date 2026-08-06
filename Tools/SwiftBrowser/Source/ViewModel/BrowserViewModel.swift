@@ -169,7 +169,9 @@ final class BrowserViewModel {
     }
 
     func navigateToSubmittedURL() {
-        guard let url = URL(string: displayedURL) else {
+        displayedURL = displayedURL.addingProtocolIfNecessary()
+
+        guard let url = URL(userTypedString: displayedURL) else {
             return
         }
 

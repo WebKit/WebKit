@@ -38,13 +38,6 @@ struct SwiftBrowserApp: App {
     @State
     private var mostRecentURL: URL? = nil
 
-    private static func addProtocolIfNecessary(to address: String) -> String {
-        if address.contains("://") || address.hasPrefix("data:") || address.hasPrefix("about:") {
-            return address
-        }
-        return "http://\(address)"
-    }
-
     var body: some Scene {
         WindowGroup(for: CodableURLRequest.self) { $request in
             BrowserView(
@@ -55,10 +48,7 @@ struct SwiftBrowserApp: App {
         } defaultValue: {
             // FIXME: <https://webkit.org/b/293859> BrowserView does not reflect URL argument passed to SwiftBrowser.app.
             let parsedURL = CommandLine.value(for: "--url")
-                .flatMap {
-                    let withProtocol = Self.addProtocolIfNecessary(to: $0)
-                    return URL(string: withProtocol)
-                }
+                .flatMap { URL(userTypedString: $0) }
             let url = parsedURL ?? URL(string: homepage)!
             return CodableURLRequest(.init(url: url))
         }
