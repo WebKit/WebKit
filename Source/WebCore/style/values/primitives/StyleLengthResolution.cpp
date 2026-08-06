@@ -48,34 +48,6 @@
 namespace WebCore {
 namespace Style {
 
-// MARK: - Page Zoom
-
-static double NODELETE unapplyPageZoom(double dimension, const RenderView* renderView)
-{
-    if (!renderView)
-        return dimension;
-    return dimension / renderView->pageZoomFactor();
-}
-
-static double NODELETE unapplyPageZoom(double dimension, const CSSToLengthConversionData& conversionData)
-{
-    return unapplyPageZoom(dimension, conversionData.renderView());
-}
-
-// MARK: - Text Zoom
-
-static double applyTextZoom(double value, const CSSToLengthConversionData& conversionData)
-{
-    if (CheckedPtr builderState = conversionData.styleBuilderState())
-        return value * builderState->zoomWithTextZoomFactor();
-    return value;
-}
-
-static double applyTextZoomIf(bool condition, double value, const CSSToLengthConversionData& conversionData)
-{
-    return condition ? applyTextZoom(value, conversionData) : value;
-}
-
 // MARK: - Font Metric Zoom
 
 // Raw font metrics include the usedZoomFactor and must be normalized.
@@ -85,7 +57,6 @@ static double unzoomFontMetric(double metric, const FontDescription& fontDescrip
         return metric / usedZoomFactor;
     return metric;
 }
-
 
 // MARK: - "font dependent" and "root font dependent" resolution functions
 
@@ -150,19 +121,6 @@ static double resolveIc(CSSPropertyID, const FontCascade& fontCascadeForUnit)
     if (!ideogramWidth)
         return fontDescription.unzoomedComputedSize();
     return unzoomFontMetric(ideogramWidth.value(), fontDescription);
-}
-
-
-static const ComputedStyle* styleForLineHeightUnits(const CSSToLengthConversionData& conversionData)
-{
-    if (conversionData.computingLineHeight() || conversionData.computingFontSize())
-        return conversionData.parentStyle();
-    return conversionData.style();
-}
-
-static const ComputedStyle* styleForRootLineHeightUnits(const CSSToLengthConversionData& conversionData)
-{
-    return conversionData.rootStyle();
 }
 
 // Resolve the "lh" and "rlh" units.
@@ -301,17 +259,17 @@ static double resolveViewportPercentageUnit(const RenderView* renderView, const 
 
 // MARK: - "container-percentage" resolution functions
 
-static std::optional<double> resolveContainerUnit(const CSSToLengthConversionData& conversionData, CQ::Axis physicalAxis)
+static std::optional<double> resolveContainerUnit(CQ::Axis physicalAxis, const auto& adaptor)
 {
     ASSERT(physicalAxis == CQ::Axis::Width || physicalAxis == CQ::Axis::Height);
 
-    conversionData.setUsesContainerUnits();
+    adaptor.setUsesContainerUnits();
 
-    RefPtr element = conversionData.elementForContainerUnitResolution();
+    RefPtr element = adaptor.elementForContainerUnits();
     if (!element)
         return { };
 
-    auto mode = !conversionData.style()->pseudoElementType()
+    auto mode = !adaptor.styleForContainerUnits()->pseudoElementType()
         ? Style::ContainerQueryEvaluator::SelectionMode::Element
         : Style::ContainerQueryEvaluator::SelectionMode::PseudoElement;
 
@@ -322,8 +280,8 @@ static std::optional<double> resolveContainerUnit(const CSSToLengthConversionDat
             auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentBoxWidth() : containerRenderer->contentBoxHeight();
             auto adjustedWidthOrHeight = widthOrHeight.toDouble();
 
-            if (!conversionData.computingFontSize())
-                adjustedWidthOrHeight = unapplyPageZoom(adjustedWidthOrHeight, conversionData);
+            if (!adaptor.computingFontSize())
+                adjustedWidthOrHeight = adjustedWidthOrHeight / adaptor.renderViewForViewportUnits()->pageZoomFactor();
 
             return adjustedWidthOrHeight / 100;
         }
@@ -335,280 +293,356 @@ static std::optional<double> resolveContainerUnit(const CSSToLengthConversionDat
 
 // MARK: - Length Resolution
 
-double resolveLength(double value, CSS::LengthUnit lengthUnit, CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit, const RenderView* renderView)
-{
-    using enum CSS::LengthUnit;
+struct CSSToLengthConversionDataAdaptor {
+    const CSSToLengthConversionData& conversionData;
 
-    switch (lengthUnit) {
-    case Px:
-        return value;
-    case Cm:
-        return value * CSS::pixelsPerCm;
-    case Mm:
-        return value * CSS::pixelsPerMm;
-    case Q:
-        return value * CSS::pixelsPerQ;
-    case In:
-        return value * CSS::pixelsPerInch;
-    case Pt:
-        return value * CSS::pixelsPerPt;
-    case Pc:
-        return value * CSS::pixelsPerPc;
-
-    // MARK: "font dependent" and "root font dependent" resolution
-
-    case Em:
-    case QuirkyEm:
-    case Rem:
-        return value * resolveEm(propertyToCompute, fontCascadeForUnit);
-    case Ex:
-    case Rex:
-        return value * resolveEx(propertyToCompute, fontCascadeForUnit);
-    case Cap:
-    case Rcap:
-        return value * resolveCap(propertyToCompute, fontCascadeForUnit);
-    case Ch:
-    case Rch:
-        return value * resolveCh(propertyToCompute, fontCascadeForUnit);
-    case Ic:
-    case Ric:
-        return value * resolveIc(propertyToCompute, fontCascadeForUnit);
-
-    // MARK: "viewport percentage" resolution
-
-    case Vh:
-        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Height>(renderView);
-    case Vw:
-        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Width>(renderView);
-    case Vmax:
-        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Max>(renderView);
-    case Vmin:
-        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Min>(renderView);
-    case Vb:
-        return value * resolveViewportPercentageUnit<ViewportType::Default, LogicalBoxAxis::Block>(renderView, nullptr);
-    case Vi:
-        return value * resolveViewportPercentageUnit<ViewportType::Default, LogicalBoxAxis::Inline>(renderView, nullptr);
-
-    case Svh:
-        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Height>(renderView);
-    case Svw:
-        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Width>(renderView);
-    case Svmax:
-        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Max>(renderView);
-    case Svmin:
-        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Min>(renderView);
-    case Svb:
-        return value * resolveViewportPercentageUnit<ViewportType::Small, LogicalBoxAxis::Block>(renderView, nullptr);
-    case Svi:
-        return value * resolveViewportPercentageUnit<ViewportType::Small, LogicalBoxAxis::Inline>(renderView, nullptr);
-
-    case Lvh:
-        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Height>(renderView);
-    case Lvw:
-        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Width>(renderView);
-    case Lvmax:
-        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Max>(renderView);
-    case Lvmin:
-        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Min>(renderView);
-    case Lvb:
-        return value * resolveViewportPercentageUnit<ViewportType::Large, LogicalBoxAxis::Block>(renderView, nullptr);
-    case Lvi:
-        return value * resolveViewportPercentageUnit<ViewportType::Large, LogicalBoxAxis::Inline>(renderView, nullptr);
-
-    case Dvh:
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Height>(renderView);
-    case Dvw:
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Width>(renderView);
-    case Dvmax:
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Max>(renderView);
-    case Dvmin:
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Min>(renderView);
-    case Dvb:
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, LogicalBoxAxis::Block>(renderView, nullptr);
-    case Dvi:
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, LogicalBoxAxis::Inline>(renderView, nullptr);
-
-    case Lh:
-    case Rlh:
-    case Cqw:
-    case Cqh:
-    case Cqi:
-    case Cqb:
-    case Cqmin:
-    case Cqmax:
-        ASSERT_NOT_REACHED();
-        return -1.0;
+    void setUsesViewportUnits() const
+    {
+        conversionData.setUsesViewportUnits();
     }
 
-    RELEASE_ASSERT_NOT_REACHED();
-}
+    void setUsesContainerUnits() const
+    {
+        conversionData.setUsesContainerUnits();
+    }
 
-double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLengthConversionData& conversionData)
+    CSSPropertyID property() const
+    {
+        return conversionData.propertyToCompute();
+    }
+
+    bool computingFontSize() const
+    {
+        return conversionData.computingFontSize();
+    }
+
+    bool computingLineHeight() const
+    {
+        return conversionData.computingLineHeight();
+    }
+
+    double applyTextZoom(double value) const
+    {
+        if (CheckedPtr builderState = conversionData.styleBuilderState())
+            return value * builderState->zoomWithTextZoomFactor();
+        return value;
+    }
+
+    const FontCascade& fontCascadeForFontUnits() const
+    {
+        return conversionData.fontCascadeForFontUnits();
+    }
+
+    const FontCascade& fontCascadeForRootFontUnits() const
+    {
+        return conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits();
+    }
+
+    const ComputedStyle* styleForLineHeightUnits() const
+    {
+        if (conversionData.computingLineHeight() || conversionData.computingFontSize())
+            return conversionData.parentStyle();
+        return conversionData.style();
+    }
+
+    const ComputedStyle* styleForRootLineHeightUnits() const
+    {
+        return conversionData.rootStyle();
+    }
+
+    const ComputedStyle* styleForViewportUnits() const
+    {
+        return conversionData.style();
+    }
+
+    const RenderView* renderViewForViewportUnits() const
+    {
+        return conversionData.renderView();
+    }
+
+    const ComputedStyle* styleForContainerUnits() const
+    {
+        return conversionData.style();
+    }
+
+    const Element* elementForContainerUnits() const
+    {
+        return conversionData.elementForContainerUnitResolution();
+    }
+
+    bool isHorizontalForContainerUnits() const
+    {
+        return conversionData.style()->writingMode().isHorizontal();
+    }
+};
+
+struct DirectDataAdaptor {
+    CSSPropertyID propertyToCompute;
+    const FontCascade& fontCascadeForUnit;
+    const RenderView* renderViewForUnit;
+
+    void setUsesViewportUnits() const
+    {
+    }
+
+    void setUsesContainerUnits() const
+    {
+    }
+
+    CSSPropertyID property() const
+    {
+        return propertyToCompute;
+    }
+
+    bool computingFontSize() const
+    {
+        return propertyToCompute == CSSPropertyFontSize;
+    }
+
+    bool computingLineHeight() const
+    {
+        return propertyToCompute == CSSPropertyLineHeight;
+    }
+
+
+    double applyTextZoom(double value) const
+    {
+        // FIXME: Add support for text zoom for direct data overload.
+        return value;
+    }
+
+    const FontCascade& fontCascadeForFontUnits() const
+    {
+        return fontCascadeForUnit;
+    }
+
+    const FontCascade& fontCascadeForRootFontUnits() const
+    {
+        return fontCascadeForUnit;
+    }
+
+    const ComputedStyle* styleForLineHeightUnits() const
+    {
+        return nullptr;
+    }
+
+    const ComputedStyle* styleForRootLineHeightUnits() const
+    {
+        return nullptr;
+    }
+
+    const ComputedStyle* styleForViewportUnits() const
+    {
+        return nullptr;
+    }
+
+    const RenderView* renderViewForViewportUnits() const
+    {
+        return renderViewForUnit;
+    }
+
+    const ComputedStyle* styleForContainerUnits() const
+    {
+        return nullptr;
+    }
+
+    const Element* elementForContainerUnits() const
+    {
+        return nullptr;
+    }
+
+    bool isHorizontalForContainerUnits() const
+    {
+        return true;
+    }
+};
+
+static double resolveLengthImpl(double value, CSS::LengthUnit lengthUnit, const auto& adaptor)
 {
     using enum CSS::LengthUnit;
 
+    auto applyTextZoomIf = [&](bool condition, double value) {
+        return condition ? adaptor.applyTextZoom(value) : value;
+    };
+
     switch (lengthUnit) {
     case Px:
-        return value * applyTextZoomIf(conversionData.computingLineHeight(), 1.0, conversionData);
+        return value * applyTextZoomIf(adaptor.computingLineHeight(), 1.0);
     case Cm:
-        return value * applyTextZoomIf(conversionData.computingLineHeight(), CSS::pixelsPerCm, conversionData);
+        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerCm);
     case Mm:
-        return value * applyTextZoomIf(conversionData.computingLineHeight(), CSS::pixelsPerMm, conversionData);
+        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerMm);
     case Q:
-        return value * applyTextZoomIf(conversionData.computingLineHeight(), CSS::pixelsPerQ, conversionData);
+        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerQ);
     case In:
-        return value * applyTextZoomIf(conversionData.computingLineHeight(), CSS::pixelsPerInch, conversionData);
+        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerInch);
     case Pt:
-        return value * applyTextZoomIf(conversionData.computingLineHeight(), CSS::pixelsPerPt, conversionData);
+        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerPt);
     case Pc:
-        return value * applyTextZoomIf(conversionData.computingLineHeight(), CSS::pixelsPerPc, conversionData);
+        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerPc);
 
     // MARK: "font dependent" resolution
 
     case Em:
     case QuirkyEm:
-        return value * applyTextZoom(resolveEm(conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * adaptor.applyTextZoom(resolveEm(adaptor.property(), adaptor.fontCascadeForFontUnits()));
     case Ex:
-        return value * applyTextZoom(resolveEx(conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * adaptor.applyTextZoom(resolveEx(adaptor.property(), adaptor.fontCascadeForFontUnits()));
     case Cap:
-        return value * applyTextZoom(resolveCap(conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * adaptor.applyTextZoom(resolveCap(adaptor.property(), adaptor.fontCascadeForFontUnits()));
 
     case Ch:
-        return value * applyTextZoom(resolveCh(conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * adaptor.applyTextZoom(resolveCh(adaptor.property(), adaptor.fontCascadeForFontUnits()));
     case Ic:
-        return value * applyTextZoom(resolveIc(conversionData.propertyToCompute(), conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * adaptor.applyTextZoom(resolveIc(adaptor.property(), adaptor.fontCascadeForFontUnits()));
 
     case Lh:
-        return value * applyTextZoomIf(conversionData.computingLineHeight(), resolveLh(styleForLineHeightUnits(conversionData), conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * applyTextZoomIf(adaptor.computingLineHeight(), resolveLh(adaptor.styleForLineHeightUnits(), adaptor.fontCascadeForFontUnits()));
 
     // MARK: "root font dependent" resolution
 
     case Rem:
-        return value * applyTextZoom(resolveEm(conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * adaptor.applyTextZoom(resolveEm(adaptor.property(), adaptor.fontCascadeForRootFontUnits()));
     case Rcap:
-        return value * applyTextZoom(resolveCap(conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * adaptor.applyTextZoom(resolveCap(adaptor.property(), adaptor.fontCascadeForRootFontUnits()));
     case Rch:
-        return value * applyTextZoom(resolveCh(conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * adaptor.applyTextZoom(resolveCh(adaptor.property(), adaptor.fontCascadeForRootFontUnits()));
     case Rex:
-        return value * applyTextZoom(resolveEx(conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * adaptor.applyTextZoom(resolveEx(adaptor.property(), adaptor.fontCascadeForRootFontUnits()));
     case Ric:
-        return value * applyTextZoom(resolveIc(conversionData.propertyToCompute(), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * adaptor.applyTextZoom(resolveIc(adaptor.property(), adaptor.fontCascadeForRootFontUnits()));
 
     case Rlh:
-        return value * applyTextZoomIf(conversionData.computingLineHeight(), resolveLh(styleForRootLineHeightUnits(conversionData), conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits()), conversionData);
+        return value * applyTextZoomIf(adaptor.computingLineHeight(), resolveLh(adaptor.styleForRootLineHeightUnits(), adaptor.fontCascadeForRootFontUnits()));
 
     // MARK: "viewport-percentage" resolution
 
     case Vh:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Height>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Height>(adaptor.renderViewForViewportUnits());
     case Vw:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Width>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Width>(adaptor.renderViewForViewportUnits());
     case Vmax:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Max>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Max>(adaptor.renderViewForViewportUnits());
     case Vmin:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Min>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Default, ViewportPhysicalDimension::Min>(adaptor.renderViewForViewportUnits());
     case Vb:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Default, LogicalBoxAxis::Block>(conversionData.renderView(), conversionData.style());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Default, LogicalBoxAxis::Block>(adaptor.renderViewForViewportUnits(), adaptor.styleForViewportUnits());
     case Vi:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Default, LogicalBoxAxis::Inline>(conversionData.renderView(), conversionData.style());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Default, LogicalBoxAxis::Inline>(adaptor.renderViewForViewportUnits(), adaptor.styleForViewportUnits());
 
     case Svh:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Height>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Height>(adaptor.renderViewForViewportUnits());
     case Svw:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Width>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Width>(adaptor.renderViewForViewportUnits());
     case Svmax:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Max>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Max>(adaptor.renderViewForViewportUnits());
     case Svmin:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Min>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Small, ViewportPhysicalDimension::Min>(adaptor.renderViewForViewportUnits());
     case Svb:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Small, LogicalBoxAxis::Block>(conversionData.renderView(), conversionData.style());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Small, LogicalBoxAxis::Block>(adaptor.renderViewForViewportUnits(), adaptor.styleForViewportUnits());
     case Svi:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Small, LogicalBoxAxis::Inline>(conversionData.renderView(), conversionData.style());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Small, LogicalBoxAxis::Inline>(adaptor.renderViewForViewportUnits(), adaptor.styleForViewportUnits());
 
     case Lvh:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Height>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Height>(adaptor.renderViewForViewportUnits());
     case Lvw:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Width>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Width>(adaptor.renderViewForViewportUnits());
     case Lvmax:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Max>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Max>(adaptor.renderViewForViewportUnits());
     case Lvmin:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Min>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Large, ViewportPhysicalDimension::Min>(adaptor.renderViewForViewportUnits());
     case Lvb:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Large, LogicalBoxAxis::Block>(conversionData.renderView(), conversionData.style());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Large, LogicalBoxAxis::Block>(adaptor.renderViewForViewportUnits(), adaptor.styleForViewportUnits());
     case Lvi:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Large, LogicalBoxAxis::Inline>(conversionData.renderView(), conversionData.style());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Large, LogicalBoxAxis::Inline>(adaptor.renderViewForViewportUnits(), adaptor.styleForViewportUnits());
 
     case Dvh:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Height>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Height>(adaptor.renderViewForViewportUnits());
     case Dvw:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Width>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Width>(adaptor.renderViewForViewportUnits());
     case Dvmax:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Max>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Max>(adaptor.renderViewForViewportUnits());
     case Dvmin:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Min>(conversionData.renderView());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, ViewportPhysicalDimension::Min>(adaptor.renderViewForViewportUnits());
     case Dvb:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, LogicalBoxAxis::Block>(conversionData.renderView(), conversionData.style());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, LogicalBoxAxis::Block>(adaptor.renderViewForViewportUnits(), adaptor.styleForViewportUnits());
     case Dvi:
-        conversionData.setUsesViewportUnits();
-        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, LogicalBoxAxis::Inline>(conversionData.renderView(), conversionData.style());
+        adaptor.setUsesViewportUnits();
+        return value * resolveViewportPercentageUnit<ViewportType::Dynamic, LogicalBoxAxis::Inline>(adaptor.renderViewForViewportUnits(), adaptor.styleForViewportUnits());
 
     // MARK: "container-percentage" resolution
 
     case Cqw:
-        if (auto resolvedValue = resolveContainerUnit(conversionData, CQ::Axis::Width))
+        if (auto resolvedValue = resolveContainerUnit(CQ::Axis::Width, adaptor))
             return value * *resolvedValue;
-        return resolveLength(value, Svw, conversionData);
+        return resolveLengthImpl(value, Svw, adaptor);
 
     case Cqh:
-        if (auto resolvedValue = resolveContainerUnit(conversionData, CQ::Axis::Height))
+        if (auto resolvedValue = resolveContainerUnit(CQ::Axis::Height, adaptor))
             return value * *resolvedValue;
-        return resolveLength(value, Svh, conversionData);
+        return resolveLengthImpl(value, Svh, adaptor);
 
     case Cqi:
-        if (auto resolvedValue = resolveContainerUnit(conversionData, conversionData.style()->writingMode().isHorizontal() ? CQ::Axis::Width : CQ::Axis::Height))
+        if (auto resolvedValue = resolveContainerUnit(adaptor.isHorizontalForContainerUnits() ? CQ::Axis::Width : CQ::Axis::Height, adaptor))
             return value * *resolvedValue;
-        return resolveLength(value, Svi, conversionData);
+        return resolveLengthImpl(value, Svi, adaptor);
 
     case Cqb:
-        if (auto resolvedValue = resolveContainerUnit(conversionData, conversionData.style()->writingMode().isHorizontal() ? CQ::Axis::Height : CQ::Axis::Width))
+        if (auto resolvedValue = resolveContainerUnit(adaptor.isHorizontalForContainerUnits() ? CQ::Axis::Height : CQ::Axis::Width, adaptor))
             return value * *resolvedValue;
-        return resolveLength(value, Svb, conversionData);
+        return resolveLengthImpl(value, Svb, adaptor);
 
     case Cqmax:
         if (value < 0)
-            return std::min(resolveLength(value, Cqb, conversionData), resolveLength(value, Cqi, conversionData));
-        return std::max(resolveLength(value, Cqb, conversionData), resolveLength(value, Cqi, conversionData));
+            return std::min(resolveLengthImpl(value, Cqb, adaptor), resolveLengthImpl(value, Cqi, adaptor));
+        return std::max(resolveLengthImpl(value, Cqb, adaptor), resolveLengthImpl(value, Cqi, adaptor));
 
     case Cqmin:
         if (value < 0)
-            return std::max(resolveLength(value, Cqb, conversionData), resolveLength(value, Cqi, conversionData));
-        return std::min(resolveLength(value, Cqb, conversionData), resolveLength(value, Cqi, conversionData));
+            return std::max(resolveLengthImpl(value, Cqb, adaptor), resolveLengthImpl(value, Cqi, adaptor));
+        return std::min(resolveLengthImpl(value, Cqb, adaptor), resolveLengthImpl(value, Cqi, adaptor));
     }
 
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+double resolveLength(double value, CSS::LengthUnit lengthUnit, CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit, const RenderView* renderViewForUnit)
+{
+    return resolveLengthImpl(value, lengthUnit, DirectDataAdaptor {
+        .propertyToCompute = propertyToCompute,
+        .fontCascadeForUnit = fontCascadeForUnit,
+        .renderViewForUnit = renderViewForUnit,
+    });
+}
+
+double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLengthConversionData& conversionData)
+{
+    return resolveLengthImpl(value, lengthUnit, CSSToLengthConversionDataAdaptor {
+        .conversionData = conversionData,
+    });
 }
 
 bool equalForLengthResolution(const Style::ComputedStyle& styleA, const Style::ComputedStyle& styleB)
@@ -635,7 +669,10 @@ bool equalForLengthResolution(const Style::ComputedStyle& styleA, const Style::C
 
 double emToPxDouble(double value, const CSSToLengthConversionData& conversionData)
 {
-    return applyTextZoom(value * conversionData.fontCascadeForFontUnits().fontDescription().unzoomedComputedSize(), conversionData);
+    CSSToLengthConversionDataAdaptor adaptor {
+        .conversionData = conversionData,
+    };
+    return value * adaptor.applyTextZoom(resolveEm(adaptor.property(), adaptor.fontCascadeForFontUnits()));
 }
 
 double emToPxDouble(double value, const ComputedStyle& style)

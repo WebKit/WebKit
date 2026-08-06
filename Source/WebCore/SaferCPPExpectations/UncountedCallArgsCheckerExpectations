@@ -381,6 +381,7 @@ style/computed/StyleComputedStyleBase.cpp
 style/values/filter-effects/StyleFilterReference.cpp
 style/values/images/kinds/StyleCachedImage.cpp
 style/values/images/kinds/StyleCursorImage.cpp
+style/values/primitives/StyleLengthResolution.cpp
 style/values/primitives/StylePrimitiveData.cpp
 style/values/transforms/StyleRotate.h
 style/values/transforms/StyleScale.h
