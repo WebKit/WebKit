@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/WEB_FEATURES.yml
@@ -1389,6 +1387,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-213-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-213-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-213.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-214-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-214.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-text-indent-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-text-indent.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-whitespace-001.xht
