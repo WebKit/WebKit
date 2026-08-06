@@ -44,25 +44,31 @@ Ref<CoordinatedAnimatedBackingStoreClient> CoordinatedAnimatedBackingStoreClient
 
 void CoordinatedAnimatedBackingStoreClient::invalidate()
 {
-    ASSERT(isMainThread());
+    assertIsMainThread();
     m_layer = nullptr;
 }
 
 void CoordinatedAnimatedBackingStoreClient::update(GraphicsLayer* layer, const FloatRect& visibleRect, const FloatRect& coverRect, const FloatSize& size, float contentsScale)
 {
-    ASSERT(isMainThread());
+    assertIsMainThread();
     ASSERT(layer);
     m_layer = layer;
-    m_visibleRect = visibleRect;
-    m_coverRect = coverRect;
-    m_size = size;
-    m_contentsScale = contentsScale;
+
+    {
+        Locker locker { m_lock };
+        m_visibleRect = visibleRect;
+        m_coverRect = coverRect;
+        m_size = size;
+        m_contentsScale = contentsScale;
+    }
 }
 
-void CoordinatedAnimatedBackingStoreClient::requestBackingStoreUpdateIfNeeded(const TransformationMatrix& transform)
+void CoordinatedAnimatedBackingStoreClient::requestBackingStoreUpdateIfNeeded(const TransformationMatrix& transform) const
 {
     // This is called from the compositor thread.
     ASSERT(!isMainThread());
+
+    Locker locker { m_lock };
 
     // Calculate the contents rectangle of the layer in backingStore coordinates.
     FloatRect contentsRect = { { }, m_size };
@@ -74,33 +80,33 @@ void CoordinatedAnimatedBackingStoreClient::requestBackingStoreUpdateIfNeeded(co
         return;
 
     // Non-invertible layers are not visible.
-    if (!transform.isInvertible())
-        return;
+    if (auto unscaledTransform = transform.inverse()) {
+        // Calculate the inverse of the layer transformation. The inverse transform will have the inverse of the
+        // scaleFactor applied, so we need to scale it back.
+        TransformationMatrix inverse = unscaledTransform->scale(m_contentsScale);
 
-    // Calculate the inverse of the layer transformation. The inverse transform will have the inverse of the
-    // scaleFactor applied, so we need to scale it back.
-    TransformationMatrix inverse = transform.inverse().value_or(TransformationMatrix()).scale(m_contentsScale);
+        // Apply the inverse transform to the visible rectangle, so we have the visible rectangle in layer coordinates.
+        FloatRect rect = inverse.clampedBoundsOfProjectedQuad(FloatQuad(m_visibleRect));
+        GraphicsLayerCoordinated::clampToSizeIfRectIsInfinite(rect, m_size);
+        FloatRect transformedVisibleRect = enclosingIntRect(rect);
 
-    // Apply the inverse transform to the visible rectangle, so we have the visible rectangle in layer coordinates.
-    FloatRect rect = inverse.clampedBoundsOfProjectedQuad(FloatQuad(m_visibleRect));
-    GraphicsLayerCoordinated::clampToSizeIfRectIsInfinite(rect, m_size);
-    FloatRect transformedVisibleRect = enclosingIntRect(rect);
+        // Convert the calculated visible rectangle to backingStore coordinates.
+        transformedVisibleRect.scale(m_contentsScale);
 
-    // Convert the calculated visible rectangle to backingStore coordinates.
-    transformedVisibleRect.scale(m_contentsScale);
+        // Restrict the calculated visible rect to the contents rectangle of the layer.
+        transformedVisibleRect.intersect(contentsRect);
 
-    // Restrict the calculated visible rect to the contents rectangle of the layer.
-    transformedVisibleRect.intersect(contentsRect);
+        if (m_coverRect.contains(transformedVisibleRect))
+            return;
 
-    if (m_coverRect.contains(transformedVisibleRect))
-        return;
-
-    // The coverRect doesn't contain the calculated visible rectangle we need to request a backingStore
-    // update to render more tiles.
-    callOnMainThread([this, protectedThis = Ref { *this }]() {
-        if (m_layer)
-            m_layer->client().notifyFlushRequired(m_layer);
-    });
+        // The coverRect doesn't contain the calculated visible rectangle we need to request a backingStore
+        // update to render more tiles.
+        callOnMainThread([this, protectedThis = Ref { *this }]() {
+            assertIsMainThread();
+            if (m_layer)
+                m_layer->client().notifyFlushRequired(m_layer);
+        });
+    }
 }
 
 } // namespace WebCore
