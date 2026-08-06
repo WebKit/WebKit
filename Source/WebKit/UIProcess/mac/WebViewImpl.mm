@@ -2026,6 +2026,16 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 
         weakThis->m_page->windowAndViewFramesChanged(viewFrameInWindowCoordinates, accessibilityPosition);
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+        // The view's on-screen position may have just changed for reasons that don't perturb
+        // layout or scroll offsets -- a window move, or an ancestor NSScrollView/NSClipView
+        // repositioning this view (renewGState) -- so nothing else would otherwise trigger a
+        // refresh of the AXFrameGeometry used to compute screen-space AXFrame values (see
+        // AccessibilityObject::convertFrameToSpace). Do it explicitly here, since every geometry
+        // change that matters for accessibility funnels through this deferred dispatch.
+        weakThis->m_page->updateAccessibilityFrameGeometry();
+#endif
     });
 }
 
