@@ -321,10 +321,12 @@ void RemoteMediaPlayerProxy::prepareForRendering()
     protect(m_player)->prepareForRendering();
 }
 
-void RemoteMediaPlayerProxy::setPageIsVisible(bool visible)
+void RemoteMediaPlayerProxy::setIsVisible(bool visible)
 {
     ALWAYS_LOG(LOGIDENTIFIER, visible);
-    protect(m_player)->setPageIsVisible(visible);
+    // The WebContent process's MediaPlayer has already resolved the page's and the video
+    // layer's visibility into this single value, and delayed it as needed.
+    protect(m_player)->setIsVisible(visible);
 }
 
 void RemoteMediaPlayerProxy::setViewportVisibility(ViewportVisibility visibility)

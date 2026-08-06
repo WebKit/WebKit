@@ -20,11 +20,15 @@
 
         run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
         run('internals.setMockVideoPresentationModeEnabled(true)');
+        // Release the renderer as soon as the video stops being visible, rather than after the
+        // usual delay, so that becoming invisible can be asserted here.
+        run('internals.settings.setVideoLayerVisibilityDelay(0)');
 
 		findMediaElement();
 		run('video.src = findMediaFile("video", "content/test")');
 		await waitFor(video, 'canplaythrough');
 		await testExpectedEventually('internals.mediaElementViewportVisibility(video)', 'NotVisible', '==', 1000);
+		testExpected('internals.isVideoVisible(video)', false);
 
 		consoleWrite('');
 		consoleWrite('Test viewport visibility in Picture-in-Picture:');
@@ -33,6 +37,8 @@
 		});
 		await waitFor(video, 'enterpictureinpicture');
 		await testExpectedEventually('internals.mediaElementViewportVisibility(video)', 'VisibleInPictureInPicture', '==', 1000);
+		// The box is still off screen; picture-in-picture is what makes the video visible.
+		testExpected('internals.isVideoVisible(video)', true);
 
         await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
 		internals.withUserGesture(() => {
@@ -40,6 +46,7 @@
 		});
 		await waitFor(video, 'leavepictureinpicture');
 		await testExpectedEventually('internals.mediaElementViewportVisibility(video)', 'NotVisible', '==', 1000);
+		await testExpectedEventually('internals.isVideoVisible(video)', false, '==', 1000);
 
 		consoleWrite('');
 		consoleWrite('Test viewport visibility in Fullscreen:');
@@ -49,17 +56,21 @@
 		await waitFor(video, 'webkitpresentationmodechanged');
         await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
 		await testExpectedEventually('internals.mediaElementViewportVisibility(video)', 'VisibleInFullscreen', '==', 1000);
+		// Likewise: fullscreen is on screen even though the element's box is not.
+		testExpected('internals.isVideoVisible(video)', true);
 
 		internals.withUserGesture(() => {
 			return run('video.webkitExitFullscreen()');
 		});
 		await waitFor(video, 'webkitpresentationmodechanged');
 		await testExpectedEventually('internals.mediaElementViewportVisibility(video)', 'NotVisible', '==', 1000);
+		await testExpectedEventually('internals.isVideoVisible(video)', false, '==', 1000);
 
 		consoleWrite('');
 		consoleWrite('Ensure video becomes visible-in-viewport when scrolled on-screen:');
 		run('video.scrollIntoView()');
 		await testExpectedEventually('internals.mediaElementViewportVisibility(video)', 'VisibleInViewport', '==', 1000);
+		testExpected('internals.isVideoVisible(video)', true);
 	}
 	</script>
 </head>

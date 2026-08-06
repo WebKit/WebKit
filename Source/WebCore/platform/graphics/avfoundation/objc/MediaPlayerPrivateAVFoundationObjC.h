@@ -166,8 +166,7 @@ private:
     void synchronizeTextTrackState() final;
 
     bool timeIsProgressing() const final { return effectiveRate(); }
-    void platformPageIsVisibleChanged(bool) final;
-    void platformViewportVisibilityChanged(ViewportVisibility) final;
+    void platformIsVisibleChanged(bool) final;
 
     void platformPlay() final;
     void platformPause() final;

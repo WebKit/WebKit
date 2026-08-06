@@ -255,7 +255,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::videoFrameAvailable(VideoFrame& video
 
 void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoFrame(VideoFrame& videoFrame)
 {
-    if (!m_isPageVisible || !m_isVisibleInViewPort)
+    // Nothing to draw into: skip the work rather than enqueue frames nobody can see.
+    if (!m_isVisible)
         return;
 
     if (!m_sampleBufferDisplayLayerLock.tryLock())
@@ -700,27 +701,19 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::hasAudio() const
     return !m_audioTrackMap.isEmpty();
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::setPageIsVisible(bool isVisible)
+void MediaPlayerPrivateMediaStreamAVFObjC::setIsVisible(bool isVisible)
 {
-    if (m_isPageVisible == isVisible)
+    if (m_isVisible == isVisible)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, isVisible);
-    m_isPageVisible = isVisible;
+    m_isVisible = isVisible;
     flushRenderers();
     reenqueueCurrentVideoFrameIfNeeded();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVisibleForCanvas(bool)
 {
-}
-
-void MediaPlayerPrivateMediaStreamAVFObjC::setViewportVisibility(ViewportVisibility visibility)
-{
-    if (visibility == ViewportVisibility::NotVisible || visibility == ViewportVisibility::IntersectingViewport)
-        m_isVisibleInViewPort = false;
-    else
-        m_isVisibleInViewPort = true;
 }
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::duration() const

@@ -594,6 +594,11 @@ void WebPageProxy::applicationDidEnterBackground()
 {
     m_lastObservedStateWasBackground = true;
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (RefPtr videoPresentationManager = m_videoPresentationManager)
+        videoPresentationManager->applicationDidEnterBackground();
+#endif
+
     bool isSuspendedUnderLock = UIApplication.sharedApplication.isSuspendedUnderLock;
     
     WEBPAGEPROXY_RELEASE_LOG(ViewState, "applicationDidEnterBackground: isSuspendedUnderLock? %d", isSuspendedUnderLock);
@@ -619,6 +624,11 @@ void WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground()
 void WebPageProxy::applicationWillEnterForeground()
 {
     m_lastObservedStateWasBackground = false;
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (RefPtr videoPresentationManager = m_videoPresentationManager)
+        videoPresentationManager->applicationWillEnterForeground();
+#endif
 
     bool isSuspendedUnderLock = UIApplication.sharedApplication.isSuspendedUnderLock;
     WEBPAGEPROXY_RELEASE_LOG(ViewState, "applicationWillEnterForeground: isSuspendedUnderLock? %d", isSuspendedUnderLock);

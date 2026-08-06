@@ -166,7 +166,7 @@ void MockMediaPlayerMediaSource::characteristicsFromMediaSourceChanged()
         player->characteristicChanged();
 }
 
-void MockMediaPlayerMediaSource::setPageIsVisible(bool)
+void MockMediaPlayerMediaSource::setIsVisible(bool)
 {
 }
 

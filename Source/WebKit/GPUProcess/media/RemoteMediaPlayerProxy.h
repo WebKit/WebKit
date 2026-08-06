@@ -169,7 +169,7 @@ public:
     void setPreservesPitch(bool);
     void setPitchCorrectionAlgorithm(WebCore::MediaPlayer::PitchCorrectionAlgorithm);
 
-    void setPageIsVisible(bool);
+    void setIsVisible(bool);
 
     using ViewportVisibility = WebCore::MediaPlayer::ViewportVisibility;
     void setViewportVisibility(ViewportVisibility);

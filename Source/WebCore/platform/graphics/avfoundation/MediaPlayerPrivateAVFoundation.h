@@ -168,7 +168,6 @@ protected:
 
     // MediaPlayerPrivatePrivateInterface overrides.
     void load(const String& url) override;
-    void load(const URL&, const LoadOptions&) override;
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
 #endif
@@ -185,10 +184,8 @@ protected:
     FloatSize naturalSize() const override;
     bool hasVideo() const override { return m_cachedHasVideo; }
     bool hasAudio() const override { return m_cachedHasAudio; }
-    bool pageIsVisible() const { return m_pageIsVisible; }
-    void setPageIsVisible(bool) final;
-    ViewportVisibility viewportVisibility() const { return m_viewportVisibility; }
-    void setViewportVisibility(ViewportVisibility) final;
+    bool isVisible() const { return m_isVisible; }
+    void setIsVisible(bool) final;
     MediaTime duration() const override;
     MediaTime currentTime() const override = 0;
     Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
@@ -251,8 +248,7 @@ protected:
     virtual AssetStatus assetStatus() const = 0;
     virtual long assetErrorCode() const = 0;
 
-    virtual void platformPageIsVisibleChanged(bool) = 0;
-    virtual void platformViewportVisibilityChanged(ViewportVisibility) = 0;
+    virtual void platformIsVisibleChanged(bool) = 0;
     virtual void platformPlay() = 0;
     virtual void platformPause() = 0;
     virtual bool platformPaused() const { return !rate(); }
@@ -368,7 +364,7 @@ protected:
     int m_delayCharacteristicsChangedNotification;
     bool m_mainThreadCallPending;
     bool m_assetIsPlayable;
-    bool m_pageIsVisible { false };
+    bool m_isVisible { false };
     bool m_loadingMetadata;
     bool m_isAllowedToRender;
     bool m_cachedHasAudio;
@@ -380,8 +376,6 @@ protected:
     bool m_shouldMaintainAspectRatio;
     bool m_seeking;
     bool m_needsRenderingModeChanged { false };
-    ViewportVisibility m_viewportVisibility { ViewportVisibility::NotVisible };
-    bool m_disableTeardownOnVisibilityChange { false };
 
 private:
     void seekInternal(const SeekTarget&);

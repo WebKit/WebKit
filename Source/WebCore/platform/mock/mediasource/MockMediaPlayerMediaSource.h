@@ -88,7 +88,7 @@ private:
     FloatSize naturalSize() const override;
     bool hasVideo() const override;
     bool hasAudio() const override;
-    void setPageIsVisible(bool) final;
+    void setIsVisible(bool) final;
     Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
     bool paused() const override;
     MediaPlayer::NetworkState networkState() const override;

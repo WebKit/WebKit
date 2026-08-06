@@ -70,7 +70,7 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer& play
     , m_delayCharacteristicsChangedNotification(0)
     , m_mainThreadCallPending(false)
     , m_assetIsPlayable(false)
-    , m_pageIsVisible(false)
+    , m_isVisible(false)
     , m_loadingMetadata(false)
     , m_isAllowedToRender(false)
     , m_cachedHasAudio(false)
@@ -203,12 +203,6 @@ void MediaPlayerPrivateAVFoundation::load(const String& url)
         return;
 
     setPreload(m_preload);
-}
-
-void MediaPlayerPrivateAVFoundation::load(const URL& url, const LoadOptions& options)
-{
-    m_disableTeardownOnVisibilityChange = options.disableTeardownOnVisibilityChange;
-    load(url.string());
 }
 
 #if ENABLE(MEDIA_SOURCE)
@@ -486,7 +480,7 @@ bool MediaPlayerPrivateAVFoundation::isReadyForVideoSetup() const
     // AVFoundation will not return true for firstVideoFrameAvailable until
     // an AVPlayerLayer has been added to the AVPlayerItem, so allow video setup
     // here if a video track to trigger allocation of a AVPlayerLayer.
-    return (m_isAllowedToRender || m_cachedHasVideo) && m_readyState >= MediaPlayer::ReadyState::HaveMetadata && m_pageIsVisible;
+    return (m_isAllowedToRender || m_cachedHasVideo) && m_readyState >= MediaPlayer::ReadyState::HaveMetadata && m_isVisible;
 }
 
 void MediaPlayerPrivateAVFoundation::prepareForRendering()
@@ -613,28 +607,18 @@ void MediaPlayerPrivateAVFoundation::updateStates()
         setUpVideoRendering();
 }
 
-void MediaPlayerPrivateAVFoundation::setPageIsVisible(bool visible)
+void MediaPlayerPrivateAVFoundation::setIsVisible(bool visible)
 {
-    if (m_pageIsVisible == visible)
+    if (m_isVisible == visible)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, visible);
 
-    m_pageIsVisible = visible;
+    m_isVisible = visible;
     if (visible)
         setUpVideoRendering();
 
-    platformPageIsVisibleChanged(visible);
-}
-
-void MediaPlayerPrivateAVFoundation::setViewportVisibility(ViewportVisibility visibility)
-{
-    if (m_viewportVisibility == visibility)
-        return;
-
-    ALWAYS_LOG(LOGIDENTIFIER, visibility);
-    m_viewportVisibility = visibility;
-    platformViewportVisibilityChanged(visibility);
+    platformIsVisibleChanged(visible);
 }
 
 void MediaPlayerPrivateAVFoundation::acceleratedRenderingStateChanged()

@@ -33,7 +33,6 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentPage.h"
-#include "DocumentQuirks.h"
 #include "DocumentView.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
@@ -185,11 +184,9 @@ void HTMLVideoElement::computeAcceleratedRenderingStateAndUpdateMediaPlayer()
     bool isInFullScreen = false;
 #endif
     CheckedPtr renderer = this->renderer();
-    // 311380@main added the viewport intersection to this condition. Some clients keep
-    // displaying the video layer they host after scrolling it out of view or hiding their
-    // web view, so for those ignore it as it was before.
-    bool isIntersectingViewport = m_isIntersectingViewport || protect(document())->quirks().shouldDisableMediaLayerTeardownOnPageVisibilityChangeQuirk();
-    bool canBeAccelerated = player->supportsAcceleratedRendering() && (isInFullScreen || (isIntersectingViewport && renderer && protect(renderer->view())->compositor().hasAcceleratedCompositing()));
+    // Whether anything can be seen is not asked here: that is resolved by MediaPlayer and acted
+    // on through setIsVisible(). This answers only whether a layer could be composited for us.
+    bool canBeAccelerated = player->supportsAcceleratedRendering() && (isInFullScreen || (renderer && protect(renderer->view())->compositor().hasAcceleratedCompositing()));
     if (canBeAccelerated == m_renderingCanBeAccelerated)
         return;
     m_renderingCanBeAccelerated = canBeAccelerated;
@@ -805,6 +802,19 @@ void HTMLVideoElement::stop()
     HTMLMediaElement::stop();
 }
 
+void HTMLVideoElement::setVideoLayerIsVisible(std::optional<bool> isVisible)
+{
+    // std::nullopt means the layer has gone, and with it any knowledge of what is on screen;
+    // the decision then falls back to the page and the viewport.
+    if (m_videoLayerIsVisible == isVisible)
+        return;
+
+    m_videoLayerIsVisible = isVisible;
+
+    if (RefPtr player = this->player())
+        player->setVideoLayerIsVisible(isVisible);
+}
+
 void HTMLVideoElement::viewportIntersectionChanged(bool isIntersecting)
 {
     if (m_isIntersectingViewport == isIntersecting)
@@ -879,6 +889,12 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
 void HTMLVideoElement::mediaPlayerEngineUpdated()
 {
     HTMLMediaElement::mediaPlayerEngineUpdated();
+
+    if (m_videoLayerIsVisible) {
+        if (RefPtr player = this->player())
+            player->setVideoLayerIsVisible(m_videoLayerIsVisible);
+    }
+
     if (!m_videoFrameRequests.isEmpty()) {
         if (RefPtr player = this->player())
             player->startVideoFrameMetadataGathering();

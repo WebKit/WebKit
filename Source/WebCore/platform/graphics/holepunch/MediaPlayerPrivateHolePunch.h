@@ -72,7 +72,7 @@ public:
     bool hasVideo() const final { return false; };
     bool hasAudio() const final { return false; };
 
-    void setPageIsVisible(bool) final { };
+    void setIsVisible(bool) final { };
 
     Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final { return MediaTimePromise::createAndResolve(MediaTime::zeroTime()); }
 

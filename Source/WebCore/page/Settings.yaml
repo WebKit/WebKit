@@ -490,6 +490,16 @@ ValidationMessageTimerMagnification:
     WebCore:
       default: 50
 
+VideoLayerVisibilityDelay:
+  comment: >
+    Seconds a video layer has to stay invisible before the renderer behind it is
+    released. Brief disappearances - a layer being reparented, animated or
+    momentarily clipped - should not cost a renderer, so the decision is delayed.
+  type: double
+  defaultValue:
+    WebCore:
+      default: 10
+
 WebGLErrorsToConsoleEnabled:
   type: bool
   defaultValue:

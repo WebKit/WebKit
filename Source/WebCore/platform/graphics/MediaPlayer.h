@@ -187,9 +187,10 @@ struct MediaPlayerLoadOptions {
     ContentType contentType { };
     bool requiresRemotePlayback { false };
     bool supportsLimitedMatroska { false };
-    bool disableTeardownOnVisibilityChange { false };
     std::optional<bool> supportsProgressMonitoringOverride { };
     VideoRendererPreferences videoRendererPreferences { };
+    // How long the video has to stay invisible before its renderer is released.
+    Seconds videoLayerVisibilityDelay { 10_s };
 };
 
 class WEBCORE_EXPORT MediaPlayerClient : public AbstractRefCountedAndCanMakeWeakPtr<MediaPlayerClient> {
@@ -445,13 +446,37 @@ public:
 #endif
     void cancelLoad();
 
-    bool pageIsVisible() const { return m_pageIsVisible; }
+    // Whether the video can be seen is resolved here, from three inputs, and only the answer
+    // is passed on to the MediaPlayerPrivate. See computeIsVisible().
+    //
+    //   setPageIsVisible()       the page holding the element is on screen.
+    //   setViewportVisibility()  where the element's box sits in the viewport, or that the
+    //                            video is in fullscreen or picture-in-picture.
+    //   setVideoLayerIsVisible() the video's own layer is on screen, reported by the UI
+    //                            process where it hosts one. std::nullopt means there is no
+    //                            layer to ask, either not yet or no longer.
+    //
+    // The layer wins whenever it has an answer, because it is the only one that survives a
+    // client hosting the layer outside of the web view: such a client keeps displaying the
+    // video after hiding the web view, so the page and the box both claim it cannot be seen
+    // while it plainly can. With no layer to ask - audio only, ports that report none, a
+    // layer since torn down - the page and the box are all there is.
+    //
+    // Becoming invisible is acted on only after a delay, so that a video briefly hidden
+    // while its layer is reparented, animated or clipped does not lose its renderer.
+    bool isVisible() const;
     void setPageIsVisible(bool);
-    void setVisibleForCanvas(bool);
-    bool isVisibleForCanvas() const { return m_visibleForCanvas; }
-
     void setViewportVisibility(ViewportVisibility);
-    ViewportVisibility viewportVisibility() const { return m_viewportVisibility; }
+    void setVideoLayerIsVisible(std::optional<bool>);
+    ViewportVisibility viewportVisibility() const;
+
+    // For a player whose visibility has already been decided elsewhere, as is the case in
+    // the GPU process: the client's player resolved the inputs above and waited out the
+    // delay before sending this, so apply it as-is rather than deciding again.
+    void setIsVisible(bool);
+
+    void setVisibleForCanvas(bool);
+    bool isVisibleForCanvas() const;
 
     void prepareToPlay();
     void play();
@@ -834,6 +859,9 @@ private:
 
     MediaPlayerClient& client() const { return *m_client; }
 
+    bool computeIsVisible() const;
+    void updateVisibility();
+    void visibilityTimerFired();
 
     CheckedPtr<const MediaPlayerFactory> nextBestMediaEngine(const MediaPlayerFactory*);
     void loadWithNextMediaEngine(const MediaPlayerFactory*);
@@ -867,6 +895,14 @@ private:
     Preload m_preload { Preload::Auto };
     double m_volume { 1 };
     bool m_pageIsVisible { false };
+    std::optional<bool> m_videoLayerIsVisible;
+    bool m_isVisible { false };
+    // Set once someone hands us the answer rather than the inputs; see setIsVisible().
+    bool m_visibilityIsDecidedElsewhere { false };
+    // Becoming visible takes effect at once; becoming invisible only does so after this
+    // delay, so that transient changes don't cost us the video renderer and the time it
+    // takes to build a new one.
+    Timer m_visibilityTimer;
     bool m_visibleForCanvas { false };
     bool m_muted { false };
     bool m_preservesPitch { true };

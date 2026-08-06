@@ -154,7 +154,7 @@ public:
     bool hasVideo() const final { return false; }
     bool hasAudio() const final { return false; }
 
-    void setPageIsVisible(bool) final { }
+    void setIsVisible(bool) final { }
 
     Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final { return MediaTimePromise::createAndReject(PlatformMediaError::Cancelled); }
 
@@ -515,6 +515,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient& client)
     : m_client(client)
     , m_reloadTimer(*this, &MediaPlayer::reloadTimerFired)
     , m_private(NullMediaPlayerPrivate::create(*this))
+    , m_visibilityTimer(*this, &MediaPlayer::visibilityTimerFired)
     , m_preferredDynamicRangeMode(DynamicRangeMode::Standard)
 {
 }
@@ -524,6 +525,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient& client, MediaPlayerEnums::MediaEngin
     , m_reloadTimer(*this, &MediaPlayer::reloadTimerFired)
     , m_private(NullMediaPlayerPrivate::create(*this))
     , m_activeEngineIdentifier(mediaEngineIdentifier)
+    , m_visibilityTimer(*this, &MediaPlayer::visibilityTimerFired)
     , m_preferredDynamicRangeMode(DynamicRangeMode::Standard)
 {
 }
@@ -680,8 +682,8 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
             protect(client())->mediaPlayerEngineUpdated();
             playerPrivate->setMessageClientForTesting(m_internalMessageClient);
 
-            if (m_pageIsVisible)
-                playerPrivate->setPageIsVisible(m_pageIsVisible);
+            if (m_isVisible)
+                playerPrivate->setIsVisible(m_isVisible);
             playerPrivate->setViewportVisibility(m_viewportVisibility);
             if (m_isGatheringVideoFrameMetadata)
                 playerPrivate->startVideoFrameMetadataGathering();
@@ -1178,10 +1180,95 @@ void MediaPlayer::setPresentationSize(const IntSize& size)
     protect(m_private)->setPresentationSize(size);
 }
 
+bool MediaPlayer::isVisible() const
+{
+    return m_isVisible;
+}
+
+bool MediaPlayer::isVisibleForCanvas() const
+{
+    return m_visibleForCanvas;
+}
+
+auto MediaPlayer::viewportVisibility() const -> ViewportVisibility
+{
+    return m_viewportVisibility;
+}
+
 void MediaPlayer::setPageIsVisible(bool visible)
 {
     m_pageIsVisible = visible;
-    protect(m_private)->setPageIsVisible(visible);
+    updateVisibility();
+}
+
+void MediaPlayer::setVideoLayerIsVisible(std::optional<bool> visible)
+{
+    m_videoLayerIsVisible = visible;
+    updateVisibility();
+}
+
+bool MediaPlayer::computeIsVisible() const
+{
+    // A video being drawn into a canvas has to keep decoding whether or not anything on screen
+    // shows it, so this outranks every other input.
+    if (m_visibleForCanvas)
+        return true;
+
+    // The video layer's own visibility is the direct answer, and the only one that accounts
+    // for a client hosting that layer outside of the web view. Where there is no layer to ask
+    // - audio only, and every port that does not report one - fall back to what the page and
+    // the viewport say, which is what this decision was made from before.
+    return m_videoLayerIsVisible.value_or(m_pageIsVisible && m_viewportVisibility != ViewportVisibility::NotVisible);
+}
+
+void MediaPlayer::updateVisibility()
+{
+    if (m_visibilityIsDecidedElsewhere)
+        return;
+
+    bool visible = computeIsVisible();
+    if (visible == m_isVisible) {
+        // Visible again before the delay elapsed: nothing to tear down after all.
+        m_visibilityTimer.stop();
+        return;
+    }
+
+    // Report becoming visible immediately: the renderer has to exist before anything can be
+    // displayed. Defer becoming invisible, as a video that is briefly hidden - moved between
+    // views, animated, momentarily clipped - would otherwise lose its renderer and have to
+    // build a new one before it could show a frame again.
+    if (!visible) {
+        if (!m_visibilityTimer.isActive())
+            m_visibilityTimer.startOneShot(m_loadOptions.videoLayerVisibilityDelay);
+        return;
+    }
+
+    m_visibilityTimer.stop();
+    m_isVisible = visible;
+    protect(m_private)->setIsVisible(visible);
+}
+
+void MediaPlayer::setIsVisible(bool visible)
+{
+    // This player is being told the answer instead of the inputs it would derive one from -
+    // the GPU process's player, whose page, layer and delay were all resolved in the web
+    // content process. Deriving our own would only fight with what we are being told.
+    m_visibilityIsDecidedElsewhere = true;
+    m_visibilityTimer.stop();
+    if (visible == m_isVisible)
+        return;
+
+    m_isVisible = visible;
+    protect(m_private)->setIsVisible(visible);
+}
+
+void MediaPlayer::visibilityTimerFired()
+{
+    // updateVisibility() stops this timer as soon as we become visible again, so reaching
+    // here means we have been invisible for the whole delay.
+    ASSERT(!computeIsVisible());
+    m_isVisible = false;
+    protect(m_private)->setIsVisible(false);
 }
 
 void MediaPlayer::setVisibleForCanvas(bool visible)
@@ -1191,6 +1278,7 @@ void MediaPlayer::setVisibleForCanvas(bool visible)
 
     m_visibleForCanvas = visible;
     protect(m_private)->setVisibleForCanvas(visible);
+    updateVisibility();
 }
 
 void MediaPlayer::setViewportVisibility(ViewportVisibility visibility)
@@ -1200,6 +1288,7 @@ void MediaPlayer::setViewportVisibility(ViewportVisibility visibility)
 
     m_viewportVisibility = visibility;
     protect(m_private)->setViewportVisibility(visibility);
+    updateVisibility();
 }
 
 void MediaPlayer::setResourceOwner(const ProcessIdentity& processIdentity)

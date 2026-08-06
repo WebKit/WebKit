@@ -982,6 +982,15 @@ void VideoPresentationManager::setTextTrackRepresentationIsHiddenForVideoElement
 
 }
 
+void VideoPresentationManager::setVideoLayerIsVisible(WebCore::MediaPlayerClientIdentifier contextId, std::optional<bool> isVisible)
+{
+    RefPtr videoElement = ensureModel(contextId)->videoElement();
+    if (!videoElement)
+        return;
+
+    videoElement->setVideoLayerIsVisible(isVisible);
+}
+
 void VideoPresentationManager::setRequiresTextTrackRepresentation(WebCore::MediaPlayerClientIdentifier contextId, bool requiresTextTrackRepresentation)
 {
     ensureModel(contextId)->setRequiresTextTrackRepresentation(requiresTextTrackRepresentation);

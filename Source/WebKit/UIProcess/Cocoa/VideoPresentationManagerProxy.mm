@@ -516,15 +516,21 @@ void VideoPresentationModelContext::requestRouteSharingPolicyAndContextUID(Compl
 void VideoPresentationModelContext::didEnterPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    if (RefPtr manager = m_manager.get())
+    if (RefPtr manager = m_manager.get()) {
         manager->hasVideoInPictureInPictureDidChange(true);
+        // Entering or leaving picture-in-picture changes whether the application being in the
+        // background hides this video, and may not produce a layer tree commit to notice it by.
+        manager->updateVideoLayerIsVisible(m_contextId, "didEnterPictureInPicture"_s);
+    }
 }
 
 void VideoPresentationModelContext::didExitPictureInPicture()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    if (RefPtr manager = m_manager.get())
+    if (RefPtr manager = m_manager.get()) {
         manager->hasVideoInPictureInPictureDidChange(false);
+        manager->updateVideoLayerIsVisible(m_contextId, "didExitPictureInPicture"_s);
+    }
 }
 
 void VideoPresentationModelContext::willEnterPictureInPicture()
@@ -609,6 +615,9 @@ Ref<VideoPresentationManagerProxy> VideoPresentationManagerProxy::create(WebPage
 VideoPresentationManagerProxy::VideoPresentationManagerProxy(WebPageProxy& page, PlaybackSessionManagerProxy& playbackSessionManagerProxy)
     : m_page(page)
     , m_playbackSessionManagerProxy(playbackSessionManagerProxy)
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
+    , m_updateVideoLayerIsVisibleTimer(RunLoop::mainSingleton(), "VideoPresentationManagerProxy::UpdateVideoLayerIsVisibleTimer"_s, this, &VideoPresentationManagerProxy::updateVideoLayerIsVisibleTimerFired)
+#endif
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     RefPtr protectedPage = m_page.get();
@@ -1025,8 +1034,137 @@ RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackS
 
 void VideoPresentationManagerProxy::willRemoveLayerForID(PlaybackSessionContextIdentifier contextId)
 {
+    // With the layer gone there is nothing left to measure, so retract what we last said rather
+    // than leave it standing: the decision has to fall back to the page and the viewport, or a
+    // video whose layer was torn down could never be told that it is on screen again.
+    if (m_videoLayerIsVisible.remove(contextId))
+        sendToWebProcess(contextId, Messages::VideoPresentationManager::SetVideoLayerIsVisible(contextId.object(), std::nullopt));
+
     removeClientForContext(contextId);
 }
+
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
+
+void VideoPresentationManagerProxy::videoLayerTreeDidChange()
+{
+    if (m_updateVideoLayerIsVisibleTimer.isActive())
+        return;
+
+    // Answer straight away if we have not looked recently, so that a video scrolled back into
+    // view gets its renderer without waiting; otherwise coalesce until the interval is up.
+    auto elapsed = MonotonicTime::now() - m_lastVideoLayerIsVisibleUpdate;
+    if (elapsed >= updateVideoLayerIsVisibleInterval) {
+        updateVideoLayerIsVisibleForAllContexts("layerTreeCommit"_s);
+        return;
+    }
+
+    m_updateVideoLayerIsVisibleTimer.startOneShot(updateVideoLayerIsVisibleInterval - elapsed);
+}
+
+void VideoPresentationManagerProxy::applicationDidEnterBackground()
+{
+    // Nothing can be seen of a video whose application has been put away.
+    updateVideoLayerIsVisibleForAllContexts("applicationDidEnterBackground"_s);
+}
+
+void VideoPresentationManagerProxy::applicationWillEnterForeground()
+{
+    // Look now, and again once the view hierarchy has had a chance to settle. Coming back to
+    // the foreground rebuilds views, so this first answer can be wrong in ways we cannot
+    // detect - a layer not yet back in a window, or still clipped away by a view about to be
+    // removed - and a page with nothing animating produces no commit to correct it by.
+    updateVideoLayerIsVisibleForAllContexts("applicationWillEnterForeground"_s);
+    if (!m_updateVideoLayerIsVisibleTimer.isActive())
+        m_updateVideoLayerIsVisibleTimer.startOneShot(updateVideoLayerIsVisibleInterval);
+}
+
+void VideoPresentationManagerProxy::updateVideoLayerIsVisibleTimerFired()
+{
+    updateVideoLayerIsVisibleForAllContexts("coalescedUpdate"_s);
+}
+
+void VideoPresentationManagerProxy::updateVideoLayerIsVisibleForAllContexts(ASCIILiteral reason)
+{
+    // Recorded here rather than in the callers so that a pass triggered by an application
+    // state change also holds off the next commit driven one.
+    m_lastVideoLayerIsVisibleUpdate = MonotonicTime::now();
+    for (auto& contextId : copyToVector(m_contextMap.keys()))
+        updateVideoLayerIsVisible(contextId, reason);
+}
+
+void VideoPresentationManagerProxy::updateVideoLayerIsVisible(PlaybackSessionContextIdentifier contextId, ASCIILiteral reason)
+{
+    RefPtr interface = findInterface(contextId);
+    RetainPtr playerLayerView = interface ? interface->playerLayerView() : nil;
+    if (!playerLayerView)
+        return;
+
+    // A view with no window or no size cannot be seen, but it may also merely be part-way
+    // through being set up or torn down. Report it as invisible either way and let the delay
+    // before the renderer is released cover the transient case, but ask again shortly: a
+    // settled page produces no further commits, so otherwise this answer would stand for good.
+    RetainPtr window = [playerLayerView window];
+    bool canBeMeasured = window && !CGRectIsEmpty([playerLayerView bounds]);
+    if (!canBeMeasured && !m_updateVideoLayerIsVisibleTimer.isActive())
+        m_updateVideoLayerIsVisibleTimer.startOneShot(updateVideoLayerIsVisibleInterval);
+
+    // Neither -isHidden, -alpha nor being in a window tell the interesting cases apart: a
+    // video a client hosts outside of the web view and one that has been scrolled far away
+    // read alike for all three. Where the layer ends up does distinguish them, so intersect
+    // its frame with the window and with every clipping ancestor and see what survives.
+    CGRect visibleRect = CGRectNull;
+    if (canBeMeasured) {
+        visibleRect = CGRectIntersection([playerLayerView convertRect:[playerLayerView bounds] toView:nil], [window bounds]);
+        for (RetainPtr<UIView> view = [playerLayerView superview]; view && !CGRectIsEmpty(visibleRect); view = [view superview]) {
+            if ([view clipsToBounds] || [[view layer] masksToBounds])
+                visibleRect = CGRectIntersection(visibleRect, [view convertRect:[view bounds] toView:nil]);
+        }
+    }
+    // Geometry only tells us where the layer sits within our own window, so also require that
+    // the application has not been put away entirely. This is deliberately the application's
+    // own state and not the page's or the view's: a client may take the layer out of the web
+    // view and display it itself, in which case neither knows that it is still on screen.
+    // Occlusion by another application's window is not covered, only full minimisation.
+    // Picture-in-picture is exempt, as the whole point of it is that the system keeps the
+    // video on screen after the application it came from has gone away.
+    RefPtr page = m_page.get();
+    bool applicationCanShowIt = interface->inPictureInPicture() || (page && !page->lastObservedStateWasBackground());
+    bool isVisible = !CGRectIsEmpty(visibleRect) && applicationCanShowIt;
+
+    auto addResult = m_videoLayerIsVisible.add(contextId, isVisible);
+    if (!addResult.isNewEntry) {
+        if (addResult.iterator->value == isVisible)
+            return;
+        addResult.iterator->value = isVisible;
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER, contextId.object().toUInt64(), ", isVisible: ", isVisible, ", reason: ", reason, ", visibleRect: ", FloatRect { visibleRect });
+    sendToWebProcess(contextId, Messages::VideoPresentationManager::SetVideoLayerIsVisible(contextId.object(), isVisible));
+}
+
+#else
+
+void VideoPresentationManagerProxy::videoLayerTreeDidChange()
+{
+}
+
+void VideoPresentationManagerProxy::applicationDidEnterBackground()
+{
+}
+
+void VideoPresentationManagerProxy::applicationWillEnterForeground()
+{
+}
+
+void VideoPresentationManagerProxy::updateVideoLayerIsVisibleForAllContexts(ASCIILiteral)
+{
+}
+
+void VideoPresentationManagerProxy::updateVideoLayerIsVisible(PlaybackSessionContextIdentifier, ASCIILiteral)
+{
+}
+
+#endif
 
 std::optional<SharedPreferencesForWebProcess> VideoPresentationManagerProxy::sharedPreferencesForWebProcess(IPC::Connection& connection) const
 {
@@ -1626,6 +1764,9 @@ void VideoPresentationManagerProxy::setVideoLayerFrame(PlaybackSessionContextIde
 
     auto [model, interface] = ensureModelAndInterface(contextId);
     interface->setCaptionsFrame(CGRectMake(0, 0, frame.width(), frame.height()));
+
+    // A client moving the video layer around drives this; re-check whether it can be seen.
+    updateVideoLayerIsVisible(contextId, "setVideoLayerFrame"_s);
     WTF::MachSendRightAnnotated sendRightAnnotated;
 #if PLATFORM(IOS_FAMILY)
 #if USE(EXTENSIONKIT)

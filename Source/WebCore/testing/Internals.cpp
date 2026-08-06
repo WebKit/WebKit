@@ -5627,6 +5627,15 @@ bool Internals::isPlayerVisibleInViewport(const HTMLMediaElement& element) const
     return player && player->viewportVisibility() == HTMLMediaElement::ViewportVisibility::VisibleInViewport;
 }
 
+// Whether the video can be seen at all, as MediaPlayer resolved it from the video layer, the
+// page and the viewport. Distinct from isPlayerVisibleInViewport(), which reports only where
+// the element's box sits.
+bool Internals::isVideoVisible(const HTMLMediaElement& element) const
+{
+    RefPtr player = element.player();
+    return player && player->isVisible();
+}
+
 bool Internals::isPlayerMuted(const HTMLMediaElement& element) const
 {
     RefPtr player = element.player();

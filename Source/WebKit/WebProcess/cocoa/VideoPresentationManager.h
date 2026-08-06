@@ -224,6 +224,7 @@ protected:
     void ensureUpdatedVideoDimensions(WebCore::MediaPlayerClientIdentifier, WebCore::FloatSize existingVideoDimensions);
 
     void NODELETE setCurrentVideoFullscreenMode(VideoPresentationInterfaceContext&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void setVideoLayerIsVisible(WebCore::MediaPlayerClientIdentifier, std::optional<bool>);
     void setRequiresTextTrackRepresentation(WebCore::MediaPlayerClientIdentifier, bool);
     void setTextTrackRepresentationBounds(WebCore::MediaPlayerClientIdentifier, const WebCore::IntRect&);
 

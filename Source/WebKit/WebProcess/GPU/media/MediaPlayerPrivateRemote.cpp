@@ -669,15 +669,15 @@ void MediaPlayerPrivateRemote::prepareForRendering()
     protect(connection())->send(Messages::RemoteMediaPlayerProxy::PrepareForRendering(), m_id);
 }
 
-void MediaPlayerPrivateRemote::setPageIsVisible(bool visible)
+void MediaPlayerPrivateRemote::setIsVisible(bool visible)
 {
-    if (m_pageIsVisible == visible)
+    if (m_isVisible == visible)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, visible);
 
-    m_pageIsVisible = visible;
-    protect(connection())->send(Messages::RemoteMediaPlayerProxy::SetPageIsVisible(visible), m_id);
+    m_isVisible = visible;
+    protect(connection())->send(Messages::RemoteMediaPlayerProxy::SetIsVisible(visible), m_id);
 }
 
 void MediaPlayerPrivateRemote::setViewportVisibility(ViewportVisibility visibility)

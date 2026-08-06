@@ -51,7 +51,7 @@ messages -> RemoteMediaPlayerProxy {
     SetPitchCorrectionAlgorithm(enum:uint8_t WebCore::MediaPlayerPitchCorrectionAlgorithm algorithm)
 
     PrepareForRendering()
-    SetPageIsVisible(bool visible)
+    SetIsVisible(bool visible)
     SetViewportVisibility(enum:uint8_t WebCore::MediaPlayerViewportVisibility visibility)
     SetShouldMaintainAspectRatio(bool maintainAspectRatio)
     AcceleratedRenderingStateChanged(bool canBeAccelerated)
