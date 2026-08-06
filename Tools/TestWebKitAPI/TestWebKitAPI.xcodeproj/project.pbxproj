@@ -463,6 +463,7 @@
 		7BB62ABE29BB4BAA00228CD6 /* IOSurfaceTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BB62AB629BB4BAA00228CD6 /* IOSurfaceTests.mm */; };
 		7BB8BDE428F0781A00129836 /* CompletionHandlerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB8BDDC28F0781A00129836 /* CompletionHandlerTests.cpp */; };
 		7BC8628F29B8B33500217CB5 /* DisplayListRecorderTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BC8628729B8B33500217CB5 /* DisplayListRecorderTests.cpp */; };
+		AA1790487510000000000002 /* AttributedStringFontCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA1790487510000000000001 /* AttributedStringFontCache.mm */; };
 		7BE876032919457B00B15289 /* AudioStreamDescriptionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BE875FB2919457B00B15289 /* AudioStreamDescriptionCocoa.mm */; };
 		7BF5017828E55F7A0008BB16 /* StackTraceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF5017028E55F7A0008BB16 /* StackTraceTest.cpp */; };
 		7C3965061CDD74F90094DBB8 /* ColorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3965051CDD74F90094DBB8 /* ColorTests.cpp */; };
@@ -3484,6 +3485,7 @@
 		7BB754B0274E39A100D00EC1 /* WebCoreTestUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreTestUtilities.cpp; sourceTree = "<group>"; };
 		7BB8BDDC28F0781A00129836 /* CompletionHandlerTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompletionHandlerTests.cpp; sourceTree = "<group>"; };
 		7BC8628729B8B33500217CB5 /* DisplayListRecorderTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayListRecorderTests.cpp; sourceTree = "<group>"; };
+		AA1790487510000000000001 /* AttributedStringFontCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedStringFontCache.mm; sourceTree = "<group>"; };
 		7BE875FB2919457B00B15289 /* AudioStreamDescriptionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioStreamDescriptionCocoa.mm; sourceTree = "<group>"; };
 		7BE962542CF015FA00D7C11F /* RestoreLocalStorage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RestoreLocalStorage.mm; sourceTree = "<group>"; };
 		7BF2CC442D3786850018D13E /* CookieStoreAPI.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStoreAPI.mm; sourceTree = "<group>"; };
@@ -7025,6 +7027,7 @@
 		CD89D0371C4EDB1300040A04 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				AA1790487510000000000001 /* AttributedStringFontCache.mm */,
 				7BE875FB2919457B00B15289 /* AudioStreamDescriptionCocoa.mm */,
 				0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */,
 				CDC94E3E2EA0B94800149E34 /* CaptionPreferencesTests.mm */,
@@ -7869,6 +7872,7 @@
 				F46C45C427D42A2F00ECED2C /* ApplicationStateTracking.mm in Sources */,
 				DF6580942722168900B3F1C1 /* ASN1Utilities.cpp in Sources */,
 				7CCE7EB41A411A7E00447C4C /* AttributedString.mm in Sources */,
+				AA1790487510000000000002 /* AttributedStringFontCache.mm in Sources */,
 				F4FA2A4F24D1F05700618A46 /* AttributedSubstringForProposedRange.mm in Sources */,
 				A17C57E12C9A5365009DD0B5 /* AttributedSubstringForProposedRange.mm in Sources */,
 				516B289E2CFEA5BC003C544C /* AudioSampleFormat.cpp in Sources */,
