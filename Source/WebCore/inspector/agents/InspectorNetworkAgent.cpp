@@ -142,103 +142,11 @@ void InspectorNetworkAgent::willDestroyFrontendAndBackend(Inspector::DisconnectR
     std::ignore = disable();
 }
 
-static Ref<Inspector::Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeaderMap& headers)
-{
-    auto headersValue = Inspector::Protocol::Network::Headers::create().release();
-
-    auto headersObject = headersValue->asObject();
-    for (const auto& header : headers)
-        headersObject->setString(header.key, header.value);
-
-    return headersValue;
-}
-
 Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics& timing, ResourceLoader& resourceLoader)
 {
-    auto elapsedTimeSince = [&] (const MonotonicTime& time) {
+    return ResourceUtilities::buildObjectForTiming(timing, resourceLoader.loadTiming().startTime(), [&](MonotonicTime time) {
         return protect(environment())->executionStopwatch().elapsedTimeSince(time).seconds();
-    };
-    auto millisecondsSinceFetchStart = [&] (const MonotonicTime& time) {
-        if (!time)
-            return 0.0;
-        return (time - timing.fetchStart).milliseconds();
-    };
-
-    return Inspector::Protocol::Network::ResourceTiming::create()
-        .setStartTime(elapsedTimeSince(resourceLoader.loadTiming().startTime()))
-        .setRedirectStart(elapsedTimeSince(timing.redirectStart))
-        .setRedirectEnd(elapsedTimeSince(timing.fetchStart))
-        .setFetchStart(elapsedTimeSince(timing.fetchStart))
-        .setDomainLookupStart(millisecondsSinceFetchStart(timing.domainLookupStart))
-        .setDomainLookupEnd(millisecondsSinceFetchStart(timing.domainLookupEnd))
-        .setConnectStart(millisecondsSinceFetchStart(timing.connectStart))
-        .setConnectEnd(millisecondsSinceFetchStart(timing.connectEnd))
-        .setSecureConnectionStart(millisecondsSinceFetchStart(timing.secureConnectionStart))
-        .setRequestStart(millisecondsSinceFetchStart(timing.requestStart))
-        .setResponseStart(millisecondsSinceFetchStart(timing.responseStart))
-        .setResponseEnd(millisecondsSinceFetchStart(timing.responseEnd))
-        .release();
-}
-
-static Inspector::Protocol::Network::Metrics::Priority NODELETE toProtocol(NetworkLoadPriority priority)
-{
-    switch (priority) {
-    case NetworkLoadPriority::Low:
-        return Inspector::Protocol::Network::Metrics::Priority::Low;
-    case NetworkLoadPriority::Medium:
-        return Inspector::Protocol::Network::Metrics::Priority::Medium;
-    case NetworkLoadPriority::High:
-        return Inspector::Protocol::Network::Metrics::Priority::High;
-    case NetworkLoadPriority::Unknown:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Network::Metrics::Priority::Medium;
-}
-
-Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
-{
-    auto metrics = Inspector::Protocol::Network::Metrics::create().release();
-
-    if (!networkLoadMetrics.protocol.isNull())
-        metrics->setProtocol(networkLoadMetrics.protocol);
-    if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
-        if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
-            metrics->setPriority(toProtocol(additionalMetrics->priority));
-        if (!additionalMetrics->remoteAddress.isNull())
-            metrics->setRemoteAddress(additionalMetrics->remoteAddress);
-        if (!additionalMetrics->connectionIdentifier.isNull())
-            metrics->setConnectionIdentifier(additionalMetrics->connectionIdentifier);
-        if (!additionalMetrics->requestHeaders.isEmpty())
-            metrics->setRequestHeaders(buildObjectForHeaders(additionalMetrics->requestHeaders));
-        if (additionalMetrics->requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
-            metrics->setRequestHeaderBytesSent(additionalMetrics->requestHeaderBytesSent);
-        if (additionalMetrics->requestBodyBytesSent != std::numeric_limits<uint64_t>::max())
-            metrics->setRequestBodyBytesSent(additionalMetrics->requestBodyBytesSent);
-        if (additionalMetrics->responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
-            metrics->setResponseHeaderBytesReceived(additionalMetrics->responseHeaderBytesReceived);
-        metrics->setIsProxyConnection(additionalMetrics->isProxyConnection);
-    }
-
-    if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
-        metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
-    if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())
-        metrics->setResponseBodyDecodedSize(networkLoadMetrics.responseBodyDecodedSize);
-
-    auto connectionPayload = Inspector::Protocol::Security::Connection::create()
-        .release();
-
-    if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
-        if (!additionalMetrics->tlsProtocol.isEmpty())
-            connectionPayload->setProtocol(additionalMetrics->tlsProtocol);
-        if (!additionalMetrics->tlsCipher.isEmpty())
-            connectionPayload->setCipher(additionalMetrics->tlsCipher);
-    }
-
-    metrics->setSecurityConnection(WTF::move(connectionPayload));
-
-    return metrics;
+    });
 }
 
 static Inspector::Protocol::Network::ReferrerPolicy NODELETE toProtocol(ReferrerPolicy referrerPolicy)
@@ -273,7 +181,7 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
     auto requestObject = Inspector::Protocol::Network::Request::create()
         .setUrl(request.url().string())
         .setMethod(request.httpMethod())
-        .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildObjectForHeaders(request.httpHeaderFields()))
         .release();
 
     if (request.httpBody() && !request.httpBody()->isEmpty()) {
@@ -325,7 +233,7 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
         .setUrl(response.url().string())
         .setStatus(response.httpStatusCode())
         .setStatusText(response.httpStatusText())
-        .setHeaders(buildObjectForHeaders(response.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildObjectForHeaders(response.httpHeaderFields()))
         .setMimeType(response.mimeType())
         .setSource(responseSource(response.source()))
         .release();
@@ -606,7 +514,7 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
             realMetrics = platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(identifier).isolatedCopy();
         });
     }
-    auto metrics = buildObjectForMetrics(realMetrics ? *realMetrics : networkLoadMetrics);
+    auto metrics = ResourceUtilities::buildObjectForMetrics(realMetrics ? *realMetrics : networkLoadMetrics);
 
     m_frontendDispatcher->loadingFinished(requestId, elapsedFinishTime, sourceMappingURL, WTF::move(metrics));
 }
@@ -776,7 +684,7 @@ void InspectorNetworkAgent::willSendWebSocketHandshakeRequest(WebSocketChannelId
 void InspectorNetworkAgent::didSendWebSocketHandshakeRequest(WebSocketChannelIdentifier identifier, const ResourceRequest& request)
 {
     auto requestObject = Inspector::Protocol::Network::WebSocketRequest::create()
-        .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildObjectForHeaders(request.httpHeaderFields()))
         .release();
     m_frontendDispatcher->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp(), WallTime::now().secondsSinceEpoch().seconds(), WTF::move(requestObject));
 }
@@ -786,7 +694,7 @@ void InspectorNetworkAgent::didReceiveWebSocketHandshakeResponse(WebSocketChanne
     auto responseObject = Inspector::Protocol::Network::WebSocketResponse::create()
         .setStatus(response.httpStatusCode())
         .setStatusText(response.httpStatusText())
-        .setHeaders(buildObjectForHeaders(response.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildObjectForHeaders(response.httpHeaderFields()))
         .release();
     m_frontendDispatcher->webSocketHandshakeResponseReceived(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp(), WTF::move(responseObject));
 }

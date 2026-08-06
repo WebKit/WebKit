@@ -1,0 +1,18 @@
+Test that NetworkLoadMetrics reach the frontend for loads in a cross-origin iframe and in the main frame under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.Metrics
+-- Running test case: SiteIsolation.Network.Metrics.CrossOriginIFrame.ConnectionInfo
+PASS: Resource should have a network protocol.
+PASS: Resource should have a remote address.
+PASS: Resource should have a known network priority.
+
+-- Running test case: SiteIsolation.Network.Metrics.CrossOriginIFrame.TransferSizes
+PASS: Request headers transfer size should be nonzero.
+PASS: Response body transfer size should be nonzero.
+
+-- Running test case: SiteIsolation.Network.Metrics.MainFrame.ConnectionInfo
+PASS: Main frame resource should have a network protocol.
+PASS: Main frame request headers transfer size should be nonzero.
+
