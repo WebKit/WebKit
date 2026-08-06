@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AnonymousBlockGenerationDisabled=true ] -->
+<html>
+<head>
+<title>White space after an out-of-flow or floated box is not rendered</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<div>text<div>block</div><div style="position: absolute; top: 0; right: 0;"></div>
+</div><pre>x</pre>
+
+<div>text<div>block</div><div style="float: left;"></div>
+</div><pre>x</pre>
+
+<div>text<div>block</div>
+</div><pre>x</pre>
+</body>
+</html>

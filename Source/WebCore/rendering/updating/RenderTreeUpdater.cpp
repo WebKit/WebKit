@@ -567,7 +567,7 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
         return true;
     }
 
-    auto wouldBeFirstInlineContentInsideBlock = [&] {
+    auto wouldBeLeadingWhiteSpaceOnLine = [&] {
         if (!parentRenderer.isRenderBlock())
             return false;
 
@@ -579,7 +579,21 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
                 return !previousRenderer->isInline();
             if (parentRenderer.isAnonymous())
                 return false;
-            return !previousRenderer->isInline() && !previousRenderer->isOutOfFlowPositioned() && !previousRenderer->isFloating();
+            // Out-of-flow and floating boxes do not end the line, so they can't tell us whether anything precedes
+            // this white space on it. Ask the nearest sibling that participates in the flow instead.
+            auto isFirstInlineContentAfterBlock = [&] {
+                // <div container>text<div></div><div out-of-flow></div> </div>
+                // While the trailing whitespace in not the first inline content in this container ('text' is)
+                // it is still considered trimmable as it is the first inline content after a in-flow block.
+                for (auto* sibling = previousRenderer; sibling; sibling = sibling->previousSibling()) {
+                    if (sibling->isOutOfFlowPositioned() || sibling->isFloating())
+                        continue;
+                    return !sibling->isInline();
+                }
+                // Nothing in flow before this white space: it is at the start of the first line.
+                return true;
+            };
+            return isFirstInlineContentAfterBlock();
         }
 
         if (auto* parent = previousRenderer->parent(); parent->isAnonymous())
@@ -588,7 +602,7 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
         // Can't tell yet.
         return false;
     };
-    if (wouldBeFirstInlineContentInsideBlock())
+    if (wouldBeLeadingWhiteSpaceOnLine())
         return false;
 
     return renderingParent.hasPrecedingInFlowChild;
