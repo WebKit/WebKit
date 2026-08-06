@@ -37,6 +37,9 @@ test/built-ins/Function/prototype/caller/prop-desc.js:
 test/built-ins/Function/prototype/toString/built-in-function-object.js:
   default: 3
   strict mode: 3
+test/built-ins/Promise/allSettledKeyed/result-property-descriptors.js:
+  default: 3
+  strict mode: 3
 test/built-ins/Proxy/apply/arguments-realm.js:
   default: 3
   strict mode: 3
