@@ -70,7 +70,7 @@ private:
     class ParamEvent {
         WTF_MAKE_TZONE_ALLOCATED(ParamEvent);
     public:
-        enum Type {
+        enum Type : uint8_t {
             SetValue,
             LinearRampToValue,
             ExponentialRampToValue,
@@ -94,15 +94,15 @@ private:
         static ParamEvent createCancelValuesEvent(Seconds cancelTime, std::optional<SavedEvent>&&);
 
         ParamEvent(Type type, float value, Seconds time, float timeConstant, Seconds duration, Vector<float>&& curve, double curvePointsPerSecond, float curveEndValue, std::optional<SavedEvent>&& savedEvent)
-            : m_type(type)
-            , m_value(value)
-            , m_time(time)
-            , m_timeConstant(timeConstant)
+            : m_time(time)
             , m_duration(duration)
             , m_curve(WTF::move(curve))
             , m_curvePointsPerSecond(curvePointsPerSecond)
-            , m_curveEndValue(curveEndValue)
             , m_savedEvent(WTF::move(savedEvent))
+            , m_value(value)
+            , m_timeConstant(timeConstant)
+            , m_curveEndValue(curveEndValue)
+            , m_type(type)
         {
         }
 
@@ -130,12 +130,7 @@ private:
         float curveEndValue() const { return m_curveEndValue; }
 
     private:
-        Type m_type;
-        float m_value { 0 };
         Seconds m_time;
-
-        // Only used for SetTarget events.
-        float m_timeConstant { 0 };
 
         // The duration of the curve.
         Seconds m_duration;
@@ -147,19 +142,26 @@ private:
         // the curve index step when running the automation.
         double m_curvePointsPerSecond { 0 };
 
-        // The default value to use at the end of the curve. Normally
-        // it's the last entry in m_curve, but cancelling a SetValueCurve
-        // will set this to a new value.
-        float m_curveEndValue { 0 };
-
-        // True if a default value has been assigned to the CancelValues event.
-        bool m_hasDefaultCancelledValue { false };
-
         // For CancelValues. If CancelValues is in the middle of an event, this
         // holds the event that is being cancelled, so that processing can
         // continue as if the event still existed up until we reach the actual
         // scheduled cancel time.
         std::optional<SavedEvent> m_savedEvent;
+
+        float m_value { 0 };
+
+        // Only used for SetTarget events.
+        float m_timeConstant { 0 };
+
+        // The default value to use at the end of the curve. Normally
+        // it's the last entry in m_curve, but cancelling a SetValueCurve
+        // will set this to a new value.
+        float m_curveEndValue { 0 };
+
+        Type m_type;
+
+        // True if a default value has been assigned to the CancelValues event.
+        bool m_hasDefaultCancelledValue { false };
     };
 
     // State of the timeline for the current event.
@@ -180,17 +182,17 @@ private:
         const size_t fillToFrame;
         const size_t fillToEndFrame;
 
-        // Value and time for the current event
-        const float value1;
+        // Time for the current event, and for the next event, if any.
         const Seconds time1;
-
-        // Value and time for the next event, if any.
-        const float value2;
         const Seconds time2;
 
         // The current event, and it's index in the event vector.
         const ParamEvent* event;
-        const int eventIndex;
+        const size_t eventIndex;
+
+        // Value for the current event, and for the next event, if any.
+        const float value1;
+        const float value2;
     };
 
     void removeCancelledEvents(size_t firstEventToRemove) WTF_REQUIRES_LOCK(m_eventsLock);
@@ -207,7 +209,7 @@ private:
     void processCancelValues(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex) WTF_REQUIRES_LOCK(m_eventsLock);
     void processSetTarget(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex);
     void processSetValueCurve(const AutomationState&, std::span<float> values, size_t& currentFrame, float& value, unsigned& writeIndex);
-    void processSetTargetFollowedByRamp(int eventIndex, ParamEvent*&, ParamEvent::Type nextEventType, size_t currentFrame, double samplingPeriod, double controlRate, float& value) WTF_REQUIRES_LOCK(m_eventsLock);
+    void processSetTargetFollowedByRamp(size_t eventIndex, ParamEvent*&, ParamEvent::Type nextEventType, size_t currentFrame, double samplingPeriod, double controlRate, float& value) WTF_REQUIRES_LOCK(m_eventsLock);
 
     Vector<ParamEvent> m_events WTF_GUARDED_BY_LOCK(m_eventsLock);
 

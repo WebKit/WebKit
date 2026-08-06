@@ -252,9 +252,6 @@ private:
     enum EventTargetInterfaceType eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final;
 
-    volatile bool m_isInitialized { false };
-    NodeType m_nodeType;
-
     WeakOrStrongContext m_context;
 
     Vector<Ref<AudioNodeInput>> m_inputs;
@@ -262,16 +259,6 @@ private:
 
     double m_lastProcessingTime { -1 };
     double m_lastNonSilentTime { -1 };
-
-    // Ref-counting
-    // start out with normal refCount == 1 (like WTF::RefCounted class).
-    mutable std::atomic<int> m_normalRefCount { 1 };
-    std::atomic<int> m_connectionRefCount { 0 };
-    
-    bool m_isMarkedForDeletion { false };
-    bool m_isDisabled { false };
-    bool m_isFinishedSourceNode { false };
-    bool m_isTailProcessing { false };
 
 #if DEBUG_AUDIONODE_REFERENCES
     static bool s_isNodeCountInitialized;
@@ -286,9 +273,21 @@ private:
     const uint64_t m_logIdentifier;
 #endif
 
+    // Ref-counting
+    // start out with normal refCount == 1 (like WTF::RefCounted class).
+    mutable std::atomic<int> m_normalRefCount { 1 };
+    std::atomic<int> m_connectionRefCount { 0 };
+
     unsigned m_channelCount { 2 };
     ChannelCountMode m_channelCountMode { ChannelCountMode::Max };
     ChannelInterpretation m_channelInterpretation { ChannelInterpretation::Speakers };
+    NodeType m_nodeType;
+
+    volatile bool m_isInitialized { false };
+    bool m_isMarkedForDeletion { false };
+    bool m_isDisabled { false };
+    bool m_isFinishedSourceNode { false };
+    bool m_isTailProcessing { false };
 };
 
 template<typename T> struct AudioNodeConnectionRefDerefTraits {

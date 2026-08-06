@@ -112,12 +112,12 @@ auto AudioNode::toWeakOrStrongContext(BaseAudioContext& context, NodeType nodeTy
 }
 
 AudioNode::AudioNode(BaseAudioContext& context, NodeType type)
-    : m_nodeType(type)
-    , m_context(toWeakOrStrongContext(context, type))
+    : m_context(toWeakOrStrongContext(context, type))
 #if !RELEASE_LOG_DISABLED
     , m_logger(context.logger())
     , m_logIdentifier(context.nextAudioNodeLogIdentifier())
 #endif
+    , m_nodeType(type)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 

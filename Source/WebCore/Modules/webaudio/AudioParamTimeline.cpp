@@ -417,10 +417,10 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
     // stopping when we've rendered all the requested values.
     // FIXME: could try to optimize by avoiding having to iterate starting from the very first event
     // and keeping track of a "current" event index.
-    int n = m_events.size();
-    for (int i = 0; i < n && writeIndex < values.size(); ++i) {
+    size_t n = m_events.size();
+    for (size_t i = 0; i < n && writeIndex < values.size(); ++i) {
         auto* event = &m_events[i];
-        auto* nextEvent = i < n - 1 ? &m_events[i + 1] : nullptr;
+        auto* nextEvent = i + 1 < n ? &m_events[i + 1] : nullptr;
 
         // Wait until we get a more recent event.
         if (!isEventCurrent(*event, nextEvent, currentFrame, sampleRate)) {
@@ -458,12 +458,12 @@ float AudioParamTimeline::valuesForFrameRangeImpl(size_t startFrame, size_t endF
             samplingPeriod,
             fillToFrame,
             fillToEndFrame,
-            value1,
             time1,
-            value2,
             time2,
             event,
             i,
+            value1,
+            value2,
         };
 
         // First handle linear and exponential ramps which require looking ahead to the next event.
@@ -793,7 +793,7 @@ void AudioParamTimeline::processSetValueCurve(const AutomationState& currentStat
     currentFrame += nextEventFillToFrame;
 }
 
-void AudioParamTimeline::processSetTargetFollowedByRamp(int eventIndex, ParamEvent*& event, ParamEvent::Type nextEventType, size_t currentFrame, double sampleRate, double controlRate, float& value)
+void AudioParamTimeline::processSetTargetFollowedByRamp(size_t eventIndex, ParamEvent*& event, ParamEvent::Type nextEventType, size_t currentFrame, double sampleRate, double controlRate, float& value)
 {
     // If the current event is SetTarget and the next event is a LinearRampToValue or ExponentialRampToValue,
     // special handling is needed. In this case, the linear and exponential ramp should start at wherever

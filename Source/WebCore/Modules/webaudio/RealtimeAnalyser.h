@@ -79,15 +79,14 @@ public:
 private:
     // The audio thread writes the input audio here.
     AudioFloatArray m_inputBuffer;
-    unsigned m_writeIndex { 0 };
 
     // AudioBus used for downmixing input audio before copying it to m_inputBuffer.
     const Ref<AudioBus> m_downmixBus;
-    
+
     size_t m_fftSize { DefaultFFTSize };
     std::unique_ptr<FFTFrame> m_analysisFrame;
     void doFFTAnalysisIfNecessary();
-    
+
     // doFFTAnalysisIfNecessary() unrolls the input buffer here before windowing and doing the FFT.
     AudioFloatArray m_temporaryBuffer { DefaultFFTSize };
 
@@ -98,9 +97,12 @@ private:
     // A value between 0 and 1 which averages the previous version of m_magnitudeBuffer with the current analysis magnitude data.
     double m_smoothingTimeConstant { DefaultSmoothingTimeConstant };
 
-    // The range used when converting when using getByteFrequencyData(). 
+    // The range used when converting when using getByteFrequencyData().
     double m_minDecibels { DefaultMinDecibels };
     double m_maxDecibels { DefaultMaxDecibels };
+
+    // The position in m_inputBuffer the audio thread writes to next.
+    unsigned m_writeIndex { 0 };
 
     // We should only do the FFT analysis once per render quantum.
     bool m_shouldDoFFTAnalysis { true };
