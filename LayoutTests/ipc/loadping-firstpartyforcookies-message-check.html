@@ -132,8 +132,9 @@ promise_test(async (t) => {
         shouldRecordFrameLoadForStorageAccess: false,
         isInitiatorPrefetch: false,
         isInitiatedByDedicatedWorker: false,
-        globalPrivacyControlStatus: false,
+        globalPrivacyControlEnabled: false,
         shouldConsiderEnhancedSecurityForInsecureResponse:false,
+        originalNavigationStartTime: { secondsSinceEpochSeconds: 0 },
     };
 
     CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, () => { });
