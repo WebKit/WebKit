@@ -1054,6 +1054,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
             if (auto* remoteMainFrameClient = m_mainFrame->remoteFrameClient())
                 remoteMainFrameClient->applyWebsitePolicies(WTF::move(*remotePageParameters->websitePoliciesData));
         }
+
+        updateRemoteMainFrameViewDelegatedScrolling();
     }
     if (auto&& provisionalFrameCreationParameters = parameters.provisionalFrameCreationParameters) {
         ASSERT(page->settings().siteIsolationEnabled());
@@ -1973,6 +1975,20 @@ bool WebPage::shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const
 {
     RefPtr localTopDocument = protect(corePage())->localTopDocument();
     return localTopDocument && localTopDocument->quirks().shouldDispatchSyntheticMouseEventsWhenModifyingSelection();
+}
+
+void WebPage::updateRemoteMainFrameViewDelegatedScrolling()
+{
+    RefPtr drawingArea = m_drawingArea;
+    if (!drawingArea)
+        return;
+
+    RefPtr remoteMainFrame = dynamicDowncast<WebCore::RemoteFrame>(protect(corePage())->mainFrame());
+    if (!remoteMainFrame)
+        return;
+
+    if (RefPtr view = remoteMainFrame->view())
+        view->setDelegatedScrollingMode(drawingArea->delegatedScrollingMode());
 }
 
 #if !PLATFORM(IOS_FAMILY)

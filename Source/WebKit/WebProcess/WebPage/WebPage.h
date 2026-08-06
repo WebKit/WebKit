@@ -644,6 +644,11 @@ public:
 
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
 
+    // Mirror the drawing area's scrolling-delegation mode onto the main frame's RemoteFrameView so its
+    // coordinate conversions (e.g. selection rects) match the local main frame in the process that
+    // actually hosts it. Without this the proxy would double-subtract the main frame's scroll offset.
+    void updateRemoteMainFrameViewDelegatedScrolling();
+
 #if ENABLE(ASYNC_SCROLLING)
     WebCore::ScrollingCoordinator* scrollingCoordinator() const;
 #endif

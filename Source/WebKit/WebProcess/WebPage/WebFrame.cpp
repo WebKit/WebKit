@@ -448,6 +448,8 @@ void WebFrame::loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingP
     else {
         localFrame->loader().detachFromParent();
         corePage->setMainFrame(newFrame.copyRef());
+        if (RefPtr page = m_page.get())
+            page->updateRemoteMainFrameViewDelegatedScrolling();
     }
 
     if (ownerElement) {
