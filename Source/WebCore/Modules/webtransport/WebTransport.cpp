@@ -210,7 +210,13 @@ void WebTransport::suspend(ReasonForSuspension why)
 
 void WebTransport::receiveDatagram(std::span<const uint8_t> datagram, bool withFin, std::optional<Exception>&& exception)
 {
-    m_datagramSource->receiveDatagram(datagram, withFin, WTF::move(exception));
+    if (m_state == State::Closed || m_state == State::Failed)
+        return;
+
+    // A burst delivered inline evicts itself, since IPC dispatch runs many messages per turn with no microtask checkpoint.
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [datagram = Vector(datagram), withFin, exception = WTF::move(exception)](auto& transport) mutable {
+        transport.m_datagramSource->receiveDatagram(datagram.span(), withFin, WTF::move(exception));
+    });
 }
 
 void WebTransport::receiveIncomingUnidirectionalStream(WebTransportStreamIdentifier identifier)

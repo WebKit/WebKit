@@ -6843,11 +6843,7 @@ imported/w3c/web-platform-tests/webtransport/streams-close.https.any.servicework
 imported/w3c/web-platform-tests/webtransport/streams-close.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/streams-close.https.any.worker.html [ Skip ]
 
-# Backend gaps (datagram flow-control, getStats, close, historical).
-imported/w3c/web-platform-tests/webtransport/datagrams.https.any.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/datagrams.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/datagrams.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/datagrams.https.any.worker.html [ Skip ]
+# Backend gaps (getStats, close, historical).
 imported/w3c/web-platform-tests/webtransport/stats.https.any.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/stats.https.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/stats.https.any.sharedworker.html [ Skip ]
