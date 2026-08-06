@@ -801,6 +801,8 @@ public:
     void scrollDidEnd() final;
     void scrollOriginDidChange() final;
 
+    void setLoadedWhileHidden() { m_loadedWhileHidden = true; }
+
 private:
     explicit LocalFrameView(LocalFrame&);
 
@@ -1109,6 +1111,7 @@ private:
     bool m_isOverlapped { false };
     bool m_contentIsOpaque { false };
     bool m_firstLayoutCallbackPending { false };
+    bool m_loadedWhileHidden { false };
 
     bool m_isTransparent { false };
 #if ENABLE(DARK_MODE_CSS)

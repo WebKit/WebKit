@@ -7118,6 +7118,16 @@ void Document::dispatchWindowLoadEvent()
         return;
     protect(window())->dispatchLoadEvent();
     m_loadEventFinished = true;
+
+    // A subframe that finished loading without ever being laid out was hidden (e.g. parent had
+    // display:none); note that so the first layout can fire resize for the 0x0 to actual size change.
+    if (RefPtr frameView = view()) {
+        if (!frameView->layoutContext().didFirstLayout()) {
+            if (RefPtr owner = ownerElement(); owner && !owner->renderer())
+                frameView->setLoadedWhileHidden();
+        }
+    }
+
     protect(cachedResourceLoader())->documentDidFinishLoadEvent();
 }
 

@@ -8700,3 +8700,7 @@ imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.html [ Fai
 imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.serviceworker.html [ Failure ]
 imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.sharedworker.html [ Failure ]
 imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.html [ Failure ]
+
+# scheduleResizeEventIfNeeded() suppresses resize events on iOS while the document is still loading,
+# since Safari on iOS resizes the window while setting up its viewport.
+imported/w3c/web-platform-tests/css/css-values/dynamic-viewport-units-rule-cache.html [ Skip ]

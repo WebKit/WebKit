@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT dynamic-viewport-units-rule-cache Test timed out
+PASS dynamic-viewport-units-rule-cache
 
