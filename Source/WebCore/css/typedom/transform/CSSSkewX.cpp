@@ -97,7 +97,7 @@ ExceptionOr<Ref<DOMMatrix>> CSSSkewX::toMatrix()
     if (!ax)
         return Exception { ExceptionCode::TypeError };
 
-    auto x = ax->convertTo(CSSUnitType::CSS_DEG);
+    auto x = ax->convertTo(CSSUnitType::Deg);
     if (!x)
         return Exception { ExceptionCode::TypeError };
 

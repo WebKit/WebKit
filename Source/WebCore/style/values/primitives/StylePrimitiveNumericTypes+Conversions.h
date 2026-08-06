@@ -297,11 +297,11 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::AnglePerce
 
         auto simplifiedPrimitiveType = simplifiedCalc.primitiveType();
 
-        if (simplifiedPrimitiveType == CSSUnitType::CSS_DEG) {
+        if (simplifiedPrimitiveType == CSSUnitType::Deg) {
             auto doubleValue = simplifiedCalc.evaluate(rest...);
             return canonicalize(CSS::AngleRaw<R, V> { To::Dimension::unit, doubleValue }, std::forward<Rest>(rest)...);
         }
-        if (simplifiedPrimitiveType == CSSUnitType::CSS_PERCENTAGE) {
+        if (simplifiedPrimitiveType == CSSUnitType::Percentage) {
             auto doubleValue = simplifiedCalc.evaluate(rest...);
             return canonicalize(CSS::PercentageRaw<R, V> { doubleValue }, std::forward<Rest>(rest)...);
         }
@@ -347,11 +347,11 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::LengthPerc
 
         auto simplifiedPrimitiveType = simplifiedCalc.primitiveType();
 
-        if (simplifiedPrimitiveType == CSSUnitType::CSS_PX) {
+        if (simplifiedPrimitiveType == CSSUnitType::Px) {
             auto doubleValue = simplifiedCalc.evaluate(rest...);
             return canonicalize(CSS::LengthRaw<R, V> { To::Dimension::unit, doubleValue }, std::forward<Rest>(rest)...);
         }
-        if (simplifiedPrimitiveType == CSSUnitType::CSS_PERCENTAGE) {
+        if (simplifiedPrimitiveType == CSSUnitType::Percentage) {
             auto doubleValue = simplifiedCalc.evaluate(rest...);
             return canonicalize(CSS::PercentageRaw<R, V> { doubleValue }, std::forward<Rest>(rest)...);
         }

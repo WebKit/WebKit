@@ -52,7 +52,7 @@ auto deprecatedConvertNumericFromCSSValue(const CSSPrimitiveValue& value, Rest&&
                 if (auto unit = CSSPercentageRaw::UnitTraits::validate(raw.unit))
                     return deprecatedToStyle(CSSPercentageRaw(*unit, raw.value), std::forward<Rest>(rest)...);
             } else if constexpr (StyleType::category == CSS::Category::Integer || StyleType::category == CSS::Category::Number) {
-                if (raw.unit == CSSUnitType::CSS_NUMBER || raw.unit == CSSUnitType::CSS_INTEGER)
+                if (raw.unit == CSSUnitType::Number || raw.unit == CSSUnitType::Integer)
                     return deprecatedToStyle(CSSRaw(raw.value), std::forward<Rest>(rest)...);
             } else {
                 if (auto unit = CSSRaw::UnitTraits::validate(raw.unit))

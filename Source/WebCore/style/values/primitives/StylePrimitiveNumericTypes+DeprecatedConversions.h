@@ -93,11 +93,11 @@ template<auto R, typename V> struct DeprecatedToStyle<CSS::UnevaluatedCalc<CSS::
 
         auto simplifiedPrimitiveType = simplifiedCalc.primitiveType();
 
-        if (simplifiedPrimitiveType == CSSUnitType::CSS_PX) {
+        if (simplifiedPrimitiveType == CSSUnitType::Px) {
             auto doubleValue = simplifiedCalc.evaluateDeprecated();
             return canonicalize(CSS::LengthRaw<R, V> { To::Dimension::unit, doubleValue }, NoConversionDataRequiredToken { });
         }
-        if (simplifiedPrimitiveType == CSSUnitType::CSS_PERCENTAGE) {
+        if (simplifiedPrimitiveType == CSSUnitType::Percentage) {
             auto doubleValue = simplifiedCalc.evaluateDeprecated();
             return canonicalize(CSS::PercentageRaw<R, V> { doubleValue }, NoConversionDataRequiredToken { });
         }

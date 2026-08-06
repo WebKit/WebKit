@@ -56,7 +56,7 @@ ExceptionOr<RectifiedCSSColorPercent> CSSOMColorValue::rectifyCSSColorPercent(CS
 {
     return switchOn(WTF::move(colorPercent),
         [](double value) -> ExceptionOr<RectifiedCSSColorPercent> {
-            return { Ref<CSSNumericValue> { CSSUnitValue::create(value * 100, CSSUnitType::CSS_PERCENTAGE) } };
+            return { Ref<CSSNumericValue> { CSSUnitValue::create(value * 100, CSSUnitType::Percentage) } };
         },
         [](Ref<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorPercent> {
             if (numericValue->type().matches<CSSNumericBaseType::Percent>())
@@ -79,7 +79,7 @@ ExceptionOr<RectifiedCSSColorAngle> CSSOMColorValue::rectifyCSSColorAngle(CSSCol
 {
     return switchOn(WTF::move(colorAngle),
         [](double value) -> ExceptionOr<RectifiedCSSColorAngle> {
-            return { Ref<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::CSS_DEG) } };
+            return { Ref<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::Deg) } };
         },
         [](Ref<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorAngle> {
             if (numericValue->type().matches<CSSNumericBaseType::Angle>())
@@ -102,7 +102,7 @@ ExceptionOr<RectifiedCSSColorNumber> CSSOMColorValue::rectifyCSSColorNumber(CSSC
 {
     return switchOn(WTF::move(colorNumber),
         [](double value) -> ExceptionOr<RectifiedCSSColorNumber> {
-            return { Ref<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::CSS_NUMBER) } };
+            return { Ref<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::Number) } };
         },
         [](Ref<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorNumber> {
             if (numericValue->type().matchesNumber())

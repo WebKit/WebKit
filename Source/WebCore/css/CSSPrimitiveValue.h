@@ -48,14 +48,14 @@ public:
     bool isPercentageOrParentFontRelativeLength() const { return isPercentage() || isParentFontRelativeLength(); }
     bool isRootFontRelativeLength() const { return isRootFontRelativeLength(primitiveUnitType()); }
     bool isLength() const { return isLength(static_cast<CSSUnitType>(primitiveType())); }
-    bool isNumber() const { return primitiveType() == CSSUnitType::CSS_NUMBER; }
-    bool isInteger() const { return primitiveType() == CSSUnitType::CSS_INTEGER; }
+    bool isNumber() const { return primitiveType() == CSSUnitType::Number; }
+    bool isInteger() const { return primitiveType() == CSSUnitType::Integer; }
     bool isNumberOrInteger() const { return isNumber() || isInteger(); }
-    bool isPercentage() const { return primitiveType() == CSSUnitType::CSS_PERCENTAGE; }
-    bool isPx() const { return primitiveType() == CSSUnitType::CSS_PX; }
-    bool isCalculated() const { return primitiveUnitType() == CSSUnitType::CSS_CALC; }
-    bool isCalculatedPercentageWithLength() const { return primitiveType() == CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH; }
-    bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
+    bool isPercentage() const { return primitiveType() == CSSUnitType::Percentage; }
+    bool isPx() const { return primitiveType() == CSSUnitType::Px; }
+    bool isCalculated() const { return primitiveUnitType() == CSSUnitType::Calc; }
+    bool isCalculatedPercentageWithLength() const { return primitiveType() == CSSUnitType::CalcPercentageWithLength; }
+    bool isFlex() const { return primitiveType() == CSSUnitType::Fr; }
 
     static Ref<CSSPrimitiveValue> create(double);
     static Ref<CSSPrimitiveValue> create(double, CSSUnitType);
@@ -129,33 +129,33 @@ private:
 
 constexpr bool CSSPrimitiveValue::isFontIndependentLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_PX
-        || type == CSSUnitType::CSS_CM
-        || type == CSSUnitType::CSS_MM
-        || type == CSSUnitType::CSS_IN
-        || type == CSSUnitType::CSS_PT
-        || type == CSSUnitType::CSS_PC;
+    return type == CSSUnitType::Px
+        || type == CSSUnitType::Cm
+        || type == CSSUnitType::Mm
+        || type == CSSUnitType::In
+        || type == CSSUnitType::Pt
+        || type == CSSUnitType::Pc;
 }
 
 constexpr bool CSSPrimitiveValue::isParentFontRelativeLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_EM
-        || type == CSSUnitType::CSS_EX
-        || type == CSSUnitType::CSS_LH
-        || type == CSSUnitType::CSS_CAP
-        || type == CSSUnitType::CSS_CH
-        || type == CSSUnitType::CSS_IC
-        || type == CSSUnitType::CSS_QUIRKY_EM;
+    return type == CSSUnitType::Em
+        || type == CSSUnitType::Ex
+        || type == CSSUnitType::Lh
+        || type == CSSUnitType::Cap
+        || type == CSSUnitType::Ch
+        || type == CSSUnitType::Ic
+        || type == CSSUnitType::QuirkyEm;
 }
 
 constexpr bool CSSPrimitiveValue::isRootFontRelativeLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_RCAP
-        || type == CSSUnitType::CSS_RCH
-        || type == CSSUnitType::CSS_REM
-        || type == CSSUnitType::CSS_REX
-        || type == CSSUnitType::CSS_RIC
-        || type == CSSUnitType::CSS_RLH;
+    return type == CSSUnitType::Rcap
+        || type == CSSUnitType::Rch
+        || type == CSSUnitType::Rem
+        || type == CSSUnitType::Rex
+        || type == CSSUnitType::Ric
+        || type == CSSUnitType::Rlh;
 }
 
 constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
@@ -166,29 +166,29 @@ constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
 
 constexpr bool CSSPrimitiveValue::isContainerPercentageLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_CQW
-        || type == CSSUnitType::CSS_CQH
-        || type == CSSUnitType::CSS_CQI
-        || type == CSSUnitType::CSS_CQB
-        || type == CSSUnitType::CSS_CQMIN
-        || type == CSSUnitType::CSS_CQMAX;
+    return type == CSSUnitType::Cqw
+        || type == CSSUnitType::Cqh
+        || type == CSSUnitType::Cqi
+        || type == CSSUnitType::Cqb
+        || type == CSSUnitType::Cqmin
+        || type == CSSUnitType::Cqmax;
 }
 
 constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
 {
-    return type == CSSUnitType::CSS_EM
-        || type == CSSUnitType::CSS_EX
-        || type == CSSUnitType::CSS_PX
-        || type == CSSUnitType::CSS_CM
-        || type == CSSUnitType::CSS_MM
-        || type == CSSUnitType::CSS_IN
-        || type == CSSUnitType::CSS_PT
-        || type == CSSUnitType::CSS_PC
-        || type == CSSUnitType::CSS_Q
+    return type == CSSUnitType::Em
+        || type == CSSUnitType::Ex
+        || type == CSSUnitType::Px
+        || type == CSSUnitType::Cm
+        || type == CSSUnitType::Mm
+        || type == CSSUnitType::In
+        || type == CSSUnitType::Pt
+        || type == CSSUnitType::Pc
+        || type == CSSUnitType::Q
         || isFontRelativeLength(type)
         || isViewportPercentageLength(type)
         || isContainerPercentageLength(type)
-        || type == CSSUnitType::CSS_QUIRKY_EM;
+        || type == CSSUnitType::QuirkyEm;
 }
 
 constexpr bool CSSPrimitiveValue::isViewportPercentageLength(CSSUnitType type)

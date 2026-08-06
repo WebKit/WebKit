@@ -48,9 +48,9 @@ StaticCSSValuePool::StaticCSSValuePool()
         new (m_identifierValues[std::to_underlying(keyword)].get()) CSSKeywordValue { CSSValue::StaticCSSValue, CSS::Keyword { keyword } };
 
     for (unsigned i = 0; i <= maximumCacheableIntegerValue; ++i) {
-        new (m_pixelValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PX);
-        new (m_percentageValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PERCENTAGE);
-        new (m_numberValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_NUMBER);
+        new (m_pixelValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::Px);
+        new (m_percentageValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::Percentage);
+        new (m_numberValues[i].get()) CSSPrimitiveValue(CSSValue::StaticCSSValue, i, CSSUnitType::Number);
     }
 }
 

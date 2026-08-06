@@ -319,7 +319,7 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
         addHTMLLengthToStyle(style, CSSPropertyHeight, value);
         break;
     case AttributeNames::borderAttr:
-        addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSUnitType::CSS_PX);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSUnitType::Px);
         break;
     case AttributeNames::bordercolorAttr:
         if (!value.isEmpty())
@@ -520,12 +520,12 @@ Ref<MutableStyleProperties> HTMLTableElement::createSharedCellStyle() const
         style->setProperty(CSSPropertyBorderColor, CSSKeywordValue::create(CSSValueInherit));
         break;
     case CellBorders::Solid:
-        style->setProperty(CSSPropertyBorderWidth, CSSPrimitiveValue::create(1, CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyBorderWidth, CSSPrimitiveValue::create(1, CSSUnitType::Px));
         style->setProperty(CSSPropertyBorderStyle, CSSKeywordValue::create(CSSValueSolid));
         style->setProperty(CSSPropertyBorderColor, CSSKeywordValue::create(CSSValueInherit));
         break;
     case CellBorders::Inset:
-        style->setProperty(CSSPropertyBorderWidth, CSSPrimitiveValue::create(1, CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyBorderWidth, CSSPrimitiveValue::create(1, CSSUnitType::Px));
         style->setProperty(CSSPropertyBorderStyle, CSSKeywordValue::create(CSSValueInset));
         style->setProperty(CSSPropertyBorderColor, CSSKeywordValue::create(CSSValueInherit));
         break;
@@ -535,7 +535,7 @@ Ref<MutableStyleProperties> HTMLTableElement::createSharedCellStyle() const
     }
 
     if (m_padding)
-        style->setProperty(CSSPropertyPadding, CSSPrimitiveValue::create(m_padding, CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyPadding, CSSPrimitiveValue::create(m_padding, CSSUnitType::Px));
 
     return style;
 }

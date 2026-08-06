@@ -300,7 +300,7 @@ std::optional<CSS::BorderImageWidth> consumeUnresolvedBorderImageWidth(CSSParser
         if (auto lengthPercentage = MetaConsumer<CSS::BorderImageWidth::Value::LengthPercentage>::consume(range, state, { .overrideParserMode = HTMLStandardMode })) {
             hasLength = hasLength || WTF::switchOn(*lengthPercentage,
                 [](const CSS::BorderImageWidth::Value::LengthPercentage::Calc& calc) {
-                    return calc.primitiveType() == CSSUnitType::CSS_PX;
+                    return calc.primitiveType() == CSSUnitType::Px;
                 },
                 [](const CSS::BorderImageWidth::Value::LengthPercentage::Raw& raw) {
                     return raw.unit != CSS::PercentageUnit::Percentage;

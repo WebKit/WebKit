@@ -136,81 +136,81 @@ static unsigned NODELETE sortPriority(CSSUnitType unit)
 
     switch (unit) {
     // number
-    case CSSUnitType::CSS_NUMBER:
-    case CSSUnitType::CSS_INTEGER:      return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Number:
+    case CSSUnitType::Integer:      return SORT_PRIORITY_NEXT;
     // percentage
-    case CSSUnitType::CSS_PERCENTAGE:   return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Percentage:   return SORT_PRIORITY_NEXT;
 
     // dimension (by unit, ordered ASCII case-insensitively)
-    case CSSUnitType::CSS_CAP:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_CH:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_CM:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_CQB:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_CQH:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_CQI:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_CQMAX:        return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_CQMIN:        return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_CQW:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_DEG:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_DPCM:         return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_DPI:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_DPPX:         return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_DVB:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_DVH:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_DVI:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_DVMAX:        return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_DVMIN:        return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_DVW:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_EM:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_EX:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_FR:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_GRAD:         return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_HZ:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_IC:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_IN:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_KHZ:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_LH:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_LVB:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_LVH:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_LVI:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_LVMAX:        return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_LVMIN:        return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_LVW:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_MM:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_MS:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_PC:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_PT:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_PX:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_Q:            return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_RAD:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_RCAP:         return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_RCH:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_REM:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_REX:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_RIC:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_RLH:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_S:            return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_SVB:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_SVH:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_SVI:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_SVMAX:        return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_SVMIN:        return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_SVW:          return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_TURN:         return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_VB:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_VH:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_VI:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_VMAX:         return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_VMIN:         return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_VW:           return SORT_PRIORITY_NEXT;
-    case CSSUnitType::CSS_X:            return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Cap:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Ch:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Cm:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Cqb:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Cqh:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Cqi:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Cqmax:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Cqmin:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Cqw:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Deg:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Dpcm:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Dpi:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Dppx:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Dvb:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Dvh:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Dvi:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Dvmax:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Dvmin:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Dvw:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Em:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Ex:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Fr:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Grad:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Hz:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Ic:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::In:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Khz:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Lh:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Lvb:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Lvh:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Lvi:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Lvmax:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Lvmin:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Lvw:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Mm:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Ms:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Pc:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Pt:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Px:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Q:            return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Rad:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Rcap:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Rch:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Rem:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Rex:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Ric:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Rlh:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::S:            return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Svb:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Svh:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Svi:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Svmax:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Svmin:        return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Svw:          return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Turn:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Vb:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Vh:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Vi:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Vmax:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Vmin:         return SORT_PRIORITY_NEXT;
+    case CSSUnitType::Vw:           return SORT_PRIORITY_NEXT;
+    case CSSUnitType::X:            return SORT_PRIORITY_NEXT;
 
     // Non-numeric types are not supported.
-    case CSSUnitType::CSS_CALC:
-    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:
-    case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
-    case CSSUnitType::CSS_QUIRKY_EM:
-    case CSSUnitType::CSS_UNKNOWN:
+    case CSSUnitType::Calc:
+    case CSSUnitType::CalcPercentageWithAngle:
+    case CSSUnitType::CalcPercentageWithLength:
+    case CSSUnitType::QuirkyEm:
+    case CSSUnitType::Unknown:
         break;
     }
 

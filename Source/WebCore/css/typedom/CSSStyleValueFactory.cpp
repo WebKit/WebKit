@@ -231,7 +231,7 @@ static ExceptionOr<Ref<CSSStyleValue>> reifyValue(const T& numeric)
         [&](const typename T::Raw& raw) -> ExceptionOr<Ref<CSSStyleValue>> {
             if constexpr (T::category == CSS::Category::Integer) {
                 // Integer is special cased to resolved the same as <number>.
-                return upcast<CSSStyleValue>(CSSUnitValue::create(raw.value, CSSUnitType::CSS_NUMBER));
+                return upcast<CSSStyleValue>(CSSUnitValue::create(raw.value, CSSUnitType::Number));
             } else {
                 return upcast<CSSStyleValue>(CSSUnitValue::create(raw.value, toCSSUnitType(raw.unit)));
             }
@@ -249,9 +249,9 @@ static ExceptionOr<Ref<CSSStyleValue>> reifyValue(const CSSPrimitiveValue& primi
             return upcast<CSSStyleValue>(result.releaseReturnValue());
         },
         [&](const CSSPrimitiveValue::Raw& raw) -> ExceptionOr<Ref<CSSStyleValue>> {
-            if (raw.unit == CSSUnitType::CSS_INTEGER) {
+            if (raw.unit == CSSUnitType::Integer) {
                 // Integer is special cased to resolved the same as <number>.
-                return upcast<CSSStyleValue>(CSSUnitValue::create(raw.value, CSSUnitType::CSS_NUMBER));
+                return upcast<CSSStyleValue>(CSSUnitValue::create(raw.value, CSSUnitType::Number));
             } else {
                 return upcast<CSSStyleValue>(CSSUnitValue::create(raw.value, raw.unit));
             }

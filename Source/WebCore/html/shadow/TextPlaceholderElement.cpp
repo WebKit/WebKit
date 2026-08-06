@@ -50,8 +50,8 @@ TextPlaceholderElement::TextPlaceholderElement(Document& document, const LayoutS
     setInlineStyleProperty(CSSPropertyVerticalAlign, CSSValueTop);
     setInlineStyleProperty(CSSPropertyVisibility, CSSValueHidden, IsImportant::Yes);
     if (size.width())
-        setInlineStyleProperty(CSSPropertyWidth, size.width(), CSSUnitType::CSS_PX);
-    setInlineStyleProperty(CSSPropertyHeight, size.height(), CSSUnitType::CSS_PX);
+        setInlineStyleProperty(CSSPropertyWidth, size.width(), CSSUnitType::Px);
+    setInlineStyleProperty(CSSPropertyHeight, size.height(), CSSUnitType::Px);
 }
 
 auto TextPlaceholderElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> NeedsPostConnectionSteps

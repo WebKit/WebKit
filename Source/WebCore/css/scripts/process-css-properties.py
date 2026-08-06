@@ -290,11 +290,11 @@ class NumericLiteral(object):
     @property
     def cpp_unit_type(self):
         if self.kind == NumericLiteral.Kind.NUMBER:
-            return f"CSSUnitType::CSS_NUMBER"
+            return f"CSSUnitType::Number"
         elif self.kind == NumericLiteral.Kind.PERCENTAGE:
-            return f"CSSUnitType::CSS_PERCENTAGE"
+            return f"CSSUnitType::Percentage"
         else:
-            return f"CSSUnitType::CSS_{self.kind.value.upper()}"
+            return f"CSSUnitType::{self.kind.name.capitalize()}"
 
     @property
     def cpp_literal(self):

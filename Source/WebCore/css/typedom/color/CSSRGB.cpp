@@ -134,7 +134,7 @@ ExceptionOr<RectifiedCSSColorRGBComp> CSSRGB::rectifyCSSColorRGBComp(CSSColorRGB
 {
     return switchOn(WTF::move(component),
         [](double value) -> ExceptionOr<RectifiedCSSColorRGBComp> {
-            return { Ref<CSSNumericValue> { CSSUnitValue::create(value * 100, CSSUnitType::CSS_PERCENTAGE) } };
+            return { Ref<CSSNumericValue> { CSSUnitValue::create(value * 100, CSSUnitType::Percentage) } };
         },
         [](Ref<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorRGBComp> {
             if (numericValue->type().matchesNumber() || numericValue->type().matches<CSSNumericBaseType::Percent>())

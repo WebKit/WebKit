@@ -44,7 +44,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyID::CSSPropertyTestUsingSharedRule:
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:
-        return CSSPrimitiveValue::Raw { CSSUnitType::CSS_NUMBER, 0 };
+        return CSSPrimitiveValue::Raw { CSSUnitType::Number, 0 };
     case CSSPropertyID::CSSPropertyTestColor:
     case CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute:
     case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:

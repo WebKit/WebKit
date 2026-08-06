@@ -35,7 +35,7 @@ namespace CSSPropertyParserHelpers {
 struct LengthValidator {
     static constexpr std::optional<CSS::LengthUnit> validate(CSSUnitType unitType, CSS::PropertyParserState& state, CSSPropertyParserOptions options)
     {
-        if (unitType == CSSUnitType::CSS_QUIRKY_EM && !isUASheetBehavior(options.overrideParserMode.value_or(state.context.mode)))
+        if (unitType == CSSUnitType::QuirkyEm && !isUASheetBehavior(options.overrideParserMode.value_or(state.context.mode)))
             return std::nullopt;
         auto result = CSS::UnitTraits<CSS::LengthUnit>::validate(unitType);
         if (result && state.absoluteLengthUnitsOnly && CSS::conversionToCanonicalUnitRequiresConversionData(*result))

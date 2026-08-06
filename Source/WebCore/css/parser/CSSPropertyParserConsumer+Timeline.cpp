@@ -173,7 +173,7 @@ RefPtr<CSSValue> consumeSingleAnimationRange(CSSParserTokenRange& range, CSS::Pr
                 return false;
             },
             [type](const CSSPrimitiveValue::Raw& raw) {
-                if (raw.unit != CSSUnitType::CSS_PERCENTAGE)
+                if (raw.unit != CSSUnitType::Percentage)
                     return false;
                 if (type == Style::SingleAnimationRangeType::Start)
                     return raw.value == 0;

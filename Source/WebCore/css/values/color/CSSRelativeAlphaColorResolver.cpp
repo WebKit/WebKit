@@ -46,7 +46,7 @@ WebCore::Color resolve(const RelativeAlphaColorResolver& resolver, const CSSToLe
     auto originAlpha = resolver.origin.alphaAsFloat();
 
     const CSSCalcSymbolTable symbolTable {
-        { std::get<0>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originAlpha * std::get<0>(Descriptor::components).symbolMultiplier },
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originAlpha * std::get<0>(Descriptor::components).symbolMultiplier },
     };
 
     // Replace symbol value (e.g. CSSValueAlpha) to its corresponding value.
@@ -74,7 +74,7 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeAlphaColorResolver&
     auto originAlpha = resolver.origin.alphaAsFloat();
 
     const CSSCalcSymbolTable symbolTable {
-        { std::get<0>(Descriptor::components).symbol, CSSUnitType::CSS_NUMBER, originAlpha * std::get<0>(Descriptor::components).symbolMultiplier },
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originAlpha * std::get<0>(Descriptor::components).symbolMultiplier },
     };
 
     // Replace any symbol value (e.g. CSSValueAlpha) with its corresponding value.

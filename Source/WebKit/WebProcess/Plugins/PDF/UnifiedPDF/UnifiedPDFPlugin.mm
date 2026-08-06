@@ -423,7 +423,7 @@ void UnifiedPDFPlugin::sizeToFitContentsIfNeeded()
 
     auto size = contentsSize();
     Ref pluginElement = m_view->pluginElement();
-    pluginElement->setInlineStyleProperty(CSSPropertyHeight, size.height(), CSSUnitType::CSS_PX);
+    pluginElement->setInlineStyleProperty(CSSPropertyHeight, size.height(), CSSUnitType::Px);
 }
 
 void UnifiedPDFPlugin::incrementalLoadingDidProgress()

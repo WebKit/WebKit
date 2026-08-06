@@ -55,7 +55,7 @@ auto convertNumericFromCSSValue(const CSSToLengthConversionData& conversionData,
                 if (auto unit = CSSPercentageRaw::UnitTraits::validate(raw.unit))
                     return toStyle(CSSPercentageRaw(*unit, raw.value), conversionData, std::forward<Rest>(rest)...);
             } else if constexpr (StyleType::category == CSS::Category::Integer || StyleType::category == CSS::Category::Number) {
-                if (raw.unit == CSSUnitType::CSS_NUMBER || raw.unit == CSSUnitType::CSS_INTEGER)
+                if (raw.unit == CSSUnitType::Number || raw.unit == CSSUnitType::Integer)
                     return toStyle(CSSRaw(raw.value), conversionData, std::forward<Rest>(rest)...);
             } else {
                 if (auto unit = CSSRaw::UnitTraits::validate(raw.unit))
@@ -92,7 +92,7 @@ auto convertNumericFromCSSValue(BuilderState& state, const CSSPrimitiveValue& va
                 if (auto unit = CSSPercentageRaw::UnitTraits::validate(raw.unit))
                     return toStyle(CSSPercentageRaw(*unit, raw.value), state, std::forward<Rest>(rest)...);
             } else if constexpr (StyleType::category == CSS::Category::Integer || StyleType::category == CSS::Category::Number) {
-                if (raw.unit == CSSUnitType::CSS_NUMBER || raw.unit == CSSUnitType::CSS_INTEGER)
+                if (raw.unit == CSSUnitType::Number || raw.unit == CSSUnitType::Integer)
                     return toStyle(CSSRaw(raw.value), state, std::forward<Rest>(rest)...);
             } else {
                 if (auto unit = CSSRaw::UnitTraits::validate(raw.unit))

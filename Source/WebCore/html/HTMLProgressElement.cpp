@@ -136,7 +136,7 @@ void HTMLProgressElement::didChangeElementValue()
     double percentageValue = std::max(0.0, position() * 100);
 
     if (RefPtr valueElement = m_valueElement)
-        valueElement->setInlineStyleProperty(CSSPropertyInlineSize, percentageValue, CSSUnitType::CSS_PERCENTAGE);
+        valueElement->setInlineStyleProperty(CSSPropertyInlineSize, percentageValue, CSSUnitType::Percentage);
 
     if (RefPtr fillElement = m_fillElement) {
         fillElement->setInlineStyleProperty(CSSPropertyTransform, makeString("translate(-"_s, 100 - percentageValue, "%, 0)"_s));

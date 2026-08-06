@@ -1070,7 +1070,7 @@ String ShorthandSerializer::serializeFont() const
                 return std::nullopt;
             },
             [](const CSSPrimitiveValue::Raw& raw) -> std::optional<CSSValueID> {
-                if (raw.unit != CSSUnitType::CSS_PERCENTAGE)
+                if (raw.unit != CSSUnitType::Percentage)
                     return std::nullopt;
                 return fontWidthKeyword(raw.value);
             }
@@ -1549,7 +1549,7 @@ String ShorthandSerializer::serializeSingleAnimationRange(const CSSValue& value,
                 return false;
             },
             [type](const CSSPrimitiveValue::Raw& raw) {
-                if (raw.unit != CSSUnitType::CSS_PERCENTAGE)
+                if (raw.unit != CSSUnitType::Percentage)
                     return false;
                 if (type == Style::SingleAnimationRangeType::Start)
                     return raw.value == 0;

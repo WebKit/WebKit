@@ -115,8 +115,8 @@ void HTMLOptGroupElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
     Ref labelContainer = HTMLDivElement::create(document);
     ScriptDisallowedScope::EventAllowedScope labelContainerScope { labelContainer };
-    labelContainer->setInlineStyleProperty(CSSPropertyPaddingInlineStart, 0.5, CSSUnitType::CSS_EM);
-    labelContainer->setInlineStyleProperty(CSSPropertyPaddingInlineEnd, 0.5, CSSUnitType::CSS_EM);
+    labelContainer->setInlineStyleProperty(CSSPropertyPaddingInlineStart, 0.5, CSSUnitType::Em);
+    labelContainer->setInlineStyleProperty(CSSPropertyPaddingInlineEnd, 0.5, CSSUnitType::Em);
     m_labelContainer = labelContainer;
     root.appendChild(WTF::move(labelContainer));
 

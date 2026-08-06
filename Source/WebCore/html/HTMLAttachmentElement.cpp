@@ -652,10 +652,10 @@ Node::NeedsPostConnectionSteps HTMLAttachmentElement::insertionSteps(InsertionTy
 {
     auto result = HTMLElement::insertionSteps(type, ancestor);
     if (isWideLayout()) {
-        setInlineStyleProperty(CSSPropertyMarginLeft, 1, CSSUnitType::CSS_PX);
-        setInlineStyleProperty(CSSPropertyMarginRight, 1, CSSUnitType::CSS_PX);
-        setInlineStyleProperty(CSSPropertyMarginTop, 1, CSSUnitType::CSS_PX);
-        setInlineStyleProperty(CSSPropertyMarginBottom, 1, CSSUnitType::CSS_PX);
+        setInlineStyleProperty(CSSPropertyMarginLeft, 1, CSSUnitType::Px);
+        setInlineStyleProperty(CSSPropertyMarginRight, 1, CSSUnitType::Px);
+        setInlineStyleProperty(CSSPropertyMarginTop, 1, CSSUnitType::Px);
+        setInlineStyleProperty(CSSPropertyMarginBottom, 1, CSSUnitType::Px);
     }
 
     Ref document = this->document();

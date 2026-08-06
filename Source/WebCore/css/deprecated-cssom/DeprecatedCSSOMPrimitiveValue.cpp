@@ -159,24 +159,24 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
 {
     auto convertUnitType = [](CSSUnitType unitType) -> unsigned short {
         switch (unitType) {
-        case CSSUnitType::CSS_CM:                           return CSS_CM;
-        case CSSUnitType::CSS_DEG:                          return CSS_DEG;
-        case CSSUnitType::CSS_EM:                           return CSS_EMS;
-        case CSSUnitType::CSS_EX:                           return CSS_EXS;
-        case CSSUnitType::CSS_GRAD:                         return CSS_GRAD;
-        case CSSUnitType::CSS_HZ:                           return CSS_HZ;
-        case CSSUnitType::CSS_INTEGER:                      return CSS_NUMBER;
-        case CSSUnitType::CSS_IN:                           return CSS_IN;
-        case CSSUnitType::CSS_KHZ:                          return CSS_KHZ;
-        case CSSUnitType::CSS_MM:                           return CSS_MM;
-        case CSSUnitType::CSS_MS:                           return CSS_MS;
-        case CSSUnitType::CSS_NUMBER:                       return CSS_NUMBER;
-        case CSSUnitType::CSS_PC:                           return CSS_PC;
-        case CSSUnitType::CSS_PERCENTAGE:                   return CSS_PERCENTAGE;
-        case CSSUnitType::CSS_PT:                           return CSS_PT;
-        case CSSUnitType::CSS_PX:                           return CSS_PX;
-        case CSSUnitType::CSS_RAD:                          return CSS_RAD;
-        case CSSUnitType::CSS_S:                            return CSS_S;
+        case CSSUnitType::Cm:                           return CSS_CM;
+        case CSSUnitType::Deg:                          return CSS_DEG;
+        case CSSUnitType::Em:                           return CSS_EMS;
+        case CSSUnitType::Ex:                           return CSS_EXS;
+        case CSSUnitType::Grad:                         return CSS_GRAD;
+        case CSSUnitType::Hz:                           return CSS_HZ;
+        case CSSUnitType::Integer:                      return CSS_NUMBER;
+        case CSSUnitType::In:                           return CSS_IN;
+        case CSSUnitType::Khz:                          return CSS_KHZ;
+        case CSSUnitType::Mm:                           return CSS_MM;
+        case CSSUnitType::Ms:                           return CSS_MS;
+        case CSSUnitType::Number:                       return CSS_NUMBER;
+        case CSSUnitType::Pc:                           return CSS_PC;
+        case CSSUnitType::Percentage:                   return CSS_PERCENTAGE;
+        case CSSUnitType::Pt:                           return CSS_PT;
+        case CSSUnitType::Px:                           return CSS_PX;
+        case CSSUnitType::Rad:                          return CSS_RAD;
+        case CSSUnitType::S:                            return CSS_S;
 
         // All other, including newer types, should return UNKNOWN.
         default:                                            return CSS_UNKNOWN;
@@ -251,23 +251,23 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
 
     auto requestedUnitType = [&] -> std::optional<CSSUnitType> {
         switch (unitType) {
-        case CSS_CM:            return CSSUnitType::CSS_CM;
-        case CSS_DEG:           return CSSUnitType::CSS_DEG;
-        case CSS_EMS:           return CSSUnitType::CSS_EM;
-        case CSS_EXS:           return CSSUnitType::CSS_EX;
-        case CSS_GRAD:          return CSSUnitType::CSS_GRAD;
-        case CSS_HZ:            return CSSUnitType::CSS_HZ;
-        case CSS_IN:            return CSSUnitType::CSS_IN;
-        case CSS_KHZ:           return CSSUnitType::CSS_KHZ;
-        case CSS_MM:            return CSSUnitType::CSS_MM;
-        case CSS_MS:            return CSSUnitType::CSS_MS;
-        case CSS_NUMBER:        return CSSUnitType::CSS_NUMBER;
-        case CSS_PC:            return CSSUnitType::CSS_PC;
-        case CSS_PERCENTAGE:    return CSSUnitType::CSS_PERCENTAGE;
-        case CSS_PT:            return CSSUnitType::CSS_PT;
-        case CSS_PX:            return CSSUnitType::CSS_PX;
-        case CSS_RAD:           return CSSUnitType::CSS_RAD;
-        case CSS_S:             return CSSUnitType::CSS_S;
+        case CSS_CM:            return CSSUnitType::Cm;
+        case CSS_DEG:           return CSSUnitType::Deg;
+        case CSS_EMS:           return CSSUnitType::Em;
+        case CSS_EXS:           return CSSUnitType::Ex;
+        case CSS_GRAD:          return CSSUnitType::Grad;
+        case CSS_HZ:            return CSSUnitType::Hz;
+        case CSS_IN:            return CSSUnitType::In;
+        case CSS_KHZ:           return CSSUnitType::Khz;
+        case CSS_MM:            return CSSUnitType::Mm;
+        case CSS_MS:            return CSSUnitType::Ms;
+        case CSS_NUMBER:        return CSSUnitType::Number;
+        case CSS_PC:            return CSSUnitType::Pc;
+        case CSS_PERCENTAGE:    return CSSUnitType::Percentage;
+        case CSS_PT:            return CSSUnitType::Pt;
+        case CSS_PX:            return CSSUnitType::Px;
+        case CSS_RAD:           return CSSUnitType::Rad;
+        case CSS_S:             return CSSUnitType::S;
         default:                return std::nullopt;
         }
     }();
@@ -295,19 +295,19 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
         // Cannot convert between numbers and percent.
         if (sourceCategory == CSSUnitCategory::Percent)
             return Exception { ExceptionCode::InvalidAccessError };
-        // We interpret conversion to CSSUnitType::CSS_NUMBER as conversion to a canonical unit in this value's category.
+        // We interpret conversion to CSSUnitType::Number as conversion to a canonical unit in this value's category.
         targetUnitType = canonicalUnitTypeForCategory(sourceCategory);
-        if (targetUnitType == CSSUnitType::CSS_UNKNOWN)
+        if (targetUnitType == CSSUnitType::Unknown)
             return Exception { ExceptionCode::InvalidAccessError };
     }
 
-    if (sourceUnitType == CSSUnitType::CSS_NUMBER || sourceUnitType == CSSUnitType::CSS_INTEGER) {
+    if (sourceUnitType == CSSUnitType::Number || sourceUnitType == CSSUnitType::Integer) {
         // Cannot convert between numbers and percent.
         if (targetCategory == CSSUnitCategory::Percent)
             return Exception { ExceptionCode::InvalidAccessError };
-        // We interpret conversion from CSSUnitType::CSS_NUMBER in the same way as CSSParser::validUnit() while using non-strict mode.
+        // We interpret conversion from CSSUnitType::Number in the same way as CSSParser::validUnit() while using non-strict mode.
         sourceUnitType = canonicalUnitTypeForCategory(targetCategory);
-        if (sourceUnitType == CSSUnitType::CSS_UNKNOWN)
+        if (sourceUnitType == CSSUnitType::Unknown)
             return Exception { ExceptionCode::InvalidAccessError };
     }
 

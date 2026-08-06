@@ -79,7 +79,7 @@ RefPtr<CSSValue> consumeOverflowClipMargin(CSSParserTokenRange& range, CSS::Prop
         list.append(length.releaseNonNull());
 
     if (list.isEmpty())
-        return { CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX) };
+        return { CSSPrimitiveValue::create(0, CSSUnitType::Px) };
 
     if (list.size() == 1)
         return WTF::move(list[0]);

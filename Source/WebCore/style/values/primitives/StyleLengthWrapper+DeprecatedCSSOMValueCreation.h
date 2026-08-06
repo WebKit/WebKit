@@ -47,7 +47,7 @@ auto deprecatedConvertLengthWrapperFromCSSValue(const CSSPrimitiveValue& value, 
         [&](const CSSPrimitiveValue::Raw& raw) -> std::optional<StyleType> {
             if (auto unit = CSSPercentageRaw::UnitTraits::validate(raw.unit))
                 return StyleType { deprecatedToStyle(CSSPercentageRaw(*unit, raw.value), std::forward<Rest>(rest)...) };
-            if (raw.unit == CSSUnitType::CSS_PX)
+            if (raw.unit == CSSUnitType::Px)
                 return StyleType { deprecatedToStyle(CSSDimensionRaw(CSS::LengthUnit::Px, raw.value), std::forward<Rest>(rest)...) };
 
             return std::nullopt;

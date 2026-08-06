@@ -122,7 +122,7 @@ void HTMLMarqueeElement::collectPresentationalHintsForAttribute(const QualifiedN
         break;
     case AttributeNames::scrolldelayAttr:
         if (!value.isEmpty())
-            addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitMarqueeSpeed, limitToOnlyHTMLNonNegative(value, defaultScrollDelay), CSSUnitType::CSS_MS);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitMarqueeSpeed, limitToOnlyHTMLNonNegative(value, defaultScrollDelay), CSSUnitType::Ms);
         break;
     case AttributeNames::loopAttr:
         if (!value.isEmpty()) {
