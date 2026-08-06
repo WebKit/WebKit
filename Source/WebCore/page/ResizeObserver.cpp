@@ -85,7 +85,7 @@ void ResizeObserver::observeInternal(Element& target, const ResizeObserverBoxOpt
     }
 
     auto& observerData = target.ensureResizeObserverData();
-    observerData.observers.append(*this);
+    observerData.observers.add(*this);
 
     m_observations.append(ResizeObservation::create(target, boxOptions));
 
@@ -244,7 +244,7 @@ bool ResizeObserver::removeTarget(Element& target)
         return false;
 
     auto& observers = observerData->observers;
-    return observers.removeFirst(this);
+    return observers.remove(this);
 }
 
 void ResizeObserver::removeAllTargets()

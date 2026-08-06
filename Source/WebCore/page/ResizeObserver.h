@@ -30,6 +30,7 @@
 #include "ResizeObserverCallback.h"
 #include <wtf/Lock.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -46,7 +47,7 @@ struct ResizeObserverOptions;
 
 struct ResizeObserverData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ResizeObserverData);
-    Vector<WeakPtr<ResizeObserver>> observers;
+    WeakHashSet<ResizeObserver> observers;
 };
 
 using NativeResizeObserverCallback = void (*)(const Vector<Ref<ResizeObserverEntry>>&, ResizeObserver&);

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<title>Resize Observer: don't crash when an element is observed multiple times</title>
+
+<script src="../resources/gc.js"></script>
+
+<p>This tests passes if it does not crash.</p>
+<input id="input">
+
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  let observer = new ResizeObserver(() => {});
+
+  observer.observe(input);
+  observer.observe(input, { box: "border-box" });
+  observer.observe(input, { box: "border-box" });
+
+  // GC the observer and <input>.
+  observer = null;
+  input.remove();
+  gc();
+</script>
+</html>
