@@ -645,9 +645,40 @@ class Port(object):
 
     def skipped_layout_tests(self, device_type=None):
         """Returns tests skipped outside of the TestExpectations files."""
-        return set(self._tests_for_other_platforms(device_type=device_type)) | set(
+        skipped = set(self._tests_for_other_platforms(device_type=device_type)) | set(
             self.get_option("ignore_tests", [])
         )
+        # LayoutTests/sar3/ runs only when WebKitTestRunner was built with the
+        # security acceleration release 3 (SAR3) feature (see _sar3_tests_enabled).
+        # When the feature is absent, skip the whole directory regardless of any
+        # sar3/TestExpectations file. Test for the directory first so the feature
+        # probe -- which needs the built driver and can fail when the checkout is
+        # not a real build tree -- runs only when there is a sar3/ to gate.
+        sar3_dir = self._filesystem.join(self.layout_tests_dir(), "sar3")
+        if self._filesystem.isdir(sar3_dir) and not self._sar3_tests_enabled():
+            skipped.add("sar3")
+        return skipped
+
+    # Whole Itanium mangled name of WTR::SAR3Enabled in WebKitTestRunner (verified
+    # empirically). Matched as a substring of raw `nm` output; Mach-O nm prints it
+    # as __ZN3WTR11SAR3EnabledE. Never demangled, never the bare identifier.
+    SAR3_GATE_SYMBOL = "_ZN3WTR11SAR3EnabledE"
+
+    @memoized
+    def _sar3_tests_enabled(self):
+        """True iff the built WebKitTestRunner contains the SAR3 gate symbol.
+
+        The symbol is compiled out when RC_REMOVE_SEC_ACCEL_3 is defined. Any
+        probe failure (binary missing/not built, nm/xcrun error, empty output)
+        is treated as absent, so LayoutTests/sar3/ is skipped."""
+        driver_path = self._path_to_driver()
+        if not driver_path or not self._filesystem.exists(driver_path):
+            return False
+        try:
+            output = self._executive.run_command(["/usr/bin/xcrun", "nm", driver_path])
+        except (ScriptError, OSError):
+            return False
+        return self.SAR3_GATE_SYMBOL in output
 
     @memoized
     def skipped_perf_tests(self):
@@ -1106,7 +1137,17 @@ class Port(object):
         return [self._filesystem.join(self._webkit_baseline_path(d), 'TestExpectations') for d in search_paths]
 
     def expectations_files(self, device_type=None):
-        return [self.path_to_generic_test_expectations_file()] + self._port_specific_expectations_files(device_type=device_type)
+        files = [self.path_to_generic_test_expectations_file()] + self._port_specific_expectations_files(device_type=device_type)
+        # When the sar3 feature is present in the driver, honor per-test overrides
+        # in LayoutTests/sar3/TestExpectations. Appended last => highest priority
+        # among cascade files. Test for the directory first so the feature probe --
+        # which needs the built driver and can fail when the checkout is not a real
+        # build tree -- runs only when there is a sar3/ directory (and
+        # expectations_dict() filters a non-existent path anyway).
+        sar3_dir = self._filesystem.join(self.layout_tests_dir(), "sar3")
+        if self._filesystem.isdir(sar3_dir) and self._sar3_tests_enabled():
+            files.append(self._filesystem.join(sar3_dir, "TestExpectations"))
+        return files
 
     def repository_paths(self):
         """Returns a list of (repository_name, repository_path) tuples of its depending code base.
