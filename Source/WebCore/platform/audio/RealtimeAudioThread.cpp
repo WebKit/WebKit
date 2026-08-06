@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2025 Apple Inc. All rights reserved.
- * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,32 +31,31 @@
 
 namespace WebCore {
 
-static bool shouldCreateRealtimeThread()
-{
-#if HAVE(SCHEDULING_POLICIES)
-    static constexpr uint8_t maximumConcurrentRealtimeThreads = 3;
-
-    uint8_t numberOfRealtimeThreads = 0;
-    for (Ref thread : Thread::allThreads()) {
-        if (thread->isRealtime())
-            ++numberOfRealtimeThreads;
-    }
-
-    return numberOfRealtimeThreads < maximumConcurrentRealtimeThreads;
-#else
-    return false;
-#endif
-}
+static constexpr uint8_t s_maximumConcurrentRealtimeThreads { 3 };
 
 Ref<Thread> createMaybeRealtimeAudioThread(ASCIILiteral threadName, Function<void()>&& entryPoint, Seconds rawRenderingQuantumDuration)
 {
-    bool shouldCreateRealtime = shouldCreateRealtimeThread();
-    auto schedulingPolicy = shouldCreateRealtime ? Thread::SchedulingPolicy::Realtime : Thread::SchedulingPolicy::Other;
+    // Create a thread with Realtime scheduling, so that this thread does not become deprioritized
+    // during heavy loads. Realtime threads have a runtime cost, so ensure no more than three realtime
+    // audio threads can be created simultaneously.
+    // FIXME: Coalesce these threads to allow a single realtime thread to service every audio instance.
+
+    bool shouldCreateRealtimeThread = [] {
+        uint8_t numberOfRealtimeThreads = 0;
+        for (Ref thread : Thread::allThreads()) {
+            if (thread->isRealtime())
+                ++numberOfRealtimeThreads;
+        }
+
+        return numberOfRealtimeThreads < s_maximumConcurrentRealtimeThreads;
+    }();
+
+    auto schedulingPolicy = shouldCreateRealtimeThread ? Thread::SchedulingPolicy::Realtime : Thread::SchedulingPolicy::Other;
 
     auto thread = Thread::create(threadName, WTF::move(entryPoint), ThreadType::Audio, Thread::QOS::UserInteractive, schedulingPolicy);
 
 #if HAVE(THREAD_TIME_CONSTRAINTS)
-    if (shouldCreateRealtime) {
+    if (shouldCreateRealtimeThread) {
         // Add thread time constraints to allow the system to ensure contiguous scheduling for this thread
         auto renderingQuantumDuration = MonotonicTime::fromRawSeconds(rawRenderingQuantumDuration.seconds());
         auto renderingTimeConstraint = MonotonicTime::fromRawSeconds(rawRenderingQuantumDuration.seconds() * 2);

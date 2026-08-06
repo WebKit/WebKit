@@ -110,16 +110,10 @@ AutomaticThread::AutomaticThread(const AbstractLocker& locker, Box<Lock> lock, R
 }
 
 AutomaticThread::AutomaticThread(const AbstractLocker& locker, Box<Lock> lock, Ref<AutomaticThreadCondition>&& condition, ThreadType type, Seconds timeout)
-    : AutomaticThread(locker, lock, WTF::move(condition), type, Thread::defaultQOS, timeout)
-{
-}
-
-AutomaticThread::AutomaticThread(const AbstractLocker& locker, Box<Lock> lock, Ref<AutomaticThreadCondition>&& condition, ThreadType type, ThreadQOS qos, Seconds timeout)
     : m_lock(lock)
     , m_condition(WTF::move(condition))
     , m_timeout(timeout)
     , m_threadType(type)
-    , m_qos(qos)
 {
     if (verbose)
         dataLog(RawPointer(this), ": Allocated AutomaticThread.\n");
@@ -251,7 +245,7 @@ void AutomaticThread::start(const AbstractLocker&)
                 }
                 RELEASE_ASSERT(result == WorkResult::Continue);
             }
-        }, m_threadType, m_qos, Thread::defaultSchedulingPolicy, stackSpec)->detach();
+        }, m_threadType, Thread::defaultQOS, Thread::defaultSchedulingPolicy, stackSpec)->detach();
 }
 
 void AutomaticThread::threadDidStart()

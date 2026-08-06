@@ -237,7 +237,7 @@
 #endif
 
 #if OS(LINUX)
-#include <wtf/linux/HighPriorityThreads.h>
+#include <wtf/linux/RealTimeThreads.h>
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
@@ -1071,7 +1071,7 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
         updateIsBroadcastChannelEnabled();
 
 #if OS(LINUX)
-        HighPriorityThreads::singleton().setEnabled(hasVisibleWebPage());
+        RealTimeThreads::singleton().setEnabled(hasVisibleWebPage());
 #endif
     } else
         page->reinitializeWebPage(WTF::move(parameters));
@@ -1101,7 +1101,7 @@ void WebProcess::removeWebPage(PageIdentifier pageID)
     updateIsBroadcastChannelEnabled();
 
 #if OS(LINUX)
-    HighPriorityThreads::singleton().setEnabled(hasVisibleWebPage());
+    RealTimeThreads::singleton().setEnabled(hasVisibleWebPage());
 #endif
 }
 
@@ -1767,7 +1767,7 @@ void WebProcess::pageActivityStateDidChange(PageIdentifier, OptionSet<WebCore::A
     if (changed & WebCore::ActivityState::IsVisible) {
         updateCPUMonitorState(CPUMonitorUpdateReason::VisibilityHasChanged);
 #if OS(LINUX)
-        HighPriorityThreads::singleton().setEnabled(hasVisibleWebPage());
+        RealTimeThreads::singleton().setEnabled(hasVisibleWebPage());
 #endif
     }
 }
