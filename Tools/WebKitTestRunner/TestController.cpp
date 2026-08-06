@@ -134,6 +134,13 @@
 
 namespace WTR {
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+// Presence of this symbol in the WebKitTestRunner binary is the run-webkit-tests
+// gate for LayoutTests/sar3/. Compiled out when RC_REMOVE_SEC_ACCEL_3 is defined.
+// Non-const external linkage plus used/visibility keeps it in the symbol table.
+__attribute__((used, visibility("default"))) bool SAR3Enabled = true;
+#endif
+
 #if OS(WINDOWS)
 static constexpr auto pathSeparator = '\\';
 #else
