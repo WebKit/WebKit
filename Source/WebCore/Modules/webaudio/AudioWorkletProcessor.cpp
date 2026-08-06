@@ -35,6 +35,7 @@
 #include "AudioChannel.h"
 #include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletProcessorConstructionData.h"
+#include "ExceptionDetails.h"
 #include "JSCallbackData.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSValueInWrappedObjectInlines.h"
@@ -298,7 +299,7 @@ void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObjec
     args.append(m_jsParamValues.getValue());
 }
 
-bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException)
+bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, std::optional<ExceptionDetails>& exceptionDetails)
 {
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
@@ -320,16 +321,16 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     buildJSArguments(vm, *globalObject, args, inputs, outputs, paramValuesMap);
     ASSERT(!args.hasOverflowed());
     if (scope.exception()) [[unlikely]] {
-        reportException(globalObject, scope.exception());
-        threwException = true;
+        exceptionDetails.emplace();
+        reportException(globalObject, scope.exception(), nullptr, false, &*exceptionDetails);
         return false;
     }
 
     NakedPtr<JSC::Exception> returnedException;
     auto result = JSCallbackData::invokeCallback(*globalObject, wrapper(), jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"_s), returnedException);
     if (returnedException) {
-        reportException(globalObject, returnedException);
-        threwException = true;
+        exceptionDetails.emplace();
+        reportException(globalObject, returnedException, nullptr, false, &*exceptionDetails);
         return false;
     }
 

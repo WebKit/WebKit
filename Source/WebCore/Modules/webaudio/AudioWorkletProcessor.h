@@ -32,6 +32,7 @@
 #include "AudioArray.h"
 #include "JSValueInWrappedObject.h"
 #include "ScriptWrappable.h"
+#include <optional>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -55,6 +56,8 @@ class ScriptExecutionContext;
 class WebCoreOpaqueRoot;
 template<typename> class ExceptionOr;
 
+struct ExceptionDetails;
+
 class AudioWorkletProcessor : public ScriptWrappable, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioWorkletProcessor> {
     WTF_MAKE_TZONE_ALLOCATED(AudioWorkletProcessor);
 public:
@@ -64,7 +67,7 @@ public:
     const String& name() const LIFETIME_BOUND { return m_name; }
     MessagePort& port() LIFETIME_BOUND { return m_port.get(); }
 
-    bool process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException);
+    bool process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, std::optional<ExceptionDetails>&);
 
     JSValueInWrappedObject& jsInputsWrapper() LIFETIME_BOUND { return m_jsInputs; }
     JSValueInWrappedObject& jsOutputsWrapper() LIFETIME_BOUND { return m_jsOutputs; }

@@ -32,6 +32,8 @@
 
 #include "ActiveDOMObject.h"
 #include "AudioNode.h"
+#include "ExceptionDetails.h"
+#include <optional>
 #include <wtf/Lock.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/ThreadAssertions.h>
@@ -77,8 +79,8 @@ private:
     AudioWorkletNode(BaseAudioContext&, const String& name, AudioWorkletNodeOptions&&, Ref<MessagePort>&&);
 
     enum class ProcessorError { ConstructorError, ProcessError };
-    void fireProcessorErrorOnMainThread(ProcessorError);
-    void didFinishProcessingOnRenderingThread(bool threwException);
+    void fireProcessorErrorOnMainThread(ProcessorError, std::optional<ExceptionDetails>&& = std::nullopt);
+    void didFinishProcessingOnRenderingThread(std::optional<ExceptionDetails>&&);
 
     // AudioNode.
     void process(size_t framesToProcess) final;
