@@ -893,7 +893,7 @@ static ALWAYS_INLINE std::tuple<uint64_t, IndexingType, std::span<EncodedJSValue
 static unsigned sortBucketSort(std::span<EncodedJSValue> sorted, unsigned dst, SortEntryVector& bucket, unsigned depth)
 {
     if (bucket.size() < 32 || depth > 32) {
-        std::ranges::sort(bucket, WTF::codePointCompareLessThan, [](const auto& element) {
+        std::ranges::stable_sort(bucket, WTF::codePointCompareLessThan, [](const auto& element) {
             return std::get<1>(element);
         });
         for (auto& entry : bucket)
