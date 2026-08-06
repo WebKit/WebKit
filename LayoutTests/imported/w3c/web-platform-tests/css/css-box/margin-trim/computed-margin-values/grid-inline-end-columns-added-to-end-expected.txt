@@ -1,4 +1,0 @@
-
-PASS grid > item 1
-PASS grid > item 2
-

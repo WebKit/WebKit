@@ -1901,25 +1901,6 @@ void RenderGrid::applySubgridStretchAlignmentToGridItemIfNeeded(RenderBox& gridI
     }
 }
 
-bool RenderGrid::isChildEligibleForMarginTrim(Style::MarginTrimSide marginTrimSide, const RenderBox& gridItem) const
-{
-    ASSERT(style().marginTrim().contains(marginTrimSide));
-
-    auto isTrimmingBlockDirection = marginTrimSide == Style::MarginTrimSide::BlockStart || marginTrimSide == Style::MarginTrimSide::BlockEnd;
-    auto itemGridSpan = isTrimmingBlockDirection ? currentGrid().gridItemSpanIgnoringCollapsedTracks(gridItem, Style::GridTrackSizingDirection::Rows) : currentGrid().gridItemSpanIgnoringCollapsedTracks(gridItem, Style::GridTrackSizingDirection::Columns);
-    switch (marginTrimSide) {
-    case Style::MarginTrimSide::BlockStart:
-    case Style::MarginTrimSide::InlineStart:
-        return !itemGridSpan.startLine();
-    case Style::MarginTrimSide::BlockEnd:
-        return itemGridSpan.endLine() == currentGrid().numTracks(Style::GridTrackSizingDirection::Rows);
-    case Style::MarginTrimSide::InlineEnd:
-        return itemGridSpan.endLine() == currentGrid().numTracks(Style::GridTrackSizingDirection::Columns);
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool RenderGrid::isBaselineAlignmentForGridItem(const RenderBox& gridItem) const
 {
     return isBaselineAlignmentForGridItem(gridItem, Style::GridTrackSizingDirection::Columns) || isBaselineAlignmentForGridItem(gridItem, Style::GridTrackSizingDirection::Rows);

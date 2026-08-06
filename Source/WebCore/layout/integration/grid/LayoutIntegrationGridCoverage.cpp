@@ -48,7 +48,6 @@ enum class ReasonCollectionMode : bool {
 enum class GridAvoidanceReason : uint8_t {
     GridHasUnsupportedWritingMode,
     GridHasRTLDirection, // http://webkit.org/b/317334
-    GridHasMarginTrim,
     GridNeedsBaseline,
     GridHasOutOfFlowChild,
     GridHasNonVisibleOverflow,
@@ -316,9 +315,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     if (renderGridStyle->writingMode().bidiDirection() == TextDirection::RTL)
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasRTLDirection, reasons, reasonCollectionMode);
-
-    if (!renderGridStyle->marginTrim().isNone())
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasMarginTrim, reasons, reasonCollectionMode);
 
     if (!renderGridStyle->isOverflowVisible())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasNonVisibleOverflow, reasons, reasonCollectionMode);
@@ -717,9 +713,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridHasRTLDirection:
         stream << "grid has RTL direction";
-        break;
-    case GridAvoidanceReason::GridHasMarginTrim:
-        stream << "grid has margin-trim";
         break;
     case GridAvoidanceReason::GridNeedsBaseline:
         stream << "inline grid needs baseline";

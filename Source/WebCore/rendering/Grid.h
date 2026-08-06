@@ -61,7 +61,6 @@ public:
     void setGridItemArea(const RenderBox& item, GridArea);
 
     GridSpan gridItemSpan(const RenderBox&, Style::GridTrackSizingDirection) const;
-    GridSpan gridItemSpanIgnoringCollapsedTracks(const RenderBox&, Style::GridTrackSizingDirection) const;
 
     const GridCell& NODELETE cell(unsigned row, unsigned column) const LIFETIME_BOUND;
 
