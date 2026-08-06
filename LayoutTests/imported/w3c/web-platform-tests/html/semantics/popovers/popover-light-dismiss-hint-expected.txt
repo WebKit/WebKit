@@ -5,6 +5,7 @@ PASS Mixed auto/hint light dismiss behavior, click on innerhint1
 PASS Mixed auto/hint light dismiss behavior, click on innerhint2
 PASS Mixed auto/hint light dismiss behavior, click on hint1
 PASS Mixed auto/hint light dismiss behavior, click on hint2
+PASS Clicking an auto nested inside a hint keeps the whole chain open
 PASS Clicking outside closes all setA
 PASS Clicking outside closes all setB
 PASS Auto can be nested inside hint (nothing should throw, auto demoted to hint)
