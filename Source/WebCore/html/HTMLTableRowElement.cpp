@@ -62,6 +62,14 @@ Ref<HTMLTableRowElement> HTMLTableRowElement::create(const QualifiedName& tagNam
 
 HTMLTableRowElement::~HTMLTableRowElement() = default;
 
+const MutableStyleProperties* HTMLTableRowElement::additionalPresentationalHintStyle() const
+{
+    auto table = findParentTable();
+    if (!table)
+        return nullptr;
+    return table->additionalRowStyle();
+}
+
 static inline RefPtr<HTMLTableElement> NODELETE findTable(const HTMLTableRowElement& row)
 {
     auto* parent = row.parentNode();

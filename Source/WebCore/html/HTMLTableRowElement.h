@@ -52,6 +52,9 @@ public:
 
 private:
     HTMLTableRowElement(const QualifiedName&, Document&);
+
+    // Used to obtain the rule between rows when the table has rules="rows".
+    const MutableStyleProperties* additionalPresentationalHintStyle() const final;
 };
 
 } // namespace

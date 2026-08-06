@@ -402,6 +402,7 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
 
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
+    bool hadRowsRule = m_rulesAttr == TableRules::Rows;
 
     switch (name.nodeName()) {
     case AttributeNames::borderAttr:
@@ -442,10 +443,12 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
 
     if (bordersBefore != cellBorders() || oldPadding != m_padding) {
         m_sharedCellStyle = nullptr;
-        bool cellChanged = false;
+        // A table with no cells at all still has rows whose rule comes and goes with
+        // rules="rows", and setTableCellsChanged only reports a change when it finds a cell.
+        bool changed = hadRowsRule != (m_rulesAttr == TableRules::Rows);
         for (auto& child : childrenOfType<Element>(*this))
-            cellChanged |= setTableCellsChanged(child);
-        if (cellChanged)
+            changed |= setTableCellsChanged(child);
+        if (changed)
             invalidateStyleForSubtree();
     }
 }
@@ -515,8 +518,8 @@ Ref<MutableStyleProperties> HTMLTableElement::createSharedCellStyle() const
     case CellBorders::SolidRowsOnly:
         style->setProperty(CSSPropertyBorderTopWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin);
-        style->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
+        style->setProperty(CSSPropertyBorderTopStyle, CSSValueNone);
+        style->setProperty(CSSPropertyBorderBottomStyle, CSSValueNone);
         style->setProperty(CSSPropertyBorderColor, CSSKeywordValue::create(CSSValueInherit));
         break;
     case CellBorders::Solid:
@@ -574,6 +577,30 @@ const MutableStyleProperties* HTMLTableElement::additionalGroupStyle(bool rows) 
     }
     static NeverDestroyed<Ref<MutableStyleProperties>> columnBorderStyle = makeGroupBorderStyle(false);
     return columnBorderStyle->ptr();
+}
+
+static Ref<MutableStyleProperties> makeRowsRuleStyle()
+{
+    // The block-direction (logical) properties, not the physical top/bottom, so that the rule
+    // between rows follows the writing mode as the spec requires:
+    // table[rules=rows i] > tr { border-block-width: 1px; border-block-style: solid; }
+    // https://html.spec.whatwg.org/multipage/rendering.html#tables-2
+    // No border-color here: html.css already has tr { border-color: inherit }, which resolves
+    // through the row group to the table's border color.
+    auto style = MutableStyleProperties::create();
+    style->setProperty(CSSPropertyBorderBlockStartWidth, CSSValueThin);
+    style->setProperty(CSSPropertyBorderBlockEndWidth, CSSValueThin);
+    style->setProperty(CSSPropertyBorderBlockStartStyle, CSSValueSolid);
+    style->setProperty(CSSPropertyBorderBlockEndStyle, CSSValueSolid);
+    return style;
+}
+
+const MutableStyleProperties* HTMLTableElement::additionalRowStyle() const
+{
+    if (m_rulesAttr != TableRules::Rows)
+        return nullptr;
+    static NeverDestroyed<Ref<MutableStyleProperties>> rowsRuleStyle = makeRowsRuleStyle();
+    return rowsRuleStyle->ptr();
 }
 
 bool HTMLTableElement::isURLAttribute(const Attribute& attribute) const
