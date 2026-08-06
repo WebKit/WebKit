@@ -97,6 +97,15 @@ MediaSampleGStreamer::MediaSampleGStreamer(const FloatSize& presentationSize, Tr
     ensureMediaSampleDebugCategoryInitialized();
 }
 
+void MediaSampleGStreamer::extendToTheBeginning()
+{
+    // Only to be used with the first sample, as a hack for lack of support for edit lists in old GStreamer versions.
+    // See AppendPipeline::appsinkNewSample()
+    ASSERT(m_dts == MediaTime::zeroTime());
+    m_duration += m_pts;
+    m_pts = MediaTime::zeroTime();
+}
+
 Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, const MediaTime& pts, const MediaTime& dts, const MediaTime& duration, const FloatSize& presentationSize, TrackID trackId)
 {
     MediaSampleGStreamer* gstreamerMediaSample = new MediaSampleGStreamer(presentationSize, trackId);

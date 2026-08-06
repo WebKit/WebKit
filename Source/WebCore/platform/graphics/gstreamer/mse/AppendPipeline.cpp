@@ -549,15 +549,23 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
             GST_TIME_ARGS(GST_BUFFER_PTS(buffer)), pts.toString().utf8().data(), GST_TIME_ARGS(GST_BUFFER_DTS(buffer)), dts.toString().utf8().data());
         mediaSample->setTimestamps(pts, dts);
     } else if (!GST_BUFFER_DTS(buffer) && GST_BUFFER_PTS(buffer) > 0
-        && GST_BUFFER_PTS(buffer) <= toGstClockTime(PlatformTimeRanges::timeFudgeFactor())) {
+        && GST_BUFFER_PTS(buffer) <= toGstClockTime(PlatformTimeRanges::timeFudgeFactor())
+        && mediaSample->isSync()) {
         // Because a track presentation time starting at some close to zero, but not exactly zero time can cause unexpected
         // results for applications, we used to extend the duration of this first sample to the left so that it starts at zero.
         // This should be relevant for files that should have an edit list but don't, but we think those files don't exist in
         // the wild anymore. Instead of correcting the sample, we log a warning. If many users report issues that trigger this
         // warning, we can consider to return to the old behaviour.
-        GST_WARNING_OBJECT(pipeline(), "Detected first sample of track '%" PRIu64 "' eligible to be extended to "
-            "start at PTS=0 %" GST_PTR_FORMAT ", but extending the first sample has been deprecated after the addition of "
-            "edit lists support. Please report this video for analysis.", track.trackId, buffer);
+        if (gst_check_version(1, 20, 0)) {
+            GST_WARNING_OBJECT(pipeline(), "Detected first sample of track '%" PRIu64 "' eligible to be extended to "
+            "start at PTS=0 %" GST_PTR_FORMAT ", but extending the first sample has been deprecated for GStreamer 1.20 and above "
+            "after the addition of edit lists support. Please report this video for analysis.", track.trackId, buffer);
+        } else {
+            GST_WARNING_OBJECT(pipeline(), "Detected first sample of track '%" PRIu64 "' eligible to be extended to "
+            "start at PTS=0 %" GST_PTR_FORMAT ". Extending the first sample for GStreamer <1.20 for backwards compatibility. "
+            "Please report this video for analysis.", track.trackId, buffer);
+            mediaSample->extendToTheBeginning();
+        }
     }
 
     GST_TRACE_OBJECT(pipeline(), "append: trackId=%" PRIu64 " PTS=%s DTS=%s DUR=%s presentationSize=%.0fx%.0f",
