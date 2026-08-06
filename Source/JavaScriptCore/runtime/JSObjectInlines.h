@@ -354,7 +354,7 @@ inline bool JSObject::noSideEffectMayHaveNonIndexProperty(VM& vm, PropertyName p
         unsigned attributes;
         if (isValidOffset(structure.get(vm, propertyName, attributes))) [[unlikely]]
             return true;
-        if (hasNonReifiedStaticProperties()) {
+        if (object->hasNonReifiedStaticProperties()) {
             for (auto* ancestorClass = object->classInfo(); ancestorClass; ancestorClass = ancestorClass->parentClass) {
                 if (auto* table = ancestorClass->staticPropHashTable; table && table->entry(propertyName)) [[unlikely]]
                     return true;

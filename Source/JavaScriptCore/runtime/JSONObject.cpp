@@ -1453,11 +1453,16 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             recordFailure("hasPolyProto"_s);
             return;
         }
-        if (structure.storedPrototype() != m_globalObject.objectPrototype()) [[unlikely]] {
-            recordFailure("non-standard object prototype"_s);
-            return;
-        }
-        if (!m_checkedObjectPrototype) {
+        if (structure.storedPrototype() != m_globalObject.objectPrototype()) {
+            if (cell.type() != FinalObjectType) [[unlikely]] {
+                recordFailure("non-final object with non-standard prototype"_s);
+                return;
+            }
+            if (mayHaveToJSON(object)) [[unlikely]] {
+                recordFailure("object may have toJSON"_s);
+                return;
+            }
+        } else if (!m_checkedObjectPrototype) {
             if (mayHaveToJSON(*m_globalObject.objectPrototype())) [[unlikely]] {
                 recordFailure("object prototype may have toJSON"_s);
                 return;
@@ -1511,8 +1516,8 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
 
             // The structure cannot transition mid-iteration on FastStringifier's case.
             // canPerformFastPropertyEnumeration ruled out getters/setters and
-            // the prototype is the original Object.prototype with no toJSON, so
-            // there is no JS observable to mutate the structure.
+            // mayHaveToJSON ruled out a toJSON / getter / Proxy on the prototype chain,
+            // so there is no JS observable to mutate the structure.
             ASSERT(object.structure() == &structure);
 
             JSValue value = object.getDirect(entry.offset());
