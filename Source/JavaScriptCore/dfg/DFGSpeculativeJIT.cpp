@@ -770,17 +770,11 @@ SilentRegisterSavePlan SpeculativeJIT::silentSavePlanForGPR(VirtualRegister spil
         
     if (registerFormat == DataFormatInt32) {
         ASSERT(info.gpr() == source);
-        ASSERT(isJSInt32(info.registerFormat()));
         if (node->hasConstant()) {
             ASSERT(node->isInt32Constant());
             fillAction = SetInt32Constant;
         } else
             fillAction = Load32Payload;
-    } else if (registerFormat == DataFormatBoolean) {
-        RELEASE_ASSERT_NOT_REACHED();
-#if COMPILER_QUIRK(CONSIDERS_UNREACHABLE_CODE)
-        fillAction = DoNothingForFill;
-#endif
     } else if (registerFormat == DataFormatCell) {
         ASSERT(info.gpr() == source);
         if (node->hasConstant()) {
@@ -876,9 +870,6 @@ void SpeculativeJIT::silentSpillImpl(const SilentRegisterSavePlan& plan)
     switch (plan.spillAction()) {
     case DoNothingForSpill:
         break;
-    case Store32Tag:
-        store32(plan.gpr(), highWordFor(plan.node()->virtualRegister()));
-        break;
     case Store32Payload:
         store32(plan.gpr(), lowWordFor(plan.node()->virtualRegister()));
         break;
@@ -911,9 +902,6 @@ void SpeculativeJIT::silentFillImpl(const SilentRegisterSavePlan& plan)
     case SetStrictInt52Constant:
         move(Imm64(plan.node()->asAnyInt()), plan.gpr());
         break;
-    case SetBooleanConstant:
-        move(TrustedImm32(plan.node()->asBoolean()), plan.gpr());
-        break;
     case SetCellConstant:
         ASSERT(plan.node()->constant()->value().isCell());
         loadLinkableConstant(LinkableConstant(*this, plan.node()->constant()->value().asCell()), plan.gpr());
@@ -930,18 +918,6 @@ void SpeculativeJIT::silentFillImpl(const SilentRegisterSavePlan& plan)
     case Load32PayloadBoxInt:
         load32(lowWordFor(plan.node()->virtualRegister()), plan.gpr());
         or64(GPRInfo::numberTagRegister, plan.gpr());
-        break;
-    case Load32PayloadConvertToInt52:
-        load32(lowWordFor(plan.node()->virtualRegister()), plan.gpr());
-        signExtend32ToPtr(plan.gpr(), plan.gpr());
-        lshift64(TrustedImm32(JSValue::int52ShiftAmount), plan.gpr());
-        break;
-    case Load32PayloadSignExtend:
-        load32(lowWordFor(plan.node()->virtualRegister()), plan.gpr());
-        signExtend32ToPtr(plan.gpr(), plan.gpr());
-        break;
-    case Load32Tag:
-        load32(highWordFor(plan.node()->virtualRegister()), plan.gpr());
         break;
     case Load32Payload:
         load32(lowWordFor(plan.node()->virtualRegister()), plan.gpr());
@@ -2758,7 +2734,6 @@ GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(Node* node)
     case DataFormatStorage:
         RELEASE_ASSERT_NOT_REACHED();
 
-    case DataFormatBoolean:
     case DataFormatCell:
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), nullptr);
         return GeneratedOperandTypeUnknown;
@@ -16539,7 +16514,7 @@ void SpeculativeJIT::compileExtractFromTuple(Node* node)
         ASSERT(info.isFormat(DataFormatInt32) || info.isFormat(DataFormatJSInt32));
         break;
     case NodeResultBoolean:
-        ASSERT(info.isFormat(DataFormatBoolean) || info.isFormat(DataFormatJSBoolean));
+        ASSERT(info.isFormat(DataFormatJSBoolean));
         break;
     case NodeResultStorage:
         ASSERT(info.isFormat(DataFormatStorage));

@@ -255,7 +255,7 @@ private:
     Packed<WhichType> m_which;
     
     // For BirthToFill, Fill:
-    //   - The GPR or FPR, or a GPR pair.
+    //   - The GPR or FPR.
     // For BirthToSpill, Spill:
     //   - The virtual register.
     // For MovHintEvent, SetLocalEvent:

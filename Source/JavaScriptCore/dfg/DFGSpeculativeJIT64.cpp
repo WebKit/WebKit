@@ -146,7 +146,6 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
         return gpr;
     }
         
-    case DataFormatBoolean:
     case DataFormatStorage:
     case DataFormatDouble:
     case DataFormatInt52:
@@ -1266,7 +1265,6 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         
     case DataFormatJSDouble:
     case DataFormatCell:
-    case DataFormatBoolean:
     case DataFormatJSCell:
     case DataFormatJSBoolean:
     case DataFormatDouble:
@@ -1508,7 +1506,6 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     case DataFormatInt32:
     case DataFormatJSDouble:
     case DataFormatJSBoolean:
-    case DataFormatBoolean:
     case DataFormatDouble:
     case DataFormatStorage:
     case DataFormatInt52:
@@ -1566,7 +1563,6 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
         return gpr;
     }
 
-    case DataFormatBoolean:
     case DataFormatJSBoolean: {
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
@@ -1704,7 +1700,6 @@ GPRReg SpeculativeJIT::fillSpeculateBigInt32(Edge edge)
         return gpr;
     }
 
-    case DataFormatBoolean:
     case DataFormatJSBoolean:
     case DataFormatJSInt32:
     case DataFormatInt32:

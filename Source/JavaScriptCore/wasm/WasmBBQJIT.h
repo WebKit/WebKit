@@ -74,7 +74,6 @@ public:
     static_assert(maxFunctionLocals < 1 << LocalIndexBits);
 
     static constexpr GPRReg wasmScratchGPR = GPRInfo::nonPreservedNonArgumentGPR0; // Scratch registers to hold temporaries in operations.
-    static constexpr GPRReg wasmScratchGPR2 = InvalidGPRReg;
     static constexpr FPRReg wasmScratchFPR = FPRInfo::nonPreservedNonArgumentFPR0;
 
 #if CPU(X86_64)
@@ -94,8 +93,7 @@ public:
             Gpr = 2,
             Fpr = 3,
             Global = 4,
-            StackArgument = 5,
-            Gpr2 = 6
+            StackArgument = 5
         };
 
         Location()
@@ -110,8 +108,6 @@ public:
 
         static Location NODELETE fromGPR(GPRReg gpr);
 
-        static Location fromGPR2(GPRReg hi, GPRReg lo);
-
         static Location NODELETE fromFPR(FPRReg fpr);
 
         static Location NODELETE fromGlobal(int32_t globalOffset);
@@ -123,8 +119,6 @@ public:
         bool NODELETE isNone() const;
 
         bool NODELETE isGPR() const;
-
-        bool NODELETE isGPR2() const;
 
         bool NODELETE isFPR() const;
 
@@ -156,10 +150,6 @@ public:
         FPRReg NODELETE asFPR() const;
         Reg asReg() const { return isGPR() ? Reg(asGPR()) : Reg(asFPR()); }
 
-        GPRReg NODELETE asGPRlo() const;
-
-        GPRReg NODELETE asGPRhi() const;
-
         void dump(PrintStream& out) const;
 
         bool NODELETE operator==(Location other) const;
@@ -182,10 +172,6 @@ public:
                 Kind m_padFpr;
                 FPRReg m_fpr;
             };
-            struct {
-                Kind m_padGpr2;
-                GPRReg m_gprhi, m_gprlo;
-            };
         };
     };
 
@@ -196,8 +182,6 @@ public:
     static TypeKind NODELETE pointerType();
 
     static bool NODELETE isFloatingPointType(TypeKind type);
-
-    static bool typeNeedsGPR2(TypeKind type);
 
 public:
     static uint32_t sizeOfType(TypeKind type);
@@ -397,18 +381,11 @@ public:
             : m_kind(None)
         { }
 
-        int32_t asI64hi() const;
-
-        int32_t asI64lo() const;
-
         void dump(PrintStream& out) const;
 
     private:
         union {
             int32_t m_i32;
-            struct {
-                int32_t lo, hi;
-            } m_i32_pair;
             int64_t m_i64;
             float m_f32;
             double m_f64;
@@ -637,10 +614,6 @@ public:
                 m_preserved.add(location.asGPR(), IgnoreVectors);
             else if (location.isFPR())
                 m_preserved.add(location.asFPR(), Width::Width128);
-            else if (location.isGPR2()) {
-                m_preserved.add(location.asGPRlo(), IgnoreVectors);
-                m_preserved.add(location.asGPRhi(), IgnoreVectors);
-            }
             initializedPreservedSet(args...);
         }
 

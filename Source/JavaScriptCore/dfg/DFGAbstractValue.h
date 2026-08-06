@@ -447,8 +447,7 @@ struct AbstractValue {
     // complex than the normal Epoch, because it knows how to track clobberStructures() and
     // observeInvalidationPoint() precisely using integer math.
     //
-    // One reason why it's here is to steal the 32-bit hole between m_arrayModes and m_value on
-    // 64-bit systems.
+    // One reason why it's here is to steal the 32-bit hole between m_arrayModes and m_value.
     AbstractValueClobberEpoch m_effectEpoch;
     
     // This is a proven constraint on the possible values that this value can

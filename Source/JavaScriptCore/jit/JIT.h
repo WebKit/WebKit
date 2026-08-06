@@ -332,7 +332,6 @@ namespace JSC {
         ECMAMode ecmaMode(Op);
 
         void emitGetVirtualRegister(VirtualRegister src, JSValueRegs dst);
-        void emitGetVirtualRegisterPayload(VirtualRegister src, RegisterID dst);
         void emitPutVirtualRegister(VirtualRegister dst, JSValueRegs src);
 
         // Machine register variants purely for convenience

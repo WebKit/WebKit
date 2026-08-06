@@ -73,9 +73,6 @@ void ValueRecovery::dumpInContext(PrintStream& out, DumpContext* context) const
     case UnboxedStrictInt52InGPR:
         out.print("strictInt52(", gpr(), ")");
         return;
-    case UnboxedBooleanInGPR:
-        out.print("bool(", gpr(), ")");
-        return;
     case UnboxedCellInGPR:
         out.print("cell(", gpr(), ")");
         return;

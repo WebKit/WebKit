@@ -662,7 +662,6 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case Int32DisplacedInJSStack:
         case CellDisplacedInJSStack:
         case DoubleDisplacedInJSStack:
-        case UnboxedBooleanInGPR:
         case UnboxedInt32InGPR:
         case UnboxedCellInGPR:
         case UnboxedDoubleInFPR:

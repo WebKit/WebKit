@@ -160,7 +160,7 @@ void JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
     resetSP();
 
     emitGetVirtualRegister(bytecode.m_thisValue, thisValueJSR);
-    emitGetVirtualRegisterPayload(bytecode.m_scope, scopeGPR);
+    emitGetVirtualRegister(bytecode.m_scope, scopeGPR);
     loadPtr(addressFor(CallFrameSlot::codeBlock), codeBlockGPR);
     move(TrustedImm32(m_bytecodeIndex.asBits()), bytecodeIndexGPR);
     callOperation(selectCallDirectEvalOperation(bytecode.m_lexicallyScopedFeatures), calleeFrameGPR, scopeGPR, thisValueJSR, codeBlockGPR, bytecodeIndexGPR);
@@ -614,8 +614,8 @@ void JIT::emit_op_async_iterator_next(const JSInstruction* instruction)
     constexpr GPRReg iteratorGPR = preferredArgumentGPR<SlowOperation, 1>();
     constexpr GPRReg driverGPR = preferredArgumentGPR<SlowOperation, 2>();
     constexpr JSValueRegs resumeValueJSR = preferredArgumentJSR<SlowOperation, 3>();
-    emitGetVirtualRegisterPayload(bytecode.m_iterator, iteratorGPR);
-    emitGetVirtualRegisterPayload(bytecode.m_driver, driverGPR);
+    emitGetVirtualRegister(bytecode.m_iterator, iteratorGPR);
+    emitGetVirtualRegister(bytecode.m_driver, driverGPR);
     if (bytecode.m_hasValue)
         emitGetVirtualRegister(resumeValueOperandFor(bytecode), resumeValueJSR);
     else
@@ -677,7 +677,7 @@ void JIT::emit_op_instanceof(const JSInstruction* instruction)
         shuffleJSRs<1>({ GetById::resultJSR }, { Instanceof::Custom::hasInstanceJSR });
         loadGlobalObject(Instanceof::Custom::globalObjectGPR);
         emitGetVirtualRegister(bytecode.m_value, Instanceof::Custom::valueJSR);
-        emitGetVirtualRegisterPayload(bytecode.m_constructor, Instanceof::Custom::constructorGPR);
+        emitGetVirtualRegister(bytecode.m_constructor, Instanceof::Custom::constructorGPR);
 
         addSlowCase(branchPtr(NotEqual,
             Instanceof::Custom::hasInstanceJSR.payloadGPR(),

@@ -59,7 +59,6 @@ enum ValueRecoveryTechnique : uint8_t {
     UnboxedInt32InGPR,
     UnboxedInt52InGPR,
     UnboxedStrictInt52InGPR,
-    UnboxedBooleanInGPR,
     UnboxedCellInGPR,
     InFPR,
     UnboxedDoubleInFPR,
@@ -114,8 +113,6 @@ public:
             result.m_technique = UnboxedInt52InGPR;
         else if (dataFormat == DataFormatStrictInt52)
             result.m_technique = UnboxedStrictInt52InGPR;
-        else if (dataFormat == DataFormatBoolean)
-            result.m_technique = UnboxedBooleanInGPR;
         else if (dataFormat == DataFormatCell)
             result.m_technique = UnboxedCellInGPR;
         else
@@ -218,7 +215,6 @@ public:
         switch (m_technique) {
         case InGPR:
         case UnboxedInt32InGPR:
-        case UnboxedBooleanInGPR:
         case UnboxedCellInGPR:
         case UnboxedInt52InGPR:
         case UnboxedStrictInt52InGPR:
@@ -277,7 +273,6 @@ public:
         case UnboxedStrictInt52InGPR:
         case StrictInt52DisplacedInJSStack:
             return DataFormatStrictInt52;
-        case UnboxedBooleanInGPR:
         case BooleanDisplacedInJSStack:
             return DataFormatBoolean;
         case UnboxedCellInGPR:
@@ -358,7 +353,6 @@ public:
         switch (m_technique) {
         case InGPR:
         case UnboxedInt32InGPR:
-        case UnboxedBooleanInGPR:
         case UnboxedCellInGPR:
         case UnboxedInt52InGPR:
         case UnboxedStrictInt52InGPR:

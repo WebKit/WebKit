@@ -39,11 +39,6 @@
 
 namespace JSC { namespace Wasm { namespace BBQJITImpl {
 
-ALWAYS_INLINE bool BBQJIT::typeNeedsGPR2(TypeKind)
-{
-    return false;
-}
-
 template<typename Functor>
 auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex, Functor&& functor) -> decltype(auto)
 {

@@ -48,7 +48,7 @@ void VariableEventStreamBuilder::logEvent(const VariableEvent& event)
 namespace {
 
 struct MinifiedGenerationInfo {
-    bool filled; // true -> in gpr/fpr/pair, false -> spilled
+    bool filled; // true -> in gpr/fpr, false -> spilled
     bool alive;
     VariableRepresentation u;
     DataFormat format;

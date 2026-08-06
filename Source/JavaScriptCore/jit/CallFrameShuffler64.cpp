@@ -53,9 +53,6 @@ DataFormat CallFrameShuffler::emitStore(
     case UnboxedStrictInt52InGPR:
         m_jit.storePtr(cachedRecovery.recovery().gpr(), address);
         return DataFormatStrictInt52;
-    case UnboxedBooleanInGPR:
-        m_jit.storePtr(cachedRecovery.recovery().gpr(), address);
-        return DataFormatBoolean;
     case UnboxedCellInGPR:
         m_jit.storePtr(cachedRecovery.recovery().gpr(), address);
         return DataFormatCell;
@@ -122,16 +119,6 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
                 dataLog(" into ", cachedRecovery.recovery(), "\n");
             break;
         }
-        case DataFormatBoolean:
-            if (verbose)
-                dataLog("   * Boxing ", cachedRecovery.recovery());
-            m_jit.add32(MacroAssembler::TrustedImm32(JSValue::ValueFalse),
-                cachedRecovery.recovery().gpr());
-            cachedRecovery.setRecovery(
-                ValueRecovery::inGPR(cachedRecovery.recovery().gpr(), DataFormatJS));
-            if (verbose)
-                dataLog(" into ", cachedRecovery.recovery(), "\n");
-            return;
         default:
             return;
         }

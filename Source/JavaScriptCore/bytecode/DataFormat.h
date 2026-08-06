@@ -100,32 +100,6 @@ inline const char* dataFormatToString(DataFormat dataFormat)
     }
 }
 
-inline bool isJSFormat(DataFormat format, DataFormat expectedFormat)
-{
-    ASSERT(expectedFormat & DataFormatJS);
-    return (format | DataFormatJS) == expectedFormat;
-}
-
-inline bool isJSInt32(DataFormat format)
-{
-    return isJSFormat(format, DataFormatJSInt32);
-}
-
-inline bool isJSDouble(DataFormat format)
-{
-    return isJSFormat(format, DataFormatJSDouble);
-}
-
-inline bool isJSCell(DataFormat format)
-{
-    return isJSFormat(format, DataFormatJSCell);
-}
-
-inline bool isJSBoolean(DataFormat format)
-{
-    return isJSFormat(format, DataFormatJSBoolean);
-}
-
 } // namespace JSC
 
 namespace WTF {

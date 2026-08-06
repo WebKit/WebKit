@@ -375,11 +375,6 @@ ALWAYS_INLINE void JIT::emitPutVirtualRegister(VirtualRegister dst, JSValueRegs 
     storeValue(from, addressFor(dst));
 }
 
-ALWAYS_INLINE void JIT::emitGetVirtualRegisterPayload(VirtualRegister src, RegisterID dst)
-{
-    emitGetVirtualRegister(src, JSValueRegs { dst });
-}
-
 ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, RegisterID dst)
 {
     emitGetVirtualRegister(src, JSValueRegs { dst });

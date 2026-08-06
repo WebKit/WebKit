@@ -289,18 +289,18 @@ void JIT::emit_compareUnsignedAndJump(const JSInstruction* instruction, Relation
 void JIT::emit_compareUnsignedAndJumpImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, RelationalCondition condition)
 {
     if (isOperandConstantInt(op2)) {
-        emitGetVirtualRegisterPayload(op1, regT0);
+        emitGetVirtualRegister(op1, regT0);
         jitAssertIsJSInt32(regT0);
         int32_t op2imm = getOperandConstantInt(op2);
         addJump(branch32(condition, regT0, Imm32(op2imm)), target);
     } else if (isOperandConstantInt(op1)) {
-        emitGetVirtualRegisterPayload(op2, regT1);
+        emitGetVirtualRegister(op2, regT1);
         jitAssertIsJSInt32(regT1);
         int32_t op1imm = getOperandConstantInt(op1);
         addJump(branch32(commute(condition), regT1, Imm32(op1imm)), target);
     } else {
-        emitGetVirtualRegisterPayload(op1, regT0);
-        emitGetVirtualRegisterPayload(op2, regT1);
+        emitGetVirtualRegister(op1, regT0);
+        emitGetVirtualRegister(op2, regT1);
         jitAssertIsJSInt32(regT0);
         jitAssertIsJSInt32(regT1);
         addJump(branch32(condition, regT0, regT1), target);
@@ -320,16 +320,16 @@ void JIT::emit_compareUnsigned(const JSInstruction* instruction, RelationalCondi
 void JIT::emit_compareUnsignedImpl(VirtualRegister dst, VirtualRegister op1, VirtualRegister op2, RelationalCondition condition)
 {
     if (isOperandConstantInt(op2)) {
-        emitGetVirtualRegisterPayload(op1, regT0);
+        emitGetVirtualRegister(op1, regT0);
         int32_t op2imm = getOperandConstantInt(op2);
         compare32(condition, regT0, Imm32(op2imm), regT0);
     } else if (isOperandConstantInt(op1)) {
-        emitGetVirtualRegisterPayload(op2, regT0);
+        emitGetVirtualRegister(op2, regT0);
         int32_t op1imm = getOperandConstantInt(op1);
         compare32(commute(condition), regT0, Imm32(op1imm), regT0);
     } else {
-        emitGetVirtualRegisterPayload(op1, regT0);
-        emitGetVirtualRegisterPayload(op2, regT1);
+        emitGetVirtualRegister(op1, regT0);
+        emitGetVirtualRegister(op2, regT1);
         compare32(condition, regT0, regT1, regT0);
     }
     boxBoolean(regT0, jsRegT10);

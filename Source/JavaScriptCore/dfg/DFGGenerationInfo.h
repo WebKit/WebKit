@@ -105,10 +105,6 @@ public:
     {
         initGPR(node, useCount, gpr, DataFormatCell);
     }
-    void initBoolean(Node* node, uint32_t useCount, GPRReg gpr)
-    {
-        initGPR(node, useCount, gpr, DataFormatBoolean);
-    }
     void initDouble(Node* node, uint32_t useCount, FPRReg fpr)
     {
         ASSERT(fpr != InvalidFPRReg);
@@ -192,16 +188,6 @@ public:
         return registerFormat() == expectedFormat || spillFormat() == expectedFormat;
     }
     
-    bool isJSFormat(DataFormat expectedFormat)
-    {
-        return JSC::isJSFormat(registerFormat(), expectedFormat) || JSC::isJSFormat(spillFormat(), expectedFormat);
-    }
-    
-    bool isJSInt32()
-    {
-        return isJSFormat(DataFormatJSInt32);
-    }
-    
     bool isInt52()
     {
         return isFormat(DataFormatInt52);
@@ -210,21 +196,6 @@ public:
     bool isStrictInt52()
     {
         return isFormat(DataFormatStrictInt52);
-    }
-    
-    bool isJSDouble()
-    {
-        return isJSFormat(DataFormatJSDouble);
-    }
-    
-    bool isJSCell()
-    {
-        return isJSFormat(DataFormatJSCell);
-    }
-    
-    bool isJSBoolean()
-    {
-        return isJSFormat(DataFormatJSBoolean);
     }
     
     bool isUnknownJS()
@@ -316,10 +287,6 @@ public:
     void fillStrictInt52(VariableEventStreamBuilder& stream, GPRReg gpr)
     {
         fillGPR(stream, gpr, DataFormatStrictInt52);
-    }
-    void fillBoolean(VariableEventStreamBuilder& stream, GPRReg gpr)
-    {
-        fillGPR(stream, gpr, DataFormatBoolean);
     }
     void fillDouble(VariableEventStreamBuilder& stream, FPRReg fpr)
     {

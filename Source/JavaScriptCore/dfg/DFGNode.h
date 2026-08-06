@@ -1056,11 +1056,6 @@ public:
         return isConstant() && constant()->value().isBoolean();
     }
      
-    bool asBoolean()
-    {
-        return constant()->value().asBoolean();
-    }
-
     bool isUndefinedOrNullConstant()
     {
         return isConstant() && constant()->value().isUndefinedOrNull();

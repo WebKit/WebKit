@@ -91,7 +91,6 @@ private:
         SpillOrderCell     = 4, // needs spill
         SpillOrderStorage  = 4, // needs spill
         SpillOrderInteger  = 5, // needs spill and box
-        SpillOrderBoolean  = 5, // needs spill and box
         SpillOrderDouble   = 6, // needs spill and convert
     };
 
@@ -470,13 +469,9 @@ public:
         }
             
         default:
-            // The following code handles JSValues, int32s, and cells.
             RELEASE_ASSERT(spillFormat == DataFormatCell || spillFormat & DataFormatJS);
             
             GPRReg reg = info.gpr();
-            // We need to box int32 and cell values, but boxing a cell is a no-op.
-            if (spillFormat == DataFormatInt32)
-                or64(GPRInfo::numberTagRegister, reg);
             
             // Spill the value, and record it as spilled in its boxed form.
             store64(reg, JITCompiler::addressFor(spillMe));
