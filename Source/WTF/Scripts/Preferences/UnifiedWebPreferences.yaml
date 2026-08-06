@@ -9098,6 +9098,7 @@ UnifyDamagedRegions:
      WebKitLegacy:
        default: false
      WebKit:
+       "PLATFORM(GTK)": true
        default: false
      WebCore:
        default: false
@@ -9197,7 +9198,6 @@ UseDamagingInformationForCompositing:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       default: false
