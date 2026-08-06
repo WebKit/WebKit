@@ -472,6 +472,7 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/WebPageProxy.swift
     ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerAVKitMac.mm
     ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerMac.mm
+    ${WEBKIT_DIR}/UIProcess/mac/SpatialShim.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKAppKitGestureController.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKDirectionalScrollLockTracker.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKFastScrollTracker.swift
