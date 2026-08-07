@@ -165,6 +165,8 @@ private:
 
     mutable std::optional<FloatSize> m_cachedViewportSizeExcludingZoom;
 
+    float m_currentScale { 1 };
+
     const Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, SVGLengthMode::Width) };
     const Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, SVGLengthMode::Height) };
     const Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, SVGLengthMode::Width, "100%"_s) };

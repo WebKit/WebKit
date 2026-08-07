@@ -1,0 +1,6 @@
+
+
+PASS currentScale round-trips on an HTML-body-child outermost svg element
+PASS currentScale round-trips on an outermost svg element inside a foreignObject
+PASS currentScale is inert on a non-outermost (nested) svg element
+

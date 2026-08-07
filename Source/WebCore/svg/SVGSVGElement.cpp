@@ -130,17 +130,24 @@ RefPtr<LocalFrame> SVGSVGElement::frameForCurrentScale() const
 
 float SVGSVGElement::currentScale() const
 {
-    // When asking from inside an embedded SVG document, a scale value of 1 seems reasonable, as it doesn't
-    // know anything about the parent scale.
-    auto frame = frameForCurrentScale();
-    return frame ? frame->pageZoomFactor() : 1;
+    // Only an outermost svg element has a currentScale (SVG 2, "Interface SVGSVGElement").
+    if (!isOutermostSVGSVGElement())
+        return 1;
+    if (RefPtr frame = frameForCurrentScale())
+        return frame->pageZoomFactor();
+    return m_currentScale;
 }
 
 void SVGSVGElement::setCurrentScale(float scale)
 {
     ASSERT(std::isfinite(scale));
-    if (auto frame = frameForCurrentScale())
+    if (!isOutermostSVGSVGElement())
+        return;
+    if (RefPtr frame = frameForCurrentScale()) {
         frame->setPageZoomFactor(scale);
+        return;
+    }
+    m_currentScale = scale;
 }
 
 void SVGSVGElement::setCurrentTranslate(const FloatPoint& translation)
