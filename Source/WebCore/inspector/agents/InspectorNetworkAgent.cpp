@@ -55,7 +55,6 @@
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindowCustom.h"
-#include "JSExecState.h"
 #include "JSWebSocket.h"
 #include "LoaderStrategy.h"
 #include "LocalFrame.h"
@@ -83,8 +82,6 @@
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/ScriptCallStack.h>
-#include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <WebCore/HTTPStatusCodes.h>
 #include <tuple>
 #include <wtf/Expected.h>
@@ -623,51 +620,14 @@ void InspectorNetworkAgent::didScheduleStyleRecalculation(Document& document)
 
 Ref<Inspector::Protocol::Network::Initiator> InspectorNetworkAgent::buildInitiatorObject(Document* document, const ResourceRequest* resourceRequest)
 {
-    // FIXME: Worker support.
-    if (!isMainThread()) {
-        return Inspector::Protocol::Network::Initiator::create()
-            .setType(Inspector::Protocol::Network::Initiator::Type::Other)
-            .release();
-    }
+    auto data = ResourceUtilities::gatherInitiatorData(document, resourceRequest, m_instrumentingAgents.get());
 
-    RefPtr<Inspector::Protocol::Network::Initiator> initiatorObject;
-
-    Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSExecState::currentState());
-    if (stackTrace->size() > 0) {
-        initiatorObject = Inspector::Protocol::Network::Initiator::create()
-            .setType(Inspector::Protocol::Network::Initiator::Type::Script)
-            .release();
-        initiatorObject->setStackTrace(stackTrace->buildInspectorObject());
-    } else if (document && document->scriptableDocumentParser()) {
-        initiatorObject = Inspector::Protocol::Network::Initiator::create()
-            .setType(Inspector::Protocol::Network::Initiator::Type::Parser)
-            .release();
-        initiatorObject->setUrl(document->url().string());
-        initiatorObject->setLineNumber(protect(document->scriptableDocumentParser())->textPosition().m_line.oneBasedInt());
-    }
-
-    CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent();
-    if (domAgent && resourceRequest) {
-        if (auto inspectorInitiatorNodeIdentifier = resourceRequest->inspectorInitiatorNodeIdentifier()) {
-            if (!initiatorObject) {
-                initiatorObject = Inspector::Protocol::Network::Initiator::create()
-                    .setType(Inspector::Protocol::Network::Initiator::Type::Other)
-                    .release();
-            }
-
-            initiatorObject->setNodeId(*inspectorInitiatorNodeIdentifier);
-        }
-    }
-
-    if (initiatorObject)
-        return initiatorObject.releaseNonNull();
-
-    if (m_isRecalculatingStyle && m_styleRecalculationInitiator)
+    // A load triggered by style resolution has no script or parser on the stack by the time it
+    // starts, so fall back to the initiator captured when the recalculation was scheduled.
+    if (!data.isAttributed() && m_isRecalculatingStyle && m_styleRecalculationInitiator)
         return *m_styleRecalculationInitiator;
 
-    return Inspector::Protocol::Network::Initiator::create()
-        .setType(Inspector::Protocol::Network::Initiator::Type::Other)
-        .release();
+    return ResourceUtilities::buildInitiatorObject(data);
 }
 
 void InspectorNetworkAgent::didCreateWebSocket(WebSocketChannelIdentifier identifier, const URL& requestURL)

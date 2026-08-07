@@ -203,10 +203,13 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
     if (!redirectResponse.isNull())
         optionalRedirectResponse = redirectResponse;
 
+    // Gather the initiator here, while the script that triggered this load is still on the stack.
+    auto initiator = ResourceUtilities::gatherInitiatorData(protectedLoader->frame()->document(), &request, m_instrumentingAgents.get());
+
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestWillBeSent(
             qualifyResourceID(resourceID), *frameID, loaderId, request.initiatorIdentifier(), documentURL, request,
-            WTF::move(optionalRedirectResponse), resourceType, timestamp, walltime),
+            WTF::move(optionalRedirectResponse), resourceType, timestamp, walltime, WTF::move(initiator)),
         page->identifier());
 }
 
@@ -238,10 +241,12 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
     auto walltime = WallTime::now().secondsSinceEpoch().value();
     auto documentURL = protectedLoader->url().string();
 
+    auto initiator = ResourceUtilities::gatherInitiatorData(protectedLoader->frame()->document(), &request, m_instrumentingAgents.get());
+
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestWillBeSent(
             qualifyResourceID(resourceID), *frameID, loaderId, request.initiatorIdentifier(), documentURL, request,
-            std::nullopt, ResourceType::Other, timestamp, walltime),
+            std::nullopt, ResourceType::Other, timestamp, walltime, WTF::move(initiator)),
         page->identifier());
 }
 
@@ -405,10 +410,12 @@ void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* load
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
     auto documentURL = protectedLoader->url().string();
 
+    auto initiator = ResourceUtilities::gatherInitiatorData(protectedLoader->frame()->document(), &cachedResource.resourceRequest(), m_instrumentingAgents.get());
+
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::RequestServedFromMemoryCache(
             qualifyResourceID(resourceID), *frameID, loaderId, documentURL,
-            cachedResource.response(), resourceType, sourceMapURL, bodySize, timestamp),
+            cachedResource.response(), resourceType, sourceMapURL, bodySize, timestamp, WTF::move(initiator)),
         page->identifier());
 }
 
