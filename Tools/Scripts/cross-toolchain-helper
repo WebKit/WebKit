@@ -546,52 +546,91 @@ class YoctoCrossBuilder():
             original_setup_env_path = self._get_cross_toolchain_env_path(check_toolchain_built=False)
             _log.info('Patching toolchain environment-setup file to remove optimizations by default: {original_setup_env_path}'.format(original_setup_env_path=original_setup_env_path))
             # This does the following:
-            # 1. Remove any line that exports CFLAGS/CXXFLAGS/LDFLAGS/CPPFLAGS
-            # 2. On the line that exports the compiler variables (export CC, export CXX and export CPP)
-            #    remove any compiler flag that is not machine related (-m*) or is '-E' (for cpp) or is for the sysroot/target.
-            # 3. Do not override CC/CXX with the cross-compiled GCC compiler if the user wants to use Clang, instead
-            #    set CC/CXX pointing to the cross-compiled Clang (assuming the support was built in the toolchain).
+            # 1. Drop the CFLAGS/CXXFLAGS/LDFLAGS/CPPFLAGS exports.
+            # 2. On the CC/CXX/CPP exports, keep only machine flags (-m*), '-E', and
+            #    the sysroot.
+            # 3. If the SDK ships clang (swift.org bundle), also emit a Clang form
+            #    swapping `<sys>-gcc/g++/cpp` for `clang/clang++/clang-cpp --target=<sys>`
+            #    (Swift/C++ interop is Clang-only), selected by the user via CC/CXX.
             patched_setup_env_path = original_setup_env_path + "-no-opt-flags"
+            # Anchor on the trailing '=' so we don't also strip unrelated exports
+            # like CPPFLAGS_FOR_BUILD. No whitespace before '=' since shell variable
+            # assignments don't allow it.
             flags_regex = re.compile(r'export\s+(C|CXX|LD|CPP)FLAGS=')
-            gcc_compiler_regex = re.compile(r'export\s+C(C|XX|PP)=')
-            clang_compiler_regex = re.compile(r'export\s+CLANGC(C|XX|PP)=')
+            compiler_regex = re.compile(r'export\s+C(C|XX|PP)=')
+            toolchain_binary_regex = re.compile(r'([\w-]+-)(gcc|g\+\+|cpp)$')
+            clang_for = {'gcc': 'clang', 'g++': 'clang++', 'cpp': 'clang-cpp'}
+            # Detect whether any SDK host sysroot has clang / swiftc binaries.
+            sysroots_dir = os.path.join(os.path.dirname(original_setup_env_path), 'sysroots')
+            sdk_has_clang = False
+            sdk_has_swiftc = False
+            if os.path.isdir(sysroots_dir):
+                for entry in os.listdir(sysroots_dir):
+                    host_bin = os.path.join(sysroots_dir, entry, 'usr', 'bin')
+                    if os.path.isfile(os.path.join(host_bin, 'clang')):
+                        sdk_has_clang = True
+                    if os.path.isfile(os.path.join(host_bin, 'swiftc')):
+                        sdk_has_swiftc = True
             gcc_lines = []
             clang_lines = []
             with open(original_setup_env_path, 'r') as fr:
                 with open(patched_setup_env_path, 'w') as fw:
                     for line in fr.readlines():
                         if not flags_regex.match(line):
-                            if gcc_compiler_regex.match(line) or clang_compiler_regex.match(line):
-                                newline = ""
+                            if compiler_regex.match(line):
+                                # GCC form always. Clang form too when the SDK ships clang.
+                                gcc_line = ""
+                                clang_line = ""
                                 for word in line.strip().split():
                                     if word.startswith('-'):
-                                        if word == '-E' or any(word.startswith(p) for p in ['-m', '--sysroot=', '--target=']):
-                                            newline += " " + word
+                                        if word.startswith('-m') or word == '-E' or word.startswith('--sysroot'):
+                                            gcc_line += " " + word
+                                            clang_line += " " + word
                                     else:
-                                        newline += " " + word
-                                if '="' in newline and not newline.endswith('"'):
-                                    newline += '"'
-                                newline = newline.strip() + '\n'
-                                (clang_lines if clang_compiler_regex.match(line) else gcc_lines).append(newline)
+                                        gcc_line += " " + word
+                                        m = toolchain_binary_regex.search(word)
+                                        if m and sdk_has_clang:
+                                            target = m.group(1).rstrip('-')
+                                            # --gcc-install-dir/-isystem point at the
+                                            # sysroot so crt*.o/libgcc.a and the c++
+                                            # headers resolve. Globs expand at source time.
+                                            gcc_dir = ('$(ls -d "$SDKTARGETSYSROOT/usr/lib/gcc/' + target
+                                                       + '"/* 2>/dev/null | head -1)')
+                                            cxx_inc = ('$(ls -d "$SDKTARGETSYSROOT/usr/include/c++"'
+                                                       '/* 2>/dev/null | head -1)')
+                                            clang_line += " " + word.replace(m.group(0),
+                                                clang_for[m.group(2)] + " --target=" + target
+                                                + " --gcc-install-dir=" + gcc_dir
+                                                + " -isystem " + cxx_inc
+                                                + " -isystem " + cxx_inc + "/" + target)
+                                        else:
+                                            clang_line += " " + word
+                                if '="' in gcc_line and not gcc_line.endswith('"'):
+                                    gcc_line += '"'
+                                if '="' in clang_line and not clang_line.endswith('"'):
+                                    clang_line += '"'
+                                gcc_lines.append(gcc_line.strip() + '\n')
+                                clang_lines.append(clang_line.strip() + '\n')
                             else:
                                 fw.write(line)
-                    # The script should check the CC/CXX env var from the user, if is set to clang then export
-                    # the CLANGCC and CLANGCXX as CC/CXX, otherwise keep the default (GCC)
+                    # Be strict: the setup-environment script is expected to export
+                    # exactly CC/CXX/CPP. If the count ever differs from 3 the file
+                    # changed shape and this has to be inspected to see what is going on.
                     if len(gcc_lines) != 3:
                         raise RuntimeError('Unexpected CC/CXX/CPP parameters in setup-environment script')
-                    if clang_lines:
+                    # Emit the compiler exports: Clang form when the SDK ships clang
+                    # and the user asked for it via CC/CXX, otherwise GCC.
+                    if sdk_has_clang and clang_lines:
                         fw.write('\nif echo "${CC} ${CXX}" | grep -qi clang; then\n')
-                        for line in clang_lines:
-                            # Remove the CLANG prefix, so for example CLANGCXX becomes CXX
-                            line = re.sub(r'(export\s+)CLANG(CC|CXX|CPP)(=)', r'\1\2\3', line)
-                            fw.write(f'    {line}')
+                        for _cl in clang_lines:
+                            fw.write('    ' + _cl)
                         fw.write('else\n')
-                        for line in gcc_lines:
-                            fw.write(f'    {line}')
+                        for _gl in gcc_lines:
+                            fw.write('    ' + _gl)
                         fw.write('fi\n')
                     else:
-                        for line in gcc_lines:
-                            fw.write(line)
+                        for _gl in gcc_lines:
+                            fw.write(_gl)
                     # When building cog, meson tries to load the wpe headers that are on the repo from the sysroot path.
                     # That is not really a bug on meson as system libraries should be loaded from the sysroot when cross-building.
                     # Workaround the issue by creating a symlink that also resolves this WebKit repository path inside the sysroot.
@@ -599,6 +638,50 @@ class YoctoCrossBuilder():
                              '    mkdir -p "${{OECORE_TARGET_SYSROOT}}/{webkit_dir_up}"\n'
                              '    ln -s "{webkit_dir}" "${{OECORE_TARGET_SYSROOT}}/{webkit_dir_up}"\n'
                              'fi\n'.format(webkit_dir=self._webkit_dir, webkit_dir_up=os.path.dirname(self._webkit_dir)))
+                    # When the SDK ships swiftc, splice -DCMAKE_Swift_FLAGS_INIT into
+                    # BUILD_WEBKIT_ARGS to wire swiftc to the Yocto sysroot:
+                    #   -sdk / -I        target headers and Swift modules.
+                    #   -Xcc ...         swiftc's compile step spawns clang -cc1, which
+                    #                    -sdk doesn't reach, so pass it the sysroot and
+                    #                    gcc-install-dir.
+                    #   -Xclang-linker   swiftc's link step spawns a separate clang that
+                    #                    doesn't inherit -Xcc, so repeat the sysroot and
+                    #                    gcc-install-dir for it.
+                    # The linker flavor (lld) is not set here. WebKit's CMake adds
+                    # -fuse-ld=lld for Swift-linked targets under USE_LD_LLD
+                    # (webkit.org/b/317573), so this splice only wires the sysroot and
+                    # gcc-install-dir. Paths resolve at env-setup source time via shell.
+                    if sdk_has_swiftc:
+                        # Yocto splits gcc-install across usr/lib/<sys> and
+                        # usr/lib/gcc/<sys>. Swift's libstdc++ probe needs crtbegin.o
+                        # in the gcc/ tree, so copy what's missing (symlinks aren't
+                        # followed by the clang driver). Idempotent.
+                        fw.write(
+                            '\nif [ -n "${OECORE_TARGET_SYSROOT:-}" ] && [ -d "${OECORE_TARGET_SYSROOT}/usr/lib/swift" ]; then\n'
+                            '    _target_prefix="${TARGET_PREFIX%-}"\n'
+                            '    _gcc_src=$(ls -d "${OECORE_TARGET_SYSROOT}/usr/lib/${_target_prefix}"/* 2>/dev/null | head -1)\n'
+                            '    if [ -n "${_gcc_src}" ]; then\n'
+                            '        _gcc_ver=$(basename "${_gcc_src}")\n'
+                            '        _gcc_dst="${OECORE_TARGET_SYSROOT}/usr/lib/gcc/${_target_prefix}/${_gcc_ver}"\n'
+                            '        if [ -d "${_gcc_dst}" ] && [ ! -e "${_gcc_dst}/crtbegin.o" ]; then\n'
+                            '            for _f in "${_gcc_src}"/*; do\n'
+                            '                _bn=$(basename "${_f}")\n'
+                            '                [ -e "${_gcc_dst}/${_bn}" ] || cp -rp "${_f}" "${_gcc_dst}/${_bn}"\n'
+                            '            done\n'
+                            '            unset _f _bn\n'
+                            '        fi\n'
+                            '        unset _gcc_ver _gcc_dst\n'
+                            '    fi\n'
+                            '    unset _target_prefix _gcc_src\n'
+                            'fi\n'
+                            '\nif [ -n "${BUILD_WEBKIT_ARGS:-}" ] && [ -d "${OECORE_TARGET_SYSROOT}/usr/lib/swift" ]; then\n'
+                            '    _target_prefix="${TARGET_PREFIX%-}"\n'
+                            '    _gcc_install_dir=$(ls -d "${OECORE_TARGET_SYSROOT}/usr/lib/gcc/${_target_prefix}"/* 2>/dev/null | head -1)\n'
+                            '    _swift_flags="-sdk ${OECORE_TARGET_SYSROOT} -I ${OECORE_TARGET_SYSROOT}/usr/lib/swift/linux -I ${OECORE_TARGET_SYSROOT}/usr/lib/swift -Xcc --sysroot=${OECORE_TARGET_SYSROOT} -Xcc --gcc-install-dir=${_gcc_install_dir} -Xclang-linker --sysroot=${OECORE_TARGET_SYSROOT} -Xclang-linker --gcc-install-dir=${_gcc_install_dir}"\n'
+                            '    BUILD_WEBKIT_ARGS="${BUILD_WEBKIT_ARGS} --cmakeargs=\\"-DCMAKE_Swift_FLAGS_INIT=\'${_swift_flags}\'\\""\n'
+                            '    export BUILD_WEBKIT_ARGS\n'
+                            '    unset _swift_flags _target_prefix _gcc_install_dir\n'
+                            'fi\n')
 
             # Put the patched setup-environ file in place of the other
             # and save a copy of the original just for debugging purposes

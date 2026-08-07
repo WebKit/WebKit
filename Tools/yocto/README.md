@@ -30,6 +30,33 @@ The script ```cross-toolchain-helper``` will parse this file and it will do the 
 
 For more info see the file ```${WebKitDirectory}/Tools/yocto/targets.conf```
 
+### Swift toolchain
+
+Swift support for WPE WebKit aarch64 and armv7 builds is provided by
+[jeremy-prater/meta-swift](https://github.com/jeremy-prater/meta-swift)
+(branch ```scarthgap```), pinned in
+```rpi/manifest.xml```. This fork carries the WPE-specific meta-swift bits (the
+Yocto-aligned Swift module triple, the additive ```do_fix_gcc_install_dir```
+copy, and the ```nativesdk-swift``` host-toolchain recipe), which are being
+upstreamed to [jeremy-prater/meta-swift](https://github.com/jeremy-prater/meta-swift).
+Once merged, the pin can move back. The swift.org prebuilt bundle (wrapped by the
+meta-swift ```nativesdk-swift``` recipe) provides both swiftc and the clang/LLVM
+toolchain used to cross-build the GLib ports, so the whole toolchain is a single,
+consistent clang. WPE-specific glue lives as bbappends inside
+```meta-openembedded_and_meta-webkit.patch```.
+
+| Target                    | Swift | Toolchain | Notes |
+| ------------------------- | ----- | --------- | ----- |
+| rpi3/4/5 64-bit (mesa)    | yes   | clang     | aarch64 |
+| rpi3/4 32-bit (mesa)      | yes   | clang     | armv7 |
+| rpi3-32bits-userland      | no    | gcc       | wpebackend-rdk + constrained build; Swift opted out in its local.conf |
+| qemu-riscv64              | no    | gcc       | upstream Swift has no riscv64 target |
+
+meta-swift builds ```swift-stdlib```, ```swift-foundation``` and
+```libdispatch``` **from source** for each target architecture. Its
+```SWIFT_VERSION``` must match the swift.org bundle pinned by
+```nativesdk-swift```; bump them in lockstep.
+
 
 ### Integration with WebKit tooling script
 
