@@ -607,12 +607,12 @@ static std::optional<SpecialCaseFontLookupResult> fontDescriptorWithFamilySpecia
             int monospacedNumbersSelector = kMonospacedNumbersSelector;
             auto numberSpacingNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &numberSpacingType));
             auto monospacedNumbersNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &monospacedNumbersSelector));
-            CFTypeRef keys[] = { kCTFontFeatureTypeIdentifierKey, kCTFontFeatureSelectorIdentifierKey };
-            CFTypeRef values[] = { numberSpacingNumber.get(), monospacedNumbersNumber.get() };
-            ASSERT(std::size(keys) == std::size(values));
-            auto settingsDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-            CFTypeRef entries[] = { settingsDictionary.get() };
-            auto settingsArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, entries, std::size(entries), &kCFTypeArrayCallBacks));
+            std::array<CFTypeRef, 2> keys { kCTFontFeatureTypeIdentifierKey, kCTFontFeatureSelectorIdentifierKey };
+            std::array<CFTypeRef, 2> values { numberSpacingNumber.get(), monospacedNumbersNumber.get() };
+            ASSERT(keys.size() == values.size());
+            auto settingsDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            std::array<CFTypeRef, 1> entries { settingsDictionary.get() };
+            auto settingsArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, entries.data(), entries.size(), &kCFTypeArrayCallBacks));
             CFDictionaryAddValue(attributes, kCTFontFeatureSettingsAttribute, settingsArray.get());
         });
         return { { systemFontDescriptor, FontTypeForPreparation::SystemFont } };
@@ -660,9 +660,9 @@ bool FontCache::shouldAutoActivateFontIfNeeded(const AtomString& family)
 static void autoActivateFont(const String& name, CGFloat size)
 {
     auto fontName = name.createCFString();
-    CFTypeRef keys[] = { kCTFontNameAttribute, kCTFontEnabledAttribute };
-    CFTypeRef values[] = { fontName.get(), kCFBooleanTrue };
-    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<CFTypeRef, 2> keys { kCTFontNameAttribute, kCTFontEnabledAttribute };
+    std::array<CFTypeRef, 2> values { fontName.get(), kCFBooleanTrue };
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto descriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
     auto newFont = adoptCF(CTFontCreateWithFontDescriptor(descriptor.get(), size, nullptr));
 }
@@ -792,9 +792,9 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
         auto familyName = adoptCF(static_cast<CFStringRef>(CTFontCopyAttribute(result.get(), kCTFontFamilyNameAttribute)));
         if (fontFamilyShouldNotBeUsedForArabic(familyName.get())) {
             CFStringRef newFamilyName = isFontWeightBold(fontWeight) ? CFSTR("GeezaPro-Bold") : CFSTR("GeezaPro");
-            CFTypeRef keys[] = { kCTFontNameAttribute };
-            CFTypeRef values[] = { newFamilyName };
-            auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            std::array<CFTypeRef, 1> keys { kCTFontNameAttribute };
+            std::array<CFTypeRef, 1> values { newFamilyName };
+            auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             auto modification = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
             result = adoptCF(CTFontCreateCopyWithAttributes(result.get(), CTFontGetSize(result.get()), nullptr, modification.get()));
         }
@@ -945,8 +945,8 @@ void addAttributesForWebFonts(CFMutableDictionaryRef attributes, AllowUserInstal
 RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts allowUserInstalledFonts)
 {
     if (allowUserInstalledFonts == AllowUserInstalledFonts::No) {
-        CFTypeRef mandatoryAttributesValues[] = { kCTFontFamilyNameAttribute, kCTFontPostScriptNameAttribute, kCTFontEnabledAttribute, kCTFontUserInstalledAttribute, kCTFontFallbackOptionAttribute };
-        return adoptCF(CFSetCreate(kCFAllocatorDefault, mandatoryAttributesValues, std::size(mandatoryAttributesValues), &kCFTypeSetCallBacks));
+        std::array<CFTypeRef, 5> mandatoryAttributesValues { kCTFontFamilyNameAttribute, kCTFontPostScriptNameAttribute, kCTFontEnabledAttribute, kCTFontUserInstalledAttribute, kCTFontFallbackOptionAttribute };
+        return adoptCF(CFSetCreate(kCFAllocatorDefault, mandatoryAttributesValues.data(), mandatoryAttributesValues.size(), &kCFTypeSetCallBacks));
     }
     return nullptr;
 }

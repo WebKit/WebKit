@@ -77,29 +77,29 @@ static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(std::sp
         if (count > 4) {
             switch (string.length() + 1) {
             case 16: {
-                alignas(16) Latin1Character pattern[16];
+                alignas(16) std::array<Latin1Character, 16> pattern;
                 pattern[0] = separatorCharacter;
                 string.getCharacters8(std::span { pattern }.subspan(1));
                 size_t fillLength = count * 16;
-                memset_pattern16(data.data(), pattern, fillLength);
+                memset_pattern16(data.data(), pattern.data(), fillLength);
                 skip(data, fillLength);
                 return;
             }
             case 8: {
-                alignas(8) Latin1Character pattern[8];
+                alignas(8) std::array<Latin1Character, 8> pattern;
                 pattern[0] = separatorCharacter;
                 string.getCharacters8(std::span { pattern }.subspan(1));
                 size_t fillLength = count * 8;
-                memset_pattern8(data.data(), pattern, fillLength);
+                memset_pattern8(data.data(), pattern.data(), fillLength);
                 skip(data, fillLength);
                 return;
             }
             case 4: {
-                alignas(4) Latin1Character pattern[4];
+                alignas(4) std::array<Latin1Character, 4> pattern;
                 pattern[0] = separatorCharacter;
                 string.getCharacters8(std::span { pattern }.subspan(1));
                 size_t fillLength = count * 4;
-                memset_pattern4(data.data(), pattern, fillLength);
+                memset_pattern4(data.data(), pattern.data(), fillLength);
                 skip(data, fillLength);
                 return;
             }

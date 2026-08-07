@@ -321,9 +321,9 @@ void SocketStreamHandleImpl::createStreams()
     case SOCKSProxy: {
         // FIXME: SOCKS5 doesn't do challenge-response, should we try to apply credentials from Keychain right away?
         // But SOCKS5 credentials don't work at the time of this writing anyway, see <rdar://6776698>.
-        const void* proxyKeys[] = { kCFStreamPropertySOCKSProxyHost, kCFStreamPropertySOCKSProxyPort };
-        const void* proxyValues[] = { m_proxyHost.get(), m_proxyPort.get() };
-        RetainPtr<CFDictionaryRef> connectDictionary = adoptCF(CFDictionaryCreate(0, proxyKeys, proxyValues, std::size(proxyKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        std::array<const void*, 2> proxyKeys { kCFStreamPropertySOCKSProxyHost, kCFStreamPropertySOCKSProxyPort };
+        std::array<const void*, 2> proxyValues { m_proxyHost.get(), m_proxyPort.get() };
+        RetainPtr<CFDictionaryRef> connectDictionary = adoptCF(CFDictionaryCreate(0, proxyKeys.data(), proxyValues.data(), proxyKeys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFReadStreamSetProperty(m_readStream.get(), kCFStreamPropertySOCKSProxy, connectDictionary.get());
         break;
         }
@@ -334,17 +334,17 @@ void SocketStreamHandleImpl::createStreams()
 
     if (shouldUseSSL()) {
         CFBooleanRef validateCertificateChain = DeprecatedGlobalSettings::allowsAnySSLCertificate() || m_shouldAcceptInsecureCertificates ? kCFBooleanFalse : kCFBooleanTrue;
-        const void* keys[] = {
+        std::array<const void*, 3> keys {
             kCFStreamSSLPeerName,
             kCFStreamSSLLevel,
             kCFStreamSSLValidatesCertificateChain
         };
-        const void* values[] = {
+        std::array<const void*, 3> values {
             host.get(),
             gLegacyTLSEnabled ? kCFStreamSocketSecurityLevelNegotiatedSSL : kCFStreamSocketSecurityLevelTLSv1_2,
             validateCertificateChain
         };
-        RetainPtr<CFDictionaryRef> settings = adoptCF(CFDictionaryCreate(0, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        RetainPtr<CFDictionaryRef> settings = adoptCF(CFDictionaryCreate(0, keys.data(), values.data(), keys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFReadStreamSetProperty(m_readStream.get(), kCFStreamPropertySSLSettings, settings.get());
         CFWriteStreamSetProperty(m_writeStream.get(), kCFStreamPropertySSLSettings, settings.get());
     }
@@ -561,11 +561,11 @@ void SocketStreamHandleImpl::readStreamCallback(CFStreamEventType type)
         ASSERT(m_connectingSubstate == Connected);
 
         CFIndex length;
-        UInt8 localBuffer[1024]; // Used if CFReadStreamGetBuffer couldn't return anything.
+        std::array<UInt8, 1024> localBuffer; // Used if CFReadStreamGetBuffer couldn't return anything.
         const UInt8* ptr = CFReadStreamGetBuffer(m_readStream.get(), 0, &length);
         if (!ptr) {
-            length = CFReadStreamRead(m_readStream.get(), localBuffer, sizeof(localBuffer));
-            ptr = localBuffer;
+            length = CFReadStreamRead(m_readStream.get(), localBuffer.data(), localBuffer.size());
+            ptr = localBuffer.data();
         }
 
         if (!length)

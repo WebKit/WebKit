@@ -429,7 +429,7 @@ bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
 
         const bool usingAlpha = contextAttributes().alpha;
         const auto size = getInternalFramebufferSize();
-        const EGLint surfaceAttributes[] = {
+        const std::array<EGLint, 18> surfaceAttributes {
             EGL_WIDTH, size.width(),
             EGL_HEIGHT, size.height(),
             EGL_IOSURFACE_PLANE_ANGLE, 0,
@@ -441,7 +441,7 @@ bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
             EGL_IOSURFACE_USAGE_HINT_ANGLE, EGL_IOSURFACE_WRITE_HINT_ANGLE,
             EGL_NONE, EGL_NONE
         };
-        EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(m_displayObj, EGL_IOSURFACE_ANGLE, surface->surface(), m_configObj, surfaceAttributes);
+        EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(m_displayObj, EGL_IOSURFACE_ANGLE, surface->surface(), m_configObj, surfaceAttributes.data());
         if (!pbuffer)
             return false;
         buffer = IOSurfacePbuffer { WTF::move(surface), pbuffer };

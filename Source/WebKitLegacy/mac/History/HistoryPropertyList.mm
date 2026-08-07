@@ -113,9 +113,9 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
     if (!displayTitle.isEmpty())
         stream.writeString(displayTitle);
     if (lastVisitedDate) {
-        char buffer[32];
-        snprintf(buffer, sizeof(buffer), "%.1lf", lastVisitedDate);
-        stream.writeUniqueString(buffer);
+        std::array<char, 32> buffer;
+        SAFE_SPRINTF(std::span { buffer }, "%.1lf", lastVisitedDate);
+        stream.writeUniqueString(buffer.data());
     }
     if (item->lastVisitWasFailure())
         stream.writeBooleanTrue();

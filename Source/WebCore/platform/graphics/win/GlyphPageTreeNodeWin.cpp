@@ -48,8 +48,8 @@ bool GlyphPage::fill(std::span<const char16_t> buffer)
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=259205 Determine if the glyph is a color glyph or not.
     if (buffer.size() == GlyphPage::size) {
-        WORD localGlyphBuffer[GlyphPage::size * 2];
-        DWORD result = GetGlyphIndices(dc, wcharFrom(buffer.data()), buffer.size(), localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
+        std::array<WORD, GlyphPage::size * 2> localGlyphBuffer;
+        DWORD result = GetGlyphIndices(dc, wcharFrom(buffer.data()), buffer.size(), localGlyphBuffer.data(), GGI_MARK_NONEXISTING_GLYPHS);
         bool success = result != GDI_ERROR && static_cast<unsigned>(result) == buffer.size();
 
         if (success) {
@@ -71,11 +71,11 @@ bool GlyphPage::fill(std::span<const char16_t> buffer)
         ScriptFreeCache(&sc);
 
         for (unsigned i = 0; i < GlyphPage::size; i++) {
-            wchar_t glyphs[2] = { };
+            std::array<wchar_t, 2> glyphs { };
             GCP_RESULTS gcpResults = { };
             gcpResults.lStructSize = sizeof gcpResults;
             gcpResults.nGlyphs = 2;
-            gcpResults.lpGlyphs = glyphs;
+            gcpResults.lpGlyphs = glyphs.data();
             GetCharacterPlacement(dc, wcharFrom(buffer.data()) + i * 2, 2, 0, &gcpResults, GCP_GLYPHSHAPE);
             bool success = 1 == gcpResults.nGlyphs;
             if (success) {

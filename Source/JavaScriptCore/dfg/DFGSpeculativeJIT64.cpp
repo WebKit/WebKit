@@ -4035,14 +4035,14 @@ void SpeculativeJIT::compile(Node* node)
         unsigned numExtraArgs = numExtraAtomicsArgs(node->op());
         Edge baseEdge = m_graph.child(node, 0);
         Edge indexEdge = m_graph.child(node, 1);
-        Edge argEdges[maxNumExtraAtomicsArgs];
+        std::array<Edge, maxNumExtraAtomicsArgs> argEdges;
         for (unsigned i = numExtraArgs; i--;)
             argEdges[i] = m_graph.child(node, 2 + i);
         Edge storageEdge = m_graph.child(node, 2 + numExtraArgs);
 
         GPRReg baseGPR;
         GPRReg indexGPR;
-        GPRReg argGPRs[2];
+        std::array<GPRReg, 2> argGPRs;
         GPRReg resultGPR;
 
         if (!storageEdge) {
@@ -4085,7 +4085,7 @@ void SpeculativeJIT::compile(Node* node)
             // We are in generic mode!
             JSValueOperand base(this, baseEdge);
             JSValueOperand index(this, indexEdge);
-            std::optional<JSValueOperand> args[2];
+            std::array<std::optional<JSValueOperand>, 2> args;
             baseGPR = base.gpr();
             indexGPR = index.gpr();
             for (unsigned i = numExtraArgs; i--;) {
@@ -4123,7 +4123,7 @@ void SpeculativeJIT::compile(Node* node)
         if (outOfBounds.isSet())
             speculationCheck(OutOfBounds, JSValueRegs(), nullptr, outOfBounds);
 
-        GPRTemporary args[2];
+        std::array<GPRTemporary, 2> args;
 
         bool ok = true;
         for (unsigned i = numExtraArgs; i--;) {

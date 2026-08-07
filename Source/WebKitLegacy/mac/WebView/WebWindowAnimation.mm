@@ -127,7 +127,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
         return;
     }
     
-    float mesh[16];
+    std::array<float, 16> mesh;
     
     flipRect(&scaleFrame);
     flipRect(&nonScaledFrame);
@@ -157,7 +157,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
     mesh[15] = NSMaxY(scaleFrame);
     
     // Apply the warp.
-    CGSSetWindowWarp(mainWindowServerConnectionID(), window.windowNumber, 2, 2, mesh);
+    CGSSetWindowWarp(mainWindowServerConnectionID(), window.windowNumber, 2, 2, mesh.data());
 }
 
 - (void)setCurrentProgress:(NSAnimationProgress)progress

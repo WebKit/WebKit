@@ -6457,10 +6457,10 @@ public:
         uint8_t* dstPtr = std::bit_cast<uint8_t*>(to);
         intptr_t distance = (intptr_t)(dstPtr - (ptr + 5));
 #if ENABLE(MPROTECT_RX_TO_RWX)
-        uint8_t buffer[5];
+        std::array<uint8_t, 5> buffer;
         buffer[0] = static_cast<uint8_t>(OP_JMP_rel32);
-        WTF::unalignedStore<int32_t>(buffer + 1, static_cast<int32_t>(distance));
-        performJITMemcpy<jitMemcpyRepatch>(ptr, buffer, 5);
+        WTF::unalignedStore<int32_t>(buffer.data() + 1, static_cast<int32_t>(distance));
+        performJITMemcpy<jitMemcpyRepatch>(ptr, buffer.data(), 5);
 #else
         WTF::unalignedStore<uint8_t>(ptr, static_cast<uint8_t>(OP_JMP_rel32));
         WTF::unalignedStore<int32_t>(ptr + 1, static_cast<int32_t>(distance));
@@ -6495,11 +6495,11 @@ public:
         } u;
         u.asWord = imm;
 #if ENABLE(MPROTECT_RX_TO_RWX)
-        uint8_t buffer[instructionSize];
+        std::array<uint8_t, instructionSize> buffer;
         buffer[0] = PRE_REX | (1 << 3) | (dst >> 3);
         buffer[1] = OP_MOV_EAXIv | (dst & 7);
-        memcpy(buffer + rexBytes + opcodeBytes, u.asBytes, instructionSize - rexBytes - opcodeBytes);
-        performJITMemcpy<jitMemcpyRepatch>(ptr, buffer, instructionSize);
+        memcpySpan(std::span { buffer }.subspan<rexBytes + opcodeBytes>(), std::span { u.asBytes }.first<instructionSize - rexBytes - opcodeBytes>());
+        performJITMemcpy<jitMemcpyRepatch>(ptr, buffer.data(), instructionSize);
 #else
         ptr[0] = PRE_REX | (1 << 3) | (dst >> 3);
         ptr[1] = OP_MOV_EAXIv | (dst & 7);
@@ -6511,7 +6511,7 @@ public:
     static void revertJumpTo_movl_i32r(void* instructionStart, int32_t imm, RegisterID dst)
     {
         // We only revert jumps on inline caches, and inline caches always use the scratch register (r11).
-        // FIXME: If the above is ever false then we need to make this smarter with respect to emitting 
+        // FIXME: If the above is ever false then we need to make this smarter with respect to emitting
         // the REX byte.
         ASSERT(dst == X86Registers::r11);
         constexpr unsigned instructionSize = 6; // REX MOV IMM32
@@ -6525,11 +6525,11 @@ public:
         } u;
         u.asWord = imm;
 #if ENABLE(MPROTECT_RX_TO_RWX)
-        uint8_t buffer[instructionSize];
+        std::array<uint8_t, instructionSize> buffer;
         buffer[0] = PRE_REX | (1 << 3) | (dst >> 3);
         buffer[1] = OP_MOV_EAXIv | (dst & 7);
-        memcpy(buffer + rexBytes + opcodeBytes, u.asBytes, instructionSize - rexBytes - opcodeBytes);
-        performJITMemcpy<jitMemcpyRepatch>(ptr, buffer, instructionSize);
+        memcpySpan(std::span { buffer }.subspan<rexBytes + opcodeBytes>(), std::span { u.asBytes }.first<instructionSize - rexBytes - opcodeBytes>());
+        performJITMemcpy<jitMemcpyRepatch>(ptr, buffer.data(), instructionSize);
 #else
         ptr[0] = PRE_REX | (dst >> 3);
         ptr[1] = OP_MOV_EAXIv | (dst & 7);
@@ -6550,11 +6550,11 @@ public:
         } u;
         u.asWord = imm;
 #if ENABLE(MPROTECT_RX_TO_RWX)
-        uint8_t buffer[maxJumpReplacementSize()];
+        std::array<uint8_t, maxJumpReplacementSize()> buffer;
         buffer[0] = OP_GROUP1_EvIz;
         buffer[1] = (X86InstructionFormatter::ModRmRegister << 6) | (GROUP1_OP_CMP << 3) | dst;
-        memcpy(buffer + 2, u.asBytes, maxJumpReplacementSize() - opcodeBytes - modRMBytes);
-        performJITMemcpy<jitMemcpyRepatch>(ptr, buffer, maxJumpReplacementSize());
+        memcpySpan(std::span { buffer }.subspan<2>(), std::span { u.asBytes }.first<maxJumpReplacementSize() - opcodeBytes - modRMBytes>());
+        performJITMemcpy<jitMemcpyRepatch>(ptr, buffer.data(), maxJumpReplacementSize());
 #else
         ptr[0] = OP_GROUP1_EvIz;
         ptr[1] = (X86InstructionFormatter::ModRmRegister << 6) | (GROUP1_OP_CMP << 3) | dst;
@@ -6576,11 +6576,11 @@ public:
         } u;
         u.asWord = imm;
 #if ENABLE(MPROTECT_RX_TO_RWX)
-        uint8_t buffer[maxJumpReplacementSize()];
+        std::array<uint8_t, maxJumpReplacementSize()> buffer;
         buffer[0] = OP_GROUP1_EvIz;
         buffer[1] = (X86InstructionFormatter::ModRmMemoryNoDisp << 6) | (GROUP1_OP_CMP << 3) | dst;
-        memcpy(buffer + 2, u.asBytes, maxJumpReplacementSize() - opcodeBytes - modRMBytes);
-        performJITMemcpy<jitMemcpyRepatch>(ptr, buffer, maxJumpReplacementSize());
+        memcpySpan(std::span { buffer }.subspan<2>(), std::span { u.asBytes }.first<maxJumpReplacementSize() - opcodeBytes - modRMBytes>());
+        performJITMemcpy<jitMemcpyRepatch>(ptr, buffer.data(), maxJumpReplacementSize());
 #else
         ptr[0] = OP_GROUP1_EvIz;
         ptr[1] = (X86InstructionFormatter::ModRmMemoryNoDisp << 6) | (GROUP1_OP_CMP << 3) | dst;
@@ -6642,8 +6642,8 @@ public:
         while (size) {
             unsigned nopSize = static_cast<unsigned>(std::min<size_t>(size, 15));
             unsigned numPrefixes = nopSize <= 10 ? 0 : nopSize - 10;
-            uint8_t buffer[16];
-            uint8_t* bufferWriter = buffer;
+            std::array<uint8_t, 16> buffer;
+            uint8_t* bufferWriter = buffer.data();
             for (unsigned i = 0; i != numPrefixes; ++i)
                 *bufferWriter++ = 0x66;
 
@@ -6651,11 +6651,11 @@ public:
             for (unsigned i = 0; i != nopRest; ++i)
                 *bufferWriter++ = nops[nopRest-1][i];
 
-            ASSERT(nopSize == bufferWriter - buffer);
+            ASSERT(nopSize == bufferWriter - buffer.data());
 #if ENABLE(MPROTECT_RX_TO_RWX)
-            machineCodeCopy<jitMemcpyRepatch>(where, buffer, nopSize);
+            machineCodeCopy<jitMemcpyRepatch>(where, buffer.data(), nopSize);
 #else
-            machineCodeCopy<memcpyRepatch>(where, buffer, nopSize);
+            machineCodeCopy<memcpyRepatch>(where, buffer.data(), nopSize);
 #endif
             where += nopSize;
             size -= nopSize;

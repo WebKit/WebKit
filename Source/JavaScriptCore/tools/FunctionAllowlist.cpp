@@ -57,8 +57,8 @@ FunctionAllowlist::FunctionAllowlist(const char* filename)
     m_hasActiveAllowlist = true;
 
     char* line;
-    char buffer[BUFSIZ];
-    while ((line = fgets(buffer, sizeof(buffer), f))) {
+    std::array<char, BUFSIZ> buffer;
+    while ((line = fgets(buffer.data(), buffer.size(), f))) {
         if (strstr(line, "//") == line)
             continue;
 

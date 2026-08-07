@@ -504,10 +504,10 @@ void AuxiliaryProcess::increaseFileDescriptorLimit()
         return;
     }
 
-    int mib[] = { CTL_KERN, KERN_MAXFILESPERPROC };
+    auto mib = WTF::toArray({ CTL_KERN, KERN_MAXFILESPERPROC });
     int maxFilesPerProc = 0;
     size_t len = sizeof(maxFilesPerProc);
-    if (int returnCode = sysctl(mib, 2, &maxFilesPerProc, &len, NULL, 0)) {
+    if (int returnCode = sysctl(mib.data(), 2, &maxFilesPerProc, &len, NULL, 0)) {
         RELEASE_LOG_ERROR(Process, "Could not get KERN_MAXFILESPERPROC: %d", returnCode);
         return;
     }

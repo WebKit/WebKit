@@ -189,7 +189,7 @@ PerfLog::PerfLog()
     header.pid = getCurrentProcessID();
 
     Locker locker { m_lock };
-    write(locker, WTF::unsafeMakeSpan(std::bit_cast<uint8_t*>(&header), sizeof(JITDump::FileHeader)));
+    write(locker, asBytes(singleElementSpan(header)));
     flush(locker);
 }
 
@@ -283,14 +283,14 @@ void PerfLog::log(const CString& name, MacroAssemblerCodeRef<LinkBufferPtrTag> c
                 totalSize += sizeof(JITDump::DebugEntry) + (irFilePath.length() + 1);
             debugRecord.header.totalSize = totalSize;
 
-            logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&debugRecord), sizeof(JITDump::DebugInfoRecord)));
+            logger.write(locker, asBytes(singleElementSpan(debugRecord)));
 
             for (auto& [codeOffset, lineNumber] : lineEntries) {
                 JITDump::DebugEntry debugEntry;
                 debugEntry.codeAddress = std::bit_cast<uintptr_t>(executableAddress) + codeOffset;
                 debugEntry.line = lineNumber;
                 debugEntry.discrim = 0;
-                logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&debugEntry), sizeof(JITDump::DebugEntry)));
+                logger.write(locker, asBytes(singleElementSpan(debugEntry)));
                 logger.write(locker, irFilePath.spanIncludingNullTerminator());
             }
         }
@@ -306,14 +306,14 @@ void PerfLog::log(const CString& name, MacroAssemblerCodeRef<LinkBufferPtrTag> c
                 totalSize += sizeof(JITDump::DebugEntry) + (sourceEntry.filePath.length() + 1);
             debugRecord.header.totalSize = totalSize;
 
-            logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&debugRecord), sizeof(JITDump::DebugInfoRecord)));
+            logger.write(locker, asBytes(singleElementSpan(debugRecord)));
 
             for (auto& sourceEntry : sourceEntries) {
                 JITDump::DebugEntry debugEntry;
                 debugEntry.codeAddress = std::bit_cast<uintptr_t>(executableAddress) + sourceEntry.codeOffset;
                 debugEntry.line = sourceEntry.line;
                 debugEntry.discrim = sourceEntry.column;
-                logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&debugEntry), sizeof(JITDump::DebugEntry)));
+                logger.write(locker, asBytes(singleElementSpan(debugEntry)));
                 logger.write(locker, sourceEntry.filePath.spanIncludingNullTerminator());
             }
         }
@@ -328,7 +328,7 @@ void PerfLog::log(const CString& name, MacroAssemblerCodeRef<LinkBufferPtrTag> c
         record.codeSize = size;
         record.codeIndex = logger.m_codeIndex++;
 
-        logger.write(locker, unsafeMakeSpan(std::bit_cast<char*>(&record), sizeof(JITDump::CodeLoadRecord)));
+        logger.write(locker, asBytes(singleElementSpan(record)));
         logger.write(locker, name.spanIncludingNullTerminator());
         logger.write(locker, unsafeMakeSpan(executableAddress, size));
         logger.flush(locker);

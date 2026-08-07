@@ -149,7 +149,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     JSObject* unscopables = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     unscopables->convertToDictionary(vm);
-    const Identifier* const unscopableNames[] = {
+    const std::array<const Identifier* const, 16> unscopableNames {
         &vm.propertyNames->builtinNames().atPublicName(),
         &vm.propertyNames->copyWithin,
         &vm.propertyNames->builtinNames().entriesPublicName(),

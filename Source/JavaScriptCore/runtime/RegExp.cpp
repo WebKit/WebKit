@@ -536,11 +536,11 @@ void RegExp::printTraceHeader()
 
 void RegExp::printTraceData()
 {
-    char formattedRegExp[SameLineFormatedRegExpnWidth + 1];
-    char rawPatternBuffer[SameLineFormatedRegExpnWidth + 1];
+    std::array<char, SameLineFormatedRegExpnWidth + 1> formattedRegExp;
+    std::array<char, SameLineFormatedRegExpnWidth + 1> rawPatternBuffer;
     String rawPattern;
 
-    memset(formattedRegExp, ' ', SameLineFormatedRegExpnWidth);
+    memsetSpan(std::span { formattedRegExp }.first(SameLineFormatedRegExpnWidth), ' ');
     formattedRegExp[SameLineFormatedRegExpnWidth] = '\0';
 
     auto patternCStr = pattern().utf8(); // Hold a reference so it doesn't get destroyed.
@@ -553,7 +553,7 @@ void RegExp::printTraceData()
 
         rawPatternBuffer[index] = '\0';
 
-        rawPattern = makeString(rawPattern, rawPatternBuffer);
+        rawPattern = makeString(rawPattern, rawPatternBuffer.data());
 
         index = 0;
     };
@@ -578,8 +578,10 @@ void RegExp::printTraceData()
 
     if (rawPattern.length() + strlen(Yarr::flagsString(flags()).data()) + 2 <= SameLineFormatedRegExpnWidth) {
         String result = makeString('/', rawPattern, '/', Yarr::flagsString(flags()).data());
-        memcpy(formattedRegExp, result.utf8().data(), result.length());
-        formattedRegExp[result.length()] = '\0';
+        auto utf8 = result.utf8();
+        size_t length = std::min<size_t>(utf8.length(), SameLineFormatedRegExpnWidth);
+        memcpySpan(std::span { formattedRegExp }.first(length), utf8.span().first(length));
+        formattedRegExp[length] = '\0';
     } else
         SAFE_DATALOGF("/%s/%s\n", rawPattern.utf8(), Yarr::flagsString(flags()).data());
 
@@ -642,7 +644,7 @@ void RegExp::printTraceData()
     unsigned averageMatchOnlyStringLen = (unsigned)(m_rtMatchOnlyTotalSubjectStringLen / m_rtMatchOnlyCallCount);
     unsigned averageMatchStringLen = (unsigned)(m_rtMatchTotalSubjectStringLen / m_rtMatchCallCount);
 
-    dataLogF("%-*.*s %*.*s %*.*s %10d %10d %10u\n", SameLineFormatedRegExpnWidth, SameLineFormatedRegExpnWidth, formattedRegExp, addrWidth, addrWidth, jit8BitMatchOnlyAddr.utf8().data(), addrWidth, addrWidth, jit16BitMatchOnlyAddr.utf8().data(), m_rtMatchOnlyCallCount, m_rtMatchOnlyFoundCount, averageMatchOnlyStringLen);
+    dataLogF("%-*.*s %*.*s %*.*s %10d %10d %10u\n", SameLineFormatedRegExpnWidth, SameLineFormatedRegExpnWidth, formattedRegExp.data(), addrWidth, addrWidth, jit8BitMatchOnlyAddr.utf8().data(), addrWidth, addrWidth, jit16BitMatchOnlyAddr.utf8().data(), m_rtMatchOnlyCallCount, m_rtMatchOnlyFoundCount, averageMatchOnlyStringLen);
     for (unsigned i = 0; i < SameLineFormatedRegExpnWidth; ++i)
         dataLog(" ");
     dataLogF(" %*.*s %*.*s %10d %10d %10u\n", addrWidth, addrWidth, jit8BitMatchAddr.utf8().data(), addrWidth, addrWidth, jit16BitMatchAddr.utf8().data(), m_rtMatchCallCount, m_rtMatchFoundCount, averageMatchStringLen);

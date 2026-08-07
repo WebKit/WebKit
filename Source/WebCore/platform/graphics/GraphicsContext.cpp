@@ -571,7 +571,7 @@ void GraphicsContext::strokeEllipseAsPath(const FloatRect& ellipse)
 
 void GraphicsContext::drawLineForText(const FloatRect& rect, bool isPrinting, bool doubleUnderlines, StrokeStyle style)
 {
-    FloatSegment line[1] { { 0, rect.width() } };
+    std::array<FloatSegment, 1> line { FloatSegment { 0, rect.width() } };
     drawLinesForText(rect.location(), rect.height(), line, isPrinting, doubleUnderlines, style);
 }
 

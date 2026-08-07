@@ -65,8 +65,8 @@ struct Inst {
         : kind(kind)
         , origin(origin)
     {
-        Arg temp[] { arg, arguments... };
-        initializeArgsFrom(std::span<const Arg> { temp, 1 + sizeof...(Arguments) });
+        std::array<Arg, 1 + sizeof...(Arguments)> temp { arg, arguments... };
+        initializeArgsFrom(std::span<const Arg> { temp });
     }
 
     Inst(Kind kind, Value* origin, std::span<const Arg> arguments)
@@ -133,8 +133,8 @@ struct Inst {
         requires (sizeof...(Arguments) > 0 && (std::is_convertible_v<Arguments, Arg> && ...))
     void setArgs(Arguments... arguments)
     {
-        Arg temp[] { arguments... };
-        setArgs(std::span<const Arg> { temp, sizeof...(Arguments) });
+        std::array<Arg, sizeof...(Arguments)> temp { arguments... };
+        setArgs(std::span<const Arg> { temp });
     }
 
     explicit operator bool() const { return origin || kind || m_size; }

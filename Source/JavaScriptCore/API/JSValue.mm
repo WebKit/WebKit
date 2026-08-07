@@ -136,8 +136,8 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 {
     auto patternString = OpaqueJSString::tryCreate(pattern);
     auto flagsString = OpaqueJSString::tryCreate(flags);
-    JSValueRef arguments[2] = { JSValueMakeString([context JSGlobalContextRef], patternString.get()), JSValueMakeString([context JSGlobalContextRef], flagsString.get()) };
-    return [JSValue valueWithJSValueRef:JSObjectMakeRegExp([context JSGlobalContextRef], 2, arguments, 0) inContext:context];
+    std::array<JSValueRef, 2> arguments { JSValueMakeString([context JSGlobalContextRef], patternString.get()), JSValueMakeString([context JSGlobalContextRef], flagsString.get()) };
+    return [JSValue valueWithJSValueRef:JSObjectMakeRegExp([context JSGlobalContextRef], 2, arguments.data(), 0) inContext:context];
 }
 
 + (JSValue *)valueWithNewErrorFromMessage:(NSString *)message inContext:(JSContext *)context
@@ -258,11 +258,11 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
     JSValue *rejection = [JSValue valueWithJSValueRef:reject inContext:context];
     CallbackData callbackData;
     const size_t argumentCount = 2;
-    JSValueRef arguments[argumentCount];
+    std::array<JSValueRef, argumentCount> arguments;
     arguments[0] = resolve;
     arguments[1] = reject;
 
-    [context beginCallbackWithData:&callbackData calleeValue:nullptr thisValue:promise argumentCount:argumentCount arguments:arguments];
+    [context beginCallbackWithData:&callbackData calleeValue:nullptr thisValue:promise argumentCount:argumentCount arguments:arguments.data()];
     executor([JSValue valueWithJSValueRef:resolve inContext:context], rejection);
     if (context.exception)
         [rejection callWithArguments:@[context.exception]];
@@ -1275,7 +1275,7 @@ static StructHandlers* createStructHandlerMap()
         // Check for [ id, SEL, <type>, <contextType> ]
         if (method_getNumberOfArguments(method) != 4)
             return;
-        char idType[3];
+        std::array<char, 3> idType;
         // Check 2nd argument type is "@"
         {
             auto secondType = adoptSystemMalloc(method_copyArgumentType(method, 3));
@@ -1283,8 +1283,8 @@ static StructHandlers* createStructHandlerMap()
                 return;
         }
         // Check result type is also "@"
-        method_getReturnType(method, idType, 3);
-        if (strcmp(idType, "@") != 0)
+        method_getReturnType(method, idType.data(), 3);
+        if (strcmp(idType.data(), "@") != 0)
             return;
         {
             auto type = adoptSystemMalloc(method_copyArgumentType(method, 2));

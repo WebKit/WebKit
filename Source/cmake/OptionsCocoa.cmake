@@ -204,6 +204,8 @@ endif ()
 set(ENABLE_WEBKIT_LEGACY ON)
 set(ENABLE_WEBKIT ON)
 
+set(ENABLE_UNSAFE_BUFFER_USAGE_WARNING ON)
+
 # OBJECT libraries don't produce .swiftmodule files.
 set(PAL_LIBRARY_TYPE STATIC)
 
@@ -296,6 +298,9 @@ add_compile_options(
     "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility=hidden>"
     "$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility-inlines-hidden>"
 )
+
+# FIXME: Consider extending this to Swift with -Xfrontend -disable-stack-protector.
+add_compile_options("$<$<COMPILE_LANGUAGE:CXX,OBJCXX>:-fno-stack-protector>")
 
 if (CMAKE_OSX_SYSROOT MATCHES "\\.Internal\\.sdk$")
     add_compile_definitions(OS_UNFAIR_LOCK_INLINE=1)

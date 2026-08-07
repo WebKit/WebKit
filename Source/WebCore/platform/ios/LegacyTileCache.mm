@@ -587,9 +587,9 @@ void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context, Dr
 
         auto matrix = CGAffineTransformMakeScale(1, -1);
         auto font = adoptCF(CTFontCreateWithName(CFSTR("Helvetica"), 25, &matrix));
-        CFTypeRef keys[] = { kCTFontAttributeName, kCTForegroundColorFromContextAttributeName };
-        CFTypeRef values[] = { font.get(), kCFBooleanTrue };
-        auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        std::array<CFTypeRef, 2> keys { kCTFontAttributeName, kCTForegroundColorFromContextAttributeName };
+        std::array<CFTypeRef, 2> values { font.get(), kCFBooleanTrue };
+        auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
         auto line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
         CGContextSetTextPosition(context, labelBounds.origin.x + 3, labelBounds.origin.y + 20);

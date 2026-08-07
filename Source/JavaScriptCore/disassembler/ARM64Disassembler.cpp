@@ -46,13 +46,13 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
     A64DOpcode arm64Opcode(armCodeStart, armCodeEnd);
 
     unsigned pcOffset = (currentPC - armCodeStart) * sizeof(uint32_t);
-    char pcInfo[25];
+    std::array<char, 25> pcInfo;
     while (byteCount) {
         if (codeStart)
-            snprintf(pcInfo, sizeof(pcInfo) - 1, "<%u> %#llx", pcOffset, static_cast<unsigned long long>(std::bit_cast<uintptr_t>(currentPC)));
+            SAFE_SPRINTF(std::span { pcInfo }.first(pcInfo.size() - 1), "<%u> %#llx", pcOffset, static_cast<unsigned long long>(std::bit_cast<uintptr_t>(currentPC)));
         else
-            snprintf(pcInfo, sizeof(pcInfo) - 1, "%#llx", static_cast<unsigned long long>(std::bit_cast<uintptr_t>(currentPC)));
-        out.printf("%s%24s: %s", prefix, pcInfo, arm64Opcode.disassemble(currentPC));
+            SAFE_SPRINTF(std::span { pcInfo }.first(pcInfo.size() - 1), "%#llx", static_cast<unsigned long long>(std::bit_cast<uintptr_t>(currentPC)));
+        out.printf("%s%24s: %s", prefix, pcInfo.data(), arm64Opcode.disassemble(currentPC));
         if (auto str = AssemblyCommentRegistry::singleton().comment(currentPC))
             out.printf("; %s\n", str->ascii().data());
         else

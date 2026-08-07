@@ -91,8 +91,8 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
         for (auto& fontFaceFeature : *fontCreationContext.fontFaceFeatures()) {
             if (fontFaceFeature.enabled()) {
                 const auto& tag = fontFaceFeature.tag();
-                const char buffer[] = { tag[0], tag[1], tag[2], tag[3], '\0' };
-                FcPatternAddString(pattern.get(), FC_FONT_FEATURES, reinterpret_cast<const FcChar8*>(buffer));
+                const std::array<char, 5> buffer { tag[0], tag[1], tag[2], tag[3], '\0' };
+                FcPatternAddString(pattern.get(), FC_FONT_FEATURES, reinterpret_cast<const FcChar8*>(buffer.data()));
             }
         }
     }

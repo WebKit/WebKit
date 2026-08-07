@@ -2348,12 +2348,12 @@ HRESULT MediaPlayerPrivateMediaFoundation::VideoScheduler::flush()
     if (m_schedulerThread) {
         ::PostThreadMessage(m_threadID, EventFlush, 0, 0);
 
-        HANDLE objects[] = { m_flushEvent.get(), m_schedulerThread.get() };
+        std::array<HANDLE, 2> objects { m_flushEvent.get(), m_schedulerThread.get() };
 
         const int schedulerTimeout = 5000;
 
         // Wait for the flush to finish or the thread to terminate.
-        ::WaitForMultipleObjects(2, objects, FALSE, schedulerTimeout);
+        ::WaitForMultipleObjects(2, objects.data(), FALSE, schedulerTimeout);
     }
 
     return S_OK;

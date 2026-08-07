@@ -684,12 +684,12 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
 
     RetainPtr colorSpace = sRGBColorSpaceSingleton();
     {
-        const CGFloat components[] = { 1, 1, 1, 0.6 };
-        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
+        constexpr auto components = WTF::toArray<CGFloat>({ 1, 1, 1, 0.6 });
+        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components.data()));
         [m_tileMapHostLayer setBackgroundColor:color.get()];
 
-        const CGFloat borderComponents[] = { 0, 0, 0, 1 };
-        RetainPtr<CGColorRef> borderColor = adoptCF(CGColorCreate(colorSpace.get(), borderComponents));
+        constexpr auto borderComponents = WTF::toArray<CGFloat>({ 0, 0, 0, 1 });
+        RetainPtr<CGColorRef> borderColor = adoptCF(CGColorCreate(colorSpace.get(), borderComponents.data()));
         [m_tileMapHostLayer setBorderColor:borderColor.get()];
     }
     
@@ -698,8 +698,8 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
     [m_exposedRectIndicatorLayer setAnchorPoint:CGPointZero];
 
     {
-        const CGFloat components[] = { 0, 1, 0, 1 };
-        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components));
+        constexpr auto components = WTF::toArray<CGFloat>({ 0, 1, 0, 1 });
+        RetainPtr<CGColorRef> color = adoptCF(CGColorCreate(colorSpace.get(), components.data()));
         [m_exposedRectIndicatorLayer setBorderColor:color.get()];
     }
 }

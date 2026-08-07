@@ -88,9 +88,9 @@ void XErrorTrapper::errorEvent(XErrorEvent* event)
     static const char errorFormatString[] = "The program with pid %d received an X Window System error.\n"
         "The error was '%s'.\n"
         "  (Details: serial %ld error_code %d request_code %d minor_code %d)\n";
-    char errorMessage[64];
-    XGetErrorText(m_display, m_errorCode, errorMessage, 63);
-    WTFLogAlways(errorFormatString, getpid(), errorMessage, event->serial, event->error_code, event->request_code, event->minor_code);
+    std::array<char, 64> errorMessage;
+    XGetErrorText(m_display, m_errorCode, errorMessage.data(), 63);
+    WTFLogAlways(errorFormatString, getpid(), errorMessage.data(), event->serial, event->error_code, event->request_code, event->minor_code);
 
     if (m_policy == Policy::Crash)
         CRASH();

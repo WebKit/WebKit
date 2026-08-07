@@ -319,13 +319,13 @@ XrResult OpenXRInputSource::updateInteractionProfile()
     RETURN_RESULT_IF_FAILED(xrGetCurrentInteractionProfile(m_session, m_subactionPath, &state));
 
     constexpr uint32_t bufferSize = 100;
-    char buffer[bufferSize];
+    std::array<char, bufferSize> buffer;
     uint32_t writtenCount = 0;
-    RETURN_RESULT_IF_FAILED(xrPathToString(m_instance, state.interactionProfile, bufferSize, &writtenCount, buffer));
+    RETURN_RESULT_IF_FAILED(xrPathToString(m_instance, state.interactionProfile, bufferSize, &writtenCount, buffer.data()));
 
     m_profiles.clear();
     for (auto& profile : openXRInteractionProfiles) {
-        if (equalSpans(profile.path.span(), unsafeSpan(buffer))) {
+        if (equalSpans(profile.path.span(), unsafeSpan(buffer.data()))) {
             m_usingHandInteractionProfile = equalSpans(profile.path.span(), handInteractionProfilePath.span());
             LOG(XR, "Input source %s using interaction profile %s", m_subactionPathName.utf8().data(), profile.path.span().data());
             for (const auto& id : profile.profileIds)

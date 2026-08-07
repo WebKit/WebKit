@@ -396,12 +396,12 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
         if (!hdrop)
             return;
 
-        WCHAR filename[MAX_PATH];
+        std::array<WCHAR, MAX_PATH> filename;
         UINT fileCount = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
         for (UINT i = 0; i < fileCount; i++) {
-            if (!DragQueryFileW(hdrop, i, filename, std::size(filename)))
+            if (!DragQueryFileW(hdrop, i, filename.data(), filename.size()))
                 continue;
-            reader.readFilename(filename);
+            reader.readFilename(filename.data());
         }
 
         GlobalUnlock(medium.hGlobal);
@@ -1017,7 +1017,7 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Fragme
     if (fileName.isEmpty() || !data)
         return 0;
 
-    WCHAR filePath[MAX_PATH];
+    std::array<WCHAR, MAX_PATH> filePath;
 
     if (url.protocolIsFile()) {
         String localPath = PAL::decodeURLEscapeSequences(url.path());
@@ -1027,30 +1027,30 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Fragme
         auto wideCharacters = localPath.wideCharacters();
         LPCWSTR localPathStr = wideCharacters.span().data();
         if (localPathStr && wcslen(localPathStr) + 1 < MAX_PATH)
-            wcscpy_s(filePath, MAX_PATH, localPathStr);
+            wcscpy_s(filePath.data(), filePath.size(), localPathStr);
         else
             return 0;
     } else {
-        WCHAR tempPath[MAX_PATH];
-        WCHAR extension[MAX_PATH];
-        if (!::GetTempPath(std::size(tempPath), tempPath))
+        std::array<WCHAR, MAX_PATH> tempPath;
+        std::array<WCHAR, MAX_PATH> extension;
+        if (!::GetTempPath(tempPath.size(), tempPath.data()))
             return 0;
-        if (!::PathAppend(tempPath, fileName.wideCharacters().span().data()))
+        if (!::PathAppend(tempPath.data(), fileName.wideCharacters().span().data()))
             return 0;
-        LPCWSTR foundExtension = ::PathFindExtension(tempPath);
+        LPCWSTR foundExtension = ::PathFindExtension(tempPath.data());
         if (foundExtension) {
-            if (wcscpy_s(extension, MAX_PATH, foundExtension))
+            if (wcscpy_s(extension.data(), extension.size(), foundExtension))
                 return 0;
         } else
-            *extension = 0;
-        ::PathRemoveExtension(tempPath);
+            extension[0] = 0;
+        ::PathRemoveExtension(tempPath.data());
         for (int i = 1; i < 10000; i++) {
-            if (swprintf_s(filePath, MAX_PATH, TEXT("%s-%d%s"), tempPath, i, extension) == -1)
+            if (swprintf_s(filePath.data(), filePath.size(), TEXT("%s-%d%s"), tempPath.data(), i, extension.data()) == -1)
                 return 0;
-            if (!::PathFileExists(filePath))
+            if (!::PathFileExists(filePath.data()))
                 break;
         }
-        HANDLE tempFileHandle = CreateFile(filePath, GENERIC_READ | GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+        HANDLE tempFileHandle = CreateFile(filePath.data(), GENERIC_READ | GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
         if (tempFileHandle == INVALID_HANDLE_VALUE)
             return 0;
 
@@ -1067,7 +1067,7 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Fragme
             return 0;
     }
 
-    SIZE_T dropFilesSize = sizeof(DROPFILES) + (sizeof(WCHAR) * (wcslen(filePath) + 2));
+    SIZE_T dropFilesSize = sizeof(DROPFILES) + (sizeof(WCHAR) * (wcslen(filePath.data()) + 2));
     HGLOBAL memObj = GlobalAlloc(GHND | GMEM_SHARE, dropFilesSize);
     if (!memObj) 
         return 0;
@@ -1080,7 +1080,7 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Fragme
 
     dropFiles->pFiles = sizeof(DROPFILES);
     dropFiles->fWide = TRUE;
-    wcscpy(reinterpret_cast<LPWSTR>(dropFiles + 1), filePath);
+    wcscpy(reinterpret_cast<LPWSTR>(dropFiles + 1), filePath.data());
     GlobalUnlock(memObj);
 
     return memObj;

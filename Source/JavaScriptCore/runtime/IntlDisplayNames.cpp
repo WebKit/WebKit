@@ -107,7 +107,7 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
 
     UErrorCode status = U_ZERO_ERROR;
 
-    UDisplayContext contexts[] = {
+    std::array<UDisplayContext, 4> contexts {
         // en_GB displays as 'English (United Kingdom)' (Standard Names) or 'British English' (Dialect Names).
         // https://github.com/tc39/proposal-intl-displaynames#language-display-names
         (m_type == Type::Language && m_languageDisplay == LanguageDisplay::Standard) ? UDISPCTX_STANDARD_NAMES : UDISPCTX_DIALECT_NAMES,
@@ -127,7 +127,7 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
         UDISPCTX_NO_SUBSTITUTE,
     };
     m_localeCString = m_locale.utf8();
-    m_displayNames = std::unique_ptr<ULocaleDisplayNames, ULocaleDisplayNamesDeleter>(uldn_openForContext(m_localeCString.data(), contexts, std::size(contexts), &status));
+    m_displayNames = std::unique_ptr<ULocaleDisplayNames, ULocaleDisplayNamesDeleter>(uldn_openForContext(m_localeCString.data(), contexts.data(), contexts.size(), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize DisplayNames"_s);
         return;
@@ -248,7 +248,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
         }
 
         // 6. Let code be the result of mapping code to upper case as described in 6.1.
-        const char16_t currency[4] = {
+        const std::array<char16_t, 4> currency {
             toASCIIUpper(code[0]),
             toASCIIUpper(code[1]),
             toASCIIUpper(code[2]),
@@ -257,7 +257,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
         // The result of ucurr_getName is static string so that we do not need to free the result.
         int32_t length = 0;
         UBool isChoiceFormat = false; // We need to pass this, otherwise, we will see crash in ICU 64.
-        const char16_t* result = ucurr_getName(currency, m_localeCString.data(), style, &isChoiceFormat, &length, &status);
+        const char16_t* result = ucurr_getName(currency.data(), m_localeCString.data(), style, &isChoiceFormat, &length, &status);
         if (U_FAILURE(status))
             return throwTypeError(globalObject, scope, "Failed to query a display name."_s);
         // ucurr_getName returns U_USING_DEFAULT_WARNING if the display-name is not found. But U_USING_DEFAULT_WARNING is returned even if
@@ -265,8 +265,8 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
         // result == currency to check whether ICU actually failed to find the corresponding display-name. This pointer comparison is ensured by
         // ICU API document.
         // > Returns pointer to display string of 'len' char16_ts. If the resource data contains no entry for 'currency', then 'currency' itself is returned.
-        if (status == U_USING_DEFAULT_WARNING && result == currency)
-            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, StringView({ currency, 3 }));
+        if (status == U_USING_DEFAULT_WARNING && result == currency.data())
+            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, StringView({ currency.data(), 3 }));
         return jsString(vm, String({ result, static_cast<size_t>(length) }));
     }
     case Type::Calendar: {

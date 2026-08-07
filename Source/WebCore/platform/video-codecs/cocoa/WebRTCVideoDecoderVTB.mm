@@ -56,7 +56,7 @@ static int bitDepthFromFormat(CMVideoFormatDescriptionRef format)
 static RetainPtr<CFDictionaryRef> createPixelBufferAttributes(CMVideoFormatDescriptionRef format)
 {
     static size_t const attributesSize = 3;
-    CFTypeRef keys[attributesSize] = {
+    std::array<CFTypeRef, attributesSize> keys {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         WebCore::kCVPixelBufferOpenGLCompatibilityKey,
 #elif PLATFORM(IOS_FAMILY)
@@ -77,8 +77,8 @@ static RetainPtr<CFDictionaryRef> createPixelBufferAttributes(CMVideoFormatDescr
     else
         pixelFormatType = isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
     RetainPtr pixelFormat = adoptCF(CFNumberCreate(nullptr, kCFNumberLongType, &pixelFormatType));
-    CFTypeRef values[attributesSize] = { kCFBooleanTrue, ioSurfaceValue.get(), pixelFormat.get() };
-    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, attributesSize, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<CFTypeRef, attributesSize> values { kCFBooleanTrue, ioSurfaceValue.get(), pixelFormat.get() };
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), attributesSize, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
 class WebRTCVideoDecoderVTBQueue : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebRTCVideoDecoderVTBQueue> {

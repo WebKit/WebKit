@@ -144,6 +144,12 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR USE_APPLE_INTERNAL_SDK)
         ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
         ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
     )
+    # mig emits raw pointer arithmetic that cannot be annotated, and the generated
+    # C gets the target's warning flags because they are not language-scoped.
+    set_source_files_properties(
+        ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
+        ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
+        PROPERTIES COMPILE_OPTIONS "-Wno-unsafe-buffer-usage")
 endif ()
 
 

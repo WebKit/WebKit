@@ -173,11 +173,11 @@ static bool currentFontContainsCharacterNonBMP(HDC hdc, StringView stringView)
     ScriptGetFontProperties(hdc, &sc, &fp);
     ScriptFreeCache(&sc);
 
-    wchar_t glyphs[2] = { };
+    std::array<wchar_t, 2> glyphs { };
     GCP_RESULTS gcpResults = { };
     gcpResults.lStructSize = sizeof gcpResults;
     gcpResults.nGlyphs = 2;
-    gcpResults.lpGlyphs = glyphs;
+    gcpResults.lpGlyphs = glyphs.data();
     GetCharacterPlacement(hdc, wcharFrom(stringView.upconvertedCharacters()), 2, 0, &gcpResults, GCP_GLYPHSHAPE);
 
     if (gcpResults.nGlyphs != 1)
@@ -292,9 +292,9 @@ RefPtr<Font> FontCache::systemFallbackForCharacterCluster(const FontDescription&
     unsigned linkedFontIndex = 0;
     while (hfont) {
         SelectObject(hdc, hfont);
-        WCHAR name[LF_FACESIZE];
-        GetTextFace(hdc, LF_FACESIZE, name);
-        familyName = String(name);
+        std::array<WCHAR, LF_FACESIZE> name;
+        GetTextFace(hdc, LF_FACESIZE, name.data());
+        familyName = String(name.data());
 
         if (containsCharacter || currentFontContainsCharacter(hdc, stringView))
             break;

@@ -823,7 +823,7 @@ RenderPassEncoder::DrawIndexResult RenderPassEncoder::clampIndexBufferToValidVal
     CHECKED_SET_PSO(renderCommandEncoder, device, device.indexBufferClampPipeline(indexType, rasterSampleCount), DrawIndexResult { IndexCall::Skip, nil, 0 });
     encoder.setVertexBuffer(renderCommandEncoder, indexBuffer, indexBufferOffsetInBytes, 0);
     encoder.setVertexBuffer(renderCommandEncoder, indexedIndirectBuffer, indexedIndirectBufferOffset, 1);
-    uint32_t data[] = {
+    std::array<uint32_t, 3> data {
         minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount ? minVertexCount - primitiveOffset : minVertexCount,
         primitiveOffset,
         indexCount - 1
@@ -912,7 +912,7 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
     encoder.setVertexBuffer(renderCommandEncoder, indexedIndirectBuffer.buffer(), indirectOffset, 0);
     encoder.setVertexBuffer(renderCommandEncoder, indexedIndirectBuffer.indirectIndexedBuffer(), 0, 1);
     encoder.setVertexBuffer(renderCommandEncoder, indirectBuffer, 0, 2);
-    uint32_t indirectData[] = { indexBufferCount, minInstanceCount };
+    std::array<uint32_t, 2> indirectData { indexBufferCount, minInstanceCount };
     encoder.setVertexBytes(renderCommandEncoder, asByteSpan(indirectData), 3);
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
     encoder.emitMemoryBarrier(renderCommandEncoder);
@@ -923,7 +923,7 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
     encoder.setVertexBuffer(renderCommandEncoder, indexBuffer, indexBufferOffsetInBytes, 0);
     encoder.setVertexBuffer(renderCommandEncoder, indexedIndirectBuffer.indirectIndexedBuffer(), 0, 1);
     auto primitiveOffset = primitiveType == MTLPrimitiveTypeLineStrip || primitiveType == MTLPrimitiveTypeTriangleStrip ? 1u : 0u;
-    uint32_t data[] = { minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount ? minVertexCount - primitiveOffset : minVertexCount, primitiveOffset, indexBufferCount - 1 };
+    std::array<uint32_t, 3> data { minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount ? minVertexCount - primitiveOffset : minVertexCount, primitiveOffset, indexBufferCount - 1 };
     encoder.setVertexBytes(renderCommandEncoder, asByteSpan(data), 2);
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint indirectBuffer:indirectBuffer indirectBufferOffset:0];
     encoder.emitMemoryBarrier(renderCommandEncoder);
@@ -958,7 +958,7 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectBufferToValid
     CHECKED_SET_PSO(renderCommandEncoder, device, renderPipelineState, std::make_pair(nil, 0ull));
     encoder.setVertexBuffer(renderCommandEncoder, indirectBuffer.buffer(), indirectOffset, 0);
     encoder.setVertexBuffer(renderCommandEncoder, indirectBuffer.indirectBuffer(), 0, 1);
-    uint32_t data[] = { minVertexCount, minInstanceCount };
+    std::array<uint32_t, 2> data { minVertexCount, minInstanceCount };
     encoder.setVertexBytes(renderCommandEncoder, asByteSpan(data), 2);
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
     encoder.emitMemoryBarrier(renderCommandEncoder);
@@ -997,7 +997,7 @@ bool RenderPassEncoder::clampIndirectBufferDispatchBatched(Buffer& indirectBuffe
     [renderCommandEncoder setRenderPipelineState:pso];
     encoder.setVertexBuffer(renderCommandEncoder, indirectBuffer.buffer(), indirectOffset, 0);
     encoder.setVertexBuffer(renderCommandEncoder, finalScratch, finalScratchOffset, 1);
-    uint32_t data[] = { minVertexCount, minInstanceCount };
+    std::array<uint32_t, 2> data { minVertexCount, minInstanceCount };
     encoder.setVertexBytes(renderCommandEncoder, asByteSpan(data), 2);
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
     checkForIndirectDrawDeviceLost(device, encoder, finalScratch, finalScratchOffset);
@@ -1025,7 +1025,7 @@ bool RenderPassEncoder::clampIndirectIndexBufferDispatch1Batched(Buffer* apiInde
     encoder.setVertexBuffer(renderCommandEncoder, indexedIndirectBuffer.buffer(), indirectOffset, 0);
     encoder.setVertexBuffer(renderCommandEncoder, finalScratch, finalScratchOffset, 1);
     encoder.setVertexBuffer(renderCommandEncoder, intermediateScratch, intermediateScratchOffset, 2);
-    uint32_t indirectData[] = { outIndexBufferCount, minInstanceCount };
+    std::array<uint32_t, 2> indirectData { outIndexBufferCount, minInstanceCount };
     encoder.setVertexBytes(renderCommandEncoder, asByteSpan(indirectData), 3);
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
     // Device-loss flag lives in intermediateScratch; also retain finalScratch until GPU completion.
@@ -1047,7 +1047,7 @@ bool RenderPassEncoder::clampIndirectIndexBufferDispatch2Batched(Buffer* apiInde
     encoder.setVertexBuffer(renderCommandEncoder, indexBuffer, indexBufferOffsetInBytes, 0);
     encoder.setVertexBuffer(renderCommandEncoder, finalScratch, finalScratchOffset, 1);
     auto primitiveOffset = primitiveType == MTLPrimitiveTypeLineStrip || primitiveType == MTLPrimitiveTypeTriangleStrip ? 1u : 0u;
-    uint32_t data[] = { minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount ? minVertexCount - primitiveOffset : minVertexCount, primitiveOffset, indexBufferCount - 1 };
+    std::array<uint32_t, 3> data { minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount ? minVertexCount - primitiveOffset : minVertexCount, primitiveOffset, indexBufferCount - 1 };
     encoder.setVertexBytes(renderCommandEncoder, asByteSpan(data), 2);
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint indirectBuffer:intermediateScratch indirectBufferOffset:intermediateScratchOffset];
     return true;
@@ -1566,10 +1566,10 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
             m_parentEncoder->addBuffer(mtlIndexBuffer);
             setVertexBuffer(commandEncoder, mtlIndexBuffer, 0, 2);
             [commandEncoder useResource:mtlIndexBuffer usage:MTLResourceUsageRead stages:MTLRenderStageVertex];
-            uint32_t slotData[] = { static_cast<uint32_t>(work.slotIndex), static_cast<uint32_t>(data.primitiveType), static_cast<uint32_t>(data.indexBufferOffset / indexSizeInBytes) };
+            std::array<uint32_t, 3> slotData { static_cast<uint32_t>(work.slotIndex), static_cast<uint32_t>(data.primitiveType), static_cast<uint32_t>(data.indexBufferOffset / indexSizeInBytes) };
             setVertexBytes(commandEncoder, asByteSpan(slotData), 3);
         } else {
-            uint32_t slotData[] = { static_cast<uint32_t>(work.slotIndex), static_cast<uint32_t>(data.primitiveType) };
+            std::array<uint32_t, 2> slotData { static_cast<uint32_t>(work.slotIndex), static_cast<uint32_t>(data.primitiveType) };
             setVertexBytes(commandEncoder, asByteSpan(slotData), 2);
         }
 

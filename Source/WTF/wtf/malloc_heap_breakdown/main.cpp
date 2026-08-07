@@ -42,11 +42,11 @@
 static std::string currentExecutablePath()
 {
     // Adapted from FileSystemGlib.cpp.
-    static char readLinkBuffer[PATH_MAX];
-    ssize_t result = readlink("/proc/self/exe", readLinkBuffer, PATH_MAX);
+    static std::array<char, PATH_MAX> readLinkBuffer;
+    ssize_t result = readlink("/proc/self/exe", readLinkBuffer.data(), readLinkBuffer.size());
     if (result == -1)
         return "";
-    return readLinkBuffer;
+    return readLinkBuffer.data();
 }
 
 class MallocZoneHeapManager {

@@ -71,21 +71,21 @@ void ProcessLauncher::launchProcess()
     setsockopt(socketPair.server.value(), SOL_SOCKET, SO_RCVBUF, &recvBufSize, 4);
     setsockopt(socketPair.client.value(), SOL_SOCKET, SO_RCVBUF, &recvBufSize, 4);
 
-    char coreProcessIdentifierString[16];
-    snprintf(coreProcessIdentifierString, sizeof coreProcessIdentifierString, "%ld", m_launchOptions.processIdentifier.toUInt64());
+    std::array<char, 16> coreProcessIdentifierString;
+    SAFE_SPRINTF(std::span { coreProcessIdentifierString }, "%ld", m_launchOptions.processIdentifier.toUInt64());
 
-    char* argv[] = {
-        coreProcessIdentifierString,
+    std::array<char*, 2> argv {
+        coreProcessIdentifierString.data(),
         nullptr
     };
 
 #if USE(WPE_BACKEND_PLAYSTATION)
-    auto appLocalPid = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv, socketPair.client.value());
+    auto appLocalPid = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv.data(), socketPair.client.value());
 #else
     PlayStation::LaunchParam param { socketPair.client.value(), m_launchOptions.userId };
     int32_t appLocalPid = PlayStation::launchProcess(
         !m_launchOptions.processPath.isEmpty() ? m_launchOptions.processPath.utf8().data() : defaultProcessPath(m_launchOptions.processType),
-        argv, param);
+        argv.data(), param);
 #endif
 
     if (appLocalPid < 0) {

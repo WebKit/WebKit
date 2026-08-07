@@ -40,8 +40,8 @@ void currentProcessMemoryStatus(ProcessMemoryStatus& memoryStatus)
     if (!file)
         return;
 
-    char buffer[128];
-    char* line = fgets(buffer, 128, file);
+    std::array<char, 128> buffer;
+    char* line = fgets(buffer.data(), buffer.size(), file);
     fclose(file);
     if (!line)
         return;

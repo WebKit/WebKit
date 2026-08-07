@@ -482,9 +482,9 @@ GraphicsContextGLCVCocoa::GraphicsContextGLCVCocoa(GraphicsContextGLCocoa& owner
     auto yuvVertexBufferCleanup = makeScopeExit([yuvVertexBuffer] {
         GL_DeleteBuffers(1, &yuvVertexBuffer);
     });
-    float vertices[12] = { -1, -1, 1, -1, 1, 1, 1, 1, -1, 1, -1, -1 };
+    std::array<float, 12> vertices { -1, -1, 1, -1, 1, 1, 1, 1, -1, 1, -1, -1 };
     GL_BindBuffer(GL_ARRAY_BUFFER, yuvVertexBuffer);
-    GL_BufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    GL_BufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
 
     GLuint framebuffer = 0;
     GL_GenFramebuffers(1, &framebuffer);

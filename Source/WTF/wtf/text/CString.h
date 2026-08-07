@@ -135,7 +135,7 @@ inline CString::CString(std::span<const Latin1Character> bytes)
 }
 
 inline CString::CString(const std::string& value)
-    : CString(unsafeMakeSpan(value.data(), value.size()))
+    : CString(std::span<const char> { value })
 {
 }
 

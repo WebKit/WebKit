@@ -194,7 +194,7 @@ static inline String gap(JSGlobalObject* globalObject, JSValue space)
     // If the space value is a number, create a gap string with that number of spaces.
     if (space.isNumber()) {
         unsigned count = clampTo<unsigned>(space.asNumber(), 0, maxGapLength);
-        char spaces[maxGapLength];
+        std::array<char, maxGapLength> spaces;
         for (unsigned i = 0; i < count; ++i)
             spaces[i] = ' ';
         return String(std::span { spaces }.first(count));

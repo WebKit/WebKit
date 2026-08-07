@@ -159,17 +159,17 @@ IPAddressSpace determineIPAddressSpace(const Site& site)
 #if OS(UNIX)
 IPAddressSpace classifyIPAddressSpace(const IPAddress& address)
 {
-    char buffer[INET6_ADDRSTRLEN];
+    std::array<char, INET6_ADDRSTRLEN> buffer;
     if (address.isIPv4()) {
-        if (!inet_ntop(AF_INET, &address.ipv4Address(), buffer, sizeof(buffer)))
+        if (!inet_ntop(AF_INET, &address.ipv4Address(), buffer.data(), buffer.size()))
             return IPAddressSpace::Unknown;
     } else if (address.isIPv6()) {
-        if (!inet_ntop(AF_INET6, &address.ipv6Address(), buffer, sizeof(buffer)))
+        if (!inet_ntop(AF_INET6, &address.ipv6Address(), buffer.data(), buffer.size()))
             return IPAddressSpace::Unknown;
     } else
         return IPAddressSpace::Unknown;
 
-    return classifyHost(String::fromLatin1(buffer));
+    return classifyHost(String::fromLatin1(buffer.data()));
 }
 #else
 IPAddressSpace classifyIPAddressSpace(const IPAddress&)

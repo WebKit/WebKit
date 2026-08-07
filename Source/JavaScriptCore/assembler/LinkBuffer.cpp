@@ -51,15 +51,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(IRDumpDebugInfo);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceCodeDumpDebugInfo);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LinkBuffer);
 
-static const char* NODELETE profileName(LinkBuffer::Profile profile)
+static ASCIILiteral profileName(LinkBuffer::Profile profile)
 {
-#define RETURN_LINKBUFFER_PROFILE_NAME(name) case LinkBuffer::Profile::name: return #name;
+#define RETURN_LINKBUFFER_PROFILE_NAME(name) case LinkBuffer::Profile::name: return #name ""_s;
     switch (profile) {
         FOR_EACH_LINKBUFFER_PROFILE(RETURN_LINKBUFFER_PROFILE_NAME)
     }
     RELEASE_ASSERT_NOT_REACHED();
 #undef RETURN_LINKBUFFER_PROFILE_NAME
-    return "";
+    return ""_s;
 }
 
 LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassemblyImpl(ASCIILiteral simpleName)
@@ -621,13 +621,13 @@ void LinkBuffer::dumpProfileStatistics(std::optional<PrintStream*> outStream)
         size_t count;
     };
 
-    Stat sortedStats[numberOfProfiles];
+    std::array<Stat, numberOfProfiles> sortedStats;
     PrintStream& out = outStream ? *outStream.value() : WTF::dataFile();
 
     size_t totalOfAllProfilesSize = 0;
     auto dumpStat = [&] (const Stat& stat) {
-        char formattedName[21];
-        snprintf(formattedName, 21, "%20s", profileName(stat.profile));
+        std::array<char, 21> formattedName;
+        SAFE_SPRINTF(std::span { formattedName }, "%20s", profileName(stat.profile));
 
         const char* largerUnit = nullptr;
         double sizeInLargerUnit = stat.size;
@@ -640,9 +640,9 @@ void LinkBuffer::dumpProfileStatistics(std::optional<PrintStream*> outStream)
         }
 
         if (largerUnit)
-            out.print("  ", formattedName, ": ", stat.size, " (", sizeInLargerUnit, " ", largerUnit, ")");
+            out.print("  ", formattedName.data(), ": ", stat.size, " (", sizeInLargerUnit, " ", largerUnit, ")");
         else
-            out.print("  ", formattedName, ": ", stat.size);
+            out.print("  ", formattedName.data(), ": ", stat.size);
 
         if (!stat.count)
             out.println();

@@ -232,7 +232,7 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
         for (auto* bindGroupResources : kvp.value) {
             for (size_t i = 0, sz = bindGroupResources->mtlResources.size(); i < sz; ++i) {
                 auto& usageData = bindGroupResources->resourceUsages[i];
-                constexpr ShaderStage shaderStages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute, ShaderStage::Undefined };
+                constexpr auto shaderStages = WTF::toArray({ ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute, ShaderStage::Undefined });
                 std::optional<BindGroupLayout::StageMapValue> bindingAccess;
                 for (auto shaderStage : shaderStages) {
                     bindingAccess = bindGroupLayout->bindingAccessForBindingIndex(usageData.binding, shaderStage);

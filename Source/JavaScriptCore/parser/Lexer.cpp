@@ -919,7 +919,7 @@ template<typename CharacterType> inline void Lexer<CharacterType>::recordUnicode
     if (U_IS_BMP(codePoint))
         record16(static_cast<char16_t>(codePoint));
     else {
-        char16_t codeUnits[2] = { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
+        std::array<char16_t, 2> codeUnits { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
         append16(codeUnits);
     }
 }
@@ -1729,7 +1729,7 @@ ALWAYS_INLINE auto Lexer<T>::parseBinary() -> std::optional<NumberParseResult>
     int digit = maximumDigits - 1;
     // Temporary buffer for the digits. Makes easier
     // to reconstruct the input characters when needed.
-    Latin1Character digits[maximumDigits];
+    std::array<Latin1Character, maximumDigits> digits;
 
     do {
         if (m_current == '_') {
@@ -1785,7 +1785,7 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> std::optional<NumberParseResult>
     int digit = maximumDigits - 1;
     // Temporary buffer for the digits. Makes easier
     // to reconstruct the input characters when needed.
-    Latin1Character digits[maximumDigits];
+    std::array<Latin1Character, maximumDigits> digits;
 
     do {
         if (m_current == '_') {
@@ -1846,7 +1846,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> std::optional<NumberParseResult>
         int digit = maximumDigits - 1;
         // Temporary buffer for the digits. Makes easier
         // to reconstruct the input characters when needed.
-        Latin1Character digits[maximumDigits];
+        std::array<Latin1Character, maximumDigits> digits;
 
         do {
             if (m_current == '_') {

@@ -37,6 +37,7 @@
 #include "DocumentSecurityOrigin.h"
 #include "ExceptionData.h"
 #include "ExceptionOr.h"
+#include "FrameDestructionObserverInlines.h"
 #include "JSDOMConvertAny.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertJSON.h"

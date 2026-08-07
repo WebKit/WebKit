@@ -113,7 +113,7 @@ static JSValue encode(JSGlobalObject* globalObject, const WTF::BitSet<256>& doNo
         }
 
         // 4-d-iv. Let Octets be the array of octets resulting by applying the UTF-8 transformation to V, and let L be the array size.
-        Latin1Character utf8OctetsBuffer[U8_MAX_LENGTH];
+        std::array<Latin1Character, U8_MAX_LENGTH> utf8OctetsBuffer;
         unsigned utf8Length = 0;
         // We can use U8_APPEND_UNSAFE here since codePoint is either
         // 1. non surrogate one, correct code point.
@@ -166,7 +166,7 @@ static JSValue decode(JSGlobalObject* globalObject, std::span<const CharType> ch
                 const int sequenceLen = 1 + U8_COUNT_TRAIL_BYTES(b0);
                 if ((k + sequenceLen * 3) <= characters.size()) {
                     charLen = sequenceLen * 3;
-                    uint8_t sequence[U8_MAX_LENGTH];
+                    std::array<uint8_t, U8_MAX_LENGTH> sequence;
                     sequence[0] = b0;
                     for (int i = 1; i < sequenceLen; ++i) {
                         const CharType* q = p + i * 3;

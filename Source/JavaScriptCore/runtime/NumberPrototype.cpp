@@ -346,9 +346,8 @@ static char* toStringWithRadixInternal(RadixBuffer& buffer, double originalNumbe
 
 static String toStringWithRadixInternal(int32_t number, unsigned radix)
 {
-    Latin1Character buf[1 + 32]; // Worst case is radix == 2, which gives us 32 digits + sign.
-    Latin1Character* end = std::end(buf);
-    Latin1Character* p = end;
+    std::array<Latin1Character, 1 + 32> buf; // Worst case is radix == 2, which gives us 32 digits + sign.
+    size_t position = buf.size();
 
     bool negative = false;
     uint32_t positiveNumber = number;
@@ -361,14 +360,14 @@ static String toStringWithRadixInternal(int32_t number, unsigned radix)
     do {
         uint32_t index = positiveNumber % radix;
         ASSERT(index < sizeof(radixDigits));
-        *--p = radixDigits[index];
+        buf[--position] = radixDigits[index];
         positiveNumber /= radix;
     } while (positiveNumber);
 
     if (negative)
-        *--p = '-';
+        buf[--position] = '-';
 
-    return String({ p, end });
+    return String(std::span { buf }.subspan(position));
 }
 
 String toStringWithRadix(double doubleValue, int32_t radix)

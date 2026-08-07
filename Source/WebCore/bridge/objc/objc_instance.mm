@@ -329,12 +329,12 @@ JSC::JSValue ObjcInstance::invokeObjcMethod(JSGlobalObject* lexicalGlobalObject,
     // Get the return value and convert it to a JavaScript value. Length
     // of return value will never exceed the size of largest scalar
     // or a pointer.
-    char buffer[1024];
+    std::array<char, 1024> buffer;
     ASSERT([signature methodReturnLength] < 1024);
 
     if (*type != 'v') {
-        [invocation getReturnValue:buffer];
-        result = convertObjcValueToValue(lexicalGlobalObject, buffer, objcValueType, m_rootObject.get());
+        [invocation getReturnValue:buffer.data()];
+        result = convertObjcValueToValue(lexicalGlobalObject, buffer.data(), objcValueType, m_rootObject.get());
     }
 } @catch(NSException* localException) {
 }
@@ -382,9 +382,9 @@ JSC::JSValue ObjcInstance::invokeDefaultMethod(JSGlobalObject* lexicalGlobalObje
     // Get the return value and convert it to a JavaScript value. Length
     // of return value will never exceed the size of a pointer, so we're
     // OK with 32 here.
-    char buffer[32];
-    [invocation getReturnValue:buffer];
-    result = convertObjcValueToValue(lexicalGlobalObject, buffer, objcValueType, m_rootObject.get());
+    std::array<char, 32> buffer;
+    [invocation getReturnValue:buffer.data()];
+    result = convertObjcValueToValue(lexicalGlobalObject, buffer.data(), objcValueType, m_rootObject.get());
 } @catch(NSException* localException) {
 }
     moveGlobalExceptionToExecState(lexicalGlobalObject);

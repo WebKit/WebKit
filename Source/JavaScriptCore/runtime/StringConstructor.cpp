@@ -161,8 +161,8 @@ JSString* stringFromCodePoint(JSGlobalObject* globalObject, int32_t arg)
     if (U_IS_BMP(codePoint))
         return jsSingleCharacterString(vm, static_cast<char16_t>(codePoint));
 
-    char16_t buffer[2] = { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
-    return jsNontrivialString(vm, String({ buffer, 2 }));
+    std::array<char16_t, 2> buffer { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
+    return jsNontrivialString(vm, String(buffer));
 }
 
 // https://tc39.es/ecma262/#sec-string.raw

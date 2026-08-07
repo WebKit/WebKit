@@ -7598,7 +7598,7 @@ protected:
         const int dataSize = sizeof(rawType) * 8;
         const int numberHalfWords = dataSize / 16;
         rawType value = std::bit_cast<rawType>(imm.m_value);
-        uint16_t halfword[numberHalfWords];
+        std::array<uint16_t, numberHalfWords> halfword;
 
         // Handle 0 and ~0 here to simplify code below
         if (!value) {

@@ -1080,8 +1080,8 @@ void drawLine(GraphicsContextCairo& platformContext, const FloatPoint& point1, c
         }
 
         float patternOffset = dashedLinePatternOffsetForPatternAndStrokeWidth(patternWidth, strokeWidth);
-        const double dashedLine[2] = { static_cast<double>(patternWidth), static_cast<double>(patternWidth) };
-        cairo_set_dash(cairoContext, dashedLine, 2, patternOffset);
+        const std::array<double, 2> dashedLine { static_cast<double>(patternWidth), static_cast<double>(patternWidth) };
+        cairo_set_dash(cairoContext, dashedLine.data(), 2, patternOffset);
     } else {
         setSourceRGBAFromColor(cairoContext, strokeColor);
         if (strokeThickness < 1)

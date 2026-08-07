@@ -115,16 +115,16 @@ void A64DOpcode::appendPCRelativeOffset(uint32_t* pc, int32_t immediate)
 {
     uint32_t* targetPC = pc + immediate;
     constexpr size_t localBufferSize = 101;
-    char buffer[localBufferSize];
-    const char* targetInfo = buffer;
+    std::array<char, localBufferSize> buffer;
+    const char* targetInfo = buffer.data();
 
     if (!m_startPC)
         return;
 
     if (targetPC >= m_startPC && targetPC < m_endPC)
-        snprintf(buffer, localBufferSize - 1, " -> <%u>", static_cast<unsigned>((targetPC - m_startPC) * sizeof(uint32_t)));
+        SAFE_SPRINTF(std::span { buffer }.first(localBufferSize - 1), " -> <%u>", static_cast<unsigned>((targetPC - m_startPC) * sizeof(uint32_t)));
     else if (const char* label = labelFor(targetPC))
-        snprintf(buffer, localBufferSize - 1, " -> %s", label);
+        snprintf(buffer.data(), localBufferSize - 1, " -> %s", label);
     else if (isJITPC(targetPC))
         targetInfo = " -> JIT PC";
     else if (LLInt::isLLIntPC(targetPC))

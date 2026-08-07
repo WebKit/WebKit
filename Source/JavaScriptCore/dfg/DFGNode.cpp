@@ -334,7 +334,7 @@ void Node::convertToCallDOM(Graph& graph)
     ASSERT(op() == Call);
     ASSERT(signature());
 
-    Edge edges[3];
+    std::array<Edge, 3> edges;
     // Skip the first one. This is callee.
     RELEASE_ASSERT(numChildren() <= 4);
     for (unsigned i = 1; i < numChildren(); ++i)

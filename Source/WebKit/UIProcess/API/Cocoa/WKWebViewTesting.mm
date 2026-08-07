@@ -1264,10 +1264,10 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #if HAVE(LIBPROC)
     // This approach should work on macOS outside of Apple Internal builds.
     if (auto pid = connection->remoteProcessID()) {
-        char path[PROC_PIDPATHINFO_MAXSIZE] = "\0";
-        int length = proc_pidpath(pid, path, sizeof(path));
+        std::array<char, PROC_PIDPATHINFO_MAXSIZE> path { };
+        int length = proc_pidpath(pid, path.data(), path.size());
         if (length > 0) {
-            RetainPtr<NSString> processPath = [NSString stringWithUTF8String:path];
+            RetainPtr<NSString> processPath = [NSString stringWithUTF8String:path.data()];
             if ([[processPath lastPathComponent] hasPrefix:@"com.apple.WebKit.WebContent.EnhancedSecurity"])
                 return @"security";
 

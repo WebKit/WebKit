@@ -105,9 +105,9 @@ RetainPtr<CFStringRef> copyLocalizedString(CFStringRef key)
 
 #if ASSERT_ENABLED
     if (result.get() == notFound) {
-        char keyCString[256];
-        CFStringGetCString(key, keyCString, sizeof(keyCString), kCFStringEncodingUTF8);
-        ASSERT_WITH_MESSAGE(result.get() != notFound, "Could not find localizable string '%s' in bundle", keyCString);
+        std::array<char, 256> keyCString;
+        CFStringGetCString(key, keyCString.data(), keyCString.size(), kCFStringEncodingUTF8);
+        ASSERT_WITH_MESSAGE(result.get() != notFound, "Could not find localizable string '%s' in bundle", keyCString.data());
     }
 #endif
 

@@ -148,13 +148,13 @@ void CSSMatrixComponent::setMatrix(Ref<DOMMatrix>&& matrix)
 RefPtr<CSSValue> CSSMatrixComponent::toCSSValue() const
 {
     if (is2D()) {
-        double values[] = { m_matrix->a(), m_matrix->b(), m_matrix->c(), m_matrix->d(), m_matrix->e(), m_matrix->f() };
+        std::array<double, 6> values { m_matrix->a(), m_matrix->b(), m_matrix->c(), m_matrix->d(), m_matrix->e(), m_matrix->f() };
         CSSValueListBuilder arguments;
         for (double value : values)
             arguments.append(CSSPrimitiveValue::create(value));
         return CSSFunctionValue::create(CSSValueMatrix, WTF::move(arguments));
     }
-    double values[] = {
+    std::array<double, 16> values {
         m_matrix->m11(), m_matrix->m12(), m_matrix->m13(), m_matrix->m14(),
         m_matrix->m21(), m_matrix->m22(), m_matrix->m23(), m_matrix->m24(),
         m_matrix->m31(), m_matrix->m32(), m_matrix->m33(), m_matrix->m34(),

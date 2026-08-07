@@ -91,7 +91,7 @@ void* createPbufferAndAttachIOSurface(GCGLDisplay display, GCGLConfig config, GC
 {
     auto eglTextureTarget = target == GL_TEXTURE_RECTANGLE_ANGLE ? EGL_TEXTURE_RECTANGLE_ANGLE : EGL_TEXTURE_2D;
 
-    const EGLint surfaceAttributes[] = {
+    const std::array<EGLint, 18> surfaceAttributes {
         EGL_WIDTH, width,
         EGL_HEIGHT, height,
         EGL_IOSURFACE_PLANE_ANGLE, static_cast<EGLint>(plane),
@@ -104,7 +104,7 @@ void* createPbufferAndAttachIOSurface(GCGLDisplay display, GCGLConfig config, GC
         EGL_NONE, EGL_NONE
     };
 
-    EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(display, EGL_IOSURFACE_ANGLE, surface, config, surfaceAttributes);
+    EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(display, EGL_IOSURFACE_ANGLE, surface, config, surfaceAttributes.data());
     if (!pbuffer)
         return nullptr;
 

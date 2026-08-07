@@ -106,7 +106,7 @@ EncodedJSValue atomicReadModifyWriteCase(JSGlobalObject* globalObject, VM& vm, c
 
     JSGenericTypedArrayView<Adaptor>* typedArray = uncheckedDowncast<JSGenericTypedArrayView<Adaptor>>(typedArrayView);
     
-    typename Adaptor::Type extraArgs[Func::numExtraArgs + 1]; // Add 1 to avoid 0 size array error in VS.
+    std::array<typename Adaptor::Type, Func::numExtraArgs + 1> extraArgs; // Add 1 to avoid 0 size array error in VS.
     for (unsigned i = 0; i < Func::numExtraArgs; ++i) {
         auto value = toNativeFromValue<Adaptor>(globalObject, args[2 + i]);
         RETURN_IF_EXCEPTION(scope, { });
@@ -116,7 +116,7 @@ EncodedJSValue atomicReadModifyWriteCase(JSGlobalObject* globalObject, VM& vm, c
     if (typedArray->isDetached() || !typedArray->inBounds(accessIndex))
         return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
-    auto result = func(typedArray->typedVector() + accessIndex, extraArgs);
+    auto result = func(typedArray->typedVector() + accessIndex, extraArgs.data());
     RELEASE_AND_RETURN(scope, JSValue::encode(Adaptor::toJSValue(globalObject, result)));
 }
 
@@ -216,10 +216,10 @@ EncodedJSValue atomicReadModifyWrite(JSGlobalObject* globalObject, VM& vm, const
 template<typename Func>
 EncodedJSValue atomicReadModifyWrite(JSGlobalObject* globalObject, CallFrame* callFrame, const Func& func)
 {
-    JSValue args[2 + Func::numExtraArgs];
+    std::array<JSValue, 2 + Func::numExtraArgs> args;
     for (unsigned i = 2 + Func::numExtraArgs; i--;)
         args[i] = callFrame->argument(i);
-    return atomicReadModifyWrite(globalObject, globalObject->vm(), args, func);
+    return atomicReadModifyWrite(globalObject, globalObject->vm(), args.data(), func);
 }
 
 struct AddFunc {
@@ -644,8 +644,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsAdd, EncodedJSValue, (JSGlobalObject* g
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, AddFunc()));
+    std::array<JSValue, 3> args { JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand) };
+    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args.data(), AddFunc()));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsAnd, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand))
@@ -654,8 +654,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsAnd, EncodedJSValue, (JSGlobalObject* g
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, AndFunc()));
+    std::array<JSValue, 3> args { JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand) };
+    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args.data(), AndFunc()));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsCompareExchange, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue expected, EncodedJSValue newValue))
@@ -664,8 +664,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsCompareExchange, EncodedJSValue, (JSGlo
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(expected), JSValue::decode(newValue)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, CompareExchangeFunc()));
+    std::array<JSValue, 4> args { JSValue::decode(base), JSValue::decode(index), JSValue::decode(expected), JSValue::decode(newValue) };
+    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args.data(), CompareExchangeFunc()));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsExchange, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand))
@@ -674,8 +674,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsExchange, EncodedJSValue, (JSGlobalObje
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, ExchangeFunc()));
+    std::array<JSValue, 3> args { JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand) };
+    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args.data(), ExchangeFunc()));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsIsLockFree, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue size))
@@ -693,8 +693,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsLoad, EncodedJSValue, (JSGlobalObject* 
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue args[] = {JSValue::decode(base), JSValue::decode(index)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, LoadFunc()));
+    std::array<JSValue, 2> args { JSValue::decode(base), JSValue::decode(index) };
+    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args.data(), LoadFunc()));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsOr, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand))
@@ -703,8 +703,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsOr, EncodedJSValue, (JSGlobalObject* gl
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, OrFunc()));
+    std::array<JSValue, 3> args { JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand) };
+    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args.data(), OrFunc()));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsStore, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand))
@@ -722,8 +722,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsSub, EncodedJSValue, (JSGlobalObject* g
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, SubFunc()));
+    std::array<JSValue, 3> args { JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand) };
+    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args.data(), SubFunc()));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationAtomicsXor, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue base, EncodedJSValue index, EncodedJSValue operand))
@@ -732,8 +732,8 @@ JSC_DEFINE_JIT_OPERATION(operationAtomicsXor, EncodedJSValue, (JSGlobalObject* g
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue args[] = {JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand)};
-    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args, XorFunc()));
+    std::array<JSValue, 3> args { JSValue::decode(base), JSValue::decode(index), JSValue::decode(operand) };
+    OPERATION_RETURN(scope, atomicReadModifyWrite(globalObject, vm, args.data(), XorFunc()));
 }
 
 IGNORE_WARNINGS_END

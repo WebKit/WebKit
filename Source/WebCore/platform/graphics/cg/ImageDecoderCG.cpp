@@ -713,8 +713,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return image;
     
     // If it is an xbm image, mask out all the white areas to render them transparent.
-    const CGFloat maskingColors[6] = {255, 255,  255, 255, 255, 255};
-    RetainPtr<CGImageRef> maskedImage = adoptCF(CGImageCreateWithMaskingColors(image.get(), maskingColors));
+    const std::array<CGFloat, 6> maskingColors {255, 255,  255, 255, 255, 255};
+    RetainPtr<CGImageRef> maskedImage = adoptCF(CGImageCreateWithMaskingColors(image.get(), maskingColors.data()));
     return maskedImage ? maskedImage : image;
 }
 
