@@ -128,12 +128,6 @@ double ViewGestureController::resistanceForDelta(double deltaScale, double curre
     return resistance;
 }
 
-void ViewGestureController::gestureEventWasNotHandledByWebCore(NSEvent *event, FloatPoint origin)
-{
-    if (event.type == NSEventTypeMagnify)
-        handleMagnificationGesture(event.magnification, WebEventFactory::phaseForEvent(event), origin);
-}
-
 void ViewGestureController::handleMagnificationGesture(double scale, WebEventPhase phase, FloatPoint origin)
 {
     RefPtr page = m_webPageProxy.get();

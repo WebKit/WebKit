@@ -233,6 +233,9 @@ class PageClient;
 class PageClientImpl;
 class DrawingAreaProxy;
 class MediaSessionCoordinatorProxyPrivate;
+#if ENABLE(MAC_GESTURE_EVENTS)
+class NativeWebGestureEvent;
+#endif
 class BrowsingWarning;
 class ViewGestureController;
 class ViewSnapshot;
@@ -249,6 +252,7 @@ struct WebHitTestResultData;
 enum class ContinueUnsafeLoad : bool;
 enum class ForceSoftwareCapturingViewportSnapshot : bool;
 enum class UndoOrRedo : bool;
+enum class WebEventPhase : uint8_t;
 
 typedef id <NSValidatedUserInterfaceItem> ValidationItem;
 typedef Vector<RetainPtr<ValidationItem>> ValidationVector;
@@ -678,7 +682,9 @@ public:
 
     RetainPtr<NSEvent> setLastMouseDownEvent(NSEvent *);
 
-    void gestureEventWasNotHandledByWebCore(NSEvent *);
+#if ENABLE(MAC_GESTURE_EVENTS)
+    void gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent&);
+#endif
     void gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *);
 
     void didRestoreScrollPosition();
@@ -1026,6 +1032,8 @@ private:
 
     std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
     bool inputMethodUsesCorrectKeyEventOrder();
+
+    void magnificationGestureWasNotHandledByWebCoreFromViewOnly(float magnification, WebEventPhase, WebCore::FloatPoint originInViewCoordinates);
 
     WeakObjCPtr<WKWebView> m_view;
     const UniqueRef<PageClient> m_pageClient;

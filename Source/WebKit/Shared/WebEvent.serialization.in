@@ -217,6 +217,7 @@ class WebKit::WebGestureEvent : WebKit::WebEvent {
     WebCore::IntPoint position();
     float gestureScale();
     float gestureRotation();
+    WebKit::WebEventPhase phase();
 };
 #endif
 
