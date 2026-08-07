@@ -2455,3 +2455,5 @@ imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.htm
 webkit.org/b/321185 [ Debug ] imported/w3c/web-platform-tests/wasm/core/float_exprs.wast.js.html [ Pass Timeout ]
 
 webkit.org/b/321191 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event.https.h2.html [ Pass Crash Failure ]
+
+webkit.org/b/321298 [ Release ] imported/w3c/web-platform-tests/wasm/serialization/memory/window-success.tentative.https.html [ Skip ]
