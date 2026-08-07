@@ -7643,6 +7643,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
         head_ref = self.getProperty('github.head.ref', 'HEAD')
         valid_reviewers = self.getProperty('valid_reviewers', [])
         invalid_reviewers = self.getProperty('invalid_reviewers', [])
+        is_cherry_pick = self.getProperty('classification', []) == ['Cherry-pick']
         reviewer_error_msg = '' if valid_reviewers else ' and no valid reviewer found'
         invalid_msg = ' and {} are not reviewers' if len(invalid_reviewers) > 1 else ' and {} is not a reviewer'
         if invalid_reviewers:
@@ -7699,7 +7700,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
                     if not self.is_reviewer(reviewer):
                         self.summary = self.summary.format(reviewer)
                         break
-            elif reviewers and author and any([author.startswith(reviewer) for reviewer in reviewers]):
+            elif reviewers and author and not is_cherry_pick and any([author.startswith(reviewer) for reviewer in reviewers]):
                 self.summary = f"'{author}' cannot review their own change"
                 rc = FAILURE
             else:

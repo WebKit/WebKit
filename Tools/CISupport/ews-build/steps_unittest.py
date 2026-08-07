@@ -9841,6 +9841,17 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=FAILURE, state_string="'WebKit Reviewer <reviewer@apple.com>' cannot review their own change")
         return self.run_step()
 
+    def test_self_reviewer_cherry_pick(self):
+        self.setup_step(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setUpCommonProperties()
+        self.setProperty('author', 'WebKit Reviewer <reviewer@apple.com>')
+        self.setProperty('classification', ['Cherry-pick'])
+        expected_remote_command_output = '    Reviewed by WebKit Reviewer.\n'
+        self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
+        self.expect_outcome(result=SUCCESS, state_string='Validated commit message')
+        return self.run_step()
+
 
 class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
     ENV = dict(
