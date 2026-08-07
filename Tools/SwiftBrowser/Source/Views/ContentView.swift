@@ -124,7 +124,7 @@ struct ContentView: View {
                 .task {
                     do {
                         for try await event in viewModel.page.navigations {
-                            print(event)
+                            viewModel.didReceiveNavigationEvent(event)
                         }
                     } catch {
                         print(error)

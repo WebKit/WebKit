@@ -161,7 +161,9 @@ final class BrowserViewModel {
     }
 
     func didReceiveNavigationEvent(_ event: WebPage.NavigationEvent) {
-        Self.logger.info("Did receive navigation event \(String(describing: event))")
+        Self.logger.info(
+            "Did receive navigation event \(String(describing: event)) (url: \(self.page.url?.absoluteString ?? "nil", privacy: .sensitive))"
+        )
 
         if event == .committed {
             displayedURL = page.url?.absoluteString ?? ""
@@ -169,8 +171,6 @@ final class BrowserViewModel {
     }
 
     func navigateToSubmittedURL() {
-        displayedURL = displayedURL.addingProtocolIfNecessary()
-
         guard let url = URL(userTypedString: displayedURL) else {
             return
         }
@@ -200,7 +200,7 @@ final class BrowserViewModel {
     func didExportPDF(result: Result<URL, any Error>) {
         switch result {
         case .success(let url):
-            Self.logger.info("Exported PDF to \(url)")
+            Self.logger.info("Exported PDF to \(url.absoluteString, privacy: .sensitive)")
 
         case .failure(let error):
             Self.logger.error("Failed to export PDF: \(error)")
