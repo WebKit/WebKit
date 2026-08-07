@@ -27,6 +27,7 @@
 #pragma once
 
 #include <WebCore/ChromeClient.h>
+#include <WebCore/Site.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
@@ -438,6 +439,7 @@ private:
     void handleAutoFillButtonClick(WebCore::HTMLInputElement&) final;
 
     void didCompleteAutofill(WebCore::HTMLInputElement&) final;
+    void didObserveFirstPartyUserGesture() final;
 
     void inputElementDidResignStrongPasswordAppearance(WebCore::HTMLInputElement&) final;
 
@@ -609,6 +611,8 @@ private:
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
+
+    std::optional<WebCore::Site> m_lastReportedFirstPartyUserGestureSite;
 
     WeakPtr<WebPage> m_page;
 };

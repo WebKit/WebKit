@@ -662,6 +662,7 @@ public:
     virtual void handleAutoFillButtonClick(HTMLInputElement&) { }
 
     virtual void didCompleteAutofill(HTMLInputElement&) { }
+    virtual void didObserveFirstPartyUserGesture() { }
 
     virtual void inputElementDidResignStrongPasswordAppearance(HTMLInputElement&) { }
 

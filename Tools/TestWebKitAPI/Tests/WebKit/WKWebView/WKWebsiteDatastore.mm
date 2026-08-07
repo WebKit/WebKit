@@ -2241,4 +2241,106 @@ TEST(TimeBasedEviction, PushSubscriptionOriginNotEvicted)
     EXPECT_WK_STREQ(@"example2.com", evictedDomains.get()[0]);
 }
 
+// IsolatedSiteStore::Signal.
+constexpr NSUInteger firstPartyVisitSignal = 1 << 1;
+constexpr NSUInteger firstPartyUserGestureSignal = 1 << 2;
+
+static NSUInteger isolatedSiteSignals(WKWebsiteDataStore *dataStore, NSString *urlString)
+{
+    return [[dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:urlString]] unsignedIntegerValue];
+}
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> webViewForIsolatedSiteStoreTest(const HTTPServer& server)
+{
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:server.httpsProxyConfiguration()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+TEST(WKWebsiteDataStore, FirstPartyVisitMarksSiteAsIsolated)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "iframe content"_s } },
+        { "/webkit"_s, { "webkit as a top-level page"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = webViewForIsolatedSiteStoreTest(server);
+    WKWebsiteDataStore *dataStore = [webView configuration].websiteDataStore;
+
+    EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://example.com/"]]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // The top-level site is marked; the site that only appeared as a subframe is not in the store at
+    // all.
+    EXPECT_TRUE(isolatedSiteSignals(dataStore, @"https://example.com/") & firstPartyVisitSignal);
+    EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://webkit.org/"]]);
+
+    // Visiting that same site as a top-level page does mark it.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_TRUE(isolatedSiteSignals(dataStore, @"https://webkit.org/") & firstPartyVisitSignal);
+}
+
+#if PLATFORM(MAC)
+
+TEST(WKWebsiteDataStore, FirstPartyUserGestureMarksSiteAsIsolated)
+{
+    HTTPServer server({
+        { "/example"_s, { "<body style='margin:0'><div id='target' style='width:300px;height:300px'></div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = webViewForIsolatedSiteStoreTest(server);
+    WKWebsiteDataStore *dataStore = [webView configuration].websiteDataStore;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_TRUE(isolatedSiteSignals(dataStore, @"https://example.com/") & firstPartyVisitSignal);
+    EXPECT_FALSE(isolatedSiteSignals(dataStore, @"https://example.com/") & firstPartyUserGestureSignal);
+
+    // A script-synthesized click constructs no UserGestureIndicator, so it is not a gesture.
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('target').click(); true"];
+    [webView objectByEvaluatingJavaScript:@"true"];
+    EXPECT_FALSE(isolatedSiteSignals(dataStore, @"https://example.com/") & firstPartyUserGestureSignal);
+
+    [webView sendClickAtPoint:NSMakePoint(100, 100)];
+    [webView waitForPendingMouseEvents];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !!(isolatedSiteSignals(dataStore, @"https://example.com/") & firstPartyUserGestureSignal);
+    }));
+}
+
+TEST(WKWebsiteDataStore, FirstPartyUserGestureInSubframeDoesNotMarkSubframeSite)
+{
+    HTTPServer server({
+        { "/example"_s, { "<body style='margin:0'><iframe src='https://webkit.org/iframe' style='width:300px;height:300px;border:0'></iframe></body>"_s } },
+        { "/iframe"_s, { "<body style='margin:0'><div style='width:300px;height:300px'></div></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = webViewForIsolatedSiteStoreTest(server);
+    WKWebsiteDataStore *dataStore = [webView configuration].websiteDataStore;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // The gesture lands inside the cross-site iframe, but it is the site the user is using as a page
+    // that gets the gesture signal.
+    [webView sendClickAtPoint:NSMakePoint(100, 100)];
+    [webView waitForPendingMouseEvents];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !!(isolatedSiteSignals(dataStore, @"https://example.com/") & firstPartyUserGestureSignal);
+    }));
+    EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://webkit.org/"]]);
+}
+
+#endif // PLATFORM(MAC)
+
 } // namespace TestWebKitAPI

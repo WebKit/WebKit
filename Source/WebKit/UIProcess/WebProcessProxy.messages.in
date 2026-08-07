@@ -60,6 +60,8 @@ messages -> WebProcessProxy WantsDispatchMessage {
 
     DidCompleteAutofill(WebCore::Site site)
 
+    DidObserveFirstPartyUserGesture(WebCore::Site site)
+
 #if PLATFORM(COCOA)
     CacheMediaMIMETypes(Vector<String> types)
     CacheMediaSourceTypeSupported(String type, bool isSupported)

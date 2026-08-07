@@ -117,7 +117,11 @@ TEST(WKWebViewAutoFillTests, AutofillMarksSiteAsIsolated)
     [webView synchronouslyLoadHTMLString:@"<input id='user' type='email'><input id='password' type='password'>" baseURL:url];
 
     WKWebsiteDataStore *dataStore = [webView configuration].websiteDataStore;
-    EXPECT_FALSE([dataStore _isIsolatedSiteForTesting:url]);
+
+    // Loading the page has already marked the site with Signal::FirstPartyVisit, so check for the
+    // autofill signal rather than mere membership.
+    constexpr NSUInteger autofillSignal = 1 << 0; // IsolatedSiteStore::Signal::Autofill.
+    EXPECT_FALSE([[dataStore _isolatedSiteSignalsForTesting:url] unsignedIntegerValue] & autofillSignal);
 
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"user.focus()"];
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"password.focus()"];
@@ -128,7 +132,7 @@ TEST(WKWebViewAutoFillTests, AutofillMarksSiteAsIsolated)
     EXPECT_WK_STREQ("famos", [webView stringByEvaluatingJavaScript:@"password.value"]);
 
     EXPECT_TRUE(TestWebKitAPI::Util::waitFor(^{
-        return (bool)[dataStore _isIsolatedSiteForTesting:url];
+        return (bool)([[dataStore _isolatedSiteSignalsForTesting:url] unsignedIntegerValue] & autofillSignal);
     }));
 }
 

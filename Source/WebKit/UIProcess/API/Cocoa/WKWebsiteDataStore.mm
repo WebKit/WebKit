@@ -1258,9 +1258,12 @@ struct WKWebsiteData {
     return protect(*_websiteDataStore)->hasServiceWorkerBackgroundActivityForTesting();
 }
 
--(BOOL)_isIsolatedSiteForTesting:(NSURL *)url
+- (NSNumber *)_isolatedSiteSignalsForTesting:(NSURL *)url
 {
-    return protect(*_websiteDataStore)->isIsolatedSiteForTesting(url);
+    auto signals = protect(*_websiteDataStore)->isolatedSiteSignalsForTesting(url);
+    if (!signals)
+        return nil;
+    return @(signals->toRaw());
 }
 
 - (void)_getPendingPushMessage:(void(^)(NSDictionary *))completionHandler

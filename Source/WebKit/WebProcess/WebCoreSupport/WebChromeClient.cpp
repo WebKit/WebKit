@@ -2001,6 +2001,27 @@ void WebChromeClient::didCompleteAutofill(HTMLInputElement& inputElement)
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebProcessProxy::DidCompleteAutofill(site), 0);
 }
 
+void WebChromeClient::didObserveFirstPartyUserGesture()
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    RefPtr corePage = page->corePage();
+    if (!corePage)
+        return;
+
+    auto site = Site { corePage->mainFrameURL() };
+    if (site.isEmpty())
+        return;
+
+    if (m_lastReportedFirstPartyUserGestureSite == site)
+        return;
+
+    m_lastReportedFirstPartyUserGestureSite = site;
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebProcessProxy::DidObserveFirstPartyUserGesture(site), 0);
+}
+
 void WebChromeClient::inputElementDidResignStrongPasswordAppearance(HTMLInputElement& inputElement)
 {
     RefPtr page = m_page.get();

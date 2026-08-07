@@ -233,7 +233,7 @@ public:
     void logTestingEvent(const String&);
     void didHaveUserInteractionForSiteIsolation(const URL&);
     IsolatedSiteStore& isolatedSiteStore() { return m_isolatedSiteStore; }
-    bool isIsolatedSiteForTesting(const URL&) const;
+    std::optional<OptionSet<IsolatedSiteStore::Signal>> isolatedSiteSignalsForTesting(const URL&) const;
     void logUserInteraction(const URL&, CompletionHandler<void()>&&);
     void getAllStorageAccessEntries(WebPageProxyIdentifier, CompletionHandler<void(Vector<String>&& domains)>&&);
     void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);

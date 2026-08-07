@@ -1008,6 +1008,11 @@ const URL& Page::mainFrameURL() const
     return m_topDocumentSyncData->documentURL;
 }
 
+void Page::didObserveFirstPartyUserGesture()
+{
+    chrome().client().didObserveFirstPartyUserGesture();
+}
+
 SecurityOrigin& Page::mainFrameOrigin() const
 {
     if (!m_topDocumentSyncData->documentSecurityOrigin)

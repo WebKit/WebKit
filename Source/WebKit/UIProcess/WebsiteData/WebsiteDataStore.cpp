@@ -1546,9 +1546,12 @@ void WebsiteDataStore::didHaveUserInteractionForSiteIsolation(const URL& url)
     }
 }
 
-bool WebsiteDataStore::isIsolatedSiteForTesting(const URL& url) const
+std::optional<OptionSet<IsolatedSiteStore::Signal>> WebsiteDataStore::isolatedSiteSignalsForTesting(const URL& url) const
 {
-    return m_isolatedSiteStore.contains(WebCore::Site { url });
+    WebCore::Site site { url };
+    if (!m_isolatedSiteStore.contains(site))
+        return std::nullopt;
+    return m_isolatedSiteStore.reasonsFor(site);
 }
 
 void WebsiteDataStore::logUserInteraction(const URL& url, CompletionHandler<void()>&& completionHandler)

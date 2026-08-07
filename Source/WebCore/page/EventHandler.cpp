@@ -4186,8 +4186,11 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
             if (page)
                 page->setUserDidInteractWithPage(savedUserDidInteractWithPage);
             document->updateLastHandledUserGestureTimestamp(savedLastHandledUserGestureTimestamp);
-        } else
+        } else {
             ResourceLoadObserver::singleton().logUserInteractionWithReducedTimeResolution(*document);
+            if (page)
+                page->didObserveFirstPartyUserGesture();
+        }
     }
 
     return wasHandled;

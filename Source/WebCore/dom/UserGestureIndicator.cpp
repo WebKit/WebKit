@@ -191,8 +191,11 @@ UserGestureIndicator::UserGestureIndicator(std::optional<IsProcessingUserGesture
 
     if (isProcessingUserGesture && document && currentToken(vm)->processingUserGesture()) {
         document->updateLastHandledUserGestureTimestamp(currentToken(vm)->startTime());
-        if (processInteractionStyle == ProcessInteractionStyle::Immediate)
+        if (processInteractionStyle == ProcessInteractionStyle::Immediate) {
             ResourceLoadObserver::singleton().logUserInteractionWithReducedTimeResolution(*document);
+            if (RefPtr page = document->page())
+                page->didObserveFirstPartyUserGesture();
+        }
 
         if (RefPtr page = document->page()) {
             page->setUserDidInteractWithPage(true);

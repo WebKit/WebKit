@@ -3051,6 +3051,8 @@ private:
 
     void notifyProcessPoolToPrewarm();
 
+    void recordFirstPartyVisit(const URL&);
+
     bool attachmentElementEnabled();
     bool modelElementEnabled();
 

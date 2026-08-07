@@ -8322,10 +8322,8 @@ TEST(SiteIsolation, SharedProcessAfterClick)
 TEST(SiteIsolation, SharedProcessAfterKeyDown)
 {
     HTTPServer server({
-        { "/warmup"_s, { "<iframe src='https://w3.org/w3c'></iframe>"_s } },
-        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe><iframe src='https://apple.com/apple'></iframe><iframe src='https://w3.org/w3c'></iframe>"_s } },
+        { "/webkit"_s, { "<iframe src='https://apple.com/apple'></iframe><iframe src='https://w3.org/w3c'></iframe>"_s } },
         { "/apple"_s, { "apple content"_s } },
-        { "/webkit"_s, { "webkit content"_s } },
         { "/w3c"_s, { "w3c content"_s } },
     }, HTTPServer::Protocol::HttpsProxy);
 
@@ -8342,41 +8340,44 @@ TEST(SiteIsolation, SharedProcessAfterKeyDown)
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:itpDatabaseFile.path]);
 
     auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server, EnableProcessCache::No, dataStoreRoot, itpRoot);
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/warmup"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
+    // Both subframe sites are new to the user, so they share one process.
     checkFrameTreesInProcesses(webView.get(), {
         {
-            "https://apple.com"_s,
-            { { RemoteFrame } }
+            "https://webkit.org"_s,
+            { { RemoteFrame }, { RemoteFrame } }
         },
         {
             RemoteFrame,
-            { { "https://w3.org"_s } }
+            { { "https://apple.com"_s }, { "https://w3.org"_s } }
         },
     });
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/apple"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
     [webView typeCharacter:'n'];
     [webView waitForNextPresentationUpdate];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
     [navigationDelegate waitForDidFinishNavigation];
 
+    // The user has now used apple.com as a page, so it gets a process of its own rather than joining
+    // w3.org, which it shared one with before.
     checkFrameTreesInProcesses(webView.get(), {
         {
-            "https://example.com"_s,
-            { { RemoteFrame }, { RemoteFrame }, { RemoteFrame } }
+            "https://webkit.org"_s,
+            { { RemoteFrame }, { RemoteFrame } }
         },
         {
             RemoteFrame,
-            { { "https://webkit.org"_s }, { RemoteFrame }, { RemoteFrame } }
+            { { "https://apple.com"_s }, { RemoteFrame } }
         },
         {
             RemoteFrame,
-            { { RemoteFrame }, { "https://apple.com"_s }, { "https://w3.org"_s } }
+            { { RemoteFrame }, { "https://w3.org"_s } }
         },
     });
 }

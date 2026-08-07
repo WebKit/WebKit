@@ -36,6 +36,8 @@ class IsolatedSiteStore {
 public:
     enum class Signal : uint8_t {
         Autofill = 1 << 0,
+        FirstPartyVisit = 1 << 1,
+        FirstPartyUserGesture = 1 << 2,
     };
 
     void addSite(const WebCore::Site&, Signal);
