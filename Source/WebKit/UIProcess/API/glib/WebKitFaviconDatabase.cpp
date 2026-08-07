@@ -342,7 +342,7 @@ void webkit_favicon_database_get_page_icons(WebKitFaviconDatabase* database, con
         return g_task_report_new_error(database, callback, userData, 0, WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND, _("Page %s does not have a favicon"), pageURI);
 
     auto task = adoptGRef(g_task_new(database, cancellable, callback, userData));
-    database->priv->iconDatabase->loadIconsForPageURL(uriString, IconDatabase::AllowDatabaseWrite::No, [task = WTF::move(task)](Vector<PlatformImagePtr>&& icons) {
+    database->priv->iconDatabase->loadIconsForPageURL(uriString, IconDatabase::AllowDatabaseWrite::Yes, [task = WTF::move(task)](Vector<PlatformImagePtr>&& icons) {
         auto images = icons.map([](PlatformImagePtr image) -> GRefPtr<WebKitImage> {
             SkPixmap pixmap;
             RELEASE_ASSERT(image->peekPixels(&pixmap));

@@ -204,6 +204,27 @@ public:
 #endif // PLATFORM(GTK)
 
 #if ENABLE(2022_GLIB_API)
+    static void getPageIconsCallback(GObject*, GAsyncResult* result, gpointer userData)
+    {
+        auto* test = static_cast<FaviconDatabaseTest*>(userData);
+        g_clear_pointer(&test->m_pageIcons, webkit_image_list_unref);
+        test->m_pageIcons = webkit_favicon_database_get_page_icons_finish(test->m_database.get(), result, &test->m_pageIconsError.outPtr());
+        test->quitMainLoop();
+    }
+
+    void getPageIconsForPageURIAndWaitUntilReady(const char* pageURI)
+    {
+        webkit_favicon_database_get_page_icons(m_database.get(), pageURI, nullptr, getPageIconsCallback, this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    void reopen()
+    {
+        close();
+        m_database = nullptr;
+        open("reopen");
+    }
+
     void waitUntilLoadFinishedAndPageIconsChanged()
     {
         g_clear_pointer(&m_pageIcons, webkit_image_list_unref);
@@ -306,7 +327,8 @@ public:
 
 #if ENABLE(2022_GLIB_API)
     size_t m_pageIconsNoticationCount { 0 };
-    WebKitImageList* m_pageIcons;
+    WebKitImageList* m_pageIcons { nullptr };
+    GUniqueOutPtr<GError> m_pageIconsError;
 #endif
 
     GRefPtr<WebKitFaviconDatabase> m_database;
@@ -464,7 +486,8 @@ static void testFaviconDatabaseGetPageIcons(FaviconDatabaseTest *test, gconstpoi
 {
     test->open("testFaviconDatabaseGetPageIcons");
 
-    test->loadURI(kServer->getURIForPath("/multipleicons").data());
+    CString pageURI = kServer->getURIForPath("/multipleicons");
+    test->loadURI(pageURI.data());
     test->waitUntilLoadFinishedAndPageIconsChanged();
 
 #if PLATFORM(GTK)
@@ -513,6 +536,12 @@ static void testFaviconDatabaseGetPageIcons(FaviconDatabaseTest *test, gconstpoi
     auto blueIconPixel = getARGBColorAtOrigin(blueIcon);
     g_assert_true(blueIconPixel.has_value());
     g_assert_cmpint(*blueIconPixel, ==, 0xFF0000FF);
+
+    test->reopen();
+    test->getPageIconsForPageURIAndWaitUntilReady(pageURI.data());
+    g_assert_no_error(test->m_pageIconsError.get());
+    g_assert_nonnull(test->m_pageIcons);
+    g_assert_cmpint(webkit_image_list_get_length(test->m_pageIcons), ==, 3);
 }
 #endif // ENABLE(2022_GLIB_API)
 
