@@ -386,9 +386,9 @@ TEST(WTF, clampSameSignIntegers)
 {
     testClampSameSignIntegers<char, char>();
     testClampSameSignIntegers<unsigned char, unsigned char>();
-    testClampSameSignIntegers<char, int32_t>();
+    testClampSameSignIntegers<signed char, int32_t>();
     testClampSameSignIntegers<unsigned char, uint32_t>();
-    testClampSameSignIntegers<char, int64_t>();
+    testClampSameSignIntegers<signed char, int64_t>();
     testClampSameSignIntegers<unsigned char, uint64_t>();
 
     testClampSameSignIntegers<int32_t, int32_t>();
@@ -414,8 +414,8 @@ static void testClampUnsignedToSigned()
 
 TEST(WTF, clampUnsignedToSigned)
 {
-    testClampUnsignedToSigned<char, unsigned char>();
-    testClampUnsignedToSigned<char, uint32_t>();
+    testClampUnsignedToSigned<signed char, unsigned char>();
+    testClampUnsignedToSigned<signed char, uint32_t>();
     testClampUnsignedToSigned<int32_t, uint32_t>();
     testClampUnsignedToSigned<int64_t, uint64_t>();
     testClampUnsignedToSigned<int32_t, uint64_t>();
@@ -446,7 +446,7 @@ static void testClampSignedToUnsigned()
 
 TEST(WTF, clampSignedToUnsigned)
 {
-    testClampSignedToUnsigned<unsigned char, char>();
+    testClampSignedToUnsigned<unsigned char, signed char>();
     testClampSignedToUnsigned<unsigned char, int32_t>();
     testClampSignedToUnsigned<uint32_t, int32_t>();
     testClampSignedToUnsigned<uint64_t, int64_t>();

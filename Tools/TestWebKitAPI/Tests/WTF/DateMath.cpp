@@ -27,9 +27,14 @@
 
 #include "Helpers/Test.h"
 #include <wtf/DateMath.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/text/CString.h>
 
 #if PLATFORM(WIN)
 #include <windows.h>
+#else
+#include <stdlib.h>
+#include <time.h>
 #endif
 
 namespace TestWebKitAPI {
@@ -137,21 +142,49 @@ TEST(WTF_DateMath, dayInMonthFromDayInYear)
     EXPECT_EQ(32, dayInMonthFromDayInYear(366, true));
 }
 
+#if PLATFORM(WIN)
 static bool isPacificTimeZone()
 {
-#if PLATFORM(WIN)
     TIME_ZONE_INFORMATION info;
     GetTimeZoneInformation(&info);
     return info.Bias == 8 * 60 && !info.StandardBias && info.DaylightBias == -60;
-#else
-    return true;
-#endif
 }
+#elif !PLATFORM(PLAYSTATION)
+class ScopedTimeZone {
+    WTF_MAKE_NONCOPYABLE(ScopedTimeZone);
+public:
+    explicit ScopedTimeZone(const char* timeZone)
+    {
+        if (const char* previous = getenv("TZ"))
+            m_previous = CString(previous);
+        setenv("TZ", timeZone, 1);
+        tzset();
+    }
+
+    ~ScopedTimeZone()
+    {
+        if (m_previous.isNull())
+            unsetenv("TZ");
+        else
+            setenv("TZ", m_previous.data(), 1);
+        tzset();
+    }
+
+private:
+    CString m_previous;
+};
+#endif
 
 TEST(WTF_DateMath, calculateLocalTimeOffset)
 {
+#if PLATFORM(WIN)
     if (!isPacificTimeZone())
         GTEST_SKIP() << "Not in Pacific Time Zone";
+#elif PLATFORM(PLAYSTATION)
+    GTEST_SKIP() << "No tzset to select a time zone";
+#else
+    ScopedTimeZone pacificTimeZone("America/Los_Angeles");
+#endif
 
     // DST Start: April 30, 1967 (02:00 am)
     LocalTimeOffset dstStart1967 = calculateLocalTimeOffset(-84301200000, TimeType::LocalTime);

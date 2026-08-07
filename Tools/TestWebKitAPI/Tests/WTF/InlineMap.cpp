@@ -1065,31 +1065,35 @@ TEST(WTF_InlineMap, RefValues)
 TEST(WTF_InlineMap, RefKeysGrowth)
 {
     // Ref keys work correctly through growth transitions.
-    // Test that Ref keys work correctly through growth transitions
-    Vector<Ref<RefLogger>> loggers;
-    for (int i = 0; i < 50; ++i)
-        loggers.append(adoptRef(*new RefLogger("a")));
-
     {
-        InlineMap<Ref<RefLogger>, int, 5> map;
+        Vector<Ref<RefLogger>> loggers;
+        for (int i = 0; i < 50; ++i)
+            loggers.append(adoptRef(*new RefLogger("a")));
 
-        for (int i = 0; i < 50; ++i) {
-            Ref<RefLogger> ref = loggers[i].copyRef();
-            map.add(WTF::move(ref), i + 1);
+        {
+            InlineMap<Ref<RefLogger>, int, 5> map;
+
+            for (int i = 0; i < 50; ++i) {
+                Ref<RefLogger> ref = loggers[i].copyRef();
+                map.add(WTF::move(ref), i + 1);
+            }
+
+            EXPECT_EQ(map.size(), 50u);
+
+            // Verify all entries through iteration
+            unsigned count = 0;
+            for (auto& entry : map) {
+                ++count;
+                // Just verify values are in expected range
+                EXPECT_GE(entry.value, 1);
+                EXPECT_LE(entry.value, 50);
+            }
+            EXPECT_EQ(count, 50u);
         }
-
-        EXPECT_EQ(map.size(), 50u);
-
-        // Verify all entries through iteration
-        unsigned count = 0;
-        for (auto& entry : map) {
-            ++count;
-            // Just verify values are in expected range
-            EXPECT_GE(entry.value, 1);
-            EXPECT_LE(entry.value, 50);
-        }
-        EXPECT_EQ(count, 50u);
     }
+
+    // Drain the RefLogger log so subsequent tests start clean.
+    takeLogStr();
 }
 
 TEST(WTF_InlineMap, ClearEmpty)
