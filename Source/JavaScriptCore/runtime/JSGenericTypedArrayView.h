@@ -117,7 +117,7 @@ public:
     inline JSValue getIndexQuickly(size_t) const;
     inline void setIndexQuicklyToNativeValue(size_t, typename Adaptor::Type);
     inline void setIndexQuickly(size_t, JSValue);
-    inline bool setIndex(JSGlobalObject*, size_t, JSValue);
+    inline bool setIndex(JSGlobalObject*, uint64_t, JSValue);
 
     static inline ElementType toAdaptorNativeFromValue(JSGlobalObject*, JSValue);
     static inline std::optional<ElementType> toAdaptorNativeFromValueWithoutCoercion(JSValue);

@@ -638,7 +638,7 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
 
         scope.release();
         if (descriptor.value())
-            thisObject->setIndex(globalObject, static_cast<size_t>(index.value()), descriptor.value());
+            thisObject->setIndex(globalObject, index.value(), descriptor.value());
 
         return true;
     }
@@ -866,7 +866,7 @@ template<typename Adaptor> inline void JSGenericTypedArrayView<Adaptor>::setInde
     setIndexQuicklyToNativeValue(i, toNativeFromValue<Adaptor>(value));
 }
 
-template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::setIndex(JSGlobalObject* globalObject, size_t i, JSValue jsValue)
+template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::setIndex(JSGlobalObject* globalObject, uint64_t i, JSValue jsValue)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -880,7 +880,7 @@ template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::setInde
     if (!inBounds(i))
         return false;
 
-    setIndexQuicklyToNativeValue(i, value);
+    setIndexQuicklyToNativeValue(static_cast<size_t>(i), value); // inBounds() has shown it is a length, so it fits.
     return true;
 }
 
