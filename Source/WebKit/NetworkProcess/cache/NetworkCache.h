@@ -204,12 +204,12 @@ public:
     std::unique_ptr<Entry> storeRedirect(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest, std::optional<Seconds> maxAgeCap);
     std::unique_ptr<Entry> update(const WebCore::ResourceRequest&, const Entry&, const WebCore::ResourceResponse& validatingResponse, PrivateRelayed);
 
-    struct TraversalEntry {
-        const Entry& entry;
+    struct TraversalRecord {
+        const Storage::Record& record;
         const Storage::RecordInfo& recordInfo;
     };
-    void traverse(Function<void(const TraversalEntry*)>&&);
-    void traverse(const String& partition, Function<void(const TraversalEntry*)>&&);
+    void traverseRecords(Function<void(const TraversalRecord*)>&&);
+    void traverseRecords(const String& partition, Function<void(const TraversalRecord*)>&&);
     void remove(const Key&);
     void remove(const WebCore::ResourceRequest&);
     void remove(const Vector<Key>&, Function<void()>&&);

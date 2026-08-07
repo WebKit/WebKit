@@ -639,7 +639,7 @@ void Cache::remove(const Vector<Key>& keys, Function<void()>&& completionHandler
     m_storage->remove(keys, WTF::move(completionHandler));
 }
 
-void Cache::traverse(Function<void(const TraversalEntry*)>&& traverseHandler)
+void Cache::traverseRecords(Function<void(const TraversalRecord*)>&& traverseHandler)
 {
     // Protect against clients making excessive traversal requests.
     const unsigned maximumTraverseCount = 3;
@@ -661,16 +661,12 @@ void Cache::traverse(Function<void(const TraversalEntry*)>&& traverseHandler)
             return;
         }
 
-        auto entry = Entry::decodeStorageRecord(*record);
-        if (!entry)
-            return;
-
-        TraversalEntry traversalEntry { *entry, recordInfo };
-        traverseHandler(&traversalEntry);
+        TraversalRecord traversalRecord { *record, recordInfo };
+        traverseHandler(&traversalRecord);
     });
 }
 
-void Cache::traverse(const String& partition, Function<void(const TraversalEntry*)>&& traverseHandler)
+void Cache::traverseRecords(const String& partition, Function<void(const TraversalRecord*)>&& traverseHandler)
 {
     m_storage->traverse(resourceType(), partition, { }, [traverseHandler = WTF::move(traverseHandler)] (const Storage::Record* record, const Storage::RecordInfo& recordInfo) mutable {
         if (!record) {
@@ -678,12 +674,8 @@ void Cache::traverse(const String& partition, Function<void(const TraversalEntry
             return;
         }
 
-        auto entry = Entry::decodeStorageRecord(*record);
-        if (!entry)
-            return;
-
-        TraversalEntry traversalEntry { *entry, recordInfo };
-        traverseHandler(&traversalEntry);
+        TraversalRecord traversalRecord { *record, recordInfo };
+        traverseHandler(&traversalRecord);
     });
 }
 
@@ -769,12 +761,15 @@ String Cache::recordsPathIsolatedCopy() const
 void Cache::fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&& completionHandler)
 {
     HashMap<WebCore::SecurityOriginData, uint64_t> originsAndSizes;
-    traverse([protectedThis = Ref { *this }, shouldComputeSize, completionHandler = WTF::move(completionHandler), originsAndSizes = WTF::move(originsAndSizes)](auto* traversalEntry) mutable {
-        if (traversalEntry) {
-            auto url = traversalEntry->entry.response().url();
-            auto result = originsAndSizes.add({ url.protocol().toString(), url.host().toString(), url.port() }, 0);
+    traverseRecords([shouldComputeSize, completionHandler = WTF::move(completionHandler), originsAndSizes = WTF::move(originsAndSizes)](auto* traversalRecord) mutable {
+        if (traversalRecord) {
+            auto url = Entry::decodeStorageRecordResponseURL(traversalRecord->record);
+            if (!url)
+                return;
+
+            auto result = originsAndSizes.add({ url->protocol().toString(), url->host().toString(), url->port() }, 0);
             if (shouldComputeSize)
-                result.iterator->value += traversalEntry->entry.sourceStorageRecord().header.size() + traversalEntry->recordInfo.bodySize;
+                result.iterator->value += traversalRecord->record.header.size() + traversalRecord->recordInfo.bodySize;
             return;
         }
 
@@ -810,11 +805,14 @@ void Cache::deleteData(const Vector<WebCore::SecurityOriginData>& origins, Compl
         originSet.add(origin);
 
     Vector<NetworkCache::Key> keysToDelete;
-    traverse([this, protectedThis = Ref { *this }, originSet = WTF::move(originSet), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete)](auto* traversalEntry) mutable {
-        if (traversalEntry) {
-            auto origin = WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(traversalEntry->entry.response().url());
-            if (originSet.contains(origin))
-                keysToDelete.append(traversalEntry->entry.key());
+    traverseRecords([this, protectedThis = Ref { *this }, originSet = WTF::move(originSet), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete)](auto* traversalRecord) mutable {
+        if (traversalRecord) {
+            auto url = Entry::decodeStorageRecordResponseURL(traversalRecord->record);
+            if (!url)
+                return;
+
+            if (originSet.contains(WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(*url)))
+                keysToDelete.append(traversalRecord->record.key);
             return;
         }
 
@@ -830,11 +828,15 @@ void Cache::deleteDataForRegistrableDomains(const Vector<WebCore::RegistrableDom
 
     Vector<NetworkCache::Key> keysToDelete;
     HashSet<WebCore::RegistrableDomain> domainsDeleted;
-    traverse([this, protectedThis = Ref { *this }, domainSet = WTF::move(domainSet), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete), domainsDeleted = WTF::move(domainsDeleted)](auto* traversalEntry) mutable {
-        if (traversalEntry) {
-            auto domain = WebCore::RegistrableDomain { traversalEntry->entry.response().url() };
+    traverseRecords([this, protectedThis = Ref { *this }, domainSet = WTF::move(domainSet), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete), domainsDeleted = WTF::move(domainsDeleted)](auto* traversalRecord) mutable {
+        if (traversalRecord) {
+            auto url = Entry::decodeStorageRecordResponseURL(traversalRecord->record);
+            if (!url)
+                return;
+
+            auto domain = WebCore::RegistrableDomain { *url };
             if (domainSet.contains(domain)) {
-                keysToDelete.append(traversalEntry->entry.key());
+                keysToDelete.append(traversalRecord->record.key);
                 domainsDeleted.add(domain);
             }
             return;

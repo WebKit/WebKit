@@ -51,6 +51,7 @@ public:
 
     Storage::Record encodeAsStorageRecord() const;
     static std::unique_ptr<Entry> decodeStorageRecord(const Storage::Record&);
+    static std::optional<URL> decodeStorageRecordResponseURL(const Storage::Record&);
 
     PrivateRelayed privateRelayed() const { return m_privateRelayed; }
     const Key& key() const LIFETIME_BOUND { return m_key; }
@@ -67,8 +68,6 @@ public:
 
     bool needsValidation() const;
     void NODELETE setNeedsValidation(bool);
-
-    const Storage::Record& sourceStorageRecord() const LIFETIME_BOUND { return m_sourceStorageRecord; }
 
     void asJSON(StringBuilder&, const Storage::RecordInfo&) const;
 
