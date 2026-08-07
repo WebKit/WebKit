@@ -22,7 +22,6 @@ find_package(LibXml2 2.9.13 REQUIRED)
 find_package(PNG REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(Threads REQUIRED)
-find_package(Unifdef REQUIRED)
 find_package(WebP REQUIRED COMPONENTS demux)
 find_package(ZLIB REQUIRED)
 
