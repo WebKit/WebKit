@@ -1051,7 +1051,7 @@ void pas_large_sharing_pool_boot_free(
     size_t page_size;
 
     PAS_PROFILE(LARGE_SHARING_POOL_BOOT_FREE, range.begin, range.end);
-    PAS_MTE_HANDLE(LARGE_SHARING_POOL_BOOT_FREE, range.begin, range.end);
+    PAS_MTE_CLEAR_PAIR(range.begin, range.end);
 
     page_size = pas_page_malloc_alignment();
     PAS_ASSERT(pas_is_aligned(range.begin, page_size));
@@ -1080,7 +1080,7 @@ void pas_large_sharing_pool_free(pas_range range,
     uint64_t epoch;
 
     PAS_PROFILE(LARGE_SHARING_POOL_FREE, range.begin, range.end);
-    PAS_MTE_HANDLE(LARGE_SHARING_POOL_FREE, range.begin, range.end);
+    PAS_MTE_CLEAR_PAIR(range.begin, range.end);
 
     if (!pas_large_sharing_pool_enabled)
         return;
@@ -1099,7 +1099,7 @@ bool pas_large_sharing_pool_allocate_and_commit(
     static const bool verbose = false;
 
     PAS_PROFILE(LARGE_SHARING_POOL_ALLOCATE_AND_COMMIT, range.begin, range.end);
-    PAS_MTE_HANDLE(LARGE_SHARING_POOL_ALLOCATE_AND_COMMIT, range.begin, range.end);
+    PAS_MTE_CLEAR_PAIR(range.begin, range.end);
     
     pas_large_free_heap_deferred_commit_log commit_log;
     uint64_t epoch;
@@ -1248,7 +1248,7 @@ pas_large_sharing_pool_compute_summary(
     pas_heap_summary result;
 
     PAS_PROFILE(LARGE_SHARING_POOL_COMPUTE_SUMMARY, range.begin, range.end);
-    PAS_MTE_HANDLE(LARGE_SHARING_POOL_COMPUTE_SUMMARY, range.begin, range.end);
+    PAS_MTE_CLEAR_PAIR(range.begin, range.end);
 
     pas_zero_memory(&result, sizeof(result));
     
