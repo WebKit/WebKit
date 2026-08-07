@@ -109,7 +109,7 @@ public:
     virtual Type type() const = 0;
 
     void connect();
-    virtual void terminate();
+    virtual void terminate(std::optional<IPC::MessageName> invalidMessageName = std::nullopt);
 
     ProcessThrottler& throttler() { return m_throttler; }
     const ProcessThrottler& throttler() const { return m_throttler; }

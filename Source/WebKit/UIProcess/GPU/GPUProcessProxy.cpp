@@ -627,7 +627,7 @@ void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC:
     WebProcessPool::didReceiveInvalidMessage(messageName);
 
     // Terminate the GPU process.
-    terminate();
+    terminate(messageName);
 
     // Since we've invalidated the connection we'll never get a IPC::Connection::Client::didClose
     // callback so we'll explicitly call it here instead.
@@ -769,11 +769,11 @@ void GPUProcessProxy::sendProcessDidResume(ResumeReason)
         send(Messages::GPUProcess::ProcessDidResume(), 0);
 }
 
-void GPUProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
+void GPUProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, IPC::MessageName invalidMessageName)
 {
     RELEASE_LOG_ERROR(Process, "GPUProcessProxy::terminateWebProcess: webProcessIdentifier=%" PRIu64, webProcessIdentifier.toUInt64());
     if (auto process = WebProcessProxy::processForIdentifier(webProcessIdentifier))
-        process->requestTermination(ProcessTerminationReason::RequestedByGPUProcess);
+        process->requestTermination(ProcessTerminationReason::RequestedByGPUProcess, invalidMessageName);
 }
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

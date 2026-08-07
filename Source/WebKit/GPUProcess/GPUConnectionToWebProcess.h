@@ -235,7 +235,7 @@ public:
     void updateSupportedRemoteCommands();
 
     bool allowsExitUnderMemoryPressure() const;
-    void terminateWebProcess();
+    void terminateWebProcess(IPC::MessageName);
 
     void lowMemoryHandler(WTF::Critical, WTF::Synchronous);
 

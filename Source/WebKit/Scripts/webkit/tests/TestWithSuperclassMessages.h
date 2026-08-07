@@ -32,6 +32,10 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
+namespace IPC {
+enum class MessageName : uint16_t;
+}
+
 namespace WebKit {
 class TestClassName;
 enum class TestTwoStateEnum : bool;
@@ -278,6 +282,31 @@ public:
 
 private:
     bool m_value;
+};
+
+class TestMessageWithMessageName {
+public:
+    using Arguments = std::tuple<IPC::MessageName>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithSuperclass_TestMessageWithMessageName; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit TestMessageWithMessageName(IPC::MessageName messageName)
+        : m_messageName(messageName)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << m_messageName;
+    }
+
+private:
+    IPC::MessageName m_messageName;
 };
 
 #if ENABLE(TEST_FEATURE)

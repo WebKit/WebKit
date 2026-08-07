@@ -576,12 +576,12 @@ Logger& GPUConnectionToWebProcess::logger()
 void GPUConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
     RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "Received an invalid message %s from WebContent process %" PRIu64 ", requesting for it to be terminated.", description(messageName), m_webProcessIdentifier.toUInt64());
-    terminateWebProcess();
+    terminateWebProcess(messageName);
 }
 
-void GPUConnectionToWebProcess::terminateWebProcess()
+void GPUConnectionToWebProcess::terminateWebProcess(IPC::MessageName invalidMessageName)
 {
-    gpuProcess().terminateWebProcess(m_webProcessIdentifier);
+    gpuProcess().terminateWebProcess(m_webProcessIdentifier, invalidMessageName);
 }
 
 void GPUConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)

@@ -218,7 +218,7 @@ private:
     // ResponsivenessTimer::Client
     void didBecomeUnresponsive() final;
 
-    void terminateWebProcess(WebCore::ProcessIdentifier);
+    void terminateWebProcess(WebCore::ProcessIdentifier, IPC::MessageName);
     void processIsReadyToExit();
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

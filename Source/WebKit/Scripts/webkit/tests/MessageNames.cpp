@@ -125,6 +125,7 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithSuperclass_TestAsyncMessageWithNoArguments"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply"_s, ReceiverName::TestWithSuperclass, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
 #endif
+    MessageDescription { "TestWithSuperclass_TestMessageWithMessageName"_s, ReceiverName::TestWithSuperclass, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage"_s, ReceiverName::TestWithSwiftConditionallyAndEnabledBy, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply"_s, ReceiverName::TestWithSwiftConditionallyAndEnabledBy, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSwiftConditionally_TestAsyncMessage"_s, ReceiverName::TestWithSwiftConditionally, false, false, false, ProcessName::Unknown, ProcessName::Unknown },

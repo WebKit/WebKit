@@ -1533,7 +1533,7 @@ void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC:
     WebProcessPool::didReceiveInvalidMessage(messageName);
 
     // Terminate the WebContent process.
-    terminate();
+    terminate(messageName);
 
     // Since we've invalidated the connection we'll never get a IPC::Connection::Client::didClose
     // callback so we'll explicitly call it here instead.
@@ -1957,7 +1957,7 @@ void WebProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Opti
     });
 }
 
-void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
+void WebProcessProxy::requestTermination(ProcessTerminationReason reason, std::optional<IPC::MessageName> invalidMessageName)
 {
     if (state() == State::Terminated)
         return;
@@ -1965,7 +1965,7 @@ void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
     Ref protectedThis { *this };
     WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "requestTermination: reason=%" PUBLIC_LOG_STRING, processTerminationReasonToString(reason).characters());
 
-    AuxiliaryProcessProxy::terminate();
+    AuxiliaryProcessProxy::terminate(invalidMessageName);
 
     processDidTerminateOrFailedToLaunch(reason);
 }

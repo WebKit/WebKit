@@ -46,7 +46,7 @@ messages -> GPUProcessProxy {
 #endif
 
     ProcessIsReadyToExit()
-    TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
+    TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, enum:uint16_t IPC::MessageName invalidMessageName)
 }
 
 #endif // ENABLE(GPU_PROCESS)

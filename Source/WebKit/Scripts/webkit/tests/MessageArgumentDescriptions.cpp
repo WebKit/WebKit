@@ -313,6 +313,8 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestSyncMessage>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
         return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestSynchronousMessage>(globalObject, decoder);
+    case MessageName::TestWithSuperclass_TestMessageWithMessageName:
+        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestMessageWithMessageName>(globalObject, decoder);
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
         return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageReply>(globalObject, decoder);
@@ -1130,6 +1132,10 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
         return Vector<ArgumentDescription> {
             { "value"_s, "bool"_s },
+        };
+    case MessageName::TestWithSuperclass_TestMessageWithMessageName:
+        return Vector<ArgumentDescription> {
+            { "messageName"_s, "IPC::MessageName"_s },
         };
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:

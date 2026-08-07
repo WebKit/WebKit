@@ -179,7 +179,7 @@ public:
     void registerFonts(Vector<SandboxExtension::Handle>&&);
 #endif
 
-    void terminateWebProcess(WebCore::ProcessIdentifier);
+    void terminateWebProcess(WebCore::ProcessIdentifier, IPC::MessageName);
 
 private:
     GPUProcess();

@@ -734,10 +734,11 @@ std::optional<audit_token_t> Connection::getAuditToken()
 }
 
 #if !USE(EXTENSIONKIT_PROCESS_TERMINATION)
-bool Connection::kill()
+bool Connection::kill(std::optional<MessageName> invalidMessageName)
 {
     if (m_xpcConnection) {
-        terminateWithReason(m_xpcConnection.get(), WebKit::ReasonCode::ConnectionKilled, "Connection::kill");
+        auto reasonCode = invalidMessageName ? WebKit::ReasonCode::MessageCheckKilled : WebKit::ReasonCode::ConnectionKilled;
+        terminateWithReason(m_xpcConnection.get(), reasonCode, "Connection::kill", invalidMessageName);
         m_didRequestProcessTermination = true;
         return true;
     }

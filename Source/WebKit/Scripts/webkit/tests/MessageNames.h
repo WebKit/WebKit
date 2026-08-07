@@ -175,6 +175,7 @@ enum class MessageName : uint16_t {
     TestWithSuperclass_TestAsyncMessageWithNoArguments,
     TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply,
 #endif
+    TestWithSuperclass_TestMessageWithMessageName,
     TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage,
     TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply,
     TestWithSwiftConditionally_TestAsyncMessage,

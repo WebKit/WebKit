@@ -86,7 +86,7 @@ public:
 private:
     explicit ModelProcessProxy();
 
-    void terminateWebProcess(WebCore::ProcessIdentifier);
+    void terminateWebProcess(WebCore::ProcessIdentifier, IPC::MessageName);
 
     Type type() const final { return Type::Model; }
 

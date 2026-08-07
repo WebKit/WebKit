@@ -311,6 +311,13 @@ _expected_model_test_with_superclass = {
             ),
             'conditions': (None),
         },
+        {
+            'name': 'TestMessageWithMessageName',
+            'parameters': (
+                ('IPC::MessageName', 'messageName'),
+            ),
+            'conditions': (None),
+        },
     ),
 }
 

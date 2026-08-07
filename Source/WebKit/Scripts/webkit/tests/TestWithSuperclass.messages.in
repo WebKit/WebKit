@@ -36,4 +36,5 @@ messages -> TestWithSuperclass : WebPageBase {
 #endif
     TestSyncMessage(uint32_t param) -> (uint8_t reply) Synchronous
     TestSynchronousMessage(bool value) -> (std::optional<WebKit::TestClassName> optionalReply) Synchronous
+    TestMessageWithMessageName(enum:uint16_t IPC::MessageName messageName)
 }

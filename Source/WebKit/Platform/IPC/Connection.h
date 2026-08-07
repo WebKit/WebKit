@@ -515,7 +515,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA) && !USE(EXTENSIONKIT_PROCESS_TERMINATION)
-    bool kill();
+    bool kill(std::optional<MessageName> invalidMessageName = std::nullopt);
 #endif
 
     bool isValid() const { return m_isValid; }

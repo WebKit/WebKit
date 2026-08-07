@@ -102,12 +102,12 @@ ModelProcessProxy::ModelProcessProxy()
 
 ModelProcessProxy::~ModelProcessProxy() = default;
 
-void ModelProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
+void ModelProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, IPC::MessageName invalidMessageName)
 {
     if (auto process = WebProcessProxy::processForIdentifier(webProcessIdentifier)) {
         MESSAGE_CHECK(process->sharedPreferencesForWebProcessValue().modelElementEnabled);
         MESSAGE_CHECK(process->sharedPreferencesForWebProcessValue().modelProcessEnabled);
-        process->requestTermination(ProcessTerminationReason::RequestedByModelProcess);
+        process->requestTermination(ProcessTerminationReason::RequestedByModelProcess, invalidMessageName);
     }
 }
 
@@ -266,7 +266,7 @@ void ModelProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IP
     WebProcessPool::didReceiveInvalidMessage(messageName);
 
     // Terminate the model process.
-    terminate();
+    terminate(messageName);
 
     // Since we've invalidated the connection we'll never get a IPC::Connection::Client::didClose
     // callback so we'll explicitly call it here instead.

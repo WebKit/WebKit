@@ -164,9 +164,9 @@ Ref<NetworkProcessProxy> NetworkProcessProxy::ensureDefaultNetworkProcess()
     return newNetworkProcess;
 }
 
-void NetworkProcessProxy::terminate()
+void NetworkProcessProxy::terminate(std::optional<IPC::MessageName> invalidMessageName)
 {
-    AuxiliaryProcessProxy::terminate();
+    AuxiliaryProcessProxy::terminate(invalidMessageName);
     if (hasConnection())
         protect(connection())->invalidate();
 }
@@ -534,7 +534,7 @@ bool NetworkProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::Deco
 void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
     logInvalidMessage(connection, messageName);
-    terminate();
+    terminate(messageName);
     networkProcessDidTerminate(ProcessTerminationReason::Crash);
 }
 
@@ -643,10 +643,10 @@ void NetworkProcessProxy::logDiagnosticMessage(WebPageProxyIdentifier pageID, co
         page->logDiagnosticMessage(message, description, shouldSample);
 }
 
-void NetworkProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
+void NetworkProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, IPC::MessageName invalidMessageName)
 {
     if (auto process = WebProcessProxy::processForIdentifier(webProcessIdentifier))
-        process->requestTermination(ProcessTerminationReason::RequestedByNetworkProcess);
+        process->requestTermination(ProcessTerminationReason::RequestedByNetworkProcess, invalidMessageName);
 }
 
 void NetworkProcessProxy::processHasUnresponseServiceWorker(WebCore::ProcessIdentifier processIdentifier)

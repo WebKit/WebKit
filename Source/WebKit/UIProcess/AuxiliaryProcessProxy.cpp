@@ -214,7 +214,7 @@ void AuxiliaryProcessProxy::connect()
     m_processLauncher = ProcessLauncher::create(this, WTF::move(launchOptions));
 }
 
-void AuxiliaryProcessProxy::terminate()
+void AuxiliaryProcessProxy::terminate(std::optional<IPC::MessageName> invalidMessageName)
 {
     RELEASE_LOG(Process, "AuxiliaryProcessProxy::terminate: PID=%d", processID());
 
@@ -223,9 +223,11 @@ void AuxiliaryProcessProxy::terminate()
 
 #if PLATFORM(COCOA) && !USE(EXTENSIONKIT_PROCESS_TERMINATION)
     if (RefPtr connection = m_connection) {
-        if (connection->kill())
+        if (connection->kill(invalidMessageName))
             return;
     }
+#else
+    UNUSED_PARAM(invalidMessageName);
 #endif
 
     // FIXME: We should really merge process launching into IPC connection creation and get rid of the process launcher.
