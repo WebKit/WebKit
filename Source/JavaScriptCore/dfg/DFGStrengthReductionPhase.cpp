@@ -689,7 +689,7 @@ private:
                     m_node->child1() = m_node->child1()->child1();
                     changed = true;
                 }
-                m_changed = changed;
+                m_changed |= changed;
                 break;
             }
             break;
