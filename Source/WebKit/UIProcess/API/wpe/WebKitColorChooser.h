@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,33 +19,32 @@
 
 #pragma once
 
-#include "WebColorPickerGtk.h"
-#include <WebCore/IntRect.h>
+#include "WebColorPicker.h"
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _WebKitColorChooserRequest WebKitColorChooserRequest;
 
-namespace WebCore {
-class Color;
+namespace WKWPE {
+class View;
 }
 
 namespace WebKit {
 
-class WebKitColorChooser final : public WebColorPickerGtk {
+class WebKitColorChooser final : public WebColorPicker {
 public:
-    static Ref<WebKitColorChooser> create(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&, std::optional<WebCore::FrameIdentifier> = std::nullopt);
-    virtual ~WebKitColorChooser();
+    static Ref<WebKitColorChooser> create(WKWPE::View&, WebPageProxy&, std::optional<WebCore::FrameIdentifier> = std::nullopt);
+    ~WebKitColorChooser();
 
 private:
-    WebKitColorChooser(WebPageProxy&, const WebCore::Color&, const WebCore::IntRect&, std::optional<WebCore::FrameIdentifier>);
+    WebKitColorChooser(WKWPE::View&, WebPageProxy&, std::optional<WebCore::FrameIdentifier>);
 
     void endPicker() override;
     void showColorPicker(const WebCore::Color&, const WebCore::IntRect&) override;
 
     static void colorChooserRequestFinished(WebKitColorChooserRequest*, WebKitColorChooser*);
 
+    WKWPE::View& m_view;
     GRefPtr<WebKitColorChooserRequest> m_request;
-    WebCore::IntRect m_elementRect;
 };
 
 } // namespace WebKit

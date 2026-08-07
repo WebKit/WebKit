@@ -24,12 +24,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitColorChooserRequestPrivate_h
-#define WebKitColorChooserRequestPrivate_h
+#pragma once
 
-#include "WebKitColorChooser.h"
+#include "WebColorPicker.h"
 #include "WebKitColorChooserRequest.h"
+#include <WebCore/Color.h>
+#include <WebCore/IntRect.h>
+#include <wtf/WeakPtr.h>
 
-WebKitColorChooserRequest* webkitColorChooserRequestCreate(WebKit::WebKitColorChooser*);
-
-#endif // WebKitColorChooserRequestPrivate_h
+WebKitColorChooserRequest* webkitColorChooserRequestCreate(WebKit::WebColorPicker&, const WebCore::Color& initialColor, const WebCore::IntRect& elementRect);

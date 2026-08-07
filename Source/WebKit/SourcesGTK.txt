@@ -132,6 +132,7 @@ UIProcess/API/glib/WebKitAutomationSession.cpp @no-unify
 UIProcess/API/glib/WebKitBackForwardList.cpp @no-unify
 UIProcess/API/glib/WebKitBackForwardListItem.cpp @no-unify
 UIProcess/API/glib/WebKitClipboardPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitColorChooserRequest.cpp @no-unify
 UIProcess/API/glib/WebKitContextMenuClient.cpp @no-unify
 UIProcess/API/glib/WebKitCookieManager.cpp @no-unify
 UIProcess/API/glib/WebKitCredential.cpp @no-unify
@@ -208,7 +209,6 @@ UIProcess/API/gtk/PageClientImpl.cpp @no-unify
 UIProcess/API/gtk/ToplevelWindow.cpp @no-unify
 UIProcess/API/gtk/WebKitAuthenticationDialog.cpp @no-unify
 UIProcess/API/gtk/WebKitColorChooser.cpp @no-unify
-UIProcess/API/gtk/WebKitColorChooserRequest.cpp @no-unify
 UIProcess/API/gtk/WebKitEmojiChooser.cpp @no-unify
 UIProcess/API/gtk/WebKitInputMethodContextGtk.cpp @no-unify
 UIProcess/API/gtk/WebKitInputMethodContextImplGtk.cpp @no-unify

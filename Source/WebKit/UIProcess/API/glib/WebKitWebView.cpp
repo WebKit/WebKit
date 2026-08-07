@@ -200,9 +200,7 @@ enum {
 
     SHOW_NOTIFICATION,
 
-#if PLATFORM(GTK)
     RUN_COLOR_CHOOSER,
-#endif
     SHOW_OPTION_MENU,
 
     USER_MESSAGE_RECEIVED,
@@ -555,6 +553,11 @@ GRefPtr<WebKitOptionMenu> WebKitWebViewClient::showOptionMenu(WebKitPopupMenu& p
 void WebKitWebViewClient::requestClipboardPermission(WebKitClipboardPermissionRequest* request)
 {
     webkitWebViewMakePermissionRequest(WEBKIT_WEB_VIEW(m_webView), WEBKIT_PERMISSION_REQUEST(request));
+}
+
+bool WebKitWebViewClient::runColorChooser(WebKitColorChooserRequest* request)
+{
+    return webkitWebViewEmitRunColorChooser(m_webView, request);
 }
 
 void WebKitWebViewClient::frameDisplayed(WKWPE::View&)
@@ -2607,44 +2610,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         G_TYPE_BOOLEAN, 1,
         WEBKIT_TYPE_NOTIFICATION);
 
-#if PLATFORM(GTK)
-     /**
-      * WebKitWebView::run-color-chooser:
-      * @web_view: the #WebKitWebView on which the signal is emitted
-      * @request: a #WebKitColorChooserRequest
-      *
-      * This signal is emitted when the user interacts with a <input
-      * type='color' /> HTML element, requesting from WebKit to show
-      * a dialog to select a color. To let the application know the details of
-      * the color chooser, as well as to allow the client application to either
-      * cancel the request or perform an actual color selection, the signal will
-      * pass an instance of the #WebKitColorChooserRequest in the @request
-      * argument.
-      *
-      * It is possible to handle this request asynchronously by increasing the
-      * reference count of the request.
-      *
-      * The default signal handler will asynchronously run a regular
-      * #GtkColorChooser for the user to interact with.
-      *
-      * Returns: %TRUE to stop other handlers from being invoked for the event.
-      *   %FALSE to propagate the event further.
-      *
-      * Since: 2.8
-      */
-    signals[RUN_COLOR_CHOOSER] = g_signal_new(
-        "run-color-chooser",
-        G_TYPE_FROM_CLASS(webViewClass),
-        G_SIGNAL_RUN_LAST,
-        G_STRUCT_OFFSET(WebKitWebViewClass, run_color_chooser),
-        g_signal_accumulator_true_handled, nullptr,
-        g_cclosure_marshal_generic,
-        G_TYPE_BOOLEAN, 1,
-        WEBKIT_TYPE_COLOR_CHOOSER_REQUEST);
-#endif // PLATFORM(GTK)
-
-    // This signal is different for WPE and GTK, so it's declared in
-    // WebKitWebView[Gtk,WPE].cpp to ensure we don't break the introspection.
+    signals[RUN_COLOR_CHOOSER] = createRunColorChooserSignal(webViewClass);
     signals[SHOW_OPTION_MENU] = createShowOptionMenuSignal(webViewClass);
 
     /**
@@ -3232,14 +3198,12 @@ bool webkitWebViewEmitShowNotification(WebKitWebView* webView, WebKitNotificatio
     return handled;
 }
 
-#if PLATFORM(GTK)
 bool webkitWebViewEmitRunColorChooser(WebKitWebView* webView, WebKitColorChooserRequest* request)
 {
     gboolean handled;
     g_signal_emit(webView, signals[RUN_COLOR_CHOOSER], 0, request, &handled);
     return handled;
 }
-#endif
 
 void webkitWebViewSelectionDidChange(WebKitWebView* webView)
 {

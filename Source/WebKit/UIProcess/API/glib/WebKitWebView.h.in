@@ -28,6 +28,7 @@
 
 #include <@API_INCLUDE_PREFIX@/WebKitAuthenticationRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitBackForwardList.h>
+#include <@API_INCLUDE_PREFIX@/WebKitColorChooserRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitContextMenu.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 #include <@API_INCLUDE_PREFIX@/WebKitEditorState.h>
@@ -67,7 +68,6 @@
 #if !ENABLE(2022_GLIB_API)
 #include <JavaScriptCore/JSBase.h>
 #endif
-#include <webkit/WebKitColorChooserRequest.h>
 #include <webkit/WebKitWebInspector.h>
 #include <webkit/WebKitWebViewBase.h>
 #elif PLATFORM(WPE)
@@ -388,6 +388,10 @@ struct _WebKitWebViewClass {
 
     gboolean   (* query_permission_state)      (WebKitWebView               *web_view,
                                                 WebKitPermissionStateQuery  *query);
+#if PLATFORM(WPE)
+    gboolean   (* run_color_chooser)           (WebKitWebView               *web_view,
+                                                WebKitColorChooserRequest   *request);
+#endif
 
 #if PLATFORM(WPE) && !ENABLE(2022_GLIB_API)
     /*< private >*/
@@ -395,7 +399,6 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
-    void (*_webkit_reserved4) (void);
 #endif
 
 #if ENABLE(2022_GLIB_API)
@@ -430,7 +433,10 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved27) (void);
     void (*_webkit_reserved28) (void);
     void (*_webkit_reserved29) (void);
+#if PLATFORM(GTK)
+    /* WPE has one fewer slot, used by run_color_chooser */
     void (*_webkit_reserved30) (void);
+#endif
 #endif
 };
 

@@ -145,6 +145,7 @@ set(WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitBackForwardList.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitBackForwardListItem.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitClipboardPermissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitColorChooserRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitCredential.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitContextMenu.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitContextMenuActions.h.in
@@ -206,7 +207,6 @@ set(WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebsitePolicies.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitXRPermissionRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/webkit.h.in
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitColorChooserRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPrintOperation.h.in
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebInspector.h.in
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebViewBase.h.in
@@ -579,7 +579,6 @@ list(APPEND WebKit_DEPENDENCIES
 )
 
 set(WEBKITGTK_SOURCES_FOR_INTROSPECTION
-    UIProcess/API/gtk/WebKitColorChooserRequest.cpp
     UIProcess/API/gtk/WebKitInputMethodContextGtk.cpp
     UIProcess/API/gtk/WebKitPrintCustomWidget.cpp
     UIProcess/API/gtk/WebKitPrintOperation.cpp

@@ -266,6 +266,43 @@ void webkit_web_view_get_background_color(WebKitWebView* webView, WebKitColor* c
     webkitColorFillFromWebCoreColor(webCoreColor.value_or(WebCore::Color::white), color);
 }
 
+guint createRunColorChooserSignal(WebKitWebViewClass* webViewClass)
+{
+    /**
+     * WebKitWebView::run-color-chooser:
+     * @web_view: the [class@WebView] on which the signal is emitted
+     * @request: a [class@ColorChooserRequest]
+     *
+     * This signal is emitted when the user interacts with a <input
+     * type='color' /> HTML element, requesting from WebKit to show
+     * a dialog to select a color. To let the application know the details of
+     * the color chooser, as well as to allow the client application to either
+     * cancel the request or perform an actual color selection, the signal will
+     * pass an instance of the [class@ColorChooserRequest] in the @request
+     * argument.
+     *
+     * It is possible to handle this request asynchronously by increasing the
+     * reference count of the request.
+     *
+     * WPE does not provide a default color chooser, so the request is finished
+     * keeping the initial color when the signal is not handled.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *   %FALSE to propagate the event further.
+     *
+     * Since: 2.56
+     */
+    return g_signal_new(
+        "run-color-chooser",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, run_color_chooser),
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 1,
+        WEBKIT_TYPE_COLOR_CHOOSER_REQUEST);
+}
+
 guint createShowOptionMenuSignal(WebKitWebViewClass* webViewClass)
 {
     /**

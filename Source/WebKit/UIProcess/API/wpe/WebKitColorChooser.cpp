@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,23 +20,24 @@
 #include "config.h"
 #include "WebKitColorChooser.h"
 
-#include "GtkUtilities.h"
+#include "APIViewClient.h"
+#include "WPEWebView.h"
 #include "WebKitColorChooserRequestPrivate.h"
-#include "WebKitWebViewPrivate.h"
-#include <WebCore/Color.h>
-#include <WebCore/IntRect.h>
+#include "WebKitWebViewClient.h"
+#include "WebPageProxy.h"
 
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebKitColorChooser> WebKitColorChooser::create(WebPageProxy& page, const WebCore::Color& initialColor, const WebCore::IntRect& rect, std::optional<WebCore::FrameIdentifier> frameID)
+Ref<WebKitColorChooser> WebKitColorChooser::create(WKWPE::View& view, WebPageProxy& page, std::optional<WebCore::FrameIdentifier> frameID)
 {
-    return adoptRef(*new WebKitColorChooser(page, initialColor, rect, frameID));
+    ASSERT(view.client().isGLibBasedAPI());
+    return adoptRef(*new WebKitColorChooser(view, page, frameID));
 }
 
-WebKitColorChooser::WebKitColorChooser(WebPageProxy& page, const Color& initialColor, const IntRect& rect, std::optional<WebCore::FrameIdentifier> frameID)
-    : WebColorPickerGtk(page, initialColor, rect, frameID)
-    , m_elementRect(rect)
+WebKitColorChooser::WebKitColorChooser(WKWPE::View& view, WebPageProxy& page, std::optional<WebCore::FrameIdentifier> frameID)
+    : WebColorPicker(&page.colorPickerClient(), frameID)
+    , m_view(view)
 {
 }
 
@@ -47,29 +48,32 @@ WebKitColorChooser::~WebKitColorChooser()
 
 void WebKitColorChooser::endPicker()
 {
-    if (!m_request) {
-        WebColorPickerGtk::endPicker();
+    if (m_request) {
+        GRefPtr request = m_request;
+        webkit_color_chooser_request_finish(request.get());
         return;
     }
 
-    webkit_color_chooser_request_finish(m_request.get());
+    WebColorPicker::endPicker();
 }
 
 void WebKitColorChooser::colorChooserRequestFinished(WebKitColorChooserRequest*, WebKitColorChooser* colorChooser)
 {
     colorChooser->m_request = nullptr;
+    protect(colorChooser)->WebColorPicker::endPicker();
 }
 
 void WebKitColorChooser::showColorPicker(const Color& color, const IntRect& rect)
 {
-    m_initialColor = colorToGdkRGBA(color);
-    GRefPtr<WebKitColorChooserRequest> request = adoptGRef(webkitColorChooserRequestCreate(*this, color, m_elementRect));
+    GRefPtr<WebKitColorChooserRequest> request = adoptGRef(webkitColorChooserRequestCreate(*this, color, rect));
     g_signal_connect(request.get(), "finished", G_CALLBACK(WebKitColorChooser::colorChooserRequestFinished), this);
+    m_request = request;
 
-    if (webkitWebViewEmitRunColorChooser(WEBKIT_WEB_VIEW(m_webView), request.get()))
-        m_request = request;
-    else
-        WebColorPickerGtk::showColorPicker(color, rect);
+    if (static_cast<WebKitWebViewClient&>(m_view.client()).runColorChooser(request.get()))
+        return;
+
+    // There is no default color chooser in WPE, so the request is finished right away keeping the initial color.
+    webkit_color_chooser_request_finish(request.get());
 }
 
 } // namespace WebKit

@@ -1470,13 +1470,32 @@ static void testWebViewFileChooserRequest(FileChooserTest* test, gconstpointer)
 }
 #endif // PLATFORM(GTK)
 
-#if PLATFORM(GTK)
+#if PLATFORM(WPE)
+static void assertColorIsEqual(const WebKitColor* color, double red, double green, double blue, double alpha)
+{
+    g_assert_cmpfloat(color->red, ==, red);
+    g_assert_cmpfloat(color->green, ==, green);
+    g_assert_cmpfloat(color->blue, ==, blue);
+    g_assert_cmpfloat(color->alpha, ==, alpha);
+}
+#endif
+
 class ColorChooserTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(ColorChooserTest);
 
     static gboolean runColorChooserCallback(WebKitWebView*, WebKitColorChooserRequest* request, ColorChooserTest* test)
     {
+        if (test->m_finishSynchronously) {
+            test->m_finishSynchronously = false;
+            g_object_weak_ref(G_OBJECT(request), [](gpointer userData, GObject*) {
+                *static_cast<bool*>(userData) = true;
+            }, &test->m_synchronousRequestDestroyed);
+            webkit_color_chooser_request_finish(request);
+            g_main_loop_quit(test->m_mainLoop);
+            return TRUE;
+        }
+
         test->runColorChooser(request);
         return TRUE;
     }
@@ -1525,9 +1544,26 @@ public:
         return m_request.get();
     }
 
+    void clickMouseButtonAndFinishColorChooserRequestSynchronously(int x, int y)
+    {
+        m_finishSynchronously = true;
+        m_synchronousRequestDestroyed = false;
+        clickMouseButton(x, y);
+        g_main_loop_run(m_mainLoop);
+        g_assert_false(m_finishSynchronously);
+        g_assert_true(m_synchronousRequestDestroyed);
+    }
+
 private:
     GRefPtr<WebKitColorChooserRequest> m_request;
+    bool m_finishSynchronously { false };
+    bool m_synchronousRequestDestroyed { false };
 };
+
+static void cancelColorChooserRequestOnColorChanged(WebKitColorChooserRequest*, GParamSpec*, ColorChooserTest* test)
+{
+    test->cancelRequest();
+}
 
 static void testWebViewColorChooserRequest(ColorChooserTest* test, gconstpointer)
 {
@@ -1539,6 +1575,7 @@ static void testWebViewColorChooserRequest(ColorChooserTest* test, gconstpointer
     test->waitUntilLoadFinished();
     WebKitColorChooserRequest* request = test->clickMouseButtonAndWaitForColorChooserRequest(5, 5);
 
+#if PLATFORM(GTK)
     // Default color is black (#000000).
     GdkRGBA rgba1;
     GdkRGBA rgba2 = { 0., 0., 0., 1. };
@@ -1552,13 +1589,33 @@ static void testWebViewColorChooserRequest(ColorChooserTest* test, gconstpointer
     g_assert_true(gdk_rgba_equal(&rgba1, &rgba2));
 
     GdkRectangle rect;
+#elif PLATFORM(WPE)
+    // Default color is black (#000000).
+    WebKitColor color;
+    webkit_color_chooser_request_get_color(request, &color);
+    assertColorIsEqual(&color, 0., 0., 0., 1.);
+
+    // Set a different color.
+    color.green = 1;
+    webkit_color_chooser_request_set_color(request, &color);
+    webkit_color_chooser_request_get_color(request, &color);
+    assertColorIsEqual(&color, 0., 1., 0., 1.);
+
+    WebKitRectangle rect;
+#endif
     webkit_color_chooser_request_get_element_rectangle(request, &rect);
     g_assert_cmpint(rect.x, == , 1);
     g_assert_cmpint(rect.y, == , 1);
     g_assert_cmpint(rect.width, == , 45);
     g_assert_cmpint(rect.height, == , 25);
 
+#if PLATFORM(WPE)
+    g_assert_true(WebViewTest::javascriptResultToBoolean(test->runJavaScriptAndWaitUntilFinished("document.querySelector('input').matches(':open')", nullptr)));
+#endif
     test->finishRequest();
+#if PLATFORM(WPE)
+    g_assert_false(WebViewTest::javascriptResultToBoolean(test->runJavaScriptAndWaitUntilFinished("document.querySelector('input').matches(':open')", nullptr)));
+#endif
 
     // Use an initial color.
     GUniquePtr<char> initialColorHTML(g_strdup_printf(colorChooserHTMLFormat, "value='#FF00FF'"));
@@ -1566,13 +1623,43 @@ static void testWebViewColorChooserRequest(ColorChooserTest* test, gconstpointer
     test->waitUntilLoadFinished();
     request = test->clickMouseButtonAndWaitForColorChooserRequest(5, 5);
 
+#if PLATFORM(GTK)
     webkit_color_chooser_request_get_rgba(request, &rgba1);
     GdkRGBA rgba3 = { 1., 0., 1., 1. };
     g_assert_true(gdk_rgba_equal(&rgba1, &rgba3));
+#elif PLATFORM(WPE)
+    webkit_color_chooser_request_get_color(request, &color);
+    assertColorIsEqual(&color, 1., 0., 1., 1.);
+#endif
 
     test->cancelRequest();
+#if PLATFORM(WPE)
+    g_assert_false(WebViewTest::javascriptResultToBoolean(test->runJavaScriptAndWaitUntilFinished("document.querySelector('input').matches(':open')", nullptr)));
+#endif
+
+    test->loadHtml(defaultColorHTML.get(), nullptr);
+    test->waitUntilLoadFinished();
+    request = test->clickMouseButtonAndWaitForColorChooserRequest(5, 5);
+    GRefPtr<WebKitColorChooserRequest> protectedRequest = request;
+#if PLATFORM(GTK)
+    g_signal_connect(request, "notify::rgba", G_CALLBACK(cancelColorChooserRequestOnColorChanged), test);
+    rgba2.green = 1;
+    webkit_color_chooser_request_set_rgba(request, &rgba2);
+#elif PLATFORM(WPE)
+    g_signal_connect(request, "notify::color", G_CALLBACK(cancelColorChooserRequestOnColorChanged), test);
+    color.green = 1;
+    webkit_color_chooser_request_set_color(request, &color);
+#endif
+    GUniquePtr<char> value(WebViewTest::javascriptResultToCString(test->runJavaScriptAndWaitUntilFinished("document.querySelector('input').value", nullptr)));
+    g_assert_cmpstr(value.get(), ==, "#000000");
+
+#if PLATFORM(WPE)
+    test->loadHtml(defaultColorHTML.get(), nullptr);
+    test->waitUntilLoadFinished();
+    test->clickMouseButtonAndFinishColorChooserRequestSynchronously(5, 5);
+    g_assert_false(WebViewTest::javascriptResultToBoolean(test->runJavaScriptAndWaitUntilFinished("document.querySelector('input').matches(':open')", nullptr)));
+#endif
 }
-#endif // PLATFORM(GTK)
 
 static void testWebViewClipboardPermissionRequest(UIClientTest* test, gconstpointer)
 {
@@ -1626,9 +1713,7 @@ void beforeAll()
 #if PLATFORM(GTK)
     FileChooserTest::add("WebKitWebView", "file-chooser-request", testWebViewFileChooserRequest);
 #endif
-#if PLATFORM(GTK)
     ColorChooserTest::add("WebKitWebView", "color-chooser-request", testWebViewColorChooserRequest);
-#endif
 #if ENABLE(POINTER_LOCK)
     UIClientTest::add("WebKitWebView", "pointer-lock-permission-request", testWebViewPointerLockPermissionRequest);
 #endif

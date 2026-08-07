@@ -104,9 +104,7 @@ void webkitWebViewDidChangePageScale(WebKitWebView*);
 WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView*);
 void webkitWebViewPermissionStateQuery(WebKitWebView*, WebKitPermissionStateQuery*);
 
-#if PLATFORM(GTK)
 bool webkitWebViewEmitRunColorChooser(WebKitWebView*, WebKitColorChooserRequest*);
-#endif
 
 void webkitWebViewEmitThemeColorChanged(WebKitWebView*);
 
@@ -130,6 +128,7 @@ void webkitWebViewCancelComposition(WebKitWebView*, const String&);
 void webkitWebViewDeleteSurrounding(WebKitWebView*, int offset, unsigned characterCount);
 void webkitWebViewSetIsWebProcessResponsive(WebKitWebView*, bool);
 
+guint createRunColorChooserSignal(WebKitWebViewClass*);
 guint createShowOptionMenuSignal(WebKitWebViewClass*);
 guint createContextMenuSignal(WebKitWebViewClass*);
 

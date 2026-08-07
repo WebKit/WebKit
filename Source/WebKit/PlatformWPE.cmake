@@ -168,6 +168,7 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitBackForwardList.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitBackForwardListItem.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitClipboardPermissionRequest.h.in
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitColorChooserRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitCredential.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitContextMenu.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitContextMenuActions.h.in
@@ -771,6 +772,7 @@ GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
         ${WPE_INCLUDE_DIRS_FOR_INTROSPECTION}
     SOURCES
         ${WPE_API_INSTALLED_HEADERS}
+        ${WPE_SOURCES_FOR_INTROSPECTION}
         Shared/API/glib
         UIProcess/API/glib
         UIProcess/API/wpe/WebKitImageWPE.cpp

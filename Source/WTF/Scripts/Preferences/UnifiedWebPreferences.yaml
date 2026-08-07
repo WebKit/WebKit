@@ -4348,7 +4348,8 @@ InputTypeColorEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA) && !PLATFORM(WATCHOS) || PLATFORM(GTK)": true
+      "PLATFORM(COCOA) && !PLATFORM(WATCHOS)": true
+      "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
       default: false
