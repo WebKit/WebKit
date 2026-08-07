@@ -34,7 +34,7 @@ using namespace WebCore;
 
 // This version number is in the DB and marks the current generation of the schema
 // Currently, a mismatched schema causes the DB to be wiped and reset.
-static const int currentDatabaseVersion = 6;
+static const int currentDatabaseVersion = 7;
 
 // Icons expire once every 4 days.
 static const Seconds iconExpirationTime { 60 * 60 * 24 * 4 };
@@ -132,7 +132,7 @@ bool IconDatabase::createTablesIfNeeded()
 
     m_db->clearAllTables();
 
-    if (!m_db->executeCommand("CREATE TABLE PageURL (url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID INTEGER NOT NULL ON CONFLICT FAIL);"_s)) {
+    if (!m_db->executeCommand("CREATE TABLE PageURL (url TEXT NOT NULL ON CONFLICT FAIL, iconID INTEGER NOT NULL ON CONFLICT FAIL, UNIQUE (url, iconID) ON CONFLICT REPLACE);"_s)) {
         RELEASE_LOG_ERROR(IconDatabase, "Could not create PageURL table in database (%i) - %s", m_db->lastError(), m_db->lastErrorMsg());
         m_db->close();
         return false;
