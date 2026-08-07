@@ -86,7 +86,7 @@ public:
     void setCaptureExtraNetworkLoadMetricsEnabled(bool) final;
 
     WebResourceLoader* webResourceLoaderForIdentifier(WebCore::ResourceLoaderIdentifier identifier) const { return m_webResourceLoaders.get(identifier); }
-    void schedulePluginStreamLoad(WebCore::LocalFrame&, WebCore::NetscapePlugInStreamLoaderClient&, WebCore::ResourceRequest&&, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&&);
+    void schedulePluginStreamLoad(WebCore::LocalFrame&, WebCore::NetscapePlugInStreamLoaderClient&, WebCore::ResourceRequest&&, WebCore::FetchOptions::Destination, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&&);
 
     void networkProcessCrashed();
 

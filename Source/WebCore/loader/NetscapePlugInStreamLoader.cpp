@@ -42,10 +42,9 @@
 
 namespace WebCore {
 
-// FIXME: Skip Content Security Policy check when associated plugin element is in a user agent shadow tree.
-// See <https://bugs.webkit.org/show_bug.cgi?id=146663>.
-NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client)
-    : ResourceLoader(frame, ResourceLoaderOptions(
+static ResourceLoaderOptions plugInStreamLoaderOptions(FetchOptions::Destination destination)
+{
+    ResourceLoaderOptions options(
         SendCallbackPolicy::SendCallbacks,
         ContentSniffingPolicy::SniffContent,
         DataBufferingPolicy::DoNotBufferData,
@@ -57,7 +56,17 @@ NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(LocalFrame& frame, Netsca
         CertificateInfoPolicy::DoNotIncludeCertificateInfo,
         ContentSecurityPolicyImposition::DoPolicyCheck,
         DefersLoadingPolicy::AllowDefersLoading,
-        CachingPolicy::AllowCaching))
+        CachingPolicy::AllowCaching);
+
+    options.destination = destination;
+
+    return options;
+}
+
+// FIXME: Skip Content Security Policy check when associated plugin element is in a user agent shadow tree.
+// See <https://bugs.webkit.org/show_bug.cgi?id=146663>.
+NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client, FetchOptions::Destination destination)
+    : ResourceLoader(frame, plugInStreamLoaderOptions(destination))
     , m_client(client)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -67,12 +76,12 @@ NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(LocalFrame& frame, Netsca
 
 NetscapePlugInStreamLoader::~NetscapePlugInStreamLoader() = default;
 
-void NetscapePlugInStreamLoader::create(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&& completionHandler)
+void NetscapePlugInStreamLoader::create(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, FetchOptions::Destination destination, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
     if (request.isNull())
         return completionHandler(nullptr);
 
-    Ref loader = adoptRef(*new NetscapePlugInStreamLoader(frame, client));
+    Ref loader = adoptRef(*new NetscapePlugInStreamLoader(frame, client, destination));
     loader->init(WTF::move(request), [loader, completionHandler = WTF::move(completionHandler)] (bool initialized) mutable {
         if (!initialized)
             return completionHandler(nullptr);

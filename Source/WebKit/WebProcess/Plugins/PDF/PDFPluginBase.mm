@@ -620,7 +620,7 @@ void PDFPluginBase::startByteRangeRequest(NetscapePlugInStreamLoaderClient& stre
     resourceRequest.setHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes="_s, position, '-', position + count - 1));
     resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
 
-    protect(WebProcess::singleton().webLoaderStrategy())->schedulePluginStreamLoad(*coreFrame, streamLoaderClient, WTF::move(resourceRequest), [incrementalLoader = Ref { *m_incrementalLoader }, requestIdentifier] (RefPtr<NetscapePlugInStreamLoader>&& streamLoader) {
+    protect(WebProcess::singleton().webLoaderStrategy())->schedulePluginStreamLoad(*coreFrame, streamLoaderClient, WTF::move(resourceRequest), protect(m_view)->fetchDestination(), [incrementalLoader = Ref { *m_incrementalLoader }, requestIdentifier] (RefPtr<NetscapePlugInStreamLoader>&& streamLoader) {
         incrementalLoader->streamLoaderDidStart(requestIdentifier, WTF::move(streamLoader));
     });
 }

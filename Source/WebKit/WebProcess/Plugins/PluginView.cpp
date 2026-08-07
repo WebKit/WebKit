@@ -147,7 +147,7 @@ void PluginView::Stream::start()
     RefPtr frame = m_pluginView->frame();
     ASSERT(frame);
 
-    protect(WebProcess::singleton().webLoaderStrategy())->schedulePluginStreamLoad(*frame, *this, ResourceRequest { m_request }, [this, protectedThis = Ref { *this }](RefPtr<NetscapePlugInStreamLoader>&& loader) {
+    protect(WebProcess::singleton().webLoaderStrategy())->schedulePluginStreamLoad(*frame, *this, ResourceRequest { m_request }, m_pluginView->fetchDestination(), [this, protectedThis = Ref { *this }](RefPtr<NetscapePlugInStreamLoader>&& loader) {
         m_loader = WTF::move(loader);
     });
 }
@@ -1037,6 +1037,11 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
     auto contentRect = dirtyRect;
     contentRect.move(borderLeft(*renderer) + paddingLeft(*renderer), borderTop(*renderer) + paddingTop(*renderer));
     renderer->repaintRectangle(contentRect);
+}
+
+FetchOptions::Destination PluginView::fetchDestination() const
+{
+    return m_pluginElement->hasTagName(HTMLNames::embedTag) ? FetchOptions::Destination::Embed : FetchOptions::Destination::Object;
 }
 
 void PluginView::loadMainResource()

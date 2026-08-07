@@ -51,6 +51,7 @@ class PlatformMouseEvent;
 class RenderEmbeddedObject;
 class ShareableBitmap;
 class VoidCallback;
+enum class FetchOptionsDestination : uint8_t;
 enum class TextGranularity : uint8_t;
 }
 
@@ -93,6 +94,8 @@ public:
 
     WebCore::HTMLPlugInElement& pluginElement() const { return m_pluginElement; }
     const URL& mainResourceURL() const LIFETIME_BOUND { return m_mainResourceURL; }
+
+    WebCore::FetchOptionsDestination fetchDestination() const;
 
     void didBeginMagnificationGesture();
     void didEndMagnificationGesture();

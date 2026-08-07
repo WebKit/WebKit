@@ -160,9 +160,9 @@ void WebLoaderStrategy::loadResource(LocalFrame& frame, CachedResource& resource
     });
 }
 
-void WebLoaderStrategy::schedulePluginStreamLoad(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&& completionHandler)
+void WebLoaderStrategy::schedulePluginStreamLoad(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, FetchOptions::Destination destination, CompletionHandler<void(RefPtr<NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
-    NetscapePlugInStreamLoader::create(frame, client, WTF::move(request), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), frame = Ref { frame }] (RefPtr<NetscapePlugInStreamLoader>&& loader) mutable {
+    NetscapePlugInStreamLoader::create(frame, client, WTF::move(request), destination, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), frame = Ref { frame }] (RefPtr<NetscapePlugInStreamLoader>&& loader) mutable {
         if (loader)
             scheduleLoad(*loader, 0, frame->document()->referrerPolicy() == ReferrerPolicy::NoReferrerWhenDowngrade);
         completionHandler(WTF::move(loader));

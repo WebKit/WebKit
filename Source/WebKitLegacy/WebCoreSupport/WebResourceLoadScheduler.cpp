@@ -125,9 +125,9 @@ void WebResourceLoadScheduler::browsingContextRemoved(LocalFrame&)
 {
 }
 
-void WebResourceLoadScheduler::schedulePluginStreamLoad(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&& completionHandler)
+void WebResourceLoadScheduler::schedulePluginStreamLoad(LocalFrame& frame, NetscapePlugInStreamLoaderClient& client, ResourceRequest&& request, FetchOptions::Destination destination, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&& completionHandler)
 {
-    NetscapePlugInStreamLoader::create(frame, client, WTF::move(request), [this, completionHandler = WTF::move(completionHandler)] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) mutable {
+    NetscapePlugInStreamLoader::create(frame, client, WTF::move(request), destination, [this, completionHandler = WTF::move(completionHandler)] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) mutable {
         if (loader)
             scheduleLoad(loader.get());
         completionHandler(WTF::move(loader));
