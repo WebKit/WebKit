@@ -1,3 +1,16 @@
+=================
+WebKitGTK 2.53.90
+=================
+
+What's new in WebKitGTK 2.53.90?
+
+  - Do not support rendering tiles in the main thread in accelerated compositing mode.
+  - Add magnification property to WebKitWebView to handle visual scaling.
+  - Add new API to allow setting a per-navigation custom User-Agent to WebKitWebsitePolicies.
+  - Improved platform media queries to handle prefers reduced motion, high contrast and dark theme.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Brazilian Portuguese, Slovenian.
+
 ================
 WebKitGTK 2.53.4
 ================
