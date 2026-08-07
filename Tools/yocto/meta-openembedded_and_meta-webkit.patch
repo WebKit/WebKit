@@ -835,3 +835,22 @@ index 2355936..0820dd9 100644
          if ${@bb.utils.contains('PACKAGECONFIG', 'dhcp-ethernet', 'true', 'false', d)}; then
                 install -D -m0644 ${WORKDIR}/wired.network ${D}${systemd_unitdir}/network/80-wired.network
          fi
+diff --git a/sources/poky/meta/recipes-devtools/pseudo/pseudo_git.bb b/sources/poky/meta/recipes-devtools/pseudo/pseudo_git.bb
+index 3ae5604..4a1e2cc 100644
+--- a/sources/poky/meta/recipes-devtools/pseudo/pseudo_git.bb
++++ b/sources/poky/meta/recipes-devtools/pseudo/pseudo_git.bb
+@@ -12,9 +12,12 @@ SRC_URI:append:class-nativesdk = " \
+     file://older-glibc-symbols.patch"
+ SRC_URI[prebuilt.sha256sum] = "ed9f456856e9d86359f169f46a70ad7be4190d6040282b84c8d97b99072485aa"
+ 
+-SRCREV = "56e1f8df4761da60e41812fc32b1de797d1765e9"
++# The pinned revision only had a dummy openat2() wrapper that returns ENOSYS.
++# Hosts with glibc >= 2.43 ship a tar that calls openat2() and has no fallback,
++# so every fakeroot task using tar fails. Bump past 6533a53 which implements it.
++SRCREV = "ba8887e5f1e922f866681ec7dec1a00b602a9328"
+ S = "${WORKDIR}/git"
+-PV = "1.9.3+git"
++PV = "1.9.11+git"
+ 
+ # largefile and 64bit time_t support adds these macros via compiler flags globally
+ # remove them for pseudo since pseudo intercepts some of the functions which will be
