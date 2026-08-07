@@ -58,11 +58,11 @@ namespace JSC {
 #endif
 
 #ifndef JSC_JIT_CAGE_PROBE
-#define JSC_JIT_CAGE_PROBE(v) do { (void)x; } while (0)
+#define JSC_JIT_CAGE_PROBE(v) do { (void)(v); } while (0)
 #endif
 
 #ifndef JSC_JIT_CAGE_PROBE_IMPL
-#define JSC_JIT_CAGE_PROBE(v) do { (void)x; } while (0)
+#define JSC_JIT_CAGE_PROBE_IMPL(v) do { (void)(v); } while (0)
 #endif
 
 template<typename Functor>
