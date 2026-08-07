@@ -1,6 +1,7 @@
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
-main frame - has 1 onunload handler(s)
 
-PASS Traverse the history after document.write after the load event
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Traverse the history after document.write after the load event Test timed out
 

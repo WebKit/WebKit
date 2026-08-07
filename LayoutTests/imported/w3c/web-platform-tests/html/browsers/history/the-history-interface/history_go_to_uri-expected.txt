@@ -1,8 +1,8 @@
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
-main frame - has 1 onunload handler(s)
-main frame - has 1 onunload handler(s)
 
-PASS history.go() negative tests
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT history.go() negative tests Test timed out
 

@@ -1,0 +1,4 @@
+
+NOTRUN Eligibility (BroadcastChannel) Could have been BFCached but actually wasn't
+NOTRUN Eligibility (BroadcastChannel closed in the pagehide event) Could have been BFCached but actually wasn't
+

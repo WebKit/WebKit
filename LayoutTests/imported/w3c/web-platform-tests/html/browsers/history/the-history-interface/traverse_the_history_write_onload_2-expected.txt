@@ -1,8 +1,6 @@
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
-main frame - has 1 onunload handler(s)
-main frame - has 1 onunload handler(s)
 
-PASS Traverse the history back and forward when a history entry is written in the load event
+FAIL Traverse the history back and forward when a history entry is written in the load event assert_array_equals: Pages opened durning history navigation lengths differ, expected array [3, 4, 2, 3, 4] length 5, got [3, 4] length 2
 

@@ -1,4 +1,4 @@
 
-NOTRUN Creating an SAH should not make it ineligible for the BFCache. BFCache not supported.
-NOTRUN Creating a SAH on an active page evicts an inactive page on contention. BFCache not supported.
+PASS Creating an SAH should not make it ineligible for the BFCache.
+FAIL Creating a SAH on an active page evicts an inactive page on contention. assert_true: expected true got false
 

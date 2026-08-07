@@ -1,6 +1,7 @@
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
-main frame - has 1 onunload handler(s)
 
-PASS history.back() with session history
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT history.back() with session history Test timed out
 

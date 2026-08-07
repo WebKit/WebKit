@@ -1,9 +1,8 @@
 main frame - has 1 onunload handler(s)
-main frame - has 1 onunload handler(s)
 
-NOTRUN SameOrigin Could have been BFCached but actually wasn't
-NOTRUN SameSite Could have been BFCached but actually wasn't
-NOTRUN CrossSite Could have been BFCached but actually wasn't
-NOTRUN beforeunload Could have been BFCached but actually wasn't
-NOTRUN unload Could have been BFCached but actually wasn't
+PASS SameOrigin
+PASS SameSite
+PASS CrossSite
+FAIL beforeunload assert_array_equals: lengths differ, expected array ["window.load", "window.pageshow", "window.beforeunload", "window.pagehide.persisted", "window.pageshow.persisted"] length 5, got ["window.load", "window.pageshow", "window.pagehide.persisted", "window.pageshow.persisted"] length 4
+PASS unload
 

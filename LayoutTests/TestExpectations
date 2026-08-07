@@ -825,6 +825,19 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-traverse-navigation-cross-origin-redirect-no-bfcache.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_url.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_3.html [ Skip ]
+
+# webkit.org/b/321061 These tests time out now that the back/forward cache is enabled for web-platform-tests.
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/srcdoc/srcdoc-history-entries.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_back_1.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_forward_1.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_undefined.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_unload_1.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_write_after_load_1.html [ Skip ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/traverse_the_history_write_after_load_2.html [ Skip ]
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-navigated-history-popup.https.html [ Skip ]
+
 imported/w3c/web-platform-tests/html/browsers/origin/origin-keyed-agent-clusters/going-back.sub.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/origin/relaxing-the-same-origin-restriction/document_domain_feature_policy.tentative.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-document-open.html [ Skip ]

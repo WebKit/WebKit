@@ -1,6 +1,7 @@
 main frame - has 1 onunload handler(s)
 main frame - has 1 onunload handler(s)
-main frame - has 1 onunload handler(s)
 
-PASS Traversing the history, unload event is fired on doucment
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Traversing the history, unload event is fired on doucment Test timed out
 

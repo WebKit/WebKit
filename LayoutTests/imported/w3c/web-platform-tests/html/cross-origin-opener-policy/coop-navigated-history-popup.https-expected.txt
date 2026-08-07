@@ -1,3 +1,5 @@
 
-PASS Popup navigating to other origin with COOP: same-origin and back in history
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Popup navigating to other origin with COOP: same-origin and back in history Test timed out
 
