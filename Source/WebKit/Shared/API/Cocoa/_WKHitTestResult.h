@@ -67,6 +67,8 @@ WK_CLASS_AVAILABLE(macos(10.12), ios(16.0))
 
 @property (nonatomic, readonly) CGRect elementBoundingBox;
 
+@property (nonatomic, readonly) CGRect _dictionaryPopupTextBoundingRectForTesting;
+
 @property (nonatomic, readonly) _WKHitTestResultElementType elementType WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));
 
 @property (nonatomic, readonly) WKFrameInfo *frameInfo WK_API_AVAILABLE(macos(14.4), ios(17.4), visionos(1.1));

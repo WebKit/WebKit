@@ -24,6 +24,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/FloatPoint.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/SharedMemory.h>
@@ -60,6 +61,13 @@ public:
     bool isContentEditable() const { return m_data.isContentEditable; }
 
     WebCore::IntRect elementBoundingBox() const { return m_data.elementBoundingBox; }
+
+    // The Look Up text indicator's bounding rect, in the top-level frame's root view coordinates.
+    WebCore::FloatRect dictionaryPopupTextBoundingRect() const
+    {
+        RefPtr textIndicator = m_data.dictionaryPopupInfo.textIndicator;
+        return textIndicator ? textIndicator->textBoundingRectInRootViewCoordinates() : WebCore::FloatRect { };
+    }
 
     bool isScrollbar() const { return m_data.isScrollbar != WebKit::WebHitTestResultData::IsScrollbar::No; }
 

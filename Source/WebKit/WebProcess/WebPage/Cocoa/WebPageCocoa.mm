@@ -431,6 +431,42 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 
 #endif
 
+    // In a site-isolated subframe the rects above are all in the local root frame's root view
+    // coordinates, because Widget::convertToRootView() stops at the local root -- the parent frame
+    // lives in another process. Map them the rest of the way to the top-level frame here, applying the
+    // CSS transforms on the remote ancestor frames rather than a plain translation, so the UI process
+    // can position the popover and the text indicator without an IPC round trip per nesting level.
+    //
+    // The conversion runs on the local root frame's view, not this frame's view, because the rects
+    // have already been walked up the widget tree to the local root. Starting from this frame's view
+    // would count the offset of any same-origin frame between it and the local root twice.
+    if (!frame.localMainFrame()) {
+        if (RefPtr rootView = frame.rootFrame().view()) {
+            auto convertRect = [&](FloatRect rect) {
+                return rootView->convertToRootViewAcrossIsolatedFrames(rect);
+            };
+
+            dictionaryPopupInfo.origin = rootView->convertToRootViewAcrossIsolatedFrames(dictionaryPopupInfo.origin);
+
+            // textRectsInBoundingRectCoordinates are offsets from the text bounding rect's location,
+            // so lift each one back into root view coordinates to convert it, then re-relativize it
+            // against the converted bounding rect.
+            auto boundingRect = textIndicator->textBoundingRectInRootViewCoordinates();
+            auto convertedBoundingRect = convertRect(boundingRect);
+            auto textRects = textIndicator->textRectsInBoundingRectCoordinates().map([&](auto rect) {
+                rect.moveBy(boundingRect.location());
+                rect = convertRect(rect);
+                rect.moveBy(-convertedBoundingRect.location());
+                return rect;
+            });
+
+            textIndicator->setTextBoundingRectInRootViewCoordinates(convertedBoundingRect);
+            textIndicator->setTextRectsInBoundingRectCoordinates(WTF::move(textRects));
+            textIndicator->setSelectionRectInRootViewCoordinates(convertRect(textIndicator->selectionRectInRootViewCoordinates()));
+            textIndicator->setContentImageWithoutSelectionRectInRootViewCoordinates(convertRect(textIndicator->contentImageWithoutSelectionRectInRootViewCoordinates()));
+        }
+    }
+
     editor->setIsGettingDictionaryPopupInfo(false);
     return dictionaryPopupInfo;
 }

@@ -147,6 +147,11 @@ static NSURL *URLFromString(const WTF::String& urlString)
     return _hitTestResult->elementBoundingBox();
 }
 
+- (CGRect)_dictionaryPopupTextBoundingRectForTesting
+{
+    return _hitTestResult->dictionaryPopupTextBoundingRect();
+}
+
 - (_WKHitTestResultElementType)elementType
 {
     switch (_hitTestResult->elementType()) {
