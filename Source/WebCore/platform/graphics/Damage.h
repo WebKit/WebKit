@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(COORDINATED_GRAPHICS) || USE(THEME_ADWAITA)
+#if USE(COORDINATED_GRAPHICS)
 #include "FloatRect.h"
 #include "LayoutSize.h"
 #include "Region.h"
@@ -640,4 +640,4 @@ static inline WTF::TextStream& operator<<(WTF::TextStream& ts, const Damage& dam
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) || USE(THEME_ADWAITA)
+#endif // USE(COORDINATED_GRAPHICS)

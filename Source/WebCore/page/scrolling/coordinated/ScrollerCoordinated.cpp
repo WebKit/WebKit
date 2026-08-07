@@ -150,10 +150,9 @@ void ScrollerCoordinated::updateValues()
 
     canvas->clear(SK_ColorTRANSPARENT);
 
-    Damage damage(state.frameRect);
     GraphicsContextSkia context(*canvas, RenderingMode::Accelerated, RenderingPurpose::DOM);
     context.scale(contentsScale);
-    scrollerImp->paint(context, state.frameRect, state, damage);
+    scrollerImp->paint(context, state.frameRect, state);
 
     grContext->flushAndSubmit(surface.get(), GLFence::isSupported(display.glDisplay()) ? GrSyncCpu::kNo : GrSyncCpu::kYes);
     auto buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), { TextureMapperFlags::ShouldBlend }, GLFence::create(display.glDisplay()));
@@ -163,7 +162,7 @@ void ScrollerCoordinated::updateValues()
     Locker layerLocker { hostLayer->lock() };
     hostLayer->setContentsRect(state.frameRect);
     hostLayer->setContentsClippingRect(FloatRoundedRect(state.frameRect));
-    hostLayer->setContentsBuffer(WTF::move(buffer), WTF::move(damage));
+    hostLayer->setContentsBuffer(WTF::move(buffer));
 }
 
 void ScrollerCoordinated::setHoveredAndPressedParts(ScrollbarPart hoveredPart, ScrollbarPart pressedPart)
