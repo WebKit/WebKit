@@ -331,11 +331,11 @@ Child toStyle(const CSSCalc::Percentage& root, const ToStyleConversionOptions&)
 
 Child toStyle(const CSSCalc::CanonicalDimension& root, const ToStyleConversionOptions& options)
 {
-    ASSERT(options.evaluation.conversionData);
-
     switch (root.dimension) {
     case CSSCalc::CanonicalDimension::Dimension::Length:
-        return dimension(resolveLength(root.value, CSS::LengthUnit::Px, *options.evaluation.conversionData));
+        if (options.evaluation.conversionData)
+            return dimension(resolveLength(root.value, CSS::LengthUnit::Px, *options.evaluation.conversionData));
+        return dimension(resolveLength(root.value, CSS::LengthUnit::Px, NoConversionDataRequiredToken { }));
 
     case CSSCalc::CanonicalDimension::Dimension::Angle:
     case CSSCalc::CanonicalDimension::Dimension::Time:

@@ -32,6 +32,10 @@
 
 namespace WebCore {
 
+namespace CSSCalc {
+class Value;
+}
+
 class CSSMathValue : public CSSNumericValue {
 public:
     CSSMathValue(CSSNumericType type)
@@ -43,6 +47,7 @@ public:
 
     template<typename T> bool equalsImpl(const CSSNumericValue&) const;
 
+    RefPtr<CSSCalc::Value> toCSSCalcValue() const;
     RefPtr<CSSValue> toCSSValue() const final;
 };
 

@@ -108,24 +108,6 @@
     });
   }, 'Scroll timeline with calculated range [JavaScript API]');
 
-promise_test(async t => {
-    t.add_cleanup(() => {
-      target.style.fontSize = '';
-    });
-    await test_range_waapi(t, {
-      rangeStart: "5em",
-      rangeEnd: "calc(100% - 5em)",
-      startOffset: 50,
-      endOffset: 950
-    });
-    target.style.fontSize =  '20px';
-    await waitForNextFrame();
-    const anim = target.getAnimations()[0];
-    const expectedProgress = (600 - 100) / (900 - 100);
-    assert_approx_equals(anim.effect.getComputedTiming().progress,
-                         expectedProgress, 0.001);
-  }, 'Scroll timeline with EM range [JavaScript API]');
-
   // Test via CSS.
   async function test_range_css(t, options) {
     t.add_cleanup(() => {

@@ -78,8 +78,8 @@ private:
     void setBindingsEffect(RefPtr<AnimationEffect>&&) final;
     ExceptionOr<void> setBindingsStartTime(const std::optional<WebAnimationTime>&) final;
     ExceptionOr<void> bindingsReverse() final;
-    void setBindingsRangeStart(TimelineRangeValue&&) final;
-    void setBindingsRangeEnd(TimelineRangeValue&&) final;
+    ExceptionOr<void> setBindingsRangeStart(Document&, TimelineRangeValue&&) final;
+    ExceptionOr<void> setBindingsRangeEnd(Document&, TimelineRangeValue&&) final;
 
     enum class Property : uint16_t {
         Name = 1 << 0,

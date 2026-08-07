@@ -30,8 +30,10 @@ struct ComputedStyleDependencies;
 
 namespace CSSCalc {
 
+struct Child;
 struct Tree;
 
+void collectComputedStyleDependencies(const Child&, ComputedStyleDependencies&);
 void collectComputedStyleDependencies(const Tree&, ComputedStyleDependencies&);
 
 } // namespace CSSCalc

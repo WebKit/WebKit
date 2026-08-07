@@ -26,13 +26,15 @@
 #include "config.h"
 #include "CSSMathValue.h"
 
+#include "CSSCalcTree+ComputedStyleDependencies.h"
 #include "CSSCalcTree.h"
 #include "CSSCalcValue.h"
 #include "CSSPrimitiveValue.h"
+#include "ComputedStyleDependencies.h"
 
 namespace WebCore {
 
-RefPtr<CSSValue> CSSMathValue::toCSSValue() const
+RefPtr<CSSCalc::Value> CSSMathValue::toCSSCalcValue() const
 {
     auto node = toCalcTreeNode();
     if (!node)
@@ -43,11 +45,24 @@ RefPtr<CSSValue> CSSMathValue::toCSSValue() const
     if (!category)
         return nullptr;
 
-    return CSSPrimitiveValue::create(CSSCalc::Value::create(*category, CSS::All, CSSCalc::Tree {
+    ComputedStyleDependencies dependencies;
+    CSSCalc::collectComputedStyleDependencies(*node, dependencies);
+
+    return CSSCalc::Value::create(*category, CSS::All, CSSCalc::Tree {
         .root = WTF::move(*node),
         .type = type,
         .stage = CSSCalc::Stage::Specified,
-    }));
+        .requiresConversionData = !dependencies.isComputationallyIndependent(),
+    });
+}
+
+RefPtr<CSSValue> CSSMathValue::toCSSValue() const
+{
+    auto calcValue = toCSSCalcValue();
+    if (!calcValue)
+        return nullptr;
+
+    return CSSPrimitiveValue::create(CSS::UnevaluatedCalcBase { calcValue.releaseNonNull() });
 }
 
 } // namespace WebCore

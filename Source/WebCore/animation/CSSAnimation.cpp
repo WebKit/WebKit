@@ -263,16 +263,20 @@ void CSSAnimation::setBindingsTimeline(RefPtr<AnimationTimeline>&& timeline)
     StyleOriginatedAnimation::setBindingsTimeline(WTF::move(timeline));
 }
 
-void CSSAnimation::setBindingsRangeStart(TimelineRangeValue&& range)
+ExceptionOr<void> CSSAnimation::setBindingsRangeStart(Document& document, TimelineRangeValue&& range)
 {
-    m_overriddenProperties.add(Property::RangeStart);
-    StyleOriginatedAnimation::setBindingsRangeStart(WTF::move(range));
+    auto result = StyleOriginatedAnimation::setBindingsRangeStart(document, WTF::move(range));
+    if (!result.hasException())
+        m_overriddenProperties.add(Property::RangeStart);
+    return result;
 }
 
-void CSSAnimation::setBindingsRangeEnd(TimelineRangeValue&& range)
+ExceptionOr<void> CSSAnimation::setBindingsRangeEnd(Document& document, TimelineRangeValue&& range)
 {
-    m_overriddenProperties.add(Property::RangeEnd);
-    StyleOriginatedAnimation::setBindingsRangeEnd(WTF::move(range));
+    auto result = StyleOriginatedAnimation::setBindingsRangeEnd(document, WTF::move(range));
+    if (!result.hasException())
+        m_overriddenProperties.add(Property::RangeEnd);
+    return result;
 }
 
 ExceptionOr<void> CSSAnimation::bindingsPlay()

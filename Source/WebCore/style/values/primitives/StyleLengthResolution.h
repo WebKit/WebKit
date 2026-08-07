@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSNoConversionDataRequiredToken.h"
 #include "CSSPrimitiveNumericRange.h"
 #include "StylePrimitiveNumericTypes+Rounding.h"
 #include <concepts>
@@ -55,6 +56,9 @@ class ComputedStyle;
 //    Vmin, Vmax, Svmin, Svmax, Lvmin, Lvmax, Dvmin, Dvmax (min/max viewport-percentage units)
 double resolveLength(double value, CSS::LengthUnit, CSSPropertyID, const FontCascade& fontCascadeForUnit, const RenderView*);
 double resolveLength(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
+
+// Only valid for absolute length units (Px, Cm, Mm, Q, In, Pt, Pc).
+double resolveLength(double value, CSS::LengthUnit, NoConversionDataRequiredToken);
 
 // True if `resolveLength` would produce identical results when resolved against both these styles.
 bool equalForLengthResolution(const Style::ComputedStyle&, const Style::ComputedStyle&);

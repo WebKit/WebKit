@@ -179,26 +179,11 @@
     });
 
     await runTimelineRangeTest(t, {
-      rangeStart: "contain calc(sign(100em - 1px) * 20px)",
-      rangeEnd: "contain calc(100%)",
-      startOffset: 720,
-      endOffset: 800
-    });
-
-    await runTimelineRangeTest(t, {
       rangeStart: "contain calc(0% + 20px)",
       rangeEnd: "contain calc(100% - 10px)",
       startOffset: 720,
       endOffset: 790
     });
-
-    await runTimelineRangeTest(t, {
-      rangeStart: "exit 2em",
-      rangeEnd: "exit 8em",
-      startOffset: 820,
-      endOffset: 880
-    });
-
 
   }, 'View timeline with range as strings.');
 

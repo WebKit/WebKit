@@ -34,14 +34,16 @@
 namespace WebCore {
 
 namespace Style {
-enum class SingleAnimationRangeType : bool;
+struct SingleAnimationRangeEnd;
+struct SingleAnimationRangeStart;
 }
 
-class Element;
+class Document;
 
 using TimelineRangeValue = Variant<TimelineRangeOffset, Ref<CSSNumericValue>, Ref<CSSOMKeywordValue>, String>;
 
-RefPtr<CSSValue> convertToCSSValue(TimelineRangeValue&&, RefPtr<Element>, Style::SingleAnimationRangeType);
+std::optional<Style::SingleAnimationRangeStart> validateTimelineRangeStart(TimelineRangeValue&&, const Document&);
+std::optional<Style::SingleAnimationRangeEnd> validateTimelineRangeEnd(TimelineRangeValue&&, const Document&);
 
 } // namespace WebCore
 

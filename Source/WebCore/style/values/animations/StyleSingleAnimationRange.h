@@ -40,11 +40,24 @@ enum class SingleAnimationRangeType : bool { Start, End };
 
 using SingleAnimationRangeEdgeOffset = LengthPercentage<>;
 
-template<SingleAnimationRangeType type>
+template<SingleAnimationRangeType rangeType>
 struct SingleAnimationRangeEdge {
+    static constexpr auto type = rangeType;
     using Base = SingleAnimationRangeEdge<type>;
     using Name = SingleAnimationRangeName;
     using Offset = SingleAnimationRangeEdgeOffset;
+
+    SingleAnimationRangeEdge(Name name, Offset&& offset)
+        : m_name { name }
+        , m_offset { WTF::move(offset) }
+    {
+    }
+
+    SingleAnimationRangeEdge(Name name, std::optional<Offset>&& offset = std::nullopt)
+        : m_name { name }
+        , m_offset { offset ? *offset : defaultOffset() }
+    {
+    }
 
     SingleAnimationRangeEdge(Offset&& offset)
         : SingleAnimationRangeEdge { Name::Omitted, WTF::move(offset) }
@@ -124,21 +137,9 @@ struct SingleAnimationRangeEdge {
     static Offset NODELETE defaultOffset();
     bool hasDefaultOffset() const { return m_offset == defaultOffset(); }
 
-    bool operator==(const SingleAnimationRangeEdge<type>&) const = default;
+    bool operator==(const SingleAnimationRangeEdge&) const = default;
 
 protected:
-    SingleAnimationRangeEdge(Name name, Offset&& offset)
-        : m_name { name }
-        , m_offset { WTF::move(offset) }
-    {
-    }
-
-    SingleAnimationRangeEdge(Name name, std::optional<Offset>&& offset)
-        : m_name { name }
-        , m_offset { offset ? *offset : defaultOffset() }
-    {
-    }
-
     Name m_name { Name::Normal };
     Offset m_offset;
 };

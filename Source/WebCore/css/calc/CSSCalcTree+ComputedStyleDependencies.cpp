@@ -34,7 +34,7 @@
 namespace WebCore {
 namespace CSSCalc {
 
-static void collectComputedStyleDependencies(const Child& root, ComputedStyleDependencies& dependencies)
+void collectComputedStyleDependencies(const Child& root, ComputedStyleDependencies& dependencies)
 {
     WTF::switchOn(root,
         [&](const Number&) {

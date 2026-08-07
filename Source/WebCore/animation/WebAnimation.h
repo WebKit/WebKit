@@ -152,11 +152,11 @@ public:
 
     TimelineRangeValue bindingsRangeStart() const { return m_timelineRange.start.toTimelineRangeValue(m_timelineRange.startZoom); }
     TimelineRangeValue bindingsRangeEnd() const { return m_timelineRange.end.toTimelineRangeValue(m_timelineRange.endZoom); }
-    virtual void setBindingsRangeStart(TimelineRangeValue&&);
-    virtual void setBindingsRangeEnd(TimelineRangeValue&&);
+    virtual ExceptionOr<void> setBindingsRangeStart(Document&, TimelineRangeValue&&);
+    virtual ExceptionOr<void> setBindingsRangeEnd(Document&, TimelineRangeValue&&);
     void setRangeStart(Style::SingleAnimationRangeStart&&, Style::ZoomFactor);
     void setRangeEnd(Style::SingleAnimationRangeEnd&&, Style::ZoomFactor);
-    const ResolvableTimelineRange& range() LIFETIME_BOUND;
+    const ResolvableTimelineRange& range() LIFETIME_BOUND { return m_timelineRange; }
 
     bool needsTick() const;
     virtual void tick();
@@ -246,8 +246,6 @@ private:
 
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
-    RefPtr<CSSValue> m_specifiedRangeStart;
-    RefPtr<CSSValue> m_specifiedRangeEnd;
     UniqueRef<ReadyPromise> m_readyPromise;
     UniqueRef<FinishedPromise> m_finishedPromise;
     std::optional<WebAnimationTime> m_previousCurrentTime;

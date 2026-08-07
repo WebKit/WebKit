@@ -6338,8 +6338,8 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
     String id = emptyString();
     std::optional<RefPtr<AnimationTimeline>> timeline;
     Variant<FramesPerSecond, AnimationFrameRatePreset> frameRate = AnimationFrameRatePreset::Auto;
-    TimelineRangeValue animationRangeStart;
-    TimelineRangeValue animationRangeEnd;
+    std::optional<TimelineRangeValue> animationRangeStart;
+    std::optional<TimelineRangeValue> animationRangeEnd;
     auto keyframeEffectOptions = WTF::switchOn(options,
         [](double value) -> Variant<double, KeyframeEffectOptions> {
             return value;
@@ -6364,8 +6364,18 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
     if (timeline)
         animation->setTimeline(timeline->get());
     animation->setBindingsFrameRate(WTF::move(frameRate));
-    animation->setBindingsRangeStart(WTF::move(animationRangeStart));
-    animation->setBindingsRangeEnd(WTF::move(animationRangeEnd));
+
+    if (animationRangeStart) {
+        auto bindingsRangeStartResult = animation->setBindingsRangeStart(document, WTF::move(*animationRangeStart));
+        if (bindingsRangeStartResult.hasException())
+            return bindingsRangeStartResult.releaseException();
+    }
+
+    if (animationRangeEnd) {
+        auto bindingsRangeEndResult = animation->setBindingsRangeEnd(document, WTF::move(*animationRangeEnd));
+        if (bindingsRangeEndResult.hasException())
+            return bindingsRangeEndResult.releaseException();
+    }
 
     auto animationPlayResult = animation->play();
     if (animationPlayResult.hasException())

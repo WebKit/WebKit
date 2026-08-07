@@ -645,6 +645,76 @@ double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLength
     });
 }
 
+double resolveLength(double value, CSS::LengthUnit lengthUnit, NoConversionDataRequiredToken)
+{
+    using enum CSS::LengthUnit;
+
+    switch (lengthUnit) {
+    case Px:
+        return value;
+    case Cm:
+        return value * CSS::pixelsPerCm;
+    case Mm:
+        return value * CSS::pixelsPerMm;
+    case Q:
+        return value * CSS::pixelsPerQ;
+    case In:
+        return value * CSS::pixelsPerInch;
+    case Pt:
+        return value * CSS::pixelsPerPt;
+    case Pc:
+        return value * CSS::pixelsPerPc;
+
+    case Em:
+    case QuirkyEm:
+    case Ex:
+    case Cap:
+    case Ch:
+    case Ic:
+    case Lh:
+    case Rem:
+    case Rcap:
+    case Rch:
+    case Rex:
+    case Ric:
+    case Rlh:
+    case Vh:
+    case Vw:
+    case Vmax:
+    case Vmin:
+    case Vb:
+    case Vi:
+    case Svh:
+    case Svw:
+    case Svmax:
+    case Svmin:
+    case Svb:
+    case Svi:
+    case Lvh:
+    case Lvw:
+    case Lvmax:
+    case Lvmin:
+    case Lvb:
+    case Lvi:
+    case Dvh:
+    case Dvw:
+    case Dvmax:
+    case Dvmin:
+    case Dvb:
+    case Dvi:
+    case Cqw:
+    case Cqh:
+    case Cqi:
+    case Cqb:
+    case Cqmax:
+    case Cqmin:
+        ASSERT_NOT_REACHED();
+        return -1;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 bool equalForLengthResolution(const Style::ComputedStyle& styleA, const Style::ComputedStyle& styleB)
 {
     // These properties affect results of `resolveLength` above.

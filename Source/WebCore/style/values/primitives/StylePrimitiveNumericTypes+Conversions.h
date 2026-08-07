@@ -31,15 +31,12 @@
 #include "CSSUnevaluatedCalc.h"
 #include "FloatConversion.h"
 #include "StyleBuilderState.h"
+#include "StyleLengthResolution.h"
 #include "StylePrimitiveNumericTypes.h"
 #include "StylePrimitiveNumericTypes+Rounding.h"
 
 namespace WebCore {
 namespace Style {
-
-// Out of line to avoid additional includes.
-double canonicalizeLength(double, CSS::LengthUnit, NoConversionDataRequiredToken);
-double canonicalizeLength(double, CSS::LengthUnit, const CSSToLengthConversionData&);
 
 // MARK: Conversion Data Access
 
@@ -115,7 +112,7 @@ template<auto R, typename V, typename... Rest> constexpr Flex<R, V> canonicalize
 
 template<auto R, typename V, typename... Rest> Length<R, V> canonicalize(const CSS::LengthRaw<R, V>& raw, Rest&&... rest)
 {
-    return { CSS::clampToRangeOf<Length<R, V>>(canonicalizeLength(raw.value, raw.unit, std::forward<Rest>(rest)...)) };
+    return { CSS::clampToRangeOf<Length<R, V>>(resolveLength(raw.value, raw.unit, std::forward<Rest>(rest)...)) };
 }
 
 template<auto R, typename V, typename... Rest> AnglePercentage<R, V> canonicalize(const CSS::AnglePercentageRaw<R, V>& raw, Rest&&... rest)

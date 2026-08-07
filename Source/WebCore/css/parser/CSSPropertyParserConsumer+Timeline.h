@@ -31,6 +31,7 @@ namespace WebCore {
 
 class CSSParserTokenRange;
 class CSSValue;
+class Document;
 enum CSSValueID : uint16_t;
 struct CSSParserContext;
 
@@ -39,12 +40,17 @@ struct PropertyParserState;
 }
 
 namespace Style {
+enum class SingleAnimationRangeName : uint8_t;
 enum class SingleAnimationRangeType : bool;
+struct SingleAnimationRangeEnd;
+struct SingleAnimationRangeStart;
 }
 
 namespace CSSPropertyParserHelpers {
 
 bool NODELETE isTimelineRangeName(CSSValueID);
+std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameRaw(const String&);
+std::optional<Style::SingleAnimationRangeName> parseTimelineRangeNameOrNormalRaw(const String&);
 
 // MARK: - Consumer functions
 
@@ -66,7 +72,9 @@ RefPtr<CSSValue> parseSingleViewTimelineInsetItem(const String&, const CSSParser
 RefPtr<CSSValue> consumeSingleAnimationRange(CSSParserTokenRange&, CSS::PropertyParserState&, Style::SingleAnimationRangeType);
 RefPtr<CSSValue> consumeSingleAnimationRangeStart(CSSParserTokenRange&, CSS::PropertyParserState&);
 RefPtr<CSSValue> consumeSingleAnimationRangeEnd(CSSParserTokenRange&, CSS::PropertyParserState&);
-RefPtr<CSSValue> parseSingleAnimationRange(const String&, const CSSParserContext&, Style::SingleAnimationRangeType);
+
+std::optional<Style::SingleAnimationRangeStart> parseAbsoluteSingleAnimationRangeStartRaw(const String&, const CSSParserContext&, const Document&);
+std::optional<Style::SingleAnimationRangeEnd> parseAbsoluteSingleAnimationRangeEndRaw(const String&, const CSSParserContext&, const Document&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

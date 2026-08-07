@@ -26,43 +26,110 @@
 #include "config.h"
 #include "TimelineRangeValue.h"
 
-#include "CSSNumericFactory.h"
+#include "CSSCalcValue.h"
+#include "CSSMathValue.h"
+#include "CSSOMKeywordValue.h"
+#include "CSSPrimitiveNumericUnits.h"
 #include "CSSPropertyParserConsumer+Timeline.h"
-#include "CSSValuePair.h"
-#include "CSSValuePool.h"
+#include "CSSUnevaluatedCalc.h"
+#include "CSSUnitValue.h"
 #include "Document.h"
-#include "Element.h"
-#include "NodeDocument.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleSingleAnimationRange.h"
+#include "TimelineRangeOffset.h"
 
 namespace WebCore {
 
-RefPtr<CSSValue> convertToCSSValue(TimelineRangeValue&& value, RefPtr<Element> element, Style::SingleAnimationRangeType type)
+static std::optional<Style::SingleAnimationRangeEdgeOffset> convertToOffset(Ref<CSSNumericValue>&& numericValue)
 {
-    if (!element)
-        return { };
+    using OffsetCSSType = Style::SingleAnimationRangeEdgeOffset::CSS;
 
-    Ref document = element->document();
+    if (RefPtr unitValue = dynamicDowncast<CSSUnitValue>(numericValue)) {
+        auto lengthPercentageUnit = CSS::toLengthPercentageUnit(unitValue->unitEnum());
+        if (!lengthPercentageUnit)
+            return std::nullopt;
+        if (CSS::conversionToCanonicalUnitRequiresConversionData(*lengthPercentageUnit))
+            return std::nullopt;
 
-    return WTF::switchOn(value,
-        [&](String& rangeString) -> RefPtr<CSSValue> {
-            return CSSPropertyParserHelpers::parseSingleAnimationRange(rangeString, document->cssParserContext(), type);
+        return Style::toStyle(typename OffsetCSSType::Raw { *lengthPercentageUnit, static_cast<float>(unitValue->value()) }, NoConversionDataRequiredToken { });
+    }
+    if (RefPtr mathValue = dynamicDowncast<CSSMathValue>(numericValue)) {
+        auto calcValue = mathValue->toCSSCalcValue();
+        if (!calcValue)
+            return std::nullopt;
+        if (auto category = calcValue->category(); category != CSS::Category::LengthPercentage && category != CSS::Category::Length && category != CSS::Category::Percentage)
+            return std::nullopt;
+        if (calcValue->requiresConversionData())
+            return std::nullopt;
+
+        return Style::toStyle(typename OffsetCSSType::Calc { calcValue.releaseNonNull() }, NoConversionDataRequiredToken { });
+    }
+
+    return std::nullopt;
+}
+
+template<typename RangeEdge>
+static std::optional<RangeEdge> convertToRangeEdge(TimelineRangeOffset&& rangeOffset)
+{
+    if (!rangeOffset.rangeName.isNull()) {
+        auto rangeName = CSSPropertyParserHelpers::parseTimelineRangeNameRaw(rangeOffset.rangeName);
+        if (!rangeName)
+            return std::nullopt;
+        if (RefPtr offset = WTF::move(rangeOffset.offset)) {
+            auto rangeOffset = convertToOffset(offset.releaseNonNull());
+            if (!rangeOffset)
+                return std::nullopt;
+            return RangeEdge { *rangeName, WTF::move(*rangeOffset) };
+        }
+        return RangeEdge { *rangeName };
+    }
+    if (RefPtr offset = WTF::move(rangeOffset.offset)) {
+        auto rangeOffset = convertToOffset(offset.releaseNonNull());
+        if (!rangeOffset)
+            return std::nullopt;
+        return RangeEdge { WTF::move(*rangeOffset) };
+    }
+    return std::nullopt;
+}
+
+template<typename RangeEdge>
+static std::optional<RangeEdge> convertToRangeEdge(Ref<CSSOMKeywordValue>&& rangeKeyword)
+{
+    auto rangeName = CSSPropertyParserHelpers::parseTimelineRangeNameOrNormalRaw(rangeKeyword->value());
+    if (!rangeName)
+        return std::nullopt;
+    return RangeEdge { *rangeName };
+}
+
+template<typename RangeEdge>
+static std::optional<RangeEdge> convertToRangeEdge(Ref<CSSNumericValue>&& rangeValue)
+{
+    auto rangeOffset = convertToOffset(WTF::move(rangeValue));
+    if (!rangeOffset)
+        return std::nullopt;
+    return RangeEdge { WTF::move(*rangeOffset) };
+}
+
+std::optional<Style::SingleAnimationRangeStart> validateTimelineRangeStart(TimelineRangeValue&& value, const Document& document)
+{
+    return WTF::switchOn(WTF::move(value),
+        [&](String&& rangeString) -> std::optional<Style::SingleAnimationRangeStart> {
+            return CSSPropertyParserHelpers::parseAbsoluteSingleAnimationRangeStartRaw(rangeString, document.cssParserContext(), document);
         },
-        [&](TimelineRangeOffset& rangeOffset) -> RefPtr<CSSValue> {
-            if (auto consumedRangeName = CSSPropertyParserHelpers::parseSingleAnimationRange(rangeOffset.rangeName, document->cssParserContext(), type)) {
-                if (RefPtr offset = rangeOffset.offset)
-                    return CSSValuePair::createNoncoalescing(*consumedRangeName, *offset->toCSSValue());
-                return consumedRangeName;
-            }
-            if (RefPtr offset = rangeOffset.offset)
-                return offset->toCSSValue();
-            return nullptr;
+        [](auto&& value) -> std::optional<Style::SingleAnimationRangeStart> {
+            return convertToRangeEdge<Style::SingleAnimationRangeStart>(WTF::move(value));
+        }
+    );
+}
+
+std::optional<Style::SingleAnimationRangeEnd> validateTimelineRangeEnd(TimelineRangeValue&& value, const Document& document)
+{
+    return WTF::switchOn(WTF::move(value),
+        [&](String&& rangeString) -> std::optional<Style::SingleAnimationRangeEnd> {
+            return CSSPropertyParserHelpers::parseAbsoluteSingleAnimationRangeEndRaw(rangeString, document.cssParserContext(), document);
         },
-        [&](Ref<CSSOMKeywordValue> rangeKeyword) {
-            return rangeKeyword->toCSSValue();
-        },
-        [&](Ref<CSSNumericValue> rangeValue) {
-            return rangeValue->toCSSValue();
+        [](auto&& value) -> std::optional<Style::SingleAnimationRangeEnd> {
+            return convertToRangeEdge<Style::SingleAnimationRangeEnd>(WTF::move(value));
         }
     );
 }
