@@ -36,6 +36,10 @@ ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);
 
 CODE_SIGN_IDENTITY = -;
 
+// Needed to resolve the SPI modules WebKit's Swift interface publicly imports on public SDKs.
+SWIFT_INCLUDE_PATHS = $(inherited) $(SWIFT_INCLUDE_PATHS_$(USE_INTERNAL_SDK));
+SWIFT_INCLUDE_PATHS_ = $(SRCROOT)/../../Source/WebKit/Platform/spi/Cocoa;
+
 ENABLE_DEBUG_DYLIB_OVERRIDE = YES;
 
 WK_ENABLE_SWIFTBROWSER = YES;

@@ -44,6 +44,10 @@ ALTERNATE_HEADER_SEARCH_PATHS_iosmac = $(BUILT_PRODUCTS_DIR)$(WK_ALTERNATE_FRAME
 PROJECT_HEADER_SEARCH_PATHS = $(SRCROOT)/../../Source/WebKit/Platform/cocoa $(PROJECT_HEADER_SEARCH_PATHS_$(WK_COCOA_TOUCH)) $(SRCROOT)/../TestRunnerShared/spi $(SRCROOT)/../TestRunnerShared/cocoa $(SRCROOT)/../../Source/WebKit/Platform/spi/Cocoa;
 PROJECT_HEADER_SEARCH_PATHS_cocoatouch = $(inherited) $(SRCROOT)/../../Source/WebKit/Platform/spi/ios $(SRCROOT)/../../Source/WebKit/UIProcess/ios $(SRCROOT)/../../Source/WebKit/Shared/ios;
 
+// Needed to resolve the SPI modules WebKit's Swift interface publicly imports on public SDKs.
+SWIFT_INCLUDE_PATHS = $(inherited) $(SWIFT_INCLUDE_PATHS_$(USE_INTERNAL_SDK));
+SWIFT_INCLUDE_PATHS_ = $(SRCROOT)/../../Source/WebKit/Platform/spi/Cocoa;
+
 HEADER_SEARCH_PATHS = $(ALTERNATE_HEADER_SEARCH_PATHS) ${BUILT_PRODUCTS_DIR}/usr/local/include $(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders $(BUILT_PRODUCTS_DIR)/WebKitTestSupport $(WEBKIT_TESTSUPPORT_INSTALLED_DIR) ${SRCROOT} $(PROJECT_HEADER_SEARCH_PATHS);
 
 WEBKIT_TESTSUPPORT_INSTALLED_DIR[config=Production] = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/WebKitTestSupport;

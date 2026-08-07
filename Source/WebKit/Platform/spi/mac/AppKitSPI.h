@@ -295,7 +295,9 @@ NS_HEADER_AUDIT_END(nullability, sendability)
 @property (nonatomic, readonly) CGFloat refreshControlDynamicDampeningThreshold;
 @end
 
-// We need to spell out the protocol here for Swift/C++ interop support in WebKit-Swift-Generated.h
+// WebKit-Swift-Generated.h references this protocol, and AppKit declares it only in Swift, so
+// Objective-C needs it spelled out here. The Swift conformance uses AppKit_SPI, which cannot
+// replace this declaration.
 @protocol NSRefreshControlHosting <NSObject>
 @required
 @property (nonatomic, readonly) CGFloat refreshControlVisibleHeight;
