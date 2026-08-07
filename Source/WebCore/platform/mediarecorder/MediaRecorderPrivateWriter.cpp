@@ -83,12 +83,14 @@ Ref<MediaRecorderPrivateWriter::WriterPromise> MediaRecorderPrivateWriter::write
     static const MediaTime maxSegmentDuration = MediaTime::createWithDouble(10);
 
     auto result = Result::Success;
-    while (!m_pendingFrames.isEmpty() && result == Result::Success) {
-        auto sample = m_pendingFrames.takeFirst();
-        result = writeFrame(sample.get());
+    while (!m_pendingFrames.isEmpty()) {
+        result = writeFrame(m_pendingFrames.first().get());
+        if (result != Result::Success)
+            break;
+        m_pendingFrames.removeFirst();
         // End the segment if we succeded in writing all frames, otherwise we will retry them on the next call.
         MediaTime endSampleTime = m_pendingFrames.isEmpty() ? endTime : m_pendingFrames.first()->presentationTime();
-        if (!segmentsMustStartWithKeyframe() && result == Result::Success && endSampleTime - m_lastSegmentEndTime >= maxSegmentDuration) {
+        if (!segmentsMustStartWithKeyframe() && endSampleTime - m_lastSegmentEndTime >= maxSegmentDuration) {
             LOG(MediaStream, "MediaRecorderPrivateWriter::writeFrames forceNewSegment at time:%f", endTime.toDouble());
             forceNewSegment(endSampleTime);
             m_lastSegmentEndTime = endSampleTime;
