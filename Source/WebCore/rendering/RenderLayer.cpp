@@ -2712,6 +2712,23 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
     return clipRect;
 }
 
+static FloatRect clipRectForTransparencyLayer(const LayoutRect& rect, const RenderLayerModelObject& renderer, const GraphicsContext& context)
+{
+    if (rendererNeedsPixelSnapping(renderer))
+        return snapRectToDevicePixels(rect, renderer.document().deviceScaleFactor());
+
+    if (!renderer.hasMask() && !renderer.hasClipPath())
+        return rect;
+
+    // RenderSVGResourceMasker sizes and draws its mask image over enclosingIntRect() of the mask
+    // content bounds (enclosingIntRect(absoluteTransform.mapRect(decoratedBounds))) - we have to
+    // perform the clip for the transparency layer in the same way to avoid losing edge pixels.
+    auto absoluteTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    if (auto inverseTransform = absoluteTransform.inverse())
+        return inverseTransform->mapRect(FloatRect(enclosingIntRect(absoluteTransform.mapRect(FloatRect(rect)))));
+    return rect;
+}
+
 void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, const LayoutRect& dirtyRect)
 {
     if (context.paintingDisabled() || (paintsWithTransparency(paintingInfo.paintBehavior) && m_usedTransparency))
@@ -2731,8 +2748,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
         context.save();
         LayoutRect adjustedClipRect = transparencyClipBox(*this, paintingInfo.rootLayer, PaintingTransparencyClipBox, RootOfTransparencyClipBox, paintingInfo.paintBehavior, &dirtyRect);
         adjustedClipRect.move(paintingInfo.subpixelOffset);
-        auto snappedClipRect = snapRectToDevicePixelsIfNeeded(adjustedClipRect, renderer());
-        context.clip(snappedClipRect);
+        context.clip(clipRectForTransparencyLayer(adjustedClipRect, renderer(), context));
 
         bool usesCompositeOperation = hasBlendMode() && !(renderer().isLegacyRenderSVGRoot() && parent() && parent()->isRenderViewLayer());
         if (usesCompositeOperation)
@@ -5483,7 +5499,10 @@ LayoutRect RenderLayer::localBoundingBox(OptionSet<CalculateLayerBoundsFlag> fla
     } else {
         RenderBox* box = renderBox();
         ASSERT(box);
-        if (!(flags & DontConstrainForMask) && box->hasMask()) {
+        // An SVG renderer (<text>, <foreignObject>) is masked by an SVG mask resource, and its visual
+        // overflow rect already covers that resource. The CSS mask clip rect comes from the border box
+        // and leaves out the SVG content that spills outside it, so it would cut that content off.
+        if (!(flags & DontConstrainForMask) && box->hasMask() && !box->isSVGLayerAwareRenderer()) {
             result = box->maskClipRect(LayoutPoint());
             box->flipForWritingMode(result); // The mask clip rect is in physical coordinates, so we have to flip, since localBoundingBox is not.
         } else if (flags.contains(ExcludeFilterOutsetsFromSelfBounds) && !box->hasLayoutOverflow()) {
