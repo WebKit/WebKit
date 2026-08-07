@@ -107,24 +107,6 @@ static NSDictionary<NSString *, id> *serializeSidebarParameters(WebExtensionSide
     return serializedParameters;
 }
 
-static Expected<WebExtensionSidebarParameters, WebExtensionError> deserializeSidebarParameters(NSDictionary<NSString *, id> *serializedParameters)
-{
-    WebExtensionSidebarParameters parameters;
-
-    if (auto enabled = objectForKey<NSNumber>(serializedParameters, @"enabled"))
-        parameters.enabled = [enabled boolValue];
-
-    if (auto path = objectForKey<NSString>(serializedParameters, @"path"))
-        parameters.panelPath = path;
-
-    auto tabIdentifierResult = parseTabIdentifier(serializedParameters);
-    if (NSString *error = indicatesError(tabIdentifierResult).get())
-        return toWebExtensionError(nullString(), @"details", error);
-    parameters.tabIdentifier = WTF::move(tabIdentifierResult.value());
-
-    return parameters;
-}
-
 void WebExtensionAPISidePanel::getOptions(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     auto result = parseTabIdentifier(options);
@@ -146,15 +128,28 @@ void WebExtensionAPISidePanel::getOptions(NSDictionary *options, Ref<WebExtensio
 
 void WebExtensionAPISidePanel::setOptions(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    auto result = deserializeSidebarParameters(options);
-    if (!result) {
-        *outExceptionString = result.error().createNSString().get();
+    auto tabIdentifierResult = parseTabIdentifier(options);
+    if ((*outExceptionString = indicatesError(tabIdentifierResult).get()))
+        return;
+
+    RetainPtr path = objectForKey<NSString>(options, @"path", false);
+    RetainPtr enabled = objectForKey<NSNumber>(options, @"enabled");
+
+    if (!path && !enabled) {
+        *outExceptionString = toErrorString(nullString(), @"options", @"it must specify at least one of 'path' or 'enabled'").createNSString().get();
         return;
     }
 
-    std::optional<String> panelPath = result->panelPath != ""_s ? std::optional(result->panelPath) : std::nullopt;
+    // An empty path (`path: ""`) clears the panel, so it is sent as nullopt.
+    std::optional<String> panelPath;
+    if (path.get().length)
+        panelPath = String { path.get() };
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetOptions(std::nullopt, result->tabIdentifier, panelPath, result->enabled), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+    std::optional<bool> enabledValue;
+    if (enabled)
+        enabledValue = enabled.get().boolValue;
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetOptions(std::nullopt, tabIdentifierResult.value(), panelPath, enabledValue), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result) {
             callback->reportError(result.error().createNSString().get());
             return;

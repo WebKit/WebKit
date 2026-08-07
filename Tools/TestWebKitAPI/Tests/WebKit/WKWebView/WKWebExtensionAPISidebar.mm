@@ -863,7 +863,8 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionOpenSucceedsWithUserGesture)
     auto manager = getManagerFor(resources, sidebarActionManifest);
     manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *sidebar) {
         (*presentSidebarCallCountPtr)++;
-        EXPECT_NOT_NULL(sidebar.associatedTab);
+        EXPECT_NULL(sidebar.associatedTab);
+        EXPECT_NOT_NULL(sidebar.associatedWindow);
         EXPECT_NOT_NULL(sidebar.webExtensionContext);
         EXPECT_NOT_NULL(sidebar.title);
         EXPECT_NOT_NULL(sidebar.webView);
@@ -902,7 +903,8 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionCloseSucceedsWithUserGesture)
         (*closeSidebarCallCountPtr)++;
 
         // Make sure all the properties are still there when delegate closeSidebar is called, since the sidebar is still displayed at the moment of the call
-        EXPECT_NOT_NULL(sidebar.associatedTab);
+        EXPECT_NULL(sidebar.associatedTab);
+        EXPECT_NOT_NULL(sidebar.associatedWindow);
         EXPECT_NOT_NULL(sidebar.webExtensionContext);
         EXPECT_NOT_NULL(sidebar.title);
         EXPECT_NOT_NULL(sidebar.webView);
@@ -1262,7 +1264,8 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForTabSucceedsWithUserGesture)
     auto manager = getManagerFor(resources, sidePanelManifest);
     manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *sidebar) {
         (*presentSidebarCallCountPtr)++;
-        EXPECT_NOT_NULL(sidebar.associatedTab);
+        EXPECT_NULL(sidebar.associatedTab);
+        EXPECT_NOT_NULL(sidebar.associatedWindow);
         EXPECT_NOT_NULL(sidebar.webExtensionContext);
         EXPECT_NOT_NULL(sidebar.title);
         EXPECT_NOT_NULL(sidebar.webView);
@@ -1305,7 +1308,8 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForWindowSucceedsWithUserGesture)
 
     manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *sidebar) {
         (*presentSidebarCallCountPtr)++;
-        EXPECT_NOT_NULL(sidebar.associatedTab);
+        EXPECT_NULL(sidebar.associatedTab);
+        EXPECT_NOT_NULL(sidebar.associatedWindow);
         EXPECT_NOT_NULL(sidebar.webExtensionContext);
         EXPECT_NOT_NULL(sidebar.title);
         EXPECT_NOT_NULL(sidebar.webView);
@@ -1315,8 +1319,8 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForWindowSucceedsWithUserGesture)
         EXPECT_NS_EQUAL(webViewURL.scheme, @"webkit-extension");
         EXPECT_NS_EQUAL(webViewURL.path, @"/sidebar.html");
 
-        EXPECT_FALSE([newWindow.tabs containsObject:sidebar.associatedTab]);
-        EXPECT_TRUE([defaultWindow.tabs containsObject:sidebar.associatedTab]);
+        EXPECT_EQ(sidebar.associatedWindow, defaultWindow);
+        EXPECT_NE(sidebar.associatedWindow, newWindow);
     };
 
     [manager loadAndRun];
@@ -1432,6 +1436,438 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelActionClickDoesNotOpenPathlessSidebar)
 
     EXPECT_EQ(presentSidebarCallCount, 0);
     EXPECT_EQ(presentActionPopupCallCount, 1);
+}
+
+#pragma mark - Per-Window Rendering Tests
+
+TEST_F(WKWebExtensionAPISidebar, TabsWithoutOverridesShareTheirWindowSidebar)
+{
+    auto *script = @[
+        @"browser.test.sendMessage('Loaded')",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Sidebar</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidebarActionManifest);
+    auto *defaultWindow = [manager defaultWindow];
+    auto *firstTab = manager.get().defaultTab;
+    auto *secondTab = [defaultWindow openNewTab];
+
+    [manager load];
+    [manager runUntilTestMessage:@"Loaded"];
+
+    auto *context = manager.get().context;
+    auto *firstSidebar = [context sidebarForTab:firstTab];
+    auto *secondSidebar = [context sidebarForTab:secondTab];
+
+    // Neither tab is singled out by the extension, so both are shown their window's sidebar: the same object,
+    // in the same web view, so moving between them leaves the sidebar pane alone.
+    EXPECT_NOT_NULL(firstSidebar);
+    EXPECT_EQ(firstSidebar, secondSidebar);
+    EXPECT_NULL(firstSidebar.associatedTab);
+    EXPECT_EQ(firstSidebar.associatedWindow, defaultWindow);
+    EXPECT_EQ(firstSidebar.webView, secondSidebar.webView);
+}
+
+TEST_F(WKWebExtensionAPISidebar, DidInvalidateSidebarFiresWhenLastOverrideCleared)
+{
+    auto *script = @[
+        @"let tabs = await browser.tabs.query({})",
+        @"let [tab] = tabs",
+
+        @"browser.test.onMessage.addListener(async (message) => {",
+        @"  if (message === 'Override')",
+        @"    await browser.sidebarAction.setTitle({ tabId: tab.id, title: 'tab title' })",
+        @"  else if (message === 'Clear')",
+        @"    await browser.sidebarAction.setTitle({ tabId: tab.id, title: null })",
+        @"  browser.test.sendMessage('Done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Sidebar</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidebarActionManifest);
+
+    __block RetainPtr<_WKWebExtensionSidebar> lastUpdated;
+    __block RetainPtr<_WKWebExtensionSidebar> lastInvalidated;
+    manager.get().internalDelegate.didUpdateSidebar = ^(_WKWebExtensionSidebar *sidebar) {
+        lastUpdated = sidebar;
+    };
+    manager.get().internalDelegate.didInvalidateSidebar = ^(_WKWebExtensionSidebar *sidebar) {
+        lastInvalidated = sidebar;
+    };
+
+    [manager load];
+    [manager runUntilTestMessage:@"Loaded"];
+
+    auto *context = manager.get().context;
+    auto *tab = manager.get().defaultTab;
+
+    // With nothing set for the tab, it is shown its window's sidebar.
+    auto *windowSidebar = [context sidebarForTab:tab];
+    EXPECT_NOT_NULL(windowSidebar);
+    EXPECT_NULL(windowSidebar.associatedTab);
+
+    // Setting a tab override gives the tab a sidebar of its own and reports it as an update, not an invalidation.
+    [manager sendTestMessage:@"Override"];
+    [manager runUntilTestMessage:@"Done"];
+    EXPECT_NE([context sidebarForTab:tab], windowSidebar);
+    EXPECT_NOT_NULL(lastUpdated.get());
+    EXPECT_EQ(lastUpdated.get().associatedTab, tab);
+    EXPECT_NULL(lastInvalidated.get());
+
+    lastUpdated = nil;
+
+    // Clearing the last override discards the tab's own sidebar: it is shown its window's sidebar again, and the
+    // discard is reported as an invalidation carrying that sidebar (so the browser can drop it and re-query),
+    // never as an update for the sidebar being gotten rid of.
+    [manager sendTestMessage:@"Clear"];
+    [manager runUntilTestMessage:@"Done"];
+    EXPECT_EQ([context sidebarForTab:tab], windowSidebar);
+    EXPECT_NOT_NULL(lastInvalidated.get());
+    EXPECT_EQ(lastInvalidated.get().associatedTab, tab);
+    EXPECT_NULL(lastUpdated.get());
+}
+
+TEST_F(WKWebExtensionAPISidebar, WillOpenSidebarWithoutUserInteractionDoesNotStartUserGesture)
+{
+    auto *script = @[
+        @"browser.test.sendMessage('Loaded')",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Sidebar</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidebarActionManifest);
+
+    [manager load];
+    [manager runUntilTestMessage:@"Loaded"];
+
+    auto *context = manager.get().context;
+    auto *tab = manager.get().defaultTab;
+    auto *sidebar = [context sidebarForTab:tab];
+
+    EXPECT_NOT_NULL(sidebar);
+    EXPECT_FALSE([context hasActiveUserGestureInTab:tab]);
+
+    // Replacing which sidebar is on screen is not an interaction with the extension, and the extension can
+    // bring one about itself by setting a property for a single tab, so it must not start a user gesture.
+    [sidebar willOpenSidebarFromUserInteraction:NO];
+    EXPECT_FALSE([context hasActiveUserGestureInTab:tab]);
+
+    [sidebar willCloseSidebar];
+    [sidebar willOpenSidebarFromUserInteraction:YES];
+    EXPECT_TRUE([context hasActiveUserGestureInTab:tab]);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelSetOptionsRequiresPathOrEnabled)
+{
+    auto *script = @[
+        @"let tabs = await browser.tabs.query({})",
+        @"let [tab] = tabs",
+
+        // `tabId` only says which sidebar to change, so these calls have nothing to do.
+        @"browser.test.assertThrows(() => browser.sidePanel.setOptions({ tabId: tab.id }))",
+        @"browser.test.assertThrows(() => browser.sidePanel.setOptions({ }))",
+
+        // Clearing the path, or setting enablement, is a change.
+        @"await browser.test.assertSafeResolve(() => browser.sidePanel.setOptions({ tabId: tab.id, path: '' }))",
+        @"await browser.test.assertSafeResolve(() => browser.sidePanel.setOptions({ tabId: tab.id, enabled: false }))",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(sidePanelManifest, @{ @"background.js": Util::constructScript(script) }, sidebarConfig);
+}
+
+TEST_F(WKWebExtensionAPISidebar, TabPanelOverrideSwapsWebViewAndRestoresIt)
+{
+    auto *script = @[
+        @"let [tab1, tab2] = await browser.tabs.query({})",
+
+        @"browser.test.onMessage.addListener(async (message) => {",
+        @"  if (message === 'Override')",
+        @"    await browser.sidebarAction.setPanel({ tabId: tab1.id, panel: '/tab.html' })",
+        @"  else if (message === 'Clear')",
+        @"    await browser.sidebarAction.setPanel({ tabId: tab1.id, panel: null })",
+        @"  browser.test.sendMessage('Done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Window Sidebar</h1>",
+        @"tab.html": @"<h1>Tab Sidebar</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidebarActionManifest);
+    auto *defaultWindow = [manager defaultWindow];
+    auto *firstTab = manager.get().defaultTab;
+    auto *secondTab = [defaultWindow openNewTab];
+
+    [manager load];
+    [manager runUntilTestMessage:@"Loaded"];
+
+    auto *context = manager.get().context;
+
+    // Neither tab is singled out, so both are shown their window's sidebar and share its single web view.
+    auto *windowSidebar = [context sidebarForTab:firstTab];
+    EXPECT_EQ(windowSidebar, [context sidebarForTab:secondTab]);
+    RetainPtr<WKWebView> sharedWebView = windowSidebar.webView;
+    EXPECT_NOT_NULL(sharedWebView.get());
+
+    // Giving one tab its own panel promotes it to a distinct sidebar with a web view of its own; the other tab
+    // keeps sharing the window's.
+    [manager sendTestMessage:@"Override"];
+    [manager runUntilTestMessage:@"Done"];
+
+    auto *tabSidebar = [context sidebarForTab:firstTab];
+    EXPECT_NE(tabSidebar, windowSidebar);
+    EXPECT_EQ(tabSidebar.associatedTab, firstTab);
+    EXPECT_NE(tabSidebar.webView, sharedWebView.get());
+    EXPECT_EQ([context sidebarForTab:secondTab], windowSidebar);
+    EXPECT_EQ([context sidebarForTab:secondTab].webView, sharedWebView.get());
+
+    // Clearing that panel demotes the tab back to sharing its window's sidebar and its original web view.
+    [manager sendTestMessage:@"Clear"];
+    [manager runUntilTestMessage:@"Done"];
+
+    EXPECT_EQ([context sidebarForTab:firstTab], windowSidebar);
+    EXPECT_EQ([context sidebarForTab:firstTab].webView, sharedWebView.get());
+}
+
+TEST_F(WKWebExtensionAPISidebar, WindowPanelChangeReloadsSharedWebViewInPlace)
+{
+    auto *script = @[
+        @"let window = await browser.windows.getCurrent()",
+
+        @"browser.test.onMessage.addListener(async (message) => {",
+        @"  if (message === 'ChangeWindowPanel')",
+        @"    await browser.sidebarAction.setPanel({ windowId: window.id, panel: '/window-2.html' })",
+        @"  browser.test.sendMessage('Done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Window Sidebar</h1>",
+        @"window-2.html": @"<h1>Window Sidebar 2</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidebarActionManifest);
+    auto *defaultWindow = [manager defaultWindow];
+    auto *firstTab = manager.get().defaultTab;
+    auto *secondTab = [defaultWindow openNewTab];
+
+    [manager load];
+    [manager runUntilTestMessage:@"Loaded"];
+
+    auto *context = manager.get().context;
+    auto *windowSidebar = [context sidebarForTab:firstTab];
+    RetainPtr<WKWebView> sharedWebView = windowSidebar.webView;
+    EXPECT_NOT_NULL(sharedWebView.get());
+
+    // Changing the window's panel reloads the shared web view in place rather than rebuilding it, so the object
+    // both tabs are looking at stays the same and sharing is preserved.
+    [manager sendTestMessage:@"ChangeWindowPanel"];
+    [manager runUntilTestMessage:@"Done"];
+
+    EXPECT_EQ([context sidebarForTab:firstTab], windowSidebar);
+    EXPECT_EQ(windowSidebar.webView, sharedWebView.get());
+    EXPECT_EQ([context sidebarForTab:secondTab], windowSidebar);
+    EXPECT_EQ([context sidebarForTab:secondTab].webView, sharedWebView.get());
+}
+
+TEST_F(WKWebExtensionAPISidebar, ParentTitleChangeNotifiesInheritingTabSidebar)
+{
+    auto *script = @[
+        @"let window = await browser.windows.getCurrent()",
+        @"let [tab] = await browser.tabs.query({})",
+
+        @"browser.test.onMessage.addListener(async (message) => {",
+        @"  if (message === 'OverrideTabPanel')",
+        @"    await browser.sidebarAction.setPanel({ tabId: tab.id, panel: '/tab.html' })",
+        @"  else if (message === 'ChangeWindowTitle')",
+        @"    await browser.sidebarAction.setTitle({ windowId: window.id, title: 'Window Title' })",
+        @"  browser.test.sendMessage('Done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Window Sidebar</h1>",
+        @"tab.html": @"<h1>Tab Sidebar</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidebarActionManifest);
+
+    __block RetainPtr<NSMutableArray> updatedSidebars = [NSMutableArray array];
+    manager.get().internalDelegate.didUpdateSidebar = ^(_WKWebExtensionSidebar *sidebar) {
+        [updatedSidebars addObject:sidebar];
+    };
+
+    [manager load];
+    [manager runUntilTestMessage:@"Loaded"];
+
+    auto *context = manager.get().context;
+    auto *tab = manager.get().defaultTab;
+
+    // The tab overrides only its panel, so it keeps a sidebar of its own that still inherits its title from the
+    // window.
+    [manager sendTestMessage:@"OverrideTabPanel"];
+    [manager runUntilTestMessage:@"Done"];
+    EXPECT_EQ([context sidebarForTab:tab].associatedTab, tab);
+
+    [updatedSidebars removeAllObjects];
+
+    // Changing the window's title has to reach the inheriting tab sidebar, not only the window's own, since the
+    // tab sidebar is what the browser displays for that tab.
+    [manager sendTestMessage:@"ChangeWindowTitle"];
+    [manager runUntilTestMessage:@"Done"];
+
+    bool notifiedTabSidebar = false;
+    for (_WKWebExtensionSidebar *sidebar in updatedSidebars.get()) {
+        if (sidebar.associatedTab == tab)
+            notifiedTabSidebar = true;
+    }
+    EXPECT_TRUE(notifiedTabSidebar);
+    EXPECT_NS_EQUAL([context sidebarForTab:tab].title, @"Window Title");
+}
+
+TEST_F(WKWebExtensionAPISidebar, SetOptionsNotifiesDelegateAtMostOnce)
+{
+    auto *script = @[
+        @"let [tab] = await browser.tabs.query({})",
+
+        @"browser.test.onMessage.addListener(async (message) => {",
+        @"  if (message === 'SetPathAndEnabled')",
+        @"    await browser.sidePanel.setOptions({ tabId: tab.id, path: '/tab.html', enabled: false })",
+        @"  browser.test.sendMessage('Done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Window Sidebar</h1>",
+        @"tab.html": @"<h1>Tab Sidebar</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidePanelManifest);
+
+    __block int updateCount = 0;
+    manager.get().internalDelegate.didUpdateSidebar = ^(_WKWebExtensionSidebar *) {
+        ++updateCount;
+    };
+
+    [manager load];
+    [manager runUntilTestMessage:@"Loaded"];
+
+    updateCount = 0;
+
+    // Setting the path (which promotes the tab to its own web view) and enablement in one call must report a
+    // single update, not one per mutated property.
+    [manager sendTestMessage:@"SetPathAndEnabled"];
+    [manager runUntilTestMessage:@"Done"];
+
+    EXPECT_EQ(updateCount, 1);
+}
+
+TEST_F(WKWebExtensionAPISidebar, TabSidebarRelinksToNewWindowOnMove)
+{
+    auto *script = @[
+        @"let [windowA, windowB] = await browser.windows.getAll()",
+        @"let [tab] = await browser.tabs.query({ windowId: windowA.id })",
+
+        @"browser.test.onMessage.addListener(async (message) => {",
+        @"  if (message === 'Setup') {",
+        @"    await browser.sidebarAction.setTitle({ windowId: windowA.id, title: 'A title' })",
+        @"    await browser.sidebarAction.setTitle({ windowId: windowB.id, title: 'B title' })",
+        @"    await browser.sidebarAction.setPanel({ tabId: tab.id, panel: '/tab.html' })",
+        @"  } else if (message === 'ChangeWindowBTitle')",
+        @"    await browser.sidebarAction.setTitle({ windowId: windowB.id, title: 'B title 2' })",
+        @"  else if (message === 'ChangeWindowATitle')",
+        @"    await browser.sidebarAction.setTitle({ windowId: windowA.id, title: 'A title 2' })",
+        @"  browser.test.sendMessage('Done')",
+        @"})",
+
+        @"browser.test.sendMessage('Loaded')",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Window Sidebar</h1>",
+        @"tab.html": @"<h1>Tab Sidebar</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidebarActionManifest);
+    auto *windowB = [manager openNewWindow];
+
+    __block RetainPtr<NSMutableArray> updatedSidebars = [NSMutableArray array];
+    manager.get().internalDelegate.didUpdateSidebar = ^(_WKWebExtensionSidebar *sidebar) {
+        [updatedSidebars addObject:sidebar];
+    };
+
+    [manager load];
+    [manager runUntilTestMessage:@"Loaded"];
+
+    [manager sendTestMessage:@"Setup"];
+    [manager runUntilTestMessage:@"Done"];
+
+    auto *context = manager.get().context;
+    auto *tab = manager.get().defaultTab;
+
+    // The tab overrides only its panel, so it inherits its title from whichever window holds it -- window A for now.
+    auto *tabSidebar = [context sidebarForTab:tab];
+    EXPECT_EQ(tabSidebar.associatedTab, tab);
+    EXPECT_NS_EQUAL(tabSidebar.title, @"A title");
+
+    // Moving the tab into window B has to re-point its inheritance at B.
+    [windowB moveTab:tab toIndex:0];
+    EXPECT_NS_EQUAL([context sidebarForTab:tab].title, @"B title");
+
+    // A change to window B's title now reaches the tab, proving it was linked as a child of B's sidebar.
+    [updatedSidebars removeAllObjects];
+    [manager sendTestMessage:@"ChangeWindowBTitle"];
+    [manager runUntilTestMessage:@"Done"];
+
+    bool notifiedByWindowB = false;
+    for (_WKWebExtensionSidebar *sidebar in updatedSidebars.get()) {
+        if (sidebar.associatedTab == tab)
+            notifiedByWindowB = true;
+    }
+    EXPECT_TRUE(notifiedByWindowB);
+    EXPECT_NS_EQUAL([context sidebarForTab:tab].title, @"B title 2");
+
+    // A change to window A's title, on the other hand, must no longer reach the tab -- it was unlinked from A.
+    [updatedSidebars removeAllObjects];
+    [manager sendTestMessage:@"ChangeWindowATitle"];
+    [manager runUntilTestMessage:@"Done"];
+
+    bool notifiedByWindowA = false;
+    for (_WKWebExtensionSidebar *sidebar in updatedSidebars.get()) {
+        if (sidebar.associatedTab == tab)
+            notifiedByWindowA = true;
+    }
+    EXPECT_FALSE(notifiedByWindowA);
+    EXPECT_NS_EQUAL([context sidebarForTab:tab].title, @"B title 2");
 }
 
 } // namespace TestWebKitAPI

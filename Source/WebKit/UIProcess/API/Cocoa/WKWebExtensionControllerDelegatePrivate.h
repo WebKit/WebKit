@@ -109,7 +109,9 @@ WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
  @param context The context within which the web extension is running.
  @param completionHandler A block to be called once the sidebar has been opened.
  @discussion This method is called in response to the extension's scripts programmatically requesting the sidebar to open. Implementing this method
- is needed if the app intends to support programmatically showing the sidebar from the extension.
+ is needed if the app intends to support programmatically showing the sidebar from the extension. The sidebar pane is shown or hidden per window, so
+ it should stay open as the user switches tabs; the app is responsible for displaying whichever sidebar applies to the tab which becomes active, which it
+ can obtain with ``-[WKWebExtensionContext sidebarForTab:]``.
  */
 - (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller presentSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
@@ -119,17 +121,34 @@ WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
  @param sidebar The sidebar which should be closed.
  @param context The context within which the web extension is running.
  @param completionHandler A block to be called once the sidebar has been closed.
- @discussion This method is called in response to the extension's scripts programmatically requesting the sidebar to close. Implementing this method is needed if the app intends to support programmatically closing the sidebar from the extension.
+ @discussion This method is called in response to the extension's scripts programmatically requesting the sidebar to close. Implementing this method is
+ needed if the app intends to support programmatically closing the sidebar from the extension. This should close the sidebar's pane in the sidebar's
+ browser window, if the given sidebar object is currently being displayed.
  */
 - (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller closeSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
 /*!
- @abstract Called when a sidebar's properties must be re-queried by the browser.
+ @abstract Called when a sidebar's properties have changed and it should be re-read.
  @param controller The web extension controller initiating the request.
- @param sidebar The sidebar whose properties must be re-queried.
+ @param sidebar The sidebar whose properties changed.
  @param context The context within which the web extension is running.
+ @discussion Use ``associatedTab`` and ``associatedWindow`` to tell which tabs are affected: a sidebar specific to a tab
+ affects only that tab, while one which is not affects every tab in ``associatedWindow`` which the extension has not
+ singled out. This method is not called when a tab ceases to have a tab-specific override; instead, see:
+ ``-_webExtensionController:didInvalidateSidebar:forExtensionContext:``.
  */
 - (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller didUpdateSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context;
+
+/*!
+ @abstract Called when a sidebar is no longer valid and should stop being displayed.
+ @param controller The web extension controller initiating the request.
+ @param sidebar The sidebar which is no longer valid.
+ @param context The context within which the web extension is running.
+ @discussion This is sent when a tab stops having a sidebar of its own. The given ``sidebar`` is the one
+ being discarded; stop displaying it, and obtain the sidebar which now applies to its ``associatedTab``
+ with ``-[WKWebExtensionContext sidebarForTab:]``.
+ */
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller didInvalidateSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context;
 
 /*!
  @abstract Called when the root-level bookmarks are needed to begin building the bookmark tree.

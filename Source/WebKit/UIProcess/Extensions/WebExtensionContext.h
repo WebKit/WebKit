@@ -532,9 +532,16 @@ public:
     std::optional<Ref<WebExtensionSidebar>> getSidebar(WebExtensionTab const&);
     std::optional<Ref<WebExtensionSidebar>> getOrCreateSidebar(WebExtensionWindow&);
     std::optional<Ref<WebExtensionSidebar>> getOrCreateSidebar(WebExtensionTab&);
-    RefPtr<WebExtensionSidebar> getOrCreateSidebar(RefPtr<WebExtensionTab>);
+
+    // The sidebar object which should be given to the browser for the specified tab. If the extension
+    // has specified tab-specific overrides for this tab, then the tab's sidebar; otherwise, the window's.
+    std::optional<Ref<WebExtensionSidebar>> sidebarForTab(WebExtensionTab&);
+    bool discardSidebarIfUnmodified(WebExtensionSidebar&);
+    void addSidebarPage(WebPageProxy&, WebExtensionSidebar&);
     void openSidebar(WebExtensionSidebar&);
     void closeSidebar(WebExtensionSidebar&);
+    void notifyDelegateOfSidebarUpdate(WebExtensionSidebar&);
+    void notifyDelegateOfSidebarInvalidation(WebExtensionSidebar&);
     bool canProgrammaticallyOpenSidebar();
     bool canProgrammaticallyCloseSidebar();
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
@@ -1124,6 +1131,7 @@ private:
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
     WeakHashMap<WebExtensionWindow, Ref<WebExtensionSidebar>> m_sidebarWindowMap;
     WeakHashMap<WebExtensionTab, Ref<WebExtensionSidebar>> m_sidebarTabMap;
+    WeakHashMap<WebPageProxy, WeakPtr<WebExtensionSidebar>> m_sidebarPageMap;
     RefPtr<WebExtensionSidebar> m_defaultSidebar;
     WebExtensionActionClickBehavior m_actionClickBehavior { WebExtensionActionClickBehavior::OpenPopup };
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)

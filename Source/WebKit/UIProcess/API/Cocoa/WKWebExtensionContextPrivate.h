@@ -66,12 +66,15 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)_resetCommands;
 
 /*!
- @abstract Retrieves the extension sidebar for a given tab, or the default sidebar if `nil` is passed.
- @param tab The tab for which to retrieve the extension sidebar, or `nil` to get the default sidebar.
- @discussion The returned object represents the sidebar specific to the tab when provided; otherwise, it returns the default sidebar.
- The default sidebar should not be directly displayed. When possible, specify the tab to get the most context-relevant sidebar.
+ @abstract Retrieves the extension sidebar which applies to a given tab.
+ @param tab The tab for which to retrieve the extension sidebar.
+ @result The sidebar for that tab, or `nil` if the extension has no sidebar to show there.
+ @discussion The same object is returned for every tab in a window which the extension has not set tab-specific
+ overrides for.  Successive results can be compared by identity when the user switches tabs to determine if the
+ sidebar must also be switched. The returned sidebar's `WKWebView` may likewise be shared with the sidebars of
+ other tabs in the window, even if the sidebar object itself may have tab-specific overrides.
  */
-- (nullable _WKWebExtensionSidebar *)sidebarForTab:(nullable id <WKWebExtensionTab>)tab NS_SWIFT_NAME(sidebar(for:));
+- (nullable _WKWebExtensionSidebar *)sidebarForTab:(id <WKWebExtensionTab>)tab NS_SWIFT_NAME(sidebar(for:));
 
 /*! @abstract Whether the extension context has access to file:// URLs.
  @discussion When YES, the extension can inject content into and interact with file:// pages. Defaults to NO. */

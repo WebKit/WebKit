@@ -29,6 +29,7 @@
 @class WKWebExtensionContext;
 @class WKWebView;
 @protocol WKWebExtensionTab;
+@protocol WKWebExtensionWindow;
 
 #if TARGET_OS_IPHONE
 @class UIImage;
@@ -41,8 +42,13 @@
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 /*!
- @abstract A `_WKWebExtensionSidebar` object encapsulates the properties for a specific web extension sidebar.
- @discussion When this property is `nil`, it indicates that the action is the default action and not associated with a specific tab.
+ @abstract A `_WKWebExtensionSidebar` object encapsulates the properties of a web extension sidebar.
+ @discussion An extension may specify a sidebar for a particular tab or for a whole window. Use
+ ``-[WKWebExtensionContext sidebarForTab:]`` to obtain the sidebar which applies to a tab. Every tab in a
+ window which the extension has not set unique properties for is given the same sidebar object, so comparing successive
+ results by identity tells the app whether anything needs to change when the user switches tabs. The sidebar pane
+ itself is shown or hidden per window; when a tab has a sidebar of its own, the app swaps between sidebars by
+ closing the one being replaced and opening the one taking its place.
  */
 WK_CLASS_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2))
 @interface _WKWebExtensionSidebar : NSObject
@@ -53,7 +59,16 @@ WK_CLASS_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2))
 /*! @abstract The extension context to which this sidebar is related. */
 @property (nonatomic, nullable, readonly, weak) WKWebExtensionContext *webExtensionContext;
 
-/*! @abstract The tab that this sidebar is associated with, or `nil` if it is the default sidebar */
+/*!
+ @abstract The window this sidebar belongs to.
+ */
+@property (nonatomic, readonly, weak) id <WKWebExtensionWindow> associatedWindow;
+
+/*!
+ @abstract The tab this sidebar is specific to, or `nil` if it applies to its whole window.
+ @discussion When this property is nil, this sidebar should be the global default for ``associatedWindow``. Otherwise,
+ it should only be showed alongside ``associatedTab``.
+ */
 @property (nonatomic, nullable, readonly, weak) id <WKWebExtensionTab> associatedTab;
 
 /*! @abstract The title of this sidebar. */
@@ -73,39 +88,50 @@ WK_CLASS_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2))
 /*! @abstract Whether this sidebar is enabled or not. */
 @property (nonatomic, readonly, getter=isEnabled) BOOL enabled;
 
-/*! @abstract The web view which should be displayed when this sidebar is opened, or `nil` if this sidebar is not a tab-specific sidebar. */
-@property (nonatomic, nullable, readonly) WKWebView *webView;
+/*!
+ @abstract The web view which renders this sidebar's content.
+ @discussion Sidebars which show the same document share a web view, so this may return the same web view for
+ several sidebars. Other properties, such as title and icon, may still differ in cases where different sidebars share the
+ same WKWebView.
+ */
+@property (nonatomic, readonly) WKWebView *webView;
 
 #if TARGET_OS_IPHONE
 /*!
- @abstract A view controller that presents a web view which will load the sidebar page for this sidebar, or `nil` if this sidebar
- is not a tab-specific sidebar.
+ @abstract A view controller which presents this sidebar's web view.
+ @discussion As with ``webView``, this may return the same view controller for several sidebars.
  */
-@property (nonatomic, nullable, readonly) UIViewController *viewController;
+@property (nonatomic, readonly) UIViewController *viewController;
 #endif
 
 #if TARGET_OS_OSX
 /*!
- @abstract The view controller that presents a web view which will load the sidebar page for this sidebar, or `nil` if this sidebar
- is not a tab-specific sidebar.
+ @abstract A view controller which presents this sidebar's web view.
+ @discussion As with ``webView``, this may return the same view controller for several sidebars.
  */
-@property (nonatomic, nullable, readonly) NSViewController *viewController;
+@property (nonatomic, readonly) NSViewController *viewController;
 #endif
 
 /*!
- @abstract Indicate that the sidebar will be opened
- @discussion This method should be invoked by the browser when this sidebar will be opened due to some action by the user. If
- this method is not called before the sidebar is opened, then the ``WKWebView`` associated with this sidebar may not have a
- document loaded, and the extension may not receive the `activeTab` permission from this user interaction.
+ @abstract Indicate that the sidebar will be opened.
+ @param fromUserInteraction Whether the sidebar is opening due to the user.
+ @discussion This method should be invoked by the browser before this sidebar is displayed. If it is not called, then the
+ ``WKWebView`` associated with this sidebar may not have a document loaded. It also marks this particular sidebar as the one
+ on screen, so when the app replaces one sidebar with another -- because the user moved to a tab which has a sidebar of its
+ own, for instance -- it should call ``willCloseSidebar`` on the one being replaced and this on the one taking its place.
+ Pass `YES` for `fromUserInteraction` only when the sidebar is opening due to direct user action, since that will grant
+ the extension the `activeTab` permission for the tab this sidebar applies to. Pass `NO` when the sidebar is opening as a side
+ effect of some other action (e.g. switching tabs), or generally not due to direct user intent.
  */
-- (void)willOpenSidebar;
+- (void)willOpenSidebarFromUserInteraction:(BOOL)fromUserInteraction;
 
 /*!
  @abstract Indicate that the sidebar will be closed
  @discussion This method should be invoked by the browser when the sidebar will be closed -- i.e., its associated ``WKWebView`` will cease
  to be displayed. If this method is not called when the sidebar is closed, then the sidebar's associated ``WKWebView`` may remain active longer than
  necessary. Note that calling this method does not guarantee that the ``WKWebView`` associated with a particular sidebar will be deallocated, as the
- web view may be shared between mutliple sidebars.
+ web view may be shared between mutliple sidebars. This should also be called on a sidebar which is being replaced by another (e.g. due to the user
+ switching tabs).
  */
 - (void)willCloseSidebar;
 

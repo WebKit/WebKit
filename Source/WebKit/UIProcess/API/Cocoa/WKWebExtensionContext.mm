@@ -883,9 +883,15 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> NODELETE toI
 - (_WKWebExtensionSidebar *)sidebarForTab:(id<WKWebExtensionTab>)tab
 {
     Ref extensionContext { *_webExtensionContext };
-    if (RefPtr maybeSidebar = extensionContext->getOrCreateSidebar(toImplNullable(tab, extensionContext.get())))
-        return maybeSidebar->wrapper();
-    return nil;
+    RefPtr implTab = toImplNullable(tab, extensionContext.get());
+    if (!implTab)
+        return nil;
+
+    auto sidebar = extensionContext->sidebarForTab(*implTab);
+    if (!sidebar || !sidebar.value()->opensSidebar())
+        return nil;
+
+    return sidebar.value()->wrapper();
 }
 #else
 - (_WKWebExtensionSidebar *)sidebarForTab:(id<WKWebExtensionTab>)tab

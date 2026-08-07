@@ -85,6 +85,10 @@
         else if (!currentWindow && !currentTab)
             currentWindow = toOptional(context->frontmostWindow());
 
+        // A window sidebar has no tab of its own, so open next to the active tab
+        if (!currentTab && currentWindow)
+            currentTab = toOptional(currentWindow.value()->activeTab());
+
         WebKit::WebExtensionTabParameters tabParameters;
         tabParameters.url = targetURL;
         tabParameters.windowIdentifier = currentWindow
@@ -272,6 +276,11 @@ const std::optional<Ref<WebExtensionWindow>> WebExtensionSidebar::window() const
     });
 }
 
+bool WebExtensionSidebar::hasOverriddenProperties() const
+{
+    return m_iconsOverride || m_titleOverride || m_sidebarPathOverride || m_isEnabled;
+}
+
 std::optional<Ref<WebExtensionSidebar>> WebExtensionSidebar::parent() const
 {
     RefPtr context = extensionContext();
@@ -280,7 +289,7 @@ std::optional<Ref<WebExtensionSidebar>> WebExtensionSidebar::parent() const
 
     return tab().and_then([&](Ref<WebExtensionTab> const& tab) -> std::optional<Ref<WebExtensionSidebar>> {
         RefPtr window = tab->window();
-        return window ? context->getSidebar(*window) : std::nullopt;
+        return window ? context->getOrCreateSidebar(*window) : std::nullopt;
     }).or_else([&] -> std::optional<Ref<WebExtensionSidebar>> {
         return Ref { context->defaultSidebar() };
     });
@@ -289,9 +298,13 @@ std::optional<Ref<WebExtensionSidebar>> WebExtensionSidebar::parent() const
 void WebExtensionSidebar::propertiesDidChange()
 {
     if (isParentSidebar())
-        notifyChildrenOfPropertyUpdate(ShouldReloadWebView::No);
-    else
-        notifyDelegateOfPropertyUpdate();
+        notifyChildrenOfPropertyUpdate();
+
+    // Discard this sidebar object if it no longer overrides any properties
+    if (RefPtr context = extensionContext(); context && context->discardSidebarIfUnmodified(*this))
+        return;
+
+    notifyDelegateOfPropertyUpdate();
 }
 
 std::optional<Ref<WebCore::Icon>> WebExtensionSidebar::icon(WebCore::FloatSize size)
@@ -319,15 +332,14 @@ std::optional<Ref<WebCore::Icon>> WebExtensionSidebar::icon(WebCore::FloatSize s
 
 void WebExtensionSidebar::setIconsDictionary(std::optional<Ref<JSON::Object>> icons)
 {
-    if (!icons || !icons.value()->size()) {
+    if (m_iconsOverride == icons)
+        return;
+
+    if (icons && icons.value()->size())
+        m_iconsOverride = WTF::move(icons);
+    else
         m_iconsOverride = std::nullopt;
-        return;
-    }
 
-    if (m_iconsOverride && m_iconsOverride.value() == icons.value())
-        return;
-
-    m_iconsOverride = WTF::move(icons);
     propertiesDidChange();
 }
 
@@ -365,12 +377,6 @@ bool WebExtensionSidebar::isEnabled() const
         .value_or(false);
 }
 
-void WebExtensionSidebar::setEnabled(bool enabled)
-{
-    m_isEnabled = enabled;
-    propertiesDidChange();
-}
-
 std::optional<String> WebExtensionSidebar::resolvedSidebarPath() const
 {
     return m_sidebarPathOverride.or_else([this] {
@@ -385,41 +391,59 @@ String WebExtensionSidebar::sidebarPath() const
     return resolvedSidebarPath().value_or(fallbackPath);
 }
 
-void WebExtensionSidebar::setSidebarPath(std::optional<String> sidebarPath)
+void WebExtensionSidebar::setOptions(std::optional<String> panelPath, std::optional<bool> enabled)
 {
     RefPtr context = extensionContext();
-    if (!sidebarPath && isDefaultSidebar() && context)
+
+    bool wasSharingWindowWebView = tab() && !m_sidebarPathOverride;
+    auto oldPathOverride = m_sidebarPathOverride;
+
+    if (!panelPath && isDefaultSidebar() && context)
         m_sidebarPathOverride = context->extension().sidebarDocumentPath();
     else
-        m_sidebarPathOverride = sidebarPath;
+        m_sidebarPathOverride = panelPath;
 
-    if (isParentSidebar())
-        notifyChildrenOfPropertyUpdate(ShouldReloadWebView::Yes);
-    else
+    if (enabled)
+        m_isEnabled = enabled;
+
+    bool isSharingWindowWebView = tab() && !m_sidebarPathOverride;
+    bool webViewDidChange = wasSharingWindowWebView != isSharingWindowWebView;
+
+    if (webViewDidChange && isSharingWindowWebView) {
+        [m_webView _close];
+        m_webView = nil;
+        m_viewController = nil;
+        m_webViewDelegate = nil;
+    }
+
+    if (m_sidebarPathOverride != oldPathOverride) {
         reloadWebView();
+        reloadDescendantWebViews();
+    }
+
+    if (enabled || webViewDidChange)
+        propertiesDidChange();
 }
 
-void WebExtensionSidebar::willOpenSidebar()
+void WebExtensionSidebar::willOpenSidebar(FromUserInteraction fromUserInteraction)
 {
     ASSERT(isEnabled());
     ASSERT(!isDefaultSidebar());
-    ASSERT(!static_cast<bool>(m_window));
 
     RELEASE_LOG_ERROR_IF(!isEnabled(), Extensions, "willOpenSidebar was called on a sidebar object which is currently disabled");
     RELEASE_LOG_ERROR_IF(isDefaultSidebar(), Extensions, "willOpenSidebar was called on the default sidebar object");
-    RELEASE_LOG_ERROR_IF(static_cast<bool>(m_window), Extensions, "willOpenSidebar was called on a window-global sidebar object");
 
     m_isOpen = true;
-    didReceiveUserInteraction();
+
+    if (fromUserInteraction == FromUserInteraction::Yes)
+        didReceiveUserInteraction();
 }
 
 void WebExtensionSidebar::willCloseSidebar()
 {
     ASSERT(!isDefaultSidebar());
-    ASSERT(!static_cast<bool>(m_window));
 
     RELEASE_LOG_ERROR_IF(isDefaultSidebar(), Extensions, "willCloseSidebar was called on the default sidebar object");
-    RELEASE_LOG_ERROR_IF(static_cast<bool>(m_window), Extensions, "willCloseSidebar was called on a window-global sidebar object");
 
     m_isOpen = false;
 }
@@ -447,22 +471,39 @@ void WebExtensionSidebar::removeChild(WebExtensionSidebar const& child)
 
 void WebExtensionSidebar::didReceiveUserInteraction()
 {
-    auto currentTab = tab();
     RefPtr currentContext = extensionContext();
 
-    ASSERT(isOpen());
-    ASSERT(currentTab);
+    // A window sidebar owns the web view shared by its tabs, so an interaction can arrive here with no tab of
+    // our own. It belongs to whichever tab is active in that window now, resolved at the time of the
+    // interaction rather than remembered, since the web view stays on screen across tab switches.
+    RefPtr<WebExtensionTab> currentTab = tab()
+        .transform([](auto const& ownTab) { return RefPtr { ownTab.ptr() }; })
+        .or_else([&] { return window().transform([](auto const& ownWindow) { return ownWindow->activeTab(); }); })
+        .value_or(nullptr);
 
-    if (!(isOpen() && currentTab && currentContext))
+    if (!(isOpen() && currentTab && currentContext)) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
-    currentContext->userGesturePerformed(currentTab.value());
+    currentContext->userGesturePerformed(*currentTab);
 }
 
 RetainPtr<SidebarViewControllerType> WebExtensionSidebar::viewController()
 {
-    // Only tab-specific sidebars should be rendered
-    if (!m_tab)
+    if (isDefaultSidebar())
+        return nil;
+
+    // If this is a tab sidebar without a path override, use the parent sidebar's view controller
+    if (tab() && !m_sidebarPathOverride) {
+        auto windowSidebar = parent();
+        ASSERT(windowSidebar && windowSidebar.value()->window());
+        if (windowSidebar && windowSidebar.value()->window())
+            return windowSidebar.value()->viewController();
+    }
+
+    // Must agree with webView(): a view controller with no web view to host would be useless.
+    if (!opensSidebar())
         return nil;
 
     if (!m_viewController)
@@ -473,9 +514,16 @@ RetainPtr<SidebarViewControllerType> WebExtensionSidebar::viewController()
 
 WKWebView *WebExtensionSidebar::webView()
 {
-    // Only tab-specific sidebars should be rendered
-    if (!m_tab)
+    if (isDefaultSidebar())
         return nil;
+
+    // If this is a tab sidebar without a path override, use the parent sidebar's web view
+    if (tab() && !m_sidebarPathOverride) {
+        auto windowSidebar = parent();
+        ASSERT(windowSidebar && windowSidebar.value()->window());
+        if (windowSidebar && windowSidebar.value()->window())
+            return windowSidebar.value()->webView();
+    }
 
     RefPtr context = extensionContext();
     if (!opensSidebar() || !context)
@@ -491,56 +539,42 @@ WKWebView *WebExtensionSidebar::webView()
     m_webViewDelegate = [[_WKWebExtensionSidebarWebViewDelegate alloc] initWithWebExtensionSidebar:*this];
     m_webView.get().navigationDelegate = m_webViewDelegate.get();
 
+    if (auto *page = m_webView.get()._page.get())
+        context->addSidebarPage(*page, *this);
+
     reloadWebView();
 
     return m_webView.get();
 }
 
-void WebExtensionSidebar::parentPropertiesWereUpdated(ShouldReloadWebView shouldReload)
+void WebExtensionSidebar::parentPropertiesWereUpdated()
 {
     ASSERT(!isDefaultSidebar());
 
-    // If we have local overrides on all properties, then a parent property update does not effect this sidebar
+    // If we have local overrides on all properties, then a parent property update does not affect this sidebar
     if (m_iconsOverride.has_value() && m_titleOverride.has_value() && m_sidebarPathOverride.has_value() && m_isEnabled.has_value())
         return;
 
-    // Delegate property update notifications should only come from non-parent (i.e. tab-specific) sidebars
     if (isParentSidebar())
-        notifyChildrenOfPropertyUpdate(shouldReload);
-    else if (shouldReload == ShouldReloadWebView::Yes)
-        reloadWebView();
-    else
-        notifyDelegateOfPropertyUpdate();
+        notifyChildrenOfPropertyUpdate();
+
+    notifyDelegateOfPropertyUpdate();
 }
 
-void WebExtensionSidebar::notifyChildrenOfPropertyUpdate(ShouldReloadWebView shouldReload)
+void WebExtensionSidebar::notifyChildrenOfPropertyUpdate()
 {
     for (auto& childSidebar : m_children)
-        childSidebar.parentPropertiesWereUpdated(shouldReload);
+        childSidebar.parentPropertiesWereUpdated();
 }
 
 void WebExtensionSidebar::notifyDelegateOfPropertyUpdate()
 {
-    RefPtr context = extensionContext();
-    if (!context)
+    // The global/default sidebar is never displayed, so there is nothing for the browser to re-read.
+    if (isDefaultSidebar())
         return;
 
-    RefPtr extensionController = context->extensionController();
-    if (!extensionController)
-        return;
-
-    auto *delegate = extensionController->delegate();
-    if (![delegate respondsToSelector:@selector(_webExtensionController:didUpdateSidebar:forExtensionContext:)])
-        return;
-
-    auto *extensionControllerWrapper = extensionController->wrapper();
-    auto *sidebarWrapper = wrapper();
-    auto *contextWrapper = context->wrapper();
-
-    if (!(extensionControllerWrapper && sidebarWrapper && contextWrapper))
-        return;
-
-    [delegate _webExtensionController:extensionControllerWrapper didUpdateSidebar:sidebarWrapper forExtensionContext:contextWrapper];
+    if (RefPtr context = extensionContext())
+        context->notifyDelegateOfSidebarUpdate(*this);
 }
 
 void WebExtensionSidebar::reloadWebView()
@@ -554,6 +588,18 @@ void WebExtensionSidebar::reloadWebView()
 
     auto url = URL { context->baseURL(), sidebarPath() };
     [m_webView loadRequest:[NSURLRequest requestWithURL:url.createNSURL().get()]];
+}
+
+void WebExtensionSidebar::reloadDescendantWebViews()
+{
+    // Reload the web view of every descendant which inherits this sidebar's panel path.
+    for (auto& childSidebar : m_children) {
+        if (childSidebar.m_sidebarPathOverride)
+            continue;
+
+        childSidebar.reloadWebView();
+        childSidebar.reloadDescendantWebViews();
+    }
 }
 
 }

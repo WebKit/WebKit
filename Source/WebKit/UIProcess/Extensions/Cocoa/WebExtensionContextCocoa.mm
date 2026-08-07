@@ -379,6 +379,9 @@ Expected<bool, RefPtr<API::Error>> WebExtensionContext::unload()
     m_actionTabMap.clear();
     m_defaultAction = nullptr;
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    m_sidebarWindowMap.clear();
+    m_sidebarTabMap.clear();
+    m_sidebarPageMap.clear();
     m_defaultSidebar = nullptr;
 #endif
     m_popupPageActionMap.clear();
@@ -1055,6 +1058,38 @@ RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifie
         goto finish;
     }
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    // Search sidebars for the page. A sidebar's web view may be shared by several tabs in a window, so the
+    // page maps to the sidebar's own tab when it has one, and otherwise to the active tab of its window.
+    for (auto entry : m_sidebarPageMap) {
+        if (entry.key.identifier() != webPageProxyIdentifier)
+            continue;
+
+        RefPtr sidebar = entry.value.get();
+        if (!sidebar)
+            continue;
+
+        if (includeExtensionViews == IncludeExtensionViews::No)
+            return nullptr;
+
+        RefPtr tab = sidebar->tab()
+            .transform([](auto const& tab) { return RefPtr { tab.ptr() }; })
+            .value_or(nullptr);
+
+        if (tab) {
+            result = tab;
+            goto finish;
+        }
+
+        RefPtr currentActiveTab = sidebar->window()
+            .transform([](auto const& window) { return window->activeTab(); })
+            .value_or(nullptr);
+
+        result = currentActiveTab;
+        goto finish;
+    }
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
     // Search open tabs for the page.
     for (Ref tab : openTabs()) {
         if (WKWebView *webView = tab->webView()) {
@@ -1441,6 +1476,28 @@ void WebExtensionContext::didMoveTab(WebExtensionTab& tab, size_t oldIndex, cons
     else if (newWindow)
         RELEASE_LOG_DEBUG(Extensions, "Added tab %{public}llu to window %{public}llu at index %{public}zu", tab.identifier().toUInt64(), newWindow->identifier().toUInt64(), newIndex);
 
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+    // A tab sidebar inherits from the sidebar of the window its tab is in, so it has to be re-linked when the
+    // tab changes windows. Without this it would keep inheriting from, and being updated by, the old window.
+    if (oldWindow != newWindow) {
+        if (RefPtr tabSidebar = m_sidebarTabMap.get(tab)) {
+            if (oldWindow) {
+                if (auto oldWindowSidebar = getSidebar(*oldWindow))
+                    oldWindowSidebar.value()->removeChild(*tabSidebar);
+            }
+
+            if (newWindow) {
+                if (auto newWindowSidebar = getOrCreateSidebar(*newWindow))
+                    newWindowSidebar.value()->addChild(*tabSidebar);
+            }
+
+            // The tab now inherits from a different window, so its title/panel/icon and the web view it
+            // shares may have changed; tell the browser to re-read it.
+            tabSidebar->propertiesDidChange();
+        }
+    }
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
     if (!oldWindow)
         didOpenTab(tab);
 
@@ -1820,7 +1877,7 @@ void WebExtensionContext::performAction(WebExtensionTab* tab, UserTriggered user
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
     std::optional<Ref<WebExtensionSidebar>> sidebar;
-    if (m_actionClickBehavior == WebExtensionActionClickBehavior::OpenSidebar && (sidebar = getOrCreateSidebar(*tab)) && canProgrammaticallyOpenSidebar() && canProgrammaticallyCloseSidebar() && sidebar.value()->opensSidebar()) {
+    if (m_actionClickBehavior == WebExtensionActionClickBehavior::OpenSidebar && (sidebar = sidebarForTab(*tab)) && canProgrammaticallyOpenSidebar() && canProgrammaticallyCloseSidebar() && sidebar.value()->opensSidebar()) {
         if (!sidebar.value()->isOpen())
             openSidebar(sidebar.value());
         else
@@ -1883,16 +1940,40 @@ std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::getOrCreateSidebar(
     }).iterator->value;
 }
 
-RefPtr<WebExtensionSidebar> WebExtensionContext::getOrCreateSidebar(RefPtr<WebExtensionTab> tab)
+std::optional<Ref<WebExtensionSidebar>> WebExtensionContext::sidebarForTab(WebExtensionTab& tab)
 {
     if (!protect(extension())->hasAnySidebar())
-        return nil;
-    if (!tab)
-        return &defaultSidebar();
+        return std::nullopt;
 
-    return getOrCreateSidebar(*tab.get())
-        .and_then([](auto const& sidebar) { return std::optional(RefPtr<WebExtensionSidebar>(&sidebar.get())); })
-        .value_or(nil);
+    if (auto tabSidebar = getSidebar(tab))
+        return tabSidebar;
+
+    if (RefPtr window = tab.window())
+        return getOrCreateSidebar(*window);
+
+    return std::nullopt;
+}
+
+void WebExtensionContext::addSidebarPage(WebPageProxy& page, WebExtensionSidebar& sidebar)
+{
+    m_sidebarPageMap.set(page, sidebar);
+}
+
+bool WebExtensionContext::discardSidebarIfUnmodified(WebExtensionSidebar& sidebar)
+{
+    auto sidebarTab = sidebar.tab();
+    if (!sidebarTab || sidebar.hasOverriddenProperties())
+        return false;
+
+    Ref tab = sidebarTab.value();
+
+    if (auto parentSidebar = sidebar.parent())
+        parentSidebar.value()->removeChild(sidebar);
+
+    m_sidebarTabMap.remove(tab.get());
+
+    notifyDelegateOfSidebarInvalidation(sidebar);
+    return true;
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 

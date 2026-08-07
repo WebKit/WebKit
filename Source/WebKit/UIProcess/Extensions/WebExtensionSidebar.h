@@ -60,7 +60,7 @@ class WebExtensionSidebar : public API::ObjectImpl<API::Object::Type::WebExtensi
 
 public:
     enum class IsDefault { No, Yes };
-    enum class ShouldReloadWebView { No, Yes };
+    enum class FromUserInteraction { No, Yes };
 
     template<typename... Args>
     static Ref<WebExtensionSidebar> create(Args&&... args)
@@ -79,7 +79,12 @@ public:
     const std::optional<Ref<WebExtensionWindow>> window() const;
     std::optional<Ref<WebExtensionSidebar>> parent() const;
 
+    /// Whether anything is set on this sidebar itself, as opposed to inherited from its parent.
+    bool hasOverriddenProperties() const;
     void propertiesDidChange();
+
+    /// Reports to the delegate that this sidebar's properties changed and it should be re-read.
+    void notifyDelegateOfPropertyUpdate();
 
     /// `icon()` will return the overridden icon of this sidebar, or the icon of the first parent sidebar in which the icon is set
     std::optional<Ref<WebCore::Icon>> icon(WebCore::FloatSize);
@@ -90,7 +95,6 @@ public:
     void setTitle(std::optional<String>);
 
     bool isEnabled() const;
-    void setEnabled(bool);
 
     bool isOpen() const { return m_isOpen; }
     bool opensSidebar()
@@ -101,10 +105,9 @@ public:
 
     /// `sidebarPath()` will return the overriden path of this sidebar, or the path of the first parent sidebar in which the path is set
     String sidebarPath() const;
-    void setSidebarPath(std::optional<String>);
+    void setOptions(std::optional<String> panelPath, std::optional<bool> enabled);
 
-    /// Should be called when a user action will open the sidebar
-    void willOpenSidebar();
+    void willOpenSidebar(FromUserInteraction);
     void willCloseSidebar();
 
     /// Should be called when the sidebar will be displayed, regardless of whether this stems from a user action.
@@ -129,11 +132,11 @@ private:
     bool isDefaultSidebar() const { return m_isDefault == IsDefault::Yes; };
     bool isParentSidebar() const { return isDefaultSidebar() || m_window.has_value(); };
 
-    void parentPropertiesWereUpdated(ShouldReloadWebView);
-    void notifyChildrenOfPropertyUpdate(ShouldReloadWebView);
-    void notifyDelegateOfPropertyUpdate();
+    void parentPropertiesWereUpdated();
+    void notifyChildrenOfPropertyUpdate();
 
     void reloadWebView();
+    void reloadDescendantWebViews();
 
     /// The configured panel path from this sidebar's override/parent chain
     std::optional<String> resolvedSidebarPath() const;

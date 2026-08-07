@@ -52,7 +52,9 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionSidebar, WebExtensionSideba
 
 - (NSString *)title
 {
-    return _webExtensionSidebar->title().createNSString().get();
+    auto *title = _webExtensionSidebar->title().createNSString().get();
+    ASSERT(title);
+    return title;
 }
 
 - (CocoaImage *)iconForSize:(CGSize)size
@@ -64,7 +66,9 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionSidebar, WebExtensionSideba
 
 - (SidebarViewControllerType *)viewController
 {
-    return _webExtensionSidebar->viewController().get();
+    auto *viewController = _webExtensionSidebar->viewController().get();
+    ASSERT(viewController);
+    return viewController;
 }
 
 - (BOOL)isEnabled
@@ -74,12 +78,14 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionSidebar, WebExtensionSideba
 
 - (WKWebView *)webView
 {
-    return _webExtensionSidebar->webView();
+    auto *webView = _webExtensionSidebar->webView();
+    ASSERT(webView);
+    return webView;
 }
 
-- (void)willOpenSidebar
+- (void)willOpenSidebarFromUserInteraction:(BOOL)fromUserInteraction
 {
-    _webExtensionSidebar->willOpenSidebar();
+    _webExtensionSidebar->willOpenSidebar(fromUserInteraction ? WebKit::WebExtensionSidebar::FromUserInteraction::Yes : WebKit::WebExtensionSidebar::FromUserInteraction::No);
 }
 
 - (void)willCloseSidebar
@@ -91,6 +97,20 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionSidebar, WebExtensionSideba
 {
     if (auto tab = _webExtensionSidebar->tab())
         return tab.value()->delegate();
+    return nil;
+}
+
+- (id<WKWebExtensionWindow>)associatedWindow
+{
+    if (auto window = _webExtensionSidebar->window())
+        return window.value()->delegate();
+
+    if (auto tab = _webExtensionSidebar->tab()) {
+        if (RefPtr window = tab.value()->window())
+            return window->delegate();
+    }
+
+    ASSERT_NOT_REACHED();
     return nil;
 }
 
@@ -145,7 +165,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionSidebar, WebExtensionSideba
     return nil;
 }
 
-- (void)willOpenSidebar
+- (void)willOpenSidebarFromUserInteraction:(BOOL)fromUserInteraction
 {
 }
 
@@ -154,6 +174,11 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionSidebar, WebExtensionSideba
 }
 
 - (id<WKWebExtensionTab>)associatedTab
+{
+    return nil;
+}
+
+- (id<WKWebExtensionWindow>)associatedWindow
 {
     return nil;
 }
