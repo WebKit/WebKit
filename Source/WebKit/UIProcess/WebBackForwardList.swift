@@ -896,7 +896,8 @@ final class WebBackForwardList {
         itemID: WebCore.BackForwardItemIdentifier,
         parentFrameID: WebCore.FrameIdentifier,
         childFrameID: WebCore.FrameIdentifier,
-        childFrameIndex: UInt64
+        childFrameIndex: UInt64,
+        childFrameName: WTF.String
     ) -> WebKit.FrameState? {
         guard let targetItem = itemForID(identifier: itemID) else {
             return nil
@@ -909,8 +910,12 @@ final class WebBackForwardList {
         let parentFrameItem = targetItem.mainFrameItem().childItemForFrameID(parentFrameID) ?? targetItem.mainFrameItem()
         var childFrameItem = parentFrameItem.childItemForFrameID(childFrameID)
         if childFrameItem == nil {
-            // The identifier is absent after session restore or cross-site child-frame recreation; fall back to position.
-            childFrameItem = parentFrameItem.childItemAtIndex(childFrameIndex)
+            // The identifier is absent after session restore or cross-site child-frame recreation
+            if childFrameName.isEmpty() {
+                childFrameItem = parentFrameItem.childItemAtIndex(childFrameIndex)
+            } else {
+                childFrameItem = parentFrameItem.childItemForFrameName(childFrameName)
+            }
         }
         guard let childFrameItem else {
             return nil

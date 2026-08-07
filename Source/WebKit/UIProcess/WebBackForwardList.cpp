@@ -953,7 +953,7 @@ void WebBackForwardList::backForwardListCounts(CompletionHandler<void(WebBackFor
     completionHandler(rawCounts());
 }
 
-FrameState* WebBackForwardList::findFrameStateInItem(WebCore::BackForwardItemIdentifier itemID, WebCore::FrameIdentifier parentFrameID, WebCore::FrameIdentifier childFrameID, uint64_t childFrameIndex)
+FrameState* WebBackForwardList::findFrameStateInItem(WebCore::BackForwardItemIdentifier itemID, WebCore::FrameIdentifier parentFrameID, WebCore::FrameIdentifier childFrameID, uint64_t childFrameIndex, const String& childFrameName)
 {
     RefPtr targetItem = itemForID(itemID);
     if (!targetItem)
@@ -971,11 +971,14 @@ FrameState* WebBackForwardList::findFrameStateInItem(WebCore::BackForwardItemIde
 
     RefPtr childFrameItem = parentFrameItem->childItemForFrameID(childFrameID);
     if (!childFrameItem) {
-        // The identifier is absent after session restore or cross-site child-frame recreation; fall back to position.
-        childFrameItem = parentFrameItem->childItemAtIndex(childFrameIndex);
+        // The identifier is absent after session restore or cross-site child-frame recreation
+        if (childFrameName.isEmpty())
+            childFrameItem = parentFrameItem->childItemAtIndex(childFrameIndex);
+        else
+            childFrameItem = parentFrameItem->childItemForFrameName(childFrameName);
+        if (!childFrameItem)
+            return nullptr;
     }
-    if (!childFrameItem)
-        return nullptr;
 
     return &childFrameItem->frameState();
 }

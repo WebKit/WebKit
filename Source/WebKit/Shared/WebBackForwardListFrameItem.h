@@ -60,6 +60,7 @@ public:
     Ref<WebBackForwardListFrameItem> rootFrame();
     Ref<WebBackForwardListFrameItem> mainFrame();
     WebBackForwardListFrameItem* NODELETE childItemForFrameID(WebCore::FrameIdentifier);
+    WebBackForwardListFrameItem* NODELETE childItemForFrameName(const String& frameName);
     WebBackForwardListFrameItem* NODELETE childItemAtIndex(uint64_t);
     const Vector<Ref<WebBackForwardListFrameItem>>& children() const { return m_children; }
 

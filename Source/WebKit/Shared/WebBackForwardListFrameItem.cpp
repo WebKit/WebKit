@@ -98,6 +98,17 @@ WebBackForwardListFrameItem* WebBackForwardListFrameItem::childItemAtIndex(uint6
     return m_children[index].ptr();
 }
 
+WebBackForwardListFrameItem* WebBackForwardListFrameItem::childItemForFrameName(const String& frameName)
+{
+    if (frameName.isEmpty())
+        return nullptr;
+    for (auto& child : m_children) {
+        if (child->frameState().target == frameName)
+            return child.ptr();
+    }
+    return nullptr;
+}
+
 WebBackForwardListItem* WebBackForwardListFrameItem::backForwardListItem() const
 {
     return m_backForwardListItem.get();
