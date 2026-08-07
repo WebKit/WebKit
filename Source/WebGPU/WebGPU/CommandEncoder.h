@@ -130,6 +130,7 @@ public:
     void endEncoding(id<MTLCommandEncoder>);
     void setLastError(NSString*);
     bool waitForCommandBufferCompletion();
+    void recordGPUExecutionWindowOnCanvasTextures(double startTime, double endTime) const;
     bool encoderIsCurrent(id<MTLCommandEncoder>) const;
     bool submitWillBeInvalid() const { return m_makeSubmitInvalid; }
     void addBuffer(id<MTLBuffer>);

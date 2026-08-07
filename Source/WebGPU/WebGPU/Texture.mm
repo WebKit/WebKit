@@ -3382,9 +3382,30 @@ bool Texture::waitForCommandBufferCompletion()
     return result;
 }
 
+void Texture::recordGPUExecutionWindow(double startTime, double endTime) const
+{
+    double duration = endTime - startTime;
+    if (duration <= 0)
+        return;
+    Locker locker { m_gpuFrameCostLock };
+    m_gpuFrameCostSeconds = std::max(m_gpuFrameCostSeconds, duration);
+}
+
+Seconds Texture::gpuFrameCost() const
+{
+    Locker locker { m_gpuFrameCostLock };
+    return m_gpuFrameCostSeconds > 0 ? Seconds { m_gpuFrameCostSeconds } : 0_s;
+}
+
+void Texture::resetGPUFrameCost() const
+{
+    Locker locker { m_gpuFrameCostLock };
+    m_gpuFrameCostSeconds = 0;
+}
+
 void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    CommandEncoder::trackEncoder(commandEncoder, m_commandEncoders);
+    commandEncoder.trackEncoderForTexture(*this, m_commandEncoders);
     commandEncoder.addTexture(*this);
     if (!m_canvasBacking && isDestroyed())
         commandEncoder.makeSubmitInvalid();

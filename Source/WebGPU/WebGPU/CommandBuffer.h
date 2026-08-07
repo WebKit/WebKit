@@ -26,6 +26,7 @@
 #pragma once
 
 #import <Metal/Metal.h>
+#import <atomic>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -76,6 +77,8 @@ public:
     void postCommitHandler();
     void addPostCommitHandler(Function<void(id<MTLCommandBuffer>)>&&);
 
+    double gpuExecutionDurationSeconds() const { return m_gpuExecutionDurationSeconds.load(std::memory_order_relaxed); }
+
 private:
     CommandBuffer(id<MTLCommandBuffer>, Device&, id<MTLSharedEvent>, uint64_t sharedEventSignalValue, Vector<Function<bool(CommandBuffer&, CommandEncoder&)>>&&, CommandEncoder&);
     CommandBuffer(Device&);
@@ -94,6 +97,7 @@ private:
     // FIXME: we should not need this semaphore - https://bugs.webkit.org/show_bug.cgi?id=272353
     BinarySemaphore m_commandBufferComplete;
     RefPtr<CommandEncoder> m_commandEncoder;
+    std::atomic<double> m_gpuExecutionDurationSeconds { 0 };
 } SWIFT_SHARED_REFERENCE(refCommandBuffer, derefCommandBuffer) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebGPU

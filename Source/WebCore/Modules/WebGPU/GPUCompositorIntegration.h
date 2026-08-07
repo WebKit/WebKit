@@ -55,6 +55,8 @@ public:
 
     void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&);
 
+    Seconds lastFrameGPUCost() const { return m_backing->lastFrameGPUCost(); }
+
     WebGPU::CompositorIntegration& backing() { return m_backing; }
     const WebGPU::CompositorIntegration& backing() const { return m_backing; }
 

@@ -228,6 +228,9 @@ void PresentationContextIOSurface::copyTextureToTexture(id<MTLTexture> destinati
 void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChainDescriptor& descriptor)
 {
     m_renderBuffers.clear();
+    m_inFlightFrames.clear();
+    m_maximumInFlightFrames = 0;
+    m_lastDrainedFrameGPUCost = 0_s;
     m_invalidTexture = Texture::createInvalid(device);
 
     bool reportValidationErrors = descriptor.reportValidationErrors;
@@ -362,6 +365,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         }
     }
     ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    m_maximumInFlightFrames = m_renderBuffers.size() > 1 ? m_renderBuffers.size() - 1 : 1;
     if (resizeCommandBuffer) {
         deviceQueue->commitMTLCommandBuffer(resizeCommandBuffer);
         m_existingRenderBuffers.clear();
@@ -410,7 +414,22 @@ void PresentationContextIOSurface::unconfigure()
 {
     m_ioSurfaces = nil;
     m_renderBuffers.clear();
+    m_inFlightFrames.clear();
+    m_maximumInFlightFrames = 0;
+    m_lastDrainedFrameGPUCost = 0_s;
     m_device = nullptr;
+}
+
+void PresentationContextIOSurface::waitForInFlightFrameSlot()
+{
+    if (!m_maximumInFlightFrames)
+        return;
+
+    while (m_inFlightFrames.size() >= m_maximumInFlightFrames) {
+        Ref<Texture> oldestFrame = m_inFlightFrames.takeFirst();
+        bool completed = oldestFrame->waitForCommandBufferCompletion();
+        m_lastDrainedFrameGPUCost = completed ? oldestFrame->gpuFrameCost() : 0_s;
+    }
 }
 
 void PresentationContextIOSurface::present(uint32_t currentIndex)
@@ -418,6 +437,8 @@ void PresentationContextIOSurface::present(uint32_t currentIndex)
     RefPtr device = m_device;
     if (m_ioSurfaces.count != m_renderBuffers.size() || currentIndex >= m_renderBuffers.size() || !device)
         return;
+
+    waitForInFlightFrameSlot();
 
     Ref deviceQueue = device->getQueue();
 
@@ -443,6 +464,11 @@ void PresentationContextIOSurface::present(uint32_t currentIndex)
         deviceQueue->endEncoding(computeEncoder, commandBuffer);
         deviceQueue->commitMTLCommandBuffer(commandBuffer);
     }
+
+    auto& presentedBuffer = m_renderBuffers[currentIndex];
+    Ref<Texture> inFlightTexture = presentedBuffer.luminanceClampTexture ? *presentedBuffer.luminanceClampTexture : presentedBuffer.texture.get();
+    m_inFlightFrames.append(inFlightTexture);
+    RELEASE_ASSERT(m_inFlightFrames.size() <= m_maximumInFlightFrames);
 }
 
 Texture* PresentationContextIOSurface::getCurrentTexture(uint32_t currentIndex)
@@ -456,11 +482,13 @@ Texture* PresentationContextIOSurface::getCurrentTexture(uint32_t currentIndex)
     auto& texturePtr = m_renderBuffers[currentIndex].luminanceClampTexture;
     if (texturePtr.get()) {
         texturePtr->recreateIfNeeded();
+        texturePtr->resetGPUFrameCost();
         return texturePtr.get();
     }
     auto& texture = m_renderBuffers[currentIndex].texture;
     texture->recreateIfNeeded();
     texture->setPreviouslyCleared(0, 0, false);
+    texture->resetGPUFrameCost();
     return texture.ptr();
 }
 

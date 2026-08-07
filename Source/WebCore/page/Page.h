@@ -108,6 +108,7 @@ class BadgeClient;
 class BroadcastChannelRegistry;
 class CacheStorageProvider;
 class CaptionDisplaySettingsClient;
+class CanvasRenderingContext;
 class Chrome;
 class CompositeEditCommand;
 class ContextMenuController;
@@ -667,6 +668,9 @@ public:
     static constexpr OptionSet<PreferredRenderingUpdateOption> allPreferredRenderingUpdateOptions = { PreferredRenderingUpdateOption::IncludeThrottlingReasons, PreferredRenderingUpdateOption::IncludeAnimationsFrameRate };
     WEBCORE_EXPORT std::optional<FramesPerSecond> preferredRenderingUpdateFramesPerSecond(OptionSet<PreferredRenderingUpdateOption> = allPreferredRenderingUpdateOptions) const;
     WEBCORE_EXPORT Seconds preferredRenderingUpdateInterval() const;
+
+    void addGPUCanvasRequestingRenderingUpdatePacing(CanvasRenderingContext&);
+    void removeGPUCanvasRequestingRenderingUpdatePacing(CanvasRenderingContext&);
 
     const FloatBoxExtent& contentInsets() const LIFETIME_BOUND { return m_contentInsets; }
     void setContentInsets(const FloatBoxExtent& insets) { m_contentInsets = insets; }
@@ -1414,6 +1418,7 @@ public:
 #endif
 
     void syncLocalFrameInfoToRemote();
+    RenderingUpdateScheduler& renderingUpdateScheduler() LIFETIME_BOUND;
 
 private:
     explicit Page(PageConfiguration&&);
@@ -1463,7 +1468,6 @@ private:
     void scheduleRenderingUpdateInternal();
     void prioritizeVisibleResources();
 
-    RenderingUpdateScheduler& renderingUpdateScheduler() LIFETIME_BOUND;
     RenderingUpdateScheduler* NODELETE existingRenderingUpdateScheduler() LIFETIME_BOUND;
 
     WheelEventTestMonitor& ensureWheelEventTestMonitor();
@@ -1716,6 +1720,8 @@ private:
     const Ref<ThermalMitigationNotifier> m_thermalMitigationNotifier;
     OptionSet<ThrottlingReason> m_throttlingReasons;
     OptionSet<ThrottlingReason> m_throttlingReasonsOverridenForTesting;
+
+    WeakHashSet<CanvasRenderingContext> m_gpuCanvasesRequestingPacing;
 
     std::optional<Navigation> m_navigationToLogWhenVisible;
 

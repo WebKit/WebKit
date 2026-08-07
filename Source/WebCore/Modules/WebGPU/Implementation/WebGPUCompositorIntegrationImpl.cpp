@@ -59,6 +59,13 @@ void CompositorIntegrationImpl::prepareForDisplay(uint32_t frameIndex, Completio
     m_onSubmittedWorkScheduledCallback(WTF::move(completionHandler));
 }
 
+Seconds CompositorIntegrationImpl::lastFrameGPUCost() const
+{
+    if (RefPtr presentationContext = m_presentationContext)
+        return presentationContext->lastFrameGPUCost();
+    return 0_s;
+}
+
 void CompositorIntegrationImpl::updateContentsHeadroom(float headroom)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)

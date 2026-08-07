@@ -26,6 +26,7 @@
 #pragma once
 
 #import "PresentationContext.h"
+#import <wtf/Deque.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
@@ -50,6 +51,8 @@ public:
     Texture* getCurrentTexture(uint32_t) override;
     TextureView* getCurrentTextureView() override;
 
+    Seconds lastFrameGPUCost() const override { return m_lastDrainedFrameGPUCost; }
+
     bool isPresentationContextIOSurface() const override { return true; }
 
     bool isValid() override { return true; }
@@ -61,6 +64,8 @@ private:
     RetainPtr<CGImageRef> getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) final;
     void copyTextureToTexture(id<MTLTexture> destination, id<MTLTexture> source, id<MTLCommandBuffer>);
     id<MTLComputePipelineState> resizeComputePipelineState();
+
+    void waitForInFlightFrameSlot();
 
     NSArray<IOSurface *> *m_ioSurfaces { nil };
     struct RenderBuffer {
@@ -74,6 +79,9 @@ private:
     id<MTLFunction> m_luminanceClampFunction;
     id<MTLComputePipelineState> m_computePipelineState;
     id<MTLComputePipelineState> m_resizeComputePipelineState;
+    Deque<Ref<Texture>> m_inFlightFrames;
+    size_t m_maximumInFlightFrames { 0 };
+    Seconds m_lastDrainedFrameGPUCost { 0_s };
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
     std::optional<const MachSendRight> m_webProcessID;
 #endif

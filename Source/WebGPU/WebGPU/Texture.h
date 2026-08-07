@@ -31,8 +31,10 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
+#import <wtf/Lock.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCountedAndCanMakeWeakPtr.h>
+#import <wtf/Seconds.h>
 #import <wtf/SwiftBridging.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/Vector.h>
@@ -137,6 +139,9 @@ public:
     bool isCanvasBacking() const { return m_canvasBacking; }
 
     bool waitForCommandBufferCompletion();
+    void recordGPUExecutionWindow(double startTime, double endTime) const;
+    Seconds gpuFrameCost() const;
+    void resetGPUFrameCost() const;
     void NODELETE updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t>&);
     id<MTLSharedEvent> NODELETE sharedEvent() const;
     uint64_t NODELETE sharedEventSignalValue() const;
@@ -180,6 +185,8 @@ private:
     Vector<WeakPtr<TextureView>> m_textureViews;
     bool m_destroyed { false };
     bool m_canvasBacking { false };
+    mutable Lock m_gpuFrameCostLock;
+    mutable double m_gpuFrameCostSeconds WTF_GUARDED_BY_LOCK(m_gpuFrameCostLock) { 0 };
     id<MTLSharedEvent> m_sharedEvent { nil };
     std::pair<id<MTLRasterizationRateMap>, id<MTLRasterizationRateMap>> m_leftRightRasterizationMaps;
 

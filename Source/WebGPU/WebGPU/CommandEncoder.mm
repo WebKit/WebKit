@@ -1449,10 +1449,22 @@ void CommandEncoder::clearTextureIfNeeded(Texture& texture, NSUInteger mipLevel,
 
 bool CommandEncoder::waitForCommandBufferCompletion()
 {
-    if (RefPtr cachedCommandBuffer = m_cachedCommandBuffer.get())
-        return cachedCommandBuffer->waitForCompletion();
+    if (RefPtr cachedCommandBuffer = m_cachedCommandBuffer.get()) {
+        bool completed = cachedCommandBuffer->waitForCompletion();
+        if (double duration = cachedCommandBuffer->gpuExecutionDurationSeconds())
+            recordGPUExecutionWindowOnCanvasTextures(0, duration);
+        return completed;
+    }
 
     return true;
+}
+
+void CommandEncoder::recordGPUExecutionWindowOnCanvasTextures(double startTime, double endTime) const
+{
+    for (auto& texture : m_trackedTextures) {
+        if (texture->isCanvasBacking())
+            texture->recordGPUExecutionWindow(startTime, endTime);
+    }
 }
 
 bool CommandEncoder::encoderIsCurrent(id<MTLCommandEncoder> commandEncoder) const

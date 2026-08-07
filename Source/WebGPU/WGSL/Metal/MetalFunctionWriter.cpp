@@ -3059,11 +3059,19 @@ void FunctionDefinitionWriter::visit(AST::SwitchStatement& statement)
         }
         if (isDefault)
             m_body.append('\n', m_indent, "default:"_s);
-        m_body.append("\n{ " DECLARE_FORWARD_PROGRESS "\n"_s);
+        // rdar://154262212: the forward-progress workaround is only needed when
+        // shader validation is enabled; emit it selectively based on DeviceState.
+        if (shaderValidationEnabled())
+            m_body.append("\n{ " DECLARE_FORWARD_PROGRESS "\n"_s);
+        else
+            m_body.append(' ');
         visit(clause.body);
 
         IndentationScope scope(m_indent);
-        m_body.append('\n', m_indent, "\n}\nbreak;"_s);
+        if (shaderValidationEnabled())
+            m_body.append('\n', m_indent, "\n}\nbreak;"_s);
+        else
+            m_body.append('\n', m_indent, "break;"_s);
     };
 
     m_body.append("switch ("_s);

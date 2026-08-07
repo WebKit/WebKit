@@ -117,12 +117,17 @@ void CommandBuffer::makeInvalidDueToCommit(NSString* lastError)
         [m_commandBuffer encodeSignalEvent:m_sharedEvent value:m_sharedEventSignalValue];
 
     m_cachedCommandBuffer = m_commandBuffer;
-    [m_commandBuffer addCompletedHandler:[protectedThis = protect(*this)](id<MTLCommandBuffer>) {
+    [m_commandBuffer addCompletedHandler:[protectedThis = protect(*this)](id<MTLCommandBuffer> completedCommandBuffer) {
+        double kernelStartTime = completedCommandBuffer.kernelStartTime;
+        double kernelEndTime = completedCommandBuffer.kernelEndTime;
+        protectedThis->m_gpuExecutionDurationSeconds.store(kernelEndTime - kernelStartTime, std::memory_order_relaxed);
         protectedThis->m_commandBufferComplete.signal();
-        protectedThis->m_device->getQueue()->scheduleWork([protectedThis]() mutable {
+        protectedThis->m_device->getQueue()->scheduleWork([protectedThis, kernelStartTime, kernelEndTime]() mutable {
             protectedThis->m_cachedCommandBuffer = nil;
-            if (RefPtr commandEncoder = protectedThis->m_commandEncoder)
+            if (RefPtr commandEncoder = protectedThis->m_commandEncoder) {
+                commandEncoder->recordGPUExecutionWindowOnCanvasTextures(kernelStartTime, kernelEndTime);
                 commandEncoder->clearTracking();
+            }
 
             protectedThis->m_commandEncoder = nullptr;
         });

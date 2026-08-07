@@ -69,7 +69,8 @@ Vector<MachSendRight> RemoteCompositorIntegrationProxy::recreateRenderBuffers(in
 void RemoteCompositorIntegrationProxy::prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&& completionHandler)
 {
     auto sendResult = sendSync(Messages::RemoteCompositorIntegration::PrepareForDisplay(frameIndex));
-    UNUSED_VARIABLE(sendResult);
+    auto [gpuFrameCost] = sendResult.takeReplyOr(Seconds { 0 });
+    m_lastFrameGPUCost = gpuFrameCost;
     protect(m_presentationContext)->present(frameIndex);
 
     completionHandler();

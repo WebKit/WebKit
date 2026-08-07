@@ -106,6 +106,11 @@ WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter
     return WebGPU::fromAPI(surface).getPreferredFormat(WebGPU::fromAPI(adapter));
 }
 
+double wgpuSurfaceGetLastFrameGPUCostSeconds(WGPUSurface surface)
+{
+    return protect(WebGPU::fromAPI(surface))->lastFrameGPUCost().seconds();
+}
+
 WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain, uint32_t index)
 {
     return protect(WebGPU::fromAPI(swapChain))->getCurrentTexture(index);

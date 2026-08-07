@@ -34,6 +34,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/WebGPUIntegralTypes.h>
 #include <wtf/Ref.h>
+#include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
@@ -99,7 +100,7 @@ private:
     void recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, unsigned bufferCount, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
 #endif
 
-    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(bool)>&&);
+    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(Seconds)>&&);
     void updateContentsHeadroom(float);
 
     const Ref<WebCore::WebGPU::CompositorIntegration> m_backing;

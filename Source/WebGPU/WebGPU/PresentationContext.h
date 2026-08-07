@@ -29,6 +29,7 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Seconds.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/TypeCasts.h>
 
@@ -65,6 +66,8 @@ public:
     virtual void present(uint32_t);
     virtual Texture* getCurrentTexture(uint32_t);
     virtual TextureView* getCurrentTextureView(); // FIXME: This should return a TextureView&.
+
+    virtual Seconds lastFrameGPUCost() const { return 0_s; }
 
     virtual bool isPresentationContextIOSurface() const { return false; }
     virtual bool isPresentationContextCoreAnimation() const { return false; }

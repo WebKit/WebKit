@@ -43,6 +43,7 @@
 #include "BroadcastChannelRegistry.h"
 #include "CacheStorageProvider.h"
 #include "CachedImage.h"
+#include "CanvasRenderingContext.h"
 #include "CaptionDisplaySettingsClient.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -2849,12 +2850,29 @@ std::optional<FramesPerSecond> Page::preferredRenderingUpdateFramesPerSecond(Opt
         }
     });
 
+    for (Ref canvasContext : m_gpuCanvasesRequestingPacing) {
+        if (auto canvasPreferredFrameRate = canvasContext->preferredRenderingUpdateFramesPerSecond()) {
+            if (!frameRate || *canvasPreferredFrameRate < *frameRate)
+                frameRate = *canvasPreferredFrameRate;
+        }
+    }
+
     return frameRate;
 }
 
 Seconds Page::preferredRenderingUpdateInterval() const
 {
     return preferredFrameInterval(m_throttlingReasons, m_displayNominalFramesPerSecond, settings().preferPageRenderingUpdatesNear60FPSEnabled());
+}
+
+void Page::addGPUCanvasRequestingRenderingUpdatePacing(CanvasRenderingContext& context)
+{
+    m_gpuCanvasesRequestingPacing.add(context);
+}
+
+void Page::removeGPUCanvasRequestingRenderingUpdatePacing(CanvasRenderingContext& context)
+{
+    m_gpuCanvasesRequestingPacing.remove(context);
 }
 
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)

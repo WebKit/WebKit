@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AnimationFrameRate.h"
 #include "CanvasBase.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "ImageBuffer.h"
@@ -118,6 +119,8 @@ public:
     virtual bool needsPreparationForDisplay() const { return false; }
     // Swaps the current drawing buffer to display buffer.
     virtual void prepareForDisplay() { }
+
+    virtual std::optional<FramesPerSecond> preferredRenderingUpdateFramesPerSecond() const { return std::nullopt; }
 
     virtual PixelFormat pixelFormat() const;
     virtual DestinationColorSpace colorSpace() const;

@@ -180,7 +180,7 @@ void TextureView::destroy()
 void TextureView::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
     CommandEncoder::trackEncoder(commandEncoder, m_commandEncoders);
-    commandEncoder.addTexture(m_parentTexture);
+    m_parentTexture->setCommandEncoder(commandEncoder);
     if (isDestroyed() && !m_parentTexture->isCanvasBacking())
         commandEncoder.makeSubmitInvalid();
 }

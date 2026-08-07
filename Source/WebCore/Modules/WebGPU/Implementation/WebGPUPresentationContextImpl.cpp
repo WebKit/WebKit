@@ -165,6 +165,13 @@ void PresentationContextImpl::present(uint32_t frameIndex, bool)
     m_currentTexture = nullptr;
 }
 
+Seconds PresentationContextImpl::lastFrameGPUCost() const
+{
+    if (auto* surface = m_backing.get())
+        return Seconds { wgpuSurfaceGetLastFrameGPUCostSeconds(surface) };
+    return 0_s;
+}
+
 RefPtr<WebCore::NativeImage> PresentationContextImpl::getMetalTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat)
 {
     if (auto* surface = m_swapChain.get())

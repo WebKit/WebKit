@@ -36,6 +36,7 @@
 #include "IOSurface.h"
 #include "OffscreenCanvas.h"
 #include "PlatformCALayer.h"
+#include "WebGPUFramePacer.h"
 #include <wtf/MachSendRight.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -61,6 +62,7 @@ public:
     PixelFormat pixelFormat() const override;
     bool isOpaque() const override;
     void didUpdateCanvasSizeProperties(bool) override;
+    std::optional<FramesPerSecond> preferredRenderingUpdateFramesPerSecond() const override;
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) override;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return false; }
@@ -92,6 +94,8 @@ private:
     CanvasType htmlOrOffscreenCanvas() const;
     ExceptionOr<void> configure(GPUCanvasConfiguration&&, bool);
     void present(uint32_t frameIndex);
+    void updateFramePacing();
+    Page* page() const;
 #if HAVE(SUPPORT_HDR_DISPLAY)
     float computeContentsHeadroom();
     void updateContentsHeadroom();
@@ -119,6 +123,9 @@ private:
     const Ref<GPUCompositorIntegration> m_compositorIntegration;
     const Ref<GPUPresentationContext> m_presentationContext;
     RefPtr<GPUTexture> m_currentTexture;
+    WebGPUFramePacer m_framePacer;
+    std::optional<FramesPerSecond> m_lastPreferredFrameRate;
+    bool m_isRegisteredForPacing { false };
 
     GPUIntegerCoordinate m_width { 0 };
     GPUIntegerCoordinate m_height { 0 };
