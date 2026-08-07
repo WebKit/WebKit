@@ -290,7 +290,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
 #if PLATFORM(COCOA)
     # Dictionary support.
-    PerformDictionaryLookupAtLocation(WebCore::FloatPoint point)
+    PerformDictionaryLookupAtLocation(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point) -> (struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
 #endif
 
 #if ENABLE(DATA_DETECTION)

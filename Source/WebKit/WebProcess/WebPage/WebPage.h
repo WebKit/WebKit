@@ -2497,7 +2497,7 @@ private:
     void resume(CompletionHandler<void(bool)>&&);
 
 #if PLATFORM(COCOA)
-    void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
+    void performDictionaryLookupAtLocation(WebCore::FrameIdentifier, const WebCore::FloatPoint&, CompletionHandler<void(std::optional<WebCore::RemoteUserInputEventData>)>&&);
     void performDictionaryLookupForRange(WebCore::LocalFrame&, const WebCore::SimpleRange&, WebCore::TextIndicatorPresentationTransition);
     WebCore::DictionaryPopupInfo dictionaryPopupInfoForRange(WebCore::LocalFrame&, const WebCore::SimpleRange&, WebCore::TextIndicatorPresentationTransition);
 

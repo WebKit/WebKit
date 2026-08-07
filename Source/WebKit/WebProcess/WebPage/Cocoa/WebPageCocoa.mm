@@ -321,31 +321,42 @@ bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) con
 }
 #endif
 
-void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
+void WebPage::performDictionaryLookupAtLocation(FrameIdentifier frameID, const FloatPoint& floatPoint, CompletionHandler<void(std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
 #if ENABLE(PDF_PLUGIN)
     if (RefPtr pluginView = mainFramePlugIn()) {
         if (pluginView->performDictionaryLookupAtLocation(floatPoint))
-            return;
+            return completionHandler(std::nullopt);
     }
 #endif
-    
-    RefPtr localMainFrame = corePage()->localMainFrame();
-    if (!localMainFrame)
-        return;
+
+    RefPtr webFrame = WebFrame::webFrame(frameID);
+    RefPtr localFrame = webFrame ? webFrame->coreLocalFrame() : nullptr;
+    RefPtr view = localFrame ? localFrame->view() : nullptr;
+    if (!view)
+        return completionHandler(std::nullopt);
+
     // Find the frame the point is over.
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-    auto result = localMainFrame->eventHandler().hitTestResultAtPoint(protect(localMainFrame->view())->windowToContents(roundedIntPoint(floatPoint)), hitType);
+    auto result = localFrame->eventHandler().hitTestResultAtPoint(view->rootViewToContents(roundedIntPoint(floatPoint)), hitType);
+
+    // AllowChildFrameContent cannot descend into a RemoteFrameView, so over a site-isolated iframe the
+    // hit test stops at its owner element and finds no text. Report the frame back instead so the UI
+    // process can retry the lookup in that frame's process, as the immediate action path does.
+    auto subframe = EventHandler::subframeForTargetNode(protect(result.targetNode()).get());
+    if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(subframe).get()) {
+        if (RefPtr remoteFrameView = remoteFrame->view())
+            return completionHandler(RemoteUserInputEventData { remoteFrame->frameID(), remoteFrameView->convertFromRootView(roundedIntPoint(floatPoint)) });
+    }
 
     RefPtr frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : corePage()->focusController().focusedOrMainFrame();
     if (!frame)
-        return;
+        return completionHandler(std::nullopt);
 
-    auto rangeResult = DictionaryLookup::rangeAtHitTestResult(result);
-    if (!rangeResult)
-        return;
+    if (auto rangeResult = DictionaryLookup::rangeAtHitTestResult(result))
+        performDictionaryLookupForRange(*frame, *rangeResult, TextIndicatorPresentationTransition::Bounce);
 
-    performDictionaryLookupForRange(*frame, *rangeResult, TextIndicatorPresentationTransition::Bounce);
+    completionHandler(std::nullopt);
 }
 
 void WebPage::performDictionaryLookupForSelection(LocalFrame& frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
