@@ -562,7 +562,7 @@ CommandResult<void> ProxyingNetworkAgent::setEmulatedConditions(std::optional<in
 
 // IPC message handlers from WebProcess FrameNetworkAgentProxy.
 
-void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& targetID, const String& documentURL, const ResourceRequest& request, std::optional<ResourceResponse>&& redirectResponse, ResourceType resourceType, double timestamp, double walltime)
+void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& targetID, const String& documentURL, const ResourceRequest& request, std::optional<ResourceResponse>&& redirectResponse, ResourceType resourceType, double timestamp, double walltime, InitiatorData&& initiator)
 {
     if (!m_enabled)
         return;
@@ -570,11 +570,7 @@ void ProxyingNetworkAgent::requestWillBeSent(ResourceID resourceID, FrameID fram
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
     auto frameIdString = IdentifierRegistry::protocolFrameId(frameID, resourceID.processIdentifier());
     auto requestObject = buildObjectForResourceRequest(request);
-
-    // FIXME: Build Initiator object once we have stack trace IPC.
-    auto initiatorObject = Protocol::Network::Initiator::create()
-        .setType(Protocol::Network::Initiator::Type::Other)
-        .release();
+    auto initiatorObject = ResourceUtilities::buildInitiatorObject(initiator);
 
     RefPtr<Protocol::Network::Response> redirectResponseObject;
     if (redirectResponse)
@@ -623,7 +619,7 @@ void ProxyingNetworkAgent::loadingFailed(ResourceID resourceID, double timestamp
     m_frontendDispatcher->loadingFailed(requestId, timestamp, errorText, canceled);
 }
 
-void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& documentURL, const ResourceResponse& response, ResourceType resourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp)
+void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, FrameID frameID, const String& loaderId, const String& documentURL, const ResourceResponse& response, ResourceType resourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp, InitiatorData&& initiator)
 {
     if (!m_enabled)
         return;
@@ -643,11 +639,7 @@ void ProxyingNetworkAgent::requestServedFromMemoryCache(ResourceID resourceID, F
     if (!sourceMapURL.isEmpty())
         cachedResourceObject->setSourceMapURL(sourceMapURL);
 
-    auto initiatorObject = Protocol::Network::Initiator::create()
-        .setType(Protocol::Network::Initiator::Type::Other)
-        .release();
-
-    m_frontendDispatcher->requestServedFromMemoryCache(requestId, frameIdString, loaderId, documentURL, timestamp, WTF::move(initiatorObject), WTF::move(cachedResourceObject));
+    m_frontendDispatcher->requestServedFromMemoryCache(requestId, frameIdString, loaderId, documentURL, timestamp, ResourceUtilities::buildInitiatorObject(initiator), WTF::move(cachedResourceObject));
 }
 
 } // namespace Inspector

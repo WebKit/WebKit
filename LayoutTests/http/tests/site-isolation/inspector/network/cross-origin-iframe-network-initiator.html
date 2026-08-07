@@ -1,0 +1,97 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.Initiator");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.Initiator.CrossOriginIFrame.Script",
+        description: "A fetch started by script in a cross-origin iframe should report a script initiator with the JS stack (rdar://171758685).",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("iframe-with-initiators.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof triggerScriptInitiatedFetch === 'function'");
+
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerScriptInitiatedFetch()", objectGroup: "test"});
+            let resource = (await resourceAddedPromise).data.resource;
+
+            InspectorTest.expectNotNull(resource.initiatorStackTrace, "Resource should have an initiator stack trace.");
+            if (!resource.initiatorStackTrace)
+                return;
+
+            // Assert the frame is present rather than that it is on top: the evaluate() that drove
+            // the call contributes frames of its own.
+            let functionNames = resource.initiatorStackTrace.callFrames.map((frame) => frame.functionName);
+            InspectorTest.expectThat(functionNames.includes("triggerScriptInitiatedFetch"), "Initiator stack should name the function that called fetch.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.Initiator.CrossOriginIFrame.AsyncScript",
+        description: "A fetch scheduled from a setTimeout callback in a cross-origin iframe should report the async parent stack trace, which is captured in the iframe's process and must survive IPC to the UIProcess (rdar://171758685).",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("iframe-with-initiators.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "typeof triggerAsyncScriptInitiatedFetch === 'function'");
+
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerAsyncScriptInitiatedFetch()", objectGroup: "test"});
+            let resource = (await resourceAddedPromise).data.resource;
+
+            InspectorTest.expectNotNull(resource.initiatorStackTrace, "Resource should have an initiator stack trace.");
+            if (!resource.initiatorStackTrace)
+                return;
+
+            InspectorTest.expectNotNull(resource.initiatorStackTrace.parentStackTrace, "Initiator stack should carry its async parent stack trace across IPC.");
+
+            // The function that scheduled the fetch lives in the async parent chain, not the
+            // synchronous stack; walk the whole chain rather than assume a particular depth.
+            let asyncFunctionNames = [];
+            for (let stackTrace = resource.initiatorStackTrace.parentStackTrace; stackTrace; stackTrace = stackTrace.parentStackTrace)
+                asyncFunctionNames.push(...stackTrace.callFrames.map((frame) => frame.functionName));
+            InspectorTest.expectThat(asyncFunctionNames.includes("triggerAsyncScriptInitiatedFetch"), "Async parent stack should name the function that scheduled the fetch.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.Initiator.CrossOriginIFrame.Parser",
+        description: "A stylesheet declared in a cross-origin iframe's markup should report a parser initiator.",
+        async test() {
+            // A parser initiator only exists while a document is parsing, so add a fresh cross-origin
+            // iframe now instead of relying on one in this page's markup: subresources of the iframes
+            // present at load time are fetched before the frontend observes that WebContent process.
+            const stylesheetURL = "http://localhost:8000/site-isolation/inspector/network/resources/parser-initiated.css";
+            InspectorTest.evaluateInPage("addParserStylesheetIFrame()");
+
+            let stylesheet = null;
+            for (let attempt = 0; attempt < 40 && !stylesheet; ++attempt) {
+                stylesheet = WI.networkManager.resourcesForURL(stylesheetURL).firstValue;
+                if (!stylesheet)
+                    await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+
+            InspectorTest.expectNotNull(stylesheet, "Should have found the parser-initiated stylesheet.");
+            if (!stylesheet)
+                return;
+
+            InspectorTest.expectNull(stylesheet.initiatorStackTrace, "A parser-initiated load should have no script stack.");
+            InspectorTest.expectNotNull(stylesheet.initiatorSourceCodeLocation, "A parser initiator should resolve to a source code location.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+function addParserStylesheetIFrame() {
+    let iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-parser-stylesheet.html";
+    document.body.appendChild(iframe);
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Network initiator information (script stack traces and parser URLs) reaches the frontend for loads in a cross-origin iframe under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-initiators.html"></iframe>
+</body>
