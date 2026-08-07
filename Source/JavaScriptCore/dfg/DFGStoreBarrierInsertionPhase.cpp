@@ -271,8 +271,7 @@ private:
                 break;
             }
 
-            case ArrayPush:
-            case ArrayUnshift: {
+            case ArrayPush: {
                 switch (m_node->arrayMode().type()) {
                 case Array::Contiguous:
                 case Array::ArrayStorage:
@@ -290,6 +289,19 @@ private:
                 default:
                     break;
                 }
+                break;
+            }
+
+            case ArrayUnshift: {
+                // Only a single-element Contiguous unshift is emitted inline; every other case
+                // calls an operation that runs its own barrier. Inline, unshift moves the
+                // existing element up to make room, which can conceal an already-live cell from
+                // a concurrent collector: it sits outside the scanned range until publicLength
+                // is updated. The moved element is what needs barriering, so this considers the
+                // array itself rather than any of the operands.
+                unsigned elementCount = m_node->numChildren() - 2;
+                if (elementCount == 1 && m_node->arrayMode().type() == Array::Contiguous)
+                    considerBarrier(m_graph.varArgChild(m_node, 1));
                 break;
             }
 
