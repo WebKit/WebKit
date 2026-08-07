@@ -247,6 +247,10 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         return;
     ASSERT(cachedImage);
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    RefPtr protectedCachedImage { cachedImage };
+#endif
+
     if (!pasteboard.isStatic())
         pasteboardImage.dataInWebArchiveFormat = imageInWebArchiveFormat(imageElement);
 
