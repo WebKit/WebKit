@@ -375,7 +375,15 @@ class Manager(object):
             return Manager.FAILED_TESTS
 
         successful = runner.result_map_by_status(runner.STATUS_PASSED)
-        disabled = len(runner.result_map_by_status(runner.STATUS_DISABLED))
+        # STATUS_DISABLED covers both DISABLED_ prefixed tests, which never launch, and
+        # tests that ran and called GTEST_SKIP(). Only the latter are reported as skipped:
+        # they were expected to run, and their output records (optionally) why they did not.
+        did_not_run = runner.result_map_by_status(runner.STATUS_DISABLED)
+        disabled = len(did_not_run)
+        skipped_at_runtime = {
+            test: output for test, output in iteritems(did_not_run)
+            if not Runner.is_disabled_test(test)
+        }
 
         # Check if running in test-parallel-safety mode
         test_parallel_safety_tests = self._port.get_option('test_parallel_safety') or []
@@ -450,8 +458,10 @@ class Manager(object):
         all_skipped_tests = list(skipped_by_expectation | skipped_as_failing | skipped_as_flaky)
         for test in all_skipped_tests:
             result_dictionary['Skipped'].append({'name': test, 'output': None})
-        if all_skipped_tests:
-            self._stream.writeln(f'Skipped {len(all_skipped_tests)} tests')
+        for test, output in iteritems(skipped_at_runtime):
+            result_dictionary['Skipped'].append({'name': test, 'output': output or None})
+        if result_dictionary['Skipped']:
+            self._stream.writeln(f"Skipped {len(result_dictionary['Skipped'])} tests")
             self._stream.writeln('')
 
         if unexpected_failures:

@@ -77,6 +77,13 @@ def run_test_parallel_safety_single_iteration(test_name):
         _log.error(f'Error in test-parallel-safety iteration for {test_name}: {e}')
         raise  # Re-raise so TaskPool can handle the error appropriately
 
+
+def _status_precedence(status):
+    # Any real result outranks a disabled/skipped test, and the rest
+    # are already ordered by severity, so they keep their own values.
+    return -1 if status == Runner.STATUS_DISABLED else status
+
+
 def report_result(worker, test, status, output, elapsed=None):
     if elapsed < Runner.ELAPSED_THRESHOLD and status == Runner.STATUS_PASSED and (not output or Runner.instance.port.get_option('quiet')):
         Runner.instance.printer.write_update(f'{worker} {test} {Runner.NAME_FOR_STATUS[status]}')
@@ -85,7 +92,9 @@ def report_result(worker, test, status, output, elapsed=None):
         Runner.instance.printer.writeln(f'{worker} {test} {Runner.NAME_FOR_STATUS[status]}{elapsed_log}')
     if test in Runner.instance.results:
         existing_status = Runner.instance.results[test][0]
-        if status > existing_status or (status == existing_status and status != Runner.STATUS_PASSED):
+        precedence = _status_precedence(status)
+        existing_precedence = _status_precedence(existing_status)
+        if precedence > existing_precedence or (precedence == existing_precedence and status != Runner.STATUS_PASSED):
             Runner.instance.results[test] = status, output, elapsed
     else:
         Runner.instance.results[test] = status, output, elapsed
@@ -112,6 +121,12 @@ class Runner(object):
         'Timeout',
         'Disabled',
     ]
+
+    STATUS_FOR_TOKEN = {
+        '**PASS**': STATUS_PASSED,
+        '**FAIL**': STATUS_FAILED,
+        '**DISABLED**': STATUS_DISABLED,
+    }
 
     instance = None
 
@@ -163,8 +178,15 @@ class Runner(object):
                 shards[f"{test}.{i}"] = [test]
         return shards
 
+    @classmethod
+    def status_for_output_line(cls, line):
+        for token, status in cls.STATUS_FOR_TOKEN.items():
+            if token in line:
+                return status
+        return None
+
     @staticmethod
-    def _is_disabled_test(test_name):
+    def is_disabled_test(test_name):
         # gtest never runs a test whose method component is prefixed with
         # DISABLED_.  test_name is the full binary.suite.method form; strip the
         # binary name, then check the method component.
@@ -180,7 +202,7 @@ class Runner(object):
         runnable = []
         disabled = []
         for test in tests:
-            if Runner._is_disabled_test(test):
+            if Runner.is_disabled_test(test):
                 disabled.append(test)
             else:
                 runnable.append(test)
@@ -367,7 +389,8 @@ class _Worker(object):
             env=self._port.environment_for_api_tests())
 
         status = Runner.STATUS_RUNNING
-        if Runner._is_disabled_test(f'{binary_name}.{test}') and not self._port.get_option('force'):
+        disabled_by_name = Runner.is_disabled_test(f'{binary_name}.{test}') and not self._port.get_option('force')
+        if disabled_by_name:
             status = Runner.STATUS_DISABLED
 
         stdout_buffer = ''
@@ -376,7 +399,7 @@ class _Worker(object):
 
         try:
             started = time.time()
-            if status != Runner.STATUS_DISABLED:
+            if not disabled_by_name:
                 server_process.start()
 
             while status == Runner.STATUS_RUNNING:
@@ -401,17 +424,14 @@ class _Worker(object):
                     _log.error(stderr_line[:-1])
                 if stdout_line:
                     stdout_line = string_utils.decode(stdout_line, target_type=str)
-                    if '**PASS**' in stdout_line:
-                        status = Runner.STATUS_PASSED
-                    elif '**FAIL**' in stdout_line:
-                        status = Runner.STATUS_FAILED
-                    elif '**DISABLED**' in stdout_line:
-                        status = Runner.STATUS_DISABLED
+                    status_from_line = Runner.status_for_output_line(stdout_line)
+                    if status_from_line is not None:
+                        status = status_from_line
                     else:
                         stdout_buffer += stdout_line
                         _log.error(stdout_line[:-1])
 
-            if status == Runner.STATUS_DISABLED:
+            if disabled_by_name:
                 pass
             elif server_process.timed_out:
                 status = Runner.STATUS_TIMEOUT
@@ -430,7 +450,11 @@ class _Worker(object):
                     status = Runner.STATUS_FAILED
                     line = self.EXCEEDED_LOG_LINE_MESSAGE.format(self.log_limit)
 
-                _log.error(line)
+                # Output trailing a **DISABLED** token is (likely) a GTEST_SKIP() reason, not an error.
+                if status == Runner.STATUS_DISABLED:
+                    _log.info(line)
+                else:
+                    _log.error(line)
                 output_buffer += line + '\n'
 
                 if line_count > self.log_limit:
@@ -495,8 +519,9 @@ class _Worker(object):
                     if last_test is not None:
                         remaining_tests.remove(last_test)
 
+                        log_line = _log.info if last_status == Runner.STATUS_DISABLED else _log.error
                         for line in buffer.splitlines(False):
-                            _log.error(line)
+                            log_line(line)
                         line_count = 0
                         TaskPool.Process.queue.send(TaskPool.Task(
                             report_result, None, TaskPool.Process.name,
@@ -507,10 +532,7 @@ class _Worker(object):
                         started = time.time()
                         buffer = ''
 
-                    if '**PASS**' == stdout_split[0]:
-                        last_status = Runner.STATUS_PASSED
-                    else:
-                        last_status = Runner.STATUS_FAILED
+                    last_status = Runner.STATUS_FOR_TOKEN.get(stdout_split[0], Runner.STATUS_FAILED)
                     last_test = stdout_split[1]
 
                 # We assume that stderr is only relevant if there is a crash (meaning we triggered an assert)
@@ -518,12 +540,13 @@ class _Worker(object):
                     remaining_tests.remove(last_test)
                     stdout_buffer = string_utils.decode(server_process.pop_all_buffered_stdout(), target_type=str)
                     stderr_buffer = string_utils.decode(server_process.pop_all_buffered_stderr(), target_type=str) if last_status == Runner.STATUS_CRASHED else ''
+                    log_line = _log.info if last_status == Runner.STATUS_DISABLED else _log.error
                     for line in (stdout_buffer + stderr_buffer).splitlines():
                         line_count += 1
                         if line_count > self.log_limit:
                             break
                         buffer += line
-                        _log.error(line[:-1])
+                        log_line(line[:-1])
 
                     if line_count > self.log_limit:
                         last_status = Runner.STATUS_FAILED
