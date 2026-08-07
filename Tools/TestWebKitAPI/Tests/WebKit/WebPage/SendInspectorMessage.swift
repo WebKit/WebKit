@@ -160,7 +160,7 @@ private func waitForCaptured(
 ) async {
     for _ in 0..<maxIterations {
         if await predicate() { return }
-        try? await _Concurrency.Task.sleep(for: .milliseconds(50))
+        try? await Task.sleep(for: .milliseconds(50))
     }
 }
 

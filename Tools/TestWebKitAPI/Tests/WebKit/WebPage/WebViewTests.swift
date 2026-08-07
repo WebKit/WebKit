@@ -30,7 +30,6 @@ import Testing
 import WebKit_Private.WKWebViewPrivate
 @_spi(Experimental) import _WebKit_SwiftUI
 private import TestWebKitAPILibrary
-import struct _Concurrency.Task
 import struct Swift.String
 #if WTF_PLATFORM_MAC
 import AppKit
