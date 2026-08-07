@@ -22,19 +22,17 @@
 
 #include "Path.h"
 #include "SVGPathByteStream.h"
-#include "SVGPathSeg.h"
-#include "SVGPropertyList.h"
-#include <wtf/WeakPtr.h>
+#include "SVGPathUtilities.h"
+#include "SVGProperty.h"
 
 namespace WebCore {
 
-class SVGPathSegList final : public SVGPropertyList<SVGPathSeg>, public CanMakeSingleThreadWeakPtr<SVGPathSegList> {
+// SVG2 removed the SVGPathSegList and SVGPathSeg* DOM interfaces, so this class
+// no longer exposes a list of path segments. It is now simply the owner of the
+// SVGPathByteStream that backs the "d" attribute, used for rendering and SMIL
+// animation. The name is kept to minimize churn in the animated-property glue.
+class SVGPathSegList final : public SVGProperty {
     friend class SVGAnimatedPathSegListAnimator;
-    friend class SVGPathSegListBuilder;
-    friend class SVGPathSegListSource;
-
-    using Base = SVGPropertyList<SVGPathSeg>;
-    using Base::Base;
 
 public:
     static Ref<SVGPathSegList> create(SVGPropertyOwner* owner, SVGPropertyAccess access)
@@ -47,81 +45,11 @@ public:
         return adoptRef(*new SVGPathSegList(other, access));
     }
 
-    static Ref<SVGPathSegList> create(Ref<SVGPathSeg>&& newItem)
-    {
-        return adoptRef(*new SVGPathSegList(WTF::move(newItem)));
-    }
-
     SVGPathSegList& operator=(const SVGPathSegList& other)
     {
         pathByteStreamWillChange();
         m_pathByteStream = other.pathByteStream();
         return *this;
-    }
-
-    // Override SVGList::length() because numberOfItems() isn't virtual.
-    unsigned length() const { return numberOfItems(); }
-
-    unsigned numberOfItems() const
-    {
-        const_cast<SVGPathSegList*>(this)->ensureItems();
-        return Base::numberOfItems();
-    }
-
-    ExceptionOr<void> clear()
-    {
-        itemsWillChange();
-        return Base::clear();
-    }
-
-    ExceptionOr<Ref<SVGPathSeg>> getItem(unsigned index)
-    {
-        ensureItems();
-        return Base::getItem(index);
-    }
-
-    ExceptionOr<Ref<SVGPathSeg>> initialize(Ref<SVGPathSeg>&& newItem)
-    {
-        itemsWillChange();
-        return Base::initialize(WTF::move(newItem));
-    }
-
-    ExceptionOr<Ref<SVGPathSeg>> insertItemBefore(Ref<SVGPathSeg>&& newItem, unsigned index)
-    {
-        ensureItems();
-        itemsWillChange();
-        return Base::insertItemBefore(WTF::move(newItem), index);
-    }
-
-    ExceptionOr<Ref<SVGPathSeg>> replaceItem(Ref<SVGPathSeg>&& newItem, unsigned index)
-    {
-        ensureItems();
-        itemsWillChange();
-        return Base::replaceItem(WTF::move(newItem), index);
-    }
-
-    ExceptionOr<Ref<SVGPathSeg>> removeItem(unsigned index)
-    {
-        ensureItems();
-        itemsWillChange();
-        return Base::removeItem(index);
-    }
-
-    ExceptionOr<Ref<SVGPathSeg>> appendItem(Ref<SVGPathSeg>&& newItem)
-    {
-        ensureItems();
-        appendPathSegToPathByteStream(newItem);
-        clearPath();
-        return Base::appendItem(WTF::move(newItem));
-    }
-
-    // Override SVGList::setItem() because replaceItem() isn't virtual.
-    ExceptionOr<void> setItem(unsigned index, Ref<SVGPathSeg>&& newItem)
-    {
-        auto result = replaceItem(WTF::move(newItem), index);
-        if (result.hasException())
-            return result.releaseException();
-        return { };
     }
 
     void updateByteStreamData(DataRef<SVGPathByteStream::Data>&& byteStreamData)
@@ -138,12 +66,8 @@ public:
 
     const SVGPathByteStream& existingPathByteStream() const LIFETIME_BOUND { return m_pathByteStream; }
 
-    const SVGPathByteStream& pathByteStream() const LIFETIME_BOUND { return const_cast<SVGPathSegList*>(this)->pathByteStream(); }
-    SVGPathByteStream& pathByteStream() LIFETIME_BOUND
-    {
-        ensurePathByteStream();
-        return m_pathByteStream;
-    }
+    const SVGPathByteStream& pathByteStream() const LIFETIME_BOUND { return m_pathByteStream; }
+    SVGPathByteStream& pathByteStream() LIFETIME_BOUND { return m_pathByteStream; }
 
     bool parse(StringView value)
     {
@@ -176,70 +100,19 @@ public:
     }
 
 private:
+    SVGPathSegList(SVGPropertyOwner* owner, SVGPropertyAccess access)
+        : SVGProperty(owner, access)
+    {
+    }
+
     SVGPathSegList(const SVGPathSegList& other, SVGPropertyAccess access)
-        : Base(other.owner(), access)
+        : SVGProperty(other.m_owner, access)
         , m_pathByteStream(other.pathByteStream())
     {
     }
 
-    // Used by appendPathSegToPathByteStream() to create a temporary SVGPathSegList with one item.
-    SVGPathSegList(Ref<SVGPathSeg>&& newItem)
-    {
-        append(WTF::move(newItem));
-    }
-
-    // Called when changing an item in the list.
-    void commitPropertyChange(SVGProperty* property) override
-    {
-        itemsWillChange();
-        Base::commitPropertyChange(property);
-    }
-
-    void ensureItems()
-    {
-        if (!m_items.isEmpty() || m_pathByteStream.isEmpty())
-            return;
-        buildSVGPathSegListFromByteStream(m_pathByteStream, *this, UnalteredParsing);
-    }
-
-    void ensurePathByteStream()
-    {
-        if (!m_pathByteStream.isEmpty() || m_items.isEmpty())
-            return;
-        buildSVGPathByteStreamFromSVGPathSegList(*this, m_pathByteStream, UnalteredParsing);
-    }
-
-    // Optimize appending an SVGPathSeg to the list. Instead of creating the whole
-    // byte stream, a temporary byte stream will be creating just for the new item
-    // and this temporary byte stream will be appended to m_pathByteStream.
-    void appendPathSegToPathByteStream(const Ref<SVGPathSeg>& item)
-    {
-        if (m_pathByteStream.isEmpty())
-            return;
-
-        Ref pathSegList = SVGPathSegList::create(item.copyRef());
-        SVGPathByteStream pathSegStream;
-
-        if (!buildSVGPathByteStreamFromSVGPathSegList(pathSegList, pathSegStream, UnalteredParsing, false))
-            return;
-
-        m_pathByteStream.append(pathSegStream);
-    }
-
-    void clearPathByteStream() { m_pathByteStream.clear(); }
-    void clearPath() { m_path = std::nullopt; }
-
-    void pathByteStreamWillChange()
-    {
-        clearItems();
-        clearPath();
-    }
-
-    void itemsWillChange()
-    {
-        clearPathByteStream();
-        clearPath();
-    }
+    // Called by SVGAnimatedPathSegListAnimator before writing a new animated byte stream.
+    void pathByteStreamWillChange() { m_path = std::nullopt; }
 
     SVGPathByteStream m_pathByteStream;
     mutable std::optional<Path> m_path;

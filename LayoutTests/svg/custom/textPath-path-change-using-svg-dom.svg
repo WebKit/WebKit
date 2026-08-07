@@ -7,12 +7,7 @@
   <script><![CDATA[
     function runTest() {
       var path = document.getElementById("thePath");
-      pathSegList = path.pathSegList;
-      pathSegList.clear();
-      pathSeg = path.createSVGPathSegMovetoAbs(50, 150);
-      pathSegList.appendItem(pathSeg);
-      pathSeg = path.createSVGPathSegLinetoAbs(450, 150);
-      pathSegList.appendItem(pathSeg);
+      path.setAttribute("d", "M50 150 L450 150");
     }
   ]]></script>
 </svg>

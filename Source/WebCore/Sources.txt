@@ -3636,8 +3636,6 @@ svg/SVGPathByteStreamBuilder.cpp
 svg/SVGPathByteStreamSource.cpp
 svg/SVGPathElement.cpp @header:RenderStyleGetters
 svg/SVGPathParser.cpp
-svg/SVGPathSegListBuilder.cpp
-svg/SVGPathSegListSource.cpp
 svg/SVGPathStringBuilder.cpp
 svg/SVGPathStringViewSource.cpp
 svg/SVGPathTraversalStateBuilder.cpp
@@ -5018,27 +5016,6 @@ JSSVGMetadataElement.cpp
 JSSVGNumber.cpp
 JSSVGNumberList.cpp
 JSSVGPathElement.cpp
-JSSVGPathSeg.cpp
-JSSVGPathSegArcAbs.cpp
-JSSVGPathSegArcRel.cpp
-JSSVGPathSegClosePath.cpp
-JSSVGPathSegCurvetoCubicAbs.cpp
-JSSVGPathSegCurvetoCubicRel.cpp
-JSSVGPathSegCurvetoCubicSmoothAbs.cpp
-JSSVGPathSegCurvetoCubicSmoothRel.cpp
-JSSVGPathSegCurvetoQuadraticAbs.cpp
-JSSVGPathSegCurvetoQuadraticRel.cpp
-JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp
-JSSVGPathSegCurvetoQuadraticSmoothRel.cpp
-JSSVGPathSegLinetoAbs.cpp
-JSSVGPathSegLinetoHorizontalAbs.cpp
-JSSVGPathSegLinetoHorizontalRel.cpp
-JSSVGPathSegLinetoRel.cpp
-JSSVGPathSegLinetoVerticalAbs.cpp
-JSSVGPathSegLinetoVerticalRel.cpp
-JSSVGPathSegList.cpp
-JSSVGPathSegMovetoAbs.cpp
-JSSVGPathSegMovetoRel.cpp
 JSSVGPatternElement.cpp
 JSSVGPoint.cpp
 JSSVGPointList.cpp

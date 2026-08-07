@@ -386,8 +386,6 @@
 #include "SVGNumber.h"
 #include "SVGNumberList.h"
 #include "SVGParsingError.h"
-#include "SVGPathSeg.h"
-#include "SVGPathSegList.h"
 #include "SVGPoint.h"
 #include "SVGPointList.h"
 #include "SVGPointerMemberAccessor.h"

@@ -32,8 +32,6 @@
 #include "SVGPathConsumer.h"
 #include "SVGPathElement.h"
 #include "SVGPathParser.h"
-#include "SVGPathSegListBuilder.h"
-#include "SVGPathSegListSource.h"
 #include "SVGPathStringBuilder.h"
 #include "SVGPathStringViewSource.h"
 #include "SVGPathTraversalStateBuilder.h"
@@ -81,16 +79,6 @@ String buildStringFromPath(const Path& path)
     return builder.toString();
 }
 
-bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList& list, SVGPathByteStream& stream, PathParsingMode parsingMode, bool checkForInitialMoveTo)
-{
-    stream.clear();
-    if (list.isEmpty())
-        return true;
-
-    SVGPathSegListSource source(list);
-    return SVGPathParser::parseToByteStream(source, stream, parsingMode, checkForInitialMoveTo);
-}
-
 Path buildPathFromByteStream(const SVGPathByteStream& stream)
 {
     if (stream.isEmpty())
@@ -105,16 +93,6 @@ Path buildPathFromByteStream(const SVGPathByteStream& stream)
     SVGPathParser::parse(source, builder);
     stream.cachePath(path);
     return path;
-}
-
-bool buildSVGPathSegListFromByteStream(const SVGPathByteStream& stream, SVGPathSegList& list, PathParsingMode mode)
-{
-    if (stream.isEmpty())
-        return true;
-
-    SVGPathSegListBuilder builder(list);
-    SVGPathByteStreamSource source(stream);
-    return SVGPathParser::parse(source, builder, mode);
 }
 
 bool buildStringFromByteStream(const SVGPathByteStream& stream, String& result, PathParsingMode parsingMode, bool checkForInitialMoveTo)

@@ -3268,8 +3268,6 @@ sub GenerateHeader
 
     if ($codeGenerator->IsSVGAnimatedType($interface->type)) {
         $headerIncludes{"SVGAnimatedPropertyImpl.h"} = 1;
-    } elsif ($codeGenerator->IsSVGPathSegType($interface->type)) {
-        $headerIncludes{"SVGPathSegImpl.h"} = 1;
     } else {
         $headerIncludes{"$interfaceName.h"} = 1 if $hasParent && $interface->extendedAttributes->{JSGenerateToNativeObject};
         # Implementation class forward declaration
@@ -3305,7 +3303,7 @@ sub GenerateHeader
     } elsif (!NeedsImplementationClass($interface)) {
         push(@headerContent, "    static $className* create(JSC::Structure*, JSDOMGlobalObject*);\n\n");
     } else {
-        if (!$codeGenerator->IsSVGAnimatedType($interface->type) && !$codeGenerator->IsSVGPathSegType($interface->type)) {
+        if (!$codeGenerator->IsSVGAnimatedType($interface->type)) {
             AddIncludesForImplementationTypeInHeader($implType);
         }
         push(@headerContent, "    static $className* create(JSC::Structure*, JSDOMGlobalObject*, Ref<$implType>&&);\n\n");

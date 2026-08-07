@@ -28,8 +28,6 @@ namespace WebCore {
 class FloatPoint;
 class Path;
 class SVGPathByteStream;
-class SVGPathSeg;
-class SVGPathSegList;
 
 // Path -> String
 String buildStringFromPath(const Path&);
@@ -38,15 +36,11 @@ String buildStringFromPath(const Path&);
 Path buildPathFromString(StringView);
 Path buildPathFromByteStream(const SVGPathByteStream&);
 
-// SVGPathSegList/String -> SVGPathByteStream
-bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList&, SVGPathByteStream& result, PathParsingMode, bool checkForInitialMoveTo = true);
+// String -> SVGPathByteStream
 bool buildSVGPathByteStreamFromString(StringView, SVGPathByteStream&, PathParsingMode);
 
 // SVGPathByteStream -> String
 bool buildStringFromByteStream(const SVGPathByteStream&, String&, PathParsingMode, bool checkForInitialMoveTo = true);
-
-// SVGPathByteStream -> SVGPathSegList
-bool buildSVGPathSegListFromByteStream(const SVGPathByteStream&, SVGPathSegList&, PathParsingMode);
 
 bool canBlendSVGPathByteStreams(const SVGPathByteStream& from, const SVGPathByteStream& to);
 

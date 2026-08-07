@@ -127,7 +127,6 @@ var propertyInfo = [
     ["SVGGradientElement", "object"],
     ["SVGLength", "object"],
     ["SVGMarkerElement", "object"],
-    ["SVGPathSeg", "object"],
     ["SVGPreserveAspectRatio", "object"],
     ["SVGTextContentElement", "object"],
     ["SVGTextPathElement", "object"],

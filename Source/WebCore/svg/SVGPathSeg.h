@@ -21,9 +21,7 @@
 
 #pragma once
 
-#include "SVGProperty.h"
-#include <wtf/EnumTraits.h>
-#include <wtf/text/WTFString.h>
+#include <cstdint>
 
 namespace WebCore {
 
@@ -50,46 +48,4 @@ enum class SVGPathSegType : uint8_t {
     CurveToQuadraticSmoothRel = 19
 };
 
-class SVGPathSeg : public SVGProperty {
-public:
-    virtual ~SVGPathSeg() = default;
-
-    // Forward declare these enums in the w3c naming scheme, for IDL generation
-    enum {
-        PATHSEG_UNKNOWN = std::to_underlying(SVGPathSegType::Unknown),
-        PATHSEG_CLOSEPATH = std::to_underlying(SVGPathSegType::ClosePath),
-        PATHSEG_MOVETO_ABS = std::to_underlying(SVGPathSegType::MoveToAbs),
-        PATHSEG_MOVETO_REL = std::to_underlying(SVGPathSegType::MoveToRel),
-        PATHSEG_LINETO_ABS = std::to_underlying(SVGPathSegType::LineToAbs),
-        PATHSEG_LINETO_REL = std::to_underlying(SVGPathSegType::LineToRel),
-        PATHSEG_CURVETO_CUBIC_ABS = std::to_underlying(SVGPathSegType::CurveToCubicAbs),
-        PATHSEG_CURVETO_CUBIC_REL = std::to_underlying(SVGPathSegType::CurveToCubicRel),
-        PATHSEG_CURVETO_QUADRATIC_ABS = std::to_underlying(SVGPathSegType::CurveToQuadraticAbs),
-        PATHSEG_CURVETO_QUADRATIC_REL = std::to_underlying(SVGPathSegType::CurveToQuadraticRel),
-        PATHSEG_ARC_ABS = std::to_underlying(SVGPathSegType::ArcAbs),
-        PATHSEG_ARC_REL = std::to_underlying(SVGPathSegType::ArcRel),
-        PATHSEG_LINETO_HORIZONTAL_ABS = std::to_underlying(SVGPathSegType::LineToHorizontalAbs),
-        PATHSEG_LINETO_HORIZONTAL_REL = std::to_underlying(SVGPathSegType::LineToHorizontalRel),
-        PATHSEG_LINETO_VERTICAL_ABS = std::to_underlying(SVGPathSegType::LineToVerticalAbs),
-        PATHSEG_LINETO_VERTICAL_REL = std::to_underlying(SVGPathSegType::LineToVerticalRel),
-        PATHSEG_CURVETO_CUBIC_SMOOTH_ABS = std::to_underlying(SVGPathSegType::CurveToCubicSmoothAbs),
-        PATHSEG_CURVETO_CUBIC_SMOOTH_REL = std::to_underlying(SVGPathSegType::CurveToCubicSmoothRel),
-        PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS = std::to_underlying(SVGPathSegType::CurveToQuadraticSmoothAbs),
-        PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL = std::to_underlying(SVGPathSegType::CurveToQuadraticSmoothRel)
-    };
-
-    virtual SVGPathSegType pathSegType() const = 0;
-    unsigned short pathSegTypeForBindings() const { return static_cast<unsigned short>(pathSegType()); }
-    virtual String pathSegTypeAsLetter() const = 0;
-    virtual Ref<SVGPathSeg> clone() const = 0;
-
-protected:
-    using SVGProperty::SVGProperty;
-};
-
 } // namespace WebCore
-
-#define SPECIALIZE_TYPE_TRAITS_SVGPATHSEG(ToValueTypeName, PathSegTypeName) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-static bool isType(const WebCore::SVGPathSeg& object) { return object.pathSegType() == WebCore::SVGPathSegType::PathSegTypeName; } \
-SPECIALIZE_TYPE_TRAITS_END()

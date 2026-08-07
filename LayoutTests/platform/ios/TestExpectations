@@ -4991,14 +4991,7 @@ svg/animations/animate-color-rgba-calcMode-discrete.html
 svg/animations/animate-end-attribute.html
 svg/animations/animate-endElement-beginElement.html
 svg/animations/animate-mpath-insert.html
-svg/animations/animate-path-animation-Cc-Ss.html
-svg/animations/animate-path-animation-Ll-Vv-Hh.html
-svg/animations/animate-path-animation-Qq-Tt.html
-svg/animations/animate-path-animation-cC-sS-inverse.html
-svg/animations/animate-path-animation-lL-vV-hH-inverse.html
-svg/animations/animate-path-animation-qQ-tT-inverse.html
 svg/animations/animate-path-nested-transforms.html
-svg/animations/animate-path-to-animation.html
 svg/animations/animate-text-nested-transforms.html
 svg/animations/animateTransform-translate-attributetype-auto.html
 svg/animations/animateTransform-translate-invalid-attributetype.html
@@ -5006,7 +4999,6 @@ svg/animations/deferred-insertion.html
 svg/animations/svgPreserveAspectRatio-animation-1.html
 svg/animations/svglength-animation-px-to-exs.html
 svg/animations/svglength-animation-px-to-percentage.html
-svg/animations/svgpath-animation-1.html
 svg/animations/use-animate-transform-and-position.html
 svg/animations/use-animate-width-and-height.html [ Skip ]
 svg/custom/gradient-attr-update.svg

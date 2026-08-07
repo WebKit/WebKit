@@ -25,7 +25,7 @@ PASS SVGMissingGlyphElement interface must be removed
 PASS SVGTransformable interface must be removed
 PASS SVGTRefElement interface must be removed
 PASS SVGPaint interface must be removed
-FAIL SVGPathSeg interface must be removed assert_false: expected false got true
+PASS SVGPathSeg interface must be removed
 PASS SVGStylable interface must be removed
 PASS SVGUnknownElement interface must be removed
 PASS SVGVKernElement interface must be removed

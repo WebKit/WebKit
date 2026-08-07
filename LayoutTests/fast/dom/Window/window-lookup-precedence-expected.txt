@@ -257,8 +257,6 @@ PASS 'function SVGLength() {    [native code]}' is 'function SVGLength() {    [n
 PASS 'function SVGLength() {    [native code]}' is 'function SVGLength() {    [native code]}'
 PASS 'function SVGMarkerElement() {    [native code]}' is 'function SVGMarkerElement() {    [native code]}'
 PASS 'function SVGMarkerElement() {    [native code]}' is 'function SVGMarkerElement() {    [native code]}'
-PASS 'function SVGPathSeg() {    [native code]}' is 'function SVGPathSeg() {    [native code]}'
-PASS 'function SVGPathSeg() {    [native code]}' is 'function SVGPathSeg() {    [native code]}'
 PASS 'function SVGPreserveAspectRatio() {    [native code]}' is 'function SVGPreserveAspectRatio() {    [native code]}'
 PASS 'function SVGPreserveAspectRatio() {    [native code]}' is 'function SVGPreserveAspectRatio() {    [native code]}'
 PASS 'function SVGTextContentElement() {    [native code]}' is 'function SVGTextContentElement() {    [native code]}'

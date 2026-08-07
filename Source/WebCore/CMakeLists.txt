@@ -1630,27 +1630,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGNumber.idl
     svg/SVGNumberList.idl
     svg/SVGPathElement.idl
-    svg/SVGPathSeg.idl
-    svg/SVGPathSegArcAbs.idl
-    svg/SVGPathSegArcRel.idl
-    svg/SVGPathSegClosePath.idl
-    svg/SVGPathSegCurvetoCubicAbs.idl
-    svg/SVGPathSegCurvetoCubicRel.idl
-    svg/SVGPathSegCurvetoCubicSmoothAbs.idl
-    svg/SVGPathSegCurvetoCubicSmoothRel.idl
-    svg/SVGPathSegCurvetoQuadraticAbs.idl
-    svg/SVGPathSegCurvetoQuadraticRel.idl
-    svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl
-    svg/SVGPathSegCurvetoQuadraticSmoothRel.idl
-    svg/SVGPathSegLinetoAbs.idl
-    svg/SVGPathSegLinetoHorizontalAbs.idl
-    svg/SVGPathSegLinetoHorizontalRel.idl
-    svg/SVGPathSegLinetoRel.idl
-    svg/SVGPathSegLinetoVerticalAbs.idl
-    svg/SVGPathSegLinetoVerticalRel.idl
-    svg/SVGPathSegList.idl
-    svg/SVGPathSegMovetoAbs.idl
-    svg/SVGPathSegMovetoRel.idl
     svg/SVGPatternElement.idl
     svg/SVGPoint.idl
     svg/SVGPointList.idl
