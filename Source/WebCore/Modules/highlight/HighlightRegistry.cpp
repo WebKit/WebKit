@@ -35,6 +35,7 @@
 #include "JSHighlight.h"
 #include "NodeDocument.h"
 #include "RenderObject.h"
+#include "ShadowRoot.h"
 #include "SimpleRange.h"
 #include "StaticRange.h"
 #include <algorithm>
@@ -47,11 +48,21 @@ void HighlightRegistry::initializeMapLike(DOMMapAdapter& map)
         map.set<IDLDOMString, IDLInterface<Highlight>>(keyValue.key, keyValue.value);
 }
 
-Vector<HighlightHitResult> HighlightRegistry::highlightsFromPoint(Document& document, float x, float y, HighlightsFromPointOptions&&)
+Vector<HighlightHitResult> HighlightRegistry::highlightsFromPoint(Document& document, float x, float y, HighlightsFromPointOptions&& options)
 {
     document.updateLayout();
 
     FloatPoint point { x, y };
+
+    auto reachableGivenShadowRoots = [&](const Ref<Node>& node) {
+        for (RefPtr shadowRoot = node->containingShadowRoot(); shadowRoot;) {
+            if (!options.shadowRoots.containsIf([&](auto& allowed) { return allowed.ptr() == shadowRoot.get(); }))
+                return false;
+            RefPtr host = shadowRoot->host();
+            shadowRoot = host ? host->containingShadowRoot() : nullptr;
+        }
+        return true;
+    };
 
     struct HitCandidate {
         int priority { 0 };
@@ -73,13 +84,17 @@ Vector<HighlightHitResult> HighlightRegistry::highlightsFromPoint(Document& docu
             if (abstractRange->collapsed())
                 continue;
 
-            if (&abstractRange->startContainer().document() != &document)
+            Ref startContainer = abstractRange->startContainer();
+            if (&startContainer->document() != &document)
+                continue;
+
+            if (!reachableGivenShadowRoots(startContainer))
                 continue;
 
             if (RefPtr staticRange = dynamicDowncast<StaticRange>(abstractRange.get()); staticRange && !staticRange->computeValidity())
                 continue;
 
-            for (auto& rect : RenderObject::clientBorderAndTextRects(makeSimpleRange(abstractRange))) {
+            for (auto& rect : RenderObject::clientTextRects(makeSimpleRange(abstractRange))) {
                 if (rect.contains(point)) {
                     matchingRanges.append(WTF::move(abstractRange));
                     break;

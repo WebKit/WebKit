@@ -863,6 +863,7 @@ public:
     WEBCORE_EXPORT static Vector<IntRect> absoluteTextRects(const SimpleRange&, OptionSet<BoundingRectBehavior> = { });
     WEBCORE_EXPORT static Vector<FloatRect> absoluteBorderAndTextRects(const SimpleRange&, OptionSet<BoundingRectBehavior> = { });
     static Vector<FloatRect> clientBorderAndTextRects(const SimpleRange&);
+    static Vector<FloatRect> clientTextRects(const SimpleRange&);
 
     // the rect that will be painted if this object is passed as the subtree paint root
     enum class RespectTransforms : bool { No, Yes };

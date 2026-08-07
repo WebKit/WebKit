@@ -2283,7 +2283,9 @@ static RefPtr<Node> nodeAfter(const BoundaryPoint& point)
 
 enum class CoordinateSpace { Client, Absolute };
 
-static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, CoordinateSpace space, OptionSet<RenderObject::BoundingRectBehavior> behavior)
+enum class TextOnly : bool { No, Yes };
+
+static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, CoordinateSpace space, OptionSet<RenderObject::BoundingRectBehavior> behavior, TextOnly textOnly = TextOnly::No)
 {
     Vector<FloatRect> rects;
 
@@ -2306,7 +2308,7 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
 
     for (Ref node : intersectingNodesWithDeprecatedZeroOffsetStartQuirk(range)) {
         auto* element = dynamicDowncast<Element>(node.get());
-        if (element && selectedElementsSet.contains(element) && (useVisibleBounds || !node->parentElement() || !selectedElementsSet.contains(node->parentElement()))) {
+        if (textOnly == TextOnly::No && element && selectedElementsSet.contains(element) && (useVisibleBounds || !node->parentElement() || !selectedElementsSet.contains(node->parentElement()))) {
             if (CheckedPtr renderer = element->renderBoxModelObject()) {
                 if (useVisibleBounds) {
                     auto localBounds = renderer->borderBoundingBox();
@@ -2365,6 +2367,11 @@ Vector<FloatRect> RenderObject::absoluteBorderAndTextRects(const SimpleRange& ra
 Vector<FloatRect> RenderObject::clientBorderAndTextRects(const SimpleRange& range)
 {
     return borderAndTextRects(range, CoordinateSpace::Client, { });
+}
+
+Vector<FloatRect> RenderObject::clientTextRects(const SimpleRange& range)
+{
+    return borderAndTextRects(range, CoordinateSpace::Client, { }, TextOnly::Yes);
 }
 
 ScrollAnchoringController* RenderObject::searchParentChainForScrollAnchoringController(const RenderObject& renderer)
