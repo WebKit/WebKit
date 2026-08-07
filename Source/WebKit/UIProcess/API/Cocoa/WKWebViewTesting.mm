@@ -37,6 +37,7 @@
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "SuspendedPageProxy.h"
 #import "UserMediaProcessManager.h"
 #import "ViewGestureController.h"
 #import "ViewSnapshotStore.h"
@@ -1033,6 +1034,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #else
     completionHandler(nil);
 #endif
+}
+
++ (NSUInteger)_suspendedRemotePageNetworkActivityCountForTesting
+{
+    return WebKit::SuspendedPageProxy::remotePagesWithNetworkActivityCountForTesting();
 }
 
 - (BOOL)_hasAccessibilityActivityForTesting

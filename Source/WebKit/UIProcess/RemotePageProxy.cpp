@@ -223,6 +223,9 @@ void RemotePageProxy::injectPageIntoNewProcess()
 
 void RemotePageProxy::processDidTerminate(WebProcessProxy& process, ProcessTerminationReason reason)
 {
+    m_processActivityState->reset();
+    m_processActivityState->dropNetworkActivity();
+
     RefPtr page = m_page.get();
     if (!page)
         return;
