@@ -24,8 +24,8 @@
 #include "Path.h"
 #include "SVGGeometryElement.h"
 #include "SVGNames.h"
+#include "SVGPath.h"
 #include "SVGPathByteStream.h"
-#include "SVGPathSegList.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -46,7 +46,7 @@ public:
 
     const SVGPathByteStream& pathByteStream() const;
     Path path() const;
-    size_t approximateMemoryCost() const final { return m_pathSegList->approximateMemoryCost(); }
+    size_t approximateMemoryCost() const final { return m_path->approximateMemoryCost(); }
 
     void pathDidChange();
 
@@ -74,7 +74,7 @@ private:
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
     void collectDPresentationalHint(MutableStyleProperties&);
 
-    const Ref<SVGAnimatedPathSegList> m_pathSegList { SVGAnimatedPathSegList::create(this) };
+    const Ref<SVGAnimatedPath> m_path { SVGAnimatedPath::create(this) };
 };
 
 } // namespace WebCore

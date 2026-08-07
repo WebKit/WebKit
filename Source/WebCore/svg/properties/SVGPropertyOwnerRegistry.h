@@ -129,10 +129,10 @@ public:
         registerProperty(attributeName, SVGAnimatedAngleOrientAccessor<OwnerType>::template singleton<property1, property2>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedPathSegList> OwnerType::*property>
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedPath> OwnerType::*property>
     static void registerProperty()
     {
-        registerProperty(attributeName, SVGAnimatedPathSegListAccessor<OwnerType>::template singleton<property>());
+        registerProperty(attributeName, SVGAnimatedPathAccessor<OwnerType>::template singleton<property>());
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedPointList> OwnerType::*property>

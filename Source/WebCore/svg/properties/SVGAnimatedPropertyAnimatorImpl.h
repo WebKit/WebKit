@@ -226,19 +226,19 @@ private:
     }
 };
 
-class SVGAnimatedPathSegListAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedPathSegList, SVGAnimationPathSegListFunction> {
-    WTF_MAKE_TZONE_ALLOCATED(SVGAnimatedPathSegListAnimator);
-    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedPathSegList, SVGAnimationPathSegListFunction>;
+class SVGAnimatedPathAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedPath, SVGAnimationPathFunction> {
+    WTF_MAKE_TZONE_ALLOCATED(SVGAnimatedPathAnimator);
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedPath, SVGAnimationPathFunction>;
     using Base::Base;
 
 public:
-    static auto create(const QualifiedName& attributeName, const Ref<SVGAnimatedPathSegList>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    static auto create(const QualifiedName& attributeName, const Ref<SVGAnimatedPath>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return adoptRef(*new SVGAnimatedPathSegListAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
+        return adoptRef(*new SVGAnimatedPathAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
     }
 
 private:
-    SVGAnimatorType animatorType() const final { return SVGAnimatorType::PathSegList; }
+    SVGAnimatorType animatorType() const final { return SVGAnimatorType::Path; }
 
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
@@ -435,8 +435,8 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedNumberListAnimator)
     static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::NumberList; }
 SPECIALIZE_TYPE_TRAITS_END()
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedPathSegListAnimator)
-    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::PathSegList; }
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedPathAnimator)
+    static bool isType(const WebCore::SVGAttributeAnimator& animator) { return animator.animatorType() == WebCore::SVGAnimatorType::Path; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGAnimatedPointListAnimator)

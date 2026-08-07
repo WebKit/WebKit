@@ -252,7 +252,7 @@ private:
     }
 };
 
-class SVGAnimationPathSegListFunction : public SVGAnimationAdditiveValueFunction<SVGPathByteStream> {
+class SVGAnimationPathFunction : public SVGAnimationAdditiveValueFunction<SVGPathByteStream> {
 public:
     using Base = SVGAnimationAdditiveValueFunction<SVGPathByteStream>;
     using Base::Base;

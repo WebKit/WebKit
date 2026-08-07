@@ -71,7 +71,7 @@ enum class SVGAnimatorType : uint8_t {
     NumberList,
     NumberPair,
     OrientType,
-    PathSegList,
+    Path,
     PointList,
     PreserveAspectRatio,
     Rect,

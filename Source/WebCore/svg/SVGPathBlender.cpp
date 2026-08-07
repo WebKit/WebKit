@@ -22,7 +22,7 @@
 #include "SVGPathBlender.h"
 
 #include "AnimationUtilities.h"
-#include "SVGPathSeg.h"
+#include "SVGPathSegType.h"
 #include "SVGPathSource.h"
 #include <functional>
 #include <wtf/SetForScope.h>

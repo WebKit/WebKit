@@ -200,24 +200,24 @@ private:
 };
 
 template<typename OwnerType>
-class SVGAnimatedPathSegListAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedPathSegList> {
-    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedPathSegList>;
+class SVGAnimatedPathAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedPath> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedPath>;
     using Base::property;
 
 public:
     using Base::Base;
     template<auto property>
-    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedPathSegListAccessor, property>(); }
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedPathAccessor, property>(); }
 
 private:
     RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
     {
-        return SVGAnimatedPathSegListAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive);
+        return SVGAnimatedPathAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive);
     }
 
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
-        downcast<SVGAnimatedPathSegListAnimator>(animator).appendAnimatedInstance(property(owner));
+        downcast<SVGAnimatedPathAnimator>(animator).appendAnimatedInstance(property(owner));
     }
 };
 

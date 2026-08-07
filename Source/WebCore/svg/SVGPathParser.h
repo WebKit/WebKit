@@ -24,7 +24,7 @@
 #pragma once
 
 #include "SVGPathConsumer.h"
-#include "SVGPathSeg.h"
+#include "SVGPathSegType.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

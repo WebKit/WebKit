@@ -21,7 +21,7 @@
 #pragma once
 
 #include "FloatPoint.h"
-#include "SVGPathSeg.h"
+#include "SVGPathSegType.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

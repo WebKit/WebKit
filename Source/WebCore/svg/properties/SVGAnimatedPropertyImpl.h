@@ -36,7 +36,7 @@
 #include "SVGLengthList.h"
 #include "SVGMarkerTypes.h"
 #include "SVGNumberList.h"
-#include "SVGPathSegList.h"
+#include "SVGPath.h"
 #include "SVGPointList.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGRect.h"
@@ -70,14 +70,14 @@ public:
     }
 };
 
-class SVGAnimatedPathSegList : public SVGAnimatedPropertyList<SVGPathSegList> {
-    using Base = SVGAnimatedPropertyList<SVGPathSegList>;
+class SVGAnimatedPath : public SVGAnimatedPropertyList<SVGPath> {
+    using Base = SVGAnimatedPropertyList<SVGPath>;
     using Base::Base;
 
 public:
-    static Ref<SVGAnimatedPathSegList> create(SVGElement* contextElement)
+    static Ref<SVGAnimatedPath> create(SVGElement* contextElement)
     {
-        return adoptRef(*new SVGAnimatedPathSegList(contextElement));
+        return adoptRef(*new SVGAnimatedPath(contextElement));
     }
 
     SVGPathByteStream& currentPathByteStream()

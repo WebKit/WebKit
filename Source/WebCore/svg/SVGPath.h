@@ -27,25 +27,22 @@
 
 namespace WebCore {
 
-// SVG2 removed the SVGPathSegList and SVGPathSeg* DOM interfaces, so this class
-// no longer exposes a list of path segments. It is now simply the owner of the
-// SVGPathByteStream that backs the "d" attribute, used for rendering and SMIL
-// animation. The name is kept to minimize churn in the animated-property glue.
-class SVGPathSegList final : public SVGProperty {
-    friend class SVGAnimatedPathSegListAnimator;
+// Owner of the SVGPathByteStream that backs the "d" attribute, used for rendering and SMIL animation.
+class SVGPath final : public SVGProperty {
+    friend class SVGAnimatedPathAnimator;
 
 public:
-    static Ref<SVGPathSegList> create(SVGPropertyOwner* owner, SVGPropertyAccess access)
+    static Ref<SVGPath> create(SVGPropertyOwner* owner, SVGPropertyAccess access)
     {
-        return adoptRef(*new SVGPathSegList(owner, access));
+        return adoptRef(*new SVGPath(owner, access));
     }
 
-    static Ref<SVGPathSegList> create(const SVGPathSegList& other, SVGPropertyAccess access)
+    static Ref<SVGPath> create(const SVGPath& other, SVGPropertyAccess access)
     {
-        return adoptRef(*new SVGPathSegList(other, access));
+        return adoptRef(*new SVGPath(other, access));
     }
 
-    SVGPathSegList& operator=(const SVGPathSegList& other)
+    SVGPath& operator=(const SVGPath& other)
     {
         pathByteStreamWillChange();
         m_pathByteStream = other.pathByteStream();
@@ -100,18 +97,18 @@ public:
     }
 
 private:
-    SVGPathSegList(SVGPropertyOwner* owner, SVGPropertyAccess access)
+    SVGPath(SVGPropertyOwner* owner, SVGPropertyAccess access)
         : SVGProperty(owner, access)
     {
     }
 
-    SVGPathSegList(const SVGPathSegList& other, SVGPropertyAccess access)
+    SVGPath(const SVGPath& other, SVGPropertyAccess access)
         : SVGProperty(other.m_owner, access)
         , m_pathByteStream(other.pathByteStream())
     {
     }
 
-    // Called by SVGAnimatedPathSegListAnimator before writing a new animated byte stream.
+    // Called by SVGAnimatedPathAnimator before writing a new animated byte stream.
     void pathByteStreamWillChange() { m_path = std::nullopt; }
 
     SVGPathByteStream m_pathByteStream;
