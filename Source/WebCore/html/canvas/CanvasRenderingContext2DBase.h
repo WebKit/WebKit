@@ -335,6 +335,9 @@ public:
 
         String unparsedFont;
         FontProxy font;
+        // The font description `unparsedFont` was resolved against. Relative values in the font
+        // shorthand depend on it, so `font` is stale once it no longer matches the canvas element.
+        FontCascadeDescription fontResolutionBase;
 
         RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
 

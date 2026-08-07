@@ -1,0 +1,9 @@
+
+PASS Re-setting the same percentage font string picks up the new font-size of the canvas
+PASS Re-setting the same em font string picks up the new font-size of the canvas
+PASS Re-setting the same relative font string picks up a font-size inherited from an ancestor
+PASS The font used for measuring and drawing is re-resolved, not just the serialization
+PASS Absolute font sizes are not affected by the font-size of the canvas
+PASS Changing the font-size of the canvas does not by itself re-resolve the font
+PASS Save and restore keep the font resolved at the time each state was saved
+

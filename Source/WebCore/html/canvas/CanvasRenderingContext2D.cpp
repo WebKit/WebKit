@@ -221,18 +221,12 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     if (newFont.isEmpty())
         return;
 
-    if (newFont == state().unparsedFont && state().font.realized())
-        return;
-
     Ref canvas = this->canvas();
     Ref document = canvas->document();
 
-    // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
-    // the "inherit" and "initial" values must be ignored. CSSPropertyParserHelpers::parseUnresolvedFont() ignores these.
-    auto unresolvedFont = CSSPropertyParserHelpers::parseUnresolvedFont(newFont, document.get(), strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
-    if (!unresolvedFont)
-        return;
-
+    // Relative values in the font shorthand ('%', 'em', 'larger', ...) are resolved against the
+    // canvas element's computed style at the time the font is set, so setting the same string again
+    // has to re-resolve if that style changed in the meantime.
     FontCascadeDescription fontDescription;
     if (CheckedPtr computedStyle = canvas->computedStyle())
         fontDescription = FontCascadeDescription { computedStyle->fontDescription() };
@@ -243,15 +237,25 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
         fontDescription.setComputedSize(DefaultFontSize);
     }
 
+    if (newFont == state().unparsedFont && state().font.realized() && fontDescription == state().fontResolutionBase)
+        return;
+
+    // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
+    // the "inherit" and "initial" values must be ignored. CSSPropertyParserHelpers::parseUnresolvedFont() ignores these.
+    auto unresolvedFont = CSSPropertyParserHelpers::parseUnresolvedFont(newFont, document.get(), strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
+    if (!unresolvedFont)
+        return;
+
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
-    auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTF::move(fontDescription), document.get());
+    auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, FontCascadeDescription { fontDescription }, document.get());
     if (!fontCascade)
         return;
 
     String newFontSafeCopy(newFont); // Create a string copy since newFont can be deleted inside realizeSaves.
     realizeSaves();
     modifiableState().unparsedFont = newFontSafeCopy;
+    modifiableState().fontResolutionBase = WTF::move(fontDescription);
 
     modifiableState().font.initialize(protect(document->fontSelector()), *fontCascade);
     ASSERT(state().font.realized());
