@@ -930,7 +930,7 @@ bool LineLayout::isSelfCollapsingContent() const
             return false;
         if (line.hasBlockLevelBox()) {
             auto blockLevelBox = [&]() -> RenderBox* {
-                for (auto index = line.firstBoxIndex(); index < line.lastBoxIndex(); ++index) {
+                for (auto index = line.firstBoxIndex(); index <= line.lastBoxIndex(); ++index) {
                     if (displayContent.boxes[index].isBlockLevelBox())
                         return dynamicDowncast<RenderBox>(displayContent.boxes[index].layoutBox().rendererForIntegration());
                     ASSERT(displayContent.boxes[index].isInlineBox());
