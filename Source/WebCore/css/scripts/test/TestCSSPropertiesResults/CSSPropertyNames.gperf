@@ -680,6 +680,18 @@ bool CSSProperty::disablesNativeAppearance(CSSPropertyID id)
     }
 }
 
+bool CSSProperty::appliesToHighlightPseudoElements(CSSPropertyID id)
+{
+    switch (id) {
+    case CSSPropertyID::CSSPropertyTestColor:
+    case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
+        return true;
+    default:
+        return false;
+    }
+}
+
 bool CSSProperty::isTestGroupProperty(CSSPropertyID id)
 {
     switch (id) {

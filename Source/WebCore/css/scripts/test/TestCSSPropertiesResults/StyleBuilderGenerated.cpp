@@ -115,6 +115,18 @@ public:
         if (builderState.applyPropertyToVisitedLinkStyle())
             builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(forwardInheritedValue(builderState.parentStyle().testColorPropertyWithVisitedLinkSupport()));
     }
+    static void applyHighlightInheritTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState)
+    {
+        if (!builderState.parentHighlightStyle()) {
+            applyInitialTestColorPropertyWithVisitedLinkSupport(builderState);
+            return;
+        }
+
+        if (builderState.applyPropertyToRegularStyle())
+            builderState.style().setTestColorPropertyWithVisitedLinkSupport(forwardInheritedValue(builderState.parentHighlightStyle()->testColorPropertyWithVisitedLinkSupport()));
+        if (builderState.applyPropertyToVisitedLinkStyle())
+            builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(forwardInheritedValue(builderState.parentHighlightStyle()->testColorPropertyWithVisitedLinkSupport()));
+    }
     static void applyValueTestColorPropertyWithVisitedLinkSupport(BuilderState& builderState, CSSValue& value)
     {
         if (builderState.applyPropertyToRegularStyle())
@@ -131,6 +143,16 @@ public:
     {
         builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(forwardInheritedValue(builderState.parentStyle().testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin()));
         builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.isAuthorOrigin());
+    }
+    static void applyHighlightInheritTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
+    {
+        if (!builderState.parentHighlightStyle()) {
+            applyInitialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState);
+            return;
+        }
+
+        builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(forwardInheritedValue(builderState.parentHighlightStyle()->testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin()));
+        builderState.style().setHasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState.parentHighlightStyle()->hasExplicitlySetTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
     }
     static void applyValueTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState, CSSValue& value)
     {
@@ -771,6 +793,40 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
         ASSERT_NOT_REACHED();
         break;
     }
+}
+
+void BuilderGenerated::applyHighlightInheritAllProperties(BuilderState& builderState)
+{
+    ASSERT(builderState.isBuildingHighlightStyle());
+
+    BuilderFunctions::applyHighlightInheritTestColorPropertyWithVisitedLinkSupport(builderState);
+    BuilderFunctions::applyHighlightInheritTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState);
+}
+
+void BuilderGenerated::applyHighlightProperty(CSSPropertyID id, BuilderState& builderState, CSSValue& value, ApplyValueType valueType)
+{
+    ASSERT(builderState.isBuildingHighlightStyle());
+    ASSERT(CSSProperty::appliesToHighlightPseudoElements(id));
+
+    switch (id) {
+    case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:
+        if (valueType == ApplyValueType::Inherit) {
+            BuilderFunctions::applyHighlightInheritTestColorPropertyWithVisitedLinkSupport(builderState);
+            return;
+        }
+        break;
+    case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
+        if (valueType == ApplyValueType::Inherit) {
+            BuilderFunctions::applyHighlightInheritTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(builderState);
+            return;
+        }
+        break;
+    default:
+        break;
+    }
+
+    // Everything else is not specific to highlight pseudo-elements.
+    applyProperty(id, builderState, value, valueType);
 }
 
 } // namespace WebCore

@@ -26,13 +26,21 @@
 
 #pragma once
 
+#include "PseudoElementIdentifier.h"
 #include "StyleBuilderState.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleZoom.h"
 
 namespace WebCore {
 namespace Style {
+
+inline bool BuilderState::isBuildingHighlightStyle() const
+{
+    auto pseudoElementType = m_style.pseudoElementType();
+    return pseudoElementType && isHighlightPseudoElement(*pseudoElementType);
+}
 
 inline void BuilderState::setTextOrientation(TextOrientation orientation) { m_fontDirty |= m_style.setTextOrientation(orientation); }
 inline void BuilderState::setWritingMode(StyleWritingMode mode) { m_fontDirty |= m_style.setWritingMode(mode); }

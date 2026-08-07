@@ -77,6 +77,9 @@ struct UnadjustedStyle;
 
 struct ResolutionContext {
     const Style::ComputedStyle* parentStyle;
+    // For highlight pseudo-elements: the corresponding highlight pseudo-element style of the
+    // originating element's parent. https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+    const Style::ComputedStyle* parentHighlightStyle { nullptr };
     const Style::ComputedStyle* parentBoxStyle { nullptr };
     // This needs to be provided during style resolution when up-to-date document element style is not available via DOM.
     const Style::ComputedStyle* documentElementStyle { nullptr };

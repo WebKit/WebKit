@@ -107,6 +107,9 @@ public:
 
     static void applyInitialColor(BuilderState&);
     static void applyValueColor(BuilderState&, CSSValue&);
+    static void applyHighlightInitialColor(BuilderState&);
+    static void applyHighlightInheritColor(BuilderState&);
+    static void applyHighlightValueColor(BuilderState&, CSSValue&);
 
     // Custom handling of value setting only.
     static void applyValueWebkitLocale(BuilderState&, CSSValue&);
@@ -703,6 +706,46 @@ inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue&
 
     builderState.style().setDisallowsFastPathInheritance();
     builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin());
+}
+
+inline void BuilderCustom::applyHighlightInitialColor(BuilderState& builderState)
+{
+    applyInitialColor(builderState);
+    builderState.style().setColorIsCurrentColorForHighlight(false);
+}
+
+// currentcolor in a highlight pseudo-element is the originating element's color, so the chain
+// inherits the keyword rather than the color it resolved to. At the start of the chain the inherited
+// value is currentColor. https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+// FIXME: A value that only references currentcolor, like color-mix(in oklab, teal, currentcolor),
+// still propagates as the color it resolved to. Resolving those per element needs the unresolved
+// Style::Color, which the color property doesn't store, and no engine does it today.
+inline void BuilderCustom::applyHighlightInheritColor(BuilderState& builderState)
+{
+    CheckedPtr parentHighlightStyle = builderState.parentHighlightStyle();
+    auto isCurrentColor = !parentHighlightStyle || parentHighlightStyle->colorIsCurrentColorForHighlight();
+    auto& sourceStyle = isCurrentColor ? builderState.parentStyle() : *parentHighlightStyle;
+
+    if (builderState.applyPropertyToRegularStyle()) {
+        builderState.style().setColor(forwardInheritedValue(sourceStyle.color()));
+        // FIXME: visitedLinkColor needs its own bit for this.
+        builderState.style().setColorIsCurrentColorForHighlight(isCurrentColor);
+    }
+    if (builderState.applyPropertyToVisitedLinkStyle())
+        builderState.style().setVisitedLinkColor(forwardInheritedValue(sourceStyle.color()));
+
+    builderState.style().setDisallowsFastPathInheritance();
+    // The seeding pass has no declaration to take the origin from, so it comes from the source.
+    // FIXME: When the source is the originating element, its own color counts as one the highlight set.
+    builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin() || sourceStyle.hasExplicitlySetColor());
+}
+
+inline void BuilderCustom::applyHighlightValueColor(BuilderState& builderState, CSSValue& value)
+{
+    applyValueColor(builderState, value);
+
+    if (builderState.applyPropertyToRegularStyle())
+        builderState.style().setColorIsCurrentColorForHighlight(valueID(value) == CSSValueCurrentcolor);
 }
 
 } // namespace Style

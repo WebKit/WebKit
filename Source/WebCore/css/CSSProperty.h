@@ -139,6 +139,10 @@ public:
 
     static bool disablesNativeAppearance(CSSPropertyID);
 
+    // Properties that apply to the highlight pseudo-elements.
+    // https://drafts.csswg.org/css-pseudo-4/#highlight-styling
+    static bool NODELETE appliesToHighlightPseudoElements(CSSPropertyID);
+
     // Returns the valid keyword values for a property from CSSProperties.json.
     // This is used by the Inspector to provide completions for properties
     // that aren't keyword-fast-path eligible but still have enumerated values.

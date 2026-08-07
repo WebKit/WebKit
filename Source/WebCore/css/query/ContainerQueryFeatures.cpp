@@ -291,10 +291,10 @@ struct StyleFeatureSchema : public FeatureSchema {
 
             // Resolve the queried custom property value for var() references, css-wide keywords and registered properties.
             auto builderContext = Style::BuilderContext {
-                context.document.get(),
-                context.conversionData.parentStyle(),
-                context.conversionData.rootStyle(),
-                context.conversionData.elementForContainerUnitResolution()
+                .document = context.document.get(),
+                .parentStyle = context.conversionData.parentStyle(),
+                .rootElementStyle = context.conversionData.rootStyle(),
+                .element = context.conversionData.elementForContainerUnitResolution()
             };
 
             auto dummyStyle = Style::ComputedStyle::clone(*style);
@@ -326,10 +326,10 @@ struct StyleFeatureSchema : public FeatureSchema {
         auto ensureBuilder = [&]() -> Style::Builder& {
             if (!styleBuilder) {
                 auto builderContext = Style::BuilderContext {
-                    context.document.get(),
-                    context.conversionData.parentStyle(),
-                    context.conversionData.rootStyle(),
-                    context.conversionData.elementForContainerUnitResolution()
+                    .document = context.document.get(),
+                    .parentStyle = context.conversionData.parentStyle(),
+                    .rootElementStyle = context.conversionData.rootStyle(),
+                    .element = context.conversionData.elementForContainerUnitResolution()
                 };
                 dummyStyle = Style::ComputedStyle::clonePtr(style);
                 dummyMatchResult = Style::MatchResult::create();

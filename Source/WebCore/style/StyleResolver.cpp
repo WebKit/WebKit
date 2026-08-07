@@ -59,6 +59,7 @@
 #include "NodeInlinesLight.h"
 #include "NodeRenderStyle.h"
 #include "PageRuleCollector.h"
+#include "PseudoElementIdentifier.h"
 #include "RenderScrollbar.h"
 #include "RenderStyleConstants.h"
 #include "RenderView.h"
@@ -75,6 +76,7 @@
 #include "SharedStringHash.h"
 #include "StyleAdjuster.h"
 #include "StyleBuilder.h"
+#include "StyleBuilderStateInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleEasingFunction.h"
@@ -114,9 +116,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Resolver);
 class Resolver::State {
 public:
     State() = default;
-    State(const Element& element, const Style::ComputedStyle* parentStyle, const Style::ComputedStyle* documentElementStyle, TreeResolutionState* treeResolutionState)
+    State(const Element& element, const Style::ComputedStyle* parentStyle, const Style::ComputedStyle* documentElementStyle, TreeResolutionState* treeResolutionState, const Style::ComputedStyle* parentHighlightStyle = nullptr)
         : m_element(&element)
         , m_parentStyle(parentStyle)
+        , m_parentHighlightStyle(parentHighlightStyle)
         , m_treeResolutionState(treeResolutionState)
     {
         ASSERT(element.isConnected());
@@ -145,6 +148,7 @@ public:
         m_parentStyle = m_ownedParentStyle.get();
     }
     const Style::ComputedStyle* NODELETE parentStyle() const { return m_parentStyle; }
+    const Style::ComputedStyle* NODELETE parentHighlightStyle() const { return m_parentHighlightStyle; }
     const Style::ComputedStyle* NODELETE rootElementStyle() const { return m_rootElementStyle; }
 
     CheckedPtr<TreeResolutionState> NODELETE treeResolutionState() { return m_treeResolutionState; }
@@ -153,6 +157,7 @@ private:
     const Element* m_element { };
     std::unique_ptr<Style::ComputedStyle> m_style;
     const Style::ComputedStyle* m_parentStyle { };
+    const Style::ComputedStyle* m_parentHighlightStyle { };
     std::unique_ptr<const Style::ComputedStyle> m_ownedParentStyle;
     const Style::ComputedStyle* m_rootElementStyle { };
 
@@ -285,11 +290,12 @@ auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionC
 BuilderContext Resolver::builderContext(State& state) const
 {
     return {
-        document(),
-        state.parentStyle(),
-        state.rootElementStyle(),
-        state.element(),
-        state.treeResolutionState()
+        .document = document(),
+        .parentStyle = state.parentStyle(),
+        .parentHighlightStyle = state.parentHighlightStyle(),
+        .rootElementStyle = state.rootElementStyle(),
+        .element = state.element(),
+        .treeResolutionState = state.treeResolutionState()
     };
 }
 
@@ -304,8 +310,14 @@ UnadjustedStyle Resolver::unadjustedStyleForElement(Element& element, const Reso
     collector.setMedium(m_mediaQueryEvaluator);
     collector.matchAllRules(m_matchAuthorAndUserStyles, matchingBehavior != RuleMatchingBehavior::MatchAllRulesExcludingSMIL);
 
-    if (collector.matchedPseudoElements())
-        style.setHasPseudoStyles(collector.matchedPseudoElements());
+    auto matchedPseudoElements = collector.matchedPseudoElements();
+    // https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+    // A highlight pseudo-element exists whenever it exists for the parent element, since it inherits
+    // from it even with no rules of its own.
+    if (state.parentStyle())
+        matchedPseudoElements.add(state.parentStyle()->highlightPseudoElementTypes());
+    if (matchedPseudoElements)
+        style.setHasPseudoStyles(matchedPseudoElements);
 
     auto elementStyleRelations = commitRelationsToRenderStyle(style, element, collector.styleRelations());
 
@@ -560,9 +572,38 @@ bool Resolver::keyframeStylesForAnimation(Element& element, const Style::Compute
     return true;
 }
 
+// Resolves the chain lazily, one level per style, each cached in the ancestor's style. Meant for
+// callers outside style resolution, where the ancestor styles are current. During resolution the
+// parent highlight style comes in with the ResolutionContext.
+// FIXME: It is still reached during tree resolution when the parent has no highlight style cached
+// for this identifier, and then reads and caches into the style being replaced.
+static const Style::ComputedStyle* parentHighlightStyleIgnoringPendingUpdate(const Element& element, const PseudoElementIdentifier& pseudoElementIdentifier)
+{
+    RefPtr parentElement = element.parentElementInComposedTree();
+    if (!parentElement)
+        return nullptr;
+
+    CheckedPtr parentStyle = parentElement->existingComputedStyle();
+    if (!parentStyle)
+        return nullptr;
+
+    if (auto* highlightStyle = parentStyle->pseudoElementStyle(pseudoElementIdentifier))
+        return highlightStyle;
+
+    auto resolvedStyle = protect(parentElement->styleResolver())->styleForPseudoElement(*parentElement, pseudoElementIdentifier, { .parentStyle = parentStyle.get() });
+    if (!resolvedStyle)
+        return nullptr;
+
+    return const_cast<Style::ComputedStyle&>(*parentStyle).addPseudoElementStyle(WTF::move(resolvedStyle->style));
+}
+
 std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)
 {
-    auto state = State(element, context.parentStyle, context.documentElementStyle, context.treeResolutionState.get());
+    auto parentHighlightStyle = context.parentHighlightStyle;
+    if (!parentHighlightStyle && isHighlightPseudoElement(pseudoElementRequest.type()))
+        parentHighlightStyle = parentHighlightStyleIgnoringPendingUpdate(element, pseudoElementRequest.identifier());
+
+    auto state = State(element, context.parentStyle, context.documentElementStyle, context.treeResolutionState.get(), parentHighlightStyle);
 
     if (state.parentStyle()) {
         state.setStyle(Style::ComputedStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry()));
@@ -584,7 +625,9 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, c
 
     ASSERT(!collector.matchedPseudoElements());
 
-    if (collector.matchResult().isEmpty())
+    // A highlight pseudo-element with no rules of its own still needs a style to pass the inherited
+    // values down to the highlight pseudo-elements of its descendants.
+    if (collector.matchResult().isEmpty() && !state.parentHighlightStyle())
         return { };
 
     state.style()->setPseudoElementIdentifier(pseudoElementRequest.identifier());
@@ -730,6 +773,9 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
     }
 
     Builder builder(style, builderContext(state), matchResult, WTF::move(includedProperties));
+
+    if (builder.state().isBuildingHighlightStyle())
+        builder.applyHighlightInheritance();
 
     // Top priority properties may affect resolution of high priority ones.
     builder.applyTopPriorityProperties();

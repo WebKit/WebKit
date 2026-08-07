@@ -712,11 +712,11 @@ std::optional<ResolvedStyle> TreeResolver::resolveAncestorFirstLetterPseudoEleme
 ResolutionContext TreeResolver::makeResolutionContext()
 {
     return {
-        &parent().style,
-        parentBoxStyle(),
-        documentElementStyle(),
-        &scope().selectorMatchingState,
-        &m_treeResolutionState
+        .parentStyle = &parent().style,
+        .parentBoxStyle = parentBoxStyle(),
+        .documentElementStyle = documentElementStyle(),
+        .selectorMatchingState = &scope().selectorMatchingState,
+        .treeResolutionState = &m_treeResolutionState
     };
 }
 
@@ -730,12 +730,20 @@ ResolutionContext TreeResolver::makeResolutionContextForPseudoElement(const Elem
         return elementUpdate.style.get();
     };
 
+    // The parent's style is the one being resolved in this pass, not the one still on the element.
+    auto parentHighlightStyle = [&]() -> const Style::ComputedStyle* {
+        if (!isHighlightPseudoElement(pseudoElementIdentifier.type))
+            return nullptr;
+        return parent().style.pseudoElementStyle(pseudoElementIdentifier);
+    };
+
     return {
-        parentStyle(),
-        parentBoxStyleForPseudoElement(elementUpdate),
-        documentElementStyle(),
-        &scope().selectorMatchingState,
-        &m_treeResolutionState
+        .parentStyle = parentStyle(),
+        .parentHighlightStyle = parentHighlightStyle(),
+        .parentBoxStyle = parentBoxStyleForPseudoElement(elementUpdate),
+        .documentElementStyle = documentElementStyle(),
+        .selectorMatchingState = &scope().selectorMatchingState,
+        .treeResolutionState = &m_treeResolutionState
     };
 }
 
@@ -747,11 +755,11 @@ std::optional<ResolutionContext> TreeResolver::makeResolutionContextForInherited
 
     // First line style for inlines is made by inheriting from parent first line style.
     return ResolutionContext {
-        parentFirstLineStyle,
-        parentBoxStyleForPseudoElement(elementUpdate),
-        documentElementStyle(),
-        &scope().selectorMatchingState,
-        &m_treeResolutionState
+        .parentStyle = parentFirstLineStyle,
+        .parentBoxStyle = parentBoxStyleForPseudoElement(elementUpdate),
+        .documentElementStyle = documentElementStyle(),
+        .selectorMatchingState = &scope().selectorMatchingState,
+        .treeResolutionState = &m_treeResolutionState
     };
 }
 
@@ -1038,12 +1046,13 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveAgainInDifferentConte
     newStyle->copyPseudoElementBitsFrom(*resolvedStyle.style);
 
     auto builderContext = BuilderContext {
-        m_document.get(),
-        &parentStyle,
-        resolutionContext.documentElementStyle,
-        &styleable.element,
-        &m_treeResolutionState,
-        WTF::move(positionTryFallback)
+        .document = m_document.get(),
+        .parentStyle = &parentStyle,
+        .parentHighlightStyle = resolutionContext.parentHighlightStyle,
+        .rootElementStyle = resolutionContext.documentElementStyle,
+        .element = &styleable.element,
+        .treeResolutionState = &m_treeResolutionState,
+        .positionTryFallback = WTF::move(positionTryFallback)
     };
 
     auto styleBuilder = Builder {
@@ -1076,11 +1085,12 @@ const Style::ComputedStyle& TreeResolver::parentAfterChangeStyle(const Styleable
 HashSet<AnimatableCSSProperty> TreeResolver::applyCascadeAfterAnimation(Style::ComputedStyle& animatedStyle, const HashMap<AnimatableCSSProperty, EnumSet<PropertyCascade::AnimationSource>>& animatedProperties, const MatchResult& matchResult, const Element& element, const ResolutionContext& resolutionContext)
 {
     auto builderContext = BuilderContext {
-        m_document.get(),
-        resolutionContext.parentStyle,
-        resolutionContext.documentElementStyle,
-        &element,
-        &m_treeResolutionState
+        .document = m_document.get(),
+        .parentStyle = resolutionContext.parentStyle,
+        .parentHighlightStyle = resolutionContext.parentHighlightStyle,
+        .rootElementStyle = resolutionContext.documentElementStyle,
+        .element = &element,
+        .treeResolutionState = &m_treeResolutionState
     };
 
     auto styleBuilder = Builder {

@@ -111,6 +111,14 @@ constexpr auto allPublicPseudoElementTypes = EnumSet {
     PseudoElementType::ViewTransitionNew
 };
 
+constexpr auto allHighlightPseudoElementTypes = EnumSet {
+    PseudoElementType::GrammarError,
+    PseudoElementType::Highlight,
+    PseudoElementType::Selection,
+    PseudoElementType::SpellingError,
+    PseudoElementType::TargetText
+};
+
 constexpr auto allInternalPseudoElementTypes = EnumSet {
     PseudoElementType::WebKitScrollbarThumb,
     PseudoElementType::WebKitScrollbarButton,

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PropertyAllowlist.h"
 
+#include "CSSProperty.h"
+
 namespace WebCore {
 namespace Style {
 
@@ -48,30 +50,11 @@ PropertyAllowlist propertyAllowlistForPseudoElement(PseudoElementType type)
 // https://drafts.csswg.org/css-pseudo-4/#highlight-styling
 bool isValidHighlightStyleProperty(CSSPropertyID id)
 {
-    switch (id) {
-    case CSSPropertyBackgroundColor:
-    case CSSPropertyColor:
-    case CSSPropertyCustom:
-    case CSSPropertyFill:
-    case CSSPropertyStroke:
-    case CSSPropertyStrokeColor:
-    case CSSPropertyStrokeWidth:
-    case CSSPropertyTextDecoration:
-    case CSSPropertyTextDecorationColor:
-    case CSSPropertyTextDecorationInset:
-    case CSSPropertyTextDecorationLine:
-    case CSSPropertyTextDecorationSkip:
-    case CSSPropertyTextDecorationSkipInk:
-    case CSSPropertyTextDecorationStyle:
-    case CSSPropertyTextDecorationThickness:
-    case CSSPropertyTextShadow:
-    case CSSPropertyTextUnderlineOffset:
-    case CSSPropertyTextUnderlinePosition:
+    // Custom properties are not part of the applicable property list but are allowed, since they
+    // can be substituted into the properties that are. https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+    if (id == CSSPropertyCustom)
         return true;
-    default:
-        break;
-    }
-    return false;
+    return CSSProperty::appliesToHighlightPseudoElements(id);
 }
 
 // https://drafts.csswg.org/css-lists-3/#marker-properties (Editor's Draft, 14 July 2021)

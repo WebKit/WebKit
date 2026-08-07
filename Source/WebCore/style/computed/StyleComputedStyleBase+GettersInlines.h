@@ -114,6 +114,11 @@ inline bool ComputedStyleBase::useTreeCountingFunctions() const
     return m_nonInheritedFlags.useTreeCountingFunctions;
 }
 
+inline bool ComputedStyleBase::colorIsCurrentColorForHighlight() const
+{
+    return m_inheritedData->colorIsCurrentColorForHighlight;
+}
+
 inline InsideLink ComputedStyleBase::insideLink() const
 {
     return static_cast<InsideLink>(m_inheritedFlags.insideLink);
@@ -276,6 +281,11 @@ inline std::optional<PseudoElementType> pseudoElementType(const ComputedStyleBas
 inline const AtomString& ComputedStyleBase::pseudoElementNameArgument() const
 {
     return m_nonInheritedData->rareData->pseudoElementNameArgument;
+}
+
+inline EnumSet<PseudoElementType> ComputedStyleBase::highlightPseudoElementTypes() const
+{
+    return EnumSet<PseudoElementType>::fromRaw(m_nonInheritedFlags.pseudoBits) & allHighlightPseudoElementTypes;
 }
 
 inline bool ComputedStyleBase::hasPseudoStyle(PseudoElementType pseudo) const

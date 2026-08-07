@@ -5,11 +5,11 @@ U
 PASS M::selection’s font-size is the same as in M
 PASS M span::selection’s font-size is the same as in M span
 PASS M::selection’s own text-shadow respects M’s font-size
-FAIL M span::selection’s inherited text-shadow respects M’s font-size assert_equals: expected "rgb(0, 128, 0) 12px 0px 0px" but got "none"
+PASS M span::selection’s inherited text-shadow respects M’s font-size
 PASS W::selection’s line-height is the same as in W
 PASS W span::selection’s line-height is the same as in W span
 PASS W::selection’s own text-shadow respects W’s line-height
-FAIL W span::selection’s inherited text-shadow respects W’s line-height assert_equals: expected "rgb(0, 128, 0) 0px 13px 0px" but got "none"
+PASS W span::selection’s inherited text-shadow respects W’s line-height
 PASS U::selection’s font-size is the same as in U
 PASS U span::selection’s font-size is the same as in U span
 PASS U::selection’s own text-decoration-thickness respects U’s font-size

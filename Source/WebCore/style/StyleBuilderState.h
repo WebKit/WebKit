@@ -95,6 +95,9 @@ struct RegisteredSubstitutionAttribute {
 struct BuilderContext {
     const Ref<const Document> document;
     const Style::ComputedStyle* parentStyle { };
+    // For highlight pseudo-elements: the corresponding highlight pseudo-element style of the
+    // originating element's parent, if any. https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+    const Style::ComputedStyle* parentHighlightStyle { };
     const Style::ComputedStyle* rootElementStyle { };
     RefPtr<const Element> element { };
     CheckedPtr<TreeResolutionState> treeResolutionState { };
@@ -121,6 +124,14 @@ public:
     const ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
 
     const ComputedStyle& parentStyle() const LIFETIME_BOUND { return *m_context.parentStyle; }
+
+    // The highlight pseudo-element style this one inherits from. Null for the highlight
+    // pseudo-element of the root element, and for anything that isn't a highlight pseudo-element.
+    // https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+    const ComputedStyle* parentHighlightStyle() const LIFETIME_BOUND { return m_context.parentHighlightStyle; }
+
+    // True for any highlight pseudo-element style, including one with nothing to inherit from.
+    inline bool isBuildingHighlightStyle() const;
 
     Builder* callingContextBuilder() const { return m_context.callingContextBuilder; }
 

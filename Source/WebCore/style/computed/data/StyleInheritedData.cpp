@@ -43,6 +43,7 @@ InheritedData::InheritedData()
     , fontData(FontData::create())
     , color(WebCore::Color::black)
     , visitedLinkColor(WebCore::Color::black)
+    , colorIsCurrentColorForHighlight(false)
 {
 }
 
@@ -57,6 +58,7 @@ inline InheritedData::InheritedData(const InheritedData& o)
     , fontData(o.fontData)
     , color(o.color)
     , visitedLinkColor(o.visitedLinkColor)
+    , colorIsCurrentColorForHighlight(o.colorIsCurrentColorForHighlight)
 {
     ASSERT(o == *this, "InheritedData should be properly copied.");
 }
@@ -78,7 +80,8 @@ bool InheritedData::fastPathInheritedEqual(const InheritedData& other) const
     // These properties also need to have "fast-path-inherited" codegen property set.
     // Cases where other properties depend on these values need to disallow the fast path (via Style::ComputedStyle::setDisallowsFastPathInheritance).
     return color == other.color
-        && visitedLinkColor == other.visitedLinkColor;
+        && visitedLinkColor == other.visitedLinkColor
+        && colorIsCurrentColorForHighlight == other.colorIsCurrentColorForHighlight;
 }
 
 bool InheritedData::nonFastPathInheritedEqual(const InheritedData& other) const
@@ -96,6 +99,7 @@ void InheritedData::fastPathInheritFrom(const InheritedData& inheritParent)
 {
     color = inheritParent.color;
     visitedLinkColor = inheritParent.visitedLinkColor;
+    colorIsCurrentColorForHighlight = inheritParent.colorIsCurrentColorForHighlight;
 }
 
 #if !LOG_DISABLED
@@ -112,6 +116,7 @@ void InheritedData::dumpDifferences(TextStream& ts, const InheritedData& other) 
 #endif
 
     LOG_IF_DIFFERENT(color);
+    LOG_IF_DIFFERENT(colorIsCurrentColorForHighlight);
     LOG_IF_DIFFERENT(visitedLinkColor);
 }
 #endif

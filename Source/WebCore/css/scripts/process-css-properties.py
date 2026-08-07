@@ -586,6 +586,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("animation-wrapper-requires-override-parameters", allowed_types=[list]),
         Schema.Entry("animation-wrapper-requires-setter", allowed_types=[str]),
         Schema.Entry("animation-wrapper", allowed_types=[str]),
+        Schema.Entry("applies-to-highlight-pseudo-elements", allowed_types=[str], default_value="no"),
         Schema.Entry("cascade-alias", allowed_types=[str]),
         Schema.Entry("color-property-traits-color-custom", allowed_types=[bool], default_value=False),
         Schema.Entry("color-property-traits-requires-excludes-visited-link-color", allowed_types=[bool], default_value=False),
@@ -804,6 +805,12 @@ class StylePropertyCodeGenProperties:
         if "skip-computed-style-setter" in json_value:
             if "skip-render-style-setter" not in json_value:
                 json_value["skip-render-style-setter"] = json_value["skip-computed-style-setter"]
+
+        if 'applies-to-highlight-pseudo-elements' in json_value:
+            if json_value['applies-to-highlight-pseudo-elements'] not in ['no', 'yes', 'yes-without-inheritance']:
+                raise Exception(f"{key_path} has unsupported 'applies-to-highlight-pseudo-elements' value '{json_value['applies-to-highlight-pseudo-elements']}'.")
+        elif any(function in json_value.get('style-builder-custom', '') for function in ['HighlightInitial', 'HighlightInherit', 'HighlightValue']):
+            raise Exception(f"{key_path} has a custom highlight function but does not apply to highlight pseudo-elements.")
 
         if "style-builder-custom" not in json_value:
             json_value["style-builder-custom"] = ""
@@ -3482,6 +3489,14 @@ class GenerateCSSPropertyInitialValues:
                 )
 
 
+def applies_to_highlight_pseudo_elements(property):
+    return property.codegen_properties.applies_to_highlight_pseudo_elements != "no"
+
+
+def inherits_in_highlight_pseudo_elements(property):
+    return property.codegen_properties.applies_to_highlight_pseudo_elements == "yes"
+
+
 # Generates `CSSPropertyNames.h` and `CSSPropertyNames.cpp`.
 class GenerateCSSPropertyNames:
     def __init__(self, generation_context):
@@ -4195,6 +4210,12 @@ class GenerateCSSPropertyNames:
                 iterable=(p for p in self.properties_and_descriptors.style_properties.all if p.codegen_properties.disables_native_appearance)
             )
 
+            self.generation_context.generate_property_id_switch_function_bool(
+                to=writer,
+                signature="bool CSSProperty::appliesToHighlightPseudoElements(CSSPropertyID id)",
+                iterable=(p for p in self.properties_and_descriptors.style_properties.all if applies_to_highlight_pseudo_elements(p))
+            )
+
             for group_name, property_group in sorted(self.generation_context.properties_and_descriptors.style_properties.logical_property_groups.items(), key=lambda x: x[0]):
                 properties = set()
                 for kind in ["logical", "physical"]:
@@ -4731,11 +4752,11 @@ class GenerateStyleBuilderGenerated:
         to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
         to.write(f"    builderState.style().setVisitedLink{property.codegen_properties.computed_style_name_for_methods}({initial_function}());")
 
-    def _generate_visited_link_color_supporting_property_inherit_value_setter(self, to, property):
+    def _generate_visited_link_color_supporting_property_inherit_value_setter(self, to, property, source_style):
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
-        to.write(f"    builderState.style().{property.codegen_properties.computed_style_setter}(forwardInheritedValue(builderState.parentStyle().{property.codegen_properties.computed_style_getter}()));")
+        to.write(f"    builderState.style().{property.codegen_properties.computed_style_setter}(forwardInheritedValue({source_style}{property.codegen_properties.computed_style_getter}()));")
         to.write(f"if (builderState.applyPropertyToVisitedLinkStyle())")
-        to.write(f"    builderState.style().setVisitedLink{property.codegen_properties.computed_style_name_for_methods}(forwardInheritedValue(builderState.parentStyle().{property.codegen_properties.computed_style_getter}()));")
+        to.write(f"    builderState.style().setVisitedLink{property.codegen_properties.computed_style_name_for_methods}(forwardInheritedValue({source_style}{property.codegen_properties.computed_style_getter}()));")
 
     def _generate_visited_link_color_supporting_property_value_setter(self, to, property):
         to.write(f"if (builderState.applyPropertyToRegularStyle())")
@@ -4771,8 +4792,8 @@ class GenerateStyleBuilderGenerated:
     def _generate_property_initial_value_setter(self, to, property):
         to.write(f"builderState.style().{property.codegen_properties.computed_style_setter}(Style::ComputedStyle::{property.codegen_properties.computed_style_initial}());")
 
-    def _generate_property_inherit_value_setter(self, to, property):
-        to.write(f"builderState.style().{property.codegen_properties.computed_style_setter}(forwardInheritedValue(builderState.parentStyle().{property.codegen_properties.computed_style_getter}()));")
+    def _generate_property_inherit_value_setter(self, to, property, source_style):
+        to.write(f"builderState.style().{property.codegen_properties.computed_style_setter}(forwardInheritedValue({source_style}{property.codegen_properties.computed_style_getter}()));")
 
     def _generate_property_value_setter(self, to, property, value):
         to.write(f"builderState.style().{property.codegen_properties.computed_style_setter}({value});")
@@ -4804,25 +4825,46 @@ class GenerateStyleBuilderGenerated:
 
         to.write(f"}}")
 
-    def _generate_style_builder_generated_cpp_inherit_value_setter(self, to, property):
-        to.write(f"static void applyInherit{property.id_without_prefix}(BuilderState& builderState)")
+    # Highlight pseudo-elements inherit the properties that apply to them from the corresponding
+    # highlight pseudo-element of the parent element. https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+    def _generate_style_builder_generated_cpp_inherit_value_setter(self, to, property, highlight=False):
+        source_style = "builderState.parentHighlightStyle()->" if highlight else "builderState.parentStyle()."
+        function_prefix = "applyHighlightInherit" if highlight else "applyInherit"
+
+        to.write(f"static void {function_prefix}{property.id_without_prefix}(BuilderState& builderState)")
         to.write(f"{{")
 
         with to.indent():
+            if highlight:
+                # At the start of the chain there is no highlight to inherit from, and the inherited
+                # value is the initial value. https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+                to.write(f"if (!builderState.parentHighlightStyle()) {{")
+                with to.indent():
+                    to.write(f"applyInitial{property.id_without_prefix}(builderState);")
+                    to.write(f"return;")
+                to.write(f"}}")
+                to.newline()
+
             if property.codegen_properties.visited_link_color_support:
-                self._generate_visited_link_color_supporting_property_inherit_value_setter(to, property)
+                self._generate_visited_link_color_supporting_property_inherit_value_setter(to, property, source_style)
             elif property.codegen_properties.coordinated_value_list_property:
+                assert not highlight, f"{property.name}: coordinated value list properties do not support highlight inheritance"
                 self._generate_coordinated_value_list_property_inherit_value_setter(to, property)
             elif property.codegen_properties.font_property:
+                assert not highlight, f"{property.name}: font properties do not support highlight inheritance"
                 self._generate_font_property_inherit_value_setter(to, property)
             else:
-                self._generate_property_inherit_value_setter(to, property)
+                self._generate_property_inherit_value_setter(to, property, source_style)
 
             if property.codegen_properties.computed_style_has_explicitly_set_policy:
                 if property.codegen_properties.computed_style_has_explicitly_set_policy == "all-author-origin":
-                    to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}(builderState.isAuthorOrigin());")
+                    # There is no declaration to take the origin from when inheriting from the parent highlight.
+                    if highlight:
+                        to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}({source_style}hasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}());")
+                    else:
+                        to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}(builderState.isAuthorOrigin());")
                 elif property.codegen_properties.computed_style_has_explicitly_set_policy == "all-border-radius":
-                    to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}(builderState.parentStyle().hasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}());")
+                    to.write(f"builderState.style().setHasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}({source_style}hasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}());")
 
             if property.codegen_properties.fast_path_inherited:
                 to.write(f"builderState.style().setDisallowsFastPathInheritance();")
@@ -4881,6 +4923,11 @@ class GenerateStyleBuilderGenerated:
                     self._generate_style_builder_generated_cpp_initial_value_setter(to, property)
                 if "Inherit" not in property.codegen_properties.style_builder_custom:
                     self._generate_style_builder_generated_cpp_inherit_value_setter(to, property)
+                custom_functions = property.codegen_properties.style_builder_custom
+                if inherits_in_highlight_pseudo_elements(property) and "HighlightInherit" not in custom_functions:
+                    if "Inherit" in custom_functions:
+                        raise Exception(f"Property '{property.name}' has a custom Inherit function and needs a custom HighlightInherit function too.")
+                    self._generate_style_builder_generated_cpp_inherit_value_setter(to, property, highlight=True)
                 if "Value" not in property.codegen_properties.style_builder_custom:
                     self._generate_style_builder_generated_cpp_value_setter(to, property)
 
@@ -4942,6 +4989,92 @@ class GenerateStyleBuilderGenerated:
         to.write(f"}}")
         to.newline()
 
+    def _generate_style_builder_generated_cpp_builder_generated_apply_highlight_property(self, *, to):
+        def highlight_function(property, function):
+            if f"Highlight{function}" in property.codegen_properties.style_builder_custom:
+                return f"BuilderCustom::applyHighlight{function}{property.id_without_prefix}"
+            if function == "Inherit" and inherits_in_highlight_pseudo_elements(property):
+                return f"BuilderFunctions::applyHighlightInherit{property.id_without_prefix}"
+            return None
+
+        to.write(f"void BuilderGenerated::applyHighlightProperty(CSSPropertyID id, BuilderState& builderState, CSSValue& value, ApplyValueType valueType)")
+        to.write(f"{{")
+
+        with to.indent():
+            to.write(f"ASSERT(builderState.isBuildingHighlightStyle());")
+            to.write(f"ASSERT(CSSProperty::appliesToHighlightPseudoElements(id));")
+            to.newline()
+            to.write(f"switch (id) {{")
+
+            for property in self.properties_and_descriptors.all_unique:
+                if not isinstance(property, StyleProperty):
+                    continue
+                if not applies_to_highlight_pseudo_elements(property):
+                    continue
+                if property.codegen_properties.longhands or property.codegen_properties.skip_style_builder:
+                    continue
+
+                functions = [(function, highlight_function(property, function)) for function in ["Initial", "Inherit", "Value"]]
+                functions = [(function, name) for function, name in functions if name]
+                if not functions:
+                    continue
+
+                to.write(f"case {property.id}:")
+                with to.indent():
+                    if len(functions) == 1:
+                        function, name = functions[0]
+                        to.write(f"if (valueType == ApplyValueType::{function}) {{")
+                        with to.indent():
+                            to.write(f"{name}(builderState{', value' if function == 'Value' else ''});")
+                            to.write(f"return;")
+                        to.write(f"}}")
+                    else:
+                        to.write(f"switch (valueType) {{")
+                        for function, name in functions:
+                            to.write(f"case ApplyValueType::{function}:")
+                            with to.indent():
+                                to.write(f"{name}(builderState{', value' if function == 'Value' else ''});")
+                                to.write(f"return;")
+                        if len(functions) < 3:
+                            to.write(f"default:")
+                            with to.indent():
+                                to.write(f"break;")
+                        to.write(f"}}")
+                    to.write(f"break;")
+
+            to.write(f"default:")
+            with to.indent():
+                to.write(f"break;")
+            to.write(f"}}")
+            to.newline()
+            to.write(f"// Everything else is not specific to highlight pseudo-elements.")
+            to.write(f"applyProperty(id, builderState, value, valueType);")
+
+        to.write(f"}}")
+        to.newline()
+
+    def _generate_style_builder_generated_cpp_builder_generated_apply_highlight(self, *, to):
+        to.write(f"void BuilderGenerated::applyHighlightInheritAllProperties(BuilderState& builderState)")
+        to.write(f"{{")
+
+        with to.indent():
+            to.write(f"ASSERT(builderState.isBuildingHighlightStyle());")
+            to.newline()
+
+            for property in self.properties_and_descriptors.all_unique:
+                if not isinstance(property, StyleProperty):
+                    continue
+                if not inherits_in_highlight_pseudo_elements(property):
+                    continue
+                if property.codegen_properties.longhands or property.codegen_properties.skip_style_builder:
+                    continue
+
+                scope = "BuilderCustom" if "HighlightInherit" in property.codegen_properties.style_builder_custom else "BuilderFunctions"
+                to.write(f"{scope}::applyHighlightInherit{property.id_without_prefix}(builderState);")
+
+        to.write(f"}}")
+        to.newline()
+
     def generate_style_builder_generated_cpp(self):
         with open('StyleBuilderGenerated.cpp', 'w') as output_file:
             writer = Writer(output_file)
@@ -4975,6 +5108,14 @@ class GenerateStyleBuilderGenerated:
                 )
 
                 self._generate_style_builder_generated_cpp_builder_generated_apply(
+                    to=writer
+                )
+
+                self._generate_style_builder_generated_cpp_builder_generated_apply_highlight(
+                    to=writer
+                )
+
+                self._generate_style_builder_generated_cpp_builder_generated_apply_highlight_property(
                     to=writer
                 )
 

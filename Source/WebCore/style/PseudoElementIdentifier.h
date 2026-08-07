@@ -73,16 +73,7 @@ inline bool isNamedViewTransitionPseudoElement(const std::optional<Style::Pseudo
 
 inline bool isHighlightPseudoElement(PseudoElementType type)
 {
-    switch (type) {
-    case PseudoElementType::GrammarError:
-    case PseudoElementType::Highlight:
-    case PseudoElementType::Selection:
-    case PseudoElementType::SpellingError:
-    case PseudoElementType::TargetText:
-        return true;
-    default:
-        return false;
-    }
+    return allHighlightPseudoElementTypes.contains(type);
 }
 
 } // namespace WebCore

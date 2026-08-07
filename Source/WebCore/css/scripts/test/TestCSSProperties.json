@@ -1026,7 +1026,8 @@
                 "computed-style-storage-path": ["level1"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::Color",
-                "parser-grammar": "<color>"
+                "parser-grammar": "<color>",
+                "applies-to-highlight-pseudo-elements": "yes-without-inheritance"
             }
         },
         "test-color-allows-types-absolute": {
@@ -1050,7 +1051,8 @@
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::Color",
                 "computed-style-visited-link-storage-path": ["level1", "level2"],
-                "parser-grammar": "<color>"
+                "parser-grammar": "<color>",
+                "applies-to-highlight-pseudo-elements": "yes"
             }
         },
         "test-image": {
@@ -1216,7 +1218,8 @@
                 "computed-style-has-explicitly-set-storage-path": ["level1", "level2"],
                 "computed-style-storage-path": ["level1", "level2"],
                 "computed-style-storage-kind": "value",
-                "computed-style-type": "Style::Number<>"
+                "computed-style-type": "Style::Number<>",
+                "applies-to-highlight-pseudo-elements": "yes"
             }
         },
         "test-render-style-has-explicitly-set-policy-all-border-radius": {

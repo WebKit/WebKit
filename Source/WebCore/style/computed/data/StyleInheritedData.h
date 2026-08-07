@@ -67,6 +67,14 @@ public:
     WebCore::Color color;
     WebCore::Color visitedLinkColor;
 
+    // Whether color came from the currentcolor keyword. A highlight pseudo-element resolves
+    // currentcolor against its originating element, so the chain inherits the keyword rather than
+    // the color it resolved to. Highlight styles always set this, so it doesn't depend on being
+    // inherited with the color. https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+    // FIXME: A value that merely references currentcolor, like color-mix(in oklab, teal,
+    // currentcolor), is not covered. See BuilderCustom::applyHighlightInheritColor().
+    bool colorIsCurrentColorForHighlight;
+
 private:
     InheritedData();
     InheritedData(const InheritedData&);

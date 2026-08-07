@@ -387,6 +387,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'animation-wrapper-requires-override-parameters': self.validate_array,
             'animation-wrapper-requires-setter': self.validate_string,
             'animation-wrapper': self.validate_string,
+            'applies-to-highlight-pseudo-elements': self.validate_string,
             'cascade-alias': self.validate_string,
             'color-property-traits-color-custom': self.validate_boolean,
             'color-property-traits-requires-excludes-visited-link-color': self.validate_boolean,

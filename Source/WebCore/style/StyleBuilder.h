@@ -51,6 +51,11 @@ public:
     void applyNonHighPriorityProperties();
     void adjustAfterApplying();
 
+    // Inherits the properties that inherit in highlight pseudo-elements from the corresponding
+    // highlight pseudo-element of the originating element's parent, before applying the cascade on top.
+    // https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+    void applyHighlightInheritance();
+
     void applyProperty(CSSPropertyID propertyID) { applyProperties(propertyID, propertyID); }
     void applyCustomProperty(const AtomString& name);
 

@@ -38,6 +38,14 @@ enum class ApplyValueType : uint8_t;
 class BuilderGenerated {
 public:
     static void applyProperty(CSSPropertyID, BuilderState&, CSSValue&, ApplyValueType);
+
+    // Same as applyProperty(), for the properties that behave differently in a highlight
+    // pseudo-element. https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+    static void applyHighlightProperty(CSSPropertyID, BuilderState&, CSSValue&, ApplyValueType);
+
+    // Inherits every property that inherits in highlight pseudo-elements from the corresponding
+    // highlight pseudo-element of the originating element's parent.
+    static void applyHighlightInheritAllProperties(BuilderState&);
 };
 
 } // namespace Style
