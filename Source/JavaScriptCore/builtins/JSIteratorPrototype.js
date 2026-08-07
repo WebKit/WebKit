@@ -395,13 +395,21 @@ function chunks(chunkSize)
     if (!@isObject(this))
         @throwTypeError("Iterator.prototype.chunks requires that |this| be an Object.");
 
-    var numChunkSize = @toNumber(chunkSize);
-    if (numChunkSize !== numChunkSize)
-        @throwRangeError("Iterator.prototype.chunks requires that first argument not be NaN.");
+    if (typeof chunkSize !== "number" || chunkSize % 1 !== 0) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwTypeError("Iterator.prototype.chunks requires that first argument be an integral Number.");
+        }
+    }
 
-    var intChunkSize = @toIntegerOrInfinity(numChunkSize);
-    if (intChunkSize < 1 || intChunkSize > @MAX_ARRAY_INDEX)
-        @throwRangeError("Iterator.prototype.chunks requires that first argument be between 1 and 2**32 - 1.");
+    if (chunkSize < 1 || chunkSize > 4294967295) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwRangeError("Iterator.prototype.chunks requires that first argument be between 1 and 2**32 - 1.");
+        }
+    }
 
     var iterated = this;
     var iteratedNextMethod = this.next;
@@ -419,7 +427,7 @@ function chunks(chunkSize)
 
             @arrayPush(buffer, result.value);
 
-            if (buffer.length === intChunkSize) {
+            if (buffer.length === chunkSize) {
                 @ifAbruptCloseIterator(iterated, (
                     yield buffer
                 ));
@@ -440,17 +448,32 @@ function windows(windowSize /*, undersized */)
     if (!@isObject(this))
         @throwTypeError("Iterator.prototype.windows requires that |this| be an Object.");
 
-    var numWindowSize = @toNumber(windowSize);
-    if (numWindowSize !== numWindowSize)
-        @throwRangeError("Iterator.prototype.windows requires that first argument not be NaN.");
+    if (typeof windowSize !== "number" || windowSize % 1 !== 0) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwTypeError("Iterator.prototype.windows requires that first argument be an integral Number.");
+        }
+    }
 
-    var intWindowSize = @toIntegerOrInfinity(numWindowSize);
-    if (intWindowSize < 1 || intWindowSize > @MAX_ARRAY_INDEX)
-        @throwRangeError("Iterator.prototype.windows requires that first argument be between 1 and 2**32 - 1.");
+    if (windowSize < 1 || windowSize > 4294967295) {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwRangeError("Iterator.prototype.windows requires that first argument be between 1 and 2**32 - 1.");
+        }
+    }
 
-    var undersized = @argument(1) ?? "only-full";
-    if (undersized !== "only-full" && undersized !== "allow-partial")
-        @throwTypeError("Iterator.prototype.windows requires that second argument be \"only-full\" or \"allow-partial\".");
+    var undersized = @argument(1);
+    if (undersized === @undefined)
+        undersized = "only-full";
+    else if (undersized !== "only-full" && undersized !== "allow-partial") {
+        try {
+            @iteratorGenericClose(this);
+        } finally {
+            @throwTypeError("Iterator.prototype.windows requires that second argument be \"only-full\" or \"allow-partial\".");
+        }
+    }
 
     var iterated = this;
     var iteratedNextMethod = this.next;
@@ -461,19 +484,19 @@ function windows(windowSize /*, undersized */)
         for (;;) {
             var result = @iteratorGenericNext(iteratedNextMethod, iterated);
             if (result.done) {
-                if (undersized === "allow-partial" && buffer.length && buffer.length < intWindowSize)
+                if (undersized === "allow-partial" && buffer.length && buffer.length < windowSize)
                     yield buffer;
                 return;
             }
 
-            if (buffer.length === intWindowSize) {
+            if (buffer.length === windowSize) {
                 for (var i = 0; i < buffer.length - 1; ++i)
                     buffer[i] = buffer[i + 1];
                 buffer[buffer.length - 1] = result.value;
             } else
                 @arrayPush(buffer, result.value);
 
-            if (buffer.length === intWindowSize) {
+            if (buffer.length === windowSize) {
                 var copy = @newArrayWithSize(buffer.length);
                 for (var i = 0; i < buffer.length; ++i)
                     copy[i] = buffer[i];

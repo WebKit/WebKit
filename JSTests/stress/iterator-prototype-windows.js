@@ -363,14 +363,24 @@ function shouldThrow(fn, error, message) {
 {
     const invalidWindowSizes = [
         undefined,
+        null,
         "test",
+        "1",
+        true,
         {},
+        [1],
+        Symbol("symbol"),
+        NaN,
+        0.5,
+        1.5,
+        Infinity,
+        -Infinity,
     ];
     const validIter = (function* gen() {})();
     for (const invalidWindowSize of invalidWindowSizes) {
         shouldThrow(function () {
             Iterator.prototype.windows.call(validIter, invalidWindowSize);
-        }, RangeError, "Iterator.prototype.windows requires that first argument not be NaN.");
+        }, TypeError, "Iterator.prototype.windows requires that first argument be an integral Number.");
     }
 }
 
@@ -378,8 +388,9 @@ function shouldThrow(fn, error, message) {
     const invalidWindowSizes = [
         -1,
         0,
+        -0,
         2 ** 32,
-        null,
+        2 ** 53,
     ];
     const validIter = (function* gen() {})();
     for (const invalidWindowSize of invalidWindowSizes) {
@@ -387,9 +398,85 @@ function shouldThrow(fn, error, message) {
             Iterator.prototype.windows.call(validIter, invalidWindowSize);
         }, RangeError, "Iterator.prototype.windows requires that first argument be between 1 and 2**32 - 1.");
     }
+
+    validIter.windows(1);
+    validIter.windows(2 ** 32 - 1);
 }
 
-shouldThrow(function () {
+{
     const validIter = (function* gen() {})();
-    validIter.windows(1, "invalid");
-}, TypeError, "Iterator.prototype.windows requires that second argument be \"only-full\" or \"allow-partial\".");
+    shouldThrow(function () {
+        validIter.windows({ valueOf() { throw new Error("windowSize must not be coerced"); } });
+    }, TypeError, "Iterator.prototype.windows requires that first argument be an integral Number.");
+}
+
+{
+    const invalidUndersizedValues = [
+        null,
+        "",
+        "invalid",
+        0,
+        true,
+        false,
+        {},
+        Symbol("symbol"),
+    ];
+    const validIter = (function* gen() {})();
+    for (const invalidUndersized of invalidUndersizedValues) {
+        shouldThrow(function () {
+            validIter.windows(1, invalidUndersized);
+        }, TypeError, "Iterator.prototype.windows requires that second argument be \"only-full\" or \"allow-partial\".");
+    }
+
+    validIter.windows(1, undefined);
+    validIter.windows(1, "only-full");
+    validIter.windows(1, "allow-partial");
+}
+
+{
+    let closeCount = 0;
+    const closable = {
+        __proto__: Iterator.prototype,
+        get next() {
+            throw new Error("next must not be read before the arguments are validated");
+        },
+        return() {
+            ++closeCount;
+            return {};
+        },
+    };
+
+    shouldThrow(function () {
+        closable.windows();
+    }, TypeError, "Iterator.prototype.windows requires that first argument be an integral Number.");
+    assert(closeCount === 1);
+
+    shouldThrow(function () {
+        closable.windows(0);
+    }, RangeError, "Iterator.prototype.windows requires that first argument be between 1 and 2**32 - 1.");
+    assert(closeCount === 2);
+
+    shouldThrow(function () {
+        closable.windows(1, "invalid");
+    }, TypeError, "Iterator.prototype.windows requires that second argument be \"only-full\" or \"allow-partial\".");
+    assert(closeCount === 3);
+}
+
+{
+    let returnGets = 0;
+    const closable = {
+        __proto__: Iterator.prototype,
+        get next() {
+            throw new Error("next must not be read before the arguments are validated");
+        },
+        get return() {
+            ++returnGets;
+            throw new Error("this error must be masked by the validation error");
+        },
+    };
+
+    shouldThrow(function () {
+        closable.windows(1, "invalid");
+    }, TypeError, "Iterator.prototype.windows requires that second argument be \"only-full\" or \"allow-partial\".");
+    assert(returnGets === 1);
+}

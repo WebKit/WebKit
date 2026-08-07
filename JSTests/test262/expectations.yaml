@@ -37,40 +37,7 @@ test/built-ins/Function/prototype/caller/prop-desc.js:
 test/built-ins/Function/prototype/toString/built-in-function-object.js:
   default: 3
   strict mode: 3
-test/built-ins/Iterator/prototype/chunks/argument-validation-failure-close-throws.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Iterator/prototype/chunks/argument-validation-failure-closes-underlying.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Iterator/prototype/chunks/chunkSize-no-coercion.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Iterator/prototype/chunks/chunkSize-not-a-number.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Iterator/prototype/chunks/chunkSize-out-of-range.js:
-  default: 3
-  strict mode: 3
 test/built-ins/Iterator/prototype/join/contents-nullish.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Iterator/prototype/windows/argument-validation-failure-close-throws.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Iterator/prototype/windows/argument-validation-failure-closes-underlying.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Iterator/prototype/windows/undersized-invalid.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Iterator/prototype/windows/windowSize-no-coercion.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Iterator/prototype/windows/windowSize-not-a-number.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Iterator/prototype/windows/windowSize-out-of-range.js:
   default: 3
   strict mode: 3
 test/built-ins/Proxy/apply/arguments-realm.js:
