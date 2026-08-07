@@ -27,6 +27,7 @@
 #include "TemporalPlainTimePrototype.h"
 
 #include "IntlDateTimeFormat.h"
+#include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "TemporalDuration.h"
@@ -163,13 +164,42 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncWith, (JSGlobalObject* gl
     if (!plainTime) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.with called on value that's not a PlainTime"_s);
 
-    JSValue temporalTimeLike  = callFrame->argument(0);
+    JSValue temporalTimeLike = callFrame->argument(0);
     if (!temporalTimeLike.isObject()) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "First argument to Temporal.PlainTime.prototype.with must be an object"_s);
 
-    auto result = plainTime->with(globalObject, asObject(temporalTimeLike), callFrame->argument(1));
+    // Step 3: If ? IsPartialTemporalObject(temporalTimeLike) is false, throw TypeError.
+    bool isPartial = isPartialTemporalObject(globalObject, temporalTimeLike);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!isPartial) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "argument must be a partial Temporal object"_s);
+
+    // Step 4: Let partialTime be ? ToTemporalTimeRecord(temporalTimeLike, ~partial~).
+    auto [hourOptional, minuteOptional, secondOptional, millisecondOptional, microsecondOptional, nanosecondOptional] = TemporalPlainTime::toPartialTime(globalObject, asObject(temporalTimeLike));
     RETURN_IF_EXCEPTION(scope, { });
 
+    // Step 17: resolvedOptions = ? GetOptionsObject(options).
+    JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // Step 18: overflow = ? GetTemporalOverflowOption(resolvedOptions).
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // Steps 5-16 (per field): if partialTime.X is not undefined, x = partialTime.X; else x = this.X.
+    ISO8601::Duration duration { };
+    duration.setField(TemporalUnit::Hour, hourOptional.value_or(plainTime->hour()));
+    duration.setField(TemporalUnit::Minute, minuteOptional.value_or(plainTime->minute()));
+    duration.setField(TemporalUnit::Second, secondOptional.value_or(plainTime->second()));
+    duration.setField(TemporalUnit::Millisecond, millisecondOptional.value_or(plainTime->millisecond()));
+    duration.setField(TemporalUnit::Microsecond, microsecondOptional.value_or(plainTime->microsecond()));
+    duration.setField(TemporalUnit::Nanosecond, nanosecondOptional.value_or(plainTime->nanosecond()));
+
+    // Step 19: result = ? RegulateTime(h, m, s, ms, us, ns, overflow).
+    auto result = TemporalPlainTime::regulateTime(globalObject, WTF::move(duration), overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // Step 20: Return ! CreateTemporalTime(result).
     return JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTF::move(result)));
 }
 

@@ -69,6 +69,9 @@ inline bool calendarHasEras(CalendarID id)
         || id == japaneseCalendarID() || id == persianCalendarID() || id == rocCalendarID();
 }
 
+// https://tc39.es/proposal-intl-era-monthcode/#sec-temporal-calendarhasmidyeareras
+inline bool calendarHasMidYearEras(CalendarID id) { return id == japaneseCalendarID(); }
+
 // calendarIsLunisolar — true for calendars with leap months (Chinese, Dangi, Hebrew).
 // NOTE: temporal_rs Calendar::is_iso() returns true for ISO8601 (opposite semantic).
 inline bool calendarIsLunisolar(CalendarID id)
@@ -87,6 +90,12 @@ JS_EXPORT_PRIVATE TemporalResult<String> calendarMonthCode(CalendarID, const ISO
 JS_EXPORT_PRIVATE TemporalResult<uint8_t> calendarDay(CalendarID, const ISO8601::PlainDate& isoDate);
 
 JS_EXPORT_PRIVATE TemporalResult<int32_t> calendarDayOfYear(CalendarID, const ISO8601::PlainDate& isoDate);
+
+JS_EXPORT_PRIVATE uint8_t calendarDayOfWeek(CalendarID, const ISO8601::PlainDate& isoDate);
+
+JS_EXPORT_PRIVATE std::optional<uint8_t> calendarWeekOfYear(CalendarID, const ISO8601::PlainDate& isoDate);
+
+JS_EXPORT_PRIVATE std::optional<int32_t> calendarYearOfWeek(CalendarID, const ISO8601::PlainDate& isoDate);
 
 JS_EXPORT_PRIVATE bool isValidMonthCodeForCalendar(CalendarID, ParsedMonthCode);
 

@@ -223,7 +223,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncWith, (JSGlobalObjec
     TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Steps 5+7+10: ISODateToFields + CalendarMergeFields + CalendarYearMonthFromFields — fused into plainYearMonthWith.
+    // Steps 5+7+10: ISODateToFields + CalendarMergeFields + CalendarYearMonthFromFields, in plainYearMonthWith.
     auto result = TemporalCore::plainYearMonthWith(yearMonth->calendarID(), yearMonth->plainYearMonth().isoPlainDate(), partialFields, overflow);
     if (!result) [[unlikely]] {
         if (result.error().kind == TemporalErrorKind::TypeError)

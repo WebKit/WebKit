@@ -77,9 +77,15 @@ JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> yearMonthFromFields(Calen
 
 JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);
 
+JS_EXPORT_PRIVATE TemporalResult<CalendarFieldsIn> isoDateToFields(CalendarID, const ISO8601::PlainDate&, ResolveType);
+
+JS_EXPORT_PRIVATE CalendarFieldsIn calendarMergeFields(CalendarID, const CalendarFieldsIn&, const CalendarFieldsIn& additionalFields);
+
 JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> plainYearMonthWith(CalendarID, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow);
 
 JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> plainDateWith(CalendarID, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow);
+
+JS_EXPORT_PRIVATE TemporalResult<ResolvedCalendarDate> plainMonthDayWith(CalendarID, const ISO8601::PlainDate& currentISODate, const CalendarFieldsIn& partialFields, TemporalOverflow);
 
 JS_EXPORT_PRIVATE TemporalResult<ISO8601::Duration> differenceYearMonth(CalendarID, const ISO8601::PlainDate& thisISODate, const ISO8601::PlainDate& otherISODate, TemporalUnit largestUnit);
 

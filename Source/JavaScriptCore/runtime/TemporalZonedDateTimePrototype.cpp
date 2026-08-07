@@ -48,7 +48,6 @@
 #include "TemporalZonedDateTime.h"
 #include "TimeZoneICUBridge.h"
 #include "ZonedDateTimeCore.h"
-#include <wtf/DateMath.h>
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
@@ -642,23 +641,26 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWith, (JSGlobalObject
     ASSERT(curOffsetNsOpt);
     int64_t curOffsetNs = *curOffsetNsOpt;
 
-    // Steps 9-16: ISODateToFields(calendar, isoDate, ~date~) + set time/offset fields.
-    //   (Fused with CalendarMergeFields below; current field values serve as the base.)
+    // Step 9: Let fields be ISODateToFields(calendar, isoDateTime.[[ISODate]], ~date~).
+    auto dateFields = TemporalCore::isoDateToFields(zdt->calendarID(), curDate, TemporalCore::ResolveType::Date);
+    if (!dateFields) [[unlikely]] {
+        throwTemporalError(globalObject, scope, dateFields.error());
+        return { };
+    }
+
     // Step 17: partialZonedDateTime = ? PrepareCalendarFields(calendar, temporalZonedDateTimeLike,
     //          «year,month,month-code,day», «hour,...,nanosecond,offset», ~partial~).
-    // Calendar comes from `this`; timeZone is not read in with().
-    auto partialFields = readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::Partial>(globalObject, fields, zdt->calendarID());
+    auto pf = readZonedDateTimeFieldsFromObject<ZonedDateTimeFieldMode::Partial>(globalObject, fields, zdt->calendarID());
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Step 18: fields = CalendarMergeFields(calendar, fields, partialZonedDateTime).
-    // Implemented by merging partialFields into the current ZDT's field values.
-    // For non-ISO calendars, fall back to calendar-coordinate values from ISODateToFields.
+    // Step 18: Set fields to CalendarMergeFields(calendar, fields, partialZonedDateTime).
+    auto merged = TemporalCore::calendarMergeFields(zdt->calendarID(), *dateFields, pf.dateFields);
 
     // Step 19: resolvedOptions = ? GetOptionsObject(options).
     JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Steps 20-22: disambiguation, offset, overflow (alphabetical order per spec NOTE).
+    // Steps 20-22: disambiguation, offset, overflow (read in alphabetical order per the spec NOTE).
     auto disambiguation = toTemporalDisambiguation(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
     auto offsetOpt = toTemporalOffset(globalObject, options, TemporalOffsetDisambiguation::Prefer);
@@ -666,41 +668,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWith, (JSGlobalObject
     TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Step 23 fallback prep: for non-ISO calendars, absent patch fields fall back to
-    // the calendar-native values (not the raw ISO year/month/day).
-    int32_t fallbackYear = curDate.year();
-    uint32_t fallbackMonth = curDate.month();
-    uint32_t fallbackDay = curDate.day();
-    std::optional<ParsedMonthCode> fallbackMonthCode;
-    if (!TemporalCore::calendarIsISO(zdt->calendarID())) {
-        auto calFields = TemporalCore::isoToCalendarFields(zdt->calendarID(), curDate);
-        if (calFields) {
-            fallbackYear = calFields->year;
-            fallbackMonth = calFields->month;
-            fallbackDay = calFields->day;
-            if (!calFields->monthCode.isEmpty())
-                fallbackMonthCode = ISO8601::parseMonthCode(calFields->monthCode);
-        }
-    }
-
-    auto& pf = partialFields;
-    auto& pDate = pf.dateFields;
-
-    // Step 23: dateTimeResult = ? InterpretTemporalDateTimeFields(calendar, fields, overflow).
-    // Merge patch onto current ZDT. Only populate month/monthCode from what the user
-    // actually provided so nonISOResolveFields' consistency check doesn't fire spuriously.
-    TemporalCore::CalendarFieldsIn merged = pDate;
-    if (!pDate.day)
-        merged.day = static_cast<uint8_t>(fallbackDay);
-    if (!pDate.year && !(pDate.era && pDate.eraYear))
-        merged.year = fallbackYear;
-    if (!pDate.month && !pDate.monthCode) {
-        // Prefer fallback monthCode (calendar-native) over numeric month for non-ISO.
-        if (fallbackMonthCode)
-            merged.monthCode = fallbackMonthCode;
-        else
-            merged.month = fallbackMonth;
-    }
+    // Steps 10-16, merged into step 18 inline: see CalendarFieldKey in CalendarFields.cpp.
     TemporalCore::TimeFieldsIn timeFields {
         pf.hour.value_or(static_cast<double>(curTime.hour())),
         pf.minute.value_or(static_cast<double>(curTime.minute())),
@@ -709,13 +677,16 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWith, (JSGlobalObject
         pf.microsecond.value_or(static_cast<double>(curTime.microsecond())),
         pf.nanosecond.value_or(static_cast<double>(curTime.nanosecond())),
     };
+
+    // Step 23: dateTimeResult = ? InterpretTemporalDateTimeFields(calendar, fields, overflow).
     auto pdt = interpretTemporalDateTimeFields(globalObject, zdt->calendarID(), merged, timeFields, overflow);
     RETURN_IF_EXCEPTION(scope, { });
     ISO8601::PlainDate newDate = pdt.date;
     ISO8601::PlainTime newTime = pdt.time;
 
-    // Step 24: newOffsetNanoseconds — the offset from the property bag, else the current one.
-    // temporal_rs: with_with_provider — offset is always Some (explicit or current).
+    // Step 24: newOffsetNanoseconds = ParseDateTimeUTCOffset(fields.[[OffsetString]]).
+    //   The [[OffsetString]] merge folds in here: format-then-parse of an unchanged offset is an
+    //   identity, so this is just "the partial's offset if given, else the receiver's".
     int64_t givenOffsetNs = pf.offsetNs.value_or(curOffsetNs);
 
     // Step 25: epochNanoseconds = ? InterpretISODateTimeOffset(dateTimeResult.[[ISODate]],
@@ -1379,8 +1350,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfWeek, (JSGloba
     auto [date, time] = zdt->getLocalDateTime(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     // Step 4: Return 𝔽(CalendarISOToDate(calendar, isoDateTime.[[ISODate]]).[[DayOfWeek]]).
-    // DayOfWeek is universal across all calendar systems (Mon=1 … Sun=7).
-    return JSValue::encode(jsNumber(ISO8601::dayOfWeek(date)));
+    return JSValue::encode(jsNumber(TemporalCore::calendarDayOfWeek(zdt->calendarID(), date)));
 }
 
 // https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.dayofyear
@@ -1416,10 +1386,11 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterWeekOfYear, (JSGlob
     // Step 3: isoDateTime = GetISODateTimeFor(timeZone, epochNanoseconds).
     auto [date, time] = zdt->getLocalDateTime(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    // Step 4: Return ? CalendarWeekOfYear(calendar, isoDateTime.[[ISODate]]). Undefined for non-ISO.
-    if (!TemporalCore::calendarIsISO(zdt->calendarID()))
+    // Step 4: Return ? CalendarWeekOfYear(calendar, isoDateTime.[[ISODate]]).
+    auto week = TemporalCore::calendarWeekOfYear(zdt->calendarID(), date);
+    if (!week)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsNumber(ISO8601::weekOfYear(date)));
+    return JSValue::encode(jsNumber(*week));
 }
 
 // https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.yearofweek
@@ -1435,10 +1406,11 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYearOfWeek, (JSGlob
     // Step 3: isoDateTime = GetISODateTimeFor(timeZone, epochNanoseconds).
     auto [date, time] = zdt->getLocalDateTime(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
-    // Step 4: Return ? CalendarYearOfWeek(calendar, isoDateTime.[[ISODate]]). Undefined for non-ISO.
-    if (!TemporalCore::calendarIsISO(zdt->calendarID()))
+    // Step 4: Return ? CalendarYearOfWeek(calendar, isoDateTime.[[ISODate]]).
+    auto yearOfWeek = TemporalCore::calendarYearOfWeek(zdt->calendarID(), date);
+    if (!yearOfWeek)
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(jsNumber(ISO8601::yearOfWeek(date)));
+    return JSValue::encode(jsNumber(*yearOfWeek));
 }
 
 // https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.hoursinday
@@ -1498,8 +1470,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInWeek, (JSGlob
     RETURN_IF_EXCEPTION(scope, { });
 
     // Step 4: Return 𝔽(CalendarISOToDate(calendar, isoDate).[[DaysInWeek]]).
-    // All calendar systems have a 7-day week.
-    return JSValue::encode(jsNumber(7));
+    return JSValue::encode(jsNumber(ISO8601::daysPerWeek));
 }
 
 // https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.daysinmonth

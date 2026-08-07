@@ -2600,10 +2600,11 @@ static void testCalendarFieldsFunctions()
     auto rWith2 = plainYearMonthWith(id("iso8601"_s), { 2025, 3, 1 }, partialMonth, TemporalOverflow::Constrain);
     TCHECK_TRUE(rWith2.has_value() && rWith2->isoDate.year() == 2025 && rWith2->isoDate.month() == 7, "plainYearMonthWith: override month -> 2025-07");
 
-    // empty partial fields: ISO falls back year+monthCode from current, succeeds
+    // empty partial fields: ISO falls back year+monthCode from current, succeeds. Unreachable from
+    // JS — PrepareCalendarFields(..., ~partial~) throws before .with() ever gets here.
     CalendarFieldsIn emptyPartial;
     auto rWithEmpty = plainYearMonthWith(id("iso8601"_s), { 2025, 3, 1 }, emptyPartial, TemporalOverflow::Constrain);
-    TCHECK_TRUE(!rWithEmpty.has_value(), "plainYearMonthWith: empty partial -> TypeError (temporal_rs: fields.is_empty())");
+    TCHECK_TRUE(rWithEmpty.has_value() && rWithEmpty->isoDate.year() == 2025 && rWithEmpty->isoDate.month() == 3, "plainYearMonthWith: empty partial -> receiver 2025-03");
 
     f = { };
     f.year = 275761; // one past maxYear
@@ -2703,6 +2704,87 @@ static void testCalendarFieldsFunctions()
     partialConflict.year = 2000;
     auto rDW6 = plainDateWith(id("japanese"_s), { 1970, 1, 1 }, partialConflict, TemporalOverflow::Constrain);
     TCHECK_TRUE(!rDW6.has_value() && rDW6.error().kind == TemporalErrorKind::RangeError, "plainDateWith: inconsistent year+era+eraYear -> RangeError");
+}
+
+static void testCalendarMergeFieldsWith()
+{
+    using MC = ParsedMonthCode;
+    auto id = calendarIDFromString;
+
+    // chinese (lunisolar): year-only change with month/monthCode absent must fall back via
+    // monthCode, not a raw ordinal, since 2023's leap-month layout differs from 2020's.
+    {
+        CalendarFieldsIn partial;
+        partial.year = 2023;
+        auto r = plainDateWith(id("chinese"_s), { 2020, 5, 23 }, partial, TemporalOverflow::Constrain);
+        TCHECK_TRUE(r.has_value() && r->isoDate.year() == 2023 && r->isoDate.month() == 5 && r->isoDate.day() == 19, "plainDateWith: chinese year-only change through leap-month year -> 2023-05-19");
+    }
+    {
+        CalendarFieldsIn partial;
+        partial.day = 10;
+        auto r = plainDateWith(id("chinese"_s), { 2020, 5, 23 }, partial, TemporalOverflow::Constrain);
+        TCHECK_TRUE(r.has_value() && r->isoDate.year() == 2020 && r->isoDate.month() == 6 && r->isoDate.day() == 1, "plainDateWith: chinese day-only change -> 2020-06-01");
+    }
+
+    // Same chinese leap-month case via plainYearMonthWith.
+    {
+        CalendarFieldsIn partial;
+        partial.year = 2023;
+        auto r = plainYearMonthWith(id("chinese"_s), { 2020, 5, 23 }, partial, TemporalOverflow::Constrain);
+        TCHECK_TRUE(r.has_value() && r->isoDate.year() == 2023 && r->isoDate.month() == 5 && r->isoDate.day() == 19, "plainYearMonthWith: chinese year-only change through leap-month year -> 2023-05-19");
+    }
+    {
+        // PlainYearMonth's stored ISO date always has day=1. Showa 64 Jan 1 = 1989-01-01
+        // (Heisei starts 1989-01-08); .with({month: 6}) re-derives era into Heisei.
+        CalendarFieldsIn partial;
+        partial.month = 6;
+        auto r = plainYearMonthWith(id("japanese"_s), { 1989, 1, 1 }, partial, TemporalOverflow::Constrain);
+        TCHECK_TRUE(r.has_value() && r->isoDate.year() == 1989 && r->isoDate.month() == 6, "plainYearMonthWith: japanese month change re-derives era -> 1989-06");
+    }
+
+    // plainMonthDayWith: ISO day/month-only changes.
+    {
+        CalendarFieldsIn base;
+        base.month = 6;
+        base.day = 15;
+        auto baseResolved = monthDayFromFields(id("iso8601"_s), base, TemporalOverflow::Constrain);
+        TCHECK_TRUE(baseResolved.has_value(), "plainMonthDayWith setup: iso base 06-15");
+
+        CalendarFieldsIn partialDay;
+        partialDay.day = 20;
+        auto r1 = plainMonthDayWith(id("iso8601"_s), baseResolved->isoDate, partialDay, TemporalOverflow::Constrain);
+        TCHECK_TRUE(r1.has_value() && r1->isoDate.month() == 6 && r1->isoDate.day() == 20, "plainMonthDayWith: iso day-only -> 06-20");
+
+        CalendarFieldsIn partialMonth;
+        partialMonth.month = 3;
+        auto r2 = plainMonthDayWith(id("iso8601"_s), baseResolved->isoDate, partialMonth, TemporalOverflow::Constrain);
+        TCHECK_TRUE(r2.has_value() && r2->isoDate.month() == 3 && r2->isoDate.day() == 15, "plainMonthDayWith: iso month-only -> 03-15");
+    }
+
+    // plainMonthDayWith: hebrew — month-without-year now throws via nonISOResolveFields.
+    {
+        CalendarFieldsIn base;
+        base.monthCode = MC { 5, false };
+        base.day = 1;
+        auto baseResolved = monthDayFromFields(id("hebrew"_s), base, TemporalOverflow::Constrain);
+        TCHECK_TRUE(baseResolved.has_value() && baseResolved->isoDate.year() == 1972 && baseResolved->isoDate.month() == 1 && baseResolved->isoDate.day() == 17, "plainMonthDayWith setup: hebrew M05 day=1 -> 1972-01-17");
+
+        CalendarFieldsIn partialDay;
+        partialDay.day = 10;
+        auto r1 = plainMonthDayWith(id("hebrew"_s), baseResolved->isoDate, partialDay, TemporalOverflow::Constrain);
+        TCHECK_TRUE(r1.has_value() && r1->isoDate.year() == 1972 && r1->isoDate.month() == 1 && r1->isoDate.day() == 26, "plainMonthDayWith: hebrew day-only -> 1972-01-26");
+
+        CalendarFieldsIn partialMonthNoYear;
+        partialMonthNoYear.month = 2;
+        auto r2 = plainMonthDayWith(id("hebrew"_s), baseResolved->isoDate, partialMonthNoYear, TemporalOverflow::Constrain);
+        TCHECK_TRUE(!r2.has_value() && r2.error().kind == TemporalErrorKind::TypeError, "plainMonthDayWith: hebrew month without year -> TypeError");
+
+        CalendarFieldsIn partialMonthYear;
+        partialMonthYear.month = 2;
+        partialMonthYear.year = 2020;
+        auto r3 = plainMonthDayWith(id("hebrew"_s), baseResolved->isoDate, partialMonthYear, TemporalOverflow::Constrain);
+        TCHECK_TRUE(r3.has_value() && r3->isoDate.year() == 1972 && r3->isoDate.month() == 10 && r3->isoDate.day() == 9, "plainMonthDayWith: hebrew month+year -> 1972-10-09");
+    }
 }
 
 static void testNonISOCalendarDateToISO()
@@ -3867,6 +3949,7 @@ static void runStressTests()
     testNonISOCalendarDateToISO(); // nonISOCalendarDateToISO: era, monthCode, overflow, ROC, Japanese, Buddhist, Coptic, Ethiopic
     testIsBuiltinCalendar(); // Canonical Temporal calendar set + legacy aliases
     testCalendarFieldsFunctions(); // yearMonthFromFields, monthDayFromFields, differenceYearMonth, plainYearMonthAdd, etc.
+    testCalendarMergeFieldsWith(); // calendarMergeFields: chinese leap-month, japanese era-suppress, hebrew MonthDay
 
     // parseISODateTime
     testParseInstantString();

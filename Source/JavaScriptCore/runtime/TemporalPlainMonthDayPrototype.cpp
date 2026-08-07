@@ -201,50 +201,8 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncWith, (JSGlobalObject
     TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // Steps 5+7: fields = ISODateToFields(calendar, plainMonthDay.[[ISODate]], ~month-day~);
-    //            fields = CalendarMergeFields(calendar, fields, partialMonthDay).
-    //   Fused inline: fill unset merged fields from the receiver's own monthCode/day.
-    TemporalCore::CalendarFieldsIn merged;
-
-    // day from ISODateToFields (use calendar day for non-ISO).
-    uint8_t currentCalDay = static_cast<uint8_t>(monthDay->plainMonthDay().day());
-    bool isISO = TemporalCore::calendarIsISO(calendarId);
-    if (!isISO) {
-        auto dayResult = TemporalCore::calendarDay(calendarId, monthDay->plainMonthDay().isoPlainDate());
-        if (dayResult)
-            currentCalDay = *dayResult;
-    }
-    // User's day takes priority over the receiver's.
-    merged.day = partialFields.day.has_value() ? partialFields.day : std::optional<uint8_t>(currentCalDay);
-
-    if (partialFields.month.has_value())
-        merged.month = partialFields.month;
-    if (partialFields.monthCode)
-        merged.monthCode = partialFields.monthCode;
-    if (partialFields.year)
-        merged.year = partialFields.year;
-    if (partialFields.era)
-        merged.era = partialFields.era;
-    if (partialFields.eraYear)
-        merged.eraYear = partialFields.eraYear;
-    if (!partialFields.month.has_value() && !partialFields.monthCode) {
-        // Neither given — fall back to current monthCode (non-ISO) or numeric month (ISO).
-        if (!isISO) {
-            auto mcStr = TemporalCore::calendarMonthCode(calendarId, monthDay->plainMonthDay().isoPlainDate());
-            if (!mcStr) [[unlikely]] {
-                throwRangeError(globalObject, scope, String(mcStr.error().message));
-                return { };
-            }
-            merged.monthCode = ISO8601::parseMonthCode(*mcStr);
-        } else
-            merged.month = std::optional<uint32_t>(monthDay->plainMonthDay().month());
-    }
-
-    if (!isISO && merged.month.has_value() && !merged.year && !(merged.era && merged.eraYear)) [[unlikely]]
-        return throwVMTypeError(globalObject, scope, "year is required with month for non-ISO calendar PlainMonthDay.with()"_s);
-
-    // Step 10: isoDate = ? CalendarMonthDayFromFields(calendar, fields, overflow).
-    auto resolved = TemporalCore::monthDayFromFields(calendarId, merged, overflow);
+    // Steps 5+7+10: ISODateToFields + CalendarMergeFields + CalendarMonthDayFromFields, in plainMonthDayWith.
+    auto resolved = TemporalCore::plainMonthDayWith(calendarId, monthDay->plainMonthDay().isoPlainDate(), partialFields, overflow);
     if (!resolved) [[unlikely]] {
         if (resolved.error().kind == TemporalErrorKind::TypeError)
             throwTypeError(globalObject, scope, String(resolved.error().message));

@@ -918,7 +918,9 @@ static bool calendarUsesISOFallbackForExtremeYear(CalendarID calendarId, int32_t
     return (calendarId == chineseCalendarID() || calendarId == dangiCalendarID()) && std::abs(isoYear) > 10000;
 }
 
-// isoToCalendarFields — no single temporal_rs equivalent; aggregates Calendar::year/month/month_code/day/era.
+// https://tc39.es/proposal-temporal/#sec-temporal-calendarisotodate
+// CalendarISOToDate's six field-resolution fields in one ICU open. The calendar* accessors compute the
+// same fields one at a time and must agree with these: they feed the getters, these feed resolution.
 TemporalResult<CalendarFields> isoToCalendarFields(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
 {
     if (calendarId == rocCalendarID() || calendarId == buddhistCalendarID()) {
@@ -1148,6 +1150,41 @@ TemporalResult<uint8_t> calendarDay(CalendarID calendarId, const ISO8601::PlainD
             return makeUnexpected(day.error());
         return static_cast<uint8_t>(*day);
     });
+}
+
+// calendarDayOfWeek — temporal_rs: Calendar::day_of_week (src/builtins/core/calendar.rs)
+// https://tc39.es/proposal-temporal/#sec-temporal-calendarisotodate
+// CalendarISOToDate [[DayOfWeek]] field:
+//   1. (all calendars) ISODayOfWeek(isoDate).
+// The 7-day cycle is unbroken across every calendar CLDR exposes, so the ISO value is also the
+// calendar value; calendarId is unused and unnamed to say so.
+uint8_t calendarDayOfWeek(CalendarID, const ISO8601::PlainDate& isoDate)
+{
+    return ISO8601::dayOfWeek(isoDate);
+}
+
+// calendarWeekOfYear — temporal_rs: Calendar::week_of_year (src/builtins/core/calendar.rs)
+// https://tc39.es/proposal-temporal/#sec-temporal-calendarisotodate
+// CalendarISOToDate [[WeekOfYear]].[[Week]] field:
+//   1. (iso8601) ISOWeekOfYear(isoDate).[[Week]].
+//   2. (non-ISO) ~undefined~ — no well-defined week calendar system.
+std::optional<uint8_t> calendarWeekOfYear(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
+{
+    if (calendarId != iso8601CalendarID())
+        return std::nullopt;
+    return ISO8601::weekOfYear(isoDate);
+}
+
+// calendarYearOfWeek — temporal_rs: Calendar::year_of_week (src/builtins/core/calendar.rs)
+// https://tc39.es/proposal-temporal/#sec-temporal-calendarisotodate
+// CalendarISOToDate [[WeekOfYear]].[[Year]] field: differs from [[Year]] only at a year boundary whose week belongs to the neighbouring year.
+//   1. (iso8601) ISOWeekOfYear(isoDate).[[Year]].
+//   2. (non-ISO) ~undefined~ — no well-defined week calendar system.
+std::optional<int32_t> calendarYearOfWeek(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
+{
+    if (calendarId != iso8601CalendarID())
+        return std::nullopt;
+    return ISO8601::yearOfWeek(isoDate);
 }
 
 // calendarDayOfYear — 1-based day within the calendar's year (ISO's if calendarUsesISODateArithmetic).
