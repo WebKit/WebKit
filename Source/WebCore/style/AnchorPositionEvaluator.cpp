@@ -813,12 +813,14 @@ CheckedPtr<RenderBoxModelObject> AnchorPositionEvaluator::findAnchorForAnchorFun
     }).iterator->value.get();
 
     auto scopedAnchorName = [&] {
-        if (anchorNameArgument)
-            return *anchorNameArgument;
-        return defaultAnchorName(style);
-    };
+        if (!anchorNameArgument)
+            return defaultAnchorName(style);
+        return anchorNameArgument;
+    }();
+    if (!scopedAnchorName)
+        return { };
 
-    auto resolvedAnchorName = ResolvedScopedName::createFromScopedName(protect(styleable.element), scopedAnchorName());
+    auto resolvedAnchorName = ResolvedScopedName::createFromScopedName(protect(styleable.element), *scopedAnchorName);
 
     // Collect anchor names that this element refers to in anchor() or anchor-size()
     bool isNewAnchorName = anchorPositionedState.anchorNames.add(resolvedAnchorName).isNewEntry;
@@ -1262,17 +1264,11 @@ static AnchorsForAnchorName collectAnchorsForAnchorName(const Document& document
     return anchorsForAnchorName;
 }
 
-static AnchorElements findAnchorsForAnchorPositionedElement(const Styleable& anchorPositioned, const Style::ComputedStyle& anchorPositionedStyle, const HashSet<ResolvedScopedName>& anchorNames, const AnchorsForAnchorName& anchorsForAnchorName)
+static AnchorElements findAnchorsForAnchorPositionedElement(const Styleable& anchorPositioned, const HashSet<ResolvedScopedName>& anchorNames, const AnchorsForAnchorName& anchorsForAnchorName)
 {
     AnchorElements anchorElements;
 
     for (auto& anchorName : anchorNames) {
-        auto isImplicitAnchorName = anchorName.name() == implicitAnchorElementName().name;
-        auto isDefaultAnchorNone = anchorPositionedStyle.positionAnchor().isNone()
-            || (anchorPositionedStyle.positionAnchor().isNormal() && anchorPositionedStyle.positionArea().isNone());
-        if (isImplicitAnchorName && isDefaultAnchorNone)
-            continue;
-
         auto anchor = findLastAcceptableAnchorWithName(anchorName, anchorPositioned, anchorsForAnchorName);
         anchorElements.add(anchorName, anchor);
     }
@@ -1301,7 +1297,7 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
         case AnchorPositionResolutionStage::FindAnchors: {
             if (renderer) {
                 // FIXME: Remove the redundant anchorElements member. The mappings are available in anchorPositionedToAnchorMap.
-                state->anchorElements = findAnchorsForAnchorPositionedElement(*anchorPositioned, renderer->style(), state->anchorNames, anchorsForAnchorName);
+                state->anchorElements = findAnchorsForAnchorPositionedElement(*anchorPositioned, state->anchorNames, anchorsForAnchorName);
                 if (isLayoutTimeAnchorPositioned(renderer->style()))
                     renderer->setNeedsLayout();
 
@@ -1413,12 +1409,14 @@ void AnchorPositionEvaluator::updateAnchorPositionedStateForDefaultAnchorAndPosi
     }).iterator->value.get();
 
     if (shouldResolveDefaultAnchor) {
-        // Always resolve the default anchor. Even if nothing is anchored to it we need it to compute the scroll compensation.
-        auto resolvedDefaultAnchor = ResolvedScopedName::createFromScopedName(element, defaultAnchorName(style));
-        if (state.anchorNames.add(resolvedDefaultAnchor).isNewEntry) {
-            // If anchor resolution has progressed past FindAnchors, and we pick up a new anchor name, set the
-            // stage back to FindAnchors. This restarts the resolution process to resolve newly added names.
-            state.stage = AnchorPositionResolutionStage::FindAnchors;
+        if (auto anchorName = defaultAnchorName(style)) {
+            // Always resolve the default anchor. Even if nothing is anchored to it we need it to compute the scroll compensation.
+            auto resolvedDefaultAnchor = ResolvedScopedName::createFromScopedName(element, *anchorName);
+            if (state.anchorNames.add(resolvedDefaultAnchor).isNewEntry) {
+                // If anchor resolution has progressed past FindAnchors, and we pick up a new anchor name, set the
+                // stage back to FindAnchors. This restarts the resolution process to resolve newly added names.
+                state.stage = AnchorPositionResolutionStage::FindAnchors;
+            }
         }
     }
 }
@@ -1755,10 +1753,18 @@ bool AnchorPositionEvaluator::isImplicitAnchor(const Style::ComputedStyle& style
     return isImplicitAnchorForPseudoElement(PseudoElementType::Before) || isImplicitAnchorForPseudoElement(PseudoElementType::After);
 }
 
-ScopedName AnchorPositionEvaluator::defaultAnchorName(const Style::ComputedStyle& style)
+std::optional<ScopedName> AnchorPositionEvaluator::defaultAnchorName(const Style::ComputedStyle& style)
 {
-    if (auto name = style.positionAnchor().tryName())
+    const auto& positionAnchor = style.positionAnchor();
+
+    bool doesNotHaveDefaultAnchor = positionAnchor.isNone() || (positionAnchor.isNormal() && style.positionArea().isNone());
+    if (doesNotHaveDefaultAnchor)
+        return std::nullopt;
+
+    if (auto name = positionAnchor.tryName())
         return *name;
+
+    ASSERT(positionAnchor.isAuto() || (positionAnchor.isNormal() && !style.positionArea().isNone()));
     return implicitAnchorElementName();
 }
 
@@ -1780,10 +1786,14 @@ CheckedPtr<RenderBoxModelObject> AnchorPositionEvaluator::defaultAnchorForBox(co
     if (!anchors.allAnchorsPositioned)
         return nullptr;
 
-    auto anchorName = ResolvedScopedName::createFromScopedName(protect(styleable->element), defaultAnchorName(box.style()));
+    auto anchorName = defaultAnchorName(box.style());
+    if (!anchorName)
+        return nullptr;
+
+    auto resolvedAnchorName = ResolvedScopedName::createFromScopedName(protect(styleable->element), *anchorName);
 
     for (auto& anchor : anchors.anchors) {
-        if (anchorName == anchor.name)
+        if (resolvedAnchorName == anchor.name)
             return anchor.renderer.get();
     }
     return nullptr;

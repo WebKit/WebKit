@@ -221,7 +221,11 @@ public:
     static bool overflowsInsetModifiedContainingBlock(const RenderBox& anchoredBox);
     static bool isDefaultAnchorInvisibleOrClippedByInterveningBoxes(const RenderBox& anchoredBox);
 
-    static ScopedName defaultAnchorName(const Style::ComputedStyle&);
+    // Given a style, determine the name of the default anchor. If it has a default anchor,
+    // return the name (either an explicit name, or the name of the implicit anchor).
+    // Otherwise, it doesn't have a default anchor, and returns std::nullopt.
+    static std::optional<ScopedName> defaultAnchorName(const Style::ComputedStyle&);
+
     static bool isAnchor(const Style::ComputedStyle&);
     static bool isImplicitAnchor(const Style::ComputedStyle&);
 
