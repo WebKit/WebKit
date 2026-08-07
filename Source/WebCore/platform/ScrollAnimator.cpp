@@ -319,6 +319,11 @@ void ScrollAnimator::didStopAnimatedScroll()
     scrollableArea->scrollDidEnd();
 }
 
+void ScrollAnimator::didStopWheelEventScroll()
+{
+    protect(m_scrollableArea)->scrollDidEnd();
+}
+
 #if HAVE(RUBBER_BANDING)
 IntSize ScrollAnimator::stretchAmount() const
 {

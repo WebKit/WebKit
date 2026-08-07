@@ -157,6 +157,8 @@ private:
     void willStartAnimatedScroll() final;
     void didStopAnimatedScroll() final;
 
+    void didStopWheelEventScroll() final;
+
     void immediateScrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped) final;
     void adjustScrollPositionToBoundsIfNecessary() final;
 
