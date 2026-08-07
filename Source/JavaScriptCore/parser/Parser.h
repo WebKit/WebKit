@@ -1554,13 +1554,6 @@ private:
         m_token.m_type = m_lexer->lexWithoutClearingLineTerminator(&m_token, lexerFlags, strictMode());
     }
 
-    ALWAYS_INLINE void nextExpectIdentifier(OptionSet<LexerFlags> lexerFlags = { })
-    {
-        m_lastTokenLocation = m_token.location();
-        m_lastTokenType = m_token.m_type;
-        m_token.m_type = m_lexer->lexExpectIdentifier(&m_token, lexerFlags, strictMode());
-    }
-
     template <class TreeBuilder>
     ALWAYS_INLINE void lexCurrentTokenAgainUnderCurrentContext(TreeBuilder& context)
     {
