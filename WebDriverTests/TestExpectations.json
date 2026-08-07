@@ -194,11 +194,20 @@
 
     "imported/selenium/py/test/selenium/webdriver/common/bidi_browsing_context_tests.py": {
         "subtests": {
+            "test_get_tree_with_child": {
+                "expected": {"all": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/310506"}}
+            },
+            "test_reload_browsing_context": {
+                "expected": {"all": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/310506"}}
+            },
+            "test_reload_with_readiness_state": {
+                "expected": {"wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/310506"}}
+            },
             "test_add_event_handler_context_created": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/288335"}, "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/303207"}}
             },
             "test_add_event_handler_dom_content_loaded": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/302058"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/302058"}, "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/310506"}}
             },
             "test_add_event_handler_download_will_begin": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288338"}}
@@ -210,7 +219,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/287936"}}
             },
             "test_add_event_handler_load": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/288340"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/288340"}, "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/310506"}}
             },
             "test_add_event_handler_navigation_committed": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/287934"}}
@@ -228,7 +237,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288335"}}
             },
             "test_concurrent_event_handler_registration": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/288335"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/288335"}, "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/310506"}}
             },
             "test_event_callback_data_consistency": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288335"}}
