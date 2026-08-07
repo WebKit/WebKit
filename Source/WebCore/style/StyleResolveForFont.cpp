@@ -229,13 +229,13 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
 
             case CSSValueLarger:
                 return {
-                    .size = parentSize * 1.02f,
+                    .size = parentSize * 1.2f,
                     .keyword = CSSValueInvalid
                 };
 
             case CSSValueSmaller:
                 return {
-                    .size = parentSize / 1.02f,
+                    .size = parentSize / 1.2f,
                     .keyword = CSSValueInvalid
                 };
 
