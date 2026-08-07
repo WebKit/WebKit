@@ -48,22 +48,22 @@ sameValue([{ toString() { return ""; } }].values().join(), "");
 sameValue([{ toString() { return "a"; } }].values().join(), "a");
 sameValue([{ toString() { return "abc"; } }].values().join(), "abc");
 
-sameValue([1, undefined, 2, null, 3].values().join(), "1,2,3");
-sameValue([1, undefined, 2, null, 3].values().join(0), "10203");
-sameValue([1, undefined, 2, null, 3].values().join(null), "1null2null3");
-sameValue([1, undefined, 2, null, 3].values().join(undefined), "1,2,3");
+sameValue([1, undefined, 2, null, 3].values().join(), "1,,2,,3");
+sameValue([1, undefined, 2, null, 3].values().join(0), "1002003");
+sameValue([1, undefined, 2, null, 3].values().join(null), "1nullnull2nullnull3");
+sameValue([1, undefined, 2, null, 3].values().join(undefined), "1,,2,,3");
 sameValue([1, undefined, 2, null, 3].values().join(""), "123");
-sameValue([1, undefined, 2, null, 3].values().join(","), "1,2,3");
-sameValue([1, undefined, 2, null, 3].values().join(", "), "1, 2, 3");
+sameValue([1, undefined, 2, null, 3].values().join(","), "1,,2,,3");
+sameValue([1, undefined, 2, null, 3].values().join(", "), "1, , 2, , 3");
 
-sameValue([1, undefined, 2, null, 3].values().join({ toString() { return 0; } }), "10203");
-sameValue([1, undefined, 2, null, 3].values().join({ toString() { return true; } }), "1true2true3");
-sameValue([1, undefined, 2, null, 3].values().join({ toString() { return false; } }), "1false2false3");
-sameValue([1, undefined, 2, null, 3].values().join({ toString() { return null; } }), "1null2null3");
-sameValue([1, undefined, 2, null, 3].values().join({ toString() { return undefined; } }), "1undefined2undefined3");
+sameValue([1, undefined, 2, null, 3].values().join({ toString() { return 0; } }), "1002003");
+sameValue([1, undefined, 2, null, 3].values().join({ toString() { return true; } }), "1truetrue2truetrue3");
+sameValue([1, undefined, 2, null, 3].values().join({ toString() { return false; } }), "1falsefalse2falsefalse3");
+sameValue([1, undefined, 2, null, 3].values().join({ toString() { return null; } }), "1nullnull2nullnull3");
+sameValue([1, undefined, 2, null, 3].values().join({ toString() { return undefined; } }), "1undefinedundefined2undefinedundefined3");
 sameValue([1, undefined, 2, null, 3].values().join({ toString() { return ""; } }), "123");
-sameValue([1, undefined, 2, null, 3].values().join({ toString() { return ","; } }), "1,2,3");
-sameValue([1, undefined, 2, null, 3].values().join({ toString() { return ", "; } }), "1, 2, 3");
+sameValue([1, undefined, 2, null, 3].values().join({ toString() { return ","; } }), "1,,2,,3");
+sameValue([1, undefined, 2, null, 3].values().join({ toString() { return ", "; } }), "1, , 2, , 3");
 
 {
     let nextGetCount = 0;
@@ -96,7 +96,7 @@ sameValue([1, undefined, 2, null, 3].values().join({ toString() { return ", "; }
         yield null;
         yield undefined;
     }
-    sameValue(gen().join("|"), "1|2|3|4|5");
+    sameValue(gen().join("|"), "||1|2|3|4|5||");
 }
 
 {
