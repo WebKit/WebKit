@@ -80,7 +80,15 @@ extension WKIdentityDocumentPresentmentController {
 
             do {
                 Self.logger.debug("IdentityDocumentPresentmentController performRequest called with request \(String(describing: request))")
-                let convertedRequests = request.mobileDocumentRequests.map(ISO18013MobileDocumentRequest.init(_:))
+                var convertedRequests: [any IdentityDocumentWebPresentmentRequest] =
+                    request.mobileDocumentRequests.map(ISO18013MobileDocumentRequest.init(_:))
+                #if HAVE_DIGITAL_CREDENTIALS_OPENID4VP
+                convertedRequests.append(contentsOf: request.openID4VPRequests.compactMap(wkPlatformOpenID4VPRequest(from:)))
+                #endif
+
+                if convertedRequests.isEmpty {
+                    throw WKIdentityDocumentPresentmentError(.invalidRequest)
+                }
 
                 Self.logger.debug("IdentityDocumentPresentmentController build converted request \(String(describing: convertedRequests))")
 
@@ -91,14 +99,27 @@ extension WKIdentityDocumentPresentmentController {
                 performRequestTask = task
                 let response = try await task.value
 
-                guard let response = response as? ISO18013MobileDocumentResponse else {
-                    Self.logger.error(
-                        "IdentityDocumentPresentmentController unexpectedly received a response that is not of type ISO18013MobileDocumentResponse"
-                    )
-                    throw WKIdentityDocumentPresentmentError(.invalidRequest)
+                if let response = response as? ISO18013MobileDocumentResponse {
+                    return .init(protocolString: Self.isoMdocProtocol, responseData: response.responseData)
                 }
 
-                return .init(protocolString: Self.isoMdocProtocol, responseData: response.responseData)
+                #if HAVE_DIGITAL_CREDENTIALS_OPENID4VP
+                if let responseData = wkPlatformOpenID4VPResponseData(from: response) {
+                    guard let requestType = request.openID4VPRequests.first?.requestType else {
+                        Self.logger.error(
+                            "IdentityDocumentPresentmentController received an OpenID4VP response for a request that did not ask for one"
+                        )
+                        throw WKIdentityDocumentPresentmentError(.invalidRequest)
+                    }
+
+                    return .init(protocolString: requestType, responseData: responseData)
+                }
+                #endif
+
+                Self.logger.error(
+                    "IdentityDocumentPresentmentController unexpectedly received a response of an unrecognized type"
+                )
+                throw WKIdentityDocumentPresentmentError(.invalidRequest)
             } catch let error as IdentityDocumentPresentmentError {
                 let userInfo = [NSDebugDescriptionErrorKey: error.debugDescription]
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,19 +27,16 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#import "WKISO18013Request.h"
-#import "WKIdentityDocumentPresentmentRequest.h"
-#import "WKIdentityDocumentPresentmentResponse.h"
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WKIdentityDocumentRawRequestValidator : NSObject
+@interface WKIdentityDocumentPresentmentOpenID4VPRequest : NSObject
 
-- (nullable WKIdentityDocumentPresentmentMobileDocumentRequest *)validateISO18013Request:(WKISO18013Request *)iso18013Request origin:(NSURL *)origin error:(NSError **)error;
+@property (nonatomic, strong, readonly) NSString *requestType;
+- (instancetype)initWithRequestType:(NSString *)requestType NS_DESIGNATED_INITIALIZER;
 
-#if HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
-- (BOOL)validateOpenID4VPRequest:(NSData *)requestData requestType:(NSString *)requestType origin:(NSURL *)origin error:(NSError **)error;
-#endif
+- (instancetype)init NS_UNAVAILABLE;
 
 @end
 

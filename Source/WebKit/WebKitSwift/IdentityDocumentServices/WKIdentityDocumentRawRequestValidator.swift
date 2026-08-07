@@ -111,5 +111,44 @@ extension WKIdentityDocumentRawRequestValidator {
             throw WKIdentityDocumentPresentmentError(.invalidRequest)
         }
     }
+
+    #if HAVE_DIGITAL_CREDENTIALS_OPENID4VP
+    @objc(validateOpenID4VPRequest:requestType:origin:error:)
+    func validateOpenID4VPRequest(_ requestData: Data, requestType: String, origin: URL) throws {
+        do {
+            let validated = try wkPlatformValidateOpenID4VPRequest(
+                requestData,
+                requestType: requestType,
+                origin: origin,
+                using: validator
+            )
+
+            guard validated else {
+                throw WKIdentityDocumentPresentmentError(.invalidRequest)
+            }
+        } catch let error as IdentityDocumentPresentmentError {
+            let userInfo = [NSDebugDescriptionErrorKey: error.debugDescription]
+
+            Self.logger.debug(
+                "WKIdentityDocumentRawRequestValidator encountered error validating an OpenID4VP request. Error: \(error)"
+            )
+
+            switch error {
+            case .invalidRequest:
+                throw WKIdentityDocumentPresentmentError(.invalidRequest, userInfo: userInfo)
+            case .notEntitled:
+                throw WKIdentityDocumentPresentmentError(.notEntitled, userInfo: userInfo)
+            default:
+                throw WKIdentityDocumentPresentmentError(.unknown, userInfo: userInfo)
+            }
+        } catch {
+            Self.logger.debug(
+                "WKIdentityDocumentRawRequestValidator encountered error validating an OpenID4VP request. Error: \(error)"
+            )
+
+            throw WKIdentityDocumentPresentmentError(.invalidRequest)
+        }
+    }
+    #endif // HAVE_DIGITAL_CREDENTIALS_OPENID4VP
 }
 #endif

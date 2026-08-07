@@ -26,23 +26,55 @@
 #include "config.h"
 #include "DigitalCredentialsRequestDataBuilder.h"
 
+#include <Logging.h>
 #include <WebCore/DigitalCredentialsRequestData.h>
 #include <WebCore/DocumentSecurityOrigin.h>
 #include <WebCore/ISO18013DocumentRequest.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> DigitalCredentialsRequestDataBuilder::build(Vector<ValidatedMobileDocumentRequest> validatedCredentialRequests, const Document& document, Vector<UnvalidatedDigitalCredentialRequest>&& unvalidatedRequests)
+ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> DigitalCredentialsRequestDataBuilder::build(Vector<ValidatedDigitalCredentialRequest> validatedCredentialRequests, const Document& document, Vector<UnvalidatedDigitalCredentialRequest>&& unvalidatedRequests)
 {
+    DigitalCredentialsSecurityOriginData origins {
+        .topOrigin = document.topOrigin().data(),
+        .documentOrigin = document.securityOrigin().data(),
+    };
+
+    Vector<ValidatedMobileDocumentRequest> mobileDocumentRequests;
+    Vector<ValidatedOpenID4VPRequest> openID4VPRequests;
+
+    for (auto& validatedRequest : validatedCredentialRequests) {
+        WTF::switchOn(validatedRequest,
+            [&](ValidatedMobileDocumentRequest& request) {
+                mobileDocumentRequests.append(WTF::move(request));
+            },
+            [&](ValidatedOpenID4VPRequest& request) {
+                openID4VPRequests.append(WTF::move(request));
+            });
+    }
+
+    if (mobileDocumentRequests.isEmpty() && !openID4VPRequests.isEmpty()) {
+        return std::make_pair(
+            DigitalCredentialsRequestData {
+                DigitalCredentialsOpenID4VPRequestData {
+                    origins,
+                    WTF::move(openID4VPRequests) } },
+            DigitalCredentialsRawRequests { WTF::move(unvalidatedRequests) });
+    }
+
+    if (!openID4VPRequests.isEmpty())
+        LOG(DigitalCredentials, "DigitalCredentialsRequestDataBuilder::build() - mdoc requests present; %zu OpenID4VP request(s) will not be presented.", openID4VPRequests.size());
+
     return std::make_pair(
         DigitalCredentialsRequestData {
             DigitalCredentialsMobileDocumentRequestData {
-                { document.topOrigin().data(), document.securityOrigin().data() },
-                WTF::move(validatedCredentialRequests) } },
+                origins,
+                WTF::move(mobileDocumentRequests) } },
         DigitalCredentialsRawRequests { WTF::move(unvalidatedRequests) });
 }
 

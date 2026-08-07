@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,14 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN)
+#include <WebCore/DigitalCredentialsSecurityOriginData.h>
+#include <WebCore/ValidatedOpenID4VPRequest.h>
+#include <wtf/Vector.h>
 
-#import "WKISO18013Request.h"
-#import "WKIdentityDocumentPresentmentRequest.h"
-#import "WKIdentityDocumentPresentmentResponse.h"
+namespace WebCore {
 
-NS_ASSUME_NONNULL_BEGIN
+struct DigitalCredentialsOpenID4VPRequestData : DigitalCredentialsSecurityOriginData {
+    Vector<ValidatedOpenID4VPRequest> requests;
+};
 
-@interface WKIdentityDocumentRawRequestValidator : NSObject
-
-- (nullable WKIdentityDocumentPresentmentMobileDocumentRequest *)validateISO18013Request:(WKISO18013Request *)iso18013Request origin:(NSURL *)origin error:(NSError **)error;
-
-#if HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
-- (BOOL)validateOpenID4VPRequest:(NSData *)requestData requestType:(NSString *)requestType origin:(NSURL *)origin error:(NSError **)error;
-#endif
-
-@end
-
-NS_ASSUME_NONNULL_END
-
-#endif // ENABLE(WEB_AUTHN)
+} // namespace WebCore

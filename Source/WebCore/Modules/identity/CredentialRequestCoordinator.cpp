@@ -149,11 +149,7 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
 
     auto validatedCredentialRequests = validatedRequestsOrException.releaseReturnValue();
 
-    bool hasOpenID4VPRequest = unvalidatedRequests.containsIf([](auto& request) {
-        return std::holds_alternative<OpenID4VPSignedRequest>(request)
-            || std::holds_alternative<OpenID4VPMultisignedRequest>(request);
-    });
-    if (validatedCredentialRequests.isEmpty() && !hasOpenID4VPRequest)
+    if (validatedCredentialRequests.isEmpty())
         return rejectTheCredentialRequestWith(Exception { ExceptionCode::TypeError, "No valid credential requests remain after validation"_s });
 
     if (signal) {

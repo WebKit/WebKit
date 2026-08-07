@@ -100,12 +100,10 @@ static std::optional<DigitalCredentialPresentationProtocol> convertProtocolStrin
     switch (*protocol) {
     case OrgIsoMdoc:
         return protocol;
+    case Openid4vpV1Unsigned:
     case Openid4vpV1Signed:
     case Openid4vpV1Multisigned:
         return document.settings().digitalCredentialsOpenID4VPEnabled() ? protocol : std::nullopt;
-    case Openid4vpV1Unsigned:
-        // FIXME (webkit.org/b/320207): support once DCQL parsing lands.
-        return std::nullopt;
     }
     return std::nullopt;
 }
@@ -120,7 +118,7 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
     auto* globalObject = document.globalObject();
 
     // Check that the object is JSON stringifiable.
-    JSC::JSONStringify(globalObject, request.data.get(), 0);
+    auto jsonString = JSC::JSONStringify(globalObject, request.data.get(), 0);
     if (scope.exception()) [[unlikely]]
         return Exception { ExceptionCode::ExistingExceptionError };
 
@@ -145,8 +143,9 @@ static ExceptionOr<std::optional<UnvalidatedDigitalCredentialRequest>> jsToCrede
         return std::make_optional<UnvalidatedDigitalCredentialRequest>(result.releaseReturnValue());
     }
     case Openid4vpV1Unsigned:
-        // FIXME (webkit.org/b/320207): support once DCQL parsing lands.
-        return std::optional<UnvalidatedDigitalCredentialRequest> { std::nullopt };
+        if (jsonString.isNull())
+            return Exception { ExceptionCode::TypeError, "The request is not JSON-serializable."_s };
+        return std::make_optional<UnvalidatedDigitalCredentialRequest>(OpenID4VPUnsignedRequest { jsonString });
     }
 }
 

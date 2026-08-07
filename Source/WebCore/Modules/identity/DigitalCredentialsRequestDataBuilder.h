@@ -39,7 +39,7 @@ namespace WebCore {
 class DigitalCredentialsRequestDataBuilder {
 
 public:
-    static ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> build(Vector<ValidatedMobileDocumentRequest>, const Document&, Vector<UnvalidatedDigitalCredentialRequest>&&);
+    static ExceptionOr<std::pair<DigitalCredentialsRequestData, DigitalCredentialsRawRequests>> build(Vector<ValidatedDigitalCredentialRequest>, const Document&, Vector<UnvalidatedDigitalCredentialRequest>&&);
 };
 
 } // namespace WebCore

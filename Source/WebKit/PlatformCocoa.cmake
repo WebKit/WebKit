@@ -2084,6 +2084,7 @@ add_library(WebKitSwift SHARED
     ${_wks_dir}/CredentialUpdaterShim.swift
     ${_wks_dir}/GroupActivities/WKGroupSession.swift
     ${_wks_dir}/IdentityDocumentServices/ISO18013MobileDocumentRequest+Extras.swift
+    ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentOpenID4VPRequest.swift
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentController.swift
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentMobileDocumentRequest.swift
     ${_wks_dir}/IdentityDocumentServices/WKIdentityDocumentPresentmentMobileDocumentRequest+Extras.swift
