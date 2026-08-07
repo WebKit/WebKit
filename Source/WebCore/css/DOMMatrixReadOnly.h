@@ -124,7 +124,7 @@ public:
 
     const TransformationMatrix& transformationMatrix() const LIFETIME_BOUND { return m_matrix; }
     
-    Ref<DOMMatrix> NODELETE cloneAsDOMMatrix() const;
+    Ref<DOMMatrix> cloneAsDOMMatrix() const;
 
 protected:
     DOMMatrixReadOnly() = default;

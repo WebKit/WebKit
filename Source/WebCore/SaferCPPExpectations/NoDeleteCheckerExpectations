@@ -1,9 +1,4 @@
-css/CSSComputedStyleDeclaration.cpp
-css/CSSPropertyInitialValues.cpp
 css/DOMMatrixReadOnly.cpp
-css/StyleSheetList.cpp
-css/parser/CSSPropertyParserConsumer+String.cpp
-css/values/color/CSSKeywordColor.cpp
 dom/Document.cpp
 dom/FragmentDirectiveRangeFinder.cpp
 dom/UserGestureIndicator.cpp

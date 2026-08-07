@@ -309,7 +309,7 @@ inline static bool hasScrollbarPseudoElement(EnumSet<PseudoElementType> collecte
     return collectedPseudoElements.contains(PseudoElementType::WebKitResizer);
 }
 
-static SelectorChecker::LocalContext NODELETE localContextForParent(const SelectorChecker::LocalContext& context)
+static SelectorChecker::LocalContext localContextForParent(const SelectorChecker::LocalContext& context)
 {
     SelectorChecker::LocalContext updatedContext(context);
     // Disable :visited matching when we see the first link.

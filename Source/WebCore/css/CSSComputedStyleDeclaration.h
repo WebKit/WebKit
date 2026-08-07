@@ -65,12 +65,12 @@ private:
     String NODELETE getPropertyPriority(const String& propertyName) final;
     String NODELETE getPropertyShorthand(const String& propertyName) final;
     bool NODELETE isPropertyImplicit(const String& propertyName) final;
-    ExceptionOr<void> NODELETE setProperty(const String& propertyName, const String& value, const String& priority) final;
+    ExceptionOr<void> setProperty(const String& propertyName, const String& value, const String& priority) final;
     ExceptionOr<String> removeProperty(const String& propertyName) final;
     String NODELETE cssText() const final;
-    ExceptionOr<void> NODELETE setCssText(const String&) final;
+    ExceptionOr<void> setCssText(const String&) final;
     String getPropertyValueInternal(CSSPropertyID) final;
-    ExceptionOr<void> NODELETE setPropertyInternal(CSSPropertyID, const String& value, IsImportant) final;
+    ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, IsImportant) final;
     Ref<MutableStyleProperties> copyProperties() const final;
 
     Element& element() const { return m_element; }

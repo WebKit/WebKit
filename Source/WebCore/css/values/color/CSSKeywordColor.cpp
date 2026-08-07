@@ -72,7 +72,7 @@ bool isSystemColorKeyword(CSSValueID id)
     return (id >= CSSValueCanvas && id <= CSSValueInternalDocumentTextColor) || isDeprecatedSystemColorKeyword(id);
 }
 
-bool isDeprecatedSystemColorKeyword(CSSValueID id)
+SUPPRESS_NODELETE bool isDeprecatedSystemColorKeyword(CSSValueID id)
 {
     if (id == CSSValueText)
 #if PLATFORM(COCOA)
