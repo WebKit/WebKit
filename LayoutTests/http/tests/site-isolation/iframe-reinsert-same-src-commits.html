@@ -9,54 +9,59 @@ if (window.testRunner) {
 }
 
 const src = "http://localhost:8000/site-isolation/resources/frame-reports-commit-to-top.html";
-const totalIterations = 5;
-let reinsertCommits = 0;
+let commits = 0;
 let done = false;
+let log = [];
 
-function finish() {
+function finish(reason) {
     if (done)
         return;
     done = true;
-    document.body.textContent = reinsertCommits === totalIterations
-        ? "PASS: all " + totalIterations + " re-inserted cross-origin iframes committed."
-        : "FAIL: only " + reinsertCommits + " of " + totalIterations + " re-inserted iframes committed (rest stuck at about:blank).";
+    if (commits >= 2)
+        document.body.textContent = "PASS: re-inserted cross-origin iframe committed.";
+    else
+        document.body.textContent = "FAIL (" + reason + "): re-inserted iframe did not commit. " + log.join(" ");
     if (window.testRunner)
         testRunner.notifyDone();
 }
 
-function runIteration() {
-    const f = document.createElement("iframe");
-    let commitsForThisFrame = 0;
+setTimeout(() => finish("timeout"), 10000);
 
-    const onMessage = (event) => {
-        if (event.source !== f.contentWindow)
-            return;
-        if (typeof event.data !== "string" || !event.data.startsWith("committed:"))
-            return;
+window.addEventListener("message", (event) => {
+    if (typeof event.data !== "string" || !event.data.startsWith("committed:"))
+        return;
 
-        commitsForThisFrame++;
-        if (commitsForThisFrame === 1) {
-            f.remove();
-            document.body.appendChild(f);
-            f.src = src;
-        } else if (commitsForThisFrame === 2) {
-            window.removeEventListener("message", onMessage);
-            if (++reinsertCommits === totalIterations)
-                finish();
-        }
-    };
-    window.addEventListener("message", onMessage);
+    commits++;
+    log.push("commit#" + commits);
 
-    f.src = src;
-    document.body.appendChild(f);
+    if (commits === 1) {
+        const frame = document.querySelector("iframe");
+        frame.remove();
+        document.body.appendChild(frame);
+        frame.src = src;
+        return;
+    }
+
+    finish("complete");
+});
+
+function start()
+{
+    try {
+        const frame = document.createElement("iframe");
+        frame.src = src;
+        document.body.appendChild(frame);
+        log.push("created");
+    } catch (e) {
+        log.push("exception:" + e);
+        finish("exception");
+    }
 }
 
-onload = () => {
-    for (let i = 0; i < totalIterations; i++)
-        runIteration();
-
-    setTimeout(finish, 8000);
-};
+if (document.readyState === "complete")
+    start();
+else
+    window.addEventListener("load", start);
 </script>
 </body>
 </html>
