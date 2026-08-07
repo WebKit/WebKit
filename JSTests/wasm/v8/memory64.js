@@ -1,3 +1,5 @@
+//@ memoryHog!
+//@ skip if $addressBits <= 32
 // Copyright 2021 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -42,19 +44,10 @@ function BasicMemory64Tests(num_pages) {
   let store = module.exports.store;
 
   assertEquals(num_bytes, memory.buffer.byteLength);
-  // TODO(v8:4153): Enable for all sizes once the TypedArray size limit is
-  // raised.
-  const kMaxTypedArraySize = Math.pow(2, 32);
-  if (num_bytes > kMaxTypedArraySize) {
-    // TODO(v8:4153): Fix the error message below, if we don't decide to bump
-    // the limit soon.
-    assertThrows(
-        () => new Int8Array(memory.buffer), RangeError,
-        'Invalid typed array length: undefined');
-  } else {
-    let array = new Int8Array(memory.buffer);
-    assertEquals(num_bytes, array.length);
-  }
+  // JSC's array buffer byte length limit is 2**34, which is also the largest memory64, so every size
+  // reachable here also fits a typed array. V8 caps buffers at 2**32 and skips the big sizes instead.
+  let array = new Int8Array(memory.buffer);
+  assertEquals(num_bytes, array.length);
 
   assertEquals(0, load(num_bytes - 4));
   assertThrows(() => load(num_bytes - 3));
@@ -121,7 +114,6 @@ function allowOOM(fn) {
   allowOOM(() => BasicMemory64Tests(max_num_pages));
 })();
 
-/*
 (function TestTooBigDeclaredInitial() {
   // print(arguments.callee.name);
   let builder = new WasmModuleBuilder();
@@ -130,12 +122,9 @@ function allowOOM(fn) {
   assertFalse(WebAssembly.validate(builder.toBuffer()));
   assertThrows(
       () => builder.toModule(), WebAssembly.CompileError,
-      'WebAssembly.Module(): initial memory size (262145 pages) is larger ' +
-          'than implementation limit (262144 pages) @+12');
+      /Memory's initial page count of 262145 is invalid/);
 })();
-*/
 
-/*
 (function TestTooBigDeclaredMaximum() {
   // print(arguments.callee.name);
   let builder = new WasmModuleBuilder();
@@ -144,10 +133,8 @@ function allowOOM(fn) {
   assertFalse(WebAssembly.validate(builder.toBuffer()));
   assertThrows(
       () => builder.toModule(), WebAssembly.CompileError,
-      'WebAssembly.Module(): maximum memory size (262145 pages) is larger ' +
-          'than implementation limit (262144 pages) @+13');
+      /Memory's maximum page count of 262145 is invalid/);
 })();
-*/
 
 (function TestGrow64() {
   // print(arguments.callee.name);

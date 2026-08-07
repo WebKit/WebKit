@@ -100,7 +100,7 @@ void WorkerThreadableWebSocketChannel::send(CString&& message)
         bridge->send(WTF::move(message));
 }
 
-void WorkerThreadableWebSocketChannel::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
+void WorkerThreadableWebSocketChannel::send(const ArrayBuffer& binaryData, size_t byteOffset, size_t byteLength)
 {
     if (RefPtr bridge = m_bridge)
         bridge->send(binaryData, byteOffset, byteLength);
@@ -280,7 +280,7 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveBinaryData(Vector<uint8_t
     }, m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount(unsigned bufferedAmount)
+void WorkerThreadableWebSocketChannel::Peer::didUpdateBufferedAmount(uint64_t bufferedAmount)
 {
     ASSERT(isMainThread());
 
@@ -308,7 +308,7 @@ void WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake()
     }, m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
+void WorkerThreadableWebSocketChannel::Peer::didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
 {
     ASSERT(isMainThread());
     m_mainWebSocketChannel = nullptr;
@@ -436,14 +436,18 @@ void WorkerThreadableWebSocketChannel::Bridge::send(CString&& message)
     });
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
+void WorkerThreadableWebSocketChannel::Bridge::send(const ArrayBuffer& binaryData, size_t byteOffset, size_t byteLength)
 {
     RefPtr peer = m_peer.get();
     if (!peer)
         return;
 
-    // ArrayBuffer isn't thread-safe, hence the content of ArrayBuffer is copied into Vector<uint8_t>.
-    Vector<uint8_t> data(byteLength);
+    // ArrayBuffer isn't thread-safe, so its content is copied into a Vector to cross to the main thread.
+    Vector<uint8_t> data;
+    if (!data.tryGrow(byteLength)) {
+        fail("Failed to send WebSocket frame: payload is too large"_s);
+        return;
+    }
     if (binaryData.byteLength())
         memcpySpan(data.mutableSpan(), binaryData.span().subspan(byteOffset, byteLength));
 

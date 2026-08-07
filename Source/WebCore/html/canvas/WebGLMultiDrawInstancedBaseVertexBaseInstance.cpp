@@ -127,14 +127,14 @@ bool WebGLMultiDrawInstancedBaseVertexBaseInstance::validateDrawcount(WebGLRende
     return true;
 }
 
-bool WebGLMultiDrawInstancedBaseVertexBaseInstance::validateOffset(WebGLRenderingContextBase& context, ASCIILiteral functionName, ASCIILiteral outOfBoundsDescription, GCGLsizei size, GCGLuint offset, GCGLsizei drawcount)
+bool WebGLMultiDrawInstancedBaseVertexBaseInstance::validateOffset(WebGLRenderingContextBase& context, ASCIILiteral functionName, ASCIILiteral outOfBoundsDescription, size_t size, GCGLuint offset, GCGLsizei drawcount)
 {
-    if (drawcount > size) {
+    if (static_cast<size_t>(drawcount) > size) {
         context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "drawcount out of bounds"_s);
         return false;
     }
 
-    if (offset > static_cast<GCGLuint>(size - drawcount)) {
+    if (offset > size - drawcount) {
         context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, outOfBoundsDescription);
         return false;
     }

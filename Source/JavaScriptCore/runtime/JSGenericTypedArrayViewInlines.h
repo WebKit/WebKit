@@ -529,8 +529,29 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot(
     if (std::optional<uint32_t> index = parseIndex(propertyName))
         return getOwnPropertySlotByIndex(thisObject, globalObject, index.value(), slot);
 
-    if (isCanonicalNumericIndexString(propertyName.uid()))
-        return false;
+    // https://tc39.es/ecma262/#sec-typedarray-getownproperty: a canonical numeric index string never
+    // reaches the ordinary lookup, and yields an element exactly when it is a valid integer index.
+    std::optional<uint64_t> integerIndex;
+    if (isCanonicalNumericIndexString(propertyName.uid(), &integerIndex)) {
+        if (!integerIndex) [[likely]]
+            return false;
+        VM& vm = globalObject->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        if (thisObject->isDetached() || !thisObject->inBounds(integerIndex.value()))
+            return false;
+        size_t index = integerIndex.value(); // inBounds() has shown it is a length, so it fits.
+        JSValue value;
+        if constexpr (Adaptor::canConvertToJSQuickly) {
+            UNUSED_VARIABLE(scope);
+            value = thisObject->getIndexQuickly(index);
+        } else {
+            auto nativeValue = thisObject->getIndexQuicklyAsNativeValue(index);
+            value = Adaptor::toJSValue(globalObject, nativeValue);
+            RETURN_IF_EXCEPTION(scope, false);
+        }
+        slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), value);
+        return true;
+    }
 
     return Base::getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
 }
@@ -552,11 +573,19 @@ bool JSGenericTypedArrayView<Adaptor>::put(
         return putByIndex(thisObject, globalObject, index.value(), value, slot.isStrictMode());
     }
 
-    if (isCanonicalNumericIndexString(propertyName.uid())) {
-        if (isThisValueAltered(slot, thisObject)) [[unlikely]]
-            return true;
-        // Cases like '-0', '1.1', etc. are still obliged to give the RHS a chance to throw.
-        toNativeFromValue<Adaptor>(globalObject, value);
+    std::optional<uint64_t> integerIndex;
+    if (isCanonicalNumericIndexString(propertyName.uid(), &integerIndex)) {
+        if (isThisValueAltered(slot, thisObject)) [[unlikely]] {
+            if (!integerIndex || thisObject->isDetached() || !thisObject->inBounds(integerIndex.value()))
+                return true;
+            return ordinarySetSlow(globalObject, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
+        }
+        // TypedArraySetElement coerces the RHS before deciding whether the index is valid, so cases like
+        // '-0' and '1.1' are still obliged to give it a chance to throw. setIndex() does the same.
+        if (integerIndex) [[unlikely]]
+            thisObject->setIndex(globalObject, integerIndex.value(), value);
+        else
+            toNativeFromValue<Adaptor>(globalObject, value);
         return true;
     }
 
@@ -572,7 +601,17 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSGenericTypedArrayView* thisObject = uncheckedDowncast<JSGenericTypedArrayView>(object);
 
-    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
+    // https://tc39.es/ecma262/#sec-typedarray-defineownproperty. A key past MAX_ARRAY_INDEX arrives as a
+    // canonical numeric index string, so the index comes from there instead.
+    std::optional<uint64_t> index = parseIndex(propertyName);
+    bool isCanonicalNumeric = false;
+    if (!index) [[unlikely]] {
+        std::optional<uint64_t> integerIndex;
+        isCanonicalNumeric = isCanonicalNumericIndexString(propertyName.uid(), &integerIndex);
+        index = integerIndex;
+    }
+
+    if (index) {
         auto throwTypeErrorIfNeeded = [&] (ASCIILiteral errorMessage) -> bool {
             if (shouldThrow)
                 throwTypeError(globalObject, scope, makeString(errorMessage, *index));
@@ -599,12 +638,12 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
 
         scope.release();
         if (descriptor.value())
-            thisObject->setIndex(globalObject, index.value(), descriptor.value());
+            thisObject->setIndex(globalObject, static_cast<size_t>(index.value()), descriptor.value());
 
         return true;
     }
 
-    if (isCanonicalNumericIndexString(propertyName.uid()))
+    if (isCanonicalNumeric)
         return typeError(globalObject, scope, shouldThrow, "Attempting to store canonical numeric string property on a typed array"_s);
 
     RELEASE_AND_RETURN(scope, Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow));
@@ -619,8 +658,13 @@ bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
     if (std::optional<uint32_t> index = parseIndex(propertyName))
         return deletePropertyByIndex(thisObject, globalObject, index.value());
 
-    if (isCanonicalNumericIndexString(propertyName.uid()))
+    std::optional<uint64_t> integerIndex;
+    if (isCanonicalNumericIndexString(propertyName.uid(), &integerIndex)) {
+        // Integer-indexed elements can't be deleted, so we must return false when the index is valid.
+        if (integerIndex) [[unlikely]]
+            return thisObject->isDetached() || !thisObject->inBounds(integerIndex.value());
         return true;
+    }
 
     return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 }

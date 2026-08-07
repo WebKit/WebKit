@@ -93,7 +93,7 @@ public:
 
     const URL& NODELETE url() const;
     State NODELETE readyState() const;
-    unsigned NODELETE bufferedAmount() const;
+    uint64_t NODELETE bufferedAmount() const;
 
     String NODELETE protocol() const;
     String NODELETE extensions() const;
@@ -125,9 +125,9 @@ private:
     void didReceiveMessage(String&& message) final;
     void didReceiveBinaryData(Vector<uint8_t>&&) final;
     void didReceiveMessageError(String&& reason) final;
-    void NODELETE didUpdateBufferedAmount(unsigned bufferedAmount) final;
+    void NODELETE didUpdateBufferedAmount(uint64_t bufferedAmount) final;
     void didStartClosingHandshake() final;
-    void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) final;
+    void didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) final;
     void didUpgradeURL() final;
 
     size_t NODELETE getFramingOverhead(size_t payloadSize);
@@ -140,8 +140,8 @@ private:
     State m_state { CONNECTING };
     URL m_url;
     const RefPtr<SecurityOrigin> m_origin;
-    unsigned m_bufferedAmount { 0 };
-    unsigned m_bufferedAmountAfterClose { 0 };
+    uint64_t m_bufferedAmount { 0 };
+    uint64_t m_bufferedAmountAfterClose { 0 };
     BinaryType m_binaryType { BinaryType::Blob };
     String m_subprotocol;
     String m_extensions;

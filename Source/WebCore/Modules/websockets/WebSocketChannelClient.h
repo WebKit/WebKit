@@ -42,13 +42,13 @@ public:
     virtual void didReceiveMessage(String&&) = 0;
     virtual void didReceiveBinaryData(Vector<uint8_t>&&) = 0;
     virtual void didReceiveMessageError(String&&) = 0;
-    virtual void didUpdateBufferedAmount(unsigned bufferedAmount) = 0;
+    virtual void didUpdateBufferedAmount(uint64_t bufferedAmount) = 0;
     virtual void didStartClosingHandshake() = 0;
     enum ClosingHandshakeCompletionStatus {
         ClosingHandshakeIncomplete,
         ClosingHandshakeComplete
     };
-    virtual void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) = 0;
+    virtual void didClose(uint64_t unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) = 0;
     virtual void didUpgradeURL() = 0;
 
 protected:

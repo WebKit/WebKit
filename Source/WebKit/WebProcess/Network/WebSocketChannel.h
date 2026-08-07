@@ -70,7 +70,7 @@ private:
     String subprotocol() final;
     String extensions() final;
     void send(CString&&) final;
-    void send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) final;
+    void send(const JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength) final;
     void send(WebCore::Blob&) final;
     void close(int code, const String& reason) final;
     void fail(String&& reason) final;

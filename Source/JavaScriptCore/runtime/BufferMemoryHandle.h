@@ -30,6 +30,7 @@
 
 #include <atomic>
 
+#include <bmalloc/Gigacage.h>
 #include <wtf/CagedPtr.h>
 #include <wtf/Lock.h>
 #include <wtf/RAMSize.h>
@@ -58,6 +59,14 @@ enum class GrowFailReason : uint8_t {
     OutOfMemory,
     GrowSharedUnavailable,
 };
+
+// The most address space one growable buffer may reserve. A growable buffer reserves its whole maximum
+// up front while only its initial size is charged against the physical budget, so without a bound one
+// buffer could claim every Primitive allocation the process will ever hand out.
+// FIXME: Nothing bounds the total across buffers; see https://bugs.webkit.org/show_bug.cgi?id=170825.
+constexpr uint64_t maxGrowableBufferReservationBytes = Gigacage::primitiveAddressSpaceBudget / 4;
+static_assert(maxGrowableBufferReservationBytes >= PageCount::maxMemory32Bytes,
+    "A memory32, and any buffer that can address one, must stay reservable in full on every platform");
 
 struct BufferMemoryResult {
     enum class Kind {

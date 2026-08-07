@@ -77,8 +77,7 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
 
     // Page counts are declarative, so accept everything a module's own memory type may declare.
     // What can actually be allocated is bounded separately, and more tightly.
-    // FIXME: We should bump MAX_ARRAY_BUFFER_SIZE and reduce the maximum size of memory64.
-    uint64_t maxDeclarablePageCount = addressType.is64Bit() ? Wasm::maxMemory64Pages : Wasm::maxMemoryPages;
+    uint64_t maxDeclarablePageCount = Wasm::maxDeclarablePages(addressType);
 
     PageCount initialPageCount;
     {
@@ -100,10 +99,6 @@ JSWebAssemblyMemory* WebAssemblyMemoryConstructor::createMemoryFromDescriptor(JS
         RETURN_IF_EXCEPTION(throwScope, { });
         if (size > maxDeclarablePageCount) {
             throwException(globalObject, throwScope, createRangeError(globalObject, "WebAssembly.Memory 'initial' page count is too large"_s));
-            return { };
-        }
-        if (PageCount(size).bytes() > MAX_ARRAY_BUFFER_SIZE) {
-            throwException(globalObject, throwScope, createOutOfMemoryError(globalObject));
             return { };
         }
         initialPageCount = PageCount(size);

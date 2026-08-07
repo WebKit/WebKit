@@ -82,23 +82,11 @@ void JSWebAssemblyMemory::associateArrayBuffer(JSGlobalObject* globalObject, boo
             auto destructor = createSharedTask<void(void*)>([protectedHandle = WTF::move(protectedHandle)] (void*) { });
             m_buffer = ArrayBuffer::createFromBytes({ static_cast<const uint8_t*>(data), size }, WTF::move(destructor));
         } else {
-            // The determination of maxByteLength of a resizable non-shared array buffer may change in
-            // https://webassembly.github.io/threads/js-api/index.html#create-a-resizable-memory-buffer
-            // Currently we are implementing the behavior expected by WPT tests,
-            // so that maxByteLength is 2^32 if the memory has no user-defined max size.
-#if USE(LARGE_TYPED_ARRAYS)
-            // If sizeof(size_t) == 8 we use the proper spec value because it's representable.
-            constexpr size_t defaultMaxByteLengthIfMemoryHasNoMax = 65536ULL * 65536ULL;
-#else
-            // If sizeof(size_t) == 4, compute the largest page-aligned size that fits within MAX_ARRAY_BUFFER_SIZE.
-            uint32_t maxPages = MAX_ARRAY_BUFFER_SIZE / PageCount::pageSize;
-            const size_t defaultMaxByteLengthIfMemoryHasNoMax = static_cast<size_t>(PageCount(maxPages).bytes());
-#endif
+            // The buffer must not advertise a length this platform could never grow the memory to, so the
+            // ceiling is what can be allocated rather than what the address type may declare.
+            size_t ceilingBytes = Wasm::maxAllocatableBytes(m_memory->addressType());
             PageCount memoryMax = m_memory->maximum();
-            // A memory64 may declare a maximum far above what an ArrayBuffer can address, while the
-            // memory itself can never grow past MAX_ARRAY_BUFFER_SIZE.
-            // FIXME: We should bump MAX_ARRAY_BUFFER_SIZE and reduce the maximum size of memory64.
-            size_t maxByteLength = memoryMax ? std::min<uint64_t>(memoryMax.bytes(), defaultMaxByteLengthIfMemoryHasNoMax) : defaultMaxByteLengthIfMemoryHasNoMax;
+            size_t maxByteLength = memoryMax ? std::min<uint64_t>(memoryMax.bytes(), ceilingBytes) : ceilingBytes;
             ArrayBufferContents contents(data, size, maxByteLength, WTF::move(protectedHandle));
             m_buffer = ArrayBuffer::create(WTF::move(contents));
         }

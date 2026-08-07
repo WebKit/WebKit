@@ -361,11 +361,11 @@ public:
             );
         }
 
-        GCGLsizei length() const
+        size_t length() const
         {
             return WTF::switchOn(m_variant,
-                [](const Ref<TypedArray>& typedArray) -> GCGLsizei { return typedArray->length(); },
-                [](const Vector<DataType>& vector) -> GCGLsizei { return vector.size(); }
+                [](const Ref<TypedArray>& typedArray) -> size_t { return typedArray->length(); },
+                [](const Vector<DataType>& vector) -> size_t { return vector.size(); }
             );
         }
 
@@ -862,7 +862,7 @@ protected:
     IntRect NODELETE getImageDataSize(ImageData*);
 
     ExceptionOr<void> texImageSourceHelper(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& sourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, TexImageSource&&);
-    void texImageArrayBufferViewHelper(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, RefPtr<ArrayBufferView>&& pixels, NullDisposition, GCGLuint srcOffset);
+    void texImageArrayBufferViewHelper(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, RefPtr<ArrayBufferView>&& pixels, NullDisposition, uint64_t srcOffset);
     void texImageImpl(TexImageFunctionID, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLenum format, GCGLenum type, Image&, GraphicsContextGL::DOMSource, bool flipY, bool premultiplyAlpha, bool ignoreNativeImageAlphaPremultiplication, const IntRect&, GCGLsizei depth, GCGLint unpackImageHeight);
     void texImage2DBase(GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels);
     void texSubImage2DBase(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum internalFormat, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels);
@@ -944,7 +944,7 @@ protected:
         GCGLenum format, GCGLenum type,
         ArrayBufferView* pixels,
         NullDisposition,
-        GCGLuint srcOffset);
+        uint64_t srcOffset);
 
     // Helper function to validate a given texture format is settable as in
     // you can supply data to texImage2D, or call texImage2D, copyTexImage2D and
@@ -976,12 +976,12 @@ protected:
     // Helper function to validate input parameters for uniform functions.
     bool validateUniformLocation(ASCIILiteral functionName, const WebGLUniformLocation*);
     template<typename T, typename TypedListType>
-    std::optional<std::span<const T>> validateUniformParameters(ASCIILiteral functionName, const WebGLUniformLocation* location, const TypedList<TypedListType, T>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset = 0, GCGLuint srcLength = 0)
+    std::optional<std::span<const T>> validateUniformParameters(ASCIILiteral functionName, const WebGLUniformLocation* location, const TypedList<TypedListType, T>& values, GCGLsizei requiredMinSize, uint64_t srcOffset = 0, GCGLuint srcLength = 0)
     {
         return validateUniformMatrixParameters(functionName, location, false, values, requiredMinSize, srcOffset, srcLength);
     }
     template<typename T, typename TypedListType>
-    std::optional<std::span<const T>> validateUniformMatrixParameters(ASCIILiteral functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<TypedListType, T>&, GCGLsizei requiredMinSize, GCGLuint srcOffset = 0, GCGLuint srcLength = 0);
+    std::optional<std::span<const T>> validateUniformMatrixParameters(ASCIILiteral functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<TypedListType, T>&, GCGLsizei requiredMinSize, uint64_t srcOffset = 0, GCGLuint srcLength = 0);
 
     // Helper function to validate parameters for bufferData.
     // Return the current bound buffer to target, or 0 if parameters are invalid.

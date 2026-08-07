@@ -97,8 +97,7 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const AtomString
                 return { };
 
             result->m_sourceIsImmediateBuffer = true;
-            unsigned byteLength = arrayBuffer->byteLength();
-            auto arrayBufferView = JSC::Uint8Array::create(WTF::move(arrayBuffer), 0, byteLength);
+            auto arrayBufferView = JSC::Uint8Array::create(WTF::move(arrayBuffer));
             dataRequiresAsynchronousLoading = populateFontFaceWithArrayBuffer(protect(result->backing()), WTF::move(arrayBufferView));
             return { };
         }

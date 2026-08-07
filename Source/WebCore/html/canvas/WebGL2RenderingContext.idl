@@ -345,11 +345,11 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
     const GLenum MAX_CLIENT_WAIT_TIMEOUT_WEBGL                 = 0x9247;
 
     // Buffer objects.
-    undefined bufferData(GLenum target, [AllowShared] ArrayBufferView data, GLenum usage, GLuint srcOffset, optional GLuint length = 0);
-    undefined bufferSubData(GLenum target, GLintptr dstByteOffset, [AllowShared] ArrayBufferView srcData, GLuint srcOffset, optional GLuint length = 0);
+    undefined bufferData(GLenum target, [AllowShared] ArrayBufferView data, GLenum usage, unsigned long long srcOffset, optional GLuint length = 0);
+    undefined bufferSubData(GLenum target, GLintptr dstByteOffset, [AllowShared] ArrayBufferView srcData, unsigned long long srcOffset, optional GLuint length = 0);
 
     undefined copyBufferSubData(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
-    undefined getBufferSubData(GLenum target, GLintptr srcByteOffset, [AllowShared] ArrayBufferView dstData, optional GLuint dstOffset = 0, optional GLuint length = 0);
+    undefined getBufferSubData(GLenum target, GLintptr srcByteOffset, [AllowShared] ArrayBufferView dstData, optional unsigned long long dstOffset = 0, optional GLuint length = 0);
 
     // Framebuffer objects.
     undefined blitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
@@ -369,18 +369,18 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
     undefined texImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, GLintptr pboOffset);
     undefined texImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, TexImageSource source);
     undefined texImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, [AllowShared] ArrayBufferView? pixels);
-    undefined texImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, [AllowShared] ArrayBufferView srcData, GLuint srcOffset);
+    undefined texImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, [AllowShared] ArrayBufferView srcData, unsigned long long srcOffset);
 
     undefined texSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLintptr pboOffset);
     undefined texSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, TexImageSource source);
-    undefined texSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, [AllowShared] ArrayBufferView? srcData, optional GLuint srcOffset = 0);
+    undefined texSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, [AllowShared] ArrayBufferView? srcData, optional unsigned long long srcOffset = 0);
 
     undefined copyTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 
     undefined compressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, GLintptr offset);
-    undefined compressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, [AllowShared] ArrayBufferView srcData, optional GLuint srcOffset = 0, optional GLuint srcLengthOverride = 0);
+    undefined compressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, [AllowShared] ArrayBufferView srcData, optional unsigned long long srcOffset = 0, optional GLuint srcLengthOverride = 0);
     undefined compressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, GLintptr offset);
-    undefined compressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, [AllowShared] ArrayBufferView srcData, optional GLuint srcOffset = 0, optional GLuint srcLengthOverride = 0);
+    undefined compressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, [AllowShared] ArrayBufferView srcData, optional unsigned long long srcOffset = 0, optional GLuint srcLengthOverride = 0);
 
     // Programs and shaders/
     GLint getFragDataLocation(WebGLProgram program, DOMString name);
@@ -390,16 +390,16 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
     undefined uniform2ui(WebGLUniformLocation? location, GLuint v0, GLuint v1);
     undefined uniform3ui(WebGLUniformLocation? location, GLuint v0, GLuint v1, GLuint v2);
     undefined uniform4ui(WebGLUniformLocation? location, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
-    undefined uniform1uiv(WebGLUniformLocation? location, Uint32List data, optional GLuint srcOffset = 0, optional GLuint srcLength = 0);
-    undefined uniform2uiv(WebGLUniformLocation? location, Uint32List data, optional GLuint srcOffset = 0, optional GLuint srcLength = 0);
-    undefined uniform3uiv(WebGLUniformLocation? location, Uint32List data, optional GLuint srcOffset = 0, optional GLuint srcLength = 0);
-    undefined uniform4uiv(WebGLUniformLocation? location, Uint32List data, optional GLuint srcOffset = 0, optional GLuint srcLength = 0);
-    undefined uniformMatrix2x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional GLuint srcOffset = 0, optional GLuint srcLength = 0);
-    undefined uniformMatrix3x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional GLuint srcOffset = 0, optional GLuint srcLength = 0);
-    undefined uniformMatrix2x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional GLuint srcOffset = 0, optional GLuint srcLength = 0);
-    undefined uniformMatrix4x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional GLuint srcOffset = 0, optional GLuint srcLength = 0);
-    undefined uniformMatrix3x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional GLuint srcOffset = 0, optional GLuint srcLength = 0);
-    undefined uniformMatrix4x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional GLuint srcOffset = 0, optional GLuint srcLength = 0);
+    undefined uniform1uiv(WebGLUniformLocation? location, Uint32List data, optional unsigned long long srcOffset = 0, optional GLuint srcLength = 0);
+    undefined uniform2uiv(WebGLUniformLocation? location, Uint32List data, optional unsigned long long srcOffset = 0, optional GLuint srcLength = 0);
+    undefined uniform3uiv(WebGLUniformLocation? location, Uint32List data, optional unsigned long long srcOffset = 0, optional GLuint srcLength = 0);
+    undefined uniform4uiv(WebGLUniformLocation? location, Uint32List data, optional unsigned long long srcOffset = 0, optional GLuint srcLength = 0);
+    undefined uniformMatrix2x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional unsigned long long srcOffset = 0, optional GLuint srcLength = 0);
+    undefined uniformMatrix3x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional unsigned long long srcOffset = 0, optional GLuint srcLength = 0);
+    undefined uniformMatrix2x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional unsigned long long srcOffset = 0, optional GLuint srcLength = 0);
+    undefined uniformMatrix4x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional unsigned long long srcOffset = 0, optional GLuint srcLength = 0);
+    undefined uniformMatrix3x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional unsigned long long srcOffset = 0, optional GLuint srcLength = 0);
+    undefined uniformMatrix4x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, optional unsigned long long srcOffset = 0, optional GLuint srcLength = 0);
     undefined vertexAttribI4i(GLuint index, GLint x, GLint y, GLint z, GLint w);
     undefined vertexAttribI4iv(GLuint index, Int32List values);
     undefined vertexAttribI4ui(GLuint index, GLuint x, GLuint y, GLuint z, GLuint w);
@@ -414,9 +414,9 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
 
     // Multiple Render Targets.
     undefined drawBuffers(sequence<GLenum> buffers);
-    undefined clearBufferiv(GLenum buffer, GLint drawbuffer, Int32List values, optional GLuint srcOffset = 0);
-    undefined clearBufferuiv(GLenum buffer, GLint drawbuffer, Uint32List values, optional GLuint srcOffset = 0);
-    undefined clearBufferfv(GLenum buffer, GLint drawbuffer, Float32List values, optional GLuint srcOffset = 0);
+    undefined clearBufferiv(GLenum buffer, GLint drawbuffer, Int32List values, optional unsigned long long srcOffset = 0);
+    undefined clearBufferuiv(GLenum buffer, GLint drawbuffer, Uint32List values, optional unsigned long long srcOffset = 0);
+    undefined clearBufferfv(GLenum buffer, GLint drawbuffer, Float32List values, optional unsigned long long srcOffset = 0);
     undefined clearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil);
 
     // Query Objects.
@@ -478,34 +478,34 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
 
     undefined texImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, GLintptr pboOffset);
     undefined texImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, TexImageSource source);
-    undefined texImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, [AllowShared] ArrayBufferView srcData, GLuint srcOffset);
+    undefined texImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, [AllowShared] ArrayBufferView srcData, unsigned long long srcOffset);
 
     undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, GLintptr pboOffset);
     undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, TexImageSource source);
-    undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView srcData, GLuint srcOffset);
+    undefined texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView srcData, unsigned long long srcOffset);
 
     undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, GLintptr offset);
-    undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, [AllowShared] ArrayBufferView srcData, GLuint srcOffset, optional GLuint srcLengthOverride = 0);
+    undefined compressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, [AllowShared] ArrayBufferView srcData, unsigned long long srcOffset, optional GLuint srcLengthOverride = 0);
 
     undefined compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, GLintptr offset);
-    undefined compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, [AllowShared] ArrayBufferView srcData, GLuint srcOffset, optional GLuint srcLengthOverride = 0);
+    undefined compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, [AllowShared] ArrayBufferView srcData, unsigned long long srcOffset, optional GLuint srcLengthOverride = 0);
 
-    undefined uniform1fv(WebGLUniformLocation? location, Float32List data, GLuint srcOffset, optional GLuint srcLength = 0);
-    undefined uniform2fv(WebGLUniformLocation? location, Float32List data, GLuint srcOffset, optional GLuint srcLength = 0);
-    undefined uniform3fv(WebGLUniformLocation? location, Float32List data, GLuint srcOffset, optional GLuint srcLength = 0);
-    undefined uniform4fv(WebGLUniformLocation? location, Float32List data, GLuint srcOffset, optional GLuint srcLength = 0);
+    undefined uniform1fv(WebGLUniformLocation? location, Float32List data, unsigned long long srcOffset, optional GLuint srcLength = 0);
+    undefined uniform2fv(WebGLUniformLocation? location, Float32List data, unsigned long long srcOffset, optional GLuint srcLength = 0);
+    undefined uniform3fv(WebGLUniformLocation? location, Float32List data, unsigned long long srcOffset, optional GLuint srcLength = 0);
+    undefined uniform4fv(WebGLUniformLocation? location, Float32List data, unsigned long long srcOffset, optional GLuint srcLength = 0);
 
-    undefined uniform1iv(WebGLUniformLocation? location, Int32List data, GLuint srcOffset, optional GLuint srcLength = 0);
-    undefined uniform2iv(WebGLUniformLocation? location, Int32List data, GLuint srcOffset, optional GLuint srcLength = 0);
-    undefined uniform3iv(WebGLUniformLocation? location, Int32List data, GLuint srcOffset, optional GLuint srcLength = 0);
-    undefined uniform4iv(WebGLUniformLocation? location, Int32List data, GLuint srcOffset, optional GLuint srcLength = 0);
+    undefined uniform1iv(WebGLUniformLocation? location, Int32List data, unsigned long long srcOffset, optional GLuint srcLength = 0);
+    undefined uniform2iv(WebGLUniformLocation? location, Int32List data, unsigned long long srcOffset, optional GLuint srcLength = 0);
+    undefined uniform3iv(WebGLUniformLocation? location, Int32List data, unsigned long long srcOffset, optional GLuint srcLength = 0);
+    undefined uniform4iv(WebGLUniformLocation? location, Int32List data, unsigned long long srcOffset, optional GLuint srcLength = 0);
 
-    undefined uniformMatrix2fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, GLuint srcOffset, optional GLuint srcLength = 0);
-    undefined uniformMatrix3fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, GLuint srcOffset, optional GLuint srcLength = 0);
-    undefined uniformMatrix4fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, GLuint srcOffset, optional GLuint srcLength = 0);
+    undefined uniformMatrix2fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, unsigned long long srcOffset, optional GLuint srcLength = 0);
+    undefined uniformMatrix3fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, unsigned long long srcOffset, optional GLuint srcLength = 0);
+    undefined uniformMatrix4fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data, unsigned long long srcOffset, optional GLuint srcLength = 0);
 
     undefined readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLintptr offset);
-    undefined readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView dstData, GLuint dstOffset);
+    undefined readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, [AllowShared] ArrayBufferView dstData, unsigned long long dstOffset);
 };
 
 WebGL2RenderingContext includes WebGLRenderingContextBase;

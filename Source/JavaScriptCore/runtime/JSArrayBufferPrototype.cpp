@@ -89,7 +89,7 @@ std::optional<JSValue> arrayBufferSpeciesConstructorSlow(JSGlobalObject* globalO
     return species.isUndefinedOrNull() ? std::nullopt : std::make_optional(species);
 }
 
-static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesConstructArrayBuffer(JSGlobalObject* globalObject, JSArrayBuffer* thisObject, unsigned length, ArrayBufferSharingMode mode)
+static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesConstructArrayBuffer(JSGlobalObject* globalObject, JSArrayBuffer* thisObject, size_t length, ArrayBufferSharingMode mode)
 {
     // This is optimized way of SpeciesConstruct invoked from {ArrayBuffer,SharedArrayBuffer}.prototype.slice.
     // https://tc39.es/ecma262/#sec-arraybuffer.prototype.slice
@@ -175,31 +175,31 @@ static EncodedJSValue arrayBufferSlice(JSGlobalObject* globalObject, JSValue arr
 
     // 5. Let len be O.[[ArrayBufferByteLength]].
     // https://tc39.es/proposal-resizablearraybuffer/#sec-sharedarraybuffer.prototype.slice
-    unsigned byteLength = thisObject->impl()->byteLength();
+    size_t byteLength = thisObject->impl()->byteLength();
 
-    unsigned firstIndex = 0;
+    size_t firstIndex = 0;
     double relativeStart = startValue.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (relativeStart < 0)
-        firstIndex = static_cast<unsigned>(std::max<double>(byteLength + relativeStart, 0));
+        firstIndex = static_cast<size_t>(std::max<double>(byteLength + relativeStart, 0));
     else
-        firstIndex = static_cast<unsigned>(std::min<double>(relativeStart, byteLength));
+        firstIndex = static_cast<size_t>(std::min<double>(relativeStart, byteLength));
     ASSERT(firstIndex <= byteLength);
 
-    unsigned finalIndex = 0;
+    size_t finalIndex = 0;
     if (!endValue.isUndefined()) {
         double relativeEnd = endValue.toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (relativeEnd < 0)
-            finalIndex = static_cast<unsigned>(std::max<double>(byteLength + relativeEnd, 0));
+            finalIndex = static_cast<size_t>(std::max<double>(byteLength + relativeEnd, 0));
         else
-            finalIndex = static_cast<unsigned>(std::min<double>(relativeEnd, byteLength));
+            finalIndex = static_cast<size_t>(std::min<double>(relativeEnd, byteLength));
     } else
         finalIndex = byteLength;
     ASSERT(finalIndex <= byteLength);
 
     // 14. Let newLen be max(final - first, 0).
-    unsigned newLength = (finalIndex >= firstIndex) ? finalIndex - firstIndex : 0;
+    size_t newLength = (finalIndex >= firstIndex) ? finalIndex - firstIndex : 0;
 
     // 15. Let ctor be ? SpeciesConstructor(O, %ArrayBuffer%).
     auto speciesResult = speciesConstructArrayBuffer(globalObject, thisObject, newLength, mode);

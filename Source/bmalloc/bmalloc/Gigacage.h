@@ -60,9 +60,17 @@ constexpr bool hasCapacityToUseLargeGigacage = false;
 constexpr bool hasCapacityToUseLargeGigacage = true;
 #endif
 
+// How much address space this process will hand out for Primitive allocations in total. Where there
+// is a Gigacage this is the size of the cage; where there is not, the same figure still tracks what
+// the platform can spare, so clients that must bound a reservation can use it either way. It exceeds
+// what size_t can hold where size_t is 32 bits, hence uint64_t.
+constexpr uint64_t primitiveAddressSpaceBudget = (hasCapacityToUseLargeGigacage ? 64 : 16) * static_cast<uint64_t>(bmalloc::Sizes::GB);
+
 #if GIGACAGE_ENABLED
 
-constexpr size_t primitiveGigacageSize = (hasCapacityToUseLargeGigacage ? 64 : 16) * bmalloc::Sizes::GB;
+// A cage is a real mapping, so it only exists on a platform whose size_t can address the whole budget.
+static_assert(primitiveAddressSpaceBudget == static_cast<size_t>(primitiveAddressSpaceBudget));
+constexpr size_t primitiveGigacageSize = static_cast<size_t>(primitiveAddressSpaceBudget);
 constexpr size_t maximumCageSizeReductionForSlide = hasCapacityToUseLargeGigacage ? 4 * bmalloc::Sizes::GB : bmalloc::Sizes::GB / 4;
 
 

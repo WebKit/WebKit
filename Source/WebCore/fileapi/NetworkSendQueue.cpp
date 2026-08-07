@@ -56,7 +56,7 @@ void NetworkSendQueue::enqueue(CString&& utf8)
     m_queue.append(WTF::move(utf8));
 }
 
-void NetworkSendQueue::enqueue(const JSC::ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
+void NetworkSendQueue::enqueue(const JSC::ArrayBuffer& binaryData, size_t byteOffset, size_t byteLength)
 {
     if (m_queue.isEmpty()) {
         m_writeRawData(binaryData.span().subspan(byteOffset, byteLength));

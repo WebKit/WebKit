@@ -63,10 +63,15 @@ size_t BufferMemoryHandle::fastMappedRedzoneBytes()
 
 size_t BufferMemoryHandle::fastMappedBytes()
 {
-    // MAX_ARRAY_BUFFER_SIZE is 4GB on 64bit and 2GB on 32bit platforms.
-    // This code should never be called in 32bit platforms they don't
-    // support fast memory.
-    return MAX_ARRAY_BUFFER_SIZE + fastMappedRedzoneBytes();
+    // Signaling memory is memory32 only, and reserves memory32's whole address range up front. A
+    // 32-bit process cannot reserve its entire address space, so it never uses this mode, and the
+    // range does not fit its size_t either.
+#if CPU(ADDRESS32)
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
+#else
+    return PageCount::maxMemory32Bytes + fastMappedRedzoneBytes();
+#endif
 }
 
 void BufferMemoryResult::dump(PrintStream& out) const

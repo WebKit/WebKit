@@ -72,6 +72,7 @@
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/Uint8Array.h>
 #include <algorithm>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
@@ -1082,14 +1083,24 @@ static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certifi
 
         auto result = PeerConnectionBackend::CertificateInformation::RSASSA_PKCS1_v1_5();
         if (parameters.modulusLength && parameters.publicExponent) {
-            int publicExponent = 0;
-            int value = 1;
-            for (unsigned counter = 0; counter < parameters.publicExponent->byteLength(); ++counter) {
-                publicExponent += parameters.publicExponent->typedSpan()[counter] * value;
-                value <<= 8;
-            }
+            // A WebCrypto BigInteger is big endian with arbitrary leading zero padding, so its length says
+            // nothing about its magnitude. Only what is left once the padding is skipped has to fit the
+            // int the certificate generator takes.
+            auto bigInteger = parameters.publicExponent->typedSpan();
+            size_t firstSignificantByte = 0;
+            while (firstSignificantByte < bigInteger.size() && !bigInteger[firstSignificantByte])
+                ++firstSignificantByte;
+            auto significantBytes = bigInteger.subspan(firstSignificantByte);
+            if (significantBytes.size() > sizeof(int32_t))
+                return Exception { ExceptionCode::NotSupportedError, "publicExponent is too large"_s };
 
-            result.rsaParameters = PeerConnectionBackend::CertificateInformation::RSA { *parameters.modulusLength, publicExponent };
+            CheckedInt32 publicExponent = 0;
+            for (uint8_t byte : significantBytes)
+                publicExponent = publicExponent * 256 + static_cast<int32_t>(byte);
+            if (publicExponent.hasOverflowed())
+                return Exception { ExceptionCode::NotSupportedError, "publicExponent is too large"_s };
+
+            result.rsaParameters = PeerConnectionBackend::CertificateInformation::RSA { *parameters.modulusLength, publicExponent.value() };
         }
         result.expires = parameters.expires;
         return result;

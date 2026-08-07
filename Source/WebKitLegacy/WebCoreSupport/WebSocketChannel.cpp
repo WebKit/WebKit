@@ -159,12 +159,12 @@ void WebSocketChannel::send(CString&& message)
     processOutgoingFrameQueue();
 }
 
-void WebSocketChannel::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
+void WebSocketChannel::send(const ArrayBuffer& binaryData, size_t byteOffset, size_t byteLength)
 {
     if (m_outgoingFrameQueueStatus != OutgoingFrameQueueOpen)
         return;
 
-    LOG(Network, "WebSocketChannel %p send() Sending ArrayBuffer %p byteOffset=%u byteLength=%u", this, &binaryData, byteOffset, byteLength);
+    LOG(Network, "WebSocketChannel %p send() Sending ArrayBuffer %p byteOffset=%zu byteLength=%zu", this, &binaryData, byteOffset, byteLength);
     enqueueRawFrame(WebSocketFrame::OpCodeBinary, binaryData.span().subspan(byteOffset, byteLength));
     processOutgoingFrameQueue();
 }

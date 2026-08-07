@@ -3485,7 +3485,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
 }
 #endif
 
-void WebGLRenderingContextBase::texImageArrayBufferViewHelper(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, RefPtr<ArrayBufferView>&& pixels, NullDisposition nullDisposition, GCGLuint srcOffset)
+void WebGLRenderingContextBase::texImageArrayBufferViewHelper(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, RefPtr<ArrayBufferView>&& pixels, NullDisposition nullDisposition, uint64_t srcOffset)
 {
     if (isContextLost())
         return;
@@ -3879,7 +3879,7 @@ bool WebGLRenderingContextBase::validateImageFormatAndType(ASCIILiteral function
     return true;
 }
 
-std::optional<std::span<const uint8_t>> WebGLRenderingContextBase::validateTexFuncData(ASCIILiteral functionName, TexImageDimension texDimension, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, ArrayBufferView* pixels, NullDisposition disposition, GCGLuint srcOffset)
+std::optional<std::span<const uint8_t>> WebGLRenderingContextBase::validateTexFuncData(ASCIILiteral functionName, TexImageDimension texDimension, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, ArrayBufferView* pixels, NullDisposition disposition, uint64_t srcOffset)
 {
     // All calling functions check isContextLost, so a duplicate check is not
     // needed here.
@@ -3907,8 +3907,16 @@ std::optional<std::span<const uint8_t>> WebGLRenderingContextBase::validateTexFu
         return std::nullopt;
     }
 
+    // An offset a size_t cannot hold is past the end of any view. Narrowing it here also keeps the
+    // arithmetic below in one width: Checked's result type for mixed widths differs between platforms.
+    if (!isInBounds<size_t>(srcOffset)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "ArrayBufferView not big enough for request"_s);
+        return std::nullopt;
+    }
+    size_t offsetInElements = srcOffset;
+
     auto dataLength = CheckedSize { packSizes->imageBytes } + packSizes->initialSkipBytes;
-    auto offset = CheckedSize { pixels ? JSC::elementSize(pixels->getType()) : 0 } * srcOffset;
+    auto offset = CheckedSize { pixels ? JSC::elementSize(pixels->getType()) : 0 } * offsetInElements;
     auto total = offset + dataLength;
     if (total.hasOverflowed() || !isInBounds<GCGLsizei>(dataLength)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "image too large"_s);
@@ -5055,11 +5063,12 @@ bool WebGLRenderingContextBase::validateCapability(ASCIILiteral functionName, GC
 }
 
 template<typename T, typename TypedListType>
-std::optional<std::span<const T>> WebGLRenderingContextBase::validateUniformMatrixParameters(ASCIILiteral functionName, const WebGLUniformLocation* location, GCGLboolean transpose, const TypedList<TypedListType, T>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength)
+std::optional<std::span<const T>> WebGLRenderingContextBase::validateUniformMatrixParameters(ASCIILiteral functionName, const WebGLUniformLocation* location, GCGLboolean transpose, const TypedList<TypedListType, T>& values, GCGLsizei requiredMinSize, uint64_t srcOffset, GCGLuint srcLength)
 {
     if (!validateUniformLocation(functionName, location))
         return { };
-    if (!values.data()) {
+    auto span = values.span();
+    if (!span.data()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "no array"_s);
         return { };
     }
@@ -5067,33 +5076,35 @@ std::optional<std::span<const T>> WebGLRenderingContextBase::validateUniformMatr
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "transpose not FALSE"_s);
         return { };
     }
-    if (srcOffset >= static_cast<GCGLuint>(values.length())) {
+    if (srcOffset >= span.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid srcOffset"_s);
         return { };
     }
-    GCGLsizei actualSize = values.length() - srcOffset;
+    size_t offset = srcOffset;
+    size_t actualSize = span.size() - offset;
     if (srcLength > 0) {
-        if (srcLength > static_cast<GCGLuint>(actualSize)) {
+        if (srcLength > actualSize) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid srcOffset + srcLength"_s);
             return { };
         }
         actualSize = srcLength;
     }
-    if (actualSize < requiredMinSize || (actualSize % requiredMinSize)) {
+    // The element count reaches GL as a GCGLsizei, so a longer run cannot be expressed.
+    if (actualSize < static_cast<size_t>(requiredMinSize) || (actualSize % requiredMinSize) || !isInBounds<GCGLsizei>(actualSize)) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid size"_s);
         return { };
     }
-    return values.span().subspan(srcOffset, actualSize);
+    return span.subspan(offset, actualSize);
 }
 
 template
-std::optional<std::span<const GCGLuint>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLuint, Uint32Array>(ASCIILiteral functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Uint32Array, uint32_t>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+std::optional<std::span<const GCGLuint>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLuint, Uint32Array>(ASCIILiteral functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Uint32Array, uint32_t>& values, GCGLsizei requiredMinSize, uint64_t srcOffset, GCGLuint srcLength);
 
 template
-std::optional<std::span<const GCGLint>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLint, Int32Array>(ASCIILiteral functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Int32Array, int32_t>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+std::optional<std::span<const GCGLint>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLint, Int32Array>(ASCIILiteral functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Int32Array, int32_t>& values, GCGLsizei requiredMinSize, uint64_t srcOffset, GCGLuint srcLength);
 
 template
-std::optional<std::span<const GCGLfloat>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLfloat, Float32Array>(ASCIILiteral functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Float32Array, float>& values, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength);
+std::optional<std::span<const GCGLfloat>> WebGLRenderingContextBase::validateUniformMatrixParameters<GCGLfloat, Float32Array>(ASCIILiteral functionName, const WebGLUniformLocation*, GCGLboolean transpose, const TypedList<Float32Array, float>& values, GCGLsizei requiredMinSize, uint64_t srcOffset, GCGLuint srcLength);
 
 RefPtr<WebGLBuffer> WebGLRenderingContextBase::validateBufferDataParameters(ASCIILiteral functionName, GCGLenum target, GCGLenum usage)
 {
@@ -5215,8 +5226,7 @@ void WebGLRenderingContextBase::vertexAttribfvImpl(ASCIILiteral functionName, GC
         return;
     }
 
-    int size = list.length();
-    if (size < expectedSize) {
+    if (data.size() < static_cast<size_t>(expectedSize)) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid size"_s);
         return;
     }

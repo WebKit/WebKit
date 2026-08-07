@@ -411,7 +411,7 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
             return makeUnexpected(WTF::move(limits.error()));
         ASSERT(!maximum || *maximum >= initial);
 
-        const uint64_t maxDeclarablePageCount = isMemory64 ? maxMemory64Pages : maxMemoryPages;
+        const uint64_t maxDeclarablePageCount = maxDeclarablePages(AddressType { isMemory64 });
         WASM_PARSER_FAIL_IF(initial > maxDeclarablePageCount, "Memory's initial page count of "_s, initial, " is invalid"_s);
 
         // FIXME(wasm-memory64): for now IPInt checks m_cachedIsMemory64 (flag if memory 0 is 64-bit)

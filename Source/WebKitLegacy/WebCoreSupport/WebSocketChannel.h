@@ -80,7 +80,7 @@ public:
     String subprotocol() final;
     String extensions() final;
     void send(CString&&) final;
-    void send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) final;
+    void send(const JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength) final;
     void send(Blob&) final;
     void close(int code, const String& reason) final; // Start closing handshake.
     void fail(String&& reason) final;
@@ -190,7 +190,7 @@ private:
     Timer m_closingTimer;
     bool m_closed { false };
     bool m_shouldDiscardReceivedData { false };
-    unsigned m_unhandledBufferedAmount { 0 };
+    uint64_t m_unhandledBufferedAmount { 0 };
 
     WebSocketChannelIdentifier m_progressIdentifier;
 

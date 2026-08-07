@@ -650,9 +650,9 @@ function testConstructionOfHugeArray(type, name, sz) {
     if (sz == 1)
         return;
     try {
-        // Construction of huge arrays must fail because byteLength is
-        // an unsigned long
-        array = new type(3000000000);
+        // A length that is a valid array index but whose byte length no buffer
+        // can reach, so construction must fail for every element size.
+        array = new type(Number.MAX_SAFE_INTEGER);
         testFailed("Construction of huge " + name + " should throw exception");
     } catch (e) {
         testPassed("Construction of huge " + name + " threw exception");

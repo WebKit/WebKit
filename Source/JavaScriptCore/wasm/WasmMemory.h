@@ -52,6 +52,11 @@ namespace JSC {
 class LLIntOffsetsExtractor;
 
 namespace Wasm {
+
+// The most bytes a memory of this address type can actually be given, as opposed to declare. Bounded
+// both by the address type's own ceiling and by what a single growable reservation may claim.
+uint64_t maxAllocatableBytes(AddressType);
+
 class Memory final : public RefCounted<Memory> {
     WTF_MAKE_NONCOPYABLE(Memory);
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Memory, JS_EXPORT_PRIVATE);

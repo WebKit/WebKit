@@ -57,7 +57,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     void enqueue(CString&& utf8);
-    void enqueue(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength);
+    void enqueue(const JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength);
     void enqueue(Blob&);
 
     void clear();

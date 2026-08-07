@@ -224,7 +224,7 @@ void WebSocketChannel::send(CString&& message)
     m_messageQueue->enqueue(WTF::move(message));
 }
 
-void WebSocketChannel::send(const JSC::ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
+void WebSocketChannel::send(const JSC::ArrayBuffer& binaryData, size_t byteOffset, size_t byteLength)
 {
     if (!increaseBufferedAmount(byteLength))
         return;

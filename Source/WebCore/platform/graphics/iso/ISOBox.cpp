@@ -39,8 +39,18 @@ ISOBox::ISOBox() = default;
 ISOBox::~ISOBox() = default;
 ISOBox::ISOBox(const ISOBox&) = default;
 
+// A box's size field and the cursor these parsers walk it with are both 32-bit, so a larger view
+// cannot be walked at all: its remaining length would not even be representable.
+static bool isWalkableView(const DataView& view)
+{
+    return isInBounds<unsigned>(view.byteLength());
+}
+
 ISOBox::PeekResult ISOBox::peekBox(DataView& view, unsigned offset)
 {
+    if (!isWalkableView(view))
+        return std::nullopt;
+
     unsigned maximumPossibleSize = view.byteLength() - offset;
     uint64_t size = 0;
     if (!checkedRead<uint32_t>(size, view, offset, BigEndian))
@@ -79,6 +89,9 @@ bool ISOBox::read(DataView& view, unsigned& offset)
 
 bool ISOBox::parse(DataView& view, unsigned& offset)
 {
+    if (!isWalkableView(view))
+        return false;
+
     unsigned maximumPossibleSize = view.byteLength() - offset;
     if (!checkedRead<uint32_t>(m_size, view, offset, BigEndian))
         return false;

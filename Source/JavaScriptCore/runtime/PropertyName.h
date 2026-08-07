@@ -153,8 +153,17 @@ ALWAYS_INLINE std::optional<bool> fastIsCanonicalNumericIndexString(std::span<co
 }
 
 // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-canonicalnumericindexstring
-ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName)
+// An integer-indexed exotic object can be longer than MAX_ARRAY_INDEX, so a key denoting an index
+// parseIndex() cannot hold still has to reach an element. Such a key always arrives as a string, so
+// callers that must serve it pass integerIndex to have it reported. A canonical numeric index string
+// covers far more than that (negatives, fractions, NaN, values past uint64_t), so anything outside the
+// reportable range is still a canonical numeric index string with no index to report.
+// integerIndex is a pointer rather than a reference so that the callers who only classify the key,
+// which include a property lookup fast path, compile to exactly what they did before.
+ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName, std::optional<uint64_t>* integerIndex = nullptr)
 {
+    if (integerIndex)
+        *integerIndex = std::nullopt;
     if (!propertyName)
         return false;
     if (propertyName->isSymbol())
@@ -171,7 +180,22 @@ ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName
     double index = jsToNumber(propertyName);
     NumberToStringBuffer buffer;
     auto span = WTF::numberToStringAndSize(index, buffer);
-    return equal(propertyName, byteCast<Latin1Character>(span));
+    if (!equal(propertyName, byteCast<Latin1Character>(span)))
+        return false;
+
+    if (integerIndex) {
+        // Anything up to MAX_ARRAY_INDEX reached the caller through parseIndex() instead. The round trip
+        // through uint64_t rejects a fractional value, which is canonical too ("4294967296.5") but is not
+        // an integer index.
+        constexpr double smallestReportedIndex = static_cast<double>(MAX_ARRAY_INDEX) + 1;
+        constexpr double firstIndexPastUInt64 = static_cast<double>(std::numeric_limits<uint64_t>::max());
+        if (index >= smallestReportedIndex && index < firstIndexPastUInt64) {
+            uint64_t candidate = static_cast<uint64_t>(index);
+            if (static_cast<double>(candidate) == index)
+                *integerIndex = candidate;
+        }
+    }
+    return true;
 }
 
 } // namespace JSC

@@ -142,7 +142,7 @@ void ThreadableWebSocketChannelClientWrapper::didReceiveBinaryData(Vector<uint8_
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount(unsigned bufferedAmount)
+void ThreadableWebSocketChannelClientWrapper::didUpdateBufferedAmount(uint64_t bufferedAmount)
 {
     m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, bufferedAmount] (ScriptExecutionContext&) {
         if (RefPtr client = m_client.get())
@@ -164,7 +164,7 @@ void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake()
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didClose(unsigned unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
+void ThreadableWebSocketChannelClientWrapper::didClose(uint64_t unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
 {
     m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, unhandledBufferedAmount, closingHandshakeCompletion, code, reason = reason.isolatedCopy()] (ScriptExecutionContext&) {
         if (RefPtr client = m_client.get())
