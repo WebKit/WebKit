@@ -46,7 +46,12 @@ TEST_PATTERN_HEADER = re.compile('^Tests?: (.*)$')
 TEST_PATTERN_EXTENSION = re.compile('\\.[a-zA-Z0-9]+$')
 NO_TEST_PATTERN = re.compile('^No new tests \\(OOPS!\\)\\.$')
 TEST_CONTENT_PATTERN = re.compile('^ +.*$')
-REVIEWED_BY_PATTERN = re.compile('^Reviewed by .*$')
+
+REVIEWED = '(?:Reviewed|Rubber[- ]stamped) by'
+REVIEWER_PATTERN = re.compile(f'^{REVIEWED} .*$')
+REVIEWED_BY_LINE_RE = re.compile(rf'^\s*{REVIEWED} (?P<approver>.+)\n?', re.MULTILINE)
+UNREVIEWED_LINE_RE = re.compile(r'^\s*(Unreviewed|Versioning\.)', re.MULTILINE)
+OOPS_LINE_RE = re.compile(r'^[^-]*\(O+P+S!*\)', re.MULTILINE)
 
 
 class CommitMessageParser:
@@ -112,7 +117,7 @@ class CommitMessageParser:
                 continue
 
             if state == ParseState.STATE_TITLE:
-                if REVIEWED_BY_PATTERN.match(line):
+                if REVIEWER_PATTERN.match(line):
                     state = ParseState.STATE_REVIEWED_BY
                     self.reviewed_by_lines.append(line)
                 elif MODIFIED_FILE_PATTERN.match(line):
@@ -126,7 +131,7 @@ class CommitMessageParser:
 
             # Parse the section with "Reviewed by"
             elif state == ParseState.STATE_REVIEWED_BY:
-                if REVIEWED_BY_PATTERN.match(line):
+                if REVIEWER_PATTERN.match(line):
                     self.reviewed_by_lines.append(line)
                 elif line == '':
                     state = ParseState.STATE_DESCRIPTION
