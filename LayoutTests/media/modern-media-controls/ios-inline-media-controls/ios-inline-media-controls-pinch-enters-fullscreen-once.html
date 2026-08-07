@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that <code>IOSInlineMediaControls</code> only enters fullscreen once per pinch gesture.");
+
+let fullscreenRequestCount = 0;
+const mediaControls = new IOSInlineMediaControls;
+mediaControls.delegate = {
+    iOSInlineMediaControlsRecognizedPinchInGesture()
+    {
+        ++fullscreenRequestCount;
+    }
+};
+
+const recognizer = mediaControls._pinchGestureRecognizer;
+recognizer.state = GestureRecognizer.States.Began;
+recognizer.scale = IOSInlineMediaControls.MinimumScaleToEnterFullscreen + 0.1;
+recognizer.state = GestureRecognizer.States.Changed;
+shouldBe("fullscreenRequestCount", "1");
+
+recognizer.scale += 0.1;
+recognizer.state = GestureRecognizer.States.Changed;
+shouldBe("fullscreenRequestCount", "1");
+
+recognizer.state = GestureRecognizer.States.Ended;
+shouldBe("fullscreenRequestCount", "1");
+
+recognizer.state = GestureRecognizer.States.Began;
+recognizer.scale = IOSInlineMediaControls.MinimumScaleToEnterFullscreen + 0.1;
+recognizer.state = GestureRecognizer.States.Changed;
+shouldBe("fullscreenRequestCount", "2");
+
+debug("");
+
+</script>
+</body>
