@@ -1371,7 +1371,10 @@ void NetworkConnectionToWebProcess::removeStorageAccessForFrame(FrameIdentifier 
 
 void NetworkConnectionToWebProcess::logUserInteraction(RegistrableDomain&& domain)
 {
-    MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, domain) == NetworkProcess::AllowCookieAccess::Allow);
+    if (m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, domain) != NetworkProcess::AllowCookieAccess::Allow) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     if (CheckedPtr networkSession = this->networkSession()) {
         if (RefPtr resourceLoadStatistics = networkSession->resourceLoadStatistics())
