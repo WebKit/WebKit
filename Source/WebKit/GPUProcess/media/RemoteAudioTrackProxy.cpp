@@ -78,7 +78,7 @@ AudioTrackPrivateRemoteConfiguration RemoteAudioTrackProxy::configuration()
 
 void RemoteAudioTrackProxy::configurationChanged()
 {
-    RefPtr connection = m_connectionToWebProcess.get();
+    RefPtr connection { m_connectionToWebProcess };
     if (!connection)
         return;
     connection->connection().send(Messages::MediaPlayerPrivateRemote::RemoteAudioTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);

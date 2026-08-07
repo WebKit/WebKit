@@ -115,7 +115,7 @@ void RemoteCDMProxy::setLogIdentifier(uint64_t logIdentifier)
 
 std::optional<SharedPreferencesForWebProcess> RemoteCDMProxy::sharedPreferencesForWebProcess() const
 {
-    RefPtr factory = m_factory.get();
+    RefPtr factory { m_factory };
     if (!factory)
         return std::nullopt;
 

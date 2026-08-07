@@ -65,7 +65,7 @@ void RemoteMediaResource::shutdown()
 
     setClient(nullptr);
 
-    RefPtr loader = m_remoteMediaResourceLoader.get();
+    RefPtr loader { m_remoteMediaResourceLoader };
     if (!loader)
         return;
 
