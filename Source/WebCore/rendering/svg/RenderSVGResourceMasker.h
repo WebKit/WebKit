@@ -59,6 +59,10 @@ public:
 private:
     void element() const = delete;
 
+    FloatRect maskBoundsInLocalCoordinates(const FloatRect& targetBoundingBox, RepaintRectCalculation);
+
+    void clearCacheBeforeLayout() final { invalidateMask(); }
+
     bool requiresLayer() const final { return true; }
     ASCIILiteral renderName() const final { return "RenderSVGResourceMasker"_s; }
     HashMap<SingleThreadWeakRef<const RenderLayerModelObject>, RefPtr<ImageBuffer>> m_masker;

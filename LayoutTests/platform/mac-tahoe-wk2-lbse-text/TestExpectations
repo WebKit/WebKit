@@ -85,22 +85,6 @@ svg/batik/text/textProperties.svg                             [ ImageOnlyFailure
 svg/clip-path/hittest-transformed-clip-objectboundingbox.html [ Failure ]
 svg/clip-path/transformed-clip.svg                            [ ImageOnlyFailure ]
 
-# Masking problems
-svg/masking/mask-negative-scale.svg                                  [ ImageOnlyFailure ]
-svg/repaint/mask-clip-target-transform.svg                           [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-dom-height-attr.html              [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr.html    [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr.html           [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-dom-width-attr.html               [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-dom-x-attr.html                   [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-dom-y-attr.html                   [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-svgdom-height-prop.html           [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop.html [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop.html        [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-svgdom-width-prop.html            [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-svgdom-x-prop.html                [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGMaskElement-svgdom-y-prop.html                [ ImageOnlyFailure ]
-
 # Bounding box issues
 imported/w3c/web-platform-tests/svg/interact/scripted/svg-pointer-events-bbox.html [ Failure ]
 
@@ -266,6 +250,7 @@ imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-001.html        
 imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-002.html                                          [ Pass ]
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-override-multiple.html                        [ Pass ]
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-override-multiple.html                        [ Pass ]
+imported/w3c/web-platform-tests/svg/painting/mask-containing-image-with-clip-path.svg                             [ Pass ]
 imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-003.html                                 [ Pass ]
 imported/w3c/web-platform-tests/svg/path/distance/pathlength-circle-mutating.svg                                  [ Pass ]
 imported/w3c/web-platform-tests/svg/render/order/z-index.svg                                                      [ Pass ]
