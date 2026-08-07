@@ -195,6 +195,19 @@ struct MemoryFootprint {
 #define PATH_MAX 4096
 #endif
 
+namespace JSC {
+// run-jsc-stress-tests reads which of these two symbols the jsc binary defines and
+// publishes the answer to tests as $secAccel3Removed; the values themselves are never
+// checked. Having one of these always present is what lets the runner know that the
+// binary does in fact support SAR3 recognition. Non-const external linkage plus
+// used/visibility keeps them in the symbol table.
+#ifdef RC_REMOVE_SEC_ACCEL_3
+__attribute__((used, visibility("default"))) bool SecAccel3Disabled = true;
+#else
+__attribute__((used, visibility("default"))) bool SecAccel3Enabled = true;
+#endif // RC_REMOVE_SEC_ACCEL_3
+}
+
 using namespace JSC;
 
 namespace {
