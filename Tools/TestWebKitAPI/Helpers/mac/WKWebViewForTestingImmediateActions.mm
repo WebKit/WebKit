@@ -69,7 +69,7 @@ static NSPoint swizzledImmediateActionLocationInView(id, SEL, NSView *)
     return nil;
 }
 
-- (ImmediateActionHitTestResult)simulateImmediateAction:(NSPoint)location
+- (ImmediateActionHitTestResult)_simulateImmediateAction:(NSPoint)location beginAnimation:(BOOL)beginAnimation
 {
     auto immediateActionGesture = self.immediateActionGesture;
     if (!immediateActionGesture.delegate)
@@ -86,10 +86,24 @@ static NSPoint swizzledImmediateActionLocationInView(id, SEL, NSView *)
     gSwizzledImmediateActionLocation = location;
     [immediateActionGesture.delegate immediateActionRecognizerWillPrepare:immediateActionGesture];
 
-    TestWebKitAPI::Util::run(&_hasReturnedImmediateActionController);
+    if (beginAnimation) {
+        [immediateActionGesture.delegate immediateActionRecognizerWillBeginAnimation:immediateActionGesture];
+        [immediateActionGesture.delegate immediateActionRecognizerDidCancelAnimation:immediateActionGesture];
+    } else
+        EXPECT_TRUE(TestWebKitAPI::Util::runFor(&_hasReturnedImmediateActionController, 10_s));
 
     _hasReturnedImmediateActionController = false;
     return { std::exchange(_hitTestResult, nil), std::exchange(_actionType, _WKImmediateActionNone) };
+}
+
+- (ImmediateActionHitTestResult)simulateImmediateAction:(NSPoint)location
+{
+    return [self _simulateImmediateAction:location beginAnimation:NO];
+}
+
+- (ImmediateActionHitTestResult)simulateImmediateActionAnimation:(NSPoint)location
+{
+    return [self _simulateImmediateAction:location beginAnimation:YES];
 }
 
 @end

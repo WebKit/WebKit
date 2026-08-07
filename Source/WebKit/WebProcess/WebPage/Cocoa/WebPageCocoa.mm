@@ -382,7 +382,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 
     DictionaryPopupInfo dictionaryPopupInfo;
 
-    IntRect rangeRect = protect(frame.view())->contentsToWindow(quads[0].enclosingBoundingBox());
+    IntRect rangeRect = protect(frame.view())->contentsToMainFrameView(quads[0].enclosingBoundingBox());
 
     const CheckedPtr style = range.startContainer().renderStyle();
     float scaledAscent = style ? style->metricsOfPrimaryFont().intAscent() * pageScaleFactor() : 0;

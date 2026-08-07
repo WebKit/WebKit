@@ -29,12 +29,9 @@
 #if PLATFORM(MAC)
 
 #import "APIHitTestResult.h"
-#import "MessageSenderInlines.h"
 #import "WKNSURLExtras.h"
 #import "WebFrameProxy.h"
-#import "WebPageMessages.h"
 #import "WebPageProxy.h"
-#import "WebPageProxyMessages.h"
 #import "WebProcessProxy.h"
 #import "WebViewImpl.h"
 #import <WebCore/DictionaryLookup.h>
@@ -197,9 +194,7 @@
     // FIXME: We need to be able to cancel this if the gesture recognizer is cancelled.
     // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
     if (_state == WebKit::ImmediateActionState::Pending) {
-        Ref connection = mainFrameProcess->connection();
-        bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(_page->webPageIDInMainFrameProcess(), 500_ms) == IPC::Error::NoError;
-        if (!receivedReply)
+        if (!protect(_page)->waitForImmediateActionHitTest(500_ms))
             _state = WebKit::ImmediateActionState::TimedOut;
     }
 
@@ -432,13 +427,13 @@
     RetainPtr view = _view.get();
     WebCore::PageOverlay::PageOverlayID overlayID = _hitTestResultData.platformData.detectedDataOriginatingPageOverlay;
     _currentActionContext = (WKDDActionContext *)[actionContext contextForView:view.get() altMode:YES interactionStartedHandler:^() {
-        protect(page->legacyMainFrameProcess())->send(Messages::WebPage::DataDetectorsDidPresentUI(overlayID), page->webPageIDInMainFrameProcess());
+        page->dataDetectorsDidPresentUI(overlayID);
     } interactionChangedHandler:^() {
         if (RefPtr detectedDataTextIndicator = _hitTestResultData.platformData.detectedDataTextIndicator)
             page->setTextIndicator(WTF::move(detectedDataTextIndicator), WebCore::TextIndicatorLifetime::Permanent);
-        protect(page->legacyMainFrameProcess())->send(Messages::WebPage::DataDetectorsDidChangeUI(overlayID), page->webPageIDInMainFrameProcess());
+        page->dataDetectorsDidChangeUI(overlayID);
     } interactionStoppedHandler:^() {
-        protect(page->legacyMainFrameProcess())->send(Messages::WebPage::DataDetectorsDidHideUI(overlayID), page->webPageIDInMainFrameProcess());
+        page->dataDetectorsDidHideUI(overlayID);
         [self _clearImmediateActionState];
     }];
 

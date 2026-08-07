@@ -2645,14 +2645,13 @@ private:
 
 #if PLATFORM(MAC)
     void performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint);
-    std::optional<WebCore::SimpleRange> lookupTextAtLocation(WebCore::FrameIdentifier, WebCore::FloatPoint);
-    void immediateActionDidUpdate();
-    void immediateActionDidCancel();
-    void immediateActionDidComplete();
+    void immediateActionDidUpdate(WebCore::FrameIdentifier);
+    void immediateActionDidCancel(WebCore::FrameIdentifier);
+    void immediateActionDidComplete(WebCore::FrameIdentifier);
 
     void dataDetectorsDidPresentUI(WebCore::PageOverlay::PageOverlayID);
     void dataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID);
-    void dataDetectorsDidHideUI(WebCore::PageOverlay::PageOverlayID);
+    void dataDetectorsDidHideUI(WebCore::FrameIdentifier, WebCore::PageOverlay::PageOverlayID);
 
     void handleAcceptedCandidate(WebCore::TextCheckingResult);
 #endif
@@ -2826,7 +2825,6 @@ private:
     void contentsToRootViewRect(WebCore::FrameIdentifier, WebCore::FloatRect, CompletionHandler<void(WebCore::FloatRect)>&&);
     void contentsToRootViewRects(WebCore::FrameIdentifier, Vector<WebCore::FloatRect>, CompletionHandler<void(Vector<WebCore::FloatRect>)>&&);
     void contentsToRootViewPoint(WebCore::FrameIdentifier, WebCore::FloatPoint, CompletionHandler<void(WebCore::FloatPoint)>&&);
-    void remoteDictionaryPopupInfoToRootView(WebCore::FrameIdentifier, WebCore::DictionaryPopupInfo, CompletionHandler<void(WebCore::DictionaryPopupInfo)>&&);
 
     void hitTestAtPoint(WebCore::FrameIdentifier, WebCore::FloatPoint, const ContentWorldData&, CompletionHandler<void(NodeHitTestResult)>&&);
 
