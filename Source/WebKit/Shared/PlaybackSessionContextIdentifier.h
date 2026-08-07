@@ -32,9 +32,4 @@ namespace WebKit {
 
 using PlaybackSessionContextIdentifier = WebCore::ProcessQualified<WebCore::HTMLMediaElementIdentifier>;
 
-inline PlaybackSessionContextIdentifier processQualify(WebCore::HTMLMediaElementIdentifier identifier)
-{
-    return WebCore::ProcessQualified(identifier, WebCore::Process::identifier());
-}
-
 }
