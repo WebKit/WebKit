@@ -119,6 +119,7 @@
 #include "LayoutDisallowedScope.h"
 #include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrameLoaderClient.h"
 #include "LocalFrameViewInlines.h"
 #include "LogInitialization.h"
@@ -131,6 +132,7 @@
 #include "ModelPlayerProvider.h"
 #include "NavigationScheduler.h"
 #include "Navigator.h"
+#include "NavigatorAudioSession.h"
 #include "NavigatorGamepad.h"
 #include "NavigatorMediaSession.h"
 #include "OpportunisticTaskScheduler.h"
@@ -920,6 +922,21 @@ DOMAudioSessionType Page::audioSessionType() const
 {
     return m_topDocumentSyncData->audioSessionType;
 }
+
+void Page::setAudioSessionState(DOMAudioSessionState audioSessionState)
+{
+    if (m_topDocumentSyncData->audioSessionState == audioSessionState)
+        return;
+
+    m_topDocumentSyncData->audioSessionState = audioSessionState;
+    if (settings().siteIsolationEnabled())
+        documentSyncClient().broadcastAudioSessionStateToOtherProcesses(audioSessionState);
+}
+
+DOMAudioSessionState Page::audioSessionState() const
+{
+    return m_topDocumentSyncData->audioSessionState;
+}
 #endif
 
 void Page::setUserDidInteractWithPage(bool didInteract)
@@ -989,6 +1006,19 @@ void Page::updateTopDocumentSyncData(const DocumentSyncSerializationData& data)
 #endif
         protect(m_topDocumentSyncData)->update(data);
         break;
+#if ENABLE(DOM_AUDIO_SESSION)
+    case DocumentSyncDataType::AudioSessionState:
+        protect(m_topDocumentSyncData)->update(data);
+        forEachDocument([](Document& document) {
+            RefPtr window = document.window();
+            RefPtr navigator = window ? window->optionalNavigator() : nullptr;
+            if (!navigator)
+                return;
+            if (RefPtr audioSession = NavigatorAudioSession::audioSessionIfExists(*navigator))
+                audioSession->topDocumentAudioSessionStateChanged();
+        });
+        break;
+#endif
     }
 }
 

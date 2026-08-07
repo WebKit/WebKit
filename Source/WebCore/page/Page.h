@@ -268,6 +268,7 @@ enum class VisibilityState : bool;
 
 #if ENABLE(DOM_AUDIO_SESSION)
 enum class DOMAudioSessionType : uint8_t;
+enum class DOMAudioSessionState : uint8_t;
 #endif
 
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
@@ -439,6 +440,8 @@ public:
 #if ENABLE(DOM_AUDIO_SESSION)
     void setAudioSessionType(DOMAudioSessionType);
     DOMAudioSessionType NODELETE audioSessionType() const;
+    void setAudioSessionState(DOMAudioSessionState);
+    DOMAudioSessionState NODELETE audioSessionState() const;
 #endif
     void setUserDidInteractWithPage(bool);
     bool NODELETE userDidInteractWithPage() const;

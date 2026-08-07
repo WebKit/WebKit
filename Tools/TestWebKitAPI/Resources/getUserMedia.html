@@ -4,10 +4,15 @@
         <script>
 
             let stream = null;
+            // getUserMedia resolves once the audio session has the right category and is active,
+            // which is later than the point where the UI process reports capture as active. A test
+            // that waits for the capture state can therefore call stop() before the promise has
+            // assigned `stream`, so remember the pending capture and stop once it has resolved.
+            let pendingCapture = null;
 
             function promptForCapture()
             {
-                navigator.mediaDevices.enumerateDevices().then(() => {
+                pendingCapture = navigator.mediaDevices.enumerateDevices().then(() => {
                     return navigator.mediaDevices.getUserMedia({ audio: false, video: true })
                 }).then((s) => {
                     stream = s;
@@ -18,6 +23,13 @@
 
             function stop(kind)
             {
+                if (pendingCapture) {
+                    const pending = pendingCapture;
+                    pendingCapture = null;
+                    pending.then(() => stop(kind));
+                    return;
+                }
+
                 let activeTracks = [];
                 stream.getTracks().forEach(track => {
                     if (!kind || track.kind == kind)
@@ -53,7 +65,7 @@
 
             function captureAudio(notifySuccess)
             {
-                navigator.mediaDevices.getUserMedia({audio: true}).then(s => {
+                pendingCapture = navigator.mediaDevices.getUserMedia({audio: true}).then(s => {
                     if (notifySuccess)
                         window.webkit.messageHandlers.gum.postMessage("PASS");
                     stream = s;
@@ -62,7 +74,7 @@
 
             function captureVideo(notifySuccess)
             {
-                navigator.mediaDevices.getUserMedia({video: true}).then(s => {
+                pendingCapture = navigator.mediaDevices.getUserMedia({video: true}).then(s => {
                     if (notifySuccess)
                         window.webkit.messageHandlers.gum.postMessage("PASS");
                     video.srcObject = s;
@@ -71,7 +83,7 @@
 
             function captureAudioAndVideo(notifySuccess)
             {
-                navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(s => {
+                pendingCapture = navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(s => {
                     if (notifySuccess)
                         window.webkit.messageHandlers.gum.postMessage("PASS");
                     stream = s;

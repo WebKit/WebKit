@@ -317,4 +317,5 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     URL initialMainDocumentURL;
     WebKit::FrameTreeCreationParameters frameTreeParameters;
     std::optional<WebKit::WebsitePoliciesData> websitePoliciesData;
+    Ref<WebCore::DocumentSyncData> topDocumentSyncData;
 }

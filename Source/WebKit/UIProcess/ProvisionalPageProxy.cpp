@@ -297,7 +297,8 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
         creationParameters.remotePageParameters = RemotePageParameters {
             m_request.url(),
             mainFrame->frameTreeCreationParameters(),
-            websitePolicies ? std::optional(websitePolicies->dataForProcess(process)) : std::nullopt
+            websitePolicies ? std::optional(websitePolicies->dataForProcess(process)) : std::nullopt,
+            DocumentSyncData::create()
         };
         creationParameters.provisionalFrameCreationParameters = mainFrame->provisionalFrameCreationParameters(
             page->mainFrame() && !m_shouldReuseMainFrame ? std::optional(page->mainFrame()->frameID()) : std::nullopt,

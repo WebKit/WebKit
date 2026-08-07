@@ -778,6 +778,9 @@ void Document::populateDocumentSyncDataForNewlyConstructedDocument(DocumentSyncD
     case DocumentSyncDataType::AudioSessionType:
         m_syncData->audioSessionType = DOMAudioSession::Type::Auto;
         break;
+    case DocumentSyncDataType::AudioSessionState:
+        m_syncData->audioSessionState = DOMAudioSession::State::Inactive;
+        break;
 #endif
     // The following either have default values that match a newly constructed document
     // or are populated other ways even on newly constructed documents.

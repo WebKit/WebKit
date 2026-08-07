@@ -702,15 +702,22 @@ Ref<GenericPromise> MediaSessionManagerInterface::audioCaptureSourceStateChanged
 {
     Ref categoryApplied = updateSessionState();
 #if USE(AUDIO_SESSION)
-    // Activate and deactivate synchronously: the returned promise reports when the category has been
-    // applied, and callers observe AudioSession::isActive() as soon as this returns without waiting for
-    // it. navigator.mediaSession.setMicrophoneActive() for instance resolves its promise from the
-    // UIProcess ValidateCaptureStateUpdate reply, which does not wait for the UpdateMediaSessionStates
-    // round-trip that applies the category under site isolation.
-    if (isCaptureStarting == IsCaptureStarting::Yes)
-        maybeActivateAudioSession();
-    else
-        maybeDeactivateAudioSession();
+    // Activation and deactivation are requested synchronously, so a caller that does not wait on the
+    // returned promise observes AudioSession::isActive() as soon as this returns (RemoteAudioSession
+    // reflects the requested state optimistically). navigator.mediaSession.setMicrophoneActive() for
+    // instance resolves its promise from the UIProcess ValidateCaptureStateUpdate reply, which does not
+    // wait for the UpdateMediaSessionStates round-trip that applies the category under site isolation.
+    // The returned promise settles once both the category has been applied and the activation has
+    // completed, so a caller that does wait — the getUserMedia promise, the track mute/unmute events —
+    // sees a session that is both categorised and active.
+    if (isCaptureStarting == IsCaptureStarting::Yes) {
+        GenericPromise::Producer producer;
+        Ref promise = producer.promise();
+        GenericPromise::all({ WTF::move(categoryApplied), maybeActivateAudioSession() })->chainTo(WTF::move(producer));
+        return promise;
+    }
+
+    maybeDeactivateAudioSession();
 #else
     UNUSED_PARAM(isCaptureStarting);
 #endif

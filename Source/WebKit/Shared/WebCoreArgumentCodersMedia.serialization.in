@@ -1105,6 +1105,12 @@ enum class WebCore::DOMAudioSessionType : uint8_t {
     Ambient,
     PlayAndRecord
 };
+
+enum class WebCore::DOMAudioSessionState : uint8_t {
+    Inactive,
+    Active,
+    Interrupted
+};
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

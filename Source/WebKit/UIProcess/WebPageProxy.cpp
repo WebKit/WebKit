@@ -8915,6 +8915,13 @@ void WebPageProxy::setTopDocumentSyncData(Ref<WebCore::DocumentSyncData>&& data)
     m_topDocumentSyncData = WTF::move(data);
 }
 
+Ref<WebCore::DocumentSyncData> WebPageProxy::topDocumentSyncData() const
+{
+    if (RefPtr topDocumentSyncData = m_topDocumentSyncData)
+        return topDocumentSyncData.releaseNonNull();
+    return WebCore::DocumentSyncData::create();
+}
+
 void WebPageProxy::broadcastDocumentSyncData(IPC::Connection& connection, const WebCore::DocumentSyncSerializationData& data)
 {
     Ref process = WebProcessProxy::fromConnection(connection);

@@ -60,6 +60,8 @@ public:
     Type type() const;
     State state() const;
 
+    void topDocumentAudioSessionStateChanged();
+
 private:
     explicit DOMAudioSession(ScriptExecutionContext*);
 
@@ -79,6 +81,7 @@ private:
     void audioSessionActiveStateChanged() final;
 
     void scheduleStateChangeEvent();
+    State currentState() const;
 
     bool m_hasScheduleStateChangeEvent { false };
     mutable std::optional<State> m_state;

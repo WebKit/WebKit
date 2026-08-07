@@ -43,6 +43,7 @@ public:
     ~NavigatorAudioSession();
 
     static Ref<DOMAudioSession> audioSession(Navigator&);
+    static RefPtr<DOMAudioSession> audioSessionIfExists(Navigator&);
 
 private:
     static NavigatorAudioSession* from(Navigator&);

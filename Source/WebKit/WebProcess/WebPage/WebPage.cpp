@@ -1046,8 +1046,18 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         for (auto& childParameters : remotePageParameters->frameTreeParameters.children)
             constructFrameTree(m_mainFrame.get(), childParameters);
 
+        RefPtr remoteMainFrame = dynamicDowncast<RemoteFrame>(page->mainFrame());
+
+        // The top document lives in another process, so adopt the state it has synchronized so far.
+        // A page hosting the local main frame owns that state and shares it with its Document, so
+        // it must keep the object it already has.
+        if (remoteMainFrame) {
+            Ref topDocumentSyncData = remotePageParameters->topDocumentSyncData;
+            page->updateTopDocumentSyncData(WTF::move(topDocumentSyncData));
+        }
+
         // Use the origin from FrameTreeSyncData so Page::mainFrameOrigin() reflects the inherited origin.
-        RefPtr<SecurityOrigin> mainFrameOrigin = dynamicDowncast<RemoteFrame>(page->mainFrame()) ? protect(page->mainFrame())->frameDocumentSecurityOrigin() : nullptr;
+        RefPtr<SecurityOrigin> mainFrameOrigin = remoteMainFrame ? protect(page->mainFrame())->frameDocumentSecurityOrigin() : nullptr;
         page->setMainFrameURLAndOrigin(remotePageParameters->initialMainDocumentURL, WTF::move(mainFrameOrigin));
 
         if (auto websitePolicies = remotePageParameters->websitePoliciesData) {

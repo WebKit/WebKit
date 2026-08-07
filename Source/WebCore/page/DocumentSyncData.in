@@ -60,6 +60,7 @@
 #                e.g: `Headers=<WebCore/Header.h>,<WebCore/AnotherHeader.h>`
 
 AudioSessionType : WebCore::DOMAudioSessionType [Conditional=ENABLE(DOM_AUDIO_SESSION) Headers=<WebCore/DOMAudioSession.h>]
+AudioSessionState : WebCore::DOMAudioSessionState [Conditional=ENABLE(DOM_AUDIO_SESSION) Headers=<WebCore/DOMAudioSession.h>]
 IsAutofocusProcessed : bool
 UserDidInteractWithPage : bool
 IsClosing : bool

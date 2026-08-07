@@ -49,6 +49,12 @@ Ref<DOMAudioSession> NavigatorAudioSession::audioSession(Navigator& navigator)
     return *navigatorAudioSession->m_audioSession;
 }
 
+RefPtr<DOMAudioSession> NavigatorAudioSession::audioSessionIfExists(Navigator& navigator)
+{
+    auto* supplement = downcast<NavigatorAudioSession>(Supplement<Navigator>::from(&navigator, supplementName()));
+    return supplement ? supplement->m_audioSession : nullptr;
+}
+
 NavigatorAudioSession* NavigatorAudioSession::from(Navigator& navigator)
 {
     auto* supplement = downcast<NavigatorAudioSession>(Supplement<Navigator>::from(&navigator, supplementName()));

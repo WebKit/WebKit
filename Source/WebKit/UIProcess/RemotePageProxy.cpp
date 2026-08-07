@@ -214,7 +214,8 @@ void RemotePageProxy::injectPageIntoNewProcess()
             page->creationParametersForRemotePage(m_process, drawingArea.get(), RemotePageParameters {
                 page->pageLoadState().url(),
                 protect(page->mainFrame())->frameTreeCreationParameters(),
-                websitePolicies ? std::make_optional(websitePolicies->dataForProcess(m_process)) : std::nullopt
+                websitePolicies ? std::make_optional(websitePolicies->dataForProcess(m_process)) : std::nullopt,
+                page->topDocumentSyncData()
             })
         ), 0
     );
@@ -370,7 +371,8 @@ void RemotePageProxy::setDrawingArea(DrawingAreaProxy* drawingArea)
             page->creationParametersForRemotePage(m_process, *drawingArea, RemotePageParameters {
                 page->pageLoadState().url(),
                 mainFrame->frameTreeCreationParameters(),
-                websitePolicies ? std::make_optional(websitePolicies->dataForProcess(m_process)) : std::nullopt
+                websitePolicies ? std::make_optional(websitePolicies->dataForProcess(m_process)) : std::nullopt,
+                page->topDocumentSyncData()
             })
         ), 0
     );
