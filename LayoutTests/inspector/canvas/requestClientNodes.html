@@ -13,39 +13,34 @@ function load() {
 }
 
 function test() {
-    let suite = InspectorTest.createAsyncSuite("Canvas.requestClientNodes");
+    let suite = InspectorTest.createAsyncSuite("Canvas.requestCSSCanvasClientNodes");
     function addTestCase({name, contextType}) {
         suite.addTestCase({
             name,
             description: "Check that creating a CSS canvas client node is tracked correctly.",
-            test(resolve, reject) {
+            async test() {
                 let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === contextType);
-                if (!canvas) {
-                    reject(`Missing canvas for type ${contextType}.`);
-                    return;
-                }
-                canvas.requestClientNodes((clientNodes) => {
-                    InspectorTest.expectEqual(clientNodes.length, 0, "There should initially be no client nodes.");
-                    resolve();
-                });
+                if (!canvas)
+                    throw `Missing canvas for type ${contextType}.`;
+
+                let cssCanvasClientNodes = await canvas.requestCSSCanvasClientNodes();
+                InspectorTest.expectEqual(cssCanvasClientNodes.length, 0, "There should initially be no CSS canvas nodes.");
             }
         });
     };
 
-    addTestCase({name: "Canvas.requestClientNodes.Initial.Canvas2D", contextType: WI.Canvas.ContextType.Canvas2D});
+    addTestCase({name: "Canvas.requestCSSCanvasClientNodes.Initial.Canvas2D", contextType: WI.Canvas.ContextType.Canvas2D});
     if (window.OffscreenCanvas)
-        addTestCase({name: "CCanvas.requestClientNodes.Initial.OffscreenCanvas2D", contextType: WI.Canvas.ContextType.OffscreenCanvas2D});
+        addTestCase({name: "Canvas.requestCSSCanvasClientNodes.Initial.OffscreenCanvas2D", contextType: WI.Canvas.ContextType.OffscreenCanvas2D});
 
     suite.addTestCase({
         name: "Canvas.CSSCanvasClients.InvalidCanvasId",
         description: "Invalid canvas identifiers should cause an error.",
-        test(resolve, reject) {
+        async test() {
             const canvasId = "DOES_NOT_EXIST";
-            CanvasAgent.requestClientNodes(canvasId, (error, clientNodeIds) => {
-                InspectorTest.expectThat(error, "Should produce an error.");
-                InspectorTest.log("Error: " + error);
-                resolve();
-            });
+            let error = await CanvasAgent.requestCSSCanvasClientNodes(canvasId).then(() => null, (error) => error);
+            InspectorTest.expectThat(error, "Should produce an error.");
+            InspectorTest.log("Error: " + error.message);
         }
     });
 

@@ -46,8 +46,10 @@ async function test() {
             InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
             InspectorTest.expectEqual(object.className, "GPUDevice", `Payload should have className "GPUDevice".`);
 
-            let clientNodes = await new Promise((resolve) => canvas.requestClientNodes(resolve));
-            InspectorTest.expectEqual(clientNodes.length, 0, "Worker GPUDevice should have no DOM client nodes.");
+            let nodes = await canvas.requestNodes();
+            InspectorTest.expectEqual(nodes.length, 0, "Worker GPUDevice should have no DOM nodes.");
+            let cssCanvasClientNodes = await canvas.requestCSSCanvasClientNodes();
+            InspectorTest.expectEqual(cssCanvasClientNodes.length, 0, "Worker GPUDevice should have no CSS canvas nodes.");
             InspectorTest.expectTrue(canvas.sizes.length === 1 && canvas.sizes[0].equals(new WI.Size(4, 4)), "Worker GPUDevice should have the size of its OffscreenCanvas.");
 
             let content = await canvas.requestContent();

@@ -206,13 +206,31 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         canvas.memoryChanged(memoryCost);
     }
 
-    clientNodesChanged(target, canvasIdentifier)
+    nodesChanged(target, canvasIdentifier)
     {
         let canvas = this._canvasForIdentifier(target, canvasIdentifier);
         if (!canvas)
             return;
 
-        canvas.clientNodesChanged();
+        canvas.nodesChanged();
+    }
+
+    cssCanvasClientNodesChanged(target, canvasIdentifier)
+    {
+        let canvas = this._canvasForIdentifier(target, canvasIdentifier);
+        if (!canvas)
+            return;
+
+        canvas.cssCanvasClientNodesChanged();
+    }
+
+    cssCanvasNamesChanged(target, canvasIdentifier, cssCanvasNames)
+    {
+        let canvas = this._canvasForIdentifier(target, canvasIdentifier);
+        if (!canvas)
+            return;
+
+        canvas.cssCanvasNamesChanged(cssCanvasNames);
     }
 
     recordingStarted(target, canvasIdentifier, initiator)

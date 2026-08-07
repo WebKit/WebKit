@@ -32,7 +32,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this.element.classList.add("canvas");
 
         this._canvas = null;
-        this._nodeRequestPromise = null;
+        this._nodesRequestPromise = null;
 
         this._sections = [];
         this._emptyContentPlaceholder = null;
@@ -68,13 +68,15 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         if (canvas === this._canvas)
             return;
 
-        this._nodeRequestPromise = null;
+        this._nodesRequestPromise = null;
 
         if (this._canvas) {
             this._canvas.removeEventListener(WI.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
             this._canvas.removeEventListener(WI.Canvas.Event.ExtensionEnabled, this._refreshExtensionsSection, this);
             this._canvas.removeEventListener(WI.Canvas.Event.SizeChanged, this._refreshSourceSection, this);
-            this._canvas.removeEventListener(WI.Canvas.Event.ClientNodesChanged, this._handleClientNodesChanged, this);
+            this._canvas.removeEventListener(WI.Canvas.Event.NodesChanged, this._handleNodesChanged, this);
+            this._canvas.removeEventListener(WI.Canvas.Event.CSSCanvasClientNodesChanged, this._handleCSSCanvasClientNodesChanged, this);
+            this._canvas.removeEventListener(WI.Canvas.Event.CSSCanvasNamesChanged, this._handleCSSCanvasNamesChanged, this);
         }
 
         this._canvas = canvas || null;
@@ -83,7 +85,9 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
             this._canvas.addEventListener(WI.Canvas.Event.MemoryChanged, this._canvasMemoryChanged, this);
             this._canvas.addEventListener(WI.Canvas.Event.ExtensionEnabled, this._refreshExtensionsSection, this);
             this._canvas.addEventListener(WI.Canvas.Event.SizeChanged, this._refreshSourceSection, this);
-            this._canvas.addEventListener(WI.Canvas.Event.ClientNodesChanged, this._handleClientNodesChanged, this);
+            this._canvas.addEventListener(WI.Canvas.Event.NodesChanged, this._handleNodesChanged, this);
+            this._canvas.addEventListener(WI.Canvas.Event.CSSCanvasClientNodesChanged, this._handleCSSCanvasClientNodesChanged, this);
+            this._canvas.addEventListener(WI.Canvas.Event.CSSCanvasNamesChanged, this._handleCSSCanvasNamesChanged, this);
         }
 
         this.needsLayout();
@@ -104,7 +108,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         identitySection.groups = [new WI.DetailsSectionGroup([this._nameRow, this._typeRow, this._memoryRow])];
         this._sections.push(identitySection);
 
-        this._nodeRow = new WI.DetailsSectionSimpleRow(WI.UIString("Node"));
+        this._nodeRow = new WI.DetailsSectionSimpleRow(WI.UIString("Nodes"));
         this._cssCanvasRow = new WI.DetailsSectionSimpleRow(WI.UIString("CSS Canvas"));
         this._widthRow = new WI.DetailsSectionSimpleRow(WI.UIString("Width"));
         this._heightRow = new WI.DetailsSectionSimpleRow(WI.UIString("Height"));
@@ -198,24 +202,23 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
         this._detachedRow.value = null;
 
-        if (this._canvas.cssCanvasNames.length)
-            this._nodeRow.value = null;
-        else {
-            let nodeRequestPromise = this._canvas.requestNode();
-            this._nodeRequestPromise = nodeRequestPromise;
-            this._nodeRequestPromise.then((node) => {
-                if (this._nodeRequestPromise !== nodeRequestPromise)
-                    return;
+        let nodesRequestPromise = this._canvas.requestNodes();
+        this._nodesRequestPromise = nodesRequestPromise;
+        this._nodesRequestPromise.then((nodes) => {
+            if (this._nodesRequestPromise !== nodesRequestPromise)
+                return;
 
-                if (!node) {
-                    this._nodeRow.value = null;
-                    return;
-                }
+            if (!nodes.length) {
+                this._nodeRow.value = null;
+                return;
+            }
 
-                this._nodeRow.value = WI.linkifyNodeReference(node);
-                this._detachedRow.value = node.parentNode ? null : WI.UIString("Yes");
-            });
-        }
+            let fragment = document.createDocumentFragment();
+            for (let node of nodes)
+                fragment.appendChild(WI.linkifyNodeReference(node));
+            this._nodeRow.value = fragment;
+            this._detachedRow.value = nodes.some((node) => !node.parentNode) ? WI.UIString("Yes") : null;
+        });
 
         this._cssCanvasRow.value = this._canvas.cssCanvasNames.join(", ") || null;
 
@@ -287,7 +290,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         if (!this.didInitialLayout)
             return;
 
-        if (!this._canvas.cssCanvasNames.length && this._canvas.contextType !== WI.Canvas.ContextType.WebGPU) {
+        if (!this._canvas.cssCanvasNames.length) {
             this._clientsSection.element.hidden = true;
             return;
         }
@@ -296,15 +299,13 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
         this._clientsSection.element.hidden = false;
 
-        this._canvas.requestClientNodes((clientNodes) => {
-            this._refreshSourceSection();
-
-            if (!clientNodes.length)
+        this._canvas.requestCSSCanvasClientNodes().then((cssCanvasClientNodes) => {
+            if (!cssCanvasClientNodes.length)
                 return;
 
             let fragment = document.createDocumentFragment();
-            for (let clientNode of clientNodes)
-                fragment.appendChild(WI.linkifyNodeReference(clientNode));
+            for (let cssCanvasClientNode of cssCanvasClientNodes)
+                fragment.appendChild(WI.linkifyNodeReference(cssCanvasClientNode));
             this._clientNodesRow.value = fragment;
         });
     }
@@ -334,11 +335,28 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._formatMemoryRow();
     }
 
-    _handleClientNodesChanged(event)
+    _handleNodesChanged(event)
     {
         if (!this.didInitialLayout)
             return;
 
+        this._refreshSourceSection();
+    }
+
+    _handleCSSCanvasClientNodesChanged(event)
+    {
+        if (!this.didInitialLayout)
+            return;
+
+        this._refreshClientsSection();
+    }
+
+    _handleCSSCanvasNamesChanged(event)
+    {
+        if (!this.didInitialLayout)
+            return;
+
+        this._refreshSourceSection();
         this._refreshClientsSection();
     }
 };

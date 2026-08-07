@@ -51,9 +51,19 @@ WI.CanvasObserver = class CanvasObserver extends InspectorBackend.Dispatcher
         WI.canvasManager.canvasMemoryChanged(this._target, canvasId, memoryCost);
     }
 
-    clientNodesChanged(canvasId)
+    nodesChanged(canvasId)
     {
-        WI.canvasManager.clientNodesChanged(this._target, canvasId);
+        WI.canvasManager.nodesChanged(this._target, canvasId);
+    }
+
+    cssCanvasClientNodesChanged(canvasId)
+    {
+        WI.canvasManager.cssCanvasClientNodesChanged(this._target, canvasId);
+    }
+
+    cssCanvasNamesChanged(canvasId, cssCanvasNames)
+    {
+        WI.canvasManager.cssCanvasNamesChanged(this._target, canvasId, cssCanvasNames);
     }
 
     recordingStarted(canvasId, initiator)
@@ -93,9 +103,9 @@ WI.CanvasObserver = class CanvasObserver extends InspectorBackend.Dispatcher
         WI.canvasManager.programDeleted(this._target, programId);
     }
 
-    // COMPATIBILITY (iOS 13): Canvas.events.cssCanvasClientNodesChanged was renamed to Canvas.events.clientNodesChanged.
-    cssCanvasClientNodesChanged(canvasId)
+    // COMPATIBILITY (macOS X.Y, iOS X.Y): `Canvas.clientNodesChanged` was renamed to `Canvas.cssCanvasClientNodesChanged`.
+    clientNodesChanged(canvasId)
     {
-        WI.canvasManager.clientNodesChanged(this._target, canvasId);
+        WI.canvasManager.cssCanvasClientNodesChanged(this._target, canvasId);
     }
 };

@@ -158,33 +158,30 @@ static bool canvasContextMatchesDevice(const CanvasRenderingContext& context, co
     return gpuCanvasContext && gpuCanvasContext->device() == &device;
 }
 
-HTMLCanvasElement* InspectorCanvas::canvasElement() const
+HashSet<HTMLCanvasElement*> InspectorCanvas::canvasElements() const
 {
     return WTF::switchOn(m_context,
         [](const WeakRef<CanvasRenderingContext>& weakContext) {
             Ref context = weakContext;
-            return dynamicDowncast<HTMLCanvasElement>(context->canvasBase());
+
+            HashSet<HTMLCanvasElement*> canvasElements;
+            if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(context->canvasBase()))
+                canvasElements.add(canvasElement);
+            return canvasElements;
         },
         [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) {
             Ref device = weakDevice;
 
-            RefPtr<HTMLCanvasElement> canvasElement;
+            HashSet<HTMLCanvasElement*> canvasElements;
             Locker locker { CanvasRenderingContext::instancesLock() };
             for (SUPPRESS_UNCOUNTED_ARG auto* context : CanvasRenderingContext::instances()) {
                 if (!context->isContextThread() || !canvasContextMatchesDevice(*context, device))
                     continue;
 
-                RefPtr currentCanvasElement = dynamicDowncast<HTMLCanvasElement>(context->canvasBase());
-                if (!currentCanvasElement)
-                    continue;
-
-                if (canvasElement) {
-                    canvasElement = nullptr;
-                    break;
-                }
-                canvasElement = currentCanvasElement;
+                if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(context->canvasBase()))
+                    canvasElements.add(canvasElement);
             }
-            return canvasElement.unsafeGet();
+            return canvasElements;
         }
     );
 }
@@ -293,7 +290,7 @@ JSC::JSValue InspectorCanvas::resolveContext(JSC::JSGlobalObject* exec)
     );
 }
 
-HashSet<Element*> InspectorCanvas::clientNodes() const
+HashSet<Element*> InspectorCanvas::cssCanvasClientNodes() const
 {
     return WTF::switchOn(m_context,
         [](const WeakRef<CanvasRenderingContext>& weakContext) {
@@ -302,22 +299,16 @@ HashSet<Element*> InspectorCanvas::clientNodes() const
         },
         [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) {
             Ref device = weakDevice;
-            HashSet<Element*> clientNodes;
+            HashSet<Element*> cssCanvasClientNodes;
             Locker locker { CanvasRenderingContext::instancesLock() };
             for (SUPPRESS_UNCOUNTED_ARG auto* context : CanvasRenderingContext::instances()) {
                 if (!context->isContextThread() || !canvasContextMatchesDevice(*context, device))
                     continue;
 
-                if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(context->canvasBase())) {
-                    if (canvasElement->document().nameForCSSCanvasElement(*canvasElement).isEmpty())
-                        clientNodes.add(canvasElement);
-                    else {
-                        for (auto& clientNode : context->canvasBase().cssCanvasClients())
-                            clientNodes.add(clientNode);
-                    }
-                }
+                for (auto& cssCanvasClientNode : context->canvasBase().cssCanvasClients())
+                    cssCanvasClientNodes.add(cssCanvasClientNode);
             }
-            return clientNodes;
+            return cssCanvasClientNodes;
         }
     );
 }
@@ -671,8 +662,6 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
                 .setCanvasId(m_identifier)
                 .setContextType(contextType)
                 .release();
-
-            // FIXME: <https://webkit.org/b/178282> Web Inspector: send a DOM node with each Canvas payload and eliminate Canvas.requestNode
 
             if (auto attributes = buildObjectForCanvasContextAttributes(context))
                 result->setContextAttributes(attributes.releaseNonNull());

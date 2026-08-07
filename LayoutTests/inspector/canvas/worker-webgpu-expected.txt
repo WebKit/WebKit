@@ -8,7 +8,8 @@ PASS: WebGPU Canvas should belong to the Worker target.
 PASS: Worker Canvas should use the GPUDevice label as its display name.
 PASS: Payload should have type "object".
 PASS: Payload should have className "GPUDevice".
-PASS: Worker GPUDevice should have no DOM client nodes.
+PASS: Worker GPUDevice should have no DOM nodes.
+PASS: Worker GPUDevice should have no CSS canvas nodes.
 PASS: Worker GPUDevice should have the size of its OffscreenCanvas.
 PASS: Worker WebGPU Canvas content should not be empty.
 

@@ -1,16 +1,19 @@
-Test that CanvasAgent.requestNode can properly resolve the owner canvas node.
+Test that CanvasAgent.requestNodes can properly resolve canvas nodes.
 
 
-== Running test suite: Canvas.requestNode
--- Running test case: Canvas.requestNode.validCanvasId
+== Running test suite: Canvas.requestNodes
+-- Running test case: Canvas.requestNodes.validCanvasId
+PASS: Canvas "CSS canvas “css”" has one node.
 PASS: Canvas "CSS canvas “css”" has node with valid id.
 PASS: Canvas "CSS canvas “css”" has node with type "CANVAS".
+PASS: Canvas "Canvas 1" has one node.
 PASS: Canvas "Canvas 1" has node with valid id.
 PASS: Canvas "Canvas 1" has node with type "CANVAS".
+PASS: Canvas "Canvas 2" has one node.
 PASS: Canvas "Canvas 2" has node with valid id.
 PASS: Canvas "Canvas 2" has node with type "CANVAS".
 
--- Running test case: Canvas.requestNode.invalidCanvasId
+-- Running test case: Canvas.requestNodes.invalidCanvasId
 PASS: Should produce an error.
 Error: Missing canvas for given canvasId
 

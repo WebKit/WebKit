@@ -25,7 +25,7 @@ function destroyClients() {
 }
 
 function test() {
-    let suite = InspectorTest.createAsyncSuite("Canvas.requestClientNodes.CSS");
+    let suite = InspectorTest.createAsyncSuite("Canvas.requestCSSCanvasClientNodes.CSS");
 
     function logClientNodes(clientNodes) {
         for (let clientNode of clientNodes) {
@@ -37,38 +37,34 @@ function test() {
     }
 
     suite.addTestCase({
-        name: "Canvas.requestClientNodes.CSS.Create",
+        name: "Canvas.requestCSSCanvasClientNodes.CSS.Create",
         description: "Check that creating a CSS canvas client node is tracked correctly.",
-        test(resolve, reject) {
-            WI.Canvas.awaitEvent(WI.Canvas.Event.ClientNodesChanged)
-            .then((event) => {
-                event.target.requestClientNodes((clientNodes) => {
-                    InspectorTest.expectShallowEqual(event.target.cssCanvasNames, ["css-canvas"], `Canvas with created client should have CSS name "css-canvas".`);
-                    InspectorTest.expectEqual(clientNodes.length, 1, "There should be one client node.");
-                    logClientNodes(clientNodes);
-                    resolve();
-                });
-            });
+        async test() {
+            let cssCanvasClientNodesChangedPromise = WI.Canvas.awaitEvent(WI.Canvas.Event.CSSCanvasClientNodesChanged);
 
             InspectorTest.evaluateInPage(`createClient()`);
+
+            let event = await cssCanvasClientNodesChangedPromise;
+            let cssCanvasClientNodes = await event.target.requestCSSCanvasClientNodes();
+            InspectorTest.expectShallowEqual(event.target.cssCanvasNames, ["css-canvas"], `Canvas with created client should have CSS name "css-canvas".`);
+            InspectorTest.expectEqual(cssCanvasClientNodes.length, 1, "There should be one CSS canvas node.");
+            logClientNodes(cssCanvasClientNodes);
         }
     });
 
     suite.addTestCase({
-        name: "Canvas.requestClientNodes.CSS.Destroy",
+        name: "Canvas.requestCSSCanvasClientNodes.CSS.Destroy",
         description: "Check that destroying a CSS canvas client node is tracked correctly.",
-        test(resolve, reject) {
-            WI.Canvas.awaitEvent(WI.Canvas.Event.ClientNodesChanged)
-            .then((event) => {
-                event.target.requestClientNodes((clientNodes) => {
-                    InspectorTest.expectShallowEqual(event.target.cssCanvasNames, ["css-canvas"], `Canvas with destroyed client should have CSS name "css-canvas".`);
-                    InspectorTest.expectEqual(clientNodes.length, 0, "There should be no client nodes.");
-                    logClientNodes(clientNodes);
-                    resolve();
-                });
-            });
+        async test() {
+            let cssCanvasClientNodesChangedPromise = WI.Canvas.awaitEvent(WI.Canvas.Event.CSSCanvasClientNodesChanged);
 
             InspectorTest.evaluateInPage(`destroyClients()`);
+
+            let event = await cssCanvasClientNodesChangedPromise;
+            let cssCanvasClientNodes = await event.target.requestCSSCanvasClientNodes();
+            InspectorTest.expectShallowEqual(event.target.cssCanvasNames, ["css-canvas"], `Canvas with destroyed client should have CSS name "css-canvas".`);
+            InspectorTest.expectEqual(cssCanvasClientNodes.length, 0, "There should be no CSS canvas nodes.");
+            logClientNodes(cssCanvasClientNodes);
         }
     });
 

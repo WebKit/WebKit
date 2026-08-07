@@ -67,7 +67,6 @@
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." },
                 { "name": "contextType", "$ref": "ContextType", "description": "The type of rendering context backing the canvas." },
                 { "name": "sizes", "type": "array", "items": { "$ref": "GenericTypes.Size" }, "optional": true },
-                { "name": "nodeId", "$ref": "DOM.NodeId", "optional": true, "description": "The corresponding DOM node id." },
                 { "name": "cssCanvasNames", "type": "array", "items": { "type": "string" }, "optional": true, "description": "The CSS canvas identifiers, for canvases created with <code>document.getCSSCanvasContext</code>." },
                 { "name": "contextAttributes", "$ref": "ContextAttributes", "optional": true, "description": "Context attributes for rendering contexts." },
                 { "name": "features", "type": "array", "items": { "type": "string" }, "optional": true, "description": "Enabled WebGPU device features." },
@@ -99,14 +98,14 @@
             "description": "Disables Canvas domain events."
         },
         {
-            "name": "requestNode",
-            "description": "Gets the NodeId for the canvas node with the given CanvasId.",
+            "name": "requestNodes",
+            "description": "Gets the NodeIds for the canvas nodes with the given CanvasId.",
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." }
             ],
             "returns": [
-                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Node identifier for given canvas." }
+                { "name": "nodeIds", "type": "array", "items": { "$ref": "DOM.NodeId" }, "description": "Node identifiers for the given canvas." }
             ]
         },
         {
@@ -120,15 +119,14 @@
             ]
         },
         {
-            "name": "requestClientNodes",
-            "description": "Gets all <code>-webkit-canvas</code> nodes or active <code>HTMLCanvasElement</code> for a <code>WebGPUDevice</code>.",
+            "name": "requestCSSCanvasClientNodes",
+            "description": "Gets all nodes using a <code>-webkit-canvas</code> image associated with the given CanvasId.",
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId" }
             ],
             "returns": [
-                { "name": "clientNodeIds", "type": "array", "items": { "$ref": "DOM.NodeId" } },
-                { "name": "cssCanvasNames", "type": "array", "items": { "type": "string" }, "description": "The CSS canvas identifiers, for canvases created with <code>document.getCSSCanvasContext</code>." }
+                { "name": "clientNodeIds", "type": "array", "items": { "$ref": "DOM.NodeId" } }
             ]
         },
         {
@@ -240,10 +238,25 @@
             ]
         },
         {
-            "name": "clientNodesChanged",
+            "name": "nodesChanged",
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." }
+            ]
+        },
+        {
+            "name": "cssCanvasClientNodesChanged",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." }
+            ]
+        },
+        {
+            "name": "cssCanvasNamesChanged",
+            "targetTypes": ["page"],
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." },
+                { "name": "cssCanvasNames", "type": "array", "items": { "type": "string" }, "description": "The CSS canvas identifiers, for canvases created with <code>document.getCSSCanvasContext</code>." }
             ]
         },
         {

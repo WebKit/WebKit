@@ -12,11 +12,11 @@ function load() {
 }
 
 function test() {
-    let suite = InspectorTest.createAsyncSuite("Canvas.requestNode");
+    let suite = InspectorTest.createAsyncSuite("Canvas.requestNodes");
 
     suite.addTestCase({
-        name: "Canvas.requestNode.validCanvasId",
-        description: "Get the node id for each canvas on the page.",
+        name: "Canvas.requestNodes.validCanvasId",
+        description: "Get the node ids for each canvas on the page.",
         test(resolve, reject) {
             let canvases = Array.from(WI.canvasManager.canvasCollection);
             let expectedLength = canvases.length;
@@ -26,8 +26,8 @@ function test() {
 
             function finish() {
                 let results = {};
-                for (let [canvas, node] of nodesMap)
-                    results[canvas.displayName] = node;
+                for (let [canvas, nodes] of nodesMap)
+                    results[canvas.displayName] = nodes;
 
                 let keys = Object.keys(results);
                 InspectorTest.assert(keys.length === nodesMap.size, "No display name collisions");
@@ -36,8 +36,10 @@ function test() {
                 // events are sent in a different order than the above.
                 keys.sort();
                 for (let displayName of keys) {
-                    InspectorTest.expectThat(results[displayName], `Canvas "${displayName}" has node with valid id.`);
-                    InspectorTest.expectEqual(results[displayName].nodeName(), "CANVAS", `Canvas "${displayName}" has node with type "CANVAS".`);
+                    let nodes = results[displayName];
+                    InspectorTest.expectEqual(nodes.length, 1, `Canvas "${displayName}" has one node.`);
+                    InspectorTest.expectThat(nodes[0], `Canvas "${displayName}" has node with valid id.`);
+                    InspectorTest.expectEqual(nodes[0].nodeName(), "CANVAS", `Canvas "${displayName}" has node with type "CANVAS".`);
                 }
 
                 resolve();
@@ -45,13 +47,13 @@ function test() {
 
             canvases.forEach((canvas) => {
                 WI.domManager.requestDocument((documentNode) => {
-                    CanvasAgent.requestNode(canvas.identifier, (error, nodeId) => {
+                    CanvasAgent.requestNodes(canvas.identifier, (error, nodeIds) => {
                         if (error) {
                             reject(error);
                             return;
                         }
 
-                        nodesMap.set(canvas, WI.domManager.nodeForId(nodeId));
+                        nodesMap.set(canvas, nodeIds.map((nodeId) => WI.domManager.nodeForId(nodeId)));
                         if (nodesMap.size === expectedLength)
                             finish();
                     });
@@ -63,11 +65,11 @@ function test() {
     // ------
 
     suite.addTestCase({
-        name: "Canvas.requestNode.invalidCanvasId",
+        name: "Canvas.requestNodes.invalidCanvasId",
         description: "Invalid canvas identifiers should cause an error.",
         test(resolve, reject) {
             const canvasId = "DOES_NOT_EXIST";
-            CanvasAgent.requestNode(canvasId, (error) => {
+            CanvasAgent.requestNodes(canvasId, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
                 InspectorTest.log("Error: " + error);
                 resolve();
@@ -83,7 +85,7 @@ function test() {
 </style>
 </head>
 <body onload="load()">
-<p>Test that CanvasAgent.requestNode can properly resolve the owner canvas node.</p>
+<p>Test that CanvasAgent.requestNodes can properly resolve canvas nodes.</p>
 <canvas id="onscreen"></canvas>
 </body>
 </html>

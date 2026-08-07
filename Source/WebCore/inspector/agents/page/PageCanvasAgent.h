@@ -43,8 +43,8 @@ public:
     ~PageCanvasAgent();
 
     // CanvasBackendDispatcherHandler
-    Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> requestNode(const Inspector::Protocol::Canvas::CanvasId&) override;
-    Inspector::Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>, Ref<JSON::ArrayOf<String>>>> requestClientNodes(const Inspector::Protocol::Canvas::CanvasId&) override;
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestNodes(const Inspector::Protocol::Canvas::CanvasId&) override;
+    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestCSSCanvasClientNodes(const Inspector::Protocol::Canvas::CanvasId&) override;
 
     // InspectorInstrumentation
     void frameNavigated(LocalFrame&);
@@ -57,14 +57,15 @@ private:
     void internalEnable() override;
     void internalDisable() override;
 
-    Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(InspectorCanvas&, bool captureBacktrace) override;
-    std::optional<Inspector::Protocol::DOM::NodeId> nodeIdForCanvas(HTMLCanvasElement*);
-    void dispatchClientNodesChanged(InspectorCanvas&);
+    void dispatchNodesChanged(InspectorCanvas&);
+    void dispatchCSSCanvasClientNodesChanged(InspectorCanvas&);
+    void dispatchCSSCanvasNamesChanged(InspectorCanvas&);
 
     bool matchesCurrentContext(ScriptExecutionContext*) const override;
 
     WeakRef<Page> m_inspectedPage;
-    WeakHashSet<InspectorCanvas> m_inspectorCanvasesWithPendingClientNodesChange;
+    WeakHashSet<InspectorCanvas> m_pendingNodesChange;
+    WeakHashSet<InspectorCanvas> m_pendingCSSCanvasClientNodesChange;
 };
 
 } // namespace WebCore

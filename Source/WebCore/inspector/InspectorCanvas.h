@@ -73,7 +73,7 @@ public:
     CanvasRenderingContext* canvasContext() const;
     GPUDevice* deviceContext() const;
 
-    HTMLCanvasElement* canvasElement() const;
+    HashSet<HTMLCanvasElement*> canvasElements() const;
 
     Vector<IntSize> sizes() const;
     Vector<String> cssCanvasNames() const;
@@ -82,7 +82,7 @@ public:
 
     JSC::JSValue resolveContext(JSC::JSGlobalObject*);
 
-    HashSet<Element*> clientNodes() const;
+    HashSet<Element*> cssCanvasClientNodes() const;
     size_t memoryCost() const;
 
     void canvasChanged();

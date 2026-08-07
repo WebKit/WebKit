@@ -25,7 +25,7 @@
 
 WI.Canvas = class Canvas extends WI.Object
 {
-    constructor(target, identifier, contextType, sizes, {domNode, cssCanvasNames, contextAttributes, features, memoryCost, stackTrace, displayName} = {})
+    constructor(target, identifier, contextType, sizes, {cssCanvasNames, contextAttributes, features, memoryCost, stackTrace, displayName} = {})
     {
         super();
 
@@ -40,7 +40,7 @@ WI.Canvas = class Canvas extends WI.Object
         this._identifier = identifier;
         this._contextType = contextType;
         this._sizes = sizes;
-        this._domNode = domNode || null;
+        this._domNodes = [];
         this._cssCanvasNames = cssCanvasNames || [];
         this._contextAttributes = contextAttributes || {};
         this._features = features || [];
@@ -49,15 +49,15 @@ WI.Canvas = class Canvas extends WI.Object
         this._stackTrace = stackTrace || null;
         this._displayName = displayName || "";
 
-        this._clientNodes = null;
-        this._requestClientNodesCallbacks = [];
-
         this._shaderProgramCollection = new WI.ShaderProgramCollection;
         this._recordingCollection = new WI.RecordingCollection;
 
         this._nextShaderProgramDisplayNumber = null;
 
-        this._requestNodePromise = this._domNode ? Promise.resolve(this._domNode) : null;
+        this._requestNodesPromise = null;
+
+        this._cssCanvasClientNodes = [];
+        this._requestCSSCanvasClientNodesPromise = null;
 
         this._recordingState = WI.Canvas.RecordingState.Inactive;
         this._recordingFrames = [];
@@ -67,8 +67,8 @@ WI.Canvas = class Canvas extends WI.Object
         if (!InspectorBackend.hasEvent("Canvas.canvasSizeChanged")) {
             console.assert(!sizes.length);
 
-            this.requestNode().then((node) => {
-                if (node) {
+            this.requestNodes().then((nodes) => {
+                for (let node of nodes) {
                     node.addEventListener(WI.DOMNode.Event.AttributeModified, this._calculateSize, this);
                     node.addEventListener(WI.DOMNode.Event.AttributeRemoved, this._calculateSize, this);
                 }
@@ -128,7 +128,6 @@ WI.Canvas = class Canvas extends WI.Object
             payload.stackTrace = {callFrames: payload.backtrace};
 
         return new WI.Canvas(target, payload.canvasId, contextType, sizes, {
-            domNode: WI.Canvas._domNodeForId(target, payload.nodeId),
             cssCanvasNames,
             contextAttributes: payload.contextAttributes,
             features: payload.features,
@@ -140,8 +139,6 @@ WI.Canvas = class Canvas extends WI.Object
 
     static _domNodeForId(target, nodeId)
     {
-        if (!nodeId)
-            return null;
         if (target instanceof WI.FrameTarget)
             return WI.domManager.nodeForIdInFrameTarget(nodeId, target);
         return WI.domManager.nodeForId(nodeId);
@@ -233,8 +230,8 @@ WI.Canvas = class Canvas extends WI.Object
         if (this._cssCanvasNames.length === 1)
             return WI.UIString("CSS canvas \u201C%s\u201D").format(this._cssCanvasNames[0]);
 
-        if (this._domNode) {
-            let idSelector = this._domNode.escapedIdSelector;
+        if (this._domNodes.length === 1) {
+            let idSelector = this._domNodes[0].escapedIdSelector;
             if (idSelector)
                 return WI.UIString("Canvas %s").format(idSelector);
         }
@@ -264,40 +261,30 @@ WI.Canvas = class Canvas extends WI.Object
         return this._contextType === Canvas.ContextType.WebGL2 || this._contextType === Canvas.ContextType.OffscreenWebGL2;
     }
 
-    requestNode()
+    requestNodes()
     {
-        if (!this._requestNodePromise) {
-            let promise = new Promise((resolve, reject) => {
+        if (!this._requestNodesPromise) {
+            let requestPromise;
+            // COMPATIBILITY (macOS X.Y, iOS X.Y): `Canvas.requestNode` was renamed to `Canvas.requestNodes`.
+            if (this._target.hasCommand("Canvas.requestNode")) {
                 WI.domManager.ensureDocument();
+                requestPromise = this._target.CanvasAgent.requestNode(this._identifier).then(({nodeId}) => ({nodeIds: nodeId ? [nodeId] : []}));
+            } else if (this._target.hasCommand("Canvas.requestNodes")) {
+                WI.domManager.ensureDocument();
+                requestPromise = this._target.CanvasAgent.requestNodes(this._identifier);
+            } else
+                requestPromise = Promise.resolve({nodeIds: []});
 
-                if (!this._target.hasCommand("Canvas.requestNode")) {
-                    resolve(null);
-                    return;
-                }
+            let promise = requestPromise.then(({nodeIds}) => {
+                if (promise !== this._requestNodesPromise)
+                    return this._domNodes;
 
-                this._target.CanvasAgent.requestNode(this._identifier, (error, nodeId) => {
-                    if (promise !== this._requestNodePromise) {
-                        resolve(this._domNode);
-                        return;
-                    }
-
-                    if (error) {
-                        resolve(null);
-                        return;
-                    }
-
-                    this._domNode = WI.Canvas._domNodeForId(this._target, nodeId);
-                    if (!this._domNode) {
-                        resolve(null);
-                        return;
-                    }
-
-                    resolve(this._domNode);
-                });
-            });
-            this._requestNodePromise = promise;
+                this._domNodes = nodeIds.map((nodeId) => WI.Canvas._domNodeForId(this._target, nodeId));
+                return this._domNodes;
+            }, () => promise === this._requestNodesPromise ? [] : this._domNodes);
+            this._requestNodesPromise = promise;
         }
-        return this._requestNodePromise;
+        return this._requestNodesPromise;
     }
 
     requestContent()
@@ -305,46 +292,43 @@ WI.Canvas = class Canvas extends WI.Object
         return this._target.CanvasAgent.requestContent(this._identifier).then((result) => result.content).catch((error) => console.error(error));
     }
 
-    requestClientNodes(callback)
+    requestCSSCanvasClientNodes()
     {
-        if (this._clientNodes) {
-            callback(this._clientNodes);
-            return;
+        if (!this._requestCSSCanvasClientNodesPromise) {
+            let requestPromise;
+            // COMPATIBILITY (macOS X.Y, iOS X.Y): `Canvas.requestCSSCanvasClientNodes` was temporarily renamed to `Canvas.requestClientNodes`.
+            if (this._target.hasCommand("Canvas.requestClientNodes")) {
+                WI.domManager.ensureDocument();
+                requestPromise = this._target.CanvasAgent.requestClientNodes(this._identifier);
+            } else if (this._target.hasCommand("Canvas.requestCSSCanvasClientNodes")) {
+                WI.domManager.ensureDocument();
+                requestPromise = this._target.CanvasAgent.requestCSSCanvasClientNodes(this._identifier);
+            } else
+                requestPromise = Promise.resolve({clientNodeIds: []});
+
+            let promise = requestPromise.then(({clientNodeIds}) => {
+                if (promise !== this._requestCSSCanvasClientNodesPromise)
+                    return this._cssCanvasClientNodes;
+
+                this._cssCanvasClientNodes = clientNodeIds.map((clientNodeId) => WI.Canvas._domNodeForId(this._target, clientNodeId));
+                return this._cssCanvasClientNodes;
+            }, () => promise === this._requestCSSCanvasClientNodesPromise ? [] : this._cssCanvasClientNodes);
+            this._requestCSSCanvasClientNodesPromise = promise;
         }
+        return this._requestCSSCanvasClientNodesPromise;
+    }
 
-        this._requestClientNodesCallbacks.push(callback);
-        if (this._requestClientNodesCallbacks.length > 1)
-            return;
-
-        WI.domManager.ensureDocument();
-
-        let wrappedCallback = (error, clientNodeIds, cssCanvasNames) => {
-            let clientNodes = [];
-            if (!error) {
-                if (cssCanvasNames)
-                    this._cssCanvasNames = cssCanvasNames;
-
-                this._clientNodes = clientNodes = clientNodeIds.map((clientNodeId) => WI.Canvas._domNodeForId(this._target, clientNodeId));
-            }
-
-            let callbacks = this._requestClientNodesCallbacks;
-            this._requestClientNodesCallbacks = [];
-            for (let callback of callbacks)
-                callback(clientNodes);
-        };
-
-        if (this._target.hasCommand("Canvas.requestClientNodes")) {
-            this._target.CanvasAgent.requestClientNodes(this._identifier, wrappedCallback);
-            return;
-        }
-
-        // COMPATIBILITY (iOS 13): Canvas.requestCSSCanvasClientNodes was renamed to Canvas.requestClientNodes.
-        if (this._target.hasCommand("Canvas.requestCSSCanvasClientNodes")) {
-            this._target.CanvasAgent.requestCSSCanvasClientNodes(this._identifier, wrappedCallback);
-            return;
-        }
-
-        wrappedCallback(null, []);
+    highlight()
+    {
+        Promise.all([
+            (!this._cssCanvasNames.length || this._contextType === Canvas.ContextType.WebGPU) ? this.requestNodes() : [],
+            (this._cssCanvasNames.length || this._contextType === Canvas.ContextType.WebGPU) ? this.requestCSSCanvasClientNodes() : [],
+        ]).then((nodesLists) => {
+            let nodes = nodesLists.flat();
+            if (!nodes.length)
+                return;
+            WI.domManager.highlightDOMNodeList(nodes);
+        });
     }
 
     startRecording(singleFrame)
@@ -373,9 +357,9 @@ WI.Canvas = class Canvas extends WI.Object
     saveIdentityToCookie(cookie)
     {
         if (this._cssCanvasNames.length)
-            cookie[WI.Canvas.CSSCanvasNameCookieKey] = this._cssCanvasNames.join(",");
-        else if (this._domNode)
-            cookie[WI.Canvas.NodePathCookieKey] = this._domNode.path;
+            cookie[WI.Canvas.CSSCanvasNameCookieKey] = JSON.stringify(this._cssCanvasNames);
+        else if (this._domNodes.length)
+            cookie[WI.Canvas.NodePathCookieKey] = JSON.stringify(this._domNodes.map((domNode) => domNode.path));
 
     }
 
@@ -415,16 +399,37 @@ WI.Canvas = class Canvas extends WI.Object
         this.dispatchEventToListeners(WI.Canvas.Event.ExtensionEnabled, {extension});
     }
 
-    clientNodesChanged()
+    nodesChanged()
     {
         // Called from WI.CanvasManager.
 
-        if (this._contextType === Canvas.ContextType.WebGPU)
-            this._requestNodePromise = null;
+        this._requestNodesPromise = null;
 
-        this._clientNodes = null;
+        this.dispatchEventToListeners(Canvas.Event.NodesChanged);
+    }
 
-        this.dispatchEventToListeners(Canvas.Event.ClientNodesChanged);
+    cssCanvasClientNodesChanged()
+    {
+        // Called from WI.CanvasManager.
+
+        this._cssCanvasClientNodes = null;
+        this._requestCSSCanvasClientNodesPromise = null;
+
+        this.dispatchEventToListeners(Canvas.Event.CSSCanvasClientNodesChanged);
+    }
+
+    cssCanvasNamesChanged(cssCanvasNames)
+    {
+        // Called from WI.CanvasManager.
+
+        console.assert(Array.isArray(cssCanvasNames), cssCanvasNames);
+
+        if (Array.shallowEqual(this._cssCanvasNames, cssCanvasNames))
+            return;
+
+        this._cssCanvasNames = cssCanvasNames;
+
+        this.dispatchEventToListeners(Canvas.Event.CSSCanvasNamesChanged);
     }
 
     recordingStarted(initiator)
@@ -545,7 +550,9 @@ WI.Canvas.Event = {
     SizeChanged: "canvas-size-changed",
     MemoryChanged: "canvas-memory-changed",
     ExtensionEnabled: "canvas-extension-enabled",
-    ClientNodesChanged: "canvas-client-nodes-changed",
+    NodesChanged: "canvas-nodes-changed",
+    CSSCanvasClientNodesChanged: "canvas-css-canvas-client-nodes-changed",
+    CSSCanvasNamesChanged: "canvas-css-canvas-names-changed",
     RecordingStarted: "canvas-recording-started",
     RecordingProgress: "canvas-recording-progress",
     RecordingStopped: "canvas-recording-stopped",
