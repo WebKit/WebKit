@@ -252,6 +252,9 @@ public:
             g_assert_true(webkit_user_media_permission_is_for_display_device(userMediaRequest) == test->m_expectedDisplayMedia);
         }
 
+        if (WEBKIT_IS_CLIPBOARD_PERMISSION_REQUEST(request))
+            test->m_clipboardPermissionRequests++;
+
         if (test->m_allowPermissionRequests)
             webkit_permission_request_allow(request);
         else
@@ -529,6 +532,7 @@ public:
     bool m_scriptDialogConfirmed;
     bool m_delayedScriptDialogs { false };
     bool m_allowPermissionRequests;
+    unsigned m_clipboardPermissionRequests { 0 };
     const char* m_expectedQueryPermissionReply;
     gboolean m_verifyMediaTypes;
     gboolean m_expectedAudioMedia;
@@ -1570,6 +1574,25 @@ static void testWebViewColorChooserRequest(ColorChooserTest* test, gconstpointer
 }
 #endif // PLATFORM(GTK)
 
+static void testWebViewClipboardPermissionRequest(UIClientTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body></body></html>", "file:///");
+    test->waitUntilLoadFinished();
+
+    test->m_allowPermissionRequests = false;
+    GUniqueOutPtr<GError> error;
+    JSCValue* value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return navigator.clipboard.readText();", nullptr, nullptr, &error.outPtr());
+    g_assert_null(value);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+    g_assert_true(g_str_has_prefix(error->message, "NotAllowedError:"));
+    g_assert_cmpuint(test->m_clipboardPermissionRequests, ==, 1);
+
+    test->m_allowPermissionRequests = true;
+    value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return navigator.clipboard.readText();", nullptr, nullptr, &error.outPtr());
+    g_assert_true(JSC_IS_VALUE(value));
+    g_assert_cmpuint(test->m_clipboardPermissionRequests, ==, 2);
+}
+
 void beforeAll()
 {
     UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
@@ -1609,6 +1632,7 @@ void beforeAll()
 #if ENABLE(POINTER_LOCK)
     UIClientTest::add("WebKitWebView", "pointer-lock-permission-request", testWebViewPointerLockPermissionRequest);
 #endif
+    UIClientTest::add("WebKitWebView", "clipboard-permission-request", testWebViewClipboardPermissionRequest);
 }
 
 void afterAll()

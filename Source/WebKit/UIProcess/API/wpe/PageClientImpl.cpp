@@ -40,7 +40,9 @@
 #include "WebContextMenuProxyWPE.h"
 #include "WebDataListSuggestionsDropdown.h"
 #include "WebDateTimePicker.h"
+#include "WebKitClipboardPermissionRequestPrivate.h"
 #include "WebKitPopupMenu.h"
+#include "WebKitWebViewClient.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/DOMPasteAccess.h>
@@ -540,7 +542,12 @@ void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, WebC
                 }
             }
         }
-        // FIXME: add WebKitClipboardPermissionRequest support.
+
+        if (m_view.client().isGLibBasedAPI()) {
+            GRefPtr<WebKitClipboardPermissionRequest> request = adoptGRef(webkitClipboardPermissionRequestCreate(WTF::move(completionHandler)));
+            static_cast<WebKitWebViewClient&>(m_view.client()).requestClipboardPermission(request.get());
+            return;
+        }
     }
 #endif
     completionHandler(WebCore::DOMPasteAccessResponse::DeniedForGesture);

@@ -28,22 +28,6 @@
 typedef WebKitPermissionRequestIface WebKitPermissionRequestInterface;
 #endif
 
-/**
- * WebKitClipboardPermissionRequest:
- * @See_also: #WebKitPermissionRequest, #WebKitWebView
- *
- * A permission request for reading clipboard contents.
- *
- * WebKitClipboardPermissionRequest represents a request for
- * permission to decide whether WebKit can access the clipboard to read
- * its contents through the Async Clipboard API.
- *
- * When a WebKitClipboardPermissionRequest is not handled by the user,
- * it is denied by default.
- *
- * Since: 2.42
- */
-
 static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface*);
 
 struct _WebKitClipboardPermissionRequestPrivate {

@@ -40,6 +40,40 @@ struct _WebKitClipboardPermissionRequestClass {
 };
 #endif
 
+#if PLATFORM(GTK)
+/**
+ * WebKitClipboardPermissionRequest:
+ * @See_also: [iface@PermissionRequest], [class@WebView]
+ *
+ * A permission request for reading clipboard contents.
+ *
+ * WebKitClipboardPermissionRequest represents a request for
+ * permission to decide whether WebKit can access the clipboard to read
+ * its contents through the Async Clipboard API.
+ *
+ * When a WebKitClipboardPermissionRequest is not handled by the user,
+ * it is denied by default.
+ *
+ * Since: 2.42
+ */
+#elif PLATFORM(WPE)
+/**
+ * WebKitClipboardPermissionRequest:
+ * @See_also: [iface@PermissionRequest], [class@WebView]
+ *
+ * A permission request for reading clipboard contents.
+ *
+ * WebKitClipboardPermissionRequest represents a request for
+ * permission to decide whether WebKit can access the clipboard to read
+ * its contents through the Async Clipboard API.
+ *
+ * When a WebKitClipboardPermissionRequest is not handled by the user,
+ * it is denied by default.
+ *
+ * Since: 2.56
+ */
+#endif
+
 WEBKIT_DECLARE_FINAL_TYPE (WebKitClipboardPermissionRequest, webkit_clipboard_permission_request, WEBKIT, CLIPBOARD_PERMISSION_REQUEST, GObject)
 
 G_END_DECLS

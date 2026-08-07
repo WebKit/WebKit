@@ -552,6 +552,11 @@ GRefPtr<WebKitOptionMenu> WebKitWebViewClient::showOptionMenu(WebKitPopupMenu& p
     return nullptr;
 }
 
+void WebKitWebViewClient::requestClipboardPermission(WebKitClipboardPermissionRequest* request)
+{
+    webkitWebViewMakePermissionRequest(WEBKIT_WEB_VIEW(m_webView), WEBKIT_PERMISSION_REQUEST(request));
+}
+
 void WebKitWebViewClient::frameDisplayed(WKWPE::View&)
 {
     {

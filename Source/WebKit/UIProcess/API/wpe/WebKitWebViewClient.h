@@ -23,6 +23,8 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
+typedef struct _WebKitClipboardPermissionRequest WebKitClipboardPermissionRequest;
+typedef struct _WebKitOptionMenu WebKitOptionMenu;
 typedef struct _WebKitWebView WebKitWebView;
 
 namespace WKWPE {
@@ -46,6 +48,7 @@ public:
     explicit WebKitWebViewClient(WebKitWebView*);
 
     GRefPtr<WebKitOptionMenu> showOptionMenu(WebKit::WebKitPopupMenu&, const WebCore::IntRect&, const Vector<WebKit::WebPopupItem>&, int32_t selectedIndex);
+    void requestClipboardPermission(WebKitClipboardPermissionRequest*);
 
 private:
     bool isGLibBasedAPI() override { return true; }
