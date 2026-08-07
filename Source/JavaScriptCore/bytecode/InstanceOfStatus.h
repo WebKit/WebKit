@@ -89,8 +89,7 @@ public:
     static InstanceOfStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex);
     
 #if ENABLE(DFG_JIT)
-    static InstanceOfStatus computeForPropertyInlineCache
-(const ConcurrentJSLocker&, VM&, PropertyInlineCache*);
+    static InstanceOfStatus computeForPropertyInlineCache(const ConcurrentJSLocker&, VM&, PropertyInlineCache*);
 #endif
     
     State state() const { return m_state; }

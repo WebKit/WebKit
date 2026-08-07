@@ -51,8 +51,7 @@ InstanceOfStatus InstanceOfStatus::computeFor(
     
     InstanceOfStatus result;
 #if ENABLE(DFG_JIT)
-    result = computeForPropertyInlineCache
-(locker, codeBlock->vm(), infoMap.get(CodeOrigin(bytecodeIndex)).propertyCache);
+    result = computeForPropertyInlineCache(locker, codeBlock->vm(), infoMap.get(CodeOrigin(bytecodeIndex)).propertyCache);
 
     if (!result.takesSlowPath()) {
         UnlinkedCodeBlock* unlinkedCodeBlock = codeBlock->unlinkedCodeBlock();
@@ -72,8 +71,7 @@ InstanceOfStatus InstanceOfStatus::computeFor(
 }
 
 #if ENABLE(DFG_JIT)
-InstanceOfStatus InstanceOfStatus::computeForPropertyInlineCache
-(const ConcurrentJSLocker& locker, VM& vm, PropertyInlineCache* propertyCache)
+InstanceOfStatus InstanceOfStatus::computeForPropertyInlineCache(const ConcurrentJSLocker& locker, VM& vm, PropertyInlineCache* propertyCache)
 {
     // FIXME: We wouldn't have to bail for nonCell if we taught MatchStructure how to handle non
     // cells. If we fixed that then we wouldn't be able to use summary();

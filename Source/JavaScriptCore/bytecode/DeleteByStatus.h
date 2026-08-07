@@ -97,8 +97,7 @@ private:
 
     static DeleteByStatus computeForBaseline(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag);
 #if ENABLE(JIT)
-    static DeleteByStatus computeForPropertyInlineCacheWithoutExitSiteFeedback(
-        const ConcurrentJSLocker&, CodeBlock* profiledBlock, PropertyInlineCache*);
+    static DeleteByStatus computeForPropertyInlineCacheWithoutExitSiteFeedback(const ConcurrentJSLocker&, CodeBlock* profiledBlock, PropertyInlineCache*);
 #endif
 
     Vector<DeleteByVariant, 1> m_variants;

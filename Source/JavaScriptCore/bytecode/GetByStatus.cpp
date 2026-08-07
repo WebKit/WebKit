@@ -203,7 +203,6 @@ GetByStatus GetByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, 
 
 #if ENABLE(DFG_JIT)
     result = computeForPropertyInlineCacheWithoutExitSiteFeedback(locker, profiledBlock, map.get(CodeOrigin(codeOrigin.bytecodeIndex())).propertyCache, callExitSiteData, codeOrigin);
-    
     if (didExit)
         return result.slowVersion();
 #else

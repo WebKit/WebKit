@@ -106,8 +106,7 @@ public:
     static PutByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack&, CodeOrigin);
 
 #if ENABLE(JIT)
-    static PutByStatus computeForPropertyInlineCache
-(const ConcurrentJSLocker&, CodeBlock* baselineBlock, PropertyInlineCache*, CodeOrigin);
+    static PutByStatus computeForPropertyInlineCache(const ConcurrentJSLocker&, CodeBlock* baselineBlock, PropertyInlineCache*, CodeOrigin);
 #endif
     
     State state() const { return m_state; }
@@ -159,8 +158,7 @@ public:
     
 private:
 #if ENABLE(JIT)
-    static PutByStatus computeForPropertyInlineCache
-(const ConcurrentJSLocker&, CodeBlock*, PropertyInlineCache*, CallLinkStatus::ExitSiteData, CodeOrigin);
+    static PutByStatus computeForPropertyInlineCache(const ConcurrentJSLocker&, CodeBlock*, PropertyInlineCache*, CallLinkStatus::ExitSiteData, CodeOrigin);
 #endif
     static PutByStatus computeFromLLInt(CodeBlock*, BytecodeIndex);
     
