@@ -496,15 +496,15 @@ void JSWebAssemblyInstance::tableCopy(uint32_t dstOffset, uint32_t srcOffset, ui
     RELEASE_ASSERT(dstTable->type() == srcTable->type());
 
     auto forEachTableElement = [&](auto fn) {
-        if (dstTableIndex == srcTableIndex && dstOffset > srcOffset) {
+        if (dstTable == srcTable && dstOffset == srcOffset)
+            return;
+        if (dstOffset > srcOffset) {
             for (uint32_t index = length; index--;)
                 fn(dstTable, srcTable, dstOffset + index, srcOffset + index);
-        } else if (dstTableIndex == srcTableIndex && dstOffset == srcOffset)
             return;
-        else {
-            for (uint32_t index = 0; index < length; ++index)
-                fn(dstTable, srcTable, dstOffset + index, srcOffset + index);
         }
+        for (uint32_t index = 0; index < length; ++index)
+            fn(dstTable, srcTable, dstOffset + index, srcOffset + index);
     };
 
     if (dstTable->isExternrefTable()) {
