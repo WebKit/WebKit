@@ -64,7 +64,7 @@ function shouldBeOneOf(actual, expectedArray) {
 {
     let locale = new Intl.Locale("ja")
     shouldBe(JSON.stringify(locale.getCalendars()), `["gregory","japanese"]`);
-    shouldBe(JSON.stringify(locale.getCollations()), `["unihan","emoji","eor"]`);
+    shouldBe(JSON.stringify(locale.getCollations()), `["emoji","eor","unihan"]`);
     shouldBe(locale.hourCycle, undefined);
     shouldBe(JSON.stringify(locale.getHourCycles()), `["h23"]`);
     shouldBe(JSON.stringify(locale.getNumberingSystems()), `["latn"]`);
@@ -73,7 +73,7 @@ function shouldBeOneOf(actual, expectedArray) {
 {
     let locale = new Intl.Locale("ja-JP")
     shouldBe(JSON.stringify(locale.getCalendars()), `["gregory","japanese"]`);
-    shouldBe(JSON.stringify(locale.getCollations()), `["unihan","emoji","eor"]`);
+    shouldBe(JSON.stringify(locale.getCollations()), `["emoji","eor","unihan"]`);
     shouldBe(locale.hourCycle, undefined);
     shouldBe(JSON.stringify(locale.getHourCycles()), `["h23"]`);
     shouldBe(JSON.stringify(locale.getNumberingSystems()), `["latn"]`);
@@ -100,7 +100,7 @@ function shouldBeOneOf(actual, expectedArray) {
 {
     let locale = new Intl.Locale("zh")
     shouldBe(JSON.stringify(locale.getCalendars()), `["gregory","chinese"]`);
-    shouldBeForICUVersion(74, JSON.stringify(locale.getCollations()), `["pinyin","stroke","unihan","zhuyin","emoji","eor"]`);
+    shouldBeForICUVersion(74, JSON.stringify(locale.getCollations()), `["emoji","eor","pinyin","stroke","unihan","zhuyin"]`);
     shouldBe(locale.hourCycle, undefined);
     shouldBeOneOf(JSON.stringify(locale.getHourCycles()), [ `["h23"]`, `["h12"]` ]);
     shouldBe(JSON.stringify(locale.getNumberingSystems()), `["latn"]`);
@@ -109,7 +109,7 @@ function shouldBeOneOf(actual, expectedArray) {
 {
     let locale = new Intl.Locale("zh-TW")
     shouldBe(JSON.stringify(locale.getCalendars()), `["gregory","roc","chinese"]`);
-    shouldBeForICUVersion(74, JSON.stringify(locale.getCollations()), `["stroke","pinyin","unihan","zhuyin","emoji","eor"]`);
+    shouldBeForICUVersion(74, JSON.stringify(locale.getCollations()), `["emoji","eor","pinyin","stroke","unihan","zhuyin"]`);
     shouldBe(locale.hourCycle, undefined);
     shouldBe(JSON.stringify(locale.getHourCycles()), `["h12"]`);
     shouldBe(JSON.stringify(locale.getNumberingSystems()), `["latn"]`);
@@ -118,7 +118,7 @@ function shouldBeOneOf(actual, expectedArray) {
 {
     let locale = new Intl.Locale("zh-HK")
     shouldBe(JSON.stringify(locale.getCalendars()), `["gregory","chinese"]`);
-    shouldBeForICUVersion(74, JSON.stringify(locale.getCollations()), `["stroke","pinyin","unihan","zhuyin","emoji","eor"]`);
+    shouldBeForICUVersion(74, JSON.stringify(locale.getCollations()), `["emoji","eor","pinyin","stroke","unihan","zhuyin"]`);
     shouldBe(locale.hourCycle, undefined);
     shouldBe(JSON.stringify(locale.getHourCycles()), `["h12"]`);
     shouldBe(JSON.stringify(locale.getNumberingSystems()), `["latn"]`);

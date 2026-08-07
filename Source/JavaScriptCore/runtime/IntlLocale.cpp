@@ -861,6 +861,11 @@ JSArray* IntlLocale::collations(JSGlobalObject* globalObject)
         return nullptr;
     }
 
+    std::ranges::sort(elements.mutableSpan(),
+        [](const String& a, const String& b) {
+            return WTF::codePointCompare(a, b) < 0;
+        });
+
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
 }
 
@@ -969,6 +974,11 @@ JSValue IntlLocale::timeZones(JSGlobalObject* globalObject)
         throwTypeError(globalObject, scope, "invalid locale"_s);
         return { };
     }
+
+    std::ranges::sort(elements.mutableSpan(),
+        [](const String& a, const String& b) {
+            return WTF::codePointCompare(a, b) < 0;
+        });
 
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTF::move(elements)));
 }
