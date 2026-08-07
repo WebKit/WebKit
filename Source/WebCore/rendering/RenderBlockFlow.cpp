@@ -4126,9 +4126,22 @@ bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         ASSERT(!walker.current()->selfNeedsLayout());
 
-        auto* blockRenderer = dynamicDowncast<RenderBox>(*walker.current());
-        if (!blockRenderer || !blockRenderer->isBlockLevelBox())
+        CheckedRef renderer = *walker.current();
+        CheckedPtr blockRenderer = dynamicDowncast<RenderBox>(renderer.get());
+        if (!blockRenderer || !blockRenderer->isBlockLevelBox()) {
+            // The line this content sits on consumes the margin after of the preceding block level box as the
+            // spacing before the line, so nothing is left to collapse with the container's margin after.
+            auto isContentfulInline = [&] {
+                if (CheckedPtr text = dynamicDowncast<RenderText>(renderer.get()))
+                    return text->hasRenderedText();
+                return !is<RenderInline>(renderer.get()) && !renderer->isFloatingOrOutOfFlowPositioned();
+            };
+            if (isContentfulInline()) {
+                marginInfo.setMargin({ }, { });
+                marginInfo.setAtBeforeSideOfBlock(false);
+            }
             continue;
+        }
 
         auto logicalHeight = blockRenderer->logicalHeight();
         auto isEligibleForBlockOnlyLayout = [&] {
