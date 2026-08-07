@@ -101,6 +101,19 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
 
     string(TOLOWER ${PORT} WEBKIT_PORT_DIR)
 
+    # -----------------------------------------------------------------------------
+    # Check the CMake generator.
+    # -----------------------------------------------------------------------------
+    # The GTK and WPE ports only support the Ninja generator.
+    # Ninja has its own dependency graph, used for dependencies between targets
+    if (PORT STREQUAL "GTK" OR PORT STREQUAL "WPE")
+        if (NOT CMAKE_GENERATOR MATCHES "Ninja")
+            message(FATAL_ERROR "The ${PORT} port requires the Ninja generator, but this build "
+                "directory was configured with the \"${CMAKE_GENERATOR}\" generator.\n"
+                "Re-run CMake with -GNinja or export CMAKE_GENERATOR=Ninja\n")
+        endif ()
+    endif ()
+
     set(_stamp_content "")
     foreach (_var IN LISTS WEBKIT_IDENTITY_VARS)
         if (DEFINED CACHE{${_var}})

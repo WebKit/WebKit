@@ -244,18 +244,19 @@ class Distcheck(object):
         create_dir(build_dir, "build")
         create_dir(install_dir, "install")
 
-        command = ['cmake', '-DPORT=%s' % port, '-DCMAKE_INSTALL_PREFIX=%s' % install_dir, '-DCMAKE_BUILD_TYPE=Release', dist_dir]
+        command = ['cmake', '-GNinja', '-DPORT=%s' % port, '-DCMAKE_INSTALL_PREFIX=%s' % install_dir, '-DCMAKE_BUILD_TYPE=Release', dist_dir]
         if not build_unified:
             command.append('-DENABLE_UNIFIED_BUILDS=OFF')
         subprocess.check_call(command, cwd=build_dir)
 
     def build(self, build_dir):
-        command = ['make']
+        command = ['cmake', '--build', '.']
         make_args = os.getenv('MAKE_ARGS')
         if make_args:
+            command.append('--')
             command.extend(make_args.split(' '))
         else:
-            command.append('-j%d' % multiprocessing.cpu_count())
+            command.extend(['-j', '%d' % multiprocessing.cpu_count()])
         subprocess.check_call(command, cwd=build_dir)
 
     def check_symbols(self, build_dir):
@@ -269,7 +270,7 @@ class Distcheck(object):
         subprocess.check_call([check_version_script, version_script, libwk])
 
     def install(self, build_dir):
-        subprocess.check_call(['make', 'install'], cwd=build_dir)
+        subprocess.check_call(['cmake', '--install', '.'], cwd=build_dir)
 
     def clean(self, dist_dir):
         shutil.rmtree(dist_dir)
