@@ -95,8 +95,8 @@ public:
     WebBackForwardListFrameItem& NODELETE navigatedFrameItem() const;
 
     // rdar://168057355
-    WebBackForwardListFrameItem* WTF_NONNULL mainFrameItemPtrForSwift() const SWIFT_NAME(mainFrameItem()) { return &mainFrameItem(); }
-    WebBackForwardListFrameItem& NODELETE mainFrameItem() const SWIFT_NAME(__mainFrameItemUnsafe());
+    SWIFT_RETURNS_UNRETAINED WebBackForwardListFrameItem* WTF_NONNULL mainFrameItemPtrForSwift() const SWIFT_NAME(mainFrameItem()) { return &mainFrameItem(); }
+    SWIFT_RETURNS_UNRETAINED WebBackForwardListFrameItem& NODELETE mainFrameItem() const SWIFT_NAME(__mainFrameItemUnsafe());
 
     void NODELETE setWasRestoredFromSession();
 

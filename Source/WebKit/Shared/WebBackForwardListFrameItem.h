@@ -41,7 +41,7 @@ public:
     static Ref<WebBackForwardListFrameItem> create(WebBackForwardListItem&, WebBackForwardListFrameItem* parentItem, Ref<FrameState>&&);
     ~WebBackForwardListFrameItem();
 
-    static WebBackForwardListFrameItem* NODELETE itemForID(WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier);
+    static SWIFT_RETURNS_UNRETAINED WebBackForwardListFrameItem* NODELETE itemForID(WebCore::BackForwardItemIdentifier, WebCore::BackForwardFrameItemIdentifier);
 
     FrameState& frameState() const { return m_frameState; }
     void updateFrameStatePayload(Ref<FrameState>&&);
@@ -59,8 +59,8 @@ public:
 
     Ref<WebBackForwardListFrameItem> rootFrame();
     Ref<WebBackForwardListFrameItem> mainFrame();
-    WebBackForwardListFrameItem* NODELETE childItemForFrameID(WebCore::FrameIdentifier);
-    WebBackForwardListFrameItem* NODELETE childItemAtIndex(uint64_t);
+    SWIFT_RETURNS_UNRETAINED WebBackForwardListFrameItem* NODELETE childItemForFrameID(WebCore::FrameIdentifier);
+    SWIFT_RETURNS_UNRETAINED WebBackForwardListFrameItem* NODELETE childItemAtIndex(uint64_t);
     const Vector<Ref<WebBackForwardListFrameItem>>& children() const { return m_children; }
 
     WebBackForwardListItem* NODELETE backForwardListItem() const;
