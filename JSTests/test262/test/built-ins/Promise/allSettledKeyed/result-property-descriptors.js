@@ -39,38 +39,43 @@ asyncTest(function() {
     assert.sameValue(Object.getPrototypeOf(result.fulfilled), Object.prototype, "fulfilled entry prototype");
     assert.sameValue(Object.getPrototypeOf(result.rejected), Object.prototype, "rejected entry prototype");
 
+    // Capture the properties eagerly because `verifyProperty` will delete them
+    // as part of the `configurable` check.
+    var fulfilledEntry = result.fulfilled;
+    var rejectedEntry = result.rejected;
+
     verifyProperty(result, "fulfilled", {
-      value: result.fulfilled,
+      value: fulfilledEntry,
       writable: true,
       enumerable: true,
       configurable: true
     });
     verifyProperty(result, "rejected", {
-      value: result.rejected,
+      value: rejectedEntry,
       writable: true,
       enumerable: true,
       configurable: true
     });
 
-    verifyProperty(result.fulfilled, "status", {
+    verifyProperty(fulfilledEntry, "status", {
       value: "fulfilled",
       writable: true,
       enumerable: true,
       configurable: true
     });
-    verifyProperty(result.fulfilled, "value", {
+    verifyProperty(fulfilledEntry, "value", {
       value: 1,
       writable: true,
       enumerable: true,
       configurable: true
     });
-    verifyProperty(result.rejected, "status", {
+    verifyProperty(rejectedEntry, "status", {
       value: "rejected",
       writable: true,
       enumerable: true,
       configurable: true
     });
-    verifyProperty(result.rejected, "reason", {
+    verifyProperty(rejectedEntry, "reason", {
       value: error,
       writable: true,
       enumerable: true,

@@ -1,10 +1,10 @@
 // This file was procedurally generated from the following sources:
-// - src/dstr-assignment/array-rest-elision-invalid.case
+// - src/dstr-assignment/obj-rest-before-comma-invalid.case
 // - src/dstr-assignment/syntax/assignment-expr.template
 /*---
-description: ArrayAssignmentPattern may not include elisions following an AssignmentRestElement in a AssignmentElementList. (AssignmentExpression)
+description: Object rest element cannot be followed by a comma in ObjectAssignmentPattern. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
-features: [destructuring-binding]
+features: [object-rest, destructuring-binding]
 flags: [generated]
 negative:
   phase: parse
@@ -19,5 +19,7 @@ info: |
        BindingPattern passing rval and undefined as arguments.
 ---*/
 $DONOTEVALUATE();
+var rest;
 
-0, [...x,] = [];
+0, {...rest,} = {}
+;

@@ -37,6 +37,42 @@ test/built-ins/Function/prototype/caller/prop-desc.js:
 test/built-ins/Function/prototype/toString/built-in-function-object.js:
   default: 3
   strict mode: 3
+test/built-ins/Iterator/prototype/chunks/argument-validation-failure-close-throws.js:
+  default: 3
+  strict mode: 3
+test/built-ins/Iterator/prototype/chunks/argument-validation-failure-closes-underlying.js:
+  default: 3
+  strict mode: 3
+test/built-ins/Iterator/prototype/chunks/chunkSize-no-coercion.js:
+  default: 3
+  strict mode: 3
+test/built-ins/Iterator/prototype/chunks/chunkSize-not-a-number.js:
+  default: 3
+  strict mode: 3
+test/built-ins/Iterator/prototype/chunks/chunkSize-out-of-range.js:
+  default: 3
+  strict mode: 3
+test/built-ins/Iterator/prototype/join/contents-nullish.js:
+  default: 3
+  strict mode: 3
+test/built-ins/Iterator/prototype/windows/argument-validation-failure-close-throws.js:
+  default: 3
+  strict mode: 3
+test/built-ins/Iterator/prototype/windows/argument-validation-failure-closes-underlying.js:
+  default: 3
+  strict mode: 3
+test/built-ins/Iterator/prototype/windows/undersized-invalid.js:
+  default: 3
+  strict mode: 3
+test/built-ins/Iterator/prototype/windows/windowSize-no-coercion.js:
+  default: 3
+  strict mode: 3
+test/built-ins/Iterator/prototype/windows/windowSize-not-a-number.js:
+  default: 3
+  strict mode: 3
+test/built-ins/Iterator/prototype/windows/windowSize-out-of-range.js:
+  default: 3
+  strict mode: 3
 test/built-ins/Proxy/apply/arguments-realm.js:
   default: 3
   strict mode: 3
@@ -64,7 +100,13 @@ test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage-empty.js:
 test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage.js:
   default: 3
   strict mode: 3
-test/intl402/Temporal/ZonedDateTime/links.js:
+test/intl402/Locale/prototype/getCollations/output-array-sorted.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getHourCycles/region-priority.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getHourCycles/subdivision-region.js:
   default: 3
   strict mode: 3
 test/language/destructuring/binding/keyed-destructuring-property-reference-target-evaluation-order-with-bindings.js:
@@ -140,6 +182,8 @@ test/language/import/import-attributes/text-self.js:
 test/language/import/import-attributes/text-string.js:
   module: 3
 test/language/import/import-attributes/text-via-namespace.js:
+  module: 3
+test/language/import/import-defer/evaluation-top-level-await/async-cycle-dependency-of-deferred-module/main.js:
   module: 3
 test/language/statements/class/elements/private-class-field-on-nonextensible-objects.js:
   strict mode: 3

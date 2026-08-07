@@ -42,4 +42,4 @@ testWithTypedArrayConstructors(function(TA, makeCtorArg) {
   assert.compareArray(result, [
     20, 20, 20, 60,
   ]);
-});
+}, null, null, ["immutable"]);

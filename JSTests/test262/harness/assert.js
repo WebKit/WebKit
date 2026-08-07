@@ -5,6 +5,7 @@ description: |
     Collection of assertion functions used throughout test262
 defines:
   - assert
+  - compareArray
   - formatIdentityFreeValue
   - formatSimpleValue
   - isNegativeZero
