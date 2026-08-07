@@ -190,6 +190,13 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
     }
 
     if (auto contextHostedID = transaction.remoteContextHostedIdentifier(); contextHostedID && rootNode) {
+        // The hosting context identifier is reused across a cross-process navigation, so the
+        // outgoing process's root layer is still parented here. Detach it before hosting the
+        // incoming one, or it stays visible until that process exits.
+        if (auto previousLayerID = m_hostedLayers.getOptional(*contextHostedID); previousLayerID && *previousLayerID != rootNode->layerID()) {
+            if (RefPtr previousNode = nodeForID(*previousLayerID))
+                previousNode->removeFromHostingNode();
+        }
         m_hostedLayers.set(*contextHostedID, rootNode->layerID());
         m_hostedLayersInProcess.ensure(processIdentifier, [] {
             return HashSet<WebCore::PlatformLayerIdentifier>();
