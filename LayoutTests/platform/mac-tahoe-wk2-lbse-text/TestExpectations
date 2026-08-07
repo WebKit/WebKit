@@ -100,8 +100,6 @@ imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-hanging-smal
 imported/w3c/web-platform-tests/svg/text/reftests/text-path-transformed-002.html                               [ ImageOnlyFailure ]
 
 # <foreignObject> issues
-svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop.html [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop.html [ ImageOnlyFailure ]
 svg/foreignObject/vertical-foreignObject.html                  [ ImageOnlyFailure ]
 
 # Text rendering has issues with CSS 'visibility'
