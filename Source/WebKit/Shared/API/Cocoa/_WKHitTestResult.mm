@@ -30,6 +30,7 @@
 #import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKHitTestResultPrivateForTesting.h"
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/URL.h>
 
@@ -145,6 +146,14 @@ static NSURL *URLFromString(const WTF::String& urlString)
 - (CGRect)elementBoundingBox
 {
     return _hitTestResult->elementBoundingBox();
+}
+
+- (CGRect)_dictionaryPopupTextBoundingRectForTesting
+{
+    RefPtr textIndicator = _hitTestResult->dictionaryPopupTextIndicator();
+    if (!textIndicator)
+        return CGRectZero;
+    return textIndicator->textBoundingRectInRootViewCoordinates();
 }
 
 - (_WKHitTestResultElementType)elementType

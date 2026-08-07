@@ -431,6 +431,37 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 
 #endif
 
+    // The rects above stop at the local root, since contentsToRootView() can't cross a process
+    // boundary. Map them the rest of the way to the top-level frame. Runs on the local root's view,
+    // not this frame's, which would count an intervening same-origin frame twice. The local root can
+    // be behind a RemoteFrame even when the main frame is local (a.com embeds b.com embeds a.com),
+    // hence isMainFrame() rather than localMainFrame().
+    Ref rootFrame = frame.rootFrame();
+    if (!rootFrame->isMainFrame()) {
+        if (RefPtr rootView = rootFrame->view()) {
+            auto convertRect = [&](FloatRect rect) {
+                return rootView->convertToRootViewAcrossIsolatedFrames(rect);
+            };
+
+            dictionaryPopupInfo.origin = rootView->convertToRootViewAcrossIsolatedFrames(dictionaryPopupInfo.origin);
+
+            // These are offsets from the bounding rect, so convert them in root view coordinates.
+            auto boundingRect = textIndicator->textBoundingRectInRootViewCoordinates();
+            auto convertedBoundingRect = convertRect(boundingRect);
+            auto textRects = textIndicator->textRectsInBoundingRectCoordinates().map([&](auto rect) {
+                rect.moveBy(boundingRect.location());
+                rect = convertRect(rect);
+                rect.moveBy(-convertedBoundingRect.location());
+                return rect;
+            });
+
+            textIndicator->setTextBoundingRectInRootViewCoordinates(convertedBoundingRect);
+            textIndicator->setTextRectsInBoundingRectCoordinates(WTF::move(textRects));
+            textIndicator->setSelectionRectInRootViewCoordinates(convertRect(textIndicator->selectionRectInRootViewCoordinates()));
+            textIndicator->setContentImageWithoutSelectionRectInRootViewCoordinates(convertRect(textIndicator->contentImageWithoutSelectionRectInRootViewCoordinates()));
+        }
+    }
+
     editor->setIsGettingDictionaryPopupInfo(false);
     return dictionaryPopupInfo;
 }
