@@ -1619,16 +1619,25 @@ bool TestSuite::launchChildTestProcess(uint32_t batchId,
     return true;
 }
 
+// Records a result for the test named at the start of testName, which is a GTest status line with
+// its "[  FAILED  ] "-style prefix already stripped. Three shapes arrive here:
+//
+//   "Foo.Bar/ES2_Metal (1 ms)"                                plain test
+//   "Foo.Bar/ES2_Metal, where GetParam() = ES2_Metal (1 ms)"  parameterized test
+//   "2 tests, listed below:"                                  GTest's summary, not a test
+//
+// So the identifier is everything before the first space, comma or CR, and input without one is
+// skipped. The comma is easy to miss, since leaving it attached still parses but matches no test.
 void ParseTestIdentifierAndSetResult(const std::string &testName,
                                      TestResultType result,
                                      TestResults *results)
 {
-    // Trim off any whitespace + extra stuff at the end of the string.
-    std::string modifiedTestName = testName.substr(0, testName.find(' '));
-    modifiedTestName             = modifiedTestName.substr(0, testName.find('\r'));
+    std::string modifiedTestName = testName.substr(0, testName.find_first_of(" ,\r"));
     TestIdentifier id;
-    bool ok = TestIdentifier::ParseFromString(modifiedTestName, &id);
-    ASSERT(ok);
+    if (!TestIdentifier::ParseFromString(modifiedTestName, &id))
+    {
+        return;
+    }
     results->results[id] = {result};
 }
 
@@ -1637,9 +1646,21 @@ bool TestSuite::finishProcess(ProcessInfo *processInfo)
     // Get test results and merge into main list.
     TestResults batchResults;
 
+    // Timings come from the child's results file. Without it the results below are reconstructed
+    // from the child's stdout, which carries no durations, so remember that and print no timing
+    // rather than the default 0.0, which would be misleading.
+    bool haveTimings = true;
+
     if (!GetTestResultsFromFile(processInfo->resultsFileName.c_str(), &batchResults))
     {
+        haveTimings = false;
+
+#if defined(ANGLE_HAS_RAPIDJSON)
+        // Children write results on both normal exit and crash/timeout, so a missing one means this
+        // child died before either path ran. Without RapidJSON nothing writes them at all, so this
+        // would warn on every batch and mean nothing.
         std::cerr << "Warning: could not find test results file from child process.\n";
+#endif  // defined(ANGLE_HAS_RAPIDJSON)
 
         // First assume all tests get skipped.
         for (const TestIdentifier &id : processInfo->testsInBatch)
@@ -1731,7 +1752,14 @@ bool TestSuite::finishProcess(ProcessInfo *processInfo)
         }
         else if (result.type == TestResultType::Pass)
         {
-            printf(" (%0.1lf ms)\n", result.elapsedTimeSeconds.back() * 1000.0);
+            if (haveTimings)
+            {
+                printf(" (%0.1lf ms)\n", result.elapsedTimeSeconds.back() * 1000.0);
+            }
+            else
+            {
+                printf("\n");
+            }
         }
         else if (result.type == TestResultType::Skip)
         {
@@ -1865,6 +1893,13 @@ int TestSuite::run()
         }
         return retVal;
     }
+
+#if !defined(ANGLE_HAS_RAPIDJSON)
+    printf(
+        "Note: built without RapidJSON, so no results files are written. --results-file and "
+        "--histogram-json-file are no-ops, and batch results are reconstructed from child stdout, "
+        "which carries no per-test timings.\n");
+#endif  // !defined(ANGLE_HAS_RAPIDJSON)
 
     Timer totalRunTime;
     totalRunTime.start();
@@ -2007,11 +2042,18 @@ int TestSuite::printFailuresAndReturnCount() const
         }
         else if (result.type != TestResultType::Pass)
         {
-            const FileLine &fileLine = mTestFileLines.find(id)->second;
+            // Reconstructed results can name a test this process never enumerated, so the lookup
+            // may fail.
+            auto fileLineIter = mTestFileLines.find(id);
 
             std::stringstream failureMessage;
-            failureMessage << id << " (" << fileLine.file << ":" << fileLine.line << ") ("
-                           << ResultTypeToString(result.type) << ")";
+            failureMessage << id;
+            if (fileLineIter != mTestFileLines.end())
+            {
+                failureMessage << " (" << fileLineIter->second.file << ":"
+                               << fileLineIter->second.line << ")";
+            }
+            failureMessage << " (" << ResultTypeToString(result.type) << ")";
             failures.emplace_back(failureMessage.str());
         }
     }
