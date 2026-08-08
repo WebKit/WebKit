@@ -454,7 +454,7 @@ public:
     WTF_EXPORT_PRIVATE static SequesteredImmortalHeap& instance();
 
     template <typename T> requires (sizeof(T) <= slotSize)
-    T* allocateAndInstall()
+    T* allocateAndInstall() WTF_EXCLUDES_LOCK(m_scavengerLock)
     {
         T* slot = nullptr;
         size_t slotIndex = 0;
@@ -491,7 +491,9 @@ public:
         return getUnchecked();
     }
 
-    int computeSlotIndex(void* slotPtr)
+    // Slots and slot pages are never freed or moved once installed, so walking
+    // them to recover a slot's index does not need m_scavengerLock.
+    int computeSlotIndex(void* slotPtr) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
         return m_slotManager.computeSlotIndex(slotPtr);
     }
@@ -501,6 +503,13 @@ public:
         auto& sih = instance();
         return sih.scavengeImpl(userdata);
     }
+
+    // Reclaim the granule cached by every idle thread and decommit all queued
+    // granules right now, rather than waiting for the next scavenger tick.
+    WTF_EXPORT_PRIVATE void reclaimIdleGranulesOnce() WTF_EXCLUDES_LOCK(m_scavengerLock);
+
+    // If true, then SIH dependents should not cache any unnecessary memory.
+    WTF_EXPORT_PRIVATE bool shouldReduceRetention() const;
 
 private:
     SequesteredImmortalHeap()
@@ -521,16 +530,20 @@ private:
     }
 
     WTF_EXPORT_PRIVATE void installScavenger();
-    WTF_EXPORT_PRIVATE bool scavengeImpl(void* userdata);
+    WTF_EXPORT_PRIVATE bool scavengeImpl(void* userdata) WTF_EXCLUDES_LOCK(m_scavengerLock);
+
+    // Walks every slot under m_scavengerLock, optionally reclaiming the granule
+    // cached by each idle thread, then decommitting each slot's queued granules.
+    WTF_EXPORT_PRIVATE void reclaimIdleSlots(bool reclaimIdleGranules) WTF_EXCLUDES_LOCK(m_scavengerLock);
 
     static void* getUnchecked()
     {
         return _pthread_getspecific_direct(key);
     }
 
-    Lock m_scavengerLock { };
+    Lock m_scavengerLock;
     SequesteredImmortalAllocator m_immortalAllocator { };
-    SlotManager m_slotManager { };
+    SlotManager m_slotManager WTF_GUARDED_BY_LOCK(m_scavengerLock) { };
     SequesteredStackAllocator m_stackAllocator { };
     SequesteredGranuleProvider m_granuleProvider { };
 };

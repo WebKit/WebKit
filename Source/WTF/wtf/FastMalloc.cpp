@@ -32,6 +32,8 @@
 #include <wtf/Atomics.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/PageBlock.h>
+#include <wtf/SequesteredImmortalHeap.h>
+#include <wtf/SequesteredMalloc.h>
 
 #if OS(WINDOWS)
 #include <windows.h>
@@ -606,6 +608,10 @@ void releaseFastMallocFreeMemoryForThisThread()
 void releaseFastMallocFreeMemory()
 {
     bmalloc::api::scavenge();
+#if USE(PROTECTED_JIT)
+    if (isSequesteredArenaMallocEnabled())
+        SequesteredImmortalHeap::instance().reclaimIdleGranulesOnce();
+#endif
 }
 
 FastMallocStatistics fastMallocStatistics()

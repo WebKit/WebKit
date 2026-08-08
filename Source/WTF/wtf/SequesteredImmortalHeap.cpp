@@ -28,6 +28,8 @@
 #if USE(PROTECTED_JIT)
 
 #include <bmalloc/pas_scavenger.h>
+#include <wtf/MemoryPressureHandler.h>
+#include <wtf/SequesteredAllocator.h>
 
 namespace WTF {
 
@@ -177,18 +179,36 @@ void SequesteredImmortalHeap::installScavenger()
 #endif
 }
 
+bool SequesteredImmortalHeap::shouldReduceRetention() const
+{
+    return MemoryPressureHandler::singleton().isUnderMemoryPressure();
+}
+
 bool SequesteredImmortalHeap::scavengeImpl(void* /*userdata*/)
 {
     dataLogLnIf(verbose, "SequesteredImmortalHeap: scavenging");
-    {
-        Locker listLocker { m_scavengerLock };
-        auto bound = m_slotManager.allocatedCount();
-        for (size_t i = 0; i < bound; i++) {
-            auto& queue = *reinterpret_cast<ConcurrentDecommitQueue*>(&m_slotManager[i]);
-            queue.decommit();
-        }
-    }
+    // Only steal idle threads' cached granules when we are actually trying to
+    // shed memory; otherwise leave them cached for compilation speed.
+    reclaimIdleSlots(shouldReduceRetention());
     return false;
+}
+
+void SequesteredImmortalHeap::reclaimIdleSlots(bool reclaimIdleGranules)
+{
+    Locker listLocker { m_scavengerLock };
+    auto bound = m_slotManager.allocatedCount();
+    for (size_t i = 0; i < bound; i++) {
+        // Every installed slot is a SequesteredArenaAllocator (its
+        // ConcurrentDecommitQueue sits at offset 0), so this reinterpret is
+        // valid; see SequesteredArenaAllocator::getCurrentAllocator.
+        auto& allocator = *reinterpret_cast<SequesteredArenaAllocator*>(&m_slotManager[i]);
+        allocator.scavenge(reclaimIdleGranules);
+    }
+}
+
+void SequesteredImmortalHeap::reclaimIdleGranulesOnce()
+{
+    reclaimIdleSlots(true);
 }
 
 SequesteredStackAllocator::Result SequesteredStackAllocator::allocate(size_t stackSize, size_t guardSize)
