@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function jsfuzzer() {
+    const bodyElement = document.getElementById("innerbody");
+    const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    const range = document.createRange();
+
+    // document.open() tears down the render tree, so the document element has no renderer.
+    document.open();
+
+    // Makes the SVG polyline the document element. It never gets a renderer.
+    range.surroundContents(polyline);
+
+    document.write("PASS if this did not crash.");
+
+    // Reparents the <body> that was inside the <foreignObject>, so it is a body
+    // whose parent is not the document element's renderer.
+    document.all[45 % document.all.length].appendChild(bodyElement);
+
+    // Starts a background image load that fails. The failure notification reaches
+    // RenderBox::imageChanged() -> repaintLayerRectsForImage(), which used to
+    // dereference the document element's null renderer.
+    bodyElement.background = "does-not-exist-image.png";
+
+    if (window.testRunner)
+        setTimeout(() => testRunner.notifyDone(), 0);
+}
+</script>
+</head>
+<body onload="jsfuzzer()">
+<foreignObject><body id="innerbody" xmlns="http://www.w3.org/1999/xhtml">
+</body>
+</html>

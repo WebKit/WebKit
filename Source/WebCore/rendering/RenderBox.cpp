@@ -2280,7 +2280,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& l
     for (auto& layer : layers.usedValues()) {
         if (RefPtr layerImage = layer.image().tryStyleImage(); layerImage && layerImage->data() == image && (layerImage->isLoaded(this) || layerImage->canRender(this, style().usedZoom()))) {
             // Now that we know this image is being used, compute the renderer and the rect if we haven't already.
-            bool drawingRootBackground = drawingBackground && (isDocumentElementRenderer() || (isBody() && !document().documentElement()->renderer()->hasBackground()));
+            bool drawingRootBackground = drawingBackground && (isDocumentElementRenderer() || !BackgroundPainter::paintsOwnBackground(*this));
             if (!layerRenderer) {
                 if (drawingRootBackground) {
                     layerRenderer = &view();
