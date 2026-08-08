@@ -1,3 +1,28 @@
+==================
+WPE WebKit 2.53.90
+==================
+
+What's new in WPE WebKit 2.53.90?
+
+  - Do not support rendering tiles in the main thread in accelerated compositing mode.
+  - Add magnification property to WebKitWebView to handle visual scaling.
+  - Add new API to allow setting a per-navigation custom User-Agent to WebKitWebsitePolicies.
+  - Add WEBKIT_INPUT_PURPOSE_SEARCH to the API (and conversely WPE_INPUT_PURPOSE_SEARCH in
+    WPEPlatform) which allows detecting when values of an input fields are expected to be
+    search terms.
+  - Improved platform media queries to handle prefers reduced motion, high contrast and dark theme.
+  - Improved drag-and-drop support.
+  - Allow disabling font subpixel rendering, which is now the default setting and matches font
+    the default rendering in most desktop environments.
+  - Add a feature flag to support skipping caching of pages with multimedia content in the
+    back-forward cache.
+  - Add a built-in popup menu support, used as the default implementation when the
+    WebKitWebView::show-option-menu signal is left unhandled.
+  - Add initial support for the Pointer Lock API, which may be enabled at build time with
+    the ENABLE_POINTER_LOCK CMake option.
+  - MiniBrowser now handles the SIGTERM and SIGINT signals, and exits cleanly.
+  - Fix several crashes and rendering issues.
+
 =================
 WPE WebKit 2.53.3
 =================
