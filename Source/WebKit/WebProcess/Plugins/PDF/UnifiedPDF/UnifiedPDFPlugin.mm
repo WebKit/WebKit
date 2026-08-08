@@ -1341,8 +1341,12 @@ bool UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const Affine
         activeAnnotation->updateGeometry();
 #endif
 
-    if (sizeChanged)
-        updateLayout();
+    // A subframe PDF should keep fitting to its frame when the frame's size changes,
+    // until the user zooms. Pinning would freeze the scale computed at install time.
+    if (sizeChanged) {
+        bool shouldRefitToFrame = !isFullMainFramePlugin() && m_shouldUpdateAutoSizeScale == ShouldUpdateAutoSizeScale::Yes;
+        updateLayout(shouldRefitToFrame ? AdjustScaleAfterLayout::Yes : AdjustScaleAfterLayout::No);
+    }
 
 #if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
     updatePageNumberIndicator();
@@ -1429,7 +1433,7 @@ void UnifiedPDFPlugin::updateLayout(AdjustScaleAfterLayout shouldAdjustScale, st
         LOG_WITH_STREAM(PDF, stream << "UnifiedPDFPlugin::updateLayout - on first layout, chose scale for actual size " << initialScaleFactor);
         setScaleFactor(initialScaleFactor);
 
-        if (!shouldSizeToFitContent())
+        if (!shouldSizeToFitContent() && isFullMainFramePlugin())
             m_shouldUpdateAutoSizeScale = ShouldUpdateAutoSizeScale::No;
     }
 
