@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Google Inc. All rights reserved.
+# Copyright (C) 2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -61,16 +62,23 @@ class LayoutTestFinder(object):
         self._filesystem = self._port.host.filesystem
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
         self._test_list_expectations = []
-        # Cache the inner finder per device_type. Bound here, not module-level, so the
+        # Cache the inner finders per device_type. Bound here, not module-level, so the
         # cache doesn't outlive this LayoutTestFinder instance.
-        self._inner_finder = functools.cache(self._make_inner_finder)
+        self._inner_finders = functools.cache(self._make_inner_finders)
 
-    def _make_inner_finder(self, device_type=None):
-        return LayoutTestFinder_New(
-            self._port.host.filesystem,
-            self._port.layout_tests_dir(),
-            self._port.baseline_search_path(device_type),
+    def _make_inner_finders(self, device_type=None):
+        baseline_search_paths = self._port.baseline_search_path(device_type)
+        return tuple(
+            LayoutTestFinder_New(
+                self._port.host.filesystem,
+                root,
+                baseline_search_paths,
+            )
+            for root in self._port.layout_tests_dirs()
         )
+
+    def _primary_inner_finder(self, device_type=None):
+        return self._inner_finders(device_type)[-1]
 
     def find_tests(self, options, args, device_type=None, with_expectations=False):
         paths = self._strip_test_dir_prefixes(args)
@@ -106,16 +114,35 @@ class LayoutTestFinder(object):
 
     def find_tests_by_path(self, paths, device_type=None, with_expectations=False):
         """Return the list of tests found. Both generic and platform-specific tests matching paths should be returned."""
-        return list(self._inner_finder(device_type).get_tests(paths))
+        finders = self._inner_finders(device_type)
+        if len(finders) == 1:
+            return list(finders[0].get_tests(paths))
+
+        # With multiple roots, search alternate roots first so an alternate test overrides an
+        # open-source one of the same name, but only dedup across roots -- duplicates
+        # produced within a single root (e.g. a test named twice in `paths`) are kept.
+        roots = self._port.layout_tests_dirs()
+        assert len(roots) == len(finders)
+        tests = []
+        seen_root_by_path = {}
+        for root, finder in zip(roots, finders):
+            for t in finder.get_tests(paths):
+                shadowing_root = seen_root_by_path.get(t.test_path)
+                if shadowing_root is not None and shadowing_root != root:
+                    _log.warning("Test collision: '%s' exists in both '%s' (used) and '%s' (ignored).", t.test_path, shadowing_root, root)
+                    continue
+                seen_root_by_path.setdefault(t.test_path, root)
+                tests.append(t)
+        return tests
 
     def _is_test_file(self, filesystem, dirname, filename):
-        finder = self._inner_finder()
+        finder = self._primary_inner_finder()
         return finder.is_test_file(
             dirname, filename
         ) and not self._is_w3c_resource_file(filesystem, dirname, filename)
 
     def _is_w3c_resource_file(self, filesystem, dirname, filename):
-        finder = self._inner_finder()
+        finder = self._primary_inner_finder()
 
         if dirname:
             dirname = self._filesystem.relpath(dirname, self._port.layout_tests_dir())
