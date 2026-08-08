@@ -37,7 +37,7 @@ private import AppKit_Private.NSMenu_Private
 extension AppKitGesturesTests {
     @MainActor
     @Suite(.serialized, .timeLimit(.minutes(1)))
-    struct DoubleClick: AppKitGestureTestSuite {
+    final class DoubleClick: AppKitGestureTestSuite {
         static let text = "Here's to the crazy ones."
 
         let recap = Recap.shared
@@ -48,19 +48,15 @@ extension AppKitGesturesTests {
             return WebPage(configuration: configuration)
         }()
 
-        let window: NSWindow
+        let windowHost: TestWindowHost
 
         init() async throws {
             let contentSize = NSSize(width: 800, height: 600)
 
-            self.window = NSWindow(size: contentSize) { [page] in
+            self.windowHost = TestWindowHost(size: contentSize) { [page] in
                 WebView(page)
                     .webViewBackForwardNavigationGestures(.enabled)
             }
-
-            self.window.setFrameOrigin(.zero)
-            NSApp.activate(ignoringOtherApps: true)
-            self.window.makeKeyAndOrderFront(nil)
 
             await NSApp.waitForActivation()
         }

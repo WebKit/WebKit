@@ -38,7 +38,7 @@ private import AppKit_Private.NSMenu_Private
 extension AppKitGesturesTests {
     @MainActor
     @Suite(.serialized, .timeLimit(.minutes(1)))
-    struct Embedded: AppKitGestureTestSuite {
+    final class Embedded: AppKitGestureTestSuite {
         @MainActor
         private final class ContentOffsetStorage {
             var value = CGPoint.zero
@@ -56,7 +56,7 @@ extension AppKitGesturesTests {
             return WebPage(configuration: configuration)
         }()
 
-        let window: NSWindow
+        let windowHost: TestWindowHost
 
         private let windowSize = NSSize(width: 800, height: 600)
         private let contentHeight: CGFloat = 2000
@@ -64,7 +64,7 @@ extension AppKitGesturesTests {
         private var contentOffset = ContentOffsetStorage()
 
         init() async throws {
-            self.window = NSWindow(size: windowSize) { [windowSize, contentHeight, contentOffset, page] in
+            self.windowHost = TestWindowHost(size: windowSize) { [windowSize, contentHeight, contentOffset, page] in
                 ScrollView {
                     VStack(spacing: 0) {
                         WebView(page)
@@ -80,10 +80,6 @@ extension AppKitGesturesTests {
                     contentOffset.value = newContentOffset
                 }
             }
-
-            self.window.setFrameOrigin(.zero)
-            NSApp.activate(ignoringOtherApps: true)
-            self.window.makeKeyAndOrderFront(nil)
 
             await NSApp.waitForActivation()
         }

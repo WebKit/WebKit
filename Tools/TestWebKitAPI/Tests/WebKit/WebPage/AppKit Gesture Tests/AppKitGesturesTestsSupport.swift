@@ -50,8 +50,31 @@ actor Recap {
     }
 }
 
+/// Presents a SwiftUI view in a key window, and closes that window once this object is deallocated.
+///
+/// Test suites should hold onto this rather than creating a window directly, so that the window does not
+/// outlive the suite. The window itself cannot perform this cleanup in its own `deinit`, since AppKit keeps
+/// an on-screen window alive until it is ordered out.
 @MainActor
-protocol AppKitGestureTestSuite {
+final class TestWindowHost {
+    let window: NSWindow
+
+    init(size: NSSize, @ViewBuilder rootView: () -> some View) {
+        self.window = NSWindow(size: size, rootView: rootView)
+        self.window.setFrameOrigin(.zero)
+
+        NSApp.activate(ignoringOtherApps: true)
+        self.window.makeKeyAndOrderFront(nil)
+    }
+
+    isolated deinit {
+        window.resignKey()
+        window.orderOut(nil)
+    }
+}
+
+@MainActor
+protocol AppKitGestureTestSuite: AnyObject {
     static var text: String { get }
 
     static var topInset: CGFloat { get }
@@ -60,7 +83,7 @@ protocol AppKitGestureTestSuite {
 
     var page: WebPage { get }
 
-    var window: NSWindow { get }
+    var windowHost: TestWindowHost { get }
 
     init() async throws
 }
@@ -68,6 +91,10 @@ protocol AppKitGestureTestSuite {
 extension AppKitGestureTestSuite {
     static var topInset: CGFloat {
         0
+    }
+
+    var window: NSWindow {
+        windowHost.window
     }
 }
 
