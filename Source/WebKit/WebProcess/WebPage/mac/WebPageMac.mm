@@ -1102,6 +1102,16 @@ void WebPage::zoomPDFOut(PDFPluginIdentifier identifier)
     pdfPlugin->zoomOut();
 }
 
+#if ENABLE(AX_PDF_SUPPORT)
+
+void WebPage::togglePDFAccessibilityDisplayMode(PDFPluginIdentifier identifier)
+{
+    if (RefPtr pdfPlugin = m_pdfPlugInsWithHUD.get(identifier))
+        pdfPlugin->toggleAccessibilityDisplayMode();
+}
+
+#endif // ENABLE(AX_PDF_SUPPORT)
+
 void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&& completionHandler)
 {
     RefPtr pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
@@ -1123,8 +1133,13 @@ void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandl
 void WebPage::createPDFHUD(PDFPluginBase& plugin, WebCore::FrameIdentifier frameID, const IntRect& boundingBox)
 {
     auto addResult = m_pdfPlugInsWithHUD.add(plugin.identifier(), plugin);
-    if (addResult.isNewEntry)
-        send(Messages::WebPageProxy::CreatePDFHUD(plugin.identifier(), frameID, boundingBox));
+    if (!addResult.isNewEntry)
+        return;
+
+    send(Messages::WebPageProxy::CreatePDFHUD(plugin.identifier(), frameID, boundingBox));
+#if ENABLE(AX_PDF_SUPPORT)
+    updatePDFHUDAccessibilityDisplayMode(plugin);
+#endif
 }
 
 void WebPage::updatePDFHUDLocation(PDFPluginBase& plugin, const IntRect& boundingBox)
@@ -1132,6 +1147,16 @@ void WebPage::updatePDFHUDLocation(PDFPluginBase& plugin, const IntRect& boundin
     if (m_pdfPlugInsWithHUD.contains(plugin.identifier()))
         send(Messages::WebPageProxy::UpdatePDFHUDLocation(plugin.identifier(), boundingBox));
 }
+
+#if ENABLE(AX_PDF_SUPPORT)
+
+void WebPage::updatePDFHUDAccessibilityDisplayMode(PDFPluginBase& plugin)
+{
+    if (m_pdfPlugInsWithHUD.contains(plugin.identifier()))
+        send(Messages::WebPageProxy::UpdatePDFHUDAccessibilityDisplayMode(plugin.identifier(), plugin.accessibilityDisplayModeState()));
+}
+
+#endif // ENABLE(AX_PDF_SUPPORT)
 
 void WebPage::removePDFHUD(PDFPluginBase& plugin)
 {

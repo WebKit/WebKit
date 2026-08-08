@@ -156,10 +156,12 @@ void PDFPresentationController::releaseMemory()
         asyncRenderer->releaseMemory();
 }
 
-void PDFPresentationController::invalidateRenderedContentForAccessibilityDisplayModeChange()
+void PDFPresentationController::updateForAccessibilityDisplayModeChange()
 {
     if (RefPtr asyncRenderer = asyncRendererIfExists())
         asyncRenderer->invalidateAllRenderedContent();
+
+    updateLayersForAccessibilityDisplayModeChange();
 }
 
 RetainPtr<PDFDocument> PDFPresentationController::pluginPDFDocument() const

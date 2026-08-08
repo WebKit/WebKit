@@ -77,7 +77,7 @@ private:
 
     void updateIsInWindow(bool isInWindow) override;
     void updateDebugBorders(bool showDebugBorders, bool showRepaintCounters) override;
-    void updateForAccessibilityDisplayModeChange(PDFAccessibilityDisplayMode) override;
+    void updateLayersForAccessibilityDisplayModeChange() override;
     void updateForCurrentScrollability(OptionSet<WebCore::TiledBackingScrollability>) override;
 
     Vector<LayerCoverage> layerCoveragesForRepaintPageCoverage(RepaintRequirements, const PDFPageCoverage&) override;

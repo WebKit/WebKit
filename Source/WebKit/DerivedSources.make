@@ -784,6 +784,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/NavigationActionData.serialization.in \
 	Shared/NetworkProcessConnectionParameters.serialization.in \
 	Shared/NodeHitTestResult.serialization.in \
+	Shared/PDFAccessibilityDisplayModeState.serialization.in \
 	Shared/PDFDisplayMode.serialization.in \
 	Shared/Pasteboard.serialization.in \
 	Shared/PlatformPopupMenuData.serialization.in \

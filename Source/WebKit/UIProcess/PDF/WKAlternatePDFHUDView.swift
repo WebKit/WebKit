@@ -36,6 +36,8 @@ final class PDFHUDControlsModel {
     var isHovered = false
     private(set) var resetSeed: UInt32 = 0
 
+    var accessibilityDisplayModeState: WKPDFHUDViewAccessibilityDisplayModeState = .unavailable
+
     var isVisible: Bool {
         !isAutoHidden || isHovered
     }
@@ -65,6 +67,28 @@ struct PDFHUDControls: View {
             Button("Zoom In", systemImage: "plus.magnifyingglass") {
                 action(.zoomIn)
             }
+
+            #if ENABLE_AX_PDF_SUPPORT
+            if model.accessibilityDisplayModeState != .unavailable {
+                Button {
+                    action(.toggleAccessibilityDisplayMode)
+                } label: {
+                    Label {
+                        Text(
+                            WKPDFHUDViewAccessibilityDisplayModeLabel(
+                                model.accessibilityDisplayModeState == .active
+                            )
+                        )
+                    } icon: {
+                        Image(
+                            _internalSystemName: WKPDFHUDViewAccessibilityDisplayModeSymbolName(
+                                model.accessibilityDisplayModeState == .active
+                            )
+                        )
+                    }
+                }
+            }
+            #endif
 
             if showSystemActions {
                 Button {
@@ -146,6 +170,10 @@ extension WKAlternatePDFHUDView {
 
     func show() {
         model.show()
+    }
+
+    func setAccessibilityDisplayModeState(_ state: WKPDFHUDViewAccessibilityDisplayModeState) {
+        model.accessibilityDisplayModeState = state
     }
 }
 

@@ -187,6 +187,7 @@ namespace WebKit {
 enum class ColorControlSupportsAlpha : bool;
 enum class UndoOrRedo : bool;
 enum class ForceSoftwareCapturingViewportSnapshot : bool;
+enum class PDFAccessibilityDisplayModeState : uint8_t;
 enum class InputType : uint8_t;
 enum class TapHandlingResult : uint8_t;
 
@@ -330,6 +331,9 @@ public:
 #if ENABLE(PDF_HUD)
     virtual void createPDFHUD(PDFPluginIdentifier, WebCore::FrameIdentifier, const WebCore::IntRect&) = 0;
     virtual void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&) = 0;
+#if ENABLE(AX_PDF_SUPPORT)
+    virtual void updatePDFHUDAccessibilityDisplayMode(PDFPluginIdentifier, PDFAccessibilityDisplayModeState) = 0;
+#endif
     virtual void removePDFHUD(PDFPluginIdentifier) = 0;
     virtual void removeAllPDFHUDs() = 0;
     virtual void showPDFHUD(PDFPluginIdentifier) = 0;

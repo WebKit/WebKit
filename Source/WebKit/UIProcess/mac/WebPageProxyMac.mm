@@ -903,6 +903,16 @@ void WebPageProxy::updatePDFHUDLocation(PDFPluginIdentifier identifier, const We
         pageClient->updatePDFHUDLocation(identifier, rect);
 }
 
+#if ENABLE(AX_PDF_SUPPORT)
+
+void WebPageProxy::updatePDFHUDAccessibilityDisplayMode(PDFPluginIdentifier identifier, PDFAccessibilityDisplayModeState accessibilityDisplayModeState)
+{
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->updatePDFHUDAccessibilityDisplayMode(identifier, accessibilityDisplayModeState);
+}
+
+#endif // ENABLE(AX_PDF_SUPPORT)
+
 void WebPageProxy::showPDFHUD(PDFPluginIdentifier identifier)
 {
     if (RefPtr pageClient = this->pageClient())
@@ -918,6 +928,15 @@ void WebPageProxy::pdfZoomOut(PDFPluginIdentifier identifier, WebCore::FrameIden
 {
     sendToProcessContainingFrame(frameID, Messages::WebPage::ZoomPDFOut(identifier));
 }
+
+#if ENABLE(AX_PDF_SUPPORT)
+
+void WebPageProxy::pdfToggleAccessibilityDisplayMode(PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID)
+{
+    sendToProcessContainingFrame(frameID, Messages::WebPage::TogglePDFAccessibilityDisplayMode(identifier));
+}
+
+#endif // ENABLE(AX_PDF_SUPPORT)
 
 void WebPageProxy::pdfSaveToPDF(PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID)
 {

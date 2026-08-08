@@ -422,6 +422,15 @@ void PageClientImpl::updatePDFHUDLocation(PDFPluginIdentifier identifier, const 
     protect(m_impl)->updatePDFHUDLocation(identifier, rect);
 }
 
+#if ENABLE(AX_PDF_SUPPORT)
+
+void PageClientImpl::updatePDFHUDAccessibilityDisplayMode(PDFPluginIdentifier identifier, PDFAccessibilityDisplayModeState accessibilityDisplayModeState)
+{
+    protect(m_impl)->updatePDFHUDAccessibilityDisplayMode(identifier, accessibilityDisplayModeState);
+}
+
+#endif // ENABLE(AX_PDF_SUPPORT)
+
 void PageClientImpl::removePDFHUD(PDFPluginIdentifier identifier)
 {
     protect(m_impl)->removePDFHUD(identifier);

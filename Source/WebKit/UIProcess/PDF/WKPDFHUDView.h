@@ -31,13 +31,24 @@
 
 #import <AppKit/AppKit.h>
 
+#if ENABLE(AX_PDF_SUPPORT)
+#import <WebKitAdditions/WKPDFHUDViewAdditions.h>
+#endif
+
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 typedef NS_ENUM(NSInteger, WKPDFHUDViewControlAction) {
     WKPDFHUDViewControlActionZoomIn,
     WKPDFHUDViewControlActionZoomOut,
+    WKPDFHUDViewControlActionToggleAccessibilityDisplayMode,
     WKPDFHUDViewControlActionOpenInPreview,
     WKPDFHUDViewControlActionSavePDF,
+};
+
+typedef NS_ENUM(NSInteger, WKPDFHUDViewAccessibilityDisplayModeState) {
+    WKPDFHUDViewAccessibilityDisplayModeStateUnavailable,
+    WKPDFHUDViewAccessibilityDisplayModeStateInactive,
+    WKPDFHUDViewAccessibilityDisplayModeStateActive,
 };
 
 NS_SWIFT_UI_ACTOR
@@ -50,6 +61,8 @@ NS_SWIFT_UI_ACTOR
 // - (instancetype)initWithFrame:(NSRect)frame frameIdentifier:(uint64_t)frameIdentifier compositingBordersVisible:(BOOL)compositingBordersVisible actionHandler:(NS_SWIFT_UI_ACTOR void(^)(WKPDFHUDViewControlAction))actionHandler;
 
 - (void)show;
+
+- (void)setAccessibilityDisplayModeState:(WKPDFHUDViewAccessibilityDisplayModeState)state;
 
 @end
 

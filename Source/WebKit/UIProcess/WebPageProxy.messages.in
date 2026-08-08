@@ -578,6 +578,9 @@ messages -> WebPageProxy {
 #if ENABLE(PDF_HUD)
     CreatePDFHUD(WebKit::PDFPluginIdentifier identifier, WebCore::FrameIdentifier frameID, WebCore::IntRect boundingBox)
     UpdatePDFHUDLocation(WebKit::PDFPluginIdentifier identifier, WebCore::IntRect boundingBox)
+#if ENABLE(AX_PDF_SUPPORT)
+    UpdatePDFHUDAccessibilityDisplayMode(WebKit::PDFPluginIdentifier identifier, enum:uint8_t WebKit::PDFAccessibilityDisplayModeState accessibilityDisplayModeState)
+#endif
     RemovePDFHUD(WebKit::PDFPluginIdentifier identifier)
     ShowPDFHUD(WebKit::PDFPluginIdentifier identifier)
 #endif

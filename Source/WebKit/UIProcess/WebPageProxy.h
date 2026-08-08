@@ -684,6 +684,9 @@ enum class TextRecognitionUpdateResult : uint8_t;
 enum class MediaPlaybackState : uint8_t;
 enum class NavigatingToAppBoundDomain : bool;
 enum class NegotiatedLegacyTLS : bool;
+#if ENABLE(PDF_HUD)
+enum class PDFAccessibilityDisplayModeState : uint8_t;
+#endif
 #if ENABLE(UNIFIED_PDF)
 enum class PDFPluginDisplayMode : uint8_t;
 #endif
@@ -1987,6 +1990,9 @@ public:
 
     void pdfZoomIn(PDFPluginIdentifier, WebCore::FrameIdentifier);
     void pdfZoomOut(PDFPluginIdentifier, WebCore::FrameIdentifier);
+#if ENABLE(AX_PDF_SUPPORT)
+    void pdfToggleAccessibilityDisplayMode(PDFPluginIdentifier, WebCore::FrameIdentifier);
+#endif
     void pdfSaveToPDF(PDFPluginIdentifier, WebCore::FrameIdentifier);
     void pdfOpenWithPreview(PDFPluginIdentifier, WebCore::FrameIdentifier);
 #endif
@@ -2549,6 +2555,9 @@ public:
 #if ENABLE(PDF_HUD)
     void createPDFHUD(PDFPluginIdentifier, WebCore::FrameIdentifier, const WebCore::IntRect&);
     void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&);
+#if ENABLE(AX_PDF_SUPPORT)
+    void updatePDFHUDAccessibilityDisplayMode(PDFPluginIdentifier, PDFAccessibilityDisplayModeState);
+#endif
     void removePDFHUD(PDFPluginIdentifier);
     void showPDFHUD(PDFPluginIdentifier);
 #endif

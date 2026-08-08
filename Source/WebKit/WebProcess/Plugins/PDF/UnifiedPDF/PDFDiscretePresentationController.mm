@@ -1322,9 +1322,11 @@ void PDFDiscretePresentationController::updateDebugBorders(bool showDebugBorders
         asyncRenderer->setShowDebugBorders(showDebugBorders);
 }
 
-void PDFDiscretePresentationController::updateForAccessibilityDisplayModeChange(PDFAccessibilityDisplayMode accessibilityDisplayMode)
+void PDFDiscretePresentationController::updateLayersForAccessibilityDisplayModeChange()
 {
-    auto applyToBackgroundLayer = [backgroundColor = pdfPageBackgroundColor(accessibilityDisplayMode)](GraphicsLayer& layer) {
+    auto displayMode = accessibilityDisplayMode();
+
+    auto applyToBackgroundLayer = [backgroundColor = pdfPageBackgroundColor(displayMode)](GraphicsLayer& layer) {
         layer.setBackgroundColor(backgroundColor);
         layer.setNeedsDisplay();
     };
@@ -1336,8 +1338,13 @@ void PDFDiscretePresentationController::updateForAccessibilityDisplayModeChange(
         if (RefPtr rightPageBackgroundLayer = row.rightPageBackgroundLayer())
             applyToBackgroundLayer(*rightPageBackgroundLayer);
 
-        if (RefPtr selectionLayer = row.selectionLayer)
-            selectionLayer->setBlendMode(pdfSelectionBlendMode(accessibilityDisplayMode));
+        if (RefPtr contentsLayer = row.contentsLayer)
+            contentsLayer->setNeedsDisplay();
+
+        if (RefPtr selectionLayer = row.selectionLayer) {
+            selectionLayer->setBlendMode(pdfSelectionBlendMode(displayMode));
+            selectionLayer->setNeedsDisplay();
+        }
     }
 }
 

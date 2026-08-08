@@ -215,6 +215,9 @@ private:
 
     void createPDFHUD(PDFPluginIdentifier, WebCore::FrameIdentifier, const WebCore::IntRect&) override;
     void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&) override;
+#if ENABLE(AX_PDF_SUPPORT)
+    void updatePDFHUDAccessibilityDisplayMode(PDFPluginIdentifier, PDFAccessibilityDisplayModeState) override;
+#endif
     void removePDFHUD(PDFPluginIdentifier) override;
     void removeAllPDFHUDs() override;
     void showPDFHUD(PDFPluginIdentifier) final;

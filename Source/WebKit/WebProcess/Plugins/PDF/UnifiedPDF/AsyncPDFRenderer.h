@@ -75,6 +75,7 @@ using PDFTileRenderIdentifier = ObjectIdentifier<PDFTileRenderType>;
 
 void applyPDFContentAXColorAdjustment(CGContextRef, PDFPage *, PDFAccessibilityDisplayMode);
 WebCore::Color pdfPageBackgroundColor(PDFAccessibilityDisplayMode);
+WebCore::Color pdfPluginBackgroundColor(PDFAccessibilityDisplayMode, const WebCore::Color& unadjustedColor);
 WebCore::BlendMode pdfSelectionBlendMode(PDFAccessibilityDisplayMode);
 WebCore::ScrollbarOverlayStyle pdfScrollbarOverlayStyle(PDFAccessibilityDisplayMode, bool pageUsesDarkAppearance);
 

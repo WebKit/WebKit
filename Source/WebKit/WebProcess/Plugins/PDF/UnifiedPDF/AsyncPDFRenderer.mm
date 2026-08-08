@@ -126,6 +126,7 @@ void AsyncPDFRenderer::invalidateAllRenderedContent()
     m_pendingPagePreviewOrder.clear();
     m_pendingPagePreviews.clear();
     m_pagePreviews.clear();
+    ensurePreviewsForCurrentPageCoverage();
 }
 
 void AsyncPDFRenderer::startTrackingLayer(GraphicsLayer& layer)

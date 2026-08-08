@@ -666,6 +666,9 @@ public:
 #if ENABLE(PDF_HUD)
     void createPDFHUD(PDFPluginBase&, WebCore::FrameIdentifier, const WebCore::IntRect&);
     void updatePDFHUDLocation(PDFPluginBase&, const WebCore::IntRect&);
+#if ENABLE(AX_PDF_SUPPORT)
+    void updatePDFHUDAccessibilityDisplayMode(PDFPluginBase&);
+#endif
     void removePDFHUD(PDFPluginBase&);
     void showPDFHUD(PDFPluginBase&);
     void updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
@@ -686,6 +689,9 @@ public:
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
     void zoomPDFIn(PDFPluginIdentifier);
     void zoomPDFOut(PDFPluginIdentifier);
+#if ENABLE(AX_PDF_SUPPORT)
+    void togglePDFAccessibilityDisplayMode(PDFPluginIdentifier);
+#endif
     void savePDF(PDFPluginIdentifier, CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&&);
     void openPDFWithPreview(PDFPluginIdentifier, CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
 #endif

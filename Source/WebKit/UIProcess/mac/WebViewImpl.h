@@ -251,6 +251,7 @@ struct WebHitTestResultData;
 
 enum class ContinueUnsafeLoad : bool;
 enum class ForceSoftwareCapturingViewportSnapshot : bool;
+enum class PDFAccessibilityDisplayModeState : uint8_t;
 enum class UndoOrRedo : bool;
 enum class WebEventPhase : uint8_t;
 
@@ -298,6 +299,7 @@ public:
 
     void createPDFHUD(PDFPluginIdentifier, WebCore::FrameIdentifier, const WebCore::IntRect&);
     void updatePDFHUDLocation(PDFPluginIdentifier, const WebCore::IntRect&);
+    void updatePDFHUDAccessibilityDisplayMode(PDFPluginIdentifier, PDFAccessibilityDisplayModeState);
     void convertPDFHUDBoundingBoxToWebViewCoordinates(WebCore::FrameIdentifier, WebCore::IntRect boundingBoxInFrameRootView, CompletionHandler<void(WebCore::IntRect)>&&);
     void removePDFHUD(PDFPluginIdentifier);
     void removeAllPDFHUDs();
@@ -1074,8 +1076,13 @@ private:
 #endif
 
     HashMap<WebKit::PDFPluginIdentifier, RetainPtr<NSView<WKPDFHUDView>>> _pdfHUDViews;
-    // PDF HUDs awaiting their initial async coordinate conversion, mapped to the latest location update.
-    HashMap<WebKit::PDFPluginIdentifier, WebCore::IntRect> m_pdfHUDsPendingCreation;
+    // PDF HUDs awaiting their initial async coordinate conversion, mapped to the latest location
+    // update and accessibility display mode state.
+    struct PendingHUDData {
+        WebCore::IntRect frameRootViewBox;
+        PDFAccessibilityDisplayModeState displayModeState;
+    };
+    HashMap<WebKit::PDFPluginIdentifier, PendingHUDData> m_pdfHUDsPendingCreation;
 
     RetainPtr<WKShareSheet> _shareSheet;
 

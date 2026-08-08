@@ -33,6 +33,7 @@
 #import "GestureTypes.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
+#import "PDFAccessibilityDisplayModeState.h"
 #import "PDFIncrementalLoader.h"
 #import "PDFKitSPI.h"
 #import "PDFPluginAnnotation.h"
@@ -1256,6 +1257,11 @@ void PDFPluginBase::writeStringToFindPasteboard(const String& string) const
     platformStrategies()->pasteboardStrategy()->setStringForType(string, NSPasteboardTypeString, NSPasteboardNameFind, context.get());
 }
 #endif
+
+PDFAccessibilityDisplayModeState PDFPluginBase::accessibilityDisplayModeState() const
+{
+    return PDFAccessibilityDisplayModeState::Ineligible;
+}
 
 #if ENABLE(PDF_HUD)
 
