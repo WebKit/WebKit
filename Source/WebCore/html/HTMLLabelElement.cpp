@@ -144,7 +144,12 @@ bool HTMLLabelElement::isEventTargetedAtInteractiveDescendants(Event& event) con
     if (!node)
         return false;
 
-    if (!isShadowIncludingInclusiveAncestorOf(node.get()))
+    // Interactive content (e.g. a <button>) may remove itself while handling the
+    // click, detaching it from the label before the label's default action runs.
+    // The event path was computed before that mutation, so the label still
+    // default-handles the click and must do nothing. Only bail when the target
+    // is still connected but outside the label.
+    if (node->isConnected() && !isShadowIncludingInclusiveAncestorOf(node.get()))
         return false;
 
     for (RefPtr it = node; it && it != this; it = it->parentElementInComposedTree()) {
