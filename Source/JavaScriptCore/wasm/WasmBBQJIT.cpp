@@ -4824,7 +4824,7 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
             ASSERT(tableIndex < m_info.tableCount());
 
             auto& tableInformation = m_info.table(tableIndex);
-            if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial()) {
+            if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial() && Table::isValidLength(tableInformation.initial())) {
                 if (!tableIndex)
                     m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedTable0Buffer()), callableFunctionBuffer);
                 else {

@@ -6341,7 +6341,7 @@ auto OMGIRGenerator::addCallIndirect(unsigned callProfileIndex, unsigned tableIn
         ASSERT(tableIndex < m_info.tableCount());
         auto& tableInformation = m_info.table(tableIndex);
 
-        if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial()) {
+        if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial() && Table::isValidLength(tableInformation.initial())) {
             // The buffer is immutable & non-control-dependent since this table is not resizable / reaching to the maximum size.
             callableFunctionBufferLength = constant(B3::Int32, tableInformation.initial(), origin());
             if (!tableIndex) {

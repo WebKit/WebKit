@@ -95,10 +95,11 @@ Table::Table(uint32_t initial, std::optional<uint64_t> maximum, Type wasmType, W
     ASSERT(!m_maximum || *m_maximum >= m_length);
 }
 
-RefPtr<Table> Table::tryCreate(VM& vm, uint32_t initial, std::optional<uint64_t> maximum, TableElementType type, Type wasmType, Wasm::AddressType addressType)
+RefPtr<Table> Table::tryCreate(VM& vm, uint64_t declaredInitial, std::optional<uint64_t> maximum, TableElementType type, Type wasmType, Wasm::AddressType addressType)
 {
-    if (!isValidLength(initial))
+    if (!isValidLength(declaredInitial))
         return nullptr;
+    uint32_t initial = static_cast<uint32_t>(declaredInitial);
     switch (type) {
     case TableElementType::Externref:
         return adoptRef(new ExternOrAnyRefTable(initial, maximum, wasmType, addressType));

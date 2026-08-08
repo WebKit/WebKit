@@ -345,8 +345,6 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
     if (!limits) [[unlikely]]
         return makeUnexpected(WTF::move(limits.error()));
 
-    uint32_t clampedInitial = initial > maxTableEntries ? static_cast<uint32_t>(maxTableEntries) : static_cast<uint32_t>(initial);
-
     ASSERT(!maximum || *maximum >= initial);
 
     if (hasInitExpr) {
@@ -370,7 +368,7 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
     }
 
     TableElementType tableType = isSubtype(type, funcrefType()) ? TableElementType::Funcref : TableElementType::Externref;
-    m_info->tables.append(TableInformation(clampedInitial, maximum, isImport, tableType, type, tableInitType, initialBitsOrImportNumber, isTable64));
+    m_info->tables.append(TableInformation(initial, maximum, isImport, tableType, type, tableInitType, initialBitsOrImportNumber, isTable64));
 
     return { };
 }

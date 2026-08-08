@@ -55,7 +55,7 @@ class Table : public ThreadSafeRefCounted<Table> {
     WTF_MAKE_NONCOPYABLE(Table);
     WTF_MAKE_TZONE_ALLOCATED(Table);
 public:
-    static RefPtr<Table> tryCreate(VM&, uint32_t initial, std::optional<uint64_t> maximum, TableElementType, Type, Wasm::AddressType);
+    static RefPtr<Table> tryCreate(VM&, uint64_t initial, std::optional<uint64_t> maximum, TableElementType, Type, Wasm::AddressType);
 
     JS_EXPORT_PRIVATE ~Table() = default;
 

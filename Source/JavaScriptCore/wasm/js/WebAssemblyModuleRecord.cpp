@@ -439,8 +439,8 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             if (!table)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Table import"_s, "is not an instance of WebAssembly.Table"_s)));
 
-            uint32_t expectedInitial = moduleInformation.tables[import.kindIndex].initial();
-            uint32_t actualInitial = table->length();
+            uint64_t expectedInitial = moduleInformation.tables[import.kindIndex].initial();
+            uint64_t actualInitial = table->length();
             if (actualInitial < expectedInitial)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Table import"_s, "provided an 'initial' that is too small"_s)));
 
