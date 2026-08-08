@@ -180,6 +180,7 @@ public:
     void setPaused(bool, DOMPromiseDeferred<void>&&);
     double currentTime() const;
     void setCurrentTime(double);
+    void applyInitialAnimationState(ModelPlayer&);
 #endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)
@@ -319,6 +320,8 @@ private:
     void updateAutoplay();
     bool loop() const;
     void updateLoop();
+    // A <model> inside a spatial portal has no player of its own; the portal owns one.
+    ModelPlayer* modelPlayerForAnimation() const;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)

@@ -87,6 +87,31 @@ bool ModelProcessModelPlayer::modelProcessEnabled() const
     return strongPage && strongPage->corePage() && strongPage->corePage()->settings().modelElementEnabled() && strongPage->corePage()->settings().modelProcessEnabled();
 }
 
+ModelProcessModelPlayer::NodeAnimationState& ModelProcessModelPlayer::ensureAnimationState(WebCore::NodeIdentifier nodeID)
+{
+    return m_animationStates.ensure(nodeID, [] {
+        return NodeAnimationState { };
+    }).iterator->value;
+}
+
+const ModelProcessModelPlayer::NodeAnimationState* ModelProcessModelPlayer::animationStateIfExists(WebCore::NodeIdentifier nodeID) const
+{
+    auto it = m_animationStates.find(nodeID);
+    if (it == m_animationStates.end())
+        return nullptr;
+
+    return &it->value;
+}
+
+ModelProcessModelPlayer::NodeAnimationState* ModelProcessModelPlayer::animationStateIfExists(WebCore::NodeIdentifier nodeID)
+{
+    auto it = m_animationStates.find(nodeID);
+    if (it == m_animationStates.end())
+        return nullptr;
+
+    return &it->value;
+}
+
 // MARK: - Messages
 
 void ModelProcessModelPlayer::didCreateLayer(WebCore::LayerHostingContextIdentifier identifier)
@@ -124,6 +149,8 @@ void ModelProcessModelPlayer::didFailLoading(WebCore::NodeIdentifier nodeID)
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer didFailLoading id=%" PRIu64, this, m_id.toUInt64());
     RELEASE_ASSERT(modelProcessEnabled());
 
+    m_animationStates.remove(nodeID);
+
     protect(client())->didFailLoading(*this, nodeID, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, "Failed to load model data"_s });
 }
 
@@ -148,14 +175,19 @@ void ModelProcessModelPlayer::didUpdatePortalTransform(const WebCore::Transforma
 
 #endif
 
-void ModelProcessModelPlayer::didUpdateAnimationPlaybackState(WebCore::NodeIdentifier, bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp)
+void ModelProcessModelPlayer::didUpdateAnimationPlaybackState(WebCore::NodeIdentifier nodeID, bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp)
 {
     RELEASE_ASSERT(modelProcessEnabled());
 
-    m_animationState.setPaused(isPaused);
-    m_animationState.setDuration(duration);
-    m_animationState.setPlaybackRate(playbackRate);
-    m_animationState.setCurrentTime(currentTime, clockTimestamp);
+    auto* nodeAnimationState = animationStateIfExists(nodeID);
+    if (!nodeAnimationState)
+        return;
+
+    auto& animationState = nodeAnimationState->playbackState;
+    animationState.setPaused(isPaused);
+    animationState.setDuration(duration);
+    animationState.setPlaybackRate(playbackRate);
+    animationState.setCurrentTime(currentTime, clockTimestamp);
 }
 
 void ModelProcessModelPlayer::didFinishEnvironmentMapLoading(bool succeeded)
@@ -167,13 +199,16 @@ void ModelProcessModelPlayer::didFinishEnvironmentMapLoading(bool succeeded)
 
 // MARK: - WebCore::ModelPlayer
 
-std::optional<WebCore::ModelPlayerAnimationState> ModelProcessModelPlayer::currentAnimationState(WebCore::NodeIdentifier) const
+std::optional<WebCore::ModelPlayerAnimationState> ModelProcessModelPlayer::currentAnimationState(WebCore::NodeIdentifier nodeID) const
 {
     // Has no current state to return if the model load hasn't returned with its extents.
     if (!m_boundingBoxExtents)
         return std::nullopt;
 
-    return m_animationState;
+    if (auto* nodeAnimationState = animationStateIfExists(nodeID))
+        return nodeAnimationState->playbackState;
+
+    return std::nullopt;
 }
 
 std::optional<std::unique_ptr<WebCore::ModelPlayerTransformState>> ModelProcessModelPlayer::currentTransformState(WebCore::NodeIdentifier) const
@@ -202,6 +237,7 @@ void ModelProcessModelPlayer::unload(WebCore::NodeIdentifier nodeID)
 {
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayer unload model nodeID=%" PRIu64 " id=%" PRIu64, this, nodeID.toUInt64(), m_id.toUInt64());
 
+    m_animationStates.remove(nodeID);
     send(Messages::ModelProcessModelPlayerProxy::UnloadModel(nodeID));
 }
 
@@ -232,7 +268,7 @@ void ModelProcessModelPlayer::reload(WebCore::NodeIdentifier nodeID, WebCore::Mo
     m_boundingBoxExtents = transformStateToRestore->boundingBoxExtents();
     setHasPortal(transformStateToRestore->hasPortal());
     setStageMode(transformStateToRestore->stageMode());
-    m_animationState = WebCore::ModelPlayerAnimationState(animationState);
+    ensureAnimationState(nodeID).playbackState = WebCore::ModelPlayerAnimationState(animationState);
     send(Messages::ModelProcessModelPlayerProxy::ReloadModel(nodeID, model, size, transformStateToRestore->entityTransform(), animationState));
 }
 
@@ -371,36 +407,44 @@ WebCore::ModelPlayerAccessibilityChildren ModelProcessModelPlayer::accessibility
 
 void ModelProcessModelPlayer::setAutoplay(WebCore::NodeIdentifier nodeID, bool autoplay)
 {
-    if (m_animationState.autoplay() == autoplay)
+    auto& animationState = ensureAnimationState(nodeID).playbackState;
+    if (animationState.autoplay() == autoplay)
         return;
 
-    m_animationState.setAutoplay(autoplay);
+    animationState.setAutoplay(autoplay);
     send(Messages::ModelProcessModelPlayerProxy::SetAutoplay(nodeID, autoplay));
 }
 
 void ModelProcessModelPlayer::setLoop(WebCore::NodeIdentifier nodeID, bool loop)
 {
-    if (m_animationState.loop() == loop)
+    auto& animationState = ensureAnimationState(nodeID).playbackState;
+    if (animationState.loop() == loop)
         return;
 
-    m_animationState.setLoop(loop);
+    animationState.setLoop(loop);
     send(Messages::ModelProcessModelPlayerProxy::SetLoop(nodeID, loop));
 }
 
 void ModelProcessModelPlayer::setPlaybackRate(WebCore::NodeIdentifier nodeID, double playbackRate, CompletionHandler<void(double effectivePlaybackRate)>&& completionHandler)
 {
-    m_requestedPlaybackRate = playbackRate;
-    sendWithAsyncReply(Messages::ModelProcessModelPlayerProxy::SetPlaybackRate(nodeID, m_requestedPlaybackRate), WTF::move(completionHandler));
+    ensureAnimationState(nodeID).playbackState.setPlaybackRate(playbackRate);
+    sendWithAsyncReply(Messages::ModelProcessModelPlayerProxy::SetPlaybackRate(nodeID, playbackRate), WTF::move(completionHandler));
 }
 
-double ModelProcessModelPlayer::duration(WebCore::NodeIdentifier) const
+double ModelProcessModelPlayer::duration(WebCore::NodeIdentifier nodeID) const
 {
-    return m_animationState.duration().seconds();
+    if (auto* animationState = animationStateIfExists(nodeID))
+        return animationState->playbackState.duration().seconds();
+
+    return 0;
 }
 
-bool ModelProcessModelPlayer::paused(WebCore::NodeIdentifier) const
+bool ModelProcessModelPlayer::paused(WebCore::NodeIdentifier nodeID) const
 {
-    return m_animationState.paused();
+    if (auto* animationState = animationStateIfExists(nodeID))
+        return animationState->playbackState.paused();
+
+    return true;
 }
 
 void ModelProcessModelPlayer::setPaused(WebCore::NodeIdentifier nodeID, bool paused, CompletionHandler<void(bool succeeded)>&& completionHandler)
@@ -408,33 +452,39 @@ void ModelProcessModelPlayer::setPaused(WebCore::NodeIdentifier nodeID, bool pau
     sendWithAsyncReply(Messages::ModelProcessModelPlayerProxy::SetPaused(nodeID, paused), WTF::move(completionHandler));
 }
 
-Seconds ModelProcessModelPlayer::currentTime(WebCore::NodeIdentifier) const
+Seconds ModelProcessModelPlayer::currentTime(WebCore::NodeIdentifier nodeID) const
 {
-    if (m_pendingCurrentTime)
-        return *m_pendingCurrentTime;
+    auto* animationState = animationStateIfExists(nodeID);
+    if (!animationState)
+        return 0_s;
 
-    return m_animationState.currentTime();
+    if (animationState->pendingCurrentTime)
+        return *animationState->pendingCurrentTime;
+
+    return animationState->playbackState.currentTime();
 }
 
 void ModelProcessModelPlayer::setCurrentTime(WebCore::NodeIdentifier nodeID, Seconds currentTime, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    double durationSeconds = duration(nodeID);
+    auto& animationState = ensureAnimationState(nodeID);
+    double durationSeconds = animationState.playbackState.duration().seconds();
     if (!durationSeconds) {
         completionHandler();
         return;
     }
 
-    m_pendingCurrentTime = Seconds(fmax(fmin(currentTime.seconds(), durationSeconds), 0));
+    animationState.pendingCurrentTime = Seconds(fmax(fmin(currentTime.seconds(), durationSeconds), 0));
     MonotonicTime timestamp = MonotonicTime::now();
-    m_clockTimestampOfLastCurrentTimeSet = timestamp;
+    animationState.clockTimestampOfLastCurrentTimeSet = timestamp;
 
-    sendWithAsyncReply(Messages::ModelProcessModelPlayerProxy::SetCurrentTime(nodeID, *m_pendingCurrentTime), [weakThis = WeakPtr { *this }, timestamp, completionHandler = WTF::move(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::ModelProcessModelPlayerProxy::SetCurrentTime(nodeID, *animationState.pendingCurrentTime), [weakThis = WeakPtr { *this }, nodeID, timestamp, completionHandler = WTF::move(completionHandler)]() mutable {
         ASSERT(RunLoop::isMain());
         if (RefPtr protectedThis = weakThis.get()) {
-            if (protectedThis->m_clockTimestampOfLastCurrentTimeSet && *(protectedThis->m_clockTimestampOfLastCurrentTimeSet) <= timestamp) {
-                protectedThis->m_pendingCurrentTime = std::nullopt;
-                protectedThis->m_clockTimestampOfLastCurrentTimeSet = std::nullopt;
+            auto it = protectedThis->m_animationStates.find(nodeID);
+            if (it != protectedThis->m_animationStates.end() && it->value.clockTimestampOfLastCurrentTimeSet && *it->value.clockTimestampOfLastCurrentTimeSet <= timestamp) {
+                it->value.pendingCurrentTime = std::nullopt;
+                it->value.clockTimestampOfLastCurrentTimeSet = std::nullopt;
             }
         }
         completionHandler();

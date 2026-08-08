@@ -210,8 +210,11 @@ void SpatialPortalController::unregisterChildModel(HTMLModelElement& model)
     if (hostedModelElement(nodeID) != &model)
         return;
 
-    unloadChildModel(nodeID);
     m_hostedModels.remove(nodeID);
+
+    // Unconditional, unlike unloadChildModel(): the player also tracks nodes that never loaded.
+    if (RefPtr player = m_modelPlayer)
+        player->unload(nodeID);
 
     if (m_hostedModels.isEmpty())
         deleteModelPlayer();
@@ -266,6 +269,10 @@ void SpatialPortalController::loadChildModelIfReady(HTMLModelElement& model)
         return;
 
     it->value.loadedModel = modelData;
+
+#if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
+    model.applyInitialAnimationState(*player);
+#endif
     player->load(nodeID, *modelData, portalContentSize(), false);
 }
 
@@ -330,9 +337,10 @@ ModelPlayer* SpatialPortalController::ensureModelPlayer()
         lazyInitialize(m_playerClient, PortalModelPlayerClient::create(*this));
 
     m_modelPlayer = provider->createModelPlayer(*m_playerClient);
+    if (!m_modelPlayer)
+        return nullptr;
 
-    if (m_modelPlayer)
-        m_modelPlayer->setPortalTransform(m_portalTransform);
+    m_modelPlayer->setPortalTransform(m_portalTransform);
 
     return m_modelPlayer.get();
 }

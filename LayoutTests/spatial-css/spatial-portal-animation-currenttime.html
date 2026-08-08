@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<meta charset="utf-8">
+<title>&lt;model> animation currentTime inside a spatial portal</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "cube.usdz");
+
+    await model.ready;
+
+    assert_equals(model.currentTime, 0);
+    model.currentTime = 30;
+    assert_equals(model.currentTime, 0, "currentTime is ignored on a child model that has no animation");
+}, "Setting currentTime is ignored on a <model> nested in a spatial portal that has no animation");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "stopwatch-60s.usdz");
+
+    await model.ready;
+
+    assert_equals(model.currentTime, 0);
+
+    model.currentTime = 30;
+    assert_approx_equals(model.currentTime, 30, 0.1, "currentTime should be around 30s");
+
+    model.currentTime = -5;
+    assert_equals(model.currentTime, 0, "currentTime should be clamped to 0");
+
+    model.currentTime = 90;
+    assert_approx_equals(model.currentTime, 60, 0.1, "currentTime should be clamped to duration");
+}, "Setting currentTime on a <model> nested in a spatial portal seeks its animation");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const first = appendModel(portal, "stopwatch-60s.usdz");
+    const second = appendModel(portal, "stopwatch-60s.usdz");
+
+    await Promise.all([first.ready, second.ready]);
+
+    first.currentTime = 10;
+    second.currentTime = 40;
+
+    assert_approx_equals(first.currentTime, 10, 0.1, "seeking the first child does not disturb it");
+    assert_approx_equals(second.currentTime, 40, 0.1, "each child seeks its own animation");
+}, "Siblings in a spatial portal seek independently");
+
+</script>
+</body>
+</html>

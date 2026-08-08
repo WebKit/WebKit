@@ -1,0 +1,89 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<meta charset="utf-8">
+<title>&lt;model> animation playback inside a spatial portal</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "stopwatch-60s.usdz");
+    model.autoplay = true;
+
+    await model.ready;
+
+    assert_approx_equals(model.duration, 60, 0.1, "the child model reports its animation duration");
+    assert_false(model.paused, "a child model with autoplay starts playing");
+}, "<model autoplay> nested in a spatial portal plays its animation");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "stopwatch-60s.usdz");
+
+    await model.ready;
+
+    assert_true(model.paused, "a child model without autoplay does not start playing");
+
+    await model.play();
+    assert_false(model.paused, "play() starts the child model's animation");
+
+    await model.pause();
+    assert_true(model.paused, "pause() stops the child model's animation");
+}, "play() and pause() control a <model> nested in a spatial portal");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "stopwatch-60s.usdz");
+    model.autoplay = true;
+    model.loop = true;
+
+    await model.ready;
+
+    model.currentTime = model.duration - 0.01;
+    await sleepForSeconds(0.2);
+    assert_false(model.paused, "a looping child model keeps playing past its duration");
+}, "<model autoplay loop> nested in a spatial portal loops its animation");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "stopwatch-60s.usdz");
+    model.autoplay = true;
+
+    await model.ready;
+
+    model.currentTime = model.duration - 0.01;
+    await sleepForSeconds(0.2);
+    assert_true(model.paused, "a non-looping child model stops at its duration");
+}, "<model autoplay> nested in a spatial portal stops after reaching its duration");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "stopwatch-60s.usdz");
+    model.autoplay = true;
+
+    await model.ready;
+    assert_false(model.paused, "the child model starts playing");
+
+    model.remove();
+    assert_equals(model.duration, 0, "the removed child model no longer reports playback state");
+
+    model.autoplay = false;
+    portal.appendChild(model);
+    await waitFor(() => model.duration > 0, "the re-added child model to report its duration");
+
+    assert_true(model.paused, "the re-added child model does not inherit the earlier autoplay");
+}, "Re-adding a <model> to a spatial portal does not reuse the playback state it had before");
+
+</script>
+</body>
+</html>

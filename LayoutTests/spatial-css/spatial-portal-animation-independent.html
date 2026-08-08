@@ -1,0 +1,76 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<meta charset="utf-8">
+<title>Independent &lt;model> animation playback inside a spatial portal</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+// The children of a spatial portal share one ModelPlayer, so playback state has to be addressed per
+// model rather than per player.
+promise_test(async t => {
+    const portal = createPortal(t);
+    const slow = appendModel(portal, "stopwatch-60s.usdz");
+    const fast = appendModel(portal, "stopwatch-60s.usdz");
+
+    slow.playbackRate = 1;
+    fast.playbackRate = 10;
+
+    await Promise.all([slow.ready, fast.ready]);
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 2, "the portal hosts both models");
+
+    await Promise.all([slow.play(), fast.play()]);
+    await sleepForSeconds(0.5);
+
+    assert_false(slow.paused, "the slower model is playing");
+    assert_false(fast.paused, "the faster model is playing");
+    assert_greater_than(fast.currentTime, slow.currentTime, "the model with the higher playbackRate advances further");
+}, "Siblings in a spatial portal advance at their own playbackRate");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const playing = appendModel(portal, "stopwatch-60s.usdz");
+    const paused = appendModel(portal, "stopwatch-60s.usdz");
+
+    await Promise.all([playing.ready, paused.ready]);
+
+    await playing.play();
+    assert_false(playing.paused, "the first model is playing");
+    assert_true(paused.paused, "pausing state is not shared with its sibling");
+
+    await paused.play();
+    await paused.pause();
+    assert_false(playing.paused, "pausing a sibling does not pause the first model");
+    assert_true(paused.paused, "the second model is paused");
+}, "Pausing one <model> in a spatial portal does not pause its siblings");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const looping = appendModel(portal, "stopwatch-60s.usdz");
+    const notLooping = appendModel(portal, "stopwatch-60s.usdz");
+
+    looping.loop = true;
+
+    await Promise.all([looping.ready, notLooping.ready]);
+    await Promise.all([looping.play(), notLooping.play()]);
+
+    looping.currentTime = looping.duration - 0.01;
+    notLooping.currentTime = notLooping.duration - 0.01;
+    await sleepForSeconds(0.2);
+
+    assert_false(looping.paused, "the looping model keeps playing past its duration");
+    assert_true(notLooping.paused, "its non-looping sibling stops at its duration");
+}, "Looping is applied per <model> in a spatial portal");
+
+</script>
+</body>
+</html>

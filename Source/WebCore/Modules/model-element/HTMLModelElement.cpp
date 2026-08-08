@@ -821,9 +821,7 @@ void HTMLModelElement::createModelPlayer()
     auto nodeID = nodeIdentifier();
 
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
-    modelPlayer->setAutoplay(nodeID, autoplay());
-    modelPlayer->setLoop(nodeID, loop());
-    modelPlayer->setPlaybackRate(nodeID, m_playbackRate, [](double) { });
+    applyInitialAnimationState(*modelPlayer);
 #endif
 
 #if ENABLE(MODEL_ELEMENT_PORTAL)
@@ -1444,6 +1442,27 @@ void HTMLModelElement::setCamera(HTMLModelElementCamera camera, DOMPromiseDeferr
 
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
 
+ModelPlayer* HTMLModelElement::modelPlayerForAnimation() const
+{
+    if (m_modelPlayer)
+        return m_modelPlayer.get();
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (CheckedPtr controller = m_lastRegisteredPortalController.get())
+        return controller->modelPlayer();
+#endif
+
+    return nullptr;
+}
+
+void HTMLModelElement::applyInitialAnimationState(ModelPlayer& modelPlayer)
+{
+    auto nodeID = nodeIdentifier();
+    modelPlayer.setAutoplay(nodeID, autoplay());
+    modelPlayer.setLoop(nodeID, loop());
+    modelPlayer.setPlaybackRate(nodeID, m_playbackRate, [](double) { });
+}
+
 void HTMLModelElement::setPlaybackRate(double playbackRate)
 {
     if (m_playbackRate == playbackRate)
@@ -1451,18 +1470,20 @@ void HTMLModelElement::setPlaybackRate(double playbackRate)
 
     m_playbackRate = playbackRate;
 
-    if (m_modelPlayer)
-        m_modelPlayer->setPlaybackRate(nodeIdentifier(), playbackRate, [](double) { });
+    if (RefPtr modelPlayer = modelPlayerForAnimation())
+        modelPlayer->setPlaybackRate(nodeIdentifier(), playbackRate, [](double) { });
 }
 
 double HTMLModelElement::duration() const
 {
-    return m_modelPlayer ? m_modelPlayer->duration(nodeIdentifier()) : 0;
+    RefPtr modelPlayer = modelPlayerForAnimation();
+    return modelPlayer ? modelPlayer->duration(nodeIdentifier()) : 0;
 }
 
 bool HTMLModelElement::paused() const
 {
-    return m_modelPlayer ? m_modelPlayer->paused(nodeIdentifier()) : true;
+    RefPtr modelPlayer = modelPlayerForAnimation();
+    return modelPlayer ? modelPlayer->paused(nodeIdentifier()) : true;
 }
 
 void HTMLModelElement::play(DOMPromiseDeferred<void>&& promise)
@@ -1477,12 +1498,13 @@ void HTMLModelElement::pause(DOMPromiseDeferred<void>&& promise)
 
 void HTMLModelElement::setPaused(bool paused, DOMPromiseDeferred<void>&& promise)
 {
-    if (!m_modelPlayer) {
+    RefPtr modelPlayer = modelPlayerForAnimation();
+    if (!modelPlayer) {
         promise.reject();
         return;
     }
 
-    m_modelPlayer->setPaused(nodeIdentifier(), paused, [promise = WTF::move(promise)] (bool succeeded) mutable {
+    modelPlayer->setPaused(nodeIdentifier(), paused, [promise = WTF::move(promise)] (bool succeeded) mutable {
         if (succeeded)
             promise.resolve();
         else
@@ -1497,8 +1519,8 @@ bool HTMLModelElement::autoplay() const
 
 void HTMLModelElement::updateAutoplay()
 {
-    if (m_modelPlayer)
-        m_modelPlayer->setAutoplay(nodeIdentifier(), autoplay());
+    if (RefPtr modelPlayer = modelPlayerForAnimation())
+        modelPlayer->setAutoplay(nodeIdentifier(), autoplay());
 }
 
 bool HTMLModelElement::loop() const
@@ -1508,19 +1530,20 @@ bool HTMLModelElement::loop() const
 
 void HTMLModelElement::updateLoop()
 {
-    if (m_modelPlayer)
-        m_modelPlayer->setLoop(nodeIdentifier(), loop());
+    if (RefPtr modelPlayer = modelPlayerForAnimation())
+        modelPlayer->setLoop(nodeIdentifier(), loop());
 }
 
 double HTMLModelElement::currentTime() const
 {
-    return m_modelPlayer ? m_modelPlayer->currentTime(nodeIdentifier()).seconds() : 0;
+    RefPtr modelPlayer = modelPlayerForAnimation();
+    return modelPlayer ? modelPlayer->currentTime(nodeIdentifier()).seconds() : 0;
 }
 
 void HTMLModelElement::setCurrentTime(double currentTime)
 {
-    if (m_modelPlayer)
-        m_modelPlayer->setCurrentTime(nodeIdentifier(), Seconds(currentTime), [] { });
+    if (RefPtr modelPlayer = modelPlayerForAnimation())
+        modelPlayer->setCurrentTime(nodeIdentifier(), Seconds(currentTime), [] { });
 }
 
 #endif
