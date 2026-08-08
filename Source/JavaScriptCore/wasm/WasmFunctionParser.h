@@ -300,6 +300,7 @@ private:
     [[nodiscard]] PartialResult parseMemoryIndex(uint8_t&);
     [[nodiscard]] PartialResult parseMemoryIndexForBulkOp(uint8_t&); // FIXME: when wasm spec tests are updated no need for this
     [[nodiscard]] PartialResult parseMemoryIndexAndFixupAlignment(uint32_t&, uint8_t&);
+    [[nodiscard]] PartialResult parseMemoryOffset(uint8_t memoryIndex, uint64_t&);
 
     [[nodiscard]] PartialResult parseIndexForLocal(uint32_t&);
     [[nodiscard]] PartialResult parseIndexForGlobal(uint32_t&);
@@ -761,13 +762,7 @@ auto FunctionParser<Context>::load(Type memoryType) -> PartialResult
 
     WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds load's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
 
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
-        offset = offset32;
-    }
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
 
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer"_s);
 
@@ -794,13 +789,7 @@ auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
 
     WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds store's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
 
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get store offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get store offset"_s);
-        offset = offset32;
-    }
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer"_s);
 
@@ -839,13 +828,7 @@ auto FunctionParser<Context>::atomicLoad(ExtAtomicOpType op, Type memoryType) ->
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
 
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
-        offset = offset32;
-    }
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer"_s);
 
     WASM_VALIDATOR_FAIL_IF(pointer.type().kind() != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
@@ -869,13 +852,7 @@ auto FunctionParser<Context>::atomicStore(ExtAtomicOpType op, Type memoryType) -
     uint8_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get store offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get store offset"_s);
-        offset = offset32;
-    }
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
 
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer"_s);
@@ -900,13 +877,7 @@ auto FunctionParser<Context>::atomicBinaryRMW(ExtAtomicOpType op, Type memoryTyp
     uint8_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
-        offset = offset32;
-    }
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
 
@@ -933,13 +904,7 @@ auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type mem
     uint8_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment !=  memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
-        offset = offset32;
-    }
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(expected, "expected"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
@@ -968,13 +933,7 @@ auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) ->
     uint8_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
-        offset = offset32;
-    }
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
     WASM_TRY_POP_EXPRESSION_STACK_INTO(timeout, "timeout"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
@@ -1002,13 +961,7 @@ auto FunctionParser<Context>::atomicNotify(ExtAtomicOpType op) -> PartialResult
     uint8_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
-        offset = offset32;
-    }
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
     WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "count"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
 
@@ -1093,13 +1046,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
         uint32_t alignment;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get simd memory op alignment"_s);
         WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get simd memory index"_s);
-        if (m_info.memory(memoryIndex).isMemory64())
-            WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get simd memory op offset"_s);
-        else {
-            uint32_t offset32;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get simd memory op offset"_s);
-            offset = offset32;
-        }
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
 
         WASM_VALIDATOR_FAIL_IF(alignment > maxAlignment, "alignment: "_s, alignment, " can't be larger than max alignment for simd operation: "_s, maxAlignment);
 
@@ -1764,6 +1711,16 @@ auto FunctionParser<Context>::parseMemoryIndexAndFixupAlignment(uint32_t& alignm
     result = 0;
     if (hasMemoryIndex)
         WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(result));
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseMemoryOffset(uint8_t memoryIndex, uint64_t& result) -> PartialResult
+{
+    // The offset is encoded as a u64 whatever the memory's address type is; only its value is
+    // restricted to the range the address type can hold.
+    WASM_PARSER_FAIL_IF(!parseVarUInt64(result), "can't get memory offset"_s);
+    WASM_VALIDATOR_FAIL_IF(!m_info.memory(memoryIndex).isMemory64() && result > UINT32_MAX, "memory offset "_s, result, " is out of range for an i32 memory"_s);
     return { };
 }
 
@@ -4182,10 +4139,13 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(!Options::useWasmTailCalls(), "wasm tail calls are not enabled"_s);
         [[fallthrough]];
     case CallIndirect: {
-        uint32_t unused;
-        uint32_t unused2;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get call_indirect's signature index in unreachable context"_s);
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused2), "can't get call_indirect's reserved byte in unreachable context"_s);
+        uint32_t signatureIndex;
+        uint32_t tableIndex;
+        WASM_PARSER_FAIL_IF(!m_info.tableCount(), "call_indirect is only valid when a table is defined or imported"_s);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(signatureIndex), "can't get call_indirect's signature index in unreachable context"_s);
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get call_indirect's table index in unreachable context"_s);
+        WASM_PARSER_FAIL_IF(tableIndex >= m_info.tableCount(), "call_indirect's table index "_s, tableIndex, " invalid, limit is "_s, m_info.tableCount());
+        WASM_PARSER_FAIL_IF(m_info.typeCount() <= signatureIndex, "call_indirect's signature index "_s, signatureIndex, " exceeds known signatures "_s, m_info.typeCount());
         return { };
     }
 
@@ -4218,13 +4178,9 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get first immediate for "_s, m_currentOpcode, " in unreachable context"_s);
         uint8_t memoryIndex;
         WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
-        if (m_info.memory(memoryIndex).isMemory64()) {
-            uint64_t unused64;
-            WASM_PARSER_FAIL_IF(!parseVarUInt64(unused64), "can't get second immediate for "_s, m_currentOpcode, " in unreachable context"_s);
-        } else {
-            uint32_t unused32;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused32), "can't get second immediate for "_s, m_currentOpcode, " in unreachable context"_s);
-        }
+        WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds "_s, m_currentOpcode, "'s natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
+        uint64_t unusedOffset;
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, unusedOffset));
         return { };
     }
 
@@ -4367,9 +4323,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case TableGet:
     case TableSet: {
         unsigned tableIndex;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index"_s);
-        [[fallthrough]];
+        WASM_FAIL_IF_HELPER_FAILS(parseTableIndex(tableIndex));
+        return { };
     }
+
     case RefIsNull: {
         return { };
     }
@@ -4381,8 +4338,11 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     }
 
     case RefFunc: {
-        uint32_t unused;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get immediate for "_s, m_currentOpcode, " in unreachable context"_s);
+        FunctionSpaceIndex index;
+        WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(index));
+        // Function references don't need to be declared in constant expression contexts.
+        if constexpr (!std::is_same<Context, ConstExprGenerator>())
+            WASM_VALIDATOR_FAIL_IF(!m_info.isDeclaredFunction(index), "ref.func index "_s, index, " isn't declared"_s);
         return { };
     }
 
@@ -4601,13 +4561,8 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             uint8_t memoryIndex;
             WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
             WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-            if (m_info.memory(memoryIndex).isMemory64()) {
-                uint64_t unused64;
-                WASM_PARSER_FAIL_IF(!parseVarUInt64(unused64), "can't get first immediate for atomic "_s, static_cast<unsigned>(op), " in unreachable context"_s);
-            } else {
-                uint32_t unused32;
-                WASM_PARSER_FAIL_IF(!parseVarUInt32(unused32), "can't get first immediate for atomic "_s, static_cast<unsigned>(op), " in unreachable context"_s);
-            }
+            uint64_t unusedOffset;
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, unusedOffset));
             break;
         }
         case ExtAtomicOpType::AtomicFence: {
