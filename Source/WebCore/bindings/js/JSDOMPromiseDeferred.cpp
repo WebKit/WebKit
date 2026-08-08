@@ -192,13 +192,15 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     if (exception.code() == ExceptionCode::ExistingExceptionError) {
-        EXCEPTION_ASSERT(scope.exception());
-        auto error = scope.exception()->value();
-        bool isTerminating = handleTerminationExceptionIfNeeded(scope, lexicalGlobalObject);
-        if (!isTerminating) {
+        if (exceptionObject.isEmpty()) {
+            EXCEPTION_ASSERT(scope.exception());
+            auto error = scope.exception()->value();
+            if (handleTerminationExceptionIfNeeded(scope, lexicalGlobalObject))
+                return;
             scope.clearException();
-            reject<IDLAny>(error, rejectAsHandled);
+            exceptionObject = error;
         }
+        reject<IDLAny>(exceptionObject, rejectAsHandled);
         return;
     }
 
