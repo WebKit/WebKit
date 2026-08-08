@@ -37,8 +37,8 @@ namespace WTF {
 template<typename T>
 class UniquelyOwned : private RefCountedWithInlineWeakPtr<T> {
     friend class RefCountedWithInlineWeakPtr<T>;
-    template<typename U> friend UniquelyOwnedPtr<U> adoptUniquelyOwned(U*);
 public:
+    using typename RefCountedWithInlineWeakPtr<T>::RefCountedType;
     // UniquelyOwned interface
     void disown() const
     {
@@ -75,11 +75,6 @@ public:
         ASSERT_WITH_SECURITY_IMPLICATION(!this->refCountDebugger().deletionHasBegun());
         return this->refCount() - 1; // One refcount belongs to our owner
     }
-
-    // InlineWeakPtr interface
-    using RefCountedWithInlineWeakPtr<T>::weakRef;
-    using RefCountedWithInlineWeakPtr<T>::weakDeref;
-    using RefCountedWithInlineWeakPtr<T>::refCount;
 };
 
 } // namespace WTF

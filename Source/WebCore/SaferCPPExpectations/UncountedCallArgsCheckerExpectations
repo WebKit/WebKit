@@ -322,7 +322,6 @@ rendering/RenderGeometryMap.cpp
 rendering/RenderImage.cpp
 rendering/RenderImageResource.h
 rendering/RenderLayer.cpp
-rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h
 rendering/RenderLayerBackingSVGAdditions.cpp

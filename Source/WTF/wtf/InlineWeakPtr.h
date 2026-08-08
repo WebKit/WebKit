@@ -47,7 +47,7 @@ public:
 
     bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
     bool isHashTableEmptyValue() const { return !m_ptr; }
-    bool isWeakNullValue() const { return !m_ptr->refCount(); }
+    bool isWeakNullValue() const { return !refCountHeader(m_ptr).refCount(); }
 
     T* get() const LIFETIME_BOUND;
 
@@ -56,9 +56,9 @@ public:
     T& operator*() const LIFETIME_BOUND { ASSERT(get()); return *get(); }
     ALWAYS_INLINE T* operator->() const LIFETIME_BOUND { return get(); }
 
-    bool operator!() const { return !m_ptr || !m_ptr->refCount(); }
+    bool operator!() const { return !m_ptr || !refCountHeader(m_ptr).refCount(); }
 
-    explicit operator bool() const { return m_ptr && m_ptr->refCount(); }
+    explicit operator bool() const { return m_ptr && refCountHeader(m_ptr).refCount(); }
 
     InlineWeakPtr& operator=(T*);
     InlineWeakPtr& operator=(std::nullptr_t);
@@ -78,7 +78,7 @@ T* InlineWeakPtr<T>::get() const LIFETIME_BOUND
 {
     if (!m_ptr)
         return nullptr;
-    if (!m_ptr->refCount())
+    if (!refCountHeader(m_ptr).refCount())
         return nullptr;
     return m_ptr;
 }

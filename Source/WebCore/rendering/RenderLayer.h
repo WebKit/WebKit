@@ -171,8 +171,11 @@ enum class UpdateBackingSharingFlags {
 using ScrollingScope = uint64_t;
 
 class RenderLayer final : public UniquelyOwned<RenderLayer> {
-    WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_EXPORT(RenderLayer, WEBCORE_EXPORT);
+#if ENABLE(COMPACT_ALLOCATION_FOR_PREFERABLY_COMPACT_TYPES)
+    WTF_ALLOW_COMPACT_POINTERS;
+#endif
 public:
+    friend class WTF::RefCountedWithInlineWeakPtr<RenderLayer>;
     friend class RenderReplica;
     friend class RenderLayerFilters;
     friend class RenderLayerBacking;
@@ -182,7 +185,7 @@ public:
 
     static UniquelyOwnedPtr<RenderLayer> create(RenderLayerModelObject& modelObject)
     {
-        return adoptUniquelyOwned(new RenderLayer(modelObject));
+        return makeUniquelyOwned<RenderLayer>(modelObject);
     }
 
     WEBCORE_EXPORT ~RenderLayer();
