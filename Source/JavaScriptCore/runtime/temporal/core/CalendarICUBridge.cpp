@@ -967,9 +967,8 @@ static std::optional<ISO8601::PlainDate> indianSakaToISO(int32_t sakaYear, uint8
     return ISO8601::PlainDate(isoYear, isoMonth, isoDay);
 }
 
-// Design choice, not an ICU4C workaround: beyond icu4x's WELL_BEHAVED_ASTRONOMICAL_RANGE
-// (±10000 years), chinese/dangi astronomical output isn't trustworthy. Every getter below
-// falls back to ISO fields here, matching nonISOCalendarDateToISO's construction-side fallback.
+// Design choice, not an ICU4C workaround: ±10000 is icu4x's WELL_BEHAVED_ASTRONOMICAL_RANGE, and
+// must track nonISOCalendarDateToISO's fallback. ICU is only accurate inside gregorian 1900-2100.
 static bool calendarUsesISOFallbackForExtremeYear(CalendarID calendarId, int32_t isoYear)
 {
     return (calendarId == chineseCalendarID() || calendarId == dangiCalendarID()) && std::abs(isoYear) > 10000;

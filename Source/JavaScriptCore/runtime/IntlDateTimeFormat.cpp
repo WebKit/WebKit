@@ -1624,6 +1624,14 @@ static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFo
     {
         // ICU4C-WORKAROUND: rdar://182953351 - append era override as a distinct part when ICU emitted no era field (coptic pre-AM).
         if (!eraOverride.isNull() && !sawEra) {
+            if (resultStringView.isEmpty() || !WTF::isUnicodeWhitespace(resultStringView[resultLength - 1])) {
+                auto separator = jsSingleCharacterString(vm, static_cast<char16_t>(' '));
+                JSObject* separatorPart = sourceType
+                    ? createIntlPartObjectWithSource(globalObject, literalString, separator, sourceType)
+                    : createIntlPartObject(globalObject, literalString, separator);
+                parts->putDirectIndex(globalObject, parts->length(), separatorPart);
+                RETURN_IF_EXCEPTION(scope, { });
+            }
             auto type = jsNontrivialString(vm, "era"_s);
             auto valueStr = jsNontrivialString(vm, String(eraOverride));
             JSObject* part = sourceType
