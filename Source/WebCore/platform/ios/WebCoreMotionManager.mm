@@ -34,7 +34,6 @@
 #import "WebCoreThreadRun.h"
 #import <CoreLocation/CoreLocation.h>
 #import <numbers>
-#import <objc/objc-runtime.h>
 #import <pal/spi/cocoa/CoreMotionSPI.h>
 #import <wtf/MathExtras.h>
 #import <wtf/SoftLinking.h>

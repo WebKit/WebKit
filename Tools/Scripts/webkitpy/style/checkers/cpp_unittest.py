@@ -293,6 +293,7 @@ class CppStyleTestBase(unittest.TestCase):
                              '+build/include',
                              '+build/include_order',
                              '+build/namespaces',
+                             '+build/objc_runtime_header',
                              '+runtime/rtti',
                              '+security/javascriptcore_wtf_blockptr')
         return self.perform_lint(code, filename, basic_error_rules, lines_to_check=lines_to_check)
@@ -3605,6 +3606,23 @@ class OrderOfIncludesTest(CppStyleTestBase):
             'BlockPtr<void(WebItemProviderFileCallback)> _callback;\n',
             '',
             file_name='Source/WebCore/foo.mm')
+
+    def test_check_objc_runtime_header_include(self):
+        expected = ('Do not include <objc/objc-runtime.h>; it is not available in all SDKs.'
+                    '  Include <objc/message.h> and/or <objc/runtime.h> instead.'
+                    '  [build/objc_runtime_header] [5]')
+        self.assert_language_rules_check('Source/JavaScriptCore/API/JSWrapperMap.h',
+                                         '#import <objc/objc-runtime.h>\n', expected)
+        self.assert_language_rules_check('Source/WebCore/foo.mm',
+                                         '#import <objc/objc-runtime.h>\n', expected)
+        self.assert_language_rules_check('Source/WebCore/foo.mm',
+                                         '#include <objc/objc-runtime.h>\n', expected)
+
+        # The individual headers the umbrella pulls in are allowed.
+        self.assert_language_rules_check('Source/WebCore/foo.mm',
+                                         '#import <objc/message.h>\n', '')
+        self.assert_language_rules_check('Source/WebCore/foo.mm',
+                                         '#import <objc/runtime.h>\n', '')
 
     def test_check_line_break_after_own_header(self):
         self.assert_language_rules_check('foo.cpp',
