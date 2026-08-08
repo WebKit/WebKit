@@ -138,6 +138,7 @@ public:
         // If there are zero memories then there will be space for a dummy memory (handled in constructor)
 
         m_memories[0].set(vm, this, value);
+        updateCachedMemoryBaseSizePair(0);
     }
 
     MemoryMode memory0Mode() const { return memory(0)->memory().mode(); }
@@ -315,9 +316,17 @@ public:
         return roundUpToMultipleOf<alignof(WasmMemoryBaseAndSize)>(sizeof(JSWebAssemblyInstance)) + sizeof(WasmMemoryBaseAndSize) * index;
     }
 
+    // Every entry into wasm loads the pinned base and bounds-checking registers from pair 0
+    // without first asking whether the module declares a memory, so the slot has to exist even
+    // when it only ever holds the dummy memory.
+    static unsigned cachedMemoryBaseSizePairCount(const Wasm::ModuleInformation& info)
+    {
+        return std::max(1U, info.memoryCount());
+    }
+
     static ptrdiff_t offsetOfImportFunctionInfo(const Wasm::ModuleInformation& info, unsigned index)
     {
-        return WTF::roundUpToMultipleOf<alignof(WasmOrJSImportableFunctionCallLinkInfo)>(offsetOfCachedMemoryBaseSizePair(info.memoryCount())) + sizeof(WasmOrJSImportableFunctionCallLinkInfo) * index;
+        return WTF::roundUpToMultipleOf<alignof(WasmOrJSImportableFunctionCallLinkInfo)>(offsetOfCachedMemoryBaseSizePair(cachedMemoryBaseSizePairCount(info))) + sizeof(WasmOrJSImportableFunctionCallLinkInfo) * index;
     }
 
     static ptrdiff_t offsetOfTable(const Wasm::ModuleInformation& info, unsigned index)
@@ -354,7 +363,7 @@ public:
 
     std::span<WasmMemoryBaseAndSize> cachedMemoryBaseSizePairs()
     {
-        return std::span { std::bit_cast<WasmMemoryBaseAndSize*>(std::bit_cast<uint8_t*>(this) + offsetOfCachedMemoryBaseSizePair(0)), m_moduleInformation->memoryCount() };
+        return std::span { std::bit_cast<WasmMemoryBaseAndSize*>(std::bit_cast<uint8_t*>(this) + offsetOfCachedMemoryBaseSizePair(0)), cachedMemoryBaseSizePairCount(m_moduleInformation) };
     }
 
     std::span<WasmOrJSImportableFunctionCallLinkInfo> importFunctionInfos()
@@ -448,7 +457,7 @@ private:
     RefPtr<Wasm::InstanceAnchor> m_anchor;
     RefPtr<SourceProvider> m_sourceProvider;
     bool m_cachedIsMemory64 { false }; // FIXME(wasm-memory64): rename this to cachedMemory0IsMemory64 or something similar
-    uint64_t m_cachedMemory0Size; // memory.size for memory 0, handled specially to avoid performance regressions
+    uint64_t m_cachedMemory0Size { 0 }; // memory.size for memory 0, handled specially to avoid performance regressions
 
     RefPtr<Wasm::Memory> m_wasmMemory;
     Wasm::Global::Value* m_globals { nullptr };
