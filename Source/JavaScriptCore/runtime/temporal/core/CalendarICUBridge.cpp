@@ -591,6 +591,63 @@ static LunisolarMonthAdvanceResult advanceToNextLunisolarMonth(UCalendar* cal, C
     return LunisolarMonthAdvanceResult::Error;
 }
 
+// Where a month-code walk stopped, and why; the caller applies the constrain rule. Neither exact
+// nor overshot means the walk left the year without reaching the target.
+struct MonthCodeSearchResult {
+    uint8_t ordinal { 1 }; // 1-based ordinal of the month stopped on.
+    bool exact { false }; // targetCode found, so the fields describe it exactly.
+    bool overshot { false }; // Stopped past the target, so it is absent from this year.
+    double stoppedMonthMs { 0 }; // Start of the month stopped on.
+    double previousMonthMs { 0 }; // Start of the last month at or before the target.
+};
+
+static std::optional<MonthCodeSearchResult> searchYearForMonthCode(UCalendar* cal, CalendarID calendarId, const String& targetCode)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    bool isChineseBased = calendarId == chineseCalendarID() || calendarId == dangiCalendarID();
+    // Chinese/Dangi year rollover is detected by the M01 sentinel, so UCAL_EXTENDED_YEAR is not read.
+    int32_t savedYear = isChineseBased ? 0 : ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
+    if (U_FAILURE(status)) [[unlikely]]
+        return std::nullopt;
+    double startMs = ucal_getMillis(cal, &status);
+    if (U_FAILURE(status)) [[unlikely]]
+        return std::nullopt;
+
+    MonthCodeSearchResult result;
+    result.stoppedMonthMs = startMs;
+    result.previousMonthMs = startMs;
+    // 14 covers the longest year (13 months) plus the step that detects the rollover.
+    for (int i = 0; i < 14; ++i) {
+        result.ordinal = static_cast<uint8_t>(i + 1);
+        auto curCode = getMonthCode(cal, calendarId);
+        if (!curCode) [[unlikely]]
+            return std::nullopt;
+        result.stoppedMonthMs = ucal_getMillis(cal, &status);
+        if (U_FAILURE(status)) [[unlikely]]
+            return std::nullopt;
+        if (*curCode == targetCode) {
+            result.exact = true;
+            return result;
+        }
+        if (codePointCompare(*curCode, targetCode) > 0) {
+            result.overshot = true;
+            return result;
+        }
+        result.previousMonthMs = result.stoppedMonthMs;
+        if (advanceToNextLunisolarMonth(cal, calendarId, status) != LunisolarMonthAdvanceResult::Advanced) [[unlikely]]
+            return std::nullopt;
+        int32_t curYear = isChineseBased ? savedYear : ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
+        auto nextCode = isChineseBased ? getMonthCode(cal, calendarId) : std::optional<String> { };
+        if (U_FAILURE(status) || (isChineseBased && !nextCode)) [[unlikely]]
+            return std::nullopt;
+        if ((isChineseBased && *nextCode == "M01"_s) || (!isChineseBased && curYear != savedYear)) {
+            // Left the year. ordinal and previousMonthMs still describe the last month inside it.
+            return result;
+        }
+    }
+    return std::nullopt;
+}
+
 static std::optional<int32_t> stableLunisolarYear(UCalendar* cal, CalendarID calendarId, UErrorCode& status)
 {
     auto anchor = lunisolarYearAnchor(cal, calendarId, status);
@@ -1050,13 +1107,9 @@ TemporalResult<int32_t> calendarYear(CalendarID calendarId, const ISO8601::Plain
         return gregorianArithmeticYearFieldsFor(calendarId, isoDate.year()).year;
     if (calendarUsesISOFallbackForExtremeYear(calendarId, isoDate.year()))
         return isoDate.year();
-    return withCalendar(calendarId, [&](UCalendar* cal) -> TemporalResult<int32_t> {
-        if (!cal) [[unlikely]]
-            return makeUnexpected(rangeError(icuOpenCalendarFailed));
-        if (!setCalendarToISODate(cal, isoDate)) [[unlikely]]
-            return makeUnexpected(rangeError(icuSetCalendarFailed));
-        UErrorCode status = U_ZERO_ERROR;
+    return withCalendarSetToDate(calendarId, isoDate, [&](UCalendar* cal) -> TemporalResult<int32_t> {
         if (calendarId == chineseCalendarID() || calendarId == dangiCalendarID()) {
+            UErrorCode status = U_ZERO_ERROR;
             auto year = stableLunisolarYear(cal, calendarId, status);
             if (!year) [[unlikely]]
                 return makeUnexpected(rangeError(icuReadCalendarFailed));
@@ -1064,16 +1117,9 @@ TemporalResult<int32_t> calendarYear(CalendarID calendarId, const ISO8601::Plain
         }
         // Older ICU versions expose an Amete Mihret-relative UCAL_EXTENDED_YEAR for Ethioaa;
         // newer versions may make UCAL_YEAR and UCAL_EXTENDED_YEAR equal.
-        if (calendarId == ethioaaCalendarID()) {
-            int32_t eraYear = ucal_get(cal, UCAL_YEAR, &status);
-            if (U_FAILURE(status)) [[unlikely]]
-                return makeUnexpected(rangeError(icuReadCalendarFailed));
-            return eraYear;
-        }
-        auto result = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-        if (U_FAILURE(status)) [[unlikely]]
-            return makeUnexpected(rangeError(icuReadCalendarFailed));
-        return result;
+        if (calendarId == ethioaaCalendarID())
+            return readICUField(cal, UCAL_YEAR);
+        return readICUField(cal, UCAL_EXTENDED_YEAR);
     });
 }
 
@@ -1402,86 +1448,24 @@ static std::optional<int> setCalendarToMonthCode(UCalendar* cal, CalendarID cale
     if (!parsed)
         return std::nullopt;
 
-    UErrorCode status = U_ZERO_ERROR;
-    if (calendarId == hebrewCalendarID()) {
-        // Hebrew: walk months in the target year to find the matching month code.
-        // NOTE: UCAL_ACTUAL_MAXIMUM is unreliable for Hebrew; walk is correct and safe.
-        int32_t savedYear = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-        if (U_FAILURE(status)) [[unlikely]]
-            return std::nullopt;
-        if (!resetCalendarToMonthStart(cal)) [[unlikely]]
-            return std::nullopt;
-
-        for (int i = 0; i < 15; i++) {
-            auto curCode = getMonthCode(cal, calendarId);
-            if (!curCode) [[unlikely]]
-                return std::nullopt;
-            if (*curCode == monthCode)
-                return 1; // exact match
-            ucal_add(cal, UCAL_MONTH, 1, &status);
-            if (U_FAILURE(status)) [[unlikely]]
-                return std::nullopt;
-            if (!forceICUFieldReresolution(cal)) [[unlikely]]
-                return std::nullopt;
-            int32_t curYear = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-            if (U_FAILURE(status)) [[unlikely]]
-                return std::nullopt;
-            if (curYear != savedYear) {
-                // Month code doesn't exist in this year.
-                // For M05L (Adar I), constrain to M06 (Adar, slot 5 in non-leap year).
-                ucal_set(cal, UCAL_EXTENDED_YEAR, savedYear);
-                ucal_set(cal, UCAL_MONTH, 5);
-                ucal_set(cal, UCAL_IS_LEAP_MONTH, 0);
-                ucal_set(cal, UCAL_DAY_OF_MONTH, 1);
-                return 0; // constrained
-            }
-        }
-        return std::nullopt;
-    }
-
-    // Chinese/Dangi: walk months from start of year to find matching month code.
-    int32_t savedYear = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-    if (U_FAILURE(status)) [[unlikely]]
-        return std::nullopt;
+    // NOTE: UCAL_ACTUAL_MAXIMUM is unreliable for Hebrew, so the month code is located by walking.
     if (!resetCalendarToMonthStart(cal)) [[unlikely]]
         return std::nullopt;
-    double previousMonthStartMs = ucal_getMillis(cal, &status);
+    auto found = searchYearForMonthCode(cal, calendarId, monthCode);
+    if (!found) [[unlikely]]
+        return std::nullopt;
+    if (found->exact)
+        return 1;
+
+    // Absent from this year, so constrain; Hebrew M05L goes forward to M06, so it stays put.
+    // Only an overshoot may stay put: a walk that left the year is positioned outside it.
+    if (calendarId == hebrewCalendarID() && found->overshot)
+        return 0;
+    UErrorCode status = U_ZERO_ERROR;
+    ucal_setMillis(cal, found->previousMonthMs, &status);
     if (U_FAILURE(status)) [[unlikely]]
         return std::nullopt;
-
-    for (int i = 0; i < 14; i++) {
-        auto curCode = getMonthCode(cal, calendarId);
-        if (!curCode) [[unlikely]]
-            return std::nullopt;
-        if (*curCode == monthCode)
-            return 1; // exact match
-        // If we've walked past the target monthCode lexicographically, the requested code
-        // (a leap month) doesn't exist in this year — constrain to the base month by
-        // reverting to the previous position (Chinese/Dangi convention, matches temporal_rs).
-        // Without this early-stop, walking to year-end would incorrectly land on M12.
-        if (codePointCompare(*curCode, monthCode) > 0) {
-            ucal_setMillis(cal, previousMonthStartMs, &status);
-            if (U_FAILURE(status)) [[unlikely]]
-                return std::nullopt;
-            return 0; // constrained to base month
-        }
-        previousMonthStartMs = ucal_getMillis(cal, &status);
-        if (U_FAILURE(status)) [[unlikely]]
-            return std::nullopt;
-        if (advanceToNextLunisolarMonth(cal, calendarId, status) != LunisolarMonthAdvanceResult::Advanced) [[unlikely]]
-            return std::nullopt;
-        int32_t curYear = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-        if (U_FAILURE(status)) [[unlikely]]
-            return std::nullopt;
-        if (curYear != savedYear) {
-            // Month code sorts after every month in the year (e.g., "M99") — constrain to last month.
-            ucal_setMillis(cal, previousMonthStartMs, &status);
-            if (U_FAILURE(status)) [[unlikely]]
-                return std::nullopt;
-            return 0; // constrained
-        }
-    }
-    return std::nullopt;
+    return 0;
 }
 
 // compareSurpassesLexicographic — icu4x: compare_surpasses_lexicographic (components/calendar/src/calendar_arithmetic.rs)
@@ -1538,41 +1522,18 @@ static int32_t resolveMonthCodeToOrdinal(CalendarID calendarId, const String& mo
         if (!cal) [[unlikely]]
             return 1;
         UErrorCode status = U_ZERO_ERROR;
-        auto yearField = calendarArithmeticYearField(calendarId);
         if (!positionCalendarToYearStart(cal, calendarId, year, status)) [[unlikely]]
             return 1;
-
-        int32_t savedYear = ucal_get(cal, yearField, &status);
-        if (U_FAILURE(status)) [[unlikely]]
+        auto found = searchYearForMonthCode(cal, calendarId, monthCode);
+        if (!found) [[unlikely]]
             return 1;
-        int32_t lastOrdinal = 1;
-        for (int i = 0; i < 14; i++) {
-            auto curCode = getMonthCode(cal, calendarId);
-            if (!curCode) [[unlikely]]
-                return lastOrdinal;
-            if (*curCode == monthCode)
-                return i + 1;
-            if (codePointCompare(*curCode, monthCode) > 0) {
-                // Hebrew M05L (Adar I) constrains FORWARD to M06 (Adar) in non-leap years.
-                // icu4x components/calendar/src/cal/hebrew.rs ordinal_from_month: M05L -> ordinal 6 with Overflow::Constrain.
-                // All other calendars constrain backward to the previous existing month.
-                if (calendarId == hebrewCalendarID() && monthCode == "M05L"_s)
-                    return i + 1;
-                return lastOrdinal;
-            }
-            lastOrdinal = i + 1;
-            ucal_add(cal, UCAL_MONTH, 1, &status);
-            if (U_FAILURE(status)) [[unlikely]]
-                return lastOrdinal;
-            if (!forceICUFieldReresolution(cal)) [[unlikely]]
-                return lastOrdinal;
-            int32_t curYear = ucal_get(cal, yearField, &status);
-            if (U_FAILURE(status)) [[unlikely]]
-                return lastOrdinal;
-            if (curYear != savedYear)
-                return lastOrdinal;
-        }
-        return lastOrdinal;
+        if (found->exact)
+            return found->ordinal;
+        // Hebrew M05L keeps the stopped-on ordinal (icu4x hebrew.rs ordinal_from_month: -> 6 under
+        // Overflow::Constrain). A ran-out stop already sits on the year's last month.
+        if (found->overshot && !(calendarId == hebrewCalendarID() && monthCode == "M05L"_s))
+            return std::max(1, found->ordinal - 1);
+        return found->ordinal;
     });
 }
 
@@ -2660,7 +2621,6 @@ TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId
 
         setICUCalendarYear(cal, calendarId, year);
 
-        bool isChineseBased = calendarId == chineseCalendarID() || calendarId == dangiCalendarID();
         if (monthCode) {
             // Step 2: ConstrainMonthCode + position ICU cursor for downstream day/millis reads.
             if (calendarIsLunisolar(calendarId)) {
@@ -2674,56 +2634,31 @@ TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId
 
                 String targetCode = makeString("M"_s, monthCode->monthNumber < 10 ? "0"_s : ""_s,
                     monthCode->monthNumber, monthCode->isLeapMonth ? "L"_s : ""_s);
-                int32_t savedYear = isChineseBased ? 0 : ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-                if (U_FAILURE(status)) [[unlikely]]
-                    return makeUnexpected(rangeError(icuReadCalendarFailed));
-                double previousMonthMs = ucal_getMillis(cal, &status);
-                if (U_FAILURE(status)) [[unlikely]]
-                    return makeUnexpected(rangeError(icuReadCalendarFailed));
-                bool found = false;
-                for (int i = 0; i < 14; i++) {
-                    auto curCode = getMonthCode(cal, calendarId);
-                    if (!curCode) [[unlikely]]
-                        return makeUnexpected(rangeError(icuReadCalendarFailed));
-                    if (*curCode == targetCode) {
-                        found = true;
-                        break;
-                    }
-                    // For constrain: if we've passed the target code, stop at previous.
-                    if (codePointCompare(*curCode, targetCode) > 0) {
-                        // Leap month doesn't exist — constrain to previous month.
-                        if (overflow == TemporalOverflow::Constrain && monthCode->isLeapMonth) {
-                            if (calendarId == hebrewCalendarID()) {
-                                // M05L -> M06 (Adar), which is this current month.
-                                found = true;
-                            } else {
-                                // Chinese/Dangi: M01L->M01, revert one step.
-                                ucal_setMillis(cal, previousMonthMs, &status);
-                                if (U_FAILURE(status)) [[unlikely]]
-                                    return makeUnexpected(rangeError(icuSetCalendarFailed));
-                                found = true;
-                            }
-                        }
-                        break;
-                    }
-                    previousMonthMs = ucal_getMillis(cal, &status);
-                    if (U_FAILURE(status)) [[unlikely]]
-                        return makeUnexpected(rangeError(icuReadCalendarFailed));
-                    auto advanceResult = advanceToNextLunisolarMonth(cal, calendarId, status);
-                    if (advanceResult == LunisolarMonthAdvanceResult::Error) [[unlikely]]
-                        return makeUnexpected(rangeError(U_FAILURE(status) ? icuReadCalendarFailed : icuCalendarArithmeticFailed));
-                    int32_t curYear = isChineseBased ? savedYear : ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-                    auto nextCode = isChineseBased ? getMonthCode(cal, calendarId) : std::optional<String> { };
-                    if (U_FAILURE(status) || (isChineseBased && !nextCode)) [[unlikely]]
-                        return makeUnexpected(rangeError(icuReadCalendarFailed));
-                    if ((isChineseBased && *nextCode == "M01"_s) || (!isChineseBased && curYear != savedYear)) {
-                        ucal_setMillis(cal, previousMonthMs, &status);
-                        if (U_FAILURE(status)) [[unlikely]]
+                auto found = searchYearForMonthCode(cal, calendarId, targetCode);
+                if (!found) [[unlikely]]
+                    return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
+                auto rewindToPreviousMonth = [&]() -> bool {
+                    ucal_setMillis(cal, found->previousMonthMs, &status);
+                    return !U_FAILURE(status);
+                };
+                bool resolved = false;
+                if (found->exact)
+                    resolved = true;
+                else if (found->overshot) {
+                    // Only a leap code constrains, and only under ~constrain~; otherwise leave the
+                    // cursor alone and let ~reject~ throw below. Hebrew M05L goes forward to M06
+                    // (stay put), Chinese/Dangi M{n}L back to M{n}.
+                    if (overflow == TemporalOverflow::Constrain && monthCode->isLeapMonth) {
+                        if (calendarId != hebrewCalendarID() && !rewindToPreviousMonth()) [[unlikely]]
                             return makeUnexpected(rangeError(icuSetCalendarFailed));
-                        break;
+                        resolved = true;
                     }
+                } else {
+                    // Walked out of the year: sit on its last month. Still unresolved.
+                    if (!rewindToPreviousMonth()) [[unlikely]]
+                        return makeUnexpected(rangeError(icuSetCalendarFailed));
                 }
-                if (!found && overflow == TemporalOverflow::Reject) [[unlikely]]
+                if (!resolved && overflow == TemporalOverflow::Reject) [[unlikely]]
                     return makeUnexpected(rangeError("monthCode does not exist in this calendar year"_s));
             } else {
                 // Non-lunisolar with monthCode (Gregorian-based calendars).

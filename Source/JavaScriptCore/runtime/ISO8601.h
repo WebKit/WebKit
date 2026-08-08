@@ -485,8 +485,8 @@ private:
 static_assert(sizeof(PlainYearMonth) == sizeof(PlainDate));
 
 // https://tc39.es/proposal-temporal/#sec-temporal-iso-string-time-zone-parse-records
-// ISO String Time Zone Parse Record { [[Z]], [[OffsetString]], [[TimeZoneAnnotation]] }.
-struct TimeZoneRecord {
+// { [[Z]], [[OffsetString]], [[TimeZoneAnnotation]] }.
+struct ISOStringTimeZoneParseRecord {
     bool m_z { false };
     std::optional<int64_t> m_offset;
     // [[TimeZoneAnnotation]]; an empty Vector is ~empty~.
@@ -508,7 +508,8 @@ struct RFC9557Annotation {
 // https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
 JS_EXPORT_PRIVATE std::optional<TimeZoneID> parseTimeZoneName(StringView);
 std::optional<Duration> parseDuration(StringView);
-std::optional<int64_t> parseUTCOffset(StringView, bool parseSubMinutePrecision = true);
+enum class SubMinutePrecision : bool { No, Yes };
+std::optional<int64_t> parseUTCOffset(StringView, SubMinutePrecision = SubMinutePrecision::Yes);
 std::optional<int64_t> parseUTCOffsetInMinutes(StringView);
 enum class ValidateTimeZoneID : bool { No, Yes };
 using CalendarID = RFC9557Value;
@@ -526,7 +527,7 @@ using TemporalProductionSet = OptionSet<TemporalProduction>;
 struct ParsedISODateTime {
     std::optional<PlainDate> date;
     std::optional<PlainTime> time;
-    std::optional<TimeZoneRecord> timeZone;
+    std::optional<ISOStringTimeZoneParseRecord> timeZone;
     std::optional<CalendarID> calendar;
     TemporalProduction matched { };
     // True when the matched goal was the SHORT FORM:

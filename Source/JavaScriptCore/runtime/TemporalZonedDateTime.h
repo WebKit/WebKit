@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-JS_EXPORT_PRIVATE std::optional<TimeZone> timeZoneFromRecord(const ISO8601::TimeZoneRecord&);
+JS_EXPORT_PRIVATE std::optional<TimeZone> timeZoneFromRecord(const ISO8601::ISOStringTimeZoneParseRecord&);
 
 class TemporalZonedDateTime final : public JSNonFinalObject {
 public:

@@ -135,7 +135,7 @@ ISO8601::PlainDateTime TemporalZonedDateTime::getLocalDateTime(JSGlobalObject* g
     return *result;
 }
 
-std::optional<TimeZone> timeZoneFromRecord(const ISO8601::TimeZoneRecord& tzRecord)
+std::optional<TimeZone> timeZoneFromRecord(const ISO8601::ISOStringTimeZoneParseRecord& tzRecord)
 {
     auto& nameOrOffset = tzRecord.m_nameOrOffset;
     if (auto* offsetNanoseconds = std::get_if<int64_t>(&nameOrOffset))

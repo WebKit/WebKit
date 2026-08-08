@@ -261,7 +261,7 @@ std::optional<Duration> parseDuration(StringView string)
 
 enum class Second60Mode { Accept, Reject };
 template<typename CharacterType>
-static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>& buffer, Second60Mode second60Mode, bool parseSubMinutePrecision = true, bool* outHasSeconds = nullptr)
+static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>& buffer, Second60Mode second60Mode, SubMinutePrecision subMinutePrecision = SubMinutePrecision::Yes, bool* outHasSeconds = nullptr)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeSpec
     // TimeSpec :
@@ -326,7 +326,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     } else if (!(*buffer >= '0' && (second60Mode == Second60Mode::Accept ? (*buffer <= '6') : (*buffer <= '5'))))
         return PlainTime(hour, minute, 0, 0, 0, 0);
 
-    if (!parseSubMinutePrecision)
+    if (subMinutePrecision == SubMinutePrecision::No)
         return std::nullopt;
 
     if (outHasSeconds)
@@ -382,7 +382,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
 }
 
 template<typename CharacterType>
-static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>& buffer, bool parseSubMinutePrecision = true, bool* outHasSubMinutePrecision = nullptr)
+static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>& buffer, SubMinutePrecision subMinutePrecision = SubMinutePrecision::Yes, bool* outHasSubMinutePrecision = nullptr)
 {
     // UTCOffset[SubMinutePrecision] :
     //     ASCIISign Hour
@@ -410,7 +410,7 @@ static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>&
         return std::nullopt;
 
     bool hasSeconds = false;
-    auto plainTime = parseTimeSpec(buffer, Second60Mode::Reject, parseSubMinutePrecision, &hasSeconds);
+    auto plainTime = parseTimeSpec(buffer, Second60Mode::Reject, subMinutePrecision, &hasSeconds);
     if (!plainTime)
         return std::nullopt;
 
@@ -427,10 +427,10 @@ static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>&
     return (nsPerHour * hour + nsPerMinute * minute + nsPerSecond * second + nsPerMillisecond * millisecond + nsPerMicrosecond * microsecond + nanosecond) * factor;
 }
 
-std::optional<int64_t> parseUTCOffset(StringView string, bool parseSubMinutePrecision)
+std::optional<int64_t> parseUTCOffset(StringView string, SubMinutePrecision subMinutePrecision)
 {
-    return readCharactersForParsing(string, [parseSubMinutePrecision](auto buffer) -> std::optional<int64_t> {
-        auto result = parseUTCOffset(buffer, parseSubMinutePrecision);
+    return readCharactersForParsing(string, [subMinutePrecision](auto buffer) -> std::optional<int64_t> {
+        auto result = parseUTCOffset(buffer, subMinutePrecision);
         if (!buffer.atEnd())
             return std::nullopt;
         return result;
@@ -698,7 +698,7 @@ static std::optional<TimeZoneIdentifierParseRecord> parseTimeZoneIdentifier(Stri
     }
 
     // Steps 4-6: parseUTCOffset matches |UTCOffset[~SubMinutePrecision]| and converts it in one call.
-    auto offsetNanoseconds = parseUTCOffset(buffer, /* parseSubMinutePrecision */ false);
+    auto offsetNanoseconds = parseUTCOffset(buffer, SubMinutePrecision::No);
 
     // Step 2: If parseResult is a List of errors, throw a RangeError exception.
     if (!offsetNanoseconds)
@@ -1100,7 +1100,7 @@ static std::optional<ISO8601ParseTokens> tokenizeTemporalInstantString(StringPar
         buffer.advance();
     } else if (*buffer == '+' || *buffer == '-') {
         bool subMinute = false;
-        auto off = parseUTCOffset(buffer, true, &subMinute);
+        auto off = parseUTCOffset(buffer, SubMinutePrecision::Yes, &subMinute);
         if (!off)
             return std::nullopt;
         tokens.utcOffsetNs = *off;
@@ -1145,7 +1145,7 @@ static std::optional<ISO8601ParseTokens> tokenizeTemporalDateTimeString(StringPa
                 buffer.advance();
             } else if (*buffer == '+' || *buffer == '-') {
                 bool subMinute = false;
-                auto off = parseUTCOffset(buffer, true, &subMinute);
+                auto off = parseUTCOffset(buffer, SubMinutePrecision::Yes, &subMinute);
                 if (!off)
                     return std::nullopt;
                 tokens.utcOffsetNs = *off;
@@ -1230,7 +1230,7 @@ static std::optional<ISO8601ParseTokens> tokenizeTemporalAnnotatedTime(StringPar
             return std::nullopt; // DateTimeUTCOffset[~Z] forbids Z.
         if (*buffer == '+' || *buffer == '-') {
             bool subMinute = false;
-            auto off = parseUTCOffset(buffer, true, &subMinute);
+            auto off = parseUTCOffset(buffer, SubMinutePrecision::Yes, &subMinute);
             if (!off)
                 return std::nullopt;
             tokens.utcOffsetNs = *off;
@@ -1398,10 +1398,10 @@ std::optional<ParsedISODateTime> parseISODateTime(StringView string, TemporalPro
         time = timeFields;
 
     // Step 24. timeZoneResult = { [[Z]]: false, [[OffsetString]]: ~empty~, [[TimeZoneAnnotation]]: ~empty~ }.
-    std::optional<TimeZoneRecord> timeZoneResult;
+    std::optional<ISOStringTimeZoneParseRecord> timeZoneResult;
     bool anyTzInfo = parseResult->hasUTCDesignator || parseResult->utcOffsetNs.has_value() || !std::holds_alternative<std::monostate>(parseResult->tzAnnotation);
     if (anyTzInfo) {
-        TimeZoneRecord tz;
+        ISOStringTimeZoneParseRecord tz;
         // Step 25. Set [[TimeZoneAnnotation]].
         if (auto* name = std::get_if<Vector<Latin1Character>>(&parseResult->tzAnnotation))
             tz.m_nameOrOffset = WTF::move(*name);
