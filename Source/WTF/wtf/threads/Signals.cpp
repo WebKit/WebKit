@@ -35,6 +35,7 @@ extern "C" {
 #endif
 
 #include <cstdio>
+#include <pthread.h>
 #include <signal.h>
 #include <wtf/StdLibExtras.h>
 
@@ -211,7 +212,7 @@ inline ptrauth_generic_signature_t hashThreadState(std::span<const natural_t> so
 
     ptrauth_generic_signature_t hash = 0;
 
-    hash = ptrauth_sign_generic_data(hash, mach_thread_self());
+    hash = ptrauth_sign_generic_data(hash, pthread_mach_thread_np(pthread_self()));
 
     auto srcSpan = spanReinterpretCast<const uintptr_t>(source).first(threadStateSizeInPointers);
 
@@ -289,9 +290,13 @@ kern_return_t catch_mach_exception_raise_state_identity_protected(
     mach_msg_type_number_t* outStateCount)
 {
     UNUSED_PARAM(threadID);
-    UNUSED_PARAM(taskIDToken);
-    return catch_mach_exception_raise_state(exceptionPort, exceptionType, exceptionData,
+    kern_return_t kr = catch_mach_exception_raise_state(exceptionPort, exceptionType, exceptionData,
         dataCount, stateFlavor, inState, inStateCount, outState, outStateCount);
+    // MIG moves the task ID token send right into this routine, but only a successful return owns it:
+    // on failure mach_msg_server_once destroys the request message and releases the right for us.
+    if (kr == KERN_SUCCESS && MACH_PORT_VALID(taskIDToken))
+        mach_port_deallocate(mach_task_self(), taskIDToken);
+    return kr;
 }
 
 #endif // defined(EXCEPTION_STATE_IDENTITY_PROTECTED)

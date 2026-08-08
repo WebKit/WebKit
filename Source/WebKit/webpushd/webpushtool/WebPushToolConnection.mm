@@ -34,6 +34,7 @@
 #import "WebPushDaemonConstants.h"
 #import <WebCore/SecurityOriginData.h>
 #import <mach/mach_init.h>
+#import <mach/mach_port.h>
 #import <mach/task.h>
 #import <pal/spi/cocoa/ServersSPI.h>
 #import <wtf/BlockPtr.h>
@@ -54,11 +55,13 @@ Ref<Connection> Connection::create(PreferTestService preferTestService, String b
 
 static mach_port_t maybeConnectToService(const char* serviceName)
 {
-    mach_port_t bsPort;
-    task_get_special_port(mach_task_self(), TASK_BOOTSTRAP_PORT, &bsPort);
+    mach_port_t bsPort = MACH_PORT_NULL;
+    if (task_get_special_port(mach_task_self(), TASK_BOOTSTRAP_PORT, &bsPort) != KERN_SUCCESS)
+        return MACH_PORT_NULL;
 
     mach_port_t servicePort;
     kern_return_t err = bootstrap_look_up(bsPort, serviceName, &servicePort);
+    mach_port_deallocate(mach_task_self(), bsPort);
 
     if (err == KERN_SUCCESS)
         return servicePort;
@@ -99,6 +102,7 @@ void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
             usleep(1000);
             result = maybeConnectToService(m_serviceName);
         }
+        mach_port_deallocate(mach_task_self(), result);
     }
 
     SAFE_PRINTF("Connecting to service '%s'\n", m_serviceName);

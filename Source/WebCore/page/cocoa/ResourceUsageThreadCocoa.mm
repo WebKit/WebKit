@@ -153,7 +153,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
         return;
     }
 
-    mach_port_t resourceUsageMachThread = mach_thread_self();
+    auto resourceUsageMachThread = MachSendRight::adopt(mach_thread_self());
 
     // Main thread is always first.
     mach_port_t mainThreadMachThread = threads[0].sendRight.sendRight();
@@ -181,7 +181,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
     auto isDebuggerThread = [&](const ThreadInfo& thread) -> bool {
         mach_port_t machThread = thread.sendRight.sendRight();
-        if (machThread == resourceUsageMachThread)
+        if (machThread == resourceUsageMachThread.sendRight())
             return true;
 #if ENABLE(SAMPLING_PROFILER)
         if (machThread == m_samplingProfilerMachThread)
