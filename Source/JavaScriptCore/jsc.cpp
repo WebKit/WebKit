@@ -237,7 +237,11 @@ static void checkException(GlobalObject*, bool isLastFile, bool hasException, JS
 class Message : public ThreadSafeRefCounted<Message> {
 public:
 #if ENABLE(WEBASSEMBLY)
-    using Content = Variant<ArrayBufferContents, RefPtr<SharedArrayBufferContents>>;
+    struct WasmMemory {
+        RefPtr<SharedArrayBufferContents> contents;
+        Wasm::AddressType addressType;
+    };
+    using Content = Variant<ArrayBufferContents, WasmMemory>;
 #else
     using Content = Variant<ArrayBufferContents>;
 #endif
@@ -2631,14 +2635,15 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast, (JSGlobalObject* g
             return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(sharingMode), WTF::move(nativeBuffer));
         }
 #if ENABLE(WEBASSEMBLY)
-        if (std::holds_alternative<RefPtr<SharedArrayBufferContents>>(content)) {
+        if (std::holds_alternative<Message::WasmMemory>(content)) {
             JSWebAssemblyMemory* jsMemory = JSC::JSWebAssemblyMemory::create(vm, globalObject->webAssemblyMemoryStructure());
             auto handler = [&vm, jsMemory](Wasm::Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); };
+            auto wasmMemory = std::get<Message::WasmMemory>(WTF::move(content));
             RefPtr<Wasm::Memory> memory;
-            if (auto shared = std::get<RefPtr<SharedArrayBufferContents>>(WTF::move(content)))
-                memory = Wasm::Memory::create(shared.releaseNonNull(), jsMemory->memory().addressType(), WTF::move(handler));
+            if (auto shared = WTF::move(wasmMemory.contents))
+                memory = Wasm::Memory::create(shared.releaseNonNull(), wasmMemory.addressType, WTF::move(handler));
             else
-                memory = Wasm::Memory::createZeroSized(MemorySharingMode::Shared, jsMemory->memory().addressType(), WTF::move(handler));
+                memory = Wasm::Memory::createZeroSized(MemorySharingMode::Shared, wasmMemory.addressType, WTF::move(handler));
             jsMemory->adopt(memory.releaseNonNull());
             return jsMemory;
         }
@@ -2706,8 +2711,8 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentBroadcast, (JSGlobalObject* globalOb
     if (memory && memory->memory().sharingMode() == MemorySharingMode::Shared) {
         Workers::singleton().broadcast(
             [&] (const AbstractLocker& locker, Worker& worker) {
-                RefPtr<SharedArrayBufferContents> contents { memory->memory().shared() };
-                RefPtr<Message> message = adoptRef(new Message(WTF::move(contents), index));
+                Message::WasmMemory wasmMemory { memory->memory().shared(), memory->memory().addressType() };
+                RefPtr<Message> message = adoptRef(new Message(WTF::move(wasmMemory), index));
                 worker.enqueue(locker, message);
             });
         return JSValue::encode(jsUndefined());

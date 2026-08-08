@@ -1361,6 +1361,10 @@ public:
             write(WasmMemoryTag);
             write(agentClusterIDFromGlobalObject(*m_lexicalGlobalObject));
             write(index);
+            // The address type is not recoverable from the shared contents, and a memory declared with a
+            // maximum of zero has no contents at all. This record is never persisted (forStorage is
+            // rejected above), so it needs no version guard.
+            write(memory->memory().addressType().is64Bit());
             return true;
         }
 #endif
@@ -3710,6 +3714,14 @@ public:
                 return JSValue();
             }
 
+            bool isMemory64;
+            if (!read(isMemory64)) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            JSC::Wasm::AddressType addressType { isMemory64 };
+
             auto& vm = m_lexicalGlobalObject->vm();
             JSWebAssemblyMemory* result = JSC::JSWebAssemblyMemory::create(vm, m_globalObject->webAssemblyMemoryStructure());
             RefPtr<Wasm::Memory> memory;
@@ -3720,10 +3732,10 @@ public:
                     fail();
                     return JSValue();
                 }
-                memory = Wasm::Memory::create(contents.releaseNonNull(), result->memory().addressType(), WTF::move(handler));
+                memory = Wasm::Memory::create(contents.releaseNonNull(), addressType, WTF::move(handler));
             } else {
                 // zero size & max-size.
-                memory = Wasm::Memory::createZeroSized(JSC::MemorySharingMode::Shared, result->memory().addressType(), WTF::move(handler));
+                memory = Wasm::Memory::createZeroSized(JSC::MemorySharingMode::Shared, addressType, WTF::move(handler));
             }
 
             result->adopt(memory.releaseNonNull());
@@ -4258,8 +4270,11 @@ size_t SerializedScriptValue::computeMemoryCost() const
 #if ENABLE(WEBASSEMBLY)
     // We are not supporting WebAssembly Module memory estimation yet.
     if (m_internals->wasmMemoryHandlesArray) {
-        for (auto& content : *m_internals->wasmMemoryHandlesArray)
-            cost += content->sizeInBytes(std::memory_order_relaxed);
+        // A shared memory declared with a maximum of zero has no contents at all.
+        for (auto& content : *m_internals->wasmMemoryHandlesArray) {
+            if (content)
+                cost += content->sizeInBytes(std::memory_order_relaxed);
+        }
     }
 #endif
 #if ENABLE(WEB_CODECS)
