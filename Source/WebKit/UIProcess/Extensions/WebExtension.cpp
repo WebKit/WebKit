@@ -1637,6 +1637,9 @@ const WebExtension::PermissionsSet& WebExtension::supportedPermissions()
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
         WebExtensionPermission::bookmarks(),
 #endif
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+        WebExtensionPermission::offscreen(),
+#endif
     };
     return permissions;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,28 @@
 
 #pragma once
 
-#if ENABLE(WK_WEB_EXTENSIONS)
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
 
-#include <wtf/text/WTFString.h>
+#include "JSWebExtensionAPIOffscreen.h"
+#include "WebExtensionAPIObject.h"
 
 namespace WebKit {
 
-/* Constants for specifying permission in a WebExtensionContext. */
-class WebExtensionPermission {
+class WebExtensionAPIOffscreen : public WebExtensionAPIObject, public JSWebExtensionWrappable {
+    WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIOffscreen, offscreen, offscreen);
+
 public:
-    static String activeTab();
-    static String alarms();
-#if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
-    static String bookmarks();
-#endif
-    static String clipboardWrite();
-    static String contextMenus();
-    static String cookies();
-    static String declarativeNetRequest();
-    static String declarativeNetRequestFeedback();
-    static String declarativeNetRequestWithHostAccess();
-    static String menus();
-    static String nativeMessaging();
-    static String notifications();
-#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
-    static String offscreen();
-#endif
-    static String scripting();
-#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    static String sidePanel();
-#endif
-    static String storage();
-    static String tabs();
-    static String unlimitedStorage();
-    static String webNavigation();
-    static String webRequest();
+#if PLATFORM(COCOA)
+
+    void createDocument(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void closeDocument(Ref<WebExtensionCallbackHandler>&&);
+    void hasDocument(Ref<WebExtensionCallbackHandler>&&);
+
+#endif // PLATFORM(COCOA)
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+SPECIALIZE_TYPE_TRAITS_WEB_EXTENSION(WebExtensionAPIOffscreen, offscreen);
+
+#endif // ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)

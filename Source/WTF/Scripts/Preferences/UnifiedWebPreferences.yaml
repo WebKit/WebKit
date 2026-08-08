@@ -10253,6 +10253,21 @@ WebExtensionBookmarksEnabled:
     WebCore:
       default: false
 
+WebExtensionOffscreenEnabled:
+  type: bool
+  status: testable
+  category: extensions
+  humanReadableName: "WebExtension Offscreen API"
+  humanReadableDescription: "Enable support for WebExtensions using the Offscreen API"
+  condition: ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebExtensionSidebarEnabled:
   type: bool
   status: testable

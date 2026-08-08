@@ -246,6 +246,11 @@ static NSString * const windowTypeKey = @"windowType";
 static NSString * const windowTypesKey = @"windowTypes";
 static NSString * const worldKey = @"world";
 
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+static NSString * const justificationKey = @"justification";
+static NSString * const reasonsKey = @"reasons";
+#endif
+
 #endif
 
 static constexpr auto delayInMinutesKey = "delayInMinutes"_s;

@@ -58,6 +58,8 @@
 
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPINotifications notifications;
 
+    [MainWorldOnly, Dynamic, Conditional=WK_WEB_EXTENSIONS_OFFSCREEN] readonly attribute WebExtensionAPIOffscreen offscreen;
+
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction pageAction;
 
     [MainWorldOnly] readonly attribute WebExtensionAPIPermissions permissions;

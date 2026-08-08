@@ -43,6 +43,7 @@
 #include "WebExtensionAPIMenus.h"
 #include "WebExtensionAPINotifications.h"
 #include "WebExtensionAPIObject.h"
+#include "WebExtensionAPIOffscreen.h"
 #include "WebExtensionAPIPermissions.h"
 #include "WebExtensionAPIRuntime.h"
 #include "WebExtensionAPIScripting.h"
@@ -84,6 +85,9 @@ public:
     WebExtensionAPILocalization& i18n();
     WebExtensionAPIMenus& menus();
     WebExtensionAPINotifications& notifications();
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    WebExtensionAPIOffscreen& offscreen();
+#endif
     WebExtensionAPIAction& pageAction() { return action(); }
     WebExtensionAPIPermissions& permissions();
     WebExtensionAPIRuntime& runtime() const final;
@@ -119,6 +123,9 @@ private:
     RefPtr<WebExtensionAPILocalization> m_i18n;
     RefPtr<WebExtensionAPIMenus> m_menus;
     RefPtr<WebExtensionAPINotifications> m_notifications;
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    RefPtr<WebExtensionAPIOffscreen> m_offscreen;
+#endif
     RefPtr<WebExtensionAPIPermissions> m_permissions;
     mutable RefPtr<WebExtensionAPIRuntime> m_runtime;
     RefPtr<WebExtensionAPIScripting> m_scripting;

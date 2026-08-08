@@ -907,6 +907,15 @@ private:
     void menusRemoveAll(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
     void fireMenusClickedEventIfNeeded(const WebExtensionMenuItem&, bool wasChecked, const WebExtensionMenuItemContextParameters&);
 
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    // Offscreen APIs
+    bool isOffscreenMessageAllowed(IPC::Decoder&);
+
+    void offscreenCreateDocument(const WebExtensionOffscreenDocumentParameters&, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void offscreenCloseDocument(CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void offscreenHasDocument(CompletionHandler<void(Expected<bool, WebExtensionError>&&)>&&);
+#endif
+
     // Permissions APIs
     void permissionsGetAll(CompletionHandler<void(Vector<String>&& permissions, Vector<String>&& origins)>&&);
     void permissionsContains(HashSet<String> permissions, HashSet<String> origins, CompletionHandler<void(bool)>&&);

@@ -109,6 +109,13 @@ messages -> WebExtensionContext {
     [Validator=isMenusMessageAllowed] MenusRemove(String identifier) -> (Expected<void, WebKit::WebExtensionError> result)
     [Validator=isMenusMessageAllowed] MenusRemoveAll() -> (Expected<void, WebKit::WebExtensionError> result)
 
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    // Offscreen APIs
+    [Validator=isOffscreenMessageAllowed] OffscreenCreateDocument(struct WebKit::WebExtensionOffscreenDocumentParameters parameters) -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isOffscreenMessageAllowed] OffscreenCloseDocument() -> (Expected<void, WebKit::WebExtensionError> result)
+    [Validator=isOffscreenMessageAllowed] OffscreenHasDocument() -> (Expected<bool, WebKit::WebExtensionError> result)
+#endif
+
     // Permissions APIs
     [Validator=isLoaded] PermissionsGetAll() -> (Vector<String> permissions, Vector<String> origins)
     [Validator=isLoaded] PermissionsContains(HashSet<String> permissions, HashSet<String> origins) -> (bool containsPermissions)

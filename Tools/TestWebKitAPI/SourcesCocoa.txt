@@ -364,6 +364,7 @@ Tests/WebKit/WKWebView/WKWebExtensionAPIEvent.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIExtension.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIMenus.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPINamespace.mm @nonARC
+Tests/WebKit/WKWebView/WKWebExtensionAPIOffscreen.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIPermissions.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIScripting.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIStorage.mm @nonARC

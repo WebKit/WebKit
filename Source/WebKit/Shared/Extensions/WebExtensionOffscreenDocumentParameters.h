@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,16 @@
 
 #pragma once
 
-#if ENABLE(WK_WEB_EXTENSIONS)
-
-#include <wtf/text/WTFString.h>
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
 
 namespace WebKit {
 
-/* Constants for specifying permission in a WebExtensionContext. */
-class WebExtensionPermission {
-public:
-    static String activeTab();
-    static String alarms();
-#if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
-    static String bookmarks();
-#endif
-    static String clipboardWrite();
-    static String contextMenus();
-    static String cookies();
-    static String declarativeNetRequest();
-    static String declarativeNetRequestFeedback();
-    static String declarativeNetRequestWithHostAccess();
-    static String menus();
-    static String nativeMessaging();
-    static String notifications();
-#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
-    static String offscreen();
-#endif
-    static String scripting();
-#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
-    static String sidePanel();
-#endif
-    static String storage();
-    static String tabs();
-    static String unlimitedStorage();
-    static String webNavigation();
-    static String webRequest();
+struct WebExtensionOffscreenDocumentParameters {
+    String justification;
+    Vector<String> reasons;
+    String url;
 };
 
-} // namespace WebKit
+}
 
-#endif // ENABLE(WK_WEB_EXTENSIONS)
+#endif // ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)

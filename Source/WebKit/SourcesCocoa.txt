@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2025 Apple Inc. All rights reserved.
+// Copyright (C) 2018-2026 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -512,6 +512,7 @@ UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIDevToolsPanels.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIEventCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIExtensionCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIMenusCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIOffscreenCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIPermissionsCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIPortCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIRuntimeCocoa.mm
@@ -772,6 +773,7 @@ WebProcess/Extensions/API/Cocoa/WebExtensionAPILocalizationCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIMenusCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPINamespaceCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPINotificationsCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIOffscreenCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIPermissionsCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIPortCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIRuntimeCocoa.mm
