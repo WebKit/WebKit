@@ -32,6 +32,7 @@
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/RTCNetworkManager.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <atomic>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
@@ -80,6 +81,9 @@ private:
     WebCore::ScriptExecutionContextIdentifier m_documentIdentifier;
     bool m_useMDNSCandidates { true };
     bool m_receivedNetworkList { false };
+    // Set on the WebRTC network thread, read there by StartUpdating.
+    std::atomic<bool> m_hasMergedNetworkList { false };
+    std::atomic<bool> m_hasPendingNetworksChangedNotification { false };
 #if ASSERT_ENABLED
     bool m_isClosed { false };
 #endif
