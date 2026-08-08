@@ -87,7 +87,7 @@ webkit.org/b/320062 imported/w3c/web-platform-tests/web-animations/responsive/to
 #//////////////////////////////////////////////////////////////////////////////////////////
 
 # Accessibility
-webkit.org/b/214341 [ Debug ] accessibility/datalist.html [ Crash ]
+webkit.org/b/214341 [ Debug ] accessibility/datalist.html [ Crash Failure Pass ]
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-embedded-objects.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-entry-and-password.html [ Failure ]
@@ -104,7 +104,6 @@ webkit.org/b/235941 accessibility/gtk/text-at-offset-special-chars.html [ Failur
 webkit.org/b/235941 accessibility/gtk/caret-offsets.html [ Timeout ]
 
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/max-width-107.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/CSS2/stacking-context/composite-change-after-scroll-preserves-stacking-order.html [ ImageOnlyFailure ]
 
 # Times out, possibly missing automation:
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-aux-pointerdown-and-pointerdown.html [ Skip ]
@@ -1136,8 +1135,6 @@ webkit.org/b/208984 fast/events/touch/touch-slider-no-js-touch-listener.html [ F
 
 webkit.org/b/213782 svg/custom/object-sizing-explicit-width.xhtml [ Failure Pass ]
 
-imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-escape-scroller-004.html [ ImageOnlyFailure ]
-
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
 
 http/tests/css/css-masking/mask-external-svg-fragment.html [ ImageOnlyFailure ]
@@ -1336,3 +1333,7 @@ webkit.org/b/320354 compositing/animation/animated-composited-inside-hidden.html
 webkit.org/b/320354 compositing/backgrounds/fixed-background-on-descendant.html [ Timeout Pass ]
 
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001.svg [ ImageOnlyFailure ]
+
+webkit.org/b/321278 [ Release ] imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-214.html [ ImageOnlyFailure ]
+webkit.org/b/321281 [ Debug ] webrtc/video-disabled-black.html [ Crash Pass ]
+webkit.org/b/320649 [ Debug ] webrtc/disable-encryption.html [ Crash Pass ]
