@@ -1,0 +1,18 @@
+Tests that navigation.reload() does not crash when structured-cloning the state option throws, and that the committed and finished promises reject with the same error. Found by a fuzzer: a throwing getter on the state object made Navigation::serializeState() fail with ExceptionCode::ExistingExceptionError, and DeferredPromise::reject() was only able to recover the pending JS exception once, so the second of the two reject() calls in Navigation::createErrorResult() hit an assertion.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof result is 'object'
+PASS 'committed' in result is true
+PASS 'finished' in result is true
+PASS result.committed instanceof Promise is true
+PASS result.finished instanceof Promise is true
+PASS committedError.message is "state clone error"
+PASS finishedError.message is "state clone error"
+PASS committedError === finishedError is true
+PASS did not crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

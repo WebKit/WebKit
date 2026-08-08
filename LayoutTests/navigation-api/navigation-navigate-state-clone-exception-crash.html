@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that navigation.navigate() does not crash when structured-cloning the state option throws, and that the committed and finished promises reject with the same error. This is the navigate() counterpart of navigation-reload-state-clone-exception-crash.html: navigate() and reload() share the same Navigation::createErrorResult(), which used to call DeferredPromise::reject() twice with the same ExceptionCode::ExistingExceptionError exception, and only the first call could recover the pending JS exception.");
+
+jsTestIsAsync = true;
+
+var result;
+var committedError;
+var finishedError;
+
+window.onload = async () => {
+    result = navigation.navigate("about:blank#navigated", { state: { get x() { throw new Error("state clone error"); } } });
+
+    shouldBe("typeof result", "'object'");
+    shouldBeTrue("'committed' in result");
+    shouldBeTrue("'finished' in result");
+    shouldBeTrue("result.committed instanceof Promise");
+    shouldBeTrue("result.finished instanceof Promise");
+
+    try {
+        await result.committed;
+        testFailed("committed promise should be rejected");
+    } catch (e) {
+        committedError = e;
+    }
+    shouldBeEqualToString("committedError.message", "state clone error");
+
+    try {
+        await result.finished;
+        testFailed("finished promise should be rejected");
+    } catch (e) {
+        finishedError = e;
+    }
+    shouldBeEqualToString("finishedError.message", "state clone error");
+
+    shouldBeTrue("committedError === finishedError");
+
+    testPassed("did not crash");
+    finishJSTest();
+};
+</script>
