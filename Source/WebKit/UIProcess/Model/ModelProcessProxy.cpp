@@ -82,7 +82,7 @@ ModelProcessProxy* ModelProcessProxy::singletonIfCreated()
 }
 
 ModelProcessProxy::ModelProcessProxy()
-    : AuxiliaryProcessProxy(WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No)
+    : AuxiliaryProcessProxy("ModelProcess"_s, WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No)
 {
     connect();
 

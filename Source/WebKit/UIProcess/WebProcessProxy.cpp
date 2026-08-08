@@ -312,7 +312,7 @@ Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType wo
 }
 
 WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity)
-    : AuxiliaryProcessProxy(processPool.shouldTakeUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No
+    : AuxiliaryProcessProxy("WebProcess"_s, processPool.shouldTakeUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No
     , processPool.alwaysRunsAtBackgroundPriority() ? AlwaysRunsAtBackgroundPriority::Yes : AlwaysRunsAtBackgroundPriority::No)
     , m_backgroundResponsivenessTimer(makeUniqueRef<BackgroundProcessResponsivenessTimer>(*this))
     , m_processPool(processPool, isPrewarmed == IsPrewarmed::Yes ? IsWeak::Yes : IsWeak::No)
@@ -2044,17 +2044,6 @@ void WebProcessProxy::prepareToDropLastAssertion(CompletionHandler<void()>&& com
 #else
     completionHandler();
 #endif
-}
-
-String WebProcessProxy::environmentIdentifier() const
-{
-    if (m_environmentIdentifier.isEmpty()) {
-        StringBuilder builder;
-        builder.append(clientName());
-        builder.append(processID());
-        m_environmentIdentifier = builder.toString();
-    }
-    return m_environmentIdentifier;
 }
 
 void WebProcessProxy::updateAudibleMediaAssertions()

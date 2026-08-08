@@ -83,10 +83,11 @@ static Seconds adjustedTimeoutForThermalState(Seconds timeout)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AuxiliaryProcessProxy);
 
-AuxiliaryProcessProxy::AuxiliaryProcessProxy(ShouldTakeUIBackgroundAssertion shouldTakeUIBackgroundAssertion, AlwaysRunsAtBackgroundPriority alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
+AuxiliaryProcessProxy::AuxiliaryProcessProxy(ASCIILiteral clientName, ShouldTakeUIBackgroundAssertion shouldTakeUIBackgroundAssertion, AlwaysRunsAtBackgroundPriority alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
     : m_responsivenessTimer(ResponsivenessTimer::create(*this, adjustedTimeoutForThermalState(responsivenessTimeout)))
     , m_alwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority == AlwaysRunsAtBackgroundPriority::Yes)
     , m_throttler(*this, shouldTakeUIBackgroundAssertion == ShouldTakeUIBackgroundAssertion::Yes)
+    , m_clientName(clientName)
 {
 }
 
@@ -652,6 +653,17 @@ AuxiliaryProcessProxy::InitializationActivityAndGrant AuxiliaryProcessProxy::ini
         , launchGrant()
 #endif
     };
+}
+
+String AuxiliaryProcessProxy::environmentIdentifier()
+{
+    if (m_environmentIdentifier.isEmpty()) {
+        StringBuilder builder;
+        builder.append(m_clientName);
+        builder.append(processID());
+        m_environmentIdentifier = builder.toString();
+    }
+    return m_environmentIdentifier;
 }
 
 } // namespace WebKit

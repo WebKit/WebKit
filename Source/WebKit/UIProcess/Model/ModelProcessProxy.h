@@ -95,7 +95,6 @@ private:
     void modelProcessExited(ProcessTerminationReason);
 
     // ProcessThrottlerClient
-    ASCIILiteral clientName() const final { return "ModelProcess"_s; }
     void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
     void sendProcessDidResume(ResumeReason) final;
 

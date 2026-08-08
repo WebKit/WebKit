@@ -194,7 +194,6 @@ private:
     void gpuProcessExited(ProcessTerminationReason);
 
     // ProcessThrottlerClient
-    ASCIILiteral clientName() const final { return "GPUProcess"_s; }
     void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
     void sendProcessDidResume(ResumeReason) final;
 

@@ -443,8 +443,6 @@ public:
     void didChangeThrottleState(ProcessThrottleState) final;
     void prepareToDropLastAssertion(CompletionHandler<void()>&&) final;
     void didDropLastAssertion() final;
-    ASCIILiteral clientName() const final { return "WebProcess"_s; }
-    String environmentIdentifier() const final;
 
 #if PLATFORM(COCOA)
     enum SandboxExtensionType : uint32_t {
@@ -895,7 +893,6 @@ private:
 #if PLATFORM(COCOA)
     bool m_platformSuspendDidReleaseNearSuspendedAssertion { false };
 #endif
-    mutable String m_environmentIdentifier;
     mutable SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     uint64_t m_sharedPreferencesVersionInNetworkProcess { 0 };
 #if ENABLE(GPU_PROCESS)

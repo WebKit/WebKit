@@ -254,7 +254,7 @@ static bool anyProcessPoolAlwaysRunsAtBackgroundPriority()
 }
 
 NetworkProcessProxy::NetworkProcessProxy()
-    : AuxiliaryProcessProxy(WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No
+    : AuxiliaryProcessProxy("NetworkProcess"_s, WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No
     , anyProcessPoolAlwaysRunsAtBackgroundPriority() ? AlwaysRunsAtBackgroundPriority::Yes : AlwaysRunsAtBackgroundPriority::No
     , networkProcessResponsivenessTimeout)
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
