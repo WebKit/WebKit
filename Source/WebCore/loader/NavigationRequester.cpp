@@ -33,7 +33,7 @@ namespace WebCore {
 NavigationRequester NavigationRequester::from(Document& document)
 {
     return {
-        document.url(),
+        document.url().isEmpty() ? aboutBlankURL() : document.url(),
         document.securityOrigin(),
         document.topOrigin(),
         document.policyContainer(),
