@@ -53,5 +53,3 @@ const extended = { extended_const: true };
     `, {}, extended);
     assert.eq(instance.exports.table.get(0)(), 42);
 }
-
-print("const-expr-i32-wrap: ok");

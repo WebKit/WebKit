@@ -36,4 +36,3 @@ testDefaultHasNoStack();
 testTraceStackFalse();
 testTraceStackTrue();
 testConstructorLength();
-print("exception-trace-stack: ok");

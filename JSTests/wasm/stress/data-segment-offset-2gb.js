@@ -76,4 +76,3 @@ try {
 }
 
 assert.eq(instance.exports.load(), 42);
-print("data-segment-offset-2gb: ok");

@@ -34,9 +34,6 @@ function main() {
         instanceA.exports.foo();
 
     gc();
-
-    print("done (should have crashed above)");
-
 }
 
 main();

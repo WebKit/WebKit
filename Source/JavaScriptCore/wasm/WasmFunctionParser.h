@@ -758,7 +758,7 @@ auto FunctionParser<Context>::load(Type memoryType) -> PartialResult
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
 
     uint8_t memoryIndex;
-    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexAndFixupAlignment(alignment, memoryIndex));
 
     WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds load's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
 
@@ -785,7 +785,7 @@ auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment"_s);
 
     uint8_t memoryIndex;
-    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexAndFixupAlignment(alignment, memoryIndex));
 
     WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds store's natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
 
@@ -825,7 +825,7 @@ auto FunctionParser<Context>::atomicLoad(ExtAtomicOpType op, Type memoryType) ->
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
     uint8_t memoryIndex;
-    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexAndFixupAlignment(alignment, memoryIndex));
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
 
     WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
@@ -850,7 +850,7 @@ auto FunctionParser<Context>::atomicStore(ExtAtomicOpType op, Type memoryType) -
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment"_s);
     uint8_t memoryIndex;
-    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexAndFixupAlignment(alignment, memoryIndex));
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
 
@@ -875,7 +875,7 @@ auto FunctionParser<Context>::atomicBinaryRMW(ExtAtomicOpType op, Type memoryTyp
     TypedExpression value;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
     uint8_t memoryIndex;
-    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexAndFixupAlignment(alignment, memoryIndex));
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
@@ -902,7 +902,7 @@ auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type mem
     TypedExpression value;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
     uint8_t memoryIndex;
-    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexAndFixupAlignment(alignment, memoryIndex));
     WASM_PARSER_FAIL_IF(alignment !=  memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
@@ -931,7 +931,7 @@ auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) ->
     TypedExpression timeout;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
     uint8_t memoryIndex;
-    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexAndFixupAlignment(alignment, memoryIndex));
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
     WASM_TRY_POP_EXPRESSION_STACK_INTO(timeout, "timeout"_s);
@@ -959,7 +959,7 @@ auto FunctionParser<Context>::atomicNotify(ExtAtomicOpType op) -> PartialResult
     TypedExpression count;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
     uint8_t memoryIndex;
-    WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
+    WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexAndFixupAlignment(alignment, memoryIndex));
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
     WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
     WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "count"_s);
@@ -1045,7 +1045,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
 
         uint32_t alignment;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get simd memory op alignment"_s);
-        WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get simd memory index"_s);
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexAndFixupAlignment(alignment, memoryIndex));
         WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, offset));
 
         WASM_VALIDATOR_FAIL_IF(alignment > maxAlignment, "alignment: "_s, alignment, " can't be larger than max alignment for simd operation: "_s, maxAlignment);
@@ -4177,7 +4177,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         uint32_t alignment;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get first immediate for "_s, m_currentOpcode, " in unreachable context"_s);
         uint8_t memoryIndex;
-        WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexAndFixupAlignment(alignment, memoryIndex));
         WASM_PARSER_FAIL_IF(alignment > memoryLog2Alignment(m_currentOpcode), "byte alignment "_s, 1ull << alignment, " exceeds "_s, m_currentOpcode, "'s natural alignment "_s, 1ull << memoryLog2Alignment(m_currentOpcode));
         uint64_t unusedOffset;
         WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, unusedOffset));
@@ -4559,7 +4559,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
             uint32_t alignment;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
             uint8_t memoryIndex;
-            WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
+            WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexAndFixupAlignment(alignment, memoryIndex));
             WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
             uint64_t unusedOffset;
             WASM_FAIL_IF_HELPER_FAILS(parseMemoryOffset(memoryIndex, unusedOffset));
