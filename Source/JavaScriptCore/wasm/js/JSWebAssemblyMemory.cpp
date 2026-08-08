@@ -251,7 +251,7 @@ JSObject* JSWebAssemblyMemory::type(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    PageCount minimum = m_memory->initial();
+    PageCount minimum = PageCount::fromBytes(m_memory->size());
     PageCount maximum = m_memory->maximum();
     auto addressType = m_memory->addressType();
 
