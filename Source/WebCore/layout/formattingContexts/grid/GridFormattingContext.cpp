@@ -172,6 +172,11 @@ static Style::RepeatTrackList repeatTrackListWithPercentagesConvertedToAuto(cons
     });
 }
 
+static Style::GridTrackSizes gridAutoTrackSizesWithPercentagesConvertedToAuto(const Style::GridTrackSizes& gridAutoTrackSizes)
+{
+    return Style::GridTrackSizes { Style::GridTrackSizeList::map(gridAutoTrackSizes, trackSizeWithPercentagesConvertedToAuto) };
+}
+
 static Style::GridTemplateList gridTemplateListWithPercentagesConvertedToAuto(const Style::GridTemplateList& computedGridTemplateList)
 {
     Style::GridTrackList transformedList = computedGridTemplateList.list.map([](const Style::GridTrackEntry& entry) {
@@ -219,8 +224,10 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
 
     auto gridTemplateColumns = inlineAxisDependsOnTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateColumns()) : gridStyle->gridTemplateColumns();
     auto gridTemplateRows = blockAxisDependsOnTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateRows()) : gridStyle->gridTemplateRows();
+    auto gridAutoColumns = inlineAxisDependsOnTracks ? gridAutoTrackSizesWithPercentagesConvertedToAuto(gridStyle->gridAutoColumns()) : gridStyle->gridAutoColumns();
+    auto gridAutoRows = blockAxisDependsOnTracks ? gridAutoTrackSizesWithPercentagesConvertedToAuto(gridStyle->gridAutoRows()) : gridStyle->gridAutoRows();
 
-    GridDefinition gridDefinition { gridTemplateColumns, gridTemplateRows, gridStyle->gridAutoColumns(), gridStyle->gridAutoRows(), autoFlowOptions, gridStyle->usedZoomForLength() };
+    GridDefinition gridDefinition { gridTemplateColumns, gridTemplateRows, gridAutoColumns, gridAutoRows, autoFlowOptions, gridStyle->usedZoomForLength() };
 
     auto usedJustifyContent = gridStyle->justifyContent().resolve();
     auto usedAlignContent = gridStyle->alignContent().resolve();
@@ -325,8 +332,8 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
     GridDefinition gridDefinition {
         gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateColumns()),
         gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateRows()),
-        gridStyle->gridAutoColumns(),
-        gridStyle->gridAutoRows(),
+        gridAutoTrackSizesWithPercentagesConvertedToAuto(gridStyle->gridAutoColumns()),
+        gridAutoTrackSizesWithPercentagesConvertedToAuto(gridStyle->gridAutoRows()),
         autoFlowOptions,
         gridStyle->usedZoomForLength(),
     };
