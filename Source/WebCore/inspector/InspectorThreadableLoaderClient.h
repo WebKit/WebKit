@@ -78,7 +78,7 @@ private:
     RefPtr<WebCore::TextResourceDecoder> m_decoder;
     String m_mimeType;
     StringBuilder m_responseText;
-    int m_statusCode;
+    int m_statusCode { 0 };
     bool m_hasCalledDeref { false };
 };
 
