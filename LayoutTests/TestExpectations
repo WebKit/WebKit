@@ -1288,6 +1288,8 @@ imported/w3c/web-platform-tests/content-security-policy/inheritance/blob-url-inh
 imported/w3c/web-platform-tests/content-security-policy/reporting/multiple-report-policies.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/reporting/report-cross-origin-no-cookies.sub.html [ Skip ]
 
+webkit.org/b/321358 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Crash Pass ]
+
 # Content Security Policy: Embedded Enforcement is not supported
 imported/w3c/web-platform-tests/content-security-policy/embedded-enforcement
 
@@ -2633,6 +2635,8 @@ imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-nested
 imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-nested-symbol.html [ ImageOnlyFailure ]
 
 webkit.org/b/139595 http/tests/xmlhttprequest/workers/abort-exception-assert.html [ Pass Failure Timeout ]
+
+webkit.org/b/321361 http/tests/xmlhttprequest/onabort-response-getters.html [ Pass Failure ]
 
 # Debug assertions are tracked as <rdar://problem/18216390>.
 [ Debug ] fast/history/history-back-while-pdf-in-pagecache.html [ Skip ]
@@ -5769,7 +5773,6 @@ imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/canvas-as-container-004.html [ ImageOnlyFailure Pass ]
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/custom-layout-container-001.https.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/inline-size-bfc-floats.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-conditional/container-queries/pseudo-elements-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/query-style-color.html [ ImageOnlyFailure ]
 
 # Scroll-state container queries (evaluation unsupported), enable parsing/serialization and computed-value tests only.
@@ -6020,7 +6023,6 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-tex
 # css/filter-effects
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg-foreignObject.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-svg.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/blur-text.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-combined-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dynamic-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-002.html [ ImageOnlyFailure ]
@@ -6686,11 +6688,8 @@ webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-overflow-solid-background.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/border-shape/border-shape-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-img-border.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-inset-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch-mixed.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-overflow-clip-margin.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-square.html [ ImageOnlyFailure ]
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-superellipse-negative-100.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-svg-border.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-video-border.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-iframe-border.html [ ImageOnlyFailure ]
@@ -8430,7 +8429,6 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-element-image/
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-no-natural-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-viewbox-no-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/path/distance/path-length-css-zoom.tentative.svg [ ImageOnlyFailure ]
-[ x86_64 ] imported/w3c/web-platform-tests/svg/painting/inline-svg-resize-viewport-dependent-mask.html [ ImageOnlyFailure ] # fails only on Intel Bot
 [ x86_64 ] imported/w3c/web-platform-tests/svg/struct/reftests/image-symbol.svg [ Skip ] # Flaky
 
 # Does not generate output properly and do tree dump.

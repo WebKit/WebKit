@@ -23,10 +23,6 @@ imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-007.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-intermediate-element-overflow-hidden-and-border-radius.html [ Pass ]
 
-# Test passing after 313958@main.
-imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-scroll-blended-position-fixed.html [ Pass ]
-
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/skip-outbound-vt-before-reveal.html [ Pass ]
 webkit.org/b/307586 [ Release ] imported/w3c/web-platform-tests/css/css-view-transitions/no-raf-while-render-blocked.html [ Failure Pass ]
 
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
@@ -92,9 +88,6 @@ imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-auto.ht
 # PointerEvents not enabled globally, but enabled for WPE (EXPERIMENTAL_FEATURES)
 pointerevents/pointer-id-crash.html [ Pass ]
 
-# Test passing for WPE but failing in GTK.
-imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-013.html [ Pass ]
-
 # Passing since added in r258661.
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ Pass ImageOnlyFailure ]
 
@@ -102,7 +95,6 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/backgr
 fast/scrolling/rtl-scrollbars-animation-property.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-shape-circle-004.svg [ Pass ]
-imported/w3c/web-platform-tests/css/css-multicol/multicol-scroll-content.html [ Pass ]
 
 webanimations/simultaneous-animations-removed-separately.html [ Pass ]
 webanimations/transform-accelerated-animation-finishes-before-removal.html [ Pass ]
@@ -930,7 +922,6 @@ webkit.org/b/287572 imported/w3c/web-platform-tests/svg/geometry/reftests/percen
 webkit.org/b/287572 imported/w3c/web-platform-tests/svg/geometry/reftests/percentage.svg [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/svg/painting/reftests/percentage-attribute.svg [ ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnlyFailure ]
-webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/2_cues_overlapping_partially_move_down.html [ Timeout ImageOnlyFailure ]
 webkit.org/b/280069 imported/w3c/web-platform-tests/webvtt/api/VTTRegion/non-visible-cue-with-region.html [ Failure Pass ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/2_cues_overlapping_partially_move_up.html [ Timeout ImageOnlyFailure ]
 webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_LF_u05D0.html [ ImageOnlyFailure ]
@@ -1314,3 +1305,7 @@ webkit.org/b/321282 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio
 webkit.org/b/321283 [ arm64 ] webaudio/MediaElementAudioSource/mediaelementaudiosourcenode-channel-count.html [ Crash Pass ]
 webkit.org/b/309266 [ Release x86_64 ] css3/scroll-snap/scroll-snap-drag-scrollbar-thumb.html [ Pass Failure ]
 webkit.org/b/252878 [ Debug ] fast/frames/exponential-frames.html [ Pass Timeout ]
+
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-inset-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch-mixed.html [ ImageOnlyFailure ]
+webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-superellipse-negative-100.html [ ImageOnlyFailure ]

@@ -115,9 +115,6 @@ accessibility/gtk/media-controls-panel-title.html [ Failure ]
 # WebInspector.
 webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Failure Timeout ]
 webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass Timeout ]
-webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl2-full.html [ Failure ]
-webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-full.html [ Failure ]
-webkit.org/b/254733 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Failure ]
 webkit.org/b/254733 inspector/canvas/shaderProgram-add-remove-webgl.html [ Failure ]
 
 # Crash on EWS bot.
@@ -126,7 +123,6 @@ webkit.org/b/229346 webrtc/multi-audio.html [ Timeout Pass Failure ]
 webkit.org/b/235885 webrtc/peer-connection-remote-audio-mute2.html [ Crash Pass Failure ]
 webkit.org/b/187064 webrtc/video-addTrack.html [ Crash Pass ]
 
-webkit.org/b/303925 webrtc/audio-replace-track.html [ Failure ]
 webkit.org/b/306021 webrtc/peer-connection-audio-unmute.html [ Pass Failure ]
 webkit.org/b/235885 webrtc/audio-peer-connection-webaudio.html [ Pass Failure ]
 webkit.org/b/308373 webrtc/encoded-streams-quirks.html [ Pass Timeout ]
@@ -446,8 +442,6 @@ webkit.org/b/306687 [ Release ] fast/dynamic/window-scrollbars-test.html [ Failu
 webkit.org/b/306688 [ Release ] fast/events/monotonic-event-time.html [ Failure Pass ]
 
 webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
-
-webkit.org/b/263872 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/progress-based-effect-delay.tentative.html [ ImageOnlyFailure ]
 
 webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 
@@ -1058,6 +1052,8 @@ webgl/2.0.y/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/filter-effects/blur-text.html [ ImageOnlyFailure ]
+
 [ Debug ] media/video-concurrent-playback.html [ Pass Failure ]
 
 # Flaky tests Nov2023
@@ -1148,8 +1144,6 @@ imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-011.svg [ Imag
 imported/w3c/web-platform-tests/svg/fonts/font-size-adjust-scale-text.svg [ ImageOnlyFailure ]
 
 media/adopt-node-after-showing-picker-crash.html [ Skip ]
-
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/skip-outbound-vt-before-reveal.html [ Failure Pass ]
 
 webkit.org/b/298727 css3/text-decoration/text-decoration-line-grammar-error-1.html [ Skip ]
 webkit.org/b/298727 css3/text-decoration/text-decoration-line-grammar-error-2.html [ Skip ]
