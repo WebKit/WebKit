@@ -27,12 +27,9 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#if USE(LIBWEBRTC)
-#include <WebCore/LibWebRTCAudioModule.h>
-#endif
-
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
@@ -44,6 +41,10 @@ namespace WebCore {
 
 class AudioStreamDescription;
 class PlatformAudioData;
+
+#if USE(LIBWEBRTC)
+class LibWebRTCAudioModule;
+#endif
 
 class WEBCORE_EXPORT AudioMediaStreamTrackRenderer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioMediaStreamTrackRenderer, WTF::DestructionThread::Main>, public LoggerHelper {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioMediaStreamTrackRenderer, WEBCORE_EXPORT);
@@ -59,7 +60,7 @@ public:
 #endif
     };
     static RefPtr<AudioMediaStreamTrackRenderer> create(Init&&);
-    virtual ~AudioMediaStreamTrackRenderer() = default;
+    virtual ~AudioMediaStreamTrackRenderer();
 
     static String defaultDeviceID();
 

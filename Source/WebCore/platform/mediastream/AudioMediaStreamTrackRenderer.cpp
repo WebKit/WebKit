@@ -75,6 +75,8 @@ AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer(Init&& init)
 {
 }
 
+AudioMediaStreamTrackRenderer::~AudioMediaStreamTrackRenderer() = default;
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& AudioMediaStreamTrackRenderer::logChannel() const
 {
