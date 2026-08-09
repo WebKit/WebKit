@@ -1365,6 +1365,10 @@ webkit.org/b/216853 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
 fast/forms/vertical-writing-mode/meter.html [ ImageOnlyFailure ]
 webkit.org/b/264558 fast/forms/vertical-writing-mode/listbox-horizontal-scrollbar.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/CSS2/css1/c43-rpl-ibx-000.xht [ Pass ]
+imported/w3c/web-platform-tests/css/CSS2/css1/c5507-padn-r-000.xht [ Pass ]
+imported/w3c/web-platform-tests/css/CSS2/css1/c5510-padn-000.xht [ Pass ]
+
 imported/w3c/web-platform-tests/css/CSS2/floats/line-pushed-by-floats-crash.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-vs-float-clearance-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-ligatures-001.html [ ImageOnlyFailure ]
