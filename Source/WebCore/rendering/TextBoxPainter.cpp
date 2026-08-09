@@ -696,7 +696,8 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
 
     if (isInsideShapedContent() && paintForegroundForShapeRange(textPainter))
         return;
-    textPainter.setGlyphDisplayListIfNeeded(textBox().box(), m_paintInfo, m_style, m_paintTextRun);
+    // Skipping GlyphDisplayListCache: text drawing goes through FontCascade::drawText() which hits the ShapedTextCache.
+    // textPainter.setGlyphDisplayListIfNeeded(textBox().box(), m_paintInfo, m_style, m_paintTextRun);
     // TextPainter wants the box rectangle and text origin of the entire line box.
     textPainter.paintRange(m_paintTextRun, m_paintRect, textOriginFromPaintRect(m_paintRect), markedText.startOffset, markedText.endOffset);
 }

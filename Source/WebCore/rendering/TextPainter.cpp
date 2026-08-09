@@ -127,31 +127,11 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
         return;
     }
 
-    RefPtr glyphDisplayList = WTF::move(m_glyphDisplayList);
+    // Skipping GlyphDisplayListCache: always draw directly via FontCascade::drawText() which hits the ShapedTextCache.
     if (!emphasisMark.isEmpty())
         m_context.drawEmphasisMarks(font, textRun, emphasisMark, textOrigin + FloatSize(0, emphasisMarkOffset), startOffset, endOffset);
-    else if (startOffset || endOffset < textRun.length() || !glyphDisplayList)
+    else
         m_context.drawText(font, textRun, textOrigin, startOffset, endOffset);
-    else {
-        bool needsStateSave = false;
-        for (auto& item : glyphDisplayList->items()) {
-            if (std::holds_alternative<DisplayList::SetInlineFillColor>(item)
-                || std::holds_alternative<DisplayList::SetInlineStroke>(item)) {
-                needsStateSave = true;
-                break;
-            }
-        }
-
-        if (needsStateSave) {
-            GraphicsContextStateSaver stateSaver(m_context);
-            m_context.translate(textOrigin);
-            m_context.drawDisplayList(*glyphDisplayList);
-        } else {
-            m_context.translate(textOrigin);
-            m_context.drawDisplayList(*glyphDisplayList);
-            m_context.translate(-textOrigin);
-        }
-    }
 }
 
 void TextPainter::paintTextWithShadows(const Style::TextShadows* shadows, const Style::AppleColorFilter& colorFilter, const FontCascade& font, const TextRun& textRun, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset, const AtomString& emphasisMark, float emphasisMarkOffset, bool stroked)

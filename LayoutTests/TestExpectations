@@ -3,6 +3,17 @@
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
 #//////////////////////////////////////////////////////////////////////////////////////////
+# GlyphDisplayListCache is intentionally bypassed for testing ShapedTextCache coverage.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+fast/text/glyph-display-lists/glyph-display-list-color.html [ Skip ]
+fast/text/glyph-display-lists/glyph-display-list-gpu-process-crash.html [ Skip ]
+fast/text/glyph-display-lists/glyph-display-list-scaled-unshared.html [ Skip ]
+fast/text/glyph-display-lists/glyph-display-list-shadow-unshared.html [ Skip ]
+fast/text/glyph-display-lists/glyph-display-list-sharing-colr.html [ Skip ]
+fast/text/glyph-display-lists/glyph-display-list-svg-unshared.html [ Skip ]
+
+#//////////////////////////////////////////////////////////////////////////////////////////
 # Platform-specific tests. Skipped here, then re-enabled on the appropriate platform.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
