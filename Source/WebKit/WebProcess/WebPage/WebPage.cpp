@@ -8547,7 +8547,12 @@ void WebPage::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::option
     if (!page)
         return completionHandler(makeUnexpected(decodeError(url)));
 
-    request.setFirstPartyForCookies(page->mainFrameURL());
+    RefPtr localMainFrame = page->localMainFrame();
+    RefPtr mainFrameDocument = localMainFrame ? localMainFrame->document() : nullptr;
+    if (mainFrameDocument)
+        request.setFirstPartyForCookies(mainFrameDocument->firstPartyForCookies());
+    else
+        request.setFirstPartyForCookies(page->mainFrameURL());
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::LoadImageForDecoding(WTF::move(request), m_webPageProxyIdentifier, maximumBytesFromNetwork), [completionHandler = WTF::move(completionHandler), sizeConstraint, url] (Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&& result) mutable {
         if (!result)
             return completionHandler(makeUnexpected(WTF::move(result.error())));

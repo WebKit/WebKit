@@ -306,6 +306,9 @@ FrameInfoData WebFrame::info(WithCertificateInfo withCertificateInfo) const
     RefPtr document = coreLocalFrame ? coreLocalFrame->document() : nullptr;
     RefPtr page = m_page.get();
     RefPtr loadingFrame = m_provisionalFrame ? m_provisionalFrame : coreLocalFrame;
+    URL frameURL = url();
+    if (frameURL.isEmpty() && document)
+        frameURL = document->url();
 
     WebFrameMetrics metrics;
     FrameType frameType = FrameType::Local;
@@ -325,7 +328,7 @@ FrameInfoData WebFrame::info(WithCertificateInfo withCertificateInfo) const
         isMainFrame(),
         frameType,
         // FIXME: This should use the full request.
-        ResourceRequest(url()),
+        ResourceRequest(WTF::move(frameURL)),
         coreFrame ? SecurityOriginData::fromFrame(*coreFrame) : SecurityOriginData { },
         coreFrame ? coreFrame->topOrigin().data() : SecurityOriginData { },
         coreFrame ? coreFrame->tree().specifiedName().string() : String(),
