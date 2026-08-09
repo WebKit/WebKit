@@ -3005,6 +3005,9 @@
     "imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-002.tentative.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-dictionary-hashes.tentative.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-clear-site-data-cache.tentative.https.html": [
         "slow"
     ],

@@ -16,6 +16,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-001.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-002.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-dictionary-hashes.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-clear-site-data-cache.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-clear-site-data-cookies.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-clear-site-data-storage.tentative.https.html

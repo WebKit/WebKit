@@ -13,8 +13,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/Makefile
-/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/dcb-header
-/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/dcz-header
+/LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/dictionary-hashes.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/image-001.png
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/image-001.png.headers
 /LayoutTests/imported/w3c/web-platform-tests/fetch/compression-dictionary/resources/static/script-001.js

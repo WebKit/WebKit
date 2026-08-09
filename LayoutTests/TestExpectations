@@ -8223,6 +8223,7 @@ webkit.org/b/317017 imported/w3c/web-platform-tests/largest-contentful-paint/mul
 # Compression Dictionary Transport is not implemented, so these time out waiting for a dictionary load that never happens.
 webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-001.tentative.https.html [ Skip ]
 webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-002.tentative.https.html [ Skip ]
+webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-dictionary-hashes.tentative.https.html [ Skip ]
 webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-clear-site-data-cache.tentative.https.html [ Skip ]
 webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-clear-site-data-cookies.tentative.https.html [ Skip ]
 webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-clear-site-data-storage.tentative.https.html [ Skip ]
