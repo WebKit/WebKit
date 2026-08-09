@@ -11366,7 +11366,7 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::WebkitLineClamp",
-                "parser-grammar": "none | <percentage [0,inf]> | <integer [1,inf]>"
+                "parser-grammar": "none | <integer [1,inf]>"
             },
             "status": "non-standard"
         },

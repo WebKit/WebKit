@@ -332,7 +332,7 @@ bool RenderDeprecatedFlexibleBox::hasClampingAndNoFlexing() const
         return false;
 
     auto& style = this->style();
-    if (style.lineClamp().isNone() || style.lineClamp().isPercentage())
+    if (style.lineClamp().isNone())
         return false;
     if (!style.logicalHeight().isAuto() || !firstChildBox->style().logicalHeight().isAuto())
         return false;
@@ -1049,20 +1049,6 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(RelayoutChildren relayoutChi
         setBorderBoxHeight(oldHeight);
 }
 
-static size_t lineCountFor(const RenderBlockFlow& blockFlow)
-{
-    if (blockFlow.childrenInline())
-        return blockFlow.lineCount();
-
-    size_t count = 0;
-    for (auto& child : childrenOfType<RenderBlockFlow>(blockFlow)) {
-        if (blockFlow.isFloatingOrOutOfFlowPositioned() || !blockFlow.style().height().isAuto())
-            continue;
-        count += lineCountFor(child);
-    }
-    return count;
-}
-
 static RenderBlockFlow* blockContainerForLastFormattedLine(const RenderBlock& enclosingBlockContainer)
 {
     for (auto* child = enclosingBlockContainer.lastChild(); child; child = child->previousSibling()) {
@@ -1110,20 +1096,6 @@ RenderDeprecatedFlexibleBox::ClampedContent RenderDeprecatedFlexibleBox::applyLi
         },
         [](const Style::WebkitLineClamp::Integer& integer) -> size_t {
             return integer.value;
-        },
-        [&](const Style::WebkitLineClamp::Percentage& percentage) -> size_t {
-            size_t numberOfLines = 0;
-            for (auto* child = iterator.first(); child; child = iterator.next()) {
-                if (childDoesNotAffectWidthOrFlexing(child))
-                    continue;
-
-                child->layoutIfNeeded();
-                if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*child))
-                    numberOfLines += lineCountFor(*blockFlow);
-                // FIXME: This should be turned into a partial damage.
-                child->setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
-            }
-            return std::max<size_t>(1, (numberOfLines + 1) * percentage.value / 100.f);
         }
     );
 

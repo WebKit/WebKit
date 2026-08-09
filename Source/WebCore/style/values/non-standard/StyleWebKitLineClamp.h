@@ -31,61 +31,25 @@
 namespace WebCore {
 namespace Style {
 
-// <-webkit-line-clamp> = none | <percentage [0,inf]> | <integer [1,inf]>
+// <-webkit-line-clamp> = none | <integer [1,inf]>
 // NOTE: CSS Overflow 4 re-defines `-webkit-line-clamp` as a shorthand of 'max-lines', 'block-ellipsis', and 'continue'.
 // https://drafts.csswg.org/css-overflow-4/#webkit-line-clamp
-struct WebkitLineClamp {
-    using Percentage = Style::Percentage<CSS::Nonnegative>;
-    using Integer = Style::Integer<CSS::Range{1, CSS::Range::infinity}>;
+struct WebkitLineClamp : ValueOrKeyword<Integer<CSS::Positive>, CSS::Keyword::None> {
+    using Base::Base;
+    using Integer = Base::Value;
 
-    constexpr WebkitLineClamp(CSS::Keyword::None)
-    {
-    }
-
-    constexpr WebkitLineClamp(Percentage percentage)
-        : m_value(percentage)
-    {
-    }
-
-    constexpr WebkitLineClamp(Integer integer)
-        : m_value(integer)
-    {
-    }
-
-    constexpr bool isNone() const { return std::holds_alternative<CSS::Keyword::None>(m_value); }
-    constexpr bool isPercentage() const { return std::holds_alternative<Percentage>(m_value); }
-    constexpr bool isInteger() const { return std::holds_alternative<Integer>(m_value); }
-
-    constexpr std::optional<Percentage> tryPercentage() const { return isPercentage() ? std::make_optional(std::get<Percentage>(m_value)) : std::nullopt; }
-    constexpr std::optional<Integer> tryInteger() const { return isInteger() ? std::make_optional(std::get<Integer>(m_value)) : std::nullopt; }
-
-    template<typename U> bool holdsAlternative() const
-    {
-        return std::holds_alternative<U>(m_value);
-    }
-
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
-    {
-        return WTF::switchOn(m_value, std::forward<F>(f)...);
-    }
+    constexpr bool isNone() const { return isKeyword(); }
+    constexpr bool isInteger() const { return isValue(); }
+    std::optional<Integer> tryInteger() const { return tryValue(); }
 
     unsigned valueForHash() const
     {
-        return WTF::switchOn(m_value,
-            [&](const CSS::Keyword::None&) { return computeHash(m_value.index()); },
-            [&](const auto& numeric) { return computeHash(m_value.index(), numeric.value); }
+        return switchOn(
+            [&](const CSS::Keyword::None&) -> unsigned { return computeHash(0); },
+            [&](const Integer& integer) -> unsigned { return computeHash(1, integer.value); }
         );
     }
-
-    constexpr bool operator==(const WebkitLineClamp&) const = default;
-
-private:
-    Variant<CSS::Keyword::None, Percentage, Integer> m_value;
 };
-
-// MARK: - Conversion
-
-template<> struct CSSValueConversion<WebkitLineClamp> { auto operator()(BuilderState&, const CSSValue&) -> WebkitLineClamp; };
 
 } // namespace Style
 } // namespace WebCore

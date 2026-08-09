@@ -19869,7 +19869,6 @@
 		BC709DDF266323CE00B9A21C /* CSSCalcSymbolTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCalcSymbolTable.cpp; sourceTree = "<group>"; };
 		BC731E742E636D8700A6584F /* StyleImageOrNone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleImageOrNone.h; sourceTree = "<group>"; };
 		BC731E762E636E9F00A6584F /* StyleImageOrNone.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleImageOrNone.cpp; sourceTree = "<group>"; };
-		BC731E992E64C20300A6584F /* StyleWebKitLineClamp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleWebKitLineClamp.cpp; sourceTree = "<group>"; };
 		BC731EA62E64CCBD00A6584F /* StyleWebKitInitialLetter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleWebKitInitialLetter.h; sourceTree = "<group>"; };
 		BC731EA92E64CE3C00A6584F /* StyleWebKitInitialLetter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleWebKitInitialLetter.cpp; sourceTree = "<group>"; };
 		BC731EBE2E65FC2C00A6584F /* StyleWebKitBoxReflect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleWebKitBoxReflect.cpp; sourceTree = "<group>"; };
@@ -37213,7 +37212,6 @@
 				BC731EBE2E65FC2C00A6584F /* StyleWebKitBoxReflect.cpp */,
 				BC2272860E82E70700E7F975 /* StyleWebKitBoxReflect.h */,
 				BC6F796F2EBE7EBD0049BA02 /* StyleWebKitLineBoxContain.h */,
-				BC731E992E64C20300A6584F /* StyleWebKitLineClamp.cpp */,
 				AB31C91D10AE1B8E000C7B92 /* StyleWebKitLineClamp.h */,
 				BC452A032ECCE2D700FD066C /* StyleWebKitLocale.cpp */,
 				BC452A012ECCE27900FD066C /* StyleWebKitLocale.h */,
