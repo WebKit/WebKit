@@ -152,6 +152,16 @@ public:
             m_invertedStrings = true;
         }
 
+        if (!isUnionSetOp()) {
+            // FIXME: Flipping the pending op (intersect with complement == subtract, and vice versa)
+            // would avoid materializing the complement, but m_strings still needs the original op.
+            CharacterClass inverted;
+            addSortedInverted(0, 0xff, other->m_matches8, other->m_ranges8, inverted.m_matches8, inverted.m_ranges8);
+            addSortedInverted(0x100, UCHAR_MAX_VALUE, other->m_matches32, other->m_ranges32, inverted.m_matches32, inverted.m_ranges32);
+            append(&inverted);
+            return;
+        }
+
         addSortedInverted(0, 0xff, other->m_matches8, other->m_ranges8, m_matches8, m_ranges8);
         addSortedInverted(0x100, UCHAR_MAX_VALUE, other->m_matches32, other->m_ranges32, m_matches32, m_ranges32);
     }
