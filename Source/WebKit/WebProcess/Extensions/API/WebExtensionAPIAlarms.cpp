@@ -117,45 +117,55 @@ void WebExtensionAPIAlarms::createAlarm(const String& name, RefPtr<JSON::Value> 
 
     String alarmName = !name.isEmpty() ? name : infoName;
 
+#if PLATFORM(COCOA)
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsCreate(!alarmName.isEmpty() ? alarmName : emptyAlarmName, initialInterval, repeatInterval), [protectedThis = Ref { *this }, callback = WTF::move(callback)]() {
         callback->call();
     }, extensionContext().identifier());
+#endif
 }
 
 void WebExtensionAPIAlarms::get(const String& name, Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/get
 
+#if PLATFORM(COCOA)
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsGet(!name.isEmpty() ? name : emptyAlarmName), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::optional<WebExtensionAlarmParameters>&& alarm) {
         callback->call(toWebAPI(callback->globalContext(), alarm, UseNullValue::No));
     }, extensionContext().identifier());
+#endif
 }
 
 void WebExtensionAPIAlarms::getAll(Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/getAll
 
+#if PLATFORM(COCOA)
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsGetAll(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Vector<WebExtensionAlarmParameters> alarms) {
         callback->call(toWebAPI(callback->globalContext(), alarms));
     }, extensionContext().identifier());
+#endif
 }
 
 void WebExtensionAPIAlarms::clear(const String& name, Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/clear
 
+#if PLATFORM(COCOA)
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClear(!name.isEmpty() ? name : emptyAlarmName), [protectedThis = Ref { *this }, callback = WTF::move(callback)](bool success) {
         callback->call(JSValueMakeBoolean(callback->globalContext(), success));
     }, extensionContext().identifier());
+#endif
 }
 
 void WebExtensionAPIAlarms::clearAll(Ref<WebExtensionCallbackHandler>&& callback)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/alarms/clearAll
 
+#if PLATFORM(COCOA)
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::AlarmsClearAll(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](bool success) {
         callback->call(JSValueMakeBoolean(callback->globalContext(), success));
     }, extensionContext().identifier());
+#endif
 }
 
 WebExtensionAPIEvent& WebExtensionAPIAlarms::onAlarm()

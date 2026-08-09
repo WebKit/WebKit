@@ -36,6 +36,7 @@ unsigned toWebKitError(unsigned webCoreError);
 #if ENABLE(WK_WEB_EXTENSIONS)
 #if ENABLE(2022_GLIB_API)
 unsigned toWebKitWebExtensionError(unsigned apiError);
+unsigned toWebKitWebExtensionContextError(unsigned apiError);
 #endif // ENABLE(2022_GLIB_API)
 unsigned toWebKitWebExtensionMatchPatternError(unsigned apiError);
 #endif // ENABLE(WK_WEB_EXTENSIONS)

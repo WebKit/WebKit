@@ -38,6 +38,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 #include "WebExtension.h"
+#include "WebExtensionContext.h"
 #include "WebExtensionMatchPattern.h"
 #endif
 
@@ -211,6 +212,30 @@ unsigned toWebKitWebExtensionError(unsigned apiError)
     }
 
     return WEBKIT_WEB_EXTENSION_ERROR_UNKNOWN;
+}
+
+unsigned toWebKitWebExtensionContextError(unsigned apiError)
+{
+    auto error = static_cast<WebKit::WebExtensionContext::APIError>(apiError);
+
+    switch (error) {
+    case WebKit::WebExtensionContext::APIError::AlreadyLoaded:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_ALREADY_LOADED;
+    case WebKit::WebExtensionContext::APIError::NotLoaded:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_NOT_LOADED;
+    case WebKit::WebExtensionContext::APIError::BaseURLAlreadyInUse:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_BASE_URL_ALREADY_IN_USE;
+    case WebKit::WebExtensionContext::APIError::NoBackgroundContent:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_NO_BACKGROUND_CONTENT;
+    case WebKit::WebExtensionContext::APIError::BackgroundContentFailedToLoad:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_BACKGROUND_CONTENT_FAILED_TO_LOAD;
+    case WebKit::WebExtensionContext::APIError::ScriptExecutionError:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_SCRIPT_EXECUTION;
+    case WebKit::WebExtensionContext::APIError::Unknown:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_UNKNOWN;
+    }
+
+    return WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_UNKNOWN;
 }
 #endif // ENABLE(2022_GLIB_API)
 unsigned toWebKitWebExtensionMatchPatternError(unsigned apiError)

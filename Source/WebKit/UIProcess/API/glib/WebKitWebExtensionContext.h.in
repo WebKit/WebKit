@@ -1,0 +1,61 @@
+/*
+ * Copyright (C) 2026 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitWebExtensionContext_h
+#define WebKitWebExtensionContext_h
+
+#if ENABLE(2022_GLIB_API)
+
+#include <glib-object.h>
+#include <gio/gio.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+
+#include "WebKitWebExtension.h"
+#include "WebKitWebExtensionMatchPattern.h"
+
+G_BEGIN_DECLS
+
+#define WEBKIT_TYPE_WEB_EXTENSION_CONTEXT                                   (webkit_web_extension_context_get_type())
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebExtensionContext, webkit_web_extension_context, WEBKIT, WEB_EXTENSION_CONTEXT, GObject)
+
+WEBKIT_API WebKitWebExtensionContext *
+webkit_web_extension_context_new_for_extension                              (WebKitWebExtension  *extension,
+                                                                             GError             **error);
+
+WEBKIT_API WebKitWebExtension *
+webkit_web_extension_context_get_web_extension                              (WebKitWebExtensionContext *context);
+
+WEBKIT_API const gchar *
+webkit_web_extension_context_get_base_uri                                   (WebKitWebExtensionContext *context);
+
+WEBKIT_API void
+webkit_web_extension_context_set_base_uri                                   (WebKitWebExtensionContext *context,
+                                                                             const gchar               *base_uri);
+
+WEBKIT_API const gchar *
+webkit_web_extension_context_get_options_page_uri                           (WebKitWebExtensionContext *context);
+
+G_END_DECLS
+
+#endif // ENABLE(2022_GLIB_API)
+
+#endif // WebKitWebExtensionContext_h

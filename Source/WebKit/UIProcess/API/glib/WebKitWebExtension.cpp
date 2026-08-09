@@ -505,6 +505,11 @@ WebKitWebExtension* webkitWebExtensionCreate(HashMap<String, GRefPtr<GBytes>>&& 
     return object;
 }
 
+RefPtr<WebKit::WebExtension> webkitWebExtensionToImpl(WebKitWebExtension* extension)
+{
+    return extension->priv->extension;
+}
+
 /**
  * webkit_web_extension_new:
  * @extension_path: (transfer none): A string pointing to the folder containing the extension manifest and resources
