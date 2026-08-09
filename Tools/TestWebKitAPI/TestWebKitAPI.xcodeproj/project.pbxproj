@@ -715,6 +715,7 @@
 				WebCore/cocoa/IOSurfaceTests.mm,
 				WebCore/cocoa/ISOBMFFTrackInfoParserTests.cpp,
 				WebCore/cocoa/MediaPlayerPrivateAVFoundationObjCTests.mm,
+				WebCore/cocoa/MediaRecorderPrivateWriterTests.cpp,
 				WebCore/cocoa/PrivateClickMeasurementCocoa.mm,
 				WebCore/cocoa/ResourceMonitor.mm,
 				WebCore/cocoa/ScrollbarWidthCrash.mm,
