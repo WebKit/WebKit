@@ -159,6 +159,7 @@ set(WebKit_BINDINGS_IN_FILES
     WebProcess/Extensions/Interfaces/WebExtensionAPIMenus
     WebProcess/Extensions/Interfaces/WebExtensionAPINamespace
     WebProcess/Extensions/Interfaces/WebExtensionAPINotifications
+    WebProcess/Extensions/Interfaces/WebExtensionAPIOffscreen
     WebProcess/Extensions/Interfaces/WebExtensionAPIPermissions
     WebProcess/Extensions/Interfaces/WebExtensionAPIPort
     WebProcess/Extensions/Interfaces/WebExtensionAPIRuntime
