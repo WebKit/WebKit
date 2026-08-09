@@ -1,0 +1,4 @@
+This test checks that grid items placed with negative grid line numbers, which count backwards from the end of the explicit grid, are positioned in the correct grid area. It also covers placements which name one edge with a positive line and the other with a negative line.
+
+PASS
+PASS

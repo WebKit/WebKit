@@ -25,12 +25,12 @@
 
 #pragma once
 
+#include "LayoutElementBox.h"
 #include "StyleGridPosition.h"
 
 namespace WebCore {
 namespace Layout {
 
-class ElementBox;
 class GridLayout;
 
 class UnplacedGridItem {

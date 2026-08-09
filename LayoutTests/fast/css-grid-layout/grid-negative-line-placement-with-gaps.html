@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<style>
+.grid {
+    display: grid;
+    position: relative;
+    grid-template-columns: 50px 50px 50px;
+    grid-template-rows: 30px 30px;
+    row-gap: 10px;
+    column-gap: 20px;
+}
+
+.item {
+    background-color: green;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid');">
+
+<p>This test checks that negative grid line numbers resolve against the explicit grid independently of the gutters, so an item placed with negative lines lands in the same grid area as the equivalent positive-line placement and is offset by the preceding gaps.</p>
+
+<div class="grid">
+    <div class="item" style="grid-column: -4 / -3; grid-row: -3 / -2;" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="30"></div>
+    <div class="item" style="grid-column: -2 / -1; grid-row: -2 / -1;" data-offset-x="140" data-offset-y="40" data-expected-width="50" data-expected-height="30"></div>
+</div>
+
+</body>
+</html>

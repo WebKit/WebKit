@@ -34,6 +34,7 @@
 #include "RenderText.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "UnplacedGridItem.h"
 #include <pal/Logging.h>
 #include <wtf/text/TextStream.h>
 
@@ -84,16 +85,18 @@ enum class GridAvoidanceReason : uint8_t {
     RelativeGridItemHasPercentageInset,
 
     GridItemColumnStartHasLineName,
-    GridItemColumnStartHasNegativeLineNumber,
     GridItemColumnStartHasSpan,
     GridItemHasColumnStartOutsideExplicitGrid,
+    GridItemNeedsLeadingImplicitColumnsWithMultipleAutoColumns,
+    GridItemNeedsTooManyLeadingImplicitColumns,
     GridItemHasUnsupportedColumnEnd,
 
     GridNeedsImplicitColumnsForItemsLockedToRow,
     GridItemRowStartHasLineName,
-    GridItemRowStartHasNegativeLineNumber,
     GridItemRowStartHasSpan,
     GridItemHasRowStartOutsideExplicitGrid,
+    GridItemNeedsLeadingImplicitRowsWithMultipleAutoRows,
+    GridItemNeedsTooManyLeadingImplicitRows,
     GridItemHasUnsupportedRowEnd,
 
     GridItemHasUnsupportedWidthValue,
@@ -111,9 +114,10 @@ static bool avoidanceReasonIsColumnPlacementRelated(GridAvoidanceReason gridAvoi
 {
     switch (gridAvoidanceReason) {
     case GridAvoidanceReason::GridItemColumnStartHasLineName:
-    case GridAvoidanceReason::GridItemColumnStartHasNegativeLineNumber:
     case GridAvoidanceReason::GridItemColumnStartHasSpan:
     case GridAvoidanceReason::GridItemHasColumnStartOutsideExplicitGrid:
+    case GridAvoidanceReason::GridItemNeedsLeadingImplicitColumnsWithMultipleAutoColumns:
+    case GridAvoidanceReason::GridItemNeedsTooManyLeadingImplicitColumns:
     case GridAvoidanceReason::GridItemHasUnsupportedColumnEnd:
         return true;
     default:
@@ -125,9 +129,10 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
 {
     switch (gridAvoidanceReason) {
     case GridAvoidanceReason::GridItemRowStartHasLineName:
-    case GridAvoidanceReason::GridItemRowStartHasNegativeLineNumber:
     case GridAvoidanceReason::GridItemRowStartHasSpan:
     case GridAvoidanceReason::GridItemHasRowStartOutsideExplicitGrid:
+    case GridAvoidanceReason::GridItemNeedsLeadingImplicitRowsWithMultipleAutoRows:
+    case GridAvoidanceReason::GridItemNeedsTooManyLeadingImplicitRows:
     case GridAvoidanceReason::GridItemHasUnsupportedRowEnd:
         return true;
     default:
@@ -152,26 +157,55 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
     }
 #endif
 
-static bool hasValidColumnEnd(const Style::GridPositionExplicit& explicitColumnStart, const Style::GridPosition columnEnd, size_t linesFromGridTemplateColumnsCount)
+// GFC's implicit grid is a dense matrix: ImplicitGrid's constructor allocates every cell of a
+// rows x columns matrix up front. The legacy Grid instead grows a row's storage only once that row
+// is used (see Grid::ensureStorageForRow), so it tolerates a sparse grid with a huge track count
+// that GFC cannot. A negative line may resolve as far as Style::GridPosition::min() lines before
+// the explicit grid, so leaving the leading implicit track count unbounded would let content force
+// a quadratic allocation. Cap what GFC takes on and leave the rest to the legacy path.
+static constexpr int maximumLeadingImplicitTracksCount = 10;
+
+// Resolves the 0-based line range for an axis whose start references an explicit line, using the
+// same mapping GFC applies in UnplacedGridItem::resolveDefinitePosition(). A negative CSS line
+// counts backward from the end of the explicit grid, so the resolved start line may be negative
+// when the placement counts past the start edge; those lines generate leading implicit tracks.
+static std::pair<int, int> resolveExplicitStartLineRange(const Style::GridPosition& explicitStart, const Style::GridPosition& end, size_t explicitTrackCount)
+{
+    ASSERT(explicitStart.isExplicit());
+    auto range = Layout::UnplacedGridItem::resolveDefinitePosition(explicitStart, end, explicitTrackCount);
+    ASSERT(range);
+    return *range;
+}
+
+// Resolves a start line that references an explicit line to its 0-based index. Whenever the start
+// is explicit its resolved line does not depend on the end at all, so pairing it with an auto end
+// makes this safe to call before the end kind has been validated.
+static int resolveExplicitStartLine(const Style::GridPosition& explicitStart, size_t explicitTrackCount)
+{
+    return resolveExplicitStartLineRange(explicitStart, CSS::Keyword::Auto { }, explicitTrackCount).first;
+}
+
+static bool hasValidColumnEnd(const Style::GridPosition& explicitColumnStart, const Style::GridPosition columnEnd, size_t explicitColumnCount)
 {
     return WTF::switchOn(columnEnd,
         [](const CSS::Keyword::Auto&) {
             return false;
         },
         [&](const Style::GridPositionExplicit&) {
-            if (!columnEnd.namedGridLine().value.isEmpty() || columnEnd.explicitPosition() < 0 || columnEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateColumnsCount))
+            if (!columnEnd.namedGridLine().value.isEmpty())
+                return false;
+
+            auto [startLine, endLine] = resolveExplicitStartLineRange(explicitColumnStart, columnEnd, explicitColumnCount);
+
+            // A negative end line may resolve before the start of the explicit grid, which generates
+            // leading implicit columns and is supported. Lines past the end edge are not.
+            if (endLine > static_cast<int>(explicitColumnCount))
                 return false;
 
             // FIXME: Multi-span items are not yet supported in intrinsic sizing
             // (see TrackSizingAlgorithm::sizeTracksForIntrinsicSizing).
             // Only accept items that span a single column.
-            auto startPosition = explicitColumnStart.position.value;
-            auto endPosition = columnEnd.explicitPosition();
-            auto gridLineDistance = endPosition - startPosition;
-            if (gridLineDistance != 1)
-                return false;
-
-            return true;
+            return endLine - startLine == 1;
         },
         [&](const Style::GridPositionSpan&) {
             return false;
@@ -222,26 +256,27 @@ static bool hasValidRowEnd(const CSS::Keyword::Auto& autoRowStart, const Style::
     );
 }
 
-static bool hasValidRowEnd(const Style::GridPositionExplicit& explicitRowStart, const Style::GridPosition rowEnd, size_t linesFromGridTemplateRowsCount)
+static bool hasValidRowEnd(const Style::GridPosition& explicitRowStart, const Style::GridPosition rowEnd, size_t explicitRowCount)
 {
     return WTF::switchOn(rowEnd,
         [&](const CSS::Keyword::Auto&) {
             return true;
         },
         [&](const Style::GridPositionExplicit&) {
-            if (!rowEnd.namedGridLine().value.isEmpty() || rowEnd.explicitPosition() < 0 || rowEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateRowsCount))
+            if (!rowEnd.namedGridLine().value.isEmpty())
+                return false;
+
+            auto [startLine, endLine] = resolveExplicitStartLineRange(explicitRowStart, rowEnd, explicitRowCount);
+
+            // A negative end line may resolve before the start of the explicit grid, which generates
+            // leading implicit rows and is supported. Lines past the end edge are not.
+            if (endLine > static_cast<int>(explicitRowCount))
                 return false;
 
             // FIXME: Multi-span items are not yet supported in intrinsic sizing
             // (see TrackSizingAlgorithm::sizeTracksForIntrinsicSizing).
             // Only accept items that span a single row.
-            auto startPosition = explicitRowStart.position.value;
-            auto endPosition = rowEnd.explicitPosition();
-            auto gridLineDistance = endPosition - startPosition;
-            if (gridLineDistance != 1)
-                return false;
-
-            return true;
+            return endLine - startLine == 1;
         },
         [&](const Style::GridPositionSpan&) {
             return false;
@@ -457,7 +492,9 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 
     ASSERT(renderGridStyle->gridAutoFlow().isRow(),
         "If we end up supporting column auto flow before broader implicit grid support then the logic using explicitlyPlacedItemsInRowCount will need to be reworked to be based upon the auto flow direction");
-    Vector<size_t> explicitlyPlacedItemsInRowCount;
+    // Keyed by the resolved 0-based row line, which is negative for placements that count past the
+    // start edge of the explicit grid, so zero is a valid key.
+    HashMap<int, size_t, DefaultHash<int>, WTF::SignedWithZeroKeyHashTraits<int>> explicitlyPlacedItemsInRowCount;
 
     for (CheckedRef gridItem : childrenOfType<RenderBox>(renderGrid)) {
         // We do not yet support grid item sizing spec for replaced elements.
@@ -530,8 +567,8 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (gridItemStyle->boxSizing() == BoxSizing::BorderBox)
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasBorderBoxSizing, reasons, reasonCollectionMode);
 
-        auto linesFromGridTemplateColumnsCount = gridTemplateColumns.sizes.size() + 1;
-        auto linesFromGridTemplateRowsCount = gridTemplateRows.sizes.size() + 1;
+        auto explicitColumnCount = gridTemplateColumns.sizes.size();
+        auto explicitRowCount = gridTemplateRows.sizes.size();
         auto& columnStart = gridItemStyle->gridItemColumnStart();
         auto columnPositioningAvoidanceReason = WTF::switchOn(columnStart,
             [&](const CSS::Keyword::Auto& autoPosition) -> std::optional<GridAvoidanceReason> {
@@ -540,16 +577,30 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
                 return { };
             },
-            [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {
-                auto columnStartLineNumber = explicitPosition.position.value;
+            [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
                 if (!columnStart.namedGridLine().value.isEmpty())
                     return GridAvoidanceReason::GridItemColumnStartHasLineName;
-                if (columnStartLineNumber < 0)
-                    return GridAvoidanceReason::GridItemColumnStartHasNegativeLineNumber;
-                if (columnStartLineNumber > static_cast<int>(linesFromGridTemplateColumnsCount))
+
+                auto columnStartLine = resolveExplicitStartLine(columnStart, explicitColumnCount);
+                if (columnStartLine > static_cast<int>(explicitColumnCount))
                     return GridAvoidanceReason::GridItemHasColumnStartOutsideExplicitGrid;
-                if (!hasValidColumnEnd(explicitPosition, gridItemStyle->gridItemColumnEnd(), linesFromGridTemplateColumnsCount))
+
+                auto& columnEnd = gridItemStyle->gridItemColumnEnd();
+                if (!hasValidColumnEnd(columnStart, columnEnd, explicitColumnCount))
                     return GridAvoidanceReason::GridItemHasUnsupportedColumnEnd;
+
+                // A start line resolving before the explicit grid generates leading implicit columns.
+                // The item's own line is the most negative of its two, so capping per item also caps
+                // the count GridFormattingContext::computeLeadingImplicitTracks() arrives at.
+                if (columnStartLine < -maximumLeadingImplicitTracksCount)
+                    return GridAvoidanceReason::GridItemNeedsTooManyLeadingImplicitColumns;
+
+                // Per spec leading implicit tracks cycle grid-auto-columns backwards from the
+                // explicit grid, but GridLayout::generateImplicitTrackSizingFunctions() always
+                // cycles forwards, so it only produces the right sizes when there is a single track
+                // size to cycle through.
+                if (columnStartLine < 0 && renderGridStyle->gridAutoColumns().size() > 1)
+                    return GridAvoidanceReason::GridItemNeedsLeadingImplicitColumnsWithMultipleAutoColumns;
                 return { };
             },
             [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
@@ -572,25 +623,30 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                     return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
                 return { };
             },
-            [&](const Style::GridPositionExplicit& explicitPosition) -> std::optional<GridAvoidanceReason> {
-                auto rowStartLineNumber = explicitPosition.position.value;
+            [&](const Style::GridPositionExplicit&) -> std::optional<GridAvoidanceReason> {
                 if (!rowStart.namedGridLine().value.isEmpty())
                     return GridAvoidanceReason::GridItemRowStartHasLineName;
-                if (rowStartLineNumber < 0)
-                    return GridAvoidanceReason::GridItemRowStartHasNegativeLineNumber;
-                if (rowStartLineNumber > static_cast<int>(linesFromGridTemplateRowsCount))
+
+                auto rowStartLine = resolveExplicitStartLine(rowStart, explicitRowCount);
+                if (rowStartLine > static_cast<int>(explicitRowCount))
                     return GridAvoidanceReason::GridItemHasRowStartOutsideExplicitGrid;
 
-                auto rowEnd = gridItemStyle->gridItemRowEnd();
-                if (!hasValidRowEnd(explicitPosition, rowEnd, linesFromGridTemplateRowsCount))
+                auto& rowEnd = gridItemStyle->gridItemRowEnd();
+                if (!hasValidRowEnd(rowStart, rowEnd, explicitRowCount))
                     return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
 
-                ASSERT(rowEnd.isExplicit());
-                size_t rowIndex = rowStartLineNumber + 1;
-                auto rowsCount = explicitlyPlacedItemsInRowCount.size();
-                if (rowIndex > rowsCount)
-                    explicitlyPlacedItemsInRowCount.insertFill(rowsCount, 0, rowIndex - rowsCount);
-                ++explicitlyPlacedItemsInRowCount[rowStartLineNumber];
+                // See the grid-auto-columns comments above for why leading implicit rows are capped
+                // and why they need a single grid-auto-rows track size.
+                if (rowStartLine < -maximumLeadingImplicitTracksCount)
+                    return GridAvoidanceReason::GridItemNeedsTooManyLeadingImplicitRows;
+
+                if (rowStartLine < 0 && renderGridStyle->gridAutoRows().size() > 1)
+                    return GridAvoidanceReason::GridItemNeedsLeadingImplicitRowsWithMultipleAutoRows;
+
+                // Key by the resolved line rather than the specified one so that two placements
+                // naming the same row through different line numbers (e.g. 1 and -4 on a grid with
+                // three explicit rows) share a bucket.
+                ++explicitlyPlacedItemsInRowCount.add(rowStartLine, 0).iterator->value;
                 return { };
             },
             [&](const Style::GridPositionSpan&) -> std::optional<GridAvoidanceReason> {
@@ -610,10 +666,14 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         // explicit grid, then we may need to add additional columns to the implicit grid to place
         // them properly. We can be more fine grained than what we are doing now, but this is
         // a good start as we allow more complex placements.
-        auto ineligibleRowIndex = explicitlyPlacedItemsInRowCount.findIf([&](size_t itemsInRowCount) {
-            return itemsInRowCount >= linesFromGridTemplateColumnsCount;
-        });
-        if (ineligibleRowIndex != notFound)
+        auto hasRowWithTooManyExplicitlyPlacedItems = [&] {
+            for (auto itemsInRowCount : explicitlyPlacedItemsInRowCount.values()) {
+                if (itemsInRowCount >= explicitColumnCount + 1)
+                    return true;
+            }
+            return false;
+        };
+        if (hasRowWithTooManyExplicitlyPlacedItems())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridNeedsImplicitColumnsForItemsLockedToRow, reasons, reasonCollectionMode);
 
         if (gridItemStyle->writingMode().isVertical() || gridItemStyle->writingMode().isBlockFlipped())
@@ -816,14 +876,17 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridItemColumnStartHasLineName:
         stream << "grid item column start has line name";
         break;
-    case GridAvoidanceReason::GridItemColumnStartHasNegativeLineNumber:
-        stream << "grid item column start has negative line number";
-        break;
     case GridAvoidanceReason::GridItemColumnStartHasSpan:
         stream << "grid item column start has span";
         break;
     case GridAvoidanceReason::GridItemHasColumnStartOutsideExplicitGrid:
         stream << "grid item has column start outside explicit grid";
+        break;
+    case GridAvoidanceReason::GridItemNeedsLeadingImplicitColumnsWithMultipleAutoColumns:
+        stream << "grid item needs leading implicit columns with multiple grid-auto-columns track sizes";
+        break;
+    case GridAvoidanceReason::GridItemNeedsTooManyLeadingImplicitColumns:
+        stream << "grid item needs too many leading implicit columns";
         break;
     case GridAvoidanceReason::GridItemHasUnsupportedColumnEnd:
         stream << "grid item has unsupported column end";
@@ -834,14 +897,17 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridItemRowStartHasLineName:
         stream << "grid item row start has line name";
         break;
-    case GridAvoidanceReason::GridItemRowStartHasNegativeLineNumber:
-        stream << "grid item row start has negative line number";
-        break;
     case GridAvoidanceReason::GridItemRowStartHasSpan:
         stream << "grid item row start has span";
         break;
     case GridAvoidanceReason::GridItemHasRowStartOutsideExplicitGrid:
         stream << "grid item has row start outside explicit grid";
+        break;
+    case GridAvoidanceReason::GridItemNeedsLeadingImplicitRowsWithMultipleAutoRows:
+        stream << "grid item needs leading implicit rows with multiple grid-auto-rows track sizes";
+        break;
+    case GridAvoidanceReason::GridItemNeedsTooManyLeadingImplicitRows:
+        stream << "grid item needs too many leading implicit rows";
         break;
     case GridAvoidanceReason::GridItemHasUnsupportedRowEnd:
         stream << "grid item has unsupported row end";

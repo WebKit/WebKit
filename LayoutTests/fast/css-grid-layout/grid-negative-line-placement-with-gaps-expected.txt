@@ -1,0 +1,3 @@
+This test checks that negative grid line numbers resolve against the explicit grid independently of the gutters, so an item placed with negative lines lands in the same grid area as the equivalent positive-line placement and is offset by the preceding gaps.
+
+PASS
