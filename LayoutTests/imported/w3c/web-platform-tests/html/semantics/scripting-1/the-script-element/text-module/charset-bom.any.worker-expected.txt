@@ -1,0 +1,5 @@
+
+FAIL UTF-8 BOM should be stripped when decoding text module script promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+FAIL UTF-16BE with BOM should be parsed as UTF-8 promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+FAIL UTF-16LE with BOM should be parsed as UTF-8 promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+

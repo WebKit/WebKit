@@ -1,0 +1,5 @@
+
+FAIL Javascript importing text module should load within the context of a service worker promise_test: Unhandled rejection with value: object "TypeError: TypeError: Import attribute type "text" is not valid"
+PASS Trying to register a service worker with a top-level text module should fail
+PASS Text module dynamic import should not load within the context of a service worker
+

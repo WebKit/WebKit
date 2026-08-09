@@ -1,0 +1,9 @@
+
+Harness Error (FAIL), message = TypeError: Import attribute type "text" is not valid
+
+NOTRUN Text modules
+
+Harness Error (FAIL), message = TypeError: Import attribute type "text" is not valid
+
+NOTRUN Text modules
+

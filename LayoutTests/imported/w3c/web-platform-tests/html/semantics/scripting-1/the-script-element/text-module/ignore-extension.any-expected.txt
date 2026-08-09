@@ -1,0 +1,6 @@
+
+FAIL Extension: file promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+FAIL Extension: file.js promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+FAIL Extension: file.json promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+FAIL Extension: file.txt promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+

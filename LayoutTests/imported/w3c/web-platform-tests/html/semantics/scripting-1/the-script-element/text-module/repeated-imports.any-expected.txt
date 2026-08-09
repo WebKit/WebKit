@@ -1,0 +1,9 @@
+
+FAIL Importing a specifier that previously failed due to an incorrect type attribute can succeed if the correct attribute is later given promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+FAIL Importing a specifier that previously succeeded with the correct type attribute should fail if the incorrect attribute is later given promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+FAIL Two modules of different type with the same specifier can load if the server changes its responses (first text, then JS) promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+FAIL An import should succeed even if the same specifier/type attribute pair previously failed due to a MIME type mismatch promise_test: Unhandled rejection with value: object "TypeError: 'text/plain' is not a valid JavaScript MIME type for module script 'http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/text-module/serve-text-then-js.py?key=fdd70d46-be12-4314-8f05-8c20b5d7da83'."
+FAIL If an import previously succeeded for a given specifier/type attribute pair, future uses of that pair should yield the same result promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+FAIL Two modules of different type with the same specifier can load if the server changes its responses (first JS, then text) promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+PASS If an import previously succeeded for a given specifier with no type attribute, future uses of the same values should yield the same result
+
