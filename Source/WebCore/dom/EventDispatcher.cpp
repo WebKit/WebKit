@@ -140,13 +140,18 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     return isAnyOf<CompositionEvent, InputEvent, KeyboardEvent>(event);
 }
 
-static HTMLInputElement* NODELETE findInputElementInEventPath(const EventPath& path)
+static RefPtr<HTMLInputElement> findInputElementInEventPath(const EventPath& path)
 {
+    // The legacy pre-activation behavior only applies to the event's activation target, which is
+    // the innermost node in the event path that has activation behavior. If that node is an input
+    // element, it is the one whose legacy pre-activation behavior (e.g. toggling a checkbox) runs.
+    // https://dom.spec.whatwg.org/#eventtarget-activation-behavior
     size_t size = path.size();
     for (size_t i = 0; i < size; ++i) {
-        auto& eventContext = path.contextAt(i);
-        if (auto* inputElement = dynamicDowncast<HTMLInputElement>(eventContext.currentTarget()))
-            return inputElement;
+        RefPtr node = path.contextAt(i).node();
+        if (!node || !node->hasActivationBehavior())
+            continue;
+        return dynamicDowncast<HTMLInputElement>(node.releaseNonNull());
     }
     return nullptr;
 }

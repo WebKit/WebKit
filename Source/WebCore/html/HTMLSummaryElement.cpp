@@ -136,4 +136,9 @@ bool HTMLSummaryElement::willRespondToMouseClickEventsWithEditability(Editabilit
     return isActiveSummary() || HTMLElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
+bool HTMLSummaryElement::hasActivationBehavior() const
+{
+    return true;
+}
+
 }

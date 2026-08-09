@@ -2890,6 +2890,11 @@ bool Node::willRespondToMouseClickEvents(const Style::ComputedStyle* styleToUse)
     return willRespondToMouseClickEventsWithEditability(computeEditabilityForMouseClickEvents(styleToUse));
 }
 
+bool Node::hasActivationBehavior() const
+{
+    return false;
+}
+
 bool Node::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
     // FIXME: Why is the iOS code path different from the non-iOS code path?

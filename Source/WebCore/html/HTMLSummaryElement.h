@@ -34,6 +34,7 @@ public:
 
     bool isActiveSummary() const;
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
+    bool hasActivationBehavior() const final;
 
 private:
     HTMLSummaryElement(const QualifiedName&, Document&);

@@ -692,6 +692,11 @@ bool HTMLAnchorElement::willRespondToMouseClickEventsWithEditability(Editability
     return isLink() || HTMLElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
+bool HTMLAnchorElement::hasActivationBehavior() const
+{
+    return isLink();
+}
+
 static auto& NODELETE rootEditableElementMap()
 {
     static NeverDestroyed<WeakHashMap<HTMLAnchorElement, WeakPtr<Element, WeakPtrImplWithEventTargetData>, WeakPtrImplWithEventTargetData>> map;

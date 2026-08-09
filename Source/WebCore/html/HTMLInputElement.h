@@ -286,6 +286,7 @@ public:
     void addSearchResult();
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
+    bool hasActivationBehavior() const final;
 
     WEBCORE_EXPORT bool isFocusingWithDataListDropdown() const;
     bool hasDataList() const;

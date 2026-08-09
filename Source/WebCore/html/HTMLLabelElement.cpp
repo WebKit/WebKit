@@ -202,6 +202,11 @@ bool HTMLLabelElement::willRespondToMouseClickEventsWithEditability(Editability 
     return (element && element->willRespondToMouseClickEventsWithEditability(editability)) || HTMLElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
+bool HTMLLabelElement::hasActivationBehavior() const
+{
+    return true;
+}
+
 void HTMLLabelElement::focus(const FocusOptions& options)
 {
     Ref protectedThis(*this);

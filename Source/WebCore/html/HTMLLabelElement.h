@@ -41,6 +41,7 @@ public:
     RefPtr<HTMLFormElement> formForBindings() const;
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
+    bool hasActivationBehavior() const final;
     void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 
 private:

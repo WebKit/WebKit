@@ -1405,6 +1405,11 @@ bool HTMLInputElement::willRespondToMouseClickEventsWithEditability(Editability 
     return HTMLTextFormControlElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
+bool HTMLInputElement::hasActivationBehavior() const
+{
+    return true;
+}
+
 bool HTMLInputElement::isURLAttribute(const Attribute& attribute) const
 {
     return attribute.name() == srcAttr || attribute.name() == formactionAttr || HTMLTextFormControlElement::isURLAttribute(attribute);

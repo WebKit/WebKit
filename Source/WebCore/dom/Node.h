@@ -561,6 +561,11 @@ public:
     // Perform the default action for an event.
     virtual void defaultEventHandler(Event&);
 
+    // Whether this node has activation behavior, per the DOM specification. This determines
+    // the event's activation target (the innermost node in the event path with activation behavior).
+    // https://dom.spec.whatwg.org/#eventtarget-activation-behavior
+    virtual bool hasActivationBehavior() const;
+
     ALWAYS_INLINE void ref() const;
     ALWAYS_INLINE void deref() const;
     ALWAYS_INLINE bool hasOneRef() const;

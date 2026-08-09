@@ -342,6 +342,11 @@ bool HTMLButtonElement::willRespondToMouseClickEventsWithEditability(Editability
     return !isDisabledFormControl();
 }
 
+bool HTMLButtonElement::hasActivationBehavior() const
+{
+    return true;
+}
+
 bool HTMLButtonElement::isSuccessfulSubmitButton() const
 {
     // HTML spec says that buttons must have names to be considered successful.

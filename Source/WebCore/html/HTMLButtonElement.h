@@ -43,6 +43,7 @@ public:
     CommandType commandType() const;
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
+    bool hasActivationBehavior() const final;
 
     RenderButton* renderer() const;
 
