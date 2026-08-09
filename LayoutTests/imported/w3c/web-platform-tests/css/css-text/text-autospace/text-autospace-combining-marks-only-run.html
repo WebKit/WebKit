@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>text-autospace: a text run of only combining marks must not discard the preceding base character</title>
+<link rel="help" href="https://drafts.csswg.org/css-text-4/#text-autospace-property">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  div {
+    font: 40px/1 sans-serif;
+    width: fit-content;
+  }
+  .normal { text-autospace: normal; }
+  .none { text-autospace: no-autospace; }
+</style>
+
+<!-- The combining marks share a text run with their base character. -->
+<div class="normal" id="singleNormal">a&#x0301;&#x0302;&#x6C38;</div>
+<div class="none" id="singleNone">a&#x0301;&#x0302;&#x6C38;</div>
+
+<!-- display: contents splits the grapheme cluster into separate text runs without
+     generating an inline box, so the middle run consists only of combining marks. -->
+<div class="normal" id="splitNormal">a<span style="display: contents">&#x0301;&#x0302;</span>&#x6C38;</div>
+<div class="none" id="splitNone">a<span style="display: contents">&#x0301;&#x0302;</span>&#x6C38;</div>
+
+<script>
+const widthOf = id => document.getElementById(id).getBoundingClientRect().width;
+
+// Comparing each structure against its own no-autospace twin isolates the autospace
+// contribution from any difference in how the split cluster is shaped.
+const singleDelta = () => widthOf("singleNormal") - widthOf("singleNone");
+const splitDelta = () => widthOf("splitNormal") - widthOf("splitNone");
+
+test(() => {
+  assert_greater_than(singleDelta(), 0,
+    "autospace should widen the ideograph boundary when the cluster is one run");
+}, "baseline: text-autospace applies between a base character and a following ideograph");
+
+test(() => {
+  assert_approx_equals(splitDelta(), singleDelta(), 0.5,
+    "a run of only combining marks should be transparent to autospace state");
+}, "a text run of only combining marks preserves the preceding base character");
+</script>

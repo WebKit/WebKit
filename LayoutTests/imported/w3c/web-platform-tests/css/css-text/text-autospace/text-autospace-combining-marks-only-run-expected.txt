@@ -1,0 +1,8 @@
+á̂永
+á̂永
+á̂永
+á̂永
+
+PASS baseline: text-autospace applies between a base character and a following ideograph
+PASS a text run of only combining marks preserves the preceding base character
+
