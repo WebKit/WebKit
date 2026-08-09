@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-seek-to-end-doesnt-loop</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var audioSourceBuffer;
+    var minBuffered;
+    var seekPromise;
+    var savedDuration;
+    const timesSeenInTimeupdateAfterSeek = [];
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    function waitForTimeupdateGreaterThan(video, refTime) {
+        return new Promise((resolve) => {
+            const listener = () => {
+                if (video.currentTime < refTime)
+                    return;
+                video.removeEventListener('timeupdate', listener);
+                resolve();
+            };
+            video.addEventListener('timeupdate', listener)
+        });
+    }
+
+    async function runTest() {
+        audioLoader = new MediaSourceLoader('content/test-48khz-manifest.json');
+        await loaderPromise(audioLoader);
+
+        findMediaElement();
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run('audioSourceBuffer = source.addSourceBuffer(audioLoader.type())');
+        waitFor(video, 'error').then(failTest);
+
+        consoleWrite('-');
+        consoleWrite('Load audio sourceBuffer');
+        run('audioSourceBuffer.appendBuffer(audioLoader.initSegment())');
+        await waitFor(audioSourceBuffer, 'update', true);
+        for (let i = 0; i < 2; i++) {
+            run(`audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(${i}))`);
+            await waitFor(audioSourceBuffer, 'update', true);
+        }
+        run('source.endOfStream()');
+        run('savedDuration = video.duration');
+        testExpected('savedDuration > 0', true);
+        testExpected('video.buffered.length', 1);
+
+        consoleWrite('-');
+        run('video.play()');
+        consoleWrite('Waiting for currentTime > 0s...');
+        await waitForTimeupdateGreaterThan(video, 0);
+
+        consoleWrite('-');
+        consoleWrite('Seeking to the end and waiting...');
+        run('video.currentTime = savedDuration');
+        video.addEventListener('timeupdate', () => {
+            timesSeenInTimeupdateAfterSeek.push(video.currentTime);
+        })
+
+        // Event logging is silenced (true) because seeked and ended can happed on any order under high load.
+        await Promise.all([
+            waitFor(video, 'seeking', true),
+            waitFor(video, 'seeked', true),
+            waitFor(video, 'ended', true),
+        ]);
+
+        consoleWrite('-');
+        consoleWrite('Seeking, seeked and ended events happened.');
+        testExpected('video.duration == savedDuration', true);
+        testExpected('video.currentTime == savedDuration', true);
+        testExpected('timesSeenInTimeupdateAfterSeek.length > 0', true);
+        testExpected('timesSeenInTimeupdateAfterSeek.indexOf(0)', -1);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    })
+    </script>
+</head>
+<body>
+    <div>
+        This tests that when seeking in an audio to the end, currentTime doesn't appear to go backwards due to an accidental loop.
+    </div>
+    <video controls muted></video>
+</body>
+</html>

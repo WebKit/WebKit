@@ -313,6 +313,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
         RefPtr self = weakThis.get();
         if (!self || !result)
             return;
+        propagateReadyStateToPlayer();
 
         // FIXME: Should m_mediaSourcePrivate run on its own WorkQueue (e.g. if MSE in a worker is enabled)
         // this should be changed for the async version of reenqueueMediaForTime.
@@ -398,7 +399,7 @@ void MediaPlayerPrivateGStreamerMSE::readyStateFromMediaSourceChanged()
 
 void MediaPlayerPrivateGStreamerMSE::propagateReadyStateToPlayer()
 {
-    ASSERT(m_mediaSourceReadyState < MediaPlayer::ReadyState::HaveCurrentData || !hasVideo() || !m_isWaitingForPreroll);
+    ASSERT(m_mediaSourceReadyState < MediaPlayer::ReadyState::HaveCurrentData || !hasVideo() || !m_isWaitingForPreroll || m_isSeeking);
     if (m_readyState == m_mediaSourceReadyState)
         return;
     GST_DEBUG("Propagating MediaSource readyState %s to player ready state (currently %s)",

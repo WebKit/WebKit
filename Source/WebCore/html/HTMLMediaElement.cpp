@@ -6510,8 +6510,11 @@ void HTMLMediaElement::mediaPlayerPlaybackStateChanged()
     beginProcessingMediaPlayerCallback();
     if (playerPaused)
         pauseInternal();
-    else
+    else if (!seeking() || !isEnded()) {
+        // The extra conditions above prevent autoplay when seeking, which would start playback from 0
+        // and cause a spurious seek to 0 when seeking to the end of the media.
         playInternal();
+    }
     endProcessingMediaPlayerCallback();
 }
 
