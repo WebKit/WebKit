@@ -590,6 +590,9 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
     if (!renderer)
         return { SkipExtraction::SelfAndSubtree };
 
+    if (renderer->isRenderOrLegacyRenderSVGHiddenContainer())
+        return { SkipExtraction::SelfAndSubtree };
+
     if (context.skipNearlyTransparentContent && renderer->style().opacity() < minOpacityToConsiderVisible) {
         if (RefPtr input = dynamicDowncast<HTMLInputElement>(node); !input || !visibleAssociatedLabelBounds(*input))
             return { SkipExtraction::SelfAndSubtree };
