@@ -1,0 +1,7 @@
+Tests that a <details> element with `display: contents` whose `::details-content` establishes a scrollable area does not crash. Test passes if WebKit does not crash. PASS.
+toggle
+content
+toggle
+content
+toggle
+content

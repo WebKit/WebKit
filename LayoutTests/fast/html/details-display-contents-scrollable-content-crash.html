@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* The scroll corner style is resolved against the shadow host, which has no
+   renderer because of `display: contents`. */
+#scroll-corner { display: contents; }
+#scroll-corner::details-content { height: 0; overflow: hidden; }
+
+/* Same for the resizer style, which is resolved along a separate code path. */
+#resizer { display: contents; }
+#resizer::details-content { height: 0; overflow: hidden; resize: both; }
+
+/* And for scrollbar creation, which looks up the same renderer. */
+#scrollbar { display: contents; }
+#scrollbar::details-content { height: 10px; overflow: scroll; }
+</style>
+</head>
+<body>
+<p>Tests that a &lt;details&gt; element with `display: contents` whose `::details-content` establishes a scrollable area does not crash. Test passes if WebKit does not crash. PASS.</p>
+<details id="scroll-corner" open><summary>toggle</summary><div>content</div></details>
+<details id="resizer" open><summary>toggle</summary><div>content</div></details>
+<details id="scrollbar" open><summary>toggle</summary><div style="height: 500px; width: 500px;">content</div></details>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Force a layout so the scrollable areas, and with them the scroll corner,
+// resizer and scrollbar styles, get resolved.
+document.body.offsetHeight;
+</script>
+</body>
+</html>
