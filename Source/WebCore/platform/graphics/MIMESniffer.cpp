@@ -140,7 +140,7 @@ static bool hasSignatureForWebM(std::span<const uint8_t> sequence)
     //   6. While iter is less than length and iter is less than 38, continuously loop through these steps:
     while (iter < length && iter < 38) {
         //  1. If the two bytes from sequence[iter] to sequence[iter + 1] are equal to 0x42 0x82,
-        if (sequence[iter] == 0x42 && sequence[iter + 1] == 0x82) {
+        if (iter + 1 < length && sequence[iter] == 0x42 && sequence[iter + 1] == 0x82) {
             //  1. Increment iter by 2.
             iter += 2;
             //  2. If iter is greater or equal than length, abort these steps.
