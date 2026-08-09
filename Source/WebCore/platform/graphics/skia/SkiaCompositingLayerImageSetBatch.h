@@ -50,9 +50,9 @@ public:
 
     void updatePaintProperties(SkCanvas&, const sk_sp<SkColorFilter>&, const std::optional<SkBlendMode>&);
 
-    // A null damage region draws everything. Otherwise the draw is split by the rects of the region. A
-    // rotated or skewed transform cannot be split, so it is flushed and drawn under a damage clip with
-    // fallbackPaint, which is used in that case only.
+    // A null damage region draws everything. Otherwise the draw is drawn whole when the damage covers it,
+    // split by the rects of the region when the transform allows, and otherwise flushed and drawn under a
+    // damage clip with fallbackPaint, which is used in that case only.
     void addImageSet(SkCanvas&, SkiaBackingStore&, const SkM44& transform, float opacity, bool enableAntialias, const SkiaDamageRegion*, const SkPaint& fallbackPaint);
     void addImage(SkCanvas&, const sk_sp<SkImage>&, const FloatRect&, const SkM44& transform, float opacity, bool enableAntialias, const SkiaDamageRegion*, const SkPaint& fallbackPaint);
 
@@ -77,30 +77,37 @@ public:
     };
 
 private:
-    // Decides how to limit one draw to the damage. Returns the inverse to split it with, or nothing when
-    // the draw is already handled, either because it misses the damage or because fallbackDraw() has drawn
-    // it under a damage clip, which ends the batch.
+    // What the caller has left to do to limit one draw to the damage.
+    enum class RestrictedDraw : uint8_t {
+        Done,
+        Whole,
+        Split
+    };
+
+    // Entries here carry no clip quad, so a draw needing a damage clip ends the batch.
     template<typename FallbackDrawFunction>
-    std::optional<SkMatrix> planRestrictedDraw(SkCanvas& canvas, const SkM44& transform, const SkMatrix& ctm, const SkRect& deviceRect, const SkiaDamageRegion& damageRegion, NOESCAPE const FallbackDrawFunction& fallbackDraw)
+    RestrictedDraw planRestrictedDraw(SkCanvas& canvas, const SkM44& transform, const SkMatrix& ctm, const SkRect& deviceRect, const SkiaDamageRegion& damageRegion, SkMatrix& inverse, NOESCAPE const FallbackDrawFunction& fallbackDraw)
     {
         ASSERT(!damageRegion.isEmpty());
 
-        SkMatrix inverse;
+        if (damageRegion.covers(deviceRect))
+            return RestrictedDraw::Whole;
+
         switch (damageRegion.planDraw(ctm, deviceRect, inverse)) {
         case SkiaDamageRegion::DrawDamageStrategy::Skip:
-            return std::nullopt;
+            return RestrictedDraw::Done;
         case SkiaDamageRegion::DrawDamageStrategy::ClipToDamage: {
             ScopedFlush autoFlush(canvas, *this, ScopedFlush::Mode::FlushBefore);
             canvas.concat(transform);
             damageRegion.clipCanvasInDeviceSpace(canvas);
             fallbackDraw(canvas);
-            return std::nullopt;
+            return RestrictedDraw::Done;
         }
         case SkiaDamageRegion::DrawDamageStrategy::SplitByRect:
             break;
         }
 
-        return inverse;
+        return RestrictedDraw::Split;
     }
 
     void updateSamplingOptions(SkCanvas&, SkSamplingOptions);

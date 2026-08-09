@@ -102,13 +102,17 @@ void SkiaCompositingLayerImageSetBatch::addImageSet(SkCanvas& canvas, SkiaBackin
     // Planned once for the whole layer. appendImageSetEntries() then splits each tile by the rects that touch it.
     const auto layerDeviceRect = ctm.mapRect(SkRect(FloatRect { { }, backingStore.size() }));
 
-    if (!planRestrictedDraw(canvas, transform, ctm, layerDeviceRect, *damageRegion, [&](SkCanvas& canvas) {
+    SkMatrix inverse;
+    const auto plan = planRestrictedDraw(canvas, transform, ctm, layerDeviceRect, *damageRegion, inverse, [&](SkCanvas& canvas) {
         backingStore.paintToCanvas(canvas, fallbackPaint, damageRegion);
-    }))
+    });
+    if (plan == RestrictedDraw::Done)
         return;
 
     updateSamplingOptions(canvas, sampling);
-    backingStore.appendImageSetEntries(canvas, ctm, matrixIndexForDraw(ctm), opacity, enableAntialias, m_imageSet, damageRegion);
+    // A covered layer has every tile inside the damage, so there is nothing to split by.
+    backingStore.appendImageSetEntries(canvas, ctm, matrixIndexForDraw(ctm), opacity, enableAntialias, m_imageSet,
+        plan == RestrictedDraw::Whole ? nullptr : damageRegion);
 }
 
 void SkiaCompositingLayerImageSetBatch::addImage(SkCanvas& canvas, const sk_sp<SkImage>& image, const FloatRect& rect, const SkM44& transform, float opacity, bool enableAntialias, const SkiaDamageRegion* damageRegion, const SkPaint& fallbackPaint)
@@ -127,19 +131,28 @@ void SkiaCompositingLayerImageSetBatch::addImage(SkCanvas& canvas, const sk_sp<S
 
     const auto deviceRect = ctm.mapRect(dstRectFull);
 
-    const auto inverse = planRestrictedDraw(canvas, transform, ctm, deviceRect, *damageRegion, [&](SkCanvas& canvas) {
+    SkMatrix inverse;
+    const auto plan = planRestrictedDraw(canvas, transform, ctm, deviceRect, *damageRegion, inverse, [&](SkCanvas& canvas) {
         canvas.drawImageRect(image, srcRectFull, dstRectFull, SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), &fallbackPaint, SkCanvas::kFast_SrcRectConstraint);
     });
-    if (!inverse)
+    if (plan == RestrictedDraw::Done)
         return;
+
+    updateSamplingOptions(canvas, samplingOptionsForImage(canvas, image, rect, ctm));
+    const auto matrixIndex = matrixIndexForDraw(ctm);
+
+    // Drawn whole, so it has no interior edges and antialiases like a draw with no damage.
+    if (plan == RestrictedDraw::Whole) {
+        const unsigned aaFlags = enableAntialias ? SkCanvas::kAll_QuadAAFlags : SkCanvas::kNone_QuadAAFlags;
+        m_imageSet.append(SkCanvas::ImageSetEntry(image, srcRectFull, dstRectFull, matrixIndex, opacity, aaFlags, false));
+        return;
+    }
 
     // Splitting creates edges inside the image, and antialiasing them would blend along those edges. This
     // never happens: a split needs a CTM that keeps rects as rects, which is never antialiased.
     ASSERT(!enableAntialias);
 
-    updateSamplingOptions(canvas, samplingOptionsForImage(canvas, image, rect, ctm));
-    const auto matrixIndex = matrixIndexForDraw(ctm);
-    damageRegion->forEachDamagedSubRect(deviceRect, dstRectFull, srcRectFull, *inverse, [&](const SkRect& srcSubRect, const SkRect& dstSubRect) {
+    damageRegion->forEachDamagedSubRect(deviceRect, dstRectFull, srcRectFull, inverse, [&](const SkRect& srcSubRect, const SkRect& dstSubRect) {
         m_imageSet.append(SkCanvas::ImageSetEntry(image, srcSubRect, dstSubRect, matrixIndex, opacity, SkCanvas::kNone_QuadAAFlags, false));
     });
 }
