@@ -4,7 +4,6 @@
 # Tests that crash #
 ####################
 http/tests/security/top-level-unique-origin2.https.html [ Crash ]
-imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Crash ]
 imported/w3c/web-platform-tests/speculation-rules/prefetch/redirect-url.https.html?origin=cross-site-redirect [ Crash ]
 imported/w3c/web-platform-tests/speculation-rules/speculation-tags/same-site-to-cross-site-redirection-prefetch.https.html [ Crash ]
 swipe/basic-cached-back-swipe.html [ Crash ]
@@ -341,7 +340,6 @@ http/wpt/mediarecorder/MediaRecorder-mock-dataavailable.html [ Failure ]
 http/wpt/mediarecorder/MediaRecorder-webm-AV-audio-video-dataavailable.html [ Failure ]
 http/wpt/webaudio/the-audio-api/the-audioworklet-interface/dynamic-import-is-prohibited.https.html [ Failure ]
 http/wpt/webaudio/the-audio-api/the-audioworklet-interface/exposed-properties.https.html [ Failure ]
-imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/no-view-transition-with-cross-origin-redirect.sub.html [ Failure ]
 imported/w3c/web-platform-tests/css/selectors/media/media-playback-state-timing.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/srcdoc/srcdoc-history-entries.html [ Failure ]

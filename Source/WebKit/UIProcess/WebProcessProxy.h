@@ -562,6 +562,14 @@ public:
     LockdownMode lockdownMode() const { return m_lockdownMode; }
     EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }
 
+    bool canReuseForSiteIsolatedNavigation(const WebsiteDataStore* targetDataStore, LockdownMode targetLockdownMode, EnhancedSecurity targetEnhancedSecurity) const
+    {
+        return !isInProcessCache()
+            && websiteDataStore() == targetDataStore
+            && lockdownMode() == targetLockdownMode
+            && enhancedSecurityStatesAreConsistent(enhancedSecurity(), targetEnhancedSecurity);
+    }
+
 #if PLATFORM(COCOA)
     std::optional<audit_token_t> auditToken() const;
 #if !ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)

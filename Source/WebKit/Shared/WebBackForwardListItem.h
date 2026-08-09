@@ -31,6 +31,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/SwiftBridging.h>
@@ -105,6 +106,9 @@ public:
     void setEnhancedSecurity(EnhancedSecurity state) { m_enhancedSecurity = state; }
     EnhancedSecurity enhancedSecurity() const { return m_enhancedSecurity; }
 
+    const std::optional<WebCore::SecurityOriginData>& initiatorOriginSnapshot() const LIFETIME_BOUND { return m_initiatorOriginSnapshot; }
+    void setInitiatorOriginSnapshot(const WebCore::SecurityOriginData& origin) { m_initiatorOriginSnapshot = origin; }
+
     void updateFrameID(WebCore::FrameIdentifier oldFrameID, WebCore::FrameIdentifier newFrameID);
 
 private:
@@ -129,6 +133,7 @@ private:
     RefPtr<ViewSnapshot> m_snapshot;
 #endif
     EnhancedSecurity m_enhancedSecurity { EnhancedSecurity::Disabled };
+    std::optional<WebCore::SecurityOriginData> m_initiatorOriginSnapshot;
 } SWIFT_SHARED_REFERENCE(refBackForwardListItem, derefBackForwardListItem) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 typedef Vector<Ref<WebBackForwardListItem>> BackForwardListItemVector;

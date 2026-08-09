@@ -1,0 +1,120 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+// main frame (opener) <- this file, hosted at 127.0.0.1
+//    |
+//    | window.open(), then this frame navigates the popup to about:blank. Because this frame
+//    initiated that navigation, the about:blank inherits this frame's origin (127.0.0.1).
+//
+// The popup then navigates cross-site to localhost, which moves it to another process, and is asked
+// to go back. Restoring the about:blank entry has to restore the origin it originally inherited (127.0.0.1)
+//
+// From HTML Spec: browsing the Web, section 7.4.2.2, Item 23, sub-item 5:
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#beginning-navigation
+//
+// If url matches about:blank or is about:srcdoc, then:
+//     Set documentState's origin to initiatorOriginSnapshot.
+
+description("An about:blank popup that inherited its opener's origin is still modifiable by the opener after going back to it from a cross-site document.");
+jsTestIsAsync = true;
+
+const sameSiteURL = "http://127.0.0.1:8000/site-isolation/resources/post-message-to-opener.html";
+const crossSiteURL = "http://localhost:8000/site-isolation/resources/history-back-when-asked.html";
+
+let popup;
+let popupHistoryLengthAfterAboutBlank;
+let popupHistoryLengthAfterCrossSiteNavigation;
+let openerCanModifyInheritedAboutBlank;
+let openerCanModifyCrossSitePopup;
+let openerCanModifyAboutBlankRestoredFromHistory;
+
+function openerCanModifyPopupDOM()
+{
+    try {
+        popup.document.body.setAttribute("data-modified-by-opener", "yes");
+        return popup.document.body.getAttribute("data-modified-by-opener") === "yes";
+    } catch (e) {
+        return false;
+    }
+}
+
+function waitUntilCanModifyIs(expected, timeoutMilliseconds = 10000)
+{
+    return new Promise((resolve) => {
+        let elapsed = 0;
+        const poll = () => {
+            if (openerCanModifyPopupDOM() === expected || elapsed >= timeoutMilliseconds) {
+                resolve(openerCanModifyPopupDOM());
+                return;
+            }
+            elapsed += 10;
+            setTimeout(poll, 10);
+        };
+        poll();
+    });
+}
+
+function waitUntilPopupURLIs(url, timeoutMilliseconds = 10000)
+{
+    return new Promise((resolve) => {
+        let elapsed = 0;
+        const poll = () => {
+            let current = "<unreadable>";
+            try { current = popup.location.href; } catch (e) { }
+            if (current === url || elapsed >= timeoutMilliseconds) {
+                resolve(current);
+                return;
+            }
+            elapsed += 10;
+            setTimeout(poll, 10);
+        };
+        poll();
+    });
+}
+
+function messageMatching(predicate)
+{
+    return new Promise((resolve) => {
+        window.addEventListener("message", function handler(event) {
+            if (event.data && predicate(event.data)) {
+                window.removeEventListener("message", handler);
+                resolve(event.data);
+            }
+        });
+    });
+}
+
+(async () => {
+    let firstPageReady = messageMatching(data => data === "initial ping");
+    popup = window.open(sameSiteURL);
+    await firstPageReady;
+
+    popup.location = "about:blank";
+    await waitUntilPopupURLIs("about:blank");
+    openerCanModifyInheritedAboutBlank = await waitUntilCanModifyIs(true);
+    popupHistoryLengthAfterAboutBlank = popup.history.length;
+    shouldBe("popupHistoryLengthAfterAboutBlank", "2");
+    shouldBeTrue("openerCanModifyInheritedAboutBlank");
+
+    let crossSiteReady = messageMatching(data => data.type === "ready");
+    popup.location = crossSiteURL;
+    popupHistoryLengthAfterCrossSiteNavigation = (await crossSiteReady).historyLength;
+    shouldBe("popupHistoryLengthAfterCrossSiteNavigation", "3");
+    openerCanModifyCrossSitePopup = await waitUntilCanModifyIs(false);
+    shouldBeFalse("openerCanModifyCrossSitePopup");
+
+    popup.postMessage("go-back", "*");
+    openerCanModifyAboutBlankRestoredFromHistory = await waitUntilCanModifyIs(true);
+    shouldBeTrue("openerCanModifyAboutBlankRestoredFromHistory");
+
+    popup.close();
+    finishJSTest();
+})();
+</script>
+</body>
+</html>
