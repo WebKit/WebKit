@@ -304,7 +304,7 @@ webkit.org/b/137096 svg/text/text-altglyph-01-b.svg [ Failure ]
 
 # Since r200320 resource-timing feature is a runtime flag.
 webkit.org/b/158617 fast/dom/Window/window-properties-performance-resource-timing.html [ Failure ]
-webkit.org/b/315934 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Crash Pass ]
+webkit.org/b/315934 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Failure Pass ]
 
 # Resource timing tests are flaky due to redirect timing variability
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Failure ]

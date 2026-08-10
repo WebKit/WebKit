@@ -4207,7 +4207,8 @@ imported/w3c/web-platform-tests/css/css-overflow/scroll-markers [ Skip ]
 webkit.org/b/210731 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html [ Skip ]
 webkit.org/b/210731 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html [ Skip ]
 
-imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.sub.html [ Failure ]
+webkit.org/b/321411 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.sub.html [ Failure ]
+
 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.any.html [ Failure ]
 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.any.serviceworker.html [ Failure ]
 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.any.sharedworker.html [ Failure ]

@@ -827,6 +827,8 @@ webkit.org/b/146731 fast/backgrounds/hidpi-background-image-contain-cover-scale-
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/content-security-policy/inside-worker/dedicatedworker-worker-src.html [ Timeout Pass ]
+
 # Flaky tests Nov2023
 webkit.org/b/264680 imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Failure Pass ]
 
@@ -1233,6 +1235,8 @@ webkit.org/b/316547 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 webkit.org/b/315455 fast/dom/Range/detach-range-during-deletecontents.html [ Timeout ]
 webkit.org/b/315455 [ Release ] http/tests/IndexedDB/transaction-commit-pending-requests-stop.html [ Pass Failure ]
 webkit.org/b/315455 webgl/1.0.x/conformance/extensions/ext-sRGB.html [ Failure ]
+
+webkit.org/b/321411 [ arm64 Release ] imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.sub.html [ Failure Pass ]
 
 webkit.org/b/317967 [ x86_64 ] fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html [ Pass Failure ]
 webkit.org/b/317969 [ x86_64 Release ] imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-blob-negotiated.window.html [ Pass Failure ]
