@@ -233,7 +233,7 @@ webkit.org/b/245840 fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
 webkit.org/b/245840 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 
 # WEBGL2 failures
-webkit.org/b/251107 inspector/canvas/recording-webgl2-full.html [ Failure ]
+webkit.org/b/251107 [ Debug ] inspector/canvas/recording-webgl2-full.html [ Failure Pass ]
 webkit.org/b/251107 inspector/canvas/recording-webgl2-snapshots.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Timeout ]
 
@@ -1329,6 +1329,7 @@ webkit.org/b/320354 compositing/backgrounds/fixed-background-on-descendant.html 
 
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001.svg [ ImageOnlyFailure ]
 
-webkit.org/b/321278 [ Release ] imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-214.html [ ImageOnlyFailure ]
+webkit.org/b/321278 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-214.html [ ImageOnlyFailure Pass ]
 webkit.org/b/321281 [ Debug ] webrtc/video-disabled-black.html [ Crash Pass ]
 webkit.org/b/320649 [ Debug ] webrtc/disable-encryption.html [ Crash Pass ]
+webkit.org/b/321451 [ Debug ] inspector/unit-tests/debouncer.html [ Failure Pass ]

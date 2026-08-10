@@ -1583,7 +1583,7 @@ webkit.org/b/239345 editing/execCommand/insert-ordered-list-and-delete.html [ Fa
 webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.html [ Failure ]
 
 # Assertion failure if ASSERT_ENABLED
-webkit.org/b/286128 [ Release ] editing/inserting/insert-list-user-select-none-crash.html [ Crash Pass ]
+webkit.org/b/286128 [ Release ] editing/inserting/insert-list-user-select-none-crash.html [ Crash Pass Timeout ]
 
 webkit.org/b/179261 editing/selection/drag-to-contenteditable-iframe.html [ Timeout ]
 [ Debug ] editing/execCommand/delete-non-editable-range-crash.html [ Timeout Pass ]
@@ -2808,8 +2808,8 @@ imported/w3c/web-platform-tests/webrtc/legacy/RTCRtpTransceiver-with-OfferToRece
 imported/w3c/web-platform-tests/webrtc/simulcast/negotiation-encodings.https.html?interop-2026 [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/transfer-datachannel.html [ Pass Failure ]
 webrtc/encrypted-rtp-header-extensions.html [ Pass Crash ]
-webrtc/h264-baseline.html [ Pass Crash ]
-webkit.org/b/311846 webrtc/h264-high.html [ Pass Crash ]
+webkit.org/b/311846 webrtc/h264-baseline.html [ Pass Crash Timeout ]
+webkit.org/b/311846 webrtc/h264-high.html [ Pass Crash Timeout ]
 webrtc/vp8-then-h264.html [ Pass Crash ]
 webkit.org/b/310095 imported/w3c/web-platform-tests/webrtc/simulcast/screenshare.https.html [ Crash Failure ]
 
@@ -2841,7 +2841,7 @@ fast/mediastream/video-rotation2.html [ Failure ]
 
 http/wpt/mediastream/webrtc-vp9-colorspace.html [ Failure ]
 
-webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Pass Crash Failure ]
+webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Pass Crash Failure Timeout ]
 
 # Regressions introduced by https://commits.webkit.org/263750@main
 fast/mediastream/apply-constraints-advanced.html [ Failure ]
@@ -5340,6 +5340,8 @@ webkit.org/b/320653 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-con
 webkit.org/b/321170 imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html?interop-2026 [ Pass Crash ]
 
 webkit.org/b/321285 [ x86_64 ] imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html [ Crash Pass ]
+
+webkit.org/b/321282 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-creation-time.https.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 
