@@ -638,15 +638,8 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 #if ENABLE(IMAGE_ANALYSIS)
         // Don't allow selecting individual glyphs on text recognized inside an image:
         if (m_element->isInUserAgentShadowTree() && m_element->userAgentPart() == UserAgentParts::internalImageOverlayText()) {
-            switch (style.webkitUserSelect()) {
-            case UserSelect::All:
-            case UserSelect::None:
-                break;
-            case UserSelect::Auto:
-            case UserSelect::Text:
-                style.setWebkitUserSelect(UserSelect::All);
-                break;
-            }
+            style.setWebkitUserSelect(style.webkitUserSelect() == UserSelect::None ? UserSelect::None : UserSelect::All);
+            style.setUserSelect(style.userSelect() == UserSelect::None ? UserSelect::None : UserSelect::All);
         }
 #endif
 
@@ -826,6 +819,32 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 #endif
 
     adjustForSiteSpecificQuirks(style);
+
+    // The hasExplicitlySetWebkitUserSelect flag is inherited along with -webkit-user-select, so legacy behavior propagates to children:
+    if (!m_document->settings().cssUnprefixedUserSelectEnabled() || style.hasExplicitlySetWebkitUserSelect()) {
+        auto value = style.webkitUserSelect();
+
+        // Legacy behavior: on editable, non-draggable content, we override None to Text
+        if (style.userModify() != UserModify::ReadOnly && style.userDrag() != UserDrag::Element && value == UserSelect::None)
+            value = UserSelect::Text;
+
+        // Legacy behavior: prefixed user-select treats Auto as Text since this
+        // implies the parent is not All / None
+        if (value == UserSelect::Auto)
+            value = UserSelect::Text;
+
+        style.setUsedUserSelect(value);
+    } else {
+        auto value = style.userSelect();
+        if (value == UserSelect::Auto)
+            value = m_parentStyle.usedUserSelectIgnoringEffectivelyInert();
+
+        // FIXME: should be overridden to UserSelect::Contain (already behaves as such)
+        if (style.userModify() != UserModify::ReadOnly)
+            value = UserSelect::Text;
+
+        style.setUsedUserSelect(value);
+    }
 }
 
 static bool NODELETE hasEffectiveDisplayNoneForDisplayContents(const Element& element)
@@ -1089,8 +1108,10 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 
     if (documentQuirks.needsPrimeVideoUserSelectNoneQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> className("webPlayerSDKUiContainer"_s);
-        if (m_element->hasClassName(className))
+        if (m_element->hasClassName(className)) {
+            style.setUserSelect(UserSelect::None);
             style.setWebkitUserSelect(UserSelect::None);
+        }
     }
 
     if (auto tikTokOverflowingContentQuery = documentQuirks.needsTikTokOverflowingContentQuirk(protect(*m_element), m_parentStyle)) {

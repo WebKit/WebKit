@@ -1,6 +1,6 @@
 
-FAIL Property user-select value 'auto' assert_true: user-select doesn't seem to be supported in the computed style expected true got false
-FAIL Property user-select value 'text' assert_true: user-select doesn't seem to be supported in the computed style expected true got false
-FAIL Property user-select value 'none' assert_true: user-select doesn't seem to be supported in the computed style expected true got false
-FAIL Property user-select value 'all' assert_true: user-select doesn't seem to be supported in the computed style expected true got false
+PASS Property user-select value 'auto'
+PASS Property user-select value 'text'
+PASS Property user-select value 'none'
+PASS Property user-select value 'all'
 

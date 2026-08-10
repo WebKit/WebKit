@@ -12499,7 +12499,7 @@
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "UserSelect",
                 "parser-grammar": "<<values>>",
-                "comment": "Not an alias of 'user-select': this property is inherited, it overrides 'user-select' whenever it has been specified (hence the has-explicitly-set flag)."
+                "comment": "Not an alias of 'user-select': this property is inherited and, when present, overrides 'user-select' for the entire subtree (see the has-explicitly-set flag)."
             },
             "status": "non-standard"
         },

@@ -1831,7 +1831,7 @@ CSSUnprefixedBackdropFilterEnabled:
 
 CSSUnprefixedUserSelectEnabled:
   type: bool
-  status: internal
+  status: testable
   category: css
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
   humanReadableName: "CSS Unprefixed User Select"

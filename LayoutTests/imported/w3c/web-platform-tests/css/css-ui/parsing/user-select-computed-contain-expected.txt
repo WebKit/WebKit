@@ -1,3 +1,3 @@
 
-FAIL Property user-select value 'contain' assert_true: user-select doesn't seem to be supported in the computed style expected true got false
+FAIL Property user-select value 'contain' assert_true: 'contain' is a supported value for user-select. expected true got false
 
