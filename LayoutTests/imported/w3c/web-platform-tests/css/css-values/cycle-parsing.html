@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CSSCycleFunctionEnabled=true ] -->
+<meta charset="utf-8">
+<title>CSS Values 5: Cycle() Notation (parsing)</title>
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#toggle-notation">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/support/parsing-testcommon.js"></script>
+
+<script>
+    const validValues = [
+        ["font-style", "cycle(italic)"],
+        ["list-style-type", "cycle(disc, circle, square, box)"],
+        ["margin", "cycle(1px 2px, 4px, 1px 5px 4px)"],
+        ["margin-top", "cycle(1px, 4px, 1px)"],
+        ["margin-right", "cycle(2px, 4px, 5px)"],
+        ["margin-bottom", "cycle(1px, 4px, 4px)"],
+        ["margin-left", "cycle(2px, 4px, 5px)"],
+        ["color", "cycle(var(--mycolor), blue)"],
+        ["color", "cycle(blue, var(--mycolor))"],
+        ["color", "cycle(var(--a), var(--b))"],
+        ["color", "cycle(var(--mycolor, blue), red)"],
+        ["font-style", "cycle(var(--a))"],
+        ["margin-top", "cycle(1px, var(--a), 2px)"],
+        ["margin-top", "cycle(env(safe-area-inset-top), 1px)"],
+        ["color", "cycle(if(style(--x: 1): red; else: blue), green)"],
+        ["color", "var(--mycolor, cycle(red, blue))"],
+    ];
+    const invalidValues = [
+        ["background-position", "10px cycle(50px, 100px)"],
+        ["background-position", "cycle(50px, 100px) 10px"],
+        ["list-style-type", "cycle(disc, 50px)"],
+        ["font-style", "cycle(cycle(italic, normal), normal)"],
+        ["font-style", "cycle(attr(data-x), normal)"],
+        ["margin-top", "cycle(calc(1px + 1px), 2px)"],
+        ["list-style-type", "cycle()"],
+        ["font-style", "cycle(inherit, italic)"],
+        ["font-style", "cycle(italic, initial)"],
+        ["margin-top", "cycle(unset, 1px)"],
+        ["margin-top", "cycle(1px, revert)"],
+        ["margin-top", "cycle(revert-layer, 1px)"],
+        ["list-style-type", "cycle(var(--a), 50px)"],
+        ["font-style", "cycle(var(--a), attr(data-x))"],
+        ["margin-top", "cycle(var(--a), calc(1px + 1px))"],
+        ["font-style", "cycle(var(--a), cycle(italic, normal))"],
+    ];
+
+    for (const validValue of validValues)
+        test_valid_value(...validValue);
+
+    for (const invalidValue of invalidValues)
+        test_invalid_value(...invalidValue);
+</script>
