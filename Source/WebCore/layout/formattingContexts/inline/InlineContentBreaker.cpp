@@ -893,46 +893,6 @@ InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverfl
     return { overflowingRunIndex };
 }
 
-EnumSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBehavior(const Style::ComputedStyle& style, bool hasWrapOpportunityAtPreviousPosition) const
-{
-    // Disregard any prohibition against line breaks mandated by the word-break property.
-    // The different wrapping opportunities must not be prioritized.
-    // Note hyphenation is not applied.
-    if (style.lineBreak() == LineBreak::Anywhere)
-        return { WordBreakRule::AtArbitraryPosition };
-
-    // Breaking is allowed within “words”.
-    if (style.wordBreak() == WordBreak::BreakAll)
-        return { WordBreakRule::AtArbitraryPositionWithinWords };
-
-    auto includeHyphenationIfAllowed = [&](std::optional<InlineContentBreaker::WordBreakRule> wordBreakRule) -> EnumSet<InlineContentBreaker::WordBreakRule> {
-        auto hyphenationIsAllowed = !m_hyphenationIsDisabled && style.hyphens() == Hyphens::Auto && canHyphenate(Style::toPlatform(style.computedLocale()));
-        if (hyphenationIsAllowed) {
-            if (wordBreakRule)
-                return { *wordBreakRule, WordBreakRule::AtHyphenationOpportunities };
-            return { WordBreakRule::AtHyphenationOpportunities };
-        }
-        if (wordBreakRule)
-            return *wordBreakRule;
-        return { };
-    };
-
-    // For compatibility with legacy content, the word-break property also supports a deprecated break-word keyword.
-    // When specified, this has the same effect as word-break: normal and overflow-wrap: anywhere, regardless of the actual value of the overflow-wrap property.
-    if (style.wordBreak() == WordBreak::BreakWord && !hasWrapOpportunityAtPreviousPosition)
-        return includeHyphenationIfAllowed(WordBreakRule::AtArbitraryPosition);
-    // OverflowWrap::BreakWord/Anywhere An otherwise unbreakable sequence of characters may be broken at an arbitrary point if there are no otherwise-acceptable break points in the line.
-    // Note that this applies to content where CSS properties (e.g. WordBreak::KeepAll) make it unbreakable. 
-    // Soft wrap opportunities introduced by overflow-wrap/word-wrap: break-word are not considered when calculating min-content intrinsic sizes.
-    auto overflowWrapBreakWordIsApplicable = !isMinimumInIntrinsicWidthMode();
-    if (((overflowWrapBreakWordIsApplicable && style.overflowWrap() == OverflowWrap::BreakWord) || style.overflowWrap() == OverflowWrap::Anywhere) && !hasWrapOpportunityAtPreviousPosition)
-        return includeHyphenationIfAllowed(WordBreakRule::AtArbitraryPosition);
-    // Breaking is forbidden within “words”.
-    if (style.wordBreak() == WordBreak::KeepAll)
-        return { };
-    return includeHyphenationIfAllowed({ });
-}
-
 void InlineContentBreaker::ContinuousContent::setTrailingSoftHyphenWidth(InlineLayoutUnit hyphenWidth)
 {
     m_logicalWidth += hyphenWidth;

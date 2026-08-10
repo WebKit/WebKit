@@ -47,6 +47,8 @@ private:
     enum class MayCacheLayoutResult : bool { No, Yes };
     InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode, AbstractLineBuilder&, MayCacheLayoutResult = MayCacheLayoutResult::No);
     InlineLayoutUnit simplifiedMinimumWidth(const ElementBox& root) const;
+    std::optional<InlineLayoutUnit> minimumContentSizeForBreakSpaces();
+    InlineLayoutUnit lineBuilderMinimumContentSize();
     InlineLayoutUnit simplifiedMaximumWidth(MayCacheLayoutResult = MayCacheLayoutResult::No);
 
     InlineFormattingContext& NODELETE formattingContext() LIFETIME_BOUND;

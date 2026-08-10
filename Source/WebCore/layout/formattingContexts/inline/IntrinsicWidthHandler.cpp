@@ -150,11 +150,78 @@ IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineForm
     initializeRangeAndTextOnlyBuilderEligibility();
 }
 
-InlineLayoutUnit IntrinsicWidthHandler::minimumContentSize()
-{
-    if (isContentEligibleForNonLineBuilderMinimumWidth(formattingContextRoot(), m_inlineItems, m_mayUseSimplifiedTextOnlyInlineLayoutInRange))
-        return simplifiedMinimumWidth(formattingContextRoot());
+struct ContentWidthBetweenLineBreaks {
+    InlineLayoutUnit maximum { };
+    InlineLayoutUnit current { };
+};
 
+std::optional<InlineLayoutUnit> IntrinsicWidthHandler::minimumContentSizeForBreakSpaces()
+{
+    if (!m_mayUseSimplifiedTextOnlyInlineLayoutInRange)
+        return { };
+
+    auto& lineBuilderRoot = this->lineBuilderRoot();
+    auto& lineBuilderRootStyle = lineBuilderRoot.style();
+    auto isEligibleForBreakSpacesFastPath = [&] {
+        if (lineBuilderRootStyle.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces)
+            return false;
+        if (&lineBuilderRootStyle != &lineBuilderRoot.firstLineStyle())
+            return false;
+        if (!TextUtil::isWrappingAllowed(lineBuilderRootStyle))
+            return false;
+        if (m_inlineItemRange.isEmpty())
+            return false;
+        if (!TextUtil::wordBreakBehavior(lineBuilderRootStyle, false, TextUtil::IsMinimumInIntrinsicWidthMode::Yes, TextUtil::HyphenationIsDisabled::No).isEmpty())
+            return false;
+        return true;
+    };
+
+    if (!isEligibleForBreakSpacesFastPath())
+        return { };
+
+    auto& inlineItemList = this->inlineItemList();
+
+    auto maximumUnbreakableWidth = InlineLayoutUnit { };
+    auto currentUnbreakableWidth = InlineLayoutUnit { };
+    auto contentWidthBetweenLineBreaks = ContentWidthBetweenLineBreaks { };
+    auto layoutRange = m_inlineItemRange;
+
+    auto recordUnbreakableWidth = [](auto& currentUnbreakableWidth, auto& maximumUnbreakableWidth, auto& contentWidthBetweenLineBreaks) {
+        maximumUnbreakableWidth = std::max(maximumUnbreakableWidth, currentUnbreakableWidth);
+        contentWidthBetweenLineBreaks.current += currentUnbreakableWidth;
+        currentUnbreakableWidth = { };
+    };
+
+    for (size_t index = layoutRange.startIndex(); index < layoutRange.endIndex(); ++index) {
+        auto& inlineItem = inlineItemList[index];
+        if (inlineItem.isLineBreak()) {
+            recordUnbreakableWidth(currentUnbreakableWidth, maximumUnbreakableWidth, contentWidthBetweenLineBreaks);
+            contentWidthBetweenLineBreaks.maximum = std::max(contentWidthBetweenLineBreaks.maximum, contentWidthBetweenLineBreaks.current);
+            contentWidthBetweenLineBreaks.current = { };
+            continue;
+        }
+
+        auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
+        auto width = inlineTextItem.width();
+        if (!width)
+            width = TextOnlySimpleLineBuilder::measuredInlineTextItem(inlineTextItem, lineBuilderRootStyle, currentUnbreakableWidth);
+
+        bool isAtSoftWrapOpportunityOrContentEnd = TextOnlySimpleLineBuilder::isAtSoftWrapOpportunityOrContentEnd(inlineTextItem, inlineItemList, index + 1, layoutRange, lineBuilderRootStyle);
+        if (inlineTextItem.hasTrailingSoftHyphen() && isAtSoftWrapOpportunityOrContentEnd && !TextOnlySimpleLineBuilder::isAtContentEnd(inlineItemList, index + 1, layoutRange))
+            *width += TextUtil::hyphenWidth(lineBuilderRootStyle);
+
+        currentUnbreakableWidth += *width;
+        if (isAtSoftWrapOpportunityOrContentEnd)
+            recordUnbreakableWidth(currentUnbreakableWidth, maximumUnbreakableWidth, contentWidthBetweenLineBreaks);
+    }
+    // Summing the widths of unbreakable InlineItems between forced breaks is the unwrapped width, so this is a max-content value.
+    // maximumContentSize() returns it instead of running its own line layout.
+    m_maximumContentWidthBetweenLineBreaks = std::max(contentWidthBetweenLineBreaks.current, contentWidthBetweenLineBreaks.maximum);
+    return maximumUnbreakableWidth;
+}
+
+InlineLayoutUnit IntrinsicWidthHandler::lineBuilderMinimumContentSize()
+{
     if (m_mayUseSimplifiedTextOnlyInlineLayoutInRange) {
         auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), lineBuilderRoot(), { }, inlineItemList() };
         return computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum, simplifiedLineBuilder, MayCacheLayoutResult::No);
@@ -162,6 +229,30 @@ InlineLayoutUnit IntrinsicWidthHandler::minimumContentSize()
 
     auto lineBuilder = LineBuilder { formattingContext(), { }, inlineItemList() };
     return computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum, lineBuilder, MayCacheLayoutResult::No);
+}
+
+InlineLayoutUnit IntrinsicWidthHandler::minimumContentSize()
+{
+    if (isContentEligibleForNonLineBuilderMinimumWidth(formattingContextRoot(), m_inlineItems, m_mayUseSimplifiedTextOnlyInlineLayoutInRange))
+        return simplifiedMinimumWidth(formattingContextRoot());
+
+    if (auto minimumContentSize = minimumContentSizeForBreakSpaces()) {
+#ifndef NDEBUG
+        {
+            auto nonLineBuilderContentWidthBetweenLineBreaks = m_maximumContentWidthBetweenLineBreaks;
+            auto lineBuilderContentSize = lineBuilderMinimumContentSize();
+            ASSERT(ceiledLayoutUnit(*minimumContentSize) == ceiledLayoutUnit(lineBuilderContentSize));
+            ASSERT(m_maximumContentWidthBetweenLineBreaks && nonLineBuilderContentWidthBetweenLineBreaks);
+            ASSERT(std::abs(*m_maximumContentWidthBetweenLineBreaks - *nonLineBuilderContentWidthBetweenLineBreaks) < 1);
+            // computedIntrinsicWidthForConstraint overwrote the member. Restore the fast path's value so maximumContentSize()
+            // returns the same value in debug as it would in release.
+            m_maximumContentWidthBetweenLineBreaks = nonLineBuilderContentWidthBetweenLineBreaks;
+        }
+#endif
+        return *minimumContentSize;
+    }
+
+    return lineBuilderMinimumContentSize();
 }
 
 InlineLayoutUnit IntrinsicWidthHandler::maximumContentSize()
@@ -198,10 +289,6 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
 
     auto availableWidth = intrinsicWidthMode == IntrinsicWidthMode::Maximum ? maxInlineLayoutUnit() : 0.f;
     auto maximumContentWidth = InlineLayoutUnit { };
-    struct ContentWidthBetweenLineBreaks {
-        InlineLayoutUnit maximum { };
-        InlineLayoutUnit current { };
-    };
     auto contentWidthBetweenLineBreaks = ContentWidthBetweenLineBreaks { };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto previousLine = std::optional<PreviousLine> { };

@@ -27,6 +27,7 @@
 
 #include <WebCore/FormattingConstraints.h>
 #include <WebCore/LayoutUnits.h>
+#include <WebCore/TextUtil.h>
 
 namespace WebCore {
 
@@ -186,12 +187,13 @@ private:
     std::optional<OverflowingTextContent::BreakingPosition> tryBreakingNextOverflowingRuns(const LineStatus&, const ContinuousContent::RunList&, size_t overflowingRunIndex, InlineLayoutUnit nonOverflowingContentWidth) const;
     std::optional<OverflowingTextContent::BreakingPosition> tryHyphenationAcrossOverflowingInlineTextItems(const LineStatus&, const ContinuousContent::RunList&, size_t overflowingRunIndex) const;
 
-    enum class WordBreakRule : uint8_t {
-        AtArbitraryPositionWithinWords,
-        AtArbitraryPosition,
-        AtHyphenationOpportunities
-    };
-    EnumSet<WordBreakRule> wordBreakBehavior(const Style::ComputedStyle&, bool hasWrapOpportunityAtPreviousPosition) const;
+    using WordBreakRule = TextUtil::WordBreakRule;
+    EnumSet<WordBreakRule> wordBreakBehavior(const Style::ComputedStyle& style, bool hasWrapOpportunityAtPreviousPosition) const
+    {
+        return TextUtil::wordBreakBehavior(style, hasWrapOpportunityAtPreviousPosition,
+            m_isMinimumInIntrinsicWidthMode ? TextUtil::IsMinimumInIntrinsicWidthMode::Yes : TextUtil::IsMinimumInIntrinsicWidthMode::No,
+            m_hyphenationIsDisabled ? TextUtil::HyphenationIsDisabled::Yes : TextUtil::HyphenationIsDisabled::No);
+    }
     bool isMinimumInIntrinsicWidthMode() const { return m_isMinimumInIntrinsicWidthMode; }
 
 private:
