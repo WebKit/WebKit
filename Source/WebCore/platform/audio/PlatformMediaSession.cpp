@@ -217,7 +217,9 @@ void PlatformMediaSession::beginInterruption(InterruptionType type)
     }
     m_interruptionStack.append({ type, false });
 
-    m_stateToRestore = state();
+    // A playback admission may still be in flight. If so the session is not in State::Playing yet even
+    // though play is intended, and we should restore State::Playing when the interruption ends.
+    m_stateToRestore = m_preparingToPlay ? State::Playing : state();
     m_notifyingClient = true;
     setState(State::Interrupted);
     protect(client())->suspendPlayback();

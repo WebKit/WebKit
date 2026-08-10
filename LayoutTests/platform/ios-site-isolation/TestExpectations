@@ -100,7 +100,6 @@ imported/blink/fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-f
 imported/blink/fast/forms/month-multiple-fields/month-multiple-fields-clearbutton-visibility-after-restore.html [ Timeout ]
 imported/blink/fast/forms/time-multiple-fields/time-multiple-fields-clearbutton-visibility-after-restore.html [ Timeout ]
 imported/blink/fast/forms/week-multiple-fields/week-multiple-fields-clearbutton-visibility-after-restore.html [ Timeout ]
-media/media-session/interruption-sends-pause-action.html [ Timeout ]
 media/remote-control-command-paused-with-webaudio.html [ Timeout ]
 media/video-play-pause-exception.html [ Timeout ]
 platform/ios/mediastream/audio-muted-in-background-tab.html [ Timeout ]
