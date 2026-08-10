@@ -113,15 +113,19 @@ void ByteRangeRequest::completeWithAccumulatedData(PDFIncrementalLoader& loader)
 {
     ASSERT(isMainRunLoop());
 
-    Borrow accumulatedData = m_accumulatedData;
-    auto data = accumulatedData->span();
-    if (data.size() > m_count) {
-        RELEASE_LOG_ERROR(IncrementalPDF, "PDF byte range request got more bytes back from the server than requested. This is likely due to a misconfigured server. Capping result at the requested number of bytes.");
-        data = data.first(m_count);
-    }
+    size_t completionSize;
+    {
+        Borrow accumulatedData = m_accumulatedData;
+        auto data = accumulatedData->span();
+        if (data.size() > m_count) {
+            RELEASE_LOG_ERROR(IncrementalPDF, "PDF byte range request got more bytes back from the server than requested. This is likely due to a misconfigured server. Capping result at the requested number of bytes.");
+            data = data.first(m_count);
+        }
 
-    m_completionHandler(data);
-    loader.requestDidCompleteWithAccumulatedData(*this, data.size());
+        m_completionHandler(data);
+        completionSize = data.size();
+    }
+    loader.requestDidCompleteWithAccumulatedData(*this, completionSize);
 }
 
 bool ByteRangeRequest::completeIfPossible(PDFIncrementalLoader& loader)

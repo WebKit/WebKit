@@ -158,6 +158,7 @@ set(TestWTF_SOURCES
     Tests/WTF/UniqueRef.cpp
     Tests/WTF/UniqueRefVector.cpp
     Tests/WTF/Vector.cpp
+    Tests/WTF/VectorBorrow.cpp
     Tests/WTF/WTFString.cpp
     Tests/WTF/WeakPtr.cpp
     Tests/WTF/WorkQueue.cpp
