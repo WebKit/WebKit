@@ -1,22 +1,94 @@
 <!DOCTYPE html>
 <html>
-<head>
-<script src="resources/audio-testing.js"></script>
-<script src="../resources/js-test-pre.js"></script>
-</head>
-<body>
-<script>
-description("Tests that ConvolverNode impulse response buffer can be set to null.");
+  <head>
+    <title>
+      Tests that ConvolverNode impulse response buffer can be set to null
+    </title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script id="layout-test-code">
+      // Fairly arbitrary, except that a power of two makes 1/sampleRate exactly
+      // representable as a single-precision float.
+      const sampleRate = 8192;
 
-var context = new AudioContext();
-var conv = context.createConvolver();
+      // More than a few render quanta.
+      const renderFrames = 4 * 128;
 
-shouldNotThrow("conv.buffer = null");
-shouldBe("conv.buffer", "null");
+      function createContext() {
+        return new OfflineAudioContext(1, renderFrames, sampleRate);
+      }
 
-shouldThrow("conv.buffer = document");
-shouldBe("conv.buffer", "null");
-</script>
-<script src="../resources/js-test-post.js"></script>
-</body>
+      // A response that convolves to a copy of the input, so that a stale
+      // response is trivially distinguishable from silence.
+      function createResponse(context) {
+        const response = context.createBuffer(1, 2, sampleRate);
+        response.getChannelData(0)[0] = 1;
+        return response;
+      }
+
+      // Render a unit DC signal through a convolver set up by |configure|.
+      async function renderThroughConvolver(configure) {
+        const context = createContext();
+
+        // Normalization is disabled so that the response is applied with unit
+        // scale and the expected output magnitude is predictable.
+        const convolver = new ConvolverNode(context, {disableNormalization: true});
+        configure(convolver, createResponse(context));
+
+        const source = new ConstantSourceNode(context, {offset: 1});
+        source.connect(convolver).connect(context.destination);
+        source.start();
+
+        const rendered = await context.startRendering();
+        return rendered.getChannelData(0);
+      }
+
+      test(() => {
+        const convolver = new ConvolverNode(createContext());
+        convolver.buffer = null;
+        assert_equals(convolver.buffer, null, 'convolver.buffer');
+      }, 'Setting the buffer to null on a new ConvolverNode leaves it null');
+
+      test(() => {
+        const convolver = new ConvolverNode(createContext());
+        assert_throws_js(TypeError, () => {
+          convolver.buffer = document;
+        }, 'setting the buffer to a non-AudioBuffer');
+        assert_equals(convolver.buffer, null, 'convolver.buffer');
+      }, 'Setting the buffer to a non-AudioBuffer throws and leaves it null');
+
+      test(() => {
+        const context = createContext();
+        const convolver = new ConvolverNode(context);
+        const response = createResponse(context);
+
+        convolver.buffer = response;
+        assert_equals(convolver.buffer, response, 'convolver.buffer');
+
+        convolver.buffer = null;
+        assert_equals(convolver.buffer, null, 'convolver.buffer after null');
+      }, 'Setting the buffer to null after a response was set clears the attribute');
+
+      // Guards the test below: if the convolver were silent for some unrelated
+      // reason, asserting that it goes silent would pass for the wrong reason.
+      promise_test(async () => {
+        const output = await renderThroughConvolver((convolver, response) => {
+          convolver.buffer = response;
+        });
+        assert_true(output.some(sample => sample != 0), 'some sample is non-zero');
+      }, 'A ConvolverNode with a response renders a non-silent signal');
+
+      promise_test(async () => {
+        const output = await renderThroughConvolver((convolver, response) => {
+          convolver.buffer = response;
+          convolver.buffer = null;
+        });
+        const index = output.findIndex(sample => sample != 0);
+        assert_equals(index, -1,
+            `first non-zero sample index (value ${index < 0 ? 0 : output[index]})`);
+      }, 'Setting the buffer to null after a response was set stops the convolution');
+    </script>
+  </body>
 </html>

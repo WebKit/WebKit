@@ -116,9 +116,13 @@ void ConvolverNode::process(size_t framesToProcess)
 ExceptionOr<void> ConvolverNode::setBufferForBindings(RefPtr<AudioBuffer>&& buffer)
 {
     ASSERT(isMainThread());
-    
-    if (!buffer)
+
+    if (!buffer) {
+        Locker locker { m_processLock };
+        m_reverb = nullptr;
+        m_buffer = nullptr;
         return { };
+    }
 
     if (buffer->sampleRate() != context().sampleRate())
         return Exception { ExceptionCode::NotSupportedError, "Buffer sample rate does not match the context's sample rate"_s };
@@ -154,10 +158,9 @@ ExceptionOr<void> ConvolverNode::setBufferForBindings(RefPtr<AudioBuffer>&& buff
 
         m_reverb = WTF::move(reverb);
         m_buffer = WTF::move(buffer);
-        if (m_buffer) {
-            // This will propagate the channel count to any nodes connected further downstream in the graph.
-            protect(output(0))->setNumberOfChannels(computeNumberOfOutputChannels(protect(input(0))->numberOfChannels(), m_buffer->numberOfChannels()));
-        }
+
+        // This will propagate the channel count to any nodes connected further downstream in the graph.
+        protect(output(0))->setNumberOfChannels(computeNumberOfOutputChannels(protect(input(0))->numberOfChannels(), m_buffer->numberOfChannels()));
     }
 
     return { };
