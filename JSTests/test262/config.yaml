@@ -21,8 +21,6 @@ skip:
     - immutable-arraybuffer
     - error-stack-accessor
   paths:
-    # Depends on the nonextensible-applies-to-private proposal which JSC has not implemented yet.
-    - test/language/import/import-defer/evaluation-triggers/ignore-private-name-access.js
     - test/staging/Intl402
     - test/staging/JSON
   files:

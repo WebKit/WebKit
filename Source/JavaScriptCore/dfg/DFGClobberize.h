@@ -807,6 +807,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PutPrivateNameById:
     case GetPrivateName:
     case GetPrivateNameById:
+    case SetPrivateBrand:
     case DefineDataProperty:
     case DefineAccessorProperty:
     case ObjectDefineProperty:
@@ -1499,11 +1500,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case CheckPrivateBrand:
         read(JSCell_structureID);
         def(HeapLocation(CheckPrivateBrandLoc, JSCell_structureID, node->child1(), node->child2()), LazyNode(node));
-        return;
-
-    case SetPrivateBrand:
-        read(JSCell_structureID);
-        write(JSCell_structureID);
         return;
 
     case CheckArrayOrEmpty:

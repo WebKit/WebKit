@@ -945,8 +945,11 @@ inline void JSObject::definePrivateField(JSGlobalObject* globalObject, PropertyN
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (type() == WebAssemblyGCObjectType) {
-        throwTypeError(globalObject, scope, "Cannot define private field on a WebAssembly GC object"_s);
+    bool isExtensible = this->isExtensible(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    if (!isExtensible) [[unlikely]] {
+        throwTypeError(globalObject, scope, NonExtensibleObjectPrivateFieldDefineError);
         return;
     }
 
@@ -1011,20 +1014,25 @@ inline void JSObject::setPrivateBrand(JSGlobalObject* globalObject, JSValue bran
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Structure* structure = this->structure();
-    if (structure->isBrandedStructure() && uncheckedDowncast<BrandedStructure>(structure)->checkBrand(asSymbol(brand))) {
+    bool isExtensible = this->isExtensible(globalObject);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    if (!isExtensible) [[unlikely]] {
+        throwTypeError(globalObject, scope, NonExtensibleObjectPrivateMethodDefineError);
+        return;
+    }
+
+    // isExtensible can run a Proxy trap, and that trap can install this very brand or otherwise
+    // transition this object, so both the brand check and the structure must follow it.
+    if (hasPrivateBrand(globalObject, brand)) {
         throwException(globalObject, scope, createReinstallPrivateMethodError(globalObject));
         return;
     }
     EXCEPTION_ASSERT(!scope.exception());
 
-    if (type() == WebAssemblyGCObjectType) {
-        throwTypeError(globalObject, scope, "Cannot add private method to a WebAssembly GC object"_s);
-        return;
-    }
-
     scope.release();
 
+    Structure* structure = this->structure();
     DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
 
     Structure* newStructure = Structure::setBrandTransition(vm, structure, asSymbol(brand), &deferredWatchpointFire);

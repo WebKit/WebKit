@@ -1870,6 +1870,8 @@ static InlineCacheAction tryCacheSetPrivateBrand(
             return RetryCacheLater;
         if (newStructure->isDictionary())
             return GiveUpOnCache;
+        if (base->structureID() != newStructure->id())
+            return GiveUpOnCache;
         ASSERT(newStructure->previousID() == oldStructure);
         ASSERT(newStructure->transitionKind() == TransitionKind::SetBrand);
         ASSERT(newStructure->isObject());

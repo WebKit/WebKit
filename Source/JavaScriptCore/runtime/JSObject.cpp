@@ -67,6 +67,8 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSObjectWithButterfly);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSFinalObject);
 
 const ASCIILiteral NonExtensibleObjectPropertyDefineError { "Attempting to define property on object that is not extensible."_s };
+const ASCIILiteral NonExtensibleObjectPrivateFieldDefineError { "Attempting to define private field on object that is not extensible."_s };
+const ASCIILiteral NonExtensibleObjectPrivateMethodDefineError { "Attempting to define private method on object that is not extensible."_s };
 const ASCIILiteral ReadonlyPropertyWriteError { "Attempted to assign to readonly property."_s };
 const ASCIILiteral ReadonlyPropertyChangeError { "Attempting to change value of a readonly property."_s };
 const ASCIILiteral UnableToDeletePropertyError { "Unable to delete property."_s };
@@ -2940,7 +2942,9 @@ bool JSObject::isExtensible(JSObject* obj, JSGlobalObject*)
 }
 
 bool JSObject::isExtensible(JSGlobalObject* globalObject)
-{ 
+{
+    if (methodTable()->isExtensible == static_cast<MethodTable::IsExtensibleFunctionPtr>(&JSObject::isExtensible)) [[likely]]
+        return isStructureExtensible();
     return methodTable()->isExtensible(this, globalObject);
 }
 
