@@ -26,8 +26,6 @@
 
 namespace WebCore {
 
-class AffineTransform;
-
 class SVGAnimateMotionElement final : public SVGAnimationElement {
     WTF_MAKE_TZONE_ALLOCATED(SVGAnimateMotionElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAnimateMotionElement);
@@ -57,7 +55,6 @@ private:
         AutoReverse
     };
     Variant<RotateMode, float> rotate() const;
-    void buildTransformForProgress(AffineTransform*, float percentage);
 
     void updateAnimationMode() override;
     void childrenChanged(const ChildChange&) final;
