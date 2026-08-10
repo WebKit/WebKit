@@ -142,6 +142,9 @@ static bool NODELETE cannotConstrainInlineItem(const InlineItem& inlineItem)
     // Out-of-flow items are ignored by inline layout and do not affect constraint calculations.
     if (inlineItem.isOutOfFlow())
         return false;
+    // A block level box takes a line of its own, so it bounds the text we constrain rather than being part of it.
+    if (inlineItem.isBlock())
+        return false;
     if (!inlineItem.isText() && !inlineItem.isSoftLineBreak() && !inlineItem.layoutBox().isInlineLevelBox())
         return true;
     if (containsTrailingSoftHyphen(inlineItem))
@@ -277,6 +280,7 @@ void InlineContentConstrainer::initialize()
         // Record relevant geometry measurements from one line layout
         m_originalLineInlineItemRanges.append(lineLayoutResult.inlineItemRange);
         m_originalLineEndsWithForcedBreak.append(lineLayoutResult.endsWithLineBreak());
+        m_originalLineIsBlockContent.append(lineLayoutResult.isBlockContent());
         bool useFirstLineStyle = !lineIndex;
         bool isFirstLineInChunk = !lineIndex || m_originalLineEndsWithForcedBreak[lineIndex - 1];
         SlidingWidth lineSlidingWidth { *this, m_inlineItemList, lineLayoutResult.inlineItemRange.startIndex(), lineLayoutResult.inlineItemRange.endIndex(), useFirstLineStyle, isFirstLineInChunk };
@@ -315,9 +319,18 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::computeParagraphLeve
 
     // If forced line breaks exist, then we can constrain each forced-break-delimited
     // chunk of text separately. This helps simplify first line/indentation logic.
+    // A line holding a block level box is a chunk of its own: it ends the run of text before it and takes no part
+    // in balancing, so the text on either side of it is balanced separately.
     Vector<size_t> chunkSizes; // Number of lines per chunk of text
     size_t currentChunkSize = 0;
     for (size_t i = 0; i < m_originalLineInlineItemRanges.size(); i++) {
+        if (m_originalLineIsBlockContent[i]) {
+            if (currentChunkSize)
+                chunkSizes.append(currentChunkSize);
+            chunkSizes.append(1);
+            currentChunkSize = 0;
+            continue;
+        }
         currentChunkSize++;
         if (m_originalLineEndsWithForcedBreak[i]) {
             chunkSizes.append(currentChunkSize);
@@ -329,6 +342,8 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::computeParagraphLeve
 
     // Constrain each chunk
     auto constrainChunk = [&](auto chunkStart, auto chunkSize) -> std::optional<Vector<LayoutUnit>> {
+        if (m_originalLineIsBlockContent[chunkStart])
+            return { };
         const bool isFirstChunk = !chunkStart;
         auto rangeToConstrain = InlineItemRange { m_originalLineInlineItemRanges[chunkStart].startIndex(), m_originalLineInlineItemRanges[chunkStart + chunkSize - 1].endIndex() };
         if (rangeToConstrain.startIndex() >= rangeToConstrain.endIndex())
