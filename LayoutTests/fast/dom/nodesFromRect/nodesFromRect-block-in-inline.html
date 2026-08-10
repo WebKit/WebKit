@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>nodesFromRect: a block level box on a line is reported before its container</title>
+<style>
+body { margin: 8px; }
+.box { display: block; width: 100px; height: 30px; border: 3px solid black; padding: 10px; margin: 10px; }
+</style>
+</head>
+<!-- Each block is nested in an inline box, so the container lays out inline content and each block sits on its
+     own line. The probed rect straddles the first block's bottom border edge, which is where the second
+     block's line box begins, so it meets both the first block and the second line.
+
+     List based hit testing reports front to back, so the block comes before its container. The root inline box
+     of the second line must not report the container there: the walk runs back to front by line, so reporting
+     it would place the container ahead of a block on an earlier line. -->
+<body id="body"><span id="s1"><div class="box" id="b1"></div></span><span id="s2"><div class="box" id="b2"></div></span>
+<pre id="out"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const describe = node => {
+    if (node.nodeType === Node.ELEMENT_NODE)
+        return node.id ? node.nodeName + "#" + node.id : node.nodeName;
+    if (node.nodeType === Node.TEXT_NODE)
+        return "'" + node.data + "'";
+    return "#" + node.nodeName;
+};
+
+let log = "";
+if (!window.internals)
+    log = "FAIL this test needs window.internals";
+else {
+    window.scrollTo(0, 0);
+    const b1 = document.getElementById("b1").getBoundingClientRect();
+    // Zero width, reaching 8px up from just below the first block's bottom border edge.
+    const nodes = internals.nodesFromRect(document, Math.round(b1.left) + 20, Math.round(b1.bottom) + 4,
+                                          8, 0, 0, 0, true, false, false);
+    const actual = Array.from(nodes).map(describe).join(", ");
+    const expected = "DIV#b1, SPAN#s1, BODY#body";
+    log = actual === expected
+        ? "PASS the block level box on the earlier line is reported before its container"
+        : "FAIL expected '" + expected + "' but got '" + actual + "'";
+}
+document.getElementById("out").textContent = log;
+</script>
+</body>
+</html>

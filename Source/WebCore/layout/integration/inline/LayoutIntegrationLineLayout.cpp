@@ -1410,7 +1410,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
                 return !m_inlineContent->isInlineBoxWrapperForBlockLevelBox(box);
             case HitTestAction::ChildBlockBackground:
             case HitTestAction::ChildBlockBackgrounds:
-                return box.isBlockLevelBox() || m_inlineContent->isInlineBoxWrapperForBlockLevelBox(box);
+                return box.isBlockLevelBox() || (m_inlineContent->isInlineBoxWrapperForBlockLevelBox(box) && !box.isRootInlineBox());
             case HitTestAction::Float:
                 return box.isBlockLevelBox();
             case HitTestAction::BlockBackground:
