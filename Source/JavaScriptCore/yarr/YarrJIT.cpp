@@ -1166,26 +1166,46 @@ class YarrGenerator final : public YarrJITInfo {
         matchCharacterClassOnlyOneRange(character, scratch, failMatches, ranges[0]);
     }
 
-    void matchCharacterClassTable(MacroAssembler::RegisterID character, MacroAssembler::JumpList& failMatches, const char* table, bool tableInverted = false)
+    // For a class holding only non-surrogate BMP code points, the code unit at the current position is a
+    // member exactly when the decoded code point would be: a surrogate code unit, a decoded non-BMP code
+    // point and errorCodePoint all lie outside of such a class.
+    bool shouldReadRawCodeUnitForCharacterClassTerm(const PatternTerm* term)
     {
-        ASSERT(!m_decodeSurrogatePairs);
-        MacroAssembler::ExtendedAddress tableEntry(character, reinterpret_cast<intptr_t>(table));
-        failMatches.append(m_jit.branchTest8(tableInverted ? MacroAssembler::NonZero : MacroAssembler::Zero, tableEntry));
+        ASSERT(term->type == PatternTerm::Type::CharacterClass);
+        return !m_decodeSurrogatePairs || (!term->invert() && term->characterClass->hasOnlyNonSurrogateBMPCharacters());
+    }
+
+    void matchCharacterClassTable(MacroAssembler::RegisterID character, MatchTargets& matchTargets, const CharacterClass* charClass)
+    {
+        MacroAssembler::ExtendedAddress tableEntry(character, reinterpret_cast<intptr_t>(charClass->m_table));
+        if (matchTargets.hasFailedTarget())
+            matchTargets.appendFailed(m_jit.branchTest8(charClass->m_tableInverted ? MacroAssembler::NonZero : MacroAssembler::Zero, tableEntry));
+        else
+            matchTargets.appendSucceeded(m_jit.branchTest8(charClass->m_tableInverted ? MacroAssembler::Zero : MacroAssembler::NonZero, tableEntry));
+    }
+
+    void matchCharacterClass(MacroAssembler::RegisterID character, MacroAssembler::RegisterID scratch, MatchTargets matchTargets, const PatternTerm* characterClassTerm)
+    {
+        ASSERT(characterClassTerm->type == PatternTerm::Type::CharacterClass);
+        const CharacterClass* charClass = characterClassTerm->characterClass;
+        if (charClass->m_table && shouldReadRawCodeUnitForCharacterClassTerm(characterClassTerm)) {
+            matchCharacterClassTable(character, matchTargets, charClass);
+            return;
+        }
+        matchCharacterClassMatchesAndRanges(character, scratch, matchTargets, charClass);
     }
 
     void matchCharacterClass(MacroAssembler::RegisterID character, MacroAssembler::RegisterID scratch, MatchTargets matchTargets, const CharacterClass* charClass)
     {
         if (charClass->m_table && !m_decodeSurrogatePairs) {
-            if (matchTargets.hasFailedTarget()) {
-                MacroAssembler::ExtendedAddress tableEntry(character, reinterpret_cast<intptr_t>(charClass->m_table));
-                matchTargets.appendFailed(m_jit.branchTest8(charClass->m_tableInverted ? MacroAssembler::NonZero : MacroAssembler::Zero, tableEntry));
-                return;
-            }
-            MacroAssembler::ExtendedAddress tableEntry(character, reinterpret_cast<intptr_t>(charClass->m_table));
-            matchTargets.appendSucceeded(m_jit.branchTest8(charClass->m_tableInverted ? MacroAssembler::Zero : MacroAssembler::NonZero, tableEntry));
+            matchCharacterClassTable(character, matchTargets, charClass);
             return;
         }
+        matchCharacterClassMatchesAndRanges(character, scratch, matchTargets, charClass);
+    }
 
+    void matchCharacterClassMatchesAndRanges(MacroAssembler::RegisterID character, MacroAssembler::RegisterID scratch, MatchTargets matchTargets, const CharacterClass* charClass)
+    {
         if (charClass->m_latin1Table) {
             bool pureLatin1 = charClass->m_matches32.isEmpty() && charClass->m_ranges32.isEmpty();
             if (m_charSize == CharSize::Char8 || pureLatin1) {
@@ -1271,7 +1291,7 @@ class YarrGenerator final : public YarrJITInfo {
                 // If we are matching the "any character" builtin class for non-unicode patterns,
                 // we only need to read the character and don't need to match as it will always succeed.
                 if (!characterClassToProcess->m_anyCharacter) {
-                    matchCharacterClass(character, scratch, MatchTargets(matchDest, failures, MatchTargets::PreferredTarget::MatchSuccessFallThrough), characterClassToProcess);
+                    matchCharacterClass(character, scratch, MatchTargets(matchDest, failures, MatchTargets::PreferredTarget::MatchSuccessFallThrough), term);
                     if (!matchDest.empty())
                         failures.append(m_jit.jump());
                 }
@@ -1557,12 +1577,30 @@ class YarrGenerator final : public YarrJITInfo {
             m_jit.load16Unaligned(address, resultReg);
     }
 
+    void readCharacterForCharacterClassTerm(Checked<unsigned> negativeCharacterOffset, MacroAssembler::RegisterID resultReg, const PatternTerm* term)
+    {
+        readCharacterForCharacterClassTerm(negativeCharacterOffset, resultReg, m_regs.index, term);
+    }
+
+    void readCharacterForCharacterClassTerm(Checked<unsigned> negativeCharacterOffset, MacroAssembler::RegisterID resultReg, MacroAssembler::RegisterID indexReg, const PatternTerm* term)
+    {
+        if (shouldReadRawCodeUnitForCharacterClassTerm(term))
+            readCharacterRaw(negativeCharacterOffset, resultReg, indexReg);
+        else
+            readCharacter(negativeCharacterOffset, resultReg, indexReg);
+    }
+
     // Read a raw code unit without surrogate pair decoding. This is used for
     // Boyer-Moore lookahead which is a hash-based prefilter where false positives
     // are safe, so exact codepoint decoding is unnecessary.
     void readCharacterRaw(Checked<unsigned> negativeCharacterOffset, MacroAssembler::RegisterID resultReg)
     {
-        MacroAssembler::BaseIndex address = negativeOffsetIndexedAddress(negativeCharacterOffset, resultReg, m_regs.index);
+        readCharacterRaw(negativeCharacterOffset, resultReg, m_regs.index);
+    }
+
+    void readCharacterRaw(Checked<unsigned> negativeCharacterOffset, MacroAssembler::RegisterID resultReg, MacroAssembler::RegisterID indexReg)
+    {
+        MacroAssembler::BaseIndex address = negativeOffsetIndexedAddress(negativeCharacterOffset, resultReg, indexReg);
 
         if (m_charSize == CharSize::Char8)
             m_jit.load8(address, resultReg);
@@ -3262,7 +3300,7 @@ class YarrGenerator final : public YarrJITInfo {
             }
         }
 
-        readCharacter(op.m_checkedOffset - term->inputPosition, character);
+        readCharacterForCharacterClassTerm(op.m_checkedOffset - term->inputPosition, character, term);
 
         matchCharacterClassTermInner(term, op.m_jumps, character, scratch);
 
@@ -3335,7 +3373,7 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.sub32(m_regs.index, MacroAssembler::Imm32(scaledMaxCount), countRegister);
 
         MacroAssembler::Label loop(&m_jit);
-        readCharacter(op.m_checkedOffset - term->inputPosition - scaledMaxCount, character, countRegister);
+        readCharacterForCharacterClassTerm(op.m_checkedOffset - term->inputPosition - scaledMaxCount, character, countRegister, term);
 
         MacroAssembler::Label nonBMPLoop(&m_jit);
 
@@ -3430,7 +3468,7 @@ class YarrGenerator final : public YarrJITInfo {
         MacroAssembler::Label loop(&m_jit);
         failures.append(atEndOfInput());
 
-        readCharacter(op.m_checkedOffset - term->inputPosition, character);
+        readCharacterForCharacterClassTerm(op.m_checkedOffset - term->inputPosition, character, term);
 
         matchCharacterClassTermInner(term, failures, character, scratch);
 
@@ -3546,7 +3584,7 @@ class YarrGenerator final : public YarrJITInfo {
         nonGreedyFailures.append(atEndOfInput());
         nonGreedyFailures.append(m_jit.branch32(MacroAssembler::Equal, countRegister, MacroAssembler::Imm32(term->quantityMaxCount)));
 
-        readCharacter(op.m_checkedOffset - term->inputPosition, character);
+        readCharacterForCharacterClassTerm(op.m_checkedOffset - term->inputPosition, character, term);
 
         matchCharacterClassTermInner(term, nonGreedyFailures, character, scratch);
 

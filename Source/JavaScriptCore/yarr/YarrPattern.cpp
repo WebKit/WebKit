@@ -3529,6 +3529,21 @@ std::unique_ptr<CharacterClass> anycharCreate()
     return characterClass;
 }
 
+bool CharacterClass::hasOnlyNonSurrogateBMPCharacters() const
+{
+    if (hasStrings() || !hasOnlyBMPCharacters())
+        return false;
+    for (auto character : m_matches32) {
+        if (U_IS_SURROGATE(character))
+            return false;
+    }
+    for (auto& range : m_ranges32) {
+        if (range.end >= 0xd800 && range.begin <= 0xdfff)
+            return false;
+    }
+    return true;
+}
+
 std::optional<char16_t> CharacterClass::hasSharedLeadSurrogate() const
 {
     if (!hasOnlyNonBMPCharacters())
