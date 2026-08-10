@@ -201,17 +201,40 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
     return result;
 }
 
+// Validates a single comma-separated argument that is a <declaration-value> subject to the
+// comma-containing-production rules: a {}-wrapped block groups internal commas, but may not be
+// mixed with other values, and a bare {} is not a valid value.
+// https://drafts.csswg.org/css-values-5/#component-function-commas
+// `allowEmpty` distinguishes <declaration-value># (dashed functions) from <declaration-value>?#
+// (random-item() items, where an item may be empty).
+static bool isValidDeclarationValueArgument(CSSParserTokenRange argumentRange, const CSSParserContext& parserContext, bool allowEmpty)
+{
+    if (argumentRange.atEnd())
+        return allowEmpty;
+
+    auto result = classifyBlock(argumentRange, parserContext);
+    return result && !result->hasTopLevelBraceBlockMixedWithOtherValues && !result->hasEmptyTopLevelBraceBlock;
+}
+
+// https://drafts.csswg.org/css-variables-2/#funcdef-var
+// <var-args> = var( <declaration-value> , <declaration-value>? )
+// The name argument is a <declaration-value>. It is substituted and then parsed as a
+// <custom-property-name> at substitution time, so parse-time validity only requires a
+// <declaration-value> here.
 bool isValidVariableReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
 {
     range.consumeWhitespace();
-    if (!CSSSubstitutionParser::isValidCustomPropertyName(range.consumeIncludingWhitespace()))
-        return false;
-    if (range.atEnd())
-        return true;
 
-    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range))
+    // Split at the first literal comma into the name argument and optional fallback.
+    auto nameArgStart = range;
+    while (!range.atEnd() && range.peek().type() != CommaToken)
+        range.consumeComponentValue();
+
+    if (!isValidDeclarationValueArgument(nameArgStart.rangeUntil(range), parserContext, /* allowEmpty */ false))
         return false;
-    if (range.atEnd())
+
+    // The split stopped at a literal comma or at the end, so this covers both a missing and an empty fallback.
+    if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range) || range.atEnd())
         return true;
 
     return !!classifyBlock(range, parserContext);
@@ -231,21 +254,6 @@ bool isValidConstantReference(CSSParserTokenRange range, const CSSParserContext&
         return true;
 
     return !!classifyBlock(range, parserContext);
-}
-
-// Validates a single comma-separated argument that is a <declaration-value> subject to the
-// comma-containing-production rules: a {}-wrapped block groups internal commas, but may not be
-// mixed with other values, and a bare {} is not a valid value.
-// https://drafts.csswg.org/css-values-5/#component-function-commas
-// `allowEmpty` distinguishes <declaration-value># (dashed functions) from <declaration-value>?#
-// (random-item() items, where an item may be empty).
-static bool isValidDeclarationValueArgument(CSSParserTokenRange argumentRange, const CSSParserContext& parserContext, bool allowEmpty)
-{
-    if (argumentRange.atEnd())
-        return allowEmpty;
-
-    auto result = classifyBlock(argumentRange, parserContext);
-    return result && !result->hasTopLevelBraceBlockMixedWithOtherValues && !result->hasEmptyTopLevelBraceBlock;
 }
 
 bool isValidDashedFunction(CSSParserTokenRange range, const CSSParserContext& parserContext)

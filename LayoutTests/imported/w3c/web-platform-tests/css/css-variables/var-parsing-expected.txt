@@ -2,9 +2,19 @@
 PASS e.style['width'] = "var(--x)" should set the property value
 PASS e.style['width'] = "var(--x,)" should set the property value
 PASS e.style['width'] = "var(--x, )" should set the property value
-PASS e.style['width'] = "var(--x ())" should not set the property value
-PASS e.style['width'] = "var(--x () )" should not set the property value
-PASS e.style['width'] = "var(--x() )" should not set the property value
-PASS e.style['width'] = "var(--x (),)" should not set the property value
-PASS e.style['width'] = "var(--x(),)" should not set the property value
+PASS e.style['width'] = "var(--x ())" should set the property value
+PASS e.style['width'] = "var(--x () )" should set the property value
+PASS e.style['width'] = "var(--x() )" should set the property value
+PASS e.style['width'] = "var(--x (),)" should set the property value
+PASS e.style['width'] = "var(--x(),)" should set the property value
+PASS e.style['width'] = "var({--x})" should set the property value
+PASS e.style['width'] = "var({--x}, 10px)" should set the property value
+PASS e.style['width'] = "var({--x, --y})" should set the property value
+PASS e.style['width'] = "var(--x {--y})" should not set the property value
+PASS e.style['width'] = "var({--x} --y)" should not set the property value
+PASS e.style['width'] = "var(--x {--y}, 10px)" should not set the property value
+PASS e.style['width'] = "var()" should not set the property value
+PASS e.style['width'] = "var({})" should not set the property value
+PASS e.style['width'] = "var({}, 10px)" should not set the property value
+PASS e.style['width'] = "var(, 10px)" should not set the property value
 

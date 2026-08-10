@@ -65,6 +65,8 @@ void collectCustomPropertyNames(const MQ::Feature& feature, HashSet<AtomString>&
             names.add(name);
 
         // var() references, at any nesting depth.
+        // FIXME: This only sees literal names. A name that comes from substitution, e.g.
+        // var(var(--name)), leaves the indirectly named property uncollected and so unwatched.
         for (size_t i = 0; i < tokens.size(); ++i) {
             if (tokens[i].type() != FunctionToken || tokens[i].functionId() != CSSValueVar)
                 continue;

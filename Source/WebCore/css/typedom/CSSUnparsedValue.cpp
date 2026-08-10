@@ -33,6 +33,7 @@
 #include "CSSOMVariableReferenceValue.h"
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
+#include "CSSSubstitutionParser.h"
 #include "CSSSubstitutionValue.h"
 #include "CSSTokenizer.h"
 #include "ExceptionOr.h"
@@ -65,28 +66,40 @@ Ref<CSSUnparsedValue> CSSUnparsedValue::create(CSSParserTokenRange tokens)
         
         if (currentToken.type() == FunctionToken || currentToken.type() == LeftParenthesisToken) {
             if (currentToken.functionId() == CSSValueVar) {
+                // https://drafts.csswg.org/css-variables-2/#funcdef-var
+                // The name argument is a <declaration-value> that is only parsed as a
+                // <custom-property-name> at computed-value time, so there is a reference to reify here
+                // only when it is a literal one. Anything else is kept as text.
+                auto argumentsRange = tokens;
+                argumentsRange.consumeWhitespace();
+                auto& nameToken = argumentsRange.consumeIncludingWhitespace();
+                auto isLiteralName = CSSSubstitutionParser::isValidCustomPropertyName(nameToken)
+                    && (argumentsRange.peek().type() == CommaToken || argumentsRange.peek().type() == RightParenthesisToken);
+
+                if (!isLiteralName) {
+                    currentToken.serialize(builder);
+                    identifiers.append(std::nullopt);
+                    continue;
+                }
+
                 if (!builder.isEmpty()) {
                     segmentStack.last().append(builder.toString());
                     builder.clear();
                 }
-                tokens.consumeWhitespace();
-                auto identToken = tokens.consumeIncludingWhitespace();
-                // Token after whitespace consumption must be variable reference identifier
-                ASSERT(identToken.type() == IdentToken);
+                tokens = argumentsRange;
+
                 if (tokens.peek().type() == CommaToken) {
                     // Fallback present
-                    identifiers.append(StringView(identToken.value()));
+                    identifiers.append(StringView(nameToken.value()));
                     segmentStack.append({ });
                     tokens.consume();
-                } else if (tokens.peek().type() == RightParenthesisToken) {
+                } else {
                     // No fallback
-                    auto variableReference = CSSOMVariableReferenceValue::create(identToken.value().toString());
+                    auto variableReference = CSSOMVariableReferenceValue::create(nameToken.value().toString());
                     ASSERT(!variableReference.hasException());
                     segmentStack.last().append(CSSUnparsedSegment { variableReference.releaseReturnValue() });
                     tokens.consume();
-                } else
-                    ASSERT_NOT_REACHED();
-                
+                }
             } else {
                 currentToken.serialize(builder);
                 identifiers.append(std::nullopt);

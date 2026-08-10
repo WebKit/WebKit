@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSSubstitutionValue.h"
 
+#include "CSSSubstitutionParser.h"
 #include "CSSVariableData.h"
 
 namespace WebCore {
@@ -93,13 +94,19 @@ void CSSSubstitutionValue::cacheSimpleReference()
 
     variableRange.consumeWhitespace();
 
-    auto variableName = variableRange.consumeIncludingWhitespace().value().toAtomString();
+    // var() names a <custom-property-name> and env() an <ident>. Anything else takes the full
+    // substitution path, since var()'s name argument may be any <declaration-value>.
+    auto& nameToken = variableRange.consumeIncludingWhitespace();
+    if (nameToken.type() != IdentToken)
+        return;
+    if (functionId == CSSValueVar && !CSSSubstitutionParser::isValidCustomPropertyName(nameToken))
+        return;
 
     // No fallback support on this path.
     if (!variableRange.atEnd())
         return;
 
-    m_simpleReference = SimpleReference { variableName, functionId };
+    m_simpleReference = SimpleReference { nameToken.value().toAtomString(), functionId };
 }
 
 } // namespace WebCore
