@@ -67,6 +67,21 @@ public:
     JSValue evaluationError() const { return m_evaluationError.get(); }
     unsigned dfsAncestorIndex() const { return m_dfsAncestorIndex; }
 
+    // https://tc39.es/proposal-defer-import-eval/#sec-IsModuleSCCEvaluated
+    // A module in an import cycle reaches EVALUATED once its own body has run, so only its cycle
+    // root reaching EVALUATED tells you the whole cycle is done.
+    bool isSCCEvaluated() const
+    {
+        // 1. If module.[[CycleRoot]] is not EMPTY, then
+        //   1.a. If module.[[CycleRoot]].[[Status]] is EVALUATED, return true.
+        //   1.b. Return false.
+        if (CyclicModuleRecord* root = cycleRoot())
+            return root->status() == Status::Evaluated;
+        // 2. If module.[[Status]] is EVALUATED, return true.
+        // 3. Return false.
+        return status() == Status::Evaluated;
+    }
+
     void setStatus(Status newStatus) { m_status = newStatus; }
     void setEvaluationError(VM& vm, JSValue error) { m_evaluationError.set(vm, this, error); }
     void setDFSAncestorIndex(unsigned newIndex) { m_dfsAncestorIndex = newIndex; }

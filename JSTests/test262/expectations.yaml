@@ -144,8 +144,6 @@ test/language/import/import-attributes/text-string.js:
   module: 3
 test/language/import/import-attributes/text-via-namespace.js:
   module: 3
-test/language/import/import-defer/evaluation-top-level-await/async-cycle-dependency-of-deferred-module/main.js:
-  module: 3
 test/language/statements/class/elements/private-class-field-on-nonextensible-objects.js:
   strict mode: 3
 test/language/statements/class/subclass/private-class-field-on-nonextensible-return-override.js:
