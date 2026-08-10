@@ -451,7 +451,10 @@ PutByStatus PutByStatus::computeFor(JSGlobalObject* globalObject, const Structur
         // If the structure is for prototype, we should do a slow path which can invalidate MegamorphicCache.
         if (structure->mayBePrototype())
             return PutByStatus(LikelyTakesSlowPath);
-    
+
+        if (privateFieldPutKind.isDefine() && !structure->privateElementAdditionsAreCacheable())
+            return PutByStatus(LikelyTakesSlowPath);
+
         ObjectPropertyConditionSet conditionSet;
         if (!isDirect) {
             ASSERT(privateFieldPutKind.isNone());

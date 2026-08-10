@@ -5218,7 +5218,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case SetPrivateBrand: {
-        clobberStructures();
+        clobberWorld();
         break;
     }
 

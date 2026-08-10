@@ -391,8 +391,9 @@ load("./resources/harmony-support.js");
     getA() { return this.#a; }
   }
 
-  let c = new C;
-  assertEquals(1, c.getA());
+  // Freezing the receiver in a field initializer makes the definitions that follow fail:
+  // https://github.com/tc39/proposal-nonextensible-applies-to-private
+  assertThrows(() => new C, TypeError);
 }
 
 {
