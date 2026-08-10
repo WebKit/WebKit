@@ -248,6 +248,27 @@ def _build_option_parser():
         default=False,
         help=('Scans WebSocket handlers even if their canonical '
               'path is not under --websock-handlers.'))
+    # WEBKIT LOCAL PATCH (rdar://184296263): additional handler trees unioned
+    # into the same resource-path namespace. Each --extra-websock-handlers is
+    # paired positionally with the corresponding --extra-scan-dir so a sibling
+    # tree (e.g. LayoutTests/sar3/http/tests) can serve handlers at the same
+    # /websocket/tests/... paths as the main tree. FIXME: upstream this.
+    parser.add_argument('--extra-websock-handlers',
+                        '--extra_websock_handlers',
+                        dest='extra_websock_handlers',
+                        action='append',
+                        default=[],
+                        help=('Additional root directory of WebSocket handler '
+                              'files, unioned into the handler map. May be '
+                              'repeated; paired positionally with '
+                              '--extra-scan-dir.'))
+    parser.add_argument('--extra-scan-dir',
+                        '--extra_scan_dir',
+                        dest='extra_scan_dir',
+                        action='append',
+                        default=[],
+                        help=('Scan directory under the corresponding '
+                              '--extra-websock-handlers. May be repeated.'))
     parser.add_argument('-d',
                         '--document-root',
                         '--document_root',

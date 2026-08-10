@@ -143,6 +143,23 @@ class PyWebSocket(http_server_base.HttpServerBase):
         else:
             _log.warning('No handler_map_file found')
 
+        # Union WebSocket handlers from the additional HTTP-test roots (e.g.
+        # LayoutTests/sar3/http/tests) into this instance so a staged test
+        # served at the normal /websocket/tests/... paths works unedited both
+        # before and after a pure-copy merge into LayoutTests/http/tests.  Each
+        # extra root is a sibling of http/tests (not nested under it), so it is
+        # passed as an additional (root, scan-dir) pair rather than widening
+        # --document-root.  http_test_roots()[0] is the main root already served
+        # above; the rest are the extras.  See rdar://184296263.
+        for extra_root in self._port_obj.http_test_roots()[1:]:
+            extra_document_root = self._port_obj.absolute_path_for_http_test_root(extra_root)
+            extra_web_socket_tests = self._filesystem.join(extra_document_root, 'websocket', 'tests')
+            if self._filesystem.isdir(extra_web_socket_tests):
+                start_cmd.append('--extra-websock-handlers')
+                start_cmd.append(extra_document_root)
+                start_cmd.append('--extra-scan-dir')
+                start_cmd.append(extra_web_socket_tests)
+
         if self._use_tls:
             start_cmd.extend(['-t', '-k', self._private_key,
                               '-c', self._certificate])

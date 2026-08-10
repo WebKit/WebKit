@@ -49,6 +49,41 @@ class TestWebsocketServer(unittest.TestCase):
         self.assertRaises(ServerError, server.start)
         self.assertEqual(server.ports_to_forward(), [8880])
 
+    def test_start_cmd_unions_sar3_handlers_when_present(self):
+        host = MockHost()
+        test_port = test.TestPort(host)
+
+        layout_tests = test_port.layout_tests_dir()
+        sar3_document_root = host.filesystem.join(layout_tests, "sar3", "http", "tests")
+        sar3_scan_dir = host.filesystem.join(sar3_document_root, "websocket", "tests")
+        host.filesystem.maybe_make_directory(sar3_scan_dir)
+
+        server = PyWebSocket(test_port, "/mock/output_dir")
+        server._prepare_config()
+
+        self.assertIn('--extra-websock-handlers', server._start_cmd)
+        self.assertEqual(
+            server._start_cmd[server._start_cmd.index('--extra-websock-handlers') + 1],
+            sar3_document_root)
+        self.assertIn('--extra-scan-dir', server._start_cmd)
+        self.assertEqual(
+            server._start_cmd[server._start_cmd.index('--extra-scan-dir') + 1],
+            sar3_scan_dir)
+        # The main instance's own root/scan-dir must be unchanged.
+        main_document_root = host.filesystem.join(layout_tests, "http", "tests")
+        self.assertEqual(server._start_cmd[server._start_cmd.index('--document-root') + 1], main_document_root)
+        self.assertEqual(server.ports_to_forward(), [8880])
+
+    def test_start_cmd_omits_sar3_handlers_when_absent(self):
+        host = MockHost()
+        test_port = test.TestPort(host)
+
+        server = PyWebSocket(test_port, "/mock/output_dir")
+        server._prepare_config()
+
+        self.assertNotIn('--extra-websock-handlers', server._start_cmd)
+        self.assertNotIn('--extra-scan-dir', server._start_cmd)
+
     def test_win32_start_and_stop(self):
         host = MockHost()
         test_port = test.TestPort(host)

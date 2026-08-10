@@ -29,11 +29,21 @@ from collections import OrderedDict
 
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models.test import Test
+from webkitpy.port import Port
 from webkitpy.thirdparty.wpt.manifest.sourcefile import SourceFile
 from webkitpy.w3c.common import TEMPLATED_TEST_HEADER
 
 IMPORTED_WPT_DIR = "imported/w3c/web-platform-tests"
 LOCAL_WPT_PATH = "http/wpt"
+
+
+def _is_http_test_path(path):
+    """Classify `path` as an HTTP test against Port.HTTP_TEST_ROOTS -- the same
+    ordered list of roots Driver.is_http_test() consults -- via a directory-segment
+    match, so a root matches both at the start of the path and nested under a
+    platform-specific override directory (e.g. "platform/mac/http/tests/...")."""
+    return any(("/" + root + "/") in ("/" + path) for root in Port.HTTP_TEST_ROOTS)
+
 
 supported_test_extensions = (
     ".htm",
@@ -443,7 +453,7 @@ class LayoutTestFinder(object):
                 reference_files=(
                     tuple(reference_files) if reference_files is not None else None
                 ),
-                is_http_test="http/test" in trimmed_path,
+                is_http_test=_is_http_test_path(trimmed_path),
                 is_websocket_test=(
                     "websocket/" in trimmed_path
                     or "http/test" in trimmed_path
