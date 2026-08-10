@@ -2161,8 +2161,14 @@ public:
 
             context->matchBegin = input.getPos();
 
-            if (currentTerm().alternative.onceThrough)
-                context->term += currentTerm().alternative.next;
+            while (currentTerm().alternative.onceThrough) {
+                int next = currentTerm().alternative.next;
+                if (next <= 0) {
+                    DUMP_EXTRA("- Return NoMatch\n");
+                    return JSRegExpResult::NoMatch;
+                }
+                context->term += next;
+            }
 
             MATCH_NEXT();
         }
