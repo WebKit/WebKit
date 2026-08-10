@@ -2950,6 +2950,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKTranslationDelegate {
+    header "_WKTranslationDelegate.h"
+    export *
+  }
+
   explicit module _WKUserContentExtensionStore {
     header "_WKUserContentExtensionStore.h"
     export *

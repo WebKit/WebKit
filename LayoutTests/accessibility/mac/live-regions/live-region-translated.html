@@ -1,0 +1,45 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true displayedTranslationLocale=fr announcementTranslationMode=immediate ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<div id="region" aria-live="polite">
+<span lang="en">Apple:</span>
+<span lang="es" id="spanish-region"></span>
+</div>
+
+<script>
+var output = "This tests that live region announcements are translated, and carry the target language, when the page is presented as a machine translation (Core-AAM).\n\n";
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n${formatAnnouncementUserInfo(userInfo)}\n`;
+
+        testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("region");
+
+    // The announcement is assembled after translation, so the per-range AXLanguage attribute must
+    // report the target locale rather than the "es" this element was authored in.
+    document.getElementById("spanish-region").textContent = "Manzana";
+
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

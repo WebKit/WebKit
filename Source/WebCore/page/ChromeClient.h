@@ -303,6 +303,8 @@ public:
     virtual void relayLiveRegionNotification(LiveRegionAnnouncementData&&) const = 0;
 #endif
 
+    virtual void translateAccessibilityAnnouncementStrings(const Vector<String>& strings, const String& targetLocaleIdentifier, CompletionHandler<void(Vector<String>&&)>&& completion) { UNUSED_PARAM(strings); UNUSED_PARAM(targetLocaleIdentifier); completion({ }); }
+
     virtual void mainFrameDidChange() { };
 
     virtual void didFinishLoadingImageForElement(HTMLImageElement&) = 0;

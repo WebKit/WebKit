@@ -838,6 +838,15 @@ IntRect WebChromeClient::rootViewToAccessibilityScreen(const IntRect& rect) cons
     return page ? page->rootViewToAccessibilityScreen(rect) : IntRect();
 }
 
+void WebChromeClient::translateAccessibilityAnnouncementStrings(const Vector<String>& strings, const String& targetLocaleIdentifier, CompletionHandler<void(Vector<String>&&)>&& completion)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return completion({ });
+
+    page->sendWithAsyncReply(Messages::WebPageProxy::TranslateAccessibilityAnnouncementStrings(strings, targetLocaleIdentifier), WTF::move(completion));
+}
+
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 void WebChromeClient::requestFrameScreenPosition(FrameIdentifier frameID) const
 {

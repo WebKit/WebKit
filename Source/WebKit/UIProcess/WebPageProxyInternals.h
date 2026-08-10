@@ -419,6 +419,9 @@ public:
 
     std::optional<TextManipulationParameters> textManipulationParameters;
 
+    // Non-empty while the client has told us it is presenting this page as a machine translation.
+    String displayedTranslationLocaleIdentifier;
+
     EnhancedSecurityTracking enhancedSecurityTracker;
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(UNIFIED_PDF)

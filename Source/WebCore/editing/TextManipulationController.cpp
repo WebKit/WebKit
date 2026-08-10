@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TextManipulationController.h"
 
+#include "AXObjectCacheInlines.h"
 #include "AccessibilityObject.h"
 #include "CharacterData.h"
 #include "ContainerNodeInlines.h"
@@ -996,6 +997,9 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
     }
 
     RefPtr<Node> insertionPointNode = lastChildOfCommonAncestorInRange->nextSibling();
+
+    if (CheckedPtr cache = commonAncestor->document().existingAXObjectCache())
+        cache->deferReRenderedContent(*commonAncestor);
 
     for (auto& node : nodesToRemove)
         node->remove();

@@ -1016,6 +1016,7 @@ enum ContentsFormat {
     undefined setUsesOverlayScrollbars(boolean enabled);
 
     undefined forceAXObjectCacheUpdate();
+    undefined setAccessibilityAnnouncementTranslationTimeout(unrestricted double seconds);
     unsigned long liveRegionSnapshotBuildCount();
     undefined resetLiveRegionSnapshotBuildCount();
     undefined setShouldMockParentSearchResultsForTesting(boolean enabled);

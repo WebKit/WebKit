@@ -690,6 +690,7 @@ void Internals::resetToConsistentState(Page& page)
 #endif
     AXObjectCache::setEnhancedUserInterfaceAccessibility(false);
     AXObjectCache::disableAccessibilityForTesting();
+    AXObjectCache::setAnnouncementTranslationTimeoutForTesting(std::nullopt);
     WebCore::setShouldMockParentSearchResultsForTesting(false);
     WebCore::setShouldMockChildFrameSearchResultsForTesting(false);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -4789,6 +4790,11 @@ void Internals::forceAXObjectCacheUpdate() const
         if (CheckedPtr cache = document->axObjectCache())
             cache->performDeferredCacheUpdate(ForceLayout::Yes);
     }
+}
+
+void Internals::setAccessibilityAnnouncementTranslationTimeout(double seconds)
+{
+    AXObjectCache::setAnnouncementTranslationTimeoutForTesting(Seconds { seconds });
 }
 
 unsigned Internals::liveRegionSnapshotBuildCount() const

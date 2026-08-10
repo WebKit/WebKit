@@ -31,12 +31,15 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKFormInputSession.h>
+#import <WebKit/_WKTranslationDelegate.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Seconds.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/Vector.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 
@@ -75,7 +78,7 @@ struct CustomMenuActionInfo {
     BlockPtr<void()> callback;
 };
 
-@interface TestRunnerWKWebView () <WKUIDelegatePrivate, _WKInputDelegate
+@interface TestRunnerWKWebView () <WKUIDelegatePrivate, _WKInputDelegate, _WKTranslationDelegate
 #if PLATFORM(IOS_FAMILY)
     , UIGestureRecognizerDelegate
 #endif
@@ -87,6 +90,9 @@ struct CustomMenuActionInfo {
     BOOL _isInteractingWithFormControl;
     BOOL _scrollingUpdatesDisabled;
     RetainPtr<NSArray<NSString *>> _allowedMenuActions;
+    // This is relevant for "reverse" mode, where replies are buffered here and returned in reverse
+    // order, ensuring the implementation can handle announcing in the correct order regardless.
+    Vector<BlockPtr<void()>> _bufferedAnnouncementTranslationReplies;
 #if PLATFORM(MAC)
     int _draggingSequenceNumber;
     RetainPtr<WebKitTestRunnerDraggingInfo> _currentDraggingInfo;
@@ -234,6 +240,7 @@ IGNORE_WARNINGS_END
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
         self.immersiveEnvironmentDelegate = self;
 #endif
+        self._translationDelegate = self;
     }
     return self;
 }
@@ -308,6 +315,72 @@ IGNORE_WARNINGS_END
     [menu update];
     [menu cancelTracking];
 #endif
+}
+
+// Fake translation client for tests.
+- (void)_webView:(WKWebView *)webView translateAccessibilityAnnouncementStrings:(NSArray<NSString *> *)strings targetLocaleIdentifier:(NSString *)targetLocaleIdentifier completionHandler:(void (^)(NSArray<NSString *> *))completionHandler
+{
+    NSString *mode = self.announcementTranslationMode;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcompletion-handler"
+    // Releases the handler without invoking it. WebKit must treat this as "no translation available".
+    if ([mode isEqualToString:@"drop"])
+        return;
+
+    // Holds the handler indefinitely without invoking it, the way a client waiting on a translation
+    // service that never answers would. Note the handler must be retained here, unlike "drop" above.
+    // Releasing it uncalled takes the finalizer path and replies immediately, which would never reach
+    // the timeout. NeverDestroyed keeps these alive for the process lifetime, which is deliberate.
+    if ([mode isEqualToString:@"hang"]) {
+        static NeverDestroyed<Vector<BlockPtr<void(NSArray<NSString *> *)>>> neverInvokedHandlers;
+        neverInvokedHandlers->append(makeBlockPtr(completionHandler));
+        return;
+    }
+#pragma clang diagnostic pop
+
+    // Declines to translate.
+    if ([mode isEqualToString:@"fail"])
+        return completionHandler(nil);
+
+    RetainPtr<NSMutableArray<NSString *>> translated = adoptNS([[NSMutableArray alloc] initWithCapacity:strings.count]);
+    for (NSString *string in strings)
+        [translated addObject:[NSString stringWithFormat:@"%@_translated_to_%@", string, targetLocaleIdentifier]];
+
+    auto reply = makeBlockPtr([completionHandler = makeBlockPtr(completionHandler), translated] {
+        completionHandler(translated.get());
+    });
+
+    // Replies well after WebKit's deadline, so the announcement goes out untranslated and the late
+    // translation must then be discarded rather than announced a second time.
+    if ([mode isEqualToString:@"delayed"]) {
+        RunLoop::mainSingleton().dispatchAfter(300_ms, [reply] {
+            reply();
+        });
+        return;
+    }
+
+    // Buffers replies and flushes them in reverse arrival order once the run loop drains, so tests
+    // can prove announcements are still released in the order they were produced.
+    if ([mode isEqualToString:@"reverse"]) {
+        _bufferedAnnouncementTranslationReplies.append(reply);
+        RunLoop::mainSingleton().dispatch([self, protectedSelf = retainPtr(self)] {
+            auto replies = std::exchange(_bufferedAnnouncementTranslationReplies, { });
+            for (auto it = replies.rbegin(); it != replies.rend(); ++it)
+                (*it)();
+        });
+        return;
+    }
+
+    if ([mode isEqualToString:@"async"]) {
+        RunLoop::mainSingleton().dispatch([reply] {
+            reply();
+        });
+        return;
+    }
+
+    // For "immediate" and any unrecognized mode, reply synchronously.
+    reply();
 }
 
 - (void)resetInteractionCallbacks

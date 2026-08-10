@@ -842,6 +842,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     StartVisualTranslation(String sourceLanguageIdentifier, String targetLanguageIdentifier)
 #endif
 
+    SetDisplayedTranslationLocaleIdentifier(String localeIdentifier)
+
     ScrollToRect(WebCore::FloatRect targetRect, WebCore::FloatPoint origin)
     SetContentOffset(std::optional<int> x, std::optional<int> y, enum:bool WebCore::ScrollIsAnimated animated)
     ScrollToEdge(WebCore::RectEdges<bool> edges, enum:bool WebCore::ScrollIsAnimated animated)

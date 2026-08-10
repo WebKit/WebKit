@@ -139,6 +139,8 @@ private:
 
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) const final;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) const final;
+
+    void translateAccessibilityAnnouncementStrings(const Vector<String>&, const String&, CompletionHandler<void(Vector<String>&&)>&&) final;
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     void requestFrameScreenPosition(WebCore::FrameIdentifier) const final;
     void scheduleAccessibilityFrameGeometryUpdate() const final;

@@ -8844,6 +8844,10 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 
     if (frame->isMainFrame())
         m_internals->textManipulationParameters = std::nullopt;
+
+    // The client re-establishes this if it continues translating the newly committed document.
+    if (frame->isMainFrame())
+        m_internals->displayedTranslationLocaleIdentifier = { };
 }
 
 void WebPageProxy::didFinishDocumentLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, const UserData& userData, WallTime timestamp)
@@ -14427,6 +14431,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     parameters.textManipulationParameters = m_internals->textManipulationParameters;
 
+    parameters.displayedTranslationLocaleIdentifier = m_internals->displayedTranslationLocaleIdentifier;
+
     parameters.accessibilityMode = m_accessibilityMode;
     parameters.shouldForceSiteIsolationAlwaysOnForTesting = WebPreferences::forcedSiteIsolationAlwaysOnForTesting();
     parameters.shouldEnableNetworkInstrumentation = inspectorController().isNetworkInstrumentationEnabled();
@@ -15235,6 +15241,35 @@ void WebPageProxy::startVisualTranslation(const String& sourceLanguageIdentifier
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+const String& WebPageProxy::displayedTranslationLocaleIdentifier() const
+{
+    return m_internals->displayedTranslationLocaleIdentifier;
+}
+
+void WebPageProxy::setDisplayedTranslationLocaleIdentifier(const String& localeIdentifier)
+{
+    if (m_internals->displayedTranslationLocaleIdentifier == localeIdentifier)
+        return;
+
+    m_internals->displayedTranslationLocaleIdentifier = localeIdentifier;
+
+    // Under site isolation a cross-origin iframe's Document lives in a different process with its
+    // own Page, so every web content process backing this page needs the new value.
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (hasRunningProcess())
+            webProcess.send(Messages::WebPage::SetDisplayedTranslationLocaleIdentifier(localeIdentifier), pageID);
+    });
+}
+
+void WebPageProxy::translateAccessibilityAnnouncementStrings(Vector<String>&& strings, String&& targetLocaleIdentifier, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    RefPtr pageClient = this->pageClient();
+    if (!pageClient)
+        return completionHandler({ });
+
+    pageClient->translateAccessibilityAnnouncementStrings(WTF::move(strings), WTF::move(targetLocaleIdentifier), WTF::move(completionHandler));
+}
 
 void WebPageProxy::requestImageBitmap(const ElementContext& elementContext, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&, const String&)>&& completion)
 {

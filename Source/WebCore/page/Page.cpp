@@ -556,6 +556,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
     if (pageConfiguration.imageTranslationLanguageIdentifiers)
         protect(imageAnalysisQueue())->setTranslationLanguageIdentifiers(WTF::move(*pageConfiguration.imageTranslationLanguageIdentifiers));
 #endif
+
+    m_displayedTranslationLocaleIdentifier = WTF::move(pageConfiguration.displayedTranslationLocaleIdentifier);
 }
 
 Page::~Page()
@@ -5651,6 +5653,11 @@ void Page::setDefaultSpatialTrackingLabel(const String& label)
     });
 }
 #endif
+
+void Page::setDisplayedTranslationLocaleIdentifier(String&& localeIdentifier)
+{
+    m_displayedTranslationLocaleIdentifier = WTF::move(localeIdentifier);
+}
 
 #if ENABLE(GAMEPAD)
 void Page::gamepadsRecentlyAccessed()

@@ -929,6 +929,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.imageTranslationLanguageIdentifiers = WTF::move(parameters.imageTranslationLanguageIdentifiers);
 #endif
 
+    pageConfiguration.displayedTranslationLocaleIdentifier = WTF::move(parameters.displayedTranslationLocaleIdentifier);
+
     if (parameters.textManipulationParameters) {
         m_textManipulationIncludesSubframes = parameters.textManipulationParameters->includeSubframes;
         m_internals->textManipulationExclusionRules = WTF::move(parameters.textManipulationParameters->exclusionRules);
@@ -9939,6 +9941,12 @@ void WebPage::startVisualTranslation(const String& sourceLanguageIdentifier, con
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+void WebPage::setDisplayedTranslationLocaleIdentifier(String&& localeIdentifier)
+{
+    if (RefPtr page = m_page)
+        page->setDisplayedTranslationLocaleIdentifier(WTF::move(localeIdentifier));
+}
 
 void WebPage::requestImageBitmap(const ElementContext& context, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&, const String& sourceMIMEType)>&& completion)
 {

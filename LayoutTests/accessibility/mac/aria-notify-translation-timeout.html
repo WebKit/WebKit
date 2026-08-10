@@ -1,0 +1,48 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsARIANotifyEnabled=true displayedTranslationLocale=fr announcementTranslationMode=hang ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<script>
+var output = "Tests that a translation client which never replies cannot swallow an announcement. Instead, the original text is announced in its original language once the deadline passes, and a later announcement is not left stuck behind the stalled one.\n\n";
+var notificationCount = 0;
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAriaNotifyUserInfo(userInfo);
+        notificationCount++;
+
+        // Announcing again after the first one timed out proves the queue drained rather than
+        // wedging behind the request that never came back.
+        if (notificationCount == 1)
+            document.ariaNotify("Second");
+
+        if (notificationCount == 2)
+            testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    internals.setAccessibilityAnnouncementTranslationTimeout(0.05);
+    accessibilityController.addNotificationListener(notificationCallback);
+
+    document.ariaNotify("First");
+
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

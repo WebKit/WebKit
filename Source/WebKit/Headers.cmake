@@ -441,6 +441,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKTextRun.h
     UIProcess/API/Cocoa/_WKThumbnailView.h
     UIProcess/API/Cocoa/_WKTouchEventGenerator.h
+    UIProcess/API/Cocoa/_WKTranslationDelegate.h
     UIProcess/API/Cocoa/_WKUserContentExtensionStore.h
     UIProcess/API/Cocoa/_WKUserContentExtensionStorePrivate.h
     UIProcess/API/Cocoa/_WKUserContentFilter.h

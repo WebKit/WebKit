@@ -1992,6 +1992,7 @@
 		9ACC07B725C81D3400DC6386 /* WebMediaKeySystemClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07B625C81D3300DC6386 /* WebMediaKeySystemClient.h */; };
 		9ACC07B925C8218400DC6386 /* WKMediaKeySystemPermissionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07B825C8218300DC6386 /* WKMediaKeySystemPermissionCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B02E0CB235EB953004044B2 /* _WKTextManipulationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B02E0C9235EB62D004044B2 /* _WKTextManipulationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9B02E0D1235EB953004044B2 /* _WKTranslationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B02E0D0235EB62D004044B2 /* _WKTranslationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B02E0CC235EB957004044B2 /* _WKTextManipulationItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B02E0CA235EB884004044B2 /* _WKTextManipulationItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B02E0D7235FC94F004044B2 /* _WKTextManipulationToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B02E0CD235EB967004044B2 /* _WKTextManipulationToken.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B1229CD23FF25F2008CA751 /* RemoteAudioDestinationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B1229CB23FF25F2008CA751 /* RemoteAudioDestinationManager.h */; };
@@ -7705,6 +7706,7 @@
 		9ACC07B625C81D3300DC6386 /* WebMediaKeySystemClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaKeySystemClient.h; sourceTree = "<group>"; };
 		9ACC07B825C8218300DC6386 /* WKMediaKeySystemPermissionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMediaKeySystemPermissionCallback.h; sourceTree = "<group>"; };
 		9B02E0C9235EB62D004044B2 /* _WKTextManipulationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextManipulationDelegate.h; sourceTree = "<group>"; };
+		9B02E0D0235EB62D004044B2 /* _WKTranslationDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTranslationDelegate.h; sourceTree = "<group>"; };
 		9B02E0CA235EB884004044B2 /* _WKTextManipulationItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextManipulationItem.h; sourceTree = "<group>"; };
 		9B02E0CD235EB967004044B2 /* _WKTextManipulationToken.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextManipulationToken.h; sourceTree = "<group>"; };
 		9B02E0CE235EBB14004044B2 /* _WKTextManipulationToken.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextManipulationToken.mm; sourceTree = "<group>"; };
@@ -13010,6 +13012,7 @@
 				F41145652CD939E0004CDBD1 /* _WKTouchEventGenerator.h */,
 				F41145662CD939E0004CDBD1 /* _WKTouchEventGenerator.mm */,
 				F411457C2CD94161004CDBD1 /* _WKTouchEventGeneratorInternal.h */,
+				9B02E0D0235EB62D004044B2 /* _WKTranslationDelegate.h */,
 				7C2413011AACFA7500A58C15 /* _WKUserContentExtensionStore.h */,
 				7C2413001AACFA7500A58C15 /* _WKUserContentExtensionStore.mm */,
 				7C2413041AACFA9C00A58C15 /* _WKUserContentExtensionStoreInternal.h */,
@@ -18059,6 +18062,7 @@
 				2DACE64E18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h in Headers */,
 				F41145682CD939E0004CDBD1 /* _WKTouchEventGenerator.h in Headers */,
 				F411457D2CD94161004CDBD1 /* _WKTouchEventGeneratorInternal.h in Headers */,
+				9B02E0D1235EB953004044B2 /* _WKTranslationDelegate.h in Headers */,
 				7C2413031AACFA7500A58C15 /* _WKUserContentExtensionStore.h in Headers */,
 				7C2413051AACFA9C00A58C15 /* _WKUserContentExtensionStoreInternal.h in Headers */,
 				7CA3793E1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h in Headers */,

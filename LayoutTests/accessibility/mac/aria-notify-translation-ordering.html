@@ -1,0 +1,45 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsARIANotifyEnabled=true displayedTranslationLocale=fr announcementTranslationMode=reverse ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<script>
+var output = "Tests that announcements are released to the platform in the order they were produced, even when translations come back out of order.\n\n";
+var notificationCount = 0;
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAriaNotifyUserInfo(userInfo);
+
+        if (++notificationCount == 3)
+            testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    accessibilityController.addNotificationListener(notificationCallback);
+
+    // The test delegate buffers these three translation requests and replies to them in reverse
+    // order, so the expected output below is the proof that ordering is restored before posting.
+    document.ariaNotify("First");
+    document.ariaNotify("Second");
+    document.ariaNotify("Third");
+
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

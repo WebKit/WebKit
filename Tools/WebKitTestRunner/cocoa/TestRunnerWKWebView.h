@@ -102,6 +102,10 @@
 @property (nonatomic, assign) BOOL shouldAcceptImmersiveEnvironmentRequests;
 #endif
 
+// Drives this view's fake _WKTranslationDelegate. One of "immediate", "async", "reverse", "fail",
+// "delayed", "hang", or "drop". Anything else, including the default, translates immediately.
+@property (nonatomic, copy) NSString *announcementTranslationMode;
+
 - (void)dismissActiveMenu;
 - (void)resetInteractionCallbacks;
 - (void)_didLoadAppInitiatedRequest:(void (^)(BOOL result))completionHandler;

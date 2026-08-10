@@ -403,12 +403,46 @@ void AXLiveRegionManager::postAnnouncementForChange(AccessibilityObject& object,
     if (diff.added.isEmpty() && diff.removed.isEmpty() && diff.changed.isEmpty())
         return;
 
-    AttributedString announcement = computeAnnouncement(newSnapshot, diff);
-    if (announcement.isNull() || announcement.string.isEmpty())
-        return;
+    // Collect the text of every object that could contribute to the announcement, in the order
+    // computeAnnouncement() will consider them, so translated text can be written back positionally.
+    Vector<String> segments;
+    auto collect = [&](const Vector<LiveRegionObject>& objects) {
+        for (auto& liveRegionObject : objects)
+            segments.append(liveRegionObject.text);
+    };
+    collect(diff.added);
+    collect(diff.removed);
+    collect(diff.changed);
 
-    if (CheckedPtr cache = m_cache)
-        cache->postLiveRegionNotification(object, newSnapshot.liveRegionStatus, announcement);
+    // Translation has to happen before computeAnnouncement(), not after, because it concatenates these
+    // objects into one AttributedString with per-range language and removal attributes, and word
+    // order changes across languages would make those ranges unrecoverable. Assembling afterwards
+    // also applies maximumAnnouncementLength to the translated text, which matters because
+    // translations commonly run longer than their source.
+    auto expectedSegmentCount = segments.size();
+    auto assemble = [this, object = Ref { object }, diff, newSnapshot, expectedSegmentCount](Vector<String>&& translatedSegments, const String& language) mutable {
+        if (translatedSegments.size() == expectedSegmentCount) {
+            size_t index = 0;
+            auto applyTranslation = [&](Vector<LiveRegionObject>& objects) {
+                for (auto& liveRegionObject : objects) {
+                    liveRegionObject.text = WTF::move(translatedSegments[index++]);
+                    if (!language.isEmpty())
+                        liveRegionObject.language = language;
+                }
+            };
+            applyTranslation(diff.added);
+            applyTranslation(diff.removed);
+            applyTranslation(diff.changed);
+        }
+
+        AttributedString announcement = computeAnnouncement(newSnapshot, diff);
+        if (announcement.isNull() || announcement.string.isEmpty())
+            return;
+
+        CheckedRef { m_cache }->postLiveRegionNotification(object, newSnapshot.liveRegionStatus, announcement);
+    };
+
+    CheckedRef { m_cache }->translateAnnouncementThenAssemble(Ref { object }, WTF::move(segments), WTF::move(assemble));
 }
 
 } // namespace WebCore

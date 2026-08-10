@@ -1,0 +1,19 @@
+Tests that a translation client which drops the completion handler without calling it neither terminates the process nor loses the announcement, and does not block the ones behind it.
+
+Received announcement request:
+AnnouncementKey: First
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: en
+
+Received announcement request:
+AnnouncementKey: Second
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: en
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

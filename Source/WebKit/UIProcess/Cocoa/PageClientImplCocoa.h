@@ -185,6 +185,8 @@ public:
 
     void processDidUpdateThrottleState() final;
 
+    void translateAccessibilityAnnouncementStrings(Vector<String>&&, String&&, CompletionHandler<void(Vector<String>&&)>&&) final;
+
 private:
 #if ENABLE(FULLSCREEN_API)
     void setFullScreenClientForTesting(std::unique_ptr<WebFullScreenManagerProxyClient>&&) final;

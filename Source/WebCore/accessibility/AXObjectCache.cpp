@@ -410,6 +410,7 @@ AXObjectCache::AXObjectCache(LocalFrame& localFrame, Document* document)
     : m_document(document)
     , m_frameID(localFrame.frameID())
     , m_notificationPostTimer(*this, &AXObjectCache::notificationPostTimerFired)
+    , m_pendingAnnouncementTimeoutTimer(*this, &AXObjectCache::pendingAnnouncementTimeoutTimerFired)
 #if PLATFORM(COCOA)
     , m_passwordNotificationTimer(*this, &AXObjectCache::passwordNotificationTimerFired)
 #endif
@@ -486,6 +487,7 @@ AXObjectCache::~AXObjectCache()
     m_notificationPostTimer.stop();
     m_liveRegionChangedPostTimer.stop();
     m_performCacheUpdateTimer.stop();
+    m_pendingAnnouncementTimeoutTimer.stop();
 
     for (const auto& object : m_objects.values())
         object->detach(AccessibilityDetachmentType::CacheDestroyed);
@@ -1739,6 +1741,11 @@ void AXObjectCache::handleAllDeferredChildrenChanged()
             postPlatformNotification(object, AXNotification::ChildrenChanged);
 #endif
     }
+
+    // These entries only suppress the children-changed raised by the re-render that recorded them, so
+    // they must not survive into subsequent, genuine mutations of the same live region.
+    m_deferredReRenderedContent.clear();
+    m_reRenderedContentAndAncestors = std::nullopt;
 }
 
 void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
@@ -1814,7 +1821,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
         // This notification needs to be sent even when the screen reader has not accessed this live region since the last update.
         // Sometimes this function can be called many times within a short period of time, leading to posting too many AXLiveRegionChanged notifications.
         // To fix this, we use a timer to make sure we only post one notification for the children changes within a pre-defined time interval.
-        if (parent->supportsLiveRegion())
+        if (parent->supportsLiveRegion() && !isReRenderedContent(*parent))
             postLiveRegionChangeNotification(*parent);
 
         // If this object is an ARIA text control, notify that its value changed.
@@ -2165,6 +2172,200 @@ void AXObjectCache::enqueueNotificationToPost(Ref<AccessibilityObject>&& object,
         m_notificationPostTimer.startOneShot(0_s);
 }
 
+static std::optional<Seconds>& announcementTranslationTimeoutOverrideForTesting()
+{
+    static NeverDestroyed<std::optional<Seconds>> override;
+    return override;
+}
+
+void AXObjectCache::setAnnouncementTranslationTimeoutForTesting(std::optional<Seconds> timeout)
+{
+    announcementTranslationTimeoutOverrideForTesting() = timeout;
+}
+
+Seconds AXObjectCache::announcementTranslationTimeout()
+{
+    // Long enough for an on-device translation of a short string, short enough that a stalled
+    // translation service does not leave the user waiting on an announcement.
+    static constexpr Seconds defaultAnnouncementTranslationTimeout = 250_ms;
+    return announcementTranslationTimeoutOverrideForTesting().value_or(defaultAnnouncementTranslationTimeout);
+}
+
+void AXObjectCache::translateAnnouncementThenAssemble(Ref<AccessibilityObject>&& object, Vector<String>&& segments, Function<void(Vector<String>&&, const String&)>&& assemble)
+{
+    RefPtr document = m_document.get();
+    RefPtr page = document ? document->page() : nullptr;
+
+    bool needsTranslation = false;
+    String targetLocale;
+    if (page) {
+        // Every announcement in a translated rendering needs translating.
+        targetLocale = page->displayedTranslationLocaleIdentifier();
+        needsTranslation = !targetLocale.isEmpty();
+    }
+
+    if (!needsTranslation && m_pendingAnnouncements.isEmpty()) {
+        assemble(WTF::move(segments), { });
+        return;
+    }
+
+    static constexpr size_t maxPendingAnnouncements = 64;
+    if (m_pendingAnnouncements.size() >= maxPendingAnnouncements) [[unlikely]] {
+        // If we hit the pending announcements cap (e.g. translation is running slowly, and / or
+        // there is a high volume of announcements), release the oldest one untranslated rather
+        // than dropping it. Losing an announcement is worse than announcing it in the original language.
+        AX_ASSERT_NOT_REACHED();
+        auto oldest = m_pendingAnnouncements.takeFirst();
+        if (!oldest.object->isDetached() && oldest.object->axObjectCache())
+            oldest.assembleAndEnqueue(WTF::move(oldest.segments), { });
+    }
+
+    uint64_t requestID = needsTranslation ? ++m_nextAnnouncementTranslationRequestID : 0;
+    m_pendingAnnouncements.append(PendingAnnouncement {
+        WTF::move(object),
+        segments,
+        needsTranslation ? targetLocale : String { },
+        requestID,
+        MonotonicTime::now() + announcementTranslationTimeout(),
+        WTF::move(assemble)
+    });
+
+    if (needsTranslation) {
+        page->chrome().client().translateAccessibilityAnnouncementStrings(segments, targetLocale,
+            [weakCache = WeakPtr { *this }, requestID](Vector<String>&& translatedSegments) mutable {
+                if (CheckedPtr cache = weakCache.get())
+                    cache->announcementTranslationDidComplete(requestID, WTF::move(translatedSegments));
+            });
+    }
+
+    scheduleAnnouncementTimeoutTimerIfNeeded();
+}
+
+void AXObjectCache::deferReRenderedContent(Node& node)
+{
+    RefPtr document = m_document.get();
+    RefPtr page = document ? document->page() : nullptr;
+    if (!page || !page->isPresentingMachineTranslation()) {
+        // Re-rendered content is only relevant when page-level translation
+        // is active (the "re-rendering" is the replacement of the original
+        // DOM text with the translated version).
+        return;
+    }
+
+    m_deferredReRenderedContent.add(node);
+    // The ancestor closure was built from a smaller set, so it no longer answers correctly.
+    m_reRenderedContentAndAncestors = std::nullopt;
+}
+
+
+bool AXObjectCache::isReRenderedContent(const AccessibilityObject& object) const
+{
+    if (m_deferredReRenderedContent.isEmptyIgnoringNullReferences())
+        return false;
+
+    RefPtr document = m_document.get();
+    RefPtr page = document ? document->page() : nullptr;
+    if (!page || !page->isPresentingMachineTranslation()) {
+        // Only relevant when page-level translation is happening -- see similar comment
+        // in AXObjectCache::deferReRenderedContent.
+        return false;
+    }
+
+    // m_deferredReRenderedContent holds the containers whose text was swapped out, recorded by
+    // deferReRenderedContent(). The children-changed notification is raised either on such a
+    // container or on a live region ancestor of one, so both directions have to match.
+    RefPtr candidateNode = object.node();
+    if (!candidateNode)
+        return false;
+
+    if (!m_reRenderedContentAndAncestors) {
+        // Build a one-time cache (m_reRenderedContentAndAncestors) capturing whether any re-rendered
+        // node or any ancestor of one is a given node, so each query is a set lookup rather than an
+        // ancestor walk per m_deferredReRenderedContent member.
+        m_reRenderedContentAndAncestors.emplace();
+        for (Ref reRenderedNode : m_deferredReRenderedContent) {
+            for (RefPtr node = reRenderedNode.get(); node; node = node->parentNode()) {
+                if (!m_reRenderedContentAndAncestors->add(*node).isNewEntry) {
+                    // Stop when we found an ancestor that was already present, since everything above it
+                    // was already added by an earlier m_deferredReRenderedContent member.
+                    break;
+                }
+            }
+        }
+    }
+
+    return m_reRenderedContentAndAncestors->contains(*candidateNode);
+}
+
+void AXObjectCache::announcementTranslationDidComplete(uint64_t requestID, Vector<String>&& translatedSegments)
+{
+    AX_ASSERT(isMainThread());
+
+    auto iterator = m_pendingAnnouncements.findIf([&](auto& entry) {
+        return entry.translationRequestID == requestID;
+    });
+    // Already force-completed by a timeout or an overflow.
+    if (iterator == m_pendingAnnouncements.end())
+        return;
+
+    auto& entry = *iterator;
+    entry.translationRequestID = 0;
+
+    // A short or oversized reply means the client could not translate these strings,
+    // so keep the originals, and with them the original language.
+    if (translatedSegments.size() == entry.segments.size())
+        entry.segments = WTF::move(translatedSegments);
+    else
+        entry.targetLocale = { };
+
+    flushPendingAnnouncements();
+}
+
+void AXObjectCache::flushPendingAnnouncements()
+{
+    // Releasing an entry only enqueues a notification to post on a zero-delay timer, so nothing here
+    // re-enters this function. That matters: an inner flush would release later entries while an
+    // outer one was still draining, which is exactly the ordering this queue exists to preserve.
+    while (!m_pendingAnnouncements.isEmpty() && !m_pendingAnnouncements.first().translationRequestID) {
+        auto entry = m_pendingAnnouncements.takeFirst();
+        if (entry.object->isDetached() || !entry.object->axObjectCache())
+            continue;
+        entry.assembleAndEnqueue(WTF::move(entry.segments), entry.targetLocale);
+    }
+
+    scheduleAnnouncementTimeoutTimerIfNeeded();
+}
+
+void AXObjectCache::scheduleAnnouncementTimeoutTimerIfNeeded()
+{
+    if (m_pendingAnnouncements.isEmpty()) {
+        m_pendingAnnouncementTimeoutTimer.stop();
+        return;
+    }
+
+    if (m_pendingAnnouncementTimeoutTimer.isActive())
+        return;
+
+    // We only need to arm the timer based on the first entries deadline, since
+    // we re-arm the timer as subsequent entries (with their own deadline) are drained.
+    auto delay = std::max(0_s, m_pendingAnnouncements.first().deadline - MonotonicTime::now());
+    m_pendingAnnouncementTimeoutTimer.startOneShot(delay);
+}
+
+void AXObjectCache::pendingAnnouncementTimeoutTimerFired()
+{
+    auto now = MonotonicTime::now();
+    for (auto& entry : m_pendingAnnouncements) {
+        if (entry.deadline > now)
+            break;
+        // Give up waiting and announce the original text in the original language.
+        entry.translationRequestID = 0;
+        entry.targetLocale = { };
+    }
+
+    flushPendingAnnouncements();
+}
+
 void AXObjectCache::postNotification(RenderObject* renderer, AXNotification notification, PostTarget postTarget)
 {
     if (!renderer)
@@ -2293,7 +2494,24 @@ void AXObjectCache::postARIANotifyNotification(Node& node, const String& announc
         }
     }
 
-    enqueueNotificationToPost(Ref { *object }, AXNotificationWithData(AXNotification::ARIANotify, AriaNotifyData { announcement, priority, interruptBehavior, object->languageIncludingAncestors() }));
+    auto sourceLanguage = object->languageIncludingAncestors();
+
+    // Assembles and enqueues the notification once the announcement text is final, which is true when either:
+    //   1. No translation is needed, and thus can be announced immediately.
+    //   2. The translation request returns the new text.
+    //   3. The translation request times out, and the original text is used.
+    auto assemble = [weakCache = WeakPtr { *this }, object, priority, interruptBehavior, sourceLanguage](Vector<String>&& segments, const String& language) mutable {
+        if (segments.isEmpty())
+            return;
+        CheckedPtr cache = weakCache.get();
+        if (!cache)
+            return;
+
+        cache->enqueueNotificationToPost(Ref { *object }, AXNotificationWithData(AXNotification::ARIANotify,
+            AriaNotifyData { WTF::move(segments[0]), priority, interruptBehavior, language.isEmpty() ? sourceLanguage : language }));
+    };
+
+    translateAnnouncementThenAssemble(Ref { *object }, { announcement }, WTF::move(assemble));
 }
 
 #if PLATFORM(COCOA)

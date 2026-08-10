@@ -70,6 +70,7 @@ Tests/WTF/cocoa/URLExtras.mm @nonARC
 Tests/WebCore/cocoa/WebAVPlayerControllerLeakTests.mm @nonARC
 
 Tests/WebKit/WKWebView/AVFoundationPreference.mm @nonARC
+Tests/WebKit/WKWebView/AccessibilityAnnouncementTranslation.mm @nonARC
 Tests/WebKit/WKWebView/AdaptiveImageGlyph.mm @nonARC
 Tests/WebKit/WKWebView/AdditionalReadAccessAllowedURLs.mm @nonARC
 Tests/WebKit/WKWebView/AdditionalSupportedImageTypes.mm @nonARC

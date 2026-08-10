@@ -239,10 +239,12 @@ const TestFeatures& TestOptions::defaults()
         };
         features.stringTestRunnerFeatures = {
             { "additionalSupportedImageTypes", { } },
+            { "announcementTranslationMode", { } },
             { "applicationBundleIdentifier", { } },
             { "applicationManifest", { } },
             { "contentMode", { } },
             { "contentSecurityPolicyExtensionMode", { } },
+            { "displayedTranslationLocale", { } },
             { "dragInteractionPolicy", { } },
             { "focusStartsInputSessionPolicy", { } },
             { "jscOptions", { } },
@@ -322,10 +324,12 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "secureUpgradePort", TestHeaderKeyType::UInt16TestRunner },
 
         { "additionalSupportedImageTypes", TestHeaderKeyType::StringTestRunner },
+        { "announcementTranslationMode", TestHeaderKeyType::StringTestRunner },
         { "applicationBundleIdentifier", TestHeaderKeyType::StringTestRunner },
         { "applicationManifest", TestHeaderKeyType::StringRelativePathTestRunner },
         { "contentMode", TestHeaderKeyType::StringTestRunner },
         { "contentSecurityPolicyExtensionMode", TestHeaderKeyType::StringTestRunner },
+        { "displayedTranslationLocale", TestHeaderKeyType::StringTestRunner },
         { "dragInteractionPolicy", TestHeaderKeyType::StringTestRunner },
         { "focusStartsInputSessionPolicy", TestHeaderKeyType::StringTestRunner },
         { "jscOptions", TestHeaderKeyType::StringTestRunner },

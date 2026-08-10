@@ -170,6 +170,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @protocol _WKInputDelegate;
 @protocol _WKResourceLoadDelegate;
 @protocol _WKTextManipulationDelegate;
+@protocol _WKTranslationDelegate;
 
 @interface WKWebView (WKPrivate)
 
@@ -262,6 +263,15 @@ for this property.
 - (void)_startTextManipulationsWithConfiguration:(_WKTextManipulationConfiguration *)configuration completion:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 - (void)_completeTextManipulation:(_WKTextManipulationItem *)item completion:(void(^)(BOOL success))completionHandler WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 - (void)_completeTextManipulationForItems:(NSArray<_WKTextManipulationItem *> *)items completion:(void(^)(NSArray<NSError *> *errors))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
+
+@property (nonatomic, weak, setter=_setTranslationDelegate:) id<_WKTranslationDelegate> _translationDelegate WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
+/*! @abstract Non-nil while this web view is presenting the document as a machine translation.
+ @discussion Set this to the target locale when entering a translated rendering, and to nil when
+ returning to the original content. WebKit uses it to decide whether accessibility announcements
+ need translating, and reports it as the language of announcements it has translated.
+ */
+@property (nonatomic, copy, setter=_setDisplayedTranslationLocaleIdentifier:) NSString *_displayedTranslationLocaleIdentifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @property (nonatomic, setter=_setAddsVisitedLinks:) BOOL _addsVisitedLinks;
 

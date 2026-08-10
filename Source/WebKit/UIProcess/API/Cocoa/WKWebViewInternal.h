@@ -236,6 +236,7 @@ std::optional<WebCore::JSHandleIdentifier> jsHandleIdentifierInFrame(const WebFr
 #endif
 
 @protocol _WKTextManipulationDelegate;
+@protocol _WKTranslationDelegate;
 @protocol _WKInputDelegate;
 @protocol _WKAppHighlightDelegate;
 
@@ -354,6 +355,7 @@ struct LiveResizeSnapshotState {
     const std::unique_ptr<WebKit::ResourceLoadDelegate> _resourceLoadDelegate;
 
     WeakObjCPtr<id <_WKTextManipulationDelegate>> _textManipulationDelegate;
+    WeakObjCPtr<id<_WKTranslationDelegate>> _translationDelegate;
     WeakObjCPtr<id <_WKInputDelegate>> _inputDelegate;
     WeakObjCPtr<id <_WKAppHighlightDelegate>> _appHighlightDelegate;
 
@@ -663,6 +665,10 @@ struct LiveResizeSnapshotState {
 - (void)_doAfterNextVisibleContentRectAndPresentationUpdate:(void (^)(void))updateBlock;
 
 - (void)_recalculateViewportSizesWithMinimumViewportInset:(CocoaEdgeInsets)minimumViewportInset maximumViewportInset:(CocoaEdgeInsets)maximumViewportInset throwOnInvalidInput:(BOOL)throwOnInvalidInput;
+
+// Asks the _WKTranslationDelegate to translate accessibility announcements. Replies with an empty
+// Vector if there is no delegate or the delegate does not implement the method.
+- (void)_translateAccessibilityAnnouncementStrings:(NSArray<NSString *> *)strings targetLocaleIdentifier:(NSString *)targetLocaleIdentifier completionHandler:(CompletionHandler<void(Vector<String>&&)>&&)completionHandler;
 
 - (void)_showWarningView:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
 - (void)_showBrowsingWarning:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;

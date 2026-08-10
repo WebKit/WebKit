@@ -160,6 +160,7 @@
 #import "_WKTextManipulationToken.h"
 #import "_WKTextPreview.h"
 #import "_WKTextRunInternal.h"
+#import "_WKTranslationDelegate.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWarningView.h"
 #import <WebCore/AppHighlight.h>
@@ -1954,6 +1955,29 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 - (NSString *)_nameForVisualIdentificationOverlay
 {
     return @"WKWebView";
+}
+
+- (void)_translateAccessibilityAnnouncementStrings:(NSArray<NSString *> *)strings targetLocaleIdentifier:(NSString *)targetLocaleIdentifier completionHandler:(CompletionHandler<void(Vector<String>&&)>&&)completionHandler
+{
+    RetainPtr delegate = [self _translationDelegate];
+    if (![delegate respondsToSelector:@selector(_webView:translateAccessibilityAnnouncementStrings:targetLocaleIdentifier:completionHandler:)])
+        return completionHandler({ });
+
+    auto checker = WebKit::CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:translateAccessibilityAnnouncementStrings:targetLocaleIdentifier:completionHandler:));
+
+    // A client that releases the handler without calling it must not be fatal here. If that happens,
+    // rather than crashing, use a finalizer to reply as if no translation were available.
+    auto handler = CompletionHandlerWithFinalizer<void(Vector<String>&&)>(WTF::move(completionHandler), [checker = checker.copyRef()](Function<void(Vector<String>&&)>& function) mutable {
+        checker->didCallCompletionHandler();
+        function({ });
+    });
+
+    [delegate _webView:self translateAccessibilityAnnouncementStrings:strings targetLocaleIdentifier:targetLocaleIdentifier completionHandler:makeBlockPtr([handler = WTF::move(handler), checker = WTF::move(checker)](NSArray<NSString *> *translatedStrings) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        handler(makeVector<String>(translatedStrings));
+    }).get()];
 }
 
 - (void)_showWarningView:(const WebKit::BrowsingWarning&)warning completionHandler:(CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler
@@ -4525,6 +4549,33 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (void)_setTextManipulationDelegate:(id <_WKTextManipulationDelegate>)delegate
 {
     _textManipulationDelegate = delegate;
+}
+
+- (id<_WKTranslationDelegate>)_translationDelegate
+{
+    return _translationDelegate.getAutoreleased();
+}
+
+- (void)_setTranslationDelegate:(id<_WKTranslationDelegate>)delegate
+{
+    _translationDelegate = delegate;
+}
+
+- (NSString *)_displayedTranslationLocaleIdentifier
+{
+    THROW_IF_SUSPENDED;
+    if (!_page)
+        return nil;
+
+    auto& localeIdentifier = _page->displayedTranslationLocaleIdentifier();
+    return localeIdentifier.isEmpty() ? nil : localeIdentifier.createNSString().autorelease();
+}
+
+- (void)_setDisplayedTranslationLocaleIdentifier:(NSString *)localeIdentifier
+{
+    THROW_IF_SUSPENDED;
+    if (_page)
+        _page->setDisplayedTranslationLocaleIdentifier(localeIdentifier);
 }
 
 static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optional<WebCore::TextManipulationTokenInfo>& info)

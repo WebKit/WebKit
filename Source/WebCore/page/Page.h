@@ -765,6 +765,12 @@ public:
     ImageAnalysisQueue* imageAnalysisQueueIfExists() { return m_imageAnalysisQueue.get(); }
 #endif
 
+    // Non-empty while the user agent is presenting this page as a machine translation (e.g. a
+    // built-in "Translate this page" feature).
+    const String& displayedTranslationLocaleIdentifier() const LIFETIME_BOUND { return m_displayedTranslationLocaleIdentifier; }
+    bool isPresentingMachineTranslation() const { return !m_displayedTranslationLocaleIdentifier.isEmpty(); }
+    WEBCORE_EXPORT void setDisplayedTranslationLocaleIdentifier(String&&);
+
 #if ENABLE(WHEEL_EVENT_LATCHING)
     ScrollLatchingController& scrollLatchingController() LIFETIME_BOUND;
     ScrollLatchingController* scrollLatchingControllerIfExists() LIFETIME_BOUND { return m_scrollLatchingController.get(); }
@@ -1841,6 +1847,8 @@ private:
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
 #endif
+
+    String m_displayedTranslationLocaleIdentifier;
 
 #if ENABLE(GAMEPAD)
     MonotonicTime m_lastAccessNotificationTime;

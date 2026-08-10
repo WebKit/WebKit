@@ -390,6 +390,8 @@ struct WebPageCreationParameters {
     std::optional<WebCore::ImageTranslationLanguageIdentifiers> imageTranslationLanguageIdentifiers { std::nullopt };
 #endif
 
+    String displayedTranslationLocaleIdentifier { };
+
     std::optional<TextManipulationParameters> textManipulationParameters { std::nullopt };
 
     bool isPopup { false };

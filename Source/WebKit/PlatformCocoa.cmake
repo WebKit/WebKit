@@ -1380,6 +1380,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKTextManipulationItem.h
     UIProcess/API/Cocoa/_WKTextManipulationToken.h
     UIProcess/API/Cocoa/_WKThumbnailView.h
+    UIProcess/API/Cocoa/_WKTranslationDelegate.h
     UIProcess/API/Cocoa/_WKUserContentWorld.h
     UIProcess/API/Cocoa/_WKUserInitiatedAction.h
     UIProcess/API/Cocoa/_WKUserStyleSheet.h

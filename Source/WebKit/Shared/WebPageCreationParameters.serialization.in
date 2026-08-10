@@ -303,6 +303,8 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     std::optional<WebCore::ImageTranslationLanguageIdentifiers> imageTranslationLanguageIdentifiers;
 #endif
 
+    String displayedTranslationLocaleIdentifier;
+
     std::optional<WebKit::TextManipulationParameters> textManipulationParameters;
 
     bool isPopup;

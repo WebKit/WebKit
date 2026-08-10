@@ -257,6 +257,9 @@ public:
     std::optional<ImageTranslationLanguageIdentifiers> imageTranslationLanguageIdentifiers;
 #endif
 
+    // Non-empty if this page is being created while the user agent is presenting a machine translation.
+    String displayedTranslationLocaleIdentifier;
+
 #if ENABLE(WEB_AUTHN)
     Ref<CredentialRequestCoordinatorClient> credentialRequestCoordinatorClient;
 #endif

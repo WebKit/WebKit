@@ -684,6 +684,21 @@ public:
     // Requests clients to announce to the user the given message in the way they deem appropriate.
     WEBCORE_EXPORT void announce(const String&);
 
+    // Invokes `assemble` exactly once, either synchronously if the page is not translated and no
+    // other announcements are queued ahead, or when the translated text arrives (or times out).
+    // The `language` argument is the target language when the text was translated and empty otherwise.
+    void translateAnnouncementThenAssemble(Ref<AccessibilityObject>&&, Vector<String>&& segments, Function<void(Vector<String>&&, const String& language)>&& assemble);
+
+    // Records a node whose descendant text is about to be swapped out for a re-rendering of the same
+    // content, e.g. when page-level translation replaces text.
+    //
+    // The resulting children-changed is not a content change the user should hear about again, so the
+    // live region announcement for it is skipped. Forgotten once that change has been processed, so
+    // it never suppresses a later, genuine mutation of the same node.
+    WEBCORE_EXPORT void deferReRenderedContent(Node&);
+
+    WEBCORE_EXPORT static void setAnnouncementTranslationTimeoutForTesting(std::optional<Seconds>);
+
     void NODELETE setTextSelectionIntent(const AXTextStateChangeIntent&);
     void NODELETE setIsSynchronizingSelection(bool);
 
@@ -905,6 +920,13 @@ private:
     void notificationPostTimerFired();
     void enqueueNotificationToPost(Ref<AccessibilityObject>&&, AXNotificationWithData&&);
 
+    void announcementTranslationDidComplete(uint64_t requestID, Vector<String>&& translatedSegments);
+    bool isReRenderedContent(const AccessibilityObject&) const;
+    void flushPendingAnnouncements();
+    void pendingAnnouncementTimeoutTimerFired();
+    void scheduleAnnouncementTimeoutTimerIfNeeded();
+    static Seconds announcementTranslationTimeout();
+
     void liveRegionChangedNotificationPostTimerFired();
 
     void performCacheUpdateTimerFired() { performDeferredCacheUpdate(ForceLayout::No); }
@@ -1061,6 +1083,29 @@ private:
     Timer m_notificationPostTimer;
     Vector<std::pair<Ref<AccessibilityObject>, AXNotificationWithData>> m_notificationsToPost;
     HashSet<AXID> m_pendingLayoutCompleteObjectIDs;
+
+    // Core-AAM requires announcements to be translated before they reach the platform when the page
+    // is presented as a machine translation.
+    struct PendingAnnouncement {
+        Ref<AccessibilityObject> object;
+        Vector<String> segments;
+        String targetLocale;
+        // Zero once this entry is no longer awaiting a reply, whether it succeeded, failed, or timed out.
+        uint64_t translationRequestID { 0 };
+        MonotonicTime deadline;
+        // Rebuilds the payload from the (possibly translated) segments and enqueues it to post. The
+        // language argument is empty when the segments were left untranslated.
+        Function<void(Vector<String>&&, const String& language)> assembleAndEnqueue;
+    };
+
+    Deque<PendingAnnouncement> m_pendingAnnouncements;
+    Timer m_pendingAnnouncementTimeoutTimer;
+    uint64_t m_nextAnnouncementTranslationRequestID { 0 };
+    // Nodes whose pending children-changed is a re-rendering of content already announced.
+    WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredReRenderedContent;
+    // The nodes above plus all their ancestors, so isReRenderedContent() is a lookup instead of a
+    // walk. Built on first query and discarded whenever m_deferredReRenderedContent changes.
+    mutable std::optional<WeakHashSet<Node, WeakPtrImplWithEventTargetData>> m_reRenderedContentAndAncestors;
 
 #if PLATFORM(COCOA)
     Timer m_passwordNotificationTimer;
