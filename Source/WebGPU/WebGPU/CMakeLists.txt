@@ -133,7 +133,7 @@ target_include_directories(WebGPU PUBLIC ${WebGPU_FRAMEWORK_HEADERS_DIR})
 target_include_directories(WebGPU PRIVATE ${WebGPU_PRIVATE_FRAMEWORK_HEADERS_DIR})
 
 if (APPLE)
-    make_directory("${CMAKE_BINARY_DIR}/WebGPU/Modules")
+    file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/WebGPU/Modules")
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/WebGPU.modulemap
         ${CMAKE_BINARY_DIR}/WebGPU/Modules/module.modulemap COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/WebGPU_Private.modulemap
@@ -141,11 +141,11 @@ if (APPLE)
 
     set(_webgpu_fw "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebGPU.framework")
     if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
-        make_directory("${_webgpu_fw}")
+        file(MAKE_DIRECTORY "${_webgpu_fw}")
 
         if (SWIFT_REQUIRED)
             set(_webgpu_swiftmodule_dir "${CMAKE_BINARY_DIR}/WebGPU/Modules/WebGPU.swiftmodule")
-            make_directory(${_webgpu_swiftmodule_dir})
+            file(MAKE_DIRECTORY ${_webgpu_swiftmodule_dir})
             set(_webgpu_swift_output "${CMAKE_CURRENT_BINARY_DIR}")
             set(_webgpu_swift_arch "${CMAKE_OSX_ARCHITECTURES}")
             if (NOT _webgpu_swift_arch)
@@ -201,7 +201,7 @@ if (APPLE)
             COMMAND codesign --force --sign - ${_webgpu_fw}
             COMMENT "Populating WebGPU.framework PrivateHeaders/, Modules/, and codesigning")
     else ()
-        make_directory("${_webgpu_fw}/Versions/A")
+        file(MAKE_DIRECTORY "${_webgpu_fw}/Versions/A")
         if (NOT EXISTS "${_webgpu_fw}/Versions/Current")
             file(CREATE_LINK "A" "${_webgpu_fw}/Versions/Current" SYMBOLIC)
         endif ()

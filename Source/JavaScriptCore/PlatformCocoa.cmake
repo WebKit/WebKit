@@ -273,7 +273,7 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
         inspector/scripts/codegen/objc_generator_templates.py
     )
 
-    make_directory("${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework")
+    file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework")
     configure_file(${JAVASCRIPTCORE_DIR}/framework.sb ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/JavaScriptCore.framework/framework.sb COPYONLY)
     configure_file(${JAVASCRIPTCORE_DIR}/JavaScriptCore.modulemap ${CMAKE_BINARY_DIR}/JavaScriptCore/Modules/module.modulemap COPYONLY)
     configure_file("${JAVASCRIPTCORE_DIR}/JavaScriptCore_Private.modulemap" ${CMAKE_BINARY_DIR}/JavaScriptCore/Modules/module.private.modulemap COPYONLY)

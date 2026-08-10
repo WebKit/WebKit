@@ -50,7 +50,7 @@ set(EXECUTABLE_NAME MiniBrowser)
 set(PRODUCT_NAME MiniBrowser)
 
 set(MiniBrowser_Contents_Directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MiniBrowser.app/Contents)
-make_directory(${MiniBrowser_Contents_Directory}/Resources)
+file(MAKE_DIRECTORY ${MiniBrowser_Contents_Directory}/Resources)
 add_custom_command(OUTPUT ${MiniBrowser_Contents_Directory}/Resources/BrowserWindow.nib
     COMMAND ibtool --compile ${MiniBrowser_Contents_Directory}/Resources/BrowserWindow.nib ${MINIBROWSER_DIR}/BrowserWindow.xib VERBATIM)
 add_custom_command(OUTPUT ${MiniBrowser_Contents_Directory}/Resources/ExtensionManagerWindowController.nib

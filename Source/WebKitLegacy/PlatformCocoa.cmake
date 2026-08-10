@@ -1177,8 +1177,8 @@ foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
 endforeach ()
 
 set(_wkl_fw "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKitLegacy.framework")
-make_directory("${_wkl_fw}")
-make_directory("${_wkl_fw}/Modules")
+file(MAKE_DIRECTORY "${_wkl_fw}")
+file(MAKE_DIRECTORY "${_wkl_fw}/Modules")
 
 if (NOT EXISTS "${_wkl_fw}/PrivateHeaders")
     file(CREATE_LINK "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy"

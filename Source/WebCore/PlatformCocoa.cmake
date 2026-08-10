@@ -9,7 +9,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
     )
 endif ()
 
-make_directory("${CMAKE_BINARY_DIR}/WebCore/Modules")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/WebCore/Modules")
 configure_file(${WEBCORE_DIR}/WebCore.modulemap ${CMAKE_BINARY_DIR}/WebCore/Modules/module.modulemap COPYONLY)
 configure_file(${WEBCORE_DIR}/WebCore_Private.modulemap ${CMAKE_BINARY_DIR}/WebCore/Modules/module.private.modulemap COPYONLY)
 
