@@ -37,11 +37,10 @@
 namespace {
 
 class InlineWeakPtrObject : public RefCountedWithInlineWeakPtr<InlineWeakPtrObject> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InlineWeakPtrObject);
 public:
     static Ref<InlineWeakPtrObject> create()
     {
-        return adoptRef(*new InlineWeakPtrObject);
+        return createRefCountedWithInlineWeakPtr<InlineWeakPtrObject>();
     }
 };
 

@@ -46,6 +46,8 @@ set(TestWTF_SOURCES
     Tests/WTF/CStringView.cpp
     Tests/WTF/CharacterProperties.cpp
     Tests/WTF/CheckedArithmeticOperations.cpp
+    Tests/WTF/CheckedPtr.cpp
+    Tests/WTF/CheckedRef.cpp
     Tests/WTF/CompactPtr.cpp
     Tests/WTF/CompactRefPtr.cpp
     Tests/WTF/CompactRefPtrTuple.cpp
@@ -111,6 +113,7 @@ set(TestWTF_SOURCES
     Tests/WTF/RedBlackTree.cpp
     Tests/WTF/Ref.cpp
     Tests/WTF/RefCountedFixedVector.cpp
+    Tests/WTF/RefCountedWithInlineWeakPtr.cpp
     Tests/WTF/RefCounter.cpp
     Tests/WTF/RefLogger.cpp
     Tests/WTF/RefPtr.cpp

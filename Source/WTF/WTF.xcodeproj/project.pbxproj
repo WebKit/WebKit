@@ -445,6 +445,7 @@
 		DD3DC8ED27A4BF8E007E5B61 /* URLHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1F0597216439940039302C /* URLHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8EE27A4BF8E007E5B61 /* WallTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66B2891DC97BAB004A1D3F /* WallTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8EF27A4BF8E007E5B61 /* Noncopyable.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472D0151A825B004123FF /* Noncopyable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9A4E1A012E6B4C1F00D3A711 /* Nonallocatable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A4E1A002E6B4C1F00D3A711 /* Nonallocatable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8F027A4BF8E007E5B61 /* PlatformCPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C42307223CE2D8A006E54D0 /* PlatformCPU.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8F127A4BF8E007E5B61 /* CrossThreadQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 515F79551CFD3A6900CCED93 /* CrossThreadQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8F227A4BF8E007E5B61 /* TimingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F7075F31FBF537A00489AF0 /* TimingScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1670,6 +1671,7 @@
 		A8A472CE151A825B004123FF /* MetaAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocator.h; sourceTree = "<group>"; };
 		A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocatorHandle.h; sourceTree = "<group>"; };
 		A8A472D0151A825B004123FF /* Noncopyable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Noncopyable.h; sourceTree = "<group>"; };
+		9A4E1A002E6B4C1F00D3A711 /* Nonallocatable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nonallocatable.h; sourceTree = "<group>"; };
 		A8A472D5151A825B004123FF /* NumberOfCores.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NumberOfCores.cpp; sourceTree = "<group>"; };
 		A8A472D6151A825B004123FF /* NumberOfCores.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberOfCores.h; sourceTree = "<group>"; };
 		A8A472D7151A825B004123FF /* OSAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSAllocator.h; sourceTree = "<group>"; };
@@ -2641,6 +2643,7 @@
 				0F5BF1651F2317830029D91D /* NaturalLoops.h */,
 				1A3F6BE6174ADA2100B2EEA7 /* NeverDestroyed.h */,
 				0F0D85B317234CB100338210 /* NoLock.h */,
+				9A4E1A002E6B4C1F00D3A711 /* Nonallocatable.h */,
 				A8A472D0151A825B004123FF /* Noncopyable.h */,
 				E3E64F0B22813428001E55B4 /* Nonmovable.h */,
 				526AEC911F6B4E5C00695F5D /* NoTailCalls.h */,
@@ -3814,6 +3817,7 @@
 				46335BEF2E778B1300860375 /* NetworkOSObject.h in Headers */,
 				DD3DC8AC27A4BF8E007E5B61 /* NeverDestroyed.h in Headers */,
 				DD3DC98C27A4BF8E007E5B61 /* NoLock.h in Headers */,
+				9A4E1A012E6B4C1F00D3A711 /* Nonallocatable.h in Headers */,
 				DD3DC8EF27A4BF8E007E5B61 /* Noncopyable.h in Headers */,
 				DD3DC93C27A4BF8E007E5B61 /* Nonmovable.h in Headers */,
 				DD3DC96127A4BF8E007E5B61 /* NoTailCalls.h in Headers */,
