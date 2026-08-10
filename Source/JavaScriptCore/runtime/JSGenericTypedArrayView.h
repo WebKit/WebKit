@@ -214,6 +214,9 @@ protected:
     // are 1 and only the MSB of the mantissa is 1. So, NaN is recognized as the largest integral numbers.
 
     template<typename IntegralType> inline void sortFloat(ElementType* begin, ElementType* end);
+
+    inline void countingSort(std::span<ElementType>);
+    template<typename CounterType> inline void countingSortWithCounters(std::span<ElementType>);
 };
 
 template<typename PassedAdaptor>

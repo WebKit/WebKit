@@ -38,6 +38,7 @@
 #include <JavaScriptCore/TypeError.h>
 #include <JavaScriptCore/TypedArrays.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/SIMDHelpers.h>
 #include <wtf/text/MakeString.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -897,7 +898,6 @@ template<typename Adaptor> inline auto JSGenericTypedArrayView<Adaptor>::toAdapt
 template<typename Adaptor> inline auto JSGenericTypedArrayView<Adaptor>::sort() -> SortResult
 {
     RELEASE_ASSERT(!isDetached());
-    Vector<ElementType, 16> forShared;
     IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
     auto lengthValue = integerIndexedObjectLength(this, getter);
     if (!lengthValue)
@@ -906,7 +906,19 @@ template<typename Adaptor> inline auto JSGenericTypedArrayView<Adaptor>::sort() 
     size_t length = lengthValue.value();
 
     auto originalSpan = typedSpan();
+
+    if constexpr (Adaptor::typeValue == TypeInt8 || Adaptor::typeValue == TypeUint8 || Adaptor::typeValue == TypeUint8Clamped) {
+        // Measured crossover. Below this, clearing the histograms costs more than std::sort, which
+        // uses insertion sort on inputs this short.
+        constexpr size_t countingSortThreshold = 128;
+        if (length >= countingSortThreshold) {
+            countingSort(originalSpan.first(length));
+            return SortResult::Success;
+        }
+    }
+
     auto array = originalSpan.data();
+    Vector<ElementType, 16> forShared;
     if (isShared()) {
         if (!forShared.tryGrow(length)) [[unlikely]]
             return SortResult::OutOfMemory;
@@ -998,6 +1010,102 @@ inline void JSGenericTypedArrayView<Adaptor>::sortFloat(ElementType* begin, Elem
             return a < b;
         return a > b;
     });
+}
+
+template<typename Adaptor>
+inline void JSGenericTypedArrayView<Adaptor>::countingSort(std::span<ElementType> elements)
+{
+    static_assert(sizeof(ElementType) == 1);
+
+    auto isNonDescending = [](std::span<ElementType> elements) ALWAYS_INLINE_LAMBDA {
+        constexpr size_t stride = SIMD::stride<ElementType>;
+        ASSERT(elements.size() > stride);
+
+        auto* data = elements.data();
+        auto hasInversion = [&](size_t index) ALWAYS_INLINE_LAMBDA {
+            simde_uint8x16_t inversions;
+            if constexpr (std::is_signed_v<ElementType>)
+                inversions = simde_vcltq_s8(simde_vld1q_s8(data + index + 1), simde_vld1q_s8(data + index));
+            else
+                inversions = simde_vcltq_u8(simde_vld1q_u8(data + index + 1), simde_vld1q_u8(data + index));
+            return SIMD::isNonZero(inversions);
+        };
+
+        size_t lastBlock = elements.size() - 1 - stride;
+        for (size_t index = 0; index < lastBlock; index += stride) {
+            if (hasInversion(index))
+                return false;
+        }
+        return !hasInversion(lastBlock);
+    };
+
+    // This stops at the first inversion, so it costs one block of comparisons on unsorted input, and
+    // it reduces the already sorted case to a single scan.
+    if (isNonDescending(elements))
+        return;
+
+    if constexpr (sizeof(size_t) > sizeof(uint32_t)) {
+        if (elements.size() > std::numeric_limits<uint32_t>::max()) [[unlikely]] {
+            countingSortWithCounters<uint64_t>(elements);
+            return;
+        }
+    }
+    countingSortWithCounters<uint32_t>(elements);
+}
+
+template<typename Adaptor>
+template<typename CounterType>
+inline void JSGenericTypedArrayView<Adaptor>::countingSortWithCounters(std::span<ElementType> elements)
+{
+    // Flipping the sign bit orders signed values the same way as unsigned ones, putting -128 in
+    // bucket 0 and 127 in bucket 255.
+    constexpr uint8_t signBias = std::is_signed_v<ElementType> ? 0x80 : 0;
+
+    constexpr size_t bucketCount = 256;
+
+    // Interleaving several histograms keeps repeated values from serializing. Incrementing a counter
+    // otherwise has to wait for the previous increment of that same counter to forward out of the
+    // store buffer, which costs several cycles per element on inputs with few distinct values.
+    constexpr size_t histogramCount = 4;
+    std::array<std::array<CounterType, bucketCount>, histogramCount> counts { };
+
+    size_t index = 0;
+    for (; index + histogramCount <= elements.size(); index += histogramCount) {
+        for (size_t histogram = 0; histogram < histogramCount; ++histogram)
+            ++counts[histogram][static_cast<uint8_t>(elements[index + histogram]) ^ signBias];
+    }
+    for (; index < elements.size(); ++index)
+        ++counts[0][static_cast<uint8_t>(elements[index]) ^ signBias];
+
+    // While this is scanning 256 elements twice, actually this is faster due to removing branch mis-prediction
+    // for sparse results.
+    std::array<CounterType, bucketCount> totals;
+    std::array<uint64_t, bucketCount / 64> occupied;
+    for (unsigned word = 0; word < occupied.size(); ++word) {
+        uint64_t bits = 0;
+        for (unsigned bit = 0; bit < 64; ++bit) {
+            unsigned bucket = word * 64 + bit;
+            CounterType count = 0;
+            for (size_t histogram = 0; histogram < histogramCount; ++histogram)
+                count += counts[histogram][bucket];
+            totals[bucket] = count;
+            bits |= static_cast<uint64_t>(!!count) << bit;
+        }
+        occupied[word] = bits;
+    }
+
+    auto* cursor = elements.data();
+    for (unsigned word = 0; word < occupied.size(); ++word) {
+        uint64_t bits = occupied[word];
+        while (bits) {
+            unsigned bucket = word * 64 + std::countr_zero(bits);
+            bits &= bits - 1;
+            CounterType count = totals[bucket];
+            std::fill_n(cursor, count, static_cast<ElementType>(bucket ^ signBias));
+            cursor += count;
+        }
+    }
+    ASSERT(cursor == elements.data() + elements.size());
 }
 
 template<typename PassedAdaptor> inline Structure* JSGenericResizableOrGrowableSharedTypedArrayView<PassedAdaptor>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
