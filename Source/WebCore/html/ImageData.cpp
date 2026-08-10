@@ -179,7 +179,7 @@ Ref<ByteArrayPixelBuffer> ImageData::byteArrayPixelBuffer() const
 Ref<Float16ArrayPixelBuffer> ImageData::float16ArrayPixelBuffer() const
 {
     Ref float16Data = m_data.asFloat16Array();
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA16F, toDestinationColorSpace(m_colorSpace) };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA16F, toExtendedDestinationColorSpace(m_colorSpace) };
     return Float16ArrayPixelBuffer::create(format, m_size, float16Data.get());
 }
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)

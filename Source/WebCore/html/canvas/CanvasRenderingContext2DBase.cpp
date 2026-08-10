@@ -72,6 +72,7 @@
 #include "PaintRenderingContext2D.h"
 #include "Path2D.h"
 #include "PixelBufferConversion.h"
+#include "PixelFormat.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
@@ -2682,7 +2683,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     if (!buffer)
         return ImageData::create(imageDataRect.width(), imageDataRect.height(), m_settings.colorSpace, settings);
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, outputPixelFormat, toDestinationColorSpace(computedColorSpace) };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, outputPixelFormat, toDestinationColorSpace(computedColorSpace, allowExtendedColorSpace(outputPixelFormat)) };
     RefPtr pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
     if (!pixelBuffer) {
         scriptContext->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
@@ -2690,7 +2691,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
         return Exception { ExceptionCode::InvalidStateError };
     }
 
-    ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
+    ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace, allowExtendedColorSpace(outputPixelFormat)));
 
     if (RefPtr imageData = ImageData::create(pixelBuffer.releaseNonNull(), outputImageDataPixelFormat))
         return { { imageData.releaseNonNull() } };
@@ -3186,9 +3187,21 @@ PixelFormat CanvasRenderingContext2DBase::pixelFormat() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static constexpr AllowExtendedColorSpace allowExtendedColorSpace(CanvasRenderingContext2DSettings::ColorType colorType)
+{
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (colorType == CanvasRenderingContext2DSettings::ColorType::Float16)
+        return AllowExtendedColorSpace::Yes;
+#else
+    UNUSED_PARAM(colorType);
+#endif
+
+    return AllowExtendedColorSpace::No;
+}
+
 DestinationColorSpace CanvasRenderingContext2DBase::colorSpace() const
 {
-    return toDestinationColorSpace(m_settings.colorSpace);
+    return toDestinationColorSpace(m_settings.colorSpace, allowExtendedColorSpace(m_settings.colorType));
 }
 
 bool CanvasRenderingContext2DBase::willReadFrequently() const

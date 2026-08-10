@@ -41,6 +41,10 @@ enum class PredefinedColorSpace : uint8_t {
 };
 
 DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace);
+DestinationColorSpace toExtendedDestinationColorSpace(PredefinedColorSpace);
+enum class AllowExtendedColorSpace : bool;
+DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace, AllowExtendedColorSpace);
+
 std::optional<PredefinedColorSpace> toPredefinedColorSpace(const DestinationColorSpace&);
 
 }
