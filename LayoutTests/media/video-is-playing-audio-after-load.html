@@ -11,7 +11,9 @@
             await waitFor(video, 'canplay');
 
             testExpected('video.audioTracks.length', '1', '>');
-            runWithKeyDown('video.play()');
+            // load() below rejects the play promise, which may still be pending until the media session
+            // admits playback.
+            runWithKeyDown('video.play().catch(() => { })');
             await waitFor(video, 'playing');
 
             testExpected('internals.pageMediaState().includes("IsPlayingAudio")', true);

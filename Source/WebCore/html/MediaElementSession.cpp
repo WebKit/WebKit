@@ -1631,7 +1631,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
     MediaUsageInfo usage = {
         element->currentSrc(),
         element->hasSource(),
-        state() == PlatformMediaSession::State::Playing,
+        isPlaying,
         canShowControlsManager(PlaybackControlsPurpose::ControlsManager),
         !page->isVisibleAndActive(),
         element->isSuspended(),

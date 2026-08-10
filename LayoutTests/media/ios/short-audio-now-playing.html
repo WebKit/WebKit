@@ -13,16 +13,14 @@
         run('audio.src = "../content/short.mp3"');
         run('audio.load()');
         await waitFor(audio, 'canplay');
-        run('audio.play()');
-        await waitFor(audio, 'playing');
+        await run('audio.play()');
         testExpected('internals.nowPlayingState.registeredAsNowPlayingApplication', false);
 
         consoleWrite('Test playing long audio; should become now playing');
         run('audio.src = "../content/silence.mp3"');
         run('audio.load()');
         await waitFor(audio, 'canplay');
-        run('audio.play()');
-        await waitFor(audio, 'playing');
+        await run('audio.play()');
         testExpected('internals.nowPlayingState.registeredAsNowPlayingApplication', true);
     }
     window.addEventListener('load', event => {

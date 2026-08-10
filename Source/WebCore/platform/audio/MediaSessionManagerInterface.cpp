@@ -543,7 +543,9 @@ void MediaSessionManagerInterface::sessionWillBeginPlayback(PlatformMediaSession
         if (m_currentInterruption && sessionWasAlreadyInterrupted)
             endInterruption(PlatformMediaSession::EndInterruptionFlags::NoFlags);
 
-        if (RefPtr session = weakSession.get())
+        // Only the session that is still current enforces the restriction: another session admitted
+        // while this one was activating has enforced it for itself already, and would be paused here.
+        if (RefPtr session = weakSession.get(); session && currentSession() == session)
             enforceConcurrentPlaybackRestriction(*session);
         ALWAYS_LOG(logSiteIdentifier, sessionLogId, " returning true");
         completionHandler(true);
@@ -602,7 +604,9 @@ void MediaSessionManagerInterface::enforceConcurrentPlaybackRestriction(Platform
 
     forEachMatchingSession([&newSession](auto& otherSession) {
         bool isOther = &otherSession == &newSession;
-        bool isPlaying = otherSession.state() == PlatformMediaSession::State::Playing;
+        // preparingToPlay() covers a session whose own admission has not completed yet: it intends to
+        // play, so it must not survive this restriction just because its state is not Playing.
+        bool isPlaying = otherSession.state() == PlatformMediaSession::State::Playing || otherSession.preparingToPlay();
         bool canConcurrent = otherSession.canPlayConcurrently(newSession);
         if (isOther)
             return false;

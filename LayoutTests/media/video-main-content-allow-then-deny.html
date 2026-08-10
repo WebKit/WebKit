@@ -15,7 +15,9 @@
     }
 
     function canPlayThrough() {
-        video.play();
+        // Hiding the video below denies playback, rejecting the play promise if the media session has
+        // not admitted playback by then.
+        video.play().catch(() => { });
         waitForEvent('playing', playing);
     }
 
