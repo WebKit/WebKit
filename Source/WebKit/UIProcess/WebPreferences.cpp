@@ -97,6 +97,15 @@ void WebPreferences::forceSiteIsolationAlwaysOnForTesting()
     WebKit::forceSiteIsolationAlwaysOnForTesting = true;
 }
 
+bool WebPreferences::usesInspectorFrameTargets() const
+{
+#if ENABLE(INSPECTOR_FRAME_TARGETS)
+    return true;
+#else
+    return siteIsolationEnabled();
+#endif
+}
+
 const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
 {
     static auto experimentalFeatures = NeverDestroyed([]() {
