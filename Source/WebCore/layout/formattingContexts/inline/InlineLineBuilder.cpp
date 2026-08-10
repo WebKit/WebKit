@@ -197,8 +197,9 @@ static TextDirection inlineBaseDirectionForLineContent(const Line::RunList& runs
     auto shouldUseBlockDirection = rootStyle.unicodeBidi() != UnicodeBidi::Plaintext;
     if (shouldUseBlockDirection)
         return rootStyle.writingMode().bidiDirection();
-    // A previous line ending with a line break (<br> or preserved \n) introduces a new unicode paragraph with its own direction.
-    if (previousLine && !previousLine->endsWithLineBreak)
+    // A previous line that ended a paragraph, with a line break (<br> or preserved \n) or with a block level box on it,
+    // introduces a new unicode paragraph, so this line takes its direction from its own content.
+    if (previousLine && !previousLine->endsParagraph)
         return previousLine->inlineBaseDirection;
     return TextUtil::directionForTextContent(toString(runs));
 }
@@ -449,8 +450,8 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Inl
     m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLineCandidate);
 
     m_lineInitialLogicalRect = initialLineLogicalRect;
-    auto previousLineEndsWithLineBreak = previousLine ? std::make_optional(previousLine->endsWithLineBreak ? InlineFormattingUtils::LineEndsWithLineBreak::Yes : InlineFormattingUtils::LineEndsWithLineBreak::No) : std::nullopt;
-    m_lineMarginStart = formattingContext().formattingUtils().computedTextIndent(isInIntrinsicWidthMode() ? InlineFormattingUtils::IsIntrinsicWidthMode::Yes : InlineFormattingUtils::IsIntrinsicWidthMode::No, isFirstFormattedLineCandidate ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, previousLineEndsWithLineBreak, initialLineLogicalRect.width());
+    auto previousLineEndsParagraph = previousLine ? std::make_optional(previousLine->endsParagraph ? InlineFormattingUtils::PreviousLineEndsParagraph::Yes : InlineFormattingUtils::PreviousLineEndsParagraph::No) : std::nullopt;
+    m_lineMarginStart = formattingContext().formattingUtils().computedTextIndent(isInIntrinsicWidthMode() ? InlineFormattingUtils::IsIntrinsicWidthMode::Yes : InlineFormattingUtils::IsIntrinsicWidthMode::No, isFirstFormattedLineCandidate ? IsFirstFormattedLine::Yes : IsFirstFormattedLine::No, previousLineEndsParagraph, initialLineLogicalRect.width());
 
     auto computeLineLogicalRect = [&] {
         // Apply the block margin coming from previous content (e.g. margin-bottom of a preceding block-in-inline

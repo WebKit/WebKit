@@ -74,7 +74,7 @@ private:
     Vector<size_t> computeBreakOpportunities(InlineItemRange) const;
     Vector<LayoutUnit> computeLineWidthsFromBreaks(InlineItemRange, const Vector<size_t>& breaks, bool isFirstChunk) const;
     InlineLayoutUnit computeMaxTextIndent() const;
-    InlineLayoutUnit computedTextIndent(IsFirstFormattedLine, std::optional<InlineFormattingUtils::LineEndsWithLineBreak> previousLineEndsWithLineBreak) const;
+    InlineLayoutUnit computedTextIndent(IsFirstFormattedLine, std::optional<InlineFormattingUtils::PreviousLineEndsParagraph>) const;
 
     InlineFormattingContext& m_inlineFormattingContext;
     const InlineItemList& m_inlineItemList;

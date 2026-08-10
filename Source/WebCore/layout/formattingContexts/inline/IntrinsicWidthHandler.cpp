@@ -254,7 +254,7 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
         // Support single line only.
         mayCacheLayoutResult = MayCacheLayoutResult::No;
         previousLineEnd = layoutRange.start;
-        previousLine = PreviousLine { lineIndex++, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, lineLayoutResult.endsWithLineBreak(), lineLayoutResult.hasContentfulInFlowContent(), { }, WTF::move(lineLayoutResult.floatContent.suspendedFloats) };
+        previousLine = PreviousLine { lineIndex++, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, lineLayoutResult.endsWithLineBreak() || lineLayoutResult.isBlockContent(), lineLayoutResult.hasContentfulInFlowContent(), { }, WTF::move(lineLayoutResult.floatContent.suspendedFloats) };
         isFirstFormattedLineCandidate &= !lineLayoutResult.hasContentfulInFlowContent();
     }
     m_maximumContentWidthBetweenLineBreaks = std::max(contentWidthBetweenLineBreaks.current, contentWidthBetweenLineBreaks.maximum);

@@ -354,7 +354,7 @@ UniqueRef<InlineLayoutResult> InlineFormattingContext::lineLayout(AbstractLineBu
             break;
         }
 
-        previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, lineLayoutResult.endsWithLineBreak(), lineLayoutResult.hasContentfulInFlowContent(), lineLayoutResult.directionality.inlineBaseDirection, WTF::move(lineLayoutResult.floatContent.suspendedFloats) };
+        previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, lineLayoutResult.endsWithLineBreak() || lineLayoutResult.isBlockContent(), lineLayoutResult.hasContentfulInFlowContent(), lineLayoutResult.directionality.inlineBaseDirection, WTF::move(lineLayoutResult.floatContent.suspendedFloats) };
         previousLineEnd = lineContentEnd;
         lineLogicalTop = formattingUtils().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext);
     }

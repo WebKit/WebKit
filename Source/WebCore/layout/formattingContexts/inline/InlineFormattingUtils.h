@@ -44,8 +44,8 @@ public:
     InlineLayoutUnit logicalTopForNextLine(const LineLayoutResult&, const InlineRect& lineLogicalRect, const FloatingContext&) const;
 
     enum class IsIntrinsicWidthMode : bool { No, Yes };
-    enum class LineEndsWithLineBreak : bool { No, Yes };
-    InlineLayoutUnit computedTextIndent(IsIntrinsicWidthMode, IsFirstFormattedLine, std::optional<LineEndsWithLineBreak> previousLineEndsWithLineBreak, InlineLayoutUnit availableWidth) const;
+    enum class PreviousLineEndsParagraph : bool { No, Yes };
+    InlineLayoutUnit computedTextIndent(IsIntrinsicWidthMode, IsFirstFormattedLine, std::optional<PreviousLineEndsParagraph>, InlineLayoutUnit availableWidth) const;
 
     bool inlineLevelBoxAffectsLineBox(const InlineLevelBox&) const;
 

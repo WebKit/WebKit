@@ -139,7 +139,7 @@ InlineRect InlineFormattingUtils::flipVisualRectToLogicalForWritingMode(const In
     return visualRect;
 }
 
-InlineLayoutUnit InlineFormattingUtils::computedTextIndent(IsIntrinsicWidthMode isIntrinsicWidthMode, IsFirstFormattedLine isFirstFormattedLine, std::optional<LineEndsWithLineBreak> previousLineEndsWithLineBreak, InlineLayoutUnit availableWidth) const
+InlineLayoutUnit InlineFormattingUtils::computedTextIndent(IsIntrinsicWidthMode isIntrinsicWidthMode, IsFirstFormattedLine isFirstFormattedLine, std::optional<PreviousLineEndsParagraph> previousLineEndsParagraph, InlineLayoutUnit availableWidth) const
 {
     CheckedRef root = formattingContext().root();
 
@@ -151,7 +151,7 @@ InlineLayoutUnit InlineFormattingUtils::computedTextIndent(IsIntrinsicWidthMode 
     // [Integration] root()->parent() would normally produce a valid layout box.
     auto shouldIndent = false;
     if (root->style().textIndent().eachLine.has_value())
-        shouldIndent = isFirstFormattedLine == IsFirstFormattedLine::Yes || (previousLineEndsWithLineBreak && *previousLineEndsWithLineBreak == LineEndsWithLineBreak::Yes);
+        shouldIndent = isFirstFormattedLine == IsFirstFormattedLine::Yes || (previousLineEndsParagraph && *previousLineEndsParagraph == PreviousLineEndsParagraph::Yes);
     else if (root->isAnonymousTextIndentCandidateForIntegration()
         || !root->isAnonymous()
         || (!root->isInlineIntegrationRoot() && root->parent().firstInFlowChild() == root.ptr()))
