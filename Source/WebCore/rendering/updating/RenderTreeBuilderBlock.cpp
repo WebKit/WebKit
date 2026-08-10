@@ -100,6 +100,17 @@ static bool isExcludedMarker(const RenderBlock& parent, const RenderObject& chil
     return listItem && !markerNeedsOwnLine(*listItem);
 }
 
+static bool hasInlineInFlowChild(const RenderBlock& parent)
+{
+    for (CheckedPtr child = parent.firstChild(); child; child = child->nextSibling()) {
+        if (child->isFloatingOrOutOfFlowPositioned() || isExcludedMarker(parent, *child))
+            continue;
+        if (child->isInline())
+            return true;
+    }
+    return false;
+}
+
 static std::optional<ParentAndBeforeChild> findParentAndBeforeChildForNonSibling(RenderBlock& parent, const RenderObject& child, RenderObject& beforeChild)
 {
     auto* beforeChildContainer = beforeChild.parent();
@@ -191,8 +202,10 @@ void RenderTreeBuilder::Block::attach(RenderBlock& parent, RenderPtr<RenderObjec
     if (!shouldBuildAnonymousBlock()) {
         if (!parent.firstChild() && !child->isFloatingOrOutOfFlowPositioned())
             parent.setChildrenInline(child->isInline());
-        else if (child->isInline())
+        else if (child->isInline() && !isExcludedMarker(parent, *child)) {
+            // An excluded marker takes no part in in-flow layout, so it does not make the children inline.
             parent.setChildrenInline(true);
+        }
         m_builder.attachToRenderElement(parent, WTF::move(child), beforeChild);
         return;
     }
@@ -390,6 +403,9 @@ RenderPtr<RenderObject> RenderTreeBuilder::Block::detach(RenderBlock& parent, Re
         // If this was our last child be sure to clear out our line boxes.
         if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(parent); blockFlow && blockFlow->childrenInline())
             blockFlow->invalidateLineLayout(RenderBlockFlow::InvalidationReason::InternalMove);
+    } else if (!m_buildsSimpleAnonymousBlocks) {
+        if (auto hasInlineChild = hasInlineInFlowChild(parent); parent.childrenInline() != hasInlineChild)
+            parent.setChildrenInline(hasInlineChild);
     }
     return takenChild;
 }
