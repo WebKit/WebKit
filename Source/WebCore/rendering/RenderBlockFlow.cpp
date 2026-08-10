@@ -51,6 +51,7 @@
 #include "LineSelection.h"
 #include "LocalFrame.h"
 #include "Logging.h"
+#include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
