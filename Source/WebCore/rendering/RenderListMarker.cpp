@@ -560,8 +560,23 @@ void RenderListMarker::updateInlineMargins()
     auto [marginStart, marginEnd] = isInside() ? marginsForInsideMarker() : marginsForOutsideMarker();
     auto zoom = style().usedZoomForLength().value;
 
-    mutableStyle().setMarginStart(Style::MarginEdge::Fixed { marginStart / zoom });
-    mutableStyle().setMarginEnd(Style::MarginEdge::Fixed { marginEnd / zoom });
+    // Which side of the list item these hang the marker off follows the list item's directionality
+    // rather than the marker's own: with marker-side: match-self (its initial value) css-lists-3
+    // positions the marker box using the directionality of the ::marker's originating element.
+    // Write the edges of the parent's inline axis, which is where
+    // BoxGeometryUpdater::horizontalLogicalMargin reads them back from.
+    auto listItemWritingMode = m_listItem->writingMode();
+    auto startEdge = Style::MarginEdge::Fixed { marginStart / zoom };
+    auto endEdge = Style::MarginEdge::Fixed { marginEnd / zoom };
+    if (listItemWritingMode.isHorizontal()) {
+        auto startIsLeft = listItemWritingMode.isInlineLeftToRight();
+        mutableStyle().setMarginLeft(startIsLeft ? startEdge : endEdge);
+        mutableStyle().setMarginRight(startIsLeft ? endEdge : startEdge);
+        return;
+    }
+    auto startIsTop = listItemWritingMode.isInlineTopToBottom();
+    mutableStyle().setMarginTop(startIsTop ? startEdge : endEdge);
+    mutableStyle().setMarginBottom(startIsTop ? endEdge : startEdge);
 }
 
 bool RenderListMarker::isInside() const
