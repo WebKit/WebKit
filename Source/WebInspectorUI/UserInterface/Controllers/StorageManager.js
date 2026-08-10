@@ -73,10 +73,13 @@ WI.StorageManager = class StorageManager extends WI.Object
     // The Storage domain is the correct cookie source only when Site Isolation is actually active:
     // that is when cross-origin iframes run out-of-process and the legacy in-process Page cookie
     // commands cannot see their cookies. In a non-Site-Isolation session the old Page path is left
-    // unchanged. The domain must also be present on the backend target (older backends lack it).
+    // unchanged. Site Isolation being active is what hands the Page domain to the web page target, so
+    // NetworkManager's answer for that (see its initializeTarget) is the signal here; a frame target
+    // existing is not, since frame targets are surfaced whether or not Site Isolation is enabled. The
+    // domain must also be present on the backend target (older backends lack it).
     get shouldUseStorageDomain()
     {
-        return WI.isSiteIsolationEnabled() && this.hasStorageDomain;
+        return WI.networkManager.enabledPageForSiteIsolation && this.hasStorageDomain;
     }
 
     get hasStorageDomain()

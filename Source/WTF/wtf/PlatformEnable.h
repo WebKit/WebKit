@@ -307,6 +307,16 @@
 #define ENABLE_INSPECTOR_EXTENSIONS 0
 #endif
 
+// When enabled, the Web Inspector surfaces a frame target for every frame (including the main frame)
+// for every inspection, not only when Site Isolation is enabled at runtime, so that the domains
+// already served per-frame (Console, Runtime, Debugger, DOM, CSS, DOMStorage, Worker) behave the same
+// regardless of the Site Isolation setting. The Page and Network domains are not affected: they move
+// to the UIProcess "web-page" target instead of to frame targets, and stay gated on Site Isolation
+// until the proxying agents that serve them there are complete.
+#if !defined(ENABLE_INSPECTOR_FRAME_TARGETS)
+#define ENABLE_INSPECTOR_FRAME_TARGETS 0
+#endif
+
 #if !defined(ENABLE_INSPECTOR_TELEMETRY)
 #define ENABLE_INSPECTOR_TELEMETRY 0
 #endif
