@@ -379,7 +379,7 @@ static void NODELETE updateCharacterAndSmallCapsIfNeeded(SmallCapsState& smallCa
 
 static RefPtr<Font> applyTextSpacingTrimIfNeeded(GlyphData& glyphData, char32_t character, TextSpacingTrim textSpacingTrim)
 {
-    if (textSpacingTrim.isSpaceAll())
+    if (textSpacingTrim.isSpaceAll() || !glyphData.font)
         return nullptr;
     TextSpacing::CharactersData charactersData = { .currentCharacter = character, .currentCharacterClass = TextSpacing::characterClass(character) };
     if (RefPtr halfWidthFont = TextSpacing::getHalfWidthFontIfNeeded(*protect(glyphData.font), textSpacingTrim, charactersData)) {
