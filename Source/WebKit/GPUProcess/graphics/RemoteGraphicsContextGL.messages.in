@@ -114,8 +114,8 @@ messages -> RemoteGraphicsContextGL Stream {
     void DetachShader(uint32_t arg0, uint32_t arg1) StreamBatched
     void Disable(uint32_t cap) StreamBatched
     void DisableVertexAttribArray(uint32_t index) StreamBatched
-    void DrawArrays(uint32_t mode, int32_t first, int32_t count)
-    void DrawElements(uint32_t mode, int32_t count, uint32_t type, uint64_t offset)
+    void DrawArrays(uint32_t mode, int32_t first, int32_t count) StreamBatched
+    void DrawElements(uint32_t mode, int32_t count, uint32_t type, uint64_t offset) StreamBatched
     void Enable(uint32_t cap) StreamBatched
     void EnableVertexAttribArray(uint32_t index) StreamBatched
     void Finish()
@@ -214,8 +214,8 @@ messages -> RemoteGraphicsContextGL Stream {
     void CompressedTexImage2D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, uint64_t offset)
     void CompressedTexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, std::span<const uint8_t> data)
     void CompressedTexSubImage2D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, uint64_t offset)
-    void DrawArraysInstanced(uint32_t mode, int32_t first, int32_t count, int32_t primcount)
-    void DrawElementsInstanced(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t primcount)
+    void DrawArraysInstanced(uint32_t mode, int32_t first, int32_t count, int32_t primcount) StreamBatched
+    void DrawElementsInstanced(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t primcount) StreamBatched
     void VertexAttribDivisor(uint32_t index, uint32_t divisor) StreamBatched
     void CreateVertexArray(uint32_t vertexArray) StreamBatched
     void DeleteVertexArray(uint32_t arg0)
@@ -257,7 +257,7 @@ messages -> RemoteGraphicsContextGL Stream {
     void VertexAttribI4ui(uint32_t index, uint32_t x, uint32_t y, uint32_t z, uint32_t w) StreamBatched
     void VertexAttribI4uiv(uint32_t index, std::span<const uint32_t, 4> values) StreamBatched
     void VertexAttribIPointer(uint32_t index, int32_t size, uint32_t type, int32_t stride, uint64_t offset) StreamBatched
-    void DrawRangeElements(uint32_t mode, uint32_t start, uint32_t end, int32_t count, uint32_t type, uint64_t offset)
+    void DrawRangeElements(uint32_t mode, uint32_t start, uint32_t end, int32_t count, uint32_t type, uint64_t offset) StreamBatched
     void ClearBufferiv(uint32_t buffer, int32_t drawbuffer, std::span<const int32_t> values)
     void ClearBufferuiv(uint32_t buffer, int32_t drawbuffer, std::span<const uint32_t> values)
     void ClearBufferfv(uint32_t buffer, int32_t drawbuffer, std::span<const float> values)
@@ -317,8 +317,8 @@ messages -> RemoteGraphicsContextGL Stream {
     void BlendFunciOES(uint32_t buf, uint32_t src, uint32_t dst) StreamBatched
     void BlendFuncSeparateiOES(uint32_t buf, uint32_t srcRGB, uint32_t dstRGB, uint32_t srcAlpha, uint32_t dstAlpha) StreamBatched
     void ColorMaskiOES(uint32_t buf, bool red, bool green, bool blue, bool alpha) StreamBatched
-    void DrawArraysInstancedBaseInstanceANGLE(uint32_t mode, int32_t first, int32_t count, int32_t instanceCount, uint32_t baseInstance)
-    void DrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t instanceCount, int32_t baseVertex, uint32_t baseInstance)
+    void DrawArraysInstancedBaseInstanceANGLE(uint32_t mode, int32_t first, int32_t count, int32_t instanceCount, uint32_t baseInstance) StreamBatched
+    void DrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t instanceCount, int32_t baseVertex, uint32_t baseInstance) StreamBatched
     void ClipControlEXT(uint32_t origin, uint32_t depth) StreamBatched
     void ProvokingVertexANGLE(uint32_t provokeMode) StreamBatched
     void PolygonModeANGLE(uint32_t face, uint32_t mode) StreamBatched
