@@ -114,26 +114,27 @@ function allowOOM(fn) {
   allowOOM(() => BasicMemory64Tests(max_num_pages));
 })();
 
-(function TestTooBigDeclaredInitial() {
+// A page count is a declaration bounded only by the i64 address space, so a count past the 16GB that
+// can be allocated still validates and compiles; allocating it is what fails. The bound itself is
+// covered by JSTests/wasm/stress/memory64-oversized-limits.js, which can encode a 2**48 page count.
+(function TestDeclaredInitialPastWhatCanBeAllocated() {
   // print(arguments.callee.name);
   let builder = new WasmModuleBuilder();
   builder.addMemory64(max_num_pages + 1);
 
-  assertFalse(WebAssembly.validate(builder.toBuffer()));
-  assertThrows(
-      () => builder.toModule(), WebAssembly.CompileError,
-      /Memory's initial page count of 262145 is invalid/);
+  assertTrue(WebAssembly.validate(builder.toBuffer()));
+  builder.toModule();
+  assertThrows(() => builder.instantiate(), RangeError, /Out of memory/);
 })();
 
-(function TestTooBigDeclaredMaximum() {
+(function TestDeclaredMaximumPastWhatCanBeAllocated() {
   // print(arguments.callee.name);
   let builder = new WasmModuleBuilder();
   builder.addMemory64(1, max_num_pages + 1);
 
-  assertFalse(WebAssembly.validate(builder.toBuffer()));
-  assertThrows(
-      () => builder.toModule(), WebAssembly.CompileError,
-      /Memory's maximum page count of 262145 is invalid/);
+  // A maximum costs nothing until it is reached, so this instantiates at its initial size.
+  assertTrue(WebAssembly.validate(builder.toBuffer()));
+  builder.instantiate();
 })();
 
 (function TestGrow64() {

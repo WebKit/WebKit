@@ -57,12 +57,13 @@ for (const address of ["i65", "", "I64", "u64", null, 1, {}]) {
     assert.throws(() => table.grow(-1n), TypeError, "Expect an integer argument in the range: [0, 2^64 - 1]");
 }
 
-// A memory64's declared maximum may exceed the memory32 page limit, up to 262144 pages (16 GiB).
+// A memory64's declared maximum may exceed the memory32 page limit, up to the 2**48 pages spanning its
+// address space.
 {
     const mem = new WebAssembly.Memory({ initial: 1n, maximum: 131072n, address: "i64" });
     assert.eq(mem.type().maximum, 131072n);
-    assert.eq(new WebAssembly.Memory({ initial: 0n, maximum: 262144n, address: "i64" }).type().maximum, 262144n);
-    assert.throws(() => new WebAssembly.Memory({ initial: 1n, maximum: 262145n, address: "i64" }), RangeError,
+    assert.eq(new WebAssembly.Memory({ initial: 0n, maximum: 1n << 48n, address: "i64" }).type().maximum, 1n << 48n);
+    assert.throws(() => new WebAssembly.Memory({ initial: 1n, maximum: (1n << 48n) + 1n, address: "i64" }), RangeError,
         "WebAssembly.Memory 'maximum' page count is too large");
     // An i32 memory keeps the memory32 limit.
     assert.throws(() => new WebAssembly.Memory({ initial: 1, maximum: 65537 }), RangeError,

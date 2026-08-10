@@ -56,7 +56,14 @@ public:
 
     void dump(WTF::PrintStream&) const;
 
-    uint64_t bytes() const { return m_pageCount * static_cast<uint64_t>(pageSize); }
+    // A page count may be larger than any byte count can express, so saturate rather than wrap: every
+    // byte-based bound (what can be allocated, what a buffer may advertise) must keep rejecting it.
+    uint64_t bytes() const
+    {
+        if (m_pageCount > std::numeric_limits<uint64_t>::max() / pageSize)
+            return std::numeric_limits<uint64_t>::max();
+        return m_pageCount * static_cast<uint64_t>(pageSize);
+    }
     uint64_t pageCount() const { return m_pageCount; }
 
     static bool isValid(uint64_t pageCount)
@@ -112,8 +119,9 @@ public:
     static constexpr uint32_t pageSize = 64 * KB;
 
     // Page counts are declarative: a memory may declare a maximum this process cannot map, and must
-    // still parse and instantiate at its initial size. This is the largest count any memory may declare.
-    static constexpr uint32_t maxPageCount = 256 * 1024;
+    // still parse and instantiate at its initial size. This is the largest count any memory may
+    // declare, the number of pages spanning an i64 memory's entire address space.
+    static constexpr uint64_t maxPageCount = std::numeric_limits<uint64_t>::max() / pageSize + 1;
 
     static constexpr uint32_t maxMemory32PageCount = 64 * 1024;
     static constexpr uint64_t maxMemory32Bytes = static_cast<uint64_t>(maxMemory32PageCount) * pageSize;
@@ -122,7 +130,7 @@ private:
     static constexpr uint64_t invalidPageCount = std::numeric_limits<uint64_t>::max();
     static_assert(maxPageCount < invalidPageCount);
     // fromBytes() must accept the byte length of any array buffer.
-    static_assert(MAX_ARRAY_BUFFER_SIZE <= static_cast<uint64_t>(maxPageCount) * pageSize);
+    static_assert(MAX_ARRAY_BUFFER_SIZE / pageSize <= maxPageCount);
 
     uint64_t m_pageCount;
 };

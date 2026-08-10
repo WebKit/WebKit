@@ -80,16 +80,17 @@ constexpr uint64_t maxDeclarablePages(AddressType addressType)
 // MAX_ARRAY_BUFFER_SIZE is not a page multiple on 32-bit, and a memory's size always is.
 constexpr uint64_t maxPageAlignedArrayBufferBytes = (MAX_ARRAY_BUFFER_SIZE / PageCount::pageSize) * PageCount::pageSize;
 
-// The largest byte length the buffer of a memory of this address type may advertise. The clamp only
-// bites on 32-bit, where a declared maximum need not be representable; growth is bounded separately.
+// The largest byte length the buffer of a memory of this address type may advertise. A memory64 may
+// declare more pages than a byte length can express, and on 32-bit a declared maximum need not be
+// representable either; growth is bounded separately.
 constexpr uint64_t maxBufferByteLength(AddressType addressType)
 {
-    return std::min<uint64_t>(maxDeclarablePages(addressType) * PageCount::pageSize, maxPageAlignedArrayBufferBytes);
+    return std::min<uint64_t>(maxDeclarablePages(addressType), maxPageAlignedArrayBufferBytes / PageCount::pageSize) * PageCount::pageSize;
 }
 
 #if USE(LARGE_TYPED_ARRAYS)
 static_assert(maxBufferByteLength(AddressType { AddressType::I32 }) == maxMemory32Pages * PageCount::pageSize);
-static_assert(maxBufferByteLength(AddressType { AddressType::I64 }) == maxMemory64Pages * PageCount::pageSize);
+static_assert(maxBufferByteLength(AddressType { AddressType::I64 }) == maxPageAlignedArrayBufferBytes);
 #endif
 
 // Limit of GC arrays in bytes. This is not included in the limits in the

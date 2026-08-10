@@ -52,13 +52,19 @@ const pageSize = 64 * 1024;
 }
 
 // Constructor: initial page count too large throws. An initial page count is declarative in the same
-// way a maximum is, so the limit is the largest count a module may declare for an i64 memory, which
-// is 262144 pages (16 GiB).
+// way a maximum is, so the limit is the largest count a module may declare for an i64 memory, which is
+// the 2**48 pages spanning its address space. A count within that bound is refused at allocation time
+// instead, with an out of memory RangeError.
 {
     assert.throws(
-        () => new WebAssembly.Memory({ initial: 262145n, address: "i64" }),
+        () => new WebAssembly.Memory({ initial: (1n << 48n) + 1n, address: "i64" }),
         RangeError,
         "WebAssembly.Memory 'initial' page count is too large"
+    );
+    assert.throws(
+        () => new WebAssembly.Memory({ initial: 1n << 48n, address: "i64" }),
+        RangeError,
+        "Out of memory"
     );
 }
 
@@ -66,13 +72,13 @@ const pageSize = 64 * 1024;
 // rather than by the memory32 page limit.
 {
     assert.throws(
-        () => new WebAssembly.Memory({ initial: 1n, maximum: 262145n, address: "i64" }),
+        () => new WebAssembly.Memory({ initial: 1n, maximum: (1n << 48n) + 1n, address: "i64" }),
         RangeError,
         "WebAssembly.Memory 'maximum' page count is too large"
     );
     const memory = new WebAssembly.Memory({ initial: 1n, maximum: 65537n, address: "i64" });
     assert.eq(memory.type().maximum, 65537n);
-    assert.eq(new WebAssembly.Memory({ initial: 1n, maximum: 262144n, address: "i64" }).type().maximum, 262144n);
+    assert.eq(new WebAssembly.Memory({ initial: 1n, maximum: 1n << 48n, address: "i64" }).type().maximum, 1n << 48n);
 }
 
 // Constructor: passing invalid address

@@ -29,14 +29,16 @@ function moduleBytesWithMemoryLimits({ initial, maximum, is64bit = true }) {
     ]);
 }
 
-// The JS API caps the limits a memory may declare at 262144 pages (16 GiB) for a 64-bit memory and
-// 65536 pages (4 GiB) for a 32-bit one. https://www.w3.org/TR/wasm-js-api-2/#limits
-const maxMemory64Pages = 262144n;
+// A memory's declared limits are bounded by its address type: an i64 memory may declare up to 2**48
+// pages, the whole of its 2**64-byte address space, and an i32 memory 2**16. A declaration is only a
+// declaration, so anything within the bound compiles no matter how far past what a port could map;
+// what cannot be allocated is refused at instantiation instead.
+const maxMemory64Pages = 1n << 48n;
 const pageSize = 65536;
 
-// An initial page count is checked against that cap and nothing else, so every count up to it
+// An initial page count is checked against that bound and nothing else, so every count up to it
 // compiles, and instantiation must honor it verbatim rather than clamp it to a smaller size.
-for (const initial of [65537n, maxMemory64Pages]) {
+for (const initial of [65537n, 262144n]) {
     const module = new WebAssembly.Module(moduleBytesWithMemoryLimits({ initial }));
     let memory;
     try {
@@ -49,23 +51,26 @@ for (const initial of [65537n, maxMemory64Pages]) {
     assert.eq(memory.buffer.byteLength, Number(initial) * pageSize);
 }
 
-// A maximum is only a declaration, so even one at the cap costs nothing to instantiate: the memory
+// No port can host the largest declarable initial size, so that one compiles and then always fails to
+// instantiate. It must not wrap around to a size that looks allocatable.
+{
+    const module = new WebAssembly.Module(moduleBytesWithMemoryLimits({ initial: maxMemory64Pages }));
+    assert.throws(() => new WebAssembly.Instance(module), RangeError, "Out of memory");
+}
+
+// A maximum is only a declaration, so even one at the bound costs nothing to instantiate: the memory
 // is created at its initial size.
-for (const maximum of [65537n, maxMemory64Pages]) {
+for (const maximum of [65537n, 262144n, 1n << 32n, (1n << 37n) - 1n, maxMemory64Pages]) {
     const { mem } = new WebAssembly.Instance(new WebAssembly.Module(moduleBytesWithMemoryLimits({ initial: 1n, maximum }))).exports;
     assert.eq(mem.buffer.byteLength, pageSize);
 }
 
-// Anything above the cap is invalid, including page counts that used to be declarable when the bound
-// was PageCount's own 2**37-1, and the UINT64_MAX that PageCount reserves to mean "no page count".
-// A memory32 above 2**16 pages is invalid too.
+// Anything above the bound is invalid, including the UINT64_MAX that PageCount reserves to mean "no
+// page count". A memory32 above 2**16 pages is invalid too.
 const pageCountSentinel = (1n << 64n) - 1n;
 for (const [limits, message] of [
     [{ initial: maxMemory64Pages + 1n }, `Memory's initial page count of ${maxMemory64Pages + 1n} is invalid`],
     [{ initial: 0n, maximum: maxMemory64Pages + 1n }, `Memory's maximum page count of ${maxMemory64Pages + 1n} is invalid`],
-    [{ initial: 0n, maximum: (1n << 32n) - 1n }, `Memory's maximum page count of ${(1n << 32n) - 1n} is invalid`],
-    [{ initial: 0n, maximum: 1n << 32n }, `Memory's maximum page count of ${1n << 32n} is invalid`],
-    [{ initial: 0n, maximum: (1n << 37n) - 1n }, `Memory's maximum page count of ${(1n << 37n) - 1n} is invalid`],
     [{ initial: pageCountSentinel }, `Memory's initial page count of ${pageCountSentinel} is invalid`],
     [{ initial: 0n, maximum: pageCountSentinel }, `Memory's maximum page count of ${pageCountSentinel} is invalid`],
     [{ initial: 65537n, is64bit: false }, "Memory's initial page count of 65537 is invalid"],
