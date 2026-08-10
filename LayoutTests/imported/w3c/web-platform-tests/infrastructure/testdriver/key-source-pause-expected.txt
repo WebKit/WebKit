@@ -1,0 +1,3 @@
+
+PASS pause actions in a key source do not reject the action sequence
+

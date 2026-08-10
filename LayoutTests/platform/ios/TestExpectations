@@ -8693,6 +8693,11 @@ imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.servicewor
 imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.sharedworker.html [ Failure ]
 imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.html [ Failure ]
 
+# testdriver-vendor.js dispatches key actions through a UI script that references eventSender,
+# which does not exist in the UI-script context, and uiController has no leapForward equivalent,
+# so an action sequence with a key source resolves without dispatching anything on iOS.
+imported/w3c/web-platform-tests/infrastructure/testdriver/key-source-pause.html [ Skip ]
+
 # scheduleResizeEventIfNeeded() suppresses resize events on iOS while the document is still loading,
 # since Safari on iOS resizes the window while setting up its viewport.
 imported/w3c/web-platform-tests/css/css-values/dynamic-viewport-units-rule-cache.html [ Skip ]

@@ -2546,6 +2546,7 @@ webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/refte
 imported/w3c/web-platform-tests/infrastructure/assumptions/ahem.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/infrastructure/assumptions/min-font-size.html [ ImageOnlyFailure ]
 webkit.org/b/197011 imported/w3c/web-platform-tests/infrastructure/testdriver [ Skip ] # largely supported; some actions need interactive window
+imported/w3c/web-platform-tests/infrastructure/testdriver/key-source-pause.html [ Pass ] # does not need an interactive window
 webkit.org/b/187093 [ Debug ] imported/w3c/web-platform-tests/infrastructure/assumptions/html-elements.html [ Skip ]
 imported/w3c/web-platform-tests/infrastructure/server/wpt-server-websocket.sub.html [ Skip ] # non deterministic URL in text dump
 

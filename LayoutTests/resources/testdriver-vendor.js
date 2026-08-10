@@ -513,8 +513,11 @@ window.test_driver_internal.action_sequence = async function(sources)
                 break;
             }
             case 'pause':
-                // FIXME: Use eventSender.leapForward.
-                throw new Error('testdriver-vendor.js for WebKit does not yet support pause key action');
+                // A tick in which the key source has no action of its own is serialized by
+                // testdriver-actions.js as a pause with no duration, so there is nothing to wait for.
+                if (action.duration > 0)
+                    events.push({type: 'leapForward', arguments: [action.duration]});
+                break;
             default:
                 throw new Error(`Unknown key action type "${action.type}" encountered in testdriver-vendor.js`);
             }
