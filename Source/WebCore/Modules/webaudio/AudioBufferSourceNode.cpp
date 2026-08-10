@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -355,10 +355,10 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
         virtualReadIndex = readIndex;
     } else if (reverse) {
         unsigned maxFrame = static_cast<unsigned>(virtualMaxFrame);
-        unsigned minFrame = static_cast<unsigned>(floorf(virtualMinFrame));
+        unsigned minFrame = static_cast<unsigned>(std::floor(virtualMinFrame));
 
         while (framesToProcess--) {
-            unsigned readIndex = static_cast<unsigned>(floorf(virtualReadIndex));
+            unsigned readIndex = static_cast<unsigned>(std::floor(virtualReadIndex));
             float interpolationFactor = virtualReadIndex - readIndex;
 
             unsigned readIndex2 = readIndex + 1;
