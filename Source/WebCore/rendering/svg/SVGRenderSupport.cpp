@@ -494,15 +494,8 @@ void SVGRenderSupport::clipContextToCSSClippingArea(GraphicsContext& context, co
 {
     WTF::switchOn(renderer.style().clipPath(),
         [&](const Style::BasicShapePath& clipPath) {
-            auto localToParentTransform = renderer.localToParentTransform();
-
             auto referenceBox = clipPathReferenceBox(renderer, clipPath.referenceBox());
-            referenceBox = localToParentTransform.mapRect(referenceBox);
-
-            auto path = Style::path(clipPath.shape(), referenceBox, renderer.style().usedZoomForLength());
-            path.transform(valueOrDefault(localToParentTransform.inverse()));
-
-            context.clipPath(path, Style::windRule(clipPath.shape()));
+            context.clipPath(Style::path(clipPath.shape(), referenceBox, renderer.style().usedZoomForLength()), Style::windRule(clipPath.shape()));
         },
         [&](const Style::BoxPath& clipPath) {
             auto referenceBox = clipPathReferenceBox(renderer, clipPath.referenceBox());
