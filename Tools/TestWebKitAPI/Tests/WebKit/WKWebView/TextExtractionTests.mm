@@ -640,6 +640,59 @@ TEST(TextExtractionTests, InteractionRemapsStaleNodeIdentifier)
     EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.querySelector('.click-count').textContent"] intValue]);
 }
 
+TEST(TextExtractionTests, InteractionRemapsStaleNodeIdentifierWithURL)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+
+    auto makeDebugTextConfiguration = [] {
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeURLs:YES];
+        [configuration setShortenURLs:YES];
+        [configuration setIncludeRects:NO];
+        return configuration;
+    };
+
+    RetainPtr accountPageMarkup = @"<div role='tablist'>"
+        "<a href='https://example.com/account' role='tab' aria-selected='true' aria-label='Account tab'>Account</a>"
+        "<a href='https://example.com/security' role='tab' aria-selected='false' aria-label='Security tab'>Security</a>"
+        "</div>";
+
+    RetainPtr securityPageMarkup = @"<div role='tablist'>"
+        "<a href='https://example.com/account' role='tab' aria-selected='false' aria-label='Account tab'>Account</a>"
+        "<a href='https://example.com/security' role='tab' aria-selected='true' aria-label='Security tab'>Security</a>"
+        "</div>"
+        "<script>"
+        "window.accountTabClicked = false;"
+        "document.querySelector(\"a[href='https://example.com/account']\").addEventListener('click', event => {"
+        "    event.preventDefault();"
+        "    window.accountTabClicked = true;"
+        "});"
+        "</script>";
+
+    [webView synchronouslyLoadHTMLString:accountPageMarkup baseURL:[NSURL URLWithString:@"https://example.com/account"]];
+    RetainPtr staleAccountTabIdentifier = extractNodeIdentifier([webView synchronouslyGetDebugText:makeDebugTextConfiguration()], @"Account tab");
+    EXPECT_NOT_NULL(staleAccountTabIdentifier);
+
+    [webView synchronouslyLoadHTMLString:securityPageMarkup baseURL:[NSURL URLWithString:@"https://example.com/security"]];
+    RetainPtr currentAccountTabIdentifier = extractNodeIdentifier([webView synchronouslyGetDebugText:makeDebugTextConfiguration()], @"Account tab");
+    EXPECT_NOT_NULL(currentAccountTabIdentifier);
+    EXPECT_FALSE([staleAccountTabIdentifier isEqualToString:currentAccountTabIdentifier]);
+
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:staleAccountTabIdentifier];
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+    RetainPtr summary = [result summary];
+    EXPECT_TRUE([summary containsString:@"stale"]);
+    EXPECT_TRUE([summary containsString:@"re-resolved"]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.accountTabClicked"] boolValue]);
+}
+
 TEST(TextExtractionTests, TargetNodeAndClientAttributes)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
