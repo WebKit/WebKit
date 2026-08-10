@@ -249,9 +249,7 @@ BufferMemoryHandle::BufferMemoryHandle(void* memory, size_t size, size_t mappedC
     , m_initial(initial)
     , m_maximum(maximum)
 {
-    if (sharingMode == MemorySharingMode::Default && mode == MemoryMode::BoundsChecking)
-        ASSERT(mappedCapacity == size);
-    else {
+    if (sharingMode != MemorySharingMode::Default || mode != MemoryMode::BoundsChecking || mappedCapacity != size) {
 #if ENABLE(WEBASSEMBLY)
         Wasm::activateSignalingMemory();
 #endif
@@ -302,16 +300,7 @@ BufferMemoryHandle::~BufferMemoryHandle()
             break;
         }
         case MemoryMode::BoundsChecking: {
-            switch (m_sharingMode) {
-            case MemorySharingMode::Default: {
-                freeVirtualPagesUnlessNullBasePointer(memory, m_size);
-                break;
-            }
-            case MemorySharingMode::Shared: {
-                if (memory == nullBasePointer() && !m_mappedCapacity) {
-                    ASSERT(!m_size);
-                    return;
-                }
+            auto freeGrowableReservation = [&] {
 #if OS(WINDOWS)
                 BufferMemoryManager::singleton().freeGrowableBoundsCheckingMemory(memory, m_mappedCapacity);
 #else
@@ -320,6 +309,24 @@ BufferMemoryHandle::~BufferMemoryHandle()
                 OSAllocator::protect(memory, m_mappedCapacity, readable, writable);
                 BufferMemoryManager::singleton().freeGrowableBoundsCheckingMemory(memory, m_mappedCapacity);
 #endif
+            };
+            switch (m_sharingMode) {
+            case MemorySharingMode::Default: {
+                if (BufferMemoryManager::singleton().isInGrowableOrFastMemory(memory)) {
+                    ASSERT(m_mappedCapacity >= m_size);
+                    ASSERT(!(m_mappedCapacity % PageCount::pageSize));
+                    freeGrowableReservation();
+                    break;
+                }
+                freeVirtualPagesUnlessNullBasePointer(memory, m_size);
+                break;
+            }
+            case MemorySharingMode::Shared: {
+                if (memory == nullBasePointer() && !m_mappedCapacity) {
+                    ASSERT(!m_size);
+                    return;
+                }
+                freeGrowableReservation();
                 break;
             }
             }
