@@ -954,6 +954,21 @@ bool LineLayout::hasContentfulInlineLine() const
     return m_inlineContent && m_inlineContent->hasContentfulInlineLevelBox();
 }
 
+size_t LineLayout::lineCountIgnoringBlockLevelBoxes() const
+{
+    auto lineCount = this->lineCount();
+    if (!lineCount)
+        return 0;
+
+    size_t blockLevelLineCount = 0;
+    for (auto& line : m_inlineContent->displayContent().lines) {
+        if (line.hasBlockLevelBox())
+            ++blockLevelLineCount;
+    }
+    // lineCount() may have already dropped a trailing line.
+    return lineCount - std::min(lineCount, blockLevelLineCount);
+}
+
 size_t LineLayout::lineCount() const
 {
     if (!m_inlineContent)

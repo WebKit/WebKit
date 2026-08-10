@@ -4575,20 +4575,26 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
     // Don't do any work if the block is smaller than the visible area.
     if (visibleWidth >= borderBoxWidth())
         return;
-    
+
     unsigned lineCount = m_lineCountForTextAutosizing;
     if (lineCount == NOT_SET) {
         if (style().usedVisibility() != Visibility::Visible)
             lineCount = NO_LINE;
         else {
+            auto lineCountIgnoringBlockLevelBoxes = [](const RenderBlockFlow& blockContainer) -> size_t {
+                if (CheckedPtr inlineLayout = blockContainer.inlineLayout())
+                    return inlineLayout->lineCountIgnoringBlockLevelBoxes();
+                return blockContainer.lineCount();
+            };
+
             size_t lineCountInBlock = 0;
             if (childrenInline())
-                lineCountInBlock = this->lineCount();
+                lineCountInBlock = lineCountIgnoringBlockLevelBoxes(*this);
             else {
                 for (auto& listItem : childrenOfType<RenderListItem>(*this)) {
                     if (!listItem.childrenInline() || listItem.style().usedVisibility() != Visibility::Visible)
                         continue;
-                    lineCountInBlock += listItem.lineCount();
+                    lineCountInBlock += lineCountIgnoringBlockLevelBoxes(listItem);
                     if (lineCountInBlock > 1)
                         break;
                 }
