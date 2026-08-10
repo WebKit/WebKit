@@ -61,13 +61,21 @@ public:
     {
         if (formattingContextRoot().writingMode().isLineInverted() || !m_lineIndex)
             return contentLogicalTop();
-        return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex - 1 }.contentLogicalBottom();
+        auto precedingLineBox = LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex - 1 };
+        // A line with a block level box on it does not share the space below it with this line. That space is the box's
+        // margin, and the box covers it itself.
+        if (precedingLineBox.hasBlockLevelBox())
+            return contentLogicalTop();
+        return precedingLineBox.contentLogicalBottom();
     }
     float contentLogicalBottomAdjustedForFollowingLineBox() const
     {
         if (!formattingContextRoot().writingMode().isLineInverted() || m_lineIndex == lines().size() - 1)
             return contentLogicalBottom();
-        return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 }.contentLogicalTop();
+        auto followingLineBox = LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 };
+        if (followingLineBox.hasBlockLevelBox())
+            return contentLogicalBottom();
+        return followingLineBox.contentLogicalTop();
     }
 
     float contentLogicalLeft() const
