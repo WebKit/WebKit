@@ -426,9 +426,18 @@ bool SVGRenderSupport::filtersForceContainerLayout(const RenderElement& renderer
     return true;
 }
 
+FloatSize SVGRenderSupport::svgContentLocationOffset(const RenderObject& renderer)
+{
+    // A <foreignObject> keeps its bounding boxes origin-relative, but paints its content at location().
+    if (CheckedPtr foreignObject = dynamicDowncast<LegacyRenderSVGForeignObject>(renderer))
+        return toFloatSize(FloatPoint { foreignObject->location() });
+    return { };
+}
+
 inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType boxType)
 {
     FloatRect referenceBox;
+    bool isBoxRelativeToRendererGeometry = true;
     switch (boxType) {
     case CSSBoxType::BorderBox:
     case CSSBoxType::MarginBox:
@@ -440,9 +449,11 @@ inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType 
     case CSSBoxType::ViewBox:
         if (renderer.element()) {
             auto viewportSize = SVGLengthContext(downcast<SVGElement>(renderer.element())).viewportSize();
-            if (viewportSize)
+            if (viewportSize) {
                 referenceBox.setSize(*viewportSize);
-            break;
+                isBoxRelativeToRendererGeometry = false;
+                break;
+            }
         }
         [[fallthrough]];
     case CSSBoxType::ContentBox:
@@ -451,6 +462,10 @@ inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType 
         referenceBox = renderer.objectBoundingBox();
         break;
     }
+
+    if (isBoxRelativeToRendererGeometry)
+        referenceBox.move(SVGRenderSupport::svgContentLocationOffset(renderer));
+
     return referenceBox;
 }
 

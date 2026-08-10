@@ -3054,7 +3054,6 @@ webkit.org/b/319443 imported/w3c/web-platform-tests/css/css-masking/mask-image/b
 webkit.org/b/319443 imported/w3c/web-platform-tests/css/css-masking/mask-image/backdrop-filter-mask-image-while-loading.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-fixed-position-rounding-error.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-shape-foreignobject-non-zero-xy.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-3.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-4.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-5.html [ ImageOnlyFailure ]

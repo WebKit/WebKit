@@ -31,6 +31,7 @@ namespace WebCore {
 
 class FloatPoint;
 class FloatRect;
+class FloatSize;
 class ImageBuffer;
 class LayoutRect;
 class RenderBoxModelObject;
@@ -109,6 +110,9 @@ public:
     static bool transformToRootChanged(RenderElement*);
 
     static void clipContextToCSSClippingArea(GraphicsContext&, const RenderElement& renderer);
+
+    // Offset from a renderer's origin-relative bounding box to where it actually paints its content.
+    static FloatSize svgContentLocationOffset(const RenderObject&);
 
     static void styleChanged(RenderElement&, const Style::ComputedStyle*);
 
