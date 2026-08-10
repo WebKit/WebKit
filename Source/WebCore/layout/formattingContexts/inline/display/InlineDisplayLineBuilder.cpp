@@ -78,7 +78,8 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
             rootInlineBoxWidth -= lineLayoutResult.hangingContent.logicalWidth;
         }
         auto rootInlineBoxHorizontalOverflow = rootInlineBoxWidth - rect.width();
-        if (rootInlineBoxHorizontalOverflow > 0)
+        // A block box contributes its own through layoutOverflowRectForPropagation(), which uses the margin the box ended up with.
+        if (rootInlineBoxHorizontalOverflow > 0 && !lineLayoutResult.isBlockContent())
             isLeftToRightDirection ? rect.shiftRightBy(rootInlineBoxHorizontalOverflow) : rect.shiftLeftBy(-rootInlineBoxHorizontalOverflow);
         return rect;
     }();

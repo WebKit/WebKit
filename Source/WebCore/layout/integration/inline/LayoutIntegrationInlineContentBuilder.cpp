@@ -152,6 +152,10 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
         auto& line = lines[lineIndex];
         auto lineScrollableOverflowRect = line.scrollableOverflow();
         auto adjustOverflowLogicalWidthWithBlockFlowQuirk = [&] {
+            if (line.hasBlockLevelBox()) {
+                // A block box contributes its own through layoutOverflowRectForPropagation(), which uses the margin the box ended up with. See InlineDisplayLineBuilder::collectEnclosingLineGeometry.
+                return;
+            }
             auto scrollableOverflowLogicalWidth = isHorizontalWritingMode ? lineScrollableOverflowRect.width() : lineScrollableOverflowRect.height();
             if (!isLeftToRightInlineDirection && line.contentLogicalWidth() > scrollableOverflowLogicalWidth) {
                 // The only time when scrollable overflow here could be shorter than
@@ -173,7 +177,8 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
             inlineContent.setHasPaintedInlineLevelBoxes();
 
         auto firstBoxIndex = boxIndex;
-        auto lineInkOverflowRect = lineScrollableOverflowRect;
+        // A block level box on a line contributes its own ink overflow below, and only when it is not self painting.
+        auto lineInkOverflowRect = line.hasBlockLevelBox() ? FloatRect { } : lineScrollableOverflowRect;
         // Collect overflow from boxes.
         // Note while we compute ink overflow for all type of boxes including atomic inline level boxes (e.g. <iframe> <img>) as part of constructing
         // display boxes (see InlineDisplayContentBuilder) RenderBlockFlow expects visual overflow.

@@ -1,0 +1,6 @@
+text
+text
+
+PASS An over-constrained block level box on a line does not add its specified end margin to scrollWidth
+PASS A block level box on a line still adds an end margin that is actually used
+
