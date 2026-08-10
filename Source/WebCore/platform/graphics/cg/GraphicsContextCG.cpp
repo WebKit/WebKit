@@ -1209,7 +1209,8 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
     for (auto change : state.changes()) {
         switch (change) {
         case GraphicsContextState::Change::FillBrush:
-            setCGFillColor(context, state.fillBrush().color(), colorSpace());
+            if (!state.fillBrush().hasPatternOrGradient())
+                setCGFillColor(context, state.fillBrush().color(), colorSpace());
             break;
 
         case GraphicsContextState::Change::StrokeThickness:
@@ -1217,7 +1218,8 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
             break;
 
         case GraphicsContextState::Change::StrokeBrush:
-            CGContextSetStrokeColorWithColor(context, cachedCGColorInDestinationStandardRange(state.strokeBrush().color(), colorSpace()).get());
+            if (!state.strokeBrush().hasPatternOrGradient())
+                CGContextSetStrokeColorWithColor(context, cachedCGColorInDestinationStandardRange(state.strokeBrush().color(), colorSpace()).get());
             break;
 
         case GraphicsContextState::Change::CompositeMode:
