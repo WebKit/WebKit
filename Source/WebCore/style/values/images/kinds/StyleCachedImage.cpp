@@ -96,7 +96,8 @@ bool CachedImage::equals(const CachedImage& other) const
         return false;
     if (m_cssValue.ptr() == other.m_cssValue.ptr() || m_cssValue->equals(other.m_cssValue.get()))
         return true;
-    if (m_cachedImage && m_cachedImage == other.m_cachedImage)
+    if (m_cachedImage && m_cachedImage == other.m_cachedImage
+        && m_url.resolved.fragmentIdentifier() == other.m_url.resolved.fragmentIdentifier())
         return true;
     return false;
 }
