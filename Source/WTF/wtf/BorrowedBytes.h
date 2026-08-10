@@ -135,6 +135,7 @@ private:
 } SWIFT_SHARED_REFERENCE(.ref, .deref);
 
 #if !defined(__swift__)
+
 class BorrowedBytesScopeBase {
     WTF_MAKE_NONCOPYABLE(BorrowedBytesScopeBase);
     WTF_FORBID_HEAP_ALLOCATION;
@@ -142,22 +143,19 @@ public:
     BorrowedBytes& bytes() LIFETIME_BOUND { return m_bytes.get(); }
 
 protected:
-    explicit BorrowedBytesScopeBase(std::span<const uint8_t> bytes)
+    explicit BorrowedBytesScopeBase(std::span<const uint8_t> bytes LIFETIME_BOUND)
         : m_bytes(BorrowedBytes::create(bytes))
     {
+        assertIsOnStack(this);
     }
 
     ~BorrowedBytesScopeBase()
     {
         // The borrow ends here. If anything on the Swift side stashed the view
         // beyond the synchronous call, the control block still carries an
-        // external reference at this point. Assert now, at the site that ends
-        // the borrow, so a stash bug crashes with a stack pointing at the
-        // premature end of the borrow rather than at some later, innocent
-        // reader. This is a debug-only ASSERT — in release the backstop is
-        // data()'s RELEASE_ASSERT(m_valid), which catches the same mistake at
-        // access time (once revoke() below has run) rather than here.
-        ASSERT(m_bytes->hasOneRef());
+        // external reference at this point. Crash here rather than relying on
+        // data()'s assertion, both for debuggability and thread safety.
+        RELEASE_ASSERT(m_bytes->hasOneRef());
         m_bytes->revoke();
     }
 

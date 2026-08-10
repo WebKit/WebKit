@@ -36,6 +36,23 @@
 
 namespace WTF {
 
+inline void assertIsOnStack(const void* object)
+{
+#if OS(DARWIN) && ASSERT_ENABLED
+    auto self = pthread_self();
+    void* origin = pthread_get_stackaddr_np(self);
+    rlim_t size = pthread_get_stacksize_np(self);
+    ASSERT(origin);
+    ASSERT(size);
+    auto top = reinterpret_cast<uintptr_t>(origin);
+    auto address = reinterpret_cast<uintptr_t>(object);
+    ASSERT(address < top);
+    ASSERT(top - address < size);
+#else
+    UNUSED_PARAM(object);
+#endif
+}
+
 /**
  * @brief Borrow is a scoped token that ensures a view into an object remains
  * valid even if the object performs internal destruction.
@@ -73,7 +90,7 @@ public:
         : m_ref(ref)
         , m_previous(m_ref.setIsBorrowed(true))
     {
-        assertIsOnStack();
+        assertIsOnStack(this);
     }
 
     ~Borrow()
@@ -97,18 +114,6 @@ public:
     }
 
 private:
-    void assertIsOnStack()
-    {
-#if OS(DARWIN) && ASSERT_ENABLED
-        auto self = pthread_self();
-        void* origin = pthread_get_stackaddr_np(self);
-        rlim_t size = pthread_get_stacksize_np(self);
-
-        ASSERT(origin, this < origin);
-        ASSERT(size, reinterpret_cast<uintptr_t>(origin) - reinterpret_cast<uintptr_t>(this) < size);
-#endif
-    }
-
     T& m_ref;
     bool m_previous { false };
 };

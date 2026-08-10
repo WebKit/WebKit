@@ -1154,6 +1154,7 @@
 				WTF/BitSet.cpp,
 				WTF/BitVector.cpp,
 				WTF/BloomFilter.cpp,
+				WTF/Borrow.cpp,
 				WTF/BorrowedBytes.cpp,
 				WTF/BoxPtr.cpp,
 				WTF/BumpPointerAllocator.cpp,

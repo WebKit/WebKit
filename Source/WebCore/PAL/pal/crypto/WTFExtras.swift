@@ -50,8 +50,10 @@ extension WTF.BorrowedBytes: RandomAccessCollection {
 
     /// The byte at `position`.
     public subscript(position: Int) -> UInt8 {
-        // Safe: UnsafeRawBufferPointer's own subscript bounds-checks position and traps if it's out of range.
-        unsafe UnsafeRawBufferPointer(start: data(), count: size())[position]
+        precondition(position >= 0 && position < size(), "BorrowedBytes index out of range")
+        // Safe: position has just been bounds-checked against the same live span
+        // that data()/size() describe, and data() traps if the borrow was revoked.
+        return unsafe UnsafeRawBufferPointer(start: data(), count: size())[position]
     }
 }
 

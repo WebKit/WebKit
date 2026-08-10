@@ -117,12 +117,34 @@ TEST(WTF_BorrowedBytes, NestedVectorScopes)
     EXPECT_EQ(outer.bytes().size(), vector.size());
 }
 
-// A view stashed beyond the scope's lifetime is caught at scope destruction,
-// where the crash stack points at the too-early end of the borrow rather than
-// later at an innocent reader. This is a debug-only ASSERT (in release the
-// backstop is data()'s RELEASE_ASSERT at access time), so the death test only
-// runs when assertions are enabled.
-TEST(WTF_BorrowedBytesDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(StashedViewCrashesAtScopeEnd))
+TEST(WTF_BorrowedBytes, ViewIdentityIsPerScope)
+{
+    Vector<uint8_t> vector { 1, 2, 3 };
+    BorrowedVectorScope outer(vector);
+    EXPECT_EQ(&outer.bytes(), &outer.bytes());
+
+    RefPtr<BorrowedBytes> innerView;
+    {
+        BorrowedVectorScope inner(vector);
+        EXPECT_NE(&inner.bytes(), &outer.bytes());
+        innerView = &inner.bytes();
+        innerView = nullptr;
+    }
+
+    // The inner borrow ended, but the outer view is untouched and still readable.
+    EXPECT_EQ(outer.bytes().data(), vector.span().data());
+    EXPECT_EQ(outer.bytes().size(), vector.size());
+}
+
+// MARK: - The stash check
+//
+// A view stashed beyond the scope's lifetime is caught at scope destruction, where
+// the crash stack points at the too-early end of the borrow rather than later at an
+// innocent reader. These are RELEASE_ASSERTs, so unlike most of the Borrow machinery
+// they fire in release builds too — which is what makes them, rather than data()'s
+// revoked-flag check, the mitigation for a reference that escaped.
+
+TEST(WTF_BorrowedBytesDeathTest, StashedViewCrashesAtScopeEnd)
 {
     auto shouldCrash = [] {
         RefPtr<BorrowedBytes> stashed;
@@ -136,5 +158,73 @@ TEST(WTF_BorrowedBytesDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(StashedViewCras
     };
     ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
 }
+
+TEST(WTF_BorrowedBytesDeathTest, StashedViewOverASpanCrashesAtScopeEnd)
+{
+    auto shouldCrash = [] {
+        RefPtr<BorrowedBytes> stashed;
+        {
+            Vector<uint8_t> vector { 1, 2, 3 };
+            auto span = vector.span();
+            BorrowedSpanScope scope(span);
+            stashed = &scope.bytes();
+        }
+    };
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
+}
+
+TEST(WTF_BorrowedBytesDeathTest, ViewEscapedToTheHeapCrashesAtScopeEnd)
+{
+    auto shouldCrash = [] {
+        struct Escapee {
+            RefPtr<BorrowedBytes> bytes;
+        };
+        auto* escapee = new Escapee;
+        {
+            Vector<uint8_t> vector { 1, 2, 3 };
+            BorrowedVectorScope scope(vector);
+            escapee->bytes = &scope.bytes();
+        }
+        delete escapee;
+    };
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
+}
+
+TEST(WTF_BorrowedBytes, ViewEscapedToTheHeapAndReleasedInTimeIsFine)
+{
+    struct Escapee {
+        RefPtr<BorrowedBytes> bytes;
+    };
+    auto escapee = makeUniqueWithoutFastMallocCheck<Escapee>();
+    Vector<uint8_t> vector { 1, 2, 3 };
+    {
+        BorrowedVectorScope scope(vector);
+        escapee->bytes = &scope.bytes();
+        EXPECT_EQ(escapee->bytes->size(), vector.size());
+        escapee->bytes = nullptr;
+    }
+    EXPECT_FALSE(escapee->bytes);
+}
+
+#if OS(DARWIN)
+TEST(WTF_BorrowedBytesDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(HeapAllocatedScopeCrashes))
+{
+    auto shouldCrash = [] {
+        struct Holder {
+            explicit Holder(std::span<const uint8_t> bytes)
+                : scope(bytes)
+            {
+            }
+            BorrowedSpanScope scope;
+        };
+        Vector<uint8_t> vector { 1, 2, 3 };
+        // Deliberately leaked: the constructor is expected to crash, and if it
+        // somehow does not, destroying the Holder would crash for another reason.
+        SUPPRESS_UNCOUNTED_LOCAL auto* holder = new Holder(vector.span());
+        EXPECT_EQ(holder->scope.bytes().size(), vector.size());
+    };
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
+}
+#endif
 
 } // namespace TestWebKitAPI
