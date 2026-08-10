@@ -23,6 +23,15 @@ PASS textInputReadonlyError is "Target is readonly"
 PASS selectDisabledMenuItemError is "Select is disabled"
 PASS readonlyField.value is "readonly"
 PASS disabledSelect.value is "Beta"
+PASS clickSubmitButtonError is ""
+PASS clickImageButtonError is ""
+PASS clickImageWithAltTextError is ""
+PASS clickSubmitButtonWithWrongTextError is "'Register' not found inside the target node"
+PASS clickedTargetNames.join() is "commit,find,logo"
+PASS clickPasswordFieldWithLabelError is ""
+PASS passwordFieldFocusedAfterClick is true
+PASS clickPasswordFieldWithValueError is "'hunter2' not found inside the target node"
+PASS clickFieldWithPlaceholderError is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

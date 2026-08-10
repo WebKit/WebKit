@@ -1985,6 +1985,24 @@ static String searchTextNotFoundDescription(const String& searchText)
     return makeString('\'', searchText, "' not found inside the target node"_s);
 }
 
+static String alternativeTextForFallbackTextSearch(const Element& element)
+{
+    if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
+        return image->altText();
+
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(element)) {
+        if (input->isImageButton())
+            return input->altText();
+
+        if (shouldTreatAsPasswordField(input.get()))
+            return { };
+
+        return input->valueWithDefault();
+    }
+
+    return { };
+}
+
 static bool searchTextMatchesElementLabelOrRenderedText(Element& element, const String& searchText)
 {
     auto withoutWhitespace = [](const String& string) {
@@ -2002,8 +2020,15 @@ static bool searchTextMatchesElementLabelOrRenderedText(Element& element, const 
     if (withoutWhitespace(normalizedLabelText(element)).containsIgnoringASCIICase(strippedSearchText))
         return true;
 
+    if (withoutWhitespace(alternativeTextForFallbackTextSearch(element)).containsIgnoringASCIICase(strippedSearchText))
+        return true;
+
     auto range = makeRangeSelectingNodeContents(element);
-    return withoutWhitespace(plainText(range, behaviorsForTextExtraction)).containsIgnoringASCIICase(strippedSearchText);
+    if (withoutWhitespace(plainText(range, behaviorsForTextExtraction)).containsIgnoringASCIICase(strippedSearchText))
+        return true;
+
+    RefPtr input = dynamicDowncast<HTMLInputElement>(element);
+    return input && withoutWhitespace(input->placeholder()).containsIgnoringASCIICase(strippedSearchText);
 }
 
 static constexpr auto nullFrameDescription = "Browsing context has been detached"_s;
