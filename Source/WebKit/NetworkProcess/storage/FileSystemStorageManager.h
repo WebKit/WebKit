@@ -27,6 +27,7 @@
 
 #include "FileSystemStorageHandle.h"
 #include "FileSystemStorageManagerLock.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -40,8 +41,9 @@ class FileSystemStorageManager final : public RefCountedAndCanMakeWeakPtr<FileSy
     WTF_MAKE_TZONE_ALLOCATED(FileSystemStorageManager);
 public:
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
-    static Ref<FileSystemStorageManager> create(String&& path, FileSystemStorageHandleRegistry&, QuotaCheckFunction&&);
+    static Ref<FileSystemStorageManager> create(String&& path, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&);
     ~FileSystemStorageManager();
+    const WebCore::ClientOrigin& origin() const { return m_origin; }
 
     bool isActive() const;
     uint64_t allocatedUnusedCapacity() const;
@@ -58,13 +60,14 @@ public:
     void requestSpace(uint64_t spaceRequested, CompletionHandler<void(bool)>&&);
 
 private:
-    FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry&, QuotaCheckFunction&&);
+    FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, QuotaCheckFunction&&);
 
     void close();
 
     using Lock = FileSystemStorageManagerLock;
 
     String m_path;
+    WebCore::ClientOrigin m_origin;
     WeakPtr<FileSystemStorageHandleRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
     HashMap<IPC::Connection::UniqueID, HashSet<WebCore::FileSystemHandleIdentifier>> m_handlesByConnection;

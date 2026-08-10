@@ -71,7 +71,7 @@ public:
     const String& path() const { return m_path; }
     OriginQuotaManager& quotaManager();
     Ref<OriginQuotaManager> protectedQuotaManager();
-    FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);
+    FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&);
     FileSystemStorageManager* existingFileSystemStorageManager();
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
     LocalStorageManager* existingLocalStorageManager();
