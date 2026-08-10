@@ -2175,10 +2175,8 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
             if (auto* positionedParentScrollableArea = positionedParent->scrollableArea())
                 localPoint -= toLayoutSize(positionedParentScrollableArea->scrollPosition());
         }
-        if (positionedParent->renderer().isInFlowPositioned()) {
-            if (auto* inlinePositionedParent = dynamicDowncast<RenderInline>(positionedParent->renderer()))
-                localPoint += inlinePositionedParent->offsetForInFlowPositionedInline(renderBox());
-        }
+        if (auto* inlinePositionedParent = dynamicDowncast<RenderInline>(positionedParent->renderer()); inlinePositionedParent && inlinePositionedParent->canContainAbsolutelyPositionedObjects())
+            localPoint += inlinePositionedParent->offsetForInFlowPositionedInline(renderBox());
 
         ASSERT(positionedParent->contentsScrollingScope());
         m_boxScrollingScope = positionedParent->contentsScrollingScope();

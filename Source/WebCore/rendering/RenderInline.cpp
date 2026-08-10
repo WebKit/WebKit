@@ -717,13 +717,16 @@ LegacyInlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
 LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child) const
 {
     // FIXME: This function isn't right with mixed writing modes.
-    if (!isInFlowPositioned()) {
+    // An inline box is the containing block for an out-of-flow child when it is in-flow positioned, and also when
+    // something else about it makes it one, e.g. a filter. Either way the child's static position is relative to the
+    // inline's own content, so it needs the offset of the line the inline starts on.
+    if (!canContainAbsolutelyPositionedObjects()) {
         ASSERT_NOT_REACHED();
         return { };
     }
 
     if (!hasLayer()) {
-        // It looks like we are inflow positioned but no layer created yet. It essentially means we don't have an position offset yet.
+        // It looks like we are a containing block but no layer created yet. It essentially means we don't have a position offset yet.
         return { };
     }
 

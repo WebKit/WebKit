@@ -2684,10 +2684,8 @@ LayoutSize RenderBox::offsetFromContainer(const RenderElement& container, const 
     if (auto* boxContainer = dynamicDowncast<RenderBox>(container))
         offset -= toLayoutSize(boxContainer->scrollPosition());
 
-    if (isAbsolutelyPositioned() && container.isInFlowPositioned()) {
-        if (auto* inlineContainer = dynamicDowncast<RenderInline>(container))
-            offset += inlineContainer->offsetForInFlowPositionedInline(this);
-    }
+    if (auto* inlineContainer = dynamicDowncast<RenderInline>(container); isAbsolutelyPositioned() && inlineContainer && inlineContainer->canContainAbsolutelyPositionedObjects())
+        offset += inlineContainer->offsetForInFlowPositionedInline(this);
 
     if (offsetDependsOnPoint)
         *offsetDependsOnPoint |= is<RenderFragmentedFlow>(container);
@@ -2805,8 +2803,8 @@ auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const 
 
     adjustedRects.move(locationOffset);
 
-    if (position == PositionType::Absolute && localContainer->isInFlowPositioned() && is<RenderInline>(*localContainer)) {
-        auto offsetForInFlowPosition = downcast<RenderInline>(*localContainer).offsetForInFlowPositionedInline(this);
+    if (auto* inlineContainer = dynamicDowncast<RenderInline>(*localContainer); position == PositionType::Absolute && inlineContainer && inlineContainer->canContainAbsolutelyPositionedObjects()) {
+        auto offsetForInFlowPosition = inlineContainer->offsetForInFlowPositionedInline(this);
         adjustedRects.move(offsetForInFlowPosition);
     } else if (styleToUse.hasInFlowPosition() && layer()) {
         // Apply the relative position offset when invalidating a rectangle.  The layer

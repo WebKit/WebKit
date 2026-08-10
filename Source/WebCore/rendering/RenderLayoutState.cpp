@@ -28,6 +28,7 @@
 
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -90,7 +91,7 @@ void RenderLayoutState::computeOffsets(const RenderLayoutState& ancestor, Render
 
     if (renderer.isOutOfFlowPositioned() && !fixed) {
         if (CheckedPtr container = dynamicDowncast<RenderInline>(renderer.container())) {
-            if (container && container->isInFlowPositioned())
+            if (container->canContainAbsolutelyPositionedObjects())
                 m_paintOffset += container->offsetForInFlowPositionedInline(&renderer);
         }
     }
