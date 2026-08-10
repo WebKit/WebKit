@@ -74,7 +74,7 @@ LAUNCHD_PLIST_INPUT_FILE_MAC_YES = webpushd/com.apple.webkit.webpushd.relocatabl
 
 LAUNCHD_PLIST_INSTALL_PATH = $(LAUNCHD_PLIST_INSTALL_PATH_$(WK_RELOCATABLE_WEBPUSHD))
 LAUNCHD_PLIST_INSTALL_PATH_YES = /System/Library/LaunchDaemons
-LAUNCHD_PLIST_INSTALL_PATH_YES[sdk=macos*] = /Library/Apple/System/Library/LaunchAgents
+LAUNCHD_PLIST_INSTALL_PATH_YES[sdk=macos*] = /Library/LaunchAgents
 
 LAUNCHD_PLIST_INSTALL_PATH_NO = /System/Library/LaunchDaemons
 LAUNCHD_PLIST_INSTALL_PATH_NO[sdk=macos*] = $(SYSTEM_SECONDARY_CONTENT_PATH)/System/Library/LaunchAgents
