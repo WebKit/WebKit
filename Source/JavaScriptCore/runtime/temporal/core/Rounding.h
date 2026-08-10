@@ -41,7 +41,8 @@ namespace TemporalCore {
 
 JS_EXPORT_PRIVATE RoundingMode negateTemporalRoundingMode(RoundingMode);
 
-JS_EXPORT_PRIVATE double applyUnsignedRoundingMode(double x, double r1, double r2, UnsignedRoundingMode);
+
+JS_EXPORT_PRIVATE Int128 applyUnsignedRoundingMode(Int128 xNumerator, Int128 xDenominator, Int128 r1, Int128 r2, UnsignedRoundingMode);
 
 JS_EXPORT_PRIVATE std::optional<unsigned> maximumRoundingIncrement(TemporalUnit);
 

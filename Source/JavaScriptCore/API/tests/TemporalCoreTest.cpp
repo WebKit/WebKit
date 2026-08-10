@@ -731,16 +731,16 @@ static void testISOTimeCompare()
 static void testApplyUnsignedRoundingMode()
 {
     // x between r1 and r2 — direction modes
-    TCHECK_EQ(applyUnsignedRoundingMode(1.3, 1.0, 2.0, UnsignedRoundingMode::Zero), 1.0, "applyURM: 1.3 Zero");
-    TCHECK_EQ(applyUnsignedRoundingMode(1.3, 1.0, 2.0, UnsignedRoundingMode::Infinity), 2.0, "applyURM: 1.3 Inf");
+    TCHECK_EQ(applyUnsignedRoundingMode(Int128(13), Int128(10), Int128(1), Int128(2), UnsignedRoundingMode::Zero), Int128(1), "applyURM: 13/10 Zero");
+    TCHECK_EQ(applyUnsignedRoundingMode(Int128(13), Int128(10), Int128(1), Int128(2), UnsignedRoundingMode::Infinity), Int128(2), "applyURM: 13/10 Inf");
     // x == r1 (exact lower bound)
-    TCHECK_EQ(applyUnsignedRoundingMode(1.0, 1.0, 2.0, UnsignedRoundingMode::Zero), 1.0, "applyURM: exact=r1");
+    TCHECK_EQ(applyUnsignedRoundingMode(Int128(10), Int128(10), Int128(1), Int128(2), UnsignedRoundingMode::Zero), Int128(1), "applyURM: exact=r1");
     // HalfZero at midpoint
-    TCHECK_EQ(applyUnsignedRoundingMode(1.5, 1.0, 2.0, UnsignedRoundingMode::HalfZero), 1.0, "applyURM: 1.5 HalfZero");
-    TCHECK_EQ(applyUnsignedRoundingMode(1.5, 1.0, 2.0, UnsignedRoundingMode::HalfInfinity), 2.0, "applyURM: 1.5 HalfInf");
+    TCHECK_EQ(applyUnsignedRoundingMode(Int128(3), Int128(2), Int128(1), Int128(2), UnsignedRoundingMode::HalfZero), Int128(1), "applyURM: 3/2 HalfZero");
+    TCHECK_EQ(applyUnsignedRoundingMode(Int128(3), Int128(2), Int128(1), Int128(2), UnsignedRoundingMode::HalfInfinity), Int128(2), "applyURM: 3/2 HalfInf");
     // HalfEven: 2.5 -> 2 (even lower), 3.5 -> 4 (even upper)
-    TCHECK_EQ(applyUnsignedRoundingMode(2.5, 2.0, 3.0, UnsignedRoundingMode::HalfEven), 2.0, "applyURM: 2.5 HalfEven->2");
-    TCHECK_EQ(applyUnsignedRoundingMode(3.5, 3.0, 4.0, UnsignedRoundingMode::HalfEven), 4.0, "applyURM: 3.5 HalfEven->4");
+    TCHECK_EQ(applyUnsignedRoundingMode(Int128(5), Int128(2), Int128(2), Int128(3), UnsignedRoundingMode::HalfEven), Int128(2), "applyURM: 5/2 HalfEven->2");
+    TCHECK_EQ(applyUnsignedRoundingMode(Int128(7), Int128(2), Int128(3), Int128(4), UnsignedRoundingMode::HalfEven), Int128(4), "applyURM: 7/2 HalfEven->4");
 }
 
 static void testNegateDuration()

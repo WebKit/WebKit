@@ -430,8 +430,8 @@ TemporalResult<ISO8601::Duration> adjustDateDurationRecord(const ISO8601::Durati
 
 // NudgeWindow — internal; holds the floor/ceiling epoch-ns bounds and durations for a single calendar nudge step.
 struct NudgeWindow {
-    double r1;
-    double r2;
+    int64_t r1;
+    int64_t r2;
     Int128 startEpochNs;
     Int128 endEpochNs;
     ISO8601::Duration startDuration;
@@ -447,7 +447,8 @@ static TemporalResult<std::optional<NudgeWindow>> computeNudgeWindow(
     double increment, TemporalUnit unit, bool additionalShift,
     const TimeZone* timeZone = nullptr, CalendarID calendarId = iso8601CalendarID())
 {
-    double r1 = 0, r2 = 0;
+    int64_t r1 = 0, r2 = 0;
+    int64_t shift = static_cast<int64_t>(increment) * sign;
     ISO8601::Duration startDuration, endDuration;
     // Steps 1-4: compute r1, r2, startDuration, endDuration based on unit.
     switch (unit) {
@@ -455,29 +456,29 @@ static TemporalResult<std::optional<NudgeWindow>> computeNudgeWindow(
         // Step 1.a: years = RoundNumberToIncrement(duration.[[Date]].[[Years]], increment, trunc).
         Int128 years = roundNumberToIncrementInt128((Int128)duration.dateDuration().years(), (Int128)increment, RoundingMode::Trunc);
         // Step 1.b-c: r1 = years; or if additionalShift, r1 = years + increment × sign.
-        r1 = additionalShift ? (double)years + increment * sign : (double)years;
+        r1 = static_cast<int64_t>(years) + (additionalShift ? shift : 0);
         // Step 1.d: r2 = r1 + increment × sign.
-        r2 = r1 + increment * sign;
+        r2 = r1 + shift;
         // Step 1.e: startDuration = CreateDateDurationRecord(r1, 0, 0, 0).
-        startDuration = ISO8601::Duration { static_cast<int64_t>(r1), 0, 0, 0, 0, 0, 0, 0, Int128(0), Int128(0) };
+        startDuration = ISO8601::Duration { r1, 0, 0, 0, 0, 0, 0, 0, Int128(0), Int128(0) };
         // Step 1.f: endDuration = CreateDateDurationRecord(r2, 0, 0, 0).
-        endDuration = ISO8601::Duration { static_cast<int64_t>(r2), 0, 0, 0, 0, 0, 0, 0, Int128(0), Int128(0) };
+        endDuration = ISO8601::Duration { r2, 0, 0, 0, 0, 0, 0, 0, Int128(0), Int128(0) };
         break;
     }
     case TemporalUnit::Month: {
         // Step 2.a: months = RoundNumberToIncrement(duration.[[Date]].[[Months]], increment, trunc).
         Int128 months = roundNumberToIncrementInt128((Int128)duration.dateDuration().months(), (Int128)increment, RoundingMode::Trunc);
         // Step 2.b-c: r1 = months; or if additionalShift, r1 = months + increment × sign.
-        r1 = additionalShift ? (double)months + increment * sign : (double)months;
+        r1 = static_cast<int64_t>(months) + (additionalShift ? shift : 0);
         // Step 2.d: r2 = r1 + increment × sign.
-        r2 = r1 + increment * sign;
+        r2 = r1 + shift;
         // Step 2.e: startDuration = AdjustDateDurationRecord(duration.[[Date]], 0, 0, r1).
-        auto sd = adjustDateDurationRecord(duration.dateDuration(), 0, 0, static_cast<int64_t>(r1));
+        auto sd = adjustDateDurationRecord(duration.dateDuration(), 0, 0, r1);
         if (!sd)
             return makeUnexpected(sd.error());
         startDuration = *sd;
         // Step 2.f: endDuration = AdjustDateDurationRecord(duration.[[Date]], 0, 0, r2).
-        auto ed = adjustDateDurationRecord(duration.dateDuration(), 0, 0, static_cast<int64_t>(r2));
+        auto ed = adjustDateDurationRecord(duration.dateDuration(), 0, 0, r2);
         if (!ed)
             return makeUnexpected(ed.error());
         endDuration = *ed;
@@ -502,15 +503,15 @@ static TemporalResult<std::optional<NudgeWindow>> computeNudgeWindow(
         // Step 3.e: weeks = RoundNumberToIncrement(duration.[[Date]].[[Weeks]] + untilResult.[[Weeks]], increment, trunc).
         Int128 weeks = roundNumberToIncrementInt128((Int128)(duration.dateDuration().weeks() + untilResult->weeks()), (Int128)increment, RoundingMode::Trunc);
         // Step 3.f: r1 = weeks. Step 3.g: r2 = weeks + increment × sign.
-        r1 = (double)weeks;
-        r2 = (double)weeks + increment * sign;
+        r1 = static_cast<int64_t>(weeks);
+        r2 = r1 + shift;
         // Step 3.h: startDuration = AdjustDateDurationRecord(duration.[[Date]], 0, r1).
-        auto sd = adjustDateDurationRecord(duration.dateDuration(), 0, static_cast<int64_t>(r1), std::nullopt);
+        auto sd = adjustDateDurationRecord(duration.dateDuration(), 0, r1, std::nullopt);
         if (!sd)
             return makeUnexpected(sd.error());
         startDuration = *sd;
         // Step 3.i: endDuration = AdjustDateDurationRecord(duration.[[Date]], 0, r2).
-        auto ed = adjustDateDurationRecord(duration.dateDuration(), 0, static_cast<int64_t>(r2), std::nullopt);
+        auto ed = adjustDateDurationRecord(duration.dateDuration(), 0, r2, std::nullopt);
         if (!ed)
             return makeUnexpected(ed.error());
         endDuration = *ed;
@@ -522,15 +523,15 @@ static TemporalResult<std::optional<NudgeWindow>> computeNudgeWindow(
         // Step 4.b: days = RoundNumberToIncrement(duration.[[Date]].[[Days]], increment, trunc).
         Int128 days = roundNumberToIncrementInt128((Int128)duration.dateDuration().days(), (Int128)increment, RoundingMode::Trunc);
         // Step 4.c: r1 = days. Step 4.d: r2 = days + increment × sign.
-        r1 = (double)days;
-        r2 = (double)days + increment * sign;
+        r1 = static_cast<int64_t>(days);
+        r2 = r1 + shift;
         // Step 4.e: startDuration = AdjustDateDurationRecord(duration.[[Date]], r1).
-        auto sd = adjustDateDurationRecord(duration.dateDuration(), static_cast<int64_t>(r1), std::nullopt, std::nullopt);
+        auto sd = adjustDateDurationRecord(duration.dateDuration(), r1, std::nullopt, std::nullopt);
         if (!sd)
             return makeUnexpected(sd.error());
         startDuration = *sd;
         // Step 4.f: endDuration = AdjustDateDurationRecord(duration.[[Date]], r2).
-        auto ed = adjustDateDurationRecord(duration.dateDuration(), static_cast<int64_t>(r2), std::nullopt, std::nullopt);
+        auto ed = adjustDateDurationRecord(duration.dateDuration(), r2, std::nullopt, std::nullopt);
         if (!ed)
             return makeUnexpected(ed.error());
         endDuration = *ed;
@@ -610,7 +611,7 @@ TemporalResult<Nudged> nudgeToCalendarUnit(int32_t sign,
             return makeUnexpected(retried.error());
         ASSERT(retried->has_value());
         nudgeWindow = **retried;
-        // Step 5.a.ii / 6.a.ii: Set didExpandCalendarUnit to true. (The spec also asserts bounds
+        // Step 5.a.iii / 6.a.iii: Set didExpandCalendarUnit to true. (The spec also asserts bounds
         // hold after retry, but the assertion is violable: https://github.com/tc39/proposal-temporal/issues/3310)
         didExpandCalendarUnit = true;
     }
@@ -628,27 +629,29 @@ TemporalResult<Nudged> nudgeToCalendarUnit(int32_t sign,
     Int128 progressDenominator = nudgeWindow.endEpochNs - nudgeWindow.startEpochNs;
     // Step 15: Let total be r1 + progress × increment × sign.
     // (NOTE: computed via integer arithmetic before the final float division per spec note.)
-    Int128 totalNumerator = Int128(static_cast<int64_t>(nudgeWindow.r1)) * progressDenominator + progressNumerator * Int128(static_cast<int64_t>(increment)) * Int128(sign);
+    Int128 totalNumerator = Int128(nudgeWindow.r1) * progressDenominator + progressNumerator * Int128(static_cast<int64_t>(increment)) * Int128(sign);
     double total = fractionToDouble(totalNumerator, absInt128(progressDenominator)) * (progressDenominator < 0 ? -1.0 : 1.0);
     Int128 progress = progressNumerator / progressDenominator;
-    // Step 16: Assert: 0 ≤ progress ≤ 1.
+    // Step 17: Assert: 0 ≤ progress ≤ 1.
     ASSERT(0 <= progress && progress <= 1);
-    // Step 17: Let unsignedRoundingMode be GetUnsignedRoundingMode(roundingMode, isNegative).
+    // Steps 18-19: isNegative, then unsignedRoundingMode = GetUnsignedRoundingMode(roundingMode, isNegative).
     UnsignedRoundingMode unsignedRoundingMode = getUnsignedRoundingMode(roundingMode, sign < 0);
-    // Step 18-19: If progress = 1, roundedUnit = abs(r2); else apply unsigned rounding.
-    double roundedUnit = std::abs(nudgeWindow.r2);
-    if (progress != 1) {
-        ASSERT(std::abs(nudgeWindow.r1) <= std::abs(total) && std::abs(total) < std::abs(nudgeWindow.r2));
-        roundedUnit = applyUnsignedRoundingMode(std::abs(total), std::abs(nudgeWindow.r1), std::abs(nudgeWindow.r2), unsignedRoundingMode);
-    }
-    // Step 20: If roundedUnit = abs(r2), set didExpandCalendarUnit to true and use endDuration/endEpochNs; else use start.
-    didExpandCalendarUnit |= (roundedUnit == std::abs(nudgeWindow.r2));
-    ISO8601::Duration resultDuration = (roundedUnit == std::abs(nudgeWindow.r2)) ? endDuration : startDuration;
-    Int128 nudgedEpochNs = (roundedUnit == std::abs(nudgeWindow.r2)) ? nudgeWindow.endEpochNs : nudgeWindow.startEpochNs;
-    // Step 21: Let nudgeResult be Duration Nudge Result Record { [[Duration]]: resultDuration, [[NudgedEpochNs]]: nudgedEpochNs, [[DidExpandCalendarUnit]]: didExpandCalendarUnit }.
+    // Steps 20-21: If progress = 1, roundedUnit = abs(r2); else apply unsigned rounding.
+    // Passes the exact rational rather than the `total` double computed above, because
+    // ApplyUnsignedRoundingMode compares for exact equality.
+    Int128 absR1 = absInt128(Int128(nudgeWindow.r1));
+    Int128 absR2 = absInt128(Int128(nudgeWindow.r2));
+    bool roundedToR2 = true;
+    if (progress != 1)
+        roundedToR2 = applyUnsignedRoundingMode(absInt128(totalNumerator), absInt128(progressDenominator), absR1, absR2, unsignedRoundingMode) == absR2;
+    // Steps 22-23: If roundedUnit = abs(r2), set didExpandCalendarUnit and use endDuration/endEpochNs; else start.
+    didExpandCalendarUnit |= roundedToR2;
+    ISO8601::Duration resultDuration = roundedToR2 ? endDuration : startDuration;
+    Int128 nudgedEpochNs = roundedToR2 ? nudgeWindow.endEpochNs : nudgeWindow.startEpochNs;
+    // Step 24: Let nudgeResult be Duration Nudge Result Record { [[Duration]]: resultDuration, [[NudgedEpochNs]]: nudgedEpochNs, [[DidExpandCalendarUnit]]: didExpandCalendarUnit }.
     // (computeNudgeWindow steps 13-14 deferred here: CombineDateAndTimeDuration applied only to the selected path.)
     auto resultDurationInternal = ISO8601::InternalDuration::combineDateAndTimeDuration(resultDuration, 0);
-    // Step 22: Return the Record { [[NudgeResult]]: nudgeResult, [[Total]]: total }.
+    // Step 25: Return the Record { [[NudgeResult]]: nudgeResult, [[Total]]: total }.
     return Nudged(NudgeResult(resultDurationInternal, nudgedEpochNs, didExpandCalendarUnit), total);
 }
 
@@ -734,15 +737,16 @@ TemporalResult<NudgeResult> nudgeToDayOrTime(ISO8601::InternalDuration duration,
     Int128 roundedTime = roundNumberToIncrementInt128(timeDuration, unitLength * (Int128)std::trunc(increment), roundingMode);
     // Step 4: Let diffTime be ! AddTimeDuration(roundedTime, -timeDuration).
     Int128 diffTime = roundedTime - timeDuration;
-    // Step 5: wholeDays = truncate(TotalTimeDuration(timeDuration, day)).
-    // (totalTimeDuration returns int64_t-truncated double, so truncate is implicit.)
-    double wholeDays = totalTimeDuration(timeDuration, TemporalUnit::Day);
-    // Step 6: roundedWholeDays = truncate(TotalTimeDuration(roundedTime, day)). (same)
-    double roundedWholeDays = totalTimeDuration(roundedTime, TemporalUnit::Day);
+    // Steps 5-6: wholeDays/roundedWholeDays = truncate(TotalTimeDuration(..., day)).
+    // Integer division truncates; a double would round, and past 128 days the distinctions steps 7-9
+    // and 13 rest on are below one ULP.
+    Int128 nsPerDay = lengthInNanoseconds(TemporalUnit::Day);
+    Int128 wholeDays = timeDuration / nsPerDay;
+    Int128 roundedWholeDays = roundedTime / nsPerDay;
     // Step 7: Let dayDelta be roundedWholeDays - wholeDays.
-    auto dayDelta = roundedWholeDays - wholeDays;
+    Int128 dayDelta = roundedWholeDays - wholeDays;
     // Step 8: If dayDelta < 0, let dayDeltaSign be -1; else if dayDelta > 0, let dayDeltaSign be 1; else 0.
-    auto dayDeltaSign = dayDelta < 0 ? -1 : dayDelta > 0 ? 1 : 0;
+    int32_t dayDeltaSign = dayDelta < 0 ? -1 : dayDelta > 0 ? 1 : 0;
     // Step 9: If dayDeltaSign = TimeDurationSign(timeDuration), let didExpandDays be true; else false.
     bool didExpandDays = dayDeltaSign == (timeDuration < 0 ? -1 : timeDuration > 0 ? 1 : 0);
     // Step 10: Let nudgedEpochNs be AddTimeDurationToEpochNanoseconds(diffTime, destEpochNs).
@@ -755,8 +759,8 @@ TemporalResult<NudgeResult> nudgeToDayOrTime(ISO8601::InternalDuration duration,
     if (largestUnit <= TemporalUnit::Day) {
         // Step 13.a: Set days to roundedWholeDays.
         days = static_cast<int64_t>(roundedWholeDays);
-        // Step 13.b: remainder = roundedTime - roundedWholeDays×hoursPerDay (days==roundedWholeDays here).
-        remainder = roundedTime + timeDurationFromComponents(-static_cast<double>(days) * WTF::hoursPerDay, 0, 0, 0, 0, 0);
+        // Step 13.b: Set remainder to roundedTime - (roundedWholeDays x nsPerDay).
+        remainder = roundedTime - roundedWholeDays * nsPerDay;
     }
     // Step 14: Let dateDuration be ! AdjustDateDurationRecord(duration.[[Date]], days).
     auto dateDurationResult = adjustDateDurationRecord(duration.dateDuration(), days, std::nullopt, std::nullopt);

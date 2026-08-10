@@ -622,10 +622,15 @@ ISO8601::InternalDuration TemporalDuration::round(JSGlobalObject* globalObject, 
 
     // Step 32: smallestUnit is ~day~.
     if (unit == TemporalUnit::Day) {
-        double fractionalDays = TemporalCore::totalTimeDuration(internalDuration.time(), TemporalUnit::Day);
-        double days = TemporalCore::roundNumberToIncrementDouble(fractionalDays, increment, mode);
+        // Steps 32.a-b, on the exact rational: past 128 days one ULP of a double day count exceeds
+        // 1ns expressed in days, so materializing fractionalDays moves the value before rounding.
+        Int128 fractionalDaysNumerator = internalDuration.time();
+        Int128 fractionalDaysDenominator = ISO8601::ExactTime::nsPerDay;
+        Int128 roundingIncrementNs = fractionalDaysDenominator * static_cast<Int128>(std::trunc(increment));
+        Int128 roundedNs = TemporalCore::roundNumberToIncrementInt128(fractionalDaysNumerator, roundingIncrementNs, mode);
+        // Steps 32.c-d: the day-range check is enforced by TemporalDurationFromInternal below.
         return ISO8601::InternalDuration::combineDateAndTimeDuration(
-            ISO8601::Duration { 0LL, 0LL, 0LL, static_cast<int64_t>(days), 0LL, 0LL, 0LL, 0LL, Int128(0), Int128(0) },
+            ISO8601::Duration { 0LL, 0LL, 0LL, static_cast<int64_t>(roundedNs / fractionalDaysDenominator), 0LL, 0LL, 0LL, 0LL, Int128(0), Int128(0) },
             0);
     }
 

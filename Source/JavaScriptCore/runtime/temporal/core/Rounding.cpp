@@ -52,32 +52,29 @@ RoundingMode negateTemporalRoundingMode(RoundingMode roundingMode)
 
 // ApplyUnsignedRoundingMode — temporal_rs: apply_unsigned_rounding_mode
 // https://tc39.es/proposal-temporal/#sec-applyunsignedroundingmode
-double applyUnsignedRoundingMode(double x, double r1, double r2, UnsignedRoundingMode unsignedRoundingMode)
+Int128 applyUnsignedRoundingMode(Int128 xNumerator, Int128 xDenominator, Int128 r1, Int128 r2, UnsignedRoundingMode unsignedRoundingMode)
 {
+    ASSERT(xDenominator > 0);
+    Int128 scaledR1 = r1 * xDenominator;
     // 1. If x = r1, return r1.
-    if (x == r1)
+    if (xNumerator == scaledR1)
         return r1;
-    // 2. Assert: r1 < x < r2.
-    ASSERT(r1 < x && x < r2);
-    // 3. Assert: unsignedRoundingMode is not undefined.
+    // 2. Assert: r1 < x < r2. 3. Assert: unsignedRoundingMode is not undefined.
+    ASSERT(scaledR1 < xNumerator && xNumerator < r2 * xDenominator);
     // 4. If unsignedRoundingMode is ~zero~, return r1.
     if (unsignedRoundingMode == UnsignedRoundingMode::Zero)
         return r1;
     // 5. If unsignedRoundingMode is ~infinity~, return r2.
     if (unsignedRoundingMode == UnsignedRoundingMode::Infinity)
         return r2;
-    // 6. Let d1 be x - r1.
-    double d1 = x - r1;
-    // 7. Let d2 be r2 - x.
-    double d2 = r2 - x;
-    // 8. If d1 < d2, return r1.
-    if (d1 < d2)
+    // 6-9. d1 = x - r1, d2 = r2 - x; d1 < d2 iff 2x < r1 + r2.
+    Int128 doubledX = xNumerator * 2;
+    Int128 sumOfBounds = (r1 + r2) * xDenominator;
+    if (doubledX < sumOfBounds)
         return r1;
-    // 9. If d2 < d1, return r2.
-    if (d2 < d1)
+    if (doubledX > sumOfBounds)
         return r2;
     // 10. Assert: d1 is equal to d2.
-    ASSERT(d1 == d2);
     // 11. If unsignedRoundingMode is ~half-zero~, return r1.
     if (unsignedRoundingMode == UnsignedRoundingMode::HalfZero)
         return r1;
@@ -86,38 +83,10 @@ double applyUnsignedRoundingMode(double x, double r1, double r2, UnsignedRoundin
         return r2;
     // 13. Assert: unsignedRoundingMode is ~half-even~.
     ASSERT(unsignedRoundingMode == UnsignedRoundingMode::HalfEven);
-    // 14. Let cardinality be (r1 / (r2 - r1)) modulo 2.
-    auto cardinality = std::fmod(r1 / (r2 - r1), 2);
-    // 15. If cardinality = 0, return r1. 16. Return r2.
-    return !cardinality ? r1 : r2;
+    // 14-16. cardinality = (r1 / (r2 - r1)) modulo 2.
+    return !((r1 / (r2 - r1)) % 2) ? r1 : r2;
 }
 
-// ApplyUnsignedRoundingMode (Int128 path) — integer analogue of the double version above.
-// https://tc39.es/proposal-temporal/#sec-applyunsignedroundingmode
-// cmp: -1 if x is closer to r1, +1 if closer to r2, 0 if exactly at midpoint.
-// Callers handle the exact case (x = r1) before calling this.
-static Int128 applyUnsignedRoundingModeInt128(Int128 r1, Int128 r2, int cmp, UnsignedRoundingMode unsignedRoundingMode)
-{
-    // 4. If unsignedRoundingMode is ~zero~, return r1.
-    if (unsignedRoundingMode == UnsignedRoundingMode::Zero)
-        return r1;
-    // 5. If unsignedRoundingMode is ~infinity~, return r2.
-    if (unsignedRoundingMode == UnsignedRoundingMode::Infinity)
-        return r2;
-    // 8. If d1 < d2, return r1. 9. If d2 < d1, return r2.
-    if (cmp < 0)
-        return r1;
-    if (cmp > 0)
-        return r2;
-    // 11. If unsignedRoundingMode is ~half-zero~, return r1.
-    if (unsignedRoundingMode == UnsignedRoundingMode::HalfZero)
-        return r1;
-    // 12. If unsignedRoundingMode is ~half-infinity~, return r2.
-    if (unsignedRoundingMode == UnsignedRoundingMode::HalfInfinity)
-        return r2;
-    // 13-16. ~half-even~: return r1 if r1 is even, else r2.
-    return !(r1 % 2) ? r1 : r2;
-}
 // MaximumTemporalDurationRoundingIncrement — temporal_rs: Unit::to_maximum_rounding_increment (src/options.rs)
 // https://tc39.es/proposal-temporal/#sec-temporal-maximumtemporaldurationroundingincrement
 std::optional<unsigned> maximumRoundingIncrement(TemporalUnit unit)
@@ -198,11 +167,9 @@ Int128 roundNumberToIncrementAsIfPositive(Int128 x, Int128 increment, RoundingMo
         r1 = quotient - 1;
         r2 = quotient;
     }
-    auto doubleRemainder = absInt128(remainder * 2);
-    int cmp = (doubleRemainder < increment ? -1 : doubleRemainder == increment ? 0 : 1) * (x < 0 ? -1 : 1);
     // 5. Let rounded be ApplyUnsignedRoundingMode(quotient, r1, r2, unsignedRoundingMode).
     // 6. Return rounded × increment.
-    return applyUnsignedRoundingModeInt128(r1, r2, cmp, unsignedRoundingMode) * increment;
+    return applyUnsignedRoundingMode(x, increment, r1, r2, unsignedRoundingMode) * increment;
 }
 
 // RoundNumberToIncrement (Int128 path) — temporal_rs: IncrementRounder<i128>::round (src/rounding.rs)
@@ -222,9 +189,8 @@ Int128 roundNumberToIncrementInt128(Int128 x, Int128 increment, RoundingMode mod
     Int128 r1 = absInt128(quotient);
     // 6. Let r2 be the smallest integer such that r2 > abs(quotient).
     Int128 r2 = r1 + 1;
-    int cmp = absInt128(remainder * 2) < increment ? -1 : absInt128(remainder * 2) > increment ? 1 : 0;
     // 7. Let rounded be ApplyUnsignedRoundingMode(abs(quotient), r1, r2, unsignedRoundingMode).
-    Int128 rounded = applyUnsignedRoundingModeInt128(r1, r2, cmp, unsignedRoundingMode);
+    Int128 rounded = applyUnsignedRoundingMode(absInt128(x), increment, r1, r2, unsignedRoundingMode);
     // 8. If isNegative is ~negative~, set rounded to -rounded.
     if (isNegative)
         rounded = -rounded;
