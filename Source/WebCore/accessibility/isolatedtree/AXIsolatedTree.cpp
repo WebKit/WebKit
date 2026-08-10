@@ -157,7 +157,7 @@ void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
     // derived dynamically from the tree's frame geometry, so we don't need to cache it.
     rootData.setProperty(AXProperty::ScreenRelativePosition, axRoot.screenRelativePosition());
 #endif
-    NodeChange rootAppend { WTF::move(rootData), axRoot.wrapper() };
+    NodeChange rootAppend { WTF::move(rootData), axRoot.wrapper(), nextChangeSequence() };
 
     RefPtr axWebArea = Accessibility::findUnignoredChild(axRoot, [] (auto& object) {
         return object->isWebArea();
@@ -169,7 +169,7 @@ void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
     }
     auto webAreaData = createIsolatedObjectData(*axWebArea, *this);
     webAreaData.setProperty(AXProperty::ScreenRelativePosition, axWebArea->screenRelativePosition());
-    NodeChange webAreaAppend { WTF::move(webAreaData), axWebArea->wrapper() };
+    NodeChange webAreaAppend { WTF::move(webAreaData), axWebArea->wrapper(), nextChangeSequence() };
 
     m_nodeMap.set(axRoot.objectID(), ParentChildrenIDs { std::nullopt, { axWebArea->objectID() } });
     m_nodeMap.set(axWebArea->objectID(), ParentChildrenIDs { axRoot.objectID(), { } });
@@ -334,7 +334,7 @@ bool AXIsolatedTree::shouldCreateNodeChange(AccessibilityObject& axObject)
             || m_unconnectedNodes.contains(axObject.objectID()));
 }
 
-std::optional<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeChangeForObject(Ref<AccessibilityObject> axObject)
+std::optional<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeChangeForObject(Ref<AccessibilityObject> axObject, std::optional<uint64_t> sequence)
 {
     AX_ASSERT(isMainThread());
     AX_ASSERT(!axObject->isDetached());
@@ -355,7 +355,8 @@ std::optional<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeChangeForObject(Re
         // objects for new children, and / or leak old ones. |collectNodeChangesForSubtree| has the same behavior.
         iterator->value.parentID = parentID;
     }
-    NodeChange nodeChange { WTF::move(data), axObject->wrapper() };
+
+    NodeChange nodeChange { WTF::move(data), axObject->wrapper(), sequence.value_or(nextChangeSequence()) };
 
     if (axObject->isRoot())
         setPendingRootNodeID(axObject->objectID());
@@ -436,7 +437,7 @@ void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
     // Instead, just directly create and queue the node change so m_readerThreadNodeMap can hold a reference
     // to it. It will be removed from m_readerThreadNodeMap when the corresponding DOM element, renderer, or
     // other entity is removed from the page.
-    NodeChange nodeChange { createIsolatedObjectData(axObject, *this), axObject->wrapper() };
+    NodeChange nodeChange { createIsolatedObjectData(axObject, *this), axObject->wrapper(), nextChangeSequence() };
     Locker locker { m_changeLogLock };
     mutablePendingChanges()->appends.append(WTF::move(nodeChange));
 }
@@ -484,7 +485,7 @@ Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
     // The process of resolving appends can add more IDs to m_unresolvedPendingAppends as we iterate over it, so
     // iterate over an exchanged map instead. Any late-appended IDs will get picked up in the next cycle.
     auto unresolvedPendingAppends = std::exchange(m_unresolvedPendingAppends, { });
-    for (const auto& axID : unresolvedPendingAppends) {
+    for (const auto& [axID, sequence] : unresolvedPendingAppends) {
         if (m_replacingTree) {
             ++counter;
             if (MonotonicTime::now() - lastFeedbackTime > CreationFeedbackInterval) {
@@ -494,7 +495,11 @@ Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
         }
 
         if (RefPtr axObject = cache->objectForID(axID)) {
-            if (std::optional nodeChange = nodeChangeForObject(*axObject))
+            // Pass along the sequence that was recorded when the decision to make this append
+            // was decided. The sequence captures when the *decision* to make the append was
+            // made, not the timing of when that append is actually resolved (now). Creating
+            // a fresh sequence ID here would be logically incorrect and potentially cause bugs.
+            if (std::optional nodeChange = nodeChangeForObject(*axObject, sequence))
                 resolvedAppends.append(WTF::move(*nodeChange));
         }
     }
@@ -541,7 +546,7 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AccessibilityObject& axObject)
 
     auto iterator = m_nodeMap.find(axObject.objectID());
     if (iterator == m_nodeMap.end()) {
-        m_unresolvedPendingAppends.add(axObject.objectID());
+        m_unresolvedPendingAppends.set(axObject.objectID(), nextChangeSequence());
 
         Vector<AXID> axChildrenIDs;
         axChildrenIDs.reserveInitialCapacity(axChildrenCopy.size());
@@ -596,7 +601,7 @@ void AXIsolatedTree::updateNode(AccessibilityObject& axObject)
     // AccessibilityRenderObject::updateRoleAfterChildrenCreation), queue the append up to be resolved with the rest
     // of the collected changes. This prevents us from creating two node changes for the same object.
     if (isCollectingNodeChanges() || !m_unresolvedPendingAppends.isEmpty()) {
-        m_unresolvedPendingAppends.add(axObject.objectID());
+        m_unresolvedPendingAppends.set(axObject.objectID(), nextChangeSequence());
         return;
     }
 
@@ -1137,7 +1142,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
 
     AXID parentID = axAncestor->objectID();
     for (AXID childID : oldChildrenIDs)
-        m_subtreesToRemove.append({ childID, parentID });
+        m_subtreesToRemove.append({ childID, parentID, nextChangeSequence() });
     if (resolveNodeChanges == ResolveNodeChanges::Yes)
         queueRemovalsAndUnresolvedChanges();
 }
@@ -1372,7 +1377,7 @@ void AXIsolatedTree::removeNode(AXID axID, std::optional<AXID> parentID)
 
     m_unresolvedPendingAppends.remove(axID);
     removeSubtreeFromNodeMap(axID, parentID);
-    queueRemovals({ { axID, parentID } });
+    queueRemovals({ { axID, parentID, nextChangeSequence() } });
 }
 
 void AXIsolatedTree::removeSubtreeFromNodeMap(std::optional<AXID> objectID, std::optional<AXID> axParentID)
@@ -1502,67 +1507,130 @@ void AXIsolatedTree::clearTreeContentsLocked()
     // will be cleaned up automatically when the tree is destroyed.
 }
 
-// When a node is queued for both subtree removal and appending in the same
-// batch (e.g. when an in-process FrameHost is replaced with an out-of-process
-// one during site isolation), the old subtree snapshot and the new one can
-// both end up in m_pendingChanges.appends. The removal root may not yet be in the
-// node map, so deleteSubtree won't encounter it.
+// When a node is queued for both subtree removal and appending in the same batch (e.g. when an
+// in-process FrameHost is replaced with an out-of-process one due to site isolation), the old
+// subtree snapshot and the new one can both end up in m_pendingChanges.appends. The removal root
+// may not yet be in the node map, so deleteSubtree won't encounter it, and removeStaleAppends is what
+// keeps the stale snapshot from being applied.
 //
-// For each unique appended ID, this function walks up its parent chain to
-// check whether any ancestor was removed from the same parent it's being
-// appended under. Results are memoized so each node is visited at most once
-// across all walks, giving O(n) total work.
+// More generally, a batch of pending changes carries appends and subtree removals in two separate
+// vectors, and the same AXID can legitimately appear in both. Two independent guards keep that from
+// corrupting the tree, and it's worth being precise about which does what, because they serve
+// different purposes.
 //
-// Nodes that were removed from one parent but appended under a different
-// parent are reparenting operations and should be kept.
+//   m_protectedFromDeletionIDs  "don't destroy a live object"
+//   removeStaleAppends          "don't resurrect a dead one"
+//
+// They also run at different times. applyPendingChanges applies removals first, destroying
+// objects as it goes, and only then calls removeStaleAppends to filter the appends. So by the
+// time we get here, destruction has already happened (unless m_protectedFromDeletionIDs saved the object).
+//
+// These variables are relevant in several scenarios.
+//
+// Scenario 1: A reparent that queues no append at all. #child is moved under a new parent by
+// aria-owns, which changes its accessibility parent without touching the render tree:
+//
+//     <div id="oldParent"><span id="child"></span></div>
+//     <div id="newParent"></div>
+//     newParent.setAttribute("aria-owns", "child");
+//
+// #child's isolated object already exists, so collectNodeChangesForSubtree takes its
+// "already in the isolated tree" branch and deliberately does not build a NodeChange (because it's
+// expensive). It protects the ID and queues a parent update instead. Meanwhile updateChildren
+// for #oldParent queues a removal of #child. The batch therefore holds a removal for #child and
+// no append for it. Without m_protectedFromDeletionIDs, deleteSubtree destroys a live object
+// that #newParent's childrenUpdates still points at.
+//
+// Scenario 2: A genuine deletion with a leftover append. A new child is added and its whole
+// subtree is then torn down in the same tree-update cycle:
+//
+//     oldParent.appendChild(newSpan);   // queues an append of newSpan under oldParent
+//     oldParent.remove();               // queues the removal
+//
+// newSpan has never been applied, so it isn't in m_readerThreadNodeMap and deleteSubtree never
+// encounters it. There is nothing to protect and nothing to destroy. Only removeStaleAppends
+// helps, as without it we materialize an object whose parent no longer exists, and which holds a
+// Ref to this tree. The FrameHost replacement described at the top of this comment is an instance
+// of this shape -- a removal root that was never applied, and so is absent from the node map.
+//
+// Scenario 3: The same parent, removed and then re-added. Pending changes accumulate until the
+// AX thread applies them, so decisions from two main-thread cycles can share one batch.
+//
+//     owner.setAttribute("aria-owns", "child");  // cycle 1: remove child from parent,
+//                                                //          append child under owner
+//     owner.remove();                            // cycle 2: append child under parent again
+//
+// The last append and the removal both name the original parent, so comparing parents alone
+// calls the newer append stale and drops it, and the object disappears while its parent's
+// childrenUpdates still lists it as a child. The sequence IDs ensure correctness in this case,
+// leaning on the append having been decided after the removal and thus having a larger ID.
+//
+// Finally, it's worth explaining why we still compare parents even though we have sequence IDs.
+// A reparent inside a single cycle queues the removal from updateChildren(oldParent) and the
+// append from updateChildren(newParent). Which of those happens first (and thus has a smaller
+// sequence ID) depends solely on the order m_needsUpdateChildren is iterated, so if the new
+// parent is visited first, the append is older than the removal and would be discarded.
+//
+// Comparing parents says these two decisions concern different parents and cannot invalidate each
+// other, making the outcome iteration-order independent.
+//
+// For each unique appended ID, this function walks up its parent chain looking for a removal
+// that invalidates it. Results are memoized so each node is visited at most once across all
+// walks, giving O(n) total work.
 void AXIsolatedTree::removeStaleAppends(const Vector<NodeAndParentID>& removals, Vector<NodeChange>& pendingAppends)
 {
-    // Build a map from removed AXID to the parent it was removed from, for
-    // O(1) lookups during the ancestor walk.
+    // Build maps from removed AXID to the parent it was removed from and when, for
+    // O(1) lookups during the ancestor walk. Kept as two maps rather than one keyed on
+    // NodeAndParentID because AXID isn't default-constructible, so it can't be a HashMap value.
     HashMap<AXID, Markable<AXID>> removedNodeToParentMap;
-    for (const auto& removal : removals)
+    HashMap<AXID, uint64_t> removedSequences;
+    for (const auto& removal : removals) {
         removedNodeToParentMap.set(removal.nodeID, removal.parentID);
+        removedSequences.set(removal.nodeID, removal.sequence);
+    }
 
-    // Build a map from appended AXID to its final parentID (last entry wins,
+    // Build maps from appended AXID to its final parentID and sequence (last entry wins,
     // since later appends override earlier ones in the append loop).
     HashMap<AXID, Markable<AXID>> appendedParentIDs;
-    for (const auto& item : pendingAppends)
+    HashMap<AXID, uint64_t> appendedSequences;
+    for (const auto& item : pendingAppends) {
         appendedParentIDs.set(item.data.axID, item.data.parentID);
+        appendedSequences.set(item.data.axID, item.sequence);
+    }
 
-    // For each unique appended ID, walk up the parent chain to determine
-    // whether it or any ancestor was removed from the same parent it's being
-    // appended under. Memoize results so shared ancestors are only resolved
-    // once.
-    HashMap<AXID, bool> ancestorWasRemoved;
+    // For each unique appended ID, walk up the parent chain looking for a removal that
+    // invalidates it. The memoized value is the sequence of the nearest such removal, or
+    // nullopt when there is none, so it doesn't depend on which descendant started the walk.
+    HashMap<AXID, std::optional<uint64_t>> invalidatingRemovalSequence;
     HashSet<AXID> idsToRemove;
 
     for (const auto& appendedID : appendedParentIDs.keys()) {
-        if (ancestorWasRemoved.contains(appendedID))
-            continue;
-
         Vector<AXID> unresolvedAncestors;
         AXID currentID = appendedID;
-        std::optional<bool> result;
+        bool resolved = false;
+        std::optional<uint64_t> invalidatingSequence;
 
-        while (!result) {
-            auto cachedIterator = ancestorWasRemoved.find(currentID);
-            if (cachedIterator != ancestorWasRemoved.end()) {
-                result = cachedIterator->value;
+        while (!resolved) {
+            auto cachedIterator = invalidatingRemovalSequence.find(currentID);
+            if (cachedIterator != invalidatingRemovalSequence.end()) {
+                invalidatingSequence = cachedIterator->value;
                 break;
             }
 
             unresolvedAncestors.append(currentID);
 
-            // Check if this node was removed. If so, compare parents: only
-            // keep it if both parents are known and differ (a reparent).
-            // If either parent is unknown, treat as stale to be safe.
+            // Check if this node was removed. A removal doesn't invalidate the append when the
+            // parents are known and differ, since that's a reparent rather than a deletion.
+            // Otherwise it invalidates any append decided before it.
             auto removedIterator = removedNodeToParentMap.find(currentID);
             if (removedIterator != removedNodeToParentMap.end()) {
                 auto currentAppendIterator = appendedParentIDs.find(currentID);
                 Markable<AXID> appendedParentID = (currentAppendIterator != appendedParentIDs.end()) ? currentAppendIterator->value : Markable<AXID> { };
                 Markable<AXID> removedParentID = removedIterator->value;
                 bool isReparent = appendedParentID && removedParentID && *appendedParentID != *removedParentID;
-                result = !isReparent;
+                if (!isReparent)
+                    invalidatingSequence = removedSequences.get(currentID);
+                resolved = true;
                 break;
             }
 
@@ -1582,14 +1650,17 @@ void AXIsolatedTree::removeStaleAppends(const Vector<NodeAndParentID>& removals,
             }
 
             // Reached a root or dead end — no removed ancestor.
-            result = false;
+            resolved = true;
         }
 
-        for (const auto& axID : unresolvedAncestors) {
-            ancestorWasRemoved.set(axID, *result);
-            if (*result)
-                idsToRemove.add(axID);
-        }
+        for (const auto& axID : unresolvedAncestors)
+            invalidatingRemovalSequence.set(axID, invalidatingSequence);
+
+        // The append only survives if it was decided after the removal that would invalidate it.
+        // A same-parent remove-then-re-add lands here with a newer append and must be kept, or the
+        // object is deleted while its parent's childrenUpdates still lists it as a child.
+        if (invalidatingSequence && appendedSequences.get(appendedID) < *invalidatingSequence)
+            idsToRemove.add(appendedID);
     }
 
     if (!idsToRemove.isEmpty()) {
@@ -1930,7 +2001,7 @@ void AXIsolatedTree::processQueuedNodeUpdates()
     m_needsUpdateChildren.clear();
 
     for (AXID objectID : m_needsUpdateNode)
-        m_unresolvedPendingAppends.add(objectID);
+        m_unresolvedPendingAppends.set(objectID, nextChangeSequence());
     m_needsUpdateNode.clear();
 
     // Updating properties can trigger side-effects (e.g. isIgnored() detecting an

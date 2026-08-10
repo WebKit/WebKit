@@ -388,6 +388,10 @@ void setPropertyIn(AXProperty, AXPropertyValueVariant&&, AXPropertyVector&, Opti
 struct NodeAndParentID {
     AXID nodeID;
     Markable<AXID> parentID;
+    // Monotonic ID of when the main thread decided on this removal, used by
+    // removeStaleAppends to tell a leftover append apart from a re-add queued afterwards.
+    // See AXIsolatedTree::nextChangeSequence.
+    uint64_t sequence { 0 };
 };
 
 struct IsolatedObjectData {
@@ -637,9 +641,14 @@ private:
 #elif USE(ATSPI)
         RefPtr<AccessibilityObjectWrapper> wrapper;
 #endif
-        explicit NodeChange(IsolatedObjectData&& isolatedData, RetainPtr<AccessibilityObjectWrapper> wrapper)
+        // Monotonic ID of when the main thread decided on this append. Compared against
+        // NodeAndParentID::sequence in removeStaleAppends. See nextChangeSequence.
+        uint64_t sequence { 0 };
+
+        explicit NodeChange(IsolatedObjectData&& isolatedData, RetainPtr<AccessibilityObjectWrapper> wrapper, uint64_t sequence = 0)
             : data(WTF::move(isolatedData))
             , wrapper(WTF::move(wrapper))
+            , sequence(sequence)
         { }
 
         NodeChange(const NodeChange&) = delete;
@@ -707,7 +716,7 @@ private:
     void updateNode(AccessibilityObject&);
     void updateNodeProperties(AccessibilityObject&, const AXPropertySet&);
 
-    std::optional<NodeChange> nodeChangeForObject(Ref<AccessibilityObject>);
+    std::optional<NodeChange> nodeChangeForObject(Ref<AccessibilityObject>, std::optional<uint64_t> sequence = std::nullopt);
     void collectNodeChangesForSubtree(AccessibilityObject&);
     bool isCollectingNodeChanges() const { return m_isCollectingNodeChanges; }
     void queueChange(NodeChange&&) WTF_REQUIRES_LOCK(m_changeLogLock);
@@ -742,7 +751,9 @@ private:
 
     // Only accessed on the main thread.
     // The key is the ID of the object that will be resolved into an m_pendingAppends NodeChange.
-    HashSet<AXID> m_unresolvedPendingAppends;
+    // The value is the sequence ID created when the append was decided, carried into the resulting
+    // NodeChange so removeStaleAppends can order it against removals.
+    HashMap<AXID, uint64_t> m_unresolvedPendingAppends;
     // Only accessed on the main thread.
     // While performing tree updates, we append nodes to this list that are no longer connected
     // in the tree and should be removed. This list turns into m_pendingSubtreeRemovals when
@@ -753,6 +764,9 @@ private:
     // It is required to protect objects from being incorrectly deleted when they are re-parented,
     // as the original parent will want to queue it for removal, but we need to keep the object around
     // for the new parent.
+    //
+    // See the comment above AXIsolatedTree::removeStaleAppends for a detailed explanation and specific
+    // scenarios where this member variable is relevant.
     HashSet<AXID> m_protectedFromDeletionIDs;
     // Only accessed on the main thread.
     // Objects whose parent has changed, and said change needs to be synced to the secondary thread.
@@ -764,6 +778,17 @@ private:
 
     // Written to by main thread under lock, accessed and applied by AX thread.
     PendingChanges m_pendingChanges WTF_GUARDED_BY_LOCK(m_changeLogLock);
+
+    // Main thread only. Marks appends and subtree removals with the order in which the main
+    // thread decided on them. applyPendingChanges replays appends and removals from separate
+    // vectors, so their relative order isn't otherwise recoverable, and removeStaleAppends needs
+    // it to tell a leftover append apart from a re-add that happened after the removal.
+    uint64_t nextChangeSequence()
+    {
+        AX_ASSERT(isMainThread());
+        return ++m_lastChangeSequence;
+    }
+    uint64_t m_lastChangeSequence { 0 };
 
     // These are placed here to fit in padding that would otherwise be between m_pendingSortedLiveRegionIDs and m_pendingSortedNonRootWebAreaIDs.
     OptionSet<ActivityState> m_pageActivityState;

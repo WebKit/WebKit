@@ -1,0 +1,84 @@
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="owner" role="group"></div>
+<div id="parent" role="group">
+    <button id="child">Child</button>
+</div>
+
+<div id="movedOwner" role="group"></div>
+<div id="movedParent" role="group">
+    <button id="movedChild">Moved child</button>
+</div>
+
+<script>
+var testOutput = "This test makes sure the isolated tree resolves a node correctly when a subtree removal and a later re-append of that same node reach the accessibility thread in one committed batch.\n\n";
+
+// Waits without touching the accessibility tree. Any AX query forces the AX thread to apply
+// whatever has been committed so far, which would split the mutations below into separate
+// batches and defeat the point of the test.
+async function waitFramesWithoutQueryingAX(count)
+{
+    for (var i = 0; i < count; i++)
+        await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        window.expectedButtonRole = "AXRole: AXButton";
+
+        var axParent = await waitForElementById("parent");
+        await waitFor(() => axParent.childrenCount === 1);
+
+        // aria-owns moves the button in the accessibility tree without touching the DOM or the
+        // render tree, so the object keeps its AXID. That is what puts one AXID in both the
+        // append and the subtree-removal vector of a single batch. A DOM reparent can't do this,
+        // as it destroys and recreates the renderer, so the new parent's append is for a new AXID.
+        //
+        // Stealing the button queues a removal of it from #parent. Deleting the owner then makes
+        // it a child of #parent again, queueing an append of that same AXID under #parent. Both
+        // land in one batch, with the append being the newer of the two, so deciding staleness by
+        // comparing parents alone cannot tell them apart and discards the append -- dropping the
+        // button from the tree even though it is a child of #parent again.
+        //
+        // Nothing may query the accessibility tree between these two mutations. Doing so applies
+        // the first batch, and then there is no merged batch left to get wrong.
+        document.getElementById("owner").setAttribute("aria-owns", "child");
+        await waitFramesWithoutQueryingAX(4);
+        document.getElementById("owner").remove();
+        await waitFramesWithoutQueryingAX(4);
+
+        window.parentCountAfterOwnerRemoved = axParent.childrenCount;
+        testOutput += expect("parentCountAfterOwnerRemoved", "1");
+        window.restoredRole = axParent.childrenCount ? axParent.childAtIndex(0).role : "<no child>";
+        testOutput += expect("restoredRole", "expectedButtonRole");
+
+        // The same batch shape as above, except the append genuinely is a move, with the removal and the
+        // append being from different parents, so the append must be kept rather than treated as stale.
+        var axMovedOwner = await waitForElementById("movedOwner");
+        var axMovedParent = await waitForElementById("movedParent");
+        await waitFor(() => axMovedParent.childrenCount === 1);
+
+        document.getElementById("movedOwner").setAttribute("aria-owns", "movedChild");
+        await waitFor(() => axMovedOwner.childrenCount === 1);
+
+        window.movedOwnerCount = axMovedOwner.childrenCount;
+        testOutput += expect("movedOwnerCount", "1");
+        window.movedRole = axMovedOwner.childrenCount ? axMovedOwner.childAtIndex(0).role : "<no child>";
+        testOutput += expect("movedRole", "expectedButtonRole");
+        window.movedParentCount = axMovedParent.childrenCount;
+        testOutput += expect("movedParentCount", "0");
+
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
