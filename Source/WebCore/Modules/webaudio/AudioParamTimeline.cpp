@@ -578,6 +578,18 @@ void AudioParamTimeline::processExponentialRamp(const AutomationState& currentSt
     }
 
     auto deltaTime = currentState.time2 - currentState.time1;
+
+    // Coincident event times are legal, so deltaTime can be zero. Guard against it the way
+    // processLinearRamp() does, before it can poison the recurrence below: 1 / numSampleFrames
+    // would be infinite, making |multiplier| infinite, and the exponent computed for
+    // |currentValue| would be 0 / 0. Such a ramp has no duration, so every frame we could write
+    // here is already at or past its end time and the value is simply value2.
+    if (deltaTime.value() <= std::numeric_limits<float>::min()) {
+        value = currentState.value2;
+        fillWithValue(values, value, currentState.fillToFrame, writeIndex);
+        return;
+    }
+
     double numSampleFrames = deltaTime.value() * currentState.sampleRate;
     double ratio = currentState.value2 / static_cast<double>(currentState.value1);
     // The value goes exponentially from value1 to value2 in a duration of deltaTime seconds (corresponding to numSampleFrames).
