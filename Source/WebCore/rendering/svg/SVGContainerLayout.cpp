@@ -86,7 +86,7 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
                         svgText->setNeedsPositioningValuesUpdate();
                         needsLayout = true;
                     } else if (CheckedPtr resource = dynamicDowncast<RenderSVGResourceGradient>(child))
-                        resource->invalidateGradient();
+                        resource->invalidateGradientOnLayoutSizeChange();
                     // FIXME: [LBSE] Add pattern support.
                 }
             }

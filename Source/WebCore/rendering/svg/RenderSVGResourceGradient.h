@@ -38,6 +38,7 @@ public:
     bool prepareStrokeOperation(GraphicsContext&, const RenderLayerModelObject&, const Style::ComputedStyle&) final;
 
     virtual void invalidateGradient() = 0;
+    void invalidateGradientOnLayoutSizeChange();
 
     virtual SVGUnitTypes::SVGUnitType gradientUnits() const = 0;
 

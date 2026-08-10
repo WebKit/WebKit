@@ -80,6 +80,15 @@ ColorInterpolationMethod RenderSVGResourceGradient::gradientColorInterpolationMe
     return { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied };
 }
 
+void RenderSVGResourceGradient::invalidateGradientOnLayoutSizeChange()
+{
+    if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        repaintAllClients();
+        return;
+    }
+    invalidateGradient();
+}
+
 bool RenderSVGResourceGradient::buildGradientIfNeeded(const RenderLayerModelObject& targetRenderer, const Style::ComputedStyle& style, AffineTransform& userspaceTransform)
 {
     if (!m_gradient) {
