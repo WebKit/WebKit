@@ -26,13 +26,29 @@
 #if HAVE_NSREFRESHCONTROLLER
 
 import Foundation
+
+// The typealias lets the conformance name the protocol's module, which differs between SDKs; a
+// Swift #if cannot split an extension's head from its body.
+#if USE_APPLE_INTERNAL_SDK
 @_spi(RefreshControl) public import AppKit
+
+// swift-format-ignore: AllPublicDeclarationsHaveDocumentation, NoLeadingUnderscores
+@_spi(_)
+public typealias _WKRefreshControlHosting = AppKit.NSRefreshControlHosting
+#else
+// AppKit's @_spi(RefreshControl) declarations are absent from the public SDK.
+public import AppKit_SPI
+
+// swift-format-ignore: AllPublicDeclarationsHaveDocumentation, NoLeadingUnderscores
+@_spi(_)
+public typealias _WKRefreshControlHosting = AppKit_SPI.NSRefreshControlHosting
+#endif
 #if canImport(WebKit_Internal)
 internal import WebKit_Internal
 #endif
 
 @_spi(_)
-extension WKWebView: AppKit.NSRefreshControlHosting {
+extension WKWebView: _WKRefreshControlHosting {
     // Protocol conformance.
     // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
     public func apply(verticalInset: CGFloat, animated: Bool, completion: (@Sendable @convention(block) () -> Void)?) {
