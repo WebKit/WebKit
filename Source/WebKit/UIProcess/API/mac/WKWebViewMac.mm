@@ -424,19 +424,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _impl->showGuessPanel(sender);
 }
 
-- (IBAction)checkSpelling:(id)sender
-{
-    _impl->checkSpelling();
-}
-
 - (void)changeSpelling:(id)sender
 {
     _impl->changeSpelling(sender);
-}
-
-- (IBAction)toggleContinuousSpellChecking:(id)sender
-{
-    _impl->toggleContinuousSpellChecking();
 }
 
 - (BOOL)isGrammarCheckingEnabled
@@ -447,16 +437,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)setGrammarCheckingEnabled:(BOOL)flag
 {
     _impl->setGrammarCheckingEnabled(flag);
-}
-
-- (IBAction)toggleGrammarChecking:(id)sender
-{
-    _impl->toggleGrammarChecking();
-}
-
-- (IBAction)toggleAutomaticSpellingCorrection:(id)sender
-{
-    _impl->toggleAutomaticSpellingCorrection();
 }
 
 - (void)orderFrontSubstitutionsPanel:(id)sender
@@ -2259,6 +2239,30 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_toggleSmartLists:(id)sender
 {
     _impl->toggleSmartLists();
+}
+
+#pragma mark - Spell checking
+
+// These are not underscore-prefixed because they must match the AppKit responder chain selectors exactly.
+
+- (IBAction)checkSpelling:(id)sender
+{
+    _impl->checkSpelling();
+}
+
+- (IBAction)toggleContinuousSpellChecking:(id)sender
+{
+    _impl->toggleContinuousSpellChecking();
+}
+
+- (IBAction)toggleGrammarChecking:(id)sender
+{
+    _impl->toggleGrammarChecking();
+}
+
+- (IBAction)toggleAutomaticSpellingCorrection:(id)sender
+{
+    _impl->toggleAutomaticSpellingCorrection();
 }
 
 - (void)_storePrivateClickMeasurementWithSourceID:(uint8_t)sourceID destinationURL:(NSURL *)destinationURL reportEndpoint:(NSURL *)reportEndpoint

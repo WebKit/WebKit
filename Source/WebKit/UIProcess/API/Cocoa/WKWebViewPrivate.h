@@ -975,6 +975,13 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 - (void)_setSmartListsEnabled:(BOOL)flag WK_API_AVAILABLE(macos(26.4));
 - (void)_toggleSmartLists:(id)sender WK_API_AVAILABLE(macos(26.4));
 
+// These are deliberately not underscore-prefixed: they must match the AppKit responder chain
+// selectors exactly, and they mirror the equivalent declarations in WebKitLegacy's WebView.
+- (IBAction)checkSpelling:(id)sender WK_API_AVAILABLE(macos(27.0));
+- (IBAction)toggleContinuousSpellChecking:(id)sender WK_API_AVAILABLE(macos(27.0));
+- (IBAction)toggleGrammarChecking:(id)sender WK_API_AVAILABLE(macos(27.0));
+- (IBAction)toggleAutomaticSpellingCorrection:(id)sender WK_API_AVAILABLE(macos(27.0));
+
 - (void)_storePrivateClickMeasurementWithSourceID:(uint8_t)sourceID destinationURL:(NSURL *)destinationURL reportEndpoint:(NSURL *)reportEndpoint WK_API_AVAILABLE(macos(26.4));
 - (void)_storeSimulatedPrivateClickMeasurementConversionWithPriority:(uint8_t)priority triggerData:(uint8_t)triggerData sourceURL:(NSURL *)sourceURL destinationURL:(NSURL *)destinationURL WK_API_AVAILABLE(macos(26.4));
 
