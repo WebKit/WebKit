@@ -27,7 +27,7 @@ import shutil
 import socket
 import subprocess
 import sys
-
+from time import sleep
 
 WKDEV_CONTAINER_NAME = 'wkdev-build'
 WKDEV_SDK_VERSION_FILENAME = '.wkdev-sdk-version'
@@ -427,6 +427,27 @@ _EPHEMERAL_ENTRYPOINT_SCRIPT = (
 )
 
 
+# This is used to avoid a race condition: when the CI is updating the images on the shared directory
+# (pull_cycle that runs each 5 minutes) we need to wait for it to finish or podman will have issues.
+def maybe_wait_for_ci_pull_cycle_sdk_images():
+    podman_shared_sdk_images_dir = os.environ.get('PODMAN_SHARED_SDK_IMAGES_DIR', None)
+    if podman_shared_sdk_images_dir is None:
+        return
+    if not os.path.isdir(podman_shared_sdk_images_dir):
+        print(f"WARNING: Can't find the directory '{podman_shared_sdk_images_dir}' defined in the env var 'PODMAN_SHARED_SDK_IMAGES_DIR'", file=sys.stderr)
+        return
+    podman_shared_sdk_images_ongoing = os.path.join(podman_shared_sdk_images_dir, '.pull_cycle_ongoing')
+    i = 0
+    while os.path.isfile(podman_shared_sdk_images_ongoing):
+        if i >= 1200:
+            print('WARNING: The pull cycle has not finished in 20 minutes. Something seems wrong. Stop waiting.', file=sys.stderr)
+            return
+        if i % 10 == 0:
+            print(f'Waiting for pull cycle to finish on the shared SDK images directory at "{podman_shared_sdk_images_dir}"')
+        sleep(1)
+        i += 1
+
+
 def maybe_enter_webkit_container_sdk(argv=None):
     """If invoked on the host (outside a wkdev-sdk container), re-execute the
     current command inside an ephemeral wkdev-build container at the SDK
@@ -530,6 +551,7 @@ def maybe_enter_webkit_container_sdk(argv=None):
         container_command,
     ] + argv[1:]
 
+    maybe_wait_for_ci_pull_cycle_sdk_images()
     print('Launching WebKit Container SDK wkdev-build {}.'.format(pinned_version), file=sys.stderr)
     sys.stdout.flush()
     sys.stderr.flush()
