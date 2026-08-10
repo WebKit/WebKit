@@ -124,7 +124,7 @@ static void configureLayerAsGuard(CALayer *layer, NSString *groupName)
     layer.remoteEffects = @[ group ];
 }
 
-static RetainPtr<NSString> interactionRegionGroupNameForRegion(const WebCore::PlatformLayerIdentifier& layerID, const WebCore::InteractionRegion& interactionRegion)
+static RetainPtr<NSString> interactionRegionGroupNameForRegion(const WebCore::QualifiedPlatformLayerIdentifier& layerID, const WebCore::InteractionRegion& interactionRegion)
 {
     return makeString("WKInteractionRegion-"_s, interactionRegion.nodeIdentifier.toUInt64()).createNSString();
 }

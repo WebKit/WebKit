@@ -50,13 +50,13 @@ PortalPresentationManagerProxy::PortalPresentationManagerProxy(WebPageProxy& pag
 
 PortalPresentationManagerProxy::~PortalPresentationManagerProxy() = default;
 
-RetainPtr<WKPageHostedPortalView> PortalPresentationManagerProxy::setUpModelView(Ref<WebCore::ModelContext> modelContext)
+RetainPtr<WKPageHostedPortalView> PortalPresentationManagerProxy::setUpModelView(WebCore::ProcessIdentifier processIdentifier, Ref<WebCore::ModelContext> modelContext)
 {
     RefPtr webPageProxy = m_page.get();
     if (!webPageProxy)
         return nil;
 
-    auto& modelPresentation = ensurePortalPresentation(modelContext, *webPageProxy);
+    auto& modelPresentation = ensurePortalPresentation(processIdentifier, modelContext, *webPageProxy);
     auto view = modelPresentation.pageHostedPortalView;
     CGRect frame = [view frame];
     frame.origin = WebCore::FloatPoint { modelContext->modelLayoutOrigin() };
@@ -69,7 +69,7 @@ RetainPtr<WKPageHostedPortalView> PortalPresentationManagerProxy::setUpModelView
     return view;
 }
 
-RetainPtr<UIView> PortalPresentationManagerProxy::startDragForModel(const WebCore::PlatformLayerIdentifier& layerIdentifier)
+RetainPtr<UIView> PortalPresentationManagerProxy::startDragForModel(const WebCore::QualifiedPlatformLayerIdentifier& layerIdentifier)
 {
     auto iterator = m_portalPresentations.find(layerIdentifier);
     if (iterator == m_portalPresentations.end())
@@ -95,7 +95,7 @@ RetainPtr<UIView> PortalPresentationManagerProxy::startDragForModel(const WebCor
 
 void PortalPresentationManagerProxy::doneWithCurrentDragSession()
 {
-    for (WebCore::PlatformLayerIdentifier layerIdentifier : m_activelyDraggedModelLayerIDs) {
+    for (auto layerIdentifier : m_activelyDraggedModelLayerIDs) {
         auto iterator = m_portalPresentations.find(layerIdentifier);
         if (iterator == m_portalPresentations.end())
             continue;
@@ -120,7 +120,7 @@ void PortalPresentationManagerProxy::pageScaleDidChange(CGFloat newScale)
     }
 }
 
-void PortalPresentationManagerProxy::invalidateModel(const WebCore::PlatformLayerIdentifier& layerIdentifier)
+void PortalPresentationManagerProxy::invalidateModel(const WebCore::QualifiedPlatformLayerIdentifier& layerIdentifier)
 {
     auto iterator = m_portalPresentations.find(layerIdentifier);
     if (iterator == m_portalPresentations.end())
@@ -146,9 +146,9 @@ void PortalPresentationManagerProxy::invalidateAllModels()
     RELEASE_LOG_INFO(ModelElement, "%p - PortalPresentationManagerProxy removed all model presentations", this);
 }
 
-PortalPresentationManagerProxy::PortalPresentation& PortalPresentationManagerProxy::ensurePortalPresentation(Ref<WebCore::ModelContext> modelContext, const WebPageProxy& webPageProxy)
+PortalPresentationManagerProxy::PortalPresentation& PortalPresentationManagerProxy::ensurePortalPresentation(WebCore::ProcessIdentifier processIdentifier, Ref<WebCore::ModelContext> modelContext, const WebPageProxy& webPageProxy)
 {
-    auto layerIdentifier = modelContext->modelLayerIdentifier();
+    WebCore::QualifiedPlatformLayerIdentifier layerIdentifier { modelContext->modelLayerIdentifier(), processIdentifier };
     if (m_portalPresentations.contains(layerIdentifier)) {
         // Update the existing PortalPresentation
         PortalPresentation& modelPresentation = *(m_portalPresentations.get(layerIdentifier));
@@ -189,12 +189,12 @@ PortalPresentationManagerProxy::PortalPresentationManagerProxy(WebPageProxy& pag
 
 PortalPresentationManagerProxy::~PortalPresentationManagerProxy() = default;
 
-RetainPtr<WKPageHostedPortalView> PortalPresentationManagerProxy::setUpModelView(Ref<WebCore::ModelContext>)
+RetainPtr<WKPageHostedPortalView> PortalPresentationManagerProxy::setUpModelView(WebCore::ProcessIdentifier, Ref<WebCore::ModelContext>)
 {
     return nil;
 }
 
-RetainPtr<UIView> PortalPresentationManagerProxy::startDragForModel(const WebCore::PlatformLayerIdentifier&)
+RetainPtr<UIView> PortalPresentationManagerProxy::startDragForModel(const WebCore::QualifiedPlatformLayerIdentifier&)
 {
     return nil;
 }
@@ -207,7 +207,7 @@ void PortalPresentationManagerProxy::pageScaleDidChange(CGFloat)
 {
 }
 
-void PortalPresentationManagerProxy::invalidateModel(const WebCore::PlatformLayerIdentifier&)
+void PortalPresentationManagerProxy::invalidateModel(const WebCore::QualifiedPlatformLayerIdentifier&)
 {
 }
 

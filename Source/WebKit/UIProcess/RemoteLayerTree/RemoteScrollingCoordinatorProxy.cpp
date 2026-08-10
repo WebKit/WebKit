@@ -103,7 +103,7 @@ ScrollRequestData RemoteScrollingCoordinatorProxy::commitScrollingTreeState(IPC:
         stateTree->setRootFrameIdentifier(transaction.rootFrameIdentifier());
 
         ASSERT(stateTree);
-        connectStateNodeLayers(*stateTree, *layerTreeHost);
+        connectStateNodeLayers(WebProcessProxy::fromConnection(connection)->coreProcessIdentifier(), *stateTree, *layerTreeHost);
         bool succeeded = m_scrollingTree->commitTreeState(WTF::move(stateTree), identifier);
 
         MESSAGE_CHECK_WITH_RETURN_VALUE(succeeded, ScrollRequestData());
@@ -135,7 +135,7 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(IPC::
     // To do overlap hit testing correctly we tell layers about such relations.
 
     for (auto& positionedNode : scrollingTree().activePositionedNodes()) {
-        Vector<PlatformLayerIdentifier> stationaryScrollContainerIDs;
+        Vector<QualifiedPlatformLayerIdentifier> stationaryScrollContainerIDs;
 
         for (auto overflowNodeID : positionedNode->relatedOverflowScrollingNodes()) {
             RefPtr node = scrollingTree().nodeForID(overflowNodeID);

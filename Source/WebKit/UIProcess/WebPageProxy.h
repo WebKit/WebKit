@@ -431,7 +431,8 @@ using NavigationIdentifier = ObjectIdentifier<NavigationIdentifierType, uint64_t
 using NowPlayingMetadataObserver = Observer<void(const NowPlayingMetadata&)>;
 using PageIdentifier = ObjectIdentifier<PageIdentifierType>;
 using PlatformDisplayID = uint32_t;
-using PlatformLayerIdentifier = ProcessQualified<ObjectIdentifier<PlatformLayerIdentifierType>>;
+using PlatformLayerIdentifier = ObjectIdentifier<PlatformLayerIdentifierType>;
+using QualifiedPlatformLayerIdentifier = ProcessQualified<PlatformLayerIdentifier>;
 using PlaybackTargetClientContextIdentifier = ProcessQualified<ObjectIdentifier<PlaybackTargetClientContextIdentifierType>>;
 using PointerID = uint32_t;
 using ResourceLoaderIdentifier = AtomicObjectIdentifier<ResourceLoaderIdentifierType>;
@@ -1145,6 +1146,7 @@ public:
     void validateCommand(const String& commandName, CompletionHandler<void(bool, int32_t)>&&);
 
     const EditorState& editorState() const LIFETIME_BOUND;
+    std::optional<WebCore::ProcessIdentifier> processIdentifierForEditorState() const;
     bool canDelete() const { return hasSelectedRange() && isContentEditable(); }
     bool hasSelectedRange() const;
     bool isContentEditable() const;
@@ -1735,7 +1737,7 @@ public:
     void didBeginTextSearchOperation();
 
     void requestRectForFoundTextRange(const WebFoundTextRange&, CompletionHandler<void(WebCore::FloatRect)>&&);
-    void addLayerForFindOverlay(CompletionHandler<void(std::optional<WebCore::PlatformLayerIdentifier>)>&&);
+    void addLayerForFindOverlay(CompletionHandler<void(std::optional<WebCore::QualifiedPlatformLayerIdentifier>)>&&);
     void removeLayerForFindOverlay(CompletionHandler<void()>&&);
 
     void getContentsAsString(ContentAsStringIncludesChildFrames, CompletionHandler<void(const String&)>&&);

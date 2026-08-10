@@ -65,12 +65,12 @@ static NSString *const WKLookToScrollExclusionEffectName = @"lookToScrollExclusi
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeNode);
 
-Ref<RemoteLayerTreeNode> RemoteLayerTreeNode::create(WebCore::PlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<CALayer> layer)
+Ref<RemoteLayerTreeNode> RemoteLayerTreeNode::create(WebCore::QualifiedPlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<CALayer> layer)
 {
     return adoptRef(*new RemoteLayerTreeNode(layerID, hostIdentifier, WTF::move(layer)));
 }
 
-RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<CALayer> layer)
+RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::QualifiedPlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<CALayer> layer)
     : m_layerID(layerID)
     , m_remoteContextHostingIdentifier(hostIdentifier)
     , m_layer(WTF::move(layer))
@@ -81,12 +81,12 @@ RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier layerI
 
 #if PLATFORM(IOS_FAMILY)
 
-Ref<RemoteLayerTreeNode> RemoteLayerTreeNode::create(WebCore::PlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<UIView> uiView)
+Ref<RemoteLayerTreeNode> RemoteLayerTreeNode::create(WebCore::QualifiedPlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<UIView> uiView)
 {
     return adoptRef(*new RemoteLayerTreeNode(layerID, hostIdentifier, WTF::move(uiView)));
 }
 
-RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<UIView> uiView)
+RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::QualifiedPlatformLayerIdentifier layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<UIView> uiView)
     : m_layerID(layerID)
     , m_remoteContextHostingIdentifier(hostIdentifier)
     , m_layer([uiView.get() layer])
@@ -109,7 +109,7 @@ RemoteLayerTreeNode::~RemoteLayerTreeNode()
 #endif
 }
 
-Ref<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(WebCore::PlatformLayerIdentifier layerID)
+Ref<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(WebCore::QualifiedPlatformLayerIdentifier layerID)
 {
     RetainPtr<CALayer> layer = adoptNS([[WKCompositingLayer alloc] init]);
     return RemoteLayerTreeNode::create(layerID, std::nullopt, WTF::move(layer));
@@ -378,7 +378,7 @@ void RemoteLayerTreeNode::updateOverlayRegionAfterHierarchyChange()
 }
 #endif
 
-std::optional<WebCore::PlatformLayerIdentifier> RemoteLayerTreeNode::layerID(CALayer *layer)
+std::optional<WebCore::QualifiedPlatformLayerIdentifier> RemoteLayerTreeNode::layerID(CALayer *layer)
 {
     RefPtr node = forCALayer(layer);
     return node ? std::optional { node->layerID() } : std::nullopt;

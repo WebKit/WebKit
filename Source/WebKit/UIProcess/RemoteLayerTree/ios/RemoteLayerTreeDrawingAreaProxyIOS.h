@@ -49,7 +49,7 @@ public:
 
     void startForcedDisplayRefreshWindow(Seconds interval, Seconds duration);
 
-    UIView *viewWithLayerIDForTesting(WebCore::PlatformLayerIdentifier) const;
+    UIView *viewWithLayerIDForTesting(WebCore::QualifiedPlatformLayerIdentifier) const;
 
 private:
     RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy&, WebProcessProxy&);

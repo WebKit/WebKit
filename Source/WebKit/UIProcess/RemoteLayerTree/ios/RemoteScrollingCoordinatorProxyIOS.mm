@@ -108,7 +108,7 @@ UIScrollView *RemoteScrollingCoordinatorProxyIOS::scrollViewForScrollingNodeID(s
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 
-void RemoteScrollingCoordinatorProxyIOS::updateOverlayRegions(const Vector<WebCore::PlatformLayerIdentifier>& destroyedLayers)
+void RemoteScrollingCoordinatorProxyIOS::updateOverlayRegions(const Vector<WebCore::QualifiedPlatformLayerIdentifier>& destroyedLayers)
 {
     for (auto layerID : destroyedLayers) {
         if (auto nodeID = m_fixedAndStickyScrollingNodesByLayerID.takeOptional(layerID)) {
@@ -213,7 +213,7 @@ void RemoteScrollingCoordinatorProxyIOS::selectOverlayRegionScrollViewIfNeeded()
     if (newSelectedScrollView) {
         [newSelectedScrollView _updateOverlayRegionsBehavior:YES];
 
-        HashSet<WebCore::PlatformLayerIdentifier> relatedLayers;
+        HashSet<WebCore::QualifiedPlatformLayerIdentifier> relatedLayers;
         auto& relatedNodesMap = scrollingTree().overflowRelatedNodes();
 
         for (auto [layerID, scrollingNodeID] : m_scrollingNodesByLayerID) {
@@ -506,11 +506,24 @@ void RemoteScrollingCoordinatorProxyIOS::scrollingTreeNodeWillBeRemoved(WebCore:
 
 #endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 
-void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
+void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ProcessIdentifier processIdentifier, ScrollingStateTree& stateTree, const RemoteLayerTreeHost& layerTreeHost)
 {
+    // The scrolling state tree was built by a single web content process; its layer
+    // identifiers are only unique within that process.
+    auto qualify = [processIdentifier] (std::optional<PlatformLayerIdentifier> layerID) -> std::optional<QualifiedPlatformLayerIdentifier> {
+        if (!layerID)
+            return std::nullopt;
+        return QualifiedPlatformLayerIdentifier { *layerID, processIdentifier };
+    };
+    auto layerForID = [&] (std::optional<PlatformLayerIdentifier> layerID) {
+        return layerTreeHost.layerForID(qualify(layerID));
+    };
+    auto nodeForID = [&] (std::optional<PlatformLayerIdentifier> layerID) {
+        return layerTreeHost.nodeForID(qualify(layerID));
+    };
     for (auto& currNode : stateTree.nodeMap().values()) {
         if (currNode->hasChangedProperty(ScrollingStateNode::Property::Layer)) {
-            auto platformLayerID = currNode->layer().layerID();
+            auto platformLayerID = qualify(currNode->layer().layerID());
             RefPtr remoteLayerTreeNode = layerTreeHost.nodeForID(platformLayerID);
             if (remoteLayerTreeNode)
                 currNode->setLayer(remoteLayerTreeNode->layer());
@@ -545,13 +558,13 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
 
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
                 auto platformLayerID = scrollingStateNode->scrollContainerLayer().layerID();
-                RefPtr remoteLayerTreeNode = layerTreeHost.nodeForID(platformLayerID);
+                RefPtr remoteLayerTreeNode = nodeForID(platformLayerID);
                 if (remoteLayerTreeNode)
                     scrollingStateNode->setScrollContainerLayer(remoteLayerTreeNode->layer());
             }
 
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
-                scrollingStateNode->setScrolledContentsLayer(layerTreeHost.layerForID(scrollingStateNode->scrolledContentsLayer().layerID()).get());
+                scrollingStateNode->setScrolledContentsLayer(layerForID(scrollingStateNode->scrolledContentsLayer().layerID()).get());
             break;
         };
         case ScrollingNodeType::MainFrame:
@@ -560,23 +573,23 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
 
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
                 auto platformLayerID = scrollingStateNode->scrollContainerLayer().layerID();
-                RefPtr remoteLayerTreeNode = layerTreeHost.nodeForID(platformLayerID);
+                RefPtr remoteLayerTreeNode = nodeForID(platformLayerID);
                 if (remoteLayerTreeNode)
                     scrollingStateNode->setScrollContainerLayer(remoteLayerTreeNode->layer());
             }
 
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
-                scrollingStateNode->setScrolledContentsLayer(layerTreeHost.layerForID(scrollingStateNode->scrolledContentsLayer().layerID()).get());
+                scrollingStateNode->setScrolledContentsLayer(layerForID(scrollingStateNode->scrolledContentsLayer().layerID()).get());
 
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::CounterScrollingLayer))
-                scrollingStateNode->setCounterScrollingLayer(layerTreeHost.layerForID(scrollingStateNode->counterScrollingLayer().layerID()).get());
+                scrollingStateNode->setCounterScrollingLayer(layerForID(scrollingStateNode->counterScrollingLayer().layerID()).get());
 
             // FIXME: we should never have header and footer layers coming from the WebProcess.
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::HeaderLayer))
-                scrollingStateNode->setHeaderLayer(layerTreeHost.layerForID(scrollingStateNode->headerLayer().layerID()).get());
+                scrollingStateNode->setHeaderLayer(layerForID(scrollingStateNode->headerLayer().layerID()).get());
 
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::FooterLayer))
-                scrollingStateNode->setFooterLayer(layerTreeHost.layerForID(scrollingStateNode->footerLayer().layerID()).get());
+                scrollingStateNode->setFooterLayer(layerForID(scrollingStateNode->footerLayer().layerID()).get());
             break;
         }
         case ScrollingNodeType::PluginScrolling: {
@@ -584,13 +597,13 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
 
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
                 auto platformLayerID = scrollingStateNode->scrollContainerLayer().layerID();
-                RefPtr remoteLayerTreeNode = layerTreeHost.nodeForID(platformLayerID);
+                RefPtr remoteLayerTreeNode = nodeForID(platformLayerID);
                 if (remoteLayerTreeNode)
                     scrollingStateNode->setScrollContainerLayer(remoteLayerTreeNode->layer());
             }
 
             if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
-                scrollingStateNode->setScrolledContentsLayer(layerTreeHost.layerForID(scrollingStateNode->scrolledContentsLayer().layerID()).get());
+                scrollingStateNode->setScrolledContentsLayer(layerForID(scrollingStateNode->scrolledContentsLayer().layerID()).get());
             break;
         }
         case ScrollingNodeType::OverflowProxy:
@@ -600,7 +613,7 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
         case ScrollingNodeType::Sticky: {
             if (RefPtr stickyStateNode = dynamicDowncast<ScrollingStateStickyNode>(currNode)) {
                 if (stickyStateNode->hasChangedProperty(ScrollingStateNode::Property::ViewportAnchorLayer))
-                    stickyStateNode->setViewportAnchorLayer(layerTreeHost.layerForID(stickyStateNode->viewportAnchorLayer().layerID()).get());
+                    stickyStateNode->setViewportAnchorLayer(layerForID(stickyStateNode->viewportAnchorLayer().layerID()).get());
             }
             break;
         }

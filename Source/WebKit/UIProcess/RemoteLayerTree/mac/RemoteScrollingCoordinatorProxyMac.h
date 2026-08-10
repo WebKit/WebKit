@@ -60,7 +60,7 @@ private:
     void scrollingTreeNodeDidBeginScrollSnapping(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScrollSnapping(WebCore::ScrollingNodeID) override;
 
-    void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) override;
+    void connectStateNodeLayers(WebCore::ProcessIdentifier, WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) override;
 
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
     void windowScreenWillChange() override;
@@ -76,7 +76,7 @@ private:
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&) override;
     void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime) override;
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const override;
-    RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const override;
+    RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::QualifiedPlatformLayerIdentifier) const override;
     HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const override;
 #else
     void willCommitLayerAndScrollingTrees() override;
