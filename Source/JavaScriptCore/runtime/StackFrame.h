@@ -33,6 +33,7 @@
 #include <JavaScriptCore/WasmIndexOrName.h>
 #include <JavaScriptCore/WriteBarrier.h>
 #include <limits.h>
+#include <optional>
 #include <wtf/Variant.h>
 
 namespace JSC {
@@ -50,6 +51,7 @@ struct JSFrameData {
 struct WasmFrameData {
     Wasm::IndexOrName functionIndexOrName;
     size_t functionIndex { 0 };
+    std::optional<uint32_t> bytecodeOffset;
 };
 
 enum class AllowURLOverride : bool { No, Yes };
@@ -64,7 +66,7 @@ public:
     StackFrame(VM&, JSCell* owner, CodeBlock*, BytecodeIndex);
     StackFrame(VM&, JSCell* owner, JSCell* callee, bool isAsyncFrame);
     StackFrame(Wasm::IndexOrName);
-    StackFrame(Wasm::IndexOrName, size_t functionIndex);
+    StackFrame(Wasm::IndexOrName, size_t functionIndex, std::optional<uint32_t> bytecodeOffset = std::nullopt);
     StackFrame() = default;
 
     bool hasLineAndColumnInfo() const

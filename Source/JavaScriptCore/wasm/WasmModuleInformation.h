@@ -144,6 +144,12 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
         return functions[index].end - functions[index].start;
     }
 
+    size_t functionBytecodeOffsetBase(FunctionCodeIndex index) const
+    {
+        ASSERT(index < internalFunctionCount());
+        return functions[index].start;
+    }
+
     bool usesSIMDImportSpace(FunctionSpaceIndex index) const { return usesSIMD(toCodeIndex(index)); }
     bool usesSIMD(FunctionCodeIndex index) const
     {

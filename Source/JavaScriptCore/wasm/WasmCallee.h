@@ -474,9 +474,9 @@ class IPIntCallee final : public Callee {
     friend class JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:
-    static Ref<IPIntCallee> create(FunctionIPIntMetadataGenerator& generator, FunctionSpaceIndex index, const RTT& signatureRTT, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    static Ref<IPIntCallee> create(FunctionIPIntMetadataGenerator& generator, FunctionSpaceIndex index, const RTT& signatureRTT, std::pair<const Name*, RefPtr<NameSection>>&& name, size_t functionStartInModule)
     {
-        return adoptRef(*new IPIntCallee(generator, index, signatureRTT, WTF::move(name)));
+        return adoptRef(*new IPIntCallee(generator, index, signatureRTT, WTF::move(name), functionStartInModule));
     }
 
     FunctionCodeIndex functionIndex() const { return m_functionIndex; }
@@ -486,6 +486,7 @@ public:
     const uint8_t* bytecode() const { return m_bytecode; }
     const uint8_t* bytecodeEnd() const { return m_bytecodeEnd; }
     const uint8_t* metadata() const LIFETIME_BOUND { return m_metadata.span().data(); }
+    uint32_t moduleBytecodeOffsetBase() const { return m_moduleBytecodeOffsetBase; }
 
     unsigned numLocals() const { return m_numLocals; }
     unsigned localSizeToAlloc() const { return m_localSizeToAlloc; }
@@ -508,7 +509,7 @@ public:
     unsigned computeCodeHashImpl() const;
 
 private:
-    IPIntCallee(FunctionIPIntMetadataGenerator&, FunctionSpaceIndex, const RTT& signatureRTT, std::pair<const Name*, RefPtr<NameSection>>&&);
+    IPIntCallee(FunctionIPIntMetadataGenerator&, FunctionSpaceIndex, const RTT& signatureRTT, std::pair<const Name*, RefPtr<NameSection>>&&, size_t functionStartInModule);
 
     CodePtr<WasmEntryPtrTag> entrypointImpl() const { return m_entrypoint; }
     std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; };
@@ -519,6 +520,7 @@ private:
 
     const uint8_t* m_bytecode;
     const uint8_t* m_bytecodeEnd;
+    uint32_t m_moduleBytecodeOffsetBase { 0 };
     Vector<uint8_t> m_metadata;
     Vector<uint8_t> m_localInitBytecode;
     RefPtr<const RTT> m_signatureRTT;
