@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/WEB_FEATURES.yml
@@ -20,6 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-exponential.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-inverse.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-linear.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/offline-hrtf-active-immediately.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-equalpower-stereo.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-position.html
@@ -27,6 +26,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower-stereo.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-hrtf-negative-elevation.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-non-finite-distance-params.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-orientation-cone-gain-changes.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-rolloff-clamping.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-basic.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-setposition-throws.html

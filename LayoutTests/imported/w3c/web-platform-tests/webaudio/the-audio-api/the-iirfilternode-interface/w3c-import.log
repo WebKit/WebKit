@@ -10,13 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/ctor-iirfilter.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/iir-filter-silent-block-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/iirfilter-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/iirfilter-getFrequencyResponse.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/iirfilter-normalization-precision.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/iirfilter.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/test-iirfilternode.html

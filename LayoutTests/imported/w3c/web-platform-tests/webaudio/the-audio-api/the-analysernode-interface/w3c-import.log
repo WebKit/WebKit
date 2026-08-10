@@ -10,11 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/analysernode-rendersizehint.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/ctor-analyser.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html

@@ -5,4 +5,13 @@ PASS setPosition z
 PASS setOrientation x
 PASS setOrientation y
 PASS setOrientation z
+PASS listener.setPosition x
+PASS listener.setPosition y
+PASS listener.setPosition z
+PASS listener.setOrientation x
+PASS listener.setOrientation y
+PASS listener.setOrientation z
+PASS listener.setOrientation xUp
+PASS listener.setOrientation yUp
+PASS listener.setOrientation zUp
 

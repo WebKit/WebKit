@@ -10,12 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/constant-source-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/constant-source-onended-not-connected.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/constant-source-onended.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/constant-source-output.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/ctor-constantsource.html

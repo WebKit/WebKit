@@ -1,4 +1,3 @@
 
-PASS Initialize worklet: Creation of AudioWorklet
-PASS test: Simple AudioWorklet I/O
+PASS Simple AudioWorklet I/O
 

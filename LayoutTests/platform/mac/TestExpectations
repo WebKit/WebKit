@@ -1654,7 +1654,6 @@ webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-20.html [ S
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ Slow ]
 
 # rdar://69347249
-[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
 [ arm64 ] webaudio/Analyser/realtimeanalyser-byte-data.html [ Failure ]
 [ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
 [ arm64 ] webaudio/Oscillator/no-dezippering.html [ Failure ]
@@ -1941,7 +1940,6 @@ webkit.org/b/256108 media/video-audio-session-mode.html [ Failure ]
 webkit.org/b/258181 [ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Slow Failure ]
 
 # webkit.org/b/258328 Umbrella Bug: Batch mark expectations slowing down EWS
-[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-denormals.https.window.html [ Failure ]
 [ Debug ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Crash ]
 
 webkit.org/b/236128 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]

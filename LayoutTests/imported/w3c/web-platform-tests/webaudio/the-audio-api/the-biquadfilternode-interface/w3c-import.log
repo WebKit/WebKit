@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/WEB_FEATURES.yml
@@ -27,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-notch.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-peaking.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-tail.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquadfilter-rendersizehint.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquadfilternode-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/ctor-biquadfilter.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html

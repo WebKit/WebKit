@@ -1,0 +1,62 @@
+
+PASS OscillatorNode smoke test at 3000Hz & hint 1
+FAIL OscillatorNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS OscillatorNode smoke test at 48000Hz & hint 128
+PASS OscillatorNode smoke test at 48000Hz & hint 100
+PASS AudioBufferSourceNode smoke test at 3000Hz & hint 1
+FAIL AudioBufferSourceNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS AudioBufferSourceNode smoke test at 48000Hz & hint 128
+PASS AudioBufferSourceNode smoke test at 48000Hz & hint 100
+PASS ConstantSourceNode smoke test at 3000Hz & hint 1
+FAIL ConstantSourceNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS ConstantSourceNode smoke test at 48000Hz & hint 128
+PASS ConstantSourceNode smoke test at 48000Hz & hint 100
+PASS GainNode smoke test at 3000Hz & hint 1
+FAIL GainNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS GainNode smoke test at 48000Hz & hint 128
+PASS GainNode smoke test at 48000Hz & hint 100
+PASS BiquadFilterNode smoke test at 3000Hz & hint 1
+FAIL BiquadFilterNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS BiquadFilterNode smoke test at 48000Hz & hint 128
+PASS BiquadFilterNode smoke test at 48000Hz & hint 100
+PASS DelayNode smoke test at 3000Hz & hint 1
+FAIL DelayNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS DelayNode smoke test at 48000Hz & hint 128
+PASS DelayNode smoke test at 48000Hz & hint 100
+PASS DynamicsCompressorNode smoke test at 3000Hz & hint 1
+FAIL DynamicsCompressorNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS DynamicsCompressorNode smoke test at 48000Hz & hint 128
+PASS DynamicsCompressorNode smoke test at 48000Hz & hint 100
+PASS WaveShaperNode smoke test at 3000Hz & hint 1
+FAIL WaveShaperNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS WaveShaperNode smoke test at 48000Hz & hint 128
+PASS WaveShaperNode smoke test at 48000Hz & hint 100
+PASS PannerNode smoke test at 3000Hz & hint 1
+FAIL PannerNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS PannerNode smoke test at 48000Hz & hint 128
+PASS PannerNode smoke test at 48000Hz & hint 100
+PASS StereoPannerNode smoke test at 3000Hz & hint 1
+FAIL StereoPannerNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS StereoPannerNode smoke test at 48000Hz & hint 128
+PASS StereoPannerNode smoke test at 48000Hz & hint 100
+PASS AnalyserNode smoke test at 3000Hz & hint 1
+FAIL AnalyserNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS AnalyserNode smoke test at 48000Hz & hint 128
+PASS AnalyserNode smoke test at 48000Hz & hint 100
+PASS IIRFilterNode smoke test at 3000Hz & hint 1
+FAIL IIRFilterNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS IIRFilterNode smoke test at 48000Hz & hint 128
+PASS IIRFilterNode smoke test at 48000Hz & hint 100
+PASS ConvolverNode smoke test at 3000Hz & hint 1
+FAIL ConvolverNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS ConvolverNode smoke test at 48000Hz & hint 128
+PASS ConvolverNode smoke test at 48000Hz & hint 100
+PASS ChannelMergerNode smoke test at 3000Hz & hint 1
+FAIL ChannelMergerNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS ChannelMergerNode smoke test at 48000Hz & hint 128
+PASS ChannelMergerNode smoke test at 48000Hz & hint 100
+PASS ChannelSplitterNode smoke test at 3000Hz & hint 1
+FAIL ChannelSplitterNode smoke test at 768000Hz & hint 4608000 promise_test: Unhandled rejection with value: object "NotSupportedError: sampleRate is not in range"
+PASS ChannelSplitterNode smoke test at 48000Hz & hint 128
+PASS ChannelSplitterNode smoke test at 48000Hz & hint 100
+

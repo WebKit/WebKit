@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/4ch-440.wav
@@ -32,6 +30,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/note-grain-on-testing.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/panner-formulas.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/panner-model-testing.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/rendersizehint-robustness-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/rendersizehint-testing.js
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/rms-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/sin_440Hz_-6dBFS_1s.wav
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/start-stop-exceptions.js
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/resources/stereopanner-testing.js

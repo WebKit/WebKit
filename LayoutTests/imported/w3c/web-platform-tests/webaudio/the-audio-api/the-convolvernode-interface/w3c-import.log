@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/WEB_FEATURES.yml
@@ -19,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolution-mono-mono.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-cascade.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-channels.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-rendersizehint.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan.html

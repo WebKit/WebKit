@@ -10,26 +10,31 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/active-processing.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-channels.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-duration-loop-playbackrate.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-duration-loop.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-ended.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-grain.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-loop-short-duration.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-multi-channels.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-null.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-one-sample-loop.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-output-channel-count.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-playbackrate-dynamic-direction.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-playbackrate-negative.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-playbackrate-zero.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-start-null-buffer.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-start.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-onended.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-time-limits.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/buffer-resampling.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/ctor-audiobuffersource.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/looped-constant-buffer.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/note-grain-on-play.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/note-grain-on-timing.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sample-accurate-scheduling.html

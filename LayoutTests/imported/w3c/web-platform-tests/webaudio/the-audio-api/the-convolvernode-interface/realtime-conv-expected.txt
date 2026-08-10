@@ -1,3 +1,3 @@
 
-PASS Test convolver with realâ€‘time context
+PASS Test convolver with real-time context
 

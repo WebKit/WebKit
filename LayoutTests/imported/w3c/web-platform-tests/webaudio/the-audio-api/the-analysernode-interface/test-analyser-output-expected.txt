@@ -1,3 +1,3 @@
 
-PASS AnalyserNode output
+PASS AnalyserNode output passes through input signal unmodified
 

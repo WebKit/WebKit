@@ -10,9 +10,8 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiodestinationnode-interface/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiodestinationnode-interface/closed-audiocontext-construction.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiodestinationnode-interface/ctor-mediastreamaudiodestination.html
