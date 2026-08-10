@@ -29,7 +29,7 @@
     EnabledBy=RemoteMediaSessionManagerEnabled || SiteIsolationEnabled
 ]
 messages -> RemoteMediaSessionManagerProxy {
-    UpdateMediaSessionStates(WebCore::PageIdentifier pageIdentifier, Vector<WebKit::RemoteMediaSessionState> sessions, uint64_t audioCaptureSourceCount) -> (enum:uint8_t WebCore::AudioSessionCategory category, enum:uint8_t WebCore::AudioSessionMode mode, enum:uint8_t WebCore::RouteSharingPolicy policy)
+    UpdateMediaSessionStates(WebCore::PageIdentifier pageIdentifier, Vector<WebKit::RemoteMediaSessionState> sessions, uint64_t audioCaptureSourceCount, enum:uint8_t WebCore::AudioSessionCategory categoryOverride) -> (enum:uint8_t WebCore::AudioSessionCategory category, enum:uint8_t WebCore::AudioSessionMode mode, enum:uint8_t WebCore::RouteSharingPolicy policy)
     void AddMediaSession(struct WebKit::RemoteMediaSessionState session);
     void RemoveMediaSession(struct WebKit::RemoteMediaSessionState session);
     void SetCurrentMediaSession(struct WebKit::RemoteMediaSessionState session);

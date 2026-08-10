@@ -152,7 +152,15 @@ Ref<GenericPromise> RemoteMediaSessionManager::updateSessionState()
         return currentSessionState(*session);
     });
 
-    return sendWithPromisedReply(Messages::RemoteMediaSessionManagerProxy::UpdateMediaSessionStates(m_webPageID, WTF::move(sessions), countActiveAudioCaptureSources()))->whenSettled(RunLoop::mainSingleton(),
+    // navigator.audioSession.type sets the override on this process's AudioSession, but the category is
+    // computed in the UI process, which has no audio session of its own to read it from.
+#if USE(AUDIO_SESSION)
+    auto categoryOverride = WebCore::AudioSession::singleton().categoryOverride();
+#else
+    auto categoryOverride = WebCore::AudioSessionCategory::None;
+#endif
+
+    return sendWithPromisedReply(Messages::RemoteMediaSessionManagerProxy::UpdateMediaSessionStates(m_webPageID, WTF::move(sessions), countActiveAudioCaptureSources(), categoryOverride))->whenSettled(RunLoop::mainSingleton(),
         [](auto&& result) -> Ref<GenericPromise> {
             if (!result)
                 return GenericPromise::createAndReject();

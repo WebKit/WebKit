@@ -103,7 +103,7 @@ private:
     void addMediaSession(IPC::Connection&, RemoteMediaSessionState&&);
     void removeMediaSession(IPC::Connection&, RemoteMediaSessionState&&);
     void setCurrentMediaSession(IPC::Connection&, RemoteMediaSessionState&&);
-    void updateMediaSessionStates(IPC::Connection&, WebCore::PageIdentifier, Vector<RemoteMediaSessionState>&&, uint64_t audioCaptureSourceCount, CompletionHandler<void(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&&);
+    void updateMediaSessionStates(IPC::Connection&, WebCore::PageIdentifier, Vector<RemoteMediaSessionState>&&, uint64_t audioCaptureSourceCount, WebCore::AudioSessionCategory categoryOverride, CompletionHandler<void(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&&);
     void mediaSessionStateChanged(IPC::Connection&, WebKit::RemoteMediaSessionState&&);
     void mediaSessionWillBeginPlayback(IPC::Connection&, RemoteMediaSessionState&&, CompletionHandler<void(bool, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&&);
 
@@ -143,7 +143,7 @@ private:
     size_t preferredBufferSize() const final { return m_audioConfiguration.preferredBufferSize; }
     void setPreferredBufferSize(size_t) final;
 
-    CategoryType categoryOverride() const final  { return m_audioConfiguration.categoryOverride; }
+    CategoryType categoryOverride() const final;
 #endif
 
     RefPtr<WebCore::PlatformMediaSessionInterface> findAndUpdateSession(IPC::Connection&, const RemoteMediaSessionState&);
@@ -158,6 +158,9 @@ private:
 
     HashMap<WebCore::ProcessQualified<WebCore::MediaSessionIdentifier>, Ref<RemoteMediaSessionProxy>> m_sessionProxies;
     HashMap<WebCore::ProcessQualified<WebCore::PageIdentifier>, uint64_t> m_audioCaptureSourceCountsByPage;
+#if USE(AUDIO_SESSION)
+    HashMap<WebCore::ProcessQualified<WebCore::PageIdentifier>, WebCore::AudioSessionCategory> m_categoryOverridesByPage;
+#endif
 
 #if PLATFORM(COCOA)
     RefPtr<RemoteMediaSessionManagerAudioHardwareListener> m_audioHardwareListenerProxy;

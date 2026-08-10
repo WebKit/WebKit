@@ -247,6 +247,12 @@ void RemoteMediaSessionManagerProxy::webProcessWillShutDown(WebCore::ProcessIden
         updateSessionState();
 
 #if USE(AUDIO_SESSION)
+    // Drop any override that process had set, so it no longer affects the category.
+    if (m_categoryOverridesByPage.removeIf([processIdentifier](auto& entry) {
+        return entry.key.processIdentifier() == processIdentifier;
+    }))
+        updateSessionState();
+
     // If we had activated the audio session on behalf of this now-gone process, forget it: its GPU
     // audio-session proxy was torn down with the process, and removeSession() above already drives the
     // shared session inactive once nothing else needs it. This keeps a later deactivation from being
@@ -271,7 +277,7 @@ void RemoteMediaSessionManagerProxy::refreshSessionStates(IPC::Connection& conne
     }
 }
 
-void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& connection, WebCore::PageIdentifier pageIdentifier, Vector<RemoteMediaSessionState>&& sessions, uint64_t audioCaptureSourceCount, CompletionHandler<void(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&& completionHandler)
+void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& connection, WebCore::PageIdentifier pageIdentifier, Vector<RemoteMediaSessionState>&& sessions, uint64_t audioCaptureSourceCount, WebCore::AudioSessionCategory categoryOverride, CompletionHandler<void(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&& completionHandler)
 {
     refreshSessionStates(connection, sessions);
 
@@ -280,6 +286,17 @@ void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& c
         m_audioCaptureSourceCountsByPage.remove(key);
     else
         m_audioCaptureSourceCountsByPage.set(key, audioCaptureSourceCount);
+
+#if USE(AUDIO_SESSION)
+    // Each page reports its own override. Keep them separate so that a page without one does not clear
+    // the override another page has set.
+    if (categoryOverride == WebCore::AudioSessionCategory::None)
+        m_categoryOverridesByPage.remove(key);
+    else
+        m_categoryOverridesByPage.set(key, categoryOverride);
+#else
+    UNUSED_PARAM(categoryOverride);
+#endif
 
     updateSessionState();
 #if USE(AUDIO_SESSION)
@@ -354,6 +371,16 @@ void RemoteMediaSessionManagerProxy::resetMediaSessionRestrictions()
 }
 
 #if USE(AUDIO_SESSION)
+WebCore::AudioSessionCategory RemoteMediaSessionManagerProxy::categoryOverride() const
+{
+    // Use the override of any page that has set one. Pages without an override have no entry here.
+    for (auto category : m_categoryOverridesByPage.values()) {
+        if (category != WebCore::AudioSessionCategory::None)
+            return category;
+    }
+    return WebCore::AudioSessionCategory::None;
+}
+
 void RemoteMediaSessionManagerProxy::remoteAudioConfigurationChanged(RemoteAudioSessionConfiguration&& configuration)
 {
     m_audioConfiguration = WTF::move(configuration);
