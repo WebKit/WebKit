@@ -48,9 +48,6 @@ namespace Style {
 class ComputedStyle;
 }
 
-// Whether an offset shape keeps constant thickness along the curve (outline) vs. expanding as an area (box-shadow spread).
-enum class ConstantThicknessOffset : bool { No, Yes };
-
 // BorderShape is used to fill and clip to the shape formed by the border and padding boxes with border-radius.
 // In future, this may be a more complex shape than a rounded rect, so accessors that return rounded rects
 // are deprecated.
@@ -63,7 +60,7 @@ public:
     // Create a BorderShape suitable for rendering an outline or shadow. borderRect is provided to
     // allow for scaling the corner radii; radii expand outward or shrink inward based on the offset
     // between borderRect and offsetRect.
-    static BorderShape shapeForOffsetRect(const Style::ComputedStyle&, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges = { true }, ConstantThicknessOffset constantThickness = ConstantThicknessOffset::No);
+    static BorderShape shapeForOffsetRect(const Style::ComputedStyle&, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges = { true });
 
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths);
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const LayoutRoundedRectRadii&);
@@ -158,7 +155,6 @@ private:
     RectCorners<float> m_cornerCurvatures { 1.0f, 1.0f, 1.0f, 1.0f };
 
     std::optional<LayoutRoundedRect> m_offsetReferenceRect;
-    bool m_constantThicknessOffset { false };
 };
 
 } // namespace WebCore

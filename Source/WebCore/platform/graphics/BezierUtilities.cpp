@@ -310,7 +310,7 @@ Vector<FloatPoint> hermiteInterpolate(const Vector<FloatPoint>& startPoints, con
 }
 
 // Converts each Catmull-Rom span to a cubic Bézier: control points sit 1/6 of the neighbor-to-neighbor tangent out from each endpoint, giving one smooth curve through every knot
-void addCatmullRomBeziers(Path& path, const Vector<FloatPoint>& points, unsigned segmentCount, bool& started)
+void addCatmullRomBeziers(Path& path, const Vector<FloatPoint>& points, unsigned segmentCount, bool& started, std::optional<FloatSize> startTangent, std::optional<FloatSize> endTangent)
 {
     if (points.size() < 2)
         return;
@@ -330,8 +330,8 @@ void addCatmullRomBeziers(Path& path, const Vector<FloatPoint>& points, unsigned
         return knots[std::clamp(index, 0, static_cast<int>(knots.size()) - 1)];
     };
     size_t tail = std::min<size_t>(3, points.size() - 1);
-    auto startTravel = (points[tail] - points[0]).normalized();
-    auto endTravel = (points[points.size() - 1] - points[points.size() - 1 - tail]).normalized();
+    auto startTravel = startTangent.value_or((points[tail] - points[0]).normalized());
+    auto endTravel = endTangent.value_or((points[points.size() - 1] - points[points.size() - 1 - tail]).normalized());
     unsigned lastSpan = knots.size() - 2;
 
     for (unsigned spanIndex = 0; spanIndex + 1 < knots.size(); ++spanIndex) {

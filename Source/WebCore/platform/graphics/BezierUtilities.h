@@ -27,6 +27,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
+#include <optional>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -48,6 +49,6 @@ Vector<FloatPoint> resampleByArcLength(const Vector<FloatPoint>& polyline, unsig
 // fraction between two whole curves, not a position along a single curve.
 Vector<FloatPoint> hermiteInterpolate(const Vector<FloatPoint>& startPoints, const Vector<FloatSize>& startVelocities, const Vector<FloatPoint>& endPoints, const Vector<FloatSize>& endVelocities, double interpolationFraction);
 
-void addCatmullRomBeziers(Path&, const Vector<FloatPoint>& points, unsigned segmentCount, bool& started);
+void addCatmullRomBeziers(Path&, const Vector<FloatPoint>& points, unsigned segmentCount, bool& started, std::optional<FloatSize> startTangent = std::nullopt, std::optional<FloatSize> endTangent = std::nullopt);
 
 } // namespace WebCore

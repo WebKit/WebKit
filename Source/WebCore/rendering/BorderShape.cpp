@@ -114,7 +114,7 @@ BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, c
     return BorderShape { borderRect, usedBorderWidths };
 }
 
-BorderShape BorderShape::shapeForOffsetRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges, ConstantThicknessOffset constantThickness)
+BorderShape BorderShape::shapeForOffsetRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges)
 {
     auto usedEdgeWidths = applyClosedEdges(edgeWidths, closedEdges);
 
@@ -143,7 +143,6 @@ BorderShape BorderShape::shapeForOffsetRect(const Style::ComputedStyle& style, c
         if (!referenceRadii.areRenderableInRect(borderRect))
             referenceRadii.makeRenderableInRect(borderRect);
         shape.m_offsetReferenceRect = LayoutRoundedRect { borderRect, referenceRadii };
-        shape.m_constantThicknessOffset = constantThickness == ConstantThicknessOffset::Yes;
 
         return shape;
     }
@@ -181,7 +180,6 @@ BorderShape BorderShape::shapeWithBorderWidths(const RectEdges<LayoutUnit>& bord
 {
     auto shape = BorderShape(m_borderRect.rect(), borderWidths, m_borderRect.radii(), m_cornerCurvatures);
     shape.m_offsetReferenceRect = m_offsetReferenceRect;
-    shape.m_constantThicknessOffset = m_constantThicknessOffset;
     return shape;
 }
 
@@ -474,7 +472,7 @@ Path BorderShape::pathForOuterCornerShape(const FloatRoundedRect& outerSnapped, 
     Path path;
     bool useAlignedToCurve = snappedOffsetReference
         && (cornersUseAlignedToCurveOffset(m_cornerCurvatures)
-            || (m_constantThicknessOffset && cornersHaveConvexSuperellipse(m_cornerCurvatures)));
+            || cornersHaveConvexSuperellipse(m_cornerCurvatures));
     if (useAlignedToCurve) {
         addAlignedToCurveOffsetContour(path, *snappedOffsetReference, m_cornerCurvatures, outerSnapped.rect());
         if (!path.isEmpty())
@@ -507,7 +505,7 @@ Path BorderShape::pathForInnerCornerShape(const FloatRoundedRect& outerSnapped, 
     Path path;
     bool useAlignedToCurve = snappedOffsetReference
         && (cornersUseAlignedToCurveOffset(m_cornerCurvatures)
-            || (m_constantThicknessOffset && cornersHaveConvexSuperellipse(m_cornerCurvatures)));
+            || cornersHaveConvexSuperellipse(m_cornerCurvatures));
     if (useAlignedToCurve) {
         addAlignedToCurveOffsetContour(path, *snappedOffsetReference, m_cornerCurvatures, innerSnapped.rect());
         if (!path.isEmpty())
