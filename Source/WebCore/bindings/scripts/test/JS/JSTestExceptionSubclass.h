@@ -20,21 +20,20 @@
 
 #pragma once
 
-#include "TestException.h"
-#include <JavaScriptCore/ErrorPrototype.h>
+#include "JSTestException.h"
+#include "TestExceptionSubclass.h"
 #include <WebCore/JSDOMWrapper.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class JSTestException : public JSDOMErrorWrapper<TestException> {
+class JSTestExceptionSubclass : public JSTestException {
 public:
-    using Base = JSDOMErrorWrapper<TestException>;
-    static JSTestException* create(JSC::Structure*, JSDOMGlobalObject*, Ref<TestException>&&);
+    using Base = JSTestException;
+    using DOMWrapped = TestExceptionSubclass;
+    static JSTestExceptionSubclass* create(JSC::Structure*, JSDOMGlobalObject*, Ref<TestExceptionSubclass>&&);
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
-    static TestException* toWrapped(JSC::VM&, JSC::JSValue);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -49,40 +48,24 @@ public:
     }
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
+    TestExceptionSubclass& wrapped() const
+    {
+        return static_cast<TestExceptionSubclass&>(Base::wrapped());
+    }
+
 protected:
-    JSTestException(JSC::Structure*, JSDOMGlobalObject&, Ref<TestException>&&);
+    JSTestExceptionSubclass(JSC::Structure*, JSDOMGlobalObject&, Ref<TestExceptionSubclass>&&);
 
     DECLARE_DEFAULT_FINISH_CREATION;
 };
 
-class JSTestExceptionOwner final : public JSC::WeakHandleOwner {
-public:
-    JSTestExceptionOwner() = default;
-    bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, ASCIILiteral*) final;
-    void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
+JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestExceptionSubclass&);
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestExceptionSubclass>&&);
+ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestExceptionSubclass& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
 
-private:
-    explicit JSTestExceptionOwner(ClangVTableWorkaroundTag);
-};
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestException*)
-{
-    static NeverDestroyed<JSTestExceptionOwner> owner;
-    return &owner.get();
-}
-
-inline void* wrapperKey(TestException* wrappableObject)
-{
-    return wrappableObject;
-}
-
-JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestException&);
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestException>&&);
-ALWAYS_INLINE JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestException& impl) { return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref { impl }); }
-
-template<> struct JSDOMWrapperConverterTraits<TestException> {
-    using WrapperClass = JSTestException;
-    using ToWrappedReturnType = TestException*;
+template<> struct JSDOMWrapperConverterTraits<TestExceptionSubclass> {
+    using WrapperClass = JSTestExceptionSubclass;
+    using ToWrappedReturnType = TestExceptionSubclass*;
 };
 
 } // namespace WebCore

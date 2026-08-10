@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/ErrorInstance.h>
 #include <JavaScriptCore/JSDestructibleObject.h>
 #include <JavaScriptCore/JSEmbedderArrayLike.h>
 #include <WebCore/JSDOMGlobalObject.h>
@@ -120,6 +121,42 @@ public:
 protected:
     JSDOMEmbedderArrayLikeWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl)
         : Base(globalObject.vm(), structure, WTF::move(impl)) { }
+};
+
+// Wrapper base for IDL [Exception] interfaces (e.g. DOMException). It is a genuine
+// JSC::ErrorInstance, so it has the [[ErrorData]] internal slot (Error.isError() returns
+// true, Object.prototype.toString reports "Error"). It deliberately does not capture a JS
+// stack trace: DOMException's WebIDL attributes and Error.prototype provide its surface.
+template<typename ImplementationClass>
+class JSDOMErrorWrapper : public JSC::ErrorInstance {
+public:
+    using Base = JSC::ErrorInstance;
+    using DOMWrapped = ImplementationClass;
+
+    template<typename, JSC::SubspaceAccess>
+    static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
+
+    JSDOMGlobalObject* realm() const { return uncheckedDowncast<JSDOMGlobalObject>(JSC::JSNonFinalObject::realm()); }
+    ScriptExecutionContext* scriptExecutionContext() const { return realm()->scriptExecutionContext(); }
+
+    ImplementationClass& wrapped() const LIFETIME_BOUND { return m_wrapped; }
+    static constexpr ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSDOMErrorWrapper, m_wrapped); }
+    constexpr static bool hasCustomPtrTraits() { return false; }
+
+protected:
+    JSDOMErrorWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl)
+        : Base(globalObject.vm(), structure, JSC::ErrorType::Error)
+        , m_wrapped(WTF::move(impl)) { }
+
+    void finishCreation(JSC::VM& vm)
+    {
+        // Do not capture a JS stack trace or add own "message"/"stack" properties. DOMException
+        // exposes its name/message through WebIDL getters on the prototype.
+        Base::finishCreation(vm, JSC::ErrorInstance::StackTraceCapturePolicy::DoNotCapture);
+    }
+
+private:
+    const Ref<ImplementationClass> m_wrapped;
 };
 
 } // namespace WebCore

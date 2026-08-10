@@ -54,6 +54,7 @@ JSTestEnabledForContext.h:
 JSTestEventConstructor.h: 
 JSTestEventTarget.h: 
 JSTestException.h: 
+JSTestExceptionSubclass.h: 
 JSTestGenerateAddOpaqueRoot.h: 
 JSTestGenerateIsReachable.h: 
 JSTestGlobalObject.h: BindingTestGlobalConstructors.idl

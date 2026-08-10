@@ -33,15 +33,18 @@
 #include "JSAudioWorkletGlobalScope.h"
 #include "JSDOMBinding.h"
 #include "JSDOMBuiltinConstructorBase.h"
+#include "JSDOMException.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowProperties.h"
 #include "JSDedicatedWorkerGlobalScope.h"
+#include "JSGPUPipelineError.h"
 #include "JSIDBSerializationGlobalObject.h"
 #include "JSObservableArray.h"
 #include "JSPaintWorkletGlobalScope.h"
 #include "JSServiceWorkerGlobalScope.h"
 #include "JSShadowRealmGlobalScope.h"
 #include "JSSharedWorkerGlobalScope.h"
+#include "JSWebTransportError.h"
 #include "JSWindowProxy.h"
 #include "JSWorkerGlobalScope.h"
 #include "JSWorkletGlobalScope.h"
@@ -62,6 +65,14 @@
 
 #if PLATFORM(COCOA)
 #include "objc_runtime.h"
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+#include "JSOverconstrainedError.h"
+#endif
+
+#if ENABLE(WEB_RTC)
+#include "JSRTCError.h"
 #endif
 
 namespace WebCore {
@@ -89,6 +100,15 @@ JSHeapData::JSHeapData(Heap& heap)
     , m_heapCellTypeForJSAudioWorkletGlobalScope(JSC::IsoHeapCellType::Args<JSAudioWorkletGlobalScope>())
 #endif
     , m_heapCellTypeForJSIDBSerializationGlobalObject(JSC::IsoHeapCellType::Args<JSIDBSerializationGlobalObject>())
+    , m_heapCellTypeForJSDOMException(JSC::IsoHeapCellType::Args<JSDOMException>())
+#if ENABLE(WEB_RTC)
+    , m_heapCellTypeForJSRTCError(JSC::IsoHeapCellType::Args<JSRTCError>())
+#endif
+#if ENABLE(MEDIA_STREAM)
+    , m_heapCellTypeForJSOverconstrainedError(JSC::IsoHeapCellType::Args<JSOverconstrainedError>())
+#endif
+    , m_heapCellTypeForJSGPUPipelineError(JSC::IsoHeapCellType::Args<JSGPUPipelineError>())
+    , m_heapCellTypeForJSWebTransportError(JSC::IsoHeapCellType::Args<JSWebTransportError>())
     , m_domBuiltinConstructorSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMBuiltinConstructorBase)
     , m_domConstructorSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMConstructorBase)
     , m_domNamespaceObjectSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMObject)

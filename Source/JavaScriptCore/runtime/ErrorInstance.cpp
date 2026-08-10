@@ -176,6 +176,22 @@ void ErrorInstance::finishCreation(VM& vm, String&& message, LineColumn lineColu
         putDirect(vm, vm.propertyNames->cause, jsString(vm, WTF::move(cause)), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
+void ErrorInstance::finishCreation(VM& vm, StackTraceCapturePolicy policy)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+
+    if (policy == StackTraceCapturePolicy::Capture) {
+        std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(vm, this, true, nullptr, nullptr, nullptr);
+        {
+            Locker locker { cellLock() };
+            m_stackTrace = WTF::move(stackTrace);
+        }
+        vm.writeBarrier(this);
+    }
+    // Otherwise, deliberately capture no stack trace and add no own name/message/stack properties.
+}
+
 // Based on ErrorPrototype's errorProtoFuncToString(), but is modified to
 // have no observable side effects to the user (i.e. does not call proxies,
 // and getters).

@@ -411,6 +411,17 @@ protected:
             dumpBigIntData(bigIntValue);
             return true;
         }
+        // The walker descends into JSArray/JSMap/JSSet; never let Derived or the generic error
+        // path claim them as terminals.
+        if (is<JSArray>(*obj) || is<JSMap>(*obj) || is<JSSet>(*obj))
+            return false;
+
+        // Give Derived (the embedder) first refusal. This lets error-like platform objects, such
+        // as WebCore's DOMException (which is an ErrorInstance), be serialized as themselves
+        // rather than as generic Errors by the ErrorInstance path below.
+        if (static_cast<Derived*>(this)->dumpDerivedTerminal(obj, code))
+            return true;
+
         if (auto* errorInstance = dynamicDowncast<ErrorInstance>(obj)) {
             auto errorInformation = extractErrorInformationFromErrorInstance(m_lexicalGlobalObject, *errorInstance);
             if (!errorInformation)
@@ -427,14 +438,7 @@ protected:
             return true;
         }
 
-        // The walker descends into JSArray/JSMap/JSSet; never let Derived claim
-        // them as terminals. Plain objects (JSFinalObject / ObjectPrototype) fall
-        // through to dumpDerivedTerminal so DOM types may opt in, with the walker
-        // catching anything Derived didn't claim.
-        if (is<JSArray>(*obj) || is<JSMap>(*obj) || is<JSSet>(*obj))
-            return false;
-
-        return static_cast<Derived*>(this)->dumpDerivedTerminal(obj, code);
+        return false;
     }
 
     void endObject()

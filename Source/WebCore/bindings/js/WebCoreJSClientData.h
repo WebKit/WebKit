@@ -89,6 +89,18 @@ public:
 #endif
     JSC::IsoHeapCellType m_heapCellTypeForJSIDBSerializationGlobalObject;
 
+    // DOM exception wrappers (IDL [Exception] interfaces) are JSC::ErrorInstance subclasses, so
+    // they need custom heap cell types.
+    JSC::IsoHeapCellType m_heapCellTypeForJSDOMException;
+#if ENABLE(WEB_RTC)
+    JSC::IsoHeapCellType m_heapCellTypeForJSRTCError;
+#endif
+#if ENABLE(MEDIA_STREAM)
+    JSC::IsoHeapCellType m_heapCellTypeForJSOverconstrainedError;
+#endif
+    JSC::IsoHeapCellType m_heapCellTypeForJSGPUPipelineError;
+    JSC::IsoHeapCellType m_heapCellTypeForJSWebTransportError;
+
 private:
     JSC::IsoSubspace m_domBuiltinConstructorSpace;
     JSC::IsoSubspace m_domConstructorSpace;
