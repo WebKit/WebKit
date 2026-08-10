@@ -40,6 +40,7 @@
 #include "WebFrameProxy.h"
 #include "WebPageInspectorAgentBase.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
@@ -521,14 +522,19 @@ void WebPageInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<InspectorBrowserAgent>(webPageContext));
     m_agents.append(makeUniqueRef<InspectorStorageAgent>(webPageContext));
 
-    if (protect(protect(m_inspectedPage)->preferences())->siteIsolationEnabled()) {
-        // ProxyingNetworkAgent and ProxyingPageAgent are RefCounted (for IPC MessageReceiver)
-        // so they can't be stored in AgentRegistry which expects UniqueRef ownership.
-        // Their lifecycle (didCreateFrontendAndBackend / willDestroyFrontendAndBackend) is
-        // managed explicitly in connectFrontend / disconnectFrontend / disconnectAllFrontends.
-        m_networkAgent = adoptRef(*new Inspector::ProxyingNetworkAgent(webPageContext));
-        m_pageAgent = adoptRef(*new Inspector::ProxyingPageAgent(webPageContext));
-    }
+    // ProxyingNetworkAgent and ProxyingPageAgent are RefCounted (for IPC MessageReceiver)
+    // so they can't be stored in AgentRegistry which expects UniqueRef ownership.
+    // Their lifecycle (didCreateFrontendAndBackend / willDestroyFrontendAndBackend) is
+    // managed explicitly in connectFrontend / disconnectFrontend / disconnectAllFrontends.
+    //
+    // They are created for every inspection, but only serve the Page and Network domains while Site
+    // Isolation is enabled; otherwise their enable() fails and the in-process InspectorPageAgent and
+    // InspectorNetworkAgent on the page target keep serving those domains. Creating them regardless
+    // is what lets the frontend ask which of the two owns Page and Network (it cannot tell from the
+    // static protocol, and frame targets now exist either way, so their presence is not a signal).
+    // See ProxyingNetworkAgent::enable() and NetworkManager.initializeTarget.
+    m_networkAgent = adoptRef(*new Inspector::ProxyingNetworkAgent(webPageContext));
+    m_pageAgent = adoptRef(*new Inspector::ProxyingPageAgent(webPageContext));
 }
 
 void WebPageInspectorController::addTarget(std::unique_ptr<InspectorTargetProxy>&& target)
@@ -548,7 +554,7 @@ void WebPageInspectorController::removeTarget(const String& targetId)
 
 bool WebPageInspectorController::shouldManageFrameTargets() const
 {
-    return protect(protect(m_inspectedPage)->preferences())->siteIsolationEnabled();
+    return protect(protect(m_inspectedPage)->preferences())->usesInspectorFrameTargets();
 }
 
 bool WebPageInspectorController::isNetworkInstrumentationEnabled() const

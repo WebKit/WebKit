@@ -31,6 +31,7 @@
 #include "WebFrameProxy.h"
 #include "WebInspectorBackendMessages.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
@@ -224,10 +225,11 @@ void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webPro
 
 CommandResult<void> ProxyingPageAgent::enable()
 {
+    // Like ProxyingNetworkAgent::enable(), this agent stays inert while Site Isolation is off: the
+    // in-process InspectorPageAgent on the page target still serves the Page domain then.
     Ref<WebPageProxy> inspectedPage = m_inspectedPage.get();
-    Ref preferences = inspectedPage->preferences();
-    if (!preferences->siteIsolationEnabled())
-        return { };
+    if (!protect(inspectedPage->preferences())->siteIsolationEnabled())
+        return makeUnexpected("The Page domain is served by the page target while Site Isolation is disabled"_s);
 
     m_enabled = true;
 

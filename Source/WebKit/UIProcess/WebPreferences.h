@@ -71,6 +71,12 @@ public:
     FOR_EACH_WEBKIT_PREFERENCE(DECLARE_PREFERENCE_GETTER_AND_SETTERS)
     FOR_EACH_WEBKIT_PREFERENCE_WITH_INSPECTOR_OVERRIDE(DECLARE_INSPECTOR_OVERRIDE_SETTERS)
 
+    // Whether the Web Inspector surfaces a frame target for every frame of pages using these
+    // preferences. Note this is NOT the same as siteIsolationEnabled(): it is true whenever that
+    // setting is on, and also (when ENABLE(INSPECTOR_FRAME_TARGETS) is set) for every inspection even
+    // when Site Isolation is off. Mirrors WebCore::usesInspectorFrameTargets(const Settings&).
+    bool usesInspectorFrameTargets() const;
+
     static const Vector<RefPtr<API::Object>>& features();
     static const Vector<RefPtr<API::Object>>& experimentalFeatures();
     static const Vector<RefPtr<API::Object>>& internalDebugFeatures();

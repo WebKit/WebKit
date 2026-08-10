@@ -64,8 +64,18 @@ class LocalFrame;
 class Node;
 class Page;
 class PageDebugger;
+class Settings;
 class WebInjectedScriptManager;
 struct PageAgentContext;
+
+// Whether the Web Inspector surfaces a frame target for every frame of this page, so that the domains
+// served per-frame (Console, Runtime, Debugger, DOM, CSS, DOMStorage, Worker) come from the frame
+// agents rather than the page-level ones. Note this is NOT the same as Settings::siteIsolationEnabled():
+// it is true whenever that setting is on, and also (when ENABLE(INSPECTOR_FRAME_TARGETS) is set) for
+// every inspection even when Site Isolation is off. The Page and Network domains are deliberately not
+// covered by this: they are moving to the UIProcess "web-page" target, which is still gated on the Site
+// Isolation setting itself.
+WEBCORE_EXPORT bool usesInspectorFrameTargets(const Settings&);
 
 class PageInspectorController final : public Inspector::InspectorEnvironment, public CanMakeCheckedPtr<PageInspectorController> {
     WTF_MAKE_NONCOPYABLE(PageInspectorController);
