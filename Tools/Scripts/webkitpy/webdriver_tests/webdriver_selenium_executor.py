@@ -21,6 +21,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import subprocess
 
 pytest_runner = None
 
@@ -31,6 +32,27 @@ def do_delayed_imports():
 
 
 _log = logging.getLogger(__name__)
+
+
+class _BrowserOutputPlugin(object):
+    """Route the selenium-launched driver's stdout/stderr to the console"""
+
+    def pytest_configure(self, config):
+        # Deferred so we import the exact same selenium as the the tests
+        from selenium.webdriver.common import service
+
+        if getattr(service.Service, '_webkit_inherits_stdio', False):
+            return
+
+        original_init = service.Service.__init__
+
+        def init_inheriting_stdio(self, *args, **kwargs):
+            if kwargs.get('log_output') is None:
+                kwargs['log_output'] = subprocess.STDOUT
+            original_init(self, *args, **kwargs)
+
+        service.Service.__init__ = init_inheriting_stdio
+        service.Service._webkit_inherits_stdio = True
 
 
 class WebDriverSeleniumExecutor(object):
@@ -62,6 +84,10 @@ class WebDriverSeleniumExecutor(object):
         if browser_args:
             self._args.extend(['--browser-args=%s' % ' '.join(browser_args)])
 
+        self._extra_plugins = []
+        if self._port.get_option('verbose'):
+            self._extra_plugins.append(_BrowserOutputPlugin())
+
         if pytest_runner is None:
             do_delayed_imports()
 
@@ -69,4 +95,4 @@ class WebDriverSeleniumExecutor(object):
         return pytest_runner.collect(directory, self._args, self._driver_name)
 
     def run(self, test, timeout, expectations):
-        return pytest_runner.run(test, self._args, timeout, self._env, expectations, self._driver_name)
+        return pytest_runner.run(test, self._args, timeout, self._env, expectations, self._driver_name, extra_plugins=self._extra_plugins)
