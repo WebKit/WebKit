@@ -51,6 +51,8 @@ public:
     bool canBePainted() const { return !!m_texture; }
 
 private:
+    void ensureTexture(const IntSize&, CoordinatedTileBuffer&);
+
     RefPtr<BitmapTexture> m_texture;
     Vector<Update> m_updates;
     float m_scale { 1. };
