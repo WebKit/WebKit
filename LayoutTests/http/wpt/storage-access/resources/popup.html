@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<script>
+function notifyTop(msg) {
+    try { if (window.opener && window.opener.top) window.opener.top.postMessage(msg, "*"); } catch (e) {}
+}
+// Simulate the user interaction that triggers WebResourceLoadObserver -> requestStorageAccessUnderOpener.
+if (window.internals)
+    internals.withUserGesture(() => {});
+// If the web process survived the request, report back. If it was terminated, this never runs.
+setTimeout(() => notifyTop("popup-survived-user-interaction"), 1000);
+</script>
+</body>
