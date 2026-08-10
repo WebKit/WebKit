@@ -2367,6 +2367,12 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
         preferences.inactiveSchedulingPolicy = WKInactiveSchedulingPolicyNone;
     }
 
+    if (purpose == WebViewPurpose::Inspector) {
+        // Match the Web Inspector's own AllowAll policy (see WKInspectorViewController.mm) so that
+        // the extension inspector background page shares the same process as the inspector web view.
+        preferences._storageBlockingPolicy = _WKStorageBlockingPolicyAllowAll;
+    }
+
     return configuration;
 }
 

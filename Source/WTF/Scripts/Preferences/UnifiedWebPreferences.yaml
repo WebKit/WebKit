@@ -7924,6 +7924,7 @@ StorageBlockingPolicy:
       default: WebCore::StorageBlockingPolicy::BlockThirdParty
     WebCore:
       default: StorageBlockingPolicy::AllowAll
+  sharedPreferenceForWebProcess: true
 
 SubpixelInlineLayoutEnabled:
   type: bool

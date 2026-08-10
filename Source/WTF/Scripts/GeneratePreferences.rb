@@ -261,7 +261,7 @@ class Preferences
     @preferences.sort_by! { |p| p.humanReadableName.empty? ? p.name : p.humanReadableName }
     @exposedPreferences = @preferences.select { |p| p.exposed }
     @exposedFeatures = @exposedPreferences.select { |p| p.type == "bool" }
-    @sharedPreferencesForWebProcess = @exposedFeatures.select { |p| p.type == "bool" && p.sharedPreferenceForWebProcess }
+    @sharedPreferencesForWebProcess = @exposedPreferences.select { |p| p.sharedPreferenceForWebProcess }
     @inspectorOverridePreferences = @preferences.select { |p| p.hasInspectorOverride? }
 
     @preferencesBoundToSetting = @preferences.select { |p| !p.webcoreBinding }

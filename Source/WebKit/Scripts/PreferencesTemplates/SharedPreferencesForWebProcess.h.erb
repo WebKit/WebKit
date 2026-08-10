@@ -37,7 +37,11 @@ struct SharedPreferencesForWebProcess {
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
+<%- if @pref.type == "bool" -%>
     bool <%= @pref.nameLower %> : 1 { false };
+<%- elsif @pref.type == "uint32_t" -%>
+    uint32_t <%= @pref.nameLower %> { 0 };
+<%- end -%>
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

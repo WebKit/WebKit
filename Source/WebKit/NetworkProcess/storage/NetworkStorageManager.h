@@ -291,6 +291,7 @@ private:
     void setStorageSiteValidationEnabledInternal(bool);
     void addAllowedSitesForConnectionInternal(IPC::Connection::UniqueID, const Vector<WebCore::RegistrableDomain>&);
     bool isSiteAllowedForConnection(IPC::Connection::UniqueID, const WebCore::RegistrableDomain&) const;
+    bool canConnectionAccessSiteForWebStorage(IPC::Connection&, const WebCore::RegistrableDomain&) const;
 
     RefPtr<FileSystemStorageHandleRegistry> protectedFileSystemStorageHandleRegistry();
 
