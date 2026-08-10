@@ -469,6 +469,14 @@ PutByStatus PutByStatus::computeFor(JSGlobalObject* globalObject, const Structur
     result.shrinkToFit();
     return result;
 }
+
+PutByStatus PutByStatus::computeFor(CodeBlock* profiledBlock, BytecodeIndex bytecodeIndex, JSGlobalObject* globalObject, const StructureSet& set, CacheableIdentifier identifier, bool isDirect, PrivateFieldPutKind privateFieldPutKind)
+{
+    if (hasBadCacheExitSite(profiledBlock, bytecodeIndex))
+        return PutByStatus(LikelyTakesSlowPath);
+
+    return computeFor(globalObject, set, identifier, isDirect, privateFieldPutKind);
+}
 #endif
 
 bool PutByStatus::makesCalls() const
