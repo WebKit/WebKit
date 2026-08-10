@@ -31,7 +31,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WTF_Borrow, ReadWhileBorrowedThenInteriorDestroyAfter)
+TEST(WTF_VectorBorrow, ReadWhileBorrowedThenInteriorDestroyAfter)
 {
     Vector<uint8_t> vector { 1, 2, 3 };
     {
@@ -45,7 +45,7 @@ TEST(WTF_Borrow, ReadWhileBorrowedThenInteriorDestroyAfter)
     EXPECT_EQ(vector.size(), 4u);
 }
 
-TEST(WTF_Borrow, NestedBorrows)
+TEST(WTF_VectorBorrow, NestedBorrows)
 {
     Vector<uint8_t> vector { 1, 2, 3 };
     {
@@ -62,7 +62,7 @@ TEST(WTF_Borrow, NestedBorrows)
     EXPECT_EQ(vector.size(), 4u);
 }
 
-TEST(WTF_BorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(ReallocateWhileBorrowedCrashes))
+TEST(WTF_VectorBorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(ReallocateWhileBorrowedCrashes))
 {
     auto shouldCrash = [] {
         Vector<uint8_t> vector { 1, 2, 3 };
@@ -72,7 +72,7 @@ TEST(WTF_BorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(ReallocateWhileBorrowe
     ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
 }
 
-TEST(WTF_BorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(DestroyWhileBorrowedCrashes))
+TEST(WTF_VectorBorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(DestroyWhileBorrowedCrashes))
 {
     auto shouldCrash = [] {
         auto* vector = new Vector<uint8_t> { 1, 2, 3 };
@@ -82,7 +82,7 @@ TEST(WTF_BorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(DestroyWhileBorrowedCr
     ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
 }
 
-TEST(WTF_BorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(SwapWhileBorrowedCrashes))
+TEST(WTF_VectorBorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(SwapWhileBorrowedCrashes))
 {
     auto shouldCrash = [] {
         Vector<uint8_t> vector { 1, 2, 3 };
@@ -93,7 +93,7 @@ TEST(WTF_BorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(SwapWhileBorrowedCrash
     ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
 }
 
-TEST(WTF_BorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(MoveWhileBorrowedCrashes))
+TEST(WTF_VectorBorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(MoveWhileBorrowedCrashes))
 {
     auto shouldCrash = [] {
         Vector<uint8_t> vector { 1, 2, 3 };
