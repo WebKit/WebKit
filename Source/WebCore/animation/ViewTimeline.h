@@ -31,7 +31,6 @@
 #include <WebCore/ScrollTimeline.h>
 #include <WebCore/StyleViewFunction.h>
 #include <WebCore/Styleable.h>
-#include <WebCore/ViewTimelineOptions.h>
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
 
@@ -43,6 +42,7 @@ enum class SingleAnimationRangeName : uint8_t;
 
 class Element;
 class StickyPositionViewportConstraints;
+struct ViewTimelineOptions;
 
 struct StickinessAdjustmentData {
     bool operator==(const StickinessAdjustmentData& other) const = default;
@@ -71,7 +71,7 @@ struct StickinessAdjustmentData {
 
 class ViewTimeline final : public ScrollTimeline {
 public:
-    static ExceptionOr<Ref<ViewTimeline>> create(Document&, ViewTimelineOptions&& = { });
+    static ExceptionOr<Ref<ViewTimeline>> create(Document&, ViewTimelineOptions&&);
     static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
 
     const Element* NODELETE subject() const;
@@ -102,12 +102,11 @@ public:
     WebAnimationTime NODELETE epsilon() const;
 
 private:
+    ViewTimeline(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
+
     ScrollTimeline::Data computeTimelineData(UseCachedCurrentTime = UseCachedCurrentTime::Yes) const final;
     std::pair<double, double> intervalForTimelineRangeName(const ScrollTimeline::Data&, Style::SingleAnimationRangeName) const;
     template<typename F> double mapOffsetToTimelineRange(const ScrollTimeline::Data&, Style::SingleAnimationRangeName, F&&) const;
-
-    explicit ViewTimeline(ScrollAxis);
-    explicit ViewTimeline(const AtomString&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
 
     bool isViewTimeline() const final { return true; }
 
@@ -124,15 +123,7 @@ private:
 
     void cacheCurrentTime();
 
-    struct SpecifiedViewTimelineInsets {
-        RefPtr<CSSValue> start;
-        RefPtr<CSSValue> end;
-    };
-
-    ExceptionOr<SpecifiedViewTimelineInsets> validateSpecifiedInsets(const ViewTimelineInsetValue, const Document&);
-
     WeakStyleable m_subject;
-    std::optional<SpecifiedViewTimelineInsets> m_specifiedInsets;
     ResolvableViewTimelineInsets m_insets;
 
     CurrentTimeData m_cachedCurrentTimeData { };

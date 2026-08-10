@@ -2933,7 +2933,6 @@
 		713516982AE6D2AE00718EBE /* ScrollAxis.h in Headers */ = {isa = PBXBuildFile; fileRef = 713516962AE6D29600718EBE /* ScrollAxis.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		713516992AE6D2B200718EBE /* ScrollTimelineOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 713516942AE6D29600718EBE /* ScrollTimelineOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		713516A22AE6EF3500718EBE /* ViewTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 7135169F2AE6EF2900718EBE /* ViewTimeline.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		713516A32AE6EF3A00718EBE /* ViewTimelineOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7135169E2AE6EF2900718EBE /* ViewTimelineOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		713922BE2518AB77005DB3C2 /* Styleable.h in Headers */ = {isa = PBXBuildFile; fileRef = 713922BC2518AB70005DB3C2 /* Styleable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		713F1D5A23DF1D8D003F5EFA /* GetAnimationsOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 713F1D5923DF1D7D003F5EFA /* GetAnimationsOptions.h */; };
 		713F1D5D23DF2582003F5EFA /* JSGetAnimationsOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 713F1D5B23DF2560003F5EFA /* JSGetAnimationsOptions.h */; };
@@ -20315,6 +20314,9 @@
 		BCB2F88D275BEE57007231BF /* ColorNormalization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorNormalization.h; sourceTree = "<group>"; };
 		BCB308073022631300228BBA /* JSTimelineRangeOffset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSTimelineRangeOffset.h; sourceTree = "<group>"; };
 		BCB308083022631300228BBA /* JSTimelineRangeOffset.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSTimelineRangeOffset.cpp; sourceTree = "<group>"; };
+		BCB308253024FE8100228BBA /* ViewTimelineInsetValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewTimelineInsetValue.h; sourceTree = "<group>"; };
+		BCB308263024FE8100228BBA /* ViewTimelineInsetValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ViewTimelineInsetValue.cpp; sourceTree = "<group>"; };
+		BCB316FA302635DE00228BBA /* StylePrimitiveNumericTypes+TypedCSSOMConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StylePrimitiveNumericTypes+TypedCSSOMConversions.h"; sourceTree = "<group>"; };
 		BCB4779725D46EFF005EF0C8 /* RenderModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderModel.h; sourceTree = "<group>"; };
 		BCB4779825D46EFF005EF0C8 /* RenderModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderModel.cpp; sourceTree = "<group>"; };
 		BCB917692FC6115A00BA905E /* DeprecatedCSSOMCustomValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeprecatedCSSOMCustomValue.h; sourceTree = "<group>"; };
@@ -31783,6 +31785,8 @@
 				7135169D2AE6EF2800718EBE /* ViewTimeline.cpp */,
 				7135169F2AE6EF2900718EBE /* ViewTimeline.h */,
 				713516A12AE6EF2A00718EBE /* ViewTimeline.idl */,
+				BCB308263024FE8100228BBA /* ViewTimelineInsetValue.cpp */,
+				BCB308253024FE8100228BBA /* ViewTimelineInsetValue.h */,
 				7135169E2AE6EF2900718EBE /* ViewTimelineOptions.h */,
 				713516A02AE6EF2900718EBE /* ViewTimelineOptions.idl */,
 				71025EC31F99F096004A250C /* WebAnimation.cpp */,
@@ -39061,6 +39065,7 @@
 				BC9BE3EF2CFE297D00D8C2CA /* StylePrimitiveNumericTypes+Logging.h */,
 				BCEC09E32F3132C1009A3938 /* StylePrimitiveNumericTypes+Rounding.h */,
 				BC3CC1B52DE136830032971C /* StylePrimitiveNumericTypes+Serialization.h */,
+				BCB316FA302635DE00228BBA /* StylePrimitiveNumericTypes+TypedCSSOMConversions.h */,
 				BCB271EE2CC0156E00265123 /* StylePrimitiveNumericTypes.h */,
 				BCD9F05B2E1C297600D1C3DF /* StyleRatio.cpp */,
 				BC23875F2D84A59400698102 /* StyleRatio.h */,
@@ -49746,7 +49751,6 @@
 				CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */,
 				26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */,
 				713516A22AE6EF3500718EBE /* ViewTimeline.h in Headers */,
-				713516A32AE6EF3A00718EBE /* ViewTimelineOptions.h in Headers */,
 				7A10958A28C7CEB20056F3BE /* ViolationReportType.h in Headers */,
 				F4FC07D62BB3A6220090B808 /* VisibilityAdjustment.h in Headers */,
 				83407FC11E8D9C1700E048D3 /* VisibilityChangeClient.h in Headers */,

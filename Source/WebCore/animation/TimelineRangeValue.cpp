@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +27,9 @@
 #include "config.h"
 #include "TimelineRangeValue.h"
 
-#include "CSSCalcValue.h"
-#include "CSSMathValue.h"
-#include "CSSOMKeywordValue.h"
-#include "CSSPrimitiveNumericUnits.h"
 #include "CSSPropertyParserConsumer+Timeline.h"
-#include "CSSUnevaluatedCalc.h"
-#include "CSSUnitValue.h"
 #include "Document.h"
-#include "StylePrimitiveNumericTypes+Conversions.h"
+#include "StylePrimitiveNumericTypes+TypedCSSOMConversions.h"
 #include "StyleSingleAnimationRange.h"
 #include "TimelineRangeOffset.h"
 
@@ -42,30 +37,7 @@ namespace WebCore {
 
 static std::optional<Style::SingleAnimationRangeEdgeOffset> convertToOffset(Ref<CSSNumericValue>&& numericValue)
 {
-    using OffsetCSSType = Style::SingleAnimationRangeEdgeOffset::CSS;
-
-    if (RefPtr unitValue = dynamicDowncast<CSSUnitValue>(numericValue)) {
-        auto lengthPercentageUnit = CSS::toLengthPercentageUnit(unitValue->unitEnum());
-        if (!lengthPercentageUnit)
-            return std::nullopt;
-        if (CSS::conversionToCanonicalUnitRequiresConversionData(*lengthPercentageUnit))
-            return std::nullopt;
-
-        return Style::toStyle(typename OffsetCSSType::Raw { *lengthPercentageUnit, static_cast<float>(unitValue->value()) }, NoConversionDataRequiredToken { });
-    }
-    if (RefPtr mathValue = dynamicDowncast<CSSMathValue>(numericValue)) {
-        auto calcValue = mathValue->toCSSCalcValue();
-        if (!calcValue)
-            return std::nullopt;
-        if (auto category = calcValue->category(); category != CSS::Category::LengthPercentage && category != CSS::Category::Length && category != CSS::Category::Percentage)
-            return std::nullopt;
-        if (calcValue->requiresConversionData())
-            return std::nullopt;
-
-        return Style::toStyle(typename OffsetCSSType::Calc { calcValue.releaseNonNull() }, NoConversionDataRequiredToken { });
-    }
-
-    return std::nullopt;
+    return Style::toAbsoluteStyleFromCSSNumericValue<Style::SingleAnimationRangeEdgeOffset>(WTF::move(numericValue));
 }
 
 template<typename RangeEdge>

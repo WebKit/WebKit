@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@ enum class SingleAnimationRangeName : uint8_t;
 enum class SingleAnimationRangeType : bool;
 struct SingleAnimationRangeEnd;
 struct SingleAnimationRangeStart;
+struct ViewTimelineInsetItem;
 }
 
 namespace CSSPropertyParserHelpers {
@@ -65,7 +66,8 @@ RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange&, CSS::Propert
 // <single-view-timeline-inset-item> = <single-view-timeline-inset>{1,2}
 // https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset
 RefPtr<CSSValue> consumeSingleViewTimelineInsetItem(CSSParserTokenRange&, CSS::PropertyParserState&);
-RefPtr<CSSValue> parseSingleViewTimelineInsetItem(const String&, const CSSParserContext&);
+
+std::optional<Style::ViewTimelineInsetItem> parseAbsoluteSingleViewTimelineInsetItemRaw(const String&, const CSSParserContext&, const Document&);
 
 // <single-animation-range> = normal | <length-percentage> | <timeline-range-name> <length-percentage>?
 // https://drafts.csswg.org/scroll-animations-1/#propdef-animation-range-start

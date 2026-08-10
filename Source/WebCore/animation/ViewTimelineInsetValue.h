@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,33 @@
 
 #pragma once
 
-#include "ViewTimelineInsetValue.h"
-#include "Element.h"
-#include "ScrollAxis.h"
+#include "CSSNumericValue.h"
+#include "CSSOMKeywordValue.h"
+#include <optional>
+#include <wtf/text/WTFString.h>
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-struct ViewTimelineOptions {
-    RefPtr<Element> subject;
-    ScrollAxis axis;
-    ViewTimelineInsetValue inset;
-};
+class Document;
+
+namespace Style {
+struct ViewTimelineInsetItem;
+}
+
+// https://drafts.csswg.org/scroll-animations-1/#dom-viewtimelineoptions-inset
+
+// FIXME: This diverges from the spec to match Chrome by using the union
+// `(CSSNumericValue or CSSOMKeywordish)` instead of the union
+// `(CSSNumericValue or CSSOMKeywordValue)`. You don't see `CSSOMKeywordish`
+// below because it is defined as the union `(DOMString or CSSOMKeywordValue)`
+// which gets flattened into the union `(CSSNumericValue or DOMString or CSSOMKeywordValue)`.
+// Tracked via https://github.com/w3c/csswg-drafts/issues/11477
+
+using ViewTimelineIndividualInset = Variant<Ref<CSSNumericValue>, String, Ref<CSSOMKeywordValue>>;
+using ViewTimelineInsetValue = Variant<String, Vector<ViewTimelineIndividualInset>>;
+
+std::optional<Style::ViewTimelineInsetItem> validateViewTimelineInset(ViewTimelineInsetValue&&, const Document&);
 
 } // namespace WebCore

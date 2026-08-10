@@ -58,7 +58,6 @@ accessibility/AccessibilityRenderObject.cpp
 animation/BlendingKeyframes.cpp
 animation/KeyframeEffect.cpp
 animation/StyleOriginatedAnimation.cpp
-animation/ViewTimeline.cpp
 animation/WebAnimation.cpp
 bindings/js/DOMPromiseProxy.h
 bindings/js/JSAudioBufferSourceNodeCustom.cpp

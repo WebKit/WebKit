@@ -906,7 +906,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/TimelineRangeOffset.h
     animation/TimelineRangeValue.h
     animation/ViewTimeline.h
-    animation/ViewTimelineOptions.h
     animation/WebAnimation.h
     animation/WebAnimationTime.h
     animation/WebAnimationTypes.h
