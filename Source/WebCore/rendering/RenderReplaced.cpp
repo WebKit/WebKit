@@ -37,6 +37,7 @@
 #include "HTMLParserIdioms.h"
 #include "HighlightRegistry.h"
 #include "InlineIteratorBox.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBoxInlines.h"
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGRoot.h"

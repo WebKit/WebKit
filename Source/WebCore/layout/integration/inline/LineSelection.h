@@ -52,6 +52,8 @@ public:
 
     static float logicalTopAdjustedForPrecedingBlock(const InlineIterator::LineBox& lineBox)
     {
+        if (auto blockLevelBox = lineBox.blockLevelBox())
+            return blockLevelBox->logicalTop();
         // FIXME: Move adjustEnclosingTopForPrecedingBlock from RenderBlockFlow to here.
         return lineBox.formattingContextRoot().adjustEnclosingTopForPrecedingBlock(LayoutUnit { lineBox.contentLogicalTopAdjustedForPrecedingLineBox() });
     }

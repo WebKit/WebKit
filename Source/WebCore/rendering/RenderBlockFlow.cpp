@@ -3623,7 +3623,8 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
     }
 
     // FIXME: Do we really need to check for SVG content here?
-    auto hasInlineOrSVGContent = hasContentfulInlineLine() || (svgTextLayout() && svgTextLayout()->lineCount());
+    // A line carrying nothing but a block level box still has gaps to fill: that box's own, and the ones beside it.
+    auto hasInlineOrSVGContent = (inlineLayout() && inlineLayout()->hasContentfulInlineOrBlockLine()) || (svgTextLayout() && svgTextLayout()->lineCount());
     if (!hasInlineOrSVGContent) {
         // Update our lastLogicalTop to be the bottom of the block. <hr>s or empty blocks with height can trip this case.
         if (containsStart)
@@ -3701,6 +3702,8 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         return result;
     };
 
+    auto childCache = LogicalSelectionOffsetCaches { *this, cache };
+
     InlineIterator::LineBoxIterator lastSelectedLineBox;
     auto lineBox = InlineIterator::firstLineBoxFor(*this);
     for (; lineBox && !hasSelectedChildren(lineBox); lineBox.traverseNext()) { }
@@ -3709,20 +3712,52 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
     // Now paint the gaps for the lines.
     for (; lineBox && hasSelectedChildren(lineBox); lineBox.traverseNext()) {
-        auto selectionTop =  LayoutUnit { LineSelection::logicalTopAdjustedForPrecedingBlock(*lineBox) };
+        auto selectionTop = LayoutUnit { LineSelection::logicalTopAdjustedForPrecedingBlock(*lineBox) };
         auto selectionHeight = LayoutUnit { std::max(0.f, LineSelection::logicalBottom(*lineBox) - selectionTop) };
 
-        if (!containsStart && !lastSelectedLineBox
-            && selectionState() != HighlightState::Start
-            && selectionState() != HighlightState::Both)
+        auto lineState = LineSelection::selectionState(*lineBox);
+
+        CheckedPtr blockContainerWithOwnGaps = [&]() -> RenderBlock* {
+            // A block level box on a line that lays out content of its own fills its own gaps, so ask it for them
+            // instead of filling gaps around it, the way blockSelectionGaps chooses between the two per block child.
+            auto blockLevelBox = lineBox->blockLevelBox();
+            if (!blockLevelBox || blockLevelBox->selectionState() == RenderObject::HighlightState::None)
+                return { };
+            auto* blockContainer = dynamicDowncast<RenderBlock>(const_cast<RenderObject&>(blockLevelBox->renderer()));
+            if (!blockContainer || blockContainer->shouldPaintSelectionGaps() || blockContainer->canBeSelectionLeaf())
+                return { };
+            return blockContainer;
+        }();
+
+        // Fill the gap above this line the way the block path fills the gap above a block level child, from the
+        // bottom of the content before it. The first selected line has no content of ours above it, so it keeps
+        // deferring to whoever laid out what precedes us.
+        auto fillGapAboveLine = [&] {
+            if (blockContainerWithOwnGaps)
+                return false;
+            if (lastSelectedLineBox)
+                return lineState == RenderObject::HighlightState::End || lineState == RenderObject::HighlightState::Inside;
+            return !containsStart && selectionState() != HighlightState::Start && selectionState() != HighlightState::Both;
+        };
+        if (fillGapAboveLine())
             result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, selectionTop, cache, paintInfo));
 
         LayoutRect logicalRect { LayoutUnit(lineBox->contentLogicalLeft()), selectionTop, LayoutUnit(lineBox->contentLogicalWidth()), selectionTop + selectionHeight };
         logicalRect.move(isHorizontalWritingMode() ? offsetFromRootBlock : offsetFromRootBlock.transposedSize());
         LayoutRect physicalRect = rootBlock.logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
-        if (!paintInfo || (isHorizontalWritingMode() && physicalRect.y() < paintInfo->rect.maxY() && physicalRect.maxY() > paintInfo->rect.y())
+        if (blockContainerWithOwnGaps) {
+            result.unite(blockContainerWithOwnGaps->selectionGaps(rootBlock, rootBlockPhysicalPosition,
+                LayoutSize(offsetFromRootBlock.width() + blockContainerWithOwnGaps->x(), offsetFromRootBlock.height() + blockContainerWithOwnGaps->y()),
+                lastLogicalTop, lastLogicalLeft, lastLogicalRight, childCache, paintInfo));
+        } else if (!paintInfo || (isHorizontalWritingMode() && physicalRect.y() < paintInfo->rect.maxY() && physicalRect.maxY() > paintInfo->rect.y())
             || (!isHorizontalWritingMode() && physicalRect.x() < paintInfo->rect.maxX() && physicalRect.maxX() > paintInfo->rect.x()))
             result.unite(lineSelectionGap(lineBox, selectionTop, selectionHeight));
+
+        // Fill the bottom of this line forward so the next line's gap starts from it. The block path does the same
+        // per block level child; updating only after the loop leaves every line but the first with a stale value.
+        auto lineSelectionBottom = LayoutUnit { LineSelection::logicalBottom(*lineBox) };
+        updateLastLogicalValues(blockDirectionOffset(rootBlock, offsetFromRootBlock) + lineSelectionBottom,
+            logicalLeftSelectionOffset(rootBlock, lineSelectionBottom, cache), logicalRightSelectionOffset(rootBlock, lineSelectionBottom, cache));
 
         lastSelectedLineBox = lineBox;
     }

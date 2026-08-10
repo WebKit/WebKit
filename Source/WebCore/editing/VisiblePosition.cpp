@@ -37,6 +37,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "InlineIteratorBox.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineRunAndOffset.h"
 #include "LineSelection.h"
