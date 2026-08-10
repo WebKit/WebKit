@@ -207,6 +207,9 @@ void InlineContentBuilder::adjustDisplayLines(InlineContent& inlineContent, size
                     lineInkOverflowRect.unite(childInkOverflow);
                 }
 
+                if (box.isBlockLevelBox() && renderer->isInFlowPositioned())
+                    lineScrollableOverflowRect.move(renderer->offsetForInFlowPosition());
+
                 if (!renderer->hasControlClip()) {
                     auto childScrollableOverflow = renderer->layoutOverflowRectForPropagation(renderer->parent()->writingMode());
                     childScrollableOverflow.move(box.left(), box.top());
