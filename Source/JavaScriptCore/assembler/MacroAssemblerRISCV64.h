@@ -180,6 +180,25 @@ public:
         m_assembler.maskRegister<32>(dest);
     }
 
+    void add8(TrustedImm32 imm, Address address)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        if (Imm::isValid<Imm::IType>(imm.m_value)) {
+            m_assembler.lbuInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+            m_assembler.addiInsn(temp.data(), temp.data(), Imm::I(imm.m_value));
+            m_assembler.sbInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+            return;
+        }
+
+        m_assembler.lbuInsn(temp.memory(), resolution.base, Imm::I(resolution.offset));
+        loadImmediate(imm, temp.data());
+        m_assembler.addInsn(temp.data(), temp.memory(), temp.data());
+
+        resolution = resolveAddress(address, temp.memory());
+        m_assembler.sbInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+    }
+
     void add32(TrustedImm32 imm, RegisterID dest)
     {
         add32(imm, dest, dest);
@@ -460,6 +479,20 @@ public:
         auto temp = temps<Data>();
         loadImmediate(imm, temp.data());
         m_assembler.mulwInsn(dest, temp.data(), rhs);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void multiplySub32(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.mulwInsn(temp.data(), mulLeft, mulRight);
+        m_assembler.subwInsn(dest, minuend, temp.data());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void div32(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.divwInsn(dest, dividend, divisor);
         m_assembler.maskRegister<32>(dest);
     }
 
@@ -1264,16 +1297,7 @@ public:
 
     void store64(TrustedImm32 imm, Address address)
     {
-        auto temp = temps<Data, Memory>();
-        RegisterID immRegister = RISCV64Registers::zero;
-        if (!!imm.m_value) {
-            loadImmediate(imm, temp.data());
-            m_assembler.maskRegister<32>(temp.data());
-            immRegister = temp.data();
-        }
-
-        auto resolution = resolveAddress(address, temp.memory());
-        m_assembler.sdInsn(resolution.base, immRegister, Imm::S(resolution.offset));
+        store64(TrustedImm64(imm.m_value), address);
     }
 
     void store64(TrustedImm64 imm, Address address)
@@ -1296,6 +1320,11 @@ public:
             store64(TrustedImm64(int64_t(value)), address);
         else
             store64(TrustedImm32(int32_t(value)), address);
+    }
+
+    void store64(TrustedImm32 imm, BaseIndex address)
+    {
+        store64(TrustedImm64(imm.m_value), address);
     }
 
     void store64(TrustedImm64 imm, BaseIndex address)
@@ -1692,6 +1721,15 @@ public:
         m_assembler.maskRegister<32>(dest);
     }
 
+    void or32(RegisterID src, Address address)
+    {
+        auto temp = temps<Data, Memory>();
+        auto resolution = resolveAddress(address, temp.memory());
+        m_assembler.lwInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
+        m_assembler.orInsn(temp.data(), src, temp.data());
+        m_assembler.swInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
+    }
+
     void or32(RegisterID src, AbsoluteAddress address)
     {
         auto temp = temps<Data, Memory>();
@@ -1725,7 +1763,7 @@ public:
         m_assembler.lwInsn(temp.data(), resolution.base, Imm::I(resolution.offset));
 
         if (Imm::isValid<Imm::IType>(imm.m_value)) {
-            m_assembler.oriInsn(temp.data(), temp.memory(), Imm::I(imm.m_value));
+            m_assembler.oriInsn(temp.data(), temp.data(), Imm::I(imm.m_value));
             m_assembler.swInsn(resolution.base, temp.data(), Imm::S(resolution.offset));
         } else {
             loadImmediate(imm, temp.memory());
@@ -2021,6 +2059,26 @@ public:
     void move64ToDouble(RegisterID src, FPRegisterID dest)
     {
         m_assembler.fmvInsn<RISCV64Assembler::FMVType::D, RISCV64Assembler::FMVType::X>(dest, src);
+    }
+
+    // Integer arithmetic on the raw bits in an FPR: RISC-V has no such instruction, so the
+    // operands go through GPRs.
+    void add64(FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        moveDoubleTo64(left, temp.data());
+        moveDoubleTo64(right, temp.memory());
+        m_assembler.addInsn(temp.data(), temp.data(), temp.memory());
+        move64ToDouble(temp.data(), dest);
+    }
+
+    void sub64(FPRegisterID left, FPRegisterID right, FPRegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        moveDoubleTo64(left, temp.data());
+        moveDoubleTo64(right, temp.memory());
+        m_assembler.subInsn(temp.data(), temp.data(), temp.memory());
+        move64ToDouble(temp.data(), dest);
     }
 
     static bool supportsCountPopulation() { return false; }
@@ -3609,6 +3667,11 @@ public:
         convertInt32ToDouble(temp.data(), dest);
     }
 
+    void convertUInt32ToDouble(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::D, RISCV64Assembler::FCVTType::WU>(dest, src);
+    }
+
     void convertInt64ToFloat(RegisterID src, FPRegisterID dest)
     {
         m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::S, RISCV64Assembler::FCVTType::L>(dest, src);
@@ -3969,6 +4032,18 @@ public:
         m_assembler.addiInsn(dest, trueSrc, Imm::I<0>());
         m_assembler.jalInsn(RISCV64Registers::zero, Imm::J<8>());
         m_assembler.addiInsn(dest, falseSrc, Imm::I<0>());
+    }
+
+    void moveConditionally32(RelationalCondition cond, RegisterID lhs, TrustedImm32 imm, TrustedImm32 trueSrc, RegisterID falseSrc, RegisterID dest)
+    {
+        // Materializing trueSrc takes a variable number of instructions, so the branch
+        // displacements are not known here.
+        Jump falseCase = branch32(invert(cond), lhs, imm);
+        move(trueSrc, dest);
+        Jump done = jump();
+        falseCase.link(this);
+        move(falseSrc, dest);
+        done.link(this);
     }
 
     void moveConditionally64(RelationalCondition cond, RegisterID lhs, RegisterID rhs, RegisterID src, RegisterID dest)

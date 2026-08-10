@@ -34,19 +34,19 @@
 # x2  => sp (through alias sp) (RISC-V stack pointer register)
 # x3  => not used (RISC-V global pointer register)
 # x4  => not used (RISC-V thread pointer register)
-# x5  => not used
-# x6  => ws0
-# x7  => ws1
+# x5  => t8
+# x6  => t9
+# x7  => t10
 # x8  => cfr (through alias fp) (RISC-V frame pointer register)
 # x9  => csr0
-# x10 => t0, a0, wa0, r0
-# x11 => t1, a1, wa1, r1
-# x12 => t2, a2, wa2
-# x13 => t3, a3, wa3
-# x14 => t4, a4, wa4
-# x15 => t5, a5, wa5
-# x16 => t6, a6, wa6
-# x17 => t7, a7, wa7
+# x10 => t0
+# x11 => t1
+# x12 => t2
+# x13 => t3
+# x14 => t4
+# x15 => t5
+# x16 => t6
+# x17 => t7
 # x18 => csr1
 # x19 => csr2
 # x20 => csr3
@@ -62,26 +62,29 @@
 # x30 => scratch register
 # x31 => scratch register
 #
+# t11 and t12 are unmapped: the baseline JIT assigns them x28 and x29, which are scratch
+# registers here, so any .asm use of them is a build error.
+#
 # FPR conventions, to match the baseline JIT:
 #
-# f0  => ft0
-# f1  => ft1
-# f2  => ft2
-# f3  => ft3
-# f4  => ft4
-# f5  => ft5
+# f0  => not used
+# f1  => not used
+# f2  => not used
+# f3  => not used
+# f4  => not used
+# f5  => not used
 # f6  => not used
 # f7  => not used
 # f8  => csfr0
 # f9  => csfr1
-# f10 => fa0, wfa0
-# f11 => fa1, wfa1
-# f12 => fa2, wfa2
-# f13 => fa3, wfa3
-# f14 => fa4, wfa4
-# f15 => fa5, wfa5
-# f16 => fa6, wfa6
-# f17 => fa7, wfa7
+# f10 => ft0
+# f11 => ft1
+# f12 => ft2
+# f13 => ft3
+# f14 => ft4
+# f15 => ft5
+# f16 => ft6
+# f17 => ft7
 # f18 => csfr2
 # f19 => csfr3
 # f20 => csfr4
@@ -154,25 +157,27 @@ end
 class RegisterID
     def riscv64Operand
         case @name
-        when 't0', 'a0', 'wa0', 'r0'
+        when 't0'
             'x10'
-        when 't1', 'a1', 'wa1', 'r1'
+        when 't1'
             'x11'
-        when 't2', 'a2', 'wa2'
+        when 't2'
             'x12'
-        when 't3', 'a3', 'wa3'
+        when 't3'
             'x13'
-        when 't4', 'a4', 'wa4'
+        when 't4'
             'x14'
-        when 't5', 'a5', 'wa5'
+        when 't5'
             'x15'
-        when 't6', 'a6', 'wa6'
+        when 't6'
             'x16'
-        when 't7', 'a7', 'wa7'
+        when 't7'
             'x17'
-        when 'ws0'
+        when 't8'
+            'x5'
+        when 't9'
             'x6'
-        when 'ws1'
+        when 't10'
             'x7'
         when 'csr0'
             'x9'
@@ -211,37 +216,25 @@ end
 class FPRegisterID
     def riscv64Operand
         case @name
-        when 'ft0'
-            'f0'
-        when 'ft1'
-            'f1'
-        when 'ft2'
-            'f2'
-        when 'ft3'
-            'f3'
-        when 'ft4'
-            'f4'
-        when 'ft5'
-            'f5'
         when 'csfr0'
             'f8'
         when 'csfr1'
             'f9'
-        when 'fa0', 'wfa0'
+        when 'ft0'
             'f10'
-        when 'fa1', 'wfa1'
+        when 'ft1'
             'f11'
-        when 'fa2', 'wfa2'
+        when 'ft2'
             'f12'
-        when 'fa3', 'wfa3'
+        when 'ft3'
             'f13'
-        when 'fa4', 'wfa4'
+        when 'ft4'
             'f14'
-        when 'fa5', 'wfa5'
+        when 'ft5'
             'f15'
-        when 'fa6', 'wfa6'
+        when 'ft6'
             'f16'
-        when 'fa7', 'wfa7'
+        when 'ft7'
             'f17'
         when 'csfr2'
             'f18'
@@ -570,6 +563,25 @@ def riscv64LowerOperation(list)
         newList << Instruction.new(node.codeOrigin, "rv_s#{suffix}", node.operands)
     end
 
+    def emitTransferOperation(newList, node, size)
+        riscv64ValidateOperands(node.operands, [Address, Address])
+
+        case size
+        when :i
+            loadSuffix = "wu"
+            storeSuffix = "w"
+        when :p, :q
+            loadSuffix = "d"
+            storeSuffix = "d"
+        else
+            raise "Invalid size #{size}"
+        end
+
+        tmp = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_l#{loadSuffix}", [node.operands[0], tmp])
+        newList << Instruction.new(node.codeOrigin, "rv_s#{storeSuffix}", [tmp, node.operands[1]])
+    end
+
     def emitMove(newList, node)
         case riscv64OperandTypes(node.operands)
         when [RegisterID, RegisterID]
@@ -600,7 +612,7 @@ def riscv64LowerOperation(list)
         case riscv64OperandTypes(node.operands)
         when [RegisterID]
             callOpcode = "jalr"
-        when [LabelReference]
+        when [LabelReference], [LocalLabelReference]
             callOpcode = "call"
         else
             riscv64RaiseMismatchedOperands(node.operands)
@@ -852,6 +864,8 @@ def riscv64LowerOperation(list)
                 emitLoadOperation(newList, node, $1.to_sym)
             when /^store(b|h|i|p|q)$/
                 emitStoreOperation(newList, node, $1.to_sym)
+            when /^transfer(i|p|q)$/
+                emitTransferOperation(newList, node, $1.to_sym)
             when "move"
                 emitMove(newList, node)
             when "jmp"

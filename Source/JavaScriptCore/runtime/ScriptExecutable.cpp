@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "CodeBlock.h"
+#include "CompilationResult.h"
 #include "Debugger.h"
 #include "EvalCodeBlock.h"
 #include "FunctionCodeBlock.h"

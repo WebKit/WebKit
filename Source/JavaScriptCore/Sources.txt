@@ -466,7 +466,7 @@ dfg/DFGVirtualRegisterAllocationPhase.cpp
 disassembler/ARM64Disassembler.cpp
 disassembler/CapstoneDisassembler.cpp
 disassembler/Disassembler.cpp
-disassembler/RISCV64Disassembler.cpp
+disassembler/RISCV64Disassembler.cpp @no-unify // Instruction names like OR and AND collide with JSTokenType enumerators.
 disassembler/X86Disassembler.cpp
 
 disassembler/ARM64/A64DOpcode.cpp

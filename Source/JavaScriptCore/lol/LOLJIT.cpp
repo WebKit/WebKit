@@ -2887,7 +2887,7 @@ void LOLJIT::emit_op_mod(const JSInstruction* currentInstruction)
     m_fastAllocator.releaseScratches(allocations);
 }
 
-#elif CPU(ARM64)
+#elif CPU(ARM64) || CPU(RISCV64)
 
 void LOLJIT::emit_op_mod(const JSInstruction* currentInstruction)
 {
