@@ -674,6 +674,15 @@ void InspectorCanvasAgent::didChangeGPUDeviceClientNodes(GPUDevice& device)
     dispatchCanvasSizeChanged(*inspectorCanvas);
 }
 
+void InspectorCanvasAgent::didChangeWebGPUMemory(GPUDevice& device)
+{
+    RefPtr inspectorCanvas = findInspectorCanvas(device);
+    if (!inspectorCanvas)
+        return;
+
+    m_frontendDispatcher->canvasMemoryChanged(inspectorCanvas->identifier(), inspectorCanvas->memoryCost());
+}
+
 void InspectorCanvasAgent::didCreateWebGPUComputePipeline(GPUDevice& device, GPUComputePipeline& pipeline)
 {
     auto inspectorCanvas = findInspectorCanvas(device);

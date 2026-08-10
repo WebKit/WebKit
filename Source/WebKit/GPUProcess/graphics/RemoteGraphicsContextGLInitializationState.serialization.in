@@ -26,6 +26,7 @@ struct WebKit::RemoteGraphicsContextGLInitializationState {
     WebCore::GraphicsContextGLAttributes attributes;
     uint64_t knownActiveExtensions;
     uint64_t requestableExtensions;
+    std::optional<uint64_t> estimatedMemoryCost;
     GCGLint maxCombinedTextureImageUnits;
     GCGLint maxVertexAttribs;
     GCGLint maxTextureSize;

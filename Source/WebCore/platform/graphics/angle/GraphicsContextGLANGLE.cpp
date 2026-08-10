@@ -176,6 +176,17 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
 {
 }
 
+SUPPRESS_NODELETE std::optional<size_t> GraphicsContextGLANGLE::estimatedMemoryCost()
+{
+    std::array<EGLint, 2> memoryUsage { };
+    if (!EGL_QueryContext(m_displayObj, m_contextObj, EGL_CONTEXT_MEMORY_USAGE_ANGLE, memoryUsage.data()))
+        return std::nullopt;
+
+    uint64_t result = static_cast<uint32_t>(memoryUsage[0]);
+    result |= static_cast<uint64_t>(static_cast<uint32_t>(memoryUsage[1])) << 32;
+    return static_cast<size_t>(result);
+}
+
 bool GraphicsContextGLANGLE::initialize()
 {
     if (contextAttributes().failContextCreationForTesting == GraphicsContextGLAttributes::SimulatedCreationFailure::FailPlatformContextCreation)
@@ -552,6 +563,7 @@ void GraphicsContextGLANGLE::renderbufferStorage(GCGLenum target, GCGLenum inter
         return;
 
     GL_RenderbufferStorage(target, internalformat, width, height);
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::getIntegerv(GCGLenum pname, std::span<GCGLint> value)
@@ -646,6 +658,7 @@ void GraphicsContextGLANGLE::texImage2D(GCGLenum target, GCGLint level, GCGLenum
         return;
     GL_TexImage2DRobustANGLE(target, level, internalformat, width, height, border, format, type, pixels.size(), pixels.data());
     invalidateKnownTextureContent(m_state.currentBoundTexture());
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset)
@@ -656,6 +669,7 @@ void GraphicsContextGLANGLE::texImage2D(GCGLenum target, GCGLint level, GCGLenum
         return;
     GL_TexImage2DRobustANGLE(target, level, internalformat, width, height, border, format, type, 0, reinterpret_cast<GLvoid*>(offset));
     invalidateKnownTextureContent(m_state.currentBoundTexture());
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoff, GCGLint yoff, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels)
@@ -682,6 +696,7 @@ void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GC
         return;
     GL_CompressedTexImage2D(target, level, internalformat, width, height, border, data.size(), data.data());
     invalidateKnownTextureContent(m_state.currentBoundTexture());
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, int border, GCGLsizei imageSize, GCGLintptr offset)
@@ -690,6 +705,7 @@ void GraphicsContextGLANGLE::compressedTexImage2D(GCGLenum target, int level, GC
         return;
     GL_CompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, reinterpret_cast<GLvoid*>(offset));
     invalidateKnownTextureContent(m_state.currentBoundTexture());
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::compressedTexSubImage2D(GCGLenum target, int level, int xoffset, int yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, std::span<const uint8_t> data)
@@ -921,6 +937,7 @@ void GraphicsContextGLANGLE::reshape(int width, int height)
     }
 
     GL_Flush();
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::activeTexture(GCGLenum texture)
@@ -1045,6 +1062,7 @@ void GraphicsContextGLANGLE::bufferData(GCGLenum target, GCGLsizeiptr size, GCGL
         return;
 
     GL_BufferData(target, size, 0, usage);
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::bufferData(GCGLenum target, std::span<const uint8_t> data, GCGLenum usage)
@@ -1053,6 +1071,7 @@ void GraphicsContextGLANGLE::bufferData(GCGLenum target, std::span<const uint8_t
         return;
 
     GL_BufferData(target, data.size(), data.data(), usage);
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::bufferSubData(GCGLenum target, GCGLintptr offset, std::span<const uint8_t> data)
@@ -1114,6 +1133,7 @@ void GraphicsContextGLANGLE::renderbufferStorageMultisample(GCGLenum target, GCG
         return;
 
     GL_RenderbufferStorageMultisample(target, samples, internalformat, width, height);
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
@@ -1122,6 +1142,7 @@ void GraphicsContextGLANGLE::renderbufferStorageMultisampleANGLE(GCGLenum target
         return;
 
     GL_RenderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
@@ -1131,6 +1152,7 @@ void GraphicsContextGLANGLE::texStorage2D(GCGLenum target, GCGLsizei levels, GCG
 
     GL_TexStorage2D(target, levels, internalformat, width, height);
     invalidateKnownTextureContent(m_state.currentBoundTexture());
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::texStorage3D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth)
@@ -1140,6 +1162,7 @@ void GraphicsContextGLANGLE::texStorage3D(GCGLenum target, GCGLsizei levels, GCG
 
     GL_TexStorage3D(target, levels, internalformat, width, height, depth);
     invalidateKnownTextureContent(m_state.currentBoundTexture());
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::texImage3D(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels)
@@ -1147,6 +1170,7 @@ void GraphicsContextGLANGLE::texImage3D(GCGLenum target, int level, int internal
     if (!makeContextCurrent())
         return;
     GL_TexImage3DRobustANGLE(target, level, internalformat, width, height, depth, border, format, type, pixels.size(), pixels.data());
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::texImage3D(GCGLenum target, int level, int internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLenum format, GCGLenum type, GCGLintptr offset)
@@ -1154,6 +1178,7 @@ void GraphicsContextGLANGLE::texImage3D(GCGLenum target, int level, int internal
     if (!makeContextCurrent())
         return;
     GL_TexImage3DRobustANGLE(target, level, internalformat, width, height, depth, border, format, type, 0, reinterpret_cast<GLvoid*>(offset));
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::texSubImage3D(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels)
@@ -1175,6 +1200,7 @@ void GraphicsContextGLANGLE::compressedTexImage3D(GCGLenum target, int level, GC
     if (!makeContextCurrent())
         return;
     GL_CompressedTexImage3D(target, level, internalformat, width, height, depth, border, data.size(), data.data());
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::compressedTexImage3D(GCGLenum target, int level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLsizei depth, int border, GCGLsizei imageSize, GCGLintptr offset)
@@ -1182,6 +1208,7 @@ void GraphicsContextGLANGLE::compressedTexImage3D(GCGLenum target, int level, GC
     if (!makeContextCurrent())
         return;
     GL_CompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, reinterpret_cast<GLvoid*>(offset));
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::compressedTexSubImage3D(GCGLenum target, int level, int xoffset, int yoffset, int zoffset, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, std::span<const uint8_t> data)
@@ -1274,6 +1301,7 @@ void GraphicsContextGLANGLE::copyTexImage2D(GCGLenum target, GCGLint level, GCGL
     GL_CopyTexImage2D(target, level, internalformat, x, y, width, height, border);
     if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO)
         GL_BindFramebuffer(framebufferTarget, m_multisampleFBO);
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
@@ -1432,6 +1460,7 @@ void GraphicsContextGLANGLE::generateMipmap(GCGLenum target)
         return;
 
     GL_GenerateMipmap(target);
+    didChangeMemoryCost();
 }
 
 Vector<GCGLAttribActiveInfo> GraphicsContextGLANGLE::activeAttribs(PlatformGLObject program)
@@ -2313,6 +2342,7 @@ void GraphicsContextGLANGLE::deleteBuffer(PlatformGLObject buffer)
         return;
 
     GL_DeleteBuffers(1, &buffer);
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::deleteFramebuffer(PlatformGLObject framebuffer)
@@ -2346,6 +2376,7 @@ void GraphicsContextGLANGLE::deleteRenderbuffer(PlatformGLObject renderbuffer)
         return;
 
     GL_DeleteRenderbuffers(1, &renderbuffer);
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::deleteShader(PlatformGLObject shader)
@@ -2366,6 +2397,7 @@ void GraphicsContextGLANGLE::deleteTexture(PlatformGLObject texture)
     });
     GL_DeleteTextures(1, &texture);
     invalidateKnownTextureContent(texture);
+    didChangeMemoryCost();
 }
 
 void GraphicsContextGLANGLE::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)

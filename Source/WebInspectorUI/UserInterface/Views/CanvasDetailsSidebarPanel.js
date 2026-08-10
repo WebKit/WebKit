@@ -102,7 +102,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
         this._nameRow = new WI.DetailsSectionSimpleRow(WI.UIString("Name"));
         this._typeRow = new WI.DetailsSectionSimpleRow(WI.UIString("Type"));
         this._memoryRow = new WI.DetailsSectionSimpleRow(WI.UIString("Memory"));
-        this._memoryRow.tooltip = WI.UIString("Memory usage of this canvas");
+        this._memoryRow.tooltip = WI.UIString("Estimated memory usage of this canvas and its associated graphics resources");
 
         let identitySection = new WI.DetailsSection("canvas-details", WI.UIString("Identity"));
         identitySection.groups = [new WI.DetailsSectionGroup([this._nameRow, this._typeRow, this._memoryRow])];

@@ -33,7 +33,11 @@
 
 namespace WebCore {
 
-GPUBuffer::~GPUBuffer() = default;
+GPUBuffer::~GPUBuffer()
+{
+    if (RefPtr device = m_device)
+        device->willDestroyBuffer(*this);
+}
 
 GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, GPUDevice& device)
     : m_backing(WTF::move(backing))
@@ -240,10 +244,15 @@ void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)
 
 void GPUBuffer::destroy(ScriptExecutionContext& scriptExecutionContext)
 {
+    if (m_destroyed)
+        return;
+
     m_destroyed = true;
     internalUnmap(scriptExecutionContext);
     m_bufferSize = 0;
     m_backing->destroy();
+    if (RefPtr device = m_device)
+        device->didChangeBufferMemoryCost(*this);
 }
 
 }

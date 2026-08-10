@@ -162,6 +162,7 @@ public:
     void removeBufferToUnmap(GPUBuffer&);
     void addBufferToUnmap(GPUBuffer&);
     Ref<GPUAdapterInfo> NODELETE adapterInfo() const;
+    size_t NODELETE memoryCost() const;
 
 #if ENABLE(VIDEO)
     WeakPtr<GPUExternalTexture> takeExternalTextureForVideoElement(const HTMLVideoElement&);
@@ -171,7 +172,16 @@ public:
     void setHasActiveInspectorCanvasCallTracer(bool active) { m_hasActiveInspectorCanvasCallTracer = active; }
 
 private:
+    friend class GPUBuffer;
+    friend class GPUTexture;
+
     GPUDevice(ScriptExecutionContext*, Ref<WebGPU::Device>&&, String&& queueLabel, GPUAdapterInfo&);
+
+    void didChangeBufferMemoryCost(GPUBuffer&);
+    void didChangeTextureMemoryCost(GPUTexture&);
+    void willDestroyBuffer(GPUBuffer&);
+    void willDestroyTexture(GPUTexture&);
+    void notifyMemoryCostChanged();
 
     // FIXME: We probably need to override more methods to make this work properly.
     RefPtr<GPUPipelineLayout> createAutoPipelineLayout();
@@ -188,6 +198,8 @@ private:
     const Ref<GPUQueue> m_queue;
     RefPtr<GPUPipelineLayout> m_autoPipelineLayout;
     WeakHashSet<GPUBuffer> m_buffersToUnmap;
+    WeakHashSet<GPUBuffer> m_buffers;
+    WeakHashSet<GPUTexture> m_textures;
 
 #if ENABLE(VIDEO)
     GPUExternalTexture* externalTextureForDescriptor(const GPUExternalTextureDescriptor&);
@@ -204,6 +216,7 @@ private:
     bool m_waitingForDeviceLostPromise { false };
     bool m_listeningForUncapturedErrors { false };
     bool m_hasActiveInspectorCanvasCallTracer { false };
+    bool m_isDestroyed { false };
 };
 
 } // namespace WebCore

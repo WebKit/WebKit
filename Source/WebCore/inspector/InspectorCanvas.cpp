@@ -324,7 +324,7 @@ size_t InspectorCanvas::memoryCost() const
         [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) -> size_t {
             Ref device = weakDevice;
 
-            CheckedSize memoryCost;
+            CheckedSize memoryCost = device->memoryCost();
             Locker locker { CanvasRenderingContext::instancesLock() };
             for (SUPPRESS_UNCOUNTED_ARG auto* context : CanvasRenderingContext::instances()) {
                 if (!context->isContextThread() || !canvasContextMatchesDevice(*context, device))

@@ -42,6 +42,7 @@
 #include <WebCore/GCGLSpan.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/PixelBufferConversion.h>
+#include <limits>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/ParsingUtilities.h>
 
@@ -70,6 +71,13 @@ IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<Spa
 {
     static_assert(sizeof...(Types) == sizeof...(SpanTupleTypes));
     return toArrayReferenceTuple<Types...>(spanTuple, std::index_sequence_for<Types...> { });
+}
+
+std::optional<size_t> estimatedMemoryCostFromIPC(std::optional<uint64_t> memoryCost)
+{
+    if (!memoryCost || *memoryCost > std::numeric_limits<size_t>::max())
+        return std::nullopt;
+    return static_cast<size_t>(*memoryCost);
 }
 
 }
@@ -164,6 +172,7 @@ void RemoteGraphicsContextGLProxy::initialize(const RemoteGraphicsContextGLIniti
     m_uniformBufferOffsetAlignment = initializationState.uniformBufferOffsetAlignment;
     m_max3DTextureSize = initializationState.max3DTextureSize;
     m_maxArrayTextureLayers = initializationState.maxArrayTextureLayers;
+    m_estimatedMemoryCost = estimatedMemoryCostFromIPC(initializationState.estimatedMemoryCost);
 }
 
 void RemoteGraphicsContextGLProxy::reshape(int width, int height)
@@ -280,6 +289,13 @@ GCGLErrorCodeSet RemoteGraphicsContextGLProxy::getErrors()
         return returnValue;
     }
     return { };
+}
+
+std::optional<size_t> RemoteGraphicsContextGLProxy::estimatedMemoryCost()
+{
+    if (isContextLost())
+        return std::nullopt;
+    return m_estimatedMemoryCost;
 }
 
 void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTesting event)
@@ -570,6 +586,19 @@ void RemoteGraphicsContextGLProxy::addDebugMessage(GCGLenum type, GCGLenum id, G
         m_client->addDebugMessage(type, id, severity, WTF::move(message));
 }
 
+void RemoteGraphicsContextGLProxy::memoryCostChanged(std::optional<uint64_t> memoryCost)
+{
+    if (isContextLost())
+        return;
+
+    auto estimatedMemoryCost = estimatedMemoryCostFromIPC(memoryCost);
+    if (estimatedMemoryCost == m_estimatedMemoryCost)
+        return;
+
+    m_estimatedMemoryCost = estimatedMemoryCost;
+    didChangeMemoryCost();
+}
+
 void RemoteGraphicsContextGLProxy::markContextLost()
 {
     disconnectGpuProcessIfNeeded();
@@ -585,7 +614,8 @@ bool RemoteGraphicsContextGLProxy::handleMessageToRemovedDestination(IPC::Connec
     //    time, it might be in the message delivery callback.
     // When adding new messages to RemoteGraphicsContextGLProxy, add them to this list.
     ASSERT(decoder.messageName() == Messages::RemoteGraphicsContextGLProxy::WasCreated::name()
-        || decoder.messageName() == Messages::RemoteGraphicsContextGLProxy::WasLost::name());
+        || decoder.messageName() == Messages::RemoteGraphicsContextGLProxy::WasLost::name()
+        || decoder.messageName() == Messages::RemoteGraphicsContextGLProxy::MemoryCostChanged::name());
     return true;
 }
 

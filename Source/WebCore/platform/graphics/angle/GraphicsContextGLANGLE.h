@@ -46,6 +46,7 @@ public:
 
     GCGLDisplay platformDisplay() const;
     GCGLConfig platformConfig() const;
+    std::optional<size_t> NODELETE estimatedMemoryCost() final;
 
     enum class ReleaseThreadResourceBehavior {
         // Releases current context after GraphicsContextGLANGLE calls done in the thread.

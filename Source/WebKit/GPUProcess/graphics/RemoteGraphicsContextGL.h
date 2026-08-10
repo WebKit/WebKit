@@ -114,6 +114,7 @@ protected:
     // GraphicsContextGL::Client overrides.
     void forceContextLost() final;
     void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, const CString&) final;
+    void didChangeMemoryCost() final;
 
     // Messages to be received.
     void ensureExtensionEnabled(WebCore::GCGLExtension);
@@ -168,6 +169,7 @@ protected:
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT
 
 private:
+    void updateMemoryCost();
     bool webXREnabled() const;
     bool webXRPromptAccepted() const;
 
@@ -188,6 +190,8 @@ protected:
     ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     HashMap<uint32_t, PlatformGLObject, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_objectNames;
+    std::optional<uint64_t> m_estimatedMemoryCost WTF_GUARDED_BY_CAPABILITY(workQueue());
+    bool m_memoryCostUpdateScheduled WTF_GUARDED_BY_CAPABILITY(workQueue()) { false };
 };
 
 

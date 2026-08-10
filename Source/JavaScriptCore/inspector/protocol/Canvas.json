@@ -70,7 +70,7 @@
                 { "name": "cssCanvasNames", "type": "array", "items": { "type": "string" }, "optional": true, "description": "The CSS canvas identifiers, for canvases created with <code>document.getCSSCanvasContext</code>." },
                 { "name": "contextAttributes", "$ref": "ContextAttributes", "optional": true, "description": "Context attributes for rendering contexts." },
                 { "name": "features", "type": "array", "items": { "type": "string" }, "optional": true, "description": "Enabled WebGPU device features." },
-                { "name": "memoryCost", "type": "number", "optional": true, "description": "Memory usage of the canvas in bytes." },
+                { "name": "memoryCost", "type": "number", "optional": true, "description": "Estimated memory usage of the graphics context and its associated resources, in bytes." },
                 { "name": "stackTrace", "$ref": "Console.StackTrace", "optional": true, "description": "Backtrace that was captured when this canvas context was created." },
                 { "name": "name", "type": "string", "optional": true }
             ]
@@ -226,7 +226,7 @@
             "name": "canvasMemoryChanged",
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." },
-                { "name": "memoryCost", "type": "number", "description": "New memory cost value for the canvas in bytes." }
+                { "name": "memoryCost", "type": "number", "description": "New estimated memory cost of the graphics context and its associated resources, in bytes." }
             ]
         },
         {

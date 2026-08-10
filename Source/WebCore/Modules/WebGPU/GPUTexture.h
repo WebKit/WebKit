@@ -75,6 +75,7 @@ public:
     GPUSize32Out NODELETE sampleCount() const;
     GPUTextureDimension NODELETE dimension() const;
     GPUFlagsConstant NODELETE usage() const;
+    size_t NODELETE memoryCost() const;
 
     static GPUTextureFormat NODELETE aspectSpecificFormat(GPUTextureFormat, GPUTextureAspect);
     static uint32_t NODELETE texelBlockSize(GPUTextureFormat);

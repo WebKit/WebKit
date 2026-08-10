@@ -465,6 +465,7 @@ public:
     // GraphicsContextGL::Client
     void forceContextLost() final;
     void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, const CString&) final;
+    void didChangeMemoryCost() final;
 
     void recycleContext();
 
@@ -601,6 +602,7 @@ protected:
     virtual void uncacheDeletedBuffer(const AbstractLocker&, WebGLBuffer*);
     bool needsPreparationForDisplay() const final { return true; }
     void NODELETE updateActiveOrdinal();
+    void scheduleMemoryCostUpdate();
     void updateMemoryCost() const;
 
     struct ContextLostState {
@@ -721,6 +723,7 @@ protected:
     int m_numGLErrorsToConsoleAllowed;
 
     bool m_compositingResultsNeedUpdating { false };
+    bool m_memoryCostUpdateScheduled { false };
     RefPtr<ImageBuffer> m_readDrawingBuffer;
     RefPtr<ImageBuffer> m_readDisplayBuffer;
 

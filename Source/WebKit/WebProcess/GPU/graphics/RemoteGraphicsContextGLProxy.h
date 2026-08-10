@@ -77,6 +77,7 @@ public:
     void reshape(int width, int height) final;
     bool supportsExtension(WebCore::GCGLExtension) final;
     bool enableExtension(WebCore::GCGLExtension) final;
+    std::optional<size_t> NODELETE estimatedMemoryCost() final;
 
     GCGLint maxCombinedTextureImageUnits() final { return m_maxCombinedTextureImageUnits; }
     GCGLint maxVertexAttribs() final { return m_maxVertexAttribs; }
@@ -415,6 +416,7 @@ private:
     void wasCreated(IPC::Semaphore&&, IPC::Semaphore&&, std::optional<RemoteGraphicsContextGLInitializationState>&&);
     void wasLost();
     void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, CString&&);
+    void memoryCostChanged(std::optional<uint64_t>);
 
     void NODELETE initialize(const RemoteGraphicsContextGLInitializationState&);
     void waitUntilInitialized();
@@ -443,6 +445,7 @@ private:
     GCGLint m_uniformBufferOffsetAlignment { 0 };
     GCGLint m_max3DTextureSize { 0 };
     GCGLint m_maxArrayTextureLayers { 0 };
+    std::optional<size_t> m_estimatedMemoryCost;
     uint32_t m_nextObjectName { 0 };
     WebCore::DestinationColorSpace m_drawingBufferColorSpace { WebCore::DestinationColorSpace::SRGB() };
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;

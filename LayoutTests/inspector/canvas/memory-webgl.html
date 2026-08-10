@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let context = null;
+let buffer = null;
+let texture = null;
+
+function load() {
+    context = document.body.appendChild(document.createElement("canvas")).getContext("webgl");
+    runTest();
+}
+
+function allocateBuffer() {
+    buffer = context.createBuffer();
+    context.bindBuffer(context.ARRAY_BUFFER, buffer);
+    context.bufferData(context.ARRAY_BUFFER, 1024 * 1024, context.STATIC_DRAW);
+}
+
+function allocateTexture() {
+    texture = context.createTexture();
+    context.bindTexture(context.TEXTURE_2D, texture);
+    context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 256, 256, 0, context.RGBA, context.UNSIGNED_BYTE, null);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.MemoryWebGL");
+
+    suite.addTestCase({
+        name: "Canvas.MemoryWebGL.InitialMemoryCost",
+        description: "Check that WebGL reports the graphics context's initial memory cost.",
+        test(resolve, reject) {
+            let canvases = Array.from(WI.canvasManager.canvasCollection).filter((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
+            InspectorTest.assert(canvases.length === 1, "There should only be one WebGL canvas.");
+            InspectorTest.expectGreaterThan(canvases[0].memoryCost, 0, "WebGL should report its initial graphics memory cost.");
+            resolve();
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.MemoryWebGL.Buffer",
+        description: "Check that allocating a WebGLBuffer updates the memory cost.",
+        async test() {
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
+            let initialMemoryCost = canvas.memoryCost;
+            let memoryChangedPromise = canvas.awaitEvent(WI.Canvas.Event.MemoryChanged);
+            InspectorTest.evaluateInPage("allocateBuffer()");
+            await memoryChangedPromise;
+            InspectorTest.expectGreaterThan(canvas.memoryCost, initialMemoryCost, "Allocating a WebGLBuffer should increase the memory cost.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.MemoryWebGL.Texture",
+        description: "Check that allocating a WebGLTexture updates the memory cost.",
+        async test() {
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
+            let initialMemoryCost = canvas.memoryCost;
+            let memoryChangedPromise = canvas.awaitEvent(WI.Canvas.Event.MemoryChanged);
+            InspectorTest.evaluateInPage("allocateTexture()");
+            await memoryChangedPromise;
+            InspectorTest.expectGreaterThan(canvas.memoryCost, initialMemoryCost, "Allocating a WebGLTexture should increase the memory cost.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.MemoryWebGL.Delete",
+        description: "Check that deleting a WebGL resource updates the memory cost.",
+        async test() {
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
+            let initialMemoryCost = canvas.memoryCost;
+            let memoryChangedPromise = canvas.awaitEvent(WI.Canvas.Event.MemoryChanged);
+            InspectorTest.evaluateInPage("context.deleteBuffer(buffer)");
+            await memoryChangedPromise;
+            InspectorTest.expectLessThan(canvas.memoryCost, initialMemoryCost, "Deleting a WebGLBuffer should decrease the memory cost.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager includes WebGL resources in canvas memory costs.</p>
+</body>
+</html>
+

@@ -58,6 +58,13 @@ Vector<S> vectorCopyCast(const T& arrayReference)
 {
     return Vector(spanReinterpretCast<const S>(arrayReference.template span<I>()));
 }
+
+std::optional<uint64_t> estimatedMemoryCostForIPC(GraphicsContextGL& context)
+{
+    if (auto memoryCost = context.estimatedMemoryCost())
+        return static_cast<uint64_t>(*memoryCost);
+    return std::nullopt;
+}
 }
 
 // Currently we have one global WebGL processing instance.
@@ -131,10 +138,12 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
         auto contextAttributes = context->contextAttributes();
         auto knownActiveExtensions = context->knownActiveExtensions();
         auto requestableExtensions = context->requestableExtensions();
+        m_estimatedMemoryCost = estimatedMemoryCostForIPC(*context);
         RemoteGraphicsContextGLInitializationState initializationState {
             .attributes = context->contextAttributes(),
             .knownActiveExtensions = knownActiveExtensions.toRaw(),
             .requestableExtensions = requestableExtensions.toRaw(),
+            .estimatedMemoryCost = m_estimatedMemoryCost,
             .maxCombinedTextureImageUnits = context->maxCombinedTextureImageUnits(),
             .maxVertexAttribs = context->maxVertexAttribs(),
             .maxTextureSize = context->maxTextureSize(),
@@ -190,6 +199,36 @@ void RemoteGraphicsContextGL::addDebugMessage(GCGLenum type, GCGLenum id, GCGLen
 {
     assertIsCurrent(workQueue());
     send(Messages::RemoteGraphicsContextGLProxy::addDebugMessage(type, id, severity, message));
+}
+
+void RemoteGraphicsContextGL::didChangeMemoryCost()
+{
+    assertIsCurrent(workQueue());
+    if (m_memoryCostUpdateScheduled)
+        return;
+
+    m_memoryCostUpdateScheduled = true;
+    m_workQueue->dispatch([protectedThis = protect(*this)] {
+        assertIsCurrent(protectedThis->workQueue());
+
+        protectedThis->m_memoryCostUpdateScheduled = false;
+        protectedThis->updateMemoryCost();
+    });
+}
+
+void RemoteGraphicsContextGL::updateMemoryCost()
+{
+    assertIsCurrent(workQueue());
+    RefPtr context = m_context;
+    if (!context)
+        return;
+
+    auto memoryCost = estimatedMemoryCostForIPC(*context);
+    if (memoryCost == m_estimatedMemoryCost)
+        return;
+
+    m_estimatedMemoryCost = memoryCost;
+    send(Messages::RemoteGraphicsContextGLProxy::MemoryCostChanged(memoryCost));
 }
 
 void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)

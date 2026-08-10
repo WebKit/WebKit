@@ -52,6 +52,7 @@ class MockGraphicsContextGLClient final : public GraphicsContextGL::Client {
 public:
     void forceContextLost() final { ++m_contextLostCalls; }
     void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, const CString&) final { }
+    void didChangeMemoryCost() final { }
     int contextLostCalls() { return m_contextLostCalls; }
 private:
     int m_contextLostCalls { 0 };

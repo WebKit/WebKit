@@ -4702,6 +4702,7 @@ void WebGLRenderingContextBase::forceLostContext(WebGLRenderingContextBase::Lost
         Locker locker { objectGraphLock() };
         detachAndRemoveAllObjects();
     }
+    updateMemoryCost();
     loseExtensions(mode);
 
     protect(graphicsContextGL())->getErrors();
@@ -5643,6 +5644,11 @@ void WebGLRenderingContextBase::addDebugMessage(GCGLenum type, GCGLenum id, GCGL
         scriptExecutionContext->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Warning, "WebGL: too many errors, no more errors will be reported to the console for this context."_s));
 }
 
+void WebGLRenderingContextBase::didChangeMemoryCost()
+{
+    scheduleMemoryCostUpdate();
+}
+
 void WebGLRenderingContextBase::recycleContext()
 {
     if (shouldPrintToConsole())
@@ -5721,9 +5727,26 @@ bool WebGLRenderingContextBase::isOpaque() const
     return !m_attributes.alpha;
 }
 
+void WebGLRenderingContextBase::scheduleMemoryCostUpdate()
+{
+    if (m_memoryCostUpdateScheduled || !m_context || isContextStopped() || isContextLost())
+        return;
+
+    m_memoryCostUpdateScheduled = true;
+    protect(canvasBase())->queueTaskKeepingObjectAlive(TaskSource::WebGL, [weakThis = WeakPtr { *this }](auto&) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        protectedThis->m_memoryCostUpdateScheduled = false;
+        if (!protectedThis->isContextStopped())
+            protectedThis->updateMemoryCost();
+    });
+}
+
 void WebGLRenderingContextBase::updateMemoryCost() const
 {
-    // Computes only a rough ballpark figure to drive garbage collection.
+    // Computes only a rough ballpark figure to drive garbage collection and Web Inspector.
     size_t newMemoryCost = 0;
     if (m_readDisplayBuffer)
         newMemoryCost += m_readDisplayBuffer->memoryCost();
@@ -5738,6 +5761,11 @@ void WebGLRenderingContextBase::updateMemoryCost() const
             bytesPerSample += 1;
         size_t samplesPerPixel = m_attributes.antialias ? 4 : 1;
         newMemoryCost += area * samplesPerPixel * bytesPerSample;
+
+        if (RefPtr context = graphicsContextGL()) {
+            if (auto backendMemoryCost = context->estimatedMemoryCost())
+                newMemoryCost += *backendMemoryCost;
+        }
     }
     CanvasRenderingContext::updateMemoryCost(newMemoryCost);
 }

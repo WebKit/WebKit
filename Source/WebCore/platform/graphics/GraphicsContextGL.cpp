@@ -640,6 +640,12 @@ void GraphicsContextGL::forceContextLost()
         m_client->forceContextLost();
 }
 
+void GraphicsContextGL::didChangeMemoryCost()
+{
+    if (m_client)
+        m_client->didChangeMemoryCost();
+}
+
 #if ENABLE(VIDEO)
 RefPtr<Image> GraphicsContextGL::videoFrameToImage(VideoFrame& frame)
 {

@@ -339,6 +339,7 @@ public:
     static void didCreateWebGPUDevice(GPUDevice&);
     static void willDestroyWebGPUDevice(GPUDevice&);
     static void didChangeGPUDeviceClientNodes(GPUDevice&);
+    static void didChangeWebGPUMemory(GPUDevice&);
     static void didCreateWebGPUComputePipeline(GPUDevice&, GPUComputePipeline&);
     static void willDestroyWebGPUComputePipeline(GPUComputePipeline&);
     static void didCreateWebGPURenderPipeline(GPUDevice&, GPURenderPipeline&);
@@ -557,6 +558,7 @@ private:
     static void didCreateWebGPUDeviceImpl(InstrumentingAgents&, GPUDevice&);
     static void willDestroyWebGPUDeviceImpl(InstrumentingAgents&, GPUDevice&);
     static void didChangeGPUDeviceClientNodesImpl(InstrumentingAgents&, GPUDevice&);
+    static void didChangeWebGPUMemoryImpl(InstrumentingAgents&, GPUDevice&);
     static void didCreateWebGPUComputePipelineImpl(InstrumentingAgents&, GPUDevice&, GPUComputePipeline&);
     static void willDestroyWebGPUComputePipelineImpl(InstrumentingAgents&, GPUComputePipeline&);
     static void didCreateWebGPURenderPipelineImpl(InstrumentingAgents&, GPUDevice&, GPURenderPipeline&);
@@ -1555,6 +1557,13 @@ inline void InspectorInstrumentation::didChangeGPUDeviceClientNodes(GPUDevice& d
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(protect(device.scriptExecutionContext())))
         didChangeGPUDeviceClientNodesImpl(*agents, device);
+}
+
+inline void InspectorInstrumentation::didChangeWebGPUMemory(GPUDevice& device)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(protect(device.scriptExecutionContext())))
+        didChangeWebGPUMemoryImpl(*agents, device);
 }
 
 inline void InspectorInstrumentation::didCreateWebGPUComputePipeline(GPUDevice& device, GPUComputePipeline& pipeline)

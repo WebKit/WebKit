@@ -1371,6 +1371,12 @@ void InspectorInstrumentation::didChangeGPUDeviceClientNodesImpl(InstrumentingAg
         canvasAgent->didChangeGPUDeviceClientNodes(device);
 }
 
+void InspectorInstrumentation::didChangeWebGPUMemoryImpl(InstrumentingAgents& instrumentingAgents, GPUDevice& device)
+{
+    if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())
+        canvasAgent->didChangeWebGPUMemory(device);
+}
+
 void InspectorInstrumentation::didCreateWebGPUComputePipelineImpl(InstrumentingAgents& instrumentingAgents, GPUDevice& device, GPUComputePipeline& pipeline)
 {
     if (CheckedPtr canvasAgent = instrumentingAgents.enabledCanvasAgent())

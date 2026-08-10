@@ -727,7 +727,7 @@ void GPUCanvasContextCocoa::updateMemoryCost() const
     if (m_readDisplayBuffer)
         newMemoryCost += m_readDisplayBuffer->memoryCost();
     if (m_currentTexture)
-        newMemoryCost += m_width * m_height * 4;
+        newMemoryCost += m_currentTexture->memoryCost();
     CanvasRenderingContext::updateMemoryCost(newMemoryCost);
 }
 

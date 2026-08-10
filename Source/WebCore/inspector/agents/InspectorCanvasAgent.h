@@ -118,6 +118,7 @@ public:
     void didCreateWebGPUDevice(GPUDevice&);
     void willDestroyWebGPUDevice(GPUDevice&);
     virtual void didChangeGPUDeviceClientNodes(GPUDevice&);
+    void didChangeWebGPUMemory(GPUDevice&);
     void didCreateWebGPUComputePipeline(GPUDevice&, GPUComputePipeline&);
     void willDestroyWebGPUComputePipeline(GPUComputePipeline&);
     void didCreateWebGPURenderPipeline(GPUDevice&, GPURenderPipeline&);

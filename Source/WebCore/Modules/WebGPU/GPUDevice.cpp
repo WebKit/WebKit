@@ -78,6 +78,7 @@
 #include "SecurityOrigin.h"
 #include "WebGPUXRBinding.h"
 #include "XRGPUBinding.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -179,14 +180,61 @@ void GPUDevice::removeBufferToUnmap(GPUBuffer& buffer)
     m_buffersToUnmap.remove(buffer);
 }
 
+size_t GPUDevice::memoryCost() const
+{
+    if (m_isDestroyed)
+        return 0;
+
+    CheckedSize result;
+    for (auto& buffer : m_buffers)
+        result += static_cast<size_t>(buffer.size());
+    for (auto& texture : m_textures)
+        result += texture.memoryCost();
+    return result.hasOverflowed() ? 0 : result.value();
+}
+
+void GPUDevice::notifyMemoryCostChanged()
+{
+    InspectorInstrumentation::didChangeWebGPUMemory(*this);
+}
+
+void GPUDevice::didChangeBufferMemoryCost(GPUBuffer& buffer)
+{
+    if (!m_isDestroyed && m_buffers.contains(buffer))
+        notifyMemoryCostChanged();
+}
+
+void GPUDevice::didChangeTextureMemoryCost(GPUTexture& texture)
+{
+    if (!m_isDestroyed && m_textures.contains(texture))
+        notifyMemoryCostChanged();
+}
+
+void GPUDevice::willDestroyBuffer(GPUBuffer& buffer)
+{
+    if (m_buffers.remove(buffer) && !m_isDestroyed)
+        notifyMemoryCostChanged();
+}
+
+void GPUDevice::willDestroyTexture(GPUTexture& texture)
+{
+    if (m_textures.remove(texture) && !m_isDestroyed)
+        notifyMemoryCostChanged();
+}
+
 void GPUDevice::destroy(ScriptExecutionContext& scriptExecutionContext)
 {
+    if (m_isDestroyed)
+        return;
+
+    m_isDestroyed = true;
     for (Ref buffer : m_buffersToUnmap)
         buffer->destroy(scriptExecutionContext);
 
     m_buffersToUnmap.clear();
 
     m_backing->destroy();
+    notifyMemoryCostChanged();
 }
 
 GPUDevice::LostPromise& GPUDevice::lost()
@@ -227,7 +275,10 @@ ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(GPUBufferDescriptor&& buffer
     if (!buffer)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createBuffer: Unable to create buffer."_s };
 
-    return GPUBuffer::create(buffer.releaseNonNull(), bufferSize, usage, mappedAtCreation, *this);
+    Ref result = GPUBuffer::create(buffer.releaseNonNull(), bufferSize, usage, mappedAtCreation, *this);
+    m_buffers.add(result);
+    didChangeBufferMemoryCost(result);
+    return result;
 }
 
 static std::optional<String> validateFeature(const auto& featureContainer, const String& featureName, String&& error)
@@ -331,7 +382,10 @@ ExceptionOr<Ref<GPUTexture>> GPUDevice::createTexture(GPUTextureDescriptor&& tex
     if (!texture)
         return Exception { ExceptionCode::InvalidStateError, "GPUDevice.createTexture: Unable to create texture."_s };
 
-    return GPUTexture::create(texture.releaseNonNull(), textureDescriptor, *this);
+    Ref result = GPUTexture::create(texture.releaseNonNull(), textureDescriptor, *this);
+    m_textures.add(result);
+    didChangeTextureMemoryCost(result);
+    return result;
 }
 
 static WebGPU::SamplerDescriptor NODELETE convertToBacking(const std::optional<GPUSamplerDescriptor>& samplerDescriptor)
