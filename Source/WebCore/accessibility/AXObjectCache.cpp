@@ -1245,10 +1245,14 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
     }
 
     RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID);
-    if (tree) {
-        if (tree->treeID() == treeID())
-            return tree;
+    if (tree && tree->treeID() == treeID())
+        return tree;
 
+    // An AXObjectCache might still exist for a document that's detached from its frame.
+    if (!page())
+        return nullptr;
+
+    if (tree) {
         // The tree belongs to a different document (navigation occurred).
         // Remove the old tree and create a new one.
         AXIsolatedTree::removeTreeForFrameID(m_frameID);
@@ -1286,6 +1290,10 @@ void AXObjectCache::initializeIsolatedTreeGeometry()
 void AXObjectCache::buildIsolatedTree()
 {
     m_buildIsolatedTreeTimer.stop();
+
+    // Our document may have been detached from its frame since this timer was scheduled.
+    if (!page())
+        return;
 
     RefPtr tree = AXIsolatedTree::create(*this);
 

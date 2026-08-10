@@ -1,0 +1,30 @@
+This tests that aria-owns can remap accessibility hierarchies.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: list1.childrenCount === 2
+PASS: list1.childAtIndex(0).isEqual(item3) === true
+PASS: list1.childAtIndex(1).isEqual(item4) === true
+PASS: item3.parentElement().isEqual(list1) === true
+PASS: item4.parentElement().isEqual(list1) === true
+PASS: list2.childrenCount === 3
+PASS: list2.childAtIndex(0).isEqual(item1) === true
+PASS: list2.childAtIndex(1).isEqual(realitem1) === true
+PASS: list2.childAtIndex(2).isEqual(item2) === true
+PASS: item1.parentElement().isEqual(list2) === true
+PASS: realitem1.parentElement().isEqual(list2) === true
+PASS: item2.parentElement().isEqual(list2) === true
+PASS: list3.childrenCount === 0
+PASS: list1.childrenCount === 3
+PASS: list1.childAtIndex(0).isEqual(item3) === true
+PASS: list1.childAtIndex(1).isEqual(item5) === true
+PASS: list1.childAtIndex(2).isEqual(item4) === true
+PASS: item3.parentElement().isEqual(list1) === true
+PASS: item5.parentElement().isEqual(list1) === true
+PASS: item4.parentElement().isEqual(list1) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,14 @@
+This tests that focusing inside an aria-hidden region permanently overrides aria-hidden after one animation frame.
+
+PASS: !button1 || !button1.isValid === true
+PASS: !button2 || !button2.isValid === true
+PASS: button2 && button2.isValid === true
+PASS: button1 && button1.isValid === true
+PASS: button1 && button1.isValid === true
+PASS: button2 && button2.isValid === true
+PASS: !button1 || !button1.isValid === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

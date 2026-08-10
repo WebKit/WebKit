@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select">
+    <option id="option1">Apple</option>
+    <option id="option2" selected>
+        Banana
+        <button id="foo">Foo</button>
+        <a href="#url">Bar</a>
+    </option>
+    <option id="option3"><span>Cherry</span></option>
+</select>
+
+<script>
+var output = "This test verifies that text nodes inside complex base-appearance select options are exposed as accessible elements (e.g. for VoiceOver navigation), but only when the option has non-text descendants.\n\n";
+
+function expectMenuItem(axElement, expectedText) {
+    var result = "";
+    result += expect("(" + axElement + ").role.toLowerCase().includes('menuitem')", "true");
+    window._menuItemText = platformTextAlternatives(eval(axElement));
+    result += _menuItemText + "\n";
+    result += expect("_menuItemText.includes('" + expectedText + "')", "true");
+    return result;
+}
+
+function hasStaticTextChild(axElement, text) {
+    for (var i = 0; i < axElement.childrenCount; i++) {
+        var child = axElement.childAtIndex(i);
+        if (child.role.toLowerCase().includes("statictext") && child.stringValue.includes(text))
+            return true;
+    }
+    return false;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var select = accessibilityController.accessibleElementById("select");
+
+    setTimeout(async function() {
+        select.press();
+        output += await expectAsync("select.isExpanded", "true");
+
+        window.menu = findBaseSelectMenu(select);
+        output += expect("menu.role.toLowerCase().includes('menu')", "true");
+
+        output += "\n--- Simple option: text is NOT exposed as a StaticText child ---\n";
+        window.appleItem = menu.childAtIndex(0);
+        output += expectMenuItem("menu.childAtIndex(0)", "Apple");
+        output += expect("appleItem.childrenCount", "0");
+
+        output += "\n--- Complex option text includes all descendant text ---\n";
+        window.bananaItem = menu.childAtIndex(1);
+        output += expect("bananaItem.role.toLowerCase().includes('menuitem')", "true");
+        window.bananaText = platformTextAlternatives(bananaItem);
+        output += bananaText + "\n";
+        output += expect("bananaText.includes('Banana')", "true");
+        output += expect("bananaText.includes('Foo')", "true");
+        output += expect("bananaText.includes('Bar')", "true");
+        window.bananaHasStaticText = hasStaticTextChild(bananaItem, "Banana");
+        output += expect("bananaHasStaticText", "true");
+
+        output += "\n--- Option with only a span wrapper: text is NOT exposed ---\n";
+        window.cherryItem = menu.childAtIndex(2);
+        output += expectMenuItem("menu.childAtIndex(2)", "Cherry");
+        output += expect("cherryItem.childrenCount", "0");
+
+        // Add a button to the span-wrapped option and verify we update the accessibility tree correctly.
+        var option3 = document.getElementById("option3");
+        var button = document.createElement("button");
+        button.textContent = "New";
+        option3.appendChild(button);
+        document.body.offsetWidth;
+
+        await waitFor(() => {
+            return hasStaticTextChild(menu.childAtIndex(2), "Cherry");
+        });
+        window.cherryHasStaticTextAfterAdd = hasStaticTextChild(menu.childAtIndex(2), "Cherry");
+        output += expect("cherryHasStaticTextAfterAdd", "true");
+
+        output += "\n--- Dynamic: remove the button from the option ---\n";
+        option3.removeChild(button);
+        document.body.offsetWidth;
+
+        await waitFor(() => {
+            return !hasStaticTextChild(menu.childAtIndex(2), "Cherry");
+        });
+        window.cherryHasStaticTextAfterRemove = hasStaticTextChild(menu.childAtIndex(2), "Cherry");
+        output += expect("cherryHasStaticTextAfterRemove", "false");
+
+        select.press();
+        output += await expectAsync("select.isExpanded", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

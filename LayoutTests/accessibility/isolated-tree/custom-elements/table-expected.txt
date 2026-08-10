@@ -1,0 +1,44 @@
+This tests that aria fallback roles work correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.accessibleElementById("table-1").role is "AXRole: AXTable"
+PASS accessibilityController.accessibleElementById("table-1").rowCount is 4
+PASS accessibilityController.accessibleElementById("table-1").columnCount is 4
+PASS accessibilityController.accessibleElementById("table-1").numberAttributeValue("AXARIAColumnCount") is 4
+PASS accessibilityController.accessibleElementById("table-1").numberAttributeValue("AXARIARowCount") is 8
+PASS accessibilityController.accessibleElementById("row-header").role is "AXRole: AXRow"
+PASS accessibilityController.accessibleElementById("header-1").role is "AXRole: AXCell"
+PASS accessibilityController.accessibleElementById("header-1").sortDirection is "AXAscendingSortDirection"
+PASS accessibilityController.accessibleElementById("row-1").role is "AXRole: AXRow"
+PASS accessibilityController.accessibleElementById("cell1").role is "AXRole: AXCell"
+PASS accessibilityController.accessibleElementById("cell1").numberAttributeValue("AXARIARowIndex") is 7
+PASS accessibilityController.accessibleElementById("cell1").numberAttributeValue("AXARIAColumnIndex") is 2
+PASS accessibilityController.accessibleElementById("cell2").role is "AXRole: AXCell"
+PASS accessibilityController.accessibleElementById("cell2").numberAttributeValue("AXARIARowIndex") is 7
+PASS accessibilityController.accessibleElementById("cell2").numberAttributeValue("AXARIAColumnIndex") is 3
+PASS accessibilityController.accessibleElementById("cell3").role is "AXRole: AXCell"
+PASS accessibilityController.accessibleElementById("cell3").numberAttributeValue("AXARIARowIndex") is 7
+PASS accessibilityController.accessibleElementById("cell3").numberAttributeValue("AXARIAColumnIndex") is 4
+PASS accessibilityController.accessibleElementById("cell3").rowIndexRange() is "{1, 2}"
+PASS accessibilityController.accessibleElementById("cell4").role is "AXRole: AXCell"
+PASS accessibilityController.accessibleElementById("cell4").numberAttributeValue("AXARIARowIndex") is 7
+PASS accessibilityController.accessibleElementById("cell4").numberAttributeValue("AXARIAColumnIndex") is 5
+PASS accessibilityController.accessibleElementById("cell4").rowIndexRange() is "{1, 3}"
+PASS accessibilityController.accessibleElementById("row-2").role is "AXRole: AXRow"
+PASS accessibilityController.accessibleElementById("cell5").role is "AXRole: AXCell"
+PASS accessibilityController.accessibleElementById("cell5").numberAttributeValue("AXARIARowIndex") is 8
+PASS accessibilityController.accessibleElementById("cell5").numberAttributeValue("AXARIAColumnIndex") is 2
+PASS accessibilityController.accessibleElementById("cell5").rowIndexRange() is "{2, 1}"
+PASS accessibilityController.accessibleElementById("cell5").columnIndexRange() is "{0, 2}"
+PASS accessibilityController.accessibleElementById("row-3").role is "AXRole: AXRow"
+PASS accessibilityController.accessibleElementById("cell6").role is "AXRole: AXCell"
+PASS accessibilityController.accessibleElementById("cell6").numberAttributeValue("AXARIARowIndex") is 9
+PASS accessibilityController.accessibleElementById("cell6").numberAttributeValue("AXARIAColumnIndex") is 2
+PASS accessibilityController.accessibleElementById("cell6").rowIndexRange() is "{3, 1}"
+PASS accessibilityController.accessibleElementById("cell6").columnIndexRange() is "{0, 3}"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

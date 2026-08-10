@@ -1,0 +1,9 @@
+This test ensures that the focused UI element is not an ignored element.
+
+internals.setSelectionFromNone();
+PASS: accessibilityController.focusedElement.role.toLowerCase().includes('webarea') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

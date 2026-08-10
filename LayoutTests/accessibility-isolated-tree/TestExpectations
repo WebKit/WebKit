@@ -4,6 +4,7 @@ accessibility/isolated-tree [ Pass ]
 #
 # Potentially caused by: https://github.com/WebKit/WebKit/commit/2517a540e6f5a2037c6843102f3a9cb753f2f9f0
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
+accessibility/isolated-tree/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
 accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Crash ]
 # Fails because of (1) stale focus ID for the iFrame and (2) iFrame #2 being ignored.
 accessibility/mac/frame-with-title.html [ Failure ]
@@ -26,6 +27,7 @@ accessibility/mac/style-range.html [ Pass ]
 
 # Flaky: https://bugs.webkit.org/show_bug.cgi?id=290946
 accessibility/datetime/input-date-field-labels-and-value-changes.html [ Pass Failure ]
+accessibility/isolated-tree/datetime/input-date-field-labels-and-value-changes.html [ Pass Failure ]
 
 # With ENABLE(ACCESSIBILITY_LOCAL_FRAME), child frames have their own AXObjectCache.
 # The child frame's isolated tree is created lazily, but the parent frame's tree
@@ -43,6 +45,7 @@ accessibility/mac/search-text-with-image-hang.html [ Failure ]
 
 # Failures introduced by ENABLE(AX_THREAD_TEXT_APIS).
 accessibility/content-editable-as-textarea.html [ Failure ]
+accessibility/isolated-tree/content-editable-as-textarea.html [ Failure ]
 accessibility/mac/attributed-string-for-text-marker-range-using-webarea.html [ Failure ]
 accessibility/mac/attributed-string-includes-misspelled-with-selection.html [ Failure ]
 accessibility/mac/attributed-string/attributed-string-does-not-includes-misspelled-for-non-editable.html [ Failure ]

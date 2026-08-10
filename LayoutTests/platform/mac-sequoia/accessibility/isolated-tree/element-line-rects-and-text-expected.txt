@@ -1,0 +1,40 @@
+This is some testing content. A link here. MOre text.
+z
+Another line of text.
+
+Jack and Jill went up the hill to fetch a pail of water. Jack fell down...
+ abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789
+
+This tests that lineRectsAndText returns the correct values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+text = "This is some testing content. {\n    AXBackgroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )\";\n    AXFont =     {\n        AXFontFamily = Times;\n        AXFontName = \"Times-Roman\";\n        AXFontSize = 16;\n    };\n    AXForegroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )\";\n}A link here.{\n    AXBackgroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )\";\n    AXFont =     {\n        AXFontFamily = Times;\n        AXFontName = \"Times-Roman\";\n        AXFontSize = 16;\n    };\n    AXForegroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0.933333 1 )\";\n    AXLink = \" {pid=zzz}\";\n    AXUnderline = 1;\n    AXUnderlineColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0.933333 1 )\";\n} MOre text.{\n    AXBackgroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )\";\n    AXFont =     {\n        AXFontFamily = Times;\n        AXFontName = \"Times-Roman\";\n        AXFontSize = 16;\n    };\n    AXForegroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )\";\n}";
+width > 0: true
+height > 0: true
+text = "z{\n    AXBackgroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )\";\n    AXFont =     {\n        AXFontFamily = Times;\n        AXFontName = \"Times-Roman\";\n        AXFontSize = 16;\n    };\n    AXForegroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )\";\n}";
+width > 0: true
+height > 0: true
+text = "Another line of text.{\n    AXBackgroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )\";\n    AXFont =     {\n        AXFontFamily = Times;\n        AXFontName = \"Times-Roman\";\n        AXFontSize = 16;\n    };\n    AXForegroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )\";\n}";
+width > 0: true
+height > 0: true
+text = "cake{\n}";
+width > 0: true
+height > 0: true
+text = "Jack and Jill went up the hill to fetch a pail of water. Jack fell down...{\n    AXBackgroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )\";\n    AXFont =     {\n        AXFontFamily = Times;\n        AXFontName = \"Times-Roman\";\n        AXFontSize = 14;\n    };\n    AXForegroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )\";\n}";
+width > 0: true
+height > 0: true
+text = "abcdefghijklmnopqrstuvwxyz0123456789 abcdefghijklmnopqrstuvwxyz0123456789 {\n    AXBackgroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )\";\n    AXFont =     {\n        AXFontFamily = Times;\n        AXFontName = \"Times-Roman\";\n        AXFontSize = 16;\n    };\n    AXForegroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )\";\n}";
+width > 0: true
+height > 0: true
+text = "abcdefghijklmnopqrstuvwxyz0123456789-abcdefghijklmnopqrstuvwxyz0123456789-{\n    AXBackgroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )\";\n    AXFont =     {\n        AXFontFamily = Times;\n        AXFontName = \"Times-Roman\";\n        AXFontSize = 16;\n    };\n    AXForegroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )\";\n}";
+width > 0: true
+height > 0: true
+text = "abcdefghijklmnopqrstuvwxyz0123456789{\n    AXBackgroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 0 )\";\n    AXFont =     {\n        AXFontFamily = Times;\n        AXFontName = \"Times-Roman\";\n        AXFontSize = 16;\n    };\n    AXForegroundColor = \" [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )\";\n}";
+width > 0: true
+height > 0: true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

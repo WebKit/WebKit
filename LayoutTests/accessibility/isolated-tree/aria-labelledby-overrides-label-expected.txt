@@ -1,0 +1,8 @@
+This tests that if aria-labelledby is used, then label elements are not used.
+
+PASS: platformValueForW3CName(text) === 'Shut down computer after 10 minutes'
+Label element role is: AXRole: AXStaticText
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

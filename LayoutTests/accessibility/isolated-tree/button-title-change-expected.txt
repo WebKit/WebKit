@@ -1,0 +1,8 @@
+Tests that the title of the button is properly updated when the text of its descendant changes.
+PASS: button.title === 'AXTitle: 0'
+PASS: button.title === 'AXTitle: 3'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+3

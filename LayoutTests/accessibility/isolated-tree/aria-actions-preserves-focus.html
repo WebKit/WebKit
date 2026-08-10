@@ -1,0 +1,64 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ ARIAActionsSupportEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="source" aria-actions="action">Source</button>
+<button id="action">Delete</button>
+<button id="other">Other</button>
+
+<script>
+var output = "This test verifies that invoking an aria-actions custom action preserves focus wherever it was rather than moving it to the (focusable) action target, and that the transient focus movement is not surfaced to assistive technology.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var actionClicked = false;
+    document.getElementById("action").addEventListener("click", () => actionClicked = true);
+
+    var focusNotificationCount = 0;
+    accessibilityController.addNotificationListener((axElement, notification) => {
+        if (notification == "AXFocusChanged")
+            ++focusNotificationCount;
+    });
+
+    var source = accessibilityController.accessibleElementById("source");
+    var originId;
+
+    async function invokeActionAndVerifyFocusIsPreserved(id) {
+        originId = id;
+        document.getElementById(originId).focus();
+        await waitFor(() => accessibilityController.focusedElement?.domIdentifier == originId);
+
+        // Ignore focus notifications and clicks from establishing the initial focus above.
+        focusNotificationCount = 0;
+        actionClicked = false;
+
+        output += expect("source.invokeCustomActionAtIndex(0)", "true");
+        output += expect("actionClicked", "true");
+        output += expect("document.activeElement.id", `'${originId}'`);
+        output += expect("accessibilityController.focusedElement.domIdentifier", `'${originId}'`);
+
+        // Give any (unexpected) focus notification a chance to be delivered before asserting none fired.
+        await new Promise(resolve => setTimeout(resolve, 0));
+        output += expect("focusNotificationCount", "0");
+    }
+
+    setTimeout(async () => {
+        output += "With the element hosting the actions focused, invoking the action preserves focus on it:\n";
+        await invokeActionAndVerifyFocusIsPreserved("source");
+        output += "\n";
+
+        output += "With an unrelated element focused, invoking the action preserves focus on that element:\n";
+        await invokeActionAndVerifyFocusIsPreserved("other");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -139,7 +139,9 @@ accessibility/combobox/gtk [ Skip ]
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
 accessibility/aria-checkbox-sends-notification.html
+accessibility/isolated-tree/aria-checkbox-sends-notification.html
 accessibility/aria-switch-sends-notification.html
+accessibility/isolated-tree/aria-switch-sends-notification.html
 accessibility/multiselect-list-reports-active-option.html
 
 # uiController.simulateRotationLikeSafari() is not implemented on macOS.
@@ -147,10 +149,12 @@ fast/screen-orientation/orientation-in-resize-event.html [ Skip ]
 
 # Need to implement AccessibilityUIElement::clearSelectedChildren()
 accessibility/aria-listbox-clear-selection-crash.html
+accessibility/isolated-tree/aria-listbox-clear-selection-crash.html
 accessibility/listbox-clear-selection.html
 
 # The dismiss action doesn't return a result on macOS
 accessibility/dismiss-action-returns-whether-keyevent-handled.html
+accessibility/isolated-tree/dismiss-action-returns-whether-keyevent-handled.html
 
 # These tests require touch support
 fast/events/touch [ Skip ]
@@ -1457,6 +1461,7 @@ webkit.org/b/205403 accessibility/presentation-role-iframe.html [ Pass Failure ]
 # The flakey behavior is that sometimes the AXImage with "circle" AXStaticText child sometimes never becomes part of the AX tree.
 # Full investigation at: https://bugs.webkit.org/show_bug.cgi?id=243407
 webkit.org/b/243407 accessibility/add-children-pseudo-element.html [ Pass Failure ]
+webkit.org/b/243407 accessibility/isolated-tree/add-children-pseudo-element.html [ Pass Failure ]
 
 # Requires (INLINE_PREDICTIONS)
 accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Skip ]
@@ -2359,6 +2364,7 @@ imported/w3c/web-platform-tests/cookies/name/name-ctl.html [ Pass Failure ]
 imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Pass Failure ]
 http/tests/inspector/network/xhr-response-body.html [ Pass Failure ]
 accessibility/checkbox-radio-element-rect.html [ Pass Failure ]
+accessibility/isolated-tree/checkbox-radio-element-rect.html [ Pass Failure ]
 fast/forms/select/mac-wk2/inactive-appearance.html [ Pass Failure ImageOnlyFailure ]
 workers/btoa-oom.html [ Pass Timeout ]
 fast/images/pagewide-play-pause-offscreen-animations.html [ Pass Failure ]

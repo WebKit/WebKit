@@ -1,0 +1,23 @@
+This tests that the aria tab item becomes selected if either aria-selected is used, or if aria-controls points to an item that contains KB focus.
+
+PASS: tab2.isSelected === true
+
+Removing aria-controls from #tab_2
+PASS: tab2.isSelected === false
+
+Resetting #tab_2 aria-controls to be '#panel_2'
+PASS: tab2.isSelected === true
+PASS: tab1.isSelected === false
+PASS: tab2.isSelected === false
+PASS: tab1.isSelected === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Crust
+Veges
+Test
+
+Select Crust
+
+Select Crust

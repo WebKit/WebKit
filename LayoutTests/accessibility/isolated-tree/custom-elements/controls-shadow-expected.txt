@@ -1,0 +1,16 @@
+This tests that ElementInternals.ariaControlsElements can reference nodes outside the shadow tree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.ariaControlsElements.length is 2
+PASS internals.ariaControlsElements[0] is document.querySelectorAll(".control")[0]
+PASS internals.ariaControlsElements[1] is document.querySelectorAll(".control")[1]
+PASS labelForControl(customTab.ariaControlsElementAtIndex(0)) is "AXValue: Panel 1"
+PASS labelForControl(customTab.ariaControlsElementAtIndex(1)) is "AXValue: Panel 2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Panel 1
+Panel 2
+
