@@ -405,7 +405,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToPlainDate, (JSGlob
     //   so we specialize: read `day` and skip the general merge machinery. `day`'s Conversion
     //   in the calendar-fields table is ~to-positive-integer-with-truncation~, which throws
     //   RangeError for any non-finite value or value ≤ 0.
-    std::optional<int32_t> itemDay;
+    std::optional<uint8_t> itemDay;
     JSValue dayProperty = item->get(globalObject, vm.propertyNames->day);
     RETURN_IF_EXCEPTION(scope, { });
     if (!dayProperty.isUndefined()) {
@@ -415,7 +415,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToPlainDate, (JSGlob
             return throwVMRangeError(globalObject, scope, "day property must be finite"_s);
         if (doubleDay <= 0) [[unlikely]]
             return throwVMRangeError(globalObject, scope, "day property must be a positive integer"_s);
-        itemDay = clampTo<int32_t>(doubleDay);
+        itemDay = clampTo<uint8_t>(doubleDay);
     }
     if (!itemDay) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.toPlainDate: item does not have a day field"_s);
@@ -423,7 +423,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToPlainDate, (JSGlob
     // Step 8: isoDate = ? CalendarDateFromFields(calendar, merged, ~constrain~).
     // Step 9: Return ! CreateTemporalDate(isoDate, calendar).
     if (yearMonth->calendarID() != iso8601CalendarID()) {
-        auto resolved = TemporalCore::plainYearMonthToPlainDate(yearMonth->calendarID(), yearMonth->plainYearMonth().isoPlainDate(), static_cast<uint8_t>(itemDay.value()));
+        auto resolved = TemporalCore::plainYearMonthToPlainDate(yearMonth->calendarID(), yearMonth->plainYearMonth().isoPlainDate(), itemDay.value());
         if (!resolved) [[unlikely]] {
             if (resolved.error().kind == TemporalErrorKind::TypeError)
                 throwTypeError(globalObject, scope, String(resolved.error().message));

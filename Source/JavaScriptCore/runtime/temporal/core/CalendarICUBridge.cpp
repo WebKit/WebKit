@@ -1650,10 +1650,13 @@ int32_t monthCodeOrdinalInYear(CalendarID calendarId, ParsedMonthCode monthCode,
 }
 
 // nonISODateSurpasses — icu4x: surpasses() (components/calendar/src/calendar_arithmetic.rs) — two-phase lexicographic + ordinal check
+// sourceRelatedYear is the same instant as sourceYear in resolveMonthCodeToOrdinal's domain. Not
+// interchangeable: for chinese/dangi the two differ on some ICU versions.
 static bool nonISODateSurpasses(
     CalendarID calendarId,
     int32_t sign,
     int32_t sourceYear,
+    int32_t sourceRelatedYear,
     const String& sourceMonthCode,
     int32_t sourceDay,
     int32_t candidateYears,
@@ -1665,7 +1668,7 @@ static bool nonISODateSurpasses(
     int32_t y0 = sourceYear + candidateYears; // Phase 1: lexicographic check (year, monthCode, day).
     if (compareSurpassesLexicographic(sign, y0, sourceMonthCode, sourceDay, targetYear, targetMonthCode, targetDay))
         return true; // Phase 2: constrain source monthCode to year y0, compare ordinally.
-    int32_t m0 = resolveMonthCodeToOrdinal(calendarId, sourceMonthCode, y0);
+    int32_t m0 = resolveMonthCodeToOrdinal(calendarId, sourceMonthCode, sourceRelatedYear + candidateYears);
     return compareSurpassesOrdinally(sign, y0, m0, sourceDay, targetYear, targetOrdinalMonth, targetDay);
 }
 
@@ -1831,6 +1834,8 @@ TemporalResult<ISO8601::PlainDate> calendarDateAdd(CalendarID calendarId, const 
         return isoDateAdd(isoDate, duration, overflow);
     // Fast path: day/week-only durations are calendar-independent.
     if (!duration.years() && !duration.months())
+        return isoDateAdd(isoDate, duration, overflow);
+    if (calendarUsesISOFallbackForExtremeYear(calendarId, isoDate.year()))
         return isoDateAdd(isoDate, duration, overflow);
     // Fixed solar calendars construct the exact expected native fields directly.
     if (calendarIsNonISOSolar(calendarId))
@@ -2030,6 +2035,8 @@ TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID calendarId, const
     // Fast path: day/week diff is calendar-independent regardless of largestUnit.
     if (largestUnit == TemporalUnit::Day || largestUnit == TemporalUnit::Week)
         return diffISODate(one, two, largestUnit);
+    if (calendarUsesISOFallbackForExtremeYear(calendarId, one.year()) || calendarUsesISOFallbackForExtremeYear(calendarId, two.year()))
+        return diffISODate(one, two, largestUnit);
 
     // Step 4 (non-ISO tail return): `Return NonISODateUntil(calendar, one, two, largestUnit)`.
     // https://tc39.es/proposal-intl-era-monthcode/#sup-temporal-nonisodateuntil
@@ -2038,11 +2045,14 @@ TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID calendarId, const
     struct DateSnapshot {
         double epochMs { 0 };
         int32_t year { 0 };
+        // resolveMonthCodeToOrdinal's year domain; differs from year for chinese/dangi. Engaged only
+        // where a caller asked for it, so a use outside that path trips rather than reading `year`.
+        std::optional<int32_t> relatedYear;
         String monthCode;
         int32_t day { 0 };
         int32_t ordinalMonth { 0 };
     };
-    auto snapshotFields = [&](const ISO8601::PlainDate& date) -> TemporalResult<DateSnapshot> {
+    auto snapshotFields = [&](const ISO8601::PlainDate& date, bool needsRelatedYear) -> TemporalResult<DateSnapshot> {
         return withCalendar(calendarId, [&](UCalendar* cal) -> TemporalResult<DateSnapshot> {
             if (!cal) [[unlikely]]
                 return makeUnexpected(rangeError(icuOpenCalendarFailed));
@@ -2058,6 +2068,18 @@ TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID calendarId, const
             snapshot.year = ucal_get(cal, calendarArithmeticYearField(calendarId), &status);
             if (U_FAILURE(status)) [[unlikely]]
                 return makeUnexpected(rangeError(icuReadCalendarFailed));
+            if (needsRelatedYear) {
+                snapshot.relatedYear = snapshot.year;
+                if (calendarId == chineseCalendarID() || calendarId == dangiCalendarID()) {
+                    auto stableYear = stableLunisolarYear(cal, calendarId, status);
+                    if (!stableYear) [[unlikely]]
+                        return makeUnexpected(rangeError(icuReadCalendarFailed));
+                    snapshot.relatedYear = *stableYear;
+                    ucal_setMillis(cal, snapshot.epochMs, &status);
+                    if (U_FAILURE(status)) [[unlikely]]
+                        return makeUnexpected(rangeError(icuSetCalendarFailed));
+                }
+            }
             if (hebrewY0Kislev) {
                 snapshot.monthCode = String("M03"_s);
                 snapshot.day = 30;
@@ -2078,12 +2100,13 @@ TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID calendarId, const
             return snapshot;
         });
     };
-    auto targetOrError = snapshotFields(two);
+    // Only the source's related year is consumed, and only by the year loop below.
+    auto targetOrError = snapshotFields(two, false);
     if (!targetOrError) [[unlikely]]
         return makeUnexpected(targetOrError.error());
     auto& target = *targetOrError;
 
-    auto sourceOrError = snapshotFields(one);
+    auto sourceOrError = snapshotFields(one, largestUnit == TemporalUnit::Year);
     if (!sourceOrError) [[unlikely]]
         return makeUnexpected(sourceOrError.error());
     auto& source = *sourceOrError;
@@ -2133,7 +2156,7 @@ TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID calendarId, const
     if (largestUnit == TemporalUnit::Year) {
         int64_t candidateYears = minYears ? minYears : sign;
         auto yearDoesNotSurpass = [&] {
-            return !nonISODateSurpasses(calendarId, sign, source.year, source.monthCode, source.day, static_cast<int32_t>(candidateYears), target.year, target.monthCode, target.ordinalMonth, target.day);
+            return !nonISODateSurpasses(calendarId, sign, source.year, *source.relatedYear, source.monthCode, source.day, static_cast<int32_t>(candidateYears), target.year, target.monthCode, target.ordinalMonth, target.day);
         };
         while (yearDoesNotSurpass()) {
             years = static_cast<int32_t>(candidateYears);
@@ -2598,13 +2621,12 @@ TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId
                     return makeUnexpected(rangeError("month is out of range for this calendar"_s));
                 resolvedMonth = 12;
             }
-            uint8_t resolvedDay = day;
             uint8_t daysInMo = ISO8601::daysInMonth(isoYear, resolvedMonth);
             if (day > daysInMo) {
                 if (overflow == TemporalOverflow::Reject) [[unlikely]]
                     return makeUnexpected(rangeError("Day is out of range for the given month"_s));
-                resolvedDay = daysInMo;
             }
+            uint8_t resolvedDay = std::clamp<uint8_t>(day, 1, daysInMo);
             return ISO8601::PlainDate(isoYear, resolvedMonth, resolvedDay);
         }
     }
@@ -2741,13 +2763,11 @@ TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId
         }
 
         // Steps 7-8: clamp day to daysInMonth (reject on out-of-range).
-        uint8_t resolvedDay;
         if (day > maxDay) {
             if (overflow == TemporalOverflow::Reject) [[unlikely]]
                 return makeUnexpected(rangeError("Day is out of range for the given month in this calendar"_s));
-            resolvedDay = static_cast<uint8_t>(maxDay);
-        } else
-            resolvedDay = day;
+        }
+        uint8_t resolvedDay = std::clamp<uint8_t>(day, 1, static_cast<uint8_t>(maxDay));
 
         // Advance cursor to resolvedDay.
         if (calendarIsLunisolar(calendarId)) {
