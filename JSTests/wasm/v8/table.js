@@ -13,7 +13,7 @@ load("wasm-module-builder.js");
 // Basic tests.
 
 const outOfUint32RangeValue = 1e12;
-const kV8MaxWasmTableSize = 9999999;
+const kV8MaxWasmTableSize = 10000000;
 
 function assertTableIsValid(table, length) {
   assertSame(WebAssembly.Table.prototype, table.__proto__);
@@ -97,7 +97,7 @@ function assertTableIsValid(table, length) {
   assertThrows(
     () => new WebAssembly.Table(
       {element: "anyfunc", initial: kV8MaxWasmTableSize + 1}),
-    RangeError, /couldn't create Table/);
+    RangeError, /above the upper bound/);
 })();
 
 (function TestMaximumIsReadOnce() {

@@ -42,13 +42,13 @@ for (const maximum of ["4294967296", "4294967301", "18446744073709551615"]) {
         )
     )`, {}, { memory64: true });
 
-    // 9999999 lands exactly on the bound, 10000000 just past it, and the last delta
-    // overflows the u64 length computation.
-    for (const delta of [9999999n, 10000000n, 18446744073709551615n]) {
+    // The table already holds one entry, so 10000000 lands one past the bound, and
+    // the last delta overflows the u64 length computation.
+    for (const delta of [10000000n, 18446744073709551615n]) {
         assert.eq(instance.exports.grow(delta), -1n);
         assert.eq(instance.exports.size(), 1n);
     }
 
-    assert.throws(() => instance.exports.table.grow(9999999n), RangeError, "WebAssembly.Table.prototype.grow could not grow the table");
+    assert.throws(() => instance.exports.table.grow(10000000n), RangeError, "WebAssembly.Table.prototype.grow could not grow the table");
     assert.eq(instance.exports.table.length, 1n);
 }

@@ -48,7 +48,7 @@ constexpr size_t maxTypes = 1000000;
 constexpr size_t maxFunctions = 1000000;
 constexpr size_t maxImports = 1000000;
 constexpr size_t maxExports = 1000000;
-constexpr size_t maxExceptions = 100000;
+constexpr size_t maxExceptions = 1000000;
 constexpr size_t maxGlobals = 1000000;
 constexpr size_t maxDataSegments = 100000;
 constexpr size_t maxMemories = 100;
@@ -66,7 +66,6 @@ constexpr size_t maxFunctionParams = 1000;
 constexpr size_t maxFunctionReturns = 1000;
 
 constexpr size_t maxTableEntries = 10000000;
-constexpr size_t maxTableInitializationEntries = 10000000;
 constexpr unsigned maxTables = 100000;
 
 constexpr uint64_t maxMemory32Pages = PageCount::maxMemory32PageCount;
