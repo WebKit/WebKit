@@ -47,6 +47,8 @@ public:
     void pauseDisplayRefreshCallbacksForMonotonicAnimations();
     void highImpactMonotonicAnimationsWereRemoved();
 
+    void startForcedDisplayRefreshWindow(Seconds interval, Seconds duration);
+
     UIView *viewWithLayerIDForTesting(WebCore::PlatformLayerIdentifier) const;
 
 private:

@@ -47,6 +47,8 @@
 #import "WebPreferences.h"
 #import "_WKTextExtractionInternal.h"
 #if PLATFORM(IOS_FAMILY)
+#import "APIPageConfiguration.h"
+#import "RemoteLayerTreeDrawingAreaProxyIOS.h"
 #import "WKContentViewInteraction.h"
 #endif
 #import <WebCore/DataDetectorType.h>
@@ -65,7 +67,16 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+constexpr Seconds defaultInteractionPresentationUpdateTimeout = 100_ms;
+
 #if PLATFORM(IOS_FAMILY)
+namespace ForcedDisplayRefreshProperties {
+constexpr Seconds refreshInterval = 250_ms;
+constexpr Seconds maximumDuration = 2_min;
+constexpr Seconds interactionPresentationUpdateTimeout = 1_s;
+static_assert(interactionPresentationUpdateTimeout > refreshInterval);
+}
+
 static std::optional<WebCore::NodeIdentifier> activeContextMenuTargetNodeIdentifier(WKContentView *contentView)
 {
     return [contentView activeContextMenuElementContext].and_then([](const auto& elementContext) {
@@ -502,6 +513,16 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     if (!page || !targetFrame)
         return completionHandler(adoptNS([[_WKTextExtractionInteractionResult alloc] initWithErrorDescription:@"Web view is invalid" summary:nil interactedElementBounds:CGRectNull]));
 
+    auto presentationUpdateTimeout = defaultInteractionPresentationUpdateTimeout;
+#if PLATFORM(IOS_FAMILY)
+    if (page->configuration().backgroundTextExtractionEnabled()) {
+        if (RefPtr drawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxyIOS>(page->drawingArea())) {
+            drawingArea->startForcedDisplayRefreshWindow(ForcedDisplayRefreshProperties::refreshInterval, ForcedDisplayRefreshProperties::maximumDuration);
+            presentationUpdateTimeout = ForcedDisplayRefreshProperties::interactionPresentationUpdateTimeout;
+        }
+    }
+#endif
+
     UniqueRef assertionScope = page->createTextExtractionAssertionScope();
     auto interactionForRetry = interaction;
     targetFrame->handleTextExtractionInteraction(WTF::move(interaction), [
@@ -513,6 +534,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         staleNodeNote,
         shouldResolveStaleNodeIdentifier,
         interaction = WTF::move(interactionForRetry),
+        presentationUpdateTimeout,
         completionHandler = makeBlockPtr(WTF::move(completionHandler))
     ](bool success, String&& description, WebCore::FloatRect interactedElementBounds) mutable {
         RetainPtr strongSelf = weakSelf.get();
@@ -575,7 +597,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
             aggregator.get()();
         });
 
-        RunLoop::mainSingleton().dispatchAfter(100_ms, [aggregator] {
+        RunLoop::mainSingleton().dispatchAfter(presentationUpdateTimeout, [aggregator] {
             aggregator.get()();
         });
     });

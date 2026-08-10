@@ -227,6 +227,12 @@ SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupContext);
 
 @end
 
+#if PLATFORM(IOS_FAMILY)
+@interface WKDisplayLinkHandlerForTesting : NSObject
+- (void)displayLinkFired:(CADisplayLink *)sender;
+@end
+#endif
+
 namespace TestWebKitAPI {
 
 static NSString *extractNodeIdentifier(NSString *debugText, NSString *searchText)
@@ -2137,6 +2143,63 @@ TEST(TextExtractionTests, ClickInteractionWhileInBackground)
         return [[webView stringByEvaluatingJavaScript:@"document.getElementById('result').textContent"] isEqualToString:@"completed"];
     }, 5, @"Expected result text to become 'completed'.");
 }
+
+#if PLATFORM(IOS_FAMILY)
+
+TEST(TextExtractionTests, ClickInteractionWithStalledDisplayLink)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:^{
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        [configuration _setBackgroundTextExtractionEnabled:YES];
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <body>
+            <button>Click Me</button>
+            <div id='result'>pending</div>
+            <script>
+                document.querySelector('button').addEventListener('click', async function() {
+                    for (let i = 0; i < 3; ++i) {
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                        await new Promise(requestAnimationFrame);
+                    }
+                    document.getElementById('result').textContent = 'completed';
+                });
+            </script>
+        </body>
+        </html>
+    )HTML"];
+
+    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidEnterBackgroundNotification object:UIApplication.sharedApplication userInfo:@{ @"isSuspendedUnderLock": @NO }];
+    [NSNotificationCenter.defaultCenter postNotificationName:UISceneDidEnterBackgroundNotification object:[[webView window] windowScene] userInfo:nil];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr buttonID = extractNodeIdentifier(debugText, @"Click Me");
+    EXPECT_NOT_NULL(buttonID);
+
+    // Simulate display refreshes being suppressed by swizzling -displayLinkFired:.
+    InstanceMethodSwizzler suppressDisplayLink {
+        NSClassFromString(@"WKDisplayLinkHandler"),
+        @selector(displayLinkFired:),
+        imp_implementationWithBlock(^(id, CADisplayLink *) { })
+    };
+
+    RetainPtr click = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [click setNodeIdentifier:buttonID];
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:click];
+    EXPECT_NULL([result error]);
+
+    Util::waitForConditionWithLogging([webView] {
+        return [[webView stringByEvaluatingJavaScript:@"document.getElementById('result').textContent"] isEqualToString:@"completed"];
+    }, 5, @"Expected rendering updates to continue after the display link stopped delivering callbacks.");
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(SCREEN_TIME)
 
