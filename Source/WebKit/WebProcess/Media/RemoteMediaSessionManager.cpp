@@ -111,8 +111,16 @@ void RemoteMediaSessionManager::setCurrentSession(WebCore::PlatformMediaSessionI
 
 void RemoteMediaSessionManager::sessionWillBeginPlayback(WebCore::PlatformMediaSessionInterface& session, CompletionHandler<void(bool)>&& completionHandler)
 {
+    // MediaSession never calls PlatformMediaSession::setActive(), so setCurrentSession() is the only
+    // thing that registers it here, and beginInterruption() only reaches registered sessions.
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::setCurrentSession(session);
+
+    // The UI process runs the rest of the admission on this session's RemoteMediaSessionProxy. Ending
+    // the interruption the session was under has to happen here, where the interrupted sessions are.
+    bool sessionWasAlreadyInterrupted = session.state() == WebCore::PlatformMediaSessionState::Interrupted;
+
     sendWithAsyncReply(Messages::RemoteMediaSessionManagerProxy::MediaSessionWillBeginPlayback(currentSessionState(session)),
-        [completionHandler = WTF::move(completionHandler)](bool granted, WebCore::AudioSessionCategory category, WebCore::AudioSessionMode mode, WebCore::RouteSharingPolicy policy) mutable {
+        [protectedThis = Ref { *this }, sessionWasAlreadyInterrupted, completionHandler = WTF::move(completionHandler)](bool granted, WebCore::AudioSessionCategory category, WebCore::AudioSessionMode mode, WebCore::RouteSharingPolicy policy) mutable {
 #if USE(AUDIO_SESSION)
             WebCore::AudioSession::singleton().setCategory(category, mode, policy);
 #else
@@ -120,6 +128,8 @@ void RemoteMediaSessionManager::sessionWillBeginPlayback(WebCore::PlatformMediaS
             UNUSED_PARAM(mode);
             UNUSED_PARAM(policy);
 #endif
+            if (granted && sessionWasAlreadyInterrupted && protectedThis->isInterrupted())
+                protectedThis->endInterruption(WebCore::PlatformMediaSessionEndInterruptionFlags::NoFlags);
             completionHandler(granted);
         });
 }
