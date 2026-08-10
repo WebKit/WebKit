@@ -8044,7 +8044,6 @@ imported/w3c/web-platform-tests/css/CSS2/box-display/root-box-003.xht [ ImageOnl
 webkit.org/b/302820 imported/w3c/web-platform-tests/css/CSS2/normal-flow/crashtests/block-in-inline-ax-crash.html [ Timeout ]
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-float-between-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-float-in-layer-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/CSS2/normal-flow/canvas-paint-order.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/cross-domain-iframe-paint-order.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/max-height-separates-margin.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/max-width-applies-to-005.xht [ ImageOnlyFailure ]
@@ -8058,6 +8057,7 @@ imported/w3c/web-platform-tests/css/CSS2/normal-flow/replaced-intrinsic-001.xht 
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/replaced-intrinsic-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/resizable-iframe-paint-order.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/normal-flow/video-paint-order.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/normal-flow/video-controls-paint-order.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/intersection-observer/animating.html [ Pass Failure ]
 imported/w3c/web-platform-tests/intersection-observer/v2/3d-transform-occlusion.html [ Skip ] # timeout

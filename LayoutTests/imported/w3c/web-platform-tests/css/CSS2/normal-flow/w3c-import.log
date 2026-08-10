@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/auto-margins-root-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/auto-margins-used-values-with-floats.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/auto-margins-used-values.html
@@ -60,6 +59,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-formatting-contexts-015.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-formatting-contexts-016-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-formatting-contexts-016.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-after-block-in-inline-with-margin-collapse-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-after-block-in-inline-with-margin-collapse-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-after-block-in-inline-with-margin-collapse.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-align-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-align-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-align-001.html
@@ -270,6 +272,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-margins-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-margins-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-margins-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-margins-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-margins-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-nested-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-nested-001-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/block-in-inline-nested-001.xht
@@ -868,8 +872,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/intrinsic-size-with-anonymous-block.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/intrinsic-size-with-negative-margins-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/intrinsic-size-with-negative-margins.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-min-height-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-min-height-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-min-height-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-min-height-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-min-height-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-min-height-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-min-height-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-min-height-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-min-height-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-through-for-various-height-values.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-through-percentage-height-block-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-through-percentage-height-block-inside-table-cell-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-through-percentage-height-block-inside-table-cell.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-through-percentage-height-block.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-through-percentage-padding-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/margin-collapse-through-percentage-padding.html
@@ -1646,6 +1661,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/table-in-inline-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/unresolvable-max-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/unresolvable-min-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/video-controls-hit-test-order.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/video-controls-paint-order-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/video-controls-paint-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/video-paint-order-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/video-paint-order-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/CSS2/normal-flow/video-paint-order.html

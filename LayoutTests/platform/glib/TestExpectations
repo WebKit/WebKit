@@ -5006,6 +5006,8 @@ webkit.org/b/294295 fullscreen/full-screen-request-removed-with-raf.html [ Pass 
 
 webkit.org/b/307368 fast/repaint/iframe-from-display-none-repaint.html [ Pass ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/CSS2/normal-flow/canvas-paint-order.html [ ImageOnlyFailure ]
+
 # Note: this randomly crashes on the EWS (which runs Release+Asserts) but passes always on post-commit (Release)
 webkit.org/b/307597 imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html [ Crash Pass ]
 
