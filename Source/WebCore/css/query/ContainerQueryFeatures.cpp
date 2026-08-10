@@ -274,12 +274,12 @@ struct StyleFeatureSchema : public FeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        CheckedPtr style = context.conversionData.style();
-        if (!style || !context.conversionData.parentStyle())
+        if (!context.conversionData.parentStyle())
             return EvaluationResult::False;
 
+        CheckedRef style = context.conversionData.style();
         if (feature.syntax == Syntax::Range)
-            return evaluateRange(feature, context, *style);
+            return evaluateRange(feature, context, style);
 
         RefPtr customPropertyValue = style->customPropertyValue(feature.name);
         if (!feature.rightComparison)
@@ -297,7 +297,7 @@ struct StyleFeatureSchema : public FeatureSchema {
                 .element = context.conversionData.elementForContainerUnitResolution()
             };
 
-            auto dummyStyle = Style::ComputedStyle::clone(*style);
+            auto dummyStyle = Style::ComputedStyle::clone(style);
             auto dummyMatchResult = Style::MatchResult::create();
 
             auto styleBuilder = Style::Builder { dummyStyle, WTF::move(builderContext), dummyMatchResult };

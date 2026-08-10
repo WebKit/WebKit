@@ -326,11 +326,6 @@ void CSSValue::collectComputedStyleDependencies(ComputedStyleDependencies& depen
         asPrimitiveValue->collectComputedStyleDependencies(dependencies);
 }
 
-bool CSSValue::canResolveDependenciesWithConversionData(const CSSToLengthConversionData& conversionData) const
-{
-    return computedStyleDependencies().canResolveDependenciesWithConversionData(conversionData);
-}
-
 bool CSSValue::equals(const CSSValue& other) const
 {
     if (classType() == other.classType()) {

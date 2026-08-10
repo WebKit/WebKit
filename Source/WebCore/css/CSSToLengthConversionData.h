@@ -31,16 +31,11 @@
 
 #pragma once
 
-#include <WebCore/CSSPrimitiveNumericRange.h>
 #include <WebCore/CSSPropertyNames.h>
 #include <WebCore/Element.h>
-#include <optional>
-#include <wtf/Assertions.h>
 
 namespace WebCore {
 
-class Element;
-class FloatSize;
 class FontCascade;
 class RenderView;
 
@@ -51,56 +46,43 @@ class ComputedStyle;
 
 class CSSToLengthConversionData {
 public:
-    CSSToLengthConversionData();
     CSSToLengthConversionData(const CSSToLengthConversionData&);
     CSSToLengthConversionData(CSSToLengthConversionData&&);
 
-    CSSToLengthConversionData(const Style::ComputedStyle&, Style::BuilderState&);
-    CSSToLengthConversionData(const Style::ComputedStyle&, const Style::ComputedStyle* rootStyle, const Style::ComputedStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution);
-
-    // Used for resolutions that don't take place during normal style resolution.
-    static std::optional<CSSToLengthConversionData> tryCreateForNonStyleBuildingResolution(Element&);
-    static std::optional<CSSToLengthConversionData> tryCreateForNonStyleBuildingResolution(Element*);
+    explicit CSSToLengthConversionData(const Style::ComputedStyle&, Style::BuilderState&);
+    explicit CSSToLengthConversionData(const Style::ComputedStyle&, const Style::ComputedStyle* rootStyle, const Style::ComputedStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution);
 
     WEBCORE_EXPORT ~CSSToLengthConversionData();
 
-    const Style::ComputedStyle* style() const { return m_style; }
+    const Style::ComputedStyle& style() const { return m_style; }
     const Style::ComputedStyle* rootStyle() const { return m_rootStyle; }
     const Style::ComputedStyle* parentStyle() const { return m_parentStyle; }
-    bool computingFontSize() const { return m_propertyToCompute == CSSPropertyFontSize; }
-    bool computingLineHeight() const { return m_propertyToCompute == CSSPropertyLineHeight; }
-    CSSPropertyID propertyToCompute() const { return m_propertyToCompute.value_or(CSSPropertyInvalid); }
     const RenderView* renderView() const { return m_renderView; }
     const Element* elementForContainerUnitResolution() const { return m_elementForContainerUnitResolution.get(); }
-
-    const FontCascade& NODELETE fontCascadeForFontUnits() const;
+    CSSPropertyID property() const { return m_property; }
+    Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }
 
     CSSToLengthConversionData copyForFontSize() const
     {
         CSSToLengthConversionData copy(*this);
-        copy.m_propertyToCompute = CSSPropertyFontSize;
+        copy.m_property = CSSPropertyFontSize;
         return copy;
     };
 
     CSSToLengthConversionData copyForLineHeight() const
     {
         CSSToLengthConversionData copy(*this);
-        copy.m_propertyToCompute = CSSPropertyLineHeight;
+        copy.m_property = CSSPropertyLineHeight;
         return copy;
     }
 
-    void NODELETE setUsesViewportUnits() const;
-    void NODELETE setUsesContainerUnits() const;
-
-    Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }
-
 private:
-    const Style::ComputedStyle* m_style { nullptr };
+    const Style::ComputedStyle& m_style;
     const Style::ComputedStyle* m_rootStyle { nullptr };
     const Style::ComputedStyle* m_parentStyle { nullptr };
     const RenderView* m_renderView { nullptr };
     RefPtr<const Element> m_elementForContainerUnitResolution;
-    std::optional<CSSPropertyID> m_propertyToCompute;
+    CSSPropertyID m_property { CSSPropertyInvalid };
     CheckedPtr<Style::BuilderState> m_styleBuilderState;
 };
 

@@ -19024,7 +19024,6 @@
 		BC02CF732CE2E10A007DA764 /* JSDOMConvertUndefined.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertUndefined.h; sourceTree = "<group>"; };
 		BC04A7C8296E57810003F9DB /* CSSColorMix.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSColorMix.cpp; sourceTree = "<group>"; };
 		BC04A7C9296E57810003F9DB /* CSSColorMix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSColorMix.h; sourceTree = "<group>"; };
-		BC05ACC12CEE531400750CB1 /* ComputedStyleDependencies.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ComputedStyleDependencies.cpp; sourceTree = "<group>"; };
 		BC05ACC22CEE533300750CB1 /* CSSPrimitiveNumericTypes+Canonicalization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPrimitiveNumericTypes+Canonicalization.h"; sourceTree = "<group>"; };
 		BC05ACC32CEE533300750CB1 /* CSSPrimitiveNumericTypes+Canonicalization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPrimitiveNumericTypes+Canonicalization.cpp"; sourceTree = "<group>"; };
 		BC05ACC82CEE5C9600750CB1 /* StylePrimitiveNumericTypes+Calculation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StylePrimitiveNumericTypes+Calculation.h"; sourceTree = "<group>"; };
@@ -41682,7 +41681,6 @@
 				BCE06AD92D77750300396CC9 /* scripts */,
 				4BAFD0DA21921EAD00C0AB64 /* typedom */,
 				BCA407D82C9DF4CF006B037F /* values */,
-				BC05ACC12CEE531400750CB1 /* ComputedStyleDependencies.cpp */,
 				BC812C2C2CB58D430048BBC5 /* ComputedStyleDependencies.h */,
 				4CA012DB29A7D56700C260C6 /* counterStyles.css */,
 				BC3078B92D00D3E800630D75 /* CSSAppleColorFilterValue.cpp */,

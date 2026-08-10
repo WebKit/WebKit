@@ -102,7 +102,7 @@ Ref<TimingFunction> createTimingFunction(const BuilderState& state, const CSS::S
 
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::StepsEasingFunction& function)
 {
-    if (!CSS::collectComputedStyleDependencies(function).canResolveDependenciesWithConversionData({ }))
+    if (!CSS::collectComputedStyleDependencies(function).isAbsolute())
         return StepsTimingFunction::create();
 
     return WTF::switchOn(function->value,

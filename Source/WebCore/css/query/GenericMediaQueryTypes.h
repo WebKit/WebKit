@@ -133,8 +133,8 @@ enum class MediaQueryDynamicDependency : uint8_t  {
 
 struct FeatureEvaluationContext {
     WeakRef<const Document, WeakPtrImplWithEventTargetData> document;
-    CSSToLengthConversionData conversionData { };
-    CheckedPtr<const RenderElement> renderer { };
+    CSSToLengthConversionData conversionData;
+    CheckedPtr<const RenderElement> renderer;
 };
 
 struct FeatureSchema {

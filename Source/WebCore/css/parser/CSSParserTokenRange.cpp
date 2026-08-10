@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-CSSParserToken& CSSParserTokenRange::eofToken()
+SUPPRESS_NODELETE CSSParserToken& CSSParserTokenRange::eofToken()
 {
     static NeverDestroyed<CSSParserToken> eofToken(EOFToken);
     return eofToken.get();

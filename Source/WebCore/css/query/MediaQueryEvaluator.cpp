@@ -81,7 +81,17 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
         if (!document->view() || !document->documentElement())
             return EvaluationResult::Unknown;
 
-        FeatureEvaluationContext context { *document, { document->initialStyle(), &document->initialStyle(), &document->initialStyle(), document->renderView(), nullptr }, nullptr };
+        FeatureEvaluationContext context {
+            .document = *document,
+            .conversionData = CSSToLengthConversionData {
+                document->initialStyle(),
+                &document->initialStyle(),
+                &document->initialStyle(),
+                document->renderView(),
+                nullptr
+            },
+            .renderer = nullptr
+        };
         return evaluateCondition(*query.condition, context);
     }();
 

@@ -192,7 +192,7 @@ std::optional<Style::ViewTimelineInsetItem> parseAbsoluteSingleViewTimelineInset
     auto dummyStyle = Style::ComputedStyle::create();
     auto dummyState = Style::BuilderState::create(dummyStyle, Style::BuilderContext { document });
 
-    ASSERT(parsedValue->canResolveDependenciesWithConversionData(dummyState->cssToLengthConversionData()));
+    ASSERT(parsedValue->computedStyleDependencies().isAbsolute());
 
     return Style::toStyleFromCSSValue<Style::ViewTimelineInsetItem>(*CheckedPtr { dummyState.ptr() }, *parsedValue);
 }
@@ -264,7 +264,7 @@ static std::optional<T> parseAbsoluteSingleAnimationRangeEdgeRaw(const String& s
     auto dummyStyle = Style::ComputedStyle::create();
     auto dummyState = Style::BuilderState::create(dummyStyle, Style::BuilderContext { document });
 
-    ASSERT(parsedValue->canResolveDependenciesWithConversionData(dummyState->cssToLengthConversionData()));
+    ASSERT(parsedValue->computedStyleDependencies().isAbsolute());
 
     return Style::toStyleFromCSSValue<T>(*CheckedPtr { dummyState.ptr() }, *parsedValue);
 }

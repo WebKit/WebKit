@@ -432,7 +432,7 @@ std::optional<Style::Transform> parseTransformRaw(const String& string, const CS
     auto dummyStyle = Style::ComputedStyle::create();
     auto dummyState = Style::BuilderState::create(dummyStyle, Style::BuilderContext { document });
 
-    ASSERT(parsedValue->canResolveDependenciesWithConversionData(dummyState->cssToLengthConversionData()));
+    ASSERT(parsedValue->computedStyleDependencies().isAbsolute());
 
     return Style::toStyleFromCSSValue<Style::Transform>(*CheckedPtr { dummyState.ptr() }, *parsedValue);
 }

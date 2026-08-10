@@ -62,7 +62,7 @@ Ref<TimingFunction> createTimingFunction(const BuilderState& state, const CSS::C
 
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::CubicBezierEasingFunction& function)
 {
-    if (!CSS::collectComputedStyleDependencies(function).canResolveDependenciesWithConversionData({ }))
+    if (!CSS::collectComputedStyleDependencies(function).isAbsolute())
         return CubicBezierTimingFunction::create();
 
     return CubicBezierTimingFunction::create(

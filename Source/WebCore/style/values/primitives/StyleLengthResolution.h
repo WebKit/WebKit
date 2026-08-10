@@ -45,30 +45,27 @@ namespace Style {
 
 class ComputedStyle;
 
-// NOTE: The `resolveLength` overload that doesn't take `CSSToLengthConversionData` has the following restrictions:
-//
-// It can never be called with the following LengthUnits:
-//    Lh, Rlh, Cqw, Cqh, Cqi, Cqb, Cqmin, Cqmax (line height, and container-percentage units)
-//
-// If `RenderView` is nullptr, the following LengthUnits will all cause a return value of zero:
-//    Vw, Vh, Vb, Vi, Svw, Svh, Svb, Svi, Lvw, Lvh, Lvb, Lvi, Dvw, Dvh, Dvb, Dvi (width/height/block/inline viewport-percentage units)
-// and the following LengthUnits will all cause a return value of `value`:
-//    Vmin, Vmax, Svmin, Svmax, Lvmin, Lvmax, Dvmin, Dvmax (min/max viewport-percentage units)
-double resolveLength(double value, CSS::LengthUnit, CSSPropertyID, const FontCascade& fontCascadeForUnit, const RenderView*);
+// Resolves length `value` of the provided `CSS::LengthUnit` type to a length with `CSS::LengthUnit::Px` type.
 double resolveLength(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
 
 // Only valid for absolute length units (Px, Cm, Mm, Q, In, Pt, Pc).
 double resolveLength(double value, CSS::LengthUnit, NoConversionDataRequiredToken);
 
+// If `RenderView` is nullptr, the following LengthUnits will all cause a return value of zero:
+//    Vw, Vh, Vb, Vi, Svw, Svh, Svb, Svi, Lvw, Lvh, Lvb, Lvi, Dvw, Dvh, Dvb, Dvi (width/height/block/inline viewport-percentage units)
+// and the following LengthUnits will all cause a return value of `value`:
+//    Vmin, Vmax, Svmin, Svmax, Lvmin, Lvmax, Dvmin, Dvmax (min/max viewport-percentage units)
+double resolveLength(double value, CSS::LengthUnit, CSSPropertyID, const FontCascade& fontCascadeForUnit, const RenderView*);
+
 // True if `resolveLength` would produce identical results when resolved against both these styles.
-bool equalForLengthResolution(const Style::ComputedStyle&, const Style::ComputedStyle&);
+bool equalForLengthResolution(const ComputedStyle&, const ComputedStyle&);
 
 // Utilities for common conversions.
 
 double emToPxDouble(double value, const CSSToLengthConversionData&);
-double emToPxDouble(double value, const Style::ComputedStyle&);
+double emToPxDouble(double value, const ComputedStyle&);
 double emToPxDoubleZoomed(double value, const CSSToLengthConversionData&);
-double emToPxDoubleZoomed(double value, const Style::ComputedStyle&);
+double emToPxDoubleZoomed(double value, const ComputedStyle&);
 
 template<typename T> inline T emToPx(double value, const CSSToLengthConversionData& conversionData)
 {
@@ -78,7 +75,7 @@ template<typename T> inline T emToPx(double value, const CSSToLengthConversionDa
         return roundForImpreciseConversion<T>(emToPxDouble(value, conversionData));
 }
 
-template<typename T> inline T emToPx(double value, const Style::ComputedStyle& style)
+template<typename T> inline T emToPx(double value, const ComputedStyle& style)
 {
     // For `em`, we only need the element's style, so we can overload this to take just a `ComputedStyle`.
     if constexpr (std::floating_point<T>)
@@ -95,7 +92,7 @@ template<typename T> inline T emToPxZoomed(double value, const CSSToLengthConver
         return roundForImpreciseConversion<T>(emToPxDoubleZoomed(value, conversionData));
 }
 
-template<typename T> inline T emToPxZoomed(double value, const Style::ComputedStyle& style)
+template<typename T> inline T emToPxZoomed(double value, const ComputedStyle& style)
 {
     // For `em`, we only need the element's style, so we can overload this to take just a `ComputedStyle`.
     if constexpr (std::floating_point<T>)

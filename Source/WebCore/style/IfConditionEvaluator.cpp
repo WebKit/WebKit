@@ -60,9 +60,9 @@ auto IfConditionEvaluator::evaluate(CSSParserTokenRange branchCondition) -> Resu
 
     auto& state = m_styleBuilder.state();
     MQ::FeatureEvaluationContext evaluationContext {
-        state.document(),
-        state.cssToLengthConversionData(),
-        nullptr
+        .document = state.document(),
+        .conversionData = state.cssToLengthConversionData(),
+        .renderer = nullptr
     };
 
     return evaluateCondition(*condition, evaluationContext) == MQ::EvaluationResult::True ? Result::True : Result::False;

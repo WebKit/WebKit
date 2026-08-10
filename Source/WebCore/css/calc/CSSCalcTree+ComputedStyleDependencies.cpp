@@ -55,10 +55,10 @@ void collectComputedStyleDependencies(const Child& root, ComputedStyleDependenci
                 CSS::collectComputedStyleDependencies(dependencies, *lengthUnit);
         },
         [&](const SiblingCount&) {
-            // No potential dependencies.
+            dependencies.siblingFunctions = true;
         },
         [&](const SiblingIndex&) {
-            // No potential dependencies.
+            dependencies.siblingFunctions = true;
         },
         [&](const IndirectNode<CalcMix>& root) {
             for (const auto& item : root->children) {
@@ -67,12 +67,12 @@ void collectComputedStyleDependencies(const Child& root, ComputedStyleDependenci
             }
         },
         [&](const IndirectNode<Anchor>& anchor) {
-            dependencies.anchors = true;
+            dependencies.anchorFunctions = true;
             if (anchor->fallback)
                 collectComputedStyleDependencies(*anchor->fallback, dependencies);
         },
         [&](const IndirectNode<AnchorSize>& anchorSize) {
-            dependencies.anchors = true;
+            dependencies.anchorFunctions = true;
             if (anchorSize->fallback)
                 collectComputedStyleDependencies(*anchorSize->fallback, dependencies);
         },

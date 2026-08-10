@@ -358,7 +358,7 @@ void BlendingKeyframes::updatePropertiesMetadata(const StyleProperties& properti
 
             if (Style::AnchorPositionEvaluator::propertyAllowsAnchorFunction(propertyID) || Style::AnchorPositionEvaluator::propertyAllowsAnchorSizeFunction(propertyID)) {
                 auto dependencies = cssValue->computedStyleDependencies();
-                if (dependencies.anchors)
+                if (dependencies.anchorFunctions)
                     m_usesAnchorFunctions = true;
             }
         } else if (RefPtr customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {

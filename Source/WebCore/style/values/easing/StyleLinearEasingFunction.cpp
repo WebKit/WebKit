@@ -165,7 +165,7 @@ Ref<TimingFunction> createTimingFunction(const BuilderState& state, const CSS::L
 
 Ref<TimingFunction> createTimingFunctionDeprecated(const CSS::LinearEasingFunction& function)
 {
-    if (!CSS::collectComputedStyleDependencies(function).canResolveDependenciesWithConversionData({ }))
+    if (!CSS::collectComputedStyleDependencies(function).isAbsolute())
         return LinearTimingFunction::create();
 
     return createTimingFunctionWithResolver(function, [&](const auto& value) -> double {

@@ -114,9 +114,15 @@ auto ContainerQueryEvaluator::featureEvaluationContextForCondition(const CQ::Con
     }();
 
     return MQ::FeatureEvaluationContext {
-        document.get(),
-        CSSToLengthConversionData { *containerStyle, rootStyle.get(), containerParentStyle.get(), document->renderView(), container.get() },
-        container->renderer()
+        .document = document.get(),
+        .conversionData = CSSToLengthConversionData {
+            *containerStyle,
+            rootStyle.get(),
+            containerParentStyle.get(),
+            document->renderView(),
+            container.get()
+        },
+        .renderer = container->renderer(),
     };
 }
 

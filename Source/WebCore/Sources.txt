@@ -1018,7 +1018,6 @@ css/CSSSubstitutionValue.cpp
 css/CSSViewTransitionRule.cpp
 css/CSSViewValue.cpp
 css/CSSWebkitBoxReflectValue.cpp
-css/ComputedStyleDependencies.cpp
 css/DOMCSSNamespace.cpp
 css/DOMCSSPaintWorklet.cpp
 css/DOMCSSRegisterCustomProperty.cpp @cost:3

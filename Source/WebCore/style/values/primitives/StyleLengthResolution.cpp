@@ -201,7 +201,7 @@ static double NODELETE resolveViewportPercentageLogicalAxis(const FloatSize& siz
 }
 
 template<LogicalBoxAxis axis>
-static double NODELETE resolveViewportPercentageLogicalAxis(const FloatSize& size, const Style::ComputedStyle* style)
+static double NODELETE resolveViewportPercentageLogicalAxis(const FloatSize& size, const ComputedStyle* style)
 {
     if (!style)
         return 0;
@@ -270,11 +270,11 @@ static std::optional<double> resolveContainerUnit(CQ::Axis physicalAxis, const a
         return { };
 
     auto mode = !adaptor.styleForContainerUnits()->pseudoElementType()
-        ? Style::ContainerQueryEvaluator::SelectionMode::Element
-        : Style::ContainerQueryEvaluator::SelectionMode::PseudoElement;
+        ? ContainerQueryEvaluator::SelectionMode::Element
+        : ContainerQueryEvaluator::SelectionMode::PseudoElement;
 
     // "The query container for each axis is the nearest ancestor container that accepts container size queries on that axis."
-    while ((element = Style::ContainerQueryEvaluator::selectContainer(CQ::ContainerRequirements { physicalAxis }, nullString(), *element, mode))) {
+    while ((element = ContainerQueryEvaluator::selectContainer(CQ::ContainerRequirements { physicalAxis }, nullString(), *element, mode))) {
         auto* containerRenderer = dynamicDowncast<RenderBox>(element->renderer());
         if (containerRenderer && containerRenderer->hasEligibleContainmentForSizeQuery()) {
             auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentBoxWidth() : containerRenderer->contentBoxHeight();
@@ -286,7 +286,7 @@ static std::optional<double> resolveContainerUnit(CQ::Axis physicalAxis, const a
             return adjustedWidthOrHeight / 100;
         }
         // For pseudo-elements the element itself can be the container. Avoid looping forever.
-        mode = Style::ContainerQueryEvaluator::SelectionMode::Element;
+        mode = ContainerQueryEvaluator::SelectionMode::Element;
     }
     return { };
 }
@@ -298,27 +298,29 @@ struct CSSToLengthConversionDataAdaptor {
 
     void setUsesViewportUnits() const
     {
-        conversionData.setUsesViewportUnits();
+        if (CheckedPtr builderState = conversionData.styleBuilderState())
+            builderState->setUsesViewportUnits();
     }
 
     void setUsesContainerUnits() const
     {
-        conversionData.setUsesContainerUnits();
+        if (CheckedPtr builderState = conversionData.styleBuilderState())
+            builderState->setIsContainerDependent();
     }
 
     CSSPropertyID property() const
     {
-        return conversionData.propertyToCompute();
+        return conversionData.property();
     }
 
     bool computingFontSize() const
     {
-        return conversionData.computingFontSize();
+        return conversionData.property() == CSSPropertyFontSize;
     }
 
     bool computingLineHeight() const
     {
-        return conversionData.computingLineHeight();
+        return conversionData.property() == CSSPropertyLineHeight;
     }
 
     double applyTextZoom(double value) const
@@ -330,19 +332,30 @@ struct CSSToLengthConversionDataAdaptor {
 
     const FontCascade& fontCascadeForFontUnits() const
     {
-        return conversionData.fontCascadeForFontUnits();
+        if (computingFontSize()) {
+            ASSERT(conversionData.parentStyle());
+            return conversionData.parentStyle()->fontCascade();
+        }
+
+        return conversionData.style().fontCascade();
     }
 
     const FontCascade& fontCascadeForRootFontUnits() const
     {
-        return conversionData.rootStyle() ? conversionData.rootStyle()->fontCascade() : conversionData.fontCascadeForFontUnits();
+        if (conversionData.rootStyle())
+            return conversionData.rootStyle()->fontCascade();
+
+        // FIXME: This should fallback to the initial style, not the element style. To fix this, we will need to make the initial style (Document::initialStyle()) available to CSSToLengthConversionData.
+        return fontCascadeForFontUnits();
     }
 
     const ComputedStyle* styleForLineHeightUnits() const
     {
-        if (conversionData.computingLineHeight() || conversionData.computingFontSize())
+        if (computingLineHeight() || computingFontSize())
             return conversionData.parentStyle();
-        return conversionData.style();
+
+        // FIXME: This should fallback to the initial style, not the element style. To fix this, we will need to make the initial style (Document::initialStyle()) available to CSSToLengthConversionData.
+        return &conversionData.style();
     }
 
     const ComputedStyle* styleForRootLineHeightUnits() const
@@ -352,7 +365,7 @@ struct CSSToLengthConversionDataAdaptor {
 
     const ComputedStyle* styleForViewportUnits() const
     {
-        return conversionData.style();
+        return &conversionData.style();
     }
 
     const RenderView* renderViewForViewportUnits() const
@@ -362,7 +375,7 @@ struct CSSToLengthConversionDataAdaptor {
 
     const ComputedStyle* styleForContainerUnits() const
     {
-        return conversionData.style();
+        return &conversionData.style();
     }
 
     const Element* elementForContainerUnits() const
@@ -372,7 +385,7 @@ struct CSSToLengthConversionDataAdaptor {
 
     bool isHorizontalForContainerUnits() const
     {
-        return conversionData.style()->writingMode().isHorizontal();
+        return conversionData.style().writingMode().isHorizontal();
     }
 };
 
@@ -629,19 +642,19 @@ static double resolveLengthImpl(double value, CSS::LengthUnit lengthUnit, const 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLengthConversionData& conversionData)
+{
+    return resolveLengthImpl(value, lengthUnit, CSSToLengthConversionDataAdaptor {
+        .conversionData = conversionData,
+    });
+}
+
 double resolveLength(double value, CSS::LengthUnit lengthUnit, CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit, const RenderView* renderViewForUnit)
 {
     return resolveLengthImpl(value, lengthUnit, DirectDataAdaptor {
         .propertyToCompute = propertyToCompute,
         .fontCascadeForUnit = fontCascadeForUnit,
         .renderViewForUnit = renderViewForUnit,
-    });
-}
-
-double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLengthConversionData& conversionData)
-{
-    return resolveLengthImpl(value, lengthUnit, CSSToLengthConversionDataAdaptor {
-        .conversionData = conversionData,
     });
 }
 
@@ -715,7 +728,7 @@ double resolveLength(double value, CSS::LengthUnit lengthUnit, NoConversionDataR
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool equalForLengthResolution(const Style::ComputedStyle& styleA, const Style::ComputedStyle& styleB)
+bool equalForLengthResolution(const ComputedStyle& styleA, const ComputedStyle& styleB)
 {
     // These properties affect results of `resolveLength` above.
 
@@ -753,7 +766,10 @@ double emToPxDouble(double value, const ComputedStyle& style)
 double emToPxDoubleZoomed(double value, const CSSToLengthConversionData& conversionData)
 {
     // Text zoom is not applied here as it is already included in the FontDescription's computedSize().
-    return value * conversionData.fontCascadeForFontUnits().fontDescription().computedSize();
+    CSSToLengthConversionDataAdaptor adaptor {
+        .conversionData = conversionData,
+    };
+    return value * adaptor.fontCascadeForFontUnits().fontDescription().computedSize();
 }
 
 double emToPxDoubleZoomed(double value, const ComputedStyle& style)

@@ -34,12 +34,28 @@ struct ComputedStyleDependencies {
     Vector<CSSPropertyID> rootProperties;
     bool containerDimensions { false };
     bool viewportDimensions { false };
-    bool anchors { false };
+    bool anchorFunctions { false };
+    bool siblingFunctions { false };
 
-    bool isComputationallyIndependent() const { return properties.isEmpty() && rootProperties.isEmpty() && !containerDimensions && !anchors; }
+    // https://drafts.css-houdini.org/css-properties-values-api-1/#computationally-independent
+    bool isComputationallyIndependent() const
+    {
+        return properties.isEmpty()
+            && rootProperties.isEmpty()
+            && !containerDimensions
+            && !anchorFunctions;
+    }
 
-    // Checks to see if the provided conversion data is sufficient to resolve the provided dependencies.
-    bool NODELETE canResolveDependenciesWithConversionData(const CSSToLengthConversionData&) const;
+    // Unlike `isComputationallyIndependent()`, this includes all dependencies.
+    bool isAbsolute() const
+    {
+        return properties.isEmpty()
+            && rootProperties.isEmpty()
+            && !containerDimensions
+            && !viewportDimensions
+            && !anchorFunctions
+            && !siblingFunctions;
+    }
 };
 
 } // namespace WebCore

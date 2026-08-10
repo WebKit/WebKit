@@ -52,7 +52,7 @@ RefPtr<CSSCalc::Value> CSSMathValue::toCSSCalcValue() const
         .root = WTF::move(*node),
         .type = type,
         .stage = CSSCalc::Stage::Specified,
-        .requiresConversionData = !dependencies.isComputationallyIndependent(),
+        .requiresConversionData = !dependencies.isAbsolute(),
     });
 }
 

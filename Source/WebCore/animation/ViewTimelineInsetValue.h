@@ -28,9 +28,9 @@
 #include "CSSNumericValue.h"
 #include "CSSOMKeywordValue.h"
 #include <optional>
-#include <wtf/text/WTFString.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
