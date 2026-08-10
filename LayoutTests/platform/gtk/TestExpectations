@@ -121,18 +121,6 @@ webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-full.html [ Failu
 webkit.org/b/254733 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Failure ]
 webkit.org/b/254733 inspector/canvas/shaderProgram-add-remove-webgl.html [ Failure ]
 
-# Crash on EWS bot.
-webrtc/vp8-then-h264-gpu-process-crash.html [ Skip ]
-webkit.org/b/235885 webrtc/audio-peer-connection-g722.html [ Failure Timeout Pass ]
-webkit.org/b/229346 webkit.org/b/235885 webrtc/multi-audio.html [ Timeout Pass Failure ]
-webkit.org/b/235885 webrtc/peer-connection-remote-audio-mute2.html [ Crash Pass Failure ]
-webkit.org/b/187064 webrtc/video-addTrack.html [ Failure Pass Timeout ]
-
-webkit.org/b/303924 webrtc/peer-connection-audio-mute2.html [ Failure ]
-webkit.org/b/303925 webrtc/audio-replace-track.html [ Failure ]
-webkit.org/b/306021 webrtc/peer-connection-audio-unmute.html [ Pass Failure ]
-webkit.org/b/235885 webrtc/audio-peer-connection-webaudio.html [ Pass Failure ]
-webkit.org/b/308373 webrtc/encoded-streams-quirks.html [ Pass Timeout ]
 
 webkit.org/b/305553 fast/selectors/selection-window-inactive-stroke-color.html [ ImageOnlyFailure ]
 webkit.org/b/305553 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure Pass ]
@@ -1214,20 +1202,13 @@ webkit.org/b/309894 [ Release ] http/tests/inspector/target/pause-on-inline-debu
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_u2029_u05D0.html [ Pass ]
 
 webkit.org/b/310748 [ Release ] editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html [ Pass ImageOnlyFailure ]
-webkit.org/b/310751 imported/w3c/web-platform-tests/webrtc/protocol/h264-profile-levels.https.html?interop-2026 [ Pass Failure ]
-[ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats-timestamp.https.html [ Pass Failure ]
-webkit.org/b/313631 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Pass Failure ]
-webkit.org/b/307440 [ Release ] imported/w3c/web-platform-tests/webrtc/simplecall.https.html [ Pass Failure ]
 webkit.org/b/310752 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-setter.html [ Pass Failure ]
 [ Release ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-assign.html [ Pass Failure ]
-webkit.org/b/310753 imported/w3c/web-platform-tests/webrtc/protocol/split.https.html [ Pass Failure ]
 webkit.org/b/310754 [ Release ] inspector/controller/runtime-controller-import.html [ Pass Failure ]
 [ Debug ] media/video-currentTime-set.html [ Pass Failure ]
 
 pointer-lock/lock-lost-on-alert.html [ Pass Failure ]
 
-webkit.org/b/311846 [ Debug ] webrtc/h264-high.html [ Pass Failure Slow ]
-webkit.org/b/311847 [ Debug ] webrtc/dtmf-gc.html [ Pass Timeout ]
 
 webkit.org/b/311927 accessibility/combobox/gtk/combobox-collapsed-selection-changed.html [ Failure Pass Timeout ]
 
