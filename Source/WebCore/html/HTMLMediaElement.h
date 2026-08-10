@@ -1023,7 +1023,7 @@ private:
     // These "internal" functions do not check user gesture restrictions.
     void playInternal();
     void pauseInternal();
-    void completePlayInternal();
+    void completePlayInternal(bool shouldSeekToStart);
 
     enum class IsExplicitLoad : bool { No, Yes };
     void prepareForLoad(IsExplicitLoad = IsExplicitLoad::No);

@@ -4593,7 +4593,7 @@ void HTMLMediaElement::play()
     playInternal();
 }
 
-void HTMLMediaElement::completePlayInternal()
+void HTMLMediaElement::completePlayInternal(bool shouldSeekToStart)
 {
     // 4.8.10.9. Playing the media resource
     // The NETWORK_EMPTY + no-src case is handled synchronously in playInternal().
@@ -4613,7 +4613,7 @@ void HTMLMediaElement::completePlayInternal()
     if (needsResourceSelection)
         selectMediaResource();
 
-    if (endedPlayback())
+    if (shouldSeekToStart)
         seekInternal(MediaTime::zeroTime());
 
     if (RefPtr mediaController = m_mediaController)
@@ -4707,13 +4707,16 @@ void HTMLMediaElement::playInternal()
     // True if the admission completion handler below is guaranteed to settle
     // m_pendingPlayPromises itself, even if pause() races the in-flight admission.
     m_playPromiseSettlementGuaranteed = shouldNotifyAboutPlaying || shouldResolvePromises;
+    // Whether the spec's seek-to-start step applies is decided at play() time: playback can reach the
+    // end of the media during the admission round trip.
+    bool shouldSeekToStart = endedPlayback();
     if (didTransitionFromPaused && m_readyState <= HAVE_CURRENT_DATA)
         scheduleEvent(eventNames().waitingEvent);
 
     if (m_playRequest->hasCallback())
         m_playRequest->disconnect();
 
-    auto onAdmissionSettled = [weakThis = WeakPtr { *this }, didTransitionFromPaused, shouldNotifyAboutPlaying, shouldResolvePromises, logSiteIdentifier](bool canBegin) {
+    auto onAdmissionSettled = [weakThis = WeakPtr { *this }, didTransitionFromPaused, shouldNotifyAboutPlaying, shouldResolvePromises, shouldSeekToStart, logSiteIdentifier](bool canBegin) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -4756,7 +4759,7 @@ void HTMLMediaElement::playInternal()
             protectedThis->scheduleNotifyAboutPlaying(false);
         else if (shouldResolvePromises)
             protectedThis->scheduleResolvePendingPlayPromises();
-        protectedThis->completePlayInternal();
+        protectedThis->completePlayInternal(shouldSeekToStart);
     };
 
     // Already admitted (e.g. resuming after endInterruption() restores state() to Playing): run inline instead of deferring through whenSettled().
