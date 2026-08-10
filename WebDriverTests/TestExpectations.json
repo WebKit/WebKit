@@ -207,7 +207,7 @@
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/288335"}, "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/303207"}}
             },
             "test_add_event_handler_dom_content_loaded": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/302058"}, "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/310506"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/302058"}, "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/302058"}}
             },
             "test_add_event_handler_download_will_begin": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/288338"}}
@@ -219,7 +219,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/287936"}}
             },
             "test_add_event_handler_load": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/288340"}, "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/310506"}}
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/288340"}, "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/288340"}}
             },
             "test_add_event_handler_navigation_committed": {
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/287934"}}
