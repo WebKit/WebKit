@@ -9624,13 +9624,13 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
-                                 "git log --format=%B eng/pull-request-branch ^main > commit_msg.txt; grep -q '^\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
+                                 "git log --format=%B eng/pull-request-branch ^main > commit_msg.txt; grep -q '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
-                                 "git log --format=%B eng/pull-request-branch ^main | grep '^\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
+                                 "git log --format=%B eng/pull-request-branch ^main | grep '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
             .exit(0)
             .log('stdio', stdout=expected_remote_command_output),
         )
@@ -9666,12 +9666,12 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B HEAD ^origin/main > commit_msg.txt; grep -q '^\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B HEAD ^origin/main > commit_msg.txt; grep -q '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B HEAD ^origin/main | grep '^\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B HEAD ^origin/main | grep '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
             .exit(0)
             .log('stdio', stdout='Reviewed by WebKit Reviewer.\n'),
         )
@@ -9683,6 +9683,15 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
         self.setUpCommonProperties()
         expected_remote_command_output = 'Reviewed by WebKit Reviewer.\n'
+        self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
+        self.expect_outcome(result=SUCCESS, state_string='Validated commit message')
+        return self.run_step()
+
+    def test_success_indented_cherry_pick(self):
+        self.setup_step(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setUpCommonProperties()
+        expected_remote_command_output = '    Reviewed by WebKit Reviewer.\n'
         self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
         self.expect_outcome(result=SUCCESS, state_string='Validated commit message')
         return self.run_step()
@@ -9733,12 +9742,12 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B eng/pull-request-branch ^main > commit_msg.txt; grep -q '^\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B eng/pull-request-branch ^main > commit_msg.txt; grep -q '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B eng/pull-request-branch ^main | grep '^\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B eng/pull-request-branch ^main | grep '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\)' || true"])
             .exit(0)
             .log('stdio', stdout='Reviewed by Myles C. Maxfield.\n'),
         )
