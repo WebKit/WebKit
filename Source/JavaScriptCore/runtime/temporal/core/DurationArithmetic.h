@@ -45,9 +45,9 @@ namespace JSC {
 // temporal_rs: NudgeResultRecord (src/builtins/core/duration.rs)
 struct NudgeResult {
     ISO8601::InternalDuration duration;
-    Int128 nudgedEpochNs;
-    bool didExpandCalendarUnit;
-    NudgeResult() { }
+    Int128 nudgedEpochNs { 0 };
+    bool didExpandCalendarUnit { false };
+    NudgeResult() = default;
     NudgeResult(ISO8601::InternalDuration d, Int128 ns, bool expanded)
         : duration(d)
         , nudgedEpochNs(ns)
@@ -60,8 +60,8 @@ struct NudgeResult {
 // temporal_rs: NudgedRecord (src/builtins/core/duration.rs)
 struct Nudged {
     NudgeResult nudgeResult;
-    double total;
-    Nudged() { }
+    double total { 0 };
+    Nudged() = default;
     Nudged(NudgeResult n, double t)
         : nudgeResult(n)
         , total(t)
@@ -81,12 +81,6 @@ JS_EXPORT_PRIVATE ISO8601::Duration negateDuration(const ISO8601::Duration&);
 JS_EXPORT_PRIVATE ISO8601::Duration absDuration(const ISO8601::Duration&);
 
 JS_EXPORT_PRIVATE TemporalUnit NODELETE largestSubduration(const ISO8601::Duration&);
-
-JS_EXPORT_PRIVATE int64_t totalSeconds(const ISO8601::Duration&);
-
-JS_EXPORT_PRIVATE Int128 totalSubseconds(const ISO8601::Duration&);
-
-JS_EXPORT_PRIVATE std::optional<double> balanceDuration(ISO8601::Duration&, TemporalUnit largestUnit);
 
 JS_EXPORT_PRIVATE Int128 timeDurationFromComponents(double hours, double minutes, double seconds, double milliseconds, double microseconds, double nanoseconds);
 
@@ -109,10 +103,6 @@ JS_EXPORT_PRIVATE TemporalResult<ISO8601::InternalDuration> toInternalDurationRe
 JS_EXPORT_PRIVATE TemporalResult<ISO8601::Duration> toDateDurationRecordWithoutTime(ISO8601::Duration);
 
 JS_EXPORT_PRIVATE Int128 getUTCEpochNanoseconds(ISO8601::PlainDate, ISO8601::PlainTime);
-
-constexpr int32_t unitIndexInTable(TemporalUnit);
-
-constexpr TemporalUnit unitInTable(int32_t);
 
 JS_EXPORT_PRIVATE TemporalResult<ISO8601::Duration> adjustDateDurationRecord(const ISO8601::Duration& dateDuration, int64_t days, std::optional<int64_t> weeks, std::optional<int64_t> months);
 

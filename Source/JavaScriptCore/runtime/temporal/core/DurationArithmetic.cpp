@@ -90,79 +90,6 @@ TemporalUnit NODELETE largestSubduration(const ISO8601::Duration& d)
     return static_cast<TemporalUnit>(index);
 }
 
-// totalSeconds — internal BalanceDuration helper; folds days/hours/minutes into total seconds for redistribution.
-int64_t totalSeconds(const ISO8601::Duration& d)
-{
-    constexpr int64_t hourPerDay = 24;
-    constexpr int64_t minPerHour = 60;
-    constexpr int64_t secPerMin = 60;
-    int64_t hours = hourPerDay * d.days() + d.hours();
-    int64_t minutes = minPerHour * hours + d.minutes();
-    return secPerMin * minutes + d.seconds();
-}
-
-// totalSubseconds — internal BalanceDuration helper; returns total sub-second nanoseconds (ms×1e6 + µs×1e3 + ns).
-Int128 totalSubseconds(const ISO8601::Duration& d)
-{
-    constexpr int64_t usPerMs = 1000;
-    constexpr int64_t nsPerUs = 1000;
-    Int128 microseconds = Int128(usPerMs) * d.milliseconds() + d.microseconds();
-    return Int128(nsPerUs) * microseconds + d.nanoseconds();
-}
-
-// balanceDuration — temporal_rs: balance is performed inline in Duration::compare.
-// Redistributes time fields up to largestUnit. Returns std::nullopt (always).
-std::optional<double> balanceDuration(ISO8601::Duration& duration, TemporalUnit largestUnit)
-{
-    constexpr int64_t nsPerUs = 1000;
-    constexpr int64_t usPerMs = 1000;
-    constexpr int64_t msPerSec = 1000;
-    constexpr int64_t secPerMin = 60;
-    constexpr int64_t minPerHour = 60;
-    Int128 nanoseconds = totalSubseconds(duration);
-    int64_t seconds = totalSeconds(duration);
-    duration.clear();
-    constexpr int64_t secondsPerDay = 86400;
-    if (largestUnit <= TemporalUnit::Day) {
-        duration.setDays(seconds / secondsPerDay);
-        seconds = seconds % secondsPerDay;
-    }
-    Int128 microseconds = nanoseconds / nsPerUs;
-    Int128 milliseconds = microseconds / Int128(usPerMs);
-    // Fold ms overflow into seconds: ms >= 1000 must carry into seconds.
-    int64_t secondsFromMs = static_cast<int64_t>(milliseconds / Int128(msPerSec));
-    int64_t totalSecs = seconds + secondsFromMs;
-    int64_t minutes = totalSecs / secPerMin;
-    if (largestUnit <= TemporalUnit::Hour) {
-        duration.setNanoseconds(nanoseconds % nsPerUs);
-        duration.setMicroseconds(microseconds % Int128(usPerMs));
-        duration.setMilliseconds(static_cast<int64_t>(milliseconds % Int128(msPerSec)));
-        duration.setSeconds(totalSecs % secPerMin);
-        duration.setMinutes(minutes % minPerHour);
-        duration.setHours(minutes / minPerHour);
-    } else if (largestUnit == TemporalUnit::Minute) {
-        duration.setNanoseconds(nanoseconds % nsPerUs);
-        duration.setMicroseconds(microseconds % Int128(usPerMs));
-        duration.setMilliseconds(static_cast<int64_t>(milliseconds % Int128(msPerSec)));
-        duration.setSeconds(totalSecs % secPerMin);
-        duration.setMinutes(minutes);
-    } else if (largestUnit == TemporalUnit::Second) {
-        duration.setNanoseconds(nanoseconds % nsPerUs);
-        duration.setMicroseconds(microseconds % Int128(usPerMs));
-        duration.setMilliseconds(static_cast<int64_t>(milliseconds % Int128(msPerSec)));
-        duration.setSeconds(totalSecs);
-    } else if (largestUnit == TemporalUnit::Millisecond) {
-        duration.setNanoseconds(nanoseconds % nsPerUs);
-        duration.setMicroseconds(microseconds % Int128(usPerMs));
-        duration.setMilliseconds(static_cast<int64_t>(milliseconds) + seconds * msPerSec);
-    } else if (largestUnit == TemporalUnit::Microsecond) {
-        duration.setNanoseconds(nanoseconds % nsPerUs);
-        duration.setMicroseconds(microseconds + Int128(seconds) * (ISO8601::ExactTime::nsPerSecond / ISO8601::ExactTime::nsPerMicrosecond));
-    } else
-        duration.setNanoseconds(nanoseconds + Int128(seconds) * ISO8601::ExactTime::nsPerSecond);
-    return std::nullopt;
-}
-
 // timeDurationFromComponents — temporal_rs: TimeDuration::from_components
 // Converts duration time fields to a total nanosecond Int128.
 Int128 timeDurationFromComponents(double hours, double minutes, double seconds, double milliseconds, double microseconds, double nanoseconds)
@@ -395,7 +322,7 @@ Int128 getUTCEpochNanoseconds(ISO8601::PlainDate date, ISO8601::PlainTime time)
         + Int128(time.nanosecond());
 }
 
-constexpr int32_t unitIndexInTable(TemporalUnit unit)
+static constexpr int32_t unitIndexInTable(TemporalUnit unit)
 {
     switch (unit) {
     case TemporalUnit::Year:
@@ -423,7 +350,7 @@ constexpr int32_t unitIndexInTable(TemporalUnit unit)
     }
 }
 
-constexpr TemporalUnit unitInTable(int32_t i)
+static constexpr TemporalUnit unitInTable(int32_t i)
 {
     switch (i) {
     case 0:
@@ -754,8 +681,9 @@ TemporalResult<NudgeResult> nudgeToZonedTime(int32_t sign,
     Int128 endEpochNs = *endNsResult;
     // Step 7: daySpan = TimeDurationFromEpochNanosecondsDifference(endEpochNs, startEpochNs).
     Int128 daySpan = endEpochNs - startEpochNs;
-    // Step 8: Assert: TimeDurationSign(daySpan) = sign.
-    ASSERT((daySpan < 0 ? -1 : daySpan > 0 ? 1 : 0) == sign);
+    // Step 8's assert is violable: a zone that skips a whole calendar day makes daySpan zero
+    // (tc39/proposal-temporal#3310). Only subtracted, never divided by, so zero needs no handling.
+    ASSERT(!daySpan || (daySpan < 0 ? -1 : 1) == sign);
     // Step 9: Let unitLength be the nanoseconds length of unit.
     Int128 unitLength = lengthInNanoseconds(unit);
     // Step 10: Let roundedTimeDuration be ? RoundTimeDurationToIncrement(duration.[[Time]], increment × unitLength, roundingMode).

@@ -81,7 +81,10 @@ ISO8601::PlainDate addDaysToISODate(const ISO8601::PlainDate& date, int64_t days
     // 2. Let ms be EpochDaysToEpochMs(epochDays, 0).
     double ms = makeDate(epochDays, 0);
     double daysToUse = msToDays(ms);
-    if (!isInBounds<int32_t>(daysToUse)) [[unlikely]]
+    // yearMonthDayFromDays adds a ~1.47e8 day offset internally, so its domain is narrower than its
+    // int32_t parameter. Real dates are within 1e8 days of the epoch, so this excludes nothing.
+    static constexpr double maxSafeEpochDays = 1e9;
+    if (std::abs(daysToUse) > maxSafeEpochDays) [[unlikely]]
         return ISO8601::PlainDate::sentinel();
     // 3. Return CreateISODateRecord(EpochTimeToEpochYear(ms), EpochTimeToMonthInYear(ms) + 1, EpochTimeToDate(ms)).
     auto [y, m, d] = WTF::yearMonthDayFromDays(static_cast<int32_t>(daysToUse));
