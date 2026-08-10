@@ -298,7 +298,7 @@ std::optional<CSS::BorderImageWidth> consumeUnresolvedBorderImageWidth(CSSParser
         // FIXME: As this falls into the "<length> ambiguous with <number>" case, this should probably be `.unitlessZeroLength = UnitlessZeroQuirk::Forbid` in case the order of checks ever changes.
 
         if (auto lengthPercentage = MetaConsumer<CSS::BorderImageWidth::Value::LengthPercentage>::consume(range, state, { .overrideParserMode = HTMLStandardMode })) {
-            hasLength = WTF::switchOn(*lengthPercentage,
+            hasLength = hasLength || WTF::switchOn(*lengthPercentage,
                 [](const CSS::BorderImageWidth::Value::LengthPercentage::Calc& calc) {
                     return calc.primitiveType() == CSSUnitType::CSS_PX;
                 },
