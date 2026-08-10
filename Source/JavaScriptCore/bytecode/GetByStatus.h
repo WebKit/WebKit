@@ -105,6 +105,7 @@ public:
 
     static GetByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& dfgContextStack, CodeOrigin);
     static GetByStatus computeFor(JSGlobalObject*, const StructureSet&, CacheableIdentifier, LookupMode);
+    static GetByStatus computeFor(CodeBlock* profiledBlock, BytecodeIndex, JSGlobalObject*, const StructureSet&, CacheableIdentifier, LookupMode);
 
     State state() const { return m_state; }
     

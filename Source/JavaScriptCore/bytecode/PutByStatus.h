@@ -102,7 +102,8 @@ public:
     
     static PutByStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag, CallLinkStatus::ExitSiteData);
     static PutByStatus computeFor(JSGlobalObject*, const StructureSet&, CacheableIdentifier, bool isDirect, PrivateFieldPutKind);
-    
+    static PutByStatus computeFor(CodeBlock* profiledBlock, BytecodeIndex, JSGlobalObject*, const StructureSet&, CacheableIdentifier, bool isDirect, PrivateFieldPutKind);
+
     static PutByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack&, CodeOrigin);
 
 #if ENABLE(JIT)
