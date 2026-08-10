@@ -908,7 +908,8 @@ end)
 
 reservedOpcode(0x27)
 
-macro popMemoryIndex(reg)
+# Pops the address operand of a memory access, whose width follows memory 0's address type.
+macro popMemoryAddress(reg)
     popInt64(reg) # Note that popInt32 and popInt64 are same implementation.
     btbnz JSWebAssemblyInstance::m_cachedIsMemory64[wasmInstance], .done
     zxi2q reg, reg
@@ -944,7 +945,7 @@ macro loadStoreMakePointerFast(alignAccess, offsetAccess, wasmAddrReg, size, scr
     addp memoryBase, wasmAddrReg
 end
 
-# Note: wasmAddrReg (t0) is set by the handler's popMemoryIndex before branching here.
+# Note: wasmAddrReg (t0) is set by the handler's popMemoryAddress before branching here.
 # For store ops, the data register (t3 for int, ft0 for float) is also set by the handler.
 macro loadStoreMakePointerSlow(cursor, wasmAddrReg, size, scratch, scratch2, decodeScratch1, decodeScratch2)
     # 1. Decode flags/alignment, check multi-memory bit
@@ -983,7 +984,7 @@ end
 ipintOp(_i32_load_mem, macro()
     # i32.load
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 4, t1, t2, .ipint_i32_load_mem_slow_path)
     # load memory location
     loadi [t0], t1
@@ -996,7 +997,7 @@ end)
 ipintOp(_i64_load_mem, macro()
     # i32.load
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 8, t1, t2, .ipint_i64_load_mem_slow_path)
     # load memory location
     loadq [t0], t1
@@ -1009,7 +1010,7 @@ end)
 ipintOp(_f32_load_mem, macro()
     # f32.load
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 4, t1, t2, .ipint_f32_load_mem_slow_path)
     # load memory location
     loadf [t0], ft0
@@ -1022,7 +1023,7 @@ end)
 ipintOp(_f64_load_mem, macro()
     # f64.load
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 8, t1, t2, .ipint_f64_load_mem_slow_path)
     # load memory location
     loadd [t0], ft0
@@ -1035,7 +1036,7 @@ end)
 ipintOp(_i32_load8s_mem, macro()
     # i32.load8_s
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 1, t1, t2, .ipint_i32_load8s_mem_slow_path)
     loadbsi [t0], t1
     pushInt32(t1)
@@ -1047,7 +1048,7 @@ end)
 ipintOp(_i32_load8u_mem, macro()
     # i32.load8_u
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 1, t1, t2, .ipint_i32_load8u_mem_slow_path)
     loadb [t0], t1
     pushInt32(t1)
@@ -1059,7 +1060,7 @@ end)
 ipintOp(_i32_load16s_mem, macro()
     # i32.load16_s
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 2, t1, t2, .ipint_i32_load16s_mem_slow_path)
     loadhsi [t0], t1
     pushInt32(t1)
@@ -1071,7 +1072,7 @@ end)
 ipintOp(_i32_load16u_mem, macro()
     # i32.load16_u
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 2, t1, t2, .ipint_i32_load16u_mem_slow_path)
     loadh [t0], t1
     pushInt32(t1)
@@ -1083,7 +1084,7 @@ end)
 ipintOp(_i64_load8s_mem, macro()
     # i64.load8_s
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 1, t1, t2, .ipint_i64_load8s_mem_slow_path)
     loadbsq [t0], t1
     pushInt64(t1)
@@ -1095,7 +1096,7 @@ end)
 ipintOp(_i64_load8u_mem, macro()
     # i64.load8_u
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 1, t1, t2, .ipint_i64_load8u_mem_slow_path)
     loadb [t0], t1
     pushInt64(t1)
@@ -1107,7 +1108,7 @@ end)
 ipintOp(_i64_load16s_mem, macro()
     # i64.load16_s
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 2, t1, t2, .ipint_i64_load16s_mem_slow_path)
     loadhsq [t0], t1
     pushInt64(t1)
@@ -1119,7 +1120,7 @@ end)
 ipintOp(_i64_load16u_mem, macro()
     # i64.load16_u
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 2, t1, t2, .ipint_i64_load16u_mem_slow_path)
     loadh [t0], t1
     pushInt64(t1)
@@ -1131,7 +1132,7 @@ end)
 ipintOp(_i64_load32s_mem, macro()
     # i64.load32_s
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 4, t1, t2, .ipint_i64_load32s_mem_slow_path)
     loadi [t0], t1
     sxi2q t1, t1
@@ -1144,7 +1145,7 @@ end)
 ipintOp(_i64_load32u_mem, macro()
     # i64.load8_s
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 4, t1, t2, .ipint_i64_load32u_mem_slow_path)
     loadi [t0], t1
     pushInt64(t1)
@@ -1158,7 +1159,7 @@ ipintOp(_i32_store_mem, macro()
     # pop data
     popInt32(t3)
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 4, t1, t2, .ipint_i32_store_mem_slow_path)
     storei t3, [t0]
     advancePC(3)
@@ -1170,7 +1171,7 @@ ipintOp(_i64_store_mem, macro()
     # pop data
     popInt64(t3)
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 8, t1, t2, .ipint_i64_store_mem_slow_path)
     storeq t3, [t0]
     advancePC(3)
@@ -1182,7 +1183,7 @@ ipintOp(_f32_store_mem, macro()
     # pop data
     popFloat32(ft0)
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 4, t1, t2, .ipint_f32_store_mem_slow_path)
     storef ft0, [t0]
     advancePC(3)
@@ -1194,7 +1195,7 @@ ipintOp(_f64_store_mem, macro()
     # pop data
     popFloat64(ft0)
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 8, t1, t2, .ipint_f64_store_mem_slow_path)
     stored ft0, [t0]
     advancePC(3)
@@ -1206,7 +1207,7 @@ ipintOp(_i32_store8_mem, macro()
     # pop data
     popInt32(t3)
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 1, t1, t2, .ipint_i32_store8_mem_slow_path)
     storeb t3, [t0]
     advancePC(3)
@@ -1218,7 +1219,7 @@ ipintOp(_i32_store16_mem, macro()
     # pop data
     popInt32(t3)
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 2, t1, t2, .ipint_i32_store16_mem_slow_path)
     storeh t3, [t0]
     advancePC(3)
@@ -1230,7 +1231,7 @@ ipintOp(_i64_store8_mem, macro()
     # pop data
     popInt64(t3)
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 1, t1, t2, .ipint_i64_store8_mem_slow_path)
     storeb t3, [t0]
     advancePC(3)
@@ -1242,7 +1243,7 @@ ipintOp(_i64_store16_mem, macro()
     # pop data
     popInt64(t3)
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 2, t1, t2, .ipint_i64_store16_mem_slow_path)
     storeh t3, [t0]
     advancePC(3)
@@ -1254,7 +1255,7 @@ ipintOp(_i64_store32_mem, macro()
     # pop data
     popInt64(t3)
     # pop index
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast(1[PC], 2[PC], t0, 4, t1, t2, .ipint_i64_store32_mem_slow_path)
     storei t3, [t0]
     advancePC(3)
@@ -1263,7 +1264,6 @@ end)
 
 ipintOp(_memory_size, macro()
     loadb IPInt::MemorySizeMetadata::memoryIndex[MC], t0
-    advanceMC(constexpr (sizeof(IPInt::MemorySizeMetadata)))
     btinz t0, .callMemorySize
     loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemory0Size())[wasmInstance], t0 # size of memory 0
     jmp .doneLoadingMemorySize
@@ -1275,18 +1275,21 @@ ipintOp(_memory_size, macro()
     urshiftp 16, t0
     zxi2q t0, t0
     pushInt32(t0)
-    advancePC(2)
+    loadb IPInt::MemorySizeMetadata::instructionLength[MC], t0
+    advancePCByReg(t0)
+    advanceMC(constexpr (sizeof(IPInt::MemorySizeMetadata)))
     nextIPIntInstruction()
 end)
 
 ipintOp(_memory_grow, macro()
     popInt32(a1)
     loadb IPInt::MemoryGrowMetadata::memoryIndex[MC], a2
-    advanceMC(constexpr (sizeof(IPInt::MemoryGrowMetadata)))
     operationCall(macro() cCall3(_ipint_extern_memory_grow) end)
     pushInt32(r0)
     ipintReloadMemory(t2)
-    advancePC(2)
+    loadb IPInt::MemoryGrowMetadata::instructionLength[MC], t0
+    advancePCByReg(t0)
+    advanceMC(constexpr (sizeof(IPInt::MemoryGrowMetadata)))
     nextIPIntInstruction()
 end)
 
@@ -4184,7 +4187,7 @@ end
 
 ipintOp(_simd_v128_load_mem, macro()
     # v128.load
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 16, t1, t2, .simd_v128_load_slow_path)
     loadv [t0], v0
     pushVec(v0)
@@ -4194,7 +4197,7 @@ end)
 
 ipintOp(_simd_v128_load_8x8s_mem, macro()
     # v128.load8x8_s
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .simd_v128_load_8x8s_slow_path)
     simdLoad8x8s()
     pushVec(v0)
@@ -4204,7 +4207,7 @@ end)
 
 ipintOp(_simd_v128_load_8x8u_mem, macro()
     # v128.load8x8_u
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .simd_v128_load_8x8u_slow_path)
     simdLoad8x8u()
     pushVec(v0)
@@ -4214,7 +4217,7 @@ end)
 
 ipintOp(_simd_v128_load_16x4s_mem, macro()
     # v128.load16x4_s
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .simd_v128_load_16x4s_slow_path)
     simdLoad16x4s()
     pushVec(v0)
@@ -4224,7 +4227,7 @@ end)
 
 ipintOp(_simd_v128_load_16x4u_mem, macro()
     # v128.load16x4_u
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .simd_v128_load_16x4u_slow_path)
     simdLoad16x4u()
     pushVec(v0)
@@ -4234,7 +4237,7 @@ end)
 
 ipintOp(_simd_v128_load_32x2s_mem, macro()
     # v128.load32x2_s
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .simd_v128_load_32x2s_slow_path)
     simdLoad32x2s()
     pushVec(v0)
@@ -4244,7 +4247,7 @@ end)
 
 ipintOp(_simd_v128_load_32x2u_mem, macro()
     # v128.load32x2_u
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .simd_v128_load_32x2u_slow_path)
     simdLoad32x2u()
     pushVec(v0)
@@ -4254,7 +4257,7 @@ end)
 
 ipintOp(_simd_v128_load8_splat_mem, macro()
     # v128.load8_splat
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .simd_v128_load8_splat_slow_path)
     simdLoadSplat8()
     pushVec(v0)
@@ -4264,7 +4267,7 @@ end)
 
 ipintOp(_simd_v128_load16_splat_mem, macro()
     # v128.load16_splat
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .simd_v128_load16_splat_slow_path)
     simdLoadSplat16()
     pushVec(v0)
@@ -4274,7 +4277,7 @@ end)
 
 ipintOp(_simd_v128_load32_splat_mem, macro()
     # v128.load32_splat
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .simd_v128_load32_splat_slow_path)
     simdLoadSplat32()
     pushVec(v0)
@@ -4284,7 +4287,7 @@ end)
 
 ipintOp(_simd_v128_load64_splat_mem, macro()
     # v128.load64_splat
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .simd_v128_load64_splat_slow_path)
     simdLoadSplat64()
     pushVec(v0)
@@ -4295,7 +4298,7 @@ end)
 ipintOp(_simd_v128_store_mem, macro()
     # v128.store
     popVec(v0)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 16, t1, t2, .simd_v128_store_slow_path)
     storev v0, [t0]
     leap 2[t4], PC
@@ -5560,7 +5563,7 @@ end)
 
 ipintOp(_simd_v128_load8_lane_mem, macro()
     popVec(v0)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .simd_v128_load8_lane_slow_path)
     loadb [t0], t0
     loadb 2[t4], t1
@@ -5573,7 +5576,7 @@ end)
 
 ipintOp(_simd_v128_load16_lane_mem, macro()
     popVec(v0)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .simd_v128_load16_lane_slow_path)
     loadh [t0], t0
     loadb 2[t4], t1
@@ -5586,7 +5589,7 @@ end)
 
 ipintOp(_simd_v128_load32_lane_mem, macro()
     popVec(v0)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .simd_v128_load32_lane_slow_path)
     loadi [t0], t0
     loadb 2[t4], t1
@@ -5599,7 +5602,7 @@ end)
 
 ipintOp(_simd_v128_load64_lane_mem, macro()
     popVec(v0)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .simd_v128_load64_lane_slow_path)
     loadq [t0], t0
     loadb 2[t4], t1
@@ -5613,7 +5616,7 @@ end)
 ipintOp(_simd_v128_store8_lane_mem, macro()
     # Stack: [addr, v128] with v128 on top. Pop both, parse memarg, extract lane, store.
     popVec(v0)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .simd_v128_store8_lane_slow_path)
     loadb 2[t4], t1
     andi ImmLaneIdx16Mask, t1
@@ -5628,7 +5631,7 @@ end)
 
 ipintOp(_simd_v128_store16_lane_mem, macro()
     popVec(v0)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .simd_v128_store16_lane_slow_path)
     loadb 2[t4], t1
     andi ImmLaneIdx8Mask, t1
@@ -5642,7 +5645,7 @@ end)
 
 ipintOp(_simd_v128_store32_lane_mem, macro()
     popVec(v0)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .simd_v128_store32_lane_slow_path)
     loadb 2[t4], t1
     andi ImmLaneIdx4Mask, t1
@@ -5656,7 +5659,7 @@ end)
 
 ipintOp(_simd_v128_store64_lane_mem, macro()
     popVec(v0)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .simd_v128_store64_lane_slow_path)
     loadb 2[t4], t1
     andi ImmLaneIdx2Mask, t1
@@ -5670,7 +5673,7 @@ end)
 
 ipintOp(_simd_v128_load32_zero_mem, macro()
     # v128.load32_zero - load 32-bit value from memory and zero-pad to 128 bits
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .simd_v128_load32_zero_slow_path)
     loadi [t0], t0
     subp V128ISize, sp
@@ -5683,7 +5686,7 @@ end)
 
 ipintOp(_simd_v128_load64_zero_mem, macro()
     # v128.load64_zero - load 64-bit value from memory and zero-pad to 128 bits
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .simd_v128_load64_zero_slow_path)
     loadq [t0], t0
     subp V128ISize, sp
@@ -10187,7 +10190,7 @@ reservedAtomicOpcode(atomic_0xe)
 reservedAtomicOpcode(atomic_0xf)
 
 ipintAtomicOp(_i32_atomic_load, macro()
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i32_atomic_load_slow_path)
     doI32AtomicLoad(t0, t2)
     pushInt32(t2)
@@ -10196,7 +10199,7 @@ ipintAtomicOp(_i32_atomic_load, macro()
 end)
 
 ipintAtomicOp(_i64_atomic_load, macro()
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .ipint_i64_atomic_load_slow_path)
     doI64AtomicLoad(t0, t2)
     pushInt64(t2)
@@ -10205,7 +10208,7 @@ ipintAtomicOp(_i64_atomic_load, macro()
 end)
 
 ipintAtomicOp(_i32_atomic_load8_u, macro()
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i32_atomic_load8_u_slow_path)
     doI32AtomicLoad8(t0, t2)
     pushInt32(t2)
@@ -10214,7 +10217,7 @@ ipintAtomicOp(_i32_atomic_load8_u, macro()
 end)
 
 ipintAtomicOp(_i32_atomic_load16_u, macro()
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i32_atomic_load16_u_slow_path)
     doI32AtomicLoad16(t0, t2)
     pushInt32(t2)
@@ -10223,7 +10226,7 @@ ipintAtomicOp(_i32_atomic_load16_u, macro()
 end)
 
 ipintAtomicOp(_i64_atomic_load8_u, macro()
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i64_atomic_load8_u_slow_path)
     doI64AtomicLoad8(t0, t2)
     pushInt64(t2)
@@ -10232,7 +10235,7 @@ ipintAtomicOp(_i64_atomic_load8_u, macro()
 end)
 
 ipintAtomicOp(_i64_atomic_load16_u, macro()
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i64_atomic_load16_u_slow_path)
     doI64AtomicLoad16(t0, t2)
     pushInt64(t2)
@@ -10241,7 +10244,7 @@ ipintAtomicOp(_i64_atomic_load16_u, macro()
 end)
 
 ipintAtomicOp(_i64_atomic_load32_u, macro()
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i64_atomic_load32_u_slow_path)
     doI64AtomicLoad32(t0, t2)
     pushInt64(t2)
@@ -10251,7 +10254,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_store, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i32_atomic_store_slow_path)
     doI32AtomicStore(t0, t3, t2, t1)
     leap 2[t4], PC
@@ -10260,7 +10263,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_store, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .ipint_i64_atomic_store_slow_path)
     doI64AtomicStore(t0, t3, t2, t1)
     leap 2[t4], PC
@@ -10269,7 +10272,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_store8_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i32_atomic_store8_u_slow_path)
     doI32AtomicStore8(t0, t3, t2, t1)
     leap 2[t4], PC
@@ -10278,7 +10281,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_store16_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i32_atomic_store16_u_slow_path)
     doI32AtomicStore16(t0, t3, t2, t1)
     leap 2[t4], PC
@@ -10287,7 +10290,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_store8_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i64_atomic_store8_u_slow_path)
     doI64AtomicStore8(t0, t3, t2, t1)
     leap 2[t4], PC
@@ -10296,7 +10299,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_store16_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i64_atomic_store16_u_slow_path)
     doI64AtomicStore16(t0, t3, t2, t1)
     leap 2[t4], PC
@@ -10305,7 +10308,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_store32_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i64_atomic_store32_u_slow_path)
     doI64AtomicStore32(t0, t3, t2, t1)
     leap 2[t4], PC
@@ -10314,7 +10317,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw_add, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i32_atomic_rmw_add_slow_path)
     doI32AtomicRmwAdd(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10324,7 +10327,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw_add, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .ipint_i64_atomic_rmw_add_slow_path)
     doI64AtomicRmwAdd(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10334,7 +10337,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw8_add_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i32_atomic_rmw8_add_u_slow_path)
     doI32AtomicRmwAdd8(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10344,7 +10347,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw16_add_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i32_atomic_rmw16_add_u_slow_path)
     doI32AtomicRmwAdd16(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10354,7 +10357,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw8_add_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i64_atomic_rmw8_add_u_slow_path)
     doI64AtomicRmwAdd8(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10364,7 +10367,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw16_add_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i64_atomic_rmw16_add_u_slow_path)
     doI64AtomicRmwAdd16(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10374,7 +10377,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw32_add_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i64_atomic_rmw32_add_u_slow_path)
     doI64AtomicRmwAdd32(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10384,7 +10387,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw_sub, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i32_atomic_rmw_sub_slow_path)
     doI32AtomicRmwSub(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10394,7 +10397,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw_sub, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .ipint_i64_atomic_rmw_sub_slow_path)
     doI64AtomicRmwSub(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10404,7 +10407,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw8_sub_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i32_atomic_rmw8_sub_u_slow_path)
     doI32AtomicRmwSub8(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10414,7 +10417,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw16_sub_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i32_atomic_rmw16_sub_u_slow_path)
     doI32AtomicRmwSub16(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10424,7 +10427,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw8_sub_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i64_atomic_rmw8_sub_u_slow_path)
     doI64AtomicRmwSub8(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10434,7 +10437,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw16_sub_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i64_atomic_rmw16_sub_u_slow_path)
     doI64AtomicRmwSub16(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10444,7 +10447,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw32_sub_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i64_atomic_rmw32_sub_u_slow_path)
     doI64AtomicRmwSub32(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10454,7 +10457,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw_and, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i32_atomic_rmw_and_slow_path)
     doI32AtomicRmwAnd(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10464,7 +10467,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw_and, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .ipint_i64_atomic_rmw_and_slow_path)
     doI64AtomicRmwAnd(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10474,7 +10477,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw8_and_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i32_atomic_rmw8_and_u_slow_path)
     doI32AtomicRmwAnd8(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10484,7 +10487,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw16_and_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i32_atomic_rmw16_and_u_slow_path)
     doI32AtomicRmwAnd16(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10494,7 +10497,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw8_and_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i64_atomic_rmw8_and_u_slow_path)
     doI64AtomicRmwAnd8(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10504,7 +10507,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw16_and_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i64_atomic_rmw16_and_u_slow_path)
     doI64AtomicRmwAnd16(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10514,7 +10517,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw32_and_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i64_atomic_rmw32_and_u_slow_path)
     doI64AtomicRmwAnd32(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10524,7 +10527,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw_or, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i32_atomic_rmw_or_slow_path)
     doI32AtomicRmwOr(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10534,7 +10537,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw_or, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .ipint_i64_atomic_rmw_or_slow_path)
     doI64AtomicRmwOr(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10544,7 +10547,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw8_or_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i32_atomic_rmw8_or_u_slow_path)
     doI32AtomicRmwOr8(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10554,7 +10557,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw16_or_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i32_atomic_rmw16_or_u_slow_path)
     doI32AtomicRmwOr16(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10564,7 +10567,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw8_or_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i64_atomic_rmw8_or_u_slow_path)
     doI64AtomicRmwOr8(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10574,7 +10577,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw16_or_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i64_atomic_rmw16_or_u_slow_path)
     doI64AtomicRmwOr16(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10584,7 +10587,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw32_or_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i64_atomic_rmw32_or_u_slow_path)
     doI64AtomicRmwOr32(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10594,7 +10597,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw_xor, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i32_atomic_rmw_xor_slow_path)
     doI32AtomicRmwXor(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10604,7 +10607,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw_xor, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .ipint_i64_atomic_rmw_xor_slow_path)
     doI64AtomicRmwXor(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10614,7 +10617,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw8_xor_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i32_atomic_rmw8_xor_u_slow_path)
     doI32AtomicRmwXor8(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10624,7 +10627,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw16_xor_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i32_atomic_rmw16_xor_u_slow_path)
     doI32AtomicRmwXor16(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10634,7 +10637,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw8_xor_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i64_atomic_rmw8_xor_u_slow_path)
     doI64AtomicRmwXor8(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10644,7 +10647,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw16_xor_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i64_atomic_rmw16_xor_u_slow_path)
     doI64AtomicRmwXor16(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10654,7 +10657,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw32_xor_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i64_atomic_rmw32_xor_u_slow_path)
     doI64AtomicRmwXor32(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10664,7 +10667,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw_xchg, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i32_atomic_rmw_xchg_slow_path)
     doI32AtomicRmwXchg(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10674,7 +10677,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw_xchg, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .ipint_i64_atomic_rmw_xchg_slow_path)
     doI64AtomicRmwXchg(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10684,7 +10687,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw8_xchg_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i32_atomic_rmw8_xchg_u_slow_path)
     doI32AtomicRmwXchg8(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10694,7 +10697,7 @@ end)
 
 ipintAtomicOp(_i32_atomic_rmw16_xchg_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i32_atomic_rmw16_xchg_u_slow_path)
     doI32AtomicRmwXchg16(t0, t3, t2, t1)
     pushInt32(t0)
@@ -10704,7 +10707,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw8_xchg_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i64_atomic_rmw8_xchg_u_slow_path)
     doI64AtomicRmwXchg8(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10714,7 +10717,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw16_xchg_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i64_atomic_rmw16_xchg_u_slow_path)
     doI64AtomicRmwXchg16(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10724,7 +10727,7 @@ end)
 
 ipintAtomicOp(_i64_atomic_rmw32_xchg_u, macro()
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i64_atomic_rmw32_xchg_u_slow_path)
     doI64AtomicRmwXchg32(t0, t3, t2, t1)
     pushInt64(t0)
@@ -10815,7 +10818,7 @@ end
 ipintAtomicOp(_i32_atomic_rmw_cmpxchg, macro()
     popInt64(t7)
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i32_atomic_rmw_cmpxchg_slow_path)
     doI32AtomicCmpxchg(t0, t3, t7, t2, t1)
     pushInt32(t0)
@@ -10826,7 +10829,7 @@ end)
 ipintAtomicOp(_i64_atomic_rmw_cmpxchg, macro()
     popInt64(t7)
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 8, t1, t2, .ipint_i64_atomic_rmw_cmpxchg_slow_path)
     doI64AtomicCmpxchg(t0, t3, t7, t2, t1)
     pushInt64(t0)
@@ -10837,7 +10840,7 @@ end)
 ipintAtomicOp(_i32_atomic_rmw8_cmpxchg_u, macro()
     popInt64(t7)
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i32_atomic_rmw8_cmpxchg_u_slow_path)
     doI32AtomicCmpxchg8(t0, t3, t7, t2, t1)
     pushInt32(t0)
@@ -10848,7 +10851,7 @@ end)
 ipintAtomicOp(_i32_atomic_rmw16_cmpxchg_u, macro()
     popInt64(t7)
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i32_atomic_rmw16_cmpxchg_u_slow_path)
     doI32AtomicCmpxchg16(t0, t3, t7, t2, t1)
     pushInt32(t0)
@@ -10859,7 +10862,7 @@ end)
 ipintAtomicOp(_i64_atomic_rmw8_cmpxchg_u, macro()
     popInt64(t7)
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 1, t1, t2, .ipint_i64_atomic_rmw8_cmpxchg_u_slow_path)
     doI64AtomicCmpxchg8(t0, t3, t7, t2, t1)
     pushInt64(t0)
@@ -10870,7 +10873,7 @@ end)
 ipintAtomicOp(_i64_atomic_rmw16_cmpxchg_u, macro()
     popInt64(t7)
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 2, t1, t2, .ipint_i64_atomic_rmw16_cmpxchg_u_slow_path)
     doI64AtomicCmpxchg16(t0, t3, t7, t2, t1)
     pushInt64(t0)
@@ -10881,7 +10884,7 @@ end)
 ipintAtomicOp(_i64_atomic_rmw32_cmpxchg_u, macro()
     popInt64(t7)
     popInt64(t3)
-    popMemoryIndex(t0)
+    popMemoryAddress(t0)
     loadStoreMakePointerFast([t4], 1[t4], t0, 4, t1, t2, .ipint_i64_atomic_rmw32_cmpxchg_u_slow_path)
     doI64AtomicCmpxchg32(t0, t3, t7, t2, t1)
     pushInt64(t0)
@@ -10940,7 +10943,7 @@ end)
 ##################################################
 
 # The handler's fast path pops values and branches here on multi-byte memarg.
-# t0 = wasm address (from popMemoryIndex), t3 = data value (for int stores),
+# t0 = wasm address (from popMemoryAddress), t3 = data value (for int stores),
 # ft0 = data value (for float stores). These must survive loadStoreMakePointerSlow.
 # For int stores, t3 is saved/restored around the macro since t3 is used as scratch.
 
@@ -11124,7 +11127,7 @@ end)
 ## Out-of-line slow paths for SIMD memory access ##
 ###################################################
 
-# t0 = wasm address (from popMemoryIndex before branching).
+# t0 = wasm address (from popMemoryAddress before branching).
 # t4 = cursor pointing to start of memarg (past SIMD opcode, set by simd_prefix).
 # After loadStoreMakePointerSlow, t4 points past the memarg.
 
@@ -11324,7 +11327,7 @@ end)
 ## Out-of-line slow paths for atomic memory operations ##
 #########################################################
 
-# t0 = wasm address (from popMemoryIndex before branching).
+# t0 = wasm address (from popMemoryAddress before branching).
 # t4 = cursor pointing to start of memarg (past atomic sub-opcode, set by atomic_prefix).
 # t3 = data value (for store/RMW ops, survives loadStoreMakePointerSlow).
 # t7 = new value for CAS (must be push/popped around loadStoreMakePointerSlow).

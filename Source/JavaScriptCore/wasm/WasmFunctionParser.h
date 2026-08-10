@@ -298,7 +298,6 @@ private:
     [[nodiscard]] PartialResult parseElementIndex(unsigned&);
     [[nodiscard]] PartialResult parseDataSegmentIndex(unsigned&);
     [[nodiscard]] PartialResult parseMemoryIndex(uint8_t&);
-    [[nodiscard]] PartialResult parseMemoryIndexForBulkOp(uint8_t&); // FIXME: when wasm spec tests are updated no need for this
     [[nodiscard]] PartialResult parseMemoryIndexAndFixupAlignment(uint32_t&, uint8_t&);
     [[nodiscard]] PartialResult parseMemoryOffset(uint8_t memoryIndex, uint64_t&);
 
@@ -1686,17 +1685,6 @@ template<typename Context>
 auto FunctionParser<Context>::parseMemoryIndex(uint8_t& result) -> PartialResult {
     uint32_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get memory index"_s);
-    WASM_VALIDATOR_FAIL_IF(memoryIndex >= m_info.memoryCount(), "memory index "_s, memoryIndex, " is out of range"_s);
-    result = memoryIndex;
-    return { };
-}
-
-// FIXME: some spec tests in binary.wast assert memory index must be a single byte,
-// spec tests will eventually have to be updated
-template<typename Context>
-auto FunctionParser<Context>::parseMemoryIndexForBulkOp(uint8_t& result) -> PartialResult {
-    uint8_t memoryIndex;
-    WASM_PARSER_FAIL_IF(!parseUInt8(memoryIndex), "can't get memory index"_s);
     WASM_VALIDATOR_FAIL_IF(memoryIndex >= m_info.memoryCount(), "memory index "_s, memoryIndex, " is out of range"_s);
     result = memoryIndex;
     return { };
@@ -3898,7 +3886,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "grow_memory is only valid if a memory is defined or imported"_s);
 
         uint8_t memoryIndex;
-        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexForBulkOp(memoryIndex));
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(memoryIndex));
 
         TypedExpression delta;
         bool isMemory64 = m_info.memory(memoryIndex).isMemory64();
@@ -3921,7 +3909,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "current_memory is only valid if a memory is defined or imported"_s);
 
         uint8_t memoryIndex;
-        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexForBulkOp(memoryIndex));
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(memoryIndex));
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addCurrentMemory(result, memoryIndex));
@@ -4530,7 +4518,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case CurrentMemory: {
         WASM_PARSER_FAIL_IF(!m_info.memoryCount(), "grow_memory/current_memory is only valid if a memory is defined or imported"_s);
         uint8_t memoryIndex;
-        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndexForBulkOp(memoryIndex));
+        WASM_FAIL_IF_HELPER_FAILS(parseMemoryIndex(memoryIndex));
         return { };
     }
 

@@ -1050,14 +1050,14 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
 
 [[nodiscard]] PartialResult IPIntGenerator::addGrowMemory(ExpressionType, ExpressionType&, uint8_t memoryIndex)
 {
-    m_metadata->addMemoryGrow(memoryIndex);
+    m_metadata->addMemoryGrow(memoryIndex, getCurrentInstructionLength());
     return { };
 }
 
 [[nodiscard]] PartialResult IPIntGenerator::addCurrentMemory(ExpressionType&, uint8_t memoryIndex)
 {
     changeStackSize(1);
-    m_metadata->addMemorySize(memoryIndex);
+    m_metadata->addMemorySize(memoryIndex, getCurrentInstructionLength());
     return { };
 }
 

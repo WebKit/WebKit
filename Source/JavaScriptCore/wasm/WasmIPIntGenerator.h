@@ -180,10 +180,12 @@ struct AtomicMemoryAccessMetadata {
 
 struct MemorySizeMetadata {
     uint8_t memoryIndex;
+    InstructionLengthMetadata instructionLength;
 };
 
 struct MemoryGrowMetadata {
     uint8_t memoryIndex;
+    InstructionLengthMetadata instructionLength;
 };
 
 struct TableInitMetadata {

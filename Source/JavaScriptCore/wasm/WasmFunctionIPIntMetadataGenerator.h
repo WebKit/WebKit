@@ -110,8 +110,8 @@ private:
     };
 
     void addLength(size_t length);
-    void addMemorySize(uint8_t memoryIndex);
-    void addMemoryGrow(uint8_t memoryIndex);
+    void addMemorySize(uint8_t memoryIndex, size_t length);
+    void addMemoryGrow(uint8_t memoryIndex, size_t length);
     void addTableAccess(uint32_t index, size_t length);
     void addRefFunc(uint32_t index, size_t length);
     void addElemDrop(uint32_t index, size_t length);
