@@ -40,6 +40,43 @@
 
 namespace WebKit {
 
+static std::optional<WebCore::Credential> credentialFromClientCertificateMessage(xpc_object_t message)
+{
+    OSObjectPtr<xpc_object_t> xpcEndPoint = xpc_dictionary_get_value(message, ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey);
+    if (!xpcEndPoint || xpc_get_type(xpcEndPoint.get()) != XPC_TYPE_ENDPOINT)
+        return std::nullopt;
+    RetainPtr endPoint = adoptNS([[NSXPCListenerEndpoint alloc] init]);
+    [endPoint _setEndpoint:xpcEndPoint.get()];
+    NSError *error = nil;
+    RetainPtr identity = adoptCF([SecKeyProxy createIdentityFromEndpoint:endPoint.get() error:&error]);
+    if (!identity || error) {
+        LOG_ERROR("Couldn't create identity from end point: %@", error);
+        return std::nullopt;
+    }
+
+    OSObjectPtr<xpc_object_t> certificateDataArray = xpc_dictionary_get_array(message, ClientCertificateAuthentication::XPCCertificatesKey);
+    if (!certificateDataArray)
+        return std::nullopt;
+    RetainPtr<NSMutableArray> certificates;
+    if (auto total = xpc_array_get_count(certificateDataArray.get())) {
+        certificates = [NSMutableArray arrayWithCapacity:total];
+        for (size_t i = 0; i < total; i++) {
+            OSObjectPtr<xpc_object_t> certificateData = xpc_array_get_value(certificateDataArray.get(), i);
+            RetainPtr cfData = adoptCF(CFDataCreate(nullptr, static_cast<const UInt8*>(xpc_data_get_bytes_ptr(certificateData.get())), xpc_data_get_length(certificateData.get())));
+            RetainPtr certificate = adoptCF(SecCertificateCreateWithData(nullptr, cfData.get()));
+            if (!certificate)
+                return std::nullopt;
+            [certificates addObject:(__bridge id)certificate.get()];
+        }
+    }
+
+    auto persistence = xpc_dictionary_get_uint64(message, ClientCertificateAuthentication::XPCPersistenceKey);
+    if (persistence > static_cast<uint64_t>(NSURLCredentialPersistenceSynchronizable))
+        return std::nullopt;
+
+    return WebCore::Credential(adoptNS([[NSURLCredential alloc] initWithIdentity:identity.get() certificates:certificates.get() persistence:(NSURLCredentialPersistence)persistence]).get());
+}
+
 void AuthenticationManager::initializeConnection(IPC::Connection* connection)
 {
     RELEASE_ASSERT(isMainRunLoop());
@@ -66,42 +103,20 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
             }
 
             auto challengeID = xpc_dictionary_get_uint64(event.get(), ClientCertificateAuthentication::XPCChallengeIDKey);
-            if (!challengeID)
+            if (!ObjectIdentifier<AuthenticationChallengeIdentifierType>::isValidIdentifier(challengeID)) {
+                ASSERT_NOT_REACHED();
                 return;
+            }
+            auto challengeIdentifier = ObjectIdentifier<AuthenticationChallengeIdentifierType>(challengeID);
 
-            OSObjectPtr<xpc_object_t> xpcEndPoint = xpc_dictionary_get_value(event.get(), ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey);
-            if (!xpcEndPoint || xpc_get_type(xpcEndPoint.get()) != XPC_TYPE_ENDPOINT)
-                return;
-            auto endPoint = adoptNS([[NSXPCListenerEndpoint alloc] init]);
-            [endPoint _setEndpoint:xpcEndPoint.get()];
-            NSError *error = nil;
-            auto identity = adoptCF([SecKeyProxy createIdentityFromEndpoint:endPoint.get() error:&error]);
-            if (!identity || error) {
-                LOG_ERROR("Couldn't create identity from end point: %@", error);
+            // CFNetwork owns the challenge's completion handler and never times out, so failing to complete it hangs the load forever.
+            auto credential = credentialFromClientCertificateMessage(event.get());
+            if (!credential) {
+                weakThis->completeAuthenticationChallenge(challengeIdentifier, AuthenticationChallengeDisposition::PerformDefaultHandling, { });
                 return;
             }
 
-            OSObjectPtr<xpc_object_t> certificateDataArray = xpc_dictionary_get_array(event.get(), ClientCertificateAuthentication::XPCCertificatesKey);
-            if (!certificateDataArray)
-                return;
-            RetainPtr<NSMutableArray> certificates;
-            if (auto total = xpc_array_get_count(certificateDataArray.get())) {
-                certificates = [NSMutableArray arrayWithCapacity:total];
-                for (size_t i = 0; i < total; i++) {
-                    OSObjectPtr<xpc_object_t> certificateData = xpc_array_get_value(certificateDataArray.get(), i);
-                    RetainPtr cfData = adoptCF(CFDataCreate(nullptr, static_cast<const UInt8*>(xpc_data_get_bytes_ptr(certificateData.get())), xpc_data_get_length(certificateData.get())));
-                    RetainPtr certificate = adoptCF(SecCertificateCreateWithData(nullptr, cfData.get()));
-                    if (!certificate)
-                        return;
-                    [certificates addObject:(__bridge id)certificate.get()];
-                }
-            }
-
-            auto persistence = xpc_dictionary_get_uint64(event.get(), ClientCertificateAuthentication::XPCPersistenceKey);
-            if (persistence > static_cast<uint64_t>(NSURLCredentialPersistenceSynchronizable))
-                return;
-
-            weakThis->completeAuthenticationChallenge(ObjectIdentifier<AuthenticationChallengeIdentifierType>(challengeID), AuthenticationChallengeDisposition::UseCredential, WebCore::Credential(adoptNS([[NSURLCredential alloc] initWithIdentity:identity.get() certificates:certificates.get() persistence:(NSURLCredentialPersistence)persistence]).get()));
+            weakThis->completeAuthenticationChallenge(challengeIdentifier, AuthenticationChallengeDisposition::UseCredential, WTF::move(*credential));
         });
     });
 }
