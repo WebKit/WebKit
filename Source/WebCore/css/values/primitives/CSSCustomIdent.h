@@ -26,49 +26,28 @@
 
 #pragma once
 
-#include <WebCore/CSSPrimitiveNumericTypes.h>
-#include <WebCore/CSSString.h>
 #include <WebCore/CSSValueTypes.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 namespace CSS {
 
-// Non-keyword <ident> argument to the ident() function, contributing its codepoints to the resulting identifier.
-struct IdentFunctionIdent {
-    AtomString value;
-
-    bool operator==(const IdentFunctionIdent&) const = default;
-};
-
-template<> struct Serialize<IdentFunctionIdent> { void operator()(StringBuilder&, const SerializationContext&, const IdentFunctionIdent&); };
-template<> struct ComputedStyleDependenciesCollector<IdentFunctionIdent> { constexpr void operator()(ComputedStyleDependencies&, const IdentFunctionIdent&) { } };
-template<> struct CSSValueChildrenVisitor<IdentFunctionIdent> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const IdentFunctionIdent&) { return IterationStatus::Continue; } };
-
-// <ident-arg> = <string> | <integer> | <ident>
-using IdentFunctionArg = Variant<IdentFunctionIdent, String, Integer<>>;
-
-// <ident()> = ident( <ident-arg>+ )
-// https://drafts.csswg.org/css-values-5/#ident
-using IdentFunction = FunctionNotation<CSSValueIdent, SpaceSeparatedVector<IdentFunctionArg>>;
-
 // https://drafts.csswg.org/css-values-4/#identifier-value
 struct CustomIdent {
-    Variant<AtomString, IdentFunction> value;
+    AtomString value;
 
-    bool isResolved() const { return WTF::holdsAlternative<AtomString>(value); }
-    bool isNull() const;
+    std::optional<AtomString> tryResolved() const
+    {
+        // FIXME: When ident() function is added, only successfully resolve when there are no <integer> components.
+        return value;
+    }
 
-    // Prefix test for parse-time validity checks, treating every <integer> component as "0".
-    // See https://github.com/w3c/csswg-drafts/issues/12206#issuecomment-3998743769.
-    bool startsWith(StringView prefix) const;
-
-    bool NODELETE operator==(const CustomIdent&) const;
+    bool operator==(const CustomIdent&) const = default;
 };
 
 template<> struct Serialize<CustomIdent> { void operator()(StringBuilder&, const SerializationContext&, const CustomIdent&); };
-template<> struct ComputedStyleDependenciesCollector<CustomIdent> { void operator()(ComputedStyleDependencies&, const CustomIdent&); };
-template<> struct CSSValueChildrenVisitor<CustomIdent> { IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const CustomIdent&); };
+template<> struct ComputedStyleDependenciesCollector<CustomIdent> { constexpr void operator()(ComputedStyleDependencies&, const CustomIdent&) { } };
+template<> struct CSSValueChildrenVisitor<CustomIdent> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const CustomIdent&) { return IterationStatus::Continue; } };
 template<> struct CSSValueCreation<CustomIdent> { Ref<CSSValue> operator()(CSSValuePool&, const CustomIdent&); };
 template<> struct DeprecatedCSSOMValueCreation<CustomIdent> { Ref<DeprecatedCSSOMValue> operator()(CSSValuePool&, CSSStyleDeclaration&, const CustomIdent&); };
 

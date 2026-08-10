@@ -79,13 +79,8 @@ CSSCounterStyleDescriptors::Ranges rangeFromCSSValue(const CSSValue& value)
 
 CSSCounterStyleDescriptors::Symbol symbolFromCSSValue(const CSSValue* value)
 {
-    if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(value)) {
-        // ident() is invalid in descriptors (https://github.com/w3c/csswg-drafts/issues/12219),
-        // so only plain identifiers apply.
-        if (auto* resolved = std::get_if<AtomString>(&customIdentValue->customIdent().value))
-            return { .isCustomIdent = true, .text = *resolved };
-        return { };
-    }
+    if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(value))
+        return { .isCustomIdent = true, .text = customIdentValue->customIdent().value };
 
     if (RefPtr stringValue = dynamicDowncast<CSSStringValue>(value))
         return { .isCustomIdent = false, .text = stringValue->string().value };
@@ -127,8 +122,7 @@ CSSCounterStyleDescriptors::Pad padFromCSSValue(const CSSValue& value)
     ASSERT(list.size() == 2);
     auto length = Style::deprecatedToStyleFromCSSValue<Style::Integer<CSS::Nonnegative>>(protect(downcast<CSSPrimitiveValue>(list[0])))->value;
     ASSERT(length >= 0);
-    Ref suffix = list[1];
-    return { static_cast<unsigned>(std::max(0, length)), symbolFromCSSValue(suffix.ptr()) };
+    return { static_cast<unsigned>(std::max(0, length)), symbolFromCSSValue(&list[1]) };
 }
 
 static CSSCounterStyleDescriptors::NegativeSymbols negativeSymbolsFromStyleProperties(const StyleProperties& properties)
@@ -144,10 +138,8 @@ CSSCounterStyleDescriptors::NegativeSymbols negativeSymbolsFromCSSValue(const CS
     CSSCounterStyleDescriptors::NegativeSymbols result;
     if (auto* list = dynamicDowncast<CSSValueList>(value)) {
         ASSERT(list->size() == 2);
-        Ref prefix = *list->item(0);
-        Ref suffix = *list->item(1);
-        result.m_prefix = symbolFromCSSValue(prefix.ptr());
-        result.m_suffix = symbolFromCSSValue(suffix.ptr());
+        result.m_prefix = symbolFromCSSValue(list->item(0));
+        result.m_suffix = symbolFromCSSValue(list->item(1));
     } else
         result.m_prefix = symbolFromCSSValue(&value);
     return result;
@@ -182,11 +174,8 @@ static CSSCounterStyleDescriptors::Name fallbackNameFromStyleProperties(const St
 
 CSSCounterStyleDescriptors::Name fallbackNameFromCSSValue(const CSSValue& value)
 {
-    if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(value)) {
-        if (auto* resolved = std::get_if<AtomString>(&customIdentValue->customIdent().value))
-            return *resolved;
-        return nullAtom();
-    }
+    if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(value))
+        return customIdentValue->customIdent().value;
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value))
         return nameStringForSerialization(keywordValue->valueID());
     return { };
@@ -233,10 +222,8 @@ CSSCounterStyleDescriptors::SystemData extractSystemDataFromCSSValue(const CSSVa
             ASSERT(secondValue->isKeywordValue() || secondValue->isCustomIdentValue());
             if (RefPtr secondValueIdent = dynamicDowncast<CSSKeywordValue>(secondValue))
                 result.first = nameStringForSerialization(secondValueIdent->valueID());
-            else if (auto* resolved = std::get_if<AtomString>(&downcast<CSSCustomIdentValue>(secondValue)->customIdent().value))
-                result.first = *resolved;
             else
-                result.first = nullAtom();
+                result.first = downcast<CSSCustomIdentValue>(secondValue)->customIdent().value;
         } else if (system == CSSCounterStyleDescriptors::System::Fixed) {
             if (auto secondValueInteger = Style::deprecatedToStyleFromCSSValue<Style::Integer<>>(secondValue))
                 result.second = secondValueInteger->value;

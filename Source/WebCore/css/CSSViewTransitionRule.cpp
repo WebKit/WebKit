@@ -61,12 +61,8 @@ StyleRuleViewTransition::StyleRuleViewTransition(Ref<StyleProperties>&& properti
         m_explicitlySetTypes = true;
 
         auto processSingleValue = [&](const CSSValue& currentValue) {
-            if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(currentValue)) {
-                // ident() is invalid in descriptors (https://github.com/w3c/csswg-drafts/issues/12219),
-                // so only plain identifiers apply.
-                if (auto* resolved = std::get_if<AtomString>(&customIdentValue->customIdent().value))
-                    m_types.append(*resolved);
-            }
+            if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(currentValue))
+                m_types.append(customIdentValue->customIdent().value);
         };
         if (auto* list = dynamicDowncast<CSSValueList>(*value)) {
             for (Ref currentValue : *list)

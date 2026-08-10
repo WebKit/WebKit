@@ -31,8 +31,6 @@
 #include "CSSMarkup.h"
 #include "DeprecatedCSSOMValue.h"
 #include "StyleBuilderChecking.h"
-#include "StylePrimitiveNumericTypes+Conversions.h"
-#include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -45,33 +43,9 @@ auto ToCSS<CustomIdent>::operator()(const CustomIdent& value, const Style::Compu
     return { .value = value.value };
 }
 
-auto ToStyle<CSS::CustomIdent>::operator()(const CSS::CustomIdent& value, const BuilderState& state) -> CustomIdent
+auto ToStyle<CSS::CustomIdent>::operator()(const CSS::CustomIdent& value, const BuilderState&) -> CustomIdent
 {
-    return WTF::switchOn(value.value,
-        [&](const AtomString& resolved) -> CustomIdent {
-            return { .value = resolved };
-        },
-        [&](const CSS::IdentFunction& function) -> CustomIdent {
-            // https://drafts.csswg.org/css-values-5/#ident
-            // Concatenate the arguments in order: strings and idents contribute their
-            // codepoints, integers are serialized as the shortest base-10 representation.
-            StringBuilder builder;
-            for (auto& argument : function.parameters) {
-                WTF::switchOn(argument,
-                    [&](const CSS::IdentFunctionIdent& ident) {
-                        builder.append(ident.value);
-                    },
-                    [&](const CSS::String& string) {
-                        builder.append(string.value);
-                    },
-                    [&](const CSS::Integer<>& integer) {
-                        builder.append(toStyle(integer, state).value);
-                    }
-                );
-            }
-            return { .value = builder.toAtomString() };
-        }
-    );
+    return { .value = value.value };
 }
 
 Ref<CSSValue> CSSValueCreation<CustomIdent>::operator()(CSSValuePool& pool, const Style::ComputedStyle& style, const CustomIdent& value)
