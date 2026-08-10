@@ -22,6 +22,7 @@
 #pragma once
 
 #include "RenderInline.h"
+#include "SVGPaintServerCache.h"
 
 namespace WebCore {
 
@@ -74,6 +75,10 @@ private:
 
     void willBeDestroyed() final;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+
+    SVGPaintServerCache* svgPaintServerCache() const final { return &m_svgPaintServerCache; }
+
+    mutable SVGPaintServerCache m_svgPaintServerCache;
 };
 
 } // namespace WebCore

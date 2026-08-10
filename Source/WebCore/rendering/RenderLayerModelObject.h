@@ -40,6 +40,8 @@ class RenderSVGResourceMarker;
 class RenderSVGResourceMasker;
 class RenderSVGResourcePaintServer;
 class SVGGraphicsElement;
+class SVGPaintServerCache;
+enum class SVGPaintType : bool;
 
 namespace Style {
 struct SVGMarkerResource;
@@ -58,8 +60,6 @@ enum class ContentChangeType : uint8_t {
     FullScreen,
     Model
 };
-
-enum class SVGPaintType : bool { Fill, Stroke };
 
 class RenderLayerModelObject : public RenderElement {
     WTF_MAKE_TZONE_ALLOCATED(RenderLayerModelObject);
@@ -190,6 +190,8 @@ private:
     RenderSVGResourceMarker* svgMarkerResourceFromStyle(const Style::SVGMarkerResource&) const;
 
     RenderSVGResourcePaintServer* svgPaintServerResourceFromStyle(const Style::SVGPaint&, const Style::ComputedStyle&, SVGPaintType) const;
+
+    virtual SVGPaintServerCache* svgPaintServerCache() const { return nullptr; }
 
     UniquelyOwnedPtr<RenderLayer> m_layer;
 

@@ -38,7 +38,6 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResourceGradient.h"
-#include "RenderSVGResourcePaintServer.h"
 #include "RenderSVGResourcePattern.h"
 #include "SVGClipPathElement.h"
 #include "SVGDocument.h"
@@ -181,25 +180,6 @@ void ReferencedSVGResources::removeClientForTarget(const AtomString& targetID)
     auto entry = m_elementClients.take(targetID);
     if (RefPtr targetElement = entry.targetElement)
         targetElement->removeReferencingCSSClient(protect(*entry.client));
-}
-
-RenderSVGResourcePaintServer* ReferencedSVGResources::cachedFillPaintServer() const
-{
-    return m_cachedFillPaintServer.get();
-}
-
-RenderSVGResourcePaintServer* ReferencedSVGResources::cachedStrokePaintServer() const
-{
-    return m_cachedStrokePaintServer.get();
-}
-
-void ReferencedSVGResources::setCachedPaintServer(SVGPaintType paintType, RenderSVGResourcePaintServer& paintServer)
-{
-    ASSERT(paintType == SVGPaintType::Fill || paintType == SVGPaintType::Stroke);
-    if (paintType == SVGPaintType::Fill)
-        m_cachedFillPaintServer = paintServer;
-    else
-        m_cachedStrokePaintServer = paintServer;
 }
 
 ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::referencedSVGResourceIDs(const Style::ComputedStyle& style, const Document& document)

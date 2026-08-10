@@ -32,6 +32,7 @@
 #include "SVGBoundingBoxComputation.h"
 #include "SVGGraphicsElement.h"
 #include "SVGMarkerData.h"
+#include "SVGPaintServerCache.h"
 #include <memory>
 #include <wtf/Vector.h>
 
@@ -143,6 +144,9 @@ private:
     void fillShape(const Style::ComputedStyle&, GraphicsContext&);
     void strokeShape(const Style::ComputedStyle&, GraphicsContext&);
     void fillStrokeMarkers(PaintInfo&);
+
+    SVGPaintServerCache* svgPaintServerCache() const final { return &m_svgPaintServerCache; }
+
     virtual void drawMarkers(PaintInfo&) { }
 
     void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
@@ -160,6 +164,7 @@ protected:
     ShapeType m_shapeType : 3 { ShapeType::Empty };
 private:
     std::unique_ptr<Path> m_path;
+    mutable SVGPaintServerCache m_svgPaintServerCache;
 };
 
 } // namespace WebCore

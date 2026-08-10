@@ -25,6 +25,7 @@
 #include "AffineTransform.h"
 #include "RenderSVGBlock.h"
 #include "SVGBoundingBoxComputation.h"
+#include "SVGPaintServerCache.h"
 #include "SVGTextChunk.h"
 #include "SVGTextLayoutAttributesBuilder.h"
 
@@ -124,6 +125,8 @@ private:
 
     bool NODELETE shouldHandleSubtreeMutations() const;
 
+    SVGPaintServerCache* svgPaintServerCache() const final { return &m_svgPaintServerCache; }
+
     bool m_needsReordering : 1 { false };
     bool m_needsPositioningValuesUpdate : 1 { false };
     bool m_needsTransformUpdate : 1 { true }; // FIXME: [LBSE] Only needed for legacy SVG engine.
@@ -134,6 +137,7 @@ private:
     Vector<SVGTextLayoutAttributes*> m_layoutAttributes;
     FloatRect m_objectBoundingBox;
     mutable std::optional<LayoutRect> m_cachedVisualOverflowRect;
+    mutable SVGPaintServerCache m_svgPaintServerCache;
 };
 
 } // namespace WebCore

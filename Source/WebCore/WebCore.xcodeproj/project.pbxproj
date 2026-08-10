@@ -20178,6 +20178,8 @@
 		BCAB417F13E356E800D8AAF3 /* Region.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Region.cpp; sourceTree = "<group>"; };
 		BCAB418013E356E800D8AAF3 /* Region.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Region.h; sourceTree = "<group>"; };
 		BCAB56F32F01A4E50087F79C /* SVGPaintServerHandlingInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGPaintServerHandlingInlines.h; sourceTree = "<group>"; };
+		BCAB56F42F01A4E50087F79C /* SVGPaintServerCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGPaintServerCache.h; sourceTree = "<group>"; };
+		BCAB56F52F01A4E50087F79C /* SVGPaintServerCacheInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGPaintServerCacheInlines.h; sourceTree = "<group>"; };
 		BCAB57052F02F3FC0087F79C /* StyleCaretColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleCaretColor.h; sourceTree = "<group>"; };
 		BCAB57062F02F3FC0087F79C /* StyleCaretColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCaretColor.cpp; sourceTree = "<group>"; };
 		BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentURLPattern.cpp; sourceTree = "<group>"; };
@@ -24826,6 +24828,8 @@
 				CDF747E5270F6966008FEEEC /* SVGInlineTextBoxInlines.h */,
 				3344077412D9BC4A00044234 /* SVGLayerTransformUpdater.h */,
 				436708AF12D9CA4B00044234 /* SVGMarkerData.h */,
+				BCAB56F42F01A4E50087F79C /* SVGPaintServerCache.h */,
+				BCAB56F52F01A4E50087F79C /* SVGPaintServerCacheInlines.h */,
 				42E48B662BAC7C6E0044526B /* SVGPaintServerHandling.h */,
 				BCAB56F32F01A4E50087F79C /* SVGPaintServerHandlingInlines.h */,
 				715379FE146BD9D6008BD615 /* SVGPathFromElement.cpp */,

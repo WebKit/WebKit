@@ -56,6 +56,7 @@
 #include "SVGGraphicsElement.h"
 #include "SVGMarkerElement.h"
 #include "SVGMaskElement.h"
+#include "SVGPaintServerCacheInlines.h"
 #include "SVGTextElement.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
@@ -69,6 +70,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderLayerModelObject);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGPaintServerCache);
 
 bool RenderLayerModelObject::s_wasFloating = false;
 bool RenderLayerModelObject::s_hadLayer = false;
@@ -659,11 +661,10 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgPaintServerResourceFrom
         return nullptr;
 
     // Only the renderer's own style is cached. A foreign style from the text selection or
-    // decoration painters resolves fresh. The cache lives on ReferencedSVGResources, which exists
-    // whenever this renderer references a paint server.
-    CheckedPtr resources = &style == &this->style() ? referencedSVGResources() : nullptr;
-    if (resources) {
-        if (auto* cached = paintType == SVGPaintType::Fill ? resources->cachedFillPaintServer() : resources->cachedStrokePaintServer())
+    // decoration painters resolves fresh.
+    CheckedPtr cache = &style == &this->style() ? svgPaintServerCache() : nullptr;
+    if (cache) {
+        if (auto* cached = cache->paintServer(paintType))
             return cached;
     }
 
@@ -671,16 +672,26 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgPaintServerResourceFrom
     if (!paintURL)
         return nullptr;
 
+    // A paint server in an external document yields an empty fragment identifier here, since the
+    // URL does not match this document's. Such a reference registers no CSSSVGResourceElementClient,
+    // and that client is what drops the cache when the referenced element changes, so it has to
+    // resolve fresh every time.
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(*paintURL, protect(document()));
+    if (resourceID.isEmpty())
+        cache = nullptr;
+
     if (RefPtr referencedElement = ReferencedSVGResources::referencedPaintServerElement(treeScopeForSVGReferences(), *paintURL)) {
         if (auto* referencedPaintServerRenderer = dynamicDowncast<RenderSVGResourcePaintServer>(referencedElement->renderer())) {
-            if (resources)
-                resources->setCachedPaintServer(paintType, *referencedPaintServerRenderer);
+            if (cache)
+                cache->setPaintServer(paintType, *referencedPaintServerRenderer);
             return referencedPaintServerRenderer;
         }
     }
 
-    if (RefPtr element = this->element())
-        document().addPendingSVGResource(AtomString(paintURL->resolved.string()), downcast<SVGElement>(*element));
+    if (!resourceID.isEmpty()) {
+        if (RefPtr element = dynamicDowncast<SVGElement>(this->element()))
+            treeScopeForSVGReferences().addPendingSVGResource(resourceID, *element);
+    }
 
     return nullptr;
 }
@@ -697,8 +708,8 @@ RenderSVGResourcePaintServer* RenderLayerModelObject::svgStrokePaintServerResour
 
 void RenderLayerModelObject::invalidateSVGPaintServerCache() const
 {
-    if (CheckedPtr resources = referencedSVGResources())
-        resources->invalidatePaintServerCache();
+    if (CheckedPtr cache = svgPaintServerCache())
+        cache->clear();
 }
 
 LegacyRenderSVGResourceClipper* RenderLayerModelObject::legacySVGClipperResourceFromStyle() const
