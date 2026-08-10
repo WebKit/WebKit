@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/crossOrigin.sub.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/elementPosition.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/elementTiming.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/eventOrder.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/multiDevice.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/multiTouchPoints.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/multiTouchPointsReleaseFirstPoint.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/multiTouchPointsReleaseSecondPoint.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/multiTouchPointsSimultaneousMove.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/multiTouchPointsTwoTouchStarts.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/multiTouchPointsWithPause.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/pause.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/penPointerEventProperties.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/penPointerEvents.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/touchPointerEventProperties.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/testdriver/actions/wheelScroll.html.ini

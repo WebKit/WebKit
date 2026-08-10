@@ -10,10 +10,36 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/bless.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click-multiple.html
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click_child.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click_child_crossorigin.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click_child_testdriver.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click_iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click_iframe_crossorigin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click_nested.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click_nested_crossorigin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click_outer_child.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click_outer_child.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/click_window.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/delete_all_cookies.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/file_upload.py
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/file_upload.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/file_upload_data.txt
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/generate_test_report.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/get_all_cookies.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/get_all_cookies.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/get_all_cookies.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/get_all_cookies.sub.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/get_named_cookie.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/get_named_cookie.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/get_named_cookie.sub.https.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/get_named_cookie.sub.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/minimize_restore_popup.html
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/send_keys.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/set_get_window_rect.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/set_permission.https.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/virtual_authenticator.html

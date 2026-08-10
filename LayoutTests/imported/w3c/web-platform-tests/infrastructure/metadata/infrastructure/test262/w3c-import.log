@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/async-error.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/async-failure.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/async.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/basic-failure.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/basic.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/error.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/module-error.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/module-failure.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/module.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/negative-early.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/negative-error.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/negative-failure.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/negative-parse.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/negative-resolution.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/negative.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/strict-error.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/strict-failure.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/strict.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/timeout.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/test262/unexpected-error.js.ini

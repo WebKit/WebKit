@@ -1,0 +1,22 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/server/context.any.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/server/http2-context.sub.h2.any.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/server/http2-websocket.sub.h2.any.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/server/secure-context.https.any.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/server/test-pac.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/server/webtransport-h3.https.sub.any.js.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/server/wpt-server-http.sub.html.ini
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/server/wpt-server-websocket.sub.html.ini

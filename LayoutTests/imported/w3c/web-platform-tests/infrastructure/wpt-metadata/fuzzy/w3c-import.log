@@ -1,0 +1,25 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/wpt-metadata/fuzzy/fuzzy-ref-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/wpt-metadata/fuzzy/fuzzy-ref-2.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/wpt-metadata/fuzzy/fuzzy-ref-2a.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/wpt-metadata/fuzzy/reftest_fuzzy_chain_ini-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/wpt-metadata/fuzzy/reftest_fuzzy_chain_ini.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/wpt-metadata/fuzzy/reftest_fuzzy_ini_full-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/wpt-metadata/fuzzy/reftest_fuzzy_ini_full.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/wpt-metadata/fuzzy/reftest_fuzzy_ini_ref_only-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/wpt-metadata/fuzzy/reftest_fuzzy_ini_ref_only.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/wpt-metadata/fuzzy/reftest_fuzzy_ini_short-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/wpt-metadata/fuzzy/reftest_fuzzy_ini_short.html

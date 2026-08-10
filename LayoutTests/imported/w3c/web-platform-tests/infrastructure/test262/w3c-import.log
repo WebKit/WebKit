@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/async-error.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/async-failure.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/async.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/basic-failure.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/basic.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/error.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/module-error.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/module-failure.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/module.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/negative-early.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/negative-error.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/negative-failure.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/negative-parse.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/negative-resolution.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/negative.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/strict-error.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/strict-failure.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/strict.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/timeout.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/test262/unexpected-error.js

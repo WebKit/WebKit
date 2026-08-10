@@ -10,9 +10,15 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/expected-fail/failing-test.html
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/expected-fail/timeout.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/expected-fail/uncaught-exception-following-subtest.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/expected-fail/uncaught-exception-single-test.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/expected-fail/uncaught-exception.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/expected-fail/unhandled-rejection-following-subtest.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/expected-fail/unhandled-rejection-single-test.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/expected-fail/unhandled-rejection.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/expected-fail/user-prompt.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/expected-fail/window-onload-test.html
