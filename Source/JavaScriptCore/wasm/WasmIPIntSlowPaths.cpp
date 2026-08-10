@@ -338,9 +338,10 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint8_t* pc, IPIntSta
     // The BBQ frame may use more stack than the IPInt frame. If there's not enough stack space,
     // skip OSR and continue executing in IPInt.
     if (bbqCallee->stackCheckSize() != Wasm::stackCheckNotNeeded) {
-        auto stackAtOSREntry = reinterpret_cast<uintptr_t>(sp);
-        auto candidateNewStackPointer = reinterpret_cast<void*>(stackAtOSREntry - bbqCallee->stackCheckSize());
-        if (candidateNewStackPointer < instance->softStackLimit()) [[unlikely]]
+        const uintptr_t stackPointer = reinterpret_cast<uintptr_t>(sp);
+        const uintptr_t stackExtent = stackPointer - static_cast<uintptr_t>(bbqCallee->stackCheckSize());
+        const uintptr_t stackLimit = reinterpret_cast<uintptr_t>(instance->softStackLimit());
+        if (stackExtent >= stackPointer || stackExtent <= stackLimit) [[unlikely]]
             WASM_RETURN_TWO(nullptr, nullptr);
     }
 
