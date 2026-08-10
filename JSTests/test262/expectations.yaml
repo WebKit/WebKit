@@ -144,10 +144,6 @@ test/language/import/import-attributes/text-string.js:
   module: 3
 test/language/import/import-attributes/text-via-namespace.js:
   module: 3
-test/language/statements/class/elements/private-class-field-on-nonextensible-objects.js:
-  strict mode: 3
-test/language/statements/class/subclass/private-class-field-on-nonextensible-return-override.js:
-  strict mode: 3
 test/language/statements/for-await-of/head-lhs-async.js:
   default: 3
   strict mode: 3
@@ -178,8 +174,6 @@ test/staging/sm/Function/function-name-assignment.js:
 test/staging/sm/Function/function-toString-builtin-name.js:
   default: 3
   strict mode: 3
-test/staging/sm/PrivateName/modify-non-extensible.js:
-  default: 3
 test/staging/sm/Proxy/revoked-get-function-realm-typeerror.js:
   default: 3
   strict mode: 3

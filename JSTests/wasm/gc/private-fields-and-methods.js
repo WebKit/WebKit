@@ -22,7 +22,7 @@ function testPrivateMethodOnStruct() {
   assert.throws(
     () => new D(),
     TypeError,
-    "Cannot add private method to a WebAssembly GC object"
+    "Attempting to define private method on object that is not extensible"
   );
 
   // Struct must remain usable after the rejected attempt.
@@ -50,7 +50,7 @@ function testPrivateFieldOnStruct() {
   assert.throws(
     () => new D(),
     TypeError,
-    "Cannot define private field on a WebAssembly GC object"
+    "Attempting to define private field on object that is not extensible"
   );
 
   assert.eq(m.exports.use(s), 42);
@@ -77,7 +77,7 @@ function testPrivateMethodOnArray() {
   assert.throws(
     () => new D(),
     TypeError,
-    "Cannot add private method to a WebAssembly GC object"
+    "Attempting to define private method on object that is not extensible"
   );
 
   assert.eq(m.exports.use(a, 0), 7);
@@ -104,7 +104,7 @@ function testPrivateFieldOnArray() {
   assert.throws(
     () => new D(),
     TypeError,
-    "Cannot define private field on a WebAssembly GC object"
+    "Attempting to define private field on object that is not extensible"
   );
 
   assert.eq(m.exports.use(a, 0), 7);
@@ -131,7 +131,7 @@ function testPrivateGetterOnStruct() {
   assert.throws(
     () => new D(),
     TypeError,
-    "Cannot add private method to a WebAssembly GC object"
+    "Attempting to define private method on object that is not extensible"
   );
 
   assert.eq(m.exports.use(s), 42);

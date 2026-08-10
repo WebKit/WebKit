@@ -72,6 +72,8 @@ struct HashTableValue;
 
 JS_EXPORT_PRIVATE Exception* throwTypeError(JSGlobalObject*, ThrowScope&, const String&);
 extern JS_EXPORT_PRIVATE const ASCIILiteral NonExtensibleObjectPropertyDefineError;
+extern JS_EXPORT_PRIVATE const ASCIILiteral NonExtensibleObjectPrivateFieldDefineError;
+extern JS_EXPORT_PRIVATE const ASCIILiteral NonExtensibleObjectPrivateMethodDefineError;
 extern JS_EXPORT_PRIVATE const ASCIILiteral ReadonlyPropertyWriteError;
 extern JS_EXPORT_PRIVATE const ASCIILiteral ReadonlyPropertyChangeError;
 extern JS_EXPORT_PRIVATE const ASCIILiteral UnableToDeletePropertyError;
