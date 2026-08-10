@@ -43,6 +43,7 @@ typedef (
     ActiveDOMObject,
     Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
+    JSCustomMarkFunction,
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface HTMLMediaElement : HTMLElement {

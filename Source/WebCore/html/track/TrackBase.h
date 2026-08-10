@@ -39,6 +39,7 @@ namespace WebCore {
 
 class SourceBuffer;
 class TrackListBase;
+class TrackOpaqueRoot;
 class TrackPrivateBase;
 class TrackPrivateBaseClient;
 using TrackID = uint64_t;
@@ -79,7 +80,9 @@ public:
     void setTrackList(TrackListBase&);
     void clearTrackList();
     TrackListBase* trackList() const;
-    WebCoreOpaqueRoot opaqueRoot() const;
+
+    void setOpaqueRoot(TrackOpaqueRoot&);
+    WebCoreOpaqueRoot opaqueRoot();
 
     virtual bool enabled() const = 0;
 
@@ -122,7 +125,7 @@ private:
     uint64_t m_logIdentifier { 0 };
 #endif
     WeakPtr<TrackListBase, WeakPtrImplWithEventTargetData> m_trackList;
-    std::atomic<WebCoreOpaqueRoot> m_opaqueRoot { WebCoreOpaqueRoot { this } };
+    RefPtr<TrackOpaqueRoot> m_trackOpaqueRoot;
     size_t m_clientRegistrationId;
 };
 

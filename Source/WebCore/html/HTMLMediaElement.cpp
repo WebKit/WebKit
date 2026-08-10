@@ -141,6 +141,7 @@
 #include "TextTrackRepresentation.h"
 #include "ThreadableBlobRegistry.h"
 #include "TimeRanges.h"
+#include "TrackOpaqueRoot.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
 #include "VideoPlaybackQuality.h"
@@ -645,10 +646,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_haveVisibleTextTrack(false)
     , m_processingPreferenceChange(false)
     , m_volumeLocked(defaultVolumeLocked())
-    , m_opaqueRootProvider(WTF::Observer<WebCoreOpaqueRoot()>::create([weakThis = WeakPtr { *this }] {
-        // This gets called on the GC thread so we cannot ref `this`.
-        return weakThis->opaqueRoot();
-    }))
+    , m_trackOpaqueRoot(TrackOpaqueRoot::create(WebCoreOpaqueRoot { this }))
 #if USE(AUDIO_SESSION)
     , m_categoryAtMostRecentPlayback(AudioSessionCategory::None)
     , m_modeAtMostRecentPlayback(AudioSessionMode::Default)
@@ -768,6 +766,8 @@ HTMLMediaElement::~HTMLMediaElement()
     invalidateBufferingStopwatch();
 
     beginIgnoringTrackDisplayUpdateRequests();
+
+    m_trackOpaqueRoot->clear();
 
     if (m_textTracks) {
         for (unsigned i = 0; i < m_textTracks->length(); ++i) {
@@ -5307,7 +5307,7 @@ AudioTrackList& HTMLMediaElement::ensureAudioTracks()
 {
     if (!m_audioTracks) {
         lazyInitialize(m_audioTracks, AudioTrackList::create(ActiveDOMObject::protectedScriptExecutionContext().get()));
-        m_audioTracks->setOpaqueRootObserver(m_opaqueRootProvider);
+        m_audioTracks->setOpaqueRoot(m_trackOpaqueRoot);
     }
 
     return *m_audioTracks;
@@ -5317,7 +5317,7 @@ TextTrackList& HTMLMediaElement::ensureTextTracks()
 {
     if (!m_textTracks) {
         lazyInitialize(m_textTracks, TextTrackList::create(ActiveDOMObject::protectedScriptExecutionContext().get()));
-        m_textTracks->setOpaqueRootObserver(m_opaqueRootProvider);
+        m_textTracks->setOpaqueRoot(m_trackOpaqueRoot);
         m_textTracks->setDuration(durationMediaTime());
     }
 
@@ -5328,7 +5328,7 @@ VideoTrackList& HTMLMediaElement::ensureVideoTracks()
 {
     if (!m_videoTracks) {
         lazyInitialize(m_videoTracks, VideoTrackList::create(ActiveDOMObject::protectedScriptExecutionContext().get()));
-        m_videoTracks->setOpaqueRootObserver(m_opaqueRootProvider);
+        m_videoTracks->setOpaqueRoot(m_trackOpaqueRoot);
     }
 
     return *m_videoTracks;

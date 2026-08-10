@@ -16482,6 +16482,8 @@
 		9B56C9A81C89312800C456DF /* CustomElementReactionQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomElementReactionQueue.h; sourceTree = "<group>"; };
 		9B56C9A91C89329A00C456DF /* CustomElementReactionQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomElementReactionQueue.cpp; sourceTree = "<group>"; };
 		9B6116491F6A593300E923B8 /* WebContentReader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebContentReader.cpp; sourceTree = "<group>"; };
+		9B672EC52FDC971500D9F683 /* JSHTMLMediaElementCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMediaElementCustom.cpp; sourceTree = "<group>"; };
+		9B672EC62FDC98BF00D9F683 /* TrackOpaqueRoot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackOpaqueRoot.h; sourceTree = "<group>"; };
 		9B69D3B11B98FF0A00E3512B /* HTMLSlotElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLSlotElement.idl; sourceTree = "<group>"; };
 		9B69D3B21B98FFE900E3512B /* HTMLSlotElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLSlotElement.cpp; sourceTree = "<group>"; };
 		9B69D3B31B98FFE900E3512B /* HTMLSlotElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSlotElement.h; sourceTree = "<group>"; };
@@ -31287,6 +31289,7 @@
 				4131F3B11F9552810059995A /* JSFetchEventCustom.cpp */,
 				84BBE5482597E7F100AA8F28 /* JSHTMLAllCollectionCustom.cpp */,
 				6E576BC324EB509C0094D4AA /* JSHTMLCanvasElementCustom.cpp */,
+				9B672EC52FDC971500D9F683 /* JSHTMLMediaElementCustom.cpp */,
 				D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */,
 				511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */,
 				51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */,
@@ -34908,6 +34911,7 @@
 				070334D21459FFAC008D8D45 /* TrackEvent.idl */,
 				BE88E0BF1715CE2600658D98 /* TrackListBase.cpp */,
 				BE88E0C01715CE2600658D98 /* TrackListBase.h */,
+				9B672EC62FDC98BF00D9F683 /* TrackOpaqueRoot.h */,
 				BE88E0D21715D2A200658D98 /* VideoTrack.cpp */,
 				BE88E0D31715D2A200658D98 /* VideoTrack.h */,
 				BE88E0D41715D2A200658D98 /* VideoTrack.idl */,
