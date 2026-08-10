@@ -64,8 +64,8 @@ ALWAYS_INLINE AtomString AtomString::convertASCIICase() const
         return *this;
 SlowPath:
         std::array<Latin1Character, localBufferSize> localBuffer;
-        for (unsigned i = 0; i < failingIndex; ++i)
-            localBuffer[i] = characters[i];
+        std::span<Latin1Character> localSpan { localBuffer };
+        StringImpl::copyCharacters(localSpan, characters.first(failingIndex));
         for (unsigned i = failingIndex; i < length; ++i)
             localBuffer[i] = type == CaseConvertType::Lower ? toASCIILower(characters[i]) : toASCIIUpper(characters[i]);
         return std::span<const Latin1Character> { localBuffer }.first(length);

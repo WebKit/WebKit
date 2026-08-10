@@ -102,6 +102,31 @@ TEST(WTF, StringImplReplaceWithLiteral)
     ASSERT_TRUE(equal(testStringImpl.get(), "r555sum555"_s));
 }
 
+TEST(WTF, StringImplContainsOnlyLatin1)
+{
+    ASSERT_TRUE(StringImpl::create("abc"_s)->containsOnlyLatin1());
+    ASSERT_TRUE(StringImpl::create(""_span)->containsOnlyLatin1());
+
+    // 8-bit strings are Latin1 by construction, regardless of content (unchanged branch).
+    Latin1Character eightBitChars[] = { 0xFF, 0x00, 0x80 };
+    auto eightBit = StringImpl::create(std::span<const Latin1Character> { eightBitChars });
+    ASSERT_TRUE(eightBit->is8Bit());
+    ASSERT_TRUE(eightBit->containsOnlyLatin1());
+
+    // Explicitly char16_t-backed (so always 16-bit, regardless of String's own up/downconvert
+    // heuristics), with every code point still <= 0xFF: containsOnlyLatin1 must be true.
+    char16_t allLatin1Chars[] = { 'a', 'b', 0x00E9 /* é */, 0xFF, 'c' };
+    auto allLatin1Sixteen = StringImpl::create(std::span<const char16_t> { allLatin1Chars });
+    ASSERT_FALSE(allLatin1Sixteen->is8Bit());
+    ASSERT_TRUE(allLatin1Sixteen->containsOnlyLatin1());
+
+    // Same, but with one genuine non-Latin1 code point (> 0xFF).
+    char16_t nonLatin1Chars[] = { 'a', 'b', 0x00E9 /* é */, 0x65E5 /* 日 */, 'c' };
+    auto nonLatin1 = StringImpl::create(std::span<const char16_t> { nonLatin1Chars });
+    ASSERT_FALSE(nonLatin1->is8Bit());
+    ASSERT_FALSE(nonLatin1->containsOnlyLatin1());
+}
+
 TEST(WTF, StringImplEqualIgnoringASCIICaseBasic)
 {
     auto a = StringImpl::create("aBcDeFG"_s);

@@ -930,11 +930,7 @@ inline bool StringImpl::containsOnlyLatin1() const
 {
     if (is8Bit())
         return true;
-    auto characters = span16();
-    char16_t mergedCharacterBits = 0;
-    for (auto character : characters)
-        mergedCharacterBits |= character;
-    return isLatin1(mergedCharacterBits);
+    return charactersAreAllLatin1(span16());
 }
 
 template<bool isSpecialCharacter(char16_t), typename CharacterType, std::size_t Extent> inline bool containsOnly(std::span<const CharacterType, Extent> characters)
