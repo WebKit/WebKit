@@ -2113,6 +2113,23 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node& replacedNode)
     return true;
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+bool AccessibilityObject::isReplacedElementForTextEmission() const
+{
+    // This is the unignored half of replacedNodeNeedsCharacter, so that the AX-thread text walks
+    // can apply the ignored check themselves: an ignored replaced element (e.g. a <legend>) emits
+    // no U+FFFC, but its block boundaries still don't emit newlines.
+    RefPtr node = this->node();
+    return node && !node->isTextNode() && isRendererReplacedElement(node->renderer());
+}
+
+bool AccessibilityObject::isInUserAgentShadowTree() const
+{
+    RefPtr node = this->node();
+    return node && node->isInUserAgentShadowTree();
+}
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
 
 ModelPlayerAccessibilityChildren AccessibilityObject::modelElementChildren()

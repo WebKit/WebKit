@@ -464,12 +464,50 @@ inline bool operator>=(const AXTextMarkerRange& range1, const AXTextMarkerRange&
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 String listMarkerTextOnSameLine(const AXTextMarker&);
+
+// The text the AX-thread text walks emit for an object with no text runs of its own, e.g. a newline
+// at a block boundary. See auxiliaryTextForObject, which is the only thing that creates these; the
+// view is always over static storage, so it outlives any caller.
+struct EmittedAuxiliaryText {
+    StringView text;
+
+    char16_t lastCharacter() const { return text.length() ? text[text.length() - 1] : 0; }
+};
 #endif
 
 namespace Accessibility {
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direction, std::optional<AXID> stopAtID = std::nullopt, const std::function<void(AXIsolatedObject&)>& exitObject = [] (AXIsolatedObject&) { });
+// Where a traversal is relative to an object it visits, mirroring the two places TextIterator emits
+// text for a non-text node:
+//   ReachedInPreOrder — we just reached this object in pre-order and are about to move past it (or
+//     into its children), like TextIterator::handleNonTextNode / handleReplacedElement.
+//   AscendedOutOf — we processed this object's children and are moving beyond it, like
+//     TextIterator::exitNode.
+enum class TraversalPoint : bool { ReachedInPreOrder, AscendedOutOf };
+// Whether the traversal may descend from an object into user-agent shadow content, e.g. from an
+// <input> into the text it renders its value with. Walks over document text must not (TextIterator
+// walks the light DOM), but walks resolving a marker within a text control must.
+enum class EnterUserAgentShadowContent : bool { No, Yes };
+
+AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direction, std::optional<AXID> stopAtID = std::nullopt, const std::function<void(AXIsolatedObject&, TraversalPoint)>& visitObject = [] (AXIsolatedObject&, TraversalPoint) { }, EnterUserAgentShadowContent = EnterUserAgentShadowContent::Yes);
+
+// The characters the AX-thread text walks emit for an object that has no text runs of its own,
+// mirroring TextIterator: a U+FFFC in place of replaced content (form controls, plugins, and other
+// nodes TextIterator considers replaced), a tab after every table cell but the last one in its row,
+// and newlines at block boundaries. `lastEmittedCharacter` is the most recently emitted character
+// (0 if none), used to avoid doubling newlines like TextIterator does.
+//
+// AXTextMarkerRange::toString, AXTextMarkerRange::toAttributedString and the index / length walk
+// (forEachRunObjectForward) all emit text through this function, so the strings they build and the
+// index space those strings are converted to can't drift apart.
+//
+// The index walk passes EmitObjectReplacementCharacters::No, because unlike the string walks it does
+// traverse into text controls (a text marker inside a text field needs an index of its own, and the
+// main thread gives it one by counting from the enclosing editable root; see makeNSRange). Counting
+// both the control's U+FFFC and its content would count it twice.
+enum class EmitObjectReplacementCharacters : bool { No, Yes };
+EmittedAuxiliaryText auxiliaryTextForObject(AXIsolatedObject&, TraversalPoint, char16_t lastEmittedCharacter, EmitObjectReplacementCharacters = EmitObjectReplacementCharacters::Yes);
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 } // namespace Accessibility

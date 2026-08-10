@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<table><tr id="row"><th scope="row">a</th><td>b</td></tr></table>
+<div id="textfield">x<input type="text" value="v">y</div>
+<div id="checkbox">x<input type="checkbox">y</div>
+</div>
+
+<script>
+var output = "This test ensures the string for an element's text marker range emits a tab\n" +
+             "between table cells, and a replacement character for a replaced element.\n\n";
+
+function rangeStringFor(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    if (!element)
+        return "<element not found>";
+    var range = element.textMarkerRangeForElement(element);
+    if (!range)
+        return "<no range>";
+    return element.stringForTextMarkerRange(range);
+}
+
+function rangeLengthFor(id) {
+    var element = accessibilityController.accessibleElementById(id);
+    if (!element)
+        return -1;
+    var range = element.textMarkerRangeForElement(element);
+    if (!range)
+        return -1;
+    return element.textMarkerRangeLength(range);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(function() {
+        // A tab separates cells within a row.
+        output += expect("rangeStringFor('row')", "'a\\tb'");
+        output += expect("rangeLengthFor('row')", "3");
+
+        // A replaced element contributes one object-replacement character (U+FFFC),
+        // not its value and not nothing.
+        output += expect("rangeStringFor('textfield')", "'x\\ufffcy'");
+        output += expect("rangeLengthFor('textfield')", "3");
+
+        output += expect("rangeStringFor('checkbox')", "'x\\ufffcy'");
+        output += expect("rangeLengthFor('checkbox')", "3");
+
+        // Hide the test content so the output is just the assertions above, with no page text dump.
+        document.getElementById("content").hidden = true;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
