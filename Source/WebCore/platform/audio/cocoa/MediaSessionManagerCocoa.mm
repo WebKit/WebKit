@@ -323,6 +323,8 @@ void MediaSessionManagerCocoa::removeSession(PlatformMediaSessionInterface& sess
         if (m_nowPlayingManager)
             m_nowPlayingManager->removeClient(*this);
         m_audioHardwareListener = nullptr;
+        m_delayCategoryChangeTimer.stop();
+        m_previousCategory = AudioSession::CategoryType::None;
     }
 
     scheduleSessionStatusUpdate();
