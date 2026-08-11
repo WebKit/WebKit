@@ -385,6 +385,8 @@ if (ENABLE_WEBXR)
             message(FATAL_ERROR "Volk 341 or newer is required for WEBXR_GRAPHICS_API=VULKAN")
         endif ()
         SET_AND_EXPOSE_TO_BUILD(XR_USE_GRAPHICS_API_VULKAN TRUE)
+        # The same condition spelled so USE() can consume it: XR_USE_GRAPHICS_API_VULKAN follows the OpenXR SDK style and has to be tested with defined(), which the serialization and message generators do not accept.
+        SET_AND_EXPOSE_TO_BUILD(USE_OPENXR_VULKAN TRUE)
     else ()
         SET_AND_EXPOSE_TO_BUILD(XR_USE_GRAPHICS_API_OPENGL_ES TRUE)
     endif ()
