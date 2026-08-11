@@ -107,6 +107,7 @@ private:
 
     void startSpeakingImmediately(SpeechSynthesisUtterance&);
     void handleSpeakingCompleted(SpeechSynthesisUtterance&, bool errorOccurred);
+    void stopPlatformSpeech();
 
     // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const final;
@@ -114,7 +115,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
     void eventListenersDidChange() final;
-    
+
     PlatformSpeechSynthesizer& ensurePlatformSpeechSynthesizer();
     Ref<PlatformSpeechSynthesizer> ensureProtectedPlatformSpeechSynthesizer();
     

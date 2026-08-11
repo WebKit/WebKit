@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.internals)
+    internals.enableMockSpeechSynthesizer();
+
+function done() {
+    document.body.textContent = "PASS";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+onload = () => {
+    let text = `\u{1fb26}籅ꉟ\udca4\u{1fd53}\u{1fb71}&ూొ㸛翋\u{1f7f8}\u{1f8a1}\u{1fb04}\u{1fda1}劀ඤྶ௰ˈ⿌\u{1f7ce}鶲\u{1f740}\u{1ff40}㤇`;
+    let utterance = new SpeechSynthesisUtterance(text);
+    utterance.onend = done;
+    utterance.onerror = done;
+    try {
+        speechSynthesis.speak(utterance);
+    } catch (e) {
+        done();
+    }
+};
+</script>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+onload = () => {
+    let frame = document.createElement('iframe');
+    document.body.appendChild(frame);
+    if (frame.contentWindow.internals)
+        frame.contentWindow.internals.enableMockSpeechSynthesizer();
+    let synth = frame.contentWindow.speechSynthesis;
+    // Utterance is created in the opener's document so its ActiveDOMObject context
+    // is still alive when the iframe's SpeechSynthesis is stopped during teardown.
+    let u = new SpeechSynthesisUtterance("test");
+    u.onerror = () => {};
+    synth.speak(u);
+    frame.remove();
+    document.body.textContent = "PASS if no crash.";
+    if (window.testRunner)
+        setTimeout(() => testRunner.notifyDone(), 0);
+};
+</script>
+</body>
+</html>
