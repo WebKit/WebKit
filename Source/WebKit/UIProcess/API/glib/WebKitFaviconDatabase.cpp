@@ -85,23 +85,16 @@ WEBKIT_DEFINE_FINAL_TYPE(WebKitFaviconDatabase, webkit_favicon_database, G_TYPE_
 static void webkit_favicon_database_class_init(WebKitFaviconDatabaseClass* faviconDatabaseClass)
 {
 #if PLATFORM(GTK)
-    /**
-     * WebKitFaviconDatabase::favicon-changed:
-     * @database: the object on which the signal is emitted
-     * @page_uri: the URI of the Web page containing the icon
-     * @favicon_uri: the URI of the favicon
-     *
-     * This signal is emitted when the favicon URI of @page_uri has
-     * been changed to @favicon_uri in the database. You can connect
-     * to this signal and call webkit_favicon_database_get_favicon()
-     * to get the favicon. If you are interested in the favicon of a
-     * #WebKitWebView it's easier to use the #WebKitWebView:favicon
-     * property. See webkit_web_view_get_favicon() for more details.
-     */
+#if USE(GTK4)
+    static constexpr auto faviconChangedSignalFlags =
+        static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_DEPRECATED);
+#else
+    static constexpr auto faviconChangedSignalFlags = G_SIGNAL_RUN_LAST;
+#endif // USE(GTK4)
     signals[FAVICON_CHANGED] = g_signal_new(
         "favicon-changed",
         G_TYPE_FROM_CLASS(faviconDatabaseClass),
-        G_SIGNAL_RUN_LAST,
+        faviconChangedSignalFlags,
         0, nullptr, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_NONE, 2,
@@ -221,25 +214,6 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, co
         });
 }
 
-/**
- * webkit_favicon_database_get_favicon:
- * @database: a #WebKitFaviconDatabase
- * @page_uri: URI of the page for which we want to retrieve the favicon
- * @cancellable: (allow-none): A #GCancellable or %NULL.
- * @callback: (scope async) (nullable): A #GAsyncReadyCallback to call when the request is
- *            satisfied or %NULL if you don't care about the result.
- * @user_data: The data to pass to @callback.
- *
- * Asynchronously obtains a favicon image.
- *
- * Asynchronously obtains an image of the favicon for the
- * given page URI. It returns the cached icon if it's in the database
- * asynchronously waiting for the icon to be read from the database.
- *
- * This is an asynchronous method. When the operation is finished, callback will
- * be invoked. You can then call webkit_favicon_database_get_favicon_finish()
- * to get the result of the operation.
- */
 void webkit_favicon_database_get_favicon(WebKitFaviconDatabase* database, const gchar* pageURI, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     g_return_if_fail(WEBKIT_IS_FAVICON_DATABASE(database));
@@ -248,16 +222,6 @@ void webkit_favicon_database_get_favicon(WebKitFaviconDatabase* database, const 
     webkitFaviconDatabaseGetFaviconInternal(database, pageURI, false, cancellable, callback, userData);
 }
 
-/**
- * webkit_favicon_database_get_favicon_finish:
- * @database: a #WebKitFaviconDatabase
- * @result: A #GAsyncResult obtained from the #GAsyncReadyCallback passed to webkit_favicon_database_get_favicon()
- * @error: (allow-none): Return location for error or %NULL.
- *
- * Finishes an operation started with webkit_favicon_database_get_favicon().
- *
- * Returns: (transfer full): a new favicon image, or %NULL in case of error.
- */
 #if USE(GTK4)
 GdkTexture* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabase* database, GAsyncResult* result, GError** error)
 #else
@@ -283,16 +247,6 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
 #endif
 }
 
-/**
- * webkit_favicon_database_get_favicon_uri:
- * @database: a #WebKitFaviconDatabase
- * @page_uri: URI of the page containing the icon
- *
- * Obtains the URI of the favicon for the given @page_uri.
- *
- * Returns: a newly allocated URI for the favicon, or %NULL if the
- * database doesn't have a favicon for @page_uri.
- */
 gchar* webkit_favicon_database_get_favicon_uri(WebKitFaviconDatabase* database, const gchar* pageURL)
 {
     g_return_val_if_fail(WEBKIT_IS_FAVICON_DATABASE(database), nullptr);
