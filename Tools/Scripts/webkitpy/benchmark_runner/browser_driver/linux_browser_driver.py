@@ -133,14 +133,6 @@ class LinuxBrowserDriver(BrowserDriver):
             encoding='utf-8',
         )
 
-    def launch_webdriver(self, url, driver):
-        try:
-            driver.maximize_window()
-        except Exception as error:
-            _log.error('Failed to maximize {browser} window - Error: {error}'.format(browser=driver.name, error=error))
-        _log.info('Launching "%s" with url "%s"' % (driver.name, url))
-        driver.get(url)
-
     def diagnose_test_failure(self, diagnose_directory, error):
         # FIXME: store a screenshoot or some debug data for later analysis before closing the browser.
         self.close_browsers()

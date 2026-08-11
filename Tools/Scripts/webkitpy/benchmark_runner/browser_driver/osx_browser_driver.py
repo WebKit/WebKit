@@ -164,15 +164,6 @@ class OSXBrowserDriver(BrowserDriver):
         return process
 
     @classmethod
-    def _launch_webdriver(cls, url, driver):
-        try:
-            driver.maximize_window()
-        except Exception as error:
-            _log.error('Failed to maximize {browser} window - Error: {error}'.format(browser=driver.name, error=error))
-        _log.info('Launching "%s" with url "%s"' % (driver.name, url))
-        driver.get(url)
-
-    @classmethod
     def _terminate_processes(cls, process_name, bundle_id):
         from webkitpy.autoinstalled.pyobjc_frameworks import AppKit
         _log.info('Closing all processes with name %s' % process_name)

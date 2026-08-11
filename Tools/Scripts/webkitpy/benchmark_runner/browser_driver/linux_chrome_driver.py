@@ -24,7 +24,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import re
 from subprocess import check_output
 
@@ -42,20 +41,6 @@ class LinuxChromeDriver(LinuxBrowserDriver):
     def launch_url(self, url, options, browser_build_path, browser_path):
         self._default_browser_arguments += ['--homepage', url]
         super().launch_url(url, options, browser_build_path, browser_path)
-
-    def launch_driver(self, url, options, browser_build_path):
-        from selenium import webdriver
-        from selenium.webdriver.chrome.options import Options
-        options = Options()
-        for option_switch in self._default_browser_arguments:
-            options.add_argument(option_switch)
-        if browser_build_path:
-            binary_path = os.path.join(browser_build_path, 'chromium-browser')
-            options.binary_location = binary_path
-        driver_executable = self.webdriver_binary_path
-        driver = webdriver.Chrome(chrome_options=options, executable_path=driver_executable)
-        super().launch_webdriver(url, driver)
-        return driver
 
     def browser_version(self):
         version_cmd = [self.process_name, '--version']
