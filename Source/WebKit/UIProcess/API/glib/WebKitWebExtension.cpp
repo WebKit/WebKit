@@ -559,7 +559,7 @@ const char* webkit_web_extension_get_path(WebKitWebExtension* extension)
  * Get the parsed manifest version, or `0` if there is no
  * version specified in the manifest.
  *
- * A [error@WebKit.WebExtensionError.UNSUPPORTED_MANIFEST_VERSION] error will be
+ * A [error@WebExtensionError.UNSUPPORTED_MANIFEST_VERSION] error will be
  * reported if the manifest version isn't specified.
  * 
  * Returns: the parsed manifest version.
