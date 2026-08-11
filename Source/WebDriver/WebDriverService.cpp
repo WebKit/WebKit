@@ -190,12 +190,17 @@ int WebDriverService::run(int argc, char** argv)
     }
 
 #if ENABLE(WEBDRIVER_BIDI)
-    auto bidiPort = parseInteger<uint16_t>(bidiPortString);
-    if (!bidiPort) {
-        const int16_t bidiPortIncrement = *port == std::numeric_limits<uint16_t>::max() ? -1 : 1;
-        bidiPort = { *port + bidiPortIncrement };
-        RELEASE_LOG_INFO(WebDriverBiDi, "Invalid WebSocket BiDi port %s provided. Defaulting to %d.", bidiPortString.utf8().data(), *bidiPort);
-        fprintf(stderr, "Invalid WebSocket BiDi port %s provided. Defaulting to %d.\n", bidiPortString.utf8().data(), *bidiPort);
+    std::optional<uint16_t> bidiPort;
+    if (!bidiPortString.isNull()) {
+        bidiPort = parseInteger<uint16_t>(bidiPortString);
+        if (!bidiPort) {
+            RELEASE_LOG_ERROR(WebDriverBiDi, "Invalid WebSocket BiDi port %s explicitly provided. Aborting.", bidiPortString.utf8().data());
+            SAFE_FPRINTF(stderr, "Invalid WebSocket BiDi port %s explicitly provided. Aborting.\n", bidiPortString.utf8());
+            return EXIT_FAILURE;
+        }
+    } else {
+        RELEASE_LOG_INFO(WebDriverBiDi, "No explicit WebSocket BiDi port requested. Defaulting to an OS-provided one.");
+        bidiPort = 0;
     }
 #endif
 
@@ -219,20 +224,21 @@ int WebDriverService::run(int argc, char** argv)
         RELEASE_LOG_INFO(WebDriverClassic, "%s starting: http=%s:%d target=%s:%d", programNameStr.data(), hostStr.data(), *port, m_targetAddress.utf8().data(), m_targetPort);
 #endif
 
-#if ENABLE(WEBDRIVER_BIDI)
-    if (!m_bidiServer->listen(host ? *host : nullString(), *bidiPort)) {
-        RELEASE_LOG_ERROR(WebDriverBiDi, "Unable to listen for WebSocket BiDi server at host %s and port %d", hostStr.data(), *bidiPort);
-        fprintf(stderr, "FATAL: Unable to listen for WebSocket BiDi server at host %s and port %d.\n", hostStr.data(), *bidiPort);
-        return EXIT_FAILURE;
-    }
-    RELEASE_LOG_INFO(WebDriverBiDi, "Started WebSocket BiDi server with host %s and port %d", hostStr.data(), *bidiPort);
-#endif // ENABLE(WEBDRIVER_BIDI)
     if (!m_server.listen(host, *port)) {
         RELEASE_LOG_ERROR(WebDriverClassic, "Unable to listen for HTTP server at host %s and port %d", hostStr.data(), *port);
         fprintf(stderr, "FATAL: Unable to listen for HTTP server at host %s and port %d.\n", hostStr.data(), *port);
         return EXIT_FAILURE;
     }
     RELEASE_LOG_INFO(WebDriverClassic, "Started HTTP server with host %s and port %d", hostStr.data(), *port);
+#if ENABLE(WEBDRIVER_BIDI)
+    auto bidiServerURL = m_bidiServer->listen(host ? *host : nullString(), *bidiPort);
+    if (!bidiServerURL) {
+        RELEASE_LOG_ERROR(WebDriverBiDi, "Unable to listen for WebSocket BiDi server at host %s and port %d", hostStr.data(), *bidiPort);
+        fprintf(stderr, "FATAL: Unable to listen for WebSocket BiDi server at host %s and port %d.\n", hostStr.data(), *bidiPort);
+        return EXIT_FAILURE;
+    }
+    RELEASE_LOG_INFO(WebDriverBiDi, "Started WebSocket BiDi server at %s", bidiServerURL->utf8().data());
+#endif // ENABLE(WEBDRIVER_BIDI)
 
     RunLoop::run();
 
