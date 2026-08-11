@@ -5344,6 +5344,8 @@ webkit.org/b/321285 [ x86_64 ] imported/w3c/web-platform-tests/webrtc-extensions
 
 webkit.org/b/321282 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-creation-time.https.html [ Failure Pass ]
 
+webkit.org/b/321482 imported/w3c/web-platform-tests/css/filter-effects/filtered-inline-is-container.html [ ImageOnlyFailure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
