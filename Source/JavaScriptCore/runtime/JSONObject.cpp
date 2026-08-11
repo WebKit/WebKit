@@ -1529,29 +1529,53 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
                 recordBufferFull();
                 return false;
             }
-            if (needComma)
-                buffer()[m_length++] = ',';
-            if constexpr (hasGap == HasGap::Yes)
-                appendNewLineAndIndentUnchecked();
-            buffer()[m_length] = '"';
 
-            if constexpr (std::same_as<CharType, char16_t>) {
-                if (stringCopyUpconvert(span, buffer() + m_length + 1)) [[unlikely]] {
-                    recordFailure("property name character needs escaping"_s);
-                    return false;
+            {
+                // m_dynamicBuffer has inline capacity, so buffer() can point inside this object
+                // next to m_length: stores through it may-alias the members, forcing the compiler
+                // to reload both after every store. Cache them instead. Scoped because the pointer
+                // dies at the next hasRemainingCapacity(), which can reallocate.
+                CharType* out = buffer();
+                unsigned length = m_length;
+
+                if (needComma)
+                    out[length++] = ',';
+
+                if constexpr (hasGap == HasGap::Yes) {
+                    // The callee reads m_length and advances it.
+                    m_length = length;
+                    appendNewLineAndIndentUnchecked();
+                    out = buffer();
+                    length = m_length;
                 }
-            } else {
-                if (stringCopySameType(span, buffer() + m_length + 1)) [[unlikely]] {
-                    recordFailure("property name character needs escaping"_s);
-                    return false;
+
+                out[length] = '"';
+
+                // Publish m_length before every bail-out.
+                if constexpr (std::same_as<CharType, char16_t>) {
+                    if (stringCopyUpconvert(span, out + length + 1)) [[unlikely]] {
+                        m_length = length;
+                        recordFailure("property name character needs escaping"_s);
+                        return false;
+                    }
+                } else {
+                    if (stringCopySameType(span, out + length + 1)) [[unlikely]] {
+                        m_length = length;
+                        recordFailure("property name character needs escaping"_s);
+                        return false;
+                    }
                 }
+
+                out[length + 1 + span.size()] = '"';
+                out[length + 1 + span.size() + 1] = ':';
+                length += 1 + span.size() + 2;
+                if constexpr (hasGap == HasGap::Yes)
+                    out[length++] = ' ';
+
+                // Mandatory, not bookkeeping: the next hasRemainingCapacity() sizes itself from
+                // m_length, so leaving a stale value here would under-count the space needed.
+                m_length = length;
             }
-
-            buffer()[m_length + 1 + span.size()] = '"';
-            buffer()[m_length + 1 + span.size() + 1] = ':';
-            m_length += 1 + span.size() + 2;
-            if constexpr (hasGap == HasGap::Yes)
-                buffer()[m_length++] = ' ';
 
             if constexpr (std::same_as<CharType, Latin1Character>) {
                 // Inlining String case here since it is too common.
