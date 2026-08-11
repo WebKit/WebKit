@@ -164,3 +164,9 @@
 #else
 #define OFFLINE_ASM_HAVE_FAST_TLS 0
 #endif
+
+#ifdef RC_REMOVE_SEC_ACCEL_3
+#define OFFLINE_ASM_RC_REMOVE_SEC_ACCEL_3 1
+#else
+#define OFFLINE_ASM_RC_REMOVE_SEC_ACCEL_3 0
+#endif
