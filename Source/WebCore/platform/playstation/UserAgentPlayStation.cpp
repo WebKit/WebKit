@@ -72,7 +72,7 @@ static String standardUserAgentStatic()
     return uaStatic;
 }
 
-String standardUserAgent(const String& applicationName, const String& applicationVersion)
+String standardUserAgent(const String& applicationName, const String& applicationVersion, UserAgentType)
 {
     // Create a default user agent string with a liberal interpretation of
     // https://developer.mozilla.org/en-US/docs/User_Agent_Strings_Reference
@@ -88,7 +88,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     return makeString(standardUserAgentStatic(), ' ', applicationName, '/', applicationVersion.isEmpty() ? versionForUAString() : applicationVersion);
 }
 
-String standardUserAgentForURL(const URL&)
+String standardUserAgentForURL(const URL&, UserAgentType)
 {
     return standardUserAgentStatic();
 }

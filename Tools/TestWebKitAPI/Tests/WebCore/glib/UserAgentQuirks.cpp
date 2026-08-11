@@ -28,11 +28,13 @@
 #include <WebCore/UserAgent.h>
 #include <wtf/URL.h>
 
+using WebCore::UserAgentType;
+
 namespace TestWebKitAPI {
 
-static void assertUserAgentForURLHasChromeBrowserQuirk(const char* url)
+static void assertUserAgentForURLHasChromeBrowserQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)));
+    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
 
     EXPECT_TRUE(uaString.contains("Chrome"_s));
     EXPECT_TRUE(uaString.contains("Safari"_s));
@@ -41,9 +43,9 @@ static void assertUserAgentForURLHasChromeBrowserQuirk(const char* url)
     EXPECT_FALSE(uaString.contains("Version"_s));
 }
 
-static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url)
+static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)));
+    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
 
     EXPECT_FALSE(uaString.contains("Chrome"_s));
     EXPECT_FALSE(uaString.contains("Safari"_s));
@@ -52,9 +54,9 @@ static void assertUserAgentForURLHasFirefoxBrowserQuirk(const char* url)
     EXPECT_FALSE(uaString.contains("Version"_s));
 }
 
-static void assertUserAgentForURLHasMacPlatformQuirk(const char* url)
+static void assertUserAgentForURLHasMacPlatformQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)));
+    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
 
     EXPECT_TRUE(uaString.contains("Macintosh"_s));
     EXPECT_TRUE(uaString.contains("Mac OS X"_s));
@@ -65,9 +67,9 @@ static void assertUserAgentForURLHasMacPlatformQuirk(const char* url)
 }
 
 #if ENABLE(WEBXR) && PLATFORM(WPE)
-static void assertUserAgentForURLHasAndroidQuirk(const char* url)
+static void assertUserAgentForURLHasAndroidQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)));
+    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
 
     EXPECT_FALSE(uaString.contains("Macintosh"_s));
     EXPECT_FALSE(uaString.contains("Mac OS X"_s));
@@ -83,16 +85,16 @@ static void assertUserAgentForURLHasAndroidQuirk(const char* url)
 // non-null to ensure *any* quirk URL is returned, so that application branding
 // does not get used. (standardUserAgentForURL returns a null string to indicate
 // that the standard user agent should be used.)
-static void assertUserAgentForURLHasEmptyQuirk(const char* url)
+static void assertUserAgentForURLHasEmptyQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)));
+    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
     EXPECT_FALSE(uaString.isNull());
 }
 
-static void assertUserAgentForURLHasNoQuirk(const char* url)
+static void assertUserAgentForURLHasNoQuirk(const char* url, UserAgentType type = UserAgentType::Default)
 {
     // A site with no quirks should return a null String.
-    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)));
+    String uaString = WebCore::standardUserAgentForURL(URL(String::fromLatin1(url)), type);
     EXPECT_TRUE(uaString.isNull());
 }
 
@@ -135,6 +137,9 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasMacPlatformQuirk("http://www.yahoo.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://finance.yahoo.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://intl.taobao.com/");
+    assertUserAgentForURLHasNoQuirk("http://www.yahoo.com/", UserAgentType::Mobile);
+    assertUserAgentForURLHasNoQuirk("http://finance.yahoo.com/", UserAgentType::Mobile);
+    assertUserAgentForURLHasNoQuirk("http://intl.taobao.com/", UserAgentType::Mobile);
     assertUserAgentForURLHasMacPlatformQuirk("http://www.whatsapp.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://web.whatsapp.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://www.chase.com/");

@@ -42,10 +42,6 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(GLIB)
-#include <wtf/glib/ChassisType.h>
-#endif
-
 #if OS(LINUX)
 #include "sys/utsname.h"
 #include <wtf/StdLibExtras.h>
@@ -123,8 +119,6 @@ SUPPRESS_NODELETE bool NavigatorUAData::mobile() const
 
 #if PLATFORM(IOS_FAMILY)
     return !(PAL::currentUserInterfaceIdiomIsDesktop() || PAL::currentUserInterfaceIdiomIsVision());
-#elif USE(GLIB)
-    return chassisType() == WTF::ChassisType::Mobile;
 #else
     return false;
 #endif

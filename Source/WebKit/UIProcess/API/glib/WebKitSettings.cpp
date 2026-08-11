@@ -1311,7 +1311,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * content to render incorrectly or fail to run, as many web pages are written to
      * parse the user-agent strings of only the most popular browsers. Therefore, it's
      * typically better to not completely override the standard user-agent, but to use
-     * webkit_settings_set_user_agent_with_application_details() instead.
+     * #WebKitUserAgent and webkit_settings_set_user_agent() instead.
      *
      * If this property is set to the empty string or %NULL, it will revert to the standard
      * user-agent.
@@ -3321,7 +3321,7 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
     if (newUserAgent == priv->userAgent)
         return;
 
-    priv->userAgent = newUserAgent;
+    priv->userAgent = WTF::move(newUserAgent);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_USER_AGENT]);
 }
 
@@ -3336,6 +3336,8 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
  * Set the #WebKitSettings:user-agent property by appending the application details to the default user
  * agent. If no application name or version is given, the default user agent used will be used. If only
  * the version is given, the default engine version is used with the given application name.
+ *
+ * Deprecated: 2.56. Use webkit_user_agent_to_string() and webkit_settings_set_user_agent() instead.
  */
 void webkit_settings_set_user_agent_with_application_details(WebKitSettings* settings, const char* applicationName, const char* applicationVersion)
 {

@@ -1,0 +1,93 @@
+/*
+ * Copyright (C) 2026 John Cardullo <john@jcarmedia.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitUserAgent_h
+#define WebKitUserAgent_h
+
+#include <glib-object.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+
+G_BEGIN_DECLS
+
+#define WEBKIT_TYPE_USER_AGENT (webkit_user_agent_get_type())
+
+typedef struct _WebKitUserAgent WebKitUserAgent;
+
+/**
+ * WebKitUserAgentType:
+ * @WEBKIT_USER_AGENT_TYPE_DEFAULT: Default user agent.
+ * @WEBKIT_USER_AGENT_TYPE_DESKTOP: Desktop user agent.
+ * @WEBKIT_USER_AGENT_TYPE_MOBILE: Mobile user agent.
+ *
+ * Enum values used to specify the type of user agent string.
+ *
+ * Since: 2.56
+ */
+typedef enum {
+    WEBKIT_USER_AGENT_TYPE_DEFAULT,
+    WEBKIT_USER_AGENT_TYPE_DESKTOP,
+    WEBKIT_USER_AGENT_TYPE_MOBILE,
+} WebKitUserAgentType;
+
+WEBKIT_API GType
+webkit_user_agent_get_type                (void);
+
+WEBKIT_API WebKitUserAgent *
+webkit_user_agent_new                     (WebKitUserAgentType  type);
+
+WEBKIT_API WebKitUserAgent *
+webkit_user_agent_new_with_details        (WebKitUserAgentType  type,
+                                           const gchar         *application_name,
+                                           const gchar         *application_version);
+
+WEBKIT_API WebKitUserAgent *
+webkit_user_agent_ref                     (WebKitUserAgent     *user_agent);
+
+WEBKIT_API void
+webkit_user_agent_unref                   (WebKitUserAgent     *user_agent);
+
+WEBKIT_API WebKitUserAgentType
+webkit_user_agent_get_user_agent_type     (WebKitUserAgent     *user_agent);
+
+WEBKIT_API void
+webkit_user_agent_set_user_agent_type     (WebKitUserAgent     *user_agent,
+                                           WebKitUserAgentType  type);
+
+WEBKIT_API const gchar *
+webkit_user_agent_get_application_name    (WebKitUserAgent     *user_agent);
+
+WEBKIT_API void
+webkit_user_agent_set_application_name    (WebKitUserAgent     *user_agent,
+                                           const gchar         *application_name);
+
+WEBKIT_API const gchar *
+webkit_user_agent_get_application_version (WebKitUserAgent     *user_agent);
+
+WEBKIT_API void
+webkit_user_agent_set_application_version (WebKitUserAgent     *user_agent,
+                                           const gchar         *application_version);
+
+WEBKIT_API const gchar *
+webkit_user_agent_to_string               (WebKitUserAgent     *user_agent);
+
+G_END_DECLS
+
+#endif /* WebKitUserAgent_h */

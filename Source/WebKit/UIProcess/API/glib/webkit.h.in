@@ -118,6 +118,7 @@
 #include <@API_INCLUDE_PREFIX@/WebKitURISchemeRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitURISchemeResponse.h>
 #include <@API_INCLUDE_PREFIX@/WebKitURIUtilities.h>
+#include <@API_INCLUDE_PREFIX@/WebKitUserAgent.h>
 #include <@API_INCLUDE_PREFIX@/WebKitUserContent.h>
 #include <@API_INCLUDE_PREFIX@/WebKitUserContentFilterStore.h>
 #include <@API_INCLUDE_PREFIX@/WebKitUserContentManager.h>

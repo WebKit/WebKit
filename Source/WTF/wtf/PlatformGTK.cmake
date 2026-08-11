@@ -5,7 +5,6 @@ list(APPEND WTF_SOURCES
     generic/WorkQueueGeneric.cpp
 
     glib/Application.cpp
-    glib/ChassisType.cpp
     glib/FilePathWatcher.cpp
     glib/FileSystemGlib.cpp
     glib/GMallocString.cpp
@@ -37,7 +36,6 @@ list(APPEND WTF_PUBLIC_HEADERS
 
     glib/ActivityObserver.h
     glib/Application.h
-    glib/ChassisType.h
     glib/FilePathWatcher.h
     glib/GMallocString.h
     glib/GRefPtr.h
