@@ -1,0 +1,112 @@
+/*
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "StyleBorderImageSource.h"
+
+#include "AnimationUtilities.h"
+#include "CSSBorderImageSourceValue.h"
+#include "CSSKeywordValue.h"
+#include "StyleBuilderState.h"
+
+namespace WebCore {
+namespace Style {
+
+// MARK: - Conversion
+
+auto ToCSS<BorderImageSource>::operator()(const BorderImageSource& value, const Style::ComputedStyle& style) -> CSS::BorderImageSource
+{
+    return WTF::switchOn(value,
+        [&](const CSS::Keyword::None& keyword) -> CSS::BorderImageSource {
+            return keyword;
+        },
+        [&](const ImageWrapper& imageWrapper) -> CSS::BorderImageSource {
+            return CSS::ImageWrapper { protect(imageWrapper.value)->computedStyleValue(style) };
+        }
+    );
+}
+
+auto ToStyle<CSS::BorderImageSource>::operator()(const CSS::BorderImageSource& value, const BuilderState& state) -> BorderImageSource
+{
+    return WTF::switchOn(value,
+        [&](const CSS::Keyword::None& keyword) -> BorderImageSource {
+            return keyword;
+        },
+        [&](const CSS::ImageWrapper& imageWrapper) -> BorderImageSource {
+            RefPtr image = state.createStyleImage(protect(imageWrapper.value));
+            if (!image)
+                return CSS::Keyword::None { };
+            return ImageWrapper { image.releaseNonNull() };
+        }
+    );
+}
+
+auto CSSValueConversion<BorderImageSource>::operator()(BuilderState& state, const CSSValue& value) -> BorderImageSource
+{
+    if (auto* sourceValue = dynamicDowncast<CSSBorderImageSourceValue>(value))
+        return toStyle(sourceValue->source(), state);
+
+    if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
+        switch (keywordValue->valueID()) {
+        case CSSValueNone:
+            return CSS::Keyword::None { };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::None { };
+        }
+    }
+
+    RefPtr image = state.createStyleImage(value);
+    if (!image)
+        return CSS::Keyword::None { };
+
+    return ImageWrapper { image.releaseNonNull() };
+}
+
+auto CSSValueCreation<BorderImageSource>::operator()(CSSValuePool&, const Style::ComputedStyle& style, const BorderImageSource& value) -> Ref<CSSValue>
+{
+    return CSSBorderImageSourceValue::create(toCSS(value, style));
+}
+
+// MARK: - Blending
+
+auto Blending<BorderImageSource>::canBlend(const BorderImageSource& a, const BorderImageSource& b) -> bool
+{
+    return !a.isNone() && !b.isNone();
+}
+
+auto Blending<BorderImageSource>::blend(const BorderImageSource& a, const BorderImageSource& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> BorderImageSource
+{
+    if (context.isDiscrete) {
+        ASSERT(!context.progress || context.progress == 1);
+        return context.progress ? b : a;
+    }
+
+    ASSERT(canBlend(a, b));
+    return Style::blend(*a.tryImage(), *b.tryImage(), aStyle, bStyle, context);
+}
+
+} // namespace Style
+} // namespace WebCore

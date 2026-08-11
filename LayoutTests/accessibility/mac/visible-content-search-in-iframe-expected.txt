@@ -1,0 +1,18 @@
+This test ensures we consider content inside iframes accessible from searches done via AXUIElementsForSearchPredicate with the AXVisibleOnly search key.
+
+
+{#outside-iframe-button AXRole: AXButton}
+
+{AXRole: AXScrollArea}
+
+{AXRole: AXWebArea}
+
+{#inside-iframe-button AXRole: AXButton}
+PASS: output.includes('#outside-iframe-button') === true
+PASS: output.includes('#inside-iframe-button') === true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Outside iframe

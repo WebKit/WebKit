@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>video-scrolling</title>
+    <script src=../../../media/video-test.js></script>
+    <script src=../../../media/media-file.js></script>
+    <script src=../../../resources/basic-gestures.js></script>
+    <script>
+    async function runTest() {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "../../../media/content/test")');
+        await waitFor(video, 'canplay');
+        await shouldResolve(run('video.play()'));
+
+        consoleWrite('Simulate drag on video element');
+
+        let middleX = video.offsetLeft + video.offsetWidth / 2;
+        let middleY = video.offsetTop + video.offsetHeight / 2;
+        touchAndDragFromPointToPoint(middleX, middleY, middleX, 0);
+        await waitFor(document, 'scroll');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    })
+    </script>
+    <style>
+        #spacer { width: 100vw; height: 100vh; }
+    </style>
+</head>
+<body>
+    <video muted playsinline></video>
+    <div id=spacer></div>
+</body>
+</html>

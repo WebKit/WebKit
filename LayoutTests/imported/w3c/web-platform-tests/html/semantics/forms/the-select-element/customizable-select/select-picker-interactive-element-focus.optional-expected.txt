@@ -1,0 +1,8 @@
+invokerbutton
+option
+
+
+FAIL Clicking interactive elements inside the select picker should focus them. assert_equals: button expected Element node <button id="button">button</button> but got Element node <select>
+  <button>invoker</button>
+  <button id="button"...
+

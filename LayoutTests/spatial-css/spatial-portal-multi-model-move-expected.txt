@@ -1,0 +1,3 @@
+
+PASS Moving one of two <model>s out of a spatial portal leaves its sibling hosted
+

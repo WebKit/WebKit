@@ -1,0 +1,4 @@
+
+PASS The revert-rule works as a branch in if()
+PASS The revert-rule works as a branch in if(), earlier return
+

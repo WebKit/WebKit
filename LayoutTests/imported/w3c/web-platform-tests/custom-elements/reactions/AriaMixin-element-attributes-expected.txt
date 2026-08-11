@@ -1,0 +1,18 @@
+
+PASS ariaActiveDescendantElement in Element must enqueue an attributeChanged reaction when adding aria-activedescendant content attribute
+PASS ariaActiveDescendantElement in Element must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS ariaControlsElements in Element must enqueue an attributeChanged reaction when adding aria-controls content attribute
+PASS ariaControlsElements in Element must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS ariaDescribedByElements in Element must enqueue an attributeChanged reaction when adding aria-describedby content attribute
+PASS ariaDescribedByElements in Element must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS ariaDetailsElements in Element must enqueue an attributeChanged reaction when adding aria-details content attribute
+PASS ariaDetailsElements in Element must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS ariaErrorMessageElements in Element must enqueue an attributeChanged reaction when adding aria-errormessage content attribute
+PASS ariaErrorMessageElements in Element must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS ariaFlowToElements in Element must enqueue an attributeChanged reaction when adding aria-flowto content attribute
+PASS ariaFlowToElements in Element must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS ariaLabelledByElements in Element must enqueue an attributeChanged reaction when adding aria-labelledby content attribute
+PASS ariaLabelledByElements in Element must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS ariaOwnsElements in Element must enqueue an attributeChanged reaction when adding aria-owns content attribute
+PASS ariaOwnsElements in Element must enqueue an attributeChanged reaction when replacing an existing attribute
+

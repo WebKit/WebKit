@@ -1,0 +1,4 @@
+This tests navigating a different window during beforeunload event. The page load should succeed.
+
+PASS
+

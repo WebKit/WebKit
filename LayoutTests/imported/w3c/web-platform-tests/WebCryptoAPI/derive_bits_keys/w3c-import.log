@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_curve25519.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_curve448.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_fixtures.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys_curve25519.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys_curve448.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derive_key_and_encrypt.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derive_key_and_encrypt.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derived_bits_length.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derived_bits_length.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derived_bits_length_testcases.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derived_bits_length_vectors.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_bits.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/ecdh_keys.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf_vectors.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2_vectors.js

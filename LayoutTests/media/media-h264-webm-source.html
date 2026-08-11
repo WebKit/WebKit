@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-h264-webm-source</title>
+    <script src=video-test.js></script>
+    <script>
+        var videoSource1;
+        var videoSource2;
+        window.addEventListener('load', event => {       
+            run('video = document.createElement("video")');
+            run('videoSource1 = document.createElement("source")');
+            run('videoSource1.type = "video/webm"');
+            run('videoSource1.src = "content/test-h264.mkv"');
+            run('video.appendChild(videoSource1)');
+            run('videoSource2 = document.createElement("source")');
+            run('videoSource2.type = "video/mp4"');
+            run('videoSource2.src = "content/test-h264-709-fullrange.mp4"');
+            run('video.appendChild(videoSource2)');
+            run('document.body.appendChild(video)');
+
+            video.controls = 1;
+            video.muted = 1;
+
+            video.onerror = (event) => {
+                consoleWrite("received error event");
+                endTest();
+            };
+
+            video.oncanplay = () => {
+                video.play();
+            };
+
+            video.onloadeddata = (event) => {
+                consoleWrite(`dataloaded: ${video.videoWidth}x${video.videoHeight}`);
+                consoleWrite(`selected source: ${video.currentSrc.split('/').pop()}`);
+                endTest();
+            }
+        });
+
+    </script>
+</head>
+<body>
+</body>
+</html>

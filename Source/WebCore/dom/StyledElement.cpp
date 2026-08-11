@@ -1,0 +1,399 @@
+/*
+ * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2001 Peter Kelly (pmk@post.com)
+ *           (C) 2001 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "StyledElement.h"
+
+#include "AttributeChangeInvalidation.h"
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSImageValue.h"
+#include "CSSMarkup.h"
+#include "CSSParser.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSPropertyParser.h"
+#include "CSSSerializationContext.h"
+#include "CSSStyleProperties.h"
+#include "CSSStyleSheet.h"
+#include "CSSUnparsedValue.h"
+#include "CSSValuePool.h"
+#include "CachedResource.h"
+#include "ContentSecurityPolicy.h"
+#include "DOMTokenList.h"
+#include "ElementInlines.h"
+#include "ElementRareData.h"
+#include "HTMLElement.h"
+#include "HTMLParserIdioms.h"
+#include "InlineStylePropertyMap.h"
+#include "InspectorInstrumentation.h"
+#include "MutableStyleProperties.h"
+#include "SVGElement.h"
+#include "ScriptableDocumentParser.h"
+#include "StylePropertyMap.h"
+#include "StylePropertyShorthand.h"
+#include "StyleResolver.h"
+#include <wtf/HashFunctions.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StyledElement);
+
+static_assert(sizeof(StyledElement) == sizeof(Element), "styledelement should remain same size as element");
+
+using namespace HTMLNames;
+
+void StyledElement::synchronizeStyleAttributeInternalImpl()
+{
+    ASSERT(elementData());
+    ASSERT(elementData()->styleAttributeIsDirty());
+    elementData()->setStyleAttributeIsDirty(false);
+    if (RefPtr<const StyleProperties> inlineStyle = this->inlineStyle())
+        setSynchronizedLazyAttribute(styleAttr, inlineStyle->asTextAtom(CSS::defaultSerializationContext()));
+}
+
+StyledElement::StyledElement(ClangVTableWorkaroundTag, const QualifiedName& name, Document& document)
+    : Element(name, document, { })
+{
+}
+
+StyledElement::~StyledElement() = default;
+
+CSSStyleProperties& StyledElement::cssomStyle()
+{
+    return ensureMutableInlineStyle()->ensureInlineCSSStyleProperties(*this);
+}
+
+StylePropertyMap& StyledElement::ensureAttributeStyleMap()
+{
+    if (!attributeStyleMap())
+        setAttributeStyleMap(InlineStylePropertyMap::create(*this));
+    return *attributeStyleMap();
+}
+
+Ref<MutableStyleProperties> StyledElement::ensureMutableInlineStyle()
+{
+    RefPtr<StyleProperties>& inlineStyle = ensureUniqueElementData().m_inlineStyle;
+    if (!inlineStyle) {
+        Ref mutableProperties = MutableStyleProperties::create(strictToCSSParserMode(isHTMLElement() && !document().inQuirksMode()));
+        inlineStyle = mutableProperties.copyRef();
+        return mutableProperties;
+    }
+    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(*inlineStyle))
+        return *mutableProperties;
+    Ref mutableProperties = inlineStyle->mutableCopy();
+    inlineStyle = mutableProperties.copyRef();
+    return mutableProperties;
+}
+
+void StyledElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
+{
+    Element::attributeChanged(name, oldValue, newValue, reason);
+    if (oldValue != newValue) {
+        if (name == styleAttr)
+            styleAttributeChanged(newValue, reason);
+        else if (hasPresentationalHintsForAttribute(name)) {
+            elementData()->setPresentationalHintStyleIsDirty(true);
+            invalidateStyle();
+        }
+    }
+}
+
+CSSStyleProperties* StyledElement::inlineStyleCSSOMWrapper()
+{
+    if (auto* style = inlineStyle(); !style || !style->hasCSSOMWrapper())
+        return nullptr;
+    SUPPRESS_UNCOUNTED_LOCAL auto* cssomWrapper = ensureMutableInlineStyle()->cssStyleProperties();
+    ASSERT(cssomWrapper && cssomWrapper->parentElement() == this);
+    return cssomWrapper;
+}
+
+static bool usesStyleBasedEditability(const StyleProperties& properties)
+{
+    return properties.getPropertyCSSValue(CSSPropertyWebkitUserModify);
+}
+
+void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
+{
+    auto& inlineStyle = elementData()->m_inlineStyle;
+
+    // Avoid redundant work if we're using shared attribute data with already parsed inline style.
+    if (inlineStyle && !elementData()->isUnique())
+        return;
+
+    // We reconstruct the property set instead of mutating if there is no CSSOM wrapper.
+    // This makes wrapperless property sets immutable and so cacheable.
+    if (RefPtr mutableStyleProperties = dynamicDowncast<MutableStyleProperties>(inlineStyle))
+        mutableStyleProperties->parseDeclaration(newStyleString, protect(document()).get());
+    else
+        inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, *this);
+
+    if (usesStyleBasedEditability(*inlineStyle))
+        document().setHasElementUsingStyleBasedEditability();
+}
+
+void StyledElement::styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason reason)
+{
+    Ref document = this->document();
+    auto startLineNumber = OrdinalNumber::beforeFirst();
+    if (document->scriptableDocumentParser() && !document->isInDocumentWrite())
+        startLineNumber = protect(document->scriptableDocumentParser())->textPosition().m_line;
+
+    if (newStyleString.isNull())
+        ensureMutableInlineStyle()->clear();
+    else if (reason == AttributeModificationReason::ByCloning || protect(document->contentSecurityPolicy())->allowInlineStyle(document->url().string(), startLineNumber, newStyleString.string(), CheckUnsafeHashes::Yes, *this, nonce(), isInUserAgentShadowTree()))
+        setInlineStyleFromString(newStyleString);
+
+    elementData()->setStyleAttributeIsDirty(false);
+
+    Node::invalidateStyle(Style::Validity::InlineStyleInvalid);
+    InspectorInstrumentation::didInvalidateStyleAttr(*this);
+}
+
+void StyledElement::synchronizeStyleAttributeForSelectorInvalidation()
+{
+    if (RefPtr inlineStyle = this->inlineStyle()) {
+        elementData()->setStyleAttributeIsDirty(false);
+        auto newValue = inlineStyle->asTextAtom(CSS::defaultSerializationContext());
+        Style::AttributeChangeInvalidation styleInvalidation(*this, styleAttr, attributeWithoutSynchronization(styleAttr), newValue);
+        setSynchronizedLazyAttribute(styleAttr, newValue);
+    }
+}
+
+void StyledElement::dirtyStyleAttribute()
+{
+    elementData()->setStyleAttributeIsDirty(true);
+
+    if (styleResolver().ruleSets().selectorsForStyleAttribute() != Style::SelectorsForStyleAttribute::None)
+        synchronizeStyleAttributeForSelectorInvalidation();
+}
+
+void StyledElement::invalidateStyleAttribute()
+{
+    if (RefPtr inlineStyle = this->inlineStyle()) {
+        if (usesStyleBasedEditability(*inlineStyle))
+            document().setHasElementUsingStyleBasedEditability();
+    }
+
+    elementData()->setStyleAttributeIsDirty(true);
+
+    // Inline style invalidation optimization does not work if there are selectors targeting the style attribute
+    // as some rule may start or stop matching.
+    auto selectorsForStyleAttribute = styleResolver().ruleSets().selectorsForStyleAttribute();
+    auto validity = selectorsForStyleAttribute == Style::SelectorsForStyleAttribute::None ? Style::Validity::InlineStyleInvalid : Style::Validity::ElementInvalid;
+
+    Node::invalidateStyle(validity);
+
+    if (auto* svgElement = dynamicDowncast<SVGElement>(*this))
+        svgElement->invalidateInstances();
+
+    // In the rare case of selectors like "[style] ~ div" we need to synchronize immediately to invalidate.
+    if (selectorsForStyleAttribute == Style::SelectorsForStyleAttribute::NonSubjectPosition)
+        synchronizeStyleAttributeForSelectorInvalidation();
+}
+
+void StyledElement::inlineStyleChanged()
+{
+    setDidMutateSubtreeAfterSetInnerHTMLOnAncestors();
+    invalidateStyleAttribute();
+    InspectorInstrumentation::didInvalidateStyleAttr(*this);
+}
+    
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, CSSValueID identifier, IsImportant important)
+{
+    ensureMutableInlineStyle()->setProperty(propertyID, CSSKeywordValue::create(identifier), important);
+    inlineStyleChanged();
+    return true;
+}
+
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, double value, CSSUnitType unit, IsImportant important)
+{
+    ensureMutableInlineStyle()->setProperty(propertyID, CSSPrimitiveValue::create(value, unit), important);
+    inlineStyleChanged();
+    return true;
+}
+
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value, IsImportant important)
+{
+    ensureMutableInlineStyle()->setProperty(propertyID, WTF::move(value), important);
+    inlineStyleChanged();
+    return true;
+}
+
+bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const String& value, IsImportant important, bool* didFailParsing)
+{
+    bool changes = ensureMutableInlineStyle()->setProperty(propertyID, value, CSSParserContext(document()), important, didFailParsing);
+    if (changes)
+        inlineStyleChanged();
+    return changes;
+}
+
+bool StyledElement::setInlineStyleCustomProperty(const AtomString& property, const String& value, IsImportant important)
+{
+    bool changes = ensureMutableInlineStyle()->setCustomProperty(property.string(), value, CSSParserContext(document()), important);
+    if (changes)
+        inlineStyleChanged();
+    return changes;
+}
+
+bool StyledElement::setInlineStyleCustomProperty(Ref<CSSValue>&& customPropertyValue, IsImportant important)
+{
+    bool changes = ensureMutableInlineStyle()->addParsedProperty(CSSProperty(CSSPropertyCustom, WTF::move(customPropertyValue), important));
+    if (changes)
+        inlineStyleChanged();
+    return changes;
+}
+
+bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
+{
+    if (!inlineStyle())
+        return false;
+    bool changes = ensureMutableInlineStyle()->removeProperty(propertyID);
+    if (changes)
+        inlineStyleChanged();
+    return changes;
+}
+
+bool StyledElement::removeInlineStyleCustomProperty(const AtomString& property)
+{
+    if (!inlineStyle())
+        return false;
+    bool changes = ensureMutableInlineStyle()->removeCustomProperty(property);
+    if (changes)
+        inlineStyleChanged();
+    return changes;
+}
+
+void StyledElement::removeAllInlineStyleProperties()
+{
+    if (!inlineStyle() || inlineStyle()->isEmpty())
+        return;
+    ensureMutableInlineStyle()->clear();
+    inlineStyleChanged();
+}
+
+void StyledElement::addSubresourceAttributeURLs(OrderedHashSet<URL>& urls) const
+{
+    RefPtr inlineStyle = this->inlineStyle();
+    if (!inlineStyle)
+        return;
+    inlineStyle->traverseSubresources([&] (auto& resource) {
+        urls.add(resource.url());
+        return false;
+    });
+}
+
+Attribute StyledElement::replaceURLsInAttributeValue(const Attribute& attribute, const CSS::SerializationContext& serializationContext) const
+{
+    if (serializationContext.replacementURLStrings.isEmpty())
+        return attribute;
+
+    if (attribute.name() != styleAttr)
+        return attribute;
+
+    RefPtr properties = this->inlineStyle();
+    if (!properties)
+        return attribute;
+
+    return Attribute { styleAttr, properties->asTextAtom(serializationContext) };
+}
+
+const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
+{
+    if (!elementData())
+        return nullptr;
+    if (elementData()->presentationalHintStyleIsDirty())
+        const_cast<StyledElement&>(*this).rebuildPresentationalHintStyle();
+    return elementData()->presentationalHintStyle();
+}
+
+void StyledElement::rebuildPresentationalHintStyle()
+{
+    bool isSVG = isSVGElement();
+    auto style = MutableStyleProperties::create(isSVG ? SVGAttributeMode : HTMLQuirksMode);
+    for (auto& attribute : attributes())
+        collectPresentationalHintsForAttribute(attribute.name(), attribute.value(), style);
+    collectExtraStyleForPresentationalHints(style);
+
+    // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
+    Ref elementData = ensureUniqueElementData();
+
+    elementData->setPresentationalHintStyleIsDirty(false);
+    if (style->isEmpty()) {
+        elementData->m_presentationalHintStyle = nullptr;
+        return;
+    }
+
+    auto shouldDeduplicate = [&] {
+        auto hasNonZeroProperty = [&](auto property) {
+            auto value = dynamicDowncast<CSSPrimitiveValue>(style->getPropertyCSSValue(property));
+            return value && !value->isZero().value_or(false);
+        };
+        if (isSVG) {
+            // SVG style tends to have unique x/y properties. Don't spend effort trying to deduplicate them.
+            if (hasNonZeroProperty(CSSPropertyX))
+                return false;
+            if (hasNonZeroProperty(CSSPropertyY))
+                return false;
+            if (hasNonZeroProperty(CSSPropertyCx))
+                return false;
+            if (hasNonZeroProperty(CSSPropertyCy))
+                return false;
+        }
+        return true;
+    }();
+
+    elementData->m_presentationalHintStyle = shouldDeduplicate ? style->immutableDeduplicatedCopy() : style->immutableCopy();
+}
+
+void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValueID identifier)
+{
+    style.setProperty(propertyID, CSSKeywordValue::create(identifier));
+}
+
+void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, double value, CSSUnitType unit)
+{
+    style.setProperty(propertyID, CSSPrimitiveValue::create(value, unit));
+}
+    
+void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const String& value)
+{
+    SUPPRESS_UNCOUNTED_ARG style.setProperty(propertyID, value, document().cssParserContext());
+}
+
+void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, Ref<CSSValue>&& value)
+{
+    style.setProperty(propertyID, WTF::move(value));
+}
+
+void StyledElement::mapLanguageAttributeToLocale(const AtomString& value, MutableStyleProperties& style)
+{
+    if (!value.isEmpty()) {
+        // Quote the locale id so it is treated as a string instead of as a CSS keyword.
+        addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitLocale, serializeString(value));
+    } else {
+        // The empty string means the language is explicitly unknown.
+        addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitLocale, CSSValueAuto);
+    }
+}
+
+}

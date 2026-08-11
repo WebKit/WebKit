@@ -1,0 +1,59 @@
+Test that a context can be lost multiple times.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 50 PASS, 0 FAIL
+
+PASS Got webglcontextlost iteration:0
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextrestored iteration:0
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextlost iteration:1
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextrestored iteration:1
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextlost iteration:2
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextrestored iteration:2
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextlost iteration:3
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextrestored iteration:3
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextlost iteration:4
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextrestored iteration:4
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextlost iteration:5
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextrestored iteration:5
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextlost iteration:6
+PASS gl.isContextLost() is true
+PASS gl.getError() is gl.CONTEXT_LOST_WEBGL
+PASS gl.getError() is gl.NO_ERROR
+PASS Got webglcontextrestored iteration:6
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

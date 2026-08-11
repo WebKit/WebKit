@@ -1,0 +1,21 @@
+When bold, italic, and underline are toggled on before typing marker-style lines, smart-list conversion should preserve the active typing style â€” including on a subsequent line typed without an explicit marker.
+| <ol>
+|   class="Apple-decimal-list"
+|   start="1"
+|   style="list-style-type: decimal;"
+|   <li>
+|     <b>
+|       <i>
+|         <u>
+|           "this is styled text"
+|     <br>
+|   <li>
+|     <b>
+|       <i>
+|         <u>
+|           "this is styled text"
+|   <li>
+|     <b>
+|       <i>
+|         <u>
+|           "this is styled text<#selection-caret>"

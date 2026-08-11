@@ -1,0 +1,13 @@
+<!doctype html>
+<html class="a
+b">
+ <head>
+  <title>document.getElementsByClassName(array): "a\n"</title>
+  <script src="../resources/common.js"></script>
+ </head>
+ <body class="a
+">
+  <p id="r">FAIL (script did not run)</p>
+  <script> t(document.getElementsByClassName(["a\n"]), [document.documentElement, document.body]) </script>
+ </body>
+</html>

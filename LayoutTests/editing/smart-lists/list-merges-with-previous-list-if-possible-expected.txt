@@ -1,0 +1,17 @@
+Consecutive ordered-list items separated by non-list content and a blank line should still merge into a single ordered list, preserving the start attribute of the first list.
+| <ol>
+|   class="Apple-decimal-list"
+|   start="1"
+|   style="list-style-type: decimal;"
+|   <li>
+|     "A"
+|     <br>
+|   <li>
+|     "B"
+|   <li>
+|     "C"
+|   <li>
+|     "D"
+|     <br>
+|   <li>
+|     "E<#selection-caret>"

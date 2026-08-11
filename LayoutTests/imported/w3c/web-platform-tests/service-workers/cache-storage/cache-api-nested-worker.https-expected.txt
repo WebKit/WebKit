@@ -1,0 +1,3 @@
+
+PASS Cache API in nested worker
+

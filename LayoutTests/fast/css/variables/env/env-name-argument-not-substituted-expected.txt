@@ -1,0 +1,11 @@
+env() does not substitute its name argument. This is a WebKit limitation: env()'s argument grammar is env( <declaration-value>, <declaration-value>? ), so env(var(--name)) should be valid at parse time and resolve the name at computed-value time.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS CSS.supports("width", "env(var(--myvar))") is false
+PASS computedWidth("--myvar: safe-area-inset-top; width: env(var(--myvar), 150px);") is initialWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

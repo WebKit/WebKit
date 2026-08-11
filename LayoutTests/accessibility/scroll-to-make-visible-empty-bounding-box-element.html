@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div role="group" aria-label="controls" style="margin-top: 5000px">
+    <button id="before-button">Like</button>
+    <x-tooltip id="tooltip" role="tooltip" tabindex="-1" aria-label="tooltip" style=""></x-tooltip>
+    <button id="after-button">Dislike</button>
+</div>
+
+<script>
+var output = "This test ensures that elements with empty intrinsic bounding boxes use their nearest-ancestor bounding box, preventing erroneous scrolls to 0,0.\n\n";
+
+class XTooltip extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open", delegatesFocus: true });
+        const fragment = document.createRange().createContextualFragment("");
+        this.shadowRoot.append(fragment.cloneNode(true));
+    }
+}
+customElements.define("x-tooltip", XTooltip);
+
+var scrollCounter = 0;
+window.addEventListener("scroll", () => {
+    scrollCounter++;
+});
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("window.scrollY", "0");
+    accessibilityController.accessibleElementById("before-button").scrollToMakeVisible();
+    setTimeout(async function() {
+        // The button is offset from the top of the page by 5000px, so expect to have scrolled somewhere close to that.
+        output += await expectAsync("window.scrollY >= 4000", "true");
+        output += await expectAsync("scrollCounter", "1");
+        accessibilityController.accessibleElementById("tooltip").scrollToMakeVisible();
+        // Wait some time for the scroll to happen (which should only happen if we have a bug).
+        await sleep(60);
+        output += expect("scrollCounter", "1");
+
+        accessibilityController.accessibleElementById("after-button").scrollToMakeVisible();
+        // Wait some time for the scroll to happen (which should only happen if we have a bug).
+        await sleep(60);
+        output += expect("scrollCounter", "1");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

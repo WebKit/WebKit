@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-18; totalPixels=0-1000" />
+<style>
+#box1 {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    color: black;
+}
+#box2 {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 240px;
+    height: 240px;
+    transform-origin: top left;
+    transform: scale(0.333);
+    background-color: green;
+    font-size: 3em;
+    color: black;
+}
+#box3 {
+    position: absolute;
+    top: 110px;
+    left: 110px;
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    color: black;
+}
+</style>
+<script type="text/javascript" src="../../resources/snapshot-helper.js"></script>
+</head>
+<body>
+    <div id="box1" draggable="true">
+        <div id="box2">
+            Should be included
+        </div>
+    </div>
+    <div id="box3">
+        Should not be included
+    </div>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+}
+
+async function main() {
+    if (!window.internals) {
+        console.log('FAIL: window.internals is not available');
+        return;
+    }
+    
+    const box = document.getElementById('box1');
+    const canvas = await SnapshotHelper.takeSnapshot(box);
+    canvas.style.position = "absolute";
+    canvas.style.top = "10px";
+    canvas.style.left = "10px";
+    box.remove();
+    document.getElementById("box3").remove();
+    document.body.appendChild(canvas);
+
+    if (window.testRunner) {
+        testRunner.notifyDone();
+    }
+}
+
+window.addEventListener('load', main, false);
+</script>
+</body>
+</html>

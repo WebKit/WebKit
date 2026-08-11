@@ -1,0 +1,9 @@
+Tests for the Page.overrideSetting command and the PointerLockEnabled setting.
+
+
+== Running test suite: Page.overrideSetting.PointerLockEnabled
+-- Running test case: Page.overrideSetting.PointerLockEnabled
+PASS: Element.prototype.requestPointerLock should be unavailable when PointerLockEnabled is overridden to false.
+PASS: Element.prototype.requestPointerLock should be available when PointerLockEnabled is overridden to true.
+PASS: Element.prototype.requestPointerLock should return to its default when the PointerLockEnabled override is removed.
+

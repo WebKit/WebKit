@@ -1,0 +1,10 @@
+
+"world" should be red:
+| "hello <#selection-anchor>"
+| <font>
+|   color="#ff0000"
+|   "world<#selection-focus>"
+
+there should be no span or font elements:
+| "<#selection-anchor>hello "
+| "world<#selection-focus>"

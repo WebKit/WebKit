@@ -1,0 +1,3 @@
+
+PASS Hit test back face hidden preserve3d, hittesting
+

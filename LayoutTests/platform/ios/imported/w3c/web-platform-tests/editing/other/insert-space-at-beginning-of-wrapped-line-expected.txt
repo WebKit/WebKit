@@ -1,0 +1,17 @@
+
+123456789-XY
+123456789-XY
+
+FAIL Typing space at "123456789 |XY" should insert a space in textarea assert_equals: expected "123456789  XY" but got "123456789 XY"
+FAIL Typing space at "123456789 |XY" should insert a space in plaintext assert_equals: expected "123456789  XY" but got "123456789 XY"
+FAIL Typing space at "123456789 |XY" should insert a space in richedit assert_equals: expected "123456789  XY" but got "123456789 XY"
+FAIL Typing space at "12345     |XY" should insert a space in textarea assert_equals: expected "12345      XY" but got "12345     XY"
+FAIL Typing space at "12345     |XY" should insert a space in plaintext assert_equals: expected "12345      XY" but got "12345     XY"
+FAIL Typing space at "12345     |XY" should insert a space in richedit assert_equals: expected "12345      XY" but got "12345     XY"
+FAIL Typing space at "12345        |XY" should insert a space in textarea assert_equals: expected "12345         XY" but got "12345        XY"
+FAIL Typing space at "12345        |XY" should insert a space in plaintext assert_equals: expected "12345         XY" but got "12345        XY"
+FAIL Typing space at "12345        |XY" should insert a space in richedit assert_equals: expected "12345         XY" but got "12345        XY"
+FAIL Typing space at "123456789-|XY" should insert a space in textarea assert_equals: expected "123456789- XY" but got "123456789-XY"
+FAIL Typing space at "123456789-|XY" should insert a space in plaintext assert_equals: expected "123456789- XY" but got "123456789-XY"
+FAIL Typing space at "123456789-|XY" should insert a space in richedit assert_equals: expected "123456789- XY" but got "123456789-XY"
+

@@ -1,0 +1,13 @@
+SVG 1.1 dynamic update tests
+
+Tests dynamic updates of the 'edgeMode' attribute of the SVGFEGaussianBlurElement object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gaussianBlurElement.getAttribute('edgeMode') is "wrap"
+PASS gaussianBlurElement.getAttribute('edgeMode') is "duplicate"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

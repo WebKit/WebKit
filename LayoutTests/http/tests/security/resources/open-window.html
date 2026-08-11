@@ -1,0 +1,22 @@
+<html>
+<head>
+<script>
+    window.onload = function()
+    {
+        if (window.testRunner)
+            testRunner.globalFlag = true;
+    } 
+
+    var windowURL = '';
+    var openedWindow;
+    function openWindow()
+    {
+        openedWindow = window.open(windowURL);
+    }
+</script>
+</head>
+<body>
+<button onclick="openWindow()">Open Window</button>
+</body>
+</html>
+

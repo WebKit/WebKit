@@ -1,0 +1,9 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Direct block, same-origin = full URL in report
+PASS Direct block, cross-origin = full URL in report
+TIMEOUT Block after redirect, same-origin = original URL in report Test timed out
+TIMEOUT Block after redirect, cross-origin = original URL in report Test timed out
+PASS Violation report status OK.
+

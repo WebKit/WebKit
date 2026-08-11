@@ -1,0 +1,234 @@
+# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#    * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#    * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import sys
+import unittest
+
+from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.executive_mock import MockExecutive2
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.webkit_finder import WebKitFinder
+
+from webkitcorepy import OutputCapture
+
+import webkitpy.port.config as config
+
+
+class ConfigTest(unittest.TestCase):
+    def setUp(self):
+        config.Config._clear_cache_for_testing()
+
+    def make_config(self, output='', files=None, exit_code=0, exception=None, run_command_fn=None, stderr='', port_implementation=None, use_cmake=False, use_xcode=False, asan=False):
+        e = MockExecutive2(output=output, exit_code=exit_code, exception=exception, run_command_fn=run_command_fn, stderr=stderr)
+        fs = MockFileSystem(files)
+        return config.Config(e, fs, port_implementation=port_implementation, use_cmake=use_cmake, use_xcode=use_xcode, asan=asan)
+
+    def assert_configuration(self, contents, expected):
+        # This tests that a configuration file containing
+        # _contents_ ends up being interpreted as _expected_.
+        output = 'foo\nfoo/%s' % contents
+        c = self.make_config(output, {'foo/Configuration': contents})
+        self.assertEqual(c.default_configuration(), expected)
+
+    def test_build_directory(self):
+        # --top-level
+        def mock_webkit_build_directory(arg_list):
+            if arg_list == ['--top-level']:
+                return '/WebKitBuild/'
+            elif arg_list == ['--configuration', '--debug']:
+                return '/WebKitBuild/Debug'
+            elif arg_list == ['--configuration', '--release']:
+                return '/WebKitBuild/Release'
+            elif arg_list == []:
+                return '/WebKitBuild/\n/WebKitBuild//Debug\n'
+            return 'Error'
+
+        def mock_run_command(arg_list):
+            if 'webkit-build-directory' in arg_list[1]:
+                return mock_webkit_build_directory(arg_list[2:])
+            return 'Error'
+
+        c = self.make_config(run_command_fn=mock_run_command)
+        self.assertEqual(c.build_directory(None), '/WebKitBuild/')
+
+        # Test again to check caching
+        self.assertEqual(c.build_directory(None), '/WebKitBuild/')
+
+        # Test other values
+        self.assertTrue(c.build_directory('Release').endswith('/Release'))
+        self.assertTrue(c.build_directory('Debug').endswith('/Debug'))
+        self.assertRaises(KeyError, c.build_directory, 'Unknown')
+
+        # Test that stderr output from webkit-build-directory won't mangle the build dir
+        config.Config._clear_cache_for_testing()
+        c = self.make_config(output='/WebKitBuild/', stderr="mock stderr output from webkit-build-directory")
+        self.assertEqual(c.build_directory(None), '/WebKitBuild/')
+
+    def test_build_directory_passes_port_implementation(self):
+        def mock_run_command(arg_list):
+            self.assetEquals('--gtk' in arg_list)
+            return '/tmp'
+
+        c = self.make_config(run_command_fn=mock_run_command, port_implementation='gtk')
+
+    def test_build_directory_passes_cmake_flag(self):
+        seen = []
+
+        def mock_run_command(arg_list):
+            seen.append(list(arg_list))
+            if '--cmake' in arg_list:
+                return '/WebKitBuild/cmake-mac/Debug'
+            return '/WebKitBuild/Debug'
+
+        c_xcode = self.make_config(run_command_fn=mock_run_command, port_implementation='mac', use_cmake=False)
+        self.assertEqual(c_xcode.build_directory('Debug'), '/WebKitBuild/Debug')
+        self.assertNotIn('--cmake', seen[-1])
+
+        c_cmake = self.make_config(run_command_fn=mock_run_command, port_implementation='mac', use_cmake=True)
+        self.assertEqual(c_cmake.build_directory('Debug'), '/WebKitBuild/cmake-mac/Debug')
+        self.assertIn('--cmake', seen[-1])
+
+        c_cmake.build_directory('Release')
+        self.assertIn('--cmake', seen[-1])
+
+    def test_build_directory_passes_asan_flag(self):
+        seen = []
+
+        def mock_run_command(arg_list):
+            seen.append(list(arg_list))
+            if '--asan' in arg_list:
+                return '/WebKitBuild/cmake-mac/ASan'
+            return '/WebKitBuild/cmake-mac/Release'
+
+        # --asan selects the sanitizer tree regardless of Debug/Release.
+        c_asan = self.make_config(run_command_fn=mock_run_command, port_implementation='mac', use_cmake=True, asan=True)
+        self.assertEqual(c_asan.build_directory('Release'), '/WebKitBuild/cmake-mac/ASan')
+        self.assertIn('--asan', seen[-1])
+        self.assertIn('--cmake', seen[-1])
+
+        c_plain = self.make_config(run_command_fn=mock_run_command, port_implementation='mac', use_cmake=True, asan=False)
+        self.assertEqual(c_plain.build_directory('Release'), '/WebKitBuild/cmake-mac/Release')
+        self.assertNotIn('--asan', seen[-1])
+
+        # --asan is forwarded independently of --cmake; don't invent --cmake.
+        c_asan_no_cmake = self.make_config(run_command_fn=mock_run_command, port_implementation='mac', use_cmake=False, asan=True)
+        c_asan_no_cmake.build_directory('Release')
+        self.assertIn('--asan', seen[-1])
+        self.assertNotIn('--cmake', seen[-1])
+
+    def test_asan_marker_without_flag_is_unchanged(self):
+        # Regression: Xcode users enable ASan via the marker file, not --asan.
+        seen = []
+
+        def mock_run_command(arg_list):
+            seen.append(list(arg_list))
+            return 'foo\nfoo/Release'
+
+        c = self.make_config(run_command_fn=mock_run_command, files={'foo/ASan': 'YES'})
+        self.assertTrue(c.asan)
+        self.assertNotIn('--asan', seen[-1])
+        self.assertNotIn('--cmake', seen[-1])
+
+    def test_build_directory_passes_xcode_flag(self):
+        seen = []
+
+        def mock_run_command(arg_list):
+            seen.append(list(arg_list))
+            return '/WebKitBuild/Debug'
+
+        c_xcode = self.make_config(run_command_fn=mock_run_command, port_implementation='mac', use_xcode=True)
+        self.assertEqual(c_xcode.build_directory('Debug'), '/WebKitBuild/Debug')
+        self.assertIn('--xcode', seen[-1])
+        self.assertNotIn('--cmake', seen[-1])
+
+    def test_default_configuration__release(self):
+        self.assert_configuration('Release', 'Release')
+
+    def test_default_configuration__debug(self):
+        self.assert_configuration('Debug', 'Debug')
+
+    def test_default_configuration__deployment(self):
+        self.assert_configuration('Deployment', 'Release')
+
+    def test_default_configuration__development(self):
+        self.assert_configuration('Development', 'Debug')
+
+    def test_default_configuration__notfound(self):
+        # This tests what happens if the default configuration file doesn't exist.
+        c = self.make_config(output='foo\nfoo/Release', files={'foo/Configuration': None})
+        self.assertEqual(c.default_configuration(), "Release")
+
+    def test_default_configuration__unknown(self):
+        # Ignore the warning about an unknown configuration value.
+        with OutputCapture():
+            self.assert_configuration('Unknown', 'Unknown')
+
+    def test_default_configuration__standalone(self):
+        # FIXME: This test runs a standalone python script to test
+        # reading the default configuration to work around any possible
+        # caching / reset bugs. See https://bugs.webkit.org/show_bug.cgi?id=49360
+        # for the motivation. We can remove this test when we remove the
+        # global configuration cache in config.py.
+        e = Executive()
+        fs = FileSystem()
+        c = config.Config(e, fs)
+        script = WebKitFinder(fs).path_from_webkit_base('Tools', 'Scripts', 'webkitpy', 'port', 'config_standalone.py')
+
+        # Note: don't use 'Release' here, since that's the normal default.
+        expected = 'Debug'
+
+        args = [sys.executable, script, '--mock', expected]
+        actual = e.run_command(args, return_stderr=False).rstrip()
+        self.assertEqual(actual, expected)
+
+    def test_default_configuration__no_perl(self):
+        # We need perl to run webkit-build-directory to find out where the
+        # default configuration file is. See what happens if perl isn't
+        # installed. (We should get the default value, 'Release').
+        c = self.make_config(exception=OSError)
+        actual = c.default_configuration()
+        self.assertEqual(actual, 'Release')
+
+    def test_default_configuration__scripterror(self):
+        # We run webkit-build-directory to find out where the default
+        # configuration file is. See what happens if that script fails.
+        # (We should get the default value, 'Release').
+        c = self.make_config(exception=ScriptError())
+        actual = c.default_configuration()
+        self.assertEqual(actual, 'Release')
+
+    def test_asan(self):
+        config = self.make_config(output='foo\nfoo/Release', files={'foo/Configuration': 'Release', 'foo/ASan': 'YES'})
+        self.assertEqual(config.asan, True)
+        config = self.make_config(output='foo\nfoo/Release', files={'foo/Configuration': 'Release'})
+        self.assertEqual(config.asan, False)
+        # An explicit --asan forces asan on even without the marker file.
+        config = self.make_config(output='foo\nfoo/cmake-mac/ASan', files={}, asan=True)
+        self.assertEqual(config.asan, True)

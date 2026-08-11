@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style>
+.negative {
+  z-index: -1;
+}
+.abs {
+  position: absolute;
+}
+.green {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+
+.red {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  will-change: transform;
+}
+</style>
+<body>
+<div class="negative abs">
+  <div class="red"></div>
+</div>
+<div class="negative abs green"></div>
+</body>

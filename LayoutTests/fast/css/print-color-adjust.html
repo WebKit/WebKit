@@ -1,0 +1,35 @@
+<head>
+<script>
+let output = [];
+
+function test(id, expected) {
+    let adjust = window.getComputedStyle(document.getElementById(id)).printColorAdjust;
+    if (adjust == expected)
+        output.push(`${id}: PASS`);
+    else
+        output.push(`${id}: FAIL. print-color-adjust was ${adjust}, it should have been ${expected}.`);
+}
+
+function runTests() {
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    test("economy", "economy");
+    test("exact", "exact");
+    test("shorthand-economy", "economy");
+    test("shorthand-exact", "exact");
+    test("prefixed-economy", "economy");
+    test("prefixed-exact", "exact");
+
+    document.body.innerHTML = output.join("\n");
+}
+</script>
+</head>
+<body onLoad="runTests();" style="white-space: pre-wrap;">
+<div id="economy" style="print-color-adjust: economy;"></div>
+<div id="exact" style="print-color-adjust: exact;"></div>
+<div id="shorthand-economy" style="color-adjust: economy;"></div>
+<div id="shorthand-exact" style="color-adjust: exact;"></div>
+<div id="prefixed-economy" style="-webkit-print-color-adjust: economy;"></div>
+<div id="prefixed-exact" style="-webkit-print-color-adjust: exact;"></div>
+</body>

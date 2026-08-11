@@ -1,0 +1,6 @@
+
+PASS :pipeline_creation_immediate_size_mismatch:pipelineType="compute";isAsync=true
+PASS :pipeline_creation_immediate_size_mismatch:pipelineType="compute";isAsync=false
+PASS :pipeline_creation_immediate_size_mismatch:pipelineType="render";isAsync=true
+PASS :pipeline_creation_immediate_size_mismatch:pipelineType="render";isAsync=false
+

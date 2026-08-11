@@ -1,0 +1,9 @@
+foo
+
+PASS A named property must return an element as-is if its name attribute matches
+PASS A named property must not be set if the element is not reachable from the Document
+PASS A named property must not be enumerable
+PASS A named property must return any element for which the id attribute matches
+PASS A non element node in the document should not cause errors
+PASS An element with identical name and id attributes should occur in the HTMLCollection once, not twice
+

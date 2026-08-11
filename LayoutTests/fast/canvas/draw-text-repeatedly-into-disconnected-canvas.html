@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+addEventListener("load", async () => {
+    await document.fonts.load("16px Ahem");
+
+    for (let i = 0; i < 3; ++i)
+        await paintIntoCanvas();
+
+    await paintIntoCanvas(document.getElementById("final-target"));
+
+    testPassed("Done painting");
+    finishJSTest();
+});
+
+async function paintIntoCanvas(target) {
+    let canvas = target || document.createElement("canvas");
+    let context = canvas.getContext("2d");
+
+    context.font = "16px Ahem";
+    context.strokeText("Hello world", 10, 10);
+    context.strokeText("Hello world", 20, 20);
+
+    for (let i = 0; i < 5; ++i)
+        await UIHelper.renderingUpdate();
+
+    delete context;
+    delete canvas;
+    gc();
+}
+
+function gc() {
+    if (window.GCController)
+        return GCController.collect();
+
+    let strings = [];
+    for (let i = 0; i < 1000000; ++i)
+        strings.push(new String(i));
+}
+</script>
+<style>
+@font-face {
+    font-family: Ahem;
+    src: url("../../resources/Ahem.ttf");
+}
+
+canvas {
+    width: 400px;
+    height: 400px;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+    <canvas width="400" height="400" id="final-target"></canvas>
+</body>
+</html>

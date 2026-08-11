@@ -1,0 +1,13 @@
+<style>
+div {
+	display: inline-block;
+}
+input {
+ font-size: 40px;
+}
+</style>
+PASS if this and<div><input id=foobar type=text value="this"></div>are vertically aligned.
+<script>
+foobar.focus();
+foobar.setSelectionRange(4, 4);
+</script>

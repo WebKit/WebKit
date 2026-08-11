@@ -1,0 +1,5 @@
+
+PASS WebTransportDatagramDuplexStream#writable is removed
+PASS WebTransportDatagramDuplexStream#incomingHighWaterMark is removed
+PASS WebTransportDatagramDuplexStream#outgoingHighWaterMark is removed
+

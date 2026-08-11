@@ -1,0 +1,105 @@
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+    .newRole {
+        border: 2px solid blue;
+        background-color: lightblue;
+    }
+</style>
+</head>
+<body>
+
+<div id="content">
+    <!--Checkbox-->
+    <div class="newRole">
+        <p><span role="checkbox" id="ariaCheckBox">X</span></p>
+        <form>
+            <input type="checkbox" name="broccoli" id="realCheckBox">Broccoli<br>
+            <input type="checkbox" name="asparagus">Asparagus<br>
+        </form>
+    </div>
+    <br/>
+
+    <!--Button-->
+    <div class="newRole">
+        <p><span role="button" id="ariaButton">X</span></p>
+        <button id="realButton">Hello</button>
+    </div>
+    <br/>
+
+    <!--Heading-->
+    <div class="newRole">
+        <p><span role="heading" id="ariaHeading">X</span></p>
+        <h1 id="realHeading">Hello</h1>
+    </div>
+    <br/>
+
+    <!--Link-->
+    <div class="newRole">
+        <p><span role="link" id="ariaLink">X</span></p>
+        <a href="/" id="realLink">Hello</a>
+    </div>
+    <br/>
+
+    <!--Radio-->
+    <div class="newRole">
+        <p><span role="radio" id="ariaRadio">X</span></p>
+        <form>
+            <input type="radio" name="broccoli" id="realRadio">Broccoli<br>
+            <input type="radio" name="asparagus">Asparagus<br>
+        </form>
+    </div>
+    <br/>
+
+    <!--Textbox-->
+    <div class="newRole">
+        <p><span role="textbox" id="ariaTextBox">X</span></p>
+        <input type="text" id="realTextBox"></input>
+    </div>
+    <br/>
+
+    <!--Image-->
+    <div class="newRole">
+        <p><span tabindex="0" role="img" alt="Hello" id="ariaImage">X</span></p>
+        <img src="resources/cake.png" alt="Giant cupcake" id="realImage"></img>
+    </div>
+    <br/>
+
+    <!--List-->
+    <div class="newRole">
+        <p><span role="list" id="ariaList"><span role="listitem">X</span></span></p>
+        <ul id="realList">
+            <li>Broccoli</li>
+            <li>Beets</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+let output = "Basic test of some aria roles to ensure they match their corresponding html-based roles.\n\n";
+
+function validateRole(roleName, ariaId, realId) {
+    output += `${roleName}:\n`;
+    window.ariaRole = accessibilityController.accessibleElementById(ariaId).role;
+    window.realRole = accessibilityController.accessibleElementById(realId).role;
+    output += expect("ariaRole", "realRole");
+}
+
+if (window.accessibilityController) {
+    validateRole("checkbox", "ariaCheckBox", "realCheckBox");
+    validateRole("button", "ariaButton", "realButton");
+    validateRole("heading", "ariaHeading", "realHeading");
+    validateRole("link", "ariaLink", "realLink");
+    validateRole("radio", "ariaRadio", "realRadio");
+    validateRole("textbox", "ariaTextBox", "realTextBox");
+    validateRole("image", "ariaImage", "realImage");
+    validateRole("list", "ariaList", "realList");
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

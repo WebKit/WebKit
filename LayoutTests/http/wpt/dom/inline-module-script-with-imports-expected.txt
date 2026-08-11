@@ -1,0 +1,4 @@
+This timing test verifies that inline module scripts with imports block readyState completion
+
+PASS Inline module script with imports blocks readyState completion until imports are loaded
+

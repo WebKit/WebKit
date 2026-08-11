@@ -1,0 +1,3 @@
+
+PASS Make sure events are not fired for stopped readers
+

@@ -1,0 +1,9 @@
+{
+    "url": "content/test-bframes-hevc.mp4",
+    "type": "video/mp4; codecs=\"hev1.1.6.L93.B0\"",
+    "init": { "offset": 0, "size": 1065 },
+    "duration": 236.0,
+    "media": [
+        { "offset": 1065, "size": 514474, "timestamp": 230.0, "duration": 6.0 }
+    ]
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #scroller {
+            margin: 10px;
+            height: 300px;
+            width: 300px;
+            background-color: green;
+            overflow-y: scroll;
+        }
+        
+        .contents {
+            width: 100%;
+            height: 200%;
+            background-color: silver;
+        }
+
+        .scrollbar-hider {
+            position: absolute;
+            top: 10px;
+            left: 294px;
+            width: 16px;
+            height: 300px;
+            background-color: gray;
+        }
+    </style>
+    <script>
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        function doTest()
+        {
+            var scroller = document.getElementById('scroller');
+            if (window.internals)
+                internals.unconstrainedScrollTo(scroller, 0, -150);
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div id="scroller">
+    <div class="contents"></div>
+</div>
+<div class="scrollbar-hider"></div>
+</body>
+</html>

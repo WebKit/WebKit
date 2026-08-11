@@ -1,0 +1,156 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    window.setTimeout(async () => {
+        if (!window.IPC) return window.testRunner?.notifyDone();
+
+        const { CoreIPC } = await import("./coreipc.js");
+
+        const streamConnection = CoreIPC.newStreamConnection();
+
+        const renderingBackendIdentifier = Math.floor(
+            Math.random() * 0x1000000,
+        );
+        CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+            renderingBackendIdentifier: renderingBackendIdentifier,
+            connectionHandle: streamConnection,
+        });
+        const remoteRenderingBackend = streamConnection.newInterface(
+            "RemoteRenderingBackend",
+            renderingBackendIdentifier,
+        );
+        remoteRenderingBackend.CreateImageBuffer({
+            logicalSize: { width: 100, height: 100 },
+            renderingMode: 1,
+            renderingPurpose: 0,
+            resolutionScale: 1,
+            colorSpace: {
+                serializableColorSpace: {
+                    alias: {
+                        optionalValue: {
+                            m_cgColorSpace: {
+                                alias: {
+                                    variantType: "WebKit::ICCData",
+                                    variant: {
+                                        data: [],
+                                        derivative: 0
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            bufferFormat: { pixelFormat: 2, useLosslessCompression: 1 },
+            identifier: 393236,
+            contextIdentifier: 393237,
+        });
+
+        try {
+            o62 = streamConnection.newInterface(
+                "RemoteGraphicsContext",
+                393237,
+            );
+
+            o62.DrawFilteredImageBuffer({
+                sourceImageIdentifier: {},
+                sourceImageRect: {
+                    location: { x: 1, y: 1 },
+                    size: {
+                        width: 1,
+                        height: 1,
+                    },
+                },
+                filter: {
+                    subclasses: {
+                        variantType: "WebCore::SVGFilterRenderer",
+                        variant: {
+                            primitiveUnits: 0,
+                            expression: { alias: [] },
+                            effects: [
+                                {
+                                    subclasses: {
+                                        variantType:
+                                            "WebCore::FEDisplacementMap",
+                                        variant: {
+                                            xChannelSelector: 0,
+                                            yChannelSelector: 4,
+                                            scale: 1,
+                                            operatingColorSpace: {
+                                                serializableColorSpace: {
+                                                    alias: {
+                                                        optionalValue: {
+                                                            m_cgColorSpace: {
+                                                                alias: {
+                                                                    variantType:
+                                                                        "WebCore::ColorSpace",
+                                                                    variant: 17,
+                                                                },
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                            in2IsTainted: false,
+                                        },
+                                    },
+                                },
+                            ],
+                            geometry: {
+                                referenceBox : {
+                                    location : {
+                                        x : 0,
+                                        y : 0
+                                    },
+                                    size : {
+                                        width : 1,
+                                        height : 1
+                                    }
+                                },
+                                filterRegion : {
+                                    location : {
+                                        x : 1,
+                                        y : 1
+                                    },
+                                    size : {
+                                        width : 1,
+                                        height : 1
+                                    }
+                                },
+                                scale : {
+                                    width : 1,
+                                    height : 1
+                                }
+                            },
+                            filterRenderingModes: 0,
+                            renderingOptions : 0,
+                            renderingResourceIdentifierIfExists: {},
+                            },
+                        },
+                    },
+                });
+        } catch (err) {
+            // We expect validation to fail and return a TypeError to us. If we get any other kind of error,
+            // log this so we can address the issue as this may indicate the test is non-functional. If the
+            // validation we are testing is not functioning correctly, the GPU process will crash and the
+            // test will fail.
+            //
+            // Replace this with a specific check for an IPC message validation failure when the
+            // enhancement in rdar://147337600 is implemented.
+            if (!(err instanceof TypeError)) {
+                console.log("Test failed: expected TypeError, got " + err);
+            }
+        }
+
+        streamConnection.connection.invalidate();
+
+        setTimeout(() => {
+            window.testRunner?.notifyDone();
+        }, 500);
+    }, 20);
+</script>
+
+This test passes if WebKit does not crash.

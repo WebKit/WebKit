@@ -1,0 +1,7 @@
+
+PASS setStreams causes streams to be reported via ontrack on callee
+PASS setStreams can be used to reconstruct a stream with a track on the remote side
+PASS Adding streams and changing direction causes new streams to be reported via ontrack on callee
+PASS Adding streams to an active transceiver causes new streams to be reported via ontrack on callee
+PASS setStreams() fires InvalidStateError on a closed peer connection.
+

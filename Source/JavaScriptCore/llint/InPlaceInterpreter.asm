@@ -1,0 +1,2615 @@
+# Copyright (C) 2023-2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+#
+# IPInt: the Wasm in-place interpreter
+#
+# docs by Daniel Liu <daniel_liu4@apple.com>; started as a 2023 intern project
+#
+# Contents:
+# 0. Documentation comments
+# 1. Interpreter definitions
+#   1.1: Register definitions
+#   1.2: Constant definitions
+# 2. Core interpreter macros
+# 3. Helper interpreter macros
+# 4. Interpreter entrypoints
+# 5. Instruction implementation
+#
+
+##############################
+# 1. Interpreter definitions #
+##############################
+
+# -------------------------
+# 1.1: Register definitions
+# -------------------------
+
+# IPInt uses a number of core registers which store the interpreter's state:
+# - PC: (Program Counter) IPInt's program counter. This records the interpreter's position in Wasm bytecode.
+# - MC: (Metadata Counter) IPInt's metadata pointer. This records the corresponding position in generated metadata.
+# - WI: (Wasm Instance) pointer to the current JSWebAssemblyInstance object. This is used for accessing
+#       function-specific data (callee-save).
+# - MB: (Memory Base) pointer to the current Wasm memory base address (callee-save).
+# - BC: (Bounds Check) the size of the current Wasm memory region, for bounds checking (callee-save).
+#
+# Locals are accessed at a constant offset from CFR:
+#   local[i] = CFR - IPIntLocalsBaseOffset - i * LocalSize
+#
+# Finally, we provide four "sc" (safe for call) registers which are guaranteed to not overlap with argument
+# registers (sc0, sc1, sc2, sc3)
+
+const alignIPInt = constexpr JSC::IPInt::alignIPInt
+const alignAtomicIPInt = constexpr JSC::IPInt::alignAtomicIPInt
+const alignArgumInt = constexpr JSC::IPInt::alignArgumInt
+const alignUInt = constexpr JSC::IPInt::alignUInt
+const alignMInt = constexpr JSC::IPInt::alignMInt
+
+if ARM64 or ARM64E
+    const PC = csr7
+    const MC = csr6
+
+    # Wasm Pinned Registers
+    const WI = csr0
+    const MB = csr3
+    const BC = csr4
+
+    const sc0 = ws0
+    const sc1 = ws1
+    const sc2 = ws2
+    const sc3 = ws3
+elsif X86_64
+    const PC = csr2
+    const MC = csr1
+
+    # Wasm Pinned Registers
+    const WI = csr0
+    const MB = csr3
+    const BC = csr4
+
+    const sc0 = ws0
+    const sc1 = ws1
+    const sc2 = csr3
+    const sc3 = csr4
+elsif RISCV64
+    const PC = csr7
+    const MC = csr6
+
+    # Wasm Pinned Registers
+    const WI = csr0
+    const MB = csr3
+    const BC = csr4
+
+    const sc0 = ws0
+    const sc1 = ws1
+    const sc2 = csr9
+    const sc3 = csr10
+else
+    const PC = invalidGPR
+    const MC = invalidGPR
+
+    # Wasm Pinned Registers
+    const WI = invalidGPR
+    const MB = invalidGPR
+    const BC = invalidGPR
+
+    const sc0 = invalidGPR
+    const sc1 = invalidGPR
+    const sc2 = invalidGPR
+    const sc3 = invalidGPR
+end
+
+# -------------------------
+# 1.2: Constant definitions
+# -------------------------
+
+const PtrSize = constexpr (sizeof(void*))
+const SlotSize = constexpr (sizeof(Register))
+
+# amount of memory a local takes up on the stack (16 bytes for a v128)
+const V128ISize = 16
+const LocalSize = V128ISize
+const StackValueSize = V128ISize
+
+const WasmEntryPtrTag = constexpr WasmEntryPtrTag
+
+# These must match the definition in GPRInfo.h
+const wasmInstance = csr0
+if X86_64 or ARM64 or ARM64E or RISCV64
+    const memoryBase = csr3
+    const boundsCheckingSize = csr4
+else
+    const memoryBase = invalidGPR
+    const boundsCheckingSize = invalidGPR
+end
+
+const UnboxedWasmCalleeStackSlot = CallerFrame - constexpr Wasm::numberOfIPIntCalleeSaveRegisters * SlotSize - MachineRegisterSize
+const WasmToJSScratchSpaceSize = constexpr Wasm::WasmToJSScratchSpaceSize
+const WasmToJSCallableFunctionSlot = constexpr Wasm::WasmToJSCallableFunctionSlot
+const WasmToJSIPIntReturnPCSlot = constexpr Wasm::WasmToJSIPIntReturnPCSlot
+
+const IPIntCalleeSaveSpaceAsVirtualRegisters = constexpr Wasm::numberOfIPIntCalleeSaveRegisters + constexpr Wasm::numberOfIPIntInternalRegisters
+const IPIntCalleeSaveSpaceStackAligned = (IPIntCalleeSaveSpaceAsVirtualRegisters * SlotSize + StackAlignment - 1) & ~StackAlignmentMask
+
+# Offset from CFR to local[0]: local[i] = CFR - IPIntLocalsBaseOffset - i * LocalSize
+const IPIntLocalsBaseOffset = IPIntCalleeSaveSpaceStackAligned + LocalSize
+
+# Must match GPRInfo.h
+if X86_64
+    const NumberOfWasmArgumentGPRs = 6
+    const NumberOfVolatileGPRs = NumberOfWasmArgumentGPRs + 2 // +2 for ws0 and ws1
+elsif ARM64 or ARM64E or RISCV64
+    const NumberOfWasmArgumentGPRs = 8
+    const NumberOfVolatileGPRs = NumberOfWasmArgumentGPRs
+else
+    error
+end
+
+const NumberOfWasmArgumentFPRs = 8
+
+##############################
+# 2. Core interpreter macros #
+##############################
+
+macro ipintOp(name, impl)
+    instructionLabel(name)
+
+    if TRACING
+        move cfr, a1
+        move PC, a2
+        move MC, a3
+        operationCall(macro() cCall4(_ipint_extern_trace) end)
+    end
+
+    impl()
+end
+
+# -----------------------------------
+# 2.1: Core interpreter functionality
+# -----------------------------------
+
+# Get IPIntCallee object at startup
+macro unboxWasmCallee(calleeBits, scratch)
+    andp ~(constexpr JSValue::NativeCalleeTag), calleeBits
+    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, scratch
+    loadp [scratch], scratch
+    addp scratch, calleeBits
+end
+
+# Tail-call dispatch
+macro advancePC(amount)
+    addp amount, PC
+end
+
+macro advancePCByReg(amount)
+    addp amount, PC
+end
+
+macro advanceMC(amount)
+    addp amount, MC
+end
+
+macro advanceMCByReg(amount)
+    addp amount, MC
+end
+
+macro decodeLEBVarUInt(dst, cursor, scratch1, scratch2)
+    loadb [cursor], dst
+    addp 1, cursor
+    bbb dst, 0x80, .done
+    andq 0x7f, dst
+    move 7, scratch1
+    validateOpcodeConfig(scratch2)
+.loop:
+    loadb [cursor], scratch2
+    addp 1, cursor
+    bbb scratch2, 0x80, .lastByte
+    andq 0x7f, scratch2
+    lshiftq scratch1, scratch2
+    orq scratch2, dst
+    addq 7, scratch1
+    jmp .loop
+.lastByte:
+    # bit 7 already 0, no AND needed
+    lshiftq scratch1, scratch2
+    orq scratch2, dst
+.done:
+end
+
+macro decodeLEBVarSInt32(dst, cursor, scratch1, scratch2)
+    loadb [cursor], dst
+    addp 1, cursor
+    bbb dst, 0x80, .singleByte
+    andq 0x7f, dst
+    move 7, scratch1
+    validateOpcodeConfig(scratch2)
+.loop:
+    loadb [cursor], scratch2
+    addp 1, cursor
+    bbb scratch2, 0x80, .lastByte
+    andq 0x7f, scratch2
+    lshiftq scratch1, scratch2
+    orq scratch2, dst
+    addq 7, scratch1
+    jmp .loop
+.lastByte:
+    # bit 7 already 0, no AND needed
+    # Check sign bit (0x40) BEFORE shifting
+    btiz scratch2, 0x40, .noSignExtend
+    lshiftq scratch1, scratch2
+    ori scratch2, dst # Ensure output is always upper zero-cleared.
+    addq 7, scratch1
+    # sign extend if shift < 32
+    bigteq scratch1, 32, .done
+    move -1, scratch2
+    lshiftq scratch1, scratch2
+    ori scratch2, dst # Ensure output is always upper zero-cleared.
+    jmp .done
+.noSignExtend:
+    lshiftq scratch1, scratch2
+    ori scratch2, dst # Ensure output is always upper zero-cleared.
+    jmp .done
+.singleByte:
+    lshifti 25, dst
+    rshifti 25, dst
+.done:
+end
+
+macro decodeLEBVarSInt64(dst, cursor, scratch1, scratch2)
+    loadb [cursor], dst
+    addp 1, cursor
+    bbb dst, 0x80, .singleByte
+    andq 0x7f, dst
+    move 7, scratch1
+    validateOpcodeConfig(scratch2)
+.loop:
+    loadb [cursor], scratch2
+    addp 1, cursor
+    bbb scratch2, 0x80, .lastByte
+    andq 0x7f, scratch2
+    lshiftq scratch1, scratch2
+    orq scratch2, dst
+    addq 7, scratch1
+    jmp .loop
+.lastByte:
+    # bit 7 already 0, no AND needed
+    # Check sign bit (0x40) BEFORE shifting
+    btiz scratch2, 0x40, .noSignExtend
+    lshiftq scratch1, scratch2
+    orq scratch2, dst
+    addq 7, scratch1
+    # sign extend if shift < 64
+    bigteq scratch1, 64, .done
+    move -1, scratch2
+    lshiftq scratch1, scratch2
+    orq scratch2, dst
+    jmp .done
+.noSignExtend:
+    lshiftq scratch1, scratch2
+    orq scratch2, dst
+    jmp .done
+.singleByte:
+    lshiftq 57, dst
+    rshiftq 57, dst
+.done:
+end
+
+macro skipLEB128(cursor, scratch)
+.loop:
+    loadb [cursor], scratch
+    addp 1, cursor
+    bbaeq scratch, 0x80, .loop
+end
+
+macro checkStackOverflow(callee, scratch)
+    loadi Wasm::IPIntCallee::m_maxFrameSizeInV128[callee], scratch
+    mulp V128ISize, scratch
+    subp cfr, scratch, scratch
+
+if not ADDRESS64
+    bpbeq scratch, cfr, .checkTrapAwareSoftStackLimit
+    handleDebuggerTrapIfNeededAndThrowWasmTrap(StackOverflow)
+.checkTrapAwareSoftStackLimit:
+end
+    bpbeq JSWebAssemblyInstance::m_stackMirror + StackManager::Mirror::m_trapAwareSoftStackLimit[wasmInstance], scratch, .stackHeightOK
+
+.checkStack:
+    operationCallMayThrowPreservingVolatileRegisters(macro()
+        move scratch, a1
+if X86_64
+        # On x86_64, callee parameter (ws0) gets clobbered by saveCallSiteIndex(). Reload from stack.
+        loadp UnboxedWasmCalleeStackSlot[cfr], a2
+else
+        move callee, a2
+end
+        move cfr, a3
+        cCall4(_ipint_extern_check_stack_and_vm_traps)
+    end)
+
+.stackHeightOK:
+end
+
+# ----------------------
+# 2.2: Code organization
+# ----------------------
+
+# Instruction labels
+# Important Note: If you don't use the unaligned global label from C++ (in our case we use the
+# labels in InPlaceInterpreter.cpp) then some linkers will still remove the definition which
+# causes all kinds of problems.
+
+macro instructionLabel(instrname)
+    aligned _ipint%instrname%_validate alignIPInt
+    _ipint%instrname%_validate:
+    _ipint%instrname%:
+end
+
+macro unimplementedInstruction(instrname)
+    instructionLabel(instrname)
+    validateOpcodeConfig(a0)
+    break
+end
+
+macro reservedOpcode(opcode)
+    unimplementedInstruction(_reserved_%opcode%)
+end
+
+macro atomicInstructionLabel(instrname)
+    aligned _ipint%instrname%_atomic_validate alignAtomicIPInt
+    _ipint%instrname%_atomic_validate:
+    _ipint%instrname%:
+end
+
+macro ipintAtomicOp(name, impl)
+    atomicInstructionLabel(name)
+
+    if TRACING
+        move cfr, a1
+        move PC, a2
+        move MC, a3
+        operationCall(macro() cCall4(_ipint_extern_trace) end)
+    end
+
+    impl()
+end
+
+macro reservedAtomicOpcode(opcode)
+    atomicInstructionLabel(_reserved_%opcode%)
+    validateOpcodeConfig(a0)
+    break
+end
+
+# ---------------------------------------
+# 2.3: Interacting with the outside world
+# ---------------------------------------
+
+# Memory
+macro ipintReloadMemory(scratch)
+    if ARM64 or ARM64E
+        loadpairq constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase, boundsCheckingSize
+    elsif X86_64
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + 8)[wasmInstance], boundsCheckingSize
+    end
+    cagedPrimitiveMayBeNull(memoryBase, scratch)
+end
+
+# Call site tracking
+
+macro saveCallSiteIndex()
+if X86_64
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
+end
+    loadp Wasm::IPIntCallee::m_bytecode[ws0], t0
+    negp t0
+    addp PC, t0
+    storei t0, CallSiteIndex[cfr]
+end
+
+# Operation Calls
+
+macro operationCall(fn)
+    validateOpcodeConfig(a0)
+
+    move wasmInstance, a0
+    push PC, MC
+    if ARM64 or ARM64E
+        # Save ws0 with padding for 16-byte alignment (PC+MC=16, ws0+pad=16, total=32)
+        subp MachineRegisterSize * 2, sp
+        storep ws0, [sp]
+    end
+    fn()
+    if ARM64 or ARM64E
+        loadp [sp], ws0
+        addp MachineRegisterSize * 2, sp
+    end
+    pop MC, PC
+end
+
+macro operationCallMayThrowImpl(fn, sizeOfExtraRegistersPreserved)
+    saveCallSiteIndex()
+    validateOpcodeConfig(a0)
+
+    move wasmInstance, a0
+    push PC, MC
+    if ARM64 or ARM64E
+        # Save ws0 with padding for 16-byte alignment (PC+MC=16, ws0+ws0=16, total=32)
+        push ws0, ws0
+    end
+    fn()
+    bpneq r1, (constexpr JSC::IPInt::SlowPathExceptionTag), .continuation
+
+    storei r0, ArgumentCountIncludingThis + LowWordOffset[cfr]
+    if ARM64 or ARM64E
+        move cfr, a1
+        move sp, a2
+        operationCall(macro() cCall3(_ipint_extern_handle_debugger_trap_if_needed) end)
+        addp sizeOfExtraRegistersPreserved + (4 * MachineRegisterSize), sp
+    elsif X86_64
+        addp sizeOfExtraRegistersPreserved + (2 * MachineRegisterSize), sp
+    end
+    jmp _wasm_throw_from_slow_path_trampoline
+.continuation:
+    if ARM64 or ARM64E
+        loadp [sp], ws0
+        addp MachineRegisterSize * 2, sp
+    end
+    pop MC, PC
+end
+
+macro operationCallMayThrow(fn)
+    operationCallMayThrowImpl(fn, 0)
+end
+
+macro operationCallMayThrowPreservingVolatileRegisters(fn)
+    preserveWasmVolatileRegisters()
+    operationCallMayThrowImpl(fn, (NumberOfVolatileGPRs * MachineRegisterSize) + (NumberOfWasmArgumentFPRs * VectorRegisterSize))
+    restoreWasmVolatileRegisters()
+end
+
+# Exception handling
+#
+# debugger-aware trap. 2 instructions; heavy logic in _wasm_ipint_check_debugger_hook_and_throw_trap due to fixed-size IPInt dispatch slots.
+macro handleDebuggerTrapIfNeededAndThrowWasmTrap(exception)
+    storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + LowWordOffset[cfr]
+if ADDRESS64 and (ARM64 or ARM64E)
+   # Currently, only ARM64 and ARM64E with ADDRESS64 platforms support the WasmDebugger.
+    jmp _wasm_ipint_check_debugger_hook_and_throw_trap
+else
+    jmp _wasm_throw_from_slow_path_trampoline
+end
+end
+
+# OSR
+macro ipintPrologueOSR(increment)
+if WEBASSEMBLY_BBQJIT
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
+    baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::IPIntTierUpCounter::m_counter[ws0], .continue
+
+    preserveWasmArgumentRegisters()
+
+    ipintReloadMemory(t2)
+    push memoryBase, boundsCheckingSize
+
+    move cfr, a1
+    operationCall(macro() cCall2(_ipint_extern_prologue_osr) end)
+    move r0, ws0
+
+    pop boundsCheckingSize, memoryBase
+
+    restoreWasmArgumentRegisters()
+
+    btpz ws0, .continue
+
+    restoreIPIntRegisters()
+    restoreCallerPCAndCFR()
+
+    if ARM64E
+        leap _g_config, ws1
+        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmOSREntry) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+    else
+        jmp ws0, WasmEntryPtrTag
+    end
+
+.continue:
+end # WEBASSEMBLY_BBQJIT
+end
+
+macro ipintLoopOSR(increment)
+if WEBASSEMBLY_BBQJIT
+    validateOpcodeConfig(ws0)
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
+    baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::IPIntTierUpCounter::m_counter[ws0], .continue
+
+    move cfr, a1
+    move PC, a2
+    # Add 1 to the index due to WTF::UncheckedKeyHashMap not supporting 0 as a key
+    addq 1, a2
+    move sp, a3
+    operationCall(macro() cCall4(_ipint_extern_loop_osr) end)
+    btpz r1, .recover
+    restoreIPIntRegisters()
+    restoreCallerPCAndCFR()
+    move r0, a0
+
+    if ARM64E
+        move r1, ws0
+        leap _g_config, ws1
+        jmp JSCConfigGateMapOffset + (constexpr Gate::wasmOSREntry) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+    else
+        jmp r1, WasmEntryPtrTag
+    end
+
+.recover:
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
+.continue:
+end
+end
+
+macro ipintEpilogueOSR(increment)
+if WEBASSEMBLY_BBQJIT
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
+    baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::IPIntTierUpCounter::m_counter[ws0], .continue
+
+    move cfr, a1
+    operationCall(macro() cCall2(_ipint_extern_epilogue_osr) end)
+.continue:
+end
+end
+
+################################
+# 3. Helper interpreter macros #
+################################
+
+macro argumINTAlign(instrname)
+    aligned _ipint_argumINT%instrname%_validate alignArgumInt
+    _ipint_argumINT%instrname%_validate:
+    _argumINT%instrname%:
+end
+
+macro mintAlign(instrname)
+    aligned _ipint_mint%instrname%_validate alignMInt
+    _ipint_mint%instrname%_validate:
+    _mint%instrname%:
+end
+
+macro uintAlign(instrname)
+    aligned _ipint_uint%instrname%_validate alignUInt
+    _ipint_uint%instrname%_validate:
+    _uint%instrname%:
+end
+
+macro forEachWasmArgumentGPR(fn)
+    if ARM64 or ARM64E
+        fn(0, wa0, wa1)
+        fn(2, wa2, wa3)
+        fn(4, wa4, wa5)
+        fn(6, wa6, wa7)
+    else
+        fn(0, wa0, wa1)
+        fn(2, wa2, wa3)
+        fn(4, wa4, wa5)
+    end
+end
+
+macro forEachWasmArgumentFPR(fn)
+    fn(0, wfa0, wfa1)
+    fn(2, wfa2, wfa3)
+    fn(4, wfa4, wfa5)
+    fn(6, wfa6, wfa7)
+end
+
+macro preserveWasmGPRArgumentRegistersImpl()
+    forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
+        if ARM64 or ARM64E
+            storepairq gpr1, gpr2, index * MachineRegisterSize[sp]
+        else
+            storeq gpr1, (index + 0) * MachineRegisterSize[sp]
+            storeq gpr2, (index + 1) * MachineRegisterSize[sp]
+        end
+    end)
+end
+
+macro restoreWasmGPRArgumentRegistersImpl()
+    forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
+        if ARM64 or ARM64E
+            loadpairq index * MachineRegisterSize[sp], gpr1, gpr2
+        else
+            loadq (index + 0) * MachineRegisterSize[sp], gpr1
+            loadq (index + 1) * MachineRegisterSize[sp], gpr2
+        end
+    end)
+end
+
+macro preserveWasmFPRArgumentRegistersImpl(fprBaseOffset)
+    forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
+        if ARM64 or ARM64E
+            storepairv fpr1, fpr2, fprBaseOffset + index * VectorRegisterSize[sp]
+        elsif X86_64
+            storev fpr1, fprBaseOffset + (index + 0) * VectorRegisterSize[sp]
+            storev fpr2, fprBaseOffset + (index + 1) * VectorRegisterSize[sp]
+        else
+            stored fpr1, fprBaseOffset + (index + 0) * VectorRegisterSize[sp]
+            stored fpr2, fprBaseOffset + (index + 1) * VectorRegisterSize[sp]
+        end
+    end)
+end
+
+macro restoreWasmFPRArgumentRegistersImpl(fprBaseOffset)
+    forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
+        if ARM64 or ARM64E
+            loadpairv fprBaseOffset + index * VectorRegisterSize[sp], fpr1, fpr2
+        elsif X86_64
+            loadv fprBaseOffset + (index + 0) * VectorRegisterSize[sp], fpr1
+            loadv fprBaseOffset + (index + 1) * VectorRegisterSize[sp], fpr2
+        else
+            loadd fprBaseOffset + (index + 0) * VectorRegisterSize[sp], fpr1
+            loadd fprBaseOffset + (index + 1) * VectorRegisterSize[sp], fpr2
+        end
+    end)
+end
+
+macro preserveWasmArgumentRegisters()
+    const gprStorageSize = NumberOfWasmArgumentGPRs * MachineRegisterSize
+    const fprStorageSize = NumberOfWasmArgumentFPRs * VectorRegisterSize
+
+    subp gprStorageSize + fprStorageSize, sp
+    preserveWasmGPRArgumentRegistersImpl()
+    preserveWasmFPRArgumentRegistersImpl(gprStorageSize)
+end
+
+macro preserveWasmVolatileRegisters()
+    const gprStorageSize = NumberOfVolatileGPRs * MachineRegisterSize
+    const fprStorageSize = NumberOfWasmArgumentFPRs * VectorRegisterSize
+
+    subp gprStorageSize + fprStorageSize, sp
+    preserveWasmGPRArgumentRegistersImpl()
+if X86_64
+    storeq ws0, (NumberOfWasmArgumentGPRs + 0) * MachineRegisterSize[sp]
+    storeq ws1, (NumberOfWasmArgumentGPRs + 1) * MachineRegisterSize[sp]
+end
+    preserveWasmFPRArgumentRegistersImpl(gprStorageSize)
+end
+
+macro restoreWasmArgumentRegisters()
+    const gprStorageSize = NumberOfWasmArgumentGPRs * MachineRegisterSize
+    const fprStorageSize = NumberOfWasmArgumentFPRs * VectorRegisterSize
+
+    restoreWasmGPRArgumentRegistersImpl()
+    restoreWasmFPRArgumentRegistersImpl(gprStorageSize)
+    addp gprStorageSize + fprStorageSize, sp
+end
+
+macro restoreWasmVolatileRegisters()
+    const gprStorageSize = NumberOfVolatileGPRs * MachineRegisterSize
+    const fprStorageSize = NumberOfWasmArgumentFPRs * VectorRegisterSize
+
+    restoreWasmGPRArgumentRegistersImpl()
+if X86_64
+    loadq (NumberOfWasmArgumentGPRs + 0) * MachineRegisterSize[sp], ws0
+    loadq (NumberOfWasmArgumentGPRs + 1) * MachineRegisterSize[sp], ws1
+end
+    restoreWasmFPRArgumentRegistersImpl(gprStorageSize)
+    addp gprStorageSize + fprStorageSize, sp
+end
+
+macro reloadMemoryRegistersFromInstance(instance, scratch1)
+    loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[instance], memoryBase
+    loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + sizeof(void*))[instance], boundsCheckingSize
+    cagedPrimitiveMayBeNull(memoryBase, scratch1) # If boundsCheckingSize is 0, pointer can be a nullptr.
+end
+
+macro throwException(exception)
+    storei constexpr Wasm::ExceptionType::%exception%, ArgumentCountIncludingThis + LowWordOffset[cfr]
+    jmp _wasm_throw_from_slow_path_trampoline
+end
+
+##############################
+# 4. Interpreter entrypoints #
+##############################
+
+// If you change this, make sure to modify JSToWasm.cpp:createJSToWasmJITShared
+op(js_to_wasm_wrapper_entry, macro ()
+    if not WEBASSEMBLY or C_LOOP
+        error
+    end
+
+    macro clobberVolatileRegisters()
+        if ARM64 or ARM64E
+            emit "movz  x9, #0xBAD"
+            emit "movz x10, #0xBAD"
+            emit "movz x11, #0xBAD"
+            emit "movz x12, #0xBAD"
+            emit "movz x13, #0xBAD"
+            emit "movz x14, #0xBAD"
+            emit "movz x15, #0xBAD"
+            emit "movz x16, #0xBAD"
+            emit "movz x17, #0xBAD"
+            emit "movz x18, #0xBAD"
+        end
+    end
+
+    macro repeat(scratch, f)
+        move 0xBEEF, scratch
+        f(0)
+        f(1)
+        f(2)
+        f(3)
+        f(4)
+        f(5)
+        f(6)
+        f(7)
+        f(8)
+        f(9)
+        f(10)
+        f(11)
+        f(12)
+        f(13)
+        f(14)
+        f(15)
+        f(16)
+        f(17)
+        f(18)
+        f(19)
+        f(20)
+        f(21)
+        f(22)
+        f(23)
+        f(24)
+        f(25)
+        f(26)
+        f(27)
+        f(28)
+        f(29)
+    end
+
+    macro saveJSToWasmRegisters()
+        subp constexpr Wasm::JSToWasmCallee::SpillStackSpaceAligned, sp
+        if ARM64 or ARM64E
+            storepairq memoryBase, boundsCheckingSize, -2 * SlotSize[cfr]
+            storep wasmInstance, -3 * SlotSize[cfr]
+        elsif X86_64
+            # These must match the wasmToJS thunk, since the unwinder won't be able to tell who made this frame.
+            storep boundsCheckingSize, -1 * SlotSize[cfr]
+            storep memoryBase, -2 * SlotSize[cfr]
+            storep wasmInstance, -3 * SlotSize[cfr]
+        else
+            storei wasmInstance, -1 * SlotSize[cfr]
+        end
+    end
+
+    macro restoreJSToWasmRegisters()
+        if ARM64 or ARM64E
+            loadpairq -2 * SlotSize[cfr], memoryBase, boundsCheckingSize
+            loadp -3 * SlotSize[cfr], wasmInstance
+        elsif X86_64
+            loadp -1 * SlotSize[cfr], boundsCheckingSize
+            loadp -2 * SlotSize[cfr], memoryBase
+            loadp -3 * SlotSize[cfr], wasmInstance
+        else
+            loadi -1 * SlotSize[cfr], wasmInstance
+        end
+        addp constexpr Wasm::JSToWasmCallee::SpillStackSpaceAligned, sp
+    end
+
+    macro getWebAssemblyFunctionAndSetNativeCalleeAndInstance(webAssemblyFunctionOut, scratch)
+        # Re-load WebAssemblyFunction Callee
+        loadp Callee[cfr], webAssemblyFunctionOut
+
+        # Replace the WebAssemblyFunction Callee with our JSToWasm NativeCallee
+        loadp WebAssemblyFunction::m_boxedJSToWasmCallee[webAssemblyFunctionOut], scratch
+        storep scratch, Callee[cfr] # JSToWasmCallee
+        storep wasmInstance, CodeBlock[cfr]
+    end
+
+if ASSERT_ENABLED
+    clobberVolatileRegisters()
+end
+
+    tagReturnAddress sp
+    preserveCallerPCAndCFR()
+    saveJSToWasmRegisters()
+
+    # Load data from the entry callee
+    # This was written by doVMEntry
+    loadp Callee[cfr], ws0 # WebAssemblyFunction*
+    loadp WebAssemblyFunction::m_importableFunction + Wasm::WasmOrJSImportableFunction::targetInstance[ws0], wasmInstance
+
+    # Allocate stack space
+    loadi WebAssemblyFunction::m_frameSize[ws0], wa0
+    subp sp, wa0, wa0
+
+if not ADDRESS64
+    bpa wa0, cfr, .stackOverflow
+end
+    # We don't need to check m_trapAwareSoftStackLimit here because we'll end up
+    # entering the Wasm function, and its prologue will handle the trap check.
+    bpbeq wa0, JSWebAssemblyInstance::m_stackMirror + StackManager::Mirror::m_softStackLimit[wasmInstance], .stackOverflow
+
+    move wa0, sp
+
+if ASSERT_ENABLED
+    repeat(wa0, macro (i)
+        storep wa0, -i * SlotSize + constexpr Wasm::JSToWasmCallee::RegisterStackSpaceAligned[sp]
+    end)
+end
+
+    # a0 = current stack frame position
+    move sp, a0
+
+    # Save wasmInstance and put the correct Callee into the stack for building the frame
+    storep wasmInstance, CodeBlock[cfr]
+
+    loadp Callee[cfr], memoryBase
+    transferp WebAssemblyFunction::m_boxedJSToWasmCallee[ws0], Callee[cfr]
+
+    # Prepare frame
+    move ws0, a2
+    move cfr, a1
+    cCall3(_operationJSToWasmEntryWrapperBuildFrame)
+
+    # Restore Callee slot
+    storep memoryBase, Callee[cfr]
+
+    btpnz r1, .buildEntryFrameThrew
+    move r0, ws0
+
+    # Memory
+    if ARM64 or ARM64E
+        loadpairq constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase, boundsCheckingSize
+    elsif X86_64
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + 8)[wasmInstance], boundsCheckingSize
+    end
+    cagedPrimitiveMayBeNull(memoryBase, wa0)
+
+    # Arguments
+
+    forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
+        if ARM64 or ARM64E
+            loadpairq index * MachineRegisterSize[sp], gpr1, gpr2
+        else
+            loadq (index + 0) * MachineRegisterSize[sp], gpr1
+            loadq (index + 1) * MachineRegisterSize[sp], gpr2
+        end
+    end)
+    forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
+        const base = NumberOfWasmArgumentGPRs * MachineRegisterSize
+        if ARM64 or ARM64E
+            loadpaird base + index * FPRRegisterSize[sp], fpr1, fpr2
+        else
+            loadd base + (index + 0) * FPRRegisterSize[sp], fpr1
+            loadd base + (index + 1) * FPRRegisterSize[sp], fpr2
+        end
+    end)
+
+    # Pop argument space values
+    addp constexpr Wasm::JSToWasmCallee::RegisterStackSpaceAligned, sp
+
+if ASSERT_ENABLED
+    repeat(ws1, macro (i)
+        storep ws1, -i * SlotSize[sp]
+    end)
+end
+
+    getWebAssemblyFunctionAndSetNativeCalleeAndInstance(ws1, ws0)
+
+    # Load callee entrypoint
+    loadp WebAssemblyFunction::m_importableFunction + Wasm::WasmOrJSImportableFunction::entrypointLoadLocation[ws1], ws0
+    loadp [ws0], ws0
+
+    # Set the callee's interpreter Wasm::Callee
+    transferp WebAssemblyFunction::m_importableFunction + Wasm::WasmOrJSImportableFunction::boxedCallee[ws1], constexpr (CallFrameSlot::callee - CallerFrameAndPC::sizeInRegisters) * 8[sp]
+
+    call ws0, WasmEntryPtrTag
+
+if ASSERT_ENABLED
+    clobberVolatileRegisters()
+end
+
+    # Don't restore SP to original position, stack results live above calleeSP.
+    # After a tail call the callee's frame may differ, so derive from actual SP.
+    # Just allocate register spill space below the callee's actual SP.
+    subp constexpr Wasm::JSToWasmCallee::RegisterStackSpaceAligned, sp
+
+if ASSERT_ENABLED
+    repeat(ws0, macro (i)
+        storep ws0, -i * SlotSize + constexpr Wasm::JSToWasmCallee::RegisterStackSpaceAligned[sp]
+    end)
+end
+
+    # Save return registers
+    # Return register are the same as the argument registers.
+    forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
+        if ARM64 or ARM64E
+            storepairq gpr1, gpr2, index * MachineRegisterSize[sp]
+        else
+            storeq gpr1, (index + 0) * MachineRegisterSize[sp]
+            storeq gpr2, (index + 1) * MachineRegisterSize[sp]
+        end
+    end)
+    forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
+        const base = NumberOfWasmArgumentGPRs * MachineRegisterSize
+        if ARM64 or ARM64E
+            storepaird fpr1, fpr2, base + index * FPRRegisterSize[sp]
+        else
+            stored fpr1, base + (index + 0) * FPRRegisterSize[sp]
+            stored fpr2, base + (index + 1) * FPRRegisterSize[sp]
+        end
+    end)
+
+    # Prepare frame
+    move sp, a0
+    move cfr, a1
+    cCall2(_operationJSToWasmEntryWrapperBuildReturnFrame)
+
+    btpnz r1, .unwind
+
+    # Clean up and return
+    restoreJSToWasmRegisters()
+if ASSERT_ENABLED
+    clobberVolatileRegisters()
+end
+    restoreCallerPCAndCFR()
+    ret
+
+    # We need to set our NativeCallee/instance here since haven't done it already and wasm_throw_from_slow_path_trampoline expects them.
+.stackOverflow:
+    getWebAssemblyFunctionAndSetNativeCalleeAndInstance(ws1, ws0)
+    throwException(StackOverflow)
+
+.buildEntryFrameThrew:
+    getWebAssemblyFunctionAndSetNativeCalleeAndInstance(ws1, ws0)
+
+.unwind:
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], a0
+    copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(a0, a1)
+
+    move wasmInstance, a0
+    call _operationWasmUnwind
+    jumpToException()
+end)
+
+op(wasm_to_wasm_ipint_wrapper_entry, macro()
+    # We have only pushed PC (intel) or pushed nothing(others), and we
+    # are still in the caller frame.
+if X86_64
+    loadp (Callee - CallerFrameAndPCSize + 8)[sp], ws0
+else
+    loadp (Callee - CallerFrameAndPCSize)[sp], ws0
+end
+
+    unboxWasmCallee(ws0, ws1)
+    loadp JSC::Wasm::IPIntCallee::m_entrypoint[ws0], ws0
+
+    # Load the instance
+if X86_64
+    loadp (CodeBlock - CallerFrameAndPCSize + 8)[sp], wasmInstance
+else
+    loadp (CodeBlock - CallerFrameAndPCSize)[sp], wasmInstance
+end
+
+    # Memory
+    if ARM64 or ARM64E
+        loadpairq constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase, boundsCheckingSize
+    elsif X86_64
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0))[wasmInstance], memoryBase
+        loadp constexpr (JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(0) + 8)[wasmInstance], boundsCheckingSize
+    end
+    cagedPrimitiveMayBeNull(memoryBase, ws1)
+
+    jmp ws0, WasmEntryPtrTag
+end)
+
+# This is the interpreted analogue to WasmToJS.cpp:wasmToJS
+op(wasm_to_js_wrapper_entry, macro()
+    # We have only pushed PC (intel) or pushed nothing(others), and we
+    # are still in the caller frame.
+    # Load this before we create the stack frame, since we lose old cfr, which we wrote Callee to
+
+    # We repurpose this slot temporarily for a WasmCallableFunction* from resolveWasmCall and friends.
+    tagReturnAddress sp
+    preserveCallerPCAndCFR()
+
+    const RegisterSpaceScratchSize = 0x80
+    subp (WasmToJSScratchSpaceSize + RegisterSpaceScratchSize), sp
+
+    storep PC, WasmToJSIPIntReturnPCSlot[cfr]
+
+    loadp CodeBlock[cfr], ws0
+    storep ws0, WasmToJSCallableFunctionSlot[cfr]
+
+    # Store all the registers here
+
+    forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
+        if ARM64 or ARM64E
+            storepairq gpr1, gpr2, index * MachineRegisterSize[sp]
+        else
+            storeq gpr1, (index + 0) * MachineRegisterSize[sp]
+            storeq gpr2, (index + 1) * MachineRegisterSize[sp]
+        end
+    end)
+    forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
+        const base = NumberOfWasmArgumentGPRs * MachineRegisterSize
+        if ARM64 or ARM64E
+            storepaird fpr1, fpr2, base + index * FPRRegisterSize[sp]
+        else
+            stored fpr1, base + (index + 0) * FPRRegisterSize[sp]
+            stored fpr2, base + (index + 1) * FPRRegisterSize[sp]
+        end
+    end)
+
+    move wasmInstance, a0
+    move ws0, a1
+    cCall2(_operationGetWasmCalleeStackSize)
+
+    move sp, a2
+    subp r0, sp
+    move sp, a0
+    move cfr, a1
+    move wasmInstance, a3
+    cCall4(_operationWasmToJSExitMarshalArguments)
+    btpnz r0, .handleException
+
+    loadp WasmToJSCallableFunctionSlot[cfr], t2
+    loadp JSC::Wasm::WasmOrJSImportableFunctionCallLinkInfo::importFunction[t2], t0
+    loadp JSC::Wasm::WasmOrJSImportableFunctionCallLinkInfo::callLinkInfo[t2], t2
+
+    # calleeGPR = t0
+    # callLinkInfoGPR = t2
+    # callTargetGPR = t5
+    loadp CallLinkInfo::m_monomorphicCallDestination[t2], t5
+
+    # scratch = t3
+    loadp CallLinkInfo::m_callee[t2], t3
+    bpeq t3, t0, .found
+    btpnz t3, (constexpr CallLinkInfo::polymorphicCalleeMask), .found
+
+.notfound:
+    pcrtoaddr _llint_default_call_trampoline, t5
+    loadp CallLinkInfo::m_codeBlock[t2], t3
+    storep t3, (CodeBlock - CallerFrameAndPCSize)[sp]
+    call _llint_default_call_trampoline
+    jmp .postcall
+.found:
+    # jit.transferPtr CallLinkInfo::codeBlock[t2], CodeBlock[cfr]
+    loadp CallLinkInfo::m_codeBlock[t2], t3
+    storep t3, (CodeBlock - CallerFrameAndPCSize)[sp]
+    call t5, JSEntryPtrTag
+
+.postcall:
+    storep r0, [sp]
+
+    move sp, a0
+    move cfr, a1
+    move wasmInstance, a2
+    cCall3(_operationWasmToJSExitMarshalReturnValues)
+    btpnz r0, .handleException
+
+.end:
+    # Retrieve return registers
+    # Return register are the same as the argument registers.
+    forEachWasmArgumentGPR(macro (index, gpr1, gpr2)
+        if ARM64 or ARM64E
+            loadpairq index * MachineRegisterSize[sp], gpr1, gpr2
+        else
+            loadq (index + 0) * MachineRegisterSize[sp], gpr1
+            loadq (index + 1) * MachineRegisterSize[sp], gpr2
+        end
+    end)
+    forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
+        const base = NumberOfWasmArgumentGPRs * MachineRegisterSize
+        if ARM64 or ARM64E
+            loadpaird base + index * FPRRegisterSize[sp], fpr1, fpr2
+        else
+            loadd base + (index + 0) * FPRRegisterSize[sp], fpr1
+            loadd base + (index + 1) * FPRRegisterSize[sp], fpr2
+        end
+    end)
+
+    loadp CodeBlock[cfr], wasmInstance
+    restoreCallerPCAndCFR()
+    ret
+
+.handleException:
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], a0
+    copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(a0, a1)
+
+    move wasmInstance, a0
+    call _operationWasmUnwind
+    jumpToException()
+end)
+
+macro jumpToException()
+    if ARM64E
+        move r0, a0
+        validateOpcodeConfig(a1)
+        leap _g_config, a1
+        jmp JSCConfigGateMapOffset + (constexpr Gate::exceptionHandler) * PtrSize[a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
+    else
+        jmp r0, ExceptionHandlerPtrTag
+    end
+end
+
+macro handleDebuggerTrapIfNeeded()
+    push PC, MC
+    push ws0, ws0   # sp[0]=ws0 (unused), sp[1]=ws0 (IPIntCallee*), sp[2]=PC, sp[3]=MC
+    move cfr, a1
+    move sp, a2     # a2 = pointer to saved [ws0, ws0, PC, MC]
+    operationCall(macro() cCall3(_ipint_extern_handle_debugger_trap_if_needed) end)
+    addp 4 * MachineRegisterSize, sp
+end
+
+op(wasm_ipint_check_debugger_hook_and_throw_trap, macro ()
+    handleDebuggerTrapIfNeeded()
+    # r0 == 0 i.e. DebuggerTrapStatus::ResolvedByDebugger i.e. this was purely a debugger trap / breakpoint,
+    #              and has been handled.  We should continue executing because it's not a Wasm trap.
+    # r0 == 1 i.e. DebuggerTrapStatus::NotResolvedByDebugger i.e. this was a fatal Wasm trap.  We should
+    #              throw it to terminate Wasm execution.
+    btpz r0, .continue
+    jmp _wasm_throw_from_slow_path_trampoline
+.continue:
+    nextIPIntInstruction()
+end)
+
+op(wasm_throw_from_slow_path_trampoline, macro ()
+    validateOpcodeConfig(t5)
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t5
+    loadp VM::topEntryFrame[t5], t5
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
+
+    move cfr, a0
+    move wasmInstance, a1
+    # Slow paths and the throwException macro store the exception code in the ArgumentCountIncludingThis slot
+    loadi ArgumentCountIncludingThis + LowWordOffset[cfr], a2
+    storei 0, CallSiteIndex[cfr]
+    cCall3(_slow_path_wasm_throw_exception)
+    jumpToException()
+end)
+
+# Almost the same as wasm_throw_from_slow_path_trampoline, but the exception
+# has already been thrown and is now sitting in the VM.
+op(wasm_unwind_from_slow_path_trampoline, macro()
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t5
+    loadp VM::topEntryFrame[t5], t5
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(t5)
+
+    move cfr, a0
+    move wasmInstance, a1
+    storei 0, CallSiteIndex[cfr]
+    cCall3(_slow_path_wasm_unwind_exception)
+    jumpToException()
+end)
+
+op(wasm_throw_from_fault_handler_trampoline_reg_instance, macro ()
+    # enableWasmDebugger disables BBQ/OMG, so this trampoline is only
+    # reached from IPInt when the debugger is active. The signal handler only patches
+    # the machine PC, so IPInt registers (PC, MC, ws0, cfr) are still live.
+    # Exception type comes from instance->m_exception; copy to CFR slot for handle_debugger_trap_if_needed.
+    loadi JSWebAssemblyInstance::m_exception[wasmInstance], t0
+    storei t0, ArgumentCountIncludingThis + LowWordOffset[cfr]
+    handleDebuggerTrapIfNeeded()
+
+    move wasmInstance, a2
+    loadp JSWebAssemblyInstance::m_vm[a2], a0
+    loadp VM::topEntryFrame[a0], a0
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(a0)
+
+    move cfr, a0
+    move a2, a1
+    loadi JSWebAssemblyInstance::m_exception[a1], a2
+
+    storei 0, CallSiteIndex[cfr]
+    cCall3(_slow_path_wasm_throw_exception)
+    jumpToException()
+end)
+
+op(ipint_entry, macro()
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+    preserveCallerPCAndCFR()
+    saveIPIntRegisters()
+    storep wasmInstance, CodeBlock[cfr]
+    loadp Callee[cfr], ws0
+    unboxWasmCallee(ws0, ws1)
+    storep ws0, UnboxedWasmCalleeStackSlot[cfr]
+
+ipintEntry()
+else
+    break
+end
+end)
+
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+.ipint_entry_end_local:
+    loadp UnboxedWasmCalleeStackSlot[cfr], MC
+    loadp Wasm::IPIntCallee::m_localInitBytecode + VectorBufferOffset[MC], MC
+.ipint_entry_end_local_loop:
+    argumINTInitializeDefaultLocals()
+    jmp .ipint_entry_end_local_loop
+
+.ipint_entry_finish_zero:
+    argumINTFinish()
+
+    loadp CodeBlock[cfr], wasmInstance
+    # OSR Check
+    ipintPrologueOSR(5)
+    move cfr, a1
+    operationCall(macro() cCall2(_ipint_extern_prepare_function_body) end)
+    move r0, ws0
+
+    loadp Wasm::IPIntCallee::m_bytecode[ws0], PC
+    loadp Wasm::IPIntCallee::m_metadata + VectorBufferOffset[ws0], MC
+
+    # Load memory
+    ipintReloadMemory(t2)
+
+    nextIPIntInstruction()
+
+.ipint_exit:
+    restoreIPIntRegisters()
+    restoreCallerPCAndCFR()
+    if ARM64E
+        leap _g_config, ws0
+        jmp JSCConfigGateMapOffset + (constexpr Gate::returnFromLLInt) * PtrSize[ws0], NativeToJITGatePtrTag
+    else
+        ret
+    end
+else
+    break
+end
+
+macro ipintCatchCommon()
+    validateOpcodeConfig(t0)
+    getVMFromCallFrame(t3, t0)
+    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
+
+    loadp VM::callFrameForCatch[t3], cfr
+    storep 0, VM::callFrameForCatch[t3]
+
+    loadp VM::targetInterpreterPCForThrow[t3], PC
+    loadp VM::targetInterpreterMetadataPCForThrow[t3], MC
+
+    loadp Callee[cfr], ws0
+    unboxWasmCallee(ws0, ws1)
+    storep ws0, UnboxedWasmCalleeStackSlot[cfr]
+
+    loadp CodeBlock[cfr], wasmInstance
+    loadp Wasm::IPIntCallee::m_bytecode[ws0], t1
+    addp t1, PC
+    loadp Wasm::IPIntCallee::m_metadata + VectorBufferOffset[ws0], t1
+    addp t1, MC
+
+    # Recompute SP from catch metadata. [MC] contains localSizeToAlloc + stackValues.
+    # Add rethrowSlots to get the total frame size below callee-save space.
+    loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], t1
+    loadi [MC], t0
+    addp t1, t0
+    mulp StackValueSize, t0
+    addp IPIntCalleeSaveSpaceStackAligned, t0
+if ARM64 or ARM64E
+    subp cfr, t0, sp
+else
+    subp cfr, t0, t0
+    move t0, sp
+end
+
+if X86_64
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
+end
+end
+
+op(ipint_catch_entry, macro()
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+    ipintCatchCommon()
+
+    move cfr, a1
+    move sp, a2
+    operationCall(macro() cCall3(_ipint_extern_retrieve_and_clear_exception) end)
+
+    ipintReloadMemory(t2)
+    advanceMC(4)
+    nextIPIntInstruction()
+else
+    break
+end
+end)
+
+op(ipint_catch_all_entry, macro()
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+    ipintCatchCommon()
+
+    move cfr, a1
+    move 0, a2
+    operationCall(macro() cCall3(_ipint_extern_retrieve_and_clear_exception) end)
+
+    ipintReloadMemory(t2)
+    advanceMC(4)
+    nextIPIntInstruction()
+else
+    break
+end
+end)
+
+op(ipint_table_catch_entry, macro()
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+    ipintCatchCommon()
+
+    # push arguments but no ref: sp in a2, call normal operation
+
+    move cfr, a1
+    move sp, a2
+    operationCall(macro() cCall3(_ipint_extern_retrieve_and_clear_exception) end)
+
+    ipintReloadMemory(t2)
+    advanceMC(4)
+    jmp _ipint_block
+else
+    break
+end
+end)
+
+op(ipint_table_catch_ref_entry, macro()
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+    ipintCatchCommon()
+
+    # push both arguments and ref
+
+    move cfr, a1
+    move sp, a2
+    operationCall(macro() cCall3(_ipint_extern_retrieve_clear_and_push_exception_and_arguments) end)
+
+    ipintReloadMemory(t2)
+    advanceMC(4)
+    jmp _ipint_block
+else
+    break
+end
+end)
+
+op(ipint_table_catch_all_entry, macro()
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+    ipintCatchCommon()
+
+    # do nothing: 0 in sp for no arguments, call normal operation
+
+    move cfr, a1
+    move 0, a2
+    operationCall(macro() cCall3(_ipint_extern_retrieve_and_clear_exception) end)
+
+    ipintReloadMemory(t2)
+    advanceMC(4)
+    jmp _ipint_block
+else
+    break
+end
+end)
+
+op(ipint_table_catch_allref_entry, macro()
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+    ipintCatchCommon()
+
+    # push only the ref
+
+    move cfr, a1
+    move sp, a2
+    operationCall(macro() cCall3(_ipint_extern_retrieve_clear_and_push_exception) end)
+
+    ipintReloadMemory(t2)
+    advanceMC(4)
+    jmp _ipint_block
+else
+    break
+end
+end)
+
+# Trampoline entrypoints
+
+op(ipint_trampoline, macro ()
+    tagReturnAddress sp
+    jmp _ipint_entry
+end)
+
+# Naming dependencies:
+#
+# In the following two macros, certain identifiers replicate naming conventions
+# defined by C macros in wasm/js/WebAssemblyBuiltin.{h, cpp}.
+# These dependencies are marked with "[!]".
+
+# wasmInstanceArgGPR is the GPR used to pass the Wasm instance pointer.
+# It must map onto the argument following the actual arguments of the builtin.
+# IMPORTANT: Any changes to the trampoline logic must be replicated in its JIT counterpart in WebAssemblyBuiltinThunk.cpp.
+macro wasmBuiltinCallTrampoline(setName, builtinName, wasmInstanceArgGPR)
+    functionPrologue()
+
+    # IPInt stores the callee and wasmInstance into the frame but JIT tiers don't, so we must do that here.
+    leap JSWebAssemblyInstance::m_builtinCalleeBits[wasmInstance], t5
+    loadp WasmBuiltinCalleeOffsets::%setName%__%builtinName%[t5], t5  # [!] BUILTIN_FULL_NAME(setName, builtinName)
+    storep t5, Callee[cfr]
+    storep wasmInstance, CodeBlock[cfr]
+
+    # Set VM topCallFrame to null to not build an unnecessary stack trace if the function throws an exception.
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t5
+    storep 0, VM::topCallFrame[t5]
+
+    # Add the extra wasmInstance arg
+    move wasmInstance, wasmInstanceArgGPR
+    call _wasm_builtin__%setName%__%builtinName%  # [!] BUILTIN_WASM_ENTRY_NAME(setName, builtinName)
+
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t5
+    btpnz VM::m_exception[t5], .handleException
+
+    # On x86, a0 and r0 are distinct (a0=rdi, r0=rax). The host function returns the result in r0,
+    # but IPInt always expects it in a0.
+if X86_64
+    move r0, a0
+end
+
+    functionEpilogue()
+    ret
+
+.handleException:
+    jmp _wasm_unwind_from_slow_path_trampoline
+end
+
+macro defineWasmBuiltinTrampoline(setName, builtinName, wasmInstanceArgGPR)
+global _wasm_builtin_trampoline__%setName%__%builtinName%    # [!] BUILTIN_TRAMPOLINE_NAME(setName, builtinName)
+_wasm_builtin_trampoline__%setName%__%builtinName%:
+    wasmBuiltinCallTrampoline(setName, builtinName, wasmInstanceArgGPR)
+end
+
+
+#   js-string builtins, in order of appearance in the spec
+
+
+# (externref, wasmInstance) -> externref
+defineWasmBuiltinTrampoline(jsstring, cast, a1)
+
+# (externref, wasmInstance) -> i32
+defineWasmBuiltinTrampoline(jsstring, test, a1)
+
+# (arrayref, i32, i32, wasmInstance) -> externref
+defineWasmBuiltinTrampoline(jsstring, fromCharCodeArray, a3)
+
+# (externref, arrayref, i32, wasmInstance) -> externref
+defineWasmBuiltinTrampoline(jsstring, intoCharCodeArray, a3)
+
+# (i32, wasmInstance) -> externref
+defineWasmBuiltinTrampoline(jsstring, fromCharCode, a1)
+
+# (i32, wasmInstance) -> externref
+defineWasmBuiltinTrampoline(jsstring, fromCodePoint, a1)
+
+# (externref, i32, wasmInstance) -> i32
+defineWasmBuiltinTrampoline(jsstring, charCodeAt, a2)
+
+# (externref, i32, wasmInstance) -> i32
+defineWasmBuiltinTrampoline(jsstring, codePointAt, a2)
+
+# (externref, wasmInstance) -> i32
+defineWasmBuiltinTrampoline(jsstring, length, a1)
+
+# (externref, externref, wasmInstance) -> externref
+defineWasmBuiltinTrampoline(jsstring, concat, a2)
+
+# (externref, i32, i32, wasmInstance) -> externref
+defineWasmBuiltinTrampoline(jsstring, substring, a3)
+
+# (externref, externref, wasmInstance) -> i32
+defineWasmBuiltinTrampoline(jsstring, equals, a2)
+
+# (externref, externref, wasmInstance) -> i32
+defineWasmBuiltinTrampoline(jsstring, compare, a2)
+
+# Low-level logic for JSPI
+
+# Move $sp down enough to reserve at least this many bytes,
+# ensuring $sp ends up properly aligned.
+#
+macro alloca(byteSize, temp)
+    move byteSize, temp
+    addp StackAlignmentMask, temp
+    andp ~StackAlignmentMask, temp
+    subp temp, sp
+end
+
+macro storeAllArgumentRegisters(base)
+    forEachWasmArgumentGPR(macro(index, reg1, reg2)
+        if ARM64 or ARM64E
+            storepairq reg1, reg2, index * MachineRegisterSize[base]
+        else
+            storeq reg1, (index + 0) * MachineRegisterSize[base]
+            storeq reg2, (index + 1) * MachineRegisterSize[base]
+        end
+    end)
+    forEachWasmArgumentFPR(macro(index, reg1, reg2)
+        if ARM64 or ARM64E
+            storepaird reg1, reg2, NumberOfWasmArgumentGPRs * MachineRegisterSize + index * FPRRegisterSize[base]
+        else
+            stored reg1, NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 0) * FPRRegisterSize[base]
+            stored reg2, NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 1) * FPRRegisterSize[base]
+        end
+    end)
+end
+
+macro loadAllArgumentRegisters(base)
+    forEachWasmArgumentGPR(macro(index, gpr1, gpr2)
+        if ARM64 or ARM64E
+            loadpairq index * MachineRegisterSize[base], gpr1, gpr2
+        else
+            loadq (index + 0) * MachineRegisterSize[base], gpr1
+            loadq (index + 1) * MachineRegisterSize[base], gpr2
+        end
+    end)
+    forEachWasmArgumentFPR(macro(index, fpr1, fpr2)
+        if ARM64 or ARM64E
+            loadpaird NumberOfWasmArgumentGPRs * MachineRegisterSize + index * FPRRegisterSize[base], fpr1, fpr2
+        else
+            loadd NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 0) * FPRRegisterSize[base], fpr1
+            loadd NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 1) * FPRRegisterSize[base], fpr2
+        end
+    end)
+end
+
+macro populateSentinelVMEntryRecord(context, vmTemp, temp)
+    loadp PinballHandlerContext::vm[context], vmTemp
+
+    storep vmTemp, VMEntryRecord::m_vm[sp]
+    storep 0, VMEntryRecord::m_context[sp]
+    loadp VM::topCallFrame[vmTemp], temp
+    storep temp, VMEntryRecord::m_prevTopCallFrame[sp]
+    loadp VM::topEntryFrame[vmTemp], temp
+    storep temp, VMEntryRecord::m_prevTopEntryFrame[sp]
+
+    storep cfr, VM::topEntryFrame[vmTemp]
+    storep 0, VM::topCallFrame[vmTemp]
+end
+
+# Copy into the VM the values saved in VM entry record and set stack overflow flag in the context.
+# a0 must point to PinballHandlerContext; cfr must point to the sentinel frame.
+macro restoreSentinelVMEntryRecordAndReturnWithStackOverflow()
+    vmEntryRecord(cfr, sp)
+    loadp VMEntryRecord::m_vm[sp], ws0
+    loadp VMEntryRecord::m_prevTopCallFrame[sp], ws1
+    storep ws1, VM::topCallFrame[ws0]
+    loadp VMEntryRecord::m_prevTopEntryFrame[sp], ws1
+    storep ws1, VM::topEntryFrame[ws0]
+    storep 1, PinballHandlerContext::stackOverflowDetected[a0]
+    move cfr, sp
+    functionEpilogue()
+    ret
+end
+
+# Allocate space for the slice to implant and prepare the implant call args.
+# a0 should point at the context and is preserved; temp is a scratch register.
+# On stack overflow jump to failLabel with sp same as before the call.
+#
+macro prepareImplantationCall(temp, stackOverflowLabel)
+    loadp PinballHandlerContext::sliceByteSize[a0], temp
+    subp temp, sp # sliceByteSize is always stack-aligned by construction
+    bpa sp, JSWebAssemblyInstance::m_stackMirror + StackManager::Mirror::m_softStackLimit[wasmInstance], .stackOK
+    addp temp, sp
+    jmp stackOverflowLabel
+.stackOK:
+    move sp, a1 # a1 = implantation base
+    move cfr, a2 # a2 = returnFP (the sentinel frame)
+end
+
+# Construct a new frame on the stack and point cfr at it.
+# The frame's caller slot contains the old cfr, but the return PC is left uninitialized.
+#
+macro createArtificialFrame()
+    subp 2 * MachineRegisterSize, sp
+    storep cfr, [sp]
+    move sp, cfr
+end
+
+# void* relocateJITReturnPC(const void* codePtr, const void* oldSignatureSP, const void* newSignatureSP)
+global _relocateJITReturnPC
+_relocateJITReturnPC:
+    functionPrologue()
+if ARM64E
+    leap _g_config, ws1
+    jmp JSCConfigGateMapOffset + (constexpr Gate::relocateJITReturnPC) * PtrSize[ws1], NativeToJITGatePtrTag
+end
+
+_relocate_jit_return_pc_return_location:
+_relocate_jit_return_pc_trampoline:
+if X86_64
+    move a0, r0
+end
+    functionEpilogue()
+    ret
+
+# void* getSentinelFrameReturnPC(void* signatureSP)
+#
+global _getSentinelFrameReturnPC
+_getSentinelFrameReturnPC:
+functionPrologue()
+if ARM64E
+    leap _g_config, ws1
+    jmp JSCConfigGateMapOffset + (constexpr Gate::getSentinelFrameReturnPCGate) * PtrSize[ws1], NativeToJITGatePtrTag
+end
+
+_get_sentinel_frame_return_pc_trampoline:
+if ARM64E
+    pcrtoaddr _exit_implanted_slice, ws0
+    tagCodePtr ws0, a0
+    move ws0, r0
+else
+    pcrtoaddr _exit_implanted_slice, r0
+end
+    functionEpilogue()
+    ret
+
+_get_sentinel_frame_return_pc_return_location:
+if X86_64
+    move a0, r0
+end
+    functionEpilogue()
+    ret
+
+
+# EncodedJSValue enterWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* callFrame)
+#
+global _enterWebAssemblySuspendingFunction
+_enterWebAssemblySuspendingFunction:
+    functionPrologue()
+
+    # Allocate the buffer to capture callee saves passed to runWebAssemblySuspendingFunction as originalCalleeSaves
+    alloca(MachineRegisterSize * constexpr NUMBER_OF_CALLEE_SAVES_REGISTERS, ws0)
+    copyCalleeSavesToBuffer(sp)
+    move sp, a2
+
+    # While we have the globalObject pointer in a0, fetch and store the address of the callee saves buffer
+    # in vm.topEntryFrame - we will need it later.
+    loadp JSGlobalObject::m_vm[a0], ws0
+    loadp VM::topEntryFrame[ws0], ws0
+    vmEntryRecord(ws0, ws0)
+    leap VMEntryRecord::calleeSaveRegistersBuffer[ws0], ws0
+    push ws0, ws0
+
+    cCall3(_runWebAssemblySuspendingFunction)
+    # A non-zero return value is the stack frame to teleport to, skipping the evacuated frames.
+    # A zero return means we return normally, typically because an exception was thrown.
+    btiz r0, .enterWebAssemblySuspendingFunction_normal_return
+
+    # Teleport over the evacuated frames by returning from the frame in r0.
+    # This is where we need the pushed pointer to the callee saves buffer in vm.topEntryFrame.
+    # It holds the initial state of callee saves for the return computed while walking the stack.
+    pop ws1, t5 # don't accidentally clobber r0 (no ws0) on x86
+    restoreCalleeSavesFromBuffer(ws1)
+    move r0, sp
+    move 0, r0
+    functionEpilogue()
+if ARM64E
+    leap _g_config, ws0
+    jmp JSCConfigGateMapOffset + (constexpr Gate::returnFromLLInt) * PtrSize[ws0], NativeToJITGatePtrTag
+else
+    ret
+end
+
+.enterWebAssemblySuspendingFunction_normal_return:
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+# EncodedJSValue pinballHandlerFulfillFunction(JGlobalObject* globalObject, CallFrame* callFrame)
+#
+# This is the host function handling the fulfillment of a future on which Wasm code is suspended.
+# Because it needs to engage in invasive stack surgery and register juggling, the core logic is implemented
+# here in assembly, with calls to C++ functions implementing higher-level logic.
+# Execution state shared between assembly and C++ is kept on the stack as a struct PinballHandlerContext,
+# and SP always points at it.
+# Key invariant: SP is stable and not perturbed by any calls we make.
+#
+global  _pinballHandlerFulfillFunction
+_pinballHandlerFulfillFunction:
+    functionPrologue()
+    alloca(constexpr (sizeof(PinballHandlerContext)), ws0)
+    # Saving our callee saves in the context
+    leap PinballHandlerContext::handlerCalleeSaves[sp], ws0
+    copyCalleeSavesToBuffer(ws0)
+
+    move sp, a2
+    call _pinballHandlerInitContextForFulfill #(globalObject, callFrame, contextPtr)
+    # Restore callee saves of the evacuated Wasm code
+    loadp PinballHandlerContext::evacuatedCalleeSaves[sp], ws0
+    restoreCalleeSavesFromBuffer(ws0)
+
+.pinballHandlerFulfillFunction_execute:
+    move sp, a0
+    call .jspi_execute_evacuated_slice #(context)
+    # Execution returns here from the sentinel frame after the slice has completed.
+    # The sentinel has already spilled Wasm argument registers into the context.
+    loadp PinballHandlerContext::stackOverflowDetected[sp], ws0
+    btpnz ws0, .pinballHandlerFulfillFunction_stack_overflow
+    # Finish this iteration and loop to the next slice or exit with the result.
+    move sp, a0
+    call _pinballHandlerFulfillFunctionContinue #(context) -> true if we should do another cycle
+    btinz r0, .pinballHandlerFulfillFunction_execute
+
+    # Done. The first Wasm argument is the return value.
+    leap PinballHandlerContext::handlerCalleeSaves[sp], ws0
+    restoreCalleeSavesFromBuffer(ws0)
+    loadp PinballHandlerContext::arguments[sp], r0
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+.pinballHandlerFulfillFunction_stack_overflow:
+    move sp, a0
+    call _pinballHandlerRejectWithStackOverflow #(context)
+    leap PinballHandlerContext::handlerCalleeSaves[sp], ws0
+    restoreCalleeSavesFromBuffer(ws0)
+    move 0, r0
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+# Perform stack surgery to implant the frames from the slice currently in the context onto the execution stack
+# and kick off its execution. The following is the stack structure at the end of this function, just before the
+# final 'ret':
+#
+#   [ _pinballHandlerFulfillFunction ]
+#     {struct PinballHandlerContext - at the bottom of the _pinballHandlerFulfillFunction frame}
+#   [ sentinel     ] <- VM.topEntryFrame
+#   [ Wasm Frame N ]
+#         ...
+#   [ Wasm Frame 0 ]
+#   [ return frame ]
+#
+# The sentinel frame is constructed by 'functionPrologue()'' at the top of this function.
+# The return frame is constructed by 'createArtificialFrame()' further down and is the current
+# frame from that point on, so the 'ret' at the end of this function returns into Wasm Frame 0.
+# Prior to that return we must load argument registers with values expected by the implanted slice.
+# After all Wasm frames have executed, Wasm Frame N returns into the sentinel frame.
+# The code that runs upon that return is _exit_implanted_slice.
+#
+# The sentinel frame ensures that SP is reset to its original value before returning into _pinballHandlerFulfillFunction.
+# That is essential because the caller expects SP to be stable. Wasm slices include additional "headroom" slots
+# above the topmost frame record and returning from them does not by itself reset SP to the bottom of the caller frame.
+# The sentinel also functions as the top VM entry frame (essential for exception unwinding).
+#
+# Wasm Frame 0 may be a WasmToJS frame, and Wasm Frame N may be a JSToWasmFrame.
+# At this time we exclusively use the "slab" slicing strategy, which evacuates the entire Wasm stack portion
+# as a single slice, so Frame 0 is always a WasmToJS frame and Frame N is always a JSToWasmFrame.
+# This assumption for now simplifies exception handling.
+#
+.jspi_execute_evacuated_slice:
+    # Construct the sentinel and make it a VM entry frame.
+    # The sentinel must be right below the PinballHandlerContext allocated by the caller.
+    functionPrologue()
+    vmEntryRecord(cfr, sp)
+    populateSentinelVMEntryRecord(a0, ws0, ws1)
+
+    prepareImplantationCall(ws0, .jspi_execute_evacuated_slice_stack_overflow) # moves sp further down to allocate space for implanted frames, loads a1-a2
+    # IMPORTANT: Preserve a0-a2 from here on until the _pinballHandlerImplantSlice call!
+    checkStackPointerAlignment(ws0, 0xbad0fff1)
+    # Preserve on the stack the arguments buffer ptr. Two copies to keep stack aligned
+    # and work around the push order difference between arm64 and x86.
+    leap PinballHandlerContext::arguments[a0], ws0
+    push ws0, ws0
+
+    # Create the return frame (the frame the 'ret' at the end of this function returns from)
+    createArtificialFrame()
+    move cfr, a3
+    call _pinballHandlerImplantSlice #(context, base, sentinelFP, thisFrame)
+    # implantSlice sets the caller and returnPC of the return frame (current frame)
+
+    # Now load the return value
+    move cfr, ws1
+    addp 2 * MachineRegisterSize, ws1
+    loadp [ws1], sc0 # sc0 -> arguments
+    loadAllArgumentRegisters(sc0)
+if X86_64
+    move a0, r0
+end
+    checkStackPointerAlignment(ws1, 0xbad0fff2)
+    functionEpilogue()
+    # return into Wasm Frame 0
+if ARM64E
+    leap _g_config, ws0
+    jmp JSCConfigGateMapOffset + (constexpr Gate::returnFromLLInt) * PtrSize[ws0], NativeToJITGatePtrTag
+else
+    ret
+end
+
+.jspi_execute_evacuated_slice_stack_overflow:
+    restoreSentinelVMEntryRecordAndReturnWithStackOverflow()
+
+
+# Returning into a sentinel frame executes this code
+global _exit_implanted_slice
+_exit_implanted_slice:
+    # We should spill all Wasm arg registers into the PinballHandlerContext.
+    # The context struct is expected right above this frame, that is cfr + 2 registers.
+    # ws1 is the only scratch safe to use before we spill (ws0 overlaps r0 on x86).
+    leap 2 * MachineRegisterSize + PinballHandlerContext::arguments[cfr], ws1
+if X86_64
+    move r0, a0 # fix the usual x86 a0/r0 discrepancy
+end
+    storeAllArgumentRegisters(ws1)
+
+    vmEntryRecord(cfr, sp)
+    loadp VMEntryRecord::m_vm[sp], t0
+    loadp VMEntryRecord::m_prevTopCallFrame[sp], t1
+    storep t1, VM::topCallFrame[t0]
+    loadp VMEntryRecord::m_prevTopEntryFrame[sp], t1
+    storep t1, VM::topEntryFrame[t0]
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+# EncodedJSValue pinballHandlerRejectFunction(JGlobalObject* globalObject, CallFrame* callFrame)
+#
+# This is the host function handling the rejection of a future on which Wasm code is suspended.
+# The overall structure is similar to _pinballHandlerFulfillFunction.
+#
+global _pinballHandlerRejectFunction
+_pinballHandlerRejectFunction:
+    functionPrologue()
+
+    alloca(constexpr(sizeof(PinballHandlerContext)), ws0)
+    leap PinballHandlerContext::handlerCalleeSaves[sp], ws0
+    copyCalleeSavesToBuffer(ws0)
+    move sp, a2 # the context pointer
+    call _pinballHandlerInitContextForReject #(globalObject, callFrame, context)
+
+    # Restore callee saves of the evacuated Wasm code
+    loadp PinballHandlerContext::evacuatedCalleeSaves[sp], ws0
+    restoreCalleeSavesFromBuffer(ws0)
+
+    move sp, a0
+    call .jspi_unwind_current_slice
+    # Execution returns here from the sentinel frame if the exception was caught in Wasm.
+    # Wasm argument registers were already spilled into the context by the sentinel.
+    loadp PinballHandlerContext::stackOverflowDetected[sp], ws0
+    btpnz ws0, .pinballHandlerRejectFunction_stack_overflow
+    move sp, a0
+    call _pinballHandlerFinishReject #(context)
+
+    leap PinballHandlerContext::handlerCalleeSaves[sp], ws1
+    restoreCalleeSavesFromBuffer(ws1)
+    move 0, r0
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+.pinballHandlerRejectFunction_stack_overflow:
+    move sp, a0
+    call _pinballHandlerRejectWithStackOverflow #(context)
+    leap PinballHandlerContext::handlerCalleeSaves[sp], ws1
+    restoreCalleeSavesFromBuffer(ws1)
+    move 0, r0
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+
+# This is almost the same as .jspi_execute_evacuated_slice in how the stack is shaped
+# by the time we get to the end of this function. The differences are:
+#
+# - What used to be a return frame is shaped as a pretend throwing frame,
+#   so it's business as usual for the unwind machinery.
+#
+# - Instead of returning at the end of the function, we store the exception
+#   into the VM and jump to the unwind logic. All together this works as if
+#   the exception was thrown from somewhere in our pretend throwing frame.
+#
+.jspi_unwind_current_slice:
+    functionPrologue()
+    vmEntryRecord(cfr, sp)
+    populateSentinelVMEntryRecord(a0, ws0, ws1)
+
+    prepareImplantationCall(ws0, .jspi_unwind_current_slice_stack_overflow) # moves sp further down to allocate space for implanted frames, loads a1-a2
+    checkStackPointerAlignment(ws0, 0xbad0fff3)
+
+    # Set up a pretend throwing frame with a zombie callee and a null codeblock.
+    subp 4 * MachineRegisterSize, sp
+    createArtificialFrame()
+    loadp PinballHandlerContext::zombieFrameCallee[a0], ws0
+    storep 0, CodeBlock[cfr]
+    storep ws0, Callee[cfr]
+    storep 0, ArgumentCountIncludingThis[cfr]
+    storep a0, ThisArgumentOffset[cfr] # context, stored temporarily to preserve it across the function call
+    move cfr, a3
+    call _pinballHandlerImplantSlice #(context, base, sentinelFP, returnFrame)
+    # implantSlice has set the caller and returnPC of the throwing frame
+
+    # Retrieve the context pointer and clean up the frame
+    loadp ThisArgumentOffset[cfr], t0
+    storep 0, ThisArgumentOffset[cfr]
+
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t1 # t1 -> vm
+    loadp PinballHandlerContext::exception[t0], t2 # t2 -> exception
+    storep t2, VM::m_exception[t1]
+
+    jmp _wasm_unwind_from_slow_path_trampoline
+
+.jspi_unwind_current_slice_stack_overflow:
+    restoreSentinelVMEntryRecordAndReturnWithStackOverflow()
+
+
+#################################
+# 5. Instruction implementation #
+#################################
+
+if ARM64 or ARM64E or X86_64
+    include InPlaceInterpreter64
+else
+# For unimplemented architectures: make sure that the assertions can still find the labels
+# See https://webassembly.github.io/spec/core/appendix/index-instructions.html for the list of instructions.
+
+unimplementedInstruction(_unreachable)
+unimplementedInstruction(_nop)
+unimplementedInstruction(_block)
+unimplementedInstruction(_loop)
+unimplementedInstruction(_if)
+unimplementedInstruction(_else)
+unimplementedInstruction(_try)
+unimplementedInstruction(_catch)
+unimplementedInstruction(_throw)
+unimplementedInstruction(_rethrow)
+reservedOpcode(0xa)
+unimplementedInstruction(_end)
+unimplementedInstruction(_br)
+unimplementedInstruction(_br_if)
+unimplementedInstruction(_br_table)
+unimplementedInstruction(_return)
+unimplementedInstruction(_call)
+unimplementedInstruction(_call_indirect)
+reservedOpcode(0x12)
+reservedOpcode(0x13)
+reservedOpcode(0x14)
+reservedOpcode(0x15)
+reservedOpcode(0x16)
+reservedOpcode(0x17)
+unimplementedInstruction(_delegate)
+unimplementedInstruction(_catch_all)
+unimplementedInstruction(_drop)
+unimplementedInstruction(_select)
+unimplementedInstruction(_select_t)
+reservedOpcode(0x1d)
+reservedOpcode(0x1e)
+reservedOpcode(0x1f)
+unimplementedInstruction(_local_get)
+unimplementedInstruction(_local_set)
+unimplementedInstruction(_local_tee)
+unimplementedInstruction(_global_get)
+unimplementedInstruction(_global_set)
+unimplementedInstruction(_table_get)
+unimplementedInstruction(_table_set)
+reservedOpcode(0x27)
+unimplementedInstruction(_i32_load_mem)
+unimplementedInstruction(_i64_load_mem)
+unimplementedInstruction(_f32_load_mem)
+unimplementedInstruction(_f64_load_mem)
+unimplementedInstruction(_i32_load8s_mem)
+unimplementedInstruction(_i32_load8u_mem)
+unimplementedInstruction(_i32_load16s_mem)
+unimplementedInstruction(_i32_load16u_mem)
+unimplementedInstruction(_i64_load8s_mem)
+unimplementedInstruction(_i64_load8u_mem)
+unimplementedInstruction(_i64_load16s_mem)
+unimplementedInstruction(_i64_load16u_mem)
+unimplementedInstruction(_i64_load32s_mem)
+unimplementedInstruction(_i64_load32u_mem)
+unimplementedInstruction(_i32_store_mem)
+unimplementedInstruction(_i64_store_mem)
+unimplementedInstruction(_f32_store_mem)
+unimplementedInstruction(_f64_store_mem)
+unimplementedInstruction(_i32_store8_mem)
+unimplementedInstruction(_i32_store16_mem)
+unimplementedInstruction(_i64_store8_mem)
+unimplementedInstruction(_i64_store16_mem)
+unimplementedInstruction(_i64_store32_mem)
+unimplementedInstruction(_memory_size)
+unimplementedInstruction(_memory_grow)
+unimplementedInstruction(_i32_const)
+unimplementedInstruction(_i64_const)
+unimplementedInstruction(_f32_const)
+unimplementedInstruction(_f64_const)
+unimplementedInstruction(_i32_eqz)
+unimplementedInstruction(_i32_eq)
+unimplementedInstruction(_i32_ne)
+unimplementedInstruction(_i32_lt_s)
+unimplementedInstruction(_i32_lt_u)
+unimplementedInstruction(_i32_gt_s)
+unimplementedInstruction(_i32_gt_u)
+unimplementedInstruction(_i32_le_s)
+unimplementedInstruction(_i32_le_u)
+unimplementedInstruction(_i32_ge_s)
+unimplementedInstruction(_i32_ge_u)
+unimplementedInstruction(_i64_eqz)
+unimplementedInstruction(_i64_eq)
+unimplementedInstruction(_i64_ne)
+unimplementedInstruction(_i64_lt_s)
+unimplementedInstruction(_i64_lt_u)
+unimplementedInstruction(_i64_gt_s)
+unimplementedInstruction(_i64_gt_u)
+unimplementedInstruction(_i64_le_s)
+unimplementedInstruction(_i64_le_u)
+unimplementedInstruction(_i64_ge_s)
+unimplementedInstruction(_i64_ge_u)
+unimplementedInstruction(_f32_eq)
+unimplementedInstruction(_f32_ne)
+unimplementedInstruction(_f32_lt)
+unimplementedInstruction(_f32_gt)
+unimplementedInstruction(_f32_le)
+unimplementedInstruction(_f32_ge)
+unimplementedInstruction(_f64_eq)
+unimplementedInstruction(_f64_ne)
+unimplementedInstruction(_f64_lt)
+unimplementedInstruction(_f64_gt)
+unimplementedInstruction(_f64_le)
+unimplementedInstruction(_f64_ge)
+unimplementedInstruction(_i32_clz)
+unimplementedInstruction(_i32_ctz)
+unimplementedInstruction(_i32_popcnt)
+unimplementedInstruction(_i32_add)
+unimplementedInstruction(_i32_sub)
+unimplementedInstruction(_i32_mul)
+unimplementedInstruction(_i32_div_s)
+unimplementedInstruction(_i32_div_u)
+unimplementedInstruction(_i32_rem_s)
+unimplementedInstruction(_i32_rem_u)
+unimplementedInstruction(_i32_and)
+unimplementedInstruction(_i32_or)
+unimplementedInstruction(_i32_xor)
+unimplementedInstruction(_i32_shl)
+unimplementedInstruction(_i32_shr_s)
+unimplementedInstruction(_i32_shr_u)
+unimplementedInstruction(_i32_rotl)
+unimplementedInstruction(_i32_rotr)
+unimplementedInstruction(_i64_clz)
+unimplementedInstruction(_i64_ctz)
+unimplementedInstruction(_i64_popcnt)
+unimplementedInstruction(_i64_add)
+unimplementedInstruction(_i64_sub)
+unimplementedInstruction(_i64_mul)
+unimplementedInstruction(_i64_div_s)
+unimplementedInstruction(_i64_div_u)
+unimplementedInstruction(_i64_rem_s)
+unimplementedInstruction(_i64_rem_u)
+unimplementedInstruction(_i64_and)
+unimplementedInstruction(_i64_or)
+unimplementedInstruction(_i64_xor)
+unimplementedInstruction(_i64_shl)
+unimplementedInstruction(_i64_shr_s)
+unimplementedInstruction(_i64_shr_u)
+unimplementedInstruction(_i64_rotl)
+unimplementedInstruction(_i64_rotr)
+unimplementedInstruction(_f32_abs)
+unimplementedInstruction(_f32_neg)
+unimplementedInstruction(_f32_ceil)
+unimplementedInstruction(_f32_floor)
+unimplementedInstruction(_f32_trunc)
+unimplementedInstruction(_f32_nearest)
+unimplementedInstruction(_f32_sqrt)
+unimplementedInstruction(_f32_add)
+unimplementedInstruction(_f32_sub)
+unimplementedInstruction(_f32_mul)
+unimplementedInstruction(_f32_div)
+unimplementedInstruction(_f32_min)
+unimplementedInstruction(_f32_max)
+unimplementedInstruction(_f32_copysign)
+unimplementedInstruction(_f64_abs)
+unimplementedInstruction(_f64_neg)
+unimplementedInstruction(_f64_ceil)
+unimplementedInstruction(_f64_floor)
+unimplementedInstruction(_f64_trunc)
+unimplementedInstruction(_f64_nearest)
+unimplementedInstruction(_f64_sqrt)
+unimplementedInstruction(_f64_add)
+unimplementedInstruction(_f64_sub)
+unimplementedInstruction(_f64_mul)
+unimplementedInstruction(_f64_div)
+unimplementedInstruction(_f64_min)
+unimplementedInstruction(_f64_max)
+unimplementedInstruction(_f64_copysign)
+unimplementedInstruction(_i32_wrap_i64)
+unimplementedInstruction(_i32_trunc_f32_s)
+unimplementedInstruction(_i32_trunc_f32_u)
+unimplementedInstruction(_i32_trunc_f64_s)
+unimplementedInstruction(_i32_trunc_f64_u)
+unimplementedInstruction(_i64_extend_i32_s)
+unimplementedInstruction(_i64_extend_i32_u)
+unimplementedInstruction(_i64_trunc_f32_s)
+unimplementedInstruction(_i64_trunc_f32_u)
+unimplementedInstruction(_i64_trunc_f64_s)
+unimplementedInstruction(_i64_trunc_f64_u)
+unimplementedInstruction(_f32_convert_i32_s)
+unimplementedInstruction(_f32_convert_i32_u)
+unimplementedInstruction(_f32_convert_i64_s)
+unimplementedInstruction(_f32_convert_i64_u)
+unimplementedInstruction(_f32_demote_f64)
+unimplementedInstruction(_f64_convert_i32_s)
+unimplementedInstruction(_f64_convert_i32_u)
+unimplementedInstruction(_f64_convert_i64_s)
+unimplementedInstruction(_f64_convert_i64_u)
+unimplementedInstruction(_f64_promote_f32)
+unimplementedInstruction(_i32_reinterpret_f32)
+unimplementedInstruction(_i64_reinterpret_f64)
+unimplementedInstruction(_f32_reinterpret_i32)
+unimplementedInstruction(_f64_reinterpret_i64)
+unimplementedInstruction(_i32_extend8_s)
+unimplementedInstruction(_i32_extend16_s)
+unimplementedInstruction(_i64_extend8_s)
+unimplementedInstruction(_i64_extend16_s)
+unimplementedInstruction(_i64_extend32_s)
+reservedOpcode(0xc5)
+reservedOpcode(0xc6)
+reservedOpcode(0xc7)
+reservedOpcode(0xc8)
+reservedOpcode(0xc9)
+reservedOpcode(0xca)
+reservedOpcode(0xcb)
+reservedOpcode(0xcc)
+reservedOpcode(0xcd)
+reservedOpcode(0xce)
+reservedOpcode(0xcf)
+unimplementedInstruction(_ref_null_t)
+unimplementedInstruction(_ref_is_null)
+unimplementedInstruction(_ref_func)
+unimplementedInstruction(_ref_eq)
+unimplementedInstruction(_ref_as_non_null)
+unimplementedInstruction(_br_on_null)
+unimplementedInstruction(_br_on_non_null)
+reservedOpcode(0xd7)
+reservedOpcode(0xd8)
+reservedOpcode(0xd9)
+reservedOpcode(0xda)
+reservedOpcode(0xdb)
+reservedOpcode(0xdc)
+reservedOpcode(0xdd)
+reservedOpcode(0xde)
+reservedOpcode(0xdf)
+reservedOpcode(0xe0)
+reservedOpcode(0xe1)
+reservedOpcode(0xe2)
+reservedOpcode(0xe3)
+reservedOpcode(0xe4)
+reservedOpcode(0xe5)
+reservedOpcode(0xe6)
+reservedOpcode(0xe7)
+reservedOpcode(0xe8)
+reservedOpcode(0xe9)
+reservedOpcode(0xea)
+reservedOpcode(0xeb)
+reservedOpcode(0xec)
+reservedOpcode(0xed)
+reservedOpcode(0xee)
+reservedOpcode(0xef)
+reservedOpcode(0xf0)
+reservedOpcode(0xf1)
+reservedOpcode(0xf2)
+reservedOpcode(0xf3)
+reservedOpcode(0xf4)
+reservedOpcode(0xf5)
+reservedOpcode(0xf6)
+reservedOpcode(0xf7)
+reservedOpcode(0xf8)
+reservedOpcode(0xf9)
+reservedOpcode(0xfa)
+unimplementedInstruction(_fb_block)
+unimplementedInstruction(_fc_block)
+unimplementedInstruction(_simd)
+unimplementedInstruction(_atomic)
+reservedOpcode(0xff)
+
+    #######################
+    ## 0xfc instructions ##
+    #######################
+
+unimplementedInstruction(_i32_trunc_sat_f32_s)
+unimplementedInstruction(_i32_trunc_sat_f32_u)
+unimplementedInstruction(_i32_trunc_sat_f64_s)
+unimplementedInstruction(_i32_trunc_sat_f64_u)
+unimplementedInstruction(_i64_trunc_sat_f32_s)
+unimplementedInstruction(_i64_trunc_sat_f32_u)
+unimplementedInstruction(_i64_trunc_sat_f64_s)
+unimplementedInstruction(_i64_trunc_sat_f64_u)
+unimplementedInstruction(_memory_init)
+unimplementedInstruction(_data_drop)
+unimplementedInstruction(_memory_copy)
+unimplementedInstruction(_memory_fill)
+unimplementedInstruction(_table_init)
+unimplementedInstruction(_elem_drop)
+unimplementedInstruction(_table_copy)
+unimplementedInstruction(_table_grow)
+unimplementedInstruction(_table_size)
+unimplementedInstruction(_table_fill)
+
+    #######################
+    ## SIMD Instructions ##
+    #######################
+
+unimplementedInstruction(_simd_v128_load_mem)
+unimplementedInstruction(_simd_v128_load_8x8s_mem)
+unimplementedInstruction(_simd_v128_load_8x8u_mem)
+unimplementedInstruction(_simd_v128_load_16x4s_mem)
+unimplementedInstruction(_simd_v128_load_16x4u_mem)
+unimplementedInstruction(_simd_v128_load_32x2s_mem)
+unimplementedInstruction(_simd_v128_load_32x2u_mem)
+unimplementedInstruction(_simd_v128_load8_splat_mem)
+unimplementedInstruction(_simd_v128_load16_splat_mem)
+unimplementedInstruction(_simd_v128_load32_splat_mem)
+unimplementedInstruction(_simd_v128_load64_splat_mem)
+unimplementedInstruction(_simd_v128_store_mem)
+unimplementedInstruction(_simd_v128_const)
+unimplementedInstruction(_simd_i8x16_shuffle)
+unimplementedInstruction(_simd_i8x16_swizzle)
+unimplementedInstruction(_simd_i8x16_splat)
+unimplementedInstruction(_simd_i16x8_splat)
+unimplementedInstruction(_simd_i32x4_splat)
+unimplementedInstruction(_simd_i64x2_splat)
+unimplementedInstruction(_simd_f32x4_splat)
+unimplementedInstruction(_simd_f64x2_splat)
+unimplementedInstruction(_simd_i8x16_extract_lane_s)
+unimplementedInstruction(_simd_i8x16_extract_lane_u)
+unimplementedInstruction(_simd_i8x16_replace_lane)
+unimplementedInstruction(_simd_i16x8_extract_lane_s)
+unimplementedInstruction(_simd_i16x8_extract_lane_u)
+unimplementedInstruction(_simd_i16x8_replace_lane)
+unimplementedInstruction(_simd_i32x4_extract_lane)
+unimplementedInstruction(_simd_i32x4_replace_lane)
+unimplementedInstruction(_simd_i64x2_extract_lane)
+unimplementedInstruction(_simd_i64x2_replace_lane)
+unimplementedInstruction(_simd_f32x4_extract_lane)
+unimplementedInstruction(_simd_f32x4_replace_lane)
+unimplementedInstruction(_simd_f64x2_extract_lane)
+unimplementedInstruction(_simd_f64x2_replace_lane)
+unimplementedInstruction(_simd_i8x16_eq)
+unimplementedInstruction(_simd_i8x16_ne)
+unimplementedInstruction(_simd_i8x16_lt_s)
+unimplementedInstruction(_simd_i8x16_lt_u)
+unimplementedInstruction(_simd_i8x16_gt_s)
+unimplementedInstruction(_simd_i8x16_gt_u)
+unimplementedInstruction(_simd_i8x16_le_s)
+unimplementedInstruction(_simd_i8x16_le_u)
+unimplementedInstruction(_simd_i8x16_ge_s)
+unimplementedInstruction(_simd_i8x16_ge_u)
+unimplementedInstruction(_simd_i16x8_eq)
+unimplementedInstruction(_simd_i16x8_ne)
+unimplementedInstruction(_simd_i16x8_lt_s)
+unimplementedInstruction(_simd_i16x8_lt_u)
+unimplementedInstruction(_simd_i16x8_gt_s)
+unimplementedInstruction(_simd_i16x8_gt_u)
+unimplementedInstruction(_simd_i16x8_le_s)
+unimplementedInstruction(_simd_i16x8_le_u)
+unimplementedInstruction(_simd_i16x8_ge_s)
+unimplementedInstruction(_simd_i16x8_ge_u)
+unimplementedInstruction(_simd_i32x4_eq)
+unimplementedInstruction(_simd_i32x4_ne)
+unimplementedInstruction(_simd_i32x4_lt_s)
+unimplementedInstruction(_simd_i32x4_lt_u)
+unimplementedInstruction(_simd_i32x4_gt_s)
+unimplementedInstruction(_simd_i32x4_gt_u)
+unimplementedInstruction(_simd_i32x4_le_s)
+unimplementedInstruction(_simd_i32x4_le_u)
+unimplementedInstruction(_simd_i32x4_ge_s)
+unimplementedInstruction(_simd_i32x4_ge_u)
+unimplementedInstruction(_simd_f32x4_eq)
+unimplementedInstruction(_simd_f32x4_ne)
+unimplementedInstruction(_simd_f32x4_lt)
+unimplementedInstruction(_simd_f32x4_gt)
+unimplementedInstruction(_simd_f32x4_le)
+unimplementedInstruction(_simd_f32x4_ge)
+unimplementedInstruction(_simd_f64x2_eq)
+unimplementedInstruction(_simd_f64x2_ne)
+unimplementedInstruction(_simd_f64x2_lt)
+unimplementedInstruction(_simd_f64x2_gt)
+unimplementedInstruction(_simd_f64x2_le)
+unimplementedInstruction(_simd_f64x2_ge)
+unimplementedInstruction(_simd_v128_not)
+unimplementedInstruction(_simd_v128_and)
+unimplementedInstruction(_simd_v128_andnot)
+unimplementedInstruction(_simd_v128_or)
+unimplementedInstruction(_simd_v128_xor)
+unimplementedInstruction(_simd_v128_bitselect)
+unimplementedInstruction(_simd_v128_any_true)
+unimplementedInstruction(_simd_v128_load8_lane_mem)
+unimplementedInstruction(_simd_v128_load16_lane_mem)
+unimplementedInstruction(_simd_v128_load32_lane_mem)
+unimplementedInstruction(_simd_v128_load64_lane_mem)
+unimplementedInstruction(_simd_v128_store8_lane_mem)
+unimplementedInstruction(_simd_v128_store16_lane_mem)
+unimplementedInstruction(_simd_v128_store32_lane_mem)
+unimplementedInstruction(_simd_v128_store64_lane_mem)
+unimplementedInstruction(_simd_v128_load32_zero_mem)
+unimplementedInstruction(_simd_v128_load64_zero_mem)
+unimplementedInstruction(_simd_f32x4_demote_f64x2_zero)
+unimplementedInstruction(_simd_f64x2_promote_low_f32x4)
+unimplementedInstruction(_simd_i8x16_abs)
+unimplementedInstruction(_simd_i8x16_neg)
+unimplementedInstruction(_simd_i8x16_popcnt)
+unimplementedInstruction(_simd_i8x16_all_true)
+unimplementedInstruction(_simd_i8x16_bitmask)
+unimplementedInstruction(_simd_i8x16_narrow_i16x8_s)
+unimplementedInstruction(_simd_i8x16_narrow_i16x8_u)
+unimplementedInstruction(_simd_f32x4_ceil)
+unimplementedInstruction(_simd_f32x4_floor)
+unimplementedInstruction(_simd_f32x4_trunc)
+unimplementedInstruction(_simd_f32x4_nearest)
+unimplementedInstruction(_simd_i8x16_shl)
+unimplementedInstruction(_simd_i8x16_shr_s)
+unimplementedInstruction(_simd_i8x16_shr_u)
+unimplementedInstruction(_simd_i8x16_add)
+unimplementedInstruction(_simd_i8x16_add_sat_s)
+unimplementedInstruction(_simd_i8x16_add_sat_u)
+unimplementedInstruction(_simd_i8x16_sub)
+unimplementedInstruction(_simd_i8x16_sub_sat_s)
+unimplementedInstruction(_simd_i8x16_sub_sat_u)
+unimplementedInstruction(_simd_f64x2_ceil)
+unimplementedInstruction(_simd_f64x2_floor)
+unimplementedInstruction(_simd_i8x16_min_s)
+unimplementedInstruction(_simd_i8x16_min_u)
+unimplementedInstruction(_simd_i8x16_max_s)
+unimplementedInstruction(_simd_i8x16_max_u)
+unimplementedInstruction(_simd_f64x2_trunc)
+unimplementedInstruction(_simd_i8x16_avgr_u)
+unimplementedInstruction(_simd_i16x8_extadd_pairwise_i8x16_s)
+unimplementedInstruction(_simd_i16x8_extadd_pairwise_i8x16_u)
+unimplementedInstruction(_simd_i32x4_extadd_pairwise_i16x8_s)
+unimplementedInstruction(_simd_i32x4_extadd_pairwise_i16x8_u)
+unimplementedInstruction(_simd_i16x8_abs)
+unimplementedInstruction(_simd_i16x8_neg)
+unimplementedInstruction(_simd_i16x8_q15mulr_sat_s)
+unimplementedInstruction(_simd_i16x8_all_true)
+unimplementedInstruction(_simd_i16x8_bitmask)
+unimplementedInstruction(_simd_i16x8_narrow_i32x4_s)
+unimplementedInstruction(_simd_i16x8_narrow_i32x4_u)
+unimplementedInstruction(_simd_i16x8_extend_low_i8x16_s)
+unimplementedInstruction(_simd_i16x8_extend_high_i8x16_s)
+unimplementedInstruction(_simd_i16x8_extend_low_i8x16_u)
+unimplementedInstruction(_simd_i16x8_extend_high_i8x16_u)
+unimplementedInstruction(_simd_i16x8_shl)
+unimplementedInstruction(_simd_i16x8_shr_s)
+unimplementedInstruction(_simd_i16x8_shr_u)
+unimplementedInstruction(_simd_i16x8_add)
+unimplementedInstruction(_simd_i16x8_add_sat_s)
+unimplementedInstruction(_simd_i16x8_add_sat_u)
+unimplementedInstruction(_simd_i16x8_sub)
+unimplementedInstruction(_simd_i16x8_sub_sat_s)
+unimplementedInstruction(_simd_i16x8_sub_sat_u)
+unimplementedInstruction(_simd_f64x2_nearest)
+unimplementedInstruction(_simd_i16x8_mul)
+unimplementedInstruction(_simd_i16x8_min_s)
+unimplementedInstruction(_simd_i16x8_min_u)
+unimplementedInstruction(_simd_i16x8_max_s)
+unimplementedInstruction(_simd_i16x8_max_u)
+reservedOpcode(0xfd9a01)
+unimplementedInstruction(_simd_i16x8_avgr_u)
+unimplementedInstruction(_simd_i16x8_extmul_low_i8x16_s)
+unimplementedInstruction(_simd_i16x8_extmul_high_i8x16_s)
+unimplementedInstruction(_simd_i16x8_extmul_low_i8x16_u)
+unimplementedInstruction(_simd_i16x8_extmul_high_i8x16_u)
+unimplementedInstruction(_simd_i32x4_abs)
+unimplementedInstruction(_simd_i32x4_neg)
+reservedOpcode(0xfda201)
+unimplementedInstruction(_simd_i32x4_all_true)
+unimplementedInstruction(_simd_i32x4_bitmask)
+reservedOpcode(0xfda501)
+reservedOpcode(0xfda601)
+unimplementedInstruction(_simd_i32x4_extend_low_i16x8_s)
+unimplementedInstruction(_simd_i32x4_extend_high_i16x8_s)
+unimplementedInstruction(_simd_i32x4_extend_low_i16x8_u)
+unimplementedInstruction(_simd_i32x4_extend_high_i16x8_u)
+unimplementedInstruction(_simd_i32x4_shl)
+unimplementedInstruction(_simd_i32x4_shr_s)
+unimplementedInstruction(_simd_i32x4_shr_u)
+unimplementedInstruction(_simd_i32x4_add)
+reservedOpcode(0xfdaf01)
+reservedOpcode(0xfdb001)
+unimplementedInstruction(_simd_i32x4_sub)
+reservedOpcode(0xfdb201)
+reservedOpcode(0xfdb301)
+reservedOpcode(0xfdb401)
+unimplementedInstruction(_simd_i32x4_mul)
+unimplementedInstruction(_simd_i32x4_min_s)
+unimplementedInstruction(_simd_i32x4_min_u)
+unimplementedInstruction(_simd_i32x4_max_s)
+unimplementedInstruction(_simd_i32x4_max_u)
+unimplementedInstruction(_simd_i32x4_dot_i16x8_s)
+reservedOpcode(0xfdbb01)
+unimplementedInstruction(_simd_i32x4_extmul_low_i16x8_s)
+unimplementedInstruction(_simd_i32x4_extmul_high_i16x8_s)
+unimplementedInstruction(_simd_i32x4_extmul_low_i16x8_u)
+unimplementedInstruction(_simd_i32x4_extmul_high_i16x8_u)
+unimplementedInstruction(_simd_i64x2_abs)
+unimplementedInstruction(_simd_i64x2_neg)
+reservedOpcode(0xfdc201)
+unimplementedInstruction(_simd_i64x2_all_true)
+unimplementedInstruction(_simd_i64x2_bitmask)
+reservedOpcode(0xfdc501)
+reservedOpcode(0xfdc601)
+unimplementedInstruction(_simd_i64x2_extend_low_i32x4_s)
+unimplementedInstruction(_simd_i64x2_extend_high_i32x4_s)
+unimplementedInstruction(_simd_i64x2_extend_low_i32x4_u)
+unimplementedInstruction(_simd_i64x2_extend_high_i32x4_u)
+unimplementedInstruction(_simd_i64x2_shl)
+unimplementedInstruction(_simd_i64x2_shr_s)
+unimplementedInstruction(_simd_i64x2_shr_u)
+unimplementedInstruction(_simd_i64x2_add)
+reservedOpcode(0xfdcf01)
+reservedOpcode(0xfdd001)
+unimplementedInstruction(_simd_i64x2_sub)
+reservedOpcode(0xfdd201)
+reservedOpcode(0xfdd301)
+reservedOpcode(0xfdd401)
+unimplementedInstruction(_simd_i64x2_mul)
+unimplementedInstruction(_simd_i64x2_eq)
+unimplementedInstruction(_simd_i64x2_ne)
+unimplementedInstruction(_simd_i64x2_lt_s)
+unimplementedInstruction(_simd_i64x2_gt_s)
+unimplementedInstruction(_simd_i64x2_le_s)
+unimplementedInstruction(_simd_i64x2_ge_s)
+unimplementedInstruction(_simd_i64x2_extmul_low_i32x4_s)
+unimplementedInstruction(_simd_i64x2_extmul_high_i32x4_s)
+unimplementedInstruction(_simd_i64x2_extmul_low_i32x4_u)
+unimplementedInstruction(_simd_i64x2_extmul_high_i32x4_u)
+unimplementedInstruction(_simd_f32x4_abs)
+unimplementedInstruction(_simd_f32x4_neg)
+reservedOpcode(0xfde201)
+unimplementedInstruction(_simd_f32x4_sqrt)
+unimplementedInstruction(_simd_f32x4_add)
+unimplementedInstruction(_simd_f32x4_sub)
+unimplementedInstruction(_simd_f32x4_mul)
+unimplementedInstruction(_simd_f32x4_div)
+unimplementedInstruction(_simd_f32x4_min)
+unimplementedInstruction(_simd_f32x4_max)
+unimplementedInstruction(_simd_f32x4_pmin)
+unimplementedInstruction(_simd_f32x4_pmax)
+unimplementedInstruction(_simd_f64x2_abs)
+unimplementedInstruction(_simd_f64x2_neg)
+reservedOpcode(0xfdee01)
+unimplementedInstruction(_simd_f64x2_sqrt)
+unimplementedInstruction(_simd_f64x2_add)
+unimplementedInstruction(_simd_f64x2_sub)
+unimplementedInstruction(_simd_f64x2_mul)
+unimplementedInstruction(_simd_f64x2_div)
+unimplementedInstruction(_simd_f64x2_min)
+unimplementedInstruction(_simd_f64x2_max)
+unimplementedInstruction(_simd_f64x2_pmin)
+unimplementedInstruction(_simd_f64x2_pmax)
+unimplementedInstruction(_simd_i32x4_trunc_sat_f32x4_s)
+unimplementedInstruction(_simd_i32x4_trunc_sat_f32x4_u)
+unimplementedInstruction(_simd_f32x4_convert_i32x4_s)
+unimplementedInstruction(_simd_f32x4_convert_i32x4_u)
+unimplementedInstruction(_simd_i32x4_trunc_sat_f64x2_s_zero)
+unimplementedInstruction(_simd_i32x4_trunc_sat_f64x2_u_zero)
+unimplementedInstruction(_simd_f64x2_convert_low_i32x4_s)
+unimplementedInstruction(_simd_f64x2_convert_low_i32x4_u)
+
+    ###################################
+    ## Relaxed SIMD instructions     ##
+    ## Opcodes 0x100 - 0x113         ##
+    ###################################
+
+unimplementedInstruction(_simd_i8x16_relaxed_swizzle)
+unimplementedInstruction(_simd_i32x4_relaxed_trunc_f32x4_s)
+unimplementedInstruction(_simd_i32x4_relaxed_trunc_f32x4_u)
+unimplementedInstruction(_simd_i32x4_relaxed_trunc_f64x2_s_zero)
+unimplementedInstruction(_simd_i32x4_relaxed_trunc_f64x2_u_zero)
+unimplementedInstruction(_simd_f32x4_relaxed_madd)
+unimplementedInstruction(_simd_f32x4_relaxed_nmadd)
+unimplementedInstruction(_simd_f64x2_relaxed_madd)
+unimplementedInstruction(_simd_f64x2_relaxed_nmadd)
+unimplementedInstruction(_simd_i8x16_relaxed_laneselect)
+unimplementedInstruction(_simd_i16x8_relaxed_laneselect)
+unimplementedInstruction(_simd_i32x4_relaxed_laneselect)
+unimplementedInstruction(_simd_i64x2_relaxed_laneselect)
+unimplementedInstruction(_simd_f32x4_relaxed_min)
+unimplementedInstruction(_simd_f32x4_relaxed_max)
+unimplementedInstruction(_simd_f64x2_relaxed_min)
+unimplementedInstruction(_simd_f64x2_relaxed_max)
+unimplementedInstruction(_simd_i16x8_relaxed_q15mulr_s)
+unimplementedInstruction(_simd_i16x8_relaxed_dot_i8x16_i7x16_s)
+unimplementedInstruction(_simd_i32x4_relaxed_dot_i8x16_i7x16_add_s)
+
+    #########################
+    ## Atomic instructions ##
+    #########################
+
+unimplementedInstruction(_memory_atomic_notify)
+unimplementedInstruction(_memory_atomic_wait32)
+unimplementedInstruction(_memory_atomic_wait64)
+unimplementedInstruction(_atomic_fence)
+
+reservedOpcode(atomic_0x4)
+reservedOpcode(atomic_0x5)
+reservedOpcode(atomic_0x6)
+reservedOpcode(atomic_0x7)
+reservedOpcode(atomic_0x8)
+reservedOpcode(atomic_0x9)
+reservedOpcode(atomic_0xa)
+reservedOpcode(atomic_0xb)
+reservedOpcode(atomic_0xc)
+reservedOpcode(atomic_0xd)
+reservedOpcode(atomic_0xe)
+reservedOpcode(atomic_0xf)
+
+unimplementedInstruction(_i32_atomic_load)
+unimplementedInstruction(_i64_atomic_load)
+unimplementedInstruction(_i32_atomic_load8_u)
+unimplementedInstruction(_i32_atomic_load16_u)
+unimplementedInstruction(_i64_atomic_load8_u)
+unimplementedInstruction(_i64_atomic_load16_u)
+unimplementedInstruction(_i64_atomic_load32_u)
+unimplementedInstruction(_i32_atomic_store)
+unimplementedInstruction(_i64_atomic_store)
+unimplementedInstruction(_i32_atomic_store8_u)
+unimplementedInstruction(_i32_atomic_store16_u)
+unimplementedInstruction(_i64_atomic_store8_u)
+unimplementedInstruction(_i64_atomic_store16_u)
+unimplementedInstruction(_i64_atomic_store32_u)
+unimplementedInstruction(_i32_atomic_rmw_add)
+unimplementedInstruction(_i64_atomic_rmw_add)
+unimplementedInstruction(_i32_atomic_rmw8_add_u)
+unimplementedInstruction(_i32_atomic_rmw16_add_u)
+unimplementedInstruction(_i64_atomic_rmw8_add_u)
+unimplementedInstruction(_i64_atomic_rmw16_add_u)
+unimplementedInstruction(_i64_atomic_rmw32_add_u)
+unimplementedInstruction(_i32_atomic_rmw_sub)
+unimplementedInstruction(_i64_atomic_rmw_sub)
+unimplementedInstruction(_i32_atomic_rmw8_sub_u)
+unimplementedInstruction(_i32_atomic_rmw16_sub_u)
+unimplementedInstruction(_i64_atomic_rmw8_sub_u)
+unimplementedInstruction(_i64_atomic_rmw16_sub_u)
+unimplementedInstruction(_i64_atomic_rmw32_sub_u)
+unimplementedInstruction(_i32_atomic_rmw_and)
+unimplementedInstruction(_i64_atomic_rmw_and)
+unimplementedInstruction(_i32_atomic_rmw8_and_u)
+unimplementedInstruction(_i32_atomic_rmw16_and_u)
+unimplementedInstruction(_i64_atomic_rmw8_and_u)
+unimplementedInstruction(_i64_atomic_rmw16_and_u)
+unimplementedInstruction(_i64_atomic_rmw32_and_u)
+unimplementedInstruction(_i32_atomic_rmw_or)
+unimplementedInstruction(_i64_atomic_rmw_or)
+unimplementedInstruction(_i32_atomic_rmw8_or_u)
+unimplementedInstruction(_i32_atomic_rmw16_or_u)
+unimplementedInstruction(_i64_atomic_rmw8_or_u)
+unimplementedInstruction(_i64_atomic_rmw16_or_u)
+unimplementedInstruction(_i64_atomic_rmw32_or_u)
+unimplementedInstruction(_i32_atomic_rmw_xor)
+unimplementedInstruction(_i64_atomic_rmw_xor)
+unimplementedInstruction(_i32_atomic_rmw8_xor_u)
+unimplementedInstruction(_i32_atomic_rmw16_xor_u)
+unimplementedInstruction(_i64_atomic_rmw8_xor_u)
+unimplementedInstruction(_i64_atomic_rmw16_xor_u)
+unimplementedInstruction(_i64_atomic_rmw32_xor_u)
+unimplementedInstruction(_i32_atomic_rmw_xchg)
+unimplementedInstruction(_i64_atomic_rmw_xchg)
+unimplementedInstruction(_i32_atomic_rmw8_xchg_u)
+unimplementedInstruction(_i32_atomic_rmw16_xchg_u)
+unimplementedInstruction(_i64_atomic_rmw8_xchg_u)
+unimplementedInstruction(_i64_atomic_rmw16_xchg_u)
+unimplementedInstruction(_i64_atomic_rmw32_xchg_u)
+unimplementedInstruction(_i32_atomic_rmw_cmpxchg)
+unimplementedInstruction(_i64_atomic_rmw_cmpxchg)
+unimplementedInstruction(_i32_atomic_rmw8_cmpxchg_u)
+unimplementedInstruction(_i32_atomic_rmw16_cmpxchg_u)
+unimplementedInstruction(_i64_atomic_rmw8_cmpxchg_u)
+unimplementedInstruction(_i64_atomic_rmw16_cmpxchg_u)
+unimplementedInstruction(_i64_atomic_rmw32_cmpxchg_u)
+end

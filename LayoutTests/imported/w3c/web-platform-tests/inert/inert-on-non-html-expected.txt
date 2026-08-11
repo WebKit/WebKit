@@ -1,0 +1,56 @@
+
+PASS <span>non-inert</span>
+PASS <span inert="">inert</span>
+PASS <foo>non-inert</foo>
+PASS <foo inert="">inert</foo>
+PASS <foo-bar>non-inert</foo-bar>
+PASS <foo-bar inert="">inert</foo-bar>
+PASS <math><mi>non-inert</mi></math>
+PASS <math inert=""><mi>non-inert</mi></math>
+PASS <math><mi inert="">non-inert</mi></math>
+PASS <svg><text>non-inert</text></svg>
+PASS <svg inert=""><text>non-inert</text></svg>
+PASS <svg><text inert="">non-inert</text></svg>
+PASS <span inert=""><span>inert</span></span>
+PASS <span inert=""><foo>inert</foo></span>
+PASS <span inert=""><foo-bar>inert</foo-bar></span>
+PASS <span inert=""><math><mi>inert</mi></math></span>
+PASS <span inert=""><svg><text>inert</text></svg></span>
+PASS <math inert=""><mi><span>non-inert</span></mi></math>
+PASS <math><mi inert=""><span>non-inert</span></mi></math>
+PASS <svg inert=""><foreignObject><span>non-inert</span></foreignObject></svg>
+PASS <svg><foreignObject inert=""><span>non-inert</span></foreignObject></svg>
+PASS <math><mi><span inert="">inert</span></mi></math>
+PASS <math><mi><foo inert="">inert</foo></mi></math>
+PASS <math><mi><foo-bar inert="">inert</foo-bar></mi></math>
+PASS <svg><foreignObject><span inert="">inert</span></foreignObject></svg>
+PASS <svg><foreignObject><foo inert="">inert</foo></foreignObject></svg>
+PASS <svg><foreignObject><foo-bar inert="">inert</foo-bar></foreignObject></svg>
+non-inert
+inert
+non-inert
+inert
+non-inert
+inert
+non-inert
+non-inert
+non-inert
+non-inert
+non-inert
+non-inert
+inert
+inert
+inert
+inert
+inert
+non-inert
+non-inert
+non-inert
+non-inert
+inert
+inert
+inert
+inert
+inert
+inert
+

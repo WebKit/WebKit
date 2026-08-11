@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container"></div>
+
+<script>
+var output = "This test ensures toggling aria-hidden on a deep DOM does not crash due to unbounded recursion in enumerateDescendantsIncludingIgnored.\n\n";
+
+let container = document.getElementById("container");
+let deepest = container;
+for (let i = 0; i < 509; i++) {
+    const div = document.createElement("div");
+    deepest.appendChild(div);
+    deepest = div;
+}
+deepest.innerText = "Deep content";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    setTimeout(async function() {
+        // Toggle aria-hidden to trigger recomputeIsIgnoredForDescendants, which
+        // calls enumerateDescendantsIncludingIgnored on the entire subtree.
+        container.setAttribute("aria-hidden", "true");
+        output += await expectAsync("webArea.childrenCount", "0");
+
+        container.setAttribute("aria-hidden", "false");
+        output += await expectAsync("webArea.childrenCount > 0", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

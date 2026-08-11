@@ -1,0 +1,3 @@
+ PASS: element at 28, 20 is svg
+PASS: element at 28, 130 is svg
+

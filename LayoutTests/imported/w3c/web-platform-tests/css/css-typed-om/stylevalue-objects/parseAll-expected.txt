@@ -1,0 +1,7 @@
+
+PASS CSSStyleValue.parseAll() with a valid property returns a list with a single CSSStyleValue
+PASS CSSStyleValue.parseAll() is not case sensitive
+PASS CSSStyleValue.parseAll() with a valid list-valued property returns a list with a single CSSStyleValue
+PASS CSSStyleValue.parseAll() with a valid shorthand property returns a CSSStyleValue
+PASS CSSStyleValue.parseAll() with a valid custom property returns a list with a single CSSStyleValue
+

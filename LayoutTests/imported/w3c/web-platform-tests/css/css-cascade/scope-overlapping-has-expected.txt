@@ -1,0 +1,5 @@
+hello
+hello
+
+PASS :has() with inner :scope works when scopes overlap
+

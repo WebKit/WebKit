@@ -1,0 +1,8 @@
+PASS down arrow key did not scroll to second snap point
+PASS page down scrolled to the first snap point
+PASS down arrow key scrolled away from second div.
+PASS up arrow scrolled back to second div
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

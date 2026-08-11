@@ -1,0 +1,89 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html><body>
+<p>This test passes if it does not crash.</p>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+}
+
+function failTest(error) {
+    document.body.textContent = `Fail: ${error.message}`;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function main() {
+    if (!window.IPC) {
+        window.testRunner?.notifyDone();
+        return;
+    }
+
+    const {CoreIPC} = await import('./coreipc.js');
+    CoreIPC.default_timeout = 30;
+
+    function makeSharedBuffer(bytes) {
+        return { optionalValue: { "asFragmentedSharedBuffer": { "toIPCData": {
+            variantType: "Vector<std::span<const uint8_t>>", variant: [ Array.from(bytes) ]
+        } } } };
+    }
+
+    let initSB = makeSharedBuffer(new TextEncoder().encode(JSON.stringify({
+        sinf: ["AAAADGZybWFtcDRhAAAAFHNjaG0AAAAAY2JjcwABAAAAAAA5c2NoaQAAADF0ZW5jAQAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAENwoLj77jCjwCAAw3SqKao8="]
+    })));
+    let certSB = makeSharedBuffer(new Uint8Array(64));
+
+    CoreIPC.GPU.RemoteLegacyCDMFactoryProxy.SupportsKeySystem(0,
+        { keySystem: "com.apple.fps.3_0", mimeType: {} }, ()=>{});
+
+    let cdmId;
+    CoreIPC.GPU.RemoteLegacyCDMFactoryProxy.CreateCDM(0,
+        { keySystem: "com.apple.fps.3_0", playerId: {} },
+        (r,_,t) => { cdmId = t.identifier.parsedValue?.optionalValue?.parsedValue; });
+    if (cdmId === undefined)
+        throw new Error('CreateCDM failed');
+
+    for (let i = 0; i < 3; i++) {
+        let sessA;
+        CoreIPC.GPU.RemoteLegacyCDMProxy.CreateSession(Number(cdmId), { logIdentifier: 1n },
+            (r,_,t) => { sessA = t.identifier.parsedValue?.optionalValue?.parsedValue; });
+        if (sessA === undefined)
+            break;
+
+        CoreIPC.GPU.RemoteLegacyCDMSessionProxy.GenerateKeyRequest(Number(sessA),
+            { mimeType: "video/mp4", initData: initSB, mediaKeysHashSalt: "x" }, ()=>{});
+
+        // Creates AVContentKeySession + bg delegate queue + fires didProvideContentKeyRequest
+        // (bg thread takes RefPtr parent).
+        CoreIPC.GPU.RemoteLegacyCDMSessionProxy.Update(Number(sessA), { update: certSB }, ()=>{});
+
+        // Drop the only main-thread RefPtr; bg's `parent` may become last owner.
+        CoreIPC.GPU.RemoteLegacyCDMFactoryProxy.RemoveSession(0, { identifier: sessA }, ()=>{});
+
+        // Burst CreateSession to drive m_sessions.append concurrently with any deferred destruction.
+        let burst = [];
+        for (let k = 0; k < 32; k++) {
+            let s;
+            CoreIPC.GPU.RemoteLegacyCDMProxy.CreateSession(Number(cdmId), { logIdentifier: BigInt(100 + k) },
+                (r,_,t) => { s = t.identifier.parsedValue?.optionalValue?.parsedValue; });
+            if (s !== undefined)
+                burst.push(s);
+        }
+        for (const s of burst)
+            CoreIPC.GPU.RemoteLegacyCDMFactoryProxy.RemoveSession(0, { identifier: s }, ()=>{});
+    }
+
+    await sleep(200);
+   
+    window.testRunner?.notifyDone();
+}
+
+main().catch(error =>  failTest(error));
+
+</script>
+</body></html>

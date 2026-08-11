@@ -1,0 +1,6 @@
+
+
+PASS Setup worker
+PASS Make sure a load that is transferred in network process continues even if service worker gets terminated.
+PASS Make sure a load that a preload response can be read right away.
+

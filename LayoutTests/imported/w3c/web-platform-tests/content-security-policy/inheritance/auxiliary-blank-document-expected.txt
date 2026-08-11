@@ -1,0 +1,7 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS window.open() inherits CSPs on initial about:blank.
+PASS For transient doc, violation event occurs in auxiliary, not opener window.
+TIMEOUT window.open() inherits CSPs on transient about:blank. Test timed out
+

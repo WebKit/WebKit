@@ -1,0 +1,9 @@
+<html id="html">
+<body contenteditable="true">VisiblePositions created at [html, x] where html is non-editable should descend into an editable body, for convenience.  Everything on this page should be selected.
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+var e = document.getElementById("html");
+window.getSelection().setBaseAndExtent(e, 1, e, 2);
+</script>
+</body></html>

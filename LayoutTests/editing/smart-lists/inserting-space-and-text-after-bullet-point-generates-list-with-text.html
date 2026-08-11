@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test-asterisk" contenteditable></div>
+<div id="test-bullet" contenteditable></div>
+<script>
+Markup.description('Typing "* " at the start of two consecutive lines should auto-convert them into an unordered disc list. Both the ASCII asterisk (U+002A) and the bullet character (U+2022) should trigger the same conversion.');
+
+var asteriskTarget = document.getElementById('test-asterisk');
+asteriskTarget.focus();
+[...'* Hello\n* World'].forEach(typeCharacterCommand);
+Markup.dump('test-asterisk', 'Asterisk (U+002A)');
+
+var bulletTarget = document.getElementById('test-bullet');
+bulletTarget.focus();
+[...'• Hello\n• World'].forEach(typeCharacterCommand);
+Markup.dump('test-bullet', 'Bullet (U+2022)');
+</script>
+</body>
+</html>

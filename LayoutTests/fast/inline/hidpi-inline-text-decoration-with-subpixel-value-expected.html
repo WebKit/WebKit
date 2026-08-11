@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that inline border is positioned properly.</title>
+<style>
+  div {
+    border: 0.5px solid blue;
+    position: absolute;
+    width: 26px;
+    height: 10px;
+  }
+</style>
+</head>
+<body>
+
+<script>
+  for(i = 0; i < 9; ++i) { 
+    for(j = 1; j < 3; ++j) {    
+      var e = document.createElement("div");
+      e.style.left = j * 30 + "px";
+      e.style.top = 36.5 + (30 * i) + "px";
+      document.body.appendChild(e);
+    }
+  }
+
+  for(i = 0; i < 9; ++i) { 
+    var e = document.createElement("div");
+    e.style.width = "26px";
+    e.style.height = "10px";
+    e.style.left = 3 * 30 + "px";
+    e.style.top = 36.5 + (30 * i) + "px";
+    document.body.appendChild(e);
+  }
+
+  for(i = 0; i < 9; ++i) { 
+    var e = document.createElement("div");
+    e.style.width = "26px";
+    e.style.height = "10px";
+    e.style.left = 4 * 30 + "px";
+    e.style.top = 36.5 + (30 * i) + "px";
+    document.body.appendChild(e);
+  }
+
+  for(i = 0; i < 9; ++i) { 
+    var e = document.createElement("div");
+    e.style.width = "26px";
+    e.style.height = "10px";
+    e.style.left = 5 * 30 + "px";
+    e.style.top = 36.5 + (30 * i) + "px";
+    document.body.appendChild(e);
+  }
+
+  for(i = 0; i < 9; ++i) { 
+    for(j = 6; j < 8; ++j) {    
+      var e = document.createElement("div");
+      e.style.left = j * 30 + "px";
+      e.style.top = 36 + (30 * i) + "px";
+      e.style.borderWidth = "1px";
+      document.body.appendChild(e);
+    }
+  }
+
+  for(i = 0; i < 9; ++i) { 
+    var e = document.createElement("div");
+    e.style.width = "26px";
+    e.style.height = "10px";
+    e.style.left = 8 * 30 + "px";
+    e.style.top = 36 + (30 * i) + "px";
+    e.style.borderWidth = "1px";
+    document.body.appendChild(e);
+  }
+
+  for(i = 0; i < 9; ++i) { 
+    var e = document.createElement("div");
+    e.style.width = "26px";
+    e.style.height = "10px";
+    e.style.left = 9 * 30 + "px";
+    e.style.top = 36 + (30 * i) + "px";
+    e.style.borderWidth = "1px";
+    document.body.appendChild(e);
+  }
+</script>
+</body>
+</html>

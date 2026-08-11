@@ -1,0 +1,13 @@
+<html>
+<script>
+    function swingBack() 
+    {
+        if (window.testRunner) {
+            window.testRunner.closeIdleLocalStorageDatabases();
+        }
+        location.href='../domstorage/localstorage/close-idle-localstorage-databases-immediately.html';
+    }
+</script>
+<body onload='setTimeout(swingBack(), 100);'>
+</body>
+</html>

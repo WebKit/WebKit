@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("Protocol.Enum");
+
+    suite.addTestCase({
+        name: "Protocol.Enum.NotMatchingDebuggableType",
+        description: "Check that protocol domains that do not match the current debuggable type still exist in `InspectorBackend.Enum`.",
+        test() {
+            InspectorTest.assert(WI.sharedApp.debuggableType !== WI.DebuggableType.ServiceWorker, `Should not be a '${WI.DebuggableType.ServiceWorker}' debuggable.`);
+            InspectorTest.expectTrue(InspectorBackend.Enum.ServiceWorker, "Should have a 'ServiceWorker' domain to get protocol enums.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests to validate being able to still get enum values for domains that aren't active.</p>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Tests XMLHttpRequest.responseType of "json" with a valid payload.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS jsonXHR.response is null
+PASS jsonXHR.response is non-null.
+PASS jsonXHR.response is jsonXHR.response
+PASS JSON.stringify(jsonXHR.response) is JSON.stringify(JSON.parse(textXHR.responseText))
+PASS jsonXHR.open("GET", jsonUrl); jsonXHR.response is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

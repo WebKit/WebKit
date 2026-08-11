@@ -1,0 +1,6 @@
+
+PASS Cross-origin stylesheet with wrong MIME type
+FAIL Cross-origin redirect to same-origin with wrong MIME type assert_equals: cross-origin redirect to same-origin with wrong MIME type should fire error expected "error" but got "load"
+PASS Same-origin redirect to cross-origin with wrong MIME type
+FAIL Same-origin redirect to cross-origin redirect back to same-origin with wrong MIME type assert_equals: double redirect through cross-origin with wrong MIME type should fire error expected "error" but got "load"
+

@@ -1,0 +1,6 @@
+This test checks that the SVG UA stylesheet applies outline via :focus-visible, not :focus.
+
+
+PASS Mouse click on SVG element should not trigger UA focus outline
+PASS Keyboard focus on SVG element should trigger UA focus outline
+

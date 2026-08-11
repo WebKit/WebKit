@@ -1,0 +1,97 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.ShadowRootCrossFrameIsolation");
+
+    // main(A) -> child(B) -> grandchild(A). Each frame's FrameDOMAgent mints node ids from its
+    // own counter, so the two frames can hand out the same raw NodeId; `target.identifier + ":" + id`
+    // scoping keeps the frontend from confusing them. This test guards that scoping.
+    let childTarget = null;
+    let grandchildTarget = null;
+
+    async function frameTargetForURLContainingWhenReady(substring, maxAttempts = 50) {
+        for (let attempt = 0; attempt < maxAttempts; ++attempt) {
+            let target = await frameTargetForURLContaining(substring);
+            if (target && WI.domManager.frameTargetDocumentForTarget(target))
+                return target;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return null;
+    }
+
+    async function expandToHost(target, role) {
+        let doc = WI.domManager.frameTargetDocumentForTarget(target);
+        let htmlNode = doc.children.find((child) => child.nodeName() === "HTML");
+        await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+        let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+        await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+        return bodyNode.children.find((child) => child.getAttribute("data-role") === role);
+    }
+
+    function awaitShadowRootPushedOn(target) {
+        return new Promise((resolve) => {
+            WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, function listener(event) {
+                let node = event.data.node;
+                if (!node || node.owningTarget !== target || !node.isShadowRoot())
+                    return;
+                WI.domManager.removeEventListener(WI.DOMManager.Event.NodeInserted, listener, null);
+                resolve(event.data);
+            });
+        });
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the child (B) and grandchild (A) frame targets.",
+        async test() {
+            childTarget = await frameTargetForURLContainingWhenReady("shadow-root-child-frame.html");
+            grandchildTarget = await frameTargetForURLContainingWhenReady("shadow-root-grandchild-frame.html");
+
+            InspectorTest.expectNotNull(childTarget, "Should find the child frame target (host B).");
+            InspectorTest.expectNotNull(grandchildTarget, "Should find the grandchild frame target (host A).");
+            InspectorTest.expectThat(childTarget !== grandchildTarget, "Child and grandchild should be distinct targets.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.ShadowRootCrossFrameIsolation.DistinctScopedNodes",
+        description: "Each frame pushing a shadow root produces a distinct scoped WI.DOMNode, even with colliding raw node ids.",
+        async test() {
+            let childHost = await expandToHost(childTarget, "child-host");
+            let grandchildHost = await expandToHost(grandchildTarget, "grandchild-host");
+            InspectorTest.expectNotNull(childHost, "Should find #child-host in the child frame.");
+            InspectorTest.expectNotNull(grandchildHost, "Should find #grandchild-host in the grandchild frame.");
+
+            let childPushPromise = awaitShadowRootPushedOn(childTarget);
+            let grandchildPushPromise = awaitShadowRootPushedOn(grandchildTarget);
+
+            childTarget.RuntimeAgent.evaluate.invoke({expression: "attachShadowToChildHost()", objectGroup: "test"});
+            grandchildTarget.RuntimeAgent.evaluate.invoke({expression: "attachShadowToGrandchildHost()", objectGroup: "test"});
+
+            let childShadow = (await childPushPromise).node;
+            let grandchildShadow = (await grandchildPushPromise).node;
+
+            InspectorTest.expectEqual(childShadow.owningTarget, childTarget, "Child shadow root should be owned by the child target.");
+            InspectorTest.expectEqual(grandchildShadow.owningTarget, grandchildTarget, "Grandchild shadow root should be owned by the grandchild target.");
+            InspectorTest.expectThat(childShadow !== grandchildShadow, "The two shadow roots must be distinct WI.DOMNode instances.");
+            InspectorTest.expectThat(childShadow.id !== grandchildShadow.id, "The two shadow roots must have distinct scoped ids.");
+
+            // The cross-target lookup below is the real guard: it only bites when the two frames'
+            // raw ids collide, but holds either way, so the expected output stays stable.
+            InspectorTest.expectEqual(WI.domManager.nodeForIdInFrameTarget(childShadow._rawNodeId, childTarget), childShadow, "Child shadow root should resolve on the child target by its raw id.");
+            InspectorTest.expectEqual(WI.domManager.nodeForIdInFrameTarget(grandchildShadow._rawNodeId, grandchildTarget), grandchildShadow, "Grandchild shadow root should resolve on the grandchild target by its raw id.");
+            InspectorTest.expectThat(WI.domManager.nodeForIdInFrameTarget(childShadow._rawNodeId, grandchildTarget) !== childShadow, "Child's raw id must not resolve to the child's node on the grandchild target.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that shadow roots pushed from two distinct cross-origin frame targets stay isolated under site isolation, even with colliding raw node ids.</p>
+<iframe src="http://127.0.0.1:8000/site-isolation/inspector/dom/resources/shadow-root-child-frame.html"></iframe>
+</body>
+</html>

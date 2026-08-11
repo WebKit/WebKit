@@ -1,0 +1,106 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <style>
+        #slider {
+            width: 300px;
+            height: 30px;
+            background: #ccc;
+            position: relative;
+        }
+        #non-slider {
+            width: 300px;
+            height: 30px;
+            background: #eee;
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        jsTestIsAsync = true;
+        let mouseDownFired = false;
+        let mouseDownTrusted = false;
+        let mouseMoveCount = 0;
+        let mouseMoveTrusted = false;
+        let mouseUpFired = false;
+        let mouseUpTrusted = false;
+        let nonSliderMouseDownFired = false;
+        let nonSliderMouseMoveFired = false;
+        let nonSliderMouseUpFired = false;
+
+        window.internals?.setTopDocumentURLForQuirks("https://www.facebook.com");
+
+        addEventListener("load", async () => {
+            description("Tests that touch-dragging a [role='slider'] element on facebook.com dispatches synthetic mouse events, and that non-slider elements do not receive them (rdar://174179871)");
+
+            if (!window.testRunner || !testRunner.runUIScript) {
+                debug("This test requires WebKitTestRunner.");
+                finishJSTest();
+                return;
+            }
+
+            const slider = document.getElementById("slider");
+            const sliderRect = slider.getBoundingClientRect();
+
+            slider.addEventListener("mousedown", (event) => {
+                mouseDownFired = true;
+                mouseDownTrusted = event.isTrusted;
+            });
+            slider.addEventListener("mousemove", (event) => {
+                mouseMoveCount++;
+                mouseMoveTrusted = event.isTrusted;
+            });
+            slider.addEventListener("mouseup", (event) => {
+                mouseUpFired = true;
+                mouseUpTrusted = event.isTrusted;
+            });
+
+            const nonSlider = document.getElementById("non-slider");
+            const nonSliderRect = nonSlider.getBoundingClientRect();
+
+            nonSlider.addEventListener("mousedown", () => {
+                nonSliderMouseDownFired = true;
+            });
+            nonSlider.addEventListener("mousemove", () => {
+                nonSliderMouseMoveFired = true;
+            });
+            nonSlider.addEventListener("mouseup", () => {
+                nonSliderMouseUpFired = true;
+            });
+
+            const startX = sliderRect.left + sliderRect.width * 0.25;
+            const startY = sliderRect.top + sliderRect.height / 2;
+            const endX = sliderRect.left + sliderRect.width * 0.75;
+
+            await UIHelper.dragFromPointToPoint(startX, startY, endX, startY, 0.5);
+
+            shouldBeTrue("mouseDownFired");
+            shouldBeTrue("mouseDownTrusted");
+            shouldBeTrue("mouseMoveCount > 0");
+            shouldBeTrue("mouseMoveTrusted");
+            shouldBeTrue("mouseUpFired");
+            shouldBeTrue("mouseUpTrusted");
+
+            const nsStartX = nonSliderRect.left + nonSliderRect.width * 0.25;
+            const nsStartY = nonSliderRect.top + nonSliderRect.height / 2;
+            const nsEndX = nonSliderRect.left + nonSliderRect.width * 0.75;
+
+            await UIHelper.dragFromPointToPoint(nsStartX, nsStartY, nsEndX, nsStartY, 0.5);
+
+            shouldBeFalse("nonSliderMouseDownFired");
+            shouldBeFalse("nonSliderMouseMoveFired");
+            shouldBeFalse("nonSliderMouseUpFired");
+
+            finishJSTest();
+        });
+    </script>
+</head>
+<body>
+<div id="slider" role="slider" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+<div id="non-slider"></div>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

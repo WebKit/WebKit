@@ -1,0 +1,4 @@
+
+FAIL Check empty results and parameters undefined is not a constructor (evaluating 'new WebAssembly.Function(functype, func)')
+FAIL Check all types undefined is not a constructor (evaluating 'new WebAssembly.Function(functype, func)')
+

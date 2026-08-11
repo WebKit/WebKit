@@ -1,0 +1,47 @@
+<style>
+    canvas {
+        width: 200px;
+        height: 200px;
+    }
+</style>
+<body>
+    <p>This test verifies that clip state is preserved across canvas recording flush boundaries.</p>
+    <canvas id="canvas"></canvas>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 200;
+        canvas.height = 200;
+
+        // Fill entire canvas green.
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, 200, 200);
+
+        // Set up a clipping region.
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(50, 50, 100, 100);
+        ctx.clip();
+
+        // Use a double requestAnimationFrame to guarantee at least one
+        // composite cycle (prepareForDisplay) happens between setting up
+        // the clip and the subsequent draw. This flushes the canvas
+        // recording to the GPU surface and starts a new recording.
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                // This fillRect should still be clipped to (50,50)-(150,150).
+                // Without proper state replay the clip would be lost after
+                // the recording flush, and the blue would cover the entire canvas.
+                ctx.fillStyle = 'blue';
+                ctx.fillRect(0, 0, 200, 200);
+                ctx.restore();
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        });
+    </script>
+</body>

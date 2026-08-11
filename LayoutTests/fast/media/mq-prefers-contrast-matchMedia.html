@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>CSS4 media query test: prefers-contrast using matchMedia and addListener.</title>
+<script>
+
+function runTest()
+{
+    if (!window.internals)
+        return;
+
+    var query = window.matchMedia("(prefers-contrast)");
+    query.addListener(() => {
+        document.getElementById("after").textContent = query.matches ? "true" : "false";
+        queryFired = true;
+        checkDone();
+    });
+
+    document.getElementById("before").textContent = query.matches ? "true" : "false";
+    window.internals.settings.forcedPrefersContrastAccessibilityValue = "on";
+    testRunner.runUIScript(`
+        (function() {
+            uiController.simulateAccessibilitySettingsChangeNotification(function() {
+                uiController.uiScriptComplete("Done");
+            });
+        })();`, function (result) {
+            scriptRan = true;
+            checkDone();
+        }
+    );
+}
+
+let queryFired = false;
+let scriptRan = false;
+
+function checkDone() {
+    if (queryFired && scriptRan)
+        testRunner.notifyDone();
+}
+
+window.addEventListener("load", runTest, false);
+</script>
+</head>
+<body>
+  <p>Initial value of query.matches: <span id="before">unknown</span> - should be false</p>
+  <p>Updated value of query.matches: <span id="after">unknown</span> - should be true</p>
+  <p>Note the updated value will only be filled if the listener fires.</p>
+</body>
+</html>

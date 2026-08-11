@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500px" height="500px">
+    <defs>
+        <filter id="shadow-1" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="-50" dy="-50" stdDeviation="0" flood-color="cyan" x="0" y="0" width="100" height="100"/>
+        </filter>
+        <filter id="shadow-2" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="50" dy="-50" stdDeviation="0" flood-color="cyan" x="150" y="0" width="100" height="100"/>
+        </filter>
+        <filter id="shadow-3" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="-50" dy="50" stdDeviation="0" flood-color="cyan" x="0" y="150" width="100" height="100"/>
+        </filter>
+        <filter id="shadow-4" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="50" dy="50" stdDeviation="0" flood-color="cyan" x="150" y="150" width="100" height="100"/>
+        </filter>
+    </defs>
+    <rect x="50" y="50" width="150" height="150" style="fill:green; filter:url(#shadow-1);"/>
+    <rect x="50" y="50" width="150" height="150" style="fill:green; filter:url(#shadow-2);"/>
+    <rect x="50" y="50" width="150" height="150" style="fill:green; filter:url(#shadow-3);"/>
+    <rect x="50" y="50" width="150" height="150" style="fill:green; filter:url(#shadow-4);"/>
+</svg>

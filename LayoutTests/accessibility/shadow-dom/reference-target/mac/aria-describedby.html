@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="../../../../resources/accessibility-helper.js"></script>
+    <script src="../../../../resources/js-test.js"></script>
+</head>
+<body>
+<div class="container">
+    <input id="input-1" aria-describedby="x-description-1">
+    <x-description-1 id="x-description-1">
+        <template shadowrootmode="closed" shadowrootreferencetarget="description-1">
+        <span>FAIL IF INCLUDED</span>
+        <span id="description-1">Description 1</span>
+        </template>
+    </x-description-1>
+</div>
+<script>
+description("This tests that using aria-describedby to refer to an element indirectly via referenceTarget causes the description to be computed correctly.");
+
+var input1 = accessibilityController.accessibleElementById("input-1");
+let output = expect("input1.customContent", "'description: Description 1'");
+
+debug(output);
+</script>
+</body>
+</html>

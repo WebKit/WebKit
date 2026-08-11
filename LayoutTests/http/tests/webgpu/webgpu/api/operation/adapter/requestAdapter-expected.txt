@@ -1,0 +1,40 @@
+
+PASS :requestAdapter:powerPreference="_undef_";forceFallbackAdapter="_undef_"
+PASS :requestAdapter:powerPreference="_undef_";forceFallbackAdapter=false
+PASS :requestAdapter:powerPreference="_undef_";forceFallbackAdapter=true
+PASS :requestAdapter:powerPreference="low-power";forceFallbackAdapter="_undef_"
+PASS :requestAdapter:powerPreference="low-power";forceFallbackAdapter=false
+PASS :requestAdapter:powerPreference="low-power";forceFallbackAdapter=true
+PASS :requestAdapter:powerPreference="high-performance";forceFallbackAdapter="_undef_"
+PASS :requestAdapter:powerPreference="high-performance";forceFallbackAdapter=false
+PASS :requestAdapter:powerPreference="high-performance";forceFallbackAdapter=true
+PASS :requestAdapter_invalid_featureLevel:featureLevel="_undef_"
+PASS :requestAdapter_invalid_featureLevel:featureLevel="core"
+PASS :requestAdapter_invalid_featureLevel:featureLevel="compatibility"
+FAIL :requestAdapter_invalid_featureLevel:featureLevel="cor" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestAdapter.spec.js:147:11
+ Reached unreachable code
+FAIL :requestAdapter_invalid_featureLevel:featureLevel="Core" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestAdapter.spec.js:147:11
+ Reached unreachable code
+FAIL :requestAdapter_invalid_featureLevel:featureLevel="compatability" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestAdapter.spec.js:147:11
+ Reached unreachable code
+FAIL :requestAdapter_invalid_featureLevel:featureLevel="" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestAdapter.spec.js:147:11
+ Reached unreachable code
+FAIL :requestAdapter_invalid_featureLevel:featureLevel="%20" assert_unreached:
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/adapter/requestAdapter.spec.js:147:11
+ Reached unreachable code
+PASS :requestAdapter_no_parameters:
+

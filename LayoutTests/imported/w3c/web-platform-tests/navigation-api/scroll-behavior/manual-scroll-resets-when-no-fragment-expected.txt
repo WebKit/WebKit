@@ -1,0 +1,3 @@
+
+PASS scroll: scroll() should reset scroll position when the destination url contains no fragment
+

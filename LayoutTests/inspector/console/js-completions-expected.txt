@@ -1,0 +1,94 @@
+Tests for the JavaScript code completion feature used by the console and other code inputs in various breakpoint editors.
+
+
+== Running test suite: console.jsCompletions
+-- Running test case: console.jsCompletions.variableCompletions
+PASS: Completions should not contain myVariable by default.
+PASS: Completions should not change before cache is cleared.
+PASS: Completions should still not contain myVariable before cache is cleared.
+PASS: Completions should change after cache is cleared.
+PASS: Completions should contain myVariable after it's created by code run in console.
+PASS: Completions should not change before cache is cleared.
+PASS: Completions should still contain myVariable before cache is cleared.
+PASS: Completions should change after cache is cleared.
+PASS: Completions should not contain myVariable after it's deleted by code run in console.
+
+-- Running test case: console.jsCompletions.revokedProxy
+PASS: Completions for a revoked proxy should return an empty array and should not crash.
+
+-- Running test case: console.jsCompletions.completionOrdering
+Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":""}:
+[
+  "aa",
+  "Aa",
+  "ab",
+  "Ab",
+  "__aa__",
+  "__ab__"
+]
+
+Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"a"}:
+[
+  "aa",
+  "ab",
+  "Aa",
+  "Ab"
+]
+
+Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"A"}:
+[
+  "Aa",
+  "Ab",
+  "aa",
+  "ab"
+]
+
+Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":"_"}:
+[
+  "__aa__",
+  "__ab__"
+]
+
+Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":""}:
+[
+  "1",
+  "2",
+  "10",
+  "20",
+  "\"__aa__\"",
+  "\"__ab__\"",
+  "\"aa\"",
+  "\"Aa\"",
+  "\"ab\"",
+  "\"Ab\""
+]
+
+Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"1"}:
+[
+  "1",
+  "10"
+]
+
+Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"a"}:
+[
+  "\"aa\"",
+  "\"ab\"",
+  "\"Aa\"",
+  "\"Ab\""
+]
+
+Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"A"}:
+[
+  "\"Aa\"",
+  "\"Ab\"",
+  "\"aa\"",
+  "\"ab\""
+]
+
+Completions with options={"baseString":"objectWithMixedPropertyKinds[","prefix":"\"_"}:
+[
+  "\"__aa__\"",
+  "\"__ab__\""
+]
+
+

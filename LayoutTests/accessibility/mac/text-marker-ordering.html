@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="wrapper">
+    <!-- First descends from second. -->
+    <div id="testcase1-second" role="group">
+    Foo
+        <div id="testcase1-first" role="group">bar</div>
+    </div>
+
+    <!-- Second descends from first. -->
+    <div id="testcase2-first" role="group">
+    Foo
+        <div id="testcase2-second" role="group">bar</div>
+    </div>
+
+    <!-- First and second share a parent. -->
+    <div id="testcase3" role="group">
+    Foo bar
+    </div>
+
+    <!-- First and second are multiple levels away from their shared ancestor. -->
+    <div role="group">
+        <div role="group">
+            <div id="testcase4-first" role="group">Foo</div>
+        </div>
+        <div role="group">
+            <div id="testcase4-second" role="group">bar</div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+var output = "This test ensures we order text marker pairs correctly in various scenarios.\n\n";
+
+var element;
+function endTextMarker(id) {
+    element = accessibilityController.accessibleElementById(id);
+    return element.endTextMarkerForTextMarkerRange(element.textMarkerRangeForElement(element));
+}
+
+function startTextMarker(id) {
+    element = accessibilityController.accessibleElementById(id);
+    return element.startTextMarkerForTextMarkerRange(element.textMarkerRangeForElement(element));
+}
+
+var stringForMarkerRange;
+function verifyRangeEqualsString(startMarker, endMarker, expectedString) {
+    stringForMarkerRange = webArea.stringForTextMarkerRange(webArea.textMarkerRangeForUnorderedMarkers(startMarker, endMarker));
+    output += expect(`'${stringForMarkerRange.replace("\n", "[NEWLINE]")}' === '${expectedString.replace("\n", "[NEWLINE]")}'`, "true");
+}
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    // The start and end markers are purposely swapped, such that if we implement ordering incorrectly, our range will be invalid.
+    // In this first example, the end marker of #testcase1-first is after "Bar" (the end of the whole range-string), but we set
+    // it to be the start marker. Meanwhile, #testcase1-second is the start of "Foo", the beginning of the range-string, but it's
+    // passed as the end marker.
+    verifyRangeEqualsString(endTextMarker("testcase1-first"), startTextMarker("testcase1-second"), "Foo\nbar");
+    verifyRangeEqualsString(endTextMarker("testcase2-second"), startTextMarker("testcase2-first"), "Foo\nbar");
+
+    element = accessibilityController.accessibleElementById("testcase3");
+    var markerRange = element.textMarkerRangeForElement(element);
+    var startMarker = element.startTextMarkerForTextMarkerRange(markerRange);
+    var endMarker = element.endTextMarkerForTextMarkerRange(markerRange);
+    verifyRangeEqualsString(endMarker, startMarker, "Foo bar");
+
+    verifyRangeEqualsString(endTextMarker("testcase4-second"), startTextMarker("testcase4-first"), "Foo\nbar");
+
+    document.getElementById("wrapper").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>
+

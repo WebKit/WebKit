@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<ul id="plainListTree" role="tree" tabindex="0">
+    <li id="plainOuterItem" role="treeitem">
+        <span>Level 1</span>
+        <ul>
+            <li id="plainInnerItem" role="treeitem">Level 2</li>
+        </ul>
+    </li>
+</ul>
+
+<ul id="groupTree" role="tree" tabindex="0">
+    <li id="groupOuterItem" role="treeitem">
+        <span>Level 1</span>
+        <ul role="group">
+            <li id="groupInnerItem" role="treeitem">Level 2</li>
+        </ul>
+    </li>
+</ul>
+
+<script>
+var output = "This tests that a treeitem nested in a plain list (a ul with no role) does not gain a hierarchical level, while a treeitem nested in a role=group gains one.\n\n";
+
+var plainOuter, plainInner, groupOuter, groupInner;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        // Wait for both trees to be built into the accessibility tree.
+        await waitFor(() => {
+            return accessibilityController.accessibleElementById("plainInnerItem")
+                && accessibilityController.accessibleElementById("groupInnerItem");
+        });
+
+        plainOuter = accessibilityController.accessibleElementById("plainOuterItem");
+        plainInner = accessibilityController.accessibleElementById("plainInnerItem");
+        groupOuter = accessibilityController.accessibleElementById("groupOuterItem");
+        groupInner = accessibilityController.accessibleElementById("groupInnerItem");
+
+        // A plain <ul> (no role) adds no level: the inner item is at the same level as the outer item.
+        output += await expectAsync("plainInner.hierarchicalLevel", "plainOuter.hierarchicalLevel");
+
+        // An authored role="group" adds exactly one level.
+        output += await expectAsync("groupInner.hierarchicalLevel", "groupOuter.hierarchicalLevel + 1");
+
+        debug(output);
+        document.getElementById("plainListTree").hidden = true;
+        document.getElementById("groupTree").hidden = true;
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

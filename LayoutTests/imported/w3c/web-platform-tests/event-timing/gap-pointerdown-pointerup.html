@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8 />
+<title>Event Timing click.</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src=/resources/testdriver.js></script>
+<script src=/resources/testdriver-actions.js></script>
+<script src=/resources/testdriver-vendor.js></script>
+<script src=resources/event-timing-test-utils.js></script>
+<div id='target'>Click me</div>
+<script>
+  promise_test(async t => {
+    const pointerDowns = []
+    const pointerUps = []
+    blockNextEventListener(window, 'pointerdown', 30)
+    blockNextEventListener(window, 'pointerup', 30)
+    new PerformanceObserver( (entries) => {
+      entries.getEntries().forEach(  (e) => {
+        if (e.name == 'pointerdown')
+          pointerDowns.push(e)
+        if (e.name =='pointerup')
+          pointerUps.push(e)
+      })
+    }).observe({type: 'event', durationThreshold: 16})
+    const pointerDownHandled = new Promise( resolve => window.addEventListener('pointerdown', e => resolve(), true) )
+    const pointerUpHandled = new Promise( resolve => window.addEventListener('pointerup', e => resolve(), true) )
+
+    await new test_driver.Actions()
+      .pointerMove(0, 0)
+      .pointerDown()
+      .send()
+    await pointerDownHandled
+    await afterNextPaint()
+    const waitStart = performance.now()
+    await t.step_wait(() => (performance.now() - waitStart > 50))
+    await new test_driver.Actions()
+      .pointerUp()
+      .send()
+    await pointerUpHandled
+    await t.step_wait(() => (pointerDowns.length != 0 && pointerUps.length != 0), 'Wait for the event timing entries to be processed.')
+    assert_equals(pointerDowns.length, 1)
+    assert_equals(pointerUps.length, 1)
+    assert_greater_than(pointerUps[0].startTime, pointerDowns[0].startTime + pointerDowns[0].duration)
+  }, "pointerdown duration shouldn't wait for pointerup.")
+</script>
+</html>

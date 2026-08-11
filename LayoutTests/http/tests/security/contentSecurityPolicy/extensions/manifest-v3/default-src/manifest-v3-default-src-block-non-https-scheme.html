@@ -1,0 +1,12 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v3 ] -->
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="script-src blob: 'self'';">
+    <script src="../../../resources/dump-as-text.js"></script>
+    <script src="../../../resources/wait-until-done.js"></script>
+    <p><br>Tests CSP for manifest v3 extensions does not permit non https schemes</p>
+</head>
+<body>
+    <script src="../resources/load-blob.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="test" contenteditable>
+<p>hello world.</p>
+</div>
+<div id="console"></div>
+<script>
+
+if (!window.internals)
+    testFailed('This test requires internals object');
+else {
+    var container = document.getElementById('test');
+
+    var p = document.querySelector('#test p');
+    var r = internals.rangeFromLocationAndLength(container, 0, 1);
+    // This offset is valid, the length is past the end of the range
+    var subrange = internals.subrange(r, 5, 100);
+    shouldBe('internals.lengthFromRange(container, subrange)', '0');
+    // This offset is past the end of the range
+    subrange = internals.subrange(r, 100, 1);
+    shouldBe('internals.lengthFromRange(container, subrange)', '0');
+    container.style.display = 'none';
+}
+
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

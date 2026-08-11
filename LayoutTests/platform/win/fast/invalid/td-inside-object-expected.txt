@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x156
+        RenderTableSection {TBODY} at (0,0) size 784x156
+          RenderTableRow {TR} at (0,2) size 784x152
+            RenderTableCell {TD} at (2,57) size 250x42 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 233x39
+                text run at (1,1) width 233: "This text should be to the left of the cat"
+                text run at (1,21) width 39: "image."
+            RenderTableCell {TD} at (253,2) size 303x152 [r=0 c=1 rs=1 cs=1]
+              RenderEmbeddedObject {OBJECT} at (1,1) size 300x150
+                layer at (0,0) size 300x150
+                  RenderView at (0,0) size 300x150
+                layer at (0,0) size 300x150
+                  RenderBlock {HTML} at (0,0) size 300x150
+                    RenderBody {BODY} at (0,0) size 300x150
+                      RenderImage {IMG} at (0,0) size 98x99
+            RenderTableCell {TD} at (557,57) size 226x42 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 219x39
+                text run at (1,1) width 219: "This text should be to the right of the"
+                text run at (1,21) width 61: "cat image."

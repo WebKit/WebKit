@@ -1,0 +1,19 @@
+This test ensures we properly compute the height and width of radiobuttons and checkboxes.
+
+PASS: radio.width > 0 === true
+PASS: radio.height > 0 === true
+PASS: checkbox.width > 0 === true
+PASS: checkbox.height > 0 === true
+PASS: radioWithLabel.width > 100 === true
+PASS: radioWithLabel.height > 0 === true
+PASS: checkboxWithLabel.width > 100 === true
+PASS: checkboxWithLabel.height > 0 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test
+Test
+This is a long test label that should be included in the size of this object
+This is a long test label that should be included in the size of this object
+

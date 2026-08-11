@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-seek-past-end</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var videoSourceBuffer;
+    var audioSourceBuffer;
+    var minBuffered;
+    var seekPromise;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    async function runTest() {
+        videoLoader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(videoLoader);
+
+        audioLoader = new MediaSourceLoader('content/test-48khz-manifest.json');
+        await loaderPromise(audioLoader);
+
+        findMediaElement();
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run('videoSourceBuffer = source.addSourceBuffer(videoLoader.type())');
+        run('audioSourceBuffer = source.addSourceBuffer(audioLoader.type())');
+        waitFor(video, 'error').then(failTest);
+
+        consoleWrite('-');
+        consoleWrite('Load video sourceBuffer');
+        run('videoSourceBuffer.appendBuffer(videoLoader.initSegment())');
+        await waitFor(videoSourceBuffer, 'update', true);
+        run('videoSourceBuffer.appendBuffer(videoLoader.mediaSegment(0))');
+        await waitFor(videoSourceBuffer, 'update', true);
+
+        consoleWrite('-');
+        consoleWrite('Load audio sourceBuffer');
+        run('audioSourceBuffer.appendBuffer(audioLoader.initSegment())');
+        await waitFor(audioSourceBuffer, 'update', true);
+        run('audioSourceBuffer.appendBuffer(audioLoader.mediaSegment(0))');
+        await waitFor(audioSourceBuffer, 'update', true);
+
+        consoleWrite('-');
+        consoleWrite('Ensure video sourceBuffer is shorter');
+        run('minBuffered = Math.min(videoSourceBuffer.buffered.end(0), audioSourceBuffer.buffered.end(0))');
+        run('audioSourceBuffer.remove(minBuffered, video.duration)');
+        await waitFor(audioSourceBuffer, 'update', true);
+        run('videoSourceBuffer.remove(minBuffered - 0.01, video.duration)');
+        await waitFor(videoSourceBuffer, 'update', true);
+
+        consoleWrite('-');
+        consoleWrite('Seek into the unbuffered video range; should timeout');
+        run('video.currentTime = video.duration');
+        seekPromise = waitFor(video, 'seeked');
+        await sleepFor(250);
+        testExpected('video.seeking', true);
+
+        consoleWrite('-');
+        consoleWrite('End loading; should cause seeked event to fire');
+        run('source.endOfStream()');
+        await seekPromise;
+
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    })
+    </script>
+</head>
+<body>
+    <div>
+        This tests that when seeking and play into unbuffered time, currentTime doesn't appear to go backward.
+    </div>
+    <video controls muted></video>
+</body>
+</html>

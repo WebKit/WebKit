@@ -1,0 +1,21 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
+<script src="resources/cache-test.js"></script>
+<body>
+<script>
+
+var tests =
+[
+ { responseHeaders: {'Last-Modified': 'Thu, 01 Jan 2000 00:00:00 GMT' } }, // Heuristic freshness.
+ { responseHeaders: {'Last-Modified': 'Thu, 01 Jan 1970 00:00:00 GMT' } }, // Epoch.
+ { responseHeaders: {'Last-Modified': 'invalid' } }, // Invalid date
+];
+
+description("Covers uses of 'Last-Modified' header to compute heuristic freshness.");
+
+debug("running " + tests.length + " tests");
+debug("");
+
+runTests(tests);
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>

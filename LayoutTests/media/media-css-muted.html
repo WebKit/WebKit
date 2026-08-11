@@ -1,0 +1,25 @@
+<!doctype HTML>
+<html>
+<head>
+    <title>media-css-muted</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "content/test")');
+        await waitFor(video, 'canplay');
+        testExpected('video.muted', false);
+        testExpected('document.querySelector("video:muted")', null);
+        testExpected('document.querySelector("video:not(:muted)")', video);
+        run('video.muted = true');
+        testExpected('document.querySelector("video:muted")', video);
+        testExpected('document.querySelector("video:not(:muted)")', null);
+        endTest();
+    });
+    </script>
+<head>
+<body>
+    <video></video>
+</body>
+</html>

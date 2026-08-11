@@ -1,0 +1,9 @@
+Viewport: Scrollbars Cause Resize
+
+Test Description: This test checks that the appearance of classic scrollbars will cause a resize event to be fired at window.visualViewport.
+
+
+PASS view size initially matches window size
+FAIL Resize event was fired at window.visualViewport if, and only if, scrollbars are classic (i.e. affect flow) assert_equals: expected true but got false
+FAIL view size reflects appearance of classic scrollbars assert_equals: expected 785 but got 800
+

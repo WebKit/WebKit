@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    width: 300px;
+    height: 50px;
+}
+
+body {
+    margin: 0;
+}
+</style>
+<head>
+<body onload="runTest()">
+<select name="select" id="select">
+    <option value="one">One</option>
+    <option value="two">Two</option>
+</select>
+<pre>Is showing popup? <span id="before"></span></pre>
+<br>
+<div>This test verifies that the popup is presented when calling showPicker on a select.</div>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function runTest() {
+    await UIHelper.activateAt(0, 0);
+    select.showPicker();
+
+    before.textContent = internals.isSelectPopupVisible(select);
+
+    testRunner.notifyDone();
+}
+</script>
+</html>

@@ -1,0 +1,32 @@
+
+PASS display: -webkit-box;
+PASS display: -webkit-box; -webkit-box-orient: vertical;
+PASS display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: none;
+PASS display: -webkit-box; -webkit-line-clamp: 3;
+PASS display: -webkit-box; -webkit-box-orient: horizontal; -webkit-line-clamp: 3;
+FAIL display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; assert_equals: expected "flow-root" but got "-webkit-box"
+PASS display: -webkit-inline-box;
+PASS display: -webkit-inline-box; -webkit-box-orient: vertical;
+PASS display: -webkit-inline-box; -webkit-box-orient: vertical; -webkit-line-clamp: none;
+PASS display: -webkit-inline-box; -webkit-line-clamp: 3;
+PASS display: -webkit-inline-box; -webkit-box-orient: horizontal; -webkit-line-clamp: 3;
+FAIL display: -webkit-inline-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; assert_equals: expected "inline-block" but got "-webkit-inline-box"
+PASS display: flex; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
+PASS display: inline-flex; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
+PASS display: -webkit-flex; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
+PASS display: -webkit-inline-flex; -webkit-box-orient: vertical; -webkit-line-clamp: 3;
+PASS display: -webkit-box; -webkit-box-orient: vertical; line-clamp: none;
+PASS display: -webkit-inline-box; -webkit-box-orient: vertical; line-clamp: none;
+PASS display: -webkit-box; line-clamp: 2;
+FAIL display: -webkit-box; -webkit-box-orient: vertical; line-clamp: 2; assert_equals: expected "flow-root" but got "-webkit-box"
+PASS display: -webkit-inline-box; line-clamp: 2;
+FAIL display: -webkit-inline-box; -webkit-box-orient: vertical; line-clamp: 2; assert_equals: expected "inline-block" but got "-webkit-inline-box"
+PASS display: -webkit-box; line-clamp: auto;
+FAIL display: -webkit-box; -webkit-box-orient: vertical; line-clamp: auto; assert_equals: expected "flow-root" but got "-webkit-box"
+PASS display: -webkit-inline-box; line-clamp: auto;
+FAIL display: -webkit-inline-box; -webkit-box-orient: vertical; line-clamp: auto; assert_equals: expected "inline-block" but got "-webkit-inline-box"
+PASS display: -webkit-box; continue: discard;
+FAIL display: -webkit-box; -webkit-box-orient: vertical; continue: discard; assert_equals: expected "flow-root" but got "-webkit-box"
+PASS display: -webkit-inline-box; continue: discard;
+FAIL display: -webkit-inline-box; -webkit-box-orient: vertical; continue: discard; assert_equals: expected "inline-block" but got "-webkit-inline-box"
+

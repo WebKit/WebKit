@@ -1,0 +1,3 @@
+
+PASS clip-path: path() hit-test takes zoom into account
+

@@ -1,0 +1,147 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# Remember to PROCESS rather than INCLUDE this template. %]
+
+[% SET search_descs = {
+  "noop"           => "---",
+  "equals"         => "is equal to",
+  "notequals"      => "is not equal to",
+  "anyexact"       => "is equal to any of the strings",
+  "substring"      => "contains the string",
+  "casesubstring"  => "contains the string (exact case)",
+  "notsubstring"   => "does not contain the string",
+  "anywordssubstr" => "contains any of the strings",
+  "allwordssubstr" => "contains all of the strings",
+  "nowordssubstr"  => "contains none of the strings",
+  "regexp"         => "matches regular expression",
+  "notregexp"      => "does not match regular expression",
+  "lessthan"       => "is less than",
+  "lessthaneq"     => "is less than or equal to",
+  "greaterthan"    => "is greater than",
+  "greaterthaneq"  => "is greater than or equal to",
+  "anywords"       => "contains any of the words",
+  "allwords"       => "contains all of the words",
+  "nowords"        => "contains none of the words",
+  "changedbefore"  => "changed before",
+  "changedafter"   => "changed after",
+  "changedfrom"    => "changed from",
+  "changedto"      => "changed to",
+  "changedby"      => "changed by",
+  "matches"        => "matches",
+  "notmatches"     => "does not match",
+  "isempty"        => "is empty",
+  "isnotempty"     => "is not empty",
+} %]
+
+[% field_types = { ${constants.FIELD_TYPE_UNKNOWN}       => "Unknown Type",
+                   ${constants.FIELD_TYPE_FREETEXT}      => "Free Text",
+                   ${constants.FIELD_TYPE_INTEGER}       => "Integer",
+                   ${constants.FIELD_TYPE_SINGLE_SELECT} => "Drop Down",
+                   ${constants.FIELD_TYPE_MULTI_SELECT}  => "Multiple-Selection Box",
+                   ${constants.FIELD_TYPE_TEXTAREA}      => "Large Text Box",
+                   ${constants.FIELD_TYPE_DATETIME}      => "Date/Time",
+                   ${constants.FIELD_TYPE_DATE}          => "Date",
+                   ${constants.FIELD_TYPE_BUG_ID}        => "$terms.Bug ID",
+                } %]
+
+[% IF in_template_var %]
+  [% PROCESS "global/value-descs.none.tmpl" %]
+  [% SET vars.value_descs = value_descs %]
+  [% SET vars.terms = terms %]
+
+  [%# field_descs is loaded as a global template variable and cached
+    # across all templates--see VARIABLES in Bugzilla/Template.pm.
+    #%]
+  [% vars.field_descs = {
+    "[Bug creation]"          => "[$terms.Bug creation]",
+     "actual_time"             => "Actual Hours",
+     "alias"                   => "Alias",
+     "assigned_to"             => "Assignee",
+     "assigned_to_realname"    => "Assignee Real Name",
+     "attach_data.thedata"     => "Attachment data",
+     "attachments.description" => "Attachment description",
+     "attachments.filename"    => "Attachment filename",
+     "attachments.mimetype"    => "Attachment mime type",
+     "attachments.ispatch"     => "Attachment is patch",
+     "attachments.isobsolete"  => "Attachment is obsolete",
+     "attachments.isprivate"   => "Attachment is private",
+     "attachments.submitter"   => "Attachment creator",
+     "blocked"                 => "Blocks",
+     "bug_file_loc"            => "URL",
+     "bug_group"               => "Group",
+     "bug_id"                  => "$terms.Bug ID",
+     "bug_severity"            => "Severity",
+     "bug_status"              => "Status",
+     "changeddate"             => "Changed",
+     "cc"                      => "CC",
+     "classification"          => "Classification",
+     "cclist_accessible"       => "CC list accessible",
+     "commenter"               => "Commenter",
+     "component_id"            => "Component ID",
+     "component"               => "Component",
+     "content"                 => "Content",
+     "creation_ts"             => "Creation date",
+     "days_elapsed"            => "Days since $terms.bug changed",
+     "deadline"                => "Deadline",
+     "delta_ts"                => "Changed",
+     "dependson"               => "Depends on",
+     "dup_id"                  => "Duplicate",
+     "estimated_time"          => "Orig. Est.",
+     "everconfirmed"           => "Ever confirmed",
+     "flagtypes.name"          => "Flags",
+     "keywords"                => "Keywords",
+     "last_visit_ts"           => "Last Visit",
+     "longdesc"                => "Comment",
+     "longdescs.count"         => "Number of Comments",
+     "longdescs.isprivate"     => "Comment is private",
+     "newcc"                   => "CC",
+     "op_sys"                  => "OS",
+     "opendate"                => "Opened",
+     "owner_idle_time"         => "Time Since Assignee Touched",
+     "percentage_complete"     => "%Complete",
+     "priority"                => "Priority",
+     "product_id"              => "Product ID",
+     "product"                 => "Product",
+     "qa_contact"              => "QA Contact",
+     "qa_contact_realname"     => "QA Contact Real Name",
+     "remaining_time"          => "Hours Left",
+     "rep_platform"            => "Hardware",
+     "reporter"                => "Reporter",
+     "reporter_accessible"     => "Reporter accessible",
+     "reporter_realname"       => "Reporter Real Name",
+     "requestees.login_name"   => "Flag Requestee",
+     "resolution"              => "Resolution",
+     "see_also"                => "See Also",
+     "setters.login_name"      => "Flag Setter",
+     "setting"                 => "Setting",
+     "settings"                => "Settings",
+     "short_desc"              => "Summary",
+     "short_short_desc"        => "Summary",
+     "status_whiteboard"       => "Whiteboard",
+     "tag"                     => "Personal Tags",
+     "target_milestone"        => "Target Milestone",
+     "version"                 => "Version",
+     "work_time"               => "Hours Worked",
+  } %]
+
+  [%# Also include any custom fields or fields which don't have a
+      Description here, by copying their Description from the
+      database. If you want to override this for your language
+      or your installation, just use a hook. %]
+  [% UNLESS Param('shutdownhtml') %]
+    [% FOREACH bz_field = bug_fields.values %]
+      [% SET vars.field_descs.${bz_field.name} = bz_field.description
+         IF !vars.field_descs.${bz_field.name}.defined %]
+    [% END %]
+  [% END %]
+
+  [% PROCESS "bug/field-help.none.tmpl" %]
+[% END %]
+
+[% Hook.process("end") %]

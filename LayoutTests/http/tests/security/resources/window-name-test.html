@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+    <script>
+        var url = new URL(window.location.href);
+        url.hostname = url.search.substring(1);
+        url.pathname = "/security/resources/log-window-name.html";
+        url.search = "";
+
+        window.name = "test";
+        document.location = url.href;
+    </script>
+</html>

@@ -1,0 +1,9 @@
+This tests signaling a slot change on lots of slot elements in a single microtask.
+WebKit should retain the JS wrappers of those elements and fire the slotchange event.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+

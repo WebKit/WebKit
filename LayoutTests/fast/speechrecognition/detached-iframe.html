@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Verify that creating speech recognition in detached iframe does not crash.");
+
+if (window.testRunner)
+    jsTestIsAsync = true;
+
+function detachFrame() {
+    document.getElementById('iframe').remove();
+
+    setTimeout(() => { finishJSTest(); }, 0);
+}
+
+</script>
+<iframe id="iframe" srcdoc="<script>parent.detachFrame(); new webkitSpeechRecognition();</script>"></iframe>
+</body>
+</html>

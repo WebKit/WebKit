@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x108
+  RenderBlock {HTML} at (0,0) size 800x108
+    RenderBody {BODY} at (8,16) size 784x84
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 386x17
+          text run at (0,0) width 386: "Test passes if the paragraph below reads 'First,Second,Third'."
+      RenderFlexibleBox {DIV} at (0,34) size 784x50
+        RenderBlock {P} at (83,16) size 35x18
+          RenderText {#text} at (0,0) size 35x17
+            text run at (0,0) width 35: "Third"
+        RenderBlock {P} at (32,16) size 51x18
+          RenderText {#text} at (0,0) size 51x17
+            text run at (0,0) width 51: "Second,"
+        RenderBlock {P} at (0,16) size 32x18
+          RenderText {#text} at (0,0) size 32x17
+            text run at (0,0) width 32: "First,"

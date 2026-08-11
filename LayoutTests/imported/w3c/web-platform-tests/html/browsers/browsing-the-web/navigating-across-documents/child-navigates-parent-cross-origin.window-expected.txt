@@ -1,0 +1,13 @@
+
+PASS Child document attempts to navigate cross-origin parent via location
+PASS Child document attempts to navigate cross-origin parent via location.hash
+PASS Child document attempts to navigate cross-origin parent via location.host
+PASS Child document attempts to navigate cross-origin parent via location.hostname
+PASS Child document attempts to navigate cross-origin parent via location.href
+PASS Child document attempts to navigate cross-origin parent via location.pathname
+PASS Child document attempts to navigate cross-origin parent via location.protocol
+PASS Child document attempts to navigate cross-origin parent via location.reload()
+PASS Child document attempts to navigate cross-origin parent via location.replace()
+PASS Child document attempts to navigate cross-origin parent via location.search
+PASS Child document attempts to navigate cross-origin parent via non-standard location property
+

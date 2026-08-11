@@ -1,0 +1,40 @@
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+    <script>
+    jsTestIsAsync = true;
+    function runTest() {
+        setEnableFeature(true, function () {
+            const loopbackAddr = "127.0.0.1";
+            if (testRunner.isStatisticsHasHadUserInteraction(loopbackAddr)) {
+                testFailed(`${loopbackAddr} already had user interaction`);
+            } else {
+                testPassed(`${loopbackAddr} did not have user interaction`);
+            }
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+            }
+
+            var tf = document.getElementById('tf');
+            internals?.setAutofilledAndObscured(tf, true);
+            setTimeout(() => {
+                if (testRunner.isStatisticsHasHadUserInteraction(`http://${loopbackAddr}`)) {
+                    testPassed(`${loopbackAddr} had user interaction`);
+                } else {
+                    testFailed(`${loopbackAddr} did not have user interaction`);
+                }
+                setEnableFeature(false, finishJSTest);
+            }, 100);
+        });
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    This tests that autofilling obscured inputs is considered as user interaction with the site.<br>
+    <form name="fm">
+        <input type="password" id="tf" value="Field value" />
+    </form>
+    <div id="console"></div>
+</body>
+</html>

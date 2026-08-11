@@ -1,0 +1,2 @@
+postMessage("closing");
+close();

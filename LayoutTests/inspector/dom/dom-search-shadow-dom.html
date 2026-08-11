@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function setup() {
+    let host = document.getElementById("host");
+    let shadow = host.attachShadow({mode: "open"});
+    shadow.innerHTML = `<section><span class="needle-class" data-needle-attr="1">needle-text-in-shadow</span></section>`;
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("DOM.performSearch.ShadowDOM");
+
+    async function search(query) {
+        await InspectorProtocol.awaitCommand({method: "DOM.getDocument", params: {}});
+        let {resultCount} = await InspectorProtocol.awaitCommand({method: "DOM.performSearch", params: {query}});
+        return resultCount;
+    }
+
+    for (let {name, query} of [
+        {name: "PlainText", query: "needle-text-in-shadow"},
+        {name: "CSSSelector", query: ".needle-class"},
+        {name: "TagName", query: "section"},
+    ]) {
+        suite.addTestCase({
+            name: `DOM.performSearch.ShadowDOM.${name}`,
+            description: `Search inside an open shadow root should find nodes (query: ${name}).`,
+            async test() {
+                let resultCount = await search(query);
+                ProtocolTest.log(`query ${JSON.stringify(query)} -> resultCount ${resultCount}`);
+                ProtocolTest.expectGreaterThanOrEqual(resultCount, 1, "Should find at least one node inside the shadow tree.");
+            },
+        });
+    }
+
+    ProtocolTest.evaluateInPage("setup()").then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that DOM.performSearch descends into open shadow trees.</p>
+<div id="host"></div>
+</body>
+</html>

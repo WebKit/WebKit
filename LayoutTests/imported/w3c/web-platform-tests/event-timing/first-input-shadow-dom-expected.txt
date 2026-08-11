@@ -1,0 +1,3 @@
+
+PASS Event Timing: test first input on shadow DOM.
+

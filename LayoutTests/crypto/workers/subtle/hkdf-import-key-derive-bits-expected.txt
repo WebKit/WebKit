@@ -1,0 +1,11 @@
+[Worker] Test HKDF deriveBits operation with an imported raw key in workers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/hkdf-import-key-derive-bits.js
+PASS [Worker] bytesToHexString(derivedKey) is expectedDerivedKey
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

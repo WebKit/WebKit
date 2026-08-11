@@ -1,0 +1,55 @@
+CONSOLE MESSAGE: Refused to load https://127.0.0.1:8443/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load https://127.0.0.1:8443/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+Tests script-src source expression matching with implicit and explicit default port numbers.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame2-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame3-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame4-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame5-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame6-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame7-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame8-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame9-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame10-->'
+--------
+PASS

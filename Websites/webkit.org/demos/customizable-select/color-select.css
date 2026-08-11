@@ -1,0 +1,87 @@
+#color-select {
+    align-items: center;
+
+    &::picker(select) {
+        appearance: base-select;
+        width: 140px;
+        height: 140px;
+        min-width: 0;
+        padding: 0;
+        overflow: visible;
+        border-radius: 100%;
+        position-area: span-all;
+        position-try-fallbacks: none;
+
+        align-items: center;
+        justify-content: center;
+        box-shadow: none;
+        filter: drop-shadow(var(--dropdown-shadow));
+        border: none;
+        transition: ease-in 0.2s;        
+
+        @starting-style {
+            scale: 0;
+        }
+    }
+    &:open::picker(select) {
+        display: grid;
+    }
+
+    .swatch {
+        width: 1em;
+        aspect-ratio: 1/1;
+        border-radius: 100%;
+        background-position: center;
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+        margin-inline-end: 0.1em;
+        display: inline-block;
+    }
+
+    .swatch.all {
+        background-image: conic-gradient(from 45deg, hsl(0,100%,50%), hsl(30,100%,50%), hsl(60,100%,50%), hsl(90,100%,50%), hsl(150,100%,50%), hsl(180,100%,50%), hsl(210,100%,50%), hsl(240,100%,50%), hsl(270,100%,50%),
+   hsl(300,100%,50%), hsl(330,100%,50%), hsl(360,100%,50%))
+    }
+
+    > div {
+        display: contents;
+    }
+
+    selectedcontent {
+        display: contents;
+    }
+    
+    option {
+        --swatch-size: 2em;
+        rotate: calc(1turn / sibling-count() * sibling-index());
+        grid-area: 1/1;
+        transform-origin: center;
+        background-color: transparent;
+        width: var(--swatch-size);
+        height: var(--swatch-size);
+        padding: 0;
+        outline: none;
+
+        .swatch {
+            width: 100%;
+            translate: -200%;
+            border: 4px solid light-dark(white, #444);
+            cursor: pointer;
+        }
+
+        &:hover .swatch {
+            border-color: light-dark(#ddd, #555);
+        }
+
+        &:focus-visible .swatch {
+            outline: 4px solid color-mix(var(--accent) 50%, transparent);
+        }
+
+        span {
+            display: none;
+        }
+
+        &::checkmark {
+            display: none;
+        }
+    }
+}

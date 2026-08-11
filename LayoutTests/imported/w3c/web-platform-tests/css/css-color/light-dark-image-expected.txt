@@ -1,0 +1,34 @@
+
+PASS background-image: light-dark(url('light.png'), url('dark.png'))
+PASS background-image: light-dark(none, url('dark.png'))
+PASS background-image: light-dark(url('light.png'), none)
+PASS background-image: light-dark(none, none)
+PASS background-image: light-dark(linear-gradient(red, blue), linear-gradient(green, yellow))
+PASS background-image: light-dark(radial-gradient(red, blue), radial-gradient(green, yellow))
+PASS background-image: light-dark(conic-gradient(red, blue), conic-gradient(green, yellow))
+PASS background-image: light-dark(repeating-linear-gradient(red, blue 50px), repeating-linear-gradient(green, yellow 50px))
+PASS background-image: light-dark(url('light.png'), linear-gradient(red, blue))
+PASS background-image: light-dark(linear-gradient(red, blue), url('dark.png'))
+PASS background-image: light-dark(none, linear-gradient(red, blue))
+PASS background-image: light-dark(linear-gradient(red, blue), none)
+PASS list-style-image: light-dark(url('light.png'), url('dark.png'))
+PASS list-style-image: light-dark(none, url('dark.png'))
+PASS list-style-image: light-dark(url('light.png'), none)
+PASS border-image-source: light-dark(url('light.png'), url('dark.png'))
+PASS border-image-source: light-dark(linear-gradient(red, blue), linear-gradient(green, yellow))
+PASS content: light-dark(url('light.png'), url('dark.png'))
+PASS background-image: light-dark(light-dark(url('a.png'), url('b.png')), url('c.png'))
+PASS background-image: light-dark(url('a.png'), light-dark(url('b.png'), url('c.png')))
+PASS background-image: nested image-set() / -webkit-cross-fade() resolve light-dark() at any depth
+PASS Serialization round-trip for light-dark() image
+PASS Inherited light-dark() image resolves with parent's color-scheme
+PASS light-dark() image responds to dynamic color-scheme changes
+PASS background-image: light-dark() (invalid)
+PASS background-image: light-dark(url(a.png)) (invalid)
+PASS background-image: light-dark(url(a.png) url(b.png)) (invalid)
+PASS background-image: light-dark(url(a.png),,url(b.png)) (invalid)
+PASS background-image: light-dark(red, green) (invalid)
+PASS background-image: light-dark(red, url(a.png)) (invalid)
+PASS background-image: light-dark(url(a.png), red) (invalid)
+PASS background-image: light-dark(url(a.png), url(b.png), url(c.png)) (invalid)
+

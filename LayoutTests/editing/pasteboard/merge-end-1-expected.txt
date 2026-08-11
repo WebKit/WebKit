@@ -1,0 +1,10 @@
+This tests the last paragraph in the pasted fragment is merged with the content after the insertion position.
+"baz" and "oo" should be in the same paragraph below.
+| <span>
+|   "f"
+| "bar"
+| <span>
+|   <br>
+| "baz<#selection-caret>"
+| <span>
+|   "oo"

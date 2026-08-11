@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'nonce-test';">
+    </head>
+<body>
+    <p>Test we allow web assembly with unsafe-eval after calling window.open.</p>
+    <script nonce="test">
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        window.open("resources/run-web-assembly.html");
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,52 @@
+# Copyright (c) 2025 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("capture_mixer") {
+  visibility = [ "*" ]
+
+  sources = [
+    "audio_content_analyzer.cc",
+    "audio_content_analyzer.h",
+    "capture_mixer.cc",
+    "capture_mixer.h",
+    "channel_content_remixer.cc",
+    "channel_content_remixer.h",
+    "dc_levels_estimator.cc",
+    "dc_levels_estimator.h",
+    "energy_estimator.cc",
+    "energy_estimator.h",
+    "remixing_logic.cc",
+    "remixing_logic.h",
+    "saturation_estimator.cc",
+    "saturation_estimator.h",
+  ]
+
+  defines = []
+
+  deps = [ "../../../rtc_base:checks" ]
+}
+
+rtc_library("capture_mixer_unittests") {
+  testonly = true
+
+  sources = [
+    "audio_content_analyzer_unittest.cc",
+    "capture_mixer_unittest.cc",
+    "channel_content_remixer_unittest.cc",
+    "dc_levels_estimator_unittest.cc",
+    "energy_estimator_unittest.cc",
+    "remixing_logic_unittest.cc",
+    "saturation_estimator_unittest.cc",
+  ]
+  deps = [
+    ":capture_mixer",
+    "../../../test:test_support",
+  ]
+}

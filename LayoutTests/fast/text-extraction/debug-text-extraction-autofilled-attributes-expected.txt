@@ -1,0 +1,5 @@
+root
+	input placeholder='Normal field' 'hello'
+	input placeholder='Autofilled field' autofilled 'test@webkit.org'
+	input password placeholder='Viewable field' secure autofilled
+	input password placeholder='Obscured field' secure autofilled

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<!--
+Verify that changing the SVG transform-origin CSS property works when the element's transform comes
+from the SVG 'transform' presentation attribute. This exercises the LBSE non-layered paint path,
+which caches the transform origin keyed on the reference box (RenderSVGModelObject). Regression
+test for a stale-cache bug: the cached origin must be dropped before RenderLayerModelObject::
+styleDidChange() rebuilds m_localTransform, otherwise the shape keeps rotating/scaling about the
+previous origin after a transform-origin change that does not trigger layout.
+
+The green 100x100 rectangle should appear at 25,25.
+-->
+
+<body>
+  <svg style="position: absolute; top: 0px; left: 0px;">
+      <rect id="rect" width="50px" height="50px" x="50" y="50" fill="green" transform="scale(2, 2)" style="transform-box: fill-box;"/>
+  </svg>
+
+  <script>
+      document.getElementById('rect').style.transformOrigin = "50% 50%";
+  </script>
+</body>
+</html>

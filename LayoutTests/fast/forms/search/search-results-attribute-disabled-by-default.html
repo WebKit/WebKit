@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<title>rdar://179949639: <input type=search> results=N attribute is disabled by default for newly-linked apps and full web browsers</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+
+<!-- No webkit-test-runner [ SearchInputResultsAttributeEnabled=... ] header is set on this test
+     deliberately. Layout tests run under WebKitTestRunner, which counts as
+     "running test" inside isFullWebBrowserOrRunningTest(); combined with the
+     WebCore-default of false, the SearchInputResultsAttributeEnabled setting
+     defaults to false and the saved-searches shadow element must NOT be created.
+
+     This is the structural fix for the Roland double-magnifying-glass bug
+     (rdar://179949639): no shadow element means no native icon to clash with
+     the site's CSS background-image. -->
+
+<input id="resultsButton" type="search" results="10">
+<input id="cancelButton"  type="search" value="x">
+
+<script>
+function shadowPart(input, partName) {
+    if (!window.internals)
+        throw new Error('This test requires window.internals (run-webkit-tests).');
+    const root = internals.shadowRoot(input);
+    return root.querySelector(`[useragentpart='${partName}']`);
+}
+
+test(() => {
+    const input = document.getElementById('resultsButton');
+    assert_equals(shadowPart(input, '-webkit-search-results-button'), null,
+        '::-webkit-search-results-button shadow element must not exist when SearchInputResultsAttributeEnabled is false');
+    assert_equals(shadowPart(input, '-webkit-search-decoration'), null,
+        '::-webkit-search-decoration shadow element must not exist when SearchInputResultsAttributeEnabled is false');
+    assert_equals(shadowPart(input, '-webkit-search-results-decoration'), null,
+        '::-webkit-search-results-decoration shadow element must not exist when SearchInputResultsAttributeEnabled is false');
+}, 'results=N saved-searches button is not constructed by default');
+
+test(() => {
+    const input = document.getElementById('cancelButton');
+    assert_not_equals(shadowPart(input, '-webkit-search-cancel-button'), null,
+        '::-webkit-search-cancel-button shadow element must always exist (web-platform-relevant; not gated by the setting)');
+}, 'cancel button is unaffected by the SearchInputResultsAttributeEnabled gate');
+</script>

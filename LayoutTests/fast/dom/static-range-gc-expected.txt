@@ -1,0 +1,49 @@
+This tests keeping nodes alive via StaticRange
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS range.startContainer.getRootNode().localName is "div"
+PASS range.endContainer.getRootNode().localName is "p"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

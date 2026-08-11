@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let shaderModule = device.createShaderModule({code: ` `});
+    let renderPipeline = device.createRenderPipeline({layout: pipelineLayout, vertex: { module: shaderModule }});
+    let bindGroupLayout = renderPipeline.getBindGroupLayout(1);
+    let videoFrame = new VideoFrame(new ArrayBuffer(6), { codedWidth: 2, codedHeight: 2, format: 'I420', timestamp: 0 });
+    let externalTexture = device.importExternalTexture({ source: videoFrame });
+    device.createBindGroup({ layout: bindGroupLayout, entries: [{ binding: 4, resource: externalTexture }] });
+    device.createBindGroup({ layout: bindGroupLayout, entries: [{ binding: 4, resource: externalTexture }] });
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

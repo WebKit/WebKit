@@ -1,0 +1,37 @@
+<body>
+<p>Test importScripts with error.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var worker = new Worker('resources/worker-importScripts-error.js');
+
+worker.onerror = function(error)
+{
+    var properties = [];
+    for (property in error) {
+        if (property == 'timeStamp')
+            continue;
+        properties.push('<br/>' + property + ': ' + error[property]);
+    }
+    properties.sort();
+    log(properties);
+
+    if (window.testRunner) {
+        // Allow the console message to be dumped out.
+        setTimeout(function() {
+            testRunner.notifyDone();
+        }, 0);
+    }
+}
+</script>
+</body>
+</html>

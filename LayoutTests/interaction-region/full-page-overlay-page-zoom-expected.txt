@@ -1,0 +1,19 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 1620.00 2120.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 1620.00 2120.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=1620 height=2120)
+
+      (interaction regions [
+        (occlusion (0,0) width=1620 height=2120)])
+      )
+    )
+  )
+)
+

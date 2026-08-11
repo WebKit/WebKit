@@ -1,0 +1,6 @@
+
+
+PASS display:inherit on option in single select computes to contents
+PASS display:inherit on option in multiple select computes to contents
+PASS option in closed single select has zero bounding client rect
+

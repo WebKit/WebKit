@@ -1,0 +1,27 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (memory_size2.wast:1)
+PASS #3 Reinitialize the default imports
+PASS #4 Test that WebAssembly compilation succeeds (memory_size2.wast:1)
+PASS #5 Test that WebAssembly instantiation succeeds (memory_size2.wast:1)
+PASS #6 Test that a WebAssembly code returns a specific result (memory_size2.wast:14)
+PASS #7 Test that a WebAssembly code returns a specific result (memory_size2.wast:15)
+PASS #8 Test that a WebAssembly code returns a specific result (memory_size2.wast:16)
+PASS #9 Test that a WebAssembly code returns a specific result (memory_size2.wast:17)
+PASS #10 Test that a WebAssembly code returns a specific result (memory_size2.wast:18)
+PASS #11 Test that a WebAssembly code returns a specific result (memory_size2.wast:19)
+PASS #12 Test that a WebAssembly code returns a specific result (memory_size2.wast:20)
+PASS #13 Test that a WebAssembly code returns a specific result (memory_size2.wast:21)
+PASS #14 Test that a WebAssembly code returns a specific result (memory_size2.wast:22)
+PASS #15 Test that a WebAssembly code returns a specific result (memory_size2.wast:23)
+PASS #16 Test that a WebAssembly code returns a specific result (memory_size2.wast:24)
+PASS #17 Test that a WebAssembly code returns a specific result (memory_size2.wast:25)
+PASS #18 Test that a WebAssembly code returns a specific result (memory_size2.wast:26)
+PASS #19 Test that a WebAssembly code returns a specific result (memory_size2.wast:27)
+PASS #20 Test that a WebAssembly code returns a specific result (memory_size2.wast:28)
+PASS #21 Test that a WebAssembly code returns a specific result (memory_size2.wast:29)
+PASS #22 Test that a WebAssembly code returns a specific result (memory_size2.wast:30)
+PASS #23 Test that a WebAssembly code returns a specific result (memory_size2.wast:32)
+PASS #24 Test that a WebAssembly code returns a specific result (memory_size2.wast:33)
+PASS #25 Test that a WebAssembly code returns a specific result (memory_size2.wast:34)
+

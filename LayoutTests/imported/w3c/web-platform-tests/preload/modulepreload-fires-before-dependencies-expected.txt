@@ -1,0 +1,5 @@
+
+PASS still-fetching top-level fires load before its dependencies
+PASS already-fetched top-level fires load before its dependencies
+PASS already-fetched syntax-error top-level fires load
+

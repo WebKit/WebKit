@@ -1,0 +1,3 @@
+
+PASS Removing a media session while microphone capture is active must not deactivate AudioSession
+

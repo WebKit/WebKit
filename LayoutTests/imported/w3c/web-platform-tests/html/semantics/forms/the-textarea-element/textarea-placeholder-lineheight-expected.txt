@@ -1,0 +1,5 @@
+
+
+PASS Bounding rect height for textarea must be the same as line-height
+PASS ComputedStyle line-height for textarea must be the same as set value
+

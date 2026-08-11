@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a truncated PKCS8 ECDSA key that triggers bounds check failure");
+
+// This test verifies that importing a malformed PKCS8 key with a truncated
+// ASN.1 structure is rejected gracefully rather than crashing.
+//
+// The malformed key is crafted so that:
+// 1. All intermediate size checks pass
+// 2. But the final computed index exceeds the buffer size
+// 3. Without the fix, keyData.subvector(index) crashes
+//
+// Key structure (71 bytes):
+// - Offset 0-66: Valid PKCS8 EC header with OIDs and 32-byte private key
+// - Offset 67: 0xa1 (TaggedType1)
+// - Offset 68: 0x00 (length byte)
+// - Offset 69: 0x03 (BIT STRING)
+// - Offset 70: 0x82 (length byte, bytesUsedToEncodedLength returns 3)
+//
+// At offset 70: bytesUsedToEncodedLength(0x82) = 3
+// index = 70 + 3 + 1 = 74
+// keyData.subvector(74) on 71-byte buffer -> OOB access (before fix)
+
+var extractable = true;
+
+// 71 bytes: valid PKCS8 EC structure with 0x82 length byte causing index overflow
+var truncatedPkcs8Key = hexStringToUint8Array("3000020100300006072a8648ce3d020106082a8648ce3d0301070400300002010104000000000000000000000000000000000000000000000000000000000000000000a1000382");
+
+// Should reject with DataError, not crash
+shouldReject('crypto.subtle.importKey("pkcs8", truncatedPkcs8Key, {name: "ECDSA", namedCurve: "P-256"}, extractable, ["sign"])');
+
+</script>
+
+</body>
+</html>

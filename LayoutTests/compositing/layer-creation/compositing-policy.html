@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            overflow:hidden; /* prevent scrollbars and document height from affecting test output */
+            height: 1000px;
+        }
+        .box {
+            margin: 10px;
+            height: 100px;
+            width: 300px;
+            padding: 4px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        if (window.internals)
+            internals.compositingPolicyOverride = 'conservative';
+
+        function dumpLayers()
+        {
+            let canvas = document.getElementsByTagName('canvas')[0];
+            var ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (window.testRunner)
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        }
+
+        window.addEventListener('load', dumpLayers, false);
+    </script>
+</head>
+<body>
+
+<div class="box" style="transform: translate3d(10px, 1px, 1px)">
+    <pre>transform: translate3d(10px, 1px, 1px)</pre>
+    Has backing under low memory.
+</div>
+
+<div class="box" style="transform: translateZ(0)">
+    <pre>transform: translateZ(0)</pre>
+    translateZ(0): No backing under low memory.
+</div>
+
+<div class="box" style="transform: translate3d(10px, 1px, 0)">
+    <pre>transform: translate3d(10px, 1px, 0)</pre>
+    No backing under low memory.
+</div>
+
+<div class="box" style="will-change: transform">
+    <pre>will-change: transform</pre>
+    No backing under low memory.
+</div>
+
+<canvas class="box" style="box-shadow: 0 0 10px black">
+</canvas>
+
+<pre id="layers"></pre>
+
+</body>
+</html>

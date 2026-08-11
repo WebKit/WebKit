@@ -1,0 +1,8 @@
+Tests that a controls overlay that stays in the DOM does not receive a spurious pointerleave on fullscreen entry.
+
+Controls
+EVENT(webkitfullscreenchange)
+EXPECTED (document.fullscreenElement == '[object HTMLDivElement]') OK
+EXPECTED (visible == 'true') OK
+END OF TEST
+

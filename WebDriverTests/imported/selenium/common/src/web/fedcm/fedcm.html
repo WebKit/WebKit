@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script>
+
+let configURL = `http://${location.host}/fedcm/config.json`;
+let promise = null;
+
+function triggerFedCm() {
+  console.log(configURL);
+  promise = navigator.credentials.get({
+    identity: {
+      providers: [{
+        configURL: configURL,
+        clientId: '1',
+      }]
+    }
+  });
+  return promise;
+}
+
+</script>

@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <canvas id="canvas"/>
+    <script>
+        description("This test verifies that the size of CanvasRenderingContext2D state stack does not grow beyond a certain limit.");
+        const RED = '#ff0000';
+        const GREEN = '#00ff00';
+        const BLUE = '#0000ff';
+        const SAVE_STACK_SIZE = 1024 * 16;
+        const MAX_SAVES = SAVE_STACK_SIZE - 1;
+
+        var c = document.getElementById("canvas");
+        var ctx = c.getContext("2d");
+
+        for (var i = 0; i < MAX_SAVES * 2; ++i) {
+            if (!i || i >= MAX_SAVES)
+                ctx.fillStyle = GREEN;
+            else if (i == MAX_SAVES - 1)
+                ctx.fillStyle = BLUE;
+            else
+                ctx.fillStyle = RED;
+            ctx.save();
+        }
+
+        ctx.fillStyle = RED;
+
+        for (var i = MAX_SAVES * 2 - 1; i >= 0; --i) {
+            ctx.restore();   
+            if (i == MAX_SAVES * 2 - 1)
+                shouldBeEqualToString('ctx.fillStyle', RED);
+            else if (i == MAX_SAVES - 1)
+                shouldBeEqualToString('ctx.fillStyle', BLUE);
+            else if (!i)
+                shouldBeEqualToString('ctx.fillStyle', GREEN);
+        }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

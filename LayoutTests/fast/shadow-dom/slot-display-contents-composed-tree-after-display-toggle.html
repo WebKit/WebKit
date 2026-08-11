@@ -1,0 +1,35 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<body>
+<pre id="console"></pre>
+<my-el id="host">
+  <div style="display:contents">
+    <div id="mutate">A</div>
+    <div>B</div>
+  </div>
+</my-el>
+<script>
+customElements.define('my-el', class extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot>';
+  }
+});
+
+document.body.offsetHeight;
+
+var host = document.getElementById('host');
+var mutate = document.getElementById('mutate');
+var output = document.getElementById('console');
+
+mutate.style.display = 'none';
+document.body.offsetHeight;
+mutate.style.display = '';
+document.body.offsetHeight;
+
+output.innerText = "Composed tree from #mutate:\n";
+output.innerText += internals.composedTreeAsTextFromNode(host, mutate);
+</script>
+</body>

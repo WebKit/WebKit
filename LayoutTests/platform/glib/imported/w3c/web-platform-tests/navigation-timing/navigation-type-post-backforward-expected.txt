@@ -1,0 +1,4 @@
+
+
+PASS Navigation type after posting and navigating away and back should be back_forward.
+

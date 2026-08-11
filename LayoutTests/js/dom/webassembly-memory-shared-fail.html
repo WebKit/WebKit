@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test sending shared WebAssembly.Memory's SharedArrayBuffer via postMessage to a worker with transfer-list and fail.");
+
+if (typeof WebAssembly !== 'undefined') {
+    window.memory = new WebAssembly.Memory({ initial: 1, maximum: 2, shared: true });
+    window.worker = new Worker("./resources/webassembly-memory-normal-fail-worker.js");
+    shouldThrow(`worker.postMessage(memory.buffer, [memory.buffer])`);
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

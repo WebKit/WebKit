@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+    <script>
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+        async function test() {
+            if (window.testRunner) {
+                await window.testRunner.setPageScaleFactor(2, 0, 0);
+                window.testRunner.notifyDone();
+            }
+        }
+    </script>
+<style>
+div {
+    background-color: black;
+    width: 100px;
+    height: 100px;
+}
+
+</style>
+</head>
+<body onload="test()">
+  Hello
+  <div></div>
+</body>
+</html>

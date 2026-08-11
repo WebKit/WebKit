@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Under site isolation, audio played in the main frame activates the audio session, and the web process observes it via AudioSession::isActive().");
+jsTestIsAsync = true;
+
+let context;
+
+async function waitForActiveAudioSession()
+{
+    for (let i = 0; i < 200; ++i) {
+        if (internals.audioSessionActive())
+            return true;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    return false;
+}
+
+async function waitForInactiveAudioSession()
+{
+    for (let i = 0; i < 200; ++i) {
+        if (!internals.audioSessionActive())
+            return;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+}
+
+onload = async () => {
+    internals.withUserGesture(() => {
+        context = new AudioContext();
+        const oscillator = context.createOscillator();
+        // Keep the tone inaudible for anyone running the tests at their desk: route the oscillator
+        // through a near-silent gain node. The context still renders audio (so it activates the
+        // audio session), but at 0.1% amplitude the output is effectively silent.
+        const gain = context.createGain();
+        gain.gain.value = 0.001;
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start();
+        context.resume();
+    });
+    audioSessionActive = await waitForActiveAudioSession();
+    shouldBeTrue("audioSessionActive");
+    await context.close();
+    // The audio-session manager is a process-wide singleton under site isolation, so its "became
+    // active" state leaks across repeated runs in one WebKitTestRunner (the stress bots). Wait for
+    // deactivation to land so the next run starts clean. Remove once the per-page audio-session
+    // activation follow-up makes this state per-page.
+    await waitForInactiveAudioSession();
+    finishJSTest();
+};
+</script>

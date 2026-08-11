@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .text-at-origin {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff0000;
+        }
+
+        .draggable-box {
+            width: 100px;
+            height: 100px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: move;
+            user-select: none;
+        }
+
+        .drag-preview {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #333;
+        }
+
+        .child {
+            position: absolute;
+            top: -50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="text-at-origin">UNDERLYING TEXT AT (0,0)</div>
+    <div class="container">
+        <div>
+            <h3>Transparent Drag Preview (Shows Bug)</h3>
+            <div class="draggable-box" draggable="true">
+                Drag Me
+            </div>
+        </div>
+    </div>
+    <script>
+        function setupCustomDragPreview() {
+            const draggables = document.querySelectorAll('[draggable="true"]');
+
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', (e) => {
+                    const type = e.target.dataset.type;
+
+                    const dragPreview = document.createElement('div');
+                    dragPreview.className = 'drag-preview';
+                    dragPreview.textContent = 'Custom drag preview\n';
+
+                    const div = document.createElement('div');
+                    div.textContent = 'Im a child!';
+                    div.classList.add('child');
+                    dragPreview.append(div);
+
+                    dragPreview.style.position = 'fixed';
+                    dragPreview.style.top = '0';
+                    dragPreview.style.left = '0';
+
+                    document.body.appendChild(dragPreview);
+
+                    e.dataTransfer.setDragImage(dragPreview, 0, 0);
+
+                    setTimeout(() => {
+                        document.body.removeChild(dragPreview);
+                    });
+                });
+            });
+        }
+
+        async function main() {
+            setupCustomDragPreview();
+        }
+
+        window.addEventListener('load', main, false);
+    </script>
+</body>
+</html>

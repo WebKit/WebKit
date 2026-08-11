@@ -1,0 +1,29 @@
+<!doctype html><!-- webkit-test-runner [ ReadableByteStreamFetchSourceEnabled=true ] -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fetch and source</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+promise_test(async () => {
+    const response = await fetch('/');
+    const fetchReadableStream = response.body;
+
+    let reader = fetchReadableStream.getReader({ mode:'byob' });
+    assert_true(reader instanceof ReadableStreamBYOBReader);
+    reader.releaseLock();
+
+    const [r1, r2] = fetchReadableStream.tee();
+
+    reader = r1.getReader({ mode:'byob' });
+    assert_true(reader instanceof ReadableStreamBYOBReader);
+
+    reader = r2.getReader();
+    assert_true(reader instanceof ReadableStreamDefaultReader);
+}, "Fetch response body as byte stream");
+    </script>
+  </body>
+</html>

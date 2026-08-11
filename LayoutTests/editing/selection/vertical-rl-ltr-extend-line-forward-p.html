@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style> .selected { color: blue; } </style>
+</head>
+<body>
+<p>This tests horizontal caret movement in vertical writing mode. "は猫である。" and "名前" must be selected.</p>
+<div id="test" style="height: 30ex; -webkit-writing-mode: vertical-rl; outline: none;" contenteditable>
+<p>吾輩は猫である。</p>
+<p>名前はまだ無い。</p>
+</div>
+<pre id="log"></pre>
+<script>
+
+var test = document.getElementById('test');
+window.getSelection().setPosition(test.getElementsByTagName('p')[0].firstChild, 2);
+window.getSelection().modify('Extend', 'Forward', 'Line');
+
+</script>
+</body>
+</html>

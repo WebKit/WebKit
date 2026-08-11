@@ -1,0 +1,83 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>User activation: bless works in iframe</title>
+<script src="/common/get-host-info.sub.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+
+<body>
+    <iframe id="same-origin"></iframe>
+    <iframe id="cross-origin"></iframe>
+</body>
+<script type="module">
+    const iframeSameOrigin = document.querySelector("iframe#same-origin");
+    const iframeCrossOrigin = document.querySelector("iframe#cross-origin");
+
+    function resetActivation() {
+        if (window.internals) internals.consumeTransientActivation();
+    }
+
+    function sendMessage(iframe) {
+        const { promise, resolve, reject } = Promise.withResolvers();
+        const timer = step_timeout(() => {
+            window.removeEventListener("message", onMessage);
+            reject(new Error("iframe did not report back in time"));
+        }, 8000);
+        function onMessage(event) {
+            if (event.source !== iframe.contentWindow) return;
+            clearTimeout(timer);
+            window.removeEventListener("message", onMessage);
+            resolve(event.data);
+        }
+        window.addEventListener("message", onMessage);
+        iframe.contentWindow.postMessage("run", "*");
+        return promise;
+    }
+
+    function loadIframe(iframe, src) {
+        const { promise, resolve } = Promise.withResolvers();
+        iframe.onload = () => resolve();
+        iframe.src = src;
+        return promise;
+    }
+
+    promise_setup(async () => {
+        const hostInfo = get_host_info();
+        const sameOriginSrc = document.location.pathname.replace(/bless.html$/, "resources/iframe.html");
+        const crossOriginSrc = new URL(sameOriginSrc, hostInfo.HTTPS_REMOTE_ORIGIN).href;
+        await Promise.all([
+            loadIframe(iframeCrossOrigin, crossOriginSrc),
+            loadIframe(iframeSameOrigin, sameOriginSrc),
+        ]);
+    });
+
+    promise_test(async (t) => {
+        resetActivation();
+        await test_driver.bless("user activation");
+        assert_true(navigator.userActivation.isActive, "top document is activated after bless");
+    }, "bless in top document");
+
+    promise_test(async (t) => {
+        resetActivation();
+        await test_driver.bless("user activation blessed directly from parent script",
+            null, iframeSameOrigin.contentWindow);
+        assert_true(iframeSameOrigin.contentWindow.navigator.userActivation.isActive,
+            "same-origin iframe is activated after bless");
+    }, "bless added directly from parent script to same-origin iframe's window context");
+
+    promise_test(async (t) => {
+        resetActivation();
+        const data = await sendMessage(iframeSameOrigin);
+        assert_equals(data.status, "success", "bless in same-origin iframe should succeed");
+        assert_true(data.isActive, "same-origin iframe is activated after bless");
+    }, "bless added from parent script to same-origin iframe via sendMessage");
+
+    promise_test(async (t) => {
+        resetActivation();
+        const data = await sendMessage(iframeCrossOrigin);
+        assert_equals(data.status, "success", "bless in cross-origin iframe should succeed");
+        assert_true(data.isActive, "cross-origin iframe is activated after bless");
+    }, "bless added from inside cross-origin iframe");
+</script>

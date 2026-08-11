@@ -1,0 +1,77 @@
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+promise_test(async (t) => {
+    const stream1 = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const track1 = stream1.getAudioTracks()[0];
+    t.add_cleanup(() => track1.stop());
+    assert_true(track1.getSettings().echoCancellation, "test1");
+
+    const stream2 = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation:false } });
+    const track2 = stream2.getAudioTracks()[0];
+    t.add_cleanup(() => track2.stop());
+    assert_false(track2.getSettings().echoCancellation, "test2");
+
+    if (window.internals && !internals.supportsMultiMicrophoneCaptureWithoutEchoCancellation())
+        return;
+
+    await new Promise(resolve => t.step_timeout(resolve, 50));
+    assert_true(track1.getSettings().echoCancellation, "test3");
+}, "Capturing without echo cancellation shouldn't affect echo cancelled tracks of the same device");
+
+promise_test(async (t) => {
+    const stream1 = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation:false } });
+    const track1 = stream1.getAudioTracks()[0];
+    t.add_cleanup(() => track1.stop());
+    assert_false(track1.getSettings().echoCancellation, "test1");
+
+    const stream2 = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const track2 = stream2.getAudioTracks()[0];
+    t.add_cleanup(() => track2.stop());
+    assert_true(track2.getSettings().echoCancellation, "test2");
+
+    if (window.internals && !internals.supportsMultiMicrophoneCaptureWithoutEchoCancellation())
+        return;
+
+    await new Promise(resolve => t.step_timeout(resolve, 50));
+    assert_false(track1.getSettings().echoCancellation, "test3");
+}, "Capturing with echo cancellation shouldn't affect tracks without echo cancellation of the same device");
+
+promise_test(async (t) => {
+    const stream1 = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation:false } });
+    const track1 = stream1.getAudioTracks()[0];
+    t.add_cleanup(() => track1.stop());
+    assert_false(track1.getSettings().echoCancellation, "test1");
+
+    const stream2 = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const track2 = stream2.getAudioTracks()[0];
+    t.add_cleanup(() => track2.stop());
+    assert_true(track2.getSettings().echoCancellation, "test2");
+
+    if (window.internals && !internals.supportsMultiMicrophoneCaptureWithoutEchoCancellation())
+        return;
+
+    await track1.applyConstraints({ echoCancellation:true });
+    assert_true(track1.getSettings().echoCancellation, "test3");
+    assert_true(track2.getSettings().echoCancellation, "test4");
+
+    await track1.applyConstraints({ echoCancellation:false });
+    assert_false(track1.getSettings().echoCancellation, "test5");
+    assert_true(track2.getSettings().echoCancellation, "test6");
+}, "Using applyConstraints for enabling/disabling echo cancellation should not interfere with another microphone track");
+
+promise_test(async (t) => {
+    const stream1 = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation:false } });
+    const track1 = stream1.getAudioTracks()[0];
+    t.add_cleanup(() => track1.stop());
+    assert_false(track1.getSettings().echoCancellation, "test1");
+
+    const track2 = track1.clone();
+    t.add_cleanup(() => track2.stop());
+    assert_false(track2.getSettings().echoCancellation, "test2");
+
+    await track1.applyConstraints({ echoCancellation:true });
+    assert_true(track1.getSettings().echoCancellation, "test3");
+    assert_true(!track2.getSettings().echoCancellation, "FIXME: support changing settings of cloned audio tracks -");
+}, "Using applyConstraints for enabling/disabling echo cancellation should not interfere with another cloned track");
+</script>

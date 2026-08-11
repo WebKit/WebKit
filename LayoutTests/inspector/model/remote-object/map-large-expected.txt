@@ -1,0 +1,112 @@
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; for (var i = 0; i < 1000000; i++) map.set(i, i); map
+{
+  "_type": "object",
+  "_subtype": "map",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_size": 1000000,
+  "_preview": {
+    "_type": "object",
+    "_subtype": "map",
+    "_description": "Map",
+    "_lossless": false,
+    "_overflow": true,
+    "_size": 1000000,
+    "_properties": [],
+    "_entries": [
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "0",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "1",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "2",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "3",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      },
+      {
+        "_key": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        },
+        "_value": {
+          "_type": "number",
+          "_description": "4",
+          "_lossless": true,
+          "_overflow": false,
+          "_properties": null,
+          "_entries": null
+        }
+      }
+    ]
+  }
+}
+

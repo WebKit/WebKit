@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest()
+{
+    var newBody = document.createElement("body");
+    var docRange = document.createRange();
+    docRange.selectNodeContents(newBody);
+    var boundingRect = docRange.getBoundingClientRect();
+}
+</script>
+</head>
+<body onload=runTest()>
+Test passes if it does not ASSERT.
+</body>
+</html>

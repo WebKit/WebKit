@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that operations marked as [Unforgeable] are indeed readonly.");
+
+function className(object) {
+    return Object.prototype.toString.call(object).match(/^\[object\s(.*)\]$/)[1];
+}
+
+function checkReadOnly(object, propertyName)
+{
+    testObject = object;
+    testPropertyName = propertyName;
+
+    debug("");
+    debug("- " + className(object) + "." + propertyName);
+    shouldBeFalse("Object.getOwnPropertyDescriptor(testObject, testPropertyName).writable");
+    // Non strict mode.
+    shouldNotThrow("testObject[testPropertyName] = false");
+    shouldNotBe("testObject[testPropertyName]", "false");
+    // Strict mode.
+    shouldThrow("'use strict'; testObject[testPropertyName] = 3", "'TypeError: Attempted to assign to readonly property.'");
+    shouldNotBe("testObject[testPropertyName]", "3");
+}
+
+debug("* Location (non refied)");
+checkReadOnly(location, "reload");
+checkReadOnly(location, "assign");
+checkReadOnly(location, "replace");
+
+debug("");
+debug("* Location (reified)");
+// Reify location.
+location.newProperty = true;
+delete location.newProperty;
+// Test again.
+checkReadOnly(location, "reload");
+checkReadOnly(location, "assign");
+checkReadOnly(location, "replace");
+
+debug("");
+</script>
+<script src="../../resources/js-test-post.js"></script>

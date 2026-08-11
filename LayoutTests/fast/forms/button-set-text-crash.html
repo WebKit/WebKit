@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+PASS if no crash.
+<input id=foobar type="button"></input>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetHeight;
+foobar.value = "foobar";
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+2d.imageData.get.nonfinite
+
+getImageData() throws TypeError if arguments are not finite
+
+Defined in "Web IDL" (draft)
+
+
+PASS getImageData() throws TypeError if arguments are not finite
+

@@ -1,0 +1,22 @@
+<style>
+div {
+  color: transparent;
+  font-family: Ahem;
+  font-size: 20px;
+}
+
+.inline-block {
+  display: inline-block;
+  min-height: 50px;
+  border-left: 50px solid blue;
+  border-right: 100px solid green;
+}
+</style>
+
+<div><div class=inline-block style="width: 200px;"></div></div>
+<div><div class=inline-block style="width: 200px;">X</div></div>
+<div><div class=inline-block style="box-sizing: border-box; width: 200px;">X</div></div>
+<div><div class=inline-block style="box-sizing: border-box;">X</div></div>
+<div><div class=inline-block style="box-sizing: border-box;">X</div></div>
+<div><div class=inline-block style="box-sizing: border-box; width: 20px;">X</div></div>
+

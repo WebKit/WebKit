@@ -1,0 +1,8 @@
+json-module-crossorigin
+
+
+
+PASS Imported JSON module, cross-origin with CORS
+PASS Imported JSON module, cross-origin, missing CORS ACAO header
+PASS Imported JSON module with parse error, cross-origin, with CORS
+

@@ -1,0 +1,4347 @@
+#X1. Type: float[5]                                // An array type with 5 elements
+#X2. Return value: float[5] func() { ... }                    // Function with a 5-element array return value
+#X3. Array constructor: float[3] (1.0, 2.0, 5.5)                // 3-element array with given elements
+#                                                                    // Fails with array of matrices!
+#X4. As unnamed parameter: void func(float[5]);
+#X5. Variable declaration: float[5] a;                                // Equivalent to float a[5]; (?)
+#X6. Empty brackets: float x[] = float[] (1.0, 2.0, 3.0);    // Size of x is 3
+#                            float y[] = float[3] (1.0, 2.0, 3.0);    // Size of y is 3 (equivalent)
+#                            float z[] = y;                            // Size of z is 3
+#X7. Testing that 2-dimensional arrays don't work: float a[5][3];    // Illegal
+#                                                    float[5] a[3];    // Illegal
+#X8. Testing that array declaration with dynamic variables as array size won't work.
+#X9. Testing length() operator: z.length();                            // Returns 3 for z defined before
+#X10. Test C/C++ style {}-constructor
+#X11. Test struct arrays
+#X12. Test array element access at initialization with const/dynamic values
+
+group constructor "Array constructors"
+
+    case float3
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) | vec3(7.4, -1.0, 2.0) | vec3(3.0, 1.6, -2.0) ];
+            output vec3 out0 = [ vec3(2.0, 0.5, 1.0) | vec3(2.0, 7.4, -1.0) | vec3(-2.0, 3.0, 1.6) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                float[3] x;
+                x = float[3] (in0.z, in0.x, in0.y);
+                out0 = vec3(x[0], x[1], x[2]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case float4
+        version 300 es
+        values
+        {
+            input vec4 in0 = [ vec4(0.5, 1.0, 2.0, 0.2) | vec4(7.4, -1.0, 2.0, -1.3) | vec4(3.0, 1.6, -2.0, 0.5) ];
+            output vec4 out0 = [ vec4(2.0, 0.5, 0.2, 1.0) | vec4(2.0, 7.4, -1.3, -1.0) | vec4(-2.0, 3.0, 0.5, 1.6) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                float[4] x;
+                x = float[4] (in0.z, in0.x, in0.w, in0.y);
+                out0 = vec4(x[0], x[1], x[2], x[3]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case int3
+        version 300 es
+        values
+        {
+            input ivec3 in0 = [ ivec3(0, 1, 2) | ivec3(7, -1, 2) | ivec3(3, 1, -2) ];
+            output ivec3 out0 = [ ivec3(2, 0, 1) | ivec3(2, 7, -1) | ivec3(-2, 3, 1) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                int[3] x;
+                x = int[3] (in0.z, in0.x, in0.y);
+                out0 = ivec3(x[0], x[1], x[2]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case int4
+        version 300 es
+        values
+        {
+            input ivec4 in0 = [ ivec4(0, 1, 2, 0) | ivec4(7, -1, 2, -1) | ivec4(3, 1, -2, 0) ];
+            output ivec4 out0 = [ ivec4(2, 0, 0, 1) | ivec4(2, 7, -1, -1) | ivec4(-2, 3, 0, 1) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                int[4] x;
+                x = int[4] (in0.z, in0.x, in0.w, in0.y);
+                out0 = ivec4(x[0], x[1], x[2], x[3]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case bool3
+        version 300 es
+        values
+        {
+            input bvec3 in0 = [ bvec3(true, true, false) ];
+            output bvec3 out0 = [ bvec3(false, true, true) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                bool[3] x;
+                x = bool[3] (in0.z, in0.x, in0.y);
+                out0 = bvec3(x[0], x[1], x[2]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case bool4
+        version 300 es
+        values
+        {
+            input bvec4 in0 = [ bvec4(true, true, false, false) ];
+            output bvec4 out0 = [ bvec4(false, true, true, false) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                bool[4] x;
+                x = bool[4] (in0.z, in0.x, in0.y, in0.w);
+                out0 = bvec4(x[0], x[1], x[2], x[3]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case struct3
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) ];
+            output vec3 out0 = [ vec3(2.0, -0.5, -1.0) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+
+
+            void main()
+            {
+                ${SETUP}
+
+                struct test
+                {
+                    float f;
+                    vec3 v;
+                };
+
+                test a = test(in0.z, vec3(in0.x, in0.y, in0.z));
+                test b = test(in0.y, vec3(-in0.z, -in0.x, -in0.y));
+                test c = test(in0.x, vec3(-in0.y, in0.z, -in0.x));
+
+                test[3] x = test[3] (a, b, c);
+
+                out0 = vec3(x[0].f, x[1].v.y, x[2].v.x);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case struct4
+        version 300 es
+        values
+        {
+            input vec4 in0 = [ vec4(0.5, 1.0, 2.0, 1.5) ];
+            output vec4 out0 = [ vec4(2.0, -0.5, -1.0, -1.5) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+
+            void main()
+            {
+                ${SETUP}
+
+
+                struct test
+                {
+                    float f;
+                    vec3 v;
+                };
+
+                test a = test(in0.z, vec3(in0.x, in0.y, in0.z));
+                test b = test(in0.y, vec3(-in0.z, -in0.x, -in0.y));
+                test c = test(in0.x, vec3(-in0.y, in0.z, -in0.x));
+                test d = test(-in0.w, vec3(-in0.w, -in0.x, -in0.z));
+
+                test[4] x = test[4] (a, b, c, d);
+
+                out0 = vec4(x[0].f, x[1].v.y, x[2].v.x, x[3].v.x);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+
+    case float_vec3
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) | vec3(7.4, -1.0, 2.0) | vec3(3.0, 1.6, -2.0) ];
+            output vec3 out0 = [ vec3(0.5, -2.0, 1.0) | vec3(7.4, -2.0, -1.0) | vec3(3.0, 2.0, 1.6) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+
+                vec3[3] x;
+                x = vec3[3] (    vec3(in0.x, in0.y, in0.z)    ,
+                                vec3(-in0.y, -in0.z, -in0.x),
+                                vec3(in0.z, in0.x, in0.y)    );
+                out0 = vec3(x[0].x, x[1].y, x[2].z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case int_vec3
+        version 300 es
+        values
+        {
+            input ivec3 in0 = [ ivec3(5, 1, 2) | ivec3(7, -1, 2) | ivec3(3, 1, -2) ];
+            output ivec3 out0 = [ ivec3(5, -2, 1) | ivec3(7, -2, -1) | ivec3(3, 2, 1) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+
+                ivec3[3] x;
+                x = ivec3[3] (    ivec3(in0.x, in0.y, in0.z)    ,
+                                ivec3(-in0.y, -in0.z, -in0.x),
+                                ivec3(in0.z, in0.x, in0.y)    );
+                out0 = ivec3(x[0].x, x[1].y, x[2].z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case bool_vec3
+        version 300 es
+        values
+        {
+            input bvec3 in0 = [ bvec3(true, false, true) ];
+            output bvec3 out0 = [ bvec3(true, true, false) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+
+                bvec3[3] x;
+                x = bvec3[3] (    bvec3(in0.x, in0.y, in0.z)    ,
+                                bvec3(in0.y, in0.z, in0.x),
+                                bvec3(in0.z, in0.x, in0.y)    );
+                out0 = bvec3(x[0].x, x[1].y, x[2].z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case float_mat3
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) | vec3(-1.5, 0.0, -2.3) ];
+            output vec3 out0 = [ vec3(0.5, -1.0, 1.0) | vec3(-1.5, 0.0, 0.0) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                mat3[3] a = mat3[3] (    mat3(    in0.x, in0.y, in0.z,
+                                                in0.x, in0.y, in0.z,
+                                                in0.x, in0.y, in0.z)    ,
+                                        mat3(    in0.z, in0.x, -in0.y,
+                                                in0.z, in0.x, -in0.y,
+                                                in0.z, in0.x, -in0.y)    ,
+                                        mat3(    -in0.z, -in0.z, in0.z,
+                                                -in0.y, -in0.y, in0.y,
+                                                -in0.x, -in0.x, in0.x)    );
+
+                mat3 a0 = a[0];
+                mat3 a1 = a[1];
+                mat3 a2 = a[2];
+
+                float ret0 = a0[2][0];
+                float ret1 = a1[0][2];
+                float ret2 = a2[1][2];
+
+                out0 = vec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case int_mat3
+        version 300 es
+        values
+        {
+            input ivec3 in0 = [ ivec3(0, 1, 2) | ivec3(-1, 0, -2) ];
+            output ivec3 out0 = [ ivec3(0, -1, 1) | ivec3(-1, 0, 0) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                mat3[3] a = mat3[3] (    mat3(    in0.x, in0.y, in0.z,
+                                                in0.x, in0.y, in0.z,
+                                                in0.x, in0.y, in0.z)    ,
+                                        mat3(    in0.z, in0.x, -in0.y,
+                                                in0.z, in0.x, -in0.y,
+                                                in0.z, in0.x, -in0.y)    ,
+                                        mat3(    -in0.z, -in0.z, in0.z,
+                                                -in0.y, -in0.y, in0.y,
+                                                -in0.x, -in0.x, in0.x)    );
+
+                mat3 a0 = a[0];
+                mat3 a1 = a[1];
+                mat3 a2 = a[2];
+
+                float ret0 = a0[2][0];
+                float ret1 = a1[0][2];
+                float ret2 = a2[1][2];
+
+                out0 = ivec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case bool_mat3
+        version 300 es
+        values
+        {
+            input bvec3 in0 = [ bvec3(true, false, true) ];
+            output bvec3 out0 = [ bvec3(true, false, false) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                mat3[3] a = mat3[3] (    mat3(    in0.x, in0.y, in0.z,
+                                                in0.x, in0.y, in0.z,
+                                                in0.x, in0.y, in0.z)    ,
+                                        mat3(    in0.z, in0.x, in0.y,
+                                                in0.z, in0.x, in0.y,
+                                                in0.z, in0.x, in0.y)    ,
+                                        mat3(    in0.z, in0.z, in0.z,
+                                                in0.y, in0.y, in0.y,
+                                                in0.x, in0.x, in0.x)    );
+
+                mat3 a0 = a[0];
+                mat3 a1 = a[1];
+                mat3 a2 = a[2];
+
+                float ret0 = a0[2][0];
+                float ret1 = a1[0][2];
+                float ret2 = a2[1][2];
+
+                out0 = bvec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+end # type
+
+group return "Arrays as return value"
+
+    case float
+        version 300 es
+        values
+        {
+            input vec3 in0 =    [ vec3(0.5, 1.0, 2.0) | vec3(7.4, -1.0, 2.0) | vec3(3.0, 1.6, -2.0) ];
+            output vec3 out0 = [ vec3(2.0, -0.5, 1.0) | vec3(2.0, -7.4, -1.0) | vec3(-2.0, -3.0, 1.6) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            float[3] func(vec3 a)
+            {
+                return float[3] (a.z, -a.x, a.y);
+            }
+
+            void main()
+            {
+                ${SETUP}
+                float[3] x = func(in0);
+                out0 = vec3(x[0], x[1], x[2]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case int
+        version 300 es
+        values
+        {
+            input ivec3 in0 = [ ivec3(4, 1, 2) | ivec3(7, -1, 2) | ivec3(3, 1, -2) ];
+            output ivec3 out0 =    [ ivec3(2, -4, 1) | ivec3(2, -7, -1) | ivec3(-2, -3, 1) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            int[3] func(ivec3 a)
+            {
+                return int[3] (a.z, -a.x, a.y);
+            }
+
+            void main()
+            {
+                ${SETUP}
+                int[3] x = func(in0);
+                out0 = ivec3(x[0], x[1], x[2]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case bool
+        version 300 es
+        values
+        {
+            input bvec3 in0 =    [ bvec3(false, true, true) ];
+            output bvec3 out0 = [ bvec3(true, false, true) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            bool[3] func(bvec3 a)
+            {
+                return bool[3] (a.z, a.x, a.y);
+            }
+
+            void main()
+            {
+                ${SETUP}
+                bool[3] x = func(in0);
+                out0 = bvec3(x[0], x[1], x[2]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+
+
+    case float_vec3
+        version 300 es
+        values
+        {
+            input vec3 in0 =    [ vec3(0.5, 1.0, 2.0) | vec3(-0.5, 11.2, -1.0) ];
+            output vec3 out0 = [ vec3(1.0, 0.5, -2.0) | vec3(11.2, -0.5, 1.0) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            vec3[3] func(vec3[3] a)
+            {
+                return vec3[3] (a[1], a[2], a[0]);
+            }
+
+            void main()
+            {
+                ${SETUP}
+                vec3[3] x = vec3[3](vec3(in0.x, in0.y, -in0.z)    ,
+                                    vec3(in0.y, -in0.z, in0.x)    ,
+                                    vec3(-in0.z, in0.x, in0.y)    );
+                x = func(x);
+                out0 = vec3(x[0].x, x[1].y, x[2].z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case struct
+        version 300 es
+        values
+        {
+            input vec3 in0 =    [ vec3(0.5, 1.0, 2.0) ];
+            output vec3 out0 = [ vec3(-1.0, 2.0, 0.5) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            struct test
+            {
+                float f;
+                vec3 v;
+            };
+
+            test[3] func(test[3] a)
+            {
+                return test[3] (a[1], a[2], a[0]);
+            }
+
+            void main()
+            {
+                ${SETUP}
+
+                test a = test(in0.z, vec3(in0.x, in0.y, in0.z));
+                test b = test(in0.y, vec3(-in0.z, -in0.x, -in0.y));
+                test c = test(in0.x, vec3(-in0.y, in0.z, -in0.x));
+
+                test[3] t = test[3] (a, b, c);
+                test[3] x = func(t);
+
+                out0 = vec3(x[0].v.z, x[1].v.y, x[2].v.x);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case int_vec3
+        version 300 es
+        values
+        {
+            input ivec3 in0 =    [ ivec3(5, 1, 2) | ivec3(-5, 11, -1) ];
+            output ivec3 out0 = [ ivec3(1, 5, -2) | ivec3(11, -5, 1) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            ivec3[3] func(ivec3[3] a)
+            {
+                return ivec3[3] (a[1], a[2], a[0]);
+            }
+
+            void main()
+            {
+                ${SETUP}
+                ivec3[3] x = ivec3[3](    ivec3(in0.x, in0.y, -in0.z)    ,
+                                        ivec3(in0.y, -in0.z, in0.x)    ,
+                                        ivec3(-in0.z, in0.x, in0.y)    );
+                x = func(x);
+                out0 = ivec3(x[0].x, x[1].y, x[2].z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case bool_vec3
+        version 300 es
+        values
+        {
+            input bvec3 in0 =    [ bvec3(true, false, false) ];
+            output bvec3 out0 = [ bvec3(false, true, false) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            bvec3[3] func(bvec3[3] a)
+            {
+                return bvec3[3] (a[1], a[2], a[0]);
+            }
+
+            void main()
+            {
+                ${SETUP}
+                bvec3[3] x = bvec3[3](    bvec3(in0.x, in0.y, in0.z)    ,
+                                        bvec3(in0.y, in0.z, in0.x)    ,
+                                        bvec3(in0.z, in0.x, in0.y)    );
+                x = func(x);
+                out0 = bvec3(x[0].x, x[1].y, x[2].z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case float_mat3
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) | vec3(-1.5, 0.0, -2.3) ];
+            output vec3 out0 = [ vec3(2.0, -1.0, 2.0) | vec3(-2.3, 0.0, -2.3) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            mat3[3] func(mat3[3] x)
+            {
+                mat3[3] r;
+                r[0] = x[1];
+                r[1] = x[2];
+                r[2] = x[0];
+                return r;
+            }
+
+            void main()
+            {
+                ${SETUP}
+                mat3[3] a, b;
+                a[0] = mat3(in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z);
+                a[1] = mat3(in0.z, in0.x, -in0.y,
+                            in0.z, in0.x, -in0.y,
+                            in0.z, in0.x, -in0.y);
+                a[2] = mat3(-in0.z, -in0.z, in0.z,
+                            -in0.y, -in0.y, in0.y,
+                            -in0.x, -in0.x, in0.x);
+
+                b = func(a);
+
+                mat3 b0 = b[0];
+                mat3 b1 = b[1];
+                mat3 b2 = b[2];
+
+                float ret0 = b0[0][0];
+                float ret1 = b1[1][1];
+                float ret2 = b2[2][2];
+
+                out0 = vec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case int_mat3
+        version 300 es
+        values
+        {
+            input ivec3 in0 = [ ivec3(5, 1, 2) | ivec3(-1, 0, -2) ];
+            output ivec3 out0 = [ ivec3(2, -1, 2) | ivec3(-2, 0, -2) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            mat3[3] func(mat3[3] x)
+            {
+                mat3[3] r;
+                r[0] = x[1];
+                r[1] = x[2];
+                r[2] = x[0];
+                return r;
+            }
+
+            void main()
+            {
+                ${SETUP}
+                mat3[3] a, b;
+                a[0] = mat3(in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z);
+                a[1] = mat3(in0.z, in0.x, -in0.y,
+                            in0.z, in0.x, -in0.y,
+                            in0.z, in0.x, -in0.y);
+                a[2] = mat3(-in0.z, -in0.z, in0.z,
+                            -in0.y, -in0.y, in0.y,
+                            -in0.x, -in0.x, in0.x);
+
+                b = func(a);
+
+                mat3 b0 = b[0];
+                mat3 b1 = b[1];
+                mat3 b2 = b[2];
+
+                float ret0 = b0[0][0];
+                float ret1 = b1[1][1];
+                float ret2 = b2[2][2];
+
+                out0 = ivec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case bool_mat3
+        version 300 es
+        values
+        {
+            input bvec3 in0 = [ bvec3(true, false, true) | bvec3(true, true, false) ];
+            output bvec3 out0 = [ bvec3(true, false, true) | bvec3(false, true, false) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            mat3[3] func(mat3[3] x)
+            {
+                mat3[3] r;
+                r[0] = x[1];
+                r[1] = x[2];
+                r[2] = x[0];
+                return r;
+            }
+
+            void main()
+            {
+                ${SETUP}
+                mat3[3] a, b;
+                a[0] = mat3(in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z);
+                a[1] = mat3(in0.z, in0.x, in0.y,
+                            in0.z, in0.x, in0.y,
+                            in0.z, in0.x, in0.y);
+                a[2] = mat3(in0.z, in0.z, in0.z,
+                            in0.y, in0.y, in0.y,
+                            in0.x, in0.x, in0.x);
+
+                b = func(a);
+
+                mat3 b0 = b[0];
+                mat3 b1 = b[1];
+                mat3 b2 = b[2];
+
+                float ret0 = b0[0][0];
+                float ret1 = b1[1][1];
+                float ret2 = b2[2][2];
+
+                out0 = bvec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+end # return
+
+group unnamed_parameter "Array type as unnamed parameter of a function prototype"
+
+    case float
+        version 300 es
+        values
+        {
+            input vec3 in0 =    [ vec3(0.5, 1.0, 2.0) | vec3(7.4, -1.0, 2.0) | vec3(3.0, 1.6, -2.0) ];
+            output vec3 out0 = [ vec3(2.0, 0.5, 1.0) | vec3(2.0, 7.4, -1.0) | vec3(-2.0, 3.0, 1.6) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            float[3] func(float[3]);
+
+            void main()
+            {
+                ${SETUP}
+                float[3] a = float[3] (in0.x, in0.y, in0.z);
+                float[3] b = func(a);
+                out0 = vec3(b[0], b[1], b[2]);
+                ${OUTPUT}
+            }
+
+            float[3] func(float[3] a)
+            {
+                return float[3] (a[2], a[0], a[1]);
+            }
+
+        ""
+    end
+
+    case int
+        version 300 es
+        values
+        {
+            input ivec3 in0 =    [ ivec3(0, 1, 2) | ivec3(7, -1, 2) | ivec3(3, 1, -2) ];
+            output ivec3 out0 = [ ivec3(2, 0, 1) | ivec3(2, 7, -1) | ivec3(-2, 3, 1) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            int[3] func(int[3]);
+
+            void main()
+            {
+                ${SETUP}
+                int[3] a = int[3] (in0.x, in0.y, in0.z);
+                int[3] b = func(a);
+                out0 = ivec3(b[0], b[1], b[2]);
+                ${OUTPUT}
+            }
+
+            int[3] func(int[3] a)
+            {
+                return int[3] (a[2], a[0], a[1]);
+            }
+
+        ""
+    end
+
+    case bool
+        version 300 es
+        values
+        {
+            input bvec3 in0 =    [ bvec3(false, true, true) ];
+            output bvec3 out0 = [ bvec3(true, false, true) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            bool[3] func(bool[3]);
+
+            void main()
+            {
+                ${SETUP}
+                bool[3] a = bool[3] (in0.x, in0.y, in0.z);
+                bool[3] b = func(a);
+                out0 = bvec3(b[0], b[1], b[2]);
+                ${OUTPUT}
+            }
+
+            bool[3] func(bool[3] a)
+            {
+                return bool[3] (a[2], a[0], a[1]);
+            }
+
+        ""
+    end
+
+    case struct
+        version 300 es
+        values
+        {
+            input vec3 in0 =    [ vec3(0.5, 1.0, 2.0) ];
+            output vec3 out0 = [ vec3(-1.0, 2.0, 0.5) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            struct test
+            {
+                float f;
+                vec3 v;
+            };
+
+            test[3] func(test[3]);
+
+            void main()
+            {
+                ${SETUP}
+
+                test a = test(in0.z, vec3(in0.x, in0.y, in0.z));
+                test b = test(in0.y, vec3(-in0.z, -in0.x, -in0.y));
+                test c = test(in0.x, vec3(-in0.y, in0.z, -in0.x));
+
+                test[3] t = test[3] (a, b, c);
+                test[3] x = func(t);
+                out0 = vec3(x[0].v.z, x[1].v.y, x[2].v.x);
+                ${OUTPUT}
+            }
+
+            test[3] func(test[3] a)
+            {
+                return test[3] (a[1], a[2], a[0]);
+            }
+
+        ""
+    end
+
+    case float_vec3
+        version 300 es
+        values
+        {
+            input vec3 in0 =    [ vec3(0.5, 1.0, 2.0) | vec3(-0.5, 11.2, -1.0) ];
+            output vec3 out0 = [ vec3(1.0, 0.5, -2.0) | vec3(11.2, -0.5, 1.0) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            vec3[3] func(vec3[3]);
+
+            void main()
+            {
+                ${SETUP}
+                vec3[3] x = vec3[3](vec3(in0.x, in0.y, -in0.z)    ,
+                                    vec3(in0.y, -in0.z, in0.x)    ,
+                                    vec3(-in0.z, in0.x, in0.y)    );
+                x = func(x);
+                out0 = vec3(x[0].x, x[1].y, x[2].z);
+                ${OUTPUT}
+            }
+
+            vec3[3] func(vec3[3] a)
+            {
+                return vec3[3] (a[1], a[2], a[0]);
+            }
+        ""
+    end
+
+    case int_vec3
+        version 300 es
+        values
+        {
+            input ivec3 in0 =    [ ivec3(5, 1, 2) | ivec3(-5, 11, -1) ];
+            output ivec3 out0 = [ ivec3(1, 5, -2) | ivec3(11, -5, 1) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            ivec3[3] func(ivec3[3]);
+
+            void main()
+            {
+                ${SETUP}
+                ivec3[3] x = ivec3[3](    ivec3(in0.x, in0.y, -in0.z)    ,
+                                        ivec3(in0.y, -in0.z, in0.x)    ,
+                                        ivec3(-in0.z, in0.x, in0.y)    );
+                x = func(x);
+                out0 = ivec3(x[0].x, x[1].y, x[2].z);
+                ${OUTPUT}
+            }
+
+            ivec3[3] func(ivec3[3] a)
+            {
+                return ivec3[3] (a[1], a[2], a[0]);
+            }
+        ""
+    end
+
+    case bool_vec3
+        version 300 es
+        values
+        {
+            input bvec3 in0 =    [ bvec3(true, false, false) ];
+            output bvec3 out0 = [ bvec3(false, true, false) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            bvec3[3] func(bvec3[3]);
+
+            void main()
+            {
+                ${SETUP}
+                bvec3[3] x = bvec3[3](    bvec3(in0.x, in0.y, in0.z)    ,
+                                        bvec3(in0.y, in0.z, in0.x)    ,
+                                        bvec3(in0.z, in0.x, in0.y)    );
+                x = func(x);
+                out0 = bvec3(x[0].x, x[1].y, x[2].z);
+                ${OUTPUT}
+            }
+
+            bvec3[3] func(bvec3[3] a)
+            {
+                return bvec3[3] (a[1], a[2], a[0]);
+            }
+
+        ""
+    end
+
+    case float_mat3
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) | vec3(-1.5, 0.0, -2.3) ];
+            output vec3 out0 = [ vec3(2.0, -1.0, 2.0) | vec3(-2.3, 0.0, -2.3) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            mat3[3] func(mat3[3]);
+
+            void main()
+            {
+                ${SETUP}
+                mat3[3] a, b;
+                a[0] = mat3(in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z);
+                a[1] = mat3(in0.z, in0.x, -in0.y,
+                            in0.z, in0.x, -in0.y,
+                            in0.z, in0.x, -in0.y);
+                a[2] = mat3(-in0.z, -in0.z, in0.z,
+                            -in0.y, -in0.y, in0.y,
+                            -in0.x, -in0.x, in0.x);
+
+                b = func(a);
+
+                mat3 b0 = b[0];
+                mat3 b1 = b[1];
+                mat3 b2 = b[2];
+
+                float ret0 = b0[0][0];
+                float ret1 = b1[1][1];
+                float ret2 = b2[2][2];
+
+                out0 = vec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+
+            mat3[3] func(mat3[3] x)
+            {
+                mat3[3] r;
+                r[0] = x[1];
+                r[1] = x[2];
+                r[2] = x[0];
+                return r;
+            }
+        ""
+    end
+
+    case int_mat3
+        version 300 es
+        values
+        {
+            input ivec3 in0 = [ ivec3(5, 1, 2) | ivec3(-1, 0, -2) ];
+            output ivec3 out0 = [ ivec3(2, -1, 2) | ivec3(-2, 0, -2) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            mat3[3] func(mat3[3]);
+
+            void main()
+            {
+                ${SETUP}
+                mat3[3] a, b;
+                a[0] = mat3(in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z);
+                a[1] = mat3(in0.z, in0.x, -in0.y,
+                            in0.z, in0.x, -in0.y,
+                            in0.z, in0.x, -in0.y);
+                a[2] = mat3(-in0.z, -in0.z, in0.z,
+                            -in0.y, -in0.y, in0.y,
+                            -in0.x, -in0.x, in0.x);
+
+                b = func(a);
+
+                mat3 b0 = b[0];
+                mat3 b1 = b[1];
+                mat3 b2 = b[2];
+
+                float ret0 = b0[0][0];
+                float ret1 = b1[1][1];
+                float ret2 = b2[2][2];
+
+                out0 = ivec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+
+            mat3[3] func(mat3[3] x)
+            {
+                mat3[3] r;
+                r[0] = x[1];
+                r[1] = x[2];
+                r[2] = x[0];
+                return r;
+            }
+        ""
+    end
+
+    case bool_mat3
+        version 300 es
+        values
+        {
+            input bvec3 in0 = [ bvec3(true, false, true) | bvec3(true, true, false) ];
+            output bvec3 out0 = [ bvec3(true, false, true) | bvec3(false, true, false) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            mat3[3] func(mat3[3]);
+            void main()
+            {
+                ${SETUP}
+                mat3[3] a, b;
+                a[0] = mat3(in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z,
+                            in0.x, in0.y, in0.z);
+                a[1] = mat3(in0.z, in0.x, in0.y,
+                            in0.z, in0.x, in0.y,
+                            in0.z, in0.x, in0.y);
+                a[2] = mat3(in0.z, in0.z, in0.z,
+                            in0.y, in0.y, in0.y,
+                            in0.x, in0.x, in0.x);
+
+                b = func(a);
+
+                mat3 b0 = b[0];
+                mat3 b1 = b[1];
+                mat3 b2 = b[2];
+
+                float ret0 = b0[0][0];
+                float ret1 = b1[1][1];
+                float ret2 = b2[2][2];
+
+                out0 = bvec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+
+            mat3[3] func(mat3[3] x)
+            {
+                mat3[3] r;
+                r[0] = x[1];
+                r[1] = x[2];
+                r[2] = x[0];
+                return r;
+            }
+        ""
+    end
+
+end # unnamed_parameter
+
+group declaration "Declaring arrays"
+
+    case implicit_size_float
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) | vec3(7.4, -1.0, 2.0) | vec3(3.0, 1.6, -2.0) ];
+            output vec3 out0 = [ vec3(2.0, 0.5, 1.0) | vec3(2.0, 7.4, -1.0) | vec3(-2.0, 3.0, 1.6) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                float[] x = float[] (in0.z, in0.x, in0.y);
+                float[] y = x;
+
+                out0 = vec3(y[0], y[1], y[2]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case implicit_size_int
+        version 300 es
+        values
+        {
+            input ivec3 in0 = [ ivec3(0, 1, 2) | ivec3(7, -1, 2) | ivec3(3, 1, -2) ];
+            output ivec3 out0 = [ ivec3(2, 0, 1) | ivec3(2, 7, -1) | ivec3(-2, 3, 1) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                int[] x = int[] (in0.z, in0.x, in0.y);
+                int[] y = x;
+
+                out0 = ivec3(y[0], y[1], y[2]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case implicit_size_bool
+        version 300 es
+        values
+        {
+            input bvec3 in0 = [ bvec3(false, true, true) ];
+            output bvec3 out0 = [ bvec3(true, false, true) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                bool[] x = bool[] (in0.z, in0.x, in0.y);
+                bool[] y = x;
+
+                out0 = bvec3(y[0], y[1], y[2]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case implicit_size_struct
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) ];
+            output vec3 out0 = [ vec3(-1.0, -0.5, 2.0) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            struct test
+            {
+                float f;
+                vec3 v;
+            };
+
+            void main()
+            {
+                ${SETUP}
+
+                test a = test(in0.z, vec3(in0.x, in0.y, in0.z));
+                test b = test(in0.y, vec3(-in0.z, -in0.x, -in0.y));
+                test c = test(in0.x, vec3(-in0.y, in0.z, -in0.x));
+
+                test[] x = test[] (c, b, a);
+                test[] y = x;
+
+                out0 = vec3(y[0].v.x, y[1].v.y, y[2].v.z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case implicit_size_float_vec3
+        version 300 es
+        values
+        {
+            input vec3 in0 =    [ vec3(0.5, 1.0, 2.0) | vec3(-0.5, 11.2, -1.0) ];
+            output vec3 out0 = [ vec3(0.5, -2.0, 1.0) | vec3(-0.5, 1.0, 11.2) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                vec3[] x = vec3[] (    vec3(in0.x, in0.y, -in0.z)    ,
+                                    vec3(in0.y, -in0.z, in0.x)    ,
+                                    vec3(-in0.z, in0.x, in0.y)    );
+                vec3[] y = x;
+                out0 = vec3(y[0].x, y[1].y, y[2].z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case implicit_size_int_ivec3
+        version 300 es
+        values
+        {
+            input ivec3 in0 =    [ ivec3(0, 1, 2) | ivec3(5, 11, -1) ];
+            output ivec3 out0 = [ ivec3(0, -2, 1) | ivec3(5, 1, 11) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                ivec3[] x = ivec3[] (    ivec3(in0.x, in0.y, -in0.z)    ,
+                                        ivec3(in0.y, -in0.z, in0.x)    ,
+                                        ivec3(-in0.z, in0.x, in0.y)    );
+                ivec3[] y = x;
+                out0 = ivec3(y[0].x, y[1].y, y[2].z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case implicit_size_bool_bvec3
+        version 300 es
+        values
+        {
+            input bvec3 in0 =    [ bvec3(true, false, true) ];
+            output bvec3 out0 = [ bvec3(true, true, false) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                bvec3[] x = bvec3[] (    bvec3(in0.x, in0.y, in0.z)    ,
+                                        bvec3(in0.y, in0.z, in0.x)    ,
+                                        bvec3(in0.z, in0.x, in0.y)    );
+                bvec3[] y = x;
+                out0 = bvec3(y[0].x, y[1].y, y[2].z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case implicit_size_float_mat3
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) | vec3(-1.5, 0.0, -2.3) ];
+            output vec3 out0 = [ vec3(0.5, -1.0, 1.0) | vec3(-1.5, 0.0, 0.0) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                mat3[] a = mat3[] (    mat3(    in0.x, in0.y, in0.z,
+                                            in0.x, in0.y, in0.z,
+                                            in0.x, in0.y, in0.z)    ,
+                                    mat3(    in0.z, in0.x, -in0.y,
+                                            in0.z, in0.x, -in0.y,
+                                            in0.z, in0.x, -in0.y)    ,
+                                    mat3(    -in0.z, -in0.z, in0.z,
+                                            -in0.y, -in0.y, in0.y,
+                                            -in0.x, -in0.x, in0.x)    );
+
+                mat3 a0 = a[0];
+                mat3 a1 = a[1];
+                mat3 a2 = a[2];
+
+                float ret0 = a0[2][0];
+                float ret1 = a1[0][2];
+                float ret2 = a2[1][2];
+
+                out0 = vec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case implicit_size_int_mat3
+        version 300 es
+        values
+        {
+            input ivec3 in0 = [ ivec3(0, 1, 2) | ivec3(-1, 0, -2) ];
+            output ivec3 out0 = [ ivec3(0, -1, 1) | ivec3(-1, 0, 0) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                mat3[] a = mat3[] (    mat3(    in0.x, in0.y, in0.z,
+                                            in0.x, in0.y, in0.z,
+                                            in0.x, in0.y, in0.z)    ,
+                                    mat3(    in0.z, in0.x, -in0.y,
+                                            in0.z, in0.x, -in0.y,
+                                            in0.z, in0.x, -in0.y)    ,
+                                    mat3(    -in0.z, -in0.z, in0.z,
+                                            -in0.y, -in0.y, in0.y,
+                                            -in0.x, -in0.x, in0.x)    );
+
+                mat3 a0 = a[0];
+                mat3 a1 = a[1];
+                mat3 a2 = a[2];
+
+                float ret0 = a0[2][0];
+                float ret1 = a1[0][2];
+                float ret2 = a2[1][2];
+
+                out0 = ivec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case implicit_size_bool_mat3
+        version 300 es
+        values
+        {
+            input bvec3 in0 = [ bvec3(true, false, true) ];
+            output bvec3 out0 = [ bvec3(true, false, false) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                mat3[] a = mat3[] (    mat3(    in0.x, in0.y, in0.z,
+                                            in0.x, in0.y, in0.z,
+                                            in0.x, in0.y, in0.z)    ,
+                                    mat3(    in0.z, in0.x, in0.y,
+                                            in0.z, in0.x, in0.y,
+                                            in0.z, in0.x, in0.y)    ,
+                                    mat3(    in0.z, in0.z, in0.z,
+                                            in0.y, in0.y, in0.y,
+                                            in0.x, in0.x, in0.x)    );
+
+                mat3 a0 = a[0];
+                mat3 a1 = a[1];
+                mat3 a2 = a[2];
+
+                float ret0 = a0[2][0];
+                float ret1 = a1[0][2];
+                float ret2 = a2[1][2];
+
+                out0 = bvec3(ret0, ret1, ret2);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+
+    case constant_expression_array_size
+        version 300 es
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            const int a = 4;
+
+            void main ()
+            {
+                const int b = 5;
+                float[a] array1;
+                float[b] array2;
+                float[array1.length()] array3;
+                float[a+b] array4;
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case constant_expression_array_access
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) ];
+            output vec3 out0 = [ vec3(-2.0, -1.0, -0.5) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            const int a = 3;
+
+            void main ()
+            {
+                ${SETUP}
+                const int b = 2;
+                float x = float[] (in0.x, in0.y, in0.z, -in0.z, -in0.y, -in0.x) [a];
+                float y = float[] (in0.x, in0.y, in0.z, -in0.z, -in0.y, -in0.x) [b+2];
+                float z = float[] (in0.x, in0.y, in0.z, -in0.z, -in0.y, -in0.x) [5];
+                out0 = vec3(x, y, z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case dynamic_expression_array_access
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) ];
+            input ivec2 in1 = ivec2(3, 2);
+            output vec3 out0 = [ vec3(-2.0, -1.0, -0.5) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                ${SETUP}
+                float x = float[] (in0.x, in0.y, in0.z, -in0.z, -in0.y, -in0.x) [in1.x];
+                float y = float[] (in0.x, in0.y, in0.z, -in0.z, -in0.y, -in0.x) [in1.y+2];
+                float z = float[] (in0.x, in0.y, in0.z, -in0.z, -in0.y, -in0.x) [in1.x+in1.y];
+                out0 = vec3(x, y, z);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case multiple_declarations_single_statement_explicit
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) ];
+            output vec3 out0 = [ vec3(2.0, -1.0, 0.5) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                ${SETUP}
+                float[] x = float[6] (in0.x, in0.y, in0.z, -in0.z, -in0.y, -in0.x),
+                        y = float[2] (in0.x, -in0.y);
+                out0 = vec3(x[2], y[1], x[0]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case multiple_declarations_single_statement_implicit
+        version 300 es
+        values
+        {
+            input ivec3 in0 = [ ivec3(5, 1, 2) ];
+            output ivec3 out0 = [ ivec3(2, -1, 5) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                ${SETUP}
+                int[] x = int[] (in0.x, in0.y, in0.z, -in0.z, -in0.y, -in0.x),
+                      y = int[] (in0.x, -in0.y);
+                out0 = ivec3(x[2], y[1], x[0]);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+end # declaration
+
+group length "Array length method"
+
+    case float
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) ];
+            output ivec3 out0 = [ ivec3(3, 5, 13) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                float[] x = float[3] (in0.z, in0.x, in0.y);
+                float[] y = float[] (in0.z, in0.x, in0.y, in0.x, in0.y);
+                float[13] z;
+
+                out0 = ivec3(x.length(), y.length(), z.length());
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case int
+        version 300 es
+        values
+        {
+            input ivec3 in0 = [ ivec3(0, 1, 2) ];
+            output ivec3 out0 = [ ivec3(3, 5, 13) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump int;
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                int[] x = int[3] (in0.z, in0.x, in0.y);
+                int[] y = int[] (in0.z, in0.x, in0.y, in0.x, in0.y);
+                int[13] z;
+
+                out0 = ivec3(x.length(), y.length(), z.length());
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case bool
+        version 300 es
+        values
+        {
+            input bvec3 in0 = [ bvec3(true, false, true) ];
+            output ivec3 out0 = [ ivec3(3, 5, 13) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main()
+            {
+                ${SETUP}
+                bool[] x = bool[3] (in0.z, in0.x, in0.y);
+                bool[] y = bool[] (in0.z, in0.x, in0.y, in0.x, in0.y);
+                bool[13] z;
+
+                out0 = ivec3(x.length(), y.length(), z.length());
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case struct
+        version 300 es
+        values
+        {
+            input vec3 in0 = [ vec3(0.5, 1.0, 2.0) ];
+            output ivec3 out0 = [ ivec3(3, 5, 13) ];
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            struct test
+            {
+                float f;
+                vec3 v;
+            };
+
+            void main()
+            {
+                ${SETUP}
+
+                test a = test(in0.z, vec3(in0.x, in0.y, in0.z));
+                test b = test(in0.y, vec3(-in0.z, -in0.x, -in0.y));
+                test c = test(in0.x, vec3(-in0.y, in0.z, -in0.x));
+
+                test[] x = test[3] (a, b, c);
+                test[] y = test[] (c, a, b, b, a);
+                test[13] z;
+
+                out0 = ivec3(x.length(), y.length(), z.length());
+                ${OUTPUT}
+            }
+        ""
+    end
+
+end # length
+
+group invalid "Invalid Functions"
+
+    case multidimensional_array1
+        version 300 es
+        expect compile_fail
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                float a[5][3];
+                ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case multidimensional_array2
+        version 300 es
+        expect compile_fail
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                float[5] a[3];
+                ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case multidimensional_uniform_array
+        version 300 es
+        expect compile_fail
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            uniform float a[3][2];
+
+            void main ()
+            {
+                ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case multidimensional_array_in_uniform_block
+        version 300 es
+        expect compile_fail
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            uniform MyBlock
+            {
+                float a[3][2];
+            };
+
+            void main ()
+            {
+                ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case dynamic_expression_array_size
+        version 300 es
+        expect compile_fail
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                int a = 5;
+                float[a] array;
+                ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case empty_declaration_without_var_name
+        version 300 es
+        expect compile_or_link_fail
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                int[];
+                ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case empty_declaration_with_var_name
+        version 300 es
+        expect compile_or_link_fail
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                int[] a;
+                ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case constructor_c_style1
+        version 300 es
+        expect compile_fail
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                float a[];
+                a = float[3] { 1.0, 2.0, 3.0 };
+
+                ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case constructor_c_style2
+        version 300 es
+        expect compile_fail
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                float a[5] = { 1.0, 2.0, 3.0 };
+
+                ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case constructor_c_style3
+        version 300 es
+        expect compile_fail
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                float a[] = float[3] { 1.0, 2.0, 3.0 };
+
+                ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+    case constructor_c_style4
+        version 300 es
+        expect compile_fail
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            void main ()
+            {
+                float a[3] = { 1.0, 2.0, 3.0 };
+
+                ${POSITION_FRAG_COLOR} = vec4(1.0);
+            }
+        ""
+    end
+
+end # invalid
+
+# https://github.com/KhronosGroup/WebGL/blob/main/sdk/tests/conformance2/glsl3/array-in-complex-expression.html
+group complex_expression "Arrays in complex expressions"
+
+    case and_short_circuits
+        version 300 es
+        values
+        {
+            output int g = -1;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            int[2] plus() {
+                ++g;
+                return int[2](g, g);
+            }
+
+            bool minus() {
+                --g;
+                return false;
+            }
+
+            void main() {
+                ${SETUP}
+                g = 0;
+                int a[2] = int[2](0, 0);
+                // The plus() call must not be evaluated, since && short-circuits
+                minus() && (a == plus());
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case or_short_circuits
+        version 300 es
+        values
+        {
+            output int g = -1;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            int[2] plus() {
+                ++g;
+                return int[2](g, g);
+            }
+
+            bool minus() {
+                --g;
+                return false;
+            }
+
+            void main() {
+                ${SETUP}
+                g = 0;
+                int a[2] = int[2](0, 0);
+                // The function call must not be evaluated, since && short-circuits
+                minus() && (a == plus());
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case ternary_only_evaluates_one_operand
+        version 300 es
+        values
+        {
+            output int g = 0;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            int[2] plus() {
+                ++g;
+                return int[2](g, g);
+            }
+
+            void main() {
+                ${SETUP}
+                g = 0;
+                int a[2] = int[2](0, 0);
+                // The function call must not be evaluated, since the condition is true.
+                (g == 0) ? true : (a == plus());
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case sequence_side_effects_affecting_compared_array_content
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+
+            int[2] func(int param) {
+                return int[2](param, param);
+            }
+
+            void main() {
+                ${SETUP}
+                int a[2];
+                for (int i = 0; i < 2; ++i) {
+                    a[i] = 1;
+                }
+                int j = 0;
+                // Sequence operator evaluates operands from left to right (ESSL 3.00 section 5.9).
+                // The function call that returns the array needs to be evaluated after ++j
+                // for the expression to return the correct value (true).
+                success = ((++j), (a == func(j)));
+                ${OUTPUT}
+            }
+        ""
+    end
+
+end # complex_expression
+
+group compare "Array comparisons"
+
+    case equal_lowp_int_lowp_int
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp int x[3] = int[3](1, 2, 3);
+                lowp int y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_uint_lowp_uint
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp uint x[3] = uint[3](1u, 2u, 3u);
+                lowp uint y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_float_lowp_float
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp float x[3] = float[3](1.0, 2.0, 3.0);
+                lowp float y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_vec2_lowp_vec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp vec2 x[3] = vec2[3](vec2(1.0, 2.0),
+                                         vec2(3.0, 4.0),
+                                         vec2(5.0, 6.0));
+                lowp vec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_vec3_lowp_vec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp vec3 x[3] = vec3[3](vec3(1.0, 2.0, 3.0),
+                                         vec3(4.0, 5.0, 6.0),
+                                         vec3(7.0, 8.0, 9.0));
+                lowp vec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_vec4_lowp_vec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp vec4 x[3] = vec4[3](vec4(1.0, 2.0, 3.0, 4.0),
+                                         vec4(5.0, 6.0, 7.0, 8.0),
+                                         vec4(9.0, 10.0, 11.0, 12.0));
+                lowp vec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_ivec2_lowp_ivec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp ivec2 x[3] = ivec2[3](ivec2(1, 2),
+                                           ivec2(3, 4),
+                                           ivec2(5, 6));
+                lowp ivec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_ivec3_lowp_ivec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp ivec3 x[3] = ivec3[3](ivec3(1, 2, 3),
+                                           ivec3(4, 5, 6),
+                                           ivec3(7, 8, 9));
+                lowp ivec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_ivec4_lowp_ivec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp ivec4 x[3] = ivec4[3](ivec4(1, 2, 3, 4),
+                                           ivec4(5, 6, 7, 8),
+                                           ivec4(9, 10, 11, 12));
+                lowp ivec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_uvec2_lowp_uvec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp uvec2 x[3] = uvec2[3](uvec2(1u, 2u),
+                                           uvec2(3u, 4u),
+                                           uvec2(5u, 6u));
+                lowp uvec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_uvec3_lowp_uvec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp uvec3 x[3] = uvec3[3](uvec3(1u, 2u, 3u),
+                                           uvec3(4u, 5u, 6u),
+                                           uvec3(7u, 8u, 9u));
+                lowp uvec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_uvec4_lowp_uvec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp uvec4 x[3] = uvec4[3](uvec4(1u, 2u, 3u, 4u),
+                                           uvec4(5u, 6u, 7u, 8u),
+                                           uvec4(9u, 10u, 11u, 12u));
+                lowp uvec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_mat2_lowp_mat2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp mat2 x[3] = mat2[3](mat2(1.0, 2.0, 3.0, 4.0),
+                                         mat2(5.0, 6.0, 7.0, 8.0),
+                                         mat2(9.0, 10.0, 11.0, 12.0));
+                lowp mat2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_mat3_lowp_mat3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp mat3 x[3] = mat3[3](mat3(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0),
+                                         mat3(10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0),
+                                         mat3(19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0));
+                lowp mat3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_lowp_mat4_lowp_mat4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision lowp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                lowp mat4 x[3] = mat4[3](mat4(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0),
+                                         mat4(17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0),
+                                         mat4(33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0));
+                lowp mat4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_int_lowp_int
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump int x[3] = int[3](1, 2, 3);
+                lowp int y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_uint_lowp_uint
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump uint x[3] = uint[3](1u, 2u, 3u);
+                lowp uint y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_float_lowp_float
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump float x[3] = float[3](1.0, 2.0, 3.0);
+                lowp float y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_vec2_lowp_vec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump vec2 x[3] = vec2[3](vec2(1.0, 2.0),
+                                            vec2(3.0, 4.0),
+                                            vec2(5.0, 6.0));
+                lowp vec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_vec3_lowp_vec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump vec3 x[3] = vec3[3](vec3(1.0, 2.0, 3.0),
+                                            vec3(4.0, 5.0, 6.0),
+                                            vec3(7.0, 8.0, 9.0));
+                lowp vec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_vec4_lowp_vec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump vec4 x[3] = vec4[3](vec4(1.0, 2.0, 3.0, 4.0),
+                                            vec4(5.0, 6.0, 7.0, 8.0),
+                                            vec4(9.0, 10.0, 11.0, 12.0));
+                lowp vec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_ivec2_lowp_ivec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump ivec2 x[3] = ivec2[3](ivec2(1, 2),
+                                              ivec2(3, 4),
+                                              ivec2(5, 6));
+                lowp ivec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_ivec3_lowp_ivec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump ivec3 x[3] = ivec3[3](ivec3(1, 2, 3),
+                                              ivec3(4, 5, 6),
+                                              ivec3(7, 8, 9));
+                lowp ivec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_ivec4_lowp_ivec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump ivec4 x[3] = ivec4[3](ivec4(1, 2, 3, 4),
+                                              ivec4(5, 6, 7, 8),
+                                              ivec4(9, 10, 11, 12));
+                lowp ivec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_uvec2_lowp_uvec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump uvec2 x[3] = uvec2[3](uvec2(1u, 2u),
+                                              uvec2(3u, 4u),
+                                              uvec2(5u, 6u));
+                lowp uvec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_uvec3_lowp_uvec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump uvec3 x[3] = uvec3[3](uvec3(1u, 2u, 3u),
+                                              uvec3(4u, 5u, 6u),
+                                              uvec3(7u, 8u, 9u));
+                lowp uvec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_uvec4_lowp_uvec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump uvec4 x[3] = uvec4[3](uvec4(1u, 2u, 3u, 4u),
+                                              uvec4(5u, 6u, 7u, 8u),
+                                              uvec4(9u, 10u, 11u, 12u));
+                lowp uvec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_mat2_lowp_mat2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump mat2 x[3] = mat2[3](mat2(1.0, 2.0, 3.0, 4.0),
+                                            mat2(5.0, 6.0, 7.0, 8.0),
+                                            mat2(9.0, 10.0, 11.0, 12.0));
+                lowp mat2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_mat3_lowp_mat3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump mat3 x[3] = mat3[3](mat3(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0),
+                                            mat3(10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0),
+                                            mat3(19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0));
+                lowp mat3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_mat4_lowp_mat4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump mat4 x[3] = mat4[3](mat4(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0),
+                                            mat4(17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0),
+                                            mat4(33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0));
+                lowp mat4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_int_mediump_int
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump int x[3] = int[3](1, 2, 3);
+                mediump int y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_uint_mediump_uint
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump uint x[3] = uint[3](1u, 2u, 3u);
+                mediump uint y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_float_mediump_float
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump float x[3] = float[3](1.0, 2.0, 3.0);
+                mediump float y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_vec2_mediump_vec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump vec2 x[3] = vec2[3](vec2(1.0, 2.0),
+                                            vec2(3.0, 4.0),
+                                            vec2(5.0, 6.0));
+                mediump vec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_vec3_mediump_vec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump vec3 x[3] = vec3[3](vec3(1.0, 2.0, 3.0),
+                                            vec3(4.0, 5.0, 6.0),
+                                            vec3(7.0, 8.0, 9.0));
+                mediump vec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_vec4_mediump_vec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump vec4 x[3] = vec4[3](vec4(1.0, 2.0, 3.0, 4.0),
+                                            vec4(5.0, 6.0, 7.0, 8.0),
+                                            vec4(9.0, 10.0, 11.0, 12.0));
+                mediump vec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_ivec2_mediump_ivec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump ivec2 x[3] = ivec2[3](ivec2(1, 2),
+                                              ivec2(3, 4),
+                                              ivec2(5, 6));
+                mediump ivec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_ivec3_mediump_ivec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump ivec3 x[3] = ivec3[3](ivec3(1, 2, 3),
+                                              ivec3(4, 5, 6),
+                                              ivec3(7, 8, 9));
+                mediump ivec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_ivec4_mediump_ivec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump ivec4 x[3] = ivec4[3](ivec4(1, 2, 3, 4),
+                                              ivec4(5, 6, 7, 8),
+                                              ivec4(9, 10, 11, 12));
+                mediump ivec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_uvec2_mediump_uvec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump uvec2 x[3] = uvec2[3](uvec2(1u, 2u),
+                                              uvec2(3u, 4u),
+                                              uvec2(5u, 6u));
+                mediump uvec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_uvec3_mediump_uvec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump uvec3 x[3] = uvec3[3](uvec3(1u, 2u, 3u),
+                                              uvec3(4u, 5u, 6u),
+                                              uvec3(7u, 8u, 9u));
+                mediump uvec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_uvec4_mediump_uvec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump uvec4 x[3] = uvec4[3](uvec4(1u, 2u, 3u, 4u),
+                                              uvec4(5u, 6u, 7u, 8u),
+                                              uvec4(9u, 10u, 11u, 12u));
+                mediump uvec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_mat2_mediump_mat2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump mat2 x[3] = mat2[3](mat2(1.0, 2.0, 3.0, 4.0),
+                                            mat2(5.0, 6.0, 7.0, 8.0),
+                                            mat2(9.0, 10.0, 11.0, 12.0));
+                mediump mat2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_mat3_mediump_mat3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump mat3 x[3] = mat3[3](mat3(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0),
+                                            mat3(10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0),
+                                            mat3(19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0));
+                mediump mat3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_mediump_mat4_mediump_mat4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision mediump float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                mediump mat4 x[3] = mat4[3](mat4(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0),
+                                            mat4(17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0),
+                                            mat4(33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0));
+                mediump mat4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_int_mediump_int
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp int x[3] = int[3](1, 2, 3);
+                mediump int y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uint_mediump_uint
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uint x[3] = uint[3](1u, 2u, 3u);
+                mediump uint y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_float_mediump_float
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp float x[3] = float[3](1.0, 2.0, 3.0);
+                mediump float y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_vec2_mediump_vec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp vec2 x[3] = vec2[3](vec2(1.0, 2.0),
+                                          vec2(3.0, 4.0),
+                                          vec2(5.0, 6.0));
+                mediump vec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_vec3_mediump_vec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp vec3 x[3] = vec3[3](vec3(1.0, 2.0, 3.0),
+                                          vec3(4.0, 5.0, 6.0),
+                                          vec3(7.0, 8.0, 9.0));
+                mediump vec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_vec4_mediump_vec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp vec4 x[3] = vec4[3](vec4(1.0, 2.0, 3.0, 4.0),
+                                          vec4(5.0, 6.0, 7.0, 8.0),
+                                          vec4(9.0, 10.0, 11.0, 12.0));
+                mediump vec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_ivec2_mediump_ivec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp ivec2 x[3] = ivec2[3](ivec2(1, 2),
+                                            ivec2(3, 4),
+                                            ivec2(5, 6));
+                mediump ivec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_ivec3_mediump_ivec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp ivec3 x[3] = ivec3[3](ivec3(1, 2, 3),
+                                            ivec3(4, 5, 6),
+                                            ivec3(7, 8, 9));
+                mediump ivec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_ivec4_mediump_ivec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp ivec4 x[3] = ivec4[3](ivec4(1, 2, 3, 4),
+                                            ivec4(5, 6, 7, 8),
+                                            ivec4(9, 10, 11, 12));
+                mediump ivec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uvec2_mediump_uvec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uvec2 x[3] = uvec2[3](uvec2(1u, 2u),
+                                            uvec2(3u, 4u),
+                                            uvec2(5u, 6u));
+                mediump uvec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uvec3_mediump_uvec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uvec3 x[3] = uvec3[3](uvec3(1u, 2u, 3u),
+                                            uvec3(4u, 5u, 6u),
+                                            uvec3(7u, 8u, 9u));
+                mediump uvec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uvec4_mediump_uvec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uvec4 x[3] = uvec4[3](uvec4(1u, 2u, 3u, 4u),
+                                            uvec4(5u, 6u, 7u, 8u),
+                                            uvec4(9u, 10u, 11u, 12u));
+                mediump uvec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_mat2_mediump_mat2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp mat2 x[3] = mat2[3](mat2(1.0, 2.0, 3.0, 4.0),
+                                          mat2(5.0, 6.0, 7.0, 8.0),
+                                          mat2(9.0, 10.0, 11.0, 12.0));
+                mediump mat2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_mat3_mediump_mat3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp mat3 x[3] = mat3[3](mat3(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0),
+                                          mat3(10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0),
+                                          mat3(19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0));
+                mediump mat3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_mat4_mediump_mat4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp mat4 x[3] = mat4[3](mat4(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0),
+                                          mat4(17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0),
+                                          mat4(33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0));
+                mediump mat4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_int_lowp_int
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp int x[3] = int[3](1, 2, 3);
+                lowp int y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uint_lowp_uint
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uint x[3] = uint[3](1u, 2u, 3u);
+                lowp uint y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_float_lowp_float
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp float x[3] = float[3](1.0, 2.0, 3.0);
+                lowp float y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_vec2_lowp_vec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp vec2 x[3] = vec2[3](vec2(1.0, 2.0),
+                                          vec2(3.0, 4.0),
+                                          vec2(5.0, 6.0));
+                lowp vec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_vec3_lowp_vec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp vec3 x[3] = vec3[3](vec3(1.0, 2.0, 3.0),
+                                          vec3(4.0, 5.0, 6.0),
+                                          vec3(7.0, 8.0, 9.0));
+                lowp vec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_vec4_lowp_vec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp vec4 x[3] = vec4[3](vec4(1.0, 2.0, 3.0, 4.0),
+                                          vec4(5.0, 6.0, 7.0, 8.0),
+                                          vec4(9.0, 10.0, 11.0, 12.0));
+                lowp vec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_ivec2_lowp_ivec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp ivec2 x[3] = ivec2[3](ivec2(1, 2),
+                                            ivec2(3, 4),
+                                            ivec2(5, 6));
+                lowp ivec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_ivec3_lowp_ivec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp ivec3 x[3] = ivec3[3](ivec3(1, 2, 3),
+                                            ivec3(4, 5, 6),
+                                            ivec3(7, 8, 9));
+                lowp ivec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_ivec4_lowp_ivec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp ivec4 x[3] = ivec4[3](ivec4(1, 2, 3, 4),
+                                            ivec4(5, 6, 7, 8),
+                                            ivec4(9, 10, 11, 12));
+                lowp ivec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uvec2_lowp_uvec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uvec2 x[3] = uvec2[3](uvec2(1u, 2u),
+                                            uvec2(3u, 4u),
+                                            uvec2(5u, 6u));
+                lowp uvec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uvec3_lowp_uvec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uvec3 x[3] = uvec3[3](uvec3(1u, 2u, 3u),
+                                            uvec3(4u, 5u, 6u),
+                                            uvec3(7u, 8u, 9u));
+                lowp uvec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uvec4_lowp_uvec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uvec4 x[3] = uvec4[3](uvec4(1u, 2u, 3u, 4u),
+                                            uvec4(5u, 6u, 7u, 8u),
+                                            uvec4(9u, 10u, 11u, 12u));
+                lowp uvec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_mat2_lowp_mat2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp mat2 x[3] = mat2[3](mat2(1.0, 2.0, 3.0, 4.0),
+                                          mat2(5.0, 6.0, 7.0, 8.0),
+                                          mat2(9.0, 10.0, 11.0, 12.0));
+                lowp mat2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_mat3_lowp_mat3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp mat3 x[3] = mat3[3](mat3(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0),
+                                          mat3(10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0),
+                                          mat3(19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0));
+                lowp mat3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_mat4_lowp_mat4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp mat4 x[3] = mat4[3](mat4(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0),
+                                          mat4(17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0),
+                                          mat4(33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0));
+                lowp mat4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_int_highp_int
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp int x[3] = int[3](1, 2, 3);
+                highp int y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uint_highp_uint
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uint x[3] = uint[3](1u, 2u, 3u);
+                highp uint y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_float_highp_float
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp float x[3] = float[3](1.0, 2.0, 3.0);
+                highp float y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_vec2_highp_vec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp vec2 x[3] = vec2[3](vec2(1.0, 2.0),
+                                          vec2(3.0, 4.0),
+                                          vec2(5.0, 6.0));
+                highp vec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_vec3_highp_vec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp vec3 x[3] = vec3[3](vec3(1.0, 2.0, 3.0),
+                                          vec3(4.0, 5.0, 6.0),
+                                          vec3(7.0, 8.0, 9.0));
+                highp vec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_vec4_highp_vec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp vec4 x[3] = vec4[3](vec4(1.0, 2.0, 3.0, 4.0),
+                                          vec4(5.0, 6.0, 7.0, 8.0),
+                                          vec4(9.0, 10.0, 11.0, 12.0));
+                highp vec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_ivec2_highp_ivec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp ivec2 x[3] = ivec2[3](ivec2(1, 2),
+                                            ivec2(3, 4),
+                                            ivec2(5, 6));
+                highp ivec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_ivec3_highp_ivec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp ivec3 x[3] = ivec3[3](ivec3(1, 2, 3),
+                                            ivec3(4, 5, 6),
+                                            ivec3(7, 8, 9));
+                highp ivec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_ivec4_highp_ivec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp ivec4 x[3] = ivec4[3](ivec4(1, 2, 3, 4),
+                                            ivec4(5, 6, 7, 8),
+                                            ivec4(9, 10, 11, 12));
+                highp ivec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uvec2_highp_uvec2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uvec2 x[3] = uvec2[3](uvec2(1u, 2u),
+                                            uvec2(3u, 4u),
+                                            uvec2(5u, 6u));
+                highp uvec2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uvec3_highp_uvec3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uvec3 x[3] = uvec3[3](uvec3(1u, 2u, 3u),
+                                            uvec3(4u, 5u, 6u),
+                                            uvec3(7u, 8u, 9u));
+                highp uvec3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_uvec4_highp_uvec4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp uvec4 x[3] = uvec4[3](uvec4(1u, 2u, 3u, 4u),
+                                            uvec4(5u, 6u, 7u, 8u),
+                                            uvec4(9u, 10u, 11u, 12u));
+                highp uvec4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_mat2_highp_mat2
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp mat2 x[3] = mat2[3](mat2(1.0, 2.0, 3.0, 4.0),
+                                          mat2(5.0, 6.0, 7.0, 8.0),
+                                          mat2(9.0, 10.0, 11.0, 12.0));
+                highp mat2 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_mat3_highp_mat3
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp mat3 x[3] = mat3[3](mat3(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0),
+                                          mat3(10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0),
+                                          mat3(19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0));
+                highp mat3 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+    case equal_highp_mat4_highp_mat4
+        version 300 es
+        values
+        {
+            output bool success = true;
+        }
+
+        both ""
+            #version 300 es
+            precision highp float;
+            ${DECLARATIONS}
+            void main()
+            {
+                ${SETUP}
+                highp mat4 x[3] = mat4[3](mat4(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0),
+                                          mat4(17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0),
+                                          mat4(33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0));
+                highp mat4 y[3] = x;
+                x = y;
+                success = (x == y);
+                ${OUTPUT}
+            }
+        ""
+    end
+
+end # compare

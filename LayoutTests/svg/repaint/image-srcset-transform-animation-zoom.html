@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { zoom: 2; margin: 0; padding: 0; }
+</style>
+<body>
+    <picture>
+        <source srcset="../../resources/square-translate.svg 2x"></source>
+        <img id="svgImg" alt="" />
+    </picture>
+</body>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        if (testRunner.dontForceRepaint)
+            testRunner.dontForceRepaint();
+    }
+
+    async function main() {
+        // Wait 250ms to ensure 100ms SVG animation completes
+        setTimeout(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 250);
+    }
+
+    window.addEventListener('load', main, false);
+</script>
+</html>

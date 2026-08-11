@@ -1,0 +1,13 @@
+[Worker] Test exporting a RSA-OAEP public key with SPKI format in workers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/rsa-export-spki-key.js
+[Worker] Generating a key pair...
+[Worker] Exporting the public key...
+PASS [Worker] publicKey.byteLength is 294
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

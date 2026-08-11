@@ -1,0 +1,5 @@
+OPEN FILE PANEL
+This test checks that clicking on an file input field opens up a file picker.
+To manually test, click on the button below. WebKit should open a file picker.
+
+ Test passes if "OPEN FILE PANEL" is logged above.

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("Map");
+
+    suite.addTestCase({
+        name: "Map.fromObject",
+        test() {
+            const key1 = "key1";
+            const key2 = "key2";
+            const value1 = "value1";
+            const value2 = 200;
+            const object = {
+                [key1]: value1,
+                [key2]: value2,
+            };
+
+            let map = Map.fromObject(object);
+            InspectorTest.expectEqual(map.size, 2, "Map from simple object should have size 2.");
+            InspectorTest.expectThat(Array.shallowEqual(Array.from(map.keys()), [key1, key2]), "Map from simple object should have keys: key1 and key2.");
+            InspectorTest.expectThat(Array.shallowEqual(Array.from(map.values()), [value1, value2]), "Map from simple object should have values: value1 and value2.");
+
+            let emptyMap = Map.fromObject({});
+            InspectorTest.expectEqual(emptyMap.size, 0, "Map from empty object should be empty.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Map.prototype.take",
+        test() {
+            const key = "key";
+            const value = "value";
+
+            let map = new Map;
+            map.set(key, value);
+            InspectorTest.expectTrue(map.has(key), "Map has `key`.");
+            InspectorTest.expectEqual(map.get(key), value, "Map has `key` => `value`.");
+            InspectorTest.expectEqual(map.take(key), value, "Map take `key` => `value`.");
+            InspectorTest.expectFalse(map.has(key), "Map does not have `key`.");
+            InspectorTest.expectEqual(map.get(key), undefined, "Map has `key` => `undefined`.");
+            InspectorTest.expectEqual(map.take("doesNotExistKey"), undefined, "Map take `doesNotExistKey` => `undefined`.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Map.prototype.firstKey",
+        test() {
+            const key1 = "key1";
+            const key2 = "key2";
+            const value1 = "value1";
+            const value2 = 200;
+
+            let map = new Map;
+            InspectorTest.expectEqual(map.firstKey, undefined, "Map should not start with a first key.");
+
+            map.set(key1, value1);
+            InspectorTest.expectEqual(map.firstKey, key1, "Map should have first key.");
+
+            map.set(key2, value2);
+            InspectorTest.expectEqual(map.firstKey, key1, "Map should have same first key after adding another entry.");
+
+            map.set(key1, value2);
+            InspectorTest.expectEqual(map.firstKey, key1, "Map should have same first key after changing its value.");
+
+            map.delete(key1);
+            InspectorTest.expectEqual(map.firstKey, key2, "Map should have different first key after deleting previous first key.");
+
+            map.delete(key2);
+            InspectorTest.expectEqual(map.firstKey, undefined, "Map should not have first key after deleting all entries.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Map.prototype.firstValue",
+        test() {
+            const key1 = "key1";
+            const key2 = "key2";
+            const value1 = "value1";
+            const value2 = "value2";
+            const value3 = "value3";
+
+            let map = new Map;
+            InspectorTest.expectEqual(map.firstValue, undefined, "Map should not start with a first value.");
+
+            map.set(key1, value1);
+            InspectorTest.expectEqual(map.firstValue, value1, "Map should have first value.");
+
+            map.set(key2, value2);
+            InspectorTest.expectEqual(map.firstValue, value1, "Map should have same first value after adding another entry.");
+
+            map.set(key1, value3);
+            InspectorTest.expectEqual(map.firstValue, value3, "Map should have different first value after changing its value.");
+
+            map.delete(key1);
+            InspectorTest.expectEqual(map.firstValue, value2, "Map should have different first value after deleting previous first key.");
+
+            map.delete(key2);
+            InspectorTest.expectEqual(map.firstValue, undefined, "Map should not have first value after deleting all entries.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Map.prototype.lastKey",
+        test() {
+            const key1 = "key1";
+            const key2 = "key2";
+            const value1 = "value1";
+            const value2 = 200;
+
+            let map = new Map;
+            InspectorTest.expectEqual(map.lastKey, undefined, "Map should not start with a last key.");
+
+            map.set(key1, value1);
+            InspectorTest.expectEqual(map.lastKey, key1, "Map should have last key.");
+
+            map.set(key2, value2);
+            InspectorTest.expectEqual(map.lastKey, key2, "Map should have different last key after adding another entry.");
+
+            map.set(key1, value2);
+            InspectorTest.expectEqual(map.lastKey, key2, "Map should have same last key after changing first value.");
+
+            map.delete(key2);
+            InspectorTest.expectEqual(map.lastKey, key1, "Map should have different last key after deleting previous last key.");
+
+            map.delete(key1);
+            InspectorTest.expectEqual(map.lastKey, undefined, "Map should not have last key after deleting all entries.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

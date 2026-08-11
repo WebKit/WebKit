@@ -1,0 +1,8 @@
+
+PASS syntax:'<length>', initialValue:'calc(15px + (sign(100vh - 10px) * 5px))' is valid
+PASS syntax:'<number>', initialValue:'calc(15 + (sign(100vh - 10px) * 5))' is valid
+PASS syntax:'<integer>', initialValue:'calc(15 + (sign(100vh - 10px) * 5))' is valid
+PASS syntax:'<angle>', initialValue:'calc(15deg + (sign(100vh - 10px) * 5deg))' is valid
+PASS syntax:'<time>', initialValue:'calc(15s + (sign(100vh - 10px) * 5s))' is valid
+PASS syntax:'<resolution>', initialValue:'calc(15dppx + (sign(100vh - 10px) * 5dpi))' is valid
+

@@ -1,0 +1,117 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+//
+// Mac-specific WKWebView API tests. @no-unify is applied to files whose
+// file-scope helpers (e.g. `static bool didFinishLoad;`) would collide with
+// siblings in the same unified translation unit. Removing those tags is a
+// mechanical follow-up -- wrap the statics in anonymous namespaces.
+
+Tests/WebKit/WKWebView/mac/AcceptsFirstMouse.mm @nonARC
+Tests/WebKit/WKWebView/mac/AttributedString.mm @nonARC
+Tests/WebKit/WKWebView/mac/BackForwardList.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/BackgroundColor.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/CancelLoadFromResourceLoadDelegate.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/CandidateTests.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/CloseNewWindowInNavigationPolicyDelegate.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/CloseWhileCommittingLoad.mm @nonARC
+Tests/WebKit/WKWebView/mac/ColorInputTests.mm @nonARC
+Tests/WebKit/WKWebView/mac/ContextMenuCanCopyURL.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/ContextMenuDefaultItemsHaveTags.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/ContextMenuMouseEvents.mm @nonARC
+Tests/WebKit/WKWebView/mac/ContextMenuTests.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/CrossPartitionFileSchemeAccess.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/DateInputTests.mm @nonARC
+Tests/WebKit/WKWebView/mac/DeviceScaleFactorOnBack.mm @nonARC
+Tests/WebKit/WKWebView/mac/DisableAutomaticSpellingCorrection.mm @nonARC
+Tests/WebKit/WKWebView/mac/DOMHTMLTableCellCellAbove.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/DOMHTMLVideoElementWrapper.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/DOMNode.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/DOMNodeFromJSObject.mm @nonARC
+Tests/WebKit/WKWebView/mac/DOMRangeOfString.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/DragAndDropTestsMac.mm @nonARC
+Tests/WebKit/WKWebView/mac/DynamicDeviceScaleFactor.mm @nonARC
+Tests/WebKit/WKWebView/mac/EditableLegacyWebView.mm @nonARC
+Tests/WebKit/WKWebView/mac/ElementAtPointInWebFrame.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/FirstResponderScrollingPosition.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/FirstResponderSuppression.mm @nonARC
+Tests/WebKit/WKWebView/mac/FontManagerTests.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/FragmentNavigation.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/FullscreenFocus.mm @nonARC
+Tests/WebKit/WKWebView/mac/FullscreenPointerLeave.mm @nonARC
+Tests/WebKit/WKWebView/mac/FullscreenZoomInitialFrame.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/GetMatchedCSSRules.mm @nonARC
+Tests/WebKit/WKWebView/mac/HIDGamepads.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/HTMLCollectionNamedItem.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/HTMLFormCollectionNamedItem.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/ImmediateActionTests.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/InspectorBar.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/InWindowFullscreen.mm @nonARC
+Tests/WebKit/WKWebView/mac/IsNavigationActionTrusted.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/JavascriptURLNavigation.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/JSWrapperForNodeInWebFrame.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/KeyboardEventTests.mm @nonARC
+Tests/WebKit/WKWebView/mac/LegacyDragAndDropTests.mm @nonARC
+Tests/WebKit/WKWebView/mac/LimitTitleSize.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/LoadWebArchive.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/LoadWebViewWithEmptyAppName.mm @nonARC
+Tests/WebKit/WKWebView/mac/MediaPlaybackSleepAssertion.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/MemoryCacheDisableWithinResourceLoadDelegate.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/MemoryCachePruneWithinResourceLoadDelegate.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/MemoryPressureHandler.mm @nonARC
+Tests/WebKit/WKWebView/mac/MenuTypesForMouseEvents.mm @nonARC
+Tests/WebKit/WKWebView/mac/MouseEventTests.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/NoPolicyDelegateResponse.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/NSResponderTests.mm @nonARC
+Tests/WebKit/WKWebView/mac/PageVisibilityStateWithWindowChanges.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/RenderedImageFromDOMNode.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/RenderedImageFromDOMRange.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/ScrollbarTests.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/ScrollingCoordinatorTests.mm @nonARC
+Tests/WebKit/WKWebView/mac/SetAndUpdateCacheModel.mm @nonARC
+Tests/WebKit/WKWebView/mac/SetDocumentURI.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/SimplifyMarkup.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/SkipAdInPictureInPicture.mm @nonARC
+Tests/WebKit/WKWebView/mac/SpellCheckerDocumentTag.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/StartLoadInDidFailProvisionalLoad.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/StopLoadingFromDidFinishLoading.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/StopLoadingFromDidReceiveResponse.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/StringByEvaluatingJavaScriptFromString.mm @nonARC
+Tests/WebKit/WKWebView/mac/StringTruncator.mm @nonARC
+Tests/WebKit/WKWebView/mac/StringWidth.mm @nonARC
+Tests/WebKit/WKWebView/mac/SubresourceErrorCrash.mm @nonARC
+Tests/WebKit/WKWebView/mac/TypingStyleCrash.mm @nonARC
+Tests/WebKit/WKWebView/mac/ViewportSizeForViewportUnits.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WebScriptObjectDescription.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WebViewCanPasteURL.mm @nonARC
+Tests/WebKit/WKWebView/mac/WebViewCanPasteZeroPng.mm @nonARC
+Tests/WebKit/WKWebView/mac/WebViewCloseInsideDidFinishLoadForFrame.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WebViewDidCreateJavaScriptContext.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WebViewDidRemoveFrameFromHierarchy.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WebViewIconLoading.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WebViewScheduleInRunLoop.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WillPerformClientRedirectToURLCrash.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WillSendSubmitEvent.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WindowlessWebViewWithMedia.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WKWebViewCoders.mm @nonARC
+Tests/WebKit/WKWebView/mac/WKWebViewMacEditingTests.mm @nonARC @no-unify
+Tests/WebKit/WKWebView/mac/WKWebViewTitlebarSeparatorTests.mm @nonARC

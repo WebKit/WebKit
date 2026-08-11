@@ -1,0 +1,12 @@
+Consecutive ordered-list items separated by non-list content and a blank line should still merge into a single ordered list, preserving the start attribute of the first list.
+| "1. A"
+| <div>
+|   "2. B"
+| <div>
+|   "C"
+| <div>
+|   <br>
+| <div>
+|   "5. D"
+| <div>
+|   "6. E<#selection-caret>"

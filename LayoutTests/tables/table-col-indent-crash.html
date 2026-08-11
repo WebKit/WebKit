@@ -1,0 +1,25 @@
+<style>
+   body { -webkit-user-modify: read-write; }
+</style>
+
+<script>
+window.onload = function() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    window.getSelection().setPosition(tableElement);
+    document.execCommand("indent", false);
+    document.execCommand("indent", false);
+}
+</script>
+
+<body>
+  <template></template>
+  <details id="details">
+    <summary>
+      <table id="tableElement">
+        <br/>
+        <col>This test passes if it doesn't crash.</col>
+      </table>
+    </summary>
+  </details>
+</body>

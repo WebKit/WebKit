@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+
+select option:not(:checked)::checkmark {
+    content: ".";
+}
+</style>
+</head>
+<body>
+<select id="select">
+    <option>One</option>
+    <option>Two</option>
+</select>
+<script>
+description("Changing the selected option while the picker is open must not crash when an author rule makes ::checkmark content depend on :checked.");
+
+const select = document.getElementById("select");
+
+jsTestIsAsync = true;
+
+(async () => {
+    await UIHelper.activateElement(select);
+    await UIHelper.animationFrame();
+    select.value = "Two";
+    document.body.offsetHeight;
+    shouldBe('select.value', '"Two"');
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

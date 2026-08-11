@@ -1,0 +1,3 @@
+
+FAIL Clicking on view transition pseudo elements sets event.pseudoTarget correctly promise_test: Unhandled rejection with value: object "TypeError: html.pseudo is not a function. (In 'html.pseudo("::view-transition")', 'html.pseudo' is undefined)"
+

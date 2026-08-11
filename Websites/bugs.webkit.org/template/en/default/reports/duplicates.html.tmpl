@@ -1,0 +1,164 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # sortby: string. the column on which we are sorting the buglist.
+  # reverse: boolean. True if we are reversing the current sort.
+  # maxrows: integer. Max number of rows to display.
+  # changedsince: integer. The number of days ago for the changedsince column.
+  # openonly: boolean. True if we are only showing open bugs.
+  # product: array of strings. The set of products we check for dups.
+  #
+  # Additionally, you need to fulfill the interface to
+  # duplicates-table.html.tmpl.
+  #%]
+
+[% IF product.size %]
+  [% title = BLOCK %]
+    Most Frequently Reported [% terms.Bugs %] for 
+    [%+ product.join(', ') FILTER html %]
+  [% END %]
+[% ELSE %]
+  [% title = "Most Frequently Reported $terms.Bugs" %]
+[% END%]
+
+[% PROCESS global/header.html.tmpl title = title %]
+
+<p>
+  <a href="#explanation">What is this data?</a>
+  <br>
+  <a href="#params">Change parameters</a>
+</p>
+
+[% PROCESS "reports/duplicates-table.html.tmpl" %]
+
+[%# *** Parameters *** %]
+
+[% bug_ids_string = bug_ids.join(',') %]
+
+<h3 id="params">Change Parameters</h3>
+
+<form method="get" action="duplicates.cgi">
+  <input type="hidden" name="sortby" value="[% sortby FILTER html %]">
+  <input type="hidden" name="reverse" value="[% reverse FILTER html %]">
+  <input type="hidden" name="bug_id" value="[% bug_ids_string FILTER html %]">
+  <table>
+    <tr>
+      <td>Restrict to products:</td>
+      <td>
+        [% INCLUDE "global/product-select.html.tmpl"
+          id       => "product"
+          name     => "product"
+          multiple => 5
+          value    => product
+        %]
+      </td>
+    </tr>
+
+    <tr>
+      <td>When sorting or restricting, work with:</td>
+      <td>
+        <input type="radio" name="sortvisible" id="entirelist" value="0"
+          [% ' checked="checked"' IF NOT sortvisible %]>
+        <label for="entirelist">
+          entire list
+        </label>
+        <br>
+        <input type="radio" name="sortvisible" id="visiblelist" value="1"
+          [% ' checked="checked"' IF sortvisible %]>
+        <label for="visiblelist">
+          currently visible list
+        </label>
+      </td>
+     </tr>
+
+    <tr>
+      <td><label for="maxrows">Max rows:</label></td>
+      <td>
+        <input size="4" name="maxrows" id="maxrows" 
+               value="[% maxrows FILTER html %]">
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <label for="changedsince">Change column is change in the last:</label>
+      </td>
+      <td>
+        <input size="4" name="changedsince" id="changedsince"
+               value="[% changedsince FILTER html %]"> days
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <label for="openonly">
+          Open [% terms.bugs %] only:
+        </label>
+      </td>
+      <td>
+        <input type="checkbox" name="openonly" id="openonly" value="1"
+          [% ' checked="checked"' IF openonly %]>
+      </td>
+    </tr>
+
+  </table>
+
+  <input type="submit" id="change" value="Change">
+</form>
+
+<form method="post" action="buglist.cgi">
+  <input type="hidden" name="bug_id" value="[% bug_ids_string FILTER html %]">
+  Or just give this to me as a <input type="submit" id="list" 
+                                      value="[% terms.bug %] list">.
+  (Note: the order may not be the same.)
+</form>
+
+<hr>
+
+<h3 id="explanation">
+  What are "Most Frequently Reported [% terms.Bugs %]"?
+</h3>
+
+<p>
+  The Most Frequent [% terms.Bugs %] page lists the known open 
+  [%+ terms.bugs %] which are reported most frequently,
+  counting the number of direct and indirect duplicates of [% terms.bugs %].
+  This information is provided in order to assist in minimizing
+  the amount of duplicate [% terms.bugs %] entered into [% terms.Bugzilla %],
+  which saves time for Quality Assurance engineers who have to triage
+  the [% terms.bugs %].
+</p>
+
+<b>How do I use this list?</b>
+
+<ul>
+  <li>Review the most frequent [% terms.bugs %] list.</li>
+  <li>If your problem is listed:</li>
+
+  <ul>
+    <li>Click on the [% terms.bug %] number to confirm that you have found the
+      same [% terms.bug %], and comment if you have additional information
+      or move on with your testing of the product.
+    </li>
+  </ul>
+
+  <li>If your problem not listed:</li>
+
+  <ul>
+    <li><a href="query.cgi">Try and locate a similar [% terms.bug %]</a>
+      that has already been filed.</li>
+    <li>If you find your [% terms.bug %] in [% terms.Bugzilla %],
+      feel free to comment with any new or additional data you may have.</li>
+    <li>If you cannot find your problem already documented in 
+      [%+ terms.Bugzilla %],
+      <a href="enter_bug.cgi">file a new [% terms.bug %]</a>.</li>
+  </ul>
+</ul>
+
+[% PROCESS global/footer.html.tmpl %]

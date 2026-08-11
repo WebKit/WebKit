@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test IDN behavior for .срб top level domain.");
+
+function test(url)
+{
+    var domURL = new URL(url);
+    return internals.userVisibleString(domURL);
+}
+
+shouldBe("test('http://православнајапородица.срб/')", "'http://православнајапородица.срб/'");
+shouldBe("test('http://www.свеовде.од.срб/')", "'http://www.свеовде.од.срб/'");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

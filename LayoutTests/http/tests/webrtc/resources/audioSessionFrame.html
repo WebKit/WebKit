@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<body>
+<script>
+onload = () => {
+    parent.postMessage({
+        type: navigator.audioSession.type,
+        state: navigator.audioSession.state
+    }, "*");
+}
+</script>
+</body>

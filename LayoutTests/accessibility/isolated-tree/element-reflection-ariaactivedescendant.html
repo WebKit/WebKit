@@ -1,0 +1,71 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<ul id="target1" role="menubar">
+  <li id="descendant1" role="menuitem">a</li>
+</ul>
+<ul id="target2" role="menubar">
+  <li id="descendant2" role="menuitem">b</li>
+</ul>
+<ul id="target3" role="menubar">
+  <li id="descendant3" role="menuitem">c</li>
+</ul>
+
+<script>
+  description("Checks that element reflection is exposed to the a11y tree for 'ariaActiveDescendantElement'");
+  if (!window.accessibilityController) {
+    debug("This test requires accessibilityController");
+  } else {
+    window.jsTestIsAsync = true
+
+    var ax = accessibilityController;
+    var axTarget1, axTarget2, axDescendant2, axDescendantFirstChild, axTarget3, axDescendant3, selectedChild;
+    var output = "";
+
+    async function runTest() {
+        target1.ariaActiveDescendantElement = descendant1;
+        axTarget1 = accessibilityController.accessibleElementById("target1");
+        axDescendant1 = accessibilityController.accessibleElementById("descendant1");
+        // Wait for the relation to be updated in the isolated tree.
+        await waitFor(() => {
+            var selectedChild = axTarget1.selectedChildAtIndex(0);
+            return selectedChild && selectedChild.isEqual(axDescendant1);
+        });
+        output += expect("axTarget1.selectedChildrenCount", "1");
+        output += expect("axTarget1.selectedChildAtIndex(0).isEqual(axDescendant1)", "true");
+
+        target2.ariaActiveDescendantElement = descendant2;
+        target2.setAttribute("aria-activedescendant", "descendant2");
+        axTarget2 = accessibilityController.accessibleElementById("target2");
+        axDescendant2 = accessibilityController.accessibleElementById("descendant2");
+        axDescendantFirstChild = axTarget2.childAtIndex(0);
+        await waitFor(() => {
+            selectedChild = axTarget2.selectedChildAtIndex(0);
+            return selectedChild && selectedChild.isEqual(axDescendantFirstChild);
+        });
+        output += expect("selectedChild.isEqual(axDescendantFirstChild)", "true");
+
+        target2.setAttribute("aria-activedescendant", "descendant2");
+        await waitFor(() => {
+            selectedChild = axTarget2.selectedChildAtIndex(0);
+            return selectedChild && selectedChild.isEqual(axDescendant2);
+        });
+        output += expect("selectedChild.isEqual(axDescendant2)", "true");
+
+        target3.ariaActiveDescendantElement = descendant3;
+        descendant3.id = "descendant3-new";
+        axDescendant3 = await waitForElementById("descendant3-new");
+        axTarget3 = accessibilityController.accessibleElementById("target3");
+        await waitFor(() => {
+            selectedChild = axTarget3.selectedChildAtIndex(0);
+            return selectedChild && selectedChild.isEqual(axDescendant3);
+        });
+        output += expect("selectedChild.isEqual(axDescendant3)", "true");
+
+        debug(output);
+        finishJSTest();
+    }
+
+    setTimeout(runTest, 0);
+  }
+</script>

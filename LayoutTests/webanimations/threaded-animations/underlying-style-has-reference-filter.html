@@ -1,0 +1,24 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ThreadedTimeBasedAnimationsEnabled=true ] -->
+<body>
+
+<script src="threaded-animations-utils.js"></script>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+
+<script>
+
+promise_test(async t => {
+    const target = createDiv(t);
+    
+    target.animate({ filter: "blur(10px)" }, 1000 * 1000);
+    await threadedAnimationsCommit();
+    assert_equals(window.internals?.acceleratedAnimationsForElement(target).length, 1);
+
+    target.style.filter = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='blur'><feGaussianBlur stdDeviation='4' /></filter></svg>#blur")`;
+    await threadedAnimationsCommit();
+    assert_equals(window.internals?.acceleratedAnimationsForElement(target).length, 0);
+}, "The presence of a reference filter precludes a threaded filter animation with an implicit keyframe.");
+
+</script>
+</body>

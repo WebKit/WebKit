@@ -1,0 +1,106 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] --> 
+<html>
+<head>
+<script>
+
+async function runTest()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if (!window.IPC) {
+        result.textContent = window.testRunner ? 'PASS' : 'This test requires IPC testing API';
+        return;
+    }
+
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+
+    const { CoreIPC, IPCWireTap } = await import('./coreipc.js');
+    const uiOutgoingTap = new IPCWireTap('UI', 'Outgoing');
+
+    function waitForNextRequestLock()
+    {
+        return new Promise((resolve) => {
+            const uiOutgoingTap = new IPCWireTap('UI', 'Outgoing');
+            uiOutgoingTap.tapNext(IPC.messages.WebLockRegistryProxy_RequestLock.name, (...args) => resolve(args));
+        });
+    }
+
+    function acquireLockLegitimately()
+    {
+        return new Promise((resolve) => {
+            navigator.locks.request('abc', {mode: 'shared'}, resolve);
+        });
+    }
+
+    function waitForNextLockComplete()
+    {
+        return new Promise((resolve) => {
+            const uiIncomingTap = new IPCWireTap('UI', 'Incoming');
+            uiIncomingTap.tapNext(IPC.messages.RemoteWebLockRegistry_DidCompleteLockRequest.name, (...args) => resolve(args));
+        });
+    }
+
+    const lockRequest = waitForNextRequestLock();
+
+    await acquireLockLegitimately();
+
+    let [process, connectionID, messageName, typedArguments, msgArguments] = await lockRequest;
+
+    lockComplete = waitForNextLockComplete();
+
+    CoreIPC.UI.WebLockRegistryProxy.RequestLock(connectionID, {
+        clientOrigin: {
+            topOrigin: {
+                data: {
+                    variantType: msgArguments.clientOrigin.topOrigin.data.variantType,
+                    variant: {
+                        protocol: 'https',
+                        host: 'webkit.org',
+                        port: 80,
+                    },
+                }
+            },
+            clientOrigin: {
+                data: {
+                    variantType: msgArguments.clientOrigin.topOrigin.data.variantType,
+                    variant: {
+                        protocol: 'https',
+                        host: 'webkit.org',
+                        port: 80,
+                    },
+                }
+            },
+        },
+        identifier: {
+            processIdentifier: msgArguments.clientID.processIdentifier,
+            object: 123456789,
+        },
+        clientID: {
+            processIdentifier: msgArguments.clientID.processIdentifier,
+            object: msgArguments.clientID.object,
+        },
+        name: msgArguments.name,
+        mode: msgArguments.mode,
+        steal: false,
+        ifAvailable: msgArguments.ifAvailable,
+    });
+
+    await acquireLockLegitimately();
+
+    [process, connectionID, messageName, typedArguments, msgArguments] = await lockComplete;
+    result.textContent = msgArguments.lockIdentifier.object == 123456789 ? 'FAIL - Acquired lock' : 'PASS';
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload="runTest()">
+This test passes if the WebLock isn't granted.
+<div id="result"></div>
+</body>
+</html>
+

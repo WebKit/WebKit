@@ -1,0 +1,58 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/blob-url-factory.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/blob-url-factory.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/cache-storage-reporting.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/coep-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/coep-frame.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/corp-image.py
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/cross-origin-isolated-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/cross-origin-isolated-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/dedicated-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/empty-coep.py
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/fetch-and-create-url.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/fetch-in-dedicated-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/load-corp-images.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/load-corp-images.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/navigate-none.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/navigate-require-corp-same-site.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/navigate-require-corp.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/navigate-require-corp.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-cross-origin-corp.txt
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-cross-origin-corp.txt.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/postmessage-ready.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/report.py
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/reporting-empty-frame-multiple-headers.html.asis
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/reporting-empty-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/reporting-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/require-corp-sw-import-scripts.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/require-corp-sw-import-scripts.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/require-corp-sw.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/require-corp-sw.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/script-factory.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/shared-worker-fetch.js.py
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/shared-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/sw-store-to-cache-storage.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/sw.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/universal-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/worker-owner-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/worker-owner.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/resources/worker-support.js

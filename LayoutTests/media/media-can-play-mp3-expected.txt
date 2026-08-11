@@ -1,0 +1,9 @@
+
+Test HTMLMediaElement canPlayType() method for a non standard, but commonly used, MP3 mime type.
+
+EXPECTED (video.canPlayType('audio/mpeg') == 'maybe') OK
+EXPECTED (video.canPlayType('audio/mpeg; codecs="mp3"') == 'probably') OK
+EXPECTED (video.canPlayType('audio/mpeg;codecs="mp3"') == 'probably') OK
+EXPECTED (video.canPlayType('audio/mpeg; codecs="xp3"') == '') OK
+END OF TEST
+

@@ -1,0 +1,14 @@
+{
+  "src/libANGLE/renderer/angle_format.py":
+    "49c55a74e763b1cfd0d96c4b49b4e402",
+  "src/libANGLE/renderer/gl/DispatchTableGL_autogen.cpp":
+    "31c088a9f24d58dc3b440412ff1410b1",
+  "src/libANGLE/renderer/gl/DispatchTableGL_autogen.h":
+    "c076045a5540e6832e725108bfb4169c",
+  "src/libANGLE/renderer/gl/generate_gl_dispatch_table.py":
+    "fe318a1678227746748e4d6d5a13aa22",
+  "src/libANGLE/renderer/gl/gl_bindings_data.json":
+    "f1e0aff4b484fba636ecef3ba80d2513",
+  "third_party/OpenGL-Registry/src/xml/gl.xml":
+    "1eb37882507017323d5e447e42e74f62"
+}

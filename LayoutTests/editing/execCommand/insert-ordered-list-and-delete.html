@@ -1,0 +1,37 @@
+<html>
+
+<script>
+
+  function foo() {
+	if (window.testRunner)
+	   testRunner.dumpAsText();
+
+    document.designMode = 'on';
+    let ol0 = document.createElement('ol');
+    document.body.append(ol0);
+    let span0 = document.createElement('span');
+    ol0.append(span0);
+    span0.append('');
+    let li0 = document.createElement('li');
+    li0.appendChild(document.createElement('iframe'));
+    span0.append(li0);
+    span0.append(document.createElement('div'));
+    document.execCommand('SelectAll');
+    document.createElement('audio').onwebkitplaybacktargetavailabilitychanged = () => document.execCommand('InsertOrderedList');
+    let img0 = document.createElement('img');
+    img0.onerror = () => document.execCommand('Delete');
+    img0.src = 'data:';
+  }
+
+  onload = () => {
+    let s0 = document.createElement('script');
+    s0.src = `data:text/javascript,(${foo})()`;
+    document.head.appendChild(s0);
+  };
+</script>
+ 
+<body>
+	This test shall pass if it does not crash.
+</body>
+ 
+</html>

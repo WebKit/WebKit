@@ -1,0 +1,28 @@
+Test that cursor: light-dark() resolves to the correct image based on color-scheme.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+TEST CASE: Light scheme - light-dark() with URL images
+Cursor Info: type=Custom hotSpot=0,0 image=25x25
+
+TEST CASE: Dark scheme - light-dark() with URL images
+Cursor Info: type=Custom hotSpot=0,0 image=30x30
+
+TEST CASE: Dark scheme (set dynamically) - light-dark() with URL images
+Cursor Info: type=Custom hotSpot=0,0 image=30x30
+
+TEST CASE: light-dark() with gradient as first arg (invalid value)
+Cursor Info: type=IBeam hotSpot=0,0
+
+TEST CASE: light-dark() with gradient as second arg (invalid value)
+Cursor Info: type=IBeam hotSpot=0,0
+
+TEST CASE: light-dark() with both args as gradients (invalid value)
+Cursor Info: type=IBeam hotSpot=0,0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

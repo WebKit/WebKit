@@ -1,0 +1,40 @@
+Tests the #comp_name_from_heading portions of the AccName Name Computation algorithm.
+
+Includes tentative "name from heading" diff.
+
+alertdialog role heading contents
+
+More alertdialog content.
+
+article role heading contents
+
+More article content.
+
+dialog role heading contents
+
+More dialog content.
+
+Not this one
+
+nor this one
+
+Nor this content.
+
+dialog heading contents
+
+More dialog content.
+
+article role simple DFS
+
+Not this one
+
+More article content.
+
+
+PASS alertdialog role, name from heading
+PASS article role, name from heading
+PASS dialog role, name from heading
+PASS group role, verify name is NOT from heading
+PASS native dialog element, name from heading
+PASS article role, name from DFS heading
+

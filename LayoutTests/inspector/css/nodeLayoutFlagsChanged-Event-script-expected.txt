@@ -1,0 +1,35 @@
+Tests for the CSS.nodeLayoutFlagsChanged event with the Event enum.
+
+
+== Running test suite: CSS.nodeLayoutFlagsChanged.Event
+-- Running test case: CSS.nodeLayoutFlagsChanged.Event.Script.Initial
+PASS: Should have Event layout flag.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Event.Script.Removed.Parent
+Removing JS event listener from parent...
+PASS: Should have Event layout flag.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Event.Script.Removed.Child
+Removing JS event listener from child...
+PASS: Should have Event layout flag.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Event.Script.Removed
+Removing JS event listener...
+PASS: Should not have Event layout flag.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Event.Script.Added.Parent
+Adding JS event listener to parent...
+PASS: Should not have Event layout flag.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Event.Script.Added.Child
+Adding JS event listener to child...
+PASS: Should not have Event layout flag.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Event.Script.Added
+Adding JS event listener...
+PASS: Should have Event layout flag.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Event.Script.RapidChange
+Rapidly changing JS event listener...
+PASS: Should have Event layout flag.
+

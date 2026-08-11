@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ BlocksInInlineLayoutEnabled=true ] -->
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="http://wpt.live/fonts/ahem.css" />
+<style>
+  body {
+    font: 100px/1 Ahem;
+    color: red;
+  }
+  .abs {
+    background-color: green;
+    width: 100px;
+    height: 100px;
+  }
+</style>
+<body>
+    <span id="span" style="position: relative;">
+      <div id="absdiv" class="abs" ></div>
+      x
+    </span>
+</body>
+<script>
+  document.body.offsetHeight;
+  document.getElementById("absdiv").style.position = "absolute";
+</script>

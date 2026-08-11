@@ -1,0 +1,3 @@
+
+PASS A WritableStream and its writer should not be garbage collected while there is a write promise pending
+

@@ -1,0 +1,11 @@
+Test that webkitCurrentFullScreenElement retargets the fullscreen element assigned to a slot.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.webkitCurrentFullScreenElement is document.querySelector("section")
+PASS successfullyParsed is true
+
+TEST COMPLETE
+full screen content
+Enter fullscreen

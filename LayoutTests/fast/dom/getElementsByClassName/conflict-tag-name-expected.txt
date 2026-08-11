@@ -1,0 +1,13 @@
+Checks that getElementsByClassName('foo') and getElementsByTagName('foo') do not conflict
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS withFooTag.length is 1
+PASS withFooTag[0].id is "a"
+PASS withFooClass.length is 1
+PASS withFooClass[0].id is "b"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

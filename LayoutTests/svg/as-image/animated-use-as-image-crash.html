@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <p>Test passes if loaded into Chromium with Asan enabled and does not crash.</p>
+  <img src='resources/animated-href-on-use.svg'></img>
+  <script type="text/javascript">
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
+    }
+
+    setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); }, 500);
+  </script>
+</html>
+

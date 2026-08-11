@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+@keyframes anim { 
+    from {
+        translate: 100px;
+        backdrop-filter: saturate(100%);
+    }
+
+    to {
+        translate: 200px;
+        backdrop-filter: saturate(140%);
+    }
+}
+
+#target {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    animation: anim 1000s;
+}
+
+</style>
+
+<div id="target"></div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+promise_test(async t => {
+    const animation = document.getAnimations()[0];
+    await animationAcceleration(animation);
+
+    // Create an update where the existing animation is modified, which will yield a
+    // new accelerated animation but will re-use the existing accelerated timeline.
+    animation.effect.updateTiming({ duration: 500 * 1000 });
+    await threadedAnimationsCommit();
+}, "Updating an animation targeting both the primary and backdrop layer for an element preserves the shared timeline.");
+
+</script>
+</body>

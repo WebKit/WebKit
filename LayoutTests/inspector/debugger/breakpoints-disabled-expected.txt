@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: testCatch
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: catch TestError
+CONSOLE MESSAGE: DONE
+Check that special breakpoints aren't hit when breakpoints are disabled.
+
+
+== Running test suite: BreakpointsDisabled
+-- Running test case: AssertionFailuresBreakpoint
+PASS: Should not pause.
+
+-- Running test case: UncaughtExceptionsBreakpoint
+PASS: Should not pause.
+
+-- Running test case: AllExceptionsBreakpoint
+PASS: Should not pause.
+

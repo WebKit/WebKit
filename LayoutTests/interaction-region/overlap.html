@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        width: 200px;
+        height: 100px;
+        background-color: green;
+        opacity: 0.2;
+    }
+    .fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: blue;
+        opacity: 0.2;
+
+        cursor: pointer;
+    }
+</style>
+<body>
+<div class="overlay">
+    <div class="fill"></div>
+</div>
+<div class="overlay">
+    <div class="fill"></div>
+    <div class="fill"></div>
+</div>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

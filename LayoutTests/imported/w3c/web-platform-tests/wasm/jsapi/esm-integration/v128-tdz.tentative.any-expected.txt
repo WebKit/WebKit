@@ -1,0 +1,3 @@
+
+FAIL v128 global exports should cause TDZ errors assert_throws_js: function "() => exporterModule.v128Export" did not throw
+

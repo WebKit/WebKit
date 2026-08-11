@@ -1,0 +1,11 @@
+<p>This tests for a bug where changing the list type of an indented list would create unwanted nesting.  You should see a single ordered list item in an indented list.</p>
+<div id="div" contenteditable="true"><br></div>
+
+<script>
+var div = document.getElementById("div");
+div.focus();
+document.execCommand("InsertText", false, "foo");
+document.execCommand("InsertUnorderedList");
+document.execCommand("Indent");
+document.execCommand("InsertOrderedList");
+</script>

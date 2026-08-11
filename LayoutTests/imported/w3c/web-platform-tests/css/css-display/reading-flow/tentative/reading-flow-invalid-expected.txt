@@ -1,0 +1,9 @@
+
+PASS e.style['reading-flow'] = "auto" should not set the property value
+PASS e.style['reading-flow'] = "none" should not set the property value
+PASS e.style['reading-flow'] = "legacy" should not set the property value
+PASS e.style['reading-flow'] = "normal auto" should not set the property value
+PASS e.style['reading-flow'] = "flex-visual flex-flow" should not set the property value
+PASS e.style['reading-flow'] = "100%" should not set the property value
+PASS e.style['reading-flow'] = "10px" should not set the property value
+

@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+async function waitForTapHighlightRectToChange(fromRect)
+{
+    let rect;
+    do {
+        rect = await UIHelper.tapHighlightViewRect();
+    } while (rect.top == fromRect.top && rect.left == fromRect.left && rect.width == fromRect.width && rect.height == fromRect.height);
+    return rect;
+}
+
+addEventListener("load", async () => {
+    const target1 = document.getElementById("target1");
+    const target2 = document.getElementById("target2");
+    const target3 = document.getElementById("target3");
+
+    target1.addEventListener("touchend", event => {
+        event.preventDefault();
+    });
+    target2.addEventListener("touchend", event => { });
+
+    description("This test verifies that tap highlights are shown when tapping on clickable elements. To run the test manually, tap on the three target buttons; a tap highlight should *not* appear over the first target, but should appear over targets 2 and 3.")
+
+    if (!window.testRunner)
+        return;
+
+    // Since the touch event was prevented, no tap highlight rect should be shown.
+    initialTapHighlightRect = await UIHelper.tapHighlightViewRect();
+    await UIHelper.activateElement(target1);
+    await UIHelper.waitForDoubleTapDelay();
+    lastKnownHighlightRect = await UIHelper.tapHighlightViewRect();
+    shouldBe("initialTapHighlightRect.left", "lastKnownHighlightRect.left");
+    shouldBe("initialTapHighlightRect.top", "lastKnownHighlightRect.top");
+    shouldBe("initialTapHighlightRect.width", "lastKnownHighlightRect.width");
+    shouldBe("initialTapHighlightRect.height", "lastKnownHighlightRect.height");
+
+    await UIHelper.activateElement(target2);
+    await UIHelper.waitForDoubleTapDelay();
+    lastKnownHighlightRect = await waitForTapHighlightRectToChange(lastKnownHighlightRect);
+    testPassed("Tap highlight shown after tapping on target 2.");
+
+    await UIHelper.activateElement(target3);
+    await UIHelper.waitForDoubleTapDelay();
+    lastKnownHighlightRect = await waitForTapHighlightRectToChange(lastKnownHighlightRect);
+    testPassed("Tap highlight shown after tapping on target 3.");
+
+    finishJSTest();
+});
+</script>
+<style>
+#target1 {
+    background-color: orange;
+}
+
+#target2 {
+    background-color: purple;
+}
+
+#target3 {
+    background-color: tomato;
+}
+
+.target {
+    width: 150px;
+    height: 50px;
+    margin: 3em;
+    display: block;
+}
+</style>
+</head>
+<body>
+<button id="target1" class="target">Target 1</button>
+<button id="target2" class="target">Target 2</button>
+<button id="target3" class="target">Target 3</button>
+<div id="console"></div>
+</body>
+</html>

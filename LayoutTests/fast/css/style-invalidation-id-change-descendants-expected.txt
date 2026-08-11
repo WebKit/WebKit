@@ -1,0 +1,56 @@
+Test basic style invalidation optimization on id mutation
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS hasExpectedStyle is true
+NoStyleChange
+NoStyleChange
+PASS testStyleChangeType("root", "NoStyleChange") is true
+Setting id NotThere
+NoStyleChange
+NoStyleChange
+PASS testStyleChangeType("root", "NoStyleChange") is true
+Setting id id1
+FullStyleChange
+FullStyleChange
+PASS testStyleChangeType("root", "FullStyleChange") is true
+PASS hasExpectedStyle is true
+Setting id id2
+FullStyleChange
+FullStyleChange
+PASS testStyleChangeType("root", "FullStyleChange") is true
+PASS hasExpectedStyle is true
+Setting id id1
+FullStyleChange
+FullStyleChange
+PASS testStyleChangeType("root", "FullStyleChange") is true
+PASS hasExpectedStyle is true
+Setting id id3
+FullStyleChange
+FullStyleChange
+PASS testStyleChangeType("root", "FullStyleChange") is true
+PASS hasExpectedStyle is true
+Setting id id4
+InlineStyleChange
+InlineStyleChange
+PASS testStyleChangeType("root", "InlineStyleChange") is true
+PASS hasExpectedStyle is true
+Setting id id4
+NoStyleChange
+NoStyleChange
+PASS testStyleChangeType("root", "NoStyleChange") is true
+PASS hasExpectedStyle is true
+Setting id NotThere
+InlineStyleChange
+InlineStyleChange
+PASS testStyleChangeType("root", "InlineStyleChange") is true
+Setting id id1
+FullStyleChange
+FullStyleChange
+PASS testStyleChangeType("root", "FullStyleChange") is true
+PASS hasExpectedStyle is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

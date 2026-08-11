@@ -1,0 +1,16 @@
+Meter element: leading plus sign in content attributes
+
+
+PASS value with leading '+' should parse as 5
+PASS max with leading '+' should parse as 10
+PASS min with leading '+' should parse as 1
+PASS low with leading '+' should parse as 2
+PASS high with leading '+' should parse as 8
+PASS optimum with leading '+' should parse as 6
+PASS value '+3.14' should parse as 3.14
+PASS setAttribute with leading '+' should parse correctly
+PASS bare '+' for max should use default value 1
+PASS bare '-' for max should use default value 1
+PASS bare '.' for max should use default value 1
+PASS '+-5' for max should use default value 1
+

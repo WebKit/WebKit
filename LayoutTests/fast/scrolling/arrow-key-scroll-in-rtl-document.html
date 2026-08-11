@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html dir="rtl">
+<head>
+    <style>
+        .wide {
+            width: 2000px;
+            height: 10px;
+            background-color: silver;
+        }
+        .origin {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            background-color: blue;
+        }
+    </style>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function checkForScroll()
+        {
+            var expectedMinimumScrollLeft = -40;
+            var scrollLeft = document.scrollingElement.scrollLeft;
+            if (scrollLeft > expectedMinimumScrollLeft)
+                document.getElementById('result').textContent = "FAIL: scrollLeft is " + scrollLeft +  ", expected " + expectedScrollLeft;
+             else
+                document.getElementById('result').textContent = "PASS: scrollLeft is less than or equal to " + expectedMinimumScrollLeft;
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        async function doTest()
+        {
+            if (window.eventSender) {
+                await UIHelper.startMonitoringWheelEvents();
+
+                for (let i = 0; i < 3; i++) {
+                    await UIHelper.rawKeyDown("leftArrow");
+                    await UIHelper.renderingUpdate();
+                    await UIHelper.rawKeyUp("leftArrow");
+                }
+
+                await UIHelper.waitForScrollCompletion();
+                checkForScroll();
+            }
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="wide"></div>
+    <div class="origin"></div>
+    <div id="result"></div>
+</body>
+</html>

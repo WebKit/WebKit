@@ -1,0 +1,6 @@
+
+PASS createNSResolver() should return the specified node as is. (HTMLDocument)
+PASS createNSResolver() resultant object should not add support of 'xml' prefix. (HTMLDocument)
+PASS createNSResolver() should return the specified node as is. (XPathEvaluator)
+PASS createNSResolver() resultant object should not add support of 'xml' prefix. (XPathEvaluator)
+

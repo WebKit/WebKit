@@ -1,0 +1,7 @@
+
+PASS e.style['widows'] = "auto" should not set the property value
+PASS e.style['widows'] = "1 234" should not set the property value
+PASS e.style['widows'] = "-234" should not set the property value
+PASS e.style['widows'] = "-1" should not set the property value
+PASS e.style['widows'] = "0" should not set the property value
+

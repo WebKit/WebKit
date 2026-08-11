@@ -1,0 +1,41 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .content {
+            height: 2000px;
+        }
+
+        body.changed .content {
+            height: 2100px;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        async function doTest()
+        {
+            const unconstrained = true;
+            await UIHelper.scrollTo(0, -100, unconstrained);
+            
+            document.body.classList.add('changed');
+            
+            await UIHelper.renderingUpdate();
+            shouldBe('window.pageYOffset', '-100');
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    Top
+    <div class="content"></div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

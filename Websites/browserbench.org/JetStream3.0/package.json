@@ -1,0 +1,50 @@
+{
+    "name": "jetstream",
+    "version": "3.0.0-alpha",
+    "description": "An open source repository for the JetStream benchmark.",
+    "engines": {
+        "node": ">=22.0.0",
+        "npm": ">=8.19.3"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/WebKit/JetStream.git"
+    },
+    "bugs": {
+        "url": "https://github.com/WebKit/JetStream/issues"
+    },
+    "license": "SEE LICENSE IN LICENSE",
+    "scripts": {
+        "prepare": "node utils/version-check.mjs",
+        "server": "npm run prepare --silent && node tests/server.mjs",
+        "compress": "npm run prepare --silent && node utils/compress.mjs",
+        "decompress": "npm run prepare --silent && node utils/compress.mjs --decompress --keep",
+        "lint:check": "npm run prepare --silent && eslint **/*.{js,mjs,jsx,ts,tsx}",
+        "pretty:check": "npm run prepare --silent && prettier --check ./",
+        "pretty:format": "npm run prepare --silent && prettier --write ./",
+        "format:check": "npm run prepare --silent && npm run pretty:check && npm run lint:check",
+        "test:prepare": "npm run prepare --silent && npm run decompress -- --quiet",
+        "test:chrome": "npm run test:prepare && node tests/run-browser.mjs --browser chrome",
+        "test:firefox": "npm run test:prepare && node tests/run-browser.mjs --browser firefox",
+        "test:safari": "npm run test:prepare && node tests/run-browser.mjs --browser safari",
+        "test:edge": "npm run test:prepare && node tests/run-browser.mjs --browser edge",
+        "test:shell": "npm run test:prepare && npm run test:v8 && npm run test:jsc && npm run test:spidermonkey",
+        "test:v8": "npm run test:prepare && node tests/run-shell.mjs --shell v8",
+        "test:jsc": "npm run test:prepare && node tests/run-shell.mjs --shell jsc",
+        "test:spidermonkey": "npm run test:prepare && node tests/run-shell.mjs --shell spidermonkey",
+        "test:build": "npm run test:prepare && node tests/run-build.mjs",
+        "test:license": "npm run test:prepare && node tests/run-license.mjs"
+    },
+    "devDependencies": {
+        "@actions/core": "^1.11.1",
+        "command-line-args": "^5.2.1",
+        "command-line-usage": "^6.1.3",
+        "es-main": "^1.3.0",
+        "eslint": "^8.38.0",
+        "glob": "^11.0.3",
+        "jsvu": "^2.5.1",
+        "local-web-server": "^5.4.0",
+        "prettier": "^2.8.8",
+        "selenium-webdriver": "^4.36.0"
+    }
+}

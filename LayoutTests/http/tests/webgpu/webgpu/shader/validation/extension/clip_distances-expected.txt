@@ -1,0 +1,6 @@
+
+PASS :use_clip_distances_requires_extension_enabled:requireExtension=true;enableExtension=true
+PASS :use_clip_distances_requires_extension_enabled:requireExtension=true;enableExtension=false
+PASS :use_clip_distances_requires_extension_enabled:requireExtension=false;enableExtension=true
+PASS :use_clip_distances_requires_extension_enabled:requireExtension=false;enableExtension=false
+

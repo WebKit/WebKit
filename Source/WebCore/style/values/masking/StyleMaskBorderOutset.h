@@ -1,0 +1,155 @@
+/*
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
+namespace WebCore {
+
+namespace CSS {
+struct MaskBorderOutset;
+}
+
+namespace Style {
+
+// <mask-border-outset-value> = <length [0,∞]> | <number [0,∞]>
+struct MaskBorderOutsetValue {
+    using Length = Style::Length<CSS::Nonnegative, float>;
+    using Number = Style::Number<CSS::Nonnegative, float>;
+
+    constexpr MaskBorderOutsetValue(Length length)
+        : m_value { length }
+    {
+    }
+    constexpr MaskBorderOutsetValue(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
+        : m_value { Length { literal } }
+    {
+    }
+    constexpr MaskBorderOutsetValue(Number number)
+        : m_value { number }
+    {
+    }
+    constexpr MaskBorderOutsetValue(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
+        : m_value { Number { literal } }
+    {
+    }
+
+    constexpr bool isLength() const { return WTF::holdsAlternative<Length>(m_value); }
+    constexpr bool isNumber() const { return WTF::holdsAlternative<Number>(m_value); }
+
+    template<typename... F> constexpr decltype(auto) switchOn(F&&... f) const
+    {
+        return WTF::switchOn(m_value, std::forward<F>(f)...);
+    }
+
+    constexpr bool isZero() const
+    {
+        return switchOn([&](auto& value) { return value == 0; });
+    }
+
+    constexpr bool operator==(const MaskBorderOutsetValue&) const = default;
+
+    constexpr bool hasSameType(const MaskBorderOutsetValue& other) const { return m_value.index() == other.m_value.index(); }
+
+private:
+    friend struct Blending<MaskBorderOutsetValue>;
+
+    Variant<Length, Number> m_value { Number { 0 } };
+};
+
+// <'mask-border-outset'> = [ <length [0,∞]> | <number [0,∞]> ]{1,4}
+// https://drafts.fxtf.org/css-masking-1/#propdef-mask-border-outset
+struct MaskBorderOutset {
+    using Value = MaskBorderOutsetValue;
+    using Edges = MinimallySerializingSpaceSeparatedRectEdges<Value>;
+
+    Edges values { Value { Value::Number { 0 } } };
+
+    MaskBorderOutset(Edges values)
+        : values { WTF::move(values) }
+    {
+    }
+    MaskBorderOutset(Value top, Value right, Value bottom, Value left)
+        : values { top, right, bottom, left }
+    {
+    }
+    MaskBorderOutset(Value value)
+        : values { WTF::move(value) }
+    {
+    }
+    MaskBorderOutset(Value::Length length)
+        : values { length }
+    {
+    }
+    MaskBorderOutset(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
+        : values { Value::Length { literal } }
+    {
+    }
+    MaskBorderOutset(Value::Number number)
+        : values { number }
+    {
+    }
+    MaskBorderOutset(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
+        : values { Value::Number { literal } }
+    {
+    }
+
+    bool isZero() const
+    {
+        return values.allOf([](auto& edge) { return edge.isZero(); });
+    }
+
+    bool operator==(const MaskBorderOutset&) const = default;
+};
+DEFINE_TYPE_WRAPPER_GET(MaskBorderOutset, values);
+
+// MARK: - Conversion
+
+template<> struct ToCSS<MaskBorderOutset> { auto operator()(const MaskBorderOutset&, const Style::ComputedStyle&) -> CSS::MaskBorderOutset; };
+template<> struct ToStyle<CSS::MaskBorderOutset> { auto operator()(const CSS::MaskBorderOutset&, const BuilderState&) -> MaskBorderOutset; };
+
+template<> struct CSSValueConversion<MaskBorderOutset> { auto operator()(BuilderState&, const CSSValue&) -> MaskBorderOutset; };
+template<> struct CSSValueCreation<MaskBorderOutset> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const MaskBorderOutset&) -> Ref<CSSValue>; };
+
+// MARK: - Blending
+
+template<> struct Blending<MaskBorderOutsetValue> {
+    bool NODELETE canBlend(const MaskBorderOutsetValue&, const MaskBorderOutsetValue&);
+    bool NODELETE requiresInterpolationForAccumulativeIteration(const MaskBorderOutsetValue&, const MaskBorderOutsetValue&);
+    auto blend(const MaskBorderOutsetValue&, const MaskBorderOutsetValue&, const BlendingContext&) -> MaskBorderOutsetValue;
+};
+
+template<> struct Blending<MaskBorderOutset> {
+    auto canBlend(const MaskBorderOutset&, const MaskBorderOutset&) -> bool;
+    auto requiresInterpolationForAccumulativeIteration(const MaskBorderOutset&, const MaskBorderOutset&) -> bool;
+    auto blend(const MaskBorderOutset&, const MaskBorderOutset&, const BlendingContext&) -> MaskBorderOutset;
+};
+
+} // namespace Style
+} // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::MaskBorderOutset)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::MaskBorderOutsetValue)

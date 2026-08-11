@@ -1,0 +1,3 @@
+
+FAIL Clearance after float with forced break inside assert_equals: expected 100 but got 74
+

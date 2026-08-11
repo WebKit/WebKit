@@ -1,0 +1,35 @@
+<head>
+<script src="../resources/js-test.js"></script>
+<body>
+<script>
+description("Tests that Gamepad.vibrationActuator keeps returning the same object");
+jsTestIsAsync = true;
+
+function runTest() {
+    addEventListener("gamepadconnected", e => {
+        gamepad = e.gamepad;
+
+        gamepad.vibrationActuator.foo = "bar";
+        shouldBeEqualToString("gamepad.vibrationActuator.foo", "bar");
+        gc();
+        shouldBeEqualToString("gamepad.vibrationActuator.foo", "bar");
+        gc();
+        setTimeout(() => {
+            gc();
+            shouldBeEqualToString("gamepad.vibrationActuator.foo", "bar");
+            finishJSTest();
+        }, 0);
+    });
+
+    const supportsDualRumble = true;
+    testRunner.setMockGamepadDetails(0, "Test Gamepad", "", 2, 2, supportsDualRumble);
+    testRunner.setMockGamepadAxisValue(0, 0, 0.7);
+    testRunner.setMockGamepadAxisValue(0, 1, -1.0);
+    testRunner.setMockGamepadButtonValue(0, 0, 1.0);
+    testRunner.setMockGamepadButtonValue(0, 1, 1.0);
+    testRunner.connectMockGamepad(0);
+}
+
+onload = runTest;
+</script>
+</body>

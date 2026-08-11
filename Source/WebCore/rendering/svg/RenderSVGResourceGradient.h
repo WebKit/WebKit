@@ -1,0 +1,63 @@
+/*
+ * Copyright (C) 2023, 2024 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include "RenderSVGResourcePaintServer.h"
+#include "SVGGradientElement.h"
+
+namespace WebCore {
+
+class Gradient;
+
+class RenderSVGResourceGradient : public RenderSVGResourcePaintServer {
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGResourceGradient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGResourceGradient);
+public:
+    virtual ~RenderSVGResourceGradient();
+
+    inline SVGGradientElement& gradientElement() const;
+
+    bool prepareFillOperation(GraphicsContext&, const RenderLayerModelObject&, const Style::ComputedStyle&) final;
+    bool prepareStrokeOperation(GraphicsContext&, const RenderLayerModelObject&, const Style::ComputedStyle&) final;
+
+    virtual void invalidateGradient() = 0;
+    void invalidateGradientOnLayoutSizeChange();
+
+    virtual SVGUnitTypes::SVGUnitType gradientUnits() const = 0;
+
+protected:
+    RenderSVGResourceGradient(Type, SVGElement&, Style::ComputedStyle&&);
+
+    virtual void collectGradientAttributesIfNeeded() = 0;
+    virtual RefPtr<Gradient> createGradient(const Style::ComputedStyle&) = 0;
+
+    virtual AffineTransform gradientTransform() const = 0;
+
+    bool buildGradientIfNeeded(const RenderLayerModelObject&, const Style::ComputedStyle&, AffineTransform& userspaceTransform);
+    GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const Style::ComputedStyle&) const;
+    GradientSpreadMethod NODELETE platformSpreadMethodFromSVGType(SVGSpreadMethodType) const;
+    ColorInterpolationMethod gradientColorInterpolationMethod() const;
+
+    RefPtr<Gradient> m_gradient;
+};
+
+}
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourceGradient, isRenderSVGResourceGradient())

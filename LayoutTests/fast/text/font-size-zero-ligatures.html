@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<p id="description">Tests that text with font-size:0 has zero width even when the font has ligatures.
+Ligature substitution via CTFontShapeGlyphs in the simple text path should not produce
+non-zero advances when the font size is zero.</p>
+<div id="console"></div>
+<script>
+function testWidth(text, fontFamily) {
+    var s = document.createElement('span');
+    s.style.fontSize = "0px";
+    s.style.fontFamily = fontFamily;
+    s.textContent = text;
+    document.body.appendChild(s);
+    var width = s.getBoundingClientRect().width;
+    document.body.removeChild(s);
+    return width;
+}
+
+// Hoefler Text has common ligatures for "fi", "fl", "ffi". It is system font.
+// These exercise the simple text path where Font::applyTransforms() calls
+// CTFontShapeGlyphs which performs ligature substitution.
+shouldBe("testWidth('fi', 'Hoefler Text')", "0");
+shouldBe("testWidth('fl', 'Hoefler Text')", "0");
+shouldBe("testWidth('ffi', 'Hoefler Text')", "0");
+
+// Control: text without ligatures should also be zero.
+shouldBe("testWidth('abc', 'Helvetica')", "0");
+
+// Sanity check: non-zero font-size still produces non-zero width.
+var sanity = document.createElement('span');
+sanity.style.fontSize = "16px";
+sanity.style.fontFamily = "Hoefler Text";
+sanity.textContent = "fi";
+document.body.appendChild(sanity);
+shouldBeTrue("sanity.getBoundingClientRect().width > 0");
+document.body.removeChild(sanity);
+</script>
+</body>
+</html>

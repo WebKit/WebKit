@@ -1,0 +1,2 @@
+
+Failure, Undo was still enabled after the location changed (but at least we didn't crash!)

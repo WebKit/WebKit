@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SupportHDRDisplayEnabled=true CSSConstrainedDynamicRangeLimitEnabled=false ] -->
+<html id="html">
+<body>
+<script src='../resources/js-test-pre.js'></script>
+<video id="videon"></video>
+<video id="videoc" style="dynamic-range-limit: constrained"></video>
+<video id="videos" style="dynamic-range-limit: standard"></video>
+<script>
+var videon;
+var videoc;
+var videos;
+var video2;
+var video3;
+
+function verifyVideo(expectations)
+{
+    const quiet = true; // So that the non-failure output is the same if dynamic-range-limit is not supported.
+    shouldBe(expectations.video + '.style["dynamic-range-limit"]', expectations.limit, quiet);
+    shouldBe('getComputedStyle(' + expectations.video + ')["dynamic-range-limit"]', expectations.computed, quiet);
+    shouldBe('internals.effectiveDynamicRangeLimitValue(' + expectations.video + ')', expectations.value, quiet);
+}
+
+if (!window.internals) {
+    failTest('This test requires window.internals.');
+} else if (CSS.supports("dynamic-range-limit", "standard") && CSS.supports("dynamic-range-limit", "no-limit")) {
+    shouldBe('CSS.supports("dynamic-range-limit", "constrained")', 'false');
+
+    videon = document.getElementById("videon");
+    videoc = document.getElementById("videoc");
+    videos = document.getElementById("videos");
+
+    internals.setPageShouldSuppressHDR(false);
+    verifyVideo({video: 'videon', limit: '""', computed: '"no-limit"', value: '1.0'});
+    verifyVideo({video: 'videoc', limit: '""', computed: '"no-limit"', value: '1.0'});
+    verifyVideo({video: 'videos', limit: '"standard"', computed: '"standard"', value: '0.0'});
+
+    internals.setPageShouldSuppressHDR(true);
+    verifyVideo({video: 'videon', limit: '""', computed: '"no-limit"', value: '0.5'});
+    verifyVideo({video: 'videoc', limit: '""', computed: '"no-limit"', value: '0.5'});
+    verifyVideo({video: 'videos', limit: '"standard"', computed: '"standard"', value: '0.0'});
+
+    video2 = document.createElement("video");
+    videon.append(video2);
+    verifyVideo({video: 'video2', limit: '""', computed: '"no-limit"', value: '0.5'});
+
+    internals.setPageShouldSuppressHDR(false);
+    verifyVideo({video: 'videon', limit: '""', computed: '"no-limit"', value: '1.0'});
+    verifyVideo({video: 'videoc', limit: '""', computed: '"no-limit"', value: '1.0'});
+    verifyVideo({video: 'videos', limit: '"standard"', computed: '"standard"', value: '0.0'});
+    verifyVideo({video: 'video2', limit: '""', computed: '"no-limit"', value: '1.0'});
+
+    video3 = document.createElement("video");
+    video2.append(video3);
+    verifyVideo({video: 'video3', limit: '""', computed: '"no-limit"', value: '1.0'});
+}
+</script>
+<script src='../resources/js-test-post.js'></script>
+</body>
+</html>

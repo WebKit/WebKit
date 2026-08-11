@@ -1,0 +1,4 @@
+
+PASS cookieStore fires change event for cookie deleted by cookieStore.delete()
+PASS cookieStore does not fire change events for non-existing expired cookies
+

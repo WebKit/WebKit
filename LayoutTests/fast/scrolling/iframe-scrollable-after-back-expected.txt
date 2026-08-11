@@ -1,0 +1,9 @@
+
+Sending mouseWheel events
+PASS: mouseWheel caused scrolling
+
+Navigating forward then back
+
+Sending mouseWheel events
+PASS: mouseWheel caused scrolling
+

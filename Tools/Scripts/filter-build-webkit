@@ -1,0 +1,581 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2011, 2012, 2013, 2014, 2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Filters the output of build-webkit into a more human-readable format.
+
+# To develop:
+#   make debug VERBOSITY=noisy >build-output.txt 
+#   cat build-output.txt | Tools/Scripts/filter-build-webkit --format=debug > formatted.txt
+# Remove an spurious alert (red line):
+# Inspect formatted.txt, locate ALERT: lines that are not real alerts
+#  A) If it is a real build task, add a matcher and printer in main function.
+#  B) If it is a spurious line
+#    - Locate the original sequence from build-output.txt
+#    - Add the sequence as a test in shouldIgnoreLine_unittests.pl
+#    - Add a ignore in the shouldIgnoreLine()
+#    - perl -I Tools/Scripts/ Tools/Scripts/webkitperl/filter-build-webkit_unittest/shouldIgnoreLine_unittests.pl
+
+package FilterBuildWebKit;
+
+BEGIN {
+    use Exporter   ();
+    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+    $VERSION     = 1.00;
+    @ISA         = qw(Exporter);
+    @EXPORT      = qw(&shouldIgnoreLine);
+    %EXPORT_TAGS = ();
+    @EXPORT_OK   = ();
+}
+
+use strict;
+use warnings;
+
+use CGI qw(escapeHTML);
+use Digest::CRC qw(crc16);
+use File::Basename;
+use FindBin;
+use lib $FindBin::Bin;
+use Getopt::Long;
+use Term::ANSIColor qw(color colored);
+use VCSUtils;
+
+use constant {
+    STYLE_PLAIN => 0,
+    STYLE_HEADER => 1,
+    STYLE_SUCCESS => 2,
+    STYLE_ALERT => 3,
+    STYLE_ERROR => 4,
+
+    HTML_HEADER =><<HTMLHEADER,
+<html>
+    <head>
+        <title>Build Log</title>
+        <style>
+            body { font-family: Monaco, monospace; font-size: 10px; color: #666; line-height: 1.5em; }
+            h2 { margin: 1.5em 0 0 0; font-size: 1.0em; font-weight: bold; color: blue; }
+            p { margin: 0; padding-left: 1.5em; border-left: 3px solid #fff; }
+            p.alert { border-left-color: red; color: red; margin: 1.5em 0 0 0; }
+            p.alert + p { margin: 1.5em 0 0 0; }
+            p.alert + p.alert { margin: 0; }
+            p.error { border-left-color: magenta; color: magenta; margin: 1.5em 0 0 0; }
+            p.error + p { margin: 1.5em 0 0 0; }
+            p.error + p.error { margin: 0; }
+            p.success { color: green; }
+        </style>
+    </head>
+    <body>
+HTMLHEADER
+
+    HTML_FOOTER =><<HTMLFOOTER,
+    </body>
+</html>
+HTMLFOOTER
+};
+
+sub printLine($$$$);
+sub setLogfileOption($$);
+sub setOutputFormatOption($$);
+sub shouldIgnoreLine($$);
+sub usageAndExit();
+
+# Global variables used only in global scope.
+my $outputPath = "&STDOUT";
+my $platform = "mac";
+my $showHelp;
+
+# Global variables used in global and subroutine scope.
+our $logUnfilteredOutput;
+our $outputFormat = -t STDOUT ? "color" : "text";
+our $unfilteredOutputPath = "build.log";
+our $inEntitlements = 0;
+our $inMultilineShellCommand = 0;
+our $inDevicePreparationWarnings = 0;
+our $inAuxiliaryFile = 0;
+
+sub usageAndExit()
+{
+    print STDERR <<__END__;
+Usage: @{[ basename($0) ]} [options] buildlog1 [buildlog2 ...]
+       build-webkit | @{[ basename($0) ]} [options]
+  -h|--help     Show this help message
+  -p|--platform Logfile type (default: $platform)
+Output Options:
+  -o|--output   Path for output (default: STDOUT)
+  -f|--format   Output format (default: color)
+                  html: Standalone HTML document
+                  text: Plain text
+                  color: Plain text with colors
+                  oneline: Plain text with colors on one line
+                  quiet: Only show errors and final result
+                  debug: Prefix lines with message class 
+Unfiltered Logging Options:
+  -l|--log      Save unfiltered output to file (see --log-file)
+  --logfile     Path to save unfiltered output (implies --log, default: $unfilteredOutputPath)
+__END__
+    exit 1;
+}
+
+sub main() {
+    my $getOptionsResult = GetOptions(
+        'h|help'                => \$showHelp,
+        'o|output=s'            => \$outputPath,
+        'p|platform=s'          => \$platform,
+        'f|format=s'            => \&setOutputFormatOption,
+        'l|log'                 => \$logUnfilteredOutput,
+        'logfile=s'             => \&setLogfileOption,
+    );
+
+    if (-t STDIN || $showHelp || !$getOptionsResult) {
+        usageAndExit();
+    }
+
+    open(OUTPUT_HANDLE, ">$outputPath") or die "Failed to open $outputPath : $!";
+    if ($logUnfilteredOutput) {
+        open(UNFILTERED_OUTPUT_HANDLE, ">$unfilteredOutputPath") or die "Failed to open $unfilteredOutputPath : $!";
+    }
+
+    print OUTPUT_HANDLE HTML_HEADER if ($outputFormat eq "html");
+
+    my $buildFinished;
+    my $buildFailed = 0;
+    for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line = <>) {
+        print UNFILTERED_OUTPUT_HANDLE $line if $logUnfilteredOutput;
+
+        chomp($line);
+
+        next if shouldIgnoreLine($previousLine, $line);
+
+        $line =~ s/\(in target '(.*)' from project '(.*)'\)$//g;
+        my $target = $1;
+        my $project = $2;
+
+        if ($line =~ /^={10}/) {
+            printLine($line, $target, $project, STYLE_SUCCESS);
+            $buildFinished = 1;
+        } elsif ($line =~ /^===/) {
+            printLine($line, $target, $project, STYLE_HEADER);
+        } elsif ($line =~ /^note: [Uu]sing/) {
+            printLine($line, $target, $project, STYLE_HEADER);
+        } elsif ($line =~ /Prepare packages|Computing target dependency graph and provisioning inputs|Create build description|Checking Dependencies|Check dependencies|Create product structure|Write auxiliary files|LinkStoryboards/) {
+            printLine($line, $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
+            printLine("Build Succeeded", $target, $project, STYLE_SUCCESS);
+        } elsif ($line =~ /^(\e\[1m)?SwiftCompile(\e\[0m)?\s/) {
+            my $path = "";
+            # Try quoted path first (for paths with spaces), then unquoted path
+            if ($line =~ /"([^"]+\.swift)"/ || $line =~ /(\S+\/\S+\.swift)\b/) {
+                $path = " " . basename($1);
+            }
+            printLine("SwiftCompile$path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|ProcessProductPackagingDER|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary|Copy|ScanDependencies|SwiftDriver|SwiftMergeGeneratedHeaders|SwiftDriverJobDiscovery|SwiftEmitModule|EmitSwiftModule|VerifyModule|ExecuteExternalTool|Unifdef|MergeInfoPlistFile|CompileAssetCatalogVariant|LinkAssetCatalog|GenerateAssetSymbols|GeneratedAssetSymbols|CopySwiftLibs|CopySwiftLibs)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
+            my $command = $2;
+            my $path = defined($4) ? basename($4) : "";
+            $command = "ScanDeps" if $command eq "ScanDependencies";
+            $path =~ s/("|\\|\.[ah]$)//g;
+            printLine("$command $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Ditto) (\S+) (\S+)/) {
+            my ($command, $path) = ($1, basename($3));
+            printLine("$command $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(CompileAssetCatalog) .*/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^\S+mkdir .*?(\S+)$/) {
+            my $path = basename($1);
+            printLine("mkdir $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^\S+\/usr\/bin\/tapi reexport .*?(\S+)$/) {
+            my $path = basename($1);
+            printLine("tapi $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^plutil .*?(\S+)$/) {
+            my $path = basename($1);
+            printLine("plutil $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^cp (\S+)/) {
+            my $path = basename($1);
+            printLine("cp $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^mv (\S+)/) {
+            my $path = basename($1);
+            printLine("mv $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /python(\d\.\d+)? (\S+) (.+)/) {
+            my ($command, $arguments) = (basename($2), $3);
+            my ($content) = $arguments;
+            $command =~ s/"//g;
+            if (($command eq "process-css-properties.py") || ($command eq "process-css-values.py") || ($command eq "process-css-pseudo-selectors.py")) {
+                $content = "";
+            } elsif ($command eq "generate-derived-log-sources.py") {
+                $arguments =~ /(\S+) +(\S+ +\S+ +\S+ +\S+ +\S+ +\S+).+/;
+                $content = "$1 $2";
+            } else {
+                $content = basename($arguments);
+            }
+            printLine("python $command $content", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^Generating bindings for the (\S+) builtin\./) {
+            printLine("Generating $1 builtin", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^\/\S+?(strip|WebCoreExportFileGenerator) .*?(\/|\> )(\S+)/) {
+            my ($command, $path) = (basename($1), basename($3));
+            printLine("$command $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^offlineasm\: /) {
+            printLine($line, $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^Generating bindings for the (\S+) builtin\./) {
+            printLine("Generating $1 builtin", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^Generating (bindings|messages? (header|receiver|dispatcher)|derived source) for (\S+)\.\.\./) {
+            my ($command, $path) = ($1, basename($3));
+            printLine("Generating $command $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Generating|Merging) (\S+) (from|for) (\S+)/) {
+            printLine($line, $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^Postprocessed ANGLE header:? (\S+)/) {
+            my $path = basename($1);
+            printLine("Postprocessed ANGLE header $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^Prepare build/) {
+            printLine($line, $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^Signing Identity:/) {
+            printLine($line, $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^Pre-processing (\S+) sandbox profile/) {
+            printLine($line, $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /compile-sandbox.sh\s+(\S+)/) {
+            printLine("compile-sandbox.sh ".$1, $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^Scripts\/generate-unified-source-bundles.py/) {
+            printLine("Generating unified sources", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^ruby JavaScriptCore\/generator\/main.rb JavaScriptCore\/bytecode\/BytecodeList.rb.*/) {
+            printLine("Generating bytecode list", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^ruby JavaScriptCore\/b3\/air\/opcode_generator.rb JavaScriptCore\/b3\/air\/AirOpcode.opcodes$/) {
+            printLine("Generating opcodes", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^.*ruby WebCore\/Scripts\/GenerateSettings.rb\s+.*\s+--template\s+.*(\/\S+).erb/) {
+            my $path = basename($1);
+            printLine("Generating settings $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^ruby "?WebCore\/domjit\/generate-abstract-heap.rb"? (\S+) (\S+)/) {
+            printLine("Generating abstract heap", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^.*\/generate-inspector-protocol-bindings.py\s+--framework\s+(\S+).*(\/\S+).json/) {
+            my $path = basename($2);
+            printLine("Generating inspector protocol bindings $1 $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^bash -c "perl JavaScriptCorePrivateHeaders\/xxd.pl .* \<\(gzip -cn .*\) .*"/) {
+            printLine("Converting WHLSLStandardLibrary", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^sh .*\/generate-https-upgrade-database\.sh .*\/HTTPSUpgradeList.txt HTTPSUpgradeList.db/) {
+            printLine("Converting HTTPSUpgradeList", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^ruby .*\/GeneratePreferences\.rb\s+--frontend\s+(\S+)\s+--template\s+.*(\/\S+).erb.+/) {
+            my $path = basename($2);
+            printLine("Generating preferences $1 $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^### (Generating \.xcfilelists for .*)$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Pre-processing InspectorBackendCommands\.\.\.)$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Unlocking '.*keychain-db')$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Using unified source list files: .*)$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(\S+\/cc).*?(\S+)\.(out|exp)/) {
+            my ($command, $path) = (basename($1), basename($2));
+            printLine("$command $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(File Doesn't Exist, Will Create:)(.*\.entitlements)$/) {
+            my $path = basename($2);
+            printLine("Creating Entitlements File $path", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(building \S+)$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(running build command .*+)$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^.+(platform-enabled-swift-args.+):.+$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /(\w+\.framework.+\.xpc) -> (.+)/) {
+            printLine("$1 -> $2", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /(\w+\.framework.+\.dylib) -> (.+)/) {
+            printLine("$1 -> $2", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /(\w+\.framework.+XPCServices) -> (.+)/) {
+            printLine("$1 -> $2", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^ExtractAppIntentsMetadata/) {
+            printLine("$line", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^.+(appintentsmetadataprocessor)\[\d+:\d+\] (.+)$/) {
+            printLine("$1 $2", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Creating.+log definitions.+)$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Generating derived log sources from.+)$/) {
+            printLine("$1", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Copying .+ from)\s+(\S+) to (\S+)$/) {
+            my ($source) = basename($2);
+            my ($dest) = basename($3);
+            printLine("$1 $source to $dest", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^(Setting fixed entry values for )(\S+)/) {
+            my ($file) = basename($2);
+            printLine("$1 $file", $target, $project, STYLE_PLAIN);
+        } else {
+            # This only gets hit if stderr is redirected to stdout.
+            if (($line =~ /\*\* BUILD FAILED \*\*/) || ($line =~ /^Build FAILED./)) {
+                $buildFailed = 1;
+            }
+            my $alertStyle = ($line =~ /error:/) ? STYLE_ERROR : STYLE_ALERT;
+            printLine($line, $target, $project, $buildFinished ? STYLE_SUCCESS : $alertStyle);
+        }
+    }
+
+    print OUTPUT_HANDLE HTML_FOOTER if ($outputFormat eq "html");
+
+    close(OUTPUT_HANDLE);
+    close(UNFILTERED_OUTPUT_HANDLE) if ($logUnfilteredOutput);
+
+    exit $buildFailed;
+}
+
+sub printLine($$$$)
+{
+    my ($line, $target, $project, $style) = @_;
+
+    # In quiet mode, only show errors and success messages (suppress warnings)
+    if ($outputFormat eq "quiet") {
+        return if ($style == STYLE_PLAIN || $style == STYLE_HEADER);
+        # Suppress warnings, only show errors
+        if ($style == STYLE_ALERT && $line =~ /^\s*warning:/i) {
+            return;
+        }
+    }
+
+    if ($outputFormat eq "html") {
+        $line = escapeHTML($line);
+        if    ($style == STYLE_HEADER)  { print OUTPUT_HANDLE "<h2>$line</h2>"; }
+        elsif ($style == STYLE_SUCCESS) { print OUTPUT_HANDLE "<p class=\"success\">$line</p>"; }
+        elsif ($style == STYLE_ERROR)   { print OUTPUT_HANDLE "<p class=\"error\">$line</p>"; }
+        elsif ($style == STYLE_ALERT)   { print OUTPUT_HANDLE "<p class=\"alert\">$line</p>"; }
+        else                            { print OUTPUT_HANDLE "<p>$line</p>"; }
+        OUTPUT_HANDLE->flush();
+        return;
+    }
+    my $erase = "";
+    my $context = "";
+    my $color = "";
+    my $reset = "";
+    my $endl = "\n";
+    if ($outputFormat eq "color" or $outputFormat eq "oneline" or $outputFormat eq "quiet") {
+        if ($target && $project) {
+            my $checksum = crc16($target . $project);
+            # Pick an ANSI color other than white or black (so, colors 1-6 and 9-14).
+            $context = colored("$target ", "ansi" . ((1 + $checksum % 6) + (8 * $checksum % 2)));
+        }
+        $reset = color("reset");
+        if ($style == STYLE_HEADER)    { $color = color("blue"); }
+        elsif ($style == STYLE_SUCCESS) { $color = color("green"); }
+        elsif ($style == STYLE_ERROR)   { $color = color("magenta"); }
+        elsif ($style == STYLE_ALERT)   { $color = color("red"); }
+        if ($outputFormat eq "oneline") {
+            $erase = "\33[2K\r";
+            if ($style != STYLE_ALERT && $style != STYLE_ERROR && $style != STYLE_SUCCESS) {
+                $endl = "\r";
+            }
+        }
+    } elsif ($outputFormat eq "debug") {
+        if ($style == STYLE_HEADER)    { $color = "HEADER:"; }
+        elsif ($style == STYLE_SUCCESS) { $color = "SUCCESS:"; }
+        elsif ($style == STYLE_ERROR)   { $color = "ERROR:"; }
+        elsif ($style == STYLE_ALERT)   { $color = "ALERT:"; }
+    }
+    print OUTPUT_HANDLE $erase, $context, $color, $line, $reset, $endl;
+    OUTPUT_HANDLE->flush();
+}
+
+sub setLogfileOption($$)
+{
+    my ($opt, $value) = @_;
+    $unfilteredOutputPath = $value;
+    $logUnfilteredOutput = 1;
+}
+
+sub setOutputFormatOption($$)
+{
+    my ($opt, $value) = @_;
+    $value = lc($value);
+    if ($value ne "html" && $value ne "text" && $value ne "color" && $value ne "oneline" && $value ne "quiet" && $value ne "debug") {
+        die "The $opt option must be either \"html\", \"text\", \"color\", \"oneline\", \"quiet\" or \"debug\"";
+    }
+    $outputFormat = $value;
+}
+
+sub shouldShowSubsequentLine($)
+{
+    my ($line) = @_;
+
+    return 1 if $line =~ /referenced from:$/;
+    return 1 if $line =~ /(note:|error:)/;
+
+    return 0;
+}
+
+sub shouldIgnoreLine($$)
+{
+    my ($previousLine, $line) = @_;
+
+    if ($line =~ /^\s*Entitlements:$/) {
+        $inEntitlements = 1;
+        return 1
+    }
+
+    if ($inEntitlements) {
+        $inEntitlements = 0 if $line =~ /^}$/;
+        return 1
+    }
+
+    # iPhone preparation errors always start and end with lines containing 'iPhoneConnect:'.
+    if ($inDevicePreparationWarnings) {
+        $inDevicePreparationWarnings = 0 if $line =~ /== END: Underlying device preparation warnings ==/;
+        return 1
+    }
+
+    if ($line =~ /iPhoneConnect:/) {
+        $inDevicePreparationWarnings = 1;
+        return 1
+    }
+
+    if ($line =~ /^\s*\/bin\/sh -c [^\']*\'$/) {
+        $inMultilineShellCommand = 1;
+        return 1;
+    }
+    if ($inMultilineShellCommand) {
+        $inMultilineShellCommand = 0 if $line =~ /^\'$/;
+        return 1;
+    }
+
+    if ($line =~ /^\s*write-file /) {
+        $inAuxiliaryFile = 1;
+        return 1;
+    } elsif ($inAuxiliaryFile) {
+        $inAuxiliaryFile = 0;
+        return 1;
+    }
+
+    return 1 if $line =~ /^\s*$/;
+    return 1 if $line =~ /^Command line invocation:/;
+    return 1 if $line =~ /^Build settings from command line:/;
+    return 1 if $line =~ /^User defaults from command line:/;
+    return 1 if $line =~ /^Prepare build/;
+    return 1 if $line =~ /^Build system information/;
+    return 1 if $line =~ /^CreateBuildRequest/;
+    return 1 if $line =~ /^SendProjectDescription/;
+    return 1 if $line =~ /^CreateBuildOperation/;
+    return 1 if $line =~ /^ComputeTargetDependencyGraph/;
+    return 1 if $line =~ /^ComputePackagePrebuildTargetDependencyGraph/;
+    return 1 if $line =~ /^GatherProvisioningInputs/;
+    return 1 if $line =~ /^CreateBuildDescription/;
+    return 1 if $line =~ /Xcode.app loaded specs from/;
+    return 1 if $line =~ /^note: Planning build/;
+    return 1 if $line =~ /^note: Constructing build description/;
+    return 1 if $line =~ /^note: Build description (constructed|loaded) in .*/;
+    return 1 if $line =~ /^note: Using build description .*/;
+    return 1 if $line =~ /^note: Using eager compilation/;
+    return 1 if $line =~ /^note: Execution policy exception registration failed and was skipped: Error Domain=NSPOSIXErrorDomain Code=1 "Operation not permitted"/;
+    return 1 if $line =~ /^note: detected encoding of input file as Unicode \(.*\)/;
+    return 1 if $line =~ /make(\[\d+\])?: Nothing to be done for/;
+    return 1 if $line =~ /^JavaScriptCore\/create_hash_table/;
+    return 1 if $line =~ /JavaScriptCore.framework\/PrivateHeaders\/create_hash_table/;
+    return 1 if $line =~ /^JavaScriptCore\/pcre\/dftables/;
+    return 1 if $line =~ /^Creating hashtable for /;
+    return 1 if $line =~ /^Wrote output to /;
+    return 1 if $line =~ /^UNDOCUMENTED: /;
+    return 1 if $line =~ /libtool.*has no symbols/;
+    return 1 if $line =~ /^# Lower case all the values, as CSS values are case-insensitive$/;
+    return 1 if $line =~ /^if sort /;
+    return 1 if $line =~ /set-webkit-configuration/;
+    return 1 if $line =~ /^building file list/;
+    return 1 if $line =~ /^\.\/$/;
+    return 1 if $line =~ /^\S+\.h$/;
+    return 1 if $line =~ /^\S+\/$/;
+    return 1 if $line =~ /^sent \d+ bytes/;
+    return 1 if $line =~ /^total size is/;
+    return 1 if $line =~ /One of the two will be used\. Which one is undefined\./;
+    return 1 if $line =~ /The Legacy Build System will be removed in a future release/;
+    return 1 if $line =~ /^\( (xcodebuild|if) /;
+    return 1 if $line =~ /^warning: can't find additional SDK/;
+    return 1 if $line =~ /^warning: no umbrella header found for target '.*', module map will not be generated$/;
+    return 1 if $line =~ /^warning\: detected internal install, passing entitlements to simulator anyway\./;
+    return 1 if $line =~ /may not function in the Simulator because Ad Hoc/;
+    return 1 if $line =~ /^.*\/usr\/bin\/clang .*?/;
+    return 1 if $line =~ / xcodebuild\[[0-9]+:[0-9a-f]+\]\s+DVTAssertions: Warning in .*/;
+    return 1 if $line =~ /^(Details|Object|Method|Function|Thread):/;
+    return 1 if $line =~ /^Please file a bug at /;
+    return 1 if $line =~ /created by an unsupported XCDependencyGraph build$/;
+    return 1 if $line =~ /warning: The assignment of '.*' at ".*" uses \$\(inherited\). In the new build system this will inherit from an earlier definition of '.*' in this xcconfig file or its imports; the old build system would discard earlier definitions. This may result in changes to resolved build setting values./;
+    return 1 if $line =~ /.* com.apple.actool.compilation-results .*/;
+    return 1 if $line =~ /.*\/Assets.car/;
+    return 1 if $line =~ /.*\/assetcatalog_generated_info.plist/;
+    return 1 if $line =~ /assetcatalog_output/;
+    return 1 if $line =~ /GeneratedAssetSymbols/;
+    return 1 if $line =~ /^mount: .+ failed with/;
+    return 1 if $line =~ /^Using .+ production environment.$/;
+    return 1 if $line =~ /replacing existing signature$/;
+    return 1 if $line =~ /^Unlocking '.*\.keychain-db'$/;
+    return 1 if $line =~ /^\d+ localizable strings$/;
+    return 1 if $line =~ /^\d+ plural rules$/;
+    return 1 if $line =~ /^The list of exported symbols did not change.$/;
+    return 1 if $line =~ /^ditto: Cannot get the real path for source/;
+    return 1 if $line =~ /^Duplicate Entry Was Skipped:/;
+    return 1 if $line =~ /^Adding .*?entitlements/;
+    return 1 if $line =~ /^Making app bundle launchable/;
+    return 1 if $line =~ /^Finished adding entitlements\.$/;
+    return 1 if $line =~ /^.* will not be code signed because its settings don't specify a development team.$/;
+    return 1 if $line =~ /^Initializing Plist...$/;
+    return 1 if $line =~ /^.* Run script build phase '/;
+    return 1 if $line =~ /^.* Traditional headermap style is no longer supported;/;
+    return 1 if $line =~ /^.* Skipping duplicate build file in/;
+    return 1 if $line =~ /^Build description signature:/;
+    return 1 if $line =~ /^Build description path:/;
+    return 1 if $line =~ /^note: Building targets in dependency order/;
+    return 1 if $line =~ /Xfrontend/;
+    return 1 if $line =~ /SwiftDriver\\ Compilation/;
+    return 1 if $line =~ /SwiftExplicitDependencyGeneratePcm/;
+    return 1 if $line =~ /SwiftExplicitDependencyCompileModuleFromInterface/;
+    return 1 if $line =~ /^Cache (hit|miss)/;
+    return 1 if $line =~ /^warning: .*libtool: archive library: .* the table of contents is empty \(no object file members in the library define global symbols\)/;
+    # Investigate these in https://bugs.webkit.org/show_bug.cgi?id=245263.
+    return 1 if $line =~ /warning: Could not read serialized diagnostics file: error\(\"Failed to open diagnostics file\"\)/;
+    # Remove two below once https://bugs.webkit.org/show_bug.cgi?id=175997 is fixed.
+    return 1 if $line =~ /libtool: warning same member name \(.*\) in output file used for input files:/;
+    return 1 if $line =~ /warning: \(.*\)  could not find object file symbol for symbol/;
+
+    if ($platform eq "win") {
+        return 1 if $line =~ /^\s*(touch|perl|cat|rm -f|del|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;
+        return 1 if $line =~ /^\s*(if not exist \"|if errorlevel 1)/;
+        return 1 if $line =~ /(^\s*|MSB3073:\s+)(set |REM |cmd \/c)/;
+        return 1 if $line =~ /^\s*[cC]:\\[pP]rogram [fF]iles.*\\.*\\(CL|midl)\.exe /;
+        return 1 if $line =~ /^\s*Processing .*\.(acf|h|idl)\s*$/;
+        return 1 if $line =~ /^\s*printf /;
+        return 1 if $line =~ /^\s*\/usr\/bin\/bash\s*/;
+        return 1 if $line =~ /^\s*offlineasm: Nothing changed/;
+        return 1 if $line =~ / \d+ File\(s\) copied/;
+        return 1 if $line =~ /^\s*File not found - \*\.h/;
+        return 1 if $line =~ /mkdir\s+\"/;
+        return 1 if $line =~ /xcopy \/y \/d \"/;
+        return 1 if $line =~ /\.obj\"\s*$/;
+        return 1 if $line =~ /:\s+(cmd \/c|set)\s+/;
+        return 1 if $line =~ /MSB3073:\s+$/;
+        return 1 if $line =~ /MSB3073:\s+if not exist/;
+        return 1 if $line =~ /which.exe bash/;
+    } else {
+        return 1 if $line =~ /^(touch|perl|cat|rm -f|python|\/usr\/bin\/g\+\+|\/bin\/ln|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file|chmod) /;
+        return 1 if $line =~ /^    / && !shouldShowSubsequentLine($previousLine);
+        return 1 if $line =~ /^printf /;
+        return 1 if $line =~ /^offlineasm: Nothing changed/;
+    }
+    return 1 if $line =~ /^Showing first/;
+
+    # FIXME: rdar://106775772
+    return 1 if $line =~ /DVTAssertions/;
+
+    return 0;
+}
+
+__PACKAGE__->main() unless caller();
+
+1;

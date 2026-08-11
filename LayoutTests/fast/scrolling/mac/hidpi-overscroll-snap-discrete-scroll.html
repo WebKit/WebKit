@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    body { margin: 0; }
+    #scroller {
+        width: 200px;
+        height: 400px;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+    }
+    #snap_target {
+        width: 100px;
+        height: 1942.5px;
+        scroll-snap-align: start;
+        background-color: blue;
+    }
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+var scroller;
+
++description("Tests that we don't scroll back to the top when scrolled to the end of a scroller with a snap port having fractional height, with a single discrete scroll event.");
+
+async function scrollTest()
+{
+    const scrollDistance = scroller.scrollHeight;
+    await UIHelper.statelessMouseWheelScrollAt(100, 200, 0, -scrollDistance);
+    await UIHelper.renderingUpdate();
+
+    shouldBeTrue("Math.abs(scroller.scrollTop - (scroller.scrollHeight - scroller.clientHeight)) <= 1");
+    finishJSTest();
+}
+
+window.addEventListener('load', () => {
+    scroller = document.getElementById('scroller');
+    setTimeout(scrollTest, 0);
+}, false);
+</script>
+</head>
+<body>
+    <div id="scroller"><div id="snap_target"></div></div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+This test ensures accessibility properly responds to dynamic changes in a color input's value.
+
+#color AXValue: rgb 0.00000 0.00000 0.00000 1
+
+Updating #color value to '#ff0f00'.
+#color AXValue: rgb 1.00000 0.05882 0.00000 1
+
+Updating #color value to '#000000'.
+#color AXValue: rgb 0.00000 0.00000 0.00000 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

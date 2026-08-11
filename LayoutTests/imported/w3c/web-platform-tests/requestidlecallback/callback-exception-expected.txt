@@ -1,0 +1,3 @@
+
+PASS requestIdleCallback callback exceptions are reported to error handler
+

@@ -1,0 +1,12 @@
+
+PASS :lang(fr-x) matches lang="fr-x" and lang="fr-x-standard" (singleton "x" matches)
+PASS :lang(fr-x) matches the correct elements
+PASS :lang(fr-standard) only matches lang="fr-standard" (not lang="fr-x-standard")
+FAIL :lang(fr) does not match lang="fr-ninechars" (subtag exceeds 8-char limit) assert_equals: expected 3 but got 4
+PASS :lang(cocoa-1) matches lang="cocoa-1-bar" (singleton "1" matches)
+PASS :lang(cocoa-a) matches lang="cocoa-a-bar" (singleton "a" matches)
+PASS :lang(cocoa-bar) does not match lang="cocoa-1-bar" (cannot skip past singleton "1")
+PASS :lang(en-x) matches lang="en-x-private" (private-use singleton)
+PASS :lang(zh-x) matches both lang="zh-x" and lang="zh-x-foobar"
+PASS :lang(en-private) does not match lang="en-x-private" (cannot skip past singleton "x")
+

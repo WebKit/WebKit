@@ -1,0 +1,9 @@
+
+PASS Property white-space-trim value 'none'
+PASS Property white-space-trim value 'discard-before'
+PASS Property white-space-trim value 'discard-after'
+PASS Property white-space-trim value 'discard-inner'
+PASS Property white-space-trim value 'discard-before discard-after'
+PASS Property white-space-trim value 'discard-before discard-after discard-inner'
+PASS Property white-space-trim value 'discard-after discard-before'
+

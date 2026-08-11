@@ -1,0 +1,10 @@
+<p>Cross-origin iframe that loads a stylesheet on demand.</p>
+
+<script>
+function loadStylesheet(href) {
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    document.head.appendChild(link);
+}
+</script>

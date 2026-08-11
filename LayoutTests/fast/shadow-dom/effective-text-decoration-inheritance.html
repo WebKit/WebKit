@@ -1,0 +1,21 @@
+<script>
+class CustomElement extends HTMLElement {
+  constructor() {
+    super();
+
+    const shadow = this.attachShadow({ mode: 'open' });
+    const slot = document.createElement('slot');
+    const style = document.createElement('style');
+    style.textContent = `
+      :host {
+        text-decoration: underline;
+      }
+    `;
+    shadow.append(style, slot);
+  }
+}
+
+customElements.define('custom-element', CustomElement);
+</script>
+
+<custom-element>This should be underlined</custom-element>

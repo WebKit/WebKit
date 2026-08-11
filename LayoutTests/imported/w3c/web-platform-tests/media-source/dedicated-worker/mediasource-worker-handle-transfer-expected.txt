@@ -1,0 +1,16 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS MediaSourceHandle serialization without transfer must fail, tested in window context
+PASS Same MediaSourceHandle transferred multiple times in single postMessage must fail, tested in window context
+PASS Attempt to transfer detached MediaSourceHandle must fail, tested in window context
+FAIL MediaSourceHandle cannot be transferred, immediately after set as srcObject, even if srcObject immediately reset to null assert_throws_dom: transferring handle that is currently srcObject fails function "function() {
+    worker.postMessage(handle, [handle]);
+  }" did not throw
+PASS MediaSourceHandle cannot be transferred, if it was srcObject when asynchronous load starts (loadstart), even if srcObject is then immediately reset to null
+TIMEOUT A detached (already transferred away) MediaSourceHandle cannot successfully load when assigned to srcObject Test timed out
+NOTRUN Precisely one load of the same MediaSourceHandle assigned synchronously to multiple media element srcObjects succeeds
+PASS MediaSourceHandle serialization without transfer must fail, tested in worker
+PASS Same MediaSourceHandle transferred multiple times in single postMessage must fail, tested in worker
+

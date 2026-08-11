@@ -1,0 +1,5 @@
+
+PASS Siblings in a spatial portal advance at their own playbackRate
+PASS Pausing one <model> in a spatial portal does not pause its siblings
+PASS Looping is applied per <model> in a spatial portal
+

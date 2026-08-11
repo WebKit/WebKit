@@ -1,0 +1,8 @@
+This text is black in color till stylesheet is fetched.
+
+
+PASS
+  Delayed Stylesheet imported using link tag should not block rendering
+  or JS execution when media doesn't match.
+
+

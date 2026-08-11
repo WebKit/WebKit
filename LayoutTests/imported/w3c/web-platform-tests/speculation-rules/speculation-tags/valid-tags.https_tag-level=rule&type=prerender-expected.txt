@@ -1,0 +1,10 @@
+
+FAIL Sec-Speculation-Tags [rule-based]: string tag assert_equals: expected (string) "prefetch;prerender" but got (object) null
+FAIL Sec-Speculation-Tags [rule-based]: 'null' string tag assert_equals: expected (string) "prefetch;prerender" but got (object) null
+FAIL Sec-Speculation-Tags [rule-based]: empty string tag assert_equals: expected (string) "prefetch;prerender" but got (object) null
+FAIL Sec-Speculation-Tags [rule-based]: single space tag assert_equals: expected (string) "prefetch;prerender" but got (object) null
+FAIL Sec-Speculation-Tags [rule-based]: double quote tag assert_equals: expected (string) "prefetch;prerender" but got (object) null
+FAIL Sec-Speculation-Tags [rule-based]: double quotes tag assert_equals: expected (string) "prefetch;prerender" but got (object) null
+FAIL Sec-Speculation-Tags [rule-based]: backslash tag assert_equals: expected (string) "prefetch;prerender" but got (object) null
+FAIL Sec-Speculation-Tags [rule-based]: backslashes tag assert_equals: expected (string) "prefetch;prerender" but got (object) null
+

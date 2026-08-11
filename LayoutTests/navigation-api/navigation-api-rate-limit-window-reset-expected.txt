@@ -1,0 +1,19 @@
+Tests that the navigation rate limit resets after the time window expires
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Configured rate limiter: 5 navigations per 0.5s
+Phase 1: Hitting the rate limit...
+First phase - Successful: 5, Failed: 3
+PASS firstPhaseSuccess <= 5 is true
+PASS firstPhaseFailures >= 3 is true
+PASS blockedBeforeWait is true
+Phase 2: Waiting 600ms for window to reset...
+Phase 3: Attempting navigation after window reset...
+PASS successAfterReset is true
+PASS postResetNavigations is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

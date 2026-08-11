@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container" style="display:none"></div>
+<script src="../resources/runner.js"></script>
+<script>
+const COUNT = 1000;
+const container = document.getElementById("container");
+
+const urls = new Array(COUNT);
+for (let i = 0; i < COUNT; ++i) {
+    const a = (Math.random() * 0xffffffff >>> 0).toString(16).padStart(8, "0");
+    const b = (Math.random() * 0xffffffff >>> 0).toString(16).padStart(8, "0");
+    urls[i] = "https://example.com/" + a + b + "-" + i + ".jpg";
+}
+
+PerfTestRunner.measureTime({
+    description: "Time to insert " + COUNT + " <img> elements with unique src URLs into the DOM.",
+    setup: function () {
+        container.replaceChildren();
+    },
+    run: function () {
+        for (let i = 0; i < COUNT; ++i) {
+            const img = document.createElement("img");
+            img.src = urls[i];
+            container.appendChild(img);
+        }
+    }
+});
+</script>
+</body>
+</html>

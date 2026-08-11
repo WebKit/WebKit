@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(stream => {
+    parent.postMessage("getUserMedia done", "*");
+    stream.getTracks().forEach(t => t.stop());
+});
+</script>
+<div>Calling getUserMedia, please grant access</div>
+</body>
+</html>
+
+

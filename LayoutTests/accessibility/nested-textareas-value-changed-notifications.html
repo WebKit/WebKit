@@ -1,0 +1,69 @@
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div contenteditable="true" id="outer_editable" tabindex="-1">
+    abc
+    <div contenteditable="false" id="middle_editable">
+        <button>xyz</button>
+        <div contenteditable="true" id="inner_editable">
+            def
+        </div>
+    </div>
+</div>
+
+<script>
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        let output = "This tests that the correct AXValueChanged notifications are posted when editing nested text areas with an intermediate non-editable text area.\n";
+
+        let count = 0;
+        accessibilityController.addNotificationListener((axElement, notification) => {
+            if (notification != "AXValueChanged")
+                return;
+
+            output += `${++count} ${notification} for element ${axElement.domIdentifier} with ${axElement.role}\n`;
+            output += `${axElement.stringValue}\n`;
+        });
+
+        const axOuter = accessibilityController.accessibleElementById("outer_editable");
+        axOuter.takeFocus();
+        setTimeout(async () => {
+            await waitFor(() => {
+                return accessibilityController.focusedElement.isEqual(axOuter);
+            });
+            // Log original value of outer_editable.
+            output += `outer_editable original ${axOuter.stringValue}\n`;
+
+            // Set the insertion point before the second char and insert a new char.
+            axOuter.setSelectedTextRange(1, 0);
+            await waitFor(() => {
+                return axOuter.selectedTextRange == "{1, 0}";
+            });
+            axOuter.insertText("a");
+            await waitFor(() => {
+                return axOuter.stringValue == "AXValue: aabc\nxyz\ndef";
+            });
+            await waitFor(() => { return count >= 4; });
+
+            // Set the insertion point before the second char of the inner_editable and insert a new char.
+            axOuter.setSelectedTextRange(10, 0);
+            await waitFor(() => {
+                return axOuter.selectedTextRange == "{10, 0}";
+            });
+            axOuter.insertText("g");
+            await waitFor(() => {
+                return axOuter.stringValue == "AXValue: aabc\nxyz\ndgef";
+            });
+            await waitFor(() => { return count >= 8; });
+            accessibilityController.removeNotificationListener();
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

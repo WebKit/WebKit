@@ -1,0 +1,21 @@
+<fast/webgpu/nocrash/fuzz-274270.html!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let canvas = new OffscreenCanvas(8, 5);
+    let context = canvas.getContext('webgpu');
+    context.configure({ device: device, format: 'rgba16float', viewFormats: ['rgba16float'] });
+    new VideoFrame(canvas, { timestamp: 0 });
+    context.getCurrentTexture().createView({format : 'rgba16float'});
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

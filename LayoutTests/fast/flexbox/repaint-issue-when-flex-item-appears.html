@@ -1,0 +1,53 @@
+<style>
+body {
+  width: 1000px;
+  font-family: Ahem;
+  font-size: 20px;
+}
+
+.flexcontainer { 
+  display: flex;
+  flex-direction: column; 
+  height: 100%; 
+}
+
+#flexitem { 
+  display: none;
+  overflow: hidden; 
+
+  width: 500px;
+  background-color: green;
+  color: green;
+}
+
+</style>
+PASS if the green box is visible below.
+<div class=flexcontainer>
+  <div id=flexitem>
+   <div>some content here</div>
+</div>
+<pre id=result></pre>
+<script>
+document.body.offsetHeight;
+
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+
+setTimeout(function() {
+  if (window.internals)
+      window.internals.startTrackingRepaints();
+
+  flexitem.style.display = "block";
+  document.body.offsetHeight;
+
+  if (window.internals) {
+    let repaintRects = window.internals.repaintRectsAsText();
+    window.internals.stopTrackingRepaints();
+    result.innerText = repaintRects;
+  }
+  if (window.testRunner)
+    testRunner.notifyDone();
+}, 0);
+</script>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function setupListener(xhr) {
+    xhr.addEventListener('readystatechange', function (e) {
+        // Access xhr.response so that it gets cached.
+        if (xhr.response) {
+            top.debug("* In child frame");
+            if (xhr.response.constructor === top.Object)
+                top.testPassed("xhr.response.constructor is top.Object");
+            else
+                top.testFailed("xhr.response.constructor is not top.Object");
+        }
+    });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.contents { display: contents; }
+</style>
+</head>
+<body>
+
+<input type="text" role="combobox" aria-controls="listbox"></input>
+<div role="listbox" id="listbox" tabindex="0" aria-activedescendant="item-two">
+   <div role="presentation">
+      <div id="item-one" aria-posinset="1" aria-setsize="3" aria-selected="false" role="option">
+         <div class="contents">
+            <div>
+               <div>Foo</div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div role="presentation">
+      <div id="item-two" aria-posinset="2" aria-setsize="3" role="option" aria-selected="true" style="background-color:gray" style="flex: 1 1 auto;">
+         <div class="contents">
+            <div class="contents">
+               <div>Bar</div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div role="presentation">
+      <div id="item-three" aria-posinset="3" aria-setsize="3" aria-selected="false" role="option" style="flex: 1 1 auto;">
+         <div class="contents">
+            <div>
+               <div class="contents">Baz</div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<script>
+var output = "This test ensures we compute the right accessibilty text for display:contents listbox items.\n\n";
+
+if (window.accessibilityController) {
+    var text;
+    function expectText(id, expectedText) {
+        text = platformTextAlternatives(accessibilityController.accessibleElementById(id));
+        output += `#${id}: ${text}\n`;
+        output += expect(`text.includes('${expectedText}')`, "true");
+        output += "\n";
+    }
+
+    expectText("item-one", "Foo");
+    expectText("item-two", "Bar");
+    expectText("item-three", "Baz");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

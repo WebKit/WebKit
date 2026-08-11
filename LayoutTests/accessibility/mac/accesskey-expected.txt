@@ -1,0 +1,15 @@
+This test makes sure that elements return their accesskeys.
+
+PASS: link.allAttributes().indexOf('AXAccessKey: w') !== -1 === true
+PASS: linkDisplayContents.allAttributes().indexOf('AXAccessKey: z') !== -1 === true
+PASS: input.allAttributes().indexOf('AXAccessKey: q') !== -1 === true
+
+Updating #link accesskey to 'u'.
+PASS: accesskey AX attribute was updated correctly.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+webkit
+webkit
+

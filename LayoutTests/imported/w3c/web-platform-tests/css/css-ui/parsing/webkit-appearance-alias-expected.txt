@@ -1,0 +1,3 @@
+
+PASS -webkit-appearance is a legacy name alias for appearance
+

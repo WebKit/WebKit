@@ -1,0 +1,37 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<select id="testSelectWithNull">
+<option value="a"/>
+<option value="null"/>
+</select>
+<select id="testSelectWithoutNull">
+<option value="a"/>
+<option value="b"/>
+</select>
+<script>
+description("Tests null handling of HTMLSelectElement.value attribute");
+
+var select = document.getElementById("testSelectWithNull");
+evalAndLog("select.value = 'a'");
+shouldBeEqualToString("select.value", "a");
+shouldBe("select.selectedIndex", "0");
+
+evalAndLog("select.value = null");
+shouldBeEqualToString("select.value", "null");
+shouldBe("select.selectedIndex", "1");
+
+select = document.getElementById("testSelectWithoutNull");
+evalAndLog("select.value = 'a'");
+shouldBeEqualToString("select.value", "a");
+shouldBe("select.selectedIndex", "0");
+
+evalAndLog("select.value = null");
+shouldBeEqualToString("select.value", "");
+shouldBe("select.selectedIndex", "-1");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

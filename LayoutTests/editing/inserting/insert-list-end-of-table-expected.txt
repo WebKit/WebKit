@@ -1,0 +1,1 @@
+Tests inserting list at the end of a table. The test passes if WebKit doesn't crash or hit an assertion.

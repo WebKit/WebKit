@@ -1,0 +1,3 @@
+
+PASS View timeline generates and resolves finish promises and events
+

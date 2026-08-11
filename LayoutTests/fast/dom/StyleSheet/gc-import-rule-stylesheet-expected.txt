@@ -1,0 +1,12 @@
+Test that a parent stylesheet wrapper is not collected when only the @import child stylesheet is alive.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS parentSheet instanceof CSSStyleSheet is true
+PASS parentSheet.cssRules[0].type is CSSRule.IMPORT_RULE
+PASS childSheet.parentStyleSheet.foo is "bar"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

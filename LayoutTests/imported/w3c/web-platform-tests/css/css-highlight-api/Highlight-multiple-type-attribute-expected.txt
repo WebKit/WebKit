@@ -1,0 +1,4 @@
+One two
+
+PASS Highlight type has a limited set of types
+

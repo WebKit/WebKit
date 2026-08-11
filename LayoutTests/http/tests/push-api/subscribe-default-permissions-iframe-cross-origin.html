@@ -1,0 +1,17 @@
+<html>
+<head>
+<script src="resources/push-api-test-pre.js"></script>
+</head>
+<body>
+<script>
+window.onmessage = function(event) {
+    if (event.data == 'finishPushAPITest')
+        finishPushAPITest();
+    else
+        log(event.data);
+};
+</script>
+<iframe src="https://127.0.0.1:8443/push-api/resources/subscribe-iframe-cross-origin.html">
+</iframe>
+</body>
+</html>

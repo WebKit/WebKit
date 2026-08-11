@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/cross-origin-content-rules.html from loading a resource from about:blank
+ALERT: PASS: window.open() in 127.0.0.1 returned null as expected.
+ALERT: Iframe loaded in localhost. Attempting to open popup...
+CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/cross-origin-content-rules.html from loading a resource from about:blank
+ALERT: PASS: window.open() in localhost returned null as expected.
+ALERT: PASS: window.open() in localhost returned a valid Window object as expected.
+

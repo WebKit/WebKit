@@ -1,0 +1,3 @@
+
+PASS Test the invocation order of AudioWorklet.addModule() and BaseAudioContext
+

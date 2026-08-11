@@ -1,0 +1,4 @@
+
+PASS Workers don't inherit storage access
+PASS Workers don't observe parent's storage access
+

@@ -1,0 +1,3 @@
+B1B2B3
+This test is successful if elementFromPoint returns the correct element.
+B3

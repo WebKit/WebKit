@@ -1,0 +1,45 @@
+<html>
+<head>
+<style>
+    #target {
+        background-color:purple;
+        width:25px;
+        height:25px;
+    }
+</style>
+<script>
+    var numberOfClicks = 0;
+
+    async function runTest() {
+        if (!window.eventSender)
+            return;
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            await testRunner.setObscuredContentInsets(100, 0, 0, 0);
+            testRunner.dumpAsText();
+        }
+
+        eventSender.mouseMoveTo(15, 115);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+
+        var result = document.getElementById("result");
+        if (numberOfClicks > 0)
+            result.innerHTML = "Pass!";
+        else
+            result.innerHTML = "Fail.";
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    
+    function clicked() {
+        numberOfClicks = 1;
+    }
+</script>
+</head>
+<body onload="runTest()">
+    <div id="target" onclick="clicked()"></div>
+    <div id="result">This test needs to be run through WebKitTestRunner.</div>
+</body>
+</html>

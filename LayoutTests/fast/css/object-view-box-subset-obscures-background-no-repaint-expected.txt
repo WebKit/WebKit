@@ -1,0 +1,10 @@
+A subset object-view-box (all-positive insets) should not prevent the opaque-foreground optimization from suppressing an obscured animated background's repaint. This test requires DRT.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS repaintRects is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,16 @@
+Tests that starting Web Audio rendering requires a transient user activation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS context.state is "suspended"
+node.connect(context.destination)
+PASS context.state is "suspended"
+PASS navigator.userActivation.isActive is true
+PASS resume() promise was resolved
+PASS context.state is "running"
+PASS navigator.userActivation.isActive is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

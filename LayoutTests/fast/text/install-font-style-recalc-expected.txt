@@ -1,0 +1,11 @@
+This test makes sure that installing a font causes a style recalc. The test only runs in DumpRenderTree/WebKitTestRunner. It passes if the text above is rendered as black boxes (aka in Ahem).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS target.offsetWidth became 200
+PASS The font was used.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+rrrr

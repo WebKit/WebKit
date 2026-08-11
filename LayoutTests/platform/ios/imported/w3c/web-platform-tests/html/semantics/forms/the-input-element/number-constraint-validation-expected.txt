@@ -1,0 +1,7 @@
+
+FAIL Unparsable number user input triggers sanitization and causes badInput to be set. assert_true: expected true got false
+PASS Setting .value to an unparsable number triggers sanitization but doesn't set badInput.
+FAIL Users inputting a parsable but invalid floating point number doesn't trigger sanitization and doesn't set badInput. assert_equals: expected "1" but got ""
+PASS Setting .value to a parsable but invalid floating point number triggers sanitization but doesn't set badInput.
+PASS Unparsable number user input causes valueMissing to be set on required input.
+

@@ -1,0 +1,3 @@
+
+PASS cloneNode() and document's allow declarative shadow roots
+

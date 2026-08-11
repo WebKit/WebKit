@@ -1,0 +1,3 @@
+
+PASS scrollIntoView takes into account the border of the scroller
+

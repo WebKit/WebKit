@@ -1,0 +1,91 @@
+
+PASS Literal result
+PASS Literal result, typed return
+PASS Literal result, typed return, calc
+PASS Literal result, typed return, mismatch
+PASS Missing result descriptor
+PASS Literal result, empty
+PASS result cascading behavior
+PASS Another dashed-function in result
+PASS Unused argument
+PASS Single parameter
+PASS Multiple parameters
+PASS Single parameter, typed
+PASS Typed parameter with calc()
+PASS Untyped parameter with calc()
+PASS Various typed parameters
+PASS Parameter with complex type (auto)
+PASS Parameter with complex type (px)
+PASS Passing argument to inner function
+PASS var() in argument resolved before call
+PASS var() in argument resolved before call, typed
+PASS Argument captures IACVT due to invalid var()
+PASS Argument captures IACVT due to invalid var(), typed
+PASS Argument captures IACVT due to type mismatch
+PASS Single parameter with default value
+PASS Multiple parameters with defaults
+PASS Multiple parameters with defaults, typed
+PASS Default referencing another parameter
+PASS Default referencing another parameter, local interference
+PASS Default referencing another defaulted parameter
+PASS Typed default with reference
+PASS IACVT arguments are defaulted
+PASS IACVT arguments are defaulted, typed
+PASS Arguments are defaulted on type mismatch
+PASS Unused local
+PASS Local does not affect outer scope
+PASS Substituting local in result
+PASS Substituting multiple locals in result
+PASS Local referring to another local
+PASS Locals appearing after result
+PASS Locals cascading behavior
+PASS Custom properties are visible inside function
+PASS Substitute local from outer scope
+PASS Substitute argument from outer scope
+PASS Inner argument shadowing outer argument
+PASS Inner argument shadowing outer local
+PASS Inner local shadowing outer argument
+PASS Inner local shadowing outer local
+PASS Referencing outer local containing var()
+PASS Referencing outer typed argument
+PASS Same function with different scopes
+PASS Referencing local two frames up
+PASS IACVT outer local shadows property
+PASS Inner function call should see resolved outer locals
+PASS Inner function call should see resolved outer locals (reverse)
+PASS Parameter shadows custom property
+PASS Local shadows parameter
+PASS IACVT argument shadows outer scope
+PASS IACVT argument shadows outer scope, typed
+PASS IACVT argument shadows outer scope, type mismatch
+PASS Missing only argument
+PASS Missing one argument of several
+PASS Passing list as only argument
+PASS Passing list as first argument
+PASS Passing list as second argument
+PASS Passing comma as argument
+PASS Passing {} as argument
+PASS Passing non-whole-value {} as argument
+PASS Local variable with initial keyword
+PASS Local variable with initial keyword, defaulted
+PASS Local variable with initial keyword, no value via IACVT-capture
+PASS Default with initial keyword
+PASS initial appearing via fallback
+PASS Local variable with inherit keyword
+PASS Local variable with inherit keyword (nested)
+PASS Inheriting an invalid value
+PASS Default with inherit keyword
+PASS Default with inherit keyword (nested)
+PASS Local with the unset keyword
+PASS Local with the revert keyword
+PASS Local with the revert-layer keyword
+PASS Local with the revert-rule keyword
+PASS initial keyword left unresolved on result descriptor
+PASS inherit keyword left unresolved on result descriptor
+PASS unset keyword left unresolved on result descriptor
+PASS revert keyword left unresolved on result descriptor
+PASS revert-layer keyword left unresolved on result descriptor
+PASS revert-rule keyword left unresolved on result descriptor
+PASS Keyword can be returned from function into local variable
+PASS Can not return CSS-wide keyword as length
+

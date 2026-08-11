@@ -1,0 +1,25 @@
+<html>
+<style>
+div {
+  background: red;
+  width: 100px;
+  height: 100px;
+}
+@media print {
+  div {
+    background: green;
+  }
+  span {
+    font-style: italic;
+  }
+}
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.setPrinting();
+</script>
+<body>
+  <div></div>
+  <span>When printing, you should see a green square above and this text should be italic.</span>
+</body>
+</html>

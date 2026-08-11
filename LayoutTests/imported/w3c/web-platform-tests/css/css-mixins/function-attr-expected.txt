@@ -1,0 +1,21 @@
+
+PASS Return untyped url() from function
+PASS Return untyped url() from function, quoted
+PASS Return typed url() from function
+PASS Return typed url() from function, quoted
+PASS Return attr(type(<length>)) from untyped function
+PASS Return attr(type(<length>)) from typed function
+PASS Return attr(type(*)) from typed function
+PASS Return attr(type(*)) from untyped function
+PASS attr() in default parameter value
+PASS attr() in local variable
+PASS Returned url() is attr-tainted
+PASS Returned url() is attr-tainted, typed attr()
+PASS Returned url() is attr-tainted, typed return
+PASS Returned url() is attr-tainted, local
+PASS Returned url() is attr-tainted, argument
+PASS Returned url() is attr-tainted, default
+PASS Returned url() is attr-tainted, parent stack frame
+PASS Returned url() is attr-tainted, initial
+PASS Returned url() is attr-tainted, inherit
+

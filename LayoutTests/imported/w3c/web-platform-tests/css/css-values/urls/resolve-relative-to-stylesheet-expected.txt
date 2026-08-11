@@ -1,0 +1,5 @@
+
+PASS stylesheet-relative URL: stylesheet-relative-image
+PASS stylesheet-relative URL: stylesheet-relative-variable-image
+PASS stylesheet-relative URL: stylesheet-relative-document-variable-image
+

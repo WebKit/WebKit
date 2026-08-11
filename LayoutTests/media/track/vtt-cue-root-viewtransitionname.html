@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test that :root view-transition-name does not apply to the cue element</title>
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+    <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function cueElement() {
+        return internals.shadowRoot(video).querySelector('[useragentpart="cue"]');
+    }
+
+    window.addEventListener('load', function() {
+        findMediaElement();
+        video.src = findMediaFile('video', '../content/test');
+        video.textTracks[0].mode = 'showing';
+
+        waitForEvent('canplaythrough', function() {
+            video.currentTime = 0.5;
+        });
+
+        waitForEvent('seeked', function() {
+            var cue = cueElement();
+            if (!cue) {
+                consoleWrite("FAIL: Could not find cue element in shadow root.");
+                endTest();
+                return;
+            }
+
+            window.cueStyle = getComputedStyle(cue);
+            consoleWrite("Test that the cue element does not inherit view-transition-name from :root.");
+            testExpected("cueStyle.viewTransitionName", "none");
+
+            endTest();
+        });
+    });
+    </script>
+</head>
+<body>
+    <video>
+        <track src="captions-webvtt/captions.vtt" kind="captions" default>
+    </video>
+</body>
+</html>

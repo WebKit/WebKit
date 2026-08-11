@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+</script>
+</head>
+<body>
+<script>
+try {
+    var messageCount = 0;
+    var worker = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker.py?type=importscripts&csp=' +
+                            encodeURIComponent("script-src 'strict-dynamic'; script-src-elem localhost:8000"));
+    worker.onmessage = function (event) {
+        alert(event.data);
+        // The worker sends two messages: one from the imported post-message.js
+        // and one from the worker script itself after importScripts() returns.
+        if (++messageCount === 2 && window.testRunner)
+            testRunner.notifyDone();
+    };
+} catch (e) {
+    alert(e);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

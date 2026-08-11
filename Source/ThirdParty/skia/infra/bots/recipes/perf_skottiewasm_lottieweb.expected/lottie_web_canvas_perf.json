@@ -1,0 +1,253 @@
+[
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "listdir",
+      "[START_DIR]/lottie-samples"
+    ],
+    "infra_step": true,
+    "name": "list lottie files",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/lottie-samples/LICENSE@@@",
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/lottie-samples/lottie1.json@@@",
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/lottie-samples/lottie2.json@@@",
+      "@@@STEP_LOG_LINE@listdir@[START_DIR]/lottie-samples/lottie3.json@@@",
+      "@@@STEP_LOG_END@listdir@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "npm",
+      "install"
+    ],
+    "cwd": "[START_DIR]/skia/tools/lottie-web-perf",
+    "env_prefixes": {
+      "PATH": [
+        "[START_DIR]/node/node/bin"
+      ]
+    },
+    "name": "npm install"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/node/node/bin/node",
+      "[START_DIR]/skia/tools/lottie-web-perf/lottie-web-perf.js",
+      "--backend",
+      "canvas",
+      "--input",
+      "[START_DIR]/lottie-samples/lottie1.json",
+      "--output",
+      "[CLEANUP]/g3_try_tmp_1/lottie1.json"
+    ],
+    "cwd": "[START_DIR]/skia/tools/lottie-web-perf",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "DISPLAY": ":0",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "Run perf cmd line app"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::infra]/resources/parse_lottieweb_trace.py",
+      "[CLEANUP]/g3_try_tmp_1/lottie1.json",
+      "/path/to/tmp/json",
+      "lottie-web"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "parse lottie1.json trace",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/node/node/bin/node",
+      "[START_DIR]/skia/tools/lottie-web-perf/lottie-web-perf.js",
+      "--backend",
+      "canvas",
+      "--input",
+      "[START_DIR]/lottie-samples/lottie2.json",
+      "--output",
+      "[CLEANUP]/g3_try_tmp_1/lottie2.json"
+    ],
+    "cwd": "[START_DIR]/skia/tools/lottie-web-perf",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "DISPLAY": ":0",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "Run perf cmd line app (2)"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::infra]/resources/parse_lottieweb_trace.py",
+      "[CLEANUP]/g3_try_tmp_1/lottie2.json",
+      "/path/to/tmp/json",
+      "lottie-web"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "parse lottie2.json trace",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/node/node/bin/node",
+      "[START_DIR]/skia/tools/lottie-web-perf/lottie-web-perf.js",
+      "--backend",
+      "canvas",
+      "--input",
+      "[START_DIR]/lottie-samples/lottie3.json",
+      "--output",
+      "[CLEANUP]/g3_try_tmp_1/lottie3.json"
+    ],
+    "cwd": "[START_DIR]/skia/tools/lottie-web-perf",
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "DISPLAY": ":0",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "Run perf cmd line app (3)"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::infra]/resources/parse_lottieweb_trace.py",
+      "[CLEANUP]/g3_try_tmp_1/lottie3.json",
+      "/path/to/tmp/json",
+      "lottie-web"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "name": "parse lottie3.json trace",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::vars]/resources/get_env_var.py",
+      "SWARMING_BOT_ID"
+    ],
+    "name": "get swarming bot id"
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[skia::vars]/resources/get_env_var.py",
+      "SWARMING_TASK_ID"
+    ],
+    "name": "get swarming task id"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]/[SWARM_OUT_DIR]"
+    ],
+    "infra_step": true,
+    "name": "makedirs perf_dir"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n    \"gitHash\": \"abc123\",\n    \"key\": {\n        \"arch\": \"x86_64\",\n        \"bench_type\": \"tracing\",\n        \"compiler\": \"none\",\n        \"configuration\": \"Release\",\n        \"cpu_or_gpu\": \"CPU\",\n        \"cpu_or_gpu_value\": \"AVX2\",\n        \"extra_config\": \"LottieWeb_Canvas\",\n        \"model\": \"GCE\",\n        \"os\": \"Debian10\",\n        \"source_type\": \"lottie-web\"\n    },\n    \"renderer\": \"lottie-web\",\n    \"results\": {\n        \"lottie1.json\": {\n            \"gl\": {\n                \"frame_avg_us\": 179.71,\n                \"frame_max_us\": 218.25,\n                \"frame_min_us\": 141.17\n            }\n        },\n        \"lottie2.json\": {\n            \"gl\": {\n                \"frame_avg_us\": 179.71,\n                \"frame_max_us\": 218.25,\n                \"frame_min_us\": 141.17\n            }\n        },\n        \"lottie3.json\": {\n            \"gl\": {\n                \"frame_avg_us\": 179.71,\n                \"frame_max_us\": 218.25,\n                \"frame_min_us\": 141.17\n            }\n        }\n    },\n    \"swarming_bot_id\": \"\",\n    \"swarming_task_id\": \"\"\n}",
+      "[START_DIR]/[SWARM_OUT_DIR]/perf_abc123_1337000001.json"
+    ],
+    "infra_step": true,
+    "name": "write output JSON",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@{@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"gitHash\": \"abc123\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"key\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"arch\": \"x86_64\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"bench_type\": \"tracing\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"compiler\": \"none\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"configuration\": \"Release\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"cpu_or_gpu\": \"CPU\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"cpu_or_gpu_value\": \"AVX2\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"extra_config\": \"LottieWeb_Canvas\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"model\": \"GCE\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"os\": \"Debian10\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"source_type\": \"lottie-web\"@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    },@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"renderer\": \"lottie-web\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"results\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"lottie1.json\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            \"gl\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            }@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        },@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"lottie2.json\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            \"gl\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            }@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        },@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        \"lottie3.json\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            \"gl\": {@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_avg_us\": 179.71,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_max_us\": 218.25,@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@                \"frame_min_us\": 141.17@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@            }@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@        }@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    },@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"swarming_bot_id\": \"\",@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@    \"swarming_task_id\": \"\"@@@",
+      "@@@STEP_LOG_LINE@perf_abc123_1337000001.json@}@@@",
+      "@@@STEP_LOG_END@perf_abc123_1337000001.json@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

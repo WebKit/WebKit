@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body {
+        margin: 0;
+        cursor: pointer;
+    }
+
+    div {
+        width: 100px;
+        height: 100px;
+        background-color: gray;
+    }
+</style>
+<body>
+<div></div>
+<div></div>
+<a href="#">an actual link</a>
+<div></div>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

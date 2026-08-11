@@ -1,0 +1,34 @@
+{
+    "domains": [
+        {
+            "domain": "TypeDomain",
+            "types": [
+                {
+                    "id": "Enum",
+                    "type": "string",
+                    "enum": ["shared", "1", "2"]
+                }
+            ]
+        },
+        {
+            "domain": "CommandDomain",
+            "commands": [
+                {
+                    "name": "command",
+                    "parameters": [
+                        { "name": "enumRequired", "$ref": "TypeDomain.Enum" },
+                        { "name": "enumOptional", "$ref": "TypeDomain.Enum", "optional": true },
+                        { "name": "parameterRequired", "type": "string" },
+                        { "name": "parameterOptional", "type": "string", "optional": true }
+                    ],
+                    "returns": [
+                        { "name": "enumRequired", "$ref": "TypeDomain.Enum" },
+                        { "name": "enumOptional", "$ref": "TypeDomain.Enum", "optional": true },
+                        { "name": "returnRequired", "type": "string" },
+                        { "name": "returnOptional", "type": "string", "optional": true }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,3 @@
+
+PASS window.onerror - compile error in cross-origin setTimeout
+

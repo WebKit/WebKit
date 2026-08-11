@@ -1,0 +1,35 @@
+This test checks that :focus-visible always matches on <input> elements which take text input, regardless of focus mechanism.
+If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
+Click each form element below to focus it.
+If the element has a red background, then the test result is FAILURE. If the element has a green outline, then the test result is SUCCESS.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PASS Focus element INPUT#input1 via mouse should match :focus-visible as it supports keyboard input
+PASS Focus element INPUT#input2 via mouse should match :focus-visible as it supports keyboard input
+PASS Focus element INPUT#input3 via mouse should match :focus-visible as it supports keyboard input
+PASS Focus element INPUT#input4 via mouse should match :focus-visible as it supports keyboard input
+PASS Focus element INPUT#input5 via mouse should match :focus-visible as it supports keyboard input
+PASS Focus element INPUT#input6 via mouse should match :focus-visible as it supports keyboard input
+PASS Focus element INPUT#input7 via mouse should match :focus-visible as it supports keyboard input
+PASS Focus element INPUT#input8 via mouse should match :focus-visible as it supports keyboard input
+FAIL Focus element INPUT#input9 via mouse should match :focus-visible as it supports keyboard input assert_equals: outlineColor for INPUT#input9 should be green expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Focus element INPUT#input10 via mouse should match :focus-visible as it supports keyboard input assert_equals: outlineColor for INPUT#input10 should be green expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Focus element INPUT#input11 via mouse should match :focus-visible as it supports keyboard input assert_equals: outlineColor for INPUT#input11 should be green expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Focus element INPUT#input12 via mouse should match :focus-visible as it supports keyboard input assert_equals: outlineColor for INPUT#input12 should be green expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Focus element INPUT#input13 via mouse should match :focus-visible as it supports keyboard input assert_equals: outlineColor for INPUT#input13 should be green expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Focus element TEXTAREA#input14 via mouse should match :focus-visible as it supports keyboard input
+

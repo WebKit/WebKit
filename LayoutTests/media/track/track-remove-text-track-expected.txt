@@ -1,0 +1,21 @@
+Tests HTMLMediaElement.removeTextTrack().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS video.textTracks.length is 1
+PASS video.removeTextTrack(addedTrack) is undefined
+PASS video.textTracks.length is 0
+PASS video.removeTextTrack(addedTrack) threw exception NotFoundError: The object can not be found here..
+PASS video.textTracks.length is 1
+PASS video.removeTextTrack(trackElement.track) threw exception NotFoundError: The object can not be found here..
+PASS video.textTracks.length is 1
+PASS video.removeTextTrack(otherTrack) threw exception NotFoundError: The object can not be found here..
+PASS otherVideo.textTracks.length is 1
+PASS removeEvent instanceof TrackEvent is true
+PASS removeEvent.target is video.textTracks
+PASS removeEvent.track is addedTrack
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

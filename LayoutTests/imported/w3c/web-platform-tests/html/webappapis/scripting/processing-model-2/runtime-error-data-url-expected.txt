@@ -1,0 +1,4 @@
+
+PASS window.onerror - runtime error in <script src=data:...>
+PASS window.onerror - runtime error in <script src=data:...> (column)
+

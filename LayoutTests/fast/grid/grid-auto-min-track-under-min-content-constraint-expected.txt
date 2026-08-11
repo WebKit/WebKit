@@ -1,0 +1,3 @@
+An auto track sized under a min-content constraint takes the maximum of its items' min-content contributions.
+
+PASS

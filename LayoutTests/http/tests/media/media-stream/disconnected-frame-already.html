@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that when a getUserMedia request is made after its frame has been disconnected, no callbacks are made and no crash occurs.");
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setUserMediaPermission(true);
+
+function onFirstIframeLoaded() {
+    iframeNavigator = iframe.contentWindow.navigator;
+    iframe.src = 'resources/disconnected-frame-already-inner2.html';
+}
+
+var error;
+var options = {audio: true, video: true};
+function onSecondIframeLoaded() {
+    setTimeout(finishTest, 100);
+
+    iframeNavigator.mediaDevices.getUserMedia(options)
+        .then(stream => {
+            testFailed('Success callback invoked unexpectedly');
+            finishJSTest();
+        })
+        .catch(err => {
+            testFailed('Error callback invoked unexpectedly');
+            finishJSTest();
+        });
+}
+
+function finishTest() {
+    debug('getUserMedia called on object with disconnected Frame.');
+    finishJSTest();
+}
+
+var iframe = document.createElement('iframe');
+iframe.src = 'resources/disconnected-frame-already-inner1.html';
+document.body.appendChild(iframe);
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

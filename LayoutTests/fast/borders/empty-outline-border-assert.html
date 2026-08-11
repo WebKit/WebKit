@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't try to draw no-op borders.</title>
+<style>
+* {
+    vertical-align: super;
+    outline-style: double;
+}
+</style>
+</head>
+<body>
+PASS if no ASSERT in debug.
+<mark>
+    <datalist>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        <iframe></iframe>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        <textarea></textarea>
+    </datalist>
+</mark>
+</body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</html>

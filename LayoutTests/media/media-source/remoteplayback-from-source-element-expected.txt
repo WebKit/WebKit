@@ -1,0 +1,28 @@
+
+
+** Setup MSE and URL <source> elements
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EVENT(update)
+EXPECTED (video.currentSrc.indexOf("blob:") === '0') OK
+EXPECTED (video.readyState >= '1') OK
+
+** Simulate a device becoming available
+
+** Simulate selecting a device
+EVENT(connect)
+EXPECTED (video.currentSrc.indexOf("blob:") < '0') OK
+EXPECTED (video.readyState >= '1') OK
+
+END OF TEST
+

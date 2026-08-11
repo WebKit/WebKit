@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that the range properties of <code>MediaController.NullMedia</code> do not throw and return <code>MediaController.EmptyRanges</code>. <code>NullMedia</code> is returned by the <code>media</code> getter once the media element's weak reference has been collected.");
+
+// Before the fix these getters referenced an unqualified `EmptyRanges`, which
+// is not a visible binding inside the NullMedia object literal (the field is
+// MediaController.EmptyRanges), so each access threw a ReferenceError.
+shouldNotThrow("MediaController.NullMedia.buffered");
+shouldNotThrow("MediaController.NullMedia.played");
+shouldNotThrow("MediaController.NullMedia.seekable");
+
+shouldBe("MediaController.NullMedia.buffered", "MediaController.EmptyRanges");
+shouldBe("MediaController.NullMedia.played", "MediaController.EmptyRanges");
+shouldBe("MediaController.NullMedia.seekable", "MediaController.EmptyRanges");
+
+shouldBe("MediaController.NullMedia.buffered.length", "0");
+
+debug("");
+
+</script>
+</body>

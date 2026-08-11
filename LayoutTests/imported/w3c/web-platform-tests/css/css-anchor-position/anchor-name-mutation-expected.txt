@@ -1,0 +1,17 @@
+
+PASS Tests when an anchor-name is added later positioned-using-anchor-function-explicit-name
+PASS Tests when an anchor-name is removed later positioned-using-anchor-function-explicit-name
+PASS Tests when an anchor-name moves from one element to another positioned-using-anchor-function-explicit-name
+PASS Tests when a new anchor candidate is added (which wins out previous anchor) positioned-using-anchor-function-explicit-name
+PASS Tests when a new anchor candidate is added (which loses out previous anchor) positioned-using-anchor-function-explicit-name
+PASS Tests when an anchor-name is added later positioned-using-anchor-function-implicit-name
+PASS Tests when an anchor-name is removed later positioned-using-anchor-function-implicit-name
+PASS Tests when an anchor-name moves from one element to another positioned-using-anchor-function-implicit-name
+PASS Tests when a new anchor candidate is added (which wins out previous anchor) positioned-using-anchor-function-implicit-name
+PASS Tests when a new anchor candidate is added (which loses out previous anchor) positioned-using-anchor-function-implicit-name
+PASS Tests when an anchor-name is added later positioned-using-position-area
+PASS Tests when an anchor-name is removed later positioned-using-position-area
+PASS Tests when an anchor-name moves from one element to another positioned-using-position-area
+PASS Tests when a new anchor candidate is added (which wins out previous anchor) positioned-using-position-area
+PASS Tests when a new anchor candidate is added (which loses out previous anchor) positioned-using-position-area
+

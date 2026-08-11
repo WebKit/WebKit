@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="input1" type="text" />
+<input id="input2" type="text" />
+
+<script>
+var output = "This test ensures that we report whether an object supports AXGrabbed correctly after dynamic page changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var input1 = document.getElementById("input1");
+    var axInput1 = accessibilityController.accessibleElementById("input1");
+    var input2 = document.getElementById("input2");
+    var axInput2 = accessibilityController.accessibleElementById("input2");
+
+    output += expect("axInput1.isAttributeSupported('AXGrabbed')", "false");
+    output += expect("axInput2.isAttributeSupported('AXGrabbed')", "false");
+
+    input1.setAttribute("draggable", "true");
+    setTimeout(async function() {
+        output += await expectAsync("axInput1.isAttributeSupported('AXGrabbed')", "true");
+        input1.removeAttribute("draggable");
+        output += await expectAsync("axInput1.isAttributeSupported('AXGrabbed')", "false");
+        input1.setAttribute("draggable", "false");
+        output += await expectAsync("axInput1.isAttributeSupported('AXGrabbed')", "true");
+
+        input2.setAttribute("aria-grabbed", "false");
+        output += await expectAsync("axInput2.isAttributeSupported('AXGrabbed')", "true");
+        input2.removeAttribute("aria-grabbed");
+        output += await expectAsync("axInput2.isAttributeSupported('AXGrabbed')", "false");
+        input2.setAttribute("aria-grabbed", "true");
+        output += await expectAsync("axInput2.isAttributeSupported('AXGrabbed')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

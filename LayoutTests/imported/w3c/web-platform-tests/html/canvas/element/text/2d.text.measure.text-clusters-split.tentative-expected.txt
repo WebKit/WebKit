@@ -1,0 +1,6 @@
+2d.text.measure.text-clusters-split.tentative
+Test that getTextClusters() splits the input correctly into the minimal clusters, keeping emojis together.
+Actual output:
+
+FAIL Test that getTextClusters() splits the input correctly into the minimal clusters, keeping emojis together. tm.getTextClusters is not a function. (In 'tm.getTextClusters()', 'tm.getTextClusters' is undefined)
+

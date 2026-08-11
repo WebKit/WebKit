@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table { -webkit-column-count: 3; transform-origin: 81; column-span: all; }
+.multicol { -webkit-column-count: 7; }
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+function runTest() {
+    getSelection().deleteFromDocument();
+    setTimeout(() => {
+        let count = location.search ? +location.search.substring(1) : 1;
+        if (count >= 20) {
+            document.open();
+            document.write('This test passes if WebKit does not crash.<br>PASS.');
+            document.close();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        } else
+            location.href = '?' + (count + 1);
+    }, 10);
+}
+
+function selectAll() {
+    document.execCommand("selectAll", false);
+}
+
+</script>
+</head>
+<body onload=runTest()>
+<div class="multicol" tabindex="1" autofocus>
+    <table>
+        <th>
+            <table>a</table>
+        </th>
+        <tr>b</tr>
+    </table>
+</div>
+<li class="multicol">
+    <iframe allowfullscreen="true" srcdoc=")#&quot;~KVv8CRs" loopstart="1">c</iframe>
+</li>
+<details open="true" ontoggle="selectAll()">d</details>
+</body>

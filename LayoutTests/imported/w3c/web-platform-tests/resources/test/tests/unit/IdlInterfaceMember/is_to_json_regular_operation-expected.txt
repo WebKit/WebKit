@@ -1,0 +1,7 @@
+
+PASS should return false when member is an attribute.
+PASS should return false when member is a static operation.
+PASS should return false when member is a static toJSON operation.
+PASS should return true when member is a regular toJSON operation.
+PASS should return true when member is a regular toJSON operation with extensible attributes.
+

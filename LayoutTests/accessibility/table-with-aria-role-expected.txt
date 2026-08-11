@@ -1,0 +1,6 @@
+Table1 should not have a table role because it's a button: AXRole: AXButton
+Table2 should not have a table role because it's a group: AXRole: AXGroup
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

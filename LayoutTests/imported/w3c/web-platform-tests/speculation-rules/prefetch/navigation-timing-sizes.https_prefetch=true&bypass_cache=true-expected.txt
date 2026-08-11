@@ -1,0 +1,3 @@
+
+PASS PerformanceNavigationTiming.transferSize/encodedBodySize/decodedBodySize test, same origin prefetch.
+

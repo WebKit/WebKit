@@ -1,0 +1,4 @@
+Generate a 'click' event
+
+PASS Event Timing: check first-input after onload, observer, click, click.
+

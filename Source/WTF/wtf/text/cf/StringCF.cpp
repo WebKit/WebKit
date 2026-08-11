@@ -1,0 +1,93 @@
+/*
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "config.h"
+#include <wtf/text/WTFString.h>
+
+#if USE(CF)
+
+#include <wtf/RetainPtr.h>
+#include <wtf/cf/VectorCF.h>
+#include <wtf/text/StringBuffer.h>
+
+namespace WTF {
+
+String::String(CFStringRef str)
+{
+    if (!str)
+        return;
+
+    // We cannot use CFIndex here since CFStringGetLength can return values larger than
+    // CFIndex can hold.  (<rdar://problem/6806478>)
+    size_t size = CFStringGetLength(str);
+    if (!size) {
+        m_impl = StringImpl::empty();
+        return;
+    }
+
+    // Fast path: check if CF exposes its internal buffer directly.
+    if (auto span = CFStringGetLatin1CStringSpan(str); span.data()) {
+        m_impl = StringImpl::create(span);
+        return;
+    }
+
+    if (auto span = CFStringGetCharactersSpan(str); span.data()) {
+        m_impl = StringImpl::create8BitIfPossible(span);
+        return;
+    }
+
+    // Slow path: try converting to Latin1, then fall back to UTF-16.
+    {
+        StringBuffer<Latin1Character> buffer(size);
+        CFIndex usedBufLen;
+        CFIndex convertedSize = CFStringGetBytes(str, CFRangeMake(0, size), kCFStringEncodingISOLatin1, 0, false, byteCast<UInt8>(buffer.characters()), size, &usedBufLen);
+        if (static_cast<size_t>(convertedSize) == size && static_cast<size_t>(usedBufLen) == size) {
+            m_impl = StringImpl::adopt(WTF::move(buffer));
+            return;
+        }
+    }
+
+    StringBuffer<char16_t> ucharBuffer(size);
+    CFStringCopyCharactersSpan(str, ucharBuffer.span());
+    m_impl = StringImpl::adopt(WTF::move(ucharBuffer));
+}
+
+RetainPtr<CFStringRef> String::createCFString() const
+{
+    if (RefPtr impl = m_impl)
+        return impl->createCFString();
+    return CFSTR("");
+}
+
+RetainPtr<CFStringRef> makeCFArrayElement(const String& vectorElement)
+{
+    return vectorElement.createCFString();
+}
+
+std::optional<String> makeVectorElement(const String*, CFStringRef cfString)
+{
+    if (cfString)
+        return { { cfString } };
+    return std::nullopt;
+}
+
+}
+
+#endif // USE(CF)

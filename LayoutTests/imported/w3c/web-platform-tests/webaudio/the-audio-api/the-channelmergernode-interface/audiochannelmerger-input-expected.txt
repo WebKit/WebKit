@@ -1,0 +1,6 @@
+
+PASS Silent inactive inputs produce 0 in unused merger channels
+PASS Stereo input should down-mix properly to mono merger input
+PASS 3-channel input uses discrete rule, dropping 2nd and 3rd channels
+PASS Merging two mono sources into stereo using ChannelMerger
+

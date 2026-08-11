@@ -1,0 +1,14 @@
+
+PASS :message_passing:memType="atomic_workgroup"
+PASS :message_passing:memType="atomic_storage"
+PASS :store:memType="atomic_workgroup"
+PASS :store:memType="atomic_storage"
+PASS :load_buffer:memType="atomic_workgroup"
+PASS :load_buffer:memType="atomic_storage"
+PASS :read:memType="atomic_workgroup"
+PASS :read:memType="atomic_storage"
+PASS :store_buffer:memType="atomic_workgroup"
+PASS :store_buffer:memType="atomic_storage"
+PASS :2_plus_2_write:memType="atomic_workgroup"
+PASS :2_plus_2_write:memType="atomic_storage"
+

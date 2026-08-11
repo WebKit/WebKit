@@ -1,0 +1,87 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("control_handler") {
+  visibility = [ "*" ]
+  sources = [
+    "control_handler.cc",
+    "control_handler.h",
+  ]
+
+  deps = [
+    "../../../api:sequence_checker",
+    "../../../api/transport:network_control",
+    "../../../api/units:data_rate",
+    "../../../api/units:time_delta",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base/system:no_unique_address",
+    "../../pacing",
+  ]
+}
+rtc_library("transport_feedback") {
+  visibility = [ "*" ]
+  sources = [
+    "transport_feedback_adapter.cc",
+    "transport_feedback_adapter.h",
+    "transport_feedback_demuxer.cc",
+    "transport_feedback_demuxer.h",
+  ]
+
+  deps = [
+    "../../../api:sequence_checker",
+    "../../../api/transport:ecn_marking",
+    "../../../api/transport:network_control",
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:macromagic",
+    "../../../rtc_base:network_route",
+    "../../../rtc_base:rtc_numerics",
+    "../../../rtc_base/network:sent_packet",
+    "../../../rtc_base/system:no_unique_address",
+    "../../rtp_rtcp:ntp_time_util",
+    "../../rtp_rtcp:rtp_rtcp_format",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+  ]
+}
+
+rtc_source_set("congestion_controller_feedback_stats") {
+  sources = [ "congestion_controller_feedback_stats.h" ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("congestion_controller_unittests") {
+    testonly = true
+
+    sources = [
+      "transport_feedback_adapter_unittest.cc",
+      "transport_feedback_demuxer_unittest.cc",
+    ]
+    deps = [
+      ":transport_feedback",
+      "../../../api/transport:ecn_marking",
+      "../../../api/transport:network_control",
+      "../../../api/units:data_size",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../rtc_base:buffer",
+      "../../../rtc_base/network:sent_packet",
+      "../../../system_wrappers",
+      "../../../test:near_matcher",
+      "../../../test:test_support",
+      "../../rtp_rtcp:ntp_time_util",
+      "../../rtp_rtcp:rtp_rtcp_format",
+      "//testing/gmock",
+    ]
+  }
+}

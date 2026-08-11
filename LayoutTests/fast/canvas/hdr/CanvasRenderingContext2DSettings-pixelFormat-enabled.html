@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
+<html>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Test that the colorType member of CanvasRenderingContext2DSettings is supported when CanvasColorTypeEnabled=true.");
+
+    function testColorType(settings, expectedColorType, allowedException = "") {
+        let canvas = document.createElement("canvas");
+        try {
+            let context = canvas.getContext("2d", settings);
+            window.testSettings = context.getContextAttributes();
+            shouldBeEqualToString("testSettings.colorType", expectedColorType);
+        } catch ({ name, message }) {
+            if (allowedException) {
+                if (name == allowedException)
+                    testPassed(`getContext("2d", ${JSON.stringify(settings)}) threw ${name} as allowed`);
+                else
+                    testFailed(`getContext("2d", ${JSON.stringify(settings)}) threw ${name} instead of ${allowedException}`);
+            } else
+                testFailed(`getContext("2d", ${JSON.stringify(settings)}) threw ${name}`);
+        }
+    }
+
+    // Test default value of colorType is "unorm8".
+    testColorType(undefined, "unorm8");
+
+    // Test setting colorType to a valid value works.
+    testColorType({ colorType: "unorm8" }, "unorm8");
+    testColorType({ colorType: "float16" }, "float16", "TypeError");
+
+    // Test setting colorType to an unsupported value.
+    shouldThrowErrorName(`document.createElement("canvas").getContext("2d", { colorType: "foo" })`, "TypeError")
+</script>
+</body>
+</html>

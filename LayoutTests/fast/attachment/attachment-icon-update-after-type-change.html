@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true ] -->
+<html class="reftest-wait">
+<body>
+<attachment title=" " type="text/plain"></attachment>
+<script src="resources/attachment-test-utils.js"></script>
+<script>
+(() => {
+    const attachments = [...document.getElementsByTagName("attachment")];
+    console.assert(attachments.length == 1);
+    if (attachments.length != 1)
+        return takeScreenshot();
+    let attachment = attachments[0];
+
+    let events = [];
+
+    let timeoutId;
+
+    const onFailure = () => {
+        clearTimeout(timeoutId);
+        attachment.insertAdjacentText("afterend", "<- (actual) events = [" + events.join() + "]");
+        takeScreenshot();
+    };
+
+    timeoutId = setTimeout(() => { events.push("timeout"); onFailure(); }, 5000);
+
+    for (const event of ["beforeload", "loadingerror", "loadeddata", "error", "load"])
+        attachment.addEventListener(event, () => { events.push(event); });
+
+    attachment.addEventListener("loadingerror", () => {
+        events.push("loadingerror");
+        onFailure();
+    }, { once: true });
+
+    let loadState = 0;
+    attachment.addEventListener("load", () => {
+        if (loadState == 0) {
+            loadState = 1;
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                loadState = 2;
+                attachment.setAttribute("type", "image/jpeg");
+            }));
+        } else if (loadState == 2) {
+            requestAnimationFrame(() => requestAnimationFrame(takeScreenshot));
+        }
+    });
+})();
+</script>
+</body>
+</html>

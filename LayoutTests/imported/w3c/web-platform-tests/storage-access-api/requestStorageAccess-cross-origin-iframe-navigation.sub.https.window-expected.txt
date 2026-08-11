@@ -1,0 +1,6 @@
+
+PASS Self-initiated reloads preserve storage access
+PASS Self-initiated same-origin navigations preserve storage access
+PASS Non-self-initiated same-origin navigations do not preserve storage access
+PASS Self-initiated cross-origin navigations do not preserve storage access
+

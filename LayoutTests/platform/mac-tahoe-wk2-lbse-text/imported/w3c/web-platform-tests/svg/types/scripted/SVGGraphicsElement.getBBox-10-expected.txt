@@ -1,0 +1,8 @@
+99
+There are issues of dynamic loading required for tiling. According to 'postpone' attribute of Resource Priorities, the dynamic loading is controlled by positional relation with bounding box of embedded contents and container's viewport. However, each bounding boxes of embedded contents should be whole earth basically when this method is used. (green part on Example) Tiling is impossible unless this situation is changed.
+
+PASS text with zoom
+PASS image with zoom
+PASS path with zoom
+PASS foreignObject with zoom
+

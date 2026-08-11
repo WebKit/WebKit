@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="navigation-utils.js"></script>
+<script>
+
+const page = "popup";
+const iframeId = "test-iframe"
+
+window.onload = () => sendMessageToOpener("load");
+window.onpageshow = ()=> sendMessageToOpener("pageshow", event.persisted ? "persisted" : "not-persisted");
+
+window.onmessage = (event) => dispatchMessage(event.data, {
+    opener: {
+        'navigate-to-page2': () => navigateIframeTo("back-iframe-2.html"),
+        'navigate-to-page2-cross-site-iframe': () => navigateIframeTo(crossSiteUrl("back-iframe-2.html")),
+        'navigate-to-other': () => navigateTo("back-iframe-other.html"),
+        back: () => history.back(),
+    },
+    page1: () => forwardMessageToOpener(event.data),
+    page2: () => forwardMessageToOpener(event.data),
+});
+
+
+</script>
+</head>
+<body>
+<h1>Popup page</h1>
+<iframe src="back-iframe-1.html" id="test-iframe"></iframe>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<title>Navigation redirect with hash</title>
+<meta name=timeout content=long>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+<body>
+<script>
+promise_test(async () => {
+    const registration = await navigator.serviceWorker.register("navigation-redirect-with-hash-worker.js", { scope : "resources" });
+    var activeWorker = registration.active;
+    if (!activeWorker) {
+        activeWorker = registration.installing;
+        await new Promise(resolve => {
+            activeWorker.addEventListener('statechange', () => {
+                if (activeWorker.state === "activated")
+                    resolve(registration);
+            });
+        });
+    }
+}, "setup");
+
+promise_test(async () => {
+   const frame = await with_iframe("/WebKit/service-workers/resources/redirect-with-hash.py#test");
+   assert_equals(frame.contentWindow.location.hash, "#test");
+   frame.remove(); 
+}, "load iframe with hash");
+</script>
+</body>

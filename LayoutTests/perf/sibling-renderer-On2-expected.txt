@@ -1,0 +1,5 @@
+PASS timeRenderTreeCreation(5000) < 20 * timeRenderTreeCreation(500) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

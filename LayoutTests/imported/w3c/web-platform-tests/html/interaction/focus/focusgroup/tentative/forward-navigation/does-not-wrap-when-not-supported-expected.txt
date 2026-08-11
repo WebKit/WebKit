@@ -1,0 +1,4 @@
+item1 item2
+
+PASS When the focus is set on the last item of a focusgroup that doesn't support wrapping in the axis of the arrow key pressed, the focus shouldn't move.
+

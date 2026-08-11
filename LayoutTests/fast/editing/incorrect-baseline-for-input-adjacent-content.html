@@ -1,0 +1,15 @@
+<style>
+div {
+	display: inline-block;
+}
+input {
+ font-size: 40px;
+}
+</style>
+PASS if this and<div><input id=change_this type=text value="test"></div>are vertically aligned.
+<script>
+change_this.focus();
+change_this.setSelectionRange(0, 4);
+document.execCommand('Delete', false, null);
+document.execCommand("InsertText", true, "this");
+</script>

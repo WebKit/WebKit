@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that style invalidation does not crash when a slotted element has its own author shadow root.<br>
+WebKit should not hit any assertion or crash and you should see PASS below.</p>
+<div id="host">
+    <span id="slotted">slotted</span>
+</div>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const host = document.getElementById('host');
+const root = host.attachShadow({mode: 'closed'});
+root.innerHTML = `
+    <style>
+        ::slotted(*) { color: red; }
+        .active ::slotted(*) { color: green; }
+    </style>
+    <div id="wrapper"><slot></slot></div>
+`;
+
+const slotted = document.getElementById('slotted');
+slotted.attachShadow({mode: 'open'}).innerHTML = '<div>nested</div>';
+
+document.body.offsetHeight;
+
+const wrapper = root.getElementById('wrapper');
+wrapper.className = 'active';
+
+document.body.offsetHeight;
+
+document.body.appendChild(document.createTextNode('PASS - WebKit did not crash'));
+
+</script>
+</body>
+</html>

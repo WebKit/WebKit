@@ -1,0 +1,21 @@
+<style>
+img:nth-last-child(n of :popover-open) { }
+</style>
+<p>This test passes if WebKit does not crash.</p>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const span1 = document.createElement('span');
+document.body.prepend(span1);
+
+const span2 = document.createElement('span');
+span1.append(span2);
+span2.popover = `abc`;
+
+span1.getBoundingClientRect();
+span2.showPopover();
+span1.innerHTML = '';
+
+</script>

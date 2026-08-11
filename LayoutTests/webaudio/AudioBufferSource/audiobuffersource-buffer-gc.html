@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Make sure that AudioBufferSourceNode.buffer keeps returning the same object");
+jsTestIsAsync = true;
+
+let context = new AudioContext();
+let audioBufferSource = context.createBufferSource();
+audioBufferSource.buffer = context.createBuffer(1, 1024, context.sampleRate);
+audioBufferSource.buffer.foo = 1;
+gc();
+setTimeout(() => {
+    gc();
+    shouldBe("audioBufferSource.buffer.foo", "1");
+    setTimeout(() => {
+        gc();
+        shouldBe("audioBufferSource.buffer.foo", "1");
+        finishJSTest();
+    }, 0);
+}, 0);
+</script>
+</body>
+</html>

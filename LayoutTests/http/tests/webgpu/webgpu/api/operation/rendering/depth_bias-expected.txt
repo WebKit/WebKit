@@ -1,0 +1,15 @@
+
+PASS :depth_bias:quadAngle=0;bias=8388608;biasSlopeScale=0;biasClamp=0
+PASS :depth_bias:quadAngle=0;bias=8388608;biasSlopeScale=0;biasClamp=0.125
+PASS :depth_bias:quadAngle=0;bias=-8388608;biasSlopeScale=0;biasClamp=0.125
+PASS :depth_bias:quadAngle=0;bias=-8388608;biasSlopeScale=0;biasClamp=-0.125
+PASS :depth_bias:quadAngle=1;bias=0;biasSlopeScale=0;biasClamp=0
+PASS :depth_bias:quadAngle=1;bias=0;biasSlopeScale=1;biasClamp=0
+PASS :depth_bias:quadAngle=1;bias=0;biasSlopeScale=-0.5;biasClamp=0
+PASS :depth_bias_24bit_format:format="depth24plus";quadAngle=0;bias=8388608;biasSlopeScale=0;biasClamp=0
+PASS :depth_bias_24bit_format:format="depth24plus";quadAngle=0;bias=8388608;biasSlopeScale=0;biasClamp=0.1
+PASS :depth_bias_24bit_format:format="depth24plus";quadAngle=1;bias=8388608;biasSlopeScale=1;biasClamp=0
+PASS :depth_bias_24bit_format:format="depth24plus-stencil8";quadAngle=0;bias=8388608;biasSlopeScale=0;biasClamp=0
+PASS :depth_bias_24bit_format:format="depth24plus-stencil8";quadAngle=0;bias=8388608;biasSlopeScale=0;biasClamp=0.1
+PASS :depth_bias_24bit_format:format="depth24plus-stencil8";quadAngle=1;bias=8388608;biasSlopeScale=1;biasClamp=0
+

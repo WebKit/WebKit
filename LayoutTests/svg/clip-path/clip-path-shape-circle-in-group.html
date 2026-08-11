@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="clip-path-shape-circle-in-group-expected.html">
+</head>
+<body style="margin: 0">
+<!-- A basic-shape clip-path on a positioned shape nested inside a plain (non-layer) group. The clip
+     must line up with the shape, not be shifted by the group-relative offset. The green circle should
+     be inscribed in the rect's box. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+<g>
+    <rect x="50" y="50" width="200" height="200" fill="green" style="-webkit-clip-path: circle()"/>
+</g>
+</svg>
+</body>
+</html>

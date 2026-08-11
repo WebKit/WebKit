@@ -1,0 +1,10 @@
+Pointer Events boundary events in capturing
+
+This automated test checks the boundary events of pointer events while the capturing changes. This test cannot be run manually.
+
+Do not hover over or touch this element.
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Boundary events around pointer capture and release Test timed out
+

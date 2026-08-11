@@ -1,0 +1,15 @@
+
+PASS Before: messageerror event must occur
+PASS Before: setting document.domain must not give sync access
+PASS parent: originAgentCluster must equal true
+PASS child1: originAgentCluster must equal false
+PASS Remove the iframe and insert new ones
+PASS Parent to child2: messageerror event must occur
+PASS Parent to child2: setting document.domain must not give sync access
+PASS Parent to child3: messageerror event must occur
+PASS Parent to child3: setting document.domain must not give sync access
+PASS child2 to child3: setting document.domain must give sync access
+PASS child3 to child2: setting document.domain must give sync access
+PASS child2: originAgentCluster must equal false
+PASS child3: originAgentCluster must equal false
+

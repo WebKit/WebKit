@@ -1,0 +1,6 @@
+a
+b
+
+PASS normalize-space() without arguments
+PASS normalize-space() should handle only #x20, #x9, #xD, and #xA
+

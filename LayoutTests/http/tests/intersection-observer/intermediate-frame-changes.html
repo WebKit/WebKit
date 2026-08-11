@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<style>
+iframe {
+  width: 300px;
+  height: 300px;
+}
+</style>
+<iframe id="intermediateFrame" src="resources/intermediate-frame.html"></iframe>
+
+<script>
+var entries = [];
+var iframe = document.getElementById("intermediateFrame");
+iframe.onload = function() {
+    var nestedFrame = iframe.contentDocument.getElementById("nestedFrame");
+    var scroller = iframe.contentDocument.getElementById("scroller");
+    var target = nestedFrame.contentDocument.getElementById("target");
+
+    async_test(function(t) {
+        new IntersectionObserver(function(changes) {
+            entries = entries.concat(changes);
+            if (entries.length == 1) {
+                assert_false(entries[0].isIntersecting);
+                scroller.scrollTop = 250;
+            } else if (entries.length == 2) {
+                assert_true(entries[1].isIntersecting);
+                scroller.scrollTop = 0;
+            } else {
+                assert_false(entries[2].isIntersecting);
+                t.done();
+            }
+        }).observe(target);
+    }, "Intersection observations are updated when an intermediate frame changes");
+};
+</script>

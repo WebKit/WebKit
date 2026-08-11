@@ -1,0 +1,51 @@
+<style>
+.container {
+  width: 600px;
+  height: 300px;
+  position: relative;
+  overflow: hidden;
+  font-family: Ahem;
+  font-size: 20px;
+}
+
+.inner_container {
+  opacity: 0;
+}
+
+figcaption {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
+
+<div class=container><figcaption><div id=changeThis class=inner_container>Pass if text animates.</div></div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  changeThis.style.opacity = "1";
+  changeThis.style.transform = "translate3d(0, 0, 0)";
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

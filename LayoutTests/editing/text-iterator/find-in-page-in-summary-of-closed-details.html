@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang><meta charset="utf-8">
+<title>find-in-page with summary of closed details element</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<details></details>
+<script>
+findStringInDetails = (id, contents) => {
+    const t = async_test(`find-in-page with summary of closed details element: ${id}`);
+    document.body.insertAdjacentHTML("beforeend", `<details id=${id}>${contents}</details>`);
+    const details = document.getElementById(id);
+    details.ontoggle = t.step_func_done(function(e) {
+        assert_unreached("toggle event fired on closed details element");
+    });
+    t.step_timeout(() => {
+        assert_true(!details.open);
+        details.remove();
+        t.done();
+    }, 3000);
+    testRunner.findString(id, []);
+}
+let target;
+target = "summary-simple"; findStringInDetails(target, `<summary>${target}</summary>`);
+</script>

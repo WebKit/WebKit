@@ -1,0 +1,77 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useHardwareKeyboardMode=true useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ScrollAnimatorEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, user-scalable=no">
+<style>
+body, html {
+    font-family: system-ui;
+    margin: 0;
+}
+
+.tall {
+    height: 120vh;
+}
+
+#placeholder {
+    width: 300px;
+    height: 150lvh;
+    background: blue;
+}
+
+#scroller {
+    background: green;
+    width: 250px;
+    height: 250px;
+    overflow: scroll;
+    line-height: 2;
+    padding: 1em;
+}
+
+input {
+    font-size: 18px;
+    width: 250px;
+    height: 44px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+async function pressKeyWithShortDelay(key) {
+    await UIHelper.rawKeyDown(key);
+    await UIHelper.delayFor(300);
+    await UIHelper.rawKeyUp(key);
+    await UIHelper.ensurePresentationUpdate();
+}
+
+addEventListener("load", async () => {
+    description("Verifies that keyboard scrolling in a child scroller works after pressing arrow keys in a text field");
+
+    scroller = document.getElementById("scroller");
+    textField = document.querySelector("input");
+    scroller.addEventListener("click", () => textField.blur());
+
+    await UIHelper.activateElementAndWaitForInputSession(textField);
+    await pressKeyWithShortDelay("upArrow");
+
+    await UIHelper.activateElement(scroller);
+    await UIHelper.waitForKeyboardToHide();
+    await pressKeyWithShortDelay("downArrow");
+    await UIHelper.waitForZoomingOrScrollingToEnd();
+
+    shouldBeGreaterThan("scroller.scrollTop", "0");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <input placeholder="1. Focus me and press ⬇️" />
+    <div id="scroller">
+        2. Tap me and press ⬇️
+        <div class="tall"></div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

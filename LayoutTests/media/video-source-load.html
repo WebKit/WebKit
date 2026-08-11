@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+    <head>
+        <title>load() and the &lt;source&gt; element</title>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+        <script>
+            var sources = [];
+            var count = 0;
+
+            function canplaythrough() 
+            {
+                testExpected("stripExtension(relativeURL(video.currentSrc))", relativeURL(stripExtension(sources[1])));
+                ++count;
+                switch (count) 
+                {
+                    case 1:
+                        consoleWrite("<br>+++ Calling load().");
+                        video.load();
+                        break;
+                    case 2:
+                        endTest();
+                    return;
+                }
+            }
+
+            function addSource(type, name)
+            {
+                var source = document.createElement('source');
+                source.src = findMediaFile(type, name);
+                sources.push(source.src);
+                source.type = mimeTypeForExtension(source.src.split('.').pop());
+                video.appendChild(source);
+            }
+
+            function setup()
+            {
+                video = mediaElement = document.getElementsByTagName('video')[0];
+
+                consoleWrite("+++ Test initial networkState.");
+                testExpected("video.networkState", HTMLMediaElement.prototype.NETWORK_EMPTY, "==");
+
+                // Add an invalid url to the first source so we test getting an error event
+                // each time resource selection runs.
+                addSource("video", "content/bogus");
+                addSource("video", "content/test");
+                addSource("audio", "content/test");
+
+                consoleWrite("<br>+++ Add &lt;source&gt; elements to trigger loading, test networkState.");
+                testExpected("video.networkState", HTMLMediaElement.prototype.NETWORK_NO_SOURCE, "==");
+
+                waitForEvent("canplaythrough", canplaythrough);
+                waitForEvent("error");
+            }
+        </script>
+    </head>
+    <body onload="setup()">
+        <video controls width=300 ></video>
+        <p>Test that the resource selection algorithm is restarted when load() is called, and that all &lt;source&gt; elements are reconsidered.</p>
+    </body>
+</html>

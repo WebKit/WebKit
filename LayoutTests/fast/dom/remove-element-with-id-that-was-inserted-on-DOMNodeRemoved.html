@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head></head> <!-- This element isn't necessary, but makes it straightforward to reason about the test when debugging it. -->
+<body id="declarativeBody"></body>
+<!-- Notice a <script> is only executed once. -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var savedDocumentElement;
+function appendBodyElementToSavedDocument()
+{
+    document.removeEventListener("DOMNodeRemoved", appendBodyElementToSavedDocument, false);
+    savedDocumentElement.appendChild(document.createElement("body")).id = "programmaticBody";
+}
+
+function insertSavedDocument()
+{
+    document.appendChild(savedDocumentElement); // Will execute <script id="script2">.
+}
+
+savedDocumentElement = document.documentElement;
+document.addEventListener("DOMNodeRemoved", appendBodyElementToSavedDocument, false);
+document.removeChild(savedDocumentElement); // Prevents <script id="script2"> from running since it won't be in the document when we fall off the end of this <script>.
+window.setTimeout(insertSavedDocument, 0);
+</script>
+<!-- This must be in its own <script> so that we execute it (for the first time) when we re-insert it into the document in insertSavedDocument(). -->
+<script id="script2">
+document.write("PASS, removed element, with HTML attribute id, which was inserted on event DOMNodeRemoved."); // Destroys the entire document, including <body id="declarativeBody"> and <body id="programmaticBody">.
+if (window.testRunner)
+    testRunner.notifyDone();
+</script>
+</html>

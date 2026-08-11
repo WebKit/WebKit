@@ -1,0 +1,6 @@
+Inside
+Below limit
+
+FAIL Scope-imported rule applies within scope, above limit assert_equals: expected "1" but got ""
+PASS Scope-imported rule does not apply below limit
+

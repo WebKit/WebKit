@@ -1,0 +1,3 @@
+Test that WebSocket is not subject to HTTP connection limit, but does not exceed a maximum. It should not contain any alerts about unexpected close events, and should say PASS below:
+
+PASS

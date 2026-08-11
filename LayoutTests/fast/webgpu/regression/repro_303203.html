@@ -1,0 +1,55 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  // Regression test for rdar://165488672 / https://bugs.webkit.org/show_bug.cgi?id=303203
+  //
+  // After 303984@main, m_commandEncoders on a tracked resource was changed from
+  // Vector<uint64_t> (allowed duplicates) to a HashSet<uint64_t> (deduplicated).
+  // However, Buffer::setCommandEncoder kept calling
+  // CommandEncoder::incrementBufferMapCount() once per call, so when the same
+  // mapped buffer was referenced N times in the same encoder, the encoder's
+  // bufferMapCount was incremented N times but only decremented once on unmap.
+  // The leftover count tripped the "bufferMapCount != 0" check at submit time,
+  // producing "Validation failure - queue1." spurious validation errors that
+  // broke applications like rerun.io's WebGPU viewer.
+  //
+  // This test references a mapped-at-creation source buffer twice from the same
+  // command encoder, unmaps it, and submits. The buggy implementation reports a
+  // validation error; the fixed implementation submits cleanly.
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+
+    let stagingBuffer = device.createBuffer({
+      size: 16,
+      usage: GPUBufferUsage.COPY_SRC,
+      mappedAtCreation: true,
+    });
+    new Uint32Array(stagingBuffer.getMappedRange()).set([1, 2, 3, 4]);
+
+    let dest1 = device.createBuffer({size: 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC});
+    let dest2 = device.createBuffer({size: 16, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC});
+
+    let commandEncoder = device.createCommandEncoder();
+    // Two references to the same mapped buffer in the same encoder. Each call
+    // to setCommandEncoder() previously incremented bufferMapCount, but the
+    // dedup'd HashSet only registered the encoder once.
+    commandEncoder.copyBufferToBuffer(stagingBuffer, 0, dest1, 0, 16);
+    commandEncoder.copyBufferToBuffer(stagingBuffer, 0, dest2, 0, 16);
+
+    stagingBuffer.unmap();
+
+    device.pushErrorScope('validation');
+    device.queue.submit([commandEncoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    let error = await device.popErrorScope();
+    if (error)
+      log('FAIL: ' + error.message);
+    else
+      log('PASS');
+
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

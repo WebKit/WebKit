@@ -1,0 +1,10 @@
+Tests that Command + Shift + v does not insert v and that pressing a does insert an a.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.event.data is "a"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

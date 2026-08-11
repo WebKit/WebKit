@@ -1,0 +1,31 @@
+// An if-else statement at the end of a function, with a return as the last statement on all
+// paths, are not actually "early" returns. The inliner is able to recognize this pattern.
+
+uniform half4 colorGreen, colorRed;
+
+inline half branchy() {
+    if (colorGreen.g == 0)
+        return 0;
+    else if (colorRed.r == 0)
+        return 0;
+    else if (colorGreen == colorRed)
+        return 0;
+    else
+        return 1;
+}
+
+inline half branchyAndBlocky() {
+    if (colorGreen.g == 0) {{{
+        return 0;
+    }}} else if (colorRed.r == 0) {{
+        return 0;
+    }} else { if (colorGreen == colorRed)
+        return 0;
+    else {{
+        return 1;
+    }}}
+}
+
+half4 main(float2 coords) {
+    return bool(branchy() * branchyAndBlocky()) ? colorGreen : colorRed;
+}

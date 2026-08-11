@@ -1,0 +1,7 @@
+
+PASS Deleting a property not in the css rule is a no-op
+PASS Deleting a property in the css rule removes it from the css rule
+PASS Deleting a custom property in the css rule removes it from the css rule
+PASS Deleting a list-valued property in the css rule removes it from the css rule
+PASS Declared StylePropertyMap.delete is not case-sensitive
+

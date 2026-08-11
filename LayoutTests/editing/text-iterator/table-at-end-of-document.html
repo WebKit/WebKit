@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = () => {
+    let result = document.getElementById('container').innerText;
+    document.getElementById('result').textContent = result;
+    document.getElementById('pass-fail').textContent = result == 'X\nY' ? 'PASS' : 'FAIL';
+}
+
+</script>
+</head>
+<body>
+<p>This tests getting the plain text of a CSS table followed by a text.
+You should see X and Y in two seprate lines below twice:</p>
+<div id="pass-fail"></div>
+<pre><span id="result" style="background: #3cf;"></span></pre>
+<div id="container" style="width:100%; height: 100%'">
+  <div style="display: table">
+    <div style="display: table-row">
+      <div id="cell" style="display: table-cell">
+        X
+      </div>
+    </div>
+  </div>
+  Y
+</div>
+</body>
+</html>

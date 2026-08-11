@@ -1,0 +1,35 @@
+This test updates contenteditable content attribute, contentEditable IDL property, and -webkit-user-modify CSS property dynamically.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS newDoc("<div></div>"); $("div").isContentEditable is false
+PASS $("div").contentEditable = "true"; $("div").isContentEditable is true
+PASS newDoc("<div contenteditable=true></div>"); $("div").isContentEditable is true
+PASS $("div").contentEditable = "false"; $("div").isContentEditable is false
+PASS newDoc("<div contenteditable=plaintext-only></div>"); $("div").isContentEditable is true
+PASS $("div").contentEditable = "false"; $("div").isContentEditable is false
+
+Style rules
+PASS newDoc("<div></div><style> div { -webkit-user-modify: read-write; } </style>"); $("div").isContentEditable is true
+PASS $("style").textContent = ""; $("div").isContentEditable is false
+PASS $("style").textContent = "* { -webkit-user-modify: read-write-plaintext-only; }"; $("div").isContentEditable is true
+PASS newDoc("<div></div>"); style = element("style", "* { -webkit-user-modify: read-write }"); $("div").isContentEditable is false
+PASS $("body").appendChild(style); $("div").isContentEditable is true
+PASS newDoc("<div></div><style></style>"); $("div").isContentEditable is false
+PASS $("style").sheet.insertRule("* { -webkit-user-modify: read-write; }", 0); $("div").isContentEditable is true
+PASS $("style").sheet.insertRule("* { -webkit-user-modify: read-only !important; }", 0); $("div").isContentEditable is false
+
+Inline styles
+PASS newDoc("<div style='-webkit-user-modify:read-write'></div>"); $("div").isContentEditable is true
+PASS $("head").innerHTML = "<base href='http://localhost/'>"; $("div").isContentEditable is true
+PASS $("div").style.webkitUserModify = ""; $("div").isContentEditable is false
+PASS newDoc("<div></div>"); $("div").style.webkitUserModify = "read-write"; $("div").isContentEditable is true
+PASS $("div").setAttribute("style", ""); $("div").isContentEditable is false
+PASS newDoc("<div></div>"); $("div").isContentEditable is false
+PASS $("div").setAttribute("style", "-webkit-user-modify: read-write"); $("div").isContentEditable is true
+PASS $("div").setAttribute("style", "-webkit-user-modify: read-only"); $("div").isContentEditable is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

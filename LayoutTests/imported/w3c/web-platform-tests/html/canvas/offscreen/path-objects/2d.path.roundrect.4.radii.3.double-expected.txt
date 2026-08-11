@@ -1,0 +1,7 @@
+2d.path.roundrect.4.radii.3.double
+
+Verify that when four radii are given to roundRect(), the third radius, specified as a double, applies to the bottom-right corner.
+
+
+PASS Verify that when four radii are given to roundRect(), the third radius, specified as a double, applies to the bottom-right corner.
+

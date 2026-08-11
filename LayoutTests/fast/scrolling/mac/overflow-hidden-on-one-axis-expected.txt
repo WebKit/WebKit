@@ -1,0 +1,13 @@
+Tests that sieways scrolling in an overflow-x:hidden scroller scrolls the enclosing scroller
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS innerScroller.scrollLeft is 0
+PASS innerScroller.scrollTop is 0
+PASS outerScroller.scrollLeft > 0 is true
+PASS outerScroller.scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

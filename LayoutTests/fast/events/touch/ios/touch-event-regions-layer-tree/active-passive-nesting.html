@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            width: 150px;
+            height: 150px;
+            margin: 40px;
+            padding: 10px;
+            border: 4px solid gray;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            border: 4px solid black;
+            margin-left: 100px;
+        }
+        
+        .active {
+            border-color: orange;
+        }
+
+        .passive {
+            border-color: gray;
+        }
+    </style>
+    <script src="resources/touch-regions-helper.js"></script>
+    <script>
+        prepareForTest();
+
+        function doTest()
+        {
+            var activeElements = document.querySelectorAll('.active');
+            for (var element of activeElements) {
+                element.addEventListener('touchstart', function(e) { });
+            }
+
+            var passiveElements = document.querySelectorAll('.passive');
+            for (var element of passiveElements) {
+                element.addEventListener('touchstart', function(e) { }, { 'passive': true });
+            }
+            
+            dumpRegions();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div class="passive container">
+    Passive
+    <div class="active box">
+        Active
+    </div>
+</div>
+
+<div class="active container">
+    Active
+    <div class="passive box">
+        Passive
+    </div>
+</div>
+
+</body>
+</html>

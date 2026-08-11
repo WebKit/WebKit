@@ -1,0 +1,5 @@
+
+
+PASS No change event when value is changed by script
+FAIL Change event when restoring pre-focused value then setting it again assert_true: Should fire change event after blur. expected true got false
+

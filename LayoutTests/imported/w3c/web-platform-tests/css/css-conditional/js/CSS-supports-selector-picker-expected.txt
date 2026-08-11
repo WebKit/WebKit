@@ -1,0 +1,8 @@
+
+PASS ::picker-icon pseudo-element is supported
+PASS ::picker(select) pseudo-element is supported
+PASS ::picker-icon without element is supported
+PASS ::picker(select) without element is supported
+PASS ::picker without argument is not supported
+PASS ::picker with empty argument is not supported
+

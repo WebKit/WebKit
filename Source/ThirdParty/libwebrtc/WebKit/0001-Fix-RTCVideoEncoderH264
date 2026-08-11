@@ -1,0 +1,561 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm
+index 4028e7acee0..89248b40d74 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm
+@@ -40,6 +40,42 @@
+ #include "sdk/objc/components/video_codec/nalu_rewriter.h"
+ #include "third_party/libyuv/include/libyuv/convert_from.h"
+ 
++#include "sdk/WebKit/WebKitUtilities.h"
++
++#import <dlfcn.h>
++#import <objc/runtime.h>
++
++VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_Usage;
++VT_EXPORT const CFStringRef kVTCompressionPropertyKey_Usage;
++
++#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS) && !ENABLE_VCP_ENCODER
++static inline bool isStandardFrameSize(int32_t width, int32_t height)
++{
++    // FIXME: Envision relaxing this rule, something like width and height dividable by 4 or 8 should be good enough.
++    if (width == 1280)
++        return height == 720;
++    if (width == 720)
++        return height == 1280;
++    if (width == 960)
++        return height == 540;
++    if (width == 540)
++        return height == 960;
++    if (width == 640)
++        return height == 480;
++    if (width == 480)
++        return height == 640;
++    if (width == 288)
++        return height == 352;
++    if (width == 352)
++        return height == 288;
++    if (width == 320)
++        return height == 240;
++    if (width == 240)
++        return height == 320;
++    return false;
++}
++#endif
++
+ @interface RTCVideoEncoderH264 ()
+ 
+ - (void)frameWasEncoded:(OSStatus)status
+@@ -325,12 +361,15 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+   RTCVideoEncoderCallback _callback;
+   int32_t _width;
+   int32_t _height;
+-  VTCompressionSessionRef _compressionSession;
++  bool _useVCP;
++  VTCompressionSessionRef _vtCompressionSession;
++  VCPCompressionSessionRef _vcpCompressionSession;
+   CVPixelBufferPoolRef _pixelBufferPool;
+   RTCVideoCodecMode _mode;
+ 
+   webrtc::H264BitstreamParser _h264BitstreamParser;
+   std::vector<uint8_t> _frameScaleBuffer;
++  bool _disableEncoding;
+ }
+ 
+ // .5 is set as a mininum to prevent overcompensating for large temporary
+@@ -347,6 +386,16 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+     _packetizationMode = RTCH264PacketizationModeNonInterleaved;
+     _profile_level_id =
+         webrtc::H264::ParseSdpProfileLevelId([codecInfo nativeSdpVideoFormat].parameters);
++#if ENABLE_VCP_VTB_ENCODER
++    if (_profile_level_id) {
++      auto profile = ExtractProfile(*_profile_level_id);
++      _useVCP = [(__bridge NSString *)profile containsString: @"High"];
++    } else {
++      _useVCP = false;
++    }
++#else
++    _useVCP = false;
++#endif
+     RTC_DCHECK(_profile_level_id);
+     RTC_LOG(LS_INFO) << "Using profile " << CFStringToString(ExtractProfile(*_profile_level_id));
+     RTC_CHECK([codecInfo.name isEqualToString:kRTCVideoCodecH264Name]);
+@@ -388,12 +437,17 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+   return [self resetCompressionSessionWithPixelFormat:kNV12PixelFormat];
+ }
+ 
++- (bool)hasCompressionSession
++{
++    return _vtCompressionSession || _vcpCompressionSession;
++}
++
+ - (NSInteger)encode:(RTCVideoFrame *)frame
+     codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)codecSpecificInfo
+            frameTypes:(NSArray<NSNumber *> *)frameTypes {
+   RTC_DCHECK_EQ(frame.width, _width);
+   RTC_DCHECK_EQ(frame.height, _height);
+-  if (!_callback || !_compressionSession) {
++  if (!_callback || ![self hasCompressionSession]) {
+     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
+   }
+   BOOL isKeyframeRequired = NO;
+@@ -403,6 +457,10 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+     isKeyframeRequired = YES;
+   }
+ 
++  if (_disableEncoding) {
++    return WEBRTC_VIDEO_CODEC_ERROR;
++  }
++
+   CVPixelBufferRef pixelBuffer = nullptr;
+   if ([frame.buffer isKindOfClass:[RTCCVPixelBuffer class]]) {
+     // Native frame buffer
+@@ -482,13 +540,28 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+   // Update the bitrate if needed.
+   [self setBitrateBps:_bitrateAdjuster->GetAdjustedBitrateBps() frameRate:_encoderFrameRate];
+ 
+-  OSStatus status = VTCompressionSessionEncodeFrame(_compressionSession,
++  OSStatus status;
++  if (_vtCompressionSession) {
++    status = VTCompressionSessionEncodeFrame(_vtCompressionSession,
+                                                     pixelBuffer,
+                                                     presentationTimeStamp,
+                                                     kCMTimeInvalid,
+                                                     frameProperties,
+                                                     encodeParams.release(),
+                                                     nullptr);
++  } else {
++#if ENABLE_VCP_ENCODER
++  status = webrtc::VCPCompressionSessionEncodeFrame(_vcpCompressionSession,
++                                                    pixelBuffer,
++                                                    presentationTimeStamp,
++                                                    kCMTimeInvalid,
++                                                    frameProperties,
++                                                    encodeParams.release(),
++                                                    nullptr);
++#else
++    status = 1;
++#endif
++  }
+   if (frameProperties) {
+     CFRelease(frameProperties);
+   }
+@@ -553,7 +626,12 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+   // configured with, make sure the compression session is reset using the correct pixel format.
+   OSType framePixelFormat = [self pixelFormatOfFrame:frame];
+ 
+-  if (_compressionSession) {
++  if ([self hasCompressionSession]) {
++#if defined(WEBRTC_WEBKIT_BUILD)
++    if (!_pixelBufferPool) {
++      return NO;
++    }
++#endif
+     // The pool attribute `kCVPixelBufferPixelFormatTypeKey` can contain either an array of pixel
+     // formats or a single pixel format.
+     NSDictionary *poolAttributes =
+@@ -584,6 +662,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+ 
+ - (int)resetCompressionSessionWithPixelFormat:(OSType)framePixelFormat {
+   [self destroyCompressionSession];
++  _disableEncoding = false;
+ 
+   // Set source image buffer attributes. These attributes will be present on
+   // buffers retrieved from the encoder's pixel buffer pool.
+@@ -610,67 +689,167 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+     CFRelease(pixelFormat);
+     pixelFormat = nullptr;
+   }
+-  CFMutableDictionaryRef encoder_specs = nullptr;
+-#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
++  CFMutableDictionaryRef encoderSpecs = CFDictionaryCreateMutable(nullptr, 5, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
++#if !defined(WEBRTC_IOS)
++  auto useHardwareEncoder = webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse;
+   // Currently hw accl is supported above 360p on mac, below 360p
+   // the compression session will be created with hw accl disabled.
+-  encoder_specs = CFDictionaryCreateMutable(
+-      nullptr, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+-  CFDictionarySetValue(encoder_specs,
+-                       kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder,
+-                       kCFBooleanTrue);
++  CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, useHardwareEncoder);
++  CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequireHardwareAcceleratedVideoEncoder, useHardwareEncoder);
++#endif
++  CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
++
++#if ENABLE_VCP_ENCODER
++  if (_useVCP) {
++    int usageValue = 1;
++    auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
++    CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_Usage, usage);
++    CFRelease(usage);
++  }
++#endif
++#if ENABLE_VCP_VTB_ENCODER
++  if (_useVCP) {
++    CFDictionarySetValue(encoderSpecs, kVTVideoEncoderList_EncoderID, CFSTR("com.apple.videotoolbox.videoencoder.h264.rtvc"));
++  }
+ #endif
+-  OSStatus status =
+-      VTCompressionSessionCreate(nullptr,  // use default allocator
++
++  OSStatus status = noErr;
++
++#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
++#if ENABLE_VCP_ENCODER
++  CFBooleanRef hwaccl_enabled = nullptr;
++  if (status == noErr) {
++    status = VTSessionCopyProperty(_vtCompressionSession,
++                               kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder,
++                               nullptr,
++                               &hwaccl_enabled);
++  }
++  if (status == noErr && (CFBooleanGetValue(hwaccl_enabled))) {
++    RTC_LOG(LS_INFO) << "Compression session created with hw accl enabled";
++  } else {
++    [self destroyCompressionSession];
++
++    // Use VCP instead.
++    int usageValue = 1;
++    auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
++    CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_Usage, usage);
++    CFRelease(usage);
++
++    RTC_LOG(LS_INFO) << "Compression session created with VCP";
++    status =
++        webrtc::VCPCompressionSessionCreate(nullptr,  // use default allocator
++                               _width,
++                               _height,
++                               kVCPCodecType4CC_H264,
++                               encoderSpecs,
++                               sourceAttributes,
++                               nullptr,  // use default compressed data allocator
++                               compressionOutputCallback,
++                               nullptr,
++                               &_vcpCompressionSession);
++  }
++#else
++  if (status != noErr) {
++    if (encoderSpecs) {
++        CFRelease(encoderSpecs);
++        encoderSpecs = nullptr;
++    }
++    if (sourceAttributes) {
++      CFRelease(sourceAttributes);
++      sourceAttributes = nullptr;
++    }
++
++    if (!isStandardFrameSize(_width, _height)) {
++      _disableEncoding = true;
++      RTC_LOG(LS_ERROR) << "Using H264 software encoder with non standard size is not supported";
++      return WEBRTC_VIDEO_CODEC_ERROR;
++    }
++    [self destroyCompressionSession];
++
++    CFDictionaryRef ioSurfaceValue = CreateCFTypeDictionary(nullptr, nullptr, 0);
++    int64_t pixelFormatType = framePixelFormat;
++    CFNumberRef pixelFormat = CFNumberCreate(nullptr, kCFNumberLongType, &pixelFormatType);
++
++    const size_t attributesSize = 3;
++    CFTypeRef keys[attributesSize] = {
++      kCVPixelBufferOpenGLCompatibilityKey,
++      kCVPixelBufferIOSurfacePropertiesKey,
++      kCVPixelBufferPixelFormatTypeKey
++    };
++    CFTypeRef values[attributesSize] = {
++      kCFBooleanTrue,
++      ioSurfaceValue,
++      pixelFormat};
++    sourceAttributes = CreateCFTypeDictionary(keys, values, attributesSize);
++
++    if (ioSurfaceValue) {
++      CFRelease(ioSurfaceValue);
++      ioSurfaceValue = nullptr;
++    }
++    if (pixelFormat) {
++      CFRelease(pixelFormat);
++      pixelFormat = nullptr;
++    }
++
++    encoderSpecs = CFDictionaryCreateMutable(nullptr, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
++    CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder, kCFBooleanFalse);
++    int usageValue = 1;
++    CFNumberRef usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
++    CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_Usage, usage);
++    if (usage) {
++      CFRelease(usage);
++      usage = nullptr;
++    }
++    status = VTCompressionSessionCreate(nullptr,  // use default allocator
+                                  _width,
+                                  _height,
+                                  kCMVideoCodecType_H264,
+-                                 encoder_specs,  // use hardware accelerated encoder if available
++                                 encoderSpecs,  // use hardware accelerated encoder if available
+                                  sourceAttributes,
+                                  nullptr,  // use default compressed data allocator
+                                  compressionOutputCallback,
+                                  nullptr,
+-                                 &_compressionSession);
++                                 &_vtCompressionSession);
++  }
++#endif // ENABLE_VCP_ENCODER
++#endif // defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
+   if (sourceAttributes) {
+     CFRelease(sourceAttributes);
+     sourceAttributes = nullptr;
+   }
+-  if (encoder_specs) {
+-    CFRelease(encoder_specs);
+-    encoder_specs = nullptr;
++  if (encoderSpecs) {
++    CFRelease(encoderSpecs);
++    encoderSpecs = nullptr;
+   }
+   if (status != noErr) {
+     RTC_LOG(LS_ERROR) << "Failed to create compression session: " << status;
+     return WEBRTC_VIDEO_CODEC_ERROR;
+   }
+-#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
+-  CFBooleanRef hwaccl_enabled = nullptr;
+-  status = VTSessionCopyProperty(_compressionSession,
+-                                 kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder,
+-                                 nullptr,
+-                                 &hwaccl_enabled);
+-  if (status == noErr && (CFBooleanGetValue(hwaccl_enabled))) {
+-    RTC_LOG(LS_INFO) << "Compression session created with hw accl enabled";
+-  } else {
+-    RTC_LOG(LS_INFO) << "Compression session created with hw accl disabled";
+-  }
+-#endif
+   [self configureCompressionSession];
+ 
++#if !defined(WEBRTC_WEBKIT_BUILD)
+   // The pixel buffer pool is dependent on the compression session so if the session is reset, the
+   // pool should be reset as well.
+-  _pixelBufferPool = VTCompressionSessionGetPixelBufferPool(_compressionSession);
+-
++  if (_vtCompressionSession)
++    _pixelBufferPool = VTCompressionSessionGetPixelBufferPool(_vtCompressionSession);
++#if ENABLE_VCP_ENCODER
++  else
++    _pixelBufferPool = webrtc::VCPCompressionSessionGetPixelBufferPool(_vtCompressionSession);
++#endif
++#endif
+   return WEBRTC_VIDEO_CODEC_OK;
+ }
+ 
+ - (void)configureCompressionSession {
+-  RTC_DCHECK(_compressionSession);
+-  SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_RealTime, true);
+-  SetVTSessionProperty(_compressionSession,
+-                       kVTCompressionPropertyKey_ProfileLevel,
+-                       ExtractProfile(*_profile_level_id));
+-  SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_AllowFrameReordering, false);
++  RTC_DCHECK([self hasCompressionSession]);
++  SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_RealTime, true);
++  SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_ProfileLevel, ExtractProfile(*_profile_level_id));
++  SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_AllowFrameReordering, false);
++#if ENABLE_VCP_ENCODER
++  if (_useVCP) {
++    SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_Usage, 1);
++  }
++#endif
+   [self setEncoderBitrateBps:_targetBitrateBps frameRate:_encoderFrameRate];
+   // TODO(tkchin): Look at entropy mode and colorspace matrices.
+   // TODO(tkchin): Investigate to see if there's any way to make this work.
+@@ -681,18 +860,25 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+   //     1);
+ 
+   // Set a relatively large value for keyframe emission (7200 frames or 4 minutes).
+-  SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_MaxKeyFrameInterval, 7200);
++  SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_MaxKeyFrameInterval, 7200);
+   SetVTSessionProperty(
+-      _compressionSession, kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, 240);
++      _vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, 240);
+ }
+ 
+ - (void)destroyCompressionSession {
+-  if (_compressionSession) {
+-    VTCompressionSessionInvalidate(_compressionSession);
+-    CFRelease(_compressionSession);
+-    _compressionSession = nullptr;
+-    _pixelBufferPool = nullptr;
++  if (_vtCompressionSession) {
++    VTCompressionSessionInvalidate(_vtCompressionSession);
++    CFRelease(_vtCompressionSession);
++    _vtCompressionSession = nullptr;
++  }
++#if ENABLE_VCP_ENCODER
++  if (_vcpCompressionSession) {
++    webrtc::VCPCompressionSessionInvalidate(_vcpCompressionSession);
++    CFRelease(_vcpCompressionSession);
++    _vcpCompressionSession = nullptr;
+   }
++#endif
++  _pixelBufferPool = nullptr;
+ }
+ 
+ - (NSString *)implementationName {
+@@ -706,13 +892,13 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+ }
+ 
+ - (void)setEncoderBitrateBps:(uint32_t)bitrateBps frameRate:(uint32_t)frameRate {
+-  if (_compressionSession) {
+-    SetVTSessionProperty(_compressionSession, kVTCompressionPropertyKey_AverageBitRate, bitrateBps);
++  if ([self hasCompressionSession]) {
++    SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_AverageBitRate, bitrateBps);
+ 
+     // With zero |_maxAllowedFrameRate|, we fall back to automatic frame rate detection.
+     if (_maxAllowedFrameRate > 0) {
+       SetVTSessionProperty(
+-          _compressionSession, kVTCompressionPropertyKey_ExpectedFrameRate, frameRate);
++          _vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_ExpectedFrameRate, frameRate);
+     }
+ 
+     // TODO(tkchin): Add a helper method to set array value.
+@@ -725,8 +911,9 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+         CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &oneSecondValue);
+     const void *nums[2] = {bytesPerSecond, oneSecond};
+     CFArrayRef dataRateLimits = CFArrayCreate(nullptr, nums, 2, &kCFTypeArrayCallBacks);
+-    OSStatus status = VTSessionSetProperty(
+-        _compressionSession, kVTCompressionPropertyKey_DataRateLimits, dataRateLimits);
++
++    SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_DataRateLimits, dataRateLimits);
++
+     if (bytesPerSecond) {
+       CFRelease(bytesPerSecond);
+     }
+@@ -736,9 +923,6 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
+     if (dataRateLimits) {
+       CFRelease(dataRateLimits);
+     }
+-    if (status != noErr) {
+-      RTC_LOG(LS_ERROR) << "Failed to set data rate limit with code: " << status;
+-    }
+ 
+     _encoderBitrateBps = bitrateBps;
+     _encoderFrameRate = frameRate;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.cc
+index ac957f1b497..a8e206264c2 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.cc
+@@ -35,12 +35,19 @@ std::string CFStringToString(const CFStringRef cf_string) {
+ }
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session,
++void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessionRef vcpSession,
+                           CFStringRef key,
+                           int32_t value) {
++  RTC_DCHECK(vtSession || vcpSession);
+   CFNumberRef cfNum =
+       CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value);
+-  OSStatus status = VTSessionSetProperty(session, key, cfNum);
++  OSStatus status = noErr;
++  if (vtSession)
++    status = VTSessionSetProperty(vtSession, key, cfNum);
++#if ENABLE_VCP_ENCODER
++  else
++    status = webrtc::VCPCompressionSessionSetProperty(vcpSession, key, cfNum);
++#endif
+   CFRelease(cfNum);
+   if (status != noErr) {
+     std::string key_string = CFStringToString(key);
+@@ -50,13 +57,20 @@ void SetVTSessionProperty(VTSessionRef session,
+ }
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session,
++void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessionRef vcpSession,
+                           CFStringRef key,
+                           uint32_t value) {
++  RTC_DCHECK(vtSession || vcpSession);
+   int64_t value_64 = value;
+   CFNumberRef cfNum =
+       CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value_64);
+-  OSStatus status = VTSessionSetProperty(session, key, cfNum);
++  OSStatus status = noErr;
++  if (vtSession)
++    status = VTSessionSetProperty(vtSession, key, cfNum);
++#if ENABLE_VCP_ENCODER
++  else
++    status = webrtc::VCPCompressionSessionSetProperty(vcpSession, key, cfNum);
++#endif
+   CFRelease(cfNum);
+   if (status != noErr) {
+     std::string key_string = CFStringToString(key);
+@@ -66,9 +80,16 @@ void SetVTSessionProperty(VTSessionRef session,
+ }
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool value) {
++void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessionRef vcpSession, CFStringRef key, bool value) {
++  RTC_DCHECK(vtSession || vcpSession);
+   CFBooleanRef cf_bool = (value) ? kCFBooleanTrue : kCFBooleanFalse;
+-  OSStatus status = VTSessionSetProperty(session, key, cf_bool);
++  OSStatus status = noErr;
++  if (vtSession)
++    status = VTSessionSetProperty(vtSession, key, cf_bool);
++#if ENABLE_VCP_ENCODER
++  else
++    status = webrtc::VCPCompressionSessionSetProperty(vcpSession, key, cf_bool);
++#endif
+   if (status != noErr) {
+     std::string key_string = CFStringToString(key);
+     RTC_LOG(LS_ERROR) << "VTSessionSetProperty failed to set: " << key_string
+@@ -77,10 +98,17 @@ void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool value) {
+ }
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session,
++void SetVTSessionProperty(VTCompressionSessionRef vtSession, VCPCompressionSessionRef vcpSession,
+                           CFStringRef key,
+                           CFStringRef value) {
+-  OSStatus status = VTSessionSetProperty(session, key, value);
++  RTC_DCHECK(vtSession || vcpSession);
++  OSStatus status = noErr;
++  if (vtSession)
++    status = VTSessionSetProperty(vtSession, key, value);
++#if ENABLE_VCP_ENCODER
++  else
++    status = webrtc::VCPCompressionSessionSetProperty(vcpSession, key, value);
++#endif
+   if (status != noErr) {
+     std::string key_string = CFStringToString(key);
+     std::string val_string = CFStringToString(value);
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.h b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.h
+index 0683ea79e56..c7d79d32771 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/sdk/objc/components/video_codec/helpers.h
+@@ -16,6 +16,8 @@
+ #include <VideoToolbox/VideoToolbox.h>
+ #include <string>
+ 
++#include "sdk/WebKit/VideoProcessingSoftLink.h"
++
+ // Convenience function for creating a dictionary.
+ inline CFDictionaryRef CreateCFTypeDictionary(CFTypeRef* keys,
+                                               CFTypeRef* values,
+@@ -29,18 +31,18 @@ inline CFDictionaryRef CreateCFTypeDictionary(CFTypeRef* keys,
+ std::string CFStringToString(const CFStringRef cf_string);
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session, CFStringRef key, int32_t value);
++void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession,CFStringRef key, int32_t value);
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session,
++void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession,
+                           CFStringRef key,
+                           uint32_t value);
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session, CFStringRef key, bool value);
++void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession, CFStringRef key, bool value);
+ 
+ // Convenience function for setting a VT property.
+-void SetVTSessionProperty(VTSessionRef session,
++void SetVTSessionProperty(VTCompressionSessionRef session, VCPCompressionSessionRef vcpSession,
+                           CFStringRef key,
+                           CFStringRef value);
+ 

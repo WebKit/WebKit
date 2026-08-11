@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<video style="width: 300px; height: 300px;" controls=""></video>
+</body>
+<script>
+if (!window.internals)
+  failTest("requires window.internals");
+
+window.internals.setPageZoomFactor(2);
+let video = document.querySelector("video");
+let videoBoundingBox = window.internals.boundingBox(video);
+
+let shadowRoot = window.internals.shadowRoot(video);
+let mediaControlsContainer = shadowRoot.querySelector(".media-controls-container");
+let mediaControlsContainerBoundingBox = window.internals.boundingBox(mediaControlsContainer);
+
+shouldBeEqualToNumber("videoBoundingBox.width", 600);
+shouldBeEqualToNumber("videoBoundingBox.height", 600);
+
+shouldBeEqualToNumber("mediaControlsContainerBoundingBox.width", 600);
+shouldBeEqualToNumber("mediaControlsContainerBoundingBox.height", 600);
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

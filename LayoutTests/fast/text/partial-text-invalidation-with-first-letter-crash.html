@@ -1,0 +1,19 @@
+<style>
+#container::first-letter {
+  color: red;
+}
+#container { 
+  letter-spacing: 86px;
+  word-break: break-word;
+}
+</style><div id=container> PASS_if_no_crash_or_assert<span id=replace_this hidden=""></span></div><script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+let new_block = document.createElement("div");
+new_block.innerText = "some_long_long_long_long_text";
+container.insertBefore(new_block, container.firstChild);
+document.execCommand("insertUnorderedList",false,null);
+document.body.offsetHeight;
+replace_this.outerHTML = "text";
+</script>

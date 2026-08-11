@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x176
+  RenderBlock {HTML} at (0,0) size 800x176
+    RenderBody {BODY} at (8,16) size 784x152
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 750x35
+          text run at (0,0) width 750: "Test passes if there is a single blue rectangle on the left, a single orange rectangle directly to its right, and there is no red"
+          text run at (0,18) width 122: "visible on the page."
+      RenderFlexibleBox {DIV} at (0,52) size 300x100 [bgcolor=#FF0000]
+        RenderBlock {DIV} at (150,0) size 150x100 [bgcolor=#FFA500]
+        RenderBlock {DIV} at (0,0) size 150x100 [bgcolor=#0000FF]

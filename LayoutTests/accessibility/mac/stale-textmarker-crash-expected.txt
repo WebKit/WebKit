@@ -1,0 +1,9 @@
+This tests that using an old text marker that references a removed container node won't crash.
+
+PASS: field.isTextMarkerValid(marker) === true
+PASS: content1.isTextMarkerValid(marker) === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

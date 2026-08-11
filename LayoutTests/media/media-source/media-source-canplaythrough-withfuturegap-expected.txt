@@ -1,0 +1,42 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(init = makeAInit(100, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]))
+RUN(sourceBuffer.appendBuffer(init))
+EVENT(loadedmetadata)
+EVENT(update)
+RUN(sample = makeASample(0, 0, 10, 1, 1, SAMPLE_FLAG.SYNC, 1))
+RUN(sourceBuffer.appendBuffer(sample))
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+EVENT(update)
+EXPECTED (video.readyState == '4') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '10') OK
+RUN(sample = makeASample(11, 11, 10, 1, 1, SAMPLE_FLAG.SYNC, 1))
+RUN(sourceBuffer.appendBuffer(sample))
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '2') OK
+EXPECTED (sourceBuffer.buffered.end(1) == '21') OK
+RUN(video.currentTime = 9)
+EVENT(seeked)
+EXPECTED (video.readyState == '3') OK
+RUN(sample = makeASample(10, 10, 1, 1, 1, SAMPLE_FLAG.SYNC, 1))
+RUN(sourceBuffer.appendBuffer(sample))
+EVENT(canplaythrough)
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '21') OK
+EXPECTED (video.readyState == '4') OK
+RUN(video.currentTime = 11)
+EVENT(seeked)
+EXPECTED (video.readyState == '4') OK
+RUN(video.currentTime = 20)
+EVENT(seeked)
+EXPECTED (video.readyState == '3') OK
+RUN(video.currentTime = 21)
+EVENT(seeked)
+EXPECTED (video.readyState == '2') OK
+END OF TEST
+

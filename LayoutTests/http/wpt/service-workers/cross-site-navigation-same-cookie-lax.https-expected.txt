@@ -1,0 +1,1 @@
+PASS: got samesite-cookie-test=1

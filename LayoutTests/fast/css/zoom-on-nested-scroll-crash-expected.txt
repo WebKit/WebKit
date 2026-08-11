@@ -1,0 +1,3 @@
+Zooming in (ctrl++) should not crash. The test PASSES if it did not crash.
+
+

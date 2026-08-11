@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function loadCrossOriginImage() {
+    let iframe = document.createElement("iframe");
+    // Load a small HTML page on localhost that contains an image.
+    // The image resource will be a subresource of the cross-origin frame.
+    iframe.src = "http://localhost:8000/inspector/network/resources/echo.py?mimetype=text/html&content=" + encodeURIComponent('<img src="/inspector/network/resources/white.png">');
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.getResponseBody.CrossOriginIframe.Binary");
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.CrossOriginIframe.Binary.PNG",
+        description: "Should be able to retrieve base64-encoded response body for an image loaded in a cross-origin iframe.",
+        test(resolve, reject) {
+            WI.Frame.awaitEvent(WI.Frame.Event.ChildFrameWasAdded)
+                .then((event) => {
+                    let childFrame = event.data.childFrame;
+                    InspectorTest.log("Child frame added: " + childFrame.url);
+
+                    // Wait for the image subresource to be added.
+                    return WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+                })
+                .then((event) => {
+                    let resource = event.data.resource;
+                    InspectorTest.log("Resource added: " + resource.url);
+                    InspectorTest.expectThat(resource.url.includes("white.png"), "Resource should be the PNG image.");
+
+                    if (resource.finished)
+                        return resource.requestContent();
+
+                    return new Promise((resolveLoad) => {
+                        resource.singleFireEventListener(WI.Resource.Event.LoadingDidFinish, () => resolveLoad());
+                    }).then(() => resource.requestContent());
+                })
+                .then(({error, sourceCode, content, rawBase64Encoded}) => {
+                    InspectorTest.expectEqual(sourceCode.mimeType, "image/png", "MIME type should be image/png.");
+                    InspectorTest.expectThat(!error, "Should not have an error retrieving content.");
+                    InspectorTest.expectEqual(rawBase64Encoded, true, "Content should be base64 encoded.");
+                    InspectorTest.expectThat(content instanceof Blob, "Image content should be a Blob.");
+                })
+                .then(resolve, reject);
+
+            InspectorTest.evaluateInPage("loadCrossOriginImage()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Network.getResponseBody returns base64-encoded content for a binary resource in a cross-origin iframe.</p>
+</body>
+</html>

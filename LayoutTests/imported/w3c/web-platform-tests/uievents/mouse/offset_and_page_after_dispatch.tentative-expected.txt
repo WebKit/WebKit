@@ -1,0 +1,9 @@
+
+PASS Click on the target without moving the mouse cursor
+PASS mousedown offset point should equal mouseup offset point
+PASS mousedown page point should equal mouseup page point
+PASS mousedown: offset point should not equal its page point
+PASS mouseup: offset point should not equal its page point
+PASS mousedown: offset and page points should not be changed after dispatch
+PASS mouseup: offset and page points should not be changed after dispatch
+

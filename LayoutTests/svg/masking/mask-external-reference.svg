@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<!-- References to external mask resources are not supported. This mask should not be used -->
+    <mask id="mask" mask-type="luminance">
+        <rect width="200" height="200" fill="black"/>
+        <rect x="50" y="50" width="100" height="100" fill="white"/>
+    </mask>
+<rect width="200" height="200" fill="green" mask="url(resources/mask-resource.svg#mask)"/>
+</svg>

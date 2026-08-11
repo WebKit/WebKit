@@ -1,0 +1,16 @@
+uniform half4 colorRed, colorGreen;
+
+half4 main(float2 coords) {
+    int4 v = int4(1, 2, 3, 4);
+
+    // The .skrp should perform this bitwise-and in-place on v, because the full 4-slot width
+    // of the variable is being overwritten.
+    v &= 0x7FFFFFFF;
+
+    // The .skrp should perform this bitwise-and on the stack, and then copy it back into v.
+    // The simplifyImmediateUnmaskedOp optimization is skipped because only 2 of the 4 slots are kept for 'result'.
+    int2 result = (v &= 0x7FFFFFFF).xy;
+
+    // Do whatever to make sure the above isn't optimized away
+    return half4(result.x, result.y, result.x, result.y);
+}

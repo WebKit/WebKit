@@ -1,0 +1,214 @@
+/*
+ * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
+ * Copyright (C) 2004-2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "CSSMarkup.h"
+
+#include "CSSParserIdioms.h"
+#include "CSSPropertyParser.h"
+#include <wtf/HexNumber.h>
+#include <wtf/text/ParsingUtilities.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/unicode/CharacterNames.h>
+
+namespace WebCore {
+
+template <typename CharacterType>
+static inline bool NODELETE isCSSTokenizerIdentifier(std::span<const CharacterType> characters)
+{
+    // -?
+    skipWhile(characters, '-');
+
+    // {nmstart}
+    if (!skipExactly<isNameStartCodePoint>(characters))
+        return false;
+
+    // {nmchar}*
+    skipWhile<isNameCodePoint>(characters);
+
+    return characters.empty();
+}
+
+// "ident" from the CSS tokenizer, minus backslash-escape sequences
+static bool NODELETE isCSSTokenizerIdentifier(StringView string)
+{
+    if (string.isEmpty())
+        return false;
+
+    if (string.is8Bit())
+        return isCSSTokenizerIdentifier(string.span8());
+    return isCSSTokenizerIdentifier(string.span16());
+}
+
+// https://drafts.csswg.org/css-syntax-3/#non-printable-code-point
+static bool isNonPrintableCodePoint(char32_t c)
+{
+    return c <= 0x08 || c == 0x0b || (c >= 0x0e && c <= 0x1f) || c == deleteCharacter;
+}
+
+static void serializeCharacter(StringBuilder& appendTo, char32_t c)
+{
+    appendTo.append('\\', c);
+}
+
+static void serializeCharacterAsEscapeSequence(StringBuilder& appendTo, char32_t c)
+{
+    appendTo.append('\\', hex(c, Lowercase), ' ');
+}
+
+void serializeIdentifier(StringBuilder& appendTo, StringView identifier, ShouldSkipStartChecks skipStartChecks)
+{
+    bool isFirst = skipStartChecks == ShouldSkipStartChecks::No;
+    bool isSecond = false;
+    bool isFirstCharHyphen = false;
+    unsigned index = 0;
+    while (index < identifier.length()) {
+        char32_t c = identifier.codePointAt(index);
+
+        index += U16_LENGTH(c);
+
+        if (!c)
+            appendTo.append(replacementCharacter);
+        else if (c <= 0x1f || c == deleteCharacter || (0x30 <= c && c <= 0x39 && (isFirst || (isSecond && isFirstCharHyphen))))
+            serializeCharacterAsEscapeSequence(appendTo, c);
+        else if (c == hyphenMinus && isFirst && index == identifier.length())
+            serializeCharacter(appendTo, c);
+        else if (0x80 <= c || c == hyphenMinus || c == lowLine || (0x30 <= c && c <= 0x39) || (0x41 <= c && c <= 0x5a) || (0x61 <= c && c <= 0x7a))
+            appendTo.append(c);
+        else
+            serializeCharacter(appendTo, c);
+
+        if (isFirst) {
+            isFirst = false;
+            isSecond = true;
+            isFirstCharHyphen = (c == hyphenMinus);
+        } else if (isSecond)
+            isSecond = false;
+    }
+}
+
+void serializeString(StringBuilder& appendTo, StringView string)
+{
+    appendTo.append('"');
+
+    unsigned index = 0;
+    while (index < string.length()) {
+        char32_t c = string.codePointAt(index);
+        index += U16_LENGTH(c);
+
+        if (c <= 0x1f || c == deleteCharacter)
+            serializeCharacterAsEscapeSequence(appendTo, c);
+        else if (c == quotationMark || c == reverseSolidus)
+            serializeCharacter(appendTo, c);
+        else
+            appendTo.append(c);
+    }
+
+    appendTo.append('"');
+}
+
+// https://drafts.csswg.org/css-syntax-3/#consume-url-token
+void serializeURLTokenValue(StringBuilder& appendTo, StringView string)
+{
+    for (auto c : string.codePoints()) {
+        if (!c)
+            appendTo.append(replacementCharacter);
+        else if (isNonPrintableCodePoint(c) || isCSSNewline(c))
+            serializeCharacterAsEscapeSequence(appendTo, c);
+        else if (c == '"' || c == '\'' || c == '(' || c == ')' || c == reverseSolidus || isASCIIWhitespace(c))
+            serializeCharacter(appendTo, c);
+        else
+            appendTo.append(c);
+    }
+}
+
+String serializeString(StringView string)
+{
+    StringBuilder builder;
+    serializeString(builder, string);
+    return builder.toString();
+}
+
+static bool shouldQuoteFontFamily(StringView string)
+{
+    // Font family names that match CSS-wide keywords, 'default', or generic
+    // family keywords must be quoted to prevent confusion with the keywords
+    // of the same names.
+    // https://www.w3.org/TR/css-fonts-4/#family-name-syntax
+    //
+    // FIXME: We also quote when the first word of a multi-word name is a
+    // generic keyword, matching parser behavior. See webkit.org/b/314837.
+    //
+    // Note: system-ui is excluded from quoting because the parser always
+    // stores it as a CSS_FONT_FAMILY string (not a CSSValueID), even when
+    // used as a generic keyword. Since we cannot distinguish the generic
+    // keyword from a quoted family name at this point, and the generic
+    // keyword is the common case, we leave it unquoted.
+    auto stringID = cssValueKeywordID(string);
+    if (stringID == CSSValueSystemUi)
+        return false;
+    if (isGenericFontFamilyKeyword(stringID))
+        return true;
+
+    // Leading, trailing, or consecutive spaces are collapsed on re-parse,
+    // so names containing them must be quoted to round-trip.
+    if (string.startsWith(' ') || string.endsWith(' ') || string.contains("  "_s))
+        return true;
+
+    bool isFirstWord = true;
+    bool hasWord = false;
+    for (auto word : string.split(' ')) {
+        if (!isCSSTokenizerIdentifier(word))
+            return true;
+        auto valueID = cssValueKeywordID(word);
+        if (!isValidCustomIdentifier(valueID))
+            return true;
+        if (isFirstWord && isGenericFontFamilyKeyword(valueID))
+            return true;
+        hasWord = true;
+        isFirstWord = false;
+    }
+    return !hasWord;
+}
+
+void serializeFontFamily(StringBuilder& builder, StringView string)
+{
+    if (shouldQuoteFontFamily(string)) {
+        serializeString(builder, string);
+        return;
+    }
+
+    builder.append(string);
+}
+
+String serializeFontFamily(const String& string)
+{
+    if (shouldQuoteFontFamily(string))
+        return serializeString(string);
+    return string;
+}
+
+} // namespace WebCore

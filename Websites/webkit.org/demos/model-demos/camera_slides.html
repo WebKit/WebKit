@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SpeedShot Ultra</title>
+    <style>
+      .nomodel-dialog {
+        position: fixed;
+        width: 500px;
+        height: 200px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.2);
+        color: white;
+        backdrop-filter: blur(10px);
+        z-index: 99;
+        left: calc(50vw - 250px);
+        top: calc(50vh - 100px);
+      }
+      .nomodel-dialog p {
+        margin: 20px;
+      }
+
+      .nomodel-dialog h2 {
+        padding-top: 20px;
+        margin: 10px;
+      }
+
+      .huge {
+        font-size: 6rem;
+      }
+
+      :root {
+        --slate: #2727b7;
+
+        --green: #b5dcac;
+        --yellow: #d9d164;
+        --orange: #ca9966;
+
+        --red: #d68283;
+        --purple: #dbb4db;
+        --blue: #b0cde0;
+      }
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        width: 100vw;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+        color: white;
+      }
+
+      .cta {
+        font-size: 1.5rem;
+        margin-top: 5vh;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 40px;
+        padding: 15px;
+        display: inline-block;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .cta:hover {
+        color: white;
+      }
+
+      .cta::after {
+        content: " ›";
+      }
+
+      main {
+        font-size: 0;
+        background: linear-gradient(
+          to right,
+          rgba(255, 255, 255, 0.4),
+          rgba(255, 255, 255, 0.05) 4px,
+          rgba(0, 0, 0, 0.2)
+        );
+        margin: 0;
+        top: 70px;
+        width: 50vw;
+        height: calc(100vh - 70px);
+        left: 45vw;
+        padding-left: 5vw;
+        position: absolute;
+        backdrop-filter: blur(10px);
+        text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      h1,
+      h2 {
+        padding-top: 10vh;
+      }
+
+      section {
+        position: absolute;
+        top: 0;
+        font-size: 1.5rem;
+        transition-property: opacity;
+        transition-duration: 1s;
+        opacity: 0;
+        padding-right: 2vw;
+      }
+
+      #hero {
+        position: absolute;
+
+        top: 70px;
+        left: 0;
+        width: 70vw;
+        z-index: -1;
+        height: calc(100vh - 70px);
+      }
+
+      #model-wrapper {
+        left: 2vw;
+        top: 0;
+        width: 45vw;
+        position: absolute;
+      }
+
+      html.fixed-model #model-holder,
+      #model-viewer {
+        position: fixed;
+        height: 100vh;
+        width: 45vw;
+      }
+
+      #model-holder {
+        top: 10vh;
+        z-index: 999;
+        height: 80vh;
+      }
+
+      #nextButton,
+      #prevButton {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 80px;
+        height: 80px;
+        background: radial-gradient(
+            rgba(255, 255, 255, 0) 35px,
+            rgba(255, 255, 255, 0.2),
+            rgba(255, 255, 255, 0.9)
+          ),
+          linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.108),
+            rgba(72, 72, 72, 0.142)
+          );
+        box-shadow: inset 5px 5px 8px rgba(255, 255, 255, 0.01),
+          5px 5px 15px rgba(0, 0, 0, 0.1);
+        z-index: 99;
+        border-radius: 50px;
+        cursor: pointer;
+        transition-duration: 0.4s;
+        opacity: 1;
+        transform: scale(0.8);
+      }
+
+      div#prevButton {
+        right: 250px;
+      }
+
+      nav {
+        position: fixed;
+        top: 0px;
+        width: 100vw;
+        background-color: rgba(0, 0, 0, 0.2);
+        height: 70px;
+        z-index: 99;
+        text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        color: white;
+        font-size: 1.5rem;
+      }
+      .header-title {
+        font-size: 3rem;
+        font-weight: 500;
+        padding: 3px;
+
+        padding-left: 20px;
+        display: inline-block;
+      }
+
+      .fixed-back {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+      }
+
+      .preorder {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.792);
+        background-color: rgba(255, 255, 255, 0.3);
+        box-shadow: inset 0px 2px 2px rgba(255, 255, 255, 0.4);
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 1rem;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="dialog" class="nomodel-dialog">
+      <h2>Browser not supported</h2>
+      <p>
+        This is a demonstration of the HTML Model element. This browser doesn't
+        currently support &lt;model&gt;, so you won't be able to see the full
+        capabilities on offer. <br /><br /><button
+          onclick="dialog.hidden = true;"
+        >
+          Hide this message
+        </button>
+      </p>
+    </div>
+    <script>
+      if (window.HTMLModelElement != null) {
+        dialog.hidden = true;
+      }
+    </script>
+
+    <div class="fixed-back"></div>
+
+    <nav>
+      <span class="header-title"> SpeedShot Ultra</span>
+      <a href="/demos/model/camera_store.html" class="preorder"
+        ><div>Pre-order now</div></a
+      >
+    </nav>
+    <div id="nextButton">
+      <?xml version="1.0" encoding="utf-8"?>
+      <svg
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        x="0px"
+        y="0px"
+        viewBox="0 0 100 100"
+        style="enable-background: new 0 0 100 100"
+        xml:space="preserve"
+      >
+        <style type="text/css">
+          .st0 {
+            fill: none;
+            stroke: #ffffff80;
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-miterlimit: 10;
+          }
+        </style>
+        <g>
+          <polyline class="st0" points="42.35,74.75 72.56,50.34 42.35,25.94 	" />
+        </g>
+      </svg>
+    </div>
+    <div id="prevButton">
+      <svg
+        version="1.1"
+        id="Layer_1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        x="0px"
+        y="0px"
+        viewBox="0 0 100 100"
+        style="enable-background: new 0 0 100 100"
+        xml:space="preserve"
+      >
+        <style type="text/css">
+          .st0 {
+            fill: none;
+            stroke: #ffffff80;
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-miterlimit: 10;
+          }
+        </style>
+        <g>
+          <polyline class="st0" points="60.43,74.75 30.23,50.34 60.43,25.94 	" />
+        </g>
+      </svg>
+    </div>
+    <model id="hero">
+      <source src="./models/camera-animated.usdz" type="model/vnd.usdz+zip" />
+    </model>
+
+    <main>
+      <section class="intro">
+        <h2>
+          SpeedShot Ultra
+          <span class="sub">is here. <a href="" data-section="1"></a></span>
+        </h2>
+        <p>
+          Full-frame sensor. 58 Focus megapixels. Fully-configurable management
+          to shoot the way you want, whenever you need to. <br />
+          <br />Welcome to SpeedShot Ultra, and welcome back to control.
+        </p>
+        <a href="./camera_store.html" class="cta">Pre-order now</a>
+      </section>
+      <section class="focus">
+        <h2>
+          Focus. <br />
+          <span class="sub"
+            >On the important things. <a href="" data-section="2"></a
+          ></span>
+        </h2>
+        <p>
+          With great photography, everything hinges on taking the right action
+          at the right moment. And with Quick Tabs for Auto-focus and burst
+          mode, you can switch up your strategy the instant the moment changes.
+        </p>
+        <a href="#" class="cta">Learn more about Quick Tabs</a>
+      </section>
+      <section class="zoom">
+        <h2>Putting it all in perspective. <a href="" data-section="3"></a></h2>
+        <p>
+          With AF 25-200mm manual zoom on SpeedShot Ultra you can get the frame
+          you need, no matter how close you are. And when you need the precision
+          to hit exact marks, SpeedShot's got you too. Set as many tabs as you
+          want, catch detents through a zoom - or hit them coming one way and
+          breeze on through the range on your way back.<br /><br />
+          It's your shot, why not take what you need?
+        </p>
+        <a href="#" class="cta">Learn more about Quick Tabs</a>
+      </section>
+      <section class="flash">
+        <h2>
+          Light up the smile<br />
+          that lights up the room. <a href="" data-section="4"></a>
+        </h2>
+        <p>
+          Pop-ups are back in a big way, giving you coverage in a tight space,
+          or everything you need to dial in a slow synch in a mixed-light
+          environment. Shadows too harsh? Dial in your favorite diffusion, or
+          read off surface information with Structured fill Flashing to keep
+          your options open all the way from the studio to the lightroom and
+          beyond.
+        </p>
+        <a href="#" class="cta">Learn more about Structured Flash</a>
+      </section>
+      <section class="settings">
+        <h2>
+          Dial it in.<br />
+          Every. last. detail. <a href="" data-section="5"></a>
+        </h2>
+        <p>
+          You've never seen a settings wheel like this. And thanks to
+          programmable Smart Grip, you won't need to. By combining static and
+          dynamic kinesthetic cues with vibrotactile reinforcement, your fingers
+          will tell you everything you need to know about where you are, without
+          taking your eyes off of the main event.<br />
+          Sometimes it pays to reinvent the wheel.
+        </p>
+        <a href="#" class="cta">Learn more about Smart Grip</a>
+      </section>
+      <section class="monitor">
+        <h2>
+          Uncompromised<br />
+          positioning. <a href="" data-section="6"></a>
+        </h2>
+        <p>
+          Sometimes getting the perfect shot means putting your gear in some
+          pretty weird places. We get it. Smart Magnetic frame keeps the monitor
+          where you need, and a built-in display battery gives you up to
+          20 minutes of display life of its own.<br />
+          Need some help setting up? Share the monitor around, lay the marks and
+          get everyone on the same page. Easy.
+        </p>
+        <a href="#" class="cta">Learn more about Remote Monitor</a>
+      </section>
+      <section class="viewfinder">
+        <h2>Room with a viewfinder. <a href="" data-section="7"></a></h2>
+        <p>
+          Photography isn't a one-way street. Sometimes an idea that comes to
+          you from behind the lens can be challenging to bring out into the
+          world. But with SpeedShot Ultra's reverse-optics scene annotation, you
+          can paint features back into your real scene to make Quick Tabs a
+          reality for everyone on set. Sketch it out, lay it out, work it out.
+        </p>
+        <a href="#" class="cta">Learn more about optic scene painting</a>
+      </section>
+    </main>
+  </body>
+
+  <script type="module">
+    const fixedBack = document.querySelector(".fixed-back");
+    const urlParams = new URLSearchParams(window.location.search);
+    const markers = [document.querySelectorAll("a[data-section]")].map(
+      (e, index) => {
+        return { index, top: e.offsetTop };
+      }
+    );
+    const modelHolder = document.querySelector("#model-holder");
+    const stops = [
+      "39393A",
+      "B5DCAC",
+      "F5D48E",
+      "EFC099",
+      "DA9697",
+      "DBB4DB",
+      "B0CDE0",
+    ]
+      .map((e) => parseInt(e, 16))
+      .map((int) => {
+        return [int >> 16, (int >> 8) % 0x100, int % 0x100];
+      });
+
+    const times = [1, 1.8, 6, 9.75, 14, 17.7, 11];
+
+    const transforms = [
+      { rx: 0, ry: 0, rz: -90, tx: -0.1, ty: -0.05, tz: -0.32 },
+
+      { rx: 0, ry: -90, rz: 0, tx: 0.06, ty: -0.1, tz: -0.28 },
+      { rx: 0, ry: 90, rz: 0, tx: -0.1, ty: -0.1, tz: -0.28 },
+      { rx: 30, ry: -0, rz: -0, tx: 0.03, ty: -0.1, tz: -0.5 },
+
+      { rx: 90, ry: 0, rz: 90, tx: -0.07, ty: 0.035, tz: -0.37 },
+      { rx: 0, ry: -140, rz: 0, tx: -0.0, ty: -0.08, tz: -0.44 },
+      { rx: 0, ry: -180, rz: 90, tx: 0.1, ty: 0, tz: -0.15 },
+    ];
+    const allSections = document.querySelectorAll("section");
+
+    let original = -1;
+    let isMoving = false;
+
+    let pct = 0;
+    let rawPct = 0;
+
+    nextButton.addEventListener("click", (e) => doMove(1));
+    prevButton.addEventListener("click", (e) => doMove(-1));
+
+    const browserHasModel = window.HTMLModelElement != null;
+
+    async function start() {
+      await hero.ready;
+
+      doMove(1);
+      requestAnimationFrame(tick);
+      if (browserHasModel) {
+        hero.entityTransform = new DOMMatrix().translate(0, 0, -0.2);
+      } else {
+        hero.entityTransform = new DOMMatrix().translate(0, 0, -0.2);
+      }
+    }
+
+    async function nextFrame() {
+      return new Promise((resolve) => requestAnimationFrame(resolve));
+    }
+
+    async function doMove(delta) {
+      if (isMoving) return;
+      isMoving = true;
+      const target = original + delta;
+
+      if (target < 0 || target >= stops.length) return;
+
+      prevButton.style.opacity = target != 0 ? 1 : 0;
+      nextButton.style.opacity = target != stops.length - 1 ? 1 : 0;
+      let t = 0;
+      allSections.forEach((s, i) => {
+        s.style.opacity = 0;
+      });
+      const epsilon = 1 / 100;
+
+      allSections[target].style.opacity = 1;
+      while (t < 1) {
+        t += epsilon;
+        const smoothedT = smoothstep(0, 1, t);
+        pct =
+          (smoothedT * target + (1 - smoothedT) * original) /
+          (stops.length + 1);
+        await nextFrame();
+      }
+      isMoving = false;
+      original = target;
+    }
+
+    function smoothstep(low, high, f) {
+      f = (f - low) / (high - low);
+      f = Math.max(0, Math.min(1, f));
+      return f * f * (3 - 2 * f);
+    }
+
+    function tick() {
+      requestAnimationFrame(tick);
+
+      const scaledTime = pct * (stops.length + 1);
+      const low = Math.max(
+        0,
+        Math.min(stops.length - 1, Math.floor(scaledTime))
+      );
+      const factor = scaledTime - low;
+      const high = Math.min(stops.length - 1, Math.ceil(scaledTime));
+
+      const f = smoothstep(0, 1, factor);
+      const g = 1 - f;
+      const translation = [
+        g * transforms[low].tx + f * transforms[high].tx - 0.1,
+        g * transforms[low].ty + f * transforms[high].ty,
+        g * transforms[low].tz + f * transforms[high].tz,
+      ];
+      const rotation = [
+        g * transforms[low].rx + f * transforms[high].rx,
+        g * transforms[low].ry + f * transforms[high].ry,
+        g * transforms[low].rz + f * transforms[high].rz,
+      ];
+
+      const scale = 0.55;
+      const xfo = new DOMMatrix()
+        .scaleSelf(scale,scale,scale)
+        .translateSelf(...translation)
+        .rotateSelf(...rotation);
+      if (browserHasModel) {
+        try {
+          hero.entityTransform = xfo;
+        } catch (e) {
+          console.error("failed on the xfo,", e);
+        }
+        hero.currentTime = g * times[low] + f * times[high];
+      }
+      const colorString = `rgb( ${g * stops[low][0] + f * stops[high][0]}, ${
+        g * stops[low][1] + f * stops[high][1]
+      }, ${g * stops[low][2] + f * stops[high][2]})`;
+      hero.style.backgroundColor = colorString;
+      document.body.style.backgroundColor = colorString;
+      fixedBack.style.backgroundColor = colorString;
+    }
+
+    start();
+  </script>
+</html>

@@ -1,0 +1,453 @@
+[
+  {
+    "cmd": [
+      "scp",
+      "file.txt",
+      "root@variable_chromeos_device_hostname:file.txt"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "scp file.txt root@variable_chromeos_device_hostname:file.txt"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chromium.googlesource.com/chromiumos/chromite.git"
+    ],
+    "cwd": "[CLEANUP]/chromite_tmp_1",
+    "name": "clone chromite"
+  },
+  {
+    "cmd": [
+      "chmod",
+      "600",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa"
+    ],
+    "name": "chmod 600 testing_rsa"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-oConnectTimeout=15",
+      "-oBatchMode=yes",
+      "-t",
+      "-t",
+      "-oConnectTimeout=30",
+      "-oConnectionAttempts=4",
+      "-oNumberOfPasswordPrompts=0",
+      "-oProtocol=2",
+      "-oServerAliveInterval=15",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "root@variable_chromeos_device_hostname",
+      "cat",
+      "file.txt"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "read file.txt"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-oConnectTimeout=15",
+      "-oBatchMode=yes",
+      "-t",
+      "-t",
+      "-oConnectTimeout=30",
+      "-oConnectionAttempts=4",
+      "-oNumberOfPasswordPrompts=0",
+      "-oProtocol=2",
+      "-oServerAliveInterval=15",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "root@variable_chromeos_device_hostname",
+      "rm",
+      "-f",
+      "file.txt"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "rm file.txt"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "results_dir"
+    ],
+    "infra_step": true,
+    "name": "rmtree results_dir"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "results_dir"
+    ],
+    "infra_step": true,
+    "name": "makedirs results_dir"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-oConnectTimeout=15",
+      "-oBatchMode=yes",
+      "-t",
+      "-t",
+      "-oConnectTimeout=30",
+      "-oConnectionAttempts=4",
+      "-oNumberOfPasswordPrompts=0",
+      "-oProtocol=2",
+      "-oServerAliveInterval=15",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "root@variable_chromeos_device_hostname",
+      "rm",
+      "-rf",
+      "device_results_dir"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "rm device_results_dir"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-oConnectTimeout=15",
+      "-oBatchMode=yes",
+      "-t",
+      "-t",
+      "-oConnectTimeout=30",
+      "-oConnectionAttempts=4",
+      "-oNumberOfPasswordPrompts=0",
+      "-oProtocol=2",
+      "-oServerAliveInterval=15",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "root@variable_chromeos_device_hostname",
+      "mkdir",
+      "-p",
+      "device_results_dir"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "mkdir device_results_dir"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-oConnectTimeout=15",
+      "-oBatchMode=yes",
+      "-t",
+      "-t",
+      "-oConnectTimeout=30",
+      "-oConnectionAttempts=4",
+      "-oNumberOfPasswordPrompts=0",
+      "-oProtocol=2",
+      "-oServerAliveInterval=15",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "root@variable_chromeos_device_hostname",
+      "mkdir",
+      "-p",
+      "/home/chronos/user/resources"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "mkdir /home/chronos/user/resources"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-oConnectTimeout=15",
+      "-oBatchMode=yes",
+      "-t",
+      "-t",
+      "-oConnectTimeout=30",
+      "-oConnectionAttempts=4",
+      "-oNumberOfPasswordPrompts=0",
+      "-oProtocol=2",
+      "-oServerAliveInterval=15",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "root@variable_chromeos_device_hostname",
+      "rm",
+      "-rf",
+      "/home/chronos/user/bin"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "rm /home/chronos/user/bin"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-oConnectTimeout=15",
+      "-oBatchMode=yes",
+      "-t",
+      "-t",
+      "-oConnectTimeout=30",
+      "-oConnectionAttempts=4",
+      "-oNumberOfPasswordPrompts=0",
+      "-oProtocol=2",
+      "-oServerAliveInterval=15",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "root@variable_chromeos_device_hostname",
+      "mkdir",
+      "-p",
+      "/home/chronos/user/bin"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "mkdir /home/chronos/user/bin"
+  },
+  {
+    "cmd": [
+      "scp",
+      "-oConnectTimeout=30",
+      "-oConnectionAttempts=4",
+      "-oNumberOfPasswordPrompts=0",
+      "-oProtocol=2",
+      "-oServerAliveInterval=15",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "[START_DIR]/build/dm",
+      "root@variable_chromeos_device_hostname:/home/chronos/user/bin/dm"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "scp [START_DIR]/build/dm root@variable_chromeos_device_hostname:/home/chronos/user/bin/dm"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-oConnectTimeout=15",
+      "-oBatchMode=yes",
+      "-t",
+      "-t",
+      "-oConnectTimeout=30",
+      "-oConnectionAttempts=4",
+      "-oNumberOfPasswordPrompts=0",
+      "-oProtocol=2",
+      "-oServerAliveInterval=15",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "root@variable_chromeos_device_hostname",
+      "chmod",
+      "+x",
+      "/home/chronos/user/bin/dm"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "make dm executable"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-oConnectTimeout=15",
+      "-oBatchMode=yes",
+      "-t",
+      "-t",
+      "-oConnectTimeout=30",
+      "-oConnectionAttempts=4",
+      "-oNumberOfPasswordPrompts=0",
+      "-oProtocol=2",
+      "-oServerAliveInterval=15",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "root@variable_chromeos_device_hostname",
+      "sudo",
+      "mount",
+      "-i",
+      "-o",
+      "remount,exec",
+      "/home/chronos"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "remount /home/chronos/user/ as exec"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "-rlptD",
+      "--delete",
+      "-e",
+      "ssh -oConnectTimeout=30 -oConnectionAttempts=4 -oNumberOfPasswordPrompts=0 -oProtocol=2 -oServerAliveInterval=15 -oServerAliveCountMax=8 -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oIdentitiesOnly=yes -i [CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "[START_DIR]/skia/resources/",
+      "root@variable_chromeos_device_hostname:/home/chronos/user/resources"
+    ],
+    "infra_step": true,
+    "name": "rsync [START_DIR]/skia/resources root@variable_chromeos_device_hostname:/home/chronos/user/resources"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "-rlptD",
+      "--delete",
+      "-e",
+      "ssh -oConnectTimeout=30 -oConnectionAttempts=4 -oNumberOfPasswordPrompts=0 -oProtocol=2 -oServerAliveInterval=15 -oServerAliveCountMax=8 -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oIdentitiesOnly=yes -i [CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "[START_DIR]/skp/",
+      "root@variable_chromeos_device_hostname:/home/chronos/user/skps"
+    ],
+    "infra_step": true,
+    "name": "rsync [START_DIR]/skp root@variable_chromeos_device_hostname:/home/chronos/user/skps"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "-rlptD",
+      "--delete",
+      "-e",
+      "ssh -oConnectTimeout=30 -oConnectionAttempts=4 -oNumberOfPasswordPrompts=0 -oProtocol=2 -oServerAliveInterval=15 -oServerAliveCountMax=8 -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oIdentitiesOnly=yes -i [CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "[START_DIR]/skimage/",
+      "root@variable_chromeos_device_hostname:/home/chronos/user/images"
+    ],
+    "infra_step": true,
+    "name": "rsync [START_DIR]/skimage root@variable_chromeos_device_hostname:/home/chronos/user/images"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "-rlptD",
+      "--delete",
+      "-e",
+      "ssh -oConnectTimeout=30 -oConnectionAttempts=4 -oNumberOfPasswordPrompts=0 -oProtocol=2 -oServerAliveInterval=15 -oServerAliveCountMax=8 -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oIdentitiesOnly=yes -i [CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "[START_DIR]/svg/",
+      "root@variable_chromeos_device_hostname:/home/chronos/user/svgs"
+    ],
+    "infra_step": true,
+    "name": "rsync [START_DIR]/svg root@variable_chromeos_device_hostname:/home/chronos/user/svgs"
+  },
+  {
+    "cmd": [
+      "ssh",
+      "-oConnectTimeout=15",
+      "-oBatchMode=yes",
+      "-t",
+      "-t",
+      "-oConnectTimeout=30",
+      "-oConnectionAttempts=4",
+      "-oNumberOfPasswordPrompts=0",
+      "-oProtocol=2",
+      "-oServerAliveInterval=15",
+      "-oServerAliveCountMax=8",
+      "-oStrictHostKeyChecking=no",
+      "-oUserKnownHostsFile=/dev/null",
+      "-oIdentitiesOnly=yes",
+      "-i",
+      "[CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "root@variable_chromeos_device_hostname",
+      "/home/chronos/user/bin/dm",
+      "--some-flag"
+    ],
+    "env": {
+      "CHROME_HEADLESS": "1",
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "dm"
+  },
+  {
+    "cmd": [
+      "rsync",
+      "-rlptD",
+      "--delete",
+      "-e",
+      "ssh -oConnectTimeout=30 -oConnectionAttempts=4 -oNumberOfPasswordPrompts=0 -oProtocol=2 -oServerAliveInterval=15 -oServerAliveCountMax=8 -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oIdentitiesOnly=yes -i [CLEANUP]/chromite_tmp_1/chromite/ssh_keys/testing_rsa",
+      "root@variable_chromeos_device_hostname:/home/chronos/user/dm_out/",
+      "[START_DIR]/[SWARM_OUT_DIR]"
+    ],
+    "infra_step": true,
+    "name": "rsync root@variable_chromeos_device_hostname:/home/chronos/user/dm_out [START_DIR]/[SWARM_OUT_DIR]"
+  },
+  {
+    "name": "$result"
+  }
+]

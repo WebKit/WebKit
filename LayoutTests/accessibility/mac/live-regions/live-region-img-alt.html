@@ -1,0 +1,43 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<div id="polite-region" aria-live="polite">
+<img id="cake-image" src="../../resources/cake.png" alt="Undefined alt text" onload="runTest();"/>
+</div>
+
+<script>
+var output = "This tests that alt text is properly handled in live regions.\n\n";    
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n${formatAnnouncementUserInfo(userInfo)}\n`;
+        testFinished = true;
+    }
+}
+
+function runTest() {
+    if (accessibilityController) {
+        window.jsTestIsAsync = true;
+        accessibilityController.addNotificationListener(notificationCallback);
+        accessibilityController.accessibleElementById("cake-image");
+
+        document.getElementById("cake-image").alt = "A picture of cake."
+
+        setTimeout(async function() {
+            await waitFor(() => testFinished);
+            accessibilityController.removeNotificationListener();
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+}
+</script>
+</body>
+</html>

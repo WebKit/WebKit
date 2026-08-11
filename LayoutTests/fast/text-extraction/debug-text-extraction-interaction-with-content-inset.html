@@ -1,0 +1,54 @@
+<!-- webkit-test-runner [ textExtractionEnabled=true useFlexibleViewport=true obscuredInset.top=50 obscuredInset.left=50 ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #target {
+            width: 50px;
+            height: 50px;
+            background-color: purple;
+        }
+    </style>
+</head>
+<body>
+    <div id="target"></div>
+    <div id="description"></div>
+    <div id="console"></div>
+    <script>
+    jsTestIsAsync = true;
+
+    description("Verifies that text extraction click interactions with a location automatically account for content insets, so that (0, 0) hits the top-left corner of the web content.");
+
+    addEventListener("load", async () => {
+        await UIHelper.setObscuredInsets(50, 50, 50, 50);
+
+        target = document.getElementById("target");
+        clickCount = 0;
+
+        target.addEventListener("click", () => {
+            clickCount++;
+        });
+
+        if (!window.testRunner)
+            return;
+
+        clickError = await UIHelper.performTextExtractionInteraction("click", {
+            location: { x: 25, y: 25 }
+        });
+
+        shouldBeEqualToString("clickError", "");
+        shouldBe("clickCount", "1");
+
+        finishJSTest();
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+This tests that a line's text marker range includes its trailing line break.
+
+PASS: editable.textMarkerRangeLength(firstLineRange) === 12
+PASS: editable.stringForTextMarkerRange(firstLineRange) === 'First line.\n' === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First line.
+Second line.

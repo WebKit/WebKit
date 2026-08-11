@@ -1,0 +1,70 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let buffer = device.createBuffer({ size: 73494, usage: GPUBufferUsage.INDEX });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    buffer.destroy()
+    let shaderModule = device.createShaderModule({ code: `
+        struct S7 {
+            @location(9) f0: vec4<i32>
+        }
+        struct FragmentOutput0 {
+            @location(2) f0: vec4<f32>,
+            @location(4) f1: vec2<u32>,
+            @location(1) f2: vec4<u32>,
+            @location(3) f3: vec4<i32>,
+            @location(0) f4: vec4<f32>
+        }
+        @fragment fn fragment0() -> FragmentOutput0 {
+            return FragmentOutput0();
+        }
+        struct VertexOutput0 {
+            @location(0) f80: vec2<f32>,
+            @location(12) f81: vec4<i32>,
+            @location(3) f82: vec3<f32>,
+            @location(1) f83: vec4<f32>,
+            @location(15) f84: vec3<i32>,
+            @location(9) f85: vec4<i32>,
+            @builtin(position) f86: vec4<f32>
+        }
+        @vertex fn vertex0() -> VertexOutput0 {
+            return VertexOutput0();
+        }
+    `});
+    let pipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: {
+            module: shaderModule,
+            targets: [
+                { format: 'bgra8unorm-srgb' },
+                { format: 'rg16uint' },
+                { format: 'rgb10a2unorm', blend: { color: {}, alpha: {} } },
+                { format: 'r32sint'},
+                { format: 'r32uint', writeMask: GPUColorWrite.ALPHA | GPUColorWrite.RED }
+            ]
+        },
+        vertex: {
+            module: shaderModule,
+            buffers: []
+        }
+    });
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['bgra8unorm-srgb', 'rg16uint', 'rgb10a2unorm', 'r32sint', 'r32uint'] });
+    renderBundleEncoder.setIndexBuffer(buffer, 'uint16', 41950);
+    renderBundleEncoder.setVertexBuffer(2, undefined, 130);
+    renderBundleEncoder.setPipeline(pipeline);
+    renderBundleEncoder.drawIndexed(1833);
+    renderBundleEncoder.finish();
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

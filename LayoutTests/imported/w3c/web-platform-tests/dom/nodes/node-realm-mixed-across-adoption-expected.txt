@@ -1,0 +1,7 @@
+
+
+PASS Element parsed into an adopted container takes the node-document realm, not the container's creation realm
+PASS Text parsed into an adopted container takes the node-document realm, not the container's creation realm
+PASS Never-wrapped node keeps its creation realm across multiple adoptions
+PASS Custom element parsed into an adopted container uses the node-document realm and registry
+

@@ -1,0 +1,9 @@
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+
+PASS SameOrigin
+PASS SameSite
+NOTRUN CrossSite Could have been BFCached but actually wasn't
+NOTRUN beforeunload Could have been BFCached but actually wasn't
+NOTRUN unload Could have been BFCached but actually wasn't
+

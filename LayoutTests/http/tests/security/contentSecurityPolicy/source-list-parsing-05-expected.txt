@@ -1,0 +1,67 @@
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains a source with an invalid path: '/path?query=string'. The query component, including the '?', will be ignored.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains a source with an invalid path: '/path#anchor'. The fragment identifier, including the '#', will be ignored.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains a source with an invalid path: '/path?query=string'. The query component, including the '?', will be ignored.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains a source with an invalid path: '/path#anchor'. The fragment identifier, including the '#', will be ignored.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'pathwithasemicolon'.
+
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js because it does not appear in the script-src directive of the Content Security Policy.
+Paths should be ignored when evaluating sources. This test passes if FAIL does not appear in the output, and each of the tests generates a warning about the path component.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame2-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame3-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame4-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame5-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame6-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame7-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame8-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame9-->'
+--------
+PASS
+
+--------
+Frame: '<!--frame10-->'
+--------
+PASS

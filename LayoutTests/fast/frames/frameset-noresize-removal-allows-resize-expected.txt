@@ -1,0 +1,14 @@
+
+
+--------
+Frame: 'testFrame'
+--------
+
+
+--------
+Frame: 'results'
+--------
+This tests that frames in a frameset with a noresize attribute can be resized after programmatically removing the frameset's noresize attribute. HTMLFrameSetElement::attributeChanged must clear m_noresize when the attribute is removed.
+
+PASS document.getElementById("testFrame").getBoundingClientRect().width is 210
+

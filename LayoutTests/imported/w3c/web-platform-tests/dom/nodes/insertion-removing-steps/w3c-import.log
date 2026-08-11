@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-append-form-and-script-from-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-append-meta-referrer-and-script-from-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-and-button-from-div.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-and-custom-from-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-and-default-style-meta-from-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-and-div-from-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-and-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-and-source-from-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-and-style.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-in-script.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-with-mutation-observer-takeRecords.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-text-and-script-in-style.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-text-in-script.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-three-scripts-from-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-three-scripts.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/blur-event.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/insertion-removing-steps-iframe.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/insertion-removing-steps-script.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/later-script-removed-by-earlier-script.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/script-does-not-run-on-child-removal.window.js

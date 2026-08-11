@@ -1,0 +1,11 @@
+This text should have a green background
+This text should have a green background
+This text should have a green background
+This text should have a green background
+
+PASS Initially red
+PASS :nth-child() no longer matching after removal
+PASS :nth-last-child() no longer matching after removal
+PASS :nth-child() in non-subject no longer matching after removal
+PASS :nth-last-child() in non-subject no longer matching after removal
+

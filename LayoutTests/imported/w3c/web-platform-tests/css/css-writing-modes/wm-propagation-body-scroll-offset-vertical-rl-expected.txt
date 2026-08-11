@@ -1,0 +1,5 @@
+
+PASS Check initial scroll position of viewport.
+PASS Scroll to scrollLeft = -1000 should be possible.
+PASS Scroll to scrollLeft = 1000 should not be possible.
+

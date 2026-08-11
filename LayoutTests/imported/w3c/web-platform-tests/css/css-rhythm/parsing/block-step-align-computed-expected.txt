@@ -1,0 +1,6 @@
+
+PASS Property block-step-align value 'auto'
+PASS Property block-step-align value 'center'
+PASS Property block-step-align value 'start'
+PASS Property block-step-align value 'end'
+

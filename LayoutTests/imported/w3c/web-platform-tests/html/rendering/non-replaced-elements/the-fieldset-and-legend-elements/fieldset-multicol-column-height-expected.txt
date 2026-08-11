@@ -1,0 +1,14 @@
+
+1
+2
+3
+4
+5
+1
+2
+3
+4
+5
+
+PASS fieldset multicol with auto count, non-auto width
+

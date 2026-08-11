@@ -1,0 +1,5 @@
+
+PASS URL has no hash
+PASS changing the hash from an empty string to an empty string does not trigger a popstate event
+PASS changing the hash from an empty string to an empty string does not trigger a hashchange event
+

@@ -1,0 +1,3 @@
+
+PASS event.intercept() can intercept same-document history.back()
+

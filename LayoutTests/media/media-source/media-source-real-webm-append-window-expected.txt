@@ -1,0 +1,20 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('video/webm; codecs="vp8"'))
+EXPECTED (sourceBuffer.appendWindowStart == '0') OK
+EXPECTED (sourceBuffer.appendWindowEnd == 'Infinity') OK
+EVENT(updateend)
+RUN(sourceBuffer.appendWindowEnd = 7.5)
+RUN(sourceBuffer.appendWindowStart = 3.5)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.start(0) == '4') OK
+EXPECTED (sourceBuffer.buffered.end(0) < '7.5') OK
+RUN(sourceBuffer.appendWindowEnd = 7.5)
+RUN(sourceBuffer.appendWindowStart = 0)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) < '7.5') OK
+END OF TEST
+

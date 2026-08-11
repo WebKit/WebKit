@@ -1,0 +1,27 @@
+<html>
+<script>
+
+let didLoad = false;
+let didFinishTesting = false;
+
+function load() {
+    document.body.innerHTML = 'The test is declared pass if there is no crash observed.';
+    didLoad =true;
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        if(!didFinishTesting)
+            testRunner.waitUntilDone();
+    }
+}
+
+function didLoadFrame2() {
+    iframe1.srcdoc = "x";
+    didFinishTesting = true;
+    if (window.testRunner && didLoad)
+        testRunner.notifyDone();
+}
+
+</script>
+<body onload="load()">
+<iframe id="iframe1" src="data:text/html,foo">a</iframe>
+<iframe id="iframe2" onload="didLoadFrame2()" srcdoc="y">

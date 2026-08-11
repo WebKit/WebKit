@@ -1,0 +1,12 @@
+
+PASS every(): Promise resolves to true if all values pass the predicate
+PASS every(): Promise resolves to false if any value fails the predicate
+PASS every(): Abort the subscription to the source if the predicate does not pass
+PASS every(): Lifecycle checks when all values pass the predicate
+PASS every(): Lifecycle checks when any value fails the predicate
+PASS every(): Resolves with true if the observable completes without emitting a value
+PASS every(): Rejects with any error emitted from the source observable
+PASS every(): Rejects with any error thrown from the predicate
+PASS every(): Index is passed into the predicate
+PASS every(): Rejects with a DOMException if the source Observable is aborted
+

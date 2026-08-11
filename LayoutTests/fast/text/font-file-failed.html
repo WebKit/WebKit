@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("file://ThisIsNotARealFile.otf") format("opentype");
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test makes sure that @font-face blocks accessed over file: urls to a file which does not exist are visible in document.fonts.");
+shouldBe("document.fonts.size", "1");
+</script>
+</body>
+</html>

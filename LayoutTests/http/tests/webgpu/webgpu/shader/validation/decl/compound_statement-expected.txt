@@ -1,0 +1,14 @@
+
+PASS :decl_conflict:case="a"
+PASS :decl_conflict:case="bc"
+PASS :decl_conflict:case="d"
+PASS :decl_conflict:case="e"
+PASS :decl_use:case="a"
+PASS :decl_use:case="b"
+PASS :decl_use:case="self"
+PASS :decl_use:case="c_yes"
+PASS :decl_use:case="c_no"
+PASS :decl_use:case="d_yes"
+PASS :decl_use:case="d_no"
+PASS :decl_use:case="e"
+

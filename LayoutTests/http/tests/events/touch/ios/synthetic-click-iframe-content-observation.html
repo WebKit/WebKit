@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+    description("Test that synthetic click completes successfully when content change observation finishes in a iframe");
+    window.jsTestIsAsync = true;
+
+    var iframeClickReceived = false;
+    var iframeContentChanged = false;
+    var iframeLoaded = false;
+
+    window.onmessage = (event) => {
+        if (event.data === 'clicked')
+            iframeClickReceived = true;
+        else if (event.data === 'content changed')
+            iframeContentChanged = true;
+        else if (event.data === 'iframe loaded')
+            iframeLoaded = true;
+    };
+
+    addEventListener("DOMContentLoaded", () => {
+        (async () => {
+            if (window.internals)
+                internals.settings.setContentChangeObserverEnabled(true);
+
+            let iframe = document.getElementById("iframe");
+            await UIHelper.waitForCondition(() => iframeLoaded);
+
+            let target = iframe.contentDocument.getElementById("target");
+            let targetX = iframe.offsetLeft + target.offsetLeft + target.offsetWidth / 2;
+            let targetY = iframe.offsetTop + target.offsetTop + target.offsetHeight / 2;
+            await UIHelper.activateAt(targetX, targetY);
+
+            await UIHelper.waitForCondition(() => iframeContentChanged);
+            await UIHelper.waitForCondition(() => iframeClickReceived);
+
+            testPassed("Synthetic click completed successfully in iframe.");
+
+            finishJSTest();
+        })();
+    });
+</script>
+</head>
+<body>
+<iframe id="iframe" src="resources/iframe-with-content-change.html" style="border: none;"></iframe>
+<p id="description"></p>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

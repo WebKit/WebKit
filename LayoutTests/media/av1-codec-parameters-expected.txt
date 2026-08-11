@@ -1,0 +1,16 @@
+EXPECTED (internals.parseAV1CodecParameters("bad-parameter") == 'null') OK
+EXPECTED (internals.parseAV1CodecParameters("av01") == 'null') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.0.01M.08") === '{ av01, Main, Level_2_1, Main, 8, 0, 110, 1, 1, 1, videoFullRangeFlag:VideoRange }') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.0.04M.10.0.112.09.16.09.0") === '{ av01, Main, Level_3_0, Main, 10, 0, 112, 9, 16, 9, videoFullRangeFlag:VideoRange }') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.4.01M.08") == 'null') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.0.24M.08") == 'null') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.0.01V.08") == 'null') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.0.01M.13") == 'null') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.0.01M.10.2.112.09.16.09.0") == 'null') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.0.01M.10.0.101.09.16.09.0") == 'null') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.0.01M.10.0.112.03.16.09.0") == 'null') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.0.01M.10.0.112.09.03.09.0") == 'null') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.0.01M.10.0.112.09.16.03.0") == 'null') OK
+EXPECTED (internals.parseAV1CodecParameters("av01.0.01M.10.0.112.09.16.09.2") == 'null') OK
+END OF TEST
+

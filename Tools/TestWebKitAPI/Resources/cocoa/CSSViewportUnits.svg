@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <rect id="fixed" style="position: fixed; width: 100%; height: 100%;"></rect>
+
+    <rect id="vw" style="width: 10px; height: 100vw;"></rect>
+    <rect id="vh" style="width: 10px; height: 100vh;"></rect>
+    <rect id="vmin" style="width: 10px; height: 100vmin;"></rect>
+    <rect id="vmax" style="width: 10px; height: 100vmax;"></rect>
+    <rect id="vb" style="width: 10px; height: 100vb;"></rect>
+    <rect id="vi" style="width: 10px; height: 100vi;"></rect>
+
+    <rect id="svw" style="width: 10px; height: 100svw;"></rect>
+    <rect id="svh" style="width: 10px; height: 100svh;"></rect>
+    <rect id="svmin" style="width: 10px; height: 100svmin;"></rect>
+    <rect id="svmax" style="width: 10px; height: 100svmax;"></rect>
+    <rect id="svb" style="width: 10px; height: 100svb;"></rect>
+    <rect id="svi" style="width: 10px; height: 100svi;"></rect>
+
+    <rect id="lvw" style="width: 10px; height: 100lvw;"></rect>
+    <rect id="lvh" style="width: 10px; height: 100lvh;"></rect>
+    <rect id="lvmin" style="width: 10px; height: 100lvmin;"></rect>
+    <rect id="lvmax" style="width: 10px; height: 100lvmax;"></rect>
+    <rect id="lvb" style="width: 10px; height: 100lvb;"></rect>
+    <rect id="lvi" style="width: 10px; height: 100lvi;"></rect>
+
+    <rect id="dvw" style="width: 10px; height: 100dvw;"></rect>
+    <rect id="dvh" style="width: 10px; height: 100dvh;"></rect>
+    <rect id="dvmin" style="width: 10px; height: 100dvmin;"></rect>
+    <rect id="dvmax" style="width: 10px; height: 100dvmax;"></rect>
+    <rect id="dvb" style="width: 10px; height: 100dvb;"></rect>
+    <rect id="dvi" style="width: 10px; height: 100dvi;"></rect>
+</svg>

@@ -1,0 +1,45 @@
+
+PASS Observable constructor
+PASS subscribe() can be called with no arguments
+PASS Subscriber interface is not constructible
+PASS Subscribe with just a function as the next handler
+PASS Observable constructor calls initializer on subscribe
+PASS Observable error path called synchronously
+PASS Subscriber must have receiver
+PASS Subscriber next & error must recieve argument
+PASS Subscriber complete() will set active to false, and abort signal
+PASS Subscriber active is readonly
+PASS Subscriber signal is readonly
+PASS Observable should error if initializer throws
+PASS Subscription is inactive after complete()
+PASS Subscription is inactive after error()
+PASS Subscription is inactive when aborted signal is passed in
+PASS Subscriber#signal is not the same AbortSignal as the one passed into `subscribe()`
+PASS Subscription does not emit values after completion
+PASS Subscription does not emit values after error
+PASS Completing or nexting a subscriber after an error does nothing
+PASS Errors pushed to the subscriber that are not handled by the subscription are reported to the global
+PASS Errors thrown in the initializer that are not handled by the subscription are reported to the global
+PASS Subscription reports errors that are pushed after subscriber is closed by completion
+PASS Errors thrown by initializer function after subscriber is closed by completion are reported
+PASS Errors thrown by initializer function after subscriber is closed by error are reported
+PASS Errors pushed by initializer function after subscriber is closed by error are reported
+PASS Subscriber#complete() cannot re-entrantly invoke itself
+PASS Subscriber#error() cannot re-entrantly invoke itself
+PASS Unsubscription lifecycle
+PASS Teardowns are called in upstream->downstream order on consumer-initiated unsubscription
+PASS Teardowns are called in downstream->upstream order on consumer-initiated unsubscription with pre-aborted Signal
+PASS Producer-initiated unsubscription in a downstream Observable fires abort events before each teardown, in downstream->upstream order
+PASS Subscriber#error() value is stored as Subscriber's AbortSignal's reason
+PASS Aborting a subscription should stop emitting values
+PASS Calling subscribe should never throw an error synchronously, initializer throws error
+PASS Calling subscribe should never throw an error synchronously, subscriber pushes error
+PASS Teardown should be called when subscription is aborted
+PASS Teardowns should be called when subscription is closed by completion
+PASS Teardowns should be called when subscription is closed by subscriber pushing an error
+PASS Teardowns should be called when subscription is closed by subscriber throwing error
+PASS Teardowns should be called synchronously during addTeardown() if the subscription is inactive
+FAIL Multiple subscriptions share the same producer and teardown runs only after last subscription abort assert_equals: Producer should not be invoked again for second subscription expected 1 but got 2
+FAIL New subscription after complete creates new producer assert_array_equals: lengths differ, expected array ["producer start", "teardown"] length 2, got ["producer start", "producer start", "teardown"] length 3
+FAIL Teardown runs after last unsubscribe regardless of unsubscription order assert_equals: Producer should be invoked once expected 1 but got 3
+

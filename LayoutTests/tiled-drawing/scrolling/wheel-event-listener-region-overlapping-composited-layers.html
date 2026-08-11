@@ -1,0 +1,90 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+body {
+    margin: 0;
+}
+
+#container {
+    width: 500px;
+    height: 2000px;
+    background: #333;
+    color: white;
+}
+
+#back {
+    position: absolute;
+    left: 100px;
+    top: 100px;
+    width: 400px;
+    height: 400px;
+    background: #f8b;
+    will-change: transform;
+}
+
+#front {
+    position: absolute;
+    left: 200px;
+    top: 200px;
+    width: 200px;
+    height: 200px;
+    background: #8bf;
+    will-change: transform;
+}
+</style>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+var backWheelEventCount = 0;
+var frontWheelEventCount = 0;
+var frontCancelableWheelEventCount = 0;
+var windowScrollEventCount = 0;
+
+async function doTest()
+{
+    await UIHelper.renderingUpdate();
+    await UIHelper.mouseWheelScrollAt(250, 250);
+    await UIHelper.renderingUpdate();
+
+    shouldBe("frontWheelEventCount > 0", "true");
+    shouldBe("frontCancelableWheelEventCount", "0");
+    shouldBe("backWheelEventCount", "0");
+    shouldBe("window.scrollY > 0", "true");
+    shouldBe("windowScrollEventCount > 0", "true");
+
+    finishJSTest();
+}
+
+window.addEventListener("load", () => {
+    let back = document.getElementById("back");
+    let front = document.getElementById("front");
+
+    back.addEventListener("wheel", event => {
+        ++backWheelEventCount;
+        event.preventDefault();
+    }, { passive: false });
+
+    front.addEventListener("wheel", event => {
+        ++frontWheelEventCount;
+        if (event.cancelable)
+            ++frontCancelableWheelEventCount;
+    }, { passive: true });
+
+    window.addEventListener("scroll", () => ++windowScrollEventCount);
+
+    setTimeout(doTest, 0);
+}, false);
+</script>
+</head>
+<body>
+    <div id="container">
+        some long block
+        <div id="back">will block</div>
+        <div id="front">will not block</div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

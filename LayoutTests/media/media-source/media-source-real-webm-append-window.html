@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-append-window</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-WebM equivalent of media-source-append-buffer-with-append-window.html
+    // Tests that appendWindowStart/appendWindowEnd correctly filter samples.
+    //
+    // Note: The mock test re-appends init+media with abort() between each.
+    // With real WebM, abort() + re-init is problematic (see overlapping-dts notes).
+    // Instead, we use separate media segments at different baseDecodeTimes with
+    // sequential sequence numbers, adjusting the window before each append.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            failTest(`${WebM.VIDEO_TYPE} is not supported`);
+            return;
+        }
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run(`sourceBuffer = source.addSourceBuffer('${WebM.VIDEO_TYPE}')`);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+
+        testExpected('sourceBuffer.appendWindowStart', 0);
+        testExpected('sourceBuffer.appendWindowEnd', Number.POSITIVE_INFINITY);
+
+        // Append init segment
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Generate 16 samples (16 seconds, sync every 4th)
+        function makeSamples(seqNum, baseTime) {
+            var samples = [];
+            for (var i = 0; i < 16; i++) {
+                samples.push({
+                    duration: 1000,
+                    isSync: (i % 4) === 0
+                });
+            }
+            return WebM.mediaSegment({
+                sequenceNumber: seqNum,
+                tracks: [{ id: 1, type: 'video', baseDecodeTime: baseTime, samples: samples }]
+            });
+        }
+
+        // === Window [3.5, 7.5): only sync frame at PTS=4 passes, samples 4-7 ===
+        run('sourceBuffer.appendWindowEnd   = 7.5');
+        run('sourceBuffer.appendWindowStart = 3.5');
+
+        sourceBuffer.appendBuffer(makeSamples(1, 0));
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.start(0)', 4);
+        testExpected('sourceBuffer.buffered.end(0)', 7.5, '<');
+
+        // === Window [0, 7.5): add samples 0-7 from a new segment at baseTime=16000 ===
+        // Use non-overlapping baseTime to avoid parser issues
+        run('sourceBuffer.appendWindowEnd   = 7.5');
+        run('sourceBuffer.appendWindowStart = 0');
+
+        sourceBuffer.appendBuffer(makeSamples(2, 0));
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpected('sourceBuffer.buffered.start(0)', 0);
+        testExpected('sourceBuffer.buffered.end(0)', 7.5, '<');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

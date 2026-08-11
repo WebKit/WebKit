@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests the lifetime of a Blob URL with a fragment.");
+jsTestIsAsync = true;
+
+onload = () => {
+    let blobContents = `<body>FOO</body>`;
+    let blob = new Blob([blobContents], { type: "text/html" });
+    blobURL = URL.createObjectURL(blob);
+    blobURLWithFragment = blobURL + "#foo=1";
+    iframe = document.getElementById("testFrame");
+    iframe.onload = () => {
+        shouldBeEqualToString("iframe.contentDocument.body.innerText", "FOO");
+        shouldBeTrue("iframe.contentWindow.location.href == blobURLWithFragment");
+        shouldBeTrue("iframe.contentDocument.URL == blobURLWithFragment");
+        finishJSTest();
+    };
+    let anchor = document.createElement("a");
+    anchor.target = "testFrame";
+    anchor.href = blobURLWithFragment;
+    anchor.click();
+    URL.revokeObjectURL(blobURL);
+}
+</script>
+<iframe id="testFrame" name="testFrame" src="about:blank"></iframe>
+</body>
+</html>

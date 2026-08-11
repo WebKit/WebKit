@@ -1,0 +1,10 @@
+Tests starting a shared worker in a frame that is already detached.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Starting the shared worker in a detached iframe threw an exception: InvalidStateError: No browsing context
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

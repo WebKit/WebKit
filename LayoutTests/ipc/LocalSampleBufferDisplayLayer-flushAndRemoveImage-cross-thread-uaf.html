@@ -1,0 +1,43 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<div id=logDiv></div>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+function done(message)
+{
+    logDiv.innerHTML = message;
+    window.testRunner?.notifyDone();
+}
+
+async function doTest()
+{
+    if (!window.IPC)
+        return;
+
+    const { CoreIPC } = await import("./coreipc.js");
+    const NLAYERS = 16;
+    const NFLUSHES = 8;
+    for (let i = 1; i <= NLAYERS; i++) {
+        CoreIPC.GPU.RemoteSampleBufferDisplayLayerManager.CreateLayer(0, {
+            id: i,
+            hideRootLayer: false,
+            size: { width: 8, height: 8 },
+            shouldMaintainAspectRatio: false,
+            canShowWhileLocked: false
+        }, () => {
+            for (let q = 0; q < NFLUSHES; q++)
+                CoreIPC.GPU.RemoteSampleBufferDisplayLayer.FlushAndRemoveImage(i, {});
+            CoreIPC.GPU.RemoteSampleBufferDisplayLayerManager.ReleaseLayer(0, { id: i });
+        });
+    }
+    return new Promise(resolve => setTimeout(resolve, 500));
+}
+
+doTest().then(() => done("PASS"), () => done("FAIL"));
+</script>
+</body>
+</html>
+

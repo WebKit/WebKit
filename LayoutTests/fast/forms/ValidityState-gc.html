@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that ValidityState survives garbage collection.</p>
+<div id="test-cases">
+<button></button>
+<fieldset></fieldset>
+<input type="text">
+<input type="radio">
+<input type="checkbox">
+<object></object>
+<output></output>
+<select></select>
+<textarea></textarea>
+</div>
+<pre id="result"></pre>
+<script>
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 1000000; i++) // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String('');
+}
+
+const testCases = Array.from(document.getElementById('test-cases').children);
+for (const child of testCases)
+    child.validity.foo = 'PASS';
+
+gc();
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+setTimeout(function () {
+    gc();
+    setTimeout(function () {
+        gc();
+        for (const child of testCases)
+            result.textContent += `${child.outerHTML}: ${child.validity.foo || 'FAIL'}\n`;
+        document.getElementById('test-cases').style.display = 'none';
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}, 0);
+
+</script>
+</body>
+</html>

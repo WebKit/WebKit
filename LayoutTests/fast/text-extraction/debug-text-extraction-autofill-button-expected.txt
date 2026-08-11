@@ -1,0 +1,4 @@
+root
+	input placeholder=Username
+	input placeholder=Email
+	input placeholder=Password secure

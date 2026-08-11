@@ -1,0 +1,85 @@
+/*
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+{
+    "extends": "eslint:recommended",
+    "env": {
+        "es6": true,
+        "node": true,
+        "jest": true,
+    },
+    "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+    },
+    "rules": {
+        "array-bracket-spacing": [2, "never"],
+        "block-spacing": [2, "always"],
+        "comma-dangle": [2, "always-multiline"],
+        "comma-spacing": [2, {"before": false, "after": true}],
+        "comma-style": [2, "last"],
+        "consistent-return": 2,
+        "curly": 0,
+        "dot-notation": 0,
+        "eol-last": 2,
+        "eqeqeq": 2,
+        "indent": ["error", 4],
+        "func-call-spacing": [2, "never"],
+        "key-spacing": [2, {"beforeColon": false, "afterColon": true}],
+        "keyword-spacing": [2, {"before": true, "after": true}],
+        "new-cap": 0,
+        "new-parens": 0,
+        "no-console": 0,
+        "no-constant-condition": 0,
+        "no-control-regex": 0,
+        "no-extra-bind": 2,
+        "no-extra-parens": [2, "all", {"nestedBinaryExpressions": false}],
+        "no-extra-semi": 2,
+        "no-global-assign": 2,
+        "no-inner-declarations": 0,
+        "no-multi-spaces": 2,
+        "no-new": 0,
+        "no-proto": 0,
+        "no-redeclare": 0,
+        "no-return-assign": 2,
+        "no-return-await": 2,
+        "no-self-compare": 2,
+        "no-shadow": 0,
+        "no-trailing-spaces": 2,
+        "no-undef": 2,
+        "no-underscore-dangle": 0,
+        "no-unused-expressions": 2,
+        "no-unused-vars": [2, {"vars": "all", "args": "none"}],
+        "no-use-before-define": 0,
+        "object-curly-spacing": [2, "never"],
+        "quotes": [2, "double"],
+        "semi": 2,
+        "semi-spacing": [2, {"before": false, "after": true}],
+        "space-infix-ops": 2,
+        "spaced-comment": [2, "always"],
+        "strict": 0,
+        "valid-typeof": 2,
+    }
+}

@@ -1,0 +1,4 @@
+
+PASS XRFrame.session meets [SameObject] requirement - webgl
+PASS XRFrame.session meets [SameObject] requirement - webgl2
+

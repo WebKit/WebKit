@@ -1,0 +1,32 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true textInteractionEnabled=false ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html, body {
+    width: 100%;
+    margin: 0;
+}
+
+#target {
+    font-size: 24px;
+}
+</style>
+<script>
+    jsTestIsAsync = true;
+
+    async function runTest()
+    {
+        description("This test verifies that text selection fails when text interaction is disabled.");
+
+        await UIHelper.longPressElement(target);
+        shouldBeEqualToString("getSelection().toString()", "");
+        finishJSTest();
+    }
+</script>
+<body onload="runTest()">
+    <div id="target">Testing</div>
+</body>
+</html>

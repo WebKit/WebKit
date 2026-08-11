@@ -1,0 +1,19 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width"/>
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+}
+</script>
+</head>
+<body>
+    <div id="content"><a id='anchor' href='data:text/html,<body onload="history.back()"><div style="width: 500px">Text</div></body>'>Anchor to another page</a></div>
+    <div>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+    </div>
+</body>
+</html>

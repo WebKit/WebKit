@@ -1,0 +1,54 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "CSSParserContext.h"
+#include "CSSParserToken.h"
+#include "ContainerQuery.h"
+#include "GenericMediaQueryParser.h"
+
+namespace WebCore {
+namespace CQ {
+
+struct ContainerQueryParser : MQ::GenericMediaQueryParser<ContainerQueryParser>  {
+    // Parse the container query, which is a `<container-condition>#`, a comma-separated
+    // list of container conditions. The method expects the token range to contain the
+    // whole query, and returns `std::nullopt` if it can't consume the entire range.
+    static std::optional<ContainerQuery> consumeContainerQuery(CSSParserTokenRange&, const MediaQueryParserContext&);
+
+    // Parse `<container-condition>`, the condition for a @container rule to apply.
+    // If successful, returns the first condition that can be parsed in the token
+    // range, and the range is advanced to be past the parsed condition. Otherwise
+    // returns `std::nullopt`.
+    static std::optional<ContainerCondition> consumeContainerCondition(CSSParserTokenRange&, const MediaQueryParserContext&);
+
+    static bool NODELETE isValidFunctionId(CSSValueID);
+    static const MQ::FeatureSchema* schemaForFeatureName(const AtomString&, const MediaQueryParserContext&, State&);
+    static std::optional<MQ::Feature> consumeAndValidateFeature(CSSParserTokenRange&, const MediaQueryParserContext&, State&);
+    static Vector<const MQ::FeatureSchema*> featureSchemas();
+};
+
+}
+}

@@ -1,0 +1,5 @@
+
+PASS Non-modal dialog should let parent visibility inherit
+PASS Modal dialog should have visibility: visible by default in UA sheet
+PASS Modal dialog visibility should be overridable
+

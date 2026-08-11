@@ -1,0 +1,32 @@
+/* use div# because the preprocessor doen't like # start */
+
+div#inner {
+    appearance: inherit;
+    box-sizing: inherit;
+    height: 100%;
+    width: 100%;
+}
+
+div#bar {
+    background: linear-gradient(to bottom, #ddd, #eee 20%, #ccc 45%, #ccc 55%, #ddd);
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+div#value {
+    block-size: 100%;
+    box-sizing: border-box;
+}
+
+div#value.optimum {
+    background: linear-gradient(to bottom, #ad7, #cea 20%, #7a3 45%, #7a3 55%, #ad7);
+}
+
+div#value.suboptimum {
+    background: linear-gradient(to bottom, #fe7, #ffc 20%, #db3 45%, #db3 55%, #fe7);
+}
+
+div#value.even-less-good {
+    background: linear-gradient(to bottom, #f77, #fcc 20%, #d44 45%, #d44 55%, #f77);
+}

@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Verifies that the iframe receives click events with the expected coordinates.");
+jsTestIsAsync = true;
+
+let events = [];
+addEventListener("message", (event) => {
+    events.push(event.data);
+    if (events.length == 2) {
+        shouldBe("events[0]", "'anchor click'");
+        shouldBe("events[1]", "'click 113,33'");
+        finishJSTest();
+    }
+});
+
+addEventListener("click", () => { testFailed("This event listener should not be called.") });
+
+function onLoad() {
+    UIHelper.tapAt(123, 123);
+}
+</script>
+<iframe onload="onLoad()" width="300" height="300" src="http://localhost:8000/site-isolation/touch-events/resources/content-observation.html"></iframe>

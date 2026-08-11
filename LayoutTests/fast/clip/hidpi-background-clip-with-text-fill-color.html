@@ -1,0 +1,19 @@
+<style>
+.container {
+  transform: translateZ(0);
+  padding-left: 340.25px;
+  font-size: 100px;
+  width: 2000px;
+}
+
+#content {
+  background: green;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+</style>
+PASS if no vertical white line on the 2nd glyph below.
+<div class=container><div id=content>WW</div></div>
+<script>
+content.style.transform = "translateY(0)";
+</script>

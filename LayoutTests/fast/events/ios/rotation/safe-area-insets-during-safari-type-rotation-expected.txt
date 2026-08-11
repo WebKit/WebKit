@@ -1,0 +1,15 @@
+Before rotation
+layoutViewport: 0, 0 - 320 x 548
+visualViewport: 0, 0 - 320 x 548
+client rect of fixed object:0, 0 - 320 x 548
+
+In resize event handler:
+layoutViewport: 0, 0 - 568 x 320
+visualViewport: 0, 0 - 568 x 320
+client rect of fixed object:100, 50 - 443 x 195
+
+After rotation
+layoutViewport: 0, 0 - 568 x 320
+visualViewport: 0, 0 - 568 x 320
+client rect of fixed object:100, 50 - 443 x 195
+

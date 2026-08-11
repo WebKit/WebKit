@@ -1,0 +1,18 @@
+load("//bazel:skia_rules.bzl", "skia_cc_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_cc_library(
+    name = "skui",
+    hdrs = [
+        "InputState.h",
+        "Key.h",
+        "ModifierKey.h",
+    ],
+    visibility = ["//:__subpackages__"],
+    deps = ["//src/core:core_priv"],
+)

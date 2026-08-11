@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT LNA Public to loopback websocket with permission Test timed out
+NOTRUN LNA Public to loopback websocket without permission
+NOTRUN LNA local to loopback websocket with permission
+NOTRUN LNA local to loopback websocket without permission
+

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+class TestClass { }
+let testClassInstance = new TestClass;
+
+class TestCustomElement1 extends HTMLElement { }
+customElements.define("test-custom-element-1", TestCustomElement1);
+
+class TestCustomElement2 extends HTMLElement { }
+customElements.define("test-custom-element-2", TestCustomElement2);
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Heap.snapshot");
+
+    suite.addTestCase({
+        name: "TriggerSnapshot",
+        description: "Calling Heap.snapshot should create a heap snapshot.",
+        async test() {
+            let {timestamp, snapshotData} = await HeapAgent.snapshot();
+
+            let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
+            let {objectId, snapshot: serializedSnapshot} = await new Promise((resolve, reject) => workerProxy.createSnapshot(WI.mainTarget.identifier, snapshotData, resolve));
+
+            let snapshot = WI.HeapSnapshotProxy.deserialize(WI.mainTarget, objectId, serializedSnapshot);
+            InspectorTest.expectGreaterThan(snapshot.totalSize, 1024, "Snapshot size should be greater than 1kb.");
+            InspectorTest.expectGreaterThan(snapshot.totalObjectCount, 100, "Snapshot object count should be greater than 100.");
+
+            InspectorTest.newline();
+
+            InspectorTest.expectThat(snapshot.categories.get("Window"), "Snapshot should include a class category for 'Window'.");
+            let windows = await new Promise((resolve, reject) => snapshot.instancesWithClassName("Window", resolve));
+            InspectorTest.expectGreaterThan(windows.length, 0, "Snapshot should include at least one 'Window' instance.");
+
+            InspectorTest.newline();
+
+            let testClassCategory = snapshot.categories.get("TestClass");
+            InspectorTest.expectThat(testClassCategory, "Snapshot should include a class category for 'TestClass'.");
+            InspectorTest.expectEqual(testClassCategory?.objectCount, 1, "'TestClass' category should include one object.");
+            let testClasses = await new Promise((resolve, reject) => snapshot.instancesWithClassName("TestClass", resolve));
+            InspectorTest.expectEqual(testClasses.length, 1, "Snapshot should include one 'TestClass' instance.");
+            InspectorTest.expectTrue(testClasses[0]?.isObjectType, "'TestClass' instance should have object flag.");
+
+            InspectorTest.newline();
+
+            let testCustomElement1Category = snapshot.categories.get("TestCustomElement1");
+            InspectorTest.expectThat(testCustomElement1Category, "Snapshot should include a class category for 'TestCustomElement1'.");
+            InspectorTest.expectEqual(testCustomElement1Category?.elementCount, 1, "'TestCustomElement1' category should include one element.");
+            let testCustomElement1s = await new Promise((resolve, reject) => snapshot.instancesWithClassName("TestCustomElement1", resolve));
+            InspectorTest.expectEqual(testCustomElement1s.length, 1, "Snapshot should include one 'TestCustomElement1' instance.");
+            InspectorTest.expectTrue(testCustomElement1s[0]?.isElementType, "'TestCustomElement1' instance should have element flag.");
+
+            InspectorTest.newline();
+
+            let testCustomElement2Category = snapshot.categories.get("TestCustomElement2");
+            InspectorTest.expectThat(testCustomElement2Category, "Snapshot should include a class category for 'TestCustomElement2'.");
+            InspectorTest.expectEqual(testCustomElement2Category?.elementCount, 1, "'TestCustomElement2' category should include one element.");
+            let testCustomElement2s = await new Promise((resolve, reject) => snapshot.instancesWithClassName("TestCustomElement2", resolve));
+            InspectorTest.expectEqual(testCustomElement2s.length, 1, "Snapshot should include one 'TestCustomElement2' instance.");
+            InspectorTest.expectTrue(testCustomElement2s[0]?.isElementType, "'TestCustomElement2' instance should have element flag.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for the Heap.snapshot command.</p>
+<test-custom-element-1></test-custom-element-1>
+<test-custom-element-2></test-custom-element-2>
+</body>
+</html>

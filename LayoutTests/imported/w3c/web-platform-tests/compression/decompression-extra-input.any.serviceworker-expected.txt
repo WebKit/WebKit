@@ -1,0 +1,6 @@
+
+PASS decompressing deflate input with extra pad should still give the output
+PASS decompressing gzip input with extra pad should still give the output
+PASS decompressing deflate-raw input with extra pad should still give the output
+PASS decompressing brotli input with extra pad should still give the output
+

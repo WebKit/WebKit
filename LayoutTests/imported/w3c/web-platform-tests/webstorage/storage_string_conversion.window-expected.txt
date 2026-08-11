@@ -1,0 +1,4 @@
+
+PASS localStorage only stores strings
+PASS sessionStorage only stores strings
+

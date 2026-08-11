@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function encodeULEB128(value)
+{
+    let bytes = [];
+    do {
+        let byte = value & 0x7f;
+        value >>>= 7;
+        if (value)
+            byte |= 0x80;
+        bytes.push(byte);
+    } while (value);
+    return bytes;
+}
+
+function appendStringCustomSection(bytes, name, value)
+{
+    let encoder = new TextEncoder;
+    name = encoder.encode(name);
+    value = encoder.encode(value);
+    let payload = [...encodeULEB128(name.length), ...name, ...encodeULEB128(value.length), ...value];
+    return new Uint8Array([...bytes, 0, ...encodeULEB128(payload.length), ...payload]);
+}
+
+let wasmInstances = [];
+function instantiateWasmWithSourceMap(sourceMappingURL)
+{
+    let bytes = Uint8Array.from(atob("AGFzbQEAAAABBwFgAn9/AX8DAgEABQMBAAEHEAIDYWRkAAAGbWVtb3J5AgAKCQEHACAAIAFqCw=="), (character) => character.charCodeAt(0));
+    bytes = appendStringCustomSection(bytes, "sourceMappingURL", sourceMappingURL);
+    wasmInstances.push(new WebAssembly.Instance(new WebAssembly.Module(bytes)));
+}
+
+function test()
+{
+    async function createWasmScript(sourceMappingURL, shouldRequestContent = true)
+    {
+        let scriptPromise = Promise.withResolvers();
+        let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, (event) => {
+            let script = event.data.script;
+            if (script.sourceType !== WI.Script.SourceType.WebAssembly)
+                return;
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptAdded, listener);
+            scriptPromise.resolve(script);
+        });
+
+        await InspectorTest.evaluateInPage(`instantiateWasmWithSourceMap(${JSON.stringify(sourceMappingURL)})`);
+        let script = await scriptPromise.promise;
+
+        if (!script.sourceMaps.length)
+            await script.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+        if (shouldRequestContent)
+            await script.requestContent();
+        return script;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("WI.Script.WebAssemblySourceMap");
+
+    suite.addTestCase({
+        name: "WI.Script.WebAssemblySourceMap.External",
+        description: "A relative WebAssembly source map should resolve from the module URL and map module byte offsets to original source.",
+        async test() {
+            let script = await createWasmScript("resources/source-map.json");
+
+            InspectorTest.expectEqual(script.sourceMaps.length, 1, "The source map should be loaded.");
+
+            let sourceMapResource = script.sourceMaps[0].resources[0];
+            let originalLocations = [2, 3, 4].map((lineNumber) => sourceMapResource.createSourceCodeLocation(lineNumber, 0));
+            InspectorTest.expectTrue(originalLocations.every((location) => !location.lineNumber), "Original source locations should use the canonical WebAssembly line.");
+            InspectorTest.expectEqual(originalLocations.map((location) => location.columnNumber).join(", "), "49, 51, 53", "Original source locations should preserve module byte offsets as columns.");
+            InspectorTest.expectEqual(originalLocations.map((location) => script.bytecodeOffsetForPosition(location.lineNumber, location.columnNumber)).join(", "), "49, 51, 53", "Canonical WebAssembly positions should map back to module byte offsets.");
+
+            let firstParameter = script.createSourceCodeLocationForBytecodeOffset(49);
+            InspectorTest.expectTrue(firstParameter.hasMappedLocation(), "The first parameter instruction should have an original location.");
+            InspectorTest.expectEqual(firstParameter.displayLineNumber, 2, "Offset 49 should map to line 3.");
+            InspectorTest.expectEqual(firstParameter.displaySourceCode.displayName, "add.wat", "The original source should be add.wat.");
+
+            let add = script.createSourceCodeLocationForBytecodeOffset(53);
+            InspectorTest.expectTrue(add.hasMappedLocation(), "The add instruction should have an original location.");
+            InspectorTest.expectEqual(add.displayLineNumber, 4, "Offset 53 should map to line 5.");
+
+            let end = script.createSourceCodeLocationForBytecodeOffset(54);
+            InspectorTest.expectTrue(end.hasMappedLocation(), "An instruction after a mapping should use the preceding mapping.");
+            InspectorTest.expectEqual(end.displayLineNumber, 4, "Offset 54 should map to line 5.");
+
+            let moduleHeader = script.createSourceCodeLocation(0, 0);
+            InspectorTest.expectFalse(moduleHeader.hasMappedLocation(), "An uncovered module byte offset should remain in the generated source.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.Script.WebAssemblySourceMap.ContentLoad",
+        description: "A source-mapped location should remain canonical when WebAssembly script content is loaded.",
+        async test() {
+            let script = await createWasmScript("resources/source-map.json?empty-content", false);
+            let sourceMapResource = script.sourceMaps[0].resources[0];
+            let add = sourceMapResource.createSourceCodeLocation(4, 0);
+
+            InspectorTest.expectEqual(add.lineNumber, 0, "The location should use the canonical WebAssembly line.");
+            InspectorTest.expectEqual(add.columnNumber, 53, "The location should preserve the module byte offset.");
+            InspectorTest.expectEqual(add.displaySourceCode, sourceMapResource, "The location should retain its original source.");
+            InspectorTest.expectEqual(add.displayLineNumber, 4, "The location should retain its original line.");
+
+            await script.requestContent();
+            InspectorTest.expectEqual(add.lineNumber, 0, "Loading content should preserve the canonical WebAssembly line.");
+            InspectorTest.expectEqual(add.columnNumber, 53, "Loading content should preserve the module byte offset.");
+            InspectorTest.expectTrue(add.hasMappedLocation(), "The canonical location should map to original source.");
+            InspectorTest.expectEqual(add.displayLineNumber, 4, "Offset 53 should map to line 5.");
+            InspectorTest.expectEqual(add.displaySourceCode.displayName, "add.wat", "The original source should be add.wat.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.Script.WebAssemblySourceMap.Partial",
+        description: "A partial WebAssembly source map should leave uncovered module byte offsets in generated source.",
+        async test() {
+            let sourceMap = {
+                version: 3,
+                file: "add.wasm",
+                sources: ["add.wat"],
+                sourcesContent: ["(module\n  (func (export \"add\") (param i32 i32) (result i32)\n    local.get 0\n    local.get 1\n    i32.add))\n"],
+                names: [],
+                mappings: "qDAIA",
+            };
+            let sourceMappingURL = "data:application/json;base64," + btoa(JSON.stringify(sourceMap));
+            let script = await createWasmScript(sourceMappingURL);
+
+            let uncovered = script.createSourceCodeLocationForBytecodeOffset(49);
+            InspectorTest.expectFalse(uncovered.hasMappedLocation(), "An instruction before the first mapping should remain in the generated source.");
+
+            let covered = script.createSourceCodeLocationForBytecodeOffset(53);
+            InspectorTest.expectTrue(covered.hasMappedLocation(), "A covered instruction should have an original location.");
+            InspectorTest.expectEqual(covered.displayLineNumber, 4, "Offset 53 should map to line 5.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests mapping WebAssembly module byte offsets to original source with source maps.</p>
+</body>
+</html>

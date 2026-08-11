@@ -1,0 +1,3 @@
+
+PASS background fetch response should be available in ephemeral sessions
+

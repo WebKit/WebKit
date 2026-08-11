@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="refresh" content="0; url=http://A=a%B=b">
+<script src="../../resources/js-test.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpFrameLoadCallbacks();
+    if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+        testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+}
+jsTestIsAsync = true;
+</script>
+</head>
+<body>
+<script>
+description("Tests that we do not redirect to an invalid URL initiated by &lt;meta http-equiv=&quot;refresh&quot;&gt;. This test PASSED if you see an entry in the dumped frame load callbacks of the form: &quot;willPerformClientRedirectToURL: http://A=a%B=b&quot; followed by &quot;didCancelClientRedirectForFrame&quot;.");
+
+shouldBecomeEqual("testRunner.didCancelClientRedirect", "true", finishJSTest);
+</script>
+</body>
+</html>

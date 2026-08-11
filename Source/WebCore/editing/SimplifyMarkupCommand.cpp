@@ -1,0 +1,137 @@
+/*
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "SimplifyMarkupCommand.h"
+
+#include "ContainerNodeInlines.h"
+#include "HTMLElement.h"
+#include "HTMLNames.h"
+#include "NodeRenderStyle.h"
+#include "NodeTraversal.h"
+#include "RenderInline.h"
+#include "RenderObject.h"
+#include "StyleComputedStyle.h"
+#include "StyleDifference.h"
+
+namespace WebCore {
+
+SimplifyMarkupCommand::SimplifyMarkupCommand(Ref<Document>&& document, Node* firstNode, Node* nodeAfterLast)
+    : CompositeEditCommand(WTF::move(document))
+    , m_firstNode(firstNode)
+    , m_nodeAfterLast(nodeAfterLast)
+{
+}
+    
+void SimplifyMarkupCommand::doApply()
+{
+    RefPtr rootNode = m_firstNode->parentNode();
+    Vector<Ref<Node>> nodesToRemove;
+    
+    document().updateLayoutIgnorePendingStylesheets();
+
+    // Walk through the inserted nodes, to see if there are elements that could be removed
+    // without affecting the style. The goal is to produce leaner markup even when starting
+    // from a verbose fragment.
+    // We look at inline elements as well as non top level divs that don't have attributes. 
+    for (RefPtr node = m_firstNode.get(); node && node != m_nodeAfterLast; node = NodeTraversal::next(*node)) {
+        if (node->firstChild() || (node->isTextNode() && node->nextSibling()) || !node->parentNode())
+            continue;
+        
+        RefPtr startingNode = node->parentNode();
+        CheckedPtr startingStyle = startingNode->renderStyle();
+        if (!startingStyle)
+            continue;
+        RefPtr currentNode = startingNode;
+        RefPtr<Node> topNodeWithStartingStyle;
+        while (currentNode != rootNode) {
+            // FIXME: The simplification algorithm should be rewritten to eliminate redundant
+            // parents in cases where the children affect rendered content, as observed with
+            // <span><picture></picture></span>.
+            if (currentNode->hasTagName(HTMLNames::pictureTag))
+                break;
+
+            if (currentNode->parentNode() != rootNode && isRemovableBlock(currentNode.get()))
+                nodesToRemove.append(*currentNode);
+            
+            currentNode = currentNode->parentNode();
+            if (!currentNode)
+                break;
+
+            CheckedPtr renderInline = dynamicDowncast<RenderInline>(currentNode->renderer());
+            if (!renderInline || renderInline->mayAffectLayout())
+                continue;
+            
+            if (currentNode->firstChild() != currentNode->lastChild()) {
+                topNodeWithStartingStyle = nullptr;
+                break;
+            }
+            
+            if (Style::difference(*currentNode->renderStyle(), *startingStyle) == Style::DifferenceResult::Equal)
+                topNodeWithStartingStyle = currentNode;
+        }
+        if (topNodeWithStartingStyle) {
+            for (RefPtr node = startingNode; node && node != topNodeWithStartingStyle; node = node->parentNode())
+                nodesToRemove.append(*node);
+        }
+    }
+
+    // we perform all the DOM mutations at once.
+    for (size_t i = 0; i < nodesToRemove.size(); ++i) {
+        // FIXME: We can do better by directly moving children from nodesToRemove[i].
+        int numPrunedAncestors = pruneSubsequentAncestorsToRemove(nodesToRemove, i);
+        if (numPrunedAncestors < 0)
+            continue;
+        removeNodePreservingChildren(nodesToRemove[i], AssumeContentIsAlwaysEditable);
+        i += numPrunedAncestors;
+    }
+}
+
+int SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove(Vector<Ref<Node>>& nodesToRemove, size_t startNodeIndex)
+{
+    size_t pastLastNodeToRemove = startNodeIndex + 1;
+    for (; pastLastNodeToRemove < nodesToRemove.size(); ++pastLastNodeToRemove) {
+        if (nodesToRemove[pastLastNodeToRemove - 1]->parentNode() != nodesToRemove[pastLastNodeToRemove].ptr())
+            break;
+        if (nodesToRemove[pastLastNodeToRemove]->firstChild() != nodesToRemove[pastLastNodeToRemove]->lastChild())
+            break;
+    }
+
+    Ref highestAncestorToRemove = nodesToRemove[pastLastNodeToRemove - 1].get();
+    RefPtr parent = highestAncestorToRemove->parentNode();
+    if (!parent) // Parent has already been removed.
+        return -1;
+    
+    if (pastLastNodeToRemove == startNodeIndex + 1)
+        return 0;
+
+    removeNode(nodesToRemove[startNodeIndex], AssumeContentIsAlwaysEditable);
+    insertNodeBefore(nodesToRemove[startNodeIndex].copyRef(), highestAncestorToRemove, AssumeContentIsAlwaysEditable);
+    removeNode(highestAncestorToRemove, AssumeContentIsAlwaysEditable);
+
+    return pastLastNodeToRemove - startNodeIndex - 1;
+}
+
+} // namespace WebCore

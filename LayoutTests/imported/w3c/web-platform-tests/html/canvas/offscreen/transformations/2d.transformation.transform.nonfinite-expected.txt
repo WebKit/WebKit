@@ -1,0 +1,7 @@
+2d.transformation.transform.nonfinite
+
+transform() with Infinity/NaN is ignored
+
+
+PASS transform() with Infinity/NaN is ignored
+

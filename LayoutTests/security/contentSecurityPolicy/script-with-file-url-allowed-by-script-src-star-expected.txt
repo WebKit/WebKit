@@ -1,0 +1,2 @@
+ALERT: PASS
+Test passes if the JavaScript script is loaded.

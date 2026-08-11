@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncClipboardAPIEnabled=true DOMPasteAllowed=false ] -->
+<html>
+    <meta charset="utf8">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <style>
+            button {
+                width: 300px;
+                padding: 1em;
+            }
+
+            input {
+                display: block;
+                font-size: 40px;
+                width: 300px;
+            }
+        </style>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+        doneWritingText = false;
+        doneReadingText = false;
+
+        description("This test verifies that the clipboard is accessible while performing a paste from native UI. To manually run the test, click the 'Copy' button above, and then paste in the text field below using native UI (e.g. menu item or cmd+V on macOS, and the callout menu on iOS). The text 'The quick brown fox jumped over the lazy dog.' should be read via the clipboard API, without triggering an additional DOM paste menu.");
+
+        async function runTest() {
+            const copyButton = document.querySelector("button");
+            const field = document.querySelector("input")
+
+            copyButton.addEventListener("click", async () => {
+                await navigator.clipboard.writeText("The quick brown fox jumped over the lazy dog.");
+                doneWritingText = true;
+            });
+
+            field.addEventListener("paste", async event => {
+                event.preventDefault();
+                testPassed(`Read text: '${await navigator.clipboard.readText()}'`);
+                doneReadingText = true;
+            });
+
+            if (!window.testRunner)
+                return;
+
+            await UIHelper.activateElement(copyButton);
+            await new Promise(resolve => shouldBecomeEqual("doneWritingText", "true", resolve));
+            await UIHelper.activateElementAndWaitForInputSession(field);
+            await UIHelper.paste();
+            await new Promise(resolve => shouldBecomeEqual("doneReadingText", "true", resolve));
+
+            field.blur();
+            await UIHelper.waitForKeyboardToHide();
+            finishJSTest();
+        }
+
+        addEventListener("load", runTest);
+    </script>
+    <body>
+        <button>Copy</button>
+        <input>
+    </body>
+</html>

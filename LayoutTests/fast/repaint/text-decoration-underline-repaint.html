@@ -1,0 +1,40 @@
+<script src="../../resources/ui-helper.js"></script>
+<style>
+div {
+  font-size: 50px;
+  font-family: Ahem;
+}
+span {
+  text-decoration: underline;
+  text-decoration-thickness: 50px;
+}
+</style>
+<div>PASS if <span id=change_this>underline is all blue</span></div>
+<pre id=result></pre>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  change_this.style.color = "blue";
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    let repaintRects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    result.textContent = repaintRects;
+  }
+
+  if (window.testRunner)
+	testRunner.notifyDone();
+}
+window.addEventListener('load', runTest, false);
+</script>

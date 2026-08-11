@@ -1,0 +1,10 @@
+
+PASS Touch::webkitRadiusX
+PASS Touch::webkitRadiusY
+PASS Touch::webkitRotationAngle
+PASS Touch::webkitForce
+PASS TouchList::identifiedTouch
+FAIL TouchEvent::initTouchEvent assert_false: Should not be supported on the prototype expected false got true
+FAIL Document::createTouch assert_false: Should not be supported on the prototype expected false got true
+FAIL Document::createTouchList assert_false: Should not be supported on the prototype expected false got true
+

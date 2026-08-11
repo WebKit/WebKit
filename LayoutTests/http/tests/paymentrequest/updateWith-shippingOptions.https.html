@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `shippingOptions` to `PaymentRequestUpdateEvent.prototype.updateWith`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+const method = validPaymentMethod();
+
+const detailsInit = validPaymentDetails();
+detailsInit.shippingOptions = [
+    {
+        id: "shippingId1",
+        label: "Shipping Label 1",
+        amount: {currency: "USD", value: "5.00"},
+        selected: true,
+    }, {
+        id: "shippingId2",
+        label: "Shipping Label 2",
+        amount: {currency: "USD", value: "10.00"},
+        selected: false,
+    },
+];
+
+const detailsUpdate = {
+    shippingOptions: [
+        {
+            id: "shippingId3",
+            label: "Shipping Label 3",
+            amount: {currency: "USD", value: "15.00"},
+            selected: false,
+        }, {
+            id: "shippingId4",
+            label: "Shipping Label 4",
+            amount: {currency: "USD", value: "20.00"},
+            selected: true,
+        },
+    ],
+};
+
+user_activation_test(async (test) => {
+    let request = new PaymentRequest([method], detailsInit, {requestShipping: false});
+    request.addEventListener("merchantvalidation", (event) => {
+        event.complete({ });
+    });
+    request.addEventListener("shippingaddresschange", (event) => {
+        event.updateWith(detailsUpdate);
+        internals.mockPaymentCoordinator.acceptPayment();
+    });
+
+    let response = await request.show();
+
+    assert_equals(internals.mockPaymentCoordinator.total.label, detailsInit.total.label, "label of total should not change");
+    assert_equals(internals.mockPaymentCoordinator.total.amount, detailsInit.total.amount.value, "value of total should not change");
+    assert_equals(internals.mockPaymentCoordinator.lineItems.length, detailsInit.displayItems.length, "number of display items should not change");
+    for (let i = 0; i < detailsInit.displayItems.length; ++i) {
+        assert_equals(internals.mockPaymentCoordinator.lineItems[i].label, detailsInit.displayItems[i].label, `display item ${i} label should not change`);
+        assert_equals(internals.mockPaymentCoordinator.lineItems[i].amount, detailsInit.displayItems[i].amount.value, `display item ${i} value should not change`);
+    }
+    assert_equals(internals.mockPaymentCoordinator.shippingMethods.length, 0, "number of shipping options should not change");
+    assert_equals(request.shippingOption, null, "selected shipping option should not be exposed on the request");
+    assert_equals(response.shippingOption, null, "selected shipping option should not be exposed on the response");
+
+    await response.complete("success");
+}, "Calling `updateWith` with a new `shippingOptions` without `requestShipping` should not update any values.");
+
+user_activation_test(async (test) => {
+    let request = new PaymentRequest([method], detailsInit, {requestShipping: true});
+    request.addEventListener("merchantvalidation", (event) => {
+        event.complete({ });
+    });
+    request.addEventListener("shippingaddresschange", (event) => {
+        event.updateWith(detailsUpdate);
+        internals.mockPaymentCoordinator.acceptPayment();
+    });
+
+    let response = await request.show();
+
+    assert_equals(internals.mockPaymentCoordinator.total.label, detailsInit.total.label, "label of total should not change");
+    assert_equals(internals.mockPaymentCoordinator.total.amount, detailsInit.total.amount.value, "value of total should not change");
+    assert_equals(internals.mockPaymentCoordinator.lineItems.length, detailsInit.displayItems.length, "number of display items should not change");
+    for (let i = 0; i < detailsInit.displayItems.length; ++i) {
+        assert_equals(internals.mockPaymentCoordinator.lineItems[i].label, detailsInit.displayItems[i].label, `display item ${i} label should not change`);
+        assert_equals(internals.mockPaymentCoordinator.lineItems[i].amount, detailsInit.displayItems[i].amount.value, `display item ${i} value should not change`);
+    }
+    assert_equals(internals.mockPaymentCoordinator.shippingMethods.length, detailsUpdate.shippingOptions.length, "number of shipping options should change");
+    for (let i = 0; i < detailsUpdate.shippingOptions.length; ++i) {
+        assert_equals(internals.mockPaymentCoordinator.shippingMethods[i].identifier, detailsUpdate.shippingOptions[i].id, `shipping option ${i} id should change`);
+        assert_equals(internals.mockPaymentCoordinator.shippingMethods[i].label, detailsUpdate.shippingOptions[i].label, `shipping option ${i} label should change`);
+        assert_equals(internals.mockPaymentCoordinator.shippingMethods[i].amount, detailsUpdate.shippingOptions[i].amount.value, `shipping option ${i} amount should change`);
+        assert_equals(internals.mockPaymentCoordinator.shippingMethods[i].selected, detailsUpdate.shippingOptions[i].selected, `shipping option ${i} selected should change`);
+    }
+    assert_equals(request.shippingOption, detailsUpdate.shippingOptions.findLast((shippingOption) => shippingOption.selected).id, "selected shipping option should change");
+    assert_equals(response.shippingOption, request.shippingOption, "selected shipping option should also be exposed on the response");
+
+    await response.complete("success");
+}, "Calling `updateWith` with a new `shippingOptions` should not update any other values.");
+
+done();
+</script>
+

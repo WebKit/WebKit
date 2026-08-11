@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.className = 'test-iframe';
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+
+let resolve;
+function waitForRemove()
+{
+    return new Promise(r => resolve = r);
+}
+
+let frame;
+function removeFrame()
+{
+    frame.remove();
+    resolve();
+}
+
+promise_test(async (test) => {
+    for (let i = 0; i < 10; i++) {
+        frame = await with_iframe("resources/getUserMedia-rvfc-remove-iframe.html");
+        await waitForRemove();
+    }
+}, "rvfc triggering frame removal");
+        </script>
+    </body>
+</html>

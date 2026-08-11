@@ -1,0 +1,14 @@
+
+FAIL Content Security Policy: Expects allowed for worklet-layout-import-data to cross-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'get_worklet(type).addModule')"
+PASS Content Security Policy: Expects allowed for worklet-layout-import-data to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-layout-import-data to cross-https origin and no-redirect redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'get_worklet(type).addModule')"
+PASS Content Security Policy: Expects allowed for worklet-layout-import-data to cross-https origin and no-redirect redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-layout-import-data to cross-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'get_worklet(type).addModule')"
+PASS Content Security Policy: Expects allowed for worklet-layout-import-data to cross-https origin and swap-origin redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-layout-import-data to same-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'get_worklet(type).addModule')"
+PASS Content Security Policy: Expects allowed for worklet-layout-import-data to same-https origin and keep-origin redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-layout-import-data to same-https origin and no-redirect redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'get_worklet(type).addModule')"
+PASS Content Security Policy: Expects allowed for worklet-layout-import-data to same-https origin and no-redirect redirection from https context.: securitypolicyviolation
+FAIL Content Security Policy: Expects allowed for worklet-layout-import-data to same-https origin and swap-origin redirection from https context. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'get_worklet(type).addModule')"
+PASS Content Security Policy: Expects allowed for worklet-layout-import-data to same-https origin and swap-origin redirection from https context.: securitypolicyviolation
+

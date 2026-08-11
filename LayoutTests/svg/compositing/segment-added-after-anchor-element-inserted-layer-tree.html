@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 200px; height: 200px; }
+    .anchor { transform: translateZ(0); }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    window.addEventListener('load', () => {
+        requestAnimationFrame(() => {
+            document.body.offsetTop;
+            // Insert a composited anchor before middle. middle now sits between two anchors, so the container backing grows one overlay "(svg segment N)" layer that paints it. middle gets no layer.
+            const svg = document.querySelector('svg');
+            const middle = document.getElementById('middle');
+            const newAnchor = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            newAnchor.setAttribute('id', 'first-anchor');
+            newAnchor.setAttribute('class', 'anchor');
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', '10');
+            rect.setAttribute('y', '10');
+            rect.setAttribute('width', '120');
+            rect.setAttribute('height', '120');
+            rect.setAttribute('fill', 'red');
+            newAnchor.appendChild(rect);
+            svg.insertBefore(newAnchor, middle);
+            requestAnimationFrame(() => {
+                if (window.internals)
+                    document.getElementById('layers').textContent = internals.layerTreeAsText(document);
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        });
+    });
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <rect id="middle" x="40" y="40" width="120" height="120" fill="green"/>
+    <g id="last-anchor" class="anchor"><rect x="70" y="70" width="120" height="120" fill="blue"/></g>
+</svg>
+<pre id="layers"></pre>
+</body>
+</html>

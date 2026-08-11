@@ -1,0 +1,120 @@
+<html>
+    <script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  const veryBrightVideo = `data:video/mp4;base64,AAAAHGZ0eXBpc29tAAACAGlzb21pc28ybXA0MQAAAAhmcmVlAAAAvG1kYXQAAAAfTgEFGkdWStxcTEM/lO/FETzRQ6gD7gAA7gIAA3EYgAAAAEgoAa8iNjAkszOL+e58c//cEe//0TT//scp1n/381P/RWP/zOW4QtxorfVogeh8nQDbQAAAAwAQMCcWUTAAAAMAAAMAAAMA84AAAAAVAgHQAyu+KT35E7gAADFgAAADABLQAAAAEgIB4AiS76MTkNbgAAF3AAAPSAAAABICAeAEn8+hBOTXYAADUgAAHRAAAAPibW9vdgAAAGxtdmhkAAAAAAAAAAAAAAAAAAAD6AAAAKcAAQAAAQAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAw10cmFrAAAAXHRraGQAAAADAAAAAAAAAAAAAAABAAAAAAAAAKcAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAABAAAAAQAAAAAAAkZWR0cwAAABxlbHN0AAAAAAAAAAEAAACnAAAAAAABAAAAAAKFbWRpYQAAACBtZGhkAAAAAAAAAAAAAAAAAABdwAAAD6BVxAAAAAAAMWhkbHIAAAAAAAAAAHZpZGUAAAAAAAAAAAAAAABDb3JlIE1lZGlhIFZpZGVvAAAAAixtaW5mAAAAFHZtaGQAAAABAAAAAAAAAAAAAAAkZGluZgAAABxkcmVmAAAAAAAAAAEAAAAMdXJsIAAAAAEAAAHsc3RibAAAARxzdHNkAAAAAAAAAAEAAAEMaHZjMQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAQABAASAAAAEgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABj//wAAAHVodmNDAQIgAAAAsAAAAAAAPPAA/P36+gAACwOgAAEAGEABDAH//wIgAAADALAAAAMAAAMAPBXAkKEAAQAmQgEBAiAAAAMAsAAAAwAAAwA8oBQgQcCTDLYgV7kWVYC1CRAJAICiAAEACUQBwChkuNBTJAAAAApmaWVsAQAAAAATY29scm5jbHgACQAQAAkAAAAAEHBhc3AAAAABAAAAAQAAABRidHJ0AAAAAAAALPwAACz8AAAAKHN0dHMAAAAAAAAAAwAAAAIAAAPoAAAAAQAAAAEAAAABAAAD6AAAABRzdHNzAAAAAAAAAAEAAAABAAAAEHNkdHAAAAAAIBAQGAAAAChjdHRzAAAAAAAAAAMAAAABAAAAAAAAAAEAAAfQAAAAAgAAAAAAAAAcc3RzYwAAAAAAAAABAAAAAQAAAAQAAAABAAAAJHN0c3oAAAAAAAAAAAAAAAQAAABvAAAAGQAAABYAAAAWAAAAFHN0Y28AAAAAAAAAAQAAACwAAABhdWR0YQAAAFltZXRhAAAAAAAAACFoZGxyAAAAAAAAAABtZGlyYXBwbAAAAAAAAAAAAAAAACxpbHN0AAAAJKl0b28AAAAcZGF0YQAAAAEAAAAATGF2ZjYwLjMuMTAw`;
+  const format = 'bgra8unorm';
+  const widthAndHeight = 384;
+
+  function videoWithData() {
+    let video = document.createElement('video');
+    video.src = veryBrightVideo;
+    video.muted = true;
+    return new Promise(resolve => {
+      video.onloadeddata = () => {
+        video.play();
+        resolve(video);
+      };
+    });
+  }
+
+  function createCanvasAndContext(device) {
+    let canvas = document.createElement('canvas');
+    canvas.width = widthAndHeight;
+    canvas.height = widthAndHeight;
+    document.body.append(canvas);
+    let context = canvas.getContext('webgpu');
+    context.configure({device, format, usage: GPUTextureUsage.RENDER_ATTACHMENT});
+    return context;
+  }
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    let context = createCanvasAndContext(device);
+    let context2 = createCanvasAndContext(device);
+    let vertexesF32 = new Float32Array([1, -1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1]);
+    let vertexBuffer = device.createBuffer({size: vertexesF32.byteLength, usage: GPUBufferUsage.VERTEX, mappedAtCreation: true});
+    new Float32Array(vertexBuffer.getMappedRange()).set(vertexesF32);
+    vertexBuffer.unmap();
+    let v = await videoWithData();
+    let code = `
+@vertex
+fn v(@location(0) position : vec4f) -> @builtin(position) vec4f {
+  return position;
+}
+
+@group(0) @binding(0) var s: sampler;
+@group(0) @binding(1) var et: texture_external;
+
+struct S {
+  @location(0) f0: vec4f,
+  @location(1) f1: vec4f,
+}
+
+@fragment
+fn f(@builtin(position) position: vec4f) -> S {
+  let f0 = 0.5 * textureLoad(et, vec2(u32(position.x/32), u32(position.y/32)));
+  let f1 = 0.8 * textureSampleBaseClampToEdge(et, s, position.xy/${widthAndHeight / 2} - 0.5);
+  return S(f0, f1);
+}
+`;
+    let module = device.createShaderModule({code});
+    let pipeline = device.createRenderPipeline({
+      layout: 'auto',
+      vertex: {
+        module,
+        buffers: [{arrayStride: 8, attributes: [{shaderLocation: 0, offset: 0, format: 'float32x2'}]}],
+      },
+      fragment: {module, targets: [{format}, {format}]},
+    });
+    let sampler0 = device.createSampler({});
+
+    let oneFrame = async startTime => {
+      device.pushErrorScope('validation');
+      let commandEncoder = device.createCommandEncoder();
+      let renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [
+          {
+            view: context.getCurrentTexture().createView(),
+            clearValue: [0.5, 0.5, 0.5, 0.5],
+            loadOp: 'clear', storeOp: 'store',
+          },
+          {
+            view: context2.getCurrentTexture().createView(),
+            clearValue: [0.5, 0.5, 0.5, 0.5],
+            loadOp: 'clear', storeOp: 'store',
+          },
+        ],
+      });
+      let bindGroupLayout = pipeline.getBindGroupLayout(0);
+      let externalTexture0 = device.importExternalTexture({source: v});
+      let textureBindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [
+          {binding: 0, resource: sampler0},
+          {binding: 1, resource: externalTexture0},
+        ],
+      });
+      renderPassEncoder.setPipeline(pipeline);
+      renderPassEncoder.setVertexBuffer(0, vertexBuffer);
+      renderPassEncoder.setBindGroup(0, textureBindGroup);
+      renderPassEncoder.draw(6);
+      renderPassEncoder.end();
+      device.queue.submit([commandEncoder.finish()]);
+      await device.queue.onSubmittedWorkDone();
+      let error = await device.popErrorScope();
+      if (error) {
+        log(error.message);
+      } else {
+        v.requestVideoFrameCallback(oneFrame);
+        log('Pass');
+      }
+      globalThis.testRunner?.dumpAsText();
+      globalThis.testRunner?.notifyDone();
+    };
+    v.requestVideoFrameCallback(oneFrame);
+  };
+</script>
+</html>

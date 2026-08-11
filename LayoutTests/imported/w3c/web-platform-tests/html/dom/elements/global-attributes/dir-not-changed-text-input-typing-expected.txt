@@ -1,0 +1,4 @@
+
+
+PASS entering LTR text doesn't change directionality of a text input without dir=auto
+

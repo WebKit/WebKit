@@ -1,0 +1,18 @@
+
+PASS :all:stmt="and_bool_literal_bool_literal"
+PASS :all:stmt="and_bool_expr_bool_expr"
+PASS :all:stmt="and_bool_literal_bool_expr"
+PASS :all:stmt="and_bool_expr_bool_literal"
+PASS :all:stmt="and_bool_literal_int_literal"
+PASS :all:stmt="and_int_literal_bool_literal"
+PASS :all:stmt="and_bool_expr_int_literal"
+PASS :all:stmt="and_int_literal_bool_expr"
+PASS :all:stmt="or_bool_literal_bool_literal"
+PASS :all:stmt="or_bool_expr_bool_expr"
+PASS :all:stmt="or_bool_literal_bool_expr"
+PASS :all:stmt="or_bool_expr_bool_literal"
+PASS :all:stmt="or_bool_literal_int_literal"
+PASS :all:stmt="or_int_literal_bool_literal"
+PASS :all:stmt="or_bool_expr_int_literal"
+PASS :all:stmt="or_int_literal_bool_expr"
+

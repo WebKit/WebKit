@@ -1,0 +1,4 @@
+ 
+
+PASS Hit test beside line of text inside anonymous block
+

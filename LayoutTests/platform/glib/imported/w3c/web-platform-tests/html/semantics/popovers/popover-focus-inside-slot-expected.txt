@@ -1,0 +1,4 @@
+Open popover    Close popover This button is where focus should land after traversing this popover
+
+FAIL Focus behavior of popover elements inside slot assert_equals: Focus should move backward from target1 to invoker expected Element node <button slot="invoker" popovertarget="popover" id="invoke... but got Element node <button id="close">Close popover</button>
+

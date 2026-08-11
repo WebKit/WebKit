@@ -1,0 +1,150 @@
+# Dark Mode is iPadOS 13 and later.
+css-dark-mode [ Pass ]
+css-dark-mode/older-systems [ Skip ]
+
+fast/events/ios/ipad [ Pass ]
+fast/forms/ios/ipad [ Pass ]
+
+# iPads don't zoom when form elements are focused
+fast/forms/ios/accessory-bar-navigation.html [ Skip ]
+fast/forms/ios/focus-input-in-fixed.html [ Skip ]
+fast/forms/ios/focus-input-via-button-no-scaling.html [ Skip ]
+fast/forms/ios/focus-input-via-button.html [ Skip ]
+fast/forms/ios/focus-long-textarea.html [ Skip ]
+fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale.html [ Skip ]
+fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-user-scalable-no.html [ Skip ]
+fast/forms/ios/zoom-after-input-tap-wide-input.html [ Skip ]
+fast/forms/ios/zoom-after-input-tap.html [ Skip ]
+
+media/video-volume.html [ Pass ]
+
+fast/forms/ios/scroll-to-reveal-focused-select.html [ Crash Failure ]
+fast/forms/ios/time-picker-value-change.html [ Failure ]
+fast/events/ios/should-be-able-to-dismiss-form-accessory-after-tapping-outside-iframe-with-focused-field.html [ Timeout ]
+
+# iPads don't zoom when form elements are focused
+fast/forms/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale.html [ Skip ]
+fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
+
+# These tests are designed for iPhone and crash on iPad
+media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-iphone-sizing.html [ Skip ]
+
+# This test is designed for iPhone and would timeout on iPad
+media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Skip ]
+
+# This test is iPad-specific
+media/modern-media-controls/media-documents/media-document-video-ipad-sizing.html [ Pass ]
+
+webkit.org/b/193970 compositing/ios/overflow-scroll-update-overlap.html [ ImageOnlyFailure ]
+
+webkit.org/b/165311 platform/ipad/media/modern-media-controls/pip-support/pip-support-tap.html [ Skip ]
+
+webkit.org/b/194259 fast/events/ios/rotation/basic-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/layout-viewport-during-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/rotation/safari-like-rotation.html [ Skip ]
+webkit.org/b/194259 fast/events/ios/viewport-no-width-value-allows-double-tap.html [ Skip ]
+
+# This test relies on the numeric keyboard having a different size than regular keyboard. This is not the case on iPad.
+fast/forms/ios/inputmode-change-update-keyboard.html [ Skip ]
+
+# <rdar://problem/51865126> [ iPad Simulator ] 2 New Layout tests are failing on iOS 13 iPad Simulator testers fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-*
+fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-2.html [ Skip ]
+fast/scrolling/ios/body-overflow-hidden-height-100-percent-zoomed-1.html [ Skip ]
+
+webkit.org/b/231635 [ Release ] editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard.html [ Timeout ]
+
+media/picture-in-picture [ Pass ]
+media/picture-in-picture/video-resize-requestPictureInPicture-crash.html [ Pass Timeout ]
+media/remove-video-element-in-pip-from-document.html [ Pass ]
+
+http/tests/media/media-source/mediasource-rvfc.html [ Pass ]
+media/media-source/media-managedmse-resume-after-stall.html [ Pass ]
+
+webkit.org/b/228622 [ Debug ] accessibility/ios-simulator/scroll-in-overflow-div.html [ Crash ]
+
+webkit.org/b/231616 [ Debug ] compositing/layer-creation/scale-rotation-transition-overlap.html [ Pass Failure Timeout ]
+
+webkit.org/b/231640 [ Debug ] webrtc/video-mute.html [ Pass Timeout ]
+
+# These fail due to color space issues in the specific iPad simulator used <rdar://84527732>
+webkit.org/b/232090 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
+webkit.org/b/292090 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
+webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
+webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
+webkit.org/b/292090 media/video-canvas-createPattern.html [ Failure ]
+
+# Failure only on iPad simulator
+webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/229656 fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass Timeout ]
+
+media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Pass ]
+media/mediacapabilities/mediacapabilities-allowed-containers.html [ Pass ]
+
+# webkit.org/b/269393 ([ iOS wk2 ] 3 iOS orientation(layout-tests) are constant text failures)
+fast/screen-orientation/natural-orientation.html [ Pass ]
+
+# webkit.org/b/269496 [ iOS17 ] fast/forms/datalist/datalist-option-labels.html is a flaky timeout
+fast/forms/datalist/datalist-option-labels.html [ Pass Timeout ]
+
+# webkit.org/b/303640 Liquid Glass broke many iPad tests
+editing/async-clipboard/clipboard-read-while-pasting.html [ Skip ]
+editing/caret/ios/absolute-caret-position-after-scroll.html [ Skip ]
+editing/input/cocoa/autocorrect-off.html [ Skip ]
+editing/input/cocoa/inline-predictions-in-text-with-leading-whitespace.html [ Skip ]
+editing/input/cocoa/writing-suggestions-in-anonymous-renderer.html [ Skip ]
+editing/input/ios/rtl-keyboard-input-on-focus-in-editable-page.html [ Skip ]
+editing/input/ios/update-text-alignment-after-inserting-newline.html [ Skip ]
+editing/selection/double-click-expands-focus-anchor-live-range.html [ Skip ]
+editing/selection/ios/autoscroll-text-field-in-subframe.html [ Skip ]
+editing/selection/ios/autoscroll-with-top-content-inset.html [ Skip ]
+editing/selection/ios/bidi-visually-contiguous-selection-extending.html [ Skip ]
+editing/selection/ios/caret-rect-after-animating-focused-text-field.html [ Skip ]
+editing/selection/ios/change-selection-by-tapping.html [ Skip ]
+editing/selection/ios/do-not-hide-selection-in-visible-container.html [ Skip ]
+editing/selection/ios/do-not-show-selection-in-empty-borderless-subframe.html [ Skip ]
+editing/selection/ios/extend-selection-with-inline-predictions.html [ Skip ]
+editing/selection/ios/hide-selection-after-hiding-contenteditable.html [ Skip ]
+editing/selection/ios/hide-selection-in-empty-overflow-hidden-container.html [ Skip ]
+editing/selection/ios/hide-selection-in-hidden-contenteditable-frame.html [ Skip ]
+editing/selection/ios/hide-selection-in-textarea-with-transform.html [ Skip ]
+editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Skip ]
+editing/selection/ios/navigating-in-subframe-does-not-dismiss-edit-menu.html [ Skip ]
+editing/selection/ios/place-selection-in-overflow-area.html [ Skip ]
+editing/selection/ios/scroll-to-reveal-selection-in-mail-compose.html [ Skip ]
+editing/selection/ios/select-text-after-changing-focus.html [ Skip ]
+editing/selection/ios/select-text-under-hidden-subframe.html [ Skip ]
+editing/selection/ios/selection-after-resizing-composited-layer.html [ Skip ]
+editing/selection/ios/selection-extends-into-overflow-area.html [ Skip ]
+editing/selection/ios/selection-is-visible-after-focusing-editable-area.html [ Skip ]
+editing/selection/ios/set-selection-by-tapping-after-changing-focused-element-bounds.html [ Skip ]
+editing/selection/ios/show-edit-menu-in-text-field-with-animation.html [ Skip ]
+editing/selection/ios/show-selection-in-transformed-container-2.html [ Skip ]
+editing/text-placeholder/caret-before-zero-width-placeholder-in-content-editable-end-of-word.html [ Skip ]
+fast/events/ios/autocorrect-after-image.html [ Skip ]
+fast/events/ios/click-event-while-editing-node.html [ Skip ]
+fast/events/ios/contenteditable-autocapitalize.html [ Skip ]
+fast/events/ios/focused-input-should-assist-on-touch.html [ Skip ]
+fast/events/ios/input-events-insert-replacement-text.html [ Skip ]
+fast/events/ios/keyboard-should-not-trigger-resize.html [ Skip ]
+fast/events/key-event-with-quirks-enabled.html [ Skip ]
+fast/forms/call-text-did-change-in-text-field-when-typing.html [ Skip ]
+fast/forms/input-text-max-length-emojis.html [ Skip ]
+fast/forms/ios/focusing-text-field-does-not-increase-change-count.html [ Skip ]
+fast/forms/ios/keyboard-restoration-after-element-replacement.html [ Skip ]
+fast/forms/text-field-focus-prevent-scroll.html [ Skip ]
+fast/forms/textarea-and-mutation-events-appending-text.html [ Skip ]
+fast/scrolling/ios/keyboard-scrolling-subscrollable-with-input.html [ Skip ]
+fast/viewport/ios/shrink-to-fit-content-no-viewport.html [ Skip ]
+fast/viewport/ios/shrink-to-fit-content-with-wider-minimum-device-width.html [ Skip ]
+fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta.html [ Skip ]
+fast/visual-viewport/ios/resize-event-for-keyboard.html [ Skip ]
+scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html [ Skip ]
+
+# Failure only on iPad simulator 
+webkit.org/b/307451 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-keyboard-behavior.optional.html [ Pass Failure ]
+
+webkit.org/b/307488 media/volume-activate-audio-session.html [ Failure ]

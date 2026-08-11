@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-fullscreen-loop-inline</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    function go()
+    {
+        if (!window.internals) {
+            failTest('This test requires window.internals.');
+            return;
+        }
+
+        findMediaElement();
+
+        internals.settings.setAllowsInlineMediaPlayback(false);
+        internals.settings.setAllowsInlineMediaPlaybackAfterFullscreen(true);
+        // Disable the Fullscreen API (element fullscreen) support
+        internals.settings.setFullScreenEnabled(false);
+        internals.setMockVideoPresentationModeEnabled(true);
+        internals.setMediaElementRestrictions(video, "NoRestrictions");
+
+        waitForEventOnce('canplaythrough', canplaythrough);
+        run('video.loop = true');
+        run('video.src = findMediaFile("video", "content/test")');
+    }
+
+    function canplaythrough()
+    {
+        waitForEventOnce('webkitpresentationmodechanged', beginfullscreen);
+        run('video.play()');
+        consoleWrite("Wait to enter fullscreen");
+    }
+
+    async function beginfullscreen()
+    {
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', true);
+        consoleWrite("Entered fullscreen");
+        run('video.currentTime = 5');
+        run('video.webkitExitFullscreen()');
+        waitForEventOnce('webkitpresentationmodechanged', endfullscreen);
+        consoleWrite("Wait to exit fullscreen");
+    }
+
+    async function endfullscreen()
+    {
+        await testExpectedEventually("internals.isChangingPresentationMode(video)", false);
+        testExpected('video.webkitDisplayingFullscreen', false);
+        consoleWrite("Exited fullscreen");
+        testExpected('video.paused', false);
+        run('video.ontimeupdate = timeupdate');
+        waitForEventAndFail('webkitpresentationmodechanged');
+    }
+
+    function timeupdate()
+    {
+        if (video.currentTime == 0) {
+            consoleWrite("Looped");
+            run('video.ontimeupdate = null');
+            testExpected('video.playsInline', false);
+            setTimeout(function loopCompleted() {
+               testExpected('video.paused', false);
+               endTest();
+            }, 0);
+        }
+    }
+    </script>
+</head>
+<body onload="go()">
+    <video controls></video>
+    <p>Test that a &lt;video&gt; keeps playing and looping after exiting fullscreen when the internal property "allowsInlineMediaPlaybackAfterFullscreen" is true.</p>
+</body>
+</html>

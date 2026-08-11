@@ -1,0 +1,11 @@
+PASS initialTopColor is "rgb(255, 255, 255)"
+PASS Top color became rgb(238, 238, 238)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+To manually test, scroll this page down; the top sampled color should remain solid white
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

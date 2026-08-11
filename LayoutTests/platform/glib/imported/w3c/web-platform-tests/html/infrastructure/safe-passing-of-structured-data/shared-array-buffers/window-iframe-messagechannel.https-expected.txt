@@ -1,0 +1,7 @@
+ALERT: [object SharedArrayBuffer]
+
+PASS postMessaging to a same-origin iframe via MessageChannel allows them to see each others' modifications
+FAIL postMessaging to a same-site iframe via MessageChannel should fail assert_equals: expected "messageerror event received" but got "message event received"
+FAIL postMessaging to a cross-site iframe via MessageChannel should fail assert_equals: expected "messageerror event received" but got "message event received"
+PASS postMessaging with a MessageChannel that's been cross-site should succeed
+

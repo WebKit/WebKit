@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function loadCrossOriginIframeWithSubresources() {
+    let iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/inspector/network/resources/cross-origin-iframe-with-subresources.html";
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.getResponseBody.CrossOriginIframe.Subresources");
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.CrossOriginIframe.Subresources",
+        description: "Should be able to retrieve response body for CSS and JS subresources in a cross-origin iframe.",
+        test(resolve, reject) {
+            let resourcesFound = new Map;
+            let expectedCount = 2; // stylesheet.css + script.js
+
+            function checkResource(resource) {
+                if (resource.url.includes("stylesheet.css"))
+                    resourcesFound.set("css", resource);
+                else if (resource.url.includes("script.js"))
+                    resourcesFound.set("js", resource);
+
+                if (resourcesFound.size < expectedCount)
+                    return;
+
+                // Both subresources found. Wait for them to finish loading, then check content.
+                let promises = [];
+                for (let [type, res] of resourcesFound) {
+                    let p = res.finished
+                        ? res.requestContent()
+                        : new Promise((resolveLoad) => {
+                            res.singleFireEventListener(WI.Resource.Event.LoadingDidFinish, () => resolveLoad());
+                        }).then(() => res.requestContent());
+                    promises.push(p.then((result) => ({type, result})));
+                }
+
+                Promise.all(promises).then((results) => {
+                    for (let {type, result} of results) {
+                        let {error, content, rawBase64Encoded} = result;
+                        InspectorTest.log(`Checking ${type} subresource...`);
+                        InspectorTest.expectThat(!error, `${type}: Should not have an error retrieving content.`);
+                        InspectorTest.expectEqual(rawBase64Encoded, false, `${type}: Content should not be base64 encoded.`);
+                        InspectorTest.expectThat(content?.length > 0, `${type}: Content should not be empty.`);
+                    }
+                }).then(resolve, reject);
+            }
+
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
+                let resource = event.data.resource;
+                if (resource.url.includes("stylesheet.css") || resource.url.includes("script.js")) {
+                    InspectorTest.log("Subresource added: " + resource.url);
+                    checkResource(resource);
+                }
+            });
+
+            // Also listen on ChildFrameWasAdded to know the iframe loaded.
+            WI.Frame.awaitEvent(WI.Frame.Event.ChildFrameWasAdded).then((event) => {
+                InspectorTest.log("Child frame added: " + event.data.childFrame.url);
+            });
+
+            InspectorTest.evaluateInPage("loadCrossOriginIframeWithSubresources()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Network.getResponseBody works for CSS and JS subresources loaded within a cross-origin iframe.</p>
+</body>
+</html>

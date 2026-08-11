@@ -1,0 +1,4 @@
+
+
+PASS devicePixelRatio remains synchronized between main frame and iframe after page zoom
+

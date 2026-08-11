@@ -1,0 +1,5 @@
+If you happen to be running this test as a human, then be sure not to interact with any part of the page; that would invalidate the results!
+
+
+PASS Beforeunload must be gated behind sticky activation: auxiliary browsing context
+

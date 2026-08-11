@@ -1,0 +1,6 @@
+base1 absposbase2 float
+
+
+FAIL position:absolute should not work as ruby-text assert_greater_than_equal: expected a number greater than or equal to 85 but got 16
+FAIL float:left should not work as ruby-text assert_greater_than_equal: expected a number greater than or equal to 85 but got 16
+

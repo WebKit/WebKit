@@ -1,0 +1,3 @@
+
+PASS Non-modal dialogs should not be cancelable via ESC
+

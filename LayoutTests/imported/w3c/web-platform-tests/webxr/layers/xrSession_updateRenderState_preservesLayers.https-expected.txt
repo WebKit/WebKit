@@ -1,0 +1,4 @@
+
+PASS Layers installed via updateRenderState are preserved across subsequent partial updates - webgl
+PASS Layers installed via updateRenderState are preserved across subsequent partial updates - webgl2
+

@@ -1,0 +1,4 @@
+Text in light DOM
+
+FAIL moveBefore-from-light-to-shadow assert_true: expected true got false
+

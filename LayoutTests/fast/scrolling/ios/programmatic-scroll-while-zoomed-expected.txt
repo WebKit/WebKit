@@ -1,0 +1,14 @@
+PASS window.pageXOffset is 53
+PASS window.pageYOffset is 91
+PASS window.visualViewport.pageLeft is 53
+PASS window.visualViewport.pageTop is 91
+
+scrolling to 0,0
+PASS window.pageXOffset is 53
+PASS window.pageYOffset is 91
+PASS window.visualViewport.pageLeft is 53
+PASS window.visualViewport.pageTop is 91
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,15 @@
+<!doctype html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+async_test(t => {
+  assert_equals(document.readyState, "loading");
+
+  history.pushState(1, "", "#1");
+  history.back();
+
+  window.onpopstate = t.step_func_done(() => {
+    assert_equals(document.readyState, "complete");
+  });
+}, "window.load event should be fired with pending same-document navigation");
+</script>

@@ -1,0 +1,6 @@
+
+PASS Empty HTMLScriptElement is executed if the default policy makes it non-empty.
+PASS Non-empty HTMLScriptElement is not executed if the default policy makes it empty.
+PASS Empty SVGScriptElement is executed if the default policy makes it non-empty.
+PASS Non-empty SVGScriptElement is not executed if the default policy makes it empty.
+

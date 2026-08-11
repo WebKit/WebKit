@@ -1,0 +1,43 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let adapter = null;
+let device = null;
+
+async function load() {
+    adapter = await navigator.gpu.requestAdapter();
+    device = await adapter.requestDevice();
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.resolveContextWebGPU");
+
+    suite.addTestCase({
+        name: "Canvas.resolveContextWebGPU.ValidIdentifier",
+        description: "Check that resolving a WebGPU Canvas returns its GPUDevice wrapper.",
+        async test() {
+            let canvases = Array.from(WI.canvasManager.canvasCollection);
+            InspectorTest.expectEqual(canvases.length, 1, "There should be one Canvas.");
+
+            let canvas = canvases[0];
+            InspectorTest.expectEqual(canvas.contextType, WI.Canvas.ContextType.WebGPU, "Canvas should represent a WebGPU device.");
+
+            const objectGroup = "test";
+            let {object} = await canvas.target.CanvasAgent.resolveContext(canvas.identifier, objectGroup);
+            InspectorTest.expectEqual(object.type, "object", `Payload should have type "object".`);
+            InspectorTest.expectEqual(object.className, "GPUDevice", `Payload should have className "GPUDevice".`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="window.testRunner?.waitUntilDone(); load()">
+    <p>Tests Canvas.resolveContext for WebGPU devices.</p>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+  appearance: base-select;
+}
+</style>
+</head>
+<body>
+<select id="select-vlr" style="writing-mode: vertical-lr"></select>
+<select id="select-vrl" style="writing-mode: vertical-rl"></select>
+<script>
+description("Tests Page Down and Page Up keyboard navigation in a base-select picker with vertical writing modes.");
+
+function setup(select) {
+    const nOptions = 100;
+    for (let i = 1; i <= nOptions; i++) {
+        const option = document.createElement('option');
+        option.textContent = `Option ${i}`;
+        option.id = `${select.id}-opt${i}`;
+        select.appendChild(option);
+    }
+}
+
+const selectVLR = document.getElementById('select-vlr');
+const selectVRL = document.getElementById('select-vrl');
+setup(selectVLR);
+setup(selectVRL);
+
+let currentSelect;
+
+function getOption(n) {
+    return document.getElementById(`${currentSelect.id}-opt${n}`);
+}
+
+function focusedOptionNumber() {
+    const id = document.activeElement ? document.activeElement.id : '';
+    const prefix = `${currentSelect.id}-opt`;
+    return id.startsWith(prefix) ? parseInt(id.replace(prefix, '')) : null;
+}
+
+function isFocusedOptionVisible() {
+    const option = document.activeElement;
+    const prefix = `${currentSelect.id}-opt`;
+    if (!option || !option.id.startsWith(prefix))
+        return false;
+    const picker = internals.shadowRoot(currentSelect).querySelector('[popover]');
+    const pickerRect = picker.getBoundingClientRect();
+    const optionRect = option.getBoundingClientRect();
+    return optionRect.left >= pickerRect.left - 1 && optionRect.right <= pickerRect.right + 1;
+}
+
+async function openPickerAt(n) {
+    currentSelect.value = getOption(n).value;
+    await UIHelper.activateElement(currentSelect);
+    await UIHelper.animationFrame();
+}
+
+async function closePicker() {
+    if (currentSelect.matches(':open')) {
+        await UIHelper.activateElement(currentSelect);
+        await UIHelper.animationFrame();
+    }
+}
+
+const nOptions = 100;
+
+async function runTestsForSelect(select, label) {
+    currentSelect = select;
+
+    debug(`\n${label}:\n`);
+
+    // Test: Opening the picker at a middle option scrolls it into view.
+    await openPickerAt(50);
+    shouldBe('focusedOptionNumber()', '50');
+    shouldBeTrue('isFocusedOptionVisible()');
+    await closePicker();
+
+    // Test: Page Down from first option moves focus forward.
+    await openPickerAt(1);
+    shouldBe('focusedOptionNumber()', '1');
+    await UIHelper.keyDown("pageDown");
+    shouldBeGreaterThanOrEqual('focusedOptionNumber()', '2');
+    await closePicker();
+
+    // Test: Page Up from last option moves focus backward.
+    await openPickerAt(nOptions);
+    shouldBe('focusedOptionNumber()', String(nOptions));
+    await UIHelper.keyDown("pageUp");
+    shouldBeTrue(`focusedOptionNumber() < ${nOptions}`);
+    await closePicker();
+
+    // Test: Repeated Page Down eventually reaches the last option.
+    await openPickerAt(1);
+    previousOption = 1;
+    for (let i = 0; i < nOptions; i++) {
+        await UIHelper.keyDown("pageDown");
+        currentOption = focusedOptionNumber();
+        if (currentOption === nOptions)
+            break;
+        if (currentOption <= previousOption) {
+            testFailed(`Page Down did not make progress: was ${previousOption}, now ${currentOption}`);
+            break;
+        }
+        previousOption = currentOption;
+    }
+    shouldBe('focusedOptionNumber()', String(nOptions));
+    await closePicker();
+
+    // Test: Repeated Page Up eventually reaches the first option.
+    await openPickerAt(nOptions);
+    previousOption = nOptions;
+    for (let i = 0; i < nOptions; i++) {
+        await UIHelper.keyDown("pageUp");
+        currentOption = focusedOptionNumber();
+        if (currentOption === 1)
+            break;
+        if (currentOption >= previousOption) {
+            testFailed(`Page Up did not make progress: was ${previousOption}, now ${currentOption}`);
+            break;
+        }
+        previousOption = currentOption;
+    }
+    shouldBe('focusedOptionNumber()', '1');
+    await closePicker();
+
+    // Test: Page Down is viewport-based, not focused-item-based.
+    // Use the appropriate arrow key for the writing mode to move within the same page.
+    isVRL = select.style.writingMode === 'vertical-rl';
+    nextKey = isVRL ? 'ArrowLeft' : 'ArrowRight';
+    prevKey = isVRL ? 'ArrowRight' : 'ArrowLeft';
+    await openPickerAt(1);
+    await UIHelper.keyDown("pageDown");
+    pageDownTarget = focusedOptionNumber();
+    await closePicker();
+
+    await openPickerAt(1);
+    await UIHelper.keyDown(nextKey);
+    await UIHelper.keyDown(nextKey);
+    await UIHelper.keyDown("pageDown");
+    shouldBeTrue('focusedOptionNumber() === pageDownTarget');
+    await closePicker();
+
+    // Test: Page Up is viewport-based.
+    await openPickerAt(nOptions);
+    await UIHelper.keyDown("pageUp");
+    pageUpTarget = focusedOptionNumber();
+    await closePicker();
+
+    await openPickerAt(nOptions);
+    await UIHelper.keyDown(prevKey);
+    await UIHelper.keyDown(prevKey);
+    await UIHelper.keyDown("pageUp");
+    shouldBeTrue('focusedOptionNumber() === pageUpTarget');
+    await closePicker();
+}
+
+jsTestIsAsync = true;
+
+(async () => {
+    await runTestsForSelect(selectVLR, 'vertical-lr');
+    await runTestsForSelect(selectVRL, 'vertical-rl');
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

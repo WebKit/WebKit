@@ -1,0 +1,3 @@
+
+PASS arc() with zero radius draws a line to the start point
+

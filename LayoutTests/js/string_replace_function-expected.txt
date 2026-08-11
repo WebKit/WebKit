@@ -1,0 +1,17 @@
+This will test string.replace with function replacer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "ABC".replace("B","$$") is "A$C"
+PASS "ABC".replace("B", function () { return "$$"; }) is "A$$C"
+PASS "ABC".replace("B", function () { return "$$$"; }) is "A$$$C"
+PASS "ABC".replace("B", function () { return "$$$$"; }) is "A$$$$C"
+PASS "ABC".replace("B", function () { return "$1"; }) is "A$1C"
+PASS "ABC".replace("B", function () { return "$2"; }) is "A$2C"
+PASS "John Doe".replace(/(\w+)\s(\w+)/, "$2 $1") is "Doe John"
+PASS "John Doe".replace(/(\w+)\s(\w+)/, function () { return "$2 $1"; }) is "$2 $1"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

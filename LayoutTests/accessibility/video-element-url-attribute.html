@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<video
+  id="video-with-src-attribute"
+  aria-label="Video with src attribute"
+  style="width:640px;height:360px;"
+  src="resources/test.mp4"
+>
+</video>
+
+<video
+  id="video-with-source-element"
+  aria-label="Video with <source> element"
+  style="width:640px;height:360px;"
+>
+    <source src="resources/test.mp4" type="video/mp4">
+</video>
+
+<video
+  id="video-with-empty-source-element"
+  aria-label="Video with empty <source> element"
+  style="width:640px;height:360px;"
+>
+    <source type="video/mp4">
+</video>
+
+<video
+  id="empty-video"
+  aria-label="Video that has neither a src attribute nor <source> element"
+  style="width:640px;height:360px;"
+>
+</video>
+
+<script>
+output = "This test ensures video accessibility elements return URL attribute values when appropriate.\n\n";
+
+const baseVideoPath = "resources/test.mp4";
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var domVideo, video;
+    setTimeout(async function() {
+        domVideo = document.getElementById("video-with-src-attribute");
+        video = accessibilityController.accessibleElementById(domVideo.id);
+        output += await expectAsync("video.url.includes(baseVideoPath)", "true");
+        domVideo.setAttribute("src", "resources/foo-bar.mp4");
+        output += await expectAsync("video.url.includes('foo-bar.mp4')", "true");
+
+        domVideo = document.getElementById("video-with-source-element");
+        video = accessibilityController.accessibleElementById(domVideo.id);
+        output += await expectAsync("video.url.includes(baseVideoPath)", "true");
+
+        output += await expectAsync("!accessibilityController.accessibleElementById('video-with-empty-source-element').url", "true");
+        output += await expectAsync("!accessibilityController.accessibleElementById('empty-video').url", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

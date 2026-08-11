@@ -1,0 +1,10 @@
+
+
+PASS getBoundingClientRect() should account for CSS zoom
+PASS getClientRects() should account for CSS zoom
+PASS getBoundingClientRect() should account for CSS zoom on iframe
+PASS getClientRects() should account for CSS zoom on iframe
+PASS getBoundingClientRect() should not apply iframe zoom to elements inside iframe
+PASS getClientRects() should not apply iframe zoom to elements inside iframe
+PASS devicePixelRatio ratio should reflect combined zoom effect
+

@@ -1,0 +1,27 @@
+### DO NOT PUT ANYTHING ABOVE THIS LINE
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on visionOS 2, 
+### you should probably use the platform/ios/TestExpectations file, NOT this one.
+
+
+# -- The below has different, expected behavior on visionOS 26 than visionOS 2 --
+# -- Please put new failure expectations at the bottom of the file. --
+
+http/wpt/model-element [ Skip ]
+http/tests/security/model-element [ Skip ]
+
+# Tests which pass only with form control refresh enabled
+fast/forms/form-control-refresh [ Skip ]
+interaction-region/form-control-refresh [ Skip ]
+
+# -- The above has different, expected behavior on visionOS 26 than visionOS 2 --
+# -- New failure expectations below this point only!! --
+
+
+
+
+
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on visionOS 2, 
+### you should probably use the platform/ios/TestExpectations file, NOT this one.
+###

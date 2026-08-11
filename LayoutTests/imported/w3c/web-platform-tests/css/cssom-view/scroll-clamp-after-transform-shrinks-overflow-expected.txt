@@ -1,0 +1,3 @@
+
+PASS Scroll offset is clamped when a transform animation shrinks scrollable overflow
+

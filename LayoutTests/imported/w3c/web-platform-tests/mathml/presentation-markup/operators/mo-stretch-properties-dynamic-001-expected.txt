@@ -1,0 +1,23 @@
+
+PASS minsize
+PASS maxsize
+PASS largeop
+PASS symmetric
+PASS stretchy
+⥯
+⥯
+⥯
+
+⥯
+⥯
+⥯
+
+⥯
+⥯
+
+⥯
+⥯
+
+⥯
+⥯
+

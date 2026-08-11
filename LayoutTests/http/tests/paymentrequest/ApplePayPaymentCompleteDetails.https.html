@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `ApplePayPaymentCompleteDetails`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+function testInvalidPaymentCompleteData(description, {data, expectedErrorSubstring}) {
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        try {
+            await response.complete("success", {data});
+            assert_true(false, `should error about '${expectedErrorSubstring}'`);
+        } catch (e) {
+            assert_true(e.message.includes(expectedErrorSubstring), `should error about '${expectedErrorSubstring}'`);
+        }
+
+        try {
+            await response.complete("success");
+            assert_true(true, "should be able to recover from error");
+        } catch (e) {
+            assert_true(false, `should be able to recover from error, but exception was thrown '${e.message}'`);
+        }
+    }, description);
+}
+
+testInvalidPaymentCompleteData("Should error if not JSON serializable", {
+    data: window,
+    expectedErrorSubstring: "JSON.stringify cannot serialize",
+});
+
+done();
+</script>
+

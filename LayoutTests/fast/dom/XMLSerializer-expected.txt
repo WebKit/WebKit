@@ -1,0 +1,7 @@
+
+PASS Check Element serialization.
+PASS Check Comment serialization.
+PASS Check Document serialization.
+PASS Check DocumentFragment serialization.
+PASS Check Attr serializiation.
+

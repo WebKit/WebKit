@@ -1,0 +1,22 @@
+<html lang="en">
+<style>
+  html {
+    letter-spacing: var(--a);
+    --a: 0ic;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  onload = () => {
+    CSS.registerProperty({
+      inherits: true,
+      name: '--a',
+      syntax: '<length>',
+      initialValue: '0',
+    });
+  };
+</script>
+This test passes if it doesn't crash.
+</html>

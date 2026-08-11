@@ -1,0 +1,42 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.ResourceAddedForFetch",
+        description: "A fetch from a cross-origin iframe should produce a WI.Resource associated with the iframe's frame, not the main frame.",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("iframe-with-fetch.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Frame target should exist for cross-origin iframe.");
+            await waitForExpressionInTarget(frameTarget, "typeof triggerFetch === 'function'");
+
+            // Listen for a resource to be added to any frame.
+            let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+
+            // Trigger the fetch inside the cross-origin iframe via RuntimeAgent.
+            await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerFetch()", objectGroup: "test"});
+
+            let resourceEvent = await resourceAddedPromise;
+            let resource = resourceEvent.data.resource;
+
+            InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
+            InspectorTest.expectThat(resource.url.includes("data.json"), "Resource URL should contain 'data.json'.");
+
+            let resourceFrame = resource.parentFrame;
+            InspectorTest.expectThat(resourceFrame instanceof WI.Frame, "Resource should have a parent WI.Frame.");
+            InspectorTest.expectEqual(resourceFrame.parentFrame, WI.networkManager.mainFrame, "Resource's frame should be a direct child of the main frame.");
+            InspectorTest.expectNotEqual(resourceFrame, WI.networkManager.mainFrame, "Resource parent frame should not be the main frame.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a fetch triggered inside a cross-origin iframe produces a WI.Resource associated with the iframe's frame.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-fetch.html"></iframe>
+</body>

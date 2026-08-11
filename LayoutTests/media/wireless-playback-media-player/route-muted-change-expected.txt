@@ -1,0 +1,12 @@
+
+Test that a MediaDeviceRoute muted change propagates to the video element.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(canplaythrough)
+RUN(route.muted = true)
+EXPECTED (video.muted == 'true') OK
+END OF TEST
+

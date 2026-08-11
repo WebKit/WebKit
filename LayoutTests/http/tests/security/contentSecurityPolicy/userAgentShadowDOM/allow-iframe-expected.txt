@@ -1,0 +1,4 @@
+ALERT: PASS iframe did load.
+Tests that a HTML iframe element, in a user agent shadow tree, is allowed to load when the page has CSP policy: frame-src 'none'. This test FAILED if it timesout.
+
+

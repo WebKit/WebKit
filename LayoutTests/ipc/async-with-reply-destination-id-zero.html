@@ -1,0 +1,26 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+// This test attempts to send an async reply to a receiver with destination 0.
+// 0 is not a valid identifier so this reply is invalid and should be dropped. 
+// When IPCTestingAPIEnabled is false, the WebContent process that initially  
+// sent the message is terminated.
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+setTimeout(async () => {
+    if (!window.IPC) // Only run test for compiles with ENABLE(IPC_TESTING_API)
+        return testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+    CoreIPC.UI.WebExtensionContextProxy.DispatchRuntimeMessageEventReply(
+        0, { replyJSON : 'A' });
+    testRunner?.notifyDone();
+}, 10);
+
+</script>
+
+<body>
+    <p>This test passes if WebKit does not crash.</p>
+</body>

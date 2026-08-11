@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Multiple 'X-Frame-Options' headers with conflicting values ('ALLOWALL, DENY') encountered when loading 'http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-conflict.cgi'. Falling back to 'DENY'.
+CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-conflict.cgi' in a frame because it set 'X-Frame-Options' to 'ALLOWALL, DENY'.
+The frame below should not load, and a console message should be generated that notes the invalid header.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+
+http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html, http status code 200>
+http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html - didFinishLoading
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-conflict.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-conflict.cgi, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html, http method GET> redirectResponse (null)

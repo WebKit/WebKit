@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    async function test() {
+        if (!window.testRunner || !window.internals)
+            return;
+
+        const range = document.getElementById('range');
+        const bounds = range.getBoundingClientRect();
+        internals.startTrackingRepaints();
+
+        await UIHelper.dragFromPointToPoint(bounds.x + 1, bounds.y + 1, bounds.x + 1, bounds.y + bounds.height / 2, 2);
+
+        let repaintRects = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+        result.textContent = repaintRects;
+
+        testRunner.notifyDone();
+    }
+</script>
+<body onload="test()">
+    <pre id="result"></pre>
+    <input style="writing-mode: vertical-rl; display: block;" type="range" id="range" min="0" max="4" value="0">
+</body>
+</html>

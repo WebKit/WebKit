@@ -1,0 +1,17 @@
+This test ensures an ARIA grid built from native table sections whose rows are wrapped in presentational scaffolding exposes its rows and cells.
+
+PASS: grid.role.toLowerCase().includes('table') === true
+PASS: grid.rowCount === 2
+PASS: grid.columnCount === 3
+#grid cellForColumnAndRow(0, 0).domIdentifier is sun
+#grid cellForColumnAndRow(1, 0).domIdentifier is mon
+#grid cellForColumnAndRow(2, 0).domIdentifier is tue
+#grid cellForColumnAndRow(0, 1).domIdentifier is day1
+#grid cellForColumnAndRow(1, 1).domIdentifier is day2
+#grid cellForColumnAndRow(2, 1).domIdentifier is day3
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Sun	Mon	Tue
+1	2	3

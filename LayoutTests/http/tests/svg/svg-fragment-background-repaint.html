@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Radio button customized using an SVG fragment is redrawn when the checked value changes</title>
+    <style>
+        input[type=radio] { appearance: none; margin: 0; display: block; }
+        input[type=radio]::before {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 100px;
+            background: url(resources/rgb-icons-3.svg#green-icon) no-repeat;
+        }
+        input[type=radio]:checked::before {
+            background: url(resources/rgb-icons-3.svg#red-icon) no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <!-- This test has to be served over HTTP: the memory cache only strips the fragment
+         identifier from HTTP-family URLs, so that is the only case where two background
+         images differing solely by fragment share one CachedResource. -->
+    <input type="radio" name="group" id="a" checked>
+    <input type="radio" name="group" id="b">
+    <script>
+        window.addEventListener("load", () => {
+            // Checking b implicitly unchecks a, so both ::before backgrounds now resolve to
+            // a different fragment of the same SVG and both have to be redrawn.
+            document.getElementById("b").checked = true;
+        });
+    </script>
+</body>
+</html>

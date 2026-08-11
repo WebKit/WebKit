@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = Test named 'heading is null when stationary (speed is 0)' specified 1 'cleanup' function, and 1 failed.
+
+FAIL heading is null when stationary (speed is 0) promise_test: Unhandled rejection with value: object "Error: bidi.emulation.set_geolocation_override is not implemented by testdriver-vendor.js"
+NOTRUN heading has a value when moving (speed > 0)
+

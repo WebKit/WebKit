@@ -1,0 +1,5 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+To whom it
+This test passes if showing inline predictions when typing in the above container don't cause a crash.

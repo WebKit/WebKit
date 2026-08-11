@@ -1,0 +1,5 @@
+
+PASS getParameters() with audio receiver
+PASS getParameters() with video receiver
+PASS getParameters() surfaces codecs on two-way receiver at the right time
+

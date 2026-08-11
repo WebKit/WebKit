@@ -1,0 +1,35 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # bug: object. The bug whose activity is being displayed.
+  # operations: array of hashes, see activity/table.html.tmpl.
+  #
+  # This template also needs to be called with the interface to the
+  # activity/table.html.tmpl template fulfilled.
+  #%]
+
+[% filtered_desc = bug.short_desc FILTER html %]
+[% PROCESS global/header.html.tmpl
+  title = "Changes made to $terms.bug $bug.bug_id"
+  header = "Activity log for $terms.bug $bug.bug_id: $filtered_desc"
+ %]
+
+<p>
+  Back to [% "$terms.bug $bug.bug_id" FILTER bug_link(bug) FILTER none %]
+</p>
+
+[% PROCESS bug/activity/table.html.tmpl %]
+
+[% IF operations.size > 0 %]
+  <p>
+    Back to [% "$terms.bug $bug.bug_id" FILTER bug_link(bug) FILTER none %]
+  </p>
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]

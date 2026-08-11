@@ -1,0 +1,9 @@
+
+PASS Main
+PASS image same-origin + undefined
+PASS image same-origin + anonymous
+PASS image same-origin + use-credentials
+FAIL image cross-origin + undefined assert_equals: coep:credentialless =>  expected (undefined) undefined but got (string) "cross_origin"
+FAIL image cross-origin + anonymous assert_equals: coep:none =>  expected (undefined) undefined but got (string) "cross_origin"
+PASS image cross-origin + use-credentials
+

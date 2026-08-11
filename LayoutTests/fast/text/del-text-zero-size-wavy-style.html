@@ -1,0 +1,21 @@
+<style>
+    .class6 { 
+        font-size: 0cm; 
+        text-decoration-style: wavy;
+    }
+</style>
+<body>
+    <del class="class6">Passes if it does not crash.</del>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    testRunner.notifyDone();
+                });
+            });
+        }
+    </script>
+</body>

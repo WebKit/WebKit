@@ -1,0 +1,157 @@
+load("//bazel:skia_rules.bzl", "generate_cpp_files_for_headers", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+SKSL_PRIVATE_HDRS = ["SkSLSampleUsage.h"]
+
+CORE_PRIV_HDRS = [
+    # Files listed here will be available to Skia internals via the core_priv target.
+    "SkIDChangeListener.h",
+    "SkGainmapShader.h",
+    "SkGainmapInfo.h",
+    "SkHdrMetadata.h",
+    "SkPixelStorage.h",
+    "SkEnumBitMask.h",
+]
+
+CORE_SRCS = [
+    # We really don't want these headers to be used outside of SkPath and SkPathBuilder
+    # so we add it to core under srcs instead to enforce that.
+    "SkPathRef.h",
+    "SkWeakRefCnt.h",
+]
+
+DECODE_SRCS_HDRS = [
+    "SkEncodedInfo.h",
+    "SkExif.h",
+]
+
+JPEG_DECODE_SRCS_HDRS = [
+    "SkJpegMetadataDecoder.h",
+    "SkXmp.h",
+]
+
+# TODO: Merge with other file lists.
+BASE_PRIVATE_HDRS = [
+    "SingleOwner.h",
+    "SkAPI.h",
+    "SkASAN.h",
+    "SkAlign.h",
+    "SkAlignedStorage.h",
+    "SkAnySubclass.h",
+    "SkAssert.h",
+    "SkAttributes.h",
+    "SkCPUTypes.h",
+    "SkDebug.h",
+    "SkFeatures.h",
+    "SkFixed.h",
+    "SkLoadUserConfig.h",
+    "SkLog.h",
+    "SkLogPriority.h",
+    "SkMacros.h",
+    "SkMath.h",
+    "SkMutex.h",
+    "SkNoncopyable.h",
+    "SkOnce.h",
+    "SkSafe32.h",
+    "SkTArray.h",
+    "SkTFitsIn.h",
+    "SkTLogic.h",
+    "SkTPin.h",
+    "SkTemplates.h",
+    "SkThreadAnnotations.h",
+    "SkTo.h",
+    "SkTypeTraits.h",
+    "SkContainers.h",
+    "SkDeque.h",
+    "SkFloatingPoint.h",
+    "SkMalloc.h",
+    "SkSemaphore.h",
+    "SkTDArray.h",
+    "SkThreadID.h",
+]
+
+# In own skia_filegroup for mapping to the //gn/sksl.gni file.
+skia_filegroup(
+    name = "sksl_private_hdrs",
+    srcs = SKSL_PRIVATE_HDRS,
+)
+
+skia_filegroup(
+    name = "private_hdrs",
+    srcs = BASE_PRIVATE_HDRS,
+    visibility = [
+        "//src/core:__pkg__",
+        "//src/opts:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "core_priv_hdrs",
+    srcs = CORE_PRIV_HDRS + SKSL_PRIVATE_HDRS,
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_filegroup(
+    name = "core_srcs",
+    srcs = CORE_SRCS,
+    visibility = ["//src/core:__pkg__"],
+)
+
+skia_filegroup(
+    name = "decode_srcs",
+    srcs = DECODE_SRCS_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+skia_filegroup(
+    name = "jpeg_decode_srcs",
+    srcs = JPEG_DECODE_SRCS_HDRS,
+    visibility = ["//src/codec:__pkg__"],
+)
+
+skia_filegroup(
+    name = "opts_srcs",
+    srcs = [
+        "SkAPI.h",
+        "SkASAN.h",
+        "SkAlign.h",
+        "SkAlignedStorage.h",
+        "SkAssert.h",
+        "SkAttributes.h",
+        "SkCPUTypes.h",
+        "SkContainers.h",
+        "SkDebug.h",
+        "SkFeatures.h",
+        "SkFloatingPoint.h",
+        "SkLoadUserConfig.h",
+        "SkLog.h",
+        "SkLogPriority.h",
+        "SkMacros.h",
+        "SkMalloc.h",
+        "SkMath.h",
+        "SkSafe32.h",
+        "SkTArray.h",
+        "SkTFitsIn.h",
+        "SkTLogic.h",
+        "SkTPin.h",
+        "SkTemplates.h",
+        "SkTo.h",
+        "SkTypeTraits.h",
+    ],
+    visibility = ["//src/opts:__pkg__"],
+)
+
+generate_cpp_files_for_headers(
+    name = "headers_to_compile",
+    headers = SKSL_PRIVATE_HDRS +
+              CORE_PRIV_HDRS +
+              CORE_SRCS +
+              DECODE_SRCS_HDRS +
+              JPEG_DECODE_SRCS_HDRS +
+              BASE_PRIVATE_HDRS,
+)

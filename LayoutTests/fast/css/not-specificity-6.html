@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        /* Specificity: (1, 1, 3). */
+        html > body > testcase.case#case1, html > body > testcase.case#case2 {
+            background-color: red;
+            color: white;
+            border: 10px solid black;
+        }
+
+        /* The maximum here is (1, 0, 3), the total is (1, 0, 4) which does not override the baseline. */
+        testcase:not(html > body testcase1, html body testcase2, html body > testcase1.foo, html body > testcase1.foo.bar, html > body testcase1.foo.bar.baz, html > body #case2, body > testcase#case2, html body > testcase1#case2) {
+            background-color: blue;
+        }
+
+        /* Adding body testcase#case2.case to push to (1, 1, 3). */
+        testcase:not(html > body testcase1, html body testcase2, html body > testcase1.foo, html body > testcase1.foo.bar, html > body testcase1.foo.bar.baz, html > body #case2, body > testcase#case2, html body > testcase1#case2, body testcase#case2.case) {
+            background-color: pink;
+        }
+
+        /* #case2.case.case2 to push to (1, 2, 1). */
+        testcase:not(html > body testcase1, html body testcase2, html body > testcase1.foo, html body > testcase1.foo.bar, html > body testcase1.foo.bar.baz, html > body #case2, body > testcase#case2, html body > testcase1#case2, #case2.case.case2) {
+            color: green;
+        }
+
+        /* #case2#case1 to push to (2, 0, 1). */
+        testcase:not(html > body testcase1, html body testcase2, html body > testcase1.foo, html body > testcase1.foo.bar, html > body testcase1.foo.bar.baz, html > body #case2, body > testcase#case2, html body > testcase1#case2, #case2#case1) {
+            border: none;
+        }
+
+        /* The maximum here is (1, 0, 3), the total is (1, 0, 4) which does not override the baseline. */
+        testcase:not(html body testcase1#case2) {
+            background-color: blue;
+        }
+
+        /* Adding html testcase#case2.case to push to (1, 1, 3). */
+        testcase:not(html testcase#case1.case) {
+            background-color: green;
+        }
+
+        /* #case2.case.case2 to push to (1, 2, 1). */
+        testcase:not(html body #case1.case.case) {
+            color: pink;
+        }
+
+        /* #case3#case1 to push to (2, 0, 1). */
+        testcase:not(html body #case3#case1) {
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <p>Test the specificity of :not() with complex selectors.</p>
+    <testcase class="case" id="case1">This sentence should be green on a pink background, without border.</testcase>
+    <testcase class="case" id="case2">This sentence should be pink on a green background, without border.</testcase>
+</body>
+</html>

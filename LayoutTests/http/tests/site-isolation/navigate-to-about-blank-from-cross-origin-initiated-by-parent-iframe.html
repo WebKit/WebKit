@@ -1,0 +1,39 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<script>
+// main frame <- this file (hosted at 127.0.0.1)
+//    |
+//    |
+// child frame <- cross origin frame opened to:
+//    http://localhost:8000/site-isolation/resources/frame-child-navigate-to-about-blank-from-cross-origin-initiated-by-parent-iframe.html
+//    |
+//    |
+// grandchild frame <- cross origin relative to child frame. opened to:
+//    http://127.0.0.1:8000/site-isolation/resources/green-background.html
+
+// Have a child iframe navigate a cross-origin grandchild iframe
+// to about:blank. Since the grandchild iframe's parent initiated navigation
+// to about:blank, the grandchild iframe inherits its parent's origin.
+// If the grandchild successfully inerited the child's origin, the child should be 
+// able to modify the grandchild's DOM.
+
+// From HTML Spec: browsing the Web, section 7.4.2.2, Item 23, sub-item 5:
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#beginning-navigation
+// 
+// If url matches about:blank or is about:srcdoc, then:
+//     Set documentState's origin to initiatorOriginSnapshot.
+//     Set documentState's about base URL to initiatorBaseURLSnapshot.
+
+
+if (window.testRunner) {
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+}
+
+</script>
+<body>
+<p>This test passes if the child frame can modify the grandchild iframe's DOM (once the grandchild iframe has navigated away from a cross-origin site to about:blank).</p>
+<iframe src="http://localhost:8000/site-isolation/resources/frame-child-navigate-to-about-blank-from-cross-origin-initiated-by-parent-iframe.html" style="border:5px solid red;"></iframe>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger/debugger-test.js"></script>
+<script src="resources/script-for-breakpoint-actions.js"></script>
+<script>
+function test()
+{
+    WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, function() {
+        InspectorTest.startTracingBreakpoints();
+        InspectorTest.startTracingProbes();
+
+        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptAdded, function(event) {
+            var scriptObject = event.data.script;
+
+            if (!/script\-for\-breakpoint\-actions\.js$/.test(scriptObject.url))
+                return;
+
+            var location = scriptObject.createSourceCodeLocation(4, 0);
+            // Create a disabled breakpoint so it is never sent to the backend; this keeps
+            // the test deterministic (no async resolution event) while still exercising the
+            // frontend probe add/remove code path, which is driven by breakpoint action changes.
+            var breakpoint = new WI.JavaScriptBreakpoint(location, {disabled: true});
+
+            // Add three probe actions so a middle probe can be removed later.
+            var actions = [];
+            for (var i of [0, 1, 2]) {
+                var action = new WI.BreakpointAction(WI.BreakpointAction.Type.Probe, {data: "a"});
+                breakpoint.addAction(action);
+                actions.push(action);
+            }
+
+            WI.debuggerManager.addBreakpoint(breakpoint);
+
+            var probeSet = WI.debuggerManager.probeSets[0];
+            InspectorTest.expectEqual(probeSet.probes.length, 3, "Probe set should have three probes after adding three actions.");
+
+            // Remove the middle action; the loop that reaps missing probes must
+            // not stop at the first surviving probe.
+            InspectorTest.log("Removing middle probe action.");
+            breakpoint.removeAction(actions[1]);
+
+            InspectorTest.expectEqual(probeSet.probes.length, 2, "Probe set should have two probes after removing the middle action.");
+
+            InspectorTest.completeTest();
+        });
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that the probe manager removes a middle probe when its breakpoint action is removed.</p>
+</body>
+</html>

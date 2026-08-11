@@ -1,0 +1,93 @@
+
+Test 1.1
+  div (shadow root)
+    div
+      slot
+        #text
+
+Shadow child 0 subtree
+  slot
+    #text
+
+Test 1.2
+  div (shadow root)
+    div
+      slot
+        div
+          #text
+
+Shadow child 0 subtree
+  slot
+    div
+      #text
+
+Test 2.1
+  div (shadow root)
+    div
+      #text
+    div
+      slot
+        #text
+
+Shadow child 0 subtree
+  #text
+
+Shadow child 1 subtree
+  slot
+    #text
+
+Test 2.2
+  div (shadow root)
+    div
+      #text
+    div
+      slot
+        div
+          #text
+
+Shadow child 0 subtree
+  #text
+
+Shadow child 1 subtree
+  slot
+    div
+      #text
+
+Test 3.1
+  div (shadow root)
+    div
+      #text
+      div (shadow root)
+        div
+          slot
+            slot
+              #text
+
+Shadow child 0 subtree
+  #text
+  div (shadow root)
+    div
+      slot
+        slot
+          #text
+
+Test 3.2
+  div (shadow root)
+    div
+      #text
+      div (shadow root)
+        div
+          slot
+            slot
+              div
+                #text
+
+Shadow child 0 subtree
+  #text
+  div (shadow root)
+    div
+      slot
+        slot
+          div
+            #text
+

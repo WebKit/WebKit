@@ -1,0 +1,3 @@
+
+FAIL Focus behavior of popover elements inside shadow DOM assert_equals: Focus should move forward from host/invoker to host/target1 expected Element node <input type="checkbox" id="target1"></input> but got Element node <button popovertarget="popover" id="invoker">Open popover...
+

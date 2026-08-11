@@ -1,0 +1,5 @@
+
+PASS Selecting an item with an unresolvable var() is invalid at computed-value time
+PASS Selecting a resolvable item produces a value even when other items are unresolvable
+PASS A var() fallback inside the selected item is used
+

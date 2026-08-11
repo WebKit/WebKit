@@ -1,0 +1,3 @@
+
+PASS test www-authenticate basic does not forward credentials to cross-origin pages.
+

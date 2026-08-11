@@ -1,0 +1,15 @@
+<span id=container>
+  <marquee id=marquee>
+    <span>PASS if no crash or assert.</span>
+  </marquee>
+  <div id=div></div>
+</span>
+<script>
+window.testRunner?.dumpAsText();
+
+document.body.offsetHeight;
+div.style.columnSpan = "all";
+div.getAnimations();
+marquee.start();
+container.remove();
+</script>

@@ -1,0 +1,11 @@
+
+
+RUN(internals.setCaptionDisplayMode('AlwaysOn'))
+RUN(internals.setCaptionsStyleSheetOverride('video::cue { font-size: 20px; }'))
+RUN(video.textTracks[0].mode = "showing")
+EXPECTED (video.textTracks[0].cues.length > '0') OK
+RUN(video.currentTime = 0.5)
+EXPECTED (firstCueElement() != 'null') OK
+EXPECTED (window.getComputedStyle(firstCueElement()).fontSize == '20px') OK
+END OF TEST
+

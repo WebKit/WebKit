@@ -1,0 +1,11 @@
+This test ensures that role='table' elements do not support selection or aria-multiselectable.
+
+PASS: accessibilityController.accessibleElementById('table').isAttributeSupported('AXSelectedRows') === false
+PASS: accessibilityController.accessibleElementById('table').isMultiSelectable === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo Bar
+header h1
+header h6

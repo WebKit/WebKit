@@ -1,0 +1,7 @@
+
+PASS No parent node
+PASS DocumentFragment parent node
+PASS ShadowRoot parent node whose shadow host has translate=yes
+PASS ShadowRoot parent node whose shadow host has translate=no
+PASS Document parent node
+

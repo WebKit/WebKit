@@ -1,0 +1,23 @@
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        description("The limit on the canvas size should be at least 8192x8192.");
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 8192;
+        canvas.height = 8192;
+
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = "green";
+        ctx.fillRect(0, 0, 8192, 8192);
+
+        pixelColors = ctx.getImageData(8191, 8191, 1, 1).data;
+
+        shouldBe("pixelColors[0]", "0");
+        shouldBe("pixelColors[1]", "128");
+        shouldBe("pixelColors[2]", "0");
+        shouldBe("pixelColors[3]", "255");
+    </script>
+</body>

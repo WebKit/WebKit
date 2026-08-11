@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.fixed-no-z-index {
+  position: absolute;
+  left: 10px;
+}
+.fixed-with-z-index {
+  position: fixed;
+  z-index: 1;
+  left: 10px;
+}
+</style>
+<script>
+  if (window.testRunner)
+      window.testRunner.waitUntilDone();
+  async function runTest() {
+    if (window.internals) {
+        window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+    }
+    if (window.testRunner) {
+        await window.testRunner.setPageScaleFactor(0.5, 0, 0);
+        testRunner.dumpAsText(true);
+        testRunner.notifyDone();
+    }
+  }
+</script>
+</head>
+<body style="width:2000px;height:2000px;" onload="runTest()">
+<div class="fixed-no-z-index">TEST</div><br>
+<div class="fixed-with-z-index">TEST</div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+rules:
+- at-supports-selector-webkit-slider-thumb.tentative.html: [supports-compat]
+- at-supports-selector-003.html: [supports-compat]
+- "*": [supports]

@@ -1,0 +1,32 @@
+<style>
+
+@keyframes anim1 { }
+
+@keyframes anim2 { }
+
+</style>
+<script>
+
+window.testRunner?.dumpAsText();
+
+const stylesheet = document.styleSheets[0];
+
+stylesheet.insertRule(`polyline { animation: anim1 1s, anim2 1s; }`, stylesheet.rules);
+
+const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+document.documentElement.prepend(svg);
+
+const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+svg.prepend(polyline);
+
+const mpath = document.createElementNS('http://www.w3.org/2000/svg', 'mpath');
+polyline.append(mpath);
+
+const animation = polyline.getAnimations()[0];
+
+mpath.before(stylesheet.ownerNode);
+
+animation.commitStyles();
+
+</script>
+<p>PASS if it does not crash.</p>

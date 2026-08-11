@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+#dropTarget { text-align: center; display: table-cell; vertical-align: middle }
+#dropTarget {width: 256px; height: 256px; border: 1px dashed}
+</style>
+</head>
+<body>
+<div id=description></div>
+<div id=dropTarget webkitdropzone="move file:text/html"></div>
+<div id=console></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+description("Test that files are not accessible while dragging. To test manually, drop an HTML file on the box below.");
+jsTestIsAsync = true;
+
+window.onload = function()
+{
+    var dropTarget = document.getElementById("dropTarget");
+
+    dropTarget.addEventListener("dragover", ondragover, true);
+    dropTarget.addEventListener("drop", ondrop, true);
+        
+     if (!window.eventSender)
+        return;
+
+    var endX = dropTarget.offsetLeft + dropTarget.offsetWidth / 2;
+    var endY = dropTarget.offsetTop + dropTarget.offsetHeight / 2
+    
+    eventSender.beginDragWithFiles(["resources/file-reader-real.html"]);
+    eventSender.mouseMoveTo(endX, endY);
+    eventSender.mouseUp();
+
+    document.body.removeChild(dropTarget);
+    finishJSTest();
+}
+
+function ondragover(event)
+{
+    shouldBe("event.dataTransfer.files.length", "0");
+}
+
+function ondrop(event)
+{
+    event.preventDefault();
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

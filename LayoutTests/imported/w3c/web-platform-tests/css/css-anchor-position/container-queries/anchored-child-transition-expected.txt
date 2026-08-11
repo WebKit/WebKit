@@ -1,0 +1,4 @@
+
+PASS Initial scale is 1
+FAIL Start transition of scale property on anchored child assert_equals: expected "1.5" but got "2"
+

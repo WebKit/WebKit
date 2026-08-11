@@ -1,0 +1,5 @@
+
+PASS
+  View transitions: Test pagereveal.updateCallbackDone promise is immediately resolved.
+
+

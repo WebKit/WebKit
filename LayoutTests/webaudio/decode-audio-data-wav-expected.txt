@@ -1,0 +1,13 @@
+Test that decoding an WAV isn't incorrectly receiving silence at the end
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Successfully decoded content
+PASS Decoding returned the right number of frames.
+PASS Decoding returned the right number of frames.
+PASS All frames got decoded with no silence.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,10 @@
+Verifies that element.requestFullscreen() calls from a same-origin popup without user activation work if and only if the opener has user activation and it delegates the capability. https://wicg.github.io/capability-delegation/spec.html
+This test requires user interaction.
+Please click here to allow undefined.
+
+Harness Error (TIMEOUT), message = null
+
+PASS Fullscreen requests from a same-origin popup fails without delegation from an opener with no user activation
+TIMEOUT Fullscreen requests from a same-origin popup fails without delegation from an opener with user activation Test timed out
+NOTRUN Fullscreen requests from a same-origin popup succeeds with delegation from an opener with user activation
+

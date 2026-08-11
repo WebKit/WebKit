@@ -1,0 +1,60 @@
+
+PASS e.style['animation-trigger'] = "initial" should set the property value
+PASS e.style['animation-trigger'] = "inherit" should set the property value
+PASS e.style['animation-trigger'] = "unset" should set the property value
+PASS e.style['animation-trigger'] = "revert" should set the property value
+PASS e.style['animation-trigger'] = "none" should set the property value
+PASS e.style['animation-trigger'] = "--abc play" should set the property value
+PASS e.style['animation-trigger'] = "  --abc play" should set the property value
+PASS e.style['animation-trigger'] = "--aBc play" should set the property value
+PASS e.style['animation-trigger'] = "--aBc play pause" should set the property value
+PASS e.style['animation-trigger'] = "--foo play pause, --bar play pause" should set the property value
+PASS e.style['animation-trigger'] = "--bar play reset, --foo play reset" should set the property value
+PASS e.style['animation-trigger'] = "none, none" should set the property value
+PASS e.style['animation-trigger'] = "--a play pause, none, --b play reset" should set the property value
+PASS e.style['animation-trigger'] = "---aBc play" should set the property value
+PASS e.style['animation-trigger'] = "--aBc-dEf play" should set the property value
+PASS e.style['animation-trigger'] = "---aBc-dEf play" should set the property value
+PASS Property animation-trigger value 'none'
+PASS Property animation-trigger value '--abc play'
+PASS Property animation-trigger value '  --abc play'
+PASS Property animation-trigger value '--aBc play'
+PASS Property animation-trigger value '--foo play, --bar pause'
+PASS Property animation-trigger value '--bar play, --foo pause'
+PASS Property animation-trigger value 'none, none'
+PASS Property animation-trigger value '--aBc play, --aBc reset'
+PASS Property animation-trigger value '--a play, none, --b play'
+PASS Property animation-trigger value '---abc play'
+FAIL e.style['animation-trigger'] = "--abc play --abc play" should not set the property value assert_equals: expected "" but got "--abc play --abc play"
+FAIL e.style['animation-trigger'] = "--abc play --bcd pause, --abc play --bcd play" should not set the property value assert_equals: expected "" but got "--abc play --bcd pause, --abc play --bcd play"
+FAIL e.style['animation-trigger'] = "--abc play --bcd play, --cde play --def play" should not set the property value assert_equals: expected "" but got "--abc play --bcd play, --cde play --def play"
+FAIL e.style['animation-trigger'] = "  --abc play --abc play" should not set the property value assert_equals: expected "" but got "--abc play --abc play"
+FAIL e.style['animation-trigger'] = "  --abc play --bcd play" should not set the property value assert_equals: expected "" but got "--abc play --bcd play"
+FAIL e.style['animation-trigger'] = "--aBc play --abc play" should not set the property value assert_equals: expected "" but got "--aBc play --abc play"
+FAIL e.style['animation-trigger'] = "--aBc play --abc play --aBc play" should not set the property value assert_equals: expected "" but got "--aBc play --abc play --aBc play"
+PASS e.style['animation-trigger'] = "none none" should not set the property value
+PASS e.style['animation-trigger'] = "none none, none" should not set the property value
+PASS e.style['animation-trigger'] = "auto" should not set the property value
+PASS e.style['animation-trigger'] = "abc" should not set the property value
+PASS e.style['animation-trigger'] = "--abc" should not set the property value
+PASS e.style['animation-trigger'] = "-abc play" should not set the property value
+PASS e.style['animation-trigger'] = "--abc " should not set the property value
+PASS e.style['animation-trigger'] = "play, play" should not set the property value
+PASS e.style['animation-trigger'] = "--abc play, play" should not set the property value
+PASS e.style['animation-trigger'] = "--abc, --def play" should not set the property value
+PASS e.style['animation-trigger'] = "default" should not set the property value
+PASS e.style['animation-trigger'] = "10px" should not set the property value
+PASS e.style['animation-trigger'] = "foo bar" should not set the property value
+PASS e.style['animation-trigger'] = "\"foo\" \"bar\"" should not set the property value
+PASS e.style['animation-trigger'] = "rgb(1, 2, 3)" should not set the property value
+PASS e.style['animation-trigger'] = "#fefefe" should not set the property value
+PASS e.style['animation-trigger'] = "--a,, --b" should not set the property value
+PASS e.style['animation-trigger'] = "trigger(--abc, play) none" should not set the property value
+PASS e.style['animation-trigger'] = "none trigger(--abc, play)" should not set the property value
+PASS e.style['animation-trigger'] = "trigger" should not set the property value
+PASS e.style['animation-trigger'] = "trigger(--abc" should not set the property value
+PASS e.style['animation-trigger'] = "trigger()" should not set the property value
+PASS e.style['animation-trigger'] = "trigger(--abc play)" should not set the property value
+FAIL e.style['animation-trigger'] = "--abc play pause reset" should not set the property value assert_equals: expected "" but got "--abc play pause reset"
+FAIL e.style['animation-trigger'] = "--abc play pause reset, --def pause reset play" should not set the property value assert_equals: expected "" but got "--abc play pause reset, --def pause reset play"
+

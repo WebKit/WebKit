@@ -1,0 +1,77 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrameMemoryCacheSourceMapURL");
+
+    // Spy on downloadSourceMap to capture the sourceMapURL that
+    // Network.requestServedFromMemoryCache forwards (via the CachedResource object),
+    // without performing the (flaky, network-dependent) source map download.
+    let capturedSourceMapURL;
+    WI.networkManager.downloadSourceMap = function(sourceMapURL) {
+        capturedSourceMapURL = sourceMapURL;
+    };
+
+    // Add a <link> for `href` in the given frame and resolve with the resulting resource once it
+    // has finished loading. responseSource is only set after ResourceWasAdded (during response/
+    // finish handling), so callers inspect it after this resolves, not at add time. The listener
+    // is registered before the load is triggered so no event is missed.
+    async function loadStylesheetAndAwaitResource(frameTarget, href) {
+        let added = new Promise((resolve) => {
+            function handler(event) {
+                let resource = event.data.resource;
+                if (!resource.url.includes(href))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, handler);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, handler);
+        });
+        await frameTarget.RuntimeAgent.evaluate.invoke({expression: `loadStylesheet(${JSON.stringify(href)})`, objectGroup: "test"});
+        let resource = await added;
+        if (!resource.finished)
+            await new Promise((resolve) => resource.singleFireEventListener(WI.Resource.Event.LoadingDidFinish, resolve));
+        return resource;
+    }
+
+    async function frameTargetContaining(substring) {
+        let target = await frameTargetForURLContaining(substring);
+        InspectorTest.assert(target instanceof WI.FrameTarget, `Frame target for "${substring}" should exist.`);
+        await waitForExpressionInTarget(target, "typeof loadStylesheet === 'function'");
+        return target;
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.MemoryCacheSourceMapURLFromHeader",
+        description: "requestServedFromMemoryCache for a cross-origin iframe stylesheet should carry the SourceMap header value.",
+        async test() {
+            let href = "stylesheet-with-source-map-header-cacheable.py";
+
+            // Frames A and B are the same origin (both localhost:8000), so under Site Isolation they
+            // share one WebContent process and its memory cache. Cold-load the stylesheet in A and
+            // keep its <link> alive so the resource stays cached in the shared process.
+            let frameA = await frameTargetContaining("iframe-with-stylesheet.html?a");
+            await loadStylesheetAndAwaitResource(frameA, href);
+            InspectorTest.log("Cold load in frame A finished; loading the same URL in frame B.");
+
+            // Loading the same URL in frame B is served from the shared memory cache.
+            let frameB = await frameTargetContaining("iframe-with-stylesheet.html?b");
+            capturedSourceMapURL = undefined;
+            let cached = await loadStylesheetAndAwaitResource(frameB, href);
+
+            InspectorTest.expectEqual(cached.type, WI.Resource.Type.StyleSheet, "Resource should be a stylesheet.");
+            InspectorTest.expectEqual(cached.responseSource, WI.Resource.ResponseSource.MemoryCache, "Resource should be served from the memory cache.");
+            InspectorTest.expectEqual(capturedSourceMapURL, "stylesheet-header.css.map", "requestServedFromMemoryCache should carry the SourceMap header value.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Network.requestServedFromMemoryCache forwards the sourceMapURL for a cross-origin iframe stylesheet served from the in-memory cache under Site Isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-stylesheet.html?a"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/network/resources/iframe-with-stylesheet.html?b"></iframe>
+</body>

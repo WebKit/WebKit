@@ -1,0 +1,41 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<style>
+.event {
+    position:relative;
+    background-color:blue;
+    width:200px;
+    height:200px;
+}
+.child {
+    position:relative;
+    background-color:blue;
+    left:200px;
+    width:50px;
+    height:50px;
+}
+.offset {
+    left: 200px;
+}
+
+</style>
+<script>
+window.onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if (window.internals)
+        results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+}
+document.addEventListener('wheel', () => { results.textContent += 'passive wheel\n' }, { passive: true });
+</script>
+<body>
+<div class="event" onwheel="results.textContent += 'wheel\n'">
+    <div class="child"></div>
+</div>
+<div class="event offset" id="passive">
+    <div class="child"></div>
+</div>
+<pre id="results"></pre>
+</body>
+</html>

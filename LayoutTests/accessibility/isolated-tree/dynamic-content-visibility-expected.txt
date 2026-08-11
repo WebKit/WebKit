@@ -1,0 +1,21 @@
+This test ensures we update the accessibility tree when content-visibility changes.
+
+
+{#button-one AXRole: AXButton}
+
+{#button-two AXRole: AXButton}
+
+
+Tree traversal after adding content-visibility: hidden:
+
+
+Tree traversal after adding content-visibility: hidden:
+
+{#button-one AXRole: AXButton}
+
+{#button-two AXRole: AXButton}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Press Press

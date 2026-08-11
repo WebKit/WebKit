@@ -1,0 +1,28 @@
+a
+a
+ת
+ת
+
+PASS Initial  directionality of element div1 is ltr
+PASS Initial  directionality of element div1_1 is ltr
+PASS Initial  directionality of element div2 is rtl
+PASS Initial  directionality of element div2_1 is rtl
+PASS Initial  directionality of element div3 is ltr
+PASS Initial  directionality of element div3_1 is rtl
+PASS Initial  directionality of element div3_2 is ltr
+PASS Initial  directionality of element div4 is ltr
+PASS Initial  directionality of element div4_1 is ltr
+PASS Initial  directionality of element div4_1_1 is ltr
+PASS Updated  directionality of element div1 is rtl
+PASS Updated  directionality of element div1_1 is rtl
+PASS Updated  directionality of element div1 is ltr
+PASS Updated  directionality of element div1_1 is ltr
+PASS Reupdated  directionality of element div1 is ltr
+PASS Reupdated  directionality of element div1_1 is ltr
+PASS Updated  directionality of element div2 is ltr
+PASS Updated  directionality of element div3 is rtl
+PASS Updated  directionality of element div3 is ltr
+PASS Updated  directionality of element div4 is rtl
+PASS Updated  directionality of element div4_1 is rtl
+PASS Updated  directionality of element div4_1_1 is rtl
+

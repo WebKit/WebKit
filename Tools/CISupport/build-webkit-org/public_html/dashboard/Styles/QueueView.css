@@ -1,0 +1,159 @@
+/*
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.queue-view {
+    width: 200px;
+    padding: 10px 20px;
+}
+
+.queue-view .queueLabel {
+    display: block;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
+    color: rgb(145, 135, 95);
+    text-align: left;
+}
+
+.queue-view .queueLabel:not(:first-child) {
+    margin-top: 10px;
+}
+
+.popover .divider {
+    height: 7px;
+}
+
+.popover .popover-iteration-heading .buildbot-link,
+.popover .popover-iteration-heading .additional-text {
+    padding-left: 5px;
+}
+
+.commit-history-popover {
+    font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
+    color: rgb(145, 135, 95);
+    font-size: 12px;
+    text-align: left;
+    padding: 1px 6px 1px 6px;
+    user-select: auto;
+}
+
+.commit-history-popover > .pending-commit > .author {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.commit-history-popover > .pending-commit > .title {
+    color: black;
+}
+
+.build-logs-popover {
+    font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
+    color: rgb(145, 135, 95);
+    font-size: 12px;
+    text-align: left;
+    padding: 1px 6px 1px 6px;
+}
+
+.build-logs-popover .build-logs-heading {
+    display: inline;
+}
+
+.build-logs-popover .build-page-link {
+    display: block;
+}
+
+.build-logs-popover .build-log-link {
+    padding-left: 5px;
+}
+
+.test-results-popover {
+    font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
+    color: rgb(145, 135, 95);
+    font-size: 12px;
+    text-align: left;
+    padding: 1px 6px 1px 6px;
+}
+
+.test-results-popover .failing-test-kind-summary {
+    display: block;
+}
+
+.test-results-popover .test-path {
+    color: black;
+    -webkit-user-select: auto;
+    cursor: text;
+}
+
+.test-results-popover .failure-kind-indicator {
+    color: rgb(191, 67, 41);
+    padding-left: 7px;
+}
+
+.test-results-popover .test-history-link {
+    color: rgb(145, 135, 95);
+    padding-left: 7px;
+}
+
+.test-results-popover .additional-link {
+    color: rgb(145, 135, 95);
+    padding-left: 7px;
+}
+
+.bubble-server-popover,
+.performance-popover,
+.leaks-popover,
+.combined-queue-popover {
+    font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
+    color: rgb(145, 135, 95);
+    font-size: 12px;
+    text-align: left;
+    padding: 1px 6px 1px 6px;
+}
+
+.bubble-server-popover .popover-queue-heading .queue-status-link,
+.bubble-server-popover .popover-queue-heading .queue-charts-link {
+    color: rgb(145, 135, 95);
+    padding-left: 7px;
+}
+
+.bubble-server-popover .latest-status-with-link,
+.bubble-server-popover .latest-status-no-link {
+    color: black;
+    padding-left: 7px;
+}
+
+.bubble-server-popover .failure-count,
+.bubble-server-popover .time-since-message,
+.bubble-server-popover .bugzilla-link,
+.bubble-server-popover .bot-status-description {
+    padding-left: 7px;
+}
+
+/* Styling the performance dashboard link as visited doesn't make much sense in the context of bot watcher's dashboard. */
+.performance-popover .dashboard-link {
+    color: blue;
+}
+
+.combined-queue-popover .revision {
+    padding-left: 7px;
+}

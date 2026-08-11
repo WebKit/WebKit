@@ -1,0 +1,10 @@
+basic stretch into definite width
+basic stretch into definite height
+indefinite height stretch is ignored
+indefinite min-height stretch is ignored
+
+PASS p + div > div 1
+PASS p + div > div 2
+PASS p + div > div 3
+PASS p + div > div 4
+

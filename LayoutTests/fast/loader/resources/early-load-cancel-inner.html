@@ -1,0 +1,18 @@
+<a id="test" onmousedown="test()">click here</a>
+<div id="outer">
+</div>
+<script>
+function test()
+{
+    document.getElementById("outer").innerHTML = "<iframe src='other.html'></iframe>";
+    document.getElementById("outer").innerHTML = "PASSED";
+}
+
+onload = async () => {
+    testRunner?.waitUntilDone();
+    await eventSender?.asyncMouseMoveTo(20, 20);
+    await eventSender?.asyncMouseDown();
+    testRunner?.notifyDone();
+}
+</script>
+

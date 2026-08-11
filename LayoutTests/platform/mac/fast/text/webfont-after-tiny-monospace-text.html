@@ -1,0 +1,25 @@
+<style>
+@font-face {
+    font-family: webfont;
+    src: url(resources/Garuda.ttf);
+}
+div {
+    font-family: webfont;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function ensureWebFontLoaded() {
+    document.body.offsetTop;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<body onload="setTimeout(ensureWebFontLoaded, 300)">
+<div>
+<span style="font-family: monospace; font-size: 7pt;">Tiny monospace text.</span>
+<span>This text should not be jagged.</span>
+</div>
+</body>

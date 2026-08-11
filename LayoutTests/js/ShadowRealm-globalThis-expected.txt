@@ -1,0 +1,12 @@
+Test to ensure correct behaviour of ShadowRealm global scope
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Object.getPrototypeOf(globalThis) === Object.prototype
+globalThis.__proto__ = { alpha: "omega" };
+Object.setPrototypeOf(globalThis, { chuckle: "buckle" });
+Reflect.setPrototypeOf(globalThis, { zoo: "moo" });
+
+PASS ShadowRealm global scope is an ordinary object
+

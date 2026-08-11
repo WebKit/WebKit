@@ -1,0 +1,79 @@
+# Copyright (C) 2019-2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(GPU_PROCESS)
+
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU
+]
+messages -> GPUConnectionToWebProcess WantsDispatchMessage {
+    void CreateRenderingBackend(WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle connectionHandle) AllowedWhenWaitingForSyncReply
+    void ReleaseRenderingBackend(WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier) AllowedWhenWaitingForSyncReply
+#if ENABLE(WEBGL)
+    [EnabledBy=WebGLEnabled && UseGPUProcessForWebGLEnabled] void CreateGraphicsContextGL(WebKit::RemoteGraphicsContextGLIdentifier identifier, struct WebCore::GraphicsContextGLAttributes attributes, WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
+    [EnabledBy=WebGLEnabled && UseGPUProcessForWebGLEnabled] void ReleaseGraphicsContextGL(WebKit::RemoteGraphicsContextGLIdentifier identifier) AllowedWhenWaitingForSyncReply
+#endif
+    [EnabledBy=WebGPUEnabled] void CreateGPU(WebKit::WebGPUIdentifier identifier, WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
+    [EnabledBy=WebGPUEnabled] void ReleaseGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
+    void ClearNowPlayingInfo()
+    void SetNowPlayingInfo(struct WebCore::NowPlayingInfo nowPlayingInfo)
+#if USE(AUDIO_SESSION)
+    [EnabledBy=UseGPUProcessForMediaEnabled && MediaPlaybackEnabled] EnsureAudioSession() -> (struct WebKit::RemoteAudioSessionConfiguration configuration) Synchronous
+#endif
+#if PLATFORM(IOS_FAMILY)
+    EnsureMediaSessionHelper()
+#endif
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    CreateVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, bool canShowWhileLocked);
+    DestroyVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID);
+#endif
+    SetMediaOverridesForTesting(struct WebKit::MediaOverridesForTesting configuration)
+    CreateAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
+    ReleaseAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
+    CreateRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
+    ReleaseRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
+    ConfigureLoggingChannel(String channelName, enum:uint8_t WTFLogChannelState state, enum:uint8_t WTFLogLevel level)
+#if USE(GRAPHICS_LAYER_WC)
+    CreateWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering) AllowedWhenWaitingForSyncReply
+    ReleaseWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier) AllowedWhenWaitingForSyncReply
+#endif
+#if ENABLE(VIDEO)
+    CanDecodeExtendedType(enum:uint8_t WebCore::PlatformMediaDecodingType platformType, WebCore::ContentType contentType) -> (bool supported);
+#endif
+
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    UpdateSampleBufferDisplayLayerBoundsAndPosition(WebKit::SampleBufferDisplayLayerIdentifier identifier, WebCore::FloatRect bounds, std::optional<MachSendRightAnnotated> fence);
+#endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    SetMediaPlaybackEnvironment(WebCore::PageIdentifier pageIdentifier, String environment);
+    SetDisplayCaptureEnvironment(WebCore::PageIdentifier pageIdentifier, String environment);
+#endif
+
+#if ENABLE(IPC_TESTING_API)
+    TakeInvalidMessageStringForTesting() -> (String error) Synchronous
+#endif
+}
+
+#endif // ENABLE(GPU_PROCESS)

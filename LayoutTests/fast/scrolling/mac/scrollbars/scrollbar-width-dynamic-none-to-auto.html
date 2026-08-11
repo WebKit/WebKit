@@ -1,0 +1,33 @@
+<!doctype html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style>
+    .container {
+        background-color: orange;
+        overflow: auto;
+        width: 200px;
+        height: 200px;
+        border: 1px solid black;
+        scrollbar-width: none;
+    }
+
+    .content {
+        background-color: green;
+        height: 300px;
+        width: 100%;
+    }
+    body.changed .container {
+        scrollbar-width: auto;
+    }
+</style>
+    <div id="box" class="container">
+        <div class="content"></div>
+    </div>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    internals.setUsesOverlayScrollbars(false);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.body.classList.add('changed');
+        testRunner.notifyDone();
+    }));
+</script>

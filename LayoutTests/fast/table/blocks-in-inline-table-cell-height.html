@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<meta name="fuzzy" content="maxDifference=0-255; totalPixels=0-50" />
+<title>Table cell with blocks-in-inline should not get wrong height after intrinsic padding change</title>
+<style>
+table {
+  border-collapse: collapse;
+}
+td {
+  padding: 0px;
+}
+div.block {
+    width: 50px;
+    height: 0;
+    padding-left: 1%;
+    background: green;
+}
+</style>
+<table>
+    <td><span><div class="block" id="a"></div></span></td>
+    <td><span><div class="block" id="b"></div></span></td>
+</table>
+<script>
+document.body.offsetHeight;
+
+a.style.width = "200px";
+a.style.height = "100px";
+document.body.offsetHeight;
+
+b.style.width = "200px";
+b.style.height = "100px";
+document.body.offsetHeight;
+</script>

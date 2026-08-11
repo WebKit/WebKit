@@ -1,0 +1,10 @@
+
+PASS Headers has append method
+PASS Headers has delete method
+PASS Headers has get method
+PASS Headers has has method
+PASS Headers has set method
+PASS Headers has entries method
+PASS Headers has keys method
+PASS Headers has values method
+

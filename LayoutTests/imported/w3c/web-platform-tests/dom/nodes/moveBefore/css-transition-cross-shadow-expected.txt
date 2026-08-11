@@ -1,0 +1,3 @@
+
+PASS Moving an element with a transition across shadow boundaries preserves the transition
+

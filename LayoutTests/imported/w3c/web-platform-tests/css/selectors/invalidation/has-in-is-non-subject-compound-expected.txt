@@ -1,0 +1,5 @@
+
+PASS initial: #subject is grey
+PASS insert .test under #trigger: #subject becomes red
+PASS remove .test: #subject returns to grey
+

@@ -1,0 +1,115 @@
+Tests the computedrole mappings defined in HTML-AAM. Most test names correspond to a unique ID defined in the spec.
+
+These should remain in alphabetical order, and include all HTML tagnames. If a tag is not tested here, include a pointer to the file where it is tested, such as: <!-- caption -> ./table-roles.html -->
+
+x
+x
+x
+x x
+x
+x
+x
+x
+x
+x
+x
+x x
+
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+                   x
+x
+x
+x
+x
+x
+x
+x
+
+x
+x
+x
+  x
+x
+
+ x
+x
+ x x x x
+x
+x
+
+PASS el-address
+PASS el-article
+PASS el-blockquote
+PASS el-button
+PASS el-code
+PASS el-dd
+PASS el-del
+PASS el-details
+PASS el-dfn
+PASS el-dt
+PASS el-em
+PASS el-fieldset
+PASS el-figure
+PASS el-form
+PASS el-h1
+PASS el-h2
+PASS el-h3
+PASS el-h4
+PASS el-h5
+PASS el-h6
+PASS el-hgroup
+PASS el-hr
+PASS el-img
+PASS el-input-button
+PASS el-input-checkbox
+PASS el-input-email
+PASS el-input-radio
+PASS el-input-range
+PASS el-input-reset
+PASS el-input-search
+PASS el-input-search-with-role
+PASS el-input-submit
+PASS el-input-tel
+PASS el-input-text
+PASS el-input-url
+PASS el-ins
+PASS el-li-in-ul
+PASS el-li-in-ol
+PASS el-main
+PASS el-mark
+PASS el-menu
+PASS el-meter
+PASS el-nav
+PASS el-ol
+PASS el-option
+PASS el-output
+PASS el-p
+PASS el-progress
+PASS el-s
+PASS el-search
+PASS el-select-listbox
+PASS el-strong
+PASS el-sub
+PASS el-sup
+PASS el-time
+PASS el-textarea
+PASS el-ul
+PASS el-img-alt-no-value
+PASS el-img-empty-alt
+

@@ -1,0 +1,138 @@
+/*
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+ 
+#include "config.h"
+#include "IconLoader.h"
+
+#include "CachedRawResource.h"
+#include "CachedResourceRequest.h"
+#include "CachedResourceRequestInitiatorTypes.h"
+#include "DocumentLoader.h"
+#include "DocumentResourceLoader.h"
+#include "FrameDestructionObserverInlines.h"
+#include "FrameLoader.h"
+#include "LocalFrameInlines.h"
+#include "LocalFrameLoaderClient.h"
+#include "Logging.h"
+#include "ResourceRequest.h"
+#include "SharedBuffer.h"
+#include <WebCore/HTTPStatusCodes.h>
+#include <wtf/text/CString.h>
+
+namespace WebCore {
+
+Ref<IconLoader> IconLoader::create(DocumentLoader& documentLoader, const URL& url)
+{
+    return adoptRef(*new IconLoader(documentLoader, url));
+}
+
+IconLoader::IconLoader(DocumentLoader& documentLoader, const URL& url)
+    : m_documentLoader(documentLoader)
+    , m_url(url)
+{
+}
+
+IconLoader::~IconLoader()
+{
+    stopLoading();
+}
+
+void IconLoader::startLoading()
+{
+    if (m_resource)
+        return;
+
+    RefPtr frame = m_documentLoader ? m_documentLoader->frame() : nullptr;
+    if (!frame)
+        return;
+
+    ResourceRequest resourceRequest = URL { m_url };
+    resourceRequest.setPriority(ResourceLoadPriority::Low);
+#if !ERROR_DISABLED
+    // Copy this because we may want to access it after transferring the
+    // `resourceRequest` to the `request`. If we don't, then the LOG_ERROR
+    // below won't print a URL.
+    auto resourceRequestURL = resourceRequest.url();
+#endif
+
+    CachedResourceRequest request(WTF::move(resourceRequest), ResourceLoaderOptions(
+        SendCallbackPolicy::SendCallbacks,
+        ContentSniffingPolicy::SniffContent,
+        DataBufferingPolicy::BufferData,
+        StoredCredentialsPolicy::DoNotUse,
+        ClientCredentialPolicy::CannotAskClientForCredentials,
+        FetchOptions::Credentials::Omit,
+        SecurityCheckPolicy::DoSecurityCheck,
+        FetchOptions::Mode::NoCors,
+        CertificateInfoPolicy::DoNotIncludeCertificateInfo,
+        ContentSecurityPolicyImposition::DoPolicyCheck,
+        DefersLoadingPolicy::AllowDefersLoading,
+        CachingPolicy::AllowCaching));
+
+    request.setInitiatorType(cachedResourceRequestInitiatorTypes().icon);
+
+    auto cachedResource = protect(protect(frame->document())->cachedResourceLoader())->requestIcon(WTF::move(request));
+    if (cachedResource)
+        m_resource = WTF::move(cachedResource.value());
+    else
+        m_resource = nullptr;
+    if (RefPtr resource = m_resource)
+        resource->addClient(*this);
+    else
+        LOG_ERROR("Failed to start load for icon at url %s (error: %s)", resourceRequestURL.string().ascii().data(), cachedResource.error().localizedDescription().utf8().data());
+}
+
+void IconLoader::stopLoading()
+{
+    if (RefPtr resource = std::exchange(m_resource, nullptr))
+        resource->removeClient(*this);
+}
+
+void IconLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
+{
+    ASSERT_UNUSED(resource, &resource == m_resource);
+
+    // If we got a status code indicating an invalid response, then lets
+    // ignore the data and not try to decode the error page as an icon.
+    RefPtr data = resource.resourceBuffer();
+    int status = resource.response().httpStatusCode();
+    if (status && !isHttpOkStatus(status))
+        data = nullptr;
+
+    constexpr std::array<uint8_t, 4> pdfMagicNumber { '%', 'P', 'D', 'F' };
+    if (data && data->startsWith(pdfMagicNumber)) {
+        LOG(IconDatabase, "IconLoader::finishLoading() - Ignoring icon at %s because it appears to be a PDF", resource.url().string().ascii().data());
+        data = nullptr;
+    }
+
+    LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", resource.url().string().ascii().data());
+
+    // DocumentLoader::finishedLoadingIcon destroys this IconLoader as it finishes. This will automatically
+    // trigger IconLoader::stopLoading() during destruction, so we should just return here.
+    if (RefPtr documentLoader = m_documentLoader.get())
+        documentLoader->finishedLoadingIcon(*this, data.get());
+}
+
+}

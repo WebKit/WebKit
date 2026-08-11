@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+// The events that we want to test, with the properties that each one uses.
+var events = [
+    { eventKind: "CustomEvent", propName: "detail" },
+    { eventKind: "MessageEvent", propName: "data"  },
+    { eventKind: "PopStateEvent", propName: "state" },
+    { eventKind: "ErrorEvent", propName: "error" },
+];
+
+// Types we can put in the property of the Event
+var values = [
+    { propValue: "document" },
+    { propValue: '{"bar":1}' },
+    { propValue: "5" },
+    { propValue: '"hello"' },
+    { propValue: "true" },
+    { propValue: "[1,2,3]" }
+];
+
+function merge(obj1, obj2) {
+    var newObj = { };
+    for (var attrname in obj1) { newObj[attrname] = obj1[attrname]; }
+    for (var attrname in obj2) { newObj[attrname] = obj2[attrname]; }
+    return newObj;
+}
+
+// Format the tests so they look like [ { eventKind: ..., propValue: ... }, ... { eventKind: ..., propValue: ... } ]
+var tests = events.map(function(event) {
+    return values.map(function(value) {
+        return merge(event, value);
+    })
+});
+tests = tests.reduce(function(a, b) {
+    return a.concat(b);
+});
+
+// We need to scan all the properies of value to ensure they all came from the current world.
+// Assumes window.internals exists.
+function checkAllPropertiesFromCurrentWorld(value) {
+    var allFromCurrentWorld = true;
+    while (allFromCurrentWorld && value && typeof value === "object") {
+        allFromCurrentWorld = allFromCurrentWorld && window.internals.isFromCurrentWorld(value);
+        for (var prop in value)
+            allFromCurrentWorld = allFromCurrentWorld && checkAllPropertiesFromCurrentWorld(value[prop], seenValues);
+        value = Object.getPrototypeOf(value);
+    }
+
+    return allFromCurrentWorld;
+}
+
+function addListener(eventKind, eventString, prop) {
+    document.addEventListener(eventString, function(event) {
+        eventValue = event
+        resultValue = event[prop]
+
+        if (window.internals) {
+            shouldBeTrue("window.internals.isFromCurrentWorld(event)");
+            shouldBeTrue("checkAllPropertiesFromCurrentWorld(resultValue)");
+        }
+
+        // The property defined in the isolated world should be undefined.
+        shouldBeUndefined("Object.pageDefinedVar");
+        window.postMessage("done", "*");
+    });
+}
+
+function sendDocumentEvent(eventKind, eventString, prop, value) {
+    var constructor = eval(eventKind);
+    var initializer = { };
+    initializer[prop] = value;
+    var newEvent = new constructor(eventString, initializer);
+    // Try to access the property in a different world to make sure caching issues do not occur
+    newEvent[prop];
+    document.dispatchEvent(newEvent);
+}
+
+function runScript(eventKind, propName, propValue, number) {
+    // Final string should have the form:
+    //     document.pageDefinedVar = 1; (function sendDocumentObject(eventKind, propName, result) {...})(...);
+    // When evaluated in the isolated world, should initiate the event with the
+    // document object as the specificed property value.
+    var eventString = eventKind + number;
+
+    var script = "Object.pageDefinedVar = 1; "
+        + "(" + sendDocumentEvent.toString() + ")('"
+        + eventKind + "', '" + eventString + "', '" + propName + "', " + propValue + ");";
+    addListener(eventKind, eventString);
+    testRunner.evaluateScriptInIsolatedWorld(0, script);
+}
+
+// Run the tests whenever a notification arrives, which indicates that the
+// previous test has finished.
+window.addEventListener("message", function(message) {
+    runNextTest();
+}, false);
+
+// Keep a count to make a unique string
+var count = 1;
+var lastEventKind, lastPropertyName;
+function runNextTest () {
+    var test = tests.pop();
+    if (!test) {
+        finishJSTest();
+        return;
+    }
+
+    if (test.eventKind !== lastEventKind) {
+        debug("");
+        debug("Testing " + test.eventKind + "." + test.propName);
+        lastEventKind = test.eventKind;
+        lastPropertyName = test.propName;
+    }
+
+    runScript(test.eventKind, test.propName, test.propValue, count++);
+};
+
+// This test is meaningless without testRunner.
+if (window.testRunner) {
+    runNextTest();
+}
+</script>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

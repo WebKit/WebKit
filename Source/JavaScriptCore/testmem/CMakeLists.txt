@@ -1,0 +1,17 @@
+set(testmem_SOURCES ./testmem.cpp)
+set(testmem_LIBRARIES ${CMAKE_DL_LIBS})
+set(testmem_FRAMEWORKS
+    JavaScriptCore
+    WTF
+    bmalloc
+)
+
+set(testmem_PRIVATE_INCLUDE_DIRECTORIES
+    $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
+)
+
+WEBKIT_EXECUTABLE_DECLARE(testmem)
+WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+WEBKIT_EXECUTABLE(testmem)
+
+install(TARGETS testmem DESTINATION "${LIBEXEC_INSTALL_DIR}")

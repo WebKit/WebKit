@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('Two matching markers that are separated by a blank line should not trigger smart-list conversion: the markers must appear on consecutive lines.');
+
+var test = document.getElementById('test');
+test.focus();
+[...'* A\n\n* B'].forEach(typeCharacterCommand);
+Markup.dump('test');
+</script>
+</body>
+</html>

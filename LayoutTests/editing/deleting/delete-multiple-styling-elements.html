@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script>
+  window.addEventListener("load", () => {
+    window.testRunner?.dumpAsText();
+    window.getSelection().selectAllChildren(container);
+    document.execCommand("clearText");
+    document.body.innerHTML = "PASS if no crash.";
+  });
+</script>
+<style>
+  div {
+    text-combine-upright: all;
+    writing-mode: vertical-rl;
+  }
+</style>
+<div contenteditable="true">
+  <span id="container">
+    <link></link>
+    <link></link>
+  </span>
+</div>

@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+input {
+    font-size: 40px;
+    width: 300px;
+    height: 100px;
+}
+</style>
+</head>
+<body>
+    <input value="hello world">
+    <p id="description"></p>
+    <p id="console"></p>
+    <script>
+    const input = document.querySelector("input");
+    jsTestIsAsync = true;
+
+    async function tapAndWaitForSelectionChange(x, y)
+    {
+        await new Promise(resolve => {
+            let doneCount = 0;
+            const checkDone = () => {
+                if (++doneCount != 2)
+                    return;
+
+                document.removeEventListener("selectionchange", checkDone);
+                resolve();
+            };
+            document.addEventListener("selectionchange", checkDone);
+            UIHelper.activateAt(x, y).then(checkDone);
+        });
+    }
+
+    addEventListener("load", async () => {
+        description("Verifies that tapping to change selection does not leave the software keyboard in a state where it is automatically shifted. To manually run the test, focus the input field, tap on 'world', and then tap on 'hello' such that the final selection is after the word 'hello'. The keyboard should not be in shifted state.");
+        if (window.testRunner)
+            await UIHelper.setHardwareKeyboardAttached(false);
+
+        await UIHelper.activateElementAndWaitForInputSession(input);
+        await tapAndWaitForSelectionChange(150, 50);
+        await tapAndWaitForSelectionChange(75, 50);
+
+        await UIHelper.ensurePresentationUpdate();
+        keyboardIsAutomaticallyShifted = await UIHelper.keyboardIsAutomaticallyShifted();
+
+        shouldBeFalse("keyboardIsAutomaticallyShifted");
+        finishJSTest();
+    });
+</script>
+</body>
+</html>

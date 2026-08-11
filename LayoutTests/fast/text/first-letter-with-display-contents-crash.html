@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't crash on first letter with display contents.</title>
+<style>
+body::first-letter { 
+    opacity: 0.2;
+}
+span { 
+	display: contents; 
+	color: red;
+}
+</style>
+</head>
+<body>
+<span>Pass if no crash</span>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</body>
+</html>

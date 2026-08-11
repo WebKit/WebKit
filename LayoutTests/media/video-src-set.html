@@ -1,0 +1,15 @@
+<video controls></video>
+<div>Test that setting src attribute triggers load</div>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    var mediaFile = findMediaFile("video", "content/test");
+    video.setAttribute('src', mediaFile);
+
+    waitForEvent('loadstart', function () {
+        testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(mediaFile));
+        endTest();
+    } );
+
+    video.setAttribute('src', mediaFile);
+</script>

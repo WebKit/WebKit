@@ -1,0 +1,4 @@
+Should be green
+
+PASS CSS Test: @namespace in CSSOM is not severely broken
+

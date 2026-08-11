@@ -1,0 +1,6 @@
+abcdefghi
+button
+
+PASS pointermove after pointerup which deletes the overlay should not keep expanding selection
+PASS pointermove after pointerup which deletes the overlay and move focus to the button should not keep expanding selection
+

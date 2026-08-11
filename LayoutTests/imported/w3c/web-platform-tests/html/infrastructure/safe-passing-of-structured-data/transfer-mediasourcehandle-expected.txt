@@ -1,0 +1,3 @@
+
+PASS MediaSourceHandle can be transferred through a MessageChannel
+

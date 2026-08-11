@@ -1,0 +1,4 @@
+This tests that a video element can load a non-MSE blob URL in an <source> element.
+
+END OF TEST
+

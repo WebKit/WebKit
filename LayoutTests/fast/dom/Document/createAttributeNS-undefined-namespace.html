@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+description('Test calling createAttributeNS with undefined as the namespace URI. It should treat it as null.');
+
+evalAndLog('element = document.createElement("div"); attr = document.createAttributeNS(undefined, "foo")');
+shouldBeNull('attr.prefix');
+shouldBeEqualToString('attr.localName', 'foo');
+shouldBeNull('attr.namespaceURI');
+shouldBeNull('element.getAttributeNodeNS(null, "foo")');
+shouldBe('element.setAttributeNode(attr); element.getAttributeNodeNS(null, "foo")', 'attr');
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+
+
+PASS Horizontal LTR.
+PASS Horizontal RTL.
+PASS Vertical-LR LTR.
+PASS Vertical-LR RTL.
+PASS Vertical-RL LTR.
+PASS Vertical-RL RTL.
+PASS Sideways-LR LTR.
+PASS Sideways-LR RTL.
+PASS Sideways-RL LTR.
+PASS Sideways-RL RTL.
+

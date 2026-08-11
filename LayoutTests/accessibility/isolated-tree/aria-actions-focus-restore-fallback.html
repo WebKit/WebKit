@@ -1,0 +1,60 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ ARIAActionsSupportEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="source" aria-actions="action">Source</button>
+<button id="action">Delete</button>
+
+<script>
+var output = "This test verifies that if an aria-actions custom action's handler removes the focused origin (so focus can't be restored to it), focus is left on the action target and surfaced to assistive technology, rather than assistive technology being left pointed at the removed origin.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var actionClicked = false;
+    document.getElementById("action").addEventListener("click", () => {
+        actionClicked = true;
+        // Remove the focused origin during the action, so restoring focus to it will fail.
+        document.getElementById("source").remove();
+    });
+
+    var focusNotificationCount = 0;
+    accessibilityController.addNotificationListener((axElement, notification) => {
+        if (notification == "AXFocusChanged")
+            ++focusNotificationCount;
+    });
+
+    var source = accessibilityController.accessibleElementById("source");
+
+    setTimeout(async () => {
+        document.getElementById("source").focus();
+        await waitFor(() => accessibilityController.focusedElement?.domIdentifier == "source");
+
+        // Ignore focus notifications from establishing the initial focus above.
+        focusNotificationCount = 0;
+
+        output += "Invoking the custom action runs the handler, which removes the focused origin:\n";
+        output += expect("source.invokeCustomActionAtIndex(0)", "true");
+        output += expect("actionClicked", "true");
+        output += "\n";
+
+        output += "Focus is left on the action target, since the origin could no longer take it back:\n";
+        output += expect("document.activeElement.id", "'action'");
+        output += "\n";
+
+        output += "Assistive technology converges on the action target rather than the removed origin:\n";
+        await waitFor(() => accessibilityController.focusedElement?.domIdentifier == "action");
+        output += expect("accessibilityController.focusedElement.domIdentifier", "'action'");
+        output += expect("focusNotificationCount > 0", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

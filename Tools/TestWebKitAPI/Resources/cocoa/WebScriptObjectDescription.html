@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<body>
+  <script>
+    function foo(base) {
+        for (let i = 0; i < 100000; i++) {
+            if (base + "" !== "<NSObject>")
+                return false;
+        }
+        return true;
+    }
+  </script>
+</body>

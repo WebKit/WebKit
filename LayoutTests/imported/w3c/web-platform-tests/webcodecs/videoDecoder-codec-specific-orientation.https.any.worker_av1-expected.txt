@@ -1,0 +1,4 @@
+
+FAIL Test that isConfigSupported() with orientation assert_equals: rotation expected (number) 90 but got (undefined) undefined
+FAIL Decode frames with orientation metadata assert_equals: rotation expected (number) 90 but got (undefined) undefined
+

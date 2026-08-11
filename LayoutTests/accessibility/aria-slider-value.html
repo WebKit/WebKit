@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<span tabindex="0" role="slider" id="slider" aria-valuenow=5 aria-valuemin=0 aria-valuemax=10>X</span>
+
+<script>
+    var testOutput = "This test ensures we properly expose the current, minimum, and maximum values of ARIA sliders.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var slider = accessibilityController.accessibleElementById("slider");
+        testOutput += expect("slider.intValue", "5");
+        testOutput += expect("slider.minValue", "0");
+        testOutput += expect("slider.maxValue", "10");
+
+        testOutput += "\nFor #slider element, updating aria-valuemin to 2, aria-valuemax to 8.\n";
+        document.getElementById("slider").ariaValueMin = "2";
+        document.getElementById("slider").ariaValueMax = "8";
+        setTimeout(async function() {
+            await waitFor(() => {
+                return slider.minValue === 2 &&
+                    slider.maxValue === 8;
+            });
+
+            testOutput += expect("slider.minValue", "2");
+            testOutput += expect("slider.maxValue", "8");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

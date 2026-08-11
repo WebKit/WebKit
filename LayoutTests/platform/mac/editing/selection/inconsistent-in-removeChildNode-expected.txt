@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 53x18
+          text run at (0,0) width 53: "Test for "
+        RenderInline {A} at (0,0) size 149x18 [color=#0000EE]
+          RenderText {#text} at (53,0) size 149x18
+            text run at (53,0) width 149: "rdar://problem/5645813"
+        RenderText {#text} at (202,0) size 4x18
+          text run at (202,0) width 4: "."
+      RenderBlock {DIV} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 80x18
+          text run at (0,0) width 80: "Selected text"
+selection start: position 5 of child 0 {#text} of child 2 {DIV} of body
+selection end:   position 18 of child 0 {#text} of child 2 {DIV} of body

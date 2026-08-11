@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+      .trigger {
+        inline-size: 100px;
+        block-size: 100px;
+        anchor-name: --tooltip;
+      }
+      .tooltip {
+        position: absolute;
+        inline-size: 20px;
+        block-size: 20px;
+        inset: 0;
+        margin: 0;
+        position-anchor: --tooltip;
+        position-area: bottom;
+
+        &::after {
+          content: '';
+          inline-size: 10px;
+          block-size: 10px;
+          background-color: blue;
+          position: fixed;
+          position-anchor: inherit; /* both inherits together */
+          position-area: inherit;   /* are required to crash */
+        }
+      }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+      window.jsTestIsAsync = true;
+
+      window.addEventListener('load', async () => {
+        description("Tests that we don't crash when hiding a popover that's has a pseudo-element.");
+
+        const trigger = document.querySelector('.trigger');
+        const tooltip = document.querySelector('.tooltip');
+        trigger.addEventListener('mouseover', () => tooltip.showPopover());
+        trigger.addEventListener('mouseout', () => tooltip.hidePopover());
+
+        const triggerBounds = trigger.getBoundingClientRect();
+        await UIHelper.moveMouseAndWaitForFrame(triggerBounds.right - 10, triggerBounds.bottom - 10);
+
+        // Moving out of the trigger causes the crash.
+        await UIHelper.moveMouseAndWaitForFrame(triggerBounds.right + 10, triggerBounds.bottom + 10);
+
+        finishJSTest();
+      });
+    </script>
+</head>
+<body>
+    <div class="trigger"></div>
+    <div class="tooltip" popover="manual"></div>
+    <div id="console"></div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

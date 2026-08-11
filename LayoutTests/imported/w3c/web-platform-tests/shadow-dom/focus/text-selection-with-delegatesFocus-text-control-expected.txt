@@ -1,0 +1,3 @@
+
+FAIL shadow root has selectable text when focus is delegated. Selection goes to text control if it is the delegated focusable area. assert_equals: keyboard typing will update the input value. expected "FOOFOO" but got "FOO"
+

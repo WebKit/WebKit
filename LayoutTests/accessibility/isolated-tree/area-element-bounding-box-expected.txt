@@ -1,0 +1,9 @@
+This test ensures we compute a non-zero size for area elements.
+
+PASS: link.width > 100 === true
+PASS: link.height > 50 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

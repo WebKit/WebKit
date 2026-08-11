@@ -1,0 +1,5 @@
+
+(repaint rects
+  (rect 10 14 10 11)
+)
+

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test generating a CryptoKey object with malformed parameters");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+
+// Not enough arguments.
+shouldReject('crypto.subtle.generateKey()');
+shouldReject('crypto.subtle.generateKey(1)');
+shouldReject('crypto.subtle.generateKey(1, 2)');
+// Malformed AlgorithmIdentifiers.
+shouldReject('crypto.subtle.generateKey("foo", 2, 3)');
+shouldReject('crypto.subtle.generateKey({name: 1}, 2, 3)');
+shouldReject('crypto.subtle.generateKey({name: true}, 2, 3)');
+shouldReject('crypto.subtle.generateKey({name: null}, 2, 3)');
+shouldReject('crypto.subtle.generateKey({name: undefined}, 2, 3)');
+shouldReject('crypto.subtle.generateKey({name: Symbol()}, 2, 3)');
+shouldReject('crypto.subtle.generateKey({name: { }}, 2, 3)');
+shouldReject('crypto.subtle.generateKey({name: "foo"}, 2, 3)');
+// Malformed Hash.
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: true}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: 1}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: null}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: undefined}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: Symbol()}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: { }}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: "foo"}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: {name: true}}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: {name: 1}}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: {name: null}}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: {name: undefined}}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: {name: Symbol()}}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: {name: { }}}, extractable, ["sign", "verify"])');
+shouldReject('crypto.subtle.generateKey({name: "hmac", hash: {name: "foo"}}, extractable, ["sign", "verify"])');
+// Algorithms not supported generateKey op.
+shouldReject('crypto.subtle.generateKey({name: "SHA-1"}, 2, 3)');
+shouldReject('crypto.subtle.generateKey({name: "SHA-256"}, 2, 3)');
+shouldReject('crypto.subtle.generateKey({name: "SHA-384"}, 2, 3)');
+shouldReject('crypto.subtle.generateKey({name: "SHA-512"}, 2, 3)');
+// Wrong KeyUsage type.
+shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, 3)');
+shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, true)');
+shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, null)');
+shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, undefined)');
+shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, Symbol())');
+shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, { })');
+shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, "foo")');
+shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, ["foo"])');
+// Syntax error.
+shouldReject('crypto.subtle.generateKey({name: "AES-CBC", length: 128}, extractable, [ ])');
+shouldReject('crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([0x01, 0x00, 0x01])}, extractable, [ ])').then(finishJSTest);
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

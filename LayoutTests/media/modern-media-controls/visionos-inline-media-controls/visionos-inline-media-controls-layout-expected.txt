@@ -1,0 +1,16 @@
+Testing the VisionInlineMediaControls layout.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.timeControl.scrubber is an instance of VisionSlider
+PASS mediaControls.timeControl.children[1] is mediaControls.timeControl.scrubber
+PASS mediaControls.volumeSlider is an instance of VisionSlider
+PASS mediaControls.timeControl.scrubber.recessed is false
+PASS mediaControls.volumeSlider.recessed is true
+PASS mediaControls.timeControl.scrubber.element.querySelector(".fill").style.width is "calc(50% + 0px)"
+PASS mediaControls.volumeSlider.element.querySelector(".fill").style.width is "75px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

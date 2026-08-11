@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="resources/webgl-test.js"></script>
+    <script src="resources/webgl-test-utils.js"></script>
+    <script id="quadFragmentShader" type="x-shader/x-fragment">
+      precision highp float;
+      varying vec2 texCoord;
+
+      void main() {
+          gl_FragColor = vec4(texCoord, 0.5, 1.0);
+      }
+    </script>
+    <script>
+      "use strict";
+
+      var wtu = WebGLTestUtils;
+
+      function drawCanvasAsTexture(dest, source)
+      {
+          const gl = wtu.create3DContext(dest);
+          const program = wtu.setupSimpleTextureProgram(gl);
+          const samplerLoc = gl.getUniformLocation(program, "tex");
+          const buffers = wtu.setupUnitQuad(gl);
+          const tex = gl.createTexture();
+          gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+          gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+          gl.bindTexture(gl.TEXTURE_2D, tex);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+          gl.uniform1i(samplerLoc, 0);
+          wtu.clearAndDrawUnitQuad(gl);
+      }
+
+      function runTest(canvas, premultipliedAlpha)
+      {
+          const canvasGL = document.createElement("canvas");
+          canvasGL.width = 256;
+          canvasGL.height = 256;
+          const gl = wtu.create3DContext(canvasGL, { premultipliedAlpha: premultipliedAlpha });
+
+          const program = wtu.setupProgram(gl,
+                                           [wtu.setupSimpleTextureVertexShader(gl), "quadFragmentShader"],
+                                           ['vPosition', 'texCoord0']);
+          const quadParameters = wtu.setupUnitQuad(gl);
+          wtu.clearAndDrawUnitQuad(gl);
+
+          drawCanvasAsTexture(canvas, canvasGL);
+      }
+
+      function init()
+      {
+          runTest(document.getElementById("canvas0"), true);
+          runTest(document.getElementById("canvas1"), false);
+          finishTest();
+      }
+    </script>
+  </head>
+  <body onload="init()">
+    <canvas id="canvas0" width="256" height="256"></canvas>
+    <canvas id="canvas1" width="256" height="256"></canvas>
+  </body>
+</html>

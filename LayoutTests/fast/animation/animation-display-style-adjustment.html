@@ -1,0 +1,25 @@
+<style>
+@keyframes scaleout {
+    0% {
+    }
+    to {
+    }
+}
+.test {
+    text-align: center;
+    border: 2px solid green;
+    height:100px;
+}
+.test > span {
+    top: 40px;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    background-color: #ff4500;
+    border-radius: 100%;
+    animation:scaleout 1.5s infinite ease-in-out
+}
+</style>
+<body>
+<div class=test><span></span>centered</div>
+</body>

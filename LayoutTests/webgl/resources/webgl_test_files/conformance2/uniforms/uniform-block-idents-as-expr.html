@@ -1,0 +1,107 @@
+<!--
+Copyright (c) 2024 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL uniform block identifiers used as expressions</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../js/js-test-pre.js"></script>
+<script src="../../js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+description();
+
+var wtu = WebGLTestUtils;
+var gl = wtu.create3DContext(undefined, undefined, 2);
+
+if (!gl) {
+    testFailed("WebGL context creation failed");
+} else {
+    wtu.setupUnitQuad(gl);
+
+    // -
+
+    function makeVSrc(src) {
+        src = src || 'void f() { }';
+        return `
+#version 300 es
+in vec4 vPosition;
+// -
+${src}
+// -
+void main() {
+    f();
+    gl_Position = vPosition;
+}
+        `.trim();
+    }
+    function makeFSrc(src) {
+        src = src || 'void f() { }';
+        return `
+#version 300 es
+precision mediump float;
+// -
+${src}
+// -
+void main() {
+    f();
+}
+        `.trim();
+    }
+
+    // -
+
+    const shaderTests = [
+        {shaderOk: true , src: 'uniform BlockName { vec4 member; };\nvoid f() { member; }'},
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; };\nvoid f() { BlockName; }'},
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; };\nvoid f() { BlockName.member; }'},
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; };\nvoid f() { BlockName[0]; }'},
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; };\nvoid f() { BlockName[0].member; }'},
+
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; } InstanceName;\nvoid f() { member; }'},
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; } InstanceName;\nvoid f() { InstanceName; }'},
+        {shaderOk: true , src: 'uniform BlockName { vec4 member; } InstanceName;\nvoid f() { InstanceName.member; }'},
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; } InstanceName;\nvoid f() { InstanceName[0]; }'},
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; } InstanceName;\nvoid f() { InstanceName[0].member; }'},
+
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; } InstanceName[1];\nvoid f() { member; }'},
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; } InstanceName[1];\nvoid f() { InstanceName; }'},
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; } InstanceName[1];\nvoid f() { InstanceName.member; }'},
+        {shaderOk: false, src: 'uniform BlockName { vec4 member; } InstanceName[1];\nvoid f() { InstanceName[0]; }'},
+        {shaderOk: true , src: 'uniform BlockName { vec4 member; } InstanceName[1];\nvoid f() { InstanceName[0].member; }'},
+    ];
+    const tests = [];
+    tests.push({programOk: true, vsrc: '', fsrc: ''});
+    for (const test of shaderTests) {
+        tests.push({programOk: test.shaderOk, vsrc: test.src, fsrc: ''});
+        tests.push({programOk: test.shaderOk, vsrc: '', fsrc: test.src});
+    }
+
+    for (const [i,test] of Object.entries(tests)) {
+        debug('');
+        debug(`test[${i}]: ` + JSON.stringify(test));
+        const vsrc = makeVSrc(test.vsrc);
+        const fsrc = makeFSrc(test.fsrc);
+        const program = wtu.setupProgram(gl, [vsrc, fsrc], ['vPosition'], undefined, true);
+        const wasLinked = !!program;
+        gl.deleteProgram(program);
+        expectTrue(wasLinked == test.programOk, `Expected linked: ${test.programOk}, was ${wasLinked}`);
+    }
+}
+
+debug("");
+var successfullyParsed = true;
+</script>
+<script src="../../js/js-test-post.js"></script>
+
+</body>
+</html>

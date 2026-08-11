@@ -1,0 +1,19 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (memory_init0.wast:2)
+PASS #3 Reinitialize the default imports
+PASS #4 Test that WebAssembly compilation succeeds (memory_init0.wast:2)
+PASS #5 Test that WebAssembly instantiation succeeds (memory_init0.wast:2)
+PASS #6 Run a WebAssembly test without special assertions (memory_init0.wast:19)
+PASS #7 Test that a WebAssembly code returns a specific result (memory_init0.wast:20)
+PASS #8 Test that a WebAssembly code returns a specific result (memory_init0.wast:21)
+PASS #9 Test that a WebAssembly code returns a specific result (memory_init0.wast:22)
+PASS #10 Run a WebAssembly test without special assertions (memory_init0.wast:25)
+PASS #11 Test that a WebAssembly code traps (memory_init0.wast:28)
+PASS #12 Test that a WebAssembly code returns a specific result (memory_init0.wast:30)
+PASS #13 Test that a WebAssembly code returns a specific result (memory_init0.wast:31)
+PASS #14 Run a WebAssembly test without special assertions (memory_init0.wast:34)
+PASS #15 Run a WebAssembly test without special assertions (memory_init0.wast:35)
+PASS #16 Test that a WebAssembly code traps (memory_init0.wast:38)
+PASS #17 Test that a WebAssembly code traps (memory_init0.wast:40)
+

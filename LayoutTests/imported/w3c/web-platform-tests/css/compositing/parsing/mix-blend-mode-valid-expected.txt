@@ -1,0 +1,18 @@
+
+PASS e.style['mix-blend-mode'] = "normal" should set the property value
+PASS e.style['mix-blend-mode'] = "multiply" should set the property value
+PASS e.style['mix-blend-mode'] = "screen" should set the property value
+PASS e.style['mix-blend-mode'] = "overlay" should set the property value
+PASS e.style['mix-blend-mode'] = "darken" should set the property value
+PASS e.style['mix-blend-mode'] = "lighten" should set the property value
+PASS e.style['mix-blend-mode'] = "color-dodge" should set the property value
+PASS e.style['mix-blend-mode'] = "color-burn" should set the property value
+PASS e.style['mix-blend-mode'] = "hard-light" should set the property value
+PASS e.style['mix-blend-mode'] = "soft-light" should set the property value
+PASS e.style['mix-blend-mode'] = "difference" should set the property value
+PASS e.style['mix-blend-mode'] = "exclusion" should set the property value
+PASS e.style['mix-blend-mode'] = "hue" should set the property value
+PASS e.style['mix-blend-mode'] = "saturation" should set the property value
+PASS e.style['mix-blend-mode'] = "color" should set the property value
+PASS e.style['mix-blend-mode'] = "luminosity" should set the property value
+

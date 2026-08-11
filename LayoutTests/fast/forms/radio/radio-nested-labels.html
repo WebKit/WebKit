@@ -1,0 +1,38 @@
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function checkButton() {
+    if (!window.testRunner)
+        return;
+
+    var radioFour = document.getElementById("four");
+    var radioX = radioFour.offsetLeft + radioFour.offsetWidth / 2;
+    var radioY = radioFour.offsetTop + radioFour.offsetHeight / 2;
+    
+    eventSender.mouseMoveTo(radioX, radioY);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    var result = document.getElementById("result");
+    if (radioFour.checked)
+        result.innerHTML = "Test Succeeded!";
+    testRunner.notifyDone();
+}
+</script>
+
+<body onload="checkButton()">
+<p>This tests our ability to correctly select radio buttons when we have nested label tags. This test 
+only works in DumpRenderTree. It can be tested manually outside of DRT just by clicking around.</p>
+
+<form>
+    <input  type="radio" name="chkPlan" id="one"><label for="one">one
+    <input  type="radio" name="chkPlan" id="two"><label for="two">two
+    <input  type="radio" name="chkPlan" id="three"><label for="three">three
+    <input  type="radio" name="chkPlan" id="four"><label for="four">four
+</form>
+
+<div id="result">Test Failed</div>
+</body>

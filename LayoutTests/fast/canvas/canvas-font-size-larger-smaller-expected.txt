@@ -1,0 +1,9 @@
+
+PASS The canvas element and the reference element start from the same font-size
+PASS canvas 'larger' scales up by a ratio in the 1.2-1.5 range the specification recommends
+PASS canvas 'smaller' scales down by a ratio in the 1.2-1.5 range the specification recommends
+PASS canvas 'larger' resolves to the same size as CSS font-size: larger
+PASS canvas 'smaller' resolves to the same size as CSS font-size: smaller
+PASS canvas 'larger' tracks the font-size of the canvas element
+PASS canvas 'larger' and 'smaller' are inverses of each other
+

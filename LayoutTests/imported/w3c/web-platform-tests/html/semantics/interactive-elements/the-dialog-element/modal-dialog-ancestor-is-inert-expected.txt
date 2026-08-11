@@ -1,0 +1,3 @@
+
+PASS Test that ancestors of modal dialog are inert.
+

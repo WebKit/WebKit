@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function printStyleProperty(property) {
+    let computedStyle = window.getComputedStyle(document.body);
+    let propertyValue = computedStyle.getPropertyValue(property);
+    TestPage.addResult(`Property "${property}" equals "${propertyValue}"`);
+}
+
+function probeInFreshFrame(probe) {
+    let frame = document.createElement("iframe");
+    document.body.appendChild(frame);
+    let result = probe(frame.contentWindow, frame.contentDocument);
+    frame.remove();
+    return result;
+}
+
+function probeSetting(setting) {
+    switch (setting) {
+    case "PushAPIEnabled":
+        return probeInFreshFrame((contentWindow) => "PushManager" in contentWindow);
+    case "InputTypeMonthEnabled":
+        return probeInFreshFrame((contentWindow, contentDocument) => {
+            let input = contentDocument.createElement("input");
+            input.type = "month";
+            return input.type === "month";
+        });
+    case "InputTypeWeekEnabled":
+        return probeInFreshFrame((contentWindow, contentDocument) => {
+            let input = contentDocument.createElement("input");
+            input.type = "week";
+            return input.type === "week";
+        });
+    }
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Page.overrideSetting");
+
+    suite.addTestCase({
+        name: "Page.overrideSetting.AuthorAndUserStylesEnabled",
+        description: "Test that author/user styles aren't applied when that setting is overridden.",
+        async test() {
+            await InspectorTest.evaluateInPage(`printStyleProperty("color")`);
+
+            InspectorTest.log("Overriding AuthorAndUserStylesEnabled to false...");
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.AuthorAndUserStylesEnabled, false);
+
+            await InspectorTest.evaluateInPage(`printStyleProperty("color")`);
+
+            InspectorTest.log("Removing AuthorAndUserStylesEnabled override...");
+            await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting.AuthorAndUserStylesEnabled);
+
+            await InspectorTest.evaluateInPage(`printStyleProperty("color")`);
+        },
+    });
+
+    let observableForSetting = {
+        PushAPIEnabled: "window.PushManager",
+        InputTypeMonthEnabled: `an <input type="month">`,
+        InputTypeWeekEnabled: `an <input type="week">`,
+    };
+
+    async function observe(setting) {
+        return await InspectorTest.evaluateInPage(`probeSetting(${JSON.stringify(setting)})`);
+    }
+
+    for (let setting of Object.keys(observableForSetting)) {
+        let observable = observableForSetting[setting];
+        suite.addTestCase({
+            name: `Page.overrideSetting.${setting}`,
+            description: `Test that overriding ${setting} controls the availability of ${observable}.`,
+            async test() {
+                let defaultValue = await observe(setting);
+
+                await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting[setting], false);
+                InspectorTest.expectFalse(await observe(setting), `${observable} should be unavailable when ${setting} is overridden to false.`);
+
+                await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting[setting], true);
+                InspectorTest.expectTrue(await observe(setting), `${observable} should be available when ${setting} is overridden to true.`);
+
+                await PageAgent.overrideSetting(InspectorBackend.Enum.Page.Setting[setting]);
+                InspectorTest.expectEqual(await observe(setting), defaultValue, `${observable} should return to its default when the ${setting} override is removed.`);
+            },
+        });
+    }
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Page.overrideSetting command.</p>
+
+    <style>
+    body {
+        color: red;
+    }
+    </style>
+</body>
+</html>

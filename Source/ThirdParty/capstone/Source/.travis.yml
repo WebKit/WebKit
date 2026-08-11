@@ -1,0 +1,66 @@
+language: cpp
+sudo: false
+before_install:
+        - export LD_LIBRARY_PATH=`pwd`/tests/:$LD_LIBRARY_PATH
+before_script:
+        - wget https://github.com/groundx/capstonefuzz/raw/master/corpus/corpus-libFuzzer-capstone_fuzz_disasmnext-latest.zip
+        - unzip -q corpus-libFuzzer-capstone_fuzz_disasmnext-latest.zip -d suite/fuzz
+        # TODO remove built in cmocka compile and use system cmocka (including brewfile) once xenial is default
+        - git clone https://git.cryptomilk.org/projects/cmocka.git suite/cstest/cmocka
+        - chmod +x suite/cstest/build_cstest.sh
+        - if [[ ${TRAVIS_OS_NAME} = linux ]]; then export PATH="/usr/lib/llvm-9/bin:${PATH}"; fi
+script:
+        - ./make.sh
+        - make check
+        - sudo make install
+        - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cp libcapstone.so.* bindings/python/libcapstone.so; fi
+        - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cp libcapstone.*.dylib bindings/python/libcapstone.dylib; fi
+        - if [[ "$NOPYTEST" != "true" ]]; then cd bindings/python && make check; cd ../..; fi
+        - if [[ "$NOPYTEST" != "true" ]]; then cd suite/cstest && ./build_cstest.sh; fi
+        - if [[ "$NOPYTEST" != "true" ]]; then python cstest_report.py -D -t build/cstest -d ../MC; fi
+        - if [[ "$NOPYTEST" != "true" ]]; then python cstest_report.py -D -t build/cstest -f issues.cs; fi
+        - if [ -n "$QA_FUZZIT" ]; then suite/fuzz/fuzzit.sh; fi
+compiler:
+        - clang
+        - gcc
+os:
+        - linux
+        - osx
+matrix:
+    include:
+        - name: xenial gcc
+          os: linux
+          dist: xenial
+          compiler: gcc
+          addons:
+            apt:
+              packages:
+                - libcmocka-dev
+        - name: xenial clang
+          os: linux
+          dist: xenial
+          compiler: clang
+          addons:
+            apt:
+              packages:
+                - libcmocka-dev
+        - name: fuzza
+          env: ASAN_OPTIONS=detect_leaks=0 CXXFLAGS="-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION -fsanitize=address -fsanitize=fuzzer-no-link" CFLAGS="-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION -fsanitize=address -fsanitize=fuzzer-no-link" LDFLAGS="-fsanitize=address" NOPYTEST=true QA_FUZZIT=asan
+          compiler: clang
+          os: linux
+        - name: fuzzm
+          env: CXXFLAGS="-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION -fsanitize=memory -fsanitize=fuzzer-no-link" CFLAGS="-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION -fsanitize=memory -fsanitize=fuzzer-no-link" LDFLAGS="-fsanitize=memory" NOPYTEST=true QA_FUZZIT=msan
+          compiler: clang
+          os: linux
+        - name: fuzzu
+          env: CXXFLAGS="-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION -fsanitize=undefined -fsanitize=fuzzer-no-link" CFLAGS="-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION -fsanitize=undefined -fno-sanitize-recover=undefined,integer -fsanitize=fuzzer-no-link" LDFLAGS="-fsanitize=undefined" NOPYTEST=true QA_FUZZIT=ubsan
+          compiler: clang
+          os: linux
+
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-trusty
+      - ubuntu-toolchain-r-test
+    packages:
+      - clang-9

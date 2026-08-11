@@ -1,0 +1,62 @@
+
+PASS , justify-self:start;align-self:start, justify-self:start;align-self:start, ltr, horizontal-tb
+PASS flip-inline, justify-self:start;align-self:start, justify-self:end;align-self:start, ltr, horizontal-tb
+PASS flip-block, justify-self:start;align-self:start, justify-self:start;align-self:end, ltr, horizontal-tb
+PASS flip-block flip-inline, justify-self:start;align-self:start, justify-self:end;align-self:end, ltr, horizontal-tb
+PASS flip-start, justify-self:start;align-self:end, justify-self:end;align-self:start, ltr, horizontal-tb
+PASS flip-block flip-start, justify-self:start;align-self:start, justify-self:end;align-self:start, ltr, horizontal-tb
+PASS flip-inline flip-start, justify-self:start;align-self:start, justify-self:start;align-self:end, ltr, horizontal-tb
+PASS flip-block flip-inline flip-start, justify-self:start;align-self:start, justify-self:end;align-self:end, ltr, horizontal-tb
+PASS flip-x, justify-self:start;align-self:start, justify-self:end;align-self:start, ltr, horizontal-tb
+PASS flip-y, justify-self:start;align-self:start, justify-self:start;align-self:end, ltr, horizontal-tb
+PASS flip-y flip-x, justify-self:start;align-self:start, justify-self:end;align-self:end, ltr, horizontal-tb
+PASS flip-y flip-start, justify-self:start;align-self:start, justify-self:end;align-self:start, ltr, horizontal-tb
+PASS flip-x flip-start, justify-self:start;align-self:start, justify-self:start;align-self:end, ltr, horizontal-tb
+PASS flip-y flip-x flip-start, justify-self:start;align-self:start, justify-self:end;align-self:end, ltr, horizontal-tb
+PASS flip-inline, justify-self:left;align-self:start, justify-self:right;align-self:start, ltr, horizontal-tb
+PASS flip-x, justify-self:left;align-self:start, justify-self:right;align-self:start, ltr, horizontal-tb
+PASS flip-start, justify-self:left;align-self:end, justify-self:end;align-self:self-start, ltr, horizontal-tb
+PASS flip-start, justify-self:right;align-self:start, justify-self:start;align-self:self-end, ltr, horizontal-tb
+PASS , justify-self:start
+PASS , justify-self:end
+PASS , justify-self:self-start
+PASS , justify-self:self-end
+PASS , justify-self:flex-start
+PASS , justify-self:flex-end
+PASS , align-self:start
+PASS , align-self:end
+PASS , align-self:self-start
+PASS , align-self:self-end
+PASS , align-self:flex-start
+PASS , align-self:flex-end
+PASS flip-inline, justify-self:start
+PASS flip-inline, justify-self:end
+PASS flip-inline, justify-self:self-start
+PASS flip-inline, justify-self:self-end
+PASS flip-inline, justify-self:flex-start
+PASS flip-inline, justify-self:flex-end
+PASS flip-inline, justify-self:left
+PASS flip-inline, justify-self:right
+PASS flip-x, justify-self:start
+PASS flip-x, justify-self:end
+PASS flip-x, justify-self:self-start
+PASS flip-x, justify-self:self-end
+PASS flip-x, justify-self:flex-start
+PASS flip-x, justify-self:flex-end
+PASS flip-x, justify-self:left
+PASS flip-x, justify-self:right
+PASS flip-block, align-self:start
+PASS flip-block, align-self:end
+PASS flip-block, align-self:self-start
+PASS flip-block, align-self:self-end
+PASS flip-block, align-self:flex-start
+PASS flip-block, align-self:flex-end
+PASS flip-y, align-self:start
+PASS flip-y, align-self:end
+PASS flip-y, align-self:self-start
+PASS flip-y, align-self:self-end
+PASS flip-y, align-self:flex-start
+PASS flip-y, align-self:flex-end
+PASS flip-start, justify-self:left;align-self:end, justify-self:end;align-self:self-start, ltr, vertical-rl
+PASS flip-start, justify-self:left;align-self:start, justify-self:start;align-self:self-end, rtl, horizontal-tb
+

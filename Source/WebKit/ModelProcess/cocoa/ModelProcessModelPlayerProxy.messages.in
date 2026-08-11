@@ -1,0 +1,66 @@
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(MODEL_PROCESS)
+
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=Model,
+    EnabledBy=ModelElementEnabled && ModelProcessEnabled
+]
+messages -> ModelProcessModelPlayerProxy {
+    CreateLayer()
+    ReloadModel(WebCore::NodeIdentifier nodeID, Ref<WebCore::Model> model, WebCore::LayoutSize layoutSize, std::optional<WebCore::TransformationMatrix> entityTransformToRestore, std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore)
+    ModelVisibilityDidChange(bool isVisible)
+    [EnabledBy=AllowTestOnlyIPC] DisableUnloadDelayForTesting()
+    
+    # WebCore::ModelPlayer
+    LoadModel(WebCore::NodeIdentifier nodeID, Ref<WebCore::Model> url, WebCore::LayoutSize layoutSize, bool isForImmersive)
+    UnloadModel(WebCore::NodeIdentifier nodeID)
+    SizeDidChange(WebCore::LayoutSize layoutSize)
+    SetEntityTransform(WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
+    SetAutoplay(WebCore::NodeIdentifier nodeID, bool autoplay)
+    SetLoop(WebCore::NodeIdentifier nodeID, bool loop)
+    SetPlaybackRate(WebCore::NodeIdentifier nodeID, double playbackRate) -> (double effectivePlaybackRate) Async
+    SetPaused(WebCore::NodeIdentifier nodeID, bool paused) -> (bool succeeded) Async
+    SetCurrentTime(WebCore::NodeIdentifier nodeID, Seconds currentTime) -> () Async
+    SetEnvironmentMap(Ref<WebCore::SharedBuffer> data)
+    SetHasPortal(bool hasPortal)
+#if ENABLE(SPATIAL_PORTAL)
+    [EnabledBy=SpatialPortalEnabled] SetPortalTransform(enum:uint8_t WebCore::PortalTransformKind kind)
+    [EnabledBy=SpatialPortalEnabled] SetPortalAction(enum:bool WebCore::PortalActionKind kind)
+#endif
+    SetStageMode(enum:bool WebCore::StageModeOperation stagemodeOp)
+    BeginStageModeTransform(WebCore::TransformationMatrix transform)
+    UpdateStageModeTransform(WebCore::TransformationMatrix transform)
+    EndStageModeInteraction()
+    AnimateModelToFitPortal() -> (bool success)
+    ResetModelTransformAfterDrag()
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    EnsureImmersivePresentation() -> (std::optional<WebCore::LayerHostingContextIdentifier> contextID) Async
+    ExitImmersivePresentation() -> () Async
+#endif
+}
+
+#endif

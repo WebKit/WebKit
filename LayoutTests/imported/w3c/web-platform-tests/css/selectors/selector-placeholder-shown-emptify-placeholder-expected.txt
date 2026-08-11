@@ -1,0 +1,5 @@
+
+
+PASS input:placeholder-shown should not be matched
+PASS textarea:placeholder-shown should not be matched
+

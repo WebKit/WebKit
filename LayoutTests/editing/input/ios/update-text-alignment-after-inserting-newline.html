@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-family: system-ui;
+}
+
+.editor {
+    width: 300px;
+    height: 300px;
+    border: 1px solid lightgray;
+}
+</style>
+</head>
+<body>
+    <div contenteditable dir="rtl" class="editor">
+        <p style="text-align: right;">عنوان بريدي الإلكتروني هو foo@me.com. أرسل لي تحديثًا عند وصولك إلى المطار</p>
+    </div>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that switching to an LTR input mode and then pressing Return automatically sets the base writing direction to LTR in a new left-aligned paragraph");
+
+    const editor = document.querySelector(".editor");
+
+    async function doAfterInputEvent(callback) {
+        await UIHelper.callFunctionAndWaitForEvent(callback, editor, "input");
+    }
+
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+    await UIHelper.setKeyboardInputModeIdentifier("en_US");
+
+    await doAfterInputEvent(async () => await UIHelper.enterText("\n"));
+    await UIHelper.ensurePresentationUpdate();
+    caretRect = await UIHelper.getUICaretViewRect();
+    editorCenter = UIHelper.midPointOfRect(editor.getBoundingClientRect());
+
+    shouldBeGreaterThan("editorCenter.x", "caretRect.left");
+
+    editor.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</html>

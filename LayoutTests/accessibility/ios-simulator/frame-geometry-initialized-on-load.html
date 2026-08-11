@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+body {
+    margin: 0;
+}
+#target {
+    position: absolute;
+    top: 200px;
+    left: 10px;
+    width: 100px;
+    height: 50px;
+}
+</style>
+</head>
+<body>
+
+<button id="target">Target</button>
+
+<script>
+var output = "This test verifies that frame geometry is initialized after page load.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        await waitForFrameGeometryReady();
+        output += expect("accessibilityController.rootElement.isFrameGeometryInitialized", "true");
+
+        output += await expectAsync("accessibilityController.accessibleElementById('target').y > 0", "true");
+        output += await expectAsync("accessibilityController.accessibleElementById('target').width > 0", "true");
+        output += await expectAsync("accessibilityController.accessibleElementById('target').height > 0", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

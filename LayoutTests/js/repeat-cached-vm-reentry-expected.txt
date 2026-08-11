@@ -1,0 +1,10 @@
+This test ensures that repeated use of the vm reentry cache does not eventually consume the entire register file.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS for(var i = 0; i < 50000; i++) anArray.sort(function(){ return 1; }) is [1,2,3,4,5]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

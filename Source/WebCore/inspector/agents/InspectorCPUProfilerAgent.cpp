@@ -1,0 +1,133 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "InspectorCPUProfilerAgent.h"
+
+#if ENABLE(RESOURCE_USAGE)
+
+#include "InstrumentingAgents.h"
+#include "ResourceUsageThread.h"
+#include <JavaScriptCore/InspectorEnvironment.h>
+#include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorCPUProfilerAgent);
+
+InspectorCPUProfilerAgent::InspectorCPUProfilerAgent(PageAgentContext& context)
+    : InspectorAgentBase("CPUProfiler"_s, context)
+    , m_frontendDispatcher(makeUniqueRef<Inspector::CPUProfilerFrontendDispatcher>(context.frontendRouter))
+    , m_backendDispatcher(Inspector::CPUProfilerBackendDispatcher::create(context.backendDispatcher, this))
+{
+}
+
+InspectorCPUProfilerAgent::~InspectorCPUProfilerAgent() = default;
+
+void InspectorCPUProfilerAgent::didCreateFrontendAndBackend()
+{
+    Ref { m_instrumentingAgents.get() }->setPersistentCPUProfilerAgent(this);
+}
+
+void InspectorCPUProfilerAgent::willDestroyFrontendAndBackend(DisconnectReason)
+{
+    std::ignore = stopTracking();
+
+    Ref { m_instrumentingAgents.get() }->setPersistentCPUProfilerAgent(nullptr);
+}
+
+Inspector::Protocol::ErrorStringOr<void> InspectorCPUProfilerAgent::startTracking()
+{
+    if (m_tracking)
+        return { };
+
+    ResourceUsageThread::addObserver(this, CPU, [this] (const ResourceUsageData& data) {
+        collectSample(data);
+    });
+
+    m_tracking = true;
+
+    m_frontendDispatcher->trackingStart(protect(environment())->executionStopwatch().elapsedTime().seconds());
+
+    return { };
+}
+
+Inspector::Protocol::ErrorStringOr<void> InspectorCPUProfilerAgent::stopTracking()
+{
+    if (!m_tracking)
+        return { };
+
+    ResourceUsageThread::removeObserver(this);
+
+    m_tracking = false;
+
+    m_frontendDispatcher->trackingComplete(protect(environment())->executionStopwatch().elapsedTime().seconds());
+
+    return { };
+}
+
+static Ref<Inspector::Protocol::CPUProfiler::ThreadInfo> buildThreadInfo(const ThreadCPUInfo& thread)
+{
+    ASSERT(thread.cpu <= 100);
+
+    auto threadInfo = Inspector::Protocol::CPUProfiler::ThreadInfo::create()
+        .setName(thread.name)
+        .setUsage(thread.cpu)
+        .release();
+
+    if (thread.type == ThreadCPUInfo::Type::Main)
+        threadInfo->setType(Inspector::Protocol::CPUProfiler::ThreadInfo::Type::Main);
+    else if (thread.type == ThreadCPUInfo::Type::WebKit)
+        threadInfo->setType(Inspector::Protocol::CPUProfiler::ThreadInfo::Type::WebKit);
+
+    if (!thread.identifier.isEmpty())
+        threadInfo->setTargetId(thread.identifier);
+
+    return threadInfo;
+}
+
+void InspectorCPUProfilerAgent::collectSample(const ResourceUsageData& data)
+{
+    auto event = Inspector::Protocol::CPUProfiler::Event::create()
+        .setTimestamp(protect(environment())->executionStopwatch().elapsedTimeSince(data.timestamp).seconds())
+        .setUsage(data.cpuExcludingDebuggerThreads)
+        .release();
+
+    if (!data.cpuThreads.isEmpty()) {
+        auto threads = JSON::ArrayOf<Inspector::Protocol::CPUProfiler::ThreadInfo>::create();
+        for (auto& threadInfo : data.cpuThreads)
+            threads->addItem(buildThreadInfo(threadInfo));
+        event->setThreads(WTF::move(threads));
+    }
+
+    m_frontendDispatcher->trackingUpdate(WTF::move(event));
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(RESOURCE_USAGE)

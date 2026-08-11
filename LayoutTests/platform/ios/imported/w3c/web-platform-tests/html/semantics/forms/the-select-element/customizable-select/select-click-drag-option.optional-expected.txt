@@ -1,0 +1,6 @@
+
+
+FAIL Clicking the invoker button and dragging to an option should choose that option and close the picker. assert_equals: select.value should be changed to two after releasing the pointer on the second option. expected "two" but got "one"
+FAIL mouse: Releasing the pointer on an option positioned on top of the invoker button should not close the picker. assert_true: select should still be open after pointerUp() without moving the pointer. expected true got false
+PASS touch: Releasing the pointer on an option positioned on top of the invoker button should not close the picker.
+

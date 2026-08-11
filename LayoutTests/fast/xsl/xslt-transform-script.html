@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="result"></div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><test>test word</test>";
+    var xmlParser = new DOMParser();
+    var parsedXML = xmlParser.parseFromString(xml, "text/xml");
+
+    var xsl = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \
+        <xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"> \
+        <xsl:template match=\"/\"> \
+            <html> \
+            <body> \
+                <a href=\"javascript:alert(1)\"><xsl:value-of select=\"test\"/></a> \
+            </body> \
+            </html> \
+        </xsl:template> \
+        </xsl:stylesheet>"; 
+    var xslParser = new DOMParser();
+    var parsedXSL = xslParser.parseFromString(xsl, "text/xml");
+
+    var xslt = new XSLTProcessor();
+    xslt.importStylesheet(parsedXSL); 
+
+    var transformedXML = xslt.transformToDocument(parsedXML);
+    var string = new XMLSerializer().serializeToString(transformedXML);
+    var textNode = document.createTextNode(string);
+    document.getElementById('result').appendChild(textNode);
+</script>
+</body>
+</html>

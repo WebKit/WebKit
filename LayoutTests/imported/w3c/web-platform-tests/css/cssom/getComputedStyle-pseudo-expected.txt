@@ -1,0 +1,32 @@
+Item
+
+
+PASS Resolution of width is correct when pseudo-element argument is ignored (due to no colon)
+PASS Resolution of width is correct when pseudo-element argument is invalid (due to a trailing token)
+PASS Resolution of width is correct for ::before and ::after pseudo-elements (single-colon)
+PASS Resolution of width is correct for ::before and ::after pseudo-elements (double-colon)
+PASS Pseudo-elements can use the full range of CSS syntax
+PASS Resolution of width is correct for ::before and ::after pseudo-elements of display: contents elements
+PASS Resolution of nonexistent pseudo-element styles
+PASS Resolution of pseudo-element styles in display: none elements
+PASS Item-based blockification of pseudo-elements
+FAIL Item-based blockification of nonexistent pseudo-elements assert_equals: Pseudo-styles of display: flex elements should get blockified expected "block" but got "inline"
+PASS display: contents on pseudo-elements
+PASS Dynamically change to display: contents on pseudo-elements
+PASS Unknown pseudo-elements
+PASS CSSStyleDeclaration is immutable
+PASS Unknown pseudo-element with a known identifier: backdrop
+PASS Unknown pseudo-element with a known identifier: file-selector-button
+PASS Unknown pseudo-element with a known identifier: grammar-error
+PASS Unknown pseudo-element with a known identifier: highlight(name)
+PASS Unknown pseudo-element with a known identifier: marker
+PASS Unknown pseudo-element with a known identifier: placeholder
+PASS Unknown pseudo-element with a known identifier: spelling-error
+PASS Unknown pseudo-element with a known identifier: view-transition
+PASS Unknown pseudo-element with a known identifier: view-transition-image-pair(name)
+PASS Unknown pseudo-element with a known identifier: view-transition-group(name)
+PASS Unknown pseudo-element with a known identifier: view-transition-old(name)
+PASS Unknown pseudo-element with a known identifier: view-transition-new(name)
+PASS ::file-selector-button resolves to the file input button element
+PASS Prefixed ::-webkit-file-upload-button does not resolve in getComputedStyle
+

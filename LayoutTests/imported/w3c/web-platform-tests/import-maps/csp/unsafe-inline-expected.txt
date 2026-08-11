@@ -1,0 +1,3 @@
+
+PASS Importmap should be accepted due to unsafe-inline
+

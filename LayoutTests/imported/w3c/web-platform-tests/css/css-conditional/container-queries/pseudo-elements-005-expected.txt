@@ -1,0 +1,5 @@
+
+PASS ::before pseudo element querying style() of originating element
+PASS ::before pseudo element not matching style()
+FAIL ::before pseudo element matching style() query after class change assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

@@ -1,0 +1,20 @@
+<style>
+  :empty {
+    -webkit-appearance: checkbox;
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    console.log('This test passes if it does not crash.');
+    document.body.appendChild(document.createElement('iframe'));
+    let n0 = document.createElement('tr');
+    document.body.appendChild(n0);
+    n0.appendChild(document.createElement('div'));
+    document.body.appendChild(document.createElement('tr'));
+    document.execCommand('SelectAll');
+    document.designMode = 'on';
+    document.execCommand('InsertText', false, '');
+  };
+</script>

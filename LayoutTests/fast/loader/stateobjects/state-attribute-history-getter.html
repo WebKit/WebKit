@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<p>Check that setting a custom getter for history.state works correctly and that PopStateEvent.state still has a correct value.</p>
+<pre id=log></pre>
+<script>
+function log(msg) {
+    document.querySelector("#log").innerHTML += msg + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.clearBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function test() {
+    if (!("state" in history)) {
+        log("FAIL: history.state is not defined");
+        return;
+    }
+
+    try {
+        Object.defineProperty(history, "state", { get: function () { return "oh hai" } });
+    } catch (e) {
+        // history.state is not configurable in JSC.
+        log(e.name == "TypeError" ? "PASS" : ("FAIL: unexpected exception: " + e));
+        testRunner.notifyDone();
+        return;
+    }
+
+    if (history.state !== "oh hai") {
+        log('FAIL: history.state != "oh hai"');
+    }
+
+    history.pushState(42, "", "");
+    history.pushState(43, "", "");
+
+    window.onpopstate = function(e) {
+        if (e.state !== 42)
+            log("FAIL: e.state expected 42, was " + e.state + " (of type " + typeof e.state + ")");
+        else
+            log("PASS");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    history.back();
+}
+
+test();
+</script>

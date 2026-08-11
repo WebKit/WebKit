@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Not allowed to use restricted network port 7: http://localhost:7/
+PASS

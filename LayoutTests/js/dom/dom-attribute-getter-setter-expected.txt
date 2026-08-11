@@ -1,0 +1,5 @@
+PASS console.log(typeof Animation.prototype.timeline) threw exception TypeError: The Animation.timeline getter can only be used on instances of Animation.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

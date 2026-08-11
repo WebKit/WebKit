@@ -1,0 +1,13 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+This tests triggering touch event on an element after document.open. The element should receive touch event.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS didFireTouchStartEvent is true
+PASS didFireTouchEndEvent is true
+

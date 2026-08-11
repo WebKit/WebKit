@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<meta charset="utf-8">
+<title>&lt;model> animation playback for a late addition to a spatial portal</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+// A child added to a portal that is already rendering finds a ModelPlayer that already exists, so
+// its playback state reaches the model process by a different route than its siblings' did.
+promise_test(async t => {
+    const portal = createPortal(t);
+    const first = appendModel(portal, "stopwatch-60s.usdz");
+    await first.ready;
+
+    const late = appendModel(portal, "stopwatch-60s.usdz");
+    late.autoplay = true;
+    await late.ready;
+
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 2, "the portal hosts both models");
+    assert_approx_equals(late.duration, 60, 0.1, "the late model reports its animation duration");
+    assert_false(late.paused, "a late model with autoplay starts playing");
+    assert_true(first.paused, "the model that was already loaded does not start playing");
+}, "<model autoplay> added to a rendering spatial portal plays its animation");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const first = appendModel(portal, "stopwatch-60s.usdz");
+    await first.ready;
+
+    const late = appendModel(portal, "stopwatch-60s.usdz");
+    late.playbackRate = 10;
+    await late.ready;
+
+    await Promise.all([first.play(), late.play()]);
+    await sleepForSeconds(0.5);
+
+    assert_greater_than(late.currentTime, first.currentTime, "the late model advances at its own playbackRate");
+}, "playbackRate set before a <model> joins a rendering spatial portal is applied");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const first = appendModel(portal, "stopwatch-60s.usdz");
+    await first.ready;
+
+    const late = appendModel(portal, "stopwatch-60s.usdz");
+    late.autoplay = true;
+    late.loop = true;
+    await late.ready;
+
+    late.currentTime = late.duration - 0.01;
+    await sleepForSeconds(0.2);
+
+    assert_false(late.paused, "the late looping model keeps playing past its duration");
+}, "loop set before a <model> joins a rendering spatial portal is applied");
+
+</script>
+</body>
+</html>

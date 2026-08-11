@@ -1,0 +1,104 @@
+<html>
+<head>
+    <script>
+        function canFind(target, specimen)
+        {
+            getSelection().empty();
+            document.body.innerHTML = specimen;
+            document.execCommand("FindString", false, target);
+            var result = getSelection().rangeCount != 0;
+            getSelection().empty();
+            return result;
+        }
+
+        var messages = "";
+
+        function testTestStyle(isExpectedToFind, style, outerStyle)
+        {
+            var markup = "<div style='" + style + "'>word</div>";
+            var styleMessage = "styled with " + style;
+
+            if (outerStyle) {
+                markup = "<div style='" + outerStyle + "'>" + markup + "</div>";
+                styleMessage += " inside an element styled with " + outerStyle;
+            }
+
+            if (canFind("word", markup) == isExpectedToFind)
+                return;
+
+            if (isExpectedToFind)
+                messages += " Could not find";
+            else
+                messages += " Found";
+            messages += " a word " + styleMessage + ".";
+        }
+
+        function testNonHiddenTextStyle(style, outerStyle)
+        {
+            testTestStyle(true, style, outerStyle);
+        }
+
+        function testHiddenTextStyle(style, outerStyle)
+        {
+            testTestStyle(false, style, outerStyle);
+        }
+
+        function runTests()
+        {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            testNonHiddenTextStyle("");
+
+            testHiddenTextStyle("display:none");
+            testHiddenTextStyle("visibility:hidden");
+
+            testNonHiddenTextStyle("height:0");
+
+            testHiddenTextStyle("height:0; overflow:hidden");
+            testHiddenTextStyle("height:0; overflow:scroll");
+            testHiddenTextStyle("height:0; overflow:auto");
+
+            testHiddenTextStyle("width:0; overflow:hidden");
+            testHiddenTextStyle("width:0; overflow:scroll");
+            testHiddenTextStyle("width:0; overflow:auto");
+
+            testHiddenTextStyle("height:0; overflow-x:hidden");
+            testHiddenTextStyle("height:0; overflow-x:scroll");
+            testHiddenTextStyle("height:0; overflow-x:auto");
+
+            testHiddenTextStyle("width:0; overflow-x:hidden");
+            testHiddenTextStyle("width:0; overflow-x:scroll");
+            testHiddenTextStyle("width:0; overflow-x:auto");
+
+            testHiddenTextStyle("height:0; overflow-y:hidden");
+            testHiddenTextStyle("height:0; overflow-y:scroll");
+            testHiddenTextStyle("height:0; overflow-y:auto");
+
+            testHiddenTextStyle("width:0; overflow-y:hidden");
+            testHiddenTextStyle("width:0; overflow-y:scroll");
+            testHiddenTextStyle("width:0; overflow-y:auto");
+
+            testHiddenTextStyle("position: relative", "height:0; overflow:hidden");
+            testHiddenTextStyle("position: relative", "height:0; overflow:scroll");
+            testHiddenTextStyle("position: relative", "height:0; overflow:auto");
+
+            testNonHiddenTextStyle("position: absolute", "height:0; overflow:hidden");
+            testNonHiddenTextStyle("position: absolute", "height:0; overflow:scroll");
+            testNonHiddenTextStyle("position: absolute", "height:0; overflow:auto");
+
+            testNonHiddenTextStyle("position: fixed", "height:0; overflow:hidden");
+            testNonHiddenTextStyle("position: fixed", "height:0; overflow:scroll");
+            testNonHiddenTextStyle("position: fixed", "height:0; overflow:auto");
+
+            if (messages === "")
+                messages = "SUCCESS: Found all the strings we expected to, and none we did not expect to.";
+            else
+                messages = "FAILURE:" + messages;
+
+            document.body.innerHTML = messages;
+        }
+    </script>
+</head>
+<body onload="runTests()"></body>
+</html>

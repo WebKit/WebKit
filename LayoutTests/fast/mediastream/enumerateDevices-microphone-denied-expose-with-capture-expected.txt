@@ -1,0 +1,5 @@
+
+PASS enumerateDevices() filters out microphones if microphone permission is prompt
+PASS enumerateDevices() filters out microphones if microphone permission is denied
+PASS enumerateDevices() filters out microphones even if microphone permission is granted and camera is in use
+

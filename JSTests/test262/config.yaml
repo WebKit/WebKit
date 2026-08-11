@@ -1,0 +1,58 @@
+
+---
+flags:
+  SharedArrayBuffer: useSharedArrayBuffer
+  Atomics: useSharedArrayBuffer
+  Temporal: useTemporal
+  ShadowRealm: useShadowRealm
+  json-parse-with-source: useJSONSourceTextAccess
+  iterator-sequencing: useIteratorSequencing
+  explicit-resource-management: useExplicitResourceManagement
+  import-defer: useImportDefer
+  import-text: useImportText
+  joint-iteration: useJointIteration
+skip:
+  features:
+    - callable-boundary-realms
+    - FinalizationRegistry.prototype.cleanupSome
+    - decorators
+    - source-phase-imports
+    - await-dictionary
+    - import-bytes
+    - immutable-arraybuffer
+    - error-stack-accessor
+  paths:
+    # Depends on the nonextensible-applies-to-private proposal which JSC has not implemented yet.
+    - test/language/import/import-defer/evaluation-triggers/ignore-private-name-access.js
+    - test/staging/Intl402
+    - test/staging/JSON
+  files:
+    # https://github.com/claudepache/es-legacy-function-reflection
+    - test/built-ins/ThrowTypeError/unique-per-realm-function-proto.js
+    - test/built-ins/Function/prototype/restricted-property-arguments.js
+    - test/built-ins/Function/prototype/restricted-property-caller.js
+
+    # New ICU (66~) raises a different failure
+    - test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js
+
+    # ICU canonicalization bug
+    # https://unicode-org.atlassian.net/browse/ICU-21367
+    - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js
+
+    # ICU needs public API for canonicalization
+    - test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js
+    - test/intl402/Intl/getCanonicalLocales/complex-language-subtag-replacement.js
+    - test/intl402/Intl/getCanonicalLocales/complex-region-subtag-replacement.js
+    - test/intl402/Intl/getCanonicalLocales/grandfathered.js
+    - test/intl402/Intl/getCanonicalLocales/preferred-grandfathered.js
+    - test/intl402/Intl/getCanonicalLocales/transformed-ext-canonical.js
+    - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js
+    - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-subdivision.js
+    - test/intl402/Locale/constructor-options-region-valid.js
+    - test/intl402/Locale/extensions-grandfathered.js
+    - test/intl402/Locale/getters-grandfathered.js
+    - test/intl402/Locale/likely-subtags-grandfathered.js
+
+    # Skipping temporarily due to a bug with handling case-insensitive \p escapes
+    - test/built-ins/RegExp/regexp-modifiers/add-ignoreCase-affects-slash-upper-p.js
+    - test/built-ins/RegExp/regexp-modifiers/add-ignoreCase-affects-slash-lower-p.js

@@ -1,0 +1,47 @@
+CORS redirect handling
+
+
+PASS local (*) to remote (*), expect origin=http://web-platform.test:8800
+PASS local (*) to remote (http://web-platform.test:8800), expect origin=http://web-platform.test:8800
+PASS local (*) to remote (null), expect to fail
+PASS local (*) to remote (none), expect to fail
+PASS local (http://web-platform.test:8800) to remote (*), expect origin=http://web-platform.test:8800
+PASS local (http://web-platform.test:8800) to remote (http://web-platform.test:8800), expect origin=http://web-platform.test:8800
+PASS local (http://web-platform.test:8800) to remote (null), expect to fail
+PASS local (http://web-platform.test:8800) to remote (none), expect to fail
+PASS local (null) to remote (*), expect origin=http://web-platform.test:8800
+PASS local (none) to remote (*), expect origin=http://web-platform.test:8800
+PASS remote (*) to local (*), expect origin=null
+PASS remote (*) to local (http://web-platform.test:8800), expect to fail
+PASS remote (*) to local (null), expect origin=null
+PASS remote (*) to local (none), expect to fail
+PASS remote (http://web-platform.test:8800) to local (*), expect origin=null
+PASS remote (http://web-platform.test:8800) to local (http://web-platform.test:8800), expect to fail
+PASS remote (http://web-platform.test:8800) to local (null), expect origin=null
+PASS remote (http://web-platform.test:8800) to local (none), expect to fail
+PASS remote (null) to local (*), expect to fail
+PASS remote (none) to local (*), expect to fail
+PASS remote (*) to remote (*), expect origin=http://web-platform.test:8800
+PASS remote (*) to remote (http://web-platform.test:8800), expect origin=http://web-platform.test:8800
+PASS remote (*) to remote (null), expect to fail
+PASS remote (*) to remote (none), expect to fail
+PASS remote (http://web-platform.test:8800) to remote (*), expect origin=http://web-platform.test:8800
+PASS remote (http://web-platform.test:8800) to remote (http://web-platform.test:8800), expect origin=http://web-platform.test:8800
+PASS remote (http://web-platform.test:8800) to remote (null), expect to fail
+PASS remote (http://web-platform.test:8800) to remote (none), expect to fail
+PASS remote (null) to remote (*), expect to fail
+PASS remote (none) to remote (*), expect to fail
+PASS remote (*) to remote2 (*), expect origin=null
+PASS remote (*) to remote2 (http://web-platform.test:8800), expect to fail
+PASS remote (*) to remote2 (null), expect origin=null
+PASS remote (*) to remote2 (none), expect to fail
+PASS remote (http://web-platform.test:8800) to remote2 (*), expect origin=null
+PASS remote (http://web-platform.test:8800) to remote2 (http://web-platform.test:8800), expect to fail
+PASS remote (http://web-platform.test:8800) to remote2 (null), expect origin=null
+PASS remote (http://web-platform.test:8800) to remote2 (none), expect to fail
+PASS remote (null) to remote2 (*), expect to fail
+PASS remote (none) to remote2 (*), expect to fail
+PASS remote (*) to remote (http://www1.web-platform.test:8800), expect to fail
+PASS remote (*) to remote2 (http://www1.web-platform.test:8800), expect to fail
+PASS remote (http://www1.web-platform.test:8800) to remote (*), expect to fail
+

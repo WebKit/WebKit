@@ -1,0 +1,10 @@
+This tests that typing a misspelling into a field that clears itself on keyup does not crash.
+WebKit bug #<a href="https://bugs.webkit.org/show_bug.cgi?id=135044">135044</a>.
+
+<br><br>
+
+<input id="a" placeholder="Using iOS software keyboard, type 'abcdef' here" style="font-size: 25px; width: 100%;">
+
+<script>
+    document.getElementById("a").addEventListener("keyup", function() { this.value = ""; });
+</script>

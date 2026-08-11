@@ -1,0 +1,213 @@
+/*
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include <WebCore/Font.h>
+#include <WebCore/FontCache.h>
+#include <WebCore/FontCascade.h>
+#include <WebCore/FontCascadeFonts.h>
+#include <WebCore/TextRun.h>
+#include <WebCore/TextShapingResultAndDisplayList.h>
+#include <wtf/WeakHashSet.h>
+
+namespace TestWebKitAPI {
+
+using namespace WebCore;
+using CodePath = FontCascade::CodePath;
+
+static void testCodePath(char16_t codePoint, CodePath codePath)
+{
+    std::array<char16_t, 1> target = { codePoint };
+    EXPECT_EQ(codePath, FontCascade::characterRangeCodePath(std::span<char16_t>(target))) << "target: " << static_cast<int>(target[0]);
+}
+
+static std::array<char16_t, 2> surrogatePair(char32_t supplementaryCharacter)
+{
+    char16_t high = 0xD800 + ((supplementaryCharacter - 0x10000) >> 10);
+    char16_t low = 0xDC00 + ((supplementaryCharacter - 0x10000) & 0x3FF);
+    return { high, low };
+}
+
+static void testSupplementaryCodePath(char32_t codePoint, CodePath codePath)
+{
+    auto target = surrogatePair(codePoint);
+    EXPECT_EQ(codePath, FontCascade::characterRangeCodePath(std::span<char16_t>(target))) << "target: U+" << std::hex << static_cast<uint32_t>(codePoint);
+}
+
+struct CodePathRange {
+    char16_t start;
+    char16_t end;
+    CodePath path;
+    CodePath belowPath { CodePath::Simple };
+    CodePath abovePath { CodePath::Simple };
+};
+
+static void testCodePathRange(CodePathRange range)
+{
+    std::array<char16_t, 1> below = { static_cast<char16_t>(range.start - 1) };
+    std::array<char16_t, 1> start = { range.start };
+    std::array<char16_t, 1> middle = { static_cast<char16_t>((range.start + range.end) / 2) };
+    std::array<char16_t, 1> end = { range.end };
+    std::array<char16_t, 1> above = { static_cast<char16_t>(range.end + 1) };
+
+    EXPECT_EQ(range.belowPath, FontCascade::characterRangeCodePath(std::span<char16_t>(below))) << "below: " << std::hex << static_cast<int>(below[0]);
+    EXPECT_EQ(range.path, FontCascade::characterRangeCodePath(std::span<char16_t>(start))) << "start: " << std::hex << static_cast<int>(start[0]);
+    EXPECT_EQ(range.path, FontCascade::characterRangeCodePath(std::span<char16_t>(middle))) << "middle: " << std::hex << static_cast<int>(middle[0]);
+    EXPECT_EQ(range.path, FontCascade::characterRangeCodePath(std::span<char16_t>(end))) << "end: " << std::hex << static_cast<int>(end[0]);
+    EXPECT_EQ(range.abovePath, FontCascade::characterRangeCodePath(std::span<char16_t>(above))) << "above: " << std::hex << static_cast<int>(above[0]);
+}
+
+TEST(FontCascadeTest, EqualityWithNullFonts)
+{
+    FontCascadeDescription description;
+    description.setOneFamily("Times"_s);
+    description.setComputedSize(16);
+
+    FontCascade a(FontCascadeDescription { description });
+    FontCascade b(FontCascadeDescription { description });
+
+    // Both have null m_fonts (update() not called). They should be equal.
+    EXPECT_TRUE(a == b);
+}
+
+// Testing characterRangeCodePath for non-surrogate codepoints
+TEST(FontCascadeTest, characterRangeCodePath_NonSurrogates)
+{
+    // U+02E5 through U+02E9 (Modifier Letters : Tone letters)
+    testCodePathRange({ 0x02E5, 0x02E9, CodePath::Complex });
+    // U+0300 through U+036F Combining diacritical marks
+    testCodePathRange({ 0x0300, 0x036F, CodePath::Complex });
+    // U+0591 through U+05CF excluding U+05BE Hebrew combining marks, Hebrew punctuation Paseq, Sof Pasuq and Nun Hafukha
+    testCodePathRange({ 0x0591, 0x05BD, CodePath::Complex });
+    testCodePath(0x5BE, CodePath::Simple);
+    testCodePathRange({ 0x05BF, 0x05CF, CodePath::Complex });
+    // U+0600 through U+109F Arabic, Syriac, Thaana, NKo, Samaritan, Mandaic,
+    // Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, Tamil, Telugu, Kannada,
+    // Malayalam, Sinhala, Thai, Lao, Tibetan, Myanmar
+    testCodePathRange({ 0x0600, 0x109F, CodePath::Complex });
+    // U+1100 through U+11FF Hangul Jamo (only Ancient Korean should be left here if you precompose;
+    // Modern Korean will be precomposed as a result of step A)
+    testCodePathRange({ 0x1100, 0x11FF, CodePath::Complex });
+    // U+135D through U+135F Ethiopic combining marks
+    testCodePathRange({ 0x135D, 0x135F, CodePath::Complex });
+    // U+1700 through U+18AF Tagalog, Hanunoo, Buhid, Taghanwa,Khmer, Mongolian
+    testCodePathRange({ 0x1700, 0x18AF, CodePath::Complex });
+    // U+1900 through U+194F Limbu (Unicode 4.0)
+    testCodePathRange({ 0x1900, 0x194F, CodePath::Complex });
+    // U+1980 through U+19DF New Tai Lue
+    testCodePathRange({ 0x1980, 0x19DF, CodePath::Complex });
+    // U+1A00 through U+1CFF Buginese, Tai Tham, Balinese, Batak, Lepcha, Vedic
+    testCodePathRange({ 0x1A00, 0x1CFF, CodePath::Complex });
+    // U+1DC0 through U+1DFF Comining diacritical mark supplement
+    testCodePathRange({ 0x1DC0, 0x1DFF, CodePath::Complex, CodePath::Simple, CodePath::SimpleWithGlyphOverflow });
+    // U+1E00 through U+2000 characters with diacritics and stacked diacritics
+    testCodePathRange({ 0x1E00, 0x2000, CodePath::SimpleWithGlyphOverflow, CodePath::Complex, CodePath::Simple });
+    // U+20D0 through U+20FF Combining marks for symbols
+    testCodePathRange({ 0x20D0, 0x20FF, CodePath::Complex });
+    testCodePath(0x26F9, CodePath::Complex);
+    // U+2CEF through U+2CF1 Combining marks for Coptic
+    testCodePathRange({ 0x2CEF, 0x2CF1, CodePath::Complex });
+    // U+302A through U+302F Ideographic and Hangul Tone marks
+    testCodePathRange({ 0x302A, 0x302F, CodePath::Complex });
+    // KATAKANA-HIRAGANA (SEMI-)VOICED SOUND MARKS require character composition
+    testCodePathRange({ 0x3099, 0x309C, CodePath::Complex });
+    // U+A67C through U+A67D Combining marks for old Cyrillic
+    testCodePathRange({ 0xA67C, 0xA67D, CodePath::Complex });
+    // U+A6F0 through U+A6F1 Combining mark for Bamum
+    testCodePathRange({ 0xA6F0, 0xA6F1, CodePath::Complex });
+    // U+A800 through U+ABFF Nagri, Phags-pa, Saurashtra, Devanagari Extended,
+    // Hangul Jamo Ext. A, Javanese, Myanmar Extended A, Tai Viet, Meetei Mayek,
+    testCodePathRange({ 0xA800, 0xABFF, CodePath::Complex });
+    // U+D7B0 through U+D7FF Hangul Jamo Ext. B
+    testCodePathRange({ 0xD7B0, 0xD7FF, CodePath::Complex });
+    // U+FE00 through U+FE0F Unicode variation selectors
+    testCodePathRange({ 0xFE00, 0xFE0F, CodePath::Complex });
+    // U+FE20 through U+FE2F Combining half marks
+    testCodePathRange({ 0xFE20, 0xFE2F, CodePath::Complex });
+}
+
+// Testing characterRangeCodePath for supplementary-plane codepoints
+TEST(FontCascadeTest, characterRangeCodePath_Surrogates)
+{
+    // U+16B00 through U+16B8F Pahawh Hmong
+    testSupplementaryCodePath(0x16B00, CodePath::Complex);
+    testSupplementaryCodePath(0x16B16, CodePath::Complex);
+    testSupplementaryCodePath(0x16B30, CodePath::Complex);
+    testSupplementaryCodePath(0x16B8F, CodePath::Complex);
+}
+
+// Purging inactive font data must flush the per-FontCascadeFonts shaped text caches.
+// A GlyphBuffer cached there holds only weak Font references, so a Font referenced only by a
+// cached shaped run can be destroyed by FontCache::purgeInactiveFontData (it has one ref); if the
+// cache is not flushed on purge, a later paint may dereference an expired weak pointer in
+// FontCascade::drawGlyphBuffer and crash. rdar://173222307
+TEST(FontCascadeTest, PurgeInactiveFontDataClearsShapedTextCache)
+{
+    FontCascadeDescription description;
+    description.setOneFamily("Times"_s);
+    description.setComputedSize(16);
+    FontCascade font(WTF::move(description));
+    font.update();
+
+    RefPtr fonts = font.fonts();
+    ASSERT_TRUE(fonts);
+
+    fonts->shapedTextCache().add("hello world"_str, makeUnique<TextShapingResultAndDisplayList>());
+    EXPECT_FALSE(fonts->shapedTextCache().isEmpty());
+
+    FontCache::forCurrentThread().purgeInactiveFontData();
+
+    EXPECT_TRUE(fonts->shapedTextCache().isEmpty());
+}
+
+// The complex text path must retain the system fallback fonts it uses (like the simple path), otherwise a
+// cached shaped run's weak Font reference dangles once FontCache::purgeInactiveFontData reclaims the font.
+TEST(FontCascadeTest, ComplexTextRetainsSystemFallbackFonts)
+{
+    FontCascadeDescription description;
+    description.setOneFamily("Times"_s);
+    description.setComputedSize(16);
+    FontCascade fontCascade(WTF::move(description));
+    fontCascade.update();
+
+    // Complex-script characters Times cannot render, forcing Core Text system fallbacks.
+    static constexpr std::array<char16_t, 8> characters { 0x06D8, 0x092D, 0x0B40, 0x0F96, 0x0DBD, 0x0EAF, 0xA86C, 0x0ACF };
+    String text { std::span<const char16_t> { characters } };
+    TextRun run { text };
+
+    // Shaping the run collects the system fallback fonts Core Text used.
+    SingleThreadWeakHashSet<const Font> fallbackFonts;
+    fontCascade.width(run, &fallbackFonts);
+
+    // Each fallback font must be retained beyond FontCache's own reference, so a purge cannot reclaim it.
+    bool hasUsedFallbackFont = false;
+    for (auto& font : fallbackFonts) {
+        hasUsedFallbackFont = true;
+        EXPECT_FALSE(font.hasOneRef());
+    }
+    ASSERT_TRUE(hasUsedFallbackFont);
+}
+}

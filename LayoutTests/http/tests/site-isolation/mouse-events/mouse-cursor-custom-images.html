@@ -1,0 +1,139 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #overlapping {
+            position: absolute;
+            left: 50px;
+            top: 50px;
+            width: 100px;
+            height: 25px;
+            z-index: 10;
+            cursor: url('resources/cursor5x5.png') 0 0, auto;
+        }
+
+        #frame {
+            position: absolute;
+            left: 50px;
+            top: 50px;
+            width: 400px;
+            height: 540px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="overlapping"></div>
+    <iframe id="frame"
+        src="http://localhost:8000/site-isolation/mouse-events/resources/cursor-custom-images-iframe.html"></iframe>
+    <div id="console"></div>
+    <script>
+        description("Verifies that custom CSS cursor images work correctly in cross-origin iframes with site isolation.");
+        jsTestIsAsync = true;
+
+        function preloadImage(url) {
+            return new Promise(resolve => {
+                const img = new Image();
+                img.onload = img.onerror = resolve;
+                img.src = url;
+            });
+        }
+
+        var lastCursorInfo;
+        function cursorDidChangeCallback(info) {
+            lastCursorInfo = info;
+        }
+
+        function waitForCursorChange() {
+            return new Promise(resolve => {
+                lastCursorInfo = undefined;
+                var check = setInterval(() => {
+                    if (lastCursorInfo !== undefined) {
+                        clearInterval(check);
+                        resolve(lastCursorInfo);
+                    }
+                }, 0);
+            });
+        }
+
+        async function moveToCursor(x, y) {
+            var pending = waitForCursorChange();
+            await eventSender.asyncMouseMoveTo(x, y);
+            return await pending;
+        }
+
+        async function runTest() {
+            if (!window.eventSender || !window.internals) {
+                testFailed('This test requires eventSender and internals');
+                finishJSTest();
+                return;
+            }
+
+            testRunner.installCursorDidChangeCallback(cursorDidChangeCallback);
+            await preloadImage('resources/cursor5x5.png');
+
+            debug('TEST CASE: Main frame element overlapping remote iframe');
+            debug('Cursor Info: ' + await moveToCursor(55, 55));
+            debug('');
+
+            debug('TEST CASE: Remote iframe body cursor');
+            debug('Cursor Info: ' + await moveToCursor(200, 60));
+            debug('');
+
+            debug('TEST CASE: Styled element in remote iframe');
+            debug('Cursor Info: ' + await moveToCursor(75, 135));
+            debug('');
+
+            debug('TEST CASE: Cursor near iframe edge where image would spill outside');
+            debug('Cursor Info: ' + await moveToCursor(445, 345));
+            debug('');
+
+            document.getElementById('frame').contentWindow.postMessage('scroll', '*');
+        }
+
+        window.addEventListener('message', async (event) => {
+            if (event.data === 'ready') {
+                runTest();
+                return;
+            }
+
+            if (event.data === 'scrolled') {
+                debug('TEST CASE: Element in overflow area of remote iframe after scrolling');
+                debug('Cursor Info: ' + await moveToCursor(251, 241));
+                debug('');
+
+                debug('TEST CASE: Cross-origin element overlapping nested same-origin iframe');
+                debug('Cursor Info: ' + await moveToCursor(105, 365));
+                debug('');
+
+                debug('TEST CASE: Nested same-origin iframe body cursor');
+                debug('Cursor Info: ' + await moveToCursor(300, 390));
+                debug('');
+
+                debug('TEST CASE: Styled element in nested same-origin iframe');
+                debug('Cursor Info: ' + await moveToCursor(125, 425));
+                debug('');
+
+                debug('TEST CASE: Cursor near nested iframe edge where image would spill outside');
+                debug('Cursor Info: ' + await moveToCursor(445, 585));
+                debug('');
+
+                document.getElementById('frame').contentWindow.postMessage('scroll-nested', '*');
+            }
+
+            if (event.data === 'nested-scrolled') {
+                debug('TEST CASE: Element in overflow area of nested same-origin iframe after scrolling');
+                debug('Cursor Info: ' + await moveToCursor(251, 505));
+                debug('');
+
+                finishJSTest();
+            }
+        });
+    </script>
+</body>
+</html>

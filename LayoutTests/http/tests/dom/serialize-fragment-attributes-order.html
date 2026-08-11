@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies the order of attributes in markup is the same as the order they are added");
+
+jsTestIsAsync = true;
+
+var frame = document.createElement('iframe');
+frame.setAttribute("id", "frameID");
+frame.setAttribute("crossorigin", "anonymous");
+frame.setAttribute("src", "http://localhost:8000/dom/resources/simple-iframe.html");
+frame.onload = () => {
+    shouldBeEqualToString("frame.outerHTML", '<iframe id="frameID" crossorigin="anonymous" src="http://localhost:8000/dom/resources/simple-iframe.html"></iframe>');
+
+    finishJSTest();
+}
+document.body.appendChild(frame);
+
+</script>
+</body>
+</html>

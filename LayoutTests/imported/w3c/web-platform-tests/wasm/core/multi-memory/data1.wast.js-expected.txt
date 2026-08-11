@@ -1,0 +1,60 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (data1.wast:4)
+PASS #3 Test that WebAssembly compilation succeeds (data1.wast:14)
+PASS #4 Test that WebAssembly compilation succeeds (data1.wast:24)
+PASS #5 Test that WebAssembly compilation succeeds (data1.wast:33)
+PASS #6 Test that WebAssembly compilation succeeds (data1.wast:42)
+PASS #7 Test that WebAssembly compilation succeeds (data1.wast:61)
+PASS #8 Test that WebAssembly compilation succeeds (data1.wast:72)
+PASS #9 Test that WebAssembly compilation succeeds (data1.wast:81)
+PASS #10 Test that WebAssembly compilation succeeds (data1.wast:89)
+PASS #11 Test that WebAssembly compilation succeeds (data1.wast:99)
+PASS #12 Test that WebAssembly compilation succeeds (data1.wast:109)
+PASS #13 Test that WebAssembly compilation succeeds (data1.wast:118)
+PASS #14 Test that WebAssembly compilation succeeds (data1.wast:128)
+PASS #15 Test that WebAssembly compilation succeeds (data1.wast:137)
+PASS #16 Reinitialize the default imports
+PASS #17 Test that WebAssembly compilation succeeds (data1.wast:4)
+PASS #18 Test that WebAssembly instantiation fails (data1.wast:4)
+PASS #19 Test that a WebAssembly module is uninstantiable
+PASS #20 Test that WebAssembly compilation succeeds (data1.wast:14)
+PASS #21 Test that WebAssembly instantiation fails (data1.wast:14)
+PASS #22 Test that a WebAssembly module is uninstantiable
+PASS #23 Test that WebAssembly compilation succeeds (data1.wast:24)
+PASS #24 Test that WebAssembly instantiation fails (data1.wast:24)
+PASS #25 Test that a WebAssembly module is uninstantiable
+PASS #26 Test that WebAssembly compilation succeeds (data1.wast:33)
+PASS #27 Test that WebAssembly instantiation fails (data1.wast:33)
+PASS #28 Test that a WebAssembly module is uninstantiable
+PASS #29 Test that WebAssembly compilation succeeds (data1.wast:42)
+PASS #30 Test that WebAssembly instantiation fails (data1.wast:42)
+PASS #31 Test that a WebAssembly module is uninstantiable
+PASS #32 Test that WebAssembly compilation succeeds (data1.wast:61)
+PASS #33 Test that WebAssembly instantiation fails (data1.wast:61)
+PASS #34 Test that a WebAssembly module is uninstantiable
+PASS #35 Test that WebAssembly compilation succeeds (data1.wast:72)
+PASS #36 Test that WebAssembly instantiation fails (data1.wast:72)
+PASS #37 Test that a WebAssembly module is uninstantiable
+PASS #38 Test that WebAssembly compilation succeeds (data1.wast:81)
+PASS #39 Test that WebAssembly instantiation fails (data1.wast:81)
+PASS #40 Test that a WebAssembly module is uninstantiable
+PASS #41 Test that WebAssembly compilation succeeds (data1.wast:89)
+PASS #42 Test that WebAssembly instantiation fails (data1.wast:89)
+PASS #43 Test that a WebAssembly module is uninstantiable
+PASS #44 Test that WebAssembly compilation succeeds (data1.wast:99)
+PASS #45 Test that WebAssembly instantiation fails (data1.wast:99)
+PASS #46 Test that a WebAssembly module is uninstantiable
+PASS #47 Test that WebAssembly compilation succeeds (data1.wast:109)
+PASS #48 Test that WebAssembly instantiation fails (data1.wast:109)
+PASS #49 Test that a WebAssembly module is uninstantiable
+PASS #50 Test that WebAssembly compilation succeeds (data1.wast:118)
+PASS #51 Test that WebAssembly instantiation fails (data1.wast:118)
+PASS #52 Test that a WebAssembly module is uninstantiable
+PASS #53 Test that WebAssembly compilation succeeds (data1.wast:128)
+PASS #54 Test that WebAssembly instantiation fails (data1.wast:128)
+PASS #55 Test that a WebAssembly module is uninstantiable
+PASS #56 Test that WebAssembly compilation succeeds (data1.wast:137)
+PASS #57 Test that WebAssembly instantiation fails (data1.wast:137)
+PASS #58 Test that a WebAssembly module is uninstantiable
+

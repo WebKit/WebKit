@@ -1,0 +1,6 @@
+2d.reset.state.stroke_style
+check that the state is reset
+Actual output:
+
+PASS check that the state is reset
+

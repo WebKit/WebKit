@@ -1,0 +1,16 @@
+<script>
+    function log(msg) {
+        const out = document.querySelector("div");
+        const p = document.createElement("p");
+        p.textContent = msg;
+        out.appendChild(p);
+    }
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    window.addEventListener("load", function () {
+        log('createImageBitmap' in window ? "createImageBitmap exists" : "FAIL: createImageBitmap should exist");
+        log('OffscreenCanvas' in window ? "OffscreenCanvas exists" : "FAIL: OffscreenCanvas should exist");
+    }, false);
+</script>
+<div></div>

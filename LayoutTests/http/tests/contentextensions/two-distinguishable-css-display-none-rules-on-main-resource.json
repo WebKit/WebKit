@@ -1,0 +1,21 @@
+[
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden1"
+        },
+        "trigger": {
+            "url-filter": "two-distinguishable-css-display-none-rules-on-main-resource.html"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hidden2"
+        },
+        "trigger": {
+            "resource-type": ["document"],
+            "url-filter": "distinguishable-css-display-none-rules-on-main-resource.html$"
+        }
+    }
+]

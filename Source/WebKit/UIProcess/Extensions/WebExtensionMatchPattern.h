@@ -1,0 +1,167 @@
+/*
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+
+#include "APIError.h"
+#include "APIObject.h"
+#include <WebCore/UserContentURLPattern.h>
+#include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
+#include <wtf/RetainPtr.h>
+
+#if PLATFORM(COCOA)
+OBJC_CLASS NSArray;
+OBJC_CLASS NSSet;
+OBJC_CLASS WKWebExtensionMatchPattern;
+#endif
+
+namespace WebKit {
+
+class WebExtensionMatchPattern : public API::ObjectImpl<API::Object::Type::WebExtensionMatchPattern> {
+    WTF_MAKE_NONCOPYABLE(WebExtensionMatchPattern);
+
+public:
+    template<typename... Args>
+    static RefPtr<WebExtensionMatchPattern> create(Args&&... args)
+    {
+        auto result = adoptRef(new WebExtensionMatchPattern(std::forward<Args>(args)...));
+        return result && result->isValid() ? WTF::move(result) : nullptr;
+    }
+
+    using URLSchemeSet = HashSet<String>;
+    using MatchPatternSet = HashSet<Ref<WebExtensionMatchPattern>>;
+
+    // Keep in sync with WKWebExtensionMatchPatternError values.
+    enum class Error : uint8_t {
+        Unknown = 1,
+        InvalidScheme,
+        InvalidHost,
+        InvalidPath,
+    };
+
+    enum class Options : uint8_t {
+        IgnoreSchemes        = 1 << 0, // Ignore the scheme component when matching.
+        IgnorePaths          = 1 << 1, // Ignore the path component when matching.
+        MatchBidirectionally = 1 << 2, // Match two patterns in either direction (A matches B, or B matches A). Invalid for matching URLs.
+        AllowFileScheme      = 1 << 3, // Allow file:// to be considered a match for <all_urls>. The scheme wildcard `*` still does not match file://, matching Chrome and Firefox behavior.
+    };
+
+    enum class CreateOptions : uint8_t {
+        MatchExactScheme = 1 << 0, // Create a pattern that matches only the exact scheme, otherwise HTTP family URLs will be `*`.
+        MatchSubdomains  = 1 << 1, // Create a pattern that matches subdomains of the supplied host.
+        MatchAllPaths    = 1 << 2, // Create a pattern that matches all paths, ignoring the supplied path.
+    };
+
+    static RefPtr<WebExtensionMatchPattern> getOrCreate(const String& pattern);
+    static RefPtr<WebExtensionMatchPattern> getOrCreate(const String& scheme, const String& host, const String& path);
+    static RefPtr<WebExtensionMatchPattern> getOrCreate(const URL&, OptionSet<CreateOptions> = { CreateOptions::MatchSubdomains, CreateOptions::MatchAllPaths });
+
+    static Ref<WebExtensionMatchPattern> allURLsMatchPattern();
+    static Ref<WebExtensionMatchPattern> allHostsAndSchemesMatchPattern();
+
+    static bool NODELETE patternsMatchAllHosts(const MatchPatternSet&);
+    static bool patternsMatchURL(const MatchPatternSet&, const URL&);
+    static bool patternsMatchPattern(const MatchPatternSet&, const WebExtensionMatchPattern&);
+
+    explicit WebExtensionMatchPattern() = default;
+    explicit WebExtensionMatchPattern(const String& pattern, RefPtr<API::Error>&);
+    explicit WebExtensionMatchPattern(const String& scheme, const String& host, const String& path, RefPtr<API::Error>&);
+
+    static URLSchemeSet& extensionSchemes();
+    static URLSchemeSet& validSchemes();
+    static URLSchemeSet& supportedSchemes();
+
+    static void registerCustomURLScheme(String);
+    static bool isWebExtensionURL(const URL&);
+
+    bool NODELETE operator==(const WebExtensionMatchPattern&) const;
+
+    bool isValid() const { return m_valid; }
+    bool isSupported() const;
+
+    String NODELETE scheme() const;
+    String host() const;
+    String NODELETE path() const;
+
+    bool hostIsPublicSuffix() const;
+
+    bool matchesAllURLs() const { return m_matchesAllURLs; }
+    bool NODELETE matchesAllHosts() const;
+
+    bool matchesURL(const URL&, OptionSet<Options> = { }) const;
+    bool matchesPattern(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
+
+    String string() const { return stringWithScheme(nullString()); }
+    Vector<String> expandedStrings(OptionSet<Options> = { }) const;
+
+    const WebCore::UserContentURLPattern& pattern() const LIFETIME_BOUND { return m_pattern; }
+
+    unsigned hash() const { return m_hash; }
+
+#if PLATFORM(COCOA) && defined(__OBJC__)
+    WKWebExtensionMatchPattern *wrapper() const { return static_cast<WKWebExtensionMatchPattern *>(API::ObjectImpl<API::Object::Type::WebExtensionMatchPattern>::wrapper()); }
+#endif
+
+private:
+    static Ref<API::Error> createError(Error, const String& localizedDescription);
+
+    String stringWithScheme(const String& differentScheme) const;
+
+    static bool isValidScheme(String);
+
+    bool schemeMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
+    bool NODELETE hostMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
+    bool NODELETE pathMatches(const WebExtensionMatchPattern&, OptionSet<Options> = { }) const;
+
+    WebCore::UserContentURLPattern m_pattern;
+    bool m_matchesAllURLs { false };
+    bool m_valid { false };
+    unsigned m_hash { 0 };
+};
+
+#if PLATFORM(COCOA)
+NSSet *toAPI(const WebExtensionMatchPattern::MatchPatternSet&);
+WebExtensionMatchPattern::MatchPatternSet toPatterns(NSSet *);
+#endif
+
+WebExtensionMatchPattern::MatchPatternSet toPatterns(const HashSet<String>&);
+HashSet<String> toStrings(const WebExtensionMatchPattern::MatchPatternSet&);
+
+} // namespace WebKit
+
+namespace WTF {
+
+template<> struct HashTraits<WebKit::WebExtensionMatchPattern> : SimpleClassHashTraits<WebKit::WebExtensionMatchPattern> {
+    static const bool emptyValueIsZero = false;
+    static const bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const WebKit::WebExtensionMatchPattern& pattern) { return pattern.isValid(); }
+};
+
+} // namespace WTF
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

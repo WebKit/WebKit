@@ -1,0 +1,70 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/block-size-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/block-size-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/block-size-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-color-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-color-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-color-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-style-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-style-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-style-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-width-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-width-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-block-width-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-color-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-color-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-color-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-style-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-style-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-style-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-width-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-width-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/border-inline-width-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/inline-size-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/inline-size-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/inline-size-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/inset-block-inline-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/inset-block-inline-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/inset-block-inline-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/inset-block-inline-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/inset-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/inset-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/inset-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/inset-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/max-block-size-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/max-block-size-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/max-block-size-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/max-inline-size-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/max-inline-size-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/max-inline-size-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/min-block-size-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/min-block-size-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/min-block-size-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/min-inline-size-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/min-inline-size-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/min-inline-size-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-valid.html

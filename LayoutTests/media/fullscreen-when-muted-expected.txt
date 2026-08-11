@@ -1,0 +1,13 @@
+Muted video should not pause when entering fullscreen.
+
+EVENT(canplaythrough)
+EVENT(playing)
+EXPECTED (video.muted == 'true') OK
+EXPECTED (video.paused == 'false') OK
+EVENT(webkitfullscreenchange)
+EXPECTED (document.webkitFullscreenElement == '[object HTMLHtmlElement]') OK
+EXPECTED (video.muted == 'true') OK
+EXPECTED (video.paused == 'false') OK
+EVENT(webkitfullscreenchange)
+END OF TEST
+

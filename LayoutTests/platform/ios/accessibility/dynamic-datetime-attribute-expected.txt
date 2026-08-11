@@ -1,0 +1,9 @@
+This test ensures that we report the correct datetime value after the attribute is changed dynamically.
+
+PASS: time.dateTimeValue === '2017-07-08'
+PASS: time.dateTimeValue === '11-12'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+July 8

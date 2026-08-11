@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="text" contenteditable="true">  Charlie      Delta  Ninja  
+    Kelly</div>
+    
+<script>
+var output = "This test ensures setting text selection works.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    let range = document.createRange();
+    range.setStart(document.getElementById("text").firstChild, 2);
+    range.setEnd(document.getElementById("text").firstChild, 9);
+    window.getSelection().addRange(range);
+
+    var editable = accessibilityController.accessibleElementById("text");
+    var startMarker, endMarker, selectedMarkerRange;
+    setTimeout(async function() {
+        output += await expectAsync("editable.selectedText", "'Charlie'");
+
+        selectedMarkerRange = editable.selectedTextMarkerRange();
+        startMarker = editable.startTextMarkerForTextMarkerRange(selectedMarkerRange);
+        endMarker = editable.endTextMarkerForTextMarkerRange(selectedMarkerRange);
+
+        // Expand |endMarker| to encompass "Charlie Delta".
+        for (let i = 0; i < 6; i++)
+            endMarker = editable.nextTextMarker(endMarker);
+        editable.setSelectedTextMarkerRange(editable.textMarkerRangeForMarkers(startMarker, endMarker));
+        output += await expectAsync("editable.selectedText", "'Charlie Delta'");
+
+        // Expand |endMarker to encompass "Charlie Delta Ninja Kel"
+        for (let i = 0; i < 10; i++)
+            endMarker = editable.nextTextMarker(endMarker);
+        editable.setSelectedTextMarkerRange(editable.textMarkerRangeForMarkers(startMarker, endMarker));
+        output += await expectAsync("editable.selectedText", "'Charlie Delta Ninja Kel'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

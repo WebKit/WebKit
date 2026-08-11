@@ -1,0 +1,37 @@
+This test ensures we don't consider SVG graphics elements something that can be walked over in a next-text-marker traversal, nor something that is counted in the AXIndexForTextMarker-style APIs.
+
+Text marker 0 had index 0
+Text marker 1 had index 1
+Text marker 2 had index 2
+Text marker 3 had index 3
+Text marker 4 had index 4
+Text marker 5 had index 5
+Text marker 6 had index 6
+Text marker 7 had index 7
+Text marker 8 had index 8
+Text marker 9 had index 9
+Text marker 10 had index 10
+Text marker 11 had index 11
+Text marker 12 had index 12
+Text marker 13 had index 13
+Text marker 14 had index 14
+Text marker 15 had index 15
+Text marker 16 had index 16
+Text marker 17 had index 17
+Text marker 18 had index 18
+Text marker 19 had index 19
+Text marker 20 had index 20
+Text marker 21 had index 21
+Text marker 22 had index 22
+Text marker 23 had index 23
+Text marker 24 had index 24
+Text marker 25 had index 25
+Text marker 26 had index 26
+Text marker 27 had index 27
+Text marker 28 had index 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This text should be counted
+

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.internals && internals.settings)
+    internals.settings.setShouldRestrictBaseURLSchemes(false);
+
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function testFailed()
+{
+    document.getElementById("result").textContent = "FAIL";
+    done();
+}
+
+function testPassed()
+{
+    document.getElementById("result").textContent = "PASS";
+    done();
+} 
+</script>
+<base href="data:/,testPassed()/">
+</head>
+<body>
+<p>This test overrides the setting <code>shouldRestrictBaseURLSchemes</code> to <code>false</code> and then sets the base URL to a data URL. This is allowed and hence script is executed.</p>
+<p>Note that there will be a JavaScript ReferenceError on success.</p>
+<p id="result"></p>
+<script src="./non-existent-file.js" onerror="testFailed()"></script>
+</body>
+</html>

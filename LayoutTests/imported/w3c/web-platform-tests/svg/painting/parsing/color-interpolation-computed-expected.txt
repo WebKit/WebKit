@@ -1,0 +1,5 @@
+
+PASS Property color-interpolation value 'auto'
+PASS Property color-interpolation value 'srgb'
+PASS Property color-interpolation value 'linearrgb'
+

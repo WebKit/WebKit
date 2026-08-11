@@ -1,0 +1,16 @@
+Test that WebGL2 framebuffer rendering works correctly when drawBuffers is called before texture attachment.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 7 PASS, 0 FAIL
+
+PASS WebGL2 context created
+PASS getError was expected value: NO_ERROR : drawBuffers should succeed
+PASS drawBuffers called BEFORE texture attachment
+PASS Texture attached AFTER drawBuffers
+PASS getError was expected value: NO_ERROR : draw should succeed
+PASS framebuffer should contain red pixels after draw
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

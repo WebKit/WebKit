@@ -1,0 +1,286 @@
+//
+// Copyright 2002 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+
+// Buffer.h: Defines the gl::Buffer class, representing storage of vertex and/or
+// index data. Implements GL buffer objects and related functionality.
+// [OpenGL ES 2.0.24] section 2.9 page 21.
+
+#ifndef LIBANGLE_BUFFER_H_
+#define LIBANGLE_BUFFER_H_
+
+#include "common/PackedEnums.h"
+#include "common/angleutils.h"
+#include "libANGLE/Debug.h"
+#include "libANGLE/Error.h"
+#include "libANGLE/IndexRangeCache.h"
+#include "libANGLE/Observer.h"
+#include "libANGLE/RefCountObject.h"
+#include "libANGLE/angletypes.h"
+
+namespace rx
+{
+class BufferImpl;
+struct BufferFeedback;
+class GLImplFactory;
+}  // namespace rx
+
+namespace gl
+{
+class Buffer;
+class Context;
+
+enum class WebGLBufferType
+{
+    Undefined,
+    ElementArray,
+    OtherData,
+};
+
+// Track vertex array's binding index of all contexts that a buffer is bound to
+class VertexArrayBufferBindingMaskAndContext final
+{
+  public:
+    VertexArrayBufferBindingMaskAndContext();
+    ~VertexArrayBufferBindingMaskAndContext();
+
+    void add(const gl::Context *context, size_t bindingIndex);
+    void remove(const gl::Context *context, size_t bindingIndex);
+    VertexArrayBufferBindingMask getBufferBindingMask(const gl::Context *context) const;
+
+  private:
+    // The expectation is that one buffer will only used in a very small number of shared contexts,
+    // the cost of searching in a vector is negligible.
+    std::vector<std::pair<const gl::Context *, VertexArrayBufferBindingMask>> mBufferBindingMask;
+};
+
+class BufferState final : angle::NonCopyable
+{
+  public:
+    BufferState();
+    ~BufferState();
+
+    BufferUsage getUsage() const { return mUsage; }
+    GLbitfield getAccessFlags() const { return mAccessFlags; }
+    GLenum getAccess() const { return mAccess; }
+    GLboolean isMapped() const { return mMapped; }
+    void *getMapPointer() const { return mMapPointer; }
+    GLint64 getMapOffset() const { return mMapOffset; }
+    GLint64 getMapLength() const { return mMapLength; }
+    GLint64 getSize() const { return mSize; }
+    std::string getLabel() const { return mLabel; }
+    WebGLBufferType getWebGLType() const { return mWebGLType; }
+
+  private:
+    friend class Buffer;
+
+    std::string mLabel;
+
+    BufferUsage mUsage;
+    GLint64 mSize;
+    GLbitfield mAccessFlags;
+    GLenum mAccess;
+    GLboolean mMapped;
+    void *mMapPointer;
+    GLint64 mMapOffset;
+    GLint64 mMapLength;
+    int mBindingCount;
+    int mTransformFeedbackIndexedBindingCount;
+    int mTransformFeedbackGenericBindingCount;
+    int mActiveTransformFeedbackCount;
+    GLboolean mImmutable;
+    GLbitfield mStorageExtUsageFlags;
+    GLboolean mExternal;
+    WebGLBufferType mWebGLType;
+};
+
+// Vertex Array and Texture track buffer data updates.
+struct ContentsObserver
+{
+    static constexpr uint32_t kBufferTextureIndex = std::numeric_limits<uint32_t>::max();
+    uint32_t bufferIndex                          = 0;
+
+    // VertexArray* (bufferIndex != kBufferTextureIndex) or Texture*
+    void *observer = nullptr;
+};
+
+ANGLE_INLINE bool operator==(const ContentsObserver &lhs, const ContentsObserver &rhs)
+{
+    return lhs.bufferIndex == rhs.bufferIndex && lhs.observer == rhs.observer;
+}
+
+class Buffer final : public ThreadSafeRefCountObject<BufferID>,
+                     public LabeledObject,
+                     public angle::Subject
+{
+  public:
+    Buffer(rx::GLImplFactory *factory, BufferID id);
+    ~Buffer() override;
+    void onDestroy(const Context *context) override;
+
+    void onBind(const Context *context, BufferBinding target);
+
+    angle::Result setLabel(const Context *context, const std::string &label) override;
+    const std::string &getLabel() const override;
+
+    angle::Result bufferStorageExternal(Context *context,
+                                        BufferBinding target,
+                                        GLsizeiptr size,
+                                        GLeglClientBufferEXT clientBuffer,
+                                        GLbitfield flags);
+    angle::Result bufferStorage(Context *context,
+                                BufferBinding target,
+                                GLsizeiptr size,
+                                const void *data,
+                                GLbitfield flags);
+    angle::Result bufferData(Context *context,
+                             BufferBinding target,
+                             const void *data,
+                             GLsizeiptr size,
+                             BufferUsage usage);
+    angle::Result bufferSubData(const Context *context,
+                                BufferBinding target,
+                                const void *data,
+                                GLsizeiptr size,
+                                GLintptr offset);
+    angle::Result copyBufferSubData(const Context *context,
+                                    Buffer *source,
+                                    GLintptr sourceOffset,
+                                    GLintptr destOffset,
+                                    GLsizeiptr size);
+    angle::Result map(const Context *context, GLenum access);
+    angle::Result mapRange(const Context *context,
+                           GLintptr offset,
+                           GLsizeiptr length,
+                           GLbitfield access);
+    angle::Result unmap(const Context *context, GLboolean *result);
+
+    // These are called when another operation changes Buffer data.
+    void onDataChanged(const Context *context);
+
+    angle::Result getIndexRange(const gl::Context *context,
+                                DrawElementsType type,
+                                size_t offset,
+                                size_t count,
+                                bool primitiveRestartEnabled,
+                                IndexRange *outRange) const;
+    const BufferState &getState() const { return mState; }
+    BufferUsage getUsage() const { return mState.mUsage; }
+    GLbitfield getAccessFlags() const { return mState.mAccessFlags; }
+    GLenum getAccess() const { return mState.mAccess; }
+    GLboolean isMapped() const { return mState.mMapped; }
+    bool isPersistentlyMapped() const
+    {
+        return (mState.mStorageExtUsageFlags & GL_MAP_PERSISTENT_BIT_EXT) != 0;
+    }
+    void *getMapPointer() const { return mState.mMapPointer; }
+    GLint64 getMapOffset() const { return mState.mMapOffset; }
+    GLint64 getMapLength() const { return mState.mMapLength; }
+    GLint64 getSize() const { return mState.mSize; }
+    GLint64 getMemorySize() const;
+    GLboolean isImmutable() const { return mState.mImmutable; }
+    GLbitfield getStorageExtUsageFlags() const { return mState.mStorageExtUsageFlags; }
+
+    WebGLBufferType getWebGLType() const { return mState.mWebGLType; }
+
+    // Buffers are always initialized immediately when allocated
+    InitState initState() const { return InitState::Initialized; }
+
+    rx::BufferImpl *getImplementation() const { return mImpl; }
+
+    ANGLE_INLINE bool isBoundToTFAndNonTFSimultaneously() const
+    {
+        // The transform feedback generic binding point is not an indexed binding point but it also
+        // does not count as a non-transform-feedback use of the buffer, so we subtract it from the
+        // binding count when checking if the buffer is bound to a non-transform-feedback location.
+        // See https://crbug.com/853978
+        return mState.mTransformFeedbackIndexedBindingCount > 0 &&
+               mState.mTransformFeedbackIndexedBindingCount !=
+                   mState.mBindingCount - mState.mTransformFeedbackGenericBindingCount;
+    }
+
+    // If this buffer is bound as a transform feedback output, even if that transform feedback is
+    // paused and not the current transform feedback.
+    ANGLE_INLINE bool isBoundToActiveTransformFeedback() const
+    {
+        return mState.mActiveTransformFeedbackCount > 0;
+    }
+
+    ANGLE_INLINE bool hasTFBBindingConflict() const
+    {
+        return isBoundToTFAndNonTFSimultaneously() || isBoundToActiveTransformFeedback();
+    }
+
+    bool isDoubleBoundForTransformFeedback() const;
+    void onTFBindingChanged(const Context *context, bool bound, bool indexed);
+    void onTFActiveChanged(const Context *context, bool active);
+    void onNonTFBindingChanged(int incr) { mState.mBindingCount += incr; }
+    angle::Result getSubData(const gl::Context *context,
+                             GLintptr offset,
+                             GLsizeiptr size,
+                             void *outData);
+
+    void addVertexArrayBinding(const gl::Context *context, size_t bindingIndex)
+    {
+        mVertexArrayBufferBindingMaskAndContext.add(context, bindingIndex);
+    }
+    void removeVertexArrayBinding(const gl::Context *context, size_t bindingIndex)
+    {
+        mVertexArrayBufferBindingMaskAndContext.remove(context, bindingIndex);
+    }
+    VertexArrayBufferBindingMask getVertexArrayBinding(const gl::Context *context) const
+    {
+        return mVertexArrayBufferBindingMaskAndContext.getBufferBindingMask(context);
+    }
+
+    void addContentsObserver(VertexArray *vertexArray, uint32_t bufferIndex);
+    void removeContentsObserver(VertexArray *vertexArray, uint32_t bufferIndex);
+    void addContentsObserver(Texture *texture);
+    void removeContentsObserver(Texture *texture);
+    bool hasContentsObserver(Texture *texture) const;
+
+    void applyImplFeedback(const gl::Context *context, const rx::BufferFeedback &feedback);
+
+  private:
+    angle::Result bufferDataImpl(Context *context,
+                                 BufferBinding target,
+                                 const void *data,
+                                 GLsizeiptr size,
+                                 BufferUsage usage,
+                                 GLbitfield flags,
+                                 BufferStorage bufferStorage);
+    angle::Result bufferExternalDataImpl(Context *context,
+                                         BufferBinding target,
+                                         GLeglClientBufferEXT clientBuffer,
+                                         GLsizeiptr size,
+                                         GLbitfield flags);
+
+    void onStateChange(const Context *context, angle::SubjectMessage message);
+    void onContentsChange(const Context *context);
+    size_t getContentsObserverIndex(void *observer, uint32_t bufferIndex) const;
+    void removeContentsObserverImpl(void *observer, uint32_t bufferIndex);
+
+    angle::Result setDataWithUsageFlags(const gl::Context *context,
+                                        gl::BufferBinding target,
+                                        GLeglClientBufferEXT clientBuffer,
+                                        const void *data,
+                                        size_t size,
+                                        gl::BufferUsage usage,
+                                        GLbitfield flags,
+                                        gl::BufferStorage bufferStorage);
+
+    BufferState mState;
+    rx::BufferImpl *mImpl;
+
+    // Current VertexArray's binding index bitmask
+    VertexArrayBufferBindingMaskAndContext mVertexArrayBufferBindingMaskAndContext;
+
+    angle::FastVector<ContentsObserver, angle::kMaxFixedObservers> mContentsObservers;
+    mutable IndexRangeCache mIndexRangeCache;
+};
+
+}  // namespace gl
+
+#endif  // LIBANGLE_BUFFER_H_

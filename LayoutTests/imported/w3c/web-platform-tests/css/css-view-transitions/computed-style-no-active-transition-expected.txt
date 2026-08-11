@@ -1,0 +1,5 @@
+
+PASS Check default values of VT pseudo properties outside of an active view transition
+PASS Values of VT pseudo properties with author stylesheet outside of an active view transition
+FAIL Value of inherited VT pseudo properties assert_equals: value of animation-duration for ::view-transition-image-pair(root) expected "0.25s" but got "0s"
+

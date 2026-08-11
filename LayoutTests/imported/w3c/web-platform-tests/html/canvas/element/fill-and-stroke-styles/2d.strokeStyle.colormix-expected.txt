@@ -1,0 +1,6 @@
+2d.strokeStyle.colormix
+color-mix works as color input
+Actual output:
+
+PASS color-mix works as color input
+

@@ -1,0 +1,4 @@
+
+FAIL The popover attribute, on an element with no implicit role, then the element's role instead maps to group. assert_equals: role starts as none expected "none" but got "generic"
+FAIL Dynamic changes to popover attribute should change the role. assert_equals: role starts as none expected "none" but got "generic"
+

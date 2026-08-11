@@ -1,0 +1,69 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<!--
+    rdar://174706941
+    Test for RemoteRenderingBackend leak via unsunk RemoteDisplayListRecorder
+    entries in m_remoteDisplayListRecorders.
+
+    workQueueUninitialize() clears m_remoteImageBuffers and
+    m_remoteImageBufferSets but not m_remoteDisplayListRecorders.
+    RemoteDisplayListRecorder holds a Ref<RemoteRenderingBackend> via its
+    RemoteGraphicsContext base class, creating a retain cycle that leaks
+    the backend when recorders are present at teardown.
+
+    Run with: run-webkit-tests --leaks --debug ipc/display-list-recorder-leak.html
+    Expect "leaks found" for RemoteRenderingBackend / RemoteDisplayListRecorder
+    objects in the GPU process if the bug is present.
+-->
+<p>PASS if no crash. Check --leaks output for RemoteRenderingBackend leak.</p>
+<script src="../resources/ipc.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.setTimeout(async () => {
+    if (!window.IPC) { window.testRunner?.notifyDone(); return; }
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const renderingBackendIdentifier = randomIPCID();
+    const connection = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier,
+        connectionHandle: connection
+    });
+    const remoteBackend = connection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+    const didInit = connection.connection.waitForMessage(renderingBackendIdentifier,
+        IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1);
+    connection.connection.setSemaphores(didInit[0].value, didInit[1].value);
+
+    // Create display list recorders without sinking them.
+    // Each CreateDisplayListRecorder adds an entry to
+    // m_remoteDisplayListRecorders with a ScopedActiveMessageReceiveQueue
+    // holding a Ref<RemoteDisplayListRecorder>, which in turn holds a
+    // Ref<RemoteRenderingBackend> (via RemoteGraphicsContext base class).
+    //
+    // When the connection is invalidated, workQueueUninitialize() does NOT
+    // clear m_remoteDisplayListRecorders, so these entries form a retain
+    // cycle that prevents the RemoteRenderingBackend from being freed.
+    for (let i = 0; i < 10; ++i) {
+        const id = randomIPCID();
+        remoteBackend.CreateDisplayListRecorder({ identifier: id });
+    }
+
+    // Explicitly release the rendering backend via IPC. This triggers
+    // GPUConnectionToWebProcess::releaseRenderingBackend() which destroys
+    // the ScopedActiveMessageReceiveQueue, calling stopListeningForIPC()
+    // then workQueueUninitialize(). Without the fix, the display list
+    // recorders remain in the map, forming a retain cycle that prevents
+    // the RemoteRenderingBackend from being freed.
+    CoreIPC.GPU.GPUConnectionToWebProcess.ReleaseRenderingBackend(0, {
+        renderingBackendIdentifier
+    });
+
+    // Give the GPU process time to process the release, then finish.
+    connection.connection.invalidate();
+    setTimeout(() => window.testRunner?.notifyDone(), 500);
+}, 0);
+</script>

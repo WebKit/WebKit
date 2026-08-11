@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-10"/>
+<style>
+body {
+    zoom: 1.2;
+    padding: 0;
+    margin: 0;
+}
+#b {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    position: absolute;
+    top: 60px;
+    left: 40px;
+}
+</style>
+</head>
+<body>
+
+<div id='b'></div>
+
+<script>
+    document.getElementById('b').style.webkitTransform = new WebKitCSSMatrix('matrix3d(0.707107, 0, -0.707107, 0.00353553, 0, 1, 0, 0, 0.707107, 0, 0.707107, -0.00353553, 100, 50, 25, 0.875)');
+</script>
+</body>
+</html>

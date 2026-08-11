@@ -1,0 +1,27 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    if (testRunner.setShouldDecideNavigationPolicyAfterDelay)
+        testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+}
+
+var events = [];
+function eventHappened(eventName) {
+    events.push(eventName);
+    if (events.length == 5) {
+        alert(events[0] + ", " + events[1] + ", " + events[2] + ", " + events[3] + ", " + events[4]);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+
+window.onhashchange = ()=>{ eventHappened("hashchange") }
+window.onpopstate = ()=>{ eventHappened("popstate") };
+window.location.href = "#fragment";
+Promise.resolve().then(()=>{ eventHappened("promise") });
+setTimeout(()=>{ eventHappened("timeout") }, 0)
+eventHappened("continuing with " + (document.URL.endsWith("#fragment") ? "correct fragment" : "incorrect fragment"));
+
+</script>

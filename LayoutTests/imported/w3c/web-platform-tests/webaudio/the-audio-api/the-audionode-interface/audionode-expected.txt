@@ -1,0 +1,3 @@
+
+FAIL Basic tests for AudioNode API. assert_equals: AudioContext.destination.numberOfOutputs expected 1 but got 0
+

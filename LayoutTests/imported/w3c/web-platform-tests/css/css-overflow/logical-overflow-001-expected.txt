@@ -1,0 +1,4 @@
+
+PASS overflow-x matches overflow-inline, and overflow-y matches overflow-block when the element has a horizontal writing mode
+PASS overflow-y matches overflow-inline, and overflow-x matches overflow-block when the element has a vertical writing mode
+

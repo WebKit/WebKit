@@ -1,0 +1,4 @@
+
+PASS Property aspect-ratio has initial value auto
+PASS Property aspect-ratio does not inherit
+

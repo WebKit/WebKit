@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+import sys
+
+import webkitpy  # noqa: F401 - This changes sys.path(!).
+from webkitcorepy import AutoInstall, Package, Version
+
+AutoInstall.register(Package("webkitapipy", Version(0, 1, 0)), local=True)
+
+from webkitapipy import program
+
+sys.exit(program.main())

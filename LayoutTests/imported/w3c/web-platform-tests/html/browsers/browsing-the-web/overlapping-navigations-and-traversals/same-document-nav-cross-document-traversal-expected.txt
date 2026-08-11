@@ -1,0 +1,4 @@
+
+PASS fragment navigation then go(-2)
+PASS pushState then go(-2)
+

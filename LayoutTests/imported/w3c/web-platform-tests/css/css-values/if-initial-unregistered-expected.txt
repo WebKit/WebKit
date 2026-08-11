@@ -1,0 +1,4 @@
+PASS if green
+
+PASS if-testing the initial keyword without any property registrations
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+noscript {
+    animation: animation 1s infinite;
+}
+
+@keyframes animation {
+    to { margin-left: "100px" };
+}
+
+</style>
+</head>
+<body>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<noscript>Hello World</noscript>
+<script>
+
+test(() => {
+    assert_equals(document.querySelector("noscript").getAnimations().length, 0);
+}, "A CSS Animation cannot be created on a <noscript> element.");
+
+</script>
+</body>
+</html>

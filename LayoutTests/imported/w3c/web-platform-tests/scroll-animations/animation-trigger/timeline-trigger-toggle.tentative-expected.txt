@@ -1,0 +1,6 @@
+Source
+Target
+Toggle timeline-trigger
+
+FAIL Toggling trigger on starts controlling attached animation; toggling off stops assert_equals: expected (string) "none" but got (undefined) undefined
+

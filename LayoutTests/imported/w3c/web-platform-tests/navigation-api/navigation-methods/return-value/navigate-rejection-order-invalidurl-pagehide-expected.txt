@@ -1,0 +1,4 @@
+
+
+PASS navigate() with an invalid URL inside onpagehide throws "SyntaxError", not "InvalidStateError"
+

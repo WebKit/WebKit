@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src="../fast/mediastream/resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="1280" height="720"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+video = document.getElementById("video");
+canvas = document.getElementById("canvas");
+
+function grabFrameData()
+{
+    canvas.getContext('2d').drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+    return canvas.getContext('2d').getImageData(0, 0, video.videoWidth, video.videoHeight);
+}
+
+async function waitFor(duration)
+{
+    return new Promise((resolve) => setTimeout(resolve, duration));
+}
+
+function testImage()
+{
+    const data = grabFrameData().data;
+    assert_greater_than(data[0], 100, "test1");
+    assert_greater_than(data[1], 100, "test1");
+    assert_greater_than(data[2], 100, "test1");
+}
+
+var localStream;
+var pc1, pc2;
+promise_test(async (test) => {
+    localStream = await callGetDisplayMedia({ video: { width:639 } });
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            pc1 = firstConnection;
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            firstConnection.getTransceivers()[0].setCodecPreferences([{mimeType: "video/VP8", clockRate: 90000}]);
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = stream;
+    let promise = new Promise(resolve => video.requestVideoFrameCallback(resolve));
+    await video.play();
+    await promise;
+}, "Setting up streaming of getDisplayMedia with VP8");
+
+promise_test(async (test) => {
+    assert_equals(video.videoWidth, 639);
+    testImage();
+}, "Testing odd width");
+
+promise_test(async (test) => {
+    test.add_cleanup(() => localStream.getTracks().forEach(track => track.stop()));
+    await localStream.getVideoTracks()[0].applyConstraints({ height:479 });
+
+    while (!(video.videoHeight % 2))
+        await waitFor(50);
+    testImage();
+}, " Testing odd height");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,11 @@
+
+Check that a webm file reports a buffered range.
+
+EXPECTED (audio.canPlayType('audio/webm; codecs=opus') == 'probably') OK
+RUN(audio.src = "content/short.webm")
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EXPECTED (audio.duration >= '0.5') OK
+EXPECTED (audio.buffered.length == '1') OK
+END OF TEST
+

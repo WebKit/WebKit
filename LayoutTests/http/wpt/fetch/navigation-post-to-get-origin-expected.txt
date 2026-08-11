@@ -1,0 +1,8 @@
+
+
+
+
+
+PASS No origin header after POST submission and 302 redirection
+PASS No origin header after POST submission and 303 redirection
+

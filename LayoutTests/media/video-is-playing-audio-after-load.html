@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>video-is-playing-audio-after-load</title>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+        <script>
+        async function runTest() {
+            findMediaElement();
+            run('video.src = findMediaFile("video", "content/audio-tracks")');
+            await waitFor(video, 'canplay');
+
+            testExpected('video.audioTracks.length', '1', '>');
+            runWithKeyDown('video.play()');
+            await waitFor(video, 'playing');
+
+            testExpected('internals.pageMediaState().includes("IsPlayingAudio")', true);
+
+            run('video.src = ""');
+            run('video.load()');
+
+            await waitFor(video, 'emptied');
+            testExpected('internals.pageMediaState().includes("IsPlayingAudio")', false);
+        };
+
+        window.addEventListener('load', event => {
+            runTest().then(endTest).catch(failTest);
+        });
+        </script>
+    </head>
+    <body>
+        <video loop></video>
+    </body>
+</html>

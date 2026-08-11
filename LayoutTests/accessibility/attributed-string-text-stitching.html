@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+* { font-size: 16px; }
+</style>
+</head>
+<body>
+
+<div role="presentation">
+    <span>Hello</span> <span>world!</span>
+    <i>How</i> 
+    <b>are</b>
+    <span>you doing</span> on<b> this fine day</b>?
+</div>
+
+<script>
+var output = "This test ensures we return the right attributed string from a stitched-text's text marker range.\n\n";
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var text = webArea.childAtIndex(0);
+
+    var markerRange = text.textMarkerRangeForElement(text);
+    output += text.attributedStringForTextMarkerRange(markerRange);
+    debug(output);
+}
+</script>
+</body>
+</html>
+

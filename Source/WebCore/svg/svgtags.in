@@ -1,0 +1,84 @@
+namespace="SVG"
+namespaceURI="http://www.w3.org/2000/svg"
+fallbackInterfaceName="SVGUnknownElement"
+fallbackJSInterfaceName="SVGElement"
+
+a
+altGlyph JSInterfaceName=SVGElement
+altGlyphDef JSInterfaceName=SVGElement
+altGlyphItem JSInterfaceName=SVGElement
+animate
+animateColor interfaceName=SVGUnknownElement, JSInterfaceName=SVGElement, noConstructor
+animateMotion
+animateTransform
+set
+circle
+clipPath
+defs
+desc
+ellipse
+feBlend
+feColorMatrix
+feComponentTransfer
+feComposite
+feConvolveMatrix
+feDiffuseLighting
+feDisplacementMap
+feDistantLight
+feDropShadow
+feFlood
+feFuncA
+feFuncB
+feFuncG
+feFuncR
+feGaussianBlur
+feImage
+feMerge
+feMergeNode
+feMorphology
+feOffset
+fePointLight
+feSpecularLighting
+feSpotLight
+feTile
+feTurbulence
+filter
+font JSInterfaceName=SVGElement
+font-face JSInterfaceName=SVGElement
+font-face-format JSInterfaceName=SVGElement
+font-face-name JSInterfaceName=SVGElement
+font-face-src JSInterfaceName=SVGElement
+font-face-uri JSInterfaceName=SVGElement
+foreignObject
+g
+glyph JSInterfaceName=SVGElement
+glyphRef JSInterfaceName=SVGElement
+hkern interfaceName=SVGHKernElement, JSInterfaceName=SVGElement
+image
+line
+linearGradient
+marker
+mask
+metadata
+missing-glyph JSInterfaceName=SVGElement
+mpath interfaceName=SVGMPathElement
+path
+pattern
+polygon
+polyline
+radialGradient
+rect
+script constructorNeedsCreatedByParser
+stop
+style constructorNeedsCreatedByParser
+svg interfaceName=SVGSVGElement
+switch
+symbol
+text
+textPath
+title
+tref interfaceName=SVGTRefElement, JSInterfaceName=SVGElement
+tspan interfaceName=SVGTSpanElement
+use
+view
+vkern interfaceName=SVGVKernElement, JSInterfaceName=SVGElement

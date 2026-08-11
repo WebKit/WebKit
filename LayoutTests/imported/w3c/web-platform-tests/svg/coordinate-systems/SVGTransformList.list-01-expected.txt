@@ -1,0 +1,16 @@
+
+PASS SVGTransformList interface, animVal distinct from baseVal
+PASS SVGTransformList interface, animVal is read-only
+PASS SVGTransformList interface, legacy getters / list length
+PASS SVGTransformList interface, initialize() invalid arguments
+PASS SVGTransformList interface, getItem() arguments
+PASS SVGTransformList interface, insertItemBefore() invalid arguments
+PASS SVGTransformList interface, insertItemBefore()
+PASS SVGTransformList interface, replaceItem() invalid arguments
+PASS SVGTransformList interface, indexed setter
+PASS SVGTransformList interface, replaceItem()
+PASS SVGTransformList interface, removeItem()
+PASS SVGTransformList interface, appendItem() invalid arguments
+PASS SVGTransformList interface, appendItem()
+PASS SVGTransformList interface, clear()
+

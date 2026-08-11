@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<body>
+
+<select id="multiselect" multiple="multiple">
+    <option>make-the-item-long-enough-to-make-a-difference-in-pixel-test</option>
+    <option>b</option>
+</select>
+
+<script>
+onload = async () => {
+    testRunner?.waitUntilDone();
+    var multiselect = document.getElementById('multiselect');
+
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(multiselect.offsetLeft + 5, multiselect.offsetTop + 5);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+    } else {
+        document.write("To manually test, click on the 'a' option and no focus ring on the selected item should be seen.");
+    }
+    testRunner?.notifyDone();
+}
+</script>
+</body>
+</html>

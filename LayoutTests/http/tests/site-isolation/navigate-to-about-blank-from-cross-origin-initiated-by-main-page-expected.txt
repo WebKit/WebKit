@@ -1,0 +1,8 @@
+This test passes if the main page can modify it's child iframe's DOM (once the child iframe has navigated away from a cross-origin site to about:blank).
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Hello from the main page

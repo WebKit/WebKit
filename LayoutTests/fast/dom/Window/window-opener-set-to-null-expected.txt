@@ -1,0 +1,13 @@
+Tests that setting window.opener to null disown its opener
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS newWindow.opener is window
+PASS newWindow.opener = null did not throw exception.
+PASS newWindow.opener is null
+PASS openerGetter.call(newWindow) is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

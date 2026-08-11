@@ -1,0 +1,9 @@
+Tests WebSocket handshake errors.
+
+
+== Running test suite: WebSocket.HandshakeError
+-- Running test case: HandshakeError
+PASS: Resource should be a WebSocket.
+PASS: Should have correct status code.
+PASS: Should have correct status text.
+

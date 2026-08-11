@@ -1,0 +1,5 @@
+
+
+PASS Test ':focus' after 'display:none' on input
+PASS Test ':focus' after 'display:none' on input's parent
+

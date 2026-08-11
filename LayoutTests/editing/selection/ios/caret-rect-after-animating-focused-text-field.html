@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+#container {
+    position: fixed;
+    width: 200px;
+    height: 200px;
+    transform: translate3d(-400px, 100px, 0);
+    transition: all 0.5s ease-out;
+}
+
+input {
+    font-size: 20px;
+    width: 100%;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that the caret view is updated following a CSS animation. To manually run the test, tap the button to focus the offscreen input field; after the input field is animated onto the screen, the caret should become visible.");
+
+    const container = document.getElementById("container");
+    const input = document.querySelector("input");
+    const button = document.querySelector("button");
+    button.addEventListener("click", () => {
+        container.style.transform = "translate3d(1em, 100px, 0)";
+        button.remove();
+        input.focus();
+    });
+
+    await UIHelper.activateElementAndWaitForInputSession(button);
+
+    let caretViewRect = {};
+    while (!caretViewRect.left || caretViewRect.left < 0 || !caretViewRect.top || caretViewRect.top < 0) {
+        await UIHelper.delayFor(100);
+        caretViewRect = await UIHelper.getUICaretViewRect();
+    }
+
+    testPassed(`The caret became visible`);
+
+    input.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<button>Tap to focus</button>
+<div id="container">
+    <input>
+</div>
+</body>
+</html>

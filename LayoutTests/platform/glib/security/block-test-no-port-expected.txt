@@ -1,0 +1,8 @@
+This test attempts to change the src of an IMG tag to a blocked IP with no port to confirm that WebKit returns the correct error for it - blocked instead of cannot find. Due to the nature of this test, the results can only be processed automatically via DumpRenderTree. In addition, on some systems the results may depend on the behavior of the proxy.
+
+
+block-test-no-port.html - willSendRequest <NSURLRequest URL block-test-no-port.html, main document URL block-test-no-port.html, http method GET> redirectResponse (null)
+block-test-no-port.html - didReceiveResponse <NSURLResponse block-test-no-port.html, http status code 0>
+block-test-no-port.html - didFinishLoading
+http://255.255.255.255/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255/test.jpg, main document URL block-test-no-port.html, http method GET> redirectResponse (null)
+http://255.255.255.255/test.jpg - didFailLoadingWithError: <NSError domain g-io-error-quark, code 38, failing URL "http://255.255.255.255/test.jpg">

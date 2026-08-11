@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<style>
+    div.container {
+        display: inline-block;
+        margin-right: 20px; 
+        margin-bottom: 10px; 
+        width: 100px; 
+        vertical-align: top;
+    }
+    div.horizontal {
+        width: 102px;
+        height: 52px;
+    }
+    div.vertical {
+        width: 52px;
+        height: 102px;
+    }
+    img {
+        border: 1px solid black;
+    }
+</style>
+<body>
+    <b>The images of the  &lt;img&gt; elements should respect their EXIF orientation after setting their style image-orientation to "from-image".</b>
+    <br>
+    <br>
+    <div class="container">
+        <div class="horizontal">
+            <img id="img1" src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Normal
+    </div>
+    <div class="container">
+        <div class="horizontal">
+            <img id="img2" src="resources/exif-orientation-1-ul.jpg" style="transform: scaleX(-1);">
+        </div>
+        <br>Flipped horizontally
+    </div>
+    <div class="container">
+        <div class="horizontal">
+            <img id="img3" src="resources/exif-orientation-1-ul.jpg" style="transform: rotate(180deg);">
+        </div>
+        <br>Rotated 180&deg;
+    </div>
+    <div class="container">
+        <div class="horizontal">
+            <img id="img4" src="resources/exif-orientation-1-ul.jpg" style="transform: scaleX(-1) rotate(180deg);">
+        </div>
+        <br>Flipped vertically
+    </div>
+    <br>
+    <div class="container">
+        <div class="vertical">
+            <img id="img5" src="resources/exif-orientation-1-ul.jpg" style="transform: translate(-25px, 25px) rotate(90deg) scaleY(-1);">
+        </div>
+        <br>Rotated 90&deg; CCW and flipped vertically
+    </div>
+    <div class="container">
+        <div class="vertical">
+            <img id="img6" src="resources/exif-orientation-1-ul.jpg" style="transform: translate(-25px, 25px) rotate(90deg);">
+        </div>
+        <br>Rotated 90&deg; CCW
+    </div>
+    <div class="container">
+        <div class="vertical">
+            <img id="img7" src="resources/exif-orientation-1-ul.jpg" style="transform: translate(-25px, 25px) rotate(270deg) scaleY(-1);">
+        </div>
+        <br>Rotated 90&deg; CW and flipped vertically
+    </div>
+    <div class="container">
+        <div class="vertical">
+            <img id="img8" src="resources/exif-orientation-1-ul.jpg" style="transform: translate(-25px, 25px) rotate(270deg);">
+        </div>
+        <br>Rotated 90&deg; CW
+    </div>
+    <br>
+    <div class="container">
+        <div class="horizontal">
+            <img id="img9" src="resources/exif-orientation-1-ul.jpg">
+        </div>
+        <br>Undefined (invalid value)
+    </div>
+    <br>
+    <ul id="console"></ul>
+    <script>
+        function log(str) {
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(str));
+            var console = document.getElementById("console");
+            console.appendChild(li);
+        }
+
+         function imageSize(index) {
+            var element = document.getElementById("img" + index);
+            var computedStyle = window.getComputedStyle(element);
+            if (element.parentElement.classList.contains("vertical"))
+                return computedStyle.height + " by " + computedStyle.width;
+            return computedStyle.width + " by " + computedStyle.height;
+        }
+
+         window.addEventListener('load', (event) => {
+            for(var i = 1; i <= 9; i++)
+                log("img" + i + " size = " + imageSize(i));
+        });
+    </script>
+</body>

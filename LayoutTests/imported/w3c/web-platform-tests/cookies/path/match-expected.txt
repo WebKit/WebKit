@@ -1,0 +1,18 @@
+
+PASS `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /
+FAIL `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: match.html assert_not_equals: Cookie path from DOM should not be `null` got disallowed value null
+FAIL `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: cookies assert_not_equals: Cookie path from DOM should not be `null` got disallowed value null
+PASS `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies
+PASS `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies/
+PASS `document.cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies/resources/echo-cookie.html
+PASS `document.cookie` on /cookies/resources/echo-cookie.html DOES NOT set cookie for path: /cook
+PASS `document.cookie` on /cookies/resources/echo-cookie.html DOES NOT set cookie for path: /w/
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /
+FAIL `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: match.html assert_not_equals: Cookie path from header should not be `null` got disallowed value null
+FAIL `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: cookies assert_not_equals: Cookie path from header should not be `null` got disallowed value null
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies/
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html sets cookie with path: /cookies/resources/echo-cookie.html
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html DOES NOT set cookie for path: /cook
+PASS `Set-Cookie` on /cookies/resources/echo-cookie.html DOES NOT set cookie for path: /w/
+

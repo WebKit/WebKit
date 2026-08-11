@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body>
+    <script>
+        window.jsTestIsAsync = true;
+
+        var svg = new Image();
+        svg.src = "resources/link-xhtml.svg";
+
+        svg.onload = function() {
+            var canvas = document.createElement("canvas");
+            window.ctx = canvas.getContext("2d");
+
+            ctx.getImageData(0, 0, 1, 1);
+
+            ctx.drawImage(svg, 0, 0);
+
+            shouldThrow("window.ctx.getImageData(0, 0, 1, 1)");
+
+            finishJSTest();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,789 @@
+/*
+ * Copyright (C) 2012 Intel Corporation
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#include <type_traits>
+#include <wtf/MathExtras.h>
+
+namespace TestWebKitAPI {
+
+TEST(WTF, Lrint)
+{
+    EXPECT_EQ(lrint(-7.5), -8);
+    EXPECT_EQ(lrint(-8.5), -8);
+    EXPECT_EQ(lrint(-0.5), 0);
+    EXPECT_EQ(lrint(0.5), 0);
+    EXPECT_EQ(lrint(-0.5), 0);
+    EXPECT_EQ(lrint(1.3), 1);
+    EXPECT_EQ(lrint(1.7), 2);
+    EXPECT_EQ(lrint(0), 0);
+    EXPECT_EQ(lrint(-0), 0);
+    if (sizeof(long int) == 8) {
+        // Largest double number with 0.5 precision and one halfway rounding case below.
+        EXPECT_EQ(lrint(pow(2.0, 52) - 0.5), pow(2.0, 52));
+        EXPECT_EQ(lrint(pow(2.0, 52) - 1.5), pow(2.0, 52) - 2);
+        // Smallest double number with 0.5 precision and one halfway rounding case above.
+        EXPECT_EQ(lrint(-pow(2.0, 52) + 0.5), -pow(2.0, 52));
+        EXPECT_EQ(lrint(-pow(2.0, 52) + 1.5), -pow(2.0, 52) + 2);
+    }
+}
+
+TEST(WTF, clampToIntLong)
+{
+    if (sizeof(long) == sizeof(int))
+        return;
+
+    long maxInt = std::numeric_limits<int>::max();
+    long minInt = std::numeric_limits<int>::min();
+    long overflowInt = maxInt + 1;
+    long underflowInt = minInt - 1;
+
+    EXPECT_GT(overflowInt, maxInt);
+    EXPECT_LT(underflowInt, minInt);
+
+    EXPECT_EQ(clampTo<int>(maxInt), maxInt);
+    EXPECT_EQ(clampTo<int>(minInt), minInt);
+
+    EXPECT_EQ(clampTo<int>(overflowInt), maxInt);
+    EXPECT_EQ(clampTo<int>(underflowInt), minInt);
+}
+
+TEST(WTF, clampToIntLongLong)
+{
+    long long maxInt = std::numeric_limits<int>::max();
+    long long minInt = std::numeric_limits<int>::min();
+    long long overflowInt = maxInt + 1;
+    long long underflowInt = minInt - 1;
+
+    EXPECT_GT(overflowInt, maxInt);
+    EXPECT_LT(underflowInt, minInt);
+
+    EXPECT_EQ(clampTo<int>(maxInt), maxInt);
+    EXPECT_EQ(clampTo<int>(minInt), minInt);
+
+    EXPECT_EQ(clampTo<int>(overflowInt), maxInt);
+    EXPECT_EQ(clampTo<int>(underflowInt), minInt);
+}
+
+TEST(WTF, clampToIntFloat)
+{
+    // This test is inaccurate as floats will round the min / max integer
+    // due to the narrow mantissa. However it will properly checks within
+    // (close to the extreme) and outside the integer range.
+    float overflowInt = maxPlusOne<int>;
+    float maxInt = overflowInt;
+    for (int i = 0; overflowInt == maxInt; i++)
+        maxInt = overflowInt - i;
+
+    float minInt = std::numeric_limits<int>::min();
+    float underflowInt = minInt;
+    for (int i = 0; underflowInt == minInt; i++)
+        underflowInt = minInt - i;
+
+    EXPECT_GT(overflowInt, maxInt);
+    EXPECT_LT(underflowInt, minInt);
+
+    EXPECT_EQ(clampTo<int>(maxInt), static_cast<int>(maxInt));
+    EXPECT_EQ(clampTo<int>(minInt), std::numeric_limits<int>::min());
+
+    EXPECT_EQ(clampTo<int>(overflowInt), std::numeric_limits<int>::max());
+    EXPECT_EQ(clampTo<int>(underflowInt), std::numeric_limits<int>::min());
+}
+
+TEST(WTF, clampToIntDouble)
+{
+    double maxInt = std::numeric_limits<int>::max();
+    double minInt = std::numeric_limits<int>::min();
+    double overflowInt = maxInt + 1;
+    double underflowInt = minInt - 1;
+
+    EXPECT_GT(overflowInt, maxInt);
+    EXPECT_LT(underflowInt, minInt);
+
+    EXPECT_EQ(clampTo<int>(maxInt), maxInt);
+    EXPECT_EQ(clampTo<int>(minInt), minInt);
+
+    EXPECT_EQ(clampTo<int>(overflowInt), maxInt);
+    EXPECT_EQ(clampTo<int>(underflowInt), minInt);
+}
+
+TEST(WTF, clampToIntIntegral)
+{
+    constexpr int intMax = std::numeric_limits<int>::max();
+    constexpr int intMin = std::numeric_limits<int>::min();
+
+    // int64_t: values in range pass through, out-of-range clamps both ends.
+    EXPECT_EQ(clampTo<int>(int64_t { 0 }), 0);
+    EXPECT_EQ(clampTo<int>(int64_t { 42 }), 42);
+    EXPECT_EQ(clampTo<int>(int64_t { -42 }), -42);
+    EXPECT_EQ(clampTo<int>(int64_t { intMax }), intMax);
+    EXPECT_EQ(clampTo<int>(int64_t { intMin }), intMin);
+    EXPECT_EQ(clampTo<int>(static_cast<int64_t>(intMax) + 1), intMax);
+    EXPECT_EQ(clampTo<int>(static_cast<int64_t>(intMin) - 1), intMin);
+    EXPECT_EQ(clampTo<int>(std::numeric_limits<int64_t>::max()), intMax);
+    EXPECT_EQ(clampTo<int>(std::numeric_limits<int64_t>::min()), intMin);
+
+    // uint64_t: in-range values pass through, large values clamp to intMax.
+    EXPECT_EQ(clampTo<int>(uint64_t { 0 }), 0);
+    EXPECT_EQ(clampTo<int>(uint64_t { 42 }), 42);
+    EXPECT_EQ(clampTo<int>(static_cast<uint64_t>(intMax)), intMax);
+    EXPECT_EQ(clampTo<int>(static_cast<uint64_t>(intMax) + 1), intMax);
+    EXPECT_EQ(clampTo<int>(std::numeric_limits<uint64_t>::max()), intMax);
+}
+
+TEST(WTF, clampToFloat)
+{
+    double maxFloat = std::numeric_limits<float>::max();
+    double minFloat = -maxFloat;
+    double overflowFloat = maxFloat * 1.1;
+    double underflowFloat = minFloat * 1.1;
+
+    EXPECT_GT(overflowFloat, maxFloat);
+    EXPECT_LT(underflowFloat, minFloat);
+
+    EXPECT_EQ(clampToFloat(maxFloat), maxFloat);
+    EXPECT_EQ(clampToFloat(minFloat), minFloat);
+
+    EXPECT_EQ(clampToFloat(overflowFloat), maxFloat);
+    EXPECT_EQ(clampToFloat(underflowFloat), minFloat);
+
+    EXPECT_EQ(clampToFloat(std::numeric_limits<float>::infinity()), maxFloat);
+    EXPECT_EQ(clampToFloat(-std::numeric_limits<float>::infinity()), minFloat);
+}
+
+TEST(WTF, clampToUnsignedLong)
+{
+    if (sizeof(unsigned long) == sizeof(unsigned))
+        return;
+
+    unsigned long maxUnsigned = std::numeric_limits<unsigned>::max();
+    unsigned long overflowUnsigned = maxUnsigned + 1;
+
+    EXPECT_GT(overflowUnsigned, maxUnsigned);
+
+    EXPECT_EQ(clampTo<unsigned>(maxUnsigned), maxUnsigned);
+
+    EXPECT_EQ(clampTo<unsigned>(overflowUnsigned), maxUnsigned);
+    EXPECT_EQ(clampTo<unsigned>(-1), 0u);
+}
+
+TEST(WTF, clampToUnsignedLongLong)
+{
+    unsigned long long maxUnsigned = std::numeric_limits<unsigned>::max();
+    unsigned long long overflowUnsigned = maxUnsigned + 1;
+
+    EXPECT_GT(overflowUnsigned, maxUnsigned);
+
+    EXPECT_EQ(clampTo<unsigned>(maxUnsigned), maxUnsigned);
+
+    EXPECT_EQ(clampTo<unsigned>(overflowUnsigned), maxUnsigned);
+    EXPECT_EQ(clampTo<unsigned>(-1), 0u);
+}
+
+#if !COMPILER(MSVC)
+template<typename TargetType, typename SourceType>
+static void testClampFloatingPointToFloatingPoint()
+{
+    // No clamping.
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(0)), static_cast<TargetType>(0));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(1)), static_cast<TargetType>(1));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(1.5)), static_cast<TargetType>(1.5));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(-1)), static_cast<TargetType>(-1));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(-1.5)), static_cast<TargetType>(-1.5));
+
+    // Explicit boundaries, clamped or not.
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(-42), static_cast<SourceType>(-42.5)), static_cast<TargetType>(-42));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(-43), static_cast<SourceType>(-42.5)), static_cast<TargetType>(static_cast<SourceType>(-42.5)));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(42), static_cast<SourceType>(41), static_cast<SourceType>(42.5)), static_cast<TargetType>(42));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(43), static_cast<SourceType>(41), static_cast<SourceType>(42.5)), static_cast<TargetType>(static_cast<SourceType>(42.5)));
+
+    // Integer bounds.
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::max()) + 1), static_cast<TargetType>(std::numeric_limits<int32_t>::max()) + 1);
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<int64_t>::max())), static_cast<TargetType>(std::numeric_limits<int64_t>::max()));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::max()) + 1), static_cast<TargetType>(std::numeric_limits<int32_t>::max()) + 1);
+
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::min())), static_cast<TargetType>(std::numeric_limits<int32_t>::min()));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<int64_t>::min())), static_cast<TargetType>(std::numeric_limits<int64_t>::min()));
+
+    if (std::is_same<TargetType, double>::value && std::is_same<SourceType, float>::value) {
+        // If the source is float and target is double, the input of those cases has lost bits in float.
+        // In that case, we also round the expectation to float.
+        EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::max())), static_cast<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::max())));
+        EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::min()) - 1), static_cast<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::min()) - 1));
+        EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::min()) - 1), static_cast<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::min()) - 1));
+    } else {
+        EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::max())), static_cast<TargetType>(std::numeric_limits<int32_t>::max()));
+        EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::min()) - 1), static_cast<TargetType>(std::numeric_limits<int32_t>::min()) - 1);
+        EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<int32_t>::min()) - 1), static_cast<TargetType>(std::numeric_limits<int32_t>::min()) - 1);
+    }
+
+    // At the limit.
+    EXPECT_EQ(clampTo<TargetType>(std::numeric_limits<TargetType>::max()), std::numeric_limits<TargetType>::max());
+    EXPECT_EQ(clampTo<TargetType>(-std::numeric_limits<TargetType>::max()), -std::numeric_limits<TargetType>::max());
+
+    // At Epsilon from the limit.
+    TargetType epsilon = std::numeric_limits<TargetType>::epsilon();
+    EXPECT_EQ(clampTo<TargetType>(std::numeric_limits<TargetType>::max() - epsilon), std::numeric_limits<TargetType>::max() - epsilon);
+    EXPECT_EQ(clampTo<TargetType>(-std::numeric_limits<TargetType>::max() + epsilon), -std::numeric_limits<TargetType>::max() + epsilon);
+
+    // Infinity.
+    EXPECT_EQ(clampTo<TargetType>(std::numeric_limits<SourceType>::infinity()), std::numeric_limits<TargetType>::max());
+    EXPECT_EQ(clampTo<TargetType>(-std::numeric_limits<SourceType>::infinity()), -std::numeric_limits<TargetType>::max());
+}
+
+TEST(WTF, clampFloatingPointToFloatingPoint)
+{
+    testClampFloatingPointToFloatingPoint<float, float>();
+    testClampFloatingPointToFloatingPoint<double, double>();
+
+    testClampFloatingPointToFloatingPoint<double, float>();
+    testClampFloatingPointToFloatingPoint<float, double>();
+
+    // Large double into smaller float.
+    EXPECT_EQ(clampTo<float>(static_cast<double>(std::numeric_limits<float>::max())), std::numeric_limits<float>::max());
+    EXPECT_EQ(clampTo<float>(-static_cast<double>(std::numeric_limits<float>::max())), -std::numeric_limits<float>::max());
+    EXPECT_EQ(clampTo<float>(static_cast<double>(std::numeric_limits<float>::max()) + 1), std::numeric_limits<float>::max());
+    EXPECT_EQ(clampTo<float>(-static_cast<double>(std::numeric_limits<float>::max()) - 1), -std::numeric_limits<float>::max());
+    EXPECT_EQ(clampTo<float>(std::numeric_limits<double>::max()), std::numeric_limits<float>::max());
+    EXPECT_EQ(clampTo<float>(-std::numeric_limits<double>::max()), -std::numeric_limits<float>::max());
+
+    float floatEspilon = std::numeric_limits<float>::epsilon();
+    double doubleEspilon = std::numeric_limits<double>::epsilon();
+    EXPECT_EQ(clampTo<float>(static_cast<double>(std::numeric_limits<float>::max()) + doubleEspilon), std::numeric_limits<float>::max());
+    EXPECT_EQ(clampTo<float>(static_cast<double>(std::numeric_limits<float>::max()) - doubleEspilon), std::numeric_limits<float>::max());
+    EXPECT_EQ(clampTo<float>(static_cast<double>(std::numeric_limits<float>::max()) + floatEspilon), std::numeric_limits<float>::max());
+    EXPECT_EQ(clampTo<float>(static_cast<double>(std::numeric_limits<float>::max()) - floatEspilon), std::numeric_limits<float>::max() - floatEspilon);
+}
+#endif // !COMPILER(MSVC)
+
+template<typename FloatingPointType>
+static void testClampFloatingPointToInteger()
+{
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(0)), 0);
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(1)), 1);
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(-1)), -1);
+    if (std::is_same<FloatingPointType, double>::value)
+        EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::max()) - 1.f), std::numeric_limits<int32_t>::max() - 1);
+    else
+        EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::max()) - 1.f), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::max())), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::max()) + 1.f), std::numeric_limits<int32_t>::max());
+
+    if (std::is_same<FloatingPointType, double>::value)
+        EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::min()) + 1.f), std::numeric_limits<int32_t>::min() + 1);
+    else
+        EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::min()) + 1.f), std::numeric_limits<int32_t>::min());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::min())), std::numeric_limits<int32_t>::min());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::min()) - 1.f), std::numeric_limits<int32_t>::min());
+
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<uint32_t>::max())), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<uint32_t>::max()) + 1.f), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<uint32_t>::min())), 0.f);
+
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int64_t>::max())), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int64_t>::max()) + 1.f), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int64_t>::min())), std::numeric_limits<int32_t>::min());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int64_t>::min()) - 1.f), std::numeric_limits<int32_t>::min());
+
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<uint64_t>::max())), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<uint64_t>::max()) + 1.f), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<uint64_t>::min())), 0.f);
+
+    FloatingPointType epsilon = std::numeric_limits<FloatingPointType>::epsilon();
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::max()) - epsilon), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::max()) + epsilon), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::min()) - epsilon), std::numeric_limits<int32_t>::min());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<int32_t>::min()) + epsilon), std::numeric_limits<int32_t>::min());
+
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(std::numeric_limits<FloatingPointType>::infinity())), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<FloatingPointType>(-std::numeric_limits<FloatingPointType>::infinity())), std::numeric_limits<int32_t>::min());
+}
+
+TEST(WTF, clampFloatToInt)
+{
+    testClampFloatingPointToInteger<float>();
+    testClampFloatingPointToInteger<double>();
+
+    // 2**24 = 16777216, the largest integer representable exactly as float.
+    EXPECT_EQ(clampTo<int32_t>(static_cast<float>(16777215)), 16777215);
+    EXPECT_EQ(clampTo<int32_t>(static_cast<float>(16777216)), 16777216);
+    EXPECT_EQ(clampTo<int32_t>(static_cast<float>(16777217)), 16777216);
+    EXPECT_EQ(clampTo<int32_t>(static_cast<double>(16777216)), 16777216);
+    EXPECT_EQ(clampTo<int32_t>(static_cast<double>(16777217)), 16777217);
+
+    EXPECT_EQ(clampTo<int16_t>(static_cast<float>(16777215)), std::numeric_limits<int16_t>::max());
+    EXPECT_EQ(clampTo<int16_t>(static_cast<float>(16777216)), std::numeric_limits<int16_t>::max());
+    EXPECT_EQ(clampTo<int16_t>(static_cast<float>(16777217)), std::numeric_limits<int16_t>::max());
+
+    // 2**53 = 9007199254740992, the largest integer representable exactly as double.
+    EXPECT_EQ(clampTo<uint64_t>(static_cast<double>(9007199254740991)), static_cast<uint64_t>(9007199254740991));
+    EXPECT_EQ(clampTo<uint64_t>(static_cast<double>(9007199254740992)), static_cast<uint64_t>(9007199254740992));
+    EXPECT_EQ(clampTo<uint64_t>(static_cast<double>(9007199254740993)), static_cast<uint64_t>(9007199254740992));
+
+    EXPECT_EQ(clampTo<int32_t>(static_cast<double>(9007199254740991)), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<double>(9007199254740992)), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(static_cast<double>(9007199254740993)), std::numeric_limits<int32_t>::max());
+
+    // Test the double at the edge of max/min and max-1/min+1.
+    double intMax = static_cast<double>(std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(intMax), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMax, 0)), std::numeric_limits<int32_t>::max() - 1);
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMax, std::numeric_limits<double>::max())), std::numeric_limits<int32_t>::max());
+
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMax - 1., 0)), std::numeric_limits<int32_t>::max() - 2);
+    EXPECT_EQ(clampTo<int32_t>(intMax - 1), std::numeric_limits<int32_t>::max() - 1);
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMax - 1., std::numeric_limits<double>::max())), std::numeric_limits<int32_t>::max() - 1);
+
+    double intMin = static_cast<double>(std::numeric_limits<int32_t>::min());
+    EXPECT_EQ(clampTo<int32_t>(intMin), std::numeric_limits<int32_t>::min());
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMin, 0)), std::numeric_limits<int32_t>::min() + 1);
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMin, -std::numeric_limits<double>::max())), std::numeric_limits<int32_t>::min());
+
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMin + 1, 0)), std::numeric_limits<int32_t>::min() + 2);
+    EXPECT_EQ(clampTo<int32_t>(intMin + 1), std::numeric_limits<int32_t>::min() + 1);
+    EXPECT_EQ(clampTo<int32_t>(std::nextafter(intMin + 1, -std::numeric_limits<double>::max())), std::numeric_limits<int32_t>::min() + 1);
+}
+
+template<typename TargetType, typename SourceType>
+static void testClampSameSignIntegers()
+{
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(0)), static_cast<TargetType>(0));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(1)), static_cast<TargetType>(1));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(-1)), std::numeric_limits<TargetType>::is_signed ? static_cast<TargetType>(-1) : std::numeric_limits<TargetType>::max());
+
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<TargetType>::min())), std::numeric_limits<TargetType>::min());
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<TargetType>::max())), std::numeric_limits<TargetType>::max());
+
+    EXPECT_EQ(clampTo<TargetType>(std::numeric_limits<SourceType>::min()), std::numeric_limits<TargetType>::min());
+    EXPECT_EQ(clampTo<TargetType>(std::numeric_limits<SourceType>::max()), std::numeric_limits<TargetType>::max());
+}
+
+TEST(WTF, clampSameSignIntegers)
+{
+    testClampSameSignIntegers<char, char>();
+    testClampSameSignIntegers<unsigned char, unsigned char>();
+    testClampSameSignIntegers<signed char, int32_t>();
+    testClampSameSignIntegers<unsigned char, uint32_t>();
+    testClampSameSignIntegers<signed char, int64_t>();
+    testClampSameSignIntegers<unsigned char, uint64_t>();
+
+    testClampSameSignIntegers<int32_t, int32_t>();
+    testClampSameSignIntegers<uint32_t, uint32_t>();
+    testClampSameSignIntegers<int32_t, int64_t>();
+    testClampSameSignIntegers<uint32_t, uint64_t>();
+    testClampSameSignIntegers<int16_t, int64_t>();
+    testClampSameSignIntegers<uint16_t, uint64_t>();
+}
+
+template<typename TargetType, typename SourceType>
+static void testClampUnsignedToSigned()
+{
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(0)), static_cast<TargetType>(0));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(1)), static_cast<TargetType>(1));
+
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<TargetType>::max()) - 1), std::numeric_limits<TargetType>::max() - 1);
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<TargetType>::max())), std::numeric_limits<TargetType>::max());
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<TargetType>::max()) + 1), std::numeric_limits<TargetType>::max());
+    EXPECT_EQ(clampTo<TargetType>(std::numeric_limits<SourceType>::max()), std::numeric_limits<TargetType>::max());
+    EXPECT_EQ(clampTo<TargetType>(std::numeric_limits<SourceType>::max() - 1), std::numeric_limits<TargetType>::max());
+}
+
+TEST(WTF, clampUnsignedToSigned)
+{
+    testClampUnsignedToSigned<signed char, unsigned char>();
+    testClampUnsignedToSigned<signed char, uint32_t>();
+    testClampUnsignedToSigned<int32_t, uint32_t>();
+    testClampUnsignedToSigned<int64_t, uint64_t>();
+    testClampUnsignedToSigned<int32_t, uint64_t>();
+    testClampUnsignedToSigned<int16_t, uint32_t>();
+    testClampUnsignedToSigned<int16_t, uint64_t>();
+}
+
+template<typename TargetType, typename SourceType>
+static void testClampSignedToUnsigned()
+{
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(0)), static_cast<TargetType>(0));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(1)), static_cast<TargetType>(1));
+    EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(-1)), static_cast<TargetType>(0));
+
+    if (sizeof(TargetType) < sizeof(SourceType)) {
+        EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<TargetType>::min())), static_cast<TargetType>(0));
+        EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<TargetType>::max()) - 1), std::numeric_limits<TargetType>::max() - 1);
+        EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<TargetType>::max())), std::numeric_limits<TargetType>::max());
+        EXPECT_EQ(clampTo<TargetType>(static_cast<SourceType>(std::numeric_limits<TargetType>::max()) + 1), std::numeric_limits<TargetType>::max());
+    }
+
+    EXPECT_EQ(clampTo<TargetType>(std::numeric_limits<SourceType>::min()), static_cast<TargetType>(0));
+    if (sizeof(TargetType) < sizeof(SourceType))
+        EXPECT_EQ(clampTo<TargetType>(std::numeric_limits<SourceType>::max()), std::numeric_limits<TargetType>::max());
+    else
+        EXPECT_EQ(clampTo<TargetType>(std::numeric_limits<SourceType>::max()), static_cast<TargetType>(std::numeric_limits<SourceType>::max()));
+}
+
+TEST(WTF, clampSignedToUnsigned)
+{
+    testClampSignedToUnsigned<unsigned char, signed char>();
+    testClampSignedToUnsigned<unsigned char, int32_t>();
+    testClampSignedToUnsigned<uint32_t, int32_t>();
+    testClampSignedToUnsigned<uint64_t, int64_t>();
+    testClampSignedToUnsigned<uint32_t, int64_t>();
+    testClampSignedToUnsigned<uint16_t, int32_t>();
+    testClampSignedToUnsigned<uint16_t, int64_t>();
+}
+
+TEST(WTF, clampNaNToInteger)
+{
+    // clampTo<>() currently returns the mininum range value when the input is NaN.
+    EXPECT_EQ(std::numeric_limits<int>::min(), clampTo<int>(std::numeric_limits<double>::quiet_NaN()));
+    EXPECT_EQ(std::numeric_limits<int>::min(), clampTo<int>(std::numeric_limits<float>::quiet_NaN()));
+    EXPECT_EQ(std::numeric_limits<unsigned>::min(), clampTo<unsigned>(std::numeric_limits<double>::quiet_NaN()));
+    EXPECT_EQ(std::numeric_limits<unsigned>::min(), clampTo<unsigned>(std::numeric_limits<float>::quiet_NaN()));
+    EXPECT_EQ(-30, clampTo<int>(std::numeric_limits<double>::quiet_NaN(), -30, -10));
+    EXPECT_EQ(10U, clampTo<unsigned>(std::numeric_limits<double>::quiet_NaN(), 10, 20));
+    EXPECT_EQ(-30, clampTo<int>(std::numeric_limits<float>::quiet_NaN(), -30, -10));
+    EXPECT_EQ(10U, clampTo<unsigned>(std::numeric_limits<float>::quiet_NaN(), 10, 20));
+}
+
+TEST(WTF, clampInfinityToInteger)
+{
+    EXPECT_EQ(std::numeric_limits<int>::max(), clampTo<int>(std::numeric_limits<double>::infinity()));
+    EXPECT_EQ(std::numeric_limits<int>::min(), clampTo<int>(-std::numeric_limits<double>::infinity()));
+    EXPECT_EQ(std::numeric_limits<int>::max(), clampTo<int>(std::numeric_limits<float>::infinity()));
+    EXPECT_EQ(std::numeric_limits<int>::min(), clampTo<int>(-std::numeric_limits<float>::infinity()));
+    EXPECT_EQ(std::numeric_limits<unsigned>::max(), clampTo<unsigned>(std::numeric_limits<double>::infinity()));
+    EXPECT_EQ(std::numeric_limits<unsigned>::min(), clampTo<unsigned>(-std::numeric_limits<double>::infinity()));
+    EXPECT_EQ(std::numeric_limits<unsigned>::max(), clampTo<unsigned>(std::numeric_limits<float>::infinity()));
+    EXPECT_EQ(std::numeric_limits<unsigned>::min(), clampTo<unsigned>(-std::numeric_limits<float>::infinity()));
+    EXPECT_EQ(10, clampTo<int>(std::numeric_limits<double>::infinity(), -10, 10));
+    EXPECT_EQ(-10, clampTo<int>(-std::numeric_limits<double>::infinity(), -10, 10));
+    EXPECT_EQ(20U, clampTo<unsigned>(std::numeric_limits<double>::infinity(), 10, 20));
+    EXPECT_EQ(10U, clampTo<unsigned>(-std::numeric_limits<double>::infinity(), 10, 20));
+    EXPECT_EQ(10, clampTo<int>(std::numeric_limits<float>::infinity(), -10, 10));
+    EXPECT_EQ(-10, clampTo<int>(-std::numeric_limits<float>::infinity(), -10, 10));
+    EXPECT_EQ(20U, clampTo<unsigned>(std::numeric_limits<float>::infinity(), 10, 20));
+    EXPECT_EQ(10U, clampTo<unsigned>(-std::numeric_limits<float>::infinity(), 10, 20));
+}
+
+TEST(WTF, normalizedFloat)
+{
+    EXPECT_EQ(normalizedFloat(std::numeric_limits<float>::min()), std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(-std::numeric_limits<float>::min()), -std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(std::numeric_limits<float>::denorm_min()), std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(-std::numeric_limits<float>::denorm_min()), -std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(0.0f), 0.0f);
+    EXPECT_EQ(normalizedFloat(-0.0f), -0.0f);
+    EXPECT_EQ(normalizedFloat(1.0f), 1.0f);
+    EXPECT_EQ(normalizedFloat(-1.0f), -1.0f);
+    EXPECT_EQ(normalizedFloat(1.17549e-38), std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(-1.17549e-38), -std::numeric_limits<float>::min());
+    EXPECT_EQ(normalizedFloat(std::numeric_limits<float>::infinity()), std::numeric_limits<float>::infinity());
+    EXPECT_EQ(normalizedFloat(-std::numeric_limits<float>::infinity()), -std::numeric_limits<float>::infinity());
+    EXPECT_TRUE(std::isnan(normalizedFloat(std::numeric_limits<float>::quiet_NaN())));
+}
+
+TEST(WTF, roundUpToPowerOfTwo)
+{
+    EXPECT_EQ(roundUpToPowerOfTwo(1U), 1U);
+    EXPECT_EQ(roundUpToPowerOfTwo(4U), 4U);
+    EXPECT_EQ(roundUpToPowerOfTwo(120U), 128U);
+    EXPECT_EQ(roundUpToPowerOfTwo(1U << 31), (1U << 31));
+}
+
+TEST(WTF, roundUpToPowerOfTwoSizeT)
+{
+    // Values that fit in 32 bits should still work.
+    EXPECT_EQ(roundUpToPowerOfTwo(static_cast<size_t>(1)), static_cast<size_t>(1));
+    EXPECT_EQ(roundUpToPowerOfTwo(static_cast<size_t>(120)), static_cast<size_t>(128));
+
+    // Values beyond 32 bits should not be truncated.
+#if CPU(ADDRESS64)
+    constexpr size_t twoTo33 = static_cast<size_t>(1) << 33;
+    EXPECT_EQ(roundUpToPowerOfTwo(twoTo33), twoTo33);
+    EXPECT_EQ(roundUpToPowerOfTwo(twoTo33 + 1), twoTo33 << 1);
+    EXPECT_EQ(roundUpToPowerOfTwo(twoTo33 - 1), twoTo33);
+
+    constexpr size_t twoTo63 = static_cast<size_t>(1) << 63;
+    EXPECT_EQ(roundUpToPowerOfTwo(twoTo63), twoTo63);
+#endif
+}
+
+TEST(WTF, clz)
+{
+    EXPECT_EQ(WTF::clz<int32_t>(1), 31U);
+    EXPECT_EQ(WTF::clz<int32_t>(42), 26U);
+    EXPECT_EQ(WTF::clz<uint32_t>(static_cast<uint32_t>(-1)), 0U);
+    EXPECT_EQ(WTF::clz<uint32_t>(static_cast<uint32_t>(std::numeric_limits<int32_t>::min()) >> 1), 1U);
+    EXPECT_EQ(WTF::clz<uint32_t>(0), 32U);
+
+    EXPECT_EQ(WTF::clz<int8_t>(42), 2U);
+    EXPECT_EQ(WTF::clz<int8_t>(3), 6U);
+    EXPECT_EQ(WTF::clz<uint8_t>(static_cast<uint8_t>(-1)), 0U);
+    EXPECT_EQ(WTF::clz<uint8_t>(0), 8U);
+
+    EXPECT_EQ(WTF::clz<int64_t>(-1), 0U);
+    EXPECT_EQ(WTF::clz<int64_t>(1), 63U);
+    EXPECT_EQ(WTF::clz<int64_t>(3), 62U);
+    EXPECT_EQ(WTF::clz<uint64_t>(42), 58U);
+    EXPECT_EQ(WTF::clz<uint64_t>(0), 64U);
+}
+
+TEST(WTF, ctz)
+{
+    EXPECT_EQ(WTF::ctz<int32_t>(1), 0U);
+    EXPECT_EQ(WTF::ctz<int32_t>(42), 1U);
+    EXPECT_EQ(WTF::ctz<uint32_t>(static_cast<uint32_t>(-1)), 0U);
+    EXPECT_EQ(WTF::ctz<uint32_t>(static_cast<uint32_t>(std::numeric_limits<int32_t>::min()) >> 1), 30U);
+    EXPECT_EQ(WTF::ctz<uint32_t>(0), 32U);
+
+    EXPECT_EQ(WTF::ctz<int8_t>(42), 1U);
+    EXPECT_EQ(WTF::ctz<int8_t>(3), 0U);
+    EXPECT_EQ(WTF::ctz<uint8_t>(static_cast<uint8_t>(-1)), 0U);
+    EXPECT_EQ(WTF::ctz<uint8_t>(0), 8U);
+
+    EXPECT_EQ(WTF::ctz<int64_t>(static_cast<uint32_t>(-1)), 0U);
+    EXPECT_EQ(WTF::ctz<int64_t>(1), 0U);
+    EXPECT_EQ(WTF::ctz<int64_t>(3), 0U);
+    EXPECT_EQ(WTF::ctz<uint64_t>(42), 1U);
+    EXPECT_EQ(WTF::ctz<uint64_t>(0), 64U);
+}
+
+TEST(WTF, getLSBSet)
+{
+    EXPECT_EQ(WTF::getLSBSet<int32_t>(1), 0U);
+    EXPECT_EQ(WTF::getLSBSet<int32_t>(42), 1U);
+    EXPECT_EQ(WTF::getLSBSet<uint32_t>(static_cast<uint32_t>(-1)), 0U);
+    EXPECT_EQ(WTF::getLSBSet<uint32_t>(static_cast<uint32_t>(std::numeric_limits<int32_t>::min()) >> 1), 30U);
+
+    EXPECT_EQ(WTF::getLSBSet<int8_t>(42), 1U);
+    EXPECT_EQ(WTF::getLSBSet<int8_t>(3), 0U);
+    EXPECT_EQ(WTF::getLSBSet<uint8_t>(static_cast<uint8_t>(-1)), 0U);
+
+    EXPECT_EQ(WTF::getLSBSet<int64_t>(-1), 0U);
+    EXPECT_EQ(WTF::getLSBSet<int64_t>(1), 0U);
+    EXPECT_EQ(WTF::getLSBSet<int64_t>(3), 0U);
+    EXPECT_EQ(WTF::getLSBSet<uint64_t>(42), 1U);
+}
+
+TEST(WTF, getMSBSet)
+{
+    EXPECT_EQ(WTF::getMSBSet<int32_t>(1), 0U);
+    EXPECT_EQ(WTF::getMSBSet<int32_t>(42), 5U);
+    EXPECT_EQ(WTF::getMSBSet<uint32_t>(static_cast<uint32_t>(-1)), 31U);
+    EXPECT_EQ(WTF::getMSBSet<uint32_t>(static_cast<uint32_t>(std::numeric_limits<int32_t>::min()) >> 1), 30U);
+
+    EXPECT_EQ(WTF::getMSBSet<int8_t>(42), 5U);
+    EXPECT_EQ(WTF::getMSBSet<int8_t>(3), 1U);
+    EXPECT_EQ(WTF::getMSBSet<uint8_t>(static_cast<uint8_t>(-1)), 7U);
+
+    EXPECT_EQ(WTF::getMSBSet<int64_t>(-1), 63U);
+    EXPECT_EQ(WTF::getMSBSet<int64_t>(1), 0U);
+    EXPECT_EQ(WTF::getMSBSet<int64_t>(3), 1U);
+    EXPECT_EQ(WTF::getMSBSet<uint64_t>(42), 5U);
+}
+
+TEST(WTF, fastLog2)
+{
+    EXPECT_EQ(WTF::fastLog2(0u), 0u);
+    EXPECT_EQ(WTF::fastLog2(1u), 0u);
+    EXPECT_EQ(WTF::fastLog2(2u), 1u);
+    EXPECT_EQ(WTF::fastLog2(3u), 2u);
+    EXPECT_EQ(WTF::fastLog2(4u), 2u);
+    EXPECT_EQ(WTF::fastLog2(5u), 3u);
+    EXPECT_EQ(WTF::fastLog2(6u), 3u);
+    EXPECT_EQ(WTF::fastLog2(7u), 3u);
+    EXPECT_EQ(WTF::fastLog2(8u), 3u);
+    EXPECT_EQ(WTF::fastLog2(9u), 4u);
+    EXPECT_EQ(WTF::fastLog2((1u << 20u) - 2u), 20u);
+    EXPECT_EQ(WTF::fastLog2((1u << 20u) - 1u), 20u);
+    EXPECT_EQ(WTF::fastLog2((1u << 20u)), 20u);
+    EXPECT_EQ(WTF::fastLog2((1u << 20u) + 1u), 21u);
+    EXPECT_EQ(WTF::fastLog2((1u << 20u) + 2u), 21u);
+    EXPECT_EQ(WTF::fastLog2(std::numeric_limits<uint32_t>::max() - 2u), 32u);
+    EXPECT_EQ(WTF::fastLog2(std::numeric_limits<uint32_t>::max() - 1u), 32u);
+    EXPECT_EQ(WTF::fastLog2(std::numeric_limits<uint32_t>::max()), 32u);
+}
+
+TEST(WTF, isIntegral)
+{
+    EXPECT_TRUE(WTF::isIntegral(0));
+    EXPECT_TRUE(WTF::isIntegral(-0));
+    EXPECT_TRUE(WTF::isIntegral(1));
+    EXPECT_TRUE(WTF::isIntegral(-1));
+    EXPECT_FALSE(WTF::isIntegral(0.1f));
+    EXPECT_FALSE(WTF::isIntegral(-0.1f));
+    EXPECT_FALSE(WTF::isIntegral(std::numbers::pi_v<float>));
+    EXPECT_TRUE(WTF::isIntegral(std::numeric_limits<float>::max()));
+    EXPECT_FALSE(WTF::isIntegral(std::numeric_limits<float>::min()));
+    EXPECT_TRUE(WTF::isIntegral(std::numeric_limits<float>::lowest()));
+    EXPECT_FALSE(WTF::isIntegral(std::numeric_limits<float>::infinity()));
+    EXPECT_FALSE(WTF::isIntegral(-std::numeric_limits<float>::infinity()));
+    EXPECT_FALSE(WTF::isIntegral(std::numeric_limits<float>::quiet_NaN()));
+}
+
+TEST(WTF, negate)
+{
+    auto expected_int8_t = WTF::negate<int8_t>(0);
+    EXPECT_TRUE((std::is_same_v<int8_t, decltype(expected_int8_t)>));
+    auto expected_int16_t = WTF::negate<int16_t>(0);
+    EXPECT_TRUE((std::is_same_v<int16_t, decltype(expected_int16_t)>));
+    auto expected_int32_t = WTF::negate<int32_t>(0);
+    EXPECT_TRUE((std::is_same_v<int32_t, decltype(expected_int32_t)>));
+    auto expected_int64_t = WTF::negate<int64_t>(0);
+    EXPECT_TRUE((std::is_same_v<int64_t, decltype(expected_int64_t)>));
+    auto expected_long_long = WTF::negate<long long>(0);
+    EXPECT_TRUE((std::is_same_v<long long, decltype(expected_long_long)>));
+
+    EXPECT_EQ(WTF::negate<int8_t>(std::numeric_limits<int8_t>::min()), std::numeric_limits<int8_t>::min());
+    EXPECT_EQ(WTF::negate<int8_t>(std::numeric_limits<int8_t>::min() + 1), std::numeric_limits<int8_t>::max());
+    EXPECT_EQ(WTF::negate<int8_t>(-1), 1);
+    EXPECT_EQ(WTF::negate<int8_t>(0), 0);
+    EXPECT_EQ(WTF::negate<int16_t>(std::numeric_limits<int16_t>::min()), std::numeric_limits<int16_t>::min());
+    EXPECT_EQ(WTF::negate<int16_t>(std::numeric_limits<int16_t>::min() + 1), std::numeric_limits<int16_t>::max());
+    EXPECT_EQ(WTF::negate<int16_t>(-1), 1);
+    EXPECT_EQ(WTF::negate<int16_t>(0), 0);
+    EXPECT_EQ(WTF::negate<int32_t>(std::numeric_limits<int32_t>::min()), std::numeric_limits<int32_t>::min());
+    EXPECT_EQ(WTF::negate<int32_t>(std::numeric_limits<int32_t>::min() + 1), std::numeric_limits<int32_t>::max());
+    EXPECT_EQ(WTF::negate<int32_t>(-1), 1);
+    EXPECT_EQ(WTF::negate<int32_t>(0), 0);
+    EXPECT_EQ(WTF::negate<int64_t>(std::numeric_limits<int64_t>::min()), std::numeric_limits<int64_t>::min());
+    EXPECT_EQ(WTF::negate<int64_t>(std::numeric_limits<int64_t>::min() + 1L), std::numeric_limits<int64_t>::max());
+    EXPECT_EQ(WTF::negate<int64_t>(-1L), 1L);
+    EXPECT_EQ(WTF::negate<int64_t>(0L), 0L);
+    EXPECT_EQ(WTF::negate<long long>(std::numeric_limits<long long>::min()), std::numeric_limits<long long>::min());
+    EXPECT_EQ(WTF::negate<long long>(std::numeric_limits<long long>::min() + 1LL), std::numeric_limits<long long>::max());
+    EXPECT_EQ(WTF::negate<long long>(-1LL), 1LL);
+    EXPECT_EQ(WTF::negate<long long>(0LL), 0LL);
+}
+
+template<typename T>
+static void testHasZeroByte()
+{
+    constexpr size_t byteCount = sizeof(T);
+
+    // No zero byte anywhere.
+    EXPECT_FALSE(hasZeroByte<T>(static_cast<T>(~static_cast<T>(0))));
+
+    // A zero byte at every position, rest set to a clean nonzero byte (0x78).
+    auto wordWithByteAt = [](size_t position, uint8_t byteValue) {
+        T word = 0;
+        for (size_t i = 0; i < byteCount; ++i)
+            word |= static_cast<T>(i == position ? byteValue : 0x78) << (i * 8);
+        return word;
+    };
+    for (size_t position = 0; position < byteCount; ++position)
+        EXPECT_TRUE(hasZeroByte<T>(wordWithByteAt(position, 0x00)));
+
+    // Exhaustive: every byte value at every position must match a plain per-byte reference
+    // check, including values right at the 0x00/0x80/0xFF boundaries where the underlying
+    // subtract-and-mask trick is easiest to get wrong.
+    for (size_t position = 0; position < byteCount; ++position) {
+        for (unsigned byteValue = 0; byteValue <= 0xFF; ++byteValue) {
+            bool expected = !byteValue;
+            EXPECT_EQ(hasZeroByte<T>(wordWithByteAt(position, static_cast<uint8_t>(byteValue))), expected);
+        }
+    }
+
+    // Two zero bytes simultaneously, at every pair of positions, must not miscount or cancel out.
+    if (byteCount >= 2) {
+        for (size_t p1 = 0; p1 < byteCount; ++p1) {
+            for (size_t p2 = 0; p2 < byteCount; ++p2) {
+                if (p1 == p2)
+                    continue;
+                T word = wordWithByteAt(p1, 0x00);
+                word &= ~(static_cast<T>(0xFF) << (p2 * 8));
+                EXPECT_TRUE(hasZeroByte<T>(word));
+            }
+        }
+    }
+}
+
+TEST(WTF, hasZeroByte)
+{
+    testHasZeroByte<uint8_t>();
+    testHasZeroByte<uint16_t>();
+    testHasZeroByte<uint32_t>();
+    testHasZeroByte<uint64_t>();
+}
+
+TEST(WTF, zeroExtendBytesToHalfwords)
+{
+    auto referenceWiden = [](uint32_t value) -> uint64_t {
+        uint64_t result = 0;
+        for (unsigned i = 0; i < 4; ++i) {
+            uint8_t byte = static_cast<uint8_t>(value >> (i * 8));
+            result |= static_cast<uint64_t>(byte) << (i * 16);
+        }
+        return result;
+    };
+
+    EXPECT_EQ(zeroExtendBytesToHalfwords(0), 0ULL);
+    EXPECT_EQ(zeroExtendBytesToHalfwords(0xFFFFFFFFU), 0x00FF00FF00FF00FFULL);
+    EXPECT_EQ(zeroExtendBytesToHalfwords(0xDDCCBBAAU), 0x00DD00CC00BB00AAULL);
+
+    // Exhaustive per byte value at every position, with the other three bytes held to a
+    // clean nonzero pattern, matching testHasZeroByte's style above.
+    for (size_t position = 0; position < 4; ++position) {
+        for (unsigned byteValue = 0; byteValue <= 0xFF; ++byteValue) {
+            uint32_t word = 0;
+            for (size_t i = 0; i < 4; ++i)
+                word |= (i == position ? byteValue : 0x78) << (i * 8);
+            EXPECT_EQ(zeroExtendBytesToHalfwords(word), referenceWiden(word));
+        }
+    }
+
+    // A handful of full-width sampled values, cross-checked against the same reference.
+    static constexpr uint32_t samples[] = { 0x00000000, 0xFFFFFFFF, 0x01020304, 0x80808080, 0x7F7F7F7F, 0xA5A5A5A5, 0x12345678, 0xFF00FF00, 0x00FF00FF };
+    for (uint32_t sample : samples)
+        EXPECT_EQ(zeroExtendBytesToHalfwords(sample), referenceWiden(sample));
+}
+
+TEST(WTF, divideRoundedUp)
+{
+    // Basic rounding behavior.
+    EXPECT_EQ(divideRoundedUp<unsigned>(0, 3), 0U);
+    EXPECT_EQ(divideRoundedUp<unsigned>(1, 3), 1U);
+    EXPECT_EQ(divideRoundedUp<unsigned>(3, 3), 1U);
+    EXPECT_EQ(divideRoundedUp<unsigned>(4, 3), 2U);
+    EXPECT_EQ(divideRoundedUp<unsigned>(6, 3), 2U);
+    EXPECT_EQ(divideRoundedUp<unsigned>(7, 3), 3U);
+
+    // Divisor of 1 returns the dividend unchanged, even at the maximum.
+    EXPECT_EQ(divideRoundedUp<uint8_t>(std::numeric_limits<uint8_t>::max(), 1), std::numeric_limits<uint8_t>::max());
+    EXPECT_EQ(divideRoundedUp<size_t>(std::numeric_limits<size_t>::max(), 1), std::numeric_limits<size_t>::max());
+
+    // Dividends near the maximum must not overflow the (a + b - 1) intermediate.
+    EXPECT_EQ(divideRoundedUp<uint8_t>(std::numeric_limits<uint8_t>::max(), 2), 128U);
+    EXPECT_EQ(divideRoundedUp<uint16_t>(std::numeric_limits<uint16_t>::max(), 2), 32768U);
+    EXPECT_EQ(divideRoundedUp<uint32_t>(std::numeric_limits<uint32_t>::max(), 2), 2147483648U);
+    EXPECT_EQ(divideRoundedUp<uint64_t>(std::numeric_limits<uint64_t>::max(), 2), 9223372036854775808ULL);
+
+    EXPECT_EQ(divideRoundedUp<uint8_t>(std::numeric_limits<uint8_t>::max(), std::numeric_limits<uint8_t>::max()), 1U);
+    EXPECT_EQ(divideRoundedUp<size_t>(std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max()), 1U);
+    EXPECT_EQ(divideRoundedUp<size_t>(std::numeric_limits<size_t>::max() - 1, std::numeric_limits<size_t>::max()), 1U);
+}
+
+} // namespace TestWebKitAPI

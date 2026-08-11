@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script>
+        videoElementString = "<video autoplay loop playsinline width=480 height=320 src=large-video-with-audio.mp4>";
+
+        function playInMainFrame()
+        {
+            document.body.innerHTML = videoElementString;
+        }
+
+        function playInSubframe()
+        {
+            const iframe = document.createElement("iframe");
+            iframe.width = 480;
+            iframe.height = 320;
+            iframe.srcdoc = "<!DOCTYPE html>" + videoElementString;
+            document.body.appendChild(iframe);
+        }
+    </script>
+</body>
+</html>

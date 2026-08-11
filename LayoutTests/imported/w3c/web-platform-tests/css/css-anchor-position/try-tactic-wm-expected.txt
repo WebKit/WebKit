@@ -1,0 +1,13 @@
+
+PASS  horizontal-tb ltr
+PASS flip-inline horizontal-tb ltr
+PASS flip-x horizontal-tb ltr
+PASS flip-inline vertical-lr ltr
+PASS flip-inline sideways-lr ltr
+PASS flip-y vertical-lr ltr
+PASS flip-y sideways-lr ltr
+PASS flip-block sideways-rl ltr
+PASS flip-x sideways-rl ltr
+PASS flip-start horizontal-tb ltr
+PASS flip-start horizontal-tb rtl
+

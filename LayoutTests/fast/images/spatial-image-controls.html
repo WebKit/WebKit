@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpatialImageControlsEnabled=true ] -->
+<script src="../../resources/ui-helper.js"></script>
+<style>
+    body {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    img {
+        width: 200px;
+        height: 200px;
+        position: absolute;
+        border-radius: inherit;
+    }
+    div.image-container {
+        width: 200px;
+        height: 200px;
+        position: relative;
+    }
+    .rounded {
+        border-radius: 20px;
+    }
+</style>
+<body>
+    <div class="image-container">
+        <img controls src="resources/spatial.heic">
+    </div>
+    <div class="image-container">
+        <template shadowrootmode="open">
+            <img style="width: 200px; height: 200px" controls src="resources/spatial.heic">
+        </template>
+    </div>
+    <div class="image-container rounded">
+        <img controls src="resources/spatial.heic">
+    </div>
+    <div class="image-container">
+        <img controls src="resources/green-2000x800.heic">
+    </div>
+    <div class="image-container">
+        <img controls src="resources/green.jpg">
+    </div>
+
+    <script>
+        async function main(){
+            const images = document.querySelectorAll('img');
+            const promises = [];
+
+            images.forEach(image => {
+              promises.push(new Promise(resolve => {
+                image.onload = resolve;
+                image.onerror = resolve;
+              }));
+            });
+            
+            await Promise.all(promises);
+    
+            images.forEach(image => {
+                await UIHelper.renderingUpdate();
+            })
+            testRunner.notifyDone();
+        }
+        
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            main();
+        }
+    </script>
+</body>

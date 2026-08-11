@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<body>
+
+<input type="text" id="field1" value="Input text field.">
+<div contenteditable id="field2">Content editable.</div>
+<textarea id="field3">Text area.</textarea>
+<input type="text" id="field4"></input>
+<div contenteditable id="field5"></div>
+<textarea id="field6"></textarea>
+
+<script>
+if (accessibilityController) {
+    let output = "Tests that NSAccessibilityNumberOfCharactersAttribute returns the correct value for text fields.\n\n";
+
+    for (let i = 1; i <= 6; ++i) {
+        let field = accessibilityController.accessibleElementById(`field${i}`);
+        output += `Field${i}: ${field.numberOfCharacters}\n`;
+    }
+
+    debug(output);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+FAIL XHR should not fire abort or error events when cancelled by navigation assert_false: error event should not fire expected false got true
+

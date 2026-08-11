@@ -1,0 +1,12 @@
+basic:
+With border:
+With border+margin:
+flex-basis:stretch items can still shrink:
+column flexbox has indefinite height so flex-basis:stretch behaves as flex-basis:content
+
+PASS .item 1
+PASS .item 2
+PASS .item 3
+PASS .item 4
+PASS .item 5
+

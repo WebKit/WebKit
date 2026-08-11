@@ -1,0 +1,5 @@
+Hello
+PASS - "text-underline-offset" property for "box" element at 0.5s saw something close to: 16.6666
+PASS - "text-underline-offset" property for "box" element at 1s saw something close to: 33.3333
+PASS - "text-underline-offset" property for "box" element at 2s saw something close to: 66.6666
+

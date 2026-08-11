@@ -1,0 +1,134 @@
+/*
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+
+#include "PeerConnectionBackend.h"
+#include "RealtimeMediaSource.h"
+#include <wtf/TZoneMalloc.h>
+
+namespace webrtc {
+class IceCandidate;
+}
+
+namespace WebCore {
+
+class LibWebRTCMediaEndpoint;
+class LibWebRTCProvider;
+class LibWebRTCRtpSenderBackend;
+class LibWebRTCRtpReceiverBackend;
+class LibWebRTCRtpTransceiverBackend;
+class RTCRtpReceiver;
+class RTCRtpReceiverBackend;
+class RTCSessionDescription;
+class RTCStatsReport;
+class RealtimeIncomingAudioSource;
+class RealtimeIncomingVideoSource;
+class RealtimeMediaSource;
+class RealtimeOutgoingAudioSource;
+class RealtimeOutgoingVideoSource;
+
+struct LibWebRTCRtpReceiverBackendAndSource;
+
+class LibWebRTCPeerConnectionBackend final : public PeerConnectionBackend {
+    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCPeerConnectionBackend);
+public:
+    LibWebRTCPeerConnectionBackend(RTCPeerConnection&, Ref<LibWebRTCMediaEndpoint>&&);
+    ~LibWebRTCPeerConnectionBackend();
+
+private:
+    void close() final;
+    void doCreateOffer(RTCOfferOptions&&) final;
+    void doCreateAnswer(RTCAnswerOptions&&) final;
+    void doSetLocalDescription(const RTCSessionDescription*) final;
+    void doSetRemoteDescription(const RTCSessionDescription&) final;
+    void doAddIceCandidate(RTCIceCandidate&, AddIceCandidateCallback&&) final;
+    void doStop() final;
+    std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final;
+    void restartIce() final;
+    bool setConfiguration(MediaEndpointConfiguration&&) final;
+    void gatherDecoderImplementationName(Function<void(String&&)>&&) final;
+    void getStats(Ref<DeferredPromise>&&) final;
+    void getStats(RTCRtpSender&, Ref<DeferredPromise>&&) final;
+    void getStats(RTCRtpReceiver&, Ref<DeferredPromise>&&) final;
+
+    std::optional<bool> canTrickleIceCandidates() const final;
+
+    void applyRotationForOutgoingVideoSources() final;
+
+    friend class LibWebRTCMediaEndpoint;
+    friend class LibWebRTCRtpSenderBackend;
+    RTCPeerConnection& connection() { return m_peerConnection; }
+
+    void getStatsSucceeded(const DeferredPromise&, Ref<RTCStatsReport>&&);
+
+    ExceptionOr<Ref<RTCRtpSender>> addTrack(MediaStreamTrack&, FixedVector<String>&&) final;
+    void removeTrack(RTCRtpSender&) final;
+
+    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&, IgnoreNegotiationNeededFlag) final;
+    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&) final;
+    void setSenderSourceFromTrack(LibWebRTCRtpSenderBackend&, MediaStreamTrack&);
+
+    void addInternalTransceiver(UniqueRef<LibWebRTCRtpTransceiverBackend>&&, RealtimeMediaSource::Type);
+    void removeTransceiver(const RTCRtpTransceiver&);
+
+    void collectTransceivers(Vector<Ref<RTCRtpTransceiver>>&&) final;
+
+    const HashMap<String, String>& trackIds() const { return m_trackIds; }
+
+private:
+    bool isLocalDescriptionSet() const final { return m_isLocalDescriptionSet; }
+
+    bool shouldEnableServiceClass() const final;
+
+    void startGatheringStatLogs(Function<void(String&&)>&&) final;
+    void stopGatheringStatLogs() final;
+    void provideStatLogs(String&&);
+    friend class RtcEventLogOutput;
+
+    template<typename T>
+    ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiverFromTrackOrKind(T&& trackOrKind, const RTCRtpTransceiverInit&, IgnoreNegotiationNeededFlag = IgnoreNegotiationNeededFlag::No);
+
+    Ref<RTCRtpReceiver> createReceiver(LibWebRTCRtpReceiverBackendAndSource&&);
+
+    void suspend() final;
+    void resume() final;
+    void disableICECandidateFiltering() final;
+    bool isNegotiationNeeded(uint32_t) const final;
+
+    const Ref<LibWebRTCMediaEndpoint> m_endpoint;
+    bool m_isLocalDescriptionSet { false };
+    bool m_isRemoteDescriptionSet { false };
+
+    Vector<Ref<RTCRtpReceiver>> m_pendingReceivers;
+
+    HashMap<String, String> m_trackIds;
+    Function<void(String&&)> m_rtcStatsLogCallback;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)

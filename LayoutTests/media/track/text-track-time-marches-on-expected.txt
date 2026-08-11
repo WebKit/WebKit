@@ -1,0 +1,7 @@
+
+PASS adding a track with cues mid-stream fires enter + cuechange
+PASS removing an active cue clears its active flag synchronously
+PASS cue not in track.cues is not part of the track
+PASS time marches on: tasks sorted by cue order when sharing an event time
+PASS removing a track with active cues clears their active flags
+

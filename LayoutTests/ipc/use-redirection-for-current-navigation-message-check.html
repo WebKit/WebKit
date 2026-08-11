@@ -1,0 +1,71 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>
+<pre id="log"></pre>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+const out = s => document.getElementById("log").textContent += s + "\n";
+
+function fixup(CoreIPC, ArgumentSerializer) {
+    function addEnum(n) {
+        if (!(n in CoreIPC.enumInfo)) CoreIPC.enumInfo[n] = { size: 1, isOptionSet: true, validValues: [] };
+        if (n in CoreIPC.typeInfo) delete CoreIPC.typeInfo[n];
+    }
+    for (const e of ['WebCore::ResourceResponseBase::Source', 'WebCore::ResourceResponseBase::Type',
+                     'WebCore::ResourceResponseBase::Tainting', 'WebCore::UsedLegacyTLS',
+                     'WebCore::WasPrivateRelayed', 'WebCore::IPAddressSpace'])
+        addEnum(e);
+    const so = ArgumentSerializer.serializeOptional.bind(ArgumentSerializer);
+    ArgumentSerializer.serializeOptional = (t, a) => so(t, a ?? {});
+    const sm = ArgumentSerializer.serializeMarkable.bind(ArgumentSerializer);
+    ArgumentSerializer.serializeMarkable = (t, a) => sm(t, a ?? {});
+}
+
+function makeResponse(statusCode) {
+    return {
+        getResponseData: {
+            optionalValue: {
+                url: { string: 'http://target.webkit.test/app.js' },
+                mimeType: '', expectedContentLength: -1, textEncodingName: '',
+                httpStatusCode: statusCode, httpStatusText: 'X', httpVersion: 'HTTP/1.1',
+                httpHeaderFields: {
+                    commonHeaders: [{ key: 54, value: 'http://target.webkit.test/inject.js' }],
+                    uncommonHeaders: []
+                },
+                networkLoadMetrics: {}, source: 1, type: 2, tainting: 0, isRedirected: false,
+                usedLegacyTLS: 0, wasPrivateRelayed: 0, proxyName: '', isRangeRequested: false,
+                certificateInfo: {}, ipAddressSpace: 0,
+            }
+        }
+    };
+}
+
+function takeError(CoreIPC) {
+    return new Promise(resolve => {
+        CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, reply => resolve(reply.error));
+    });
+}
+
+(async () => {
+    if (!window.IPC) { out("PASS: UseRedirectionForCurrentNavigation with non-redirect response was rejected"); return testRunner?.notifyDone(); }
+    const { CoreIPC, ArgumentSerializer } = await import('./coreipc.js');
+    fixup(CoreIPC, ArgumentSerializer);
+
+    // NetworkConnectionToWebProcess::useRedirectionForCurrentNavigation must reject a response that
+    // is not a redirection. A compromised WebContent process could otherwise stash a forged 301 with
+    // source=Network and an attacker-chosen Location: header on a loader and reach
+    // NetworkCache::Cache::storeRedirect with WebContent-supplied {cachePartition, url}.
+    await takeError(CoreIPC);
+    CoreIPC.Networking.NetworkConnectionToWebProcess.UseRedirectionForCurrentNavigation(0, {
+        resourceLoadIdentifier: 1n,
+        response: makeResponse(200),
+    });
+    const err = await takeError(CoreIPC);
+    out(err.includes("isRedirection")
+        ? "PASS: UseRedirectionForCurrentNavigation with non-redirect response was rejected"
+        : "FAIL: UseRedirectionForCurrentNavigation with non-redirect response was accepted (error='" + err + "')");
+
+    testRunner?.notifyDone();
+})().catch(e => { out("FAIL: " + e + "\n" + e.stack); testRunner?.notifyDone(); });
+</script>
+</body>

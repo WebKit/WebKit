@@ -1,0 +1,61 @@
+Fixed Layout
+
+Checks whether fixed layout is implemented properly
+
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:10px tables
+
+10px
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:100% tables
+
+100%
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc(10px + 100%) tables
+
+calc(10px + 100%)
+This should be a 100x50 cyan rectangle:
+Table-layout:fixed does NOT apply to width:auto tables
+
+auto
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:min-content tables
+
+min-content
+This should be a 100x50 cyan rectangle:
+Table-layout:fixed does NOT apply to width:max-content tables
+
+max-content
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:fit-content tables
+
+fit-content
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:stretch tables
+
+stretch
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:-webkit-fill-available tables
+
+-webkit-fill-available
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:intrinsic tables
+
+intrinsic
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:min-intrinsic tables
+
+min-intrinsic
+
+PASS 10px
+PASS 100%
+PASS calc(10px + 100%)
+PASS auto
+PASS min-content
+PASS max-content
+PASS fit-content
+PASS stretch
+PASS -webkit-fill-available
+FAIL intrinsic assert_equals: Table is in fixed mode expected 50 but got 100
+FAIL min-intrinsic assert_equals: Table is in fixed mode expected 50 but got 100
+

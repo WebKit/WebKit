@@ -1,0 +1,7 @@
+
+FAIL Property frame-sizing value 'auto' assert_true: frame-sizing doesn't seem to be supported in the computed style expected true got false
+FAIL Property frame-sizing value 'content-width' assert_true: frame-sizing doesn't seem to be supported in the computed style expected true got false
+FAIL Property frame-sizing value 'content-height' assert_true: frame-sizing doesn't seem to be supported in the computed style expected true got false
+FAIL Property frame-sizing value 'content-inline-size' assert_true: frame-sizing doesn't seem to be supported in the computed style expected true got false
+FAIL Property frame-sizing value 'content-block-size' assert_true: frame-sizing doesn't seem to be supported in the computed style expected true got false
+

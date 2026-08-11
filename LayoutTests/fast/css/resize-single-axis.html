@@ -1,0 +1,100 @@
+<style>
+    div {
+        width: 50px;
+        height: 50px;
+        overflow: hidden;
+        -webkit-box-sizing: border-box;
+        border: solid;
+        margin: 10px;
+    }
+
+    #both {
+        resize: both;
+    }
+
+    #horizontal {
+        resize: horizontal;
+    }
+
+    #vertical {
+        resize: vertical;
+    }
+
+    #block-horizontal,
+    #block-vertical {
+        resize: block;
+    }
+
+    #inline-horizontal,
+    #inline-vertical {
+        resize: inline;
+    }
+</style>
+
+<pre id="console"></pre>
+<div id="both"></div>
+<div id="horizontal"></div>
+<div id="vertical"></div>
+<div id="block-horizontal"></div>
+<div id="inline-horizontal"></div>
+<section style="writing-mode: vertical-lr;">
+    <div id="block-vertical"></div>
+    <div id="inline-vertical"></div>
+</section>
+
+<script type="text/javascript">
+    function log(message)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+    }
+
+    function resize(target)
+    {
+        var x = document.body.offsetLeft + target.offsetLeft + target.offsetWidth;
+        var y = document.body.offsetTop + target.offsetTop + target.offsetHeight;
+        eventSender.mouseMoveTo(x - 6, y - 6);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(x + 44, y + 44);
+        eventSender.mouseUp();
+    }
+
+    function assertSize(target, width, height)
+    {
+        var computedStyle = getComputedStyle(target);
+        var actualWidth = computedStyle.width;
+        var actualHeight = computedStyle.height;
+
+        if (actualWidth === width && actualHeight === height)
+            log("'" + target.id + "' resized as expected to (" + width + ", " + height + ").");
+        else
+            log("FAIL: '" + target.id + "' resized to (" + actualWidth + ", " + actualHeight + ") instead of (" + width + ", " + height + ").");
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+
+        var both = document.getElementById("both");
+        var horizontal = document.getElementById("horizontal");
+        var vertical = document.getElementById("vertical");
+        var blockHorizontal = document.getElementById("block-horizontal");
+        var inlineHorizontal = document.getElementById("inline-horizontal");
+        var blockVertical = document.getElementById("block-vertical");
+        var inlineVertical = document.getElementById("inline-vertical");
+
+        resize(both);
+        resize(horizontal);
+        resize(vertical);
+        resize(blockHorizontal);
+        resize(inlineHorizontal);
+        resize(blockVertical);
+        resize(inlineVertical);
+
+        assertSize(both, "100px", "100px");
+        assertSize(horizontal, "100px", "50px");
+        assertSize(vertical, "50px", "100px");
+        assertSize(blockHorizontal, "50px", "100px");
+        assertSize(inlineHorizontal, "100px", "50px");
+        assertSize(blockVertical, "100px", "50px");
+        assertSize(inlineVertical, "50px", "100px");
+    }
+</script>

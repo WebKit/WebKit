@@ -1,0 +1,7 @@
+
+PASS initialize OfflineAudioContext
+PASS invalid constructor
+PASS default constructor
+PASS test AudioNodeOptions
+PASS construct with options
+

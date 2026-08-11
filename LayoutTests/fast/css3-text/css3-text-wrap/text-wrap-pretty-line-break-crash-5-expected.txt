@@ -1,0 +1,1 @@
+#x13 { letter-spacing: 1em; text-wrap: pretty;direction: ltr;} *:first-child, style {margin-right: 999px; display: table-header-group;box-align: baseline;} *:last-child { font-family: system-ui;} A { Awebkit-align-self: AAAA;tab-size: 1em;-webkit-line-clamp: 16;-webkit-hyphenate-character: auto } AAAAAAAAAAAAAAAAAAAA This test passes if it doesn't crash.

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+<textarea id="test"></textarea>
+<script>
+description("The test verifies if the spelling markers remain if whitespace "
+    + "is added before or after the misspelled word or the caret is moved. "
+    + "The test succeeds if the word 'meagesga' has a red underline.");
+
+jsTestIsAsync = true;
+
+if (window.internals) {
+    if (UIHelper.isIOSFamily() || !UIHelper.isWebKit2())
+        internals.setContinuousSpellCheckingEnabled(true);
+    else {
+        internals.settings.setUnifiedTextCheckerEnabled(true);
+        internals.settings.setAsynchronousSpellCheckingEnabled(true);
+    }
+}
+
+let textarea = document.getElementById("test");
+
+async function resetText() {
+    textarea.blur();
+    if (window.testRunner)
+        await UIHelper.activateElementAndWaitForInputSession(textarea);
+    else
+        textarea.focus();
+    textarea.value = "";
+    typeCharacterCommand('i');
+    typeCharacterCommand('t');
+    typeCharacterCommand('\'');
+    typeCharacterCommand('s');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('m');
+    typeCharacterCommand('e');
+    typeCharacterCommand('a');
+    typeCharacterCommand('g');
+    typeCharacterCommand('e');
+    typeCharacterCommand('s');
+    typeCharacterCommand('g');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+}
+
+async function checkSpellingMarker(testCase)
+{
+    await resetText();
+
+    debug(`<br>Test: ${testCase.testName}:`);
+    testCase.run();
+
+    if (window.internals)
+        shouldBecomeEqual(`internals.hasSpellingMarker(${testCase.expectedMisspelledWordStartPosition}, 8)`, "true", () => runNextTest());
+    else
+        runNextTest();
+}
+
+var testCases = [
+    {
+        testName: "Has misspelled word",
+        run: () => { /* Do nothing */ },
+        expectedMisspelledWordStartPosition: 7,
+    },
+    {
+        testName: "Insert space before misspelled word",
+        run: () => {
+            evalAndLog("test.setSelectionRange(7, 7)");
+            evalAndLog("typeCharacterCommand(' ')");
+        },
+        expectedMisspelledWordStartPosition: 8,
+    },
+    {
+        testName: "Insert space after misspelled word",
+        run: () => {
+            evalAndLog("test.setSelectionRange(15, 15)");
+            evalAndLog("typeCharacterCommand(' ')");
+        },
+        expectedMisspelledWordStartPosition: 7,
+    },
+    {
+        testName: "Move caret",
+        run: () => {
+            evalAndLog("execMoveSelectionBackwardByCharacterCommand()");
+        },
+        expectedMisspelledWordStartPosition: 7,
+    }
+];
+
+function runNextTest()
+{
+    let testCase = testCases.shift();
+    if (testCase) {
+        setTimeout(() => checkSpellingMarker(testCase), 0);
+        return;
+    }
+    finishJSTest();
+}
+runNextTest();
+</script>
+</body>
+</html>

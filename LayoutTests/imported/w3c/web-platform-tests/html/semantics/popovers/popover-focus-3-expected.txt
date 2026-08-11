@@ -1,0 +1,14 @@
+Invoker  after
+Show popover
+Toggle popover Other focusable element
+
+PASS Circular reference tab navigation with popovertarget invocation
+PASS Circular reference tab navigation with command/commandfor invocation
+PASS Circular reference tab navigation with imperative invocation
+PASS Popover focus returns when popover is hidden by invoker with popovertarget invocation
+PASS Popover focus returns when popover is hidden by invoker with commandfor invocation
+PASS Popover focus returns when popover is hidden by invoker with imperative invocation
+PASS Popover focus only returns to invoker when focus is within the popover with popovertarget invocation
+PASS Popover focus only returns to invoker when focus is within the popover with command/commandfor invocation
+PASS Popover focus only returns to invoker when focus is within the popover with imperative invocation
+

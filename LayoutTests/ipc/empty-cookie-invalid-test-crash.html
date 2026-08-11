@@ -1,0 +1,18 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script>
+ if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.setTimeout(async () => {
+    if (!window.IPC)
+        return window.testRunner?.notifyDone();
+    const { CoreIPC } = await import('./coreipc.js');
+    const str = unescape('Xp%5BVN%3ALz%3A%1BK%18t%5CE%18h0Fwo%5Dg%5C%10f%5E.%07EQ%1E%1BYKub%109%5Elme%27%0D%28%7E%168z%11YFEz9%25%037%13');
+    CoreIPC.Networking.NetworkConnectionToWebProcess.DeleteCookie(0,{firstParty:{string:''},url:{string:str},cookieName:''});
+    globalThis.testRunner?.notifyDone();
+
+}, 10);
+</script>

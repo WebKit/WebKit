@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="source" contenteditable="true" spellcheck="false">You has the right.</div>
+<div id="target" contenteditable="true" spellcheck="true"></div>
+
+<script>
+description('This tests whether WebKit can render grammar markers when pasting text if it has a grammar-checker. To test manually, copy the text in the first div element and paste it to the second div element. This test succeeds when WebKit renders a grammar marker under a word "has".');
+
+jsTestIsAsync = true;
+
+if (window.internals)
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+
+if (window.testRunner)
+    testRunner.dumpAsText(true);
+
+function verifyGrammarMarker(destination, ungrammaticalPhrase)
+{
+    if (window.internals && internals.hasGrammarMarker(destination.innerHTML.indexOf(ungrammaticalPhrase), ungrammaticalPhrase.length)) {
+        testPassed("ungrammatical phrase '" + ungrammaticalPhrase + "' on '" + destination.innerHTML + "'");
+        return true;
+    } else
+       return false;
+}
+
+var source = document.getElementById('source');
+window.getSelection().selectAllChildren(source);
+document.execCommand('Copy');
+var target = document.getElementById('target');
+window.getSelection().selectAllChildren(target);
+document.execCommand('Paste');
+
+shouldBecomeEqual('verifyGrammarMarker(target, "has")', 'true', finishJSTest);
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

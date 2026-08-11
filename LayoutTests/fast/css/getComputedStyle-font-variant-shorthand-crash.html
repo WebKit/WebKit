@@ -1,0 +1,11 @@
+<!-- webkit-test-runner [ CSSFontVariantEmojiEnabled=false ] -->
+<script>
+    function test() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        document.body.dataset.fontVariant = getComputedStyle(document.body)["font-variant"];
+    };
+</script>
+<body onload="test()">
+    PASS if no crash.
+</body>

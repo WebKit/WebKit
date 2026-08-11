@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Site isolation iframe with contextmenu target</title>
+</head>
+<body>
+<input id="contextmenu-target" type="text" value="Context menu target">
+<script>
+document.getElementById("contextmenu-target").addEventListener("contextmenu", function(event) {
+    event.preventDefault();
+    window.parent.postMessage({
+        type: "contextmenu",
+        targetId: event.target.id
+    }, "*");
+});
+</script>
+</body>
+</html>

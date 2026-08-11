@@ -1,0 +1,20 @@
+This tests that inserting html into an empty list item produces flat sibling list items, not nested ones
+
+Before:
+| "\n"
+| <ul>
+|   <li>
+|     <#selection-caret>
+|     <br>
+| "\n"
+
+After:
+| "\n"
+| <ul>
+|   <li>
+|     "Line one"
+|   <li>
+|     "Line two"
+|   <li>
+|     "Line three<#selection-caret>"
+| "\n"

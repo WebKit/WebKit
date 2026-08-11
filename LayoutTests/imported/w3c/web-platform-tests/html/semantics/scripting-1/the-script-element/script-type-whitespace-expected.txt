@@ -1,0 +1,7 @@
+
+PASS Script shouldn't run with type="text/javascript&#x000B;" (parser-inserted)
+PASS Script shouldn't run with type="text/javascript&#x0085;" (parser-inserted)
+PASS Script shouldn't run with type="text/javascript&#x00A0;" (parser-inserted)
+PASS Script shouldn't run with type="text/javascript&#x1680;" (parser-inserted)
+PASS Script shouldn't run with type="text/javascript&#x3000;" (parser-inserted)
+

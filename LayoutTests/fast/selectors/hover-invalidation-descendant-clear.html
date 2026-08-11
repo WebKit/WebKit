@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.parent {
+    position: relative;
+    padding: 10px;
+    background-color: silver;
+}
+
+.child {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    top: 0px;
+    background-color: green;
+    display: none;
+}
+
+.enableHover:hover .child {
+    display: block;
+}
+
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function runTest(targetSelector) {
+    var target = document.querySelector(targetSelector);
+
+    if (window.eventSender) {
+        var x = target.offsetLeft + target.offsetWidth / 2;
+        var y = target.offsetTop + target.offsetHeight / 2;
+        eventSender.mouseMoveTo(x, y);
+    }
+}
+
+async function runTests() {
+    await new Promise(requestAnimationFrame);
+    runTest("#target");
+    await new Promise(requestAnimationFrame);
+    runTest("#target2");
+    await new Promise(requestAnimationFrame);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+</head>
+<body onload="runTests()">
+<div>
+Test that clearing dynamically activated :hover rule affecting descendants works.
+</div>
+<div id="target" class="parent enableHover">
+    Hover to see a green box below.
+    <div class="child"></div>
+</div>
+<div id="target2" class="parent enableHover">
+    Hover to see a green box below.
+    <div class="child"></div>
+</div>
+</body>
+</html>

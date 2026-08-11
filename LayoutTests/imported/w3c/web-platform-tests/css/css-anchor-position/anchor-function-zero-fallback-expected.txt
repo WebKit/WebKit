@@ -1,0 +1,8 @@
+
+PASS e.style['width'] = "anchor-size(width, calc(0))" should not set the property value
+PASS e.style['width'] = "anchor-size(width, min(0, 0))" should not set the property value
+PASS e.style['height'] = "anchor-size(height, max(0))" should not set the property value
+PASS e.style['left'] = "anchor(left, calc(0))" should not set the property value
+PASS e.style['width'] = "anchor-size(width, 0)" should set the property value
+PASS e.style['width'] = "anchor-size(width, 10px)" should set the property value
+

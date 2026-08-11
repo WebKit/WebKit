@@ -1,0 +1,17 @@
+The backtracking child combinator with tail cases
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Backtracking with tail, tag name matching failed. Restart with the backtracking start element.
+PASS getComputedStyle(document.getElementById("target1")).backgroundColor is "rgb(1, 2, 3)"
+Backtracking with tail, tag name matching failed. Restart with the backtracking start element. And fails.
+PASS getComputedStyle(document.getElementById("target2")).backgroundColor is "rgb(0, 0, 0)"
+Backtracking with tail, others matching failed. Restart with the backtracking start element.
+PASS getComputedStyle(document.getElementById("target3")).backgroundColor is "rgb(4, 5, 6)"
+Backtracking with tail, others matching failed. Restart with the backtracking start element. And fails.
+PASS getComputedStyle(document.getElementById("target4")).backgroundColor is "rgb(0, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

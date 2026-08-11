@@ -1,0 +1,28 @@
+<html>
+<head><script src="../../resources/js-test.js"></script></head>
+<body>
+
+<script>
+
+description("Test for XPath substring() function behavior, adapted from Chromium XPathFunctionsTest.");
+
+shouldBe('document.evaluate("substring(\\"motor car\\", 6)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '" car"');
+shouldBe('document.evaluate("substring(\\"metadata\\", 4, 3)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '"ada"');
+shouldBe('document.evaluate("substring(\\"123456\\", 1.5, 2.6)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '"234"');
+shouldBe('document.evaluate("substring(\\"12345\\", 0, 3)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '"12"');
+shouldBe('document.evaluate("substring(\\"12345\\", 5, -3)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '""');
+shouldBe('document.evaluate("substring(\\"12345\\", -3, 5)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '"1"');
+shouldBe('document.evaluate("substring(\\"12345\\", number(\\"NaN\\"), 3)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '""');
+shouldBe('document.evaluate("substring(\\"12345\\", 1, number(\\"NaN\\"))", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '""');
+shouldBe('document.evaluate("substring(\\"\\", 0, 1)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '""');
+shouldBe('document.evaluate("substring(\\"well hello there\\", 6, 5)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '"hello"');
+shouldBe('document.evaluate("substring(\\"hello, world!\\", -4, 10)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '"hello"');
+shouldBe('document.evaluate("substring(\\"hello\\", -9007199254740990, 1)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '""');
+shouldBe('document.evaluate("substring(\\"hello, world!\\", 1, -3)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '""');
+shouldBe('document.evaluate("substring(\\"foo\\", -9007199254740991, 1)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '""');
+shouldBe('document.evaluate("substring(\\"12345\\", -42, 999999999)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '"12345"');
+shouldBe('document.evaluate("substring(\\"no way\\", 999999999, 7)", document.body, null, XPathResult.STRING_TYPE, null).stringValue', '""');
+
+</script>
+</body>
+</html>

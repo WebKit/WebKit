@@ -1,0 +1,4 @@
+
+PASS A <model> added to a spatial portal that already hosts models loads as well
+PASS Removing one of two <model>s from a spatial portal leaves its sibling loaded
+

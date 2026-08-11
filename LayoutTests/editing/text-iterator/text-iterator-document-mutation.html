@@ -1,0 +1,10 @@
+<div id=div>text</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+div.offsetLeft;
+if (window.internals)
+    internals.retainTextIteratorForDocumentContent();
+div.textContent = "This test passes if it doesn't crash";
+</script>

@@ -1,0 +1,18 @@
+This tests that aria fallback roles work correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.accessibleElementById("custom-element") is null
+PASS accessibilityController.accessibleElementById("custom-checkbox").role is "AXRole: AXCheckBox"
+PASS accessibilityController.accessibleElementById("custom-checkbox").roleDescription is "AXRoleDescription: some description"
+PASS platformValueForW3CName(accessibilityController.accessibleElementById("custom-checkbox")) is "some label"
+PASS accessibilityController.accessibleElementById("custom-checkbox").isChecked is true
+PASS accessibilityController.accessibleElementById("button-checkbox").role is "AXRole: AXButton"
+PASS accessibilityController.accessibleElementById("button-checkbox").roleDescription is "AXRoleDescription: other description"
+PASS platformValueForW3CName(accessibilityController.accessibleElementById("button-checkbox")) is "other label"
+PASS accessibilityController.accessibleElementById("button-checkbox").isChecked is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

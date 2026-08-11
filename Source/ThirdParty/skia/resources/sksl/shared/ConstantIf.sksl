@@ -1,0 +1,10 @@
+uniform half4 colorGreen, colorRed;
+
+half4 main(float2 coords) {
+    int a = 0, b = 0, c = 0, d = 0;
+    if (true) a = 1;
+    if (2 > 1) b = 2; else b = 3;
+    if (1 > 2) c = 4; else c = 5;
+    if (false) d = 6;
+    return (a == 1 && b == 2 && c == 5 && d == 0) ? colorGreen : colorRed;
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- A role="grid" on a native <table> whose native rowgroups (thead/tbody) contain only
+     presentational rows, with the real role="row" rows wrapped in a nested presentational
+     <table>. This is the structure the FullCalendar JS library generates. -->
+<table role="grid" id="grid">
+    <thead role="rowgroup">
+        <tr role="presentation">
+            <th role="presentation">
+                <table role="presentation">
+                    <thead role="presentation">
+                        <tr role="row">
+                            <th role="columnheader" id="sun">Sun</th>
+                            <th role="columnheader" id="mon">Mon</th>
+                            <th role="columnheader" id="tue">Tue</th>
+                        </tr>
+                    </thead>
+                </table>
+            </th>
+        </tr>
+    </thead>
+    <tbody role="rowgroup">
+        <tr role="presentation">
+            <td role="presentation">
+                <table role="presentation">
+                    <tbody role="presentation">
+                        <tr role="row">
+                            <td role="gridcell" id="day1">1</td>
+                            <td role="gridcell" id="day2">2</td>
+                            <td role="gridcell" id="day3">3</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+var output = "This test ensures an ARIA grid built from native table sections whose rows are wrapped in presentational scaffolding exposes its rows and cells.\n\n";
+
+if (window.accessibilityController) {
+    var grid = accessibilityController.accessibleElementById("grid");
+    output += expect("grid.role.toLowerCase().includes('table')", "true");
+    output += expect("grid.rowCount", "2");
+    output += expect("grid.columnCount", "3");
+    output += dumpAXTable(grid);
+
+    debug(output);
+}
+</script>
+</body>
+</html>

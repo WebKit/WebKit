@@ -1,0 +1,6 @@
+
+
+
+PASS x and y properties for image elements with css zoom
+PASS x and y properties for image elements with css zoom 1
+

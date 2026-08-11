@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css">
+    #box {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      position: fixed;
+    }
+    
+    #box.unfixed {
+      position: static;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
+    }
+    
+    function doTest()
+    {
+      window.setTimeout(function() {
+        document.getElementById('box').className = 'unfixed'
+
+        window.setTimeout(function() {
+          window.location = 'resources/fixpos-unload-final.html'
+        }, 0);
+      }, 0);
+    }
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+  <div id="box"></div>
+</body>
+</html>

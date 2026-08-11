@@ -1,0 +1,6 @@
+
+PASS There should be 3 @page rules.
+FAIL Rule #0 undefined is not an object (evaluating 'sheet.rules[0].cssRules.length')
+FAIL Rule #1 undefined is not an object (evaluating 'sheet.rules[1].cssRules.length')
+FAIL Rule #2 undefined is not an object (evaluating 'pageRule.cssRules.length')
+

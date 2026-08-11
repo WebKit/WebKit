@@ -1,0 +1,8 @@
+
+
+PASS Once a transform has been attached, it cannot be reused elsewhere.
+PASS Receiver and sender read, modifiy and write video frames.
+PASS Receiver and sender read, modifiy and write audio frames.
+PASS Sender reads frames but doesn't write them back. Receiver doesn't receive any frames.
+PASS Sender skips some frames and only writes one back. Receiver only receives that frame.
+

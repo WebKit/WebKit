@@ -1,0 +1,5 @@
+
+PASS e.style['-webkit-line-clamp'] = "none" should set the property value
+PASS e.style['-webkit-line-clamp'] = "1" should set the property value
+PASS e.style['-webkit-line-clamp'] = "6" should set the property value
+

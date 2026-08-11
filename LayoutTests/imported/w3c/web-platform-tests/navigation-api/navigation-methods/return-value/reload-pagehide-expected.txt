@@ -1,0 +1,4 @@
+
+
+PASS reload() inside onpagehide
+

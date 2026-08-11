@@ -1,0 +1,26 @@
+<script>
+(async () => {
+ testRunner.dumpAsText();
+ internals.withUserGesture(() => {});
+ n1 = document.createElement('video');
+ document.documentElement.append(n1);
+ n2 = document.createElement('source');
+ n1.after(n2);
+ n14 = document.createElement('div');
+ n2.append(n14);
+ n18 = document.createElement('div');
+ n2.after(n18);
+ n46 = document.createElement('source');
+ n1.after(n46);
+ n59 = document.createElement('audio');
+ n59.src = 'data:application/vnd.apple.mpegURL;base64,x';
+ try {
+ await n2.requestFullscreen();
+ navigator.mediaSession.callActionHandler({ action: 'seekbackward', });
+ await new Promise(requestAnimationFrame);
+ await new Promise(requestAnimationFrame);
+ await n18.requestFullscreen();
+ } catch { }
+})();
+ </script>
+This test passes if it doesn't crash.

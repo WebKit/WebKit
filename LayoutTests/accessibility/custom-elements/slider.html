@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-slider id="slider-1"></custom-slider>
+<custom-slider id="slider-2" aria-valuemax="15" aria-valuemin="3" aria-valuenow="7" aria-valuetext="7 out of 15"></custom-slider>
+<script>
+
+customElements.define('custom-slider', class CustomSlider extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'slider';
+        internals.ariaValueMax = 10;
+        internals.ariaValueMin = 1;
+        internals.ariaValueNow = 5;
+        internals.ariaValueText = '5/10';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBeEqualToString('accessibilityController.accessibleElementById("slider-1").role', 'AXRole: AXSlider');
+    shouldBe('accessibilityController.accessibleElementById("slider-1").intValue', '5');
+    shouldBe('accessibilityController.accessibleElementById("slider-1").maxValue', '10');
+    shouldBe('accessibilityController.accessibleElementById("slider-1").minValue', '1');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("slider-1").valueDescription', 'AXValueDescription: 5/10');
+
+    shouldBeEqualToString('accessibilityController.accessibleElementById("slider-2").role', 'AXRole: AXSlider');
+    shouldBe('accessibilityController.accessibleElementById("slider-2").intValue', '7');
+    shouldBe('accessibilityController.accessibleElementById("slider-2").maxValue', '15');
+    shouldBe('accessibilityController.accessibleElementById("slider-2").minValue', '3');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("slider-2").valueDescription', 'AXValueDescription: 7 out of 15');
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+FAIL An import should succeed even if the same specifier/type attribute pair previously failed due to a MIME type mismatch assert_equals: expected "2" but got "1"
+FAIL An import should succeed even if the same specifier/type pair previously failed due to a network error (e.g. 404) assert_equals: expected "1" but got "0"
+PASS Multiple imports in sequence with the same specifier/type pair should only fetch the module once
+PASS Multiple concurrent imports with the same specifier/type pair should only fetch the module once
+

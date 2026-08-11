@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x35
+  RenderBlock {HTML} at (0,0) size 800x35
+    RenderBody {BODY} at (8,8) size 784x19
+      RenderInline {LABEL} at (0,0) size 16x18
+        RenderText {#text} at (0,0) size 0x0
+        RenderBlock {INPUT} at (2,4) size 12x12
+          RenderBlock (generated) at (0,0) size 12x13
+            RenderText at (0,0) size 41x13
+              text run at (0,0) width 41: "VISIBLE"
+        RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

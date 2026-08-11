@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Make sure that event targets get cleared after dispatching in a shadow tree.");
+
+host = document.createElement("div");
+shadow = host.attachShadow({ mode: "open" });
+child = shadow.appendChild(document.createElement("trala"));
+counter = 0;
+
+child.addEventListener("hi",(e) => {
+    shouldBeUndefined(window.event);
+    shouldBe("counter++", "0");
+});
+child.addEventListener("hi", (e) => {
+    shouldBeUndefined("window.event");
+    shouldBe("counter++", "1");
+});
+child.addEventListener("hi", (e) => {
+    shouldBeUndefined("window.event");
+    shouldBe("counter++", "2");
+});
+
+let event = new MouseEvent("hi", { composed: false, relatedTarget: document.body });
+child.dispatchEvent(event);
+shouldBe("counter", "3");
+shouldBe("event.target", "null");
+shouldBe("event.relatedTarget", "null");
+</script>
+</body>
+</html>

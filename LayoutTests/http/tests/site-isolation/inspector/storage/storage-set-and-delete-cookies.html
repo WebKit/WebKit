@@ -1,0 +1,120 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Storage.setCookie and Storage.deleteCookies");
+
+    suite.addTestCase({
+        name: "Storage.setCookie.Enable",
+        async test() {
+            await WI.backendTarget.StorageAgent.enable();
+            InspectorTest.log("Storage domain enabled.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Storage.setCookie.Roundtrip",
+        description: "A cookie set via Storage.setCookie should be readable via Storage.getCookies. Without an explicit cookie partitionKey the cookie is unpartitioned, so the returned partitionKey has no sourceOrigin.",
+        async test() {
+            let {partitionKey} = await WI.backendTarget.StorageAgent.setCookie(
+                {
+                    name: "RoundtripCookie",
+                    value: "PASS",
+                    domain: "127.0.0.1",
+                    path: "/",
+                },
+                {type: "context"});
+            InspectorTest.expectNotNull(partitionKey, "setCookie should return a partitionKey.");
+            InspectorTest.expectNull(partitionKey.sourceOrigin, "An unpartitioned cookie's returned partitionKey should have no sourceOrigin.");
+
+            let {cookies} = await WI.backendTarget.StorageAgent.getCookies({name: "RoundtripCookie"});
+            InspectorTest.expectEqual(cookies.length, 1, "Should read back exactly one matching cookie.");
+            InspectorTest.expectEqual(cookies[0].value, "PASS", "Cookie value should be 'PASS'.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Storage.setCookie.ExplicitPartitionKeyEchoed",
+        description: "When the caller supplies an explicit cookie partitionKey, setCookie should echo it back as the returned partitionKey's sourceOrigin.",
+        async test() {
+            let {partitionKey} = await WI.backendTarget.StorageAgent.setCookie(
+                {
+                    name: "PartitionedCookie",
+                    value: "PASS",
+                    domain: "127.0.0.1",
+                    path: "/",
+                    partitionKey: "http://127.0.0.1",
+                },
+                {type: "context"});
+            InspectorTest.expectNotNull(partitionKey, "setCookie should return a partitionKey.");
+            InspectorTest.expectEqual(partitionKey.sourceOrigin, "http://127.0.0.1", "Returned partitionKey should echo the explicit cookie partitionKey.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Storage.setCookie.SessionCookieRoundtrip",
+        description: "A session cookie (session:true) read back by getCookies serializes its required 'expires' field as 0. Echoing that object straight back into setCookie must NOT file an epoch-expired cookie: the agent honors 'session' and leaves the expiry unset, so the cookie survives the round-trip.",
+        async test() {
+            await WI.backendTarget.StorageAgent.setCookie({
+                name: "SessionCookie",
+                value: "PASS",
+                domain: "127.0.0.1",
+                path: "/",
+                session: true,
+                expires: 0,
+            });
+
+            let {cookies} = await WI.backendTarget.StorageAgent.getCookies({name: "SessionCookie"});
+            InspectorTest.expectEqual(cookies.length, 1, "A session cookie set with expires:0 should be readable, not silently dropped as epoch-expired.");
+            if (cookies.length) {
+                InspectorTest.expectEqual(cookies[0].value, "PASS", "Session cookie value should be 'PASS'.");
+                InspectorTest.expectEqual(cookies[0].session, true, "Round-tripped cookie should still be a session cookie.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "Storage.deleteCookies.ByFilter",
+        description: "Deleting by filter should remove only the matching cookies.",
+        async test() {
+            await WI.backendTarget.StorageAgent.setCookie({name: "DeleteMe", value: "x", domain: "127.0.0.1", path: "/"});
+            await WI.backendTarget.StorageAgent.setCookie({name: "KeepMe", value: "y", domain: "127.0.0.1", path: "/"});
+
+            await WI.backendTarget.StorageAgent.deleteCookies({name: "DeleteMe"});
+
+            let {cookies} = await WI.backendTarget.StorageAgent.getCookies();
+            InspectorTest.expectEqual(cookies.filter((c) => c.name === "DeleteMe").length, 0, "'DeleteMe' should be gone.");
+            InspectorTest.expectEqual(cookies.filter((c) => c.name === "KeepMe").length, 1, "'KeepMe' should remain.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Storage.deleteCookies.NoFilterRejected",
+        description: "deleteCookies with no filter must fail rather than delete the entire store (guards against an accidental global clear, matching BiDi).",
+        async test() {
+            try {
+                await WI.backendTarget.StorageAgent.deleteCookies();
+                InspectorTest.fail("deleteCookies with no filter should have failed.");
+            } catch (error) {
+                InspectorTest.expectThat(error, "deleteCookies with no filter should produce an error.");
+            }
+
+            // The cookie set by the previous case must still be present: the rejected call deleted nothing.
+            let {cookies} = await WI.backendTarget.StorageAgent.getCookies();
+            InspectorTest.expectEqual(cookies.filter((c) => c.name === "KeepMe").length, 1, "'KeepMe' should still remain after the rejected delete.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests Storage.setCookie (with partitioning) and Storage.deleteCookies by filter under Site Isolation.</p>
+</body>
+</html>

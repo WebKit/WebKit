@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Foreign content in mi</title>
+    <script type="text/javascript">
+      function test()
+      {
+        var span1 = document.createElement("span");
+        document.getElementById("mi1").appendChild(span1);
+
+        var span2 = document.createElement("span");
+        document.getElementById("mi2").appendChild(span2);
+        
+        span1 = document.getElementById("span1");
+        span1.parentNode.removeChild(span1);
+
+        span2 = document.getElementById("span2");
+        span2.parentNode.removeChild(span2);
+      }
+      
+    </script>
+  </head>
+
+  <body onload="test()">
+
+    <!-- This should render the same as the static reference. -->
+
+    <math><mi id="mi1">x</mi></math>
+
+    <math><mi id="mi2">sin</mi></math>
+
+    <math><mi>x<span id="span1"></span></mi></math>
+
+    <math><mi>sin<span id="span2"></span></mi></math>
+
+  </body>
+</html>

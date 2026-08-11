@@ -1,0 +1,14 @@
+
+PASS Property overscroll-behavior-x value 'contain'
+PASS Property overscroll-behavior-x value 'none'
+PASS Property overscroll-behavior-x value 'auto'
+PASS Property overscroll-behavior-y value 'contain'
+PASS Property overscroll-behavior-y value 'none'
+PASS Property overscroll-behavior-y value 'auto'
+PASS Property overscroll-behavior-inline value 'contain'
+PASS Property overscroll-behavior-inline value 'none'
+PASS Property overscroll-behavior-inline value 'auto'
+PASS Property overscroll-behavior-block value 'contain'
+PASS Property overscroll-behavior-block value 'none'
+PASS Property overscroll-behavior-block value 'auto'
+

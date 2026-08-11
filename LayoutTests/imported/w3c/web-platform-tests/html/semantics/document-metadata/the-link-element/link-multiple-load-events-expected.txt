@@ -1,0 +1,8 @@
+
+PASS <link> cannot request the same resource twice by touching the 'rel' attribute, if its value never changes
+PASS <link> cannot request the same resource twice by touching the 'href' attribute, if its value never changes
+PASS <link> cannot request the same resource twice by touching the 'type' attribute, if its value never changes
+PASS <link> cannot request the same resource twice by touching the 'media' attribute, if its value never changes
+PASS <link> load event can fire twice for the same href resource, based on 'rel' attribute mutations
+PASS <link> load event fires for each DIFFERENT stylesheet it loads
+

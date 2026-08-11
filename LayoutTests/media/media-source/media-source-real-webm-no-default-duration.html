@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-no-default-duration</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests that the WebM parser correctly infers frame duration from timecode
+    // gaps when no DefaultDuration element is present in the TrackEntry.
+    // This is a regression test for parsers (e.g. GStreamer) that fail to
+    // compute contiguous buffered ranges without explicit DefaultDuration.
+    // See: https://bugs.webkit.org/show_bug.cgi?id=XXXXX
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        // Init segment WITHOUT DefaultDuration — parser must infer from timecodes
+        sourceBuffer.appendBuffer(WebM.initSegment({
+            tracks: [{ id: 1, type: 'video', defaultDuration: 0 }]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        // 4 keyframes at 1-second intervals
+        sourceBuffer.appendBuffer(WebM.mediaSegment({
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: true },
+            ]}]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Without DefaultDuration, the parser must infer duration from the gap
+        // between successive timecodes. It should still produce a single
+        // contiguous buffered range.
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 4, 0.05);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

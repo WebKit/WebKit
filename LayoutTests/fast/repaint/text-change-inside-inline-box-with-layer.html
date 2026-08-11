@@ -1,0 +1,45 @@
+<style>
+body {
+  padding: 40px;
+}
+
+div {
+  background-color: green;
+}
+
+span {
+  font-family: Monospace;
+  font-size: 20px;
+  position: relative;
+  top: -30px;
+}
+</style>
+<div><span id=change_this>fail</span></div>
+<pre id=repaints></pre>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  if (window.internals)
+    internals.startTrackingRepaints();
+
+  change_this.firstChild.replaceData(0, 4, "pass");
+
+  await UIHelper.renderingUpdate();
+
+  if (window.internals) {
+    repaints.innerHTML = window.internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+  }
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+
+window.addEventListener('load', runTest);
+</script>

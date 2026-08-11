@@ -1,0 +1,48 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% FOR i IN [ 0 .. data.0.0.max ] %]
+  [% data.0.0.$i = display_value(col_field, data.0.0.$i) %]
+[% END %]
+
+[% FOR i IN [ 0 .. row_names.max ] %]
+  [% row_names.$i = display_value(row_field, row_names.$i) %]
+[% END %]
+
+[% FILTER null;
+  USE graph = GD.Graph.bars(width, height);
+
+  graph.set(x_label           => field_descs.$col_field || col_field,
+            y_label           => terms.Bugs,
+            y_tick_number     => 8,
+            y_number_format   => "%d",
+            x_label_position  => 0.5,
+            x_labels_vertical => x_labels_vertical,
+            bar_spacing       => 8,
+            shadow_depth      => 4,
+            shadowclr         => 'dred',
+            show_values       => 1,
+            legend_placement  => "RT");
+
+  graph.set(cumulate          => "true",
+            show_values       => 0) IF cumulate;
+
+  graph.set_legend(row_names);
+  END;
+-%]
+
+[% IF Param("font_file") %]
+  [% graph.set_x_axis_font(Param("font_file"), 9);
+     graph.set_x_label_font(Param("font_file"), 10);
+     graph.set_y_axis_font(Param("font_file"), 9);
+     graph.set_y_label_font(Param("font_file"), 10);
+     graph.set_legend_font(Param("font_file"), 9);
+  %]
+[% END %]
+
+[% graph.plot(data.0).png | stdout(1) %]

@@ -1,0 +1,38 @@
+<script>
+    window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
+
+    function test() {
+        var pass = document.getElementById('pass');
+        if (window.IPC) {
+            import('./coreipc.js').then(({
+                CoreIPC
+            }) => {
+                CoreIPC.Networking.NetworkStorageManager.AbortTransaction(0, {
+                    transactionIdentifier: {
+                        m_idbConnectionIdentifier: {},
+                        m_resourceNumber: {}
+                    }
+                })
+                CoreIPC.Networking.NetworkStorageManager.CommitTransaction(0, {
+                    transactionIdentifier: {
+                        m_idbConnectionIdentifier: {},
+                        m_resourceNumber: {}
+                    },
+                    handledRequestResultsCount: 0
+                })
+                pass.innerText = "PASS";
+                window.testRunner?.notifyDone();
+            });
+        } else {
+
+            pass.innerText = "PASS";
+            window.testRunner?.notifyDone();
+        }
+    }
+</script>
+
+<body onload="test()">
+    <p>This test passes if webkit does not crash</p>
+    <div id="pass"></div>
+</body>

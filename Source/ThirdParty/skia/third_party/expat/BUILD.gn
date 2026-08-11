@@ -1,0 +1,54 @@
+# Copyright 2016 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  skia_use_system_expat = is_official_build
+}
+
+import("../third_party.gni")
+
+if (skia_use_system_expat) {
+  system("expat") {
+    libs = [ "expat" ]
+  }
+} else {
+  third_party("expat") {
+    _src = "../externals/expat"
+
+    public_defines = [ "XML_STATIC" ]
+
+    public_include_dirs = [
+      "../externals/expat/expat/lib",
+      "include/expat_config",
+    ]
+
+    public = [ "$_src/expat/lib/expat.h" ]
+    sources = [
+      "$_src/expat/lib/ascii.h",
+      "$_src/expat/lib/asciitab.h",
+      "$_src/expat/lib/expat_external.h",
+      "$_src/expat/lib/iasciitab.h",
+      "$_src/expat/lib/internal.h",
+      "$_src/expat/lib/latin1tab.h",
+      "$_src/expat/lib/nametab.h",
+      "$_src/expat/lib/siphash.h",
+      "$_src/expat/lib/utf8tab.h",
+      "$_src/expat/lib/winconfig.h",
+      "$_src/expat/lib/xmlparse.c",
+      "$_src/expat/lib/xmlrole.c",
+      "$_src/expat/lib/xmlrole.h",
+      "$_src/expat/lib/xmltok.c",
+      "$_src/expat/lib/xmltok.h",
+      "$_src/expat/lib/xmltok_impl.h",
+    ]
+
+    unused_sources = [
+      # Not independently compiled, but conditionally included in xmltok.c
+      "$_src/expat/lib/xmltok_impl.c",
+      "$_src/expat/lib/xmltok_ns.c",
+    ]
+    assert(unused_sources != [])
+  }
+}

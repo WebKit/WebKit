@@ -1,0 +1,8 @@
+
+PASS Text content: \r followed by plain text then \n produces two newlines
+PASS Double-quoted attribute: \r followed by plain text then \n produces two newlines
+PASS Single-quoted attribute: \r followed by plain text then \n produces two newlines
+PASS Text content: \r\n collapses to single newline
+PASS Double-quoted attribute: \r\n collapses to single newline
+PASS Single-quoted attribute: \r\n collapses to single newline
+

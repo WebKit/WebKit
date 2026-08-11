@@ -1,0 +1,11 @@
+2d.layer.invalid-calls.beginLayer-reset-endLayer
+
+Raises exception on beginLayer() + reset() + endLayer().
+
+
+FAIL Raises exception on beginLayer() + reset() + endLayer(). assert_throws_dom: function "function() {
+    ctx.beginLayer();
+    ctx.reset();
+    ctx.endLayer();
+  }" did not throw
+

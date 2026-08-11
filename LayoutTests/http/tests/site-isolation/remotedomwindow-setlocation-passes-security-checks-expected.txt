@@ -1,0 +1,5 @@
+ALERT: PASS: Iframe window is confirmed to be a cross-origin proxy.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+This test verifies that navigating a cross-origin RemoteDOMWindow to a javascript: URL is blocked and produces the correct cross-origin error message.
+
+

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="editor" contenteditable><br></div>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function config(config) {
+    editor.textContent = '';
+    internals.setContinuousSpellCheckingEnabled(config.continuousSpellchecking);
+    internals.setAutomaticQuoteSubstitutionEnabled(config.smartQuote);
+    internals.setAutomaticLinkDetectionEnabled(config.smartLink);
+    internals.setAutomaticDashSubstitutionEnabled(config.smartDash);
+    internals.setAutomaticTextReplacementEnabled(config.textReplacement);
+    internals.setAutomaticSpellingCorrectionEnabled(config.autocorrection);
+}
+
+function type(text) {
+    document.execCommand('InsertText', false, text);
+}
+
+function tryAllCombinations(configOptions, config) {
+    if (!configOptions.length) {
+        debug('');
+        evalAndLog('config(' + JSON.stringify(config) + ')');
+        shouldBe('type("We\'re"); type(" "); type("good"); editor.textContent', '"We\u2019re good"');
+        return;
+    }
+    var firstConfigOption = configOptions[0];
+    var remainingOptions = configOptions.slice(1);
+    config[firstConfigOption] = true;
+    tryAllCombinations(remainingOptions, config);
+
+    config[firstConfigOption] = false;
+    tryAllCombinations(remainingOptions, config);
+}
+
+var editor = document.getElementById('editor');
+editor.focus();
+
+if (!window.internals)
+    testFailed("This test requires internals to be ran manually. To test manually, type \"We're good\" with all combinations of spellchecking and substitutions options.");
+else
+    tryAllCombinations(['continuousSpellchecking', 'smartLink', 'smartDash', 'textReplacement', 'autocorrection'], {smartQuote: true});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<input type="number" id="testNumber" value="0">
+
+<table id="testTable">
+  <thead id="testTableSection">
+    <tr></tr>
+  </thead>
+  <tr id="testRow">
+    <td id="testCell"></td
+  </tr>
+</table>
+
+<canvas id="testCanvas" width="100" height="100">
+
+<script>
+description("Checks the behavior of passing undefined for optional parameters that have default values");
+
+debug("* HTMLInputElement.stepUp(optional long n = 1)");
+var testNumber = document.getElementById("testNumber");
+shouldBeEqualToString("testNumber.value", "0");
+evalAndLog("testNumber.stepUp()");
+shouldBeEqualToString("testNumber.value", "1");
+evalAndLog("testNumber.stepUp(undefined)");
+shouldBeEqualToString("testNumber.value", "2");
+
+debug("");
+debug("* HTMLInputElement.stepDown(optional long n = 1)");
+evalAndLog("testNumber.stepDown()");
+shouldBeEqualToString("testNumber.value", "1");
+evalAndLog("testNumber.stepDown(undefined)");
+shouldBeEqualToString("testNumber.value", "0");
+
+debug("");
+debug("* HTMLTableElement.insertRow(optional long index = -1)");
+// Should append the row if index is missing or undefined.
+var testTable = document.getElementById("testTable");
+var newRow1;
+evalAndLog("newRow1 = testTable.insertRow()");
+shouldBe("testTable.rows[testTable.rows.length - 1]", "newRow1");
+var newRow2
+evalAndLog("newRow2 = testTable.insertRow(undefined)");
+shouldBe("testTable.rows[testTable.rows.length - 1]", "newRow2");
+
+debug("");
+debug("* HTMLTableRowElement.insertCell(optional long index = -1)");
+// Should append the cell if index is missing or undefined.
+var testRow = document.getElementById("testRow");
+var newCell1;
+evalAndLog("newCell1 = testRow.insertCell()");
+shouldBe("testRow.cells[testRow.cells.length - 1]", "newCell1");
+var newCell2;
+evalAndLog("newCell2 = testRow.insertCell(undefined)");
+shouldBe("testRow.cells[testRow.cells.length - 1]", "newCell2");
+
+debug("");
+debug("* HTMLTableSectionElement.insertRow(optional long index = -1)");
+// Should append the row if index is missing or undefined.
+var testTableSection = document.getElementById("testTableSection");
+var newRow3;
+evalAndLog("newRow3 = testTableSection.insertRow()");
+shouldBe("testTable.rows[testTableSection.rows.length - 1]", "newRow3");
+var newRow4;
+evalAndLog("newRow4 = testTableSection.insertRow(undefined)");
+shouldBe("testTable.rows[testTableSection.rows.length - 1]", "newRow4");
+
+debug("");
+debug("* CanvasRenderingContext2D.fill(optional CanvasWindingRule winding = 'nonzero')");
+var ctx = document.getElementById("testCanvas").getContext("2d");
+ctx.rect(0, 0, 150, 100);
+ctx.fillStyle = "red";
+shouldNotThrow("ctx.fill(undefined)");
+
+debug("");
+debug("* CanvasRenderingContext2D.fill(Path2D path, optional CanvasWindingRule winding = 'nonzero')");
+var path = new Path2D();
+shouldNotThrow("ctx.fill(path, undefined)");
+
+debug("");
+debug("* CanvasRenderingContext2D.clip(optional CanvasWindingRule winding = 'nonzero')");
+shouldNotThrow("ctx.clip(undefined)");
+
+debug("");
+debug("* CanvasRenderingContext2D.clip(Path2D path, optional CanvasWindingRule winding = 'nonzero')");
+shouldNotThrow("ctx.clip(path, undefined)");
+
+debug("");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

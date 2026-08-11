@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<style>
+@-webkit-keyframes test {
+    to { background-color: inherit; }
+}
+body {
+    -webkit-animation: test 1s;
+}
+</style>
+<pre>This test passes if it does not crash.</pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

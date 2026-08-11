@@ -1,0 +1,267 @@
+/*
+ * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#pragma once
+
+#include <stdint.h>
+#include <tuple>
+#include <wtf/GetPtr.h>
+#include <wtf/Int128.h>
+#include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
+
+namespace WTF {
+    // integer hash function
+
+    // rapidhash "mum" mixer.
+    // Keep in sync with AssemblyHelpers::rapidHashMix64 and FTL rapidHashMix64 code as we need to use the same hash function.
+    inline unsigned intHash(uint64_t key)
+    {
+        constexpr uint64_t secret1 = 0x2d358dccaa6c78a5ULL;
+        constexpr uint64_t secret2 = 0x8bb84b93962eacc9ULL;
+        UInt128 product = static_cast<UInt128>(key ^ secret1) * static_cast<UInt128>(key ^ secret2);
+        uint64_t folded = static_cast<uint64_t>(product) ^ static_cast<uint64_t>(product >> 64);
+        return static_cast<unsigned>(folded);
+    }
+
+    inline unsigned intHash(uint32_t key)
+    {
+        return intHash(static_cast<uint64_t>(key));
+    }
+
+    inline unsigned intHash(uint8_t key8)
+    {
+        return intHash(static_cast<uint32_t>(key8));
+    }
+
+    inline unsigned intHash(uint16_t key16)
+    {
+        return intHash(static_cast<uint32_t>(key16));
+    }
+
+    // Compound integer hash method: http://opendatastructures.org/versions/edition-0.1d/ods-java/node33.html#SECTION00832000000000000000
+    inline unsigned pairIntHash(unsigned key1, unsigned key2)
+    {
+        unsigned shortRandom1 = 277951225; // A random 32-bit value.
+        unsigned shortRandom2 = 95187966; // A random 32-bit value.
+        uint64_t longRandom = 19248658165952622LL; // A random 64-bit value.
+
+        uint64_t product = longRandom * (shortRandom1 * key1 + shortRandom2 * key2);
+        unsigned highBits = static_cast<unsigned>(product >> ((sizeof(uint64_t) - sizeof(unsigned)) * 8));
+        return highBits;
+    }
+
+    template<typename T> struct IntHash {
+        static unsigned hash(T key) { return intHash(static_cast<typename SizedUnsignedTrait<sizeof(T)>::Type>(key)); }
+        static bool equal(T a, T b) { return a == b; }
+        static constexpr bool safeToCompareToEmptyOrDeleted = true;
+    };
+
+    template<typename T> struct FloatHash {
+        typedef typename SizedUnsignedTrait<sizeof(T)>::Type Bits;
+        static unsigned hash(T key)
+        {
+            return intHash(std::bit_cast<Bits>(key));
+        }
+        static bool equal(T a, T b)
+        {
+            return std::bit_cast<Bits>(a) == std::bit_cast<Bits>(b);
+        }
+        static constexpr bool safeToCompareToEmptyOrDeleted = true;
+    };
+
+    // pointer identity hash function
+
+    template<typename T, bool isSmartPointer> 
+    struct PtrHashBase;
+
+    template <typename T>
+    struct PtrHashBase<T, false /* isSmartPtr */> {
+        typedef T PtrType; 
+
+        static unsigned hash(PtrType key) { return IntHash<uintptr_t>::hash(reinterpret_cast<uintptr_t>(key)); }
+        static bool equal(PtrType a, PtrType b) { return a == b; }
+        static constexpr bool safeToCompareToEmptyOrDeleted = true;
+    };
+
+    template <typename T>
+    struct PtrHashBase<T, true /* isSmartPtr */> {
+        typedef typename GetPtrHelper<T>::PtrType PtrType;
+        typedef typename GetPtrHelper<T>::UnderlyingType UnderlyingType;
+
+        static unsigned hash(std::add_const_t<UnderlyingType>* key) { return IntHash<uintptr_t>::hash(reinterpret_cast<uintptr_t>(key)); }
+        static bool equal(std::add_const_t<UnderlyingType>* a, std::add_const_t<UnderlyingType>* b) { return a == b; }
+        static constexpr bool safeToCompareToEmptyOrDeleted = true;
+
+        static unsigned hash(const T& key) requires(!std::is_convertible_v<const T&, std::add_const_t<UnderlyingType>*>) { return hash(getPtr(key)); }
+        static bool equal(const T& a, const T& b) requires(!std::is_convertible_v<const T&, std::add_const_t<UnderlyingType>*>) { return getPtr(a) == getPtr(b); }
+        static bool equal(std::add_const_t<UnderlyingType>* a, const T& b) requires(!std::is_convertible_v<const T&, std::add_const_t<UnderlyingType>*>) { return a == getPtr(b); }
+        static bool equal(const T& a, std::add_const_t<UnderlyingType>* b) requires(!std::is_convertible_v<const T&, std::add_const_t<UnderlyingType>*>) { return getPtr(a) == b; }
+    };
+
+    template<typename T> struct PtrHash : PtrHashBase<T, IsSmartPtr<T>::value> {
+    };
+
+    template<typename P> struct PtrHash<Ref<P>> : PtrHashBase<Ref<P>, IsSmartPtr<Ref<P>>::value> {
+        static constexpr bool safeToCompareToEmptyOrDeleted = false;
+    };
+
+    // default hash function for each type
+
+    template<typename T> struct DefaultHash;
+
+    template<typename T, typename U> struct PairHash {
+        static unsigned hash(const std::pair<T, U>& p)
+        {
+            return pairIntHash(DefaultHash<T>::hash(p.first), DefaultHash<U>::hash(p.second));
+        }
+        static bool equal(const std::pair<T, U>& a, const std::pair<T, U>& b)
+        {
+            return DefaultHash<T>::equal(a.first, b.first) && DefaultHash<U>::equal(a.second, b.second);
+        }
+        static constexpr bool safeToCompareToEmptyOrDeleted = DefaultHash<T>::safeToCompareToEmptyOrDeleted && DefaultHash<U>::safeToCompareToEmptyOrDeleted;
+    };
+
+    template<typename T, typename U> struct IntPairHash {
+        static unsigned hash(const std::pair<T, U>& p) { return pairIntHash(p.first, p.second); }
+        static bool equal(const std::pair<T, U>& a, const std::pair<T, U>& b) { return PairHash<T, U>::equal(a, b); }
+        static constexpr bool safeToCompareToEmptyOrDeleted = PairHash<T, U>::safeToCompareToEmptyOrDeleted;
+    };
+
+    template<typename... Types>
+    struct TupleHash {
+        template<size_t I = 0>
+            requires (I < sizeof...(Types) - 1)
+        static unsigned hash(const std::tuple<Types...>& t)
+        {
+            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            return pairIntHash(DefaultHash<IthTupleElementType>::hash(std::get<I>(t)), hash<I + 1>(t));
+        }
+
+        template<size_t I = 0>
+            requires (I == sizeof...(Types) - 1)
+        static unsigned hash(const std::tuple<Types...>& t)
+        {
+            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            return DefaultHash<IthTupleElementType>::hash(std::get<I>(t));
+        }
+
+        template<size_t I = 0>
+            requires (I < sizeof...(Types) - 1)
+        static bool equal(const std::tuple<Types...>& a, const std::tuple<Types...>& b)
+        {
+            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            return DefaultHash<IthTupleElementType>::equal(std::get<I>(a), std::get<I>(b)) && equal<I + 1>(a, b);
+        }
+
+        template<size_t I = 0>
+            requires (I == sizeof...(Types) - 1)
+        static bool equal(const std::tuple<Types...>& a, const std::tuple<Types...>& b)
+        {
+            using IthTupleElementType = typename std::tuple_element<I, typename std::tuple<Types...>>::type;
+            return DefaultHash<IthTupleElementType>::equal(std::get<I>(a), std::get<I>(b));
+        }
+
+        static constexpr bool safeToCompareToEmptyOrDeleted = (DefaultHash<Types>::safeToCompareToEmptyOrDeleted && ...);
+    };
+
+    // make IntHash the default hash function for many integer types
+
+    template<> struct DefaultHash<bool> : IntHash<uint8_t> { };
+    template<> struct DefaultHash<uint8_t> : IntHash<uint8_t> { };
+    template<> struct DefaultHash<short> : IntHash<unsigned> { };
+    template<> struct DefaultHash<unsigned short> : IntHash<unsigned> { };
+    template<> struct DefaultHash<int> : IntHash<unsigned> { };
+    template<> struct DefaultHash<unsigned> : IntHash<unsigned> { };
+    template<> struct DefaultHash<long> : IntHash<unsigned long> { };
+    template<> struct DefaultHash<unsigned long> : IntHash<unsigned long> { };
+    template<> struct DefaultHash<long long> : IntHash<unsigned long long> { };
+    template<> struct DefaultHash<unsigned long long> : IntHash<unsigned long long> { };
+
+#if defined(_NATIVE_WCHAR_T_DEFINED)
+    template<> struct DefaultHash<wchar_t> : IntHash<wchar_t> { };
+#endif
+
+    template<> struct DefaultHash<float> : FloatHash<float> { };
+    template<> struct DefaultHash<double> : FloatHash<double> { };
+
+    // make PtrHash the default hash function for pointer types that don't specialize
+
+    template<typename P> struct DefaultHash<P*> : PtrHash<P*> { };
+    template<typename P, typename Q, typename R> struct DefaultHash<RefPtr<P, Q, R>> : PtrHash<RefPtr<P, Q, R>> { };
+    template<typename P> struct DefaultHash<Ref<P>> : PtrHash<Ref<P>> { };
+
+    template<typename P, typename Deleter> struct DefaultHash<std::unique_ptr<P, Deleter>> : PtrHash<std::unique_ptr<P, Deleter>> { };
+
+#ifdef __OBJC__
+    template<> struct DefaultHash<__unsafe_unretained id> : PtrHash<__unsafe_unretained id> { };
+#endif
+
+    // make IntPairHash the default hash function for pairs of (at most) 32-bit integers.
+
+    template<> struct DefaultHash<std::pair<short, short>> : IntPairHash<short, short> { };
+    template<> struct DefaultHash<std::pair<short, unsigned short>> : IntPairHash<short, unsigned short> { };
+    template<> struct DefaultHash<std::pair<short, int>> : IntPairHash<short, int> { };
+    template<> struct DefaultHash<std::pair<short, unsigned>> : IntPairHash<short, unsigned> { };
+    template<> struct DefaultHash<std::pair<unsigned short, short>> : IntPairHash<unsigned short, short> { };
+    template<> struct DefaultHash<std::pair<unsigned short, unsigned short>> : IntPairHash<unsigned short, unsigned short> { };
+    template<> struct DefaultHash<std::pair<unsigned short, int>> : IntPairHash<unsigned short, int> { };
+    template<> struct DefaultHash<std::pair<unsigned short, unsigned>> : IntPairHash<unsigned short, unsigned> { };
+    template<> struct DefaultHash<std::pair<int, short>> : IntPairHash<int, short> { };
+    template<> struct DefaultHash<std::pair<int, unsigned short>> : IntPairHash<int, unsigned short> { };
+    template<> struct DefaultHash<std::pair<int, int>> : IntPairHash<int, int> { };
+    template<> struct DefaultHash<std::pair<int, unsigned>> : IntPairHash<int, unsigned> { };
+    template<> struct DefaultHash<std::pair<unsigned, short>> : IntPairHash<unsigned, short> { };
+    template<> struct DefaultHash<std::pair<unsigned, unsigned short>> : IntPairHash<unsigned, unsigned short> { };
+    template<> struct DefaultHash<std::pair<unsigned, int>> : IntPairHash<unsigned, int> { };
+    template<> struct DefaultHash<std::pair<unsigned, unsigned>> : IntPairHash<unsigned, unsigned> { };
+
+    // make PairHash the default hash function for pairs of arbitrary values.
+
+    template<typename T, typename U> struct DefaultHash<std::pair<T, U>> : PairHash<T, U> { };
+    template<typename... Types> struct DefaultHash<std::tuple<Types...>> : TupleHash<Types...> { };
+
+    template<typename T> constexpr bool isSafeToCompareToHashTableEmptyOrDeletedValue() {
+        if constexpr (requires { T::safeToCompareToHashTableEmptyOrDeletedValue; }) {
+            static_assert(std::same_as<decltype(T::safeToCompareToHashTableEmptyOrDeletedValue), const bool>);
+            return T::safeToCompareToHashTableEmptyOrDeletedValue;
+        } else
+            return false;
+    }
+
+    // Default hash for any type with a hash() member function and an equality operator.
+    template<typename T> concept HashableWithMemberFunction = requires(const T& t) {
+        requires std::equality_comparable<T>;
+        { t.hash() } -> std::same_as<unsigned>;
+    };
+    template<HashableWithMemberFunction T> struct MemberBasedHash {
+        static unsigned hash(const T& key) { return key.hash(); }
+        static bool equal(const T& a, const T& b) { return a == b; }
+        static constexpr bool safeToCompareToEmptyOrDeleted = isSafeToCompareToHashTableEmptyOrDeletedValue<T>();
+    };
+    template<HashableWithMemberFunction T> struct DefaultHash<T> : MemberBasedHash<T> { };
+
+} // namespace WTF
+
+using WTF::DefaultHash;
+using WTF::IntHash;
+using WTF::PtrHash;
+using WTF::intHash;
+using WTF::pairIntHash;

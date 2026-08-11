@@ -1,0 +1,6 @@
+Source expressions in a separate policy are honored with `strict-dynamic` in the script-src directive.
+
+
+PASS Script injected via `appendChild` is permitted with `strict-dynamic` + a nonce+allowed double policy.
+PASS Non-allowed script injected via `appendChild` is not permitted with `strict-dynamic` + a nonce+allowed double policy.
+

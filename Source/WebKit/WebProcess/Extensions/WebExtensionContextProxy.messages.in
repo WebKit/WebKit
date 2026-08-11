@@ -1,0 +1,117 @@
+/*
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+
+[
+    DispatchedFrom=UI,
+    DispatchedTo=WebContent
+]
+messages -> WebExtensionContextProxy {
+    // Action
+    DispatchActionClickedEvent(std::optional<WebKit::WebExtensionTabParameters> tabParameters)
+
+    // Alarms
+    DispatchAlarmsEvent(struct WebKit::WebExtensionAlarmParameters alarmInfo)
+
+    // Commands
+    DispatchCommandsCommandEvent(String identifier, std::optional<WebKit::WebExtensionTabParameters> tabParameters)
+    DispatchCommandsChangedEvent(String identifier, String oldShortcut, String newShortcut)
+
+    // Cookies
+    DispatchCookiesChangedEvent()
+
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+    // DeclarativeNetRequest
+    DispatchOnRuleMatchedDebugEvent(struct WebCore::ContentRuleListMatchedRule matchedRule)
+#endif
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+    // DevTools
+    AddInspectorPageIdentifier(WebCore::PageIdentifier pageID, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier)
+    AddInspectorBackgroundPageIdentifier(WebCore::PageIdentifier pageID, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier)
+    DispatchDevToolsExtensionPanelShownEvent(Inspector::ExtensionTabID identifier, WebCore::FrameIdentifier frameIdentifier)
+    DispatchDevToolsExtensionPanelHiddenEvent(Inspector::ExtensionTabID identifier)
+    DispatchDevToolsNetworkNavigatedEvent(URL url)
+    DispatchDevToolsPanelsThemeChangedEvent(Inspector::ExtensionAppearance appearance)
+#endif
+
+    // Extension
+    SetBackgroundPageIdentifier(WebCore::PageIdentifier pageID)
+    AddPopupPageIdentifier(WebCore::PageIdentifier pageID, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier)
+    AddTabPageIdentifier(WebCore::PageIdentifier pageID, WebKit::WebExtensionTabIdentifier tabIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier)
+
+    // Menus
+    DispatchMenusClickedEvent(struct WebKit::WebExtensionMenuItemParameters menuItemParameters, bool wasChecked, struct WebKit::WebExtensionMenuItemContextParameters contextParameters, std::optional<WebKit::WebExtensionTabParameters> tabParameters)
+
+    // Permissions
+    UpdateGrantedPermissions(HashMap<String, WallTime> permissions)
+    DispatchPermissionsEvent(WebKit::WebExtensionEventListenerType type, HashSet<String> permissions, HashSet<String> origins)
+
+    // Ports
+    DispatchPortMessageEvent(std::optional<WebKit::WebPageProxyIdentifier> sendingPageProxyIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String messageJSON, bool userGesture)
+    DispatchPortDisconnectEvent(WebKit::WebExtensionPortChannelIdentifier channelIdentifier)
+
+    // Runtime
+    DispatchRuntimeMessageEvent(WebKit::WebExtensionContentWorldType contentWorldType, String messageJSON, struct std::optional<WebKit::WebExtensionMessageTargetParameters> targetParameters, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (String replyJSON)
+    DispatchRuntimeConnectEvent(WebKit::WebExtensionContentWorldType contentWorldType, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct std::optional<WebKit::WebExtensionMessageTargetParameters> targetParameters, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (HashCountedSet<WebKit::WebPageProxyIdentifier> addedPortCounts)
+    DispatchRuntimeInstalledEvent(enum:uint8_t WebKit::WebExtensionContextInstallReason installReason, String previousVersion)
+    DispatchRuntimeStartupEvent()
+
+    // Storage
+    SetStorageAccessLevel(WebKit::WebExtensionDataType dataType, enum:uint8_t WebKit::WebExtensionStorageAccessLevel accessLevel)
+    DispatchStorageChangedEvent(Vector<String> onChangedJSON, WebKit::WebExtensionDataType dataType, WebKit::WebExtensionContentWorldType contentWorldType)
+
+    // Tabs Events
+    DispatchTabsCreatedEvent(WebKit::WebExtensionTabParameters tabParameters)
+    DispatchTabsUpdatedEvent(WebKit::WebExtensionTabParameters tabParameters, WebKit::WebExtensionTabParameters changedParameters)
+    DispatchTabsReplacedEvent(WebKit::WebExtensionTabIdentifier replacedTabIdentifier, WebKit::WebExtensionTabIdentifier newTabIdentifier)
+    DispatchTabsDetachedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier oldWindowIdentifier, uint64_t oldIndex)
+    DispatchTabsMovedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, uint64_t oldIndex, uint64_t newIndex)
+    DispatchTabsAttachedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier newWindowIdentifier, uint64_t newIndex)
+    DispatchTabsActivatedEvent(WebKit::WebExtensionTabIdentifier previousActiveTabIdentifier, WebKit::WebExtensionTabIdentifier newActiveTabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier)
+    DispatchTabsHighlightedEvent(Vector<WebKit::WebExtensionTabIdentifier> tabs, WebKit::WebExtensionWindowIdentifier windowIdentifier)
+    DispatchTabsRemovedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebKit::WebExtensionContext::WindowIsClosing windowIsClosing)
+
+    // Test Events
+    DispatchTestMessageEvent(String message, String argumentJSON, WebKit::WebExtensionContentWorldType contentWorldType)
+    DispatchTestStartedEvent(String argumentJSON, WebKit::WebExtensionContentWorldType contentWorldType)
+    DispatchTestFinishedEvent(String argumentJSON, WebKit::WebExtensionContentWorldType contentWorldType)
+
+    // Web Navigation
+    DispatchWebNavigationEvent(WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionTabIdentifier tabID, struct WebKit::WebExtensionFrameParameters frameParamaters, WallTime timestamp)
+
+    // Web Request
+    ResourceLoadDidSendRequest(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebCore::ResourceRequest request, struct WebKit::ResourceLoadInfo resourceLoadInfo, std::optional<IPC::FormDataReference> formData)
+    ResourceLoadDidPerformHTTPRedirection(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebCore::ResourceResponse response, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceRequest newRequest)
+    ResourceLoadDidReceiveChallenge(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebCore::AuthenticationChallenge challenge, struct WebKit::ResourceLoadInfo resourceLoadInfo)
+    ResourceLoadDidReceiveResponse(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebCore::ResourceResponse response, struct WebKit::ResourceLoadInfo resourceLoadInfo)
+    ResourceLoadDidCompleteWithError(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebCore::ResourceResponse response, WebCore::ResourceError error, struct WebKit::ResourceLoadInfo resourceLoadInfo)
+
+    // Windows
+    DispatchWindowsEvent(WebKit::WebExtensionEventListenerType type, std::optional<WebKit::WebExtensionWindowParameters> windowParameters)
+}
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)

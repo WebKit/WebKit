@@ -1,0 +1,13 @@
+
+FAIL wasm: reserved import names should cause WebAssembly.LinkError promise_rejects_js: function "function() { throw e; }" threw object "TypeError: Module name, 'test' does not resolve to a valid URL." ("TypeError") expected instance of function "function LinkError() {
+    [native code]
+}" ("LinkError")
+FAIL wasm-js: reserved import names should cause WebAssembly.LinkError promise_rejects_js: function "function() { throw e; }" threw object "TypeError: Module name, 'test' does not resolve to a valid URL." ("TypeError") expected instance of function "function LinkError() {
+    [native code]
+}" ("LinkError")
+FAIL wasm: reserved export names should cause WebAssembly.LinkError assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL wasm-js: reserved export names should cause WebAssembly.LinkError assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL wasm-js: reserved module names should cause WebAssembly.LinkError promise_rejects_js: function "function() { throw e; }" threw object "TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy." ("TypeError") expected instance of function "function LinkError() {
+    [native code]
+}" ("LinkError")
+

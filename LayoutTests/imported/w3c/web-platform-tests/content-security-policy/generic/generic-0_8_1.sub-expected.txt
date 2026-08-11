@@ -1,0 +1,5 @@
+test wildcard host name matching (asterisk as part of a subdomain is not accepted)
+
+
+PASS Wildcard host matching works.
+

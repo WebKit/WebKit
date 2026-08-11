@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!-- An out-of-process iframe with a 2D translate must render its full content: the
+     coverage clamp projects the embedder-visible rect back into child coordinates,
+     and a pure translation is exactly the term that was mishandled for offset frames. -->
+<head><meta name="fuzzy" content="maxDifference=112; totalPixels=900"/>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+onmessage = (event) => {
+    if (window.testRunner && event.data == "onload")
+        setTimeout(() => testRunner.notifyDone(), 100);
+};
+</script>
+</head>
+<body style="margin:0;background:blue">
+<iframe src="http://localhost:8000/site-isolation/resources/green-background.html" frameborder=0
+    style="position:absolute; border:0; left:0; top:0; width:200px; height:150px;
+           transform:translate(220px,180px); transform-origin:0 0"></iframe>
+</body>

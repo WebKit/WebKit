@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 20px; }
+    div {
+        margin: 1em;
+        padding: 1em;
+        width: 400px;
+        background: rgba(0, 0, 0, 0.5);
+    }
+</style>
+<body>
+<section id="test">
+    <div style="cursor:pointer;">pointer</div>
+    <div style="cursor:help;">help</div>
+    <div style="cursor:grab;">grab</div>
+    <div style="cursor:not-allowed;">not allowed</div>
+    <div style="cursor:text;">text</div>
+    <div style="cursor:wait;">wait</div>
+    <div style="cursor:vertical-text;">vertical text</div>
+    <div style="cursor:move;">move</div>
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals) {
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+       document.getElementById('test').remove();
+    }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+Testing the StatusSupport behavior with an error.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaController.controls.statusLabel.text is "Error"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,26 @@
+
+PASS Nesting-selector in <scope-end>
+PASS Implicit :scope in <scope-end>
+PASS Relative selectors in <scope-end>
+PASS Nested nesting-selectors within scope's <stylesheet> select inclusive descendants of the scope root
+PASS Nesting-selector within :scope rule
+PASS Nesting-selector within :scope rule (double nested)
+PASS @scope nested within style rule
+PASS Parent pseudo class within scope-start
+PASS Parent pseudo class within body of nested @scope
+PASS Implicit rule within nested @scope
+PASS Implicit rule within nested @scope (proximity)
+PASS Nested :scope inside an :is
+PASS :scope within nested and scoped rule
+PASS :scope within nested and scoped rule (implied &)
+PASS :scope within nested and scoped rule (relative)
+PASS Scoped nested group rule
+PASS Scoped nested within another scope
+PASS Implicit (prelude-less) @scope as a nested group rule
+PASS Insert a nested style rule within @scope, &
+PASS Insert a nested style rule within @scope, :scope
+PASS Insert a CSSNestedDeclarations rule directly in top-level @scope
+PASS Mutating selectorText on outer style rule causes correct inner specificity
+PASS Modifying selectorText invalidates inner scoped rules
+PASS Modifying selectorText invalidates inner scoped rules (nested declarations)
+

@@ -1,0 +1,94 @@
+----------------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXChildrenInNavigationOrder: <array of size 0>
+AXHelp:
+AXParent: <AXStaticText>
+AXSize: NSSize: {731, 36}
+AXTitle:
+AXDescription:
+AXValue: Embroiled in a high-profile corruption investigation, Israels prime minister says he will resign as soon as his party chooses a new leader in September elections.
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: <array of size 0>
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXStaticText>
+AXLanguage:
+AXDOMIdentifier:
+AXDOMClassList: <array of size 0>
+AXFocusableAncestor: <AXStaticText>
+AXEditableAncestor: (null)
+AXHighestEditableAncestor: (null)
+AXVisibleCharacterRange: NSRange: {0, 162}
+AXElementBusy: 0
+AXIntersectionWithSelectionRange: (null)
+AXPath: <AXStaticText>
+
+----------------------
+AXUIElementForTextMarker
+AXTextMarkerRangeForUIElement
+AXLineForTextMarker
+AXTextMarkerRangeForLine
+AXStringForTextMarkerRange
+AXTextMarkerForPosition
+AXBoundsForTextMarkerRange
+AXAttributedStringForTextMarkerRange
+AXAttributedStringForTextMarkerRangeWithOptions
+AXTextMarkerRangeForTextMarkers
+AXTextMarkerRangeForUnorderedTextMarkers
+AXNextTextMarkerForTextMarker
+AXPreviousTextMarkerForTextMarker
+AXLeftWordTextMarkerRangeForTextMarker
+AXRightWordTextMarkerRangeForTextMarker
+AXLeftLineTextMarkerRangeForTextMarker
+AXRightLineTextMarkerRangeForTextMarker
+AXSentenceTextMarkerRangeForTextMarker
+AXParagraphTextMarkerRangeForTextMarker
+AXNextWordEndTextMarkerForTextMarker
+AXPreviousWordStartTextMarkerForTextMarker
+AXNextLineEndTextMarkerForTextMarker
+AXPreviousLineStartTextMarkerForTextMarker
+AXNextSentenceEndTextMarkerForTextMarker
+AXPreviousSentenceStartTextMarkerForTextMarker
+AXNextParagraphEndTextMarkerForTextMarker
+AXPreviousParagraphStartTextMarkerForTextMarker
+AXStyleTextMarkerRangeForTextMarker
+AXLengthForTextMarkerRange
+AXBoundsForRange
+AXStringForRange
+AXUIElementsForSearchPredicate
+AXEndTextMarkerForBounds
+AXStartTextMarkerForBounds
+AXLineTextMarkerRangeForTextMarker
+AXSelectTextWithCriteria
+AXSearchTextWithCriteria
+AXTextOperation
+AXTextMarkerForIndex
+AXTextMarkerIsValid
+AXIndexForTextMarker
+AXRelativeIndexForTextMarker
+AXIntersectTextMarkerRanges
+
+----------------------
+PASS: textChild.boundsForRange(6, 10) was equal or approximately equal to (x: -1, y: -1, w: 60, h: 18).
+PASS: textChild.boundsForRange(1, 35) was equal or approximately equal to (x: -1, y: -1, w: 221, h: 18).
+PASS: textChild.boundsForRange(0, 1) was equal or approximately equal to (x: -1, y: -1, w: 11, h: 18).
+PASS: textChild.boundsForRange(0, 100000) was equal to (x: -1, y: -1, w: 731, h: 36).
+PASS: textChild.boundsForRange(5, 0) was equal or approximately equal to (x: -1, y: -1, w: 2, h: 18).
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+By ISABEL KERSHNER and GRAHAM BOWLEY 3:23 PM ET
+Embroiled in a high-profile corruption investigation, Israels prime minister says he will resign as soon as his party chooses a new leader in September elections.

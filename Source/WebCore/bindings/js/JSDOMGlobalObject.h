@@ -1,0 +1,191 @@
+/*
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+#pragma once
+
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/WeakGCMap.h>
+#include <WebCore/ProcessQualified.h>
+#include <wtf/Compiler.h>
+#include <wtf/Forward.h>
+#include <wtf/ObjectIdentifier.h>
+#include <wtf/RefPtr.h>
+
+namespace JSC {
+
+class ScriptFetchParameters;
+class ScriptFetcher;
+class WebAssemblyCompileOptions;
+enum class JSPromiseRejectionOperation : unsigned;
+
+}
+
+namespace WebCore {
+
+class DOMConstructors;
+class DOMGuardedObject;
+class JSBuiltinInternalFunctions;
+class Event;
+class DOMWrapperWorld;
+class ScriptExecutionContext;
+
+struct JSHandleIdentifierType;
+using WebProcessJSHandleIdentifier = ObjectIdentifier<JSHandleIdentifierType>;
+using JSHandleIdentifier = ProcessQualified<WebProcessJSHandleIdentifier>;
+
+using JSDOMStructureMap = HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::Structure>>;
+using DOMGuardedObjectSet = HashSet<DOMGuardedObject*>;
+
+class WEBCORE_EXPORT JSDOMGlobalObject : public JSC::JSGlobalObject {
+public:
+    struct JSDOMGlobalObjectData;
+
+    using Base = JSC::JSGlobalObject;
+
+    static const JSC::ClassInfo s_info;
+
+    template<typename, JSC::SubspaceAccess>
+    static void subspaceFor(JSC::VM&) { RELEASE_ASSERT_NOT_REACHED(); }
+
+    static void destroy(JSC::JSCell*);
+
+    Lock& gcLock() LIFETIME_BOUND WTF_RETURNS_LOCK(m_gcLock) { return m_gcLock; }
+
+    JSDOMStructureMap& structures() LIFETIME_BOUND WTF_REQUIRES_LOCK(m_gcLock) { return m_structures; }
+    DOMGuardedObjectSet& guardedObjects() LIFETIME_BOUND WTF_REQUIRES_LOCK(m_gcLock) { return m_guardedObjects; }
+    DOMConstructors& constructors() LIFETIME_BOUND { return m_constructors; }
+
+    // No locking is necessary for call sites that do not mutate the containers and are not on a GC thread.
+    const JSDOMStructureMap& structures() const LIFETIME_BOUND WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_structures; }
+    const DOMGuardedObjectSet& guardedObjects() const LIFETIME_BOUND WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_guardedObjects; }
+    const DOMConstructors& constructors() const LIFETIME_BOUND { ASSERT(!Thread::mayBeGCThread()); return m_constructors; }
+
+    // The following don't require grabbing the gcLock first and should only be called when the Heap says that mutators don't have to be fenced.
+    inline JSDOMStructureMap& structures(NoLockingNecessaryTag) LIFETIME_BOUND;
+    inline DOMGuardedObjectSet& guardedObjects(NoLockingNecessaryTag) LIFETIME_BOUND;
+
+    ScriptExecutionContext* scriptExecutionContext() const;
+
+    static String codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
+    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, const JSC::ArgList&);
+    static JSC::Structure* trustedScriptStructure(JSC::JSGlobalObject*);
+
+    // Make binding code generation easier.
+    JSDOMGlobalObject* realm() { return this; }
+
+    DECLARE_VISIT_CHILDREN;
+
+    DOMWrapperWorld& world() { return m_world.get(); }
+    bool worldIsNormal() const { return m_worldIsNormal; }
+    static constexpr ptrdiff_t offsetOfWorldIsNormal() { return OBJECT_OFFSETOF(JSDOMGlobalObject, m_worldIsNormal); }
+
+    JSBuiltinInternalFunctions& builtinInternalFunctions() LIFETIME_BOUND { return m_builtinInternalFunctions; }
+
+    static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, JSC::Exception*);
+    static JSC::JSGlobalObject* deriveShadowRealmGlobalObject(JSC::JSGlobalObject*);
+
+    void clearDOMGuardedObjects() const;
+
+    JSC::JSGlobalProxy& proxy() const { ASSERT(m_proxy); return *m_proxy.get(); }
+
+    JSC::JSFunction* createCrossOriginFunction(JSC::JSGlobalObject*, JSC::PropertyName, JSC::NativeFunction, unsigned length);
+    JSC::GetterSetter* createCrossOriginGetterSetter(JSC::JSGlobalObject*, JSC::PropertyName, JSC::GetValueFunc, JSC::PutValueFunc);
+
+    ~JSDOMGlobalObject();
+
+    static constexpr const JSC::ClassInfo* info() { return &s_info; }
+
+    inline static JSC::Structure* createStructure(JSC::VM&, JSC::JSValue);
+
+    bool allowsJSHandleCreation() const;
+
+    JSC::JSObject* readableStreamByteStrategySize();
+
+    using ScriptErrorCallback = Function<void(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber)>;
+
+    void addScriptErrorCallback(ScriptErrorCallback&&);
+    bool hasScriptErrorCallbacks() const;
+    void invokeScriptErrorCallbacks(const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) const;
+
+    void addJSHandle(JSHandleIdentifier, JSC::JSObject&);
+    void refJSHandle(JSHandleIdentifier);
+    bool derefJSHandle(JSHandleIdentifier);
+    JSC::JSObject* jsHandle(JSHandleIdentifier) const;
+
+protected:
+    JSDOMGlobalObject(JSC::VM&, JSC::Structure*, Ref<DOMWrapperWorld>&&, const JSC::GlobalObjectMethodTable* = nullptr);
+    void finishCreation(JSC::VM&);
+    void finishCreation(JSC::VM&, JSC::JSObject*);
+
+    static void promiseRejectionTracker(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSPromiseRejectionOperation);
+
+#if ENABLE(WEBASSEMBLY)
+    static void compileStreaming(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSValue, std::optional<JSC::WebAssemblyCompileOptions>&&);
+    static void instantiateStreaming(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSValue, JSC::JSObject* importObject, std::optional<JSC::WebAssemblyCompileOptions>&&);
+#endif
+
+    static JSC::Identifier moduleLoaderResolve(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, RefPtr<JSC::ScriptFetcher>, bool useImportMap);
+    static JSC::JSPromise* moduleLoaderFetch(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, RefPtr<JSC::ScriptFetchParameters>, RefPtr<JSC::ScriptFetcher>);
+    static JSC::JSValue moduleLoaderEvaluate(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, RefPtr<JSC::ScriptFetcher>, JSC::JSValue, JSC::JSValue);
+    static JSC::JSPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSString*, RefPtr<JSC::ScriptFetchParameters>, const JSC::SourceOrigin&, bool deferred);
+    static JSC::JSObject* moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, RefPtr<JSC::ScriptFetcher>);
+
+    JSDOMStructureMap m_structures WTF_GUARDED_BY_LOCK(m_gcLock);
+    DOMGuardedObjectSet m_guardedObjects WTF_GUARDED_BY_LOCK(m_gcLock);
+    const UniqueRef<DOMConstructors> m_constructors;
+
+    const Ref<DOMWrapperWorld> m_world;
+    uint8_t m_worldIsNormal;
+    Lock m_gcLock;
+    JSC::WriteBarrier<JSC::JSGlobalProxy> m_proxy;
+
+private:
+    void addBuiltinGlobals(JSC::VM&);
+    friend JSBuiltinInternalFunctions;
+
+    using CrossOriginMapKey = std::pair<JSC::JSGlobalObject*, void*>;
+
+    const UniqueRef<JSBuiltinInternalFunctions> m_builtinInternalFunctions;
+    JSC::WeakGCMap<CrossOriginMapKey, JSC::JSFunction> m_crossOriginFunctionMap;
+    JSC::WeakGCMap<CrossOriginMapKey, JSC::GetterSetter> m_crossOriginGetterSetterMap;
+    JSC::Weak<JSC::JSObject> m_readableStreamByteStrategySize;
+    Vector<ScriptErrorCallback> m_scriptErrorCallbacks;
+
+    struct JSHandleSlot {
+        JSC::WriteBarrier<JSC::JSObject> object;
+        size_t refCount { 0 };
+    };
+    HashMap<JSHandleIdentifier, JSHandleSlot> m_jsHandles WTF_GUARDED_BY_LOCK(m_gcLock);
+};
+
+JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext&, DOMWrapperWorld&);
+WEBCORE_EXPORT JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject&, JSC::CallFrame*);
+JSDOMGlobalObject& legacyActiveGlobalObjectForAccessor(JSC::JSGlobalObject&, JSC::CallFrame*);
+
+template<class JSClass>
+inline JSClass* toJSDOMGlobalObject(JSC::VM&, JSC::JSValue);
+
+} // namespace WebCore

@@ -1,0 +1,3 @@
+
+PASS getSubscriptions returns an empty array when there are no subscriptions
+

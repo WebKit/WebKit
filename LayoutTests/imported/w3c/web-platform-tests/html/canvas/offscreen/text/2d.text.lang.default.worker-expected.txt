@@ -1,0 +1,3 @@
+
+FAIL 2d assert_equals: ctx.lang === 'inherit' (got [undefined], expected inherit[string]) expected (string) "inherit" but got (undefined) undefined
+

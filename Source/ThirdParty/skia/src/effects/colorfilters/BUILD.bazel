@@ -1,0 +1,34 @@
+load("//bazel:skia_rules.bzl", "split_srcs_and_hdrs")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+COLORFILTER_FILES = [
+    "SkBlendModeColorFilter.cpp",
+    "SkBlendModeColorFilter.h",
+    "SkColorFilterBase.cpp",
+    "SkColorFilterBase.h",
+    "SkColorSpaceXformColorFilter.cpp",
+    "SkColorSpaceXformColorFilter.h",
+    "SkComposeColorFilter.cpp",
+    "SkComposeColorFilter.h",
+    "SkGaussianColorFilter.cpp",
+    "SkGaussianColorFilter.h",
+    "SkMatrixColorFilter.cpp",
+    "SkMatrixColorFilter.h",
+    "SkRuntimeColorFilter.cpp",
+    "SkRuntimeColorFilter.h",
+    "SkTableColorFilter.cpp",
+    "SkTableColorFilter.h",
+    "SkWorkingFormatColorFilter.cpp",
+    "SkWorkingFormatColorFilter.h",
+]
+
+split_srcs_and_hdrs(
+    name = "colorfilter",
+    files = COLORFILTER_FILES,
+    visibility = ["//src/effects:__pkg__"],
+)

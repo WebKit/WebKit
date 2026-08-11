@@ -1,0 +1,5 @@
+
+PASS Same-origin popup with structured coop unsafe-none
+PASS Same-origin popup with structured coop same-origin
+PASS Same-origin popup with structured coop same-origin-allow-popups
+

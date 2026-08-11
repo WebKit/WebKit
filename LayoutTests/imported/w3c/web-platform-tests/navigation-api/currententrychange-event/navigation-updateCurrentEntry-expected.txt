@@ -1,0 +1,3 @@
+
+PASS currententrychange fires for navigation.updateCurrentEntry()
+

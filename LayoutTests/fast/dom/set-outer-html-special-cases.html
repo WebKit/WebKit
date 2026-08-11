@@ -1,0 +1,26 @@
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+    description("Tests some special cases of the outerHTML setter.");
+    function runTest()
+    {
+        // Parent does not need to be a HTML element.
+        document.getElementById('testSVG').outerHTML = '<g></g>';
+        shouldBeEqualToString("document.getElementById('svgElement').innerHTML", "<g></g>");
+
+        // We should throw a NoModificationAllowedError if the parent is a Document.
+        shouldThrowErrorName("document.documentElement.outerHTML = ''", "NoModificationAllowedError");
+
+        // Setting outerHTML on an element with no parent is a no-op per the specification.
+        a = document.createElement("a");
+        shouldBe("a.parentNode", "null");
+        shouldNotThrow("a.outerHTML = ''");
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svgElement"><symbol id="testSVG"></symbol></svg>
+</body>
+</html>
+

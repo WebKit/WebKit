@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Permission policy 'Geolocation' check failed for document with origin ''.
+Tests that navigator.geolocation.getCurrentPosition() returns error PERMISSION_DENIED when called from a document in a sandboxed iframe.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS error.code is error.PERMISSION_DENIED.
+PASS error.message is "Origin does not have permission to use Geolocation service".
+

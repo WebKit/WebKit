@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css" />
+<style>
+.spacer {
+  height: 40px;
+  background: lightgray;
+}
+.target {
+  font-family: Ahem;
+  font-size: 40px;
+  line-height: 1;
+}
+rt {
+  /* The Ruby annotation positioning is UA-dependent. In order to ref-test the
+     trimming of parts above the ascent, hide the Ruby annotation. */
+  color: transparent;
+}
+</style>
+<div class="spacer"></div>
+<div class="target">A <ruby style="ruby-position: over">BASE<rt>RUBY</rt></ruby> BASE B</div>
+<div class="spacer"></div>

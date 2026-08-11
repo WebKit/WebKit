@@ -1,0 +1,6 @@
+email with leading whitespace:
+number with trailing incomplete exponent:
+
+PASS Visible value and validity should not be affected when assigning to the defaultValue property for type=email.
+PASS Visible value and validity should not be affected when assigning to the defaultValue property for type=number.
+

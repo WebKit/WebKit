@@ -1,0 +1,22 @@
+
+PASS Same-origin script
+PASS Same-origin script: sec-fetch-dest
+PASS Same-origin script: sec-fetch-mode
+PASS Same-origin script: sec-fetch-site
+PASS Same-origin script: sec-fetch-user
+PASS Same-site script
+PASS Same-site script: sec-fetch-dest
+PASS Same-site script: sec-fetch-mode
+PASS Same-site script: sec-fetch-site
+PASS Same-site script: sec-fetch-user
+PASS Cross-site script
+PASS Cross-site script: sec-fetch-dest
+PASS Cross-site script: sec-fetch-mode
+PASS Cross-site script: sec-fetch-site
+PASS Cross-site script: sec-fetch-user
+PASS Same-origin CORS script
+PASS Same-origin CORS script: sec-fetch-dest
+PASS Same-origin CORS script: sec-fetch-mode
+PASS Same-origin CORS script: sec-fetch-site
+PASS Same-origin CORS script: sec-fetch-user
+

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")/../glib/dependencies/dnf"
+
+# NOTE: This appends the list in glib/dependencies/dnf
+PACKAGES+=(
+    # These are dependencies necessary for building WebKitWPE.
+    libicu-devel
+    libxml2-devel
+    qt6-qtdeclarative-devel
+    zlib-devel
+
+    # These are dependencies necessary for running tests.
+    python-gobject-base
+
+    # These are dependencies necessary for building the jhbuild.
+    libxkbcommon-devel
+    libXrandr-devel
+    libunwind-devel
+
+    # These are dependencies necessary for building Cog.
+    libportal-devel
+    libportal-gtk4-devel
+    xcb-util-cursor-devel
+)

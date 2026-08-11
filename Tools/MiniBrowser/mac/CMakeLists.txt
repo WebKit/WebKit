@@ -1,0 +1,98 @@
+set(MINIBROWSER_DIR "${TOOLS_DIR}/MiniBrowser/mac")
+
+find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
+
+set(PRODUCT_BUNDLE_IDENTIFIER "org.WebKit.MiniBrowser")
+
+#FIXME: This should not need WEBCORE_EXPORT defined.  This means we are including WebCore headers, and we should not.
+add_definitions("-include MiniBrowser_Prefix.pch -DWEBCORE_EXPORT=")
+
+set(MiniBrowser_SOURCES
+    ${MINIBROWSER_DIR}/AppDelegate.m
+    ${MINIBROWSER_DIR}/BrowserWindowController.m
+    ${MINIBROWSER_DIR}/ExtensionManagerWindowController.m
+    ${MINIBROWSER_DIR}/HistoryButton.m
+    ${MINIBROWSER_DIR}/SettingsController.m
+    ${MINIBROWSER_DIR}/WK1BrowserWindowController.m
+    ${MINIBROWSER_DIR}/WK2BrowserWindowController.m
+    ${MINIBROWSER_DIR}/main.m
+    ${TOOLS_DIR}/MiniBrowser/MBToolbarItem.m
+)
+
+set(MiniBrowser_INCLUDE_DIRECTORIES
+    ${WTF_FRAMEWORK_HEADERS_DIR}
+    ${CMAKE_SOURCE_DIR}/Source
+    ${MINIBROWSER_DIR}
+)
+if (NOT USE_FRAMEWORK_BUNDLES)
+    list(APPEND MiniBrowser_INCLUDE_DIRECTORIES
+        ${WebKit_FRAMEWORK_HEADERS_DIR}
+        ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
+        ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+        ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
+        ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+    )
+endif ()
+
+set(MiniBrowser_LIBRARIES
+    ${SECURITYINTERFACE_LIBRARY}
+    "-framework PDFKit"
+    "-framework QuartzCore"
+    "-framework UniformTypeIdentifiers"
+    "-framework UserNotifications"
+    WebKit::WebKit
+    WebKit::WebKitLegacy
+)
+
+set(CMAKE_EXE_LINKER_FLAGS "-framework Cocoa")
+
+set(EXECUTABLE_NAME MiniBrowser)
+set(PRODUCT_NAME MiniBrowser)
+
+set(MiniBrowser_Contents_Directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MiniBrowser.app/Contents)
+file(MAKE_DIRECTORY ${MiniBrowser_Contents_Directory}/Resources)
+add_custom_command(OUTPUT ${MiniBrowser_Contents_Directory}/Resources/BrowserWindow.nib
+    COMMAND ibtool --compile ${MiniBrowser_Contents_Directory}/Resources/BrowserWindow.nib ${MINIBROWSER_DIR}/BrowserWindow.xib VERBATIM)
+add_custom_command(OUTPUT ${MiniBrowser_Contents_Directory}/Resources/ExtensionManagerWindowController.nib
+    COMMAND ibtool --compile ${MiniBrowser_Contents_Directory}/Resources/ExtensionManagerWindowController.nib ${MINIBROWSER_DIR}/ExtensionManagerWindowController.xib VERBATIM)
+add_custom_command(OUTPUT ${MiniBrowser_Contents_Directory}/Resources/MainMenu.nib
+    COMMAND ibtool --compile ${MiniBrowser_Contents_Directory}/Resources/MainMenu.nib ${MINIBROWSER_DIR}/MainMenu.xib VERBATIM)
+add_custom_target(MiniBrowserNibs ALL DEPENDS
+    ${MiniBrowser_Contents_Directory}/Resources/BrowserWindow.nib
+    ${MiniBrowser_Contents_Directory}/Resources/ExtensionManagerWindowController.nib
+    ${MiniBrowser_Contents_Directory}/Resources/MainMenu.nib
+)
+
+include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
+add_executable(MiniBrowser MACOSX_BUNDLE ${MiniBrowser_SOURCES})
+target_compile_options(MiniBrowser PRIVATE -fobjc-arc)
+# FIXME: Remove once source files are fixed. https://bugs.webkit.org/show_bug.cgi?id=312034
+WEBKIT_ADD_TARGET_CXX_FLAGS(MiniBrowser -Wno-unused-parameter)
+set_target_properties(MiniBrowser PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${MINIBROWSER_DIR}/Info.plist)
+target_link_libraries(MiniBrowser ${MiniBrowser_LIBRARIES})
+add_dependencies(MiniBrowser MiniBrowserNibs)
+set(MiniBrowser_XPC_SERVICES WebProcess NetworkProcess GPUProcess)
+if (TARGET WebProcessEnhancedSecurity)
+    list(APPEND MiniBrowser_XPC_SERVICES WebProcessEnhancedSecurity WebProcessCaptivePortal)
+endif ()
+foreach (_service IN LISTS MiniBrowser_XPC_SERVICES)
+    set_property(TARGET MiniBrowser APPEND PROPERTY LINK_DEPENDS $<TARGET_FILE:${_service}>)
+endforeach ()
+
+set(MiniBrowser_CODE_SIGN_ENTITLEMENTS ${MINIBROWSER_DIR}/../MiniBrowser.entitlements)
+_WEBKIT_ADD_CODE_SIGN(MiniBrowser)
+
+# SIP strips DYLD_* for XPC children, so they load system WebKit -> version mismatch crash.
+# Set __XPC_DYLD_FRAMEWORK_PATH so XPC services find this build's frameworks.
+# Mirrors Tools/Scripts/webkitdirs.pm:setupMacWebKitEnvironment().
+file(WRITE ${CMAKE_BINARY_DIR}/run-minibrowser
+"#!/bin/bash
+DIR=\"\$(cd \"\$(dirname \"\${BASH_SOURCE[0]}\")\" && pwd)\"
+export DYLD_FRAMEWORK_PATH=\"\$DIR\${DYLD_FRAMEWORK_PATH:+:\$DYLD_FRAMEWORK_PATH}\"
+export __XPC_DYLD_FRAMEWORK_PATH=\"\$DIR\"
+export DYLD_LIBRARY_PATH=\"\$DIR\${DYLD_LIBRARY_PATH:+:\$DYLD_LIBRARY_PATH}\"
+export __XPC_DYLD_LIBRARY_PATH=\"\$DIR\"
+exec \"\$DIR/MiniBrowser.app/Contents/MacOS/MiniBrowser\" \"\$@\"
+")
+file(CHMOD ${CMAKE_BINARY_DIR}/run-minibrowser PERMISSIONS
+    OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)

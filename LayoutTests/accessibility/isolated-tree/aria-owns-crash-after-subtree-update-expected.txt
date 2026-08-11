@@ -1,0 +1,20 @@
+This tests that mixed DOM + aria-owns cycles do not cause stack-overflow recursion in updateOwnedChildrenIfNecessary().
+
+PASS: typeof t1a.childrenCount === 'number'
+PASS: typeof t2a.childrenCount === 'number'
+PASS: typeof t3self.childrenCount === 'number'
+PASS: typeof t4a.childrenCount === 'number'
+PASS: did not stack overflow.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a
+b
+c
+child of t2-a
+b
+self
+a-mutated
+b
+c

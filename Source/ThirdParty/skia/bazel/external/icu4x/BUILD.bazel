@@ -1,0 +1,12 @@
+load("@rules_rust//rust:defs.bzl", "rust_static_library")
+
+# Linked rust code
+rust_static_library(
+    name = "icu4x_rust",
+    srcs = [
+        "src/lib.rs",
+    ],
+    deps = [
+        "@crates//:icu_capi",
+    ],
+)

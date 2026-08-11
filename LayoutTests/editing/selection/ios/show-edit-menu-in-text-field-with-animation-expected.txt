@@ -1,0 +1,9 @@
+Verifies that edit menu can be shown when tapping in a text field with a looping animation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Revealed edit menu
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

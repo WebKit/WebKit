@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+#bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    background: silver;
+}
+
+#field {
+    font-size: 24px;
+    width: 90%;
+}
+
+#spacer {
+    height: 5000px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description(`Verifies that dragging a selection handle inside a text field that lives in a
+        position: fixed container does not autoscroll the main frame. To run manually: scroll to the
+        very bottom of the page, focus the text field pinned to the top, select a word, then drag a
+        selection handle up to the top edge of the viewport and hold. The page should stay put.`);
+
+    const field = document.getElementById("field");
+    await UIHelper.activateElement(field);
+
+    window.scrollBy(0, document.documentElement.scrollHeight);
+    await UIHelper.ensurePresentationUpdate();
+
+    field.select();
+    await UIHelper.waitForSelectionToAppear();
+
+    offsetBefore = pageYOffset;
+    shouldBeTrue("offsetBefore > 0");
+
+    const grabber = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(grabber.x, grabber.y)
+        .wait(0.25)
+        .move(grabber.x + 100, grabber.y, 0.75)
+        .end()
+        .wait(0.5)
+        .takeResult());
+
+    offsetAfter = pageYOffset;
+    verticalMovement = Math.abs(offsetAfter - offsetBefore);
+    shouldBeTrue("verticalMovement <= 1");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div id="bar"><input inputmode="none" id="field" value="Hello world"></div>
+    <div id="spacer"></div>
+    <p id="description"></p>
+    <p id="console"></p>
+</body>
+</html>

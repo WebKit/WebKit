@@ -1,0 +1,5 @@
+name: basic-classify
+test:
+  prompt: "What type of commit is 312302@main"
+validation:
+  prompt: "312302@main is a Gardening commit"

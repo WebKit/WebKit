@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cache Storage in stopped context</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function load_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.src = url;
+        frame.onload = resolve;
+        document.body.appendChild(frame);
+    });
+}
+
+promise_test(async test => {
+    const frame = await load_iframe('resources/cache-in-stopped-context-iframe.html');
+    await new Promise(resolve => setTimeout(resolve, 50));
+}, "Make sure cache.put promise does not resolve in detached context");
+</script>
+</body>
+<script>
+</script>

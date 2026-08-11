@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+
+    <style>
+    	video { height: 200px; }
+    </style>
+
+    <script>
+    window.addEventListener('load', event => {
+    	runTest().then(endTest).catch(failTest);
+    });
+
+    function firstCueElement() {
+        return internals.shadowRoot(video).querySelector('[useragentpart="-internal-cue-background"]');
+    }
+
+    async function runTest() {
+        consoleWrite("");
+        run("internals.setCaptionDisplayMode('AlwaysOn')");
+        run("internals.setCaptionsStyleSheetOverride('video::cue { font-size: 20px; }')");
+
+        findMediaElement();
+        video.src = findMediaFile('video', '../content/test');
+        await waitFor(video, 'canplaythrough', true);
+
+        run('video.textTracks[0].mode = "showing"');
+        await testExpectedEventually('video.textTracks[0].cues.length', '0', '>');
+
+        run('video.currentTime = 0.5');
+        await waitFor(video, 'seeked', true);
+
+        await testExpectedEventually('firstCueElement()', null, '!=');
+        await testExpected(`window.getComputedStyle(firstCueElement()).fontSize`, '20px');
+    }
+    </script>
+</head>
+<body>
+    <video>
+        <track src="captions-webvtt/styling.vtt" kind="captions">
+    </video>
+</body>
+</html>

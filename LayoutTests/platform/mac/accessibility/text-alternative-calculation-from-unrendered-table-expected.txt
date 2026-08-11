@@ -1,0 +1,9 @@
+This tests text alternative calculation from an unrendered table.
+
+Test 1 - W3C Name: cell 1 cell 2 cell 3
+Test 2 - Custom content: description: cell 1 cell 2 cell 3
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

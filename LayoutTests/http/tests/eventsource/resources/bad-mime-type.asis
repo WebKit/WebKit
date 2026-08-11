@@ -1,0 +1,3 @@
+Content-Type: text/bogus
+
+data: should not trigger an event

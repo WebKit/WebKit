@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    -webkit-text-size-adjust: none;
+}
+
+.container {
+    color: white;
+    text-align: center;
+    opacity: 0.75;
+    position: fixed;
+}
+
+#top-box {
+    width: 300px;
+    height: 300px;
+    top: 50px;
+    left: 50px;
+    background: green;
+    pointer-events: none;
+}
+
+#small {
+    width: 39px;
+    height: 39px;
+    top: 21px;
+    left: 21px;
+    background: blue;
+}
+
+#occluded-box {
+    width: 300px;
+    height: 300px;
+    top: 150px;
+    left: 150px;
+    background: red;
+}
+
+#background-paragraph {
+    width: 100%;
+    height: 100%;
+    background: orange;
+    bottom: 0;
+    left: 0;
+}
+
+#narrow-paragraph {
+    width: 500px;
+    height: 100%;
+    bottom: 0;
+    left: 0;
+    background: blueviolet;
+    
+}
+
+</style>
+</head>
+<body>
+    <div id="background-paragraph" class="container">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero id faucibus nisl tincidunt eget nullam non nisi est. A cras semper auctor neque vitae tempus quam pellentesque nec. Amet risus nullam eget felis eget nunc lobortis mattis aliquam. Sagittis purus sit amet volutpat consequat mauris nunc congue. Dictum fusce ut placerat orci nulla pellentesque dignissim enim. Laoreet non curabitur gravida arcu ac. Lorem ipsum dolor sit amet. Ultrices in iaculis nunc sed augue lacus viverra. Eu feugiat pretium nibh ipsum consequat nisl vel. Neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing. Semper quis lectus nulla at volutpat diam ut. Bibendum ut tristique et egestas quis ipsum suspendisse ultrices. Rhoncus dolor purus non enim praesent elementum facilisis leo. Ultrices vitae auctor eu augue ut lectus arcu bibendum at.</p>
+    </div>
+    <div id="narrow-paragraph" class="container">
+        <p>Here’s to the crazy ones. <strong>The misfits.</strong> The rebels. The troublemakers.
+    </div>
+    <div id="occluded-box" class="container">
+        Occluded box
+    </div>
+    <div id="small" class="container">
+        Too small
+    </div>
+    <div id="top-box" class="container">
+        Top box
+    </div>
+</body>
+</html>

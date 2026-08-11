@@ -1,0 +1,5 @@
+
+PASS Removing the <script type=speculationrules> must cancel the prefetch
+PASS Removing a rule from the <script type=speculationrules> must not cancel the prefetch
+PASS Adding a rule to the <script type=speculationrules> must not prefetch
+

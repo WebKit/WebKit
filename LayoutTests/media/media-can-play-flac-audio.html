@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="video-test.js"></script>
+        <script>
+            function start()
+            {
+                audio = document.getElementsByTagName('audio')[0];
+
+                testExpected("audio.canPlayType('audio/x-flac')", "maybe");
+                testExpected("audio.canPlayType('audio/flac')", "maybe");
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <audio controls></audio>
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method with multiple .flac MIME types.</p>
+        <p>These tests may be expected to fail if the WebKit port does not support the format.</p>
+    </body>
+</html>

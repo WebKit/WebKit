@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that a fixed size table (200px) can accommodate fixed size content (100px + 100px) without wrapping.</title> 
+</head>
+<body>
+<table width="200" cellspacing="0" cellpadding="0">
+<tr><td>
+  <table width="100" align="left" cellspacing="0" cellpadding="0"><tr><td><div style="outline: 1px solid green; width: 100px; height: 100px;"></div></td></tr></table>
+  <table width="100"><tr><td><div style="outline: 1px solid green; width: 10px; height: 10px;"></div></td></tr></table>
+</td></tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that changing page scale factor does not fire a spurious resize event.");
+jsTestIsAsync = true;
+
+var resizeCount = 0;
+
+window.addEventListener("resize", function() {
+    resizeCount++;
+});
+
+window.onload = function() {
+    if (window.testRunner)
+        testRunner.setPageScaleFactor(2, 0, 0);
+
+    requestAnimationFrame(function() {
+        setTimeout(function() {
+            shouldBe("resizeCount", "0");
+            finishJSTest();
+        }, 0);
+    });
+};
+</script>
+</body>
+</html>

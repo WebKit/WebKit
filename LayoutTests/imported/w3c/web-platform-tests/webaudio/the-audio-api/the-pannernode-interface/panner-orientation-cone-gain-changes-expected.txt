@@ -1,0 +1,4 @@
+
+PASS Changing orientation via AudioParam.value updates the cone gain
+PASS Changing orientation via setOrientation() updates the cone gain
+

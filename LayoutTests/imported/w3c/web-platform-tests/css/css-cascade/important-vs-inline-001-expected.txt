@@ -1,0 +1,8 @@
+Test passes if this text is semi-transparent.
+
+
+PASS CSS Cascade: inline style loses to !important
+PASS CSS Cascade: inline style loses to !important 1
+PASS CSS Cascade: inline style loses to !important 2
+PASS CSS Cascade: inline style loses to !important 3
+

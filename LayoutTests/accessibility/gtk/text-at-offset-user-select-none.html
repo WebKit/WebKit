@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+<div style='-webkit-user-select:none'>
+<a href='https://www.webkitgtk.org' id='link'>text inside the link<br/>second line</a>
+</div>
+<span>Text outside the block</span>
+<div id="console"></div>
+<script>
+description("This tests the ability to get element text inside a link when user-select:none is set.");
+if (window.accessibilityController) {
+    var link = accessibilityController.accessibleElementById("link");
+
+    shouldBe("link.characterAtOffset(0)", "'t, 0, 1'");
+    shouldBe("link.characterAtOffset(6)", "'n, 6, 7'");
+    shouldBe("link.wordAtOffset(0)", "'text , 0, 5'");
+    shouldBe("link.wordAtOffset(6)", "'inside , 5, 12'");
+    shouldBe("link.lineAtOffset(0)", "'text inside the link\\n, 0, 21'");
+    shouldBe("link.lineAtOffset(23)", "'second line, 21, 32'");
+
+    var secondLineRuns = link.attributedStringForRange(21, 11);
+    shouldBeTrue("secondLineRuns.includes(\"Range attributes for 'second line'\")");
+}
+</script>
+</body>
+</html>

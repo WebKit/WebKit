@@ -1,0 +1,44 @@
+// Copyright (C) 2009-2023 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "../../../Configurations/Version.xcconfig"
+
+ENABLE_LLVM_PROFILE_GENERATION_DEFINES = $(ENABLE_LLVM_PROFILE_GENERATION_DEFINES_$(ENABLE_LLVM_PROFILE_GENERATION));
+ENABLE_LLVM_PROFILE_GENERATION_DEFINES_YES = ENABLE_LLVM_PROFILE_GENERATION=1;
+
+// IR PGO profile generation flags
+WK_PGO_GEN_FLAGS = $(WK_PGO_GEN_FLAGS_$(ENABLE_LLVM_PROFILE_GENERATION));
+WK_PGO_GEN_FLAGS_YES = -fprofile-generate;
+
+GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) $(ENABLE_LLVM_PROFILE_GENERATION_DEFINES);
+GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+OTHER_CFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/ -D__STDC_WANT_LIB_EXT1__=1 $(WK_PGO_GEN_FLAGS);
+HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" $(HEADER_SEARCH_PATHS);
+PRODUCT_NAME = JavaScriptCore;
+
+// Remove below workaround once fix from rdar://146134116 is universally available in all supported configurations.
+LLVM_PROFILE_GENERATION_OTHER_LD_FLAGS = $(LLVM_PROFILE_GENERATION_OTHER_LD_FLAGS_$(ENABLE_LLVM_PROFILE_GENERATION))
+LLVM_PROFILE_GENERATION_OTHER_LD_FLAGS_YES = -Wl,-dirty_data_list,/dev/null;
+
+OTHER_LDFLAGS = $(inherited) $(LLVM_PROFILE_GENERATION_OTHER_LD_FLAGS) $(WK_PGO_GEN_FLAGS);

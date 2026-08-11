@@ -1,0 +1,3 @@
+
+PASS Render pass with destroyed depth-stencil texture and no color attachments should not crash
+

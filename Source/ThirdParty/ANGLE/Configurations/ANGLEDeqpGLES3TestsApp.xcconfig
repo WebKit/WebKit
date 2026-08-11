@@ -1,0 +1,48 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "ANGLEDeqp.xcconfig"
+
+PRODUCT_NAME = ANGLEDeqpGLES3TestsApp;
+PRODUCT_BUNDLE_IDENTIFIER = org.webkit.$(PRODUCT_NAME:rfc1034identifier);
+GCC_PREPROCESSOR_DEFINITIONS = ANGLE_DEQP_GLES3_TESTS $(inherited);
+HEADER_SEARCH_PATHS = $(ANGLE_HEADER_PATH_PREFIX)/src/tests $(inherited);
+
+SKIP_INSTALL[sdk=macosx*] = YES;
+WRAPPER_EXTENSION = app;
+INFOPLIST_FILE = $(SRCROOT)/WebKit/ANGLEEnd2EndTestsAppInfo.plist;
+TARGETED_DEVICE_FAMILY = 1,2,3,4,7;
+
+ANGLE_OTHER_LDFLAGS = -framework UIKit $(DEQP_LINK_FRAMEWORKS) $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME)) -lz -Wl,-e,_ios_main;
+ANGLE_OTHER_LDFLAGS_maccatalyst = -framework IOKit;
+
+// The Xcode 16+ debug-dylib stub ignores -e, which would strand UIKit init.
+ENABLE_DEBUG_DYLIB = NO;
+
+CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*] = Configurations/ANGLEEnd2EndTestsApp-iOS-simulator.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]        = Configurations/ANGLEEnd2EndTestsApp-iOS.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=appletv*]         = Configurations/ANGLEEnd2EndTestsApp-iOS.entitlements;
+CODE_SIGN_ENTITLEMENTS[sdk=xr*]              = Configurations/ANGLEEnd2EndTestsApp-iOS.entitlements;
+
+WARNING_CFLAGS = $(inherited) -Wno-global-constructors;
+GCC_WARN_64_TO_32_BIT_CONVERSION = NO;

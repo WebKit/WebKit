@@ -1,0 +1,6 @@
+
+PASS Loose id
+PASS Strict id
+PASS Loose name
+PASS Strict name
+

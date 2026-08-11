@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<script>
+function startTest() {
+  document.body.offsetHeight;
+
+  var index = 0;
+  PerfTestRunner.measureRunsPerSecond({run: function() {
+    document.getElementById("item").style.height = ++index % 2 ?  "10px" : "50px";
+    document.body.offsetHeight;
+  }});
+}
+</script>
+</head>
+<body onload="startTest()">
+  <div style="display: grid; grid-template-columns: auto auto; grid-template-rows: auto;">
+    <div id="item" style="width: 50px; height: 50px; background-color: blue;"></div>
+    <div style="display: grid; grid-column: 2;">
+      <div style="display: grid;">
+        <div style="display: grid;">
+          <div style="display: grid;">
+            <div style="display: grid;">
+              <div style="display: grid;"></div>
+              <div style="display: grid;">
+                <div style="display: grid;">
+                  <div style="display: grid;">
+                    <div style="display: grid;">
+                      <div style="display: grid;">
+                        <div style="display: grid;">
+                          <div style="display: grid;">
+                            <div style="display: grid;">
+                              <div style="display: grid;">
+                                <div style="display: grid;"></div>
+                                <div style="display: grid;">
+                                  <div style="display: grid;">
+                                    <div style="display: grid;">
+                                      <div style="display: grid;">
+                                        <div style="display: grid;">
+                                          <div style="width: 100px; height: 800px; background-color: green;"></div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

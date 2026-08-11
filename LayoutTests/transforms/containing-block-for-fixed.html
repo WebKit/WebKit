@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<style>
+    body {
+        height: 1000px;
+        padding-top: 300px;
+    }
+    body > div {
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+        background: red;
+    }
+    body > div > div {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        background: green;
+    }
+</style>
+You should see three green boxes.<br>
+
+<div style="transform:scale(1)"><div></div></div>
+<div style="perspective:0"><div></div></div>
+<div style="transform-style:preserve-3d"><div></div></div>
+
+<script>
+    // Scroll on load to test fixed positioning.
+    scrollTo(0, 300);
+</script>

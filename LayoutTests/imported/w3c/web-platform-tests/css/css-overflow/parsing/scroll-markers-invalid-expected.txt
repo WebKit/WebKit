@@ -1,0 +1,7 @@
+
+PASS e.style['scroll-marker-group'] = "10" should not set the property value
+PASS e.style['scroll-marker-group'] = "true" should not set the property value
+PASS e.style['scroll-marker-group'] = "default" should not set the property value
+PASS e.style['scroll-marker-group'] = "set" should not set the property value
+PASS e.style['scroll-marker-group'] = "before, after" should not set the property value
+

@@ -1,0 +1,8 @@
+
+PASS Consuming the body of a resource with bad br content with arrayBuffer() should reject
+PASS Consuming the body of a resource with bad br content with blob() should reject
+PASS Consuming the body of a resource with bad br content with bytes() should reject
+PASS Consuming the body of a resource with bad br content with formData() should reject
+PASS Consuming the body of a resource with bad br content with json() should reject
+PASS Consuming the body of a resource with bad br content with text() should reject
+

@@ -1,0 +1,259 @@
+/*
+ * Copyright (C) 2001 Peter Kelly (pmk@post.com)
+ * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
+ * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "KeyboardEvent.h"
+
+#include "Document.h"
+#include "Editor.h"
+#include "EventHandler.h"
+#include "EventNames.h"
+#include "LocalDOMWindow.h"
+#include "LocalFrameInlines.h"
+#include "PlatformKeyboardEvent.h"
+#include "WindowsKeyboardCodes.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(KeyboardEvent);
+
+static inline const AtomString& eventTypeForKeyboardEventType(PlatformEvent::Type type)
+{
+    switch (type) {
+    case PlatformEvent::Type::KeyUp:
+        return eventNames().keyupEvent;
+    case PlatformEvent::Type::RawKeyDown:
+        return eventNames().keydownEvent;
+    case PlatformEvent::Type::Char:
+        return eventNames().keypressEvent;
+    case PlatformEvent::Type::KeyDown:
+        // The caller should disambiguate the combined event into RawKeyDown or Char events.
+        break;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return eventNames().keydownEvent;
+}
+
+static inline int NODELETE windowsVirtualKeyCodeWithoutLocation(int keycode)
+{
+    switch (keycode) {
+    case VK_LCONTROL:
+    case VK_RCONTROL:
+        return VK_CONTROL;
+    case VK_LSHIFT:
+    case VK_RSHIFT:
+        return VK_SHIFT;
+    case VK_LMENU:
+    case VK_RMENU:
+        return VK_MENU;
+    default:
+        return keycode;
+    }
+}
+
+static inline KeyboardEvent::KeyLocationCode NODELETE keyLocationCode(const PlatformKeyboardEvent& key)
+{
+    if (key.isKeypad())
+        return KeyboardEvent::DOM_KEY_LOCATION_NUMPAD;
+
+    switch (key.windowsVirtualKeyCode()) {
+    case VK_LCONTROL:
+    case VK_LSHIFT:
+    case VK_LMENU: // Left Option/Alt
+    case VK_LWIN: // Left Command/Windows key (Natural keyboard)
+        return KeyboardEvent::DOM_KEY_LOCATION_LEFT;
+    case VK_RCONTROL:
+    case VK_RSHIFT:
+    case VK_RMENU: // Right Option/Alt
+    case VK_RWIN: // Right Windows key (Natural keyboard)
+#if PLATFORM(COCOA)
+    // FIXME: WebCore maps the right command key to VK_APPS even though the USB HID spec.,
+    // <https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf>, states that it
+    // should map to the same key as the right Windows key (VK_RWIN).
+    case VK_APPS: // Right Command
+#endif
+        return KeyboardEvent::DOM_KEY_LOCATION_RIGHT;
+    default:
+        return KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
+    }
+}
+
+inline KeyboardEvent::KeyboardEvent()
+     : UIEventWithKeyState(EventInterfaceType::KeyboardEvent)
+{
+}
+
+static bool viewIsCompositing(WindowProxy* view)
+{
+    if (!view)
+        return false;
+    RefPtr window = dynamicDowncast<LocalDOMWindow>(view->window());
+    if (!window)
+        return false;
+    RefPtr localFrame = window->frame();
+    return localFrame && localFrame->editor().hasComposition();
+}
+
+inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<WindowProxy>&& view)
+    : UIEventWithKeyState(EventInterfaceType::KeyboardEvent, eventTypeForKeyboardEventType(key.type()), CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
+        key.timestamp(), view.copyRef(), 0, key.modifiers(), IsTrusted::Yes)
+    , m_underlyingPlatformEvent(makeUnique<PlatformKeyboardEvent>(key))
+    , m_key(key.key())
+    , m_code(key.code())
+    , m_keyIdentifier(AtomString { key.keyIdentifier() })
+    , m_location(keyLocationCode(key))
+    , m_repeat(key.isAutoRepeat())
+    , m_isComposing(viewIsCompositing(view.get()))
+#if USE(APPKIT) || PLATFORM(IOS_FAMILY)
+    , m_handledByInputMethod(key.handledByInputMethod())
+#endif
+#if USE(APPKIT)
+    , m_keypressCommands(key.commands())
+#endif
+{
+}
+
+inline KeyboardEvent::KeyboardEvent(const AtomString& eventType, const Init& initializer, IsTrusted isTrusted)
+    : UIEventWithKeyState(EventInterfaceType::KeyboardEvent, eventType, initializer, isTrusted)
+    , m_key(initializer.key)
+    , m_code(initializer.code)
+    , m_keyIdentifier(initializer.keyIdentifier)
+    , m_location(initializer.location)
+    , m_repeat(initializer.repeat)
+    , m_isComposing(initializer.isComposing)
+    , m_charCode(initializer.charCode)
+    , m_keyCode(initializer.keyCode)
+    , m_which(initializer.which)
+{
+}
+
+KeyboardEvent::~KeyboardEvent() = default;
+
+Ref<KeyboardEvent> KeyboardEvent::create(const PlatformKeyboardEvent& platformEvent, RefPtr<WindowProxy>&& view)
+{
+    return adoptRef(*new KeyboardEvent(platformEvent, WTF::move(view)));
+}
+
+Ref<KeyboardEvent> KeyboardEvent::createForBindings()
+{
+    return adoptRef(*new KeyboardEvent);
+}
+
+Ref<KeyboardEvent> KeyboardEvent::create(const AtomString& type, const Init& initializer, IsTrusted isTrusted)
+{
+    return adoptRef(*new KeyboardEvent(type, initializer, isTrusted));
+}
+
+void KeyboardEvent::initKeyboardEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&& view,
+    const AtomString& keyIdentifier, unsigned location, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+{
+    if (isBeingDispatched())
+        return;
+
+    initUIEvent(type, canBubble, cancelable, WTF::move(view), 0);
+
+    m_keyIdentifier = keyIdentifier;
+    m_location = location;
+
+    setModifierKeys(ctrlKey, altKey, shiftKey, metaKey);
+
+    m_charCode = std::nullopt;
+    m_isComposing = false;
+    m_keyCode = std::nullopt;
+    m_repeat = false;
+    m_underlyingPlatformEvent = nullptr;
+    m_which = std::nullopt;
+    m_code = { };
+    m_key = { };
+
+#if PLATFORM(COCOA)
+    m_handledByInputMethod = false;
+    m_keypressCommands = { };
+#endif
+}
+
+int KeyboardEvent::keyCode() const
+{
+    if (m_keyCode)
+        return m_keyCode.value();
+
+    // IE: virtual key code for keyup/keydown, character code for keypress
+    // Firefox: virtual key code for keyup/keydown, zero for keypress
+    // We match IE.
+    if (!m_underlyingPlatformEvent)
+        return 0;
+    if (type() == eventNames().keydownEvent || type() == eventNames().keyupEvent)
+        return windowsVirtualKeyCodeWithoutLocation(m_underlyingPlatformEvent->windowsVirtualKeyCode());
+
+    return charCode();
+}
+
+int KeyboardEvent::keyCodeForKeyDown() const
+{
+    ASSERT(type() == eventNames().keypressEvent);
+    if (m_keyCode)
+        return m_keyCode.value();
+
+    if (!m_underlyingPlatformEvent)
+        return 0;
+
+    return windowsVirtualKeyCodeWithoutLocation(m_underlyingPlatformEvent->windowsVirtualKeyCodeWithoutKeyPressOverride());
+}
+
+int KeyboardEvent::charCode() const
+{
+    if (m_charCode)
+        return m_charCode.value();
+
+    // IE: not supported
+    // Firefox: 0 for keydown/keyup events, character code for keypress
+    // We match Firefox, unless in backward compatibility mode, where we always return the character code.
+    bool backwardCompatibilityMode = false;
+    RefPtr view = this->view();
+    RefPtr window = dynamicDowncast<LocalDOMWindow>(view ? view->window() : nullptr);
+    if (RefPtr frame = window ? window->frame() : nullptr)
+        backwardCompatibilityMode = frame->eventHandler().needsKeyboardEventDisambiguationQuirks();
+
+    if (!m_underlyingPlatformEvent || (type() != eventNames().keypressEvent && !backwardCompatibilityMode))
+        return 0;
+    return m_underlyingPlatformEvent->text().codePointAt(0);
+}
+
+unsigned KeyboardEvent::which() const
+{
+    // Netscape's "which" returns a virtual key code for keydown and keyup, and a character code for keypress.
+    // That's exactly what IE's "keyCode" returns. So they are the same for keyboard events.
+    if (m_which)
+        return m_which.value();
+    return static_cast<unsigned>(keyCode());
+}
+
+FocusEventData KeyboardEvent::focusEventData() const
+{
+    return { type(), keyIdentifier(), altKey() };
+}
+
+} // namespace WebCore

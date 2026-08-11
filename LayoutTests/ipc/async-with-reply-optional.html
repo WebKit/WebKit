@@ -1,0 +1,43 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that async messages can reply with optionals</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ipc.js"></script>
+<body>
+<script>
+async function runTest() {
+    const testerID = 0;
+    const IPCTester_AsyncOptionalExceptionData = IPC.messages.IPCTester_AsyncOptionalExceptionData.name;
+    const IPCTester_AsyncOptionalExceptionDataReply = IPC.messages.IPCTester_AsyncOptionalExceptionDataReply.name;
+
+    for (const processTarget of IPC.processTargets) {
+        // Test starts here.
+        let results = { };
+
+        let connection = IPC.connectionForProcessTarget(processTarget);
+        let result1 = IPC.sendWithPromisedReply(processTarget, testerID, IPCTester_AsyncOptionalExceptionData, [{type: 'bool', value: 0}]);
+        let result2 = IPC.sendWithPromisedReply(processTarget, testerID, IPCTester_AsyncOptionalExceptionData, [{type: 'bool', value: 1}]);
+        let result = await result1;
+        assert_equals(typeof result, "object");
+        assert_equals(typeof result.arguments[0], "undefined");
+        assert_equals(result.arguments[1].type, "String");
+        assert_equals(result.arguments[1].value, "b");
+        result = await result2;
+        assert_equals(typeof result, "object");
+        assert_equals(result.arguments[0].type, "ExceptionData");
+        assert_equals(result.arguments[0].code, "WrongDocumentError");
+        assert_equals(result.arguments[0].message, "m");
+        assert_equals(result.arguments[1].type, "String");
+        assert_equals(result.arguments[1].value, "a");
+    }
+    done();
+}
+
+setup({ single_test: true });
+if (window.IPC)
+    runTest();
+else
+    done();
+
+</script>
+</body>

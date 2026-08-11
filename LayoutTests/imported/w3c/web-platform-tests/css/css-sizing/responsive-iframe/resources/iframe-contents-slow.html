@@ -1,0 +1,17 @@
+<!doctype HTML>
+<head>
+<script>
+window.parent.postMessage('slow-will-block', '*');
+</script>
+<script src="slow.js"></script>
+<style>
+* { margin: 0 }
+#target {
+  background-color: lightBlue;
+  border: orange 10px solid;
+  box-sizing: border-box;
+}
+</style>
+<meta name="responsive-embedded-sizing">
+</head>
+<div id="target" style="width: 100px; height: 400px"></div>

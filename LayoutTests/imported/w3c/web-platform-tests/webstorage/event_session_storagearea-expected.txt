@@ -1,0 +1,5 @@
+event_session_storageArea
+
+
+PASS storageArea property test of session event - session event is fired due to an invocation of the setItem() method.
+

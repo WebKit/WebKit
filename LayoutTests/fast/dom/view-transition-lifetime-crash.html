@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="../../resources/gc.js"></script>
+</head>
+
+<body>
+  <p>This test passes if it does not crash.</p>
+
+  <script>
+    // This allocates a bunch of ViewTransition objects, but nothing references them,
+    // so they should be garbage collected (below).
+    for (let i = 0; i < 100; i++) {
+      let vt = document.startViewTransition();
+
+      // Repeatedly starting new view transitions will cancel the previous view transition and
+      // reject the `ready` promise. If the document visibility is hidden, the view transition
+      // is skipped and the promise is also rejected too.
+      // In any case, we don't want the unhandled promise rejection to show up in the
+      // test output, so catch them but do nothing.
+      vt.ready.catch(e => { });
+    }
+
+    // Trigger GC to deallocate the ViewTransition objects (hopefully)
+    window.gc();
+
+    document.addEventListener("visibilitychange", () => {
+      testRunner.notifyDone();
+    });
+
+    window.internals.setPageVisibility(false);
+
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+  </script>
+</body>
+
+</html>

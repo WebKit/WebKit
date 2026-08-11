@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<body>
+    <p>Test styling of elements using their local name. Matching the name should be case-insensitive for HTML, case-sensitive for XML (specifically SVG in this case).</p>
+    <div id="test-cases">
+        <rect style="width: 100px; height: 100px; background-color: green; border: 1px solid red; display: block; float: left; stroke: purple; fill: blue; stroke: purple; border: 2px dashed lime; fill: yellow; background-color: orange;"></rect>
+        <Rect style="width: 100px; height: 100px; background-color: green; border: 1px solid red; display: block; float: left; stroke: purple; fill: blue; stroke: purple; border: 2px dashed lime; fill: yellow; background-color: orange;"></Rect>
+        <RECT style="width: 100px; height: 100px; background-color: green; border: 1px solid red; display: block; float: left; stroke: purple; fill: blue; stroke: purple; border: 2px dashed lime; fill: yellow; background-color: orange;"></RECT>
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" style="width: 100px; height: 100px; background-color: green; border: 1px solid red; display: block; float: left; stroke: purple; fill: blue;"></rect>
+            <Rect x="100" width="100" height="100" style="width: 100px; height: 100px; background-color: green; border: 1px solid red; display: block; float: left; stroke: purple; fill: blue;"></Rect>
+            <RECT x="200" width="100" height="100" style="width: 100px; height: 100px; background-color: green; border: 1px solid red; display: block; float: left; stroke: purple; fill: blue;"></RECT>
+        </svg>
+    </div>
+</body>
+<script>
+    var svgDocument = new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" style="width: 100px; height: 100px; background-color: green; border: 1px solid red; display: block; float: left; stroke: purple; fill: blue;"></rect><Rect x="100" width="100" height="100" style="stroke: purple; border: 2px dashed lime;"></Rect><RECT x="200" width="100" height="100" style="fill: yellow; background-color: orange;"></RECT></svg>', 'text/xml');
+    var testCases = document.getElementById("test-cases");
+    testCases.appendChild(document.importNode(svgDocument.documentElement, true));
+</script>
+</html>

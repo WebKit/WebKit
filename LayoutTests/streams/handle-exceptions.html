@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async t => {
+    const image = document.createElement("img");
+    const height = image.height;
+    const signal = AbortSignal.timeout(height);
+    const readable = new ReadableStream({
+        cancel: function(r) {
+            try {
+                Object.defineProperty(Promise, Symbol.species, {
+                    value: function(executor) {
+                        eventhandler2();
+                        return new Promise(executor);
+                    }
+                });
+            } catch(e) { }
+            return Promise.resolve();
+        }
+    });
+    const decoder = new TextDecoderStream();
+    const writable = decoder.writable;
+    return promise_rejects_js(t, ReferenceError, readable.pipeTo(writable, { signal: signal, preventClose: true }));
+});
+</script>
+</body>
+</html>

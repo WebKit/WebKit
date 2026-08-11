@@ -1,0 +1,23 @@
+
+PASS Initial color
+PASS remove .test to subject_child
+PASS add .test from subject_child
+PASS remove .test to subject_descendant
+PASS add .test from subject_descendant
+PASS insert element div before subject_child
+PASS remove element div before subject_child
+PASS insert element div before subject_descendant
+PASS remove element div before subject_descendant
+PASS insert element div after subject_child
+PASS remove element div after subject_child
+PASS insert element div after subject_descendant
+PASS remove element div after subject_descendant
+PASS insert tree div>div before subject_child
+PASS remove tree div>div before subject_child
+PASS insert tree div>div before subject_descendant
+PASS remove tree div>div before subject_descendant
+PASS insert tree div.test after subject_child
+PASS remove tree div.test after subject_child
+PASS insert tree div.test after subject_descendant
+PASS remove tree div.test after subject_descendant
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .tiled {
+            height: 500px;
+            width: 5000px;
+            background-color: silver;
+            border: 5px solid black;
+            background-image: -webkit-linear-gradient(left, green, yellow, orange, blue);
+            -webkit-box-reflect: below 10px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+        }
+    </script>
+</head>
+<body>
+
+<p>This test should not crash.</p>
+
+<div class="tiled"></div>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS Keep alive a video element with a live srcObject
+PASS GC a video element with a live srcObject, then srcObject set to null
+

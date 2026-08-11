@@ -1,0 +1,20 @@
+doc-before  doc-after
+Baseline: find text in each scope from document
+PASS: 'doc-before' found at (#test-content, 0) 0 to 10
+PASS: 'outer-before' found at (#outer-shadow-root, 0) 0 to 12
+PASS: 'inner-text' found at (#inner-shadow-root, 0) 0 to 10
+
+Cross-scope matches are rejected
+PASS: 'outer-before inner-text' was not found.
+PASS: 'inner-text outer-after' was not found.
+
+Sequential find navigates from inner shadow root to outer scope
+PASS: 'inner-text' found at (#inner-shadow-root, 0) 0 to 10
+PASS: 'outer-after' found at (#outer-shadow-root, 2) 1 to 12
+PASS: 'doc-after' found at (#test-content, 2) 1 to 10
+
+Count matches across nested shadow roots
+PASS: countFindMatches('outer-before') is 1.
+PASS: countFindMatches('inner-text') is 1.
+PASS: countFindMatches('doc-before') is 1.
+

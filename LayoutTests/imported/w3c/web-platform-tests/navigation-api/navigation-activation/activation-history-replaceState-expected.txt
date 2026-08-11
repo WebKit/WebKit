@@ -1,0 +1,3 @@
+
+PASS navigation.activation.entry should be orphaned by history.replaceState()
+

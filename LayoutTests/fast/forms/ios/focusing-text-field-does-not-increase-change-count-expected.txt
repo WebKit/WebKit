@@ -1,0 +1,10 @@
+This test verifies that the pasteboard changeCount does not increment as a result of focusing an editable field. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS changeCountAfter is changeCountBefore
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,19 @@
+
+PASS setup - define tests
+PASS X25519 deriveBits checks for all-zero value result with a key of order 0
+PASS X25519 deriveBits checks for all-zero value result with a key of order 1
+PASS X25519 deriveBits checks for all-zero value result with a key of order 8
+PASS X25519 deriveBits checks for all-zero value result with a key of order p-1 (order 2)
+PASS X25519 deriveBits checks for all-zero value result with a key of order p (=0, order 4)
+PASS X25519 deriveBits checks for all-zero value result with a key of order p+1 (=1, order 1)
+PASS Key derivation using a X25519 generated keys.
+PASS X25519 good parameters
+PASS X25519 mixed case parameters
+PASS X25519 missing public property
+PASS X25519 public property of algorithm is not a CryptoKey
+PASS X25519 mismatched algorithms
+PASS X25519 no deriveKey usage for base key
+PASS X25519 base key is not a private key
+PASS X25519 public property value is a private key
+PASS X25519 public property value is a secret key
+

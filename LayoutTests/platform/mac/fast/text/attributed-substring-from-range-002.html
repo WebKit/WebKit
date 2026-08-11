@@ -1,0 +1,49 @@
+<html>
+<body contenteditable><div><object></object></div>123456789</body>
+<script>
+    var console_messages = document.createElement("ol");
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+    function createConsole()
+    {
+        var console = document.createElement("pre");
+        console.appendChild(console_messages);
+        document.body.appendChild(console);
+    }
+    
+    log("-");
+    log("This tests a particular construction that screws up the text iterator.");
+    log("-");
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    
+        // Set selection, because attributedSubstringFromRange only works on the run of text that's
+        // currently selected.
+        window.getSelection().setPosition(document.body, 0);
+
+        var stringFromInnerText = document.body.innerText;
+        var stringFromAttributedSubstring = textInputController.attributedSubstringFromRange(0, 100).string();
+
+        log("actual text: \\n123456789");
+        log("from innerText (TextIterator): " + stringFromInnerText.replace("\n", "\\n"));
+        log("from attributedSubstringFromRange: " + stringFromAttributedSubstring.replace("\n", "\\n"));
+
+        if (stringFromInnerText != stringFromAttributedSubstring)
+            log("FAILED: Strings must match to keep input methods working.");
+        else if (stringFromInnerText == "\n123456789")
+            log("SUCCESS: Strings were correct.");
+        else
+            log("SUCCESS: Strings matched, although there is room for improvement because they were both wrong.");
+    } else {
+        log("DID NOT TEST: This test cannot run interactively.");
+    }
+    createConsole();
+    
+</script>
+</body>
+</html>

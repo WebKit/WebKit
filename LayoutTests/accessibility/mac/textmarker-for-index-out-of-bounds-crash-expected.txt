@@ -1,0 +1,8 @@
+This verifies that textMarkerForIndex does not crash when given an index greater than 2^31.
+
+PASS: text.isTextMarkerNull(text.textMarkerForIndex(99999999999)) === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+text

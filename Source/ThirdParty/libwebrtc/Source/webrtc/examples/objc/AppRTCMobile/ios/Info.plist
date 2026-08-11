@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>BuildMachineOSBuild</key>
+  <string>12E55</string>
+  <key>CFBundleDevelopmentRegion</key>
+  <string>en</string>
+  <key>CFBundleDisplayName</key>
+  <string>AppRTCMobile</string>
+  <key>CFBundleExecutable</key>
+  <string>${EXECUTABLE_NAME}</string>
+  <key>CFBundleIcons</key>
+  <dict>
+    <key>CFBundlePrimaryIcon</key>
+    <dict>
+      <key>CFBundleIconFiles</key>
+      <array>
+        <string>Icon.png</string>
+        <string>Icon-120.png</string>
+        <string>Icon-180.png</string>
+      </array>
+    </dict>
+  </dict>
+  <key>CFBundleIdentifier</key>
+  <string>com.google.AppRTCMobile</string>
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+  <key>CFBundleName</key>
+  <string>${EXECUTABLE_NAME}</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleShortVersionString</key>
+  <string>1.0</string>
+  <key>CFBundleSignature</key>
+  <string>????</string>
+  <key>CFBundleSupportedPlatforms</key>
+  <array>
+    <string>iPhoneOS</string>
+  </array>
+  <key>CFBundleVersion</key>
+  <string>1.0</string>
+  <key>UIStatusBarTintParameters</key>
+  <dict>
+    <key>UINavigationBar</key>
+    <dict>
+      <key>Style</key>
+      <string>UIBarStyleDefault</string>
+      <key>Translucent</key>
+      <false/>
+    </dict>
+  </dict>
+  <key>UISupportedInterfaceOrientations</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+    <string>UIInterfaceOrientationLandscapeLeft</string>
+    <string>UIInterfaceOrientationLandscapeRight</string>
+    <string>UIInterfaceOrientationPortraitUpsideDown</string>
+  </array>
+  <key>UIAppFonts</key>
+  <array>
+    <string>Roboto-Regular.ttf</string>
+  </array>
+  <key>UIBackgroundModes</key>
+  <array>
+    <string>audio</string>
+    <string>voip</string>
+  </array>
+  <key>NSCameraUsageDescription</key>
+  <string>Camera access needed for video calling</string>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Microphone access needed for video calling</string>
+  <key>UIFileSharingEnabled</key>
+  <true/>
+  <key>UILaunchImages</key>
+  <array>
+    <dict>
+      <key>UILaunchImageMinimumOSVersion</key>
+      <string>7.0</string>
+      <key>UILaunchImageName</key>
+      <string>iPhone5</string>
+      <key>UILaunchImageOrientation</key>
+      <string>Portrait</string>
+      <key>UILaunchImageSize</key>
+      <string>{320, 568}</string>
+    </dict>
+    <dict>
+      <key>UILaunchImageMinimumOSVersion</key>
+      <string>8.0</string>
+      <key>UILaunchImageName</key>
+      <string>iPhone6</string>
+      <key>UILaunchImageOrientation</key>
+      <string>Portrait</string>
+      <key>UILaunchImageSize</key>
+      <string>{375, 667}</string>
+    </dict>
+    <dict>
+      <key>UILaunchImageMinimumOSVersion</key>
+      <string>8.0</string>
+      <key>UILaunchImageName</key>
+      <string>iPhone6p</string>
+      <key>UILaunchImageOrientation</key>
+      <string>Portrait</string>
+      <key>UILaunchImageSize</key>
+      <string>{414, 736}</string>
+    </dict>
+  </array>
+</dict>
+</plist>

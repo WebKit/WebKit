@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+</script>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/bogus.svg") format("svg"), url("../../resources/Ahem.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+This test makes sure that an @font-face with an invalid primary font file is rendered. The test passes if you see something other than this text on the page.
+<div style="font: 48px 'WebFont', Helvetica;">Hello</div>
+<div id="error" style="font-size: 48px; color: red;"></div>
+<script>
+// We're waiting for Ahem to be loaded. Unfortunately, the WK API says that the load is complete when the number of concurrent in-flight subresources
+// hits 0, which occurs before we hit our second layout and realize we need to load Ahem. So, without this, the test would complete before Ahem is
+// requested.
+if (window.testRunner) {
+    document.fonts.keys().next().value.loaded.then(function() {
+        testRunner.notifyDone();
+    }, function() {
+        document.getElementById("error").textContent = "Error loading font.";
+        testRunner.notifyDone();
+    });
+}
+</script>
+</body>
+</html>

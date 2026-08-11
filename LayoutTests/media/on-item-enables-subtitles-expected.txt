@@ -1,0 +1,16 @@
+
+RUN(internals.settings.setShouldDisplayTrackKind("Captions", true))
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplay)
+RUN(host = internals.controlsHostForMediaElement(video))
+RUN(host.setSelectedTextTrack(host.captionMenuOffItem))
+RUN(track = document.createElement("track"))
+RUN(track.kind = "subtitles")
+RUN(track.srclang = "en")
+RUN(track.src = "content/lorem-ipsum.vtt")
+RUN(video.appendChild(track))
+RUN(host.setSelectedTextTrack(host.captionMenuOnItem))
+EVENT(change)
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+END OF TEST
+

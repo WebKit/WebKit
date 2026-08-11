@@ -1,0 +1,3 @@
+This test inserts HTML containing both an HTML <style> element and an SVG <style> element into an editable region via InsertHTML. Both must be stripped by the paste sanitizer, while the rest of the SVG content is preserved.
+Number of <style> elements remaining (HTML or SVG): 0 (PASS)
+Number of <rect> elements preserved: 1 (PASS)

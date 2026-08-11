@@ -1,0 +1,714 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//build/config/linux/gtk/gtk.gni")
+import("//build/config/ui.gni")
+import("../../webrtc.gni")
+
+use_desktop_capture_differ_sse2 = current_cpu == "x86" || current_cpu == "x64"
+
+config("x11_config") {
+  if (rtc_use_x11_extensions) {
+    defines = [ "WEBRTC_USE_X11" ]
+  }
+}
+
+rtc_library("primitives") {
+  visibility = [ "*" ]
+  sources = [
+    "desktop_capture_types.h",
+    "desktop_frame.cc",
+    "desktop_frame.h",
+    "desktop_geometry.cc",
+    "desktop_geometry.h",
+    "desktop_region.cc",
+    "desktop_region.h",
+    "frame_texture.cc",
+    "frame_texture.h",
+    "shared_desktop_frame.cc",
+    "shared_desktop_frame.h",
+    "shared_memory.cc",
+    "shared_memory.h",
+  ]
+
+  deps = [
+    "../../api:scoped_refptr",
+    "../../media:video_common",
+    "../../rtc_base:checks",
+    "../../rtc_base:refcount",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/libyuv",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("desktop_capture_modules_tests") {
+    testonly = true
+
+    defines = []
+    sources = []
+    deps = [
+      ":desktop_capture",
+      "../../api:function_view",
+      "../../api:scoped_refptr",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:platform_thread",
+      "../../rtc_base:random",
+      "../../rtc_base:timeutils",
+    ]
+    if (rtc_desktop_capture_supported) {
+      deps += [
+        ":desktop_capture_mock",
+        ":primitives",
+        ":screen_drawer",
+        "../../rtc_base:base64",
+        "../../rtc_base:threading",
+        "../../test:test_support",
+      ]
+      sources += [
+        "screen_capturer_integration_test.cc",
+        "screen_drawer_unittest.cc",
+        "window_finder_unittest.cc",
+      ]
+
+      if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+        configs += [ "../portal:gio" ]
+      }
+
+      public_configs = [ ":x11_config" ]
+
+      if (is_win) {
+        deps += [ "../../rtc_base/win:windows_version" ]
+      }
+    }
+  }
+
+  if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+    rtc_test("shared_screencast_stream_test") {
+      testonly = true
+
+      sources = [
+        "linux/wayland/shared_screencast_stream_unittest.cc",
+        "linux/wayland/test/test_egl_dmabuf.cc",
+        "linux/wayland/test/test_egl_dmabuf.h",
+        "linux/wayland/test/test_screencast_stream_provider.cc",
+        "linux/wayland/test/test_screencast_stream_provider.h",
+      ]
+
+      configs += [ "../portal:pipewire_all" ]
+
+      deps = [
+        ":desktop_capture",
+        ":desktop_capture_mock",
+        ":primitives",
+        "../../api:scoped_refptr",
+        "../../rtc_base:checks",
+        "../../rtc_base:logging",
+        "../../rtc_base:random",
+        "../../rtc_base:stringutils",
+        "../../rtc_base:timeutils",
+        "../portal",
+
+        # TODO(bugs.webrtc.org/9987): Remove this dep on rtc_base:rtc_base once
+        # rtc_base:threading is fully defined.
+        "../../rtc_base:task_queue_for_test",
+        "../../rtc_base:threading",
+        "../../system_wrappers",
+        "../../test:test_support",
+        "//api/units:time_delta",
+        "//rtc_base:rtc_event",
+      ]
+
+      data = [ "../../third_party/pipewire" ]
+      public_configs = [ "../portal:pipewire_config" ]
+    }
+  }
+
+  rtc_library("desktop_capture_unittests") {
+    testonly = true
+
+    defines = []
+    sources = [
+      "blank_detector_desktop_capturer_wrapper_unittest.cc",
+      "cropped_desktop_frame_unittest.cc",
+      "desktop_and_cursor_composer_unittest.cc",
+      "desktop_capturer_differ_wrapper_unittest.cc",
+      "desktop_frame_rotation_unittest.cc",
+      "desktop_frame_texture_unittest.cc",
+      "desktop_frame_unittest.cc",
+      "desktop_geometry_unittest.cc",
+      "desktop_region_unittest.cc",
+      "differ_block_unittest.cc",
+      "fallback_desktop_capturer_wrapper_unittest.cc",
+      "rgba_color_unittest.cc",
+      "test_utils.cc",
+      "test_utils.h",
+      "test_utils_unittest.cc",
+    ]
+
+    if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+      configs += [ "../portal:gio" ]
+    }
+
+    deps = [
+      ":desktop_capture",
+      ":desktop_capture_mock",
+      ":primitives",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:random",
+      "../../rtc_base:task_queue_for_test",
+      "../../rtc_base:threading",
+      "../../rtc_base:timeutils",
+      "../../system_wrappers",
+      "../../test:test_support",
+    ]
+
+    if (is_win) {
+      sources += [
+        "win/cursor_unittest.cc",
+        "win/cursor_unittest_resources.h",
+        "win/cursor_unittest_resources.rc",
+        "win/full_screen_win_application_handler_unittest.cc",
+        "win/screen_capture_utils_unittest.cc",
+        "win/screen_capturer_win_directx_unittest.cc",
+        "win/test_support/test_window.cc",
+        "win/test_support/test_window.h",
+        "win/window_capture_utils_unittest.cc",
+      ]
+      deps += [
+        "../../rtc_base/win:scoped_com_initializer",
+        "../../rtc_base/win:windows_version",
+      ]
+    }
+
+    if (rtc_desktop_capture_supported) {
+      sources += [
+        "screen_capturer_helper_unittest.cc",
+        "screen_capturer_unittest.cc",
+        "window_capturer_unittest.cc",
+      ]
+      if (is_mac) {
+        sources += [ "screen_capturer_mac_unittest.cc" ]
+      }
+      if (rtc_enable_win_wgc) {
+        sources += [
+          "win/wgc_capture_source_unittest.cc",
+          "win/wgc_capturer_win_unittest.cc",
+        ]
+      }
+      deps += [
+        ":desktop_capture_mock",
+        "../../api:make_ref_counted",
+        "../../system_wrappers:metrics",
+      ]
+      public_configs = [ ":x11_config" ]
+    }
+  }
+
+  rtc_library("screen_drawer") {
+    testonly = true
+
+    sources = [
+      "screen_drawer.cc",
+      "screen_drawer.h",
+    ]
+
+    if (is_linux || is_chromeos) {
+      sources += [ "screen_drawer_linux.cc" ]
+      libs = [ "X11" ]
+    }
+
+    if (is_mac) {
+      sources += [ "screen_drawer_mac.cc" ]
+    }
+
+    if (is_win) {
+      sources += [ "screen_drawer_win.cc" ]
+    }
+
+    deps = [
+      ":desktop_capture",
+      ":primitives",
+      "../../api:scoped_refptr",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:threading",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+
+    if (is_posix || is_fuchsia) {
+      sources += [
+        "screen_drawer_lock_posix.cc",
+        "screen_drawer_lock_posix.h",
+      ]
+    }
+  }
+
+  rtc_library("desktop_capture_mock") {
+    testonly = true
+
+    sources = [
+      "mock_desktop_capturer_callback.cc",
+      "mock_desktop_capturer_callback.h",
+    ]
+
+    if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+      configs += [ "../portal:gio" ]
+    }
+
+    deps = [
+      ":desktop_capture",
+      ":primitives",
+      "../../test:test_support",
+    ]
+  }
+}
+
+# TODO(bugs.webrtc.org/14187): remove when all users are gone
+if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+  config("pipewire_config") {
+    configs = [ "../portal:pipewire_config" ]
+  }
+}
+
+rtc_library("desktop_capture") {
+  visibility = [ "*" ]
+  defines = []
+  deps = [
+    "../../api/environment",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../media:video_common",
+    "../../rtc_base/containers:flat_map",
+    "../../rtc_base/containers:flat_set",
+    "../../system_wrappers",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+  public_configs = [ ":x11_config" ]
+  sources = [
+    "blank_detector_desktop_capturer_wrapper.cc",
+    "blank_detector_desktop_capturer_wrapper.h",
+    "cropped_desktop_frame.cc",
+    "cropped_desktop_frame.h",
+    "cropping_window_capturer.cc",
+    "cropping_window_capturer.h",
+    "delegated_source_list_controller.h",
+    "desktop_and_cursor_composer.cc",
+    "desktop_and_cursor_composer.h",
+    "desktop_capture_metadata.h",
+    "desktop_capture_metrics_helper.cc",
+    "desktop_capture_metrics_helper.h",
+    "desktop_capture_options.cc",
+    "desktop_capture_options.h",
+    "desktop_capturer.cc",
+    "desktop_capturer.h",
+    "desktop_capturer_differ_wrapper.cc",
+    "desktop_capturer_differ_wrapper.h",
+    "desktop_capturer_wrapper.cc",
+    "desktop_capturer_wrapper.h",
+    "desktop_frame_generator.cc",
+    "desktop_frame_generator.h",
+    "desktop_frame_rotation.cc",
+    "desktop_frame_rotation.h",
+    "differ_block.cc",
+    "differ_block.h",
+    "fake_desktop_capturer.cc",
+    "fake_desktop_capturer.h",
+    "fallback_desktop_capturer_wrapper.cc",
+    "fallback_desktop_capturer_wrapper.h",
+    "full_screen_application_handler.cc",
+    "full_screen_application_handler.h",
+    "full_screen_window_detector.cc",
+    "full_screen_window_detector.h",
+    "mouse_cursor.cc",
+    "mouse_cursor.h",
+    "mouse_cursor_monitor.h",
+    "resolution_tracker.cc",
+    "resolution_tracker.h",
+    "rgba_color.cc",
+    "rgba_color.h",
+    "screen_capture_frame_queue.h",
+    "screen_capturer_helper.cc",
+    "screen_capturer_helper.h",
+    "window_finder.cc",
+    "window_finder.h",
+  ]
+  if (is_mac) {
+    sources += [
+      "mac/desktop_configuration.h",
+      "mac/desktop_configuration_monitor.cc",
+      "mac/desktop_configuration_monitor.h",
+      "mac/desktop_frame_utils.cc",
+      "mac/desktop_frame_utils.h",
+      "mac/full_screen_mac_application_handler.cc",
+      "mac/full_screen_mac_application_handler.h",
+      "mac/window_list_utils.cc",
+      "mac/window_list_utils.h",
+    ]
+    deps += [ ":desktop_capture_objc" ]
+  }
+
+  if (build_with_mozilla) {
+    sources += [
+      "desktop_device_info.cc",
+      "desktop_device_info.h",
+    ]
+    if (is_win) {
+      sources += [
+        "app_capturer_win.cc",
+        "win/desktop_device_info_win.cc",
+        "win/win_shared.cc",
+      ]
+    }
+  }
+  if (rtc_use_x11_extensions || rtc_use_pipewire) {
+    sources += [
+      "mouse_cursor_monitor_linux.cc",
+      "screen_capturer_linux.cc",
+      "window_capturer_linux.cc",
+    ]
+
+    if (build_with_mozilla && (is_linux || is_chromeos)) {
+      sources += [
+        "app_capturer_linux.cc",
+        "linux/x11/app_capturer_x11.cc",
+        "linux/x11/desktop_device_info_linux.cc",
+        "linux/x11/desktop_device_info_linux.h",
+        "linux/x11/shared_x_util.cc",
+        "linux/x11/shared_x_util.h",
+      ]
+    }
+  }
+
+  if (rtc_use_x11_extensions) {
+    sources += [
+      "linux/x11/mouse_cursor_monitor_x11.cc",
+      "linux/x11/mouse_cursor_monitor_x11.h",
+      "linux/x11/screen_capturer_x11.cc",
+      "linux/x11/screen_capturer_x11.h",
+      "linux/x11/shared_x_display.cc",
+      "linux/x11/shared_x_display.h",
+      "linux/x11/window_capturer_x11.cc",
+      "linux/x11/window_capturer_x11.h",
+      "linux/x11/window_finder_x11.cc",
+      "linux/x11/window_finder_x11.h",
+      "linux/x11/window_list_utils.cc",
+      "linux/x11/window_list_utils.h",
+      "linux/x11/x_atom_cache.cc",
+      "linux/x11/x_atom_cache.h",
+      "linux/x11/x_error_trap.cc",
+      "linux/x11/x_error_trap.h",
+      "linux/x11/x_server_pixel_buffer.cc",
+      "linux/x11/x_server_pixel_buffer.h",
+      "linux/x11/x_window_property.cc",
+      "linux/x11/x_window_property.h",
+    ]
+    libs = [
+      "X11",
+      "Xcomposite",
+      "Xdamage",
+      "Xext",
+      "Xfixes",
+
+      # Xrandr depends on Xrender and needs to be listed before its dependency.
+      "Xrandr",
+
+      "Xrender",
+      "Xtst",
+    ]
+  }
+
+  if (!is_win && !is_mac && !rtc_use_x11_extensions && !rtc_use_pipewire &&
+      !is_fuchsia) {
+    sources += [
+      "mouse_cursor_monitor_null.cc",
+      "screen_capturer_null.cc",
+      "window_capturer_null.cc",
+    ]
+  }
+
+  deps += [
+    ":primitives",
+    "../../api:function_view",
+    "../../api:make_ref_counted",
+    "../../api:refcountedbase",
+    "../../api:scoped_refptr",
+    "../../api:sequence_checker",
+    "../../rtc_base:checks",
+    "../../rtc_base:cpu_info",
+    "../../rtc_base:event_tracer",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:random",
+    "../../rtc_base:stringutils",
+    "../../rtc_base:timeutils",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/system:arch",
+    "../../rtc_base/system:no_unique_address",
+    "../../rtc_base/system:rtc_export",
+    "../../system_wrappers:metrics",
+  ]
+
+  if (is_fuchsia) {
+    sources += [
+      "mouse_cursor_monitor_null.cc",
+      "screen_capturer_fuchsia.cc",
+      "screen_capturer_fuchsia.h",
+      "window_capturer_null.cc",
+    ]
+    deps += [
+      "../../rtc_base:divide_round",
+      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.sysmem",
+      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.composition",
+      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.display.singleton",
+      "//third_party/fuchsia-sdk/sdk/pkg/sys_cpp",
+    ]
+  }
+
+  if (is_win) {
+    sources += [
+      "cropping_window_capturer_win.cc",
+      "desktop_frame_win.cc",
+      "desktop_frame_win.h",
+      "mouse_cursor_monitor_win.cc",
+      "screen_capturer_win.cc",
+      "win/cursor.cc",
+      "win/cursor.h",
+      "win/d3d_device.cc",
+      "win/d3d_device.h",
+      "win/desktop.cc",
+      "win/desktop.h",
+      "win/desktop_capture_utils.cc",
+      "win/desktop_capture_utils.h",
+      "win/display_configuration_monitor.cc",
+      "win/display_configuration_monitor.h",
+      "win/dxgi_adapter_duplicator.cc",
+      "win/dxgi_adapter_duplicator.h",
+      "win/dxgi_context.cc",
+      "win/dxgi_context.h",
+      "win/dxgi_duplicator_controller.cc",
+      "win/dxgi_duplicator_controller.h",
+      "win/dxgi_frame.cc",
+      "win/dxgi_frame.h",
+      "win/dxgi_output_duplicator.cc",
+      "win/dxgi_output_duplicator.h",
+      "win/dxgi_texture.cc",
+      "win/dxgi_texture.h",
+      "win/dxgi_texture_mapping.cc",
+      "win/dxgi_texture_mapping.h",
+      "win/dxgi_texture_staging.cc",
+      "win/dxgi_texture_staging.h",
+      "win/full_screen_win_application_handler.cc",
+      "win/full_screen_win_application_handler.h",
+      "win/scoped_gdi_object.h",
+      "win/scoped_thread_desktop.cc",
+      "win/scoped_thread_desktop.h",
+      "win/screen_capture_utils.cc",
+      "win/screen_capture_utils.h",
+      "win/screen_capturer_win_directx.cc",
+      "win/screen_capturer_win_directx.h",
+      "win/screen_capturer_win_gdi.cc",
+      "win/screen_capturer_win_gdi.h",
+      "win/screen_capturer_win_magnifier.cc",
+      "win/screen_capturer_win_magnifier.h",
+      "win/selected_window_context.cc",
+      "win/selected_window_context.h",
+      "win/window_capture_utils.cc",
+      "win/window_capture_utils.h",
+      "win/window_capturer_win_gdi.cc",
+      "win/window_capturer_win_gdi.h",
+      "window_capturer_win.cc",
+      "window_finder_win.cc",
+      "window_finder_win.h",
+    ]
+    libs = [
+      "d3d11.lib",
+      "dxgi.lib",
+      "shcore.lib",
+    ]
+    deps += [
+      "../../rtc_base:threading",
+      "../../rtc_base:win32",
+      "../../rtc_base/containers:flat_map",
+      "../../rtc_base/win:create_direct3d_device",
+      "../../rtc_base/win:get_activation_factory",
+      "../../rtc_base/win:windows_version",
+    ]
+  }
+
+  if (rtc_use_x11_extensions) {
+    deps += [ "../../rtc_base:sanitizer" ]
+  }
+
+  if (!build_with_mozilla) {
+    deps += [ "//third_party/libyuv" ]
+  }
+
+  if (use_desktop_capture_differ_sse2) {
+    deps += [ ":desktop_capture_differ_sse2" ]
+  }
+
+  if (rtc_use_pipewire) {
+    sources += [
+      "linux/wayland/base_capturer_pipewire.cc",
+      "linux/wayland/base_capturer_pipewire.h",
+      "linux/wayland/egl_dmabuf.cc",
+      "linux/wayland/egl_dmabuf.h",
+      "linux/wayland/mouse_cursor_monitor_pipewire.cc",
+      "linux/wayland/mouse_cursor_monitor_pipewire.h",
+      "linux/wayland/portal_request_response.h",
+      "linux/wayland/restore_token_manager.cc",
+      "linux/wayland/restore_token_manager.h",
+      "linux/wayland/scoped_glib.h",
+      "linux/wayland/screen_capture_portal_interface.cc",
+      "linux/wayland/screen_capture_portal_interface.h",
+      "linux/wayland/screencast_portal.cc",
+      "linux/wayland/screencast_portal.h",
+      "linux/wayland/screencast_stream_utils.cc",
+      "linux/wayland/screencast_stream_utils.h",
+      "linux/wayland/shared_screencast_stream.cc",
+      "linux/wayland/shared_screencast_stream.h",
+      "linux/wayland/xdg_desktop_portal_utils.h",
+      "linux/wayland/xdg_session_details.h",
+    ]
+
+    configs += [ "../portal:pipewire_all" ]
+
+    public_configs += [ "../portal:pipewire_config" ]
+
+    deps += [
+      "../../rtc_base:sanitizer",
+      "../portal",
+    ]
+  }
+
+  if (rtc_enable_win_wgc) {
+    sources += [
+      "win/dxgi_desktop_frame.cc",
+      "win/dxgi_desktop_frame.h",
+      "win/wgc_capture_session.cc",
+      "win/wgc_capture_session.h",
+      "win/wgc_capture_source.cc",
+      "win/wgc_capture_source.h",
+      "win/wgc_capturer_win.cc",
+      "win/wgc_capturer_win.h",
+      "win/wgc_desktop_frame.cc",
+      "win/wgc_desktop_frame.h",
+    ]
+    libs += [ "dwmapi.lib" ]
+    deps += [
+      "../../api/units:time_delta",
+      "../../rtc_base:rtc_event",
+      "../../rtc_base:threading",
+      "../../rtc_base/win:hstring",
+    ]
+  }
+}
+
+if (is_mac) {
+  rtc_library("desktop_capture_objc") {
+    # This target, needs to be separated from ":desktop_capture" because
+    # that is the C++ part of the target while this one is the Obj-C++ part.
+    # Aside from this, both represent a "desktop_capture" target.
+    # This target separation based on programming languages introduces a
+    # dependency cycle between ":desktop_capture" and
+    # ":desktop_capture_objc".
+    # To break this, ":desktop_capture_objc" shares some .h files with
+    # ":desktop_capture" but when external targets need one of these
+    # headers, they should depend on ":desktop_capture" and consider
+    # this target as private.
+    visibility = [ ":desktop_capture" ]
+    sources = [
+      "delegated_source_list_controller.h",
+      "desktop_capture_metadata.h",
+      "desktop_capture_options.h",
+      "desktop_capturer.h",
+      "full_screen_application_handler.h",
+      "full_screen_window_detector.h",
+      "mac/desktop_configuration.h",
+      "mac/desktop_configuration.mm",
+      "mac/desktop_configuration_monitor.h",
+      "mac/desktop_frame_cgimage.h",
+      "mac/desktop_frame_cgimage.mm",
+      "mac/desktop_frame_iosurface.h",
+      "mac/desktop_frame_iosurface.mm",
+      "mac/desktop_frame_provider.h",
+      "mac/desktop_frame_provider.mm",
+      "mac/sck_picker_handle.h",
+      "mac/sck_picker_handle.mm",
+      "mac/screen_capturer_mac.h",
+      "mac/screen_capturer_mac.mm",
+      "mac/screen_capturer_sck.h",
+      "mac/screen_capturer_sck.mm",
+      "mac/window_list_utils.h",
+      "mouse_cursor.h",
+      "mouse_cursor_monitor.h",
+      "mouse_cursor_monitor_mac.mm",
+      "screen_capture_frame_queue.h",
+      "screen_capturer_darwin.mm",
+      "screen_capturer_helper.h",
+      "window_capturer_mac.mm",
+      "window_finder.h",
+      "window_finder_mac.h",
+      "window_finder_mac.mm",
+    ]
+    deps = [
+      ":primitives",
+      "../../api:function_view",
+      "../../api:refcountedbase",
+      "../../api:scoped_refptr",
+      "../../api:sequence_checker",
+      "../../api/environment",
+      "../../rtc_base:checks",
+      "../../rtc_base:event_tracer",
+      "../../rtc_base:logging",
+      "../../rtc_base:macromagic",
+      "../../rtc_base:safe_conversions",
+      "../../rtc_base:timeutils",
+      "../../rtc_base/synchronization:mutex",
+      "../../rtc_base/system:rtc_export",
+      "../../sdk:helpers_objc",
+      "../../system_wrappers",
+      "//third_party/abseil-cpp/absl/base:core_headers",
+      "//third_party/abseil-cpp/absl/base:nullability",
+      "//third_party/abseil-cpp/absl/strings:str_format",
+    ]
+    frameworks = [
+      "AppKit.framework",
+      "CoreVideo.framework",
+      "IOKit.framework",
+      "IOSurface.framework",
+    ]
+    weak_frameworks = [ "ScreenCaptureKit.framework" ]  # macOS 12.3
+  }
+}
+
+if (use_desktop_capture_differ_sse2) {
+  # Have to be compiled as a separate target because it needs to be compiled
+  # with SSE2 enabled.
+  rtc_library("desktop_capture_differ_sse2") {
+    visibility = [ ":*" ]
+    sources = [
+      "differ_vector_sse2.cc",
+      "differ_vector_sse2.h",
+    ]
+
+    if (is_posix || is_fuchsia) {
+      cflags = [ "-msse2" ]
+    }
+  }
+}

@@ -1,0 +1,188 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/CSSCustomPropertyValue.h>
+#include <WebCore/CSSKeyword.h>
+#include <WebCore/CSSPrimitiveNumeric.h>
+#include <WebCore/CSSRatio.h>
+#include <WebCore/CSSToLengthConversionData.h>
+#include <WebCore/CSSValueKeywords.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/OptionSet.h>
+#include <wtf/Variant.h>
+#include <wtf/text/AtomString.h>
+
+namespace WebCore {
+
+class RenderElement;
+
+namespace MQ {
+
+enum class LogicalOperator : uint8_t { And, Or, Not };
+enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual };
+enum class Syntax : uint8_t { Boolean, Plain, Range };
+
+template<typename T>
+bool compare(ComparisonOperator op, T left, T right)
+{
+    switch (op) {
+    case ComparisonOperator::LessThan:
+        return left < right;
+    case ComparisonOperator::LessThanOrEqual:
+        return left <= right;
+    case ComparisonOperator::Equal:
+        return left == right;
+    case ComparisonOperator::GreaterThan:
+        return left > right;
+    case ComparisonOperator::GreaterThanOrEqual:
+        return left >= right;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+// The two comparisons of a three-operand range must point the same direction and neither may be '='.
+inline bool isConsistentThreeWayComparison(ComparisonOperator first, ComparisonOperator second)
+{
+    auto isLessFamily = [](ComparisonOperator op) {
+        return op == ComparisonOperator::LessThan || op == ComparisonOperator::LessThanOrEqual;
+    };
+    auto isGreaterFamily = [](ComparisonOperator op) {
+        return op == ComparisonOperator::GreaterThan || op == ComparisonOperator::GreaterThanOrEqual;
+    };
+    return (isLessFamily(first) && isLessFamily(second)) || (isGreaterFamily(first) && isGreaterFamily(second));
+}
+
+struct Condition;
+struct FeatureSchema;
+
+using Value = Variant<
+    CSS::Integer<>,
+    CSS::Number<>,
+    CSS::Length<>,
+    CSS::Resolution<>,
+    CSS::Ratio,
+    CSS::Keyword,
+    Ref<CSSCustomPropertyValue>
+>;
+
+struct Comparison {
+    ComparisonOperator op;
+    std::optional<Value> value;
+};
+
+struct Feature {
+    AtomString name;
+    Syntax syntax;
+    std::optional<Comparison> leftComparison { };
+    std::optional<Comparison> rightComparison { };
+
+    // The center operand of a style range, used when it is not a bare <custom-property-name>
+    // (those are stored in `name`, matching the plain/size feature model). For example, the
+    // subject of `style(10px < 10em)` or `style(calc(1px + 1px) > --foo)`.
+    std::optional<Value> subject { };
+
+    std::optional<CSSValueID> functionId { };
+
+    const FeatureSchema* schema { nullptr };
+};
+
+struct GeneralEnclosed {
+    String name;
+    String text;
+};
+
+using QueryInParens = Variant<Condition, Feature, GeneralEnclosed>;
+
+struct Condition {
+    LogicalOperator logicalOperator { LogicalOperator::And };
+    Vector<QueryInParens> queries;
+
+    std::optional<CSSValueID> functionId { };
+};
+
+enum class EvaluationResult : uint8_t { False, True, Unknown };
+
+enum class MediaQueryDynamicDependency : uint8_t  {
+    Viewport = 1 << 0,
+    Appearance = 1 << 1,
+    Accessibility = 1 << 2,
+};
+
+struct FeatureEvaluationContext {
+    WeakRef<const Document, WeakPtrImplWithEventTargetData> document;
+    CSSToLengthConversionData conversionData;
+    CheckedPtr<const RenderElement> renderer;
+};
+
+struct FeatureSchema {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FeatureSchema);
+
+    enum class Type : uint8_t { Discrete, Range };
+    enum class ValueType : uint8_t { Integer, Number, Length, Ratio, Resolution, Identifier, CustomProperty };
+
+    AtomString name;
+    Type type;
+    ValueType valueType;
+    OptionSet<MediaQueryDynamicDependency> dependencies;
+    FixedVector<CSSValueID> valueIdentifiers;
+
+    virtual EvaluationResult evaluate(const Feature&, const FeatureEvaluationContext&) const { return EvaluationResult::Unknown; }
+
+    FeatureSchema(const AtomString& name, Type type, ValueType valueType, OptionSet<MediaQueryDynamicDependency> dependencies, FixedVector<CSSValueID>&& valueIdentifiers = { })
+        : name(name)
+        , type(type)
+        , valueType(valueType)
+        , dependencies(dependencies)
+        , valueIdentifiers(WTF::move(valueIdentifiers))
+    { }
+    virtual ~FeatureSchema() = default;
+};
+
+template<typename TraverseFunction> void traverseFeatures(const Condition&, TraverseFunction&&);
+
+template<typename TraverseFunction>
+void traverseFeatures(const QueryInParens& queryInParens, TraverseFunction&& function)
+{
+    return WTF::switchOn(queryInParens, [&](const Condition& condition) {
+        traverseFeatures(condition, function);
+    }, [&](const MQ::Feature& feature) {
+        function(feature);
+    }, [&](const MQ::GeneralEnclosed&) {
+        MQ::Feature dummy { };
+        function(dummy);
+    });
+}
+
+template<typename TraverseFunction>
+void traverseFeatures(const Condition& condition, TraverseFunction&& function)
+{
+    for (auto& queryInParens : condition.queries)
+        traverseFeatures(queryInParens, function);
+}
+
+
+}
+}

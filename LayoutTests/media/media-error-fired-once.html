@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>error-event-only-fired-once</title>
+    <script src=video-test.js></script>
+    <script>
+        window.addEventListener('load', event => {
+        
+            run('video = document.createElement("video")');
+            video.controls = 1;
+
+            video.onerror = (event) => {
+
+                video.onerror = (event) => {
+                    failTest("'error' event fired twice.");
+                }
+
+                setTimeout(() => {
+                    endTest();
+                }, 200);
+
+                document.body.appendChild(video);
+            };
+
+            run('video.src = "content/does-not-exist.mpeg"');
+        });
+
+    </script>
+</head>
+<body>
+</body>
+</html>
+
+

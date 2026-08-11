@@ -1,0 +1,4 @@
+
+FAIL After removing the last over element, redundant pointerenter events should not be fired on the ancestors assert_equals: expected "pointerover@div#parent, pointerout@div#parent, pointerleave@div#parent, pointerleave@div#grandparent, pointerover@body, pointermove@body" but got "pointerover@body, pointermove@body"
+FAIL After removing the root element in the shadow under the cursor, pointerleave events should be targeted outside the shadow, but redundant pointerenter events should not be fired assert_equals: expected "pointerover@div#shadowHost, pointerout@div#shadowHost, pointerleave@div#shadowHost, pointerleave@div#containerOfShadowHost, pointerover@body, pointermove@body" but got "pointerover@body, pointermove@body"
+

@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+
+import filecmp
+import os
+import shutil
+import sys
+
+# The public SDKs for some embedded platforms are missing cross-platform
+# headers that WebKit uses. The xcfilelists given to this script pair a
+# framework or header directory from another SDK (i.e. macOS or iOS) with an
+# output path in $(WK_DERIVED_SDK_HEADERS_DIR). Symlink the SDK header to its
+# destination, where the rest of the build can use it.
+
+srcs = open(os.environ['SCRIPT_INPUT_FILE_LIST_0'])
+dsts = open(os.environ['SCRIPT_OUTPUT_FILE_LIST_0'])
+
+def ln_sfh(src, dst):
+    print(src, '->', dst, flush=True)
+    os.symlink(src, f'{dst}.new')
+    os.replace(f'{dst}.new', dst)
+
+
+def framework_headers_cmp(src, dst):
+    if os.path.isfile(src):
+        return filecmp.cmp(src, dst)
+    else:
+        def diff(dcmp):
+            return dcmp.left_only or dcmp.right_only or \
+                any(not file.endswith('.tbd') for file in dcmp.diff_files) or \
+                any(diff(subdcmp) for subdcmp in dcmp.subdirs.values())
+        return not diff(filecmp.dircmp(src, dst))
+
+        
+failing = False
+
+for src, dst in zip(srcs, dsts):
+    src = src.rstrip()
+    dst = dst.rstrip()
+
+    src_name = os.path.basename(src)
+    dst_name = os.path.basename(dst)
+    if src_name != dst_name:
+        raise SystemExit(f'error: Input lines do not have matching filenames ("{src_name}" and "{dst_name}). '
+                         'Are the xcfilelist entries in the right order?')
+
+    # Keep the list minimal by comparing what's actually in the base SDK, and
+    # refusing to process a framework or header that is textually identical to
+    # one in the SDK.
+    sdkroot_dst = dst.replace(os.environ['WK_DERIVED_SDK_HEADERS_DIR'], os.environ['SDKROOT'])
+    if os.path.exists(sdkroot_dst) and framework_headers_cmp(src, sdkroot_dst):
+        additions_sdk = os.environ[f'SDK_DIR_WebKitSDKAdditions_{os.environ["PLATFORM_NAME"]}']
+        print(f'error: "{src_name}" already exists in the base SDK. It does '
+              'not need to be symlinked, please remove it from '
+              f'{additions_sdk}/SymlinkedHeaders.xcconfig.', file=sys.stderr)
+        failing = True
+    elif os.path.isfile(src):
+        ln_sfh(src, dst)
+    else:
+        # The build system is not tracking the contents of the tree, so delete
+        # it first to remove any stale files.
+        shutil.rmtree(dst, ignore_errors=True)
+        # Directories being copied may be framework bundles, which contain
+        # platform-specific TBDs. Ignore them when copying.
+        shutil.copytree(
+            src, dst,
+            ignore=lambda _, names: {name for name in names if name.endswith('.tbd')},
+            copy_function=ln_sfh
+        )
+
+if failing:
+    sys.exit(1)

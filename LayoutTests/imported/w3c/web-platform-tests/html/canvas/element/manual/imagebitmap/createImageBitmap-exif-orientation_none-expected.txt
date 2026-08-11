@@ -1,0 +1,10 @@
+
+PASS createImageBitmap with Orientation 1
+FAIL createImageBitmap with Orientation 2 assert_array_approx_equals: Pixel value at (10,10) 0,0,0,255 =~ 128,128,128,255. property 0, expected 0 +/- 1, expected 0 but got 128
+FAIL createImageBitmap with Orientation 3 assert_array_approx_equals: Pixel value at (10,10) 0,0,0,255 =~ 254,128,129,255. property 0, expected 0 +/- 1, expected 0 but got 254
+FAIL createImageBitmap with Orientation 4 assert_array_approx_equals: Pixel value at (10,10) 0,0,0,255 =~ 254,0,0,255. property 0, expected 0 +/- 1, expected 0 but got 254
+FAIL createImageBitmap with Orientation 5 assert_array_approx_equals: Pixel value at (90,10) 128,128,128,255 =~ 0,255,1,255. property 0, expected 128 +/- 1, expected 128 but got 0
+FAIL createImageBitmap with Orientation 6 assert_array_approx_equals: Pixel value at (10,10) 0,0,0,255 =~ 254,0,0,255. property 0, expected 0 +/- 1, expected 0 but got 254
+FAIL createImageBitmap with Orientation 7 assert_array_approx_equals: Pixel value at (10,10) 0,0,0,255 =~ 254,128,129,255. property 0, expected 0 +/- 1, expected 0 but got 254
+FAIL createImageBitmap with Orientation 8 assert_array_approx_equals: Pixel value at (10,10) 0,0,0,255 =~ 128,128,128,255. property 0, expected 0 +/- 1, expected 0 but got 128
+

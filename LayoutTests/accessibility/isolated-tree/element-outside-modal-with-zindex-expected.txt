@@ -1,0 +1,15 @@
+This tests that content with a higher zindex than the active modal is exposed to accessibility.
+
+PASS: accessibilityController.accessibleElementById('modalButton').isIgnored === false
+PASS: accessibilityController.accessibleElementById('text1').childAtIndex(0).isIgnored === false
+PASS: accessibilityController.accessibleElementById('text2') == null === true
+PASS: accessibilityController.accessibleElementById('floatingButton').isIgnored === false
+PASS: accessibilityController.accessibleElementById('displayContentsButton').isIgnored === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+This is content floating above the modal.This is content floating beneath the modal.
+My Button
+Display Contents Button

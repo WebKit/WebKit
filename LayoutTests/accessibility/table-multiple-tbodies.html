@@ -1,0 +1,38 @@
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="./resources/table-helper.js"></script>
+</head>
+<body>
+
+<table id="table" align="center" border="1" cellpadding="5" cellspacing="0">
+    <thead><tr><th>1</th><th>a</th><td>b</td></tr></thead>
+    <tbody>
+        <tr><th>1</th><td>c</td><td>d</td></tr>
+        <tr><th>1</th><td>c1</td><td>d1</td></tr>
+    </tbody>
+    <tbody>
+        <tr><th>1</th><td>c</td><td>d</td></tr>
+        <tr><th>1</th><td>c1</td><td>d1</td></tr>
+    </tbody>
+    <tbody>
+        <tr><th>1</th><td>c</td><td>d</td></tr>
+        <tr><th>1</th><td>c1</td><td>d1</td></tr>
+    </tbody>
+    <tfoot><tr><td>1</td><td>e</td><td>f</td></tr></tfoot>
+</table>
+
+<script>
+    if (window.accessibilityController) {
+        let output = "";
+
+        let table = accessibilityController.accessibleElementById("table");
+        output += "Multi-tbody table\n";
+        output += tableProperties(table);
+
+        axDebug(output);
+    }
+</script>
+</body>
+</html>

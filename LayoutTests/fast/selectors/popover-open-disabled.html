@@ -1,0 +1,21 @@
+<!-- webkit-test-runner [ PopoverAttributeEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test that :popover-open selector is not supported when popover attribute is disabled</title>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            @supports not selector(:popover-open) {
+                background-color: green;
+            }
+        }
+    </style>
+</head>
+<body>
+    <p>Test passes if you see a green square</p>
+    <div></div>
+</body>
+</html>

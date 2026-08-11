@@ -1,0 +1,137 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("neteq_api") {
+  visibility = [ "*" ]
+  sources = [
+    "neteq.cc",
+    "neteq.h",
+    "neteq_factory.h",
+  ]
+
+  deps = [
+    "..:rtp_headers",
+    "..:rtp_packet_info",
+    "..:scoped_refptr",
+    "../../rtc_base:stringutils",
+    "../audio_codecs:audio_codecs_api",
+    "../environment",
+    "../units:timestamp",
+  ]
+}
+
+rtc_library("default_neteq_factory") {
+  visibility = [ "*" ]
+  sources = [
+    "default_neteq_factory.cc",
+    "default_neteq_factory.h",
+  ]
+  deps = [
+    ":default_neteq_controller_factory",
+    ":neteq_api",
+    "..:scoped_refptr",
+    "../../modules/audio_coding:neteq",
+    "../audio_codecs:audio_codecs_api",
+    "../environment",
+  ]
+}
+
+rtc_library("custom_neteq_factory") {
+  visibility = [ "*" ]
+  sources = [
+    "custom_neteq_factory.cc",
+    "custom_neteq_factory.h",
+  ]
+
+  deps = [
+    ":neteq_api",
+    ":neteq_controller_api",
+    "..:scoped_refptr",
+    "../../modules/audio_coding:neteq",
+    "../audio_codecs:audio_codecs_api",
+    "../environment",
+  ]
+}
+
+rtc_source_set("neteq_controller_api") {
+  visibility = [ "*" ]
+  sources = [
+    "neteq_controller.h",
+    "neteq_controller_factory.h",
+  ]
+
+  deps = [
+    ":neteq_api",
+    ":tick_timer",
+    "../environment",
+  ]
+}
+
+rtc_library("default_neteq_controller_factory") {
+  visibility = [ "*" ]
+  sources = [
+    "default_neteq_controller_factory.cc",
+    "default_neteq_controller_factory.h",
+  ]
+
+  deps = [
+    ":neteq_controller_api",
+    "../../modules/audio_coding:neteq",
+    "../environment",
+  ]
+}
+
+rtc_library("custom_neteq_controller_factory") {
+  visibility = [ "*" ]
+  sources = [
+    "custom_neteq_controller_factory.cc",
+    "custom_neteq_controller_factory.h",
+  ]
+  deps = [
+    ":delay_manager_api",
+    ":neteq_controller_api",
+    "../../modules/audio_coding:neteq",
+    "../../rtc_base:checks",
+    "../environment",
+  ]
+}
+
+rtc_library("delay_manager_api") {
+  visibility = [ "*" ]
+  sources = [
+    "delay_manager_factory.h",
+    "delay_manager_interface.h",
+  ]
+  deps = [
+    ":neteq_controller_api",
+    ":tick_timer",
+    "..:field_trials_view",
+  ]
+}
+
+rtc_library("tick_timer") {
+  visibility = [ "*" ]
+  sources = [
+    "tick_timer.cc",
+    "tick_timer.h",
+  ]
+  deps = [ "../../rtc_base:checks" ]
+}
+
+rtc_library("tick_timer_unittest") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [ "tick_timer_unittest.cc" ]
+  deps = [
+    ":tick_timer",
+    "../../test:test_support",
+    "//testing/gtest",
+  ]
+}

@@ -1,0 +1,7 @@
+
+PASS Baseline: non-important inline width is overridden by stylesheet !important
+PASS Upgrading priority to !important with an unchanged value updates layout
+PASS Downgrading priority from !important with an unchanged value updates layout
+PASS Priority-only toggles update layout for additional integer values
+PASS Priority-only upgrade works for large integer values
+

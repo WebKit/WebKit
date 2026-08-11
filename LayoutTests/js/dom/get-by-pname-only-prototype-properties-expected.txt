@@ -1,0 +1,9 @@
+This tests that get_by_pname doesn't incorrectly think that an empty object can cache its prototype's properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,12 @@
+<p>Text to be copied and pasted</p>
+<script>
+onpaste = (event) => {
+    window.parent.postMessage(event.clipboardData.getData('text/plain'), "*");
+}
+
+onload = () => {
+    document.execCommand("SelectAll");
+    document.execCommand("Copy");
+    document.execCommand("Paste");
+}
+</script>

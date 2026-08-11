@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that input.value is properly reset when changing the input type to 'file'.");
+
+var input = document.createElement("input");
+shouldBeEqualToString("input.type", "text");
+evalAndLog("input.value = '/etc/hosts'");
+shouldBeEqualToString("input.value", "/etc/hosts");
+
+evalAndLog("input.type = 'file'");
+// Make sure that input.value is properly reset.
+shouldBeEqualToString("input.value", "");
+shouldBeNull("input.getAttribute('value')");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

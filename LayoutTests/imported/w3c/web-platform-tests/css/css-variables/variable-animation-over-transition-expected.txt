@@ -1,0 +1,7 @@
+This text should animate from blue to green over a period of 1 second. The transition is not visible because the animation overrides it.
+
+PASS Verify CSS variable value before animation
+PASS Verify substituted color value before animation
+PASS Verify CSS variable value after animation
+PASS Verify substituted color value after animation
+

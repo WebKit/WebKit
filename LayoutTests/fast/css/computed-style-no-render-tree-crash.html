@@ -1,0 +1,21 @@
+<iframe id=iframe></iframe>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+iframe.srcdoc = `<script>onbeforeunload = async () => {
+    await clientInformation.storage.persist();
+    document.designMode = 'off';
+    document.title = 'x';
+};</scri`+`pt>`;
+iframe.onload = () => {
+    iframe.onload = () => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+    iframe.srcdoc = "foo";
+};
+</script>
+This test passes if it doesn't crash.

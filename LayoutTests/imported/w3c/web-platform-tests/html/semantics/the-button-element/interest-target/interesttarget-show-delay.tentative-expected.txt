@@ -1,0 +1,23 @@
+
+FAIL interesttarget fires after a delay, invokerLayout=plain assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget should not trigger via mouse click, invokerLayout=plain assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget interest-target-show-delay is respected, invokerLayout=plain assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget does not close an already-open popover, invokerLayout=plain assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget does nothing when the target is moved out of the document, invokerLayout=plain assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget does nothing when the target changes, invokerLayout=plain assert_true: interesttarget is not supported expected true got false
+FAIL moving hover between two invokers for the same target does the right thing, invokerLayout=plain assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget fires after a delay, invokerLayout=nested assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget should not trigger via mouse click, invokerLayout=nested assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget interest-target-show-delay is respected, invokerLayout=nested assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget does not close an already-open popover, invokerLayout=nested assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget does nothing when the target is moved out of the document, invokerLayout=nested assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget does nothing when the target changes, invokerLayout=nested assert_true: interesttarget is not supported expected true got false
+FAIL moving hover between two invokers for the same target does the right thing, invokerLayout=nested assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget fires after a delay, invokerLayout=nested-offset assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget should not trigger via mouse click, invokerLayout=nested-offset assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget interest-target-show-delay is respected, invokerLayout=nested-offset assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget does not close an already-open popover, invokerLayout=nested-offset assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget does nothing when the target is moved out of the document, invokerLayout=nested-offset assert_true: interesttarget is not supported expected true got false
+FAIL interesttarget does nothing when the target changes, invokerLayout=nested-offset assert_true: interesttarget is not supported expected true got false
+FAIL moving hover between two invokers for the same target does the right thing, invokerLayout=nested-offset assert_true: interesttarget is not supported expected true got false
+

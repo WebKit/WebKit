@@ -1,0 +1,7 @@
+
+FAIL UA :fullscreen interactivity rule assert_equals: before requestFullscreen expected (string) "auto" but got (undefined) undefined
+FAIL UA [inert] rule wins over UA :fullscreen rule assert_equals: before requestFullscreen expected (string) "inert" but got (undefined) undefined
+FAIL UA :fullscreen rule overriding inherited [inert] 'interactivity:inert' rule assert_equals: before requestFullscreen expected (string) "inert" but got (undefined) undefined
+FAIL UA [inert] rule overriding inherited :fullscreen 'interactivity:auto' rule assert_equals: before requestFullscreen expected (string) "inert" but got (undefined) undefined
+FAIL Author 'interactivity:inert' overrides UA :fullscreen 'interactivity:auto' rule assert_equals: before requestFullscreen expected (string) "inert" but got (undefined) undefined
+

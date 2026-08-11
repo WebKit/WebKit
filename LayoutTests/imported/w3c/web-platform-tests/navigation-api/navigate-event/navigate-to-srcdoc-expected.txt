@@ -1,0 +1,4 @@
+
+
+PASS navigate event fires appropriately (and can be canceled) for adding the srcdoc attribute
+

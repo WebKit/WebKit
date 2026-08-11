@@ -1,0 +1,412 @@
+/*
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WebLockManager.h"
+
+#include "ContextDestructionObserverInlines.h"
+#include "Document.h"
+#include "ExceptionCode.h"
+#include "ExceptionOr.h"
+#include "JSDOMConvertAny.h"
+#include "JSDOMConvertDictionary.h"
+#include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
+#include "JSValueInWrappedObjectInlines.h"
+#include "JSWebLockManagerSnapshot.h"
+#include "NavigatorBase.h"
+#include "Page.h"
+#include "SecurityOrigin.h"
+#include "WebLock.h"
+#include "WebLockGrantedCallback.h"
+#include "WebLockManagerSnapshot.h"
+#include "WebLockRegistry.h"
+#include "WorkerGlobalScope.h"
+#include "WorkerLoaderProxy.h"
+#include "WorkerThread.h"
+#include <JavaScriptCore/HeapCellInlines.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/RunLoop.h>
+#include <wtf/text/MakeString.h>
+
+namespace WebCore {
+
+static std::optional<ClientOrigin> clientOriginFromContext(ScriptExecutionContext* context)
+{
+    if (!context)
+        return std::nullopt;
+    RefPtr origin = context->securityOrigin();
+    if (!origin || origin->isOpaque())
+        return std::nullopt;
+    return { { context->topOrigin().data(), origin->data() } };
+}
+
+struct WebLockManager::LockRequest {
+    Markable<WebLockIdentifier> lockIdentifier;
+    String name;
+    WebLockMode mode { WebLockMode::Exclusive };
+    RefPtr<WebLockGrantedCallback> grantedCallback;
+    RefPtr<AbortSignal> signal;
+    std::optional<uint32_t> signalAlgorithmIdentifier;
+
+    bool NODELETE isValid() const { return !!lockIdentifier; }
+
+    void removeSignalAlgorithm()
+    {
+        if (signal && signalAlgorithmIdentifier)
+            protect(signal)->removeAlgorithm(*signalAlgorithmIdentifier);
+    }
+};
+
+class WebLockManager::MainThreadBridge : public ThreadSafeRefCounted<MainThreadBridge, WTF::DestructionThread::Main> {
+public:
+    static RefPtr<MainThreadBridge> create(ScriptExecutionContext* context)
+    {
+        auto clientOrigin = clientOriginFromContext(context);
+        if (!clientOrigin)
+            return nullptr;
+
+        auto sessionID = context->sessionID();
+        if (!sessionID)
+            return nullptr;
+
+        return adoptRef(*new MainThreadBridge(*context, *sessionID, WTF::move(*clientOrigin)));
+    }
+
+    void requestLock(WebLockIdentifier, const String& name, const Options&, Function<void(bool)>&&, Function<void()>&& lockStolenHandler);
+    void releaseLock(WebLockIdentifier, const String& name);
+    void abortLockRequest(WebLockIdentifier, const String& name, Function<void(bool)>&&);
+    void query(Function<void(Snapshot&&)>&&);
+    void clientIsGoingAway();
+
+private:
+    MainThreadBridge(ScriptExecutionContext&, PAL::SessionID, ClientOrigin&&);
+
+    const ScriptExecutionContextIdentifier m_clientID;
+    const PAL::SessionID m_sessionID;
+    const ClientOrigin m_clientOrigin; // Main thread only.
+};
+
+WebLockManager::MainThreadBridge::MainThreadBridge(ScriptExecutionContext& context, PAL::SessionID sessionID, ClientOrigin&& clientOrigin)
+    : m_clientID(context.identifier())
+    , m_sessionID(sessionID)
+    , m_clientOrigin(WTF::move(clientOrigin).isolatedCopy())
+{
+}
+
+void WebLockManager::MainThreadBridge::requestLock(WebLockIdentifier lockIdentifier, const String& name, const Options& options, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
+{
+    callOnMainThread([this, protectedThis = Ref { *this }, name = crossThreadCopy(name), mode = options.mode, steal = options.steal, ifAvailable = options.ifAvailable, lockIdentifier, grantedHandler = WTF::move(grantedHandler), lockStolenHandler = WTF::move(lockStolenHandler)]() mutable {
+        WebLockRegistry::singleton().requestLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, mode, steal, ifAvailable, [clientID = m_clientID, grantedHandler = WTF::move(grantedHandler)] (bool success) mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [grantedHandler = WTF::move(grantedHandler), success](auto&) mutable {
+                grantedHandler(success);
+            });
+        }, [clientID = m_clientID, lockStolenHandler = WTF::move(lockStolenHandler)]() mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [lockStolenHandler = WTF::move(lockStolenHandler)](auto&) mutable {
+                lockStolenHandler();
+            });
+        });
+    });
+}
+
+void WebLockManager::MainThreadBridge::releaseLock(WebLockIdentifier lockIdentifier, const String& name)
+{
+    callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name)] {
+        WebLockRegistry::singleton().releaseLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name);
+    });
+}
+
+void WebLockManager::MainThreadBridge::abortLockRequest(WebLockIdentifier lockIdentifier, const String& name, Function<void(bool)>&& callback)
+{
+    callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name), callback = WTF::move(callback)]() mutable {
+        WebLockRegistry::singleton().abortLockRequest(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, [clientID = m_clientID, callback = WTF::move(callback)](bool wasAborted) mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [callback = WTF::move(callback), wasAborted](auto&) mutable {
+                callback(wasAborted);
+            });
+        });
+    });
+}
+
+void WebLockManager::MainThreadBridge::query(Function<void(Snapshot&&)>&& callback)
+{
+    callOnMainThread([this, protectedThis = Ref { *this }, callback = WTF::move(callback)]() mutable {
+        WebLockRegistry::singleton().snapshot(m_sessionID, m_clientOrigin, [clientID = m_clientID, callback = WTF::move(callback)](Snapshot&& snapshot) mutable {
+            ScriptExecutionContext::ensureOnContextThread(clientID, [callback = WTF::move(callback), snapshot = crossThreadCopy(snapshot)](auto&) mutable {
+                callback(WTF::move(snapshot));
+            });
+        });
+    });
+}
+
+void WebLockManager::MainThreadBridge::clientIsGoingAway()
+{
+    callOnMainThread([this, protectedThis = Ref { *this }] {
+        WebLockRegistry::singleton().clientIsGoingAway(m_sessionID, m_clientOrigin, m_clientID);
+    });
+}
+
+Ref<WebLockManager> WebLockManager::create(NavigatorBase& navigator)
+{
+    auto manager = adoptRef(*new WebLockManager(navigator));
+    manager->suspendIfNeeded();
+    return manager;
+}
+
+WebLockManager::WebLockManager(NavigatorBase& navigator)
+    : ActiveDOMObject(navigator.scriptExecutionContext())
+    , m_mainThreadBridge(MainThreadBridge::create(protect(navigator.scriptExecutionContext()).get()))
+{
+}
+
+WebLockManager::~WebLockManager()
+{
+    clientIsGoingAway();
+}
+
+void WebLockManager::request(const String& name, Ref<WebLockGrantedCallback>&& grantedCallback, Ref<DeferredPromise>&& promise)
+{
+    request(name, { }, WTF::move(grantedCallback), WTF::move(promise));
+}
+
+void WebLockManager::request(const String& name, Options&& options, Ref<WebLockGrantedCallback>&& grantedCallback, Ref<DeferredPromise>&& releasePromise)
+{
+    UNUSED_PARAM(name);
+    RefPtr context = scriptExecutionContext();
+    if (!context) {
+        releasePromise->reject(ExceptionCode::InvalidStateError, "Context is invalid"_s);
+        return;
+    }
+
+    if (RefPtr document = dynamicDowncast<Document>(*context); document && !document->isFullyActive()) {
+        releasePromise->reject(ExceptionCode::InvalidStateError, "Responsible document is not fully active"_s);
+        return;
+    }
+
+    if (!m_mainThreadBridge) {
+        releasePromise->reject(ExceptionCode::SecurityError, "Context's origin is opaque"_s);
+        return;
+    }
+
+    if (name.startsWith('-')) {
+        releasePromise->reject(ExceptionCode::NotSupportedError, "Lock name cannot start with '-'"_s);
+        return;
+    }
+
+    if (name.length() > WebLock::maxNameLength) {
+        releasePromise->reject(ExceptionCode::NotSupportedError, makeString("Lock name cannot cannot be longer than "_s, WebLock::maxNameLength, " characters"_s));
+        return;
+    }
+
+    if (options.steal && options.ifAvailable) {
+        releasePromise->reject(ExceptionCode::NotSupportedError, "WebLockOptions's steal and ifAvailable cannot both be true"_s);
+        return;
+    }
+
+    if (options.steal && options.mode != WebLockMode::Exclusive) {
+        releasePromise->reject(ExceptionCode::NotSupportedError, "WebLockOptions's steal is true but mode is not 'exclusive'"_s);
+        return;
+    }
+
+    if (options.signal && (options.steal || options.ifAvailable)) {
+        releasePromise->reject(ExceptionCode::NotSupportedError, "WebLockOptions's steal and ifAvailable need to be false when a signal is provided"_s);
+        return;
+    }
+
+    if (options.signal && options.signal->aborted()) {
+        releasePromise->reject<IDLAny>(options.signal->reason().getValue());
+        return;
+    }
+
+    WebLockIdentifier lockIdentifier = WebLockIdentifier::generate();
+    m_releasePromises.add(lockIdentifier, WTF::move(releasePromise));
+
+    std::optional<uint32_t> signalAlgorithmIdentifier;
+    if (RefPtr signal = options.signal) {
+        signalAlgorithmIdentifier = signal->addAlgorithm([weakThis = WeakPtr { *this }, lockIdentifier](JSC::JSValue reason) mutable {
+            if (weakThis)
+                weakThis->signalToAbortTheRequest(lockIdentifier, reason);
+        });
+    }
+
+    m_pendingRequests.add(lockIdentifier, LockRequest { lockIdentifier, name, options.mode, WTF::move(grantedCallback), WTF::move(options.signal), signalAlgorithmIdentifier });
+
+    m_mainThreadBridge->requestLock(lockIdentifier, name, options, [weakThis = WeakPtr { *this }, lockIdentifier](bool success) mutable {
+        if (weakThis)
+            weakThis->didCompleteLockRequest(lockIdentifier, success);
+    }, [weakThis = WeakPtr { *this }, lockIdentifier]() mutable {
+        if (weakThis)
+            weakThis->settleReleasePromise(lockIdentifier, Exception { ExceptionCode::AbortError, "Lock was stolen by another request"_s });
+    });
+}
+
+void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bool success)
+{
+    queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [lockIdentifier, success](auto& manager) mutable {
+        auto request = manager.m_pendingRequests.take(lockIdentifier);
+        if (!request.isValid())
+            return;
+
+        request.removeSignalAlgorithm();
+
+        if (success) {
+            if (request.signal && request.signal->aborted()) {
+                manager.m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
+                return;
+            }
+
+            Ref lock = WebLock::create(*request.lockIdentifier, request.name, request.mode);
+            auto result = request.grantedCallback->invoke(lock.ptr());
+            if (result.type() != CallbackResultType::Success || result.returnValue()->isSuspended()) {
+                manager.m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
+                manager.settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
+                return;
+            }
+
+            Ref waitingPromise = result.releaseReturnValue();
+            waitingPromise->whenSettled([weakThis = WeakPtr { manager }, lockIdentifier = *request.lockIdentifier, name = request.name, waitingPromise] {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis || waitingPromise->isSuspended())
+                    return;
+                protectedThis->m_mainThreadBridge->releaseLock(lockIdentifier, name);
+                protectedThis->settleReleasePromise(lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
+            });
+        } else {
+            auto result = request.grantedCallback->invoke(nullptr);
+            if (result.type() != CallbackResultType::Success || result.returnValue()->isSuspended()) {
+                manager.settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });
+                return;
+            }
+
+            Ref waitingPromise = result.releaseReturnValue();
+            manager.settleReleasePromise(*request.lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
+        }
+    });
+}
+
+void WebLockManager::query(Ref<DeferredPromise>&& promise)
+{
+    RefPtr context = scriptExecutionContext();
+    if (!context) {
+        promise->reject(ExceptionCode::InvalidStateError, "Context is invalid"_s);
+        return;
+    }
+
+    if (RefPtr document = dynamicDowncast<Document>(*context); document && !document->isFullyActive()) {
+        promise->reject(ExceptionCode::InvalidStateError, "Responsible document is not fully active"_s);
+        return;
+    }
+
+    if (!m_mainThreadBridge) {
+        promise->reject(ExceptionCode::SecurityError, "Context's origin is opaque"_s);
+        return;
+    }
+
+    auto promiseIdentifier = WebLockIdentifier::generate();
+    m_queryPromises.add(promiseIdentifier, WTF::move(promise));
+    m_mainThreadBridge->query([weakThis = WeakPtr { *this }, promiseIdentifier](Snapshot&& snapshot) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        auto promise = protectedThis->m_queryPromises.take(promiseIdentifier);
+        if (!promise)
+            return;
+
+        queueTaskKeepingObjectAlive(*protectedThis, TaskSource::DOMManipulation, [promise = WTF::move(promise), snapshot = WTF::move(snapshot)](auto&) mutable {
+            promise->resolve<IDLDictionary<Snapshot>>(WTF::move(snapshot));
+        });
+    });
+}
+
+// https://w3c.github.io/web-locks/#signal-to-abort-the-request
+void WebLockManager::signalToAbortTheRequest(WebLockIdentifier lockIdentifier, JSC::JSValue reason)
+{
+    if (!scriptExecutionContext() || !m_mainThreadBridge)
+        return;
+
+    auto requestsIterator = m_pendingRequests.find(lockIdentifier);
+    if (requestsIterator == m_pendingRequests.end())
+        return;
+    auto& request = requestsIterator->value;
+
+    m_mainThreadBridge->abortLockRequest(*request.lockIdentifier, request.name, [weakThis = WeakPtr { *this }, lockIdentifier](bool wasAborted) {
+        if (wasAborted && weakThis) {
+            if (auto request = weakThis->m_pendingRequests.take(lockIdentifier); request.isValid())
+                request.removeSignalAlgorithm();
+        }
+    });
+    if (RefPtr releasePromise = m_releasePromises.take(lockIdentifier))
+        releasePromise->reject<IDLAny>(reason);
+}
+
+void WebLockManager::settleReleasePromise(WebLockIdentifier lockIdentifier, ExceptionOr<JSC::JSValue>&& result)
+{
+    RefPtr releasePromise = m_releasePromises.take(lockIdentifier);
+    if (!releasePromise)
+        return;
+
+    if (result.hasException())
+        releasePromise->reject(result.releaseException());
+    else
+        releasePromise->resolveWithJSValue(result.releaseReturnValue());
+}
+
+void WebLockManager::stop()
+{
+    clientIsGoingAway();
+}
+
+void WebLockManager::clientIsGoingAway()
+{
+    for (auto& request : m_pendingRequests.values())
+        request.removeSignalAlgorithm();
+
+    // Reject all pending promises before clearing.
+    auto releasePromises = std::exchange(m_releasePromises, { });
+    for (auto& promise : releasePromises.values())
+        protect(promise)->reject(ExceptionCode::AbortError, "Promise was rejected because the browsing context is going away"_s);
+    auto queryPromises = std::exchange(m_queryPromises, { });
+    for (auto& promise : queryPromises.values())
+        protect(promise)->reject(ExceptionCode::AbortError, "Promise was rejected because the browsing context is going away"_s);
+    m_pendingRequests.clear();
+    m_releasePromises.clear();
+
+    if (m_mainThreadBridge)
+        m_mainThreadBridge->clientIsGoingAway();
+}
+
+bool WebLockManager::virtualHasPendingActivity() const
+{
+    return !m_pendingRequests.isEmpty() || !m_releasePromises.isEmpty() || !m_queryPromises.isEmpty();
+}
+
+void WebLockManager::suspend(ReasonForSuspension reason)
+{
+    if (reason == ReasonForSuspension::PageWillBeSuspended || reason == ReasonForSuspension::BackForwardCache)
+        clientIsGoingAway();
+
+    ActiveDOMObject::suspend(reason);
+}
+
+} // namespace WebCore

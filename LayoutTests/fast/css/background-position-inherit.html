@@ -1,0 +1,16 @@
+<div style="background-position: 25% 75%">
+    <div id="target" style="background-position: inherit;"></div>
+</div>
+<p>
+    This tests that <tt>background-position: inherit</tt> is applied correctly.
+</p>
+<p id="result">
+</p>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var targetBackgroundPosition = getComputedStyle(document.getElementById("target")).backgroundPosition,cssText;
+
+    document.getElementById("result").innerText = targetBackgroundPosition == "25% 75%" ? "PASS" : "FAIL: The inherited value was " + targetBackgroundPosition;
+</script>

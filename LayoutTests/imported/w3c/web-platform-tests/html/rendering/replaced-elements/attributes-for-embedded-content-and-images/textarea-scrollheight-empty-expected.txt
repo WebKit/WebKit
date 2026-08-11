@@ -1,0 +1,4 @@
+
+
+PASS Textarea scrollHeight shouldn't collapse under a line height
+

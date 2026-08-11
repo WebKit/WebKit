@@ -1,0 +1,26 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS global/header.html.tmpl title = "Sanity Check"
+                                   style_urls = ['skins/standard/admin.css'] %]
+
+<div>
+  <p>
+    Bugzilla is checking the referential integrity of your database.
+    This may take several minutes to complete.
+  </p>
+
+  <p>
+    Errors, if any, will be <span class="alert">emphasized like this</span>.
+    Depending on the errors found, some links will be displayed allowing you
+    to easily fix them. Fixing these errors will automatically run this script
+    again (so be aware that it may take an even longer time than the first run).
+  </p>
+</div>
+
+<hr>

@@ -1,0 +1,7 @@
+2d.shadow.enable.off.2
+
+Shadows are not drawn when only shadowColor is set
+
+
+PASS Shadows are not drawn when only shadowColor is set
+

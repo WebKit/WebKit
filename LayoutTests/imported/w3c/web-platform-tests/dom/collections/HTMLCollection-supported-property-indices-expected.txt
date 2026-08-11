@@ -1,0 +1,9 @@
+
+PASS Handling of property names that look like negative integers
+PASS Handling of property names that look like small nonnegative integers
+PASS Handling of property names that look like integers around 2^31
+PASS Handling of property names that look like integers around 2^32
+PASS Trying to set an expando that would shadow an already-existing indexed property
+PASS Trying to set an expando with an indexed property name past the end of the list
+PASS Trying to delete an indexed property name should never work
+

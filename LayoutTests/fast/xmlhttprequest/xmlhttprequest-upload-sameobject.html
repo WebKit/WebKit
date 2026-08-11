@@ -1,0 +1,19 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that XMLHttpRequest.upload always returns the same object.");
+jsTestIsAsync = true;
+
+let xhr = new XMLHttpRequest();
+xhr.upload.foo = 1;
+gc();
+setTimeout(() => {
+    gc();
+    shouldBe("xhr.upload.foo", "1");
+    finishJSTest();
+}, 0);
+</script>
+</body>
+</html>

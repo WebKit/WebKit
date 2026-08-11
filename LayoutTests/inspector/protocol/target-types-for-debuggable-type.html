@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("WI.DebuggableType.supportedTargetTypes");
+
+    suite.addTestCase({
+        name: "WI.DebuggableType.supportedTargetTypes.WebPage",
+        description: "Check that protocol domains/events/commands with non-matching targets are not hooked up.",
+        test() {
+            InspectorTest.expectTrue(InspectorBackend.hasDomain("DOM"), "Should have a 'DOM' domain.");
+            InspectorTest.expectTrue(InspectorBackend.hasCommand("DOM.requestNode"), "Should have a 'DOM.requestNode' command.");
+            InspectorTest.expectFalse(InspectorBackend.hasCommand("DOM.getDataBindingsForNode"), "Should not have a 'DOM.getDataBindingsForNode' command.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests to validate the relationship between debuggable types and target types.</p>
+</body>
+</html>

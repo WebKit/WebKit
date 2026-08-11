@@ -1,0 +1,9 @@
+
+PASS A source whose buffer was never set outputs one channel
+PASS A source with a stereo buffer that was never started outputs one channel
+PASS A playing source outputs the buffer channel count, then one channel at the end of the buffer
+PASS A source that is stopped outputs one channel after the stop time
+PASS A source outputs one channel after its duration has elapsed
+PASS A source whose buffer is set to null outputs one channel
+PASS A playing source whose buffer is null outputs one channel
+

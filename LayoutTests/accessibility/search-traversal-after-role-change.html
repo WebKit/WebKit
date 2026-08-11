@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container" role="group">
+    <h1>Hello world!</h1>
+    <div role="toolbar">
+        <div>
+            <button>Foo</button>
+        </div>
+    </div>
+
+    <div role="article">
+        Lorem ipsum
+    </div>
+</div>
+
+<script>
+    var testOutput = "This test ensures we can traverse through an object's children after its role is changed dynamically.\n";
+
+    function traverse(containerElement) {
+        let searchResult = null;
+        while (true) {
+            searchResult = containerElement.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+            if (!searchResult)
+                break;
+            const role = searchResult.role;
+            testOutput += `\n${role}`;
+            if (role.includes("StaticText")) {
+                let textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
+                testOutput += `\n${textContent}`;
+            }
+            testOutput += "\n";
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        const container = accessibilityController.accessibleElementById("container");
+        testOutput += "\nPerforming search traversal with initial page state.\n";
+        traverse(container);
+
+        document.getElementById("container").role = "main";
+        setTimeout(async function() {
+            await waitFor(() => {
+                if (accessibilityController.platformName === "ios")
+                    return container.role && container.role.includes("LandmarkMain");
+
+                return container.subrole && container.subrole.includes("AXLandmarkMain");
+            });
+            testOutput += "\nPerforming search traversal after role change.\n";
+            traverse(container);
+
+            document.getElementById("container").style.visibility = "hidden";
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

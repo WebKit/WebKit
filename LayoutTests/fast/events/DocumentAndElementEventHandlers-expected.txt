@@ -1,0 +1,8 @@
+
+PASS oncopy EventHandler on Document
+PASS oncopy EventHander on HTMLElement
+PASS oncut EventHandler on Document
+PASS oncut EventHander on HTMLElement
+PASS onpaste EventHandler on Document
+PASS onpaste EventHander on HTMLElement
+

@@ -1,0 +1,3 @@
+
+FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError assert_equals: expected "InvalidModificationError" but got "OperationError"
+

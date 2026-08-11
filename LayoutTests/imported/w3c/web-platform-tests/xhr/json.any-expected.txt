@@ -1,0 +1,4 @@
+
+PASS Ensure the correct JSON parser is used
+PASS Ensure UTF-16 results in an error
+

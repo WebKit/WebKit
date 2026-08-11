@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+body {
+  font-size: 16px;
+  overflow: hidden;
+}
+
+table {
+  border-spacing: 0px;
+}
+
+td {
+  height: 20px;
+  padding: 0px;
+  background-color: blue;
+  white-space: pre-wrap;
+}
+
+td:nth-child(odd) {
+  background-color: green;
+}
+
+div {
+  height: 20px;
+}
+</style>
+<div style="width: 200px; height: auto;">
+<table><tr><td style="width: 300px;"></td><td style="width: 400px;"></td><td style="width: 30%;"></td></tr></table>
+<table><tr><td style="width: 400px;"></td><td style="width: 500px;"></td><td style="width: 40%;"></td></tr></table>
+<table><tr><td style="width: 500px;"></td><td style="width: 600px;"></td><td style="width: 50%;"></td></tr></table>
+<table><tr><td style="width: 600px;"></td><td style="width: 500px;"></td><td style="width: 60%;"></td></tr></table>
+<table><tr><td style="width: 700px;"></td><td style="width: 400px;"></td><td style="width: 70%;"></td></tr></table>
+<table><tr><td style="width: 800px;"></td><td style="width: 300px;"></td><td style="width: 80%;"></td></tr></table>
+<table><tr><td style="width: 900px;"></td><td style="width: 200px;"></td><td style="width: 90%;"></td></tr></table>
+</div>

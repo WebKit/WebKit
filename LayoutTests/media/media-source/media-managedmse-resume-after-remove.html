@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mediasource-resume-after-remove</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var currentTime;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-vp9-profile0-manifest.json');
+        await loaderPromise(loader);
+
+        source = new ManagedMediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        run('video.muted = true');
+        run('video.playsInline = true');
+        run('video.disableRemotePlayback = true');
+        run('video.autoplay = true');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+        const playingPromise = waitFor(video, 'playing', true);
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+        await playingPromise;
+        run('video.currentTime = 1');
+        await Promise.all([ waitFor(video, 'seeked'), testExpectedEventually("video.currentTime", 1.5, ">=") ]);
+
+        run('sourceBuffer.remove(1, sourceBuffer.buffered.end(0))');
+        await Promise.all([ waitFor(video, 'waiting'), waitFor(sourceBuffer, 'update', true)]);
+        testExpected('video.currentTime', 1.5, ">=");
+        currentTime = video.currentTime;
+        testExpected('video.readyState', video.HAVE_METADATA);
+
+        // make sure currentTime didn't progress.
+        await sleepFor(500);
+        testExpected('video.currentTime == currentTime',true);
+        testExpected('video.readyState', video.HAVE_METADATA);
+
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+        await testExpectedEventually("video.currentTime", 2, ">=");
+        testExpected('video.readyState >= video.HAVE_CURRENT_DATA', true);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

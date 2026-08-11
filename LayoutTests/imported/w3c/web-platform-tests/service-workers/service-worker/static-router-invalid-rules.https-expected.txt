@@ -1,0 +1,10 @@
+
+PASS addRoutes should raise for invalid ByteString request method.
+PASS addRoutes should raise for invalid HTTP request method.
+PASS addRoutes should raise for forbidden request method.
+PASS addRoutes should raise if or condition exceeds the depth limit
+PASS addRoutes should raise if not condition exceeds the depth limit
+PASS addRoutes should raise if the number of router rules exceeds the length limit
+PASS addRoutes should raise if the conditon does not exist in the rule
+PASS addRoutes should raise if the source does not exiswt in the rule
+

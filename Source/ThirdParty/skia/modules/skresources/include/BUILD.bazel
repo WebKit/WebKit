@@ -1,0 +1,13 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "hdrs",
+    srcs = ["SkResources.h"],
+    visibility = ["//modules/skresources:__pkg__"],
+)

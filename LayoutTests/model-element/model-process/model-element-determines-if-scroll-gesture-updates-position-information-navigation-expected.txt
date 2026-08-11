@@ -1,0 +1,10 @@
+ensurePositionInformationIsUpToDate should only be called when a scroll gesture occurs if a model element exists in the page. After navigating from a page with a model element to a page without one and attempting to scroll, ensurePositionInformationIsUpToDate should not be called.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS After navigating from a page with model elements to a page without any and performing the scroll gesture, ensurePositionInformationIsUpToDate was not called.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

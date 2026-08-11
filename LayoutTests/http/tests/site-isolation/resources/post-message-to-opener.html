@@ -1,0 +1,6 @@
+<script>
+    addEventListener("message", (event) => {
+        window.opener.postMessage("opened window received: " + event.data, "*")
+    });
+    window.opener.postMessage("initial ping", "*")
+</script>

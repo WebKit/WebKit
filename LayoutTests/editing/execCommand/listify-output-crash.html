@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+onload = function() {
+    document.execCommand('SelectAll');
+    document.execCommand('InsertUnorderedList');
+    document.body.textContent = 'PASS';
+}
+</script>
+</head>
+<body contenteditable="true"><output>
+<option>12</option>after
+</body>
+</html>

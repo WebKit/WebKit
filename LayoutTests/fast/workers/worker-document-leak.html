@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Verify that creation of a worker does not leak its creating document.</p>
+<div id='console'></div>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/gc.js"></script>
+<script>
+jsTestIsAsync = true;
+
+// Set this number as high as possible without introducing timeouts in debug builds.
+// Reducing it does not require rebaselines.
+var numIterations = 6;
+
+var doneCallback;
+    
+window.onmessage = function(event) {
+    if (event.data == "done" && doneCallback) {
+        doneCallback();
+    }
+}
+    
+function waitForDoneMessage() {
+    return new Promise(resolve => {
+        doneCallback = () => {
+            doneCallback = null;
+            resolve();
+        }
+    });
+}
+
+async function startTest() {
+    try {
+        let message = await testDocumentIsNotLeaked(async documentCount => {
+            let frameIdentifiers = [];
+            for (var i = 0; i < documentCount; i++) {
+                let frame = document.body.appendChild(document.createElement("iframe"));
+                frame.src = "resources/worker-document-leak-iframe.html";
+                await waitForDoneMessage()
+                frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                frame.remove();
+            }
+            return frameIdentifiers;
+        }, { documentCount: numIterations });
+        testPassed(message);
+    } catch (error) {
+        testFailed(error.message);
+    }
+    finishJSTest();
+}
+
+window.onload = startTest;
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+
+PASS self.reportError() dispatches an "error" event for this's relevant global object
+

@@ -1,0 +1,9 @@
+This tests that vm entry to a JS function with arity mismatch doesn't crash (bug 136305).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

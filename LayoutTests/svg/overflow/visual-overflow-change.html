@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<head>
+    <style>
+        body {
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .svgcanvas {
+            position: relative;
+            width: 3800px;
+            height: 600px;
+            display: inline-block;
+            overflow: hidden;
+        }
+        
+        .indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3800px; /* Trigger composited tiling */
+            height: 600px;
+            display: inline-block;
+            background-color: red;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(0);
+        }
+        
+        #svgroot {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: gray;
+        }
+        
+        svg {
+            border: 4px solid black;
+            box-sizing: border-box;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function doTest()
+        {
+            window.setTimeout(function() {
+                var svg = document.getElementById('svgroot');
+                svg.setAttribute('x', 640);
+                svg.setAttribute('y', 480);
+                svg.setAttribute('width', 1920);
+                svg.setAttribute('height', 1400);
+                var background = document.getElementById('canvasBackground');
+                background.setAttribute('x', 540);
+                background.setAttribute('y', 480);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+    <!-- You should see no red -->
+    <div class="indicator"></div>
+    <div class="composited svgcanvas">
+        <svg id="svgroot" width="640" height="480" overflow="visible">
+          <svg id="canvasBackground" width="640" height="480" overflow="none">
+            <rect width="100%" height="100%" fill="green"/>
+          </svg>
+        </svg>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+
+FAIL the windowControlsOverlay object should exist on the navigator object assert_idl_attribute: property "windowControlsOverlay" not found in prototype chain
+FAIL visible should be a member of the windowControlsOverlay object assert_idl_attribute: provided value is not an object
+FAIL visible should be false undefined is not an object (evaluating 'navigator.windowControlsOverlay.visible')
+FAIL getTitlebarAreaRect should be a method of the windowControlsOverlay object assert_idl_attribute: provided value is not an object
+FAIL getTitlebarAreaRect return type should be DOMRect undefined is not an object (evaluating 'navigator.windowControlsOverlay.getTitlebarAreaRect')
+FAIL getTitlebarAreaRect should return a empty DOMRect undefined is not an object (evaluating 'navigator.windowControlsOverlay.getTitlebarAreaRect')
+FAIL ongeometrychange should be a member of the windowControlsOverlay object assert_idl_attribute: provided value is not an object
+

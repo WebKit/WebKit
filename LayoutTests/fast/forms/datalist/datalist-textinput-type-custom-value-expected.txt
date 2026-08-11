@@ -1,0 +1,16 @@
+
+This test verifies that typing into an input with a list attribute allows freely entering text that does not match any datalist option. The type-select filter on the context menu should not consume keystrokes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.value became 'M'
+PASS input.value became 'Ma'
+PASS input.value became 'Man'
+PASS input.value became 'Mang'
+PASS input.value became 'Mango'
+PASS input.value is "Mango"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

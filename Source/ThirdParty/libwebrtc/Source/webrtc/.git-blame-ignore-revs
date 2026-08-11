@@ -1,0 +1,36 @@
+# git hyper-blame master ignore list.
+#
+# This file contains a list of git hashes of revisions to be ignored by git
+# hyper-blame (in depot_tools). These revisions are considered "unimportant" in
+# that they are unlikely to be what you are interested in when blaming.
+#
+# Instructions:
+# - Only large (generally automated) reformatting or renaming CLs should be
+#   added to this list. Do not put things here just because you feel they are
+#   trivial or unimportant. If in doubt, do not put it on this list.
+# - Precede each revision with a comment containing the first line of its log.
+# - Only put full 40-character hashes on this list (not short hashes or any
+#   other revision reference).
+# - Append to the bottom of the file (revisions should be in chronological order
+#   from oldest to newest).
+# - Because you must use a hash, you need to append to this list in a follow-up
+#   CL to the actual reformatting CL that you are trying to ignore.
+
+# Format all Java in WebRTC.
+b6760f9e4442410f2bcb6090b3b89bf709e2fce2
+# Format all C++ in WebRTC.
+665174fdbb4e0540eccb27cf7412348f1b65534c
+# Format almost all C++ in WebRTC. Again. Mostly #include reordering.
+a4d873786f10eedd72de25ad0d94ad7c53c1f68a
+# Format /modules
+c018bae80743596694db91478b879815f19dfb74
+# Format /sdk
+6f86f6af008176e631140e6a80e0a0bca9550143
+# Format /rtc_base
+802e8e5fdbac5af0e264d7fbe32b16643ad718ae
+# Format ^(api|call|common_audio|examples|media|net|p2p|pc)/
+bceec84aeedcb9f5992d30dae0b477fb5e227fee
+# Format the rest
+7220ee97aafaa33a914f578e0f04184a94d17974
+# Run clang-tidy on the repo
+97b46e12582606a238d4f0c8524365cf5bdcb411

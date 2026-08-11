@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<table id="table1">
+    <tbody>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col" id="title-cell">Col 1</th>
+            <th>Col 2</th>
+            <th>Col 3</th>
+        </tr>
+        <tr>
+            <th scope="row" id="second-row-cell">Data abc</td>
+            <td>Data def</td>
+            <td>Data ghi</td>
+            <td>Data jkl</td>
+        </tr>
+        <tr>
+            <td>Data abc</td>
+            <td>Data def</td>
+            <td>Data ghi</td>
+        </tr>
+    </tbody>
+</table>
+<script>
+var testOutput = "This test ensures that the right header is returned when AX clients request the table header.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var table = accessibilityController.accessibleElementById("table1");
+    var cell1 = table.cellForColumnAndRow(1, 1);
+    var cell2 = table.cellForColumnAndRow(2, 0);
+    var cell3 = table.cellForColumnAndRow(1, 2);
+
+    testOutput += `The table cell at (0, 1) should have exactly 1 column header, currently it has ${cell1.columnHeaders().length} column header(s).\n`;
+    testOutput += `The table cell at (2, 0) should have exactly 0 row headers, currently it has ${cell2.rowHeaders().length} row header(s).\n`;
+    testOutput += `The table cell at (1, 2) should have exactly 0 row headers, currently it has ${cell3.rowHeaders().length} row header(s).\n\n`;
+
+    testOutput += "Changing scope of table header at (0, 0) to 'row':\n";
+    document.getElementById("title-cell").setAttribute("scope", "row");
+
+    setTimeout(async function() {
+        await waitFor(() => cell1.columnHeaders().length == 0);
+        testOutput += `The table cell at (0, 1) should have exactly 0 column headers, currently it has ${cell1.columnHeaders().length} column header(s).\n`;
+
+        await waitFor(() => cell2.rowHeaders().length);
+        testOutput += `The table cell at (2, 0) should have exactly 1 row header, currently it has ${cell2.rowHeaders().length} row header(s).\n`;
+        testOutput += `The table cell at (1, 2) should have exactly 0 row headers, currently it has ${cell3.rowHeaders().length} row header(s).\n\n`;
+
+        testOutput += "Changing scope of cell at (0, 1) to 'rowgroup':\n";
+        document.getElementById("second-row-cell").setAttribute("scope", "rowgroup");
+        document.getElementById("second-row-cell").setAttribute("rowspan", "2");
+
+        cell3 = table.cellForColumnAndRow(1, 2);
+        await waitFor(() => cell3.rowHeaders().length);
+        testOutput += `The table cell at (1, 2) should have exactly 1 row header, currently it has ${cell3.rowHeaders().length} row header(s).\n`;
+
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+# Copyright (c) 2025 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+if (rtc_include_tests) {
+  rtc_library("bwe_integration_tests") {
+    testonly = true
+    sources = []
+
+    # TODO: bugs.webrtc.org / 447037083 - for some reason a "fake" hardware
+    # encoder / decoder is used on
+    # https://ci.chromium.org/ui/p/webrtc/builders/try/android_arm64_rel
+    # generic_decoder.cc: (line 306): Decoder implementation: DecoderInfo {
+    # prefers_late_decoding = implementation_name = 'fake_decoder',
+    # is_hardware_accelerated = true
+    # Figure out how to run libvpx instead.
+    if (rtc_enable_protobuf && !is_android) {
+      sources += [
+        "bwe_ramp_up_test.cc",
+        "l4s_test.cc",
+        "receive_side_bwe_test.cc",
+        "scream_test.cc",
+        "stats_utilities.cc",
+        "stats_utilities.h",
+      ]
+
+      deps = [
+        "..:peer_scenario",
+        "../..:create_frame_generator_capturer",
+        "../..:test_support",
+        "../../../api:audio_options_api",
+        "../../../api:jsep",
+        "../../../api:make_ref_counted",
+        "../../../api:network_emulation_manager_api",
+        "../../../api:peer_connection_interface",
+        "../../../api:rtc_error",
+        "../../../api:rtc_stats_api",
+        "../../../api:rtp_parameters",
+        "../../../api:rtp_sender_interface",
+        "../../../api:rtp_transceiver_direction",
+        "../../../api:scoped_refptr",
+        "../../../api/test/network_emulation",
+        "../../../api/test/network_emulation:network_config_schedule_proto",
+        "../../../api/test/network_emulation:network_queue",
+        "../../../api/test/network_emulation:schedulable_network_node_builder",
+        "../../../api/test/network_emulation:token_bucket_network_behavior_builder",
+        "../../../api/transport:bitrate_settings",
+        "../../../api/transport:ecn_marking",
+        "../../../api/transport:stun_types",
+        "../../../api/units:data_rate",
+        "../../../api/units:data_size",
+        "../../../api/units:time_delta",
+        "../../../api/units:timestamp",
+        "../../../api/video:video_frame",
+        "../../../media:codec",
+        "../../../media:media_constants",
+        "../../../media:stream_params",
+        "../../../modules/rtp_rtcp:rtp_rtcp_format",
+        "../../../pc:media_session",
+        "../../../pc:pc_test_utils",
+        "../../../pc:session_description",
+        "../../../rtc_base:checks",
+        "../../../rtc_base:copy_on_write_buffer",
+        "../../../rtc_base:logging",
+        "../../../rtc_base:network_constants",
+        "../../network:emulated_network",
+        "../../scenario",
+        "//third_party/abseil-cpp/absl/flags:flag",
+        "//third_party/abseil-cpp/absl/strings",
+      ]
+    }
+  }
+}

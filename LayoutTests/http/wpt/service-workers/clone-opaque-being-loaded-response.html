@@ -1,0 +1,36 @@
+<html>
+<head>
+<title>Service Worker returning an opaque cloned response</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+var registration;
+var iframe;
+promise_test(async (test) => {
+    registration = await navigator.serviceWorker.getRegistration("resources/");
+    if (registration)
+        await registration.unregister();
+    registration = await navigator.serviceWorker.register("clone-opaque-being-loaded-response-worker.js", { scope : "resources/" });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    await new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    iframe = await with_iframe("resources/clone-opaque-being-loaded-response-iframe.html");
+    assert_equals(iframe.contentWindow.document.body.innerHTML.trim(), "PASS");
+    iframe.remove();
+}, "Ensure opaque response fetch is working");
+</script>
+</body>
+</html>

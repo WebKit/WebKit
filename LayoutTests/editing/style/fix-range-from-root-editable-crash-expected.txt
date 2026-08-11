@@ -1,0 +1,2 @@
+This tests ApplyStyleCommand::fixRangeAndApplyInlineStyle does not crash when startNode is body.
+PASS

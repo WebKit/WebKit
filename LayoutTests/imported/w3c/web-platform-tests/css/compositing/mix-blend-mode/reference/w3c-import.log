@@ -1,0 +1,55 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/green-square.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-animation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-blended-element-overflow-hidden-and-border-radius-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-blended-element-overflow-scroll-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-blended-element-with-transparent-pixels-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-blended-with-3D-transform-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-blended-with-transform-and-perspective-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-border-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-both-parent-and-blended-with-3D-transform-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-canvas-parent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-canvas-sibling-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-filter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-iframe-parent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-iframe-sibling-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-image-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-intermediate-element-overflow-hidden-and-border-radius-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-mask-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-overflowing-child-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-paragraph-background-image-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-paragraph-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-parent-element-overflow-hidden-and-border-radius-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-parent-element-overflow-scroll-blended-position-fixed-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-parent-element-overflow-scroll-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-parent-with-3D-transform-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-parent-with-border-radius-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-parent-with-text-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-plus-lighter-basic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-plus-lighter-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-plus-lighter-svg-basic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-plus-lighter-svg-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-rotated-clip-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-script-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-sibling-with-3D-transform-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-stacking-context-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-stacking-context-creates-isolation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-svg-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-video-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-video-sibling-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/reference/mix-blend-mode-with-transform-and-preserve-3D-ref.html

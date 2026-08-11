@@ -1,0 +1,5 @@
+
+PASS The specified CSS Animations work on view transition pseudos.
+PASS The specified CSS Animations and script animations work on view transition pseudos
+PASS The specified CSS Animations are removed if setting display:none.
+

@@ -1,0 +1,18 @@
+
+PASS :sampling_while_testing:format="stencil8";depthReadOnly="_undef_";stencilReadOnly=true
+PASS :sampling_while_testing:format="stencil8";depthReadOnly="_undef_";stencilReadOnly=false
+PASS :sampling_while_testing:format="depth16unorm";depthReadOnly=true;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth16unorm";depthReadOnly=false;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth32float";depthReadOnly=true;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth32float";depthReadOnly=false;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth24plus";depthReadOnly=true;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth24plus";depthReadOnly=false;stencilReadOnly="_undef_"
+PASS :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=true;stencilReadOnly=true
+PASS :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=true;stencilReadOnly=false
+PASS :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=false;stencilReadOnly=true
+PASS :sampling_while_testing:format="depth24plus-stencil8";depthReadOnly=false;stencilReadOnly=false
+PASS :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=true;stencilReadOnly=true
+PASS :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=true;stencilReadOnly=false
+PASS :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=false;stencilReadOnly=true
+PASS :sampling_while_testing:format="depth32float-stencil8";depthReadOnly=false;stencilReadOnly=false
+

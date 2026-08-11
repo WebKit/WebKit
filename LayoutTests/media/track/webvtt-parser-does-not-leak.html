@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/document-leak-test.js"></script>
+<script>
+    description("Tests that WebVTT parsing does not leak the document object when parsing WebVTT files");
+    onload = () => runDocumentLeakTest({ frameURL: "track-cue-css.html", framesToCreate: 20 });
+</script>
+</body>
+</html>

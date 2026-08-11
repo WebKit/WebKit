@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div id="test1" role="button" tabindex="0">X</div>
+  <div id="test2" role="button" tabindex="0" aria-keyshortcuts="">X</div>
+  <div id="test3" role="button" tabindex="0" aria-keyshortcuts="Shift+Space">X</div>
+  <div id="test4" role="button" tabindex="0" aria-keyshortcuts="Shift+Space Alt+Space">X</div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    function platformAttributes(axElement) {
+        var allAttributes = axElement.allAttributes().split("\n");
+        var length = allAttributes.length;
+        for (var i = 0; i < length; i++) {
+            var string = allAttributes[i];
+            if (string.startsWith("AXPlatformAttributes"))
+                return string;
+        }
+        return "";
+    }
+
+    description("This tests the exposure of the value of aria-keyshortcuts.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 4; i++) {
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            debug(platformAttributes(axElement));
+        }
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

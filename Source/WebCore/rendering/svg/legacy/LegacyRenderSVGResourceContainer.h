@@ -1,0 +1,95 @@
+/*
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include "LegacyRenderSVGHiddenContainer.h"
+#include "LegacyRenderSVGResource.h"
+#include "SVGDocumentExtensions.h"
+#include <wtf/InlineWeakPtr.h>
+#include <wtf/WeakHashSet.h>
+
+namespace WebCore {
+
+class RenderLayer;
+
+class LegacyRenderSVGResourceContainer : public LegacyRenderSVGHiddenContainer, public LegacyRenderSVGResource {
+    WTF_MAKE_TZONE_ALLOCATED(LegacyRenderSVGResourceContainer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LegacyRenderSVGResourceContainer);
+public:
+    virtual ~LegacyRenderSVGResourceContainer();
+
+    void layout() override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
+
+    static float NODELETE computeTextPaintingScale(const RenderElement&);
+    static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
+
+    void removeClientFromCacheAndMarkForInvalidation(RenderElement&, bool markForInvalidation = true) override;
+    void removeAllClientsFromCacheAndMarkForInvalidationIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) override;
+
+    void idChanged();
+    void markAllClientsForRepaint();
+    void addClientRenderLayer(RenderLayer&);
+    void removeClientRenderLayer(RenderLayer&);
+    void markAllClientLayersForInvalidation();
+
+protected:
+    LegacyRenderSVGResourceContainer(Type, SVGElement&, Style::ComputedStyle&&);
+
+    enum InvalidationMode {
+        LayoutAndBoundariesInvalidation,
+        BoundariesInvalidation,
+        RepaintInvalidation,
+        ParentOnlyInvalidation
+    };
+
+    // Used from the invalidateClient/invalidateClients methods from classes, inheriting from us.
+    virtual bool selfNeedsClientInvalidation() const { return everHadLayout() && selfNeedsLayout(); }
+
+    void markAllClientsForInvalidation(InvalidationMode);
+    void markAllClientsForInvalidationIfNeeded(InvalidationMode, SingleThreadWeakHashSet<RenderObject>* visitedRenderers);
+    void markClientForInvalidation(RenderObject&, InvalidationMode);
+
+private:
+    friend class SVGResourcesCache;
+    void addClient(RenderElement&);
+    void removeClient(RenderElement&);
+
+    void willBeDestroyed() final;
+    void registerResource();
+
+    AtomString m_id;
+    SingleThreadWeakKeyHashSet<RenderElement> m_clients;
+    InlineWeakKeyHashSet<RenderLayer> m_clientLayers;
+    bool m_registered { false };
+    bool m_isInvalidating { false };
+};
+
+inline LegacyRenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeScope&, const AtomString&); // Defined in LegacyRenderSVGResourceContainerInlines.h
+
+template<typename Renderer>
+Renderer* getRenderSVGResourceById(TreeScope&, const AtomString&); // Defined in LegacyRenderSVGResourceContainerInlines.h
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyRenderSVGResourceContainer)
+    static bool isType(const WebCore::RenderObject& renderer) { return renderer.isLegacyRenderSVGResourceContainer(); }
+    static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() != WebCore::SolidColorResourceType; }
+SPECIALIZE_TYPE_TRAITS_END()

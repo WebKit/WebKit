@@ -1,0 +1,5 @@
+
+PASS Creating a dedicated worker from a blob URL works.
+PASS Creating a dedicated worker from a blob URL works immediately before revoking.
+PASS Blob URLs should not resolve relative to document base URL.
+

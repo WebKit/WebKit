@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="input" type="date" value="2020-09-16"/>
+
+<script>
+
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that a date input's calendar view can be opened using the space key, without any mouse interaction.");
+
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeFalse("showingPicker");
+
+    debug("Focusing input using tab key and then pressing space key.");
+    UIHelper.keyDown("\t");
+    UIHelper.keyDown(" ");
+    await UIHelper.ensurePresentationUpdate();
+
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeTrue("showingPicker");
+
+    finishJSTest();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+
+section {
+    width: 300px;
+    height: 150px;
+    border: 1px solid gray;
+    box-sizing: border-box;
+    background: lightgray;
+    color: white;
+    text-align: center;
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+    <main>
+        <section>
+            <p>WebKit Homepage</p>
+            <a href="https://webkit.org">WebKit</a>
+        </section>
+        <section>
+            <p>Apple Homepage</p>
+            <a href="https://apple.com">Apple</a>
+        </section>
+        <footer>
+            <p>This test requires WebKitTestRunner</p>
+        </footer>
+    </main>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async event => {
+    const firstSection = document.querySelector("section");
+    targetSelector = await UIHelper.adjustVisibilityForFrontmostTarget(firstSection);
+    shouldBeEqualToString("targetSelector", "SECTION:has(A[href='https://webkit.org'])");
+    finishJSTest();
+});
+</script>
+</html>

@@ -1,0 +1,4 @@
+content
+
+PASS A table with 'overflow-anchor: none' shouldn't generate any scroll anchor candidates.
+

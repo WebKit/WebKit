@@ -1,0 +1,4 @@
+
+PASS attachShadow with a default-namespaced element
+PASS Test attachShadow with a namespaced element
+

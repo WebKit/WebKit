@@ -1,0 +1,12 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Repeatedly tapping on the button should fire click events.
+
+This test is best run in WebKitTestRunner. If you are running this test manually, verify that tapping the button causes a "Click!" message to appear below, and that click occurred without the regular 350ms delay for double tapping.
+
+Click!
+Click!
+Click!
+

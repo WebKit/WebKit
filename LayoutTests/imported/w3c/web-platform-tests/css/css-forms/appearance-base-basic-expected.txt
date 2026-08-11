@@ -1,0 +1,13 @@
+     button
+
+FAIL Basic appearance stylesheet properties for input-text assert_equals: color should inherit expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Basic appearance stylesheet properties for input-search assert_equals: color should inherit expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Basic appearance stylesheet properties for input-number assert_equals: color should inherit expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Basic appearance stylesheet properties for input-button assert_equals: color should inherit expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0.847)"
+FAIL Basic appearance stylesheet properties for input-reset assert_equals: color should inherit expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0.847)"
+FAIL Basic appearance stylesheet properties for button assert_equals: color should inherit expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0.847)"
+PASS Basic appearance stylesheet properties for select
+FAIL Basic appearance stylesheet properties for textarea assert_equals: color should inherit expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Basic appearance stylesheet properties for meter
+PASS Basic appearance stylesheet properties for progress
+

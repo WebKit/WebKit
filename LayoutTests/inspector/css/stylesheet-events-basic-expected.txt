@@ -1,0 +1,39 @@
+Test for CSS.styleSheetAdded and CSS.styleSheetRemoved events.
+
+
+== Running test suite: CSS.StyleSheetEvents.Basic
+-- Running test case: CheckNoStyleSheets
+PASS: Should be no stylesheets.
+
+-- Running test case: AddStyleTag
+PASS: StyleSheetAdded event should fire.
+
+-- Running test case: DisableStyleTag
+PASS: StyleSheetRemoved event should fire for the same CSSStyleSheet.
+
+-- Running test case: EnableStyleTag
+PASS: StyleSheetAdded event should fire with a new CSSStyleSheet.
+
+-- Running test case: RemoveStyleTag
+PASS: StyleSheetAdded event should fire.
+
+-- Running test case: AddExternalStyleSheet
+PASS: StyleSheetAdded event should fire.
+Added StyleSheet with URL: inspector/css/resources/external.css
+
+-- Running test case: DisableExternalStyleSheet
+PASS: StyleSheetRemoved event should fire for the same CSSStyleSheet.
+
+-- Running test case: EnableExternalStyleSheet
+PASS: StyleSheetAdded event should fire with a new CSSStyleSheet.
+
+-- Running test case: DisableExternalStyleSheetViaMediaAttribute
+PASS: StyleSheetRemoved event should fire for the same CSSStyleSheet.
+
+-- Running test case: EnableExternalStyleSheetViaMediaAttribute
+PASS: StyleSheetAdded event should fire with a new CSSStyleSheet.
+
+-- Running test case: RemoveExternalStyleSheet
+PASS: StyleSheetAdded event should fire.
+Removed StyleSheet with URL: inspector/css/resources/external.css
+

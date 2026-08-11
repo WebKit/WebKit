@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x102
+  RenderBlock {HTML} at (0,0) size 800x102
+    RenderBody {BODY} at (8,16) size 784x70
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 778x35
+          text run at (0,0) width 778: "The three boxes should be the same. The order in each box should be: Roman letters, Hebrew letters, digits, Hebrew letters,"
+          text run at (0,18) width 91: "Roman letters."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderInline {SPAN} at (0,0) size 123x19 [border: (1px solid #008000)]
+          RenderText {#text} at (1,0) size 121x17
+            text run at (1,0) width 26: "abc "
+            text run at (27,0) width 23 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+            text run at (50,0) width 24: "123"
+            text run at (74,0) width 24 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (98,0) width 24: " def"
+        RenderText {#text} at (123,0) size 4x17
+          text run at (123,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 123x19 [border: (1px solid #008000)]
+          RenderText {#text} at (128,0) size 121x17
+            text run at (128,0) width 26: "abc "
+            text run at (154,0) width 23 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+            text run at (177,0) width 24: "123"
+            text run at (201,0) width 24 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (225,0) width 24: " def"
+        RenderText {#text} at (250,0) size 4x17
+          text run at (250,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 123x19 [border: (1px solid #008000)]
+          RenderText {#text} at (255,0) size 121x17
+            text run at (255,0) width 26: "abc "
+            text run at (281,0) width 23 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+            text run at (304,0) width 24: "123"
+            text run at (328,0) width 24 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (352,0) width 24: " def"
+        RenderText {#text} at (0,0) size 0x0

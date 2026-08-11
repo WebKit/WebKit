@@ -1,0 +1,6 @@
+
+PASS anchor-scope:all appearing dynamically
+PASS anchor-scope:--a appearing dynamically
+PASS anchor-scope:--b appearing dynamically (--b never referenced)
+PASS anchor-scope:--a appearing dynamically scopes only --a
+

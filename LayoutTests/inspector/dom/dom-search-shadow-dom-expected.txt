@@ -1,0 +1,16 @@
+Tests that DOM.performSearch descends into open shadow trees.
+
+
+== Running test suite: DOM.performSearch.ShadowDOM
+-- Running test case: DOM.performSearch.ShadowDOM.PlainText
+query "needle-text-in-shadow" -> resultCount 2
+PASS: Should find at least one node inside the shadow tree.
+
+-- Running test case: DOM.performSearch.ShadowDOM.CSSSelector
+query ".needle-class" -> resultCount 2
+PASS: Should find at least one node inside the shadow tree.
+
+-- Running test case: DOM.performSearch.ShadowDOM.TagName
+query "section" -> resultCount 2
+PASS: Should find at least one node inside the shadow tree.
+

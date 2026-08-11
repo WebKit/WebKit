@@ -1,0 +1,15 @@
+This tests for a problem with put after delete that existed at one point in the past.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS props(a) is 'a,b,c,d,e'
+delete a.c
+PASS props(a) is 'a,b,d,e'
+define getter named c
+PASS props(a) is 'a,b,d,e,c'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

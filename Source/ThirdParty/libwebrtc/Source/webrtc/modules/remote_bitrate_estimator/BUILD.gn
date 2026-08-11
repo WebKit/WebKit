@@ -1,0 +1,199 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("remote_bitrate_estimator") {
+  sources = [
+    "aimd_rate_control.cc",
+    "aimd_rate_control.h",
+    "bwe_defines.cc",
+    "include/bwe_defines.h",
+    "include/remote_bitrate_estimator.h",
+    "inter_arrival.cc",
+    "inter_arrival.h",
+    "overuse_detector.cc",
+    "overuse_detector.h",
+    "overuse_estimator.cc",
+    "overuse_estimator.h",
+    "remote_bitrate_estimator_abs_send_time.cc",
+    "remote_bitrate_estimator_abs_send_time.h",
+    "remote_bitrate_estimator_single_stream.cc",
+    "remote_bitrate_estimator_single_stream.h",
+  ]
+
+  deps = [
+    "..:module_api",
+    "..:module_api_public",
+    "../../api:field_trials_view",
+    "../../api:rtp_headers",
+    "../../api/environment",
+    "../../api/transport:bandwidth_usage",
+    "../../api/transport:network_control",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:bitrate_tracker",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:safe_minmax",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../rtc_base/synchronization:mutex",
+    "../../system_wrappers",
+    "../../system_wrappers:metrics",
+    "../congestion_controller/goog_cc:link_capacity_estimator",
+    "../rtp_rtcp:rtp_rtcp_format",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
+}
+
+rtc_source_set("rtp_transport_feedback_generator") {
+  sources = [ "rtp_transport_feedback_generator.h" ]
+  deps = [
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../rtp_rtcp:rtp_rtcp_format",
+  ]
+}
+
+rtc_library("transport_sequence_number_feedback_generator") {
+  sources = [
+    "packet_arrival_map.cc",
+    "packet_arrival_map.h",
+    "transport_sequence_number_feedback_generator.cc",
+    "transport_sequence_number_feedback_generator.h",
+  ]
+  deps = [
+    ":rtp_transport_feedback_generator",
+    "../../api:field_trials_view",
+    "../../api:rtp_headers",
+    "../../api/transport:network_control",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:rtc_numerics",
+    "../../rtc_base:safe_minmax",
+    "../../rtc_base/synchronization:mutex",
+    "../../system_wrappers",
+    "../rtp_rtcp:rtp_rtcp_format",
+  ]
+}
+
+rtc_library("congestion_control_feedback_generator") {
+  sources = [
+    "congestion_control_feedback_generator.cc",
+    "congestion_control_feedback_generator.h",
+    "congestion_control_feedback_tracker.cc",
+    "congestion_control_feedback_tracker.h",
+  ]
+  deps = [
+    ":rtp_transport_feedback_generator",
+    "../../api:field_trials_view",
+    "../../api:sequence_checker",
+    "../../api/environment",
+    "../../api/transport:ecn_marking",
+    "../../api/units:data_rate",
+    "../../api/units:data_size",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:rtc_numerics",
+    "../../rtc_base/containers:flat_map",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../congestion_controller/rtp:congestion_controller_feedback_stats",
+    "../rtp_rtcp:ntp_time_util",
+    "../rtp_rtcp:rtp_rtcp_format",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/types:span",
+  ]
+}
+
+if (!build_with_chromium) {
+  rtc_library("bwe_rtp") {
+    testonly = true
+    sources = [
+      "tools/bwe_rtp.cc",
+      "tools/bwe_rtp.h",
+    ]
+    deps = [
+      "../../test:rtp_test_utils",
+      "../rtp_rtcp:rtp_rtcp_format",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+      "//third_party/abseil-cpp/absl/strings",
+    ]
+  }
+
+  rtc_executable("rtp_to_text") {
+    testonly = true
+    sources = [ "tools/rtp_to_text.cc" ]
+    deps = [
+      ":bwe_rtp",
+      "../../rtc_base:macromagic",
+      "../../rtc_base:stringutils",
+      "../../test:rtp_test_utils",
+      "../rtp_rtcp:rtp_rtcp_format",
+    ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_library("remote_bitrate_estimator_unittests") {
+    testonly = true
+
+    sources = [
+      "aimd_rate_control_unittest.cc",
+      "congestion_control_feedback_generator_unittest.cc",
+      "congestion_control_feedback_tracker_unittest.cc",
+      "inter_arrival_unittest.cc",
+      "overuse_detector_unittest.cc",
+      "packet_arrival_map_test.cc",
+      "remote_bitrate_estimator_abs_send_time_unittest.cc",
+      "remote_bitrate_estimator_single_stream_unittest.cc",
+      "remote_bitrate_estimator_unittest_helper.cc",
+      "remote_bitrate_estimator_unittest_helper.h",
+      "transport_sequence_number_feedback_generator_unittest.cc",
+    ]
+    deps = [
+      ":congestion_control_feedback_generator",
+      ":remote_bitrate_estimator",
+      ":transport_sequence_number_feedback_generator",
+      "..:module_api_public",
+      "../../api:field_trials",
+      "../../api:rtp_headers",
+      "../../api/environment:environment_factory",
+      "../../api/transport:bandwidth_usage",
+      "../../api/transport:ecn_marking",
+      "../../api/transport:mock_network_control",
+      "../../api/transport:network_control",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../rtc_base:buffer",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:random",
+      "../../system_wrappers",
+      "../../test:create_test_field_trials",
+      "../../test:fileutils",
+      "../../test:test_support",
+      "../pacing",
+      "../rtp_rtcp:rtp_rtcp_format",
+    ]
+  }
+}

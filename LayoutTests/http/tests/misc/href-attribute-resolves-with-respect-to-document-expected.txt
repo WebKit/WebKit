@@ -1,0 +1,19 @@
+Test for HTMLBaseElement's href attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS endsWith(document.querySelector('base').href, 'foo/bar/') is true
+PASS endsWith(document.querySelector('base').href, 'foo/bar/foo/bar/') is false
+PASS document.querySelector('base').hasAttribute('href') is true
+PASS endsWith(document.querySelector('base').href, '/null') is true
+PASS document.querySelector('base').hasAttribute('href') is false
+PASS endsWith(document.querySelector('base').href, '/href-attribute-resolves-with-respect-to-document.html') is true
+PASS documentWithoutAView.querySelector('base').href is "foo/bar/"
+PASS documentWithoutAView.querySelector('base').href is "http://webkit.org/"
+PASS iframe.contentDocument.querySelector('base').href is "http://127.0.0.1:8000/misc/foo/bar/"
+PASS newWindow.document.querySelector('base').href is "http://127.0.0.1:8000/misc/foo/bar/"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,13 @@
+<script src="data:"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+onload = () => {
+    let canvas = document.createElement('canvas');
+    document.body.append(canvas);
+    canvas.getContext('2d');
+    print();
+    canvas.remove();
+};
+</script>
+PASS

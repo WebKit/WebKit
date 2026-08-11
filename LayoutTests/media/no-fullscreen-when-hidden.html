@@ -1,0 +1,60 @@
+<html>
+<head>
+    <title>Test fullscreen video going into pip should exit fullscreen</title>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+
+        var divElement
+
+        function init()
+        {
+            if (!window.testRunner || !testRunner.runUIScript) {
+                consoleWrite("This test requires testRunner.runUIScript()");
+                return;
+            }
+
+            findMediaElement();
+            video.src = findMediaFile('video', 'content/test');
+            divElement = document.getElementById("divElement");
+            video.addEventListener('playing', onplaying);
+            run('video.play()');
+        }
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                uiController.removeViewFromWindow(function() {
+                    uiController.uiScriptComplete('');
+                });
+            })();`
+        }
+
+        function onplaying()
+        {
+            waitForEventAndFail('webkitpresentationmodechanged');
+            waitForEventAndFail('webkitbeginfullscreen');
+            waitForEventAndFail('webkitfullscreenchange');
+
+            testRunner.runUIScript(getUIScript(), function(result) {
+                runWithKeyDown(function(){ 
+                    consoleWrite("Attempting to go into Full Screen");
+                    if (video.webkitRequestFullscreen)
+                    	video.webkitRequestFullscreen(); 
+                    run('video.webkitEnterFullscreen()');
+                    if (divElement.webkitRequestFullscreen)
+                    	divElement.webkitRequestFullscreen();
+                    endTestLater()
+                });
+            });
+        }
+    </script>
+</head>
+<body onload="init()">
+    Fullscreen should be prevented when page is not visible.<br>
+    <div id="divElement"></div>
+    <video controls></video>
+</body>
+</html>
+

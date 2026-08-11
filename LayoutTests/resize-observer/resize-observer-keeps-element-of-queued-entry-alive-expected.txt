@@ -1,0 +1,25 @@
+This tests observing an element with an ResizeObserver and removing the element from the document while it is queued for delivery.
+
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+PASS - ResizeObserver wrapper is alive
+
+Done
+

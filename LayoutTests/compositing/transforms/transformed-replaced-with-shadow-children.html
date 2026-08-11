@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+ <script src="../../resources/ui-helper.js"></script>
+  <script>
+    if (window.testRunner)
+       testRunner.waitUntilDone();
+
+    async function doTest()
+    {
+      await UIHelper.renderingUpdate();
+      await UIHelper.renderingUpdate();
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body style="overflow:hidden">
+  <audio controls style="margin-left: 100vw; transform: translateX(-100vw); width: 400px;">
+</body>
+</html>

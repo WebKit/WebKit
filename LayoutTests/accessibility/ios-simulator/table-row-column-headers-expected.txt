@@ -1,0 +1,33 @@
+ColHeader1	ColHeader2
+Rowheader1	content1	content2	content3
+RowHeader2	content4	content5	content6
+content7	content8	content9
+This test makes sure that cells are getting the correct header elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Verifying "content1" with col header: "ColHeader1" row header: "Rowheader1".
+PASS cell.headerElementAtIndex(0).description is colDescription
+PASS cell.headerElementAtIndex(1).description is rowDescription
+
+
+Verifying "content2" with col header: "ColHeader2" row header: "Rowheader1".
+PASS cell.headerElementAtIndex(0).description is colDescription
+PASS cell.headerElementAtIndex(1).description is rowDescription
+
+
+Verifying "content7" with col header: "ColHeader1" row header: "Rowheader2".
+PASS cell.headerElementAtIndex(0).description is colDescription
+PASS cell.headerElementAtIndex(1).description is rowDescription
+
+
+Verifying "content9" with col header: "ColHeader2" row header: "Rowheader2".
+PASS cell.headerElementAtIndex(0).description is colDescription
+PASS cell.headerElementAtIndex(1).description is rowDescription
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

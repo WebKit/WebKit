@@ -1,0 +1,10 @@
+Tests that deleting a @namespace rule when list contains anything other than @import or @namespace rules should throw InvalidStateError.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS styleSheet.deleteRule(0) threw exception InvalidStateError: The object is in an invalid state..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

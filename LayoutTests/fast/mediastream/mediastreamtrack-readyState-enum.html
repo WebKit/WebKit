@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MediaStreamTrackState enum: readyState only ever returns "live" or "ended"</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+// MediaCapture-Main §"MediaStreamTrackState" enum:
+//   https://w3c.github.io/mediacapture-main/#dom-mediastreamtrackstate
+//
+//   enum MediaStreamTrackState {
+//     "live",
+//     "ended"
+//   };
+//
+// MediaStreamTrack.readyState (a MediaStreamTrackState getter) must
+// return only one of these two values. There is no script API to "prove"
+// the enum is closed (we can't enumerate the enum from script), but we
+// can assert that every observable transition produces a value in the
+// allowed set — which is the strongest assertion script-side testing
+// supports for an IDL enum.
+
+const VALID = ["live", "ended"];
+
+function assertValidState(track, label) {
+    assert_in_array(track.readyState, VALID,
+        `${label}: readyState is one of ${JSON.stringify(VALID)}`);
+}
+
+promise_test(async test => {
+    // Newly created from getUserMedia.
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+
+    for (const t of stream.getTracks())
+        assertValidState(t, `fresh ${t.kind} track`);
+
+    // After stop().
+    for (const t of stream.getTracks()) {
+        t.stop();
+        assertValidState(t, `stopped ${t.kind} track`);
+        assert_equals(t.readyState, "ended", "stopped track is in 'ended' state");
+    }
+}, "readyState is in MediaStreamTrackState enum after creation and after stop()");
+
+promise_test(async test => {
+    // Clones of live and ended tracks must also yield valid states.
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const original = stream.getVideoTracks()[0];
+
+    const cloneOfLive = original.clone();
+    test.add_cleanup(() => cloneOfLive.stop());
+    assertValidState(cloneOfLive, "clone of live track");
+    assert_equals(cloneOfLive.readyState, "live",
+        "clone of a live track is also live");
+
+    original.stop();
+    const cloneOfEnded = original.clone();
+    assertValidState(cloneOfEnded, "clone of ended track");
+    assert_equals(cloneOfEnded.readyState, "ended",
+        "clone of an ended track is also ended");
+}, "readyState is in MediaStreamTrackState enum after cloning live and ended tracks");
+
+promise_test(async test => {
+    // Verify that JSON serialization round-trips the enum string verbatim
+    // (no extra modifier characters or stringification artifacts that
+    // would imply a different underlying type).
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    test.add_cleanup(() => stream.getTracks().forEach(t => t.stop()));
+    const track = stream.getAudioTracks()[0];
+
+    const round = JSON.parse(JSON.stringify({ s: track.readyState }));
+    assert_equals(typeof round.s, "string",
+        "readyState round-trips as a string");
+    assert_in_array(round.s, VALID,
+        "readyState round-trip value is in the spec-mandated enum set");
+}, "readyState stringifies and round-trips as an enum-set value");
+</script>
+</head>
+<body></body>
+</html>

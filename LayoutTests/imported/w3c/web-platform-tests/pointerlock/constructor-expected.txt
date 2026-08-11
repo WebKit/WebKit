@@ -1,0 +1,6 @@
+Create Pointer Lock events and check each default value.
+
+
+PASS Default event values for mouse event interface and its pointer lock extensions.
+PASS Default event values for pointerlockerror using a dictionary
+

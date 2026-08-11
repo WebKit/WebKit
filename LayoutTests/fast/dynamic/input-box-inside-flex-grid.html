@@ -1,0 +1,27 @@
+<style>
+.form {
+  display: grid;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+input {
+  font-size: 10px;
+  font-family: Ahem;
+  border: none;
+}
+</style>
+<div class=form><div class=field><div class=popup><input id=foo>
+<script>
+document.body.offsetHeight;
+foo.value = "pass if this long text does not get truncated";
+</script>

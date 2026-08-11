@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <filter id="drop-shadow" width="140%" height="140%">
+        <feDropShadow dx="20" dy="20" stdDeviation="0" flood-color="black" />
+    </filter>
+    <switch style="filter:url(#drop-shadow)">
+        <rect x="20" y="20" fill="green" width="100" height="100" />
+    </switch>
+</svg>

@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="clock" role="timer" aria-live="polite" aria-atomic="true" aria-relevant="additions text">2:30pm</div>
+<div id="clock-display-contents" style="display: contents" role="timer" aria-live="polite" aria-atomic="true" aria-relevant="additions text">4:30pm</div>
+
+<script>
+    var testOutput = "This test ensures that an element's busy state updates aria-busy changes.\n\n";
+
+    var axClock, axClockWithDisplayContents;
+    function verifyIsBusy() {
+        testOutput += `#clock is busy: ${axClock.isBusy}\n`;
+        testOutput += `#clock-display-contents is busy: ${axClockWithDisplayContents.isBusy}\n\n`;
+    }
+    function verifyIsAtomic() {
+        testOutput += `#clock is atomic: ${axClock.isAtomicLiveRegion}\n`;
+        testOutput += `#clock-display-contents is atomic: ${axClockWithDisplayContents.isAtomicLiveRegion}\n\n`;
+    }
+    function verifyLiveRegionRelevant() {
+        testOutput += `#clock relevant: ${axClock.liveRegionRelevant}\n`;
+        testOutput += `#clock-display-contents relevant: ${axClockWithDisplayContents.liveRegionRelevant}\n\n`;
+    }
+    function verifyLiveRegionStatus() {
+        testOutput += `#clock live region status: ${axClock.liveRegionStatus}\n`;
+        testOutput += `#clock-display-contents live region status: ${axClockWithDisplayContents.liveRegionStatus}\n\n`;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        axClock = accessibilityController.accessibleElementById("clock");
+        axClockWithDisplayContents = accessibilityController.accessibleElementById("clock-display-contents");
+
+        testOutput += "Verifying initial states:\n\n";
+        verifyIsAtomic();
+        verifyIsBusy();
+        verifyLiveRegionRelevant();
+        verifyLiveRegionStatus();
+
+        const clock = document.getElementById("clock");
+        const clockWithDisplayContents = document.getElementById("clock-display-contents");
+
+        testOutput += "Setting aria-busy to true.\n\n";
+        clock.ariaBusy = "true";
+        clockWithDisplayContents.ariaBusy = "true";
+        setTimeout(async function() {
+            await waitFor(() => axClock.isBusy && axClockWithDisplayContents.isBusy);
+            verifyIsBusy();
+
+            testOutput += "Setting aria-busy to false.\n\n";
+            clock.ariaBusy = "false";
+            clockWithDisplayContents.ariaBusy = "false";
+            await waitFor(() => !axClock.isBusy && !axClockWithDisplayContents.isBusy);
+            verifyIsBusy();
+
+            testOutput += "Setting aria-atomic to false.\n\n";
+            clock.ariaAtomic = "false";
+            clockWithDisplayContents.ariaAtomic = "false";
+            await waitFor(() => !axClock.isAtomicLiveRegion && !axClockWithDisplayContents.isAtomicLiveRegion);
+            verifyIsAtomic();
+
+            testOutput += "Setting aria-relevant to removals.\n\n";
+            clock.ariaRelevant = "removals";
+            clockWithDisplayContents.ariaRelevant = "removals";
+            await waitFor(() => axClock.liveRegionRelevant.includes("removals") && axClockWithDisplayContents.liveRegionRelevant.includes("removals"));
+            verifyLiveRegionRelevant();
+
+            testOutput += "Setting aria-live to assertive.\n\n";
+            clock.ariaLive = "assertive";
+            clockWithDisplayContents.ariaLive = "assertive";
+            await waitFor(() => axClock.liveRegionStatus.includes("assertive") && axClockWithDisplayContents.liveRegionStatus.includes("assertive"));
+            verifyLiveRegionStatus();
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

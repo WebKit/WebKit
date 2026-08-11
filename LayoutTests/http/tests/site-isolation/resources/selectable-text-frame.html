@@ -1,0 +1,9 @@
+<body style="margin: 0; font: 20px monospace;">
+Hello world this is selectable text inside a cross origin iframe.
+<script>
+document.addEventListener("selectionchange", () => {
+    window.top.postMessage("selection:" + getSelection().toString(), "*");
+});
+window.top.postMessage("ready", "*");
+</script>
+</body>

@@ -1,0 +1,12 @@
+
+PASS Transferring a MessagePort with a ReadableStream should set `.ports`
+PASS Transferring a MessagePort with a WritableStream should set `.ports`
+PASS Transferring a MessagePort with a TransformStream should set `.ports`
+PASS Transferring a MessagePort with a ReadableStream should set `.ports`, advanced
+PASS Transferring a MessagePort with a WritableStream should set `.ports`, advanced
+PASS Transferring a MessagePort with a TransformStream should set `.ports`, advanced
+PASS Transferring a MessagePort with multiple streams should set `.ports`
+PASS ReadableStream must not be serializable
+PASS WritableStream must not be serializable
+PASS TransformStream must not be serializable
+

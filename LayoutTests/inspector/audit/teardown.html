@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+
+function test()
+{
+    let suite = InspectorTest.Audit.createSuite("Audit.teardown");
+
+    suite.addTestCase({
+        name: "Audit.teardown.Invalid.WithoutSetup",
+        description: "Check that Audit.teardown fails if called before Audit.setup.",
+        async test() {
+            await InspectorTest.expectException(async () => {
+                await InspectorTest.Audit.teardownAudit();
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "Audit.teardown.Invalid.SequentialCalls",
+        description: "Check that additional calls to Audit.teardown fail.",
+        async test() {
+            await InspectorTest.Audit.setupAudit();
+            await InspectorTest.Audit.teardownAudit();
+            await InspectorTest.expectException(async () => {
+                await InspectorTest.Audit.teardownAudit();
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the Audit.teardown command.</p>
+</body>
+</html>

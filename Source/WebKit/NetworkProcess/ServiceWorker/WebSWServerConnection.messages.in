@@ -1,0 +1,84 @@
+# Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=WebContent,
+    DispatchedTo=Networking
+]
+messages -> WebSWServerConnection {
+    # When possible, these messages can be implemented directly by WebCore::SWClientConnection
+    [EnabledBy=ServiceWorkersEnabled] ScheduleJobInServer(struct WebCore::ServiceWorkerJobData jobData)
+    [EnabledBy=ServiceWorkersEnabled] ScheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier jobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier identifier, WebCore::ServiceWorkerOrClientIdentifier documentIdentifier) -> (Expected<bool, WebCore::ExceptionData> result)
+
+    [EnabledBy=ServiceWorkersEnabled] FinishFetchingScriptInServer(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, struct WebCore::WorkerFetchResult result)
+    [EnabledBy=ServiceWorkersEnabled] AddServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier identifier)
+    [EnabledBy=ServiceWorkersEnabled] RemoveServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier identifier)
+
+    [EnabledBy=ServiceWorkersEnabled] RegisterServiceWorkerInServer(WebCore::ServiceWorkerIdentifier identifier)
+    [EnabledBy=ServiceWorkersEnabled] UnregisterServiceWorkerInServer(WebCore::ServiceWorkerIdentifier identifier)
+
+    [EnabledBy=ServiceWorkersEnabled] PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientIdentifier source)
+
+    [EnabledBy=ServiceWorkersEnabled] DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
+
+    [EnabledBy=ServiceWorkersEnabled] MatchRegistration(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    [EnabledBy=ServiceWorkersEnabled] WhenRegistrationReady(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (struct std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    [EnabledBy=ServiceWorkersEnabled] GetRegistrations(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (Vector<WebCore::ServiceWorkerRegistrationData> registrations)
+    [EnabledBy=ServiceWorkersEnabled] RegisterServiceWorkerClient(struct WebCore::ClientOrigin clientOrigin, struct WebCore::ServiceWorkerClientData data, std::optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier, String userAgent)
+    [EnabledBy=ServiceWorkersEnabled] UnregisterServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier identifier)
+
+    [EnabledBy=ServiceWorkersEnabled] TerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
+    [EnabledBy=ServiceWorkersEnabled] WhenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
+
+    SetThrottleState(bool isThrottleable)
+    [EnabledBy=ServiceWorkersEnabled] StoreRegistrationsOnDisk() -> ()
+
+    [EnabledBy=PushAPIEnabled] SubscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<uint8_t> applicationServerKey) -> (Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> result)
+    [EnabledBy=PushAPIEnabled] UnsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, WebCore::PushSubscriptionIdentifier pushSubscriptionIdentifier) -> (Expected<bool, WebCore::ExceptionData> result)
+    [EnabledBy=PushAPIEnabled] GetPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result)
+    [EnabledBy=PushAPIEnabled] GetPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<uint8_t, WebCore::ExceptionData> result)
+
+    [EnabledBy=ServiceWorkerNavigationPreloadEnabled] EnableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (struct std::optional<WebCore::ExceptionData> result)
+    [EnabledBy=ServiceWorkerNavigationPreloadEnabled] DisableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (struct std::optional<WebCore::ExceptionData> result)
+    [EnabledBy=ServiceWorkerNavigationPreloadEnabled] SetNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier identifier, String value) -> (struct std::optional<WebCore::ExceptionData> result)
+    [EnabledBy=ServiceWorkerNavigationPreloadEnabled] GetNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<WebCore::NavigationPreloadState, WebCore::ExceptionData> result)
+
+    [EnabledBy=BackgroundFetchAPIEnabled] StartBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier, Vector<WebCore::BackgroundFetchRequest> requests, struct WebCore::BackgroundFetchOptions options) -> (Expected<std::optional<WebCore::BackgroundFetchInformation>, WebCore::ExceptionData> result)
+    [EnabledBy=BackgroundFetchAPIEnabled] BackgroundFetchInformation(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier) -> (Expected<std::optional<WebCore::BackgroundFetchInformation>, WebCore::ExceptionData> result)
+    [EnabledBy=BackgroundFetchAPIEnabled] BackgroundFetchIdentifiers(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier) -> (Vector<String> result)
+
+    [EnabledBy=BackgroundFetchAPIEnabled] AbortBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier) -> (bool result)
+    [EnabledBy=BackgroundFetchAPIEnabled] MatchBackgroundFetch(WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier, String backgroundFetchIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (Vector<WebCore::BackgroundFetchRecordInformation> results)
+    [EnabledBy=BackgroundFetchAPIEnabled] RetrieveRecordResponse(WebCore::BackgroundFetchRecordIdentifier recordIdentifier) -> (Expected<WebCore::ResourceResponse, WebCore::ExceptionData> result)
+    [EnabledBy=BackgroundFetchAPIEnabled] RetrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier recordIdentifier, WebKit::RetrieveRecordResponseBodyCallbackIdentifier callbackIdentifier)
+
+    [EnabledBy=CookieStoreManagerEnabled] AddCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<WebCore::CookieChangeSubscription> subscriptions) -> (struct std::optional<WebCore::ExceptionData> result)
+    [EnabledBy=CookieStoreManagerEnabled] RemoveCookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<WebCore::CookieChangeSubscription> subscriptions) -> (struct std::optional<WebCore::ExceptionData> result)
+    [EnabledBy=CookieStoreManagerEnabled] CookieChangeSubscriptions(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<Vector<WebCore::CookieChangeSubscription>, WebCore::ExceptionData> result)
+
+    AddRoutes(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<WebCore::ServiceWorkerRoute> subscriptions) -> (Expected<void, WebCore::ExceptionData> result)
+
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+    GetNotifications(URL registrationURL, String tag) -> (Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData> result)
+#endif
+}

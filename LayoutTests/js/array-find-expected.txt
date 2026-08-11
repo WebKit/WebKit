@@ -1,0 +1,66 @@
+Tests for Array.prototype.find
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Array.prototype.find.length is 1
+PASS Array.prototype.find.name is 'find'
+PASS [undefined, 0, null, false, ''].find(passUndefined) is undefined
+PASS [undefined, 0, null, false, ''].find(passZero) is 0
+PASS [undefined, 0, null, false, ''].find(passNull) is null
+PASS [undefined, 0, null, false, ''].find(passFalse) is false
+PASS [undefined, 0, null, false, ''].find(passEmptyString) is ''
+PASS [0, null, false, ''].find(passUndefined) is undefined
+PASS [undefined, 0, false, ''].find(passNull) is undefined
+PASS [undefined, 0, null, ''].find(passFalse) is undefined
+PASS [undefined, 0, null, false].find(passEmptyString) is undefined
+PASS [undefined, null, false, ''].find(passZero) is undefined
+Array with holes
+PASS (new Array(20)).find(passUndefined) is undefined
+PASS arrayWithHoles.find(passUndefined) is undefined
+PASS arrayWithHoles.find(passZero) is 0
+PASS arrayWithHoles.find(passNull) is null
+PASS arrayWithHoles.find(passFalse) is false
+PASS arrayWithHoles.find(passEmptyString) is ''
+Generic Object
+PASS toObject([undefined, 0, null, false, '']).find(passUndefined) is undefined
+PASS toObject([undefined, 0, null, false, '']).find(passZero) is 0
+PASS toObject([undefined, 0, null, false, '']).find(passNull) is null
+PASS toObject([undefined, 0, null, false, '']).find(passFalse) is false
+PASS toObject([undefined, 0, null, false, '']).find(passEmptyString) is ''
+PASS toObject([0, null, false, '']).find(passUndefined) is undefined
+PASS toObject([undefined, 0, false, '']).find(passNull) is undefined
+PASS toObject([undefined, 0, null, '']).find(passFalse) is undefined
+PASS toObject([undefined, 0, null, false]).find(passEmptyString) is undefined
+PASS toObject([undefined, null, false, '']).find(passZero) is undefined
+PASS toObject(new Array(20)).find(passUndefined) is undefined
+Array-like object with invalid lengths
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: 0 }; Array.prototype.find.call(obj, throwError) is undefined.
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -0 }; Array.prototype.find.call(obj, throwError) is undefined.
+PASS var obj = { 0: 1, 1: 2, 2: 3, length: -3 }; Array.prototype.find.call(obj, throwError) is undefined.
+Modification during search
+PASS [0,1,2,3,4,5,6,7,8,9].find(findItemAddedDuringSearch) is undefined
+PASS [0,1,2,3,4,5,6,7,8,9].find(findItemRemovedDuringSearch) is undefined
+Exceptions
+PASS Array.prototype.find.call(undefined, function() {}) threw exception TypeError: Array.prototype.find requires that |this| not be null or undefined.
+PASS Array.prototype.find.call(null, function() {}) threw exception TypeError: Array.prototype.find requires that |this| not be null or undefined.
+PASS [].find(1) threw exception TypeError: Array.prototype.find callback must be a function.
+PASS [].find('hello') threw exception TypeError: Array.prototype.find callback must be a function.
+PASS [].find([]) threw exception TypeError: Array.prototype.find callback must be a function.
+PASS [].find({}) threw exception TypeError: Array.prototype.find callback must be a function.
+PASS [].find(null) threw exception TypeError: Array.prototype.find callback must be a function.
+PASS [].find(undefined) threw exception TypeError: Array.prototype.find callback must be a function.
+Callbacks in the expected order and *not* skipping holes
+find callback called with index 0
+find callback called with index 1
+find callback called with index 2
+find callback called with index 3
+find callback called with index 4
+find callback called with index 5
+find callback called with index 6
+find callback called with index 7
+PASS numberOfCallbacksInFindInArrayWithHoles() is 8
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

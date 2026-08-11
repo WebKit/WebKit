@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+navigation.onnavigate = function (event) {
+  event.intercept({
+    handler: function () {
+      document.documentElement.remove();
+      return Promise.resolve();
+    }
+  });
+};
+
+window.onload = function () {
+  navigation.navigate('#anchor');
+  parent.scheduleFinish();
+};
+
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ dumpResourceLoadCallbacks=true ] -->
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        if (testRunner.setSerializeHTTPLoads)
+            testRunner.setSerializeHTTPLoads();
+    } else {
+        document.write ('This test must be run through DumpRenderTree.')
+    }
+    function loadSecondStylesheet() {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = "resources/stylesheet.css#b";
+        link.onload = secondStylesheetLoaded;
+        document.head.appendChild(link);
+    }
+    function secondStylesheetLoaded() {
+        testRunner.notifyDone();
+    }
+</script>
+<link rel=stylesheet onload='loadSecondStylesheet()' href="resources/stylesheet.css#a">
+<body>
+This tests that file: URL are loaded separately even if they differ by the fragment only.
+</div>
+</html>

@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+navigator.serviceWorker.register("resources/empty-worker.js", { }).then(function(registration) {
+    waitForState(registration.installing, "activated").then(function() {
+        let worker = registration.active;
+        registration.unregister().then(function (success) {
+            if (success)
+                log("PASS: Unregistration was successful");
+            else
+                log("FAIL: Unregistration failed");
+        }).then(function() {
+            waitForState(worker, "redundant").then(function() {
+                log("PASS: Worker became redundant after unregistering");
+                if (registration.installing)
+                    log("FAIL: registration.installing should be null");
+                else
+                    log("PASS: registration.installing is null");
+
+                if (registration.waiting)
+                    log("FAIL: registration.waiting should be null");
+                else
+                    log("PASS: registration.waiting is null");
+
+                handle = setInterval(function() {
+                    if (registration.active)
+                        return;
+
+                    log("PASS: registration.active is null");
+                    clearInterval(handle);
+
+                    finishSWTest();
+                }, 0);
+            });
+        });
+    });
+});
+</script>
+</body>
+</html>

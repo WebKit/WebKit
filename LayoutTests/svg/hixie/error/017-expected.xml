@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+ <text x="20" y="220" font-size="200" stroke="black" stroke-width="10" fill="white">FAIL</text>
+ <circle cx="100" cy="100" r="200" stroke="black" stroke-width="5" fill="red"/>
+ <text x="20" y="220" font-size="200" fill="white">FAIL</text>
+</svg>

@@ -1,0 +1,31 @@
+<style>
+div {
+    font-family: Monospace;
+    font-size: 20px;
+}
+</style>
+<div>
+  <span>PASS if underline forms a single
+    <span style="text-decoration: underline; text-box: trim-both ex alphabetic">line</span>
+  </span>
+</div>
+<div>
+  <span style="text-decoration: underline;">PASS if underline forms a single
+    <span style="text-box: trim-both cap alphabetic">line</span>
+  </span>
+</div>
+<div>
+  <span style="text-decoration: underline;">PASS if underline forms a single
+    <span style="text-decoration: underline; text-box: trim-both cap alphabetic">line</span>
+  </span>
+</div>
+<div>
+  <span style="text-decoration: underline; text-box: trim-both ex alphabetic">PASS if underline forms a single
+    <span style="text-decoration: underline;">line</span>
+  </span>
+</div>
+<div>
+  <span style="text-decoration: underline; text-box: trim-both ex alphabetic">PASS if underline forms a single
+    <span style="text-decoration: underline; text-box: trim-both cap alphabetic">line</span>
+  </span>
+</div>

@@ -1,0 +1,4 @@
+
+PASS :continue_in_switch_in_for_loop:preventValueOptimizations=true
+PASS :continue_in_switch_in_for_loop:preventValueOptimizations=false
+

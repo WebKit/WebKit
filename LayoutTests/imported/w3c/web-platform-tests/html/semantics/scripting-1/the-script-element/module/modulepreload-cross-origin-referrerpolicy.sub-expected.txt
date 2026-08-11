@@ -1,0 +1,9 @@
+
+PASS Cross-origin modulepreload with default referrer policy should load
+PASS Cross-origin modulepreload with no-referrer policy should load
+PASS Cross-origin modulepreload with origin policy should load
+PASS Cross-origin modulepreload with same-origin policy should load
+PASS Cross-origin modulepreload with strict-origin policy should load
+PASS Cross-origin modulepreload with strict-origin-when-cross-origin policy should load
+PASS Cross-origin modulepreload with unsafe-url policy should load
+

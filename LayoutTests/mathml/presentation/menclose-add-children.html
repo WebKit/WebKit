@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+    <head>
+        <script type="text/javascript">
+            function runTest() {
+                var mathmlNS = "http://www.w3.org/1998/Math/MathML";
+                var node = document.createElementNS(mathmlNS, "mspace");
+				node.setAttribute("width","100px");
+				node.setAttribute("height","100px");
+				node.setAttribute("mathbackground","red");
+				document.getElementById('testMenclose').appendChild(node);
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p>
+            <math><menclose id="testMenclose" notation="box"></menclose></math>
+		</p>
+    </body>
+</html>

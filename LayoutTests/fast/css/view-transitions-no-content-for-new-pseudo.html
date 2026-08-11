@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html class="reftest-wait">
+<script>
+    function finishTest() {
+        if (window.internals)
+            document.getElementById("results").textContent = internals.layerTreeAsText(document);
+        document.documentElement.classList.remove("reftest-wait");
+    }
+    async function startTest() {
+        document.startViewTransition(() => requestAnimationFrame(() => requestAnimationFrame(finishTest)));
+    }
+    onload = () => requestAnimationFrame(() => requestAnimationFrame(startTest));
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<style>
+    html::view-transition-group(root) { animation-duration: 300s; }
+    html::view-transition-new(root) { animation: unset; opacity: 1; }
+    html::view-transition-old(root) { animation: unset; opacity: 0; }
+</style>
+<body>
+<pre id="results"></pre>
+</body>
+</html>

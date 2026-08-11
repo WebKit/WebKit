@@ -1,0 +1,38 @@
+Tests the computedrole mappings defined in HTML-AAM. Most test names correspond to a unique ID defined in the spec.
+
+These should remain in alphabetical order, and include all HTML tagnames. If a tag is not tested here, include a pointer to the file where it is tested, such as: <!-- caption -> ./table-roles.html -->
+
+
+a	b	c
+1	2	3
+4	5	6
+x	y	z
+
+PASS el-input-checkbox-switch
+FAIL el-thead assert_equals: <thead data-testname="el-thead" data-expectedrole="rowgroup" class="ex">
+    <tr>
+      <th>a</th>
+      <th>b</th>
+      <th>c</th>
+    </tr>
+  </thead> expected "rowgroup" but got ""
+FAIL el-tbody assert_equals: <tbody data-testname="el-tbody" data-expectedrole="rowgroup" class="ex">
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>6</td>
+    </tr>
+  </tbody> expected "rowgroup" but got ""
+FAIL el-tfoot assert_equals: <tfoot data-testname="el-tfoot" data-expectedrole="rowgroup" class="ex">
+    <tr>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+    </tr>
+  </tfoot> expected "rowgroup" but got ""
+

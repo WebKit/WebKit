@@ -1,0 +1,24 @@
+
+PASS :swizzle_assignment_vars:case="vec4u_w_literal"
+PASS :swizzle_assignment_vars:case="vec4u_xy_vec2u"
+PASS :swizzle_assignment_vars:case="vec4u_zx_vec2u"
+PASS :swizzle_assignment_vars:case="vec4u_xyzw_vec4u"
+PASS :swizzle_assignment_vars:case="vec4u_xy_vec2_yx"
+PASS :swizzle_assignment_vars:case="vec3i_y_literal"
+PASS :swizzle_assignment_vars:case="vec3i_zx_vec2i"
+PASS :swizzle_assignment_vars:case="vec3f_xy_vec2f"
+PASS :swizzle_assignment_vars:case="vec2f_yx_v_plus_v"
+PASS :swizzle_assignment_vars:case="vec4f_rgb_vec3f_div_10"
+PASS :swizzle_assignment_vars:case="vec2h_yx_vec2h"
+PASS :swizzle_assignment_vars:case="vec2_bool_y_true"
+PASS :swizzle_assignment_vars:case="vec3_bool_xz_vec2bool"
+PASS :swizzle_assignment_vars:case="vec4u_xy_x_literal"
+PASS :swizzle_assignment_vars:case="vec3f_zyx_yz_vec2f"
+PASS :swizzle_assignment_vars:case="vec2i_xz_yx_vec2i"
+PASS :swizzle_compound_assignment:case="vec4u_w_add_5"
+PASS :swizzle_compound_assignment:case="vec4u_xy_mul_vec2u"
+PASS :swizzle_compound_assignment:case="vec3i_zx_add_vec2i"
+PASS :swizzle_compound_assignment:case="vec3f_xy_mul_vec2f"
+PASS :eval_order:
+PASS :compound_eval_order:
+

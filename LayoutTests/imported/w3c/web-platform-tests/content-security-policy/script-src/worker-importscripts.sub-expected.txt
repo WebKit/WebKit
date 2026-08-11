@@ -1,0 +1,4 @@
+
+PASS Dedicated worker delivers its own CSP
+PASS Shared worker delivers its own CSP
+

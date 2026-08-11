@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+@keyframes keyframes {}
+
+cite { animation: keyframes 100ms }
+
+</style>
+</head>
+<body onload="main()">
+
+<object type="image/png">
+    <cite></cite>
+    <dl hidden></dl>
+</object>
+
+<script>
+
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+const object = document.querySelector("object");
+const cite = document.querySelector("cite");
+const dl = document.querySelector("dl");
+
+function main() {
+    object.addEventListener("DOMSubtreeModified", subtreeModified);
+    object.data = "x";
+    cite.style.animationIterationCount = "infinite";
+}
+
+function subtreeModified() {
+    const animation = cite.getAnimations()[0];
+    object.width = "1em";
+    object.codeBase;
+    animation.effect = new KeyframeEffect(dl, { });
+}
+
+</script>
+<p>PASS if this test doesn't crash</p>
+</body>
+</html>

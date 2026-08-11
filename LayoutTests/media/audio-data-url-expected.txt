@@ -1,0 +1,3 @@
+
+PASS Test that audio element can use a data: url
+

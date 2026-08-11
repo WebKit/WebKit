@@ -1,0 +1,15 @@
+word-break: keep-all should suppress breaks between letter pairs but allow breaks at punctuation.
+
+あ、か
+あ,か
+あ か
+a、b
+a,b
+a b
+PASS: 'あ、か' lines=2
+PASS: 'あ,か' lines=2
+PASS: 'あ か' lines=2
+PASS: 'a、b' lines=2
+PASS: 'a,b' lines=1
+PASS: 'a b' lines=2
+

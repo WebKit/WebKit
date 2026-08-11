@@ -1,0 +1,10 @@
+
+PASS get() returns the record
+PASS get() returns the record where the index contains duplicate values
+PASS get() attempts to retrieve a record that does not exist
+PASS get() returns the record with the first key in the range
+PASS get() throws DataError when using invalid key
+PASS get() throws InvalidStateError when the index is deleted
+PASS get() throws TransactionInactiveError on aborted transaction
+PASS get() throws InvalidStateError on index deleted by aborted upgrade
+

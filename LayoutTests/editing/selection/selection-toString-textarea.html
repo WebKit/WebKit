@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<textarea id="textarea">hello, world</textarea>
+<script>
+
+textarea.focus();
+textarea.setSelectionRange(0, 5);
+shouldBeEqualToString('getSelection().toString()', 'hello');
+
+</script>

@@ -1,0 +1,7 @@
+
+PASS Tests for all frames are in same origin
+FAIL Tests for middle frame and inner frame are in same origin and outer frame is in different origin assert_equals: expected "outerlog:windowblur,middlelog:innerlog:windowfocus,INPUT," but got "outerlog:middlelog:innerlog:BODY,"
+FAIL Tests for outer frame and middle frame are in same origin and inner frame is in different origin assert_equals: expected "outerlog:windowblur,middlelog:innerlog:windowfocus,INPUT," but got "outerlog:middlelog:innerlog:BODY,"
+FAIL Tests for outer frame and inner frame are in same origin and middle frame is in different origin assert_equals: expected "outerlog:windowblur,middlelog:windowfocus,BODY,innerlog:windowfocus,INPUT,INPUT,windowblur," but got "outerlog:windowblur,middlelog:IFRAME,innerlog:windowfocus,INPUT,INPUT,"
+FAIL Tests for all frames are in different origin assert_equals: expected "outerlog:windowblur,middlelog:innerlog:windowfocus,INPUT," but got "outerlog:middlelog:innerlog:BODY,"
+

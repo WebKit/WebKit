@@ -1,0 +1,13 @@
+<canvas width="300" height="300" id="canvas"></canvas>
+
+<script>
+  const context = canvas.getContext("2d");
+
+  context.filter = "drop-shadow(-5px -5px)";
+  context.fillStyle = "blue";
+  context.fillRect(100, 100, 100, 100);
+
+  context.filter = "drop-shadow(5px 5px)";
+  context.fillStyle = "green";
+  context.fillRect(200, 200, 50, 50);
+</script>

@@ -1,0 +1,45 @@
+This test ensures that a rowspan cell does not extend outside its table section.
+
+#table cellForColumnAndRow(0, 0).domIdentifier is c0r0
+#table cellForColumnAndRow(1, 0).domIdentifier is c1r0
+#table cellForColumnAndRow(0, 1).domIdentifier is c0r1
+#table cellForColumnAndRow(1, 1).domIdentifier is c1r1
+#table cellForColumnAndRow(0, 2).domIdentifier is c0r3
+#table cellForColumnAndRow(1, 2).domIdentifier is c1r3
+
+{#r0 AXRole: AXRow}
+
+{#c0r0 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Author}
+
+{#c1r0 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Title}
+
+{#r1 AXRole: AXRow}
+
+{#c0r1 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Stephen Hawking}
+
+{#c1r1 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: A Brief History of Time}
+
+{#r3 AXRole: AXRow}
+
+{#c0r3 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Stan Owocki}
+
+{#c1r3 AXRole: AXCell}
+
+{AXRole: AXStaticText AXValue: Fundamentals of Astrophysics}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Author	Title
+Stephen Hawking	A Brief History of Time
+Stan Owocki	Fundamentals of Astrophysics

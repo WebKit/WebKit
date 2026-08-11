@@ -1,0 +1,11 @@
+<body>
+<p>Test that calling navigator.getGamepads no longer generates a console message in insecure contexts</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.markContextAsInsecure();
+
+navigator.getGamepads();
+</script>
+</body>

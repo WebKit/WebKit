@@ -1,0 +1,2 @@
+PASS if it doesn't assert in debug builds.
+

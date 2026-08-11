@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<div style="height: 2000px;"></div>
+
+<div style="contain-intrinsic-size: auto 1px;" id="test">
+  <div style="height: 50px;"></div>
+</div>
+
+<script>
+function finalize() {
+  el.style.contentVisibility = "auto";
+  window.parent.postMessage("ready", "*");
+}
+
+var el = document.getElementById("test");
+var observer = new ResizeObserver(function() {
+  requestAnimationFrame(finalize);
+  observer.unobserve(el);
+});
+
+observer.observe(el);
+el.offsetWidth;
+</script>

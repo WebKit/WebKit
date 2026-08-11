@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input id="target" type="text" autocapitalize="none" style="width: 200px; font-size: 16px;">
+<script>
+window.addEventListener("blur", () => {
+    window.parent.postMessage({ type: "windowBlurred" }, "*");
+});
+window.addEventListener("message", (event) => {
+    if (event.data.type === "getInputRect") {
+        const rect = document.getElementById("target").getBoundingClientRect();
+        window.parent.postMessage({
+            type: "inputRect",
+            x: rect.x + rect.width / 2,
+            y: rect.y + rect.height / 2
+        }, "*");
+    } else if (event.data.type === "getInputValue") {
+        window.parent.postMessage({
+            type: "inputValue",
+            value: document.getElementById("target").value
+        }, "*");
+    } else if (event.data.type === "focusInput") {
+        const target = document.getElementById("target");
+        // Focus with a user gesture so a cross-origin iframe is allowed to take focus from the main frame.
+        if (window.internals)
+            internals.withUserGesture(() => target.focus());
+        else
+            target.focus();
+        window.parent.postMessage({ type: "inputFocused", focused: document.activeElement === target }, "*");
+    }
+});
+</script>
+</body>
+</html>

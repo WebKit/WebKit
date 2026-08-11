@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Testing bufferedAmountLowThreashold default RTCDataChannel attribute and event</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script src ="../routines.js"></script>
+    <script>
+window.addEventListener("unhandledrejection", event => {
+    event.preventDefault();
+});
+
+var localChannel;
+
+function closeDataChannels() {
+    localChannel.close();
+    closeConnections();
+}
+
+var longString = "abcdefgh";
+for (var cptr = 0; cptr < 10; ++cptr)
+    longString += longString;
+
+function sendMessages(channel)
+{
+    while(channel.bufferedAmount < 1000)
+        channel.send(longString);
+}
+
+promise_test(async (test) => {
+    await new Promise((resolve, reject) => {
+        createConnections((localConnection) => {
+            localChannel = localConnection.createDataChannel('sendDataChannel');
+            assert_equals(localChannel.bufferedAmountLowThreshold, 0, "default bufferedAmountLowThreshold value");
+            localChannel.onopen = resolve;
+        }, (remoteConnection) => {
+            remoteConnection.ondatachannel = (event) => {
+                event.channel.onmessage = () => { };
+            };
+        });
+        setTimeout(() => reject('timed out 1'), 5000);
+    });
+
+    const promise = new Promise((resolve, reject) => {
+        localChannel.onbufferedamountlow = resolve;
+        setTimeout(() => reject('timed out 2'), 5000);
+    });
+
+    sendMessages(localChannel);
+    await promise;
+    closeDataChannels();
+}, "Default buffer threshold");
+
+    </script>
+  </body>
+</html>

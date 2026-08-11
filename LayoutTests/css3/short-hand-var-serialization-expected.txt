@@ -1,0 +1,15 @@
+Test that shorthand css properties set to a variable return that variable when accessed through the style sheet.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+- Tests -
+PASS styleSheet.rules[1].style.borderRadius is "var(--v0)"
+PASS styleSheet.rules[2].style.margin is "var(--v0)"
+PASS styleSheet.rules[3].style.borderBlockWidth is "var(--v0)"
+PASS styleSheet.rules[4].style.borderInlineWidth is "var(--v0)"
+PASS styleSheet.rules[5].style.perspectiveOrigin is "var(--v0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

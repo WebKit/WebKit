@@ -1,0 +1,29 @@
+
+PASS .box 1
+PASS .box 2
+PASS .box 3
+FAIL .box 4 assert_equals:
+<div class="container" style="direction: rtl;">
+    <div class="float"></div>
+    <div class="box" style="margin: auto;" data-expected-margin-left="15" data-expected-margin-right="35"></div>
+    <div class="box" style="margin-left: auto;" data-expected-margin-left="30" data-expected-margin-right="0"></div>
+    <div class="box" style="margin-right: auto;" data-expected-margin-left="0" data-expected-margin-right="50"></div>
+  </div>
+margin-left expected "15" but got "35"
+FAIL .box 5 assert_equals:
+<div class="container" style="direction: rtl;">
+    <div class="float"></div>
+    <div class="box" style="margin: auto;" data-expected-margin-left="15" data-expected-margin-right="35"></div>
+    <div class="box" style="margin-left: auto;" data-expected-margin-left="30" data-expected-margin-right="0"></div>
+    <div class="box" style="margin-right: auto;" data-expected-margin-left="0" data-expected-margin-right="50"></div>
+  </div>
+margin-left expected "30" but got "50"
+FAIL .box 6 assert_equals:
+<div class="container" style="direction: rtl;">
+    <div class="float"></div>
+    <div class="box" style="margin: auto;" data-expected-margin-left="15" data-expected-margin-right="35"></div>
+    <div class="box" style="margin-left: auto;" data-expected-margin-left="30" data-expected-margin-right="0"></div>
+    <div class="box" style="margin-right: auto;" data-expected-margin-left="0" data-expected-margin-right="50"></div>
+  </div>
+margin-left expected "0" but got "20"
+

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<iframe id="crossOriginFrame" src="http://localhost:8000/frames/resources/frames-with-same-name-cross-origin-frame.html"></iframe>
+<script>
+description("Make sure that frame lookup by name has correct ordering when duplicate names are involved.");
+
+onload = () => {
+    crossOriginWindow = document.getElementById("crossOriginFrame").contentWindow;
+    // Both frames have the same name "foo" so window.foo should return the first one in tree order, even
+    // though the name of the first frame gets set after the name of the second frame.
+    shouldBeTrue("crossOriginWindow.foo === crossOriginWindow[0]");
+    shouldBeTrue("open('', 'foo') === crossOriginWindow.foo");
+};
+</script>
+</body>
+</html>

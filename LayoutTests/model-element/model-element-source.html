@@ -1,0 +1,166 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+const makeSource = (src, type) => {
+    const source = document.createElement("source");
+    source.src = src;
+    if (type)
+        source.type = type;
+    return source;
+}
+
+test(() => {
+    assert_idl_attribute(document.createElement("model"), "currentSrc");
+}, "The HTMLModelElement interface has a currentSrc property.");
+
+test(() => {
+    assert_readonly(document.createElement("model"), "currentSrc");
+}, "The currentSrc property is read-only.");
+
+test(() => {
+    assert_equals(document.createElement("model").currentSrc, "");
+}, "The currentSrc property is the empty string when no <source> is provided.");
+
+test(() => {
+    const model = document.createElement("model");
+    model.appendChild(makeSource(""));
+    assert_equals(model.currentSrc, "");
+}, "The currentSrc property is the empty string when a <source> is provided with no src attribute.");
+
+test(() => {
+    const model = document.createElement("model");
+    const source = model.appendChild(makeSource("model.usdz"));
+    assert_equals(model.currentSrc, source.src);
+}, "The currentSrc property is the empty string when a <source> is provided.");
+
+test(() => {
+    const model = document.createElement("model");
+    const source = model.appendChild(makeSource(""));
+    assert_equals(model.currentSrc, "");
+
+    source.src = "model.usdz";
+    assert_equals(model.currentSrc, source.src);
+}, "Changing the src attribute of a <source> changes the currentSrc property.");
+
+test(() => {
+    const model = document.createElement("model");
+    const source = model.appendChild(makeSource("model.usdz"));
+    assert_equals(model.currentSrc, source.src);
+
+    source.remove();
+    assert_equals(model.currentSrc, "");
+}, "Removing the <source> changes the currentSrc property.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-1.usdz"));
+    const secondSource = model.appendChild(makeSource("model-2.usdz"));
+    assert_equals(model.currentSrc, firstSource.src);
+}, "currentSrc returns the src value for the first <source> element.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-1.usdz"));
+    const secondSource = model.appendChild(makeSource("model-2.usdz"));
+    assert_equals(model.currentSrc, firstSource.src);
+
+    firstSource.remove();
+    assert_equals(model.currentSrc, secondSource.src);
+}, "Removing a <source> element updates currentSrc.");
+
+test(() => {
+    const model = document.createElement("model");
+    const initialSource = model.appendChild(makeSource("model-initial.usdz"));
+    assert_equals(model.currentSrc, initialSource.src);
+
+    const secondSource = model.insertBefore(makeSource("model-initial.usdz"), initialSource);
+    assert_equals(model.currentSrc, secondSource.src);
+}, "Adding a <source> before the current <source> updates currentSrc.");
+
+test(() => {
+    assert_idl_attribute(document.createElement("model"), "src");
+}, "The HTMLModelElement interface has a src property.");
+
+test(() => {
+    const model = document.createElement("model");
+    model.setAttribute("src", "some-model.usdz");
+    assert_true(model.src.endsWith("/some-model.usdz"));
+}, "HTMLModelElement src property reflects src attribute value as a resolved URL.");
+
+test(() => {
+    const model = document.createElement("model");
+    model.src = "some-model.usdz";
+    assert_equals(model.getAttribute("src"), "some-model.usdz");
+}, "<model> src attribute reflects HTMLModelElement src property.");
+
+test(() => {
+    const model = document.createElement("model");
+    model.src = "model.usdz";
+    assert_equals(model.currentSrc, model.src);
+}, "Changing the src attribute of a <model> changes the currentSrc property.");
+
+test(() => {
+    const model = document.createElement("model");
+    model.appendChild(makeSource("model-child.usdz"));
+    model.src = "model-attr.usdz";
+    assert_equals(model.currentSrc, model.src);
+}, "A non-empty src attribute takes precedence over a <source> child.");
+
+test(() => {
+    const model = document.createElement("model");
+    const source = model.appendChild(makeSource("model-child.usdz"));
+    model.src = "";
+    assert_true(model.hasAttribute("src"));
+    assert_equals(model.currentSrc, source.src);
+}, "An empty src attribute does not take precedence over a <source> child.");
+
+test(() => {
+    const model = document.createElement("model");
+    const source = model.appendChild(makeSource("model-child.usdz"));
+    model.src = "model-attr.usdz";
+    assert_equals(model.currentSrc, model.src);
+    model.src = "";
+    assert_equals(model.currentSrc, source.src);
+}, "Removing a src attribute selects the first matching <source> child.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-child-1.unknown", "model/unknown"));
+    const secondSource = model.appendChild(makeSource("model-child-2.usdz", "model/vnd.usdz+zip"));
+    assert_equals(model.currentSrc, secondSource.src);
+}, "The first <source> with a supported type is selected.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-child-1.usdz", "model/unknown"));
+    const secondSource = model.appendChild(makeSource("model-child-2.usdz", "model/vnd.usdz+zip"));
+    firstSource.type = "model/vnd.usdz+zip";
+    assert_equals(model.currentSrc, firstSource.src);
+}, "Changing a <source type> to a supported type causes it to be selected.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-child-1.usdz", "model/vnd.usdz+zip"));
+    const secondSource = model.appendChild(makeSource("model-child-2.usdz", "model/vnd.usdz+zip"));
+    firstSource.type = "model/unknown";
+    assert_equals(model.currentSrc, secondSource.src);
+}, "Changing a <source type> to an unsupported type causes it not to be selected.");
+
+test(() => {
+    const model = document.createElement("model");
+    const initialSource = model.appendChild(makeSource("model-child-1.usdz", "model/vnd.usdz+zip"));
+    const newSource = model.insertBefore(makeSource("model-child-2.usdz", "model/unsupported"), model.firstChild);
+    assert_equals(model.currentSrc, initialSource.src);
+}, "An inserted <source> with an unsupported type is not selected.");
+
+test(() => {
+    const model = document.createElement("model");
+    const initialSource = model.appendChild(makeSource("model-child-1.usdz", "model/vnd.usdz+zip"));
+    const newSource = model.insertBefore(makeSource("model-child-2.usdz", "model/vnd.usdz+zip"), model.firstChild);
+    assert_equals(model.currentSrc, newSource.src);
+}, "An inserted <source> with a supported type is selected.");
+</script>
+</body>
+</html>

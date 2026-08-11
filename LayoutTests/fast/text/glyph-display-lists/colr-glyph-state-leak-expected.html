@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Reference for COLR glyph state leak test</title>
+<style>
+@font-face {
+    font-family: "Ahem COLR";
+    src: url("../resources/Ahem-COLR.ttf") format("truetype");
+}
+body {
+    font: 24px Ahem;
+}
+h1 {
+    font: 48px Ahem COLR;
+}
+</style>
+<body>
+<h1>AAA</h1>
+<p style="color: green">AAA</p>

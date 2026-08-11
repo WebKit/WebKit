@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+        function postMessage(event) {
+            window.webkit.messageHandlers.testHandler.postMessage(event.type);
+
+        }
+        window.addEventListener('load', event => {
+            video.addEventListener('loadeddata', postMessage);
+            video.addEventListener('suspend', postMessage);
+            video.src = 'video-with-audio.mp4';
+        });
+        </script>
+    <body>
+        <video id=video></video>
+</script></body></html>"

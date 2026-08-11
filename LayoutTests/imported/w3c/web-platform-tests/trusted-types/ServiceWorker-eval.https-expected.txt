@@ -1,0 +1,10 @@
+
+PASS eval(string) in service worker
+PASS indirect eval(string) in service worker
+PASS eval(TrustedScript) in service worker
+PASS indirect eval(TrustedScript) in service worker
+PASS eval(string) with default policy in service worker
+PASS indirect eval(string) with default policy in service worker
+PASS eval(string) with default policy mutation in service worker
+PASS indirect eval(string) with default policy mutation in service worker
+

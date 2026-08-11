@@ -1,0 +1,58 @@
+
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(loadeddata)
+Test that action handlers properly register with correct PlatformMediaSession RemoteControlCommandType
+ACTION: play
+Command: PlayCommand
+ACTION: pause
+Command: PauseCommand
+ACTION: seekbackward
+Command: SkipBackwardCommand
+ACTION: seekforward
+Command: SkipForwardCommand
+ACTION: previoustrack
+Command: PreviousTrackCommand
+ACTION: nexttrack
+Command: NextTrackCommand
+ACTION: skipad
+Command: NextTrackCommand
+ACTION: stop
+Command: StopCommand
+ACTION: seekto
+Command: SeekToPlaybackPositionCommand
+ACTION: previousslide
+Command: PreviousTrackCommand
+ACTION: nextslide
+Command: NextTrackCommand
+Test that removing one of a pair sharing a platform command keeps the command, and removing both clears it
+Register nexttrack and nextslide, then remove nexttrack
+EXPECTED (internals.platformSupportedCommands().includes("NextTrackCommand") == 'true') OK
+Remove nextslide
+EXPECTED (internals.platformSupportedCommands().includes("NextTrackCommand") == 'false') OK
+Register nexttrack and nextslide, then remove nextslide
+EXPECTED (internals.platformSupportedCommands().includes("NextTrackCommand") == 'true') OK
+Remove nexttrack
+EXPECTED (internals.platformSupportedCommands().includes("NextTrackCommand") == 'false') OK
+Register previoustrack and previousslide, then remove previoustrack
+EXPECTED (internals.platformSupportedCommands().includes("PreviousTrackCommand") == 'true') OK
+Remove previousslide
+EXPECTED (internals.platformSupportedCommands().includes("PreviousTrackCommand") == 'false') OK
+Register previoustrack and previousslide, then remove previousslide
+EXPECTED (internals.platformSupportedCommands().includes("PreviousTrackCommand") == 'true') OK
+Remove previoustrack
+EXPECTED (internals.platformSupportedCommands().includes("PreviousTrackCommand") == 'false') OK
+Iterate over all possible actions
+Command: SkipForwardCommand
+Command: SkipBackwardCommand
+Command: PreviousTrackCommand
+Command: PlayCommand
+Command: SeekToPlaybackPositionCommand
+Command: StopCommand
+Command: PauseCommand
+Command: NextTrackCommand
+Iterate over possible actions after video element src is cleared
+RUN(video.src = "")
+EVENT(loadstart)
+EXPECTED (internals.platformSupportedCommands().length == '0') OK
+END OF TEST
+

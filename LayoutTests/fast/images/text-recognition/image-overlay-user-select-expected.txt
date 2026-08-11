@@ -1,0 +1,16 @@
+The user-select value of recognized text inside an image overlay should be all or none.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(overlayText(plain)).webkitUserSelect is "all"
+PASS getComputedStyle(overlayText(unselectable)).webkitUserSelect is "none"
+PASS getComputedStyle(overlayText(inInert)).webkitUserSelect is "all"
+PASS getSelection().toString() is ""
+PASS getComputedStyle(overlayText(plain)).webkitUserSelect is "none"
+PASS getComputedStyle(overlayText(plain)).webkitUserSelect is "all"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

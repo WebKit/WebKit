@@ -1,0 +1,5 @@
+
+PASS e.style['mask-type'] = "auto" should not set the property value
+PASS e.style['mask-type'] = "luminance alpha" should not set the property value
+PASS e.style['mask-type'] = "alpha, luminance" should not set the property value
+

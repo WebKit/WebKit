@@ -1,0 +1,20 @@
+
+PASS display
+PASS unicodeBidi
+PASS color
+PASS borderTopStyle
+PASS borderRightStyle
+PASS borderBottomStyle
+PASS borderLeftStyle
+PASS borderTopWidth
+PASS borderRightWidth
+PASS borderBottomWidth
+PASS borderLeftWidth
+PASS marginTop
+PASS marginRight
+PASS marginBottom
+PASS marginLeft
+PASS overflow
+PASS height
+PASS box-sizing
+

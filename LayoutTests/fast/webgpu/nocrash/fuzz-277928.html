@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let buffer = device.createBuffer({ size: 8527, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX });
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [{ binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }]
+    });
+    let videoFrame = new VideoFrame(new ArrayBuffer(6), { codedWidth: 2, codedHeight: 2, format: 'I420', timestamp: 0 });
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ['rg16uint'] });
+    let bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [{ binding: 0, resource: { buffer: buffer, offset: 2560, size: 660 } }]
+    });
+    renderBundleEncoder.setBindGroup(0, bindGroup)
+    let renderBundleEncoder2 = device.createRenderBundleEncoder({ colorFormats: ['rg16uint'] });
+    let renderBundle = renderBundleEncoder.finish();
+    let texture = device.createTexture({ size: [1, 1], dimension: '3d', format: 'rg16uint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let shaderModule = device.createShaderModule({ code: `
+        @vertex fn vertex0() -> @builtin(position) vec4f {
+            return vec4f();
+        }
+        struct FragmentOutput0 {
+            @location(0) f0: vec2u
+        }
+        @fragment fn fragment0() -> @location(0) vec2u {
+            return vec2u();
+        }
+    `});
+    let pipeline5 = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [{ format: 'rg16uint' }] },
+        vertex: { module: shaderModule, buffers: [] }
+    });
+    let textureView = texture.createView();
+    let renderBundleEncoder3 = device.createRenderBundleEncoder({ colorFormats: ['rg16uint'] });
+    renderBundleEncoder3.setPipeline(pipeline5);
+    renderBundleEncoder3.setVertexBuffer(0, buffer);
+    renderBundleEncoder3.draw(0);
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [{ view: textureView, depthSlice: 0, loadOp: 'clear', storeOp: 'discard' }],
+    });
+    let renderBundle3 = renderBundleEncoder3.finish();
+    let renderBundle2 = renderBundleEncoder2.finish();
+    renderPassEncoder.executeBundles([renderBundle2, renderBundle, renderBundle3]);
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

@@ -1,0 +1,8 @@
+Button
+
+PASS Don't fire focusin/out when reparenting focused element directly
+PASS Don't fire focusin/out when reparenting an element that has focus within
+PASS Don't fire focusin/out when moving to the same parent
+PASS Don't fire focusin and then correct when moving to an inert subtree
+FAIL Don't fire focusin and then correct when moving to a tree that is made inert using style assert_array_equals: lengths differ, expected array ["button.onfocusin", "button.onfocusout"] length 2, got ["button.onfocusin"] length 1
+

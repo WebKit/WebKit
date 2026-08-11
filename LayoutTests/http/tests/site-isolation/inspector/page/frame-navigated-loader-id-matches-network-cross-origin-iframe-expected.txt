@@ -1,0 +1,13 @@
+Test that under Site Isolation a cross-origin iframe's Page.frameNavigated loaderId matches the Network.requestWillBeSent loaderId for its main resource.
+
+
+
+== Running test suite: SiteIsolation.Page.FrameNavigatedLoaderIdMatchesNetwork
+-- Running test case: SiteIsolation.Page.FrameNavigated.LoaderIdMatchesNetworkMainResource
+PASS: Cross-origin child frame should be in the frame model.
+PASS: Network.requestWillBeSent (Document) should fire for the child's navigation.
+PASS: Page.frameNavigated should fire for the child's navigation.
+PASS: Page.frameNavigated loaderId should equal the Network.requestWillBeSent loaderId for the same main-resource load.
+PASS: Child frame's main resource should be the newly navigated document.
+PASS: Child frame should be committed with the navigation's loaderId.
+

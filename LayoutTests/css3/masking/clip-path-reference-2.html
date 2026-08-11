@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+
+#div1 {
+  width: 200px;
+  height: 200px;
+  -webkit-clip-path: url("#clip");
+  background-color: green;
+}
+#div2 {
+  width: 200px;
+  height: 200px;
+  -webkit-clip-path: url("#clip2");
+  background-color: green;
+}
+* {
+  padding: 0;
+  margin: 0;
+}
+</style>
+<div id="div1"></div>
+<div id="div2"></div>
+<svg>
+  <clipPath id="clip">
+    <ellipse cx="100" cy="100" rx="100" ry="100"/>
+  </clipPath>
+  <clipPath id="clip2">
+    <ellipse cx="50%" cy="50%" rx="50%" ry="50%"/>
+  </clipPath>
+</svg>
+</html>

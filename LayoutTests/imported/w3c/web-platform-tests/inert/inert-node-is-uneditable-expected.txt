@@ -1,0 +1,6 @@
+I'm not editable. aaI'm editable. I'm not editable.
+
+PASS Can't edit inert contenteditable
+PASS Can edit non-inert contenteditable
+PASS Can't edit interactivity:auto contenteditable inside inert
+

@@ -1,0 +1,11 @@
+
+WebGL 1 vendor is: WebKit
+WebGL 1 renderer is: WebKit WebGL
+WebGL 1 shading language version is: WebGL GLSL ES 1.0 (1.0)
+WebGL 1 unmasked vendor is: Apple Inc.
+WebGL 1 unmasked renderer is: Apple GPU
+WebGL 2 vendor is: WebKit
+WebGL 2 renderer is: WebKit WebGL
+WebGL 2 shading language version is: WebGL GLSL ES 3.00
+WebGL 2 unmasked vendor is: Apple Inc.
+WebGL 2 unmasked renderer is: Apple GPU

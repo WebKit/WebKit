@@ -1,0 +1,3 @@
+Polyfills shared across different workloads, for browser APIs that are not available in JavaScript engine shells, e.g., `TextDecoder`.
+To make performance between browser and shell measurements not too dissimilar, these shouldn't account for a major part of the runtime (e.g., ideally only be used during initialization, outside of the main measurement loop).
+Also, please also add a link to the original sources and licensing information in each subdirectory.

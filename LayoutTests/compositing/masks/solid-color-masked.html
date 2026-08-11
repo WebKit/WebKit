@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+          width: 100px;
+          height: 100px;
+          background-color: blue;
+        }
+        
+        .composited {
+          transform: translateZ(0);
+        }
+
+        .masked {
+            -webkit-mask-image: linear-gradient(black, transparent);
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        function doTest()
+        {
+            window.setTimeout(function() {
+                document.getElementById('box').classList.add('masked');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 10);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div id="box" class="composited box">
+</div>
+</body>
+</html>

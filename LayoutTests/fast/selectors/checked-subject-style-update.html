@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+input { color: rgb(0, 0, 0); }
+input:checked { color: rgb(255, 0, 0); }
+</style>
+</head>
+<body>
+<input type="checkbox" id="checkbox">
+<script>
+description('Toggling :checked must update the input\'s own style, now that HTMLInputElement::setChecked relies on PseudoClassChangeInvalidation instead of invalidateStyle().');
+
+debug('Unchecked.');
+shouldBeEqualToString('getComputedStyle(document.getElementById("checkbox")).color', 'rgb(0, 0, 0)');
+
+debug('Checked.');
+document.getElementById('checkbox').checked = true;
+shouldBeEqualToString('getComputedStyle(document.getElementById("checkbox")).color', 'rgb(255, 0, 0)');
+
+debug('Unchecked again.');
+document.getElementById('checkbox').checked = false;
+shouldBeEqualToString('getComputedStyle(document.getElementById("checkbox")).color', 'rgb(0, 0, 0)');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

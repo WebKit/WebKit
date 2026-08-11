@@ -1,0 +1,21 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+
+function onloadHandler() {
+    shadow = document.createElement("div").attachShadow({mode: "closed"});
+    shadow.prepend(dataElement);
+}
+</script>
+<body>
+  <data id="dataElement">
+    <table id="theTable">
+      <iframe id="theIframe" onload="onloadHandler()"></iframe>
+      <hr id="FOO"/>
+    </table>
+  </data>
+  <p>
+    This test passes if it doesn't crash.
+  </p>
+</body>

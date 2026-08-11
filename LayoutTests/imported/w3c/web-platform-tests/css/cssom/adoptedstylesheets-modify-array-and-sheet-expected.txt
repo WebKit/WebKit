@@ -1,0 +1,6 @@
+This text should be green
+
+PASS Add the two sheets. Text should be red.
+PASS Flip the two sheet. Still red.
+PASS Modify the color declaration. Should now be green.
+

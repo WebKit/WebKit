@@ -1,0 +1,4 @@
+Test :state() pseudo-class invalidation with :has()
+
+PASS Test :has() invalidation with :state() pseudo-classes
+

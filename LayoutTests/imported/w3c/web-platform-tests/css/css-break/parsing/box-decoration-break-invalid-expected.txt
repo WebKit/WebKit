@@ -1,0 +1,4 @@
+
+PASS e.style['box-decoration-break'] = "auto" should not set the property value
+PASS e.style['box-decoration-break'] = "slice clone" should not set the property value
+

@@ -1,0 +1,7 @@
+This tests that moving the cursor inside a 'user-select: all' element expands the selection to the entire element. The cursor should not end up inside the 'user-select: all' element, but rather in the middle of "after". To test manually, ensure this page is opened in an editable web view.
+| "before "
+| <span>
+|   id="inner"
+|   style="-webkit-user-select: all;"
+|   "a long select-all"
+| " aft<#selection-caret>er"

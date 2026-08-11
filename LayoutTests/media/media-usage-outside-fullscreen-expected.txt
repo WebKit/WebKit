@@ -1,0 +1,22 @@
+Sibling element that does not contain the video.
+
+Test that MediaUsageInfo::outsideOfFullscreen reflects whether the media element is outside the fullscreen element.
+
+EVENT(canplaythrough)
+
+** No element is fullscreen: video is not 'outside of fullscreen'.
+EXPECTED (usage.outsideOfFullscreen == 'false') OK
+
+** A sibling element is fullscreen: video is outside of fullscreen.
+EVENT(webkitfullscreenchange)
+EXPECTED (usage.outsideOfFullscreen == 'true') OK
+RUN(document.webkitExitFullscreen())
+EVENT(webkitfullscreenchange)
+
+** The video's container is fullscreen: video is inside fullscreen.
+EVENT(webkitfullscreenchange)
+EXPECTED (usage.outsideOfFullscreen == 'false') OK
+RUN(document.webkitExitFullscreen())
+EVENT(webkitfullscreenchange)
+END OF TEST
+

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test ApplePayInstallmentConfiguration.");
+
+window.jsTestIsAsync = true;
+
+expectedBindingTotalAmount = '1.00';
+expectedCurrencyCode = 'USD';
+expectedFeatureType = 'appleCard';
+expectedIsInStorePurchase = false;
+expectedMerchandisingImageData = 'dGVzdA==';
+expectedMerchantIdentifier = 'merchant';
+expectedOpenToBuyThresholdAmount = '2.50';
+expectedReferrerIdentifier = 'referrer';
+
+function validRequest()
+{
+    return {
+        countryCode: 'US',
+        currencyCode: 'USD',
+        supportedNetworks: ['visa', 'masterCard'],
+        merchantCapabilities: ['supports3DS'],
+        total: { label: 'Your Label', amount: '10.00' },
+        installmentConfiguration: {
+            bindingTotalAmount: expectedBindingTotalAmount,
+            currencyCode: expectedCurrencyCode,
+            merchandisingImageData: expectedMerchandisingImageData,
+            merchantIdentifier: expectedMerchantIdentifier,
+            openToBuyThresholdAmount: expectedOpenToBuyThresholdAmount,
+            referrerIdentifier: expectedReferrerIdentifier,
+        },
+    }
+}
+
+activateThen(() => {
+    var session = new ApplePaySession(8, validRequest());
+    session.begin();
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.bindingTotalAmount', 'expectedBindingTotalAmount');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.currencyCode', 'expectedCurrencyCode');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.featureType', 'expectedFeatureType');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.isInStorePurchase', 'expectedIsInStorePurchase');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.merchandisingImageData', 'expectedMerchandisingImageData');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.merchantIdentifier', 'expectedMerchantIdentifier');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.openToBuyThresholdAmount', 'expectedOpenToBuyThresholdAmount');
+    shouldBe('internals.mockPaymentCoordinator.installmentConfiguration.referrerIdentifier', 'expectedReferrerIdentifier');
+    internals.mockPaymentCoordinator.cancelPayment();
+    finishJSTest();
+});
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

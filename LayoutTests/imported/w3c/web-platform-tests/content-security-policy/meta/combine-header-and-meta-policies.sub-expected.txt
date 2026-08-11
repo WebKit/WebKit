@@ -1,0 +1,7 @@
+Test passes if both style and image are blocked and a report is generated for the style block from the header-supplied policy.
+
+
+
+PASS Expecting logs: ["TEST COMPLETE", "violated-directive=img-src", "violated-directive=style-src-elem"]
+PASS combine-header-and-meta-policies
+

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-currenttime-progression</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Verifies that currentTime advances during playback. Catches regressions
+    // where cross-process time reporting stalls or returns stepwise jumps:
+    //   - TimeProgressEstimator interpolation (bug 307515)
+    //   - currentTime polling frequency (bug 307495 / Paramount+)
+
+    var source;
+    var sourceBuffer;
+    var time1;
+    var time2;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // 4 seconds of all-sync video so every frame decodes independently.
+        var samples = [];
+        for (var i = 0; i < 4; i++) {
+            samples.push({
+                duration: 1000,
+                isSync: true,
+            });
+        }
+        var media = WebM.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples }]
+        });
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+
+        source.endOfStream();
+
+        run('video.currentTime = 0');
+        await waitFor(video, 'seeking', true);
+        await waitFor(video, 'seeked', true);
+        run('video.play()');
+        await waitFor(video, 'playing');
+
+        // Wait for currentTime to advance past 0.
+        await testExpectedEventually('video.currentTime', 0, '>', 5000);
+
+        time1 = video.currentTime;
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        time2 = video.currentTime;
+        testExpected('time2 > time1', true);
+
+        run('video.pause()');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

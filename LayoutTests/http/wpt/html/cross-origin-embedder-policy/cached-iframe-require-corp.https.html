@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<title>COEP: require-corp for a cache iframe</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+</head>
+<body>
+<script>
+async_test(t => {
+    let iframe1 = document.createElement("iframe");
+    iframe1.src = "resources/require-corp-cacheable-iframe.html";
+    document.body.append(iframe1);
+    iframe1.addEventListener("load", t.step_func((event) => {
+        assert_equals(iframe1.contentDocument.body.innerText, "FOO");
+        iframe1.remove();
+        iframe1 = null;
+        let iframe2 = document.createElement("iframe");
+        if (window.internals)
+            internals.clearMemoryCache();
+        iframe2.src = "resources/require-corp-cacheable-iframe.html";
+        document.body.append(iframe2);
+        iframe2.addEventListener("load", t.step_func((event) => {
+            assert_equals(iframe2.contentDocument.body.innerText, "FOO");
+            t.done();
+        }));
+    }));
+}, "iframe should properly load from disk cache");
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description("No cookie expiry capping for a cookie set by the top-level navigation's own response.");
+    jsTestIsAsync = true;
+
+    const cookieName = "cnameTestCookie";
+    const oneWeekInMilliseconds = 7 * 24 * 60 * 60 * 1000;
+
+    function checkCookie() {
+        let cookie = internals.getCookies().find((cookie) => cookie.name === cookieName);
+        if (!cookie)
+            testFailed("Cookie was not set.");
+        else if (cookie.expires > Date.now() + oneWeekInMilliseconds)
+            testPassed("Cookie set by the top-level navigation response was not capped.");
+        else
+            testFailed("Cookie set by the top-level navigation response was capped.");
+
+        setEnableFeature(false, finishJSTest);
+    }
+
+    function runTest() {
+        if (document.location.search === "?step=check") {
+            checkCookie();
+            return;
+        }
+
+        setEnableFeature(true, function() {
+            testRunner.statisticsSetThirdPartyCNAMEDomain("http://3rdpartytestwebkit.org", function() {
+                document.location.href = "resources/set-cookie.py?name=" + cookieName + "&value=value#" + document.location.href + "?step=check";
+            });
+        });
+    }
+</script>
+</body>
+</html>

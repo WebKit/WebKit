@@ -1,0 +1,11 @@
+
+
+PASS Exposed when a cross-origin redirect opts in to the destination origin
+PASS Exposed when a cross-origin redirect opts in with a wildcard
+PASS Exposed when every redirect in the chain opts in to the destination origin
+PASS Hidden when the redirect opts in to a non-destination origin
+PASS Hidden when only part of the chain opts in to the destination origin
+PASS Hidden for a no-referrer navigation even when the redirect opts in
+PASS Exposed when the redirect opts in to a cross-origin destination origin
+PASS Hidden when the redirect opts in to the main frame origin but not the destination origin
+

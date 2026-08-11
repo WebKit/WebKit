@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=video-test.js></script>
+        <script>
+            var state;
+
+            function someTimeLater()
+            {
+                testExpected("state", "load() with missing 'src'");
+                testExpected("videos[0].error", null);
+                testExpected("videos[0].networkState", HTMLMediaElement.NETWORK_EMPTY);
+                testExpected("videos[0].src", "");
+                endTest();
+            }
+
+            function errorEvent()
+            {
+                failTest("<br><i>***'error' event fired***<" + "/i>");
+            }
+
+            function test()
+            {
+                videos = document.querySelectorAll('video');
+
+                consoleWrite("<br><i>Network state should remain in NETWORK_EMPTY with missing 'src' attribute.<" + "/i>");
+                consoleWrite("** &lt;video&gt; with no src attribute**");
+                testExpected("videos[0].error", null);
+                testExpected("videos[0].networkState", HTMLMediaElement.NETWORK_EMPTY);
+                testExpected("videos[0].src", "");
+
+                consoleWrite("<br><i>Calling load() with no 'src' should NOT fire 'error' event, set network state to NETWORK_EMPTY.<" + "/i>");
+                state = "load() with missing 'src'";
+                videos[0].load();
+
+                setTimeout(someTimeLater, 100) ;
+            }
+        </script>
+    </head>
+
+    <body onload="setTimeout(test, 100)">
+        <video width=320 height=60 controls onerror="errorEvent()"></video>
+    </body>
+</html>

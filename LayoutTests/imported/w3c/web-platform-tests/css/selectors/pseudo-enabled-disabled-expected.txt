@@ -1,0 +1,7 @@
+
+
+PASS :enabeld should match to enabled controls
+PASS :disabled should match to enabled controls
+PASS :not(:enabeld) should match to disabled controls and non-controls
+PASS :not(:disabled) should match to enabled controls and non-controls
+

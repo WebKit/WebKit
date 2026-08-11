@@ -1,0 +1,11 @@
+uniform half4 colorGreen;
+
+half4 blocky(half4 c) {
+    {
+        return c;
+    }
+}
+
+half4 main(float2 coords) {
+    return blocky(colorGreen);
+}

@@ -1,0 +1,16 @@
+Name: clspv
+Short Name: clspv
+URL: https://github.com/google/clspv
+Version: N/A
+Revision: 8f35aa835ae973e1c802421ba5a873f5e967278c
+Update Mechanism: Manual
+Security Critical: no
+Shipped: no
+License: Apache-2.0
+License File: src/LICENSE
+
+Description:
+clspv is a prototype compiler for a subset of OpenCL C to Vulkan compute shaders
+
+Local Modifications:
+No modifications.

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body >
+
+<input type="text" labelled-by="othertext">
+<p id="othertext">other text</p>
+
+<div id="container" style="width: 100px; height: 100px; overflow: hidden">
+    <button id="button" name="submit-button" style="display: block">Button</button>
+    <h1 id="label" aria-hidden="true"><b id="boldtext">Test</b> Label 1</h1>
+</div>
+
+<script>
+var output = "This test ensures we don't crash when trying to add an unconnected node during dirty layout.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    // Touch the tree to ensure the AXObjectCache is created.
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    document.getElementById("othertext").id = "othertext2";
+    document.getElementById("button").focus();
+    document.getElementById("button").setAttribute("aria-labelledby", "label");
+
+    document.getElementById("boldtext").remove();
+    document.getElementById("button").offsetWidth;
+
+    setTimeout(async function() {
+        // Allow time for test to crash.
+        await sleep(10);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

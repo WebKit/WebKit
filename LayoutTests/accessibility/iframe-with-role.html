@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body onload="runTest()">
+
+Text before iframe
+<iframe id="iframe" srcdoc="<body><button>Click me (inside iframe)</button></body>"></iframe>
+Text after iframe
+
+<script>
+window.jsTestIsAsync = true;
+
+var output = "This test ensures that the content within an iframe with an ARIA role is accessible.\n\n";
+
+function traverseContent() {
+    const rootWebArea = accessibilityController.rootElement.childAtIndex(0);
+    let searchResult = null;
+    while (true) {
+        searchResult = rootWebArea.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+
+        const role = searchResult.role;
+        output += `\n${role}`;
+        if (role.includes("StaticText")) {
+            let textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
+            output += `\n${textContent}`;
+        }
+        output += "\n";
+    }
+}
+
+function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    output += "Traversing initial body content.\n";
+    traverseContent();
+
+    output += `\n${evalAndReturn("document.getElementById('iframe').removeAttribute('role');")}`;
+    setTimeout(async function() {
+        // Wait an arbitrary amount of time for the AX tree to update.
+        await sleep(100);
+        traverseContent();
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,74 @@
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    // Override `WG` is declared in the module and used only by a compute
+    // entry point, not by the vertex/fragment entry points. Supplying a
+    // value for it via `constants` on a render pipeline must be valid per
+    // the WebGPU spec and must not cause draws to be silently dropped.
+    let module = device.createShaderModule({code: `
+      override WG: u32;
+      @compute @workgroup_size(WG) fn cs() {}
+
+      @vertex fn vs(@builtin(vertex_index) i: u32) -> @builtin(position) vec4f {
+        var p = array<vec2f,3>(vec2f(-1,-1), vec2f(3,-1), vec2f(-1,3));
+        return vec4f(p[i], 0, 1);
+      }
+      @fragment fn fs() -> @location(0) vec4f {
+        return vec4f(0.0, 1.0, 0.0, 1.0);
+      }`});
+
+    let pipeline = device.createRenderPipeline({
+      layout: 'auto',
+      vertex: {module, entryPoint: 'vs', constants: {WG: 8}},
+      fragment: {module, entryPoint: 'fs', targets: [{format: 'rgba8unorm'}], constants: {WG: 8}},
+    });
+    log(pipeline ? 'pipeline created' : 'pipeline null');
+
+    let texture = device.createTexture({
+      format: 'rgba8unorm',
+      size: [4, 4, 1],
+      usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+    });
+    let enc = device.createCommandEncoder();
+    let pass = enc.beginRenderPass({
+      colorAttachments: [{
+        view: texture.createView(),
+        loadOp: 'clear', storeOp: 'store',
+        clearValue: {r: 0, g: 0, b: 0, a: 1},
+      }],
+    });
+    pass.setPipeline(pipeline);
+    pass.draw(3);
+    pass.end();
+    device.queue.submit([enc.finish()]);
+    await device.queue.onSubmittedWorkDone();
+
+    let error = await device.popErrorScope();
+    if (error) {
+      log(error.message);
+    } else {
+      log('no validation error');
+    }
+
+    // Also confirm passing an identifier that does NOT refer to any override
+    // in the module still produces a validation error.
+    device.pushErrorScope('validation');
+    try {
+      device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {module, entryPoint: 'vs', constants: {DOES_NOT_EXIST: 1}},
+        fragment: {module, entryPoint: 'fs', targets: [{format: 'rgba8unorm'}]},
+      });
+    } catch (e) { }
+    let secondError = await device.popErrorScope();
+    log(secondError ? 'invalid override rejected' : 'invalid override accepted');
+
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

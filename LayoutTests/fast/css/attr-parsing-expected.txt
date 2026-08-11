@@ -1,0 +1,39 @@
+SUCCESS
+
+Rules from the stylesheet:
+
+#a { content: attr(b); }
+#c { content: attr("x"); }
+#d { content: attr(0); }
+#e { content: attr(0.0); }
+#f { content: attr(0%); }
+#g { content: attr(0px); }
+#h { }
+#i { content: attr(+0); }
+#j { content: attr(-k); }
+#l { content: attr(0m); }
+#n { content: attr(-0p); }
+#q { content: attr(url(http://webkit.org)); }
+#r { content: attr(U/**/+0020); }
+#s { content: attr(U/**/+0020/**/-00FF); }
+#t { content: attr(#123456); }
+#u { content: attr(#); }
+Expected result:
+
+#a { content: attr(b); }
+#c { content: attr("x"); }
+#d { content: attr(0); }
+#e { content: attr(0.0); }
+#f { content: attr(0%); }
+#g { content: attr(0px); }
+#h { }
+#i { content: attr(+0); }
+#j { content: attr(-k); }
+#l { content: attr(0m); }
+#n { content: attr(-0p); }
+#q { content: attr(url(http://webkit.org)); }
+#r { content: attr(U/**/+0020); }
+#s { content: attr(U/**/+0020/**/-00FF); }
+#t { content: attr(#123456); }
+#u { content: attr(#); }
+

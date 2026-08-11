@@ -1,0 +1,3 @@
+This tests that adding a child node with only whitespace to an object tag does not create a new subframe, causing an assert.
+SUCCESS!
+

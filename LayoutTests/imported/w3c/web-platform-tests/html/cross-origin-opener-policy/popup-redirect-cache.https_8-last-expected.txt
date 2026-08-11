@@ -1,0 +1,3 @@
+
+PASS same-origin document opening popup redirect from https://www1.web-platform.test:9443 to https://not-web-platform.test:9443 with redirectCache true and destCache true
+

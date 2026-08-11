@@ -1,0 +1,14 @@
+<style>
+  html, body {
+    display: grid;
+  }
+  body {
+    grid-template-rows: subgrid repeat(3, []);
+  }
+</style>
+<script>
+  onload = () => {
+    if (window.testRunner)
+           testRunner.dumpAsText();
+  };
+</script>

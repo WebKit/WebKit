@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+.fakeImage { 
+    border: 1px solid black;
+    width: 100px;
+    height: 100px;
+}
+</style>
+</head>
+<body>
+
+<div role="img" aria-label="test" id="image1" class="fakeImage">inside</div>b
+
+<script>
+var output = "This tests object replacements are present in strings when the replaced element is at the beginning of the document and there are rendered children\n\n";
+
+if (window.accessibilityController) {
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    var textMarkerRange = webarea.textMarkerRangeForMarkers(webarea.startTextMarker, webarea.endTextMarker);
+    var text = webarea.stringForTextMarkerRange(textMarkerRange).replace(String.fromCharCode(65532), "[ATTACHMENT]");
+    output += `Webarea text: ${text}\n`;
+    debug(output);
+}
+</script>
+</body>
+</html>
+

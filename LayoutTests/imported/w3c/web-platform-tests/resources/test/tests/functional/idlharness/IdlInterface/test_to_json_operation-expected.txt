@@ -1,0 +1,14 @@
+
+PASS A interface: default toJSON operation on object
+FAIL B interface: default toJSON operation on object assert_equals: expected "number" but got "string"
+PASS C interface: default toJSON operation on object
+FAIL D interface: default toJSON operation on object assert_true: property "foo" should be present in the output of D.prototype.toJSON() expected true got false
+FAIL F interface: default toJSON operation on object assert_true: property foo should be writable expected true got false
+FAIL G interface: default toJSON operation on object assert_true: property foo should be enumerable expected true got false
+FAIL H interface: default toJSON operation on object assert_true: property foo should be configurable expected true got false
+PASS I interface: default toJSON operation on object
+PASS K interface: default toJSON operation on object
+PASS L interface: toJSON operation on object
+FAIL M interface: toJSON operation on object assert_equals: expected "string" but got "object"
+FAIL N interface: toJSON operation on object assert_true: {"type":"return-type","extAttrs":[],"generic":"","nullable":false,"union":false,"idlType":"DOMException"} is not an appropriate return value for the toJSON operation of N expected true got false
+

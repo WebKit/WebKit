@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+}
+
+function finish() {
+    if (window.testRunner)
+        testRunner.resetPageVisibility();
+
+    document.open();
+    document.write("PASS. WebKit didn't crash");
+    document.close();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function crash()
+{     
+    document.body.removeChild(document.getElementById("f"));
+    setTimeout("finish()", 0);
+}
+
+frame = document.createElement("iframe");
+frame.id = "f";
+document.body.appendChild(frame);
+scriptElement = frame.contentDocument.createElement("script");
+frame.contentDocument.body.appendChild(scriptElement);
+scriptElement.innerText = "function handleVisibilityChange() \
+                           { \
+                               parent.crash(); \
+                           } \
+                           document.addEventListener('webkitvisibilitychange', handleVisibilityChange, false);";
+
+if (window.testRunner)
+    testRunner.setPageVisibility("hidden");
+    
+// Many platforms don't support the page visibility api. For those, just bail out.
+setTimeout("finish()", 10);
+</script>
+</body>
+</html>

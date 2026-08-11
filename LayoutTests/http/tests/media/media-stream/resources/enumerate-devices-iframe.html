@@ -1,0 +1,54 @@
+<script>
+    async function checkDeviceKind(kind)
+    {
+        try {
+            let devices = await navigator.mediaDevices.enumerateDevices();
+            for (let device of devices) {
+                if (device.kind === kind)
+                    return true;
+            }
+        } catch (e) {
+        }
+        return false;
+    }
+
+    async function checkSpeakerSelection()
+    {
+        let stream1, stream2;
+        // Speakers are currently only exposed after getUserMedia.
+        try {
+            stream1 = await navigator.mediaDevices.getUserMedia({ audio : true });
+        } catch (e) {
+        }
+        try {
+            stream2 = await navigator.mediaDevices.getUserMedia({ video : true });
+        } catch (e) {
+        }
+        if (stream1)
+            stream1.getTracks().forEach(t => t.stop());
+        if (stream2)
+            stream2.getTracks().forEach(t => t.stop());
+        return checkDeviceKind('audiooutput');
+    }
+
+    async function enumerate()
+    {
+        let visible = [];
+        if (await checkDeviceKind('videoinput'))
+            visible.push('camera');
+        if (await checkDeviceKind('audioinput'))
+            visible.push('microphone');
+        if (await checkSpeakerSelection())
+            visible.push('speakerselection');
+ 
+        visible = visible.join('+');
+        parent.postMessage(visible, '*');
+        result.innerHTML = 'result: "' + visible + '"';
+    }
+
+    window.addEventListener("message", enumerate);
+</script>
+
+<div id='result'></div>
+
+

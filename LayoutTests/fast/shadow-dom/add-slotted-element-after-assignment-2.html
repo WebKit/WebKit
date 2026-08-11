@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="host"></div>
+<style>
+#host > div { width: 100px; background: green; }
+#host > div:first-of-type { height: 70px; }
+#host > div:last-of-type { height: 30px; }
+</style>
+<script>
+
+const shadowRoot = host.attachShadow({mode: 'closed'});
+
+const child1 = document.createElement('div');
+host.appendChild(child1);
+
+const slot1 = document.createElement("slot");
+shadowRoot.append(slot1);
+
+const child2 = document.createElement('div')
+child2.slot = 'slot2';
+host.appendChild(child2);
+
+const slot2 = document.createElement("slot");
+slot2.name = 'slot2';
+shadowRoot.append(slot2);
+
+</script>
+</body>
+</html>

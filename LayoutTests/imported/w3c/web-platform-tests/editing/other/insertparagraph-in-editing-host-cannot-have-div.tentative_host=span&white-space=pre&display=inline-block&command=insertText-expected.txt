@@ -1,0 +1,13 @@
+a
+b
+
+PASS <span contenteditable style="display:inline-block; white-space:pre">a[]b</span>
+PASS <span contenteditable style="display:inline-block; white-space:pre"><span style="white-space:normal">a[]b</span></span>
+PASS <span contenteditable style="display:inline-block; white-space:pre"><span style="white-space:normal"><span style="white-space:pre">a[]b</span></span></span>
+FAIL <span contenteditable style="display:inline-block; white-space:pre"><span style="display:block;white-space:normal">a[]b</span></span> assert_equals: expected "<span style=\"display:block\">a</span><span style=\"display:block\">b</span>" but got "<span style=\"display:block\">a\nb</span>"
+FAIL <span contenteditable style="display:inline-block; white-space:pre"><div>a[]b</div></span> assert_equals: expected "<div>a</div><div>b</div>" but got "<div>a\nb</div>"
+PASS <span contenteditable style="display:inline-block; white-space:pre"><div style="display:inline">a[]b</div></span>
+PASS <span contenteditable style="display:inline-block; white-space:pre"><div style="display:inline-block">a[]b</div></span>
+PASS <span contenteditable style="display:inline-block; white-space:pre"><div style="display:inline;white-space:normal">a[]b</div></span>
+PASS <span contenteditable style="display:inline-block; white-space:pre"><div style="display:inline-block;white-space:normal">a[]b</div></span>
+

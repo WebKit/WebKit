@@ -1,0 +1,4 @@
+
+
+FAIL Clicking directly on ::picker(select) should not trigger light dismiss. assert_true: Clicking ::picker(select) should fire a click event on the select element. expected true got false
+

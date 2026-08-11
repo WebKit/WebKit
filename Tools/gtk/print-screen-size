@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2021 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import sys
+import gi
+gi.require_version('Gtk', '3.0')
+gi.require_version('Gdk', '3.0')
+from gi.repository import Gtk, Gdk
+
+
+def print_screen_size(monitor_id):
+    display = Gdk.Display.get_default()
+    if not display:
+        print('Unable to find a display')
+        return 1
+    monitor = display.get_monitor(monitor_id)
+    if not monitor:
+        print('Unable to find a monitor')
+        return 1
+    geometry = monitor.get_geometry()
+    print('{}x{}'.format(geometry.width,  geometry.height))
+    return 0
+
+
+# This tool is used from the layout tests when running with the Xvfb driver,
+# in order to check that the Xvfb server is alive and configured as expected.
+# Please, don't modify this tool without checking first how it is used at webkitpy/port/xvfbdriver.py
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Print the current display size (widthxheight) of a given monitor')
+    parser.add_argument("-n", type=int, help='Number of the monitor the query', default=0)
+    args = parser.parse_args()
+    sys.exit(print_screen_size(args.n))

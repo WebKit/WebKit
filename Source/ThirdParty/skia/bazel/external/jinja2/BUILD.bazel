@@ -1,0 +1,12 @@
+load("@rules_python//python:defs.bzl", "py_library")
+
+py_library(
+    name = "jinja2",
+    srcs = glob(
+        ["jinja2/**/*.py"],
+        allow_empty = False,
+    ),
+    imports = ["."],
+    visibility = ["//visibility:public"],
+    deps = ["@markupsafe"],
+)

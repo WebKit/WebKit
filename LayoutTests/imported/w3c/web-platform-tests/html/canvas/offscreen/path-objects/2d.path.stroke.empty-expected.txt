@@ -1,0 +1,7 @@
+2d.path.stroke.empty
+
+Empty subpaths are not stroked
+
+
+PASS Empty subpaths are not stroked
+

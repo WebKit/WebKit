@@ -1,0 +1,3 @@
+
+PASS Cross-Origin-Embedder-Policy frame and javascript: URLs
+

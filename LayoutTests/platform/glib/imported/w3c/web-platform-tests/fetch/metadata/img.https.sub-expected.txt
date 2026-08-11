@@ -1,0 +1,18 @@
+
+
+PASS Same-origin image
+PASS Same-site image
+PASS Cross-site image
+PASS Same-origin image: sec-fetch-dest
+PASS Same-origin image: sec-fetch-mode
+PASS Same-origin image: sec-fetch-site
+PASS Same-origin image: sec-fetch-user
+PASS Same-site image: sec-fetch-dest
+PASS Same-site image: sec-fetch-mode
+PASS Same-site image: sec-fetch-site
+PASS Same-site image: sec-fetch-user
+PASS Cross-site image: sec-fetch-dest
+PASS Cross-site image: sec-fetch-mode
+PASS Cross-site image: sec-fetch-site
+PASS Cross-site image: sec-fetch-user
+

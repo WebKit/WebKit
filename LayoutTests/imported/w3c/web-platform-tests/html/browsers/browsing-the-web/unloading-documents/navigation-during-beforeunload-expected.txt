@@ -1,0 +1,5 @@
+
+PASS Navigating a sibling iframe during another iframe's beforeunload should not be blocked
+PASS Navigating the same frame during its own beforeunload should be blocked
+PASS Navigating the parent frame during a child's beforeunload should not be blocked
+

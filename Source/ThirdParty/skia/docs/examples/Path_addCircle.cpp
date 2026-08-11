@@ -1,0 +1,15 @@
+// Copyright 2019 Google LLC
+// Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+#include "tools/fiddle/examples.h"
+REG_FIDDLE(Path_addCircle, 256, 256, false, 0) {
+void draw(SkCanvas* canvas) {
+    SkPaint paint;
+    paint.setAntiAlias(true);
+    paint.setStyle(SkPaint::kStroke_Style);
+    paint.setStrokeWidth(10);
+    for (int size = 10; size < 300; size += 20) {
+        SkPath path = SkPath::Circle(128, 128, size, SkPathDirection::kCW);
+        canvas->drawPath(path, paint);
+    }
+}
+}  // END FIDDLE

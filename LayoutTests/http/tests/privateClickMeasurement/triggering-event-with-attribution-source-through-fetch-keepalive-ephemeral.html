@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<div id="description">Tests triggering of ephemeral private click measurement attribution with same-site triggering event request.</div>
+<a id="targetLink" href="http://localhost:8000/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral.html?stepTwo" attributionsourceid=3 attributiondestination="http://localhost:8000">Link</a><br>
+<div id="output"></div>
+<script>
+    prepareTest();
+
+    function activateElement(elementID) {
+        var element = document.getElementById(elementID);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+            },
+            function () {
+                document.getElementById("output").innerText = "FAIL Promise rejected.";
+                tearDownAndFinish();
+            }
+        );
+    }
+
+    function triggerFetch(conversionData) {
+        return fetch("https://localhost:8443/privateClickMeasurement/resources/redirectToConversionWithAttributionSource.py?conversionData="+ conversionData + "&delay_ms=100", { keepalive: true });
+    }
+
+    function runTest() {
+        if (window.location.search === "?stepTwo") {
+            // Start private click attribution fetch but navigate away before the fetch redirection happens.
+            triggerFetch(12);
+            document.location.href = "http://localhost:8000/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive-ephemeral.html?stepThree";
+            return;
+        }
+        if (window.location.search === "?stepThree") {
+            document.body.removeChild(document.getElementById("targetLink"));
+            // Do an invalid private click attribution fetch to ensure the previous correct click attribution fetch will be finished.
+            triggerFetch("Dummy").catch(() => {
+                if (window.testRunner)
+                    testRunner.dumpPrivateClickMeasurement();
+                tearDownAndFinish();
+            });
+            return;
+        }
+        testRunner.setPrivateClickMeasurementEphemeralMeasurementForTesting(true);
+        testRunner.setPrivateClickMeasurementAppBundleIDForTesting("testBundleID");
+        activateElement("targetLink");
+    }
+</script>
+</body>
+</html>

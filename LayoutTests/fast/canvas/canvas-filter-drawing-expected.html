@@ -1,0 +1,42 @@
+<style>
+     canvas {
+         width: 350px;
+         height: 200px;
+     }
+ </style>
+ <body>
+    <h3>This tests the filter is drawn to the canvas.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 350;
+        canvas.height = 200;
+
+        function loadImage(src, x, y) {
+            return new Promise((resolve) => {
+                let image = new Image;
+                image.onload = (() => {
+                    ctx.drawImage(image, x, y);
+                    resolve();
+                });
+                image.src = src;
+            });
+        }
+
+        var images = [
+            { src: "resources/100x100-green-rect-filter-drop-shadow.svg", x: 20, y: 20 },
+            { src: "resources/100x100-green-rect-filter-blur.svg", x: 190, y: 10 },
+        ];
+
+        var promises = [];
+
+        for (let image of images)
+            promises.push(loadImage(image.src, image.x, image.y));
+            
+        Promise.all(promises).then(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    </script>
+</body>

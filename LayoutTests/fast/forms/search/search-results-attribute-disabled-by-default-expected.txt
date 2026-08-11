@@ -1,0 +1,5 @@
+
+
+PASS results=N saved-searches button is not constructed by default
+PASS cancel button is unaffected by the SearchInputResultsAttributeEnabled gate
+

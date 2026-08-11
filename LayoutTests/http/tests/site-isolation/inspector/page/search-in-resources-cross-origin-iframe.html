@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SearchInResources");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SearchInResources.AggregatesMatchesAcrossProcesses",
+        description: "searchInResources should fan out across WebContent processes and aggregate per-resource match counts.",
+        async test() {
+            let frameTarget = await frameTargetForURLContaining("resource-tree-frame-with-subresource.html");
+            InspectorTest.assert(frameTarget instanceof WI.FrameTarget, "Cross-origin child frame target should exist.");
+            await waitForExpressionInTarget(frameTarget, "document.styleSheets.length > 0");
+
+            let { result } = await WI.backendTarget.PageAgent.searchInResources("rebeccapurple");
+            InspectorTest.expectThat(Array.isArray(result), "Result should be an array.");
+
+            let stylesheetHits = result.filter((r) => r.url.endsWith("/resource-tree-subframe-style.css"));
+            InspectorTest.expectEqual(stylesheetHits.length, 1, "Should report exactly one stylesheet hit for the cross-origin child's CSS.");
+            if (stylesheetHits.length === 1) {
+                InspectorTest.expectEqual(stylesheetHits[0].matchesCount, 1, "Stylesheet hit should report matchesCount=1.");
+                InspectorTest.expectThat(!!stylesheetHits[0].frameId, "Stylesheet hit should carry a frameId.");
+                InspectorTest.expectThat(/^frame-\d+\.\d+$/.test(stylesheetHits[0].frameId || ""), "Stylesheet hit's frameId should be process-qualified (frame-<pid>.<id>).");
+            }
+
+            // A query that no fixture contains -- aggregator should still produce an empty array.
+            // Build the needle from fragments so the literal never appears contiguously in this
+            // test's own HTML source: searchInResources scans the main document too (matching
+            // legacy), so any string written verbatim here would self-match the page source.
+            let absentNeedle = "ZZ" + "absent" + "needle" + "QQ" + "987654";
+            let { result: emptyResult } = await WI.backendTarget.PageAgent.searchInResources(absentNeedle);
+            InspectorTest.expectEqual(emptyResult.length, 0, "Searching for a string absent from all resources should return an empty array.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.searchInResources fans out across processes and aggregates matches from cross-origin iframes under site isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/page/resources/resource-tree-frame-with-subresource.html"></iframe>
+</body>

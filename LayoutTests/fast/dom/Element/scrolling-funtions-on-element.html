@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #scroller {
+                height: 500px;
+                width:500px;
+                outline: 1px solid black;
+                overflow: auto;
+            }
+            .content {
+                width: 9999px;
+                height: 9999px;
+            }
+        </style>
+        <script src="../../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests scrollTo/By(x,y) and scrollTo/By(scrollOptions) on Element');
+                
+                var scroller = document.getElementById('scroller');
+                setTimeout(function() {
+                    scroller.scrollTo(20, 500);
+                    shouldBe("scroller.scrollLeft", "20");
+                    shouldBe("scroller.scrollTop", "500");
+
+                    scroller.scrollBy(50, 60);
+                    shouldBe("scroller.scrollLeft", "70");
+                    shouldBe("scroller.scrollTop", "560");
+
+                    scroller.scrollTo({ 'left' : 100, 'top' : 400 });
+                    shouldBe("scroller.scrollLeft", "100");
+                    shouldBe("scroller.scrollTop", "400");
+
+                    scroller.scrollBy({ 'left' : 20, 'top' : 30 });
+                    shouldBe("scroller.scrollLeft", "120");
+                    shouldBe("scroller.scrollTop", "430");
+
+                    scroller.scrollTo({ 'top' : 700 });
+                    shouldBe("scroller.scrollLeft", "120");
+                    shouldBe("scroller.scrollTop", "700");
+
+                    scroller.scrollTo({ 'left' : 300 });
+                    shouldBe("scroller.scrollLeft", "300");
+                    shouldBe("scroller.scrollTop", "700");
+
+                    scroller.scrollBy({ 'left' : 200 });
+                    shouldBe("scroller.scrollLeft", "500");
+                    shouldBe("scroller.scrollTop", "700");
+
+                    scroller.scrollBy({ 'top' : 250 });
+                    shouldBe("scroller.scrollLeft", "500");
+                    shouldBe("scroller.scrollTop", "950");
+
+                    scroller.scrollTo(20.5, 25.5);
+                    shouldBe("scroller.scrollLeft", "20");
+                    shouldBe("scroller.scrollTop", "25");
+
+                    scroller.scrollTo(30.99, 35.99);
+                    shouldBe("scroller.scrollLeft", "30");
+                    shouldBe("scroller.scrollTop", "35");
+
+                    scroller.scrollTo(NaN, NaN);
+                    shouldBe("scroller.scrollLeft", "0");
+                    shouldBe("scroller.scrollTop", "0");
+
+                    scroller.scrollTo(10, 10);
+                    scroller.scrollBy(Infinity, Infinity);
+                    shouldBe("scroller.scrollLeft", "10");
+                    shouldBe("scroller.scrollTop", "10");
+
+                    scroller.scrollTo(-100, -100);
+                    shouldBe("scroller.scrollLeft", "0");
+                    shouldBe("scroller.scrollTop", "0");
+
+                    scroller.style.display = 'none';
+                    scroller.scrollTo(100, 100);
+                    shouldBe("scroller.scrollLeft", "0");
+                    shouldBe("scroller.scrollTop", "0");
+
+                    scroller.style.display = 'block';
+                    shouldBe("scroller.scrollLeft", "0");
+                    shouldBe("scroller.scrollTop", "0");
+
+                    if (window.internals)
+                        internals.setPageZoomFactor(1.5);
+
+                    scroller.scrollTo({ 'left' : 100, 'top' : 400 });
+                    shouldBe("scroller.scrollLeft", "100");
+                    shouldBe("scroller.scrollTop", "400");
+
+                    scroller.style.display = 'none';
+
+                    finishJSTest();
+                }, 0);
+            }
+            var jsTestIsAsync = true;
+        </script>
+    </head>
+    <body onload="runTest()">
+        <div id="scroller">
+            <div class="content">Scrolling content</div>
+        </div>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

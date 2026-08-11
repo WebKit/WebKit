@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset="us-ascii">
+<title>Test of what variations on the @charset directive are acceptable</title>
+<style>
+body { line-height: 1.5em; }
+span { display: none; padding: 2px;}
+span.pass { background: lime; color: green; }
+span.fail { background: red; color: white; }
+</style>
+<link rel=stylesheet href="css-charset-evil-a1.css">
+<link rel=stylesheet href="css-charset-evil-a2.css">
+<link rel=stylesheet href="css-charset-evil-a3.css">
+<link rel=stylesheet href="css-charset-evil-a4.css">
+<link rel=stylesheet href="css-charset-evil-b1.css">
+<link rel=stylesheet href="css-charset-evil-b2.css">
+<link rel=stylesheet href="css-charset-evil-b3.css">
+<link rel=stylesheet href="css-charset-evil-b4.css">
+<link rel=stylesheet href="css-charset-evil-b5.css">
+<link rel=stylesheet href="css-charset-evil-b6.css">
+<link rel=stylesheet href="css-charset-evil-b7.css">
+<link rel=stylesheet href="css-charset-evil-b8.css">
+<link rel=stylesheet href="css-charset-evil-c1.css">
+<link rel=stylesheet href="css-charset-evil-c2.css">
+<link rel=stylesheet href="css-charset-evil-c3.css">
+<link rel=stylesheet href="css-charset-evil-d1.css">
+<pre>
+Correct:
+@charset "utf-8";    <span id="a1&#195;&#164;" class='fail'>FAIL</span><span id="a1&#228;" class='pass'>PASS</span>
+
+Wrong Capitalization:
+@CHARSET "utf-8";    <span id="a2&#195;&#164;" class='pass'>PASS</span><span id="a2&#228;" class='fail'>FAIL</span>
+@ChArSeT "utf-8";    <span id="a3&#195;&#164;" class='pass'>PASS</span><span id="a3&#228;" class='fail'>FAIL</span>
+@cHaRsEt "utf-8";    <span id="a4&#195;&#164;" class='pass'>PASS</span><span id="a4&#228;" class='fail'>FAIL</span>
+
+Wrong Whitespace:
+@charset"utf-8";     <span id="b1&#195;&#164;" class='pass'>PASS</span><span id="b1&#228;" class='fail'>FAIL</span>
+@charset  "utf-8";   <span id="b2&#195;&#164;" class='pass'>PASS</span><span id="b2&#228;" class='fail'>FAIL</span>
+@charset\9"utf-8";   <span id="b3&#195;&#164;" class='pass'>PASS</span><span id="b3&#228;" class='fail'>FAIL</span>
+@charset\A"utf-8";   <span id="b4&#195;&#164;" class='pass'>PASS</span><span id="b4&#228;" class='fail'>FAIL</span>
+@charset\C"utf-8";   <span id="b5&#195;&#164;" class='pass'>PASS</span><span id="b5&#228;" class='fail'>FAIL</span>
+@charset\D"utf-8";   <span id="b6&#195;&#164;" class='pass'>PASS</span><span id="b6&#228;" class='fail'>FAIL</span>
+@charset "utf-8" ;   <span id="b7&#195;&#164;" class='pass'>PASS</span><span id="b7&#228;" class='fail'>FAIL</span>
+ @charset "utf-8";   <span id="b8&#195;&#164;" class='pass'>PASS</span><span id="b8&#228;" class='fail'>FAIL</span>
+
+Wrong Quote character:
+@charset 'utf-8';    <span id="c1&#195;&#164;" class='pass'>PASS</span><span id="c1&#228;" class='fail'>FAIL</span>
+@charset "utf-8';    <span id="c2&#195;&#164;" class='pass'>PASS</span><span id="c2&#228;" class='fail'>FAIL</span>
+@charset 'utf-8";    <span id="c3&#195;&#164;" class='pass'>PASS</span><span id="c3&#228;" class='fail'>FAIL</span>
+
+Wrong Semicolon:
+@charset "utf-8"     <span id="d1&#195;&#164;" class='pass'>PASS</span><span id="d1&#228;" class='fail'>FAIL</span>
+</pre>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>

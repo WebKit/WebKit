@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v3 ] -->
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'nonce-test'">
+        <script src="../../../resources/dump-as-text.js"></script>
+        <p>
+            Tests CSP for manifest v3 extensions does not permit nonces. Passes if we don't alert FAIL.
+        </p>
+    </head>
+    <body>
+        <script nonce='test'>
+            alert('FAIL');
+        </script>
+    </body>
+</html>
+

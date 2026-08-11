@@ -1,0 +1,42 @@
+<style>
+    .checkable {
+        width: 200px;
+        height: 200px;
+        margin: 2px;
+        display: inline-block;
+        border: 0.3em solid currentColor;
+        background: transparent;
+        font: 11px system-ui;
+        box-sizing: border-box;
+    }
+
+    .radio {
+        border-radius: 100%;
+    }
+
+    .checkbox {
+        border-radius: 0.5em;
+    }
+
+    .enabled .checkable {
+        color: darkblue;
+        margin-top: 3px;
+    }
+
+    .disabled .checkable {
+        color: darkgreen;
+        margin-top: 4px;
+        border-color: color-mix(in srgb, currentColor 30%, transparent);
+        background-color: color-mix(in srgb, currentColor 10%, transparent);
+    }
+</style>
+<body>
+    <div class="enabled container">
+        <div class="checkable checkbox"></div>
+        <div class="checkable radio"></div>
+    </div>
+    <div class="disabled container">
+        <div class="checkable checkbox"></div>
+        <div class="checkable radio"></div>
+    </div>
+</body>

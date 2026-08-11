@@ -1,0 +1,8 @@
+2d.fillStyle.colorObject
+ctx.fillStyle works with color objects
+Actual output:
+Expected output:
+
+
+FAIL ctx.fillStyle works with color objects assert_equals: Red channel of the pixel at (50, 25) expected 255 but got 0
+

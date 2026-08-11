@@ -1,0 +1,21 @@
+
+PASS attachInternals({ behaviors: [] }) accepts empty behaviors array
+FAIL behaviors returns empty array when no behaviors configured assert_not_equals: got disallowed value undefined
+FAIL behaviors is a read-only frozen array Can't find variable: HTMLSubmitButtonBehavior
+FAIL behaviors array cannot be modified after attachment Can't find variable: HTMLSubmitButtonBehavior
+FAIL HTMLSubmitButtonBehavior cannot be subclassed Can't find variable: HTMLSubmitButtonBehavior
+FAIL attachInternals throws TypeError for duplicate behavior instance Can't find variable: HTMLSubmitButtonBehavior
+FAIL attachInternals throws TypeError for multiple instances of same behavior type assert_throws_js: function "() => element.attachInternals({
+      behaviors: [new HTMLSubmitButtonBehavior(), new HTMLSubmitButtonBehavior()]
+    })" threw object "ReferenceError: Can't find variable: HTMLSubmitButtonBehavior" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL attachInternals throws TypeError when behavior is already attached to another element Can't find variable: HTMLSubmitButtonBehavior
+FAIL attachInternals throws TypeError for string in behaviors array assert_throws_js: function "() => element.attachInternals({ behaviors: [value] })" did not throw
+FAIL attachInternals throws TypeError for null in behaviors array assert_throws_js: function "() => element.attachInternals({ behaviors: [value] })" did not throw
+FAIL attachInternals throws TypeError for undefined in behaviors array assert_throws_js: function "() => element.attachInternals({ behaviors: [value] })" did not throw
+FAIL attachInternals throws TypeError for plain object in behaviors array assert_throws_js: function "() => element.attachInternals({ behaviors: [value] })" did not throw
+FAIL attachInternals throws TypeError for number in behaviors array assert_throws_js: function "() => element.attachInternals({ behaviors: [value] })" did not throw
+FAIL attachInternals throws TypeError for DOM element in behaviors array assert_throws_js: function "() => element.attachInternals({ behaviors: [value] })" did not throw
+FAIL Behavior state is preserved across disconnect and reconnect Can't find variable: HTMLSubmitButtonBehavior
+

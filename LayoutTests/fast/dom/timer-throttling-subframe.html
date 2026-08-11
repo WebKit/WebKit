@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that timers are throttled in subframes that are outside the viewport");
+window.jsTestIsAsync = true;
+
+function checkSubframesThrottled()
+{
+    shouldBeTrue("testFrame.contentWindow.internals.areTimersThrottled()");
+    shouldBeTrue("grandChildFrame.contentWindow.internals.areTimersThrottled()");
+
+    finishJSTest();
+}
+
+function scrollFrameOutOfView()
+{
+    debug("Scrolling frame out of view again.");
+    window.scroll(0, 0);
+
+    shouldBeFalse("internals.areTimersThrottled()");
+    shouldBecomeEqual("testFrame.contentWindow.internals.areTimersThrottled()", "true", checkSubframesThrottled);
+}
+
+function scrollFrameIntoView()
+{
+    shouldBeFalse("internals.areTimersThrottled()");
+    shouldBeTrue("testFrame.contentWindow.internals.areTimersThrottled()");
+    shouldBeTrue("grandChildFrame.contentWindow.internals.areTimersThrottled()");
+
+    debug("Scrolling frame into view.");
+    window.internals.scrollElementToRect(testFrame, 0, 0, 300, 300);
+
+    debug("Timers should no longer be throttled");
+    shouldBeFalse("internals.areTimersThrottled()");
+    shouldBeFalse("testFrame.contentWindow.internals.areTimersThrottled()");
+    shouldBeFalse("grandChildFrame.contentWindow.internals.areTimersThrottled()");
+
+    scrollFrameOutOfView();
+}
+
+function runTest()
+{
+    testFrame = document.getElementById("testFrame");
+    grandChildFrame = testFrame.contentDocument.getElementById("grandChildFrame");
+    debug("Frame is initially outside the viewport so timers should be throttled");
+    shouldBecomeEqual("testFrame.contentWindow.internals.areTimersThrottled()", "true", scrollFrameIntoView);
+}
+
+var i = 0;
+setInterval(function() {
+    i++;
+}, 100);
+</script>
+<div style="position: relative; width: 1600px; height: 2400px; background-color: green;">
+    <iframe id="testFrame" src="resources/timer-frame.html" style="position:absolute; left: 600px; top: 800px;" onload="runTest()"></iframe>
+</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

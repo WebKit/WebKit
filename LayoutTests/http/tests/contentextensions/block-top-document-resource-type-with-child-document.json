@@ -1,0 +1,11 @@
+[
+    {
+        "trigger": {
+            "url-filter": "iframe",
+            "resource-type": ["top-document"]
+        },
+        "action": {
+            "type": "block"
+        }
+    }
+]

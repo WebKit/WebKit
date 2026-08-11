@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<style><![CDATA[
+@font-face {
+  font-family: MyFont;
+  src: url("#foo") format("svg");
+}
+
+.target {
+  font-family: MyFont;
+}
+]]></style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+   <defs>
+    <font id="foo">
+      <font-face font-family="bar" />
+      <glyph unicode="A" horiz-adv-x="800"
+         d="m 78,11 c -22,-0 -45,11 -41,31 49,234 137,473 241,714 5,14 22,21 39,21 23,-0 55,-25 67,-40 C 476,531 677,283 764,70 779,33 698,20 683,56 648,146 591,244 528,346 417,332 303,348 204,343 170,243 141,140 119,36 116,19 97,11 78,11 z m 249,385 c 57,-0 114,0 169,1 -56,90 -115,184 -166,277 -37,-91 -74,-184 -107,-278 35,-0 70,-0 105,-0 z" />
+    </font>
+  </defs>
+</svg>
+<h1>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=42352">Bug 42352</a></h1>
+<p>Following text should be rendered as usual. Only "A" has a glyph in SVG Font.</p>
+<p class="target">XXA</p>
+<p class="target">XAX</p>
+<p class="target">AXX</p>
+<p class="target">XXX</p>
+<p class="target">AAA</p>
+
+</body>
+</html>

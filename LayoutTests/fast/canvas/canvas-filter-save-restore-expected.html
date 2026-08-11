@@ -1,0 +1,41 @@
+<style>
+     canvas {
+         width: 500px;
+         height: 260px;
+     }
+ </style>
+ <body>
+    <h3>This tests the canvas filter is maintained in its state.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 500;
+        canvas.height = 260;
+
+        ctx.fillStyle = 'green';
+
+        ctx.filter = 'blur(4px)';
+        ctx.fillRect(20, 20, 100, 100);
+
+        ctx.filter = 'sepia(1)';
+        ctx.fillRect(140, 20, 100, 100);
+
+        ctx.filter = 'invert(75%)';
+        ctx.fillRect(260, 20, 100, 100);
+
+        ctx.filter = 'saturate(400%)';
+        ctx.fillRect(380, 20, 100, 100);
+
+        ctx.fillRect(380, 140, 100, 100);
+
+        ctx.filter = 'invert(75%)';
+        ctx.fillRect(260, 140, 100, 100);
+
+        ctx.filter = 'sepia(1)';
+        ctx.fillRect(140, 140, 100, 100);
+
+        ctx.filter = 'blur(4px)';
+        ctx.fillRect(20, 140, 100, 100);
+    </script>
+</body>

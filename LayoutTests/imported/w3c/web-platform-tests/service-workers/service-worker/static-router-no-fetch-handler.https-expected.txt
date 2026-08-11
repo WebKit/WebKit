@@ -1,0 +1,5 @@
+
+PASS The router rule is evaluated without fetch handlers in service worker
+PASS addRoutes should raise if the fetch-event source is used without onfetch
+PASS addRoutes should raise if the race-network-and-fetch-handler source is used without onfetch
+

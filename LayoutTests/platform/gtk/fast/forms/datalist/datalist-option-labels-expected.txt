@@ -1,0 +1,11 @@
+This test verifies that when option element labels are included in datalist suggestions, the text of the label is considered when computing matching datalist suggestions. Otherwise, if labels are not included in suggestions, there should be no datalist suggestions shown. To manually run the test, focus the input element and type 'e'. There should either be no matches or two matches (and selecting the second match should set the value to 'baz').
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.value became 'e'
+PASS Not showing suggestions.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

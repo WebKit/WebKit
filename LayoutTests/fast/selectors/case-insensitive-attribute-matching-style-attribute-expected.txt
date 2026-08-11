@@ -1,0 +1,45 @@
+Test attribute matching with the case insensitive flag used to match the style attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state.
+PASS document.querySelectorAll("[style*=PURPLE i]").length is 2
+PASS document.querySelectorAll("[style*=PURPLE i]")[0].id is "target-with-renderer"
+PASS document.querySelectorAll("[style*=PURPLE i]")[1].id is "target-without-renderer"
+PASS getComputedStyle(document.getElementById("target-with-renderer"))["color"] is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.getElementById("target-without-renderer"))["color"] is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.getElementById("target-with-renderer"))["background-color"] is "rgb(128, 0, 128)"
+PASS getComputedStyle(document.getElementById("target-without-renderer"))["background-color"] is "rgb(128, 0, 128)"
+
+Let's change the background color to something else than purple.
+PASS document.querySelectorAll("[style*=PURPLE i]").length is 0
+PASS getComputedStyle(document.getElementById("target-with-renderer"))["color"] is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("target-without-renderer"))["color"] is "rgb(0, 0, 0)"
+PASS getComputedStyle(document.getElementById("target-with-renderer"))["background-color"] is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.getElementById("target-without-renderer"))["background-color"] is "rgb(255, 0, 0)"
+
+Back to purple.
+PASS document.querySelectorAll("[style*=PURPLE i]").length is 2
+PASS document.querySelectorAll("[style*=PURPLE i]")[0].id is "target-with-renderer"
+PASS document.querySelectorAll("[style*=PURPLE i]")[1].id is "target-without-renderer"
+PASS getComputedStyle(document.getElementById("target-with-renderer"))["color"] is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.getElementById("target-without-renderer"))["color"] is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.getElementById("target-with-renderer"))["background-color"] is "rgb(128, 0, 128)"
+PASS getComputedStyle(document.getElementById("target-without-renderer"))["background-color"] is "rgb(128, 0, 128)"
+
+Remove the style attribute entirely.
+PASS document.querySelectorAll("[style*=PURPLE i]").length is 0
+
+Back to purple.
+PASS document.querySelectorAll("[style*=PURPLE i]").length is 2
+PASS document.querySelectorAll("[style*=PURPLE i]")[0].id is "target-with-renderer"
+PASS document.querySelectorAll("[style*=PURPLE i]")[1].id is "target-without-renderer"
+PASS getComputedStyle(document.getElementById("target-with-renderer"))["color"] is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.getElementById("target-without-renderer"))["color"] is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.getElementById("target-with-renderer"))["background-color"] is "rgb(128, 0, 128)"
+PASS getComputedStyle(document.getElementById("target-without-renderer"))["background-color"] is "rgb(128, 0, 128)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

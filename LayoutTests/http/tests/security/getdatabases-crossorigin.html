@@ -1,0 +1,43 @@
+<!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=true ] -->
+<html>
+<head>
+<script>
+
+if (window.location.hostname == "localhost")
+    console.log("FAIL: Must be run as 127.0.0.1, not localhost");
+    
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var messagesReceived = 0;
+
+window.onmessage = function(event) {
+    console.log("Message received from other context")
+    
+    if (++messagesReceived < 2)
+        return;
+
+    indexedDB.databases().then((result) => {
+        databases = result;
+        if (databases.length != 0)
+            console.log("FAIL: There are " + databases.length + " database(s) when there should be 0");
+        else
+            console.log("PASS");
+        if (testRunner)
+            testRunner.notifyDone();
+    });
+};
+
+function openOtherWindow()
+{
+    window.open("http://localhost:8000/security/resources/getdatabases-otherwindow.html")
+}
+
+</script>
+</head>
+<body onload="openOtherWindow()">
+<iframe src="http://localhost:8000/security/resources/getdatabases-otherframe.html"></iframe>
+</body>
+</html>

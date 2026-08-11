@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LBSE: a moved shape's old position is repainted when an ancestor transform also changes</title>
+</head>
+<body>
+<!--
+    Shape (s) sits under a static parent (p) under a grandparent (gp). Because s's own parent never
+    changes, s takes the flush fast path. Frame 1 changes s's transform and is flushed before tracking
+    starts. Frame 2 then changes both gp's and s's transform in one flush: s's old position must still
+    be repainted, covered by gp's entry (whose visual overflow folds in s and is kept fresh by the
+    flush's cache invalidation).
+-->
+<svg width="400" height="400">
+    <g id="gp">
+        <g id="p">
+            <rect id="s" x="0" y="0" width="40" height="40" fill="green"/>
+        </g>
+    </g>
+</svg>
+<pre id="result"></pre>
+<script>
+function runTest()
+{
+    var gp = document.getElementById("gp");
+    var s = document.getElementById("s");
+
+    // Frame 1: move the shape, flushed before tracking starts.
+    s.setAttribute("transform", "translate(0,200)");
+    document.body.offsetTop;
+
+    window.internals.startTrackingRepaints();
+
+    // Frame 2: move grandparent and shape together in one flush.
+    gp.setAttribute("transform", "translate(200,0)");
+    s.setAttribute("transform", "translate(0,220)");
+    document.body.offsetTop;
+
+    document.getElementById("result").textContent = window.internals.repaintRectsAsText();
+    window.internals.stopTrackingRepaints();
+}
+
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText(false);
+    document.body.offsetTop;
+    runTest();
+} else {
+    document.getElementById("result").textContent = "This test requires testRunner and internals.";
+}
+</script>
+</body>
+</html>

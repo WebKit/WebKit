@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div id="container">
+</div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+  let container = document.getElementById('container')
+  const test_property_with_zoom = (property, specified, zoom, expected) => {
+      test(() => {
+        try {
+          document.body.style.zoom = zoom;
+
+          let target = document.createElement("div");
+          target.className = 'target';
+          target.appendChild(new Text("test"));
+          container.appendChild(target)
+
+          target.style[property] = specified;
+          const computed = window.getComputedStyle(target)[property]
+          assert_equals(computed, expected);
+        } finally {
+          document.body.style.zoom = 1;
+        }
+      }, `'${property}: ${specified}' at zoom level ${zoom}`)
+  }
+
+  test_property_with_zoom("shape-margin", "16px", 1, '16px');
+  test_property_with_zoom("shape-margin", "calc(16px)", 1, '16px');
+
+  test_property_with_zoom("shape-margin", "16px", 2, '16px');
+  test_property_with_zoom("shape-margin", "calc(16px)", 2, '16px');
+
+  container.remove();
+</script>
+</body>
+</html>

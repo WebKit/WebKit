@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the beforeunload alert is not shown in case of unhandled keypress. This test passes if you do NOT see a 'CONFIRM NAVIGATION' message at the top.");
+jsTestIsAsync = true;
+
+onload = function() {
+    const testFrame = document.getElementById("testFrame");
+    testFrame.contentWindow.onbeforeunload = function(e) {
+        return "FAIL: a beforeunload alert was shown.";
+    };
+
+    debug("Simulate an unhandled user key press.");
+    if (window.eventSender)
+        eventSender.keyDown("a", ["metaKey"]);
+
+    setTimeout(function() {
+        testFrame.src = "about:blank";
+        setTimeout(finishJSTest, 0);
+    }, 0);
+};
+</script>
+<iframe id="testFrame" src="resources/onclick.html"></iframe>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("context") {
+  sources = [ "context.h" ]
+  deps = [
+    "../../../api/units:time_delta",
+    "../common:internal_types",
+    "../packet:sctp_packet",
+    "../public:socket",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("heartbeat_handler") {
+  deps = [
+    ":context",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../packet:bounded_io",
+    "../packet:chunk",
+    "../packet:parameter",
+    "../packet:sctp_packet",
+    "../public:socket",
+    "../public:types",
+    "../timer",
+    "//third_party/abseil-cpp/absl/functional:bind_front",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+  sources = [
+    "heartbeat_handler.cc",
+    "heartbeat_handler.h",
+  ]
+}
+
+rtc_library("stream_reset_handler") {
+  deps = [
+    ":context",
+    "../../../api/units:time_delta",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
+    "../common:internal_types",
+    "../common:sequence_numbers",
+    "../packet:chunk",
+    "../packet:parameter",
+    "../packet:sctp_packet",
+    "../public:socket",
+    "../public:types",
+    "../rx:data_tracker",
+    "../rx:reassembly_queue",
+    "../timer",
+    "../tx:retransmission_queue",
+    "//third_party/abseil-cpp/absl/functional:bind_front",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+  sources = [
+    "stream_reset_handler.cc",
+    "stream_reset_handler.h",
+  ]
+}
+
+rtc_library("packet_sender") {
+  deps = [
+    "../packet:sctp_packet",
+    "../public:socket",
+  ]
+  sources = [
+    "packet_sender.cc",
+    "packet_sender.h",
+  ]
+}
+
+rtc_library("transmission_control_block") {
+  deps = [
+    ":context",
+    ":heartbeat_handler",
+    ":packet_sender",
+    ":stream_reset_handler",
+    "../../../api/task_queue",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
+    "../common:internal_types",
+    "../packet:chunk",
+    "../packet:sctp_packet",
+    "../public:socket",
+    "../public:types",
+    "../rx:data_tracker",
+    "../rx:reassembly_queue",
+    "../timer",
+    "../tx:retransmission_error_counter",
+    "../tx:retransmission_queue",
+    "../tx:retransmission_timeout",
+    "../tx:send_queue",
+    "//third_party/abseil-cpp/absl/functional:bind_front",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+  sources = [
+    "capabilities.h",
+    "transmission_control_block.cc",
+    "transmission_control_block.h",
+  ]
+}
+
+rtc_library("dcsctp_socket") {
+  deps = [
+    ":heartbeat_handler",
+    ":packet_sender",
+    ":stream_reset_handler",
+    ":transmission_control_block",
+    "../../../api/task_queue",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
+    "../common:internal_types",
+    "../packet:bounded_io",
+    "../packet:chunk",
+    "../packet:chunk_validators",
+    "../packet:data",
+    "../packet:error_cause",
+    "../packet:parameter",
+    "../packet:sctp_packet",
+    "../public:socket",
+    "../public:types",
+    "../rx:data_tracker",
+    "../rx:reassembly_queue",
+    "../timer",
+    "../tx:retransmission_queue",
+    "../tx:rr_send_queue",
+    "//third_party/abseil-cpp/absl/functional:bind_front",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+  sources = [
+    "callback_deferrer.cc",
+    "callback_deferrer.h",
+    "dcsctp_socket.cc",
+    "dcsctp_socket.h",
+    "state_cookie.cc",
+    "state_cookie.h",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("mock_callbacks") {
+    testonly = true
+    sources = [ "mock_dcsctp_socket_callbacks.h" ]
+    deps = [
+      "../../../api/task_queue",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../rtc_base:logging",
+      "../../../rtc_base:random",
+      "../../../test:test_support",
+      "../public:socket",
+      "../public:types",
+      "../timer",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  rtc_source_set("mock_context") {
+    testonly = true
+    sources = [ "mock_context.h" ]
+    deps = [
+      ":context",
+      ":mock_callbacks",
+      "../../../api/units:time_delta",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../packet:sctp_packet",
+      "../public:socket",
+      "../public:types",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+
+  rtc_library("dcsctp_socket_unittests") {
+    testonly = true
+
+    deps = [
+      ":dcsctp_socket",
+      ":heartbeat_handler",
+      ":mock_callbacks",
+      ":mock_context",
+      ":packet_sender",
+      ":stream_reset_handler",
+      ":transmission_control_block",
+      "../../../api:create_network_emulation_manager",
+      "../../../api:network_emulation_manager_api",
+      "../../../api:simulated_network_api",
+      "../../../api/task_queue",
+      "../../../api/task_queue:pending_task_safety_flag",
+      "../../../api/test/network_emulation",
+      "../../../api/units:data_rate",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../rtc_base:copy_on_write_buffer",
+      "../../../rtc_base:logging",
+      "../../../rtc_base:random",
+      "../../../rtc_base:socket_address",
+      "../../../rtc_base:stringutils",
+      "../../../rtc_base:threading",
+      "../../../rtc_base:timeutils",
+      "../../../system_wrappers",
+      "../../../test:test_support",
+      "../common:handover_testing",
+      "../common:internal_types",
+      "../common:math",
+      "../packet:chunk",
+      "../packet:data",
+      "../packet:error_cause",
+      "../packet:parameter",
+      "../packet:sctp_packet",
+      "../packet:tlv_trait",
+      "../public:socket",
+      "../public:types",
+      "../public:utils",
+      "../rx:data_tracker",
+      "../rx:reassembly_queue",
+      "../testing:data_generator",
+      "../testing:testing_macros",
+      "../timer",
+      "../timer:task_queue_timeout",
+      "../tx:mock_send_queue",
+      "../tx:retransmission_queue",
+      "//third_party/abseil-cpp/absl/base:nullability",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+    sources = [
+      "dcsctp_socket_network_test.cc",
+      "dcsctp_socket_test.cc",
+      "heartbeat_handler_test.cc",
+      "packet_sender_test.cc",
+      "state_cookie_test.cc",
+      "stream_reset_handler_test.cc",
+      "transmission_control_block_test.cc",
+    ]
+  }
+}

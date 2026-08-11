@@ -1,0 +1,17 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+Test that an incoming sample whose (DTS, PT) collides with the buffer tail evicts the existing sample (w3c/media-source#375).
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+RUN(source.endOfStream())
+RUN(video.play())
+EVENT(ended)
+RUN(quality = video.getVideoPlaybackQuality())
+EXPECTED (quality.totalVideoFrames == '4') OK
+EXPECTED (quality.droppedVideoFrames == '0') OK
+END OF TEST
+

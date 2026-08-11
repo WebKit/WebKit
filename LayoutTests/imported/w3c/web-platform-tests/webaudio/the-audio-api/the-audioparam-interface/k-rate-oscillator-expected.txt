@@ -1,0 +1,4 @@
+
+PASS Oscillator k-rate detune
+PASS Oscillator k-rate frequency
+

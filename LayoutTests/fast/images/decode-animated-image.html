@@ -1,0 +1,36 @@
+<style>
+    canvas {
+        width: 100px;
+        height: 100px;
+    }
+</style>
+<body>
+    <p>This tests calling decode() multiple times for an animated image.</p>
+    <canvas></canvas>
+    <script>
+        function drawImageToCanvas(image, canvas) {
+            let context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        }
+
+        if (window.internals && window.testRunner) {
+            internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+            internals.clearMemoryCache();
+            testRunner.waitUntilDone();
+        }
+
+        (async () => {
+            let image = new Image;
+            image.src = "resources/animated-red-green-blue-repeat-2.gif";
+
+            // Wait for the green frame.
+            await image.decode();
+            await image.decode();
+
+            drawImageToCanvas(image, document.querySelector("canvas"));
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        })();
+    </script>
+</body>

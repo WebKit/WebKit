@@ -1,0 +1,12 @@
+<style>
+  @namespace a url();
+</style>
+<script src="../../resources/js-test.js"></script>
+<script>
+  description("Tests that deleting a @namespace rule when list contains anything other than @import or @namespace rules should throw InvalidStateError.");
+
+  let styleSheet = document.styleSheets[0];
+  styleSheet.cssRules[0];
+  styleSheet.insertRule(`b {}`, 1);
+  shouldThrowErrorName("styleSheet.deleteRule(0)", "InvalidStateError");
+</script>

@@ -1,0 +1,61 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "child-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/resource-tree-frame-with-subresource.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.GetResourceTreeResources");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.GetResourceTreeResources.LoaderIdAndResources",
+        description: "getResourceTree should report loaderId and aggregate each frame's cached subresources cross-process under Site Isolation.",
+        async test() {
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+            let frameTarget = (await targetAddedPromise).data.target;
+
+            // Drive/await the cross-origin child's commit (see resource-tree-cross-origin-iframe.html),
+            // then poll getResourceTree until the child's stylesheet subresource is aggregated in.
+            let frameTree;
+            let child;
+            for (let attempt = 0; attempt < 50; ++attempt) {
+                if (!frameTarget.executionContext) {
+                    await Promise.race([
+                        frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded),
+                        new Promise((resolve) => setTimeout(resolve, 100)),
+                    ]);
+                }
+                ({ frameTree } = await WI.backendTarget.PageAgent.getResourceTree());
+                child = frameTree.childFrames?.[0];
+                if (child && (child.resources || []).some((resource) => resource.url.endsWith("/resource-tree-subframe-style.css")))
+                    break;
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+
+            InspectorTest.expectThat(!!frameTree.frame.loaderId, "Main frame should have a non-empty loaderId.");
+
+            InspectorTest.expectEqual(frameTree.childFrames?.length, 1, "Should have exactly one child frame in the tree.");
+            InspectorTest.expectThat(!!child.frame.loaderId, "Cross-origin child frame should have a non-empty loaderId.");
+            InspectorTest.expectThat(child.frame.loaderId !== frameTree.frame.loaderId, "Child frame's loaderId should differ from the main frame's.");
+
+            let childResources = child.resources || [];
+            let styleResource = childResources.find((resource) => resource.url.endsWith("/resource-tree-subframe-style.css"));
+            InspectorTest.expectThat(!!styleResource, "Cross-origin child's cached stylesheet subresource should be reported in resources.");
+            if (styleResource)
+                InspectorTest.expectEqual(styleResource.type, "StyleSheet", "Subresource type should be StyleSheet.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.getResourceTree reports loaderId and aggregates cross-process subresources under site isolation.</p>
+</body>

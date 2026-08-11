@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: PASS: Audio worklet load was allowed by CSP
+

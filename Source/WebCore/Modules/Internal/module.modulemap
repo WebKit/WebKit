@@ -1,0 +1,4 @@
+module WebCore_Internal {
+    header "WebCoreInternal.h"
+    export *
+}

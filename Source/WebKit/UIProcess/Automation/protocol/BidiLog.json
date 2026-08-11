@@ -1,0 +1,24 @@
+{
+    "domain": "BidiLog",
+    "exposedAs": "log",
+    "condition": "ENABLE(WEBDRIVER_BIDI)",
+    "description": "The log module contains commands and events relating to logging.",
+    "spec": "https://w3c.github.io/webdriver-bidi/#module-log",
+    "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/log",
+    "events": [
+        {
+            "name": "entryAdded",
+            "description": "Fired when a new log entry is added.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-log-entryAdded",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/log/entry_added",
+            "parameters": [
+                { "name": "level", "type": "string", "description": "The log entry level." },
+                { "name": "source", "type": "string", "description": "The source script information" },
+                { "name": "text", "type": "string", "description": "The log entry text message." },
+                { "name": "timestamp", "type": "number", "description": "The timestamp of the log entry." },
+                { "name": "type", "type": "string", "description": "The log entry type." },
+                { "name": "method", "type": "string", "optional": true, "description": "The log entry console method."}
+            ]
+        }
+    ]
+}

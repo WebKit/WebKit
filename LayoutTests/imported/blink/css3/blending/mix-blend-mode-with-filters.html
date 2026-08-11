@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<meta name="fuzzy" content="maxDifference=1; totalPixels=0-636">
+<style>
+  div {
+    width: 100px;
+    height: 100px;
+  }
+  .container {
+    background-color: lime;
+    isolation: isolate;
+    margin: 10px;
+  }
+  .child {
+    background-color: blue;
+    -webkit-filter: blur(10px);
+    mix-blend-mode: difference;
+  }
+  .accelerated {
+    will-change: transform;
+  }
+</style>
+
+<div class="container">
+  <div class="child"></div>
+</div>
+
+<div class="container">
+  <div class="accelerated child"></div>
+</div>

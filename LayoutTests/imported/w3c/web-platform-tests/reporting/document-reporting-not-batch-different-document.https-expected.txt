@@ -1,0 +1,4 @@
+
+
+FAIL Reports are not batched for same url in different document. assert_equals: Number of reports expected 2 but got 1
+

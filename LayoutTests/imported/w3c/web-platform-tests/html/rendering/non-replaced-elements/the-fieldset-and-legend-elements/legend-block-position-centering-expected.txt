@@ -1,0 +1,10 @@
+
+
+
+
+
+
+
+
+PASS Legend's border-box should be centere on the fieldset border
+

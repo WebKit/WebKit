@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            background-image: linear-gradient(white, gray);
+        }
+    </style>
+    <script>
+        function scrolled()
+        {
+            if (parent && 'iframeScrolled' in parent)
+                parent.iframeScrolled()
+        }
+    </script>
+</head>
+<body onscroll="scrolled()">
+</body>
+</html>

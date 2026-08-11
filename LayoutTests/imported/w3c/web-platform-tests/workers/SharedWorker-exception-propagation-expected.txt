@@ -1,0 +1,3 @@
+
+PASS Uncaught error in shared worker should not propagate to window
+

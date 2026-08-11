@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta name="fuzzy" content="maxDifference=0-50; totalPixels=0-284">
+<style>
+
+.wrapper {
+    position: absolute;
+    display: inline-block;
+}
+
+#first { left: 50px; top: 50px; }
+#second { left: 50px; top: 250px; }
+
+/* Cover the arrow area which keeps its orientation in vertical writing mode
+   but rotates with a CSS transform, so it would differ between test and ref.
+   Positioned in page coordinates outside the wrapper so both files can use
+   the same cover placement. */
+.cover {
+    position: absolute;
+    left: 0;
+    width: 200px;
+    height: 100px;
+    background: white;
+}
+
+#cover1 { top: 50px; }
+#cover2 { top: 250px; }
+
+</style>
+<div id="first" class="wrapper">
+    <select style="writing-mode: vertical-rl; direction: rtl"><option>Option 1</option></select>
+</div>
+<div id="second" class="wrapper">
+    <select style="writing-mode: vertical-lr; direction: rtl"><option>Option 1</option></select>
+</div>
+<div id="cover1" class="cover"></div>
+<div id="cover2" class="cover"></div>

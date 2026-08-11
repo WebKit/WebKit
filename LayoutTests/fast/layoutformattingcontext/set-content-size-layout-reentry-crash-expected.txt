@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: PASS if this doesn't crash.
+aaaaaaa
+

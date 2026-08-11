@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+
+        <script>
+            async function seeked()
+            {
+                consoleWrite("<br>** Track should be visible, cue should be styled appropriately. **");
+                testExpected("video.textTracks[0].mode", "showing");
+
+                consoleWrite("<br>** Remove the video from the document, add it back. **");
+                run("video.parentNode.removeChild(video)");
+                run("document.body.appendChild(video)");
+
+                consoleWrite("<br>** Change caption display mode to generate a notification. **");
+                run("setCaptionDisplayMode('ForcedOnly')");
+
+                // The notification is sent asynchronously.
+                consoleWrite("<br>** Track should not be visible. **");
+                await testExpectedEventually("video.textTracks[0].mode", "disabled");
+
+                consoleWrite("");
+                endTest();
+            }
+
+            function canplaythrough()
+            {
+                consoleWrite("");
+                run("video.currentTime = .5");
+                consoleWrite("");
+            }
+
+            function loaded()
+            {
+                consoleWrite("");
+                run("internals.setCaptionDisplayMode('AlwaysOn')");
+                run("internals.setCaptionsStyleSheetOverride('video::cue { color: blue; background-color: yellow; }')");
+                run("internals.settings.setShouldDisplayTrackKind('Captions', true)");
+
+                findMediaElement();
+                video.src = findMediaFile('video', '../content/test');
+                waitForEvent('seeked', seeked);
+                waitForEvent('canplaythrough', canplaythrough);
+                consoleWrite("");
+            }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <span>Test that caption preferences change notifications work</span>
+        <video controls >
+            <track src="captions-webvtt/styling.vtt" kind="captions">
+        </video>
+    </body>
+</html>

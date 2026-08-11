@@ -1,0 +1,5 @@
+🌠a🌠
+🌠a🌠
+
+PASS Range.getClientRects should correct indexing into trailing surrogates
+

@@ -1,0 +1,13 @@
+
+PASS anyref casts
+PASS eqref casts
+PASS structref casts
+PASS arrayref casts
+PASS i31ref casts
+PASS funcref casts
+PASS externref casts
+PASS null casts
+PASS concrete struct casts
+PASS concrete array casts
+PASS concrete func casts
+

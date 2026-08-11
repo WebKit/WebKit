@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+<style type="text/css">
+#tests { font-size: 2.5em; padding: 0px; margin: 0px; }
+dt { width: 15ex; padding: 0px 10px; margin: 0px; }
+dd { font-size: 0.6em; margin: 0px; padding: 0px 10px; }
+.target { background-color: #bbeeff; }
+.targetContainer { position: absolute; left: 10px; top: 0px; z-index: -5; }
+</style>
+</head>
+<body>
+<p>This test ensures WebKit lets user select bidirectional text intuitively.
+To manually test, select text in blue box in each test case below by a mouse drag from left to right.
+The changes in the selected text should match the expectations before |.
+Do the same by a mouse drag from right to left and expectations are after |.</p>
+<div>Selected text: <span id="log"></span></div>
+<dl id="tests">
+<dt contenteditable><span class="target">abcאבג</span></dt>
+<dd>a,ab,abc,abcAB,abcA,abcABC|A,AB,ABC,cABC,bcABC,abcABC</dd>
+
+<dt contenteditable><span class="target">אבגdef</span></dt>
+<dd>C,BC,ABC,ABCd,ABCef,ABCdef|f,ef,def,BCdef,Cdef,ABCdef</dd>
+
+<dt contenteditable>abc<span class="target">אבג</span>def</dt>
+<dd>C,BC,ABC|A,AB,ABC</dd>
+
+<dt dir="rtl" contenteditable><span class="target">אבג</span>def</dt>
+<dd>C,BC,ABC|A,AB,ABC</dd>
+
+<dt dir="rtl">אבגd<span class="target">ef</span></dt>
+<dd>e,ef|f,ef</dd>
+
+<dt contenteditable>abc<span class="target">אב</span>ג</dt>
+<dd>B,AB|A,AB</dd>
+
+<dt contenteditable>aקל<span class="target">12</span>יםd</dt>
+<dd>1,12|2,12</dd>
+
+<dt contenteditable dir="rtl"><span class="target">אבג 123</span></dt>
+<dd>1,12,123, 123,C 123,BC 123,ABC 123|A,AB,ABC,ABC ,ABC 12,ABC 1,ABC 123</dd>
+
+<dt contenteditable><span class="target">אבג 123</span></dt>
+<dd>1,12, 123,C 123,BC 123,ABC 123|A,AB,ABC,ABC ,ABC 12,ABC 1,ABC 123</dd>
+
+<dt contenteditable style="position: relative;">aאבגb<div class="targetContainer">a<span class="target">אבג</span>b</div></dt>
+<dd>C,BC,ABC|A,AB,ABC</dd>
+
+<dt contenteditable dir="ltr"><span class="target" dir="rtl">אבג<br></span></dt>
+<dd>C,BC,ABC|A,AB,ABC</dd>
+
+<!--<dt contenteditable><span class="target">אבג 123 - 456</span></dt>
+<dd>1,12, 123,C 123,BC 123,ABC 123|A,AB,ABC,ABC ,ABC 12,ABC 1,ABC 123</dd>-->
+
+</dl>
+<div id="console"></div>
+<pre><script>
+var tests = document.getElementById('tests');
+
+String.prototype.fold = function () {
+    var result = '';
+    for (var i = 0; i < this.length; i++) {
+        var code = this.charCodeAt(i);
+        if (0x05d0 <= code && code <= 0x05ea)// Hebrew Alef
+            code += -0x05d0 + 'A'.charCodeAt(0);
+        result += String.fromCharCode(code);
+    }
+    return result;
+}
+
+function assertEqual(expected, actual) {
+    document.writeln('E:' + expected + ' A:' + actual);
+}
+
+function selectByMouseDragAndVerifyResult(target, leftToRight, expectations) {
+    var y = target.offsetTop + target.offsetHeight / 2;
+    var left = target.offsetLeft;
+
+    offsetParent = target.offsetParent;
+    while (offsetParent) {
+        y += offsetParent.offsetTop;
+        left += offsetParent.offsetLeft;
+        offsetParent = offsetParent.offsetParent;
+    }
+
+    var startX = left + (leftToRight ? 0 : target.offsetWidth);
+    eventSender.dragMode = false;
+
+    // Clear click count
+    eventSender.mouseMoveTo(0, 0);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    eventSender.mouseMoveTo(startX, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(10);
+
+    var previousSelectedText = '';
+    var j = 0;
+    var xIncrement = leftToRight ? 1 : -1;
+    for (var x = startX; left <= x && x <= left + target.offsetWidth; x += xIncrement) {
+        eventSender.mouseMoveTo(x, y);
+
+        var selectedText = window.getSelection().toString().fold();
+        if (previousSelectedText != selectedText) {
+            if (expectations[j] == selectedText)
+                testPassed('selected "' + selectedText + '"');
+            else
+                testFailed('selected "' + selectedText + '" but expected "' + expectations[j] + '"');
+            previousSelectedText = selectedText;
+            j++;
+        }
+    }
+
+    eventSender.mouseUp();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+
+    var tests = document.getElementById('tests').getElementsByTagName('dt');
+    var testExpectations = document.getElementById('tests').getElementsByTagName('dd');
+
+    for (var i = 0; i < tests.length; i++) {        
+        tests[i].style.display = null;
+        testExpectations[i].style.display = null;
+
+        var target = tests[i].getElementsByClassName('target')[0];
+        var relativeTargets = tests[i].getElementsByClassName('relativeTarget');
+        var testExpectation = testExpectations[i].textContent;
+
+        debug('Test "' + target.textContent.fold() + '" in "' + target.parentNode.textContent.fold() + '":');
+        debug('Selecting from left to right');
+        selectByMouseDragAndVerifyResult(target, true, testExpectation.split(/\|/)[0].split(/,/));
+        debug('Selecting from right to left');
+        selectByMouseDragAndVerifyResult(target, false, testExpectation.split(/\|/)[1].split(/,/));
+        debug('');
+
+        // Some tests may be ouside of the window so bring them in as we process.
+        tests[i].style.display = 'none';
+        testExpectations[i].style.display = 'none';
+    }
+
+    document.getElementById('tests').style.display = 'none';
+    document.getElementById('log').parentNode.style.display = 'none';
+} else {
+    debug('This test requires eventSender');
+    document.onselectionchange = function () {
+        document.getElementById('log').textContent = window.getSelection().toString().fold();
+    }
+}
+
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

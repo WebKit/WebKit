@@ -1,0 +1,37 @@
+<html>
+<meta name="fuzzy" content="maxDifference=102; totalPixels=118111" />
+<head>
+<title>Source selection alternative VP9</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../utilities.js"></script>
+<script>
+    // This test should only pass on iOS simulator devices with no VP9 HW decoder.
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        let video = document.getElementsByTagName('video')[0];
+        const sources = [
+            {src: '../content/vp9-opus-bad.webm', type: 'video/webm; codecs=vp9,opus'},
+            {src: '../content/h264-aac-good.mp4', type: 'video/mp4; codecs=avc1,mp4a.40.2'}
+        ];
+        for (var source of sources) {
+            let sourceElement = video.appendChild(document.createElement('source'));
+            sourceElement.src = source.src;
+            sourceElement.type = source.type;
+        }
+        await once(video, 'canplay');
+        video.play();
+        // duration of the last frame.
+        video.currentTime = video.duration - 0.02;
+        await Promise.all([ once(video, 'seeked'), once(video, 'ended') ]);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video width="720px" height="480px" />
+</body>
+</html>

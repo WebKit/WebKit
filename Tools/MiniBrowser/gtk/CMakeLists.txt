@@ -1,0 +1,58 @@
+set(MiniBrowser_DIR "${TOOLS_DIR}/MiniBrowser/gtk")
+
+file(MAKE_DIRECTORY ${MiniBrowser_DERIVED_SOURCES_DIR})
+
+set(MiniBrowser_SOURCES
+    BrowserCellRendererVariant.c
+    BrowserCellRendererVariant.h
+    BrowserDownloadsBar.c
+    BrowserDownloadsBar.h
+    BrowserSearchBox.c
+    BrowserSearchBox.h
+    BrowserSettingsDialog.c
+    BrowserSettingsDialog.h
+    BrowserTab.c
+    BrowserTab.h
+    BrowserWindow.c
+    BrowserWindow.h
+    main.c
+)
+
+set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
+    ${CMAKE_BINARY_DIR}
+    ${MiniBrowser_DERIVED_SOURCES_DIR}
+    ${WebKitGTK_FRAMEWORK_HEADERS_DIR}
+    ${CMAKE_SOURCE_DIR}/Source
+)
+
+set(MiniBrowser_PRIVATE_LIBRARIES
+    ${JavaScriptCore_LIBRARY_NAME}
+    GTK::GTK
+    WebKit::WebKit
+)
+
+set(MiniBrowser_DEPENDENCIES
+    NetworkProcess
+    WebProcess
+)
+
+if (NOT USE_GSTREAMER_FULL)
+  list(APPEND MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES ${GSTREAMER_INCLUDE_DIRS})
+  list(APPEND MiniBrowser_PRIVATE_LIBRARIES ${GSTREAMER_LIBRARIES})
+endif ()
+
+if (USE_GTK4)
+    set(MiniBrowser_PRIVATE_DEFINITIONS GDK_VERSION_MIN_REQUIRED=GDK_VERSION_4_0)
+else ()
+    set(MiniBrowser_PRIVATE_DEFINITIONS GDK_VERSION_MIN_REQUIRED=GDK_VERSION_3_22)
+endif ()
+
+if (DEVELOPER_MODE)
+    list(APPEND MiniBrowser_PRIVATE_DEFINITIONS -DWEBKIT_INJECTED_BUNDLE_PATH="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+endif ()
+
+WEBKIT_EXECUTABLE_DECLARE(MiniBrowser)
+WEBKIT_EXECUTABLE(MiniBrowser)
+WEBKIT_ADD_TARGET_CXX_FLAGS(MiniBrowser -Wno-unused-parameter)
+
+install(TARGETS MiniBrowser DESTINATION "${LIBEXEC_INSTALL_DIR}")

@@ -1,0 +1,7 @@
+This test ensures we don't crash when a shadow-scoped stylesheet invalidation causes style re-resolution during textUnderElement.
+
+PASS: No crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Click me

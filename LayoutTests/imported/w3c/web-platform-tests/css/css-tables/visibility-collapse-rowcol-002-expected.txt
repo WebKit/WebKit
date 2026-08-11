@@ -1,0 +1,9 @@
+Visibility collapse
+
+Spec
+Setting row and spanning column to visibility:collapse changes height and width.
+
+
+PASS spanning row visibility:collapse doesn't change table width
+PASS spanning row visibility:collapse doesn't change height in this case
+

@@ -1,0 +1,4 @@
+PASS
+
+PASS checkIntersection() / checkEnclosure() with null ref. element
+

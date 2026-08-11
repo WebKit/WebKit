@@ -1,0 +1,147 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("task_queue") {
+  visibility = [ "*" ]
+  sources = [
+    "task_queue_base.cc",
+    "task_queue_base.h",
+    "task_queue_factory.h",
+  ]
+
+  deps = [
+    "..:location",
+    "../../rtc_base:macromagic",
+    "../../rtc_base/system:rtc_export",
+    "../units:time_delta",
+    "//third_party/abseil-cpp/absl/base:config",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("task_queue_test") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "task_queue_test.cc",
+    "task_queue_test.h",
+  ]
+
+  check_includes = false  # no-presubmit-check TODO(bugs.webrtc.org/9419)
+  if (build_with_chromium) {
+    visibility = []
+    visibility = webrtc_default_visibility
+    visibility += [
+      # This is the only Chromium targets that can depend on this. The reason
+      # behind this is the fact that these are 'testonly' targets and as such
+      # it cannot be part of the WebRTC component.
+      "//components/webrtc:unit_tests",
+      "//third_party/blink/renderer/platform:blink_platform_unittests_sources",
+    ]
+
+    # Don't depend on WebRTC code outside of webrtc_overrides:webrtc_component
+    # because this will break the WebRTC component build in Chromium.
+    deps = [
+      "../../../webrtc_overrides:webrtc_component",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/cleanup",
+      "//third_party/abseil-cpp/absl/strings",
+    ]
+  } else {
+    deps = [
+      ":default_task_queue_factory",
+      ":task_queue",
+      "../../api:field_trials_view",
+      "../../api:make_ref_counted",
+      "../../api:ref_count",
+      "../../api/units:time_delta",
+      "../../rtc_base:refcount",
+      "../../rtc_base:rtc_event",
+      "../../rtc_base:timeutils",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/cleanup",
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
+      "//third_party/abseil-cpp/absl/strings",
+    ]
+  }
+}
+
+rtc_library("default_task_queue_factory") {
+  visibility = [ "*" ]
+
+  # Internally webrtc shouldn't rely on any specific TaskQueue implementation
+  # and should create TaskQueue using TaskQueueFactory interface.
+  # TaskQueueFactory interface can be propagated with Environment.
+  poisonous = [ "environment_construction" ]
+  sources = [ "default_task_queue_factory.h" ]
+  deps = [
+    ":task_queue",
+    "../../api:field_trials_view",
+    "../../rtc_base/memory:always_valid_pointer",
+  ]
+
+  if (is_mac || is_ios) {
+    sources += [ "default_task_queue_factory_gcd.cc" ]
+    deps += [ "../../rtc_base:rtc_task_queue_gcd" ]
+  } else if (is_win && current_os != "winuwp" && !build_with_chromium) {
+    sources += [ "default_task_queue_factory_win.cc" ]
+    deps += [ "../../rtc_base:rtc_task_queue_win" ]
+  } else {
+    sources += [ "default_task_queue_factory_stdlib.cc" ]
+    deps += [ "../../rtc_base:rtc_task_queue_stdlib" ]
+  }
+}
+
+rtc_library("pending_task_safety_flag") {
+  visibility = [ "*" ]
+  sources = [
+    "pending_task_safety_flag.cc",
+    "pending_task_safety_flag.h",
+  ]
+  deps = [
+    ":task_queue",
+    "..:refcountedbase",
+    "..:scoped_refptr",
+    "..:sequence_checker",
+    "../../rtc_base:checks",
+    "../../rtc_base/system:no_unique_address",
+    "../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("task_queue_default_factory_unittests") {
+    testonly = true
+    sources = [ "default_task_queue_factory_unittest.cc" ]
+    deps = [
+      ":default_task_queue_factory",
+      ":task_queue_test",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_library("pending_task_safety_flag_unittests") {
+    testonly = true
+    sources = [ "pending_task_safety_flag_unittest.cc" ]
+    deps = [
+      ":pending_task_safety_flag",
+      ":task_queue",
+      "..:scoped_refptr",
+      "../../rtc_base:checks",
+      "../../rtc_base:rtc_event",
+      "../../rtc_base:task_queue_for_test",
+      "../../test:test_support",
+    ]
+  }
+}

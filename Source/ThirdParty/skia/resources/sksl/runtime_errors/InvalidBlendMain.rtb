@@ -1,0 +1,26 @@
+// Runtime blend modes require specific main signatures.
+// Ensure that signatures intended for other runtime effect types don't work.
+
+// Expect 5 errors
+
+half4 main() { return half4(1); }
+half4 main(half4 src) { return src; }
+half4 main(half2 coords, half4 src) { return src; }
+half4 main(half2 coords, half4 src, half4 dst) { return src * dst; }
+half4 main(half4 src, half4 dst, half4 bonusColor) { return src * dst; }
+
+half4 main(half4 src, half4 dst) { return src * dst; }  // the correct signature is allowed
+
+/*%%*
+'main' parameters must be (vec4|float4|half4, vec4|float4|half4)
+'main' parameters must be (vec4|float4|half4, vec4|float4|half4)
+unknown identifier 'src'
+'main' parameters must be (vec4|float4|half4, vec4|float4|half4)
+unknown identifier 'src'
+'main' parameters must be (vec4|float4|half4, vec4|float4|half4)
+unknown identifier 'src'
+unknown identifier 'dst'
+'main' parameters must be (vec4|float4|half4, vec4|float4|half4)
+unknown identifier 'src'
+unknown identifier 'dst'
+*%%*/

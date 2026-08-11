@@ -1,0 +1,15 @@
+
+
+PASS Verifying that cross-origin access of 'assign' is restricted
+PASS Verifying that cross-origin access of 'customproperty' is restricted
+PASS Verifying that cross-origin access of 'hash' is restricted
+PASS Verifying that cross-origin access of 'host' is restricted
+PASS Verifying that cross-origin access of 'hostname' is restricted
+PASS Verifying that cross-origin access of 'pathname' is restricted
+PASS Verifying that cross-origin access of 'port' is restricted
+PASS Verifying that cross-origin access of 'protocol' is restricted
+PASS Verifying that cross-origin access of 'reload' is restricted
+PASS Verifying that cross-origin access of 'search' is restricted
+PASS Verifying that cross-origin access of 'toString' is restricted
+PASS Verifying that cross-origin access of 'valueOf' is restricted
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't call layout on the percentage height img box when the content of the editable field changes.</title>
+</head>
+<body>
+<div id=changeThis contenteditable="true" style="margin-bottom: 100px; width: 700px; height: 20px; background-color: yellow;">type words</div>
+
+<div style="position: relative; padding-bottom: 200px; overflow: hidden;">
+  <div style="position: absolute; height: 100%;">
+    <img style="background-color: black; height: 100%;" src="broken.jpg">
+  </div>
+</div>
+
+<script>
+document.offsetHeight;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+setTimeout(function() {
+    if (window.internals)
+        internals.startTrackingRepaints();
+    changeThis.innerText = "this should not be super slow";
+    document.offsetHeight;
+    if (window.internals) {
+        changeThis.textContent = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+[
+  EnabledBySetting=NavigationAPIEnabled,
+  Exposed=Window
+] interface NavigationTransition {
+  readonly attribute NavigationNavigationType navigationType;
+  readonly attribute NavigationHistoryEntry from;
+  readonly attribute Promise<undefined> finished;
+};

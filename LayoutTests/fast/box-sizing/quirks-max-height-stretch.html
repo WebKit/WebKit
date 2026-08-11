@@ -1,0 +1,20 @@
+<html>
+<title>max-height: stretch caps content at viewport in quirks mode (body.stretchesToViewport)</title>
+<link rel="match" href="quirks-max-height-stretch-expected.html">
+<style>
+body {
+  margin: 0;
+}
+.outer {
+  max-height: stretch;
+  overflow: hidden;
+}
+.inner {
+  height: 2000px;
+  background: green;
+}
+</style>
+<div class="outer">
+  <div class="inner"></div>
+</div>
+</html>

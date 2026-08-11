@@ -1,0 +1,26 @@
+<script>
+
+var count = 1;
+
+function iframeClicked()
+{
+    try {
+        history.pushState(top.object, top.object, "#" + top.object);
+    } catch (e) {
+        top.log("Expected exception: " + e);
+        if (window.testRunner)
+            testRunner.notifyDone();    
+    }
+
+    ++count;
+
+    if (count > 50) {
+        top.log("This has gone on for way too long");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    setTimeout(top.click, 0);
+}
+
+</script>

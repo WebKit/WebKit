@@ -1,0 +1,5 @@
+
+FAIL Setting the range to start on slotted content and end in shadow tree, should follow DOM tree order. The index is not in the allowed range.
+PASS Setting the range to start and end on slotted content, should follow DOM tree order.
+FAIL Setting the range to start on unslotted content and end in shadow tree, should follow DOM tree order. assert_equals: expected Text node "Second" but got Element node <div id="container"><div id="host">Second</div></div>
+

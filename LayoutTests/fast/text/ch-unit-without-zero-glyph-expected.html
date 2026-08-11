@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("resources/tiny-ligature-font.svg") format("svg");
+}
+</style>
+</head>
+<body>
+This test makes sure that the <code>ch</code> unit falls back to 0.5em on fonts that don't support the 0 character. The test passes if the green box below has the correct width.
+<div style="font: 48px 'WebFont'; width: calc(10em / 2); background: green; color: transparent;">AAAA</div>
+</body>
+</html>

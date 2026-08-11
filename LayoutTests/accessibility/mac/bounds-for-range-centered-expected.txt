@@ -1,0 +1,15 @@
+This test verifies that text marker range bounds are correctly offset when text is not left-aligned.
+
+PASS: textChild.boundsForRangeWithPagePosition(0, 4) was equal or approximately equal to (x: 29, y: 8, w: 61, h: 31).
+PASS: textChild.boundsForRangeWithPagePosition(5, 7) was equal or approximately equal to (x: 95, y: 8, w: 92, h: 31).
+PASS: textChild.boundsForRangeWithPagePosition(13, 5) was equal or approximately equal to (x: 76, y: 39, w: 64, h: 31).
+PASS: textChild.boundsForRangeWithPagePosition(0, 4) was equal or approximately equal to (x: 34, y: 117, w: 32, h: 62).
+PASS: textChild.boundsForRangeWithPagePosition(5, 7) was equal or approximately equal to (x: 34, y: 183, w: 32, h: 92).
+PASS: textChild.boundsForRangeWithPagePosition(13, 5) was equal or approximately equal to (x: 65, y: 165, w: 32, h: 63).
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Good morning world
+
+Good morning world

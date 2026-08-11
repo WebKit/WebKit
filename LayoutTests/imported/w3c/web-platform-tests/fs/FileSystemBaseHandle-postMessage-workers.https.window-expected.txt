@@ -1,0 +1,5 @@
+
+PASS Send and receive messages using a dedicated worker.
+PASS Send and receive messages using a service worker.
+PASS Send and receive messages using a shared worker.
+

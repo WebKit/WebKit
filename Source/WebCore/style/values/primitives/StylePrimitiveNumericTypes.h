@@ -1,0 +1,163 @@
+/*
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/CSSPrimitiveNumericTypes.h>
+#include <WebCore/StylePrimitiveNumeric.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
+
+namespace WebCore {
+namespace Style {
+
+// NOTE: This is spelled with an explicit "Or" to distinguish it from types like AnglePercentage/LengthPercentage that have behavior distinctions beyond just being a union of the two types (specifically, calc() has specific behaviors for those types).
+template<CSS::Range nR = CSS::All, CSS::Range pR = nR, typename V = double> struct NumberOrPercentage {
+    using Number = Style::Number<nR, V>;
+    using Percentage = Style::Percentage<pR, V>;
+
+    NumberOrPercentage(Variant<Number, Percentage>&& value)
+    {
+        WTF::switchOn(WTF::move(value), [this](auto&& alternative) { this->value = WTF::move(alternative); });
+    }
+
+    NumberOrPercentage(Number value)
+        : value { WTF::move(value) }
+    {
+    }
+
+    NumberOrPercentage(Percentage value)
+        : value { WTF::move(value) }
+    {
+    }
+
+    bool operator==(const NumberOrPercentage&) const = default;
+
+    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    {
+        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+        using ResultType = decltype(visitor(std::declval<Number>()));
+
+        return WTF::switchOn(value,
+            [](CSS::PrimitiveDataEmptyToken) -> ResultType {
+                RELEASE_ASSERT_NOT_REACHED();
+            },
+            [&](const Number& number) -> ResultType {
+                return visitor(number);
+            },
+            [&](const Percentage& percentage) -> ResultType {
+                return visitor(percentage);
+            }
+        );
+    }
+
+private:
+    friend struct Blending<NumberOrPercentage>;
+
+    NumberOrPercentage(Variant<CSS::PrimitiveDataEmptyToken, Number, Percentage>&& value)
+        : value { WTF::move(value) }
+    {
+    }
+
+    NumberOrPercentage(CSS::PrimitiveDataEmptyToken token)
+        : value { WTF::move(token) }
+    {
+    }
+
+    bool isEmpty() const { return std::holds_alternative<CSS::PrimitiveDataEmptyToken>(value); }
+
+    Variant<CSS::PrimitiveDataEmptyToken, Number, Percentage> value;
+};
+
+template<CSS::Range nR = CSS::All, CSS::Range pR = nR, typename V = double> struct NumberOrPercentageResolvedToNumber {
+    using Number = Style::Number<nR, V>;
+    using Percentage = Style::Percentage<pR, V>;
+
+    Number value { 0 };
+
+    constexpr NumberOrPercentageResolvedToNumber(Number number)
+        : value { number }
+    {
+    }
+
+    constexpr NumberOrPercentageResolvedToNumber(Percentage percentage)
+        : value { percentage.value / static_cast<V>(100) }
+    {
+    }
+
+    constexpr NumberOrPercentageResolvedToNumber(typename Number::ResolvedValueType value)
+        : NumberOrPercentageResolvedToNumber { Number { value } }
+    {
+    }
+
+    constexpr NumberOrPercentageResolvedToNumber(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
+        : NumberOrPercentageResolvedToNumber { Number { literal } }
+    {
+    }
+
+    constexpr NumberOrPercentageResolvedToNumber(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal)
+        : NumberOrPercentageResolvedToNumber { Percentage { literal } }
+    {
+    }
+
+    constexpr bool isZero() const { return value.isZero(); }
+
+    constexpr bool operator==(const NumberOrPercentageResolvedToNumber&) const = default;
+    constexpr bool operator==(typename Number::ResolvedValueType other) const { return value.value == other; };
+    constexpr auto operator<=>(const NumberOrPercentageResolvedToNumber&) const = default;
+};
+
+// MARK: CSS -> Style
+
+template<auto nR, auto pR, typename V> struct ToStyleMapping<CSS::NumberOrPercentage<nR, pR, V>> {
+    using type = NumberOrPercentage<nR, pR, V>;
+};
+
+template<auto nR, auto pR, typename V> struct ToStyleMapping<CSS::NumberOrPercentageResolvedToNumber<nR, pR, V>> {
+    using type = NumberOrPercentageResolvedToNumber<nR, pR, V>;
+};
+
+// MARK: Style -> CSS
+
+template<auto nR, auto pR, typename V> struct ToCSSMapping<NumberOrPercentage<nR, pR, V>> {
+    using type = CSS::NumberOrPercentage<nR, pR, V>;
+};
+
+template<auto nR, auto pR, typename V> struct ToCSSMapping<NumberOrPercentageResolvedToNumber<nR, pR, V>> {
+    using type = CSS::NumberOrPercentageResolvedToNumber<nR, pR, V>;
+};
+
+} // namespace Style
+} // namespace WebCore
+
+namespace WTF {
+
+template<auto nR, auto pR, typename V>
+struct MarkableTraits<WebCore::Style::NumberOrPercentage<nR, pR, V>> {
+    static bool isEmptyValue(const WebCore::Style::NumberOrPercentage<nR, pR, V>& value) { return value.isEmpty(); }
+    static WebCore::Style::NumberOrPercentage<nR, pR, V> emptyValue() { return WebCore::Style::NumberOrPercentage<nR, pR, V>(WebCore::CSS::PrimitiveDataEmptyToken()); }
+};
+
+}
+
+template<auto nR, auto pR, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::Style::NumberOrPercentage<nR, pR, V>> = true;

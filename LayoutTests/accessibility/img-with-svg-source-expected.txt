@@ -1,0 +1,28 @@
+
+This tests that images with SVG source are indeed exposed as images and not as SVG groups, if the SVG source is not accessible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS image.role is 'AXRole: AXImage'
+AXDescription:
+PASS image.role is 'AXRole: AXImage'
+AXDescription: 2. svg image with alt text
+PASS image.role is 'AXRole: AXImage'
+AXDescription: 3. svg image with role img
+PASS image.role is 'AXRole: AXImage'
+AXDescription: 4. svg image in an anchor
+PASS image.role is 'AXRole: AXImage'
+AXDescription: 5. svg image with role img in an anchor
+PASS image.role is 'AXRole: AXImage'
+AXDescription: 6. svg image with aria label
+PASS image.role is 'AXRole: AXImage'
+AXDescription: 7. svg image with role img and aria label
+PASS image.role is 'AXRole: AXImage'
+AXDescription: 8. svg image with size set
+PASS image.role is 'AXRole: AXImage'
+AXDescription: 9. svg image with role img and size set
+

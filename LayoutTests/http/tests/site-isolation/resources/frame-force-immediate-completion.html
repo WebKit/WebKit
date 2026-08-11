@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<head>
+<script>
+function finish()
+{
+    // Call forceImmediateCompletion from a remote (cross-origin) subframe after the main frame has loaded.
+    // The dump must be routed to the main-frame process; the test passes if it doesn't time out.
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.forceImmediateCompletion();
+    }, 30);
+}
+</script>
+</head>
+<body onload="finish()">
+<p>I am a simple document that calls forceImmediateCompletion when done loading.</p>
+</body>

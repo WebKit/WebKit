@@ -1,0 +1,10 @@
+This tests iterating element.children backwarwds. The collection index getter should return the last element when indexed for the last item.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS container.children[3]; container.children[2] is child2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

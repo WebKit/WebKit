@@ -1,0 +1,152 @@
+/*
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "TestFeatures.h"
+#include <optional>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+namespace WTR {
+
+class TestOptions {
+public:
+    static const TestFeatures& defaults();
+    static const std::unordered_map<std::string, TestHeaderKeyType>& keyTypeMapping();
+
+    explicit TestOptions(TestFeatures features)
+        : m_features { std::move(features) }
+    {
+    }
+
+    bool allowTopNavigationToDataURLs() const { return boolWebPreferenceFeatureValue("AllowTopNavigationToDataURLs", true); }
+    bool enableAttachmentElement() const { return boolWebPreferenceFeatureValue("AttachmentElementEnabled", false); }
+    bool enableAttachmentWideLayout() const { return boolWebPreferenceFeatureValue("AttachmentWideLayoutEnabled", false); }
+    bool punchOutWhiteBackgroundsInDarkMode() const { return boolWebPreferenceFeatureValue("PunchOutWhiteBackgroundsInDarkMode", false); }
+    bool useServiceWorkerShortTimeout() const { return boolWebPreferenceFeatureValue("ShouldUseServiceWorkerShortTimeout", false); }
+    bool accessibilityIsolatedTreeMode() const { return boolWebPreferenceFeatureValue("IsAccessibilityIsolatedTreeEnabled", false); }
+    bool siteIsolationEnabled() const { return boolWebPreferenceFeatureValue("SiteIsolationEnabled", false); }
+    bool lockdownModeEnabled() const { return boolWebPreferenceFeatureValue("LockdownModeEnabled", false); }
+    bool usesBackForwardCache() const { return boolWebPreferenceFeatureValue("UsesBackForwardCache", false); }
+
+    bool allowsLinkPreview() const { return boolTestRunnerFeatureValue("allowsLinkPreview"); }
+    bool appHighlightsEnabled() const { return boolTestRunnerFeatureValue("appHighlightsEnabled"); }
+    bool allowTestOnlyIPC() const { return boolTestRunnerFeatureValue("allowTestOnlyIPC"); }
+    bool allowTestOnlyMockContentFilterIPC() const { return boolTestRunnerFeatureValue("allowTestOnlyMockContentFilterIPC"); }
+    bool allowTestOnlyOriginAccessAllowListIPC() const { return boolTestRunnerFeatureValue("allowTestOnlyOriginAccessAllowListIPC"); }
+    bool dumpJSConsoleLogInStdErr() const { return boolTestRunnerFeatureValue("dumpJSConsoleLogInStdErr"); }
+    bool editable() const { return boolTestRunnerFeatureValue("editable"); }
+    bool enableInAppBrowserPrivacy() const { return boolTestRunnerFeatureValue("enableInAppBrowserPrivacy"); }
+    bool enableProcessSwapOnNavigation() const { return boolTestRunnerFeatureValue("enableProcessSwapOnNavigation"); }
+    bool findInteractionEnabled() const { return boolTestRunnerFeatureValue("findInteractionEnabled") ; }
+    bool ignoreSynchronousMessagingTimeouts() const { return boolTestRunnerFeatureValue("ignoreSynchronousMessagingTimeouts"); }
+    bool ignoresViewportScaleLimits() const { return boolTestRunnerFeatureValue("ignoresViewportScaleLimits"); }
+    bool isAppBoundWebView() const { return boolTestRunnerFeatureValue("isAppBoundWebView"); }
+    bool isAppInitiated() const { return boolTestRunnerFeatureValue("isAppInitiated"); }
+    bool advancedPrivacyProtectionsEnabled() const { return boolTestRunnerFeatureValue("advancedPrivacyProtectionsEnabled"); }
+    bool runSingly() const { return boolTestRunnerFeatureValue("runSingly"); }
+    bool runInCrossOriginFrame() const { return boolTestRunnerFeatureValue("runInCrossOriginFrame"); }
+    bool shouldHandleRunOpenPanel() const { return boolTestRunnerFeatureValue("shouldHandleRunOpenPanel"); }
+    bool shouldAcceptImmersiveEnvironmentRequests() const { return boolTestRunnerFeatureValue("shouldAcceptImmersiveEnvironmentRequests"); }
+    bool shouldPresentPopovers() const { return boolTestRunnerFeatureValue("shouldPresentPopovers"); }
+    bool shouldShowSpellCheckingDots() const { return boolTestRunnerFeatureValue("spellCheckingDots"); }
+    bool shouldShowTouches() const { return boolTestRunnerFeatureValue("shouldShowTouches"); }
+    bool shouldShowCursor() const { return boolTestRunnerFeatureValue("shouldShowCursor"); }
+    bool shouldShowWindow() const { return boolTestRunnerFeatureValue("shouldShowWindow"); }
+    bool textInteractionEnabled() const { return boolTestRunnerFeatureValue("textInteractionEnabled"); }
+    bool useCharacterSelectionGranularity() const { return boolTestRunnerFeatureValue("useCharacterSelectionGranularity"); }
+    bool shouldInjectTestRunner() const { return boolTestRunnerFeatureValue("injectTestRunner"); }
+    bool useDataDetection() const { return boolTestRunnerFeatureValue("useDataDetection"); }
+    bool useEphemeralSession() const { return boolTestRunnerFeatureValue("useEphemeralSession"); }
+    bool useFlexibleViewport() const { return boolTestRunnerFeatureValue("useFlexibleViewport"); }
+    bool useRemoteLayerTree() const { return boolTestRunnerFeatureValue("useRemoteLayerTree"); }
+    bool noUseRemoteLayerTree() const { return boolTestRunnerFeatureValue("noUseRemoteLayerTree"); }
+    bool useThreadedScrolling() const { return boolTestRunnerFeatureValue("useThreadedScrolling"); }
+    bool suppressInputAccessoryView() const { return boolTestRunnerFeatureValue("suppressInputAccessoryView"); }
+    bool allowsInlinePredictions() const { return boolTestRunnerFeatureValue("allowsInlinePredictions"); }
+    bool showsScrollIndicators() const { return boolTestRunnerFeatureValue("showsScrollIndicators"); }
+    bool longPressActionsEnabled() const { return boolTestRunnerFeatureValue("longPressActionsEnabled"); }
+    bool enhancedWindowingEnabled() const { return boolTestRunnerFeatureValue("enhancedWindowingEnabled"); }
+    bool textExtractionEnabled() const { return boolTestRunnerFeatureValue("textExtractionEnabled"); }
+    bool useHardwareKeyboardMode() const { return boolTestRunnerFeatureValue("useHardwareKeyboardMode"); }
+    bool shouldIgnoreWebProcessTermination() const { return boolTestRunnerFeatureValue("ignoreWebProcessTermination"); }
+    bool enableMetalDebugDevice() const { return boolTestRunnerFeatureValue("enableMetalDebugDevice"); }
+    bool enableMetalShaderValidation() const { return boolTestRunnerFeatureValue("enableMetalShaderValidation"); }
+    bool pageTopColorSamplingEnabled() const { return boolTestRunnerFeatureValue("pageTopColorSamplingEnabled"); }
+    bool enhancedSecurityEnabled() const { return boolTestRunnerFeatureValue("enhancedSecurityEnabled"); }
+    bool globalPrivacyControl() const { return boolTestRunnerFeatureValue("globalPrivacyControl"); }
+    bool shouldDumpResourceLoadCallbacks() const { return boolTestRunnerFeatureValue("dumpResourceLoadCallbacks"); }
+    std::string resourceResponseMIMETypesToDump() const { return stringTestRunnerFeatureValue("dumpResourceResponseMIMETypes"); }
+
+    double contentInsetTop() const { return doubleTestRunnerFeatureValue("contentInset.top"); }
+    double obscuredInsetTop() const { return doubleTestRunnerFeatureValue("obscuredInset.top"); }
+    double obscuredInsetLeft() const { return doubleTestRunnerFeatureValue("obscuredInset.left"); }
+    double horizontalSystemMinimumLayoutMargin() const { return doubleTestRunnerFeatureValue("horizontalSystemMinimumLayoutMargin"); }
+    double deviceScaleFactor() const { return doubleTestRunnerFeatureValue("deviceScaleFactor"); }
+    double viewHeight() const { return doubleTestRunnerFeatureValue("viewHeight"); }
+    double viewWidth() const { return doubleTestRunnerFeatureValue("viewWidth"); }
+    uint16_t insecureUpgradePort() const { return uint16TestRunnerFeatureValue("insecureUpgradePort"); };
+    uint16_t secureUpgradePort() const { return uint16TestRunnerFeatureValue("secureUpgradePort"); };
+    std::string additionalSupportedImageTypes() const { return stringTestRunnerFeatureValue("additionalSupportedImageTypes"); }
+    // Drives the fake _WKTranslationDelegate in TestRunnerWKWebView. See its announcementTranslationMode.
+    std::string announcementTranslationMode() const { return stringTestRunnerFeatureValue("announcementTranslationMode"); }
+    std::string applicationBundleIdentifier() const { return stringTestRunnerFeatureValue("applicationBundleIdentifier"); }
+    std::string applicationManifest() const { return stringTestRunnerFeatureValue("applicationManifest"); }
+    std::string contentMode() const { return stringTestRunnerFeatureValue("contentMode"); }
+    std::string contentSecurityPolicyExtensionMode() const { return stringTestRunnerFeatureValue("contentSecurityPolicyExtensionMode"); }
+    std::string displayedTranslationLocale() const { return stringTestRunnerFeatureValue("displayedTranslationLocale"); }
+    std::string dragInteractionPolicy() const { return stringTestRunnerFeatureValue("dragInteractionPolicy"); }
+    std::string focusStartsInputSessionPolicy() const { return stringTestRunnerFeatureValue("focusStartsInputSessionPolicy"); }
+    std::string jscOptions() const { return stringTestRunnerFeatureValue("jscOptions"); }
+    std::string captionDisplayMode() const { return stringTestRunnerFeatureValue("captionDisplayMode"); }
+    std::string standaloneWebApplicationURL() const { return stringTestRunnerFeatureValue("standaloneWebApplicationURL"); }
+    std::vector<std::string> overrideLanguages() const { return stringVectorTestRunnerFeatureValue("language"); }
+
+    bool shouldEnableProcessSwapOnNavigation() const
+    {
+        return enableProcessSwapOnNavigation();
+    }
+
+    const std::unordered_map<std::string, bool>& boolWebPreferenceFeatures() const { return m_features.boolWebPreferenceFeatures; }
+    const std::unordered_map<std::string, double>& doubleWebPreferenceFeatures() const { return m_features.doubleWebPreferenceFeatures; }
+    const std::unordered_map<std::string, uint32_t>& uint32WebPreferenceFeatures() const { return m_features.uint32WebPreferenceFeatures; }
+    const std::unordered_map<std::string, std::string>& stringWebPreferenceFeatures() const { return m_features.stringWebPreferenceFeatures; }
+
+    bool hasSameInitializationOptions(const TestOptions&) const;
+
+private:
+    bool boolWebPreferenceFeatureValue(std::string key, bool defaultValue) const;
+    bool boolTestRunnerFeatureValue(std::string key) const;
+    double doubleTestRunnerFeatureValue(std::string key) const;
+    uint16_t uint16TestRunnerFeatureValue(std::string key) const;
+    std::string stringTestRunnerFeatureValue(std::string key) const;
+    std::vector<std::string> stringVectorTestRunnerFeatureValue(std::string key) const;
+
+    TestFeatures m_features;
+};
+
+}

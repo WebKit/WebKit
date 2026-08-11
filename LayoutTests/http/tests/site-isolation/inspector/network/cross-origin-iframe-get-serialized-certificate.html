@@ -1,0 +1,125 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let httpIFrame;
+let httpsIFrame;
+
+function addIFrame() {
+    // Cross-origin (localhost vs the 127.0.0.1 main frame) HTTP iframe -> its own WebContent process
+    // under Site Isolation. Its subresources load over http, so no certificate is captured.
+    httpIFrame = document.createElement("iframe");
+    httpIFrame.src = "http://localhost:8000/site-isolation/inspector/network/resources/get-response-body-iframe.html";
+    httpIFrame.addEventListener("load", () => httpIFrame.contentWindow.postMessage({type: "TriggerLoads"}, "*"));
+    document.body.appendChild(httpIFrame);
+}
+
+function addSecureIFrame() {
+    // Cross-origin HTTPS iframe -> its own WebContent process under Site Isolation, and its
+    // subresource loads over TLS so a certificate is actually captured.
+    httpsIFrame = document.createElement("iframe");
+    httpsIFrame.src = "https://localhost:8443/site-isolation/inspector/network/resources/get-serialized-certificate-iframe.html";
+    httpsIFrame.addEventListener("load", () => httpsIFrame.contentWindow.postMessage({type: "TriggerLoads"}, "*"));
+    document.body.appendChild(httpsIFrame);
+}
+
+function test() {
+    // Exercises Network.getSerializedCertificate under Site Isolation. The command is issued against
+    // the multiplexing (web-page) target's NetworkAgent, where ProxyingNetworkAgent lives under SI.
+    //
+    // The success case loads a resource over https so a real certificate is captured cross-process and
+    // returned as a non-empty base64 string. The remaining cases cover the routing/error paths that do
+    // not need TLS: a real requestId over http (no certificate), a malformed requestId, and a
+    // well-formed requestId whose process does not exist.
+    //
+    // Like cross-origin-iframe-get-response-body, this is requestId-routed and never resolves a frame
+    // target, so resources are driven through the WI.Frame.Event.ResourceWasAdded path with a
+    // dynamically-added iframe (loads triggered only after Network instrumentation is enabled), rather
+    // than the FrameTarget/RuntimeAgent path, which has event-ordering races under SI. The static-iframe
+    // pattern used by the frame-target tests is therefore unnecessary (and would be racy) here.
+
+    function waitForResource(urlSubstring) {
+        return new Promise((resolve) => {
+            function onResourceAdded(event) {
+                let resource = event.data.resource;
+                if (!resource || !resource.url || !resource.url.includes(urlSubstring))
+                    return;
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+                resolve(resource);
+            }
+            WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+        });
+    }
+
+    // Trigger loads in a fresh iframe and resolve once the matching resource has finished loading, so
+    // its response (and thus any certificate) has been received by the owning process's store.
+    async function loadedResource(addFunctionCall, urlSubstring) {
+        let resourcePromise = waitForResource(urlSubstring);
+        InspectorTest.evaluateInPage(addFunctionCall);
+        let resource = await resourcePromise;
+        if (!resource.finished && !resource.failed)
+            await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+        return resource;
+    }
+
+    async function expectToFail(requestId, label) {
+        try {
+            await WI.backendTarget.NetworkAgent.getSerializedCertificate(requestId);
+            InspectorTest.expectThat(false, `${label}: getSerializedCertificate should have failed.`);
+        } catch (e) {
+            InspectorTest.expectThat(true, `${label}: getSerializedCertificate should fail.`);
+            InspectorTest.log(`  Error: ${e.message || e}`);
+        }
+    }
+
+    let realRequestId;
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.CrossOriginIFrame.GetSerializedCertificate");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetSerializedCertificate.SecureCertificate",
+        description: "A resource loaded over https in a cross-origin iframe's WebContent process has its certificate captured; getSerializedCertificate routes there and returns a non-empty base64 certificate.",
+        async test() {
+            let resource = await loadedResource("addSecureIFrame()", "square100.png");
+            InspectorTest.expectThat(!!resource.requestIdentifier, "Secure resource should have a request identifier.");
+
+            let {serializedCertificate} = await WI.backendTarget.NetworkAgent.getSerializedCertificate(resource.requestIdentifier);
+            InspectorTest.expectGreaterThan(serializedCertificate.length, 0, "getSerializedCertificate should return a non-empty base64 certificate.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetSerializedCertificate.MissingCertificateOverHTTP",
+        description: "A valid requestId routes to the owning process; over http there is no certificate, so it fails with a missing-certificate error (proving the routing + store lookup work).",
+        async test() {
+            let resource = await loadedResource("addIFrame()", "echo.py");
+
+            realRequestId = resource.requestIdentifier;
+            InspectorTest.expectThat(!!realRequestId, "Loaded resource should have a request identifier.");
+
+            await expectToFail(realRequestId, "Real requestId over http (no certificate)");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetSerializedCertificate.Malformed",
+        description: "A malformed requestId should fail to parse.",
+        async test() {
+            await expectToFail("not-a-valid-request-id", "Malformed requestId");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Network.CrossOriginIFrame.GetSerializedCertificate.UnknownProcess",
+        description: "A well-formed requestId whose process does not exist should fail to route.",
+        async test() {
+            let unknownProcess = realRequestId.replace(/^request-\d+\./, "request-4294967295.");
+            await expectToFail(unknownProcess, "Unknown process");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests Network.getSerializedCertificate under Site Isolation (routed through ProxyingNetworkAgent to the owning WebContent process's BackendResourceDataStore). A resource loaded over https returns a real certificate; the http, malformed, and unknown-process cases exercise the routing and error paths.</p>
+</body>

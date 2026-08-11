@@ -1,0 +1,7 @@
+
+PASS e.style['text-emphasis-position'] = "auto auto" should not set the property value
+PASS e.style['text-emphasis-position'] = "auto left" should not set the property value
+PASS e.style['text-emphasis-position'] = "over auto" should not set the property value
+PASS e.style['text-emphasis-position'] = "left over right" should not set the property value
+PASS e.style['text-emphasis-position'] = "under right over" should not set the property value
+

@@ -1,0 +1,17 @@
+This test verifies that if an aria-actions custom action's handler removes the focused origin (so focus can't be restored to it), focus is left on the action target and surfaced to assistive technology, rather than assistive technology being left pointed at the removed origin.
+
+Invoking the custom action runs the handler, which removes the focused origin:
+PASS: source.invokeCustomActionAtIndex(0) === true
+PASS: actionClicked === true
+
+Focus is left on the action target, since the origin could no longer take it back:
+PASS: document.activeElement.id === 'action'
+
+Assistive technology converges on the action target rather than the removed origin:
+PASS: accessibilityController.focusedElement.domIdentifier === 'action'
+PASS: focusNotificationCount > 0 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Delete

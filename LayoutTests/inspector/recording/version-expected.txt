@@ -1,0 +1,7 @@
+Tests Recording.VERSION value.
+
+
+== Running test suite: Recording.VERSION
+-- Running test case: Recording.VERSION.MatchesFrontend
+PASS: The recording system version should match the frontend version.
+

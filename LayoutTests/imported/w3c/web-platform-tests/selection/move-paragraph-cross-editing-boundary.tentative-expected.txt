@@ -1,0 +1,8 @@
+P1
+
+Line 1: Hello World Line 2: Hello World
+
+
+FAIL cross editing boundary assert_equals: expected "P1" but got "\n    Line 1: Hello World\n    Line 2: "
+PASS not cross editing boundary
+

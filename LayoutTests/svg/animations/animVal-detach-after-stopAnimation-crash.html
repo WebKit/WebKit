@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+<svg id="s">
+  <rect id="r" x="10" width="50" height="50">
+    <animate id="a" attributeName="x" from="0" to="100" dur="1s" begin="0s"/>
+  </rect>
+</svg>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let len;
+
+function grab()
+{
+    // Separate frame so intermediate wrappers are not pinned by a conservative stack scan.
+    return document.getElementById("r").x.animVal;
+}
+
+function step1()
+{
+    let s = document.getElementById("s");
+    let a = document.getElementById("a");
+    let r = document.getElementById("r");
+
+    // Enter the active interval so stopAnimation() takes the m_animVal = nullptr branch.
+    s.pauseAnimations();
+    s.setCurrentTime(0.5);
+
+    len = grab();
+
+    // Reaches SVGAnimatedValueProperty::stopAnimation().
+    a.remove();
+    r.remove();
+    s.remove();
+}
+
+function step2()
+{
+    if (window.GCController)
+        GCController.collect();
+    // SVGLength::valueForBindings -> SVGProperty::contextElement; m_owner must not dangle.
+    len.value;
+    document.body.textContent = "PASS if no crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.onload = () => {
+    // Defer past Document::implicitClose so svgExtensions->startAnimations() has run.
+    setTimeout(() => {
+        step1();
+        setTimeout(step2, 0);
+    }, 0);
+};
+</script>
+</body>
+</html>

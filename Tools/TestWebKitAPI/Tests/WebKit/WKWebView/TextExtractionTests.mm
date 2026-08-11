@@ -1,0 +1,3042 @@
+/*
+ * Copyright (C) 2025-2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#import "ClassMethodSwizzler.h"
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
+#import "Helpers/Utilities.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/PDFTestHelpers.h"
+#import "Helpers/cocoa/SafeBrowsingTestUtilities.h"
+#import "Helpers/cocoa/ScreenTimeExtras.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestWKWebView.h"
+#import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import "InstanceMethodSwizzler.h"
+#import "SafeBrowsingSPI.h"
+#import <WebKit/WKContentWorldPrivate.h>
+#import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKSecurityOrigin.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebpagePreferences.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKContentWorldConfiguration.h>
+#import <WebKit/_WKFeature.h>
+#import <WebKit/_WKFrameTreeNode.h>
+#import <WebKit/_WKJSHandle.h>
+#import <WebKit/_WKRemoteObjectInterface.h>
+#import <WebKit/_WKRemoteObjectRegistry.h>
+#import <WebKit/_WKTextExtraction.h>
+#import <WebKit/_WKTextRun.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <pal/cocoa/ScreenTimeSoftLink.h>
+#import <pal/spi/cocoa/NSKeyedUnarchiverSPI.h>
+#import <wtf/SoftLinking.h>
+#import <wtf/WorkQueue.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/MakeString.h>
+
+#if !defined(TestWebKitAPI_SSBLookupContext_SoftLinked)
+#define TestWebKitAPI_SSBLookupContext_SoftLinked
+SOFT_LINK_PRIVATE_FRAMEWORK(SafariSafeBrowsing);
+SOFT_LINK_CLASS(SafariSafeBrowsing, SSBLookupContext);
+#endif
+
+@class WKTextExtractionItem;
+
+@interface WKWebView (TextExtractionTestsSPI)
+- (void)_requestTextExtraction:(_WKTextExtractionConfiguration *)configuration completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
+@end
+
+@interface WKWebView (TextExtractionTests)
+- (NSString *)synchronouslyGetDebugText:(_WKTextExtractionConfiguration *)configuration;
+- (_WKTextExtractionResult *)synchronouslyExtractDebugTextResult:(_WKTextExtractionConfiguration *)configuration;
+- (_WKTextExtractionInteractionResult *)synchronouslyPerformInteraction:(_WKTextExtractionInteraction *)interaction;
+- (NSData *)synchronouslyGetSelectorPathDataForNode:(_WKJSHandle *)node;
+- (_WKJSHandle *)synchronouslyGetNodeForSelectorPathData:(NSData *)data;
+@end
+
+@interface _WKTextExtractionInteraction (TextExtractionTests)
+- (NSString *)debugDescriptionInWebView:(WKWebView *)webView error:(NSError **)outError;
+@end
+
+@interface _WKTextExtractionResult (TextExtractionTests)
+- (_WKJSHandle *)jsHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText;
+- (_WKJSHandle *)containerJSHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText;
+- (_WKJSHandle *)containerJSHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(NSString *)nodeIdentifier;
+- (WKFrameInfo *)frameInfoForNodeIdentifier:(NSString *)nodeIdentifier;
+@end
+
+@implementation WKWebView (TextExtractionTests)
+
+- (NSString *)synchronouslyGetDebugText:(_WKTextExtractionConfiguration *)configuration
+{
+    return [[self synchronouslyExtractDebugTextResult:configuration] textContent];
+}
+
+- (_WKTextExtractionResult *)synchronouslyExtractDebugTextResult:(_WKTextExtractionConfiguration *)configuration
+{
+    RetainPtr configurationToUse = configuration;
+    if (!configurationToUse)
+        configurationToUse = adoptNS([_WKTextExtractionConfiguration new]);
+
+    __block bool done = false;
+    __block RetainPtr<_WKTextExtractionResult> result;
+    [self _extractDebugTextWithConfiguration:configurationToUse.get() completionHandler:^(_WKTextExtractionResult *extractionResult) {
+        result = extractionResult;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+- (_WKTextExtractionInteractionResult *)synchronouslyPerformInteraction:(_WKTextExtractionInteraction *)interaction
+{
+    __block bool done = false;
+    __block RetainPtr<_WKTextExtractionInteractionResult> result;
+    [self _performInteraction:interaction completionHandler:^(_WKTextExtractionInteractionResult *theResult) {
+        result = theResult;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+- (NSData *)synchronouslyGetSelectorPathDataForNode:(_WKJSHandle *)node
+{
+    __block bool done = false;
+    __block RetainPtr<NSData> result;
+    [self _getSelectorPathDataForNode:node completionHandler:^(NSData *data) {
+        result = data;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+- (_WKJSHandle *)synchronouslyGetNodeForSelectorPathData:(NSData *)data
+{
+    __block bool done = false;
+    __block RetainPtr<_WKJSHandle> result;
+    [self _getNodeForSelectorPathData:data completionHandler:^(_WKJSHandle *handle) {
+        result = handle;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+@end
+
+@implementation _WKTextExtractionInteraction (TextExtractionTests)
+
+- (NSString *)debugDescriptionInWebView:(WKWebView *)webView error:(NSError **)outError
+{
+    __block bool done = false;
+    __block RetainPtr<NSString> result;
+    __block RetainPtr<NSError> error;
+    [self debugDescriptionInWebView:webView completionHandler:^(NSString *description, NSError *theError) {
+        result = description;
+        error = theError;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    if (outError)
+        *outError = error.autorelease();
+    return result.autorelease();
+}
+
+@end
+
+@implementation _WKTextExtractionResult (TextExtractionTests)
+
+- (_WKJSHandle *)jsHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText
+{
+    __block bool done = false;
+    __block RetainPtr<_WKJSHandle> result;
+    [self requestJSHandleForNodeIdentifier:nodeIdentifier searchText:searchText completionHandler:^(_WKJSHandle *handle) {
+        result = handle;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+- (_WKJSHandle *)containerJSHandleForNodeIdentifier:(NSString *)nodeIdentifier searchText:(NSString *)searchText
+{
+    __block bool done = false;
+    __block RetainPtr<_WKJSHandle> result;
+    [self requestContainerJSHandleForNodeIdentifier:nodeIdentifier searchText:searchText completionHandler:^(_WKJSHandle *handle) {
+        result = handle;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+- (_WKJSHandle *)containerJSHandleForSearchTexts:(NSArray<NSString *> *)searchTexts nodeIdentifier:(NSString *)nodeIdentifier
+{
+    __block bool done = false;
+    __block RetainPtr<_WKJSHandle> result;
+    [self requestContainerJSHandleForSearchTexts:searchTexts nodeIdentifier:nodeIdentifier completionHandler:^(_WKJSHandle *handle) {
+        result = handle;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+- (WKFrameInfo *)frameInfoForNodeIdentifier:(NSString *)nodeIdentifier
+{
+    __block bool done = false;
+    __block RetainPtr<WKFrameInfo> result;
+    [self requestFrameInfoForNodeIdentifier:nodeIdentifier completionHandler:^(WKFrameInfo *frameInfo) {
+        result = frameInfo;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+@end
+
+#if PLATFORM(IOS_FAMILY)
+@interface WKDisplayLinkHandlerForTesting : NSObject
+- (void)displayLinkFired:(CADisplayLink *)sender;
+@end
+#endif
+
+namespace TestWebKitAPI {
+
+static NSString *extractNodeIdentifier(NSString *debugText, NSString *searchText)
+{
+    for (NSString *line in [debugText componentsSeparatedByString:@"\n"]) {
+        if (![line containsString:searchText])
+            continue;
+
+        RetainPtr regex = [NSRegularExpression regularExpressionWithPattern:@"uid=(((?:\\d+_)+)?\\d+)" options:0 error:nil];
+        RetainPtr match = [regex firstMatchInString:line options:0 range:NSMakeRange(0, line.length)];
+        if (!match)
+            continue;
+
+        NSRange identifierRange = [match rangeAtIndex:1];
+        return [line substringWithRange:identifierRange];
+    }
+
+    return nil;
+}
+
+#if PLATFORM(MAC)
+
+TEST(TextExtractionTests, SelectPopupMenu)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr click = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [click setNodeIdentifier:extractNodeIdentifier(debugText.get(), @"menu")];
+
+    __block bool doneSelectingOption = false;
+    __block RetainPtr<NSString> debugTextAfterClickingSelect;
+    [webView _performInteraction:click.get() completionHandler:^(_WKTextExtractionInteractionResult *clickResult) {
+        EXPECT_FALSE(clickResult.error);
+        EXPECT_NOT_NULL(clickResult.summary);
+        EXPECT_TRUE([[webView synchronouslyGetDebugText:nil] containsString:@"nativePopupMenu"]);
+
+        RetainPtr selectOption = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionSelectMenuItem]);
+        [selectOption setText:@"Three"];
+        [webView _performInteraction:selectOption.get() completionHandler:^(_WKTextExtractionInteractionResult *selectOptionResult) {
+            EXPECT_FALSE(selectOptionResult.error);
+            EXPECT_WK_STREQ("Successfully updated option in select element", selectOptionResult.summary);
+            doneSelectingOption = true;
+        }];
+    }];
+
+    Util::run(&doneSelectingOption);
+    EXPECT_WK_STREQ("Three", [webView stringByEvaluatingJavaScript:@"select.value"]);
+}
+
+#endif // PLATFORM(MAC)
+
+TEST(TextExtractionTests, InteractionDebugDescription)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr testButtonID = extractNodeIdentifier(debugText.get(), @"Test");
+    RetainPtr emailID = extractNodeIdentifier(debugText.get(), @"email");
+    RetainPtr composeID = extractNodeIdentifier(debugText.get(), @"Compose");
+    RetainPtr selectID = extractNodeIdentifier(debugText.get(), @"select");
+
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+    EXPECT_FALSE([debugText containsString:@"crazy ones"]);
+#endif
+
+    NSError *error = nil;
+    NSString *description = nil;
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+
+        [interaction setNodeIdentifier:testButtonID.get()];
+        description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+        EXPECT_WK_STREQ("Click on button labeled “Click Me” with id “test-button”, with rendered text “Test”", description);
+        EXPECT_NULL(error);
+
+        [interaction setNodeIdentifier:emailID.get()];
+        description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+        EXPECT_WK_STREQ("Click on input of type email with placeholder “Recipient address”", description);
+        EXPECT_NULL(error);
+
+        [interaction setNodeIdentifier:composeID.get()];
+        description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+        EXPECT_WK_STREQ("Click on editable div labeled “Compose a new message” with class “message-body”, with rendered text “Subject 'The quick brown fox jumped over the lazy dog'”, containing child labeled “Heading”", description);
+        EXPECT_NULL(error);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionTextInput]);
+
+        [interaction setNodeIdentifier:emailID.get()];
+        [interaction setText:@"squirrelfish@webkit.org"];
+        [interaction setReplaceAll:YES];
+        description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+        EXPECT_WK_STREQ("Enter text “squirrelfish@webkit.org” into input of type email with placeholder “Recipient address”, replacing any existing content", description);
+        EXPECT_NULL(error);
+
+        [interaction setNodeIdentifier:composeID.get()];
+        [interaction setText:@"«Testing»"];
+        [interaction setReplaceAll:NO];
+        description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+        EXPECT_WK_STREQ("Enter text “'Testing'” into editable div labeled “Compose a new message” with class “message-body”, with rendered text “Subject 'The quick brown fox jumped over the lazy dog'”, containing child labeled “Heading”", description);
+        EXPECT_NULL(error);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionSelectMenuItem]);
+        [interaction setNodeIdentifier:selectID.get()];
+        [interaction setText:@"Three"];
+        description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+        EXPECT_WK_STREQ("Select menu item “Three” in select with role “menu”", description);
+        EXPECT_NULL(error);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        auto clickLocation = [webView elementMidpointFromSelector:@"#test-button"];
+        [interaction setLocation:clickLocation];
+        description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+        RetainPtr expectedString = [NSString stringWithFormat:@"Click at coordinates (%.0f, %.0f) on child node of button labeled “Click Me” with id “test-button”, with rendered text “Test”", clickLocation.x, clickLocation.y];
+        EXPECT_WK_STREQ(expectedString.get(), description);
+        EXPECT_NULL(error);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setText:@"Subject"];
+        description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+        EXPECT_WK_STREQ("Click on “Subject” in child node of editable h3 labeled “Heading”, with rendered text “Subject”", description);
+        EXPECT_NULL(error);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+
+        [interaction setNodeIdentifier:extractNodeIdentifier(debugText, @"Open menu")];
+        description = [interaction debugDescriptionInWebView:webView error:&error];
+        EXPECT_WK_STREQ("Click on img labeled “Open menu” under link with href “/menu” with id “menu-link”", description);
+        EXPECT_NULL(error);
+
+        [interaction setNodeIdentifier:extractNodeIdentifier(debugText, @"Checkmark icon")];
+        description = [interaction debugDescriptionInWebView:webView error:&error];
+        EXPECT_WK_STREQ("Click on img labeled “Checkmark icon” under button labeled “Submit form” with id “submit-with-icon”", description);
+        EXPECT_NULL(error);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:extractNodeIdentifier(debugText, @"Open menu")];
+
+        [webView stringByEvaluatingJavaScript:@"document.getElementById('menu-link').setAttribute('href', '/search?q=webkit&lang=en')"];
+        description = [interaction debugDescriptionInWebView:webView error:&error];
+        EXPECT_WK_STREQ("Click on img labeled “Open menu” under link with href “/search?…” with id “menu-link”", description);
+        EXPECT_NULL(error);
+
+        RetainPtr longPathComponent = [@"" stringByPaddingToLength:99 withString:@"a" startingAtIndex:0];
+        [webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"document.getElementById('menu-link').setAttribute('href', '/%@')", longPathComponent.get()]];
+        description = [interaction debugDescriptionInWebView:webView error:&error];
+        RetainPtr expectedHref = [NSString stringWithFormat:@"/%@…", [longPathComponent.get() substringToIndex:78]];
+        RetainPtr expectedString = [NSString stringWithFormat:@"Click on img labeled “Open menu” under link with href “%@” with id “menu-link”", expectedHref.get()];
+        EXPECT_WK_STREQ(expectedString.get(), description);
+        EXPECT_NULL(error);
+    }
+}
+
+TEST(TextExtractionTests, InteractionDescriptionUsesAdjacentTextForUnlabeledIcon)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@"<div><span>Full Name</span><svg width='16' height='16' class='pencil1' onclick=''></svg></div>"
+        "<div><span>Password</span><span>********</span><svg width='16' height='16' class='pencil2' onclick=''></svg></div>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr nameIconID = extractNodeIdentifier(debugText, @"pencil1");
+    RetainPtr passwordIconID = extractNodeIdentifier(debugText, @"pencil2");
+    EXPECT_NOT_NULL(nameIconID);
+    EXPECT_NOT_NULL(passwordIconID);
+
+    NSError *error = nil;
+    NSString *description = nil;
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+
+    [interaction setNodeIdentifier:nameIconID];
+    description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_WK_STREQ("Click on svg with class “pencil1” after rendered text “Full Name”", description);
+    EXPECT_NULL(error);
+
+    [interaction setNodeIdentifier:passwordIconID];
+    description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_WK_STREQ("Click on svg with class “pencil2” after rendered text “Password ********”", description);
+    EXPECT_NULL(error);
+}
+
+TEST(TextExtractionTests, InteractionClicksThroughOccludingOverlay)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@"<a aria-label='Log in' href='#' style='position:absolute; top:10px; left:10px; width:80px; height:60px;'>"
+        "<span id='login-button' role='button' style='display:block; width:100%; height:100%;'>"
+        "<svg width='36' height='36' viewBox='0 0 36 36'><circle cx='18' cy='18' r='18' fill='black'></circle></svg>"
+        "</span></a>"
+        "<div style='position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.1);'></div>"
+        "<script>window.loginClicked = false;"
+        "document.getElementById('login-button').addEventListener('click', () => { window.loginClicked = true; });</script>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr loginLinkID = extractNodeIdentifier(debugText, @"Log in");
+    EXPECT_NOT_NULL(loginLinkID);
+
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:loginLinkID];
+    RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.loginClicked"] boolValue]);
+}
+
+TEST(TextExtractionTests, InteractionWithSearchTextSpanningBlockBoundary)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@"<a aria-label='Account nav entry' href='#settings'>"
+        "<span style='display:block'>05</span><span style='display:block'>SETTINGS</span></a>"
+        "<script>window.settingsClicked = false;"
+        "document.querySelector('a').addEventListener('click', () => { window.settingsClicked = true; });</script>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr settingsLinkID = extractNodeIdentifier(debugText, @"Account nav entry");
+    EXPECT_NOT_NULL(settingsLinkID);
+
+    NSError *error = nil;
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:settingsLinkID];
+    [interaction setText:@"05 SETTINGS"];
+
+    RetainPtr description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_NULL(error);
+    EXPECT_WK_STREQ("Click on link with href “#settings” labeled “Account nav entry”, with rendered text “05 SETTINGS”", description);
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.settingsClicked"] boolValue]);
+
+    [webView objectByEvaluatingJavaScript:@"window.settingsClicked = false"];
+    [interaction setText:@"05SETTINGS"];
+
+    description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_NULL(error);
+    EXPECT_WK_STREQ("Click on link with href “#settings” labeled “Account nav entry”, with rendered text “05 SETTINGS”", description);
+
+    result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.settingsClicked"] boolValue]);
+
+    [webView objectByEvaluatingJavaScript:@"window.settingsClicked = false"];
+    [interaction setText:@"05\u00a0SETTINGS"];
+
+    result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.settingsClicked"] boolValue]);
+}
+
+TEST(TextExtractionTests, InteractionDebugDescriptionWithStaleNodeIdentifier)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    NSError *error = nil;
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:@"999999999_999999999"];
+    [interaction setText:@"Test"];
+
+    EXPECT_NOT_NULL([interaction debugDescriptionInWebView:webView error:&error]);
+}
+
+TEST(TextExtractionTests, InteractionResultSummary)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration.autorelease();
+    }()];
+    RetainPtr testButtonID = extractNodeIdentifier(debugText.get(), @"Test");
+    RetainPtr emailID = extractNodeIdentifier(debugText.get(), @"email");
+    RetainPtr selectID = extractNodeIdentifier(debugText.get(), @"select");
+
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:testButtonID.get()];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NULL([result error]);
+        EXPECT_WK_STREQ("Clicked on button labeled “Click Me” with id “test-button”, with rendered text “Test”", [result summary]);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionTextInput]);
+        [interaction setNodeIdentifier:emailID.get()];
+        [interaction setText:@"squirrelfish@webkit.org"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NULL([result error]);
+        EXPECT_WK_STREQ("Inserted text into input of type email with placeholder “Recipient address”", [result summary]);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionSelectMenuItem]);
+        [interaction setNodeIdentifier:selectID.get()];
+        [interaction setText:@"Three"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NULL([result error]);
+        EXPECT_WK_STREQ("Successfully updated option in select element", [result summary]);
+    }
+
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setText:@"Subject"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NULL([result error]);
+        EXPECT_WK_STREQ("Clicked on “Subject” in child node of editable h3 labeled “Heading”, with rendered text “Subject”", [result summary]);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setText:@"this text does not exist anywhere on the page"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NOT_NULL([result error]);
+        EXPECT_NULL([result summary]);
+    }
+}
+
+TEST(TextExtractionTests, InteractionSearchTextMatchesAccessibilityLabel)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr testButtonID = extractNodeIdentifier(debugText, @"Test");
+
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:testButtonID];
+        [interaction setText:@"Click Me"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+        EXPECT_NULL([result error]);
+        EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.querySelector('.click-count').textContent"] intValue]);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:testButtonID];
+        [interaction setText:@"lick m"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+        EXPECT_NULL([result error]);
+        EXPECT_EQ(2, [[webView objectByEvaluatingJavaScript:@"document.querySelector('.click-count').textContent"] intValue]);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:testButtonID];
+        [interaction setText:@"not the label"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+        EXPECT_NOT_NULL([result error]);
+        EXPECT_EQ(2, [[webView objectByEvaluatingJavaScript:@"document.querySelector('.click-count').textContent"] intValue]);
+    }
+}
+
+TEST(TextExtractionTests, InteractionRemapsStaleNodeIdentifier)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+
+    auto makeDebugTextConfiguration = [] {
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration;
+    };
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+    RetainPtr staleIdentifier = extractNodeIdentifier([webView synchronouslyGetDebugText:makeDebugTextConfiguration()], @"Test");
+    EXPECT_NOT_NULL(staleIdentifier);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+    RetainPtr currentIdentifier = extractNodeIdentifier([webView synchronouslyGetDebugText:makeDebugTextConfiguration()], @"Test");
+    EXPECT_NOT_NULL(currentIdentifier);
+    EXPECT_FALSE([staleIdentifier isEqualToString:currentIdentifier]);
+
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:staleIdentifier];
+
+    NSError *error = nil;
+    RetainPtr description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+    EXPECT_NULL(error);
+    EXPECT_NOT_NULL(description);
+    EXPECT_TRUE([description containsString:@"Click Me"]);
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+    RetainPtr summary = [result summary];
+    EXPECT_TRUE([summary containsString:@"Click Me"]);
+    EXPECT_TRUE([summary containsString:@"stale"]);
+    EXPECT_TRUE([summary containsString:@"re-resolved"]);
+    EXPECT_EQ(1, [[webView objectByEvaluatingJavaScript:@"document.querySelector('.click-count').textContent"] intValue]);
+}
+
+TEST(TextExtractionTests, InteractionRemapsStaleNodeIdentifierWithURL)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+
+    auto makeDebugTextConfiguration = [] {
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeURLs:YES];
+        [configuration setShortenURLs:YES];
+        [configuration setIncludeRects:NO];
+        return configuration;
+    };
+
+    RetainPtr accountPageMarkup = @"<div role='tablist'>"
+        "<a href='https://example.com/account' role='tab' aria-selected='true' aria-label='Account tab'>Account</a>"
+        "<a href='https://example.com/security' role='tab' aria-selected='false' aria-label='Security tab'>Security</a>"
+        "</div>";
+
+    RetainPtr securityPageMarkup = @"<div role='tablist'>"
+        "<a href='https://example.com/account' role='tab' aria-selected='false' aria-label='Account tab'>Account</a>"
+        "<a href='https://example.com/security' role='tab' aria-selected='true' aria-label='Security tab'>Security</a>"
+        "</div>"
+        "<script>"
+        "window.accountTabClicked = false;"
+        "document.querySelector(\"a[href='https://example.com/account']\").addEventListener('click', event => {"
+        "    event.preventDefault();"
+        "    window.accountTabClicked = true;"
+        "});"
+        "</script>";
+
+    [webView synchronouslyLoadHTMLString:accountPageMarkup baseURL:[NSURL URLWithString:@"https://example.com/account"]];
+    RetainPtr staleAccountTabIdentifier = extractNodeIdentifier([webView synchronouslyGetDebugText:makeDebugTextConfiguration()], @"Account tab");
+    EXPECT_NOT_NULL(staleAccountTabIdentifier);
+
+    [webView synchronouslyLoadHTMLString:securityPageMarkup baseURL:[NSURL URLWithString:@"https://example.com/security"]];
+    RetainPtr currentAccountTabIdentifier = extractNodeIdentifier([webView synchronouslyGetDebugText:makeDebugTextConfiguration()], @"Account tab");
+    EXPECT_NOT_NULL(currentAccountTabIdentifier);
+    EXPECT_FALSE([staleAccountTabIdentifier isEqualToString:currentAccountTabIdentifier]);
+
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:staleAccountTabIdentifier];
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+    RetainPtr summary = [result summary];
+    EXPECT_TRUE([summary containsString:@"stale"]);
+    EXPECT_TRUE([summary containsString:@"re-resolved"]);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.accountTabClicked"] boolValue]);
+}
+
+TEST(TextExtractionTests, TargetNodeAndClientAttributes)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+    [webView evaluateJavaScript:@"getSelection().selectAllChildren(document.querySelector('h3[aria-label=\"Heading\"]'))" completionHandler:nil];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:^{
+        RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+        [configuration setAllowJSHandleCreation:YES];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr editorHandle = [webView querySelector:@"div[contenteditable]" frame:nil world:world.get()];
+    RetainPtr headingHandle = [webView querySelector:@"h3[aria-label='Heading']" frame:nil world:world.get()];
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setTargetNode:editorHandle.get()];
+        [configuration addClientAttribute:@"extra-data-1" value:@"abc" forNode:editorHandle.get()];
+        [configuration addClientAttribute:@"extra-data-1" value:@"123" forNode:headingHandle.get()];
+        [configuration addClientAttribute:@"extra-data-2" value:@"xyz" forNode:headingHandle.get()];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"Compose a new message"]);
+    EXPECT_TRUE([debugText containsString:@"label='Compose a new message' extra-data-1=abc"]);
+    EXPECT_TRUE([debugText containsString:@"label=Heading extra-data-1=123 extra-data-2=xyz"]);
+    EXPECT_TRUE([debugText containsString:@"Subject"]);
+    EXPECT_TRUE([debugText containsString:@"The quick brown fox jumped over the lazy dog"]);
+    EXPECT_FALSE([debugText containsString:@"select,"]);
+    EXPECT_FALSE([debugText containsString:@"Click Me"]);
+    EXPECT_FALSE([debugText containsString:@"Recipient address"]);
+}
+
+TEST(TextExtractionTests, TargetNodeWithSameOriginSubframe)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<div id='target'><p>main content</p><iframe srcdoc='<p>subframe content</p>'></iframe></div>"];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:^{
+        RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+        [configuration setAllowJSHandleCreation:YES];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr targetHandle = [webView querySelector:@"#target" frame:nil world:world];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setTargetNode:targetHandle];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"main content"]);
+    EXPECT_TRUE([debugText containsString:@"subframe content"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNamePrefixesContentBlocks)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<h1>Alpha</h1><p>Bravo</p><div><h2>Charlie</h2></div>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // A block that renders its own inline content is prefixed with its lowercased tag name.
+    EXPECT_TRUE([debugText containsString:@"h1 'Alpha'"]);
+    EXPECT_TRUE([debugText containsString:@"p 'Bravo'"]);
+    EXPECT_TRUE([debugText containsString:@"h2 'Charlie'"]);
+
+    // The <div> only holds a block-level child, so it is a structural wrapper and collapses rather than being tagged.
+    EXPECT_FALSE([debugText containsString:@"div"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameTagsBlockWithOnlyInlineContent)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<div>Delta</div>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // A generic block whose children are all inline (here, just text) renders its own text, so it is tagged.
+    EXPECT_TRUE([debugText containsString:@"div 'Delta'"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameDisabledByDefault)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<h1>Alpha</h1><p>Bravo</p>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration.autorelease();
+    }()];
+
+    // Without includeTagName the text is still extracted, but no tag-name prefix is emitted.
+    EXPECT_TRUE([debugText containsString:@"'Alpha'"]);
+    EXPECT_TRUE([debugText containsString:@"'Bravo'"]);
+    EXPECT_FALSE([debugText containsString:@"h1 '"]);
+    EXPECT_FALSE([debugText containsString:@"p '"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameCollapsesMixedInlineAndBlockContent)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<div>lead text<h2>Charlie</h2></div>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // The <div> mixes direct text with a block-level child, which forces a block formatting context, so it is a
+    // structural wrapper and collapses. Its own text is still extracted (untagged) and the inner block is tagged.
+    EXPECT_TRUE([debugText containsString:@"h2 'Charlie'"]);
+    EXPECT_TRUE([debugText containsString:@"'lead text'"]);
+    EXPECT_FALSE([debugText containsString:@"div"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameDropsEmptyAndWhitespaceBlocks)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<p>Alpha</p><div>   </div>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // A whitespace-only block has an inline formatting context, but pruning drops it once its whitespace text is
+    // removed, so it is never tagged.
+    EXPECT_TRUE([debugText containsString:@"p 'Alpha'"]);
+    EXPECT_FALSE([debugText containsString:@"div"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameKeepsSemanticLabelForStructuralContainers)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<blockquote>Quote text.</blockquote>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // Semantic containers are extracted independently of includeTagName and keep their descriptive label rather
+    // than the raw tag name; the flag only tags otherwise-generic blocks.
+    EXPECT_TRUE([debugText containsString:@"block-quote 'Quote text.'"]);
+    EXPECT_FALSE([debugText containsString:@"blockquote"]);
+}
+
+TEST(TextExtractionTests, IncludeTagNameFlattensInlineElementsIntoBlockText)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<p>First <b>bold</b> and <span>emphasized</span> text.</p>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        [configuration setIncludeTagName:YES];
+        return configuration.autorelease();
+    }()];
+
+    // Inline elements (<b>, <span>, …) have inline renderers, so they collapse and their text merges into the
+    // enclosing block's single text run; only the block itself is tagged.
+    EXPECT_TRUE([debugText containsString:@"p 'First bold and emphasized text.'"]);
+    EXPECT_FALSE([debugText containsString:@"b '"]);
+    EXPECT_FALSE([debugText containsString:@"span"]);
+}
+
+TEST(TextExtractionTests, ExtractFromDocumentWithoutBody)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    RetainPtr request = adoptNS([[NSURLRequest alloc] initWithURL:adoptNS([[NSURL alloc] initWithString:@"data:application/xml,<root><item>hello%20world</item></root>"]).get()]);
+    [webView synchronouslyLoadRequest:request.get()];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_NOT_NULL(debugText);
+}
+
+TEST(TextExtractionTests, ReplacementStrings)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugTextWithoutReplacements = [webView synchronouslyGetDebugText:nil];
+    EXPECT_TRUE([debugTextWithoutReplacements containsString:@"The quick brown fox jumped over the lazy dog"]);
+
+    RetainPtr debugTextWithReplacements = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setReplacementStrings:@{
+            @"fox": @"cat",
+            @"dog": @"mouse",
+            @"lazy": @""
+        }];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_FALSE([debugTextWithReplacements containsString:@"fox"]);
+    EXPECT_FALSE([debugTextWithReplacements containsString:@"dog"]);
+    EXPECT_FALSE([debugTextWithReplacements containsString:@"lazy"]);
+    EXPECT_TRUE([debugTextWithReplacements containsString:@"The quick brown cat jumped over the  mouse"]);
+}
+
+TEST(TextExtractionTests, ReplacementStringsLongestMatchWins)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadHTMLString:@"<p>John Appleseed met John.</p>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setReplacementStrings:@{
+            @"John": @"<redacted-name>",
+            @"John Appleseed": @"<redacted-full-name>",
+        }];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"<redacted-full-name> met <redacted-name>."]);
+    EXPECT_FALSE([debugText containsString:@"<redacted-name> Appleseed"]);
+}
+
+TEST(TextExtractionTests, ReplacementStringsCaseAndQuoteInsensitive)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadHTMLString:@"<p>Hello WORLD. It’s a test.</p>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setReplacementStrings:@{
+            @"hello world": @"<greeting>",
+            @"it's": @"<contraction>",
+        }];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"<greeting>"]);
+    EXPECT_TRUE([debugText containsString:@"<contraction>"]);
+    EXPECT_FALSE([debugText containsString:@"Hello WORLD"]);
+    EXPECT_FALSE([debugText containsString:@"It’s"]);
+}
+
+TEST(TextExtractionTests, ReplacementStringsDiacriticInsensitive)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadHTMLString:@"<p>Visited café in Zürich.</p>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setReplacementStrings:@{
+            @"cafe": @"<spot>",
+        }];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"Visited <spot> in Zürich."]);
+    EXPECT_FALSE([debugText containsString:@"café"]);
+    EXPECT_FALSE([debugText containsString:@"Zurich"]);
+}
+
+TEST(TextExtractionTests, ReplacementStringsAppliedToInteractionDescription)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr composeID = extractNodeIdentifier(debugText, @"Compose");
+
+    [webView synchronouslyGetDebugText:^{
+        RetainPtr replacementConfiguration = adoptNS([_WKTextExtractionConfiguration new]);
+        [replacementConfiguration setReplacementStrings:@{
+            @"FOX": @"cat",
+            @"compose a new message": @"[redacted subject]",
+        }];
+        return replacementConfiguration.autorelease();
+    }()];
+
+    NSError *error = nil;
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:composeID];
+    RetainPtr description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_NULL(error);
+
+    EXPECT_TRUE([description containsString:@"[redacted subject]"]);
+    EXPECT_TRUE([description containsString:@"brown cat jumped over the lazy dog"]);
+    EXPECT_FALSE([description containsString:@"Compose a new message"]);
+    EXPECT_FALSE([description containsString:@"fox"]);
+}
+
+TEST(TextExtractionTests, VisibleTextOnly)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration configureForMinimalOutput];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"Test"]);
+    EXPECT_TRUE([debugText containsString:@"foo"]);
+    EXPECT_TRUE([debugText containsString:@"Subject"]);
+    EXPECT_TRUE([debugText containsString:@"“The quick brown fox jumped over the lazy dog”"]);
+    EXPECT_TRUE([debugText containsString:@"0"]);
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+    EXPECT_FALSE([debugText containsString:@"Here’s to the crazy ones"]);
+    EXPECT_FALSE([debugText containsString:@"The round pegs in the square holes"]);
+    EXPECT_FALSE([debugText containsString:@"The ones who see things differently"]);
+    EXPECT_FALSE([debugText containsString:@"And they have no respect for the status quo"]);
+    EXPECT_FALSE([debugText containsString:@"They push the human race forward"]);
+    EXPECT_FALSE([debugText containsString:@"Because the people who are crazy"]);
+#endif // ENABLE(TEXT_EXTRACTION_FILTER)
+}
+
+TEST(TextExtractionTests, ZeroWordLimit)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"Hello"];
+
+    RetainPtr extractionConfiguration = adoptNS([_WKTextExtractionConfiguration new]);
+    [extractionConfiguration setOutputFormat:_WKTextExtractionOutputFormatPlainText];
+    [extractionConfiguration setFilterOptions:_WKTextExtractionFilterNone];
+    [extractionConfiguration setMaxWordsPerParagraph:0];
+
+    EXPECT_WK_STREQ("…", [webView synchronouslyGetDebugText:extractionConfiguration.get()]);
+}
+
+TEST(TextExtractionTests, SkipNearlyTransparentContentByDefault)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <body>
+            <div>visible container text</div>
+            <div style="opacity: 0">transparent container text</div>
+            <label for="labeled-field">Visible label</label>
+            <input id="labeled-field" style="opacity: 0" placeholder="labeled transparent field">
+            <input style="opacity: 0" placeholder="unlabeled transparent field">
+        </body>
+        </html>
+    )HTML"];
+
+    RetainPtr defaultText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([defaultText containsString:@"visible container text"]);
+    EXPECT_FALSE([defaultText containsString:@"transparent container text"]);
+    EXPECT_TRUE([defaultText containsString:@"labeled transparent field"]);
+    EXPECT_FALSE([defaultText containsString:@"unlabeled transparent field"]);
+}
+
+TEST(TextExtractionTests, MinimalHTMLOutput)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "    <body>"
+        "        <p>Hello <span class='asdf'>world</span></p>"
+        "        <input data-name='form' type='password' placeholder='Password field' />"
+        "        <div contenteditable>This <span id='target'>text</span> is editable</div>"
+        "    </body>"
+        "</html>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration configureForMinimalOutput];
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatHTML];
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"Hello world"]);
+    EXPECT_TRUE([debugText containsString:@"This text is editable"]);
+    EXPECT_FALSE([debugText containsString:@"data-name"]);
+    EXPECT_FALSE([debugText containsString:@"form"]);
+    EXPECT_FALSE([debugText containsString:@"target"]);
+    EXPECT_FALSE([debugText containsString:@"asdf"]);
+}
+
+TEST(TextExtractionTests, NestedDetailsDoesNotHang)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<details><details>x<summary></summary></details></details>"];
+
+    __block bool done = false;
+    [webView _requestAllTextWithCompletionHandler:^(NSArray<_WKTextRun *> *) {
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(TextExtractionTests, FilterOptions)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    auto extractTextWithFilterOptions = [webView](_WKTextExtractionFilterOptions options) {
+        return [webView synchronouslyExtractDebugTextResult:^{
+            RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+            [configuration setFilterOptions:options];
+            return configuration.autorelease();
+        }()];
+    };
+
+    {
+        RetainPtr result = extractTextWithFilterOptions(_WKTextExtractionFilterNone);
+        EXPECT_TRUE([[result textContent] containsString:@"“The quick brown fox jumped over the lazy dog”"]);
+        EXPECT_TRUE([[result textContent] containsString:@"Here’s to the crazy ones"]);
+        EXPECT_FALSE([result filteredOutAnyText]);
+    }
+    {
+        RetainPtr result = extractTextWithFilterOptions(_WKTextExtractionFilterTextRecognition);
+        EXPECT_TRUE([[result textContent] containsString:@"“The quick brown fox jumped over the lazy dog”"]);
+#if ENABLE(TEXT_EXTRACTION_FILTER)
+        EXPECT_FALSE([[result textContent] containsString:@"Here’s to the crazy ones"]);
+        EXPECT_TRUE([result filteredOutAnyText]);
+#endif
+    }
+    {
+        RetainPtr result = extractTextWithFilterOptions(_WKTextExtractionFilterClassifier);
+        EXPECT_TRUE([[result textContent] containsString:@"“The quick brown fox jumped over the lazy dog”"]);
+        EXPECT_TRUE([[result textContent] containsString:@"Here’s to the crazy ones"]);
+        EXPECT_FALSE([result filteredOutAnyText]);
+    }
+}
+
+TEST(TextExtractionTests, FilterRedundantTextInLinks)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@"<body>"
+        "<a class='first' href='http://apple.com'>apple</a>"
+        "<a class='second' href='http://webkit.org'>webkit</a>"
+        "</body>"];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:^{
+        RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+        [configuration setAllowJSHandleCreation:YES];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr firstLink = [webView querySelector:@".first" frame:nil world:world.get()];
+        RetainPtr secondLink = [webView querySelector:@".second" frame:nil world:world.get()];
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeURLs:NO];
+        [configuration setIncludeRects:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+        [configuration addClientAttribute:@"href" value:@"url1.com" forNode:firstLink.get()];
+        [configuration addClientAttribute:@"href" value:@"webkit.org" forNode:secondLink.get()];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"link href=url1.com 'apple'"]);
+    EXPECT_TRUE([debugText containsString:@"link href=webkit.org"]);
+}
+
+TEST(TextExtractionTests, NodesToSkip)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:^{
+        RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+        [configuration setAllowJSHandleCreation:YES];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr selectHandle = [webView querySelector:@"select" frame:nil world:world.get()];
+    RetainPtr inputHandle = [webView querySelector:@"input[type=email]" frame:nil world:world.get()];
+    RetainPtr editorHandle = [webView querySelector:@"div[contenteditable]" frame:nil world:world.get()];
+    RetainPtr hiddenTextHandle = [webView querySelector:@"h4" frame:nil world:world.get()];
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setNodesToSkip:@[editorHandle.get(), selectHandle.get(), inputHandle.get(), hiddenTextHandle.get()]];
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatMarkdown];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+        [configuration setIncludeRects:NO];
+        return configuration.autorelease();
+    }()];
+
+    NSArray<NSString *> *lines = [debugText componentsSeparatedByString:@"\n"];
+    EXPECT_EQ([lines count], 4u);
+    EXPECT_WK_STREQ("Test", lines[0]);
+    EXPECT_WK_STREQ("subject SUBJECT", lines[1]);
+    EXPECT_WK_STREQ("![]() [](file:///menu)![]()", lines[2]);
+    EXPECT_WK_STREQ("0", lines[3]);
+}
+
+TEST(TextExtractionTests, RequestJSHandleForNodeIdentifier)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr debugTextForSubject = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+
+        RetainPtr nodeID = extractNodeIdentifier([extractionResult textContent], @"Compose a new message");
+        [configuration setTargetNode:[extractionResult jsHandleForNodeIdentifier:nodeID.get() searchText:@"Subject"]];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_WK_STREQ(debugTextForSubject.get(), @"root\n\tlabel=Heading 'Subject'");
+
+    RetainPtr debugTextForBody = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+        [configuration setTargetNode:[extractionResult jsHandleForNodeIdentifier:nil searchText:@"The quick brown fox"]];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_WK_STREQ(debugTextForBody.get(), @"root '\u201CThe quick brown fox jumped over the lazy dog\u201D'");
+
+    RetainPtr nodeID = extractNodeIdentifier([extractionResult textContent], @"Compose a new message");
+    EXPECT_NOT_NULL([extractionResult jsHandleForNodeIdentifier:nodeID.get() searchText:@"text that does not exist"]);
+    EXPECT_NULL([extractionResult jsHandleForNodeIdentifier:nil searchText:@"text that does not exist"]);
+}
+
+TEST(TextExtractionTests, RequestJSHandleForStaleNodeIdentifier)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr nodeID = extractNodeIdentifier([extractionResult textContent], @"Compose a new message");
+    EXPECT_NOT_NULL(nodeID.get());
+    [webView synchronouslyLoadHTMLString:@"<body>different content</body>"];
+    EXPECT_NULL([extractionResult jsHandleForNodeIdentifier:nodeID searchText:nil]);
+}
+
+TEST(TextExtractionTests, RequestJSHandleForNodeIdentifierCaseSensitive)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr debugTextForLowercase = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+        [configuration setTargetNode:[extractionResult jsHandleForNodeIdentifier:nil searchText:@"subject"]];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_WK_STREQ(debugTextForLowercase.get(), @"root\n\tlabel=Lowercase 'subject'");
+
+    RetainPtr debugTextForUppercase = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+        [configuration setTargetNode:[extractionResult jsHandleForNodeIdentifier:nil searchText:@"SUBJECT"]];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_WK_STREQ(debugTextForUppercase.get(), @"root\n\tlabel=Uppercase 'SUBJECT'");
+}
+
+TEST(TextExtractionTests, RequestContainerJSHandleForNodeIdentifier)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-product"];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionAllContainers];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr debugText1 = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatMarkdown];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+
+        RetainPtr handle = [extractionResult containerJSHandleForNodeIdentifier:nil searchText:@"Premium Wireless Headphones"];
+        [configuration setTargetNode:handle.get()];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr debugText2 = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatMarkdown];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+
+        RetainPtr nodeID = extractNodeIdentifier([extractionResult textContent], @"$99.99");
+        RetainPtr handle = [extractionResult containerJSHandleForNodeIdentifier:nodeID.get() searchText:nil];
+        [configuration setTargetNode:handle.get()];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_WK_STREQ(debugText1.get(), debugText2.get());
+    EXPECT_TRUE([debugText1 containsString:@"Sale - 20% Off"]);
+    EXPECT_TRUE([debugText1 containsString:@"In Stock - Ships within 24 hours"]);
+    EXPECT_FALSE([debugText1 containsString:@"Customers Also Bought"]);
+
+    RetainPtr nodeID = extractNodeIdentifier([extractionResult textContent], @"$99.99");
+    EXPECT_NOT_NULL([extractionResult containerJSHandleForNodeIdentifier:nodeID.get() searchText:@"text that does not exist"]);
+    EXPECT_NULL([extractionResult containerJSHandleForNodeIdentifier:nil searchText:@"text that does not exist"]);
+}
+
+TEST(TextExtractionTests, RequestContainerJSHandleForSearchTexts)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-product"];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionAllContainers];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatMarkdown];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+
+        RetainPtr firstSectionID = extractNodeIdentifier([extractionResult textContent], @"section");
+        RetainPtr handle = [extractionResult containerJSHandleForSearchTexts:@[ @"Premium Wireless Headphones", @"Ships within 24 hours" ] nodeIdentifier:firstSectionID.get()];
+        [configuration setTargetNode:handle.get()];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"Premium Wireless Headphones"]);
+    EXPECT_TRUE([debugText containsString:@"Ships within 24 hours"]);
+    EXPECT_FALSE([debugText containsString:@"Customers Also Bought"]);
+    EXPECT_FALSE([debugText containsString:@"The noise cancellation is incredible"]);
+}
+
+TEST(TextExtractionTests, RequestContainerJSHandleForSearchTextsFallsBackToBodyWhenTargetMisses)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-product"];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        [configuration setIncludeAccessibilityAttributes:YES];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionAllContainers];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr reviewsSectionID = extractNodeIdentifier([extractionResult textContent], @"5 Reviews");
+    EXPECT_NOT_NULL(reviewsSectionID.get());
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatMarkdown];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+
+        RetainPtr handle = [extractionResult containerJSHandleForSearchTexts:@[ @"Premium Wireless Headphones", @"Ships within 24 hours" ] nodeIdentifier:reviewsSectionID.get()];
+        [configuration setTargetNode:handle.get()];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"Premium Wireless Headphones"]);
+    EXPECT_TRUE([debugText containsString:@"Ships within 24 hours"]);
+    EXPECT_FALSE([debugText containsString:@"Customer Reviews"]);
+}
+
+TEST(TextExtractionTests, RequestJSHandleForNodeInDetachedSubframe)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    __block RetainPtr subframes = adoptNS([NSMutableArray new]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate setDidCommitLoadWithRequestInFrame:^(WKWebView *, NSURLRequest *, WKFrameInfo *frame) {
+        if (!frame.mainFrame && ![frame.request.URL.scheme isEqualToString:@"about"])
+            [subframes addObject:frame];
+    }];
+    [webView setNavigationDelegate:navigationDelegate];
+
+    [webView loadHTMLString:@"<h1>Subframe</h1> <iframe id='child' srcdoc=\"<button id='target'>subframe target</p>\"></iframe>" baseURL:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    Util::waitForConditionWithLogging([webView] {
+        return [[webView objectByEvaluatingJavaScript:@"!!document.getElementById('child').contentDocument && document.getElementById('child').contentDocument.readyState === 'complete'"] boolValue];
+    }, 3, @"Expected subframe to finish loading.");
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setAdditionalFrames:subframes];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr buttonIdentifier = extractNodeIdentifier([extractionResult textContent], @"subframe target");
+    EXPECT_NOT_NULL(buttonIdentifier);
+
+    [webView objectByEvaluatingJavaScript:@"document.querySelector('iframe').remove()"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr buttonHandle = [extractionResult jsHandleForNodeIdentifier:buttonIdentifier searchText:nil];
+    EXPECT_NULL(buttonHandle);
+
+    RetainPtr headingText = [webView stringByEvaluatingJavaScript:@"document.querySelector('h1').textContent"];
+    EXPECT_WK_STREQ(@"Subframe", headingText);
+}
+
+TEST(TextExtractionTests, ResolveTargetNodeFromSelectorData)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr selectorData = [&] {
+        RetainPtr originalWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+        [originalWebView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+        RetainPtr world = [WKContentWorld _worldWithConfiguration:^{
+            RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+            [configuration setAllowJSHandleCreation:YES];
+            return configuration.autorelease();
+        }()];
+
+        RetainPtr subjectHandle = [originalWebView querySelector:@"h3" frame:nil world:world.get()];
+        return [originalWebView synchronouslyGetSelectorPathDataForNode:subjectHandle.get()];
+    }();
+
+    EXPECT_NOT_NULL(selectorData.get());
+
+    RetainPtr newWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [newWebView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr resolvedHandle = [newWebView synchronouslyGetNodeForSelectorPathData:selectorData.get()];
+    EXPECT_NOT_NULL(resolvedHandle.get());
+
+    RetainPtr debugText = [newWebView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+        [configuration setTargetNode:resolvedHandle.get()];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_WK_STREQ(debugText.get(), @"root\n\tlabel=Heading 'Subject'");
+}
+
+TEST(TextExtractionTests, ClickInteractionWithElementHandle)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <head><meta name='viewport' content='width=device-width, initial-scale=1'></head>
+        <body>
+            <button id='submit' onclick="document.getElementById('result').textContent = 'clicked'">Submit</button>
+            <div id='result'>none</div>
+        </body>
+        </html>
+    )HTML"];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:^{
+        RetainPtr worldConfiguration = adoptNS([_WKContentWorldConfiguration new]);
+        [worldConfiguration setAllowJSHandleCreation:YES];
+        return worldConfiguration.autorelease();
+    }()];
+
+    RetainPtr buttonHandle = [webView querySelector:@"#submit" frame:nil world:world];
+    RetainPtr selectorData = [webView synchronouslyGetSelectorPathDataForNode:buttonHandle];
+    RetainPtr elementHandle = [webView synchronouslyGetNodeForSelectorPathData:selectorData];
+    EXPECT_NOT_NULL(elementHandle);
+
+    RetainPtr click = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [click setElementHandle:elementHandle];
+    [click setNodeIdentifier:@"0_99999"]; // Intentionally invalid node UID.
+
+    NSError *error = nil;
+    RetainPtr description = [click debugDescriptionInWebView:webView error:&error];
+    EXPECT_NULL(error);
+    EXPECT_TRUE([description containsString:@"Submit"]);
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:click];
+    EXPECT_NULL([result error]);
+
+    EXPECT_WK_STREQ("clicked", [webView stringByEvaluatingJavaScript:@"document.getElementById('result').textContent"]);
+}
+
+#if HAVE(SAFARI_SAFE_BROWSING_NAMESPACED_LISTS)
+
+typedef void(^WKSafeBrowsingNamespacedListBlock)(NSDictionary<NSString *, NSArray<NSString *> *> *, NSError *);
+static void overrideGetListsForNamespace(SSBLookupContext *instance, SEL, NSString *, NSString *, WKSafeBrowsingNamespacedListBlock completion)
+{
+    static NeverDestroyed workQueue = WorkQueue::create("Queue for simulating SSB API"_s);
+    workQueue.get()->dispatch([completion = makeBlockPtr(completion)] {
+        RetainPtr hardCodedResult = @{
+            @"test1/domains": @[ @".*" ],
+            @"test1/filter": @[ @"return input.length >= 1000 ? '<too long>' : null" ],
+            @"test2/domains": @[ @".*" ],
+            @"test2/filter": @[ @"return input.replaceAll('o', '•').replaceAll('u', 'v')" ],
+        };
+        completion(hardCodedResult, nil);
+    });
+}
+
+TEST(TextExtractionTests, FilteringRules)
+{
+    InstanceMethodSwizzler safeBrowsingSwizzler {
+        getSSBLookupContextClassSingleton(),
+        @selector(_getListsForNamespace:collectionId:completionHandler:),
+        reinterpret_cast<IMP>(overrideGetListsForNamespace)
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatHTML];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+        [configuration setIncludeRects:NO];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"<input type='email' placeholder='Recipient address'>f••</input>"]);
+    EXPECT_TRUE([debugText containsString:@"<h3 aria-label='Heading'>Svbject</h3>"]);
+    EXPECT_TRUE([debugText containsString:@"The qvick br•wn f•x jvmped •ver the lazy d•g"]);
+}
+
+static void overrideGetListsForNamespaceIsolation(SSBLookupContext *, SEL, NSString *, NSString *, WKSafeBrowsingNamespacedListBlock completion)
+{
+    static NeverDestroyed workQueue = WorkQueue::create("Queue for simulating SSB API"_s);
+    workQueue.get()->dispatch([completion = makeBlockPtr(completion)] {
+        RetainPtr hardCodedResult = @{
+            @"isolation/domains": @[ @".*" ],
+            @"isolation/filter": @[ @"\
+                let dom = '<dom:?>'; \
+                try { \
+                    const text = (typeof document !== 'undefined' && document && document.body) ? document.body.innerText.trim() : ''; \
+                    dom = text ? `<dom:leaked:${text}>` : '<dom:empty>'; \
+                } catch (e) { \
+                    dom = `<dom:threw:${e.name}>`; \
+                } \
+                let net = '<net:?>'; \
+                try { \
+                    const response = await fetch('http://127.0.0.1:1/should-never-load'); \
+                    net = `<net:loaded:${response.status}>`; \
+                } catch (e) { \
+                    net = '<net:blocked>'; \
+                } \
+                return `${dom}|${net}`; \
+            " ],
+        };
+        completion(hardCodedResult, nil);
+    });
+}
+
+TEST(TextExtractionTests, FilteringRulesAreIsolated)
+{
+    HTTPServer server { { { "/should-never-load"_s, { "leaked"_s } } }, HTTPServer::Protocol::Http };
+
+    InstanceMethodSwizzler safeBrowsingSwizzler {
+        getSSBLookupContextClassSingleton(),
+        @selector(_getListsForNamespace:collectionId:completionHandler:),
+        reinterpret_cast<IMP>(overrideGetListsForNamespaceIsolation)
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatHTML];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionNone];
+        [configuration setIncludeRects:NO];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"&lt;dom:empty&gt;|&lt;net:blocked&gt;"]);
+    EXPECT_FALSE([debugText containsString:@"&lt;dom:leaked:"]);
+    EXPECT_FALSE([debugText containsString:@"&lt;net:loaded:"]);
+    EXPECT_EQ(0u, server.totalRequests());
+}
+
+#endif // HAVE(SAFARI_SAFE_BROWSING_NAMESPACED_LISTS)
+
+static String mainFrameMarkup(uint16_t port)
+{
+    return makeString(R"(<!DOCTYPE html>
+        <html>
+            <head>
+                <meta name='viewport' content='width=device-width, initial-scale=1'>
+                <style>
+                    iframe {
+                        width: 300px;
+                        height: 300px;
+                    }
+                </style>
+            </head>
+            <body>
+                <iframe class='same'></iframe>
+                <iframe class='cross'></iframe>
+                <a href='https://webkit.org'>Link to WebKit home page</a>
+                <script>
+                    subframeLoadedCount = 0;
+                    sameOriginFrame = document.querySelector('iframe.same');
+                    sameOriginFrame.addEventListener('load', () => subframeLoadedCount++, { once: true });
+                    sameOriginFrame.src = 'subframe-same.html';
+
+                    crossOriginFrame = document.querySelector('iframe.cross');
+                    crossOriginFrame.addEventListener('load', () => subframeLoadedCount++, { once: true });
+                    crossOriginFrame.src = 'http://localhost:)"_s, port, R"(/subframe-cross.html';
+                </script>
+            </body>
+        </html>)"_s);
+}
+
+static String subFrameMarkup(ASCIILiteral buttonText)
+{
+    return makeString(R"(<!DOCTYPE html>
+        <html>
+            <body>
+                <h1>Click count: <span id='click-count'>0</span></h1>
+                <article aria-label='Button container'>
+                    <button>)"_s, buttonText, R"(</button>
+                </article>
+                <script>
+                    const clickCount = document.getElementById('click-count');
+                    const button = document.querySelector('button');
+                    button.addEventListener('click', () => {
+                        clickCount.textContent = 1 + parseInt(clickCount.textContent);
+                    });
+                </script>
+            </body>
+        </html>)"_s);
+}
+
+TEST(TextExtractionTests, SubframeInteractions)
+{
+    HTTPServer server { {
+        { "/subframe-cross.html"_s, { subFrameMarkup("Cross origin: click here"_s) } },
+        { "/subframe-same.html"_s, { subFrameMarkup("Same origin: click here"_s) } },
+    }, HTTPServer::Protocol::Http };
+
+    server.addResponse("/"_s, { mainFrameMarkup(server.port()) });
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    __block RetainPtr subframes = adoptNS([NSMutableArray new]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate setDidCommitLoadWithRequestInFrame:^(WKWebView *, NSURLRequest *, WKFrameInfo *frame) {
+        if (!frame.mainFrame && ![frame.request.URL.scheme isEqualToString:@"about"])
+            [subframes addObject:frame];
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:server.request()];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    Util::waitForConditionWithLogging([webView] {
+        return [[webView objectByEvaluatingJavaScript:@"subframeLoadedCount"] intValue] == 2;
+    }, 2, @"Expected subframes to finish loading.");
+
+    RetainPtr extractionConfiguration = adoptNS([_WKTextExtractionConfiguration new]);
+    [extractionConfiguration setIncludeRects:NO];
+    [extractionConfiguration setIncludeURLs:NO];
+    [extractionConfiguration setAdditionalFrames:subframes.get()];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:^{
+        RetainPtr configuration = adoptNS([_WKContentWorldConfiguration new]);
+        [configuration setAllowJSHandleCreation:YES];
+        return configuration.autorelease();
+    }()];
+
+    for (WKFrameInfo *subframe in subframes.get()) {
+        RetainPtr button = [webView querySelector:@"button" frame:subframe world:world.get()];
+        EXPECT_NOT_NULL(button);
+        [extractionConfiguration addClientAttribute:@"foo" value:@"bar" forNode:button.get()];
+    }
+
+    auto numberOfMatches = [](NSString *text, NSString *patternString) {
+        RetainPtr pattern = [NSRegularExpression regularExpressionWithPattern:patternString options:0 error:nil];
+        return [pattern numberOfMatchesInString:text options:0 range:NSMakeRange(0, text.length)];
+    };
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:extractionConfiguration.get()];
+    EXPECT_EQ(numberOfMatches(debugText.get(), @"foo=bar"), 2u);
+
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:extractNodeIdentifier(debugText.get(), @"Same origin: click here")];
+
+        NSError *error = nil;
+        RetainPtr description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+        EXPECT_WK_STREQ(description.get(), @"Click on button under article labeled “Button container”, with rendered text “Same origin: click here”");
+
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NULL([result error]);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:extractNodeIdentifier(debugText.get(), @"Cross origin: click here")];
+
+        NSError *error = nil;
+        RetainPtr description = [interaction debugDescriptionInWebView:webView.get() error:&error];
+        EXPECT_WK_STREQ(description.get(), @"Click on button under article labeled “Button container”, with rendered text “Cross origin: click here”");
+
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NULL([result error]);
+    }
+
+    RetainPtr debugTextAfterClicks = [webView synchronouslyGetDebugText:extractionConfiguration.get()];
+    EXPECT_EQ(numberOfMatches(debugTextAfterClicks.get(), @"Click count: 1"), 2u);
+}
+
+TEST(TextExtractionTests, SubframeOriginInDebugText)
+{
+    HTTPServer server { {
+        { "/subframe-cross.html"_s, { subFrameMarkup("Cross"_s) } },
+        { "/subframe-same.html"_s, { subFrameMarkup("Same"_s) } },
+    }, HTTPServer::Protocol::Http };
+
+    server.addResponse("/"_s, { mainFrameMarkup(server.port()) });
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadRequest:server.request()];
+
+    Util::waitForConditionWithLogging([webView] {
+        return [[webView objectByEvaluatingJavaScript:@"subframeLoadedCount"] intValue] == 2;
+    }, 2, @"Expected subframes to finish loading.");
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setIncludeURLs:YES];
+        return configuration.autorelease();
+    }()];
+
+    auto crossOriginExpected = makeString("origin=localhost:"_s, server.port());
+    EXPECT_TRUE([debugText containsString:crossOriginExpected.createNSString()]);
+    EXPECT_FALSE([debugText containsString:@"origin=http://localhost"]);
+    EXPECT_FALSE([debugText containsString:@"origin=127.0.0.1"]);
+}
+
+TEST(TextExtractionTests, RequestFrameInfoForNodeIdentifier)
+{
+    HTTPServer server { {
+        { "/subframe-cross.html"_s, { subFrameMarkup("Cross origin: click here"_s) } },
+        { "/subframe-same.html"_s, { subFrameMarkup("Same origin: click here"_s) } },
+    }, HTTPServer::Protocol::Http };
+
+    server.addResponse("/"_s, { mainFrameMarkup(server.port()) });
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    __block RetainPtr subframes = adoptNS([NSMutableArray new]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate setDidCommitLoadWithRequestInFrame:^(WKWebView *, NSURLRequest *, WKFrameInfo *frame) {
+        if (!frame.mainFrame && ![frame.request.URL.scheme isEqualToString:@"about"])
+            [subframes addObject:frame];
+    }];
+    [webView setNavigationDelegate:navigationDelegate];
+    [webView loadRequest:server.request()];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    Util::waitForConditionWithLogging([webView] {
+        return [[webView objectByEvaluatingJavaScript:@"subframeLoadedCount"] intValue] == 2;
+    }, 2, @"Expected subframes to finish loading.");
+
+    RetainPtr result = [webView synchronouslyExtractDebugTextResult:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setAdditionalFrames:subframes];
+        return configuration.autorelease();
+    }()];
+
+    RetainPtr debugText = [result textContent];
+    auto crossOriginToken = makeString("origin=localhost:"_s, server.port());
+
+    RetainPtr crossOriginFrameInfo = [result frameInfoForNodeIdentifier:extractNodeIdentifier(debugText, crossOriginToken.createNSString())];
+    EXPECT_NOT_NULL(crossOriginFrameInfo);
+    EXPECT_FALSE([crossOriginFrameInfo isMainFrame]);
+    EXPECT_WK_STREQ("/subframe-cross.html", [[crossOriginFrameInfo request].URL path]);
+
+    RetainPtr crossOriginButtonFrameInfo = [result frameInfoForNodeIdentifier:extractNodeIdentifier(debugText, @"Cross origin: click here")];
+    EXPECT_NOT_NULL(crossOriginButtonFrameInfo);
+    EXPECT_FALSE([crossOriginButtonFrameInfo isMainFrame]);
+    EXPECT_WK_STREQ("/subframe-cross.html", [[crossOriginButtonFrameInfo request].URL path]);
+
+    RetainPtr sameOriginButtonFrameInfo = [result frameInfoForNodeIdentifier:extractNodeIdentifier(debugText, @"Same origin: click here")];
+    EXPECT_NOT_NULL(sameOriginButtonFrameInfo);
+    EXPECT_FALSE([sameOriginButtonFrameInfo isMainFrame]);
+    EXPECT_WK_STREQ("/subframe-same.html", [[sameOriginButtonFrameInfo request].URL path]);
+
+    RetainPtr mainFrameInfo = [result frameInfoForNodeIdentifier:extractNodeIdentifier(debugText, @"Link to WebKit home page")];
+    EXPECT_NOT_NULL(mainFrameInfo);
+    EXPECT_TRUE([mainFrameInfo isMainFrame]);
+
+    EXPECT_NULL([result frameInfoForNodeIdentifier:@"not-a-node-identifier"]);
+}
+
+TEST(TextExtractionTests, ClickInteractionWithTextOnly)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    EXPECT_WK_STREQ("0", [webView stringByEvaluatingJavaScript:@"clickCount.textContent"]);
+
+    RetainPtr click = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [click setText:@"Test"];
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:click.get()];
+    EXPECT_NULL([result error]);
+    EXPECT_WK_STREQ("1", [webView stringByEvaluatingJavaScript:@"clickCount.textContent"]);
+}
+
+TEST(TextExtractionTests, ScrollToRevealFallsBackToFullDocumentWhenNodeMisses)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+        </head>
+        <body>
+            <button id='anchor'>Anchor Section</button>
+            <div style='height: 5000px'></div>
+            <div id='target'>Reveal Me Down Here</div>
+        </body>
+        </html>
+    )HTML"];
+
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue]);
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeRects:NO];
+        [configuration setNodeIdentifierInclusion:_WKTextExtractionNodeIdentifierInclusionAllContainers];
+        return configuration.autorelease();
+    }()];
+    RetainPtr anchorID = extractNodeIdentifier(debugText, @"Anchor Section");
+    EXPECT_NOT_NULL(anchorID);
+
+    RetainPtr scroll = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionScroll]);
+    [scroll setNodeIdentifier:anchorID];
+    [scroll setText:@"Reveal Me Down Here"];
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:scroll];
+    EXPECT_NULL([result error]);
+    EXPECT_GT([[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue], 0);
+
+    RetainPtr missingScroll = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionScroll]);
+    [missingScroll setNodeIdentifier:anchorID];
+    [missingScroll setText:@"This text does not exist anywhere"];
+
+    RetainPtr missingResult = [webView synchronouslyPerformInteraction:missingScroll];
+    EXPECT_NOT_NULL([missingResult error]);
+}
+
+TEST(TextExtractionTests, ClickInteractionWhileInBackground)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:^{
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        [configuration _setBackgroundTextExtractionEnabled:YES];
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+        </head>
+        <body>
+            <button>Click Me</button>
+            <div id='result'>pending</div>
+            <script>
+                document.querySelector('button').addEventListener('click', async () => {
+                    for (let i = 0; i < 3; ++i) {
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                        await new Promise(requestAnimationFrame);
+                    }
+                    document.getElementById('result').textContent = 'completed';
+                });
+            </script>
+        </body>
+        </html>
+    )HTML"];
+
+#if PLATFORM(IOS_FAMILY)
+    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidEnterBackgroundNotification object:UIApplication.sharedApplication userInfo:@{@"isSuspendedUnderLock": @NO }];
+    [NSNotificationCenter.defaultCenter postNotificationName:UISceneDidEnterBackgroundNotification object:[[webView window] windowScene] userInfo:nil];
+#else
+    [[webView window] orderOut:nil];
+#endif
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr buttonID = extractNodeIdentifier(debugText.get(), @"Click Me");
+    EXPECT_NOT_NULL(buttonID.get());
+
+    RetainPtr click = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [click setNodeIdentifier:buttonID.get()];
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:click.get()];
+    EXPECT_NULL([result error]);
+
+    Util::waitForConditionWithLogging([webView] {
+        return [[webView stringByEvaluatingJavaScript:@"document.getElementById('result').textContent"] isEqualToString:@"completed"];
+    }, 5, @"Expected result text to become 'completed'.");
+}
+
+#if PLATFORM(IOS_FAMILY)
+
+TEST(TextExtractionTests, ClickInteractionWithStalledDisplayLink)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:^{
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        [configuration _setBackgroundTextExtractionEnabled:YES];
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <body>
+            <button>Click Me</button>
+            <div id='result'>pending</div>
+            <script>
+                document.querySelector('button').addEventListener('click', async function() {
+                    for (let i = 0; i < 3; ++i) {
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                        await new Promise(requestAnimationFrame);
+                    }
+                    document.getElementById('result').textContent = 'completed';
+                });
+            </script>
+        </body>
+        </html>
+    )HTML"];
+
+    [NSNotificationCenter.defaultCenter postNotificationName:UIApplicationDidEnterBackgroundNotification object:UIApplication.sharedApplication userInfo:@{ @"isSuspendedUnderLock": @NO }];
+    [NSNotificationCenter.defaultCenter postNotificationName:UISceneDidEnterBackgroundNotification object:[[webView window] windowScene] userInfo:nil];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    RetainPtr buttonID = extractNodeIdentifier(debugText, @"Click Me");
+    EXPECT_NOT_NULL(buttonID);
+
+    // Simulate display refreshes being suppressed by swizzling -displayLinkFired:.
+    InstanceMethodSwizzler suppressDisplayLink {
+        NSClassFromString(@"WKDisplayLinkHandler"),
+        @selector(displayLinkFired:),
+        imp_implementationWithBlock(^(id, CADisplayLink *) { })
+    };
+
+    RetainPtr click = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [click setNodeIdentifier:buttonID];
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:click];
+    EXPECT_NULL([result error]);
+
+    Util::waitForConditionWithLogging([webView] {
+        return [[webView stringByEvaluatingJavaScript:@"document.getElementById('result').textContent"] isEqualToString:@"completed"];
+    }, 5, @"Expected rendering updates to continue after the display link stopped delivering callbacks.");
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
+#if ENABLE(SCREEN_TIME)
+
+TEST(TextExtractionTests, ScreenTimeBlocksTextExtraction)
+{
+    __block bool doneCheckingScreenTime = false;
+
+    InstanceMethodSwizzler swizzler {
+        PAL::getSTScreenTimeConfigurationClassSingleton(),
+        @selector(enforcesChildRestrictions),
+        imp_implementationWithBlock(^BOOL {
+            doneCheckingScreenTime = true;
+            return YES;
+        })
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 300) configuration:^{
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        RetainPtr preferences = [configuration preferences];
+        [preferences _setTextExtractionEnabled:YES];
+        for (_WKFeature *feature in [WKPreferences _features]) {
+            if ([feature.key isEqualToString:@"ScreenTimeEnabled"])
+                [preferences _setEnabled:YES forFeature:feature];
+        }
+        return configuration.autorelease();
+    }()]);
+
+    RetainPtr request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView synchronouslyLoadSimulatedRequest:request.get() responseHTMLString:@"<body>Hello world. This is a test</body>"];
+    [webView waitForNextPresentationUpdate];
+    Util::run(&doneCheckingScreenTime);
+
+    RetainPtr controller = [webView _screenTimeWebpageController];
+    [controller setURLIsBlocked:YES];
+
+    RetainPtr debugTextWhenBlocked = [webView synchronouslyGetDebugText:nil];
+    EXPECT_FALSE([debugTextWhenBlocked containsString:@"Hello world"]);
+
+    [controller setURLIsBlocked:NO];
+
+    RetainPtr debugTextWhenUnblocked = [webView synchronouslyGetDebugText:nil];
+    EXPECT_TRUE([debugTextWhenUnblocked containsString:@"Hello world"]);
+}
+
+#endif // ENABLE(SCREEN_TIME)
+
+#if HAVE(SAFE_BROWSING)
+
+TEST(TextExtractionTests, SafeBrowsingWarningBlocksTextExtraction)
+{
+    ClassMethodSwizzler swizzler {
+        getSSBLookupContextClassSingleton(),
+        @selector(sharedLookupContext),
+        [TestLookupContext methodForSelector:@selector(sharedLookupContext)]
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:^{
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        RetainPtr preferences = [configuration preferences];
+        [preferences setFraudulentWebsiteWarningEnabled:YES];
+        [preferences _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"debug-text-extraction" withExtension:@"html"]]];
+
+    Util::waitForConditionWithLogging([&] -> bool {
+        return [webView _safeBrowsingWarning];
+    }, 3, @"Timed out waiting for safe browsing warning");
+
+    RetainPtr debugTextWithWarning = [webView synchronouslyGetDebugText:nil];
+    EXPECT_FALSE([debugTextWithWarning containsString:@"Test"]);
+
+    [webView visitUnsafeSite];
+    [webView _test_waitForDidFinishNavigation];
+
+    RetainPtr debugTextAfterWarning = [webView synchronouslyGetDebugText:nil];
+    EXPECT_FALSE([debugTextAfterWarning containsString:@"Test"]);
+}
+
+TEST(TextExtractionTests, DelayedSafeBrowsingWarningBlocksTextExtraction)
+{
+    DelayedLookupContext.delayDuration = 1_s;
+
+    TestWebKitAPI::HTTPServer server({
+        { "/test"_s, { "test"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    ClassMethodSwizzler swizzler {
+        getSSBLookupContextClassSingleton(),
+        @selector(sharedLookupContext),
+        [DelayedLookupContext methodForSelector:@selector(sharedLookupContext)]
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:[&] {
+        RetainPtr configuration = server.httpsProxyConfiguration();
+        RetainPtr preferences = [configuration preferences];
+        [preferences setFraudulentWebsiteWarningEnabled:YES];
+        [preferences _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+    [webView evaluateJavaScript:@"window.location = 'https://example2.com/test'" completionHandler:nil];
+
+    Util::waitForConditionWithLogging([&] -> bool {
+        return [webView _safeBrowsingWarning];
+    }, 5, @"Timed out waiting for delayed safe browsing warning");
+
+    [webView visitUnsafeSite];
+
+    RetainPtr debugTextAfterWarning = [webView synchronouslyGetDebugText:nil];
+    EXPECT_FALSE([debugTextAfterWarning containsString:@"test"]);
+}
+
+TEST(TextExtractionTests, BackgroundTextExtractionBlocksUserMediatedHTTPFallback)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer httpsServer({
+        { "/secure"_s, { { }, "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(httpsServer.port())
+    }];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    [configuration _setBackgroundTextExtractionEnabled:YES];
+    [configuration defaultWebpagePreferences].preferredHTTPSNavigationPolicy = WKWebpagePreferencesUpgradeToHTTPSPolicyUserMediatedFallbackToHTTP;
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    __block bool failedNavigation { false };
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate setDidFailProvisionalNavigation:^(WKWebView *, WKNavigation *, NSError *error) {
+        EXPECT_NOT_NULL(error);
+        failedNavigation = true;
+    }];
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://site.example/secure"]]];
+
+    Util::run(&failedNavigation);
+
+    EXPECT_NULL([webView _safeBrowsingWarning]);
+}
+
+#endif // HAVE(SAFE_BROWSING)
+
+TEST(TextExtractionTests, InvalidURLsAreSkipped)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    constexpr auto markupString = R"HTML(<!DOCTYPE html>
+        <html>
+        <body>
+            <a href="https://example.com/valid">Valid link</a>
+            <a href="   https://not a valid url   ">Link with spaces</a>
+            <a href="https://example
+        .com/newline">Link with newline</a>
+            <a href="">Empty href</a>
+            <img src="https://example.com/valid.png" alt="Valid image">
+            <img src="   not a valid src   " alt="Image with spaces">
+            <img src="https://example
+        .com/broken.png" alt="Image with newline">
+            <img src="" alt="Empty src">
+        </body>
+        </html>)HTML";
+    [webView synchronouslyLoadHTMLString:@(markupString)];
+
+    for (auto format : { _WKTextExtractionOutputFormatTextTree, _WKTextExtractionOutputFormatMarkdown }) {
+        RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+            RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+            [configuration setIncludeURLs:YES];
+            [configuration setShortenURLs:YES];
+            [configuration setOutputFormat:format];
+            return configuration.autorelease();
+        }()];
+
+        EXPECT_TRUE([debugText containsString:@"Valid link"]);
+        EXPECT_TRUE([debugText containsString:@"example.com"]);
+        EXPECT_TRUE([debugText containsString:@"Valid image"]);
+
+        EXPECT_TRUE([debugText containsString:@"Link with spaces"]);
+        EXPECT_TRUE([debugText containsString:@"Link with newline"]);
+        EXPECT_TRUE([debugText containsString:@"Image with spaces"]);
+        EXPECT_TRUE([debugText containsString:@"Image with newline"]);
+
+        EXPECT_FALSE([debugText containsString:@"not a valid"]);
+    }
+}
+
+TEST(TextExtractionTests, AuthorShadowDOMText)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    static constexpr auto markupString = R"HTML(<!DOCTYPE html>
+        <html>
+        <body>
+            <p>Before shadow content</p>
+            <custom-button variant="primary" text="Next"></custom-button>
+            <custom-button variant="secondary" text="Cancel"></custom-button>
+            <my-card></my-card>
+            <script>
+            class CustomButton extends HTMLElement {
+                connectedCallback() {
+                    this.attachShadow({ mode: 'open' });
+                    const text = this.getAttribute('text') || '';
+                    this.shadowRoot.innerHTML = `
+                        <button type="button">
+                            <span class="button__label">${text}</span>
+                        </button>
+                    `;
+                }
+            }
+            customElements.define('custom-button', CustomButton);
+
+            class MyCard extends HTMLElement {
+                connectedCallback() {
+                    this.attachShadow({ mode: 'open' });
+                    this.shadowRoot.innerHTML = `
+                        <div>
+                            <h2>Shadow heading</h2>
+                            <p>Shadow paragraph text</p>
+                            <a href="https://example.com">Shadow link</a>
+                        </div>
+                    `;
+                }
+            }
+            customElements.define('my-card', MyCard);
+            </script>
+        </body>
+        </html>)HTML";
+    [webView synchronouslyLoadHTMLString:@(markupString)];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    EXPECT_TRUE([debugText containsString:@"Before shadow content"]);
+    EXPECT_TRUE([debugText containsString:@"Next"]);
+    EXPECT_TRUE([debugText containsString:@"Cancel"]);
+    EXPECT_TRUE([debugText containsString:@"Shadow heading"]);
+    EXPECT_TRUE([debugText containsString:@"Shadow paragraph text"]);
+    EXPECT_TRUE([debugText containsString:@"Shadow link"]);
+}
+
+TEST(TextExtractionTests, ClickInteractionWithExtractionContext)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+        </head>
+        <body>
+            <button onclick="document.getElementById('result').textContent = 'original'">Edit</button>
+            <div id='result'>none</div>
+        </body>
+        </html>
+    )HTML"];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:nil];
+    EXPECT_TRUE([[extractionResult textContent] containsString:@"Edit"]);
+
+    [webView objectByEvaluatingJavaScript:
+        @"let btn = document.createElement('button');"
+        "btn.textContent = 'Edit';"
+        "btn.onclick = () => document.getElementById('result').textContent = 'new';"
+        "document.body.insertBefore(btn, document.body.firstChild); true;"];
+
+    RetainPtr click = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick extractionContext:extractionResult.get()]);
+    [click setText:@"Edit"];
+    [webView synchronouslyPerformInteraction:click.get()];
+
+    EXPECT_WK_STREQ("original", [webView stringByEvaluatingJavaScript:@"document.getElementById('result').textContent"]);
+}
+
+TEST(TextExtractionTests, ShortenURLsWithTopHostName)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    RetainPtr markup = @"<!DOCTYPE html>"
+        "<html><body>"
+        "    <a href=\"https://webkit.org/blog/post\">Same-host link</a>"
+        "    <a href=\"https://webkit.org\">Root link</a>"
+        "    <a href=\"https://example.com/other\">Cross-host link</a>"
+        "</body></html>";
+    [webView synchronouslyLoadHTMLString:markup.get() baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setIncludeURLs:YES];
+        [configuration setShortenURLs:YES];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([debugText containsString:@"url=/blog/post"]);
+    EXPECT_TRUE([debugText containsString:@"url=/"]);
+    EXPECT_TRUE([debugText containsString:@"example.com/other"]);
+}
+
+TEST(TextExtractionTests, ExtractionContextPrefersInteractiveElement)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+        </head>
+        <body>
+            <h1>Sign in</h1>
+            <button onclick="document.getElementById('result').textContent = 'submitted'">Sign in</button>
+            <div id="result">none</div>
+        </body>
+        </html>
+    )HTML"];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:nil];
+    EXPECT_TRUE([[extractionResult textContent] containsString:@"Sign in"]);
+
+    RetainPtr click = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick extractionContext:extractionResult.get()]);
+    [click setText:@"Sign in"];
+    RetainPtr result = [webView synchronouslyPerformInteraction:click.get()];
+    EXPECT_NULL([result error]);
+
+    EXPECT_WK_STREQ("submitted", [webView stringByEvaluatingJavaScript:@"document.getElementById('result').textContent"]);
+}
+
+TEST(TextExtractionTests, ResultOrigin)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/"_s, { "<html><body>Hello world</body></html>"_s } },
+    });
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadRequest:server.request()];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:nil];
+    EXPECT_TRUE([[extractionResult textContent] containsString:@"Hello world"]);
+
+    WKSecurityOrigin *origin = [extractionResult origin];
+    EXPECT_NOT_NULL(origin);
+    EXPECT_WK_STREQ("http", [origin protocol]);
+    EXPECT_WK_STREQ("127.0.0.1", [origin host]);
+    EXPECT_EQ(server.port(), static_cast<uint16_t>([origin port]));
+}
+
+TEST(TextExtractionTests, HoverInteractionWithTextOnly)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "    <meta name='viewport' content='width=device-width, initial-scale=1'>"
+        "</head>"
+        "<body>"
+        "    <div id='target' style='padding: 20px;'>Hover Me</div>"
+        "    <div id='result'>none</div>"
+        "    <script>"
+        "        document.getElementById('target').addEventListener('mouseover', () => {"
+        "            document.getElementById('result').textContent = 'hovered';"
+        "        });"
+        "    </script>"
+        "</body>"
+        "</html>"];
+
+    EXPECT_WK_STREQ("none", [webView stringByEvaluatingJavaScript:@"result.textContent"]);
+
+    RetainPtr hover = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionHover]);
+    [hover setText:@"Hover Me"];
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:hover.get()];
+    EXPECT_NULL([result error]);
+    EXPECT_WK_STREQ("hovered", [webView stringByEvaluatingJavaScript:@"result.textContent"]);
+}
+
+TEST(TextExtractionTests, HoverInteractionWithExtractionContext)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+        </head>
+        <body>
+            <button id='target'>Menu</button>
+            <div id='result'>none</div>
+            <script>
+                document.getElementById('target').addEventListener('mouseenter', () => {
+                    document.getElementById('result').textContent = 'entered';
+                });
+            </script>
+        </body>
+        </html>
+    )HTML"];
+
+    RetainPtr extractionResult = [webView synchronouslyExtractDebugTextResult:nil];
+    EXPECT_TRUE([[extractionResult textContent] containsString:@"Menu"]);
+
+    RetainPtr hover = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionHover extractionContext:extractionResult.get()]);
+    [hover setText:@"Menu"];
+    RetainPtr result = [webView synchronouslyPerformInteraction:hover.get()];
+    EXPECT_NULL([result error]);
+
+    EXPECT_WK_STREQ("entered", [webView stringByEvaluatingJavaScript:@"document.getElementById('result').textContent"]);
+}
+
+TEST(TextExtractionTests, HoverDoesNotClick)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+        </head>
+        <body>
+            <div id='target' style='padding: 20px;'>Target</div>
+            <div id='hover-result'>none</div>
+            <div id='click-result'>none</div>
+            <script>
+                let target = document.getElementById('target');
+                target.addEventListener('mouseover', () => {
+                    document.getElementById('hover-result').textContent = 'hovered';
+                });
+                target.addEventListener('click', () => {
+                    document.getElementById('click-result').textContent = 'clicked';
+                });
+            </script>
+        </body>
+        </html>
+    )HTML"];
+
+    RetainPtr hover = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionHover]);
+    [hover setText:@"Target"];
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:hover.get()];
+    EXPECT_NULL([result error]);
+    EXPECT_WK_STREQ("hovered", [webView stringByEvaluatingJavaScript:@"document.getElementById('hover-result').textContent"]);
+    EXPECT_WK_STREQ("none", [webView stringByEvaluatingJavaScript:@"document.getElementById('click-result').textContent"]);
+}
+
+TEST(TextExtractionTests, InteractedElementBounds)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration.autorelease();
+    }()];
+    RetainPtr testButtonID = extractNodeIdentifier(debugText.get(), @"Test");
+    RetainPtr emailID = extractNodeIdentifier(debugText.get(), @"email");
+
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:testButtonID.get()];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NULL([result error]);
+        CGRect bounds = [result interactedElementBounds];
+        EXPECT_FALSE(CGRectIsNull(bounds));
+        EXPECT_GT(CGRectGetWidth(bounds), 0);
+        EXPECT_GT(CGRectGetHeight(bounds), 0);
+        EXPECT_LT(CGRectGetMaxX(bounds), 800);
+        EXPECT_LT(CGRectGetMaxY(bounds), 600);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionTextInput]);
+        [interaction setNodeIdentifier:emailID.get()];
+        [interaction setText:@"hello@webkit.org"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NULL([result error]);
+        CGRect bounds = [result interactedElementBounds];
+        EXPECT_FALSE(CGRectIsNull(bounds));
+        EXPECT_GT(CGRectGetWidth(bounds), 0);
+        EXPECT_GT(CGRectGetHeight(bounds), 0);
+    }
+    {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setText:@"this text does not exist anywhere on the page"];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NOT_NULL([result error]);
+        EXPECT_TRUE(CGRectIsNull([result interactedElementBounds]));
+    }
+}
+
+TEST(TextExtractionTests, RequestTextExtractionInSVGDocument)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    RetainPtr request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ctext%20x%3D%2210%22%20y%3D%2220%22%3EHello%3C%2Ftext%3E%3C%2Fsvg%3E"]];
+    [webView synchronouslyLoadRequest:request];
+
+    __block bool done = false;
+    __block RetainPtr<WKTextExtractionItem> resultItem;
+    [webView _requestTextExtraction:nil completionHandler:^(WKTextExtractionItem *item) {
+        resultItem = item;
+        done = true;
+    }];
+    Util::run(&done);
+
+    EXPECT_NOT_NULL(resultItem);
+}
+
+#if PLATFORM(MAC)
+
+TEST(TextExtractionTests, KeyPressInsertsCharactersInOrder)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<input type='text' id='q'>"];
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('q').focus()"];
+
+    for (NSString *character in @[ @"a", @"b", @"c" ]) {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionKeyPress]);
+        [interaction setText:character];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NULL([result error]);
+    }
+
+    EXPECT_WK_STREQ("abc", [webView stringByEvaluatingJavaScript:@"document.getElementById('q').value"]);
+}
+
+TEST(TextExtractionTests, KeyPressInsertsBracketCharacters)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<input type='text' id='q'>"];
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('q').focus()"];
+
+    for (NSString *character in @[ @"[", @"{", @"]", @"}" ]) {
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionKeyPress]);
+        [interaction setText:character];
+        RetainPtr result = [webView synchronouslyPerformInteraction:interaction.get()];
+        EXPECT_NULL([result error]);
+    }
+
+    EXPECT_WK_STREQ("[{]}", [webView stringByEvaluatingJavaScript:@"document.getElementById('q').value"]);
+}
+
+#endif // PLATFORM(MAC)
+
+#if ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(SAFARI_SAFE_BROWSING_NAMESPACED_LISTS)
+
+static NSString *synchronouslyFilterExtractedString(WKWebView *webView, NSString *string, _WKTextExtractionFilterOptions options)
+{
+    __block bool done = false;
+    __block RetainPtr<NSString> result;
+    [webView _filterExtractedString:string options:options completionHandler:^(NSString *filtered) {
+        result = filtered;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result.autorelease();
+}
+
+static RetainPtr<WKWebView> makeFilterTestWebView()
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@""];
+    return webView;
+}
+
+TEST(TextExtractionTests, FilterExtractedStringPassthrough)
+{
+    InstanceMethodSwizzler safeBrowsingSwizzler {
+        getSSBLookupContextClassSingleton(),
+        @selector(_getListsForNamespace:collectionId:completionHandler:),
+        reinterpret_cast<IMP>(overrideGetListsForNamespace)
+    };
+
+    RetainPtr webView = makeFilterTestWebView();
+
+    // With no filter options, text passes through unchanged.
+    RetainPtr result = synchronouslyFilterExtractedString(webView.get(), @"Hello world", _WKTextExtractionFilterNone);
+    EXPECT_WK_STREQ("Hello world", result.get());
+}
+
+TEST(TextExtractionTests, FilterExtractedStringRulesApplied)
+{
+    InstanceMethodSwizzler safeBrowsingSwizzler {
+        getSSBLookupContextClassSingleton(),
+        @selector(_getListsForNamespace:collectionId:completionHandler:),
+        reinterpret_cast<IMP>(overrideGetListsForNamespace)
+    };
+
+    RetainPtr webView = makeFilterTestWebView();
+
+    // The swizzled rules replace 'o' with '•' and 'u' with 'v'.
+    RetainPtr result = synchronouslyFilterExtractedString(webView.get(), @"The quick brown fox", _WKTextExtractionFilterRules);
+    EXPECT_WK_STREQ("The qvick br•wn f•x", result.get());
+}
+
+TEST(TextExtractionTests, FilterExtractedStringRulesTruncates)
+{
+    InstanceMethodSwizzler safeBrowsingSwizzler {
+        getSSBLookupContextClassSingleton(),
+        @selector(_getListsForNamespace:collectionId:completionHandler:),
+        reinterpret_cast<IMP>(overrideGetListsForNamespace)
+    };
+
+    RetainPtr webView = makeFilterTestWebView();
+
+    // The swizzled rules replace strings >= 1000 characters with '<too long>'.
+    NSString *longString = [@"x" stringByPaddingToLength:1000 withString:@"x" startingAtIndex:0];
+    RetainPtr result = synchronouslyFilterExtractedString(webView.get(), longString, _WKTextExtractionFilterRules);
+    EXPECT_WK_STREQ("<too long>", result.get());
+}
+
+TEST(TextExtractionTests, FilterExtractedStringEmptyInput)
+{
+    InstanceMethodSwizzler safeBrowsingSwizzler {
+        getSSBLookupContextClassSingleton(),
+        @selector(_getListsForNamespace:collectionId:completionHandler:),
+        reinterpret_cast<IMP>(overrideGetListsForNamespace)
+    };
+
+    RetainPtr webView = makeFilterTestWebView();
+
+    RetainPtr result = synchronouslyFilterExtractedString(webView.get(), @"", _WKTextExtractionFilterRules);
+    EXPECT_WK_STREQ("", result.get());
+}
+
+#endif // ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(SAFARI_SAFE_BROWSING_NAMESPACED_LISTS)
+
+#if ENABLE(UNIFIED_PDF)
+
+static RetainPtr<TestWKWebView> loadPDFInWebView()
+{
+    RetainPtr configuration = configurationForWebViewTestingUnifiedPDF();
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadData:testPDFData() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.example.com/test.pdf"]];
+    [webView _test_waitForDidFinishNavigation];
+    return webView;
+}
+
+TEST(TextExtractionTests, ExtractFromPDFAsMarkdown)
+{
+    RetainPtr webView = loadPDFInWebView();
+
+    RetainPtr text = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatMarkdown];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([text containsString:@"Test PDF Content"]);
+    EXPECT_TRUE([text containsString:@"555-555-1234"]);
+}
+
+TEST(TextExtractionTests, ExtractFromPDFAsTextTree)
+{
+    RetainPtr webView = loadPDFInWebView();
+
+    RetainPtr text = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([text hasPrefix:@"root"]);
+    EXPECT_TRUE([text containsString:@"Test PDF Content"]);
+    EXPECT_TRUE([text containsString:@"555-555-1234"]);
+}
+
+TEST(TextExtractionTests, ExtractFromPDFAsHTML)
+{
+    RetainPtr webView = loadPDFInWebView();
+
+    RetainPtr text = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatHTML];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([text hasPrefix:@"<body>"]);
+    EXPECT_TRUE([text hasSuffix:@"</body>"]);
+    EXPECT_TRUE([text containsString:@"Test PDF Content"]);
+    EXPECT_TRUE([text containsString:@"555-555-1234"]);
+}
+
+TEST(TextExtractionTests, ExtractFromPDFAsJSON)
+{
+    RetainPtr webView = loadPDFInWebView();
+
+    RetainPtr text = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatJSON];
+        return configuration.autorelease();
+    }()];
+
+    NSError *error = nil;
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[text dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+    EXPECT_NULL(error);
+    EXPECT_WK_STREQ("root", [json objectForKey:@"type"]);
+    NSArray *children = [json objectForKey:@"children"];
+    EXPECT_EQ([children count], 1u);
+    EXPECT_WK_STREQ("text", [[children firstObject] objectForKey:@"type"]);
+    NSString *content = [[children firstObject] objectForKey:@"content"];
+    EXPECT_TRUE([content containsString:@"Test PDF Content"]);
+    EXPECT_TRUE([content containsString:@"555-555-1234"]);
+}
+
+TEST(TextExtractionTests, ExtractFromPDFAsPlainText)
+{
+    RetainPtr webView = loadPDFInWebView();
+
+    RetainPtr text = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:_WKTextExtractionOutputFormatPlainText];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([text containsString:@"Test PDF Content"]);
+    EXPECT_TRUE([text containsString:@"555-555-1234"]);
+}
+
+static RetainPtr<TestWKWebView> loadPDFWithLinkInWebView()
+{
+    RetainPtr configuration = configurationForWebViewTestingUnifiedPDF();
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView loadData:testPDFDataWithLink() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://www.example.com/test-with-link.pdf"]];
+    [webView _test_waitForDidFinishNavigation];
+    return webView;
+}
+
+TEST(TextExtractionTests, ExtractFromPDFLink)
+{
+    RetainPtr webView = loadPDFWithLinkInWebView();
+    {
+        RetainPtr text = [webView synchronouslyGetDebugText:^{
+            RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+            [configuration setOutputFormat:_WKTextExtractionOutputFormatMarkdown];
+            return configuration.autorelease();
+        }()];
+
+        EXPECT_TRUE([text containsString:@"[our website](https://www.example.com/)"]);
+    }
+    {
+        RetainPtr text = [webView synchronouslyGetDebugText:^{
+            RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+            [configuration setOutputFormat:_WKTextExtractionOutputFormatHTML];
+            return configuration.autorelease();
+        }()];
+
+        EXPECT_TRUE([text containsString:@"<a href='https://www.example.com/'>our website</a>"]);
+    }
+    {
+        RetainPtr text = [webView synchronouslyGetDebugText:^{
+            RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+            [configuration setOutputFormat:_WKTextExtractionOutputFormatJSON];
+            return configuration.autorelease();
+        }()];
+
+        NSError *error = nil;
+        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:[text dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+        EXPECT_NULL(error);
+
+        NSDictionary *linkNode = nil;
+        for (NSDictionary *child in [json objectForKey:@"children"]) {
+            if ([[child objectForKey:@"type"] isEqualToString:@"link"]) {
+                linkNode = child;
+                break;
+            }
+        }
+
+        EXPECT_NOT_NULL(linkNode);
+        EXPECT_WK_STREQ("https://www.example.com/", [linkNode objectForKey:@"url"]);
+        NSArray *linkChildren = [linkNode objectForKey:@"children"];
+        EXPECT_EQ([linkChildren count], 1u);
+        EXPECT_WK_STREQ("our website", [[linkChildren firstObject] objectForKey:@"content"]);
+    }
+    {
+        RetainPtr text = [webView synchronouslyGetDebugText:^{
+            RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+            [configuration setOutputFormat:_WKTextExtractionOutputFormatTextTree];
+            return configuration.autorelease();
+        }()];
+
+        EXPECT_TRUE([text containsString:@"link"]);
+        EXPECT_TRUE([text containsString:@"url=https://www.example.com/"]);
+        EXPECT_TRUE([text containsString:@"our website"]);
+    }
+}
+
+#endif // ENABLE(UNIFIED_PDF)
+
+} // namespace TestWebKitAPI

@@ -1,0 +1,5 @@
+
+PASS Test if |onprocessorerror| is called for an exception thrown from the processor constructor.
+PASS Test if |onprocessorerror| is called for a transfered object that cannot be deserialized on the AudioWorkletGlobalScope.
+PASS Test if |onprocessorerror| is called upon failure of process() method.
+

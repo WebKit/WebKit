@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html><body>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function log(s) { document.getElementById('log').textContent += s + '\n'; }
+
+async function main() {
+    if (!window.IPC) {
+        log('PASS: file:// rejected by MESSAGE_CHECK');
+        return;
+    }
+
+    const { CoreIPC, ArgumentSerializer } = await import('./coreipc.js');
+
+    const fileRequest = {
+        getRequestDataToSerialize: {
+            variantType: 'WebCore::ResourceRequest::RequestData',
+            variant: {
+                m_url: { string: 'file:///private/etc/hosts' },
+                m_firstPartyForCookies: { string: 'file:///private/etc/hosts' },
+                m_timeoutInterval: 60.0,
+                m_httpMethod: 'GET',
+                m_httpHeaderFields: { commonHeaders: [], uncommonHeaders: [] },
+                m_responseContentDispositionEncodingFallbackArray: [],
+                m_cachePolicy: 0,
+                m_sameSiteDisposition: 1,
+                m_priority: 2,
+                m_requester: 0,
+                m_allowCookies: true,
+                m_isTopSite: true,
+                m_isAppInitiated: true,
+                m_privacyProxyFailClosedForUnreachableNonMainHosts: false,
+                m_useAdvancedPrivacyProtections: false,
+                m_didFilterLinkDecoration: false,
+                m_isPrivateTokenUsageByThirdPartyAllowed: false,
+                m_wasSchemeOptimisticallyUpgraded: false,
+                m_targetAddressSpace: 0,
+            },
+        },
+        cachePartition: '',
+        hiddenFromInspector: false,
+    };
+
+    const definition = IPC.messages.NetworkConnectionToWebProcess_LoadImageForDecoding;
+    const args = ArgumentSerializer.serializeArguments(definition.arguments,
+        { request: fileRequest, pageID: BigInt(IPC.webPageProxyID), maximumBytesFromNetwork: 1024n });
+
+    CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, () => { });
+
+    IPC.connectionForProcessTarget('Networking').sendWithAsyncReply(0, definition.name, args, () => { });
+
+    let messageCheck = null;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {},
+        reply => messageCheck = reply.error);
+
+    if (messageCheck && messageCheck.includes('Message check failed') && messageCheck.includes('protocolIsInHTTPFamily'))
+        log('PASS: file:// rejected by MESSAGE_CHECK');
+    else
+        log('FAIL: expected MESSAGE_CHECK on protocolIsInHTTPFamily, got: "' + messageCheck + '"');
+}
+
+main().catch(e => log('FAIL: ' + e + '\n' + (e.stack || ''))).finally(() => window.testRunner?.notifyDone());
+</script>
+</body></html>

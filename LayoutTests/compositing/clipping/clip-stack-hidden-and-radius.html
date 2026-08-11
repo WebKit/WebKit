@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            position: absolute;
+            border-top-right-radius: 10px;
+            overflow: hidden;
+            height: 400px;
+            width: 600px;
+            box-sizing: border-box;
+            background-color: silver;
+        }
+
+        .clipping {
+            display: block;
+            position: relative;
+            overflow: hidden;
+            border: 12px solid black;
+            box-sizing: border-box;
+            height: 400px;
+            width: 450px;
+        }
+        
+        .composited {
+            display: block;
+            width: 600px;
+            height: 400px;
+            background-color: green;
+            will-change: transform;
+        }
+    </style>
+</head>
+<body>
+    <p>The green square should be enclosed by the black border.</p>
+    <div class="container">
+        <div class="clipping">
+            <div class="composited"></div>
+        </div>
+    </div>
+</body>
+</html>

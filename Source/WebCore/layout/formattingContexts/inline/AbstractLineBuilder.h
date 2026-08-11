@@ -1,0 +1,96 @@
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/FormattingConstraints.h>
+#include <WebCore/InlineContentBreaker.h>
+#include <WebCore/InlineLayoutState.h>
+#include <WebCore/InlineLine.h>
+#include <WebCore/InlineLineTypes.h>
+#include <WebCore/LineLayoutResult.h>
+
+namespace WebCore {
+namespace Layout {
+
+struct LineInput {
+    InlineItemRange needsLayoutRange;
+    InlineRect initialLogicalRect;
+};
+
+using WrapOpportunityList = Vector<const InlineItem*, 32>;
+
+class AbstractLineBuilder {
+public:
+    virtual LineLayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&, bool isFirstFormattedLineCandidate) = 0;
+    virtual ~AbstractLineBuilder() { };
+
+    void NODELETE setIntrinsicWidthMode(IntrinsicWidthMode);
+
+protected:
+    AbstractLineBuilder(InlineFormattingContext&, const ElementBox& rootBox, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
+
+    void reset();
+
+    std::optional<InlineLayoutUnit> overflowWidthAsLeadingForNextLine(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result&) const;
+
+    std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
+    bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
+
+    bool isFirstFormattedLineCandidate() const { return m_isFirstFormattedLineCandidate; }
+
+    InlineContentBreaker& inlineContentBreaker() LIFETIME_BOUND { return m_inlineContentBreaker; }
+
+    InlineFormattingContext& formattingContext() LIFETIME_BOUND { return m_inlineFormattingContext; }
+    const InlineFormattingContext& formattingContext() const LIFETIME_BOUND { return m_inlineFormattingContext; }
+    const HorizontalConstraints& rootHorizontalConstraints() const LIFETIME_BOUND { return m_rootHorizontalConstraints; }
+    const InlineLayoutState& NODELETE layoutState() const LIFETIME_BOUND;
+    InlineLayoutState& NODELETE layoutState() LIFETIME_BOUND;
+    const BlockLayoutState& blockLayoutState() const LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
+    BlockLayoutState& blockLayoutState() LIFETIME_BOUND { return layoutState().parentBlockLayoutState(); }
+    const ElementBox& root() const { return m_rootBox; }
+    const Style::ComputedStyle& rootStyle() const LIFETIME_BOUND;
+
+protected:
+    Line m_line;
+    InlineRect m_lineLogicalRect;
+    std::span<const InlineItem> m_inlineItemList;
+    WrapOpportunityList m_wrapOpportunityList;
+    std::optional<InlineTextItem> m_partialLeadingTextItem;
+    std::optional<PreviousLine> m_previousLine { };
+    bool m_isFirstFormattedLineCandidate { false };
+
+private:
+    InlineFormattingContext& m_inlineFormattingContext;
+    const ElementBox& m_rootBox; // Note that this is not necessarily a block container (see range builder).
+    HorizontalConstraints m_rootHorizontalConstraints;
+
+    InlineContentBreaker m_inlineContentBreaker;
+    std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
+};
+
+
+}
+}

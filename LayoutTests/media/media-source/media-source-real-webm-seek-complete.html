@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-seek-complete</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-WebM equivalent of media-source-seek-complete.html
+    // Tests that seeking completes after endOfStream.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video', defaultDuration: 500 }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Multiple samples so WebM parser can infer per-frame duration
+        // from timecode gaps. Single-sample clusters have unknown duration.
+        var media = WebM.mediaSegment({
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 10000, samples: [
+                { duration: 500, isSync: true },
+                { duration: 500, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('source.duration = 11');
+        run('source.endOfStream()');
+        run('video.currentTime = 10');
+        await waitFor(video, 'seeked');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

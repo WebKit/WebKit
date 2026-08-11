@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/gc.js"></script>
+<script>
+
+var promise = new Promise((resolve, reject) => {
+    if (!window.internals) {
+        reject("Test require internals API");
+        return;
+    }
+    window.onload = function () {
+        let promise = testDocumentIsNotLeaked(
+            async function initAndRemove(frameCount)
+            {
+                let frames = await new Promise((resolve, reject) => {
+                    let frames = [];
+                    let counter = 0;
+                    function onMessage() {
+                        counter++;
+                        if (counter == frameCount)
+                            resolve(frames);
+                    }
+                    window.addEventListener("message", onMessage);
+                    for (let i = 0; i < frameCount; ++i) {
+                        let frame = document.createElement('iframe');
+                        frame.src = "resources/mymediadevicesframe.htm";
+                        document.body.appendChild(frame);
+                        frames.push(frame);
+                    }
+                });
+                let frameIdentifiers = [];
+                for (let i = 0; i < frameCount; ++i) {
+                    let frame = frames[i];
+                    frameIdentifiers.push(internals.documentIdentifier(frame.contentDocument));
+                    frame.src = "non-existent-frame";
+                }
+                nukeArray(frames);
+                frames = null;
+                return frameIdentifiers;
+            }
+        );
+        resolve(promise);
+    };
+});
+
+promise_test((test) => {
+    return promise;
+}, "Ensure that the frame's document get collected after being stopped while using MediaDevices");
+
+</script>

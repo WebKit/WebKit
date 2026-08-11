@@ -1,0 +1,3 @@
+
+PASS Send paired surrogates data on a WebSocket - Connection should be closed
+

@@ -1,0 +1,350 @@
+#!/usr/bin/env vpython3
+
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+"""
+This tool tries to fix (some) errors reported by `gn gen --check` or
+`gn check`.
+If a command line flag `-C out/<dir>` is supplied, it will run `gn gen --check`
+in that directory. Otherwise it will run `mb gen` in a temporary directory
+which is useful to check for different configurations.
+
+Usage:
+    $ vpython3 tools_webrtc/gn_check_autofix.py -C out/Default
+    or
+    $ vpython3 tools_webrtc/gn_check_autofix.py -m some_mater -b some_bot
+    or
+    $ vpython3 tools_webrtc/gn_check_autofix.py -c some_mb_config
+"""
+
+import argparse
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+
+from collections import defaultdict
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+CHROMIUM_DIRS = [
+    'base', 'build', 'buildtools', 'testing', 'third_party', 'tools'
+]
+
+TARGET_RE = re.compile(
+    r'(?P<indentation_level>\s*)\w*\("(?P<target_name>\w*)"\) {$')
+
+BAD_TARGETS = ['libjingle_peerconnection_api']
+
+
+class TemporaryDirectory:
+
+    def __init__(self):
+        self._closed = False
+        self._name = None
+        self._name = tempfile.mkdtemp()
+
+    def __enter__(self):
+        return self._name
+
+    def __exit__(self, exc, value, _tb):
+        if self._name and not self._closed:
+            shutil.rmtree(self._name)
+            self._closed = True
+
+
+def Run(cmd):
+    print('Running:', ' '.join(cmd))
+    sub = subprocess.Popen(cmd,
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE,
+                           universal_newlines=True)
+    return sub.communicate()
+
+
+def fix_errors(filename, missing_deps, deleted_sources):
+    with open(filename) as file:
+        lines = file.readlines()
+
+    fixed_file = ''
+    indentation_level = None
+    for line in lines:
+        match = TARGET_RE.match(line)
+        if match:
+            target = match.group('target_name')
+            if target in missing_deps:
+                indentation_level = match.group('indentation_level')
+        elif indentation_level is not None:
+            match = re.match(indentation_level + '}$', line)
+            if match:
+                line = ('deps = [\n' + ''.join('  "' + dep + '",\n'
+                                               for dep in missing_deps[target])
+                        + ']\n') + line
+                indentation_level = None
+            elif line.strip().startswith('deps = ['):
+                joined_deps = ''.join('  "' + dep + '",\n'
+                                      for dep in missing_deps[target])
+                line = line.replace('deps = [', 'deps = [' + joined_deps)
+                indentation_level = None
+
+        if line.strip() not in deleted_sources:
+            fixed_file += line
+
+    with open(filename, 'w') as file:
+        file.write(fixed_file)
+
+    Run(['gn', 'format', filename])
+
+
+def fix_source_set(filename, line_to_replace):
+    with open(filename) as file:
+        lines = file.readlines()
+    fixed_file = ''
+    for line in lines:
+        if line.strip() == line_to_replace.strip():
+            fixed_file += line.replace('rtc_source_set', 'rtc_library')
+        else:
+            fixed_file += line
+
+    with open(filename, 'w') as file:
+        file.write(fixed_file)
+
+    Run(['gn', 'format', filename])
+
+def first_non_empty(iterable):
+    """Return first item which evaluates to True, or fallback to None."""
+    return next((x for x in iterable if x), None)
+
+
+def rebase(base_path, dependency_path, dependency):
+    """Adapt paths so they work both in stand-alone WebRTC and Chromium tree.
+
+  To cope with varying top-level directory (WebRTC VS Chromium), we use:
+    * relative paths for WebRTC modules.
+    * absolute paths for shared ones.
+  E.g. '//common_audio/...' -> '../../common_audio/'
+       '//third_party/...' remains as is.
+
+  Args:
+    base_path: current module path  (E.g. '//video')
+    dependency_path: path from root (E.g. '//rtc_base/time')
+    dependency: target itself       (E.g. 'timestamp_extrapolator')
+
+  Returns:
+    Full target path (E.g. '../rtc_base/time:timestamp_extrapolator').
+  """
+
+    root = first_non_empty(dependency_path.split('/'))
+    if root in CHROMIUM_DIRS:
+        # Chromium paths must remain absolute. E.g.
+        # //third_party//abseil-cpp...
+        rebased = dependency_path
+    else:
+        base_path = base_path.split(os.path.sep)
+        dependency_path = dependency_path.split(os.path.sep)
+
+        first_difference = None
+        shortest_length = min(len(dependency_path), len(base_path))
+        for i in range(shortest_length):
+            if dependency_path[i] != base_path[i]:
+                first_difference = i
+                break
+
+        first_difference = first_difference or shortest_length
+        base_path = base_path[first_difference:]
+        dependency_path = dependency_path[first_difference:]
+        rebased = os.path.sep.join((['..'] * len(base_path)) + dependency_path)
+    return rebased + ':' + dependency
+
+
+def _update_deps(new_lines, current_deps_lines_content, block_type):
+    """Helper to finalize and append a processed deps block to new_lines."""
+    if block_type == 'deps_set':
+        new_lines.append('deps = [\n')
+    elif block_type == 'deps_add':
+        new_lines.append('deps += [\n')
+    for dep_line in current_deps_lines_content:
+        line = dep_line.strip()
+        # Keep blank lines (inserted for formatting), comments and
+        # lines tagged with "  # keep".
+        if not line or line.startswith('#') or line.endswith(' # keep'):
+            new_lines.append(dep_line)
+            continue
+        deps_to_keep = []
+        # Keep absolute dependencies.
+        deps_to_keep.extend(re.findall(r'"(//[^"]*)"', dep_line))
+        # Keep _unittest and _unittests target.
+        deps_to_keep.extend(
+            re.findall(r'"([^"]*[_:](?:unit)?tests?)"', dep_line))
+        for dep in deps_to_keep:
+            new_lines.append('"' + dep + '",\n')
+    new_lines.append(']\n')
+
+
+def remove_all_dependencies(filename):
+    """
+    Removes non-absolute dependencies from all targets in a BUILD.gn file.
+    It preserves `deps = [...]` and `deps += [...]` blocks if they contain
+    absolute dependencies (starting with '//'), otherwise it removes them
+    or replaces with `deps = []`.
+    """
+    if not os.path.exists(filename):
+        print('Error: File "{}" not found.'.format(filename), file=sys.stderr)
+        return 1
+    with open(filename, 'r') as file:
+        lines = file.readlines()
+
+    new_lines = []  # New file content.
+    block_type = None  # None, 'deps_set' or 'deps_add'
+    bracket_level = 0
+    current_deps_lines_content = []  # Stores content of deps block
+
+    for line in lines:
+        stripped_line = line.split('#', 1)[0].strip()
+
+        if block_type is None:  # Not in a deps block.
+            if stripped_line.startswith('deps = ['):
+                block_type = 'deps_set'
+            elif stripped_line.startswith('deps += ['):
+                block_type = 'deps_add'
+            else:  # Not a deps line, just append it.
+                new_lines.append(line)
+
+        if block_type is not None:  # Inside a deps block.
+            current_deps_lines_content.append(line)
+            bracket_level += stripped_line.count('[')
+            bracket_level -= stripped_line.count(']')
+            if bracket_level < 0:
+                print('Error: Unbalanced [] found in "{}'.format(filename),
+                      file=sys.stderr)
+                return 1
+
+            if bracket_level == 0:  # End of a deps block
+                _update_deps(new_lines, current_deps_lines_content, block_type)
+                block_type = None
+                current_deps_lines_content = []
+
+    with open(filename, 'w') as file:
+        file.writelines(new_lines)
+    Run(['gn', 'format', filename])
+    print('Removed all dependencies from {}.'.format(filename))
+    return 0
+
+
+def main():
+    helptext = """
+This tool tries to fix (some) errors reported by `gn gen --check`.
+
+If a command line flag `-C out/<dir>` is supplied, it will run `gn gen --check`
+in that directory. Otherwise it will run `mb gen` in a temporary directory
+with all other command line arguments forwarded to `mb gen`. This mode is
+useful to check for different configurations."""
+
+    parser = argparse.ArgumentParser(
+        description=helptext,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument(
+        '-r',
+        '--remove-all-dependencies',
+        dest='remove_deps_file_paths',
+        nargs='+',
+        metavar='FILE_PATH',
+        help='Remove all dependencies from the specified BUILD.gn files.')
+    parser.add_argument('-C',
+                        dest='local_build_dir',
+                        help='Path lo a local build dir, e.g. out/Default')
+    (flags, argv_to_forward) = parser.parse_known_args(sys.argv[1:])
+
+    if flags.remove_deps_file_paths:
+        for filename in flags.remove_deps_file_paths:
+            if remove_all_dependencies(filename) != 0:
+                return 1
+        return 0
+
+    deleted_sources = set()
+    errors_by_file = defaultdict(lambda: defaultdict(set))
+
+    if flags.local_build_dir:
+        mb_output = Run([
+            "gn",
+            "gen",
+            "--check",
+            # High limit to expose all errors to the tool.
+            "--error-limit=20000",
+            flags.local_build_dir
+        ])
+    else:
+        with TemporaryDirectory() as tmp_dir:
+            mb_script_path = os.path.join(SCRIPT_DIR, 'mb', 'mb.py')
+            mb_config_file_path = os.path.join(SCRIPT_DIR, 'mb',
+                                               'mb_config.pyl')
+            mb_gen_command = ([
+                mb_script_path,
+                'gen',
+                tmp_dir,
+                '--config-file',
+                mb_config_file_path,
+            ] + argv_to_forward)
+        mb_output = Run(mb_gen_command)
+
+    errors = mb_output[0].split('ERROR')[1:]
+
+    if mb_output[1]:
+        print(mb_output[1])
+        return 1
+
+    for error in errors:
+        error = error.split('\n')
+        target_msg = 'The target:'
+        if target_msg not in error:
+            target_msg = 'It is not in any dependency of'
+        if target_msg not in error:
+            target_msg = 'rtc_source_set shall not contain cc files'
+        if target_msg not in error:
+            print('\n'.join(error))
+            continue
+        index = error.index(target_msg) + 1
+        if error[index + 1] in ('is including a file from the target:',
+                                'The include file is in the target(s):'):
+            path, target = error[index].strip().split(':')
+            dep = error[index + 2].strip()
+            dep_path, dep = dep.split(':')
+            if dep in BAD_TARGETS:  # Ignore suggestions for known bad targets.
+                dep = error[index + 3].strip()
+                dep_path, dep = dep.split(':')
+            dep = rebase(path, dep_path, dep)
+            # Replacing /target:target with /target
+            dep = re.sub(r'/(\w+):(\1)$', r'/\1', dep)
+            # Replacing target:target with target
+            dep = re.sub(r'^(\w+):(\1)$', r'\1', dep)
+            path = os.path.join(path[2:], 'BUILD.gn')
+            errors_by_file[path][target].add(dep)
+        elif error[index + 1] == 'has a source file:':
+            deleted_file = '"' + os.path.basename(
+                error[index + 2].strip()) + '",'
+            deleted_sources.add(deleted_file)
+        elif target_msg == 'rtc_source_set shall not contain cc files':
+            path = error[index].strip().split(':',
+                                              maxsplit=1)[0].split(' ')[1][2:]
+            print('Turning', error[index + 1].strip().split(' ')[0], 'in',
+                  path, 'into an rtc_library...')
+            fix_source_set(path, error[index + 1])
+        else:
+            print('\n'.join(error))
+            continue
+
+    for path, missing_deps in list(errors_by_file.items()):
+        fix_errors(path, missing_deps, deleted_sources)
+
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-seek-back-after-ended</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    function timeUpdatePromise(video) {
+        return new Promise(resolve => {
+            video.addEventListener('timeupdate', event => {
+                if (!video.paused && video.currentTime > 1) {
+                    testExpected("video.paused", false);
+                    testExpected("video.currentTime", 1, ">");
+                    resolve();
+                }
+            });
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            loader = new MediaSourceLoader('content/test-vp9-manifest.json');
+            await loaderPromise(loader);
+
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitForEventAndFail('error');
+
+            run('source.duration = loader.duration()');
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
+            await waitFor(sourceBuffer, 'update');
+
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+            await waitFor(sourceBuffer, 'update');
+            run('source.endOfStream()');
+
+            await video.play();
+            consoleWrite("RUN(await video.play())");
+            testExpected("video.paused", false);
+
+            await waitFor(video, 'ended');
+
+            run('video.currentTime = 0');
+            await waitFor(video, 'seeked');
+            await video.play();
+            consoleWrite("RUN(await video.play())");
+
+            await timeUpdatePromise(video);
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <div>
+        This tests that a SourceBuffer can accept an initialization segment and a media segment and fire "update" events,
+        the element can play and seek back properly when it's ended.
+    </div>
+    <video controls></video>
+</body>
+</html>

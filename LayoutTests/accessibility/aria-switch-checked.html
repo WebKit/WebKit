@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <div role="switch" id="switch1">X</div>
+    <div role="switch" id="switch2" aria-checked="true">X</div>
+    <div role="switch" id="switch3" aria-checked="false">X</div>
+</div>
+
+<script>
+    description("This tests that ARIA switches correctly handle the aria-checked attribute.");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var switch1, switch2, switch3;
+        setTimeout(async function() {
+            // If aria-checked is absent, it should be not checked.
+            switch1 = accessibilityController.accessibleElementById("switch1");
+            shouldBeFalse("switch1.isChecked");
+
+            // If aria-checked is present and true, it's clearly checked.
+            switch2 = accessibilityController.accessibleElementById("switch2");
+            shouldBeTrue("switch2.isChecked");
+
+            // If aria-checked is present and false, it's clearly not checked.
+            switch3 = accessibilityController.accessibleElementById("switch3");
+            shouldBeFalse("switch3.isChecked");
+
+            let domSwitch3 = document.getElementById("switch3");
+            // Change the value on the element and be sure we see the change.
+            domSwitch3.setAttribute("aria-checked", "true");
+            await expectAsyncExpression("switch3.isChecked", "true");
+
+            // Remove the attribute from the element and be sure we see the change.
+            domSwitch3.removeAttribute("aria-checked");
+            await expectAsyncExpression("switch3.isChecked", "false");
+
+            document.getElementById("content").style.visibility = "hidden";
+
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

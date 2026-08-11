@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('Once any other input follows the Smart Lists conversion, the immediate-undo window closes. Typing a character and then pressing Backspace should remove just that character; the list itself stays intact, with the second list item empty.');
+
+const test = document.getElementById('test');
+test.focus();
+[...'* A\n* '].forEach(typeCharacterCommand);
+typeCharacterCommand('x');
+deleteCommand();
+Markup.dump('test');
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS Reverse playback of a short buffer renders a sub-sample interpolated signal
+PASS Reverse playback from a buffer longer than 2^23 frames matches an equivalent short buffer
+

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function loadCrossOriginIframe() {
+    let iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/inspector/network/resources/data.html";
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.getResponseBody.CrossOriginIframe.Document");
+
+    suite.addTestCase({
+        name: "Network.getResponseBody.CrossOriginIframe.Document.HTML",
+        description: "Should be able to retrieve HTML document content from a cross-origin iframe.",
+        test(resolve, reject) {
+            WI.Frame.awaitEvent(WI.Frame.Event.ChildFrameWasAdded)
+                .then((event) => {
+                    let childFrame = event.data.childFrame;
+                    InspectorTest.log("Child frame added: " + childFrame.url);
+                    InspectorTest.expectThat(childFrame.url.includes("localhost"), "Child frame should be cross-origin.");
+
+                    let mainResource = childFrame.mainResource;
+                    InspectorTest.expectThat(mainResource instanceof WI.Resource, "Child frame should have a main resource.");
+                    InspectorTest.expectEqual(mainResource.type, WI.Resource.Type.Document, "Main resource should be Document type.");
+
+                    if (mainResource.finished)
+                        return mainResource.requestContent();
+
+                    return new Promise((resolveLoad) => {
+                        mainResource.singleFireEventListener(WI.Resource.Event.LoadingDidFinish, () => resolveLoad());
+                    }).then(() => mainResource.requestContent());
+                })
+                .then(({error, sourceCode, content, rawBase64Encoded}) => {
+                    InspectorTest.expectThat(!error, "Should not have an error retrieving content.");
+                    InspectorTest.expectEqual(rawBase64Encoded, false, "Content should not be base64 encoded.");
+                    InspectorTest.expectThat(content.includes("<span>Hello World</span>"), "Content should contain the expected HTML.");
+                })
+                .then(resolve, reject);
+
+            InspectorTest.evaluateInPage("loadCrossOriginIframe()");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Network.getResponseBody returns HTML document content from a cross-origin iframe's main resource.</p>
+</body>
+</html>

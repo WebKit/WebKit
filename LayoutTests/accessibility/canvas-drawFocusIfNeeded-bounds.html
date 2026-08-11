@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<canvas id="canvas" width="400" height="300">
+    <button id="button">Canvas Button</button>
+</canvas>
+
+<script>
+var output = "This test ensures that drawFocusIfNeeded() correctly sets accessibility bounds for canvas fallback elements.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    var axCanvas = accessibilityController.accessibleElementById("canvas");
+    var canvasPageX = axCanvas.pageX;
+    var canvasPageY = axCanvas.pageY;
+
+    setTimeout(async function() {
+        output += await verifyCanvasFocusBounds({
+            canvasId: "canvas", canvasDescendantId: "button",
+            focusX: 100, focusY: 50, focusWidth: 80, focusHeight: 40,
+            expectedPageX: canvasPageX + 100, expectedPageY: canvasPageY + 50,
+            expectedWidth: 80, expectedHeight: 40,
+        });
+
+        output += "\nDynamic update: move the focus path to a new position.\n\n";
+
+        output += await verifyCanvasFocusBounds({
+            canvasId: "canvas", canvasDescendantId: "button",
+            focusX: 200, focusY: 150, focusWidth: 80, focusHeight: 40,
+            expectedPageX: canvasPageX + 200, expectedPageY: canvasPageY + 150,
+            expectedWidth: 80, expectedHeight: 40,
+        });
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

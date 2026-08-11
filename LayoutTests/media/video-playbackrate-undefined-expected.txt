@@ -1,0 +1,5 @@
+
+TEST(video.playbackRate = undefined) THROWS('TypeError: The provided value is non-finite') OK
+TEST(video.defaultPlaybackRate = undefined) THROWS('TypeError: The provided value is non-finite') OK
+END OF TEST
+

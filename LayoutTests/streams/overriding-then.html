@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+
+promise_test(async () => {
+  add_completion_callback(() => delete Object.prototype.then);
+  let thenCounter = 0;
+  Object.prototype.then = (onFulfilled) => {
+    ++thenCounter;
+    onFulfilled({ then : null });
+  };
+
+  const a = new ReadableStream({
+    start: (c) => {
+      c.enqueue(new Uint8Array([0]));
+      c.enqueue(new Uint8Array([1]));
+      c.close();
+    },
+    type: "bytes"
+  });
+
+  const [b, c] = a.tee();
+
+  const reader = b.getReader();
+
+  await reader.read();
+
+  assert_equals(thenCounter, 1);
+}, "Object.prototype.then should not allow observing the tee algorithm")
+</script>

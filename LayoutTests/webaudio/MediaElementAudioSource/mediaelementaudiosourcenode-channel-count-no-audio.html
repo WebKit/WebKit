@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MediaElementAudioSourceNode: video-only media element produces a single silent output channel</title>
+<link rel="help" href="https://webaudio.github.io/web-audio-api/#MediaElementAudioSourceNode">
+<script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+"use strict";
+
+function waitFor(element, type) {
+    return new Promise(resolve => element.addEventListener(type, resolve, { once: true }));
+}
+
+function sleepFor(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+promise_test(async t => {
+    const video = document.createElement("video");
+    video.src = "../../media/content/test-video-only.mp4";
+    video.loop = true;
+    waitFor(video, "error").then(event => {
+        throw new Error(`video element error: code=${event.target.error?.code}`);
+    });
+
+    const context = new AudioContext({sampleRate: 48000});
+    t.add_cleanup(() => context.close());
+
+    const source = context.createMediaElementSource(video);
+    assert_equals(source.numberOfInputs, 0);
+    assert_equals(source.numberOfOutputs, 1);
+
+    const analyser = context.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0;
+    analyser.minDecibels = -40;
+    analyser.maxDecibels = 0;
+
+    const gain = context.createGain();
+    gain.gain.value = 0;
+
+    source.connect(analyser);
+    analyser.connect(gain);
+    gain.connect(context.destination);
+
+    context.resume();
+    await waitFor(video, "canplay");
+    video.play();
+
+    let attempts = 0;
+    while (video.currentTime < 0.2) {
+        if (++attempts >= 30)
+            throw new Error(`video.currentTime stuck at ${video.currentTime}`);
+        await sleepFor(50);
+    }
+    await sleepFor(150);
+
+    const buf = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteFrequencyData(buf);
+    const maxBin = buf.reduce((m, v) => Math.max(m, v), 0);
+    assert_equals(maxBin, 0,
+        "all frequency bins silent (no audio track in source → single output channel of zero samples, no decode noise)");
+
+    video.pause();
+}, "MediaElementAudioSourceNode with a video-only HTMLMediaElement produces a single silent output channel");
+</script>
+</body>
+</html>

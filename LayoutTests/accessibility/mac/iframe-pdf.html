@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script>
+    if (window.accessibilityController)
+        window.jsTestIsAsync = true;
+</script>
+</head>
+<body>
+
+<script>
+    var testOutput = "This test ensures PDFs loaded in iframes are exposed in the accessibility tree.\n\n";
+
+    if (window.accessibilityController) {
+        var textNode, traversalString, pageObject;
+        setTimeout(async function() {
+            // This test is async because we may need to try the traversal a few times before the iframe
+            // and the PDF inside the iframe are fully loaded.
+            await waitFor(() => {
+                pageObject = findFirstPageDescendant(accessibilityController.accessibleElementById("container"));
+                if (!pageObject)
+                    return false;
+
+                textNode = traverseChildrenToFirstStaticText(pageObject);
+                return textNode;
+            });
+
+            testOutput += "\nFound text object:\n";
+            testOutput += `${textNode.role}\n`;
+            testOutput += `First word: ${textNode.stringValue.split(" ")[1]}`; // Get first word (omit 'AXValue')
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0)
+    }
+</script>
+
+<div id="container" role="group">
+    <iframe src="../resources/simple-webkit-pages.pdf">
+</div>
+
+</body>
+</html>
+

@@ -1,0 +1,16 @@
+
+PASS :queryset_and_destination_buffer_state:querySetState="valid";destinationState="valid"
+PASS :queryset_and_destination_buffer_state:querySetState="valid";destinationState="invalid"
+PASS :queryset_and_destination_buffer_state:querySetState="valid";destinationState="destroyed"
+PASS :queryset_and_destination_buffer_state:querySetState="invalid";destinationState="valid"
+PASS :queryset_and_destination_buffer_state:querySetState="invalid";destinationState="invalid"
+PASS :queryset_and_destination_buffer_state:querySetState="invalid";destinationState="destroyed"
+PASS :queryset_and_destination_buffer_state:querySetState="destroyed";destinationState="valid"
+PASS :queryset_and_destination_buffer_state:querySetState="destroyed";destinationState="invalid"
+PASS :queryset_and_destination_buffer_state:querySetState="destroyed";destinationState="destroyed"
+PASS :first_query_and_query_count:
+PASS :destination_buffer_usage:
+PASS :destination_offset_alignment:
+PASS :resolve_buffer_oob:
+PASS :query_set_buffer,device_mismatch:
+

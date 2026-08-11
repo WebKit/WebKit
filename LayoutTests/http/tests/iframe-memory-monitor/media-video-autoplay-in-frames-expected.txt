@@ -1,0 +1,5 @@
+PASS document.querySelector('iframe[name=frame1]').srcdoc is not ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

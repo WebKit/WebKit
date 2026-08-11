@@ -1,0 +1,10 @@
+This test ensures we maintain proper text stitching (or lack thereof) when the page changes dynamically
+
+PASS: platformStaticTextValue(text).includes('Hello') === true
+PASS: platformStaticTextValue(text).includes('Hello world') === true
+PASS: platformStaticTextValue(text).includes('Hello world last text') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world last text

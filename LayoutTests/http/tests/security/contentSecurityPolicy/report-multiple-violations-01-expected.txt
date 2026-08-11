@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: [Report Only] Refused to load http://127.0.0.1:8000/security/resources/abe.png because it does not appear in the img-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] Refused to load http://127.0.0.1:8000/security/resources/eba.png because it does not appear in the img-src directive of the Content Security Policy.
+This tests that multiple violations on a page trigger multiple reports. The test passes if two CSP violation console messages are visible in the output.
+
+

@@ -1,0 +1,50 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% FOR i IN [ 0 .. data.0.0.max ] %]
+  [% data.0.0.$i = display_value(col_field, data.0.0.$i) %]
+[% END %]
+
+[% FOR i IN [ 0 .. row_names.max ] %]
+  [% row_names.$i = display_value(row_field, row_names.$i) %]
+[% END %]
+
+[% IF cumulate %]
+  [% USE graph = GD.Graph.area(width, height) %]
+  [% graph.set(cumulate => "true") %]
+[% ELSE %]
+  [% USE graph = GD.Graph.lines(width, height) %]
+[% END %]
+
+[% FILTER null;
+  graph.set(x_label           => field_descs.$col_field || col_field,
+            y_label           => terms.Bugs,
+            y_tick_number     => 8,
+            x_label_position  => 0.5,
+            x_labels_vertical => x_labels_vertical,
+            legend_placement  => "RT",
+            line_width        => 2,
+            dclrs             => ["lred", "lgreen", "lblue", "lyellow",
+                                  "lpurple", "lorange", "black", "green",
+                                  "blue", "dpink", "lbrown", "gray", 
+                                  "red", "dpurple", "gold", "marine"]);
+
+  graph.set_legend(row_names);
+  END;
+-%]
+
+[% IF Param("font_file") %]
+  [% graph.set_x_axis_font(Param("font_file"), 9);
+     graph.set_x_label_font(Param("font_file"), 10);
+     graph.set_y_axis_font(Param("font_file"), 9);
+     graph.set_y_label_font(Param("font_file"), 10);
+     graph.set_legend_font(Param("font_file"), 9);
+  %]
+[% END %]
+
+[% graph.plot(data.0).png | stdout(1) %]

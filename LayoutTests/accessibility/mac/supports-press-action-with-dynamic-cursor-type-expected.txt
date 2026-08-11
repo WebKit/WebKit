@@ -1,0 +1,10 @@
+This test ensures whether an element supports press action is reported correctly after dynamic CSS cursor style changes.
+
+PASS: text.role === 'AXRole: AXStaticText'
+PASS: text.isPressActionSupported() === true
+PASS: text.isPressActionSupported() === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Text

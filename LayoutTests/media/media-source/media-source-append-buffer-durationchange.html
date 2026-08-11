@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var mediaSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    async function sourceOpen() {
+        run('source.duration = 0');
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        initSegment = makeAInit(100, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+        testExpected('sourceBuffer.updating', true);
+        await Promise.all([ waitForEvent(sourceBuffer, 'update'), waitFor(sourceBuffer, 'updateend') ]);
+        testExpected('source.duration', 0);
+        testExpected('sourceBuffer.updating', false);
+        mediaSegment = concatenateSamples([
+            makeASample(0,  0,  1, 1, 1, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(1,  1,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(2,  2,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(3,  3,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(4,  4,  1, 1, 1, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(5,  5,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(6,  6,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(7,  7,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(8,  8,  1, 1, 1, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(9,  9,  1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(10, 10, 1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(11, 11, 1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(12, 12, 1, 1, 1, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(13, 13, 1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(14, 14, 1, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(15, 15, 1, 1, 1, SAMPLE_FLAG.NONE, 0)
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+        await Promise.all([ waitForEvent(sourceBuffer, 'update'), waitFor(sourceBuffer, 'updateend'), waitFor(video, 'durationchange') ]);
+        testExpected('source.duration', 16);
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

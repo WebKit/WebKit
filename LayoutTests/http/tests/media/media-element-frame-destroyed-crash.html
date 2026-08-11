@@ -1,0 +1,12 @@
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    for (let i = 5; i; i--) {
+      let iframe = document.createElement('iframe');
+      iframe.src = 'resources/media-element-frame-destroyed-crash-subframe.html';
+      document.body.appendChild(iframe);
+    }
+  }
+</script>
+<p>This test PASS if it does not CRASH.</p>

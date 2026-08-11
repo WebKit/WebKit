@@ -1,0 +1,13 @@
+1
+2
+2
+1
+2
+2
+1 2
+
+PASS Trailing white space before a block level box collapses (nested)
+PASS Trailing white space before a block level box collapses (sibling)
+PASS White space between two characters on the same line is preserved
+PASS The trailing white space collapses the same whether the block level box is nested in an inline box or a sibling of inline content
+

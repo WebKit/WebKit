@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+const url = "data:audio/mpeg;base64,/+MYxAAAAANIAUAAAASEEB/jwOFM/0MM/90b/+RhST//w4NFwOjf///PZu////9lns5GFDv//l9GlUIEEIAAAgIg8Ir/JGq3/+MYxDsLIj5QMYcoAP0dv9HIjUcH//yYSg+CIbkGP//8w0bLVjUP///3Z0x5QCAv/yLjwtGKTEFNRTMuOTeqqqqqqqqqqqqq/+MYxEkNmdJkUYc4AKq" + "q".repeat(32535);
+
+const xhr = new XMLHttpRequest();
+xhr.onload = function() {
+    testPassed("Large URL handled properly.");
+    finishJSTest();
+}
+xhr.onerror = function() {
+    testFailed("Large URL was improperly rejected.");
+    finishJSTest();
+}
+xhr.open("GET", url);
+xhr.send();
+</script>
+</body>
+</html>

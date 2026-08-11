@@ -1,0 +1,23 @@
+<style>
+.none { pointer-events:none; }
+</style>
+<div class=target>target1</div>
+<div><span class=target>target2</span></div>
+<pre id=log></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test(target, expected) {
+    const pass = document.elementFromPoint(target.offsetLeft + 5, target.offsetTop + 5) === expected;
+    log.textContent += pass ? "PASS\n" : "FAIL\n"
+
+}
+for (target of document.querySelectorAll(".target")) {
+    test(target, target);
+    target.classList.add("none");
+    test(target, target.parentElement);
+    target.classList.remove("none");
+    test(target, target);
+}
+</script>

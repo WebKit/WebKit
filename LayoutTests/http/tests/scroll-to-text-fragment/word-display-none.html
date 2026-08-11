@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Scroll to text fragment - highlight simple start text</title>
+<link rel="help" href="https://wicg.github.io/scroll-to-text-fragment/">
+<style>
+  span {
+    display: none;
+  }
+</style>
+
+<p>The test passes if the following word does not have a yellow background.</p>
+<div>This <span>word</span> should not be highlighted</div>
+
+<script>
+  location.href = "#:~:text=This-,word,-should";
+</script>
+</html>

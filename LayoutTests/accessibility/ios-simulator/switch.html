@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="checkbox" switch id="html-switch">
+
+<button
+  type="button"
+  role="switch"
+  aria-checked="true"
+  id="aria-switch"
+  class="switch">
+  <span aria-hidden="true">off</span>
+  <span aria-hidden="true">on</span>
+</button>
+<label for="aria-switch" class="switch">Speaker power</label>
+
+<script>
+let output = "This test ensures that switches are exposed as such by the iOS wrapper.\n\n";
+
+if (window.accessibilityController) {
+    output += expect("accessibilityController.accessibleElementById('html-switch').isSwitch", "true");
+    output += expect("accessibilityController.accessibleElementById('aria-switch').isSwitch", "true");
+    debug(output);
+}
+</script>
+</body>
+</html>
+

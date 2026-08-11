@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="grid">
+    <div id="item"></div>
+</div>
+<script>
+description('Test that an element supports z-index once it is a grid item and it is repainted properly.');
+
+debug('Test z-index property for a regular element');
+var item = document.getElementById("item");
+shouldBe("getComputedStyle(item, '').getPropertyValue('z-index')", "'auto'");
+item.style.zIndex = "-10";
+shouldBe("getComputedStyle(item, '').getPropertyValue('z-index')", "'-10'");
+
+debug('Test z-index property once the element becomes a grid item');
+var grid = document.getElementById("grid");
+grid.style.display = "grid";
+shouldBe("getComputedStyle(item, '').getPropertyValue('z-index')", "'-10'");
+item.style.zIndex = "10";
+shouldBe("getComputedStyle(item, '').getPropertyValue('z-index')", "'10'");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

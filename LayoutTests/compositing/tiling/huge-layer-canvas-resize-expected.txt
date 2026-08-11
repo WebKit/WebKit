@@ -1,0 +1,31 @@
+(repaint rects
+  (rect 0 0 3400 2000)
+  (rect 2500 0 900 2028)
+  (rect 2500 0 900 2041)
+)
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 3400.00 2041.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 3400.00 2041.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (bounds 3400.00 2000.00)
+          (children 1
+            (GraphicsLayer
+              (bounds 3400.00 2000.00)
+              (usingTiledLayer 1)
+              (drawsContent 1)
+              (repaint rects
+                (rect 0.00 0.00 2500.00 2000.00)
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

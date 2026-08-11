@@ -1,0 +1,69 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+group("crypto") {
+  deps = [
+    ":frame_decryptor_interface",
+    ":frame_encryptor_interface",
+    ":options",
+  ]
+}
+
+rtc_library("options") {
+  visibility = [ "*" ]
+  sources = [
+    "crypto_options.cc",
+    "crypto_options.h",
+  ]
+  deps = [
+    "..:field_trials_view",
+    "../../rtc_base:checks",
+    "../../rtc_base:ssl_adapter",
+    "../../rtc_base/system:rtc_export",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+  ]
+}
+
+rtc_source_set("frame_decryptor_interface") {
+  visibility = [ "*" ]
+  sources = [ "frame_decryptor_interface.h" ]
+  deps = [
+    "..:ref_count",
+    "..:rtp_parameters",
+  ]
+}
+
+rtc_source_set("frame_encryptor_interface") {
+  visibility = [ "*" ]
+  sources = [ "frame_encryptor_interface.h" ]
+  deps = [
+    "..:ref_count",
+    "..:rtp_parameters",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("crypto_options_unittest") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [ "crypto_options_unittest.cc" ]
+    deps = [
+      ":options",
+      "..:field_trials",
+      "../../rtc_base:ssl_adapter",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+      "//testing/gtest",
+    ]
+    if (rtc_build_ssl) {
+      deps += [ "//third_party/boringssl" ]
+    }
+  }
+}

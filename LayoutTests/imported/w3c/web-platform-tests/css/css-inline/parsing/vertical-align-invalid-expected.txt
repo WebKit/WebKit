@@ -1,0 +1,10 @@
+
+PASS e.style['vertical-align'] = "none" should not set the property value
+PASS e.style['vertical-align'] = "first last" should not set the property value
+PASS e.style['vertical-align'] = "first, last" should not set the property value
+PASS e.style['vertical-align'] = "sub super" should not set the property value
+PASS e.style['vertical-align'] = "super 10px" should not set the property value
+PASS e.style['vertical-align'] = "20% sub" should not set the property value
+PASS e.style['vertical-align'] = "baseline middle" should not set the property value
+PASS e.style['vertical-align'] = "text-top, bottom" should not set the property value
+

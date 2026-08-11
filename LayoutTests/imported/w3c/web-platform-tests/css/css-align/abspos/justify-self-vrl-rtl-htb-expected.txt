@@ -1,0 +1,40 @@
+
+
+
+PASS .item 1
+PASS .item 2
+PASS .item 3
+FAIL .item 4 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: baseline;" data-expected-height="20" data-offset-y="20"></div>
+</div>
+offsetTop expected 20 but got 0
+FAIL .item 5 assert_equals:
+<div class="container">
+  <div class="item" style="justify-self: last baseline;" data-expected-height="20" data-offset-y="0"></div>
+</div>
+offsetTop expected 0 but got 20
+PASS .item 6
+PASS .item 7
+PASS .item 8
+PASS .item 9
+PASS .item 10
+PASS .item 11
+PASS .item 12
+PASS .item 13
+FAIL .item 14 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: baseline;" data-expected-height="20" data-offset-y="20"></div>
+</div>
+offsetTop expected 20 but got 0
+FAIL .item 15 assert_equals:
+<div class="container">
+  <div class="item rtl" style="justify-self: last baseline;" data-expected-height="20" data-offset-y="0"></div>
+</div>
+offsetTop expected 0 but got 20
+PASS .item 16
+PASS .item 17
+PASS .item 18
+PASS .item 19
+PASS .item 20
+

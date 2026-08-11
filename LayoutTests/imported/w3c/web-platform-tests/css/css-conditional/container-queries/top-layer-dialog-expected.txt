@@ -1,0 +1,6 @@
+
+PASS #container initially wider than 200px
+PASS #container changed to 200px
+PASS Modal dialog still has parent as query container while in top layer
+PASS Container changes width while dialog is in top layer
+

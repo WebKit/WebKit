@@ -1,0 +1,46 @@
+<!DOCTYPE html><!-- webkit-test-runner [ RequestIdleCallbackEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+
+description('This tests that when requestIdleCallback is enabled, requestIdleCallback is eventaully called in the order.');
+
+jsTestIsAsync = true;
+
+const iframe = document.createElement('iframe');
+const logsA = [];
+const logsB = [];
+
+iframe.onload = () => {
+    requestIdleCallback(() => {
+        logsA.push('A1');
+        cancelIdleCallback(b1);
+    });
+
+    const b1 = iframe.contentWindow.requestIdleCallback(() => {
+        logsB.push('B1');
+        iframe.contentWindow.cancelIdleCallback(a3);
+        iframe.contentWindow.cancelIdleCallback(b2);
+    });
+    const b2 = iframe.contentWindow.requestIdleCallback(() => logsB.push('B2'));
+
+    window.a2 = requestIdleCallback(() => logsA.push('A2'));
+    cancelIdleCallback(a2 + 1);
+    window.a3 = requestIdleCallback(() => logsA.push('A3'));
+    shouldBe('a3', 'a2 + 1');
+    cancelIdleCallback(a2);
+}
+document.body.appendChild(iframe);
+
+setTimeout(() => {
+    shouldBe('logsA.length', '2');
+    shouldBe('logsB.length', '1');
+    shouldBeEqualToString('logsA.join(", ")', 'A1, A3');
+    shouldBeEqualToString('logsB.join(", ")', 'B1');
+    finishJSTest();
+}, 200);
+
+</script>
+</body>
+</html>

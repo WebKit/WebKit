@@ -1,0 +1,23 @@
+<script>
+ function main() {
+     range = document.createRange();
+     range.selectNodeContents(button);
+     feImage.before(button);
+     range.surroundContents(ol);
+ }
+ window.testRunner?.dumpAsText();
+</script>
+<body onload=main()>
+    <h1>This test passes if it doesn't crash</h1>
+    <u style="visibility: hidden;">
+        <button id="button">
+        </button>
+        <svg id="svgObject">
+            <path filter="url(#filter)" />
+            <filter id="filter">
+                <feImage xlink:href="#svgObject" id="feImage" />
+            </filter>
+        </svg>
+        <ol id="ol"/>
+    </u>
+</body>

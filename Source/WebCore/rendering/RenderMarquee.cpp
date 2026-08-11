@@ -1,0 +1,331 @@
+/*
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ *
+ * Portions are Copyright (C) 1998 Netscape Communications Corporation.
+ *
+ * Other contributors:
+ *   Robert O'Callahan <roc+@cs.cmu.edu>
+ *   David Baron <dbaron@fas.harvard.edu>
+ *   Christian Biesinger <cbiesinger@web.de>
+ *   Randall Jesup <rjesup@wgate.com>
+ *   Roland Mainz <roland.mainz@informatik.med.uni-giessen.de>
+ *   Josh Soref <timeless@mac.com>
+ *   Boris Zbarsky <bzbarsky@mit.edu>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * Alternatively, the contents of this file may be used under the terms
+ * of either the Mozilla Public License Version 1.1, found at
+ * http://www.mozilla.org/MPL/ (the "MPL") or the GNU General Public
+ * License Version 2.0, found at http://www.fsf.org/copyleft/gpl.html
+ * (the "GPL"), in which case the provisions of the MPL or the GPL are
+ * applicable instead of those above.  If you wish to allow use of your
+ * version of this file only under the terms of one of those two
+ * licenses (the MPL or the GPL) and not to allow others to use your
+ * version of this file under the LGPL, indicate your decision by
+ * deletingthe provisions above and replace them with the notice and
+ * other provisions required by the MPL or the GPL, as the case may be.
+ * If you do not delete the provisions above, a recipient may use your
+ * version of this file under any of the LGPL, the MPL or the GPL.
+ */
+
+#include "config.h"
+
+#include "RenderMarquee.h"
+
+#include "HTMLMarqueeElement.h"
+#include "HTMLNames.h"
+#include "LocalFrameView.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderElementInlines.h"
+#include "RenderLayer.h"
+#include "RenderLayerScrollableArea.h"
+#include "RenderObjectInlines.h"
+#include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderMarquee);
+
+using namespace HTMLNames;
+
+RenderMarquee::RenderMarquee(RenderLayer* layer)
+    : m_layer(*layer)
+    , m_timer(*this, &RenderMarquee::timerFired)
+{
+    ASSERT(layer);
+    ASSERT(layer->scrollableArea());
+    layer->scrollableArea()->setScrollClamping(ScrollClamping::Unclamped);
+}
+
+RenderMarquee::~RenderMarquee() = default;
+
+int RenderMarquee::marqueeSpeed() const
+{
+    CheckedRef layer = m_layer.get();
+    auto result = static_cast<int>(layer->renderer().style().marqueeSpeed().asMilliseconds());
+    if (RefPtr marquee = dynamicDowncast<HTMLMarqueeElement>(layer->renderer().element()))
+        result = std::max(result, marquee->minimumDelay());
+    return result;
+}
+
+static MarqueeDirection NODELETE reverseDirection(MarqueeDirection direction)
+{
+    switch (direction) {
+    case MarqueeDirection::Auto:
+        return MarqueeDirection::Auto;
+    case MarqueeDirection::Left:
+        return MarqueeDirection::Right;
+    case MarqueeDirection::Right:
+        return MarqueeDirection::Left;
+    case MarqueeDirection::Up:
+        return MarqueeDirection::Down;
+    case MarqueeDirection::Down:
+        return MarqueeDirection::Up;
+    case MarqueeDirection::Backward:
+        return MarqueeDirection::Forward;
+    case MarqueeDirection::Forward:
+        return MarqueeDirection::Backward;
+    }
+    return MarqueeDirection::Auto;
+}
+
+MarqueeDirection RenderMarquee::direction() const
+{
+    // FIXME: Support the CSS3 "auto" value for determining the direction of the marquee.
+    // For now just map MarqueeDirection::Auto to MarqueeDirection::Backward
+    auto& layer = m_layer.get();
+    auto result = layer.renderer().style().marqueeDirection();
+    auto writingMode = layer.renderer().writingMode();
+    if (result == MarqueeDirection::Auto)
+        result = MarqueeDirection::Backward;
+    if (result == MarqueeDirection::Forward)
+        result = (writingMode.isBidiLTR()) ? MarqueeDirection::Right : MarqueeDirection::Left;
+    if (result == MarqueeDirection::Backward)
+        result = (writingMode.isBidiLTR()) ? MarqueeDirection::Left : MarqueeDirection::Right;
+
+    // Now we have the real direction.  Next we check to see if the increment is negative.
+    // If so, then we reverse the direction.
+    // FIXME: This will fail for `increment` that uses `calc()`, though this can currently never happen due to the property being internal
+    if (auto& increment = layer.renderer().style().marqueeIncrement(); increment.isKnownNegative())
+        result = reverseDirection(result);
+    
+    return result;
+}
+
+bool RenderMarquee::isHorizontal() const
+{
+    return direction() == MarqueeDirection::Left || direction() == MarqueeDirection::Right;
+}
+
+int RenderMarquee::computePosition(MarqueeDirection dir, bool stopAtContentEdge)
+{
+    CheckedPtr box = layer().renderBox();
+    ASSERT(box);
+    CheckedRef boxStyle = box->style();
+    if (isHorizontal()) {
+        bool ltr = boxStyle->writingMode().deprecatedIsLeftToRightDirection();
+        LayoutUnit paddingBoxWidth = box->paddingBoxWidth();
+        LayoutUnit contentWidth = ltr ? box->maxContentLogicalWidthContribution() : box->minContentLogicalWidthContribution();
+        if (ltr)
+            contentWidth += (box->paddingRight() - box->borderLeft());
+        else {
+            contentWidth = box->borderBoxWidth() - contentWidth;
+            contentWidth += (box->paddingLeft() - box->borderRight());
+        }
+        if (dir == MarqueeDirection::Right) {
+            if (stopAtContentEdge)
+                return std::max<LayoutUnit>(0, ltr ? (contentWidth - paddingBoxWidth) : (paddingBoxWidth - contentWidth));
+
+            return ltr ? contentWidth : paddingBoxWidth;
+        }
+
+        if (stopAtContentEdge)
+            return std::min<LayoutUnit>(0, ltr ? (contentWidth - paddingBoxWidth) : (paddingBoxWidth - contentWidth));
+
+        return ltr ? -paddingBoxWidth : -contentWidth;
+    }
+
+    // Vertical
+    int contentHeight = box->layoutOverflowRect().maxY() - box->borderTop() + box->paddingBottom();
+    int paddingBoxHeight = roundToInt(box->paddingBoxHeight());
+    if (dir == MarqueeDirection::Up) {
+        if (stopAtContentEdge)
+            return std::min(contentHeight - paddingBoxHeight, 0);
+
+        return -paddingBoxHeight;
+    }
+
+    if (stopAtContentEdge)
+        return std::max(contentHeight - paddingBoxHeight, 0);
+
+    return contentHeight;
+}
+
+void RenderMarquee::start()
+{
+    CheckedRef layer = m_layer.get();
+    if (m_timer.isActive() || layer->renderer().style().marqueeIncrement().isKnownZero())
+        return;
+
+    CheckedPtr scrollableArea = layer->scrollableArea();
+    ASSERT(scrollableArea);
+
+    auto details = ScrollPositionChangeOptions::createProgrammaticUnclamped();
+    if (!m_suspended && !m_stopped) {
+        if (isHorizontal())
+            scrollableArea->scrollToOffset(ScrollOffset(m_start, 0), details);
+        else
+            scrollableArea->scrollToOffset(ScrollOffset(0, m_start), details);
+    } else {
+        m_suspended = false;
+        m_stopped = false;
+    }
+
+    m_timer.startRepeating(1_ms * speed());
+}
+
+void RenderMarquee::suspend()
+{
+    m_timer.stop();
+    m_suspended = true;
+}
+
+void RenderMarquee::stop()
+{
+    m_timer.stop();
+    m_stopped = true;
+}
+
+void RenderMarquee::updateMarqueePosition()
+{
+    bool activate = (m_totalLoops <= 0 || m_currentLoop < m_totalLoops);
+    if (activate) {
+        MarqueeBehavior behavior = layer().renderer().style().marqueeBehavior();
+        m_start = computePosition(direction(), behavior == MarqueeBehavior::Alternate);
+        m_end = computePosition(reverseDirection(direction()), behavior == MarqueeBehavior::Alternate || behavior == MarqueeBehavior::Slide);
+        if (!m_stopped)
+            start();
+    }
+}
+
+void RenderMarquee::updateMarqueeStyle()
+{
+    CheckedRef layer = m_layer.get();
+    CheckedRef style = layer->renderer().style();
+
+    auto newDirection = style->marqueeDirection();
+    auto newTotalLoops = WTF::switchOn(style->marqueeRepetition(),
+        [&](const Style::WebkitMarqueeRepetition::Integer& finiteCount) {
+            return finiteCount.value;
+        },
+        [&](const CSS::Keyword::Infinite&) {
+            return -1;
+        }
+    );
+
+    if (m_direction != newDirection || (m_totalLoops != newTotalLoops && m_currentLoop >= m_totalLoops))
+        m_currentLoop = 0; // When direction changes or our loopCount is a smaller number than our current loop, reset our loop.
+
+    m_direction = newDirection;
+    m_totalLoops = newTotalLoops;
+
+    if (layer->renderer().isHTMLMarquee()) {
+        // Hack for WinIE.  In WinIE, a value of 0 or lower for the loop count for SLIDE means to only do
+        // one loop.
+        if (m_totalLoops <= 0 && style->marqueeBehavior() == MarqueeBehavior::Slide)
+            m_totalLoops = 1;
+    }
+
+    if (speed() != marqueeSpeed()) {
+        m_speed = marqueeSpeed();
+        if (m_timer.isActive())
+            m_timer.startRepeating(1_ms * speed());
+    }
+    
+    // Check the loop count to see if we should now stop.
+    bool activate = (m_totalLoops <= 0 || m_currentLoop < m_totalLoops);
+    if (activate && !m_timer.isActive())
+        layer->renderer().setNeedsLayout();
+    else if (!activate && m_timer.isActive())
+        m_timer.stop();
+}
+
+void RenderMarquee::timerFired()
+{
+    CheckedRef layer = m_layer.get();
+    if (layer->renderer().view().needsLayout())
+        return;
+
+    CheckedPtr scrollableArea = layer->scrollableArea();
+    ASSERT(scrollableArea);
+
+    if (m_reset) {
+        m_reset = false;
+        if (isHorizontal())
+            scrollableArea->scrollToXOffset(m_start);
+        else
+            scrollableArea->scrollToYOffset(m_start);
+        return;
+    }
+    
+    CheckedRef style = layer->renderer().style();
+    CheckedPtr renderBox = layer->renderBox();
+    
+    int endPoint = m_end;
+    int range = m_end - m_start;
+    int newPos;
+    if (range == 0)
+        newPos = m_end;
+    else {  
+        bool addIncrement = direction() == MarqueeDirection::Up || direction() == MarqueeDirection::Left;
+        bool isReversed = style->marqueeBehavior() == MarqueeBehavior::Alternate && m_currentLoop % 2;
+        if (isReversed) {
+            // We're going in the reverse direction.
+            endPoint = m_start;
+            range = -range;
+            addIncrement = !addIncrement;
+        }
+        bool positive = range > 0;
+        int clientSize = (isHorizontal() ? roundToInt(renderBox->paddingBoxWidth()) : roundToInt(renderBox->paddingBoxHeight()));
+        int increment = std::abs(Style::evaluate<float>(layer->renderer().style().marqueeIncrement(), clientSize, layer->renderer().style().usedZoomForLength()));
+        int currentPos = (isHorizontal() ? scrollableArea->scrollOffset().x() : scrollableArea->scrollOffset().y());
+        newPos =  currentPos + (addIncrement ? increment : -increment);
+        if (positive)
+            newPos = std::min(newPos, endPoint);
+        else
+            newPos = std::max(newPos, endPoint);
+    }
+
+    if (newPos == endPoint) {
+        m_currentLoop++;
+        if (m_totalLoops > 0 && m_currentLoop >= m_totalLoops)
+            m_timer.stop();
+        else if (style->marqueeBehavior() != MarqueeBehavior::Alternate)
+            m_reset = true;
+    }
+    
+    if (isHorizontal())
+        scrollableArea->scrollToXOffset(newPos);
+    else
+        scrollableArea->scrollToYOffset(newPos);
+}
+
+} // namespace WebCore

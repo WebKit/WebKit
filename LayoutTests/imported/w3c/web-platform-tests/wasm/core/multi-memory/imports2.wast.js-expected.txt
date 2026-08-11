@@ -1,0 +1,51 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (imports2.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (imports2.wast:9)
+PASS #4 Test that WebAssembly compilation succeeds (imports2.wast:22)
+PASS #5 Test that WebAssembly compilation succeeds (imports2.wast:33)
+PASS #6 Test that WebAssembly compilation succeeds (imports2.wast:39)
+PASS #7 Test that WebAssembly compilation succeeds (imports2.wast:49)
+PASS #8 Test that WebAssembly compilation succeeds (imports2.wast:53)
+PASS #9 Test that WebAssembly compilation succeeds (imports2.wast:58)
+PASS #10 Test that WebAssembly compilation succeeds (imports2.wast:62)
+PASS #11 Test that WebAssembly compilation succeeds (imports2.wast:66)
+PASS #12 Test that WebAssembly compilation succeeds (imports2.wast:70)
+PASS #13 Reinitialize the default imports
+PASS #14 Test that WebAssembly compilation succeeds (imports2.wast:1)
+PASS #15 Test that WebAssembly instantiation succeeds (imports2.wast:1)
+PASS #16 Test that WebAssembly compilation succeeds (imports2.wast:9)
+PASS #17 Test that WebAssembly instantiation succeeds (imports2.wast:9)
+PASS #18 Test that a WebAssembly code returns a specific result (imports2.wast:17)
+PASS #19 Test that a WebAssembly code returns a specific result (imports2.wast:18)
+PASS #20 Test that a WebAssembly code returns a specific result (imports2.wast:19)
+PASS #21 Test that a WebAssembly code traps (imports2.wast:20)
+PASS #22 Test that WebAssembly compilation succeeds (imports2.wast:22)
+PASS #23 Test that WebAssembly instantiation succeeds (imports2.wast:22)
+PASS #24 Test that a WebAssembly code returns a specific result (imports2.wast:28)
+PASS #25 Test that a WebAssembly code returns a specific result (imports2.wast:29)
+PASS #26 Test that a WebAssembly code returns a specific result (imports2.wast:30)
+PASS #27 Test that a WebAssembly code traps (imports2.wast:31)
+PASS #28 Test that WebAssembly compilation succeeds (imports2.wast:33)
+PASS #29 Test that WebAssembly instantiation succeeds (imports2.wast:33)
+PASS #30 Test that WebAssembly compilation succeeds (imports2.wast:39)
+PASS #31 Test that WebAssembly instantiation succeeds (imports2.wast:39)
+PASS #32 Test that WebAssembly compilation succeeds (imports2.wast:49)
+PASS #33 Test that WebAssembly instantiation fails (imports2.wast:49)
+PASS #34 Test that a WebAssembly module is unlinkable
+PASS #35 Test that WebAssembly compilation succeeds (imports2.wast:53)
+PASS #36 Test that WebAssembly instantiation fails (imports2.wast:53)
+PASS #37 Test that a WebAssembly module is unlinkable
+PASS #38 Test that WebAssembly compilation succeeds (imports2.wast:58)
+PASS #39 Test that WebAssembly instantiation fails (imports2.wast:58)
+PASS #40 Test that a WebAssembly module is unlinkable
+PASS #41 Test that WebAssembly compilation succeeds (imports2.wast:62)
+PASS #42 Test that WebAssembly instantiation fails (imports2.wast:62)
+PASS #43 Test that a WebAssembly module is unlinkable
+PASS #44 Test that WebAssembly compilation succeeds (imports2.wast:66)
+PASS #45 Test that WebAssembly instantiation fails (imports2.wast:66)
+PASS #46 Test that a WebAssembly module is unlinkable
+PASS #47 Test that WebAssembly compilation succeeds (imports2.wast:70)
+PASS #48 Test that WebAssembly instantiation fails (imports2.wast:70)
+PASS #49 Test that a WebAssembly module is unlinkable
+

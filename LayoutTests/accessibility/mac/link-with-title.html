@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<a id="link1" href="#" title="TITLE">TEXT</a>
+
+<script>
+    if (window.accessibilityController) {
+        let output = "This tests that a link with a title attribute will only include that in the help field.\n";
+
+        var link1 = accessibilityController.accessibleElementById("link1");
+        output += "Link with title and visible text\n";
+        output += expect("link1.description", "'AXDescription: '");
+        output += expect("link1.title", "'AXTitle: TEXT'");
+        output += expect("link1.helpText", "'AXHelp: TITLE'");
+
+        debug(output);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+Fieldset with legend as a flex item in column direction should have the correct height on the first layout, without needing a relayout.
+
+X
+X
+X
+PASS: fieldset1 height matches after relayout (42px)
+PASS: fieldset2 height matches after relayout (92px)
+PASS: fieldset3 (row) height matches after relayout (42px)
+

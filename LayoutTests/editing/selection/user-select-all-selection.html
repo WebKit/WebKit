@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<head>
+<style>
+.userSelectAll {-webkit-user-select: all; }
+</style>
+<script src="../editing.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script src="resources/js-test-selection-shared.js"></script>
+<script>
+function log(str) {
+    var div = document.createElement("div");
+    div.appendChild(document.createTextNode(str));
+    document.getElementById("console").appendChild(div);
+}
+
+function placeCaretBeforeUserSelectAllElement()
+{
+    var userSelectAllElement = document.getElementById("allArea");
+    execSetSelectionCommand(userSelectAllElement.previousSibling.firstChild, userSelectAllElement.previousSibling.textContent.length, userSelectAllElement.previousSibling.firstChild, userSelectAllElement.previousSibling.textContent.length);
+}
+
+function mouseMoveFromTo(fromX, toX)
+{
+    var userSelectAllElement = document.getElementById("allArea");
+    var y = userSelectAllElement.offsetTop + 10;
+    eventSender.dragMode = false;
+    // Clear click count
+    eventSender.mouseMoveTo(0, 0);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+                
+    eventSender.mouseMoveTo(fromX, y);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(toX, y);
+    eventSender.mouseUp();
+}
+
+function testKeyboard(){
+    var userSelectAllElement = document.getElementById("allArea");
+
+    placeCaretBeforeUserSelectAllElement();
+    getSelection().modify('extend', 'forward', 'character');
+    Markup.dump(editor, 'After extend forward character');
+
+    getSelection().modify('extend', 'backward', 'character');
+    Markup.dump(editor, 'After extend backward character');
+
+    getSelection().modify('extend', 'right', 'character');
+    Markup.dump(editor, 'After extend right character');
+
+    getSelection().modify('extend', 'left', 'character');
+    Markup.dump(editor, 'After extend left character');
+
+    getSelection().modify('move', 'forward', 'character');
+    Markup.dump(editor, 'After move forward character');
+
+    getSelection().modify('move', 'backward', 'character');
+    Markup.dump(editor, 'After move backward character');
+
+    getSelection().modify('move', 'right', 'character');
+    Markup.dump(editor, 'After move right character');
+
+    getSelection().modify('move', 'left', 'character');
+    Markup.dump(editor, 'After move left character');
+}
+
+function testMouse(){
+    var userSelectAllElement = document.getElementById("allArea");
+    var descendant = document.getElementById("descendant");
+
+    clickAt(descendant.offsetLeft + 10 , descendant.offsetTop + 10);
+    Markup.dump(editor, 'After click');
+
+    // mouse extending from left
+    var leftTarget = userSelectAllElement.previousSibling;
+    mouseMoveFromTo(leftTarget.offsetLeft, descendant.offsetLeft + 20);
+    Markup.dump(editor, 'After extending selection from left by mouse');
+    
+    // mouse extending from right
+    var rightTarget = userSelectAllElement.nextSibling;
+    var textLength = rightTarget.textContent.length;
+    mouseMoveFromTo(userSelectAllElement.offsetLeft + userSelectAllElement.offsetWidth + rightTarget.offsetWidth, descendant.offsetLeft + 10);
+    Markup.dump(editor, 'After extending selection from right by mouse');
+}
+    
+function testProgrammaticSelection(){
+    var boldElement = document.querySelector('b');
+    getSelection().selectAllChildren(boldElement);
+    Markup.dump(editor, 'After programmatic selection');
+}
+</script>
+</head>
+<body><div id="editor" contenteditable><span>Test -webkit-user-select all </span><span class="userSelectAll" id="allArea"><span style="border: solid red 1px" id="descendant">user <b>select all</b> area</span></span><span> Test -webkit-user-select all</span></div>
+<div id="console"></div>
+<script>
+Markup.description(" Test -webkit-user-select all selection movements and extensions (left right forward backward) ");
+testKeyboard();
+testMouse();
+testProgrammaticSelection();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

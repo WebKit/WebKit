@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div tabindex="0" id="textfield" role="textbox" aria-multiline="false">a</div>
+<div tabindex="0" id="textarea" role="textbox" aria-multiline="true">b</div>
+
+<script>
+    var testOutput = "This tests that aria-multiline will change the role of a text control from a text field to a text area.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        const textField = accessibilityController.accessibleElementById("textfield");
+        const textArea = accessibilityController.accessibleElementById("textarea");
+        testOutput += `#textfield role: ${textField.role}\n`;
+        testOutput += `#textarea role: ${textArea.role}\n`;
+
+        testOutput += "\nSetting #textfield aria-multiline to true and #textarea aria-multiline to false.\n";
+        document.getElementById("textfield").ariaMultiLine = true;
+        document.getElementById("textarea").ariaMultiLine = false;
+        setTimeout(async function() {
+            await waitFor(() => {
+                return textField.role.includes("TextArea") &&
+                    textArea.role.includes("TextField");
+            })
+            testOutput += `#textfield role: ${textField.role}\n`;
+            testOutput += `#textarea role: ${textArea.role}\n`;
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

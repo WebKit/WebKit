@@ -1,0 +1,12 @@
+Verifies that the iframe receives touch events with the expected coordinates.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS events[0] is 'touchstart 40,10'
+PASS events[1] is 'touchmove 140,60'
+PASS events[2] is 'touchend 140,60'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

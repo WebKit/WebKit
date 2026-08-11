@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <image src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=958d24b5-114f-44d7-867f-7b6ed7a64d46&amp;encodingcheck=&Gbreve;">
+
+
+
+PASS Speculative parsing, document.write(): image-src
+

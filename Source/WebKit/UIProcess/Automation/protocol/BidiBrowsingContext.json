@@ -1,0 +1,375 @@
+{
+    "domain": "BidiBrowsingContext",
+    "exposedAs": "browsingContext",
+    "condition": "ENABLE(WEBDRIVER_BIDI)",
+    "description": "The browsingContext module contains commands and events relating to navigables.",
+    "spec": "https://w3c.github.io/webdriver-bidi/#module-browsingContext",
+    "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context",
+    "types": [
+        {
+            "id": "BrowsingContext",
+            "description": "A unique identifier for a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-Browsingcontext",
+            "type": "string"
+        },
+        {
+            "id": "CreateType",
+            "description": "The type of browsing context to be created.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-create",
+            "type": "string",
+            "enum": [ "tab", "window" ]
+        },
+        {
+            "id": "Info",
+            "description": "Information about a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-Info",
+            "type": "object",
+            "properties": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The navigable being described." },
+                { "name": "url", "type": "string" },
+                { "name": "originalOpener", "$ref": "BidiBrowsingContext.BrowsingContext", "nullable": true },
+                { "name": "parent", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "nullable": true },
+                { "name": "children", "type": "array", "items": { "$ref": "BidiBrowsingContext.Info" }, "nullable": true },
+                { "name": "clientWindow", "$ref": "BidiBrowser.ClientWindow" },
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext" }
+            ]
+        },
+        {
+            "id": "NavigationID",
+            "description": "Unique string identifying an ongoing navigation.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-Navigation",
+            "type": "string"
+        },
+        {
+            "id": "NavigationInfo",
+            "description": "Information about a navigation.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-NavigationInfo",
+            "type": "object",
+            "properties": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext" },
+                { "name": "navigation", "$ref": "BidiBrowsingContext.NavigationID", "nullable": true },
+                { "name": "timestamp", "type": "number" },
+                { "name": "url", "type": "string" }
+            ]
+        },
+        {
+            "id": "ReadinessState",
+            "description": "Represents the stage of document loading at which a navigation command will return.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-ReadinessState",
+            "type": "string",
+            "enum": ["none", "interactive", "complete"]
+        },
+        {
+            "id": "UserPromptType",
+            "description": "Represents the possible user prompt types.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-UserPromptType",
+            "type": "string",
+            "enum": [ "alert", "beforeunload", "confirm", "prompt" ]
+        },
+        {
+            "id": "Locator",
+            "description": "Defines a strategy for locating nodes within a document.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-Locator",
+            "type": "object",
+            "properties": [
+                { "name": "type", "$ref": "BidiBrowsingContext.LocatorType" },
+                { "name": "value", "type": "any" }
+            ]
+        },
+        {
+            "id": "LocatorType",
+            "description": "The type of locator strategy to use for finding nodes.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-Locator",
+            "bug": "https://bugs.webkit.org/show_bug.cgi?id=288329",
+            "type": "string",
+            "enum": [ "css" ]
+        },
+        {
+            "id": "Viewport",
+            "description": "Represents viewport dimensions.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-setViewport",
+            "type": "object",
+            "properties": [
+                { "name": "width", "type": "integer" },
+                { "name": "height", "type": "integer" }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "activate",
+            "description": "Activates and focuses the given top-level traversable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-activate",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/activate",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to activate.  It is an error to pass a non-top level traversable." }
+            ]
+        },
+        {
+            "name": "close",
+            "description": "Closes the given top-level traversable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-close",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/close",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to close.  It is an error to pass a non-top level traversable." },
+                { "name": "promptUnload", "type": "boolean", "optional": true, "description": "Whether to permit prompting the user from beforeunload event." }
+            ]
+        },
+        {
+            "name": "create",
+            "description": "Creates a new navigable, either in a new tab or in a new window, and returns its navigable id (<code>BidiBrowsingContext.BrowsingContext</code>).",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-create",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/create",
+            "async": true,
+            "parameters": [
+                { "name": "type", "$ref": "BidiBrowsingContext.CreateType" },
+                { "name": "referenceContext", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true },
+                { "name": "background", "type": "boolean", "optional": true },
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext", "optional": true }
+            ],
+            "returns": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to close. It is an error to pass a non-top level traversable." }
+            ]
+        },
+        {
+            "name": "handleUserPrompt",
+            "description": "Allows closing an open prompt.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-create",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/create",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context in which to handle a user prompt.  It is an error to pass a non-top level traversable." },
+                { "name": "accept", "type": "boolean", "optional": true },
+                { "name": "userText", "type": "string", "optional": true }
+            ]
+        },
+        {
+            "name": "locateNodes",
+            "description": "Locates nodes within a browsing context using the provided locator strategy.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-locateNodes",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/locate_nodes",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to search within." },
+                { "name": "locator", "$ref": "BidiBrowsingContext.Locator", "description": "The locator strategy and value to use for finding nodes." },
+                { "name": "maxNodeCount", "type": "number", "optional": true, "description": "Maximum number of nodes to return. If not specified, all matching nodes are returned." },
+                { "name": "serializationOptions", "$ref": "BidiScript.SerializationOptions", "optional": true, "description": "Options for controlling how nodes are serialized in the response." },
+                { "name": "startNodes", "type": "array", "items": { "$ref": "BidiScript.RemoteValue" }, "optional": true, "description": "Optional array of node references to start the search from." }
+            ],
+            "returns": [
+                { "name": "nodes", "type": "array", "items": { "$ref": "BidiScript.RemoteValue" }, "description": "Array of nodes matching the locator." }
+            ]
+        },
+        {
+            "name": "getTree",
+            "description": "Describes the frame tree at a particular moment in time. Returns a tree of all descendant navigables including the given parent itself, or all top-level contexts when no parent is provided.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-getTree",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/get_tree",
+            "async": true,
+            "parameters": [
+                { "name": "root", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true },
+                { "name": "maxDepth", "type": "number", "optional": true }
+            ],
+            "returns": [
+                { "name": "contexts", "type": "array", "items": { "$ref": "BidiBrowsingContext.Info" }, "description": "Information about the matching browsing contexts." }
+            ]
+        },
+        {
+            "name": "navigate",
+            "description": "Navigates a navigable to the given URL.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-navigate",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/navigate",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to navigate." },
+                { "name": "url", "type": "string", "description": "The URL to navigate to." },
+                { "name": "wait", "type": "string", "optional": true, "description": "The readiness state at which the command will return (default is 'none'). Should be a BidiBrowsingContext.ReadinessState value." }
+            ],
+            "returns": [
+                { "name": "url", "type": "string", "description": "The URL the browsing context navigated to." },
+                { "name": "navigation", "$ref": "BidiBrowsingContext.NavigationID", "nullable": true, "description": "The navigation ID, or null if not applicable." }
+            ]
+        },
+        {
+            "name": "reload",
+            "description": "Reloads a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-reload",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/reload",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to reload." },
+                { "name": "ignoreCache", "type": "boolean", "optional": true },
+                { "name": "wait", "$ref": "BidiBrowsingContext.ReadinessState", "optional": true }
+            ],
+            "returns": [
+                { "name": "url", "type": "string", "description": "The URL the browsing context navigated to." },
+                { "name": "navigation", "$ref": "BidiBrowsingContext.NavigationID", "nullable": true, "description": "The navigation ID, or null if not applicable." }
+            ]
+        },
+        {
+            "name": "traverseHistory",
+            "description": "Traverses the history of a given navigable by a delta. Errors out if the bounds check for delta fails.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-traverseHistory",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/traverse_history",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to traverse history." },
+                { "name": "delta", "type": "integer", "description": "The number of steps to traverse in history. Positive values go forward, negative values go backward, and a value of zero will succeed with no action." }
+            ],
+            "async": true
+        },
+        {
+            "name": "setViewport",
+            "description": "Sets the viewport dimensions and/or device pixel ratio for a browsing context.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-setViewport",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/set_viewport",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "The identifier of the browsing context to set viewport for." },
+                { "name": "viewport", "$ref": "BidiBrowsingContext.Viewport", "optional": true, "nullable": true, "description": "The viewport dimensions to set. If null, resets to default." },
+                { "name": "devicePixelRatio", "type": "number", "optional": true, "nullable": true, "description": "The device pixel ratio to set. If null, resets to default." },
+                { "name": "userContexts", "type": "array", "items": { "$ref": "BidiBrowser.UserContext" }, "optional": true, "description": "User context IDs to apply the viewport to." }
+            ],
+            "async": true
+        }
+    ],
+    "events": [
+        {
+            "name": "navigationStarted",
+            "description": "Event fired when navigation starts in a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-navigationStarted",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/navigation_started",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext" },
+                { "name": "navigation", "$ref": "BidiBrowsingContext.NavigationID", "nullable": true },
+                { "name": "timestamp", "type": "number", "description": "Time value in milliseconds representing the current date and time in UTC." },
+                { "name": "url", "type": "string", "description": "The provisional URL being navigated to." }
+            ]
+        },
+        {
+            "name": "navigationCommitted",
+            "description": "Event fired when navigation commits in a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-navigationCommitted",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/navigation_committed",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext" },
+                { "name": "navigation", "$ref": "BidiBrowsingContext.NavigationID", "nullable": false },
+                { "name": "timestamp", "type": "number", "description": "Time value in milliseconds representing the current date and time in UTC." },
+                { "name": "url", "type": "string", "description": "The URL that navigation committed to." }
+            ]
+        },
+        {
+            "name": "navigationFailed",
+            "description": "Event fired when navigation fails in a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-navigationFailed",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/navigation_failed",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext" },
+                { "name": "navigation", "$ref": "BidiBrowsingContext.NavigationID", "nullable": true, "description": "The navigation ID, or null when the navigation is canceled before making progress." },
+                { "name": "timestamp", "type": "number", "description": "Time value in milliseconds representing the current date and time in UTC." },
+                { "name": "url", "type": "string", "description": "The URL that failed to navigate to." }
+            ]
+        },
+        {
+            "name": "navigationAborted",
+            "description": "Event fired when navigation is aborted in a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-navigationAborted",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext" },
+                { "name": "navigation", "$ref": "BidiBrowsingContext.NavigationID", "nullable": true, "description": "The navigation ID, or null when the navigation is canceled before making progress." },
+                { "name": "timestamp", "type": "number", "description": "Time value in milliseconds representing the current date and time in UTC." },
+                { "name": "url", "type": "string", "description": "The URL that was being navigated to when aborted." }
+            ]
+        },
+        {
+            "name": "fragmentNavigated",
+            "description": "Event fired when fragment navigation occurs in a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-fragmentNavigated",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/navigation_committed",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext" },
+                { "name": "navigation", "$ref": "BidiBrowsingContext.NavigationID", "nullable": true },
+                { "name": "timestamp", "type": "number", "description": "Time value in milliseconds representing the current date and time in UTC." },
+                { "name": "url", "type": "string", "description": "The URL with the fragment that was navigated to." }
+            ]
+        },
+        {
+            "name": "domContentLoaded",
+            "description": "Event fired when the DOMContentLoaded event occurs in a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-domContentLoaded",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/dom_content_loaded",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext" },
+                { "name": "navigation", "$ref": "BidiBrowsingContext.NavigationID", "nullable": true },
+                { "name": "timestamp", "type": "number", "description": "Time value in milliseconds representing the current date and time in UTC." },
+                { "name": "url", "type": "string" }
+            ]
+        },
+        {
+            "name": "load",
+            "description": "Event fired when all resources have finished loading in a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-load",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext" },
+                { "name": "navigation", "$ref": "BidiBrowsingContext.NavigationID", "nullable": true },
+                { "name": "timestamp", "type": "number", "description": "Time value in milliseconds representing the current date and time in UTC." },
+                { "name": "url", "type": "string" }
+            ]
+        },
+        {
+            "name": "userPromptClosed",
+            "description": "Event fired when a user prompt is dismissed in a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-userPromptClosed",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/user_prompt_closed",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the navigable that triggered the user prompt." },
+                { "name": "type", "$ref": "BidiBrowsingContext.UserPromptType" },
+                { "name": "accepted", "type": "boolean" },
+                { "name": "userText", "type": "string", "optional": true }
+            ]
+        },
+        {
+            "name": "userPromptOpened",
+            "description": "Event fired when a user prompt is shown in a navigable.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-userPromptOpened",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/user_prompt_opened",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the navigable that triggered the user prompt." },
+                { "name": "type", "$ref": "BidiBrowsingContext.UserPromptType" },
+                { "name": "handler", "$ref": "BidiSession.UserPromptHandlerType" },
+                { "name": "message", "type": "string" },
+                { "name": "defaultValue", "type": "string", "optional": true }
+            ]
+        },
+        {
+            "name": "contextCreated",
+            "description": "Event fired when a browsing context is created.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-contextCreated",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/context_created",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext" },
+                { "name": "url", "type": "string", "description": "The URL of the browsing context when it was created." },
+                { "name": "originalOpener", "$ref": "BidiBrowsingContext.BrowsingContext", "nullable": true },
+                { "name": "parent", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "nullable": true },
+                { "name": "children", "type": "array", "items": { "$ref": "BidiBrowsingContext.Info" }, "nullable": true },
+                { "name": "clientWindow", "$ref": "BidiBrowser.ClientWindow" },
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext" }
+            ]
+       },
+       {
+            "name": "contextDestroyed",
+            "description": "Event fired when a browsing context is destroyed.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#event-browsingContext-contextDestroyed",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/context_destroyed",
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext" },
+                { "name": "url", "type": "string", "description": "The URL of the browsing context when it was destroyed." },
+                { "name": "originalOpener", "$ref": "BidiBrowsingContext.BrowsingContext", "nullable": true },
+                { "name": "parent", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "nullable": true },
+                { "name": "children", "type": "array", "items": { "$ref": "BidiBrowsingContext.Info" }, "nullable": true },
+                { "name": "clientWindow", "$ref": "BidiBrowser.ClientWindow" },
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext" }
+            ]
+       }
+    ]
+}

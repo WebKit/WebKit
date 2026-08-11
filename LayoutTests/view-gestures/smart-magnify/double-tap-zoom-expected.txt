@@ -1,0 +1,2 @@
+Visual viewport after smart magnify: left: 88 top 135 width 432 height 322 scale 1.82
+

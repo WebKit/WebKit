@@ -1,0 +1,4 @@
+
+PASS Property clip-rule value 'nonzero'
+PASS Property clip-rule value 'evenodd'
+

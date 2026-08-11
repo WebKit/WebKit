@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL Canvas Test: Colorspaces</title>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("This test ensures WebGL implementations correctly implement drawingbufferColorSpace.");
+
+const DONT_SET = "<don't set>";
+
+function test(w, h, drawingBufferColorSpaceInString, expectedDrawingBufferColorSpace, color) {
+  debug("");
+  debug(`test(w=${w}, h=${h}, drawingBufferColorSpace=${drawingBufferColorSpaceInString}, expectedDrawingBufferColorSpace="${expectedDrawingBufferColorSpace}", color="${color}")`);
+  const drawingBufferColorSpace = eval(drawingBufferColorSpaceInString);
+
+  var canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+
+  var consoleDiv = document.getElementById("console");
+  document.body.insertBefore(canvas, consoleDiv);
+
+  gl = wtu.create3DContext(canvas, {antialias: false});
+  if (!gl) {
+    testFailed("context does not exist");
+  } else {
+    testPassed("context exists");
+
+    if ('drawingBufferColorSpace' in gl) {
+      shouldBe('gl.drawingBufferColorSpace', '"srgb"');
+
+      if (drawingBufferColorSpace !== DONT_SET) {
+        debug(`Setting gl.drawingBufferColorSpace=${drawingBufferColorSpaceInString}`);
+        gl.drawingBufferColorSpace = drawingBufferColorSpace;
+      }
+      as_expected = expectedDrawingBufferColorSpace;
+      shouldBe('gl.drawingBufferColorSpace', 'as_expected');
+    }
+
+    gl.clearColor(color[0], color[1], color[2], 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    shouldBe('gl.getError()', 'gl.NO_ERROR');
+
+    wtu.checkCanvas(gl, [color[0] * 255, color[1] * 255, color[2] * 255], "Canvas color as expected", 1);
+  }
+}
+
+var wtu = WebGLTestUtils;
+
+test(4, 4, 'DONT_SET', "srgb", [1, 0, 0]);
+test(4, 4, 'DONT_SET', "srgb", [0, 1, 0]);
+test(4, 4, 'DONT_SET', "srgb", [0, 0, 1]);
+
+test(4, 4, '"srgb"', "srgb", [1, 0, 0]);
+test(4, 4, '"srgb"', "srgb", [0, 1, 0]);
+test(4, 4, '"srgb"', "srgb", [0, 0, 1]);
+
+test(4, 4, '"display-p3"', "display-p3", [1, 0, 0]);
+test(4, 4, '"display-p3"', "display-p3", [0, 1, 0]);
+test(4, 4, '"display-p3"', "display-p3", [0, 0, 1]);
+
+test(4, 4, '"invalid"', "srgb", [1, 0, 0]);
+test(4, 4, '""', "srgb", [1, 0, 0]);
+test(4, 4, 'null', "srgb", [1, 0, 0]);
+test(4, 4, 'undefined', "srgb", [1, 0, 0]);
+test(4, 4, '0', "srgb", [1, 0, 0]);
+test(4, 4, '1', "srgb", [1, 0, 0]);
+test(4, 4, 'new Date', "srgb", [1, 0, 0]);
+
+debug("")
+</script>
+</body>
+</html>

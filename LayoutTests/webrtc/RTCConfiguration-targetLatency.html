@@ -1,0 +1,19 @@
+<!doctype html><!-- webkit-test-runner [ WebRTCSocketsServiceClassEnabled=true ] -->
+<meta charset=utf-8>
+<title>RTCConfiguration targetLatency</title>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+test(() => {
+    if (!window.internals)
+        return;
+
+    const pc1 = new RTCPeerConnection({ targetLatency: "lowest" });
+    assert_true(internals.hasPeerConnectionEnabledServiceClass(pc1));
+    pc1.close();
+
+    const pc2 = new RTCPeerConnection({ targetLatency: "none" });
+    assert_false(internals.hasPeerConnectionEnabledServiceClass(pc2));
+    pc2.close();
+}, "targetLatency and serviceClass");
+</script>

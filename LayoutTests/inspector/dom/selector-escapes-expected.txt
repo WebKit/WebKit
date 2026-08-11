@@ -1,0 +1,28 @@
+Test for DOMNode.SelectorEscapes.
+
+
+== Running test suite: DOMNode.SelectorEscapes
+-- Running test case: DOMNode.SelectorEscapes.NormalId
+PASS: Unescaped id selector should be `#id`.
+PASS: Unescaped class selector should be `.class`.
+PASS: Unescaped selector should be `div#id.class`.
+PASS: Escaped id selector should be `#id`.
+PASS: Escaped class selector should be `.class`.
+PASS: Display name should be `div#id.class`.
+
+-- Running test case: DOMNode.SelectorEscapes.NumberId
+PASS: Unescaped id selector should be `#123Id`.
+PASS: Unescaped class selector should be `.123Class`.
+PASS: Unescaped selector should be `div#123Id.123Class`.
+PASS: Escaped id selector should be `[id="\31 23Id"]`.
+PASS: Escaped class selector should be `.\31 23Class`.
+PASS: Display name should be `div[id="\31 23Id"].\31 23Class`.
+
+-- Running test case: DOMNode.SelectorEscapes.PoundId
+PASS: Unescaped id selector should be `##id`.
+PASS: Unescaped class selector should be `.#class`.
+PASS: Unescaped selector should be `div##id.#class`.
+PASS: Escaped id selector should be `#\#id`.
+PASS: Escaped class selector should be `.\#class`.
+PASS: Display name should be `div#\#id.\#class`.
+

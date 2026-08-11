@@ -1,0 +1,4 @@
+
+PASS Test reset during flush
+FAIL Test new flush after reset in a flush callback assert_equals: outputs expected 1 but got 0
+

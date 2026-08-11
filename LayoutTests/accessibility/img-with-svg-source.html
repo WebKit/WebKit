@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<style>img {background-color: #000;}</style>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+
+<!-- This test must run when all remote resources (SVG images) are loaded.
+    Thus add an onload event listener to body and run the test there. -->
+<body onload="runTest()">
+
+<img id="image1" src="resources/apple-logo.svg">
+<img id="image2" src="resources/apple-logo.svg" alt="2. svg image with alt text">
+<img id="image3" role="img" src="resources/apple-logo.svg" alt="3. svg image with role img" and alt text">
+<a href="https://apple.com"><img id="image4" src="resources/apple-logo.svg" alt="4. svg image in an anchor"></a>
+<a href="https://apple.com"><img id="image5" role="img" src="resources/apple-logo.svg" alt="5. svg image with role img in an anchor"></a>
+<img id="image6" src="resources/apple-logo.svg" aria-label="6. svg image with aria label">
+<img id="image7" role="img" src="resources/apple-logo.svg" aria-label="7. svg image with role img and aria label">
+<img id="image8" src="resources/apple-logo.svg" alt="8. svg image with size set" style="height: 200px; width: 200px;">
+<img id="image9" role="img" src="resources/apple-logo.svg" alt="9. svg image with role img and size set" style="height: 200px; width: 200px;">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that images with SVG source are indeed exposed as images and not as SVG groups, if the SVG source is not accessible.");
+
+    function runTest() {
+        if (window.accessibilityController) {
+            for (i = 1; i < 10; ++i) {
+                image = accessibilityController.accessibleElementById("image" + i);
+                shouldBe("image.role", "'AXRole: AXImage'");
+                debug(image.description);
+            }
+        }
+    }
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

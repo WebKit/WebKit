@@ -1,0 +1,5 @@
+int extern;
+
+/*%%*
+name 'extern' is reserved
+*%%*/

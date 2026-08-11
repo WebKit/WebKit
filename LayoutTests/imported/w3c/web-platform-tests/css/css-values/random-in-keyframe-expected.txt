@@ -1,0 +1,3 @@
+
+PASS random() is not ignored in keyframe
+

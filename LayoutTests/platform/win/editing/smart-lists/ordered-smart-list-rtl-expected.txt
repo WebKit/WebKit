@@ -1,0 +1,4 @@
+Smart-list conversion should work inside a right-to-left contenteditable. Typing "1. تفاحة" + Enter + "2. برتقال" should produce an ordered list containing the Arabic text.
+| "1. تفاحة"
+| <div>
+|   "2. برتقال<#selection-caret>"

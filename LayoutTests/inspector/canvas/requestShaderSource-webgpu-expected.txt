@@ -1,0 +1,13 @@
+Tests Canvas.requestShaderSource for WebGPU pipelines.
+
+
+== Running test suite: Canvas.requestShaderSource.WebGPU
+-- Running test case: Canvas.requestShaderSource.WebGPU.Compute
+PASS: Requested WGSL source should match the source used to create the pipeline.
+
+-- Running test case: Canvas.requestShaderSource.WebGPU.Vertex
+PASS: Requested WGSL source should match the source used to create the pipeline.
+
+-- Running test case: Canvas.requestShaderSource.WebGPU.Fragment
+PASS: Requested WGSL source should match the source used to create the pipeline.
+

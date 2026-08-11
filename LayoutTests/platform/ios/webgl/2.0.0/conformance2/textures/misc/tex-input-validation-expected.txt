@@ -1,0 +1,88 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-input-validation.html
+[ 1: PASS ] gl = wtu.create3DContext(undefined, undefined, contextVersion) is non-null.
+[ 2: PASS ] tex = gl.createTexture() is non-null.
+[ 3: PASS ] getError was expected value: NO_ERROR :
+[ 4: PASS ] getError was expected value: INVALID_ENUM : paramName: TEXTURE_WRAP_T
+[ 5: PASS ] getError was expected value: INVALID_ENUM : paramName: TEXTURE_WRAP_T
+[ 6: PASS ] getError was expected value: INVALID_ENUM : paramName: TEXTURE_WRAP_T
+[ 7: PASS ] getError was expected value: INVALID_ENUM : paramName: TEXTURE_WRAP_T
+[ 8: PASS ] getError was expected value: NO_ERROR : paramName: TEXTURE_WRAP_T
+[ 9: PASS ] getError was expected value: NO_ERROR : paramName: TEXTURE_WRAP_T
+[ 10: PASS ] getError was expected value: INVALID_ENUM : paramName: 0x8e42
+[ 11: PASS ] getError was expected value: INVALID_ENUM : paramName: 0x8e42
+[ 12: PASS ] getError was expected value: INVALID_ENUM : paramName: TEXTURE_WRAP_R
+[ 13: PASS ] getError was expected value: INVALID_ENUM : paramName: TEXTURE_WRAP_R
+[ 14: PASS ] getError was expected value: INVALID_ENUM : paramName: TEXTURE_WRAP_T
+[ 15: PASS ] getError was expected value: NO_ERROR : paramName: TEXTURE_WRAP_T
+[ 16: PASS ] getError was expected value: INVALID_ENUM : paramName: 0x8e42
+[ 17: PASS ] getError was expected value: INVALID_ENUM : internalFormat: RGBA target: 0x8064 format: RGBA type: UNSIGNED_BYTE border: 0
+[ 18: FAIL ] getError expected one of: INVALID_ENUM or INVALID_VALUE. Was INVALID_OPERATION : internalFormat: RED target: TEXTURE_2D format: RED type: UNSIGNED_BYTE border: 0
+[ 19: PASS ] getError was expected value: INVALID_VALUE : internalFormat: RGBA target: TEXTURE_2D format: RGBA type: UNSIGNED_BYTE border: 1
+[ 20: PASS ] getError was expected value: INVALID_OPERATION : internalFormat: RGBA target: TEXTURE_2D format: RGB type: UNSIGNED_BYTE border: 0
+[ 21: PASS ] getError was expected value: NO_ERROR : internalFormat: RGBA target: TEXTURE_2D format: RGBA type: UNSIGNED_BYTE border: 0
+[ 22: PASS ] getError was expected value: INVALID_OPERATION : internalFormat: RGBA target: TEXTURE_2D format: RGBA type: BYTE border: 0
+[ 23: PASS ] getError was expected value: INVALID_ENUM : internalFormat: RGBA target: TEXTURE_3D format: RGBA type: UNSIGNED_BYTE border: 0
+[ 24: PASS ] getError was expected value: NO_ERROR : format: RGBA type: UNSIGNED_BYTE
+[ 25: PASS ] getError was expected value: INVALID_OPERATION : format: RED type: UNSIGNED_BYTE
+[ 26: PASS ] getError was expected value: INVALID_OPERATION : format: RGBA type: BYTE
+[ 27: PASS ] getError was expected value: INVALID_ENUM : format: RGBA type: UNSIGNED_BYTE
+[ 28: PASS ] fbo = gl.createFramebuffer() is non-null.
+[ 29: PASS ] colorBuffer = gl.createRenderbuffer() is non-null.
+[ 30: PASS ] getError was expected value: NO_ERROR :
+[ 31: PASS ] getError was expected value: NO_ERROR :
+[ 32: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 33: PASS ] getError was expected value: INVALID_ENUM : colorBufferFormat: RGB565 internalFormat: 0x8054 target: TEXTURE_2D border: 0
+[ 34: PASS ] getError was expected value: NO_ERROR :
+[ 35: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 36: PASS ] getError was expected value: INVALID_VALUE : colorBufferFormat: RGB565 internalFormat: RGBA target: TEXTURE_2D border: 1
+[ 37: PASS ] getError was expected value: NO_ERROR :
+[ 38: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 39: PASS ] getError was expected value: INVALID_OPERATION : colorBufferFormat: RGB565 internalFormat: RGBA target: TEXTURE_2D border: 0
+[ 40: PASS ] getError was expected value: NO_ERROR :
+[ 41: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 42: PASS ] getError was expected value: NO_ERROR : colorBufferFormat: RGB565 internalFormat: RGB target: TEXTURE_2D border: 0
+[ 43: PASS ] getError was expected value: NO_ERROR :
+[ 44: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 45: PASS ] getError was expected value: INVALID_ENUM : colorBufferFormat: RGB5_A1 internalFormat: RGBA target: TEXTURE_3D border: 0
+[ 46: PASS ] getError was expected value: NO_ERROR :
+[ 47: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 48: PASS ] getError was expected value: NO_ERROR :
+[ 49: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : colorBufferFormat: RGB5_A1 internalFormat: RGBA target: TEXTURE_2D
+[ 50: PASS ] getError was expected value: NO_ERROR :
+[ 51: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+[ 52: PASS ] getError was expected value: NO_ERROR :
+[ 53: PASS ] getError was expected value: INVALID_OPERATION : colorBufferFormat: RGB565 internalFormat: RGBA target: TEXTURE_2D
+[ 54: PASS ] gl is non-null.
+[ 55: PASS ] tex = gl.createTexture() is non-null.
+[ 56: PASS ] getError was expected value: NO_ERROR :
+[ 57: PASS ] getError was expected value: NO_ERROR : colorBufferFormat: RGBA internalFormat: RGBA
+[ 58: PASS ] gl is non-null.
+[ 59: PASS ] tex = gl.createTexture() is non-null.
+[ 60: PASS ] getError was expected value: NO_ERROR :
+[ 61: PASS ] getError was expected value: INVALID_OPERATION : colorBufferFormat: RGB internalFormat: RGBA
+[ 62: PASS ] gl is non-null.
+[ 63: PASS ] tex = gl.createTexture() is non-null.
+[ 64: PASS ] getError was expected value: NO_ERROR :
+[ 65: PASS ] getError was expected value: NO_ERROR : colorBufferFormat: RGBA internalFormat: RGBA
+[ 66: PASS ] gl is non-null.
+[ 67: PASS ] tex = gl.createTexture() is non-null.
+[ 68: PASS ] getError was expected value: NO_ERROR :
+[ 69: PASS ] getError was expected value: INVALID_OPERATION : colorBufferFormat: RGB internalFormat: RGBA
+[ 70: PASS ] tex = gl.createTexture() is non-null.
+[ 71: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM :
+[ 72: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : internalFormat: RGBA target: 0x8070 format: RGBA type: UNSIGNED_BYTE border: 0
+[ 73: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : internalFormat: RGBA target: TEXTURE_3D format: RGB type: UNSIGNED_BYTE border: 0
+[ 74: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : internalFormat: RGBA target: TEXTURE_3D format: RGBA type: BYTE border: 0
+[ 75: PASS ] getError was expected value: NO_ERROR : internalFormat: RGBA target: TEXTURE_3D format: RGBA type: UNSIGNED_BYTE border: 0
+[ 76: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : internalFormat: RGBA target: TEXTURE_2D format: RGBA type: UNSIGNED_BYTE border: 0
+[ 77: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : internalFormat: RG target: TEXTURE_3D format: RGBA type: UNSIGNED_BYTE border: 0
+[ 78: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : internalFormat: RGBA target: TEXTURE_3D format: RG8 type: UNSIGNED_BYTE border: 0
+[ 79: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : internalFormat: RGBA target: TEXTURE_3D format: RGBA type: INT border: 0
+[ 80: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : format: 0x80e0 type: UNSIGNED_BYTE
+[ 81: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : format: RGBA type: 0x8032
+[ 82: PASS ] getError was expected value: NO_ERROR : format: RGBA type: UNSIGNED_BYTE
+[ 83: PASS ] successfullyParsed is true
+[ FAIL ] 12 failures reported
+

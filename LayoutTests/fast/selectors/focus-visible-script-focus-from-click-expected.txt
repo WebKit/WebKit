@@ -1,0 +1,17 @@
+Test that calling element.focus() from a button's click handler does not show :focus-visible, regardless of whether the button has child elements.
+
+
+Click
+  Click
+Click
+
+
+Click
+  Focus target
+
+PASS Button with <div> child: focus() from click handler should not show :focus-visible
+PASS Button with text only: focus() from click handler should not show :focus-visible
+PASS Button with pointer-events:none child: focus() from click handler should not show :focus-visible
+PASS Button with shadow DOM child: focus() from click handler should not show :focus-visible
+PASS Button with slotted content: focus() from click handler should not show :focus-visible
+

@@ -1,0 +1,11 @@
+Testing that settings 'pointer-events: none' on the <video> element is respected in the media controls shadow root.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(window.internals.shadowRoot(media).querySelector('.media-controls-container')).pointerEvents is "none"
+PASS interactive is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

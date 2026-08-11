@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test that pixel access functions work with non-SRGB color spaces.");
+
+let canvasDisplayP3 = document.createElement("canvas");
+let contextDisplayP3 = canvasDisplayP3.getContext("2d", { colorSpace: "display-p3" });
+
+let canvasSRGB = document.createElement("canvas");
+let contextSRGB = canvasSRGB.getContext("2d", { colorSpace: "srgb" });
+
+const imageDataCreatedFromDisplayP3Canvas = contextDisplayP3.createImageData(50, 50);
+shouldBe("imageDataCreatedFromDisplayP3Canvas.colorSpace", `"display-p3"`);
+
+const imageDataCreatedFromDisplayP3CanvasOverridingColorSpaceSRGB = contextDisplayP3.createImageData(50, 50, { colorSpace: "srgb" });
+shouldBe("imageDataCreatedFromDisplayP3CanvasOverridingColorSpaceSRGB.colorSpace", `"srgb"`);
+
+const imageDataCreatedFromDisplayP3CanvasOverridingColorSpaceDisplayP3 = contextDisplayP3.createImageData(50, 50, { colorSpace: "display-p3" });
+shouldBe("imageDataCreatedFromDisplayP3CanvasOverridingColorSpaceDisplayP3.colorSpace", `"display-p3"`);
+
+const imageDataCreatedFromSRGBCanvas = contextSRGB.createImageData(50, 50);
+shouldBe("imageDataCreatedFromSRGBCanvas.colorSpace", `"srgb"`);
+
+const imageDataCreatedFromSRGBCanvasOverridingColorSpaceSRGB = contextSRGB.createImageData(50, 50, { colorSpace: "srgb" });
+shouldBe("imageDataCreatedFromSRGBCanvasOverridingColorSpaceSRGB.colorSpace", `"srgb"`);
+
+const imageDataCreatedFromSRGBCanvasOverridingColorSpaceDisplayP3 = contextSRGB.createImageData(50, 50, { colorSpace: "display-p3" });
+shouldBe("imageDataCreatedFromSRGBCanvasOverridingColorSpaceDisplayP3.colorSpace", `"display-p3"`);
+
+const imageDataCreatedFromImageDataConstructor = new ImageData(50, 50, { colorSpace: "srgb" });
+shouldBe("imageDataCreatedFromImageDataConstructor.colorSpace", `"srgb"`);
+
+const imageDataCreatedFromImageDataConstructorSettingColorSpaceToSRGB = new ImageData(50, 50, { colorSpace: "srgb" });
+shouldBe("imageDataCreatedFromImageDataConstructorSettingColorSpaceToSRGB.colorSpace", `"srgb"`);
+
+const imageDataCreatedFromImageDataConstructorSettingColorSpaceToDisplayP3 = new ImageData(50, 50, { colorSpace: "display-p3" });
+shouldBe("imageDataCreatedFromImageDataConstructorSettingColorSpaceToDisplayP3.colorSpace", `"display-p3"`);
+
+const imageDataCreatedFromImageDataConstructorPassingBuffer = new ImageData(new Uint8ClampedArray(400), 10, 10, { colorSpace: "srgb" });
+shouldBe("imageDataCreatedFromImageDataConstructorPassingBuffer.colorSpace", `"srgb"`);
+
+const imageDataCreatedFromImageDataConstructorPassingBufferSettingColorSpaceToSRGB = new ImageData(new Uint8ClampedArray(400), 10, 10, { colorSpace: "srgb" });
+shouldBe("imageDataCreatedFromImageDataConstructorPassingBufferSettingColorSpaceToSRGB.colorSpace", `"srgb"`);
+
+const imageDataCreatedFromImageDataConstructorPassingBufferSettingColorSpaceToDisplayP3 = new ImageData(new Uint8ClampedArray(400), 10, 10, { colorSpace: "display-p3" });
+shouldBe("imageDataCreatedFromImageDataConstructorPassingBufferSettingColorSpaceToDisplayP3.colorSpace", `"display-p3"`);
+
+var data = { };
+
+// NOTE:
+// color(srgb 0 1 0) converted to display-p3 is color(display-p3 0.4584 0.98526 0.29829) or [117, 251, 76, 255] in byte form.
+
+debug("");
+debug("Testing a display-p3 canvas with color(display-p3 0 1 0) drawn into it");
+debug("");
+
+contextDisplayP3.fillStyle = "color(display-p3 0 1 0)";
+contextDisplayP3.fillRect(0, 0, 50, 50);
+
+// No specified color space will default to the canvas' color space, in this case, display-p3
+debug("Test getImageData with no specified color space, on a display-p3 canvas (canvas has color(display-p3 0 1 0) drawn in it)");
+data = contextDisplayP3.getImageData(0, 0, 1, 1);
+shouldBe("data.colorSpace", `"display-p3"`)
+shouldBe("data.data[0]", "0");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+debug("Test getImageData with srgb specified, on a display-p3 canvas (canvas has color(display-p3 0 1 0) drawn in it)");
+// NOTE: color(display-p3 0 1 0) is outside the range of sRGB, so it clipped to 255.
+data = contextDisplayP3.getImageData(0, 0, 1, 1, { colorSpace: "srgb" });
+shouldBe("data.colorSpace", `"srgb"`)
+shouldBe("data.data[0]", "0");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+debug("Test getImageData with display-p3 specified, on a display-p3 canvas (canvas has color(display-p3 0 1 0) drawn in it)");
+data = contextDisplayP3.getImageData(0, 0, 1, 1, { colorSpace: "display-p3" });
+shouldBe("data.colorSpace", `"display-p3"`)
+shouldBe("data.data[0]", "0");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+debug("");
+debug("Testing a display-p3 canvas with color(srgb 0 1 0) drawn into it");
+debug("");
+
+contextDisplayP3.fillStyle = "color(srgb 0 1 0)";
+contextDisplayP3.fillRect(0, 0, 50, 50);
+
+// No specified color space will default to the canvas' color space, in this case, display-p3
+debug("Test getImageData with no specified color space, on a display-p3 canvas (canvas has color(srgb 0 1 0) drawn in it)");
+data = contextDisplayP3.getImageData(0, 0, 1, 1);
+shouldBe("data.colorSpace", `"display-p3"`)
+shouldBe("data.data[0]", "117");
+shouldBe("data.data[1]", "251");
+shouldBe("data.data[2]", "76");
+shouldBe("data.data[3]", "255");
+
+debug("Test getImageData with srgb specified, on a display-p3 canvas (canvas has color(srgb 0 1 0) drawn in it)");
+data = contextDisplayP3.getImageData(0, 0, 1, 1, { colorSpace: "srgb" });
+shouldBe("data.colorSpace", `"srgb"`)
+// NOTE: This 3 is odd, but due to lack of precision in 8-bit round-tripping.
+shouldBe("data.data[0]", "3");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+debug("Test getImageData with display-p3 specified, on a display-p3 canvas (canvas has color(srgb 0 1 0) drawn in it)");
+data = contextDisplayP3.getImageData(0, 0, 1, 1, { colorSpace: "display-p3" });
+shouldBe("data.colorSpace", `"display-p3"`)
+shouldBe("data.data[0]", "117");
+shouldBe("data.data[1]", "251");
+shouldBe("data.data[2]", "76");
+shouldBe("data.data[3]", "255");
+
+debug("");
+debug("Testing a srgb canvas with color(display-p3 0 1 0) drawn into it");
+debug("");
+
+contextSRGB.fillStyle = "color(display-p3 0 1 0)";
+contextSRGB.fillRect(0, 0, 50, 50);
+
+// No specified color space will default to the canvas' color space, in this case, srgb
+debug("Test getImageData with no specified color space, on a srgb canvas (canvas has color(display-p3 0 1 0) drawn in it)");
+data = contextSRGB.getImageData(0, 0, 1, 1);
+shouldBe("data.colorSpace", `"srgb"`)
+shouldBe("data.data[0]", "0");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+debug("Test getImageData with srgb specified, on a srgb canvas (canvas has color(display-p3 0 1 0) drawn in it)");
+data = contextSRGB.getImageData(0, 0, 1, 1, { colorSpace: "srgb" });
+shouldBe("data.colorSpace", `"srgb"`)
+shouldBe("data.data[0]", "0");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+debug("Test getImageData with display-p3 specified, on a srgb canvas (canvas has color(display-p3 0 1 0) drawn in it)");
+data = contextSRGB.getImageData(0, 0, 1, 1, { colorSpace: "display-p3" });
+shouldBe("data.colorSpace", `"display-p3"`)
+shouldBe("data.data[0]", "117");
+shouldBe("data.data[1]", "251");
+shouldBe("data.data[2]", "76");
+shouldBe("data.data[3]", "255");
+
+debug("");
+debug("Testing a srgb canvas with color(srgb-p3 0 1 0) drawn into it");
+debug("");
+
+contextSRGB.fillStyle = "color(srgb 0 1 0)";
+contextSRGB.fillRect(0, 0, 50, 50);
+
+// No specified color space will default to the canvas' color space, in this case, srgb
+debug("Test getImageData with no specified color space, on a srgb canvas (canvas has color(srgb 0 1 0) drawn in it)");
+data = contextSRGB.getImageData(0, 0, 1, 1);
+shouldBe("data.colorSpace", `"srgb"`)
+shouldBe("data.data[0]", "0");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+debug("Test getImageData with srgb specified, on a srgb canvas (canvas has color(srgb 0 1 0) drawn in it)");
+data = contextSRGB.getImageData(0, 0, 1, 1, { colorSpace: "srgb" });
+shouldBe("data.colorSpace", `"srgb"`)
+shouldBe("data.data[0]", "0");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+debug("Test getImageData with display-p3 specified, on a srgb canvas (canvas has color(srgb 0 1 0) drawn in it)");
+data = contextSRGB.getImageData(0, 0, 1, 1, { colorSpace: "display-p3" });
+shouldBe("data.colorSpace", `"display-p3"`)
+shouldBe("data.data[0]", "117");
+shouldBe("data.data[1]", "251");
+shouldBe("data.data[2]", "76");
+shouldBe("data.data[3]", "255");
+
+
+debug("");
+
+
+const imageDataDisplayP3ToPut = new ImageData(1, 1, { colorSpace: "display-p3" });
+imageDataDisplayP3ToPut.data[0] = 0;
+imageDataDisplayP3ToPut.data[1] = 255;
+imageDataDisplayP3ToPut.data[2] = 0;
+imageDataDisplayP3ToPut.data[3] = 255;
+
+const imageDataSRGBToPut = new ImageData(1, 1, { colorSpace: "srgb" });
+imageDataSRGBToPut.data[0] = 0;
+imageDataSRGBToPut.data[1] = 255;
+imageDataSRGBToPut.data[2] = 0;
+imageDataSRGBToPut.data[3] = 255;
+
+
+debug("");
+debug("Testing a display-p3 canvas with display-p3 ImageData drawn into it");
+debug("");
+
+contextDisplayP3.putImageData(imageDataDisplayP3ToPut, 0, 0);
+
+data = contextDisplayP3.getImageData(0, 0, 1, 1, { colorSpace: "srgb" });
+shouldBe("data.colorSpace", `"srgb"`)
+shouldBe("data.data[0]", "0");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+data = contextDisplayP3.getImageData(0, 0, 1, 1, { colorSpace: "display-p3" });
+shouldBe("data.colorSpace", `"display-p3"`)
+shouldBe("data.data[0]", "0");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+debug("");
+debug("Testing a display-p3 canvas with srgb ImageData drawn into it");
+debug("");
+
+contextDisplayP3.putImageData(imageDataSRGBToPut, 0, 0);
+
+data = contextDisplayP3.getImageData(0, 0, 1, 1, { colorSpace: "srgb" });
+shouldBe("data.colorSpace", `"srgb"`)
+// NOTE: This 3 is odd, but due to lack of precision in 8-bit round-tripping.
+shouldBe("data.data[0]", "3");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+data = contextDisplayP3.getImageData(0, 0, 1, 1, { colorSpace: "display-p3" });
+shouldBe("data.colorSpace", `"display-p3"`)
+shouldBe("data.data[0]", "117");
+shouldBe("data.data[1]", "251");
+shouldBe("data.data[2]", "76");
+shouldBe("data.data[3]", "255");
+
+debug("");
+debug("Testing a srgb canvas with display-p3 ImageData drawn into it");
+debug("");
+
+contextSRGB.putImageData(imageDataDisplayP3ToPut, 0, 0);
+
+data = contextSRGB.getImageData(0, 0, 1, 1, { colorSpace: "srgb" });
+shouldBe("data.colorSpace", `"srgb"`)
+shouldBe("data.data[0]", "0");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+data = contextSRGB.getImageData(0, 0, 1, 1, { colorSpace: "display-p3" });
+shouldBe("data.colorSpace", `"display-p3"`)
+shouldBe("data.data[0]", "117");
+shouldBe("data.data[1]", "251");
+shouldBe("data.data[2]", "76");
+shouldBe("data.data[3]", "255");
+
+
+debug("");
+debug("Testing a srgb canvas with srgb ImageData drawn into it");
+debug("");
+
+contextSRGB.putImageData(imageDataSRGBToPut, 0, 0);
+
+data = contextSRGB.getImageData(0, 0, 1, 1, { colorSpace: "srgb" });
+shouldBe("data.colorSpace", `"srgb"`)
+shouldBe("data.data[0]", "0");
+shouldBe("data.data[1]", "255");
+shouldBe("data.data[2]", "0");
+shouldBe("data.data[3]", "255");
+
+data = contextSRGB.getImageData(0, 0, 1, 1, { colorSpace: "display-p3" });
+shouldBe("data.colorSpace", `"display-p3"`)
+shouldBe("data.data[0]", "117");
+shouldBe("data.data[1]", "251");
+shouldBe("data.data[2]", "76");
+shouldBe("data.data[3]", "255");
+
+debug("");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

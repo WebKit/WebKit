@@ -1,0 +1,18 @@
+<style>
+  :has(:not(:checked)) {
+    foo: bar;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    let select = document.createElement('select');
+    document.head.append(document.createElement('object'));
+    document.head.append(select);
+    select.append(document.createElement('option'));
+    document.execCommand('SelectAll');
+    select.append(document.createElement('div'));
+    document.write('PASS');
+  };
+</script>

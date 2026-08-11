@@ -1,0 +1,12 @@
+Service Worker Tests
+
+Demonstrates running testharness based tests inside a service worker.
+
+The test harness should time out due to one of the tests inside the worker timing out.
+
+This test assumes that the browser supports ServiceWorkers.
+
+
+FAIL Browser supports ServiceWorker assert_true: navigator.serviceWorker exists expected true got false
+FAIL Register ServiceWorker undefined is not an object (evaluating 'navigator.serviceWorker.register')
+

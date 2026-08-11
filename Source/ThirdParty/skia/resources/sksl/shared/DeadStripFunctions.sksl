@@ -1,0 +1,34 @@
+/*#pragma settings NoInline*/
+
+uniform half4 colorGreen, colorRed;
+
+half4 dead_fn(half4 a, half4 b) {
+    return a * b;
+}
+
+half4 live_fn(half4 a, half4 b) {
+    return a + b;
+}
+
+half4 main(float2 coords) {
+    const bool TRUE = true, FALSE = false;
+    half4 a, b;
+
+    if (FALSE) {
+        // Dead stripping a user function.
+        half4 unused = dead_fn(half4(0.5), half4(2));
+    } else {
+        // A live user function.
+        a = live_fn(half4(3), half4(-5));
+    }
+
+    if (TRUE) {
+        // A live built-in function.
+        b = unpremul(half4(1));
+    } else {
+        // Dead stripping a built-in function. (This is a separate overload of `unpremul`.)
+        float4 unused = unpremul(float4(-1));
+    }
+
+    return (a != half4(0) && b != half4(0)) ? colorGreen : colorRed;
+}

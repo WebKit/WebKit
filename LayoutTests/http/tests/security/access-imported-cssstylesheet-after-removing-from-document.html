@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<head>
+
+<title>Accessing @import-ed CSSStyleSheet after removing from document</title>
+<script src="/resources/js-test-pre.js"></script>
+
+<style id="local-style">
+    /* Rule 0: same origin */
+    @import url('/security/resources/cssStyle.css');
+
+    /* Rule 1: cross origin */
+    @import url('http://localhost:8000/security/resources/cssStyle.css');
+
+    /* Rule 3: same origin -> same origin */
+    @import url('/resources/redirect.py?url=http://127.0.0.1:8000/security/resources/cssStyle.css');
+
+    /* Rule 4: same origin -> cross origin */
+    @import url('/resources/redirect.py?url=http://localhost:8000/security/resources/cssStyle.css');
+
+    /* Rule 5: cross origin -> same origin */
+    @import url('http://localhost:8000/resources/redirect.py?url=http://127.0.0.1:8000/security/resources/cssStyle.css');
+
+    /* Rule 6: same origin -> cross origin -> same origin */
+    @import url('http://127.0.0.1:8000/resources/redirect.py?url=http://localhost:8000/resources/redirect.py?url=http://127.0.0.1:8000/security/resources/cssStyle.css');
+</style>
+
+</head>
+
+<body>
+
+<script>
+    description("Tests accessing @import-ed CSSStyleSheet after <style> is removed from the document");
+
+    let local_style = document.getElementById("local-style");
+    let local_stylesheet = local_style.sheet;
+
+    // Remove the styles from the document
+    window.document.head.removeChild(local_style);
+
+    function check_accessible(stylesheet) {
+        shouldNotThrow(() => stylesheet.cssRules);
+        shouldNotThrow(() => stylesheet.insertRule('#element2 { margin: 10px; }'));
+        shouldNotThrow(() => stylesheet.deleteRule(0));
+    }
+
+    function check_inaccessible(stylesheet) {
+        shouldThrowErrorName(() => stylesheet.cssRules, "SecurityError");
+        shouldThrowErrorName(() => stylesheet.insertRule('body { margin: 10px; } '), "SecurityError");
+        shouldThrowErrorName(() => stylesheet.deleteRule(0), "SecurityError");
+    }
+
+    check_accessible(local_stylesheet.rules[0].styleSheet);
+    check_inaccessible(local_stylesheet.rules[1].styleSheet);
+    check_accessible(local_stylesheet.rules[2].styleSheet);
+    check_inaccessible(local_stylesheet.rules[3].styleSheet);
+    check_inaccessible(local_stylesheet.rules[4].styleSheet);
+    check_inaccessible(local_stylesheet.rules[5].styleSheet);
+</script>
+
+<script src="/resources/js-test-post.js"></script>
+
+</body>
+

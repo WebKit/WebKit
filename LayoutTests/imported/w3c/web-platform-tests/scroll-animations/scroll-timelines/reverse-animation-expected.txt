@@ -1,0 +1,13 @@
+
+PASS Setting current time while reverse-pending preserves currentTime
+PASS Reversing an animation inverts the playback rate
+PASS Reversing an animation resets a sticky start time.
+PASS Reversing an animation does not cause it to leave the pending state
+PASS Reversing an animation does not cause it to resolve the ready promise
+PASS Reversing an animation with a negative playback rate should cause the animation to play in a forward direction
+PASS Reversing when when playbackRate == 0 should preserve the playback rate
+PASS Reversing an idle animation aligns startTime with the rangeEnd boundary
+PASS Reversing an animation without an active timeline throws an InvalidStateError
+PASS Reversing an animation plays a pausing animation
+PASS Reversing should use the negative pending playback rate
+

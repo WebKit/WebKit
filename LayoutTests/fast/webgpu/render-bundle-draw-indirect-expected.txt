@@ -1,0 +1,11 @@
+Regression test for bugs.webkit.org/show_bug.cgi?id=264219: a render bundle containing drawIndirect (non-indexed) must actually render, with its draw GPU-encoded into the bundle's persistent MTLIndirectCommandBuffer at executeBundles time. Renders a full-target triangle via a bundle of drawIndirect into a 1x1 texture and reads the pixel back, executing the bundle twice to exercise reuse.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frame0.join() is "0,255,0,255"
+PASS frame1.join() is "0,255,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

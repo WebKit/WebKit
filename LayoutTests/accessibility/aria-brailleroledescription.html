@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="button" aria-brailleroledescription="btn">
+    Press
+</button>
+
+<script>
+var output = "This test ensures aria-brailleroledescription works.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("accessibilityController.accessibleElementById('button').brailleRoleDescription", "'AXBrailleRoleDescription: btn'");
+
+    setTimeout(async function() {
+        // Before making the DOM change, wait out any children-changed notifications caused by the page finishing its load.
+        // Without this, we pass the test despite the implementation being wrong.
+        await sleep(1);
+        document.getElementById("button").ariaBrailleRoleDescription = "bigbtn";
+
+        output += await expectAsync("accessibilityController.accessibleElementById('button').brailleRoleDescription", "'AXBrailleRoleDescription: bigbtn'");
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

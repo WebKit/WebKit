@@ -1,0 +1,7 @@
+
+PASS Container with overflow:x-only — child border crossing content edge extends scrollable area by inline/block padding
+PASS Container with overflow:y-only — child border crossing content edge extends scrollable area by inline/block padding
+PASS Container with overflow:both — child border crossing content edge extends scrollable area by inline/block padding
+PASS Container with overflow:clip-y — child border crossing content edge extends scrollable area by inline/block padding
+PASS Container with overflow:clip-x — child border crossing content edge extends scrollable area by inline/block padding
+

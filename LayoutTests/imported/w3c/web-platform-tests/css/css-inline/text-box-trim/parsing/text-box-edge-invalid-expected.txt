@@ -1,0 +1,28 @@
+
+PASS e.style['text-box-edge'] = "none" should not set the property value
+PASS e.style['text-box-edge'] = "normal" should not set the property value
+PASS e.style['text-box-edge'] = "leading" should not set the property value
+PASS e.style['text-box-edge'] = "auto leading" should not set the property value
+PASS e.style['text-box-edge'] = "leading auto" should not set the property value
+PASS e.style['text-box-edge'] = "normal text" should not set the property value
+PASS e.style['text-box-edge'] = "text none" should not set the property value
+PASS e.style['text-box-edge'] = "leading leading" should not set the property value
+PASS e.style['text-box-edge'] = "leading text" should not set the property value
+PASS e.style['text-box-edge'] = "leading cap" should not set the property value
+PASS e.style['text-box-edge'] = "leading ex" should not set the property value
+PASS e.style['text-box-edge'] = "leading ideographic" should not set the property value
+PASS e.style['text-box-edge'] = "leading ideographic-ink" should not set the property value
+PASS e.style['text-box-edge'] = "text leading" should not set the property value
+PASS e.style['text-box-edge'] = "cap leading" should not set the property value
+PASS e.style['text-box-edge'] = "ex leading" should not set the property value
+PASS e.style['text-box-edge'] = "ideographic leading" should not set the property value
+PASS e.style['text-box-edge'] = "ideographic-ink leading" should not set the property value
+PASS e.style['text-box-edge'] = "alphabetic" should not set the property value
+PASS e.style['text-box-edge'] = "alphabetic text" should not set the property value
+PASS e.style['text-box-edge'] = "text cap" should not set the property value
+PASS e.style['text-box-edge'] = "text ex" should not set the property value
+PASS e.style['text-box-edge'] = "auto auto" should not set the property value
+PASS e.style['text-box-edge'] = "auto text" should not set the property value
+PASS e.style['text-box-edge'] = "text auto" should not set the property value
+PASS e.style['text-box-edge'] = "text text text" should not set the property value
+

@@ -1,0 +1,14 @@
+<html>
+<body>
+Failure! The navigation should not have been blocked
+<script>
+window.addEventListener("load", e => {
+  internals.withUserGesture(() => {
+      setTimeout(() => {
+          top.location = "http://localhost:8000/security/resources/should-have-loaded.html";
+      }, 0);
+  });
+});
+</script>
+</body>
+</html>

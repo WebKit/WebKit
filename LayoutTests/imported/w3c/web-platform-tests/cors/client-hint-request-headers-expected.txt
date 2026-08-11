@@ -1,0 +1,12 @@
+Request headers
+
+
+PASS Unspecified request headers are disallowed
+PASS Unextractable device-memory client hint header is disallowed
+PASS Unextractable DPR client hint header is disallowed
+PASS Unextractable width client hint header is disallowed
+PASS Unextractable viewport-width client hint header is disallowed
+PASS Test invalid rtt value is disallowed
+PASS Test invalid downlink value is disallowed
+PASS Test invalid ect value is disallowed
+

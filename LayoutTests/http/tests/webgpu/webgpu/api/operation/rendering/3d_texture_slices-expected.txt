@@ -1,0 +1,12 @@
+
+PASS :one_color_attachment,mip_levels:mipLevel=0;depthSlice=0
+PASS :one_color_attachment,mip_levels:mipLevel=0;depthSlice=1
+PASS :one_color_attachment,mip_levels:mipLevel=1;depthSlice=0
+PASS :one_color_attachment,mip_levels:mipLevel=1;depthSlice=1
+PASS :one_color_attachment,mip_levels:mipLevel=2;depthSlice=0
+PASS :one_color_attachment,mip_levels:mipLevel=2;depthSlice=1
+PASS :multiple_color_attachments,same_mip_level:sameTexture=true
+PASS :multiple_color_attachments,same_mip_level:sameTexture=false
+PASS :multiple_color_attachments,same_slice_with_diff_mip_levels:depthSlice=0
+PASS :multiple_color_attachments,same_slice_with_diff_mip_levels:depthSlice=1
+

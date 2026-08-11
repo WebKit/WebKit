@@ -1,0 +1,22 @@
+<style>
+.box {
+  width: 60px;
+  height: 30px;
+  float: left;
+  background-color: blue;
+}
+
+.box.right {
+  float: right;
+  background-color: green;
+}
+</style>
+<div style="width: 100px">
+  <div class="box"></div>
+  <div class="right box"></div>
+  <div>PASS if no assert in debug</div>
+</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

@@ -1,0 +1,3 @@
+
+FAIL event and promise ordering for same-document navigation.navigate() intercepted by intercept() with a precommitHandler that redirects assert_array_equals: lengths differ, expected array ["navigate", "precommitHandler start", "promise microtask", "precommitHandler async step 1a", "precommitHandler async step 1b", "currententrychange", "handler start", "committed fulfilled", "handler async step 1", "navigatesuccess", "finished fulfilled", "transition.finished fulfilled"] length 12, got ["navigate", "currententrychange", "handler start", "committed fulfilled", "promise microtask", "handler async step 1", "navigatesuccess", "finished fulfilled", "transition.finished fulfilled"] length 9
+

@@ -1,0 +1,12 @@
+
+PASS Default event values.
+PASS There must not be a initProgressEvent().
+PASS Basic test.
+PASS ECMAScript value conversion test.
+PASS Positive integer number test.
+PASS Zero test.
+PASS Decimal number test.
+PASS Mixed integer and decimal number test.
+PASS Negative number.
+PASS ProgressEventInit members must be matched case-sensitively.
+

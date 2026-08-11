@@ -1,0 +1,38 @@
+
+PASS :empty append color initial
+PASS :empty append color after adding
+PASS :empty append color after removing
+PASS :empty insert color initial
+PASS :empty insert color after adding
+PASS :empty insert color after removing
+PASS :first-child append color initial
+PASS :first-child append color after adding
+PASS :first-child append color after removing
+PASS :first-child insert color initial
+PASS :first-child insert color after adding
+PASS :first-child insert color after removing
+PASS :last-child append color initial
+PASS :last-child append color after adding
+PASS :last-child append color after removing
+PASS :last-child insert color initial
+PASS :last-child insert color after adding
+PASS :last-child insert color after removing
+PASS :empty subtree append color initial
+PASS :empty subtree append color after adding
+PASS :empty subtree append color after removing
+PASS :empty subtree insert color initial
+PASS :empty subtree insert color after adding
+PASS :empty subtree insert color after removing
+PASS :first-child subtree append color initial
+PASS :first-child subtree append color after adding
+PASS :first-child subtree append color after removing
+PASS :first-child subtree insert color initial
+PASS :first-child subtree insert color after adding
+PASS :first-child subtree insert color after removing
+PASS :last-child subtree append color initial
+PASS :last-child subtree append color after adding
+PASS :last-child subtree append color after removing
+PASS :last-child subtree insert color initial
+PASS :last-child subtree insert color after adding
+PASS :last-child subtree insert color after removing
+

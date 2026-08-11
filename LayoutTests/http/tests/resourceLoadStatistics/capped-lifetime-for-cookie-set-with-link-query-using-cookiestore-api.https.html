@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/cookies/resources/cookie-utilities.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Check that cookies created by JavaScript using CookieStore after a cross-site navigation with link query get capped to 24 hours.");
+    jsTestIsAsync = true;
+
+    const twelveHoursInSeconds = 12 * 60 * 60;
+    const oneDayInSeconds = 2 * twelveHoursInSeconds;
+    const twoDaysInSeconds = 2 * oneDayInSeconds;
+    const twelveHoursAsExpiresDate = createExpiresDateFromMaxAge(twelveHoursInSeconds);
+    const twoDaysAsExpiresDate = createExpiresDateFromMaxAge(twoDaysInSeconds);
+    const overTwelveHoursInSeconds = twelveHoursInSeconds + 30;
+    const overOneDayInSeconds = oneDayInSeconds + 30;
+
+    async function testCookies() {
+        let passedTests = 0;
+        function checkThatCookieDoesNotExpireAfter(cookieData, maxAgeInSeconds) {
+            let now = new Date();
+            let maxExpiryDateInMilliseconds = now.getTime() + (maxAgeInSeconds * 1000);
+
+            if (maxExpiryDateInMilliseconds > cookieData["expires"])
+                ++passedTests;
+            else
+                testFailed("Cookie named " + cookieData["name"] + " expires in more than " + maxAgeInSeconds + " seconds.");
+        }
+
+        await cookieStore.set({ name: "shortLivedCookieExpires", value: "foo", expires: Date.now() + (1000 * twelveHoursInSeconds) });
+        await cookieStore.set({ name: "longLivedCookieExpires", value: "foo", expires: Date.now() + (1000 * twoDaysInSeconds) });
+
+        const cookies = await UIHelper.cookiesForDomain("localhost");
+        if (!cookies.length)
+            testFailed("No cookies found.");
+        for (let cookie of cookies) {
+            switch (cookie.name) {
+                case "shortLivedCookieExpires":
+                    checkThatCookieDoesNotExpireAfter(cookie, overTwelveHoursInSeconds);
+                    break;
+                case "longLivedCookieExpires":
+                    checkThatCookieDoesNotExpireAfter(cookie, overOneDayInSeconds);
+                    break;
+            }
+        }
+
+        resetCookiesForCurrentOrigin();
+
+        if (passedTests === 2) {
+            testPassed("The short-lived cookie doesn't expire after more than " + overTwelveHoursInSeconds + " seconds.");
+            testPassed("The long-lived cookie doesn't expire after more than " + overOneDayInSeconds + " seconds.");
+        } else if (cookies.length)
+            testFailed("At least one cookie's expiry attribute was beyond the test thresholds.");
+
+        setEnableFeature(false, finishJSTest);
+    }
+
+    function navigateCrossOrigin() {
+        location.href = location.href.replace("127.0.0.1", "localhost") + "?clickid=b4db33fc47c4f3";
+    }
+
+    addEventListener("load", async () => {
+        await UIHelper.renderingUpdate();
+        if (location.href.includes("clickid"))
+            return await testCookies();
+
+        setEnableFeature(true, () => {
+            const prevalentResourceOrigin = location.origin;
+            testRunner.setStatisticsPrevalentResource(prevalentResourceOrigin, true, function() {
+                if (!testRunner.isStatisticsPrevalentResource(prevalentResourceOrigin))
+                    testFailed("Host did not get set as prevalent resource.");
+                testRunner.statisticsUpdateCookieBlocking(navigateCrossOrigin);
+            });
+        });
+    });
+</script>
+</body>
+</html>

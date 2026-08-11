@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let texture = device.createTexture({ size: [1, 1, 2], dimension: '3d', format: 'rgb10a2uint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView();
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass({
+        colorAttachments: [
+            { view: textureView, depthSlice: 0, loadOp: 'load', storeOp: 'store' },
+            { view: textureView, depthSlice: 1, loadOp: 'clear', storeOp: 'store' }
+        ],
+    });
+    renderPassEncoder.end()
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false WebGPUEnabled=false runSingly=true ] -->
+<title>Test that instantiating a remoteGPU is not allowed if WebGPUEnabled=false</title>
+<script src="../../resources/ipc.js"></script>
+<body>
+<script>
+testRunner.dumpAsText();
+if (window.IPC)
+    runTest();
+
+function runTest() {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    let rrbStreamConnection;
+    let rrbStreamConnectionHandle;
+    let webGPUStreamConnection;
+    let webGPUStreamConnectionHandle;
+    const defaultTimeout = 1000;
+    try {
+        [rrbStreamConnection, rrbStreamConnectionHandle] = IPC.createStreamClientConnection(16, defaultTimeout);
+        let renderingBackendID = randomIPCID();
+        IPC.sendMessage(
+            'GPU',
+            IPC.webPageProxyID,
+            IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name,
+            [
+                { type: 'uint64_t', value: renderingBackendID },
+                {
+                    type: 'StreamServerConnectionHandle',
+                    value: rrbStreamConnectionHandle,
+                }
+            ]);
+
+        let webGPUID = randomIPCID();
+        [webGPUStreamConnection, webGPUStreamConnectionHandle] = IPC.createStreamClientConnection(16, defaultTimeout);
+        var result = IPC.sendMessage(
+            'GPU',
+            IPC.webPageProxyID,
+            IPC.messages.GPUConnectionToWebProcess_CreateGPU.name,
+            [
+                { type: 'uint64_t', value: webGPUID }, // identifier
+                { type: 'uint64_t', value: renderingBackendID }, // renderingBackendIdentifier
+                { type: 'StreamServerConnectionHandle', value: webGPUStreamConnectionHandle }, // stream
+            ]);
+
+        syncFlush('GPU');
+        console.log("PASS: Will pass if test runner ends the test prematurely.");
+
+        // FIXME: currently we cannot detect that GPUP crashes and test runner doesn't
+        // let the test continue if the subprocesses crash.
+        setTimeout(() => {
+            console.log("FAIL: test runner should have detected GPUP crash.");
+            if (window.testRunner)
+                testRunner.notifyDone()
+        }, 1000);
+    } finally {
+        if (rrbStreamConnection)
+            rrbStreamConnection.invalidate();
+        if (webGPUStreamConnection)
+            webGPUStreamConnection.invalidate();
+    }
+}
+</script>
+</body>

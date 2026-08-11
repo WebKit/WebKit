@@ -1,0 +1,4 @@
+
+FAIL Local mutable global exports should be live bindings assert_equals: expected (number) 555 but got (object) object "[object WebAssembly.Global]"
+FAIL Dep module mutable global exports should be live bindings assert_equals: expected (number) 3001 but got (object) object "[object WebAssembly.Global]"
+

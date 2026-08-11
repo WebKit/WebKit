@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="mixed" style="font-size: 20px; writing-mode: vertical-lr; text-orientation: mixed;">
+Hello world.
+</p>
+
+<p id="upright" style="font-size: 20px; writing-mode: vertical-lr; text-orientation: upright;">
+Hello world.
+</p>
+
+<script>
+if (window.accessibilityController) {
+    let output = "This test verifies that text marker range bounds for vertical text orientations are correct.\n\n";
+    var mixedText = accessibilityController.accessibleElementById("mixed").childAtIndex(0);
+    var uprightText = accessibilityController.accessibleElementById("upright").childAtIndex(0);
+
+    // Mixed (rendered sideways)
+    output += expectRectWithVariance("mixedText.boundsForRange(0, 5)", -1, -1, 23, 45, 1); // "Hello"
+    output += expectRectWithVariance("mixedText.boundsForRange(6, 6)", -1, -1, 23, 52, 1); // "world."
+    output += expectRectWithVariance("mixedText.boundsForRange(0, 12)", -1, -1, 23, 102, 1); // "Hello world." (full width)
+
+    // Upright
+    output += expectRectWithVariance("uprightText.boundsForRange(0, 5)", -1, -1, 23, 101, 1); // "Hello"
+    output += expectRectWithVariance("uprightText.boundsForRange(6, 6)", -1, -1, 23, 121, 1); // "world."
+    output += expectRectWithVariance("uprightText.boundsForRange(0, 12)", -1, -1, 23, 226, 1); // "Hello world." (full width)
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+
+

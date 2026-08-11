@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+    .line-path {
+        stroke: #444;
+        fill: none;
+        stroke-width: 2;
+    }
+</style>
+</head>
+<body>
+    <svg viewBox="0 0 600 100" width="600" height="100">
+        <g></g>
+    </svg>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+        }
+
+        const pathData = [
+            { d: 'M 20 50 L 180 50', attr: 'marker-start', val: 'arrowStart' },
+            { d: 'M 220 50 L 300 50 L 380 50', attr: 'marker-mid', val: 'arrowMid' },
+            { d: 'M 420 50 L 580 50', attr: 'marker-end', val: 'arrowEnd' },
+        ];
+
+        function createMarker(parent, id, color) {
+            const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+            marker.setAttribute("id", id);
+            marker.setAttribute("viewBox", "0 0 10 10");
+            marker.setAttribute("refX", "5");
+            marker.setAttribute("refY", "5");
+            marker.setAttribute("markerUnits", "strokeWidth");
+            marker.setAttribute("markerWidth", "8");
+            marker.setAttribute("markerHeight", "6");
+            marker.setAttribute("orient", "auto");
+            parent.appendChild(marker);
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+            path.setAttribute("fill", color);
+            marker.appendChild(path);
+        }
+
+        function render(count) {
+            const svg = document.querySelector("svg");
+            const group = svg.querySelector("g");
+
+            const paths = Array.from(group.querySelectorAll("line-path"));
+
+            while (paths.length < pathData.length) {
+                paths.push(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
+            }
+
+            paths.forEach((path, idx) => {
+                path.setAttribute('class', 'line-path');
+                path.setAttribute('d', pathData[idx].d);
+                path.setAttribute(pathData[idx].attr, `url(#${pathData[idx].val}${count})`);
+
+                group.appendChild(path);
+            })
+
+            svg.querySelectorAll("defs *").forEach(el => el.remove());
+
+            let defs = document.querySelector('defs');
+            if (!defs) {
+                defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            }
+
+            group.appendChild(defs);
+            createMarker(defs, `arrowStart${count}`, "red");
+            createMarker(defs, `arrowMid${count}`, "green");
+            createMarker(defs, `arrowEnd${count}`, "blue");
+        }
+
+        window.addEventListener("load", async () => {
+            render(0);
+            await UIHelper.renderingUpdate();
+            render(1);
+
+            if (window.testRunner) {
+                testRunner.notifyDone();
+            }
+        });
+    </script>
+</body>
+</html>

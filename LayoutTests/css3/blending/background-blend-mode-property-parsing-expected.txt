@@ -1,0 +1,69 @@
+Test the parsing of the background-blend-mode property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Basic reference : normal
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'normal'
+
+Basic reference : multiply, screen
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'multiply, screen'
+
+Basic reference : screen, multiply
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'screen, multiply'
+
+Basic reference : overlay, normal
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'overlay, normal'
+
+Basic reference : darken, lighten, normal, multiply
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'darken, lighten, normal, multiply'
+
+Basic reference : lighten
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'lighten'
+
+Basic reference : color-dodge
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'color-dodge'
+
+Basic reference : color-burn
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'color-burn'
+
+Basic reference : hard-light
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'hard-light'
+
+Basic reference : soft-light
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'soft-light'
+
+Basic reference : difference
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'difference'
+
+Basic reference : exclusion
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('background-blend-mode') is 'exclusion'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

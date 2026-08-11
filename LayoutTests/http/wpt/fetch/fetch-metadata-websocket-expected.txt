@@ -1,0 +1,7 @@
+
+PASS Websocket Handshake fetch metadata
+PASS WebSocket Handshake: sec-fetch-dest
+PASS WebSocket Handshake: sec-fetch-mode
+PASS WebSocket Handshake: sec-fetch-site
+PASS WebSocket Handshake: sec-fetch-user
+

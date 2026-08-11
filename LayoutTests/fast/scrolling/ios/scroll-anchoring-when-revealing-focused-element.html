@@ -1,0 +1,95 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true focusStartsInputSessionPolicy=allow ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+body, html {
+    width: 100%;
+    margin: 0;
+}
+
+body {
+    height: 5000px;
+}
+
+input {
+    font-size: 18px;
+    position: absolute;
+    width: 100%;
+    top: 85vh;
+    overflow-anchor: none;
+}
+
+#content-above-anchor {
+    width: 100%;
+}
+
+#scroll-anchor {
+    width: 100%;
+    height: 100px;
+    font-weight: bold;
+    line-height: 100px;
+    color: white;
+    background: tomato;
+    text-align: center;
+}
+
+#description, #console {
+    overflow-anchor: none;
+    position: absolute;
+    top: 0;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<p id="console"></p>
+<div id="content-above-anchor"></div>
+<div id="scroll-anchor">Scroll Anchor Element</div>
+<input placeholder="Focus me" />
+<script>
+jsTestIsAsync = true;
+finalContentAboveAnchorHeight = 25;
+const contentAboveAnchor = document.getElementById("content-above-anchor");
+
+addEventListener("load", async () => {
+    description("Verifies that we scroll to avoid obscuring the focused element with the software keyboard, when scroll anchoring is enabled. To run the test manually, focus the text field without a hardware keyboard attached and check that the text field is visible");
+
+    let textField = document.querySelector("input");
+    textField.addEventListener("focus", async function() {
+        while (true) {
+            const currentHeight = parseInt(getComputedStyle(contentAboveAnchor).height);
+            contentAboveAnchor.style.height = `${currentHeight + 1}px`;
+            if (currentHeight >= finalContentAboveAnchorHeight)
+                return;
+            await UIHelper.renderingUpdate();
+        }
+    }, { once: true });
+
+    document.scrollingElement.scrollTo(0, 10);
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.setObscuredInsets(59, 0, 134, 0);
+    await UIHelper.setHardwareKeyboardAttached(false);
+    await UIHelper.beginInteractiveObscuredInsetsChange();
+
+    textField.focus();
+
+    await UIHelper.waitForKeyboardToShow();
+    await UIHelper.endInteractiveObscuredInsetsChange();
+
+    distanceToTopOfKeyboard = innerHeight - (await UIHelper.inputViewBounds()).height;
+    distanceToBottomOfTextField = textField.offsetTop + textField.offsetHeight - pageYOffset;
+    shouldBeGreaterThan("distanceToTopOfKeyboard", "distanceToBottomOfTextField");
+
+    textField.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

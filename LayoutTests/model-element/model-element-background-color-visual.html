@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<html>
+<head>
+<style>
+    body { margin: 0; }
+    /* A semi-transparent background-color must be blended over the canvas
+       (yielding rgb(255,127,127)) and applied only once. The regression in
+       webkit.org/b/315363 applied it twice -- an opaque layer backgroundColor
+       plus the box background painted on top -- darkening it to rgb(255,63,63).
+       This is a pixel test so the composited result is verified directly. */
+    #model {
+        background-color: rgba(255, 0, 0, 0.5);
+        width: 300px;
+        height: 300px;
+    }
+</style>
+</head>
+<body>
+<model id="model">
+    <source src="resources/teapot.usdz">
+</model>
+<script>
+    window.testRunner?.waitUntilDone();
+
+    const model = document.getElementById("model");
+    model.ready.then(() => {
+        window.testRunner?.notifyDone();
+    }, () => {
+        window.testRunner?.notifyDone();
+    });
+</script>
+</body>
+</html>

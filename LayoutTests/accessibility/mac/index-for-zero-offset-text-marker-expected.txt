@@ -1,0 +1,15 @@
+This test ensures we can get the index of a zero offset text marker without crashing, and that the index is consistent with the string length up to that marker.
+
+PASS: index === prefixLength
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is static text
+with a line break.
+This is text inside a p tag
+with a line break
+
+This is text inside a div
+with a line break
+This is text in a p tag with no line break

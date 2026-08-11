@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+    <div id="testDiv"></div>
+
+    <script>
+promise_test(async t => {
+    testDiv.innerHTML = '<embed id="embedElement" src="resources/get-user-media-embed.html"></embed>';
+    const result = await new Promise(resolve => window.onmessage = e => resolve(e.data));
+    assert_equals(result, "OK");
+}, "Same origin embed should get access to camera");
+
+promise_test(async t => {
+    testDiv.innerHTML = '<embed id="embedElement" src="http://localhost:8000/media/media-stream/resources/get-user-media-embed.html"></embed>';
+    const result = await new Promise(resolve => window.onmessage = e => resolve(e.data));
+    assert_equals(result, "KO");
+}, "Cross origin embed should not get access to camera");
+    </script>
+</body>
+</html>

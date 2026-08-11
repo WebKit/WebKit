@@ -1,0 +1,34 @@
+
+PASS iteration composition of discrete type animation (align-content)
+PASS iteration composition of <length> type animation
+PASS iteration composition of <percentage> type animation
+PASS iteration composition of <color> type animation
+PASS iteration composition of <color> type animation that green component is decreasing
+PASS iteration composition of <number> type animation
+PASS iteration composition of <shape> type animation
+PASS iteration composition of <calc()> value animation
+PASS iteration composition of <calc()> value animation that the values can'tbe reduced
+PASS iteration composition of opacity animation
+PASS iteration composition of box-shadow animation
+PASS iteration composition of filter blur animation
+PASS iteration composition of filter brightness for different unit animation
+PASS iteration composition of filter brightness animation
+PASS iteration composition of filter drop-shadow animation
+PASS iteration composition of same filter list animation
+PASS iteration composition of discrete filter list because of mismatch of the order
+PASS iteration composition of different length filter list animation
+PASS iteration composition of transform(rotate) animation
+PASS iteration composition of transform: [ scale(0), scale(1) ] animation
+PASS iteration composition of transform: [ scale(1), scale(2) ] animation
+PASS iteration composition of transform: scale(2) animation
+PASS iteration composition of transform list animation
+PASS iteration composition of transform of matrix function
+PASS iteration composition of transform list animation whose order is mismatched
+PASS iteration composition of transform list animation whose order is mismatched because of missing functions
+PASS iteration composition of transform from none to translate
+PASS iteration composition of transform of matrix3d function
+PASS iteration composition of transform of rotate3d function
+PASS iteration composition starts with non-zero value animation
+PASS iteration composition with negative final value animation
+PASS duration changes with an iteration composition operation of accumulate
+

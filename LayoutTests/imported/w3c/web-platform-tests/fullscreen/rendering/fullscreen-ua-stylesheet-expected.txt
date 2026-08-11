@@ -1,0 +1,5 @@
+
+PASS UA stylesheet: margin:0!important and box-sizing:border-box!important apply to fullscreen element
+PASS UA stylesheet: object-fit:contain applies to fullscreen element when author has no :fullscreen override
+PASS UA stylesheet: object-fit:contain is not !important - author can override
+

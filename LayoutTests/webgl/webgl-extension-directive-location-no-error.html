@@ -1,0 +1,29 @@
+<body>
+<p>Ensure that if a shader extension directive is specified after non-preprocessor symbols, no errors are logged.</p>
+<canvas></canvas>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const fragmentShaderSource = `
+    precision highp float;
+    #extension GL_OES_standard_derivatives : enable
+
+    void main() {
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+    }
+    `;
+
+const canvas = document.querySelector('canvas');
+const gl = canvas.getContext("webgl");
+
+gl.getExtension('OES_standard_derivatives');
+
+const shader = gl.createShader(gl.FRAGMENT_SHADER);
+gl.shaderSource(shader, fragmentShaderSource);
+gl.compileShader(shader);
+const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+if (!success)
+    console.log(gl.getShaderInfoLog(shader));
+</script>
+</body>

@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+async function start() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        var link = document.getElementById("link");
+        await eventSender.asyncMouseMoveTo(link.offsetLeft + 2, link.offsetTop + 2);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+    }
+}
+</script>
+</head>
+<body onload="start();">
+<a id="link" href="resources/redirect-to-referrer-check.pl">Link</a>
+</body></html>

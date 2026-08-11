@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/image-preload-helper.js"></script>
+<style type="text/css">
+    #test-container {
+        margin: 30px;
+    }
+</style>
+</head>
+<body>
+<p id="description"></p>
+<div id="test-container">
+  <div style='color-scheme: light; cursor: light-dark(url(resources/greenbox.png), url(resources/greenbox30.png)) 0 0, pointer'>Light scheme - light-dark() with URL images</div>
+  <div style='color-scheme: dark; cursor: light-dark(url(resources/greenbox.png), url(resources/greenbox30.png)) 0 0, pointer'>Dark scheme - light-dark() with URL images</div>
+  <div id=dynamic style='cursor: light-dark(url(resources/greenbox.png), url(resources/greenbox30.png)) 0 0, pointer'>Dark scheme (set dynamically) - light-dark() with URL images</div>
+  <div style='cursor: light-dark(linear-gradient(red, white), url(resources/greenbox.png)) 0 0, pointer'>light-dark() with gradient as first arg (invalid value)</div>
+  <div style='cursor: light-dark(url(resources/greenbox.png), linear-gradient(red, white)) 0 0, pointer'>light-dark() with gradient as second arg (invalid value)</div>
+  <div style='cursor: light-dark(linear-gradient(red, white), radial-gradient(blue, green)) 0 0, pointer'>light-dark() with both args as gradients (invalid value)</div>
+</div>
+<br/>
+<div id="console"></div>
+<script>
+
+var testContainer = document.getElementById('test-container');
+
+async function runTests() {
+    dynamic.style.colorScheme = "dark";
+
+    // Can't do anything useful here without eventSender
+    if (window.eventSender) {
+        var nodesToTest = document.querySelectorAll('#test-container > div');
+        for (var i = 0; i < nodesToTest.length; i++) {
+            var node = nodesToTest[i];
+            debug('TEST CASE: ' + node.textContent);
+
+            // Make sure the node is visible and move the mouse over top of it.
+            document.scrollingElement.scrollTop = node.offsetTop - 50;
+            await eventSender.asyncMouseMoveTo(node.offsetLeft + 3, node.offsetTop - document.scrollingElement.scrollTop + 3);
+
+            debug('Cursor Info: ' + window.internals.getCurrentCursorInfo());
+            debug('');
+        }
+        // This text is redundant with the test output - hide it
+        testContainer.style.display = 'none';
+    }
+
+    finishJSTest();
+}
+
+description("Test that cursor: light-dark() resolves to the correct image based on color-scheme.");
+
+if (!window.eventSender) {
+    testFailed('This test requires DumpRenderTree');
+}
+
+if (window.testRunner) {
+    window.jsTestIsAsync = true;
+}
+
+// Wait for the cursor images to load before starting tests.
+preloadImagesFromStyle(testContainer, 2, runTests);
+
+</script>
+</body>
+</html>

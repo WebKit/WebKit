@@ -1,0 +1,20 @@
+<!-- webkit-test-runner [ dumpResourceLoadCallbacks=true ] -->
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
+    testRunner.dumpAllHTTPRedirectedResponseHeaders();
+    testRunner.waitUntilDone();
+}
+
+async function doTest()
+{
+    const response = await fetch("../beacon/resources/redirect.py?status=302&location=/");
+    await response.text();
+    testRunner.notifyDone();
+}
+</script>
+<body onload="setTimeout(doTest, 100);">
+</body>
+</html>

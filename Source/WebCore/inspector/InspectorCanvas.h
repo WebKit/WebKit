@@ -1,0 +1,185 @@
+/*
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "CanvasRenderingContext2DBase.h"
+#include "InspectorCanvasProcessedArguments.h"
+#include "IntSize.h"
+#include "WebGL2RenderingContext.h"
+#include "WebGLRenderingContextBase.h"
+#include <JavaScriptCore/AsyncStackTrace.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <JavaScriptCore/ScriptCallFrame.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <cstdint>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/Variant.h>
+#include <wtf/WeakRef.h>
+
+namespace JSC {
+class JSValue;
+class JSGlobalObject;
+}
+
+namespace WebCore {
+
+class CanvasGradient;
+class CanvasPattern;
+class Element;
+class GPUDevice;
+class HTMLCanvasElement;
+class HTMLImageElement;
+class HTMLVideoElement;
+class ImageBitmap;
+class ImageData;
+class OffscreenCanvas;
+class CSSStyleImageValue;
+class WeakPtrImplWithEventTargetData;
+
+template<typename> struct InspectorCanvasArgumentProcessor;
+
+class InspectorCanvas final : public RefCountedAndCanMakeWeakPtr<InspectorCanvas> {
+public:
+    static Ref<InspectorCanvas> create(CanvasRenderingContext&);
+    static Ref<InspectorCanvas> create(GPUDevice&);
+
+    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
+
+    CanvasRenderingContext* canvasContext() const;
+    GPUDevice* deviceContext() const;
+
+    HashSet<HTMLCanvasElement*> canvasElements() const;
+
+    Vector<IntSize> sizes() const;
+    Vector<String> cssCanvasNames() const;
+
+    ScriptExecutionContext* scriptExecutionContext() const;
+
+    JSC::JSValue resolveContext(JSC::JSGlobalObject*);
+
+    HashSet<Element*> cssCanvasClientNodes() const;
+    size_t memoryCost() const;
+
+    void canvasChanged();
+
+    bool hasActiveInspectorCanvasCallTracer() const;
+    void setHasActiveInspectorCanvasCallTracer(bool);
+
+    void resetRecordingData();
+    bool NODELETE hasRecordingData() const;
+    bool NODELETE currentFrameHasData() const;
+
+    void recordAction(String&&, InspectorCanvasProcessedArguments&& = { });
+    void recordAction(String&&, InspectorCanvasProcessedArgument&& receiver, InspectorCanvasProcessedArguments&& = { });
+
+    Ref<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> releaseFrames() { return m_frames.releaseNonNull(); }
+
+    void finalizeFrame();
+    void markCurrentFrameIncomplete();
+
+    void setRecordingName(const String& name) { m_recordingName = name; }
+
+    void setBufferLimit(long);
+    bool NODELETE hasBufferSpace() const;
+    long bufferUsed() const { return m_bufferUsed; }
+
+    void setFrameCount(long);
+    bool NODELETE overFrameCount() const;
+
+    Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(bool captureBacktrace);
+    Ref<Inspector::Protocol::Recording::Recording> releaseObjectForRecording();
+
+    static Inspector::Protocol::ErrorStringOr<String> getContentAsDataURL(CanvasRenderingContext&);
+    Inspector::Protocol::ErrorStringOr<String> getContentAsDataURL();
+
+private:
+    template<typename> friend struct InspectorCanvasArgumentProcessor;
+
+    explicit InspectorCanvas(CanvasRenderingContext&);
+    explicit InspectorCanvas(GPUDevice&);
+
+    void appendActionSnapshotIfNeeded();
+    void recordAction(String&&, InspectorCanvasProcessedArguments&&, RefPtr<JSON::ArrayOf<int>> receiver);
+
+    using DuplicateDataVariant = Variant<
+        Ref<CanvasGradient>,
+        Ref<CanvasPattern>,
+        Ref<HTMLCanvasElement>,
+        Ref<HTMLImageElement>,
+#if ENABLE(VIDEO)
+        Ref<HTMLVideoElement>,
+#endif
+        Ref<ImageData>,
+        Ref<ImageBitmap>,
+        Ref<Inspector::ScriptCallStack>,
+        Ref<Inspector::AsyncStackTrace>,
+        Ref<CSSStyleImageValue>,
+        Inspector::ScriptCallFrame,
+#if ENABLE(OFFSCREEN_CANVAS)
+        Ref<OffscreenCanvas>,
+#endif
+        String
+    >;
+
+    int indexForData(DuplicateDataVariant);
+    size_t identifierForRecordingObject(RecordingSwizzleType, uintptr_t);
+    Ref<JSON::Value> valueIndexForData(DuplicateDataVariant);
+    String stringIndexForKey(const String&);
+    Ref<Inspector::Protocol::Recording::InitialState> buildInitialState();
+    Ref<JSON::ArrayOf<JSON::Value>> buildAction(String&&, InspectorCanvasProcessedArguments&& = { });
+    Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasGradient(const CanvasGradient&);
+    Ref<JSON::ArrayOf<JSON::Value>> buildArrayForCanvasPattern(const CanvasPattern&);
+    Ref<JSON::ArrayOf<JSON::Value>> buildArrayForImageData(const ImageData&);
+
+    String m_identifier;
+
+    Variant<
+        WeakRef<CanvasRenderingContext>,
+        WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>
+    > m_context;
+
+    RefPtr<Inspector::Protocol::Recording::InitialState> m_initialState;
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> m_frames;
+    RefPtr<JSON::ArrayOf<JSON::Value>> m_currentActions;
+    RefPtr<JSON::ArrayOf<JSON::Value>> m_lastRecordedAction;
+    RefPtr<JSON::ArrayOf<JSON::Value>> m_serializedDuplicateData;
+    Vector<DuplicateDataVariant> m_indexedDuplicateData;
+
+    HashMap<uintptr_t, size_t> m_boundRecordingObjectIdentifiers;
+    HashMap<RecordingSwizzleType, size_t> m_nextRecordingObjectIdentifiers;
+
+    String m_recordingName;
+    MonotonicTime m_currentFrameStartTime { MonotonicTime::nan() };
+    size_t m_bufferLimit { 100 * 1024 * 1024 };
+    size_t m_bufferUsed { 0 };
+    std::optional<size_t> m_frameCount;
+    size_t m_framesCaptured { 0 };
+    bool m_contentChanged { false };
+};
+
+} // namespace WebCore

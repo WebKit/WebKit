@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT CORB cannot block polyglot HTML/JS: html-js-polyglot.js Test timed out
+TIMEOUT CORB cannot block polyglot HTML/JS: html-js-polyglot2.js Test timed out
+

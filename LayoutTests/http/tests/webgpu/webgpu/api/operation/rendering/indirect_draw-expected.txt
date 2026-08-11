@@ -1,0 +1,4 @@
+
+PASS :basics:isIndexed=true
+PASS :basics:isIndexed=false
+

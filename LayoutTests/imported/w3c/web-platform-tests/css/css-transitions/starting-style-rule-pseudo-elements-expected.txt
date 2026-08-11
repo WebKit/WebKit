@@ -1,0 +1,5 @@
+
+PASS Triggered transition from first style update
+PASS Triggered transition from display:none to display:block
+PASS Triggered transition on DOM insertion
+

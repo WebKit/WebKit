@@ -1,0 +1,45 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script>
+    if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+    var index = 0;
+    function log(s) {
+        document.getElementById("mylog").innerHTML += s + "<br>";
+    }
+    addEventListener("message", (event) => {
+        log(event.data);
+        index = index + 1;
+        switch (index) {
+        case 1:
+            secondFrame.contentWindow.postMessage('secondFrame', '*');
+            break;
+        case 2:
+            window.frames[0].postMessage('window.frames[0]', '*')
+            break;
+        case 3:
+            window.frames[1].postMessage('window.frames[1]', '*')
+            break;
+        case 4:
+            firstFrame.src = 'http://localhost:8000/site-isolation/resources/reply-query.html?1';
+            firstFrame.onload = ()=>{
+                window.frames[0].postMessage('window.frames[0] after navigating to cross-site', '*')
+            }
+            break;
+        case 5:
+            firstFrame.src = 'http://127.0.0.1:8000/site-isolation/resources/reply-query.html?1';
+            firstFrame.onload = ()=>{
+                window.frames[0].postMessage('window.frames[0] after navigating back to same-site', '*')
+            }
+            break;
+        case 6:
+            log('complete');
+            if (window.testRunner) { testRunner.notifyDone() }
+        }
+    })
+    onload = ()=>{
+        log('frames length ' + frames.length);
+        firstFrame.contentWindow.postMessage('firstFrame', '*')
+    }
+</script>
+<iframe id='firstFrame' src='http://127.0.0.1:8000/site-isolation/resources/reply-query.html?1'></iframe>
+<iframe id='secondFrame' src='http://127.0.0.1:8000/site-isolation/resources/reply-query.html?2'></iframe>
+<div id='mylog'></div>

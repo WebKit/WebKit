@@ -1,0 +1,6 @@
+
+PASS Parsing coop as a structured header 'string' item
+PASS Parsing coop as a structured header 'byte sequence' item
+PASS Parsing coop as a structured header 'boolean' item
+PASS Parsing coop as a structured header 'integer or decimal' item
+

@@ -1,0 +1,5 @@
+
+Harness Error (FAIL), message = TypeError: log is not a function. (In 'log("Fail")', 'log' is undefined)
+
+FAIL Expecting alerts: ["PASS (1 of 2)","PASS (2 of 2)"] assert_unreached: Alert timeout, expected alerts PASS (1 of 2),PASS (2 of 2) not fired. Reached unreachable code
+

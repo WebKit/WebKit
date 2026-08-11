@@ -1,0 +1,54 @@
+<head style="display:none">
+    <style>
+        i,
+        :invalid {
+            position: absolute;
+        }
+    
+        *:empty {
+            -webkit-column-rule-width: medium;
+        }
+    
+        *:scope,
+        ruby {
+            overflow-y: -webkit-paged-y;
+            column-rule-width: 81em;
+            position: static;
+        }
+    
+        :read-only {
+            display: table-row-group;
+            perspective: 0px;
+        }
+    </style>
+</head>
+
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+        
+    function main() {
+        try { 
+            var attrs = document.getElementsByTagName("select"); 
+            var v118 = attrs.item(42 % attrs.length); 
+            x2.after(v118); 
+        } catch { }
+    }
+</script>
+
+<body onload="main()">
+    PASS if no assert in Debug.
+    <ol>
+    </ol>
+    <menu>
+        <menu>
+        </menu>
+        <object>
+        </object>
+    </menu>
+    <cite id="x2">
+        <i lang="jw">
+            <select></select>
+        </i>
+    </cite>
+</body>

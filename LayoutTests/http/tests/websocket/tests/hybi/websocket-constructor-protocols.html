@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+description('Construct a WebSocket with multiple protocols. It should throw an appropriate exception.');
+
+var url = "ws://127.0.0.1:8880/websocket/tests/simple";
+shouldThrowErrorName('new WebSocket(url, ["a@"])', 'SyntaxError');
+shouldThrowErrorName('new WebSocket(url, new Set(["b@"]))', 'SyntaxError');
+shouldThrowErrorName('x = { toString: () => "a", [Symbol.iterator]: function* () { yield "c@"; } }; new WebSocket(url, x)', 'SyntaxError');
+shouldThrowErrorName('x = { toString: () => "d@", [Symbol.iterator]: null }; new WebSocket(url, x)', 'SyntaxError');
+shouldThrowErrorName('x = { toString: () => "a", [Symbol.iterator]: 1 }; new WebSocket(url, x)', 'TypeError');
+shouldThrowErrorName('x = { [Symbol.iterator]: function* () { yield "e@"; } }; new WebSocket(url, x)', 'SyntaxError');
+shouldThrowErrorName('x = { [Symbol.iterator]: function* () { throw {name: "SomeError", toString: () => "Some error" }; } }; new WebSocket(url, x)', 'SomeError');
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,4 @@
+
+
+PASS Dispose events should fire when entries are removed by a navigation in a different frame
+

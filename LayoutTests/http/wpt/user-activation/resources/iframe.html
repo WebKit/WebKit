@@ -1,0 +1,31 @@
+<!doctype html>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<body>
+    <h1>User activation bless iframe</h1>
+</body>
+
+<script type="module">
+    async function messageListener(event) {
+        try {
+            await test_driver.bless("user activation");
+            event.source.postMessage(
+                {
+                    status: "success",
+                    isActive: navigator.userActivation.isActive,
+                },
+                event.origin,
+            );
+        } catch (error) {
+            event.source.postMessage(
+                { status: "error", error: String(error), stack: error?.stack },
+                event.origin,
+            );
+        }
+    }
+
+    if (window !== window.top) {
+        test_driver.set_test_context(window.top);
+    }
+    window.addEventListener("message", messageListener);
+</script>

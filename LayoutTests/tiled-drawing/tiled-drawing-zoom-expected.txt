@@ -1,0 +1,24 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 1805.00 1345.00)
+  (visible rect 0.00, 0.00 785.00 x 585.00)
+  (coverage rect 0.00, 0.00 785.00 x 585.00)
+  (intersects coverage rect 1)
+  (contentsScale 1.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 585.00)
+      (contentsOpaque 1)
+      (transform [2.30 0.00 0.00 0.00] [0.00 2.30 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+      (visible rect 0.00, 0.00 341.30 x 254.35)
+      (coverage rect 0.00, 0.00 341.30 x 254.35)
+      (intersects coverage rect 1)
+      (contentsScale 2.30)
+      (tile cache coverage 0, 0 347 x 260)
+      (tile size 800 x 600)
+      (top left tile 0, 0 tiles grid 1 x 1)
+      (in window 1)
+    )
+  )
+)
+

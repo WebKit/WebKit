@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../media/media-file.js"></script>
+    <script src="../../../media/video-test.js"></script>
+    <script>
+    function dumpLayers()
+    {
+        if (window.testRunner) {
+            document.getElementById('outText').textContent = window.internals.layerTreeAsText(document);
+            testRunner.notifyDone();
+        }
+    }
+    window.addEventListener('load', async event => {
+        findMediaElement();
+        run("internals.enableGStreamerHolePunching(video)");
+        run("video.src = findMediaFile('video', '../../../media/content/test')");
+        run("video.play()");
+        setTimeout(dumpLayers, 500);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+    <pre id="outText"></pre>
+</body>
+</html>

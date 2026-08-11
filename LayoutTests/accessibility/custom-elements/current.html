@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-element id="custom-location"></custom-element>
+<custom-element id="custom-page" aria-current="page"></custom-element>
+<script>
+
+customElements.define('custom-element', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.ariaCurrent = 'location';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-location").currentStateValue', 'location');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-page").currentStateValue', 'page');
+}
+
+</script>
+</body>
+</html>

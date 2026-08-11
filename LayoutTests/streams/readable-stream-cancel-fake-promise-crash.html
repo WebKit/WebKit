@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if WebKit does not hit assertions or crash under ASAN.</p>
+<div id="result"></div>
+<script>
+
+function FakePromise(executor) {
+    executor(() => {}, () => {});
+    return { }
+}
+
+const stream = new ReadableStream({
+    cancel(reason) {
+        Object.defineProperty(Promise, Symbol.species, {
+            configurable: true,
+            get() {
+                return FakePromise;
+            }
+        });
+        return new Promise(() => {});
+    }
+});
+stream.cancel("test reason");
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    setTimeout(() => testRunner.notifyDone(), 100);
+}
+</script>

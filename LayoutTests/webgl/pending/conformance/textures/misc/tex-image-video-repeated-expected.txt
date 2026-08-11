@@ -1,0 +1,4 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../../resources/pending_webgl_test_files/conformance/textures/misc/tex-image-video-repeated.html
+[ PASS ] All tests passed

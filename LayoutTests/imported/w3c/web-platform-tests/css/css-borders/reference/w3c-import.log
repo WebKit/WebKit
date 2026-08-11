@@ -1,0 +1,22 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/reference/border-radius-greater-than-width-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/reference/border-radius-side-shorthands-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/reference/borders-on-sub-unit-sized-elements-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/reference/subpixel-border-width-ref.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/reference/subpixel-borders-with-child-border-box-sizing-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-borders/reference/subpixel-borders-with-child-ref.html

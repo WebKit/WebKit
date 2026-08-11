@@ -1,0 +1,59 @@
+Test isPointInFill() on path.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test simple different coordinates
+PASS p1.isPointInFill() is true
+PASS p1.isPointInFill({}) is true
+PASS p1.isPointInFill({x: 0, y: 0}) is true
+PASS p1.isPointInFill({x: 200, y: 200}) is false
+PASS p1.isPointInFill({x: -200, y: -200}) is false
+PASS p1.isPointInFill({x: -100, y: -100}) is true
+PASS p1.isPointInFill(new DOMPoint()) is true
+PASS p1.isPointInFill(new DOMPoint(100, 100)) is true
+PASS p1.isPointInFill(new DOMPoint(-200, -200)) is false
+PASS p1.isPointInFill(new DOMPointReadOnly()) is true
+PASS p1.isPointInFill(new DOMPointReadOnly(-200, -200)) is false
+PASS p1.isPointInFill(svgPoint) is true
+PASS p1.isPointInFill(svgPoint) is false
+PASS p1.isPointInFill(new DOMPoint(NaN)) is false
+PASS p1.isPointInFill(new DOMPoint(Infinity)) is false
+PASS p1.isPointInFill({x: 'string', y: 'string'}) is false
+PASS p1.isPointInFill('string') threw exception TypeError: Type error.
+
+Test that transform doesn't affect result
+PASS p2.isPointInFill() is true
+
+Verify that no argument or empty dictionary is the same as 0,0 and may return false
+PASS p3.isPointInFill() is false
+PASS p3.isPointInFill({}) is false
+
+display: none; should not affect isPointInFill
+FAIL p4.isPointInFill() should be true. Was false.
+
+visibility: hidden; should not affect isPointInFill
+PASS p5.isPointInFill() is true
+
+opacity: 0; should not affect isPointInFill
+PASS p6.isPointInFill() is true
+
+opacity: 0; on group should not affect isPointInFill
+PASS p7.isPointInFill() is true
+
+isPointInFill should respect fill-rule: nonzero
+PASS p8.isPointInFill() is true
+
+isPointInFill should respect fill-rule: evenodd
+PASS p9.isPointInFill() is false
+
+isPointInFill should not respect clip-rule 1
+PASS p10.isPointInFill() is true
+
+isPointInFill should not respect clip-rule 2
+PASS p11.isPointInFill() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

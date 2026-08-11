@@ -1,0 +1,1002 @@
+
+PASS punctuation, currency, symbols  U+2014 — %26%238212%3B
+PASS punctuation, currency, symbols  U+2016 ‖ %26%238214%3B
+PASS punctuation, currency, symbols  U+2017 ‗ %26%238215%3B
+PASS punctuation, currency, symbols  U+201A ‚ %26%238218%3B
+PASS punctuation, currency, symbols  U+201B ‛ %26%238219%3B
+PASS punctuation, currency, symbols  U+201E „ %26%238222%3B
+PASS punctuation, currency, symbols  U+201F ‟ %26%238223%3B
+PASS punctuation, currency, symbols  U+2022 • %26%238226%3B
+PASS punctuation, currency, symbols  U+2023 ‣ %26%238227%3B
+PASS punctuation, currency, symbols  U+2024 ․ %26%238228%3B
+PASS punctuation, currency, symbols  U+2027 ‧ %26%238231%3B
+PASS punctuation, currency, symbols  U+2028   %26%238232%3B
+PASS punctuation, currency, symbols  U+2029   %26%238233%3B
+PASS punctuation, currency, symbols  U+202A ‪ %26%238234%3B
+PASS punctuation, currency, symbols  U+202B ‫ %26%238235%3B
+PASS punctuation, currency, symbols  U+202C ‬ %26%238236%3B
+PASS punctuation, currency, symbols  U+202D ‭ %26%238237%3B
+PASS punctuation, currency, symbols  U+202E ‮ %26%238238%3B
+PASS punctuation, currency, symbols  U+202F   %26%238239%3B
+PASS punctuation, currency, symbols  U+2031 ‱ %26%238241%3B
+PASS punctuation, currency, symbols  U+2034 ‴ %26%238244%3B
+PASS punctuation, currency, symbols  U+2035 ‵ %26%238245%3B
+PASS punctuation, currency, symbols  U+2036 ‶ %26%238246%3B
+PASS punctuation, currency, symbols  U+2037 ‷ %26%238247%3B
+PASS punctuation, currency, symbols  U+2038 ‸ %26%238248%3B
+PASS punctuation, currency, symbols  U+2039 ‹ %26%238249%3B
+PASS punctuation, currency, symbols  U+203A › %26%238250%3B
+PASS punctuation, currency, symbols  U+203C ‼ %26%238252%3B
+PASS punctuation, currency, symbols  U+203D ‽ %26%238253%3B
+PASS punctuation, currency, symbols  U+203E ‾ %26%238254%3B
+PASS punctuation, currency, symbols  U+203F ‿ %26%238255%3B
+PASS punctuation, currency, symbols  U+2040 ⁀ %26%238256%3B
+PASS punctuation, currency, symbols  U+2041 ⁁ %26%238257%3B
+PASS punctuation, currency, symbols  U+2042 ⁂ %26%238258%3B
+PASS punctuation, currency, symbols  U+2043 ⁃ %26%238259%3B
+PASS punctuation, currency, symbols  U+2044 ⁄ %26%238260%3B
+PASS punctuation, currency, symbols  U+2045 ⁅ %26%238261%3B
+PASS punctuation, currency, symbols  U+2046 ⁆ %26%238262%3B
+PASS punctuation, currency, symbols  U+2047 ⁇ %26%238263%3B
+PASS punctuation, currency, symbols  U+2048 ⁈ %26%238264%3B
+PASS punctuation, currency, symbols  U+2049 ⁉ %26%238265%3B
+PASS punctuation, currency, symbols  U+204A ⁊ %26%238266%3B
+PASS punctuation, currency, symbols  U+204B ⁋ %26%238267%3B
+PASS punctuation, currency, symbols  U+204C ⁌ %26%238268%3B
+PASS punctuation, currency, symbols  U+204D ⁍ %26%238269%3B
+PASS punctuation, currency, symbols  U+204E ⁎ %26%238270%3B
+PASS punctuation, currency, symbols  U+204F ⁏ %26%238271%3B
+PASS punctuation, currency, symbols  U+2050 ⁐ %26%238272%3B
+PASS punctuation, currency, symbols  U+2051 ⁑ %26%238273%3B
+PASS punctuation, currency, symbols  U+2052 ⁒ %26%238274%3B
+PASS punctuation, currency, symbols  U+2053 ⁓ %26%238275%3B
+PASS punctuation, currency, symbols  U+2054 ⁔ %26%238276%3B
+PASS punctuation, currency, symbols  U+2055 ⁕ %26%238277%3B
+PASS punctuation, currency, symbols  U+2056 ⁖ %26%238278%3B
+PASS punctuation, currency, symbols  U+2057 ⁗ %26%238279%3B
+PASS punctuation, currency, symbols  U+2058 ⁘ %26%238280%3B
+PASS punctuation, currency, symbols  U+2059 ⁙ %26%238281%3B
+PASS punctuation, currency, symbols  U+205A ⁚ %26%238282%3B
+PASS punctuation, currency, symbols  U+205B ⁛ %26%238283%3B
+PASS punctuation, currency, symbols  U+205C ⁜ %26%238284%3B
+PASS punctuation, currency, symbols  U+205D ⁝ %26%238285%3B
+PASS punctuation, currency, symbols  U+205E ⁞ %26%238286%3B
+PASS punctuation, currency, symbols  U+205F   %26%238287%3B
+PASS punctuation, currency, symbols  U+2060 ⁠ %26%238288%3B
+PASS punctuation, currency, symbols  U+2061 ⁡ %26%238289%3B
+PASS punctuation, currency, symbols  U+2062 ⁢ %26%238290%3B
+PASS punctuation, currency, symbols  U+2063 ⁣ %26%238291%3B
+PASS punctuation, currency, symbols  U+2064 ⁤ %26%238292%3B
+PASS punctuation, currency, symbols  U+2065 ⁥ %26%238293%3B
+PASS punctuation, currency, symbols  U+2066 ⁦ %26%238294%3B
+PASS punctuation, currency, symbols  U+2067 ⁧ %26%238295%3B
+PASS punctuation, currency, symbols  U+2068 ⁨ %26%238296%3B
+PASS punctuation, currency, symbols  U+2069 ⁩ %26%238297%3B
+PASS punctuation, currency, symbols  U+206A ⁪ %26%238298%3B
+PASS punctuation, currency, symbols  U+206B ⁫ %26%238299%3B
+PASS punctuation, currency, symbols  U+206C ⁬ %26%238300%3B
+PASS punctuation, currency, symbols  U+206D ⁭ %26%238301%3B
+PASS punctuation, currency, symbols  U+206E ⁮ %26%238302%3B
+PASS punctuation, currency, symbols  U+206F ⁯ %26%238303%3B
+PASS punctuation, currency, symbols  U+2070 ⁰ %26%238304%3B
+PASS punctuation, currency, symbols  U+2071 ⁱ %26%238305%3B
+PASS punctuation, currency, symbols  U+2072 ⁲ %26%238306%3B
+PASS punctuation, currency, symbols  U+2073 ⁳ %26%238307%3B
+PASS punctuation, currency, symbols  U+2075 ⁵ %26%238309%3B
+PASS punctuation, currency, symbols  U+2076 ⁶ %26%238310%3B
+PASS punctuation, currency, symbols  U+2077 ⁷ %26%238311%3B
+PASS punctuation, currency, symbols  U+2078 ⁸ %26%238312%3B
+PASS punctuation, currency, symbols  U+2079 ⁹ %26%238313%3B
+PASS punctuation, currency, symbols  U+207A ⁺ %26%238314%3B
+PASS punctuation, currency, symbols  U+207B ⁻ %26%238315%3B
+PASS punctuation, currency, symbols  U+207C ⁼ %26%238316%3B
+PASS punctuation, currency, symbols  U+207D ⁽ %26%238317%3B
+PASS punctuation, currency, symbols  U+207E ⁾ %26%238318%3B
+PASS punctuation, currency, symbols  U+2080 ₀ %26%238320%3B
+PASS punctuation, currency, symbols  U+2085 ₅ %26%238325%3B
+PASS punctuation, currency, symbols  U+2086 ₆ %26%238326%3B
+PASS punctuation, currency, symbols  U+2087 ₇ %26%238327%3B
+PASS punctuation, currency, symbols  U+2088 ₈ %26%238328%3B
+PASS punctuation, currency, symbols  U+2089 ₉ %26%238329%3B
+PASS punctuation, currency, symbols  U+208A ₊ %26%238330%3B
+PASS punctuation, currency, symbols  U+208B ₋ %26%238331%3B
+PASS punctuation, currency, symbols  U+208C ₌ %26%238332%3B
+PASS punctuation, currency, symbols  U+208D ₍ %26%238333%3B
+PASS punctuation, currency, symbols  U+208E ₎ %26%238334%3B
+PASS punctuation, currency, symbols  U+208F ₏ %26%238335%3B
+PASS punctuation, currency, symbols  U+2090 ₐ %26%238336%3B
+PASS punctuation, currency, symbols  U+2091 ₑ %26%238337%3B
+PASS punctuation, currency, symbols  U+2092 ₒ %26%238338%3B
+PASS punctuation, currency, symbols  U+2093 ₓ %26%238339%3B
+PASS punctuation, currency, symbols  U+2094 ₔ %26%238340%3B
+PASS punctuation, currency, symbols  U+2095 ₕ %26%238341%3B
+PASS punctuation, currency, symbols  U+2096 ₖ %26%238342%3B
+PASS punctuation, currency, symbols  U+2097 ₗ %26%238343%3B
+PASS punctuation, currency, symbols  U+2098 ₘ %26%238344%3B
+PASS punctuation, currency, symbols  U+2099 ₙ %26%238345%3B
+PASS punctuation, currency, symbols  U+209A ₚ %26%238346%3B
+PASS punctuation, currency, symbols  U+209B ₛ %26%238347%3B
+PASS punctuation, currency, symbols  U+209C ₜ %26%238348%3B
+PASS punctuation, currency, symbols  U+209D ₝ %26%238349%3B
+PASS punctuation, currency, symbols  U+209E ₞ %26%238350%3B
+PASS punctuation, currency, symbols  U+209F ₟ %26%238351%3B
+PASS punctuation, currency, symbols  U+20A0 ₠ %26%238352%3B
+PASS punctuation, currency, symbols  U+20A1 ₡ %26%238353%3B
+PASS punctuation, currency, symbols  U+20A2 ₢ %26%238354%3B
+PASS punctuation, currency, symbols  U+20A3 ₣ %26%238355%3B
+PASS punctuation, currency, symbols  U+20A4 ₤ %26%238356%3B
+PASS punctuation, currency, symbols  U+20A5 ₥ %26%238357%3B
+PASS punctuation, currency, symbols  U+20A6 ₦ %26%238358%3B
+PASS punctuation, currency, symbols  U+20A7 ₧ %26%238359%3B
+PASS punctuation, currency, symbols  U+20A8 ₨ %26%238360%3B
+PASS punctuation, currency, symbols  U+20A9 ₩ %26%238361%3B
+PASS punctuation, currency, symbols  U+20AA ₪ %26%238362%3B
+PASS punctuation, currency, symbols  U+20AB ₫ %26%238363%3B
+PASS punctuation, currency, symbols  U+20AD ₭ %26%238365%3B
+PASS punctuation, currency, symbols  U+20AE ₮ %26%238366%3B
+PASS punctuation, currency, symbols  U+20AF ₯ %26%238367%3B
+PASS punctuation, currency, symbols  U+20B0 ₰ %26%238368%3B
+PASS punctuation, currency, symbols  U+20B1 ₱ %26%238369%3B
+PASS punctuation, currency, symbols  U+20B2 ₲ %26%238370%3B
+PASS punctuation, currency, symbols  U+20B3 ₳ %26%238371%3B
+PASS punctuation, currency, symbols  U+20B4 ₴ %26%238372%3B
+PASS punctuation, currency, symbols  U+20B5 ₵ %26%238373%3B
+PASS punctuation, currency, symbols  U+20B6 ₶ %26%238374%3B
+PASS punctuation, currency, symbols  U+20B7 ₷ %26%238375%3B
+PASS punctuation, currency, symbols  U+20B8 ₸ %26%238376%3B
+PASS punctuation, currency, symbols  U+20B9 ₹ %26%238377%3B
+PASS punctuation, currency, symbols  U+20BA ₺ %26%238378%3B
+PASS punctuation, currency, symbols  U+20BB ₻ %26%238379%3B
+PASS punctuation, currency, symbols  U+20BC ₼ %26%238380%3B
+PASS punctuation, currency, symbols  U+20BD ₽ %26%238381%3B
+PASS punctuation, currency, symbols  U+20BE ₾ %26%238382%3B
+PASS punctuation, currency, symbols  U+20BF ₿ %26%238383%3B
+PASS punctuation, currency, symbols  U+20C0 ⃀ %26%238384%3B
+PASS punctuation, currency, symbols  U+20C1 ⃁ %26%238385%3B
+PASS punctuation, currency, symbols  U+20C2 ⃂ %26%238386%3B
+PASS punctuation, currency, symbols  U+20C3 ⃃ %26%238387%3B
+PASS punctuation, currency, symbols  U+20C4 ⃄ %26%238388%3B
+PASS punctuation, currency, symbols  U+20C5 ⃅ %26%238389%3B
+PASS punctuation, currency, symbols  U+20C6 ⃆ %26%238390%3B
+PASS punctuation, currency, symbols  U+20C7 ⃇ %26%238391%3B
+PASS punctuation, currency, symbols  U+20C8 ⃈ %26%238392%3B
+PASS punctuation, currency, symbols  U+20C9 ⃉ %26%238393%3B
+PASS punctuation, currency, symbols  U+20CA ⃊ %26%238394%3B
+PASS punctuation, currency, symbols  U+20CB ⃋ %26%238395%3B
+PASS punctuation, currency, symbols  U+20CC ⃌ %26%238396%3B
+PASS punctuation, currency, symbols  U+20CD ⃍ %26%238397%3B
+PASS punctuation, currency, symbols  U+20CE ⃎ %26%238398%3B
+PASS punctuation, currency, symbols  U+20CF ⃏ %26%238399%3B
+PASS punctuation, currency, symbols  U+20D0 ⃐ %26%238400%3B
+PASS punctuation, currency, symbols  U+20D1 ⃑ %26%238401%3B
+PASS punctuation, currency, symbols  U+20D2 ⃒ %26%238402%3B
+PASS punctuation, currency, symbols  U+20D3 ⃓ %26%238403%3B
+PASS punctuation, currency, symbols  U+20D4 ⃔ %26%238404%3B
+PASS punctuation, currency, symbols  U+20D5 ⃕ %26%238405%3B
+PASS punctuation, currency, symbols  U+20D6 ⃖ %26%238406%3B
+PASS punctuation, currency, symbols  U+20D7 ⃗ %26%238407%3B
+PASS punctuation, currency, symbols  U+20D8 ⃘ %26%238408%3B
+PASS punctuation, currency, symbols  U+20D9 ⃙ %26%238409%3B
+PASS punctuation, currency, symbols  U+20DA ⃚ %26%238410%3B
+PASS punctuation, currency, symbols  U+20DB ⃛ %26%238411%3B
+PASS punctuation, currency, symbols  U+20DC ⃜ %26%238412%3B
+PASS punctuation, currency, symbols  U+20DD ⃝ %26%238413%3B
+PASS punctuation, currency, symbols  U+20DE ⃞ %26%238414%3B
+PASS punctuation, currency, symbols  U+20DF ⃟ %26%238415%3B
+PASS punctuation, currency, symbols  U+20E0 ⃠ %26%238416%3B
+PASS punctuation, currency, symbols  U+20E1 ⃡ %26%238417%3B
+PASS punctuation, currency, symbols  U+20E2 ⃢ %26%238418%3B
+PASS punctuation, currency, symbols  U+20E3 ⃣ %26%238419%3B
+PASS punctuation, currency, symbols  U+20E4 ⃤ %26%238420%3B
+PASS punctuation, currency, symbols  U+20E5 ⃥ %26%238421%3B
+PASS punctuation, currency, symbols  U+20E6 ⃦ %26%238422%3B
+PASS punctuation, currency, symbols  U+20E7 ⃧ %26%238423%3B
+PASS punctuation, currency, symbols  U+20E8 ⃨ %26%238424%3B
+PASS punctuation, currency, symbols  U+20E9 ⃩ %26%238425%3B
+PASS punctuation, currency, symbols  U+20EA ⃪ %26%238426%3B
+PASS punctuation, currency, symbols  U+20EB ⃫ %26%238427%3B
+PASS punctuation, currency, symbols  U+20EC ⃬ %26%238428%3B
+PASS punctuation, currency, symbols  U+20ED ⃭ %26%238429%3B
+PASS punctuation, currency, symbols  U+20EE ⃮ %26%238430%3B
+PASS punctuation, currency, symbols  U+20EF ⃯ %26%238431%3B
+PASS punctuation, currency, symbols  U+20F0 ⃰ %26%238432%3B
+PASS punctuation, currency, symbols  U+20F1 ⃱ %26%238433%3B
+PASS punctuation, currency, symbols  U+20F2 ⃲ %26%238434%3B
+PASS punctuation, currency, symbols  U+20F3 ⃳ %26%238435%3B
+PASS punctuation, currency, symbols  U+20F4 ⃴ %26%238436%3B
+PASS punctuation, currency, symbols  U+20F5 ⃵ %26%238437%3B
+PASS punctuation, currency, symbols  U+20F6 ⃶ %26%238438%3B
+PASS punctuation, currency, symbols  U+20F7 ⃷ %26%238439%3B
+PASS punctuation, currency, symbols  U+20F8 ⃸ %26%238440%3B
+PASS punctuation, currency, symbols  U+20F9 ⃹ %26%238441%3B
+PASS punctuation, currency, symbols  U+20FA ⃺ %26%238442%3B
+PASS punctuation, currency, symbols  U+20FB ⃻ %26%238443%3B
+PASS punctuation, currency, symbols  U+20FC ⃼ %26%238444%3B
+PASS punctuation, currency, symbols  U+20FD ⃽ %26%238445%3B
+PASS punctuation, currency, symbols  U+20FE ⃾ %26%238446%3B
+PASS punctuation, currency, symbols  U+20FF ⃿ %26%238447%3B
+PASS punctuation, currency, symbols  U+2100 ℀ %26%238448%3B
+PASS punctuation, currency, symbols  U+2101 ℁ %26%238449%3B
+PASS punctuation, currency, symbols  U+2102 ℂ %26%238450%3B
+PASS punctuation, currency, symbols  U+2104 ℄ %26%238452%3B
+PASS punctuation, currency, symbols  U+2105 ℅ %26%238453%3B
+PASS punctuation, currency, symbols  U+2106 ℆ %26%238454%3B
+PASS punctuation, currency, symbols  U+2107 ℇ %26%238455%3B
+PASS punctuation, currency, symbols  U+2108 ℈ %26%238456%3B
+PASS punctuation, currency, symbols  U+210A ℊ %26%238458%3B
+PASS punctuation, currency, symbols  U+210B ℋ %26%238459%3B
+PASS punctuation, currency, symbols  U+210C ℌ %26%238460%3B
+PASS punctuation, currency, symbols  U+210D ℍ %26%238461%3B
+PASS punctuation, currency, symbols  U+210E ℎ %26%238462%3B
+PASS punctuation, currency, symbols  U+210F ℏ %26%238463%3B
+PASS punctuation, currency, symbols  U+2110 ℐ %26%238464%3B
+PASS punctuation, currency, symbols  U+2111 ℑ %26%238465%3B
+PASS punctuation, currency, symbols  U+2112 ℒ %26%238466%3B
+PASS punctuation, currency, symbols  U+2114 ℔ %26%238468%3B
+PASS punctuation, currency, symbols  U+2115 ℕ %26%238469%3B
+PASS punctuation, currency, symbols  U+2117 ℗ %26%238471%3B
+PASS punctuation, currency, symbols  U+2118 ℘ %26%238472%3B
+PASS punctuation, currency, symbols  U+2119 ℙ %26%238473%3B
+PASS punctuation, currency, symbols  U+211A ℚ %26%238474%3B
+PASS punctuation, currency, symbols  U+211B ℛ %26%238475%3B
+PASS punctuation, currency, symbols  U+211C ℜ %26%238476%3B
+PASS punctuation, currency, symbols  U+211D ℝ %26%238477%3B
+PASS punctuation, currency, symbols  U+211E ℞ %26%238478%3B
+PASS punctuation, currency, symbols  U+211F ℟ %26%238479%3B
+PASS punctuation, currency, symbols  U+2120 ℠ %26%238480%3B
+PASS punctuation, currency, symbols  U+2123 ℣ %26%238483%3B
+PASS punctuation, currency, symbols  U+2124 ℤ %26%238484%3B
+PASS punctuation, currency, symbols  U+2125 ℥ %26%238485%3B
+PASS punctuation, currency, symbols  U+2127 ℧ %26%238487%3B
+PASS punctuation, currency, symbols  U+2128 ℨ %26%238488%3B
+PASS punctuation, currency, symbols  U+2129 ℩ %26%238489%3B
+PASS punctuation, currency, symbols  U+212A K %26%238490%3B
+PASS punctuation, currency, symbols  U+212C ℬ %26%238492%3B
+PASS punctuation, currency, symbols  U+212D ℭ %26%238493%3B
+PASS punctuation, currency, symbols  U+212E ℮ %26%238494%3B
+PASS punctuation, currency, symbols  U+212F ℯ %26%238495%3B
+PASS punctuation, currency, symbols  U+2130 ℰ %26%238496%3B
+PASS punctuation, currency, symbols  U+2131 ℱ %26%238497%3B
+PASS punctuation, currency, symbols  U+2132 Ⅎ %26%238498%3B
+PASS punctuation, currency, symbols  U+2133 ℳ %26%238499%3B
+PASS punctuation, currency, symbols  U+2134 ℴ %26%238500%3B
+PASS punctuation, currency, symbols  U+2135 ℵ %26%238501%3B
+PASS punctuation, currency, symbols  U+2136 ℶ %26%238502%3B
+PASS punctuation, currency, symbols  U+2137 ℷ %26%238503%3B
+PASS punctuation, currency, symbols  U+2138 ℸ %26%238504%3B
+PASS punctuation, currency, symbols  U+2139 ℹ %26%238505%3B
+PASS punctuation, currency, symbols  U+213A ℺ %26%238506%3B
+PASS punctuation, currency, symbols  U+213B ℻ %26%238507%3B
+PASS punctuation, currency, symbols  U+213C ℼ %26%238508%3B
+PASS punctuation, currency, symbols  U+213D ℽ %26%238509%3B
+PASS punctuation, currency, symbols  U+213E ℾ %26%238510%3B
+PASS punctuation, currency, symbols  U+213F ℿ %26%238511%3B
+PASS punctuation, currency, symbols  U+2140 ⅀ %26%238512%3B
+PASS punctuation, currency, symbols  U+2141 ⅁ %26%238513%3B
+PASS punctuation, currency, symbols  U+2142 ⅂ %26%238514%3B
+PASS punctuation, currency, symbols  U+2143 ⅃ %26%238515%3B
+PASS punctuation, currency, symbols  U+2144 ⅄ %26%238516%3B
+PASS punctuation, currency, symbols  U+2145 ⅅ %26%238517%3B
+PASS punctuation, currency, symbols  U+2146 ⅆ %26%238518%3B
+PASS punctuation, currency, symbols  U+2147 ⅇ %26%238519%3B
+PASS punctuation, currency, symbols  U+2148 ⅈ %26%238520%3B
+PASS punctuation, currency, symbols  U+2149 ⅉ %26%238521%3B
+PASS punctuation, currency, symbols  U+214A ⅊ %26%238522%3B
+PASS punctuation, currency, symbols  U+214B ⅋ %26%238523%3B
+PASS punctuation, currency, symbols  U+214C ⅌ %26%238524%3B
+PASS punctuation, currency, symbols  U+214D ⅍ %26%238525%3B
+PASS punctuation, currency, symbols  U+214E ⅎ %26%238526%3B
+PASS punctuation, currency, symbols  U+214F ⅏ %26%238527%3B
+PASS punctuation, currency, symbols  U+2150 ⅐ %26%238528%3B
+PASS punctuation, currency, symbols  U+2151 ⅑ %26%238529%3B
+PASS punctuation, currency, symbols  U+2152 ⅒ %26%238530%3B
+PASS punctuation, currency, symbols  U+2155 ⅕ %26%238533%3B
+PASS punctuation, currency, symbols  U+2156 ⅖ %26%238534%3B
+PASS punctuation, currency, symbols  U+2157 ⅗ %26%238535%3B
+PASS punctuation, currency, symbols  U+2158 ⅘ %26%238536%3B
+PASS punctuation, currency, symbols  U+2159 ⅙ %26%238537%3B
+PASS punctuation, currency, symbols  U+215A ⅚ %26%238538%3B
+PASS punctuation, currency, symbols  U+215F ⅟ %26%238543%3B
+PASS punctuation, currency, symbols  U+216A Ⅺ %26%238554%3B
+PASS punctuation, currency, symbols  U+216B Ⅻ %26%238555%3B
+PASS punctuation, currency, symbols  U+216C Ⅼ %26%238556%3B
+PASS punctuation, currency, symbols  U+216D Ⅽ %26%238557%3B
+PASS punctuation, currency, symbols  U+216E Ⅾ %26%238558%3B
+PASS punctuation, currency, symbols  U+216F Ⅿ %26%238559%3B
+PASS punctuation, currency, symbols  U+217A ⅺ %26%238570%3B
+PASS punctuation, currency, symbols  U+217B ⅻ %26%238571%3B
+PASS punctuation, currency, symbols  U+217C ⅼ %26%238572%3B
+PASS punctuation, currency, symbols  U+217D ⅽ %26%238573%3B
+PASS punctuation, currency, symbols  U+217E ⅾ %26%238574%3B
+PASS punctuation, currency, symbols  U+217F ⅿ %26%238575%3B
+PASS punctuation, currency, symbols  U+2180 ↀ %26%238576%3B
+PASS punctuation, currency, symbols  U+2181 ↁ %26%238577%3B
+PASS punctuation, currency, symbols  U+2182 ↂ %26%238578%3B
+PASS punctuation, currency, symbols  U+2183 Ↄ %26%238579%3B
+PASS punctuation, currency, symbols  U+2184 ↄ %26%238580%3B
+PASS punctuation, currency, symbols  U+2185 ↅ %26%238581%3B
+PASS punctuation, currency, symbols  U+2186 ↆ %26%238582%3B
+PASS punctuation, currency, symbols  U+2187 ↇ %26%238583%3B
+PASS punctuation, currency, symbols  U+2188 ↈ %26%238584%3B
+PASS punctuation, currency, symbols  U+2189 ↉ %26%238585%3B
+PASS punctuation, currency, symbols  U+218A ↊ %26%238586%3B
+PASS punctuation, currency, symbols  U+218B ↋ %26%238587%3B
+PASS punctuation, currency, symbols  U+218C ↌ %26%238588%3B
+PASS punctuation, currency, symbols  U+218D ↍ %26%238589%3B
+PASS punctuation, currency, symbols  U+218E ↎ %26%238590%3B
+PASS punctuation, currency, symbols  U+218F ↏ %26%238591%3B
+PASS punctuation, currency, symbols  U+219A ↚ %26%238602%3B
+PASS punctuation, currency, symbols  U+219B ↛ %26%238603%3B
+PASS punctuation, currency, symbols  U+219C ↜ %26%238604%3B
+PASS punctuation, currency, symbols  U+219D ↝ %26%238605%3B
+PASS punctuation, currency, symbols  U+219E ↞ %26%238606%3B
+PASS punctuation, currency, symbols  U+219F ↟ %26%238607%3B
+PASS punctuation, currency, symbols  U+21A0 ↠ %26%238608%3B
+PASS punctuation, currency, symbols  U+21A1 ↡ %26%238609%3B
+PASS punctuation, currency, symbols  U+21A2 ↢ %26%238610%3B
+PASS punctuation, currency, symbols  U+21A3 ↣ %26%238611%3B
+PASS punctuation, currency, symbols  U+21A4 ↤ %26%238612%3B
+PASS punctuation, currency, symbols  U+21A5 ↥ %26%238613%3B
+PASS punctuation, currency, symbols  U+21A6 ↦ %26%238614%3B
+PASS punctuation, currency, symbols  U+21A7 ↧ %26%238615%3B
+PASS punctuation, currency, symbols  U+21A8 ↨ %26%238616%3B
+PASS punctuation, currency, symbols  U+21A9 ↩ %26%238617%3B
+PASS punctuation, currency, symbols  U+21AA ↪ %26%238618%3B
+PASS punctuation, currency, symbols  U+21AB ↫ %26%238619%3B
+PASS punctuation, currency, symbols  U+21AC ↬ %26%238620%3B
+PASS punctuation, currency, symbols  U+21AD ↭ %26%238621%3B
+PASS punctuation, currency, symbols  U+21AE ↮ %26%238622%3B
+PASS punctuation, currency, symbols  U+21AF ↯ %26%238623%3B
+PASS punctuation, currency, symbols  U+21B0 ↰ %26%238624%3B
+PASS punctuation, currency, symbols  U+21B1 ↱ %26%238625%3B
+PASS punctuation, currency, symbols  U+21B2 ↲ %26%238626%3B
+PASS punctuation, currency, symbols  U+21B3 ↳ %26%238627%3B
+PASS punctuation, currency, symbols  U+21B4 ↴ %26%238628%3B
+PASS punctuation, currency, symbols  U+21B5 ↵ %26%238629%3B
+PASS punctuation, currency, symbols  U+21B6 ↶ %26%238630%3B
+PASS punctuation, currency, symbols  U+21B7 ↷ %26%238631%3B
+PASS punctuation, currency, symbols  U+21B8 ↸ %26%238632%3B
+PASS punctuation, currency, symbols  U+21B9 ↹ %26%238633%3B
+PASS punctuation, currency, symbols  U+21BA ↺ %26%238634%3B
+PASS punctuation, currency, symbols  U+21BB ↻ %26%238635%3B
+PASS punctuation, currency, symbols  U+21BC ↼ %26%238636%3B
+PASS punctuation, currency, symbols  U+21BD ↽ %26%238637%3B
+PASS punctuation, currency, symbols  U+21BE ↾ %26%238638%3B
+PASS punctuation, currency, symbols  U+21BF ↿ %26%238639%3B
+PASS punctuation, currency, symbols  U+21C0 ⇀ %26%238640%3B
+PASS punctuation, currency, symbols  U+21C1 ⇁ %26%238641%3B
+PASS punctuation, currency, symbols  U+21C2 ⇂ %26%238642%3B
+PASS punctuation, currency, symbols  U+21C3 ⇃ %26%238643%3B
+PASS punctuation, currency, symbols  U+21C4 ⇄ %26%238644%3B
+PASS punctuation, currency, symbols  U+21C5 ⇅ %26%238645%3B
+PASS punctuation, currency, symbols  U+21C6 ⇆ %26%238646%3B
+PASS punctuation, currency, symbols  U+21C7 ⇇ %26%238647%3B
+PASS punctuation, currency, symbols  U+21C8 ⇈ %26%238648%3B
+PASS punctuation, currency, symbols  U+21C9 ⇉ %26%238649%3B
+PASS punctuation, currency, symbols  U+21CA ⇊ %26%238650%3B
+PASS punctuation, currency, symbols  U+21CB ⇋ %26%238651%3B
+PASS punctuation, currency, symbols  U+21CC ⇌ %26%238652%3B
+PASS punctuation, currency, symbols  U+21CD ⇍ %26%238653%3B
+PASS punctuation, currency, symbols  U+21CE ⇎ %26%238654%3B
+PASS punctuation, currency, symbols  U+21CF ⇏ %26%238655%3B
+PASS punctuation, currency, symbols  U+21D0 ⇐ %26%238656%3B
+PASS punctuation, currency, symbols  U+21D1 ⇑ %26%238657%3B
+PASS punctuation, currency, symbols  U+21D3 ⇓ %26%238659%3B
+PASS punctuation, currency, symbols  U+21D5 ⇕ %26%238661%3B
+PASS punctuation, currency, symbols  U+21D6 ⇖ %26%238662%3B
+PASS punctuation, currency, symbols  U+21D7 ⇗ %26%238663%3B
+PASS punctuation, currency, symbols  U+21D8 ⇘ %26%238664%3B
+PASS punctuation, currency, symbols  U+21D9 ⇙ %26%238665%3B
+PASS punctuation, currency, symbols  U+21DA ⇚ %26%238666%3B
+PASS punctuation, currency, symbols  U+21DB ⇛ %26%238667%3B
+PASS punctuation, currency, symbols  U+21DC ⇜ %26%238668%3B
+PASS punctuation, currency, symbols  U+21DD ⇝ %26%238669%3B
+PASS punctuation, currency, symbols  U+21DE ⇞ %26%238670%3B
+PASS punctuation, currency, symbols  U+21DF ⇟ %26%238671%3B
+PASS punctuation, currency, symbols  U+21E0 ⇠ %26%238672%3B
+PASS punctuation, currency, symbols  U+21E1 ⇡ %26%238673%3B
+PASS punctuation, currency, symbols  U+21E2 ⇢ %26%238674%3B
+PASS punctuation, currency, symbols  U+21E3 ⇣ %26%238675%3B
+PASS punctuation, currency, symbols  U+21E4 ⇤ %26%238676%3B
+PASS punctuation, currency, symbols  U+21E5 ⇥ %26%238677%3B
+PASS punctuation, currency, symbols  U+21E6 ⇦ %26%238678%3B
+PASS punctuation, currency, symbols  U+21E7 ⇧ %26%238679%3B
+PASS punctuation, currency, symbols  U+21E8 ⇨ %26%238680%3B
+PASS punctuation, currency, symbols  U+21E9 ⇩ %26%238681%3B
+PASS punctuation, currency, symbols  U+21EA ⇪ %26%238682%3B
+PASS punctuation, currency, symbols  U+21EB ⇫ %26%238683%3B
+PASS punctuation, currency, symbols  U+21EC ⇬ %26%238684%3B
+PASS punctuation, currency, symbols  U+21ED ⇭ %26%238685%3B
+PASS punctuation, currency, symbols  U+21EE ⇮ %26%238686%3B
+PASS punctuation, currency, symbols  U+21EF ⇯ %26%238687%3B
+PASS punctuation, currency, symbols  U+21F0 ⇰ %26%238688%3B
+PASS punctuation, currency, symbols  U+21F1 ⇱ %26%238689%3B
+PASS punctuation, currency, symbols  U+21F2 ⇲ %26%238690%3B
+PASS punctuation, currency, symbols  U+21F3 ⇳ %26%238691%3B
+PASS punctuation, currency, symbols  U+21F4 ⇴ %26%238692%3B
+PASS punctuation, currency, symbols  U+21F5 ⇵ %26%238693%3B
+PASS punctuation, currency, symbols  U+21F6 ⇶ %26%238694%3B
+PASS punctuation, currency, symbols  U+21F7 ⇷ %26%238695%3B
+PASS punctuation, currency, symbols  U+21F8 ⇸ %26%238696%3B
+PASS punctuation, currency, symbols  U+21F9 ⇹ %26%238697%3B
+PASS punctuation, currency, symbols  U+21FA ⇺ %26%238698%3B
+PASS punctuation, currency, symbols  U+21FB ⇻ %26%238699%3B
+PASS punctuation, currency, symbols  U+21FC ⇼ %26%238700%3B
+PASS punctuation, currency, symbols  U+21FD ⇽ %26%238701%3B
+PASS punctuation, currency, symbols  U+21FE ⇾ %26%238702%3B
+PASS punctuation, currency, symbols  U+21FF ⇿ %26%238703%3B
+PASS punctuation, currency, symbols  U+2201 ∁ %26%238705%3B
+PASS punctuation, currency, symbols  U+2204 ∄ %26%238708%3B
+PASS punctuation, currency, symbols  U+2205 ∅ %26%238709%3B
+PASS punctuation, currency, symbols  U+2206 ∆ %26%238710%3B
+PASS punctuation, currency, symbols  U+2209 ∉ %26%238713%3B
+PASS punctuation, currency, symbols  U+220A ∊ %26%238714%3B
+PASS punctuation, currency, symbols  U+220C ∌ %26%238716%3B
+PASS punctuation, currency, symbols  U+220D ∍ %26%238717%3B
+PASS punctuation, currency, symbols  U+220E ∎ %26%238718%3B
+PASS punctuation, currency, symbols  U+2210 ∐ %26%238720%3B
+PASS punctuation, currency, symbols  U+2212 − %26%238722%3B
+PASS punctuation, currency, symbols  U+2213 ∓ %26%238723%3B
+PASS punctuation, currency, symbols  U+2214 ∔ %26%238724%3B
+PASS punctuation, currency, symbols  U+2215 ∕ %26%238725%3B
+PASS punctuation, currency, symbols  U+2216 ∖ %26%238726%3B
+PASS punctuation, currency, symbols  U+2217 ∗ %26%238727%3B
+PASS punctuation, currency, symbols  U+2218 ∘ %26%238728%3B
+PASS punctuation, currency, symbols  U+2219 ∙ %26%238729%3B
+PASS punctuation, currency, symbols  U+221B ∛ %26%238731%3B
+PASS punctuation, currency, symbols  U+221C ∜ %26%238732%3B
+PASS punctuation, currency, symbols  U+221F ∟ %26%238735%3B
+PASS punctuation, currency, symbols  U+2221 ∡ %26%238737%3B
+PASS punctuation, currency, symbols  U+2222 ∢ %26%238738%3B
+PASS punctuation, currency, symbols  U+2223 ∣ %26%238739%3B
+PASS punctuation, currency, symbols  U+2224 ∤ %26%238740%3B
+PASS punctuation, currency, symbols  U+2226 ∦ %26%238742%3B
+PASS punctuation, currency, symbols  U+222D ∭ %26%238749%3B
+PASS punctuation, currency, symbols  U+222F ∯ %26%238751%3B
+PASS punctuation, currency, symbols  U+2230 ∰ %26%238752%3B
+PASS punctuation, currency, symbols  U+2231 ∱ %26%238753%3B
+PASS punctuation, currency, symbols  U+2232 ∲ %26%238754%3B
+PASS punctuation, currency, symbols  U+2233 ∳ %26%238755%3B
+PASS punctuation, currency, symbols  U+2236 ∶ %26%238758%3B
+PASS punctuation, currency, symbols  U+2237 ∷ %26%238759%3B
+PASS punctuation, currency, symbols  U+2238 ∸ %26%238760%3B
+PASS punctuation, currency, symbols  U+2239 ∹ %26%238761%3B
+PASS punctuation, currency, symbols  U+223A ∺ %26%238762%3B
+PASS punctuation, currency, symbols  U+223B ∻ %26%238763%3B
+PASS punctuation, currency, symbols  U+223E ∾ %26%238766%3B
+PASS punctuation, currency, symbols  U+223F ∿ %26%238767%3B
+PASS punctuation, currency, symbols  U+2240 ≀ %26%238768%3B
+PASS punctuation, currency, symbols  U+2241 ≁ %26%238769%3B
+PASS punctuation, currency, symbols  U+2242 ≂ %26%238770%3B
+PASS punctuation, currency, symbols  U+2243 ≃ %26%238771%3B
+PASS punctuation, currency, symbols  U+2244 ≄ %26%238772%3B
+PASS punctuation, currency, symbols  U+2245 ≅ %26%238773%3B
+PASS punctuation, currency, symbols  U+2246 ≆ %26%238774%3B
+PASS punctuation, currency, symbols  U+2247 ≇ %26%238775%3B
+PASS punctuation, currency, symbols  U+2248 ≈ %26%238776%3B
+PASS punctuation, currency, symbols  U+2249 ≉ %26%238777%3B
+PASS punctuation, currency, symbols  U+224A ≊ %26%238778%3B
+PASS punctuation, currency, symbols  U+224B ≋ %26%238779%3B
+PASS punctuation, currency, symbols  U+224C ≌ %26%238780%3B
+PASS punctuation, currency, symbols  U+224D ≍ %26%238781%3B
+PASS punctuation, currency, symbols  U+224E ≎ %26%238782%3B
+PASS punctuation, currency, symbols  U+224F ≏ %26%238783%3B
+PASS punctuation, currency, symbols  U+2250 ≐ %26%238784%3B
+PASS punctuation, currency, symbols  U+2251 ≑ %26%238785%3B
+PASS punctuation, currency, symbols  U+2253 ≓ %26%238787%3B
+PASS punctuation, currency, symbols  U+2254 ≔ %26%238788%3B
+PASS punctuation, currency, symbols  U+2255 ≕ %26%238789%3B
+PASS punctuation, currency, symbols  U+2256 ≖ %26%238790%3B
+PASS punctuation, currency, symbols  U+2257 ≗ %26%238791%3B
+PASS punctuation, currency, symbols  U+2258 ≘ %26%238792%3B
+PASS punctuation, currency, symbols  U+2259 ≙ %26%238793%3B
+PASS punctuation, currency, symbols  U+225A ≚ %26%238794%3B
+PASS punctuation, currency, symbols  U+225B ≛ %26%238795%3B
+PASS punctuation, currency, symbols  U+225C ≜ %26%238796%3B
+PASS punctuation, currency, symbols  U+225D ≝ %26%238797%3B
+PASS punctuation, currency, symbols  U+225E ≞ %26%238798%3B
+PASS punctuation, currency, symbols  U+225F ≟ %26%238799%3B
+PASS punctuation, currency, symbols  U+2262 ≢ %26%238802%3B
+PASS punctuation, currency, symbols  U+2263 ≣ %26%238803%3B
+PASS punctuation, currency, symbols  U+2266 ≦ %26%238806%3B
+PASS punctuation, currency, symbols  U+2267 ≧ %26%238807%3B
+PASS punctuation, currency, symbols  U+2268 ≨ %26%238808%3B
+PASS punctuation, currency, symbols  U+2269 ≩ %26%238809%3B
+PASS punctuation, currency, symbols  U+226C ≬ %26%238812%3B
+PASS punctuation, currency, symbols  U+226D ≭ %26%238813%3B
+PASS punctuation, currency, symbols  U+226E ≮ %26%238814%3B
+PASS punctuation, currency, symbols  U+226F ≯ %26%238815%3B
+PASS punctuation, currency, symbols  U+2270 ≰ %26%238816%3B
+PASS punctuation, currency, symbols  U+2271 ≱ %26%238817%3B
+PASS punctuation, currency, symbols  U+2272 ≲ %26%238818%3B
+PASS punctuation, currency, symbols  U+2273 ≳ %26%238819%3B
+PASS punctuation, currency, symbols  U+2274 ≴ %26%238820%3B
+PASS punctuation, currency, symbols  U+2275 ≵ %26%238821%3B
+PASS punctuation, currency, symbols  U+2276 ≶ %26%238822%3B
+PASS punctuation, currency, symbols  U+2277 ≷ %26%238823%3B
+PASS punctuation, currency, symbols  U+2278 ≸ %26%238824%3B
+PASS punctuation, currency, symbols  U+2279 ≹ %26%238825%3B
+PASS punctuation, currency, symbols  U+227A ≺ %26%238826%3B
+PASS punctuation, currency, symbols  U+227B ≻ %26%238827%3B
+PASS punctuation, currency, symbols  U+227C ≼ %26%238828%3B
+PASS punctuation, currency, symbols  U+227D ≽ %26%238829%3B
+PASS punctuation, currency, symbols  U+227E ≾ %26%238830%3B
+PASS punctuation, currency, symbols  U+227F ≿ %26%238831%3B
+PASS punctuation, currency, symbols  U+2280 ⊀ %26%238832%3B
+PASS punctuation, currency, symbols  U+2281 ⊁ %26%238833%3B
+PASS punctuation, currency, symbols  U+2284 ⊄ %26%238836%3B
+PASS punctuation, currency, symbols  U+2285 ⊅ %26%238837%3B
+PASS punctuation, currency, symbols  U+2288 ⊈ %26%238840%3B
+PASS punctuation, currency, symbols  U+2289 ⊉ %26%238841%3B
+PASS punctuation, currency, symbols  U+228A ⊊ %26%238842%3B
+PASS punctuation, currency, symbols  U+228B ⊋ %26%238843%3B
+PASS punctuation, currency, symbols  U+228C ⊌ %26%238844%3B
+PASS punctuation, currency, symbols  U+228D ⊍ %26%238845%3B
+PASS punctuation, currency, symbols  U+228E ⊎ %26%238846%3B
+PASS punctuation, currency, symbols  U+228F ⊏ %26%238847%3B
+PASS punctuation, currency, symbols  U+2290 ⊐ %26%238848%3B
+PASS punctuation, currency, symbols  U+2291 ⊑ %26%238849%3B
+PASS punctuation, currency, symbols  U+2292 ⊒ %26%238850%3B
+PASS punctuation, currency, symbols  U+2293 ⊓ %26%238851%3B
+PASS punctuation, currency, symbols  U+2294 ⊔ %26%238852%3B
+PASS punctuation, currency, symbols  U+2295 ⊕ %26%238853%3B
+PASS punctuation, currency, symbols  U+2296 ⊖ %26%238854%3B
+PASS punctuation, currency, symbols  U+2297 ⊗ %26%238855%3B
+PASS punctuation, currency, symbols  U+2298 ⊘ %26%238856%3B
+PASS punctuation, currency, symbols  U+229A ⊚ %26%238858%3B
+PASS punctuation, currency, symbols  U+229B ⊛ %26%238859%3B
+PASS punctuation, currency, symbols  U+229C ⊜ %26%238860%3B
+PASS punctuation, currency, symbols  U+229D ⊝ %26%238861%3B
+PASS punctuation, currency, symbols  U+229E ⊞ %26%238862%3B
+PASS punctuation, currency, symbols  U+229F ⊟ %26%238863%3B
+PASS punctuation, currency, symbols  U+22A0 ⊠ %26%238864%3B
+PASS punctuation, currency, symbols  U+22A1 ⊡ %26%238865%3B
+PASS punctuation, currency, symbols  U+22A2 ⊢ %26%238866%3B
+PASS punctuation, currency, symbols  U+22A3 ⊣ %26%238867%3B
+PASS punctuation, currency, symbols  U+22A4 ⊤ %26%238868%3B
+PASS punctuation, currency, symbols  U+22A6 ⊦ %26%238870%3B
+PASS punctuation, currency, symbols  U+22A7 ⊧ %26%238871%3B
+PASS punctuation, currency, symbols  U+22A8 ⊨ %26%238872%3B
+PASS punctuation, currency, symbols  U+22A9 ⊩ %26%238873%3B
+PASS punctuation, currency, symbols  U+22AA ⊪ %26%238874%3B
+PASS punctuation, currency, symbols  U+22AB ⊫ %26%238875%3B
+PASS punctuation, currency, symbols  U+22AC ⊬ %26%238876%3B
+PASS punctuation, currency, symbols  U+22AD ⊭ %26%238877%3B
+PASS punctuation, currency, symbols  U+22AE ⊮ %26%238878%3B
+PASS punctuation, currency, symbols  U+22AF ⊯ %26%238879%3B
+PASS punctuation, currency, symbols  U+22B0 ⊰ %26%238880%3B
+PASS punctuation, currency, symbols  U+22B1 ⊱ %26%238881%3B
+PASS punctuation, currency, symbols  U+22B2 ⊲ %26%238882%3B
+PASS punctuation, currency, symbols  U+22B3 ⊳ %26%238883%3B
+PASS punctuation, currency, symbols  U+22B4 ⊴ %26%238884%3B
+PASS punctuation, currency, symbols  U+22B5 ⊵ %26%238885%3B
+PASS punctuation, currency, symbols  U+22B6 ⊶ %26%238886%3B
+PASS punctuation, currency, symbols  U+22B7 ⊷ %26%238887%3B
+PASS punctuation, currency, symbols  U+22B8 ⊸ %26%238888%3B
+PASS punctuation, currency, symbols  U+22B9 ⊹ %26%238889%3B
+PASS punctuation, currency, symbols  U+22BA ⊺ %26%238890%3B
+PASS punctuation, currency, symbols  U+22BB ⊻ %26%238891%3B
+PASS punctuation, currency, symbols  U+22BC ⊼ %26%238892%3B
+PASS punctuation, currency, symbols  U+22BD ⊽ %26%238893%3B
+PASS punctuation, currency, symbols  U+22BE ⊾ %26%238894%3B
+PASS punctuation, currency, symbols  U+22BF ⊿ %26%238895%3B
+PASS punctuation, currency, symbols  U+22C0 ⋀ %26%238896%3B
+PASS punctuation, currency, symbols  U+22C1 ⋁ %26%238897%3B
+PASS punctuation, currency, symbols  U+22C2 ⋂ %26%238898%3B
+PASS punctuation, currency, symbols  U+22C3 ⋃ %26%238899%3B
+PASS punctuation, currency, symbols  U+22C4 ⋄ %26%238900%3B
+PASS punctuation, currency, symbols  U+22C5 ⋅ %26%238901%3B
+PASS punctuation, currency, symbols  U+22C6 ⋆ %26%238902%3B
+PASS punctuation, currency, symbols  U+22C7 ⋇ %26%238903%3B
+PASS punctuation, currency, symbols  U+22C8 ⋈ %26%238904%3B
+PASS punctuation, currency, symbols  U+22C9 ⋉ %26%238905%3B
+PASS punctuation, currency, symbols  U+22CA ⋊ %26%238906%3B
+PASS punctuation, currency, symbols  U+22CB ⋋ %26%238907%3B
+PASS punctuation, currency, symbols  U+22CC ⋌ %26%238908%3B
+PASS punctuation, currency, symbols  U+22CD ⋍ %26%238909%3B
+PASS punctuation, currency, symbols  U+22CE ⋎ %26%238910%3B
+PASS punctuation, currency, symbols  U+22CF ⋏ %26%238911%3B
+PASS punctuation, currency, symbols  U+22D0 ⋐ %26%238912%3B
+PASS punctuation, currency, symbols  U+22D1 ⋑ %26%238913%3B
+PASS punctuation, currency, symbols  U+22D2 ⋒ %26%238914%3B
+PASS punctuation, currency, symbols  U+22D3 ⋓ %26%238915%3B
+PASS punctuation, currency, symbols  U+22D4 ⋔ %26%238916%3B
+PASS punctuation, currency, symbols  U+22D5 ⋕ %26%238917%3B
+PASS punctuation, currency, symbols  U+22D6 ⋖ %26%238918%3B
+PASS punctuation, currency, symbols  U+22D7 ⋗ %26%238919%3B
+PASS punctuation, currency, symbols  U+22D8 ⋘ %26%238920%3B
+PASS punctuation, currency, symbols  U+22D9 ⋙ %26%238921%3B
+PASS punctuation, currency, symbols  U+22DA ⋚ %26%238922%3B
+PASS punctuation, currency, symbols  U+22DB ⋛ %26%238923%3B
+PASS punctuation, currency, symbols  U+22DC ⋜ %26%238924%3B
+PASS punctuation, currency, symbols  U+22DD ⋝ %26%238925%3B
+PASS punctuation, currency, symbols  U+22DE ⋞ %26%238926%3B
+PASS punctuation, currency, symbols  U+22DF ⋟ %26%238927%3B
+PASS punctuation, currency, symbols  U+22E0 ⋠ %26%238928%3B
+PASS punctuation, currency, symbols  U+22E1 ⋡ %26%238929%3B
+PASS punctuation, currency, symbols  U+22E2 ⋢ %26%238930%3B
+PASS punctuation, currency, symbols  U+22E3 ⋣ %26%238931%3B
+PASS punctuation, currency, symbols  U+22E4 ⋤ %26%238932%3B
+PASS punctuation, currency, symbols  U+22E5 ⋥ %26%238933%3B
+PASS punctuation, currency, symbols  U+22E6 ⋦ %26%238934%3B
+PASS punctuation, currency, symbols  U+22E7 ⋧ %26%238935%3B
+PASS punctuation, currency, symbols  U+22E8 ⋨ %26%238936%3B
+PASS punctuation, currency, symbols  U+22E9 ⋩ %26%238937%3B
+PASS punctuation, currency, symbols  U+22EA ⋪ %26%238938%3B
+PASS punctuation, currency, symbols  U+22EB ⋫ %26%238939%3B
+PASS punctuation, currency, symbols  U+22EC ⋬ %26%238940%3B
+PASS punctuation, currency, symbols  U+22ED ⋭ %26%238941%3B
+PASS punctuation, currency, symbols  U+22EE ⋮ %26%238942%3B
+PASS punctuation, currency, symbols  U+22EF ⋯ %26%238943%3B
+PASS punctuation, currency, symbols  U+22F0 ⋰ %26%238944%3B
+PASS punctuation, currency, symbols  U+22F1 ⋱ %26%238945%3B
+PASS punctuation, currency, symbols  U+22F2 ⋲ %26%238946%3B
+PASS punctuation, currency, symbols  U+22F3 ⋳ %26%238947%3B
+PASS punctuation, currency, symbols  U+22F4 ⋴ %26%238948%3B
+PASS punctuation, currency, symbols  U+22F5 ⋵ %26%238949%3B
+PASS punctuation, currency, symbols  U+22F6 ⋶ %26%238950%3B
+PASS punctuation, currency, symbols  U+22F7 ⋷ %26%238951%3B
+PASS punctuation, currency, symbols  U+22F8 ⋸ %26%238952%3B
+PASS punctuation, currency, symbols  U+22F9 ⋹ %26%238953%3B
+PASS punctuation, currency, symbols  U+22FA ⋺ %26%238954%3B
+PASS punctuation, currency, symbols  U+22FB ⋻ %26%238955%3B
+PASS punctuation, currency, symbols  U+22FC ⋼ %26%238956%3B
+PASS punctuation, currency, symbols  U+22FD ⋽ %26%238957%3B
+PASS punctuation, currency, symbols  U+22FE ⋾ %26%238958%3B
+PASS punctuation, currency, symbols  U+22FF ⋿ %26%238959%3B
+PASS punctuation, currency, symbols  U+2300 ⌀ %26%238960%3B
+PASS punctuation, currency, symbols  U+2301 ⌁ %26%238961%3B
+PASS punctuation, currency, symbols  U+2302 ⌂ %26%238962%3B
+PASS punctuation, currency, symbols  U+2303 ⌃ %26%238963%3B
+PASS punctuation, currency, symbols  U+2304 ⌄ %26%238964%3B
+PASS punctuation, currency, symbols  U+2305 ⌅ %26%238965%3B
+PASS punctuation, currency, symbols  U+2306 ⌆ %26%238966%3B
+PASS punctuation, currency, symbols  U+2307 ⌇ %26%238967%3B
+PASS punctuation, currency, symbols  U+2308 ⌈ %26%238968%3B
+PASS punctuation, currency, symbols  U+2309 ⌉ %26%238969%3B
+PASS punctuation, currency, symbols  U+230A ⌊ %26%238970%3B
+PASS punctuation, currency, symbols  U+230B ⌋ %26%238971%3B
+PASS punctuation, currency, symbols  U+230C ⌌ %26%238972%3B
+PASS punctuation, currency, symbols  U+230D ⌍ %26%238973%3B
+PASS punctuation, currency, symbols  U+230E ⌎ %26%238974%3B
+PASS punctuation, currency, symbols  U+230F ⌏ %26%238975%3B
+PASS punctuation, currency, symbols  U+2310 ⌐ %26%238976%3B
+PASS punctuation, currency, symbols  U+2311 ⌑ %26%238977%3B
+PASS punctuation, currency, symbols  U+2313 ⌓ %26%238979%3B
+PASS punctuation, currency, symbols  U+2314 ⌔ %26%238980%3B
+PASS punctuation, currency, symbols  U+2315 ⌕ %26%238981%3B
+PASS punctuation, currency, symbols  U+2316 ⌖ %26%238982%3B
+PASS punctuation, currency, symbols  U+2317 ⌗ %26%238983%3B
+PASS punctuation, currency, symbols  U+2318 ⌘ %26%238984%3B
+PASS punctuation, currency, symbols  U+2319 ⌙ %26%238985%3B
+PASS punctuation, currency, symbols  U+231A ⌚ %26%238986%3B
+PASS punctuation, currency, symbols  U+231B ⌛ %26%238987%3B
+PASS punctuation, currency, symbols  U+231C ⌜ %26%238988%3B
+PASS punctuation, currency, symbols  U+231D ⌝ %26%238989%3B
+PASS punctuation, currency, symbols  U+231E ⌞ %26%238990%3B
+PASS punctuation, currency, symbols  U+231F ⌟ %26%238991%3B
+PASS punctuation, currency, symbols  U+2320 ⌠ %26%238992%3B
+PASS punctuation, currency, symbols  U+2321 ⌡ %26%238993%3B
+PASS punctuation, currency, symbols  U+2322 ⌢ %26%238994%3B
+PASS punctuation, currency, symbols  U+2323 ⌣ %26%238995%3B
+PASS punctuation, currency, symbols  U+2324 ⌤ %26%238996%3B
+PASS punctuation, currency, symbols  U+2325 ⌥ %26%238997%3B
+PASS punctuation, currency, symbols  U+2326 ⌦ %26%238998%3B
+PASS punctuation, currency, symbols  U+2327 ⌧ %26%238999%3B
+PASS punctuation, currency, symbols  U+2328 ⌨ %26%239000%3B
+PASS punctuation, currency, symbols  U+2329 〈 %26%239001%3B
+PASS punctuation, currency, symbols  U+232A 〉 %26%239002%3B
+PASS punctuation, currency, symbols  U+232B ⌫ %26%239003%3B
+PASS punctuation, currency, symbols  U+232C ⌬ %26%239004%3B
+PASS punctuation, currency, symbols  U+232D ⌭ %26%239005%3B
+PASS punctuation, currency, symbols  U+232E ⌮ %26%239006%3B
+PASS punctuation, currency, symbols  U+232F ⌯ %26%239007%3B
+PASS punctuation, currency, symbols  U+2330 ⌰ %26%239008%3B
+PASS punctuation, currency, symbols  U+2331 ⌱ %26%239009%3B
+PASS punctuation, currency, symbols  U+2332 ⌲ %26%239010%3B
+PASS punctuation, currency, symbols  U+2333 ⌳ %26%239011%3B
+PASS punctuation, currency, symbols  U+2334 ⌴ %26%239012%3B
+PASS punctuation, currency, symbols  U+2335 ⌵ %26%239013%3B
+PASS punctuation, currency, symbols  U+2336 ⌶ %26%239014%3B
+PASS punctuation, currency, symbols  U+2337 ⌷ %26%239015%3B
+PASS punctuation, currency, symbols  U+2338 ⌸ %26%239016%3B
+PASS punctuation, currency, symbols  U+2339 ⌹ %26%239017%3B
+PASS punctuation, currency, symbols  U+233A ⌺ %26%239018%3B
+PASS punctuation, currency, symbols  U+233B ⌻ %26%239019%3B
+PASS punctuation, currency, symbols  U+233C ⌼ %26%239020%3B
+PASS punctuation, currency, symbols  U+233D ⌽ %26%239021%3B
+PASS punctuation, currency, symbols  U+233E ⌾ %26%239022%3B
+PASS punctuation, currency, symbols  U+233F ⌿ %26%239023%3B
+PASS punctuation, currency, symbols  U+2340 ⍀ %26%239024%3B
+PASS punctuation, currency, symbols  U+2341 ⍁ %26%239025%3B
+PASS punctuation, currency, symbols  U+2342 ⍂ %26%239026%3B
+PASS punctuation, currency, symbols  U+2343 ⍃ %26%239027%3B
+PASS punctuation, currency, symbols  U+2344 ⍄ %26%239028%3B
+PASS punctuation, currency, symbols  U+2345 ⍅ %26%239029%3B
+PASS punctuation, currency, symbols  U+2346 ⍆ %26%239030%3B
+PASS punctuation, currency, symbols  U+2347 ⍇ %26%239031%3B
+PASS punctuation, currency, symbols  U+2348 ⍈ %26%239032%3B
+PASS punctuation, currency, symbols  U+2349 ⍉ %26%239033%3B
+PASS punctuation, currency, symbols  U+234A ⍊ %26%239034%3B
+PASS punctuation, currency, symbols  U+234B ⍋ %26%239035%3B
+PASS punctuation, currency, symbols  U+234C ⍌ %26%239036%3B
+PASS punctuation, currency, symbols  U+234D ⍍ %26%239037%3B
+PASS punctuation, currency, symbols  U+234E ⍎ %26%239038%3B
+PASS punctuation, currency, symbols  U+234F ⍏ %26%239039%3B
+PASS punctuation, currency, symbols  U+2350 ⍐ %26%239040%3B
+PASS punctuation, currency, symbols  U+2351 ⍑ %26%239041%3B
+PASS punctuation, currency, symbols  U+2352 ⍒ %26%239042%3B
+PASS punctuation, currency, symbols  U+2353 ⍓ %26%239043%3B
+PASS punctuation, currency, symbols  U+2354 ⍔ %26%239044%3B
+PASS punctuation, currency, symbols  U+2355 ⍕ %26%239045%3B
+PASS punctuation, currency, symbols  U+2356 ⍖ %26%239046%3B
+PASS punctuation, currency, symbols  U+2357 ⍗ %26%239047%3B
+PASS punctuation, currency, symbols  U+2358 ⍘ %26%239048%3B
+PASS punctuation, currency, symbols  U+2359 ⍙ %26%239049%3B
+PASS punctuation, currency, symbols  U+235A ⍚ %26%239050%3B
+PASS punctuation, currency, symbols  U+235B ⍛ %26%239051%3B
+PASS punctuation, currency, symbols  U+235C ⍜ %26%239052%3B
+PASS punctuation, currency, symbols  U+235D ⍝ %26%239053%3B
+PASS punctuation, currency, symbols  U+235E ⍞ %26%239054%3B
+PASS punctuation, currency, symbols  U+235F ⍟ %26%239055%3B
+PASS punctuation, currency, symbols  U+2360 ⍠ %26%239056%3B
+PASS punctuation, currency, symbols  U+2361 ⍡ %26%239057%3B
+PASS punctuation, currency, symbols  U+2362 ⍢ %26%239058%3B
+PASS punctuation, currency, symbols  U+2363 ⍣ %26%239059%3B
+PASS punctuation, currency, symbols  U+2364 ⍤ %26%239060%3B
+PASS punctuation, currency, symbols  U+2365 ⍥ %26%239061%3B
+PASS punctuation, currency, symbols  U+2366 ⍦ %26%239062%3B
+PASS punctuation, currency, symbols  U+2367 ⍧ %26%239063%3B
+PASS punctuation, currency, symbols  U+2368 ⍨ %26%239064%3B
+PASS punctuation, currency, symbols  U+2369 ⍩ %26%239065%3B
+PASS punctuation, currency, symbols  U+236A ⍪ %26%239066%3B
+PASS punctuation, currency, symbols  U+236B ⍫ %26%239067%3B
+PASS punctuation, currency, symbols  U+236C ⍬ %26%239068%3B
+PASS punctuation, currency, symbols  U+236D ⍭ %26%239069%3B
+PASS punctuation, currency, symbols  U+236E ⍮ %26%239070%3B
+PASS punctuation, currency, symbols  U+236F ⍯ %26%239071%3B
+PASS punctuation, currency, symbols  U+2370 ⍰ %26%239072%3B
+PASS punctuation, currency, symbols  U+2371 ⍱ %26%239073%3B
+PASS punctuation, currency, symbols  U+2372 ⍲ %26%239074%3B
+PASS punctuation, currency, symbols  U+2373 ⍳ %26%239075%3B
+PASS punctuation, currency, symbols  U+2374 ⍴ %26%239076%3B
+PASS punctuation, currency, symbols  U+2375 ⍵ %26%239077%3B
+PASS punctuation, currency, symbols  U+2376 ⍶ %26%239078%3B
+PASS punctuation, currency, symbols  U+2377 ⍷ %26%239079%3B
+PASS punctuation, currency, symbols  U+2378 ⍸ %26%239080%3B
+PASS punctuation, currency, symbols  U+2379 ⍹ %26%239081%3B
+PASS punctuation, currency, symbols  U+237A ⍺ %26%239082%3B
+PASS punctuation, currency, symbols  U+237B ⍻ %26%239083%3B
+PASS punctuation, currency, symbols  U+237C ⍼ %26%239084%3B
+PASS punctuation, currency, symbols  U+237D ⍽ %26%239085%3B
+PASS punctuation, currency, symbols  U+237E ⍾ %26%239086%3B
+PASS punctuation, currency, symbols  U+237F ⍿ %26%239087%3B
+PASS punctuation, currency, symbols  U+2380 ⎀ %26%239088%3B
+PASS punctuation, currency, symbols  U+2381 ⎁ %26%239089%3B
+PASS punctuation, currency, symbols  U+2382 ⎂ %26%239090%3B
+PASS punctuation, currency, symbols  U+2383 ⎃ %26%239091%3B
+PASS punctuation, currency, symbols  U+2384 ⎄ %26%239092%3B
+PASS punctuation, currency, symbols  U+2385 ⎅ %26%239093%3B
+PASS punctuation, currency, symbols  U+2386 ⎆ %26%239094%3B
+PASS punctuation, currency, symbols  U+2387 ⎇ %26%239095%3B
+PASS punctuation, currency, symbols  U+2388 ⎈ %26%239096%3B
+PASS punctuation, currency, symbols  U+2389 ⎉ %26%239097%3B
+PASS punctuation, currency, symbols  U+238A ⎊ %26%239098%3B
+PASS punctuation, currency, symbols  U+238B ⎋ %26%239099%3B
+PASS punctuation, currency, symbols  U+238C ⎌ %26%239100%3B
+PASS punctuation, currency, symbols  U+238D ⎍ %26%239101%3B
+PASS punctuation, currency, symbols  U+238E ⎎ %26%239102%3B
+PASS punctuation, currency, symbols  U+238F ⎏ %26%239103%3B
+PASS punctuation, currency, symbols  U+2390 ⎐ %26%239104%3B
+PASS punctuation, currency, symbols  U+2391 ⎑ %26%239105%3B
+PASS punctuation, currency, symbols  U+2392 ⎒ %26%239106%3B
+PASS punctuation, currency, symbols  U+2393 ⎓ %26%239107%3B
+PASS punctuation, currency, symbols  U+2394 ⎔ %26%239108%3B
+PASS punctuation, currency, symbols  U+2395 ⎕ %26%239109%3B
+PASS punctuation, currency, symbols  U+2396 ⎖ %26%239110%3B
+PASS punctuation, currency, symbols  U+2397 ⎗ %26%239111%3B
+PASS punctuation, currency, symbols  U+2398 ⎘ %26%239112%3B
+PASS punctuation, currency, symbols  U+2399 ⎙ %26%239113%3B
+PASS punctuation, currency, symbols  U+239A ⎚ %26%239114%3B
+PASS punctuation, currency, symbols  U+239B ⎛ %26%239115%3B
+PASS punctuation, currency, symbols  U+239C ⎜ %26%239116%3B
+PASS punctuation, currency, symbols  U+239D ⎝ %26%239117%3B
+PASS punctuation, currency, symbols  U+239E ⎞ %26%239118%3B
+PASS punctuation, currency, symbols  U+239F ⎟ %26%239119%3B
+PASS punctuation, currency, symbols  U+23A0 ⎠ %26%239120%3B
+PASS punctuation, currency, symbols  U+23A1 ⎡ %26%239121%3B
+PASS punctuation, currency, symbols  U+23A2 ⎢ %26%239122%3B
+PASS punctuation, currency, symbols  U+23A3 ⎣ %26%239123%3B
+PASS punctuation, currency, symbols  U+23A4 ⎤ %26%239124%3B
+PASS punctuation, currency, symbols  U+23A5 ⎥ %26%239125%3B
+PASS punctuation, currency, symbols  U+23A6 ⎦ %26%239126%3B
+PASS punctuation, currency, symbols  U+23A7 ⎧ %26%239127%3B
+PASS punctuation, currency, symbols  U+23A8 ⎨ %26%239128%3B
+PASS punctuation, currency, symbols  U+23A9 ⎩ %26%239129%3B
+PASS punctuation, currency, symbols  U+23AA ⎪ %26%239130%3B
+PASS punctuation, currency, symbols  U+23AB ⎫ %26%239131%3B
+PASS punctuation, currency, symbols  U+23AC ⎬ %26%239132%3B
+PASS punctuation, currency, symbols  U+23AD ⎭ %26%239133%3B
+PASS punctuation, currency, symbols  U+23AE ⎮ %26%239134%3B
+PASS punctuation, currency, symbols  U+23AF ⎯ %26%239135%3B
+PASS punctuation, currency, symbols  U+23B0 ⎰ %26%239136%3B
+PASS punctuation, currency, symbols  U+23B1 ⎱ %26%239137%3B
+PASS punctuation, currency, symbols  U+23B2 ⎲ %26%239138%3B
+PASS punctuation, currency, symbols  U+23B3 ⎳ %26%239139%3B
+PASS punctuation, currency, symbols  U+23B4 ⎴ %26%239140%3B
+PASS punctuation, currency, symbols  U+23B5 ⎵ %26%239141%3B
+PASS punctuation, currency, symbols  U+23B6 ⎶ %26%239142%3B
+PASS punctuation, currency, symbols  U+23B7 ⎷ %26%239143%3B
+PASS punctuation, currency, symbols  U+23B8 ⎸ %26%239144%3B
+PASS punctuation, currency, symbols  U+23B9 ⎹ %26%239145%3B
+PASS punctuation, currency, symbols  U+23BA ⎺ %26%239146%3B
+PASS punctuation, currency, symbols  U+23BB ⎻ %26%239147%3B
+PASS punctuation, currency, symbols  U+23BC ⎼ %26%239148%3B
+PASS punctuation, currency, symbols  U+23BD ⎽ %26%239149%3B
+PASS punctuation, currency, symbols  U+23BE ⎾ %26%239150%3B
+PASS punctuation, currency, symbols  U+23BF ⎿ %26%239151%3B
+PASS punctuation, currency, symbols  U+23C0 ⏀ %26%239152%3B
+PASS punctuation, currency, symbols  U+23C1 ⏁ %26%239153%3B
+PASS punctuation, currency, symbols  U+23C2 ⏂ %26%239154%3B
+PASS punctuation, currency, symbols  U+23C3 ⏃ %26%239155%3B
+PASS punctuation, currency, symbols  U+23C4 ⏄ %26%239156%3B
+PASS punctuation, currency, symbols  U+23C5 ⏅ %26%239157%3B
+PASS punctuation, currency, symbols  U+23C6 ⏆ %26%239158%3B
+PASS punctuation, currency, symbols  U+23C7 ⏇ %26%239159%3B
+PASS punctuation, currency, symbols  U+23C8 ⏈ %26%239160%3B
+PASS punctuation, currency, symbols  U+23C9 ⏉ %26%239161%3B
+PASS punctuation, currency, symbols  U+23CA ⏊ %26%239162%3B
+PASS punctuation, currency, symbols  U+23CB ⏋ %26%239163%3B
+PASS punctuation, currency, symbols  U+23CC ⏌ %26%239164%3B
+PASS punctuation, currency, symbols  U+23CD ⏍ %26%239165%3B
+PASS punctuation, currency, symbols  U+23CE ⏎ %26%239166%3B
+PASS punctuation, currency, symbols  U+23CF ⏏ %26%239167%3B
+PASS punctuation, currency, symbols  U+23D0 ⏐ %26%239168%3B
+PASS punctuation, currency, symbols  U+23D1 ⏑ %26%239169%3B
+PASS punctuation, currency, symbols  U+23D2 ⏒ %26%239170%3B
+PASS punctuation, currency, symbols  U+23D3 ⏓ %26%239171%3B
+PASS punctuation, currency, symbols  U+23D4 ⏔ %26%239172%3B
+PASS punctuation, currency, symbols  U+23D5 ⏕ %26%239173%3B
+PASS punctuation, currency, symbols  U+23D6 ⏖ %26%239174%3B
+PASS punctuation, currency, symbols  U+23D7 ⏗ %26%239175%3B
+PASS punctuation, currency, symbols  U+23D8 ⏘ %26%239176%3B
+PASS punctuation, currency, symbols  U+23D9 ⏙ %26%239177%3B
+PASS punctuation, currency, symbols  U+23DA ⏚ %26%239178%3B
+PASS punctuation, currency, symbols  U+23DB ⏛ %26%239179%3B
+PASS punctuation, currency, symbols  U+23DC ⏜ %26%239180%3B
+PASS punctuation, currency, symbols  U+23DD ⏝ %26%239181%3B
+PASS punctuation, currency, symbols  U+23DE ⏞ %26%239182%3B
+PASS punctuation, currency, symbols  U+23DF ⏟ %26%239183%3B
+PASS punctuation, currency, symbols  U+23E0 ⏠ %26%239184%3B
+PASS punctuation, currency, symbols  U+23E1 ⏡ %26%239185%3B
+PASS punctuation, currency, symbols  U+23E2 ⏢ %26%239186%3B
+PASS punctuation, currency, symbols  U+23E3 ⏣ %26%239187%3B
+PASS punctuation, currency, symbols  U+23E4 ⏤ %26%239188%3B
+PASS punctuation, currency, symbols  U+23E5 ⏥ %26%239189%3B
+PASS punctuation, currency, symbols  U+23E6 ⏦ %26%239190%3B
+PASS punctuation, currency, symbols  U+23E7 ⏧ %26%239191%3B
+PASS punctuation, currency, symbols  U+23E8 ⏨ %26%239192%3B
+PASS punctuation, currency, symbols  U+23E9 ⏩ %26%239193%3B
+PASS punctuation, currency, symbols  U+23EA ⏪ %26%239194%3B
+PASS punctuation, currency, symbols  U+23EB ⏫ %26%239195%3B
+PASS punctuation, currency, symbols  U+23EC ⏬ %26%239196%3B
+PASS punctuation, currency, symbols  U+23ED ⏭ %26%239197%3B
+PASS punctuation, currency, symbols  U+23EE ⏮ %26%239198%3B
+PASS punctuation, currency, symbols  U+23EF ⏯ %26%239199%3B
+PASS punctuation, currency, symbols  U+23F0 ⏰ %26%239200%3B
+PASS punctuation, currency, symbols  U+23F1 ⏱ %26%239201%3B
+PASS punctuation, currency, symbols  U+23F2 ⏲ %26%239202%3B
+PASS punctuation, currency, symbols  U+23F3 ⏳ %26%239203%3B
+PASS punctuation, currency, symbols  U+23F4 ⏴ %26%239204%3B
+PASS punctuation, currency, symbols  U+23F5 ⏵ %26%239205%3B
+PASS punctuation, currency, symbols  U+23F6 ⏶ %26%239206%3B
+PASS punctuation, currency, symbols  U+23F7 ⏷ %26%239207%3B
+PASS punctuation, currency, symbols  U+23F8 ⏸ %26%239208%3B
+PASS punctuation, currency, symbols  U+23F9 ⏹ %26%239209%3B
+PASS punctuation, currency, symbols  U+23FA ⏺ %26%239210%3B
+PASS punctuation, currency, symbols  U+23FB ⏻ %26%239211%3B
+PASS punctuation, currency, symbols  U+23FC ⏼ %26%239212%3B
+PASS punctuation, currency, symbols  U+23FD ⏽ %26%239213%3B
+PASS punctuation, currency, symbols  U+23FE ⏾ %26%239214%3B
+PASS enclosed chars and boxes  U+246F ⑯ %26%239327%3B
+PASS enclosed chars and boxes  U+2470 ⑰ %26%239328%3B
+PASS enclosed chars and boxes  U+2471 ⑱ %26%239329%3B
+PASS enclosed chars and boxes  U+2472 ⑲ %26%239330%3B
+PASS enclosed chars and boxes  U+2473 ⑳ %26%239331%3B
+PASS enclosed chars and boxes  U+2483 ⒃ %26%239347%3B
+PASS enclosed chars and boxes  U+2484 ⒄ %26%239348%3B
+PASS enclosed chars and boxes  U+2485 ⒅ %26%239349%3B
+PASS enclosed chars and boxes  U+2486 ⒆ %26%239350%3B
+PASS enclosed chars and boxes  U+2487 ⒇ %26%239351%3B
+PASS enclosed chars and boxes  U+2488 ⒈ %26%239352%3B
+PASS enclosed chars and boxes  U+2489 ⒉ %26%239353%3B
+PASS enclosed chars and boxes  U+248A ⒊ %26%239354%3B
+PASS enclosed chars and boxes  U+248B ⒋ %26%239355%3B
+PASS enclosed chars and boxes  U+248C ⒌ %26%239356%3B
+PASS enclosed chars and boxes  U+248D ⒍ %26%239357%3B
+PASS enclosed chars and boxes  U+248E ⒎ %26%239358%3B
+PASS enclosed chars and boxes  U+248F ⒏ %26%239359%3B
+PASS enclosed chars and boxes  U+2490 ⒐ %26%239360%3B
+PASS enclosed chars and boxes  U+2491 ⒑ %26%239361%3B
+PASS enclosed chars and boxes  U+2492 ⒒ %26%239362%3B
+PASS enclosed chars and boxes  U+2493 ⒓ %26%239363%3B
+PASS enclosed chars and boxes  U+2494 ⒔ %26%239364%3B
+PASS enclosed chars and boxes  U+2495 ⒕ %26%239365%3B
+PASS enclosed chars and boxes  U+2496 ⒖ %26%239366%3B
+PASS enclosed chars and boxes  U+2497 ⒗ %26%239367%3B
+PASS enclosed chars and boxes  U+2498 ⒘ %26%239368%3B
+PASS enclosed chars and boxes  U+2499 ⒙ %26%239369%3B
+PASS enclosed chars and boxes  U+249A ⒚ %26%239370%3B
+PASS enclosed chars and boxes  U+249B ⒛ %26%239371%3B
+PASS enclosed chars and boxes  U+24B6 Ⓐ %26%239398%3B
+PASS enclosed chars and boxes  U+24B7 Ⓑ %26%239399%3B
+PASS enclosed chars and boxes  U+24B8 Ⓒ %26%239400%3B
+PASS enclosed chars and boxes  U+24B9 Ⓓ %26%239401%3B
+PASS enclosed chars and boxes  U+24BA Ⓔ %26%239402%3B
+PASS enclosed chars and boxes  U+24BB Ⓕ %26%239403%3B
+PASS enclosed chars and boxes  U+24BC Ⓖ %26%239404%3B
+PASS enclosed chars and boxes  U+24BD Ⓗ %26%239405%3B
+PASS enclosed chars and boxes  U+24BE Ⓘ %26%239406%3B
+PASS enclosed chars and boxes  U+24BF Ⓙ %26%239407%3B
+PASS enclosed chars and boxes  U+24C0 Ⓚ %26%239408%3B
+PASS enclosed chars and boxes  U+24C1 Ⓛ %26%239409%3B
+PASS enclosed chars and boxes  U+24C2 Ⓜ %26%239410%3B
+PASS enclosed chars and boxes  U+24C3 Ⓝ %26%239411%3B
+PASS enclosed chars and boxes  U+24C4 Ⓞ %26%239412%3B
+PASS enclosed chars and boxes  U+24C5 Ⓟ %26%239413%3B
+PASS enclosed chars and boxes  U+24C6 Ⓠ %26%239414%3B
+PASS enclosed chars and boxes  U+24C7 Ⓡ %26%239415%3B
+PASS enclosed chars and boxes  U+24C8 Ⓢ %26%239416%3B
+PASS enclosed chars and boxes  U+24C9 Ⓣ %26%239417%3B
+PASS enclosed chars and boxes  U+24CA Ⓤ %26%239418%3B
+PASS enclosed chars and boxes  U+24CB Ⓥ %26%239419%3B
+PASS enclosed chars and boxes  U+24CC Ⓦ %26%239420%3B
+PASS enclosed chars and boxes  U+24CD Ⓧ %26%239421%3B
+PASS enclosed chars and boxes  U+24CE Ⓨ %26%239422%3B
+PASS enclosed chars and boxes  U+24CF Ⓩ %26%239423%3B
+PASS enclosed chars and boxes  U+24EA ⓪ %26%239450%3B
+PASS enclosed chars and boxes  U+24EB ⓫ %26%239451%3B
+PASS enclosed chars and boxes  U+24EC ⓬ %26%239452%3B
+PASS enclosed chars and boxes  U+24ED ⓭ %26%239453%3B
+PASS enclosed chars and boxes  U+24EE ⓮ %26%239454%3B
+PASS enclosed chars and boxes  U+24EF ⓯ %26%239455%3B
+PASS enclosed chars and boxes  U+24F0 ⓰ %26%239456%3B
+PASS enclosed chars and boxes  U+24F1 ⓱ %26%239457%3B
+PASS enclosed chars and boxes  U+24F2 ⓲ %26%239458%3B
+PASS enclosed chars and boxes  U+24F3 ⓳ %26%239459%3B
+PASS enclosed chars and boxes  U+24F4 ⓴ %26%239460%3B
+PASS enclosed chars and boxes  U+24F5 ⓵ %26%239461%3B
+PASS enclosed chars and boxes  U+24F6 ⓶ %26%239462%3B
+PASS enclosed chars and boxes  U+24F7 ⓷ %26%239463%3B
+PASS enclosed chars and boxes  U+24F8 ⓸ %26%239464%3B
+PASS enclosed chars and boxes  U+24F9 ⓹ %26%239465%3B
+PASS enclosed chars and boxes  U+24FA ⓺ %26%239466%3B
+PASS enclosed chars and boxes  U+24FB ⓻ %26%239467%3B
+PASS enclosed chars and boxes  U+24FC ⓼ %26%239468%3B
+PASS enclosed chars and boxes  U+24FD ⓽ %26%239469%3B
+PASS enclosed chars and boxes  U+24FE ⓾ %26%239470%3B
+PASS enclosed chars and boxes  U+24FF ⓿ %26%239471%3B
+PASS enclosed chars and boxes  U+2504 ┄ %26%239476%3B
+PASS enclosed chars and boxes  U+2505 ┅ %26%239477%3B
+PASS enclosed chars and boxes  U+2506 ┆ %26%239478%3B
+PASS enclosed chars and boxes  U+2507 ┇ %26%239479%3B
+PASS enclosed chars and boxes  U+2508 ┈ %26%239480%3B
+PASS enclosed chars and boxes  U+2509 ┉ %26%239481%3B
+PASS enclosed chars and boxes  U+250A ┊ %26%239482%3B
+PASS enclosed chars and boxes  U+250B ┋ %26%239483%3B
+PASS enclosed chars and boxes  U+254C ╌ %26%239548%3B
+PASS enclosed chars and boxes  U+254D ╍ %26%239549%3B
+PASS enclosed chars and boxes  U+254E ╎ %26%239550%3B
+PASS enclosed chars and boxes  U+254F ╏ %26%239551%3B
+PASS enclosed chars and boxes  U+2550 ═ %26%239552%3B
+PASS enclosed chars and boxes  U+2551 ║ %26%239553%3B
+PASS enclosed chars and boxes  U+2552 ╒ %26%239554%3B
+PASS enclosed chars and boxes  U+2553 ╓ %26%239555%3B
+PASS enclosed chars and boxes  U+2554 ╔ %26%239556%3B
+PASS enclosed chars and boxes  U+2555 ╕ %26%239557%3B
+PASS enclosed chars and boxes  U+2556 ╖ %26%239558%3B
+PASS enclosed chars and boxes  U+2557 ╗ %26%239559%3B
+PASS enclosed chars and boxes  U+2558 ╘ %26%239560%3B
+PASS enclosed chars and boxes  U+2559 ╙ %26%239561%3B
+PASS enclosed chars and boxes  U+255A ╚ %26%239562%3B
+

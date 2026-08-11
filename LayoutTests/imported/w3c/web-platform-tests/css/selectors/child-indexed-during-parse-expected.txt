@@ -1,0 +1,8 @@
+
+PASS :last-child against an element still being parsed
+PASS :only-child against an element still being parsed
+PASS :last-of-type against an element still being parsed
+PASS :only-of-type against an element still being parsed
+PASS :nth-last-child(1) against an element still being parsed
+PASS :nth-last-of-type(1) against an element still being parsed
+

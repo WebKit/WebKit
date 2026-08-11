@@ -1,0 +1,8 @@
+
+PASS fetch() in Worker should be intercepted after the client is claimed.
+PASS fetch() in nested Worker should be intercepted after the client is claimed.
+PASS fetch() in blob URL Worker should be intercepted after the client is claimed.
+FAIL fetch() in nested blob URL Worker created from a blob URL Worker should be intercepted after the client is claimed. assert_equals: fetch() in the worker should be intercepted. expected "Intercepted!" but got "a simple text file\n"
+PASS fetch() in nested Worker created from a blob URL Worker should be intercepted after the client is claimed.
+PASS fetch() in nested blob URL Worker created from a Worker should be intercepted after the client is claimed.
+

@@ -1,0 +1,28 @@
+<style>
+#content {
+    width: 800px;
+    height: 800px;
+    overflow: auto;
+}
+</style>
+<div id="content">
+<script>
+addEventListener("mousedown", (event) => {
+    window.parent.postMessage(event.pageX + "," + event.pageY, "*");
+});
+
+addEventListener("load", (event) => {
+    window.scrollTo(50, 50);
+
+    function checkScrollPosition() {
+        // FIXME: <rdar://114836034> This probably needs to change back to 50,50 once scrolling works in site-isolated iframes.
+        if (window.scrollX === 23 && window.scrollY === 50)
+            window.parent.postMessage("scrolled", "*");
+        else
+            requestAnimationFrame(checkScrollPosition);
+    }
+
+    requestAnimationFrame(checkScrollPosition);
+});
+</script>
+</div>

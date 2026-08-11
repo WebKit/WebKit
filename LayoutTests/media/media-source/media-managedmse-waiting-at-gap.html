@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>waiting event must fire synchronously when currentTime reaches a buffered gap</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var readyStateAtLastTimeupdate = -1;
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(loader);
+
+        source = new ManagedMediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        run('video.muted = true');
+        run('video.playsInline = true');
+        run('video.disableRemotePlayback = true');
+        run('video.autoplay = true');
+        await waitFor(source, 'sourceopen');
+        waitFor(video, 'error').then(failTest);
+        const playingPromise = waitFor(video, 'playing', true);
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(2))');
+        await waitFor(sourceBuffer, 'update');
+        await playingPromise;
+
+        // Capture readyState at every timeupdate so the LAST one before the waiting event
+        // reflects what JS observes at the moment the playhead reaches the buffered gap.
+        // If monitorSourceBuffers runs synchronously in mediaPlayerTimeChanged (the intended
+        // behavior), that timeupdate will report HAVE_CURRENT_DATA. If the readyState drop is
+        // deferred to the next playbackProgressTimer tick, it will report HAVE_FUTURE_DATA.
+        const onTimeupdate = () => { readyStateAtLastTimeupdate = video.readyState; };
+        video.addEventListener('timeupdate', onTimeupdate);
+
+        await waitFor(video, 'waiting');
+        video.removeEventListener('timeupdate', onTimeupdate);
+
+        testExpected('video.currentTime == video.buffered.end(0)', true);
+        testExpected('video.readyState', HTMLMediaElement.HAVE_CURRENT_DATA);
+        testExpected('readyStateAtLastTimeupdate', HTMLMediaElement.HAVE_CURRENT_DATA);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

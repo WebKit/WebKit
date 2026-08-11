@@ -1,0 +1,5 @@
+
+PASS clamp() accepts whitespace between a 'none' min argument and the following comma
+PASS clamp() accepts whitespace after a trailing 'none' max argument
+PASS clamp() accepts whitespace around 'none' for both bounds
+

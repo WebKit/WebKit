@@ -1,0 +1,8 @@
+Test that Network.setExtraHTTPHeaders is forwarded to the WebContent process and applied to requests from a cross-origin iframe under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.SetExtraHTTPHeaders
+-- Running test case: SiteIsolation.Network.SetExtraHTTPHeaders.AppliedToCrossOriginIFrameRequest
+PASS: The cross-origin iframe's request should carry the inspector's extra HTTP header.
+

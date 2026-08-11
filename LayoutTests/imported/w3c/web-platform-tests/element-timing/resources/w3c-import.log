@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/TAOImage.py
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/circle-tao.svg
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/circle-tao.svg.headers
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/circle.svg
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/element-timing-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/iframe-stores-entry.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/iframe-with-content.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/iframe-with-square-sends-entry.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/iframe-with-square.html
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/multiple-redirects.py
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/progressive-image.py
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/slow-image.py
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/square100.png
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/square20.jpg
+/LayoutTests/imported/w3c/web-platform-tests/element-timing/resources/square20.png

@@ -1,0 +1,25 @@
+<style>
+div {
+  content-visibility: hidden;
+}
+
+tbody { 
+  will-change: transform;
+}
+
+th {
+  outline: 1px solid green;
+}
+</style>
+PASS if no crash or assert.
+<div>
+  <table><tr id=table_row onwheel="foobar()"><th></th></tr></table>
+</div>
+<script>
+window.testRunner?.dumpAsText();
+
+table_row.offsetTop;
+table_row.style.position = "absolute";
+if (window.internals)
+  internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+</script>

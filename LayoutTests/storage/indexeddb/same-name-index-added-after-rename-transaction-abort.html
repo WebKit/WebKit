@@ -1,0 +1,21 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<script>
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+  setTimeout(() => {
+    testRunner.notifyDone();
+  }, 100);
+  let ii = 5;
+  let jj = 21;
+  let kk = 21;
+  for (let i = 0; i < ii; i++) {
+    indexedDB.open('db' + i, 1).addEventListener('upgradeneeded', ev => {
+      for (let j = 0; j < jj; j++) {
+        let os = ev.target.result.createObjectStore('os2' + j);
+        for (let k = 0; k < kk; k++) {
+          os.createIndex('idx0', 'c').name = 'x' + k;
+        }
+      }
+    });
+  }
+</script>

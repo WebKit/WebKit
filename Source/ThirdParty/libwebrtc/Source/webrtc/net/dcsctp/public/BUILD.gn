@@ -1,0 +1,98 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("types") {
+  deps = [
+    "../../../api/units:time_delta",
+    "../../../rtc_base:strong_alias",
+  ]
+  sources = [
+    "dcsctp_message.h",
+    "dcsctp_options.h",
+    "types.h",
+  ]
+}
+
+rtc_library("socket") {
+  deps = [
+    ":types",
+    "../../../api/task_queue",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:strong_alias",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+  sources = [
+    "dcsctp_handover_state.cc",
+    "dcsctp_handover_state.h",
+    "dcsctp_socket.h",
+    "packet_observer.h",
+    "timeout.h",
+  ]
+}
+
+rtc_library("factory") {
+  deps = [
+    ":socket",
+    ":types",
+    "../socket:dcsctp_socket",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+  sources = [
+    "dcsctp_socket_factory.cc",
+    "dcsctp_socket_factory.h",
+  ]
+}
+
+rtc_source_set("mocks") {
+  testonly = true
+  sources = [
+    "mock_dcsctp_socket.h",
+    "mock_dcsctp_socket_factory.h",
+  ]
+  deps = [
+    ":factory",
+    ":socket",
+    ":types",
+    "../../../test:test_support",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("utils") {
+  deps = [
+    ":socket",
+    ":types",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
+    "../../../rtc_base:text2pcap",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+  sources = [
+    "text_pcap_packet_observer.cc",
+    "text_pcap_packet_observer.h",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("dcsctp_public_unittests") {
+    testonly = true
+
+    deps = [
+      ":mocks",
+      ":types",
+      "../../../test:test_support",
+    ]
+    sources = [
+      "mock_dcsctp_socket_test.cc",
+      "types_test.cc",
+    ]
+  }
+}

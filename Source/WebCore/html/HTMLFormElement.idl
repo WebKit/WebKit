@@ -1,0 +1,49 @@
+/*
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+[
+    LegacyUnenumerableNamedProperties,
+    LegacyOverrideBuiltIns,
+    JSGenerateToNativeObject,
+    Exposed=Window
+] interface HTMLFormElement : HTMLElement {
+    [CEReactions=NotNeeded, Reflect="accept-charset"] attribute DOMString acceptCharset;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] USVString action;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString autocomplete;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString enctype;
+    [CEReactions=NotNeeded, ImplementedAs=enctype, ReflectSetter="enctype"] attribute [AtomString] DOMString encoding;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString method;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString name;
+    [CEReactions=NotNeeded, Reflect] attribute boolean noValidate;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString target;
+    [CEReactions=NotNeeded, Reflect] attribute DOMString rel;
+    [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
+
+    readonly attribute HTMLFormControlsCollection elements;
+    readonly attribute unsigned long length;
+    getter Element? (unsigned long index);
+    getter (RadioNodeList or Element)? ([RequiresExistingAtomString] DOMString name);
+
+    [ImplementedAs=submitFromJavaScript] undefined submit();
+    undefined requestSubmit(optional HTMLElement? submitter);
+    [CEReactions=Needed] undefined reset();
+    boolean checkValidity();
+    [EnabledBySetting=InteractiveFormValidationEnabled] boolean reportValidity();
+};

@@ -1,0 +1,29 @@
+<style>
+@layer a {
+  .outer {
+    background: red;
+  }
+
+  .inner {
+    padding-top: 50px;
+    top: inherit;
+  }
+
+  .hover {
+    background: green;
+  }
+}
+
+.inner {
+  padding-top: revert-layer;
+}
+</style>
+<div id=t class="outer">
+  <div class="inner">
+    This text should have padding above.
+  </div>
+</div>
+<script>
+document.body.offsetLeft;
+t.classList.add('hover');
+</script>

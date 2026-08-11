@@ -1,0 +1,5 @@
+Test worker invalid url exceptions. Should print one "PASS" statement.
+
+PASS: No exception thrown when accessing a worker from another domain.
+PASS: Got error event
+

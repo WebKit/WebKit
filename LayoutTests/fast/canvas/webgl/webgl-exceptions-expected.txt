@@ -1,0 +1,19 @@
+PASS gl.getBufferParameter() threw exception TypeError: Not enough arguments.
+PASS gl.getRenderbufferParameter() threw exception TypeError: Not enough arguments.
+PASS gl.getTexParameter() threw exception TypeError: Not enough arguments.
+PASS gl.getVertexAttrib() threw exception TypeError: Not enough arguments.
+PASS gl.getAttachedShaders() threw exception TypeError: Not enough arguments.
+PASS gl.getExtension() threw exception TypeError: Not enough arguments.
+PASS gl.getFramebufferAttachmentParameter() threw exception TypeError: Not enough arguments.
+PASS gl.getParameter() threw exception TypeError: Not enough arguments.
+PASS gl.getProgramParameter() threw exception TypeError: Not enough arguments.
+PASS gl.getShaderParameter() threw exception TypeError: Not enough arguments.
+PASS gl.getUniform() threw exception TypeError: Not enough arguments.
+PASS gl.uniform1iv() threw exception TypeError: Not enough arguments.
+PASS gl.uniformMatrix2fv() threw exception TypeError: Not enough arguments.
+PASS gl.uniform1fv() threw exception TypeError: Not enough arguments.
+PASS gl.vertexAttrib1fv() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

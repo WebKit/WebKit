@@ -1,0 +1,5 @@
+
+FAIL SVG anchor with ping attribute should send ping on click promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: observe_entry"
+FAIL SVG anchor with multiple ping URLs should send multiple pings promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: observe_entry"
+FAIL SVG anchor ping attribute should be settable via ping IDL attribute assert_equals: expected (string) "https://example.com/ping1 https://example.com/ping2" but got (undefined) undefined
+

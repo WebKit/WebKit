@@ -1,0 +1,5 @@
+sticky
+content
+
+PASS Sticky-positioned headers shouldn't be chosen as scroll anchors (we should use 'content' instead)
+

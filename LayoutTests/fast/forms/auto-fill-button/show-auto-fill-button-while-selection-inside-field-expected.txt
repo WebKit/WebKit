@@ -1,0 +1,10 @@
+This test ensures clicking on an input field, and then adding an autofill button, leaves the selection inside the field.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.value is "Test"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

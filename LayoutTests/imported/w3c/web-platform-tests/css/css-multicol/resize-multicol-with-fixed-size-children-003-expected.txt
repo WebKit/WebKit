@@ -1,0 +1,3 @@
+
+PASS Resize multicol with fixed-width child
+

@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=0.5">
+    <style>
+        textarea {
+            margin: 400px 20px;
+        }
+    </style>
+    
+    <script src="resources/zooming-test-utils.js"></script>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        var textarea = document.getElementById('input');
+        var verticalPoint = textarea.clientHeight / 2;
+        testZoomAfterTap(textarea, 10, verticalPoint);
+    }
+
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<p>Tests zooming into a tall textarea on tap.</p>
+<textarea id="input" rows="30">
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+A
+</textarea>
+
+</body>
+</html>

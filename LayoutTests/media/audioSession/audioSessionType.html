@@ -1,0 +1,62 @@
+<!doctype html><!-- webkit-test-runner [ DOMAudioSessionFullEnabled=false ] -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="../media-file.js"></script>
+        <script src="../video-test.js"></script>
+    </head>
+    <body>
+        <audio id="audio"></audio>
+        <script>
+async function ensureCategory(expected, counter)
+{
+    if (internals.audioSessionCategory() == expected)
+        return "";
+
+    if (!counter)
+        counter = 0;
+    else if (counter > 100)
+        return `ensureCategory failed, expected was ${expected} and current value is ${internals.audioSessionCategory()}`;
+
+    await new Promise(resolve => setTimeout(resolve, 20));
+    return ensureCategory(expected, ++counter);
+}
+
+promise_test(async (test) => {
+    assert_equals(navigator.audioSession.type, "auto");
+    assert_equals(AudioSession.prototype.state, undefined);
+    assert_equals(AudioSession.prototype.onstatechange, undefined);
+
+    if (!window.internals)
+        return;
+
+    audio.src = findMediaFile("audio", "../content/test");
+    await audio.play();
+
+
+    assert_equals(navigator.audioSession.type, "auto");
+    assert_equals(await ensureCategory("MediaPlayback"), "", "initial MediaPlayback");
+
+    navigator.audioSession.type = "ambient";
+    assert_equals(internals.audioSessionCategory(), "AmbientSound");
+
+    navigator.audioSession.type = "playback";
+    assert_equals(internals.audioSessionCategory(), "MediaPlayback");
+
+    navigator.audioSession.type = "transient";
+    assert_equals(internals.audioSessionCategory(), "AmbientSound");
+
+    navigator.audioSession.type = "play-and-record";
+    assert_equals(internals.audioSessionCategory(), "PlayAndRecord");
+
+    navigator.audioSession.type = "transient-solo";
+    assert_equals(internals.audioSessionCategory(), "SoloAmbientSound");
+
+    navigator.audioSession.type = "auto";
+    assert_equals(await ensureCategory("MediaPlayback"), "", "final MediaPlayback");
+}, "AudioSession type");
+        </script>
+    </body>
+</html>

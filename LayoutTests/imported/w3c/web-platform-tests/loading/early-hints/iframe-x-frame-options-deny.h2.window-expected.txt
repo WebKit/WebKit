@@ -1,0 +1,3 @@
+
+PASS Early hints for an iframe that violates X-Frame-Options should be ignored.
+

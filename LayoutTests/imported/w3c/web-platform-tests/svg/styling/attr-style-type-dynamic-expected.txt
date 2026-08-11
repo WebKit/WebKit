@@ -1,0 +1,6 @@
+
+PASS Initial state: invalid type leaves the sheet unprocessed
+PASS Changing the type from invalid to valid creates the stylesheet
+PASS Changing the type from valid to invalid removes the stylesheet
+PASS Removing the type attribute restores the default CSS handling
+

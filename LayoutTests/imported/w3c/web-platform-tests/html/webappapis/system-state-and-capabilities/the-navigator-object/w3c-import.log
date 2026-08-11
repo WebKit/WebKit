@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/clientinformation.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/historical.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-indexed.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-window-controls-overlay.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator.any.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator_user_agent.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator_user_agent.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigatorcookies-cookieenabled-true.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigatorlanguage.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/per-global.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/plugins-and-mimetypes.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/secure_context.html

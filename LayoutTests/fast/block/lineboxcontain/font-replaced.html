@@ -1,0 +1,17 @@
+<!doctype html>
+<head>
+<title>line-box-contain: font replaced</title>
+<style>
+.test { -webkit-line-box-contain: font replaced; line-box-contain: font replaced; font: 64px/1em Ahem; background-color:red; width:6em; overflow:hidden }
+.goodline { color: green; line-height:12 }
+</style>
+</head>
+<body>
+You should see a green rectangle below.  If you see any red, the test has failed.
+
+<div class="test">
+<span class="goodline">xxxxx</span><span style="background-color:green; font-size:128px; padding-left:0.5em;"></span><br>
+<div style="display:inline-block; width:6em;height:1em;vertical-align:bottom;background-color:green"></div>
+</div>
+
+<p style="-webkit-line-box-contain:font replaced;line-box-contain: font replaced; border:1px solid black">This line should look normal.</p>

@@ -1,0 +1,24 @@
+This test ensures content inside dynamically expanded details elements is accessible.
+
+
+{#details AXRole: AXGroup}
+
+{AXRole: AXDisclosureTriangle}
+
+{AXRole: AXStaticText AXValue: Foo}
+
+{#details AXRole: AXGroup}
+
+{AXRole: AXDisclosureTriangle}
+
+{AXRole: AXStaticText AXValue: Foo}
+
+{AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: Bar}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+Bar

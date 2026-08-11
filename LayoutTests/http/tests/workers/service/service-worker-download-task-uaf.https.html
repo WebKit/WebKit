@@ -1,0 +1,86 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<p>This test passes if WebKit does not crash.</p>
+<div id=logDiv></div>
+<script>
+
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+window.testRunner?.setShouldDownloadUndisplayableMIMETypes(true);
+window.testRunner?.setUseSeparateServiceWorkerProcess(false);
+
+function done(msg)
+{
+    logDiv.innerHTML = msg;
+    window.testRunner?.notifyDone();
+}
+
+function sleep(ms)
+{
+    return new Promise(r => setTimeout(r, ms));
+}
+
+async function run()
+{
+    if (!window.IPC)
+        return;
+
+    // We terminate network process to be sure that registering a service worker will get us a SW context connection.
+    window.testRunner.terminateNetworkProcess();
+    await fetch("").then(() => { }, () => { });
+
+    let captured = null;
+    const gotCapture = new Promise(resolve => {
+        IPC.addOutgoingMessageListener("Networking", m => {
+            if (m.description === "NetworkConnectionToWebProcess_EstablishSWContextConnection" && !captured) {
+                captured = m;
+                resolve();
+            }
+        });
+    });
+
+    const registration = await navigator.serviceWorker.register(
+        "resources/service-worker-download-task-uaf-worker.js",
+        { scope: "/workers/service/resources/" });
+    await registration.installing.ready;
+
+    const frame = document.createElement("iframe");
+    frame.src = "/workers/service/resources/download-task-uaf";
+    document.body.appendChild(frame);
+
+    await Promise.race([gotCapture, sleep(5000)]);
+    if (!captured)
+        throw "no NetworkConnectionToWebProcess_EstablishSWContextConnection captured";
+
+    const { CoreIPC } = await import("/ipc/coreipc.js"); 
+
+    const a = captured.arguments;
+    const args = {
+        webPageProxyID: a[0].value,
+        site: {
+            protocol: a[1].value?.protocol?.value ?? "http",
+            domain: { string: a[1].value?.domain?.value?.string?.value ?? "127.0.0.1" }
+        },
+        serviceWorkerPageIdentifier: {},
+        crossOriginEmbedderPolicy: 0
+    };
+
+    // Try overwriting m_swContextConnection in the Network Process.
+    CoreIPC.Networking.NetworkConnectionToWebProcess.EstablishSWContextConnection(0, args, () => {});
+
+    await sleep(100);
+
+    for (let pass = 0; pass < 5; pass++) {
+        for (let F = 1; F <= 5; F++)
+            IPC.sendMessage("Networking", F, IPC.messages.ServiceWorkerDownloadTask_DidFinish.name, []);
+    }
+
+    await sleep(100);
+    frame.remove();
+}
+
+run().then(() => done("PASS"), e => done("FAIL:" + e));
+</script>
+</body>
+</html>

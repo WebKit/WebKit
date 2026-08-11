@@ -1,0 +1,6 @@
+abc
+
+def
+
+PASS Anchor selection descent into inline blocks.
+

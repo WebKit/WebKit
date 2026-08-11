@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <title>createPattern repeat test</title>
+  <style> canvas { border:solid #000 } </style>
+  <script>
+   if (window.testRunner) {
+     testRunner.waitUntilDone();
+   }
+   window.onload = function(){
+    var i = new Image();
+    i.src = "resources/apple.gif";
+    i.onload = function() {
+        var ctx = document.getElementsByTagName('canvas')[0].getContext('2d');
+    
+        var w = i.width;
+        var h = i.height;
+    	//ctx.strokeWidth(1.0);
+    	ctx.translate(10, 10);
+	ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, 150, 150);
+        ctx.clip();
+    	ctx.drawImage(i, 0, 0);
+        ctx.drawImage(i, 0, h);
+        ctx.drawImage(i, 0, 2*h);
+        ctx.drawImage(i, w, 0);
+        ctx.drawImage(i, w, h);
+        ctx.drawImage(i, w, 2*h);
+        ctx.drawImage(i, 2*w, 0);
+        ctx.drawImage(i, 2*w, h);
+        ctx.drawImage(i, 2*w, 2*h);
+        ctx.restore();
+
+    	ctx.translate(0, 160);
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, 150, 150);
+        ctx.clip();
+        ctx.drawImage(i, 0, 0);
+        ctx.drawImage(i, w, 0);
+        ctx.drawImage(i, 2*w, 0);
+        ctx.restore();
+ 
+    	ctx.translate(160, 0);
+        ctx.save()
+        ctx.beginPath();
+        ctx.rect(0, 0, 150, 150);
+        ctx.clip();
+        ctx.drawImage(i, 0, 0);
+        ctx.restore();
+    
+    	ctx.translate(0, -160);
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, 150, 150);
+        ctx.clip();
+        ctx.drawImage(i, 0, 0);
+        ctx.drawImage(i, 0, h);
+        ctx.drawImage(i, 0, 2*h);
+        ctx.restore();
+    	
+    	if (window.testRunner)
+    	    testRunner.notifyDone();
+    }
+   }
+  </script>
+ </head>
+ <body>
+  <p>There should be one big square below containing four squares. Top left square should be filled with 3 rows of 2 and bit Apple images. Top right square should be 2 and a bit rows with one Apple image column along the left edge of the square. Bottom left square should be one row with three Apple images along the top of the square. Bottom right square should be one Apple image in top left corner.</p>
+  <p><canvas height="330" width="330"></canvas></p>
+ </body>
+</html>

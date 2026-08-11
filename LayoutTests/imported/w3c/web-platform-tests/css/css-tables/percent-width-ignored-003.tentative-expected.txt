@@ -1,0 +1,4 @@
+Engines render this same as without the intermediate background:blue block -- yellow 1% width is ignored.
+
+PASS #outerTable 1
+

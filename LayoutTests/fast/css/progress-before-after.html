@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<style>
+progress {
+  width: 100px;
+  height: 100px;
+  appearance: none;
+  position: relative;
+}
+progress::before {
+  position: absolute;
+  content: "";
+  width: 50%;
+  height: 100%;
+  background: green;
+}
+progress::after {
+  position: absolute;
+  content: "";
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  background: green;
+}
+</style>
+<progress></progress>

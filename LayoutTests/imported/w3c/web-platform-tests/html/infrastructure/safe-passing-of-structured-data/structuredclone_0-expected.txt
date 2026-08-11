@@ -1,0 +1,45 @@
+
+PASS Primitive string is cloned
+PASS Primitive integer is cloned
+PASS Primitive floating point is cloned
+PASS Primitive floating point (negative) is cloned
+PASS Primitive number (hex) is cloned
+PASS Primitive number (scientific) is cloned
+PASS Primitive boolean is cloned
+PASS Instance of Boolean is cloned
+PASS Instance of Number is cloned
+PASS Instance of String is cloned
+PASS Instance of Date is cloned
+PASS Instance of RegExp is cloned
+PASS Value 'null' is cloned
+PASS Value 'undefined' is cloned
+PASS Object properties are cloned
+PASS Prototype chains are not walked.
+PASS Property descriptors of Objects are not cloned
+PASS Cycles are preserved in Objects
+PASS Identity of duplicates is preserved
+PASS Property order is preserved
+PASS Enumerable properties of Arrays are cloned
+PASS Property descriptors of Arrays are not cloned
+PASS Cycles are preserved in Arrays
+PASS ImageData object can be cloned
+PASS ImageData expandos are not cloned
+PASS Window objects cannot be cloned
+PASS Document objects cannot be cloned
+PASS Empty Error objects can be cloned
+PASS Error objects can be cloned
+PASS EvalError objects can be cloned
+PASS RangeError objects can be cloned
+PASS ReferenceError objects can be cloned
+PASS SyntaxError objects can be cloned
+PASS TypeError objects can be cloned
+PASS URIError objects can be cloned
+PASS URIError objects from other realms are treated as URIError
+PASS Cloning a modified Error
+PASS Error.message: getter is ignored when cloning
+PASS Error.message: undefined property is stringified
+PASS DOMException objects can be cloned
+PASS DOMException objects created by the UA can be cloned
+FAIL QuotaExceededError objects can be cloned Can't find variable: QuotaExceededError
+FAIL QuotaExceededError objects with empty quota/requested can be cloned Can't find variable: QuotaExceededError
+

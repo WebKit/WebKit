@@ -1,0 +1,4 @@
+
+PASS Should fire a security policy violation event
+PASS The inline style should not be applied
+

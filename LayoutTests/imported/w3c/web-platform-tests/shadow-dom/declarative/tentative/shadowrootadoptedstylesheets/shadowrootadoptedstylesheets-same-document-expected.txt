@@ -1,0 +1,3 @@
+
+PASS adoptedStyleSheets is populated from a <template> element's shadowrootadoptedstylesheets attribute via Document.parseHTMLUnsafe.
+

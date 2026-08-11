@@ -1,0 +1,4 @@
+
+PASS Constructing a CSSVariableReferenceValue with an empty variable name throws a TypeError
+PASS Constructing a CSSVariableReferenceValue with an invalid variable name throws SyntaxError
+

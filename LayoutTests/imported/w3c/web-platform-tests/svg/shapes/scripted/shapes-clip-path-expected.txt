@@ -1,0 +1,5 @@
+
+PASS Clipped shapes can be hit when rendered: circle
+PASS Clipped shapes can be hit when rendered: ellipse
+PASS Clipped shapes can be hit when rendered: rect
+

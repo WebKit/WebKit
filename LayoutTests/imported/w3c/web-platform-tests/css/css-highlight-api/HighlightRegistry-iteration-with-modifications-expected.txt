@@ -1,0 +1,8 @@
+
+PASS HighlightRegistry iteration includes Highlights added after starting the iteration (Map-like behavior)
+PASS HighlightRegistry iteration includes Highlights added after starting the iteration when there were already Highlights (Map-like behavior)
+PASS HighlightRegistry iteration skips Highlights deleted before being visited (Map-like behavior)
+PASS HighlightRegistry iteration skips Highlights deleted before being visited even when other Highlights remain (Map-like behavior)
+PASS HighlightRegistry iteration is not modified when a Highlight that was already visited is deleted and there are still Highlights to visit
+PASS HighlightRegistry iteration skips all Highlights when .clear() is called before visiting them (Map-like behavior)
+

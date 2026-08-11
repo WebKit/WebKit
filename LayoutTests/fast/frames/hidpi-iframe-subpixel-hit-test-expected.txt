@@ -1,0 +1,23 @@
+
+Tests that hit-testing takes subpixel iframe offsets into account
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+top
+PASS hitElement.tagName is "IFRAME"
+FAIL hitElement.tagName should be BODY. Was IFRAME.
+bottom
+PASS hitElement.tagName is "IFRAME"
+PASS hitElement.tagName is "BODY"
+left
+PASS hitElement.tagName is "IFRAME"
+FAIL hitElement.tagName should be BODY. Was IFRAME.
+right
+PASS hitElement.tagName is "IFRAME"
+PASS hitElement.tagName is "BODY"
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

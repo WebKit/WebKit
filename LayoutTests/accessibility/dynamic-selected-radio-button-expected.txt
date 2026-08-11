@@ -1,0 +1,9 @@
+This test ensures we compute the correct selected radio button after dynamic page changes.
+
+PASS: radiogroup.uiElementAttributeValue('AXValue').domIdentifier.includes('cat') === true
+PASS: radiogroup.uiElementAttributeValue('AXValue')?.domIdentifier?.includes('dog') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Cat   Dog

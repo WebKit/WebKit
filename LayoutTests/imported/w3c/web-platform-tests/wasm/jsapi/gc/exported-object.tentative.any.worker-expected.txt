@@ -1,0 +1,21 @@
+
+PASS property access
+PASS property assignment (strict mode)
+PASS property assignment (non-strict mode)
+PASS ownPropertyNames
+PASS defineProperty
+PASS delete (strict mode)
+PASS delete (non-strict mode)
+PASS getPrototypeOf
+PASS setPrototypeOf
+PASS isExtensible
+PASS preventExtensions
+PASS sealing
+PASS typeof
+PASS toString
+PASS valueOf
+PASS GC objects as map keys
+PASS GC objects as set element
+PASS GC objects as weak map keys
+PASS GC objects as weak set element
+

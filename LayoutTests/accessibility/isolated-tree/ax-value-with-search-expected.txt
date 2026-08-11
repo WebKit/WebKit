@@ -1,0 +1,8 @@
+This tests that a search field returns its value correctly.
+PASS: searchInput.stringValue === 'AXValue: hello'
+PASS: searchInput.stringValue === 'AXValue: test'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

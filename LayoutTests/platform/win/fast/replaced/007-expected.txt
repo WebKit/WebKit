@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x314
+        RenderText {#text} at (164,139) size 152x19
+          text run at (164,139) width 152: "This should be centered. "
+        RenderIFrame {IFRAME} at (315,0) size 305x154 [border: (2px inset #000000)]
+          layer at (0,0) size 300x150
+            RenderView at (0,0) size 300x150
+          layer at (0,0) size 300x150
+            RenderBlock {HTML} at (0,0) size 300x150
+              RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FF0000]
+        RenderBR {BR} at (619,154) size 1x0
+        RenderText {#text} at (166,294) size 152x19
+          text run at (166,294) width 152: "This should be centered. "
+        RenderEmbeddedObject {OBJECT} at (317,159) size 301x150
+          layer at (0,0) size 300x150
+            RenderView at (0,0) size 300x150
+          layer at (0,0) size 300x150
+            RenderBlock {HTML} at (0,0) size 300x150
+              RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FF0000]
+        RenderBR {BR} at (617,309) size 1x0

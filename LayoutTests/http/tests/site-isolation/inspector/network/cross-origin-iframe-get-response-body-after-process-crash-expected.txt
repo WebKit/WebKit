@@ -1,0 +1,12 @@
+Tests that Network.getResponseBody rejects (rather than returning an empty body as success, or hanging) when the WebContent process that served the resource has been terminated, under Site Isolation.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterProcessCrash
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterProcessCrash.WorksBeforeCrash
+PASS: Resource should finish loading.
+PASS: Resource should have a request identifier.
+PASS: getResponseBody should return the served content before the crash.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.AfterProcessCrash.RejectsAfterCrash
+PASS: getResponseBody should reject once the serving WebContent process is gone (not return an empty body as success, not hang).
+

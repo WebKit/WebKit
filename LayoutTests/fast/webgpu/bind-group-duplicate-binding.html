@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script>
+globalThis.testRunner?.waitUntilDone();
+globalThis.testRunner?.dumpAsText();
+const log = console.debug;
+
+onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    let large = device.createBuffer({ size: 1024, usage: GPUBufferUsage.STORAGE });
+    let small = device.createBuffer({ size: 256,  usage: GPUBufferUsage.STORAGE });
+
+    let bgl = device.createBindGroupLayout({ entries: [
+        { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage', hasDynamicOffset: true } },
+        { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage', hasDynamicOffset: true } },
+        { binding: 2, visibility: 0,                       sampler: { } },
+    ]});
+
+    let bg = device.createBindGroup({ layout: bgl, entries: [
+        { binding: 0, resource: { buffer: large, size: 256 } },
+        { binding: 0, resource: { buffer: large, size: 256 } },
+        { binding: 1, resource: { buffer: small } },
+    ]});
+
+    let module = device.createShaderModule({ code:
+        '@group(0) @binding(1) var<storage,read_write> b1: array<u32,64>;\n' +
+        '@compute @workgroup_size(1) fn main(){ b1[0] = 1u; }'
+    });
+
+    let pipeline = device.createComputePipeline({
+        layout: device.createPipelineLayout({ bindGroupLayouts: [bgl] }),
+        compute: { module }
+    });
+
+    let commandEncoder = device.createCommandEncoder();
+    let computePassEncoder = commandEncoder.beginComputePass({});
+    computePassEncoder.setPipeline(pipeline);
+    computePassEncoder.setBindGroup(0, bg, new Uint32Array([0, 512]));
+    computePassEncoder.dispatchWorkgroups(1);
+    computePassEncoder.end();
+    device.queue.submit([commandEncoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+
+    let error = await device.popErrorScope();
+    if (error)
+        log(error.message);
+    else
+        log('no validation error');
+    globalThis.testRunner?.notifyDone();
+};
+</script>

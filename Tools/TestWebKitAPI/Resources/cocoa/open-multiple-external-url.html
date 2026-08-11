@@ -1,0 +1,66 @@
+<style>
+    iframe { width: 0; height: 0; visibility: hidden; }
+</style>
+
+<body>
+
+<script>
+window.addEventListener("click", function() {
+    let hash = window.location.hash;
+    switch (hash) {
+    case "#normalLoop":
+        normalLoop();
+        break;
+    case "#loopAfterTimer":
+        loopAfterTimer();
+        break;
+    case "#loopAfterPostMessage":
+        loopAfterPostMessage();
+        break;
+    case "#loopAfterLongTimer":
+        loopAfterLongTimer();
+        break;
+    }
+}, false);
+
+function normalLoop() {
+    for (var i = 0; i < 3; ++i) {
+        var iframe = document.createElement('iframe');
+        document.body.appendChild(iframe);
+        iframe.contentWindow.location = "mailto:someone@example.com?Subject=Hello%20again";
+    }
+}
+
+function loopAfterTimer() {
+    setTimeout(function() {
+        for (var i = 0; i < 3; ++i) {
+            var iframe = document.createElement('iframe');
+            document.body.appendChild(iframe);
+            iframe.contentWindow.location = "mailto:someone@example.com?Subject=Hello%20again";
+        }
+    }, 500);
+}
+
+function loopAfterPostMessage() {
+    window.onmessage = function() {
+        for (var i = 0; i < 3; ++i) {
+            var iframe = document.createElement('iframe');
+            document.body.appendChild(iframe);
+            iframe.contentWindow.location = "mailto:someone@example.com?Subject=Hello%20again";
+        }
+    }
+    window.postMessage("foo", "*");
+}
+
+function loopAfterLongTimer() {
+    setTimeout(function() {
+        for (var i = 0; i < 3; ++i) {
+            var iframe = document.createElement('iframe');
+            document.body.appendChild(iframe);
+            iframe.contentWindow.location = "mailto:someone@example.com?Subject=Hello%20again";
+        }
+    }, 2000);
+}
+
+</script>
+</body>

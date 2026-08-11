@@ -1,0 +1,12 @@
+This test verifies accessibility notifications for base-appearance selects (appearance: base-select).
+
+PASS: select.isExpanded === true
+PASS: select.isExpanded === false
+PASS: select.stringValue.includes('Bravo') === true
+PASS: window.receivedNotification === true
+PASS: select.stringValue.includes('Charlie') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

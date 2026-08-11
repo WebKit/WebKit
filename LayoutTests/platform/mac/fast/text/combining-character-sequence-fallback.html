@@ -1,0 +1,30 @@
+<style>
+    div { font-size: 48px; padding: 8px 24px; margin: 8px 0; }
+    .reference { border: solid black; }
+    .test { border: solid blue; }
+</style>
+<p>
+    Each blue box should match the black box above it.
+</p>
+<div class="reference" style="font-family: serif;">
+    <span style="font-family: 'lucida grande';">1&#x20e3;2&#x20e3;</span> and <span style="font-family: 'lucida grande';">a&#x20e3;</span>
+</div>
+<div class="test" style="font-family: serif, 'lucida grande';">
+    1&#x20e3;2&#x20e3; and a&#x20e3;
+</div>
+
+<div class="reference" style="font-family: serif;">
+    <span style="font-family: -webkit-pictograph;">1&#x20e3;2&#x20e3;</span> and <span style="font-family: 'lucida grande';">a&#x20e3;</span>
+</div>
+<div class="test" style="font-family: serif, -webkit-pictograph, 'lucida grande';">
+    1&#x20e3;2&#x20e3; and a&#x20e3;
+</div>
+<p>
+    The combining marks should be centered above the letters.
+</p>
+<div style="font-family: verdana;">
+    i&#x0302; and i&#x033f;
+</div>
+<div style="font-family: verdana; font-variant: small-caps;">
+    i&#x0302; and i&#x033f;
+</div>

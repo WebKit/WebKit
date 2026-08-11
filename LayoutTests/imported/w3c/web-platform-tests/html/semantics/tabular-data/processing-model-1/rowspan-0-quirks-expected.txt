@@ -1,0 +1,6 @@
+x	x
+x
+
+PASS clientHeight
+PASS rowSpan
+

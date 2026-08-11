@@ -1,0 +1,7 @@
+PASS window.getComputedStyle(target).getPropertyValue('-internal-text-autosizing-status') is ""
+PASS target.style.internalTextAutosizingStatus is undefined
+PASS style.sheet.cssRules[0].style.internalTextAutosizingStatus is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello

@@ -1,0 +1,195 @@
+/*
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/StylePrimitiveNumericTypes.h>
+
+namespace WebCore {
+
+namespace CSS {
+struct BorderImageWidth;
+}
+
+namespace Style {
+
+// <border-image-width-value> = <length-percentage [0,∞]> | <number [0,∞]> | auto
+struct BorderImageWidthValue {
+    using LengthPercentage = Style::LengthPercentage<CSS::Nonnegative>;
+    using Number = Style::Number<CSS::Nonnegative, float>;
+
+    BorderImageWidthValue(CSS::Keyword::Auto keyword)
+        : m_value { keyword }
+    {
+    }
+    BorderImageWidthValue(LengthPercentage&& length)
+        : m_value { WTF::move(length) }
+    {
+    }
+    BorderImageWidthValue(CSS::ValueLiteral<CSS::LengthUnit::Px> literal)
+        : m_value { LengthPercentage { literal } }
+    {
+    }
+    BorderImageWidthValue(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal)
+        : m_value { LengthPercentage { literal } }
+    {
+    }
+    BorderImageWidthValue(Number number)
+        : m_value { number }
+    {
+    }
+    BorderImageWidthValue(CSS::ValueLiteral<CSS::NumberUnit::Number> literal)
+        : m_value { Number { literal } }
+    {
+    }
+
+    bool isAuto() const { return WTF::holdsAlternative<CSS::Keyword::Auto>(m_value); }
+    bool isLengthPercentage() const { return WTF::holdsAlternative<LengthPercentage>(m_value); }
+    bool isNumber() const { return WTF::holdsAlternative<Number>(m_value); }
+
+    std::optional<LengthPercentage::Fixed> tryFixed() const
+    {
+        if (auto* length = std::get_if<LengthPercentage>(&m_value))
+            return length->tryFixed();
+        return { };
+    }
+
+    bool isFixed() const
+    {
+        if (auto* length = std::get_if<LengthPercentage>(&m_value))
+            return length->isFixed();
+        return false;
+    }
+
+    bool isCalculated() const
+    {
+        if (auto* length = std::get_if<LengthPercentage>(&m_value))
+            return length->isCalculated();
+        return false;
+    }
+
+    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    {
+        return WTF::switchOn(m_value, std::forward<F>(f)...);
+    }
+
+    bool operator==(const BorderImageWidthValue&) const = default;
+
+    bool hasSameType(const BorderImageWidthValue& other) const { return m_value.index() == other.m_value.index(); }
+
+private:
+    friend struct Blending<BorderImageWidthValue>;
+
+    Variant<CSS::Keyword::Auto, LengthPercentage, Number> m_value { Number { 1 } };
+};
+
+// <'border-image-width'> = [ <length-percentage [0,∞]> | <number [0,∞]> | auto ]{1,4}
+// https://drafts.csswg.org/css-backgrounds/#propdef-border-image-width
+struct BorderImageWidth {
+    using Value = BorderImageWidthValue;
+    using Edges = MinimallySerializingSpaceSeparatedRectEdges<Value>;
+
+    Edges values { Value::Number { 1 } };
+    bool legacyWebkitBorderImage { false };
+
+    BorderImageWidth(Edges values, bool legacyWebkitBorderImage = false)
+        : values { WTF::move(values) }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(Value top, Value right, Value bottom, Value left, bool legacyWebkitBorderImage = false)
+        : values { WTF::move(top), WTF::move(right), WTF::move(bottom), WTF::move(left) }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(Value value, bool legacyWebkitBorderImage = false)
+        : values { WTF::move(value) }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(CSS::Keyword::Auto keyword, bool legacyWebkitBorderImage = false)
+        : values { keyword }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(Value::LengthPercentage&& lengthPercentage, bool legacyWebkitBorderImage = false)
+        : values { WTF::move(lengthPercentage) }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(CSS::ValueLiteral<CSS::LengthUnit::Px> literal, bool legacyWebkitBorderImage = false)
+        : values { literal }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> literal, bool legacyWebkitBorderImage = false)
+        : values { literal }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(Value::Number number, bool legacyWebkitBorderImage = false)
+        : values { number }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+    BorderImageWidth(CSS::ValueLiteral<CSS::NumberUnit::Number> literal, bool legacyWebkitBorderImage = false)
+        : values { literal }
+        , legacyWebkitBorderImage { legacyWebkitBorderImage }
+    {
+    }
+
+    bool overridesBorderWidths() const { return legacyWebkitBorderImage; }
+
+    bool operator==(const BorderImageWidth&) const = default;
+};
+DEFINE_TYPE_WRAPPER_GET(BorderImageWidth, values);
+
+// MARK: - Conversion
+
+template<> struct ToCSS<BorderImageWidth> { auto operator()(const BorderImageWidth&, const Style::ComputedStyle&) -> CSS::BorderImageWidth; };
+template<> struct ToStyle<CSS::BorderImageWidth> { auto operator()(const CSS::BorderImageWidth&, const BuilderState&) -> BorderImageWidth; };
+
+template<> struct CSSValueConversion<BorderImageWidth> { auto operator()(BuilderState&, const CSSValue&) -> BorderImageWidth; };
+template<> struct CSSValueCreation<BorderImageWidth> { auto operator()(CSSValuePool&, const Style::ComputedStyle&, const BorderImageWidth&) -> Ref<CSSValue>; };
+
+// MARK: - Blending
+
+template<> struct Blending<BorderImageWidthValue> {
+    bool NODELETE canBlend(const BorderImageWidthValue&, const BorderImageWidthValue&);
+    auto requiresInterpolationForAccumulativeIteration(const BorderImageWidthValue&, const BorderImageWidthValue&) -> bool;
+    auto blend(const BorderImageWidthValue&, const BorderImageWidthValue&, const BlendingContext&) -> BorderImageWidthValue;
+};
+
+template<> struct Blending<BorderImageWidth> {
+    auto canBlend(const BorderImageWidth&, const BorderImageWidth&) -> bool;
+    auto requiresInterpolationForAccumulativeIteration(const BorderImageWidth&, const BorderImageWidth&) -> bool;
+    auto blend(const BorderImageWidth&, const BorderImageWidth&, const BlendingContext&) -> BorderImageWidth;
+};
+
+} // namespace Style
+} // namespace WebCore
+
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::Style::BorderImageWidth)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::BorderImageWidthValue)

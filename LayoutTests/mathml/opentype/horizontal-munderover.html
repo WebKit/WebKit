@@ -1,0 +1,51 @@
+<!doctype html>
+<html> 
+  <head>
+    <title>Horizontal Operators in munderover</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- We test various munderover constructions. All the horizontal braces
+         should stretch to cover the size of the red rectangle.
+         Note: A font with an OpenType MATH table is required. -->
+    <p>
+      <math>
+        <mstyle scriptsizemultiplier="1">
+          <mover><mo stretchy="true">&#x23DE;</mo><mspace mathbackground="red" height="2px" width="4em"/></mover>
+        </mstyle>
+      </math>
+      <math>
+        <mstyle scriptsizemultiplier="1">
+          <mover><mspace mathbackground="red" height="2px" width="4em"/><mo stretchy="true">&#x23DE;</mo></mover>
+        </mstyle>
+      </math>
+      <math>
+        <mstyle scriptsizemultiplier="1">
+          <munder><mo stretchy="true">&#x23DE;</mo><mspace mathbackground="red" height="2px" width="4em"/></munder>
+        </mstyle>
+      </math>
+      <math>
+        <mstyle scriptsizemultiplier="1">
+          <munderover><mspace mathbackground="red" height="2px" width="4em"/><mo stretchy="true">&#x23DE;</mo><mo stretchy="true">&#x23DE;</mo></munderover>
+        </mstyle>
+      </math>
+      <math>
+        <mstyle scriptsizemultiplier="1">
+          <munderover><mo stretchy="true">&#x23DE;</mo><mspace mathbackground="red" height="2px" width="4em"/><mo stretchy="true">&#x23DE;</mo></munderover>
+        </mstyle>
+      </math>
+      <math>
+        <mstyle scriptsizemultiplier="1">
+          <munderover><mo stretchy="true">&#x23DE;</mo><mo stretchy="true">&#x23DE;</mo><mspace mathbackground="red" height="2px" width="4em"/></munderover>
+        </mstyle>
+      </math>
+      <math>
+        <mstyle scriptsizemultiplier="1">
+          <munder><mover><mo stretchy="true">&#x23DE;</mo><mspace mathbackground="red" height="2px" width="4em"/></mover><mo stretchy="true">&#x23DE;</mo></munder>
+        </mstyle>
+      </math>
+    </p>
+
+  </body>
+</html>

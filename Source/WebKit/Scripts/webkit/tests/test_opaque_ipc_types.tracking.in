@@ -1,0 +1,70 @@
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# See opaque_transports.tracking.in for format documentation
+
+[UnsafeWrapper] MachSendRight {
+    [Legacy] MessageParam TestWithLegacyReceiver.DidCreateWebProcessConnection connectionIdentifier
+    [Legacy] MessageParam TestWithStream.SendMachSendRight a1
+    [Legacy] MessageParamReply TestWithStream.ReceiveMachSendRight r1
+}
+
+[UnsafeWrapper] NotDispatchableFromWebContentType {
+    [NotSentFromWebContent] MessageParam TestWithLegacyReceiver.OpaqueTypeSecurityAssertion param
+    [MemorySafety=1, Docs=rdar://123445] MessageParam TestWithoutAttributes.OpaqueTypeSecurityAssertion param
+    [SecurityGatedReply] MessageParamReply SomeInterface.GetHighRiskDataFromWebContent result
+}
+
+[UnsafeWrapper] Vector<uint8_t> {
+    [Legacy] StructureParam WebKit::TestStruct.buffer
+    [Legacy] StructureParam WebCore::TestData.content
+    [NotSentFromWebContent] StructureParam WebKit::SecureData.encrypted
+}
+
+[UnsafeWrapper] std::span<const uint8_t> {
+    [Legacy] MessageParam TestInterface.ProcessData data
+    [NotSentFromWebContent] MessageParamReply TestInterface.GetData result
+}
+
+[UnsafeWrapper] TestUnsafeType {
+    [Legacy] MessageParam Test.Method param
+}
+
+[SerializationPolicyViolation='rdar://12345 Test violation'] StructureParam PolicyTest.data std::span<const uint8_t>
+[MemorySafety=1, Docs=rdar://123445] MessageParam CompoundTest.Method param Vector<uint8_t>
+
+[UnsafeWrapper] std::optional<Vector<std::pair<Vector<uint8_t>, String>>> {
+    [Legacy] StructureParam ComplexTest.complexData
+}
+
+[Legacy] AliasParam TestNamespace::TestSalt std::array<uint8_t, 8>
+[Legacy] AliasParam TestType::Handle MachSendRight
+[Legacy] MessageParam TestReceiver.TestMessage testParam MachSendRight
+[Legacy] MessageParamReply TestReceiver.GetTestData result Vector<uint8_t>
+[Legacy] StructureParam TestStruct.testMember Vector<uint8_t>
+[NotSentFromWebContent] MessageParam SecureReceiver.SecureMessage secureData Vector<uint8_t>
+[SecurityGatedReply] MessageParamReply UserInterface.GetUserData data std::span<const uint8_t>
+[NeedsReview] MessageParam ReviewTest.Method param MachSendRight
+[DebugOnly] MessageParam DebugTest.Method param Vector<uint8_t>
+[SafeWrapper] StructureParam IPC::ConnectionHandle.m_handle MachSendRight
+[Legacy] StructureParam WebKit::VeryLongNamespace::VeryLongClassName::VeryLongMethodName Vector<uint8_t>
+[Legacy] StructureParam TestClass.getData() Vector<uint8_t>

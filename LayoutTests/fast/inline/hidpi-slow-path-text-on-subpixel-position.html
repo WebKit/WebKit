@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .outer {
+    display: -webkit-flex;
+    -webkit-align-items: center;
+    box-sizing: border-box;
+    padding-top: 1px;
+    height: 25px;
+  }
+  .inner {
+    font: -webkit-small-control;
+    font-size: 9px;
+    -webkit-transform: translateX(0);
+}
+</style>
+</head>
+<body>
+  <div class=outer>
+    <div class=inner>This tests that slow paint for inlines draws the text on the same position as fast path.</div>
+  </div>
+</body>
+</html>

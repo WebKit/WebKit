@@ -1,0 +1,47 @@
+Tests getCTM/getScreenCTM in combination with CSS transform-origin / transform-box
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS !!iframe.contentDocument is true
+PASS iframe.contentDocument.toString() is "[object XMLDocument]"
+PASS getCTMById('rect1') is "[2.0 0.0 0.0 2.0 -40.0 -40.0]"
+PASS getScreenCTMById('rect1') is "[2.0 0.0 0.0 2.0 -37.0 -37.0]"
+PASS getBBoxById('rect1') is "[30 55 50 50]"
+PASS getAbsoluteBBoxById('rect1') is "[23 73 100 100]"
+PASS getCTMById('rect2') is "[2.0 0.0 0.0 2.0 -70.0 -50.0]"
+PASS getScreenCTMById('rect2') is "[2.0 0.0 0.0 2.0 -37.0 103.0]"
+PASS getBBoxById('rect2') is "[60 55 50 50]"
+PASS getAbsoluteBBoxById('rect2') is "[83 213 100 100]"
+PASS getCTMById('rect3') is "[8.0 0.0 0.0 3.0 -280.0 -75.0]"
+PASS getScreenCTMById('rect3') is "[8.0 0.0 0.0 3.0 -247.0 -92.0]"
+PASS getBBoxById('rect3') is "[60 55 25 25]"
+PASS getAbsoluteBBoxById('rect3') is "[233 73 200 75]"
+PASS getCTMById('rect4') is "[2.0 0.0 0.0 2.0 -40.0 220.0]"
+PASS getScreenCTMById('rect4') is "[2.0 0.0 0.0 2.0 -37.0 223.0]"
+PASS getBBoxById('rect4') is "[30 55 50 50]"
+PASS getAbsoluteBBoxById('rect4') is "[23 333 100 100]"
+PASS getCTMById('rect5') is "[2.0 0.0 0.0 2.0 10.0 10.0]"
+PASS getScreenCTMById('rect5') is "[2.0 0.0 0.0 2.0 -37.0 363.0]"
+PASS getBBoxById('rect5') is "[60 55 50 50]"
+PASS getAbsoluteBBoxById('rect5') is "[83 473 100 100]"
+PASS getCTMById('rect6') is "[8.0 0.0 0.0 3.0 -200.0 -15.0]"
+PASS getScreenCTMById('rect6') is "[8.0 0.0 0.0 3.0 -247.0 168.0]"
+PASS getBBoxById('rect6') is "[60 55 25 25]"
+PASS getAbsoluteBBoxById('rect6') is "[233 333 200 75]"
+PASS getCTMById('rect7') is "[2.0 0.0 0.0 2.0 467.5 17.5]"
+PASS getScreenCTMById('rect7') is "[2.0 0.0 0.0 2.0 470.5 20.5]"
+PASS getBBoxById('rect7') is "[30 55 50 50]"
+PASS getAbsoluteBBoxById('rect7') is "[530.5 130.5 100 100]"
+PASS getCTMById('rect8') is "[2.0 0.0 0.0 2.0 -155.0 -130.0]"
+PASS getScreenCTMById('rect8') is "[2.0 0.0 0.0 2.0 428.0 123.0]"
+PASS getBBoxById('rect8') is "[60 55 50 50]"
+PASS getAbsoluteBBoxById('rect8') is "[548 233 100 100]"
+PASS getCTMById('rect9') is "[8.0 0.0 0.0 3.0 -620.0 -195.0]"
+PASS getScreenCTMById('rect9') is "[8.0 0.0 0.0 3.0 3.0 -112.0]"
+PASS getBBoxById('rect9') is "[60 55 25 25]"
+PASS getAbsoluteBBoxById('rect9') is "[483 53 200 75]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+    <div><input id="top" autocorrect="off"></input></div>
+    <div><input id="bottom"></input></div>
+</body>
+<p id="description"></p>
+<p id="console"></p>
+</body>
+<script>
+function isSpellingCorrectionMenuItemEnabled(element)
+{
+    const elementRect = element.getBoundingClientRect();
+    eventSender.mouseMoveTo(elementRect.left + elementRect.width / 2, elementRect.top + elementRect.height / 2);
+
+    const spellingMenuItem = eventSender.contextClick().find(item => item.title === "Spelling and Grammar");
+    return spellingMenuItem.children.find(item => item.title === "Correct Spelling Automatically").enabled;
+}
+
+description("Verifies that autocorrect='off' disables the 'Correct Spelling Automatically' context menu item on macOS. To manually test, check that the menu item is disabled when right clicking the top text field, but enabled when clicking the bottom text field.");
+
+topInput = document.getElementById("top");
+bottomInput = document.getElementById("bottom");
+
+if (window.eventSender) {
+    shouldBeFalse("isSpellingCorrectionMenuItemEnabled(topInput)");
+    shouldBeTrue("isSpellingCorrectionMenuItemEnabled(bottomInput)");
+}
+</script>
+</html>

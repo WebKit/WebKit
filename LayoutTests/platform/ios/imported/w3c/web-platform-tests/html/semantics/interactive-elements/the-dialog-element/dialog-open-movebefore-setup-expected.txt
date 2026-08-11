@@ -1,0 +1,3 @@
+
+FAIL reparenting a dialog should not cause it to move in the open dialogs list assert_false: the second open dialog is now closed expected false got true
+

@@ -1,0 +1,4 @@
+Green Yellow Blue Yellow-Blue
+
+PASS Highlight priority attribute is mutable
+

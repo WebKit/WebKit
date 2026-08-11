@@ -1,0 +1,8 @@
+
+PASS Same-origin syntax error
+PASS Same-origin throw
+PASS Cross-origin syntax error
+PASS Cross-origin throw
+PASS Redirect-to-cross-origin syntax error
+PASS Redirect-to-Cross-origin throw
+

@@ -1,0 +1,3 @@
+
+PASS Test cyclic for svg animations for syncbases
+

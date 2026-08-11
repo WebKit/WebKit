@@ -1,0 +1,93 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ deviceScaleFactor=2.0 ] -->
+<style>
+    :root {
+        --margin: .6px;
+    }
+
+    .m4 {
+        --margin: .4px;
+    }
+
+    .case {
+        display: inline-block;
+        height: 110px;
+        width: 110px;
+        position: relative;
+        vertical-align: top;
+        margin: 2px;
+        background-color: hotpink;
+    }
+
+    svg {
+        /* The circles should not be overflowing */
+        overflow: hidden;
+        position: absolute;
+    }
+
+    .left {
+        left: 0;
+        margin-left: var(--margin);
+        top: 0;
+    }
+
+    .right {
+        margin-right: var(--margin);
+        right: 0;
+        top: 0;
+    }
+
+    .top {
+        left: 0;
+        margin-top: var(--margin);
+        top: 0;
+    }
+
+    .bottom {
+        bottom: 0;
+        left: 0;
+        margin-bottom: var(--margin);
+    }
+</style>
+<div class="case">
+    <svg class="left" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="50" fill="black" />
+    </svg>
+</div>
+<div class="case">
+    <svg class="right" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="50" fill="black" />
+    </svg>
+</div>
+<div class="case">
+    <svg class="top" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="50" fill="black" />
+    </svg>
+</div>
+<div class="case">
+    <svg class="bottom" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="50" fill="black" />
+    </svg>
+</div>
+
+<div class="m4">
+    <div class="case">
+        <svg class="left" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="50" fill="black" />
+        </svg>
+    </div>
+    <div class="case">
+        <svg class="right" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="50" fill="black" />
+        </svg>
+    </div>
+    <div class="case">
+        <svg class="top" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="50" fill="black" />
+        </svg>
+    </div>
+    <div class="case">
+        <svg class="bottom" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="50" fill="black" />
+        </svg>
+    </div>
+</div>

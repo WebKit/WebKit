@@ -1,0 +1,5 @@
+PASS document.getElementById("onlyTable").offsetWidth is 999999
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

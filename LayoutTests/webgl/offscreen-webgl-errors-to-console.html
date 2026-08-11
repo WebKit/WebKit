@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForWebGLEnabled=true OffscreenCanvasEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+// Tests that using offscreen canvas WebGL, we log a warning to the console if the setting is enabled.
+// One log should be produced.
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() {
+    if (!window.OffscreenCanvas) {
+        testPassed("No OffscreenCanvas support");
+        return;
+    }
+    for (let errorsToConsole of [true, false]) {
+        if (window.internals)
+            window.internals.settings.setWebGLErrorsToConsoleEnabled(errorsToConsole);
+        var canvas = new OffscreenCanvas(10, 10);
+        var gl = canvas.getContext('webgl');
+        if (!gl) {
+            testPassed("No OffscreenCanvas WebGL");
+            continue;
+        }
+        gl.activeTexture(gl.TEXTURE31 + 444);
+        testPassed(`Case: ${errorsToConsole}`);
+    }
+}
+
+runTest();
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

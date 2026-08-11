@@ -1,0 +1,4 @@
+
+PASS Blobs work on BroadcastChannel
+PASS Blobs work with workers on BroadcastChannel
+

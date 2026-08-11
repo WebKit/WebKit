@@ -1,0 +1,17 @@
+Direct DOM children
+
+Grandchildren
+
+popovertarget attribute relationship
+
+nested popovertarget attribute relationship
+
+Popover 1  Dialog
+
+PASS Direct DOM children
+PASS Grandchildren
+PASS popovertarget attribute relationship
+PASS nested popovertarget attribute relationship
+PASS popovers should be closed by dialogs
+PASS dialogs should not be closed by popovers
+

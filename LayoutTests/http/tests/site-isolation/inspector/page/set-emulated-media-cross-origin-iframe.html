@@ -1,0 +1,120 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<style>
+body { color: blue; }
+@media print {
+    body { color: green; }
+}
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/emulated-media-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    async function addIFrameAndGetTarget() {
+        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let event = await targetAddedPromise;
+        return event.data.target;
+    }
+
+    async function getComputedColorInTarget(target) {
+        // Wait for the iframe document to fully load before checking computed styles.
+        // TargetAdded fires when the JS context is created, before DOM and CSS are ready.
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: "window.getComputedStyle(document.body).getPropertyValue('color')", objectGroup: "test", returnByValue: true});
+        InspectorTest.assert(response.result.value, "Should be able to evaluate computed style in cross-origin target.");
+        return response.result.value;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetEmulatedMediaCrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMedia.DefaultMedia",
+        description: "Both the main page and cross-origin iframe should use screen media by default.",
+        async test() {
+            let target = await addIFrameAndGetTarget();
+            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added target should have Frame type.");
+
+            let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColor, "rgb(0, 0, 255)", "Main page should have screen styles (blue).");
+
+            let iframeColor = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColor, "rgb(0, 0, 255)", "Cross-origin iframe should have screen styles (blue).");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMedia.EmulateAndReload",
+        description: "Emulating print media and reloading should apply print styles in the cross-origin iframe.",
+        async test() {
+            InspectorTest.log("Setting emulated media to print...");
+            await PageAgent.setEmulatedMedia("print");
+
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            // Wait for the main page to fully load before checking computed styles.
+            await RuntimeAgent.evaluate.invoke({
+                expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+                objectGroup: "test",
+                awaitPromise: true,
+            });
+
+            let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColor, "rgb(0, 128, 0)", "Main page should have print styles (green).");
+
+            InspectorTest.log("Re-adding cross-origin iframe...");
+            let target = await addIFrameAndGetTarget();
+            let iframeColor = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColor, "rgb(0, 128, 0)", "Cross-origin iframe should have print styles (green).");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMedia.ResetAndReload",
+        description: "Resetting emulated media and reloading should restore screen styles in both frames.",
+        async test() {
+            InspectorTest.log("Resetting emulated media...");
+            await PageAgent.setEmulatedMedia("");
+
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            // Wait for the main page to fully load before checking computed styles.
+            await RuntimeAgent.evaluate.invoke({
+                expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+                objectGroup: "test",
+                awaitPromise: true,
+            });
+
+            let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColor, "rgb(0, 0, 255)", "Main page should have screen styles restored (blue).");
+
+            InspectorTest.log("Re-adding cross-origin iframe...");
+            let target = await addIFrameAndGetTarget();
+            let iframeColor = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColor, "rgb(0, 0, 255)", "Cross-origin iframe should have screen styles restored (blue).");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Page.setEmulatedMedia propagates to cross-origin iframes under site isolation.</p>
+</body>

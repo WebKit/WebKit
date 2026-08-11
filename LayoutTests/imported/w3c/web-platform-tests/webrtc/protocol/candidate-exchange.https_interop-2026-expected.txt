@@ -1,0 +1,6 @@
+
+PASS Adding only caller -> callee candidates gives a connection
+PASS Adding only callee -> caller candidates gives a connection
+PASS Adding callee -> caller candidates from end-of-candidates gives a connection
+PASS Explicit offer/answer exchange gives a connection
+

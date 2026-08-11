@@ -1,0 +1,12 @@
+
+PASS Frame location should update on successful navigation
+PASS Frame location should not be accessible after redirect
+PASS Frame location should not be accessible after cross-origin navigation
+PASS Frame location should not update on failed about:blank navigation
+PASS Frame location should not update on failed mixed-content navigation
+PASS Return value should be instance of WindowClient
+PASS Redirecting to another origin should resolve with null
+PASS Navigating to different origin should resolve with null
+PASS Navigating to about:blank should reject with TypeError
+PASS Navigating to mixed-content iframe should reject with TypeError
+

@@ -1,0 +1,4 @@
+Test :defined pseudo-class invalidation with :has()
+
+PASS Test :has() invalidation with :defined pseudo-class
+

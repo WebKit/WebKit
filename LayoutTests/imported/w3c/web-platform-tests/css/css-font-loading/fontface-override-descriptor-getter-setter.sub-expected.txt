@@ -1,0 +1,26 @@
+
+PASS Initial value of ascentOverride should be 'normal'
+PASS Initialize ascentOverride with 'normal' should succeed
+PASS Initialize ascentOverride with a percentage should succeed
+PASS Initialize ascentOverride with a negative percentage should fail
+PASS Initialize ascentOverride with a non-percentage should fail
+PASS Changing ascentOverride from 'normal' to percentage should succeed
+PASS Changing ascentOverride from percentage to 'normal' should succeed
+PASS Changing ascentOverride to invalid value should fail
+PASS Initial value of descentOverride should be 'normal'
+PASS Initialize descentOverride with 'normal' should succeed
+PASS Initialize descentOverride with a percentage should succeed
+PASS Initialize descentOverride with a negative percentage should fail
+PASS Initialize descentOverride with a non-percentage should fail
+PASS Changing descentOverride from 'normal' to percentage should succeed
+PASS Changing descentOverride from percentage to 'normal' should succeed
+PASS Changing descentOverride to invalid value should fail
+PASS Initial value of lineGapOverride should be 'normal'
+PASS Initialize lineGapOverride with 'normal' should succeed
+PASS Initialize lineGapOverride with a percentage should succeed
+PASS Initialize lineGapOverride with a negative percentage should fail
+PASS Initialize lineGapOverride with a non-percentage should fail
+PASS Changing lineGapOverride from 'normal' to percentage should succeed
+PASS Changing lineGapOverride from percentage to 'normal' should succeed
+PASS Changing lineGapOverride to invalid value should fail
+

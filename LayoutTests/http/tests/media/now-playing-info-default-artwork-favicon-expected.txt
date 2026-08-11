@@ -1,0 +1,31 @@
+
+Tests that the NowPlaying's artwork default to favicon if no Metadata is set.
+
+* NowPlaying should not be active before playback has started.
+RUN(video.src = findMediaFile("video", "../../media-resources/content/test"))
+EVENT(canplaythrough)
+RUN(nowPlayingState = internals.nowPlayingState)
+EXPECTED (nowPlayingState.registeredAsNowPlayingApplication == 'false') OK
+RUN(navigator.mediaSession.playbackState = "paused")
+RUN(navigator.mediaSession.positionState = {duration: video.duration, position: video.currentTime})
+RUN(navigator.mediaSession.setActionHandler("play", playAction))
+RUN(navigator.mediaSession.setActionHandler("pause", pauseAction))
+
+* Start to play, NowPlaying should become active.
+RUN(navigator.mediaSession.callActionHandler({action: "play"}))
+ACTION: play
+EVENT(playing)
+RUN(navigator.mediaSession.callActionHandler({action: "pause"}))
+ACTION: pause
+EXPECTED (internals.nowPlayingMetadata.title == 'now-playing-info-default-artwork-favicon') OK
+EXPECTED (internals.nowPlayingMetadata.artist == '') OK
+EXPECTED (internals.nowPlayingMetadata.album == '') OK
+EXPECTED (internals.nowPlayingMetadata.artwork.mimeType == 'image/png') OK
+EXPECTED (internals.nowPlayingMetadata.artwork.src == 'http://127.0.0.1:8000/media-resources/content/abe.png') OK
+RUN(navigator.mediaSession.metadata = new MediaMetadata({title: "title", artist: "artist", album: "album", artwork: [{src: "../../media-resources/content/test-vp8.webm.png"}]}))
+EXPECTED (internals.nowPlayingMetadata.artwork.src == 'http://127.0.0.1:8000/media-resources/content/test-vp8.webm.png') OK
+RUN(navigator.mediaSession.metadata = new MediaMetadata({title: "title", artist: "artist", album: "album", artwork: []}))
+EXPECTED (internals.nowPlayingMetadata.artwork.src == 'http://127.0.0.1:8000/media-resources/content/abe.png') OK
+
+END OF TEST
+

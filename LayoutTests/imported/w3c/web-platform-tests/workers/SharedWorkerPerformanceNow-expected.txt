@@ -1,0 +1,4 @@
+
+
+PASS performance.now() exists in shared workers and reports reasonable times
+

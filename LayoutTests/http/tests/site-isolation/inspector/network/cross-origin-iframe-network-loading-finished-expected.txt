@@ -1,0 +1,14 @@
+Test that cross-origin iframe resource loading lifecycle events fire correctly for a completed fetch and a failed network load.
+
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrameLoadingLifecycle
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.LoadingDidFinish
+PASS: Resource should be created.
+PASS: Resource should be marked as finished.
+PASS: Resource should not be marked as failed.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.FailedLoadFiresLoadingDidFail
+PASS: Resource should be created.
+PASS: Resource should be marked as failed.
+

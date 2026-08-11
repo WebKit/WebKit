@@ -1,0 +1,21 @@
+
+PASS white-space: normal
+PASS white-space: pre
+PASS white-space: pre-wrap
+PASS white-space: pre-line
+PASS white-space: nowrap
+PASS white-space: break-spaces
+PASS white-space: collapse
+PASS white-space: preserve
+PASS white-space: preserve-breaks
+PASS white-space: wrap
+PASS white-space: discard-before
+PASS white-space: discard-after
+PASS white-space: discard-inner
+PASS white-space: preserve nowrap discard-inner
+PASS white-space: discard-before discard-after
+PASS white-space: discard-inner discard-after discard-before
+PASS white-space: collapse wrap discard-before discard-after discard-inner
+PASS `white-space` should overwrite a previously set `white-space-trim`
+PASS `white-space-trim` set after `white-space` should not be overwritten
+

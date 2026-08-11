@@ -1,0 +1,670 @@
+/*
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+
+#include "WasmBBQJIT.h"
+#include "WasmCallingConvention.h"
+#include "WasmCompilationContext.h"
+#include "WasmExceptionType.h"
+#include "WasmFunctionParser.h"
+#include "WasmLimits.h"
+#include "js/JSWebAssemblyInstance.h"
+#include <wtf/CheckedArithmetic.h>
+#include <wtf/Scope.h>
+
+namespace JSC { namespace Wasm { namespace BBQJITImpl {
+
+template<typename Functor>
+auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex, Functor&& functor) -> decltype(auto)
+{
+    if (WTF::sumOverflows<uint64_t>(static_cast<uint64_t>(sizeOfOperation), uoffset)) {
+        recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
+        return functor(CCallHelpers::Address(wasmBaseMemoryPointer, 0));
+    }
+
+    uint64_t boundary = static_cast<uint64_t>(sizeOfOperation) + uoffset - 1;
+
+    ScratchScope<1, 0> scratches(*this);
+    Location pointerLocation;
+
+    std::optional<ScratchScope<2, 0>> nonZeroMemoryScratches;
+    GPRReg baseRegister = wasmBaseMemoryPointer;
+    GPRReg boundsCheckingSizeRegister = wasmBoundsCheckingSizeRegister;
+    if (memoryIndex) {
+        nonZeroMemoryScratches.emplace(*this);
+        baseRegister = nonZeroMemoryScratches->gpr(0);
+        boundsCheckingSizeRegister = nonZeroMemoryScratches->gpr(1);
+        m_jit.loadPtr(
+            Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(memoryIndex)),
+            baseRegister
+        );
+        m_jit.loadPtr(
+            Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfCachedMemoryBaseSizePair(memoryIndex) + sizeof(UCPURegister)),
+            boundsCheckingSizeRegister
+        );
+    }
+
+    if (pointer.isConst()) {
+        uint64_t constantPointer = m_info.memory(memoryIndex).isMemory64() ? pointer.asI64() : static_cast<uint32_t>(pointer.asI32());
+        if (WTF::sumOverflows<uint64_t>(constantPointer, boundary))
+            recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
+        else {
+            uint64_t finalOffset = constantPointer + uoffset;
+            if (finalOffset <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) && B3::Air::Arg::isValidAddrForm(B3::Air::Move, static_cast<int32_t>(finalOffset), Width::Width128)) {
+                switch (m_info.memoryModeForAccess(memoryIndex, m_mode)) {
+                case MemoryMode::BoundsChecking: {
+                    m_jit.move(TrustedImmPtr(constantPointer + boundary), wasmScratchGPR);
+                    recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, boundsCheckingSizeRegister));
+                    break;
+                }
+                case MemoryMode::Signaling: {
+                    RELEASE_ASSERT(!m_info.memory(memoryIndex).isMemory64());
+                    // FIXME: it seems like this check is covered by the constantPointer + boundary >= maximum check below?
+                    if (uoffset >= Memory::fastMappedRedzoneBytes()) {
+                        uint64_t maximum = m_info.memory(memoryIndex).maximum() ? m_info.memory(memoryIndex).maximum().bytes() : std::numeric_limits<uint32_t>::max();
+                        if ((constantPointer + boundary) >= maximum)
+                            recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
+                    }
+                    break;
+                }
+                }
+                return functor(CCallHelpers::Address(baseRegister, static_cast<int32_t>(finalOffset)));
+            }
+        }
+        pointerLocation = Location::fromGPR(scratches.gpr(0));
+        emitMoveConst(pointer, pointerLocation);
+    } else
+        pointerLocation = loadIfNecessary(pointer);
+    ASSERT(pointerLocation.isGPR());
+
+    // FIXME: for clarity we should probably rename m_mode to m_memory0Mode or something similar
+    switch (m_info.memoryModeForAccess(memoryIndex, m_mode)) {
+    case MemoryMode::BoundsChecking: {
+        // We're not using signal handling only when the memory is not shared.
+        // Regardless of signaling, we must check that no memory access exceeds the current memory size.
+        if (m_info.memory(memoryIndex).isMemory64()) {
+            if (boundary) {
+                m_jit.move(TrustedImmPtr(boundary), wasmScratchGPR);
+                Jump overflow = m_jit.branchAddPtr(ResultCondition::Carry, pointerLocation.asGPR(), wasmScratchGPR);
+                recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, overflow);
+            } else
+                m_jit.move(pointerLocation.asGPR(), wasmScratchGPR);
+        } else {
+            m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+            if (boundary)
+                m_jit.addPtr(TrustedImmPtr(boundary), wasmScratchGPR);
+        }
+
+        recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, boundsCheckingSizeRegister));
+        break;
+    }
+    case MemoryMode::Signaling: {
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_info.memory(memoryIndex).isMemory64());
+        // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
+        // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
+        // memory accesses are 32-bit. However WebAssembly register + offset accesses perform the addition in 64-bit which can push an access above
+        // the 32-bit limit (the offset is unsigned 32-bit). The redzone will catch most small offsets, and we'll explicitly bounds check any
+        // register + large offset access. We don't think this will be generated frequently.
+        //
+        // We could check that register + large offset doesn't exceed 4GiB+redzone since that's technically the limit we need to avoid overflowing the
+        // PROT_NONE region, but it's better if we use a smaller immediate because it can codegens better. We know that anything equal to or greater
+        // than the declared 'maximum' will trap, so we can compare against that number. If there was no declared 'maximum' then we still know that
+        // any access equal to or greater than 4GiB will trap, no need to add the redzone.
+        if (uoffset >= Memory::fastMappedRedzoneBytes()) {
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_info.memory(memoryIndex).isMemory64());
+            uint64_t maximum = m_info.memory(memoryIndex).maximum() ? m_info.memory(memoryIndex).maximum().bytes() : std::numeric_limits<uint32_t>::max();
+            m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+            if (boundary)
+                m_jit.addPtr(TrustedImmPtr(boundary), wasmScratchGPR);
+            recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImmPtr(static_cast<int64_t>(maximum))));
+        }
+        break;
+    }
+    }
+
+    bool canUseOffsetForm = uoffset <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) && B3::Air::Arg::isValidAddrForm(B3::Air::Move, static_cast<int32_t>(uoffset), Width::Width128);
+#if CPU(ARM64)
+    if (canUseOffsetForm) {
+        if (m_info.memory(memoryIndex).isMemory64())
+            return functor(CCallHelpers::BaseIndex(baseRegister, pointerLocation.asGPR(), CCallHelpers::TimesOne, static_cast<int32_t>(uoffset)));
+        return functor(CCallHelpers::BaseIndex(baseRegister, pointerLocation.asGPR(), CCallHelpers::TimesOne, static_cast<int32_t>(uoffset), CCallHelpers::Extend::ZExt32));
+    }
+
+    if (m_info.memory(memoryIndex).isMemory64())
+        m_jit.addPtr(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
+    else
+        m_jit.addZeroExtend64(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
+#else
+    if (m_info.memory(memoryIndex).isMemory64())
+        m_jit.addPtr(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
+    else {
+        m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+        m_jit.addPtr(baseRegister, wasmScratchGPR);
+    }
+#endif
+
+    if (canUseOffsetForm)
+        return functor(Address(wasmScratchGPR, static_cast<int32_t>(uoffset)));
+
+    // FIXME: We (potentially) already computed this above before adding the boundary, we should preserve that add result and use it again here
+    m_jit.addPtr(TrustedImmPtr(uoffset), wasmScratchGPR);
+    return functor(Address(wasmScratchGPR));
+}
+
+#if CPU(X86_64)
+static inline RegisterSet clobbersForDivX86()
+{
+    static RegisterSet x86DivClobbers;
+    static std::once_flag flag;
+    std::call_once(
+        flag,
+        []() {
+            RegisterSet builder;
+            builder.add(X86Registers::eax, IgnoreVectors);
+            builder.add(X86Registers::edx, IgnoreVectors);
+            x86DivClobbers = builder;
+        });
+    return x86DivClobbers;
+}
+
+#define PREPARE_FOR_MOD_OR_DIV \
+do { \
+    for (JSC::Reg reg : clobbersForDivX86()) \
+        clobber(reg); \
+} while (false); \
+ScratchScope<0, 0> scratches(*this, clobbersForDivX86())
+#else
+#define PREPARE_FOR_MOD_OR_DIV
+#endif
+
+#if CPU(X86_64)
+template<typename IntType, bool IsMod>
+void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location rhsLocation, Value&, Location resultLocation)
+{
+    // FIXME: We currently don't do nearly as sophisticated instruction selection on Intel as we do on other platforms,
+    // but there's no good reason we can't. We should probably port over the isel in the future if it seems to yield
+    // dividends.
+
+    constexpr bool isSigned = std::is_signed<IntType>();
+    constexpr bool is32 = sizeof(IntType) == 4;
+
+    ASSERT(lhsLocation.isRegister() || rhsLocation.isRegister());
+    if (lhs.isConst())
+        emitMoveConst(lhs, lhsLocation = Location::fromGPR(wasmScratchGPR));
+    else if (rhs.isConst())
+        emitMoveConst(rhs, rhsLocation = Location::fromGPR(wasmScratchGPR));
+    ASSERT(lhsLocation.isRegister() && rhsLocation.isRegister());
+
+    ASSERT(resultLocation.isRegister());
+    ASSERT(lhsLocation.asGPR() != X86Registers::eax && lhsLocation.asGPR() != X86Registers::edx);
+    ASSERT(rhsLocation.asGPR() != X86Registers::eax && lhsLocation.asGPR() != X86Registers::edx);
+
+    ScratchScope<2, 0> scratches(*this, lhsLocation, rhsLocation, resultLocation);
+
+    Jump toDiv, toEnd;
+
+    Jump isZero = is32
+        ? m_jit.branchTest32(ResultCondition::Zero, rhsLocation.asGPR())
+        : m_jit.branchTest64(ResultCondition::Zero, rhsLocation.asGPR());
+    recordJumpToThrowException(ExceptionType::DivisionByZero, isZero);
+    if constexpr (isSigned) {
+        if constexpr (is32)
+            m_jit.compare32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), scratches.gpr(0));
+        else
+            m_jit.compare64(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), scratches.gpr(0));
+        if constexpr (is32)
+            m_jit.compare32(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm32(std::numeric_limits<int32_t>::min()), scratches.gpr(1));
+        else {
+            m_jit.move(TrustedImm64(std::numeric_limits<int64_t>::min()), scratches.gpr(1));
+            m_jit.compare64(RelationalCondition::Equal, lhsLocation.asGPR(), scratches.gpr(1), scratches.gpr(1));
+        }
+        m_jit.and64(scratches.gpr(0), scratches.gpr(1));
+        if constexpr (IsMod) {
+            toDiv = m_jit.branchTest64(ResultCondition::Zero, scratches.gpr(1));
+            // In this case, WASM doesn't want us to fault, but x86 will. So we set the result ourselves.
+            if constexpr (is32)
+                m_jit.xor32(resultLocation.asGPR(), resultLocation.asGPR());
+            else
+                m_jit.xor64(resultLocation.asGPR(), resultLocation.asGPR());
+            toEnd = m_jit.jump();
+        } else {
+            Jump isNegativeOne = m_jit.branchTest64(ResultCondition::NonZero, scratches.gpr(1));
+            recordJumpToThrowException(ExceptionType::IntegerOverflow, isNegativeOne);
+        }
+    }
+
+    if (toDiv.isSet())
+        toDiv.link(&m_jit);
+
+    m_jit.move(lhsLocation.asGPR(), X86Registers::eax);
+
+    if constexpr (is32 && isSigned) {
+        m_jit.x86ConvertToDoubleWord32();
+        m_jit.x86Div32(rhsLocation.asGPR());
+    } else if constexpr (is32) {
+        m_jit.xor32(X86Registers::edx, X86Registers::edx);
+        m_jit.x86UDiv32(rhsLocation.asGPR());
+    } else if constexpr (isSigned) {
+        m_jit.x86ConvertToQuadWord64();
+        m_jit.x86Div64(rhsLocation.asGPR());
+    } else {
+        m_jit.xor64(X86Registers::edx, X86Registers::edx);
+        m_jit.x86UDiv64(rhsLocation.asGPR());
+    }
+
+    if constexpr (IsMod)
+        m_jit.move(X86Registers::edx, resultLocation.asGPR());
+    else
+        m_jit.move(X86Registers::eax, resultLocation.asGPR());
+
+    if (toEnd.isSet())
+        toEnd.link(&m_jit);
+}
+#else
+template<typename IntType, bool IsMod>
+void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location rhsLocation, Value&, Location resultLocation)
+{
+    constexpr bool isSigned = std::is_signed<IntType>();
+    constexpr bool is32 = sizeof(IntType) == 4;
+
+    ASSERT(lhsLocation.isRegister() || rhsLocation.isRegister());
+    ASSERT(resultLocation.isRegister());
+
+    bool checkedForZero = false, checkedForNegativeOne = false;
+    if (rhs.isConst()) {
+        int64_t divisor = is32 ? rhs.asI32() : rhs.asI64();
+        if (!divisor) {
+            emitThrowException(ExceptionType::DivisionByZero);
+            return;
+        }
+        if (divisor == 1) {
+            if constexpr (IsMod) {
+                // N % 1 == 0
+                if constexpr (is32)
+                    m_jit.xor32(resultLocation.asGPR(), resultLocation.asGPR());
+                else
+                    m_jit.xor64(resultLocation.asGPR(), resultLocation.asGPR());
+            } else
+                m_jit.move(lhsLocation.asGPR(), resultLocation.asGPR());
+            return;
+        }
+        if (divisor == -1) {
+            // Check for INT_MIN / -1 case, and throw an IntegerOverflow exception if it occurs
+            if (!IsMod && isSigned) {
+                Jump jump = is32
+                    ? m_jit.branch32(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm32(std::numeric_limits<int32_t>::min()))
+                    : m_jit.branch64(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm64(std::numeric_limits<int64_t>::min()));
+                recordJumpToThrowException(ExceptionType::IntegerOverflow, jump);
+            }
+
+            if constexpr (isSigned) {
+                if constexpr (IsMod) {
+                    // N % 1 == 0
+                    if constexpr (is32)
+                        m_jit.xor32(resultLocation.asGPR(), resultLocation.asGPR());
+                    else
+                        m_jit.xor64(resultLocation.asGPR(), resultLocation.asGPR());
+                    return;
+                }
+                if constexpr (is32)
+                    m_jit.neg32(lhsLocation.asGPR(), resultLocation.asGPR());
+                else
+                    m_jit.neg64(lhsLocation.asGPR(), resultLocation.asGPR());
+                return;
+            }
+
+            // Fall through to general case.
+        } else {
+            using UnsignedInt = std::make_unsigned_t<IntType>;
+            bool divisorIsNegative = isSigned && divisor < 0;
+            UnsignedInt magnitude = divisorIsNegative
+                ? static_cast<UnsignedInt>(WTF::negate(static_cast<IntType>(divisor)))
+                : static_cast<UnsignedInt>(divisor);
+
+            if (isPowerOfTwo(magnitude)) {
+                unsigned shiftAmount = WTF::fastLog2(magnitude);
+
+                if constexpr (IsMod) {
+                    if constexpr (isSigned) {
+                        // This constructs an extra operand with log2(divisor) bits equal to the sign bit of the dividend. If the dividend
+                        // is positive, this is zero and adding it achieves nothing; but if the dividend is negative, this is equal to the
+                        // divisor minus one, which is the exact amount of bias we need to get the correct result. Computing this for both
+                        // positive and negative dividends lets us elide branching, but more importantly allows us to save a register by
+                        // not needing an extra multiplySub at the end.
+                        if constexpr (is32) {
+                            m_jit.rshift32(lhsLocation.asGPR(), TrustedImm32(31), wasmScratchGPR);
+                            m_jit.urshift32(wasmScratchGPR, TrustedImm32(32 - shiftAmount), wasmScratchGPR);
+                            m_jit.add32(wasmScratchGPR, lhsLocation.asGPR(), resultLocation.asGPR());
+                        } else {
+                            m_jit.rshift64(lhsLocation.asGPR(), TrustedImm32(63), wasmScratchGPR);
+                            m_jit.urshift64(wasmScratchGPR, TrustedImm32(64 - shiftAmount), wasmScratchGPR);
+                            m_jit.add64(wasmScratchGPR, lhsLocation.asGPR(), resultLocation.asGPR());
+                        }
+
+                        lhsLocation = resultLocation;
+                    }
+
+                    if constexpr (is32)
+                        m_jit.and32(Imm32(magnitude - 1), lhsLocation.asGPR(), resultLocation.asGPR());
+                    else
+                        m_jit.and64(TrustedImm64(magnitude - 1), lhsLocation.asGPR(), resultLocation.asGPR());
+
+                    if constexpr (isSigned) {
+                        // The extra operand we computed is still in wasmScratchGPR - now we can subtract it from the result to get the
+                        // correct answer.
+                        if constexpr (is32)
+                            m_jit.sub32(resultLocation.asGPR(), wasmScratchGPR, resultLocation.asGPR());
+                        else
+                            m_jit.sub64(resultLocation.asGPR(), wasmScratchGPR, resultLocation.asGPR());
+                    }
+                    return;
+                }
+
+                if constexpr (isSigned) {
+                    // If we are doing signed division, we need to bias the dividend for negative numbers.
+                    if constexpr (is32)
+                        m_jit.add32(TrustedImm32(magnitude - 1), lhsLocation.asGPR(), wasmScratchGPR);
+                    else
+                        m_jit.add64(TrustedImm64(magnitude - 1), lhsLocation.asGPR(), wasmScratchGPR);
+
+                    // moveConditionally seems to be faster than a branch here, even if it's well predicted.
+                    if (is32)
+                        m_jit.moveConditionally32(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0), lhsLocation.asGPR(), wasmScratchGPR, wasmScratchGPR);
+                    else
+                        m_jit.moveConditionally64(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0), lhsLocation.asGPR(), wasmScratchGPR, wasmScratchGPR);
+                    lhsLocation = Location::fromGPR(wasmScratchGPR);
+                }
+
+                // Emit the actual division instruction: arithmetic shift if signed,
+                // logical shift if unsigned
+                if constexpr (isSigned) {
+                    if constexpr (is32)
+                        m_jit.rshift32(lhsLocation.asGPR(), m_jit.trustedImm32ForShift(Imm32(shiftAmount)), resultLocation.asGPR());
+                    else
+                        m_jit.rshift64(lhsLocation.asGPR(), TrustedImm32(shiftAmount), resultLocation.asGPR());
+                } else {
+                    if constexpr (is32)
+                        m_jit.urshift32(lhsLocation.asGPR(), m_jit.trustedImm32ForShift(Imm32(shiftAmount)), resultLocation.asGPR());
+                    else
+                        m_jit.urshift64(lhsLocation.asGPR(), TrustedImm32(shiftAmount), resultLocation.asGPR());
+                }
+
+                if constexpr (isSigned) {
+                    if (divisorIsNegative) {
+                        if constexpr (is32)
+                            m_jit.neg32(resultLocation.asGPR(), resultLocation.asGPR());
+                        else
+                            m_jit.neg64(resultLocation.asGPR(), resultLocation.asGPR());
+                    }
+                }
+
+                return;
+            }
+        }
+        // TODO: try generating integer reciprocal instead.
+        checkedForNegativeOne = true;
+        checkedForZero = true;
+        rhsLocation = Location::fromGPR(wasmScratchGPR);
+        emitMoveConst(rhs, rhsLocation);
+        // Fall through to register/register div.
+    } else if (lhs.isConst()) {
+        int64_t dividend = is32 ? lhs.asI32() : lhs.asI64();
+
+        Jump isZero = is32
+            ? m_jit.branchTest32(ResultCondition::Zero, rhsLocation.asGPR())
+            : m_jit.branchTest64(ResultCondition::Zero, rhsLocation.asGPR());
+        recordJumpToThrowException(ExceptionType::DivisionByZero, isZero);
+        checkedForZero = true;
+
+        if (!dividend) {
+            if constexpr (is32)
+                m_jit.xor32(resultLocation.asGPR(), resultLocation.asGPR());
+            else
+                m_jit.xor64(resultLocation.asGPR(), resultLocation.asGPR());
+            return;
+        }
+        if (isSigned && !IsMod && dividend == std::numeric_limits<IntType>::min()) {
+            Jump isNegativeOne = is32
+                ? m_jit.branch32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1))
+                : m_jit.branch64(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm64(-1));
+            recordJumpToThrowException(ExceptionType::IntegerOverflow, isNegativeOne);
+        }
+        checkedForNegativeOne = true;
+
+        lhsLocation = Location::fromGPR(wasmScratchGPR);
+        emitMoveConst(lhs, lhsLocation);
+        // Fall through to register/register div.
+    }
+
+    if (!checkedForZero) {
+        Jump isZero = is32
+            ? m_jit.branchTest32(ResultCondition::Zero, rhsLocation.asGPR())
+            : m_jit.branchTest64(ResultCondition::Zero, rhsLocation.asGPR());
+        recordJumpToThrowException(ExceptionType::DivisionByZero, isZero);
+    }
+
+    ScratchScope<1, 0> scratches(*this, lhsLocation, rhsLocation, resultLocation);
+    if (isSigned && !IsMod && !checkedForNegativeOne) {
+        // The following code freely clobbers wasmScratchGPR. This would be a bug if either of our operands were
+        // stored in wasmScratchGPR, which is the case if one of our operands is a constant - but in that case,
+        // we should be able to rule out this check based on the value of that constant above.
+        ASSERT(!lhs.isConst());
+        ASSERT(!rhs.isConst());
+        ASSERT(lhsLocation.asGPR() != wasmScratchGPR);
+        ASSERT(rhsLocation.asGPR() != wasmScratchGPR);
+
+        if constexpr (is32)
+            m_jit.compare32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), wasmScratchGPR);
+        else
+            m_jit.compare64(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), wasmScratchGPR);
+        if constexpr (is32)
+            m_jit.compare32(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm32(std::numeric_limits<int32_t>::min()), scratches.gpr(0));
+        else {
+            m_jit.move(TrustedImm64(std::numeric_limits<int64_t>::min()), scratches.gpr(0));
+            m_jit.compare64(RelationalCondition::Equal, lhsLocation.asGPR(), scratches.gpr(0), scratches.gpr(0));
+        }
+        m_jit.and64(wasmScratchGPR, scratches.gpr(0), wasmScratchGPR);
+        Jump isNegativeOne = m_jit.branchTest64(ResultCondition::NonZero, wasmScratchGPR);
+        recordJumpToThrowException(ExceptionType::IntegerOverflow, isNegativeOne);
+    }
+
+    GPRReg divResult = IsMod ? scratches.gpr(0) : resultLocation.asGPR();
+    if (is32 && isSigned)
+        m_jit.div32(lhsLocation.asGPR(), rhsLocation.asGPR(), divResult);
+    else if (is32)
+        m_jit.uDiv32(lhsLocation.asGPR(), rhsLocation.asGPR(), divResult);
+    else if (isSigned)
+        m_jit.div64(lhsLocation.asGPR(), rhsLocation.asGPR(), divResult);
+    else
+        m_jit.uDiv64(lhsLocation.asGPR(), rhsLocation.asGPR(), divResult);
+
+    if (IsMod) {
+        if (is32)
+            m_jit.multiplySub32(divResult, rhsLocation.asGPR(), lhsLocation.asGPR(), resultLocation.asGPR());
+        else
+            m_jit.multiplySub64(divResult, rhsLocation.asGPR(), lhsLocation.asGPR(), resultLocation.asGPR());
+    }
+}
+#endif
+
+#if CPU(X86_64)
+#define PREPARE_FOR_SHIFT \
+    do { \
+        clobber(shiftRCX); \
+    } while (false); \
+    ScratchScope<0, 0> scratches(*this, Location::fromGPR(shiftRCX))
+#else
+#define PREPARE_FOR_SHIFT
+#endif
+
+template<size_t N, typename OverflowHandler>
+void BBQJIT::emitShuffleMove(Vector<Value, N, OverflowHandler>& srcVector, Vector<Location, N, OverflowHandler>& dstVector, Vector<ShuffleStatus, N, OverflowHandler>& statusVector, unsigned index)
+{
+    Location srcLocation = locationOf(srcVector[index]);
+    Location dst = dstVector[index];
+    if (srcLocation == dst)
+        return; // Easily eliminate redundant moves here.
+
+    uint32_t dstSize = srcVector[index].size();
+    statusVector[index] = ShuffleStatus::BeingMoved;
+    for (unsigned i = 0; i < srcVector.size(); i ++) {
+        // This check should handle constants too - constants always have location None, and no
+        // dst should ever be a constant. But we assume that's asserted in the caller.
+        if (Location::rangesOverlap(locationOf(srcVector[i]), srcVector[i].size(), dst, dstSize)) {
+            switch (statusVector[i]) {
+            case ShuffleStatus::ToMove:
+                emitShuffleMove(srcVector, dstVector, statusVector, i);
+                break;
+            case ShuffleStatus::BeingMoved: {
+                Location temp = srcVector[i].isFloat() ? Location::fromFPR(wasmScratchFPR) : Location::fromGPR(wasmScratchGPR);
+                emitMove(srcVector[i], temp);
+                srcVector[i] = Value::pinned(srcVector[i].type(), temp);
+                break;
+            }
+            case ShuffleStatus::Moved:
+                break;
+            }
+        }
+    }
+    emitMove(srcVector[index], dst);
+    statusVector[index] = ShuffleStatus::Moved;
+}
+
+template<typename Func>
+void BBQJIT::emitCCall(Func function, std::span<const Value> arguments)
+{
+    // Currently, we assume the Wasm calling convention is the same as the C calling convention
+    Vector<Type, 16> resultTypes;
+    auto argumentTypes = WTF::map<16>(arguments, [](auto& value) {
+        return Type { value.type(), 0u };
+    });
+    Ref<const RTT> functionRTT = TypeInformation::rttForFunction(resultTypes, argumentTypes);
+    CallInformation callInfo = wasmCallingConvention().callInformationFor(functionRTT.get(), CallRole::Caller);
+    Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
+    m_maxCalleeStackSizeForValidation = std::max<uint32_t>(calleeStackSize, m_maxCalleeStackSizeForValidation);
+    ASSERT(static_cast<uint32_t>(alignedFrameSize(m_maxCalleeStackSizeForValidation + m_frameSizeForValidation)) <= m_frameSize);
+
+    // Prepare wasm operation calls.
+    m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+
+    // Preserve caller-saved registers and other info
+    prepareForExceptions();
+    saveValuesAcrossCallAndPassArguments(arguments, callInfo, functionRTT.get());
+
+    // Materialize address of native function and call register
+    void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
+    m_jit.move(TrustedImmPtr(std::bit_cast<uintptr_t>(taggedFunctionPtr)), wasmScratchGPR);
+    m_jit.call(wasmScratchGPR, OperationPtrTag);
+}
+
+template<typename Func>
+void BBQJIT::emitCCall(Func function, std::span<const Value> arguments, Value& result)
+{
+    ASSERT(result.isTemp());
+
+    // Currently, we assume the Wasm calling convention is the same as the C calling convention
+    Vector<Type, 16> resultTypes = { Type { result.type(), 0u } };
+    auto argumentTypes = WTF::map<16>(arguments, [](auto& value) {
+        return Type { value.type(), 0u };
+    });
+
+    Ref<const RTT> functionRTT = TypeInformation::rttForFunction(resultTypes, argumentTypes);
+    CallInformation callInfo = wasmCallingConvention().callInformationFor(functionRTT.get(), CallRole::Caller);
+    Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
+    m_maxCalleeStackSizeForValidation = std::max<uint32_t>(calleeStackSize, m_maxCalleeStackSizeForValidation);
+    ASSERT(static_cast<uint32_t>(alignedFrameSize(m_maxCalleeStackSizeForValidation + m_frameSizeForValidation)) <= m_frameSize);
+
+    // Prepare wasm operation calls.
+    m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+
+    // Preserve caller-saved registers and other info
+    prepareForExceptions();
+    saveValuesAcrossCallAndPassArguments(arguments, callInfo, functionRTT.get());
+
+    // Materialize address of native function and call register
+    void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
+    m_jit.move(TrustedImmPtr(std::bit_cast<uintptr_t>(taggedFunctionPtr)), wasmScratchGPR);
+    m_jit.call(wasmScratchGPR, OperationPtrTag);
+
+    Location resultLocation;
+    switch (result.type()) {
+    case TypeKind::I32:
+    case TypeKind::I31ref:
+    case TypeKind::I64:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+    case TypeKind::Arrayref:
+    case TypeKind::Structref:
+    case TypeKind::Funcref:
+    case TypeKind::Exnref:
+    case TypeKind::Externref:
+    case TypeKind::Eqref:
+    case TypeKind::Anyref:
+    case TypeKind::Noexnref:
+    case TypeKind::Noneref:
+    case TypeKind::Nofuncref:
+    case TypeKind::Noexternref:
+    case TypeKind::Rec:
+    case TypeKind::Sub:
+    case TypeKind::Subfinal:
+    case TypeKind::Array:
+    case TypeKind::Struct:
+    case TypeKind::Func: {
+        resultLocation = Location::fromGPR(GPRInfo::returnValueGPR);
+        ASSERT(validGPRs().contains(GPRInfo::returnValueGPR, IgnoreVectors));
+        break;
+    }
+    case TypeKind::F32:
+    case TypeKind::F64: {
+        resultLocation = Location::fromFPR(FPRInfo::returnValueFPR);
+        ASSERT(validFPRs().contains(FPRInfo::returnValueFPR, Width::Width128));
+        break;
+    }
+    case TypeKind::V128: {
+        resultLocation = Location::fromFPR(FPRInfo::returnValueFPR);
+        ASSERT(validFPRs().contains(FPRInfo::returnValueFPR, Width::Width128));
+        break;
+    }
+    case TypeKind::Void:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    RegisterBinding currentBinding;
+    if (resultLocation.isGPR())
+        currentBinding = bindingFor(resultLocation.asGPR());
+    else if (resultLocation.isFPR())
+        currentBinding = bindingFor(resultLocation.asFPR());
+    RELEASE_ASSERT(!currentBinding.isScratch());
+
+    bind(result, resultLocation);
+}
+
+} } } // namespace JSC::Wasm::BBQJITImpl
+
+#endif // ENABLE(WEBASSEMBLY_BBQJIT)

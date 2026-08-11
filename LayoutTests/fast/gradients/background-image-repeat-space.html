@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            width: 200px;
+            height: 200px;
+            display: inline-block;
+            background-image: linear-gradient(lime, lime);
+        }
+        .fixed-tile {
+            background-size: 30px 30px;
+        }
+        .percentage-tile {
+            background-size: 15% 15%;
+        }
+        .space {
+            background-repeat: space;
+        }
+        .space-repeat {
+            background-repeat: space repeat;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="container fixed-tile space"></div>
+        <div class="container fixed-tile space-repeat"></div>
+    </div>
+    <div>
+        <div class="container percentage-tile space"></div>
+        <div class="container percentage-tile space-repeat"></div>
+    </div>
+</body>
+</html>
+

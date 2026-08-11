@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true ] -->
+<html>
+<head>
+<link rel="stylesheet" href="resources/cookies-test-style.css">
+<script src="resources/cookies-test-pre.js"></script>
+<script src="../resourceLoadStatistics/resources/util.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description(
+"This test checks that multiple cookies are correctly set in a same-site and cross-site iframe."
+);
+
+function openIframe(url) {
+    const element = document.createElement("iframe");
+    element.src = url;
+    document.body.appendChild(element);
+}
+
+const sameSiteOrigin = "https://127.0.0.1:8443";
+const thirdPartyOrigin = "https://localhost:8443";
+
+let sameSiteIframe = sameSiteOrigin + "/cookies/multiple-cookies.https.html";
+let crossSiteIframe = thirdPartyOrigin + "/cookies/multiple-cookies.https.html";
+
+testRunner?.waitUntilDone();
+testRunner?.dumpChildFramesAsText();
+setEnableFeature(true, function() {
+    testRunner?.setStatisticsShouldBlockThirdPartyCookies(true, () => {
+        window.onmessage = () => {
+            window.onmessage = () => {
+                testRunner?.setStatisticsShouldBlockThirdPartyCookies(false, () => {
+                    setEnableFeature(false, function() {
+                        testRunner?.notifyDone();
+                    });
+                }, false, true);
+            };
+            openIframe(crossSiteIframe);
+        };
+        openIframe(sameSiteIframe);
+    }, false, true);
+});
+</script>
+<script src="resources/cookies-test-post.js"></script>
+</body>
+</html>

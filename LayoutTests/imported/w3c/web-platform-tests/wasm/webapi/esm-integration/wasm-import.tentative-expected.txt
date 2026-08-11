@@ -1,0 +1,3 @@
+
+PASS Invalid imports for WebAssembly modules should error.
+

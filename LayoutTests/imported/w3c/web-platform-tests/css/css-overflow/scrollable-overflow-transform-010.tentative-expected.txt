@@ -1,0 +1,18 @@
+
+FAIL .container 1 assert_equals:
+<div class="container" data-expected-scroll-height="241">
+    <div style="transform: rotate(-45deg);" class="element">
+      <div style="transform: rotate(45deg);" class="element-2">
+      </div>
+    </div>
+  </div>
+scrollHeight expected 241 but got 300
+FAIL .container 2 assert_equals:
+<div class="container" data-expected-scroll-height="222">
+    <div style="transform: rotate(30deg) rotate(-15deg);" class="element">
+      <div style="transform: rotate(-30deg) rotate(105deg);" class="element-2">
+      </div>
+    </div>
+  </div>
+scrollHeight expected 222 but got 250
+

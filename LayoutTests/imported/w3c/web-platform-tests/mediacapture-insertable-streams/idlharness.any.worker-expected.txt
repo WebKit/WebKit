@@ -1,0 +1,28 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS MediaStreamTrackProcessor interface: existence and properties of interface object
+PASS MediaStreamTrackProcessor interface object length
+PASS MediaStreamTrackProcessor interface object name
+PASS MediaStreamTrackProcessor interface: existence and properties of interface prototype object
+PASS MediaStreamTrackProcessor interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaStreamTrackProcessor interface: existence and properties of interface prototype object's @@unscopables property
+PASS MediaStreamTrackProcessor interface: attribute readable
+FAIL MediaStreamTrackProcessor must be primary interface of new MediaStreamTrackProcessor({ track: new VideoTrackGenerator() }) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Type error"
+FAIL Stringification of new MediaStreamTrackProcessor({ track: new VideoTrackGenerator() }) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Type error"
+FAIL MediaStreamTrackProcessor interface: new MediaStreamTrackProcessor({ track: new VideoTrackGenerator() }) must inherit property "readable" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Type error"
+PASS VideoTrackGenerator interface: existence and properties of interface object
+PASS VideoTrackGenerator interface object length
+PASS VideoTrackGenerator interface object name
+PASS VideoTrackGenerator interface: existence and properties of interface prototype object
+PASS VideoTrackGenerator interface: existence and properties of interface prototype object's "constructor" property
+PASS VideoTrackGenerator interface: existence and properties of interface prototype object's @@unscopables property
+PASS VideoTrackGenerator interface: attribute writable
+PASS VideoTrackGenerator interface: attribute muted
+PASS VideoTrackGenerator interface: attribute track
+PASS VideoTrackGenerator must be primary interface of new VideoTrackGenerator()
+PASS Stringification of new VideoTrackGenerator()
+PASS VideoTrackGenerator interface: new VideoTrackGenerator() must inherit property "writable" with the proper type
+PASS VideoTrackGenerator interface: new VideoTrackGenerator() must inherit property "muted" with the proper type
+PASS VideoTrackGenerator interface: new VideoTrackGenerator() must inherit property "track" with the proper type
+

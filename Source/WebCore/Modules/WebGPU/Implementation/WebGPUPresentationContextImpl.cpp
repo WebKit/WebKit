@@ -1,0 +1,185 @@
+/*
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WebGPUPresentationContextImpl.h"
+
+#if HAVE(WEBGPU_IMPLEMENTATION)
+
+#include "NativeImage.h"
+#include "WebGPUCanvasConfiguration.h"
+#include "WebGPUConvertToBackingContext.h"
+#include "WebGPUDeviceImpl.h"
+#include "WebGPUTextureImpl.h"
+#include <WebGPU/WebGPUExt.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/MachSendRight.h>
+#endif
+
+namespace WebCore::WebGPU {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContextImpl);
+
+PresentationContextImpl::PresentationContextImpl(WebGPUPtr<WGPUSurface>&& surface, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(WTF::move(surface))
+    , m_convertToBackingContext(convertToBackingContext)
+{
+}
+
+PresentationContextImpl::~PresentationContextImpl() = default;
+
+void PresentationContextImpl::setSize(uint32_t width, uint32_t height)
+{
+    m_width = width;
+    m_height = height;
+}
+
+static WGPUToneMappingMode NODELETE convertToToneMappingMode(WebCore::WebGPU::CanvasToneMappingMode toneMappingMode)
+{
+    switch (toneMappingMode) {
+    case WebCore::WebGPU::CanvasToneMappingMode::Standard:
+        return WGPUToneMappingMode_Standard;
+    case WebCore::WebGPU::CanvasToneMappingMode::Extended:
+        return WGPUToneMappingMode_Extended;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WGPUToneMappingMode_Extended;
+}
+
+static WGPUCompositeAlphaMode NODELETE convertToAlphaMode(WebCore::WebGPU::CanvasAlphaMode compositingAlphaMode)
+{
+    switch (compositingAlphaMode) {
+    case WebCore::WebGPU::CanvasAlphaMode::Opaque:
+        return WGPUCompositeAlphaMode_Opaque;
+    case WebCore::WebGPU::CanvasAlphaMode::Premultiplied:
+        return WGPUCompositeAlphaMode_Premultiplied;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WGPUCompositeAlphaMode_Premultiplied;
+}
+
+static WGPUColorSpace NODELETE convertToColorSpace(PredefinedColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case PredefinedColorSpace::SRGB:
+        return WGPUColorSpace::SRGB;
+    case PredefinedColorSpace::SRGBLinear:
+        return WGPUColorSpace::SRGBLinear;
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+    case PredefinedColorSpace::DisplayP3:
+        return WGPUColorSpace::DisplayP3;
+    case PredefinedColorSpace::DisplayP3Linear:
+        return WGPUColorSpace::DisplayP3Linear;
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return WGPUColorSpace::SRGB;
+}
+
+bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfiguration)
+{
+    m_swapChain = nullptr;
+
+    m_format = canvasConfiguration.format;
+
+    Ref convertToBackingContext = m_convertToBackingContext;
+
+    WGPUSwapChainDescriptor backingDescriptor {
+        .label = nullptr,
+        .usage = convertToBackingContext->convertTextureUsageFlagsToBacking(canvasConfiguration.usage),
+        .format = convertToBackingContext->convertToBacking(canvasConfiguration.format),
+        .width = m_width,
+        .height = m_height,
+        .presentMode = WGPUPresentMode_Immediate,
+        .viewFormats = canvasConfiguration.viewFormats.map([&](auto colorFormat) {
+            return convertToBackingContext->convertToBacking(colorFormat);
+        }),
+        .colorSpace = convertToColorSpace(canvasConfiguration.colorSpace),
+        .toneMappingMode = convertToToneMappingMode(canvasConfiguration.toneMappingMode),
+        .compositeAlphaMode = convertToAlphaMode(canvasConfiguration.compositingAlphaMode),
+        .reportValidationErrors = canvasConfiguration.reportValidationErrors
+    };
+
+    m_swapChain = adoptWebGPU(wgpuDeviceCreateSwapChain(convertToBackingContext->convertToBacking(protect(canvasConfiguration.device)), m_backing.get(), &backingDescriptor));
+    return true;
+}
+
+void PresentationContextImpl::unconfigure()
+{
+    if (!m_swapChain)
+        return;
+
+    m_swapChain = nullptr;
+
+    m_format = TextureFormat::Bgra8unorm;
+    m_width = 0;
+    m_height = 0;
+    m_currentTexture = nullptr;
+}
+
+RefPtr<Texture> PresentationContextImpl::getCurrentTexture(uint32_t frameIndex)
+{
+    if (!m_swapChain)
+        return nullptr; // FIXME: This should return an invalid texture instead.
+
+    if (!m_currentTexture) {
+        auto texturePtr = wgpuSwapChainGetCurrentTexture(m_swapChain.get(), frameIndex);
+        if (!texturePtr)
+            return nullptr;
+
+        m_currentTexture = TextureImpl::create(WebGPUPtr<WGPUTexture> { texturePtr }, m_format, TextureDimension::_2d, m_convertToBackingContext);
+    }
+    return m_currentTexture;
+}
+
+void PresentationContextImpl::present(uint32_t frameIndex, bool)
+{
+    if (auto* surface = m_swapChain.get())
+        wgpuSwapChainPresent(surface, frameIndex);
+    m_currentTexture = nullptr;
+}
+
+Seconds PresentationContextImpl::lastFrameGPUCost() const
+{
+    if (auto* surface = m_backing.get())
+        return Seconds { wgpuSurfaceGetLastFrameGPUCostSeconds(surface) };
+    return 0_s;
+}
+
+RefPtr<WebCore::NativeImage> PresentationContextImpl::getMetalTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat)
+{
+    if (auto* surface = m_swapChain.get())
+        return WebCore::NativeImage::create(wgpuSwapChainGetTextureAsNativeImage(surface, bufferIndex, isIOSurfaceSupportedFormat));
+
+    return nullptr;
+}
+
+} // namespace WebCore::WebGPU
+
+#endif // HAVE(WEBGPU_IMPLEMENTATION)

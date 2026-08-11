@@ -1,0 +1,15 @@
+
+PASS EdDSA Ed25519 verification
+PASS EdDSA Ed25519 verification with altered signature after call
+PASS EdDSA Ed25519 with altered data after call
+PASS EdDSA Ed25519 using privateKey to verify
+PASS EdDSA Ed25519 using publicKey to sign
+PASS EdDSA Ed25519 no verify usage
+PASS EdDSA Ed25519 round trip
+PASS EdDSA Ed25519 signing with wrong algorithm name
+PASS EdDSA Ed25519 verifying with wrong algorithm name
+PASS EdDSA Ed25519 verification failure due to altered signature
+PASS EdDSA Ed25519 verification failure due to shortened signature
+PASS EdDSA Ed25519 verification failure due to altered data
+PASS Sign and verify using generated Ed25519 keys.
+

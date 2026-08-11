@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<div id="target"></div>
+<script>
+description("Checks that calling StylePropertyMap.set() with a negative value wraps it into a calc.");
+
+function toCamelCase(variable)
+{
+    return variable.replace(/-([a-z])/g, function(str, letter) {
+        return letter.toUpperCase();
+    });
+}
+
+target = document.getElementById("target");
+
+negative_length_properties = [
+    'background-size', // https://w3c.github.io/csswg-drafts/css-backgrounds/#the-background-size
+    'border-block-start-width', 'border-block-end-width', 'border-inline-start-width', 'border-inline-end-width', // https://w3c.github.io/csswg-drafts/css-logical/#border-width
+    'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-radius
+    'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width', // https://w3c.github.io/csswg-drafts/css-backgrounds/#the-border-width
+    'border-image-outset', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-image-outset
+    'border-image-width', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-image-width
+    'column-width', // https://w3c.github.io/csswg-drafts/css-multicol-1/#propdef-column-width
+    'flex-basis', // https://w3c.github.io/csswg-drafts/css-flexbox/#flex-basis-property
+    'grid-auto-columns', 'grid-auto-rows', // https://w3c.github.io/csswg-drafts/css-grid/#auto-tracks
+    'line-height', // https://w3c.github.io/csswg-drafts/css-inline/#line-height-property
+    'max-height', // https://w3c.github.io/csswg-drafts/css2/#propdef-max-height
+    'max-width', // https://w3c.github.io/csswg-drafts/css2/#propdef-max-width
+    'outline-width', // https://w3c.github.io/csswg-drafts/css-ui/#outline-width
+    'perspective', // https://w3c.github.io/csswg-drafts/css-transforms-2/#perspective-property
+    'row-gap', 'column-gap', // https://w3c.github.io/csswg-drafts/css-align/#column-row-gap
+    'scroll-padding-inline-start', 'scroll-padding-block-start', 'scroll-padding-inline-end', 'scroll-padding-block-end', // https://w3c.github.io/csswg-drafts/css-scroll-snap/#padding-longhands-logical
+    'width', // https://w3c.github.io/csswg-drafts/css-sizing-3/#propdef-width
+];
+negative_percent_properties = [
+    'background-size', // https://w3c.github.io/csswg-drafts/css-backgrounds/#the-background-size
+    'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-radius
+    'border-image-slice', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-image-slice
+    'border-image-width', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-image-width
+    'flex-basis', // https://w3c.github.io/csswg-drafts/css-flexbox/#flex-basis-property
+    'grid-auto-columns', 'grid-auto-rows', // https://w3c.github.io/csswg-drafts/css-grid/#auto-tracks
+    'line-height', // https://w3c.github.io/csswg-drafts/css-inline/#line-height-property
+    'max-height', // https://w3c.github.io/csswg-drafts/css2/#propdef-max-height
+    'max-width', // https://w3c.github.io/csswg-drafts/css2/#propdef-max-width
+    'row-gap', 'column-gap', // https://w3c.github.io/csswg-drafts/css-align/#column-row-gap
+    'scroll-padding-inline-start', 'scroll-padding-block-start', 'scroll-padding-inline-end', 'scroll-padding-block-end', // https://w3c.github.io/csswg-drafts/css-scroll-snap/#padding-longhands-logical
+    'width', // https://w3c.github.io/csswg-drafts/css-sizing-3/#propdef-width
+];
+negative_number_properties = [
+    'animation-iteration-count', // https://w3c.github.io/csswg-drafts/css-animations/#animation-iteration-count
+    'border-image-outset', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-image-outset
+    'border-image-slice', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-image-slice
+    'border-image-width', // https://w3c.github.io/csswg-drafts/css-backgrounds/#border-image-width
+    'line-height', // https://w3c.github.io/csswg-drafts/css-inline/#line-height-property
+    'stroke-miterlimit', // https://svgwg.org/svg2-draft/painting.html#StrokeMiterlimitProperty
+];
+negative_time_properties = [
+    'animation-duration', // https://w3c.github.io/csswg-drafts/css-animations/#animation-duration
+];
+
+for (let property of negative_length_properties) {
+  shouldNotThrow("target.attributeStyleMap.set('" + property + "', new CSSUnitValue(-32, 'px'))");
+  shouldBeEqualToString("target.style." + toCamelCase(property), "calc(-32px)");
+}
+
+for (let property of negative_percent_properties) {
+  shouldNotThrow("target.attributeStyleMap.set('" + property + "', new CSSUnitValue(-32, 'percent'))");
+  shouldBeEqualToString("target.style." + toCamelCase(property), "calc(-32%)");
+}
+
+for (let property of negative_number_properties) {
+  shouldNotThrow("target.attributeStyleMap.set('" + property + "', new CSSUnitValue(-32, 'number'))");
+  shouldBeEqualToString("target.style." + toCamelCase(property), "calc(-32)");
+}
+
+for (let property of negative_time_properties) {
+  shouldNotThrow("target.attributeStyleMap.set('" + property + "', new CSSUnitValue(-32, 's'))");
+  shouldBeEqualToString("target.style." + toCamelCase(property), "calc(-32s)");
+}
+
+// Special cases.
+
+// https://w3c.github.io/csswg-drafts/css-fonts/#font-weight-prop
+shouldNotThrow("target.attributeStyleMap.set('font-weight', new CSSUnitValue(0, 'number'))");
+shouldBeEqualToString("target.style.fontWeight", "calc(0)");
+shouldNotThrow("target.attributeStyleMap.set('font-weight', new CSSUnitValue(-32, 'number'))");
+shouldBeEqualToString("target.style.fontWeight", "calc(-32)");
+shouldNotThrow("target.attributeStyleMap.set('font-weight', new CSSUnitValue(100, 'number'))");
+shouldBeEqualToString("target.style.fontWeight", "100");
+shouldNotThrow("target.attributeStyleMap.set('font-weight', new CSSUnitValue(1001, 'number'))");
+shouldBeEqualToString("target.style.fontWeight", "calc(1001)");
+</script>
+</body>
+</html>

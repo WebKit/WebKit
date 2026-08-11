@@ -1,0 +1,199 @@
+/*
+ * Copyright (C) 2022 Igalia S.L.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "NotificationResourcesLoader.h"
+
+#if ENABLE(NOTIFICATIONS)
+
+#include "BitmapImage.h"
+#include "ContextDestructionObserverInlines.h"
+#include "GraphicsContext.h"
+#include "NotificationResources.h"
+#include "ResourceRequest.h"
+#include "ResourceResponse.h"
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/URL.h>
+
+namespace WebCore {
+
+// 2.5. Resources
+// https://notifications.spec.whatwg.org/#resources
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NotificationResourcesLoader);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ResourceLoader);
+
+NotificationResourcesLoader::NotificationResourcesLoader(Notification& notification)
+    : m_notification(notification)
+{
+}
+
+bool NotificationResourcesLoader::resourceIsSupportedInPlatform(Resource resource)
+{
+    switch (resource) {
+    case Resource::Icon:
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        return true;
+#else
+        return false;
+#endif
+    case Resource::Image:
+    case Resource::Badge:
+    case Resource::ActionIcon:
+        // FIXME: Implement other resources.
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void NotificationResourcesLoader::start(CompletionHandler<void(RefPtr<NotificationResources>&&)>&& completionHandler)
+{
+    m_completionHandler = WTF::move(completionHandler);
+
+    // If the notification platform supports icons, fetch notification’s icon URL, if icon URL is set.
+    if (resourceIsSupportedInPlatform(Resource::Icon)) {
+        Ref notification = m_notification.get();
+        const URL& iconURL = notification->icon();
+        if (!iconURL.isEmpty()) {
+            Ref loader = ResourceLoader::create(*protect(notification->scriptExecutionContext()), iconURL, [this](ResourceLoader* loader, RefPtr<BitmapImage>&& image) {
+                if (m_stopped)
+                    return;
+
+                if (image && !image->size().isEmpty()) {
+                    if (!m_resources)
+                        m_resources = NotificationResources::create();
+                    protect(m_resources)->setIcon(WTF::move(image));
+                }
+
+                didFinishLoadingResource(loader);
+            });
+
+            if (!loader->finished())
+                m_loaders.add(WTF::move(loader));
+        }
+    }
+
+    // FIXME: Implement other resources.
+
+    if (m_loaders.isEmpty())
+        m_completionHandler(WTF::move(m_resources));
+}
+
+void NotificationResourcesLoader::stop()
+{
+    if (m_stopped)
+        return;
+
+    m_stopped = true;
+
+    auto completionHandler = std::exchange(m_completionHandler, nullptr);
+
+    while (!m_loaders.isEmpty()) {
+        RefPtr loader = m_loaders.takeAny();
+        loader->cancel();
+    }
+
+    if (completionHandler)
+        completionHandler(nullptr);
+}
+
+void NotificationResourcesLoader::didFinishLoadingResource(ResourceLoader* loader)
+{
+    if (m_loaders.contains(loader)) {
+        m_loaders.remove(loader);
+        if (m_loaders.isEmpty() && m_completionHandler)
+            m_completionHandler(WTF::move(m_resources));
+    }
+}
+
+auto NotificationResourcesLoader::ResourceLoader::create(ScriptExecutionContext& context, const URL& url, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&& completionHandler) -> Ref<ResourceLoader>
+{
+    return adoptRef(*new ResourceLoader(context, url, WTF::move(completionHandler)));
+}
+
+NotificationResourcesLoader::ResourceLoader::ResourceLoader(ScriptExecutionContext& context, const URL& url, CompletionHandler<void(ResourceLoader*, RefPtr<BitmapImage>&&)>&& completionHandler)
+    : m_completionHandler(WTF::move(completionHandler))
+{
+    relaxAdoptionRequirement();
+
+    ThreadableLoaderOptions options;
+    options.mode = FetchOptions::Mode::Cors;
+    options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
+    options.dataBufferingPolicy = DataBufferingPolicy::DoNotBufferData;
+    options.contentSecurityPolicyEnforcement = context.shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective;
+    m_loader = ThreadableLoader::create(context, *this, ResourceRequest(URL { url }), options);
+}
+
+NotificationResourcesLoader::ResourceLoader::~ResourceLoader() = default;
+
+void NotificationResourcesLoader::ResourceLoader::cancel()
+{
+    auto completionHandler = std::exchange(m_completionHandler, nullptr);
+    protect(*m_loader)->cancel();
+    m_loader = nullptr;
+    if (completionHandler)
+        completionHandler(this, nullptr);
+}
+
+void NotificationResourcesLoader::ResourceLoader::didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response)
+{
+    // If the response's internal response's type is "default", then attempt to decode the resource as image.
+    if (response.type() == ResourceResponse::Type::Default)
+        m_image = BitmapImage::create();
+}
+
+void NotificationResourcesLoader::ResourceLoader::didReceiveData(const SharedBuffer& buffer)
+{
+    if (RefPtr image = m_image) {
+        m_buffer.append(buffer);
+        image->setData(m_buffer.buffer(), false);
+    }
+}
+
+void NotificationResourcesLoader::ResourceLoader::didFinishLoading(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const NetworkLoadMetrics&)
+{
+    m_finished = true;
+
+    if (RefPtr image = m_image)
+        image->setData(m_buffer.takeBuffer(), true);
+
+    if (m_completionHandler)
+        m_completionHandler(this, WTF::move(m_image));
+}
+
+void NotificationResourcesLoader::ResourceLoader::didFail(std::optional<ScriptExecutionContextIdentifier>, const ResourceError&)
+{
+    m_finished = true;
+
+    if (m_completionHandler)
+        m_completionHandler(this, nullptr);
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(NOTIFICATIONS)

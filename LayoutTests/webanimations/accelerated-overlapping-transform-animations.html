@@ -1,0 +1,44 @@
+<style>
+
+    #target {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100px;
+        background-color: black;
+    }
+
+</style>
+<div id="target"></div>
+<script src="../resources/ui-helper.js"></script>
+<script>
+
+const waitForAnimationCommit = async (animation) => {
+    await animation.ready;
+    if (!UIHelper.isWebKit2()) {
+        await UIHelper.renderingUpdate();
+        await UIHelper.renderingUpdate();
+    } else
+        await UIHelper.ensureStablePresentationUpdate()
+}
+
+(async () => {
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    const target = document.getElementById("target");
+
+    // Make the animations last a whole minute so they don't end while the test is running. 
+    const duration = 60 * 1000;
+
+    // Start a first stationary "transform" animation and wait until it has been applied before starting
+    // a second stationary "transform" animation which should replace the first one.
+    await waitForAnimationCommit(target.animate({ transform: ["translateX(100px)", "translateX(100px)"] }, duration));
+    await waitForAnimationCommit(target.animate({ transform: ["translateX(200px)", "translateX(200px)"] }, duration));
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+
+</script>

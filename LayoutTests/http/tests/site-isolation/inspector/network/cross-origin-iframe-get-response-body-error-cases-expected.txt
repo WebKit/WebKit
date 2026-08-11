@@ -1,0 +1,22 @@
+Tests the error paths of Network.getResponseBody under Site Isolation (malformed requestId, unknown process, unknown resource), routed through ProxyingNetworkAgent.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ErrorCases
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ErrorCases.ValidControl
+PASS: Loaded resource should have a request identifier.
+PASS: Control: valid requestId should return the served content.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ErrorCases.Malformed
+PASS: Malformed string: getResponseBody should fail.
+  Error: Invalid requestId format
+PASS: Non-numeric ids: getResponseBody should fail.
+  Error: Invalid requestId format
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ErrorCases.UnknownProcess
+PASS: Unknown process: getResponseBody should fail.
+  Error: WebProcess not found for requestId
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBody.ErrorCases.UnknownResource
+PASS: Unknown resource in real process: getResponseBody should fail.
+  Error: Missing resource for given requestId
+

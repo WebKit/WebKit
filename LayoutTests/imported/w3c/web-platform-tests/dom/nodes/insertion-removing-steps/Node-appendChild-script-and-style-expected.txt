@@ -1,0 +1,7 @@
+
+PASS An earlier-inserted <script> synchronously observes a later-inserted <style> (via a div) being applied
+PASS An earlier-inserted <script> synchronously observes a later-inserted <style> (via a DocumentFragment) being applied
+FAIL Earlier-inserted <script> (via a DocumentFragment) synchronously observes a later-inserted <link rel=stylesheet>'s CSSStyleSheet creation assert_array_equals: expected property 0 to be "sheet" but got null (expected array ["sheet"] got [null])
+FAIL Earlier-inserted <script> (via a div) synchronously observes a later-inserted <link rel=stylesheet>'s CSSStyleSheet creation assert_array_equals: expected property 0 to be "sheet" but got null (expected array ["sheet"] got [null])
+FAIL Earlier-inserted <script> (via a append()) synchronously observes a later-inserted <link rel=stylesheet>'s CSSStyleSheet creation assert_array_equals: expected property 0 to be "sheet" but got null (expected array ["sheet"] got [null])
+

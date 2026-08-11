@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="text" type="text" />
+<button id="button" aria-describedby="tooltip">Click me</button>
+<div id="tooltip" role="tooltip" style="display: none"></div>
+
+<script>
+var output = "This test ensures we don't crash when a shadow-scoped stylesheet invalidation causes style re-resolution during textUnderElement.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var button = document.getElementById("button");
+    // Create a shadow root on the tooltip with slots.
+    var tooltip = document.getElementById("tooltip");
+    var shadow = tooltip.attachShadow({ mode: "open" });
+    shadow.innerHTML = "<style>.inner { color: red; }</style><slot></slot><slot></slot>";
+    // Add a light DOM child text that will be slotted.
+    tooltip.innerHTML = "Tooltip text";
+
+    setTimeout(async function() {
+        touchAccessibilityTree(accessibilityController.rootElement);
+
+        var styleElement = shadow.querySelector("style");
+        // Dirty the style by changing text color (which is an inherited property).
+        styleElement.textContent = `.inner { color: rgb(50, 0, 0); }`;
+        tooltip.innerHTML = "New text";
+        // Update aria-description so the tooltip's accessibility text is queued for recomputation.
+        tooltip.setAttribute("aria-description", "new description");
+        // Change a text field's value so we start the notification timer. We process isolated object updates before
+        // posting notifications, so we will process the updates from the aria-description change. In doing so, we will 
+        // recompute accessibility text property while the element has dirty style.
+        document.getElementById("text").value = "foo";
+        await sleep(0);
+        touchAccessibilityTree(accessibilityController.rootElement);
+
+        output += "PASS: No crash.";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

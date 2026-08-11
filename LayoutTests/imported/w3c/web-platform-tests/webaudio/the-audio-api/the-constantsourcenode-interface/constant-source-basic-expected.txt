@@ -1,0 +1,6 @@
+
+PASS ConstantSourceNode constructor creates a valid node with correct defaults
+PASS ConstantSourceNode start()/stop() should throw correct exceptions per spec
+PASS context.createConstantSource() creates a ConstantSourceNode with correct defaults
+PASS context.createConstantSource() node start()/stop() should throw correct exceptions per spec
+

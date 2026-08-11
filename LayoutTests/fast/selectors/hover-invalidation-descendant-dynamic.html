@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.parent {
+    position: relative;
+    padding: 10px;
+    background-color: silver;
+}
+
+.child {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    top: 0px;
+    background-color: green;
+    display: none;
+}
+
+#target.enableHover:hover .child {
+    display: block;
+}
+
+/* :matches() is here to disable the selector compiler */
+#target2:matches(:root, :nth-of-type(n), :not(#specificity-trick), :nth-last-of-type(n)).enableHover:hover .child {
+    display: block;
+}
+
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest(targetSelector) {
+    var target = document.querySelector(targetSelector);
+    var child = target.querySelector('.child');
+
+    target.classList.add('enableHover');
+
+    if (window.eventSender) {
+        var x = target.offsetLeft + target.offsetWidth / 2;
+        var y = target.offsetTop + target.offsetHeight / 2;
+        eventSender.mouseMoveTo(x, y);
+    }
+
+    return child.offsetWidth != 0;
+}
+
+function log(text, pass) {
+    var log = document.querySelector("#log");
+    var line = document.createElement("div");
+    line.innerHTML = text + ": " + (pass ? "PASS" : "FAIL");
+    log.appendChild(line);
+}
+
+function runTests() {
+    var compilerPass = runTest("#target");
+    var checkerPass = runTest("#target2");
+    if (!window.testRunner)
+        return;
+    log("Selector compiler", compilerPass);
+    log("Selector checker", checkerPass);
+
+    testRunner.notifyDone();
+}
+
+</script>
+</head>
+<body onload="runTests()">
+<div>
+Test that dynamically activated :hover rule affecting descendants works.
+</div>
+<div id="target" class="parent">
+    Hover to see a green box below.
+    <div class="child"></div>
+</div>
+<div id="target2" class="parent">
+    Hover to see a green box below.
+    <div class="child"></div>
+</div>
+<div id=log></div>
+</body>
+</html>

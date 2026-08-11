@@ -1,0 +1,345 @@
+/* This file is part of the WebKit open source project.
+   
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public
+   License as published by the Free Software Foundation; either
+   version 2 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with this library; see the file COPYING.LIB.  If not, write to
+   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA 02110-1301, USA.
+*/
+
+#ifndef webkitdomdefines_h
+#define webkitdomdefines_h
+
+#include <glib.h>
+
+#ifdef G_OS_WIN32
+    #ifdef BUILDING_WEBKIT
+        #define WEBKIT_API __declspec(dllexport)
+    #else
+        #define WEBKIT_API __declspec(dllimport)
+    #endif
+#else
+    #define WEBKIT_API __attribute__((visibility("default")))
+#endif
+
+#define WEBKIT_DEPRECATED WEBKIT_API G_DEPRECATED
+#define WEBKIT_DEPRECATED_FOR(f) WEBKIT_API G_DEPRECATED_FOR(f)
+
+#ifndef WEBKIT_API
+    #define WEBKIT_API
+#endif
+typedef struct _WebKitDOMAttr WebKitDOMAttr;
+typedef struct _WebKitDOMAttrClass WebKitDOMAttrClass;
+
+typedef struct _WebKitDOMBlob WebKitDOMBlob;
+typedef struct _WebKitDOMBlobClass WebKitDOMBlobClass;
+
+typedef struct _WebKitDOMCDATASection WebKitDOMCDATASection;
+typedef struct _WebKitDOMCDATASectionClass WebKitDOMCDATASectionClass;
+
+typedef struct _WebKitDOMCSSRule WebKitDOMCSSRule;
+typedef struct _WebKitDOMCSSRuleClass WebKitDOMCSSRuleClass;
+
+typedef struct _WebKitDOMCSSRuleList WebKitDOMCSSRuleList;
+typedef struct _WebKitDOMCSSRuleListClass WebKitDOMCSSRuleListClass;
+
+typedef struct _WebKitDOMCSSStyleDeclaration WebKitDOMCSSStyleDeclaration;
+typedef struct _WebKitDOMCSSStyleDeclarationClass WebKitDOMCSSStyleDeclarationClass;
+
+typedef struct _WebKitDOMCSSStyleSheet WebKitDOMCSSStyleSheet;
+typedef struct _WebKitDOMCSSStyleSheetClass WebKitDOMCSSStyleSheetClass;
+
+typedef struct _WebKitDOMCSSValue WebKitDOMCSSValue;
+typedef struct _WebKitDOMCSSValueClass WebKitDOMCSSValueClass;
+
+typedef struct _WebKitDOMCharacterData WebKitDOMCharacterData;
+typedef struct _WebKitDOMCharacterDataClass WebKitDOMCharacterDataClass;
+
+typedef struct _WebKitDOMClientRect WebKitDOMClientRect;
+typedef struct _WebKitDOMClientRectClass WebKitDOMClientRectClass;
+
+typedef struct _WebKitDOMClientRectList WebKitDOMClientRectList;
+typedef struct _WebKitDOMClientRectListClass WebKitDOMClientRectListClass;
+
+typedef struct _WebKitDOMComment WebKitDOMComment;
+typedef struct _WebKitDOMCommentClass WebKitDOMCommentClass;
+
+typedef struct _WebKitDOMDOMImplementation WebKitDOMDOMImplementation;
+typedef struct _WebKitDOMDOMImplementationClass WebKitDOMDOMImplementationClass;
+
+typedef struct _WebKitDOMDOMWindow WebKitDOMDOMWindow;
+typedef struct _WebKitDOMDOMWindowClass WebKitDOMDOMWindowClass;
+
+typedef struct _WebKitDOMDocument WebKitDOMDocument;
+typedef struct _WebKitDOMDocumentClass WebKitDOMDocumentClass;
+
+typedef struct _WebKitDOMDocumentFragment WebKitDOMDocumentFragment;
+typedef struct _WebKitDOMDocumentFragmentClass WebKitDOMDocumentFragmentClass;
+
+typedef struct _WebKitDOMDocumentType WebKitDOMDocumentType;
+typedef struct _WebKitDOMDocumentTypeClass WebKitDOMDocumentTypeClass;
+
+typedef struct _WebKitDOMElement WebKitDOMElement;
+typedef struct _WebKitDOMElementClass WebKitDOMElementClass;
+
+typedef struct _WebKitDOMEvent WebKitDOMEvent;
+typedef struct _WebKitDOMEventClass WebKitDOMEventClass;
+
+typedef struct _WebKitDOMEventTarget WebKitDOMEventTarget;
+typedef struct _WebKitDOMEventTargetIface WebKitDOMEventTargetIface;
+
+typedef struct _WebKitDOMFile WebKitDOMFile;
+typedef struct _WebKitDOMFileClass WebKitDOMFileClass;
+
+typedef struct _WebKitDOMFileList WebKitDOMFileList;
+typedef struct _WebKitDOMFileListClass WebKitDOMFileListClass;
+
+typedef struct _WebKitDOMHTMLAnchorElement WebKitDOMHTMLAnchorElement;
+typedef struct _WebKitDOMHTMLAnchorElementClass WebKitDOMHTMLAnchorElementClass;
+
+typedef struct _WebKitDOMHTMLAppletElement WebKitDOMHTMLAppletElement;
+typedef struct _WebKitDOMHTMLAppletElementClass WebKitDOMHTMLAppletElementClass;
+
+typedef struct _WebKitDOMHTMLAreaElement WebKitDOMHTMLAreaElement;
+typedef struct _WebKitDOMHTMLAreaElementClass WebKitDOMHTMLAreaElementClass;
+
+typedef struct _WebKitDOMHTMLBRElement WebKitDOMHTMLBRElement;
+typedef struct _WebKitDOMHTMLBRElementClass WebKitDOMHTMLBRElementClass;
+
+typedef struct _WebKitDOMHTMLBaseElement WebKitDOMHTMLBaseElement;
+typedef struct _WebKitDOMHTMLBaseElementClass WebKitDOMHTMLBaseElementClass;
+
+typedef struct _WebKitDOMHTMLBodyElement WebKitDOMHTMLBodyElement;
+typedef struct _WebKitDOMHTMLBodyElementClass WebKitDOMHTMLBodyElementClass;
+
+typedef struct _WebKitDOMHTMLButtonElement WebKitDOMHTMLButtonElement;
+typedef struct _WebKitDOMHTMLButtonElementClass WebKitDOMHTMLButtonElementClass;
+
+typedef struct _WebKitDOMHTMLCanvasElement WebKitDOMHTMLCanvasElement;
+typedef struct _WebKitDOMHTMLCanvasElementClass WebKitDOMHTMLCanvasElementClass;
+
+typedef struct _WebKitDOMHTMLCollection WebKitDOMHTMLCollection;
+typedef struct _WebKitDOMHTMLCollectionClass WebKitDOMHTMLCollectionClass;
+
+typedef struct _WebKitDOMHTMLDListElement WebKitDOMHTMLDListElement;
+typedef struct _WebKitDOMHTMLDListElementClass WebKitDOMHTMLDListElementClass;
+
+typedef struct _WebKitDOMHTMLDirectoryElement WebKitDOMHTMLDirectoryElement;
+typedef struct _WebKitDOMHTMLDirectoryElementClass WebKitDOMHTMLDirectoryElementClass;
+
+typedef struct _WebKitDOMHTMLDivElement WebKitDOMHTMLDivElement;
+typedef struct _WebKitDOMHTMLDivElementClass WebKitDOMHTMLDivElementClass;
+
+typedef struct _WebKitDOMHTMLDocument WebKitDOMHTMLDocument;
+typedef struct _WebKitDOMHTMLDocumentClass WebKitDOMHTMLDocumentClass;
+
+typedef struct _WebKitDOMHTMLElement WebKitDOMHTMLElement;
+typedef struct _WebKitDOMHTMLElementClass WebKitDOMHTMLElementClass;
+
+typedef struct _WebKitDOMHTMLEmbedElement WebKitDOMHTMLEmbedElement;
+typedef struct _WebKitDOMHTMLEmbedElementClass WebKitDOMHTMLEmbedElementClass;
+
+typedef struct _WebKitDOMHTMLFieldSetElement WebKitDOMHTMLFieldSetElement;
+typedef struct _WebKitDOMHTMLFieldSetElementClass WebKitDOMHTMLFieldSetElementClass;
+
+typedef struct _WebKitDOMHTMLFontElement WebKitDOMHTMLFontElement;
+typedef struct _WebKitDOMHTMLFontElementClass WebKitDOMHTMLFontElementClass;
+
+typedef struct _WebKitDOMHTMLFormElement WebKitDOMHTMLFormElement;
+typedef struct _WebKitDOMHTMLFormElementClass WebKitDOMHTMLFormElementClass;
+
+typedef struct _WebKitDOMHTMLFrameElement WebKitDOMHTMLFrameElement;
+typedef struct _WebKitDOMHTMLFrameElementClass WebKitDOMHTMLFrameElementClass;
+
+typedef struct _WebKitDOMHTMLFrameSetElement WebKitDOMHTMLFrameSetElement;
+typedef struct _WebKitDOMHTMLFrameSetElementClass WebKitDOMHTMLFrameSetElementClass;
+
+typedef struct _WebKitDOMHTMLHRElement WebKitDOMHTMLHRElement;
+typedef struct _WebKitDOMHTMLHRElementClass WebKitDOMHTMLHRElementClass;
+
+typedef struct _WebKitDOMHTMLHeadElement WebKitDOMHTMLHeadElement;
+typedef struct _WebKitDOMHTMLHeadElementClass WebKitDOMHTMLHeadElementClass;
+
+typedef struct _WebKitDOMHTMLHeadingElement WebKitDOMHTMLHeadingElement;
+typedef struct _WebKitDOMHTMLHeadingElementClass WebKitDOMHTMLHeadingElementClass;
+
+typedef struct _WebKitDOMHTMLHtmlElement WebKitDOMHTMLHtmlElement;
+typedef struct _WebKitDOMHTMLHtmlElementClass WebKitDOMHTMLHtmlElementClass;
+
+typedef struct _WebKitDOMHTMLIFrameElement WebKitDOMHTMLIFrameElement;
+typedef struct _WebKitDOMHTMLIFrameElementClass WebKitDOMHTMLIFrameElementClass;
+
+typedef struct _WebKitDOMHTMLImageElement WebKitDOMHTMLImageElement;
+typedef struct _WebKitDOMHTMLImageElementClass WebKitDOMHTMLImageElementClass;
+
+typedef struct _WebKitDOMHTMLInputElement WebKitDOMHTMLInputElement;
+typedef struct _WebKitDOMHTMLInputElementClass WebKitDOMHTMLInputElementClass;
+
+typedef struct _WebKitDOMHTMLLIElement WebKitDOMHTMLLIElement;
+typedef struct _WebKitDOMHTMLLIElementClass WebKitDOMHTMLLIElementClass;
+
+typedef struct _WebKitDOMHTMLLabelElement WebKitDOMHTMLLabelElement;
+typedef struct _WebKitDOMHTMLLabelElementClass WebKitDOMHTMLLabelElementClass;
+
+typedef struct _WebKitDOMHTMLLegendElement WebKitDOMHTMLLegendElement;
+typedef struct _WebKitDOMHTMLLegendElementClass WebKitDOMHTMLLegendElementClass;
+
+typedef struct _WebKitDOMHTMLLinkElement WebKitDOMHTMLLinkElement;
+typedef struct _WebKitDOMHTMLLinkElementClass WebKitDOMHTMLLinkElementClass;
+
+typedef struct _WebKitDOMHTMLMapElement WebKitDOMHTMLMapElement;
+typedef struct _WebKitDOMHTMLMapElementClass WebKitDOMHTMLMapElementClass;
+
+typedef struct _WebKitDOMHTMLMarqueeElement WebKitDOMHTMLMarqueeElement;
+typedef struct _WebKitDOMHTMLMarqueeElementClass WebKitDOMHTMLMarqueeElementClass;
+
+typedef struct _WebKitDOMHTMLMenuElement WebKitDOMHTMLMenuElement;
+typedef struct _WebKitDOMHTMLMenuElementClass WebKitDOMHTMLMenuElementClass;
+
+typedef struct _WebKitDOMHTMLMetaElement WebKitDOMHTMLMetaElement;
+typedef struct _WebKitDOMHTMLMetaElementClass WebKitDOMHTMLMetaElementClass;
+
+typedef struct _WebKitDOMHTMLModElement WebKitDOMHTMLModElement;
+typedef struct _WebKitDOMHTMLModElementClass WebKitDOMHTMLModElementClass;
+
+typedef struct _WebKitDOMHTMLOListElement WebKitDOMHTMLOListElement;
+typedef struct _WebKitDOMHTMLOListElementClass WebKitDOMHTMLOListElementClass;
+
+typedef struct _WebKitDOMHTMLObjectElement WebKitDOMHTMLObjectElement;
+typedef struct _WebKitDOMHTMLObjectElementClass WebKitDOMHTMLObjectElementClass;
+
+typedef struct _WebKitDOMHTMLOptGroupElement WebKitDOMHTMLOptGroupElement;
+typedef struct _WebKitDOMHTMLOptGroupElementClass WebKitDOMHTMLOptGroupElementClass;
+
+typedef struct _WebKitDOMHTMLOptionElement WebKitDOMHTMLOptionElement;
+typedef struct _WebKitDOMHTMLOptionElementClass WebKitDOMHTMLOptionElementClass;
+
+typedef struct _WebKitDOMHTMLOptionsCollection WebKitDOMHTMLOptionsCollection;
+typedef struct _WebKitDOMHTMLOptionsCollectionClass WebKitDOMHTMLOptionsCollectionClass;
+
+typedef struct _WebKitDOMHTMLParagraphElement WebKitDOMHTMLParagraphElement;
+typedef struct _WebKitDOMHTMLParagraphElementClass WebKitDOMHTMLParagraphElementClass;
+
+typedef struct _WebKitDOMHTMLParamElement WebKitDOMHTMLParamElement;
+typedef struct _WebKitDOMHTMLParamElementClass WebKitDOMHTMLParamElementClass;
+
+typedef struct _WebKitDOMHTMLPreElement WebKitDOMHTMLPreElement;
+typedef struct _WebKitDOMHTMLPreElementClass WebKitDOMHTMLPreElementClass;
+
+typedef struct _WebKitDOMHTMLQuoteElement WebKitDOMHTMLQuoteElement;
+typedef struct _WebKitDOMHTMLQuoteElementClass WebKitDOMHTMLQuoteElementClass;
+
+typedef struct _WebKitDOMHTMLScriptElement WebKitDOMHTMLScriptElement;
+typedef struct _WebKitDOMHTMLScriptElementClass WebKitDOMHTMLScriptElementClass;
+
+typedef struct _WebKitDOMHTMLSelectElement WebKitDOMHTMLSelectElement;
+typedef struct _WebKitDOMHTMLSelectElementClass WebKitDOMHTMLSelectElementClass;
+
+typedef struct _WebKitDOMHTMLStyleElement WebKitDOMHTMLStyleElement;
+typedef struct _WebKitDOMHTMLStyleElementClass WebKitDOMHTMLStyleElementClass;
+
+typedef struct _WebKitDOMHTMLTableCaptionElement WebKitDOMHTMLTableCaptionElement;
+typedef struct _WebKitDOMHTMLTableCaptionElementClass WebKitDOMHTMLTableCaptionElementClass;
+
+typedef struct _WebKitDOMHTMLTableCellElement WebKitDOMHTMLTableCellElement;
+typedef struct _WebKitDOMHTMLTableCellElementClass WebKitDOMHTMLTableCellElementClass;
+
+typedef struct _WebKitDOMHTMLTableColElement WebKitDOMHTMLTableColElement;
+typedef struct _WebKitDOMHTMLTableColElementClass WebKitDOMHTMLTableColElementClass;
+
+typedef struct _WebKitDOMHTMLTableElement WebKitDOMHTMLTableElement;
+typedef struct _WebKitDOMHTMLTableElementClass WebKitDOMHTMLTableElementClass;
+
+typedef struct _WebKitDOMHTMLTableRowElement WebKitDOMHTMLTableRowElement;
+typedef struct _WebKitDOMHTMLTableRowElementClass WebKitDOMHTMLTableRowElementClass;
+
+typedef struct _WebKitDOMHTMLTableSectionElement WebKitDOMHTMLTableSectionElement;
+typedef struct _WebKitDOMHTMLTableSectionElementClass WebKitDOMHTMLTableSectionElementClass;
+
+typedef struct _WebKitDOMHTMLTextAreaElement WebKitDOMHTMLTextAreaElement;
+typedef struct _WebKitDOMHTMLTextAreaElementClass WebKitDOMHTMLTextAreaElementClass;
+
+typedef struct _WebKitDOMHTMLTitleElement WebKitDOMHTMLTitleElement;
+typedef struct _WebKitDOMHTMLTitleElementClass WebKitDOMHTMLTitleElementClass;
+
+typedef struct _WebKitDOMHTMLUListElement WebKitDOMHTMLUListElement;
+typedef struct _WebKitDOMHTMLUListElementClass WebKitDOMHTMLUListElementClass;
+
+typedef struct _WebKitDOMKeyboardEvent WebKitDOMKeyboardEvent;
+typedef struct _WebKitDOMKeyboardEventClass WebKitDOMKeyboardEventClass;
+
+typedef struct _WebKitDOMMediaList WebKitDOMMediaList;
+typedef struct _WebKitDOMMediaListClass WebKitDOMMediaListClass;
+
+typedef struct _WebKitDOMMouseEvent WebKitDOMMouseEvent;
+typedef struct _WebKitDOMMouseEventClass WebKitDOMMouseEventClass;
+
+typedef struct _WebKitDOMNamedNodeMap WebKitDOMNamedNodeMap;
+typedef struct _WebKitDOMNamedNodeMapClass WebKitDOMNamedNodeMapClass;
+
+typedef struct _WebKitDOMNode WebKitDOMNode;
+typedef struct _WebKitDOMNodeClass WebKitDOMNodeClass;
+
+typedef struct _WebKitDOMNodeFilter WebKitDOMNodeFilter;
+typedef struct _WebKitDOMNodeFilterIface WebKitDOMNodeFilterIface;
+
+typedef struct _WebKitDOMNodeIterator WebKitDOMNodeIterator;
+typedef struct _WebKitDOMNodeIteratorClass WebKitDOMNodeIteratorClass;
+
+typedef struct _WebKitDOMNodeList WebKitDOMNodeList;
+typedef struct _WebKitDOMNodeListClass WebKitDOMNodeListClass;
+
+typedef struct _WebKitDOMObject WebKitDOMObject;
+typedef struct _WebKitDOMObjectClass WebKitDOMObjectClass;
+
+typedef struct _WebKitDOMProcessingInstruction WebKitDOMProcessingInstruction;
+typedef struct _WebKitDOMProcessingInstructionClass WebKitDOMProcessingInstructionClass;
+
+typedef struct _WebKitDOMRange WebKitDOMRange;
+typedef struct _WebKitDOMRangeClass WebKitDOMRangeClass;
+
+typedef struct _WebKitDOMDOMSelection WebKitDOMDOMSelection;
+typedef struct _WebKitDOMDOMSelectionClass WebKitDOMDOMSelectionClass;
+
+typedef struct _WebKitDOMStyleSheet WebKitDOMStyleSheet;
+typedef struct _WebKitDOMStyleSheetClass WebKitDOMStyleSheetClass;
+
+typedef struct _WebKitDOMStyleSheetList WebKitDOMStyleSheetList;
+typedef struct _WebKitDOMStyleSheetListClass WebKitDOMStyleSheetListClass;
+
+typedef struct _WebKitDOMText WebKitDOMText;
+typedef struct _WebKitDOMTextClass WebKitDOMTextClass;
+
+typedef struct _WebKitDOMDOMTokenList WebKitDOMDOMTokenList;
+typedef struct _WebKitDOMDOMTokenListClass WebKitDOMDOMTokenListClass;
+
+typedef struct _WebKitDOMTreeWalker WebKitDOMTreeWalker;
+typedef struct _WebKitDOMTreeWalkerClass WebKitDOMTreeWalkerClass;
+
+typedef struct _WebKitDOMUIEvent WebKitDOMUIEvent;
+typedef struct _WebKitDOMUIEventClass WebKitDOMUIEventClass;
+
+typedef struct _WebKitDOMWheelEvent WebKitDOMWheelEvent;
+typedef struct _WebKitDOMWheelEventClass WebKitDOMWheelEventClass;
+
+typedef struct _WebKitDOMXPathExpression WebKitDOMXPathExpression;
+typedef struct _WebKitDOMXPathExpressionClass WebKitDOMXPathExpressionClass;
+
+typedef struct _WebKitDOMXPathNSResolver WebKitDOMXPathNSResolver;
+typedef struct _WebKitDOMXPathNSResolverIface WebKitDOMXPathNSResolverIface;
+
+typedef struct _WebKitDOMXPathResult WebKitDOMXPathResult;
+typedef struct _WebKitDOMXPathResultClass WebKitDOMXPathResultClass;
+
+#include <webkitdom/webkitdomautocleanups.h>
+
+#endif

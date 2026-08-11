@@ -1,0 +1,350 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "InlineBoxPainter.h"
+
+#include "BackgroundPainter.h"
+#include "BorderPainter.h"
+#include "ContainerNodeInlines.h"
+#include "GraphicsContext.h"
+#include "GraphicsLayer.h"
+#include "InlineIteratorBoxInlines.h"
+#include "InlineIteratorLineBox.h"
+#include "LocalFrameView.h"
+#include "PaintInfo.h"
+#include "PaintInfoInlines.h"
+#include "RenderBlockFlow.h"
+#include "RenderElementStyleInlines.h"
+#include "RenderInline.h"
+#include "RenderLayer.h"
+#include "RenderView.h"
+#include "StyleBorderImage.h"
+#include "StyleBoxShadow.h"
+#include "StyleFillLayers.h"
+#include "StyleMaskBorder.h"
+
+namespace WebCore {
+
+InlineBoxPainter::InlineBoxPainter(const LegacyInlineFlowBox& inlineBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+    : InlineBoxPainter(*InlineIterator::inlineBoxFor(inlineBox), paintInfo, paintOffset)
+{
+}
+
+InlineBoxPainter::InlineBoxPainter(const LayoutIntegration::InlineContent& inlineContent, const InlineDisplay::Box& box, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+    : InlineBoxPainter(*InlineIterator::inlineBoxFor(inlineContent, box), paintInfo, paintOffset)
+{
+}
+
+InlineBoxPainter::InlineBoxPainter(const InlineIterator::InlineBox& inlineBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+    : m_inlineBox(inlineBox)
+    , m_paintInfo(paintInfo)
+    , m_paintOffset(paintOffset)
+    , m_renderer(m_inlineBox.renderer())
+    , m_isFirstLineBox(m_inlineBox.lineBox()->isFirst())
+    , m_isRootInlineBox(m_inlineBox.isRootInlineBox())
+    , m_isHorizontal(m_inlineBox.isHorizontal())
+{
+}
+
+InlineBoxPainter::~InlineBoxPainter() = default;
+
+void InlineBoxPainter::paint()
+{
+    if (m_paintInfo.phase == PaintPhase::Outline || m_paintInfo.phase == PaintPhase::SelfOutline) {
+        if (renderer().style().usedVisibility() != Visibility::Visible || !renderer().hasOutline() || m_isRootInlineBox)
+            return;
+
+        auto& inlineFlow = downcast<RenderInline>(renderer());
+        m_paintInfo.outlineObjects->add(inlineFlow);
+
+        return;
+    }
+
+    if (m_paintInfo.phase == PaintPhase::Mask) {
+        paintMask();
+        return;
+    }
+
+    if (m_paintInfo.phase == PaintPhase::Accessibility) {
+        if (auto* renderInline = dynamicDowncast<RenderInline>(m_renderer)) {
+            auto linesBoundingBox = enclosingIntRect(renderInline->linesVisualOverflowBoundingBox());
+            linesBoundingBox.moveBy(roundedIntPoint(m_paintOffset));
+            m_paintInfo.accessibilityRegionContext()->takeBounds(dynamicDowncast<RenderInline>(m_renderer), WTF::move(linesBoundingBox));
+        }
+        return;
+    }
+
+    paintDecorations();
+}
+
+template<typename T>
+static LayoutRect clipRectForNinePieceImageStrip(const InlineIterator::InlineBox& box, const T& image, const LayoutRect& paintRect)
+{
+    LayoutRect clipRect(paintRect);
+    CheckedRef style = box.renderer().style();
+    LayoutBoxExtent outsets = style->imageOutsets(image, style->deviceScaleFactor());
+    auto closedEdges = box.closedEdges();
+    if (box.isHorizontal()) {
+        clipRect.setY(paintRect.y() - outsets.top());
+        clipRect.setHeight(paintRect.height() + outsets.top() + outsets.bottom());
+        if (closedEdges.left()) {
+            clipRect.setX(paintRect.x() - outsets.left());
+            clipRect.setWidth(paintRect.width() + outsets.left());
+        }
+        if (closedEdges.right())
+            clipRect.setWidth(clipRect.width() + outsets.right());
+    } else {
+        clipRect.setX(paintRect.x() - outsets.left());
+        clipRect.setWidth(paintRect.width() + outsets.left() + outsets.right());
+        if (closedEdges.top()) {
+            clipRect.setY(paintRect.y() - outsets.top());
+            clipRect.setHeight(paintRect.height() + outsets.top());
+        }
+        if (closedEdges.bottom())
+            clipRect.setHeight(clipRect.height() + outsets.bottom());
+    }
+    return clipRect;
+}
+
+LayoutRect InlineBoxPainter::computeNinePieceImageStrip(const LayoutPoint& adjustedPaintOffset, const LayoutRect& localRect) const
+{
+    // We have a border/mask image that spans multiple lines.
+    // We need to adjust tx and ty by the width of all previous lines.
+    // Think of border image painting on inlines as though you had one long line, a single continuous
+    // strip. Even though that strip has been broken up across multiple lines, you still paint it
+    // as though you had one single line. This means each line has to pick up the image where
+    // the previous line left off.
+    // FIXME: What the heck do we do with RTL here? The math we're using is obviously not right,
+    // but it isn't even clear how this should work at all.
+    LayoutUnit logicalOffsetOnLine;
+    for (auto box = m_inlineBox.nextInlineBoxLineLeftward(); box; box.traverseInlineBoxLineLeftward())
+        logicalOffsetOnLine += box->logicalWidth();
+    LayoutUnit totalLogicalWidth = logicalOffsetOnLine;
+    for (auto box = m_inlineBox.iterator(); box; box.traverseInlineBoxLineRightward())
+        totalLogicalWidth += box->logicalWidth();
+
+    LayoutUnit stripX = adjustedPaintOffset.x() - (isHorizontal() ? logicalOffsetOnLine : 0_lu);
+    LayoutUnit stripY = adjustedPaintOffset.y() - (isHorizontal() ? 0_lu : logicalOffsetOnLine);
+    LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : localRect.width();
+    LayoutUnit stripHeight = isHorizontal() ? localRect.height() : totalLogicalWidth;
+    return { stripX, stripY, stripWidth, stripHeight };
+}
+
+void InlineBoxPainter::paintMask()
+{
+    if (!m_paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().usedVisibility() != Visibility::Visible || m_paintInfo.phase != PaintPhase::Mask)
+        return;
+
+    // Move x/y to our coordinates.
+    auto localRect = LayoutRect { m_inlineBox.visualRect() };
+    LayoutPoint adjustedPaintOffset = m_paintOffset + localRect.location();
+
+    auto& maskBorder = renderer().style().maskBorder();
+    auto maskBorderSource = maskBorder.source().tryStyleImage();
+
+    // Figure out if we need to push a transparency layer to render our mask.
+    bool pushTransparencyLayer = false;
+    bool compositedMask = renderer().hasLayer() && renderer().layer()->hasCompositedMask();
+    bool flattenCompositingLayers = renderer().view().frameView().paintBehavior().contains(PaintBehavior::FlattenCompositingLayers);
+    CompositeOperator compositeOp = CompositeOperator::SourceOver;
+    if (!compositedMask || flattenCompositingLayers) {
+        if ((maskBorderSource && Style::hasImageInAnyLayer(renderer().style().maskLayers())) || renderer().style().maskLayers().usedLength() > 1)
+            pushTransparencyLayer = true;
+
+        compositeOp = CompositeOperator::DestinationIn;
+        if (pushTransparencyLayer) {
+            m_paintInfo.context().setCompositeOperation(CompositeOperator::DestinationIn);
+            m_paintInfo.context().beginTransparencyLayer(1.0f);
+            compositeOp = CompositeOperator::SourceOver;
+        }
+    }
+
+    LayoutRect paintRect = LayoutRect(adjustedPaintOffset, localRect.size());
+
+    paintFillLayers(Color(), renderer().style().maskLayers(), renderer().style().usedZoomForLength(), paintRect, compositeOp);
+
+    bool hasBoxImage = maskBorderSource && maskBorderSource->canRender(&renderer(), renderer().style().usedZoom());
+    if (!hasBoxImage || !maskBorderSource->isLoaded(&renderer())) {
+        if (pushTransparencyLayer)
+            m_paintInfo.context().endTransparencyLayer();
+        return; // Don't paint anything while we wait for the image to load.
+    }
+
+    BorderPainter borderPainter { renderer(), m_paintInfo };
+
+    if (!m_inlineBox.isSplit())
+        borderPainter.paintNinePieceImage(LayoutRect(adjustedPaintOffset, localRect.size()), renderer().style(), maskBorder, compositeOp);
+    else {
+        // We have a mask image that spans multiple lines.
+        LayoutRect imageStrip = computeNinePieceImageStrip(adjustedPaintOffset, localRect);
+        LayoutRect clipRect = clipRectForNinePieceImageStrip(m_inlineBox, maskBorder, paintRect);
+        GraphicsContextStateSaver stateSaver(m_paintInfo.context());
+        m_paintInfo.context().clip(clipRect);
+        borderPainter.paintNinePieceImage(imageStrip, renderer().style(), maskBorder, compositeOp);
+    }
+
+    if (pushTransparencyLayer)
+        m_paintInfo.context().endTransparencyLayer();
+}
+
+void InlineBoxPainter::paintDecorations()
+{
+    if (!m_paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().usedVisibility() != Visibility::Visible || m_paintInfo.phase != PaintPhase::Foreground)
+        return;
+
+    if (!m_isRootInlineBox && !renderer().hasVisibleBoxDecorations())
+        return;
+
+    auto& style = this->style();
+    // You can use p::first-line to specify a background. If so, the root inline boxes for
+    // a line may actually have to paint a background.
+    if (m_isRootInlineBox && (!m_isFirstLineBox || &style == &renderer().style()))
+        return;
+
+    // Move x/y to our coordinates.
+    auto localRect = LayoutRect { m_inlineBox.visualRect() };
+    LayoutPoint adjustedPaintoffset = m_paintOffset + localRect.location();
+    GraphicsContext& context = m_paintInfo.context();
+    LayoutRect paintRect = LayoutRect(adjustedPaintoffset, localRect.size());
+    // Shadow comes first and is behind the background and border.
+    if (!BackgroundPainter::boxShadowShouldBeAppliedToBackground(renderer(), adjustedPaintoffset, BleedAvoidance::None, m_inlineBox))
+        paintBoxShadow(Style::ShadowStyle::Normal, paintRect);
+
+    auto color = style.visitedDependentBackgroundColor(m_paintInfo.paintBehavior);
+    auto compositeOp = protect(renderer().document())->compositeOperatorForBackgroundColor(color, renderer());
+
+    Style::ColorResolver colorResolver { style };
+    color = colorResolver.colorApplyingColorFilter(color);
+
+    paintFillLayers(color, style.backgroundLayers(), style.usedZoomForLength(), paintRect, compositeOp);
+    paintBoxShadow(Style::ShadowStyle::Inset, paintRect);
+
+    // :first-line cannot be used to put borders on a line. Always paint borders with our
+    // non-first-line style.
+    if (m_isRootInlineBox || !renderer().style().border().hasVisibleBorderDecoration())
+        return;
+
+    auto& borderImage = renderer().style().borderImage();
+    auto borderImageSource = borderImage.source().tryStyleImage();
+    bool hasBorderImage = borderImageSource && borderImageSource->canRender(&renderer(), style.usedZoom());
+    if (hasBorderImage && !borderImageSource->isLoaded(&renderer()))
+        return; // Don't paint anything while we wait for the image to load.
+
+    BorderPainter borderPainter { renderer(), m_paintInfo };
+
+    if (!hasBorderImage || !m_inlineBox.isSplit()) {
+        auto closedEdges = m_inlineBox.closedEdges();
+        borderPainter.paintBorder(paintRect, style, BleedAvoidance::None, closedEdges);
+        return;
+    }
+
+    // We have a border image that spans multiple lines.
+    LayoutRect imageStrip = computeNinePieceImageStrip(adjustedPaintoffset, localRect);
+    LayoutRect clipRect = clipRectForNinePieceImageStrip(m_inlineBox, borderImage, paintRect);
+    GraphicsContextStateSaver stateSaver(context);
+    context.clip(clipRect);
+    borderPainter.paintBorder(imageStrip, style);
+}
+
+template<typename Layers> void InlineBoxPainter::paintFillLayers(const Color& color, const Layers& fillLayers, Style::ZoomFactor zoom, const LayoutRect& rect, CompositeOperator op)
+{
+    for (auto& layer : fillLayers.usedValues() | std::views::reverse)
+        paintFillLayer(color, FillLayerToPaint<typename Layers::value_type> { .layer = layer, .isLast = &layer == &fillLayers.usedLast(), .zoom = zoom }, rect, op);
+}
+
+template<typename Layer> void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayerToPaint<Layer>& fillLayer, const LayoutRect& rect, CompositeOperator op)
+{
+    RefPtr image = fillLayer.layer.image().tryStyleImage();
+    bool hasFillImage = image && image->canRender(&renderer(), renderer().style().usedZoom());
+    bool hasFillImageOrBorderRadius = hasFillImage || renderer().style().border().hasBorderRadius();
+
+    BackgroundPainter backgroundPainter { renderer(), m_paintInfo };
+
+    if (!hasFillImageOrBorderRadius || !m_inlineBox.isSplit() || m_isRootInlineBox) {
+        backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, { }, op);
+        return;
+    }
+
+    if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone) {
+        GraphicsContextStateSaver stateSaver(m_paintInfo.context());
+        m_paintInfo.context().clip({ rect.location(), m_inlineBox.visualRectIgnoringBlockDirection().size() });
+        backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, { }, op);
+        return;
+    }
+
+    // We have a fill image that spans multiple lines.
+    // We need to adjust tx and ty by the width of all previous lines.
+    // Think of background painting on inlines as though you had one long line, a single continuous
+    // strip. Even though that strip has been broken up across multiple lines, you still paint it
+    // as though you had one single line. This means each line has to pick up the background where
+    // the previous line left off.
+    LayoutUnit logicalOffsetOnLine;
+    LayoutUnit totalLogicalWidth;
+    if (renderer().writingMode().isBidiLTR()) {
+        for (auto box = m_inlineBox.nextInlineBoxLineLeftward(); box; box.traverseInlineBoxLineLeftward())
+            logicalOffsetOnLine += box->logicalWidth();
+        totalLogicalWidth = logicalOffsetOnLine;
+        for (auto box = m_inlineBox.iterator(); box; box.traverseInlineBoxLineRightward())
+            totalLogicalWidth += box->logicalWidth();
+    } else {
+        for (auto box = m_inlineBox.nextInlineBoxLineRightward(); box; box.traverseInlineBoxLineRightward())
+            logicalOffsetOnLine += box->logicalWidth();
+        totalLogicalWidth = logicalOffsetOnLine;
+        for (auto box = m_inlineBox.iterator(); box; box.traverseInlineBoxLineLeftward())
+            totalLogicalWidth += box->logicalWidth();
+    }
+    LayoutRect backgroundImageStrip {
+        rect.x() - (isHorizontal() ? logicalOffsetOnLine : 0_lu),
+        rect.y() - (isHorizontal() ? 0_lu : logicalOffsetOnLine),
+        isHorizontal() ? totalLogicalWidth : LayoutUnit(m_inlineBox.visualRectIgnoringBlockDirection().width()),
+        isHorizontal() ? LayoutUnit(m_inlineBox.visualRectIgnoringBlockDirection().height()) : totalLogicalWidth
+    };
+
+    GraphicsContextStateSaver stateSaver(m_paintInfo.context());
+    m_paintInfo.context().clip(FloatRect { rect });
+    backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, backgroundImageStrip, op);
+}
+
+void InlineBoxPainter::paintBoxShadow(Style::ShadowStyle shadowStyle, const LayoutRect& paintRect)
+{
+    BackgroundPainter backgroundPainter { renderer(), m_paintInfo };
+
+    if (!m_inlineBox.isSplit() || m_isRootInlineBox) {
+        backgroundPainter.paintBoxShadow(paintRect, style(), shadowStyle);
+        return;
+    }
+
+    // FIXME: We can do better here in the multi-line case. We want to push a clip so that the shadow doesn't
+    // protrude incorrectly at the edges, and we want to possibly include shadows cast from the previous/following lines
+    auto closedEdges = m_inlineBox.closedEdges();
+    backgroundPainter.paintBoxShadow(paintRect, style(), shadowStyle, closedEdges);
+}
+
+const Style::ComputedStyle& InlineBoxPainter::style() const
+{
+    return m_isFirstLineBox ? renderer().firstLineStyle() : renderer().style();
+}
+
+}

@@ -1,0 +1,37 @@
+Test that a webkitplaybacktargetavailabilitychanged is not fired when adding an event listener to a media element with disableRemotePlayback set
+RUN(video = document.body.appendChild(document.createElement('video')))
+RUN(video.disableRemotePlayback = true)
+Promise rejected correctly OK
+Correctly failed to receive targetavailabilitychanged event OK
+Test completed OK
+
+Test that a webkitplaybacktargetavailabilitychanged is fired when setting disableRemotePlayback on an element with an event listener
+RUN(video = document.body.appendChild(document.createElement('video')))
+EVENT(webkitplaybacktargetavailabilitychanged)
+EXPECTED (event.availability == 'available') OK
+RUN(video.disableRemotePlayback = true)
+EVENT(webkitplaybacktargetavailabilitychanged)
+EXPECTED (event.availability == 'not-available') OK
+Test completed OK
+
+Test that a webkitplaybacktargetavailabilitychanged is fired when clearing disableRemotePlayback on an element with an event listener
+RUN(video = document.body.appendChild(document.createElement('video')))
+RUN(video.disableRemotePlayback = true)
+Promise rejected correctly OK
+Correctly failed to receive targetavailabilitychanged event OK
+RUN(video.disableRemotePlayback = false)
+EVENT(webkitplaybacktargetavailabilitychanged)
+EXPECTED (event.availability == 'available') OK
+Test completed OK
+
+Test that a webkitplaybacktargetavailabilitychanged is not received when setting disableRemotePlayback, when no targets were previously available
+RUN(video = document.body.appendChild(document.createElement('video')))
+EVENT(webkitplaybacktargetavailabilitychanged)
+EXPECTED (event.availability == 'not-available') OK
+RUN(video.disableRemotePlayback = true)
+Promise rejected correctly OK
+Correctly failed to receive targetavailabilitychanged event OK
+Test completed OK
+
+END OF TEST
+

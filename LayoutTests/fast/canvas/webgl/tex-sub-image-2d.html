@@ -1,0 +1,90 @@
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+<script id="fshader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+uniform sampler2D tex;
+varying vec2 texCoord;
+
+void main()
+{
+    float intensity = texture2D(tex, texCoord).a;
+    gl_FragColor = vec4(intensity, intensity, intensity, 1.0);
+}
+</script>
+
+</head>
+<body>
+<canvas id="example" width="256px" height="1px"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Tests texSubImage2D upload path from Uint8Array');
+
+var wtu = WebGLTestUtils;
+var canvas = document.getElementById("example");
+var gl = wtu.create3DContext(canvas);
+var program = wtu.setupProgram(
+    gl,
+    [wtu.setupSimpleTextureVertexShader(gl),
+     wtu.loadShaderFromScript(gl, "fshader")],
+    ['vPosition', 'texCoord0']);
+wtu.setupUnitQuad(gl);
+var textureWidth = 256;
+var textureHeight = 1;
+
+textureLoc = gl.getUniformLocation(program, "tex");
+
+var texture = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, texture);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+// Allocate the texture object
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, textureWidth, textureHeight, 0, gl.ALPHA, gl.UNSIGNED_BYTE, null);
+// Prepare the image data
+var array = new Uint8Array(textureWidth);
+for (var i = 0; i < textureWidth; i++)
+    array[i] = i;
+// Fill the texture object with data -- this is actually the code path being tested
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, textureWidth, textureHeight, gl.ALPHA, gl.UNSIGNED_BYTE, array);
+
+// Clear and set up
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+gl.bindTexture(gl.TEXTURE_2D, texture);
+gl.useProgram(program);
+gl.uniform1i(textureLoc, 0);
+// Draw the texture to the frame buffer
+gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+// Read back the frame buffer
+var buf = new Uint8Array(textureWidth * textureHeight * 4);
+gl.readPixels(0, 0, textureWidth, textureHeight, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+
+// Verify the frame buffer's contents
+var passed = true;
+for (var i = 0; i < textureWidth; i++) {
+    var val = i;
+    if (buf[4 * i + 0] != val ||
+        buf[4 * i + 1] != val ||
+        buf[4 * i + 2] != val) {
+        testFailed("pixel at (" + i + ", 0) was (" +
+                   buf[4 * i + 0] + ", " +
+                   buf[4 * i + 1] + ", " +
+                   buf[4 * i + 2] + "), should be (" +
+                   val + ", " + val + ", " + val + ")");
+        passed = false;
+        break;
+    }
+}
+
+if (passed)
+    testPassed("");
+</script>
+</body>
+</html>

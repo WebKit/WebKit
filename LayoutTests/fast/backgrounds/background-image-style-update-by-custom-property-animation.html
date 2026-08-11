@@ -1,0 +1,30 @@
+<!doctype html>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<style>
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+#target {
+    background-image: linear-gradient(var(--angle),red,green,blue);
+    background-clip: text;
+}
+</style>
+<div id="target"></div>
+<script>
+  test(function() {
+    let target = document.getElementById("target");
+    assert_equals(getComputedStyle(target)['background-clip'], "text");
+
+    const animation = target.animate({ "--angle": "360deg" }, 100);
+    animation.pause();
+    animation.currentTime = 10;
+
+    assert_equals(getComputedStyle(target)['background-clip'], "text");
+  }, "'background-clip' stays set after animation style has been applied");
+</script>

@@ -1,0 +1,142 @@
+/*
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "DeprecatedGlobalSettings.h"
+
+#include "AudioSession.h"
+#include "MediaPlayer.h"
+#include "MediaStrategy.h"
+#include "PlatformMediaSessionManager.h"
+#include "PlatformStrategies.h"
+#include <wtf/NeverDestroyed.h>
+
+#if PLATFORM(COCOA)
+#include "MediaSessionManagerCocoa.h"
+#endif
+
+namespace WebCore {
+
+DeprecatedGlobalSettings& DeprecatedGlobalSettings::singleton()
+{
+    static NeverDestroyed<DeprecatedGlobalSettings> deprecatedGlobalSettings;
+    return deprecatedGlobalSettings;
+}
+
+#if USE(AVFOUNDATION)
+void DeprecatedGlobalSettings::setAVFoundationEnabled(bool enabled)
+{
+    if (singleton().m_AVFoundationEnabled == enabled)
+        return;
+
+    singleton().m_AVFoundationEnabled = enabled;
+    platformStrategies()->mediaStrategy()->resetMediaEngines();
+}
+#endif
+
+#if USE(GSTREAMER)
+void DeprecatedGlobalSettings::setGStreamerEnabled(bool enabled)
+{
+    if (singleton().m_GStreamerEnabled == enabled)
+        return;
+
+    singleton().m_GStreamerEnabled = enabled;
+
+#if ENABLE(VIDEO)
+    platformStrategies()->mediaStrategy()->resetMediaEngines();
+#endif
+}
+#endif
+
+// It's very important that this setting doesn't change in the middle of a document's lifetime.
+// The Mac port uses this flag when registering and deregistering platform-dependent scrollbar
+// objects. Therefore, if this changes at an unexpected time, deregistration may not happen
+// correctly, which may cause the platform to follow dangling pointers.
+void DeprecatedGlobalSettings::setMockScrollbarsEnabled(bool flag)
+{
+    singleton().m_mockScrollbarsEnabled = flag;
+    // FIXME: This should update scroll bars in existing pages.
+}
+
+void DeprecatedGlobalSettings::setUsesOverlayScrollbars(bool flag)
+{
+    singleton().m_usesOverlayScrollbars = flag;
+    // FIXME: This should update scroll bars in existing pages.
+}
+
+void DeprecatedGlobalSettings::setTrackingPreventionEnabled(bool flag)
+{
+    singleton().m_trackingPreventionEnabled = flag;
+}
+
+#if PLATFORM(IOS_FAMILY)
+void DeprecatedGlobalSettings::setAudioSessionCategoryOverride(unsigned sessionCategory)
+{
+    AudioSession::singleton().setCategoryOverride(static_cast<AudioSession::CategoryType>(sessionCategory));
+}
+
+unsigned DeprecatedGlobalSettings::audioSessionCategoryOverride()
+{
+    return static_cast<unsigned>(AudioSession::singleton().categoryOverride());
+}
+
+void DeprecatedGlobalSettings::setNetworkInterfaceName(const String& networkInterfaceName)
+{
+    singleton().m_networkInterfaceName = networkInterfaceName;
+}
+#endif
+
+#if USE(AUDIO_SESSION)
+void DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(bool flag)
+{
+    AudioSession::setShouldManageAudioSessionCategory(flag);
+}
+
+bool DeprecatedGlobalSettings::shouldManageAudioSessionCategory()
+{
+    return AudioSession::shouldManageAudioSessionCategory();
+}
+#endif
+
+void DeprecatedGlobalSettings::setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
+{
+    singleton().m_allowsAnySSLCertificate = allowAnySSLCertificate;
+}
+
+bool DeprecatedGlobalSettings::allowsAnySSLCertificate()
+{
+    return singleton().m_allowsAnySSLCertificate;
+}
+
+#if ENABLE(WEB_PUSH_NOTIFICATIONS)
+
+bool DeprecatedGlobalSettings::builtInNotificationsEnabled()
+{
+    return singleton().m_builtInNotificationsEnabled;
+}
+
+#endif
+
+} // namespace WebCore

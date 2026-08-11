@@ -1,0 +1,5 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS message.data is an instance of RangeError
+

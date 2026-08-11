@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: The page loaded successfully.
+CONSOLE MESSAGE: This page should load.
+
+
+--------
+Frame: 'iframe'
+--------
+This page should load.

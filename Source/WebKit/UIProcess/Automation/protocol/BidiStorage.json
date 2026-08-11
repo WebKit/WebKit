@@ -1,0 +1,144 @@
+{
+    "domain": "BidiStorage",
+    "exposedAs": "storage",
+    "condition": "ENABLE(WEBDRIVER_BIDI)",
+    "description": "The storage module contains functionality and events related to storage.",
+    "spec": "https://w3c.github.io/webdriver-bidi/#module-storage",
+    "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/storage",
+    "types": [
+        {
+            "id": "PartitionKey",
+            "type": "object",
+            "description": "The <code>BidiStorage.PartitionKey</code> type represents a storage partition key.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-storage-PartitionKey",
+            "properties": [
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext", "optional": true},
+                { "name": "sourceOrigin", "type": "string", "optional": true, "description": "The serialization of the origin of resources that can access the storage partition." }
+            ]
+        },
+        {
+            "id": "CookieFilter",
+            "type": "object",
+            "description": "Filter parameters for cookie retrieval and deletion.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-getCookies",
+            "properties": [
+                { "name": "name", "type": "string", "optional": true, "description": "The name of the cookie." },
+                { "name": "value", "type": "string", "optional": true, "description": "The value of the cookie (as a string)." },
+                { "name": "domain", "type": "string", "optional": true, "description": "The domain of the cookie." },
+                { "name": "path", "type": "string", "optional": true, "description": "The path of the cookie." },
+                { "name": "size", "type": "integer", "optional": true, "description": "The size of the cookie." },
+                { "name": "httpOnly", "type": "boolean", "optional": true, "description": "If the cookie is HTTP only." },
+                { "name": "secure", "type": "boolean", "optional": true, "description": "If the cookie is secure." },
+                { "name": "sameSite", "type": "string", "optional": true, "description": "The <code>SameSite</code> attribute of the cookie." },
+                { "name": "expiry", "type": "integer", "optional": true, "description": "The expiry timestamp of the cookie." }
+            ]
+        },
+        {
+            "id": "BrowsingContextPartitionDescriptor",
+            "type": "object",
+            "description": "Describes a storage partition based on a browsing context.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-getCookies",
+            "properties": [
+                { "name": "type", "type": "string", "enum": [ "context"], "description": "The type of partition descriptor." },
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context." }
+            ]
+        },
+        {
+            "id": "StorageKeyPartitionDescriptor",
+            "type": "object",
+            "description": "Describes a storage partition based on a storage key.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-getCookies",
+            "properties": [
+                { "name": "type", "type": "string", "enum": [ "storageKey"], "description": "The type of partition descriptor." },
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext", "optional": true},
+                { "name": "sourceOrigin", "type": "string", "optional": true, "description": "The serialization of the origin of resources that can access the storage partition." }
+            ]
+        },
+        {
+             "id": "PartitionDescriptorType",
+             "type": "string",
+             "description": "The type of storage partition descriptor.",
+             "enum": [ "context", "storageKey"]
+        },
+        {
+            "id": "PartitionDescriptor",
+            "type": "object",
+            "description": "Describes a storage partition.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-getCookies",
+            "properties": [
+                { "name": "type", "$ref": "PartitionDescriptorType", "description": "The type of partition descriptor." },
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "The identifier of the browsing context." },
+                { "name": "userContext", "$ref": "BidiBrowser.UserContext", "optional": true},
+                { "name": "sourceOrigin", "type": "string", "optional": true, "description": "The serialization of the origin of resources that can access the storage partition." }
+            ]
+        },
+        {
+            "id": "CookieSameSitePolicy",
+            "type": "string",
+            "description": "Enumerates values for cookies same site policy.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-getCookies",
+            "enum": [ "None", "Lax", "Strict"]
+        },
+        {
+            "id": "PartialCookie",
+            "type": "object",
+            "description": "Represents a cookie to be set.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-getCookies",
+            "properties": [
+                { "name": "name", "type": "string", "description": "The name of the cookie." },
+                { "name": "value", "type": "string", "description": "The value of the cookie (as a string)." },
+                { "name": "domain", "type": "string", "description": "The domain of the cookie." },
+                { "name": "path", "type": "string", "optional": true, "description": "The path of the cookie." },
+                { "name": "httpOnly", "type": "boolean", "optional": true, "description": "Whether the cookie is HTTP only." },
+                { "name": "secure", "type": "boolean", "optional": true, "description": "Whether the cookie is secure." },
+                { "name": "sameSite", "$ref": "CookieSameSitePolicy", "optional": true, "description": "The <code>SameSite</code> attribute of the cookie." },
+                { "name": "expiry", "type": "integer", "optional": true, "description": "The expiry timestamp of the cookie." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "getCookies",
+            "description": "Retrieves zero or more cookies which match a set of provided parameters.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-getCookies",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/storage/get_cookies",
+            "parameters": [
+                { "name": "filter", "$ref": "BidiStorage.CookieFilter", "optional": true, "description": "Filter parameters for cookie retrieval." },
+                { "name": "partition", "$ref": "BidiStorage.PartitionDescriptor", "optional": true, "description": "The storage partition in which to get cookies." }
+            ],
+            "returns": [
+                { "name": "cookies", "type": "array", "items": { "$ref": "BidiStorage.PartialCookie" }, "description": "The list of matching cookies" },
+                { "name": "partitionKey", "$ref": "BidiStorage.PartitionKey", "description": "The storage partition key" }
+            ],
+            "async": true
+        },
+        {
+            "name": "setCookie",
+            "description": "Creates a new cookie in a cookie store, replacing any cookie in that store which matches.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-setCookie",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/storage/set_cookie",
+            "parameters": [
+                { "name": "cookie", "$ref": "BidiStorage.PartialCookie", "description": "The cookie to set." },
+                { "name": "partition", "$ref": "BidiStorage.PartitionDescriptor", "optional": true, "description": "The storage partition in which to set cookies." }
+            ],
+            "returns": [
+                { "name": "partitionKey", "$ref": "BidiStorage.PartitionKey", "description": "The storage partition key." }
+            ],
+            "async": true
+        },
+        {
+            "name": "deleteCookies",
+            "description": "Removes zero or more cookies which match a set of provided parameters.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-storage-deleteCookies",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/storage/delete_cookies",
+            "parameters": [
+                { "name": "filter", "$ref": "BidiStorage.CookieFilter", "optional": true, "description": "Filter parameters for cookie deletion." },
+                { "name": "partition", "$ref": "BidiStorage.PartitionDescriptor", "optional": true, "description": "The storage partition in which to delete cookies." }
+            ],
+            "returns": [
+                { "name": "partitionKey", "$ref": "BidiStorage.PartitionKey", "description": "The storage partition key." }
+            ],
+            "async": true
+        }
+    ]
+}

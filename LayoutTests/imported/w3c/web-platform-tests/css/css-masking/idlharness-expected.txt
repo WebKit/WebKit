@@ -1,0 +1,43 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Element: member names are unique
+PASS SVGElement includes GlobalEventHandlers: member names are unique
+PASS SVGElement includes HTMLOrSVGElement: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS SVGClipPathElement interface: existence and properties of interface object
+PASS SVGClipPathElement interface object length
+PASS SVGClipPathElement interface object name
+PASS SVGClipPathElement interface: existence and properties of interface prototype object
+PASS SVGClipPathElement interface: existence and properties of interface prototype object's "constructor" property
+PASS SVGClipPathElement interface: existence and properties of interface prototype object's @@unscopables property
+PASS SVGClipPathElement interface: attribute clipPathUnits
+PASS SVGClipPathElement interface: attribute transform
+PASS SVGClipPathElement must be primary interface of [object SVGClipPathElement]
+PASS Stringification of [object SVGClipPathElement]
+PASS SVGClipPathElement interface: [object SVGClipPathElement] must inherit property "clipPathUnits" with the proper type
+PASS SVGClipPathElement interface: [object SVGClipPathElement] must inherit property "transform" with the proper type
+PASS SVGMaskElement interface: existence and properties of interface object
+PASS SVGMaskElement interface object length
+PASS SVGMaskElement interface object name
+PASS SVGMaskElement interface: existence and properties of interface prototype object
+PASS SVGMaskElement interface: existence and properties of interface prototype object's "constructor" property
+PASS SVGMaskElement interface: existence and properties of interface prototype object's @@unscopables property
+PASS SVGMaskElement interface: attribute maskUnits
+PASS SVGMaskElement interface: attribute maskContentUnits
+PASS SVGMaskElement interface: attribute x
+PASS SVGMaskElement interface: attribute y
+PASS SVGMaskElement interface: attribute width
+PASS SVGMaskElement interface: attribute height
+PASS SVGMaskElement must be primary interface of [object SVGMaskElement]
+PASS Stringification of [object SVGMaskElement]
+PASS SVGMaskElement interface: [object SVGMaskElement] must inherit property "maskUnits" with the proper type
+PASS SVGMaskElement interface: [object SVGMaskElement] must inherit property "maskContentUnits" with the proper type
+PASS SVGMaskElement interface: [object SVGMaskElement] must inherit property "x" with the proper type
+PASS SVGMaskElement interface: [object SVGMaskElement] must inherit property "y" with the proper type
+PASS SVGMaskElement interface: [object SVGMaskElement] must inherit property "width" with the proper type
+PASS SVGMaskElement interface: [object SVGMaskElement] must inherit property "height" with the proper type
+

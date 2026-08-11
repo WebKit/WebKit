@@ -1,0 +1,40 @@
+This test ensures WebKit can search for ad-hoc radiogroups. An ad-hoc radiogroup is a set of radiobuttons connected by `name` attribute alone, without an appropriate `role="radiogroup"` container.
+
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'circle'
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'red'
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'small'
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'green'
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'triangle'
+PASS: resultElement.role === 'AXRole: AXRadioButton'
+PASS: resultElement.domIdentifier === 'red'
+PASS: resultElement.domIdentifier === 'medium'
+PASS: resultElement.domIdentifier === 'small'
+PASS: resultElement.domIdentifier === 'green'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Shape
+
+ Circle
+ Square
+ Triangle
+Color
+
+ Red
+ Blue
+ Green
+Size
+
+ Small
+Unrelated content separating ad-hoc radio group items
+
+ Medium
+Unrelated content separating ad-hoc radio group items
+
+ Large

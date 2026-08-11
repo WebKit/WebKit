@@ -1,0 +1,11 @@
+This test ensures that accessibility receives the proper notifications for when input sessions begin and end.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Got session start and value change notifications.
+Got session end notification.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

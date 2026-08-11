@@ -1,0 +1,6 @@
+
+PASS Grandparent with cross-origin srdoc grandchild session
+PASS Grandparent with cross-origin sandboxed srdoc grandchild session
+PASS Grandparent with same-origin srdoc grandchild session
+PASS Grandparent with same-origin sandboxed srdoc grandchild session
+

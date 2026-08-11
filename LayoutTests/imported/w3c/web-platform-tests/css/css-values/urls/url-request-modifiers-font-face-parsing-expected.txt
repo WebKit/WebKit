@@ -1,0 +1,10 @@
+
+FAIL cross-origin(anonymous) in @font-face src assert_not_equals: should be valid got disallowed value ""
+FAIL referrer-policy(no-referrer) in @font-face src assert_not_equals: should be valid got disallowed value ""
+FAIL integrity() in @font-face src assert_not_equals: should be valid got disallowed value ""
+FAIL multiple modifiers in @font-face src assert_not_equals: should be valid got disallowed value ""
+FAIL modifiers with format() in @font-face src assert_not_equals: should be valid got disallowed value ""
+FAIL unknown modifier in @font-face src assert_not_equals: should be valid got disallowed value ""
+PASS duplicate cross-origin in @font-face src
+PASS duplicate unknown modifier in @font-face src
+

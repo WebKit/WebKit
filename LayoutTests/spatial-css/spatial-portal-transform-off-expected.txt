@@ -1,0 +1,3 @@
+portal-transform is supported: false
+portal-transform computed style is exposed: false
+portal-transform survives in cssText: false

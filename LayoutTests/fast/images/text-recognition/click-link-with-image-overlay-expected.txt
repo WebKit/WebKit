@@ -1,0 +1,5 @@
+PASS clickCount became 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

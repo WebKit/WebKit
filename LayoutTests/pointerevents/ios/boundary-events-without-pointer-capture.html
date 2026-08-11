@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../utils.js"></script>
+<script>
+
+'use strict';
+
+async_test(test => {
+    const firstTarget = makeTarget(test, { x: "100px", y: "100px", width: "100px", height: "100px" });
+    firstTarget.id = "one";
+
+    const secondTarget = makeTarget(test, { x: "200px", y: "100px", width: "100px", height: "100px" });
+    secondTarget.id = "two";
+
+    const eventsLog = [];
+    const logger = event => eventsLog.push(`${event.type}@${event.currentTarget.id}`);
+    for (let eventType of ["pointerover", "pointerenter", "pointerout", "pointerleave"]) {
+        firstTarget.addEventListener(eventType, logger);
+        secondTarget.addEventListener(eventType, logger);
+    }
+
+    // Ensure we get pointer events for all touch events.
+    document.body.style.touchAction = "none";
+
+    // Ensure we disable pointer capture.
+    document.body.addEventListener("pointerdown", event => event.currentTarget.releasePointerCapture(event.pointerId));
+
+    const one = ui.finger();
+    ui.sequence([
+        one.begin({ x: 50, y: 150 }),
+        one.move({ x: 150, y: 150 }),
+        one.move({ x: 250, y: 150 }),
+        one.move({ x: 350, y: 150 }),
+        one.end()
+    ]).then(() => {
+        assert_array_equals(eventsLog, ["pointerover@one", "pointerenter@one", "pointerout@one", "pointerleave@one", "pointerover@two", "pointerenter@two", "pointerout@two", "pointerleave@two"]);
+        test.done();
+    });
+}, `Testing that "pointerover", "pointerenter", "pointerout" and "pointerleave" events are dispatched correctly with capture disabled as a touch moves between elements.`);
+
+</script>
+</body>
+</html>

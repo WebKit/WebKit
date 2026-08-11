@@ -1,0 +1,18 @@
+This is not aria-selected.	XYZ
+This test ensures that the AXSelectedStateChanged notification is fired when the value for the aria-selected attribute changes in grid cells.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axSelectable.isSelected is false
+PASS axSelectable.children[0].isSelected is false
+1 AXSelectedCellsChanged for element selectable
+PASS axSelectable.isSelected is true
+PASS axSelectable.children[0].isSelected is true
+2 AXSelectedCellsChanged for element selectable
+PASS axSelectable.isSelected is false
+PASS axSelectable.children[0].isSelected is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

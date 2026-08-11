@@ -1,0 +1,5 @@
+
+Harness Error (FAIL), message = Error: bidi.permissions.set_permission() is not implemented by testdriver-vendor.js
+
+NOTRUN Tests Geolocation error callback
+

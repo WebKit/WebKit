@@ -1,0 +1,3 @@
+
+PASS Check cues from resources/degenerate-cues.vtt
+

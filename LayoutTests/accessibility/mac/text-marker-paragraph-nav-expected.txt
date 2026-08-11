@@ -1,0 +1,77 @@
+This tests that paragraph navigation is working correctly.
+
+Current character is: p
+Current paragraph is: paragraph test
+Pre paragraph start to next paragraph end: paragraph test
+Current character is: T
+Current paragraph is: Test Content
+Pre paragraph start to next paragraph end: Test Content
+Current character is: c
+Current paragraph is: c [ATTACHMENT]d
+Pre paragraph start to next paragraph end: c [ATTACHMENT]d
+Current character is: d
+Current paragraph is: c [ATTACHMENT]d
+Pre paragraph start to next paragraph end: c [ATTACHMENT]d
+test audio ￼file
+Current character is: t
+Current paragraph is: test audio [ATTACHMENT]file
+Pre paragraph start to next paragraph end: test audio [ATTACHMENT]file
+Current character is: c
+Current paragraph is: can't select
+Pre paragraph start to next paragraph end: can't select
+Current character is: 巧
+Current paragraph is: 巧克力 是食物吗?
+Pre paragraph start to next paragraph end: 巧克力 是食物吗?
+Current character is: ك
+Current paragraph is: كيف حالك؟
+Pre paragraph start to next paragraph end: كيف حالك؟
+Current character is: b
+Current paragraph is: both   spaces
+Pre paragraph start to next paragraph end: both   spaces
+Current character is: i
+Current paragraph is: line breaks
+Pre paragraph start to next paragraph end: line breaks
+Current character is: s
+Current paragraph is: some
+Pre paragraph start to next paragraph end: some
+Current character is: t
+Current paragraph is: text
+Pre paragraph start to next paragraph end: text
+Verify Paragraphs: Forward
+Paragraph: this is my first paragraph. Of text. it has some text.
+Paragraph:
+Paragraph:
+Paragraph: this is my second paragraph. Of text. it has some text.
+Paragraph: this is my third paragraph. Of text. it has some text.
+Verify Paragraphs: Backward
+Paragraph: this is my third paragraph. Of text. it has some text.
+Paragraph: this is my second paragraph. Of text. it has some text.
+Paragraph:
+Paragraph:
+Paragraph: this is my first paragraph. Of text. it has some text.
+Test going forward.
+End paragraph: text
+Test going backwards.
+Start paragraph: paragraph test
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+paragraph test
+Test Contenteditable is working.
+c d
+test audio file
+can't select
+巧克力 是食物吗?
+كيف حالك؟
+both   spaces
+line breaks
+some
+text
+this is my first paragraph. Of text. it has some text.
+
+
+this is my second paragraph. Of text. it has some text.
+this is my third paragraph. Of text. it has some text.
+
+

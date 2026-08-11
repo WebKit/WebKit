@@ -1,0 +1,566 @@
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# This file tracks Opaque Data Type usage in CoreIPC in 4 places:
+# MessageParam - in a message parameter
+# MessageParamReply - in a message reply parameter
+# AliasParam - in a using statement in a serialization.in file
+# StructureParam - in a structure in a serialization.in file
+
+# See https://en.wikipedia.org/wiki/Opaque_data_type
+
+# If you find yourself adding something to this file to ensure the build completes please consider using a
+# SafeWrapper (explained below) or well defined type which decompose to simple primitives.
+#
+# Additions or changes to this file will trigger a review with a security focus.
+
+# We introduce two concepts to model the risk from Opaque Data Types:
+#
+# SafeWrapper: 
+#     A SafeWrapper is safe because the regular use of it cannot invalidate a security property.
+#     The data is specifically constrained in usage in the implementation (e.g. data handled fully in Strictly Safe Swift)
+#     or it's usage and behavior is primitive (specific) enough for it to be deemed very low risk.
+
+# UnsafeWrapper:
+#     It's never OK for an unsafe wrapper to be sent from WebContent without additional security considerations.
+#     The IPC serialization mechanism provides no guaranteed of safety or structure.
+#     Each use of an unsafe wrapper needs to be reviewed.
+#     Where and how an UnsafeWrapper type is used is critical for security.
+# 
+# When developing IPC flows, prefer SafeWrappers and well defined types which decompose to simple primitives.
+
+# Each item in this tracking file must have one of the following attributes for justification (in square brackets):
+#
+# Legacy: This is a bootstrapping state for NeedsReview
+# NeedsReview: This item needs to be reviewed by the security team
+# SafeWrapper: The item has been reviewed and is deemed a SafeWrapper, must also include 'MemorySafety= ...'
+# UnsafeWrapper: The item has been reviewed and can only be used in the documented ways. 
+# SecurityGatedReply: The item handled after a security relevent gate (i.e user interaction)
+# NotSentFromWebContent: We can add a ASSERT(!isInWebProcess()) in the encoder. Currently no runtime checks for AliasParam
+# DebugOnly: This is compiled out in release so we don't need to worry about it
+# SerializationPolicyViolation: Items which should be UnsafeWrapper but the added ASSERTs break functionality
+
+# Additional attributes can be used for contextual information:
+# Docs= ... , Radar or https://bugs.webkit.org link for more info / documentation
+# MemorySafety= ... , Description of level (see below):
+
+# When we have an attribute describing memory safety progress, these are the progress levels:
+# - 0: Claiming that it is desired but with no current progress
+# - 1: We have specific documented fuzzing for a capability implemented in a memory unsafe language
+# - 2: We have specific documented fuzzing and all static analysis issues are resolved (e.g SaferCPP)
+# - 3: We have a Strictly Safe Swift implementation of the capability
+
+########################### Test Items ##########################################
+# To not special case running generation tests we have a small number of test items here
+# Test are run via: make -C Source/WebKit/Scripts/webkit/tests
+[UnsafeWrapper] MachSendRight {
+    [Legacy] MessageParam TestWithLegacyReceiver.DidCreateWebProcessConnection connectionIdentifier
+    [Legacy] MessageParam TestWithoutAttributes.DidCreateWebProcessConnection connectionIdentifier
+    [Legacy] MessageParam TestWithStream.SendMachSendRight a1
+    [Legacy] MessageParamReply TestWithStream.ReceiveMachSendRight r1
+    [Legacy] MessageParam TestWithStream.SendAndReceiveMachSendRight a1
+    [Legacy] MessageParamReply TestWithStream.SendAndReceiveMachSendRight r1
+}
+# NotDispatchableFromWebContent is specified as an ODT type in opaque_ipc_types.py
+[NotSentFromWebContent] StructureParam WebCore::OpaqueTypeObject.member NotDispatchableFromWebContent
+[NotSentFromWebContent] MessageParam TestWithLegacyReceiver.OpaqueTypeSecurityAssertion ping NotDispatchableFromWebContent
+[NotSentFromWebContent] MessageParam TestWithoutAttributes.OpaqueTypeSecurityAssertion ping NotDispatchableFromWebContent
+[NotSentFromWebContent] MessageParamReply TestWithLegacyReceiver.OpaqueTypeSecurityAssertion pong NotDispatchableFromWebContent
+[NotSentFromWebContent] MessageParamReply TestWithoutAttributes.OpaqueTypeSecurityAssertion pong NotDispatchableFromWebContent
+[NotSentFromWebContent] AliasParam WebCore::AliasOpaqueTypeWrapper Variant<int, Vector<uint8_t>>
+[NotSentFromWebContent] StructureParam Namespace::OtherClass.dataDetectorResults RetainPtr<NSArray>
+
+########################### Opaque Data Types in CoreIPC ##########################################
+
+[SerializationPolicyViolation='rdar://160898631 Adopt NotSentFromWebContent'] StructureParam API::Data.span() std::span<const uint8_t>
+
+# The AliasParam handling either shows the whole type if it's on one line or just the OTD if it's a multiline variant
+[Legacy] AliasParam FileSystem::Salt std::array<uint8_t, 8>
+[Legacy] AliasParam WebCore::GraphicsContextGL::ExternalSyncSource std::tuple<MachSendRight, uint64_t>
+[Legacy] AliasParam WebKit::CoreIPCNSURLRequestData::BodyParts Variant<WebKit::CoreIPCString, WebKit::CoreIPCData>
+[NeedsReview] AliasParam WebKit::ProtocolProperties::AppPropertyValue Variant<bool, WebKit::CoreIPCNumber, WebKit::CoreIPCString, WebKit::CoreIPCData>
+[NeedsReview] StructureParam WebKit::ProtocolProperties.appProperties HashMap<String, WebKit::ProtocolProperties::AppPropertyValue>
+[Legacy] AliasParam WebKit::CoreIPCSecTrustData::ExceptionType Vector<std::pair<WebKit::CoreIPCString, Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCData, bool>>>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoSubDictValue Variant<WebKit::CoreIPCNumber, WebKit::CoreIPCData, WebKit::CoreIPCDate, bool>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoSubDict Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::RevocationInfoSubDictValue>>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoEntry Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::RevocationInfoSubDict>>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::RevocationInfoArray Vector<WebKit::CoreIPCSecTrustData::RevocationInfoEntry>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::InfoSubDict Vector<std::pair<WebKit::CoreIPCString, bool>>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::InfoOption Variant<WebKit::CoreIPCDate, WebKit::CoreIPCString, bool, WebKit::CoreIPCSecTrustData::RevocationInfoArray, WebKit::CoreIPCSecTrustData::InfoSubDict>
+[NeedsReview] AliasParam WebKit::CoreIPCSecTrustData::InfoType Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::InfoOption>>
+[Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyArrayOfData Vector<WebKit::CoreIPCData>
+[Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyVariant Variant<bool, WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyArrayOfNumbers, WebKit::CoreIPCSecTrustData::PolicyArrayOfStrings, WebKit::CoreIPCSecTrustData::PolicyArrayOfData, WebKit::CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers, WebKit::CoreIPCSecTrustData::PolicyDictionaryValueIsNumber>
+[Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyOption Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyVariant>>
+[Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyValue Variant<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyOption>
+[Legacy] AliasParam WebKit::CoreIPCSecTrustData::PolicyType Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyValue>>
+[Legacy] AliasParam WebKit::ImageBufferBackendHandle Variant<WebCore::ShareableBitmapHandle, MachSendRight, WebCore::DynamicContentScalingDisplayList>
+[Legacy] AliasParam WebKit::ImageBufferBackendHandle Variant<WebCore::ShareableBitmapHandle, MachSendRight>
+[Legacy] AliasParam WebKit::ObjectValue WebKit::CoreIPCData
+[Legacy] AliasParam WebCore::SharedMemory::Handle WebCore::SharedMemoryHandle
+[Legacy] AliasParam WebKit::SharedVideoFrame::Buffer Variant<std::nullptr_t, WebKit::RemoteVideoFrameReadReference, MachSendRight, WebCore::IntSize>
+
+# [UnsafeWrapper] in single line format as they are all unique types
+[Legacy] MessageParamReply WebPageProxy.ModelElementSizeDidChange result Expected<MachSendRight, WebCore::ResourceError>
+[Legacy] MessageParamReply UserMediaCaptureManagerProxy.TakePhoto result Expected<std::pair<Vector<uint8_t>, String>, String>
+[Legacy] MessageParam NetworkProcess.SetProxyConfigData proxyConfigurations Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>
+[Legacy] StructureParam WebKit::HTTPBody::Element.data Variant<Vector<uint8_t>, WebKit::HTTPBody::Element::FileData, String>
+[Legacy] StructureParam WebCore::SerializedPlatformDataCueValue::Data.value Variant<std::nullptr_t, RetainPtr<NSString>, RetainPtr<NSDate>, RetainPtr<NSNumber>, RetainPtr<NSData>>
+[Legacy] StructureParam WebCore::BlobPart.m_dataOrURL Variant<Vector<uint8_t>, Ref<WebCore::SharedBuffer>, URL>
+[Legacy] StructureParam WebCore::FormDataElement.data Variant<Vector<uint8_t>, WebCore::FormDataElement::EncodedFileData, WebCore::FormDataElement::EncodedBlobData, WebCore::FormDataElement::PendingStreamData>
+[Legacy] StructureParam WebCore::FragmentedSharedBuffer.toIPCData() Variant<std::optional<WebCore::SharedMemoryHandle>, Vector<std::span<const uint8_t>>>
+[Legacy] StructureParam WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData.sendRightAnnotated std::optional<WTF::MachSendRightAnnotated>
+[Legacy] StructureParam WebKit::NetworkSessionCreationParameters.proxyConfigData std::optional<Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>>
+[Legacy] StructureParam WebKit::ICCData.data Vector<uint8_t>
+[Legacy] StructureParam WebKit::IndexedColorSpace.table Vector<uint8_t>
+
+[UnsafeWrapper] std::optional<WebKit::CoreIPCSecTrustData::InfoType> {
+    [NeedsReview] StructureParam WebKit::CoreIPCSecTrustData.info
+}
+
+[UnsafeWrapper] std::optional<std::span<const uint8_t>> {
+    [Legacy] StructureParam WebKit::CoreIPCData.dataReference() 
+    [NotSentFromWebContent] MessageParam WebSWContextManagerConnection.FirePushEvent data
+}
+
+[UnsafeWrapper] std::span<const uint8_t> {
+    [Legacy] MessageParam LibWebRTCCodecs.CompletedEncoding data
+    [Legacy] MessageParam LibWebRTCCodecs.SetEncodingConfiguration description
+    [Legacy] MessageParam LibWebRTCCodecsProxy.DecodeFrame data
+    [Legacy] MessageParam LibWebRTCCodecsProxy.SetDecoderFormatDescription description
+
+    [Legacy] MessageParam LogStream.LogOnBehalfOfWebContent logCategory
+    [Legacy] MessageParam LogStream.LogOnBehalfOfWebContent logChannel
+    [Legacy] MessageParam LogStream.LogOnBehalfOfWebContent logString
+
+    [Legacy] MessageParam NetworkRTCProvider.SendToSocket data
+    [Legacy] MessageParam NetworkSocketChannel.SendData data
+    [Legacy] MessageParam NetworkSocketChannel.SendString message
+
+    [Legacy] MessageParam NetworkStorageManager.ExecuteCommandForWritable dataBytes
+
+    [Legacy] MessageParam NetworkTransportSession.SendDatagram datagram
+    [Legacy] MessageParam NetworkTransportSession.StreamSendBytes bytes
+
+    [Legacy] MessageParam RemoteGraphicsContextGL.BufferData1 data
+    [Legacy] MessageParam RemoteGraphicsContextGL.BufferSubData data
+    [Legacy] MessageParam RemoteGraphicsContextGL.CompressedTexImage2D0 data
+    [Legacy] MessageParam RemoteGraphicsContextGL.CompressedTexImage3D0 data
+    [Legacy] MessageParam RemoteGraphicsContextGL.CompressedTexSubImage2D0 data
+    [Legacy] MessageParam RemoteGraphicsContextGL.CompressedTexSubImage3D0 data
+    [Legacy] MessageParam RemoteGraphicsContextGL.TexImage2D0 pixels
+    [Legacy] MessageParam RemoteGraphicsContextGL.TexImage3D0 pixels
+    [Legacy] MessageParam RemoteGraphicsContextGL.TexSubImage2D0 pixels
+    [Legacy] MessageParam RemoteGraphicsContextGL.TexSubImage3D0 pixels
+
+    [Legacy] MessageParam WebPageProxy.RegisterWebProcessAccessibilityToken data
+    [Legacy] MessageParam WebPageProxy.RelayAccessibilityNotification notificationData
+    [Legacy] MessageParam WebPageProxy.DidFinishLoadingDataForCustomContentProvider data
+
+    [Legacy] MessageParam RTCDataChannelRemoteManagerProxy.ReceiveData data
+    [Legacy] MessageParam RTCDataChannelRemoteManagerProxy.SendData text
+
+    [Legacy] StructureParam WebKit::CoreIPCSecAccessControl.dataReference()
+    [Legacy] StructureParam WebKit::CoreIPCSecCertificate.dataReference()
+    [Legacy] StructureParam WebKit::CoreIPCSecKeychainItem.dataReference()
+    [Legacy] StructureParam WebKit::CoreIPCSecTrust.dataReference()
+    [Legacy] StructureParam WebKit::CoreIPCCFCharacterSet.dataReference()
+    [Legacy] StructureParam WebKit::SandboxExtensionImpl.getSerializedFormat()
+    [Legacy] StructureParam WebCore::BufferSource.span()
+    [Legacy] StructureParam WebCore::PixelBufferSourceView.bytes()
+    [Legacy] StructureParam JSC::ArrayBufferContents.span()
+
+    [SecurityGatedReply] MessageParamReply WebPage.OpenPDFWithPreview data
+    [SecurityGatedReply] MessageParamReply WebPage.SavePDF data
+    [NotSentFromWebContent] MessageParam WebTransportSession.ReceiveDatagram datagram
+    [NotSentFromWebContent] MessageParam WebTransportSession.StreamReceiveBytes bytes
+    [NotSentFromWebContent] MessageParam WebSocketChannel.DidReceiveBinaryData data
+    [NotSentFromWebContent] MessageParam RTCDataChannelRemoteManager.ReceiveData data
+    [NotSentFromWebContent] MessageParam RTCDataChannelRemoteManager.SendData text
+    [NotSentFromWebContent] MessageParam NetworkProcessProxy.DataTaskDidReceiveData data
+    [NotSentFromWebContent] MessageParam NetworkProcess.InstallMockParentalControlsURLFilterForTesting replacementData
+    [NotSentFromWebContent] MessageParam NetworkProcess.PublishDownloadProgress activityAccessToken
+    [NotSentFromWebContent] MessageParam NetworkProcess.PublishDownloadProgress bookmarkData
+    [NotSentFromWebContent] MessageParam NetworkProcess.ResumeDownload activityAccessToken
+    [NotSentFromWebContent] MessageParam NetworkProcess.ResumeDownload resumeData
+    [NotSentFromWebContent] MessageParam MediaPlayerPrivateRemote.AddDataCue data
+    [NotSentFromWebContent] MessageParam MediaPlayerPrivateRemote.InitializationDataEncountered initData
+    [NotSentFromWebContent] MessageParam MediaPlayerPrivateRemote.MediaPlayerKeyNeeded message
+    [NotSentFromWebContent] MessageParam MediaPlayerPrivateRemote.ParseWebVTTCueData data
+    [NotSentFromWebContent] MessageParamReply DownloadProxy.DecideDestinationWithSuggestedFilename activityAccessToken
+    [NotSentFromWebContent] MessageParamReply DownloadProxy.DecideDestinationWithSuggestedFilename placeholderBookmarkData
+    [NotSentFromWebContent] MessageParamReply NetworkProcess.CancelDownload resumeData
+    [NotSentFromWebContent] MessageParamReply RemoteGraphicsContextGL.GetBufferSubDataInline data
+    [NotSentFromWebContent] MessageParamReply RemoteGraphicsContextGL.ReadPixelsInline data
+    [NotSentFromWebContent] MessageParam DownloadProxy.DidFail resumeData
+    [NotSentFromWebContent] MessageParam DownloadProxy.DidReceiveFinalURL bookmarkData
+    [NotSentFromWebContent] MessageParam DownloadProxy.DidReceivePlaceholderURL bookmarkData
+    [NotSentFromWebContent] MessageParam GPUProcess.ResolveBookmarkDataForCacheDirectory bookmarkData
+    [NotSentFromWebContent] MessageParam LegacyCustomProtocolManager.DidLoadData data
+    [NotSentFromWebContent] MessageParam LibWebRTCNetwork.SignalReadPacket data
+    [NotSentFromWebContent] MessageParam WebPage.DidChooseFilesForOpenPanelWithDisplayStringAndIcon iconData
+    [NotSentFromWebContent] MessageParam WebPage.InsertMultiRepresentationHEIC data
+    [NotSentFromWebContent] MessageParam WebPage.LoadDataInFrame data
+    [NotSentFromWebContent] MessageParam WebPage.RegisterUIProcessAccessibilityTokens elementToken
+    [NotSentFromWebContent] MessageParam WebPage.RegisterUIProcessAccessibilityTokens windowToken
+    [NotSentFromWebContent] MessageParam WebPage.ReplaceImageForRemoveBackground data
+    [NotSentFromWebContent] MessageParam WebPage.ReplaceSelectionWithPasteboardData data
+    [NotSentFromWebContent] MessageParam WebProcess.BindAccessibilityFrameWithData data
+    [NotSentFromWebContent] MessageParam WebProcess.SetInjectedBundleParameter value
+    [NotSentFromWebContent] MessageParam WebProcess.SetInjectedBundleParameters parameters
+}
+
+[UnsafeWrapper] std::optional<Vector<uint8_t>> {
+    [Legacy] MessageParamReply WebPageProxy.SerializeAndWrapCryptoKey wrappedKey
+    [Legacy] MessageParamReply WebPageProxy.UnwrapCryptoKey key
+    [Legacy] MessageParamReply WebProcessProxy.SerializeAndWrapCryptoKey wrappedKey
+    [Legacy] MessageParamReply WebProcessProxy.UnwrapCryptoKey key
+    [Legacy] MessageParamReply RemoteBuffer.GetMappedRange data
+    [Legacy] StructureParam WebCore::CryptoKeyData.key
+    [Legacy] StructureParam WebKit::FrameState.stateObjectData
+    [Legacy] StructureParam WebKit::WebPushMessage.pushData
+}
+
+[UnsafeWrapper] Vector<uint8_t> {
+    [Legacy] MessageParamReply WebPage.BindRemoteAccessibilityFrames token
+    [Legacy] MessageParam NetworkConnectionToWebProcess.NavigatorSubscribeToPushService applicationServerKey
+    [Legacy] MessageParam PushClientConnection.SubscribeToPushService vapidPublicKey
+    [Legacy] MessageParam RemoteBuffer.CopyWithCopy data
+    [Legacy] MessageParam RemoteQueue.WriteBufferWithCopy data
+    [Legacy] MessageParam RemoteQueue.WriteTextureWithCopy data
+    [Legacy] MessageParam WebPageProxy.BindRemoteAccessibilityFrames dataToken
+    [Legacy] MessageParam WebSWServerConnection.SubscribeToPushService applicationServerKey
+    [Legacy] StructureParam WebKit::CoreIPCPKSecureElementPass.ipcData()
+    [Legacy] StructureParam WebKit::CoreIPCCFURL.toVector()
+    [Legacy] StructureParam WebKit::NetworkProcessCreationParameters.uiProcessCookieStorageIdentifier
+    [Legacy] StructureParam WebKit::WebPushD::WebPushDaemonConnectionConfiguration.hostAppAuditTokenData
+    [Legacy] StructureParam WebKit::WebsiteDataStoreParameters.uiProcessCookieStorageIdentifier
+    [Legacy] StructureParam WebCore::ContentFilterUnblockHandler.webFilterEvaluatorData()
+    [Legacy] StructureParam WebCore::FormData.m_boundary
+    [Legacy] StructureParam WebCore::NotificationData.data
+    [Legacy] StructureParam WebCore::PushSubscriptionData.clientECDHPublicKey
+    [Legacy] StructureParam WebCore::PushSubscriptionData.serverVAPIDPublicKey
+    [Legacy] StructureParam WebCore::PushSubscriptionData.sharedAuthenticationSecret
+    [Legacy] StructureParam WebCore::SerializedScriptValueInternals.data
+    [Legacy] StructureParam WebCore::ThreadSafeDataBufferImpl.m_data
+    [Legacy] StructureParam WebCore::WebCodecsEncodedAudioChunkData.buffer
+    [Legacy] StructureParam WebCore::WebCodecsEncodedVideoChunkData.buffer
+    [Legacy] StructureParam WebCore::WrappedCryptoKey.encryptedKey
+    [Legacy] StructureParam JSC::ArrayBuffer.toVector()
+    [Legacy] StructureParam WebCore::MockWebAuthenticationConfiguration::HidConfiguration.pinProtocols
+    [Legacy] StructureParam WebModel::UpdateMeshDescriptor.indexData
+    [Legacy] StructureParam WebCore::CustomFontCreationData.fontFaceData
+
+    [NotSentFromWebContent] MessageParam WebPage.GetInformationFromImageData imageData
+    [NotSentFromWebContent] MessageParam WebPage.GetImageMetadata imageData
+    [NotSentFromWebContent] MessageParam WebPage.BindRemoteAccessibilityFrames dataToken
+    [NotSentFromWebContent] MessageParamReply WebPageProxy.BindRemoteAccessibilityFrames token
+    [NotSentFromWebContent] MessageParamReply WebPageProxy.LoadSynchronousURLSchemeTask data
+    [NotSentFromWebContent] MessageParamReply NetworkConnectionToWebProcess.PerformSynchronousLoad data
+}
+
+[UnsafeWrapper] Vector<unsigned char> {
+    [Legacy] StructureParam WebCore::SVGPathByteStream.bytes()
+}
+
+[UnsafeWrapper] std::array<uint8_t, 16> {
+    [Legacy] StructureParam WebCore::WrappedCryptoKey.tag
+}
+
+[UnsafeWrapper] std::array<uint8_t, 24> {
+    [Legacy] StructureParam WebCore::WrappedCryptoKey.wrappedKEK
+}
+
+[UnsafeWrapper] FixedVector<uint8_t> {
+    [Legacy] StructureParam WTF::MachSendRightAnnotated.data
+}
+
+[UnsafeWrapper] Vector<WebKit::CoreIPCData> {
+    [Legacy] StructureParam WebKit::CoreIPCSecTrustData.certificates
+    [Legacy] StructureParam WebKit::CoreIPCSecTrustData.chain
+}
+
+[UnsafeWrapper] std::optional<WebKit::CoreIPCData> {
+    [Legacy] StructureParam WebKit::CoreIPCNSURLRequestData.body 
+}
+
+[UnsafeWrapper] std::optional<Vector<WebKit::CoreIPCData>> {
+    [Legacy] StructureParam WebKit::CoreIPCSecTrustData.anchors
+    [Legacy] StructureParam WebKit::CoreIPCSecTrustData.responses
+    [Legacy] StructureParam WebKit::CoreIPCSecTrustData.scts
+    [Legacy] StructureParam WebKit::CoreIPCSecTrustData.trustedLogs
+    [Legacy] StructureParam WebKit::CoreIPCNSURLProtectionSpaceData.distnames
+}
+
+[SafeWrapper] StructureParam IPC::ConnectionHandle.m_handle MachSendRight
+
+[UnsafeWrapper] std::optional<MachSendRight> {
+    [Legacy] MessageParamReply RemoteMediaPlayerProxy.NativeImageForCurrentTime sendRight
+}
+
+[UnsafeWrapper] MachSendRight {
+    [Legacy] MessageParam RemoteXRProjectionLayer.StartFrame colorBuffer
+    [Legacy] MessageParam RemoteXRProjectionLayer.StartFrame completionSyncEvent
+    [Legacy] MessageParam RemoteXRProjectionLayer.StartFrame depthBuffer
+    [Legacy] MessageParam DrawingArea.UpdateGeometry fencePort
+    [Legacy] StructureParam IPC::Semaphore.createSendRight()
+    [Legacy] StructureParam IPC::SharedFileHandle.toMachSendRight()
+    [Legacy] StructureParam IPC::Signal.takeSendRight()
+    [Legacy] StructureParam PlatformXR::FrameData::ExternalTexture.handle
+    [Legacy] StructureParam PlatformXR::FrameData::LayerSetupData.completionSyncEvent
+    [Legacy] StructureParam WebKit::CoreIPCCVPixelBufferRef.m_sendRight
+    [Legacy] StructureParam WebCore::GraphicsContextGLExternalImageSourceIOSurfaceHandle.handle
+    [Legacy] StructureParam WebCore::GraphicsContextGLExternalImageSourceMTLSharedTextureHandle.handle
+    [Legacy] StructureParam WebCore::ProcessIdentity.m_taskIdToken
+    [Legacy] StructureParam WebCore::SharedMemoryHandle.m_handle
+    [Legacy] StructureParam WTF::MachSendRightAnnotated.sendRight
+
+    [NotSentFromWebContent] MessageParam WebPage.SetObscuredContentInsetsFenced machSendRight
+    [NotSentFromWebContent] MessageParamReply RemoteGraphicsContextGL.PrepareForDisplay displayBuffer
+}
+
+[UnsafeWrapper] Vector<MachSendRight> {
+    [Legacy] StructureParam WebCore::DynamicContentScalingDisplayList.takeSurfaces()
+
+    [NotSentFromWebContent] MessageParamReply RemoteCompositorIntegration.RecreateRenderBuffers renderBuffers
+    [NotSentFromWebContent] MessageParamReply RemoteGPU.CreateModelBacking renderBuffers
+    [NotSentFromWebContent] MessageParamReply RemoteMesh.UpdateRenderBuffers renderBuffers
+}
+
+[UnsafeWrapper] std::optional<MachSendRightAnnotated> {
+    [Legacy] MessageParam GPUConnectionToWebProcess.UpdateSampleBufferDisplayLayerBoundsAndPosition fence
+    [Legacy] StructureParam WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData.sendRightAnnotated
+}
+
+[UnsafeWrapper] WTF::MachSendRightAnnotated {
+    [Legacy] StructureParam WebCore::HostingContext.sendRightAnnotated
+}
+
+[UnsafeWrapper] MachSendRightAnnotated {
+    [Legacy] MessageParam RemoteAudioVideoRendererProxyManager.SetVideoLayerSizeFenced sendRightAnnotated
+    [Legacy] MessageParam RemoteMediaPlayerProxy.SetVideoLayerSizeFenced sendRightAnnotated
+    [Legacy] StructureParam WebCore::HostingContext.sendRightAnnotated
+
+    [NotSentFromWebContent] MessageParam VideoPresentationManager.SetVideoLayerFrameFenced sendRightAnnotated
+}
+
+[UnsafeWrapper] RetainPtr<CFDataRef> {
+    [Legacy] StructureParam WebCore::FontPlatformSerializedAttributes.matrix
+}
+
+[UnsafeWrapper] RetainPtr<CFDataRef> {
+    [Legacy] StructureParam WebCore::ShareableGainMap.m_metadata
+    [Legacy] StructureParam WebCore::MultiRepresentationHEICAttachmentData.data
+    [Legacy] StructureParam WebCore::TextAttachmentFileWrapper.data
+
+    [NotSentFromWebContent] StructureParam WebKit::NetworkProcessCreationParameters.networkATSContext
+    [NotSentFromWebContent] StructureParam WebKit::WebProcessCreationParameters.networkATSContext
+}
+
+[UnsafeWrapper] RetainPtr<NSData> {
+    [Legacy] StructureParam WebCore::TextRecognitionResult.imageAnalysisData
+    [NeedsReview] StructureParam WebKit::CoreIPCPKPaymentMerchantSessionData.signature
+    [NeedsReview] StructureParam WebKit::CoreIPCPKPaymentMerchantSessionData.ampEnrollmentPinning
+    [NeedsReview] StructureParam WebKit::CoreIPCPKPaymentTokenData.paymentData
+    [NeedsReview] StructureParam WebKit::CoreIPCPKPaymentData.credential
+}
+
+[UnsafeWrapper] std::span<const char> {
+    [Legacy] StructureParam WebKit::RTCPacketOptions::SerializableData.srtpAuthKey
+    [Legacy] StructureParam WTF::CString.span()
+}
+
+# Shared Memory
+[SafeWrapper] StructureParam WebCore::ShareableCVPixelBufferBytesHandle.m_handle WebCore::SharedMemoryHandle
+[SafeWrapper] StructureParam WebCore::ShareableBitmapHandle.m_handle WebCore::SharedMemoryHandle
+[NotSentFromWebContent] StructureParam WebCore::SharedTimebaseHandle.memory WebCore::SharedMemoryHandle
+[SafeWrapper] StructureParam IPC::StreamServerConnectionHandle.buffer WebCore::SharedMemoryHandle
+[SafeWrapper] StructureParam WebModel::ImageAsset.dataHandle std::optional<WebCore::SharedMemory::Handle>
+
+[UnsafeWrapper] std::optional<IPC::SharedBufferReference> {
+    [Legacy] MessageParamReply WebPage.GetMainResourceDataOfFrame buffer
+    [Legacy] MessageParamReply WebPage.GetResourceDataFromFrame buffer
+    [Legacy] MessageParamReply WebPage.GetAccessibilityTreeData dataReference
+    [SecurityGatedReply] MessageParamReply WebPage.GetWebArchiveOfFrame dataReference
+    [SecurityGatedReply] MessageParamReply WebPage.GetWebArchiveOfFrameWithFileName dataReference
+    [SecurityGatedReply] MessageParamReply WebPage.GetWebArchiveData dataReference
+}
+
+[UnsafeWrapper] IPC::SharedBufferReference {
+    [Legacy] MessageParamReply WebPage.GetContentsAsMHTMLData data
+}
+
+[UnsafeWrapper] IPC::SharedBufferReference {
+    [Legacy] MessageParamReply WebPage.DidGetLoadDecisionForIcon iconData
+    [Legacy] MessageParam RemoteImageDecoderAVFProxy.CreateDecoder data
+    [Legacy] MessageParam RemoteImageDecoderAVFProxy.SetData data
+    [Legacy] MessageParam RemoteMediaResourceLoader.DataReceived data
+    [Legacy] MessageParam WebProcess.ConsumeAudioComponentRegistrations registrationData
+    [Legacy] MessageParam WebPageProxy.RegisterAttachmentIdentifierFromData data
+    [Legacy] MessageParam ServiceWorkerDownloadTask.DidReceiveData data
+    [Legacy] MessageParam ServiceWorkerFetchTask.DidReceiveData data
+    [Legacy] MessageParam NetworkResourceLoader.PendingStreamAppendData chunk
+
+    [NotSentFromWebContent] MessageParam WebResourceLoader.DidReceiveData data
+    [NotSentFromWebContent] MessageParam WebSWClientConnection.NotifyRecordResponseBodyChunk data
+    [NotSentFromWebContent] MessageParam WebSWContextManagerConnection.ForwardPendingStreamUploadData chunk
+    [NotSentFromWebContent] MessageParam GPUProcess.ConsumeAudioComponentRegistrations registrationData
+    [NotSentFromWebContent] MessageParam WebPage.UpdateAttachmentAttributes associatedElementData
+}
+
+[UnsafeWrapper] std::optional<WebCore::SharedMemoryHandle> {
+    [Legacy] StructureParam WebKit::WebHitTestResultData.getImageSharedMemoryHandle()
+    [Legacy] StructureParam WebKit::WebCompiledContentRuleListData.createDataHandle()
+    [Legacy] StructureParam WebKit::WebJSBufferData.sharedMemoryHandle()
+}
+
+[UnsafeWrapper] Vector<WebCore::SharedMemory::Handle> {
+    [NotSentFromWebContent] MessageParam WebPage.RestoreAppHighlightsAndScrollToIndex memoryHandles
+}
+
+[UnsafeWrapper] std::optional<WebCore::SharedMemory::Handle> {
+    [Legacy] MessageParamReply WebPage.DrawPagesForPrinting data
+    [Legacy] MessageParamReply WebPage.DrawPagesForPrintingDuringDOMPrintOperation data
+    [Legacy] MessageParamReply RemoteMediaResourceLoader.DataReceived remoteData
+    [Legacy] MessageParam RemoteBuffer.Copy data
+    [Legacy] MessageParam RemoteQueue.WriteBuffer data
+    [Legacy] MessageParam RemoteQueue.WriteTexture dataHandle
+    [Legacy] StructureParam IPC::SharedBufferReference::SerializableBuffer.handle
+    [Legacy] StructureParam WebKit::FullScreenMediaDetails.imageHandle
+
+    [DebugOnly] MessageParamReply IPCStreamTester.SyncMessageReturningSharedMemory1 handle
+
+    [NotSentFromWebContent] MessageParamReply RemoteAudioVideoRendererProxyManager.Create handle SharedTimebaseHandle
+}
+
+[UnsafeWrapper] WebCore::SharedMemoryHandle {
+    [Legacy] StructureParam WebKit::ConsumerSharedCARingBufferHandle.memory
+    [Legacy] StructureParam WebCore::ShareableResourceHandle.m_handle
+    [NotSentFromWebContent] StructureParam IPC::TransferString::SharedSpan8.dataHandle
+    [NotSentFromWebContent] StructureParam IPC::TransferString::SharedSpan16.dataHandle
+}
+
+[UnsafeWrapper] WebCore::SharedMemory::Handle {
+    [Legacy] MessageParam WebPageProxy.SaveImageToLibrary handle
+    [Legacy] MessageParam WebPageProxy.SetPromisedDataForImage imageHandle
+    [Legacy] MessageParam WebPageProxy.SetPromisedDataForImage archiveHandle
+    [Legacy] MessageParam LibWebRTCCodecsProxy.SetSharedVideoFrameMemory storageHandle
+    [Legacy] MessageParam RemoteGraphicsContext.SetSharedVideoFrameMemory storageHandle
+    [Legacy] MessageParam RemoteGraphicsContextGL.SetSharedVideoFrameMemory storageHandle
+    [Legacy] MessageParam RemoteGraphicsContextGL.GetBufferSubDataSharedMemory handle
+    [Legacy] MessageParam RemoteGraphicsContextGL.ReadPixelsSharedMemory handle
+    [Legacy] MessageParam RemoteImageBuffer.GetPixelBufferWithNewMemory handle
+    [Legacy] MessageParam RemoteDevice.SetSharedVideoFrameMemory storageHandle
+    [Legacy] MessageParam RemoteSampleBufferDisplayLayer.SetSharedVideoFrameMemory storageHandle
+    [Legacy] MessageParam RemoteAudioDestinationManager.CreateAudioDestination frameCount
+    [Legacy] MessageParam RemoteVideoFrameObjectHeap.SetSharedVideoFrameMemory storageHandle
+
+    [NotSentFromWebContent] MessageParam VisitedLinkTableController.SetVisitedLinkTable handle
+    [NotSentFromWebContent] MessageParam WebSWClientConnection.SetSWOriginTableSharedMemory handle
+    [NotSentFromWebContent] MessageParam RemoteVideoFrameObjectHeapProxyProcessor.SetSharedVideoFrameMemory storageHandle
+    [DebugOnly] MessageParam WebPasteboardProxy.TestIPCSharedMemory handle
+}
+
+[Legacy] StructureParam WebModel::UpdateMeshDescriptor.vertexData Vector<Vector<uint8_t>>
+
+[UnsafeWrapper] AliasParam IPC::TransferString::IPCData Variant<std::monostate, std::span<const uint8_t>, std::span<const char16_t>, IPC::TransferString::SharedSpan8, IPC::TransferString::SharedSpan16>
+
+[UnsafeWrapper] WebCore::GraphicsContextGL::ExternalSyncSource {
+    [Legacy] MessageParam RemoteGraphicsContextGL.CreateExternalSync arg0
+}
+
+[UnsafeWrapper] IPC::TransferString::IPCData {
+    [Legacy] StructureParam IPC::TransferString.toIPCData()
+}
+
+[UnsafeWrapper] FileSystem::Salt {
+    [Legacy] StructureParam WebKit::WebProcessDataStoreParameters.mediaKeysStorageSalt
+}
+
+[UnsafeWrapper] WebKit::SharedVideoFrame::Buffer {
+    [Legacy] StructureParam WebKit::SharedVideoFrame.buffer
+}
+
+[UnsafeWrapper] UniqueRef<WebKit::CFObjectValue> {
+    [Legacy] StructureParam WebKit::CoreIPCCFType.object()
+}
+
+[UnsafeWrapper] std::optional<WebKit::ImageBufferBackendHandle> {
+    [Legacy] MessageParam RemoteImageBufferProxy.DidCreateBackend handle
+    [Legacy] MessageParamReply WebPage.TakeSnapshot image
+    [Legacy] StructureParam WebKit::RemoteLayerBackingStoreProperties.m_bufferHandle
+    [Legacy] StructureParam WebKit::BufferSetBackendHandle.bufferHandle
+    [Legacy] StructureParam WebKit::ImageBufferSetPrepareBufferForDisplayOutputData.backendHandle
+    [Legacy] StructureParam WebKit::WCBackingStore.handle()
+}
+
+[UnsafeWrapper] UniqueRef<WebKit::ObjectValue> {
+    [Legacy] StructureParam WebKit::CoreIPCNSCFObject.value()
+}
+
+[UnsafeWrapper] std::optional<WebKit::SharedVideoFrame::Buffer> {
+    [Legacy] MessageParam RemoteVideoFrameObjectHeapProxyProcessor.NewVideoFrameBuffer frame
+    [Legacy] MessageParam RemoteVideoFrameObjectHeapProxyProcessor.NewConvertedVideoFrameBuffer frame
+}
+
+[UnsafeWrapper] std::optional<Vector<WebKit::CoreIPCNSURLRequestData::BodyParts>> {
+    [Legacy] StructureParam WebKit::CoreIPCNSURLRequestData.bodyParts
+}
+
+[UnsafeWrapper] UniqueRef<WebKit::PlistValue> {
+    [Legacy] StructureParam WebKit::CoreIPCPlistObject.value()
+}
+
+[UnsafeWrapper] std::unique_ptr<Vector<KeyValuePair<WebKit::CoreIPCCFDictionary::KeyType, WebKit::CoreIPCCFType>>> {
+    [Legacy] StructureParam WebKit::CoreIPCCFDictionary.vector()
+}
+
+[UnsafeWrapper] std::optional<Vector<WebKit::CoreIPCSecTrustData::ExceptionType>> {
+    [Legacy] StructureParam WebKit::CoreIPCSecTrustData.exceptions
+}
+
+[UnsafeWrapper] Vector<WebKit::CoreIPCSecTrustData::PolicyType> {
+    [Legacy] StructureParam WebKit::CoreIPCSecTrustData.policies
+}
+
+[Legacy] StructureParam WebCore::AccessibilityRemoteToken.bytes Vector<uint8_t>
+
+[NeedsReview] StructureParam WebCore::X509SubjectKeyIdentifier.data Vector<uint8_t>
+
+# Deprecated CFTypes Which Should Not Be Sent From WebContent
+[NotSentFromWebContent] AliasParam WebKit::CFObjectValue Variant<std::nullptr_t, WebKit::CoreIPCCFArray, WebKit::CoreIPCBoolean, WebKit::CoreIPCCFCharacterSet, WebKit::CoreIPCData, WebKit::CoreIPCDate, WebKit::CoreIPCCFDictionary, WebKit::CoreIPCNull, WebKit::CoreIPCNumber, WebKit::CoreIPCString, WebKit::CoreIPCCFURL, WebKit::CoreIPCSecCertificate, WebKit::CoreIPCSecTrust, WebKit::CoreIPCCGColorSpace, WebCore::Color, WebKit::CoreIPCSecAccessControl>
+[NotSentFromWebContent] AliasParam WebKit::CoreIPCCFDictionary::KeyType Variant<WebKit::CoreIPCCFArray, WebKit::CoreIPCBoolean, WebKit::CoreIPCCFCharacterSet, WebKit::CoreIPCData, WebKit::CoreIPCDate, WebKit::CoreIPCCFDictionary, WebKit::CoreIPCNull, WebKit::CoreIPCNumber, WebKit::CoreIPCString, WebKit::CoreIPCCFURL>
+[UnsafeWrapper] RetainPtr<CFDictionaryRef> {
+    [NotSentFromWebContent] StructureParam WebKit::NetworkSessionCreationParameters.proxyConfiguration
+    [NotSentFromWebContent] StructureParam WebKit::SecItemRequestData.m_attributesToMatch
+    [NotSentFromWebContent] StructureParam WebKit::SecItemRequestData.m_queryDictionary
+}
+[NotSentFromWebContent] AliasParam WebKit::PlistValue Variant<WebKit::CoreIPCPlistArray, WebKit::CoreIPCPlistDictionary, WebKit::CoreIPCString, WebKit::CoreIPCNumber, WebKit::CoreIPCDate, WebKit::CoreIPCData>
+
+# GTK Specific
+[Legacy] StructureParam sk_sp<SkColorSpace>.dataReference() std::span<const uint8_t>
+[Legacy] StructureParam sk_sp<SkData>.dataReference() std::span<const uint8_t>
+[Legacy] StructureParam SkString.data() std::span<const char>
+[Legacy] StructureParam WebCore::CertificateInfo.certificateChain() Vector<Vector<uint8_t>>
+
+[NeedsReview] MessageParam NetworkTransportSession.ExportKeyingMaterial label std::span<const uint8_t>
+[NeedsReview] MessageParam NetworkTransportSession.ExportKeyingMaterial context std::span<const uint8_t>
+[NeedsReview] MessageParamReply NetworkTransportSession.ExportKeyingMaterial keyingMaterial std::optional<Vector<uint8_t>>

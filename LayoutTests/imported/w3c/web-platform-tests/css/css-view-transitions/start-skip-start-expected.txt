@@ -1,0 +1,3 @@
+
+PASS Synchronously starting a view transition blocks on DOM callback for previously skipped transitions
+

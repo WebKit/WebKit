@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Solving for 'right' on absolutely positioned non-replaced elements</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#abs-non-replaced-width">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="When direction is left-to-right and 'left', 'width' and 'right' are 'auto', the width becomes shrink-to-fit and then solve for 'right'.">
+        <style type="text/css">
+            #div1
+            {
+                border: solid black;
+                direction: ltr;
+                height: 2in;
+                position: relative;
+                width: 2in;
+            }
+            div div
+            {
+                background: red;
+                color: blue;
+                font: 1in/1em Ahem;
+                left: auto;
+                position: absolute;
+                right: auto;
+                width: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue box is in the upper-left corner of the black box and there is no red visible on the page.</p>
+        <div id="div1">
+            <div>X</div>
+        </div>
+    </body>
+</html>

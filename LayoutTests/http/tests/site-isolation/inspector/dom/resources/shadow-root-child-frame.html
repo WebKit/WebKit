@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Shadow DOM Child Frame</title>
+</head>
+<body>
+    <div id="child-host" data-role="child-host"></div>
+    <script>
+    // Embed a grandchild iframe back on the original host so main(A) -> child(B) ->
+    // grandchild(A): the grandchild shares the main frame's process, giving two distinct
+    // frame targets (child and grandchild) whose FrameDOMAgents mint node ids from
+    // independent counters and can therefore collide numerically.
+    let grandchildHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "grandchild-frame";
+    iframe.src = `http://${grandchildHost}:8000/site-isolation/inspector/dom/resources/shadow-root-grandchild-frame.html`;
+    document.body.appendChild(iframe);
+
+    function attachShadowToChildHost() {
+        document.getElementById("child-host").attachShadow({mode: "open"});
+        return true;
+    }
+    </script>
+</body>
+</html>

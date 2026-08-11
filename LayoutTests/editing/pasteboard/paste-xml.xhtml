@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<style>
+.editing {
+    border: 2px solid red;
+    padding: 12px;
+    font-size: 24px;
+}
+</style>
+
+<script src="../editing.js" language="JavaScript" type="text/JavaScript" />
+
+<script>
+
+function editingTest() {
+    for (i = 0; i != 4; i++)
+        moveSelectionForwardByCharacterCommand();
+    for (i = 0; i != 3; i++)
+        extendSelectionForwardByCharacterCommand();
+    copyCommand();
+    moveSelectionForwardByCharacterCommand();
+    pasteCommand();
+}
+
+</script>
+
+</head> 
+
+<body>
+<div contenteditable="" id="root" class="editing">
+<span id="test">foo bar baz</span>
+</div>
+
+<script>
+runDumpAsTextEditingTest(true);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+function a() { return "a"; }
+function b() { return "b"; }
+function c() { return "c"; }
+
+function testFunction() {
+    debugger;
+    let x = 1;
+    let y = 2;
+}
+
+function testEval() {
+    let before = 1;
+    eval("debugger");
+    let after = 2;
+}
+
+function testInnerFunction() {
+    function alpha() {
+        beta();
+    }
+    function beta() {
+        debugger;
+    }
+    alpha();
+}
+
+function testAnonymousFunction() {
+    (function() {
+        debugger;
+        let inner = 1;
+    })();
+    let outer = 2;
+}
+
+function testCommas() {
+    debugger;
+    let x = 1,
+        y = 2,
+        z = 3;
+    a(), b(), c();
+    true && (a(), b(), c()) && true;
+}
+
+function testChainedExpressions() {
+    debugger;
+    a() && b() && c();
+}
+
+function testDeclarations() {
+    debugger;
+    let x = a(),
+        y = b(),
+        z = c();
+}
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepOut");
+
+    // Always step-out when call frames change.
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+        if (!WI.debuggerManager.activeCallFrame)
+            return;
+        logPauseLocation();
+        WI.debuggerManager.stepOut();
+    });
+
+    function addTestCase({name, description, expression}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    InspectorTest.log(`PAUSED (${WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target).pauseReason})`);
+                });
+                WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Resumed, (event) => {
+                    InspectorTest.log("RESUMED");
+                    resolve();
+                });
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Debugger.stepOut.function",
+        description: "step-out should leave a function.",
+        expression: "setTimeout(testFunction)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOut.eval",
+        description: "step-out should step leave an eval program.",
+        expression: "setTimeout(testEval)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOut.innerFunction",
+        description: "step-out should leave a function and end up after its callsite.",
+        expression: "setTimeout(testInnerFunction)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOut.anonymousFunction",
+        description: "step-out should leave an anonymous function and end up after its callsite.",
+        expression: "setTimeout(testAnonymousFunction)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOut.commas",
+        description: "step-out should not enter any comma separated function calls.",
+        expression: "setTimeout(testCommas)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOut.chainedExpressions",
+        description: "step-out should not enter any function calls in a chained expression.",
+        expression: "setTimeout(testChainedExpressions)",
+    });
+
+    addTestCase({
+        name: "Debugger.stepOut.declarations",
+        description: "step-out should leave a function.",
+        expression: "setTimeout(testDeclarations)",
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping with "stepOut".</p>
+</body>
+</html>

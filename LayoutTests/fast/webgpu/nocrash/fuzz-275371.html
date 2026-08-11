@@ -1,0 +1,48 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let shaderModule = device.createShaderModule({ code: `
+        struct d {
+            @location(0) e: vec4<f32>,
+            @location(3) f: vec4<f32>,
+            @location(1) g: vec4<i32>,
+            @location(2) p: i32
+        }
+        @fragment fn h() -> d {
+            return d();
+        }
+        @vertex fn k() -> @builtin(position) vec4f {
+            return vec4f();
+        }
+    `});
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let renderPipeline = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: {
+            module: shaderModule,
+            targets: [{ format: 'rgba8unorm-srgb' }]
+        },
+        vertex: { module: shaderModule }
+    });
+    let renderBundleEncoder = device.createRenderBundleEncoder({
+        colorFormats: ['rgba8unorm-srgb']
+    });
+    renderBundleEncoder.setVertexBuffer(0, null);
+    renderBundleEncoder.setPipeline(renderPipeline);
+    device.destroy();
+    renderBundleEncoder.draw(0);
+    renderBundleEncoder.finish();
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

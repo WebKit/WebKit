@@ -1,0 +1,10 @@
+This test makes sure stack unwinding works correctly in combination with dynamically added scopes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is "inner scope"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

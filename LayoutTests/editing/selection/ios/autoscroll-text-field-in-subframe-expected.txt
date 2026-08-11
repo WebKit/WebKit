@@ -1,0 +1,12 @@
+
+Verifies that you can autoscroll inside of a text field in a subframe. To manually run the test, focus the text field and move the caret to the right edge; the text field should scroll to the end (after the word 'dog')
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS loadedSubframe became true
+PASS Autoscrolled to end of text field
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

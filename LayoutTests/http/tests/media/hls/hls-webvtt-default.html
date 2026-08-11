@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../../media-resources/video-test.js></script>
+    <script>
+        window.addEventListener('load', async event => {
+            run('internals.setCaptionDisplayMode("automatic")');
+            
+            video = document.getElementById('video');
+            video.src = "../resources/hls/test-webvtt-default.m3u8";
+            video.play();
+            await waitFor(video.textTracks, 'addtrack');
+
+            testExpected("video.textTracks.length", "1");
+            testExpected("video.textTracks[0].mode", "showing");
+
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <video id="video" muted loop></video>
+</body>
+</html>

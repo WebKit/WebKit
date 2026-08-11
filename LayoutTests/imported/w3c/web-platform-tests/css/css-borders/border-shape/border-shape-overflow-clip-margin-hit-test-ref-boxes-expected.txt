@@ -1,0 +1,7 @@
+
+FAIL overflow-clip-margin with border-box reference assert_equals: Point at 70px from center should hit child with border-box reference (expanded radius 80px) expected Element node <div id="target1" class="target"></div> but got Element node <body><div id="border-box-ref" class="outer">
+  <div id="...
+FAIL overflow-clip-margin with padding-box reference (inside) assert_equals: Point at 65px from center should hit child with padding-box reference (expanded radius 70px) expected Element node <div id="target2" class="target"></div> but got Element node <body><div id="border-box-ref" class="outer">
+  <div id="...
+PASS overflow-clip-margin with padding-box reference (outside)
+

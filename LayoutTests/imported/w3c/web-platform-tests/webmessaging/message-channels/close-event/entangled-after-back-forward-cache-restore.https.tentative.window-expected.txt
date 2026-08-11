@@ -1,0 +1,3 @@
+
+PASS MessagePort still works after the page is restored from BFCache
+

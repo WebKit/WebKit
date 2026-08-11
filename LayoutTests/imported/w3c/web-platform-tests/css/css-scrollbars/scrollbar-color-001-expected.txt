@@ -1,0 +1,3 @@
+
+PASS scrollbar-color auto on the root defers to ::-webkit-scrollbar
+

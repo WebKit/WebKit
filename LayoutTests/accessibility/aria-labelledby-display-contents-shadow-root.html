@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="label-element" style="display: contents;">
+  <template shadowrootmode="open">
+    <div>Shadow Label Text</div>
+  </template>
+</div>
+
+<button id="test-button" aria-labelledby="label-element">Button Content</button>
+
+<div id="unrelated-shadow-host">
+  <template shadowrootmode="open">
+    <div>This should NOT appear in button name</div>
+  </template>
+</div>
+
+<script>
+var output = "This test ensures aria-labelledby correctly references display:contents elements with shadow roots.\n\n";
+
+if (window.accessibilityController) {
+    var testButton = accessibilityController.accessibleElementById("test-button");
+    output += expect("testButton.role.toLowerCase().includes('button')", "true");
+    output += expect("platformValueForW3CName(testButton)", "'Shadow Label Text'");
+    output += expect("platformValueForW3CName(testButton).includes('should NOT appear')", "false");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

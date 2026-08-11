@@ -1,0 +1,13 @@
+
+PASS border-image: url("")
+PASS -webkit-border-image: url("")
+PASS border-image: url("") 50%
+PASS -webkit-border-image: url("") 50%
+PASS border-image: url("") 50% / 11 22% calc(33% + 33px) auto
+PASS border-image: url("") 50% / 11 22% calc(33% + 33px) calc(22px * 2)
+PASS -webkit-border-image: url("") 50% fill / 11 22% calc(33% + 33px) calc(22px * 2)
+PASS border-image: url("") 50% / 11px 22px 33px 44px
+PASS -webkit-border-image: url("") 50% fill / 11px 22px 33px 44px
+PASS --v: 50px; border-image: url("") 50% / var(--v)
+PASS --v: 50px; -webkit-border-image: url("") 50% / var(--v)
+

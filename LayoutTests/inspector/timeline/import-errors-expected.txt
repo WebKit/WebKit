@@ -1,0 +1,27 @@
+Tests that WI.TimelineManager.processJSON reports import errors through the Timeline importer.
+
+
+== Running test suite: TimelineManager.processJSON.errors
+-- Running test case: ExplicitError
+PASS: Should have synthesized an import error.
+PASS: Import error should be synthesized by WI.TimelineManager.
+Error Message: could not read file
+
+-- Running test case: NotAnObject
+PASS: Should have synthesized an import error.
+PASS: Import error should be synthesized by WI.TimelineManager.
+Error Message: invalid JSON
+
+-- Running test case: MissingRequiredKeys
+PASS: Should have synthesized an import error.
+PASS: Import error should be synthesized by WI.TimelineManager.
+Error Message: invalid JSON
+
+-- Running test case: UnsupportedVersion
+PASS: Should have synthesized an import error.
+PASS: Import error should be synthesized by WI.TimelineManager.
+Error Message: unsupported version
+
+-- Running test case: Cleanup
+Restored.
+

@@ -1,0 +1,20 @@
+Description
+
+This test validates that for a cross origin resource, the timing allow check algorithm will pass when the value of Timing-Allow-Origin is a case-sensitive match for the value of the origin of the current document.
+
+
+PASS window.performance is defined
+PASS window.performance.getEntriesByType is defined
+PASS The iframe should have one resource timing entry.
+PASS redirectStart should be 0 in cross-origin request since no redirect.
+PASS redirectEnd should be 0 in cross-origin request since no redirect.
+PASS domainLookupStart should not be 0 in timing-allow cross-origin request.
+PASS domainLookupEnd should not be 0 in timing-allow cross-origin request.
+PASS connectStart should not be 0 in timing-allow cross-origin request.
+PASS connectEnd should not be 0 in timing-allow cross-origin request.
+PASS requestStart should not be 0 in timing-allow cross-origin request.
+PASS responseStart should not be 0 in timing-allow cross-origin request.
+PASS secureConnectionStart should be 0 in cross-origin request since no ssl!
+PASS fetchStart should not be 0 in timing-allow cross-origin request.
+PASS responseEnd should not be 0 in timing-allow cross-origin request.
+

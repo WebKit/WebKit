@@ -1,0 +1,3 @@
+
+PASS Test that starting many nested workers does not crash due to threading issues
+

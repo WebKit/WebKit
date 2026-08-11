@@ -1,0 +1,5 @@
+This tests using parseHTMLUnsafe to create a declarative shadow DOM.
+connectedCallback should be called on a custom element inside the shadow DOM.
+
+PASS
+

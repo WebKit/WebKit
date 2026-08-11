@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests if WebKit does not crash or hit any assertions.</p>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const host = document.createElement('div');
+document.body.appendChild(host);
+const shadowRoot = host.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = '<div id="inner"><slot name="some-name"></slot></div>';
+
+const innerHost = shadowRoot.getElementById('inner');
+const innerShadowRoot = innerHost.attachShadow({mode: 'closed'});
+innerShadowRoot.appendChild(document.createElement('slot'));
+innerHost.getBoundingClientRect();
+
+shadowRoot.querySelector('slot').remove();
+const newChild = document.createElement('div');
+newChild.appendChild(document.createElement('slot'));
+innerHost.appendChild(newChild);
+
+document.write('<div>PASS</div>');
+
+</script>
+</body>
+</html>

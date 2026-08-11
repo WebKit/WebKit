@@ -1,0 +1,76 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/basic-gestures.js"></script>
+<style>
+body {
+    margin: 0;
+    font-size: 30px;
+    font-family: monospace;
+}
+#target {
+    width: 300px;
+    padding: 10px;
+    background-color: silver;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+document.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+}, { passive: false });
+
+async function runTest()
+{
+    if (!window.testRunner)
+        return;
+
+    var output = "";
+    var fontHeight = 30;
+
+    var target = document.getElementById("target");
+    var targetRect = target.getBoundingClientRect();
+    var pressPointX = targetRect.x + targetRect.width / 2;
+    var pressPointY = targetRect.y + targetRect.height / 2;
+
+    await longPressAtPoint(pressPointX, pressPointY);
+    await UIHelper.waitForSelectionToAppear();
+
+    var initialSelection = document.getSelection().toString();
+    if (initialSelection.length > 0)
+        output += "PASS: Has selection after long press<br>";
+    else
+        output += "FAIL: No selection after long press<br>";
+
+    var grabberRect = await UIHelper.getSelectionEndGrabberViewRect();
+    var grabberX = grabberRect.left + (grabberRect.width / 2);
+    var grabberY = grabberRect.top + (grabberRect.height / 2);
+
+    await touchAndDragFromPointToPoint(grabberX, grabberY, grabberX, grabberY + (fontHeight * 2));
+
+    var newSelection = document.getSelection().toString();
+    if (newSelection.length > initialSelection.length)
+        output += "PASS: Selection expanded after dragging handle down<br>";
+    else
+        output += "FAIL: Selection did not expand (initial: " + initialSelection.length + ", new: " + newSelection.length + ")<br>";
+
+    document.getElementById("target").innerHTML = output;
+    testRunner.notifyDone();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</head>
+<body>
+<div id="target">
+    <p>Here's to the crazy ones. The misfits. The rebels. The troublemakers.</p>
+    <p>The round pegs in the square holes. The ones who see things differently.</p>
+</div>
+</body>
+</html>

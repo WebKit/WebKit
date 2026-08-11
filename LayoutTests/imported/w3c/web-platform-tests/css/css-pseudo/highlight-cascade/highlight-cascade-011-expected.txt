@@ -1,0 +1,5 @@
+Some text
+
+PASS div::selection does not inherit custom properties from the highlight parent
+PASS --background-color has no computed value on div::selection
+

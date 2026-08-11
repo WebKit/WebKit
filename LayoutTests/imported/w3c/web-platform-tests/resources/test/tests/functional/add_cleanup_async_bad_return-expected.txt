@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = Test named 'promise_test that returns a non-thenable object in one "cleanup" callback' specified 3 'cleanup' functions, and 1 returned a non-thenable value.
+
+PASS promise_test that returns a non-thenable object in one "cleanup" callback
+NOTRUN The test runner is in an unpredictable state ('NOT RUN')
+

@@ -1,0 +1,37 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/carousel-grid-order.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/flex-flow.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/flex-visual-order.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-auto-flow-reading-order.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-columns.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-order-across-scopes.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-order-on-shadow-host.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-order-pseudo-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-order-with-display-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-order-with-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-order-with-nested-grids.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-order-with-popover.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-order-with-position-absolute.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-order-with-position-fixed.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-order-with-slots.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-order.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/grid-rows.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/normal.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/source-order-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/reading-flow/tentative/source-order-valid.html

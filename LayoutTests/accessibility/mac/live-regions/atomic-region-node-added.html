@@ -1,0 +1,43 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body id="body">
+
+<div id="region" aria-live="polite" aria-relevant="additions" aria-atomic="true">Hello</div>
+
+<script>
+var output = "This tests that atomic regions are announced when aria-relevant=additions is set and an element is added as a child of an atomic region.\n\n";
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n${formatAnnouncementUserInfo(userInfo)}\n`;
+
+        testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.addNotificationListener(notificationCallback);
+    // Initialize the accessibility tree so that all the live regions are registered.
+    accessibilityController.accessibleElementById("region");
+
+    var region = document.getElementById("region");
+    var span = document.createElement("span").appendChild(document.createTextNode(" world"));
+    region.appendChild(span);
+
+    setTimeout(async function() {        
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

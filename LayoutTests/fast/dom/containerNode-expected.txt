@@ -1,0 +1,1 @@
+PASS: No infinite loop.

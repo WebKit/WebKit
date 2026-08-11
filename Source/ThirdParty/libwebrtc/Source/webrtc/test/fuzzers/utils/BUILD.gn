@@ -1,0 +1,58 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("rtp_replayer") {
+  testonly = true
+  sources = [
+    "rtp_replayer.cc",
+    "rtp_replayer.h",
+  ]
+  deps = [
+    "../..:call_config_utils",
+    "../..:create_test_environment",
+    "../..:encoder_settings",
+    "../..:null_transport",
+    "../..:rtp_test_utils",
+    "../..:run_loop",
+    "../..:test_renderer",
+    "../../../api:rtp_parameters",
+    "../../../api:time_controller",
+    "../../../api:transport_api",
+    "../../../api/environment",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../api/video:video_frame",
+    "../../../api/video_codecs:video_codecs_api",
+    "../../../call",
+    "../../../call:call_interfaces",
+    "../../../call:video_receive_stream_api",
+    "../../../media:rtc_internal_video_codecs",
+    "../../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:rtc_json",
+    "../../../system_wrappers",
+    "../../time_controller",
+    "//third_party/abseil-cpp/absl/memory",
+  ]
+}
+
+rtc_library("validate_rtp_packetizer") {
+  testonly = true
+  sources = [
+    "validate_rtp_packetizer.cc",
+    "validate_rtp_packetizer.h",
+  ]
+  deps = [
+    "..:fuzz_data_helper",
+    "../../../modules/rtp_rtcp",
+    "../../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../../rtc_base:checks",
+  ]
+}

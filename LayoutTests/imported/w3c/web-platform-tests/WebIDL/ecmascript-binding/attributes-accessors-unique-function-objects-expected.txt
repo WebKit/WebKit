@@ -1,0 +1,3 @@
+
+PASS For attributes, each copy of the accessor property has distinct built-in function objects for its getters and setters.
+

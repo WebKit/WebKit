@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+    <title>Time marches on: other-cues partition, missed cues only on monotonic advance, idempotent re-runs</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard §4.8.13.9 "Playing the media resource", time marches on:
+//   https://html.spec.whatwg.org/multipage/media.html#time-marches-on
+//
+// Edge-case behaviors of the time-marches-on algorithm:
+//
+// - Step 1+2: "current cues" / "other cues" only contains cues from
+//   text tracks in hidden or showing mode (not disabled). A cue in a
+//   disabled track must never participate in the algorithm.
+//
+// - Step 4: "missed cues" is non-empty ONLY when the current playback
+//   position changed through monotonic increase during normal playback.
+//   On non-monotonic position changes (i.e. seeks), missed cues is empty
+//   -- the algorithm runs once at the new position, no enter+exit pair
+//   for cues that were entirely between the old and new positions.
+//
+// - Step 7: if all current cues are already active and no other cues are
+//   active and missed cues is empty, return early. Re-running the
+//   algorithm without any state change must not queue duplicate events.
+
+const MEDIA_SRC = "../content/test-25fps.mp4";
+
+function makeReadyVideo(t) {
+    const video = document.createElement("video");
+    video.muted = true;
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+    video.src = MEDIA_SRC;
+    return video;
+}
+
+function whenSeekedTo(video, time) {
+    return new Promise(resolve => {
+        video.addEventListener("seeked", resolve, { once: true });
+        if (video.readyState >= video.HAVE_METADATA)
+            video.currentTime = time;
+        else
+            video.addEventListener("loadedmetadata",
+                () => { video.currentTime = time; }, { once: true });
+    });
+}
+
+function nextTick(t) {
+    return new Promise(r => t.step_timeout(r, 50));
+}
+
+promise_test(async t => {
+    // Cues in a disabled track must NOT participate in time marches on:
+    // no 'enter' fires when their range covers currentTime, no 'exit'
+    // fires when leaving their range, and no 'cuechange' on the track.
+    const video = makeReadyVideo(t);
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "disabled";
+    const cue = new VTTCue(0, 100, "in disabled track");
+    tt.addCue(cue);
+
+    let enterFired = false;
+    let exitFired = false;
+    let cuechangeFired = false;
+    cue.onenter = () => { enterFired = true; };
+    cue.onexit = () => { exitFired = true; };
+    tt.oncuechange = () => { cuechangeFired = true; };
+
+    await whenSeekedTo(video, 0.5);
+    await nextTick(t);
+    assert_false(enterFired,
+        "'enter' must not fire for a cue in a disabled track");
+    assert_false(cuechangeFired,
+        "'cuechange' must not fire for a disabled track");
+
+    // Move on; verify exit doesn't fire either.
+    await whenSeekedTo(video, 0.8);
+    await nextTick(t);
+    assert_false(exitFired,
+        "'exit' must not fire for a cue in a disabled track");
+}, "time marches on (other cues): disabled-track cues never participate");
+
+promise_test(async t => {
+    // Seeking past a cue (non-monotonic advance) must NOT generate
+    // enter+exit events for the cue. With a cue at [0.2, 0.4] and we
+    // seek from 0.05 directly to 0.6, the cue was never "current" --
+    // missed cues is empty for non-monotonic advance, so neither an
+    // enter nor an exit event should fire.
+    const video = makeReadyVideo(t);
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+    const cue = new VTTCue(0.2, 0.4, "skipped over");
+    tt.addCue(cue);
+
+    // Park at t=0.05 (before the cue).
+    await whenSeekedTo(video, 0.05);
+    await nextTick(t);
+    assert_array_equals([...tt.activeCues], [],
+        "no cues active at t=0.05 (before cue range)");
+
+    let enterFired = false;
+    let exitFired = false;
+    cue.onenter = () => { enterFired = true; };
+    cue.onexit = () => { exitFired = true; };
+
+    // Seek past the cue range without crossing through it monotonically.
+    await whenSeekedTo(video, 0.6);
+    await nextTick(t);
+
+    assert_false(enterFired,
+        "'enter' must not fire when seeking past a cue (non-monotonic advance)");
+    assert_false(exitFired,
+        "'exit' must not fire when seeking past a cue (non-monotonic advance)");
+    assert_array_equals([...tt.activeCues], [],
+        "no cues active at t=0.6 (after cue range)");
+}, "time marches on (missed cues): seeking past a cue does not fire enter+exit");
+
+promise_test(async t => {
+    // Re-running the algorithm without state change must not duplicate
+    // events. Trigger time-marches-on by seeking to the same position
+    // twice; only the first should produce events.
+    const video = makeReadyVideo(t);
+    const tt = video.addTextTrack("captions", "test", "en");
+    tt.mode = "showing";
+    const cue = new VTTCue(0, 100, "covers t=0.5");
+    tt.addCue(cue);
+
+    let enterCount = 0;
+    let cuechangeCount = 0;
+    cue.onenter = () => { enterCount++; };
+    tt.oncuechange = () => { cuechangeCount++; };
+
+    await whenSeekedTo(video, 0.5);
+    await nextTick(t);
+    assert_equals(enterCount, 1, "'enter' fired once on first seek");
+
+    // Trigger another time-marches-on by seeking to a slightly different
+    // position still within the cue. State (cue active) is unchanged.
+    await whenSeekedTo(video, 0.6);
+    await nextTick(t);
+    assert_equals(enterCount, 1,
+        "'enter' did not fire again -- cue was already active (early-exit)");
+
+    await whenSeekedTo(video, 0.7);
+    await nextTick(t);
+    assert_equals(enterCount, 1,
+        "'enter' still has not fired again on a third no-state-change seek");
+}, "time marches on (early-exit): no duplicate enter when state is unchanged");
+</script>
+</body>
+</html>

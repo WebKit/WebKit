@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div id="content">
+  <div id="test1" role="table">
+    <div id="test2" role="row">
+      <div id="test3" role="columnheader">X</div>
+      <div id="test4" role="columnheader">X</div>
+    </div>
+    <div id="test5" role="row">
+      <div id="test6" role="rowheader">X</div>
+      <div id="test7" role="cell">X</div>
+    </div>
+  </div>
+  <div id="test8" role="grid">
+    <div id="test9" role="row">
+      <div id="test10" id="test4" role="columnheader">X</div>
+      <div id="test11" role="columnheader">X</div>
+    </div>
+    <div id="test12" role="row">
+      <div id="test13" role="rowheader">X</div>
+      <div id="test14" role="gridcell">X</div>
+    </div>
+  </div>
+  <div id="test15" role="treegrid">
+    <div id="test16" role="row">
+      <div id="test17" role="columnheader">X</div>
+      <div id="test18" role="columnheader">X</div>
+    </div>
+    <div id="test19" role="row">
+      <div id="test20" role="rowheader">X</div>
+      <div id="test21" role="gridcell">X</div>
+    </div>
+  </div>
+  <table id="test22">
+    <tr id="test23">
+      <th id="test24">X</th>
+      <th id="test25">X</th>
+    </tr>
+    <tr id="test26">
+      <th id="test27">X</th>
+      <td id="test28">X</td>
+    </tr>
+  </table>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests whether or not table-related elements implement the table cell interface.");
+    if (window.accessibilityController) {
+        for (var i = 1; i <= 28; i++) {
+            var axElement = accessibilityController.accessibleElementById("test" + i);
+            var result = !axElement ? "(null)" : axElement.role + " " + axElement.boolAttributeValue("AXInterfaceTableCell");
+            debug("test" + i + " " + result);
+        }
+
+        document.getElementById("content").style.visibility = "hidden";
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

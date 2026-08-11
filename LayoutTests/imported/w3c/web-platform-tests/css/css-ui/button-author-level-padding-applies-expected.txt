@@ -1,0 +1,4 @@
+
+
+PASS Author-level CSS padding should apply to buttons with native appearance
+

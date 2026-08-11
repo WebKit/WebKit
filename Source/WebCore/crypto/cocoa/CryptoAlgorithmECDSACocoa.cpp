@@ -1,0 +1,67 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "CryptoAlgorithmECDSA.h"
+
+#include "CommonCryptoDERUtilities.h"
+#include "CommonCryptoUtilities.h"
+#include "CryptoAlgorithmEcdsaParams.h"
+#include "CryptoKeyEC.h"
+#include "CryptoTypesBridging.h"
+#include "ExceptionOr.h"
+#include <pal/crypto/CryptoTypes.h>
+#include <wtf/StdLibExtras.h>
+
+namespace WebCore {
+
+static ExceptionOr<Vector<uint8_t>> signECDSACryptoKit(CryptoAlgorithmIdentifier hash, const PlatformECKeyContainer& key, const Vector<uint8_t>& data)
+{
+    if (!isValidHashParameter(hash))
+        return Exception { ExceptionCode::OperationError };
+    auto rv = key.sign(data.span(), toCKHashFunction(hash));
+    if (rv.errorCode != PAL::Crypto::Error::Success)
+        return Exception { ExceptionCode::OperationError };
+    return WTF::move(rv.result);
+}
+
+static ExceptionOr<bool> verifyECDSACryptoKit(CryptoAlgorithmIdentifier hash, const PlatformECKeyContainer& key, const Vector<uint8_t>& signature, const Vector<uint8_t> data)
+{
+    if (!isValidHashParameter(hash))
+        return Exception { ExceptionCode::OperationError };
+    return key.doVerify(data.span(), signature.span(), toCKHashFunction(hash)).errorCode == PAL::Crypto::Error::Success;
+}
+
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& data)
+{
+    return signECDSACryptoKit(parameters.hashIdentifier, key.platformKey(), data);
+}
+
+ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
+{
+    return verifyECDSACryptoKit(parameters.hashIdentifier, key.platformKey(), signature, data);
+}
+
+} // namespace WebCore

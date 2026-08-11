@@ -1,0 +1,3 @@
+
+PASS Data URL should not trigger CORS errors and if failing should reject the promise.
+

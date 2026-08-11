@@ -1,0 +1,3 @@
+Test that forward delete key works.
+
+PASS

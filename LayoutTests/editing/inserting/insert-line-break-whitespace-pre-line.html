@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container"></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+container.innerHTML = `<span contenteditable style="display: block; white-space: pre-line;"></span>`;
+container.firstChild.focus();
+document.execCommand('insertLineBreak', false, null);
+Markup.dump(container);
+
+</script>
+</body>
+</html>

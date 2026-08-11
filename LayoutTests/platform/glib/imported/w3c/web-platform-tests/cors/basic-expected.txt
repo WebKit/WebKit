@@ -1,0 +1,8 @@
+
+PASS Same domain basic usage
+PASS Cross domain basic usage
+PASS Same domain different port
+PASS Cross domain different port
+PASS Cross domain different protocol
+PASS Same domain different protocol different port
+

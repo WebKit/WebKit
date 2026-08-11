@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test.js" type="text/javascript"></script>
+    <script src="resources/webgl-test.js" type="text/javascript"></script>
+    <script src="resources/webgl-test-utils.js"> </script>
+    
+</head>
+<body>
+    <canvas id="webgl-canvas" width="100px" height="100px"></canvas>
+    <script>
+    var wtu = WebGLTestUtils;
+    
+    function runShaderTest(gl, vShaderSource, fshaderSource, errorShouldBeText)
+    {
+        var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        var program = gl.createProgram();
+        var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, vShaderSource);
+        gl.compileShader(vertexShader);
+        gl.shaderSource(fragmentShader, fshaderSource);
+        gl.compileShader(fragmentShader);
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        
+        wtu.glErrorShouldBe(gl,0,errorShouldBeText);
+        gl.deleteProgram(program)
+        gl.deleteShader(vertexShader);
+        gl.deleteShader(fragmentShader);
+    }
+    function runTest()
+    {
+        description("Tests that program compiling/linking with a reserved keyword.");
+        var canvas = document.getElementById('webgl-canvas');
+        var gl = canvas.getContext("webgl2");
+        {
+            var vShaderSource = '#version 300 es\n in vec2 pos;\nvoid main() { gl_Position = vec4(pos, 0, 1); }'
+            var fshaderSource = '#version 300 es\n precision mediump float;\n out vec4 color;\n struct s { float metal; };\n float helper(s _s) { return _s.metal; }\n void main() { s _s; float a = helper(_s); color = vec4(a,0.8,0,1); }\n'
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using reserved keyword in struct")
+        }
+        
+        {
+            var vShaderSource = '#version 300 es\n in vec2 pos;\nvoid main() { gl_Position = vec4(pos, 0, 1); }'
+            var fshaderSource = '#version 300 es\n precision mediump float;\n out vec4 color;\n struct s { float a; };\n float helper(s _s) { return _s.a; }\n void main() { s metal; float a = helper(metal); color = vec4(a,0.8,0,1); }\n'
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using reserved keyword in variable name")
+        }
+        {
+            var vShaderSource = '#version 300 es\n in vec2 pos;\nvoid main() { gl_Position = vec4(pos, 0, 1); }'
+            var fshaderSource = '#version 300 es\n precision mediump float;\n out vec4 color;\n struct metal { float a; };\n float helper(metal _s) { return _s.a; }\n void main() { metal _s; float a = helper(_s); color = vec4(a,0.8,0,1); }\n'
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using reserved keyword for struct name")
+        }
+        
+        {
+            var vShaderSource = '#version 300 es\n in vec2 pos;\nvoid main() { gl_Position = vec4(pos, 0, 1); }'
+            var fshaderSource = '#version 300 es\n precision mediump float;\n out vec4 color;\n struct metal { float a; } _s;\n float helper(metal _s) { return _s.a; }\n void main() { metal _s; float a = helper(_s); color = vec4(a,0.8,0,1); }\n'
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using reserved keyword for struct name with global struct ")
+        }
+        {
+            var vShaderSource = '#version 300 es\n in vec2 pos;\nvoid main() { gl_Position = vec4(pos, 0, 1); }'
+            var fshaderSource = '#version 300 es\n precision mediump float;\n out vec4 color;\n struct s { float metal; } _s;\n float helper(s _s) { return _s.metal; }\n void main() { _s.metal = 1.0f; float a = helper(_s); color = vec4(a,0.8,0,1); }\n'
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using reserved keyword in type with global struct ")
+        }
+        {
+            var vShaderSource = '#version 300 es\n in vec2 pos;\nvoid main() { gl_Position = vec4(pos, 0, 1); }'
+            var fshaderSource = '#version 300 es\n precision mediump float;\n out vec4 color;\n struct metal { float a; } _s;\n float helper(metal _s) { return _s.a; }\n void main() { _s.a = 1.0f; float a = helper(_s); color = vec4(a,0.8,0,1); }\n'
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using reserved keyword for struct name  with global struct ")
+        }
+        {
+            var vShaderSource = '#version 300 es\n in vec2 pos;\nvoid main() { gl_Position = vec4(pos, 0, 1); }'
+            var fshaderSource = '#version 300 es\n precision mediump float;\n out vec4 color;\n struct s { float a; } metal;\n float helper(s _s) { return _s.a; }\n void main() { metal.a = 1.0f; float a = helper(metal); color = vec4(a,0.8,0,1); }\n'
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using reserved keyword for variable name with global struct ")
+        }
+        {
+            var vShaderSource = '#version 300 es\n in vec2 pos;\nvoid main() { gl_Position = vec4(pos, 0, 1); }'
+            var fshaderSource = '#version 300 es\n precision mediump float;\n out vec4 color;\n struct threadgroup_imageblock { float a; } metal;\n float helper(threadgroup_imageblock _s) { return _s.a; }\n void main() { metal.a = 1.0f; float a = helper(metal); color = vec4(a,0.8,0,1); }\n'
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using reserved keyword for variable name and struct name with global struct ")
+        }
+        {
+            var vShaderSource = '#version 300 es\n in vec2 pos;\nvoid main() { gl_Position = vec4(pos, 0, 1); }'
+            var fshaderSource = '#version 300 es\n precision mediump float;\n out vec4 color;\n struct s { float metal; };\n struct p { s q; };\n float helper(s _s) { return _s.metal; }\n void main() { p _p; float a = helper(_p.q); color = vec4(a,0.8,0,1); }\n'
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using reserved keyword in nested struct")
+        }
+        {
+            var vShaderSource = '#version 300 es\n in vec2 pos;\nvoid main() { gl_Position = vec4(pos, 0, 1); }'
+            var fshaderSource = '#version 300 es\n precision mediump float;\n out vec4 color;\n struct s { float metal; };\n struct p { s metal; };\n float helper(s _s) { return _s.metal; }\n void main() { p _p; float a = helper(_p.metal); color = vec4(a,0.8,0,1); }\n'
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using reserved keyword to access nested struct")
+        }
+        
+        
+
+    }
+    runTest();
+
+    </script>
+</body>
+</html>

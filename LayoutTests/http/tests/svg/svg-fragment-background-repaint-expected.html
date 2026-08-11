@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Radio button customized using an SVG fragment is redrawn when the checked value changes</title>
+    <style>
+        input[type=radio] { appearance: none; margin: 0; display: block; }
+        input[type=radio]::before {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 100px;
+            background: url(resources/rgb-icons-3.svg#green-icon) no-repeat;
+        }
+        input[type=radio]:checked::before {
+            background: url(resources/rgb-icons-3.svg#red-icon) no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <input type="radio" name="group" id="a">
+    <input type="radio" name="group" id="b" checked>
+</body>
+</html>

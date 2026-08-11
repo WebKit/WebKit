@@ -1,0 +1,9 @@
+Tests for the Page.overrideSetting command and the FullScreenEnabled setting.
+
+
+== Running test suite: Page.overrideSetting.FullScreenEnabled
+-- Running test case: Page.overrideSetting.FullScreenEnabled
+PASS: Element.prototype.requestFullscreen should be unavailable when FullScreenEnabled is overridden to false.
+PASS: Element.prototype.requestFullscreen should be available when FullScreenEnabled is overridden to true.
+PASS: Element.prototype.requestFullscreen should return to its default when the FullScreenEnabled override is removed.
+

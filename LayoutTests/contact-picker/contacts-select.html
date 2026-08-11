@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContactPickerAPIEnabled=true ] -->
+<html>
+    <head>
+        <script src="../resources/js-test.js"></script>
+        <script src="../resources/ui-helper.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        const addressBook = [
+            {
+                "name": ["Person A"],
+                "email": ["person.a@webkit.org"],
+                "tel": ["555-5555"]
+            },
+            {
+                "name": ["Person B"],
+                "email": ["person.b@webkit.org", "person.b.alt@webkit.org"],
+            },
+            {
+                "name": ["Person C"],
+                "tel": ["777-7777"],
+            }
+        ];
+
+        async function runTest()
+        {
+            description("This test verifies that navigator.contacts.select presents a contact picker and returns the selected contacts.\n");
+
+            const contactsButton = document.getElementById("contacts");
+            contactsButton.addEventListener("click", async () => {
+                const contactsRequest = navigator.contacts.select(["name", "email"], { multiple: true });
+                await UIHelper.waitForContactPickerToShow();
+
+                UIHelper.dismissContactPickerWithContacts(addressBook);
+
+                await UIHelper.waitForContactPickerToHide();
+
+                contacts = await contactsRequest;
+                shouldBeEqualToNumber("contacts.length", 3);
+
+                contact1 = contacts[0];
+                shouldBeTrue("areArraysEqual(contact1.name, addressBook[0].name)");
+                shouldBeTrue("areArraysEqual(contact1.email, addressBook[0].email)");
+                shouldBeEqualToNumber("contact1.tel.length", 0);
+
+                contact2 = contacts[1];
+                shouldBeTrue("areArraysEqual(contact2.name, addressBook[1].name)");
+                shouldBeTrue("areArraysEqual(contact2.email, addressBook[1].email)");
+                shouldBeEqualToNumber("contact2.tel.length", 0);
+
+                contact3 = contacts[2];
+                shouldBeTrue("areArraysEqual(contact3.name, addressBook[2].name)");
+                shouldBeEqualToNumber("contact3.email.length", 0);
+                shouldBeEqualToNumber("contact3.tel.length", 0);
+
+                finishJSTest();
+            }, { once: true });
+
+            await UIHelper.activateElement(contactsButton);
+        }
+    </script>
+    <body onload=runTest()>
+        <button id="contacts">Show contacts</button>
+    </body>
+</html>

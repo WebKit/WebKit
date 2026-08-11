@@ -1,0 +1,1082 @@
+/*
+ * Copyright (C) 2010-2014 Google Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#if ENABLE(WEB_AUDIO)
+
+#include "AudioContext.h"
+
+#include "AnalyserNode.h"
+#include "AsyncAudioDecoder.h"
+#include "AudioBuffer.h"
+#include "AudioBufferCallback.h"
+#include "AudioBufferOptions.h"
+#include "AudioBufferSourceNode.h"
+#include "AudioDestination.h"
+#include "AudioListener.h"
+#include "AudioNodeInput.h"
+#include "AudioNodeOutput.h"
+#include "AudioParamDescriptor.h"
+#include "AudioScheduledSourceNode.h"
+#include "AudioSession.h"
+#include "AudioWorklet.h"
+#include "BiquadFilterNode.h"
+#include "ChannelMergerNode.h"
+#include "ChannelMergerOptions.h"
+#include "ChannelSplitterNode.h"
+#include "ChannelSplitterOptions.h"
+#include "ConstantSourceNode.h"
+#include "ConstantSourceOptions.h"
+#include "ContextDestructionObserverInlines.h"
+#include "ConvolverNode.h"
+#include "DelayNode.h"
+#include "DelayOptions.h"
+#include "DocumentPage.h"
+#include "DocumentSecurityOrigin.h"
+#include "DynamicsCompressorNode.h"
+#include "Event.h"
+#include "EventNames.h"
+#include "EventTargetInterfaces.h"
+#include "FFTFrame.h"
+#include "FrameLoader.h"
+#include "GainNode.h"
+#include "HRTFDatabaseLoader.h"
+#include "HRTFPanner.h"
+#include "IIRFilterNode.h"
+#include "IIRFilterOptions.h"
+#include "JSAudioBuffer.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMPromiseDeferred.h"
+#include "LocalFrame.h"
+#include "Logging.h"
+#include "MediaSessionManagerInterface.h"
+#include "NetworkingContext.h"
+#include "OriginAccessPatterns.h"
+#include "OscillatorNode.h"
+#include "Page.h"
+#include "PannerNode.h"
+#include "PeriodicWave.h"
+#include "PeriodicWaveOptions.h"
+#include "PlatformMediaSessionManager.h"
+#include "ScriptController.h"
+#include "ScriptProcessorNode.h"
+#include "ScriptTrackingPrivacyCategory.h"
+#include "StereoPannerNode.h"
+#include "StereoPannerOptions.h"
+#include "WaveShaperNode.h"
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <wtf/Atomics.h>
+#include <wtf/MainThread.h>
+#include <wtf/NativePromise.h>
+#include <wtf/Ref.h>
+#include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/WTFString.h>
+
+#if DEBUG_AUDIONODE_REFERENCES
+#include <stdio.h>
+#endif
+
+#if USE(GSTREAMER)
+#include "GStreamerCommon.h"
+#endif
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BaseAudioContext);
+
+bool BaseAudioContext::isSupportedSampleRate(float sampleRate)
+{
+    return sampleRate >= 3000 && sampleRate <= 384000;
+}
+
+static uint64_t NODELETE generateContextID()
+{
+    ASSERT(isMainThread());
+    static uint64_t contextIDSeed = 0;
+    return ++contextIDSeed;
+}
+
+static HashSet<uint64_t>& NODELETE liveAudioContexts()
+{
+    ASSERT(isMainThread());
+    static NeverDestroyed<HashSet<uint64_t>> contexts;
+    return contexts;
+}
+
+static OptionSet<NoiseInjectionPolicy> effectiveNoiseInjectionPolicies(Document& document)
+{
+    OptionSet<NoiseInjectionPolicy> policies;
+    auto documentPolicies = document.noiseInjectionPolicies();
+    if (documentPolicies.contains(NoiseInjectionPolicy::Minimal))
+        policies.add(NoiseInjectionPolicy::Minimal);
+    if (documentPolicies.contains(NoiseInjectionPolicy::Enhanced) && document.requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::Audio))
+        policies.add(NoiseInjectionPolicy::Enhanced);
+    return policies;
+}
+
+BaseAudioContext::BaseAudioContext(Document& document)
+    : ActiveDOMObject(document)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(document.logger())
+    , m_logIdentifier(uniqueLogIdentifier())
+#endif
+    , m_contextID(generateContextID())
+    , m_worklet(AudioWorklet::create(*this))
+    , m_listener(AudioListener::create(*this))
+    , m_noiseInjectionPolicies(effectiveNoiseInjectionPolicies(document))
+{
+    liveAudioContexts().add(m_contextID);
+
+    FFTFrame::initialize();
+}
+
+BaseAudioContext::~BaseAudioContext()
+{
+    liveAudioContexts().remove(m_contextID);
+#if DEBUG_AUDIONODE_REFERENCES
+    fprintf(stderr, "%p: BaseAudioContext::~AudioContext()\n", this);
+#endif
+    ASSERT(m_nodesToDelete.isEmpty());
+    ASSERT(m_referencedSourceNodes.isEmpty());
+    ASSERT(m_automaticPullNodes.isEmpty());
+    if (m_automaticPullNodesNeedUpdating)
+        m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
+    ASSERT(m_renderingAutomaticPullNodes.isEmpty());
+    // FIXME: Can we assert that m_deferredBreakConnectionList is empty?
+}
+
+bool BaseAudioContext::isContextAlive(uint64_t contextID)
+{
+    return liveAudioContexts().contains(contextID);
+}
+
+void BaseAudioContext::lazyInitialize()
+{
+    if (isStopped() || isClosed())
+        return;
+
+    if (m_isInitialized)
+        return;
+
+    // Don't allow the context to initialize a second time after it's already been explicitly uninitialized.
+    ASSERT(!m_isAudioThreadFinished);
+    if (m_isAudioThreadFinished)
+        return;
+
+    protect(destination())->initialize();
+
+    m_isInitialized = true;
+}
+
+void BaseAudioContext::clear()
+{
+    Ref protectedThis { *this };
+
+    // Audio thread is dead. Nobody will schedule node deletion action. Let's do it ourselves.
+    do {
+        m_nodesToDelete.appendVector(std::exchange(m_nodesMarkedForDeletion, { }));
+        deleteMarkedNodes();
+    } while (!m_nodesMarkedForDeletion.isEmpty());
+}
+
+void BaseAudioContext::uninitialize()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+
+    if (!m_isInitialized)
+        return;
+
+    // This stops the audio thread and all audio rendering.
+    protect(destination())->uninitialize();
+
+    // Don't allow the context to initialize a second time after it's already been explicitly uninitialized.
+    m_isAudioThreadFinished = true;
+
+    finishTailProcessing();
+
+    {
+        Locker locker { graphLock() };
+        // Process any deferred operations from the last render quantum that couldn't be
+        // processed in handlePostRenderTasks() due to lock contention.
+        handleDeferredDecrementConnectionCounts();
+        handleDeferredDerefs();
+        // This should have been called from handlePostRenderTasks() at the end of rendering.
+        // However, in case of lock contention, the tryLock() call could have failed in handlePostRenderTasks(),
+        // leaving nodes in m_referencedSourceNodes. Now that the audio thread is gone, make sure we deref those nodes
+        // before the BaseAudioContext gets destroyed.
+        derefFinishedSourceNodes();
+        // Any still-playing scheduled source nodes were registered as automatic pull nodes; remove
+        // them before their references are dropped so m_automaticPullNodes ends up empty.
+        for (auto& node : m_referencedSourceNodes) {
+            if (is<AudioScheduledSourceNode>(node.get()))
+                removeAutomaticPullNode(node.get());
+        }
+        m_renderingAutomaticPullNodes.clear();
+    }
+
+    // Get rid of the sources which may still be playing.
+    derefUnfinishedSourceNodes();
+
+    m_isInitialized = false;
+}
+
+void BaseAudioContext::addReaction(State state, DOMPromiseDeferred<void>&& promise)
+{
+    size_t stateIndex = static_cast<size_t>(state);
+    if (stateIndex >= m_stateReactions.size())
+        m_stateReactions.grow(stateIndex + 1);
+
+    m_stateReactions[stateIndex].append(WTF::move(promise));
+}
+
+void BaseAudioContext::setState(State state)
+{
+    if (m_state != state) {
+        m_state = state;
+        queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+        if (RefPtr manager = mediaSessionManagerIfExists())
+            manager->updateNowPlayingInfoIfNecessary();
+    }
+
+    size_t stateIndex = static_cast<size_t>(state);
+    if (stateIndex >= m_stateReactions.size())
+        return;
+
+    Vector<DOMPromiseDeferred<void>> reactions;
+    m_stateReactions[stateIndex].swap(reactions);
+
+    for (auto& promise : reactions)
+        promise.resolve();
+}
+
+void BaseAudioContext::stop()
+{
+    ASSERT(isMainThread());
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    // Usually ScriptExecutionContext calls stop twice.
+    if (m_isStopScheduled)
+        return;
+
+    Ref protectedThis { *this };
+
+    m_isStopScheduled = true;
+
+    ASSERT(document());
+    protect(document())->updateIsPlayingMedia();
+
+    uninitialize();
+    clear();
+}
+
+Document* BaseAudioContext::document() const
+{
+    return downcast<Document>(scriptExecutionContext());
+}
+
+bool BaseAudioContext::wouldTaintOrigin(const URL& url) const
+{
+    if (url.protocolIsData())
+        return false;
+
+    if (RefPtr document = this->document())
+        return !protect(document->securityOrigin())->canRequest(url, OriginAccessPatternsForWebProcess::singleton());
+
+    return false;
+}
+
+ExceptionOr<Ref<AudioBuffer>> BaseAudioContext::createBuffer(unsigned numberOfChannels, unsigned length, float sampleRate)
+{
+    return AudioBuffer::create(AudioBufferOptions {numberOfChannels, length, sampleRate});
+}
+
+void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback, Ref<DeferredPromise>&& promise)
+{
+    RefPtr document = this->document();
+    if (!document || !document->isFullyActive()) {
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s });
+        return;
+    }
+
+    if (!m_audioDecoder)
+        m_audioDecoder = makeUnique<AsyncAudioDecoder>();
+
+    audioData->pin();
+
+    auto p = m_audioDecoder->decodeAsync(audioData.copyRef(), sampleRate());
+    p->whenSettled(RunLoop::currentSingleton(), [audioData = WTF::move(audioData), activity = makePendingActivity(*this), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback), promise = WTF::move(promise)] (DecodingTaskPromise::Result&& result) mutable {
+        activity->object().queueTaskKeepingObjectAlive(activity->object(), TaskSource::InternalAsyncTask, [audioData = WTF::move(audioData), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback), promise = WTF::move(promise), result = WTF::move(result)](auto&) mutable {
+
+            audioData->unpin();
+
+            if (!result) {
+                promise->reject(WTF::move(result.error()));
+                if (errorCallback)
+                    errorCallback->invoke(nullptr);
+                return;
+            }
+            auto audioBuffer = WTF::move(result.value());
+            promise->resolve<IDLInterface<AudioBuffer>>(audioBuffer.get());
+            if (successCallback)
+                successCallback->invoke(audioBuffer.ptr());
+        });
+    });
+}
+
+ExceptionOr<Ref<AudioBufferSourceNode>> BaseAudioContext::createBufferSource()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    ASSERT(isMainThread());
+    return AudioBufferSourceNode::create(*this);
+}
+
+ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+
+    // W3C Editor's Draft 06 June 2017
+    //  https://webaudio.github.io/web-audio-api/#widl-BaseAudioContext-createScriptProcessor-ScriptProcessorNode-unsigned-long-bufferSize-unsigned-long-numberOfInputChannels-unsigned-long-numberOfOutputChannels
+
+    // The bufferSize parameter determines the buffer size in units of sample-frames. If it's not passed in,
+    // or if the value is 0, then the implementation will choose the best buffer size for the given environment,
+    // which will be constant power of 2 throughout the lifetime of the node. ... If the value of this parameter
+    // is not one of the allowed power-of-2 values listed above, an IndexSizeError must be thrown.
+    switch (bufferSize) {
+    case 0:
+#if USE(AUDIO_SESSION)
+        {
+            // Pick a value between 256 (2^8) and 16384 (2^14), based on the buffer size of the current AudioSession.
+            // Guard against a zero session buffer size: std::log2(0) is -infinity, and converting that to size_t is undefined behavior.
+            auto sessionBufferSize = AudioSession::singleton().bufferSize();
+            bufferSize = 1 << std::max<size_t>(8, std::min<size_t>(14, sessionBufferSize ? std::log2(sessionBufferSize) : 0));
+        }
+#else
+        bufferSize = 2048;
+#endif
+        break;
+    case 256:
+    case 512:
+    case 1024:
+    case 2048:
+    case 4096:
+    case 8192:
+    case 16384:
+        break;
+    default:
+        return Exception { ExceptionCode::IndexSizeError, "Unsupported buffer size for ScriptProcessorNode"_s };
+    }
+
+    // An IndexSizeError exception must be thrown if bufferSize or numberOfInputChannels or numberOfOutputChannels
+    // are outside the valid range. It is invalid for both numberOfInputChannels and numberOfOutputChannels to be zero.
+    // In this case an IndexSizeError must be thrown.
+
+    if (!numberOfInputChannels && !numberOfOutputChannels)
+        return Exception { ExceptionCode::IndexSizeError, "numberOfInputChannels and numberOfOutputChannels cannot both be 0"_s };
+
+    // This parameter [numberOfInputChannels] determines the number of channels for this node's input. Values of
+    // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
+
+    if (numberOfInputChannels > maxNumberOfChannels)
+        return Exception { ExceptionCode::IndexSizeError, "numberOfInputChannels exceeds maximum number of channels"_s };
+
+    // This parameter [numberOfOutputChannels] determines the number of channels for this node's output. Values of
+    // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
+
+    if (numberOfOutputChannels > maxNumberOfChannels)
+        return Exception { ExceptionCode::IndexSizeError, "numberOfOutputChannels exceeds maximum number of channels"_s };
+
+    return ScriptProcessorNode::create(*this, bufferSize, numberOfInputChannels, numberOfOutputChannels);
+}
+
+ExceptionOr<Ref<BiquadFilterNode>> BaseAudioContext::createBiquadFilter()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return BiquadFilterNode::create(*this);
+}
+
+ExceptionOr<Ref<WaveShaperNode>> BaseAudioContext::createWaveShaper()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return WaveShaperNode::create(*this);
+}
+
+ExceptionOr<Ref<PannerNode>> BaseAudioContext::createPanner()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return PannerNode::create(*this);
+}
+
+ExceptionOr<Ref<ConvolverNode>> BaseAudioContext::createConvolver()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return ConvolverNode::create(*this);
+}
+
+ExceptionOr<Ref<DynamicsCompressorNode>> BaseAudioContext::createDynamicsCompressor()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return DynamicsCompressorNode::create(*this);
+}
+
+ExceptionOr<Ref<AnalyserNode>> BaseAudioContext::createAnalyser()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return AnalyserNode::create(*this);
+}
+
+ExceptionOr<Ref<GainNode>> BaseAudioContext::createGain()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return GainNode::create(*this);
+}
+
+ExceptionOr<Ref<DelayNode>> BaseAudioContext::createDelay(double maxDelayTime)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    DelayOptions options;
+    options.maxDelayTime = maxDelayTime;
+    return DelayNode::create(*this, options);
+}
+
+ExceptionOr<Ref<ChannelSplitterNode>> BaseAudioContext::createChannelSplitter(size_t numberOfOutputs)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+
+    ChannelSplitterOptions options;
+    options.numberOfOutputs = numberOfOutputs;
+    return ChannelSplitterNode::create(*this, options);
+}
+
+ExceptionOr<Ref<ChannelMergerNode>> BaseAudioContext::createChannelMerger(size_t numberOfInputs)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+
+    ChannelMergerOptions options;
+    options.numberOfInputs = numberOfInputs;
+    return ChannelMergerNode::create(*this, options);
+}
+
+ExceptionOr<Ref<OscillatorNode>> BaseAudioContext::createOscillator()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return OscillatorNode::create(*this);
+}
+
+ExceptionOr<Ref<PeriodicWave>> BaseAudioContext::createPeriodicWave(Vector<float>&& real, Vector<float>&& imaginary, const PeriodicWaveConstraints& constraints)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    
+    PeriodicWaveOptions options;
+    options.real = WTF::move(real);
+    options.imag = WTF::move(imaginary);
+    options.disableNormalization = constraints.disableNormalization;
+    return PeriodicWave::create(*this, WTF::move(options));
+}
+
+ExceptionOr<Ref<ConstantSourceNode>> BaseAudioContext::createConstantSource()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return ConstantSourceNode::create(*this);
+}
+
+ExceptionOr<Ref<StereoPannerNode>> BaseAudioContext::createStereoPanner()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return StereoPannerNode::create(*this);
+}
+
+ExceptionOr<Ref<IIRFilterNode>> BaseAudioContext::createIIRFilter(ScriptExecutionContext& scriptExecutionContext, Vector<double>&& feedforward, Vector<double>&& feedback)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    ASSERT(isMainThread());
+    IIRFilterOptions options;
+    options.feedforward = WTF::move(feedforward);
+    options.feedback = WTF::move(feedback);
+    return IIRFilterNode::create(scriptExecutionContext, *this, WTF::move(options));
+}
+
+void BaseAudioContext::derefFinishedSourceNodes()
+{
+    ASSERT(isGraphOwner());
+    ASSERT(isAudioThread() || isAudioThreadFinished());
+
+    if (!m_hasFinishedAudioSourceNodes)
+        return;
+
+    // Removing a node from the automatic pull node set may reallocate the underlying hash table.
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    m_referencedSourceNodes.removeAllMatching([&](auto& node) {
+        if (!node->isFinishedSourceNode())
+            return false;
+        if (is<AudioScheduledSourceNode>(node.get()))
+            removeAutomaticPullNode(Ref { node.get() });
+        return true;
+    });
+    m_hasFinishedAudioSourceNodes = false;
+}
+
+void BaseAudioContext::derefUnfinishedSourceNodes()
+{
+    ASSERT(isMainThread() && isAudioThreadFinished());
+    m_referencedSourceNodes.clear();
+}
+
+void BaseAudioContext::addDeferredDecrementConnectionCount(AudioNode* node)
+{
+    ASSERT(isAudioThread());
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    m_deferredBreakConnectionList.append(node);
+}
+
+void BaseAudioContext::addDeferredDeref(const AudioNode* node)
+{
+    ASSERT(isAudioThread());
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    m_deferredDerefList.append(const_cast<AudioNode*>(node));
+}
+
+void BaseAudioContext::handlePreRenderTasks(const AudioIOPosition& outputPosition)
+{
+    ASSERT(isAudioThread());
+
+    // At the beginning of every render quantum, try to update the internal rendering graph state (from main thread changes).
+    // It's OK if the tryLock() fails, we'll just take slightly longer to pick up the changes.
+    if (auto locker = Locker<RecursiveLock>::tryLock(graphLock())) {
+        // Fixup the state of any dirty AudioSummingJunctions and AudioNodeOutputs.
+        handleDirtyAudioSummingJunctions();
+        handleDirtyAudioNodeOutputs();
+
+        updateAutomaticPullNodes();
+        m_outputPosition = outputPosition;
+
+        m_listener->updateDirtyState();
+    }
+}
+
+AudioIOPosition BaseAudioContext::outputPosition()
+{
+    ASSERT(isMainThread());
+    Locker locker { graphLock() };
+    return m_outputPosition;
+}
+
+void BaseAudioContext::handlePostRenderTasks()
+{
+    ASSERT(isAudioThread());
+
+    // Must use a tryLock() here too. Don't worry, the lock will very rarely be contended and this method is called frequently.
+    // The worst that can happen is that there will be some nodes which will take slightly longer than usual to be deleted or removed
+    // from the render graph (in which case they'll render silence).
+    auto locker = Locker<RecursiveLock>::tryLock(graphLock());
+    if (!locker)
+        return;
+
+    // Take care of finishing any derefs where the tryLock() failed previously.
+    handleDeferredDecrementConnectionCounts();
+    handleDeferredDerefs();
+
+    // Dynamically clean up nodes which are no longer needed.
+    derefFinishedSourceNodes();
+
+    // Don't delete in the real-time thread. Let the main thread do it.
+    // Ref-counted objects held by certain AudioNodes may not be thread-safe.
+    scheduleNodeDeletion();
+
+    // Fixup the state of any dirty AudioSummingJunctions and AudioNodeOutputs.
+    handleDirtyAudioSummingJunctions();
+    handleDirtyAudioNodeOutputs();
+
+    updateAutomaticPullNodes();
+    updateTailProcessingNodes();
+}
+
+void BaseAudioContext::handleDeferredDecrementConnectionCounts()
+{
+    ASSERT(isGraphOwner());
+    for (auto& node : m_deferredBreakConnectionList)
+        node->decrementConnectionCountWithLock();
+
+    m_deferredBreakConnectionList.clear();
+}
+
+void BaseAudioContext::handleDeferredDerefs()
+{
+    ASSERT(isGraphOwner());
+    for (auto& node : m_deferredDerefList)
+        node->derefWithLock();
+    m_deferredDerefList.clear();
+}
+
+void BaseAudioContext::addTailProcessingNode(AudioNode& node)
+{
+    ASSERT(isGraphOwner());
+    if (node.isTailProcessing()) {
+        ASSERT(m_tailProcessingNodes.contains(node) || m_finishedTailProcessingNodes.contains(node));
+        return;
+    }
+
+    // Ideally we'd find a way to avoid this vector append since we try to avoid potential heap allocations
+    // on the audio thread for performance reasons.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    ASSERT(!m_tailProcessingNodes.contains(node));
+    m_tailProcessingNodes.append(node);
+}
+
+void BaseAudioContext::removeTailProcessingNode(AudioNode& node)
+{
+    ASSERT(isGraphOwner());
+    ASSERT(node.isTailProcessing());
+
+    if (m_tailProcessingNodes.removeFirst(node))
+        return;
+
+    // Remove the node from finished tail processing nodes so we don't end up disabling its outputs later on the main thread.
+    ASSERT(m_finishedTailProcessingNodes.contains(node));
+    m_finishedTailProcessingNodes.removeFirst(node);
+}
+
+void BaseAudioContext::updateTailProcessingNodes()
+{
+    ASSERT(isAudioThread());
+    ASSERT(isGraphOwner());
+    // Go backwards as the current node may be removed from m_tailProcessingNodes as we iterate.
+    // We are on the audio thread so we want to avoid allocations as much as possible.
+    for (auto i = m_tailProcessingNodes.size(); i > 0; --i) {
+        auto& node = m_tailProcessingNodes[i - 1];
+        if (!protect(node.node())->propagatesSilence())
+            continue; // Node is not done processing its tail.
+
+        // Ideally we'd find a way to avoid this vector append since we try to avoid potential heap allocations
+        // on the audio thread for performance reasons.
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
+        // Disabling of outputs should happen on the main thread we add the node to m_finishedTailProcessingNodes
+        // for disableOutputsForFinishedTailProcessingNodes() to process later on the main thread.
+        ASSERT(!m_finishedTailProcessingNodes.contains(node));
+        m_finishedTailProcessingNodes.append(WTF::move(node));
+        m_tailProcessingNodes.removeAt(i - 1);
+    }
+
+    if (m_finishedTailProcessingNodes.isEmpty() || m_disableOutputsForTailProcessingScheduled)
+        return;
+
+    m_disableOutputsForTailProcessingScheduled = true;
+
+    // We try to avoid heap allocations on the audio thread but there is no way to do a main thread dispatch
+    // without one.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    callOnMainThread([this, protectedThis = Ref { *this }]() mutable {
+        Locker locker { graphLock() };
+        disableOutputsForFinishedTailProcessingNodes();
+        m_disableOutputsForTailProcessingScheduled = false;
+    });
+}
+
+void BaseAudioContext::disableOutputsForFinishedTailProcessingNodes()
+{
+    ASSERT(isMainThread());
+    ASSERT(isGraphOwner());
+    for (auto& finishedTailProcessingNode : std::exchange(m_finishedTailProcessingNodes, { }))
+        protect(finishedTailProcessingNode.node())->disableOutputs();
+}
+
+void BaseAudioContext::finishTailProcessing()
+{
+    ASSERT(isMainThread());
+    Locker locker { graphLock() };
+
+    // disableOutputs() can cause new nodes to start tail processing so we need to loop until both vectors are empty.
+    while (!m_tailProcessingNodes.isEmpty() || !m_finishedTailProcessingNodes.isEmpty()) {
+        for (auto& tailProcessingNode : std::exchange(m_tailProcessingNodes, { }))
+            protect(tailProcessingNode.node())->disableOutputs();
+        disableOutputsForFinishedTailProcessingNodes();
+    }
+}
+
+void BaseAudioContext::markForDeletion(AudioNode& node)
+{
+    ASSERT(isGraphOwner());
+    ASSERT_WITH_MESSAGE(node.nodeType() != AudioNode::NodeTypeDestination, "Destination node is owned by the BaseAudioContext");
+
+    if (isAudioThreadFinished())
+        m_nodesToDelete.append(&node);
+    else {
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+        m_nodesMarkedForDeletion.append(&node);
+    }
+
+    // This is probably the best time for us to remove the node from automatic pull list,
+    // since all connections are gone and we hold the graph lock. Then when handlePostRenderTasks()
+    // gets a chance to schedule the deletion work, updateAutomaticPullNodes() also gets a chance to
+    // modify m_renderingAutomaticPullNodes.
+    removeAutomaticPullNode(node);
+}
+
+void BaseAudioContext::unmarkForDeletion(AudioNode& node)
+{
+    ASSERT(isGraphOwner());
+    ASSERT_WITH_MESSAGE(node.nodeType() != AudioNode::NodeTypeDestination, "Destination node is owned by the BaseAudioContext");
+
+    m_nodesToDelete.removeFirst(&node);
+    m_nodesMarkedForDeletion.removeFirst(&node);
+}
+
+void BaseAudioContext::scheduleNodeDeletion()
+{
+    bool isGood = m_isInitialized && isGraphOwner();
+    ASSERT(isGood);
+    if (!isGood)
+        return;
+
+    // Make sure to call deleteMarkedNodes() on main thread.    
+    if (!m_nodesMarkedForDeletion.isEmpty() && !m_isDeletionScheduled) {
+        ASSERT(m_nodesToDelete.isEmpty());
+        m_nodesToDelete = std::exchange(m_nodesMarkedForDeletion, { });
+
+        m_isDeletionScheduled = true;
+
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+        callOnMainThread([protectedThis = Ref { *this }]() mutable {
+            protectedThis->deleteMarkedNodes();
+        });
+    }
+}
+
+void BaseAudioContext::deleteMarkedNodes()
+{
+    ASSERT(isMainThread());
+
+    // Protect this object from being deleted before we release the lock.
+    Ref protectedThis { *this };
+
+    Locker locker { graphLock() };
+
+    while (m_nodesToDelete.size()) {
+        CheckedPtr node = m_nodesToDelete.takeLast();
+
+        // A node may have been re-referenced (via ref() or incrementConnectionCount()) after being
+        // marked for deletion. This can happen when ref() on the audio thread couldn't acquire the
+        // graph lock to unmark the node. Re-check before deleting.
+        if (node->hasReferences()) {
+            node->clearIsMarkedForDeletion();
+            continue;
+        }
+
+        // Before deleting the node, clear out any AudioNodeInputs from m_dirtySummingJunctions.
+        unsigned numberOfInputs = node->numberOfInputs();
+        for (unsigned i = 0; i < numberOfInputs; ++i)
+            m_dirtySummingJunctions.remove(protect(node->input(i)).get());
+
+        // Before deleting the node, clear out any AudioNodeOutputs from m_dirtyAudioNodeOutputs.
+        unsigned numberOfOutputs = node->numberOfOutputs();
+        for (unsigned i = 0; i < numberOfOutputs; ++i)
+            m_dirtyAudioNodeOutputs.remove(protect(node->output(i)).get());
+
+        ASSERT_WITH_MESSAGE(node->nodeType() != AudioNode::NodeTypeDestination, "Destination node is owned by the BaseAudioContext");
+
+        // Finally, delete it.
+        SUPPRESS_UNCHECKED_LOCAL auto* nodePtr = std::exchange(node, nullptr).unsafeGet(); // NOLINT.
+        delete nodePtr;
+    }
+    m_isDeletionScheduled = false;
+}
+
+void BaseAudioContext::markSummingJunctionDirty(AudioSummingJunction* summingJunction)
+{
+    ASSERT(isGraphOwner());
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    m_dirtySummingJunctions.add(summingJunction);
+}
+
+void BaseAudioContext::removeMarkedSummingJunction(AudioSummingJunction* summingJunction)
+{
+    ASSERT(isMainThread());
+    Locker locker { graphLock() };
+    m_dirtySummingJunctions.remove(summingJunction);
+}
+
+enum EventTargetInterfaceType BaseAudioContext::eventTargetInterface() const
+{
+    return EventTargetInterfaceType::BaseAudioContext;
+}
+
+void BaseAudioContext::markAudioNodeOutputDirty(AudioNodeOutput* output)
+{
+    ASSERT(isGraphOwner());
+    m_dirtyAudioNodeOutputs.add(output);
+}
+
+void BaseAudioContext::handleDirtyAudioSummingJunctions()
+{
+    ASSERT(isGraphOwner());
+
+    for (auto& junction : m_dirtySummingJunctions)
+        junction->updateRenderingState();
+
+    m_dirtySummingJunctions.clear();
+}
+
+void BaseAudioContext::handleDirtyAudioNodeOutputs()
+{
+    ASSERT(isGraphOwner());
+
+    for (auto& output : m_dirtyAudioNodeOutputs)
+        output->updateRenderingState();
+
+    m_dirtyAudioNodeOutputs.clear();
+}
+
+void BaseAudioContext::addAutomaticPullNode(AudioNode& node)
+{
+    ASSERT(isGraphOwner());
+
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    if (m_automaticPullNodes.add(&node).isNewEntry)
+        m_automaticPullNodesNeedUpdating = true;
+}
+
+void BaseAudioContext::removeAutomaticPullNode(AudioNode& node)
+{
+    ASSERT(isGraphOwner());
+
+    if (m_automaticPullNodes.remove(&node)) {
+        if (m_isAudioThreadFinished) {
+            // If the audio thread is finished, update m_renderingAutomaticPullNodes
+            // directly instead of setting m_automaticPullNodesNeedUpdating and waiting
+            // for the next rendering quantum (which will not happen). This is safe
+            // since the audio thread has been terminated and thus cannot be using this
+            // vector anymore.
+            m_renderingAutomaticPullNodes.removeFirst(&node);
+        } else
+            m_automaticPullNodesNeedUpdating = true;
+    }
+}
+
+void BaseAudioContext::updateAutomaticPullNodes()
+{
+    ASSERT(isGraphOwner());
+
+    if (!m_automaticPullNodesNeedUpdating)
+        return;
+
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
+    // Copy from m_automaticPullNodes to m_renderingAutomaticPullNodes.
+    m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
+
+    unsigned i = 0;
+    for (auto& output : m_automaticPullNodes)
+        m_renderingAutomaticPullNodes[i++] = output;
+
+    m_automaticPullNodesNeedUpdating = false;
+}
+
+void BaseAudioContext::processAutomaticPullNodes(size_t framesToProcess)
+{
+    ASSERT(isAudioThread());
+
+    for (auto& node : m_renderingAutomaticPullNodes)
+        node->processIfNecessary(framesToProcess);
+}
+
+ScriptExecutionContext* BaseAudioContext::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
+
+void BaseAudioContext::postTask(Function<void()>&& task)
+{
+    ASSERT(isMainThread());
+    if (!m_isStopScheduled)
+        queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [task = WTF::move(task)](auto&) mutable { task(); });
+}
+
+const SecurityOrigin* BaseAudioContext::origin() const
+{
+    RefPtr context = scriptExecutionContext();
+    return context ? context->securityOrigin() : nullptr;
+}
+
+void BaseAudioContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message)
+{
+    if (RefPtr context = scriptExecutionContext())
+        context->addConsoleMessage(source, level, message);
+}
+
+PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)
+{
+    switch (type) {
+    case OscillatorType::Square:
+        if (!m_cachedPeriodicWaveSquare)
+            m_cachedPeriodicWaveSquare = PeriodicWave::createSquare(sampleRate());
+        return *m_cachedPeriodicWaveSquare;
+    case OscillatorType::Sawtooth:
+        if (!m_cachedPeriodicWaveSawtooth)
+            m_cachedPeriodicWaveSawtooth = PeriodicWave::createSawtooth(sampleRate());
+        return *m_cachedPeriodicWaveSawtooth;
+    case OscillatorType::Triangle:
+        if (!m_cachedPeriodicWaveTriangle)
+            m_cachedPeriodicWaveTriangle = PeriodicWave::createTriangle(sampleRate());
+        return *m_cachedPeriodicWaveTriangle;
+    case OscillatorType::Custom:
+        RELEASE_ASSERT_NOT_REACHED();
+    case OscillatorType::Sine:
+        if (!m_cachedPeriodicWaveSine)
+            m_cachedPeriodicWaveSine = PeriodicWave::createSine(sampleRate());
+        return *m_cachedPeriodicWaveSine;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void BaseAudioContext::addAudioParamDescriptors(const String& processorName, Vector<AudioParamDescriptor>&& descriptors)
+{
+    ASSERT(!m_parameterDescriptorMap.contains(processorName));
+    bool wasEmpty = m_parameterDescriptorMap.isEmpty();
+    m_parameterDescriptorMap.add(processorName, WTF::move(descriptors));
+    if (wasEmpty)
+        workletIsReady();
+}
+
+void BaseAudioContext::sourceNodeWillBeginPlayback(AudioNode& node)
+{
+    ASSERT(isMainThread());
+    Locker locker { graphLock() };
+
+    ASSERT(!m_referencedSourceNodes.contains(&node));
+    // Reference source node to keep it alive and playing even if its JS wrapper gets garbage collected.
+    m_referencedSourceNodes.append(node);
+
+    // Scheduled source nodes must be processed on every render quantum even when they are not
+    // connected to the destination, so that they reach their stop time and fire the ended event.
+    if (is<AudioScheduledSourceNode>(node))
+        addAutomaticPullNode(node);
+}
+
+void BaseAudioContext::sourceNodeDidFinishPlayback(AudioNode& node)
+{
+    ASSERT(isAudioThread());
+
+    node.setIsFinishedSourceNode();
+    m_hasFinishedAudioSourceNodes = true;
+}
+
+void BaseAudioContext::workletIsReady()
+{
+    ASSERT(isMainThread());
+
+    // If we're already rendering when the worklet becomes ready, we need to restart
+    // rendering in order to switch to the audio worklet thread.
+    protect(destination())->restartRendering();
+}
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& BaseAudioContext::logChannel() const
+{
+    return LogMedia;
+}
+#endif
+
+RefPtr<MediaSessionManagerInterface> BaseAudioContext::mediaSessionManager() const
+{
+    RefPtr document = this->document();
+    if (!document)
+        return nullptr;
+
+    RefPtr page = document->page();
+    if (!page)
+        return nullptr;
+
+    return page->mediaSessionManager();
+}
+
+RefPtr<MediaSessionManagerInterface> BaseAudioContext::mediaSessionManagerIfExists() const
+{
+    auto* document = this->document();
+    if (!document)
+        return nullptr;
+
+    auto* page = document->page();
+    if (!page)
+        return nullptr;
+
+    return page->mediaSessionManagerIfExists();
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_AUDIO)

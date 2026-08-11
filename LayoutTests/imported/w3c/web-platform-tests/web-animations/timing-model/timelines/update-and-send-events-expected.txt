@@ -1,0 +1,10 @@
+
+PASS Fires cancel event before requestAnimationFrame
+PASS Fires finish event before requestAnimationFrame
+PASS Sorts finish events by composite order
+PASS Sorts cancel events by composite order
+PASS Queues a cancel event in transitionstart event callback
+PASS Sorts events for the same transition
+PASS Playback events with the same timeline retain the order in which they arequeued
+PASS All timelines are updated before running microtasks
+

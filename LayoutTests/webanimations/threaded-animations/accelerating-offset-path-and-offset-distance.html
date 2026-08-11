@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="threaded-animations-utils.js"></script>
+<style>
+
+div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+<script>
+
+const createDiv = test => {
+    const div = document.createElement("div");
+    test.add_cleanup(() => div.remove());
+    return document.body.appendChild(div);
+}
+
+const duration = 1000 * 1000; // 1000s.
+
+promise_test(async test => {
+    const target = createDiv(test);
+    target.style.offsetDistance = "100px";
+    const animation = target.animate({ offsetPath: "rect(0px 100px 100px 0px)" }, duration);
+    await animationAcceleration(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 1);
+}, "Animating 'offset-path' with a fixed 'offset-distance' on the underlying style allows acceleration.");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    target.style.offsetDistance = "50%";
+    const animation = target.animate({ offsetPath: "rect(0px 100px 100px 0px)" }, duration);
+    await animationAcceleration(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Animating 'offset-path' with a percentage 'offset-distance' on the underlying style does not allow acceleration.");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    target.style.offsetDistance = "calc(100px + 50%)";
+    const animation = target.animate({ offsetPath: "rect(0px 100px 100px 0px)" }, duration);
+    await animationAcceleration(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Animating 'offset-path' with a calculated 'offset-distance' on the underlying style does not allow acceleration.");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animation = target.animate({
+        offsetPath: "rect(0px 100px 100px 0px)",
+        offsetDistance: "100px"
+    }, duration);
+    await animationAcceleration(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 2);
+}, "Animating 'offset-path' with an 'offset-distance' animated to a fixed value allows acceleration.");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animation = target.animate({
+        offsetPath: "rect(0px 100px 100px 0px)",
+        offsetDistance: "50%"
+    }, duration);
+    await animationAcceleration(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Animating 'offset-path' with an 'offset-distance' animated to a percentage value does not allow acceleration.");
+
+promise_test(async test => {
+    const target = createDiv(test);
+    const animation = target.animate({
+        offsetPath: "rect(0px 100px 100px 0px)",
+        offsetDistance: "calc(100px + 50%)"
+    }, duration);
+    await animationAcceleration(animation);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0);
+}, "Animating 'offset-path' with an 'offset-distance' animated to a calculated value does not allow acceleration.");
+
+</script>
+</body>

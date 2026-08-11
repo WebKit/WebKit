@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/remote-object-utilities.js"></script>
+<script>
+function test()
+{
+    let steps = [
+        {expression: `(function(){})`},
+        {expression: `function foo(){}; foo`},
+        {expression: `function myFunction(a, b) { console.log(a, b); }; myFunction`},
+        {expression: `function myTarget(a, b) { console.log(a, b); }; myTarget.bind(null)`}, // bound function
+        {expression: `Array.prototype.push`}, // native (ECMAScript)
+        {expression: `window.setTimeout`}, // native (DOM)
+        {expression: `Object.getOwnPropertyDescriptor({ get getter() { return 1 } }, "getter").get`}, // getter
+        {expression: `Object.getOwnPropertyDescriptor({ set setter(v) { console.log(v); } }, "setter").set`}, // setter
+    ];
+
+    if (!window.WI) {
+        window.steps = steps;
+        return;
+    }
+
+    runSteps(steps);
+}
+</script>
+</head>
+<body onload="runTest(); runInBrowserTest();"></body>
+</html>

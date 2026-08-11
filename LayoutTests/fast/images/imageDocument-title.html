@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that the title of an ImageDocument is properly set.");
+jsTestIsAsync = true;
+
+var f = document.createElement("iframe");
+f.onload = function() {
+    shouldBeEqualToString("f.contentDocument.title", "green-24x24.jpg 24×24 pixels");
+    shouldBeEqualToString("f.contentDocument.head.getElementsByTagName('title')[0].textContent", "green-24x24.jpg 24×24 pixels");
+    finishJSTest();
+}
+
+f.src = "resources/green-24x24.jpg";
+document.body.appendChild(f);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+Inside
+Inside, but should not match
+Outside
+
+FAIL The :scope pseudo-class works in imported stylesheets assert_equals: expected "1" but got ""
+

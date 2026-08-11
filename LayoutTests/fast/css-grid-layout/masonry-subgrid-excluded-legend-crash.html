@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<style>
+*:not(style):not(script) {
+    display: grid-lanes;
+    grid-template-rows: subgrid repeat(auto-fill, []) repeat(4, []);
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>This test passes if it does not crash.</p>
+<fieldset><legend><div></div></legend></fieldset>

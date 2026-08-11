@@ -1,0 +1,6 @@
+
+hover here
+
+PASS :focus-within should be adjusted on ancestors when popover enters/exits top layer.
+FAIL :hover should be adjusted on ancestors when popover enters/exits top layer. assert_true: hoverTarget should match :hover expected true got false
+

@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0">
+<script src="../../resources/ui-helper.js"></script>
+<link rel="stylesheet" href="resources/test.css">
+</head>
+<body>
+<p>This tests that the placeholder is hidden when a text placeholder is inserted into a text field. This test can only be run in WebKitTestRunner or DumpRenderTree.</p>
+<input id="input" class="test" type="text" placeholder="FAIL">
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function runTest()
+{
+    let input = document.getElementById("input");
+    if (window.testRunner)
+        await UIHelper.activateElementAndWaitForInputSession(input);
+    else
+        await UIHelper.callFunctionAndWaitForEvent(() => input.focus(), input, "focus");
+
+    input.setSelectionRange(0, 0);
+
+    if (window.internals) {
+        // Because we are using the Ahem font almost all glyphs have the same width.
+        let glyphWidth = parseInt(window.getComputedStyle(input, null).fontSize, 10);
+        internals.insertTextPlaceholder(5 * glyphWidth, 0 /* height */);
+    }
+
+    // Defocus field to hide the cursor.
+    await UIHelper.callFunctionAndWaitForEvent(() => input.blur(), input, "blur");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+runTest();
+</script>
+</body>
+</html>

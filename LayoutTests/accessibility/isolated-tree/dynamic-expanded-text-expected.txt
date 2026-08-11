@@ -1,0 +1,10 @@
+This test ensures the expanded-text value of an abbreviation is updated after dynamic page changes.
+
+PASS: text.stringAttributeValue('AXExpandedTextValue') === 'Laughing out loud'
+PASS: text.isAttributeSupported('AXExpandedTextValue') === true
+PASS: text.stringAttributeValue('AXExpandedTextValue') === 'Lots of luck'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+LOL

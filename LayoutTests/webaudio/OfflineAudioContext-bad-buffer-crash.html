@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("This test passes if it does not crash.");
+
+shouldNotThrow("context = new OfflineAudioContext(1, 2**29, 44000)");
+shouldBe("context.sampleRate", "44000");
+shouldNotThrow("new OscillatorNode(context)");
+</script>
+</body>
+</html>

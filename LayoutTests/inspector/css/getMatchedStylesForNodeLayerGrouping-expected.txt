@@ -1,0 +1,103 @@
+Tests for the CSS.getMatchedStyleForNode command and style rule groupings.
+
+
+== Running test suite: CSS.getMatchedStyleForNode.LayerGrouping
+-- Running test case: CSS.getMatchedStyleForNode.LayerGrouping.Normal
+PASS: Should have 3 authored rules.
+- Testing rule #0
+PASS: Selector text should be ".item".
+PASS: "color" property value should be "red".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeLayerGrouping.html".
+PASS: Rule should have no groupings.
+- Testing rule #1
+PASS: Selector text should be ".item".
+PASS: "color" property value should be "lawngreen".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeLayerGrouping.html".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "layer-rule".
+PASS: Grouping 0 should have a text of "special".
+PASS: Grouping 1 should have a type of "supports-rule".
+PASS: Grouping 1 should have a text of "(color: red)".
+- Testing rule #2
+PASS: Selector text should be ".item".
+PASS: "color" property value should be "peachpuff".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeLayerGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "layer-rule".
+PASS: Grouping 0 should have a text of "base".
+
+-- Running test case: CSS.getMatchedStyleForNode.LayerGrouping.Imported
+PASS: Should have 5 authored rules.
+- Testing rule #0
+PASS: Selector text should be ".item".
+PASS: "color" property value should be "red".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeLayerGrouping.html".
+PASS: Rule should have no groupings.
+- Testing rule #1
+PASS: Selector text should be ".item".
+PASS: "color" property value should be "lawngreen".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeLayerGrouping.html".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "layer-rule".
+PASS: Grouping 0 should have a text of "special".
+PASS: Grouping 1 should have a type of "supports-rule".
+PASS: Grouping 1 should have a text of "(color: red)".
+- Testing rule #2
+PASS: Selector text should be ".item".
+PASS: "color" property value should be "peachpuff".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeLayerGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "layer-rule".
+PASS: Grouping 0 should have a text of "base".
+- Testing rule #3
+PASS: Selector text should be ".imported".
+PASS: "color" property value should be "darkslategray".
+PASS: Source code for rule should be in file named "external-layers.css".
+PASS: Rule should have 3 grouping(s).
+PASS: Grouping 0 should have a type of "layer-rule".
+PASS: Grouping 0 should have a text of "special".
+PASS: Grouping 1 should have a type of "supports-rule".
+PASS: Grouping 1 should have a text of "(color: red)".
+PASS: Grouping 2 should have a type of "layer-import-rule".
+PASS: Grouping 2 should have a text of "imported".
+- Testing rule #4
+PASS: Selector text should be ".imported".
+PASS: "color" property value should be "mintcream".
+PASS: Source code for rule should be in file named "external-layers.css".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "layer-rule".
+PASS: Grouping 0 should have a text of "base".
+PASS: Grouping 1 should have a type of "layer-import-rule".
+PASS: Grouping 1 should have a text of "imported".
+
+-- Running test case: CSS.getMatchedStyleForNode.LayerGrouping.Anonymous
+PASS: Should have 4 authored rules.
+- Testing rule #0
+PASS: Selector text should be ".item".
+PASS: "color" property value should be "red".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeLayerGrouping.html".
+PASS: Rule should have no groupings.
+- Testing rule #1
+PASS: Selector text should be ".anonymous".
+PASS: "color" property value should be "darkviolet".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeLayerGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "layer-rule".
+PASS: Grouping 0 should not have any text.
+- Testing rule #2
+PASS: Selector text should be ".item".
+PASS: "color" property value should be "lawngreen".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeLayerGrouping.html".
+PASS: Rule should have 2 grouping(s).
+PASS: Grouping 0 should have a type of "layer-rule".
+PASS: Grouping 0 should have a text of "special".
+PASS: Grouping 1 should have a type of "supports-rule".
+PASS: Grouping 1 should have a text of "(color: red)".
+- Testing rule #3
+PASS: Selector text should be ".item".
+PASS: "color" property value should be "peachpuff".
+PASS: Source code for rule should be in file named "getMatchedStylesForNodeLayerGrouping.html".
+PASS: Rule should have 1 grouping(s).
+PASS: Grouping 0 should have a type of "layer-rule".
+PASS: Grouping 0 should have a text of "base".
+

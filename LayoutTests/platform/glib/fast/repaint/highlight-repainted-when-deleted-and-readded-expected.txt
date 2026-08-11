@@ -1,0 +1,7 @@
+Highlight this first and then clear highlight, then add it again.
+(repaint rects
+  (rect 8 8 784 37)
+  (rect 8 8 784 37)
+  (rect 8 8 784 37)
+)
+When run, the first "this" should be highlighted, and then the highlight should be removed. Then then highlight should be added again.

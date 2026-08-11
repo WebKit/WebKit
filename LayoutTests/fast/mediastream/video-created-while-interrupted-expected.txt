@@ -1,0 +1,4 @@
+
+
+PASS Correctly handle autoplay for a media element created while page is interrupted
+

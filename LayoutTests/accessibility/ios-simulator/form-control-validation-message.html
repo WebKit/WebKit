@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+</script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<form>
+  Required text input: <input id="input" type="text" required=""><input id="submit" type="submit" id="firstSubmitButton">
+</form>
+
+<script>
+    description("This tests that we are exposing form validation message through hint on iOS.");
+    jsTestIsAsync = true;
+
+    if (window.accessibilityController) {
+
+        var input = accessibilityController.accessibleElementById("input");
+        
+        shouldBeEqualToString("input.helpText", "AXHint: ");
+        document.getElementById("submit").click();
+        handle = setInterval(function() {
+            if (input.helpText === "AXHint: ")
+                return;
+            clearInterval(handle);
+            shouldBeEqualToString("input.helpText", "AXHint: Fill out this field");
+            finishJSTest();
+        }, 10);
+    }
+</script>
+</body>
+</html>
+

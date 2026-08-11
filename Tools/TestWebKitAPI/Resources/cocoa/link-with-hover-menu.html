@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='viewport' content='width=device-width'>
+    <style>
+        body {
+            height: 100vh;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li > ul {
+            visibility: hidden;
+            padding: 0;
+        }
+
+        li:hover > ul {
+            visibility: visible;
+        }
+    </style>
+    <script>
+        const boundingClientRectArray = (selector) => {
+            const rect = document.querySelector(selector).getBoundingClientRect();
+            return [rect.left, rect.top, rect.width, rect.height];
+        };
+
+        addEventListener('mousemove', (event) => webkit.messageHandlers.testHandler.postMessage(event.type));
+    </script>
+</head>
+<body>
+    <ul>
+        <li>
+            <a id='link' href='https://www.apple.com/'>link</a>
+            <ul>
+                <li><a href='#'>hover menu</a></li>
+            </ul>
+        </li>
+    </ul>
+</body>
+</html>

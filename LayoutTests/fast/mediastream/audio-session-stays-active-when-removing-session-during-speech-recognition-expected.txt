@@ -1,0 +1,3 @@
+
+PASS Removing a media session while SpeechRecognition is capturing must not deactivate AudioSession
+

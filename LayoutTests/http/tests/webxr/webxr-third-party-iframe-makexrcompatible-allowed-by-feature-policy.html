@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that third-party iframes will be allowed to call makeXRCompatible() with xr-spatial-tracking feature policy.");
+jsTestIsAsync = true;
+
+onmessage = (_e) => {
+    e = _e;
+    if (e.data.makeXRCompatible != undefined) {
+        shouldBeTrue("e.data.makeXRCompatible");
+        finishJSTest();
+    }
+};
+</script>
+<iframe src="http://localhost:8000/webxr/resources/webxr-makexrcompatible-test.html" allow="xr-spatial-tracking"></iframe>
+</body>
+</html>

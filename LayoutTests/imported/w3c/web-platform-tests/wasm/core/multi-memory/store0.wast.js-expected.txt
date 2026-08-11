@@ -1,0 +1,11 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (store0.wast:3)
+PASS #3 Reinitialize the default imports
+PASS #4 Test that WebAssembly compilation succeeds (store0.wast:3)
+PASS #5 Test that WebAssembly instantiation succeeds (store0.wast:3)
+PASS #6 Run a WebAssembly test without special assertions (store0.wast:22)
+PASS #7 Run a WebAssembly test without special assertions (store0.wast:23)
+PASS #8 Test that a WebAssembly code returns a specific result (store0.wast:24)
+PASS #9 Test that a WebAssembly code returns a specific result (store0.wast:25)
+

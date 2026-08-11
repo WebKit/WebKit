@@ -1,0 +1,5 @@
+
+PASS
+  Test SVGColor animation with invalid value: Invalid color string in from attribute
+
+

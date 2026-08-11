@@ -1,0 +1,7 @@
+
+
+FAIL focused area prefered over targeted area. assert_equals: scroll top is reset expected 0 but got 150
+FAIL targeted area prefered over non-focused area. assert_not_equals: sanity check that box1 is not focused. got disallowed value Element node <div tabindex="1" id="box1" class="target">Box 1</div>
+FAIL block axis area is preferred. assert_not_equals: sanity check that box1 is not focused. got disallowed value Element node <div tabindex="1" id="box1" class="target">Box 1</div>
+FAIL block axis area is preferred (vertical writing-mode). assert_not_equals: sanity check that box1 is not focused. got disallowed value Element node <div tabindex="1" id="box1" class="target">Box 1</div>
+

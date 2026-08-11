@@ -1,0 +1,5 @@
+Tests that inserting a <track> element immediately after a load() doesn't crash.
+
+
+END OF TEST
+

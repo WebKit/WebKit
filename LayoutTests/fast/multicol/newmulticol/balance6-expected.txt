@@ -1,0 +1,8 @@
+PASS mc.offsetHeight is 34
+PASS mc.scrollWidth is 500
+PASS successfullyParsed is true
+
+TEST COMPLETE
+There should be no scrollbar on this page.
+
+

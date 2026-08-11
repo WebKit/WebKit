@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+<style>
+.test::first-letter {
+    color: red;
+    font-size: 50px;
+}
+.test {
+    font-size: 50px;
+    margin: 10px;
+}
+</style>
+</head>
+<body>
+<div class="test" id="test1">Hello</div>
+<div class="test" id="test2">A</div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.eventSender && window.internals) {
+    function log(msg) {
+        document.getElementById("log").textContent += msg + "\n";
+    }
+
+    function cursorAt(element, xOffset) {
+        var rect = element.getBoundingClientRect();
+        eventSender.mouseMoveTo(rect.left + xOffset, rect.top + rect.height / 2);
+        return internals.getCurrentCursorInfo();
+    }
+
+    // Test 1: Cursor over first letter "H" should be I-beam (text cursor).
+    var cursor1 = cursorAt(test1, 5);
+    log("test1 (first letter): " + (cursor1.includes("IBeam") ? "PASS" : "FAIL (cursor=" + cursor1 + ")"));
+
+    // Test 2: Cursor over single-char first letter "A" should be I-beam.
+    var cursor2 = cursorAt(test2, 5);
+    log("test2 (single char first letter): " + (cursor2.includes("IBeam") ? "PASS" : "FAIL (cursor=" + cursor2 + ")"));
+
+    // Test 3: Cursor over remaining text "ello" should be I-beam.
+    var cursor3 = cursorAt(test1, 80);
+    log("test3 (remaining text): " + (cursor3.includes("IBeam") ? "PASS" : "FAIL (cursor=" + cursor3 + ")"));
+} else {
+    document.getElementById("log").textContent = "This test requires eventSender and internals.";
+}
+</script>
+</body>
+</html>

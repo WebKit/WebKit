@@ -1,0 +1,2 @@
+[foobar] select -> [this] word and expand the selection to [foobar] by moving the cursor to the left over to the blue area. PASS if selection covers both [foobar] and [this].
+PASS

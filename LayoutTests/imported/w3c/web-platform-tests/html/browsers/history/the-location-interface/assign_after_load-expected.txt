@@ -1,0 +1,3 @@
+
+PASS Assignment to location after document is completely loaded
+

@@ -1,0 +1,31 @@
+Tests WebAssembly source placement for a site-isolated frame.
+
+
+== Running test suite: WebAssembly.FrameTarget.Placement
+-- Running test case: WebAssembly.FrameTarget.Placement.CrossOriginFrame
+PASS: Should create the named child frame.
+PASS: The FrameTarget execution context should identify its frame.
+PASS: The WebAssembly script should belong to the cross-origin child frame.
+PASS: The main frame should not contain the child frame's WebAssembly script.
+PASS: The child frame should contain its WebAssembly script.
+
+-- Running test case: WebAssembly.FrameTarget.Placement.Resource
+PASS: The WebAssembly script should associate with a Resource.
+PASS: The WebAssembly script should belong to the cross-origin child frame.
+PASS: The associated Resource should belong to the cross-origin child frame.
+PASS: The Resource should be associated with the WebAssembly script.
+PASS: The Resource-backed WebAssembly script should not remain an extra script.
+PASS: Repeated loads of the same URL should associate with distinct Resources.
+PASS: Repeated loads of the same URL should preserve distinct request identifiers.
+PASS: The repeated Resource should use a site-isolation-qualified request identifier.
+
+-- Running test case: WebAssembly.FrameTarget.Placement.WorkerResource
+PASS: Should create a Worker target.
+PASS: The Worker's WebAssembly script should associate with a Resource.
+PASS: The Worker's associated Resource should use the final response URL.
+PASS: The associated Resource should belong to the Worker target.
+PASS: The Worker target should contain the associated Resource.
+PASS: The Worker's associated Resource should not belong to a frame.
+PASS: The associated Resource should use a site-isolation-qualified request identifier.
+PASS: The Resource-backed WebAssembly script should not remain an extra script.
+

@@ -1,0 +1,72 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/CompositionEvent.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.attrChange.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.attrName.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.newValue.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.prevValue.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMAttrModified.relatedNode.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMCharacterDataModified.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMNodeInserted.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMNodeRemoved.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/DOMSubtreeModified.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/Event.defaultPrevented.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/Event.eventPhase.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/Event.stopPropagation.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/KeyboardEvent.key.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/KeyboardEvent.location.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/KeyboardEvent.modifiers.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MouseEvent.button.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MouseEvent.image.map.area.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MouseEvent.preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MutationEvent.hasFeature.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MutationEvent.initMutationEvent.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/MutationEvent.relatedNode.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/ProcessingInstruction.DOMCharacterDataModified.fail.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/ProcessingInstruction.DOMCharacterDataModified.xml
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/TextEvent.hasFeature.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/TextEvent.initTextEvent.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/TextEvent.inputMode.IME.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/TextEvent.inputMode.drop.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/TextEvent.inputMode.keyboard.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/TextEvent.inputMode.paste.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/TextEvent.inputMode.script.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/UIEvent.load.stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/WheelEvent.Capture.Bubble.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/WheelEvent.ctrlKey.zoom.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/WheelEvent.deltaMode.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/WheelEvent.hasFeature.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/WheelEvent.initWheelEvent.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/WheelEvent.preventDefault.scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/abort.img.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/abort.testresult.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/blur.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/compositionstart.data.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/compositionstart.keydown.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/compositionstart.preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/dispatchEvent.click.checkbox.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/error.image.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/focusin.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/focusin.relatedTarget.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/focusout.relatedTarget.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/hasFeature.Events.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/hasFeature.feature.string.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/load.image.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/mouseenter.ctrlKey.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/mouseenter.relatedTarget.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/legacy-domevents-tests/submissions/Microsoft/mouseleave.relatedTarget.html

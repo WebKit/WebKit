@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+jsTestIsAsync = true;
+description("Tests that a setInterval timer gets a nonzero alignment once it has reached the maximum nesting level.");
+
+if (!window.testRunner || !window.internals) {
+    testFailed("Test requires internals.");
+    finishJSTest();
+}
+
+const maxNestingLevel = 5;
+var intervalsCount = 0;
+var intervalHandle;
+
+function intervalFired()
+{
+    shouldBe("internals.isTimerAligned(intervalHandle)", `${++intervalsCount >= maxNestingLevel}`);
+    if (intervalsCount > maxNestingLevel + 5) {
+        clearInterval(intervalHandle);
+        return finishJSTest();
+    }
+}
+
+window.addEventListener("load", () => {
+    intervalHandle = setInterval(intervalFired, 10);
+});
+</script>
+</body>
+</html>

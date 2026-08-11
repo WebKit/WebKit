@@ -1,0 +1,12 @@
+<script>
+function load() {
+    a.onerror = undefined;
+    document.body.textContent = "Tests a symbol element with onError event being referenced by a use element.  Test passes if WebKit does not crash.  PASS";
+    if (window.testRunner)
+        testRunner.dumpAsText();
+}
+</script>
+<body onload=load()>
+<svg>
+<use xlink:href="#a">
+<symbol id="a" onerror="eventhandler5()" />

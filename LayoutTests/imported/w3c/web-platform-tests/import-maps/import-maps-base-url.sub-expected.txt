@@ -1,0 +1,9 @@
+
+
+PASS bare/bare: static import
+PASS bare/bare: dynamic import (from module)
+PASS bare/bare: dynamic import (from text/javascript)
+PASS bare/bare: static import with inject <base>
+PASS bare/bare: dynamic import (from module) with inject <base>
+PASS bare/bare: dynamic import (from text/javascript) with inject <base>
+

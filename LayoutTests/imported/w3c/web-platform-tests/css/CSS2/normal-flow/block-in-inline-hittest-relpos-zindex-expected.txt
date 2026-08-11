@@ -1,0 +1,8 @@
+
+PASS block-in-inline-hittest-relpos-zindex
+PASS z-index: 1;
+PASS z-index: -1;
+PASS position: relative;
+PASS position: relative; z-index: 1;
+PASS position: relative; z-index: -1;
+

@@ -1,0 +1,4 @@
+
+
+FAIL CSS Test: ::scroll-marker loses focus from ::scroll-marker with scroll-marker-group mode set to links assert_equals: ::scroll-marker activation retains focus expected "rgb(0, 128, 0)" but got ""
+

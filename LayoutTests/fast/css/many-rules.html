@@ -1,0 +1,23 @@
+<body>
+<div id=info></div>
+<div id=test></div>
+<script>
+function makeSheet(index) {
+    let sheet;
+    sheet = `#test:after { content: "Matched rule from sheet ${index}" }`;
+    for (let i = 1; i < 32768; ++i)
+        sheet += ".dummy-rule { color: red }";
+    return sheet;
+}
+function makeSheets(count) {
+    for (let i = 0; i < count; ++i) {
+        const style = document.createElement("style");
+        style.textContent = makeSheet(i + 1);
+        document.head.appendChild(style);
+    }
+
+    info.textContent = `Expecting match from sheet ${count}`;
+}
+makeSheets(20);
+</script>
+</body>

@@ -1,0 +1,92 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "lowpass"
+PASS Executing "highpass"
+PASS Executing "bandpass"
+PASS Executing "lowshelf"
+PASS Executing "highshelf"
+PASS Executing "peaking"
+PASS Executing "notch"
+PASS Executing "allpass"
+PASS Executing "getFrequencyResponse"
+PASS Audit report
+PASS > [lowpass] Frequency response
+PASS   lowpass: Number of non-finite values in magnitude response is equal to 0.
+PASS   lowpass: Number of non-finte values in phase response is equal to 0.
+PASS   lowpass: Number of non-finite values in the expected magnitude response is equal to 0.
+PASS   lowpass: Number of non-finite values in expected phase response is equal to 0.
+PASS   lowpass: Actual and expected results contained only finite values is true.
+PASS   lowpass: Max error (-74.129644 dB) of magnitude response at frequency 22027.949219 Hz is less than or equal to -73.017800.
+PASS   lowpass: Max error (0.000009 deg) in phase response at frequency 1477.349976 Hz is less than or equal to 0.000461.
+PASS < [lowpass] All assertions passed. (total 7 assertions)
+PASS > [highpass] Frequency response
+PASS   highpass: Number of non-finite values in magnitude response is equal to 0.
+PASS   highpass: Number of non-finte values in phase response is equal to 0.
+PASS   highpass: Number of non-finite values in the expected magnitude response is equal to 0.
+PASS   highpass: Number of non-finite values in expected phase response is equal to 0.
+PASS   highpass: Actual and expected results contained only finite values is true.
+PASS   highpass: Max error (-121.357282 dB) of magnitude response at frequency 418.950012 Hz is less than or equal to -117.5461.
+PASS   highpass: Max error (0.000007 deg) in phase response at frequency 132.300003 Hz is less than or equal to 0.000399.
+PASS < [highpass] All assertions passed. (total 7 assertions)
+PASS > [bandpass] Frequency response
+PASS   bandpass: Number of non-finite values in magnitude response is equal to 0.
+PASS   bandpass: Number of non-finte values in phase response is equal to 0.
+PASS   bandpass: Number of non-finite values in the expected magnitude response is equal to 0.
+PASS   bandpass: Number of non-finite values in expected phase response is equal to 0.
+PASS   bandpass: Actual and expected results contained only finite values is true.
+PASS   bandpass: Max error (-80.143847 dB) of magnitude response at frequency 22027.949219 Hz is less than or equal to -79.013900.
+PASS   bandpass: Max error (0.000005 deg) in phase response at frequency 1455.300049 Hz is less than or equal to 0.000283.
+PASS < [bandpass] All assertions passed. (total 7 assertions)
+PASS > [lowshelf] Frequency response
+PASS   lowshelf: Number of non-finite values in magnitude response is equal to 0.
+PASS   lowshelf: Number of non-finte values in phase response is equal to 0.
+PASS   lowshelf: Number of non-finite values in the expected magnitude response is equal to 0.
+PASS   lowshelf: Number of non-finite values in expected phase response is equal to 0.
+PASS   lowshelf: Actual and expected results contained only finite values is true.
+PASS   lowshelf: Max error (-125.263718 dB) of magnitude response at frequency 1653.75 Hz is less than or equal to -120.4038.
+PASS   lowshelf: Max error (0.000001 deg) in phase response at frequency 749.700012 Hz is less than or equal to 0.000233.
+PASS < [lowshelf] All assertions passed. (total 7 assertions)
+PASS > [highshelf] Frequency response
+PASS   highshelf: Number of non-finite values in magnitude response is equal to 0.
+PASS   highshelf: Number of non-finte values in phase response is equal to 0.
+PASS   highshelf: Number of non-finite values in the expected magnitude response is equal to 0.
+PASS   highshelf: Number of non-finite values in expected phase response is equal to 0.
+PASS   highshelf: Actual and expected results contained only finite values is true.
+PASS   highshelf: Max error (-125.223469 dB) of magnitude response at frequency 992.25 Hz is less than or equal to -1110.000000.
+PASS   highshelf: Max error (0.000001 deg) in phase response at frequency 749.700012 Hz is less than or equal to 0.000233.
+PASS < [highshelf] All assertions passed. (total 7 assertions)
+PASS > [peaking] Frequency response
+PASS   peaking: Number of non-finite values in magnitude response is equal to 0.
+PASS   peaking: Number of non-finte values in phase response is equal to 0.
+PASS   peaking: Number of non-finite values in the expected magnitude response is equal to 0.
+PASS   peaking: Number of non-finite values in expected phase response is equal to 0.
+PASS   peaking: Actual and expected results contained only finite values is true.
+PASS   peaking: Max error (-125.419013 dB) of magnitude response at frequency 1411.199951 Hz is less than or equal to -119.117600.
+PASS   peaking: Max error (0.000003 deg) in phase response at frequency 992.25 Hz is less than or equal to 0.000004.
+PASS < [peaking] All assertions passed. (total 7 assertions)
+PASS > [notch] Frequency response
+PASS   notch: Number of non-finite values in magnitude response is equal to 0.
+PASS   notch: Number of non-finte values in phase response is equal to 0.
+PASS   notch: Number of non-finite values in the expected magnitude response is equal to 0.
+PASS   notch: Number of non-finite values in expected phase response is equal to 0.
+PASS   notch: Actual and expected results contained only finite values is true.
+PASS   notch: Max error (-87.080820 dB) of magnitude response at frequency 992.25 Hz is less than or equal to -87.080800.
+PASS   notch: Max error (0.000008 deg) in phase response at frequency 992.25 Hz is less than or equal to 0.000380.
+PASS < [notch] All assertions passed. (total 7 assertions)
+PASS > [allpass] Frequency response
+PASS   allpass: Number of non-finite values in magnitude response is equal to 0.
+PASS   allpass: Number of non-finte values in phase response is equal to 0.
+PASS   allpass: Number of non-finite values in the expected magnitude response is equal to 0.
+PASS   allpass: Number of non-finite values in expected phase response is equal to 0.
+PASS   allpass: Actual and expected results contained only finite values is true.
+PASS   allpass: Max error (-265.351749 dB) of magnitude response at frequency 1146.599976 Hz is less than or equal to -265.351700.
+PASS   allpass: Max error (0.000016 deg) in phase response at frequency 992.25 Hz is less than or equal to 0.000760.
+PASS < [allpass] All assertions passed. (total 7 assertions)
+PASS > [getFrequencyResponse] Test out-of-bounds frequency values
+PASS   Magnitude response at frequency -1 is NaN.
+PASS   Magnitude response at frequency 16385 is NaN.
+PASS   Phase response at frequency -1 is NaN.
+PASS   Phase response at frequency 16385 is NaN.
+PASS < [getFrequencyResponse] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 9 tasks ran successfully.
+

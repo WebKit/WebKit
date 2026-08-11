@@ -1,0 +1,17 @@
+
+RUN(video.src = "../content/test-inband-captions.mp4")
+EVENT(addtrack)
+RUN(video.textTracks[0].mode = "showing")
+RUN(video.play())
+EXPECTED (video.textTracks[0].cues.length > '0') OK
+RUN(video.pause())
+RUN(video.currentTime = video.textTracks[0].cues[0].startTime + 0.1)
+EVENT(seeked)
+EXPECTED (video.textTracks[0].activeCues.length == '1') OK
+EXPECTED (video.textTracks[0].activeCues[0].text == 'Align Top Left') OK
+
+Ensure the cue does not wrap:
+EXPECTED (firstCueElement().getClientRects().length == '1') OK
+EXPECTED (firstCueElement().getClientRects()[0].height < '22') OK
+END OF TEST
+

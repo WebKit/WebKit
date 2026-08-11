@@ -1,0 +1,7 @@
+
+PASS Verify k-rate 'attack' with input on DynamicsCompressorNode
+PASS Verify k-rate 'knee' with input on DynamicsCompressorNode
+PASS Verify k-rate 'ratio' with input on DynamicsCompressorNode
+PASS Verify k-rate 'release' with input on DynamicsCompressorNode
+FAIL Verify k-rate 'threshold' with input on DynamicsCompressorNode assert_equals: threshold: Sample[512] must match exactly expected 0.004096666816622019 but got 0.004097588360309601
+

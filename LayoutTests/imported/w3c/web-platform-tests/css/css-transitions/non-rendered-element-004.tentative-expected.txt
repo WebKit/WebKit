@@ -1,0 +1,3 @@
+
+PASS Transitions on ::marker pseudo-elements are canceled when the parent display type is no longer list-item
+

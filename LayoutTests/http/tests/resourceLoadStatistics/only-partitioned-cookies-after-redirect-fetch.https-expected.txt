@@ -1,0 +1,5 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS step12: echo-cookies returned the expected value
+

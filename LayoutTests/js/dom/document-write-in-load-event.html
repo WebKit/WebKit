@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="loaded()">
+<script>
+    window.jsTestIsAsync = true;
+    function loaded() {
+        let script = document.createElement("script");
+        script.src = "script-tests/dummy.js";
+        script.addEventListener('load', function () {
+            document.write("<script>finishJSTest()<\/script>");
+        }, false);
+        document.body.appendChild(script);
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

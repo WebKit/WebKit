@@ -1,0 +1,92 @@
+<script>
+
+var request = window.indexedDB.open("IndexedDBMultiProcess", 2);
+
+request.onsuccess = function(event)
+{
+    var req = event.target.result.transaction("TestObjectStore").objectStore("TestObjectStore").get("foo");
+
+    req.onsuccess = function(event)
+    {
+        window.webkit.messageHandlers.testHandler.postMessage('Value of foo: ' + req.result);
+        continueTest1();
+    }
+
+    req.onerror = function(event)
+    {
+        // Unexpected error
+        window.webkit.messageHandlers.testHandler.postMessage('Unexpected error getting value');
+    }
+}
+
+request.onerror = function()
+{
+    // Unexpected error
+    window.webkit.messageHandlers.testHandler.postMessage('Unexpected error opening database');
+}
+
+request.onupgradeneeded = function(event)
+{
+    // Unexpected upgrade needed
+    window.webkit.messageHandlers.testHandler.postMessage('Unexpected UpgradeNeeded');
+}
+
+function continueTest1()
+{
+    var request = window.indexedDB.deleteDatabase("ProcessCloseIDBCleanup");
+    request.onsuccess = function(e)
+    {
+        continueTest2();
+    }
+    request.onerror = function(e)
+    {
+        // Unexpected error
+        window.webkit.messageHandlers.testHandler.postMessage('Error deleting ProcessCloseIDBCleanup database');
+    }
+}
+
+function startGetLoop()
+{
+    var request = window.indexedDB.open("ProcessCloseIDBCleanup");
+    request.onsuccess = function(e)
+    {
+        var req = e.target.result.transaction(["TestObjectStore"]).objectStore("TestObjectStore").get("foo");
+        req.onsuccess = startGetLoop;
+        req.onerror = function(e)
+        {
+            // Unexpected error
+            window.webkit.messageHandlers.testHandler.postMessage('Error with a get loop');
+        }
+    }
+
+    request.onerror = function(e)
+    {
+        // Unexpected error
+        window.webkit.messageHandlers.testHandler.postMessage('Error with a get loop');
+    }
+}
+
+function continueTest2()
+{
+    var request = window.indexedDB.open("ProcessCloseIDBCleanup");
+    request.onsuccess = function(e)
+    {
+        for (var i = 0; i < 75; ++i)
+            startGetLoop();
+
+        setTimeout("window.webkit.messageHandlers.testHandler.postMessage('Get loops started');", 0);
+    }
+
+    request.onerror = function(e)
+    {
+        // Unexpected error
+        window.webkit.messageHandlers.testHandler.postMessage('Error opening ProcessCloseIDBCleanup database');
+    }
+
+    request.onupgradeneeded = function(e)
+    {
+        e.target.result.createObjectStore("TestObjectStore").put("bar", "foo");
+    }
+}
+
+</script>

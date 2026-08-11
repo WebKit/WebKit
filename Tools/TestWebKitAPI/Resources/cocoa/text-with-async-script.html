@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        eventMessages = [];
+    </script>
+</head>
+<body>
+    <script src="async.js" async></script>
+    <script>
+        eventMessages.push("Before requesting async script.");
+        fetch("async.js").then(response => eventMessages.push("Finished requesting async script."));
+        eventMessages.push("After requesting async script.");
+    </script>
+    <p>Lorem ipsum dolor sit amet, <a href="https://webkit.org">consectetur adipiscing elit</a>, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <a href="https://webkit.org">Tempor id eu nisl nunc mi ipsum faucibus vitae.</a> Sed tempus urna et pharetra pharetra massa massa. Vitae tortor condimentum lacinia quis vel eros donec ac. <a href="https://webkit.org">Ullamcorper velit sed ullamcorper morbi</a> tincidunt ornare massa eget. Sit amet cursus sit amet dictum. Id eu nisl nunc mi ipsum faucibus vitae aliquet nec. Suscipit tellus mauris a diam maecenas sed. Consequat nisl vel pretium lectus quam id leo. <a href="https://webkit.org">Netus et malesuada fames ac turpis egestas integer.</a> Quam lacus suspendisse faucibus interdum posuere lorem ipsum. Sem integer vitae justo eget magna fermentum iaculis. A condimentum vitae sapien pellentesque habitant morbi tristique. Varius duis at consectetur lorem. Ipsum faucibus vitae aliquet nec ullamcorper sit.</p>
+    <p>Sed faucibus <a href="https://webkit.org">turpis in eu mi bibendum</a>. Donec enim diam vulputate ut pharetra sit amet aliquam. Consequat id porta nibh venenatis cras sed felis eget velit. At lectus urna duis convallis convallis tellus id interdum velit. Id consectetur purus ut faucibus pulvinar elementum integer enim. Ipsum dolor sit amet consectetur adipiscing elit ut aliquam. At tellus at urna condimentum mattis. Faucibus pulvinar elementum integer enim. At elementum eu facilisis sed odio morbi. Fames ac turpis egestas integer eget aliquet. Consequat interdum varius sit amet mattis vulputate enim nulla. Lectus sit amet est placerat in egestas. Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Urna et pharetra pharetra massa massa ultricies mi.</p>
+    <p>Sed lectus vestibulum mattis ullamcorper velit sed ullamcorper. <a href="https://webkit.org">Quam lacus suspendisse</a> faucibus interdum posuere lorem. Sagittis vitae et leo duis ut diam. Turpis massa sed elementum tempus. Aliquam sem fringilla ut morbi. <a href="https://webkit.org">Fringilla est ullamcorper</a> eget nulla facilisi etiam dignissim. Id velit ut tortor pretium. Bibendum at varius vel pharetra vel turpis nunc. Sit amet aliquam id diam maecenas. Lobortis feugiat vivamus at augue <a href="https://webkit.org">eget arcu dictum</a> varius duis. Libero justo laoreet sit amet. Egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam.</p>
+</body>
+</html>

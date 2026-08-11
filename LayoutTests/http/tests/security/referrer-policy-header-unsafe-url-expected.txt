@@ -1,0 +1,27 @@
+Tests support for Referrer-Policy HTTP header.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing 'Referrer-Policy: unsafe-url' - referrer origin: https://127.0.0.1:8443/ - destination origin: https://localhost:8443/ - isMultipartResponse? false
+PASS actualReferrer is "https://127.0.0.1:8443/security/resources/serve-referrer-policy-and-test.py?value=unsafe-url&destinationOrigin=https://localhost:8443/&isTestingMultipart=0&id=0"
+
+Testing 'Referrer-Policy: unsafe-url' - referrer origin: https://127.0.0.1:8443/ - destination origin: https://127.0.0.1:8443/ - isMultipartResponse? false
+PASS actualReferrer is "https://127.0.0.1:8443/security/resources/serve-referrer-policy-and-test.py?value=unsafe-url&destinationOrigin=https://127.0.0.1:8443/&isTestingMultipart=0&id=1"
+
+Testing 'Referrer-Policy: unsafe-url' - referrer origin: https://127.0.0.1:8443/ - destination origin: http://127.0.0.1:8000/ - isMultipartResponse? false
+PASS actualReferrer is "https://127.0.0.1:8443/security/resources/serve-referrer-policy-and-test.py?value=unsafe-url&destinationOrigin=http://127.0.0.1:8000/&isTestingMultipart=0&id=2"
+
+Testing 'Referrer-Policy: unsafe-url' - referrer origin: https://127.0.0.1:8443/ - destination origin: https://localhost:8443/ - isMultipartResponse? true
+PASS actualReferrer is "https://127.0.0.1:8443/security/resources/serve-referrer-policy-and-test.py?value=unsafe-url&destinationOrigin=https://localhost:8443/&isTestingMultipart=1&id=0"
+
+Testing 'Referrer-Policy: unsafe-url' - referrer origin: https://127.0.0.1:8443/ - destination origin: https://127.0.0.1:8443/ - isMultipartResponse? true
+PASS actualReferrer is "https://127.0.0.1:8443/security/resources/serve-referrer-policy-and-test.py?value=unsafe-url&destinationOrigin=https://127.0.0.1:8443/&isTestingMultipart=1&id=1"
+
+Testing 'Referrer-Policy: unsafe-url' - referrer origin: https://127.0.0.1:8443/ - destination origin: http://127.0.0.1:8000/ - isMultipartResponse? true
+PASS actualReferrer is "https://127.0.0.1:8443/security/resources/serve-referrer-policy-and-test.py?value=unsafe-url&destinationOrigin=http://127.0.0.1:8000/&isTestingMultipart=1&id=2"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

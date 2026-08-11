@@ -1,0 +1,22 @@
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+function setupFunction(magnitude)
+{
+    array = [];
+    for (var i = 0; i < magnitude; i++) {
+        array[i] = i;
+    }
+}
+
+function test(magnitude)
+{
+    for (var i = 0; i < array.length; i++) {
+        for (var j = 0; j < array.length; j++) {
+            var foo = array[i] + array[j];
+        }
+    }
+}
+
+Magnitude.description("Tests that doing a nested loop over an array is quadratic.");
+Magnitude.run(setupFunction, test, Magnitude.POLYNOMIAL);
+</script>

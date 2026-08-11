@@ -1,0 +1,4 @@
+
+PASS Navigate same-scheme
+FAIL Navigate cross-scheme assert_not_equals: SameSite=strict cookies cannot be sent to cross-scheme navigations got disallowed value "0.887286713799624"
+

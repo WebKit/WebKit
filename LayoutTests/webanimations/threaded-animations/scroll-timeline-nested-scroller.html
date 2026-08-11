@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<body>
+<style>
+
+#scroller {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    overflow-y: scroll;
+    background-color: black;
+}
+
+#content {
+    height: 200px;
+    background-color: blue;
+}
+
+#target {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    background-color: green;
+}
+
+</style>
+
+<div id="scroller">
+    <div id="content"></div>
+    <div id="target"></div>
+</div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+const scrollAndCheckTimeline = async (scroller, progress) => {
+    const maxScrollTop = scroller.scrollHeight - scroller.offsetHeight;
+    const scrollTop = progress * maxScrollTop;
+    scroller.scrollTop = scrollTop;
+
+    const expectedTimelineTime = `${(progress * 100).toFixed(2)}%`;
+
+    const remoteAnimationStack = await UIHelper.remoteAnimationStackForElement(target);
+    assert_equals(remoteAnimationStack.animations.length, 1);
+    const remoteAnimation = remoteAnimationStack.animations[0];
+    assert_equals(remoteAnimation.timeline.currentTime, expectedTimelineTime, `After scrolling to ${scrollTop}, the timeline time is ${expectedTimelineTime}`);
+    assert_equals(remoteAnimation.progress, progress, `After scrolling to ${scrollTop}, the animation progress is ${progress}`);
+};
+
+promise_test(async t => { 
+    const timeline = new ScrollTimeline({ source : scroller });
+    const animation = target.animate({ opacity: 1 }, { timeline });
+
+    await animationAcceleration(animation);
+
+    await scrollAndCheckTimeline(scroller, 0);
+    await scrollAndCheckTimeline(scroller, 0.5);
+    await scrollAndCheckTimeline(scroller, 1);
+    await scrollAndCheckTimeline(scroller, 0.25);
+    await scrollAndCheckTimeline(scroller, 0.75);
+}, "The timeline current time updates as its source is scrolled with a nested scroller");
+
+</script>
+</body>

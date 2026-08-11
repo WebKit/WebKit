@@ -1,0 +1,27 @@
+<html>
+<body id="body">
+
+<p>This tests that we broadcast focus events when the focused element changes.</p>
+
+<p id="notDRT" style="visibility: hidden;">This test should only be run inside of DumpRenderTree.</p>
+
+<input id="i1" title="field 1">
+<input id="i2" title="field 2">
+<input id="i3" title="field 3">
+
+<script>
+    if (!window.testRunner)
+        document.getElementById("notDRT").style.visibility = "visible";
+
+    testRunner.dumpAsText();
+
+    accessibilityController.logFocusEvents();
+
+    document.getElementById("i1").focus();
+
+    document.getElementById("i2").focus();
+
+    eventSender.keyDown("\t");
+</script>
+</body>
+</html>

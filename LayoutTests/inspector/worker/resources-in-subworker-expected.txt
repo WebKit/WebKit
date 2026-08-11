@@ -1,0 +1,55 @@
+Test for Resources in a Subworker.
+
+
+== Running test suite: Subworker.Resources
+-- Running test case: Subworker.Resource.Start
+PASS: Added Target should have Worker type.
+RESOURCES:
+inspector/worker/resources/resource-utilities.js
+
+-- Running test case: Subworker.Resource.XHR
+PASS: Subworker Target should dispatch ResourceAdded event.
+PASS: Resource should be XHR.
+PASS: Resource should be tied to the Subworker Target.
+PASS: Resource has no parent frame.
+RESOURCES:
+inspector/worker/resources/resource-utilities.js
+inspector/worker/resources/dataXHR.json
+
+-- Running test case: Main.Resource.XHR
+PASS: Frame should dispatch ResourceWasAdded event.
+PASS: Resource should be XHR.
+PASS: Resource should be tied to the Main Target.
+PASS: Resource parentFrame is the main frame.
+RESOURCES:
+inspector/worker/resources/resource-utilities.js
+inspector/worker/resources/dataXHR.json
+
+-- Running test case: Subworker.Resource.Fetch
+PASS: Subworker Target should dispatch ResourceAdded event.
+PASS: Resource should be tied to the Subworker Target.
+PASS: Resource has no parent frame.
+RESOURCES:
+inspector/worker/resources/resource-utilities.js
+inspector/worker/resources/dataXHR.json
+inspector/worker/resources/dataFetch.json
+
+-- Running test case: Main.Resource.Fetch
+PASS: Frame should dispatch ResourceWasAdded event.
+PASS: Resource should be tied to the Main Target.
+PASS: Resource parentFrame is the main frame.
+RESOURCES:
+inspector/worker/resources/resource-utilities.js
+inspector/worker/resources/dataXHR.json
+inspector/worker/resources/dataFetch.json
+
+-- Running test case: Subworker.Resource.ImportScript
+PASS: Subworker Target should dispatch ResourceAdded event.
+PASS: Resource should be tied to the Subworker Target.
+PASS: Resource has no parent frame.
+RESOURCES:
+inspector/worker/resources/resource-utilities.js
+inspector/worker/resources/dataXHR.json
+inspector/worker/resources/dataFetch.json
+inspector/worker/resources/worker-import-1.js
+

@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+
+            function test()
+            {
+                var panel = document.getElementById("panel");
+                var mediaFile = findMediaFile("video", "content/test");
+
+                panel.innerHTML = "<video controls><source src='" + mediaFile + "'></video>";
+
+                video = mediaElement = document.getElementsByTagName('video')[0];
+                waitForEvent("loadstart", function () {
+                    testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(mediaFile));
+
+                    source = document.querySelector('source');
+                    testExpected("stripExtension(source.getAttribute('src'))", stripExtension(mediaFile));
+                    testExpected("stripExtension(relativeURL(source.src))", stripExtension(mediaFile));
+
+                    endTest();
+                });
+            }
+        </script>
+    </head>
+
+    <body onload="setTimeout(test, 100)">
+
+    <div id=panel></div>
+
+    </body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="before" type="text">
+<input id="input" type="time">
+<input id="after" type="text">
+
+<script>
+
+jsTestIsAsync = true;
+
+function beginTest(title, value, step) {
+    debug("\n" + title);
+    input.value = value || "";
+    input.step = step || "";
+    input.blur();
+    input.focus();
+}
+
+function verifyNumberOfFields(expected) {
+    numberOfFields = 0;
+
+    // Focus first field.
+    input.blur();
+    input.focus();
+
+    while (document.activeElement !== after) {
+        numberOfFields++;
+        UIHelper.keyDown("\t");
+    }
+
+    // Return focus to first field.
+    input.blur();
+    input.focus();
+
+    shouldBe("numberOfFields", expected.toString());
+}
+
+addEventListener("load", async () => {
+    description("Test for presence of second and millisecond fields in &lt;input type=time&gt;");
+
+    defaultNumberOfFields = 3; // Hour, minute, and AM/PM fields
+    numberOfFieldsWithSeconds = defaultNumberOfFields + 1;
+    numberOfFieldsWithMilliseconds = numberOfFieldsWithSeconds + 1;
+
+    beginTest("Default", "10:20");
+    verifyNumberOfFields(defaultNumberOfFields);
+
+    beginTest("Zero seconds", "10:20:00");
+    verifyNumberOfFields(defaultNumberOfFields);
+
+    beginTest("Zero seconds and zero milliseconds", "10:20:00.000");
+    verifyNumberOfFields(defaultNumberOfFields);
+
+    beginTest("Zero seconds and non-zero milliseconds", "10:20:00.567");
+    verifyNumberOfFields(numberOfFieldsWithMilliseconds);
+
+    beginTest("Non-zero seconds", "10:20:45");
+    verifyNumberOfFields(numberOfFieldsWithSeconds);
+
+    beginTest("Non-zero seconds and zero milliseconds", "10:20:45.000");
+    verifyNumberOfFields(numberOfFieldsWithSeconds);
+
+    beginTest("Non-zero seconds and non-zero milliseconds", "10:20:45.567");
+    verifyNumberOfFields(numberOfFieldsWithMilliseconds);
+
+    beginTest("Step attribute minute precision", "10:20", "60");
+    verifyNumberOfFields(defaultNumberOfFields);
+
+    beginTest("Step attribute second precision", "10:20", "2");
+    verifyNumberOfFields(numberOfFieldsWithSeconds);
+
+    beginTest("Step attribute millisecond precision", "10:20", "0.5");
+    verifyNumberOfFields(numberOfFieldsWithMilliseconds);
+
+    debug("");
+    finishJSTest();
+});
+
+</script>
+
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

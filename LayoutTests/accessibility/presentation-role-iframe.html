@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+
+<body id="body">
+
+<div id="content1" role="group">
+<iframe onload="runTest(1)" id="iframe1" role='presentation' src="data:text/html,<body><button>Click me</button></body>"></iframe>
+</div>
+
+<div id="content2" role="group">
+<iframe onload="runTest(2)" id="iframe2" src="data:text/html,<body><button>Click me</button></body>"></iframe>
+</div>
+
+<div id="content3" role="group">
+<object type="text/html" onload="runTest(3)" role="none" id="object1" data="data:text/html,<body><div role='group'><button>Click me</button></div></body>"></object>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+description("This tests that setting role=presentation on an iframe/object hides the AXWebArea.");
+
+jsTestIsAsync = true;
+var test1Ran = false;
+var test2Ran = false;
+var test3Ran = false;
+
+var test1Log; 
+var test2Log; 
+var test3Log;
+
+// Run the test for a iframe that has presentation role and one that does not.
+// The children should be different.
+function runTest(testNumber)
+{
+  if (window.accessibilityController) {
+    var content = accessibilityController.accessibleElementById("content" + testNumber);
+    if (testNumber == 1) {
+         test1Ran = true;
+         test1Log = testLog(content, testNumber);
+    } else if (testNumber == 2) {
+         test2Ran = true;
+         test2Log = testLog(content, testNumber);
+    } else if (testNumber == 3) {
+         test3Ran = true;
+         test3Log = testLog(content, testNumber);
+    }
+
+    if (test3Ran && test2Ran && test1Ran) {
+        debug(test1Log);
+        debug(test2Log);
+        debug(test3Log);
+        finishJSTest();
+    }
+  }
+}
+
+function testLog(content, testNumber) {
+    var result = testNumber + ". Content child: " + content.childAtIndex(0).role;
+    result += "\n" + testNumber + ". Content grand child: " + content.childAtIndex(0).childAtIndex(0).role;
+    return result;
+}
+</script>
+
+</body>
+</html>

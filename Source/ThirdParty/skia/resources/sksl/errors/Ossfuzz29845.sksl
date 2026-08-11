@@ -1,0 +1,8 @@
+struct Test {
+    l();
+    void m();
+
+/*%%*
+no type named 'l'
+expected an identifier, but found '('
+*%%*/

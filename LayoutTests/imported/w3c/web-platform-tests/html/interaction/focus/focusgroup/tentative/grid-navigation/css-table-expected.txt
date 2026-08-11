@@ -1,0 +1,5 @@
+r1c1	r1c2
+r2c1	r2c2
+
+FAIL Tests that grid focusgroups also work on CSS tables (i.e.: 'display: table'). The implementation relies on the layout objects, so the other tests that covers HTML tables don't need to be duplicated to test the same cases with CSS tables. assert_equals: expected Element node <div id="r1c2" style="display:table-cell" tabindex="-1">r... but got Element node <div id="r1c1" style="display:table-cell" tabindex="0">r1...
+

@@ -1,0 +1,1175 @@
+/*
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "AXObjectCache.h"
+
+#if PLATFORM(MAC)
+
+#import "AXIsolatedObject.h"
+#import "AXLiveRegionManager.h"
+#import "AXLoggerBase.h"
+#import "AXNotifications.h"
+#import "AXObjectCacheInlines.h"
+#import "AXSearchManager.h"
+#import "AXTreeStoreInlines.h"
+#import "AXUtilities.h"
+#import "AccessibilityObject.h"
+#import "CocoaAccessibilityConstants.h"
+#import "DeprecatedGlobalSettings.h"
+#import "DocumentView.h"
+#import "FrameTree.h"
+#import "LocalFrameInlines.h"
+#import "LocalFrameView.h"
+#import "RenderObject.h"
+#import "RenderView.h"
+#import "WebAccessibilityObjectWrapperMac.h"
+#import <pal/spi/cocoa/NSAccessibilitySPI.h>
+#import <pal/spi/mac/HIServicesSPI.h>
+#import <wtf/Scope.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <ApplicationServices/ApplicationServicesPriv.h>
+#endif
+
+#import <pal/spi/cocoa/AccessibilitySupportSPI.h>
+#import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
+
+// Very large strings can negatively impact the performance of notifications, so this length is chosen to try to fit an average paragraph or line of text, but not allow strings to be large enough to hurt performance.
+static const NSUInteger AXValueChangeTruncationLength = 1000;
+
+// Check if platform provides enums for text change notifications
+#ifndef AXTextStateChangeDefined
+#define AXTextStateChangeDefined
+
+typedef CF_ENUM(UInt32, AXTextStateChangeType)
+{
+    kAXTextStateChangeTypeUnknown,
+    kAXTextStateChangeTypeEdit,
+    kAXTextStateChangeTypeSelectionMove,
+    kAXTextStateChangeTypeSelectionExtend,
+    kAXTextStateChangeTypeSelectionBoundary
+};
+
+typedef CF_ENUM(UInt32, AXTextEditType)
+{
+    kAXTextEditTypeUnknown,
+    kAXTextEditTypeDelete,
+    kAXTextEditTypeInsert,
+    kAXTextEditTypeTyping,
+    kAXTextEditTypeDictation,
+    kAXTextEditTypeCut,
+    kAXTextEditTypePaste,
+    kAXTextEditTypeAttributesChange
+};
+
+typedef CF_ENUM(UInt32, AXTextSelectionDirection)
+{
+    kAXTextSelectionDirectionUnknown = 0,
+    kAXTextSelectionDirectionBeginning,
+    kAXTextSelectionDirectionEnd,
+    kAXTextSelectionDirectionPrevious,
+    kAXTextSelectionDirectionNext,
+    kAXTextSelectionDirectionDiscontiguous
+};
+
+typedef CF_ENUM(UInt32, AXTextSelectionGranularity)
+{
+    kAXTextSelectionGranularityUnknown,
+    kAXTextSelectionGranularityCharacter,
+    kAXTextSelectionGranularityWord,
+    kAXTextSelectionGranularityLine,
+    kAXTextSelectionGranularitySentence,
+    kAXTextSelectionGranularityParagraph,
+    kAXTextSelectionGranularityPage,
+    kAXTextSelectionGranularityDocument,
+    kAXTextSelectionGranularityAll
+};
+
+#endif // AXTextStateChangeDefined
+
+static NSNumber *platformChangeTypeForWebCoreChangeType(WebCore::AXTextStateChangeType changeType)
+{
+    switch (changeType) {
+    case WebCore::AXTextStateChangeType::Unknown:
+        return @(kAXTextStateChangeTypeUnknown);
+    case WebCore::AXTextStateChangeType::Edit:
+        return @(kAXTextStateChangeTypeEdit);
+    case WebCore::AXTextStateChangeType::SelectionMove:
+        return @(kAXTextStateChangeTypeSelectionMove);
+    case WebCore::AXTextStateChangeType::SelectionExtend:
+        return @(kAXTextStateChangeTypeSelectionExtend);
+    case WebCore::AXTextStateChangeType::SelectionBoundary:
+        return @(kAXTextStateChangeTypeSelectionBoundary);
+    }
+}
+
+static NSNumber *platformEditTypeForWebCoreEditType(WebCore::AXTextEditType changeType)
+{
+    switch (changeType) {
+    case WebCore::AXTextEditType::Unknown:
+        return @(kAXTextEditTypeUnknown);
+    case WebCore::AXTextEditType::Delete:
+        return @(kAXTextEditTypeDelete);
+    case WebCore::AXTextEditType::Insert:
+        return @(kAXTextEditTypeInsert);
+    case WebCore::AXTextEditType::Typing:
+        return @(kAXTextEditTypeTyping);
+    case WebCore::AXTextEditType::Dictation:
+        return @(kAXTextEditTypeDictation);
+    case WebCore::AXTextEditType::Cut:
+        return @(kAXTextEditTypeCut);
+    case WebCore::AXTextEditType::Paste:
+        return @(kAXTextEditTypePaste);
+    case WebCore::AXTextEditType::Replace:
+        return @(kAXTextEditTypeUnknown); // Does not exist in platform enum.
+    case WebCore::AXTextEditType::AttributesChange:
+        return @(kAXTextEditTypeAttributesChange);
+    }
+}
+
+static NSNumber *platformDirectionForWebCoreDirection(WebCore::AXTextSelectionDirection direction)
+{
+    switch (direction) {
+    case WebCore::AXTextSelectionDirection::Unknown:
+        return @(kAXTextSelectionDirectionUnknown);
+    case WebCore::AXTextSelectionDirection::Beginning:
+        return @(kAXTextSelectionDirectionBeginning);
+    case WebCore::AXTextSelectionDirection::End:
+        return @(kAXTextSelectionDirectionEnd);
+    case WebCore::AXTextSelectionDirection::Previous:
+        return @(kAXTextSelectionDirectionPrevious);
+    case WebCore::AXTextSelectionDirection::Next:
+        return @(kAXTextSelectionDirectionNext);
+    case WebCore::AXTextSelectionDirection::Discontiguous:
+        return @(kAXTextSelectionDirectionDiscontiguous);
+    }
+}
+
+static NSNumber *platformGranularityForWebCoreGranularity(WebCore::AXTextSelectionGranularity granularity)
+{
+    switch (granularity) {
+    case WebCore::AXTextSelectionGranularity::Unknown:
+        return @(kAXTextSelectionGranularityUnknown);
+    case WebCore::AXTextSelectionGranularity::Character:
+        return @(kAXTextSelectionGranularityCharacter);
+    case WebCore::AXTextSelectionGranularity::Word:
+        return @(kAXTextSelectionGranularityWord);
+    case WebCore::AXTextSelectionGranularity::Line:
+        return @(kAXTextSelectionGranularityLine);
+    case WebCore::AXTextSelectionGranularity::Sentence:
+        return @(kAXTextSelectionGranularitySentence);
+    case WebCore::AXTextSelectionGranularity::Paragraph:
+        return @(kAXTextSelectionGranularityParagraph);
+    case WebCore::AXTextSelectionGranularity::Page:
+        return @(kAXTextSelectionGranularityPage);
+    case WebCore::AXTextSelectionGranularity::Document:
+        return @(kAXTextSelectionGranularityDocument);
+    case WebCore::AXTextSelectionGranularity::All:
+        return @(kAXTextSelectionGranularityAll);
+    }
+}
+
+// The simple Cocoa calls in this file don't throw exceptions.
+
+namespace WebCore {
+
+void AXObjectCache::initializeUserDefaultValues()
+{
+    // This is only set in the constructor, so the page must be reloaded if this default is changed.
+    RetainPtr userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:@"com.apple.Accessibility"]);
+    gAccessibilityDOMIdentifiersEnabled = [userDefaults boolForKey:@"AXEnableWebKitDOMIdentifier"];
+}
+
+void AXObjectCache::attachWrapper(AccessibilityObject& object)
+{
+    RetainPtr<WebAccessibilityObjectWrapper> wrapper = adoptNS([[WebAccessibilityObjectWrapper alloc] initWithAccessibilityObject:object]);
+    object.setWrapper(wrapper.get());
+}
+
+static void AXPostNotificationWithUserInfo(AccessibilityObjectWrapper *object, NSString *notification, id userInfo, bool skipSystemNotification = false)
+{
+    if (id associatedPluginParent = [object _associatedPluginParent])
+        object = associatedPluginParent;
+
+    // To simplify monitoring for notifications in tests, repost as a simple NSNotification instead of forcing test infrastucture to setup an IPC client and do all the translation between WebCore types and platform specific IPC types and back
+    if (AXObjectCache::shouldRepostNotificationsForTests()) [[unlikely]]
+        [object accessibilityPostedNotification:notification userInfo:userInfo];
+    else if (skipSystemNotification)
+        return;
+
+    NSAccessibilityPostNotificationWithUserInfo(object, notification, userInfo);
+}
+
+#ifndef NDEBUG
+// This function exercises, for debugging and testing purposes, the AXObject methods called in [WebAccessibilityObjectWrapper accessibilityIsIgnored].
+// It is useful in cases like AXObjectCache::postPlatformNotification which calls NSAccessibilityPostNotification, which in turn calls accessibilityIsIgnored, except when it is running layout tests.
+// Thus, calling exerciseIsIgnored during AXObjectCache::postPlatformNotification helps detect issues during layout tests.
+// Example of such issues is the crash described in: https://bugs.webkit.org/show_bug.cgi?id=46662.
+static void exerciseIsIgnored(AccessibilityObject& object)
+{
+    object.updateBackingStore();
+    if (object.isAttachment()) {
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        [[object.wrapper() attachmentView] accessibilityIsIgnored];
+        ALLOW_DEPRECATED_DECLARATIONS_END
+
+        return;
+    }
+    object.isIgnored();
+}
+#endif
+
+void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNotification notification)
+{
+    processQueuedIsolatedNodeUpdates();
+
+    bool skipSystemNotification = false;
+    // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
+    NSString *macNotification;
+    switch (notification) {
+    case AXNotification::ActiveDescendantChanged:
+        macNotification = NSAccessibilityActiveElementChangedNotification;
+        break;
+    case AXNotification::AutocorrectionOccured:
+        macNotification = NSAccessibilityAutocorrectionOccurredNotification;
+        break;
+    case AXNotification::CurrentStateChanged:
+        macNotification = NSAccessibilityCurrentStateChangedNotification;
+        break;
+    case AXNotification::FocusedUIElementChanged:
+        macNotification = NSAccessibilityFocusedUIElementChangedNotification;
+        break;
+    case AXNotification::ImageOverlayChanged:
+        macNotification = NSAccessibilityImageOverlayChangedNotification;
+        break;
+    case AXNotification::LayoutComplete:
+        macNotification = NSAccessibilityLayoutCompleteNotification;
+        break;
+    case AXNotification::LabelChanged:
+        macNotification = NSAccessibilityTitleChangedNotification;
+        break;
+    case AXNotification::LoadComplete:
+    case AXNotification::FrameLoadComplete:
+        macNotification = NSAccessibilityLoadCompleteNotification;
+        // Frame loading events are handled by the UIProcess on macOS to improve reliability.
+        // On macOS, before notifications are allowed by AppKit to be sent to clients, you need to have a client (e.g. VoiceOver)
+        // register for that notification. Because these new processes appear before VO has a chance to register, it will often
+        // miss AXLoadComplete notifications. By moving them to the UIProcess, we can eliminate that issue.
+        skipSystemNotification = true;
+        break;
+    case AXNotification::InvalidStatusChanged:
+        macNotification = NSAccessibilityInvalidStatusChangedNotification;
+        break;
+    case AXNotification::SelectedChildrenChanged:
+        if (object.isExposableTable())
+            macNotification = NSAccessibilitySelectedRowsChangedNotification;
+        else
+            macNotification = NSAccessibilitySelectedChildrenChangedNotification;
+        break;
+    case AXNotification::SelectedCellsChanged:
+        macNotification = NSAccessibilitySelectedCellsChangedNotification;
+        break;
+    case AXNotification::SelectedTextChanged:
+        macNotification = NSAccessibilitySelectedTextChangedNotification;
+        break;
+    case AXNotification::CheckedStateChanged:
+    case AXNotification::ValueChanged:
+        macNotification = NSAccessibilityValueChangedNotification;
+        break;
+    case AXNotification::LiveRegionCreated:
+        macNotification = NSAccessibilityLiveRegionCreatedNotification;
+        break;
+    case AXNotification::LiveRegionChanged:
+        macNotification = NSAccessibilityLiveRegionChangedNotification;
+        break;
+    case AXNotification::RowCountChanged:
+        macNotification = NSAccessibilityRowCountChangedNotification;
+        break;
+    case AXNotification::RowExpanded:
+        macNotification = NSAccessibilityRowExpandedNotification;
+        break;
+    case AXNotification::RowCollapsed:
+        macNotification = NSAccessibilityRowCollapsedNotification;
+        break;
+    case AXNotification::ElementBusyChanged:
+        macNotification = NSAccessibilityElementBusyChangedNotification;
+        break;
+    case AXNotification::ExpandedChanged:
+        macNotification = NSAccessibilityExpandedChangedNotification;
+        break;
+    case AXNotification::SortDirectionChanged:
+        macNotification = NSAccessibilitySortDirectionChangedNotification;
+        break;
+    case AXNotification::MenuClosed:
+        macNotification = (id)kAXMenuClosedNotification;
+        break;
+    case AXNotification::MenuListItemSelected:
+    case AXNotification::MenuListValueChanged:
+        macNotification = (id)kAXMenuItemSelectedNotification;
+        break;
+    case AXNotification::PressDidSucceed:
+        macNotification = NSAccessibilityPressDidSucceedNotification;
+        break;
+    case AXNotification::PressDidFail:
+        macNotification = NSAccessibilityPressDidFailNotification;
+        break;
+    case AXNotification::MenuOpened:
+        macNotification = (id)kAXMenuOpenedNotification;
+        break;
+    case AXNotification::DraggingStarted:
+        macNotification = (id)NSAccessibilityDraggingSourceDragBeganNotification;
+        break;
+    case AXNotification::DraggingEnded:
+        macNotification = (id)NSAccessibilityDraggingSourceDragEndedNotification;
+        break;
+    case AXNotification::DraggingEnteredDropZone:
+        macNotification = (id)NSAccessibilityDraggingDestinationDropAllowedNotification;
+        break;
+    case AXNotification::DraggingDropped:
+        macNotification = (id)NSAccessibilityDraggingDestinationDragAcceptedNotification;
+        break;
+    case AXNotification::DraggingExitedDropZone:
+        macNotification = (id)NSAccessibilityDraggingDestinationDragNotAcceptedNotification;
+        break;
+    case AXNotification::TextCompositionBegan:
+        macNotification = NSAccessibilityTextInputMarkingSessionBeganNotification;
+        break;
+    case AXNotification::TextCompositionEnded:
+        macNotification = NSAccessibilityTextInputMarkingSessionEndedNotification;
+        break;
+    default:
+        return;
+    }
+
+    Ref protectedObject = object;
+
+#ifndef NDEBUG
+    exerciseIsIgnored(object);
+#endif
+
+    AXPostNotificationWithUserInfo(object.wrapper(), macNotification, nil, skipSystemNotification);
+}
+
+void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
+{
+    AX_ASSERT(isMainThread());
+
+    processQueuedIsolatedNodeUpdates();
+
+    NSDictionary *userInfo = @{ NSAccessibilityPriorityKey: @(NSAccessibilityPriorityHigh),
+        NSAccessibilityAnnouncementKey: message.createNSString().get(),
+    };
+    NSAccessibilityPostNotificationWithUserInfo(NSApp, NSAccessibilityAnnouncementRequestedNotification, userInfo);
+
+    // To simplify monitoring of notifications in tests, repost as a simple NSNotification instead of forcing test infrastucture to setup an IPC client and do all the translation between WebCore types and platform specific IPC types and back.
+    if (gShouldRepostNotificationsForTests) [[unlikely]] {
+        if (RefPtr root = getOrCreate(protect(m_document->view()).get()))
+            [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo];
+    }
+}
+
+void AXObjectCache::postPlatformARIANotifyNotification(AccessibilityObject& object, const AriaNotifyData& notificationData)
+{
+    AX_ASSERT(isMainThread());
+
+    processQueuedIsolatedNodeUpdates();
+
+    NSDictionary *userInfo = @{
+        NSAccessibilityARIAAnnouncementPriority: notifyPriorityToAXValueString(notificationData.priority).get(),
+        NSAccessibilityARIAAnnouncementInterrupt: interruptBehaviorToAXValueString(notificationData.interrupt).get(),
+        NSAccessibilityAnnouncementKey: notificationData.message.createNSString().get(),
+        NSAccessibilityAnnouncementLanguageKey: notificationData.language.createNSString().get()
+    };
+
+    NSAccessibilityPostNotificationWithUserInfo(object.wrapper(), NSAccessibilityAnnouncementRequestedNotification, userInfo);
+
+    if (gShouldRepostNotificationsForTests) [[unlikely]] {
+        if (RefPtr root = getOrCreate(protect(m_document->view()).get()))
+            [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo];
+    }
+}
+
+void AXObjectCache::postPlatformLiveRegionNotification(AccessibilityObject& object, const LiveRegionAnnouncementData& liveRegionData)
+{
+    RetainPtr userInfo = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:liveRegionData.message.nsAttributedString().get(), NSAccessibilityAnnouncementKey, @(liveRegionData.status == LiveRegionStatus::Assertive ? NSAccessibilityPriorityHigh : NSAccessibilityPriorityLow), NSAccessibilityPriorityKey, @(YES), NSAccessibilityAnnouncementIsLiveRegionKey, nil]);
+
+    NSAccessibilityPostNotificationWithUserInfo(object.wrapper(), NSAccessibilityAnnouncementRequestedNotification, userInfo.get());
+
+    if (gShouldRepostNotificationsForTests) [[unlikely]] {
+        if (RefPtr root = getOrCreate(protect(m_document->view()).get()))
+            [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo.get()];
+    }
+}
+
+void AXObjectCache::onDocumentRenderTreeCreation(const Document& document)
+{
+    m_deferredDocumentsWithNewRenderTrees.append(document);
+
+    if (!m_performCacheUpdateTimer.isActive() && !m_performingDeferredCacheUpdate)
+        m_performCacheUpdateTimer.startOneShot(0_s);
+}
+
+void AXObjectCache::deferSortForNewLiveRegion(Ref<AccessibilityObject>&& object)
+{
+    queueUnsortedObject(WTF::move(object), PreSortedObjectType::LiveRegion);
+}
+
+void AXObjectCache::queueUnsortedObject(Ref<AccessibilityObject>&& object, PreSortedObjectType type)
+{
+    if (!m_sortedIDListsInitialized)
+        return;
+    // We only need to do this work if the sorted ID list has already been initialized.
+
+    auto unsortedObjectListIterator = m_deferredUnsortedObjects.ensure(type, [&] {
+        return Vector<Ref<AccessibilityObject>>();
+    }).iterator;
+    unsortedObjectListIterator->value.appendIfNotContains(WTF::move(object));
+
+    if (!m_performCacheUpdateTimer.isActive() && !m_performingDeferredCacheUpdate)
+        m_performCacheUpdateTimer.startOneShot(0_s);
+}
+
+void AXObjectCache::createIsolatedObjectIfNeeded(AccessibilityObject& object)
+{
+    if (!isIsolatedTreeEnabled())
+        return;
+
+    // The wrapper associated with a published notification may not have an isolated object yet.
+    // This should only happen when the live object is ignored, meaning we will never create an isolated object for it.
+    // This is generally correct, but not in this case, since AX clients will try to query this wrapper but the wrapper
+    // will consider itself detached due to the lack of an isolated object.
+    //
+    // Detect this and create an isolated object if necessary.
+    id wrapper = object.wrapper();
+    if (!wrapper || [wrapper hasIsolatedObject])
+        return;
+
+    if (object.isIgnored())
+        deferAddUnconnectedNode(object);
+}
+
+AXTextStateChangeIntent AXObjectCache::inferDirectionFromIntent(AccessibilityObject& object, const AXTextStateChangeIntent& originalIntent, const VisibleSelection& selection)
+{
+    if (!object.isTextControl() && !object.editableAncestor())
+        return originalIntent;
+
+    if (originalIntent.selection.direction != AXTextSelectionDirection::Discontiguous || object.objectID() != m_lastTextFieldAXID || m_lastSelection == selection) {
+        m_lastTextFieldAXID = object.objectID();
+        m_lastSelection = selection;
+        return originalIntent;
+    }
+
+    auto intent = originalIntent;
+    if (m_lastSelection.isCaret() && selection.isCaret()) {
+        // Cursor movement
+        if (selection.visibleStart() == m_lastSelection.visibleStart().next(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeType::SelectionMove;
+            intent.selection.direction = AXTextSelectionDirection::Next;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
+        } else if (selection.visibleStart() == m_lastSelection.visibleStart().previous(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeType::SelectionMove;
+            intent.selection.direction = AXTextSelectionDirection::Previous;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
+        }
+    } else if (selection.visibleBase() == m_lastSelection.visibleBase()) {
+        // Selection
+        if (selection.visibleExtent() == m_lastSelection.visibleExtent().next(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeType::SelectionExtend;
+            intent.selection.direction = AXTextSelectionDirection::Next;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
+        } else if (selection.visibleExtent() == m_lastSelection.visibleExtent().previous(CannotCrossEditingBoundary)) {
+            intent.type = AXTextStateChangeType::SelectionExtend;
+            intent.selection.direction = AXTextSelectionDirection::Previous;
+            intent.selection.granularity = AXTextSelectionGranularity::Character;
+        }
+    }
+
+    m_lastTextFieldAXID = object.objectID();
+    m_lastSelection = selection;
+
+    return intent;
+}
+
+void AXObjectCache::postTextSelectionChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent& originalIntent, const VisibleSelection& selection)
+{
+    RefPtr axObject = object;
+    if (!axObject)
+        axObject = rootWebArea();
+
+    if (!axObject)
+        return;
+
+    processQueuedIsolatedNodeUpdates();
+
+    // If the selection landed on a stitched-away text run, report the change on the stitch-group
+    // representative (the element actually exposed in the tree) rather than the removed member,
+    // so the SelectedTextChanged notification that VoiceOver uses to move focus during caret
+    // navigation targets an element present in its parent's children. Mirrors the
+    // AXUIElementForTextMarker redirect.
+    axObject = downcast<AccessibilityObject>(axObject->stitchRepresentativeOrSelf());
+
+    auto intent = inferDirectionFromIntent(*axObject, originalIntent, selection);
+
+    auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:5]);
+    if (m_isSynchronizingSelection)
+        [userInfo setObject:@YES forKey:NSAccessibilityTextStateSyncKey];
+    if (intent.type != AXTextStateChangeType::Unknown) {
+        [userInfo setObject:platformChangeTypeForWebCoreChangeType(intent.type) forKey:NSAccessibilityTextStateChangeTypeKey];
+        switch (intent.type) {
+        case AXTextStateChangeType::SelectionMove:
+        case AXTextStateChangeType::SelectionExtend:
+        case AXTextStateChangeType::SelectionBoundary:
+            [userInfo setObject:platformDirectionForWebCoreDirection(intent.selection.direction) forKey:NSAccessibilityTextSelectionDirection];
+            switch (intent.selection.direction) {
+            case AXTextSelectionDirection::Unknown:
+                break;
+            case AXTextSelectionDirection::Beginning:
+            case AXTextSelectionDirection::End:
+            case AXTextSelectionDirection::Previous:
+            case AXTextSelectionDirection::Next:
+                [userInfo setObject:platformGranularityForWebCoreGranularity(intent.selection.granularity) forKey:NSAccessibilityTextSelectionGranularity];
+                break;
+            case AXTextSelectionDirection::Discontiguous:
+                break;
+            }
+            if (intent.selection.focusChange)
+                [userInfo setObject:@(intent.selection.focusChange) forKey:NSAccessibilityTextSelectionChangedFocus];
+            break;
+        case AXTextStateChangeType::Unknown:
+        case AXTextStateChangeType::Edit:
+            break;
+        }
+    }
+    if (!selection.isNone()) {
+        if (auto textMarkerRange = textMarkerRangeFromVisiblePositions(this, selection.visibleStart(), selection.visibleEnd()))
+            [userInfo setObject:(id)textMarkerRange forKey:NSAccessibilitySelectedTextMarkerRangeAttribute];
+    }
+
+    if (id wrapper = axObject->wrapper()) {
+        [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
+        createIsolatedObjectIfNeeded(*axObject);
+    }
+
+    if (RefPtr root = rootWebArea()) {
+        AXPostNotificationWithUserInfo(root->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
+        if (root->wrapper() != axObject->wrapper())
+            AXPostNotificationWithUserInfo(axObject->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
+    }
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // A selection change inside an in-process (local) child frame is posted above only on that child
+    // frame's own web area and text control. VoiceOver tracks the document's text-selection context on
+    // the MAIN frame's web area, and a child frame's root web area does not connect to it through the
+    // ordinary parentObject() chain (AccessibilityScrollView::parentObject() returns nullptr for a root
+    // web area; the link exists only via crossFrameParentObject()). So VoiceOver never associates the
+    // child-frame selection change with the document and announces nothing when arrowing through a text
+    // field inside an iframe. Also post the notification on each ancestor frame's web area (up to the
+    // main frame's), reusing the same userInfo — its marker range and TextChangeElement carry their own
+    // (child) tree identifiers, so the announced selection resolves correctly cross-frame.
+    RefPtr document = this->document();
+    RefPtr frame = document ? document->frame() : nullptr;
+    for (RefPtr<Frame> ancestor = frame ? frame->tree().parent() : nullptr; ancestor; ancestor = ancestor->tree().parent()) {
+        if (RefPtr localAncestorFrame = dynamicDowncast<LocalFrame>(ancestor.get())) {
+            RefPtr ancestorDocument = localAncestorFrame->document();
+            CheckedPtr ancestorCache = ancestorDocument ? ancestorDocument->existingAXObjectCache() : nullptr;
+            if (RefPtr ancestorRoot = ancestorCache ? ancestorCache->rootWebArea() : nullptr)
+                AXPostNotificationWithUserInfo(ancestorRoot->wrapper(), NSAccessibilitySelectedTextChangedNotification, userInfo.get());
+        }
+    }
+#endif // ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+}
+
+static void addTextMarkerForVisiblePosition(NSMutableDictionary *change, AXObjectCache& cache, const VisiblePosition& position)
+{
+    AX_ASSERT(!position.isNull());
+
+    if (RetainPtr marker = textMarkerForVisiblePosition(&cache, position))
+        [change setObject:(__bridge id)marker.get() forKey:NSAccessibilityTextChangeValueStartMarker];
+}
+
+static void addFirstTextMarker(NSMutableDictionary *change, AXObjectCache& cache, AccessibilityObject& object)
+{
+    TextMarkerData textMarkerData { cache.treeID(), object.objectID(), 0 };
+    auto textMarkerDataRef = adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData)));
+    [change setObject:bridge_id_cast(textMarkerDataRef.get()) forKey:NSAccessibilityTextChangeValueStartMarker];
+}
+
+static NSDictionary *textReplacementChangeDictionary(AXObjectCache& cache, AccessibilityObject& object, AXTextEditType type, const String& string, const VisiblePosition& visiblePosition = { })
+{
+    RetainPtr text = string.createNSString();
+    NSUInteger length = [text length];
+    if (!length)
+        return nil;
+
+    auto change = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
+    [change setObject:platformEditTypeForWebCoreEditType(type) forKey:NSAccessibilityTextEditType];
+    if (length > AXValueChangeTruncationLength) {
+        [change setObject:@(length) forKey:NSAccessibilityTextChangeValueLength];
+        text = [text substringToIndex:AXValueChangeTruncationLength];
+    }
+    [change setObject:text.get() forKey:NSAccessibilityTextChangeValue];
+
+    if (!visiblePosition.isNull())
+        addTextMarkerForVisiblePosition(change.get(), cache, visiblePosition);
+    else
+        addFirstTextMarker(change.get(), cache, object);
+    return change.autorelease();
+}
+
+void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, AXTextEditType type, const String& text, const VisiblePosition& position)
+{
+    if (!text.length())
+        return;
+
+    postTextReplacementPlatformNotification(object, AXTextEditType::Unknown, emptyString(), type, text, position);
+}
+
+void AXObjectCache::postUserInfoForChanges(AccessibilityObject& rootWebArea, AccessibilityObject& object, RetainPtr<NSMutableArray> changes)
+{
+    auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
+    [userInfo setObject:platformChangeTypeForWebCoreChangeType(AXTextStateChangeType::Edit) forKey:NSAccessibilityTextStateChangeTypeKey];
+    auto changesArray = changes.autorelease();
+    if (changesArray.count)
+        [userInfo setObject:changesArray forKey:NSAccessibilityTextChangeValues];
+
+    if (id wrapper = object.wrapper()) {
+        [userInfo setObject:wrapper forKey:NSAccessibilityTextChangeElement];
+        createIsolatedObjectIfNeeded(object);
+    }
+
+    AXPostNotificationWithUserInfo(rootWebArea.wrapper(), NSAccessibilityValueChangedNotification, userInfo.get());
+    if (rootWebArea.wrapper() != object.wrapper())
+        AXPostNotificationWithUserInfo(object.wrapper(), NSAccessibilityValueChangedNotification, userInfo.get());
+}
+
+void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject* object, AXTextEditType deletionType, const String& deletedText, AXTextEditType insertionType, const String& insertedText, const VisiblePosition& position)
+{
+    RefPtr axObject = object;
+    if (!axObject)
+        axObject = rootWebArea();
+
+    if (!axObject)
+        return;
+
+    processQueuedIsolatedNodeUpdates();
+
+    auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, deletionType, deletedText, position))
+        [changes addObject:change];
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, insertionType, insertedText, position))
+        [changes addObject:change];
+
+    if (RefPtr root = rootWebArea())
+        postUserInfoForChanges(*root, *axObject, changes.get());
+}
+
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String& deletedText, const String& insertedText)
+{
+    RefPtr axObject = object;
+    if (!axObject)
+        axObject = rootWebArea();
+
+    if (!axObject)
+        return;
+
+    processQueuedIsolatedNodeUpdates();
+
+    auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditType::Delete, deletedText, { }))
+        [changes addObject:change];
+    if (NSDictionary *change = textReplacementChangeDictionary(*this, *axObject, AXTextEditType::Insert, insertedText, { }))
+        [changes addObject:change];
+
+    if (RefPtr root = rootWebArea())
+        postUserInfoForChanges(*root, *axObject, changes.get());
+}
+
+void AXObjectCache::frameLoadingEventPlatformNotification(RenderView* renderView, AXLoadingEvent loadingEvent)
+{
+    if (!renderView)
+        return;
+
+    if (loadingEvent == AXLoadingEvent::Finished) {
+        // It's not always safe to call getOrCreate (e.g. if layout is dirty), so
+        // only do so if necessary based on the loading event type.
+        RefPtr axWebArea = getOrCreate(*renderView);
+        RefPtr document = axWebArea ? axWebArea->document() : nullptr;
+        if (document.get() == axWebArea->topDocument())
+            postNotification(axWebArea.get(), document.get(), AXNotification::LoadComplete);
+        else
+            postNotification(axWebArea.get(), document.get(), AXNotification::FrameLoadComplete);
+    }
+}
+
+void AXObjectCache::platformHandleFocusedUIElementChanged(AccessibilityObject*, AccessibilityObject*)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    // Process any pending isolated-tree node updates (e.g. queued children-changed walks for
+    // newly-revealed subtrees like the contents of a just-opened <dialog>) before calling
+    // NSAccessibilityHandleFocusChanged. AppKit synchronously calls [NSApp accessibilityFocusedUIElement]
+    // from inside NSAccessibilityHandleFocusChanged on the same call stack. That query lands on
+    // our wrapper's accessibilityFocusedUIElement, which goes through the AX thread to
+    // AXIsolatedTree::focusedNode. If we serve that query before the focused object's subtree
+    // has been resolved into the isolated tree's pending appends, focusedNode returns null,
+    // meaning VoiceOver won't move to it.
+    processQueuedIsolatedNodeUpdates();
+#endif
+
+    NSAccessibilityHandleFocusChanged();
+    // AXFocusChanged is a test specific notification name and not something a real AT will be listening for
+    if (!gShouldRepostNotificationsForTests) [[unlikely]]
+        return;
+
+    RefPtr rootWebArea = this->rootWebArea();
+    if (!rootWebArea)
+        return;
+
+    // Post the test-only notification synchronously so layout tests observe the same timing
+    // as AppKit's synchronous [NSApp accessibilityFocusedUIElement] query inside
+    // NSAccessibilityHandleFocusChanged, i.e. while the focus change is still on the call stack
+    // and before performDeferredCacheUpdate has finished its remaining work. (Delivery to a real
+    // AT like VoiceOver crosses a process boundary and is async; what we're mirroring is the
+    // local same-stack moment when AppKit asks for the focused element.) Tests that need to dirty
+    // style/layout in response should defer that work via setTimeout, since real ATs can't trigger
+    // JS synchronously in response to notifications but our test infrastructure can.
+    [rootWebArea->wrapper() accessibilityPostedNotification:NSAccessibilityFocusChangedNotification userInfo:nil];
+}
+
+void AXObjectCache::handleScrolledToAnchor(const Node&)
+{
+}
+
+void AXObjectCache::platformPerformDeferredCacheUpdate()
+{
+    for (const auto& document : m_deferredDocumentsWithNewRenderTrees) {
+        if (RefPtr object = getOrCreate(document ? document->renderView() : nullptr); object && object->isWebArea())
+            queueUnsortedObject(object.releaseNonNull(), PreSortedObjectType::WebArea);
+    }
+    m_deferredDocumentsWithNewRenderTrees.clear();
+
+    for (auto& unsortedObjectsEntry : m_deferredUnsortedObjects)
+        addSortedObjects(WTF::move(unsortedObjectsEntry.value), unsortedObjectsEntry.key);
+    m_deferredUnsortedObjects.clear();
+}
+
+static bool NODELETE isTestAXClientType(AXClientType client)
+{
+    return client == kAXClientTypeWebKitTesting || client == kAXClientTypeXCTest;
+}
+
+// FIXME: We should inline this function, otherwise we probably aren't
+// benefiting much from the unlikely annotation.
+bool AXObjectCache::clientIsInTestMode()
+{
+    if (isTestAXClientType(_AXGetClientForCurrentRequestUntrusted())) [[unlikely]]
+        return true;
+    return false;
+}
+
+bool AXObjectCache::clientSupportsIsolatedTree()
+{
+    auto client = _AXGetClientForCurrentRequestUntrusted();
+    if (client == kAXClientTypeVoiceOver)
+        return true;
+    if (client == kAXClientTypeWebKitTesting || client == kAXClientTypeXCTest) [[unlikely]]
+        return true;
+    return false;
+}
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+AXObjectCache::PlatformAXThreadSupport AXObjectCache::platformAXThreadSupport(ForceAXThreadMode forceAXThread)
+{
+    if (!(_AXSIsolatedTreeModeFunctionIsAvailable()))
+        return PlatformAXThreadSupport::NotSupported;
+
+    if (forceAXThread == ForceAXThreadMode::No && !shouldForceAccessibilityEnabled()) {
+        if (!clientSupportsIsolatedTree())
+            return PlatformAXThreadSupport::NotSupported;
+
+        if (_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeOff)
+            return PlatformAXThreadSupport::NotSupported;
+
+        // We'll now return PlatformAXThreadSupport::Supported, which assumes that
+        // _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread. This
+        // assert should help us catch the scenario where a new variant is added
+        // that we aren't handling (e.g. a main-thread-isolated-tree-mode).
+        //
+        // _AXSIsolatedTreeMode represents what mode the system allows the web content process
+        // to be, different from our gAccessibilityMode which is what our mode actually is.
+        AX_ASSERT(_AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread);
+    }
+
+    return _AXSIsolatedTreeMode_Soft() == AXSIsolatedTreeModeSecondaryThread
+        ? PlatformAXThreadSupport::Supported
+        : PlatformAXThreadSupport::NotSupported;
+}
+
+AXObjectCache::DidStartThread AXObjectCache::platformStartSecondaryThread()
+{
+    auto error = _AXUIElementUseSecondaryAXThread(true);
+    // Starting the true AX thread doesn't work in testing contexts.
+    // This is OK because we fake it with the AXThread class.
+    AX_ASSERT(error == kAXErrorSuccess || clientIsInTestMode());
+    return error == kAXErrorSuccess ? DidStartThread::Yes : DidStartThread::No;
+}
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+
+bool AXObjectCache::shouldSpellCheck()
+{
+    // This method can be called from non-accessibility contexts, so we need to allow spellchecking if accessibility is disabled.
+    if (!accessibilityEnabled())
+        return true;
+
+    if (forceDeferredSpellChecking()) [[unlikely]]
+        return false;
+
+    auto client = _AXGetClientForCurrentRequestUntrusted();
+    // The only AT that we know can handle deferred spellchecking is VoiceOver.
+    if (client == kAXClientTypeVoiceOver)
+        return false;
+    if (isTestAXClientType(client)) [[unlikely]]
+        return true;
+    // ITM is currently only ever enabled for VoiceOver, so if it's enabled we can defer spell-checking.
+    return !isIsolatedTreeEnabled();
+}
+
+AXCoreObject::AccessibilityChildrenVector AXObjectCache::sortedLiveRegions()
+{
+    if (!m_sortedIDListsInitialized)
+        initializeSortedIDLists();
+    return objectsForIDs(m_sortedLiveRegionIDs);
+}
+
+AXCoreObject::AccessibilityChildrenVector AXObjectCache::sortedNonRootWebAreas()
+{
+    if (!m_sortedIDListsInitialized)
+        initializeSortedIDLists();
+    return objectsForIDs(m_sortedNonRootWebAreaIDs);
+}
+
+void AXObjectCache::addSortedObjects(Vector<Ref<AccessibilityObject>>&& objectsToSort, PreSortedObjectType type)
+{
+    AX_ASSERT(type == PreSortedObjectType::LiveRegion || type == PreSortedObjectType::WebArea);
+
+    if (!m_sortedIDListsInitialized) {
+        // Once the sorted ID lists have been initialized for the first time, we rely
+        // on handling these dynamic updates to keep them up-to-date. But if that hasn't
+        // happened yet, don't bother doing any work.
+        return;
+    }
+
+    Vector<AXID>& sortedList = type == PreSortedObjectType::LiveRegion ? m_sortedLiveRegionIDs : m_sortedNonRootWebAreaIDs;
+    auto updateIsolatedTree = [&] () {
+        if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID)) {
+            if (type == PreSortedObjectType::LiveRegion)
+                tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
+            else
+                tree->sortedNonRootWebAreasDidChange(m_sortedNonRootWebAreaIDs);
+        }
+    };
+
+    if (sortedList.isEmpty() && objectsToSort.size() == 1) {
+        // Fast path for when there's only object of the given type, avoiding the need for a tree scan.
+        sortedList.append(objectsToSort[0]->objectID());
+        updateIsolatedTree();
+        return;
+    }
+
+    RefPtr webArea = rootWebArea();
+    if (!webArea)
+        return;
+
+    // Any remaining path must update the isolated tree.
+    auto onExit = makeScopeExit([&] () {
+        updateIsolatedTree();
+    });
+
+    unsigned totalExpectedObjectCount = objectsToSort.size();
+    for (const auto& existingSortedObjectID : sortedList) {
+        bool containedExistingObject = objectsToSort.containsIf([&] (const auto& objectToSort) {
+            return objectToSort->objectID() == existingSortedObjectID;
+        });
+
+        if (!containedExistingObject)
+            ++totalExpectedObjectCount;
+    }
+
+    sortedList.clear();
+    sortedList.reserveCapacity(totalExpectedObjectCount);
+
+    RefPtr current = rootWebArea();
+    while ((current = current ? downcast<AccessibilityObject>(current->nextInPreOrder()) : nullptr)) {
+        bool shouldAppend = type == PreSortedObjectType::LiveRegion && current->supportsLiveRegion();
+        shouldAppend = shouldAppend || (type == PreSortedObjectType::WebArea && current->isWebArea());
+
+        if (shouldAppend) {
+            // There's no reason to ever add the same object twice, as that means we walked over it twice
+            // in our pre-order tree traversal.
+            AX_ASSERT(!sortedList.contains(current->objectID()));
+            sortedList.appendIfNotContains(current->objectID());
+
+            if (sortedList.size() >= totalExpectedObjectCount)
+                break;
+        }
+    }
+    sortedList.shrinkToFit();
+
+#if ASSERT_ENABLED
+    for (const auto& object : objectsToSort)
+        AX_ASSERT(sortedList.contains(object->objectID()));
+#endif
+}
+
+void AXObjectCache::removeLiveRegion(AccessibilityObject& object)
+{
+    if (!m_sortedIDListsInitialized)
+        return;
+
+#if PLATFORM(COCOA)
+    if (m_liveRegionManager)
+        m_liveRegionManager->unregisterLiveRegion(object.objectID());
+#endif
+
+    if (m_sortedLiveRegionIDs.removeAll(object.objectID())) {
+        if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
+            tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
+    }
+}
+
+void AXObjectCache::initializeSortedIDLists()
+{
+    if (m_sortedIDListsInitialized)
+        return;
+    m_sortedIDListsInitialized = true;
+
+    RefPtr current = rootWebArea();
+    while ((current = current ? downcast<AccessibilityObject>(current->nextInPreOrder()) : nullptr)) {
+        if (current->supportsLiveRegion()) {
+            // There's no reason to ever add the same object twice, as that means we walked over it twice
+            // in our pre-order tree traversal.
+            AX_ASSERT(!m_sortedLiveRegionIDs.contains(current->objectID()));
+            m_sortedLiveRegionIDs.appendIfNotContains(current->objectID());
+        } else if (current->isWebArea()) {
+            AX_ASSERT(!m_sortedNonRootWebAreaIDs.contains(current->objectID()));
+            m_sortedNonRootWebAreaIDs.appendIfNotContains(current->objectID());
+        }
+    }
+
+    if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID)) {
+        if (m_sortedLiveRegionIDs.size())
+            tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
+        if (m_sortedNonRootWebAreaIDs.size())
+            tree->sortedNonRootWebAreasDidChange(m_sortedNonRootWebAreaIDs);
+    }
+}
+
+Seconds AXObjectCache::platformSelectedTextRangeDebounceInterval() const
+{
+    return 100_ms;
+}
+
+// TextMarker and TextMarkerRange funcstions.
+// FIXME: TextMarker and TextMarkerRange should become classes wrapping the system objects.
+
+RetainPtr<AXTextMarkerRangeRef> textMarkerRangeFromMarkers(AXTextMarkerRef startMarker, AXTextMarkerRef endMarker)
+{
+    if (!startMarker || !endMarker)
+        return nil;
+
+    AX_ASSERT(CFGetTypeID((__bridge CFTypeRef)startMarker) == AXTextMarkerGetTypeID());
+    AX_ASSERT(CFGetTypeID((__bridge CFTypeRef)endMarker) == AXTextMarkerGetTypeID());
+    return adoptCF(AXTextMarkerRangeCreate(kCFAllocatorDefault, startMarker, endMarker));
+}
+
+static RetainPtr<AXTextMarkerRef> AXTextMarkerRangeStart(AXTextMarkerRangeRef textMarkerRange)
+{
+    AX_ASSERT(textMarkerRange);
+    AX_ASSERT(CFGetTypeID((__bridge CFTypeRef)textMarkerRange) == AXTextMarkerRangeGetTypeID());
+    return adoptCF(AXTextMarkerRangeCopyStartMarker(textMarkerRange));
+}
+
+static RetainPtr<AXTextMarkerRef> AXTextMarkerRangeEnd(AXTextMarkerRangeRef textMarkerRange)
+{
+    AX_ASSERT(textMarkerRange);
+    AX_ASSERT(CFGetTypeID((__bridge CFTypeRef)textMarkerRange) == AXTextMarkerRangeGetTypeID());
+    return adoptCF(AXTextMarkerRangeCopyEndMarker(textMarkerRange));
+}
+
+static TextMarkerData getBytesFromAXTextMarker(AXTextMarkerRef textMarker)
+{
+    if (!textMarker)
+        return { };
+
+    AX_ASSERT(CFGetTypeID(textMarker) == AXTextMarkerGetTypeID());
+    if (CFGetTypeID(textMarker) != AXTextMarkerGetTypeID())
+        return { };
+
+    TextMarkerData textMarkerData;
+    AX_ASSERT(AXTextMarkerGetLength(textMarker) == sizeof(textMarkerData));
+    if (AXTextMarkerGetLength(textMarker) != sizeof(textMarkerData))
+        return { };
+
+    memcpySpan(asMutableByteSpan(textMarkerData), AXTextMarkerGetByteSpan(textMarker));
+    return textMarkerData;
+}
+
+AccessibilityObject* accessibilityObjectForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
+{
+    AX_ASSERT(isMainThread());
+    if (!cache || !textMarker)
+        return nullptr;
+
+    auto textMarkerData = getBytesFromAXTextMarker(textMarker);
+    return cache->objectForTextMarkerData(textMarkerData);
+}
+
+// TextMarker <-> VisiblePosition conversion.
+
+AXTextMarkerRef textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePosition& visiblePos)
+{
+    AX_ASSERT(isMainThread());
+    if (!cache)
+        return nil;
+
+    auto textMarkerData = cache->textMarkerDataForVisiblePosition(visiblePos);
+    if (!textMarkerData)
+        return nil;
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&(*textMarkerData), sizeof(*textMarkerData))).autorelease();
+}
+
+VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
+{
+    AX_ASSERT(isMainThread());
+    if (!cache || !textMarker)
+        return { };
+
+    auto textMarkerData = getBytesFromAXTextMarker(textMarker);
+    return cache->visiblePositionForTextMarkerData(textMarkerData);
+}
+
+// TextMarkerRange <-> VisiblePositionRange conversion.
+
+AXTextMarkerRangeRef textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const VisiblePosition& startPosition, const VisiblePosition& endPosition)
+{
+    AX_ASSERT(isMainThread());
+    if (!cache)
+        return nil;
+
+    auto startTextMarker = textMarkerForVisiblePosition(cache, startPosition);
+    auto endTextMarker = textMarkerForVisiblePosition(cache, endPosition);
+    return textMarkerRangeFromMarkers(startTextMarker, endTextMarker).autorelease();
+}
+
+VisiblePositionRange visiblePositionRangeForTextMarkerRange(AXObjectCache* cache, AXTextMarkerRangeRef textMarkerRange)
+{
+    AX_ASSERT(isMainThread());
+
+    return {
+        visiblePositionForTextMarker(cache, AXTextMarkerRangeStart(textMarkerRange).get()),
+        visiblePositionForTextMarker(cache, AXTextMarkerRangeEnd(textMarkerRange).get())
+    };
+}
+
+// TextMarker <-> CharacterOffset conversion.
+
+AXTextMarkerRef textMarkerForCharacterOffset(AXObjectCache* cache, const CharacterOffset& characterOffset, TextMarkerOrigin origin)
+{
+    AX_ASSERT(isMainThread());
+
+    if (!cache)
+        return nil;
+
+    auto textMarkerData = cache->textMarkerDataForCharacterOffset(characterOffset, origin);
+    if (!textMarkerData.objectID || textMarkerData.isRedacted)
+        return nil;
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
+}
+
+CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, AXTextMarkerRef textMarker)
+{
+    AX_ASSERT(isMainThread());
+    if (!cache || !textMarker)
+        return { };
+
+    auto textMarkerData = getBytesFromAXTextMarker(textMarker);
+    return cache->characterOffsetForTextMarkerData(textMarkerData);
+}
+
+// TextMarkerRange <-> SimpleRange conversion.
+
+AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache* cache, const std::optional<SimpleRange>& range, bool isStart)
+{
+    AX_ASSERT(isMainThread());
+    if (!cache || !range)
+        return nil;
+
+    auto textMarkerData = cache->startOrEndTextMarkerDataForRange(*range, isStart);
+    if (!textMarkerData.objectID)
+        return nil;
+    return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData, sizeof(textMarkerData))).autorelease();
+}
+
+AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache* cache, const std::optional<SimpleRange>& range)
+{
+    AX_ASSERT(isMainThread());
+    if (!cache)
+        return nil;
+
+    auto startTextMarker = startOrEndTextMarkerForRange(cache, range, true);
+    auto endTextMarker = startOrEndTextMarkerForRange(cache, range, false);
+    return textMarkerRangeFromMarkers(startTextMarker, endTextMarker).autorelease();
+}
+
+std::optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache* cache, AXTextMarkerRangeRef textMarkerRange)
+{
+    AX_ASSERT(isMainThread());
+    if (!cache || !textMarkerRange)
+        return std::nullopt;
+
+    auto startTextMarker = AXTextMarkerRangeStart(textMarkerRange);
+    auto endTextMarker = AXTextMarkerRangeEnd(textMarkerRange);
+    if (!startTextMarker || !endTextMarker)
+        return std::nullopt;
+
+    CharacterOffset startCharacterOffset = characterOffsetForTextMarker(cache, startTextMarker.get());
+    CharacterOffset endCharacterOffset = characterOffsetForTextMarker(cache, endTextMarker.get());
+    return cache->rangeForUnorderedCharacterOffsets(startCharacterOffset, endCharacterOffset);
+}
+
+bool AXObjectCache::shouldForceAccessibilityEnabled()
+{
+    static bool cachedValue = [] {
+        RetainPtr userDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:@"com.apple.Accessibility"]);
+        return [userDefaults boolForKey:@"ShouldForceWebKitAccessibilityEnabled"];
+    }();
+    return cachedValue;
+}
+
+} // namespace WebCore
+
+#endif // PLATFORM(MAC)

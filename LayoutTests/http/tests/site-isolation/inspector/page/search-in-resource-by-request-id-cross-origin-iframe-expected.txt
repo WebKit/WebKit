@@ -1,0 +1,18 @@
+Test that Page.searchInResource(requestId) routes to the WebProcess owning the resource and searches BackendResourceDataStore under site isolation.
+
+
+
+== Running test suite: SiteIsolation.Page.SearchInResource.ByRequestId
+-- Running test case: SiteIsolation.Page.SearchInResource.ByRequestId.RoutesToOwningProcess
+PASS: Resource should have a non-empty requestIdentifier.
+PASS: Result should be an array.
+PASS: Should report at least one matching line in the response body.
+PASS: Match's lineContent should include the query.
+
+-- Running test case: SiteIsolation.Page.SearchInResource.ByRequestId.MalformedRequestIdFails
+PASS: searchInResource should fail for a malformed requestId.
+
+-- Running test case: SiteIsolation.Page.SearchInResource.ByRequestId.RejectsBase64Body
+PASS: Base64 resource should have a non-empty requestIdentifier.
+PASS: searchInResource(requestId) should fail on a base64-encoded response body.
+

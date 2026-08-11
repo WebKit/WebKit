@@ -1,0 +1,32 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true PDFPluginHUDEnabled=false ] -->
+<html>
+<head>
+<style>
+embed {
+    width: 300px;
+    height: 300px;
+}
+</style>
+<script src="../resources/ui-helper.js"></script>
+</head>
+<body>
+<embed id="plugin" src="../fast/images/resources/green_rectangle.pdf"></embed>
+<embed id="plugin2"></embed>
+<pre id="layers"></pre>
+<pre id="layers2"></pre>
+<script>
+testRunner?.waitUntilDone();
+testRunner?.dumpAsText();
+internals?.registerPDFTest(async () => {
+    await UIHelper.waitForPDFFadeIn();
+    layers.textContent = internals.layerTreeAsText(document);
+    plugin2.src = "../fast/images/resources/green_rectangle.pdf";
+    internals?.registerPDFTest(async () => {
+        await UIHelper.waitForPDFFadeIn();
+        layers2.textContent = internals.layerTreeAsText(document);
+        testRunner?.notifyDone();
+    }, plugin2);
+}, plugin);
+</script>
+</body>
+</html>

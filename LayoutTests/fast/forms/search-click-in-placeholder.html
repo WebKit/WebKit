@@ -1,0 +1,31 @@
+<body onload="test()">
+    <input type="search" id="target" placeholder="Placeholder text" onfocus="window.hasFocus=1">
+    <pre id="console"></pre>
+    <script>
+        var hasFocus = 0;
+
+        function log(message) {
+            document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+        }
+
+        async function test() {
+            if (!window.eventSender || !window.testRunner)
+                return;
+
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+
+            var target = document.getElementById("target");
+            var x = target.offsetParent.offsetLeft + target.offsetLeft + target.offsetWidth / 2;
+            var y = target.offsetParent.offsetTop + target.offsetTop + target.offsetHeight / 2;
+
+            await eventSender.asyncMouseMoveTo(x, y);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseUp();
+
+            log(hasFocus ? "PASS" : "FAIL");
+
+            testRunner.notifyDone();
+        }
+    </script>
+</body>

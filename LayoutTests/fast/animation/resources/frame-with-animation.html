@@ -1,0 +1,10 @@
+<script>
+let i = 0;
+function doWork()
+{
+    i++;
+    requestAnimationFrame(doWork);
+}
+
+requestAnimationFrame(doWork);
+</script>

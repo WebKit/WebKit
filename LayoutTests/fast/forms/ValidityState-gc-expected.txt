@@ -1,0 +1,12 @@
+This tests that ValidityState survives garbage collection.
+
+<button></button>: PASS
+<fieldset></fieldset>: PASS
+<input type="text">: PASS
+<input type="radio">: PASS
+<input type="checkbox">: PASS
+<object></object>: PASS
+<output></output>: PASS
+<select></select>: PASS
+<textarea></textarea>: PASS
+

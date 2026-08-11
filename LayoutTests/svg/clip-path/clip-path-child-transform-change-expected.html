@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>A clip child's transform change must not be frozen by the clip geometry cache</title>
+<style>svg { display: block; }</style>
+</head>
+<body>
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+    <clipPath id="clip">
+        <rect x="0" y="0" width="50" height="50" transform="translate(100, 100)"/>
+    </clipPath>
+    <rect width="200" height="200" fill="green" clip-path="url(#clip)"/>
+</svg>
+</body>
+</html>

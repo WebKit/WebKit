@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+  .grid {
+    display: grid;
+    position: relative;
+    transform: translate(10px);
+  }
+  .abspos {
+    position: absolute;
+  }
+  .removeFromGrid {
+    grid-column: 1;
+  }
+</style>
+<body>
+  This test passes if it does not crash.
+    <div class="grid">
+      <div class="removeFromGrid abspos"></div>
+      <div class="removeFromGrid abspos"></div>
+      <div class="removeFromGrid abspos"></div>
+    </div>
+<script>
+let grid = document.querySelector(".grid");
+
+for (let i = 0; i < 100; ++i) {
+  let newElement = document.createElement("div");
+  newElement.classList += "abspos";
+  grid.appendChild(newElement);
+}
+document.body.offsetHeight;
+
+let elementsToRemove = Array.from(document.getElementsByClassName("removeFromGrid"));
+
+grid.removeChild(elementsToRemove.pop());
+document.body.offsetHeight;
+
+elementsToRemove.forEach(elementToRemove => {
+  grid.removeChild(elementToRemove);
+});
+document.body.offsetHeight;
+</script>
+</html>

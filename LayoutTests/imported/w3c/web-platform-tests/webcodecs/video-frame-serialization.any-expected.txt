@@ -1,0 +1,9 @@
+
+PASS Test we can clone a VideoFrame.
+PASS Verify closing a frame doesn't affect its clones.
+PASS Verify cloning a closed frame throws.
+PASS Verify closing frames does not propagate accross contexts.
+PASS Verify transferring frames closes them.
+PASS Verify posting closed frames throws.
+PASS Verify storing a frame throws.
+

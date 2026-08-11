@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<head>
+<style>
+div[contenteditable] {
+    font-family: monospace;
+    font-size: 24px;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that selectWordForReplacement extends to a multi-word grammar marker. This test requires WebKitTestRunner.");
+
+    if (!window.testRunner)
+        return;
+
+    const editor = document.querySelector("div[contenteditable]");
+    const rect = editor.getBoundingClientRect();
+
+    await UIHelper.activateAndWaitForInputSessionAt(rect.left + 10, rect.top + rect.height / 2);
+    await UIHelper.typeCharacters("He are going home");
+
+    // Add a grammar marker spanning "are going" (offset 3, length 9) within
+    // the inserted text node.
+    internals.setMarkerFor("grammar", 3, 9, "");
+    shouldBeTrue("internals.hasGrammarMarker(3, 9)");
+
+    // Place the caret inside the grammar marker, between "ar" and "e" of "are".
+    getSelection().collapse(editor.firstChild, 5);
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.selectWordForReplacement();
+    await UIHelper.ensurePresentationUpdate();
+
+    shouldBeEqualToString("getSelection().toString()", "are going");
+
+    editor.textContent = "";
+    editor.blur();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div contenteditable></div>
+</body>
+</html>

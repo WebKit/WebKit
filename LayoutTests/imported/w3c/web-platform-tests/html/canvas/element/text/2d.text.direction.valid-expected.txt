@@ -1,0 +1,5 @@
+2d.text.direction.valid
+Actual output:
+
+FAIL Canvas test: 2d.text.direction.valid assert_equals: ctx.direction === 'inherit' (got ltr[string], expected inherit[string]) expected "inherit" but got "ltr"
+

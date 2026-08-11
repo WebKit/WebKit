@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            width: 500px;
+            height: 400px;
+            border: 1px solid black;
+            overflow-x: scroll;
+        }
+        
+        .content {
+            height: 100%;
+            width: 500%;
+        }
+        
+        .container {
+            border: 2px solid orange;
+            width: 450px;
+            height: 100%;
+            margin: 0 120px;
+            box-sizing: border-box;
+        }
+        
+        .sticky {
+            position: sticky;
+            top: 10px;
+            right: 10px;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="scroller" dir="rtl">
+        <div class="content">
+            <div class="container">
+                <div class="sticky"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

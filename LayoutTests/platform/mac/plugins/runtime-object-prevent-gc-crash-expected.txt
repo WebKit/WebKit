@@ -1,0 +1,5 @@
+Test that garbage collection of RuntimeObjects does not crash during RootObject::finalize().
+
+This test only works in DumpRenderTree on Mac, because it depends on objCController.
+
+PASS: You didn't crash.

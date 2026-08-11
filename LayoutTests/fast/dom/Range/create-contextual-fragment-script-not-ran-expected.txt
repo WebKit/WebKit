@@ -1,0 +1,3 @@
+Tests createContextualFragment does not execute scripts immediately. You should see PASS below:
+
+PASS

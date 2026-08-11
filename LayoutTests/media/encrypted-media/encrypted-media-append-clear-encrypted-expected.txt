@@ -1,0 +1,12 @@
+
+EME API is supported OK
+Appending chunks...
+EVENT(encrypted)
+MediaKeys is created OK
+EVENT(message)
+EVENT(keystatuseschange)
+Session: keyId=b0b1b2b3b4b5b6b7b8b9babbbcbdbebf status=usable OK
+All appends are completed
+EXPECTED (video.duration >= '23') OK
+END OF TEST
+

@@ -1,0 +1,54 @@
+<head>
+<script src="../resources/js-test.js"></script>
+<body>
+<script>
+description("Tests input validation for vibrationActuator.playEffect");
+jsTestIsAsync = true;
+
+let gamepad = null;
+
+async function shouldThrowDueToInvalidParameter(description, parameters)
+{
+    debug("* Invalid input test: " + description);
+    try {
+        await gamepad.vibrationActuator.playEffect('dual-rumble', parameters);
+        testFailed("playEffect() did not throw an exception()");
+    } catch (error) {
+        testPassed("playEffect() threw exception: " + error);
+    }
+}
+
+function runTest() {
+    addEventListener("gamepadconnected", async e => {
+        gamepad = event.gamepad;
+        shouldBeTrue("gamepad.vibrationActuator.canPlayEffectType('dual-rumble')");
+        try {
+            result = await gamepad.vibrationActuator.playEffect('dual-rumble');
+            shouldBeEqualToString("result", "complete");
+        } catch (error) {
+            testFailed("playEffect('dual-rumble') unexpectedly threw exception: " + error);
+        }
+
+        await shouldThrowDueToInvalidParameter("Negative duration", { duration: -1 });
+        await shouldThrowDueToInvalidParameter("Negative startDelay", { startDelay: -1 });
+        await shouldThrowDueToInvalidParameter("Negative weakMagnitude", { weakMagnitude: -1 });
+        await shouldThrowDueToInvalidParameter("Negative strongMagnitude", { strongMagnitude: -1 });
+        await shouldThrowDueToInvalidParameter("weakMagnitude > 1", { weakMagnitude: 2 });
+        await shouldThrowDueToInvalidParameter("strongMagnitude > 1", { strongMagnitude: 2 });
+
+        finishJSTest();
+    });
+
+    const supportsDualRumble = true;
+    testRunner.setMockGamepadDetails(0, "Test Gamepad", "", 2, 2, supportsDualRumble);
+    testRunner.setMockGamepadAxisValue(0, 0, 0.7);
+    testRunner.setMockGamepadAxisValue(0, 1, -1.0);
+    testRunner.setMockGamepadButtonValue(0, 0, 1.0);
+    testRunner.setMockGamepadButtonValue(0, 1, 1.0);
+    testRunner.connectMockGamepad(0);
+}
+
+onload = runTest;
+
+</script>
+</body>

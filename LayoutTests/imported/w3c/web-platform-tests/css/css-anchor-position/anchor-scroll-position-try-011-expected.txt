@@ -1,0 +1,6 @@
+
+PASS Should use the last fallback position initially
+PASS Should use the third fallback position with enough space above
+PASS Should use the second fallback position with enough space right
+PASS Should use the first fallback position with enough space above and right
+

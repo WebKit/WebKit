@@ -1,0 +1,12 @@
+
+
+PASS Ensure the right attributes are modified.
+PASS Ensure the deleted attributes is modified.
+PASS Ensure the right attributes are modified (setAttributeNS).
+PASS Ensure the deleted attributes is modified (setAttributeNS).
+PASS Ensure toggleAttribute results in an empty attribute.
+PASS Ensure setAttribute results in right attribute value.
+PASS Ensure setAttributeNS results in right attribute value.
+PASS Ensure setAttributeNode throws InUseAttributeError when callback assigns attributes.
+PASS Ensure setAttributeNodeNS throws InUseAttributeError when callback assigns attributes.
+

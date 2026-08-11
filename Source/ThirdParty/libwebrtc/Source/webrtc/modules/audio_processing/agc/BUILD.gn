@@ -1,0 +1,117 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("gain_control_interface") {
+  sources = [ "gain_control.h" ]
+}
+
+rtc_library("agc") {
+  sources = [
+    "agc_manager_direct.cc",
+    "agc_manager_direct.h",
+  ]
+  configs += [ "..:apm_debug_dump" ]
+  deps = [
+    ":gain_control_interface",
+    ":level_estimation",
+    "..:apm_logging",
+    "..:audio_buffer",
+    "..:audio_frame_view",
+    "../../../api:field_trials_view",
+    "../../../api/audio:audio_processing",
+    "../../../api/environment",
+    "../../../common_audio",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:gtest_prod",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:safe_minmax",
+    "../../../system_wrappers:metrics",
+    "../agc2:clipping_predictor",
+    "../agc2:gain_map",
+    "../agc2:input_volume_stats_reporter",
+  ]
+}
+
+rtc_library("level_estimation") {
+  sources = [
+    "agc.cc",
+    "agc.h",
+    "loudness_histogram.cc",
+    "loudness_histogram.h",
+    "utility.cc",
+    "utility.h",
+  ]
+  deps = [
+    "../../../rtc_base:checks",
+    "../vad",
+  ]
+}
+
+rtc_library("legacy_agc") {
+  visibility = [
+    ":*",
+    "..:*",
+  ]  # Only targets in this file and in
+     # audio_processing can depend on
+     # this.
+
+  sources = [
+    "legacy/analog_agc.cc",
+    "legacy/analog_agc.h",
+    "legacy/digital_agc.cc",
+    "legacy/digital_agc.h",
+    "legacy/gain_control.h",
+  ]
+
+  deps = [
+    "../../../common_audio:common_audio_c",
+    "../../../common_audio:common_audio_cc",
+    "../../../rtc_base:checks",
+  ]
+
+  if (rtc_build_with_neon) {
+    if (current_cpu != "arm64") {
+      # Enable compilation for the NEON instruction set.
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags = [ "-mfpu=neon" ]
+    }
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_library("agc_unittests") {
+    testonly = true
+    sources = [
+      "agc_manager_direct_unittest.cc",
+      "loudness_histogram_unittest.cc",
+      "mock_agc.h",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+
+    deps = [
+      ":agc",
+      ":gain_control_interface",
+      ":level_estimation",
+      "..:audio_buffer",
+      "../../../api/audio:audio_processing",
+      "../../../api/environment",
+      "../../../api/environment:environment_factory",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:safe_minmax",
+      "../../../rtc_base:stringutils",
+      "../../../test:create_test_environment",
+      "../../../test:create_test_field_trials",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+}

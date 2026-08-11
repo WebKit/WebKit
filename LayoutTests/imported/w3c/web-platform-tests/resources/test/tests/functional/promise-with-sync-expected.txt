@@ -1,0 +1,10 @@
+Promise Tests
+
+This test demonstrates the use of promise_test alongside synchronous tests.
+
+
+PASS first synchronous test
+PASS first promise_test
+PASS second synchronous test
+PASS second promise_test
+

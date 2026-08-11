@@ -1,0 +1,226 @@
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: testFinally
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: finally
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: testThrowingThruNativeCode
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: testCatch
+CONSOLE MESSAGE: throwing TestError
+CONSOLE MESSAGE: catch TestError
+CONSOLE MESSAGE: DONE
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: BREAKPOINT ACTION LOG 1
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: BREAKPOINT ACTION LOG 2
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: BREAKPOINT ACTION LOG 3
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: BREAKPOINT ACTION LOG 4
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+CONSOLE MESSAGE: TestError
+Checking pause locations when pausing on uncaught exceptions.
+
+
+== Running test suite: BreakOnUncaughtException
+-- Running test case: BreakOnUncaughtException.UncaughtExceptionBasic
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+Uncaught exception in test page: TestError [break-on-exception-tests.js:8]
+
+-- Running test case: BreakOnUncaughtException.UncaughtExceptionInFinally
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+Uncaught exception in test page: TestError [break-on-exception-tests.js:8]
+
+-- Running test case: BreakOnUncaughtException.UncaughtExceptionThruNativeCode
+PASS: Should pause for exception.
+PAUSE AT doThrow:8:22
+Uncaught exception in test page: TestError [break-on-exception-tests.js:8]
+
+-- Running test case: BreakOnUncaughtException.CaughtException
+PASS: Should not pause, exception was caught.
+
+-- Running test case: BreakOnUncaughtException.Options.Condition
+
+Setting condition to 'false'...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should not pause.
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should not pause.
+
+Setting condition to 'true'...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should pause.
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should pause.
+
+-- Running test case: BreakOnUncaughtException.Options.Condition.ConsoleCommandLineAPI
+Adding saved console value 'false'...
+
+Setting condition to saved console value...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should not pause.
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should not pause.
+
+Adding saved console value 'true'...
+Setting condition to saved console value...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should pause.
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should pause.
+
+-- Running test case: BreakOnUncaughtException.Options.IgnoreCount
+
+Setting ignoreCount to '2'...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should not pause.
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should not pause.
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should pause.
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should pause.
+
+-- Running test case: BreakOnUncaughtException.Options.Action.Log
+
+Adding log action...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should pause.
+
+Editing log action...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should pause.
+
+Editing log action...
+Enabling auto-continue...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should not pause.
+
+Editing log action...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should not pause.
+
+-- Running test case: BreakOnUncaughtException.Options.Actions.Evaluate
+
+Adding evaluate action...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should pause.
+
+Editing evaluate action...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should pause.
+
+Editing evaluate action...
+Enabling auto-continue...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should not pause.
+
+Editing evaluate action...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should not pause.
+
+-- Running test case: BreakOnUncaughtException.Options.Actions.Evaluate.ConsoleCommandLineAPI
+Adding saved console value '1'...
+
+Adding evaluate action using saved console value...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should pause.
+
+Adding saved console value '2'...
+Editing evaluate action using saved console value...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should pause.
+
+Adding saved console value '3'...
+Editing evaluate action using saved console value...
+Enabling auto-continue...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should not pause.
+
+Adding saved console value '4'...
+Editing evaluate action using saved console value...
+
+Triggering breakpoint...
+Uncaught exception in test page: TestError [break-on-uncaught-exception.html:15]
+PASS: Should execute breakpoint action.
+PASS: Should not pause.
+

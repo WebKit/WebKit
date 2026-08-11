@@ -1,0 +1,3 @@
+
+PASS Inline speculation rules script after an external stylesheet should work
+

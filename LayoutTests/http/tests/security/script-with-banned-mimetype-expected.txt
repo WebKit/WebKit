@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=audio/mp4&no-content-type-options=1 as script because audio/mp4 is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=audio/mpeg&no-content-type-options=1 as script because audio/mpeg is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=audio/ogg&no-content-type-options=1 as script because audio/ogg is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=audio/wav&no-content-type-options=1 as script because audio/wav is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=audio/x-aiff&no-content-type-options=1 as script because audio/x-aiff is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=image/gif&no-content-type-options=1 as script because image/gif is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=image/png&no-content-type-options=1 as script because image/png is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/csv&no-content-type-options=1 as script because text/csv is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=video/mpeg&no-content-type-options=1 as script because video/mpeg is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=video/ogg&no-content-type-options=1 as script because video/ogg is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=video/quicktime&no-content-type-options=1 as script because video/quicktime is not a script MIME type.
+CONSOLE MESSAGE: Refused to execute http://127.0.0.1:8000/security/resources/abe-that-increments-scriptsSuccessfullyLoaded.jpg as script because image/jpeg is not a script MIME type.
+Test that an external JavaScript script is blocked if it has a banned MIME type.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.scriptsSuccessfullyLoaded is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

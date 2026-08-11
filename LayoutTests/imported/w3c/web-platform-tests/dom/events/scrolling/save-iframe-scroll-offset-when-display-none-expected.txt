@@ -1,0 +1,5 @@
+
+
+PASS Ensure that the scroll position is not lost when the local iframe is set to display:none and shown again.
+PASS Ensure that the scroll position is not lost when the remote iframe is set to display:none and shown again.
+

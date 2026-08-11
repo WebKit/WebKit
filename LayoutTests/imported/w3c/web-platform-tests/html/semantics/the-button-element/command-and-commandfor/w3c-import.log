@@ -1,0 +1,44 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/button-event-dispatch-content-attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/button-event-dispatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/button-type-behavior.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/button-type-reflection.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/command-close-target-non-dialog-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/command-reflection.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/event-dispatch-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/event-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/fullscreen-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/generic-eventtarget-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/interface.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/invalid-element-types.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-audio-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-audio-invalid-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-details-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-details-invalid-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-dialog-behavior.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-dialog-disconnect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-dialog-invalid-behavior.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-input-number.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-popover-behavior.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-popover-disconnect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-popover-invalid-behavior.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-scroll-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/on-video-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/source-attribute-retargeting.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/the-button-element/command-and-commandfor/toggleevent-source-attribute-retargeting.html

@@ -1,0 +1,16 @@
+Tests for interval event breakpoint functionality (DOMDebugger) in a Worker.
+
+
+== Running test suite: Worker.DOMDebugger.EventBreakpoint.Interval
+-- Running test case: Worker.DOMDebugger.EventBreakpoint.Interval.Basic
+PASS: Should have paused.
+PASS: Pause reason should have been Interval.
+CALL STACK:
+0: [F] interval
+ASYNC CALL STACK:
+1: --- setInterval ---
+2: [F] triggerInterval
+3: [F] handleMessage
+4: --- addEventListener ---
+5: [P] Global Code
+

@@ -1,0 +1,85 @@
+
+FAIL TCP candidate aimed at port 8001 accepted promise_test: Unhandled rejection with value: undefined
+FAIL TCP addIceCandidate aimed at port 8001 accepted promise_test: Unhandled rejection with value: undefined
+PASS TCP candidate aimed at Fetch bad port 1 ignored
+PASS TCP candidate aimed at Fetch bad port 7 ignored
+PASS TCP candidate aimed at Fetch bad port 9 ignored
+PASS TCP candidate aimed at Fetch bad port 11 ignored
+PASS TCP candidate aimed at Fetch bad port 13 ignored
+PASS TCP candidate aimed at Fetch bad port 15 ignored
+PASS TCP candidate aimed at Fetch bad port 17 ignored
+PASS TCP candidate aimed at Fetch bad port 19 ignored
+PASS TCP candidate aimed at Fetch bad port 20 ignored
+PASS TCP candidate aimed at Fetch bad port 21 ignored
+PASS TCP candidate aimed at Fetch bad port 22 ignored
+PASS TCP candidate aimed at Fetch bad port 23 ignored
+PASS TCP candidate aimed at Fetch bad port 25 ignored
+PASS TCP candidate aimed at Fetch bad port 37 ignored
+PASS TCP candidate aimed at Fetch bad port 42 ignored
+PASS TCP candidate aimed at Fetch bad port 43 ignored
+PASS TCP candidate aimed at Fetch bad port 53 ignored
+PASS TCP candidate aimed at Fetch bad port 69 ignored
+PASS TCP candidate aimed at Fetch bad port 77 ignored
+PASS TCP candidate aimed at Fetch bad port 79 ignored
+PASS TCP candidate aimed at Fetch bad port 87 ignored
+PASS TCP candidate aimed at Fetch bad port 95 ignored
+PASS TCP candidate aimed at Fetch bad port 101 ignored
+PASS TCP candidate aimed at Fetch bad port 102 ignored
+PASS TCP candidate aimed at Fetch bad port 103 ignored
+PASS TCP candidate aimed at Fetch bad port 104 ignored
+PASS TCP candidate aimed at Fetch bad port 109 ignored
+PASS TCP candidate aimed at Fetch bad port 110 ignored
+PASS TCP candidate aimed at Fetch bad port 111 ignored
+PASS TCP candidate aimed at Fetch bad port 113 ignored
+PASS TCP candidate aimed at Fetch bad port 115 ignored
+PASS TCP candidate aimed at Fetch bad port 117 ignored
+PASS TCP candidate aimed at Fetch bad port 119 ignored
+PASS TCP candidate aimed at Fetch bad port 123 ignored
+PASS TCP candidate aimed at Fetch bad port 135 ignored
+PASS TCP candidate aimed at Fetch bad port 137 ignored
+PASS TCP candidate aimed at Fetch bad port 139 ignored
+PASS TCP candidate aimed at Fetch bad port 143 ignored
+PASS TCP candidate aimed at Fetch bad port 161 ignored
+PASS TCP candidate aimed at Fetch bad port 179 ignored
+PASS TCP candidate aimed at Fetch bad port 389 ignored
+PASS TCP candidate aimed at Fetch bad port 427 ignored
+PASS TCP candidate aimed at Fetch bad port 465 ignored
+PASS TCP candidate aimed at Fetch bad port 512 ignored
+PASS TCP candidate aimed at Fetch bad port 513 ignored
+PASS TCP candidate aimed at Fetch bad port 514 ignored
+PASS TCP candidate aimed at Fetch bad port 515 ignored
+PASS TCP candidate aimed at Fetch bad port 526 ignored
+PASS TCP candidate aimed at Fetch bad port 530 ignored
+PASS TCP candidate aimed at Fetch bad port 531 ignored
+PASS TCP candidate aimed at Fetch bad port 532 ignored
+PASS TCP candidate aimed at Fetch bad port 540 ignored
+PASS TCP candidate aimed at Fetch bad port 548 ignored
+PASS TCP candidate aimed at Fetch bad port 554 ignored
+PASS TCP candidate aimed at Fetch bad port 556 ignored
+PASS TCP candidate aimed at Fetch bad port 563 ignored
+PASS TCP candidate aimed at Fetch bad port 587 ignored
+PASS TCP candidate aimed at Fetch bad port 601 ignored
+PASS TCP candidate aimed at Fetch bad port 636 ignored
+PASS TCP candidate aimed at Fetch bad port 989 ignored
+PASS TCP candidate aimed at Fetch bad port 990 ignored
+PASS TCP candidate aimed at Fetch bad port 993 ignored
+PASS TCP candidate aimed at Fetch bad port 995 ignored
+FAIL TCP candidate aimed at Fetch bad port 1719 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 1720 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 1723 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 2049 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 3659 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 4045 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 5060 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 5061 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 6000 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 6566 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 6665 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 6666 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 6667 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 6668 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 6669 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 6697 ignored assert_unreached: Reached unreachable code
+FAIL TCP candidate aimed at Fetch bad port 10080 ignored assert_unreached: Reached unreachable code
+FAIL TCP addIceCandidate aimed at Fetch bad port 2049 ignored assert_unreached: Reached unreachable code
+

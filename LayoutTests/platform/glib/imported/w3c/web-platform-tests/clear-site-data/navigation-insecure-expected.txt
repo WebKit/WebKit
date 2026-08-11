@@ -1,0 +1,7 @@
+
+
+PASS Do not clear datatypes on insecure navigation (header: )
+PASS Do not clear datatypes on insecure navigation (header: cookies)
+PASS Do not clear datatypes on insecure navigation (header: storage)
+PASS Do not clear datatypes on insecure navigation (header: cookies, storage)
+

@@ -1,0 +1,6 @@
+
+FAIL Property corner-top value '0px round' assert_true: corner-top doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-top value '10px bevel' assert_true: corner-top doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-top value 'normal / 2px round' assert_true: corner-top doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-top value '4px 2% squircle / 1em scoop' assert_true: corner-top doesn't seem to be supported in the computed style expected true got false
+

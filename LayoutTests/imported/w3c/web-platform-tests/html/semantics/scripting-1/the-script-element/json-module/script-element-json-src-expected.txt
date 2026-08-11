@@ -1,0 +1,3 @@
+
+PASS Test that <script> doesn't load when the src is JSON.
+

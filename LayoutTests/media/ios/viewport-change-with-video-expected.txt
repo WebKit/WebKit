@@ -1,0 +1,4 @@
+This tests changing the viewport after a video element. WebKit should not crash.
+
+
+PASS. WebKit didn't crash

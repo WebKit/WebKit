@@ -1,0 +1,51 @@
+
+PASS :number_of_dynamic_buffers_exceeds_the_maximum_value:
+PASS :number_of_bind_group_layouts_exceeds_the_maximum_value:
+PASS :bind_group_layouts,device_mismatch:
+PASS :bind_group_layouts,null_bind_group_layouts:
+PASS :bind_group_layouts,create_pipeline_with_null_bind_group_layouts:
+FAIL :bind_group_layouts,set_pipeline_with_null_bind_group_layouts: assert_unreached:
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=0;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=0;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=1;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=1;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=2;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=2;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=3;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=3;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=0;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=0;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=1;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=1;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=2;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=2;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=3;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Render";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=3;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=0;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=0;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=1;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=1;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=2;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=2;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=3;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Null";emptyBindGroupLayoutIndex=3;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=0;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=0;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=1;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=1;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=2;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=2;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=3;setBindGroupOnEmptyBindGroupLayoutIndex=true) INFO: subcase ran
+  - (in subcase: pipelineType="Compute";emptyBindGroupLayoutType="Undefined";emptyBindGroupLayoutIndex=3;setBindGroupOnEmptyBindGroupLayoutIndex=false) INFO: subcase ran
+  - EXCEPTION: Error: Unexpected validation error occurred: number of bind groups set(3) is less than the pipeline uses(4)
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:466:44
+ Reached unreachable code
+PASS :immediate_data_size:immediateSize=0
+PASS :immediate_data_size:immediateSize=4
+PASS :immediate_data_size:immediateSize="max"
+PASS :immediate_data_size:immediateSize=1
+PASS :immediate_data_size:immediateSize=2
+PASS :immediate_data_size:immediateSize=3
+PASS :immediate_data_size:immediateSize=5
+PASS :immediate_data_size:immediateSize="exceedLimit"
+

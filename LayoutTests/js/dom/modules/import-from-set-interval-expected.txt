@@ -1,0 +1,15 @@
+Test import from setInterval.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module execution is confined in the module environment.
+PASS typeof cocoa is "undefined"
+PASS typeof exportedCocoa is "object"
+PASS exportedCocoa.taste() is "nice"
+PASS window.imported is true
+PASS window.passedCocoa is window.exportedCocoa
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

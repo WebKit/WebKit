@@ -1,0 +1,9 @@
+foo
+(repaint rects
+  (rect 8 40 784 20)
+  (rect 8 39 784 1)
+  (rect 8 9 784 40)
+  (rect 8 40 784 20)
+  (rect 0 48 800 20)
+)
+

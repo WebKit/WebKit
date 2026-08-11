@@ -1,0 +1,23 @@
+Testing AirPlaySupport is only enabled once media has started playing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting test, the media can be played but hasn't started playing.
+
+Making AirPlay routes available.
+
+Airplay routes are available and controls are visible on the screen, but since the media hasn't played yet, AirplaySupport should be disabled.
+PASS controls.airplayButton.uiDelegate is undefined.
+PASS controls.visible is true
+PASS controls.faded is false
+
+We play the media so that the Airplay button can be enabled.
+
+Media played, AirplaySupport should become enabled now.
+PASS !!controls.airplayButton.uiDelegate became true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

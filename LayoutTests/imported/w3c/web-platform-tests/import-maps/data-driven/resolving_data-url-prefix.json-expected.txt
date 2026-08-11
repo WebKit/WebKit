@@ -1,0 +1,5 @@
+
+
+PASS Test helper: fetching and sanity checking test JSON: data-url-prefix.json
+PASS data: URL prefix: should not resolve since you can't resolve relative to a data: URL: foo/bar
+

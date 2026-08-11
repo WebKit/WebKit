@@ -1,0 +1,5 @@
+PASS range.commonAncestorContainer is videoElement
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

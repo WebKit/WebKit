@@ -1,0 +1,22 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testSwitch(0) is 'abcd'
+PASS testSwitch(1) is 'bcd'
+PASS testSwitch(2) is 'd'
+PASS testSwitch(false) is ''
+PASS testSwitch2(1) is 'a'
+PASS testSwitch2(2) is 'b'
+PASS testSwitch2(3) is 'd'
+PASS testSwitch2(-1) is 'cd'
+PASS testSwitch2('x') is 'cd'
+PASS testSwitch3(0) is 'cde'
+PASS testSwitch3(3) is 'de'
+PASS testSwitch3(4) is 'e'
+PASS testSwitch4(0) is 'ab'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

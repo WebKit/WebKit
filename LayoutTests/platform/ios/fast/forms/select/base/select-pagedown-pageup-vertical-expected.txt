@@ -1,0 +1,141 @@
+Tests Page Down and Page Up keyboard navigation in a base-select picker with vertical writing modes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+vertical-lr:
+
+PASS focusedOptionNumber() is 50
+PASS isFocusedOptionVisible() is true
+PASS focusedOptionNumber() is 1
+FAIL focusedOptionNumber() should be >= 2. Was 1 (of type number).
+PASS focusedOptionNumber() is 100
+FAIL focusedOptionNumber() < 100 should be true. Was false.
+FAIL Page Down did not make progress: was 1, now 1
+FAIL focusedOptionNumber() should be 100. Was 1.
+FAIL Page Up did not make progress: was 100, now 100
+FAIL focusedOptionNumber() should be 1. Was 100.
+PASS focusedOptionNumber() === pageDownTarget is true
+PASS focusedOptionNumber() === pageUpTarget is true
+
+vertical-rl:
+
+PASS focusedOptionNumber() is 50
+PASS isFocusedOptionVisible() is true
+PASS focusedOptionNumber() is 1
+FAIL focusedOptionNumber() should be >= 2. Was 1 (of type number).
+PASS focusedOptionNumber() is 100
+FAIL focusedOptionNumber() < 100 should be true. Was false.
+FAIL Page Down did not make progress: was 1, now 1
+FAIL focusedOptionNumber() should be 100. Was 1.
+FAIL Page Up did not make progress: was 100, now 100
+FAIL focusedOptionNumber() should be 1. Was 100.
+PASS focusedOptionNumber() === pageDownTarget is true
+FAIL focusedOptionNumber() === pageUpTarget should be true. Was false.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+
+Option 1
+Option 2
+Option 3
+Option 4
+Option 5
+Option 6
+Option 7
+Option 8
+Option 9
+Option 10
+Option 11
+Option 12
+Option 13
+Option 14
+Option 15
+Option 16
+Option 17
+Option 18
+Option 19
+Option 20
+Option 21
+Option 22
+Option 23
+Option 24
+Option 25
+Option 26
+Option 27
+Option 28
+Option 29
+Option 30
+Option 31
+Option 32
+Option 33
+Option 34
+Option 35
+Option 36
+Option 37
+Option 38
+Option 39
+Option 40
+Option 41
+Option 42
+Option 43
+Option 44
+Option 45
+Option 46
+Option 47
+Option 48
+Option 49
+Option 50
+Option 51
+Option 52
+Option 53
+Option 54
+Option 55
+Option 56
+Option 57
+Option 58
+Option 59
+Option 60
+Option 61
+Option 62
+Option 63
+Option 64
+Option 65
+Option 66
+Option 67
+Option 68
+Option 69
+Option 70
+Option 71
+Option 72
+Option 73
+Option 74
+Option 75
+Option 76
+Option 77
+Option 78
+Option 79
+Option 80
+Option 81
+Option 82
+Option 83
+Option 84
+Option 85
+Option 86
+Option 87
+Option 88
+Option 89
+Option 90
+Option 91
+Option 92
+Option 93
+Option 94
+Option 95
+Option 96
+Option 97
+Option 98
+Option 99
+Option 100
+

@@ -1,0 +1,2 @@
+Try to autoscroll this text.
+PASSED : the autoscroll did not happen!

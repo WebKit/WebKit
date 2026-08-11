@@ -1,0 +1,89 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true contentMode=desktop ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1">
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingUsesIdempotentMode(true);
+    window.internals.settings.setIdempotentModeAutosizingOnlyHonorsPercentages(true);
+}
+</script>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+.measure { display: inline-block; font-family: Ahem; }
+</style>
+</head>
+<body>
+<p>Tests that text-size-adjust: none correctly preserves CSS zoom and text zoom for font rendering.</p>
+
+<!-- Case 1: Inherited CSS zoom (same as parent) -->
+<div style="zoom: 2;">
+    <span class="measure" id="zoom-auto" style="font-size: 16px;">X</span>
+    <span class="measure" id="zoom-none" style="-webkit-text-size-adjust: none; font-size: 16px;">X</span>
+    <span class="measure" id="zoom-pct" style="-webkit-text-size-adjust: 50%; font-size: 16px;">X</span>
+</div>
+
+<!-- Case 2: Element has different zoom than parent -->
+<div style="zoom: 2;">
+    <span class="measure" id="diff-zoom-pct" style="zoom: 3; -webkit-text-size-adjust: 50%; font-size: 16px;">X</span>
+    <span class="measure" id="diff-zoom-none" style="zoom: 3; -webkit-text-size-adjust: none; font-size: 16px;">X</span>
+    <span class="measure" id="diff-zoom-ref" style="zoom: 3; font-size: 16px;">X</span>
+</div>
+
+<!-- Case 3: Text zoom (page-level) with text-size-adjust -->
+<div id="text-zoom-container">
+    <span class="measure" id="tzoom-auto" style="font-size: 16px;">X</span>
+    <span class="measure" id="tzoom-none" style="-webkit-text-size-adjust: none; font-size: 16px;">X</span>
+    <span class="measure" id="tzoom-pct" style="-webkit-text-size-adjust: 50%; font-size: 16px;">X</span>
+    <span class="measure" id="tzoom-8px" style="font-size: 8px;">X</span>
+</div>
+
+<!-- References without zoom -->
+<div>
+    <span class="measure" id="no-zoom-auto" style="font-size: 16px;">X</span>
+    <span class="measure" id="no-zoom-none" style="-webkit-text-size-adjust: none; font-size: 16px;">X</span>
+    <span class="measure" id="no-zoom-32" style="font-size: 32px;">X</span>
+    <span class="measure" id="no-zoom-8-zoom6" style="zoom: 6; font-size: 8px;">X</span>
+</div>
+
+<script>
+description("Verifies that text-size-adjust: none preserves CSS zoom and text zoom for rendered font metrics.");
+
+function renderedHeight(id) {
+    return document.getElementById(id).getBoundingClientRect().height;
+}
+
+// Inherited CSS zoom: text-size-adjust:none should render same as auto (zoom preserved).
+shouldBe("renderedHeight('zoom-none')", "renderedHeight('zoom-auto')");
+
+// Inherited CSS zoom: zoom:2 + 16px should render same as 32px without zoom.
+shouldBe("renderedHeight('zoom-none')", "renderedHeight('no-zoom-32')");
+
+// Inherited CSS zoom: text-size-adjust:50% in zoom:2 gives 16*0.5*2=16, same as 16px without zoom.
+shouldBe("renderedHeight('zoom-pct')", "renderedHeight('no-zoom-auto')");
+
+// Different zoom than parent: text-size-adjust:none should render same as auto.
+shouldBe("renderedHeight('diff-zoom-none')", "renderedHeight('diff-zoom-ref')");
+
+// Different zoom than parent: text-size-adjust:50% on 16px with total zoom 6 should
+// render same as 8px with zoom 6 (since 16*0.5=8 is the adjusted size before zoom).
+shouldBe("renderedHeight('diff-zoom-pct')", "renderedHeight('no-zoom-8-zoom6')");
+
+// Without zoom: text-size-adjust:none matches auto.
+shouldBe("renderedHeight('no-zoom-none')", "renderedHeight('no-zoom-auto')");
+
+// Now apply page-level text zoom and verify it's preserved with text-size-adjust.
+if (window.eventSender) {
+    eventSender.textZoomIn(); // 1.2x text zoom
+
+    // With text zoom active, text-size-adjust:none should still render same as auto.
+    shouldBe("renderedHeight('tzoom-none')", "renderedHeight('tzoom-auto')");
+
+    // text-size-adjust:50% with text zoom should render same as 8px with text zoom
+    // (since 16*0.5=8 is the adjusted size, and both get the same text zoom applied).
+    shouldBe("renderedHeight('tzoom-pct')", "renderedHeight('tzoom-8px')");
+}
+</script>
+</body>
+</html>

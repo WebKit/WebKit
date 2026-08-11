@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function sleepTick() {
+    let now = performance.now();
+    let until = now + 10;
+    while (performance.now() < until);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("console.time");
+
+    suite.addTestCase({
+        name: "console.time.DefaultLabel",
+        description: "Test that default label works as expected.",
+        test(resolve, reject) {
+            let seen = 0;
+            const expected = 6;
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.messageText.includes("default"), "Message should contain the 'default' label name somewhere.");
+                if (++seen === expected) {
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+                    resolve();
+                }
+            }
+
+            InspectorTest.evaluateInPage(`console.time()`);
+            InspectorTest.evaluateInPage(`console.timeLog()`);
+            InspectorTest.evaluateInPage(`console.timeEnd()`);
+
+            InspectorTest.evaluateInPage(`console.time(undefined)`);
+            InspectorTest.evaluateInPage(`console.timeLog('default')`);
+            InspectorTest.evaluateInPage(`console.timeEnd('default')`);
+
+            InspectorTest.evaluateInPage(`console.time('default')`);
+            InspectorTest.evaluateInPage(`console.timeLog(undefined)`);
+            InspectorTest.evaluateInPage(`console.timeEnd(undefined)`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "console.time.UserLabels",
+        description: "Test that user labels works as expected.",
+        test(resolve, reject) {
+            let seen = 0;
+            const expected = 2;
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.messageText.includes("my-label"), "Message should contain the 'my-label' label name somewhere.");
+                if (++seen === expected) {
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+                    resolve();
+                }
+            }
+
+            InspectorTest.evaluateInPage(`console.time('my-label')`);
+            InspectorTest.evaluateInPage(`console.timeLog('my-label')`);
+            InspectorTest.evaluateInPage(`console.timeEnd('my-label')`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "console.time.MultipleTimers",
+        description: "Test that multiple timers running at the same time work as expected.",
+        test(resolve, reject) {
+            let seen = 0;
+            const expected = 2;
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                let expectedLabel = seen === 0 ? "my-label-2" : "my-label-1";
+                InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.messageText.includes(expectedLabel), "Message should contain the '" + expectedLabel + "' label name somewhere.");
+                if (++seen === expected) {
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+                    resolve();
+                }
+            }
+
+            InspectorTest.evaluateInPage(`console.time('my-label-1')`);
+            InspectorTest.evaluateInPage(`console.time('my-label-2')`);
+            InspectorTest.evaluateInPage(`console.timeEnd('my-label-2')`);
+            InspectorTest.evaluateInPage(`console.timeEnd('my-label-1')`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "console.time.WarnWhenExisting",
+        description: "Test for a warning when trying to start an already started timer.",
+        test(resolve, reject) {
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                if (message.level === WI.ConsoleMessage.MessageLevel.Warning) {
+                    InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                    InspectorTest.pass("Should receive a Warning level message");
+                    InspectorTest.expectThat(message.messageText.includes("default"), "Message should contain the 'default' label name somewhere.");
+                    return;
+                }
+                if (message.type === WI.ConsoleMessage.MessageType.Timing) {
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+                    resolve();
+                }
+            }
+
+            InspectorTest.evaluateInPage(`console.time()`);
+            InspectorTest.evaluateInPage(`console.time()`); // Warning
+            InspectorTest.evaluateInPage(`console.timeEnd()`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "console.time.WarnWhenNotExisting",
+        description: "Test for a warning when trying to start an already started timer.",
+        test(resolve, reject) {
+            let seen = 0;
+            const expected = 2;
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                if (message.type === WI.ConsoleMessage.MessageType.Clear)
+                    return;
+
+                InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.level === WI.ConsoleMessage.MessageLevel.Warning, "Should receive a Warning level message.");
+                InspectorTest.expectThat(message.messageText.includes("default"), "Message should contain the 'default' label name somewhere.");
+                if (++seen === expected) {
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+                    resolve();
+                }
+            }
+
+            InspectorTest.evaluateInPage(`console.timeLog()`); // Warn
+            InspectorTest.evaluateInPage(`console.clear()`);
+            InspectorTest.evaluateInPage(`console.timeEnd()`); // Warn
+        }
+    });
+
+    suite.addTestCase({
+        name: "console.time.TimeLogIncreasing",
+        description: "Test for timeLog multiple times with a timer should increase.",
+        test(resolve, reject) {
+            let lastTime = 0;
+            let seen = 0;
+            const expected = 4;
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+                InspectorTest.expectThat(message.messageText.includes("my-timelog-label"), "Message should contain the 'my-timelog-label' label name somewhere.");
+
+                let match = message.messageText.match(/^my-timelog-label: (\d+(\.\d+)?ms)/)
+                if (match) {
+                    let currentTime = parseFloat(match[1]);
+                    if (lastTime) {
+                        InspectorTest.assert(currentTime > 15, "At least 15 milliseconds should have elapsed since this is for timeLog 2 and later.");
+                        InspectorTest.expectGreaterThan(currentTime, lastTime, "+ Timer time should be increasing.");
+                    } else
+                        InspectorTest.pass("+ Initial timer time seen.");
+                    lastTime = currentTime;
+                }
+
+                if (++seen === expected) {
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+                    resolve();
+                }
+            }
+
+            InspectorTest.evaluateInPage(`console.time("my-timelog-label")`);
+            InspectorTest.evaluateInPage(`sleepTick(); console.timeLog("my-timelog-label")`);
+            InspectorTest.evaluateInPage(`sleepTick(); console.timeLog("my-timelog-label")`);
+            InspectorTest.evaluateInPage(`sleepTick(); console.timeLog("my-timelog-label")`);
+            InspectorTest.evaluateInPage(`sleepTick(); console.timeEnd("my-timelog-label")`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "console.time.TimeLogArguments",
+        description: "Test for timeLog with trailing parameters.",
+        test(resolve, reject) {
+            let seen = 0;
+            const expected = 4;
+            WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+            function handler(event) {
+                let message = event.data.message;
+                InspectorTest.expectThat(message.type === WI.ConsoleMessage.MessageType.Timing, "Should receive a Timing type message.");
+
+                switch (seen) {
+                case 0:
+                    InspectorTest.expectEqual(message.parameters, undefined, "timeLog should contain no parameters");
+                    break;
+                case 1:
+                    InspectorTest.expectEqual(message.parameters.length, 1, "timeLog should contain 1 parameters");
+                    break;
+                case 2:
+                    InspectorTest.expectEqual(message.parameters.length, 2, "timeLog should contain 2 parameters");
+                    break;
+                case 3:
+                    InspectorTest.expectEqual(message.parameters, undefined, "timeEnd should contain no parameters");
+                    break;
+                }
+
+                if (++seen === expected) {
+                    WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handler);
+                    resolve();
+                }
+            }
+
+            InspectorTest.evaluateInPage(`console.time("x")`);
+            InspectorTest.evaluateInPage(`console.timeLog("x")`);
+            InspectorTest.evaluateInPage(`console.timeLog("x", 1)`);
+            InspectorTest.evaluateInPage(`console.timeLog("x", 2, window)`);
+            InspectorTest.evaluateInPage(`console.timeEnd("x")`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the console.time, console.timeLog, and console.timeEnd APIs.</p>
+</body>
+</html>

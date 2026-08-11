@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<style>
+    div.container {
+        display: inline-block;
+        margin-right: 20px;
+        margin-bottom: 10px;
+        width: 100px;
+        vertical-align: top;
+    }
+    div.box {
+        width: 102px;
+        height: 52px;
+    }
+    img {
+        position: fixed;
+        image-orientation: none;
+        visibility: hidden;
+    }
+    canvas {
+        position: fixed;
+        border: 1px solid black;
+        width: 100px;
+        height: 50px;
+    }
+</style>
+<script>
+    if (window.internals)
+        internals.settings.setCanvasUsesAcceleratedDrawing(false);
+</script>
+<body>
+    <b>CanvasRenderingContext2D.drawImage() should ignore the image's EXIF orientation if its style image-orientation is set to "none".</b>
+    <br>
+    <br>
+    <div class ="container">
+        <div class ="box">
+            <img src="resources/exif-orientation-1-ul.jpg">
+            <canvas></canvas>
+        </div>
+        <br>Normal
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <img src="resources/exif-orientation-2-ur.jpg">
+            <canvas></canvas>
+        </div>
+        <br>Flipped horizontally
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <img src="resources/exif-orientation-3-lr.jpg">
+            <canvas></canvas>
+        </div>
+        <br>Rotated 180&deg;
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <img src="resources/exif-orientation-4-lol.jpg">
+            <canvas></canvas>
+        </div>
+        <br>Flipped vertically
+    </div>
+    <br>
+    <div class ="container">
+        <div class ="box">
+            <img src="resources/exif-orientation-5-lu.jpg">
+            <canvas></canvas>
+        </div>
+        <br>Rotated 90&deg; CCW and flipped vertically
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <img src="resources/exif-orientation-6-ru.jpg">
+            <canvas></canvas>
+        </div>
+        <br>Rotated 90&deg; CCW
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <img src="resources/exif-orientation-7-rl.jpg">
+            <canvas></canvas>
+        </div>
+        <br>Rotated 90&deg; CW and flipped vertically
+    </div>
+    <div class ="container">
+        <div class ="box">
+            <img src="resources/exif-orientation-8-llo.jpg">
+            <canvas></canvas>
+        </div>
+        <br>Rotated 90&deg; CW
+    </div>
+    <br>
+    <div class ="container">
+        <div class ="box">
+            <img src="resources/exif-orientation-9-u.jpg">
+            <canvas></canvas>
+        </div>
+        <br>Undefined (invalid value)
+    </div>
+    <script>
+        if (window.testRunner)
+            window.testRunner.waitUntilDone();
+
+        window.onload = function() {
+            var boxes = document.querySelectorAll(".box");
+
+            boxes.forEach(function(box) {
+                let image = box.querySelector("img");
+                let canvas = box.querySelector("canvas");
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+                let context = canvas.getContext("2d");
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            });
+
+            window.testRunner.notifyDone();
+        }
+    </script>
+</body>

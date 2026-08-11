@@ -1,0 +1,62 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # datasets: an array of hashes with available statuses and resolutions.
+  # url_image: URL of the generated graph.
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "$terms.Bug Charts"
+  h1 = "Welcome to the $terms.Bugzilla Charting Kitchen"
+  style_urls = ['skins/standard/buglist.css']
+  doc_section = "using/reports-and-charts.html#charts"
+%]
+
+[% IF url_image %]
+  <div class="center">
+    <img src="[% url_image FILTER html %]">
+  </div>
+[% ELSE %]
+    <form id="choose_product" method="get" action="reports.cgi">
+      <table id="old_charts">
+        <tr>
+          <th>Product:</th>
+          <td>
+            [% INCLUDE "global/product-select.html.tmpl"
+              id   => "product_id"
+              name => "product_id"
+              valueattribute => "id"
+              add  => "-All-"
+            %]
+          </td>
+        </tr>
+        <tr>
+          <th>Chart datasets:</th>
+          <td>
+            <select id="datasets" name="datasets" multiple="multiple" size="5">
+              [%# We cannot use translated statuses and resolutions from field-descs.none.html
+                # because old charts do not distinguish statuses from resolutions. %]
+              [% FOREACH dataset = datasets %]
+                <option value="[% dataset.value FILTER html %]"
+                  [% " selected=\"selected\"" IF dataset.selected %]>
+                  [% dataset.value FILTER html %]</option>
+              [% END %]
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="2">
+            <input type="submit" id="submit" value="Continue">
+          </th>
+        </tr>
+      </table>
+    </form>
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]

@@ -1,0 +1,3 @@
+
+PASS MediaStreamAudioDestinationNode creation in closed iframe throws error
+

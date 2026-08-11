@@ -1,0 +1,7 @@
+
+PASS Test worker construction with the default worker type.
+PASS Test worker construction with the "classic" worker type.
+PASS Test worker construction with the "module" worker type.
+PASS Test worker construction with an empty worker type.
+PASS Test worker construction with an unknown worker type.
+

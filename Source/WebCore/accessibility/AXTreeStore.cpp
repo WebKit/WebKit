@@ -1,0 +1,72 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "AXTreeStore.h"
+#include "AXTreeStoreInlines.h"
+
+#include "AXIsolatedTree.h"
+#include "AXObjectCache.h"
+
+namespace WebCore {
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+template<>
+WEBCORE_EXPORT void AXTreeStore<AXIsolatedTree>::applyPendingChangesForAllIsolatedTrees()
+{
+    AX_ASSERT(!isMainThread());
+
+    // Snapshot all live trees while holding the lock, then release it before
+    // calling applyPendingChangesOrTearDown. This is necessary because
+    // applyPendingChangesLocked can call attachPlatformWrapper ->
+    // crossFrameChildObject -> treeForFrameID, which needs to acquire
+    // s_storeLock. Holding s_storeLock across that call would self-deadlock.
+    Vector<std::pair<AXTreeID, Ref<AXIsolatedTree>>> trees;
+    {
+        Locker locker { AXTreeStore<AXIsolatedTree>::s_storeLock };
+        for (auto& entry : AXTreeStore<AXIsolatedTree>::isolatedTreeMap()) {
+            if (RefPtr tree = entry.value.get())
+                trees.append({ entry.key, tree.releaseNonNull() });
+        }
+    }
+
+    Vector<AXTreeID> treesToRemove;
+    for (auto& [treeID, tree] : trees) {
+        if (tree->applyPendingChangesOrTearDown() == DidTearDown::Yes)
+            treesToRemove.append(treeID);
+    }
+
+    if (!treesToRemove.isEmpty()) {
+        Locker locker { AXTreeStore<AXIsolatedTree>::s_storeLock };
+        auto& map = AXTreeStore<AXIsolatedTree>::isolatedTreeMap();
+        for (auto& treeID : treesToRemove)
+            map.remove(treeID);
+    }
+
+    AXIsolatedTree::clearAnyTreeNeedsTearDown();
+}
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+
+} // namespace WebCore

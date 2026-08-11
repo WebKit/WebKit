@@ -1,0 +1,198 @@
+# Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("bitrate_settings") {
+  visibility = [ "*" ]
+  sources = [
+    "bitrate_settings.cc",
+    "bitrate_settings.h",
+  ]
+  deps = [ "../../rtc_base/system:rtc_export" ]
+}
+
+rtc_source_set("bandwidth_usage") {
+  visibility = [ "*" ]
+  sources = [ "bandwidth_usage.h" ]
+}
+
+rtc_library("bandwidth_estimation_settings") {
+  visibility = [ "*" ]
+  sources = [ "bandwidth_estimation_settings.h" ]
+  deps = [ "../../rtc_base/system:rtc_export" ]
+}
+
+rtc_source_set("ecn_marking") {
+  visibility = [ "*" ]
+  sources = [ "ecn_marking.h" ]
+  deps = [ "//third_party/abseil-cpp/absl/strings:string_view" ]
+}
+
+rtc_source_set("enums") {
+  visibility = [ "*" ]
+  sources = [ "enums.h" ]
+}
+
+rtc_library("network_control") {
+  visibility = [ "*" ]
+  sources = [
+    "network_control.h",
+    "network_types.cc",
+    "network_types.h",
+  ]
+
+  deps = [
+    ":ecn_marking",
+    "..:field_trials_view",
+    "../../rtc_base/system:rtc_export",
+    "../environment",
+    "../units:data_rate",
+    "../units:data_size",
+    "../units:time_delta",
+    "../units:timestamp",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+  ]
+}
+
+rtc_source_set("datagram_transport_interface") {
+  visibility = [ "*" ]
+  sources = [ "data_channel_transport_interface.h" ]
+  deps = [
+    "..:priority",
+    "..:rtc_error",
+    "../../rtc_base:copy_on_write_buffer",
+    "../../rtc_base:ssl_adapter",
+  ]
+}
+
+rtc_library("goog_cc") {
+  visibility = [ "*" ]
+  sources = [
+    "goog_cc_factory.cc",
+    "goog_cc_factory.h",
+  ]
+  deps = [
+    ":network_control",
+    "..:field_trials_view",
+    "..:network_state_predictor_api",
+    "../../modules/congestion_controller/goog_cc",
+    "../../modules/congestion_controller/goog_cc_scream_network_controller",
+    "../../modules/congestion_controller/scream:scream_network_controller",
+    "../../rtc_base:logging",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../rtc_base/system:rtc_export",
+    "../units:time_delta",
+  ]
+}
+
+rtc_source_set("sctp_transport_factory_interface") {
+  visibility = [ "*" ]
+  sources = [ "sctp_transport_factory_interface.h" ]
+  deps = [ "../environment" ]
+}
+
+rtc_library("stun_types") {
+  visibility = [ "*" ]
+  sources = [
+    "stun.cc",
+    "stun.h",
+  ]
+
+  deps = [
+    "../../rtc_base:byte_buffer",
+    "../../rtc_base:byte_order",
+    "../../rtc_base:checks",
+    "../../rtc_base:crc32",
+    "../../rtc_base:crypto_random",
+    "../../rtc_base:digest",
+    "../../rtc_base:ip_address",
+    "../../rtc_base:logging",
+    "../../rtc_base:net_helpers",
+    "../../rtc_base:socket_address",
+    "../../rtc_base:span_helpers",
+    "../../rtc_base:stringutils",
+    "../../system_wrappers:metrics",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("test_feedback_generator_interface") {
+    testonly = true
+    sources = [ "test/feedback_generator_interface.h" ]
+    visibility = [ "*" ]
+    deps = [
+      ":network_control",
+      "..:network_emulation_manager_api",
+      "..:simulated_network_api",
+      "../rtc_event_log",
+      "../units:data_rate",
+      "../units:data_size",
+      "../units:time_delta",
+      "../units:timestamp",
+    ]
+  }
+  rtc_library("test_feedback_generator") {
+    testonly = true
+    sources = [
+      "test/create_feedback_generator.cc",
+      "test/create_feedback_generator.h",
+    ]
+    visibility = [ "*" ]
+    deps = [
+      ":test_feedback_generator_interface",
+      "..:network_emulation_manager_api",
+      "../../test/network:feedback_generator",
+    ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_library("ecn_marking_unittest") {
+    testonly = true
+    sources = [ "ecn_marking_unittest.cc" ]
+    deps = [
+      ":ecn_marking",
+      "../../test:test_support",
+      "//third_party/abseil-cpp/absl/strings",
+    ]
+  }
+
+  rtc_library("stun_unittest") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [ "stun_unittest.cc" ]
+    deps = [
+      ":stun_types",
+      "../../rtc_base:byte_buffer",
+      "../../rtc_base:byte_order",
+      "../../rtc_base:checks",
+      "../../rtc_base:ip_address",
+      "../../rtc_base:socket_address",
+      "../../rtc_base:span_helpers",
+      "../../system_wrappers:metrics",
+      "../../test:test_support",
+      "//testing/gtest",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("mock_network_control") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [ "test/mock_network_control.h" ]
+    deps = [
+      ":network_control",
+      "../../test:test_support",
+    ]
+  }
+}

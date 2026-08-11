@@ -1,0 +1,7 @@
+2d.drawImage.broken
+Actual output:
+Expected output:
+
+
+FAIL Canvas test: 2d.drawImage.broken assert_unreached: Should have rejected: The source image could not be decoded. Reached unreachable code
+

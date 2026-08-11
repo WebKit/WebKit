@@ -1,0 +1,93 @@
+This test ensures that a table with display:block components is accessible.
+
+PASS: table.rowCount === 4
+PASS: table.columnCount === 3
+PASS: table.cellForColumnAndRow(0, 0).domIdentifier === "r0c0"
+PASS: table.cellForColumnAndRow(1, 0).domIdentifier === "r0c1"
+PASS: table.cellForColumnAndRow(2, 0).domIdentifier === "r0c2"
+PASS: table.cellForColumnAndRow(0, 1).domIdentifier === "r1c0"
+PASS: table.cellForColumnAndRow(1, 1).domIdentifier === "r1c1"
+PASS: table.cellForColumnAndRow(2, 1).domIdentifier === "r1c2"
+PASS: table.cellForColumnAndRow(0, 2).domIdentifier === "r2c0"
+PASS: table.cellForColumnAndRow(1, 2).domIdentifier === "r2c1"
+PASS: table.cellForColumnAndRow(2, 2).domIdentifier === "r2c2"
+PASS: table.cellForColumnAndRow(0, 3).domIdentifier === "r3c0"
+PASS: table.cellForColumnAndRow(1, 3).domIdentifier === "r3c1"
+PASS: table.cellForColumnAndRow(2, 3).domIdentifier === "r3c2"
+
+Performing search traversal of body.
+
+{#table AXRole: AXTable} (parent: {#body AXRole: AXGroup})
+
+{#r0 AXRole: AXRow} (parent: {#table AXRole: AXTable})
+
+{#r0c0 AXRole: AXCell} (parent: {#r0 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: Author} (parent: {#r0c0 AXRole: AXCell})
+
+{#r0c1 AXRole: AXCell} (parent: {#r0 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: Title} (parent: {#r0c1 AXRole: AXCell})
+
+{#r0c2 AXRole: AXCell} (parent: {#r0 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: Year} (parent: {#r0c2 AXRole: AXCell})
+
+{#r1 AXRole: AXRow} (parent: {#table AXRole: AXTable})
+
+{#r1c0 AXRole: AXCell} (parent: {#r1 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: Stephen Hawking} (parent: {#r1c0 AXRole: AXCell})
+
+{#r1c1 AXRole: AXCell} (parent: {#r1 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: A Brief History of Time} (parent: {#r1c1 AXRole: AXCell})
+
+{#r1c2 AXRole: AXCell} (parent: {#r1 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: 1988} (parent: {#r1c2 AXRole: AXCell})
+
+{#r2 AXRole: AXRow} (parent: {#table AXRole: AXTable})
+
+{#r2c0 AXRole: AXCell} (parent: {#r2 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: Carl Sagan} (parent: {#r2c0 AXRole: AXCell})
+
+{#r2c1 AXRole: AXCell} (parent: {#r2 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: Cosmos} (parent: {#r2c1 AXRole: AXCell})
+
+{#r2c2 AXRole: AXCell} (parent: {#r2 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: 1980} (parent: {#r2c2 AXRole: AXCell})
+
+{#r3 AXRole: AXRow} (parent: {#table AXRole: AXTable})
+
+{#r3c0 AXRole: AXCell} (parent: {#r3 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: Will Gater} (parent: {#r3c0 AXRole: AXCell})
+
+{#r3c1 AXRole: AXCell} (parent: {#r3 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: The Mysteries of the Universe} (parent: {#r3c1 AXRole: AXCell})
+
+{#r3c2 AXRole: AXCell} (parent: {#r3 AXRole: AXRow})
+
+{AXRole: AXStaticText AXValue: 2020} (parent: {#r3c2 AXRole: AXCell})
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a table caption
+Author
+Title
+Year
+Stephen Hawking
+A Brief History of Time
+1988
+Carl Sagan
+Cosmos
+1980
+Will Gater
+The Mysteries of the Universe
+2020

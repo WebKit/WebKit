@@ -1,0 +1,3 @@
+
+PASS Asynchronous disconnect() correctly silences the output
+

@@ -1,0 +1,138 @@
+/*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "MockPageOverlayClient.h"
+
+#include "Document.h"
+#include "GraphicsContext.h"
+#include "GraphicsLayer.h"
+#include "LocalFrameInlines.h"
+#include "Page.h"
+#include "PageOverlayController.h"
+#include "PlatformMouseEvent.h"
+#include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
+
+namespace WebCore {
+
+MockPageOverlayClient& MockPageOverlayClient::singleton()
+{
+    static NeverDestroyed<MockPageOverlayClient> sharedClient;
+    return sharedClient.get();
+}
+
+MockPageOverlayClient::MockPageOverlayClient() = default;
+
+Ref<MockPageOverlay> MockPageOverlayClient::installOverlay(Page& page, PageOverlay::OverlayType overlayType)
+{
+    Ref overlay = PageOverlay::create(*this, overlayType);
+    page.pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
+
+    Ref mockOverlay = MockPageOverlay::create(overlay.ptr());
+    m_overlays.add(mockOverlay);
+
+    return mockOverlay;
+}
+
+void MockPageOverlayClient::uninstallAllOverlays()
+{
+    while (!m_overlays.isEmpty()) {
+        RefPtr mockOverlay = m_overlays.takeAny();
+        PageOverlayController* overlayController = mockOverlay->overlay()->controller();
+        ASSERT(overlayController);
+        overlayController->uninstallPageOverlay(*mockOverlay->overlay(), PageOverlay::FadeMode::DoNotFade);
+    }
+}
+
+String MockPageOverlayClient::layerTreeAsText(Page& page, OptionSet<LayerTreeAsTextOptions> options)
+{
+    RefPtr viewOverlayRoot = page.pageOverlayController().viewOverlayRootLayer();
+    RefPtr documentOverlayRoot = page.pageOverlayController().documentOverlayRootLayer();
+    
+    return makeString("View-relative:\n"_s, (viewOverlayRoot ? viewOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no view-relative overlay root)"_s)
+        , "\n\nDocument-relative:\n"_s, (documentOverlayRoot ? documentOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no document-relative overlay root)"_s));
+}
+
+void MockPageOverlayClient::willMoveToPage(PageOverlay&, Page*)
+{
+}
+
+void MockPageOverlayClient::didMoveToPage(PageOverlay& overlay, Page* page)
+{
+    if (page)
+        overlay.setNeedsDisplay();
+}
+
+void MockPageOverlayClient::drawRect(PageOverlay& overlay, GraphicsContext& context, const IntRect&)
+{
+    GraphicsContextStateSaver stateSaver(context);
+
+    FloatRect insetRect = overlay.bounds();
+
+    if (overlay.overlayType() == PageOverlay::OverlayType::Document) {
+        context.setStrokeColor(Color::green);
+        insetRect.inflate(-50);
+    } else {
+        context.setStrokeColor(Color::blue);
+        insetRect.inflate(-20);
+    }
+
+    context.strokeRect(insetRect, 20);
+}
+
+bool MockPageOverlayClient::mouseEvent(PageOverlay& overlay, const PlatformMouseEvent& event)
+{
+    if (RefPtr mainFrame = overlay.page()->mainFrame()) {
+        if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame)) {
+            if (RefPtr document = localMainFrame->document())
+                document->addConsoleMessage(MessageSource::Other, MessageLevel::Debug, makeString("MockPageOverlayClient::mouseEvent location ("_s, flooredIntPoint(event.position()).x(), ", "_s, flooredIntPoint(event.position()).y(), ')'));
+        }
+    }
+    return false;
+}
+
+void MockPageOverlayClient::didScrollFrame(PageOverlay&, LocalFrame&)
+{
+}
+
+bool MockPageOverlayClient::copyAccessibilityAttributeStringValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, String&)
+{
+    return false;
+}
+
+bool MockPageOverlayClient::copyAccessibilityAttributeBoolValueForPoint(PageOverlay&, String /* attribute */, FloatPoint, bool&)
+{
+    return false;
+}
+
+Vector<String> MockPageOverlayClient::copyAccessibilityAttributeNames(PageOverlay&, bool /* parameterizedNames */)
+{
+    return Vector<String>();
+}
+
+}

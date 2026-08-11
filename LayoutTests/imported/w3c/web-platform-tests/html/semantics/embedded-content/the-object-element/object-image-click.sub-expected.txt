@@ -1,0 +1,7 @@
+
+
+PASS same-origin-explicit
+PASS same-origin-implicit
+PASS cross-origin-explicit
+PASS cross-origin-implicit
+

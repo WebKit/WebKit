@@ -1,0 +1,23 @@
+<html>
+<head>
+<style>
+blockquote {
+    color: blue;
+    border-left: 2px solid blue;
+    margin-left: 0px;
+    padding-left: 10px;
+}
+</style>
+</head>
+<body>
+<div id="description">When your cursor is after an empty blockquote, hitting delete should bring the cursor (and the content following the cursor) back into the blockquote, instead of deleting the empty blockquote.</div>
+<div id="edit" contenteditable="true"><blockquote type="cite"><br></blockquote>This should be quoted</div>
+
+<script>
+edit = document.getElementById("edit");
+var s = window.getSelection();
+s.setPosition(edit, 1);
+document.execCommand("Delete");
+</script>
+</body>
+</html>

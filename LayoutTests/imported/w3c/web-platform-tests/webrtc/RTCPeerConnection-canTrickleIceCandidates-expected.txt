@@ -1,0 +1,5 @@
+
+PASS canTrickleIceCandidates property is null prior to setRemoteDescription
+PASS canTrickleIceCandidates property is true after setRemoteDescription with a=ice-options:trickle
+PASS canTrickleIceCandidates property is false after setRemoteDescription without a=ice-options:trickle
+

@@ -1,0 +1,3 @@
+This test verifies that when page is loaded from the page cache on navigation back, the suspended timers are resumed for a duration left when they were suspended. This is a test for https://bugs.webkit.org/show_bug.cgi?id=28683.
+The test navigates to a page, starts a timer and then navigates to another page and back. It then measures time when the timer is actually fired and makes sure that it is at least the time set at the beginning. If successful, it outputs 'PASS' below.
+PASS

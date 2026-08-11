@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<style>
+.container {
+    border: 2px solid blue;
+    width: 100px;
+    height: 100px;
+}
+.contents {
+    display:contents;
+}
+#innercontainer {
+    display:content;
+}
+#test1:hover { color: green }
+#test2:hover span { color: green  }
+#test3:active { color: green }
+#test4:active span { color: green  }
+</style>
+<div class=container>
+<div id=test1 class=contents>
+Text should turn green on hover.
+</div>
+</div>
+<div class=container>
+<div id=test2 class=contents>
+<span>
+Text should turn green on hover.
+</spans>
+</div>
+</div>
+<div class=container>
+<div id=test3 class=contents>
+Text should turn green on mouse down.
+</div>
+</div>
+<div class=container>
+<div id=test4 class=contents>
+<span>
+Text should turn green on mouse down.
+</spans>
+</div>
+</div>
+<div id=log></div>
+
+<script>
+function test(testId, activate) {
+    const testElement = document.getElementById(testId);
+    eventSender.mouseMoveTo(testElement.parentNode.offsetLeft + 5, testElement.parentNode.offsetTop + 5);
+    if (activate)
+        eventSender.mouseDown();
+    const verifyElement = testElement.firstElementChild ? testElement.firstElementChild : testElement;
+    const pass = getComputedStyle(verifyElement, null).color == 'rgb(0, 128, 0)';
+    log.innerHTML += `${testId} ${pass ? "PASS" : "FAIL"}<br>`;
+    if (activate)
+        eventSender.mouseUp();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    test('test1');
+    test('test2');
+    test('test3', true);
+    test('test4', true);
+}
+</script>
+

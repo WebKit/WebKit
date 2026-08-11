@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="113 77 573 544" width="573" height="544">
+  <defs>
+    <font-face font-family="Helvetica Neue" font-size="13" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
+      <font-face-src>
+        <font-face-name name="HelveticaNeue"/>
+      </font-face-src>
+    </font-face>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-1 -4 10 8" markerWidth="10" markerHeight="8" color="white">
+      <g>
+        <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <metadata> Produced by OmniGraffle 7.15 
+    <dc:date>2020-04-14 23:29:45 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke="none" stroke-dasharray="none" fill-opacity="1" stroke-opacity="1" fill="none">
+    <title>Canvas 1</title>
+    <rect fill="black" x="113" y="77" width="573" height="544"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_2">
+        <rect x="114" y="131" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="131" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 137.20564)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="33.7245" y="12">Live Catch Variable Preservation</tspan>
+        </text>
+      </g>
+      <g id="Graphic_3">
+        <rect x="114" y="162.68118" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="162.68118" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 168.88682)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="77.3005" y="12">CPS Rethreading</tspan>
+        </text>
+      </g>
+      <g id="Graphic_4">
+        <rect x="114" y="194.36236" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="194.36236" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 200.568)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="96.5665" y="12">Unification</tspan>
+        </text>
+      </g>
+      <g id="Graphic_5">
+        <rect x="114" y="226.04354" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="226.04354" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 232.24918)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="71.7625" y="12">Prediction Injection</tspan>
+        </text>
+      </g>
+      <g id="Graphic_6">
+        <rect x="114" y="257.72472" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="257.72472" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 263.93036)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="28.297" y="12">Static Execution Count Estimation</tspan>
+        </text>
+      </g>
+      <g id="Graphic_7">
+        <rect x="114" y="289.4059" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="289.4059" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 295.61154)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="57.924" y="12">Backwards Propagation</tspan>
+        </text>
+      </g>
+      <g id="Graphic_8">
+        <rect x="114" y="321.08708" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="321.08708" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 327.29272)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="60.927" y="12">Prediction Propagation</tspan>
+        </text>
+      </g>
+      <g id="Graphic_9">
+        <rect x="114" y="352.76826" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="352.76826" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 358.9739)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="111.4905" y="12">Fixup</tspan>
+        </text>
+      </g>
+      <g id="Graphic_10">
+        <rect x="114" y="384.44944" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="384.44944" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 390.6551)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="52.984" y="12">InvalidationPoint Injection</tspan>
+        </text>
+      </g>
+      <g id="Graphic_11">
+        <rect x="114" y="416.1306" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="416.1306" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 422.33626)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="67.6675" y="12">Type Check Hoisting</tspan>
+        </text>
+      </g>
+      <g id="Graphic_12">
+        <rect x="114" y="447.8118" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="447.8118" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 454.01744)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="71.1515" y="12">Strength Reduction</tspan>
+        </text>
+      </g>
+      <g id="Graphic_13">
+        <rect x="114" y="479.493" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="479.493" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 485.6986)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="77.3005" y="12">CPS Rethreading</tspan>
+        </text>
+      </g>
+      <g id="Graphic_14">
+        <rect x="114" y="511.17416" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="511.17416" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 517.3798)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="71.041" y="12">Abstract Interpreter</tspan>
+        </text>
+      </g>
+      <g id="Graphic_15">
+        <rect x="114" y="542.85534" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="542.85534" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 549.061)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="77.658" y="12">Constant Folding</tspan>
+        </text>
+      </g>
+      <g id="Graphic_16">
+        <rect x="114" y="574.5365" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="574.5365" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 580.74216)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="73.212" y="12">CFG Simplification</tspan>
+        </text>
+      </g>
+      <g id="Graphic_17">
+        <rect x="420" y="99.31882" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="99.31882" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 105.52446)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="4.4485" y="12">Local Common Subexpression Elimination</tspan>
+        </text>
+      </g>
+      <g id="Graphic_18">
+        <rect x="420" y="131" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="131" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 137.20564)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="77.3005" y="12">CPS Rethreading</tspan>
+        </text>
+      </g>
+      <g id="Graphic_19">
+        <rect x="420" y="162.68118" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="162.68118" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 168.88682)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="71.236" y="12">Varargs Forwarding</tspan>
+        </text>
+      </g>
+      <g id="Graphic_21">
+        <rect x="420" y="194.36236" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="194.36236" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 200.568)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="71.041" y="12">Abstract Interpreter</tspan>
+        </text>
+      </g>
+      <g id="Graphic_20">
+        <rect x="420" y="226.04354" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="226.04354" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 232.24918)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="77.658" y="12">Constant Folding</tspan>
+        </text>
+      </g>
+      <g id="Graphic_22">
+        <rect x="420" y="257.72472" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="257.72472" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 263.93036)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="59.484" y="12">Tier Up Check Injection</tspan>
+        </text>
+      </g>
+      <g id="Graphic_23">
+        <rect x="420" y="289.4059" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="289.4059" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 295.61154)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="49.6235" y="12">Fast Store Barrier Insertion</tspan>
+        </text>
+      </g>
+      <g id="Graphic_24">
+        <rect x="420" y="321.08708" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="321.08708" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 327.29272)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="59.497" y="12">Store Barrier Clustering</tspan>
+        </text>
+      </g>
+      <g id="Graphic_25">
+        <rect x="420" y="352.76826" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="352.76826" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 358.9739)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="100.4145" y="12">Clean Up</tspan>
+        </text>
+      </g>
+      <g id="Graphic_26">
+        <rect x="420" y="384.44944" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="384.44944" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 390.6551)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="77.3005" y="12">CPS Rethreading</tspan>
+        </text>
+      </g>
+      <g id="Graphic_27">
+        <rect x="420" y="416.1306" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="416.1306" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 422.33626)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="60.9205" y="12">Dead Code Elimination</tspan>
+        </text>
+      </g>
+      <g id="Graphic_28">
+        <rect x="420" y="447.8118" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="447.8118" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 454.01744)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="74.4015" y="12">Phantom Insertion</tspan>
+        </text>
+      </g>
+      <g id="Graphic_29">
+        <rect x="420" y="479.493" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="479.493" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 485.6986)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="89.332" y="12">Stack Layout</tspan>
+        </text>
+      </g>
+      <g id="Graphic_30">
+        <rect x="420" y="511.17416" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="511.17416" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 517.3798)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="53.114" y="12">Virtual Register Allocation</tspan>
+        </text>
+      </g>
+      <g id="Graphic_31">
+        <rect x="420" y="542.85534" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="542.85534" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 549.061)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="63.4555" y="12">Watchpoint Collection</tspan>
+        </text>
+      </g>
+      <g id="Graphic_32">
+        <rect x="420" y="574.5365" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="420" y="574.5365" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(425 580.74216)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="26.7305" y="12">DFG Speculative JIT (the backend)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_33">
+        <rect x="114" y="99.31882" width="265" height="27.77528" fill="#236ca5"/>
+        <rect x="114" y="99.31882" width="265" height="27.77528" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(119 105.52446)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="white" x="20.601" y="12">DFG Byte Code Parser (the frontend)</tspan>
+        </text>
+      </g>
+      <g id="Line_34">
+        <path d="M 246.5 602.3118 L 246.5 620 L 399.5 620 L 399.5 78 L 552.5 78 L 552.5 89.41882" marker-end="url(#FilledArrow_Marker)" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1.0,4.0" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,6 @@
+Video element with blob: URL must be blocked when blob: is not in media-src
+
+
+PASS Video with blob: URL blocked when blob: not in media-src
+PASS Audio with blob: URL blocked when blob: not in media-src
+

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<p style='max-width:120px;'>This is one line wrapped because of the maximum width of its container.</p><p>This is another line wrapped<br>because of one forced<br>line break in the middle.</p>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the ability to get element text for different granularities and offsets.");
+    if (window.accessibilityController) {
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+
+        var paragraph = webArea.childAtIndex(0);
+        shouldBe("paragraph.characterAtOffset(16)", "' , 16, 17'");
+        shouldBe("paragraph.wordAtOffset(16)", "'line , 12, 17'");
+        shouldBe("paragraph.lineAtOffset(17)", "'wrapped because , 17, 33'");
+
+        paragraph = webArea.childAtIndex(1);
+        shouldBe("paragraph.characterAtOffset(28)", "'\\n, 28, 29'");
+        shouldBe("paragraph.wordAtOffset(28)", "'wrapped\\n, 21, 29'");
+        shouldBe("paragraph.lineAtOffset(30)", "'because of one forced\\n, 29, 51'");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

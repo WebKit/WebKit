@@ -1,0 +1,121 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function removeRemovableNode()
+{
+    window.__removableNode = document.getElementById("removable-node");
+    window.__removableNode.remove();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("NodeStylesRefreshed");
+
+    async function nodeStylesForSelector(selector) {
+        let documentNode = await WI.domManager.requestDocument();
+        let nodeId = await documentNode.querySelector(selector);
+        let node = WI.domManager.nodeForId(nodeId);
+
+        let nodeStyles = WI.cssManager.stylesForNode(node);
+        await nodeStyles.refreshIfNeeded();
+
+        return nodeStyles;
+    }
+
+    suite.addTestCase({
+        name: "NodeStylesRefreshed.ClassAdded",
+        async test() {
+            let nodeStyles = await nodeStylesForSelector("body");
+
+            nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                InspectorTest.expectTrue(event.data.significantChange, `Adding '.baz' class should cause a significant change.`);
+            });
+
+            InspectorTest.evaluateInPage(`document.body.classList.add("baz")`);
+            await nodeStyles.refresh();
+        }
+    });
+
+    suite.addTestCase({
+        name: "NodeStylesRefreshed.ClassRemoved",
+        async test() {
+            let nodeStyles = await nodeStylesForSelector("body");
+
+            nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                InspectorTest.expectTrue(event.data.significantChange, `Removing '.foo' class should cause a significant change.`);
+            });
+
+            InspectorTest.evaluateInPage(`document.body.classList.remove("foo")`);
+            await nodeStyles.refresh();
+        }
+    });
+
+    suite.addTestCase({
+        name: "NodeStylesRefreshed.IrrelevantClassAdded",
+        async test() {
+            let nodeStyles = await nodeStylesForSelector("body");
+
+            nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                InspectorTest.expectFalse(event.data.significantChange, `Adding '.blah' class shouldn't cause a significant change.`);
+            });
+
+            InspectorTest.evaluateInPage(`document.body.classList.add("blah")`);
+            await nodeStyles.refresh();
+        }
+    });
+
+    suite.addTestCase({
+        name: "NodeStylesRefreshed.IrrelevantClassRemoved",
+        async test() {
+            let nodeStyles = await nodeStylesForSelector("body");
+
+            nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                InspectorTest.expectFalse(event.data.significantChange, `Removing '.blah' class shouldn't cause a significant change.`);
+            });
+
+            InspectorTest.evaluateInPage(`document.body.classList.remove("blah")`);
+            await nodeStyles.refresh();
+        }
+    });
+
+    suite.addTestCase({
+        name: "NodeStylesRefreshed.DisconnectedNode",
+        description: "Ensure that changing the style of a disconnected node does not crash.",
+        async test() {
+            let nodeStyles = await nodeStylesForSelector("#removable-node");
+
+            nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                InspectorTest.expectFalse(event.data.significantChange, `Refreshing styles of an unchanged node should not be a significant change.`);
+            });
+
+            InspectorTest.log("Refreshing styles before removal.")
+            await nodeStyles.refresh();
+
+            nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                InspectorTest.expectTrue(event.data.significantChange, `Refreshing styles of a now detached node should be a significant change.`);
+            });
+
+            InspectorTest.log("Removing node from DOM tree.")
+            InspectorTest.evaluateInPage(`removeRemovableNode();`);
+
+            InspectorTest.log("Refreshing styles after removal.")
+            await nodeStyles.refresh();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+
+}
+</script>
+</head>
+<body onLoad="runTest()" class="foo bar">
+<p>Testing that WI.DOMNodeStyles.Event.Refreshed event dispatches with correct significantChange flag.</p>
+<div id="removable-node" class="foo bar"></div>
+<style>
+.foo {font-size: 12px;}
+.bar {background: lightyellow;}
+.baz {color: darkgreen;}
+</style>
+</body>
+</html>

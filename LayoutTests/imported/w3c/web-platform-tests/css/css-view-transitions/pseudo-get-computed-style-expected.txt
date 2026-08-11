@@ -1,0 +1,4 @@
+
+PASS properties of pseudo elements in update callback
+PASS properties of pseudo elements outside of transition
+

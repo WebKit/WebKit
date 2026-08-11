@@ -1,0 +1,11 @@
+Verifies that tapping to change selection works when the focused element's bounds change after focusing the element. To manually run the test, first tap the editable area to focus it, then tap the button to shrink the editable area, and finally, verify that it's possible to change selection in the editable area by tapping it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().rangeCount is 1
+PASS Successfully changed selection after shrinking editable area.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,11 @@
+
+FAIL setPathData() replaces the existing d attribute path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [1, 2] },
+    { type: "L", values: [3, 4] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() works on a detached path path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "L", values: [5, 5] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() with an empty sequence path.setPathData is not a function. (In 'path.setPathData([])', 'path.setPathData' is undefined)
+

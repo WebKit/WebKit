@@ -1,0 +1,17 @@
+<p>This test passes if it doesn't crash.</p>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  
+  onbeforeunload = () => {
+    for (let i = 0; i < 1000; i++)
+      document.execCommand('Copy');
+  };
+  onload = async () => {
+      document.execCommand('SelectAll');
+    location.host = '';
+    await caches.has('a');
+    window.open();
+    
+  };
+</script>

@@ -1,0 +1,11 @@
+PASS window.visualViewport.pageTop == 0 is true
+PASS window.visualViewport.scale == 1 is true
+PASS window.visualViewport.width == internals.layoutViewportRect().width is true
+PASS window.visualViewport.height == internals.layoutViewportRect().height is true
+PASS window.keyboardTopInView == internals.layoutViewportRect().height is true
+PASS window.visualViewport.height == window.initialLayoutViewportHeight is true
+PASS internals.layoutViewportRect().height == window.initialLayoutViewportHeight is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

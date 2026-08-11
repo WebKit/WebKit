@@ -1,0 +1,16 @@
+Test passes if outline widths are rounded up when they are greater than 0px and less than 1px, and rounded down when they are greater than 1px.
+
+
+PASS 0px
+PASS 0.1px
+PASS 0.25px
+PASS 0.5px
+PASS 0.9px
+PASS 1px
+PASS 1.25px
+PASS 1.5px
+PASS 2px
+PASS 2.75px
+PASS 2.99px
+PASS 3px
+

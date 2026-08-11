@@ -1,0 +1,13 @@
+Tests that scroll event listeners still work after going back to a page in the page cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+pageshow 0
+pageshow 1
+delayed until after pageshow
+PASS scrollEventCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+
+PASS flexbox | computed style | flex-shrink: 0
+

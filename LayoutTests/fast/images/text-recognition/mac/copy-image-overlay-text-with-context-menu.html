@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+div[contenteditable] {
+    border: 1px solid tomato;
+}
+</style>
+</head>
+<body>
+<img src="../../resources/green-400x400.png"></img>
+<div contenteditable></div>
+<script>
+addEventListener("load", () => {
+    let image = document.querySelector("img");
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.5),
+            bottomLeft : new DOMPointReadOnly(0, 0.5),
+            children: [
+                {
+                    text : "foobar",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0, 0.5),
+                }
+            ]
+        }
+    ]);
+
+    eventSender.mouseMoveTo(50, 150);
+
+    for (let item of eventSender.contextClick()) {
+        if (item.title === "Copy")
+            item.click();
+    }
+
+    editor = document.querySelector("div[contenteditable]");
+    editor.focus();
+    document.execCommand("Paste");
+
+    shouldBeEqualToString("editor.textContent", "foobar");
+    editor.remove();
+});
+</script>
+</body>
+</html>

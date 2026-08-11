@@ -1,0 +1,6 @@
+
+PASS receiver.getStats() via addTransceiver should return stats report containing inbound-rtp stats
+PASS receiver.getStats() via addTrack should return stats report containing inbound-rtp stats
+PASS receiver.getStats() should work with a closed PeerConnection but not have inbound-rtp objects
+PASS receiver.getStats() should return stats report containing ICE candidate stats
+

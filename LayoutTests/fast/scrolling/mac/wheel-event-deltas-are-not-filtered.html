@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        async function dispatchWheelEvents()
+        {
+            const events = [
+                {
+                    type : "wheel",
+                    viewX : 100,
+                    viewY : 100,
+                    deltaX : 10,
+                    deltaY : -10,
+                    phase : "began"
+                },
+                {
+                    type : "wheel",
+                    deltaX : 10,
+                    deltaY : -20,
+                    phase : "changed"
+                },
+                {
+                    type : "wheel",
+                    phase : "ended"
+                },
+                {
+                    type : "wheel",
+                    deltaX : 10,
+                    deltaY : -10,
+                    momentumPhase : "began"
+                },
+                {
+                    type : "wheel",
+                    viewX : 101, // Defeat coalescing
+                    deltaX : 10,
+                    deltaY : -20,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    viewX : 102, // Defeat coalescing
+                    deltaX : 20,
+                    deltaY : -30,
+                    momentumPhase : "changed"
+                },
+                {
+                    type : "wheel",
+                    momentumPhase : "ended"
+                }
+            ];
+
+            await UIHelper.mouseWheelSequence({ events });
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+
+            window.addEventListener('wheel', (event) => {
+                debug(`${event.deltaX} ${event.deltaY}`)
+            });
+
+            dispatchWheelEvents();
+        }, false);
+    </script>
+</head>
+<body>
+    
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

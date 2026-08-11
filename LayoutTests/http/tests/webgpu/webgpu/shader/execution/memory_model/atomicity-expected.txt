@@ -1,0 +1,5 @@
+
+PASS :atomicity:memType="atomic_storage";testType="inter_workgroup"
+PASS :atomicity:memType="atomic_storage";testType="intra_workgroup"
+PASS :atomicity:memType="atomic_workgroup";testType="intra_workgroup"
+

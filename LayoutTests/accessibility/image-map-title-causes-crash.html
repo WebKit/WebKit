@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<img usemap="#map">
+<map name="map" id="map"><area href="javascript:document.getElementById('result').innerHTML='area clicked'" /></map>
+    
+<script>
+var output = "This test ensures that we don't crash when requesting the title of all objects after dynamic area element removal.\n\n";
+
+function queryTitleOnDescendants(object) {
+    object.title;
+
+    var count = object.childrenCount;
+    for (var i = 0; i < count; ++i)
+        queryTitleOnDescendants(object.childAtIndex(i));
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webarea = accessibilityController.rootElement.childAtIndex(0);
+    queryTitleOnDescendants(webarea);
+
+    // Remove the <area>, replacing it with a static text of "1".
+    document.getElementById("map").innerHTML = 1;
+    setTimeout(async function() {
+        queryTitleOnDescendants(webarea);
+        output += "PASS: No crash.\n";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<style>select::picker(select), select::picker-icon { transition-duration: 0s !important; }</style>
+<style>
+.custom, .custom::picker(select) {
+  appearance: base-select;
+}
+</style>
+
+<select multiple>
+  <option>normal</option>
+  <div>
+    <option>
+      <div>div</div>
+      <span>span</span>
+      text
+    </option>
+  </div>
+</select>
+
+<select multiple class=custom>
+  <option>normal</option>
+  <option>base-select</option>
+</select>

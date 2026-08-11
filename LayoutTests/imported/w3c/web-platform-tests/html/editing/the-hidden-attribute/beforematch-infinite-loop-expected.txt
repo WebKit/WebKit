@@ -1,0 +1,5 @@
+hidden 2
+hidden 1
+
+PASS hidden=until-found revealing algorithm should collect elements to reveal before revealing them.
+

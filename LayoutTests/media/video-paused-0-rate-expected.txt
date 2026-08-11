@@ -1,0 +1,8 @@
+
+Test that setting '0' playbackRate works correctly.
+
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

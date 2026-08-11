@@ -1,0 +1,60 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    const adapter = await navigator.gpu.requestAdapter();
+    const device = await adapter.requestDevice();
+
+    const indexBuffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.INDEX, mappedAtCreation: true });
+    new Uint32Array(indexBuffer.getMappedRange()).set([0, 1, 2, 0]);
+    indexBuffer.unmap();
+
+    const vertexBuffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.VERTEX, mappedAtCreation: true });
+    new Float32Array(vertexBuffer.getMappedRange()).set([1.0, 2.0, 3.0, 4.0]);
+    vertexBuffer.unmap();
+
+    const shaderModule = device.createShaderModule({ code: `
+        @vertex fn vs(@location(0) pos: f32) -> @builtin(position) vec4<f32> {
+            return vec4<f32>(pos, 0.0, 0.0, 1.0);
+        }
+        @fragment fn fs() -> @location(0) vec4<f32> {
+            return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+        }
+    `});
+    const pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module: shaderModule, entryPoint: 'vs',
+            buffers: [{ arrayStride: 4, stepMode: 'vertex', attributes: [{ shaderLocation: 0, offset: 0, format: 'float32' }] }]
+        },
+        fragment: { module: shaderModule, entryPoint: 'fs', targets: [{ format: 'bgra8unorm' }] }
+    });
+
+    const colorTexture = device.createTexture({ size: [1, 1], format: 'bgra8unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    const renderPassDescriptor = {
+        colorAttachments: [{ view: colorTexture.createView(), clearValue: [0, 0, 0, 1], loadOp: 'clear', storeOp: 'store' }]
+    };
+
+    function draw(baseVertex) {
+        const commandEncoder = device.createCommandEncoder();
+        const pass = commandEncoder.beginRenderPass(renderPassDescriptor);
+        pass.setPipeline(pipeline);
+        pass.setVertexBuffer(0, vertexBuffer);
+        pass.setIndexBuffer(indexBuffer, 'uint32');
+        pass.drawIndexed(3, 1, 0, baseVertex, 0);
+        pass.end();
+        device.queue.submit([commandEncoder.finish()]);
+        return device.queue.onSubmittedWorkDone();
+    }
+
+    await draw(0);
+    await draw(-2147483648);
+
+    debug('Pass');
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+run();
+</script>

@@ -1,0 +1,7 @@
+
+Harness Error (FAIL), message = Error: bidi.permissions.set_permission() is not implemented by testdriver-vendor.js
+
+NOTRUN Permissions-Policy header geolocation=* allows the top-level document.
+NOTRUN Permissions-Policy header geolocation=* allows same-origin iframes.
+NOTRUN Permissions-Policy header geolocation=* allows cross-origin iframes.
+

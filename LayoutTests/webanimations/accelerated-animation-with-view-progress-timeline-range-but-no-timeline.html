@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+<body>
+<div id="target">PASS if this does not crash.</div>
+<script>
+
+window.testRunner?.dumpAsText();
+
+document.getElementById("target").animate({ offset: "cover 0%", transform: "scale(2)" }, 1000);
+
+</script>
+</body>
+</html>

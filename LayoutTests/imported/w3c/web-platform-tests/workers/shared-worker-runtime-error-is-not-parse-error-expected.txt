@@ -1,0 +1,5 @@
+
+PASS eval() with syntax error fires at global scope but not at SharedWorker
+PASS JSON.parse() error fires at global scope but not at SharedWorker
+PASS Script parse error dispatches plain Event at SharedWorker
+

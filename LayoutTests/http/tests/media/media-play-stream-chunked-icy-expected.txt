@@ -1,0 +1,9 @@
+
+Test ended by:
+
+Play streamed media.
+Verify that the 'ended' event fires upon finishing the playback.
+
+EVENT(ended)
+END OF TEST
+

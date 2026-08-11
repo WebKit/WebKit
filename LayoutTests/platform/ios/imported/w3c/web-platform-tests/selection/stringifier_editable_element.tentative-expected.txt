@@ -1,0 +1,17 @@
+      Button Anchor Text
+
+Harness Error (TIMEOUT), message = null
+
+PASS select the entire input should result all the content
+PASS toString() should return empty when the focus is not on the editable content
+PASS toString() works with selectionStart and selectionEnd for input
+PASS select the entire textarea should result all the content
+PASS toString() works with selectionStart and selectionEnd for textarea
+FAIL toString() works even if a click just occured on a button assert_equals: expected "This is a text" but got ""
+PASS toString() works for programatically calling .click() on anchor (without href)
+TIMEOUT toString() doesn't work for actual clicking the anchor (without href) Test timed out
+NOTRUN toString() works for programatically calling .click() on anchor (with href)
+NOTRUN toString() also works for actual clicking the anchor (with href)
+NOTRUN Click on a text prior to toString() moves the seleciton
+NOTRUN Click on a `user-select:none` text prior to toString() doesn't move the seleciton
+

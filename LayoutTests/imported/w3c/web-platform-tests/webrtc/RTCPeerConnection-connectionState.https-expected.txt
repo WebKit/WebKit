@@ -1,0 +1,10 @@
+
+PASS Initial connectionState should be new
+PASS Closing the connection should set connectionState to closed
+PASS connection with one data channel should eventually have connected connection state
+PASS connection with one data channel should eventually have transports in connected state
+PASS connectionState remains new when not adding remote ice candidates
+PASS connectionState transitions to connected via connecting
+PASS when adding a datachannel to an existing unbundled connected PC, it should go through a connecting state
+PASS Closing a PeerConnection should not fire connectionstatechange event
+

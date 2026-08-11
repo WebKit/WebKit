@@ -1,0 +1,14 @@
+<style>
+span { -webkit-user-select: all; }
+a { -webkit-user-select: none; }
+</style>
+<body id=body contentEditable="true"><span><a>a</a><canvas id=canvas></canvas></span>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    body.appendChild(canvas);
+    document.execCommand("selectAll", false);
+    document.execCommand("insertOrderedList", false);
+    document.body.innerText = "Tests inserting list in paragraphs that have userSelect:none elements. The test passes if WebKit doesn't crash or hit an ssertion.";
+</script>

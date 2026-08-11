@@ -1,0 +1,5 @@
+light dismiss target
+popover
+
+PASS Light dismiss should still happen if the clicked element is removed during pointerdown.
+

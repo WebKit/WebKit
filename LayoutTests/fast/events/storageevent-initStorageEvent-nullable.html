@@ -1,0 +1,25 @@
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests nullable parameters to StorageEvent.initStorageEvent()");
+
+var event = new StorageEvent("storage");
+shouldBe("event.__proto__", "StorageEvent.prototype");
+
+evalAndLog('event.initStorageEvent("storage", false, false, "key", "oldValue", "newValue", "url")');
+shouldBeEqualToString("event.oldValue", "oldValue");
+shouldBeEqualToString("event.newValue", "newValue");
+
+evalAndLog('event.initStorageEvent("storage", false, false, "key", null, null, "url")');
+shouldBeNull("event.oldValue");
+shouldBeNull("event.newValue");
+
+evalAndLog('event.initStorageEvent("storage", false, false, "key", "oldValue", "newValue", "url")');
+shouldBeEqualToString("event.oldValue", "oldValue");
+shouldBeEqualToString("event.newValue", "newValue");
+
+evalAndLog('event.initStorageEvent("storage", false, false, "key", undefined, undefined, "url")');
+shouldBeNull("event.oldValue");
+shouldBeNull("event.newValue");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>

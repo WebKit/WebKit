@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<link rel="stylesheet" href="resources/test.css">
+</head>
+<body>
+<p id="description"></p>
+<div id="test" class="test" style="width: 200px; height: 200px; border: 1px solid black" contenteditable="true">Hello from Cupertino!</div>
+<p id="console"></p>
+<script>
+window.jsTestIsAsync = true;
+
+description("This tests that the text insertion point is before the inserted text placeholder when it's inserted at the end of a word. This test can only be run in WebKitTestRunner or DumpRenderTree.");
+
+async function runTest()
+{
+    let testElement = document.getElementById("test");
+    if (window.testRunner)
+        await UIHelper.activateElementAndWaitForInputSession(testElement);
+    else
+        await UIHelper.callFunctionAndWaitForEvent(() => testElement.focus(), testElement, "focus");
+
+    let endOfHello = testElement.textContent.indexOf("Hello") + 5;
+    window.getSelection().setBaseAndExtent(testElement.firstChild, endOfHello, testElement.firstChild, endOfHello);
+
+    if (window.internals) {
+        let lineHeight = parseInt(window.getComputedStyle(testElement, null).lineHeight, 10);
+        internals.insertTextPlaceholder(0 /* width */, lineHeight);
+    }
+
+    shouldBeEqualToString("window.getSelection().type", "Caret");
+    shouldBe("window.getSelection().baseOffset", "'Hello'.length");
+
+    if (window.testRunner) {
+        // Cleanup to make the results pretty.
+        document.body.removeChild(testElement);
+    }
+
+    finishJSTest();
+}
+runTest();
+</script>
+</body>
+</html>

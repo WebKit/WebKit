@@ -1,0 +1,4 @@
+Test inline web worker via blob URL.
+Hello from worker
+DONE
+

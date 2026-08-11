@@ -1,0 +1,5 @@
+
+
+PASS relatedTarget should not leak at capturing phase, at window object.
+PASS relatedTarget should not leak at target.
+

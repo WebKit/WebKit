@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<style>
+    #containing-block {
+        position: relative;
+    }
+
+    #anchor {
+        position: absolute;
+
+        width: 200px;
+        height: 100px;
+
+        anchor-name: --anchor;
+
+        background: red;
+    }
+
+    #anchor-positioned {
+        position: absolute;
+
+        width: anchor-size(--anchor width);
+        height: anchor-size(--anchor height);
+
+        background: green;
+
+        z-index: 1;
+    }
+</style>
+
+Test passes if no red is visible.
+
+<div id="containing-block">
+    <!--
+        Both rectangles below overlaps.
+        #anchor is red, #anchor-positioned is green and above #anchor in Z order.
+        If no red is visible then #anchor-positioned has fully covered #anchor.
+    -->
+    <div id="anchor"></div>
+    <div id="anchor-positioned"></div>
+</div>
+
+<script>
+    if (window.internals)
+        window.internals.setPageZoomFactor(2);
+    if (window.parent !== window)
+        window.parent.postMessage("testCompleted", "*");
+</script>

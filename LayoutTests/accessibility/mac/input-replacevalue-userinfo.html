@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../editing/editing.js"></script>
+</head>
+<body>
+
+<input type="text" id="field" value="a">
+<input type="password" id="secure-field" value="a">
+
+<script>
+var output = "This tests that the value change notifications user info data are correct when replacing the contents of an input field.\n\n";
+
+const AXTextStateChangeTypeEdit = 1;
+const AXTextEditTypeDelete = 1;
+const AXTextEditTypeInsert = AXTextEditTypeDelete + 1;
+
+var globalUserInfo = null;
+function notificationCallback(notification, userInfo) {
+    if (notification == "AXValueChanged")
+        globalUserInfo = userInfo;
+}
+
+async function testField(id, newValue, expectedDeletion, expectedInsertion) {
+    // Assign the expected values to their corresponding globals so that they can be used in expect().
+    globalExpectedDeletion = expectedDeletion;
+    globalExpectedInsertion = expectedInsertion;
+    output += `globalExpectedDeletion: ${globalExpectedDeletion}\n`;
+    output += `globalExpectedInsertion: ${globalExpectedInsertion}\n`;
+
+    globalUserInfo = null;
+    document.getElementById(id).value = newValue;
+    await waitFor(() => { return globalUserInfo; });
+    // The userInfo for a replacement edit operation consists of a dictionary with the type AXTextStateChangeTypeEdit and an array of 2 elements describing the deletion and the insertion.
+    output += expect("globalUserInfo['AXTextStateChangeType']", "AXTextStateChangeTypeEdit");
+    values = globalUserInfo['AXTextChangeValues'];
+    output += expect("values.length", "2");
+    // Each array element is in turn a dictionary with the EditType, deletion or insertion, and the text being deleted or inserted.
+    output += expect("values[0]['AXTextEditType']", "AXTextEditTypeDelete");
+    output += expect("values[0]['AXTextChangeValue']", "globalExpectedDeletion");
+    output += expect("values[1]['AXTextEditType']", "AXTextEditTypeInsert");
+    output += expect("values[1]['AXTextChangeValue']", "globalExpectedInsertion");
+}
+
+if (window.accessibilityController) {
+    jsTestIsAsync = true;
+    accessibilityController.enableEnhancedAccessibility(true);
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    webArea.addNotificationListener(notificationCallback);
+
+    var globalExpectedDeletion, globalExpectedInsertion;
+    setTimeout(async () => {
+        output += "Regular text field:\n";
+        await testField("field", "b", "a", "b");
+
+        output += "Password field:\n";
+        // Notification userInfo should come with masking characters (bullet = \u2022) regardless the inner or new value.
+        await testField("secure-field", "b", "\u2022", "\u2022");
+
+        webArea.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

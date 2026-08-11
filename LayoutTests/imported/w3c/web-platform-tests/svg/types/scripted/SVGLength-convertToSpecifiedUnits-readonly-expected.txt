@@ -1,0 +1,7 @@
+
+PASS SVGLength, convertToSpecifiedUnits on read-only animVal, animVal throws NoModificationAllowedError
+PASS SVGLength, convertToSpecifiedUnits on read-only animVal, animVal unchanged after failed conversion
+PASS SVGLength, convertToSpecifiedUnits on read-only animVal, animVal throws for percentage
+PASS SVGLength, convertToSpecifiedUnits on read-only animVal, animVal throws for ems
+PASS SVGLength, convertToSpecifiedUnits on read-only animVal, baseVal still accepts conversion
+

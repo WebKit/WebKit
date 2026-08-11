@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test IDN behavior for .рф top level domain.");
+
+function test(url)
+{
+    var domURL = new URL(url);
+    return internals.userVisibleString(domURL);
+}
+
+shouldBe("test('http://президент.рф/')", "'http://президент.рф/'");
+shouldBe("test('http://президент.рф./')", "'http://президент.рф./'");
+shouldBe("test('http://www.президент.рф/')", "'http://www.президент.рф/'");
+shouldBe("test('http://почта.президент.рф/')", "'http://почта.президент.рф/'");
+shouldBe("test('http://0ж9.рф/')", "'http://0ж9.рф/'");
+shouldBe("test('http://туда-сюда.рф/')", "'http://туда-сюда.рф/'");
+shouldBe("test('http://прeзидент.рф/') /* spoof: Roman 'e' */", "'http://xn--e-htbdgf6aiiy.xn--p1ai/'");
+shouldBe("test('http://caxap.рф/') /* spoof: all characters in 'caxap' are Roman */", "'http://caxap.xn--p1ai/'");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

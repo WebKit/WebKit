@@ -1,0 +1,65 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/arrows.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/comment-in-cue-text.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/empty.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/header-garbage.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/header-space.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/header-tab.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/header-timings.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/ids.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/newlines.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/nulls.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/regions-id.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/regions-lines.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/regions-old.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/regions-regionanchor.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/regions-scroll.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/regions-viewportanchor.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/settings-align.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/settings-line.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/settings-multiple.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/settings-position.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/settings-region.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/settings-size.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/settings-vertical.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-bom.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-formfeed.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-invalid-whitespace.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-invalid.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-lowercase.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-missing-whitespace.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-missing.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-no-newline.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-null.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-partial.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-space-no-newline.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-space.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-tab-no-newline.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-tab.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-timings.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-two-boms.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/signature-websrt.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/stylesheets.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/timings-60.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/timings-eof.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/timings-garbage.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/timings-negative.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/timings-omitted-hours.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/timings-too-long.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/timings-too-short.test
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/parsing/file-parsing/support/whitespace-chars.test

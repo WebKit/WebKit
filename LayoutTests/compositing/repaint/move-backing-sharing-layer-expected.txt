@@ -1,0 +1,27 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 817.00 585.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 817.00 585.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 8.00 13.00)
+          (bounds 20.00 20.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 15.00 15.00)
+          (bounds 802.00 202.00)
+          (drawsContent 1)
+          (repaint rects
+            (rect 201.00 51.00 100.00 100.00)
+            (rect 401.00 51.00 100.00 100.00)
+          )
+        )
+      )
+    )
+  )
+)
+

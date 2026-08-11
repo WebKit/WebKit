@@ -1,0 +1,4 @@
+Try to select this text. Pass if non-selection is visible.
+
+PASS Can select with defaultPrevented mousemove
+PASS Can select with regular mousemove

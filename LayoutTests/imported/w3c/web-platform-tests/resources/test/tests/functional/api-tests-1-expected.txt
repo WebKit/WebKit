@@ -1,0 +1,57 @@
+Sample HTML5 API Tests
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Setup function ran
+PASS window onload event fires when set from the handler
+PASS on_event does not use event capture
+PASS body element fires the onload event set from the attribute
+PASS document.body should be the first body element in the document
+PASS assert_equals tests
+FAIL assert_equals tests expected to fail assert_equals: Zero case expected 0 but got -0
+PASS assert_not_equals tests
+PASS assert_true expected to pass
+FAIL assert_true expected to fail assert_true: false should not be true expected true got false
+PASS basic assert_array_equals test
+FAIL assert_array_equals with first param undefined assert_array_equals: undefined equals [1]? value is undefined, expected array
+FAIL assert_array_equals with first param true assert_array_equals: true equals [1]? value is true, expected array
+FAIL assert_array_equals with first param false assert_array_equals: false equals [1]? value is false, expected array
+FAIL assert_array_equals with first param null assert_array_equals: null equals [1]? value is null, expected array
+FAIL assert_array_equals with first param 1 assert_array_equals: 1 equals [1]? value is 1, expected array
+PASS basic assert_array_approx_equals test
+PASS basic assert_approx_equals test
+PASS basic assert_less_than test
+PASS bigint assert_less_than test
+FAIL assert_greater_than expected to fail assert_greater_than: 10 is not greater than 11 expected a number greater than 11 but got 10
+FAIL bigint assert_greater_than expected to fail assert_greater_than: 10n is not greater than 11n expected a number greater than 11n but got 10n
+PASS basic assert_greater_than_equal test
+PASS bigint assert_greater_than_equal test
+FAIL assert_less_than_equal expected to fail assert_greater_than_equal: '10' is not a number expected a number but got a "string"
+PASS test for assert[_not]_own_property and insert_inherits
+PASS Test throw DOM exception
+FAIL Test throw DOMException as JS exception expected to fail assert_throws_js: function "function DOMException() {
+    [native code]
+}" is not an Error subtype
+FAIL Test throw SyntaxError DOMException where JS SyntaxError expected; expected to fail assert_throws_js: function "function () {document.querySelector("")}" threw object "SyntaxError: '' is not a valid selector." ("SyntaxError") expected instance of function "function SyntaxError() {
+    [native code]
+}" ("SyntaxError")
+PASS Test throw JS SyntaxError
+PASS Test throw DOM SyntaxError
+PASS Test throw DOM SyntaxError from subframe
+FAIL Test throw DOM SyntaxError from subframe with incorrect global expectation; expected to fail assert_throws_dom: function "function () {ifr.contentDocument.querySelector("")}" threw an exception from the wrong global
+FAIL Test throw DOM SyntaxError with incorrect expectation; expected to fail assert_throws_dom: function "function () {document.querySelector("")}" threw an exception from the wrong global
+FAIL Test throw JS SyntaxError where SyntaxError DOMException expected; expected to fail assert_throws_dom: function "function () {JSON.parse("{")}" threw object "SyntaxError: JSON Parse error: Expected '}'" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
+FAIL Test throw DOM exception expected to fail assert_throws_dom: function "function () {a.appendChild(b)}" threw object "HierarchyRequestError: The operation would yield an incorrect node tree." that is not a DOMException NOT_FOUND_ERR: property "code" is equal to 3, expected 8
+FAIL Test assert_throws_dom with ambiguous DOM-exception expected to Fail Test bug: ambiguous DOMException code 0 passed to assert_throws_dom()
+FAIL Test assert_throws_dom with non-DOM-exception expected to Fail Test bug: unrecognized DOMException code name or name "TEST_ERR" passed to assert_throws_dom()
+PASS Test assert_throws_dom with number code value expected to Pass
+PASS Test assert_throws_dom with number code value and real DOMException expected to Pass
+PASS Test step_func
+PASS Test async test with callback
+PASS Test async test with callback and `this` obj.
+TIMEOUT test should timeout (fail) with the default of 2 seconds Test timed out
+NOTRUN async test that is never started, should have status Not Run
+PASS Test that defines a global and cleans it up
+PASS Test that cleanup handlers from previous test ran
+

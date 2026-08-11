@@ -1,0 +1,311 @@
+<!-- This runs the GMs and unit tests which have been compiled to WASM. When this completes,
+either window._error will be set or window._testsDone will be true and window._results will be an
+array of the test names and what they drew.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WASM Runner of GMs and Unit Tests</title>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/static/wasm_gm_tests.js" type="text/javascript" charset="utf-8"></script>
+  <style type="text/css" media="screen">
+    #status_text {
+      min-width: 900px;
+      min-height: 500px;
+    }
+  </style>
+</head>
+<body>
+<main>
+  <button id=start_tests>Start Tests</button>
+  <br>
+  <pre id=status_text></pre>
+
+  <canvas id=gm_canvas></canvas>
+</main>
+<script type="text/javascript" charset="utf-8">
+  const loadTestsPromise = InitWasmGMTests({
+    locateFile: (file) => '/static/'+file,
+  });
+
+  const loadKnownHashesPromise = fetch('/static/hashes.txt').then((resp) => resp.text());
+
+  const resourceNames = [];
+  const loadResourceListing = fetch('/static/resource_listing.json').then((resp) => resp.json())
+    .then((json) => {
+    console.debug('should fetch resources', json);
+    const loadingPromises = [];
+    for (const resource of json) {
+      resourceNames.push(resource);
+      const url = `/static/resources/${resource}`;
+      loadingPromises.push(fetch(url).then((resp) => resp.arrayBuffer()));
+    }
+    return Promise.all(loadingPromises).catch((e) => {
+      console.error(e);
+      window._error = `Failed getting resources: ${JSON.stringify(e)}`;
+    });
+  });
+
+  let attemptedPOSTs = 0;
+  let successfulPOSTs = 0;
+  Promise.all([loadTestsPromise, loadKnownHashesPromise, loadResourceListing]).then(([GM, hashes, resourceBuffers]) => {
+    GM.Init();
+    LoadResources(GM, resourceNames, resourceBuffers);
+    LoadKnownHashes(GM, hashes);
+    document.getElementById('start_tests').addEventListener('click', async () => {
+      window._testsProgress = 0;
+      window._log = 'Starting\n';
+      window._failed = [];
+      await RunTests(GM);
+      if (window._error) {
+        console.log(window._error);
+        return;
+      }
+      await RunGMs(GM);
+      if (attemptedPOSTs !== successfulPOSTs) {
+        window._error = `Failed to POST all the PNG files (expected ${attemptedPOSTs}, finished ${successfulPOSTs})`;
+      } else {
+        window._testsDone = true;
+      }
+    });
+    window._testsReady = true;
+  });
+
+  const statusElement = document.getElementById('status_text');
+  function log(line) {
+    console.log(line);
+    line += '\n';
+    statusElement.innerText += line;
+    window._log += line;
+  }
+
+  function LoadResources(GM, resourceNames, resourceBuffers) {
+    for (let i = 0; i < resourceNames.length; i++) {
+      const name = resourceNames[i];
+      const buffer = resourceBuffers[i];
+      GM.LoadResource(name, buffer);
+    }
+  }
+
+  // There's a global set of known hashes that we preload with the md5 hashes that are already
+  // uploaded to Gold. This saves us some time to encode them and write them to disk.
+  function LoadKnownHashes(GM, hashes) {
+    log(`Loading ${hashes.length} hashes`);
+    console.time('load_hashes');
+    for (const hash of hashes.split('\n')) {
+      if (hash.length < 5) { // be sure not to add empty lines
+        continue;
+      }
+      GM.LoadKnownDigest(hash);
+    }
+    console.timeEnd('load_hashes');
+    log('hashes loaded');
+  }
+
+  const gmSkipList = new Set([
+    'exoticformats', // Uses SkFILEStream to load resource.
+  ]);
+
+  async function RunGMs(GM) {
+    const canvas = document.getElementById('gm_canvas');
+    const ctx = GM.GetWebGLContext(canvas, 2);
+    const grcontext = GM.MakeGrContext(ctx);
+    if (!grcontext) {
+      window._error = 'Could not make GrContext for gms';
+      return;
+    }
+    window._results = [];
+    // We run these tests in batches so as not to lock up the main thread, which makes it easier
+    // to read the progress as well as making the page more responsive when debugging.
+    await new Promise((resolve, reject) => {
+      const names = GM.ListGMs();
+      names.sort();
+      // When debugging locally, it can be handy to skip to a certain GM by using
+      // names.indexOf here instead of 0.
+      let testIdx = 0;
+      const nextBatch = async () => {
+        for (let i = 0; i < 10 && testIdx < names.length; i++) {
+          testIdx++;
+          const name = names[testIdx];
+          if (!name) {
+            testIdx = names.length;
+            break;
+          }
+          if (gmSkipList.has(name)) {
+            continue;
+          }
+          log(`Starting GM ${name}`);
+          const pngAndMetadata = GM.RunGM(grcontext, name);
+          if (!pngAndMetadata || !pngAndMetadata.hash) {
+            log('    No output (was skipped)');
+            continue; // Was skipped
+          }
+          log(`    drew ${pngAndMetadata.hash}`);
+          window._results.push({
+            name: name,
+            digest: pngAndMetadata.hash,
+          });
+          if (pngAndMetadata.png) {
+            await postPNG(pngAndMetadata.hash, pngAndMetadata.png);
+          }
+          window._testsProgress++;
+        }
+        if (testIdx >= names.length) {
+          resolve();
+          return;
+        }
+        setTimeout(nextBatch);
+      };
+      setTimeout(nextBatch);
+    });
+    grcontext.delete();
+  }
+
+  async function postPNG(hash, data) {
+    attemptedPOSTs += 1;
+    await fetch('/write_png', {
+      method: 'POST',
+      body: data,
+      headers: {
+        'Content-type': 'image/png',
+        'X-MD5-Hash': hash, // this will be used server side to create the name of the png.
+      }
+    }).then((resp) => {
+      if (resp.ok) {
+        successfulPOSTs += 1;
+      } else {
+        console.error('not ok response', resp);
+        log('not ok response ' + resp.toString());
+      }
+    }).catch((e) => {
+      console.error('Could not post PNG', e);
+      log('Could not post PNG ' + resp.toString());
+    });
+  }
+
+  const testSkipList = new Set([
+    // These tests all crash https://bugs.chromium.org/p/skia/issues/detail?id=10869
+
+
+    // note, to catch these crashes, you must compile a debug build,
+    // run with --manual_mode and open the developer console,
+    // and enable pause on exceptions in the sources tab, or the browser will just close
+    // the instant this test crashes.
+
+    // These tests fail when doing a dlopen call
+    // 'To use dlopen, you need to use Emscripten's linking support'
+    // Some of these appear to hit the default case instead of the GLES case in GrContextFactory.cpp
+    // which isn't expected to work. If they had a GLES context, they'd probably pass.
+    'AsyncReadPixelsContextShutdown',
+    'GrContextFactory_abandon',
+    'GrContext_abandonContext',
+    'GrContext_oomed',
+    'GrDDLImage_MakeSubset',
+    'InitialTextureClear',
+    'PinnedImageTest',
+    'PromiseImageTextureShutdown',
+
+    // These tests time out
+    'SkTraceMemoryDump_ownedGLRenderTarget',
+    'GrStyledShape',
+
+    // wasm doesn't have threading
+    'GrContextFactory_executorAndTaskGroup',
+    'GrContextFactory_sharedContexts',
+    'RefCnt',
+    'SkRuntimeEffectThreaded',
+    'SkStrikeMultiThread',
+    'String_Threaded',
+
+    // These tests are crashing for unknown reasons
+    'AdvancedBlendTest',
+    'Data',
+    'ES2BlendWithNoTexture',
+    'TextureBindingsResetTest',
+
+    // keys invalid
+    'GrPathKeys',
+
+    // Creates only 35 of 36 expected fragment processor factories
+    'ProcessorCloneTest',
+    'ProcessorOptimizationValidationTest',
+    'ProcessorRefTest',
+    'Programs',
+
+    // Apparently fail only on release builds / bots
+    'FlushFinishedProcTest',
+    'WritePixelsNonTextureMSAA_Gpu',
+
+    // These SkSL tests fail on the Quadro P400s in the Golo
+    'SkSLCommaSideEffects_Ganesh',
+    'SkSLMatrixScalarNoOpFolding_Ganesh',
+    'SkSLPreserveSideEffects_Ganesh',
+    'SkSLStructFieldNoFolding_Ganesh',
+
+    // These tests use files on disk, which is not supported for WASM
+    'Stream',
+    'StreamBuffer',
+    'StreamPeek',
+    'FILEStreamWithOffset',
+  ]);
+
+  async function RunTests(GM) {
+    const canvas = document.getElementById('gm_canvas');
+    const ctx = GM.GetWebGLContext(canvas, 2);
+    // This sets up the GL context for all tests.
+    const grcontext = GM.MakeGrContext(ctx);
+    if (!grcontext) {
+      window._error = 'Could not make GrContext for tests';
+      return;
+    }
+    // We run these tests in batches so as not to lock up the main thread, which makes it easier
+    // to read the progress as well as making the page more responsive when debugging.
+    await new Promise((resolve, reject) => {
+      const names = GM.ListTests();
+      names.sort();
+      console.log(names);
+      // When debugging locally, it can be handy to skip to a certain test by using
+      // names.indexOf here instead of 0.
+      let testIdx = 0;
+      const nextBatch = () => {
+        for (let i = 0; i < 10 && testIdx < names.length; i++) {
+          testIdx++;
+          const name = names[testIdx];
+          if (!name) {
+            testIdx = names.length;
+            break;
+          }
+          if (testSkipList.has(name)) {
+            continue;
+          }
+          log(`Running test ${name}`);
+          try {
+            const result = GM.RunTest(name);
+            log('    ' + result.result, result.msg || '');
+            if (result.result !== 'passed' && result.result !== 'skipped') {
+              window._failed.push(name);
+            }
+          } catch (e) {
+            log(`${name} crashed with ${e.toString()} ${e.stack}`);
+            window._error = e.toString();
+            reject();
+            return;
+          }
+          window._testsProgress++;
+        }
+        if (testIdx >= names.length) {
+          resolve();
+          return;
+        }
+        setTimeout(nextBatch);
+      };
+      setTimeout(nextBatch);
+    });
+
+    grcontext.delete();
+  }
+</script>
+</body>
+</html>

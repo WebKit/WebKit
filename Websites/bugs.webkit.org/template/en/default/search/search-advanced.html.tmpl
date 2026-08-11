@@ -1,0 +1,55 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # This template has no interface. However, to use it, you need to fulfill
+  # the interfaces of search/form.html.tmpl, search/knob.html.tmpl and
+  # search/boolean-charts.html.tmpl.
+  #%]
+
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
+
+[% javascript = BLOCK %]
+function remove_token() {
+  if (queryform.token) {
+    var asDefault = document.getElementById('remasdefault');
+    queryform.token.disabled = !asDefault.checked;
+  }
+}
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = "Search for $terms.bugs"
+  yui = [ 'autocomplete', 'calendar' ]
+  javascript = javascript
+  javascript_urls = [ "js/util.js", "js/TUI.js", "js/field.js"]
+  style_urls = ['skins/standard/buglist.css']
+  doc_section = "using/finding.html"
+%]
+
+[% WRAPPER search/tabs.html.tmpl %]
+
+[% button_name = "Search" %]
+
+<p id="search_help">Hover your mouse over each field label to get help for that field.</p>
+
+<form method="post" action="buglist.cgi" name="queryform" id="queryform"
+      onsubmit="remove_token()">
+
+[% PROCESS search/form.html.tmpl %]
+
+[% PROCESS "search/boolean-charts.html.tmpl" %]
+
+[% PROCESS search/knob.html.tmpl %]
+
+</form>
+
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]

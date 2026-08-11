@@ -1,0 +1,112 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true dumpJSConsoleLogInStdErr=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script>
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+      setTimeout(() => {
+          testRunner.notifyDone();
+      }, 100);
+    }
+</script>
+<script type="module">
+  if (window.IPC) {
+    import('./coreipc.js').then(({ CoreIPC }) => {
+      var o73='';
+      var o75='';
+      var o77='';
+      CoreIPC.GPU.RemoteMediaPlayerManagerProxy.CreateMediaPlayer(0, {
+        identifier:393216,
+        clientIdentifier:393217,
+        remoteEngineIdentifier:6,
+        proxyConfiguration:{
+          referrer:'',
+          userAgent:o73,
+          sourceApplicationIdentifier:'',
+          networkInterfaceName:'',
+          audioOutputDeviceId:'',
+          mediaContentTypesRequiringHardwareSupport:
+          [
+            {raw:o73,typeWasInferredFromExtension:false},
+            {raw:'',typeWasInferredFromExtension:false},
+            {raw:'',typeWasInferredFromExtension:true},
+            {raw:'',typeWasInferredFromExtension:false},
+            {raw:'',typeWasInferredFromExtension:false},
+            {raw:'',typeWasInferredFromExtension:true},
+            {raw:'',typeWasInferredFromExtension:false},
+            {raw:'',typeWasInferredFromExtension:false}],
+            allowedMediaContainerTypes:{},
+            allowedMediaCodecTypes:{optionalValue:['','','',o75,o73,o73,'']},
+            allowedMediaVideoCodecIDs:{
+              optionalValue:[
+                {value:124},
+                {value:655366},
+                {value:121},
+                {value:720918},
+                {value:125},
+                {value:4},
+                {value:45},
+                {value:115}
+              ]
+            },
+            allowedMediaAudioCodecIDs: {
+              optionalValue:[
+                {value:557939},
+                {value:81},
+                {value:20971541},
+                {value:5},
+                {value:40},
+                {value:15},
+                {value:110},
+                {value:3589472272},
+                {value:17}
+              ]
+            },
+            allowedMediaCaptionFormatTypes:{},
+            playerContentBoxRect:{
+              m_location:{x:{rawValue:68},
+              y:{rawValue:35}
+            },
+            m_size:{
+              width:{rawValue:106},
+              height:{rawValue:0}
+            }
+          },
+          preferredAudioCharacteristics:['A','',''],
+          outOfBandTrackData:[],
+          documentSecurityOrigin:{
+            data:{
+              variantType:'WebCore::SecurityOriginData::Tuple',
+              variant:{protocol:'',host:'',port:{}}
+            }
+          },
+          presentationSize: {width:4,height:65},
+          videoLayerSize:{width:40,height:86},
+          logIdentifier:238,
+          shouldUsePersistentCache:false,
+          isVideo:false,
+          renderingCanBeAccelerated:false,
+          prefersSandboxedParsing:false,
+          shouldDisableHDR:false
+        }
+      });
+      var o83=393216;
+      CoreIPC.GPU.RemoteMediaPlayerProxy.LoadMediaSource(o83,{
+        url:{string:o77},
+        options:{
+          contentType:{
+            raw:'A',
+            typeWasInferredFromExtension:true
+          },
+          requiresRemotePlayback:true,
+          supportsLimitedMatroska:false,
+          videoRendererPreferences:0
+        },
+        mediaSourceIdentifier:393218
+      });
+      var o86=393218;
+      CoreIPC.GPU.RemoteMediaSourceProxy.AddSourceBuffer(o86,{contentType:{raw:'image/heif',typeWasInferredFromExtension:false},configuration:{textTracksEnabled:false,supportsLimitedMatroska:false}});
+      CoreIPC.GPU.RemoteMediaPlayerManagerProxy.DeleteMediaPlayer(0,{identifier:393216});
+    });
+}
+</script>

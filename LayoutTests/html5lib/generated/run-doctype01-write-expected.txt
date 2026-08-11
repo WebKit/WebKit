@@ -1,0 +1,1 @@
+../resources/doctype01.dat: PASS

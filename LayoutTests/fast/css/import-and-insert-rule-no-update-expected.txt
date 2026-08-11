@@ -1,0 +1,3 @@
+Test for bug 56981: CSSStyleSheet#insertRule doesn't work well with imported stylesheets
+You should see one PASS below.
+PASS

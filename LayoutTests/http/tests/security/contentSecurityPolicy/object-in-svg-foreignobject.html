@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="object-src 'none'">
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+    <p>This test ensures that objects inside SVG foreignobject elements are beholden
+    to the same policy as the rest of the document. This test passes if there is
+    a console message saying the plugin was blocked.</p>
+    <svg>
+        <foreignObject>
+            <object xmlns="http://www.w3.org/1999/xhtml" data="/plugins/resources/mock-plugin.pl" />
+        </foreignObject>
+    </svg>
+</body>
+</html>

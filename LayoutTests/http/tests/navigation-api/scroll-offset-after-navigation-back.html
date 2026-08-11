@@ -1,0 +1,59 @@
+<!-- webkit-test-runner [ CSSScrollAnchoringEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 4000px;
+        }
+        
+        .box {
+            margin-top: 200px;
+            width: 100px;
+            height: 100px;
+            background-color: green;
+            cursor: pointer;
+        }
+    </style>
+    <script src='/js-test-resources/ui-helper.js'></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        async function runTest()
+        {
+            let start_url = location.href;
+
+            window.scrollTo(0, 200);
+
+            await navigation.navigate("#frag").finished;
+
+            let intercept_resolve;
+            let navigate_event;
+            navigation.onnavigate = e => {
+                navigate_event = e;
+                e.intercept({ handler: () => new Promise(r => intercept_resolve = r) });
+            };
+
+            let promises = navigation.navigate(start_url);
+            await promises.committed;
+
+            intercept_resolve();
+
+            await promises.finished;
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', () => {
+            // Wait for the load event so that the navigation doesn't get cvonerted into a replace navigation.
+            setTimeout(runTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+<div id="frag"></div>
+<div class="box"></div>
+</body>
+</html>

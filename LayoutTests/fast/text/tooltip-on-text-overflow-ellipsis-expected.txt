@@ -1,0 +1,2 @@
+This is a long text with text-overflow: ellipsis. PASS if tooltip shows up on hover.
+This is a long text with text-overflow: ellipsis. PASS if tooltip shows up on hover.

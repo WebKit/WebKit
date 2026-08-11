@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Tests RTCDataChannel.");
+
+            var pc = null;
+            var dc = null;
+            var data;
+            var array;
+
+            function dc_onclose() {
+                testPassed("dc_onclose was called");
+                shouldBe("dc.readyState", "'closed'");
+
+                finishJSTest();
+            }
+
+            function dc_onmessage_arraybufferview(e) {
+                testPassed("dc_onmessage_arraybufferview was called");
+                data = e.data;
+                shouldBe("data.byteLength", "2");
+                array = new Int8Array(e.data);
+                shouldBe("array[0]", "11");
+                shouldBe("array[1]", "13");
+
+                dc.onclose = dc_onclose;
+                dc.close();
+            }
+
+            function dc_onmessage_arraybuffer(e) {
+                testPassed("dc_onmessage_arraybuffer was called");
+                data = e.data;
+                shouldBe("data.byteLength", "2");
+                array = new Int8Array(e.data);
+                shouldBe("array[0]", "17");
+                shouldBe("array[1]", "19");
+
+                array[0] = 11;
+                array[1] = 13;
+                dc.onmessage = dc_onmessage_arraybufferview;
+                shouldNotThrow("dc.send(array);");
+            }
+
+            function dc_onmessage_string(e) {
+                testPassed("dc_onmessage_string was called");
+                data = e.data;
+                shouldBe("data", "'xyzzy'");
+
+                dc.binaryType = "arraybuffer";
+                buffer = new ArrayBuffer(2);
+                var array = new Int8Array(buffer);
+                array[0] = 17;
+                array[1] = 19;
+                dc.onmessage = dc_onmessage_arraybuffer;
+                shouldNotThrow("dc.send(buffer);");
+            }
+
+            function dc_onopen() {
+                testPassed("dc_onopen was called");
+                shouldBe("dc.readyState", "'open'");
+                shouldBe("dc.label", "'label'");
+
+                dc.onmessage = dc_onmessage_string;
+                shouldNotThrow("dc.send('xyzzy');");
+
+                shouldThrow("dc.send(null);");
+                shouldThrow("dc.send(undefined);");
+            }
+
+            function pc_ondatachannel(e) {
+                testPassed("pc_ondatachannel was called");
+            }
+
+            function pc_onicechange() {
+                if (pc.iceConnectionState === "completed") {
+                    testPassed("pc is connected");
+                    shouldNotThrow('dc = pc.createDataChannel("label");');
+                    shouldBe("dc.readyState", "'connecting'");
+                    dc.onopen = dc_onopen;
+                }
+            }
+
+            pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            shouldThrow('dc = pc.createDataChannel("label", {maxRetransmitTime:0, maxRetransmits:0});');
+            shouldNotThrow('dc = pc.createDataChannel("label1");');
+            shouldNotThrow('dc = pc.createDataChannel("label2", {});');
+            shouldNotThrow('dc = pc.createDataChannel("label3", {ordered:true});');
+            shouldNotThrow('dc = pc.createDataChannel("label3", {ordered:false});');
+            shouldNotThrow('dc = pc.createDataChannel("label3", {maxRetransmits:0});');
+            shouldNotThrow('dc = pc.createDataChannel("label3", {maxRetransmitTime:0});');
+
+            pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            pc.oniceconnectionstatechange = pc_onicechange;
+            pc.ondatachannel = pc_ondatachannel;
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+            setTimeout(function() {
+                testFailed("Test timed out");
+                finishJSTest();
+            }, 2000);
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

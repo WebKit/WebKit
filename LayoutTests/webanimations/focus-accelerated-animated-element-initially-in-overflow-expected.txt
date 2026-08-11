@@ -1,0 +1,3 @@
+
+PASS Calling 'focus()' on an element initially in overflow with a `transform` animation bringing it into view should not cause its container to scroll.
+

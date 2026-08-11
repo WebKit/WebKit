@@ -1,0 +1,416 @@
+/*
+ * Copyright (C) 2021-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2023, 2024 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "ReferencedSVGResources.h"
+
+#include "ContainerNodeInlines.h"
+#include "Document.h"
+#include "DocumentView.h"
+#include "LegacyRenderSVGResourceClipper.h"
+#include "LegacyRenderSVGResourceContainerInlines.h"
+#include "PathOperation.h"
+#include "RenderLayer.h"
+#include "RenderLayerModelObject.h"
+#include "RenderObjectInlines.h"
+#include "RenderSVGPath.h"
+#include "RenderSVGResourceGradient.h"
+#include "RenderSVGResourcePattern.h"
+#include "SVGClipPathElement.h"
+#include "SVGDocument.h"
+#include "SVGDocumentExtensions.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGFilterElement.h"
+#include "SVGMarkerElement.h"
+#include "SVGMaskElement.h"
+#include "SVGResourceElementClient.h"
+#include "Settings.h"
+#include "StyleComputedStyle.h"
+#include "StyleFilterReference.h"
+#include "StyleImage.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+class CSSSVGResourceElementClient final : public SVGResourceElementClient {
+    WTF_MAKE_TZONE_ALLOCATED(CSSSVGResourceElementClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CSSSVGResourceElementClient);
+public:
+    CSSSVGResourceElementClient(RenderElement& clientRenderer)
+        : m_clientRenderer(clientRenderer)
+    {
+    }
+
+    void resourceChanged(SVGElement&) final;
+
+    const RenderElement& NODELETE renderer() const final { return m_clientRenderer.get(); }
+
+private:
+    const CheckedRef<RenderElement> m_clientRenderer;
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CSSSVGResourceElementClient);
+
+void CSSSVGResourceElementClient::resourceChanged(SVGElement& element)
+{
+    if (m_clientRenderer->renderTreeBeingDestroyed())
+        return;
+
+    if (is<SVGFilterElement>(element)) {
+        if (auto* layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get())) {
+            if (CheckedPtr layer = layerModelObject->layer())
+                layer->clearFilters();
+        }
+    }
+
+    if (!m_clientRenderer->document().settings().layerBasedSVGEngineEnabled()) {
+        m_clientRenderer->repaint();
+        return;
+    }
+
+    bool resourceIsPaintServer = is<RenderSVGResourceGradient>(element.renderer()) || is<RenderSVGResourcePattern>(element.renderer());
+
+    // A gradient or pattern change can leave the cached fill or stroke paint server stale, so drop
+    // it before the needsLayout() return below, because layout never touches the cache. Other
+    // resource types are not paint servers, so they leave it alone.
+    if (resourceIsPaintServer) {
+        if (CheckedPtr layerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get()))
+            layerModelObject->invalidateSVGPaintServerCache();
+    }
+
+    if (m_clientRenderer->needsLayout())
+        return;
+
+    CheckedPtr clientLayerModelObject = dynamicDowncast<RenderLayerModelObject>(m_clientRenderer.get());
+
+    // A non-layer SVG client applies clip-path/mask at paint time, so the area the resource used to cover
+    // lives only in its cached visual overflow rect (kept current at the end of the client's own layout).
+    // Capture the old repaint rects before that cache is dropped below, so the affected region is
+    // repainted along with the new one. Layered clients keep their old bounds in the layer's stored
+    // repaint rect and go through the position update instead.
+    bool isNonLayerSVGClient = clientLayerModelObject && clientLayerModelObject->isSVGLayerAwareRenderer() && !clientLayerModelObject->hasLayer();
+    std::optional<RenderObject::RepaintRects> oldRepaintRects;
+    SingleThreadWeakPtr<const RenderLayerModelObject> repaintContainer;
+    if (isNonLayerSVGClient) {
+        repaintContainer = clientLayerModelObject->containerForRepaint().renderer.get();
+        CheckedPtr checkedRepaintContainer = repaintContainer.get();
+        oldRepaintRects = clientLayerModelObject->rectsForRepaintingAfterLayout(checkedRepaintContainer.get(), RepaintOutlineBounds::Yes);
+    }
+
+    // Invalidate cached visual overflow rect since resource bounds may have changed.
+    if (clientLayerModelObject) {
+        clientLayerModelObject->invalidateCachedVisualOverflowRect();
+        // Ensure the post-layout recursiveUpdateLayerPositions() processes this client layer
+        // and generates repaint rects, even if the client's own geometry didn't change.
+        if (CheckedPtr layer = clientLayerModelObject->layer())
+            layer->setSelfAndDescendantsNeedPositionUpdate();
+    }
+
+    // Special case for markers. Markers can be attached to RenderSVGPath object. Marker positions are computed
+    // once during layout, or if the shape itself changes. Here we manually update the marker positions without
+    // requiring a relayout. Instead we can simply repaint the path - via the updateLayerPosition() logic, properly
+    // repainting the old repaint boundaries and the new ones (after the marker change).
+    if (auto* pathClientRenderer = dynamicDowncast<RenderSVGPath>(m_clientRenderer.get()); pathClientRenderer && is<SVGMarkerElement>(element))
+        pathClientRenderer->updateMarkerPositions();
+
+    // During layout, clients with layers are handled by the post-layout
+    // recursiveUpdateLayerPositions() phase. Clients without layers need a direct repaint.
+    if (m_clientRenderer->document().view()->layoutContext().isInLayout()) {
+        if (clientLayerModelObject && clientLayerModelObject->hasLayer())
+            return;
+    }
+
+    if (oldRepaintRects) {
+        CheckedPtr checkedRepaintContainer = repaintContainer.get();
+        auto newRepaintRects = clientLayerModelObject->rectsForRepaintingAfterLayout(checkedRepaintContainer.get(), RepaintOutlineBounds::Yes);
+        clientLayerModelObject->repaintAfterLayoutIfNeeded(WTF::move(repaintContainer), RequiresFullRepaint::Yes, *oldRepaintRects, newRepaintRects);
+        return;
+    }
+
+    m_clientRenderer->repaintOldAndNewPositionsForSVGRenderer();
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ReferencedSVGResources);
+
+ReferencedSVGResources::ReferencedSVGResources(RenderElement& renderer)
+    : m_renderer(renderer)
+{
+}
+
+ReferencedSVGResources::~ReferencedSVGResources()
+{
+    for (auto& targetID : copyToVector(m_elementClients.keys()))
+        removeClientForTarget(targetID);
+}
+
+void ReferencedSVGResources::addClientForTarget(SVGElement& targetElement, const AtomString& targetID)
+{
+    m_elementClients.ensure(targetID, [&] {
+        auto client = makeUnique<CSSSVGResourceElementClient>(m_renderer);
+        targetElement.addReferencingCSSClient(*client);
+        return ClientEntry { WTF::move(client), targetElement };
+    });
+}
+
+void ReferencedSVGResources::removeClientForTarget(const AtomString& targetID)
+{
+    auto entry = m_elementClients.take(targetID);
+    if (RefPtr targetElement = entry.targetElement)
+        targetElement->removeReferencingCSSClient(protect(*entry.client));
+}
+
+ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::referencedSVGResourceIDs(const Style::ComputedStyle& style, const Document& document)
+{
+    SVGElementIdentifierAndTagPairs referencedResources;
+    WTF::switchOn(style.clipPath(),
+        [&](const Style::ReferencePath& clipPath) {
+            if (!clipPath.fragment().isEmpty())
+                referencedResources.append({ clipPath.fragment(), { SVGNames::clipPathTag } });
+        },
+        [](const auto&) { }
+    );
+
+    for (auto& value : style.filter()) {
+        WTF::switchOn(value,
+            [&](const Style::FilterReference& filterReference) {
+                if (!filterReference.cachedFragment.isEmpty())
+                    referencedResources.append({ filterReference.cachedFragment, { SVGNames::filterTag } });
+            },
+            []<CSSValueID C, typename T>(const FunctionNotation<C, T>&) { }
+        );
+    }
+
+    if (!document.settings().layerBasedSVGEngineEnabled())
+        return referencedResources;
+
+    if (style.hasPositionedMask()) {
+        // FIXME: We should support all the values in the CSS mask property, but for now just use the first mask-image if it's a reference.
+        if (RefPtr maskImage = style.maskLayers().usedFirst().image().tryStyleImage()) {
+            auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(maskImage->url(), document);
+            if (!resourceID.isEmpty())
+                referencedResources.append({ resourceID, { SVGNames::maskTag } });
+        }
+    }
+
+    if (style.hasMarkers()) {
+        if (auto markerStartResource = style.markerStart(); !markerStartResource.isNone()) {
+            auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerStartResource, document);
+            if (!resourceID.isEmpty())
+                referencedResources.append({ resourceID, { SVGNames::markerTag } });
+        }
+
+        if (auto markerMidResource = style.markerMid(); !markerMidResource.isNone()) {
+            auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerMidResource, document);
+            if (!resourceID.isEmpty())
+                referencedResources.append({ resourceID, { SVGNames::markerTag } });
+        }
+
+        if (auto markerEndResource = style.markerEnd(); !markerEndResource.isNone()) {
+            auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerEndResource, document);
+            if (!resourceID.isEmpty())
+                referencedResources.append({ resourceID, { SVGNames::markerTag } });
+        }
+    }
+
+    if (auto fillURL = style.fill().tryAnyURL()) {
+        auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(*fillURL, document);
+        if (!resourceID.isEmpty())
+            referencedResources.append({ resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag, SVGNames::patternTag } });
+    }
+
+    if (auto strokeURL = style.stroke().tryAnyURL()) {
+        auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(*strokeURL, document);
+        if (!resourceID.isEmpty())
+            referencedResources.append({ resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag, SVGNames::patternTag } });
+    }
+
+    return referencedResources;
+}
+
+void ReferencedSVGResources::updateReferencedResources(TreeScope& treeScope, const ReferencedSVGResources::SVGElementIdentifierAndTagPairs& referencedResources)
+{
+    HashSet<AtomString> oldKeys;
+    for (auto& key : m_elementClients.keys())
+        oldKeys.add(key);
+
+    for (auto& [targetID, tagNames] : referencedResources) {
+        RefPtr element = elementForResourceIDs(treeScope, targetID, tagNames);
+        if (!element)
+            continue;
+
+        addClientForTarget(*element, targetID);
+        oldKeys.remove(targetID);
+    }
+
+    for (auto& targetID : oldKeys)
+        removeClientForTarget(targetID);
+}
+
+bool ReferencedSVGResources::addReferencedSVGResourceIfNeeded(SVGElement& targetElement, const AtomString& targetID)
+{
+    if (m_elementClients.contains(targetID))
+        return false;
+    addClientForTarget(targetElement, targetID);
+    return true;
+}
+
+// SVG code uses getRenderSVGResourceById<>, but that works in terms of renderers. We need to find resources
+// before the render tree is fully constructed, so this works on Elements.
+RefPtr<SVGElement> ReferencedSVGResources::elementForResourceID(TreeScope& treeScope, const AtomString& resourceID, const SVGQualifiedName& tagName)
+{
+    RefPtr element = dynamicDowncast<SVGElement>(treeScope.getElementById(resourceID));
+    if (!element || !element->hasTagName(tagName))
+        return nullptr;
+
+    return element;
+}
+
+RefPtr<SVGElement> ReferencedSVGResources::elementForResourceIDs(TreeScope& treeScope, const AtomString& resourceID, const SVGQualifiedNames& tagNames)
+{
+    RefPtr element = dynamicDowncast<SVGElement>(treeScope.getElementById(resourceID));
+    if (!element)
+        return nullptr;
+
+    for (const auto& tagName : tagNames) {
+        if (element->hasTagName(tagName))
+            return element;
+    }
+
+    return nullptr;
+}
+
+RefPtr<SVGClipPathElement> ReferencedSVGResources::referencedClipPathElement(TreeScope& treeScope, const Style::ReferencePath& clipPath)
+{
+    if (clipPath.fragment().isEmpty())
+        return nullptr;
+
+    Ref document = treeScope.documentScope();
+    CheckedRef extensions = document->svgExtensions();
+    if (auto externalDocument = extensions->externalResourceDocument(clipPath.url().resolved)) {
+        RefPtr resolvedDocument = *externalDocument;
+        if (!resolvedDocument)
+            return nullptr;
+        return downcast<SVGClipPathElement>(elementForResourceID(*resolvedDocument, clipPath.fragment(), SVGNames::clipPathTag));
+    }
+
+    return downcast<SVGClipPathElement>(elementForResourceID(treeScope, clipPath.fragment(), SVGNames::clipPathTag));
+}
+
+RefPtr<SVGMarkerElement> ReferencedSVGResources::referencedMarkerElement(TreeScope& treeScope, const Style::URL& markerResource)
+{
+    Ref document = treeScope.documentScope();
+    CheckedRef extensions = document->svgExtensions();
+    if (auto externalDocument = extensions->externalResourceDocument(markerResource.resolved)) {
+        RefPtr resolvedDocument = *externalDocument;
+        auto resourceID = markerResource.resolved.fragmentIdentifier().toAtomString();
+        if (resourceID.isEmpty() || !resolvedDocument)
+            return nullptr;
+        return downcast<SVGMarkerElement>(elementForResourceID(*resolvedDocument, resourceID, SVGNames::markerTag));
+    }
+
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, protect(document));
+    if (resourceID.isEmpty())
+        return nullptr;
+
+    return downcast<SVGMarkerElement>(elementForResourceID(treeScope, resourceID, SVGNames::markerTag));
+}
+
+RefPtr<SVGMaskElement> ReferencedSVGResources::referencedMaskElement(TreeScope& treeScope, const Style::Image& maskImage)
+{
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(maskImage.url(), protect(treeScope.documentScope()));
+    if (resourceID.isEmpty())
+        return nullptr;
+
+    return referencedMaskElement(treeScope, resourceID);
+}
+
+RefPtr<SVGMaskElement> ReferencedSVGResources::referencedMaskElement(TreeScope& treeScope, const AtomString& resourceID)
+{
+    return downcast<SVGMaskElement>(elementForResourceID(treeScope, resourceID, SVGNames::maskTag));
+}
+
+RefPtr<SVGElement> ReferencedSVGResources::referencedPaintServerElement(TreeScope& treeScope, const Style::URL& uri)
+{
+    Ref document = treeScope.documentScope();
+    CheckedRef extensions = document->svgExtensions();
+    if (auto externalDocument = extensions->externalResourceDocument(uri.resolved)) {
+        RefPtr resolvedDocument = *externalDocument;
+        auto resourceID = uri.resolved.fragmentIdentifier().toAtomString();
+        if (resourceID.isEmpty() || !resolvedDocument)
+            return nullptr;
+        return elementForResourceIDs(*resolvedDocument, resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag, SVGNames::patternTag });
+    }
+
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(uri, protect(document));
+    if (resourceID.isEmpty())
+        return nullptr;
+
+    return elementForResourceIDs(treeScope, resourceID, { SVGNames::linearGradientTag, SVGNames::radialGradientTag, SVGNames::patternTag });
+}
+
+RefPtr<SVGFilterElement> ReferencedSVGResources::referencedFilterElement(TreeScope& treeScope, const Style::FilterReference& filterReference)
+{
+    if (filterReference.cachedFragment.isEmpty())
+        return nullptr;
+
+    Ref document = treeScope.documentScope();
+    CheckedRef extensions = document->svgExtensions();
+    if (auto externalDocument = extensions->externalResourceDocument(filterReference.url.resolved)) {
+        RefPtr resolvedDocument = *externalDocument;
+        if (!resolvedDocument)
+            return nullptr;
+        return downcast<SVGFilterElement>(elementForResourceID(*resolvedDocument, filterReference.cachedFragment, SVGNames::filterTag));
+    }
+
+    return downcast<SVGFilterElement>(elementForResourceID(treeScope, filterReference.cachedFragment, SVGNames::filterTag));
+}
+
+LegacyRenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(TreeScope& treeScope, const Style::ReferencePath& clipPath)
+{
+    if (clipPath.fragment().isEmpty())
+        return nullptr;
+
+    Ref document = treeScope.documentScope();
+    CheckedRef extensions = document->svgExtensions();
+    if (auto externalDocument = extensions->externalResourceDocument(clipPath.url().resolved)) {
+        RefPtr resolvedDocument = *externalDocument;
+        if (!resolvedDocument)
+            return nullptr;
+        return getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(*resolvedDocument, clipPath.fragment());
+    }
+
+    // For some reason, SVG stores a cache of id -> renderer, rather than just using getElementById() and renderer().
+    return getRenderSVGResourceById<LegacyRenderSVGResourceClipper>(treeScope, clipPath.fragment());
+}
+
+LegacyRenderSVGResourceContainer* ReferencedSVGResources::referencedRenderResource(TreeScope& treeScope, const AtomString& fragment)
+{
+    if (fragment.isEmpty())
+        return nullptr;
+    return getRenderSVGResourceContainerById(treeScope, fragment);
+}
+
+} // namespace WebCore

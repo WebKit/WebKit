@@ -1,0 +1,96 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+# We export a known file inside the resources directory so that we can compute a path to said
+# directory from places that support "Make" variables[1], such as the "cmd" attribute[2] of a
+# genrule. For example, a genrule can compute the path to the resources directory from its "cmd"
+# attribute as follows:
+#
+#     $$(dirname $$(rootpath //resources:README))
+#
+# [1] https://bazel.build/reference/be/make-variables
+# [2] https://bazel.build/reference/be/general#genrule.cmd
+exports_files(
+    ["README"],
+    visibility = [
+        "//bench:__pkg__",
+        "//gm:__pkg__",
+        "//tests:__pkg__",
+    ],
+)
+
+skia_filegroup(
+    name = "resources",
+    srcs = [
+        "Cowboy.svg",
+        "crbug769134.fil",
+        "diff_canvas_traces/lorem_ipsum.trace",
+        "nov-talk-sequence.txt",
+        "pdf_command_stream.txt",
+        "//resources/sksl",
+    ] + glob(
+        [
+            "android_fonts/**",
+        ],
+        allow_empty = False,
+    ) + glob(
+        [
+            "empty_images/**",
+        ],
+        allow_empty = False,
+    ) + glob(
+        [
+            "fonts/**",
+        ],
+        allow_empty = False,
+    ) + glob(
+        [
+            "icc_profiles/**",
+        ],
+        allow_empty = False,
+    ) + glob(
+        [
+            "images/**",
+        ],
+        allow_empty = False,
+    ) + glob(
+        [
+            "invalid_images/**",
+        ],
+        allow_empty = False,
+    ) + glob(
+        [
+            "skottie/**",
+        ],
+        allow_empty = False,
+    ) + glob(
+        [
+            "text/**",
+        ],
+        allow_empty = False,
+    ),
+    visibility = [
+        "//bench:__pkg__",
+        "//dm:__pkg__",
+        "//gm:__pkg__",
+        "//src/ports/fontations:__pkg__",
+        "//tests:__pkg__",
+        "//tools/viewer:__pkg__",
+    ],
+)
+
+filegroup(
+    name = "core_test_resources",
+    srcs = [
+        "images/baby_tux.png",
+        "images/baby_tux.webp",
+    ],
+    visibility = [
+        "//tests:__pkg__",
+    ],
+)

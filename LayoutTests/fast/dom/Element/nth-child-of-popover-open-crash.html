@@ -1,0 +1,16 @@
+<p>This test passes if WebKit does not crash.</p>
+<style></style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.styleSheets[0].insertRule(`@scope (:nth-last-child(1 of :popover-open)) { i { } }`);
+
+let element = document.createElement('div');
+document.body.append(element);
+
+element.popover = 'auto';
+element.showPopover();
+element.scrollIntoView();
+element.outerText = 'X';
+</script>

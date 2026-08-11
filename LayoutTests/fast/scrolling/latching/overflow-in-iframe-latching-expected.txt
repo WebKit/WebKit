@@ -1,0 +1,17 @@
+
+Scrolls over a scrolled-to-top overflow inside a scrolled iframe, testing that the iframe scrolls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS iframeTarget.contentWindow.pageYOffset is 100
+PASS overflowInIframeElement.scrollTop is 0
+PASS window.pageYOffset is 20
+After scroll
+FAIL iframeTarget.contentWindow.pageYOffset should be 0. Was 100.
+FAIL overflowInIframeElement.scrollTop should be 0. Was 210.
+PASS window.pageYOffset is 20
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

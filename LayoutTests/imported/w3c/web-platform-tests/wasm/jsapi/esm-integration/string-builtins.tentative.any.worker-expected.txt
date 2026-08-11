@@ -1,0 +1,3 @@
+
+FAIL String builtins should be supported in imports in ESM integration promise_test: Unhandled rejection with value: object "TypeError: Cross-origin script load denied by Cross-Origin Resource Sharing policy."
+

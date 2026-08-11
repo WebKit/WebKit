@@ -1,0 +1,9 @@
+PASS cloned.value is target.value
+PASS internals.userAgentPart(clonedShadowRoot.firstChild.firstChild) is internals.userAgentPart(targetShadowRoot.firstChild.firstChild)
+PASS internals.userAgentPart(clonedShadowRoot.firstChild.firstChild.firstChild) is internals.userAgentPart(targetShadowRoot.firstChild.firstChild.firstChild)
+PASS clonedShadowRoot.firstChild.firstChild.firstChild.style.inlineSize is "70%"
+PASS targetShadowRoot.firstChild.firstChild.firstChild.style.inlineSize is "50%"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

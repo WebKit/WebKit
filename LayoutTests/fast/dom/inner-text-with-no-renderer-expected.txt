@@ -1,0 +1,4 @@
+This tests that innerText works on an element that has no renderer associated. If the test is successful the text "SUCCESS" should be shown below.
+
+SUCCESS
+

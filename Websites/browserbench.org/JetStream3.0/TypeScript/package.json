@@ -1,0 +1,30 @@
+{
+  "name": "typescript-compile",
+  "version": "1.0.0",
+  "description": "A demo project to evaluate TypeScript performance.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./src/benchmark-node.mjs",
+    "clean": "rm -rf dist/* && rm -rf src/gen/*.json",
+    "import": "node ./build/import-src-project.mjs",
+    "prebuild": "npm run clean  && npm run import",
+    "build": "webpack",
+    "build:dev": "npm run prebuild && webpack --mode development"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@dapplets/unicode-escape-webpack-plugin": "^0.1.1",
+    "@types/node": "^24.2.0",
+    "ansi-styles": "^6.2.1",
+    "glob": "^11.0.3",
+    "license-webpack-plugin": "^4.0.2",
+    "path-browserify": "^1.0.1",
+    "typescript": "^5.9.2",
+    "undici-types": "^7.13.0",
+    "util": "^0.12.5",
+    "webpack": "^5.101.0",
+    "webpack-cli": "^6.0.1"
+  }
+}

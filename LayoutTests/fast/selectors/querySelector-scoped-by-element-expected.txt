@@ -1,0 +1,44 @@
+Verify that querySelector only returns elements in the subtree of the element on which the function was called..
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Simple query on #id rooted on 'parent1'.
+PASS document.getElementById("parent1").querySelectorAll("#myDiv").length is 1
+PASS document.getElementById("parent1").querySelectorAll("#myDiv")[0].hasAttribute("data-target1") is true
+
+Simple query on .class rooted on 'parent1'.
+PASS document.getElementById("parent1").querySelectorAll(".myDiv").length is 1
+PASS document.getElementById("parent1").querySelectorAll(".myDiv")[0].hasAttribute("data-target2") is true
+
+Scoped query on #id rooted on 'parent1'.
+PASS document.getElementById("parent1").querySelectorAll(":scope > #myDiv").length is 1
+PASS document.getElementById("parent1").querySelectorAll(":scope > #myDiv")[0].hasAttribute("data-target1") is true
+PASS document.getElementById("parent1").querySelectorAll(":scope > * >  #myDiv").length is 0
+
+Scoped query on .class rooted on 'parent1'.
+PASS document.getElementById("parent1").querySelectorAll(":scope > .myDiv").length is 1
+PASS document.getElementById("parent1").querySelectorAll(":scope > .myDiv")[0].hasAttribute("data-target2") is true
+PASS document.getElementById("parent1").querySelectorAll(":scope > * >  .myDiv").length is 0
+
+Simple query on #id rooted on 'parent2'. The id we are looking for is duplicated in the document.
+PASS document.getElementById("parent2").querySelectorAll("#myDiv").length is 1
+PASS document.getElementById("parent2").querySelectorAll("#myDiv")[0].hasAttribute("data-target3") is true
+
+Simple query on .class rooted on 'parent2'. The id we are looking for is duplicated in the document.
+PASS document.getElementById("parent2").querySelectorAll(".myDiv").length is 1
+PASS document.getElementById("parent2").querySelectorAll(".myDiv")[0].hasAttribute("data-target4") is true
+
+Scoped query on #id rooted on 'parent2'.
+PASS document.getElementById("parent2").querySelectorAll(":scope > #myDiv").length is 1
+PASS document.getElementById("parent2").querySelectorAll(":scope > #myDiv")[0].hasAttribute("data-target3") is true
+PASS document.getElementById("parent2").querySelectorAll(":scope > * >  #myDiv").length is 0
+
+Scoped query on .class rooted on 'parent2'.
+PASS document.getElementById("parent2").querySelectorAll(":scope > .myDiv").length is 1
+PASS document.getElementById("parent2").querySelectorAll(":scope > .myDiv")[0].hasAttribute("data-target4") is true
+PASS document.getElementById("parent2").querySelectorAll(":scope > * >  .myDiv").length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

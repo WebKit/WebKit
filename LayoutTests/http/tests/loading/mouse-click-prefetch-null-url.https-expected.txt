@@ -1,0 +1,2 @@
+Clicking this prefetches something.
+Clicking this link without an href therafter should not crash.

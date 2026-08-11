@@ -1,0 +1,9 @@
+
+PASS :memcpy:
+PASS :large_dispatch:dispatchSize=256
+PASS :large_dispatch:dispatchSize=2048
+PASS :large_dispatch:dispatchSize=315
+PASS :large_dispatch:dispatchSize=628
+PASS :large_dispatch:dispatchSize=2179
+PASS :large_dispatch:dispatchSize="maximum"
+

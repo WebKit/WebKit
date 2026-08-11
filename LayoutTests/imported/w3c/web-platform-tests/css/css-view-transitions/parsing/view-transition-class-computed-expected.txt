@@ -1,0 +1,13 @@
+
+PASS Property view-transition-class value 'none'
+PASS Property view-transition-class value 'foo'
+PASS Property view-transition-class value 'bar'
+PASS Property view-transition-class value 'baz'
+PASS Property view-transition-class value 'foo bar'
+PASS Property view-transition-class value 'foo bar baz'
+PASS Property view-transition-class value 'unset'
+PASS Property view-transition-class value 'initial'
+PASS Property view-transition-class value 'inherit'
+PASS Property view-transition-class value 'revert'
+PASS Property view-transition-class value 'revert-layer'
+

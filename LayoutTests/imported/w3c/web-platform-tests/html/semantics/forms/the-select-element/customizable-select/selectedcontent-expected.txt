@@ -1,0 +1,9 @@
+
+new span two
+
+three
+
+FAIL The <selectedcontent> element should reflect the HTML contents of the selected <option>. assert_equals: The innerHTML of <selectedcontent> should be updated in response to a form reset. expected "\n      <span class=\"one\">span</span> one\n    " but got "\n      <span class=\"two\" data-foo=\"bar\">new span</span> two\n    "
+PASS When there are multiple <selectedcontent> elements, both of them should be kept up to date.
+FAIL <seletedcontent> behavior in disconnected <select>. assert_equals: <selectedcontent> should be updated when changing value of a disconnected select. expected "two" but got ""
+

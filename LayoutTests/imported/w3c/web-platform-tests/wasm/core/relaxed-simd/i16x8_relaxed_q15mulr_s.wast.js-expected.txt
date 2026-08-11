@@ -1,0 +1,15 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (i16x8_relaxed_q15mulr_s.wast:3)
+PASS #3 Test that WebAssembly compilation succeeds (wrapper)
+PASS #4 Test that WebAssembly compilation succeeds (wrapper)
+PASS #5 Reinitialize the default imports
+PASS #6 Test that WebAssembly compilation succeeds (i16x8_relaxed_q15mulr_s.wast:3)
+PASS #7 Test that WebAssembly instantiation succeeds (i16x8_relaxed_q15mulr_s.wast:3)
+PASS #8 Test that WebAssembly compilation succeeds (wrapper)
+PASS #9 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #10 Run a WebAssembly test without special assertions (i16x8_relaxed_q15mulr_s.wast:13)
+PASS #11 Test that WebAssembly compilation succeeds (wrapper)
+PASS #12 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #13 Run a WebAssembly test without special assertions (i16x8_relaxed_q15mulr_s.wast:22)
+

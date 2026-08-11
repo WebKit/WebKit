@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Not allowed to use restricted network port 6000: http://127.0.0.1:6000/
+Test Data:
+Tests that blocking form actions to restricted ports works correctly. If this test passes, you will see a console error, and will not see a page indicating a form was POSTed.

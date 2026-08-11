@@ -1,0 +1,7 @@
+
+PASS Default validity based on emptiness
+PASS Setting textarea.defaultValue should not trigger validation
+PASS User keystrokes should trigger validation
+PASS Setting textarea.defaultValue from the input event handler should trigger validation
+PASS Calling textarea.replaceChildren() from the input event handler should trigger validation
+

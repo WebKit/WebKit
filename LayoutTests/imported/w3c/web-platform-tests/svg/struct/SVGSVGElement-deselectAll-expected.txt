@@ -1,0 +1,13 @@
+Selectable text
+Inner text
+HTML paragraph text
+
+
+PASS deselectAll exists on outermost svg element
+PASS deselectAll exists on inner svg element
+PASS deselectAll() does not throw when nothing is selected
+PASS deselectAll() clears selection of SVG text content
+PASS deselectAll() clears selection of HTML content outside the svg
+PASS deselectAll() on inner svg clears the document selection
+PASS deselectAll() results in a collapsed selection
+

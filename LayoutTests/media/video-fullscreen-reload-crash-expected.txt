@@ -1,0 +1,10 @@
+Destroy the document containing a video while that video is in fullscreen; should not crash.
+
+RUN(internals.settings.setAllowsInlineMediaPlayback(false))
+RUN(video.load())
+EVENT(canplaythrough)
+RUN(video.play())
+EVENT(webkitbeginfullscreen)
+RUN(iframe.src = "about:blank")
+END OF TEST
+

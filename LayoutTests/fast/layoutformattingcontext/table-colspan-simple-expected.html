@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+body {
+    font-size: 10px;
+    padding: 3px;
+}
+span {
+    margin-right: 4px;
+}
+div {
+    margin-bottom: 4px;
+}
+.spacing {
+    margin-top: 6px;
+}
+</style>
+<div><span>1</span><span>2</span><span>3</span><span>4</span></div>
+<div><span>1</span><span style="margin-left: 9px">2</span></div>
+<div><span>1</span><span style="margin-left: 18px">2</span></div>
+<div>1</div>

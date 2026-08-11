@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 40cm; height: 20cm; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+const flatRectangle = "flat-rectangle.usdz";
+
+promise_test(async t => {
+    const narrowPortal = createPortal(t);
+    const narrowModel = appendModel(narrowPortal, flatRectangle);
+
+    const widePortal = createPortal(t, { width: "80cm" }); // Twice as wide.
+    const wideModel = appendModel(widePortal, flatRectangle);
+
+    await narrowModel.ready;
+    await wideModel.ready;
+
+    const narrowTransform = await waitForPortalTransform(narrowPortal, portalTransformIsResolved, "narrow portal");
+    const wideTransform = await waitForPortalTransform(widePortal, portalTransformIsResolved, "wide portal");
+
+    assert_3d_matrix_approx_equals(narrowTransform.scale3d(2), wideTransform);
+}, `portal-transform: auto scales the portal's content to fit the portal box`);
+
+</script>
+</body>
+</html>

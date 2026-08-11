@@ -1,0 +1,28 @@
+Tests for WI.CubicBezierTimingFunction.
+
+
+== Running test suite: WI.CubicBezierTimingFunction
+-- Running test case: WI.CubicBezierTimingFunction.fromString.Valid
+PASS: Should parse 'cubic-bezier(1, 2, 3, 4)' as 'cubic-bezier(1, 2, 3, 4)'.
+PASS: Should parse 'cubic-bezier(0.1, 0.2, 0.3, 0.4)' as 'cubic-bezier(0.1, 0.2, 0.3, 0.4)'.
+PASS: Should parse 'cubic-bezier(0.25, 0.1, 0.25, 1)' as 'ease'.
+PASS: Should parse 'cubic-bezier(0.42, 0, 1, 1)' as 'ease-in'.
+PASS: Should parse 'cubic-bezier(0, 0, 0.58, 1)' as 'ease-out'.
+PASS: Should parse 'cubic-bezier(0.42, 0, 0.58, 1)' as 'ease-in-out'.
+PASS: Should parse 'cubic-bezier(0, 0, 1, 1)' as 'linear'.
+PASS: Should parse 'ease' as 'ease'.
+PASS: Should parse 'ease-in' as 'ease-in'.
+PASS: Should parse 'ease-out' as 'ease-out'.
+PASS: Should parse 'ease-in-out' as 'ease-in-out'.
+PASS: Should parse 'linear' as 'linear'.
+
+-- Running test case: WI.CubicBezierTimingFunction.fromString.Invalid
+PASS: Should not parse invalid 'cubic-bezier()'.
+PASS: Should not parse invalid 'cubic-bezier(0)'.
+PASS: Should not parse invalid 'cubic-bezier(0, 1)'.
+PASS: Should not parse invalid 'cubic-bezier(0, 1, 2)'.
+PASS: Should not parse invalid 'cubic-bezier("test")'.
+PASS: Should not parse invalid 'cubic-bezier(0, "test")'.
+PASS: Should not parse invalid 'cubic-bezier(0, 1, "test")'.
+PASS: Should not parse invalid 'cubic-bezier(0, 1, 2, "test")'.
+

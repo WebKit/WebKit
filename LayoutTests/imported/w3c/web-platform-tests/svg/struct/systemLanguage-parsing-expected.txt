@@ -1,0 +1,15 @@
+
+PASS Comma-separated tokens are split into individual items
+PASS Whitespace after comma is stripped
+PASS Whitespace before comma is stripped
+PASS Whitespace around commas is stripped
+PASS Leading and trailing whitespace on the value is stripped
+PASS Tabs and newlines as leading/trailing whitespace are stripped
+PASS Single token without commas
+PASS BCP 47 subtags are preserved within tokens
+PASS Double comma produces an empty token between the two commas
+PASS Empty string results in a single empty token
+PASS A single comma separates two empty tokens
+PASS Numeric tokens are parsed without validation
+PASS Invalid language tags are stored as tokens without validation
+

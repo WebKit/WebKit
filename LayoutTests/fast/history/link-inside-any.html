@@ -1,0 +1,64 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description(":link inside :-webkit-any should behave like :any-link.");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    window.testRunner.keepWebHistory();
+
+var count = 0;
+function finish()
+{
+    if (++count === 2)
+        finishJSTest();
+}
+
+function compareStyles()
+{
+    if (window.internals) {
+        oneStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById("one").firstChild);
+        twoStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById("two"));
+        shouldBecomeEqualToString("oneStyle.color", "rgb(0, 128, 0)", finish);
+        shouldBecomeEqualToString("twoStyle.color", "rgb(0, 128, 0)", finish);
+    }
+}
+</script>
+<style>
+a { color: red; }
+#area1 #one :-webkit-any(:link) {
+    color: green;
+}
+#area1 #one + :-webkit-any(:link) + a {
+    color: green;
+}
+
+#area2 p {
+    color: green;
+}
+/* :-webkit-any(:link) should not matched against not link element. */
+#area2 :-webkit-any(:link) + p {
+    color: red;
+}
+</style>
+</head>
+<body onload="compareStyles()">
+<iframe src="resources/dummy.html" style="display:none"></iframe>
+
+<p>One and Two links should be green:</p>
+<div id="area1">
+    <p id="one"><a href="resources/dummy.html">One</a></p>
+    <a href="resources/dummy.html">and</a>
+    <a id="two"href="resources/dummy.html">Two</a>
+</div>
+
+<div id="area2">
+    <span></span>
+    <p id="three">Three</p>
+</div>
+
+<div id=console></div>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

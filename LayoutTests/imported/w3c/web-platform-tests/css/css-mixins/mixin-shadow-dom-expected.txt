@@ -1,0 +1,7 @@
+This text should be green.
+
+FAIL Style in shadow DOM should have access to outside non-adopted mixins assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Style in shadow DOM should have access to inside mixins assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Style in shadow DOM should have access to mixins from adopted stylesheets assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS Style outside shadow DOM should _not_ have access to inside mixins
+

@@ -1,0 +1,5 @@
+This test passes if it doesn't crash
+
+
+PASS report-to-multiple-endpoints
+

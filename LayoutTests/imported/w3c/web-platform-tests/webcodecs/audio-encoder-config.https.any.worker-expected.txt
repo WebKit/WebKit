@@ -1,0 +1,51 @@
+
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Missing codec
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Empty codec
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Missing sampleRate
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Missing numberOfChannels
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Zero sampleRate
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Zero channels
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Bit rate too big
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Bit rate present but equal to zero
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Opus complexity too big
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Opus packetlossperc too big
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Opus frame duration too small
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Opus frame duration too big
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Invalid Opus frameDuration
+PASS Test that AudioEncoder.isConfigSupported() rejects invalid config: Bitrate is too low for Opus
+PASS Test that AudioEncoder.configure() rejects invalid config: Missing codec
+PASS Test that AudioEncoder.configure() rejects invalid config: Empty codec
+PASS Test that AudioEncoder.configure() rejects invalid config: Missing sampleRate
+PASS Test that AudioEncoder.configure() rejects invalid config: Missing numberOfChannels
+PASS Test that AudioEncoder.configure() rejects invalid config: Zero sampleRate
+PASS Test that AudioEncoder.configure() rejects invalid config: Zero channels
+PASS Test that AudioEncoder.configure() rejects invalid config: Bit rate too big
+PASS Test that AudioEncoder.configure() rejects invalid config: Bit rate present but equal to zero
+PASS Test that AudioEncoder.configure() rejects invalid config: Opus complexity too big
+PASS Test that AudioEncoder.configure() rejects invalid config: Opus packetlossperc too big
+PASS Test that AudioEncoder.configure() rejects invalid config: Opus frame duration too small
+PASS Test that AudioEncoder.configure() rejects invalid config: Opus frame duration too big
+PASS Test that AudioEncoder.configure() rejects invalid config: Invalid Opus frameDuration
+PASS Test that AudioEncoder.configure() rejects invalid config: Bitrate is too low for Opus
+PASS Test that AudioEncoder.isConfigSupported() doesn't support config: Unrecognized codec
+PASS Test that AudioEncoder.isConfigSupported() doesn't support config: Sample rate is too small
+PASS Test that AudioEncoder.isConfigSupported() doesn't support config: Sample rate is too large
+PASS Test that AudioEncoder.isConfigSupported() doesn't support config: Way too many channels
+PASS Test that AudioEncoder.isConfigSupported() doesn't support config: Possible future opus codec string
+PASS Test that AudioEncoder.isConfigSupported() doesn't support config: Possible future aac codec string
+PASS Test that AudioEncoder.isConfigSupported() doesn't support config: codec with spaces
+PASS Test that AudioEncoder.configure() doesn't support config: Unrecognized codec
+PASS Test that AudioEncoder.configure() doesn't support config: Sample rate is too small
+PASS Test that AudioEncoder.configure() doesn't support config: Sample rate is too large
+PASS Test that AudioEncoder.configure() doesn't support config: Way too many channels
+PASS Test that AudioEncoder.configure() doesn't support config: Possible future opus codec string
+PASS Test that AudioEncoder.configure() doesn't support config: Possible future aac codec string
+PASS Test that AudioEncoder.configure() doesn't support config: codec with spaces
+PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":8000,"numberOfChannels":1}
+PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":48000,"numberOfChannels":2}
+PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":48000,"numberOfChannels":2,"bitrate":128000,"bitrateMode":"constant","bogus":123}
+PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":48000,"numberOfChannels":2,"bitrate":128000,"bitrateMode":"variable","bogus":123}
+PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":48000,"numberOfChannels":2,"opus":{"complexity":5,"signal":"music","application":"audio","frameDuration":20000,"packetlossperc":10,"useinbandfec":true}}
+PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":48000,"numberOfChannels":2,"opus":{"format":"opus","signal":"voice","application":"lowdelay","complexity":10,"frameDuration":60000,"packetlossperc":20,"usedtx":true,"bogus":456}}
+PASS AudioEncoder.isConfigSupported() supports: {"codec":"opus","sampleRate":48000,"numberOfChannels":2,"opus":{}}
+

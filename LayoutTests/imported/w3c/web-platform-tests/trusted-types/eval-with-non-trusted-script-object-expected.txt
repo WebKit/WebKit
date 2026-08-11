@@ -1,0 +1,3 @@
+
+PASS Function constructor of stringified object and TrustedScript fails.
+

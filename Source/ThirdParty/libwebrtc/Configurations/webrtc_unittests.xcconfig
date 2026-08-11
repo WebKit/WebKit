@@ -1,0 +1,89 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "Base-libwebrtc.xcconfig"
+
+SKIP_INSTALL = YES;
+
+PRODUCT_NAME = webrtc_unittests;
+
+ALTERNATE_HEADER_SEARCH_PATHS = $(ALTERNATE_HEADER_SEARCH_PATHS_$(SDK_VARIANT));
+ALTERNATE_HEADER_SEARCH_PATHS_iosmac = $(BUILT_PRODUCTS_DIR)$(WK_ALTERNATE_FRAMEWORKS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH);
+
+HEADER_SEARCH_PATHS = $(inherited) $(ALTERNATE_HEADER_SEARCH_PATHS) $(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH) $(SRCROOT)/../gtest $(SRCROOT)/../gtest/include $(SRCROOT)/../gmock $(SRCROOT)/../gmock/include $(SRCROOT)/Source/webrtc $(SRCROOT)/Source/third_party/json/include;
+LIBRARY_SEARCH_PATHS = $(inherited) $(SDK_DIR)$(WK_LIBRARY_INSTALL_PATH);
+
+GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+WARNING_CFLAGS = $(inherited) -Wno-exit-time-destructors -Wno-global-constructors -Wno-inconsistent-missing-override;
+
+// Sources excluded from the build, grouped per missing dependency.  To
+// re-enable a group, restore the dependency described in its comment and
+// drop the corresponding `$(EXCLUDED_SOURCE_FILE_NAMES_*)` reference from
+// the assembled list at the bottom of this block.
+
+// Need `webrtc::AudioDeviceModuleImpl`, which is platform code outside
+// WebKit's libwebrtc API.  A stub in `pc/webrtc_unittests_stubs.cc`
+// satisfies the linker for everything else.
+EXCLUDED_SOURCE_FILE_NAMES_audio_device_module = test_audio_device.cc;
+
+// Need iOS-only `sdk/objc/components/video_codec/` headers, which are not
+// part of WebKit's libwebrtc.  A stub in `pc/webrtc_unittests_stubs.cc`
+// satisfies the linker for everything else.
+EXCLUDED_SOURCE_FILE_NAMES_objc_codec = objc_codec_factory_helper.mm;
+
+// Pull in the `webrtc_pc_e2e` quality-test framework, a much larger helper
+// closure not yet in scope.
+EXCLUDED_SOURCE_FILE_NAMES_pc_e2e = svc_e2e_tests.cc;
+
+// Read binary test inputs (`.pcm` / `.wav` / `.yuv` / similar) from
+// `Source/ThirdParty/libwebrtc/Source/webrtc/resources/`, sometimes via a
+// base class such as `AudioCodecSpeedTest` or through
+// `modules/audio_coding/neteq/tools/input_audio_file.h`.  WebKit's libwebrtc
+// tree ships only `.sha1` placeholders there (upstream Chromium fetches the
+// binaries via `gclient sync`, which WebKit does not run).  Without the
+// binaries, audio tests trip a fatal `Check failed: fp_` in
+// `input_audio_file.cc:27` and abort the entire test binary, taking down
+// every subsequent unrelated test; video tests fail SetUp() at
+// `libyuv_unittest.cc:108` with "Cannot read file".  To re-enable, populate
+// the `resources/` directory with the actual binaries (e.g. via upstream
+// `gclient sync`) and remove the matching entries from this variable.
+EXCLUDED_SOURCE_FILE_NAMES_resources = audio_codec_speed_test.cc opus_speed_test.cc audio_decoder_opus_unittest.cc audio_decoder_unittest.cc audio_encoder_opus_unittest.cc cng_unittest.cc expand_unittest.cc merge_unittest.cc neteq_decoder_plc_unittest.cc neteq_stereo_unittest.cc neteq_unittest.cc opus_bandwidth_unittest.cc opus_complexity_unittest.cc opus_fec_test.cc opus_unittest.cc time_stretch_unittest.cc libyuv_unittest.cc video_codec_test.cc;
+
+// `testing::Message::operator<<` streams via `std::ostream` (`*ss_ << val`) and
+// does not consult `AbslStringify`, so `EXPECT_THAT(...) << factory_signature.id()`
+// fails to compile: `FactorySignature::Id` is an AbslStringify-only enum with no
+// `operator<<(std::ostream&, Id)`.  This is latent upstream code never built on
+// `main` (only this target compiles the file).  To re-enable, add an ostream
+// operator for the enum, or route the failure-message stream through
+// `absl::StrCat(factory_signature.id())`.
+EXCLUDED_SOURCE_FILE_NAMES_gtest_stringify = peer_connection_stability_integrationtest.cc;
+
+// `rate_tracker_comparison_unittest.cc` compares the C++ `rate_tracker`
+// against a Rust implementation through a cxx FFI binding
+// (`rtc_base/rate_tracker_ffi.rs.h`).  WebKit's libwebrtc does not run the
+// Rust/cxx build that generates that header (the `.rs` sources are present
+// but never compiled), so the test cannot build.  Build the Rust FFI to
+// re-enable.
+EXCLUDED_SOURCE_FILE_NAMES_rust_ffi = rate_tracker_comparison_unittest.cc;
+
+EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_audio_device_module) $(EXCLUDED_SOURCE_FILE_NAMES_objc_codec) $(EXCLUDED_SOURCE_FILE_NAMES_pc_e2e) $(EXCLUDED_SOURCE_FILE_NAMES_resources) $(EXCLUDED_SOURCE_FILE_NAMES_gtest_stringify) $(EXCLUDED_SOURCE_FILE_NAMES_rust_ffi);

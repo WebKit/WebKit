@@ -1,0 +1,15 @@
+
+PASS Should throw if no name is provided
+PASS Null name should not throw
+PASS Undefined name should not throw
+PASS Non-empty name should not throw
+PASS Non-string name should not throw
+PASS postMessage without parameters should throw
+PASS postMessage with null should not throw
+PASS close should not throw
+PASS close should not throw when called multiple times
+PASS postMessage after close should throw
+PASS BroadcastChannel should have an onmessage event
+PASS postMessage should throw with uncloneable data
+PASS postMessage should throw InvalidStateError after close, even with uncloneable data
+

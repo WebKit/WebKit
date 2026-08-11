@@ -1,0 +1,14 @@
+
+PASS e.style['column-rule'] = "medium dotted green" should set column-rule-color
+PASS e.style['column-rule'] = "medium dotted green" should set column-rule-style
+PASS e.style['column-rule'] = "medium dotted green" should set column-rule-width
+PASS e.style['column-rule'] = "medium dotted green" should not set unrelated longhands
+PASS e.style['column-rule'] = "100px" should set column-rule-color
+PASS e.style['column-rule'] = "100px" should set column-rule-style
+PASS e.style['column-rule'] = "100px" should set column-rule-width
+PASS e.style['column-rule'] = "100px" should not set unrelated longhands
+PASS e.style['column-rule'] = "blue" should set column-rule-color
+PASS e.style['column-rule'] = "blue" should set column-rule-style
+PASS e.style['column-rule'] = "blue" should set column-rule-width
+PASS e.style['column-rule'] = "blue" should not set unrelated longhands
+

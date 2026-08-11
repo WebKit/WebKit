@@ -1,0 +1,10 @@
+
+Test that video.webkitSupportsFullscreen returns false unless the setting is enbled.
+
+EVENT(loadedmetadata)
+RUN(internals.settings.setFullScreenEnabled(false))
+EXPECTED (video.webkitSupportsFullscreen == 'false') OK
+RUN(internals.settings.setFullScreenEnabled(true))
+EXPECTED (video.webkitSupportsFullscreen == 'true') OK
+END OF TEST
+

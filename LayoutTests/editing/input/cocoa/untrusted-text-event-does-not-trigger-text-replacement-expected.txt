@@ -1,0 +1,9 @@
+This test verifies that dispatching untrusted TextEvents does not trigger system text replacements. Requires WebKitTestRunner
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS editor.textContent is "foo@bar.com"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

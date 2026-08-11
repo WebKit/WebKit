@@ -1,0 +1,14 @@
+Tests the shadow DOM slots portions of the AccName Name Computation algorithm, coming in ARIA #167.
+
+slotted
+
+
+slotted
+
+
+
+PASS aria-labelledby reference to element with slotted text content
+PASS aria-labelledby reference to element with default slotted text content
+PASS aria-labelledby reference to element with slotted text content and aria-label on slot
+PASS aria-labelledby reference to element with default slotted text content and aria-label on slot
+

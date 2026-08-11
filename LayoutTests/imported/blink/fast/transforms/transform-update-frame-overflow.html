@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<style>
+#transformed {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    transform: translateY(0);
+}
+</style>
+<div id="transformed">
+</div>
+<script>
+    document.body.offsetTop;
+
+    var transformed = document.getElementById('transformed');
+    transformed.style.transform = "translateY(1000px)";
+
+    if (window.eventSender)
+        eventSender.keyDown("end");
+</script>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        function loaded() {
+            var svg = document.getElementById("svgFrame").getSVGDocument().documentElement;
+            svg.setCurrentTime(4); // Past end of the animation in the embedded SVG.
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body>
+  <iframe id="svgFrame" style="border: none" onload="loaded()" width='200' height='200' src='resources/animation-on-view-element.svg#customView'></iframe>
+</body>
+</html>

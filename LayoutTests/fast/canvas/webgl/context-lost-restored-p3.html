@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var wtu = WebGLTestUtils;
+var canvas;
+var gl;
+var shouldGenerateGLError;
+var extension;
+var allowRestore;
+var contextLostEventFired;
+var contextRestoredEventFired;
+
+function init()
+{
+    if (window.initNonKhronosFramework) {
+        window.initNonKhronosFramework(true);
+    }
+
+    description("Restored context should keep colorspace.");
+
+    shouldGenerateGLError = wtu.shouldGenerateGLError;
+    testLosingAndRestoringContext();
+}
+
+function setupTest()
+{
+    canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    gl = wtu.create3DContext(canvas);
+    if ("drawingBufferColorSpace" in gl) {
+        gl.drawingBufferColorSpace = "display-p3";
+        if (gl.drawingBufferColorSpace != "display-p3") {
+            debug("drawingBufferColorSpace did not store display-p3");
+            return false;
+        }
+    } else {
+        debug("No drawingBufferColorSpace in gl");
+        return false;
+    }
+
+    extension = gl.getExtension("WEBGL_lose_context");
+    if (!extension) {
+        debug("Could not find lose_context extension under the following names: WEBGL_lose_context");
+        return false;
+    }
+    return true;
+}
+
+function testLosingAndRestoringContext()
+{
+    if (!setupTest())
+        finishTest();
+
+    debug("");
+    debug("Test losing and restoring a context.");
+
+    canvas.addEventListener("webglcontextlost", function(e) {
+      testLostContext(e);
+      // restore the context after this event has exited.
+      setTimeout(function() {
+        shouldGenerateGLError(gl, gl.NO_ERROR, "extension.restoreContext()");
+        // The context should still be lost. It will not get restored until the 
+        // webglrestorecontext event is fired.
+        shouldBeTrue("gl.isContextLost()");
+        shouldBe("gl.getError()", "gl.NO_ERROR");
+      }, 0);
+    });
+    canvas.addEventListener("webglcontextrestored", function() {
+      testRestoredContext();
+      finishTest();
+    });
+    allowRestore = true;
+    contextLostEventFired = false;
+    contextRestoredEventFired = false;
+
+    testOriginalContext();
+    extension.loseContext();
+    // The context should be lost immediately.
+    shouldBeTrue("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    // but the event should not have been fired.
+    shouldBeFalse("contextLostEventFired");
+
+    shouldBe("gl.drawingBufferColorSpace", '"display-p3"');
+}
+
+function testOriginalContext()
+{
+    debug("Test valid context");
+    shouldBeFalse("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    shouldBe("gl.drawingBufferColorSpace", '"display-p3"');
+    debug("");
+}
+
+function testLostContext(e)
+{
+    debug("Test lost context");
+    shouldBeFalse("contextLostEventFired");
+    contextLostEventFired = true;
+    shouldBeTrue("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    debug("");
+    if (allowRestore)
+      e.preventDefault();
+}
+
+function testRestoredContext()
+{
+    debug("Test restored context");
+    shouldBeFalse("contextRestoredEventFired");
+    contextRestoredEventFired = true;
+    shouldBeFalse("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    shouldBe("gl.drawingBufferColorSpace", '"display-p3"');
+    debug("");
+}
+
+
+</script>
+</head>
+<body onload="init()">
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

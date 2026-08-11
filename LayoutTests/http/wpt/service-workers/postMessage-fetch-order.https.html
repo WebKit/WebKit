@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>message and fetch events order</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (test) => {
+    const scope = "resources";
+
+    const registration = await navigator.serviceWorker.register("postMessage-fetch-order-worker.js", { scope : scope });
+    test.add_cleanup(() => { registration.unregister(); });
+
+    activeWorker = registration.active;
+    if (!activeWorker) {
+       activeWorker = registration.installing;
+        await new Promise(resolve => {
+            activeWorker.addEventListener('statechange', () => {
+                if (activeWorker.state === "activated")
+                    resolve();
+            });
+        });
+    }
+
+    const iframe = await with_iframe(scope);
+    test.add_cleanup(() => { iframe.remove(); });
+
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", (event) => {
+            resolve(event.data);
+        });
+        test.step_timeout(() => reject("No response message from service worker"), 5000);
+    });
+
+    activeWorker.postMessage("postMessageBeforeFetch");
+    iframe.contentWindow.fetch("betweenPostMessages");
+    activeWorker.postMessage("postMessageAfterFetch");
+
+    var result = await promise;
+    assert_array_equals(result, ["postMessageBeforeFetch", "fetch", "postMessageAfterFetch"]);
+}, " Make sure order of postMessage/fetch event is respected");
+</script>
+</body>
+</html>

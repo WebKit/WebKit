@@ -1,0 +1,19 @@
+x
+x x
+
+PASS fieldset with display: block
+PASS fieldset with display: table
+PASS fieldset with display: table-row-group
+PASS fieldset with display: table-header-group
+PASS fieldset with display: table-footer-group
+PASS fieldset with display: table-row
+PASS fieldset with display: table-cell
+PASS fieldset with display: table-column-group
+PASS fieldset with display: table-column
+PASS fieldset with display: table-caption
+PASS fieldset with display: list-item
+PASS fieldset with display: flow-root
+PASS fieldset with display: inline
+PASS fieldset with display: inline-block
+PASS fieldset with display: inline-table
+

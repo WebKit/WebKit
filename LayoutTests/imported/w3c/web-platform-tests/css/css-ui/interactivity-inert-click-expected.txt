@@ -1,0 +1,4 @@
+
+FAIL No click event for interactivity:inert element assert_false: expected false got true
+PASS Click event should work after interactivity change
+

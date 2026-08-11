@@ -1,0 +1,288 @@
+# Copyright (C) 2022-2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+[CustomHeader] struct WebCore::DOMCacheEngine::CacheInfo {
+    WebCore::DOMCacheIdentifier identifier
+    String name
+}
+
+[CustomHeader] struct WebCore::DOMCacheEngine::CacheInfos {
+    Vector<WebCore::DOMCacheEngine::CacheInfo> infos;
+    uint64_t updateCounter;
+};
+
+[CustomHeader] struct WebCore::DOMCacheEngine::CacheIdentifierOperationResult {
+    WebCore::DOMCacheIdentifier identifier;
+    bool hadStorageError;
+};
+
+enum class WebCore::IDBResultType : uint8_t {
+    Error,
+    OpenDatabaseSuccess,
+    OpenDatabaseUpgradeNeeded,
+    DeleteDatabaseSuccess,
+    CreateObjectStoreSuccess,
+    DeleteObjectStoreSuccess,
+    ClearObjectStoreSuccess,
+    PutOrAddSuccess,
+    GetRecordSuccess,
+    GetAllRecordsSuccess,
+    GetCountSuccess,
+    DeleteRecordSuccess,
+    CreateIndexSuccess,
+    DeleteIndexSuccess,
+    OpenCursorSuccess,
+    IterateCursorSuccess,
+    RenameObjectStoreSuccess,
+    RenameIndexSuccess,
+};
+
+enum class WebCore::IDBTransactionDurability : uint8_t {
+    Strict,
+    Relaxed,
+    Default
+};
+
+enum class WebCore::IDBTransactionMode : uint8_t {
+    Readonly,
+    Readwrite,
+    Versionchange
+};
+
+[CustomHeader] struct WebCore::DOMCacheEngine::CrossThreadRecord {
+    uint64_t identifier;
+    uint64_t updateResponseCounter;
+    WebCore::FetchHeadersGuard requestHeadersGuard;
+    WebCore::ResourceRequest request;
+    WebCore::FetchOptions options;
+    String referrer;
+    WebCore::FetchHeadersGuard responseHeadersGuard;
+    WebCore::ResourceResponseData response;
+    Variant<std::nullptr_t, Ref<WebCore::FormData>, Ref<WebCore::SharedBuffer>> responseBody;
+    uint64_t responseBodySize;
+};
+
+struct WebCore::IDBCursorRecord {
+    WebCore::IDBKeyData key;
+    WebCore::IDBKeyData primaryKey;
+    WebCore::IDBValue value;
+}
+
+class WebCore::IDBCursorInfo {
+    WebCore::IDBResourceIdentifier identifier();
+    WebCore::IDBResourceIdentifier transactionIdentifier();
+    WebCore::IDBObjectStoreIdentifier objectStoreIdentifier();
+    Variant<WebCore::IDBObjectStoreIdentifier, WebCore::IDBIndexIdentifier> sourceIdentifier();
+
+    WebCore::IDBKeyRangeData range();
+
+    WebCore::IndexedDB::CursorSource cursorSource();
+    WebCore::IndexedDB::CursorDirection cursorDirection();
+    WebCore::IndexedDB::CursorType cursorType();
+};
+
+class WebCore::IDBError {
+    std::optional<WebCore::ExceptionCode> code()
+    String messageForSerialization()
+}
+
+struct WebCore::IDBGetAllRecordsData {
+    WebCore::IDBKeyRangeData keyRangeData;
+    WebCore::IndexedDB::GetAllType getAllType;
+    std::optional<uint32_t> count;
+    WebCore::IndexedDB::CursorDirection cursorDirection;
+    WebCore::IDBObjectStoreIdentifier objectStoreIdentifier;
+    std::optional<WebCore::IDBIndexIdentifier> indexIdentifier;
+}
+
+class WebCore::IDBGetResult {
+    WebCore::IDBKeyData keyData()
+    WebCore::IDBKeyData primaryKeyData()
+    WebCore::IDBValue value()
+    std::optional<WebCore::IDBKeyPath> keyPath()
+    Vector<WebCore::IDBCursorRecord> prefetchedRecords()
+    bool isDefined()
+}
+
+class WebCore::IDBGetAllResult {
+    WebCore::IndexedDB::GetAllType type()
+    Vector<WebCore::IDBKeyData> keys()
+    Vector<WebCore::IDBKeyData> primaryKeys()
+    Vector<WebCore::IDBValue> values()
+    std::optional<WebCore::IDBKeyPath> keyPath()
+}
+
+class WebCore::IDBDatabaseInfo {
+    String m_name
+    uint64_t m_version
+    uint64_t m_maxIndexID
+    HashMap<WebCore::IDBObjectStoreIdentifier, WebCore::IDBObjectStoreInfo> m_objectStoreMap
+}
+
+struct WebCore::IDBKeyRangeData {
+    WebCore::IDBKeyData lowerKey;
+    WebCore::IDBKeyData upperKey;
+
+    bool lowerOpen;
+    bool upperOpen;
+};
+
+class WebCore::IDBTransactionInfo {
+    WebCore::IDBResourceIdentifier identifier();
+    WebCore::IDBTransactionMode mode();
+    WebCore::IDBTransactionDurability durability();
+    uint64_t newVersion();
+    Vector<String> objectStores();
+    std::unique_ptr<WebCore::IDBDatabaseInfo> originalDatabaseInfo();
+};
+
+enum class WebCore::IDBGetRecordDataType : bool;
+
+struct WebCore::IDBGetRecordData {
+    WebCore::IDBKeyRangeData keyRangeData;
+    WebCore::IDBGetRecordDataType type;
+}
+
+class WebCore::IDBIndexInfo {
+    WebCore::IDBIndexIdentifier identifier()
+    WebCore::IDBObjectStoreIdentifier objectStoreIdentifier()
+    String name()
+    WebCore::IDBKeyPath keyPath()
+    bool unique()
+    bool multiEntry()
+}
+
+class WebCore::IDBObjectStoreInfo {
+    WebCore::IDBObjectStoreIdentifier identifier()
+    String name()
+    std::optional<WebCore::IDBKeyPath> keyPath()
+    bool autoIncrement()
+    HashMap<WebCore::IDBIndexIdentifier, WebCore::IDBIndexInfo> indexMap()
+}
+
+struct WebCore::IDBIterateCursorData {
+    WebCore::IDBKeyData keyData;
+    WebCore::IDBKeyData primaryKeyData;
+    unsigned count;
+    WebCore::IndexedDB::CursorIterateOption option;
+}
+
+class WebCore::IDBResourceIdentifier {
+    Markable<WebCore::IDBConnectionIdentifier> m_idbConnectionIdentifier
+    Markable<WebCore::IDBResourceObjectIdentifier> m_resourceNumber
+}
+
+class WebCore::IDBValue {
+    WebCore::ThreadSafeDataBuffer data()
+    Vector<String> blobURLs()
+    Vector<String> blobFilePaths()
+    Vector<WebCore::FileSystemHandleGlobalIdentifier> fileSystemHandleGlobalIdentifiers()
+};
+
+class WebCore::IDBOpenRequestData {
+    WebCore::IDBConnectionIdentifier m_serverConnectionIdentifier;
+    [Validator='!m_requestIdentifier->isEmpty()'] WebCore::IDBResourceIdentifier m_requestIdentifier;
+    [Validator='m_databaseIdentifier->isValid()'] WebCore::IDBDatabaseIdentifier m_databaseIdentifier;
+    uint64_t m_requestedVersion;
+    WebCore::IndexedDB::RequestType m_requestType;
+}
+
+class WebCore::IDBRequestData {
+    WebCore::IDBConnectionIdentifier m_serverConnectionIdentifier;
+    [Validator='!m_requestIdentifier->isEmpty()'] WebCore::IDBResourceIdentifier m_requestIdentifier;
+    [Validator='!m_transactionIdentifier->isEmpty()'] WebCore::IDBResourceIdentifier m_transactionIdentifier;
+    std::optional<WebCore::IDBResourceIdentifier> m_cursorIdentifier;
+    Markable<WebCore::IDBObjectStoreIdentifier> m_objectStoreIdentifier;
+    Markable<WebCore::IDBIndexIdentifier> m_indexIdentifier;
+    WebCore::IndexedDB::IndexRecordType m_indexRecordType;
+    uint64_t m_requestedVersion;
+    WebCore::IndexedDB::RequestType m_requestType;
+}
+
+[LegacyPopulateFromEmptyConstructor] class WebCore::IDBDatabaseIdentifier {
+    String m_databaseName
+    WebCore::ClientOrigin m_origin
+    bool m_isTransient
+}
+
+struct WebCore::IDBDatabaseNameAndVersion {
+    String name;
+    uint64_t version;
+}
+
+[LegacyPopulateFromEmptyConstructor] class WebCore::IDBResultData {
+    WebCore::IDBResultType m_type;
+    WebCore::IDBResourceIdentifier m_requestIdentifier;
+    WebCore::IDBError m_error;
+    std::optional<WebCore::IDBDatabaseConnectionIdentifier> m_databaseConnectionIdentifier;
+    std::unique_ptr<WebCore::IDBDatabaseInfo> m_databaseInfo;
+    std::unique_ptr<WebCore::IDBTransactionInfo> m_transactionInfo;
+    std::unique_ptr<WebCore::IDBKeyData> m_resultKey;
+    std::unique_ptr<WebCore::IDBGetResult> m_getResult;
+    std::unique_ptr<WebCore::IDBGetAllResult> m_getAllResult;
+    uint64_t m_resultInteger;
+    [NotSerialized] std::unique_ptr<WebCore::ClientOrigin> m_clientOrigin;
+}
+
+class WebCore::IDBKeyData {
+    bool isPlaceholder()
+    [Validator='WebCore::IDBKeyData::isValidValue(*value)'] Variant<std::nullptr_t, WebCore::IDBKeyData::Invalid, Vector<WebCore::IDBKeyData>, String, double, WebCore::IDBKeyData::Date, WebCore::ThreadSafeDataBuffer, WebCore::IDBKeyData::Min, WebCore::IDBKeyData::Max> value()
+}
+
+[Nested] struct WebCore::IDBKeyData::Invalid {
+}
+
+[Nested] struct WebCore::IDBKeyData::Min {
+}
+
+[Nested] struct WebCore::IDBKeyData::Max {
+}
+
+[Nested] struct WebCore::IDBKeyData::Date {
+    double value
+}
+
+enum class WebCore::DOMCacheEngine::Error : uint8_t {
+    NotImplemented,
+    ReadDisk,
+    WriteDisk,
+    QuotaExceeded,
+    Internal,
+    Stopped,
+    CORP
+};
+
+using WebCore::IDBConnectionIdentifier = WebCore::ProcessIdentifier;
+
+using WebCore::DOMCacheEngine::CacheInfosOrError = Expected<WebCore::DOMCacheEngine::CacheInfos, WebCore::DOMCacheEngine::Error>;
+
+using WebCore::DOMCacheEngine::CacheIdentifierOrError = Expected<WebCore::DOMCacheEngine::CacheIdentifierOperationResult, WebCore::DOMCacheEngine::Error>
+
+using WebCore::DOMCacheEngine::RecordIdentifiersOrError = Expected<Vector<uint64_t>, WebCore::DOMCacheEngine::Error>
+
+using WebCore::DOMCacheEngine::CrossThreadRecordsOrError = Expected<Vector<WebCore::DOMCacheEngine::CrossThreadRecord>, WebCore::DOMCacheEngine::Error>
+
+using WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError = Expected<bool, WebCore::DOMCacheEngine::Error>
+
+using WebCore::IDBKeyPath = Variant<String, Vector<String>>;
+

@@ -1,0 +1,6 @@
+command/commandfor popovertarget
+
+PASS Clicking on disabled command button should just close popover like normal
+PASS Clicking on disabled popovertarget button should just close popover like normal
+PASS Clicking on disabled popovertarget input button should just close popover like normal
+

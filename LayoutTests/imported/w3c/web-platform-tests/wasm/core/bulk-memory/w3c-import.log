@@ -1,0 +1,23 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/bulk-memory/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/bulk-memory/bulk.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/bulk-memory/memory_copy.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/bulk-memory/memory_fill.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/bulk-memory/memory_init.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/bulk-memory/table-sub.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/bulk-memory/table_copy.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/bulk-memory/table_fill.wast.js.html
+/LayoutTests/imported/w3c/web-platform-tests/wasm/core/bulk-memory/table_init.wast.js.html

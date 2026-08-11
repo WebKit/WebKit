@@ -1,0 +1,6 @@
+
+PASS RTCPeerConnection No-Media Connection Test
+iceConnectionState info
+
+First: connected
+Second: connected

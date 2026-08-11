@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="/resources/gc.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+// Regression test for IDBTransaction/IDBRequest/IDBObjectStore retain cycle.
+//
+// When IDBTransaction::stop() is called on a finishing transaction, the
+// old code returned early without clearing operation maps or request
+// sets.  TransactionOperationImpl objects hold Ref<IDBTransaction>
+// through captured lambdas, forming retain cycles that prevent
+// destruction.
+//
+// This test exercises that path by:
+//   1. Loading a single iframe that opens an IDB transaction
+//   2. The iframe calls txn.commit() while requests are still pending
+//   3. The iframe signals the parent immediately (before events dispatch)
+//   4. The parent removes the iframe, triggering stop()
+//   5. Runs many successful IDB operations to flush the event loop
+//   6. After GC, verifies IDBTransaction count returns to baseline
+
+promise_test(async (test) => {
+    assert_true(!!window.internals, "Test requires internals API");
+
+    const gcCount = 100;
+
+    // Record baseline IDBTransaction count.
+    gc();
+    await new Promise(r => setTimeout(r, 50));
+    const baseline = internals.numberOfIDBTransactions();
+
+    // Create one iframe that opens an IDB transaction, calls commit()
+    // with pending requests, and immediately signals us.
+    let frame = await new Promise((resolve, reject) => {
+        function onMessage() {
+            window.removeEventListener("message", onMessage);
+            resolve(f);
+        }
+        window.addEventListener("message", onMessage);
+        let f = document.createElement('iframe');
+        f.src = "resources/commit-then-stop-frame.html";
+        document.body.appendChild(f);
+    });
+
+    // Remove the iframe -- triggers stop() on its IDBTransaction while
+    // it is in the Committing state with non-empty m_openRequests.
+    frame.remove();
+    frame = null;
+
+    // GC repeatedly and check if IDBTransaction objects were destroyed.
+    for (let i = 0; i < gcCount; i++) {
+        gc();
+        await new Promise(r => setTimeout(r, 50));
+        if (internals.numberOfIDBTransactions() <= baseline)
+            return;
+    }
+
+    let residual = internals.numberOfIDBTransactions() - baseline;
+    assert_equals(residual, 0,
+        "IDBTransaction objects not destroyed (" + residual + " still alive after GC)");
+
+}, "IDBTransaction with pending requests should not leak when committed transaction is stopped");
+
+</script>

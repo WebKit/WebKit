@@ -1,0 +1,7 @@
+
+PASS initialize() of global registry should throw for nodes from another document
+PASS createElement() should throw with global registry from another document
+PASS createElementNS() should throw with global registry from another document
+PASS attachShadow() should throw with global registry from another document
+PASS importNode() should throw with global registry from another document
+

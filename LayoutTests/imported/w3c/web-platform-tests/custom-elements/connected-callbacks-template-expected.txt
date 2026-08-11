@@ -1,0 +1,3 @@
+
+PASS Nested custom element connectedCallback insertion involving a template DocumentFragment
+

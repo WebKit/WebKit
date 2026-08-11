@@ -1,0 +1,4 @@
+
+PASS Opaque responses should not be reused for XHRs, loading case
+PASS Opaque responses should not be reused for XHRs, done case
+

@@ -1,0 +1,43 @@
+<html>
+<head>
+<style>
+#forceSensor {
+    width: 200px;
+    height: 200px;
+    border: 2px solid black;
+}
+</style>
+<script>
+
+function forceChanged()
+{
+    var console = document.getElementById("console");
+    console.innerHTML = "Success! The mouseforcechanged event was dispatched.";
+    testRunner.notifyDone();
+}
+
+function startTest()
+{
+    var forceSensor = document.getElementById("forceSensor");
+    forceSensor.addEventListener("webkitmouseforcechanged", forceChanged, false);
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(100, 100);
+        eventSender.mouseForceChanged(1.5);
+    }
+}
+</script>
+</head>
+
+<body onload="startTest()">
+
+<div id="forceSensor"></div>
+<pre id="console">Failed. This test must be run in the test harness.</pre>
+
+</body>
+</html>

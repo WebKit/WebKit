@@ -1,0 +1,80 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [{ binding: 0, visibility: GPUShaderStage.COMPUTE, externalTexture: {} }]
+    });
+    let videoFrame = new VideoFrame(new ArrayBuffer(6), { codedWidth: 2, codedHeight: 2, format: 'I420', timestamp: 0 });
+    let externalTexture = device.importExternalTexture({ source: videoFrame });
+    let shaderModule = device.createShaderModule({ code: `
+        @compute fn i(@builtin(global_invocation_id) j: vec3<u32>, @builtin(local_invocation_id) k: vec3<u32>) {}
+        struct l {
+            @location(2) m: vec4<u32>,
+            @location(0) n: vec3<u32>,
+            @location(1) a: u32,
+            @location(3) o: vec4<i32>
+        }
+        @fragment fn p(@location(12) q: vec2<f32>, @location(9) r: vec4<u32>, @builtin(position) s: vec4<f32>, @builtin(sample_mask) device: u32, @builtin(sample_index) t: u32, @builtin(front_facing) u: bool) -> l {
+            return l();
+        }
+        struct v {
+            @location(12) c: vec2<f32>,
+            @builtin(position) d: vec4<f32>,
+            @location(9) w: vec4<u32>
+        }
+        @vertex fn x(@location(15) q: i32, @location(6) r: vec4<f16>) -> v {
+            return v();
+        }
+    `});
+    let bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [{ binding: 0, resource: externalTexture }]
+    });
+    let buffer = device.createBuffer({ size: 9, usage: GPUBufferUsage.VERTEX });
+    let renderPipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: {
+            module: shaderModule,
+            targets: [
+                { format: 'rg8uint', writeMask: 0 },
+                { format: 'r16uint', writeMask: GPUColorWrite.GREEN },
+                { format: 'rgba16uint', writeMask: 0 },
+                { format: 'rgba16sint', writeMask: GPUColorWrite.BLUE | GPUColorWrite.RED }
+            ]
+        },
+        vertex: {
+            module: shaderModule,
+            buffers: [
+                {
+                    arrayStride: 0,
+                    attributes: [
+                        { format: 'snorm16x2', offset: 144, shaderLocation: 6 },
+                        { format: 'sint8x4', offset: 728, shaderLocation: 15 }
+                    ]
+                }
+            ]
+        }
+    });
+    renderBundleEncoder = device.createRenderBundleEncoder({
+        colorFormats: ['rg8uint', 'r16uint', 'rgba16uint', 'rgba16sint']
+    });
+    renderBundleEncoder.setBindGroup(0, bindGroup);
+    renderBundleEncoder.setVertexBuffer(0, buffer);
+    renderBundleEncoder.setPipeline(renderPipeline);
+    renderBundleEncoder.draw(0);
+    renderBundleEncoder.finish();
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

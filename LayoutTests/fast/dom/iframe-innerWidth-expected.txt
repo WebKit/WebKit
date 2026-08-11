@@ -1,0 +1,11 @@
+This tests that innerWidth/innerHeight on an frame window are valid in the load event handler.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frame.contentWindow.innerWidth is 300
+PASS frame.contentWindow.innerHeight is 150
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+
+FAIL checkIntersection() assert_equals: checkIntersection(), element g_inner_top rect 10,10,80,10 expected true but got false
+

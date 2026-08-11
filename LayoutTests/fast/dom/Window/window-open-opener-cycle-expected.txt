@@ -1,0 +1,10 @@
+Tests navigating a window which has an opener cycle.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS opener.opener === self
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

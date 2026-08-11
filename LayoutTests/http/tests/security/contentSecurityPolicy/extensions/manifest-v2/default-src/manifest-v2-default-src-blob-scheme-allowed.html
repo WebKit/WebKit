@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v2 ] -->
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src blob: 'nonce-test'">
+<p><br>Tests CSP for extensions permits the blob: scheme.</p>
+</head>
+<body>
+<script nonce='test'>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    var script = document.createElement("script");
+    script.onload = function () {
+        alert("PASS successfully loaded blob-URL script.");
+        testRunner.notifyDone();
+    }
+    script.onerror = function () {
+        alert("FAIL should not have fired error event for blob-URL script.");
+        testRunner.notifyDone();
+    }
+    script.src = window.URL.createObjectURL(new Blob(["alert('PASS executed blob-URL script.');"]));
+
+    document.head.appendChild(script);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,501 @@
+# Copyright (c) 2014 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+config("audio_device_warnings_config") {
+  if (is_win && is_clang) {
+    cflags = [
+      # Disable warnings failing when compiling with Clang on Windows.
+      # https://bugs.chromium.org/p/webrtc/issues/detail?id=5366
+      "-Wno-microsoft-goto",
+    ]
+  }
+}
+
+rtc_source_set("audio_device_default") {
+  visibility = [ "*" ]
+  sources = [ "include/audio_device_default.h" ]
+  deps = [ "../../api/audio:audio_device" ]
+}
+
+rtc_source_set("audio_device") {
+  visibility = [ "*" ]
+  public_deps += [  # no-presubmit-check TODO(webrtc:8603)
+    ":audio_device_api",
+
+    # Deprecated.
+    # TODO(webrtc:7452): Remove this public dep. audio_device_impl should
+    # be depended on directly if needed.
+    ":audio_device_impl",
+  ]
+}
+
+rtc_source_set("audio_device_api") {
+  visibility = [ "*" ]
+  sources = [
+    "include/audio_device.h",
+    "include/audio_device_defines.h",
+  ]
+  deps = [ "../../api/audio:audio_device" ]
+}
+
+rtc_library("audio_device_buffer") {
+  sources = [
+    "audio_device_buffer.cc",
+    "audio_device_buffer.h",
+    "fine_audio_buffer.cc",
+    "fine_audio_buffer.h",
+  ]
+  deps = [
+    "../../api:sequence_checker",
+    "../../api/audio:audio_device",
+    "../../api/environment",
+    "../../api/task_queue",
+    "../../api/units:time_delta",
+    "../../common_audio:common_audio_c",
+    "../../rtc_base:buffer",
+    "../../rtc_base:checks",
+    "../../rtc_base:event_tracer",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:safe_conversions",
+    "../../rtc_base:timestamp_aligner",
+    "../../rtc_base:timeutils",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/system:no_unique_address",
+    "../../system_wrappers:metrics",
+  ]
+}
+
+rtc_library("audio_device_generic") {
+  sources = [
+    "audio_device_generic.cc",
+    "audio_device_generic.h",
+  ]
+  deps = [
+    ":audio_device_buffer",
+    "../../api/audio:audio_device",
+  ]
+}
+
+rtc_library("audio_device_name") {
+  sources = [
+    "audio_device_name.cc",
+    "audio_device_name.h",
+  ]
+  deps = [ "//third_party/abseil-cpp/absl/strings:string_view" ]
+}
+
+rtc_library("windows_core_audio_utility") {
+  if (is_win && !build_with_chromium) {
+    sources = [
+      "win/core_audio_utility_win.cc",
+      "win/core_audio_utility_win.h",
+    ]
+
+    deps = [
+      ":audio_device_name",
+      "../../api/audio:audio_device",
+      "../../api/units:time_delta",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:platform_thread_types",
+      "../../rtc_base:stringutils",
+      "../../rtc_base/win:windows_version",
+      "//third_party/abseil-cpp/absl/strings",
+    ]
+
+    libs = [ "oleaut32.lib" ]
+  }
+}
+
+# An ADM with a dedicated factory method which does not depend on the
+# audio_device_impl target. The goal is to use this new structure and
+# gradually phase out the old design.
+# TODO(henrika): currently only supported on Windows.
+rtc_library("audio_device_module_from_input_and_output") {
+  visibility = [ "*" ]
+  if (is_win && !build_with_chromium) {
+    sources = [
+      "include/audio_device_factory.cc",
+      "include/audio_device_factory.h",
+    ]
+    sources += [
+      "win/audio_device_module_win.cc",
+      "win/audio_device_module_win.h",
+      "win/core_audio_base_win.cc",
+      "win/core_audio_base_win.h",
+      "win/core_audio_input_win.cc",
+      "win/core_audio_input_win.h",
+      "win/core_audio_output_win.cc",
+      "win/core_audio_output_win.h",
+    ]
+
+    deps = [
+      ":audio_device_buffer",
+      ":audio_device_name",
+      ":windows_core_audio_utility",
+      "../../api:make_ref_counted",
+      "../../api:scoped_refptr",
+      "../../api:sequence_checker",
+      "../../api/audio:audio_device",
+      "../../api/environment",
+      "../../api/task_queue",
+      "../../api/units:time_delta",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:platform_thread",
+      "../../rtc_base:safe_conversions",
+      "../../rtc_base:stringutils",
+      "../../rtc_base:timeutils",
+      "../../rtc_base:zero_memory",
+      "../../rtc_base/win:scoped_com_initializer",
+      "../../rtc_base/win:windows_version",
+      "//third_party/abseil-cpp/absl/strings",
+    ]
+  }
+}
+
+if (!build_with_chromium) {
+  rtc_library("test_audio_device_module") {
+    visibility = [ "*" ]
+    sources = [
+      "include/test_audio_device.cc",
+      "include/test_audio_device.h",
+      "test_audio_device_impl.cc",
+      "test_audio_device_impl.h",
+    ]
+
+    deps = [
+      ":audio_device_buffer",
+      ":audio_device_default",
+      ":audio_device_generic",
+      ":audio_device_impl",
+      "../../api:make_ref_counted",
+      "../../api:scoped_refptr",
+      "../../api/audio:audio_device",
+      "../../api/environment",
+      "../../api/task_queue",
+      "../../api/units:time_delta",
+      "../../common_audio",
+      "../../rtc_base:buffer",
+      "../../rtc_base:checks",
+      "../../rtc_base:macromagic",
+      "../../rtc_base:random",
+      "../../rtc_base:safe_conversions",
+      "../../rtc_base:timeutils",
+      "../../rtc_base/synchronization:mutex",
+      "../../rtc_base/system:file_wrapper",
+      "../../rtc_base/task_utils:repeating_task",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+}
+
+rtc_library("audio_device_dummy") {
+  visibility = [ "*" ]
+  sources = [
+    "dummy/audio_device_dummy.cc",
+    "dummy/audio_device_dummy.h",
+  ]
+  deps = [
+    ":audio_device_buffer",
+    ":audio_device_generic",
+    "../../api/audio:audio_device",
+  ]
+}
+
+if (!build_with_chromium) {
+  rtc_library("file_audio_device") {
+    visibility = [ "*" ]
+    sources = [
+      "dummy/file_audio_device.cc",
+      "dummy/file_audio_device.h",
+      "dummy/file_audio_device_factory.cc",
+      "dummy/file_audio_device_factory.h",
+    ]
+    defines = []
+    if (rtc_use_dummy_audio_file_devices) {
+      defines += [ "WEBRTC_DUMMY_FILE_DEVICES" ]
+    }
+    deps = [
+      ":audio_device_buffer",
+      ":audio_device_generic",
+      "../../api/audio:audio_device",
+      "../../api/environment",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:platform_thread",
+      "../../rtc_base:stringutils",
+      "../../rtc_base:threading",
+      "../../rtc_base/synchronization:mutex",
+      "../../rtc_base/system:file_wrapper",
+      "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+  }
+}
+
+# Contains default implementations of webrtc::AudioDeviceModule for Windows,
+# Linux, Mac, iOS and Android.
+rtc_library("audio_device_impl") {
+  visibility = [ "*" ]
+  deps = [
+    ":audio_device_buffer",
+    ":audio_device_default",
+    ":audio_device_dummy",
+    ":audio_device_generic",
+    "../../api:make_ref_counted",
+    "../../api:ref_count",
+    "../../api:refcountedbase",
+    "../../api:scoped_refptr",
+    "../../api:sequence_checker",
+    "../../api/audio:audio_device",
+    "../../api/environment",
+    "../../api/task_queue",
+    "../../api/units:time_delta",
+    "../../common_audio",
+    "../../common_audio:common_audio_c",
+    "../../rtc_base:buffer",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:platform_thread",
+    "../../rtc_base:random",
+    "../../rtc_base:rtc_event",
+    "../../rtc_base:safe_conversions",
+    "../../rtc_base:stringutils",
+    "../../rtc_base:threading",
+    "../../rtc_base:timeutils",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/system:arch",
+    "../../rtc_base/system:file_wrapper",
+    "../../rtc_base/task_utils:repeating_task",
+    "../../system_wrappers:metrics",
+    "../utility",
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+  if (rtc_include_internal_audio_device && is_ios) {
+    deps += [ "../../sdk:audio_device" ]
+  }
+
+  sources = [ "include/fake_audio_device.h" ]
+
+  if (build_with_mozilla) {
+    sources += [
+      "opensl/single_rw_fifo.cc",
+      "opensl/single_rw_fifo.h",
+    ]
+  }
+
+  defines = []
+  cflags = []
+  if (rtc_audio_device_plays_sinus_tone) {
+    defines += [ "AUDIO_DEVICE_PLAYS_SINUS_TONE" ]
+  }
+  if (rtc_enable_android_aaudio) {
+    defines += [ "WEBRTC_AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO" ]
+  }
+  if (rtc_include_internal_audio_device) {
+    sources += [
+      "audio_device_data_observer.cc",
+      "audio_device_impl.cc",
+      "audio_device_impl.h",
+      "include/audio_device_data_observer.h",
+    ]
+    if (is_android) {
+      if (build_with_mozilla) {
+        include_dirs += [
+          "/config/external/nspr",
+          "/nsprpub/lib/ds",
+          "/nsprpub/pr/include",
+        ]
+      }
+    }
+    if (rtc_use_dummy_audio_file_devices) {
+      defines += [ "WEBRTC_DUMMY_FILE_DEVICES" ]
+    } else {
+      if (is_linux || is_chromeos) {
+        sources += [
+          "linux/alsasymboltable_linux.cc",
+          "linux/alsasymboltable_linux.h",
+          "linux/audio_device_alsa_linux.cc",
+          "linux/audio_device_alsa_linux.h",
+          "linux/audio_mixer_manager_alsa_linux.cc",
+          "linux/audio_mixer_manager_alsa_linux.h",
+          "linux/latebindingsymboltable_linux.cc",
+          "linux/latebindingsymboltable_linux.h",
+        ]
+        defines += [ "WEBRTC_ENABLE_LINUX_ALSA" ]
+        libs = [ "dl" ]
+        if (rtc_use_x11) {
+          libs += [ "X11" ]
+          defines += [ "WEBRTC_USE_X11" ]
+        }
+        if (rtc_include_pulse_audio) {
+          defines += [ "WEBRTC_ENABLE_LINUX_PULSE" ]
+        }
+        sources += [
+          "linux/audio_device_pulse_linux.cc",
+          "linux/audio_device_pulse_linux.h",
+          "linux/audio_mixer_manager_pulse_linux.cc",
+          "linux/audio_mixer_manager_pulse_linux.h",
+          "linux/pulseaudiosymboltable_linux.cc",
+          "linux/pulseaudiosymboltable_linux.h",
+        ]
+      }
+      if (is_mac) {
+        sources += [
+          "mac/audio_device_mac.cc",
+          "mac/audio_device_mac.h",
+          "mac/audio_mixer_manager_mac.cc",
+          "mac/audio_mixer_manager_mac.h",
+        ]
+        deps += [
+          ":audio_device_impl_frameworks",
+          "../third_party/portaudio:mac_portaudio",
+        ]
+      }
+      if (is_win) {
+        sources += [
+          "win/audio_device_core_win.cc",
+          "win/audio_device_core_win.h",
+        ]
+        libs = [
+          # Required for the built-in WASAPI AEC.
+          "dmoguids.lib",
+          "wmcodecdspuuid.lib",
+          "amstrmid.lib",
+          "msdmo.lib",
+          "oleaut32.lib",
+        ]
+        deps += [
+          "../../rtc_base:win32",
+          "../../rtc_base/win:scoped_com_initializer",
+        ]
+      }
+      configs += [ ":audio_device_warnings_config" ]
+    }
+  } else {
+    defines = [ "WEBRTC_DUMMY_AUDIO_BUILD" ]
+  }
+
+  if (!build_with_chromium) {
+    deps += [ ":file_audio_device" ]
+
+    # TODO(titovartem): remove after downstream is fixed
+    sources += [ "dummy/file_audio_device_factory.h" ]
+  }
+}
+
+if (is_mac) {
+  rtc_source_set("audio_device_impl_frameworks") {
+    visibility = [ ":*" ]
+    frameworks = [
+      # Needed for CoreGraphics:
+      "ApplicationServices.framework",
+
+      "AudioToolbox.framework",
+      "CoreAudio.framework",
+
+      # Needed for CGEventSourceKeyState in audio_device_mac.cc:
+      "CoreGraphics.framework",
+    ]
+  }
+}
+
+rtc_source_set("mock_audio_device") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "include/mock_audio_device.h",
+    "include/mock_audio_transport.h",
+    "mock_audio_device_buffer.h",
+  ]
+  deps = [
+    ":audio_device",
+    ":audio_device_buffer",
+    ":audio_device_impl",
+    "../../api:make_ref_counted",
+    "../../api:scoped_refptr",
+    "../../api/audio:audio_device",
+    "../../test:test_support",
+  ]
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  rtc_library("audio_device_unittests") {
+    testonly = true
+
+    sources = [
+      "fine_audio_buffer_unittest.cc",
+      "include/test_audio_device_unittest.cc",
+      "test_audio_device_impl_test.cc",
+    ]
+    deps = [
+      ":audio_device_buffer",
+      ":audio_device_generic",
+      ":audio_device_impl",
+      ":mock_audio_device",
+      ":test_audio_device_module",
+      "../../api:scoped_refptr",
+      "../../api:sequence_checker",
+      "../../api/audio:audio_device",
+      "../../api/audio:create_audio_device_module",
+      "../../api/environment",
+      "../../api/environment:environment_factory",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../common_audio",
+      "../../rtc_base:buffer",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:macromagic",
+      "../../rtc_base:race_checker",
+      "../../rtc_base:rtc_event",
+      "../../rtc_base:safe_conversions",
+      "../../rtc_base:task_queue_for_test",
+      "../../rtc_base:timeutils",
+      "../../rtc_base/synchronization:mutex",
+      "../../test:create_test_environment",
+      "../../test:fileutils",
+      "../../test:test_support",
+      "../../test/time_controller",
+    ]
+    if (is_linux || is_chromeos || is_mac || is_win) {
+      sources += [ "audio_device_unittest.cc" ]
+    }
+    if (is_win) {
+      sources += [ "win/core_audio_utility_win_unittest.cc" ]
+      deps += [
+        ":audio_device_module_from_input_and_output",
+        ":windows_core_audio_utility",
+        "../../rtc_base/win:scoped_com_initializer",
+        "../../rtc_base/win:windows_version",
+      ]
+    }
+    if (is_android) {
+      deps += [
+        "../../sdk/android:internal_jni",
+        "../../sdk/android:libjingle_peerconnection_java",
+        "../../sdk/android:native_api_jni",
+        "../utility",
+      ]
+    }
+    if (!rtc_include_internal_audio_device) {
+      defines = [ "WEBRTC_DUMMY_AUDIO_BUILD" ]
+    }
+  }
+}

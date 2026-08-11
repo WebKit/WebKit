@@ -1,0 +1,116 @@
+Tests Debugger.setShouldBlackboxURL.
+
+
+== Running test suite: Debugger.setShouldBlackboxURL
+-- Running test case: Debugger.setShouldBlackboxURL.sourceRanges.Ignored
+PASS: Should not error for invalid format.
+PASS: Should not error for non-integer values.
+PASS: Should not error for negative integers.
+PASS: Should not error if endLine is before startLine.
+PASS: Should not error if endColumn is before startColumn.
+PASS: Should not error if endColumn is equal to startColumn.
+
+-- Running test case: Debugger.setShouldBlackboxURL.Invalid.emptyURL
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "URL must not be empty",
+  "data": [
+    {
+      "code": -32000,
+      "message": "URL must not be empty"
+    }
+  ]
+}
+
+-- Running test case: Debugger.setShouldBlackboxURL.Invalid.injectedScript
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Blackboxing of internal scripts is controlled by 'Debugger.setPauseForInternalScripts'",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Blackboxing of internal scripts is controlled by 'Debugger.setPauseForInternalScripts'"
+    }
+  ]
+}
+
+-- Running test case: Debugger.setShouldBlackboxURL.Invalid.sourceRanges.Format
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Unexpected format for given sourceRanges",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Unexpected format for given sourceRanges"
+    }
+  ]
+}
+
+-- Running test case: Debugger.setShouldBlackboxURL.Invalid.sourceRanges.NonInteger
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Unexpected non-integer item in given sourceRanges",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Unexpected non-integer item in given sourceRanges"
+    }
+  ]
+}
+
+-- Running test case: Debugger.setShouldBlackboxURL.Invalid.sourceRanges.Negative
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Unexpected negative item in given sourceRanges",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Unexpected negative item in given sourceRanges"
+    }
+  ]
+}
+
+-- Running test case: Debugger.setShouldBlackboxURL.Invalid.sourceRanges.EndLineBeforeStartLine
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Unexpected endLine before startLine in given sourceRanges",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Unexpected endLine before startLine in given sourceRanges"
+    }
+  ]
+}
+
+-- Running test case: Debugger.setShouldBlackboxURL.Invalid.sourceRanges.EndColumnBeforeStartColumn
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Unexpected endColumn before startColumn in given sourceRanges",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Unexpected endColumn before startColumn in given sourceRanges"
+    }
+  ]
+}
+
+-- Running test case: Debugger.setShouldBlackboxURL.Invalid.sourceRanges.EndColumnEqualsStartColumn
+PASS: Should produce an exception.
+{
+  "code": -32000,
+  "message": "Unexpected endColumn before startColumn in given sourceRanges",
+  "data": [
+    {
+      "code": -32000,
+      "message": "Unexpected endColumn before startColumn in given sourceRanges"
+    }
+  ]
+}
+

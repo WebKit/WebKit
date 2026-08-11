@@ -1,0 +1,18 @@
+Tests that the EventTarget API is no longer working on detached frames.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS internals.lastHandledUserGestureTimestamp() is 0
+PASS frame.contentWindow.internals.lastHandledUserGestureTimestamp() is 0
+PASS innerFrame.contentWindow.internals.lastHandledUserGestureTimestamp() is 0
+PASS innerFrame2.contentWindow.internals.lastHandledUserGestureTimestamp() is 0
+Dispatching click
+PASS internals.lastHandledUserGestureTimestamp() is not 0
+PASS frame.contentWindow.internals.lastHandledUserGestureTimestamp() is not 0
+PASS innerFrame.contentWindow.internals.lastHandledUserGestureTimestamp() is not 0
+PASS innerFrame2.contentWindow.internals.lastHandledUserGestureTimestamp() is 0
+

@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <title>Scrolling tree should only show slow-repaint reasons on the root</title>
+    <style>
+        .scroller {
+            background-color: silver;
+            border: 1px solid black;
+            padding: 10px;
+            width: 400px;
+            height: 300px;
+            overflow: scroll;
+            background-image: linear-gradient(green, blue);
+            background-attachment: fixed;
+        }
+        
+        .scrolling-content {
+            height: 1000px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="scrolling-content">
+            Scrolling content
+        </div>
+    </div>
+    <pre id="scrollingTree"></pre>
+</body>
+</html>

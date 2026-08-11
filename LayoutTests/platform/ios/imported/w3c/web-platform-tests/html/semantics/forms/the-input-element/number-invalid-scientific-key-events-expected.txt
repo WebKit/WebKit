@@ -1,0 +1,7 @@
++
+
+FAIL Reject multiple signs after 'e' (-) assert_equals: Should reject '-' after 'e' in '1e+1' expected 10 but got NaN
+FAIL Reject multiple signs after 'e' (+) assert_equals: Should reject '+' after 'e' in '1e+1' expected 10 but got NaN
+FAIL Leading '+' with existing 'e' assert_equals: Leading '+' with existing 'e' should result in a valid number expected 10 but got NaN
+FAIL Insert - at start assert_equals: Should accept leading '-' expected -10 but got NaN
+

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<label for="textarea">This is a textarea:</label>
+<textarea id="textarea" rows="10" cols="33">abc defg hij klmnop</textarea>
+
+<script>
+let output = "Tests the proper sequence of AXSelectedTextChanged notifications in textarea elements\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    function outputNotification(axElement, notification) {
+        output += `Received ${notification} notification for '${axElement.domIdentifier}', ${axElement.role}\n`;
+        let selectionRange = axElement.selectedTextMarkerRange();
+        if (axElement.textMarkerRangeLength(selectionRange) > 0)
+            output += `Selected text: '${axElement.stringForTextMarkerRange(selectionRange)}'\n`;
+        else {
+            // Output the char to the right of the insertion point.
+            let start = axElement.startTextMarkerForTextMarkerRange(selectionRange);
+            let end = axElement.nextTextMarker(start);
+            let range = axElement.textMarkerRangeForMarkers(start, end);
+            output += `Insertion point before '${axElement.stringForTextMarkerRange(range)}'\n`;
+        }
+    }
+
+    setTimeout(async () => {
+        // Focus the textarea and select the word "defg" using DOM calls.
+        let textareaElement = document.getElementById("textarea");
+        textareaElement.focus();
+
+        output += `Select the word 'defg':\n`;
+        await waitForNotifications(null, "AXSelectedTextChanged", 3, () => {
+            textareaElement.setSelectionRange(4, 8);
+        }, outputNotification);
+
+        output += `\nMove the insertion point to before 'o':\n`;
+        await waitForNotifications(null, "AXSelectedTextChanged", 3, () => {
+            textareaElement.setSelectionRange(17, 17);
+        }, outputNotification);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

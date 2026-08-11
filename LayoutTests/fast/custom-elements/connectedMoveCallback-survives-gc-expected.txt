@@ -1,0 +1,10 @@
+Tests that connectedMoveCallback is kept alive by the garbage collector. The callback is stored as a JSC::Weak, so JSCustomElementInterface::visitJSFunctionsInGCThread() must visit it. Otherwise it is collected once removed from the prototype, and moveBefore() fires disconnected/connected instead of connectedMove.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS reactions.join() is "connectedMove"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

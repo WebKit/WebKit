@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        iframe {
+            height: 200px;
+            width: 400px;
+        }
+    </style>
+    <script src="/js-test-resources/js-test-pre.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    
+    <script>
+    description("Tests that requestAnimationFrame is throttled in subframes that are cross-origin, and not in same-origin frames");
+    window.jsTestIsAsync = true;
+    
+    var crossOriginFrame;
+    var sameOriginFrame
+
+    var throttledState = {
+        'cross' : undefined,
+        'same' : undefined,
+    }
+
+    var frameLoadCount = 0;
+
+    function queryThrottleState(frame, id)
+    {
+        return new Promise(function(resolve) {
+            function handler(message) {
+                var re = /throttled\[(\w+)\]: ((\w+)(\|\w+)*|\[Unthrottled\])/;
+                var match = re.exec(message.data);
+                if (match && match[1] === id) {
+                    window.removeEventListener("message", handler);
+                    debug("Received message: " + message.data);
+                    throttledState[id] = match[2];
+                    resolve();
+                }
+            }
+            window.addEventListener("message", handler);
+            frame.contentWindow.postMessage("report-throttle-" + id, "*");
+        });
+    }
+
+    async function runTest()
+    {
+        crossOriginFrame = document.getElementById("cross-origin-frame");
+        sameOriginFrame = document.getElementById("same-origin-frame");
+
+        debug("Checking that requestAnimationFrame is throttled in cross origin frame");
+
+        await queryThrottleState(crossOriginFrame, "cross");
+        await queryThrottleState(sameOriginFrame, "same");
+        shouldBeEqualToString("throttledState['cross']", "NonInteractedCrossOriginFrame");
+        shouldBeEqualToString("throttledState['same']", "[Unthrottled]");
+
+        await UIHelper.activateAt(crossOriginFrame.offsetLeft + 20, crossOriginFrame.offsetTop + 20);
+        debug("Interacted with cross-origin frame");
+        await UIHelper.activateAt(sameOriginFrame.offsetLeft + 20, sameOriginFrame.offsetTop + 20);
+        debug("Interacted with same-origin frame");
+
+        await queryThrottleState(crossOriginFrame, "cross");
+        await queryThrottleState(sameOriginFrame, "same");
+        shouldBeEqualToString("throttledState['cross']", "[Unthrottled]");
+        shouldBeEqualToString("throttledState['same']", "[Unthrottled]");
+
+        finishJSTest();
+    }
+
+    window.onmessage = function(message)
+    {
+        if (message.data === "frameload") {
+            debug("Received message: " + message.data);
+            if (++frameLoadCount == 2)
+                runTest();
+        }
+    }
+    </script>
+</head>
+<body>
+    <iframe id="cross-origin-frame" src="http://localhost:8000/frame-throttling/resources/requestAnimationFrame-frame.html?dontcacheme"></iframe>
+    <iframe id="same-origin-frame" src="resources/requestAnimationFrame-frame.html?dontcacheme"></iframe>
+
+    <script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

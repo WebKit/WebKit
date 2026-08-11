@@ -1,0 +1,15 @@
+<style>
+  *::first-letter {
+    -webkit-initial-letter: 2;
+  }
+  * {
+    bottom: 0vh;
+    writing-mode: vertical-lr;
+  }
+</style>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  console.log("This test passes if it does not crash.");
+  document.styleSheets[0].insertRule(`*::before { content: 'ab' url(); }`);
+</script>

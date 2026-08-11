@@ -1,0 +1,5 @@
+PASS range.commonAncestorContainer is fileInputElement
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

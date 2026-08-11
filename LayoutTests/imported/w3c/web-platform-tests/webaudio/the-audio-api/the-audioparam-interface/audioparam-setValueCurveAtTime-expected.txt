@@ -1,0 +1,3 @@
+
+PASS AudioParam.setValueCurveAtTime() reproduces the expected waveform
+

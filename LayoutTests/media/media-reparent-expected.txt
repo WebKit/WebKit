@@ -1,0 +1,3 @@
+Test that reparenting a removed media tag doesn't crash the process.
+END OF TEST
+

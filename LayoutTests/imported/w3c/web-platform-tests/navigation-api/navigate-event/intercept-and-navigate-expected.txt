@@ -1,0 +1,3 @@
+
+PASS Using intercept() then navigate() in the ensuing currententrychange should abort the finished promise (but not the committed promise)
+

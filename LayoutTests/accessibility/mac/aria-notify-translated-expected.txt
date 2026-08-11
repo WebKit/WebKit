@@ -1,0 +1,19 @@
+Tests that ariaNotify announcements are translated, and reported in the target language, when the page is presented as a machine translation (Core-AAM).
+
+Received announcement request:
+AnnouncementKey: San Francisco_translated_to_fr
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: Normal
+AXAnnouncementLanguageKey: fr
+
+Received announcement request:
+AnnouncementKey: Hej_translated_to_fr
+AXARIAAnnouncementInterruptBehavior: None
+AXARIAAnnouncementPriority: High
+AXAnnouncementLanguageKey: fr
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hej

@@ -1,0 +1,145 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/CSSPropertyNames.h>
+#include <WebCore/StyleCoordinatedValueListValue.h>
+#include <WebCore/StyleSingleAnimationRange.h>
+#include <WebCore/StyleSingleAnimationTimeline.h>
+#include <WebCore/StyleTimelineTriggerName.h>
+#include <WebCore/StyleValueTypes.h>
+
+namespace WebCore {
+namespace Style {
+
+// macro(ownerType, property, type, lowercaseName, uppercaseName)
+
+#define FOR_EACH_TIMELINE_TRIGGER_REFERENCE(macro) \
+    macro(TimelineTrigger, TimelineTriggerName, TimelineTriggerName, name, Name) \
+    macro(TimelineTrigger, TimelineTriggerSource, SingleAnimationTimeline, source, Source) \
+    macro(TimelineTrigger, TimelineTriggerActivationRangeStart, SingleAnimationRangeStart, activationRangeStart, ActivationRangeStart) \
+    macro(TimelineTrigger, TimelineTriggerActivationRangeEnd, SingleAnimationRangeEnd, activationRangeEnd, ActivationRangeEnd) \
+    macro(TimelineTrigger, TimelineTriggerActiveRangeStart, SingleAnimationRangeStart, activeRangeStart, ActiveRangeStart) \
+    macro(TimelineTrigger, TimelineTriggerActiveRangeEnd, SingleAnimationRangeEnd, activeRangeEnd, ActiveRangeEnd) \
+\
+
+#define FOR_EACH_TIMELINE_TRIGGER_SHORTHAND(macro) \
+    macro(TimelineTrigger, TimelineTriggerActivationRange, SingleAnimationRange, activationRange, ActivationRange) \
+    macro(TimelineTrigger, TimelineTriggerActiveRange, SingleAnimationRange, activeRange, ActiveRange) \
+\
+
+#define FOR_EACH_TIMELINE_TRIGGER_PROPERTY(macro) \
+    FOR_EACH_TIMELINE_TRIGGER_REFERENCE(macro) \
+\
+
+struct TimelineTrigger {
+    TimelineTrigger();
+    TimelineTrigger(TimelineTriggerName&&);
+
+    const TimelineTriggerName& name() const { return data().m_name; }
+    const SingleAnimationTimeline& source() const LIFETIME_BOUND { return data().m_source; }
+    const SingleAnimationRangeStart& activationRangeStart() const LIFETIME_BOUND { return data().m_activationRangeStart; }
+    const SingleAnimationRangeEnd& activationRangeEnd() const LIFETIME_BOUND { return data().m_activationRangeEnd; }
+    const SingleAnimationRangeStart& activeRangeStart() const LIFETIME_BOUND { return data().m_activeRangeStart; }
+    const SingleAnimationRangeEnd& activeRangeEnd() const LIFETIME_BOUND { return data().m_activeRangeEnd; }
+
+    static TimelineTriggerName initialName() { return CSS::Keyword::None { }; }
+    static SingleAnimationTimeline initialSource() { return CSS::Keyword::Auto { }; }
+    static SingleAnimationRangeStart initialActivationRangeStart() { return CSS::Keyword::Normal { }; }
+    static SingleAnimationRangeEnd initialActivationRangeEnd() { return CSS::Keyword::Normal { }; }
+    static SingleAnimationRangeStart initialActiveRangeStart() { return CSS::Keyword::Normal { }; }
+    static SingleAnimationRangeEnd initialActiveRangeEnd() { return CSS::Keyword::Normal { }; }
+
+    FOR_EACH_TIMELINE_TRIGGER_REFERENCE(DECLARE_COORDINATED_VALUE_LIST_GETTER_AND_SETTERS_REFERENCE)
+
+    // Support for the `timeline-trigger-activation-range` shorthand.
+    static SingleAnimationRange initialActivationRange() { return { initialActivationRangeStart(), initialActivationRangeEnd() }; }
+    SingleAnimationRange activationRange() const { return { activationRangeStart(), activationRangeEnd() }; }
+    void setActivationRange(SingleAnimationRange&& activationRange) { setActivationRangeStart(WTF::move(activationRange.start)); setActivationRangeEnd(WTF::move(activationRange.end)); }
+    void fillActivationRange(SingleAnimationRange&& activationRange) { fillActivationRangeStart(WTF::move(activationRange.start)); fillActivationRangeEnd(WTF::move(activationRange.end)); }
+    void clearActivationRange() { clearActivationRangeStart(); clearActivationRangeEnd(); }
+    bool isActivationRangeUnset() const { return isActivationRangeStartUnset() && isActivationRangeEndUnset(); }
+    bool isActivationRangeSet() const { return isActivationRangeStartSet() || isActivationRangeEndSet(); }
+    bool isActivationRangeFilled() const { return isActivationRangeStartFilled() || isActivationRangeEndFilled(); }
+
+    // Support for the `timeline-trigger-activation-range` shorthand.
+    static SingleAnimationRange initialActiveRange() { return { initialActiveRangeStart(), initialActiveRangeEnd() }; }
+    SingleAnimationRange activeRange() const { return { activeRangeStart(), activeRangeEnd() }; }
+    void setActiveRange(SingleAnimationRange&& activeRange) { setActiveRangeStart(WTF::move(activeRange.start)); setActiveRangeEnd(WTF::move(activeRange.end)); }
+    void fillActiveRange(SingleAnimationRange&& activeRange) { fillActiveRangeStart(WTF::move(activeRange.start)); fillActiveRangeEnd(WTF::move(activeRange.end)); }
+    void clearActiveRange() { clearActiveRangeStart(); clearActiveRangeEnd(); }
+    bool isActiveRangeUnset() const { return isActiveRangeStartUnset() && isActiveRangeEndUnset(); }
+    bool isActiveRangeSet() const { return isActiveRangeStartSet() || isActiveRangeEndSet(); }
+    bool isActiveRangeFilled() const { return isActiveRangeStartFilled() || isActiveRangeEndFilled(); }
+
+    bool operator==(const TimelineTrigger&) const = default;
+
+    // CoordinatedValueList interface.
+
+    static constexpr auto baseProperty = PropertyNameConstant<CSSPropertyTimelineTriggerName> { };
+    static constexpr auto properties = std::tuple { FOR_EACH_TIMELINE_TRIGGER_PROPERTY(DECLARE_COORDINATED_VALUE_LIST_PROPERTY) };
+    static TimelineTrigger clone(const TimelineTrigger& other) { return TimelineTrigger { Data { other.m_data } }; }
+    bool isInitial() const { return name().isNone(); }
+
+private:
+    struct Data {
+        bool operator==(const Data&) const = default;
+
+        TimelineTriggerName m_name { TimelineTrigger::initialName() };
+        SingleAnimationTimeline m_source { TimelineTrigger::initialSource() };
+        SingleAnimationRangeStart m_activationRangeStart { TimelineTrigger::initialActivationRangeStart() };
+        SingleAnimationRangeEnd m_activationRangeEnd { TimelineTrigger::initialActivationRangeEnd() };
+        SingleAnimationRangeStart m_activeRangeStart { TimelineTrigger::initialActiveRangeStart() };
+        SingleAnimationRangeEnd m_activeRangeEnd { TimelineTrigger::initialActiveRangeEnd() };
+
+        FOR_EACH_TIMELINE_TRIGGER_PROPERTY(DECLARE_COORDINATED_VALUE_LIST_IS_SET_AND_IS_FILLED_MEMBERS)
+    };
+
+    // Needed by macros to access members.
+    Data& data() LIFETIME_BOUND { return m_data; }
+    const Data& data() const LIFETIME_BOUND { return m_data; }
+
+    TimelineTrigger(Data&& data)
+        : m_data { WTF::move(data) }
+    {
+    }
+
+    Data m_data;
+};
+
+FOR_EACH_TIMELINE_TRIGGER_REFERENCE(DECLARE_COORDINATED_VALUE_LIST_PROPERTY_ACCESSOR_REFERENCE)
+FOR_EACH_TIMELINE_TRIGGER_SHORTHAND(DECLARE_COORDINATED_VALUE_LIST_PROPERTY_ACCESSOR_SHORTHAND)
+
+// MARK: - Logging
+
+TextStream& operator<<(TextStream&, const TimelineTrigger&);
+
+#undef FOR_EACH_TIMELINE_TRIGGER_REFERENCE
+#undef FOR_EACH_TIMELINE_TRIGGER_PROPERTY
+#undef FOR_EACH_TIMELINE_TRIGGER_SHORTHAND
+
+} // namespace Style
+} // namespace WebCore

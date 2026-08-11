@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-font-integrity-negative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-font-integrity.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-image-integrity-negative.sub-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-image-integrity-negative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-image-integrity.sub-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-image-integrity.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-import-integrity-negative.sub-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-import-integrity-negative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-import-integrity.sub-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-import-integrity.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-svg-filter-integrity-negative.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-svg-filter-integrity-negative.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-svg-filter-integrity.sub-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/urls/integrity/url-svg-filter-integrity.sub.html

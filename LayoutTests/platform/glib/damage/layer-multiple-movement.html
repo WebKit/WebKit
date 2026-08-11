@@ -1,0 +1,25 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      .a { position: fixed; left: 10px; top: 10px; width: 30px; height: 30px; background-color: green; }
+      .b { position: fixed; left: 300px; top: 300px; width: 30px; height: 30px; background-color: blue; }
+    </style>
+  </head>
+  <body>
+    <div class="a"></div>
+    <div class="b"></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => {
+              document.getElementsByClassName("a")[0].style.left = "100px";
+              document.getElementsByClassName("b")[0].style.left = "400px";
+          },
+          () => { assertRectsEq(latestFrameDamage().rects, [[10, 10, 30, 30], [100, 10, 30, 30], [300, 300, 30, 30], [400, 300, 30, 30]]); },
+      ], 0);
+    </script>
+  </body>
+</html>

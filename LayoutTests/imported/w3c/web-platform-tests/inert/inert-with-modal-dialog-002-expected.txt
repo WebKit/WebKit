@@ -1,0 +1,5 @@
+
+PASS Modal dialog only marks outside nodes as inert
+PASS Inner nodes with 'inert' attribute become inert anyways
+PASS If the modal dialog has the 'inert' attribute, everything becomes inert
+

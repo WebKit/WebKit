@@ -1,0 +1,26 @@
+<html>
+<head>
+    <script>
+    var results = null;
+
+    function run() {
+        results = document.getElementById("results");
+        window.addEventListener("deviceorientation", handleDeviceOrientation, false);
+    }
+
+    function handleDeviceOrientation(event) {
+        results.textContent = "Saw event in the main frame - this is ok";
+        window.removeEventListener("deviceorientation", handleDeviceOrientation);
+    }
+
+    window.addEventListener("load", run, false);
+    </script>
+</head>
+<body>
+    <p>This tests that deviceorientation events are not dispatched in different origin iframes.</p>
+    <p><b>REMEMBER TO CHANGE THE SRC OF THE IFRAME TO BE CROSS-ORIGIN</b></p>
+    <p>We should be able to detect the event in the main page, but not in the frame.</p>
+    <p id="results">Main page has not seen event.</p>
+    <iframe id="frameA" src="http://127.0.0.1/device-orientation-child-frame.html"></iframe>
+</body>
+</html>

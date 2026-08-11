@@ -1,0 +1,4 @@
+
+PASS e.style['font-synthesis-small-caps'] = "normal" should not set the property value
+PASS e.style['font-synthesis-small-caps'] = "auto none" should not set the property value
+

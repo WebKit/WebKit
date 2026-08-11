@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="timeout" content="long">
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Ensure that video does not stall and that video frames' time continue increasing when seeking to the same location twice.
+
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
+    }
+
+    var MediaSource = self.ManagedMediaSource || self.MediaSource;
+    var source;
+    var sourceBuffer;
+    var loader;
+
+    async function start() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        await loaderPromise(loader);
+
+        source = new MediaSource();
+
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        await waitFor(sourceBuffer, 'update');
+
+        // Append first segment with window [0, 0.3) to limit pre-enqueued data.
+        run('sourceBuffer.appendWindowEnd = 0.3');
+        sourceBuffer.appendBuffer(loader.mediaSegment(0));
+        await waitFor(sourceBuffer, 'update', true);
+        consoleWrite('Appended first segment with window [0, 0.3)');
+
+        // First seek to 0.
+        run('video.currentTime = 0');
+        await waitFor(video, 'seeked');
+        consoleWrite('First seek to 0 completed');
+
+        // Second seek to 0: synchronizer already at 0.
+        run('video.currentTime = 0');
+        await waitFor(video, 'seeked');
+        consoleWrite('Second seek to 0 completed');
+
+        // Remove window restriction and re-append the first segment, capped at 0.6s.
+        // With bug 312859, provideMediaData is blocked so samples past 0.3s never
+        // reach the renderer.
+        run('sourceBuffer.appendWindowEnd = 0.6');
+        sourceBuffer.appendBuffer(loader.mediaSegment(0));
+        await waitFor(sourceBuffer, 'update', true);
+        consoleWrite('Re-appended first segment with window [0, 0.6)');
+        source.endOfStream();
+
+        // Play and check that a video frame past 0.3s is actually rendered.
+        // With the bug, video frames were frozen so requestVideoFrameCallback
+        // never reported a frame past 0.3s.
+        run('video.play()');
+        await waitFor(video, 'playing');
+
+        const gotFrame = await new Promise(resolve => {
+            const timeout = setTimeout(() => resolve(false), 5000);
+            function check(now, metadata) {
+                if (metadata.mediaTime > 0.3) {
+                    clearTimeout(timeout);
+                    resolve(true);
+                    return;
+                }
+                video.requestVideoFrameCallback(check);
+            }
+            video.requestVideoFrameCallback(check);
+        });
+
+        if (gotFrame)
+            consoleWrite('EXPECTED (video frame rendered past 0.3s) OK');
+        else
+            consoleWrite('EXPECTED (video frame rendered past 0.3s) FAIL');
+
+        run('video.pause()');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="start()">
+    <video disableRemotePlayback></video>
+</body>
+</html>

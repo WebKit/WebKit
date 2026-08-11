@@ -1,0 +1,5 @@
+
+PASS Relevancy updated after changing proximity to the viewport.
+PASS Relevancy updated after being focused/unfocused.
+PASS Relevancy updated after being selected/unselected.
+

@@ -1,0 +1,38 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "Decorations.cpp",
+        "Decorations.h",
+        "FontArguments.cpp",
+        "FontCollection.cpp",
+        "Iterators.h",
+        "OneLineShaper.cpp",
+        "OneLineShaper.h",
+        "ParagraphBuilderImpl.cpp",
+        "ParagraphBuilderImpl.h",
+        "ParagraphCache.cpp",
+        "ParagraphImpl.cpp",
+        "ParagraphImpl.h",
+        "ParagraphPainterImpl.cpp",
+        "ParagraphPainterImpl.h",
+        "ParagraphStyle.cpp",
+        "Run.cpp",
+        "Run.h",
+        "TextLine.cpp",
+        "TextLine.h",
+        "TextShadow.cpp",
+        "TextStyle.cpp",
+        "TextWrapper.cpp",
+        "TextWrapper.h",
+        "TypefaceFontProvider.cpp",
+    ],
+    visibility = ["//modules/skparagraph:__pkg__"],
+)

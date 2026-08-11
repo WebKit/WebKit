@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x304
+  RenderBlock {HTML} at (0,0) size 800x305
+    RenderBody {BODY} at (8,8) size 784x281
+      RenderBlock (anonymous) at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 756x54
+          text run at (0,0) width 539: "Tests of WebKit's intepretation of font sizes when no absolute font size is specified. "
+          text run at (538,0) width 218: "Percentages and logical keywords"
+          text run at (0,18) width 203: "scale to reflect the family type. "
+          text run at (202,18) width 539: "Opera 9 matches this behavior as well (except it has a bug with multiple font-family"
+          text run at (0,36) width 217: "mappings as in the first example)."
+      RenderBlock {PRE} at (0,67) size 784x15
+        RenderInline {SPAN} at (0,0) size 118x15
+          RenderText {#text} at (0,0) size 118x15
+            text run at (0,0) width 118: "Should be 13 px"
+      RenderBlock {PRE} at (0,95) size 784x16
+        RenderInline {SPAN} at (0,0) size 82x16
+          RenderText {#text} at (0,0) size 82x16
+            text run at (0,0) width 82: "Should be 13px"
+      RenderBlock {PRE} at (0,124) size 784x16
+        RenderInline {SPAN} at (0,0) size 82x16
+          RenderText {#text} at (0,0) size 82x16
+            text run at (0,0) width 82: "Should be 13px"
+      RenderBlock {P} at (0,156) size 784x18
+        RenderInline {SPAN} at (0,2) size 82x16
+          RenderText {#text} at (0,2) size 82x16
+            text run at (0,2) width 82: "Should be 13px"
+      RenderBlock {P} at (0,190) size 784x19
+        RenderInline {TT} at (0,0) size 101x19
+          RenderInline {SPAN} at (0,0) size 101x18
+            RenderText {#text} at (0,0) size 101x18
+              text run at (0,0) width 101: "Should be 16px"
+      RenderBlock {P} at (0,224) size 784x19
+        RenderInline {TT} at (0,2) size 101x16
+          RenderInline {SPAN} at (0,0) size 101x18
+            RenderText {#text} at (0,0) size 101x18
+              text run at (0,0) width 101: "Should be 16px"
+      RenderBlock {P} at (0,258) size 784x23
+        RenderInline {TT} at (0,5) size 121x16
+          RenderInline {SPAN} at (0,0) size 121x22
+            RenderText {#text} at (0,0) size 121x22
+              text run at (0,0) width 121: "Should be 19px"

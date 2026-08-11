@@ -1,0 +1,88 @@
+/*
+ * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+ * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include "SVGGraphicsElement.h"
+#include "SVGURIReference.h"
+#include "SharedStringHash.h"
+#include <wtf/TZoneMalloc.h>
+
+namespace WebCore {
+
+class DOMTokenList;
+
+enum class Relation : uint8_t;
+
+class SVGAElement final : public SVGGraphicsElement, public SVGURIReference {
+    WTF_MAKE_TZONE_ALLOCATED(SVGAElement);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGAElement);
+public:
+    static Ref<SVGAElement> create(const QualifiedName&, Document&);
+    ~SVGAElement();
+
+    AtomString target() const final { return AtomString { m_target->currentValue() }; }
+    SVGAnimatedString& targetAnimated() { return m_target; }
+
+    URL hrefURL() const;
+
+    SharedStringHash visitedLinkHash() const;
+
+    DOMTokenList& relList();
+
+private:
+    SVGAElement(const QualifiedName&, Document&);
+
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAElement, SVGGraphicsElement, SVGURIReference>;
+
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+    void svgAttributeChanged(const QualifiedName&) final;
+
+    RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
+    bool childShouldCreateRenderer(const Node&) const final;
+
+    bool isValid() const final { return SVGTests::isValid(); }
+    String title() const final;
+    void defaultEventHandler(Event&) final;
+
+    bool NODELETE hasRel(Relation) const;
+    
+    bool supportsFocus() const final;
+    bool isMouseFocusable() const final;
+    bool isKeyboardFocusable(const FocusEventData&) const final;
+    bool NODELETE isURLAttribute(const Attribute&) const final;
+    bool canStartSelection() const final;
+    int defaultTabIndex() const final;
+
+    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
+
+    const Ref<SVGAnimatedString> m_target { SVGAnimatedString::create(this) };
+
+    OptionSet<Relation> m_linkRelations;
+
+    // This is computed only once and must not be affected by subsequent URL changes.
+    mutable std::optional<SharedStringHash> m_storedVisitedLinkHash;
+
+    const std::unique_ptr<DOMTokenList> m_relList;
+};
+
+} // namespace WebCore

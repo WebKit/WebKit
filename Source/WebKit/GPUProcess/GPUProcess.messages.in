@@ -1,0 +1,122 @@
+# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(GPU_PROCESS)
+
+[
+    DispatchedFrom=UI,
+    DispatchedTo=GPU,
+    ExceptionForEnabledBy
+]
+messages -> GPUProcess : AuxiliaryProcess {
+    InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters) -> ()
+
+    CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::ConnectionHandle connectionHandle, struct WebKit::GPUProcessConnectionParameters parameters) -> () AllowedWhenWaitingForSyncReply
+    SharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier processIdentifier, struct WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess) -> ()
+
+    UpdateGPUProcessPreferences(struct WebKit::GPUProcessPreferences preferences)
+    UpdateSandboxAccess(Vector<WebKit::SandboxExtensionHandle> extensions);
+
+    PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
+    ProcessDidResume()
+
+    AddSession(PAL::SessionID sessionID, struct WebKit::GPUProcessSessionParameters parameters)
+    RemoveSession(PAL::SessionID sessionID)
+
+#if ENABLE(MEDIA_STREAM)
+    SetMockCaptureDevicesEnabled(bool isEnabled)
+    SetOrientationForMediaCapture(WebCore::IntDegrees orientation);
+    RotationAngleForCaptureDeviceChanged(String persistentId, enum:uint16_t WebCore::VideoFrameRotation rotation);
+
+    UpdateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, bool willUseEchoCancellation, WebCore::ProcessIdentifier processID) -> ()
+    UpdateCaptureOrigin(WebCore::SecurityOriginData originData, WebCore::ProcessIdentifier processID)
+    AddMockMediaDevice(struct WebCore::MockMediaDevice device)
+    ClearMockMediaDevices()
+    RemoveMockMediaDevice(String persistentId)
+    SetMockMediaDeviceIsEphemeral(String persistentId, bool isEphemeral)
+    ResetMockMediaDevices()
+    SetMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
+    TriggerMockCaptureConfigurationChange(bool forCamera, bool forMicrophone, bool forDisplay)
+    SetShouldListenToVoiceActivity(bool shouldListen)
+    EnableMicrophoneMuteStatusAPI()
+#endif
+#if PLATFORM(MAC)
+    SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
+#endif
+
+#if PLATFORM(COCOA)
+    SinkCompletedSnapshotToPDF(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FloatSize size, WebCore::FrameIdentifier rootFrameIdentifier) -> (RefPtr<WebCore::SharedBuffer> result)
+#endif
+    SinkCompletedSnapshotToBitmap(WebKit::RemoteSnapshotIdentifier identifier, WebCore::FloatSize size, WebCore::FrameIdentifier rootFrameIdentifier) -> (std::optional<WebCore::ShareableBitmapHandle> image)
+    ReleaseSnapshot(WebKit::RemoteSnapshotIdentifier identifier)
+
+#if HAVE(SCREEN_CAPTURE_KIT)
+    PromptForGetDisplayMedia(enum:uint8_t WebCore::DisplayCapturePromptType type) -> (std::optional<WebCore::CaptureDevice> device)
+    CancelGetDisplayMediaPrompt()
+#endif
+
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    TryToSetAudioSessionActiveForProcess(WebCore::ProcessIdentifier processID, bool active) -> (GenericPromise::Result result)
+#endif
+
+#if PLATFORM(MAC)
+    OpenDirectoryCacheInvalidated(WebKit::SandboxExtensionHandle handle)
+#endif
+
+#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
+    ConsumeAudioComponentRegistrations(IPC::SharedBufferReference registrationData)
+#endif
+
+#if HAVE(POWERLOG_TASK_MODE_QUERY)
+    EnablePowerLogging(WebKit::SandboxExtensionHandle handle)
+#endif
+
+    UserPreferredLanguagesChanged(Vector<String> languages)
+
+    WebProcessConnectionCountForTesting() -> (uint64_t count)
+
+#if USE(EXTENSIONKIT)
+    ResolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData)
+#endif
+#if ENABLE(WEBXR)
+    WebXRPromptAccepted(std::optional<WebCore::ProcessIdentity> processIdentity) -> (bool accepted)
+#endif
+#if HAVE(AUDIT_TOKEN)
+    SetPresentingApplicationAuditToken(WebCore::ProcessIdentifier processIdentifier, WebCore::PageIdentifier pageIdentifier, struct std::optional<WebKit::CoreIPCAuditToken> auditToken);
+#endif
+#if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
+#if HAVE(CORE_RE)
+    RequestSharedSimulationConnection(struct WebKit::CoreIPCAuditToken modelProcessAuditToken) -> (std::optional<IPC::SharedFileHandle> sharedSimulationConnection)
+#endif
+#if HAVE(TASK_IDENTITY_TOKEN)
+    CreateMemoryAttributionIDForTask(WebCore::ProcessIdentity processIdentity) -> (std::optional<String> completionHandler)
+    UnregisterMemoryAttributionID(String attributionID) -> ()
+#endif
+#endif
+
+#if PLATFORM(COCOA)
+    PostWillTakeSnapshotNotification() -> ()
+    RegisterFonts(Vector<WebKit::SandboxExtensionHandle> sandboxExtensions)
+#endif
+}
+
+#endif // ENABLE(GPU_PROCESS)

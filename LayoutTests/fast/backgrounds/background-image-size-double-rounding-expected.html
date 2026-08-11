@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>This tests that background image size is rounded properly when no-repeat attribute is present.</title>
+<style>
+  .outer {
+	position: absolute;
+    width: 10px;
+    height: 10px;
+	background-color: blue;
+  }
+
+  .inner {
+    height: 10px;
+    width: 10.5px;
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAaCAYAAAA0R0VGAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAK6wAACusBgosNWgAAAq5pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIgogICAgICAgICAgICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iCiAgICAgICAgICAgIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIj4KICAgICAgICAgPHhtcDpDcmVhdGVEYXRlPjIwMDgtMDktMjBUMTA6MTY6MjNaPC94bXA6Q3JlYXRlRGF0ZT4KICAgICAgICAgPHhtcDpDcmVhdG9yVG9vbD5BZG9iZSBGaXJld29ya3MgQ1MzPC94bXA6Q3JlYXRvclRvb2w+CiAgICAgICAgIDx4bXA6TW9kaWZ5RGF0ZT4yMDA4LTA5LTIwVDEzOjEyOjQ4WjwveG1wOk1vZGlmeURhdGU+CiAgICAgICAgIDxkYzpmb3JtYXQ+aW1hZ2UvcG5nPC9kYzpmb3JtYXQ+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgqSlUo2AAAATUlEQVRIDe3SsQ3AMAwDQcf7j5o2dQx4hK9UnHoCxInP965/Db09tNetpVz9DjlyVaDmbI5cFag5myNXBWrO5shVgZqzOXJVoOZsrsodgj4DFBo/NegAAAAASUVORK5CYII=);
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  adjustment = 0.1;
+  for (i = 0; i < 20; ++i) {
+    adjustment += 0.1;
+    size = 8;
+    for (j = 0; j < 20; ++j) {
+      size += 0.1;
+      var outer = document.createElement("div");
+      outer.className = "outer";
+      outer.style.top = (20 * i + j * adjustment) + "px";
+      outer.style.left = (20 * j + i * adjustment) + "px";
+      
+      var inner = document.createElement("div");
+      inner.className = "inner";
+      inner.style.width = size + "px";
+      
+      outer.appendChild(inner);
+      container.appendChild(outer);
+    }
+  }
+</script>
+</body>
+</html>

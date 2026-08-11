@@ -1,0 +1,80 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # subject: subject line of message
+  # body: message body, shown before the query tables
+  # queries: array of hashes containing:
+  #     bugs: array containing hashes of fieldnames->values for each bug
+  #     title: the title given in the whine scheduling mechanism
+  #     name: the name of the query
+  #     columnlist: array of fieldnames to display in the mail
+  # author: user object for the person who scheduled this whine
+  # recipient: user object for the intended recipient of the message
+  #%]
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      [[% terms.Bugzilla %]] [% subject FILTER html %]
+    </title>
+  </head>
+  <body>
+
+    <pre>
+      [% body FILTER html %]
+    </pre>
+
+    <p>
+      [% IF author.login == recipient.login %]
+        <a href="[%+ urlbase FILTER html %]editwhines.cgi">Click
+            here to edit your whine schedule</a>
+      [% ELSE %]
+        This search was scheduled by [% author.login FILTER html %].
+      [% END %]
+    </p>
+
+[% IF queries.size %]
+  [% FOREACH query=queries %]
+
+    <h2>[%+ query.title FILTER html %] ([% query.bugs.size %] [%+ terms.bugs %])</h2>
+
+    <table>
+      <tr>
+        <th>ID</th>
+        [% FOREACH col = query.columnlist %]
+          [% NEXT IF col == 'bug_id' %]
+          <th>[% field_descs.$col FILTER html %]</th>
+        [% END %]
+      </tr>
+
+      [% FOREACH bug=query.bugs %]
+        <tr>
+          <td><a href="[%+ urlbase FILTER html %]show_bug.cgi?id=
+              [%- bug.bug_id %]">[% bug.bug_id %]</a></td>
+          [% FOREACH col = query.columnlist %]
+            [% NEXT IF col == 'bug_id' %]
+            <td>[% display_value(col, bug.$col) FILTER html %]</td>
+          [% END %]
+        </tr>
+      [% END %]
+    </table>
+
+    [% IF author.login == recipient.login %]
+      <p>
+        <a href="[% urlbase FILTER html %]buglist.cgi?cmdtype=runnamed&amp;namedcmd=[% query.name FILTER uri %]">View as [% terms.bug %] list</a>
+      </p>
+    [% END %]
+  [% END %]
+[% ELSE %]
+
+  <h3>No [% terms.bugs %] were found that matched the search criteria.</h3>
+[% END %]
+  </body>
+</html>

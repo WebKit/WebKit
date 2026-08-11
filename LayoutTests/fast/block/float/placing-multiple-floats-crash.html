@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests placing multiple floats does not make the browser crash.</title>
+<style>
+div {
+    float: left;
+    width: 100px; 
+    height: 100px; 
+}
+</style>
+</head>
+<body>
+Pass if no crash or assert.
+<div><p style="width: 100px; height: 100px"></p></div>
+<iframe width="800" height="600"></iframe>
+<div></div>
+<span id=span></span><fieldset/><center id=center></center>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+setInterval(function() {
+    var range = document.createRange();
+    range.selectNodeContents(span);
+    range.surroundContents(center);
+}, 0);
+
+setTimeout(function() {
+    document.documentElement.style.visibility = "collapse";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 100);
+</script>
+</body>
+</html>

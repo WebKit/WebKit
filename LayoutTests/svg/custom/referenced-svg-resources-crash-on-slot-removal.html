@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<div id="outer-host"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const outerHost = document.getElementById("outer-host");
+const outerShadow = outerHost.attachShadow({ mode: "open" });
+
+outerShadow.innerHTML = `
+    <div id="inner-host">
+        <div id="svg-defs" slot="s">
+            <svg>
+                <defs>
+                    <clipPath id="clip"><rect width="50" height="50"/></clipPath>
+                </defs>
+            </svg>
+        </div>
+        <div id="svg-user" slot="s">
+            <svg>
+                <rect width="100" height="100" style="clip-path: url(#clip);"/>
+            </svg>
+        </div>
+    </div>
+`;
+
+const innerHost = outerShadow.getElementById("inner-host");
+const innerShadow = innerHost.attachShadow({ mode: "open" });
+innerShadow.innerHTML = '<slot name="s"></slot>';
+
+document.body.offsetHeight;
+
+outerShadow.getElementById("svg-defs").remove();
+</script>
+</body>
+</html>

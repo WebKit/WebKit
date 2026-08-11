@@ -1,0 +1,4 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+(ROOT (TEXT "Heading\n\nSubheading\n\nSome plain text and a link.\n\n" {<https://www.apple.com/> in [37,47]}))

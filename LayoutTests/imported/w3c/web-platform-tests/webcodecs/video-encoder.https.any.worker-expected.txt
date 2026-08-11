@@ -1,0 +1,11 @@
+
+PASS Test VideoEncoder construction
+PASS Test successful configure(), encode(), and flush()
+PASS encodeQueueSize test
+PASS Test successful reset() and re-confiugre()
+PASS Test successful encode() after re-configure().
+PASS Verify closed VideoEncoder operations
+PASS Verify unconfigured VideoEncoder operations
+PASS Verify encoding closed frames throws.
+PASS Encode video with negative timestamp
+

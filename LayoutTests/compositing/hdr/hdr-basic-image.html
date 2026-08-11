@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .image-box {
+        width: 200px;
+        height: 200px;
+        will-change: transform;
+    }
+</style>
+<body>
+    <pre id="layers">Layer tree goes here in DRT</pre>
+    <div style="position: fixed; top: 10px; left: 10px;">
+        <img class="image-box">
+    </div>
+    <div style="position: fixed; top: 10px; left: 220px;">
+        <div class="image-box"></div>
+    </div>
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+ 
+        var image = new Image;
+        image.onload = (() => {
+            if (window.internals)
+                internals.setHasHDRContentForTesting(image);
+
+            var divElement = document.querySelector("div.image-box");
+            divElement.style.backgroundImage = 'url(' + image.src + ')';
+
+            var imgElement = document.querySelector("img.image-box");
+            imgElement.src = image.src;
+
+            if (window.testRunner) {
+                document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        });
+        image.src = "../../fast/images/resources/green-400x400.png";
+    </script>
+</body>
+</html>

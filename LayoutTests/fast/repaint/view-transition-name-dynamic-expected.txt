@@ -1,0 +1,6 @@
+Tests that dynamically setting view-transition-name invalidates for repaint. Setting it makes #wc a stacking context, painting the negative-z-index green child above #wc's red background. Passes if a repaint is issued for that region.
+
+(repaint rects
+  (rect 0 52 100 100)
+)
+

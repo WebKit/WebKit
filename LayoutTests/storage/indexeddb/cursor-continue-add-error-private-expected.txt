@@ -1,0 +1,17 @@
+Adding record fails due to index uniqueness during cursor iteration.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+cursorRequest = scoreIndex.openCursor()
+cursor = event.target.result
+PASS cursor.key is 100
+cursor.continue()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

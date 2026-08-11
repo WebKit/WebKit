@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<style>
+.container {
+  width: 150px;
+  background: lightblue;
+}
+
+.container > div {
+  display: block;
+  background: lightgrey;
+  margin: 10px 0 20px 0;
+  height: 20px;
+}
+
+nocollapse {
+  display: block;
+  overflow: hidden;
+}
+</style>
+
+<div class="container">
+  <div></div>
+  <nocollapse style="overflow: visible"></nocollapse>
+</div>
+
+<div class="container">
+  <div></div>
+  <nocollapse></nocollapse>
+</div>
+
+<div class="container">
+  <div></div>
+  <nocollapse></nocollapse>
+  <div></div>
+</div>

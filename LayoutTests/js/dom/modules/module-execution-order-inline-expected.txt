@@ -1,0 +1,14 @@
+Test module execution order between inlined module tags.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module is not executed yet.
+PASS count++ is 0
+PASS count++ is 1
+PASS count++ is 2
+PASS count++ is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

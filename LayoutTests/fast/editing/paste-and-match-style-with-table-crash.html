@@ -1,0 +1,18 @@
+<style>
+  head, style {
+    display: block;
+  }
+</style>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  onload = () => {
+    console.log("This test passes if it does not crash.");
+    document.execCommand('SelectAll');
+    document.execCommand('Copy');
+    document.designMode = 'on';
+    document.execCommand('InsertHorizontalRule');
+    document.body.appendChild(document.createElement('table'));
+    document.execCommand('PasteAndMatchStyle');
+  };
+</script>

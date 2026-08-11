@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice({requiredFeatures: [ 'depth32float-stencil8' ]});
+    let texture = device.createTexture({ size: [21], mipLevelCount: 3, format: 'depth32float-stencil8', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView({ baseMipLevel: 2 });
+    let shaderModule = device.createShaderModule({ code: `
+        struct e {
+            @location(0) f: vec4<f32>
+        }
+        @fragment fn g() -> e {
+            return e();
+        }
+        @vertex fn n() -> @builtin(position) vec4<f32> {
+            return vec4();
+        }
+    `});
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let pipeline = await device.createRenderPipelineAsync({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [{ format: 'rgba16float' }] },
+        depthStencil: { format: 'depth32float-stencil8', depthWriteEnabled: true, depthCompare: 'never' },
+        vertex: { module: shaderModule }
+    });
+    let renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: [], depthStencilFormat: 'depth32float-stencil8' });
+    renderBundleEncoder.setPipeline(pipeline);
+    let renderPass = device.createCommandEncoder().beginRenderPass({
+        colorAttachments: [],
+        depthStencilAttachment: {
+            view: textureView,
+            depthClearValue: 0,
+            depthLoadOp: 'clear',
+            depthStoreOp: 'store',
+            stencilLoadOp: 'load',
+            stencilStoreOp: 'store'
+        }
+    });
+    let renderBundle = renderBundleEncoder.finish();
+    renderPass.executeBundles([renderBundle]);
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

@@ -1,0 +1,24 @@
+
+PASS HTTP protocol, no subdomain, port #1
+PASS HTTP protocol, no subdomain, port #2
+PASS HTTP protocol, www subdomain #1, port #1
+PASS HTTP protocol, www subdomain #1, port #2
+PASS HTTP protocol, www subdomain #2, port #1
+PASS HTTP protocol, www subdomain #2, port #2
+PASS HTTP protocol, www subdomain #3, port #1
+PASS HTTP protocol, www subdomain #3, port #2
+PASS HTTP protocol, punycode subdomain #1, port #1
+PASS HTTP protocol, punycode subdomain #1, port #2
+PASS HTTP protocol, punycode subdomain #2, port #1
+PASS HTTP protocol, punycode subdomain #2, port #2
+PASS HTTP protocol, non-existent domain, port #1
+PASS HTTP protocol, non-existent domain, port #2
+PASS HTTPS protocol, no subdomain
+PASS HTTPS protocol, www subdomain #1
+PASS HTTPS protocol, www subdomain #2
+PASS HTTPS protocol, www subdomain #3
+PASS HTTPS protocol, punycode subdomain #1
+PASS HTTPS protocol, punycode subdomain #2
+PASS HTTPS protocol, non-existent domain, port #1
+PASS HTTPS protocol, non-existent domain, port #2
+

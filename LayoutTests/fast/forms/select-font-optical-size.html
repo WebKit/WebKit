@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+body {
+    text-rendering: optimizeLegibility;
+}
+select {
+    -webkit-appearance: none;
+}
+</style>
+</head>
+<body>
+<select id="target">
+    <option>Click</option>
+    <option>Click</option>
+</select>
+<script>
+description("This test makes sure that text-rendering: optimizeLegibility on a drop-down select element doesn't cause a hang.");
+window.jsTestIsAsync = true;
+const target = document.getElementById("target");
+if (window.internals) {
+    internals.withUserGesture(function() {
+        target.click();
+        window.setTimeout(finishJSTest, 50);
+    });
+} else
+    finishJSTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

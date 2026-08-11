@@ -1,0 +1,33 @@
+<script>
+
+var database;
+
+for (var i = 0; i < 100; ++i) {
+    var request = window.indexedDB.deleteDatabase("IndexedDBDatabaseProcessKill");
+    request.onsuccess = function() {
+        window.webkit.messageHandlers.testHandler.postMessage('DeleteRequestDone');
+    }
+    request.onerror = function() {
+        window.webkit.messageHandlers.testHandler.postMessage('DeleteRequestError');
+    }
+
+    request = window.indexedDB.open("IndexedDBDatabaseProcessKill");
+    request.onsuccess = function() {
+        window.webkit.messageHandlers.testHandler.postMessage('OpenRequestDone');
+    }
+    request.onerror = function() {
+        window.webkit.messageHandlers.testHandler.postMessage('OpenRequestError');
+    }
+    request.onupgradeneeded = function(e) {
+        database = e.target.result;
+        database.onerror = function() {
+            notifyDatabaseErrorReceived = function() {
+                window.webkit.messageHandlers.testHandler.postMessage('DatabaseErrorReceived');
+            }
+            setTimeout("setTimeout(notifyDatabaseErrorReceived, 0)", 0);
+        }
+        window.webkit.messageHandlers.testHandler.postMessage('OpenRequestUpgradeNeeded');
+    }
+}
+
+</script>

@@ -1,0 +1,28 @@
+Tests passing bad input to the Selection API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Not passing enough parameters
+PASS selection.collapse() threw exception TypeError: Not enough arguments.
+PASS selection.containsNode() threw exception TypeError: Not enough arguments.
+PASS selection.selectAllChildren() threw exception TypeError: Not enough arguments.
+PASS selection.extend() threw exception TypeError: Not enough arguments.
+PASS selection.getRangeAt() threw exception TypeError: Not enough arguments.
+PASS selection.addRange() threw exception TypeError: Not enough arguments.
+PASS selection.setBaseAndExtent() threw exception TypeError: Not enough arguments.
+PASS selection.setBaseAndExtent(document.body) threw exception TypeError: Not enough arguments.
+PASS selection.setBaseAndExtent(document.body, 0) threw exception TypeError: Not enough arguments.
+PASS selection.setBaseAndExtent(document.body, 0, document.body) threw exception TypeError: Not enough arguments.
+PASS selection.setPosition() threw exception TypeError: Not enough arguments.
+
+* Passing null for non-nullable parameters
+PASS selection.containsNode(null) threw exception TypeError: Argument 1 ('node') to Selection.containsNode must be an instance of Node.
+PASS selection.selectAllChildren(null) threw exception TypeError: Argument 1 ('node') to Selection.selectAllChildren must be an instance of Node.
+PASS selection.extend(null) threw exception TypeError: Argument 1 ('node') to Selection.extend must be an instance of Node.
+PASS selection.addRange(null) threw exception TypeError: Argument 1 ('range') to Selection.addRange must be an instance of Range.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

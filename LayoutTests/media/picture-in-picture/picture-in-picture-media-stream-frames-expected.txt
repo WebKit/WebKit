@@ -1,0 +1,24 @@
+
+RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
+RUN(video.srcObject = canvas.captureStream())
+EVENT(playing)
+
+Test that frames keep arriving while the video is inline:
+RUN(inlineFrameCount = video.getVideoPlaybackQuality().totalVideoFrames)
+EXPECTED (video.getVideoPlaybackQuality().totalVideoFrames > inlineFrameCount == 'true') OK
+
+Test that frames keep arriving after entering Picture-in-Picture:
+RUN(video.requestPictureInPicture())
+EVENT(enterpictureinpicture)
+EXPECTED (internals.mediaElementViewportVisibility(video) == 'VisibleInPictureInPicture') OK
+RUN(pipFrameCount = video.getVideoPlaybackQuality().totalVideoFrames)
+EXPECTED (video.getVideoPlaybackQuality().totalVideoFrames > pipFrameCount == 'true') OK
+
+Test that frames keep arriving after leaving Picture-in-Picture:
+RUN(document.exitPictureInPicture())
+EVENT(leavepictureinpicture)
+RUN(inlineAgainFrameCount = video.getVideoPlaybackQuality().totalVideoFrames)
+EXPECTED (video.getVideoPlaybackQuality().totalVideoFrames > inlineAgainFrameCount == 'true') OK
+END OF TEST
+

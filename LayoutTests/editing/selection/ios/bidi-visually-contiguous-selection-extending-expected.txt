@@ -1,0 +1,15 @@
+This text — مثل هذا النص — is right to left
+
+
+أرسل بريدًا إلكترونيًا إلى foo@example.com وانتظر الرد
+
+This test verifies that the text selection remains visually contiguous when extending the selection across bidi text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Selected all text in LTR paragraph
+PASS Selected all text in RTL paragraph
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

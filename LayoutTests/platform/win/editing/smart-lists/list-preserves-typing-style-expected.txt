@@ -1,0 +1,15 @@
+When bold, italic, and underline are toggled on before typing marker-style lines, smart-list conversion should preserve the active typing style â€” including on a subsequent line typed without an explicit marker.
+| <b>
+|   <i>
+|     <u>
+|       "1. this is styled text"
+| <div>
+|   <b>
+|     <i>
+|       <u>
+|         "2. this is styled text"
+| <div>
+|   <b>
+|     <i>
+|       <u>
+|         "this is styled text<#selection-caret>"

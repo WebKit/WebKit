@@ -1,0 +1,44 @@
+PASS did load script with origin ./cookie-protected-script.py?source=module-propagate&testId=0.
+
+PASS did load script with origin http://127.0.0.1:8000/security/resources/cookie-protected-script.py?source=module-propagate&testId=1.
+
+PASS did not load script with origin https://127.0.0.1:8443/security/resources/cookie-protected-script.py?source=module-propagate&testId=2.
+
+PASS did not load script with origin http://localhost:8000/security/resources/cookie-protected-script.py?source=module-propagate&testId=3.
+
+PASS did load script with origin ./cookie-protected-script.py?source=module-propagate&testId=4.
+
+PASS did load script with origin http://127.0.0.1:8000/security/resources/cookie-protected-script.py?source=module-propagate&testId=5.
+
+PASS did not load script with origin https://127.0.0.1:8443/security/resources/cookie-protected-script.py?source=module-propagate&testId=6.
+
+PASS did not load script with origin http://localhost:8000/security/resources/cookie-protected-script.py?source=module-propagate&testId=7.
+
+PASS did load script with origin ./cookie-protected-script.py?source=module-propagate&testId=8.
+
+PASS did load script with origin http://127.0.0.1:8000/security/resources/cookie-protected-script.py?source=module-propagate&testId=9.
+
+PASS did not load script with origin https://127.0.0.1:8443/security/resources/cookie-protected-script.py?source=module-propagate&testId=10.
+
+PASS did not load script with origin http://localhost:8000/security/resources/cookie-protected-script.py?source=module-propagate&testId=11.
+
+PASS did not load script with origin ./cookie-protected-script.py?source=module-propagate&testId=12.
+
+PASS did not load script with origin http://127.0.0.1:8000/security/resources/cookie-protected-script.py?source=module-propagate&testId=13.
+
+PASS did not load script with origin https://127.0.0.1:8443/security/resources/cookie-protected-script.py?source=module-propagate&testId=14.
+
+PASS did not load script with origin http://localhost:8000/security/resources/cookie-protected-script.py?source=module-propagate&testId=15.
+
+PASS did load script with origin ./cookie-protected-script.py?source=module-propagate&testId=16.
+
+PASS did load script with origin http://127.0.0.1:8000/security/resources/cookie-protected-script.py?source=module-propagate&testId=17.
+
+PASS did load script with origin https://127.0.0.1:8443/security/resources/cookie-protected-script.py?source=module-propagate&testId=18.
+
+PASS did not load script with origin http://localhost:8000/security/resources/cookie-protected-script.py?source=module-propagate&testId=19.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

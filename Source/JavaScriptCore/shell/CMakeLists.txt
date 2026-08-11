@@ -1,0 +1,150 @@
+set(jsc_SOURCES ../jsc.cpp)
+set(jsc_LIBRARIES ${CMAKE_DL_LIBS})
+set(jsc_FRAMEWORKS
+    JavaScriptCore
+    WTF
+    bmalloc
+)
+
+set(jsc_PRIVATE_INCLUDE_DIRECTORIES
+    $<TARGET_PROPERTY:JavaScriptCore,INCLUDE_DIRECTORIES>
+)
+
+if (WTF_OS_MACOS)
+    list(APPEND jsc_LIBRARIES edit)
+endif ()
+
+if (WIN32)
+    list(APPEND jsc_LIBRARIES Winmm)
+endif ()
+
+if (ENABLE_FUZZILLI)
+  list(APPEND jsc_SOURCES ../fuzzilli/Fuzzilli.cpp)
+endif ()
+
+WEBKIT_EXECUTABLE_DECLARE(jsc)
+
+if (DEVELOPER_MODE)
+    set(testapi_SOURCES
+        ../API/tests/CompareAndSwapTest.cpp
+        ../API/tests/ExecutionTimeLimitTest.cpp
+        ../API/tests/FunctionOverridesTest.cpp
+        ../API/tests/FunctionToStringTests.cpp
+        ../API/tests/GlobalContextWithFinalizerTest.cpp
+        ../API/tests/JSONParseTest.cpp
+        ../API/tests/JSObjectGetProxyTargetTest.cpp
+        ../API/tests/MultithreadedMultiVMExecutionTest.cpp
+        ../API/tests/PingPongStackOverflowTest.cpp
+        ../API/tests/TemporalCoreTest.cpp
+        ../API/tests/TypedArrayCTest.cpp
+        ../API/tests/VMManagerStopTheWorldTest.cpp
+        ../API/tests/testapi.cpp
+    )
+    set(testapi_C_SOURCES
+        ../API/tests/CustomGlobalObjectClassTest.c
+        ../API/tests/testapi.c
+    )
+    set(testapi_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testapi_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testapi_FRAMEWORKS ${jsc_FRAMEWORKS})
+
+    set(testmasm_SOURCES ../assembler/testmasm.cpp)
+    set(testmasm_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testmasm_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testmasm_FRAMEWORKS ${jsc_FRAMEWORKS})
+
+    set(testRegExp_SOURCES ../testRegExp.cpp)
+    set(testRegExp_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testRegExp_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testRegExp_FRAMEWORKS ${jsc_FRAMEWORKS})
+
+    set(testb3_SOURCES
+        ../b3/testb3_1.cpp
+        ../b3/testb3_2.cpp
+        ../b3/testb3_3.cpp
+        ../b3/testb3_4.cpp
+        ../b3/testb3_5.cpp
+        ../b3/testb3_6.cpp
+        ../b3/testb3_7.cpp
+        ../b3/testb3_8.cpp
+    )
+    set(testb3_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testb3_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testb3_FRAMEWORKS ${jsc_FRAMEWORKS})
+
+    set(testair_SOURCES ../b3/air/testair.cpp)
+    set(testair_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testair_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testair_FRAMEWORKS ${jsc_FRAMEWORKS})
+
+    set(testdfg_SOURCES ../dfg/testdfg.cpp)
+    set(testdfg_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testdfg_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(testdfg_FRAMEWORKS ${jsc_FRAMEWORKS})
+
+    set(testwasmdebugger_SOURCES
+        ../wasm/debugger/testwasmdebugger.cpp
+
+        ../wasm/debugger/tests/BinaryTests.cpp
+        ../wasm/debugger/tests/ControlFlowTests.cpp
+        ../wasm/debugger/tests/ExecutionHandlerIdleStopTest.cpp
+        ../wasm/debugger/tests/ExecutionHandlerTest.cpp
+        ../wasm/debugger/tests/ExecutionHandlerTestSupport.cpp
+        ../wasm/debugger/tests/ExecutionHandlerVMLifecycleTest.cpp
+        ../wasm/debugger/tests/ExtGCTests.cpp
+        ../wasm/debugger/tests/GDBPacketParserTest.cpp
+        ../wasm/debugger/tests/MemoryTests.cpp
+        ../wasm/debugger/tests/SpecialTests.cpp
+        ../wasm/debugger/tests/TestScripts.cpp
+        ../wasm/debugger/tests/TestUtilities.cpp
+        ../wasm/debugger/tests/UnaryTests.cpp
+    )
+    set(testwasmdebugger_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(testwasmdebugger_PRIVATE_INCLUDE_DIRECTORIES
+        ${jsc_PRIVATE_INCLUDE_DIRECTORIES}
+        ${JAVASCRIPTCORE_DIR}/wasm/debugger/tests
+    )
+    set(testwasmdebugger_FRAMEWORKS ${jsc_FRAMEWORKS})
+
+    WEBKIT_EXECUTABLE_DECLARE(testapi)
+    WEBKIT_EXECUTABLE_DECLARE(testRegExp)
+    WEBKIT_EXECUTABLE_DECLARE(testmasm)
+    WEBKIT_EXECUTABLE_DECLARE(testb3)
+    WEBKIT_EXECUTABLE_DECLARE(testair)
+    WEBKIT_EXECUTABLE_DECLARE(testdfg)
+    WEBKIT_EXECUTABLE_DECLARE(testwasmdebugger)
+
+    if (COMPILER_IS_GCC_OR_CLANG)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(testb3 -Wno-array-bounds)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(testair -Wno-array-bounds)
+        WEBKIT_ADD_TARGET_CXX_FLAGS(testb3 -Wno-error=stack-exhausted)
+    endif ()
+endif ()
+
+WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
+WEBKIT_EXECUTABLE(jsc)
+
+if (SHOULD_INSTALL_JS_SHELL)
+    install(TARGETS jsc DESTINATION "${LIBEXEC_INSTALL_DIR}")
+endif ()
+
+if (DEVELOPER_MODE)
+    WEBKIT_EXECUTABLE(testapi)
+    WEBKIT_EXECUTABLE(testRegExp)
+    WEBKIT_EXECUTABLE(testmasm)
+    WEBKIT_EXECUTABLE(testb3)
+    WEBKIT_EXECUTABLE(testair)
+    WEBKIT_EXECUTABLE(testdfg)
+    WEBKIT_EXECUTABLE(testwasmdebugger)
+
+    WEBKIT_ADD_PREFIX_HEADER(testapi ../JavaScriptCorePrefix.h PREFIX_NO_CODEGEN PREFIX_LANGUAGES CXX)
+    WEBKIT_REUSE_PREFIX_HEADER(testb3 testapi ../JavaScriptCorePrefix.h PREFIX_LANGUAGES CXX)
+    WEBKIT_REUSE_PREFIX_HEADER(testwasmdebugger testapi ../JavaScriptCorePrefix.h PREFIX_LANGUAGES CXX)
+
+    file(COPY
+        "${JAVASCRIPTCORE_DIR}/API/tests/testapiScripts"
+        DESTINATION
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    )
+endif ()

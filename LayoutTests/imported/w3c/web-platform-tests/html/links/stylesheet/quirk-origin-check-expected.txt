@@ -1,0 +1,5 @@
+There should be no red.
+
+
+PASS Origin check for stylesheet with non-CSS MIME type quirk
+

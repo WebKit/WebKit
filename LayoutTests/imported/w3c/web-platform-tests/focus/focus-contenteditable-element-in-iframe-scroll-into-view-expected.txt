@@ -1,0 +1,5 @@
+focusable 1
+
+
+PASS Check contenteditable element in an iframe scroll into view on second focusing
+

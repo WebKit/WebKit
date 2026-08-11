@@ -1,0 +1,538 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#include "Helpers/Utilities.h"
+#include <wtf/CheckedPtr.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/HashSet.h>
+#include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Threading.h>
+#include <wtf/TypeCasts.h>
+#include <wtf/UniquelyOwned.h>
+#include <wtf/UniquelyOwnedPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/WallTime.h>
+
+namespace {
+
+class UniquelyOwnedObject : public UniquelyOwned<UniquelyOwnedObject> {
+public:
+    static UniquelyOwnedPtr<UniquelyOwnedObject> create()
+    {
+        return makeUniquelyOwned<UniquelyOwnedObject>();
+    }
+};
+
+}
+
+namespace TestWebKitAPI {
+
+class CheckedObject : public CanMakeCheckedPtr<CheckedObject> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CheckedObject);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CheckedObject);
+public:
+    int someFunction() const { return -7; }
+    int member() const { return m_member; }
+private:
+    int m_member { 333 };
+};
+
+class DerivedCheckedObject : public CheckedObject {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DerivedCheckedObject);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DerivedCheckedObject);
+};
+
+TEST(WTF_CheckedPtr, Basic)
+{
+    {
+        auto checkedObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+    }
+
+    {
+        auto checkedObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+        {
+            CheckedPtr ptr { checkedObject.get() };
+            EXPECT_TRUE(!!ptr);
+            EXPECT_EQ(ptr.get(), checkedObject.get());
+            EXPECT_EQ(ptr->someFunction(), -7);
+            EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+        }
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+    }
+
+    {
+        auto checkedObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+
+        CheckedPtr ptr = { checkedObject.get() };
+        EXPECT_TRUE(!!ptr);
+        EXPECT_EQ(ptr.get(), checkedObject.get());
+        EXPECT_EQ(ptr->someFunction(), -7);
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+        ptr = nullptr;
+
+        EXPECT_FALSE(!!ptr);
+        EXPECT_EQ(ptr.get(), nullptr);
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+    }
+
+    {
+        auto checkedObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+
+        CheckedPtr ptr1 { checkedObject.get() };
+        EXPECT_TRUE(!!ptr1);
+        EXPECT_EQ(ptr1.get(), checkedObject.get());
+        EXPECT_EQ(ptr1->someFunction(), -7);
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+
+        const CheckedPtr ptr2 { checkedObject.get() };
+        EXPECT_TRUE(!!ptr2);
+        EXPECT_EQ(ptr2.get(), checkedObject.get());
+        EXPECT_EQ(ptr2->someFunction(), -7);
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
+
+        CheckedPtr ptr3 = ptr2;
+        EXPECT_TRUE(!!ptr3);
+        EXPECT_EQ(ptr3.get(), checkedObject.get());
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 3u);
+
+        ptr1 = nullptr;
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
+        EXPECT_EQ(ptr1.get(), nullptr);
+        EXPECT_EQ(ptr2.get(), checkedObject.get());
+        EXPECT_EQ(ptr3.get(), checkedObject.get());
+
+        ptr1 = WTF::move(ptr3);
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
+        EXPECT_EQ(ptr1.get(), checkedObject.get());
+        EXPECT_EQ(ptr2.get(), checkedObject.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(ptr3.get(), nullptr);
+    }
+}
+
+TEST(WTF_CheckedPtr, CheckedRef)
+{
+    {
+        auto checkedObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+        {
+            CheckedRef ref { *checkedObject };
+            EXPECT_EQ(ref.ptr(), checkedObject.get());
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+            CheckedPtr ptr { ref };
+            EXPECT_EQ(ref.ptr(), checkedObject.get());
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(ptr.get(), checkedObject.get());
+            EXPECT_EQ(ptr->someFunction(), -7);
+            EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
+        }
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+    }
+
+    {
+        auto checkedObject = makeUnique<DerivedCheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+        {
+            CheckedRef<DerivedCheckedObject> ref { *checkedObject };
+            EXPECT_EQ(ref.ptr(), checkedObject.get());
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+            CheckedPtr<CheckedObject> ptr { ref };
+            EXPECT_EQ(ref.ptr(), checkedObject.get());
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(ptr.get(), checkedObject.get());
+            EXPECT_EQ(ptr->someFunction(), -7);
+            EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
+        }
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+    }
+
+    {
+        auto checkedObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+        {
+            CheckedRef ref { *checkedObject };
+            EXPECT_EQ(ref.ptr(), checkedObject.get());
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+            CheckedPtr ptr { WTF::move(ref) };
+            EXPECT_EQ(ptr.get(), checkedObject.get());
+            EXPECT_EQ(ptr->someFunction(), -7);
+            EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+        }
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+    }
+
+    {
+        auto checkedObject = makeUnique<DerivedCheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+        {
+            CheckedRef<DerivedCheckedObject> ref { *checkedObject };
+            EXPECT_EQ(ref.ptr(), checkedObject.get());
+            EXPECT_EQ(ref->someFunction(), -7);
+            EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+            CheckedPtr<CheckedObject> ptr { WTF::move(ref) };
+            EXPECT_EQ(ptr.get(), checkedObject.get());
+            EXPECT_EQ(ptr->someFunction(), -7);
+            EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+        }
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+    }
+}
+
+TEST(WTF_CheckedPtr, DerivedClass)
+{
+    {
+        auto checkedObject = makeUnique<DerivedCheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+    }
+
+    {
+        auto checkedObject = makeUnique<DerivedCheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+        {
+            CheckedPtr ptr = { checkedObject.get() };
+            EXPECT_TRUE(!!ptr);
+            EXPECT_EQ(ptr.get(), checkedObject.get());
+            EXPECT_EQ(ptr->someFunction(), -7);
+            EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+        }
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+    }
+
+    {
+        auto checkedObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+
+        CheckedPtr<CheckedObject> ptr { checkedObject.get() };
+        EXPECT_TRUE(!!ptr);
+        EXPECT_EQ(ptr.get(), checkedObject.get());
+        EXPECT_EQ(ptr->someFunction(), -7);
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+        ptr = nullptr;
+
+        EXPECT_FALSE(!!ptr);
+        EXPECT_EQ(ptr.get(), nullptr);
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+    }
+
+    {
+        auto checkedObject = makeUnique<DerivedCheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+
+        CheckedPtr<DerivedCheckedObject> ptr1 { checkedObject.get() };
+        EXPECT_TRUE(!!ptr1);
+        EXPECT_EQ(ptr1.get(), checkedObject.get());
+        EXPECT_EQ(ptr1->someFunction(), -7);
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+
+        const CheckedPtr<CheckedObject> ptr2 = ptr1;
+        EXPECT_TRUE(!!ptr2);
+        EXPECT_EQ(ptr2.get(), checkedObject.get());
+        EXPECT_EQ(ptr2->someFunction(), -7);
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
+
+        CheckedPtr<CheckedObject> ptr3 = ptr1;
+        EXPECT_TRUE(!!ptr3);
+        EXPECT_EQ(ptr3.get(), checkedObject.get());
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 3u);
+
+        ptr1 = nullptr;
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
+        EXPECT_EQ(ptr1.get(), nullptr);
+        EXPECT_EQ(ptr2.get(), checkedObject.get());
+        EXPECT_EQ(ptr3.get(), checkedObject.get());
+
+        CheckedPtr<CheckedObject> ptr4 = WTF::move(ptr3);
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
+        EXPECT_EQ(ptr1.get(), nullptr);
+        EXPECT_EQ(ptr2.get(), checkedObject.get());
+        SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(ptr3.get(), nullptr);
+        EXPECT_EQ(ptr4.get(), checkedObject.get());
+    }
+}
+
+TEST(WTF_CheckedPtr, HashSet)
+{
+    {
+        auto checkedObject = makeUnique<CheckedObject>();
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 0u);
+
+        CheckedPtr ptr = { checkedObject.get() };
+        EXPECT_EQ(ptr.get(), checkedObject.get());
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+
+        HashSet<CheckedPtr<CheckedObject>> set;
+        set.add(ptr);
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 2u);
+
+        ptr = nullptr;
+        EXPECT_EQ(checkedObject->checkedPtrCount(), 1u);
+    }
+
+    {
+        auto object1 = makeUnique<CheckedObject>();
+        auto object2 = makeUnique<DerivedCheckedObject>();
+        EXPECT_EQ(object1->checkedPtrCount(), 0u);
+        EXPECT_EQ(object2->checkedPtrCount(), 0u);
+
+        HashSet<CheckedPtr<CheckedObject>> set;
+        set.add(object1.get());
+        EXPECT_EQ(object1->checkedPtrCount(), 1u);
+        EXPECT_EQ(object2->checkedPtrCount(), 0u);
+
+        set.add(object1.get());
+        EXPECT_EQ(object1->checkedPtrCount(), 1u);
+        EXPECT_EQ(object2->checkedPtrCount(), 0u);
+
+        CheckedPtr<DerivedCheckedObject> ptr { object2.get() };
+        set.add(ptr);
+        EXPECT_EQ(object1->checkedPtrCount(), 1u);
+        EXPECT_EQ(object2->checkedPtrCount(), 2u);
+        ptr = nullptr;
+
+        EXPECT_EQ(object1->checkedPtrCount(), 1u);
+        EXPECT_EQ(object2->checkedPtrCount(), 1u);
+
+        set.remove(object1.get());
+        EXPECT_EQ(object1->checkedPtrCount(), 0u);
+        EXPECT_EQ(object2->checkedPtrCount(), 1u);
+    }
+
+    {
+        Vector<std::unique_ptr<CheckedObject>> objects;
+        objects.append(makeUnique<CheckedObject>());
+        EXPECT_EQ(objects[0]->checkedPtrCount(), 0u);
+
+        HashSet<CheckedPtr<CheckedObject>> set;
+        set.add(objects[0].get());
+        auto initialCapacity = set.capacity();
+
+        for (unsigned i = 0; set.capacity() == initialCapacity; ++i) {
+            if (i % 2)
+                objects.append(makeUnique<DerivedCheckedObject>());
+            else
+                objects.append(makeUnique<CheckedObject>());
+            set.add(objects.last().get());
+        }
+
+        for (auto& object : objects)
+            EXPECT_EQ(object->checkedPtrCount(), 1u);
+
+        auto setVector = WTF::copyToVector(set);
+
+        for (auto& object : objects)
+            EXPECT_EQ(object->checkedPtrCount(), 2u);
+    }
+}
+
+TEST(WTF_CheckedPtr, ReferenceCountLimit)
+{
+    auto object = makeUnique<CheckedObject>();
+    constexpr unsigned count = 256 * 1024;
+    Vector<CheckedPtr<CheckedObject>> ptrs;
+    ptrs.fill(object.get(), count);
+    EXPECT_EQ(object->checkedPtrCount(), count);
+}
+
+TEST(WTF_CheckedPtr, ObjectIsNulledOut)
+{
+    static NeverDestroyed<CheckedPtr<CheckedObject>> leakedCheckedPtr;
+    auto object = makeUnique<CheckedObject>();
+    leakedCheckedPtr.get() = object.get();
+    object = nullptr;
+    std::array<uint8_t, sizeof(CheckedObject)> allZeros { };
+    EXPECT_TRUE(equalSpans(asByteSpan(*leakedCheckedPtr.get()), std::span { allZeros }));
+}
+
+class ThreadSafeCheckedPtrObject final : public CanMakeThreadSafeCheckedPtr<ThreadSafeCheckedPtrObject> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ThreadSafeCheckedPtrObject);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ThreadSafeCheckedPtrObject);
+public:
+    std::atomic<unsigned> value { 0 };
+};
+
+TEST(WTF_CheckedPtr, CanMakeThreadSafeCheckedPtr)
+{
+    constexpr unsigned threadCount = 20;
+    Vector<Ref<Thread>> threads;
+    auto object = makeUnique<ThreadSafeCheckedPtrObject>();
+
+    std::atomic<bool> allThreadsHaveStarted = false;
+    Seconds startingTime;
+
+    threads.reserveInitialCapacity(threadCount);
+    for (unsigned i = 0; i < threadCount; ++i) {
+        threads.append(Thread::create("CheckedPtr testing thread"_s, [&]() mutable {
+            CheckedPtr ptr = object.get();
+            do {
+                for (unsigned i = 0; i < 1000; ++i) {
+                    CheckedRef ref { *ptr };
+                    ptr = nullptr;
+                    ++ref->value;
+                    ptr = ref;
+                }
+            } while (!allThreadsHaveStarted || WallTime::now().secondsSinceEpoch() - startingTime < Seconds::fromMilliseconds(5));
+        }));
+    }
+
+    startingTime = WallTime::now().secondsSinceEpoch();
+    allThreadsHaveStarted = true;
+
+    for (auto& thread : threads)
+        thread->waitForCompletion();
+}
+
+#if !PLATFORM(PLAYSTATION)
+TEST(WTF_CheckedPtrDeathTest, CheckedPtrCheckFailure)
+{
+    auto shouldCrash = [&] {
+        CheckedPtr<CheckedObject> checkedPtr;
+        {
+            auto checkedObject = makeUnique<CheckedObject>();
+            checkedPtr = checkedObject.get();
+        }
+    };
+
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
+}
+
+TEST(WTF_CheckedPtrDeathTest, UniquelyOwnedCheckedPtrCheckFailure)
+{
+    auto shouldCrashInDebug = [&] {
+        CheckedPtr<UniquelyOwnedObject> checkedPtr;
+        {
+            auto uniquelyOwnedObject = UniquelyOwnedObject::create();
+            checkedPtr = uniquelyOwnedObject.get();
+        }
+    };
+
+#if ASSERT_ENABLED
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrashInDebug(), "");
+#else
+    shouldCrashInDebug(); // No crash in release builds
+#endif
+}
+#endif
+
+class CheckedBaseForIsAnyOf : public CanMakeCheckedPtr<CheckedBaseForIsAnyOf> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CheckedBaseForIsAnyOf);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CheckedBaseForIsAnyOf);
+public:
+    virtual ~CheckedBaseForIsAnyOf() = default;
+    virtual bool isDerivedCheckedA() const { return false; }
+    virtual bool isDerivedCheckedB() const { return false; }
+};
+
+class DerivedCheckedA : public CheckedBaseForIsAnyOf {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DerivedCheckedA);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DerivedCheckedA);
+public:
+    bool isDerivedCheckedA() const override { return true; }
+};
+
+class DerivedCheckedB : public CheckedBaseForIsAnyOf {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DerivedCheckedB);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DerivedCheckedB);
+public:
+    bool isDerivedCheckedB() const override { return true; }
+};
+
+} // namespace TestWebKitAPI
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(TestWebKitAPI::DerivedCheckedA)
+    static bool isType(const TestWebKitAPI::CheckedBaseForIsAnyOf& object) { return object.isDerivedCheckedA(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(TestWebKitAPI::DerivedCheckedB)
+    static bool isType(const TestWebKitAPI::CheckedBaseForIsAnyOf& object) { return object.isDerivedCheckedB(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+namespace TestWebKitAPI {
+
+TEST(WTF_CheckedPtr, IsAnyOfNonConst)
+{
+    {
+        // Object is DerivedCheckedB. isAnyOf<DerivedCheckedA, CheckedBaseForIsAnyOf> should
+        // return true because everything is-a CheckedBaseForIsAnyOf.
+        auto object = makeUnique<DerivedCheckedB>();
+        CheckedPtr<CheckedBaseForIsAnyOf> ptr = object.get();
+
+        // Non-const overload: the bug causes this to call
+        //   is<DerivedCheckedA, CheckedBaseForIsAnyOf>(ptr.get())
+        // which resolves as is<DerivedCheckedA>(CheckedBaseForIsAnyOf*),
+        // only checking DerivedCheckedA and ignoring CheckedBaseForIsAnyOf entirely.
+        // The object is DerivedCheckedB, not DerivedCheckedA, so the buggy code returns false.
+        bool result = isAnyOf<DerivedCheckedA, CheckedBaseForIsAnyOf>(ptr);
+        EXPECT_TRUE(result);
+    }
+
+    {
+        // Same pointer value but const: uses the correct const overload which
+        // properly delegates to isAnyOf<> on the raw pointer.
+        auto object = makeUnique<DerivedCheckedB>();
+        const CheckedPtr<CheckedBaseForIsAnyOf> constPtr = object.get();
+        bool constResult = isAnyOf<DerivedCheckedA, CheckedBaseForIsAnyOf>(constPtr);
+        EXPECT_TRUE(constResult);
+    }
+
+    {
+        // Verify single-type isAnyOf works on non-const (unaffected by the bug).
+        auto object = makeUnique<DerivedCheckedA>();
+        CheckedPtr<CheckedBaseForIsAnyOf> ptr = object.get();
+        EXPECT_TRUE(isAnyOf<DerivedCheckedA>(ptr));
+        EXPECT_FALSE(isAnyOf<DerivedCheckedB>(ptr));
+    }
+
+    {
+        // Two derived types on non-const CheckedPtr: would not have compiled before the fix
+        // because is<DerivedCheckedA, DerivedCheckedB>(CheckedBaseForIsAnyOf*) requires an
+        // implicit downcast from CheckedBaseForIsAnyOf* to DerivedCheckedB*.
+        auto object = makeUnique<DerivedCheckedA>();
+        CheckedPtr<CheckedBaseForIsAnyOf> ptr = object.get();
+        bool matchesAorB = isAnyOf<DerivedCheckedA, DerivedCheckedB>(ptr);
+        EXPECT_TRUE(matchesAorB);
+
+        auto objectB = makeUnique<DerivedCheckedB>();
+        CheckedPtr<CheckedBaseForIsAnyOf> ptrB = objectB.get();
+        bool matchesBorA = isAnyOf<DerivedCheckedA, DerivedCheckedB>(ptrB);
+        EXPECT_TRUE(matchesBorA);
+
+        // Base object matches neither derived type.
+        auto base = makeUnique<CheckedBaseForIsAnyOf>();
+        CheckedPtr<CheckedBaseForIsAnyOf> ptrBase = base.get();
+        bool matchesNeither = isAnyOf<DerivedCheckedA, DerivedCheckedB>(ptrBase);
+        EXPECT_FALSE(matchesNeither);
+    }
+}
+
+} // namespace TestWebKitAPI

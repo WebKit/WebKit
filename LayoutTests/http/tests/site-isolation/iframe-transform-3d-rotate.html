@@ -1,0 +1,20 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!-- An out-of-process iframe with a 3D perspective transform must render its full content.
+     TransformationMatrix::mapRect maps the four corners through the perspective divide; the
+     coverage clamp must still cover the projected quad (with the empty-projection correctness
+     floor backing the whole frame if the projection is degenerate). -->
+<head><meta name="fuzzy" content="maxDifference=0-255; totalPixels=0-2000"/>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+onmessage = (event) => {
+    if (window.testRunner && event.data == "onload")
+        setTimeout(() => testRunner.notifyDone(), 100);
+};
+</script>
+</head>
+<body style="margin:0;background:blue">
+<iframe src="http://localhost:8000/site-isolation/resources/green-background.html" frameborder=0
+    style="position:absolute; border:0; left:200px; top:100px; width:200px; height:150px;
+           transform:perspective(700px) rotateY(40deg); transform-origin:0 0"></iframe>
+</body>

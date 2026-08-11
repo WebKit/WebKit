@@ -1,0 +1,10 @@
+
+EVENT(sourceopen)
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(canplay)
+RUN(video.currentTime = video.buffered.end(0) + 0.5)
+Did not issue "seeked" event OK
+END OF TEST
+

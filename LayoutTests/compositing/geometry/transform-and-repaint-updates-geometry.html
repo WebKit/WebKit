@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+<style>
+#box {
+    display: block;
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    transform: translateZ(0);
+}
+</style>
+</head>
+
+<body>
+    <div id="box"></div>
+</body>
+ 
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+requestAnimationFrame(() => {
+    let box = document.getElementById('box');
+    box.style.transform = `translate3d(300px, 0, 0)`;
+    box.style.backgroundColor = 'green';
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

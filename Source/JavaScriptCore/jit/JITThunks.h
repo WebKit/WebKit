@@ -1,0 +1,315 @@
+/*
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#pragma once
+
+#include <wtf/Platform.h>
+
+#if ENABLE(JIT)
+
+#include <JavaScriptCore/CallData.h>
+#include <JavaScriptCore/ImplementationVisibility.h>
+#include <JavaScriptCore/Intrinsic.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/SlowPathFunction.h>
+#include <JavaScriptCore/ThunkGenerator.h>
+#include <JavaScriptCore/Weak.h>
+#include <JavaScriptCore/WeakHandleOwner.h>
+#include <tuple>
+#include <wtf/Atomics.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/Hasher.h>
+#include <wtf/Lock.h>
+#include <wtf/PackedRefPtr.h>
+#include <wtf/RecursiveLockAdapter.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace JSC {
+namespace DOMJIT {
+class Signature;
+}
+
+class VM;
+class NativeExecutable;
+
+// Thunks whose generated code does not depend on the VM. They are generated once per process and
+// shared by every VM. Their generators deliberately take no VM, so that a generator that starts
+// needing VM state fails to compile here instead of silently baking one VM's state into code that
+// another VM runs.
+#define JSC_FOR_EACH_VM_INDEPENDENT_COMMON_THUNK(macro) \
+    macro(PolymorphicThunk, polymorphicThunk) \
+    macro(PolymorphicThunkForClosure, polymorphicThunkForClosure) \
+    macro(PolymorphicTopTierThunk, polymorphicTopTierThunk) \
+    macro(PolymorphicTopTierThunkForClosure, polymorphicTopTierThunkForClosure) \
+    macro(ReturnFromBaseline, returnFromBaselineGenerator) \
+    macro(GetByIdLoadOwnPropertyHandler, getByIdLoadOwnPropertyHandler) \
+    macro(GetByIdLoadPrototypePropertyHandler, getByIdLoadPrototypePropertyHandler) \
+    macro(GetByIdMissHandler, getByIdMissHandler) \
+    macro(GetByIdGetterHandler, getByIdGetterHandler) \
+    macro(GetByIdProxyObjectLoadHandler, getByIdProxyObjectLoadHandler) \
+    macro(GetByIdModuleNamespaceLoadHandler, getByIdModuleNamespaceLoadHandler) \
+    macro(PutByIdReplaceHandler, putByIdReplaceHandler) \
+    macro(PutByIdStrictSetterHandler, putByIdStrictSetterHandler) \
+    macro(PutByIdSloppySetterHandler, putByIdSloppySetterHandler) \
+    macro(InByIdHitHandler, inByIdHitHandler) \
+    macro(InByIdMissHandler, inByIdMissHandler) \
+    macro(DeleteByIdDeleteHandler, deleteByIdDeleteHandler) \
+    macro(DeleteByIdDeleteNonConfigurableHandler, deleteByIdDeleteNonConfigurableHandler) \
+    macro(DeleteByIdDeleteMissHandler, deleteByIdDeleteMissHandler) \
+    macro(InstanceOfHitHandler, instanceOfHitHandler) \
+    macro(InstanceOfMissHandler, instanceOfMissHandler) \
+    macro(GetByValWithStringLoadOwnPropertyHandler, getByValWithStringLoadOwnPropertyHandler) \
+    macro(GetByValWithStringLoadPrototypePropertyHandler, getByValWithStringLoadPrototypePropertyHandler) \
+    macro(GetByValWithStringMissHandler, getByValWithStringMissHandler) \
+    macro(GetByValWithStringGetterHandler, getByValWithStringGetterHandler) \
+    macro(GetByValWithSymbolLoadOwnPropertyHandler, getByValWithSymbolLoadOwnPropertyHandler) \
+    macro(GetByValWithSymbolLoadPrototypePropertyHandler, getByValWithSymbolLoadPrototypePropertyHandler) \
+    macro(GetByValWithSymbolMissHandler, getByValWithSymbolMissHandler) \
+    macro(GetByValWithSymbolGetterHandler, getByValWithSymbolGetterHandler) \
+    macro(PutByValWithStringReplaceHandler, putByValWithStringReplaceHandler) \
+    macro(PutByValWithStringStrictSetterHandler, putByValWithStringStrictSetterHandler) \
+    macro(PutByValWithStringSloppySetterHandler, putByValWithStringSloppySetterHandler) \
+    macro(PutByValWithSymbolReplaceHandler, putByValWithSymbolReplaceHandler) \
+    macro(PutByValWithSymbolStrictSetterHandler, putByValWithSymbolStrictSetterHandler) \
+    macro(PutByValWithSymbolSloppySetterHandler, putByValWithSymbolSloppySetterHandler) \
+    macro(InByValWithStringHitHandler, inByValWithStringHitHandler) \
+    macro(InByValWithStringMissHandler, inByValWithStringMissHandler) \
+    macro(InByValWithSymbolHitHandler, inByValWithSymbolHitHandler) \
+    macro(InByValWithSymbolMissHandler, inByValWithSymbolMissHandler) \
+    macro(DeleteByValWithStringDeleteHandler, deleteByValWithStringDeleteHandler) \
+    macro(DeleteByValWithStringDeleteNonConfigurableHandler, deleteByValWithStringDeleteNonConfigurableHandler) \
+    macro(DeleteByValWithStringDeleteMissHandler, deleteByValWithStringDeleteMissHandler) \
+    macro(DeleteByValWithSymbolDeleteHandler, deleteByValWithSymbolDeleteHandler) \
+    macro(DeleteByValWithSymbolDeleteNonConfigurableHandler, deleteByValWithSymbolDeleteNonConfigurableHandler) \
+    macro(DeleteByValWithSymbolDeleteMissHandler, deleteByValWithSymbolDeleteMissHandler) \
+    macro(CheckPrivateBrandHandler, checkPrivateBrandHandler) \
+    macro(SetPrivateBrandHandler, setPrivateBrandHandler) \
+    macro(GetByValWithUndefinedKeyLoadOwnPropertyHandler, getByValWithUndefinedKeyLoadOwnPropertyHandler) \
+    macro(GetByValWithUndefinedKeyLoadPrototypePropertyHandler, getByValWithUndefinedKeyLoadPrototypePropertyHandler) \
+    macro(GetByValWithUndefinedKeyMissHandler, getByValWithUndefinedKeyMissHandler) \
+    macro(GetByValWithNullKeyLoadOwnPropertyHandler, getByValWithNullKeyLoadOwnPropertyHandler) \
+    macro(GetByValWithNullKeyLoadPrototypePropertyHandler, getByValWithNullKeyLoadPrototypePropertyHandler) \
+    macro(GetByValWithNullKeyMissHandler, getByValWithNullKeyMissHandler) \
+    macro(GetByValWithTrueKeyLoadOwnPropertyHandler, getByValWithTrueKeyLoadOwnPropertyHandler) \
+    macro(GetByValWithTrueKeyLoadPrototypePropertyHandler, getByValWithTrueKeyLoadPrototypePropertyHandler) \
+    macro(GetByValWithTrueKeyMissHandler, getByValWithTrueKeyMissHandler) \
+    macro(GetByValWithFalseKeyLoadOwnPropertyHandler, getByValWithFalseKeyLoadOwnPropertyHandler) \
+    macro(GetByValWithFalseKeyLoadPrototypePropertyHandler, getByValWithFalseKeyLoadPrototypePropertyHandler) \
+    macro(GetByValWithFalseKeyMissHandler, getByValWithFalseKeyMissHandler) \
+    macro(PutByValWithUndefinedKeyReplaceHandler, putByValWithUndefinedKeyReplaceHandler) \
+    macro(PutByValWithNullKeyReplaceHandler, putByValWithNullKeyReplaceHandler) \
+    macro(PutByValWithTrueKeyReplaceHandler, putByValWithTrueKeyReplaceHandler) \
+    macro(PutByValWithFalseKeyReplaceHandler, putByValWithFalseKeyReplaceHandler) \
+
+// VM-dependent thunks that must exist before any code runs, because they are requested from
+// contexts that cannot take a lock. In particular CallLinkInfo::visitWeak runs during GC with the
+// JIT worklist threads suspended, and reaches getCTIVirtualCall; if a suspended compiler thread held
+// the lock, taking it here would deadlock.
+#define JSC_FOR_EACH_VM_DEPENDENT_EAGER_COMMON_THUNK(macro) \
+    macro(HandleException, handleExceptionGenerator) \
+    macro(CheckException, checkExceptionGenerator) \
+    macro(NativeCall, nativeCallGenerator) \
+    macro(NativeConstruct, nativeConstructGenerator) \
+    macro(NativeTailCall, nativeTailCallGenerator) \
+    macro(NativeTailCallWithoutSavedTags, nativeTailCallWithoutSavedTagsGenerator) \
+    macro(InternalFunctionCall, internalFunctionCallGenerator) \
+    macro(InternalFunctionConstruct, internalFunctionConstructGenerator) \
+    macro(ThrowExceptionFromCall, throwExceptionFromCallGenerator) \
+    macro(ThrowExceptionFromCallSlowPath, throwExceptionFromCallSlowPathGenerator) \
+    macro(ThrowStackOverflowAtPrologue, throwStackOverflowAtPrologueGenerator) \
+    macro(ThrowOutOfMemoryError, throwOutOfMemoryErrorGenerator) \
+    macro(VirtualThunkForRegularCall, virtualThunkForRegularCall) \
+    macro(VirtualThunkForTailCall, virtualThunkForTailCall) \
+    macro(VirtualThunkForConstruct, virtualThunkForConstruct) \
+
+// VM-dependent thunks generated on first use. These are only ever requested while compiling an
+// inline cache, where taking a lock is safe, and a short-lived VM never pays for the ones it does
+// not use.
+#define JSC_FOR_EACH_VM_DEPENDENT_LAZY_COMMON_THUNK(macro) \
+    macro(GetByIdCustomAccessorHandler, getByIdCustomAccessorHandler) \
+    macro(GetByIdCustomValueHandler, getByIdCustomValueHandler) \
+    macro(GetByIdMegamorphicGetterHandler, getByIdMegamorphicGetterHandler) \
+    macro(PutByIdTransitionNonAllocatingHandler, putByIdTransitionNonAllocatingHandler) \
+    macro(PutByIdTransitionNewlyAllocatingHandler, putByIdTransitionNewlyAllocatingHandler) \
+    macro(PutByIdTransitionReallocatingHandler, putByIdTransitionReallocatingHandler) \
+    macro(PutByIdTransitionReallocatingOutOfLineHandler, putByIdTransitionReallocatingOutOfLineHandler) \
+    macro(PutByIdCustomAccessorHandler, putByIdCustomAccessorHandler) \
+    macro(PutByIdCustomValueHandler, putByIdCustomValueHandler) \
+    macro(GetByValWithStringCustomAccessorHandler, getByValWithStringCustomAccessorHandler) \
+    macro(GetByValWithStringCustomValueHandler, getByValWithStringCustomValueHandler) \
+    macro(GetByValWithSymbolCustomAccessorHandler, getByValWithSymbolCustomAccessorHandler) \
+    macro(GetByValWithSymbolCustomValueHandler, getByValWithSymbolCustomValueHandler) \
+    macro(PutByValWithStringTransitionNonAllocatingHandler, putByValWithStringTransitionNonAllocatingHandler) \
+    macro(PutByValWithStringTransitionNewlyAllocatingHandler, putByValWithStringTransitionNewlyAllocatingHandler) \
+    macro(PutByValWithStringTransitionReallocatingHandler, putByValWithStringTransitionReallocatingHandler) \
+    macro(PutByValWithStringTransitionReallocatingOutOfLineHandler, putByValWithStringTransitionReallocatingOutOfLineHandler) \
+    macro(PutByValWithStringCustomAccessorHandler, putByValWithStringCustomAccessorHandler) \
+    macro(PutByValWithStringCustomValueHandler, putByValWithStringCustomValueHandler) \
+    macro(PutByValWithSymbolTransitionNonAllocatingHandler, putByValWithSymbolTransitionNonAllocatingHandler) \
+    macro(PutByValWithSymbolTransitionNewlyAllocatingHandler, putByValWithSymbolTransitionNewlyAllocatingHandler) \
+    macro(PutByValWithSymbolTransitionReallocatingHandler, putByValWithSymbolTransitionReallocatingHandler) \
+    macro(PutByValWithSymbolTransitionReallocatingOutOfLineHandler, putByValWithSymbolTransitionReallocatingOutOfLineHandler) \
+    macro(PutByValWithSymbolCustomAccessorHandler, putByValWithSymbolCustomAccessorHandler) \
+    macro(PutByValWithSymbolCustomValueHandler, putByValWithSymbolCustomValueHandler) \
+    macro(PutByValWithUndefinedKeyTransitionNonAllocatingHandler, putByValWithUndefinedKeyTransitionNonAllocatingHandler) \
+    macro(PutByValWithUndefinedKeyTransitionNewlyAllocatingHandler, putByValWithUndefinedKeyTransitionNewlyAllocatingHandler) \
+    macro(PutByValWithUndefinedKeyTransitionReallocatingHandler, putByValWithUndefinedKeyTransitionReallocatingHandler) \
+    macro(PutByValWithUndefinedKeyTransitionReallocatingOutOfLineHandler, putByValWithUndefinedKeyTransitionReallocatingOutOfLineHandler) \
+    macro(PutByValWithNullKeyTransitionNonAllocatingHandler, putByValWithNullKeyTransitionNonAllocatingHandler) \
+    macro(PutByValWithNullKeyTransitionNewlyAllocatingHandler, putByValWithNullKeyTransitionNewlyAllocatingHandler) \
+    macro(PutByValWithNullKeyTransitionReallocatingHandler, putByValWithNullKeyTransitionReallocatingHandler) \
+    macro(PutByValWithNullKeyTransitionReallocatingOutOfLineHandler, putByValWithNullKeyTransitionReallocatingOutOfLineHandler) \
+    macro(PutByValWithTrueKeyTransitionNonAllocatingHandler, putByValWithTrueKeyTransitionNonAllocatingHandler) \
+    macro(PutByValWithTrueKeyTransitionNewlyAllocatingHandler, putByValWithTrueKeyTransitionNewlyAllocatingHandler) \
+    macro(PutByValWithTrueKeyTransitionReallocatingHandler, putByValWithTrueKeyTransitionReallocatingHandler) \
+    macro(PutByValWithTrueKeyTransitionReallocatingOutOfLineHandler, putByValWithTrueKeyTransitionReallocatingOutOfLineHandler) \
+    macro(PutByValWithFalseKeyTransitionNonAllocatingHandler, putByValWithFalseKeyTransitionNonAllocatingHandler) \
+    macro(PutByValWithFalseKeyTransitionNewlyAllocatingHandler, putByValWithFalseKeyTransitionNewlyAllocatingHandler) \
+    macro(PutByValWithFalseKeyTransitionReallocatingHandler, putByValWithFalseKeyTransitionReallocatingHandler) \
+    macro(PutByValWithFalseKeyTransitionReallocatingOutOfLineHandler, putByValWithFalseKeyTransitionReallocatingOutOfLineHandler) \
+
+#define JSC_FOR_EACH_VM_DEPENDENT_COMMON_THUNK(macro) \
+    JSC_FOR_EACH_VM_DEPENDENT_EAGER_COMMON_THUNK(macro) \
+    JSC_FOR_EACH_VM_DEPENDENT_LAZY_COMMON_THUNK(macro)
+
+// List up super common stubs so that we initialize them eagerly.
+#define JSC_FOR_EACH_COMMON_THUNK(macro) \
+    JSC_FOR_EACH_VM_INDEPENDENT_COMMON_THUNK(macro) \
+    JSC_FOR_EACH_VM_DEPENDENT_COMMON_THUNK(macro)
+
+enum class CommonJITThunkID : uint8_t {
+#define JSC_DEFINE_COMMON_JIT_THUNK_ID(name, func) name,
+JSC_FOR_EACH_COMMON_THUNK(JSC_DEFINE_COMMON_JIT_THUNK_ID)
+#undef JSC_DEFINE_COMMON_JIT_THUNK_ID
+};
+
+#define JSC_COUNT_COMMON_JIT_THUNK_ID(name, func) + 1
+// The VM-independent thunks come first, so a CommonJITThunkID below this bound indexes the shared
+// table and one at or above it indexes a VM's own table. Within a VM's own table the eager thunks
+// come first, so an index below numberOfVMDependentEagerCommonThunkIDs is already generated and one
+// at or above it is generated on demand.
+static constexpr unsigned numberOfVMIndependentCommonThunkIDs = 0 JSC_FOR_EACH_VM_INDEPENDENT_COMMON_THUNK(JSC_COUNT_COMMON_JIT_THUNK_ID);
+static constexpr unsigned numberOfVMDependentEagerCommonThunkIDs = 0 JSC_FOR_EACH_VM_DEPENDENT_EAGER_COMMON_THUNK(JSC_COUNT_COMMON_JIT_THUNK_ID);
+static constexpr unsigned numberOfVMDependentLazyCommonThunkIDs = 0 JSC_FOR_EACH_VM_DEPENDENT_LAZY_COMMON_THUNK(JSC_COUNT_COMMON_JIT_THUNK_ID);
+static constexpr unsigned numberOfCommonThunkIDs = 0 JSC_FOR_EACH_COMMON_THUNK(JSC_COUNT_COMMON_JIT_THUNK_ID);
+#undef JSC_COUNT_COMMON_JIT_THUNK_ID
+
+class JITThunks final : private WeakHandleOwner {
+    WTF_MAKE_TZONE_ALLOCATED(JITThunks);
+public:
+    JITThunks();
+    ~JITThunks() final;
+
+    CodePtr<JITThunkPtrTag> ctiNativeCall(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeCallWithDebuggerHook(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeConstruct(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeConstructWithDebuggerHook(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeTailCall(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeTailCallWithoutSavedTags(VM&);
+    CodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM&);
+    CodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM&);
+
+    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, CommonJITThunkID);
+    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator);
+    MacroAssemblerCodeRef<JITThunkPtrTag> ctiSlowPathFunctionStub(VM&, SlowPathFunction);
+
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ImplementationVisibility, unsigned length, const String& name);
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, ImplementationVisibility, Intrinsic, const DOMJIT::Signature*, unsigned length, const String& name);
+    NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, ThunkGenerator, ImplementationVisibility, Intrinsic, unsigned length, const String& name);
+
+    void initialize(VM&);
+
+private:
+    template <typename GenerateThunk>
+    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStubImpl(ThunkGenerator key, GenerateThunk);
+
+    MacroAssemblerCodeRef<JITThunkPtrTag> lazyCommonThunk(VM&, CommonJITThunkID);
+
+    void finalize(Handle<Unknown>, void* context) final;
+
+    struct Entry {
+        PackedRefPtr<ExecutableMemoryHandle> handle;
+        bool needsCrossModifyingCodeFence;
+    };
+    using CTIStubMap = UncheckedKeyHashMap<ThunkGenerator, Entry>;
+
+    using HostFunctionKey = std::tuple<TaggedNativeFunction, TaggedNativeFunction, ImplementationVisibility, unsigned, String>;
+
+    struct WeakNativeExecutableHash {
+        static inline unsigned NODELETE hash(const Weak<NativeExecutable>&);
+        static inline unsigned hash(const NativeExecutable*);
+        static unsigned hash(const HostFunctionKey& key)
+        {
+            return hash(std::get<0>(key), std::get<1>(key), std::get<2>(key), std::get<3>(key), std::get<4>(key));
+        }
+
+        static inline bool NODELETE equal(const Weak<NativeExecutable>&, const Weak<NativeExecutable>&);
+        static inline bool equal(const Weak<NativeExecutable>&, const HostFunctionKey&);
+        static inline bool equal(const Weak<NativeExecutable>&, const NativeExecutable*);
+        static inline bool equal(const NativeExecutable&, const NativeExecutable&);
+        static constexpr bool safeToCompareToEmptyOrDeleted = false;
+
+    private:
+        static unsigned hash(TaggedNativeFunction function, TaggedNativeFunction constructor, ImplementationVisibility implementationVisibility, unsigned length, const String& name)
+        {
+            Hasher hasher;
+            WTF::add(hasher, function);
+            WTF::add(hasher, constructor);
+            WTF::add(hasher, implementationVisibility);
+            WTF::add(hasher, length);
+            if (!name.isNull())
+                WTF::add(hasher, name);
+            return hasher.hash();
+        }
+    };
+    struct HostKeySearcher;
+    struct NativeExecutableTranslator;
+
+    using WeakNativeExecutableSet = UncheckedKeyHashSet<Weak<NativeExecutable>, WeakNativeExecutableHash>;
+
+    // A lazy thunk is published with a release store to its state, so a request that finds it
+    // generated reads its code with an acquire load and no lock, and each thunk's own lock keeps
+    // generating one from blocking requests for the others. GeneratedOnCompilationThread records
+    // that a thread about to run the code still owes it a crossModifyingCodeFence.
+    enum class LazyThunkState : uint8_t { NotGenerated, GeneratedOnCompilationThread, Generated };
+
+    struct LazyThunk {
+        MacroAssemblerCodeRef<JITThunkPtrTag> codeRef;
+        Atomic<LazyThunkState> state { LazyThunkState::NotGenerated };
+        Lock lock;
+    };
+
+    // Filled by initialize() before any other thread can run, so reading it needs no lock.
+    MacroAssemblerCodeRef<JITThunkPtrTag> m_eagerCommonThunks[numberOfVMDependentEagerCommonThunkIDs] { };
+    LazyThunk m_lazyCommonThunks[numberOfVMDependentLazyCommonThunkIDs];
+    CTIStubMap m_ctiStubMap;
+    WeakNativeExecutableSet m_nativeExecutableSet;
+    WTF::RecursiveLock m_lock;
+};
+
+} // namespace JSC
+
+#endif // ENABLE(JIT)

@@ -1,0 +1,6 @@
+2d.text.drawing.style.invalid.spacing
+Testing letter spacing and word spacing with invalid units
+Actual output:
+
+PASS Testing letter spacing and word spacing with invalid units
+

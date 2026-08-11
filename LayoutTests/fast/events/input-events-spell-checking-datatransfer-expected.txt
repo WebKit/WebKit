@@ -1,0 +1,4 @@
+To manually test this, make a typo in the first contenteditable and use spell checking to correct it. The corrected value should appear below.
+
+after autocorrection:
+| "<p>escape me!</p>"

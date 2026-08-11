@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/001.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/002.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/003-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/003.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/004.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/005.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/006.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/007.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/008.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/009.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/010-1.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/010.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/011.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/012.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/013.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/014.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/helper-drag-me-green-box.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/canvas/helper-drop-here-canvas.xhtml

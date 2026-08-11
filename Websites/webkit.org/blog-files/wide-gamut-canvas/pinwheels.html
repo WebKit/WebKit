@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html { text-align: center; }
+canvas { border-radius: 100px; box-shadow: 0 0 16px #0008; margin: 16px; }
+@media (prefers-color-scheme: dark) {
+    html { background-color: black; }
+    canvas { box-shadow: 0 0 16px #fff4; }
+}
+</style>
+<canvas id="canvas-srgb" width="200" height="200"></canvas>
+<canvas id="canvas-display-p3" width="200" height="200"></canvas>
+<script>
+const STOP_COLORS = ["1 0 0", "1 0 1", "0 0 1", "0 1 0", "1 1 0", "1 0 0"];
+
+for (let colorSpace of ["srgb", "display-p3"]) {
+    let canvas = document.getElementById(`canvas-${colorSpace}`);
+    let context = canvas.getContext("2d", { colorSpace });
+    let gradient = context.createConicGradient(0, 100, 100);
+    for (let i = 0; i < STOP_COLORS.length; ++i)
+        gradient.addColorStop(i / (STOP_COLORS.length - 1), `color(display-p3 ${STOP_COLORS[i]})`);
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, 200, 200);
+}
+</script>

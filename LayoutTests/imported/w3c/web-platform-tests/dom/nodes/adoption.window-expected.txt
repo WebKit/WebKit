@@ -1,0 +1,8 @@
+
+PASS appendChild() and DocumentFragment with host
+PASS adoptNode() and DocumentFragment with host
+PASS appendChild() and DocumentFragment
+PASS adoptNode() and DocumentFragment
+PASS appendChild() and ShadowRoot
+PASS adoptNode() and ShadowRoot
+hihihi

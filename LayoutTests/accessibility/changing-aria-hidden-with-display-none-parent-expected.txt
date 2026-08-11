@@ -1,0 +1,38 @@
+This test ensures that we don't crash when removing an object from the AX tree whose child recently changed aria-hidden status.
+
+
+{#body AXRole: AXGroup}
+
+{#ul AXRole: AXList}
+
+{#li1 AXRole: AXGroup}
+
+{AXRole: AXListMarker}
+
+{AXRole: AXStaticText AXValue: One}
+
+{AXRole: AXGroup}
+
+{AXRole: AXListMarker}
+
+{AXRole: AXStaticText AXValue: Two}
+
+{AXRole: AXGroup}
+
+{AXRole: AXListMarker}
+
+{AXRole: AXStaticText AXValue: Three}
+
+Making #li1 aria-hidden and #ul display:none.
+
+Re-dumping AX tree.
+
+
+{#body AXRole: AXGroup}
+
+PASS: There was no crash.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

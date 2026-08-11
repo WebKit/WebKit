@@ -1,0 +1,7 @@
+setTimeout() and setInterval() should not run without 'unsafe-eval' script-src directive.
+
+
+PASS window.setTimeout()
+PASS window.setInterval()
+PASS Test that securitypolicyviolation event is fired
+

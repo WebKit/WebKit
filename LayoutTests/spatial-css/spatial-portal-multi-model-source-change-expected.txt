@@ -1,0 +1,4 @@
+
+PASS Changing the source of one <model> in a spatial portal leaves its sibling loaded
+PASS Clearing the source of one <model> in a spatial portal unloads only that model
+

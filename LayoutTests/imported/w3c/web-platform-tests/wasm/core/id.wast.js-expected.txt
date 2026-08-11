@@ -1,0 +1,19 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (id.wast:1)
+PASS #3 Test that WebAssembly compilation fails (id.wast:26)
+PASS #4 Test that WebAssembly compilation fails (id.wast:27)
+PASS #5 Test that WebAssembly compilation fails (id.wast:28)
+PASS #6 Test that WebAssembly compilation fails (id.wast:29)
+PASS #7 Test that WebAssembly compilation fails (id.wast:30)
+PASS #8 Test that WebAssembly compilation fails (id.wast:31)
+PASS #9 Reinitialize the default imports
+PASS #10 Test that WebAssembly compilation succeeds (id.wast:1)
+PASS #11 Test that WebAssembly instantiation succeeds (id.wast:1)
+PASS #12 Test that WebAssembly compilation fails (id.wast:26)
+PASS #13 Test that WebAssembly compilation fails (id.wast:27)
+PASS #14 Test that WebAssembly compilation fails (id.wast:28)
+PASS #15 Test that WebAssembly compilation fails (id.wast:29)
+PASS #16 Test that WebAssembly compilation fails (id.wast:30)
+PASS #17 Test that WebAssembly compilation fails (id.wast:31)
+

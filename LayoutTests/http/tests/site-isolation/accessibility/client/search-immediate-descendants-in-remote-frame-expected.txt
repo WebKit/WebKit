@@ -1,0 +1,18 @@
+Tests that immediateDescendantsOnly search inside a remote frame's list does not return results from the parent frame (which is very obviously not an immediate descendant).
+Without the fix, the parent search returns the main page's ScrollBar, causing VoiceOver to loop.
+
+PASS: list !== null === true
+PASS: list.role.includes('List') === true
+PASS: listChildCount === 3
+PASS: lastListItem != null === true
+
+Search forward from last list item (immediateDescendantsOnly=true):
+PASS: results.length === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Content Before Iframe
+
+
+Content After Iframe

@@ -1,0 +1,16 @@
+Some text
+Item
+
+Some content
+
+
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 1
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 2
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 3
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 4
+FAIL CSS Values and Units Test: attr() invalidation of pseudo elements 5 assert_not_equals: Change of attribute value should lead to invalidation of ::placeholder element style. got disallowed value "16px"
+FAIL CSS Values and Units Test: attr() invalidation of pseudo elements 6 assert_not_equals: Change of attribute value should lead to invalidation of ::file-selector-button element style. got disallowed value "16px"
+FAIL CSS Values and Units Test: attr() invalidation of pseudo elements 7 assert_not_equals: Change of attribute value should lead to invalidation of ::details-content element style. got disallowed value "16px"
+PASS CSS Values and Units Test: attr() invalidation of pseudo elements 8
+

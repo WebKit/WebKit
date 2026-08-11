@@ -1,0 +1,13 @@
+
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(canplay)
+RUN(cue = new VTTCue(0, 1, "vertical"))
+RUN(textTrack.addCue(cue))
+EXPECTED (firstCueElement() != 'null') OK
+EXPECTED (window.getComputedStyle(firstCueElement()).writingMode == 'horizontal-tb') OK
+RUN(cue.vertical = "rl")
+EXPECTED (window.getComputedStyle(firstCueElement()).writingMode == 'vertical-rl') OK
+RUN(cue.vertical = "lr")
+EXPECTED (window.getComputedStyle(firstCueElement()).writingMode == 'vertical-lr') OK
+END OF TEST
+

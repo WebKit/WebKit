@@ -1,0 +1,21 @@
+
+PASS [INPUT in MONTH status] The min attribute is not set
+PASS [INPUT in MONTH status] Value is empty string
+PASS [INPUT in MONTH status] The min attribute is an invalid month string
+PASS [INPUT in MONTH status] The value attribute is an invalid month string
+PASS [INPUT in MONTH status] The value is an invalid month string(year is three digits)
+PASS [INPUT in MONTH status] The value is an invalid month string(month is less than 12)
+PASS [INPUT in MONTH status] The min attribute is less than value attribute
+PASS [INPUT in MONTH status] The value attribute is less than min attribute
+PASS [INPUT in MONTH status] The value attribute is less than min attribute(Year is 10000 should be valid)
+PASS [INPUT in WEEK status] The min attribute is not set
+PASS [INPUT in WEEK status] Value is empty string
+PASS [INPUT in WEEK status] The min attribute is an invalid week string
+PASS [INPUT in WEEK status] The value attribute is an invalid week string
+PASS [INPUT in WEEK status] The value attribute is an invalid week string(w is in lowercase)
+PASS [INPUT in WEEK status] The value is an invalid week string(year is three digits)
+PASS [INPUT in WEEK status] The value is an invalid week string(week is too greater)
+PASS [INPUT in WEEK status] The min attribute is less than value attribute
+PASS [INPUT in WEEK status] The value attribute is less than min attribute
+PASS [INPUT in WEEK status] The value attribute is less than min attribute(Year is 10000 should be valid)
+

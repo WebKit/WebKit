@@ -1,0 +1,53 @@
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+[
+    WantsSendCancelReply,
+    DispatchedTo=WebContent,
+    DispatchedFrom=UI
+]
+messages -> WebFrame {
+    GetFrameInfo() -> (struct std::optional<WebKit::FrameInfoData> data)
+    CreateProvisionalFrame(struct WebKit::ProvisionalFrameCreationParameters creationParameters)
+    DestroyProvisionalFrame();
+    FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
+    FindFocusableElementContinuingFromFrame(enum:uint8_t WebCore::FocusDirection direction, WebCore::FrameIdentifier frameIdentifer, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement)
+    TakeSnapshotOfNode(WebCore::JSHandleIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> snapshot);
+
+    ConnectInspector(Inspector::FrontendChannel::ConnectionType connectionType)
+    DisconnectInspector()
+    SendMessageToInspectorTarget(String message)
+
+    # Text extraction support
+    RequestTextExtraction(struct WebCore::TextExtraction::Request request) -> (struct WebCore::TextExtraction::Result result)
+    HandleTextExtractionInteraction(struct WebCore::TextExtraction::Interaction interaction) -> (bool succeeded, String description, WebCore::FloatRect interactedElementBounds)
+    DescribeTextExtractionInteraction(struct WebCore::TextExtraction::Interaction interaction) -> (struct WebCore::TextExtraction::InteractionDescription description)
+    TakeSnapshotOfExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (RefPtr<WebCore::TextIndicator> textIndicator)
+    RequestJSHandleForExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (struct std::optional<WebKit::JSHandleInfo> handle)
+    RequestContainerJSHandleForExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (struct std::optional<WebKit::JSHandleInfo> handle)
+    RequestContainerJSHandleForSearchTexts(Vector<String> texts, std::optional<WebCore::NodeIdentifier> fallbackNodeIdentifier) -> (struct std::optional<WebKit::JSHandleInfo> handle)
+    RequestContentFrameIdentifierForNode(WebCore::NodeIdentifier nodeIdentifier) -> (std::optional<WebCore::FrameIdentifier> frameIdentifier)
+
+    # Element targeting support
+    GetSelectorPathsForNode(struct WebKit::JSHandleInfo handle) -> (Vector<HashSet<String>> selectors)
+    GetNodeForSelectorPaths(Vector<HashSet<String>> selectors) -> (struct std::optional<WebKit::JSHandleInfo> handle)
+}

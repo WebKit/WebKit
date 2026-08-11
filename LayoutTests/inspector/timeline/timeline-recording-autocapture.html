@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Timeline.AutoCapture");
+
+    function awaitCapturingState(capturingState) {
+        return new Promise((resolve) => {
+            let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                if (event.data.capturingState !== capturingState)
+                    return;
+                WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                resolve();
+            });
+        });
+    }
+
+    function awaitTimelineMarker(recording, markerType) {
+        return new Promise((resolve) => {
+            let listener = recording.addEventListener(WI.TimelineRecording.Event.MarkerAdded, (event) => {
+                if (event.data.marker.type !== markerType)
+                    return;
+
+                recording.removeEventListener(WI.TimelineRecording.Event.MarkerAdded, listener);
+                resolve();
+            });
+        });
+    }
+
+    suite.addTestCase({
+        name: "Timeline.AutoCapture",
+        description: "Verify that a page reload triggers auto-capture of a timeline recording.",
+        async test() {
+            await TimelineAgent.setAutoCaptureEnabled(true);
+            await TimelineAgent.setInstruments([InspectorBackend.Enum.Timeline.Instrument.Timeline]);
+
+            InspectorTest.log("Loaded");
+            InspectorTest.expectFalse(WI.timelineManager.isCapturing(), "TimelineManager should not be capturing.");
+
+            let recording = WI.timelineManager.activeRecording;
+
+            InspectorTest.log("Reload");
+            await Promise.all([
+                InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad),
+                awaitCapturingState(WI.TimelineManager.CapturingState.Active),
+                awaitTimelineMarker(recording, WI.TimelineMarker.Type.LoadEvent),
+                InspectorTest.reloadPage(),
+            ]);
+
+            InspectorTest.expectFalse(isNaN(WI.networkManager.mainFrame.domContentReadyEventTimestamp), "The first reload should have a DOMContentLoaded timestamp.");
+            InspectorTest.expectFalse(isNaN(WI.networkManager.mainFrame.loadEventTimestamp), "The first reload should have a load timestamp.");
+            InspectorTest.expectTrue(WI.timelineManager.isCapturing(), "TimelineManager should be capturing after reload with auto-capture enabled.");
+            InspectorTest.expectTrue(recording.capturing, "TimelineRecording should be capturing.");
+
+            InspectorTest.log("Stop");
+            WI.timelineManager.stopCapturing();
+            await awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+
+            InspectorTest.expectFalse(WI.timelineManager.isCapturing(), "TimelineManager should not be capturing.");
+            InspectorTest.expectFalse(recording.capturing, "TimelineRecording should not be capturing.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Timeline.AutoCaptureSuppressedDuringActiveRecording",
+        description: "Verify that a page reload during an active recording does not trigger auto-capture that stops the ongoing recording.",
+        async test() {
+            await TimelineAgent.setAutoCaptureEnabled(true);
+            await TimelineAgent.setInstruments([InspectorBackend.Enum.Timeline.Instrument.Timeline]);
+
+            InspectorTest.log("Start");
+            WI.timelineManager.startCapturing();
+            await awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+
+            let recording = WI.timelineManager.activeRecording;
+            InspectorTest.expectTrue(WI.timelineManager.isCapturing(), "TimelineManager should be capturing.");
+
+            // If Timelines.autoCaptureStarted event is dispatched, it will stop the active recording.
+            let autoCaptureDidFire = false;
+            let autoCaptureListener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                if (event.data.capturingState === WI.TimelineManager.CapturingState.Inactive)
+                    autoCaptureDidFire = true;
+            });
+
+            InspectorTest.log("Reload");
+            let mainFrame = WI.networkManager.mainFrame;
+            let mainResourceDidChangePromise = new Promise((resolve) => {
+                mainFrame.singleFireEventListener(WI.Frame.Event.MainResourceDidChange, () => {
+                    InspectorTest.expectTrue(isNaN(mainFrame.domContentReadyEventTimestamp), "A new navigation should clear the previous DOMContentLoaded timestamp.");
+                    InspectorTest.expectTrue(isNaN(mainFrame.loadEventTimestamp), "A new navigation should clear the previous load timestamp.");
+                    resolve();
+                });
+            });
+            await Promise.all([
+                InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad),
+                mainResourceDidChangePromise,
+                awaitTimelineMarker(recording, WI.TimelineMarker.Type.LoadEvent),
+                InspectorTest.reloadPage(),
+            ]);
+
+            WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, autoCaptureListener);
+
+            InspectorTest.expectFalse(isNaN(mainFrame.domContentReadyEventTimestamp), "The second reload should have a DOMContentLoaded timestamp.");
+            InspectorTest.expectFalse(isNaN(mainFrame.loadEventTimestamp), "The second reload should have a load timestamp.");
+            InspectorTest.expectTrue(WI.timelineManager.isCapturing(), "TimelineManager should still be capturing after reload.");
+            InspectorTest.expectEqual(WI.timelineManager.activeRecording, recording, "TimelineManager active recording should not have changed.");
+            InspectorTest.expectFalse(autoCaptureDidFire, "Auto-capture should not have stopped the active recording.");
+
+            InspectorTest.log("Stop");
+            WI.timelineManager.stopCapturing();
+            await awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+
+            InspectorTest.expectFalse(WI.timelineManager.isCapturing(), "TimelineManager should not be capturing.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for auto-capture timeline recording.</p>
+</body>
+</html>

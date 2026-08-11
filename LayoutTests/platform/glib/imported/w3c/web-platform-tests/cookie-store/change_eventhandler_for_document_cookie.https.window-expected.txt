@@ -1,0 +1,6 @@
+
+PASS document.cookie set/overwrite/delete observed by CookieStore
+PASS CookieStore set/overwrite/delete observed by document.cookie
+PASS CookieStore agrees with document.cookie on encoding non-ASCII cookies
+PASS document.cookie agrees with CookieStore on encoding non-ASCII cookies
+

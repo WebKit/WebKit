@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that URLSearchParams is iterable.");
+
+var searchParams = new URLSearchParams("key1=value1&key2=value2&key3=value3");
+var result = [['key1', 'value1'], ['key2', 'value2'], ['key3', 'value3']];
+
+var iteration_count = 0;
+for (var item of searchParams) {
+    pair = item;
+    expected_key = result[iteration_count][0];
+    expected_value = result[iteration_count][1];
+    shouldBe("pair.length", "2");
+    shouldBeEqualToString("pair[0]", "" + expected_key);
+    shouldBeEqualToString("pair[1]", "" + expected_value);
+    iteration_count++;
+}
+shouldBe("iteration_count", "3");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+PASS 'font-variant' does not support 'normal'
+PASS 'font-variant' does not support 'no-common-ligatures proportional-nums'
+PASS 'font-variant' does not support 'common-ligatures tabular-nums'
+PASS 'font-variant' does not support 'small-caps slashed-zero'
+

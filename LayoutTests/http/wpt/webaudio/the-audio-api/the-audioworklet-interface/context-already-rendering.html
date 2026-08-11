@@ -1,0 +1,32 @@
+<!doctype html>
+<title>Make sure we don't crash if the AudioWorklet gets constructed while the AudioContext is already rendering.</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+var context;
+promise_setup(async (t) => {
+  context = new AudioContext();
+  internals.withUserGesture(() => {
+      context.resume();
+  });
+
+  const filePath = 'processors/basic-processor.js';
+  await context.audioWorklet.addModule(filePath);
+});
+
+const wait_for_audioworklet_rendering = async (node) => {
+  await new Promise((resolve) => {
+    node.port.onmessage = resolve;
+  });
+};
+
+promise_test(async (t) => {
+  const options = {
+    numberOfInputs: 0,
+    numberOfOutputs: 1
+  };
+
+  const node = new AudioWorkletNode(context, 'basic-processor', options);
+  await wait_for_audioworklet_rendering(node);
+}, 'Passes if it does not crash');
+</script>

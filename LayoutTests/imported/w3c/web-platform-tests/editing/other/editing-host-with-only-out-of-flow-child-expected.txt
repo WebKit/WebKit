@@ -1,0 +1,9 @@
+out of flow
+floated
+in flow
+
+PASS An empty editing host is laid out with a line
+PASS An editing host whose only child is absolutely positioned keeps its empty line
+PASS An editing host whose only child is floated keeps its empty line
+PASS An editing host with one line of in-flow content is the same height as an empty one
+

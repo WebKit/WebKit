@@ -1,0 +1,22 @@
+Tests that walking accessibilityParent from a cross-process iframe descendant reaches the main page's WebArea.
+PASS: iframeHeading != null === true
+
+Found Iframe descendant: AXRole: AXHeading "Iframe Heading 1"
+
+Accessibility-parent chain:
+  1: AXRole: AXHeading
+  2: AXRole: AXWebArea
+  3: AXRole: AXScrollArea
+  4: AXRole: AXGroup
+  5: AXRole: AXGroup
+  6: AXRole: AXWebArea
+  7: AXRole: AXScrollArea
+
+PASS: walk.webAreaCount >= 2 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Heading Before Iframe
+
+  Button After Iframe

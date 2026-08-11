@@ -1,0 +1,22 @@
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<div id="div">
+  <table id="table">
+    <script>
+      var table = document.getElementById('table');
+      table.parentNode.removeChild(table);
+      var docFragment = document.createDocumentFragment();
+      docFragment.appendChild(table);
+    </script>
+    <h1></h1>
+  </table>
+</div>
+
+<script>
+var div = document.getElementById('div');
+shouldBe("div.children.length", "0");
+shouldBeEqualToString("docFragment.firstElementChild.tagName", "H1");
+</script>
+</body>
+</html>

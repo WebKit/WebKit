@@ -1,0 +1,4 @@
+X
+
+FAIL Wheel event transactions target elements assert_equals: Wheel event at index `0` does not have the expected target expected Element node <div id="firstRootSpacer" class="spacer" style="backgroun... but got Element node <div id="secondRootSpacer" class="spacer" style="backgrou...
+

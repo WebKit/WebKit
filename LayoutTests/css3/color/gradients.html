@@ -1,0 +1,47 @@
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-3169" />
+<style>
+body {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><g fill="#ccc"><rect width="5" height="5"/><rect x="5" y="5" width="5" height="5"/></g></svg>');
+    background-size: 100px 100px;
+}
+.box {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+</style>
+<p>These two rows should be identical</p>
+<div class="box" style="background: linear-gradient(red, blue);"></div>
+<!-- Floating point rounding means we can't use this in a ref test without some tolerance -->
+<!-- <div class="box" style="background: linear-gradient(red, rgba(0, 0, 255, 0.5));"></div> -->
+<div class="box" style="background: linear-gradient(red, blue, green, cyan);"></div>
+<div class="box" style="background: linear-gradient(to bottom right, red, blue);"></div>
+<div class="box" style="background: linear-gradient(to bottom left, rgba(255, 0, 0, 0.6), rgba(0, 0, 255, 0.6));"></div>
+
+<br>
+
+<div class="box" style="background: linear-gradient(in srgb, color(srgb 1 0 0), blue);"></div>
+<!-- Floating point rounding means we can't use this in a ref test without some tolerance -->
+<!-- <div class="box" style="background: linear-gradient(in srgb, red, color(srgb 0 0 1 / 0.5));"></div> -->
+<div class="box" style="background: linear-gradient(in srgb, red, color(srgb 0 0 1), green, color(srgb 0 1 1));"></div>
+<div class="box" style="background: linear-gradient(in srgb to bottom right, color(srgb 1 0 0), color(srgb 0 0 1));"></div>
+<div class="box" style="background: linear-gradient(in srgb to bottom left, color(srgb 1 0 0 / 0.6), color(srgb 0 0 1 / 0.6));"></div>
+
+<br>
+
+<p>These two rows should be identical</p>
+<div class="box" style="background: radial-gradient(green, yellow);"></div>
+<!-- Floating point rounding means we can't use this in a ref test without some tolerance -->
+<!-- <div class="box" style="background: radial-gradient(orange, rgba(0, 0, 255, 0.5));"></div> -->
+<div class="box" style="background: radial-gradient(red, blue, green, cyan);"></div>
+<!-- Floating point rounding means we can't use this in a ref test without some tolerance -->
+<!-- <div class="box" style="background: radial-gradient(circle at top right, orange, purple);"></div> -->
+
+<br>
+
+<div class="box" style="background: radial-gradient(in srgb, color(srgb 0 0.5 0), color(srgb 1 1 0));"></div>
+<!-- Floating point rounding means we can't use this in a ref test without some tolerance -->
+<!-- <div class="box" style="background: radial-gradient(in srgb, orange, color(srgb 0 0 1 / 0.5));"></div> -->
+<div class="box" style="background: radial-gradient(in srgb, red, color(srgb 0 0 1), green, color(srgb 0 1 1));"></div>
+<!-- Floating point rounding means we can't use this in a ref test without some tolerance -->
+<!-- <div class="box" style="background: radial-gradient(in srgb circle at top right, orange, color(srgb 0.5 0 0.5));"></div> -->

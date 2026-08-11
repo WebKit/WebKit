@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div contenteditable="true" id="editor">Hello Cupertino!</div>
+<script>
+jsTestIsAsync = true;
+
+(async () => {
+    description("This test verifies that the selection is restored to a position before the placeholder, after removing the placeholder.");
+    editor = document.getElementById("editor");
+    if (window.testRunner)
+        await UIHelper.activateElementAndWaitForInputSession(editor);
+
+    let textNode = editor.firstChild;
+    getSelection().setPosition(textNode, 6);
+
+    if (!window.internals)
+        return;
+
+    let placeholderElement = internals.insertTextPlaceholder(60, 0);
+    internals.removeTextPlaceholder(placeholderElement);
+
+    shouldBeEqualToString("getSelection().type", "Caret");
+    shouldBe("getSelection().rangeCount", "1");
+
+    document.execCommand("InsertText", true, "from ");
+    shouldBeEqualToString("editor.textContent", "Hello from Cupertino!");
+
+    editor.blur();
+    if (window.testRunner)
+        await UIHelper.waitForKeyboardToHide();
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

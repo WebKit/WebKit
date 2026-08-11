@@ -1,0 +1,18 @@
+
+PASS justify-self: start places the item's margin box within its grid area
+PASS justify-self: center places the item's margin box within its grid area
+PASS justify-self: end places the item's margin box within its grid area
+PASS justify-self: self-start places the item's margin box within its grid area
+PASS justify-self: self-end places the item's margin box within its grid area
+PASS justify-self: flex-start places the item's margin box within its grid area
+PASS justify-self: flex-end places the item's margin box within its grid area
+PASS justify-self: left places the item's margin box within its grid area
+PASS justify-self: right places the item's margin box within its grid area
+PASS align-self: start places the item's margin box within its grid area
+PASS align-self: center places the item's margin box within its grid area
+PASS align-self: end places the item's margin box within its grid area
+PASS align-self: self-start places the item's margin box within its grid area
+PASS align-self: self-end places the item's margin box within its grid area
+PASS align-self: flex-start places the item's margin box within its grid area
+PASS align-self: flex-end places the item's margin box within its grid area
+

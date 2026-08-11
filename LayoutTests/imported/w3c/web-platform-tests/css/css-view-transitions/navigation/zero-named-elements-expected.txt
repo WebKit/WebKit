@@ -1,0 +1,3 @@
+
+PASS transition finishes with no named elements
+

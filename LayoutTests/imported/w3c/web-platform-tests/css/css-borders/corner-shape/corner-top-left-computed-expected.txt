@@ -1,0 +1,8 @@
+
+FAIL Property corner-top-left value '0px round' assert_true: corner-top-left doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-top-left value 'normal' assert_true: corner-top-left doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-top-left value '4px round' assert_true: corner-top-left doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-top-left value '2% notch' assert_true: corner-top-left doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-top-left value '4px 2% squircle' assert_true: corner-top-left doesn't seem to be supported in the computed style expected true got false
+FAIL Property corner-top-left value 'superellipse(-0.5) 30% 10px' assert_true: corner-top-left doesn't seem to be supported in the computed style expected true got false
+

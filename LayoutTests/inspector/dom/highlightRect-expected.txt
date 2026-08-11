@@ -1,0 +1,31 @@
+Tests for the DOM.highlightRect command.
+
+
+== Running test suite: DOM.highlightRect
+-- Running test case: CheckEmptyHighlight
+PASS: Should not be a highlight yet.
+
+-- Running test case: HighlightSmallRectViewportCoordinates
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":0,"y":0,"width":100,"height":200,"top":0,"right":100,"bottom":200,"left":0}
+
+-- Running test case: HighlightSmallRectPageCoordinates
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":-10,"y":-10,"width":100,"height":200,"top":-10,"right":90,"bottom":190,"left":-10}
+
+-- Running test case: HighlightSmallRectUnspecifiedCoordinatesUsesViewportCoordinates
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":0,"y":0,"width":100,"height":200,"top":0,"right":100,"bottom":200,"left":0}
+
+-- Running test case: HighlightLargeRectViewportCoordinates
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":0,"y":0,"width":100000,"height":200000,"top":0,"right":100000,"bottom":200000,"left":0}
+
+-- Running test case: HighlightLargeRectPageCoordinates
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":-10,"y":-10,"width":100000,"height":200000,"top":-10,"right":99990,"bottom":199990,"left":-10}
+
+-- Running test case: HighlightEmptyRect
+PASS: Should be one highlight rect.
+Highlight Rect: {"x":0,"y":0,"width":0,"height":0,"top":0,"right":0,"bottom":0,"left":0}
+

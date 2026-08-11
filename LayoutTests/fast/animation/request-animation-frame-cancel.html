@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<span id="e"></span>
+<span id="f"></span>
+<script>
+description("This tests cancelling a requestAnimationFrame callback");
+
+window.jsTestIsAsync = true;
+
+var callbackFired = false;
+var e = document.getElementById("e");
+var id = window.requestAnimationFrame(function() {
+}, e);
+
+onload = async () => {
+    window.cancelAnimationFrame(id);
+
+    await testRunner?.displayAndTrackRepaints();
+
+    setTimeout(function() {
+        shouldBeFalse("callbackFired");
+    }, 100);
+
+    setTimeout(function() {
+        finishJSTest();
+    }, 200);
+}
+
+</script>
+</body>
+</html>

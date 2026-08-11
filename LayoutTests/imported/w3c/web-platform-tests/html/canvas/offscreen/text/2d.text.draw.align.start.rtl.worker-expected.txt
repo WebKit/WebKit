@@ -1,0 +1,3 @@
+
+PASS textAlign start with rtl is the right edge
+

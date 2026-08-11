@@ -1,0 +1,11 @@
+
+PASS Number parsing: 1e2 equals 100, 2E2 equals 200, 1.5e2 equals 150
+PASS Number parsing: 1e2 = 100
+PASS Number parsing: 2E2 = 200, 1.5e2 = 150
+PASS Number parsing: Positive exponent (e+2)
+PASS Number parsing: Negative exponent (e-1)
+PASS Number parsing: 'e' and 'E' are case-insensitive
+PASS Number parsing: Fractional base with exponent (1.5e2)
+PASS Number parsing: Zero exponent (5e0 = 5)
+PASS Number parsing: Consecutive exponent numbers (1e2-1e2 = 100,-100)
+

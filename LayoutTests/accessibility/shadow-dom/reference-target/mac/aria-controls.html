@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="../../../../resources/accessibility-helper.js"></script>
+    <script src="../../../../resources/js-test.js"></script>
+</head>
+<body>
+<ul id="tablist-1" role="tablist">
+    <li id="tab-1" role="tab" tabindex="-1">Tab 1</li>
+    <li id="tab-2" role="tab" tabindex="-1" aria-controls="x-panel-2">Tab 2</li>
+</ul>
+
+<div id="panel-1" role="tabpanel">
+    <h3 tabindex="0">Panel 1</h3>
+</div>
+
+<x-panel id="x-panel-2">
+    <template shadowrootmode="open" shadowrootreferencetarget="panel-2">
+        <div id="panel-2" role="tabpanel">
+            <h2 id="item-in-panel-2" tabindex="0">Panel 2</h2>
+        </div>
+    </template>
+</x-panel>
+
+<script>
+description("This tests that aria-controls referring to a tabpanel indirectly via referenceTarget works still causes the relevant tab element to be selected when the tabpanel receives focus.");
+window.jsTestIsAsync = true;
+var tab2;
+
+(async () => {
+    const tabList = accessibilityController.accessibleElementById('tablist-1');
+    tab2 = tabList.childAtIndex(1);
+
+    let output = "tab2.isSelected should be false initially\n";
+    output += expect("tab2.isSelected", "false");
+
+    // we set KB focus to something in x-panel-2, which means that tab2 should become selected
+    // because it aria-controls x-panel-2
+    const xPanel2 = document.getElementById("x-panel-2");
+    const panel2Item = xPanel2.shadowRoot.getElementById("item-in-panel-2");
+    panel2Item.focus();
+
+    output += "tab2.isSelected should be true after focusing panel2Item\n";
+    output += await expectAsync("tab2.isSelected", "true");
+
+    debug(output);
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

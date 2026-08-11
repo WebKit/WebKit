@@ -1,0 +1,40 @@
+<!doctype html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../../inspector/resources/inspector-test.js"></script>
+<script>
+function createWebSocketConnection()
+{
+    new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/handshake-error");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebSocket.HandshakeError");
+
+    suite.addTestCase({
+        name: "HandshakeError",
+        description: "Should capture WebSocket handshake errors.",
+        async test() {
+            let [resourceWasAddedEvent] = await Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                InspectorTest.evaluateInPage(`createWebSocketConnection()`),
+            ]);
+            let {resource} = resourceWasAddedEvent.data;
+            InspectorTest.expectThat(resource instanceof WI.WebSocketResource, "Resource should be a WebSocket.");
+
+            await resource.awaitEvent(WI.Resource.Event.ResponseReceived);
+            InspectorTest.expectEqual(resource.statusCode, 403, "Should have correct status code.");
+            InspectorTest.expectEqual(resource.statusText, "Forbidden", "Should have correct status text.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests WebSocket handshake errors.</p>
+</body>
+</html>

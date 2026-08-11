@@ -1,0 +1,25 @@
+This tests that the value change notifications user info data are correct when replacing the contents of an input field.
+
+Regular text field:
+globalExpectedDeletion: a
+globalExpectedInsertion: b
+PASS: globalUserInfo['AXTextStateChangeType'] === AXTextStateChangeTypeEdit
+PASS: values.length === 2
+PASS: values[0]['AXTextEditType'] === AXTextEditTypeDelete
+PASS: values[0]['AXTextChangeValue'] === globalExpectedDeletion
+PASS: values[1]['AXTextEditType'] === AXTextEditTypeInsert
+PASS: values[1]['AXTextChangeValue'] === globalExpectedInsertion
+Password field:
+globalExpectedDeletion: •
+globalExpectedInsertion: •
+PASS: globalUserInfo['AXTextStateChangeType'] === AXTextStateChangeTypeEdit
+PASS: values.length === 2
+PASS: values[0]['AXTextEditType'] === AXTextEditTypeDelete
+PASS: values[0]['AXTextChangeValue'] === globalExpectedDeletion
+PASS: values[1]['AXTextEditType'] === AXTextEditTypeInsert
+PASS: values[1]['AXTextChangeValue'] === globalExpectedInsertion
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

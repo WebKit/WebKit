@@ -1,0 +1,30 @@
+<!doctype HTML>
+<html>
+<head>
+    <title>media-css-playing-paused</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "content/test")');
+        await waitFor(video, 'canplay');
+        testExpected('video.paused', true);
+        testExpected('document.querySelector("video:playing")', null);
+        testExpected('document.querySelector("video:not(:playing)")', video);
+        testExpected('document.querySelector("video:paused")', video);
+        testExpected('document.querySelector("video:not(:paused)")', null);
+        run('video.play()');
+        await waitFor(video, 'playing');
+        testExpected('document.querySelector("video:playing")', video);
+        testExpected('document.querySelector("video:not(:playing)")', null);
+        testExpected('document.querySelector("video:paused")', null);
+        testExpected('document.querySelector("video:not(:paused)")', video);
+        endTest();
+    });
+    </script>
+<head>
+<body>
+    <video loop></video>
+</body>
+</html>

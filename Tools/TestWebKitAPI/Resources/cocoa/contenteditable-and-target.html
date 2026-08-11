@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+        <style>
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        img {
+            height: 200px;
+        }
+
+        #source, #target {
+            width: 100%;
+            height: 200px;
+            font-size: 150px;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+
+        #target {
+            border: green 1px dashed;
+            color: green;
+            border-width: 5px;
+        }
+        </style>
+</head>
+
+<body>
+    <div contenteditable id="source"><img src="icon.png"></img></div>
+    <code><div id="target"></div></code>
+    <script>
+    target.addEventListener("dragenter", event => event.preventDefault());
+    target.addEventListener("dragover", event => event.preventDefault());
+    target.addEventListener("drop", event => {
+        target.textContent = "PASS";
+        event.preventDefault();
+    });
+    </script>
+</body>
+</html>

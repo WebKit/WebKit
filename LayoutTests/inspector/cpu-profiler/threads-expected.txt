@@ -1,0 +1,22 @@
+Tests that CPUProfiler tracking events include per-Thread CPU usage.
+
+
+== Running test suite: CPUProfiler.Threads
+-- Running test case: CPUProfiler.Threads
+CPUProfiler.trackingStart
+PASS: Should have a timestamp when starting.
+CPUProfiler.trackingUpdate
+PASS: Should have an event object.
+PASS: Event should have a timestamp.
+PASS: Event should have a usage.
+PASS: usage should be greater than or equal to zero.
+PASS: Event should have threads.
+PASS: Every thread has between 0 and 100 usage.
+PASS: Event should have 1 main thread.
+PASS: Event should have 2 worker threads.
+PASS: Event should have other worker threads.
+PASS: Worker 1 usage should be greater than zero.
+PASS: Worker 2 usage should be greater than zero.
+PASS: Total usage should be greater than or equal to the sum of both worker threads.
+CPUProfiler.trackingComplete
+

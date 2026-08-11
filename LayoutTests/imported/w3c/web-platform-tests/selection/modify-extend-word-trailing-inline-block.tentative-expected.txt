@@ -1,0 +1,4 @@
+This is a line
+
+PASS Selection.modify: Extending a word towards the end of a line ended by an inline-block.
+

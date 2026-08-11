@@ -1,0 +1,5 @@
+2d.text.font.parse.complex2
+
+
+PASS OffscreenCanvas test: 2d.text.font.parse.complex2
+

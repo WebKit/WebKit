@@ -1,0 +1,333 @@
+/*
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "PDFDataDetectorOverlayController.h"
+
+#if ENABLE(UNIFIED_PDF_DATA_DETECTION)
+
+#include "PDFDataDetectorItem.h"
+#include "PDFKitSPI.h"
+#include "UnifiedPDFPlugin.h"
+#include "WebMouseEvent.h"
+#include <WebCore/DataDetectorElementInfo.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/FrameView.h>
+#include <WebCore/GraphicsLayer.h>
+#include <WebCore/GraphicsLayerClient.h>
+#include <WebCore/IntPoint.h>
+#include <WebCore/Page.h>
+#include <pal/spi/cocoa/DataDetectorsCoreSPI.h>
+#include <pal/spi/mac/DataDetectorsSPI.h>
+#include <wtf/IteratorRange.h>
+#include <wtf/OptionSet.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/Vector.h>
+#include <wtf/cocoa/VectorCocoa.h>
+#include <wtf/text/WTFString.h>
+
+#include <pal/mac/DataDetectorsSoftLink.h>
+
+namespace WebKit {
+
+using namespace WebCore;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PDFDataDetectorOverlayController);
+
+Ref<PDFDataDetectorOverlayController> PDFDataDetectorOverlayController::create(UnifiedPDFPlugin& plugin)
+{
+    return adoptRef(*new PDFDataDetectorOverlayController(plugin));
+}
+
+PDFDataDetectorOverlayController::PDFDataDetectorOverlayController(UnifiedPDFPlugin& plugin)
+    : m_plugin(plugin)
+{
+}
+
+PDFDataDetectorOverlayController::~PDFDataDetectorOverlayController() = default;
+
+Ref<PageOverlay> PDFDataDetectorOverlayController::installProtectedOverlayIfNeeded()
+{
+    if (m_overlay)
+        return *m_overlay;
+
+    m_overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
+    protect(m_plugin)->installDataDetectorOverlay(Ref { *m_overlay });
+
+    return *m_overlay;
+}
+
+void PDFDataDetectorOverlayController::uninstallOverlay()
+{
+    if (!m_overlay)
+        return;
+
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return;
+
+    plugin->uninstallDataDetectorOverlay(Ref { *std::exchange(m_overlay, nullptr) });
+}
+
+void PDFDataDetectorOverlayController::teardown()
+{
+    uninstallOverlay();
+}
+
+static RetainPtr<DDHighlightRef> createPlatformDataDetectorHighlight(Vector<FloatRect>&& highlightBounds, FloatRect&& visibleContentRect)
+{
+    Vector highlightBoundsCG = highlightBounds.map([](const FloatRect& bound) -> CGRect {
+        return bound;
+    });
+
+    DDHighlightStyle style = static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow);
+    BOOL drawButton = YES;
+    NSWritingDirection writingDirection = NSWritingDirectionNatural;
+    BOOL endsWithEOL = NO;
+    BOOL drawFlipped = YES;
+    float targetSurfaceBackingScaleFactor = 0;
+
+    return adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, highlightBoundsCG.mutableSpan().data(), highlightBounds.size(), visibleContentRect, style, drawButton, writingDirection, endsWithEOL, drawFlipped, targetSurfaceBackingScaleFactor));
+}
+
+RetainPtr<DDHighlightRef> PDFDataDetectorOverlayController::createPlatformDataDetectorHighlight(PDFDataDetectorItem& dataDetectorItem) const
+{
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return { };
+
+    RefPtr mainFrameView = plugin->mainFrameView();
+    if (!mainFrameView)
+        return { };
+
+    auto rectForSelectionInMainFrameContentsSpace = plugin->rectForSelectionInMainFrameContentsSpace(dataDetectorItem.selection().get());
+
+    return ::WebKit::createPlatformDataDetectorHighlight(Vector<FloatRect>::from(WTF::move(rectForSelectionInMainFrameContentsSpace)), mainFrameView->visibleContentRect());
+}
+
+bool PDFDataDetectorOverlayController::handleMouseEvent(const WebCore::PlatformMouseEvent& event, PDFDocumentLayout::PageIndex pageIndex)
+{
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return false;
+
+    if (plugin->isLocked())
+        return false;
+
+    RefPtr mainFrameView = plugin->mainFrameView();
+    if (!mainFrameView)
+        return false;
+
+    if (!PAL::isDataDetectorsFrameworkAvailable())
+        return false;
+
+    updateDataDetectorHighlightsIfNeeded(pageIndex);
+
+    auto mousePositionInWindowSpace = event.position();
+    auto mousePositionInMainFrameContentsSpace = mainFrameView->windowToContents(mousePositionInWindowSpace);
+    bool mouseIsOverActiveHighlightButton = false;
+    m_staleDataDetectorItemWithHighlight = std::exchange(m_activeDataDetectorItemWithHighlight, { { }, { } });
+    RefPtr<PDFDataDetectorItem> dataDetectorItemForActiveHighlight;
+
+    if (auto iterator = m_pdfDataDetectorItemsWithHighlightsMap.find(pageIndex); iterator != m_pdfDataDetectorItemsWithHighlightsMap.end()) {
+        for (auto& [dataDetectorItem, coreHighlight] : iterator->value) {
+            Boolean isOverButton = NO;
+            if (!PAL::softLink_DataDetectors_DDHighlightPointIsOnHighlight(protect(coreHighlight->highlight()).get(), mousePositionInMainFrameContentsSpace, &isOverButton))
+                continue;
+
+            mouseIsOverActiveHighlightButton = isOverButton;
+            m_activeDataDetectorItemWithHighlight.first = dataDetectorItem.copyRef();
+            m_activeDataDetectorItemWithHighlight.second = coreHighlight.copyRef();
+            break;
+        }
+    }
+
+    RefPtr previousActiveHighlight = m_staleDataDetectorItemWithHighlight.second;
+    RefPtr activeHighlight = m_activeDataDetectorItemWithHighlight.second;
+
+    if (previousActiveHighlight != activeHighlight) {
+        if (previousActiveHighlight)
+            previousActiveHighlight->fadeOut();
+
+        if (activeHighlight) {
+            protect(installProtectedOverlayIfNeeded()->layer())->addChild(activeHighlight->layer());
+            activeHighlight->fadeIn();
+        }
+
+        didInvalidateHighlightOverlayRects(pageIndex, ShouldUpdatePlatformHighlightData::No, ActiveHighlightChanged::Yes);
+    }
+
+    if (event.type() == WebCore::PlatformEventType::MousePressed && mouseIsOverActiveHighlightButton)
+        return handleDataDetectorAction(flooredIntPoint(mousePositionInWindowSpace), Ref { *m_activeDataDetectorItemWithHighlight.first });
+
+    return false;
+}
+
+bool PDFDataDetectorOverlayController::handleDataDetectorAction(const IntPoint& mousePositionInWindowSpace, PDFDataDetectorItem& dataDetectorItem)
+{
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return false;
+
+    RefPtr mainFrameView = plugin->mainFrameView();
+    if (!mainFrameView)
+        return false;
+
+    auto rectForSelectionInMainFrameContentsSpace = roundedIntRect(plugin->rectForSelectionInMainFrameContentsSpace(dataDetectorItem.selection().get()));
+
+    plugin->handleClickForDataDetectionResult({ dataDetectorItem.scannerResult(), mainFrameView->contentsToWindow(rectForSelectionInMainFrameContentsSpace) }, mousePositionInWindowSpace);
+    return true;
+}
+
+void PDFDataDetectorOverlayController::updateDataDetectorHighlightsIfNeeded(PDFDocumentLayout::PageIndex pageIndex)
+{
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return;
+
+    if (!PAL::isDataDetectorsFrameworkAvailable())
+        return;
+
+    bool shouldUpdatePlatformHighlightData = true;
+
+    // FIXME: Simplify this logic to only cache on the first PDFPage query by calling `.ensure()` once we figure out why the first few fetches sometimes return bogus results.
+    if (auto it = m_pdfDataDetectorItemsWithHighlightsMap.find(pageIndex); it == m_pdfDataDetectorItemsWithHighlightsMap.end() || it->value.isEmpty()) {
+        auto dataDetectorItemsWithHighlights = [&]() -> PDFDataDetectorItemsWithHighlights {
+            RetainPtr page = plugin->pageAtIndex(pageIndex);
+#if HAVE(PDFPAGE_DATA_DETECTOR_RESULTS)
+            if ([page respondsToSelector:@selector(dataDetectorResults)]) {
+                RetainPtr<NSArray> results = [page dataDetectorResults];
+                return makeVector(results.get(), [&](DDScannerResult *result) -> std::optional<PDFDataDetectorItemWithHighlight> {
+                    Ref dataDetectorItem = PDFDataDetectorItem::create(result, page.get());
+                    if (!dataDetectorItem->hasActions() || dataDetectorItem->isPastDate())
+                        return { };
+
+                    Ref coreHighlight = DataDetectorHighlight::createForPDFSelection(*this, createPlatformDataDetectorHighlight(dataDetectorItem.get()));
+
+                    return { std::make_pair(WTF::move(dataDetectorItem), WTF::move(coreHighlight)) };
+                });
+            }
+#endif
+            return { };
+        }();
+
+        m_pdfDataDetectorItemsWithHighlightsMap.set(pageIndex, WTF::move(dataDetectorItemsWithHighlights));
+        shouldUpdatePlatformHighlightData = false;
+    }
+
+    if (shouldUpdatePlatformHighlightData)
+        updatePlatformHighlightData(pageIndex);
+}
+
+void PDFDataDetectorOverlayController::updatePlatformHighlightData(PDFDocumentLayout::PageIndex pageIndex)
+{
+    for (auto& [dataDetectorItem, coreHighlight] : m_pdfDataDetectorItemsWithHighlightsMap.get(pageIndex))
+        coreHighlight->setHighlight(createPlatformDataDetectorHighlight(Ref { dataDetectorItem }).get());
+}
+
+void PDFDataDetectorOverlayController::hideActiveHighlightOverlay()
+{
+    if (RefPtr activeHighlight = m_activeDataDetectorItemWithHighlight.second)
+        activeHighlight->dismissImmediately();
+}
+
+void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::optional<PDFDocumentLayout::PageIndex> pageIndex, ShouldUpdatePlatformHighlightData shouldUpdatePlatformHighlightData, ActiveHighlightChanged activeHighlightChanged)
+{
+    // Regardless of what we repaint, we don't need the stale data after this.
+    auto resetStaleDataDetectorWithHighlight = makeScopeExit([this, protectedThis = Ref { *this }] {
+        m_staleDataDetectorItemWithHighlight = { { }, { } };
+    });
+
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return;
+
+    auto [previousDataDetectorItem, previousActiveHighlight] = m_staleDataDetectorItemWithHighlight;
+    auto [activeDataDetectorItem, activeHighlight] = m_activeDataDetectorItemWithHighlight;
+
+    bool shouldUpdateHighlights = activeHighlightChanged == ActiveHighlightChanged::Yes || activeHighlight || previousActiveHighlight;
+    if (!shouldUpdateHighlights || !plugin->canShowDataDetectorHighlightOverlays())
+        return;
+
+    if (shouldUpdatePlatformHighlightData == ShouldUpdatePlatformHighlightData::No)
+        return;
+
+    auto pageIndices = [&] {
+        if (pageIndex) {
+            if (auto iterator = m_pdfDataDetectorItemsWithHighlightsMap.find(*pageIndex); iterator != m_pdfDataDetectorItemsWithHighlightsMap.end())
+                return makeSizedIteratorRange(m_pdfDataDetectorItemsWithHighlightsMap, iterator.keys(), std::next(iterator).keys());
+        }
+
+        return m_pdfDataDetectorItemsWithHighlightsMap.keys();
+    }();
+
+    for (auto pageIndex : pageIndices)
+        updatePlatformHighlightData(pageIndex);
+}
+
+#pragma mark - PageOverlayClient
+
+void PDFDataDetectorOverlayController::willMoveToPage(PageOverlay&, Page* page)
+{
+    if (!page)
+        uninstallOverlay();
+}
+
+#pragma mark - DataDetectorHighlightClient
+
+void PDFDataDetectorOverlayController::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
+{
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return;
+
+    plugin->scheduleRenderingUpdate(requestedSteps);
+}
+
+float PDFDataDetectorOverlayController::deviceScaleFactor() const
+{
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return 1;
+
+    return plugin->deviceScaleFactor();
+}
+
+RefPtr<GraphicsLayer> PDFDataDetectorOverlayController::createGraphicsLayer(GraphicsLayerClient& client)
+{
+    RefPtr plugin = m_plugin.get();
+    if (!plugin)
+        return nullptr;
+
+    return plugin->createGraphicsLayer(client);
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(UNIFIED_PDF_DATA_DETECTION)
+

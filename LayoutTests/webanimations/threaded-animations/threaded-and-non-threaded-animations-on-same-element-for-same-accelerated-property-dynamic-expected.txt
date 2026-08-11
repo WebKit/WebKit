@@ -1,0 +1,3 @@
+
+PASS Adding a monotonic animation on an element that has an accelerated progress-based animation for the same underlying property makes both animations run without acceleration.
+

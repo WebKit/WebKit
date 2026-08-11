@@ -1,0 +1,40 @@
+
+== Running test suite: Map
+-- Running test case: Map.fromObject
+PASS: Map from simple object should have size 2.
+PASS: Map from simple object should have keys: key1 and key2.
+PASS: Map from simple object should have values: value1 and value2.
+PASS: Map from empty object should be empty.
+
+-- Running test case: Map.prototype.take
+PASS: Map has `key`.
+PASS: Map has `key` => `value`.
+PASS: Map take `key` => `value`.
+PASS: Map does not have `key`.
+PASS: Map has `key` => `undefined`.
+PASS: Map take `doesNotExistKey` => `undefined`.
+
+-- Running test case: Map.prototype.firstKey
+PASS: Map should not start with a first key.
+PASS: Map should have first key.
+PASS: Map should have same first key after adding another entry.
+PASS: Map should have same first key after changing its value.
+PASS: Map should have different first key after deleting previous first key.
+PASS: Map should not have first key after deleting all entries.
+
+-- Running test case: Map.prototype.firstValue
+PASS: Map should not start with a first value.
+PASS: Map should have first value.
+PASS: Map should have same first value after adding another entry.
+PASS: Map should have different first value after changing its value.
+PASS: Map should have different first value after deleting previous first key.
+PASS: Map should not have first value after deleting all entries.
+
+-- Running test case: Map.prototype.lastKey
+PASS: Map should not start with a last key.
+PASS: Map should have last key.
+PASS: Map should have different last key after adding another entry.
+PASS: Map should have same last key after changing first value.
+PASS: Map should have different last key after deleting previous last key.
+PASS: Map should not have last key after deleting all entries.
+

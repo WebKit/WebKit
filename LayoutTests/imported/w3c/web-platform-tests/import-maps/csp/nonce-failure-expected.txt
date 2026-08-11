@@ -1,0 +1,3 @@
+
+PASS Importmap should be rejected due to nonce
+

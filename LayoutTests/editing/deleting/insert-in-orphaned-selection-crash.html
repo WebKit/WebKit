@@ -1,0 +1,29 @@
+<style>
+ * { -webkit-appearance: button; }
+ tr { height: 10px; }
+ td { width: 100px; height: 100px; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.addEventListener("DOMNodeRemoved",  function () {
+    document.designMode = document.designMode == "on" ? "off" : "on";
+    document.execCommand("SelectAll");
+});
+document.addEventListener("focusin",  function () {
+    document.execCommand('InsertText');
+    console.log("The test PASS if it does not CRASH.");
+});
+window.onload = function() {
+    document.getElementsByTagName("div")[0].remove();
+};
+</script>
+<div>
+    <textarea></textarea>
+</div>
+<table frame="vsides">
+    <tr>
+        <td>
+        </td>
+    </tr>
+</table>

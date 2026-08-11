@@ -1,0 +1,93 @@
+<!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that the navigation rate limit resets after the time window expires");
+
+// Using test parameters for faster execution:
+// - maxNavigations = 5 (instead of 200)
+// - windowDuration = 0.5 seconds (instead of 10 seconds)
+
+jsTestIsAsync = true;
+
+const TEST_LIMIT = 5;
+const TEST_WINDOW_DURATION_S = 0.5;
+const WAIT_BUFFER_MS = 100; // Small buffer to ensure window has reset
+
+var firstPhaseSuccess = 0;
+var firstPhaseFailures = 0;
+var blockedBeforeWait = false;
+var successAfterReset = false;
+var postResetNavigations = 0;
+
+window.onload = async () => {
+
+    // Configure rate limiter for testing
+    if (window.internals) {
+        internals.setNavigationRateLimiterParameters(window, TEST_LIMIT, TEST_WINDOW_DURATION_S);
+        debug(`Configured rate limiter: ${TEST_LIMIT} navigations per ${TEST_WINDOW_DURATION_S}s`);
+    } else {
+        testFailed("window.internals not available - test cannot run");
+        finishJSTest();
+        return;
+    }
+
+    // Phase 1: Hit the rate limit
+    debug("Phase 1: Hitting the rate limit...");
+
+    for (let i = 0; i < TEST_LIMIT + 3; i++) {
+        try {
+            const result = navigation.navigate(`#phase1-${i}`);
+            await result.committed;
+            firstPhaseSuccess++;
+        } catch (error) {
+            if (error.name === "QuotaExceededError")
+                firstPhaseFailures++;
+        }
+    }
+
+    debug(`First phase - Successful: ${firstPhaseSuccess}, Failed: ${firstPhaseFailures}`);
+    shouldBeTrue(`firstPhaseSuccess <= ${TEST_LIMIT}`);
+    shouldBeTrue("firstPhaseFailures >= 3");
+
+    // Verify we're now blocked
+    try {
+        await navigation.navigate("#blocked-test").committed;
+    } catch (error) {
+        if (error.name === "QuotaExceededError")
+            blockedBeforeWait = true;
+    }
+    shouldBeTrue("blockedBeforeWait");
+
+    // Phase 2: Wait for window to reset
+    const waitTimeMs = (TEST_WINDOW_DURATION_S * 1000) + WAIT_BUFFER_MS;
+    debug(`Phase 2: Waiting ${waitTimeMs}ms for window to reset...`);
+    await new Promise(resolve => setTimeout(resolve, waitTimeMs));
+
+    // Phase 3: Verify navigations are allowed again
+    debug("Phase 3: Attempting navigation after window reset...");
+    try {
+        const result = navigation.navigate("#after-reset");
+        await result.committed;
+        successAfterReset = true;
+    } catch (error) {
+        testFailed(`Navigation after reset failed with: ${error.name}: ${error.message}`);
+    }
+
+    shouldBeTrue("successAfterReset");
+
+    // Verify we can do multiple navigations again
+    for (let i = 0; i < 3; i++) {
+        try {
+            await navigation.navigate(`#post-reset-${i}`).committed;
+            postResetNavigations++;
+        } catch (error) {
+            testFailed(`Post-reset navigation ${i} failed: ${error.name}`);
+        }
+    }
+
+    shouldBe("postResetNavigations", "3");
+
+    finishJSTest();
+};
+</script>

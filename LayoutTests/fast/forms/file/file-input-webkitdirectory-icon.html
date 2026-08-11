@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <script src=../../../resources/ui-helper.js></script>
+    <script src=resources/file-icon-bytes.js></script>
+<head>
+</head>
+<body>
+    <input type=file webkitdirectory>
+    <script>
+        (async () => {
+            if (!window.testRunner)
+                return;
+
+            testRunner.waitUntilDone();
+            testRunner.setOpenPanelFiles(['foo.txt']);
+            testRunner.setOpenPanelFilesMediaIcon(testIconBytes);
+
+            let fileInput = document.querySelector('input[type=file]');
+            let fileInputChangePromise = new Promise((resolve) => {
+                fileInput.addEventListener('change', resolve);
+            });
+
+            await UIHelper.activateElement(fileInput);
+            await fileInputChangePromise;
+            await UIHelper.activateElement(document.body);
+
+            setTimeout(() => testRunner.notifyDone(), 0);
+        })();
+    </script>
+</body>
+</html>

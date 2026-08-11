@@ -1,0 +1,40 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <script src="../../../resources/ui-helper.js"></script>
+  <script type="text/javascript">
+      async function scrollAndRepaint()
+      {
+          if (window.testRunner) {
+              document.body.offsetTop;
+              await testRunner.displayAndTrackRepaints();
+              repaintTest();
+          } else {
+              setTimeout(repaintTest, 15);
+          }
+      }
+
+      function repaintTest()
+      {
+          document.getElementById('toMove').style.left = "150px";
+          document.getElementById('toMove').style.backgroundColor = "green";
+          if (window.testRunner)
+              window.testRunner.notifyDone();
+      }
+
+      if (window.testRunner)
+          window.testRunner.waitUntilDone();
+      
+      window.addEventListener('load', async () => {
+          await UIHelper.startMonitoringWheelEvents();
+          await UIHelper.waitForScrollCompletion();
+          await scrollAndRepaint();
+      }, false);
+  </script>
+</head>
+  <body style="height: 820;">
+    <p style="position: absolute; top: 330px">You should see a yellow rect on the left, and a green one on the right. No red pixels.</p>
+    <div id="toMove" style="width: 100px; height: 100px; background-color: red; position: fixed; top: 70px; left: 10px;"></div>
+    <div style="width: 100px; height: 100px; background-color: yellow; position: absolute; top: 406; left: 10px; z-index: -5;"></div>
+  </body>
+</html>

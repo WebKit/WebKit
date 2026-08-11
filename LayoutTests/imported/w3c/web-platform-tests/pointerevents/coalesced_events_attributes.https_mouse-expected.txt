@@ -1,0 +1,6 @@
+
+PASS Coalesced list in boundary events
+PASS Coalesced list in pointer-capture events
+PASS Coalesced list in pointerdown/move/up events
+PASS Coalesced list in pointercancel event
+

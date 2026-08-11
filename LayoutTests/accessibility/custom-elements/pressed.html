@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-button id="button-1"></custom-button>
+<custom-button id="button-2" aria-pressed="false" aria-required="false" aria-selected="false"></custom-button>
+<script>
+
+customElements.define('custom-button', class CustomButton extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'button';
+        internals.ariaPressed = 'true';
+        internals.ariaRequired = 'true';
+        internals.ariaSelected = 'true';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBeEqualToString('accessibilityController.accessibleElementById("button-1").role', 'AXRole: AXCheckBox');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("button-1").stringValue', 'AXValue: 1');
+    shouldBeTrue('accessibilityController.accessibleElementById("button-1").isRequired');
+    shouldBeTrue('accessibilityController.accessibleElementById("button-1").isSelected');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("button-2").role', 'AXRole: AXCheckBox');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("button-2").stringValue', 'AXValue: 0');
+    shouldBeFalse('accessibilityController.accessibleElementById("button-2").isRequired');
+    shouldBeFalse('accessibilityController.accessibleElementById("button-2").isSelected');
+}
+
+</script>
+</body>
+</html>

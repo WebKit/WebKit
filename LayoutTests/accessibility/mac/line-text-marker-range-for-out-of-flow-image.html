@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+<p>Before</p>
+<div style="position: relative;">
+    <img id="image" src="resources/cake.png" aria-label="Employee Photo" style="position: absolute;">
+</div>
+<p>After</p>
+</div>
+
+<script>
+var output = "This tests that an out-of-flow (position:absolute) image, which sits on no inline line box, still has a line of its own. Reading its line by text marker returns the object-replacement character so that line-by-line navigation announces the image instead of nothing. Should pass with the accessibility isolated tree both on and off.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(() => {
+        const image = accessibilityController.accessibleElementById("image");
+        const range = image.textMarkerRangeForElement(image);
+        const marker = image.startTextMarkerForTextMarkerRange(range);
+        const lineString = image.stringForTextMarkerRange(image.lineTextMarkerRangeForTextMarker(marker));
+
+        window.imageLineIsObjectReplacement = lineString === String.fromCharCode(0xFFFC);
+        output += expect("imageLineIsObjectReplacement", "true");
+
+        debug(output);
+        document.getElementById("content").style.display = "none";
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

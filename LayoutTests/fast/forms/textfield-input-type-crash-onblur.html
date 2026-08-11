@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+ <html>
+ <head>
+ <script>
+
+     if (window.testRunner)
+         testRunner.dumpAsText();
+
+     function main()
+     {
+        var hVar = document.getElementById("hVar")
+        datalistVar.remove()
+        inputVar.setRangeText("")
+        inputVar.select()
+        nVar.setAttribute("hidden","")
+        inputVar.type = "tel"
+        hVar.before("")
+     }
+     function changeType()
+     {
+        inputVar.type = ""
+     }
+ </script>
+ </head>
+ <body onload="main()"><p> This test passes </p> <n id="nVar" onblur="changeType()" tabindex=0><input id="inputVar" hidden="" list="datalistVar"><datalist id="datalistVar"><option ><h id="hVar">
+ </html>

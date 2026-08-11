@@ -1,0 +1,5 @@
+
+
+
+PASS Moving focus from its own focus() call doesn't leave stale :focus-within state
+

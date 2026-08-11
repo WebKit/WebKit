@@ -1,0 +1,5 @@
+Test that the removed 'plugin-types' CSP directive does not block YouTube plugin replacement.
+
+PASS: YouTube plugin replacement iframe was created.
+
+

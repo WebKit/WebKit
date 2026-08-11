@@ -1,0 +1,30 @@
+Tests Storage.setCookie (with partitioning) and Storage.deleteCookies by filter under Site Isolation.
+
+
+== Running test suite: Storage.setCookie and Storage.deleteCookies
+-- Running test case: Storage.setCookie.Enable
+Storage domain enabled.
+
+-- Running test case: Storage.setCookie.Roundtrip
+PASS: setCookie should return a partitionKey.
+PASS: An unpartitioned cookie's returned partitionKey should have no sourceOrigin.
+PASS: Should read back exactly one matching cookie.
+PASS: Cookie value should be 'PASS'.
+
+-- Running test case: Storage.setCookie.ExplicitPartitionKeyEchoed
+PASS: setCookie should return a partitionKey.
+PASS: Returned partitionKey should echo the explicit cookie partitionKey.
+
+-- Running test case: Storage.setCookie.SessionCookieRoundtrip
+PASS: A session cookie set with expires:0 should be readable, not silently dropped as epoch-expired.
+PASS: Session cookie value should be 'PASS'.
+PASS: Round-tripped cookie should still be a session cookie.
+
+-- Running test case: Storage.deleteCookies.ByFilter
+PASS: 'DeleteMe' should be gone.
+PASS: 'KeepMe' should remain.
+
+-- Running test case: Storage.deleteCookies.NoFilterRejected
+PASS: deleteCookies with no filter should produce an error.
+PASS: 'KeepMe' should still remain after the rejected delete.
+

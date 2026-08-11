@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+    window.addEventListener('load', () => {
+        window.parent.postMessage({ action: 'frameLoaded', completed: true }, '*');
+    });
+</script>
+</body>
+</html>

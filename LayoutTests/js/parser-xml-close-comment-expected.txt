@@ -1,0 +1,29 @@
+Test to ensure correct handling of --> as a single line comment when at the beginning of a line or preceeded by a multi-line comment
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'should be a syntax error' --> threw exception SyntaxError: Postfix -- operator applied to value that is not a reference..
+PASS /**/ 1--> threw exception SyntaxError: Postfix -- operator applied to value that is not a reference..
+PASS /**/ 1 --> threw exception SyntaxError: Postfix -- operator applied to value that is not a reference..
+PASS 1 /**/--> threw exception SyntaxError: Postfix -- operator applied to value that is not a reference..
+PASS 1 /**/ --> threw exception SyntaxError: Postfix -- operator applied to value that is not a reference..
+PASS 1/*
+*/--> is 1
+PASS 1/*
+*/
+--> is 1
+PASS 2/*
+*/ --> is 2
+PASS 2/*
+*/
+ --> is 2
+PASS --> is undefined.
+PASS  --> is undefined.
+PASS /**/--> is undefined.
+PASS /*
+*/--> is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

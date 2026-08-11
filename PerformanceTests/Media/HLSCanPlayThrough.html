@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<script>
+var video;
+var url;
+
+window.addEventListener('load', () => {
+    PerfTestRunner.prepareToMeasureValuesAsync({
+        unit: 'ms',
+        done: function () {
+            if (video) {
+                video.src = null;
+                video.load();
+            }
+        }
+    });
+
+    runTest();
+});
+
+function runTest() {   
+    video =  document.createElement('video');
+
+    var startTime = PerfTestRunner.now();
+    video.src = 'hls/720p/prog_index.m3u8';
+    video.addEventListener('canplaythrough', () => {
+        if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+            return;
+
+        PerfTestRunner.gc();
+        setTimeout(runTest, 0);
+    });
+}
+
+</script>
+</head>
+<body>
+    <button onclick="pauseAll()">pause</button><button onclick="playAll()">play</button><br>
+</body>
+</html>

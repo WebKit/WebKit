@@ -1,0 +1,3 @@
+
+PASS Float precision of VTTCue attributes line, position and size, stored as floats
+

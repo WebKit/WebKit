@@ -1,0 +1,3 @@
+
+PASS Create a close watcher without user activation; create a close watcher with user activation that preventDefault()s cancel; send user activation
+

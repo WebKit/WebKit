@@ -1,0 +1,5 @@
+
+PASS scroll-behavior: smooth on DIV element
+PASS HTML element scroll-behavior should propagate to viewport
+PASS BODY element scroll-behavior should not propagate to viewport
+

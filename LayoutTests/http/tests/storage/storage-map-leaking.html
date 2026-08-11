@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Make sure that StorageAreaMap objects do no leak.");
+jsTestIsAsync = true;
+localStorage.setItem("foo", "bar");
+
+onload = function() {
+    let attemptsRemaining = 5;
+
+    function attempt() {
+        let countBeforeOpen = testRunner.storageAreaMapCount;
+        let newWindow = window.open("resources/storage-map-leaking-window.html");
+        window.addEventListener("message", function handler(event) {
+            if (event.data !== "loaded")
+                return;
+            window.removeEventListener("message", handler);
+            newWindow.close();
+            newWindow = null;
+
+            let checksRemaining = 50;
+            handle = setInterval(() => {
+                if (window.GCController)
+                    GCController.collect();
+                let currentCount = testRunner.storageAreaMapCount;
+                if (currentCount <= countBeforeOpen) {
+                    testPassed("StorageAreaMap objects are not leaking");
+                    clearInterval(handle);
+                    finishJSTest();
+                    return;
+                }
+                if (--checksRemaining <= 0) {
+                    clearInterval(handle);
+                    if (--attemptsRemaining > 0)
+                        attempt();
+                    else {
+                        testFailed("StorageAreaMap objects are leaking (count=" + currentCount + ")");
+                        finishJSTest();
+                    }
+                }
+            }, 10);
+        });
+    }
+
+    attempt();
+}
+</script>
+</body>
+</html>

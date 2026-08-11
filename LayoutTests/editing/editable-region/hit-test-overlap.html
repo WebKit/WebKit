@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="resources/hit-test-utilities.js"></script>
+<style>
+#test-container {
+    height: 500px;
+}
+
+.container {
+    position: relative;
+    width: 500px;
+    height: 200px;
+    margin: 20px;
+    border: 1px solid black;
+}
+
+.editable {
+    -webkit-user-modify: read-write;
+    background-color: aquamarine;
+    border: 2px solid green;
+}
+
+.overlapper {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid black;
+    z-index: 1;
+    box-shadow: 0 0 10px black;
+}
+
+.tap-point {
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: red;
+    z-index: 1;
+}
+</style>
+</head>
+<body style="height: 4096px">
+<div id="test-container">
+    <h2>Non-composited overlap</h2>
+    <div id="non-composited-container" class="container">
+        <div class="editable" style="margin: 10px; height: 100px"></div>
+        <div class="overlapper"></div>
+    </div>
+
+    <h2>Composited overlap</h2>
+    <div id="composited-container" class="container">
+        <div class="editable" style="margin: 10px; height: 100px"></div>
+        <div class="overlapper" style="will-change: transform; transform: translateZ(0)"></div>
+    </div>
+
+    <div id="first-tap-point" class="tap-point" style="top: 150px; left: 270px"></div>
+    <div id="second-tap-point" class="tap-point" style="top: 400px; left: 270px"></div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.internals)
+    internals.settings.setEditableRegionEnabled(true);
+
+async function runTest()
+{
+    if (!window.testRunner) {
+        testFailed("Must be run in WebKitTestRunner.");
+        return;
+    }
+
+    debug("Non-Composited overlap:");
+    let container = document.getElementById("non-composited-container");
+    let containerComputedStyle = window.getComputedStyle(container);
+    let overlapper = container.querySelector(".overlapper");
+    let borderLength = parseInt(containerComputedStyle.borderLeftWidth, 10); // Assumes uniform border width
+    await shouldHaveEditableElementsInRect(container.offsetLeft + borderLength, container.offsetTop + borderLength, overlapper.offsetWidth - borderLength, container.offsetHeight - borderLength);
+    await shouldHaveEditableElementsInRectForElement(document.getElementById("first-tap-point"));
+    await shouldHaveEditableElementsInRect(container.offsetLeft + overlapper.offsetWidth + borderLength, container.offsetTop - borderLength, container.offsetWidth - overlapper.offsetWidth - borderLength, container.offsetHeight - borderLength);
+
+    debug("<br>Composited overlap:");
+    container = document.getElementById("composited-container");
+    containerComputedStyle = window.getComputedStyle(container);
+    overlapper = container.querySelector(".overlapper");
+    borderLength = parseInt(containerComputedStyle.borderLeftWidth, 10); // Assumes uniform border width
+    await shouldNotHaveEditableElementsInRect(container.offsetLeft + borderLength, container.offsetTop + borderLength, overlapper.offsetWidth - borderLength, container.offsetHeight - borderLength);
+    await shouldNotHaveEditableElementsInRectForElement(document.getElementById("second-tap-point"));
+    await shouldHaveEditableElementsInRect(container.offsetLeft + overlapper.offsetWidth + borderLength, container.offsetTop + borderLength, container.offsetWidth - overlapper.offsetWidth - borderLength, container.offsetHeight - borderLength);
+
+    let testContainer = document.getElementById("test-container");
+    document.body.removeChild(testContainer);
+    finishJSTest();
+}
+
+description("Hit test editable elements that are overlapped by another element.");
+runTest();
+</script>
+</body>
+</html>

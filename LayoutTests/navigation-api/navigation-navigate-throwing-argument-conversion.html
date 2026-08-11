@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that navigation.navigate() returns a valid NavigationResult when argument conversion throws");
+
+jsTestIsAsync = true;
+
+var result;
+var committedError;
+var finishedError;
+
+window.onload = async () => {
+    result = navigation.navigate({ toString() { throw new Error("test error"); } });
+
+    shouldBe("typeof result", "'object'");
+    shouldBeTrue("'committed' in result");
+    shouldBeTrue("'finished' in result");
+    shouldBeTrue("result.committed instanceof Promise");
+    shouldBeTrue("result.finished instanceof Promise");
+
+    try {
+        await result.committed;
+        testFailed("committed promise should be rejected");
+    } catch (e) {
+        committedError = e;
+    }
+    shouldBeEqualToString("committedError.message", "test error");
+
+    try {
+        await result.finished;
+        testFailed("finished promise should be rejected");
+    } catch (e) {
+        finishedError = e;
+    }
+    shouldBeEqualToString("finishedError.message", "test error");
+
+    finishJSTest();
+};
+</script>

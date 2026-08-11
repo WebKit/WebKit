@@ -1,0 +1,107 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+    let iframe;
+
+    function addCrossOriginIFrame() {
+        let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+        iframe = document.createElement("iframe");
+        iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/worker/resources/iframe-with-worker.html`;
+        document.body.appendChild(iframe);
+    }
+
+    function removeCrossOriginIFrame() {
+        iframe.remove();
+    }
+
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.Worker.CrossOriginIFrame");
+
+        let parentFrameTarget;
+        let workerTarget;
+
+        suite.addTestCase({
+            name: "SiteIsolation.Worker.CrossOrigin.Setup",
+            description: "Adding a cross-origin iframe with a worker should create both frame and worker targets.",
+            async test() {
+                // When a cross-origin iframe loads under site isolation, the target
+                // lifecycle is: a non-provisional FrameTarget is created, then a
+                // provisional FrameTarget is created, then the non-provisional one is
+                // destroyed and the provisional one commits. The worker connects to
+                // whichever FrameTarget is current at the time Worker.enable() runs.
+                //
+                // Rather than trying to match a specific FrameTarget from the events
+                // array (which can see multiple Frame targets due to the provisional
+                // swap), use the worker's parentTarget as the source of truth.
+                let workerAddedPromise = new Promise((resolve) => {
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, (event) => {
+                        if (event.data.target.type === WI.TargetType.Worker)
+                            resolve(event.data.target);
+                    });
+                });
+
+                InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+
+                workerTarget = await workerAddedPromise;
+                parentFrameTarget = workerTarget.parentTarget;
+
+                InspectorTest.expectNotNull(parentFrameTarget, "Frame target should be created.");
+                InspectorTest.expectEqual(parentFrameTarget.type, WI.TargetType.Frame, "Parent target should have Frame type.");
+                InspectorTest.expectThat(parentFrameTarget.hasDomain("Worker"), "Parent frame target should have the Worker domain.");
+
+                InspectorTest.expectNotNull(workerTarget, "Worker target should be created.");
+                InspectorTest.expectEqual(workerTarget.type, WI.TargetType.Worker, "Worker target should have Worker type.");
+                InspectorTest.expectEqual(workerTarget.parentTarget, parentFrameTarget, "Worker's parent target should be the frame target.");
+                InspectorTest.log(`Worker target name: ${workerTarget.displayName}`);
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Worker.CrossOrigin.EvaluateInWorker",
+            description: "Should be able to evaluate JavaScript in the worker spawned by the cross-origin iframe.",
+            async test() {
+                InspectorTest.assert(workerTarget, "Worker target should exist from setup.");
+
+                let response = await workerTarget.RuntimeAgent.evaluate.invoke({
+                    expression: "passphrase",
+                    objectGroup: "test",
+                    returnByValue: true,
+                });
+                InspectorTest.expectThat(!response.wasThrown, "Evaluation should not throw.");
+                InspectorTest.log("Resulting passphrase value: " + response.result.value);
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Worker.CrossOrigin.RemoveIframe",
+            description: "Removing the cross-origin iframe should clean up both worker and frame targets.",
+            async test() {
+                let removedTargets = [];
+                let allRemovedPromise = new Promise((resolve) => {
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, (event) => {
+                        removedTargets.push(event.data.target);
+                        if (removedTargets.length >= 2)
+                            resolve();
+                    });
+                });
+
+                InspectorTest.evaluateInPage("removeCrossOriginIFrame()");
+
+                await allRemovedPromise;
+
+                let removedWorker = removedTargets.find((t) => t.type === WI.TargetType.Worker);
+                let removedFrame = removedTargets.find((t) => t.type === WI.TargetType.Frame);
+
+                InspectorTest.expectNotNull(removedWorker, "Worker target should be removed.");
+                InspectorTest.expectNotNull(removedFrame, "Frame target should be removed.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that workers spawned in cross-origin iframes are properly surfaced through the frame target's Worker domain
+        under site isolation.</p>
+</body>

@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+Hello world!<br id="line-break">It's me, here to chat.
+
+<script>
+var output = "This test ensures we do not stitch text across a line break.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var text = webArea.childAtIndex(0);
+
+    // A <br> separates the text around it, so the two lines should not stitch into one object.
+    output += expect(`platformStaticTextValue(text).includes("Hello world!")`, "true");
+    output += expect(`platformStaticTextValue(text).includes("It's me, here to chat.")`, "false");
+
+    // Removing the line break should let the now-adjacent text stitch into a single object.
+    document.getElementById("line-break").remove();
+    setTimeout(async function() {
+        output += await expectAsync(`platformStaticTextValue(text).includes("It's me, here to chat.")`, "true");
+        output += expect(`platformStaticTextValue(text).includes("Hello world!")`, "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

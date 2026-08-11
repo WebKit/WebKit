@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/mime-type-application-json.webmanifest
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/mime-type-application-json.webmanifest.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/mime-type-application-manifest+json.webmanifest
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/mime-type-application-manifest+json.webmanifest.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/mime-type-invalid.webmanifest
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/mime-type-invalid.webmanifest.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/mime-type-none.webmanifest
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/mime-type-none.webmanifest.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/mime-type-text-json.webmanifest
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/mime-type-text-json.webmanifest.headers
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/wrong-mime-type-text-plain.webmanifest
+/LayoutTests/imported/w3c/web-platform-tests/html/links/manifest/wrong-mime-type-text-plain.webmanifest.headers

@@ -1,0 +1,92 @@
+/*
+ * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include <WebCore/Filter.h>
+#include <WebCore/FilterResults.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/SVGFilterExpression.h>
+#include <WebCore/SVGUnitTypes.h>
+#include <wtf/Ref.h>
+#include <wtf/TypeCasts.h>
+
+namespace WebCore {
+
+class FilterImage;
+class GraphicsContext;
+class SVGElement;
+class SVGFilterElement;
+
+class SVGFilterRenderer final : public Filter {
+public:
+    static RefPtr<SVGFilterRenderer> create(SVGElement* contextElement, SVGFilterElement&, const FilterGeometry&, OptionSet<FilterRenderingMode>, OptionSet<FilterRenderingOption>, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> = std::nullopt);
+    WEBCORE_EXPORT static Ref<SVGFilterRenderer> create(SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, const FilterGeometry&, OptionSet<FilterRenderingMode>, OptionSet<FilterRenderingOption>, std::optional<RenderingResourceIdentifier>);
+
+    static bool isIdentity(SVGFilterElement&);
+    static IntOutsets calculateOutsets(SVGFilterElement&, const FloatRect& targetBoundingBox);
+
+    SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits; }
+
+    const SVGFilterExpression& expression() const LIFETIME_BOUND { return m_expression; }
+    const FilterEffectVector& effects() const LIFETIME_BOUND { return m_effects; }
+
+    FilterEffectVector effectsOfType(FilterFunction::Type) const final;
+
+    WEBCORE_EXPORT FilterResults& ensureResults(NOESCAPE const FilterResultsCreator&);
+    void clearEffectResult(FilterEffect&);
+    WEBCORE_EXPORT void mergeEffects(const FilterEffectVector&);
+
+    RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
+    FilterStyleVector createFilterStyles(GraphicsContext&, const FilterStyle& sourceStyle) const final;
+
+    static FloatSize NODELETE calculateResolvedSize(const FloatSize&, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits);
+
+    WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const final;
+
+    WEBCORE_EXPORT static bool NODELETE isValidSVGFilterExpression(const SVGFilterExpression&, const FilterEffectVector&);
+private:
+    SVGFilterRenderer(const FilterGeometry&, SVGUnitTypes::SVGUnitType primitiveUnits, OptionSet<FilterRenderingOption>, std::optional<RenderingResourceIdentifier>);
+    SVGFilterRenderer(const FilterGeometry&, SVGUnitTypes::SVGUnitType primitiveUnits, SVGFilterExpression&&, FilterEffectVector&&, OptionSet<FilterRenderingOption>, std::optional<RenderingResourceIdentifier>);
+
+    static std::optional<std::tuple<SVGFilterExpression, FilterEffectVector>> buildExpression(SVGElement* contextElement, SVGFilterElement&, const SVGFilterRenderer&, const GraphicsContext& destinationContext);
+    void setExpression(SVGFilterExpression&& expression) { m_expression = WTF::move(expression); }
+    void setEffects(FilterEffectVector&& effects) { m_effects = WTF::move(effects); }
+
+    FloatSize resolvedSize(const FloatSize&) const final;
+    FloatPoint3D resolvedPoint3D(const FloatPoint3D&) const final;
+
+    OptionSet<FilterRenderingMode> supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const final;
+
+    RefPtr<FilterImage> apply(const Filter&, FilterImage& sourceImage, FilterResults&) final;
+    FilterStyleVector createFilterStyles(GraphicsContext&, const Filter&, const FilterStyle& sourceStyle) const final;
+
+    SVGUnitTypes::SVGUnitType m_primitiveUnits;
+
+    SVGFilterExpression m_expression;
+    FilterEffectVector m_effects;
+
+    std::unique_ptr<FilterResults> m_results;
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(SVGFilterRenderer);

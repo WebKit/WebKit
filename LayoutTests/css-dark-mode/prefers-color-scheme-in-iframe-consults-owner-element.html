@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<title>prefers-color-scheme in an iframe follows the used color scheme of its owner element, even if it's different from the environment color scheme</title>
+
+<style>
+  #ifr {
+    width: 500px;
+    height: 500px;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    display: block;
+    color-scheme: light;
+  }
+</style>
+
+<p>Test passes if the box is green.</p>
+<iframe id="ifr"></iframe>
+
+<script>
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setUseDarkAppearanceForTesting(true);
+
+    ifr.addEventListener("load", () => {
+      testRunner.notifyDone();
+    })
+  }
+
+  ifr.src = "resources/prefers-color-scheme-iframe.html";
+</script>

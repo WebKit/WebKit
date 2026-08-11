@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<select id="ltr-right" style="text-align: right"><option>Option</option></select>
+<select id="rtl-left" dir="rtl" style="text-align: left"><option>Option</option></select>
+</body>
+<script>
+description("A select with text-align pointing toward the chevron should still have internal padding on the logical end, preventing text from overlapping with the chevron.");
+
+function getButtonComputedStyle(select) {
+    const shadow = internals.shadowRoot(select);
+    const button = shadow.querySelector("slot[name=buttonSlot]").firstElementChild;
+    return window.getComputedStyle(button);
+}
+
+const ltrStyle = getButtonComputedStyle(document.getElementById("ltr-right"));
+const rtlStyle = getButtonComputedStyle(document.getElementById("rtl-left"));
+
+// LTR: chevron is on the right (logical end), padding-right must be non-zero.
+shouldNotBe("ltrStyle.paddingRight", '"0px"');
+shouldBe("ltrStyle.paddingLeft", '"0px"');
+
+// RTL: chevron is on the left (logical end in RTL), padding-left must be non-zero.
+shouldNotBe("rtlStyle.paddingLeft", '"0px"');
+shouldBe("rtlStyle.paddingRight", '"0px"');
+</script>
+</html>

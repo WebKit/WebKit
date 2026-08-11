@@ -1,0 +1,9 @@
+
+PASS insertAdjacentHTML with html assigned via policy (successful HTML transformation).
+PASS insertAdjacentHTML(TrustedHTML) throws SyntaxError DOMException when position invalid.
+PASS `insertAdjacentHTML(string)` throws.
+PASS `insertAdjacentHTML(string)` still throws TypeError when position invalid.
+PASS `insertAdjacentHTML(null)` throws.
+PASS `insertAdjacentHTML(string)` assigned via default policy (successful HTML transformation).
+PASS `insertAdjacentHTML(null)` assigned via default policy does not throw.
+

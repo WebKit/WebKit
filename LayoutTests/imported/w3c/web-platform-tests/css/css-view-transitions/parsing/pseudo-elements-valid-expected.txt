@@ -1,0 +1,102 @@
+
+PASS "::view-transition" should be a valid selector
+PASS ":root::view-transition" should be a valid selector
+PASS ".a::view-transition" should be a valid selector
+PASS "div ::view-transition" should be a valid selector
+PASS "::view-transition-group(*)" should be a valid selector
+PASS ":root::view-transition-group(*)" should be a valid selector
+PASS ".a::view-transition-group(*)" should be a valid selector
+PASS "div ::view-transition-group(*)" should be a valid selector
+PASS "::view-transition-group(*):only-child" should be a valid selector
+PASS ":root::view-transition-group(*):only-child" should be a valid selector
+PASS ".a::view-transition-group(*):only-child" should be a valid selector
+PASS "div ::view-transition-group(*):only-child" should be a valid selector
+PASS "::view-transition-group(root)" should be a valid selector
+PASS ":root::view-transition-group(root)" should be a valid selector
+PASS ".a::view-transition-group(root)" should be a valid selector
+PASS "div ::view-transition-group(root)" should be a valid selector
+PASS "::view-transition-group(root):only-child" should be a valid selector
+PASS ":root::view-transition-group(root):only-child" should be a valid selector
+PASS ".a::view-transition-group(root):only-child" should be a valid selector
+PASS "div ::view-transition-group(root):only-child" should be a valid selector
+PASS "::view-transition-group(dashed-ident)" should be a valid selector
+PASS ":root::view-transition-group(dashed-ident)" should be a valid selector
+PASS ".a::view-transition-group(dashed-ident)" should be a valid selector
+PASS "div ::view-transition-group(dashed-ident)" should be a valid selector
+PASS "::view-transition-group(dashed-ident):only-child" should be a valid selector
+PASS ":root::view-transition-group(dashed-ident):only-child" should be a valid selector
+PASS ".a::view-transition-group(dashed-ident):only-child" should be a valid selector
+PASS "div ::view-transition-group(dashed-ident):only-child" should be a valid selector
+PASS "::view-transition-image-pair(*)" should be a valid selector
+PASS ":root::view-transition-image-pair(*)" should be a valid selector
+PASS ".a::view-transition-image-pair(*)" should be a valid selector
+PASS "div ::view-transition-image-pair(*)" should be a valid selector
+PASS "::view-transition-image-pair(*):only-child" should be a valid selector
+PASS ":root::view-transition-image-pair(*):only-child" should be a valid selector
+PASS ".a::view-transition-image-pair(*):only-child" should be a valid selector
+PASS "div ::view-transition-image-pair(*):only-child" should be a valid selector
+PASS "::view-transition-image-pair(root)" should be a valid selector
+PASS ":root::view-transition-image-pair(root)" should be a valid selector
+PASS ".a::view-transition-image-pair(root)" should be a valid selector
+PASS "div ::view-transition-image-pair(root)" should be a valid selector
+PASS "::view-transition-image-pair(root):only-child" should be a valid selector
+PASS ":root::view-transition-image-pair(root):only-child" should be a valid selector
+PASS ".a::view-transition-image-pair(root):only-child" should be a valid selector
+PASS "div ::view-transition-image-pair(root):only-child" should be a valid selector
+PASS "::view-transition-image-pair(dashed-ident)" should be a valid selector
+PASS ":root::view-transition-image-pair(dashed-ident)" should be a valid selector
+PASS ".a::view-transition-image-pair(dashed-ident)" should be a valid selector
+PASS "div ::view-transition-image-pair(dashed-ident)" should be a valid selector
+PASS "::view-transition-image-pair(dashed-ident):only-child" should be a valid selector
+PASS ":root::view-transition-image-pair(dashed-ident):only-child" should be a valid selector
+PASS ".a::view-transition-image-pair(dashed-ident):only-child" should be a valid selector
+PASS "div ::view-transition-image-pair(dashed-ident):only-child" should be a valid selector
+PASS "::view-transition-old(*)" should be a valid selector
+PASS ":root::view-transition-old(*)" should be a valid selector
+PASS ".a::view-transition-old(*)" should be a valid selector
+PASS "div ::view-transition-old(*)" should be a valid selector
+PASS "::view-transition-old(*):only-child" should be a valid selector
+PASS ":root::view-transition-old(*):only-child" should be a valid selector
+PASS ".a::view-transition-old(*):only-child" should be a valid selector
+PASS "div ::view-transition-old(*):only-child" should be a valid selector
+PASS "::view-transition-old(root)" should be a valid selector
+PASS ":root::view-transition-old(root)" should be a valid selector
+PASS ".a::view-transition-old(root)" should be a valid selector
+PASS "div ::view-transition-old(root)" should be a valid selector
+PASS "::view-transition-old(root):only-child" should be a valid selector
+PASS ":root::view-transition-old(root):only-child" should be a valid selector
+PASS ".a::view-transition-old(root):only-child" should be a valid selector
+PASS "div ::view-transition-old(root):only-child" should be a valid selector
+PASS "::view-transition-old(dashed-ident)" should be a valid selector
+PASS ":root::view-transition-old(dashed-ident)" should be a valid selector
+PASS ".a::view-transition-old(dashed-ident)" should be a valid selector
+PASS "div ::view-transition-old(dashed-ident)" should be a valid selector
+PASS "::view-transition-old(dashed-ident):only-child" should be a valid selector
+PASS ":root::view-transition-old(dashed-ident):only-child" should be a valid selector
+PASS ".a::view-transition-old(dashed-ident):only-child" should be a valid selector
+PASS "div ::view-transition-old(dashed-ident):only-child" should be a valid selector
+PASS "::view-transition-new(*)" should be a valid selector
+PASS ":root::view-transition-new(*)" should be a valid selector
+PASS ".a::view-transition-new(*)" should be a valid selector
+PASS "div ::view-transition-new(*)" should be a valid selector
+PASS "::view-transition-new(*):only-child" should be a valid selector
+PASS ":root::view-transition-new(*):only-child" should be a valid selector
+PASS ".a::view-transition-new(*):only-child" should be a valid selector
+PASS "div ::view-transition-new(*):only-child" should be a valid selector
+PASS "::view-transition-new(root)" should be a valid selector
+PASS ":root::view-transition-new(root)" should be a valid selector
+PASS ".a::view-transition-new(root)" should be a valid selector
+PASS "div ::view-transition-new(root)" should be a valid selector
+PASS "::view-transition-new(root):only-child" should be a valid selector
+PASS ":root::view-transition-new(root):only-child" should be a valid selector
+PASS ".a::view-transition-new(root):only-child" should be a valid selector
+PASS "div ::view-transition-new(root):only-child" should be a valid selector
+PASS "::view-transition-new(dashed-ident)" should be a valid selector
+PASS ":root::view-transition-new(dashed-ident)" should be a valid selector
+PASS ".a::view-transition-new(dashed-ident)" should be a valid selector
+PASS "div ::view-transition-new(dashed-ident)" should be a valid selector
+PASS "::view-transition-new(dashed-ident):only-child" should be a valid selector
+PASS ":root::view-transition-new(dashed-ident):only-child" should be a valid selector
+PASS ".a::view-transition-new(dashed-ident):only-child" should be a valid selector
+PASS "div ::view-transition-new(dashed-ident):only-child" should be a valid selector
+

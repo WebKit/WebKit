@@ -1,0 +1,11 @@
+
+Tests that a point-based hit test descending into an iframe whose ancestor has a CSS transform does not trigger the rect-based-through-transform assertion in RenderLayer::hitTestList.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS hitNode is childInIframe
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

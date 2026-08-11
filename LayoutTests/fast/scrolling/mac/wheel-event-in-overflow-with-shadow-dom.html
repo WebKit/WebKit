@@ -1,0 +1,93 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+        
+        .filler {
+            width: 20px;
+            height: 250px;
+            background-color: silver;
+        }
+
+        #container {
+            height: 400px;
+            width: 400px;
+            padding: 10px;
+            border: 1px solid black;
+        }
+        
+        #target {
+            border: 1px solid gray;
+            padding: 10px;
+            height: 150px;
+            background-color: orange;
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var overflowScrollEventCount = 0;
+        var windowScrollEventCount = 0;
+
+        async function testScrollOverContent()
+        {
+            debug('');
+            debug('Test scroll over shadow content');
+            await UIHelper.mouseWheelScrollAt(200, 400);
+
+            shouldBe('overflowScrollEventCount > 0', 'true');
+            shouldBe('windowScrollEventCount == 0', 'true');
+        }
+
+        async function scrollTest()
+        {
+            await testScrollOverContent();
+            finishJSTest();
+        }
+        
+        function setupCustomElement(target)
+        {
+            target.addEventListener('wheel', () => {});
+
+            class TestContainer extends HTMLElement {
+                connectedCallback() {
+                    const shadow = this.attachShadow({ mode: 'open' });
+                    shadow.innerHTML = `
+                            <div style="height: calc(100% - 20px); overflow: auto; border: 1px solid green; padding: 10px" onscroll="++overflowScrollEventCount">
+                                <slot></slot>
+                            </div>`;
+                }
+            }
+
+            customElements.define('test-container', TestContainer);
+        }
+
+        window.addEventListener('load', () => {
+            setupCustomElement(document.getElementById('target'));
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="container">
+        <test-container>
+            <div class="filler"></div>
+            <div id="target">
+                <p>Scrolling over this element should scroll the overflow scroller<p>
+            </div>
+            <div class="filler"></div>
+        </test-container>
+    </div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

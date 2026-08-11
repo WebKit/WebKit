@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+const CONTAINS_UNPAIRED_SURROGATES = 'abc\uDC00def\uD800ghi';
+const REPLACED = 'abc\uFFFDdef\uFFFDghi';
+
+description("Tests use of USVString in CSSStyleDeclaration.");
+
+var declaration = document.styleSheets[0].cssRules[0].style;
+declaration.setProperty("animation-name", CONTAINS_UNPAIRED_SURROGATES);
+shouldBeEqualToString("declaration.getPropertyValue('animation-name')", REPLACED);
+shouldBeTrue("declaration.cssText.includes(REPLACED)");
+shouldBeEqualToString("declaration.removeProperty('animation-name')", REPLACED);
+</script>
+</body>
+</html>

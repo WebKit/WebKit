@@ -1,0 +1,3 @@
+
+PASS font-size-adjust responsive to inherited font-size-adjust changes
+

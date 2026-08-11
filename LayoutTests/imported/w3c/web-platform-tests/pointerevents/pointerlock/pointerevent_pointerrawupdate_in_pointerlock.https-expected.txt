@@ -1,0 +1,12 @@
+pointerrawupdate
+
+Test Description: This test checks if pointerrawupdate is dispatched correctly while in pointerlock mode.
+Click in the black box (and accept the pointerlock permission if asked).
+Move your mouse.
+Click in the purple box inside the iframe
+Move your mouse.
+
+
+
+FAIL pointerrawupdate event received assert_true: Pointerrawupdate event should have been received before pointermove while in pointerlock mode. expected true got false
+

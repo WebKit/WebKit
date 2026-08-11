@@ -1,0 +1,6 @@
+
+NOTRUN Encoding and decoding cycle Unsupported config: {"codec":"vp09.01.10.08.03","hasEmbeddedColorSpace":true,"hardwareAcceleration":"prefer-software","outputPixelFormat":"I444","width":320,"height":200,"bitrate":1000000,"bitrateMode":"constant","framerate":30}
+NOTRUN Encoding and decoding cycle with realtime latency mode Unsupported config: {"codec":"vp09.01.10.08.03","hasEmbeddedColorSpace":true,"hardwareAcceleration":"prefer-software","outputPixelFormat":"I444","width":320,"height":200,"bitrate":1000000,"bitrateMode":"constant","framerate":30,"latencyMode":"realtime"}
+NOTRUN Encoding and decoding cycle w/ stripped color space Unsupported config: {"codec":"vp09.01.10.08.03","hasEmbeddedColorSpace":true,"hardwareAcceleration":"prefer-software","outputPixelFormat":"I444","width":320,"height":200,"bitrate":1000000,"bitrateMode":"constant","framerate":30}
+NOTRUN Encoding and decoding cycle w/ rate control Unsupported config: {"codec":"vp09.01.10.08.03","hasEmbeddedColorSpace":true,"hardwareAcceleration":"prefer-software","outputPixelFormat":"I444","width":320,"height":200,"bitrate":1000000,"bitrateMode":"constant","framerate":30}
+

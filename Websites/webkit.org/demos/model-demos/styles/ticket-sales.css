@@ -1,0 +1,458 @@
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+body {
+    font-family: -apple-system, system-ui, sans-serif;
+    background: #0a0a0b;
+    color: #d4d4d8;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+}
+
+.main-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(280px, 32vw, 560px);
+    gap: 16px;
+    min-height: 0;
+}
+
+.preview-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0;
+}
+
+.card,
+.venue-col {
+    background: #141416;
+    border: 1px solid #1e1e22;
+    border-radius: 12px;
+}
+
+.event-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    flex-shrink: 0;
+}
+
+.event-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fafafa;
+    letter-spacing: -0.3px;
+}
+
+.event-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px solid #1e1e22;
+}
+
+.event-card-seats {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e11d48;
+}
+
+.event-card-price {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: #e4e4e7;
+}
+
+.section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #71717a;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.venue-col {
+    display: flex;
+    overflow: hidden;
+    min-height: 0;
+    flex: 1;
+    position: relative;
+}
+
+.seat-map {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.seatmap-viewport {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.seatmap-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: 0 0;
+    will-change: transform;
+}
+
+.seatmap-layer.animated {
+    transition: transform 0.3s ease-out;
+}
+
+.seatmap-viewport svg {
+    display: block;
+}
+
+.seat-map-loading {
+    color: #52525b;
+    font-size: 13px;
+    text-align: center;
+    padding: 32px;
+    margin: auto;
+}
+
+.seat {
+    fill: var(--seat-idle, rgba(255, 255, 255, 0.06));
+    stroke: var(--seat-idle-stroke, #2a2a2e);
+    stroke-width: 1;
+    cursor: pointer;
+}
+
+.seat.active {
+    fill: var(--seat-color, #e11d48);
+    stroke: var(--seat-color, #e11d48);
+    filter: url(#seatGlow);
+}
+
+.seat.in-cart {
+    fill: #fafafa;
+    stroke: #fafafa;
+}
+
+.seat.unavailable {
+    fill: #2a2a2e;
+    stroke: #6a6a72;
+    cursor: default;
+}
+
+.stage-shape {
+    fill: rgba(255, 255, 255, 0.06);
+    stroke: rgba(255, 255, 255, 0.16);
+    stroke-width: 1.5;
+}
+
+.stage-label,
+.seatmap-section-label {
+    fill: #a1a1aa;
+    font-weight: 700;
+    text-anchor: middle;
+    text-transform: uppercase;
+}
+
+.stage-label {
+    font-size: 18px;
+    letter-spacing: 6px;
+    dominant-baseline: central;
+}
+
+.seatmap-section-label {
+    font-size: 14px;
+    letter-spacing: 3px;
+}
+
+.pill-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 16px;
+    border: 1px solid;
+    border-radius: 18px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.pill-btn img {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+}
+
+.seatmap-fit-btn {
+    position: absolute;
+    z-index: 2;
+    bottom: 16px;
+    right: 16px;
+    border-color: #2a2a2e;
+    background: #141416;
+    color: #a1a1aa;
+}
+
+.preview-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.preview-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.preview-popup {
+    width: 448px;
+    aspect-ratio: 4 / 3;
+    max-width: calc(100vw - 64px);
+    max-height: calc(100vh - 64px);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #1e1e22;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+}
+
+.seat-preview {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.theater-model {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #141416;
+}
+
+.preview-blur-bar {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 68px;
+    background: rgba(10, 10, 11, 0.35);
+    backdrop-filter: blur(20px);
+    pointer-events: none;
+}
+
+.preview-overlay {
+    position: absolute;
+    inset: 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.2s ease;
+    pointer-events: none;
+}
+
+.preview-backdrop.visible .preview-top,
+.preview-backdrop.visible .preview-bar {
+    pointer-events: auto;
+}
+
+.preview-top {
+    display: flex;
+    justify-content: space-between;
+}
+
+.preview-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #141416;
+    color: #fafafa;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.preview-spinner {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 28px;
+    height: 28px;
+    border: 2.5px solid #2a2a2e;
+    border-top-color: #e11d48;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    pointer-events: none;
+}
+
+.preview-unsupported {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.preview-unsupported-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fafafa;
+}
+
+.preview-unsupported-detail {
+    font-size: 12px;
+    color: #52525b;
+}
+
+.preview-bar {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.seat-info,
+.ticket-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.seat-info { gap: 2px; }
+
+.seat-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.seat-detail {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.seat-price {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.purchase-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    flex: 1;
+    min-height: 0;
+}
+
+.selection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.ticket-entry {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    border: 1px solid #1e1e22;
+}
+
+.ticket-color-bar {
+    width: 3px;
+    height: 20px;
+    border-radius: 2px;
+}
+
+.ticket-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fafafa;
+}
+
+.ticket-location {
+    font-size: 12px;
+    color: #a1a1aa;
+}
+
+.ticket-price {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+    color: #e4e4e7;
+}
+
+.purchase-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #1e1e22;
+}
+
+.total-label {
+    font-size: 16px;
+    font-weight: 900;
+    color: #fafafa;
+    white-space: nowrap;
+}
+
+.cta {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #fafafa;
+    color: #0a0a0b;
+    white-space: nowrap;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

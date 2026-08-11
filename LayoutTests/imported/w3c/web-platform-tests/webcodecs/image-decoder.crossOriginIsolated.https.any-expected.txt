@@ -1,0 +1,4 @@
+
+FAIL Test ImageDecoder decoding with a SharedArrayBuffer source Can't find variable: ImageDecoder
+FAIL Test ImageDecoder decoding with a Uint8Array(SharedArrayBuffer) source Can't find variable: ImageDecoder
+

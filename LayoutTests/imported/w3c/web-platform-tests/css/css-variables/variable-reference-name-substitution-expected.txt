@@ -1,0 +1,26 @@
+
+PASS var() name comes from another var()
+PASS var() name comes from a chain of var()s
+PASS invalid substituted name falls back
+PASS unset name-providing var() falls back
+PASS whitespace around substituted name
+PASS invalid substituted name without fallback is invalid at computed-value time
+PASS name argument substituting to nothing falls back
+PASS multi-token substituted name falls back
+PASS dimension-token substituted name falls back
+PASS string substituted name falls back
+PASS -- as substituted name falls back
+PASS {}-wrapped literal name argument
+PASS {}-wrapped substituted name argument
+PASS {}-wrapped name argument with whitespace
+PASS {}-wrapped name argument with fallback
+PASS var() name comes from attr()
+PASS var() name from attr() that is not a name falls back
+PASS var() name comes from if()
+PASS var() name comes from random-item()
+PASS direct cycle through the name argument
+PASS indirect cycle through the name argument
+PASS substituted name resolves a registered property
+PASS substituted name of a guaranteed-invalid registered property uses the fallback
+PASS fallback of an unparsed name is not syntax checked
+

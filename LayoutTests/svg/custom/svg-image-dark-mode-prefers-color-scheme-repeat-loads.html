@@ -1,0 +1,49 @@
+<style>
+  #container {
+    display: flex;
+    gap: 10px;
+  }
+
+  img {
+    width: 50px;
+    height: 50px;
+  }
+</style>
+
+<p>You should not see any red boxes.</p>
+
+<div id="container">
+</div>
+
+<script>
+  function random() {
+    return Math.ceil(Math.random() * 10000).toString();
+  }
+
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.setUseDarkAppearanceForTesting(true);
+  }
+
+  const imgLoadPromises = [];
+
+  // With the bug, each image have a random chance of being green or red, so load a bunch
+  // of them to make sure at least one hits the bug (is red)
+  for (let i = 0; i < 10; ++i) {
+    const img = document.createElement("img");
+    // Random query string to make sure the images are not loaded from cache.
+    // Otherwise, if this test is run with run-webkit-tests --iteration [larger than 1],
+    // the first iteration would fail, but subsequent iterations would pass because of caching.
+    img.src = `resources/prefers-color-scheme-dark-red-green.svg?${random()}}`;
+
+    const loadPromise = new Promise((resolve) => img.addEventListener("load", resolve));
+    imgLoadPromises.push(loadPromise);
+
+    container.appendChild(img);
+  }
+
+  Promise.allSettled(imgLoadPromises).then(() => {
+    if (window.testRunner)
+      testRunner.notifyDone();
+  });
+</script>

@@ -1,0 +1,7 @@
+
+
+FAIL Paste text 9 Paste with text crossing start of DIV
+	 expected <div contenteditable>one<div>two</div>t<div>t|hree</div></div>,
+	 but got  <div contenteditable>one<div>two</div>t <div>t |hree</div></div>,
+	 sameupto <div contenteditable>one<div>two</div>t
+

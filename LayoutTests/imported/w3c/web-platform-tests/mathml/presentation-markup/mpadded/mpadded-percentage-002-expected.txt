@@ -1,0 +1,12 @@
+
+PASS width='200%' is interpreted as the default value
+PASS height='200%' is interpreted as the default value
+PASS depth='200%' is interpreted as the default value
+PASS lspace='200%' is interpreted as the default value
+PASS voffset='200%' is interpreted as the default value
+
+
+
+
+
+

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/source-map-utilities.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SourceMaps.HTML");
+    addSourceMapTest(suite, "text/html", "3", "resources/html-source-map-tests/3.html");
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test HTML SourceMap with inline script and multi-line JS template literals</p>
+</body>
+</html>

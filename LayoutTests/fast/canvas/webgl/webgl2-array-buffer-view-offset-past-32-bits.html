@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="4" height="4"></canvas>
+<script>
+description("An ArrayBufferView offset past 2^32 must be rejected rather than truncated to 32 bits, which would silently transfer the bytes at the truncated offset instead.");
+
+var gl = document.getElementById("canvas").getContext("webgl2");
+
+// 2^32 truncates to 0 and 2^32 + 8 truncates to 8, both of which name real data
+// in a small view, so a truncating implementation reports no error and moves the
+// wrong bytes.
+var pastUint32 = 4294967296;
+var view = new Uint8Array(16);
+view.set([1, 2, 3, 4], 8);
+
+var buffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+gl.bufferData(gl.ARRAY_BUFFER, 16, gl.STATIC_DRAW);
+
+var texture = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, texture);
+
+function shouldRejectOffset(name, call) {
+    for (var offset of [pastUint32, pastUint32 + 8, 2 * pastUint32]) {
+        call(offset);
+        var error = gl.getError();
+        if (error === gl.INVALID_VALUE || error === gl.INVALID_OPERATION)
+            testPassed(name + " with srcOffset " + offset + " was rejected");
+        else
+            testFailed(name + " with srcOffset " + offset + " gave 0x" + error.toString(16) + ", expected INVALID_VALUE");
+    }
+}
+
+shouldRejectOffset("bufferData", (offset) => gl.bufferData(gl.ARRAY_BUFFER, view, gl.STATIC_DRAW, offset, 4));
+shouldRejectOffset("bufferSubData", (offset) => gl.bufferSubData(gl.ARRAY_BUFFER, 0, view, offset, 4));
+shouldRejectOffset("getBufferSubData", (offset) => gl.getBufferSubData(gl.ARRAY_BUFFER, 0, view, offset, 4));
+shouldRejectOffset("readPixels", (offset) => gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, view, offset));
+shouldRejectOffset("texImage2D", (offset) => gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, view, offset));
+shouldRejectOffset("texSubImage2D", (offset) => {
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.getError();
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, view, offset);
+});
+
+// An offset that really does name the data still works, so the rejection above is
+// about the magnitude and not about the argument being ignored.
+gl.bufferData(gl.ARRAY_BUFFER, view, gl.STATIC_DRAW, 8, 4);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+var readBack = new Uint8Array(4);
+gl.getBufferSubData(gl.ARRAY_BUFFER, 0, readBack);
+shouldBe("gl.getError()", "gl.NO_ERROR");
+shouldBe("[...readBack].join()", "'1,2,3,4'");
+</script>
+</body>
+</html>

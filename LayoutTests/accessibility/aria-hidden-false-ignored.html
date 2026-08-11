@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+    
+<div style="display: none">
+    <p id="hidden-text" aria-hidden="false">This text should be hidden</p>
+</div>
+
+<div style="visibility: hidden">
+    <p id="invisible-text" aria-hidden="false">This text should be invisible</p>
+</div>
+
+<div aria-hidden="true">
+    <p id="aria-hidden-text">This text is hidden with aria-hidden</p>
+</div>
+
+<script>
+var output = "This test ensures that aria-hidden=false is treated like an undefined value.\n\n";
+
+if (window.accessibilityController) {
+    var hiddenText = accessibilityController.accessibleElementById("hidden-text");
+    output += expect("!hiddenText", "true");
+    var invisibleText = accessibilityController.accessibleElementById("invisible-text");
+    output += expect("!invisibleText", "true");
+    var ariaHiddenText = accessibilityController.accessibleElementById("aria-hidden-text");
+    output += expect("!ariaHiddenText", "true");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>
+

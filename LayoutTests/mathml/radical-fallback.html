@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Radical fallback</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- This pixel test verifies stretching of radical operators with either
+         the default MathML font or a sans-serif font. The latter is likely
+         to require a fallback mechanism as sans-serif are generally not math
+         fonts and so can not stretch radicals. -->
+
+    <p>Large LTR radicals:
+      <math>
+        <msqrt><mspace height="5em"/></msqrt>
+        <msqrt style="font-family: sans-serif"><mspace height="5em"/></msqrt>
+      </math>
+    </p>
+
+    <p>Large RTL radicals:
+      <math dir="rtl">
+        <msqrt><mspace height="5em"/></msqrt>
+        <msqrt style="font-family: sans-serif"><mspace height="5em"/></msqrt>
+      </math>
+    </p>
+
+  </body>
+</html>

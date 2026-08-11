@@ -1,0 +1,7 @@
+
+PASS window.postMessage should be able to transfer a TransformStream
+PASS a TransformStream with a locked writable should not be transferable
+PASS a TransformStream with a locked readable should not be transferable
+PASS a TransformStream with both sides locked should not be transferable
+PASS piping through transferred transforms should work
+

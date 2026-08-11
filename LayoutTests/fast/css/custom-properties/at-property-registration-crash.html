@@ -1,0 +1,18 @@
+<style>
+  @property --a {
+    syntax: 'foo';
+    inherits: false;
+    initial-value: foo;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  onload = () => {
+    document.open();
+    document.createElement('div').style.width = '0';
+    document.write("This test passes if it doesn't crash.");
+  };
+</script>
+

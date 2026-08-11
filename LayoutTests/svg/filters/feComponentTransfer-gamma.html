@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    .box {
+        width: 200px;
+        height: 200px;
+        filter: url('#gamma-filter');
+        background-color: rgb(1 1 1);
+    }
+</style>
+
+<body>
+    <div class="box"></div>
+    <svg class="gamma-svg">
+        <filter id="gamma-filter">
+            <feComponentTransfer color-interpolation-filters="sRGB">
+                <feFuncR type="gamma" exponent="0.05"></feFuncR>
+                <feFuncG type="gamma" exponent="0.05"></feFuncG>
+                <feFuncB type="gamma" exponent="0.05"></feFuncB>
+            </feComponentTransfer>
+        </filter>
+    </svg>
+</body>
+</html>

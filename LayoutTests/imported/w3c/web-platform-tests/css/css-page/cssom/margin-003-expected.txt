@@ -1,0 +1,4 @@
+
+FAIL Insert rules undefined is not an object (evaluating 'pageRule.cssRules.length')
+FAIL Delete rules undefined is not an object (evaluating 'pageRule.cssRules.length')
+

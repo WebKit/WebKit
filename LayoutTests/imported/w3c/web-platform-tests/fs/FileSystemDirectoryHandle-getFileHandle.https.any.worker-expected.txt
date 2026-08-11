@@ -1,0 +1,15 @@
+
+PASS getFileHandle(create=false) rejects for non-existing files
+PASS getFileHandle(create=true) creates an empty file for non-existing files
+PASS getFileHandle(create=true) creates an empty file with all valid ASCII characters in the name
+PASS getFileHandle(create=true) creates an empty file with non-ASCII characters in the name
+PASS getFileHandle(create=false) returns existing files
+PASS getFileHandle(create=true) returns existing files without erasing
+PASS getFileHandle(create=false) when a directory already exists with the same name
+PASS getFileHandle(create=true) when a directory already exists with the same name
+PASS getFileHandle() with empty name
+PASS getFileHandle() with "." name
+PASS getFileHandle() with ".." name
+PASS getFileHandle(create=false) with a path separator when the file exists.
+PASS getFileHandle(create=true) with a path separator
+

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #wrapper {
+            width: 0px;
+            height: 0px;
+            border: 10px solid gray;
+        }
+        iframe {
+            height: 100%;
+            width: 100%;
+            background-color: red;
+            border: none;
+        }
+
+        #wrapper.resized {
+            height: 300px;
+            width: 400px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('wrapper').classList.add('resized');
+                if (window.testRunner) {
+                     document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+                     testRunner.notifyDone();
+                }
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+
+<div id="wrapper">
+    <iframe class="composited" src="resources/composited-subframe.html"></iframe>    
+</div>
+<pre id="layers"></pre>
+</body>
+</html>

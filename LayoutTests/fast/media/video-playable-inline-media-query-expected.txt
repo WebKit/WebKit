@@ -1,0 +1,7 @@
+Tests the (-webkit-video-playable-inline) media query.
+
+Enabling Inline Media Playback
+PASS: "(-webkit-video-playable-inline)" evaluates to true
+Disabling Inline Media Playback
+PASS: "(-webkit-video-playable-inline)" evaluates to false
+

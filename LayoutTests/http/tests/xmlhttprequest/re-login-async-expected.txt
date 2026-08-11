@@ -1,0 +1,6 @@
+Test that default credentials aren't used when ones are provided to XHR explicitly.
+
+Login: PASS
+Default: PASS
+Re-login: PASS
+New default: PASS

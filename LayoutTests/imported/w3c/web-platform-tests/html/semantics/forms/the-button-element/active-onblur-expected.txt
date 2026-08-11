@@ -1,0 +1,4 @@
+button one button two
+
+FAIL Buttons should clear :active when the user tabs away from them while holding spacebar. assert_equals: Buttons should not be :active after tab is used to change focus. expected null but got Element node <button id="b1">button one</button>
+

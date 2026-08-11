@@ -1,0 +1,4 @@
+
+
+PASS <link rel='image'> with progressive image shouldn't crash
+

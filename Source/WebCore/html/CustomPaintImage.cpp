@@ -1,0 +1,179 @@
+/*
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "CustomPaintImage.h"
+
+#include "ContextDestructionObserverInlines.h"
+
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSImageValue.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSPropertyNames.h"
+#include "CSSPropertyParser.h"
+#include "CSSStyleImageValue.h"
+#include "CSSUnitValue.h"
+#include "CSSUnparsedValue.h"
+#include "CustomPaintCanvas.h"
+#include "GraphicsContext.h"
+#include "HashMapStylePropertyMapReadOnly.h"
+#include "ImageBitmap.h"
+#include "ImageBuffer.h"
+#include "JSCSSPaintCallback.h"
+#include "JSDOMExceptionHandling.h"
+#include "MainThreadStylePropertyMapReadOnly.h"
+#include "PaintRenderingContext2D.h"
+#include "RenderElement.h"
+#include "RenderElementInlines.h"
+#include "RenderObjectStyle.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StyleExtractor.h"
+#include <JavaScriptCore/ArgList.h>
+#include <JavaScriptCore/ConstructData.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+
+namespace WebCore {
+
+CustomPaintImage::CustomPaintImage(PaintDefinition& definition, const FloatSize& size, const RenderElement& element, const Vector<String>& arguments)
+    : m_paintDefinition(definition)
+    , m_inputProperties(definition.inputProperties)
+    , m_element(element)
+    , m_arguments(arguments)
+{
+    setContainerSize(size);
+}
+
+CustomPaintImage::~CustomPaintImage() = default;
+
+static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element& element)
+{
+    Style::Extractor extractor(&element);
+
+    if (isCustomPropertyName(name))
+        return extractor.customPropertyValue(name);
+
+    CSSPropertyID propertyID = cssPropertyID(name);
+    if (!propertyID)
+        return nullptr;
+
+    return extractor.propertyValue(propertyID, Style::Extractor::UpdateLayout::No);
+}
+
+ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)
+{
+    CheckedPtr renderElement = m_element.get();
+    CheckedPtr paintDefinition = m_paintDefinition.get();
+    if (!renderElement || !renderElement->element() || !paintDefinition)
+        return ImageDrawResult::DidNothing;
+
+    JSC::JSValue paintConstructor = paintDefinition->paintConstructor;
+
+    if (!paintConstructor)
+        return ImageDrawResult::DidNothing;
+
+    ASSERT(!renderElement->needsLayout());
+    ASSERT(!renderElement->element()->document().needsStyleRecalc());
+
+    Ref callback = paintDefinition->paintCallback.get();
+    RefPtr scriptExecutionContext = callback->scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return ImageDrawResult::DidNothing;
+
+    Ref canvas = CustomPaintCanvas::create(*scriptExecutionContext, destSize.width(), destSize.height());
+    RefPtr context = canvas->getContext();
+
+    HashMap<AtomString, RefPtr<CSSValue>> propertyValues;
+
+    if (RefPtr element = renderElement->element()) {
+        for (auto& name : m_inputProperties)
+            propertyValues.add(name, extractComputedProperty(name, *element));
+    }
+
+    auto size = CSSPaintSize::create(destSize.width(), destSize.height());
+    Ref<StylePropertyMapReadOnly> propertyMap = HashMapStylePropertyMapReadOnly::create(WTF::move(propertyValues));
+
+    auto& vm = paintConstructor.getObject()->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto& globalObject = *paintConstructor.getObject()->realm();
+
+    auto& lexicalGlobalObject = globalObject;
+    JSC::ArgList noArgs;
+    JSC::JSValue thisObject = { JSC::construct(&lexicalGlobalObject, paintConstructor, noArgs, "Failed to construct paint class"_s) };
+
+    if (scope.exception()) [[unlikely]] {
+        reportException(&lexicalGlobalObject, scope.exception());
+        return ImageDrawResult::DidNothing;
+    }
+
+    auto result = callback->invoke(WTF::move(thisObject), *context, size, propertyMap, m_arguments);
+    if (result.type() != CallbackResultType::Success)
+        return ImageDrawResult::DidNothing;
+
+    canvas->replayDisplayList(destContext);
+
+    return ImageDrawResult::DidDraw;
+}
+
+ImageDrawResult CustomPaintImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+{
+    GraphicsContextStateSaver stateSaver(destContext);
+    destContext.setCompositeOperation(options.compositeOperator(), options.blendMode());
+    destContext.clip(destRect);
+    destContext.translate(destRect.location());
+    if (destRect.size() != srcRect.size())
+        destContext.scale(destRect.size() / srcRect.size());
+    destContext.translate(-srcRect.location());
+    return doCustomPaint(destContext, size());
+}
+
+void CustomPaintImage::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
+    const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+{
+    // Allow the generator to provide visually-equivalent tiling parameters for better performance.
+    FloatSize adjustedSize = size();
+    FloatRect adjustedSrcRect = srcRect;
+
+    // Factor in the destination context's scale to generate at the best resolution
+    AffineTransform destContextCTM = destContext.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    double xScale = std::abs(destContextCTM.xScale());
+    double yScale = std::abs(destContextCTM.yScale());
+    AffineTransform adjustedPatternCTM = patternTransform;
+    adjustedPatternCTM.scale(1.0 / xScale, 1.0 / yScale);
+    adjustedSrcRect.scale(xScale, yScale);
+
+    auto buffer = destContext.createAlignedImageBuffer(adjustedSize);
+    if (!buffer)
+        return;
+    doCustomPaint(buffer->context(), adjustedSize);
+
+    if (destContext.drawLuminanceMask())
+        buffer->convertToLuminanceMask();
+
+    destContext.drawPattern(*buffer, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
+    destContext.setDrawLuminanceMask(false);
+}
+
+} // namespace WebCore

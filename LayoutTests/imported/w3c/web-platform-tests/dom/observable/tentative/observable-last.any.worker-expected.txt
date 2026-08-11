@@ -1,0 +1,7 @@
+
+PASS last(): Promise resolves to last value
+PASS last(): Promise rejects with emitted error
+PASS last(): Promise rejects with RangeError when source Observable completes without emitting any values
+PASS last(): Aborting a signal rejects the Promise with an AbortError DOMException
+PASS last(): Lifecycle
+

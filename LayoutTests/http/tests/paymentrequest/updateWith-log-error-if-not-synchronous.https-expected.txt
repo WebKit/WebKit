@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: updateWith() should be called synchronously when handling "shippingaddresschange".
+
+PASS Not calling `updateWith` inside `shippingaddresschange` should log an error.
+

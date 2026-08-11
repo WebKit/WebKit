@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            position: relative;
+            margin: 50px;
+            width: 300px;
+            height: 250px;
+            overflow-y: scroll;
+        }
+        
+        .contents {
+            height: 400%;
+        }
+        
+        .fake-outline {
+            position: relative;
+            left: 20px;
+            top: 20px;
+            width: 260px;
+            height: 210px;
+            box-sizing: border-box;
+            border: 20px solid rgba(0, 128, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">
+            <div class="fake-outline"></div>
+            &nbsp;
+        </div>
+    </div>
+</body>
+</html>

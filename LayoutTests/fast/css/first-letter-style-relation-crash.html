@@ -1,0 +1,33 @@
+<style>
+  html {
+    -webkit-user-modify: read-write-plaintext-only;
+  }
+  * {
+    float: right;
+    border-image: url();
+    max-inline-size: 0;
+  }
+  :first-child {
+    content: url();
+  }
+  :nth-child(3)::first-letter {
+    background: grey;
+  }
+  div {
+    overflow-x: scroll;
+  }
+  div::-webkit-scrollbar {
+    background: grey;
+  }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+onload = () => {
+    document.body.appendChild(document.createElement('div'));
+    document.body.appendChild(document.createElement('div'));
+    document.body.appendChild(document.createElement('div'));
+    document.execCommand('SelectAll');
+    document.execCommand('InsertText', false, "This test passes if it doesn't crash");
+};
+</script>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<style>
+div {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+  border: solid 10px currentColor;
+}
+div:hover {
+  color: green;
+}
+</style>
+<div id=hitregion></div>
+<script>
+if (window.eventSender) {
+  testRunner.dumpAsText();
+
+  window.internals.startTrackingRepaints();
+
+  eventSender.mouseMoveTo(50, 50);
+  eventSender.mouseDown();
+  eventSender.mouseUp();
+
+  document.body.offsetHeight;
+
+  let repaintRects = window.internals.repaintRectsAsText();
+  window.internals.stopTrackingRepaints();
+
+  hitregion.innerText = repaintRects;
+}
+</script>

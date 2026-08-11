@@ -1,0 +1,4 @@
+
+PASS linear distance model with refDistance == maxDistance must not produce NaN/Inf samples
+PASS exponential distance model with refDistance == 0 must not produce NaN/Inf samples
+

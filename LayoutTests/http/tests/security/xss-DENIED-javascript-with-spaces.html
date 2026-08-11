@@ -1,0 +1,20 @@
+<body onload="test()">
+<iframe src="http://localhost:8000/security/resources/innocent-victim-with-notify.html"></iframe>
+<p>There should be no alert displayed.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function test()
+{
+    var i = document.getElementsByTagName("iframe")[0];
+    i.src = new Array(100).join('\x20') + 'javascript:alert(document.body.innerHTML)';
+    setTimeout(function() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+</script>
+</body>

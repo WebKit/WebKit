@@ -1,0 +1,71 @@
+Before
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 2916.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 2916.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 3
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 300.00 300.00)
+          (drawsContent 1)
+          (backingStoreAttached 1)
+        )
+        (GraphicsLayer
+          (position 8.00 1308.00)
+          (bounds 300.00 300.00)
+          (drawsContent 1)
+          (backingStoreAttached 0)
+        )
+        (GraphicsLayer
+          (position 8.00 2608.00)
+          (bounds 300.00 300.00)
+          (drawsContent 1)
+          (backingStoreAttached 0)
+        )
+      )
+    )
+  )
+)
+
+
+After
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 785.00 2916.00)
+  (backingStoreAttached 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 2916.00)
+      (contentsOpaque 1)
+      (backingStoreAttached 1)
+      (children 3
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 300.00 300.00)
+          (drawsContent 1)
+          (backingStoreAttached 0)
+        )
+        (GraphicsLayer
+          (position 8.00 1308.00)
+          (bounds 300.00 300.00)
+          (drawsContent 1)
+          (backingStoreAttached 0)
+        )
+        (GraphicsLayer
+          (position 8.00 2608.00)
+          (bounds 300.00 300.00)
+          (drawsContent 1)
+          (backingStoreAttached 1)
+        )
+      )
+    )
+  )
+)
+First layer.
+Second layer.
+Third layer.

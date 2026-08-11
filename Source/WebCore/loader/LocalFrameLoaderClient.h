@@ -1,0 +1,409 @@
+/*
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution. 
+ * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission. 
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/FrameLoaderClient.h>
+#include <WebCore/IntPoint.h>
+#include <WebCore/LayoutMilestone.h>
+#include <WebCore/LinkIcon.h>
+#include <WebCore/LoaderMalloc.h>
+#include <WebCore/RegistrableDomain.h>
+#include <WebCore/ResourceLoaderIdentifier.h>
+#include <wtf/Expected.h>
+#include <wtf/Forward.h>
+#include <wtf/Platform.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WallTime.h>
+#include <wtf/WeakRef.h>
+#include <wtf/text/WTFString.h>
+
+#if ENABLE(APPLICATION_MANIFEST)
+#include <WebCore/ApplicationManifest.h>
+#endif
+
+#if ENABLE(CONTENT_FILTERING)
+#include <WebCore/ContentFilterUnblockHandler.h>
+#endif
+
+#if PLATFORM(COCOA)
+#ifdef __OBJC__
+#import <Foundation/Foundation.h>
+typedef id RemoteAXObjectRef;
+#else
+typedef void* RemoteAXObjectRef;
+#endif
+#endif
+
+#if PLATFORM(COCOA)
+OBJC_CLASS NSArray;
+OBJC_CLASS NSCachedURLResponse;
+OBJC_CLASS NSDictionary;
+OBJC_CLASS NSView;
+#endif
+
+namespace WebCore {
+
+class AXIsolatedTree;
+class AuthenticationChallenge;
+class CachedFrame;
+class CachedResourceRequest;
+class Color;
+class LocalDOMWindow;
+class DOMWindowExtension;
+class DOMWrapperWorld;
+class DocumentLoader;
+class Element;
+class FrameLoader;
+class FrameNetworkingContext;
+class HTMLFormElement;
+class HTMLFrameOwnerElement;
+class HTMLPlugInElement;
+class HistoryItem;
+class IntSize;
+class LegacyPreviewLoaderClient;
+class LocalFrame;
+class MessageEvent;
+class Page;
+class ProtectionSpace;
+class RegistrableDomain;
+class RTCPeerConnectionHandler;
+class ResourceError;
+class ResourceTiming;
+class SecurityOrigin;
+class SharedBuffer;
+class SubstituteData;
+class Widget;
+
+enum class LoadWillContinueInAnotherProcess : bool;
+enum class LockBackForwardList : bool;
+enum class UsedLegacyTLS : bool;
+enum class WasPrivateRelayed : bool;
+enum class FromDownloadAttribute : bool { No , Yes };
+enum class IsSameDocumentNavigation : bool { No, Yes };
+enum class ShouldGoToHistoryItem : uint8_t { No, Yes, ItemUnknown };
+enum class ProcessSwapDisposition : uint8_t;
+enum class IFrameUnloadReason : bool { ResourceMonitor, MemoryMonitor };
+
+struct BackForwardFrameItemIdentifierType;
+using BackForwardFrameItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardFrameItemIdentifierType>>;
+
+struct BackForwardItemIdentifierType;
+struct StringWithDirection;
+
+using BackForwardItemIdentifier = ProcessQualified<ObjectIdentifier<BackForwardItemIdentifierType>>;
+
+class WEBCORE_EXPORT LocalFrameLoaderClient : public FrameLoaderClient {
+    WTF_MAKE_TZONE_ALLOCATED(LocalFrameLoaderClient);
+public:
+    ~LocalFrameLoaderClient();
+
+    void NODELETE ref() const;
+    void deref() const;
+
+    virtual bool isWebLocalFrameLoaderClient() const { return false; }
+
+    // An inline function cannot be the first non-abstract virtual function declared
+    // in the class as it results in the vtable being generated as a weak symbol.
+    // This hurts performance (in macOS at least, when loading frameworks), so we
+    // don't want to do it in WebKit.
+    virtual bool hasHTMLView() const;
+
+    virtual bool hasWebView() const = 0; // mainly for assertions
+
+    virtual void makeRepresentation(DocumentLoader*) = 0;
+
+#if PLATFORM(IOS_FAMILY)
+    // Returns true if the client forced the layout.
+    virtual bool forceLayoutOnRestoreFromBackForwardCache() = 0;
+#endif
+    virtual void forceLayoutForNonHTML() = 0;
+
+    virtual void setCopiesOnScroll() = 0;
+
+    virtual void detachedFromParent2() = 0;
+    virtual void detachedFromParent3() = 0;
+
+    virtual void assignIdentifierToInitialRequest(ResourceLoaderIdentifier, DocumentLoader*, const ResourceRequest&) = 0;
+
+    virtual void dispatchWillSendRequest(DocumentLoader*, ResourceLoaderIdentifier, ResourceRequest&, const ResourceResponse& redirectResponse) = 0;
+    virtual bool shouldUseCredentialStorage(DocumentLoader*, ResourceLoaderIdentifier) = 0;
+    virtual void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, ResourceLoaderIdentifier, const AuthenticationChallenge&) = 0;
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    virtual bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, ResourceLoaderIdentifier, const ProtectionSpace&) = 0;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    virtual RetainPtr<CFDictionaryRef> connectionProperties(DocumentLoader*, ResourceLoaderIdentifier) = 0;
+#endif
+
+    virtual void dispatchDidReceiveResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&) = 0;
+    virtual void dispatchDidReceiveContentLength(DocumentLoader*, ResourceLoaderIdentifier, int dataLength) = 0;
+    virtual void dispatchDidFinishLoading(DocumentLoader*, ResourceLoaderIdentifier) = 0;
+    virtual void dispatchDidFailLoading(DocumentLoader*, ResourceLoaderIdentifier, const ResourceError&) = 0;
+    virtual bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int length) = 0;
+
+    virtual void dispatchDidDispatchOnloadEvents() = 0;
+    virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() = 0;
+    virtual void dispatchDidChangeProvisionalURL() { }
+    virtual void dispatchDidCancelClientRedirect() = 0;
+    virtual void dispatchWillPerformClientRedirect(const URL&, double interval, WallTime fireDate, LockBackForwardList) = 0;
+    virtual void dispatchDidChangeMainDocument() { }
+    virtual void dispatchWillChangeDocument(const URL&, const URL&) { }
+    virtual void dispatchDidChangeCSPOriginsThatUpgradeInsecureNavigations(const HashSet<SecurityOriginData>&) { }
+    virtual void dispatchDidNavigateWithinPage() { }
+    virtual void dispatchDidChangeLocationWithinPage() = 0;
+    virtual void dispatchDidPushStateWithinPage() = 0;
+    virtual void dispatchDidReplaceStateWithinPage() = 0;
+    virtual void dispatchDidPopStateWithinPage() = 0;
+    virtual void dispatchWillClose() = 0;
+    virtual void dispatchDidReceiveIcon() { }
+    virtual void dispatchDidStartProvisionalLoad() = 0;
+    virtual void dispatchDidReceiveTitle(const StringWithDirection&) = 0;
+    virtual void dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>, std::optional<WasPrivateRelayed>) = 0;
+    virtual void dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading, WillInternallyHandleFailure) = 0;
+    virtual void dispatchDidFailLoad(const ResourceError&) = 0;
+    virtual void dispatchDidFinishDocumentLoad() = 0;
+    virtual void dispatchDidFinishLoad() = 0;
+    virtual void dispatchDidExplicitOpen(const URL&, const String& /* mimeType */) { }
+#if ENABLE(DATA_DETECTION)
+    virtual void dispatchDidFinishDataDetection(NSArray *detectionResults) = 0;
+#endif
+
+    virtual void dispatchDidLayout() { }
+    virtual void dispatchDidReachLayoutMilestone(OptionSet<LayoutMilestone>) { }
+    virtual void dispatchDidReachVisuallyNonEmptyState() { }
+
+    virtual LocalFrame* dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy, const String& openedMainFrameName) = 0;
+    virtual void dispatchShow() = 0;
+
+    virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, const String& downloadAttribute, FramePolicyFunction&&) = 0;
+    virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String& frameName, std::optional<HitTestResult>&&, FramePolicyFunction&&) = 0;
+    virtual void cancelPolicyCheck() = 0;
+
+    virtual void dispatchUnableToImplementPolicy(const ResourceError&) = 0;
+
+    virtual void dispatchWillSendSubmitEvent(Ref<FormState>&&) = 0;
+    virtual void dispatchWillSubmitForm(FormState&, URL&& requestURL, String&& method, CompletionHandler<void()>&&) = 0;
+
+    virtual void dispatchBackForwardItemLoading(const URL&, const String& referer, LocalFrame& childFrame);
+
+    virtual void revertToProvisionalState(DocumentLoader*) = 0;
+    virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) = 0;
+
+    virtual void setMainFrameDocumentReady(bool) = 0;
+
+    virtual void startDownload(const ResourceRequest&, const String& suggestedName = String(), FromDownloadAttribute = FromDownloadAttribute::No) = 0;
+
+    virtual void willChangeTitle(DocumentLoader*) = 0;
+    virtual void didChangeTitle(DocumentLoader*) = 0;
+
+    virtual void willReplaceMultipartContent() = 0;
+    virtual void didReplaceMultipartContent() = 0;
+
+    virtual void committedLoad(DocumentLoader*, const SharedBuffer&) = 0;
+    virtual void finishedLoading(DocumentLoader*) = 0;
+
+    virtual void updateGlobalHistory() = 0;
+    virtual void updateGlobalHistoryRedirectLinks() = 0;
+
+    virtual ShouldGoToHistoryItem shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const = 0;
+    virtual bool supportsAsyncShouldGoToHistoryItem() const = 0;
+    virtual void shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(ShouldGoToHistoryItem)>&&) const = 0;
+    virtual void dispatchGoToBackForwardItemAtIndex(int steps) = 0;
+    virtual void dispatchEnqueueHistoryTraversalDelta(int delta) = 0;
+
+    virtual bool shouldFallBack(const ResourceError&) const = 0;
+
+    virtual void loadStorageAccessQuirksIfNeeded() = 0;
+
+    virtual bool canHandleRequest(const ResourceRequest&) const = 0;
+    virtual bool canShowMIMEType(const String& MIMEType) const = 0;
+    virtual bool canShowMIMETypeAsHTML(const String& MIMEType) const = 0;
+    virtual bool representationExistsForURLScheme(StringView URLScheme) const = 0;
+    virtual String generatedMIMETypeForURLScheme(StringView URLScheme) const = 0;
+
+    virtual void frameLoadCompleted() = 0;
+    virtual void saveViewStateToItem(HistoryItem&) = 0;
+    virtual void restoreViewState() = 0;
+    virtual void provisionalLoadStarted() = 0;
+    virtual void didFinishLoad() = 0;
+    virtual void prepareForDataSourceReplacement() = 0;
+
+    virtual Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&, ResourceRequest&&) = 0;
+    virtual Ref<DocumentLoader> createDocumentLoader(ResourceRequest&&, SubstituteData&&) = 0;
+    virtual void updateCachedDocumentLoader(DocumentLoader&) = 0;
+    virtual void setTitle(const StringWithDirection&, const URL&) = 0;
+
+    virtual bool hasCustomUserAgent() const { return false; }
+    virtual String userAgent(const URL&) const = 0;
+
+    virtual String overrideContentSecurityPolicy() const { return String(); }
+
+    virtual void savePlatformDataToCachedFrame(CachedFrame*) = 0;
+    virtual void transitionToCommittedFromCachedFrame(CachedFrame*) = 0;
+#if PLATFORM(IOS_FAMILY)
+    virtual void didRestoreFrameHierarchyForCachedFrame() = 0;
+#endif
+    enum class InitializingIframe : bool { No, Yes };
+    virtual void transitionToCommittedForNewPage(InitializingIframe) = 0;
+
+    virtual void didRestoreFromBackForwardCache() = 0;
+
+    virtual void didCacheBackForwardItem(BackForwardItemIdentifier, BackForwardFrameItemIdentifier);
+    virtual void didEvictBackForwardItem(BackForwardItemIdentifier);
+    virtual void didTakeBackForwardItemForRestoration(BackForwardItemIdentifier);
+
+    virtual bool canCachePage() const = 0;
+    virtual void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) = 0;
+
+    virtual RefPtr<LocalFrame> createFrame(const AtomString& name, HTMLFrameOwnerElement&) = 0;
+    virtual RefPtr<Widget> createPlugin(HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool loadManually) = 0;
+    virtual void redirectDataToPlugin(Widget&) = 0;
+
+    virtual ObjectContentType objectContentType(const URL&, const String& mimeType) = 0;
+    virtual AtomString overrideMediaType() const = 0;
+
+    virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) = 0;
+
+    virtual void registerForIconNotification() { }
+
+#if PLATFORM(COCOA)
+    // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
+    virtual RemoteAXObjectRef accessibilityRemoteObject() = 0;
+    virtual IntPoint accessibilityRemoteFrameOffset() = 0;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    virtual void setIsolatedTree(Ref<WebCore::AXIsolatedTree>&&) = 0;
+    virtual RefPtr<WebCore::AXIsolatedTree> isolatedTree() const = 0;
+#endif
+    virtual void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse*, CompletionHandler<void(NSCachedURLResponse *)>&&) const = 0;
+    virtual std::optional<double> dataDetectionReferenceDate() { return std::nullopt; }
+#endif
+
+    virtual bool shouldLoadMediaElementURL(const URL&) const { return true; }
+
+    virtual void didChangeScrollOffset() { }
+
+    virtual bool allowScript(bool enabledPerSettings) { return enabledPerSettings; }
+
+    // Clients that generally disallow universal access can make exceptions for particular URLs.
+    virtual bool shouldForceUniversalAccessFromLocalURL(const URL&) { return false; }
+
+    virtual Ref<FrameNetworkingContext> createNetworkingContext() = 0;
+
+    virtual bool shouldPaintBrokenImage(const URL&) const { return true; }
+
+    virtual void dispatchGlobalObjectAvailable(DOMWrapperWorld&) { }
+    virtual void dispatchServiceWorkerGlobalObjectAvailable(DOMWrapperWorld&) { }
+    virtual void dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(DOMWindowExtension*) { }
+    virtual void dispatchDidReconnectDOMWindowExtensionToGlobalObject(DOMWindowExtension*) { }
+    virtual void dispatchWillDestroyGlobalObjectForDOMWindowExtension(DOMWindowExtension*) { }
+
+    virtual void willInjectUserScript(DOMWrapperWorld&) { }
+
+    virtual void didFinishServiceWorkerPageRegistration(bool success) { UNUSED_PARAM(success); }
+
+#if ENABLE(WEB_RTC)
+    virtual void dispatchWillStartUsingPeerConnectionHandler(RTCPeerConnectionHandler*) { }
+#endif
+
+    virtual void completePageTransitionIfNeeded() { }
+    virtual void setDocumentVisualUpdatesAllowed(bool) { }
+
+    // FIXME (bug 116233): We need to get rid of EmptyFrameLoaderClient completely, then this will no longer be needed.
+    virtual bool isEmptyFrameLoaderClient() const { return false; }
+    virtual bool isRemoteWorkerFrameLoaderClient() const { return false; }
+
+#if USE(QUICK_LOOK)
+    virtual RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) = 0;
+#endif
+
+#if ENABLE(CONTENT_FILTERING)
+    virtual void contentFilterDidBlockLoad(ContentFilterUnblockHandler&&) { }
+#endif
+
+    virtual void prefetchDNS(const String&) = 0;
+    virtual void sendH2Ping(const URL&, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&&) = 0;
+
+    virtual void didRestoreScrollPosition() { }
+
+    virtual void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) { }
+
+#if ENABLE(APPLICATION_MANIFEST)
+    virtual void finishedLoadingApplicationManifest(uint64_t, const std::optional<ApplicationManifest>&) { }
+#endif
+
+    virtual bool hasFrameSpecificStorageAccess() { return false; }
+    virtual void revokeFrameSpecificStorageAccess() { }
+    virtual void didLoadFromRegistrableDomain(RegistrableDomain&&) { }
+    virtual Vector<RegistrableDomain> loadedSubresourceDomains() const { return { }; }
+
+    virtual RefPtr<Frame> provisionalParentFrame() const;
+
+    // True while this frame is a provisional frame for a cross-process navigation that has not
+    // committed yet, and so is not in the frame tree even though it has a parent to be attached to.
+    virtual bool isProvisionalFrame() const;
+
+    virtual AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return AllowsContentJavaScript::Yes; }
+
+#if ENABLE(APP_BOUND_DOMAINS)
+    virtual bool shouldEnableInAppBrowserPrivacyProtections() const { return false; }
+    virtual void notifyPageOfAppBoundBehavior() { }
+#endif
+
+#if ENABLE(PDF_PLUGIN)
+    virtual bool shouldUsePDFPlugin(const String&, StringView) const { return false; }
+#endif
+
+    virtual bool isParentProcessAFullWebBrowser() const { return false; }
+
+    virtual void dispatchLoadEventToOwnerElementInAnotherProcess() = 0;
+
+    virtual void documentLoaderDetached(NavigationIdentifier, LoadWillContinueInAnotherProcess) { }
+
+    virtual void frameNameChanged(const String&) { }
+
+    virtual RefPtr<HistoryItem> createHistoryItemTree(bool clipAtTarget, BackForwardItemIdentifier) const = 0;
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    virtual void didExceedNetworkUsageThreshold();
+#endif
+
+    virtual void applyMonitorUnloadToOwnerFrame(IFrameUnloadReason);
+
+    virtual bool shouldSuppressLayoutMilestones() const { return false; }
+
+protected:
+    explicit LocalFrameLoaderClient(FrameLoader&);
+
+private:
+    WeakRef<FrameLoader> m_loader;
+};
+
+} // namespace WebCore

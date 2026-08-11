@@ -1,0 +1,3 @@
+
+PASS Content extensions should be able to block beacon redirects
+

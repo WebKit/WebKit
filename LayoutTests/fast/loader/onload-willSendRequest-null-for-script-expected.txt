@@ -1,0 +1,3 @@
+Test for Bug 33687: window.onload never fires if page contains a <script src=foo> whose load is cancelled by resource load delegate returning null from willSendRequest. If the test passes, you should see the word "PASSED" below.
+
+PASSED

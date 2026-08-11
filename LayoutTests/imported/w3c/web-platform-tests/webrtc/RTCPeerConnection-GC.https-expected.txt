@@ -1,0 +1,4 @@
+
+PASS GC does not collect a peer connection pipe rendering to a video element
+PASS GC does not collect an HTMLMediaElement playing a video track
+

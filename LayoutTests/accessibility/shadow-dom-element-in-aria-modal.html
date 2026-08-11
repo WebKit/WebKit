@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button>Button One</button>
+<div aria-modal="true" role="dialog">
+    <button>Button Two</button>
+    Before Button
+    <my-button>Button Three</my-button>
+    After Button
+</div>
+
+<script>
+    class MyButton extends HTMLElement {
+        constructor() {
+            super();
+    
+            const root = this.attachShadow({ mode: 'open' });
+            root.innerHTML = '<button id="my-button"><slot></slot></button>';
+        }
+    }    
+    customElements.define('my-button', MyButton);
+
+    description("This test ensures shadow DOM descendants of something that is aria-modal are accessible.");
+
+    if (window.accessibilityController) {
+        var button = accessibilityController.accessibleElementById("my-button");
+        shouldBeFalse("button.isIgnored");
+    }
+</script>
+</body>
+</html>
+
+

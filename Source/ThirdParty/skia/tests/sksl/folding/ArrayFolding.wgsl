@@ -1,0 +1,37 @@
+diagnostic(off, derivative_uniformity);
+diagnostic(off, chromium.unreachable_code);
+enable f16;
+struct FSOut {
+  @location(0) sk_FragColor: vec4<f16>,
+};
+struct _GlobalUniforms {
+  colorRed: vec4<f16>,
+  colorGreen: vec4<f16>,
+};
+@group(0) @binding(0) var<uniform> _globalUniforms : _GlobalUniforms;
+var<private> globalValue: i32 = 0;
+fn side_effecting_ii(value: i32) -> i32 {
+  {
+    globalValue = globalValue + i32(1);
+    return value;
+  }
+}
+fn _skslMain(coords: vec2<f32>) -> vec4<f16> {
+  {
+    var _7_two: i32 = 2;
+    const _8_flatten0: i32 = 1;
+    let _9_flatten1: i32 = _7_two;
+    const _10_flatten2: i32 = 3;
+    _7_two = _7_two - i32(1);
+    let _11_noFlatten0: i32 = array<i32, 3>(_7_two, side_effecting_ii(2), 3)[0];
+    let _12_noFlatten1: i32 = array<i32, 3>(side_effecting_ii(1), 2, 3)[1];
+    _7_two = _7_two + i32(1);
+    let _13_noFlatten2: i32 = array<i32, 3>(1, _7_two, 3)[2];
+    return select(_globalUniforms.colorRed, _globalUniforms.colorGreen, vec4<bool>(((_8_flatten0 == _11_noFlatten0) && (_9_flatten1 == _12_noFlatten1)) && (_10_flatten2 == _13_noFlatten2)));
+  }
+}
+@fragment fn main() -> FSOut {
+  var _stageOut: FSOut;
+  _stageOut.sk_FragColor = _skslMain(/*fragcoord*/ vec2<f32>());
+  return _stageOut;
+}

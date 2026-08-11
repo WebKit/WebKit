@@ -1,0 +1,17 @@
+This test verifies that translated aria-notify announcements carry the target language on iOS.
+
+Announcement received, notification: AXAnnouncementRequested, attributed string: Hello_translated_to_fr{
+    UIAccessibilityARIAInterruptBehavior = None;
+    UIAccessibilityARIAPriority = Normal;
+    UIAccessibilitySpeechAttributeLanguage = fr;
+}
+Announcement received, notification: AXAnnouncementRequested, attributed string: World_translated_to_fr{
+    UIAccessibilityARIAInterruptBehavior = Pending;
+    UIAccessibilityARIAPriority = High;
+    UIAccessibilitySpeechAttributeLanguage = fr;
+}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

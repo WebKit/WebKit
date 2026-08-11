@@ -1,0 +1,53 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body style="margin: 0">
+<input id="maininput" style="width: 100px;">
+<iframe id="frame" width="300" height="100" src="http://localhost:8000/site-isolation/resources/text-input.html" onload="runTest()"></iframe>
+<div id="mainarea" style="width: 300px; height: 300px;"></div>
+<script>
+description("Tapping the main frame moves focus out of a focused text field in a cross-origin iframe (dispatching a blur and clearing its caret) when site isolation is enabled.");
+jsTestIsAsync = true;
+
+window.mainFrameBlurred = false;
+window.iframeBlurred = false;
+
+// The main frame dispatches blur once focus moves into the cross-origin iframe.
+window.addEventListener("blur", () => { window.mainFrameBlurred = true; });
+// The iframe posts this when its window is blurred, i.e. when focus leaves it.
+window.addEventListener("message", (event) => {
+    if (event.data.type === "windowBlurred")
+        window.iframeBlurred = true;
+});
+
+async function runTest()
+{
+    // Focus an element in the main frame so it is the focused frame to begin with.
+    const mainInput = document.getElementById("maininput");
+    mainInput.focus();
+    window.mainInputWasFocused = document.activeElement === mainInput;
+    shouldBeTrue("mainInputWasFocused");
+
+    // Focus the text field in the cross-origin iframe, then wait for the main frame to lose focus. This
+    // confirms the focus change reached the main frame's process before we tap.
+    document.getElementById("frame").contentWindow.postMessage({ type: "focusInput" }, "*");
+    for (let i = 0; i < 50 && !window.mainFrameBlurred; i++)
+        await UIHelper.ensurePresentationUpdate();
+    shouldBeTrue("mainFrameBlurred");
+
+    // Tapping an empty area of the main frame must move focus out of the cross-origin iframe, which
+    // dispatches a blur event there and clears the caret in its text field.
+    const mainRect = document.getElementById("mainarea").getBoundingClientRect();
+    await UIHelper.activateAt(mainRect.left + mainRect.width / 2, mainRect.top + mainRect.height / 2);
+    for (let i = 0; i < 50 && !window.iframeBlurred; i++)
+        await UIHelper.ensurePresentationUpdate();
+    shouldBeTrue("iframeBlurred");
+
+    finishJSTest();
+}
+</script>
+</body>
+</html>

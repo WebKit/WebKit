@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ InputTypeColorEnhancementsEnabled=false ] -->
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input id="empty_colorwell" type="color">
+<input id="good_colorwell" type="color" value="#ff0000">
+<input id="bad_colorwell" type="color" value="purple">
+
+<script>
+    description("This test checks the role of ColorWellRole on an input with type=color");
+
+    if (window.accessibilityController) {
+        let axColorwell = accessibilityController.accessibleElementById("empty_colorwell");
+        debug("Role of input type=color is: " + axColorwell.role);
+        debug("Value of empty color well: " + axColorwell.stringValue);
+
+        axColorwell = accessibilityController.accessibleElementById("good_colorwell");
+        debug("Value of good color well: " + axColorwell.stringValue);
+
+        axColorwell = accessibilityController.accessibleElementById("bad_colorwell");
+        debug("Value of bad color well: " + axColorwell.stringValue);
+    }
+</script>
+</body>
+</html>

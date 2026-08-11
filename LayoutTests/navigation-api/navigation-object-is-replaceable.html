@@ -1,0 +1,12 @@
+<script src="../resources/js-test.js"></script>
+
+<script>
+description("This tests that the Navigation object is replaceable");
+
+window.onload = () => {
+    shouldNotBe("navigation", "\"foo\"");
+    navigation = "foo";
+    shouldBe("navigation", "\"foo\"");
+}
+
+</script>

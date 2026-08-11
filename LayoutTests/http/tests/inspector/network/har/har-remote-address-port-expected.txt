@@ -1,0 +1,20 @@
+Tests for WI.HARBuilder.port and WI.HARBuilder.ipAddress remote address parsing.
+
+
+== Running test suite: HAR.RemoteAddress
+-- Running test case: HAR.RemoteAddress.Port
+PASS: IPv4 address with a port returns the port.
+PASS: IPv4 address with a different port returns the port.
+PASS: Bracketed IPv6 address with a port returns the port.
+PASS: Bracketed IPv6 address with a port returns the port.
+PASS: IPv4 address with no port returns undefined.
+PASS: Hostname with no port returns undefined.
+PASS: Empty remote address returns undefined.
+PASS: Missing remote address returns undefined.
+
+-- Running test case: HAR.RemoteAddress.IPAddress
+PASS: Strips the port from an IPv4 address.
+PASS: IPv4 address with no port is unchanged.
+PASS: Empty remote address returns the empty string.
+PASS: Missing remote address returns the empty string.
+

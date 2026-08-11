@@ -1,0 +1,26 @@
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function waitForProvisionalNavigationFailure() {
+    if (testRunner.lastProvisionalNavigationFailureURL.includes("resources/should-not-load.html")) {
+        if (helper.location == "http://127.0.0.1:8000/contentextensions/resources/block-everything-unless-domain-helper.html")
+            console.log("PASS - blocked the load");
+        else
+            console.log("FAIL - loaded blocked URL");
+        testRunner.notifyDone();
+    } else {
+        setTimeout(waitForProvisionalNavigationFailure, 10);
+    }
+}
+
+var helper = window.open("resources/block-everything-unless-domain-helper.html");
+if (helper)
+    helper.addEventListener('load', waitForProvisionalNavigationFailure);
+else {
+    console.log("opening window failed");
+    testRunner.notifyDone();
+}
+</script>

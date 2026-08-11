@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html aria-label="main-page-web-area">
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<iframe id="iframe" onload="runTest()" aria-hidden="true" srcdoc="
+    <html aria-label='iframe-web-area'>
+        <button>Inside iframe</button>
+    </html>"
+>
+</iframe>
+<input id="checkbox" type="checkbox">
+
+<script>
+var output = "This test ensures the scrollview of an iframe doesn't become the root of the tree after dynamic page changes.\n\n";
+
+var webAreaText;
+function verifyWebAreaText() {
+    output += expect("webAreaText.includes('main-page-web-area')", "true");
+    output += expect("!webAreaText.includes('iframe-web-area')", "true");
+}
+
+var root;
+function runTest() {
+    window.jsTestIsAsync = true;
+    if (!window.accessibilityController)
+        return;
+
+    var gotCheckedNotification = false;
+    window.accessibilityController.addNotificationListener(function (target, notification) {
+        if (target && target.role.toLowerCase().includes("checkbox") && notification === "AXValueChanged")
+            gotCheckedNotification = true;
+    });
+
+    root = accessibilityController.rootElement;
+    touchAccessibilityTree(root);
+
+    output += expect("root.childAtIndex(0).role.toLowerCase().includes('webarea')", "true");
+    // Should include "main-page-web-area", indicating we're looking at the top-most web area for the page.
+    webAreaText = platformTextAlternatives(root.childAtIndex(0));
+    verifyWebAreaText();
+
+    setTimeout(async function() {
+        // Wait for page rendering to be complete in case it's not done yet.
+        await UIHelper.renderingUpdate();
+
+        // Make the object and all descendants become unignored. This causes a full-node update for this and all descendants
+        // in the isolated tree. The scroll-area descendant is the particular object we're trying to target, as if we behave
+        // incorrectly, when we create a node change for it in AXIsolatedTree::nodeChangeForObject, we will set it as the root.
+        document.getElementById("iframe").setAttribute("aria-hidden", "false");
+        // Force the iframe to lose its renderer. The bug this test was written for was caused by an iframe's scroll-area
+        // not returning a parent because it had no renderer, thus causing some of our code to think it was the root.
+        document.getElementById("iframe").style.display = "contents";
+        // Force layout to drop the renderer right now.
+        document.getElementById("checkbox").offsetHeight;
+        // Wait for the render tree update to be complete.
+        await UIHelper.renderingUpdate();
+
+        // Perform an action that will cause a platform notification to be posted, which will trigger an eager flush of
+        // any pending isolated tree updates (i.e. those queued up by the aria-hidden change).
+        document.getElementById("checkbox").checked = true;
+        // Assume that the isolated tree has been updated by the time the checked notification was disbursed to us.
+        await waitFor(() => gotCheckedNotification);
+        accessibilityController.removeNotificationListener();
+
+        // Ensure the root didn't get updated to an invalid value (the iframe scroll-area).
+        root = accessibilityController.rootElement;
+        webAreaText = platformTextAlternatives(root.childAtIndex(0));
+        verifyWebAreaText();
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

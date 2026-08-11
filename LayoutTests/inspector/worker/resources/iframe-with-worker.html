@@ -1,0 +1,4 @@
+<script>
+var worker = new Worker("cross-origin-worker.js", {name: "CrossOriginWorker"});
+worker.postMessage("ping");
+</script>

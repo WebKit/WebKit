@@ -1,0 +1,18 @@
+<body onload="handleLoad()">
+<form action="state-restore-broken-state-2.html" name=f>
+  <input name="name1" value="unmodified">
+</form>
+
+<script>
+function handleLoad() {
+    if (!parent.isGoingBack) {
+        document.f.name1.value = 'modified';
+        setTimeout(function() {
+            window.location.href = 'state-restore-broken-state-2.html';
+        }, 0);
+    } else {
+        parent.didSecondLoad();
+    }
+}
+</script>
+</body>

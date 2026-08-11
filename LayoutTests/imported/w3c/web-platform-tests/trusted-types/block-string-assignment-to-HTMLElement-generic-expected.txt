@@ -1,0 +1,11 @@
+
+PASS script.src accepts only TrustedScriptURL
+PASS div.innerHTML accepts only TrustedHTML
+PASS iframe.srcdoc accepts only TrustedHTML
+PASS script.src accepts string and null after default policy was created
+PASS div.innerHTML accepts string and null after default policy was created
+PASS iframe.srcdoc accepts string and null after default policy was created
+PASS script.text accepts only TrustedScript
+PASS script.innerText accepts only TrustedScript
+PASS script.textContent accepts only TrustedScript
+

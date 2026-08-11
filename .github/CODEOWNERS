@@ -1,0 +1,275 @@
+# Copyright (C) 2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# ================================================================================
+#
+#     Contributors do not "own" WebKit components. This file is used to
+#     automatically add reviewers to pull requests.
+#
+#     Documentation:
+#       https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#       https://git-scm.com/docs/gitignore#_pattern_format
+#
+# ================================================================================
+
+/.github @JonWBedard
+/metadata @JonWBedard
+
+# ================================================================================
+# Tools
+
+/Tools @JonWBedard
+
+/Tools/CISupport @aj062 @JonWBedard @ryanhaddad @briannafan
+
+/Tools/lldb/ @JonWBedard @gsnedders
+
+/Tools/Scripts/ @JonWBedard @gsnedders
+
+/Tools/Scripts/libraries @JonWBedard @briannafan @gsnedders
+/Tools/Scripts/libraries/webkitscmpy @facetothefate @JonWBedard @briannafan @gsnedders
+
+/Tools/Scripts/libraries/webkitapipy @emw-apple
+AllowedSPI*.toml @emw-apple
+
+/Tools/TestWebKitAPI
+/Tools/TestWebKitAPI/Tests/WebKitGLib/ @WebKit/glib-reviewers
+/Tools/TestWebKitAPI/Tests/WebKitGtk/ @WebKit/glib-reviewers
+/Tools/TestWebKitAPI/WebKitGLib/ @WebKit/glib-reviewers
+/Tools/TestWebKitAPI/WebKitGtk/ @WebKit/glib-reviewers
+/Tools/TestWebKitAPI/Tests/WebKit/WKWebView/ScreenTime.mm @jesxilin
+
+/Tools/gstreamer/ @WebKit/glib-reviewers
+/Tools/jhbuild/ @WebKit/glib-reviewers
+
+/Tools/WebKitTestRunner/InjectedBundle/Accessibility* @twilco @minorninth @fleizach @AndresGonzalezApple
+
+# ================================================================================
+# bmalloc
+
+/Source/bmalloc @WebKit/jsc-reviewers
+/Tools/TestWebKitAPI/Tests/WTF/bmalloc @WebKit/jsc-reviewers
+
+# ================================================================================
+# JavaScriptCore
+
+/Source/JavaScriptCore @WebKit/jsc-reviewers
+/Source/JavaScriptCore/debugger @dcrousso @patrickangle
+/Source/JavaScriptCore/inspector @dcrousso @patrickangle @burg
+/JSTests @WebKit/jsc-reviewers
+/LayoutTests/js @WebKit/jsc-reviewers
+/Tools/TestWebKitAPI/Tests/JavaScriptCore @WebKit/jsc-reviewers
+
+# ================================================================================
+# Web Inspector
+
+/Source/WebInspectorUI @dcrousso @patrickangle @burg
+/Tools/Scripts/webkitpy/inspector @dcrousso @patrickangle @burg
+/LayoutTests/http/tests/inspector @dcrousso @patrickangle @burg
+/LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso @patrickangle @burg
+/LayoutTests/inspector @dcrousso @patrickangle @burg
+
+# ================================================================================
+# WebCore
+
+/Source/WebCore/accessibility @twilco @minorninth @fleizach @AndresGonzalezApple
+/Source/WebCore/dom @rniwa @cdumez
+/LayoutTests/accessibility @twilco @minorninth @fleizach @AndresGonzalezApple
+/LayoutTests/accessibility-isolated-tree @twilco @minorninth @fleizach @AndresGonzalezApple
+/LayoutTests/fast/dom @rniwa
+/LayoutTests/fast/events @rniwa
+
+/Source/WebCore/editing @rniwa
+/LayoutTests/editing @rniwa
+
+/Source/WebCore/Modules/applicationmanifest/ @marcoscaceres
+/Source/WebCore/Modules/beacon @cdumez
+/Source/WebCore/Modules/contact-picker @marcoscaceres
+/Source/WebCore/Modules/entriesapi @cdumez
+/Source/WebCore/Modules/geolocation @cdumez @marcoscaceres
+/Source/WebCore/Modules/model-element @mwyrzykowski @etiennesegonzac
+/Source/WebCore/Modules/notifications @cdumez
+/Source/WebCore/Modules/paymentrequest @marcoscaceres
+/Source/WebCore/Modules/permissions @marcoscaceres
+/Source/WebCore/Modules/credentialmanagement @marcoscaceres
+/Source/WebCore/Modules/gamepad @marcoscaceres
+/Source/WebCore/Modules/identity @marcoscaceres
+/Source/WebCore/Modules/screen-wake-lock @marcoscaceres
+/Source/WebCore/Modules/speech @marcoscaceres
+/Source/WebCore/Modules/web-locks @cdumez
+/Source/WebCore/Modules/webaudio @cdumez
+/Source/WebCore/bindings @cdumez
+/Source/WebCore/html @cdumez @rniwa
+/Source/WebCore/html/UserActivation.* @marcoscaceres
+/Source/WebCore/inspector @dcrousso @patrickangle @burg
+/Source/WebCore/loader @cdumez
+/Source/WebCore/page/Quirks.cpp @brentfulgham @karlcow
+/Source/WebCore/workers @cdumez
+/Source/WebCore/worklets @cdumez
+/Source/WebCore/xml @cdumez
+/Source/WebCore/page @cdumez
+/Source/WebCore/page/PointerCaptureController.cpp @lilyspiniolas
+/Source/WebCore/page/PointerCaptureController.h @lilyspiniolas
+./Source/WebCore/page/Navigator.* @marcoscaceres
+
+/Source/WebCore/animation @graouts
+
+/LayoutTests/http/tests/paymentrequest @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/badging @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/contenteditable @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/gamepad @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/geolocation @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/merchant-validation @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/payment-request @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/permissions @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/resources @gsnedders
+/LayoutTests/imported/w3c/web-platform-tests/screen-orientation @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/speech-api @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/tools @gsnedders
+/LayoutTests/imported/w3c/web-platform-tests/web-share @marcoscaceres
+
+# ================================================================================
+# WebKit
+
+*ContentExtension* @b-weinstein @xeenon
+*InspectorExtension* @b-weinstein @xeenon
+*WebExtension* @b-weinstein @xeenon
+/Source/WebKit/_WebKit_SwiftUI @rr-codes
+/Source/WebKit/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in @brentfulgham @pvollan
+/Source/WebKit/NetworkProcess @cdumez
+/Source/WebKit/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in @brentfulgham @pvollan
+/Source/WebKit/Platform @cdumez
+/Source/WebKit/Resources/SandboxProfiles @brentfulgham @pvollan
+/Source/WebKit/Shared/Sandbox @brentfulgham @pvollan
+/Source/WebKit/UIProcess @cdumez
+/Source/WebKit/UIProcess/Extensions @b-weinstein @xeenon
+/Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle @burg
+/Source/WebKit/WebKitSwift @rr-codes
+/Source/WebKit/UIProcess/DigitalCredentials @marcoscaceres
+/Source/WebKit/UIProcess/WebsiteData/Cocoa/ScreenTimeWebsiteDataSupport.* @jesxilin
+/Source/WebKit/WebProcess @cdumez
+/Source/WebKit/WebProcess/DigitalCredentials @marcoscaceres
+/Source/WebKit/WebKitSwift/IdentityDocumentServices @marcoscaceres
+/Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon
+/Source/WebKit/WebProcess/Inspector @dcrousso @patrickangle @burg
+/Source/WebKit/WebProcess/com.apple.WebProcess.sb.in  @brentfulgham @pvollan
+/Source/WebKit/Scripts/webkit/opaque_ipc_types.* @sheeparegreat
+
+# ================================================================================
+# WebDriver
+
+/Source/WebDriver/ @carlosgcampos @burg
+/Source/WebKit/UIProcess/Automation @carlosgcampos @burg
+
+# ================================================================================
+# CMake
+
+/Source/cmake/OptionsCommon.cmake @mcatanzaro
+/Source/cmake/WebKitCompilerFlags.cmake @mcatanzaro
+
+# ================================================================================
+# Xcode
+
+*.xcconfig @emw-apple @rr-codes
+
+# ================================================================================
+# Module Map
+
+*.modulemap @rr-codes
+
+# ================================================================================
+# Swift
+
+*.swift @rr-codes
+
+# ================================================================================
+# Linux graphics
+
+CoordinatedGraphics/ @magomez
+cairo/ @magomez
+coordinated/ @magomez
+skia/ @alexgcastro @carlosgcampos @nikolaszimmermann
+
+# ================================================================================
+# Linux Multimedia
+
+/Source/WebCore/Modules/mediastream/gstreamer @calvaris @philn
+/Source/WebCore/platform/audio/gstreamer @calvaris @philn
+/Source/WebCore/platform/graphics/gstreamer @ntrrgc @calvaris @philn
+/Source/WebCore/platform/gstreamer @ntrrgc @calvaris @philn
+/Source/WebCore/platform/mediastream/gstreamer @calvaris @philn
+gstreamer/ @philn
+
+# ================================================================================
+# WPE WebKit and WebKitGTK
+
+/Source/ThirdParty/xdgmime/ @WebKit/glib-reviewers
+/Source/cmake/OptionsGTK.cmake @WebKit/glib-reviewers @mcatanzaro
+/Source/cmake/OptionsWPE.cmake @WebKit/glib-reviewers
+
+adwaita/ @WebKit/glib-reviewers
+atspi/ @WebKit/glib-reviewers
+freetype/ @WebKit/glib-reviewers
+glib/ @WebKit/glib-reviewers
+gtk4/ @WebKit/glib-reviewers
+gtk/ @WebKit/glib-reviewers
+harfbuzz/ @WebKit/glib-reviewers
+libwpe/ @WebKit/glib-reviewers @donny-dont
+linux/ @WebKit/glib-reviewers
+soup/ @WebKit/glib-reviewers
+unix/ @WebKit/glib-reviewers
+xdg/ @WebKit/glib-reviewers
+wpe/ @WebKit/glib-reviewers
+
+# Don't want to own these
+/Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/util/ar/testdata/linux
+/Source/ThirdParty/libwebrtc/Source/third_party/libaom/source/config/linux
+/Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/examples/peerconnection/client/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_device/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/modules/desktop_capture/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_capture/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/test/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/tools_webrtc/audio_quality/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/tools_webrtc/video_quality_toolchain/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_tools/testing/golang/linux
+
+/LayoutTests/platform/glib/
+/LayoutTests/platform/gtk/
+/LayoutTests/platform/gtk4/
+/LayoutTests/platform/gtk-wayland/
+/LayoutTests/platform/gtk-wk2/
+/LayoutTests/platform/wpe/
+
+# ================================================================================
+# WebGPU
+
+/Source/WebCore/Modules/webgpu @tadeuzagallo @mwyrzykowski
+/Source/WebGPU @tadeuzagallo @mwyrzykowski
+/Source/WebKit/Shared/WebGPU @tadeuzagallo @mwyrzykowski
+/Source/WebKit/WebProcess/GPU/graphics/WebGPU @tadeuzagallo @mwyrzykowski
+/Source/WebKit/GPUProcess/graphics/WebGPU @tadeuzagallo @mwyrzykowski
+
+/Source/WebGPU/WGSL @mwyrzykowski @djg @tadeuzagallo

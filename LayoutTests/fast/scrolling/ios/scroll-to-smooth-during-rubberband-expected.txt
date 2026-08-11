@@ -1,0 +1,11 @@
+Tests that a smooth scroll to 0,0 during a rubberband does not leave the view with a negative scroll position.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.pageYOffset > 0 is true
+PASS window.pageYOffset is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

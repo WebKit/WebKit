@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing audio addTransceiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script src ="routines.js"></script>
+        <script>
+promise_test(async (test) => {
+    const pc = new RTCPeerConnection();
+    const transceiver = pc.addTransceiver("audio", { sendEncodings: [ { rid: 'foo' }, { rid: 'baz' } ] });
+
+    const parameters = transceiver.sender.getParameters();
+    assert_equals(parameters.encodings.length, 1);
+
+    await pc.setLocalDescription();
+    const sdp = pc.localDescription.sdp;
+    assert_true(sdp.indexOf('baz') === -1);
+}, "addTransceiver audio with encodings");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/cache-storage.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/cache.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/cross-origin-isolated.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/dedicated-worker.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/fetch.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-credentialless.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-none.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe-coep-require-corp.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/iframe.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/image.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/link.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/redirect.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-navigation.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/reporting-subresource-corp.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/script.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker-coep-credentialless-proxy.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker-coep-none-proxy.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/service-worker.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/shared-worker.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/video.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/credentialless/video.https.window.js.headers

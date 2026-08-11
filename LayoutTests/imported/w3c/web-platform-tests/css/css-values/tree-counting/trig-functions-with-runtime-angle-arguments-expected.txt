@@ -1,0 +1,6 @@
+
+PASS rotate property: cos() with runtime angle argument converts degrees to radians
+PASS rotate property: first element gets correct cos(30deg) value
+PASS rotate property: last element gets correct cos(150deg) value
+PASS transform rotate(): cos() with runtime angle argument converts degrees to radians
+

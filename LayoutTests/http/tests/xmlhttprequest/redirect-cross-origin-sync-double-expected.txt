@@ -1,0 +1,4 @@
+Test that a cross-origin chain of redirects to a server that responds is indistinguishable from one that does not. Should say PASS:
+
+PASS
+

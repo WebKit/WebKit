@@ -1,0 +1,34 @@
+<html>
+<head>
+</head>
+<body>
+<!-- This test makes sure there is no crash when specifying "font-style=initial" on a <font-face> element. The test passes if there is no crash. -->
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+  <svg>
+    <font-face font-style="initial" font-family="any">
+      <font-face-src>
+        <font-face-name name="any"></font-face-name>
+      </font-face-src>
+    </font-face>
+    <font-face font-style="inherit" font-family="any">
+      <font-face-src>
+        <font-face-name name="any"></font-face-name>
+      </font-face-src>
+    </font-face>
+    <font-face font-style="unset" font-family="any">
+      <font-face-src>
+        <font-face-name name="any"></font-face-name>
+      </font-face-src>
+    </font-face>
+    <font-face font-style="revert" font-family="any">
+      <font-face-src>
+        <font-face-name name="any"></font-face-name>
+      </font-face-src>
+    </font-face>
+  </svg>
+</body>
+
+</html>

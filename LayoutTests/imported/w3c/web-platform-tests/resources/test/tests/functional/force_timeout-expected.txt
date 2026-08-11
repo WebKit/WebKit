@@ -1,0 +1,7 @@
+Test#force_timeout
+
+
+TIMEOUT test (synchronous) Test timed out
+TIMEOUT async_test Test timed out
+TIMEOUT promise_test Test timed out
+

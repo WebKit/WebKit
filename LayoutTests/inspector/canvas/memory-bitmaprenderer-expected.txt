@@ -1,0 +1,10 @@
+Test that CanvasManager tracks bitmap renderer memory costs.
+
+
+== Running test suite: Canvas.MemoryBitmapRenderer
+-- Running test case: Canvas.MemoryBitmapRenderer.Transfer
+PASS: Transferring an ImageBitmap should increase the memory cost.
+
+-- Running test case: Canvas.MemoryBitmapRenderer.Clear
+PASS: Clearing an ImageBitmap should clear the memory cost.
+

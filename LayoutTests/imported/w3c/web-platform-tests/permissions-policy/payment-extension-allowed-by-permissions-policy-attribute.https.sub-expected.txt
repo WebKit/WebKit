@@ -1,0 +1,7 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT WebAuthn "payment" extension is not supported in cross-origin iframe without allow="payment" attribute Test timed out
+NOTRUN WebAuthn "payment" extension can be enabled in cross-origin iframe using allow="payment" attribute
+

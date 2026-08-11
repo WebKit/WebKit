@@ -1,0 +1,40 @@
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<script>
+var hasScrolled = false;
+
+function sawIteration(event) {
+    if (hasScrolled) {
+        document.getElementById("results").innerText = "PASS: Saw iteration after scrolling";
+        testRunner.notifyDone();
+    }
+}
+
+async function startScroll() {
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(200, 200);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseMoveTo(200, 300);
+        setTimeout(endScroll, 100);
+    }
+}
+
+async function endScroll() {
+    await eventSender.asyncMouseUp();
+    hasScrolled = true;
+}
+
+function startTest() {
+    var iframe = document.querySelector("iframe");
+    iframe.addEventListener("webkitAnimationIteration", sawIteration, false);
+    setTimeout(startScroll, 100);
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.addEventListener("load", startTest, false);
+</script>
+<iframe src="resources/anim.html"></iframe>
+<div id="results"></div>

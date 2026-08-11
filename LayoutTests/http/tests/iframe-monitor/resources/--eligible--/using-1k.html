@@ -1,0 +1,8 @@
+Using 6k resources but still eligible for resource monitoring.
+
+<script>
+    const size = 1 * 1024;
+    fetch(`../generate-byte.py?size=${size}`).then(() => {
+        window.parent.postMessage(true, '*');
+    });
+</script>

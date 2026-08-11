@@ -1,0 +1,2 @@
+Verify that the model is allowed because the src's URL and this document have the same origin
+

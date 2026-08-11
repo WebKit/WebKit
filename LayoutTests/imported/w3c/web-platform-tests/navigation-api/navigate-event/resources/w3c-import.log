@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/cross-origin-redirect-on-second-visit.py
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/document-open-after-replaceState-helper.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/echo-sourceElement.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/intercept-cross-origin-focus-stealing-user-initiated.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/intercept-cross-origin-focus-stealing.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/meta-refresh.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/navigate-during-onnavigate-should-reject-helper.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/navigate-history-traversal-during-onnavigate-helper.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/navigatesuccess-cross-document-helper.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/navigate-event/resources/opener-postMessage-onpageshow.html

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<p>Cross-origin iframe served over HTTPS that loads a secure image subresource, for Network.getSerializedCertificate success-path testing under Site Isolation.</p>
+
+<script>
+window.addEventListener("message", (event) => {
+    if (event.data.type === "TriggerLoads")
+        triggerLoads();
+});
+
+function triggerLoads() {
+    // Secure (HTTPS) image subresource, same-origin to this HTTPS iframe. Loaded over TLS so the
+    // iframe's WebContent process captures a CertificateInfo in its BackendResourceDataStore, which
+    // Network.getSerializedCertificate then serializes. Cache-busted so each run is a fresh load.
+    let img = document.createElement("img");
+    img.src = "https://localhost:8443/resources/square100.png?" + Math.random();
+    document.body.appendChild(img);
+}
+</script>

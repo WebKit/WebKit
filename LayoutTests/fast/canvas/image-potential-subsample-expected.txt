@@ -1,0 +1,5 @@
+PASS: Pixel (10, 10) was close to 255,0,0,255
+
+PASS: Pixel (200, 200) was close to 0,255,0,255
+
+PASS: Pixel (390, 390) was close to 0,0,255,255

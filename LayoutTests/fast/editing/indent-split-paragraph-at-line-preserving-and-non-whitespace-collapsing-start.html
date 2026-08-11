@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<style>
+blockquote,br { -webkit-user-modify: read-only; }
+img { float: right; }
+.pre { white-space: pre; }
+</style>
+<div style="contain: strict">
+  <div contenteditable="true">
+    <span class="pre">&#x0A;A&#x0A;<div><span id="container"></span>&#x0A;</div>
+  </div>
+</div>
+<script>
+  window.testRunner?.dumpAsText();
+  document.designMode = "on";
+  window.getSelection().selectAllChildren(container);
+  document.execCommand("indent",false,null);
+  document.execCommand("insertImage",false,"x");
+  document.execCommand("delete",false,null);
+  document.execCommand("insertImage",false,"x");
+  document.execCommand("delete",false,null);
+  window.getSelection().selectAllChildren(container);
+  document.execCommand("indent",false,null);
+  document.execCommand("indent",false,null);
+  document.body.innerHTML = "PASS if no crash.";
+</script>

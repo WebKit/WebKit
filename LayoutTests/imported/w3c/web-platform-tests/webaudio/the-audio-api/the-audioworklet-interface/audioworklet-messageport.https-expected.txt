@@ -1,0 +1,7 @@
+
+FAIL AudioWorkletGlobalScope: message via shared port promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.port.onmessage = (event) => {
+            resolve(event.data);
+          }')"
+PASS AudioWorkletProcessor: initialization message
+PASS AudioWorkletProcessor: message via instance port
+

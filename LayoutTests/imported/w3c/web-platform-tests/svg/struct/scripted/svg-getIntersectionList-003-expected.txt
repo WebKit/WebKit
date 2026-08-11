@@ -1,0 +1,4 @@
+PASS (didn't crash)
+
+PASS getIntersectionList() crash test
+

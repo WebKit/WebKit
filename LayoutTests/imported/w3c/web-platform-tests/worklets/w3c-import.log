@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/worklets/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/worklets/README.md
+/LayoutTests/imported/w3c/web-platform-tests/worklets/animation-worklet-credentials.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/animation-worklet-csp.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/animation-worklet-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/animation-worklet-referrer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/animation-worklet-service-worker-interception.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/audio-worklet-credentials.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/audio-worklet-csp.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/audio-worklet-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/audio-worklet-referrer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/audio-worklet-service-worker-interception.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/idlharness.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/worklets/layout-worklet-credentials.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/layout-worklet-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/layout-worklet-referrer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/layout-worklet-service-worker-interception.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/paint-worklet-credentials.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/paint-worklet-csp.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/paint-worklet-import.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/paint-worklet-referrer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html

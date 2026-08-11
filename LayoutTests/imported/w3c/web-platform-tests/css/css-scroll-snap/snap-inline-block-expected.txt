@@ -1,0 +1,10 @@
+
+PASS Snaps correctly for horizontal-tb writing mode with 'scroll-snap-align: end start' alignment
+PASS Snaps correctly for vertical-lr writing mode with 'scroll-snap-align: end start' alignment
+PASS Snaps correctly for vertical-rl writing mode with 'scroll-snap-align: end start' alignment
+PASS Snaps correctly for horizontal-tb writing mode with 'scroll-snap-align: start end' alignment
+PASS Snaps correctly for vertical-lr writing mode with 'scroll-snap-align: start end' alignment
+PASS Snaps correctly for vertical-rl writing mode with 'scroll-snap-align: start end' alignment
+PASS Snaps correctly for 'direction: rtl' with 'scroll-snap-align: end start' alignment
+PASS Snaps correctly for 'direction: rtl' with 'scroll-snap-align: start end' alignment
+

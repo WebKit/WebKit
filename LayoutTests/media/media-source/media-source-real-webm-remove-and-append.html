@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-remove-and-append</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests removing a range from the middle of buffered data, creating a gap,
+    // then verifying the gap exists. This exercises the state synchronization
+    // between the MSE layer and the renderer after removal — a pattern that
+    // exposed reenqueue bugs during the re-architecture.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Append 8 seconds: sync at 0, 2, 4, 6
+        var media = WebM.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 8, 0.05);
+
+        // Remove [2, 6) — should create a gap since sync frames are at 0,2,4,6
+        run('sourceBuffer.remove(2, 6)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Should have two ranges: [0, 2) and [6, 8)
+        testExpected('sourceBuffer.buffered.length', 2);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 2, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(1)', 6, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(1)', 8, 0.05);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

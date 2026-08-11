@@ -1,0 +1,9 @@
+Test iframe bounds (in screen position) in site isolation.
+
+PASS: iframeX === 100
+PASS: iframeY === 50
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

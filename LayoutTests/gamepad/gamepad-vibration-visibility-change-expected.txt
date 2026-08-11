@@ -1,0 +1,12 @@
+Tests that the [playingEffectPromise] gets resolved with 'preempted' when the document becomes hidden
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+* Starting dual-rumble effect
+* Changing page visibility to hidden
+PASS result is "preempted"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

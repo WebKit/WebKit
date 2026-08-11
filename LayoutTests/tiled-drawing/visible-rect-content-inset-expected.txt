@@ -1,0 +1,24 @@
+This test applies a content inset and then dumps the layer tree including visible rects. The visible rects should match the expected rects.
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 500.00)
+  (visible rect 0.00, 0.00 800.00 x 500.00)
+  (coverage rect 0.00, 0.00 800.00 x 500.00)
+  (intersects coverage rect 1)
+  (contentsScale 1.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 500.00)
+      (contentsOpaque 1)
+      (visible rect 0.00, 0.00 800.00 x 500.00)
+      (coverage rect 0.00, 0.00 800.00 x 500.00)
+      (intersects coverage rect 1)
+      (contentsScale 1.00)
+      (tile cache coverage 0, 0 800 x 500)
+      (tile size 800 x 512)
+      (top left tile 0, 0 tiles grid 1 x 1)
+      (in window 1)
+    )
+  )
+)
+

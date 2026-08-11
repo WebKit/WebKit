@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+        </script>
+        <style>
+            .outer {
+                width: max-content;
+                overflow: auto;
+                height: 100px;
+            }
+            .wrapper {
+                width: 300px;
+                overflow-x: auto;
+            }
+            .wrapper-content {
+                width: 500px;
+                height: 50px;
+            }
+            .tall {
+                width: 50px;
+                height: 300px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>PASS if no crash.</p>
+        <div class="outer">
+            <div class="wrapper">
+                <div class="wrapper-content"></div>
+            </div>
+            <div class="tall"></div>
+        </div>
+    </body>
+</html>

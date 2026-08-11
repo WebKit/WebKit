@@ -1,0 +1,6 @@
+select this text but not this
+(repaint rects
+  (rect 8 8 220 40)
+  (rect 228 8 564 20)
+)
+

@@ -1,0 +1,15 @@
+Test calling createAttributeNS with undefined as the namespace URI. It should treat it as null.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+element = document.createElement("div"); attr = document.createAttributeNS(undefined, "foo")
+PASS attr.prefix is null
+PASS attr.localName is "foo"
+PASS attr.namespaceURI is null
+PASS element.getAttributeNodeNS(null, "foo") is null
+PASS element.setAttributeNode(attr); element.getAttributeNodeNS(null, "foo") is attr
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

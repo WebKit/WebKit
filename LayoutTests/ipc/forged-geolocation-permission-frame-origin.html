@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setGeolocationPermission(true);
+}
+
+function finish()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function run()
+{
+    if (!window.IPC) {
+        finish();
+        return;
+    }
+
+    const msgName = IPC.messages.WebPageProxy_RequestGeolocationPermissionForFrame.name;
+    let replayed = false;
+    IPC.addOutgoingMessageListener("UI", function (desc) {
+        if (!desc || desc.name !== msgName || replayed || !desc.buffer)
+            return;
+        replayed = true;
+        // Replay the captured RequestGeolocationPermissionForFrame with the
+        // FrameInfoData::securityOrigin protocol bytes mutated. The UI process should
+        // re-derive the origin from WebFrameProxy::securityOrigin() and ignore the
+        // forged value, so this must not crash or terminate the WebContent process.
+        const mutated = new Uint8Array(new Uint8Array(desc.buffer));
+        const enc = new TextEncoder();
+        const realBytes = enc.encode("file");
+        const evilBytes = enc.encode("http");
+        outer: for (let i = 0; i + realBytes.length <= mutated.length; i++) {
+            for (let j = 0; j < realBytes.length; j++) {
+                if (mutated[i + j] !== realBytes[j])
+                    continue outer;
+            }
+            for (let j = 0; j < evilBytes.length; j++)
+                mutated[i + j] = evilBytes[j];
+            i += realBytes.length - 1;
+        }
+        IPC.sendMessage("UI", desc.destinationID, msgName, mutated.slice(16));
+        setTimeout(finish, 0);
+    });
+
+    navigator.geolocation.getCurrentPosition(function () { }, function () { });
+    setTimeout(finish, 2000);
+}
+</script>
+</head>
+<body onload="run()">
+<p>Tests that a forged FrameInfoData::securityOrigin in RequestGeolocationPermissionForFrame is ignored by the UI process. Passes if it does not crash.</p>
+</body>
+</html>

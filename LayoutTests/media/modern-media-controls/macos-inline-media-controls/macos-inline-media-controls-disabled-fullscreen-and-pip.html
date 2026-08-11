@@ -1,0 +1,19 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing <code>MacOSInlineMediaControls</code> with disabled fullscreen and picture-in-picture buttons.");
+
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+
+// Disabling both the fullscreen and picture-and-picture buttons should make the top left controls bar have no visible
+// buttons and thus have its visible property set to false.
+mediaControls.fullscreenButton.enabled = false;
+mediaControls.pipButton.enabled = false;
+shouldBeFalse("mediaControls.topLeftControlsBar.visible");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

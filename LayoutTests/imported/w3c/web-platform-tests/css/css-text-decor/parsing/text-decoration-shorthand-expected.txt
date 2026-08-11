@@ -1,0 +1,7 @@
+
+PASS e.style['text-decoration'] = "overline from-font dotted green" should set text-decoration-color
+PASS e.style['text-decoration'] = "overline from-font dotted green" should set text-decoration-line
+PASS e.style['text-decoration'] = "overline from-font dotted green" should set text-decoration-style
+PASS e.style['text-decoration'] = "overline from-font dotted green" should set text-decoration-thickness
+PASS e.style['text-decoration'] = "overline from-font dotted green" should not set unrelated longhands
+

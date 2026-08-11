@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<style>
+    /* `spatial: portal` needs a box to establish a portal. These do not have one. */
+    #inline-portal { spatial: portal; }
+    #contents-portal { spatial: portal; display: contents; }
+</style>
+<body>
+<span id="inline-portal">
+    <model id="inline-model"><source src="../model-element/resources/cube.usdz"></model>
+</span>
+<div id="contents-portal">
+    <model id="contents-model"><source src="../model-element/resources/cube.usdz"></model>
+</div>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+for (const [portalID, modelID, description] of [
+    ["inline-portal", "inline-model", "an inline"],
+    ["contents-portal", "contents-model", "a display: contents"],
+]) {
+    promise_test(async t => {
+        const portal = document.getElementById(portalID);
+        const model = document.getElementById(modelID);
+
+        await model.ready;
+        await UIHelper.ensureStablePresentationUpdate();
+
+        assert_false(internals.establishesSpatialPortal(portal), "the element establishes no portal");
+        assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 0, "no model is delegated to it");
+        assert_greater_than(model.getBoundingClientRect().width, 0, "the <model> renders standalone");
+    }, `A <model> inside ${description} spatial: portal renders standalone`);
+}
+</script>
+</body>
+</html>

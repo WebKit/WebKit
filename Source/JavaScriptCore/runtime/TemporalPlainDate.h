@@ -1,0 +1,89 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <JavaScriptCore/CalendarICUBridge.h>
+#include <JavaScriptCore/ISO8601.h>
+#include <JavaScriptCore/IntlObject.h>
+
+namespace JSC {
+
+class TemporalPlainDate final : public JSNonFinalObject {
+public:
+    using Base = JSNonFinalObject;
+
+    template<typename CellType, SubspaceAccess mode>
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.temporalPlainDateSpace<mode>();
+    }
+
+    static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&);
+    static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&, String&&);
+    static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&, CalendarID);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+
+    DECLARE_INFO;
+
+    static ISO8601::PlainDate validateAndCreateISODateRecord(JSGlobalObject*, const ISO8601::Duration&);
+    static TemporalPlainDate* from(JSGlobalObject*, JSValue item, JSValue options);
+
+    ISO8601::PlainDate plainDate() const { return m_plainDate; }
+    CalendarID calendarID() const { return m_calendarID; }
+    void setCalendarId(StringView id) { m_calendarID = TemporalCore::calendarIDFromString(id); }
+    void setCalendarID(CalendarID id) { m_calendarID = id; }
+    String calendarIDAsString() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
+
+#define JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD(name, capitalizedName) \
+    decltype(auto) name() const { return m_plainDate.name(); }
+    JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD);
+#undef JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD
+
+    String monthCode() const { return ISO8601::monthCode(m_plainDate.month()); }
+
+    String toString() const;
+
+    ISO8601::Duration until(JSGlobalObject*, TemporalPlainDate*, JSValue options);
+    ISO8601::Duration since(JSGlobalObject*, TemporalPlainDate*, JSValue options);
+
+private:
+    TemporalPlainDate(VM&, Structure*, ISO8601::PlainDate&&);
+    TemporalPlainDate(VM&, Structure*, ISO8601::PlainDate&&, String&&);
+    DECLARE_DEFAULT_FINISH_CREATION;
+
+    template<DifferenceOperation>
+    ISO8601::Duration differenceTemporalPlainDate(JSGlobalObject*, TemporalPlainDate*, JSValue optionsValue);
+
+    ISO8601::PlainDate m_plainDate;
+    CalendarID m_calendarID { 0 };
+};
+
+TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&);
+TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&, String&& calendarId);
+TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&, CalendarID);
+TemporalPlainDate* createTemporalDate(JSGlobalObject*, ISO8601::PlainDate&&, CalendarID, TemporalNewTarget);
+
+} // namespace JSC

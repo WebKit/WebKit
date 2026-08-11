@@ -1,0 +1,4 @@
+X
+
+FAIL referrer-policy(no-referrer) sends no referrer for @import assert_equals: @import with referrer-policy(no-referrer) should apply green style expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+

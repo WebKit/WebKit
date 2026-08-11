@@ -1,0 +1,10 @@
+Typing an ordered list whose first item starts at a number greater than 1 should produce an ol element whose start attribute matches the first number typed.
+| <ol>
+|   class="Apple-decimal-list"
+|   start="5"
+|   style="list-style-type: decimal;"
+|   <li>
+|     "A"
+|     <br>
+|   <li>
+|     "B<#selection-caret>"

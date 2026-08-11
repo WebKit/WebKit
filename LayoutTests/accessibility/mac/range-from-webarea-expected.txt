@@ -1,0 +1,8 @@
+This test verifies the the correct ranges are returned when one of the markers points to a webarea.
+Web area to end of content string: Hello world
+End of content to web area start string: Hello world
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world

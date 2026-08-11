@@ -1,0 +1,9 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../resources/webgl_test_files/conformance/textures/misc/cube-incomplete-fbo.html
+[ 1: PASS ] getError was expected value: NO_ERROR : Should be no errors after attaching cube map face.
+[ 2: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36054. Was 36061.
+[ 3: FAIL ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) should be 36053. Was 36061.
+[ 4: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
+

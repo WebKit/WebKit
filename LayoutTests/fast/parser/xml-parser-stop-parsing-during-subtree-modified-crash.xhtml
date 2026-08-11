@@ -1,0 +1,19 @@
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<script>
+<![CDATA[
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+document.addEventListener("DOMSubtreeModified", function () {
+    setTimeout(() => {
+        console.log('PASS');
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 10);
+    window.stop();
+}, false);
+]]>
+</script>
+<a

@@ -1,0 +1,16 @@
+
+PASS Loading data…
+PASS Parsing: <mailto:/example.com/> against <http://example.org/foo/bar>
+PASS Parsing: <mailto:example.com/> against <http://example.org/foo/bar>
+PASS Parsing: <mailto:/example.com/> without base
+PASS Parsing: <mailto:example.com/> without base
+PASS Parsing: <#x> against <mailto:x@x.com>
+PASS Parsing: <mailto:/../> without base
+PASS Parsing: <> without base
+PASS Parsing: <mailto://example.com:8080/pathname?search#hash> without base
+PASS Parsing: <mailto:///test> without base
+PASS Parsing: <mailto://test/a/../b> without base
+PASS Parsing: <mailto://:443> without base
+PASS Parsing: <mailto://test:test> without base
+PASS Parsing: <mailto://[:1]> without base
+

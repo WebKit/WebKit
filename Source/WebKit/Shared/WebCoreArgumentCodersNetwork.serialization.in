@@ -1,0 +1,279 @@
+# Copyright (C) 2022-2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+[LegacyPopulateFromEmptyConstructor] struct WebCore::ResourceLoadStatistics {
+    WebCore::RegistrableDomain registrableDomain;
+    WallTime lastSeen;
+    bool hadUserInteraction;
+    WallTime mostRecentUserInteractionTime;
+    bool grandfathered;
+    HashSet<WebCore::RegistrableDomain> storageAccessUnderTopFrameDomains;
+    HashSet<WebCore::RegistrableDomain> topFrameUniqueRedirectsTo;
+    HashSet<WebCore::RegistrableDomain> topFrameUniqueRedirectsToSinceSameSiteStrictEnforcement;
+    HashSet<WebCore::RegistrableDomain> topFrameUniqueRedirectsFrom;
+    HashSet<WebCore::RegistrableDomain> topFrameLinkDecorationsFrom;
+    bool gotLinkDecorationFromPrevalentResource;
+    HashSet<WebCore::RegistrableDomain> topFrameLoadedThirdPartyScripts;
+    HashSet<WebCore::RegistrableDomain> subframeUnderTopFrameDomains;
+    HashSet<WebCore::RegistrableDomain> subresourceUnderTopFrameDomains;
+    HashSet<WebCore::RegistrableDomain> subresourceUniqueRedirectsTo;
+    HashSet<WebCore::RegistrableDomain> subresourceUniqueRedirectsFrom;
+    bool isPrevalentResource;
+    bool isVeryPrevalentResource;
+    unsigned dataRecordsRemoved;
+    unsigned timesAccessedAsFirstPartyDueToUserInteraction;
+    unsigned timesAccessedAsFirstPartyDueToStorageAccessAPI;
+#if ENABLE(WEB_API_STATISTICS)
+    HashSet<WebCore::RegistrableDomain> topFrameRegistrableDomainsWhichAccessedWebAPIs;
+    HashSet<String> fontsFailedToLoad;
+    HashSet<String> fontsSuccessfullyLoaded;
+    WebCore::CanvasActivityRecord canvasActivityRecord;
+    OptionSet<WebCore::NavigatorAPIsAccessed> navigatorFunctionsAccessed;
+    OptionSet<WebCore::ScreenAPIsAccessed> screenFunctionsAccessed;
+#endif
+};
+
+[Nested] enum class WebCore::Cookie::SameSitePolicy : uint8_t {
+    None
+    Lax
+    Strict
+};
+
+struct WebCore::Cookie {
+    String name;
+    String value;
+    String domain;
+    String path;
+    String partitionKey;
+    double created;
+    std::optional<double> expires;
+    bool httpOnly;
+    bool secure;
+    bool session;
+    String comment;
+    URL commentURL;
+    Vector<uint16_t> ports;
+    WebCore::Cookie::SameSitePolicy sameSite;
+};
+
+[Nested, CustomHeader] struct WebCore::HTTPHeaderMap::CommonHeader {
+    WebCore::HTTPHeaderName key;
+    String value;
+};
+
+[Nested, CustomHeader] struct WebCore::HTTPHeaderMap::UncommonHeader {
+    String key;
+    String value;
+};
+
+class WebCore::HTTPHeaderMap {
+    Vector<WebCore::HTTPHeaderMap::CommonHeader, 0, CrashOnOverflow, 6> commonHeaders();
+    Vector<WebCore::HTTPHeaderMap::UncommonHeader, 0, CrashOnOverflow, 0> uncommonHeaders();
+}
+
+[Nested] struct WebCore::ResourceError::IPCData {
+    [Validator='*type != WebCore::ResourceError::Type::Null'] WebCore::ResourceErrorBaseType type;
+#if PLATFORM(COCOA)
+    RetainPtr<NSError> nsError;
+    bool isSanitized;
+#endif // PLATFORM(COCOA)
+#if !PLATFORM(COCOA)
+    String domain;
+    int errorCode;
+    URL failingURL;
+    String localizedDescription;
+    WebCore::ResourceError::IsSanitized isSanitized;
+#endif // !PLATFORM(COCOA)
+#if USE(SOUP)
+    WebCore::CertificateInfo certificateInfo;
+#endif // USE(SOUP)
+};
+
+[CreateUsing=fromIPCData] class WebCore::ResourceError {
+    std::optional<WebCore::ResourceError::IPCData> ipcData();
+};
+
+class WebCore::CertificateInfo {
+#if PLATFORM(COCOA)
+    RetainPtr<SecTrustRef> trust()
+#endif
+#if USE(CURL)
+    int verificationError()
+    Vector<Vector<uint8_t>> certificateChain()
+#endif
+#if USE(SOUP)
+    GRefPtr<GTlsCertificate> certificate()
+    GTlsCertificateFlags tlsErrors()
+#endif
+}
+
+enum class WebCore::ResourceRequestCachePolicy : uint8_t {
+    UseProtocolCachePolicy,
+    ReloadIgnoringCacheData,
+    ReturnCacheDataElseLoad,
+    ReturnCacheDataDontLoad,
+    DoNotUseAnyCache,
+    RefreshAnyCacheData,
+};
+
+[Nested] enum class WebCore::ResourceRequestBase::SameSiteDisposition : uint8_t {
+    Unspecified,
+    SameSite,
+    CrossSite
+};
+
+[Nested] enum class WebCore::ResourceRequestRequester : uint8_t {
+    Unspecified,
+    Main,
+    XHR,
+    Fetch,
+    Media,
+    Model,
+    ImportScripts,
+    Ping,
+    Beacon,
+    EventSource
+};
+
+enum class WebCore::ResourceLoadPriority : uint8_t {
+    VeryLow,
+    Low,
+    Medium,
+    High,
+    VeryHigh,
+};
+
+[Nested] enum class WebCore::ResourceResponseBaseType : uint8_t {
+    Basic,
+    Cors,
+    Default,
+    Error,
+    Opaque,
+    Opaqueredirect
+};
+
+[Nested] enum class WebCore::ResourceResponseBaseTainting : uint8_t {
+    Basic,
+    Cors,
+    Opaque,
+    Opaqueredirect
+};
+
+[CustomHeader] enum class WebCore::ResourceResponseSource : uint8_t {
+    Unknown,
+    Network,
+    DiskCache,
+    DiskCacheAfterValidation,
+    MemoryCache,
+    MemoryCacheAfterValidation,
+    ServiceWorker,
+    LegacyApplicationCachePlaceholder,
+    DOMCache,
+    InspectorOverride
+};
+
+using WebCore::ResourceResponseBase::Type = WebCore::ResourceResponseBaseType;
+
+using WebCore::ResourceResponseBase::Tainting = WebCore::ResourceResponseBaseTainting;
+
+using WebCore::ResourceResponseBase::Source = WebCore::ResourceResponseSource;
+
+class WebCore::ResourceResponseBase {
+    std::optional<WebCore::ResourceResponseData> getResponseData()
+}
+
+class WebCore::ResourceResponse : WebCore::ResourceResponseBase {
+}
+
+[CustomHeader] struct WebCore::ResourceResponseData {
+    URL url;
+    String mimeType;
+    long long expectedContentLength;
+    String textEncodingName;
+    short httpStatusCode;
+    String httpStatusText;
+    String httpVersion;
+    WebCore::HTTPHeaderMap httpHeaderFields;
+    std::optional<WebCore::NetworkLoadMetrics> networkLoadMetrics;
+    WebCore::ResourceResponseBase::Source source;
+    WebCore::ResourceResponseBase::Type type;
+    WebCore::ResourceResponseBase::Tainting tainting;
+    bool isRedirected;
+    WebCore::UsedLegacyTLS usedLegacyTLS;
+    WebCore::WasPrivateRelayed wasPrivateRelayed;
+    String proxyName;
+    bool isRangeRequested;
+    std::optional<WebCore::CertificateInfo> certificateInfo;
+    WebCore::IPAddressSpace ipAddressSpace;
+};
+
+[CreateUsing=create] class WebCore::HTTPHeaderField {
+    String name();
+    String value();
+};
+
+struct WebCore::CookieStoreGetOptions {
+    String name;
+    String url;
+};
+
+struct WebCore::CookieChangeSubscription {
+    String name;
+    String url;
+};
+
+class WebCore::ResourceLoadTiming {
+    MonotonicTime startTime();
+    MonotonicTime endTime();
+}
+
+[CustomHeader] class WebCore::ResourceTiming {
+    URL url();
+    String initiatorType();
+    WebCore::ResourceLoadTiming resourceLoadTiming();
+    WebCore::NetworkLoadMetrics networkLoadMetrics();
+    Vector<WebCore::ServerTiming> serverTiming();
+    bool isLoadedFromServiceWorker();
+    bool isSameOriginRequest();
+}
+
+[OptionSet] enum class WebCore::HTTPHeadersToKeepFromCleaning : uint8_t {
+    AcceptEncoding,
+    CacheControl,
+    ContentType,
+    Origin,
+    Pragma,
+    Referer,
+    UserAgent,
+};
+
+enum class WebCore::ResourceErrorBaseType : uint8_t {
+     Null,
+     General,
+     AccessControl,
+     Cancellation,
+     Timeout,
+}
+
+[Nested] enum class WebCore::ResourceError::IsSanitized : bool
+

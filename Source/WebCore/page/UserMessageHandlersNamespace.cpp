@@ -1,0 +1,110 @@
+/*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "UserMessageHandlersNamespace.h"
+
+#if ENABLE(USER_MESSAGE_HANDLERS)
+
+#include "DOMWrapperWorld.h"
+#include "FrameDestructionObserverInlines.h"
+#include "LocalFrame.h"
+#include "Page.h"
+#include "UserContentController.h"
+#include "UserMessageHandler.h"
+
+namespace WebCore {
+
+UserMessageHandlersNamespace::UserMessageHandlersNamespace(LocalFrame& frame, UserContentProvider& userContentProvider)
+    : FrameDestructionObserver(&frame)
+    , m_userContentProvider(userContentProvider)
+{
+    m_userContentProvider->registerForUserMessageHandlerInvalidation(*this);
+}
+
+UserMessageHandlersNamespace::~UserMessageHandlersNamespace()
+{
+    m_userContentProvider->unregisterForUserMessageHandlerInvalidation(*this);
+}
+
+void UserMessageHandlersNamespace::didInvalidate(UserContentProvider& provider)
+{
+    auto oldMap = WTF::move(m_messageHandlers);
+
+    provider.forEachUserMessageHandler([&](const UserMessageHandlerDescriptor& descriptor) {
+        if (RefPtr userMessageHandler = oldMap.take({ descriptor.name(), descriptor.world() })) {
+            m_messageHandlers.add({ descriptor.name(), descriptor.world() }, userMessageHandler.releaseNonNull());
+            return;
+        }
+    });
+
+    for (auto& userMessageHandler : oldMap.values())
+        userMessageHandler->invalidateDescriptor();
+}
+
+Vector<AtomString> UserMessageHandlersNamespace::supportedPropertyNames() const
+{
+    // FIXME: Consider adding support for iterating the registered UserMessageHandlers. This would
+    // require adding support for passing the DOMWrapperWorld to supportedPropertyNames.
+    return { };
+}
+
+bool UserMessageHandlersNamespace::isSupportedPropertyName(const AtomString&)
+{
+    // FIXME: Consider adding support for this. It would require adding support for passing the
+    // DOMWrapperWorld to isSupportedPropertyName().
+    return false;
+}
+
+RefPtr<UserMessageHandler> UserMessageHandlersNamespace::namedItem(DOMWrapperWorld& world, const AtomString& name)
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return nullptr;
+
+    RefPtr userContentProvider = frame->userContentProvider();
+    if (!userContentProvider)
+        return nullptr;
+
+    RefPtr handler = m_messageHandlers.get({ name, world });
+    if (handler)
+        return handler;
+
+    userContentProvider->forEachUserMessageHandler([&](const UserMessageHandlerDescriptor& descriptor) {
+        if (descriptor.name() != name || &descriptor.world() != &world)
+            return;
+
+        ASSERT(!handler);
+
+        auto addResult = m_messageHandlers.add({ descriptor.name(), descriptor.world() }, UserMessageHandler::create(*frame, descriptor));
+        handler = addResult.iterator->value.get();
+    });
+
+    return handler;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(USER_MESSAGE_HANDLERS)

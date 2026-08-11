@@ -1,0 +1,11 @@
+
+Tests that UIHelper.insertAutofillSuggestion fills the focused username and password inputs in a same-origin login form on iOS.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS userValue is "frederik"
+PASS passwordValue is "famos"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,62 @@
+Test the WebGL premultipledAlpha context creation flag.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+testing: premultipliedAlpha: true imageFormat: image/png
+PASS gl.getContextAttributes().premultipledAlpha is premultipledAlpha
+PASS gl.getContextAttributes().preserveDrawingBuffer is true
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS getError was expected value: NO_ERROR : Should be no errors from drawing.
+PASS getError was expected value: NO_ERROR : Should be no errors from creating copy.
+PASS getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+PASS should draw with 64,128,255,128
+
+testing: premultipliedAlpha: true imageFormat: undefined
+PASS gl.getContextAttributes().premultipledAlpha is premultipledAlpha
+PASS gl.getContextAttributes().preserveDrawingBuffer is true
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS getError was expected value: NO_ERROR : Should be no errors from drawing.
+PASS getError was expected value: NO_ERROR : Should be no errors from creating copy.
+PASS getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+PASS should draw with 64,128,255,128
+
+testing: premultipliedAlpha: false imageFormat: image/png
+PASS gl.getContextAttributes().premultipledAlpha is premultipledAlpha
+PASS gl.getContextAttributes().preserveDrawingBuffer is true
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS getError was expected value: NO_ERROR : Should be no errors from drawing.
+PASS getError was expected value: NO_ERROR : Should be no errors from creating copy.
+PASS getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+PASS should draw with 255,192,128,1
+
+testing: premultipliedAlpha: false imageFormat: undefined
+PASS gl.getContextAttributes().premultipledAlpha is premultipledAlpha
+PASS gl.getContextAttributes().preserveDrawingBuffer is true
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS getError was expected value: NO_ERROR : Should be no errors from drawing.
+PASS getError was expected value: NO_ERROR : Should be no errors from creating copy.
+PASS getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+PASS should draw with 255,192,128,1
+
+testing: premultipliedAlpha: false imageFormat: image/jpeg
+PASS gl.getContextAttributes().premultipledAlpha is premultipledAlpha
+PASS gl.getContextAttributes().preserveDrawingBuffer is true
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS getError was expected value: NO_ERROR : Should be no errors from drawing.
+PASS getError was expected value: NO_ERROR : Should be no errors from creating copy.
+PASS getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+PASS should draw with 128,128,128,255
+
+testing: premultipliedAlpha: true imageFormat: image/jpeg
+PASS gl.getContextAttributes().premultipledAlpha is premultipledAlpha
+PASS gl.getContextAttributes().preserveDrawingBuffer is true
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS getError was expected value: NO_ERROR : Should be no errors from drawing.
+PASS getError was expected value: NO_ERROR : Should be no errors from creating copy.
+PASS getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
+PASS should draw with 128,128,128,255
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

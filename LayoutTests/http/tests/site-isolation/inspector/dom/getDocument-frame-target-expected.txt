@@ -1,0 +1,11 @@
+Test that a cross-origin iframe's FrameDOMAgent returns a valid document tree.
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent
+-- Running test case: SiteIsolation.DOM.FrameDOMAgent.GetDocument
+PASS: Frame target should have a DOMAgent.
+PASS: Frame target should have a document.
+PASS: Root should be a Document node.
+PASS: Document should have children.
+PASS: Document should have an HTML element child.
+

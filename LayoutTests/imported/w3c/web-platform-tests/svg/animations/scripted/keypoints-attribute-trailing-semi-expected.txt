@@ -1,0 +1,3 @@
+
+FAIL A trailing semicolon is allowed in the 'keyPoints' attribute assert_equals: expected -100 but got 0
+

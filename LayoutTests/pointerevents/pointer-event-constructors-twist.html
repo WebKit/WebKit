@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test.js"></script>
+    <script src="../resources/ui-helper.js"></script>
+</head>
+<script>
+    window.jsTestIsAsync = true;
+    if (window.testRunner) {
+
+        event = new PointerEvent('pointerdown');
+        shouldBe("event.twist", "0");
+
+        event = new PointerEvent('pointerdown', { twist: 50 });
+        shouldBe("event.twist", "50");
+        finishJSTest();
+    }
+</script>
+</html>

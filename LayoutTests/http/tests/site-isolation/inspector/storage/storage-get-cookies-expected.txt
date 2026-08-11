@@ -1,0 +1,15 @@
+Tests that Storage.getCookies returns cookies from the NetworkProcess-backed cookie store under Site Isolation.
+
+
+== Running test suite: Storage.getCookies
+-- Running test case: Storage.getCookies.Enable
+Storage domain enabled.
+
+-- Running test case: Storage.getCookies.InitiallyEmpty
+PASS: Should be no cookies.
+
+-- Running test case: Storage.getCookies.AfterSet
+PASS: Should have found the 'Baseline' cookie.
+PASS: Cookie value should be 'PASS'.
+PASS: Cookie domain should be '127.0.0.1'.
+

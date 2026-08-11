@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="/resourceLoadStatistics/resources/util.js"></script>
+    <script>
+        description("Tests the LoginStatus API to set and get the login status.");
+        jsTestIsAsync = true;
+
+        async function runTest() {
+            try {
+                await navigator.setStatus('logged-in');
+                testPassed("Successfully set login status to 'logged-in'.");
+                const isLoggedIn = await navigator.isLoggedIn();
+                if (isLoggedIn)
+                    testPassed("isLoggedIn() returned true after setting status to 'logged-in'.");
+                else
+                    testFailed("isLoggedIn() returned false after setting status to 'logged-in'.");
+
+                await navigator.setStatus('logged-out');
+                testPassed("Successfully set login status to 'logged-out'.");
+
+                const isLoggedOut = await navigator.isLoggedIn();
+                if (!isLoggedOut)
+                    testPassed("isLoggedIn() returned false after setting status to 'logged-out'.");
+                else
+                    testFailed("isLoggedIn() returned true after setting status to 'logged-out'.");
+            } catch (error) {
+                testFailed("An error occurred: " + error);
+            } finally {
+                finishJSTest();
+            }
+        }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

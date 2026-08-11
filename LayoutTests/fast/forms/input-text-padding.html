@@ -1,0 +1,70 @@
+<!-- webkit-test-runner [ VectorBasedControlsOnMacEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+#input1 {
+    padding-top: 22px;
+}
+
+#input2 {
+    padding-right: 22px;
+}
+
+#input3 {
+    padding-bottom: 22px;
+}
+
+#input4 {
+    padding-left: 22px;
+}
+
+#input5 {
+    padding-block-start: 22px;
+}
+
+#input6 {
+    padding-inline-end: 22px;
+}
+
+#input7 {
+    padding-block-end: 22px;
+}
+
+#input8 {
+    padding-inline-start: 22px;
+}
+
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<p id="description"></p>
+
+<input id="input1">
+<input id="input2">
+<input id="input3">
+<input id="input4">
+<input id="input5">
+<input id="input6">
+<input id="input7">
+<input id="input8">
+
+<div id="console"></div>
+<script>
+
+description('This test checks that padding applies to text inputs with native appearance.');
+
+shouldBeEqualToString('getComputedStyle(input1).paddingTop', '22px');
+shouldBeEqualToString('getComputedStyle(input2).paddingRight', '22px');
+shouldBeEqualToString('getComputedStyle(input3).paddingBottom', '22px');
+shouldBeEqualToString('getComputedStyle(input4).paddingLeft', '22px');
+shouldBeEqualToString('getComputedStyle(input5).paddingBlockStart', '22px');
+shouldBeEqualToString('getComputedStyle(input6).paddingInlineEnd', '22px');
+shouldBeEqualToString('getComputedStyle(input7).paddingBlockEnd', '22px');
+shouldBeEqualToString('getComputedStyle(input8).paddingInlineStart', '22px');
+
+</script>
+</body>
+</html>

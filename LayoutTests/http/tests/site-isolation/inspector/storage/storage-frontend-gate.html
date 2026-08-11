@@ -1,0 +1,61 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIframeThatSetsCookie() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "cookie-frame";
+    // Cross-origin => separate WebContent process under Site Isolation, which spawns a Frame Target.
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/storage/resources/set-cookie-via-script.html`;
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Storage.FrontendGate");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Storage.FrontendGate.RoutesToStorageDomainOnceFrameTargetExists",
+        description: "WI.storageManager.shouldUseStorageDomain gates the frontend's cookie source on Site Isolation. It must be false before any cross-origin iframe exists, and flip to true once the iframe's Frame Target is committed, so cookie inspection reads the authoritative Storage-domain store rather than the in-process Page path.",
+        async test() {
+            await InspectorTest.evaluateInPage(`if (window.testRunner) testRunner.setAlwaysAcceptCookies(true);`);
+
+            // The Storage domain lives on the backend (multiplexing) target and exists regardless of
+            // Site Isolation. WI.storageManager.enable() runs at startup, so it is already active.
+            InspectorTest.expectTrue(WI.storageManager.hasStorageDomain, "The Storage domain should exist on the backend (multiplexing) target regardless of Site Isolation.");
+
+            // Before any cross-origin frame, there is no Frame Target, so Site Isolation is not yet
+            // active from the frontend's point of view and the Storage-domain path is not selected.
+            InspectorTest.expectFalse(WI.isSiteIsolationEnabled(), "Site Isolation should not be active before a cross-origin iframe loads.");
+            InspectorTest.expectFalse(WI.storageManager.shouldUseStorageDomain, "Frontend should not route cookies through the Storage domain before Site Isolation is active.");
+
+            // Adding the cross-origin iframe spawns a Frame Target. TargetAdded is dispatched
+            // asynchronously, so await it as the reliable "Site Isolation is active" signal.
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addCrossOriginIframeThatSetsCookie()");
+
+            let frameTarget = (await targetAddedPromise).data.target;
+            InspectorTest.expectThat(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe should be its own Frame Target (out-of-process).");
+
+            if (frameTarget.isProvisional)
+                await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+
+            // With a Frame Target present, the frontend gate flips: cookies now come from the
+            // authoritative Storage-domain store so cross-origin iframe cookies are visible.
+            InspectorTest.expectTrue(WI.isSiteIsolationEnabled(), "Site Isolation should be active once a Frame Target exists.");
+            InspectorTest.expectTrue(WI.storageManager.shouldUseStorageDomain, "Frontend should route cookies through the Storage domain once Site Isolation is active.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that the frontend's WI.storageManager.shouldUseStorageDomain gate selects the Storage domain for cookie inspection only once a cross-origin iframe (a Frame Target) makes Site Isolation active.</p>
+</body>
+</html>

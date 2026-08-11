@@ -1,0 +1,10 @@
+PASS sampledColors.bottom is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+To manually test, open this page in Safari and verify that bottom fixed color extensions don’t appear
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+

@@ -1,0 +1,3 @@
+
+PASS RTCDtlsTransport.prototype.getRemoteCertificates
+

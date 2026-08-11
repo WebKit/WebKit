@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script>
+        if (window.testRunner) {
+            const hostname = window.location.hostname;
+            alert(`Iframe loaded in ${hostname}. Attempting to open popup...`);
+            try {
+                const blockedPopup = window.open("about:blank");
+                if (!blockedPopup) {
+                    alert(`PASS: window.open() in ${hostname} returned null as expected.`);
+                } else {
+                    alert(`FAIL: window.open() in ${hostname} returned a valid Window object.`);
+                    blockedPopup.close();
+                }
+                const validPopup = window.open("data:text/html, hello");
+                if (!validPopup) {
+                    alert(`FAIL: window.open() in ${hostname} returned null.`);
+                } else {
+                    alert(`PASS: window.open() in ${hostname} returned a valid Window object as expected.`);
+                    validPopup.close();
+                }
+            } catch (e) {
+                alert(`FAIL: An unexpected error occurred: ${e}`);
+            }
+            testRunner.notifyDone();
+        } else {
+            document.body.textContent = "Test requires window.testRunner.";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS Transition of anchor() when changing target anchor element name
+PASS Transition of anchor-size() when changing target anchor element name
+

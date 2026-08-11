@@ -1,0 +1,28 @@
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function testFunc() {
+  (async () => {
+    let cache = await caches.open("a");
+    try {
+      let ret = await cache.match("/\\X\u0600");
+      assert_unreached("Should never reach here, expected exception.")
+    } catch (err) {
+      assert_true(err instanceof TypeError);
+      assert_equals(err.message, "URL is not valid or contains user credentials.");
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+  })();
+}
+</script>
+<body onload="testFunc()">
+<p>
+PASS Throwing exception on invalid url.
+</p>
+</body>

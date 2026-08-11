@@ -1,0 +1,23 @@
+{
+  "url": "content/counting-video-vttsimple.mp4",
+  "type": "video/mp4; codecs=\"mp4v.20.f3,wvtt\"",
+  "init": {
+    "offset": 0,
+    "size": 1270
+  },
+  "duration": 10.0,
+  "media": [
+    {
+      "offset": 1270,
+      "size": 152763,
+      "timestamp": 0.0,
+      "duration": 5.0
+    },
+    {
+      "offset": 154033,
+      "size": 159335,
+      "timestamp": 5.0,
+      "duration": 10.0
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        video {
+            width: 480px;
+            height: 320px;
+            position: absolute;
+        }
+
+        button {
+            top: 320px;
+            left: 20px;
+            position: absolute;
+        }
+
+        body {
+            margin: 0;
+        }
+    </style>
+    <script>
+        function playing() {
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("playing");
+                } catch(e) {
+                }
+            }, 0);
+        }
+
+        function seeked() {
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("seeked");
+                } catch(e) {
+                    console.debug(`error: ${e}`);
+                }
+            }, 0);
+        }
+
+        function seekTo(time) {
+            document.querySelector("video").currentTime = time;
+        }
+
+        function setLoop(loop) {
+            document.querySelector("video").loop = loop;
+        }
+
+        function mousedown() {
+            document.querySelector("video").muted = true;
+        }
+
+        function removeVideoElement() {
+            document.body.removeChild(document.querySelector("video"));
+            return document.querySelector("video");
+        }
+
+        function play() {
+            document.querySelector("video").play();
+        }
+
+        function pause() {
+            document.querySelector("video").pause();
+        }
+
+        function stopped() {
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("paused");
+                } catch(e) {
+                    console.debug(`error: ${e}`);
+                }
+            }, 0);
+        }
+
+        function handleEnded() {
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("ended");
+                } catch(e) {
+                    console.debug(`error: ${e}`);
+                }
+            }, 0);
+        }
+
+        function canplaythrough() {
+            setTimeout(function() {
+                try {
+                    window.webkit.messageHandlers.testHandler.postMessage("canplaythrough");
+                } catch(e) {
+                    console.debug(`error: ${e}`);
+                }
+            }, 0);
+        }
+
+        function setMediaSessionMetadata() {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: "bar",
+                artwork: [
+                    {
+                        src: "400x400-green.png",
+                        sizes: "400x400",
+                        type: "image/png",
+                    },
+                ],
+            });
+        }
+
+        function loadSubframe() {
+            const frame = document.createElement("iframe");
+            frame.addEventListener("load", () => {
+                window.webkit.messageHandlers.testHandler.postMessage("subframeLoaded");
+            });
+            frame.src = "simple.html";
+            document.body.appendChild(frame);
+        }
+
+    </script>
+</head>
+<body>
+    <video autoplay title="foo" onmousedown=mousedown() onplaying=playing() onpause=stopped() onseeked=seeked() onended=handleEnded() oncanplaythrough=canplaythrough()>
+        <source src="large-video-with-audio.mp4">
+    </video>
+    <button onclick="console.log(removeVideoElement())">Stop!</button>
+</body>
+<html>

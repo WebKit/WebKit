@@ -1,0 +1,6 @@
+
+PASS var(--unknown, revert-layer) in custom property
+PASS var(--unknown, revert-layer) in shorthand
+PASS var(--unknown, revert-layer) in shorthand observed via longhand
+PASS var(--unknown, revert-layer) in longhand
+

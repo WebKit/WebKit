@@ -1,0 +1,8 @@
+희진DJ
+
+
+PASS Korean/Latin transition should be considered a word boundary when moving forward
+PASS Korean/Latin transition should be considered a word boundary when moving backward
+PASS Latin/Korean transition should be considered a word boundary when moving forward
+PASS Latin/Korean transition should be considered a word boundary when moving backward
+

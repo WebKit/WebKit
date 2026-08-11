@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Transfer MediaStreamTrack to dedicated worker</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+
+async function createWorker(script)
+{
+    script += "self.postMessage('ready');";
+    const blob = new Blob([script], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+    await new Promise(resolve => worker.onmessage = () => {
+        resolve();
+    });
+    URL.revokeObjectURL(url);
+    return worker;
+}
+
+async function waitForSettings(track, width, height)
+{
+    let counter = 0;
+    while (++counter < 100) {
+        const settings = track.getSettings();
+        if (settings.width === width && settings.height === height)
+            return;
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+}
+
+promise_test(async test => {
+    const worker = await createWorker(`
+        function makeOffscreenCanvasVideoFrame(width, height) {
+            let canvas = new OffscreenCanvas(width, height);
+            let ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgba(50, 100, 150, 255)';
+            ctx.fillRect(0, 0, width, height);
+            return new VideoFrame(canvas, { timestamp: 1 });
+        }
+        self.onmessage = async (event) => {
+            const generator = new VideoTrackGenerator();
+            const writer = generator.writable.getWriter();
+            writer.write(makeOffscreenCanvasVideoFrame(100, 100));
+            self.postMessage({ track : generator.track }, [generator.track]);
+        }
+    `);
+    test.add_cleanup(() => worker.terminate());
+
+    const tracks = [];
+    for (let i = 0; i < 10; ++i) {
+        worker.postMessage("track");
+        tracks.push(await new Promise(resolve => worker.onmessage = e => resolve(e.data.track)));
+    }
+
+    for (const track of tracks) {
+      await waitForSettings(track, 100, 100);
+      assert_equals(track.getSettings().width, 100, "width");
+      assert_equals(track.getSettings().height, 100, "height");
+    }
+}, "Transfer VideoTrackGenerator right before writing the first frame");
+
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+
+
+PASS moveBefore() correctly updates name map when moving into shadow root
+PASS moveBefore() correctly updates window map
+PASS moveBefore() correctly updates name map ordering in document
+

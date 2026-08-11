@@ -1,0 +1,89 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        #scroller {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 500px;
+            height: 400px;
+            border: 2px solid gray;
+            overflow-y: scroll;
+            background-color: rgba(255, 255, 255, 0.5);
+            box-sizing: border-box;
+        }
+
+        .fixed {
+            position: fixed;
+            left: 0px;
+            top: -200px; /* outside the viewport */
+            width: 200px;
+            height: 100px;
+        }
+
+        .box {
+            position: absolute;
+            top: 210px;
+            left: 10px;
+            width: 300px;
+            height: 100px;
+            background-color: green;
+        }
+
+        .contents {
+            position: absolute;
+            left: 35px;
+            top: 28px;
+            width: 90%;
+            height: 300%;
+        }
+
+        .outside-box {
+            position: absolute;
+            overflow: hidden;
+            top: 20px;
+            left: 530px;
+            width: 20px;
+            height: 400px;
+            background-color: silver;
+        }
+
+        #header {
+            position: relative;
+            background-color: blue;
+            width: 100%;
+            height: 20px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            const scroller = document.getElementById('scroller');
+            scroller.addEventListener('scroll', () => {
+                const scrollPos = scroller.scrollTop;
+                const header = document.getElementById('header');
+                header.style.top = `-${scrollPos}px`;
+            }, false);
+            
+            requestAnimationFrame(() => {
+                scroller.scrollTop = 100;
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            })
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="contents">
+            <div class="fixed"></div>
+            <div class="box"></div>
+        </div>
+    </div>
+    <div class="outside-box">
+        <div id="header">relative</div>
+    </div>
+</body>

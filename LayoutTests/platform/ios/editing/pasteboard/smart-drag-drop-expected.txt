@@ -1,0 +1,10 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+Tests that drag/drop after double-click does a smart drag. Specifically the end result should have a space: "world hello".<br>
+To test manually double click on the "hello" and drag it to after "world".
+| <span>
+|   id="dragme"
+|   "<#selection-caret>hello"
+| " world"

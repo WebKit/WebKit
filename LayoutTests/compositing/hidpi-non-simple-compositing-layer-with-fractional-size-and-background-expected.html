@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that a non simple render backing layer with fractional CSS pixel size paints the background with no cruft.</title>
+<head>
+<style>
+  div {
+    background: green; 
+    position: absolute;
+    border: 0.5px solid red;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  adjustment = 0.1;
+  w = 2; h = 2;
+  for (i = 0; i < 30; ++i) {
+    adjustment += 0.1;
+    for (j = 0; j < 40; ++j) {
+      var e = document.createElement("div");
+      e.style.top = ((w + 2) * i + j * adjustment) + "px";
+      e.style.left = ((w + 2) * j + i * adjustment) + "px";
+      e.style.width = w + "px";
+      e.style.height = h + "px";
+      container.appendChild(e);
+      w += 0.01;
+      h += 0.01;
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<head>
+<script>
+function fail(){
+    window.parent.postMessage("test:fail", "*");
+}
+</script>
+</head>
+<body onload="fail()">
+<h1>target</h1>
+</body>

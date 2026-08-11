@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+   <head>
+       <title>CSS Test: Reference Result</title>
+       <link rel="author" title="WebKit" href="http://www.webkit.org/">
+       <link rel="help" href="http://www.w3.org/TR/CSS21/tables.html#height-layout">
+        <style type="text/css">
+            td
+            {
+                height:10px;
+                vertical-align: baseline;
+            }
+            #small
+            {
+                font-family: Ahem;
+                font-size: small;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the bottom of the black boxes is aligned.</p>
+        <table>
+            <tr>
+                <td>
+                    <div id="small">Text</div>
+                </td>
+                <td>
+                    <div id="small">Text</div>
+                </td>
+                <td>
+                    <div id="small">Text</div>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

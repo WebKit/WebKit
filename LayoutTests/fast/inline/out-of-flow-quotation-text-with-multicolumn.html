@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<title>This tests that out-of-flow quotes with multicolumn show up.</title>
+<head>
+<style>
+q:before { 
+  position: fixed;
+  column-count: 2;
+  color: transparent;
+} 
+
+q:after { 
+  position: fixed;
+  left: 0px;
+  top: 0px;
+} 
+</style>
+</head>
+<body>
+<q>&nbsp</q>
+</body>
+</html>

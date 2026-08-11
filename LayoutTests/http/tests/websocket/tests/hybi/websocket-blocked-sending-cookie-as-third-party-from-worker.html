@@ -1,0 +1,60 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+    <script src="../../../../js-test-resources/js-test.js"></script>
+    <script src="../../../cookies/resources/cookie-utilities.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        function runWorkerTest()
+        {
+            shouldBeEqualToString("document.location.host", "127.0.0.1:8000");
+            debug("<br>Sending third-party cookie through cross-origin WebSocket handshake from DedicatedWorker is blocked.");
+
+            let worker = new Worker("resources/websocket-blocked-sending-cookie-as-third-party-worker.js");
+            worker.onmessage = (event) => {
+                let { type, message } = event.data;
+                if (type === "pass")
+                    testPassed(message);
+                else if (type === "fail")
+                    testFailed(message);
+                else
+                    debug(message);
+
+                if (type === "done")
+                    finishJSTest();
+            };
+        }
+
+        async function runTest()
+        {
+            switch (document.location.hash) {
+                case "":
+                    // Navigate to localhost to set first-party cookie there.
+                    await setCookie("setAsFirstPartyHTTPLoopback", "value");
+                    document.location.href = "http://localhost:8000/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-from-worker.html#setCookieAsFirstParty";
+                    break;
+                case "#setCookieAsFirstParty":
+                    await setCookie("setAsFirstPartyHTTP", "value");
+                    document.cookie = "setAsFirstPartyJS=value";
+                    document.location.href = "http://127.0.0.1:8000/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-from-worker.html#didSetCookieAsFirstParty";
+                    break;
+                case "#didSetCookieAsFirstParty":
+                    shouldBeUndefined(document.cookie);
+                    runWorkerTest();
+                    break;
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="output"></div>
+<script>
+    description("Tests that a DedicatedWorker WebSocket does not send third-party cookies when ITP cookie blocking is enabled.");
+    if (window.testRunner && testRunner.setStatisticsShouldBlockThirdPartyCookies)
+        testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runTest);
+    else
+        runTest();
+</script>
+</body>
+</html>

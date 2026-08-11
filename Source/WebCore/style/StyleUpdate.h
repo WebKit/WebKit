@@ -1,0 +1,109 @@
+/*
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "Node.h"
+#include "StyleChange.h"
+#include <wtf/HashMap.h>
+#include <wtf/OrderedHashSet.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace WebCore {
+
+class ContainerNode;
+class Document;
+class Element;
+class Node;
+class SVGElement;
+class Text;
+
+namespace Style {
+
+class ComputedStyle;
+
+enum class SVGRendererUpdateType : bool {
+    Default, // Routes through Style::Update -> RenderTreeUpdater::updateSVGRenderer.
+    TransformAttributeOnly // LBSE in-place transform refresh, bypasses Style::Update.
+};
+
+struct ElementUpdate {
+    std::unique_ptr<Style::ComputedStyle> style;
+    OptionSet<Change> changes { };
+    bool recompositeLayer { false };
+    bool mayNeedRebuildRoot { false };
+};
+
+struct TextUpdate {
+    unsigned offset { 0 };
+    unsigned length { std::numeric_limits<unsigned>::max() };
+    std::optional<std::unique_ptr<Style::ComputedStyle>> inheritedDisplayContentsStyle;
+};
+
+class Update final : public CanMakeCheckedPtr<Update, WTF::DefaultedOperatorEqual::No, WTF::CheckedPtrDeleteCheckException::Yes> {
+    WTF_MAKE_TZONE_ALLOCATED(Update);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Update);
+public:
+    Update(Document&);
+    ~Update();
+
+    const OrderedHashSet<Ref<ContainerNode>>& roots() const LIFETIME_BOUND { return m_roots; }
+    OrderedHashSet<Ref<Element>> takeRebuildRoots() { return WTF::move(m_rebuildRoots); }
+
+    const ElementUpdate* NODELETE elementUpdate(const Element&) const;
+    ElementUpdate* NODELETE elementUpdate(const Element&);
+
+    const TextUpdate* NODELETE textUpdate(const Text&) const;
+
+    const Style::ComputedStyle* initialContainingBlockUpdate() const LIFETIME_BOUND { return m_initialContainingBlockUpdate.get(); }
+
+    const Style::ComputedStyle* NODELETE elementStyle(const Element&) const;
+    Style::ComputedStyle* NODELETE elementStyle(const Element&);
+
+    const Document& document() const { return m_document; }
+
+    bool isEmpty() const { return !size(); }
+    unsigned size() const { return m_elements.size() + m_texts.size(); }
+
+    void addElement(Element&, Element* parent, ElementUpdate&&);
+    void addText(Text&, Element* parent, TextUpdate&&);
+    void addText(Text&, TextUpdate&&);
+    void addSVGRendererUpdate(SVGElement&);
+    void addInitialContainingBlockUpdate(std::unique_ptr<Style::ComputedStyle>);
+
+private:
+    void addPossibleRoot(Element*);
+    void addPossibleRebuildRoot(Element&, Element* parent);
+
+    const Ref<Document> m_document;
+    OrderedHashSet<Ref<ContainerNode>> m_roots;
+    OrderedHashSet<Ref<Element>> m_rebuildRoots;
+    HashMap<Ref<const Element>, ElementUpdate> m_elements;
+    HashMap<Ref<const Text>, TextUpdate> m_texts;
+    std::unique_ptr<Style::ComputedStyle> m_initialContainingBlockUpdate;
+};
+
+}
+}

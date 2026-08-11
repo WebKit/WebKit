@@ -1,0 +1,3 @@
+
+PASS Instantiation errors in different files should be reported depending on different roots
+

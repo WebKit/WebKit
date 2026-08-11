@@ -1,0 +1,7 @@
+
+PASS error event is normal (return true does not cancel; one arg) on Document, with a synthetic ErrorEvent
+PASS Initial values of ErrorEvent members
+PASS error member can be set to null
+PASS error member can be set to undefined
+PASS error member can be set to arbitrary
+

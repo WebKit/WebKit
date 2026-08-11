@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>configurationchange is deferred while muted and fires on unmute.</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <video id=video playsInline autoplay></video>
+    <script>
+    promise_test(async (t) => {
+        if (!window.testRunner || !window.internals)
+            return;
+
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+        const track = stream.getVideoTracks()[0];
+
+        video.srcObject = stream;
+        await video.play();
+
+        assert_false(track.muted);
+        assert_false(track.getSettings().backgroundBlur);
+
+        let configChangeCount = 0;
+        track.onconfigurationchange = () => { ++configChangeCount; };
+
+        const mutePromise = new Promise(resolve => track.onmute = resolve);
+        internals.setMediaStreamSourceInterrupted(track, true);
+        await mutePromise;
+        assert_true(track.muted);
+
+        testRunner.triggerMockCaptureConfigurationChange(true, false, false);
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        assert_equals(configChangeCount, 0, "configurationchange must not fire while muted");
+
+        const unmutePromise = new Promise(resolve => track.onunmute = resolve);
+        internals.setMediaStreamSourceInterrupted(track, false);
+        await unmutePromise;
+        assert_false(track.muted);
+
+        await new Promise(resolve => setTimeout(resolve, 200));
+        assert_equals(configChangeCount, 1, "configurationchange must fire exactly once after unmute");
+        assert_true(track.getSettings().backgroundBlur);
+    }, "configurationchange is deferred while muted and fires after unmute");
+
+    promise_test(async (t) => {
+        if (!window.testRunner || !window.internals)
+            return;
+
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+        const track = stream.getVideoTracks()[0];
+
+        video.srcObject = stream;
+        await video.play();
+
+        let configChangeCount = 0;
+        track.onconfigurationchange = () => { ++configChangeCount; };
+
+        const mutePromise = new Promise(resolve => track.onmute = resolve);
+        internals.setMediaStreamSourceInterrupted(track, true);
+        await mutePromise;
+
+        testRunner.triggerMockCaptureConfigurationChange(true, false, false);
+        testRunner.triggerMockCaptureConfigurationChange(true, false, false);
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        assert_equals(configChangeCount, 0, "configurationchange must not fire while muted");
+
+        const unmutePromise = new Promise(resolve => track.onunmute = resolve);
+        internals.setMediaStreamSourceInterrupted(track, false);
+        await unmutePromise;
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+        assert_equals(configChangeCount, 1, "multiple deferred changes coalesce into a single event on unmute");
+    }, "multiple configurationchange notifications while muted coalesce into one event on unmute");
+    </script>
+</body>
+</html>

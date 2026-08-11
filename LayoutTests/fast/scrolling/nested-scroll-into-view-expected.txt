@@ -1,0 +1,10 @@
+Verifies that focusing element should not scroll the top level container
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS container.scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Entering fullscreen while fully exiting fullscreen</title>
+    <script src="full-screen-test.js"></script>
+    <script>
+
+    window.addEventListener('load', async event => {
+        if (Element.prototype.requestFullscreen == undefined) {
+            logResult(false, "Element.prototype.requestFullscreen == undefined");
+            endTest();
+            return;
+        }
+
+        if (!window.testRunner) {
+            logResult(false, "This test requires WebKitTestRunner.");
+            endTest();
+            return;
+        }
+
+        consoleWrite('Enter fullscreen with target1');
+        internals.withUserGesture(() => { run('target1.requestFullscreen()'); });
+        await waitFor(target1, 'fullscreenchange');
+        await testRunner.updatePresentation();
+
+        consoleWrite('Fully exit fullscreen with target1');
+        run('document.webkitCancelFullScreen()');
+
+        consoleWrite('Attempt to enter fullscreen with target2');
+        internals.withUserGesture(() => { run('target2.requestFullscreen()'); });
+
+        await waitFor(target2, 'fullscreenerror');
+        await testRunner.updatePresentation();
+
+        internals.withUserGesture(() => { run('target2.requestFullscreen()'); });
+        await waitFor(target2, 'fullscreenchange');
+
+        endTest();
+    });
+</script>
+</head>
+<body>
+<span id="target1"></span>
+<span id="target2"></span>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<script src="../../resources/ui-helper.js"></script>
+<script>
+async function test()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    var select = document.getElementById("select");
+    await UIHelper.activateElement(select);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+function reportFocus()
+{
+    document.getElementById("result").innerHTML = "PASS";
+}
+</script>
+<body onload="test()">
+<p>The select below should be focused because we dispatched a mouse down event to it.</p>
+<p id="result">FAIL</p>
+<select id="select" size="4" onfocus="reportFocus()">
+    <option>one</option>
+    <option>two</option>
+    <option>three</option>
+    <option>four</option>
+</select>
+</body>

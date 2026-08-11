@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (test) => {
+    const scope = "resources";
+    const registration = await navigator.serviceWorker.register("navigation-optimization-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    await new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+
+    await registration.navigationPreload.enable();
+}, "Setup worker");
+
+promise_test(async (test) => {
+    const promise1 = new Promise((resolve, reject) => { window.callback1 = resolve; setTimeout(() => reject("callback1"), 4000); });
+    const promise2 = new Promise((resolve, reject) => { window.callback2 = resolve; setTimeout(() => reject("callback2"), 5000); });
+
+    // The iframe is responsible to call callback1 and callback2.
+    with_iframe("/WebKit/service-workers/resources/navigation-optimization.py?delay=1.0");
+
+    await promise1;
+    await promise2;
+}, "Make sure a load that is transferred in network process continues even if service worker gets terminated.");
+
+promise_test(async (test) => {
+    const promise1 = new Promise((resolve, reject) => { window.callback1 = resolve; setTimeout(() => reject("callback1"), 4000); });
+    const promise2 = new Promise((resolve, reject) => { window.callback2 = resolve; setTimeout(() => reject("callback2"), 5000); });
+
+    // The iframe is responsible to call callback1 and callback2.
+    with_iframe("/WebKit/service-workers/resources/navigation-optimization.py?get-body");
+
+    await promise1;
+    await promise2;
+}, "Make sure a load that a preload response can be read right away.");
+</script>
+</body>
+</html>

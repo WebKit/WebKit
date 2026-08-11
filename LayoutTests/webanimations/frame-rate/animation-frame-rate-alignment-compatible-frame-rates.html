@@ -1,0 +1,54 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>Animation.frameRate</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const timestamps = new Map;
+
+    const timing = { duration: 10_000, iterations: Infinity };
+
+    await new Promise(resolve => {
+        const animations = [];
+
+        const addTimestamp = frameRate => {
+            const timestamp = document.timeline.currentTime;
+            if (!timestamps.has(timestamp))
+                timestamps.set(timestamp, new Set);
+            timestamps.get(timestamp).add(frameRate);
+
+            if (timestamps.get(timestamp).size == 3)
+                resolve();
+        };
+
+        const addAnimation = frameRate => {
+            const animation = document.timeline.animate(progress => addTimestamp(frameRate), timing);
+            animation.frameRate = frameRate;
+            animations.push(animation);
+            t.add_cleanup(() => animation.cancel());
+        };
+
+        // Start an animation that updates at 12fps.
+        addAnimation(12);
+
+        // Wait one frame before we start another animation running at 6fps.
+        // This new animation should update in sync with the 12fps animation.
+        requestAnimationFrame(() => {
+            addAnimation(6);
+
+            // Wait another frame before we start another animation running at 6fps.
+            // This new animation should update in sync with the 12fps animation.
+            requestAnimationFrame(() => {
+                addAnimation(18);
+            })
+        });
+    });
+}, "Animations that start on consecutive frames with different, but compatible frame rates, eventually resolve in the same frame");
+
+</script>
+</body>

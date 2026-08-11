@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter()
+    let device = await adapter.requestDevice({ requiredLimits: { maxVertexBufferArrayStride: 3100 } });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    let texture = device.createTexture({ size: [], format: 'rgba16float', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let textureView = texture.createView();
+    let shaderModule = device.createShaderModule({ code: `
+        struct f {
+            @location(7) g: vec3<f16>
+        }
+        struct h {
+            @location(0) i: vec4<f32>
+        }
+        @fragment fn j() -> h {
+            return h();
+        }
+        struct k {
+            @location(0) @builtin(position) l: vec4<f32>
+        }
+        @vertex fn m() -> k {
+            return k();
+        }
+    `});
+    let buffer = device.createBuffer({ size: 32, usage: GPUBufferUsage.INDIRECT });
+    let pipeline = device.createRenderPipeline({
+        layout: pipelineLayout,
+        fragment: { module: shaderModule, targets: [{ format: 'rgba16float' }] },
+        vertex: { module: shaderModule, buffers: [, { arrayStride: 3100, attributes: [{ format: 'unorm8x4', offset: 8, shaderLocation: 9 }] }] },
+    })
+    let renderBundleEncoder = device.createRenderBundleEncoder({colorFormats: [ 'rgba16float' ]})
+    buffer.destroy()
+    let buffer2 = device.createBuffer({ size: 0, usage: GPUBufferUsage.INDEX });
+    let buffer3 = device.createBuffer({ size: 12, usage: GPUBufferUsage.VERTEX });
+    renderBundleEncoder.setIndexBuffer(buffer2, 'uint32');
+    renderBundleEncoder.setVertexBuffer(1, buffer3);
+    renderBundleEncoder.setPipeline(pipeline);
+    renderBundleEncoder.drawIndexedIndirect(buffer, 8);
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass({ colorAttachments: [{ view: textureView, loadOp: 'load', storeOp: 'discard' }] });
+    let renderBundle = renderBundleEncoder.finish();
+    renderPassEncoder.executeBundles([renderBundle]);
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

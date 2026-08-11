@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function load() {
+    document.getElementById("test").addEventListener("click", (event) => {
+        if (!window.internals)
+            return;
+
+        TestPage.addResult(window.internals.userIsInteracting() ? "User is Interacting" : "User is NOT Interacting");
+    });
+
+    runTest();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Runtime.evaluate.emulateUserGesture.userIsInteracting");
+
+    suite.addTestCase({
+        name: "EvaluateWithoutEmulatingUserGesture.userIsInteracting",
+        description: "Check that the evaluation is not considered a user interaction when emulateUserGesture is false.",
+        async test() {
+            await RuntimeAgent.evaluate.invoke({expression: `document.getElementById("test").click()`, emulateUserGesture: false});
+        },
+    });
+
+    suite.addTestCase({
+        name: "EvaluateWithEmulatingUserGesture.userIsInteracting",
+        description: "Check that the evaluation is considered a user interaction when emulateUserGesture is true.",
+        async test() {
+            await RuntimeAgent.evaluate.invoke({expression: `document.getElementById("test").click()`, emulateUserGesture: true});
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests for Runtime emulateUserGesture option.</p>
+    <a id="test"></a>
+</body>
+</html>

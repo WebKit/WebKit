@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-mse-unmuxed-audio-only</title>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=support.js></script>
+    <script src="eme2016.js"></script>
+    <script>
+    var isPlayingAudio = false;
+
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    async function startTest() {
+        window.audio = document.querySelector('audio');
+        let keys = await startEME({video: audio, setMediaKeys: true, capabilities: [{
+            initDataTypes: ['sinf'],
+            audioCapabilities: [{ contentType: 'audio/mp4', robustness: '' }],
+            distinctiveIdentifier: 'not-allowed',
+            persistentState: 'not-allowed',
+            sessionTypes: ['temporary'],
+        }]});
+
+        let mediaSource = new MediaSource;
+        audio.srcObject = mediaSource;
+        consoleWrite('Created mediaSource');
+        await waitFor(mediaSource, 'sourceopen');
+
+        consoleWrite('-');
+        consoleWrite('Appending Encrypted Audio Header');
+
+        let {sourceBuffer: sourceBuffer, session: session} = await createBufferAppendAndWaitForEncrypted(audio, mediaSource, keys, 'audio/mp4', 'content/elementary-stream-audio-header-keyid-1.m4a');
+
+        consoleWrite('-');
+        consoleWrite('Appending Encrypted Audio Payload');
+
+        let fetchPromise = fetchAndAppend(sourceBuffer, 'content/elementary-stream-audio-payload.m4a')
+        let canplayPromise = waitFor(audio, 'canplay');
+        await Promise.all([fetchPromise, canplayPromise]);
+
+        consoleWrite('-');
+        consoleWrite('Playing');
+        await shouldResolve(run('audio.play()'));
+
+        await testExpectedEventually('audio.currentTime', '0.2', '>', 2000);
+
+        consoleWrite('-');
+        consoleWrite('Verifying audio is producing audible sound');
+        
+        if (window.internals) {
+            isPlayingAudio = internals.pageMediaState().includes('IsPlayingAudio') && audio.currentTime > 0;
+            testExpected('isPlayingAudio', true, '==');
+        }
+    }
+    </script>
+</head>
+<body>
+    <audio controls width="480"></audio>
+</body>
+</html>

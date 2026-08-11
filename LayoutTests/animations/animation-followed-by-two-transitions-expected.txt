@@ -1,0 +1,12 @@
+The test passes if the animationend event is followed by two transitionend events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Observed 'animationend' event. Starting first transition...
+PASS Observed first 'transitionend' event. Starting second transition...
+PASS Observed second 'transitionend' event.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

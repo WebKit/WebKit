@@ -1,0 +1,91 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    // Resolve the committed frame target for the static cross-origin iframe by its document URL.
+    // The frame target from TargetManager.Event.TargetAdded is the child's initial about:blank
+    // target, hosted in the PARENT's process; when the cross-origin document commits in its own
+    // process that target is destroyed and replaced by a committed one, so evaluating on the
+    // TargetAdded target hangs after commit (its WebFrame is now remote, coreLocalFrame() is null,
+    // and messages are silently dropped). Filtering WI.targets by document.location.href picks the
+    // live committed target -- the proven idiom shared by the runtime/dom/css cross-origin frame
+    // tests (see frameTargetForURLContaining in site-isolation-debugger-test-utilities.js).
+    async function crossOriginTarget() {
+        let target = await frameTargetForURLContaining("paint-rects-frame.html");
+        InspectorTest.assert(target instanceof WI.FrameTarget, "Should resolve a cross-origin FrameTarget.");
+        return target;
+    }
+
+    // paintRectCount is read from the target's OWN process (internals ->
+    // PageInspectorController::paintRectCount -> WebInspectorBackendClient::paintRectCount),
+    // so a nonzero count in the cross-origin iframe target proves the subframe process drew
+    // paint rects locally -- the behavior that was a no-op before webkit.org/b/308899.
+    async function paintRectCountInTarget(target) {
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: "window.internals.inspectorPaintRectCount()", objectGroup: "test", returnByValue: true});
+        return response.result.value;
+    }
+
+    // Alternate the color so each call is a real style change (setting the same value twice is a
+    // no-op and produces no repaint).
+    async function triggerPaintInTarget(target, iteration = 0) {
+        let color = (iteration % 2) ? "papayawhip" : "rebeccapurple";
+        await target.RuntimeAgent.evaluate.invoke({expression: `document.getElementById("target").style.backgroundColor = "${color}"`, objectGroup: "test", returnByValue: true});
+    }
+
+    // Poll: paint rects are created asynchronously after the style change repaints, and fade
+    // out after ~250ms, so we can't read the count synchronously. Re-trigger a paint each
+    // iteration: PageAgent.setShowPaintRects returning only means the main-frame process got the
+    // toggle; the fan-out to the cross-origin subframe process is a further async IPC hop, so an
+    // early single paint can land before m_showPaintRects is set and be silently dropped. Painting
+    // on every poll guarantees at least one paint happens after the toggle arrives. Transient
+    // protocol errors (the committed target still settling) are swallowed so they surface as a
+    // clean count==0 FAIL rather than an unhandled rejection that aborts the suite. Returns the
+    // first nonzero count observed, or 0 if none within the polling window.
+    async function pollForPaintRectCountInTarget(target) {
+        for (let i = 0; i < 50; ++i) {
+            try {
+                await triggerPaintInTarget(target, i);
+                let count = await paintRectCountInTarget(target);
+                if (count)
+                    return count;
+            } catch (e) {
+                if (e instanceof TypeError || e instanceof SyntaxError || e instanceof ReferenceError)
+                    throw e;
+            }
+            await new Promise((resolve) => { setTimeout(resolve, 20); });
+        }
+        return 0;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetShowPaintRectsCrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetShowPaintRects.Enabled",
+        description: "A paint in a cross-origin iframe should produce paint rects in the iframe's own process while enabled.",
+        async test() {
+            let target = await crossOriginTarget();
+
+            InspectorTest.log("Enabling paint rects...");
+            await PageAgent.setShowPaintRects(true);
+
+            let count = await pollForPaintRectCountInTarget(target);
+            InspectorTest.expectGreaterThan(count, 0, "Cross-origin iframe should have paint rects after painting while enabled.");
+
+            await PageAgent.setShowPaintRects(false);
+        }
+    });
+
+    // FIXME: This asserts paint rects are PRODUCED in the subframe process, not that they are
+    // POSITIONED correctly. A regression test for the coordinate space (rects must not drift by
+    // the frame's scroll offset) needs a pixel/geometry probe the current test harness does not
+    // expose from a cross-origin target. See webkit.org/b/308899.
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.setShowPaintRects produces paint rects in cross-origin iframes under site isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/page/resources/paint-rects-frame.html"></iframe>
+</body>

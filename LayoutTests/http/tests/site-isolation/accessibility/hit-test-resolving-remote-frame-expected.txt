@@ -1,0 +1,9 @@
+This test ensures that hit testing with site isolation enabled returns the right accessibility element when the remote element is resolved.
+
+iframe rect: 8, 8
+Element at (58, 58): Role: AXStaticText, Value: Hello, world!
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

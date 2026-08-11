@@ -1,0 +1,5 @@
+This test verifies that we don't hang when building the accessibility tree with a YouTube embed.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

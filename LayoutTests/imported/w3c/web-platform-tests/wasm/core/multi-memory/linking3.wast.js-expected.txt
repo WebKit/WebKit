@@ -1,0 +1,32 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (linking3.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (linking3.wast:15)
+PASS #4 Test that WebAssembly compilation succeeds (linking3.wast:28)
+PASS #5 Test that WebAssembly compilation succeeds (linking3.wast:40)
+PASS #6 Test that WebAssembly compilation succeeds (linking3.wast:52)
+PASS #7 Test that WebAssembly compilation succeeds (linking3.wast:66)
+PASS #8 Reinitialize the default imports
+PASS #9 Test that WebAssembly compilation succeeds (linking3.wast:1)
+PASS #10 Test that WebAssembly instantiation succeeds (linking3.wast:1)
+PASS #11 Test that WebAssembly compilation succeeds (linking3.wast:15)
+PASS #12 Test that WebAssembly instantiation fails (linking3.wast:15)
+PASS #13 Test that a WebAssembly module is unlinkable
+PASS #14 Test that a WebAssembly code returns a specific result (linking3.wast:23)
+PASS #15 Test that WebAssembly compilation succeeds (linking3.wast:28)
+PASS #16 Test that WebAssembly instantiation fails (linking3.wast:28)
+PASS #17 Test that a WebAssembly module is uninstantiable
+PASS #18 Test that a WebAssembly code returns a specific result (linking3.wast:36)
+PASS #19 Test that a WebAssembly code returns a specific result (linking3.wast:37)
+PASS #20 Test that WebAssembly compilation succeeds (linking3.wast:40)
+PASS #21 Test that WebAssembly instantiation fails (linking3.wast:40)
+PASS #22 Test that a WebAssembly module is uninstantiable
+PASS #23 Test that a WebAssembly code returns a specific result (linking3.wast:49)
+PASS #24 Test that WebAssembly compilation succeeds (linking3.wast:52)
+PASS #25 Test that WebAssembly instantiation succeeds (linking3.wast:52)
+PASS #26 Test that WebAssembly compilation succeeds (linking3.wast:66)
+PASS #27 Test that WebAssembly instantiation fails (linking3.wast:66)
+PASS #28 Test that a WebAssembly module is uninstantiable
+PASS #29 Test that a WebAssembly code returns a specific result (linking3.wast:82)
+PASS #30 Test that a WebAssembly code returns a specific result (linking3.wast:83)
+

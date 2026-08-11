@@ -1,0 +1,15 @@
+Test that the uncaught exception hook will immediately terminate the test and print the associated exception and stack trace.
+
+Uncaught exception in Inspector page: This is an exception thrown in the inspector page.
+
+Stack Trace:
+(suppressed)
+
+Evaluated Code:
+function test()
+{
+    InspectorTest.suppressStackTraces = true;
+
+    throw new Error("This is an exception thrown in the inspector page.");
+}
+

@@ -1,0 +1,6 @@
+Active
+Idle
+Invalid
+
+PASS getAnimations includes an untriggered 'fill-mode: none' and 'fill-mode: both' animations.
+

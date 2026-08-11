@@ -1,0 +1,19 @@
+
+PASS Should be known: '(display-mode)'
+PASS Should be known: '(display-mode: standalone)'
+PASS Should be known: '(display-mode: browser)'
+PASS Should be known: '(display-mode: minimal-ui)'
+PASS Should be known: '(display-mode: fullscreen)'
+FAIL Should be known: '(display-mode: picture-in-picture)' assert_true: expected true got false
+PASS Should be parseable: '(display-mode: 0)'
+PASS Should be unknown: '(display-mode: 0)'
+PASS Should be parseable: '(display-mode: none)'
+PASS Should be unknown: '(display-mode: none)'
+PASS Should be parseable: '(display-mode: random)'
+PASS Should be unknown: '(display-mode: random)'
+PASS Should be parseable: '(display-mode: 10px)'
+PASS Should be unknown: '(display-mode: 10px)'
+PASS Should be parseable: '(display-mode: 1%)'
+PASS Should be unknown: '(display-mode: 1%)'
+PASS Check that display-mode evaluates to true in the boolean context
+

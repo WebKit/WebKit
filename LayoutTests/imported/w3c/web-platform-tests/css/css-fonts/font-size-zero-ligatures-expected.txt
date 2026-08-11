@@ -1,0 +1,6 @@
+
+PASS font-size: 0 without ligature produces zero width
+PASS font-size: 0 with fi ligature produces zero width
+PASS font-size: 0 with multiple ligatures produces zero width
+PASS Ligature text and non-ligature text at font-size: 0 produce identical container width
+ ab fi ffi ffl

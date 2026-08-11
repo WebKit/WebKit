@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<title>Intersection Observer: root margin is applied when observer is in a same-origin iframe, and page is zoomed</title>
+
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<style>
+  #iframe {
+    width: 40px;
+    height: 40px;
+    display: block;
+    position: fixed;
+    left: 0;
+    top: -40px;
+    border: 0;
+  }
+</style>
+
+<iframe id="iframe"></iframe>
+
+<script>
+  isIntersecting = null;
+  window.addEventListener("message", event => {
+    isIntersecting = event.data.isIntersecting;
+  });
+
+  function loadFrame() {
+    return new Promise(resolve => {
+      iframe.addEventListener("load", resolve, { once: true });
+      iframe.src = "resources/root-margin-with-zoom-subframe.html";
+    });
+  }
+
+  promise_test(async (t) => {
+    window.internals.setPageZoomFactor(2);
+
+    await loadFrame();
+
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    assert_true(isIntersecting);
+  });
+</script>

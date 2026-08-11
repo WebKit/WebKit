@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { margin: 0; height: 2000000px; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  #t {
+    position: fixed;
+    top: 10px; left: 10px;
+    width: 100px; height: 100px;
+    background: red;
+    will-change: transform;
+    animation: spin linear;
+    animation-timeline: scroll(root);
+  }
+  #t.noanim { animation: none; }
+</style>
+</head>
+<body>
+<div id="t"></div>
+<script>
+  window.testRunner?.waitUntilDone();
+  window.testRunner?.dumpAsText();
+  let t = document.getElementById('t');
+  let toggle = 0;
+  let iterations = 0;
+  function doScroll() {
+    let target = (window.scrollY < 1000000) ? 1900000 : 100;
+    window.scrollTo({ top: target, behavior: 'smooth' });
+  }
+  window.addEventListener('load', () => {
+    document.body.offsetHeight;
+    requestAnimationFrame(() => {
+      doScroll();
+      (function loop() {
+        if (toggle++ & 1) t.classList.remove('noanim');
+        else t.classList.add('noanim');
+        document.body.offsetHeight;
+        if ((toggle & 0xf) == 0) doScroll();
+        if (++iterations < 120)
+          setTimeout(loop, 8);
+        else {
+          document.body.textContent = 'PASS if no crash.';
+          window.testRunner?.notifyDone();
+        }
+      })();
+    });
+  });
+</script>
+</body>
+</html>

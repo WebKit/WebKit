@@ -1,0 +1,6 @@
+
+
+
+
+PASS Anchor selection can select images
+

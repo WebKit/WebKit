@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+#scroller {
+    display: flex;
+    overflow: auto;
+    height: 50px;
+}
+.inner-flex {
+    display: flex;
+    flex: 1;
+}
+</style>
+<p>PASS if no crash/assert.</p>
+<div class=flex-column>
+  <div class=flex-column style="transform: translateZ(0);">
+    <div id="scroller">
+      <div class="inner-flex">
+        <div class="inner-flex" style="justify-content: center;">
+          <span style="position: fixed;"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.body.offsetHeight;
+const d = document.createElement('div');
+d.style.cssText = 'height: 100px; width: 10px; flex-shrink: 0;';
+document.getElementById('scroller').appendChild(d);
+</script>

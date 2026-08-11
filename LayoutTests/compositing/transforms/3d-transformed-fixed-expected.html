@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            perspective: 500px;
+            perspective-origin: 100px 150px;
+            height: 1000px;
+        }
+
+        .box {
+            position: absolute;
+            left: 100px;
+            top: 100px;
+            width: 250px;
+            height: 200px;
+            padding: 20px;
+            background-color: blue;
+        }
+    </style>
+    <script>
+        window.addEventListener('load', () => {
+            window.scrollTo(0, 200);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="fixed box" style="transform: rotateY(45deg)"></div>
+</body>
+</html>

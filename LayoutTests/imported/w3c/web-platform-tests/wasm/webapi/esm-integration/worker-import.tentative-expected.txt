@@ -1,0 +1,3 @@
+
+FAIL Testing import of WebAssembly from JavaScript worker Error: assert_equals: expected (number) 42 but got (object) object "[object Object]"
+

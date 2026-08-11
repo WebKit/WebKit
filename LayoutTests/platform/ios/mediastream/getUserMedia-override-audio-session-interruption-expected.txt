@@ -1,0 +1,4 @@
+
+
+PASS call getUserMedia, stop, interrupt and recall getUserMedia
+

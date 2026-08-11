@@ -1,0 +1,46 @@
+include_rules = [
+  "+call",
+  "+common_video",
+  "+logging/rtc_event_log",
+  "+modules/async_audio_processing",
+  "+modules/audio_coding",
+  "+modules/audio_device",
+  "+modules/audio_mixer",
+  "+modules/audio_processing",
+  "+modules/rtp_rtcp",
+  "+modules/video_capture",
+  "+modules/video_coding",
+  "+modules/video_coding/utility",
+  "+net/dcsctp",
+  "+p2p",
+  "+sound",
+  "+system_wrappers",
+  "+third_party/libyuv",
+]
+
+specific_include_rules = {
+  "win32devicemanager\\.cc": [
+    "+third_party/logitech/files/logitechquickcam.h",
+  ],
+  ".*webrtc_video_engine\\.h": [
+    "+video/config",
+  ],
+  ".*webrtc_video_engine\\.cc": [
+    "+video/config",
+  ],
+  ".*media_channel\\.h": [
+    "+video/config",
+  ],
+  ".*webrtc_video_engine_unittest\\.cc": [
+    "+video/config",
+  ],
+  ".*fake_webrtc_call\\.cc": [
+    "+video/config",
+  ],
+  ".*fake_webrtc_call\\.h": [
+    "+video/config",
+  ],
+  ".*codec\\.h": [
+    "+absl/strings/str_format.h",
+  ],
+}

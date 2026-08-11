@@ -1,0 +1,89 @@
+[
+	{
+		"name": "Versioning",
+		"pickable": false,
+		"headers": [
+			"[Vv]ersioning",
+			"[Bb]ump [Vv]ersion"
+		],
+		"paths": ["Configurations/Version.xcconfig"]
+	},
+	{
+		"name": "Poison",
+		"pickable": false,
+		"headers": ["Poisoned commit"],
+		"paths": ["metadata/poison.txt"]
+	},
+	{
+		"name": "Build-fix",
+		"pickable": false,
+		"headers": [
+			"^Apply build[ -]fix",
+			"^Unreviewed build[ -]fix"
+		]
+	},
+	{
+		"name": "Gardening",
+		"pickable": false,
+		"headers": [
+			{"value": "GARDENING", "ratio": 85},
+			{"value": "gardening", "ratio": 85},
+			{"value": "REBASELINE"},
+			{"value": "rebaseline"},
+			{"value": "is a constant failure"},
+			{"value": "is an almost constant failure"},
+			{"value": "are constant failures"},
+			{"value": "tests consistently failing"}
+		],
+		"contents": [
+			{"value": "unreviewed test gardening"}
+		],
+		"paths": [
+			"LayoutTests/TestExpectations",
+			"LayoutTests/platform/.+/TestExpectations",
+			"LayoutTests/.+-expected(-mismatch)?\\.",
+			"TestExpectations/apitests",
+			"Tools/TestWebKitAPI/.+/TestExpectations"
+		]
+	},
+	{
+		"name": "Apply-Patch",
+		"pickable": false,
+		"headers": ["^Apply patch"]
+	},
+	{
+		"name": "Contributor",
+		"pickable": false,
+		"paths": ["metadata/contributors.json"]
+	},
+	{
+		"name": "Cherry-pick",
+		"pickable": true,
+		"headers": ["^[Cc]herry[- ][Pp]ick"],
+		"trailers": [
+			"^[Cc]herry[- ][Pp]ick:",
+			"^[Oo]riginally[- ]landed[- ]as:"
+		]
+	},
+	{
+		"name": "Test-import",
+		"pickable": false,
+		"headers": ["[Ii]mport", "[Ss]ync"],
+		"paths": [
+			"LayoutTests/TestExpectations",
+			"LayoutTests/imported",
+			"LayoutTests/platform/.+/TestExpectations",
+			"LayoutTests/platform/.+/imported",
+			"LayoutTests/tests-options.json"
+		]
+	},
+	{
+		"name": "Tools",
+		"pickable": true,
+		"paths": [
+			"Tools",
+			"LayoutTests",
+			"metadata"
+		]
+	}
+]

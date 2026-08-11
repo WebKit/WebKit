@@ -1,0 +1,255 @@
+/*
+ * Copyright (C) 2012, 2017 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitFaviconDatabase_h
+#define WebKitFaviconDatabase_h
+
+#include <gio/gio.h>
+#include <glib-object.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+
+#if PLATFORM(GTK)
+#if USE(GTK4)
+#include <gtk/gtk.h>
+#else
+#include <cairo.h>
+#endif
+#endif
+
+#if ENABLE(2022_GLIB_API)
+#include <@API_INCLUDE_PREFIX@/WebKitImage.h>
+#endif
+
+G_BEGIN_DECLS
+
+#define WEBKIT_FAVICON_DATABASE_ERROR           (webkit_favicon_database_error_quark())
+#define WEBKIT_TYPE_FAVICON_DATABASE            (webkit_favicon_database_get_type())
+#if !ENABLE(2022_GLIB_API)
+#define WEBKIT_FAVICON_DATABASE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_FAVICON_DATABASE, WebKitFaviconDatabase))
+#define WEBKIT_IS_FAVICON_DATABASE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_FAVICON_DATABASE))
+#define WEBKIT_FAVICON_DATABASE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_FAVICON_DATABASE, WebKitFaviconDatabaseClass))
+#define WEBKIT_IS_FAVICON_DATABASE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_FAVICON_DATABASE))
+#define WEBKIT_FAVICON_DATABASE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_FAVICON_DATABASE, WebKitFaviconDatabaseClass))
+
+struct _WebKitFaviconDatabaseClass {
+    GObjectClass parent_class;
+
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitFaviconDatabase, webkit_favicon_database, WEBKIT, FAVICON_DATABASE, GObject)
+
+/**
+ * WebKitFaviconDatabaseError:
+ * @WEBKIT_FAVICON_DATABASE_ERROR_NOT_INITIALIZED: The #WebKitFaviconDatabase is closed
+ * @WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND: There is not an icon available for the requested URL
+ * @WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN: There might be an icon for the requested URL, but its data is unknown at the moment
+ *
+ * Enum values used to denote the various errors related to the #WebKitFaviconDatabase.
+ **/
+typedef enum {
+    WEBKIT_FAVICON_DATABASE_ERROR_NOT_INITIALIZED,
+    WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND,
+    WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN
+} WebKitFaviconDatabaseError;
+
+WEBKIT_API GQuark
+webkit_favicon_database_error_quark        (void);
+
+#if PLATFORM(GTK)
+WEBKIT_API void
+webkit_favicon_database_get_favicon        (WebKitFaviconDatabase *database,
+                                            const gchar           *page_uri,
+                                            GCancellable          *cancellable,
+                                            GAsyncReadyCallback    callback,
+                                            gpointer               user_data);
+
+#if USE(GTK4)
+WEBKIT_API GdkTexture *
+webkit_favicon_database_get_favicon_finish (WebKitFaviconDatabase *database,
+                                            GAsyncResult          *result,
+                                            GError               **error);
+#else
+WEBKIT_API cairo_surface_t *
+webkit_favicon_database_get_favicon_finish (WebKitFaviconDatabase *database,
+                                            GAsyncResult          *result,
+                                            GError               **error);
+#endif
+
+WEBKIT_API gchar *
+webkit_favicon_database_get_favicon_uri    (WebKitFaviconDatabase *database,
+                                            const gchar           *page_uri);
+#endif // PLATFORM(GTK)
+
+#if ENABLE(2022_GLIB_API)
+WEBKIT_API void
+webkit_favicon_database_get_page_icons     (WebKitFaviconDatabase *database,
+                                            const gchar           *page_uri,
+                                            GCancellable          *cancellable,
+                                            GAsyncReadyCallback    callback,
+                                            gpointer               user_data);
+
+WEBKIT_API WebKitImageList *
+webkit_favicon_database_get_page_icons_finish
+                                           (WebKitFaviconDatabase  *database,
+                                            GAsyncResult           *result,
+                                            GError                **error);
+#endif // ENABLE(2022_GLIB_API)
+
+WEBKIT_API void
+webkit_favicon_database_clear              (WebKitFaviconDatabase *database);
+
+G_END_DECLS
+
+#if USE(GTK4)
+/**
+ * WebKitFaviconDatabase::favicon-changed:
+ * @database: the object on which the signal is emitted
+ * @page_uri: the URI of the Web page containing the icon
+ * @favicon_uri: the URI of the favicon
+ *
+ * This signal is emitted when the favicon URI of @page_uri has
+ * been changed to @favicon_uri in the database. You can connect
+ * to this signal and call webkit_favicon_database_get_favicon()
+ * to get the favicon. If you are interested in the favicon of a
+ * #WebKitWebView it's easier to use the #WebKitWebView:favicon
+ * property. See webkit_web_view_get_favicon() for more details.
+ *
+ * Deprecated: 2.54
+ */
+
+/**
+ * webkit_favicon_database_get_favicon:
+ * @database: a #WebKitFaviconDatabase
+ * @page_uri: URI of the page for which we want to retrieve the favicon
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: (scope async) (nullable): A #GAsyncReadyCallback to call when the request is
+ *            satisfied or %NULL if you don't care about the result.
+ * @user_data: The data to pass to @callback.
+ *
+ * Asynchronously obtains a favicon image.
+ *
+ * Asynchronously obtains an image of the favicon for the
+ * given page URI. It returns the cached icon if it's in the database
+ * asynchronously waiting for the icon to be read from the database.
+ *
+ * This is an asynchronous method. When the operation is finished, callback will
+ * be invoked. You can then call webkit_favicon_database_get_favicon_finish()
+ * to get the result of the operation.
+ *
+ * New applications should use [method@FaviconDatabase.get_page_icons] and
+ * [method@FaviconDatabase.get_page_icons_finish] instead.
+ *
+ * Deprecated: 2.54
+ */
+
+/**
+ * webkit_favicon_database_get_favicon_finish:
+ * @database: a #WebKitFaviconDatabase
+ * @result: A #GAsyncResult obtained from the #GAsyncReadyCallback passed to webkit_favicon_database_get_favicon()
+ * @error: (allow-none): Return location for error or %NULL.
+ *
+ * Finishes an operation started with webkit_favicon_database_get_favicon().
+ *
+ * New applications should use [method@FaviconDatabase.get_page_icons] and
+ * [method@FaviconDatabase.get_page_icons_finish] instead.
+ *
+ * Returns: (transfer full): a new favicon image, or %NULL in case of error.
+ *
+ * Deprecated: 2.54
+ */
+
+/**
+ * webkit_favicon_database_get_favicon_uri:
+ * @database: a #WebKitFaviconDatabase
+ * @page_uri: URI of the page containing the icon
+ *
+ * Obtains the URI of the favicon for the given @page_uri.
+ *
+ * Returns: a newly allocated URI for the favicon, or %NULL if the
+ * database doesn't have a favicon for @page_uri.
+ *
+ * Deprecated: 2.54
+ */
+#else
+/**
+ * WebKitFaviconDatabase::favicon-changed:
+ * @database: the object on which the signal is emitted
+ * @page_uri: the URI of the Web page containing the icon
+ * @favicon_uri: the URI of the favicon
+ *
+ * This signal is emitted when the favicon URI of @page_uri has
+ * been changed to @favicon_uri in the database. You can connect
+ * to this signal and call webkit_favicon_database_get_favicon()
+ * to get the favicon. If you are interested in the favicon of a
+ * #WebKitWebView it's easier to use the #WebKitWebView:favicon
+ * property. See webkit_web_view_get_favicon() for more details.
+ */
+
+/**
+ * webkit_favicon_database_get_favicon:
+ * @database: a #WebKitFaviconDatabase
+ * @page_uri: URI of the page for which we want to retrieve the favicon
+ * @cancellable: (allow-none): A #GCancellable or %NULL.
+ * @callback: (scope async) (nullable): A #GAsyncReadyCallback to call when the request is
+ *            satisfied or %NULL if you don't care about the result.
+ * @user_data: The data to pass to @callback.
+ *
+ * Asynchronously obtains a favicon image.
+ *
+ * Asynchronously obtains an image of the favicon for the
+ * given page URI. It returns the cached icon if it's in the database
+ * asynchronously waiting for the icon to be read from the database.
+ *
+ * This is an asynchronous method. When the operation is finished, callback will
+ * be invoked. You can then call webkit_favicon_database_get_favicon_finish()
+ * to get the result of the operation.
+ */
+
+/**
+ * webkit_favicon_database_get_favicon_finish:
+ * @database: a #WebKitFaviconDatabase
+ * @result: A #GAsyncResult obtained from the #GAsyncReadyCallback passed to webkit_favicon_database_get_favicon()
+ * @error: (allow-none): Return location for error or %NULL.
+ *
+ * Finishes an operation started with webkit_favicon_database_get_favicon().
+ *
+ * Returns: (transfer full): a new favicon image, or %NULL in case of error.
+ */
+
+/**
+ * webkit_favicon_database_get_favicon_uri:
+ * @database: a #WebKitFaviconDatabase
+ * @page_uri: URI of the page containing the icon
+ *
+ * Obtains the URI of the favicon for the given @page_uri.
+ *
+ * Returns: a newly allocated URI for the favicon, or %NULL if the
+ * database doesn't have a favicon for @page_uri.
+ */
+#endif // USE(GTK4)
+
+#endif

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="../resources/cookie-utilities.js"></script>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+description("Tests that Same-Site cookies for 127.0.0.1 can be set in an about:blank iframe and retrieved by the top-most frame.");
+
+async function runTest()
+{
+    let appendIframeAndWaitUntilLoadedPromise = new Promise((resolved) => {
+        let iframe = document.createElement("iframe");
+        iframe.onload = (e) => resolved(iframe);
+        iframe.src = "about:blank";
+        document.body.appendChild(iframe);
+    });
+    let iframe = await appendIframeAndWaitUntilLoadedPromise;
+
+    let didLoadScriptInIFrame = new Promise((resolve) => {
+        let script = iframe.contentDocument.createElement("script");
+        script.onload = resolve;
+        script.src = "../resources/cookie-utilities.js";
+        iframe.contentDocument.head.appendChild(script);
+    });
+    await didLoadScriptInIFrame;
+
+    // Set cookies in about:blank iframe.
+    let iframeContentWindow = iframe.contentWindow;
+    await iframeContentWindow.resetCookies();
+    await iframeContentWindow.setCookie("strict", "14", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+    await iframeContentWindow.setCookie("implicit-strict", "14", {"SameSite": null, "Max-Age": 100, "path": "/"});
+    await iframeContentWindow.setCookie("strict-because-invalid-SameSite-value", "14", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+    await iframeContentWindow.setCookie("lax", "14", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+
+    // Fetch cookies in top-most frame.
+    debug("Cookies sent with HTTP request:");
+    await shouldHaveCookieWithValue("strict", "14");
+    await shouldHaveCookieWithValue("implicit-strict", "14");
+    await shouldHaveCookieWithValue("strict-because-invalid-SameSite-value", "14");
+    await shouldHaveCookieWithValue("lax", "14");
+
+    debug("<br>Cookies visible in DOM:");
+    shouldHaveDOMCookieWithValue("strict", "14");
+    shouldHaveDOMCookieWithValue("implicit-strict", "14");
+    shouldHaveDOMCookieWithValue("strict-because-invalid-SameSite-value", "14");
+    shouldHaveDOMCookieWithValue("lax", "14");
+
+    await iframeContentWindow.resetCookies();
+    finishJSTest();
+}
+runTest();
+</script>
+</body>
+</html>

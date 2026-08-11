@@ -1,0 +1,3 @@
+
+PASS anchor stays in inner span when extending forward from leading boundary
+

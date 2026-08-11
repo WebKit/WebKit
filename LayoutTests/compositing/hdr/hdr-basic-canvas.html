@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ CanvasColorTypeEnabled=true ] -->
+<style>
+    canvas {
+        border: 1px solid black;
+    }
+</style>
+<body>
+    <pre id="layers">Layer tree goes here in DRT</pre>
+    <canvas id="canvas1"></canvas>
+    <canvas id="canvas2"></canvas>
+    <div style="position: fixed; top: 192px;">
+        <canvas id="canvas3"></canvas>
+    </div>
+    <div style="position: fixed; top: 192px; left: 315px">
+        <canvas id="canvas4"></canvas>
+    </div>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        if (window.internals)
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+
+        let canvas1 = document.getElementById("canvas1");
+        let context1 = canvas1.getContext("2d", { colorType: "float16" });
+        context1.fillStyle = "green";
+        context1.fillRect(0, 0, 100, 100);
+
+        let canvas2 = document.getElementById("canvas2");
+        let context2 = canvas2.getContext("2d");
+        context2.fillStyle = "green";
+        context2.fillRect(0, 0, 100, 100);
+
+        let canvas3 = document.getElementById("canvas3");
+        let context3 = canvas3.getContext("2d", { colorType: "float16" });
+        context3.fillStyle = "green";
+        context3.fillRect(0, 0, 100, 100);
+
+        let canvas4 = document.getElementById("canvas4");
+        let context4 = canvas4.getContext("2d");
+        context4.fillStyle = "green";
+        context4.fillRect(0, 0, 100, 100);
+
+        document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+    </script>
+</body>

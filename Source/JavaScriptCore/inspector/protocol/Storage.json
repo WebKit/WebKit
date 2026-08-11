@@ -1,0 +1,114 @@
+{
+    "domain": "Storage",
+    "description": "Query and modify storage (cookies for now) under Site Isolation. Backed by the NetworkProcess-owned cookie store via API::HTTPCookieStore, so cross-origin iframe cookies are visible. The flat read also surfaces partitioned (CHIPS) cookies, each labeled with its partitionKey.",
+    "debuggableTypes": ["web-page"],
+    "targetTypes": ["web-page"],
+    "types": [
+        {
+            "id": "CookieSameSitePolicy",
+            "type": "string",
+            "enum": ["None", "Lax", "Strict"],
+            "description": "Same-Site policy of a cookie."
+        },
+        {
+            "id": "Cookie",
+            "type": "object",
+            "description": "Cookie object.",
+            "properties": [
+                { "name": "name", "type": "string", "description": "Cookie name." },
+                { "name": "value", "type": "string", "description": "Cookie value." },
+                { "name": "domain", "type": "string", "description": "Cookie domain." },
+                { "name": "path", "type": "string", "description": "Cookie path." },
+                { "name": "expires", "type": "number", "description": "Cookie expires." },
+                { "name": "session", "type": "boolean", "description": "True in case of session cookie." },
+                { "name": "httpOnly", "type": "boolean", "description": "True if cookie is http-only." },
+                { "name": "secure", "type": "boolean", "description": "True if cookie is secure." },
+                { "name": "sameSite", "$ref": "CookieSameSitePolicy", "description": "Cookie Same-Site policy." },
+                { "name": "partitionKey", "type": "string", "optional": true, "description": "Cookie partition key." }
+            ]
+        },
+        {
+            "id": "CookieFilter",
+            "type": "object",
+            "description": "Filter parameters for cookie retrieval and deletion. Every provided field narrows the result set.",
+            "properties": [
+                { "name": "name", "type": "string", "optional": true, "description": "The name of the cookie." },
+                { "name": "value", "type": "string", "optional": true, "description": "The value of the cookie." },
+                { "name": "domain", "type": "string", "optional": true, "description": "The domain of the cookie." },
+                { "name": "path", "type": "string", "optional": true, "description": "The path of the cookie." },
+                { "name": "httpOnly", "type": "boolean", "optional": true, "description": "If the cookie is HTTP only." },
+                { "name": "secure", "type": "boolean", "optional": true, "description": "If the cookie is secure." }
+            ]
+        },
+        {
+            "id": "PartitionKey",
+            "type": "object",
+            "description": "Identifies the storage partition a cookie belongs to. At least one of 'userContext' or 'sourceOrigin' is present.",
+            "properties": [
+                { "name": "userContext", "type": "string", "optional": true, "description": "The user context identifier of the partition." },
+                { "name": "sourceOrigin", "type": "string", "optional": true, "description": "The serialization of the origin of resources that can access the storage partition." }
+            ]
+        },
+        {
+            "id": "PartitionDescriptorType",
+            "type": "string",
+            "description": "The type of storage partition descriptor.",
+            "enum": ["context"]
+        },
+        {
+            "id": "PartitionDescriptor",
+            "type": "object",
+            "description": "Describes a storage partition. Omit to target the inspected page's default data store. Type 'context' targets the inspected page's main-frame origin.",
+            "properties": [
+                { "name": "type", "$ref": "PartitionDescriptorType", "description": "The type of partition descriptor." }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Marks the Storage domain enabled for this target. No tracking is started; cookies are read on demand from the authoritative store, so this is effectively a no-op kept for domain-lifecycle symmetry."
+        },
+        {
+            "name": "disable",
+            "description": "Marks the Storage domain disabled for this target. Counterpart to enable; a no-op beyond lifecycle bookkeeping."
+        },
+        {
+            "name": "getCookies",
+            "description": "Retrieves zero or more cookies which match the provided filter, within the given partition.",
+            "async": true,
+            "parameters": [
+                { "name": "filter", "$ref": "CookieFilter", "optional": true, "description": "Filter parameters for cookie retrieval." },
+                { "name": "partition", "$ref": "PartitionDescriptor", "optional": true, "description": "The storage partition in which to get cookies. Defaults to the origin of the inspected page's main frame." }
+            ],
+            "returns": [
+                { "name": "cookies", "type": "array", "items": { "$ref": "Cookie" }, "description": "The list of matching cookies." },
+                { "name": "partitionKey", "$ref": "PartitionKey", "description": "The storage partition key the cookies came from." }
+            ]
+        },
+        {
+            "name": "setCookie",
+            "description": "Creates a new cookie, replacing any cookie in the partition which matches.",
+            "async": true,
+            "parameters": [
+                { "name": "cookie", "$ref": "Cookie", "description": "The cookie to set." },
+                { "name": "partition", "$ref": "PartitionDescriptor", "optional": true, "description": "The storage partition in which to set the cookie. Defaults to the origin of the inspected page's main frame." }
+            ],
+            "returns": [
+                { "name": "partitionKey", "$ref": "PartitionKey", "description": "The storage partition key the cookie was set in." }
+            ]
+        },
+        {
+            "name": "deleteCookies",
+            "description": "Removes zero or more cookies which match the provided filter, within the given partition. A filter is required; omitting it fails rather than deleting every cookie.",
+            "async": true,
+            "parameters": [
+                { "name": "filter", "$ref": "CookieFilter", "optional": true, "description": "Filter parameters for cookie deletion. Required in practice: a request with no filter is rejected to avoid an accidental clear of the entire store." },
+                { "name": "partition", "$ref": "PartitionDescriptor", "optional": true, "description": "The storage partition in which to delete cookies. Defaults to the origin of the inspected page's main frame." }
+            ],
+            "returns": [
+                { "name": "partitionKey", "$ref": "PartitionKey", "description": "The storage partition key the cookies were deleted from." }
+            ]
+        }
+    ]
+}

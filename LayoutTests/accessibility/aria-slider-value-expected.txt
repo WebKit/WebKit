@@ -1,0 +1,14 @@
+This test ensures we properly expose the current, minimum, and maximum values of ARIA sliders.
+
+PASS: slider.intValue === 5
+PASS: slider.minValue === 0
+PASS: slider.maxValue === 10
+
+For #slider element, updating aria-valuemin to 2, aria-valuemax to 8.
+PASS: slider.minValue === 2
+PASS: slider.maxValue === 8
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+X

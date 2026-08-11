@@ -1,0 +1,6 @@
+PASS getComputedStyle(field).color is not "rgb(0, 0, 0)"
+PASS getComputedStyle(field).color is "rgb(0, 0, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

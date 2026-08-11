@@ -1,0 +1,13 @@
+Box 0Box 1Box 2Box 3Box 4Box 5Box 6Box 7Box 8Box 9
+
+PASS box0 is common to both axes and is the snap target despite being last in tree order.
+PASS box1 is common to both axes and is the snap target despite being last in tree order.
+PASS box2 is common to both axes and is the snap target despite being last in tree order.
+PASS box3 is common to both axes and is the snap target despite being last in tree order.
+PASS box4 is common to both axes and is the snap target despite being last in tree order.
+PASS box5 is common to both axes and is the snap target despite being last in tree order.
+PASS box6 is common to both axes and is the snap target despite being last in tree order.
+PASS box7 is common to both axes and is the snap target despite being last in tree order.
+PASS box8 is common to both axes and is the snap target despite being last in tree order.
+PASS box9 is common to both axes and is the snap target despite being last in tree order.
+

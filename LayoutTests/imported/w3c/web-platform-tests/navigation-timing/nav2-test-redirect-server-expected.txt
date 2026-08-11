@@ -1,0 +1,8 @@
+Description
+
+This test validates the values of the window.performance.redirectCount and the window.performance.timing.redirectStart/End times for a same-origin server side redirect navigation.
+
+
+
+PASS Navigation Timing 2 WPT
+

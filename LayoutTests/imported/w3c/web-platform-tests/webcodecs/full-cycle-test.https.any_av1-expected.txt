@@ -1,0 +1,8 @@
+
+Harness Error (FAIL), message = Error: assert_equals: colorSpace.primaries expected (string) "bt709" but got (object) null
+
+FAIL Encoding and decoding cycle assert_equals: frames_decoded expected 16 but got 0
+FAIL Encoding and decoding cycle with realtime latency mode assert_equals: frames_decoded expected 16 but got 0
+FAIL Encoding and decoding cycle w/ stripped color space assert_equals: frames_decoded expected 16 but got 0
+FAIL Encoding and decoding cycle w/ rate control assert_equals: frames_decoded expected 16 but got 0
+

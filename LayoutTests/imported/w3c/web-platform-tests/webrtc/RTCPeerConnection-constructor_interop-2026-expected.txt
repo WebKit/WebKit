@@ -1,0 +1,12 @@
+
+PASS new RTCPeerConnection()
+PASS new RTCPeerConnection(null)
+PASS new RTCPeerConnection(undefined)
+PASS new RTCPeerConnection({})
+PASS new RTCPeerConnection({ certificates: null })
+PASS new RTCPeerConnection({ certificates: undefined })
+PASS new RTCPeerConnection({ certificates: [] })
+PASS new RTCPeerConnection({ certificates: [null] })
+PASS new RTCPeerConnection({ certificates: [undefined] })
+PASS new RTCPeerConnection({ iceCandidatePoolSize: toNumberThrows })
+

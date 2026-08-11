@@ -1,0 +1,10 @@
+This test makes sure that @font-face blocks accessed over file: urls to a file which does not exist are visible in document.fonts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.fonts.size is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

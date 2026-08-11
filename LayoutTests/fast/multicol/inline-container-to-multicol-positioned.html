@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+    #multicol {
+        border: thin solid green;
+        height: 300px;
+        width: 200px;
+        text-align: justify;
+        position: relative;
+    }
+
+    #positioned {
+        position: absolute;
+    }
+    </style>
+</head>
+<body>
+    <p><a href="https://bugs.webkit.org/show_bug.cgi?id=135127">b135127</a>: The test passes if it doesn't hang or crash</p>
+    <div id="multicol">
+        Text text text text text text text text <span id="positioned">Text text text text Text  text text text</span>Text text text text Text  text text text Text text text text  text text text text
+    </div>
+    <script type="text/javascript">
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    var multicolElement = document.getElementById("multicol");
+
+    document.body.offsetTop;
+
+    multicolElement.style.webkitColumnCount = "2";
+    document.body.offsetTop;
+
+    multicolElement.style.webkitColumnCount = "auto";
+    document.body.offsetLeft;
+
+    multicolElement.remove();
+    </script>
+</body>
+</html>

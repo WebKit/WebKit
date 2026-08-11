@@ -1,0 +1,17 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (table_get64.wast:1)
+PASS #3 Reinitialize the default imports
+PASS #4 Test that WebAssembly compilation succeeds (table_get64.wast:1)
+PASS #5 Test that WebAssembly instantiation succeeds (table_get64.wast:1)
+PASS #6 Run a WebAssembly test without special assertions (table_get64.wast:24)
+PASS #7 Test that a WebAssembly code returns a specific result (table_get64.wast:26)
+PASS #8 Test that a WebAssembly code returns a specific result (table_get64.wast:27)
+PASS #9 Test that a WebAssembly code returns a specific result (table_get64.wast:29)
+PASS #10 Test that a WebAssembly code returns a specific result (table_get64.wast:30)
+PASS #11 Test that a WebAssembly code returns a specific result (table_get64.wast:31)
+PASS #12 Test that a WebAssembly code traps (table_get64.wast:33)
+PASS #13 Test that a WebAssembly code traps (table_get64.wast:34)
+PASS #14 Test that a WebAssembly code traps (table_get64.wast:35)
+PASS #15 Test that a WebAssembly code traps (table_get64.wast:36)
+

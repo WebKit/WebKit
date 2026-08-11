@@ -1,0 +1,4 @@
+Test passes if this line is green.
+
+PASS CSS Selectors: :nth-last-child() with no argument
+

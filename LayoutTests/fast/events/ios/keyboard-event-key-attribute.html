@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<input id="testInput" type="text">
+<script>
+description("Tests that KeyboardEvent.key is properly initialized on iOS.");
+jsTestIsAsync = true;
+
+var tests = [['a', 'KeyA'], ['@', 'Digit2']];
+
+function getTypingUIScript(x, y)
+{
+    return `
+        (function() {
+            uiController.didShowKeyboardCallback = function() {
+                uiController.typeCharacterUsingHardwareKeyboard('a', function() {
+                    uiController.typeCharacterUsingHardwareKeyboard('@', function() {
+                        uiController.uiScriptComplete();
+                    });
+                });
+            };
+            uiController.singleTapAtPoint(${x}, ${y}, function() { });
+        })();`
+}
+
+var i = 0;
+var testInput = document.getElementById("testInput");
+testInput.onkeydown = function(e) {
+    // Ignore the Shift key so as to normalize the test results across different iOS versions.
+    if (e.key == "Shift")
+        return;
+    event = e;
+    shouldBeEqualToString("event.key", "" + tests[i][0]);
+    shouldBeEqualToString("event.code", "" + tests[i][1]);
+    i++;
+    if (i == tests.length)
+        finishJSTest();
+};
+
+const x = testInput.offsetLeft + 5;
+const y = testInput.offsetTop + 5;
+testRunner.runUIScript(getTypingUIScript(x, y), function() { });
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

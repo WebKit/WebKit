@@ -1,0 +1,3 @@
+
+PASS Once in the top-layer position:sticky computes to position:absolute
+

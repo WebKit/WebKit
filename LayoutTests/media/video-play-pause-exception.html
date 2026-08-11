@@ -1,0 +1,33 @@
+<html>
+<body>
+<video controls></video>
+
+<p>Video has no src. Test that the playing event is not dispatched.</p>
+
+<script src=video-test.js></script>
+<script>
+    waitForEventAndFail('playing');
+
+    waitForEvent("loadstart");
+    waitForEvent("timeupdate");
+    waitForEvent("waiting");
+
+    function onpause()
+    {
+        // FIXME(138669): remove this hack once networkState changes in the synchronous section of the resource selection algorithm.
+        if (video.networkState == 3) {
+            setTimeout(onpause, 0);
+            return;
+        }
+        testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
+        endTest();
+        consoleWrite("");
+     }
+
+    waitForEvent("pause", onpause);
+
+    run("handlePromise(video.play())");
+    run("video.pause()");
+</script>
+</body>
+</html>

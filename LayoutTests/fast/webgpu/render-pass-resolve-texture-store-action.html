@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGPU Render Pass with Deprecated resolveTexture Field</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async t => {
+    const adapter = await navigator.gpu.requestAdapter();
+    assert_true(adapter !== null, "Failed to get GPU adapter");
+
+    const device = await adapter.requestDevice();
+    assert_true(device !== null, "Failed to get GPU device");
+
+    // Create a multisampled color texture
+    const msaaTexture = device.createTexture({
+        size: { width: 256, height: 256, depthOrArrayLayers: 1 },
+        sampleCount: 4,
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+
+    const msaaView = msaaTexture.createView();
+
+    // Create a resolve texture (non-multisampled)
+    const resolveTexture = device.createTexture({
+        size: { width: 256, height: 256, depthOrArrayLayers: 1 },
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+
+    const resolveView = resolveTexture.createView();
+
+    const commandEncoder = device.createCommandEncoder();
+
+    // Use the deprecated resolveTexture field instead of resolveTarget
+    // This should still work correctly and set the proper storeAction
+    const renderPassDescriptor = {
+        colorAttachments: [{
+            view: msaaView,
+            resolveTexture: resolveView, // Using deprecated field
+            clearValue: { r: 0.0, g: 1.0, b: 0.0, a: 1.0 },
+            loadOp: 'clear',
+            storeOp: 'store',
+        }]
+    };
+
+    // This should not crash with Metal validation error about storeAction
+    const renderPass = commandEncoder.beginRenderPass(renderPassDescriptor);
+    renderPass.end();
+
+    const commandBuffer = commandEncoder.finish();
+    device.queue.submit([commandBuffer]);
+
+    // The test passes if we get here without Metal validation errors
+}, 'Render pass with deprecated resolveTexture field should set correct storeAction');
+</script>
+</body>
+</html>

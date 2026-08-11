@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    var timeout;
+
+    function pauseVideo() {
+        document.getElementsByTagName("video")[0].pause();
+    }
+
+    function handlePaused() {
+        // Wait until the next runloop to allow media controls to update.
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("paused");
+            } catch(e) { }
+        }, 0);
+    }
+
+    function beganAutoplaying() {
+        setTimeout(function() {
+            try {
+                window.webkit.messageHandlers.testHandler.postMessage("autoplayed");
+            } catch(e) {
+            }
+        }, 0)
+    }
+
+   </script>
+</head>
+<body onmousedown=pauseVideo()>
+    <video autoplay controls onplaying=beganAutoplaying() src="video-with-audio.mp4" webkit-playsinline onpause=handlePaused()></video>
+</body>
+</html>

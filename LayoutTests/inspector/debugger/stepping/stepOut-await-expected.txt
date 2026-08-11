@@ -1,0 +1,134 @@
+Checking pause locations when stepping with "stepOut".
+
+
+== Running test suite: Debugger.stepOut.await
+-- Running test case: Debugger.stepOut.await.statements
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:6:5
+      2    async function c() { return "c"; }
+      3
+      4    async function testStatements() {
+ ->   5        |debugger;
+      6        let x = await 1;
+      7        let y = await 2;
+      8        TestPage.dispatchEventToFrontend("done");
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.await.functions
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:13:5
+      9    }
+     10
+     11    async function testFunctions() {
+ ->  12        |debugger;
+     13        let before = await 1;
+     14        await a();
+     15        let after = await 2;
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.await.eval
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:21:5
+     17    }
+     18
+     19    async function testEval() {
+ ->  20        |debugger;
+     21        let before = await 1;
+     22        await eval("1 + 1");
+     23        let after = await 2;
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.await.anonymousFunction
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:30:9
+     26
+     27    async function testAnonymousFunction() {
+     28        await (async function() {
+ ->  29            |debugger;
+     30            let inner = await 1;
+     31        })();
+     32        let outer = await 2;
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.await.commas
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:38:5
+     34    }
+     35
+     36    async function testCommas() {
+ ->  37        |debugger;
+     38        let x = await 1,
+     39            y = await 2,
+     40            z = await 3;
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.await.chainedExpressions
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:48:5
+     44    }
+     45
+     46    async function testChainedExpressions() {
+ ->  47        |debugger;
+     48        await a() && await b() && await c();
+     49        TestPage.dispatchEventToFrontend("done");
+     50    }
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.await.declarations
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:54:5
+     50    }
+     51
+     52    async function testDeclarations() {
+ ->  53        |debugger;
+     54        let x = await a(),
+     55            y = await b(),
+     56            z = await c();
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.await.innerFunction
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:66:9
+     62            await beta();
+     63        }
+     64        async function beta() {
+ ->  65            |debugger;
+     66        }
+     67        await alpha();
+     68        TestPage.dispatchEventToFrontend("done");
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.await.testFor
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:73:5
+     69    }
+     70
+     71    async function testFor() {
+ ->  72        |debugger;
+     73        for await (let item of [a(), b()]) {
+     74            c();
+     75        }
+
+RESUMED
+
+-- Running test case: Debugger.stepOut.await.testRepeatedInvocation
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:83:13
+     79    async function testRepeatedInvocation() {
+     80        async function wrap(state) {
+     81            if (state === 2)
+ ->  82                |debugger;
+     83            if (state === 1)
+     84                await a(); // should not pause on this line
+     85            await b();
+
+RESUMED
+

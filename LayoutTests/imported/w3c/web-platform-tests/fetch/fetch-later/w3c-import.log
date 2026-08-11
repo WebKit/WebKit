@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fetch/fetch-later/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/fetch/fetch-later/README.md
+/LayoutTests/imported/w3c/web-platform-tests/fetch/fetch-later/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/fetch/fetch-later/activate-after.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/fetch-later/basic.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/fetch-later/basic.https.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/fetch-later/iframe.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/fetch-later/new-window.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/fetch-later/non-secure.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/fetch-later/send-on-deactivate-with-background-sync.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/fetch-later/send-on-deactivate.https.window.js

@@ -1,0 +1,5 @@
+Click meClick me next
+
+PASS Tabbing forward out of a <slot popover> should not hang.
+PASS Tabbing backwards out of a <slot popover> should not hang.
+

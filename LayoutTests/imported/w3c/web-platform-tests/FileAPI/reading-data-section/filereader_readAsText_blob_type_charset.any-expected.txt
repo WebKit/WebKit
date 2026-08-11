@@ -1,0 +1,5 @@
+
+PASS readAsText() uses the charset parameter of the Blob's type (windows-1252)
+PASS readAsText() decodes a windows-1252 Blob body using the type's charset
+PASS readAsText() encoding argument overrides the Blob type's charset
+

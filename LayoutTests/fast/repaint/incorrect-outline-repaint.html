@@ -1,0 +1,27 @@
+<style>
+span {
+  font-size: 10px;
+  font-family: Ahem;
+}
+</style>
+<!-- PASS if the green outline is visible -->
+<span id=changeThis>outline</span>
+<pre id=result></pre>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+setTimeout(function() {
+  if (window.internals) {
+    internals.startTrackingRepaints();
+    changeThis.style.outline = "50px solid green";
+    let repaintRects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    result.textContent = repaintRects.indexOf('-') == -1 ? "FAIL: 50px outline should produce negative vertical position for repaint" : "PASS";
+    if (window.testRunner)
+      testRunner.notifyDone();
+  } else
+    changeThis.style.outline = "50px solid green";
+}, 0);
+</script>

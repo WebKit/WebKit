@@ -1,0 +1,7 @@
+
+RUN(video.muted = true)
+RUN(video.src = '/media/resources/load-video.py?type=audio/mpeg&name=sound_5.mp3')
+RUN(video.load())
+EVENT(loadeddata)
+END OF TEST
+

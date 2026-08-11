@@ -1,0 +1,17 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (data_drop0.wast:2)
+PASS #3 Reinitialize the default imports
+PASS #4 Test that WebAssembly compilation succeeds (data_drop0.wast:2)
+PASS #5 Test that WebAssembly instantiation succeeds (data_drop0.wast:2)
+PASS #6 Run a WebAssembly test without special assertions (data_drop0.wast:18)
+PASS #7 Run a WebAssembly test without special assertions (data_drop0.wast:19)
+PASS #8 Run a WebAssembly test without special assertions (data_drop0.wast:20)
+PASS #9 Test that a WebAssembly code returns a specific result (data_drop0.wast:21)
+PASS #10 Test that a WebAssembly code traps (data_drop0.wast:22)
+PASS #11 Run a WebAssembly test without special assertions (data_drop0.wast:23)
+PASS #12 Run a WebAssembly test without special assertions (data_drop0.wast:24)
+PASS #13 Test that a WebAssembly code returns a specific result (data_drop0.wast:25)
+PASS #14 Test that a WebAssembly code traps (data_drop0.wast:26)
+PASS #15 Run a WebAssembly test without special assertions (data_drop0.wast:27)
+

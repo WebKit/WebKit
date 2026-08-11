@@ -1,0 +1,10 @@
+This test makes sure the right suffix is returned when fetching text marker strings for list items.
+
+PASS: list1.stringForTextMarkerRange(textRange) === `${bulletString} item 1`
+PASS: list2.stringForTextMarkerRange(textRange) === '1. item 2'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+item 1
+item 2

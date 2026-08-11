@@ -1,0 +1,18 @@
+This test verifies that the base-select popover (Menu) is a sibling of the select in the iOS accessibility tree, not a child. On iOS, isAccessibilityElement=YES elements are treated as leaves -- assistive technologies won't recurse into their children. The select is an accessibility element, so the popover must be a sibling for its menu items to be reachable.
+
+PASS: select.isExpanded === true
+--- Menu is a sibling of the select, not a child ---
+PASS: hasMenuChild === false
+PASS: menu != null === true
+PASS: menu.role.toLowerCase().includes('menu') === true
+
+--- Menu items have MenuItem role ---
+PASS: menu.childAtIndex(0).role.toLowerCase().includes('menuitem') === true
+PASS: menu.childAtIndex(1).role.toLowerCase().includes('menuitem') === true
+PASS: menu.childAtIndex(2).role.toLowerCase().includes('menuitem') === true
+PASS: select.isExpanded === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

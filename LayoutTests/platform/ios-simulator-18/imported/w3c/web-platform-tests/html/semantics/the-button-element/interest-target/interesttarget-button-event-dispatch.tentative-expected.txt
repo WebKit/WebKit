@@ -1,0 +1,6 @@
+Button Other Button
+
+FAIL InterestEvent dispatches on button hover assert_true: InterestEvent is fired expected true got false
+PASS event does not dispatch if invoker is disabled
+FAIL event dispatches if interestee is non-HTML Element assert_true: InterestEvent is fired expected true got false
+

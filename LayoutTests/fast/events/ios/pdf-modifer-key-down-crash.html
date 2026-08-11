@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UsesBackForwardCache=true UnifiedPDFEnabled=true ] -->
+<html>
+<head>
+<script>
+if (!window.testRunner)
+    document.write("Must be run in WebKitTestRunner");
+else {
+    testRunner.dumpAsText();
+    testRunner.queueLoad("../..//images/resources/green_rectangle.pdf");
+    testRunner.queueLoadingScript(`
+        (async function() {
+            setTimeout("history.back()", 0);
+            await new Promise(resolve => {
+                testRunner.runUIScript("uiController.keyDown('', ['leftCommand'])", resolve);
+            });
+        })();
+    `);
+} 
+</script>
+</head>
+<body>PASS did not crash.</body>
+</html>

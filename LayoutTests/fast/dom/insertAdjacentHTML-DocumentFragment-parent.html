@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that insertAdjacentHTML() works if the element's parent is a DocumentFragment.");
+
+var fragment = new DocumentFragment();
+var div = document.createElement("div");
+fragment.appendChild(div);
+
+shouldNotThrow("div.insertAdjacentHTML('beforebegin', '<a>test</a>')");
+shouldBeEqualToString("fragment.firstChild.tagName", "A");
+shouldBeEqualToString("fragment.firstChild.nextSibling.tagName", "DIV");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

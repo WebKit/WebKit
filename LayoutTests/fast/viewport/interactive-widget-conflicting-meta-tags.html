@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<head>
+    <title>With two viewport meta tags, the last one replaces the arguments of the first one entirely: its interactive-widget value wins, and width and initial-scale from the first tag are dropped (so the layout width falls back to 980).</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-visual">
+    <meta name="viewport" content="interactive-widget=overlays-content">
+    <script>
+        function test() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                alert(internals.configurationForViewport(1, 320, 480, 320, 352));
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

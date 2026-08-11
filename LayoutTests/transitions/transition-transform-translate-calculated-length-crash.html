@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<style>
+    div {
+        -webkit-transition:-webkit-transform 50ms;
+    }
+    #div2 {
+        -webkit-transform:translate(-webkit-calc(10% + 10px));
+    }
+</style>
+<body>
+    <p>Bug https://bugs.webkit.org/show_bug.cgi?id=118686: Dereference null pointer crash in Length::decrementCalculatedRef()</p>
+    <p>The test passes if it does not crash.</p>
+    <div id="div1"></div>
+    <div id="div2"></div>
+</body>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    document.getElementById("div1").style.webkitTransform = "translate(-webkit-calc(10% + 20px))";
+    document.getElementById("div2").style.webkitTransform = "none";
+</script>

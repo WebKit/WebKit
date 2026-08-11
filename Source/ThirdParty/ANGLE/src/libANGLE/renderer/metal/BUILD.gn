@@ -1,0 +1,187 @@
+# Copyright 2019 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This file houses the build configuration for the ANGLE Metal back-end.
+
+import("../../../../gni/angle.gni")
+import("metal_backend.gni")
+
+if (metal_internal_shader_compilation_supported) {
+  import("//build/config/mac/mac_sdk.gni")
+}
+
+assert(is_mac || is_ios)
+assert(angle_enable_metal)
+
+config("angle_metal_backend_config") {
+  defines = [
+    "ANGLE_ENABLE_METAL",
+    "ANGLE_WEBKIT_EXPLICIT_RESOLVE_TARGET_ENABLED=1",
+  ]
+  ldflags = [
+    "-weak_framework",
+    "Metal",
+  ]
+  include_dirs = [ "$root_gen_dir/angle" ]
+}
+
+if (metal_internal_shader_compilation_supported) {
+  template("run_metal_tool") {
+    action(target_name) {
+      forward_variables_from(invoker,
+                             [
+                               "deps",
+                               "sources",
+                               "outputs",
+                               "metal_tool",
+                             ])
+      script = "shaders/metal_wrapper.py"
+      if (use_system_xcode) {
+        # System Xcode: run metal and metallib via xcrun. Since Xcode 26.0, the
+        # Metal toolchain has been unbundled from Xcode, and must be installed
+        # separately by running `xcodebuild -downloadComponent MetalToolchain`.
+        # There is a vestigial metal executable in mac_bin_path, but it’s
+        # incapable of running successfuly without the
+        # rest of the Metal toolchain surrounding it. `xcrun` is able to find
+        # and run the correct Metal toolchain when properly installed.
+        #
+        # If you’re using system Xcode and your build fails with this message:
+        #   error: error: cannot execute tool 'metal' due to missing Metal Toolchain; use: xcodebuild -downloadComponent MetalToolchain
+        # then do what the error message suggests, and then retry your build.
+        args = [
+          "xcrun",
+          metal_tool,
+        ]
+      } else {
+        # Hermetic Xcode: at least for now, the Metal toolchain is
+        # “spliced” into the location in the hermetic toolchain where it
+        # lived before Xcode 26.0, so it can be run directly from there.
+        args = [ mac_bin_path + metal_tool ]
+      }
+
+      args += invoker.args
+    }
+  }
+
+  _metal_internal_shaders_air_file =
+      "$root_gen_dir/angle/mtl_internal_shaders_autogen.air"
+
+  run_metal_tool("angle_metal_internal_shaders_to_air") {
+    _metal_internal_shaders_metal_source =
+        "shaders/mtl_internal_shaders_autogen.metal"
+    sources = [ _metal_internal_shaders_metal_source ]
+
+    outputs = [ _metal_internal_shaders_air_file ]
+
+    metal_tool = "metal"
+
+    args = [
+      "-c",
+      rebase_path(_metal_internal_shaders_metal_source, root_build_dir),
+      "-o",
+      rebase_path(_metal_internal_shaders_air_file, root_build_dir),
+    ]
+
+    if (is_mac) {
+      args += [
+        "--std=macos-metal2.1",
+        "-mmacosx-version-min=10.14",
+      ]
+    } else if (is_ios) {
+      args += [
+        "--std=ios-metal2.1",
+        "-mios-version-min=12",
+      ]
+    }
+  }
+
+  _metal_internal_shaders_metallib_file =
+      "$root_gen_dir/angle/mtl_internal_shaders_autogen.metallib"
+
+  run_metal_tool("angle_metal_internal_shaders_to_mtllib") {
+    deps = [ ":angle_metal_internal_shaders_to_air" ]
+
+    sources = [ _metal_internal_shaders_air_file ]
+
+    outputs = [ _metal_internal_shaders_metallib_file ]
+
+    metal_tool = "metallib"
+
+    args = [
+      rebase_path(_metal_internal_shaders_air_file, root_build_dir),
+      "-o",
+      rebase_path(_metal_internal_shaders_metallib_file, root_build_dir),
+    ]
+  }
+
+  config("angle_metal_internal_shaders_config") {
+    include_dirs = [ "$root_gen_dir/angle" ]
+  }
+
+  action("angle_metal_internal_shaders") {
+    script = "shaders/embed_in_header.py"
+
+    outputs = [ metal_internal_shaders_header ]
+
+    sources = [ _metal_internal_shaders_metallib_file ]
+
+    deps = [ ":angle_metal_internal_shaders_to_mtllib" ]
+
+    args = [
+      "--source",
+      rebase_path(_metal_internal_shaders_metallib_file, root_build_dir),
+      "--variable-name",
+      "gDefaultMetallib",
+      "--header",
+      rebase_path(metal_internal_shaders_header, root_build_dir),
+    ]
+
+    public_configs = [ ":angle_metal_internal_shaders_config" ]
+  }
+}
+
+angle_source_set("angle_metal_backend") {
+  public_configs = [ ":angle_metal_backend_config" ]
+
+  sources = metal_backend_sources
+
+  cflags = []
+  cflags_cc = []
+  cflags_objc = []
+  cflags_objcc = []
+  ldflags = []
+  libs = []
+  defines = []
+
+  public_deps = [
+    "${angle_root}:angle_common",
+    "${angle_root}:angle_gpu_info_util",
+    "${angle_root}:angle_image_util",
+    "${angle_root}:libANGLE_headers",
+    "${angle_root}:translator",
+  ]
+
+  if (metal_internal_shader_compilation_supported) {
+    public_deps += [ ":angle_metal_internal_shaders" ]
+    defines += [ "ANGLE_METAL_HAS_PREBUILT_INTERNAL_SHADERS" ]
+  }
+
+  objc_flags = [
+    "-Wno-nullability-completeness",
+    "-Wno-unguarded-availability",
+    "-fno-objc-arc",
+  ]
+  cflags_objc += objc_flags
+  cflags_objcc += objc_flags
+
+  if (is_apple) {
+    frameworks = [
+      "IOSurface.framework",
+      "QuartzCore.framework",
+    ]
+    if (is_mac) {
+      frameworks += [ "Cocoa.framework" ]
+    }
+  }
+}

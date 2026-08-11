@@ -1,0 +1,13 @@
+
+PASS Offsets for position-area: span-all
+PASS Offsets for position-area: left span-all
+PASS Offsets for position-area: span-left span-all
+PASS Offsets for position-area: span-all center
+PASS Offsets for position-area: span-right span-all
+PASS Offsets for position-area: right span-all
+PASS Offsets for position-area: top span-all
+PASS Offsets for position-area: span-top span-all
+PASS Offsets for position-area: center span-all
+PASS Offsets for position-area: span-bottom span-all
+PASS Offsets for position-area: bottom span-all
+

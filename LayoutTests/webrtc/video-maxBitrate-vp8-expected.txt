@@ -1,0 +1,4 @@
+
+
+PASS Testing that maxBitrate and maintain-framerate have an effect
+

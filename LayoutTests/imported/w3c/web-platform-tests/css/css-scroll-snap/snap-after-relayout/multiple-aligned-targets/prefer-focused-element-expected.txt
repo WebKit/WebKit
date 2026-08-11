@@ -1,0 +1,6 @@
+top lefttop rightbottom leftbottom right
+
+PASS scroller selects focused target from aligned choices on snap
+PASS out-of-viewport focused element is not the selected snap target.
+PASS scroller follows selected snap target through layout shift,regardless of focus
+

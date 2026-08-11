@@ -1,0 +1,15 @@
+Test the behavior of CanvasRenderingContext2D.strokeText() when called with different numbers of arguments.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.strokeText() threw exception TypeError: Not enough arguments.
+PASS ctx.strokeText('moo') threw exception TypeError: Not enough arguments.
+PASS ctx.strokeText('moo',0) threw exception TypeError: Not enough arguments.
+PASS ctx.strokeText('moo',0,0) is undefined
+PASS ctx.strokeText('moo',0,0,0) is undefined
+PASS ctx.strokeText('moo',0,0,0,0) is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

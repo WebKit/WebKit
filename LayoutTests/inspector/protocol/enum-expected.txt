@@ -1,0 +1,7 @@
+Tests to validate being able to still get enum values for domains that aren't active.
+
+
+== Running test suite: Protocol.Enum
+-- Running test case: Protocol.Enum.NotMatchingDebuggableType
+PASS: Should have a 'ServiceWorker' domain to get protocol enums.
+

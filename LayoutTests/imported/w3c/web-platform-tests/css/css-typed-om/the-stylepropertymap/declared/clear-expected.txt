@@ -1,0 +1,5 @@
+
+PASS Clearing an empty CSS rule is a no-op
+PASS Can clear a CSS rule containing properties
+PASS Declared StylePropertyMap.clear updates the CSS rule
+

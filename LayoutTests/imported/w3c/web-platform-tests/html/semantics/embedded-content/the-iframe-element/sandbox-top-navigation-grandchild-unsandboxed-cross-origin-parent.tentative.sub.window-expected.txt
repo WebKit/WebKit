@@ -1,0 +1,3 @@
+
+PASS A same-origin grandchild in a cross-origin parent can navigate top
+

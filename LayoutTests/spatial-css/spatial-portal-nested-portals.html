@@ -1,0 +1,38 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<style>
+    #outer { spatial: portal; width: 400px; height: 200px; }
+    #inner { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<div id="outer">
+    <div id="inner">
+        <model id="model"><source src="../model-element/resources/cube.usdz"></model>
+    </div>
+</div>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const model = document.getElementById("model");
+    await model.ready;
+    await UIHelper.ensureStablePresentationUpdate();
+
+    const outer = document.getElementById("outer");
+    const inner = document.getElementById("inner");
+
+    assert_true(internals.establishesSpatialPortal(outer), "the outer element establishes a portal");
+    assert_false(internals.establishesSpatialPortal(inner), "the nested spatial: portal is a noop");
+
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(outer), 1, "the single (outer) portal hosts the model");
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(inner), 0, "the nested portal hosts nothing");
+}, "A <model> in nested spatial portals delegates to the outer portal");
+</script>
+</body>
+</html>

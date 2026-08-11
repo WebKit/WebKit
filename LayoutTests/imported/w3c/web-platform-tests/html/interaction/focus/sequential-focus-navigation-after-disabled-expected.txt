@@ -1,0 +1,4 @@
+First Target Third
+
+PASS Tab after disabling a focused button moves focus to the next focusable element
+

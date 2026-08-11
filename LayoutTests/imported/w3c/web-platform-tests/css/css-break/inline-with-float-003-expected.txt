@@ -1,0 +1,8 @@
+
+PASS Hit first inline-block
+PASS Hit second inline-block
+PASS Hit first float fragment
+PASS Hit second float fragment
+PASS Hit third float fragment
+PASS Hit third inline-block
+

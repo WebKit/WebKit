@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    let editor = document.querySelector("div[contenteditable]");
+    description("Verifies that after disconnecting a hardware keyboard and showing the software keyboard, we scroll to reveal the caret in the focused text field.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+    let initialContentOffset = await UIHelper.contentOffset();
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+
+    let contentOffset = initialContentOffset;
+    while (contentOffset.y <= initialContentOffset.y) {
+        await UIHelper.delayFor(200);
+        contentOffset = await UIHelper.contentOffset();
+    }
+
+    testPassed("Scrolled in response to showing software keyboard");
+
+    editor.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    finishJSTest();
+});
+</script>
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+div[contenteditable] {
+    position: fixed;
+    width: calc(100% - 16px);
+    bottom: 1em;
+    border: tomato solid 1px;
+    outline: none;
+}
+</style>
+</head>
+<body>
+    <div contenteditable></div>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

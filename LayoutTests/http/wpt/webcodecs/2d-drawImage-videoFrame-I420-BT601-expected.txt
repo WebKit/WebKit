@@ -1,0 +1,4 @@
+
+PASS Test SMTPE170m video frame rendering, full range=true
+PASS Test SMTPE170m video frame rendering, full range=false
+

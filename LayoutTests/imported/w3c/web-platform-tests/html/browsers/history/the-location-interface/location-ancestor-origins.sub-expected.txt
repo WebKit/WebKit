@@ -1,0 +1,18 @@
+
+PASS test A1 -> B1 (no-referrer in response header) -> C1 -> B2
+PASS test A1 -> A2 (no-referrer in response header) -> B1 -> C1
+FAIL test no-referrer attribute on iframe for iframe containing B1 assert_array_equals: expected property 0 to be "null" but got "http://web-platform.test:8800" (expected array ["null"] got ["http://web-platform.test:8800"])
+PASS test default referrer policy, A1 -> B1 -> A2
+FAIL test toggle of masked A1 -> B1 iframe for A2 sets no-referrer -> A2 assert_array_equals: expected property 0 to be "null" but got "http://not-web-platform.test:8800" (expected array ["null", "http://web-platform.test:8800"] got ["http://not-web-platform.test:8800", "http://web-platform.test:8800"])
+FAIL test of toggle of masked at first origin != parentDocOrigin, A1 -> B1 -> B2 -> A2 assert_array_equals: expected property 0 to be "null" but got "http://not-web-platform.test:8800" (expected array ["null", "null", "http://web-platform.test:8800"] got ["http://not-web-platform.test:8800", "http://not-web-platform.test:8800", "http://web-platform.test:8800"])
+PASS test sandboxed iframe in A1, A1 iframe attribute sandbox -> C1 -> B1 -> C2
+FAIL Test same-origin referrer policy, A1 -> B1 -> A2 iframe attribute same-origin -> B2 assert_array_equals: expected property 0 to be "null" but got "http://web-platform.test:8800" (expected array ["null", "http://not-web-platform.test:8800", "http://web-platform.test:8800"] got ["http://web-platform.test:8800", "http://not-web-platform.test:8800", "http://web-platform.test:8800"])
+FAIL Test that mutating the iframe referrerpolicy attribute of B1 before creation of B2 does not impact the hiding/non-hiding when creating a grandchild browsing context (keep null) assert_array_equals: expected property 0 to be "null" but got "http://not-web-platform.test:8800" (expected array ["null", "http://web-platform.test:8800"] got ["http://not-web-platform.test:8800", "http://web-platform.test:8800"])
+PASS Test that mutating the iframe referrerpolicy attribute does not impact the hiding/non-hiding when creating a grandchild browsing context (keep origins)
+PASS Test that tightening policy using meta, does not affect list
+PASS Test that loosening policy in policy container has no effect.
+PASS about:blank's location.ancestorOrigin policy=null
+FAIL about:blank's location.ancestorOrigin policy=no-referrer assert_array_equals: expected property 0 to be "null" but got "http://web-platform.test:8800" (expected array ["null"] got ["http://web-platform.test:8800"])
+PASS A -> about:blank -> B1 -> B2
+FAIL A -> about:blank, that set iframe referrer policy=no-referrer -> B1 -> B2 assert_array_equals: expected property 1 to be "null" but got "http://web-platform.test:8800" (expected array ["http://not-web-platform.test:8800", "null", "null"] got ["http://not-web-platform.test:8800", "http://web-platform.test:8800", "http://web-platform.test:8800"])
+

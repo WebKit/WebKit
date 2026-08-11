@@ -1,0 +1,8 @@
+PASS colors.top is "rgb(0, 122, 255)"
+PASS colors.left is "multiple"
+PASS colors.right is "multiple"
+PASS colors.bottom is "rgb(225, 225, 225)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("This tests that an SVG containing an invalid font does not crash. WebKit should not hit any assertions.");
+jsTestIsAsync = true;
+
+function test() {
+    if (window.FileSystemHandle == undefined)
+    	testPassed("Confirmed Lockdown Mode process");
+    else
+        testFailed("This is NOT a Lockdown Mode process.");
+
+    testPassed("The SVG loaded without crashing.");
+    finishJSTest();
+}
+</script>
+</head>
+<body onload="test()">
+<img src="resources/opentype_font_graph.svg">
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+PASS e.style['color'] = "text" should not set the property value
+PASS e.style['background-color'] = "text" should not set the property value
+PASS e.style['border-color'] = "text" should not set the property value
+

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>in-band CEA-608: cue endTime is set by EDM clear</title>
+  <script src="../video-test.js"></script>
+  <script src="../media-source/mp4-generator.js"></script>
+  <script src="./caption-generator.js"></script>
+  <script>
+    window.addEventListener('load', async () => {
+      try {
+        findMediaElement();
+
+        const FRAME_COUNT    = 150;
+        const FRAME_DURATION = 1001;   // 30000/1001 ≈ 29.97fps
+        const TIMESCALE      = 30000;
+        const TOTAL_TICKS    = FRAME_COUNT * FRAME_DURATION;
+        const CUE_TICKS      = 20 * FRAME_DURATION;
+
+        // Offset the caption track start by enough frames to allow the media
+        // pipeline to initialize before the first cue is delivered.
+        const CAPTION_START_OFFSET = TIMESCALE; // 1 second
+
+        const captionSamples = Captions.buildPopOnCueSamples({
+            cues: [
+                { text: 'Cue 1', durationTicks: CUE_TICKS },
+                { text: 'Cue 2', durationTicks: CUE_TICKS },
+                { text: 'Cue 3', durationTicks: CUE_TICKS },
+                { text: 'Cue 4', durationTicks: CUE_TICKS },
+            ],
+            totalDurationTicks: TOTAL_TICKS,
+        });
+
+        const videoSamples = Array.from({ length: FRAME_COUNT }, (_, i) => ({
+            duration: FRAME_DURATION,
+            isSync: i % 30 === 0,
+            dts: i * FRAME_DURATION,
+            pts: i * FRAME_DURATION,
+        }));
+
+        const { init, media } = MP4.samples({
+            timescale: TIMESCALE,
+            tracks: [
+                { id: 1, type: 'video' },
+                { id: 2, type: 'captions' },
+            ],
+            trackSamples: {
+                1: videoSamples,
+                2: captionSamples.map(s => ({ duration: s.duration, data: s.data, isSync: true, dts: CAPTION_START_OFFSET, pts: CAPTION_START_OFFSET })),
+            },
+        });
+
+        // Concatenate init + media into a single buffer for direct playback via blob URL.
+        const combined = new Uint8Array(init.byteLength + media.byteLength);
+        combined.set(new Uint8Array(init), 0);
+        combined.set(new Uint8Array(media), init.byteLength);
+
+        window.blobUrl = URL.createObjectURL(new Blob([combined], { type: 'video/mp4' }));
+        run(`video.src = blobUrl`);
+        waitForEventAndFail('error');
+
+        const canPlayThrough = waitFor(video, 'canplaythrough');
+        await waitFor(video.textTracks, 'addtrack');
+        await canPlayThrough;
+
+        run('track = video.textTracks[0]');
+        run('track.mode = "showing"');
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        run('video.play()');
+
+        await testExpectedEventually('video.currentTime', 0.5, '>', 5000);
+        await testExpectedEventually('track.cues && track.cues.length', 1, '>=', 5000);
+        await testExpectedEventually('track.cues[track.cues.length - 1] && track.cues[track.cues.length - 1].endTime < video.duration', true, '===', 8000);
+
+        run('video.pause()');
+        run('lastCue = track.cues[track.cues.length - 1]');
+        testExpected('lastCue.endTime < video.duration', true);
+
+        endTest();
+      } catch (error) {
+        failTest(`Caught exception: "${error}"`);
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div>in-band CEA-608: cue endTime is set by EDM clear</div>
+  <video controls></video>
+</body>
+
+</html>

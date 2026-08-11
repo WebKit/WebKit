@@ -1,0 +1,3 @@
+
+FAIL getIntersectionList() with <use> assert_array_equals: lengths differ, expected array [] length 0, got ["circle"] length 1
+

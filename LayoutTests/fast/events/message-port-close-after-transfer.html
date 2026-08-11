@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<iframe id="echoIframe" srcdoc='<script>
+window.onmessage = (e) => {
+    if (e.data === "port-transfer") {
+        const port = e.ports[0];
+        port.onmessage = (evt) => port.postMessage("echo:" + evt.data);
+        window.parent.postMessage("port-transfer-ack", "*");
+    }
+};
+</script>'></iframe>
+
+<script>
+description("Tests that calling close() on a MessagePort after it has been transferred to another context is a no-op for the channel - the new owner must still receive messages.");
+jsTestIsAsync = true;
+
+let echoData;
+const channel = new MessageChannel();
+
+// Send channel.port1 to the iframe when it's ready:
+document.getElementById("echoIframe").onload = () => {
+    document.getElementById("echoIframe").contentWindow.postMessage("port-transfer", "*", [channel.port1]);
+};
+
+// channel.port2 stays in this document and listens for the iframe's echo.
+const {promise: firstEchoReceived, resolve} = Promise.withResolvers();
+let messageCount = 0;
+channel.port2.onmessage = (evt) => {
+    echoData = evt.data;
+    if (messageCount == 0) {
+        messageCount = 1;
+        shouldBeEqualToString("echoData", "echo:hello");
+        resolve();
+    } else if (messageCount == 1) {
+        shouldBeEqualToString("echoData", "echo:hello again");
+        finishJSTest();
+    }
+};
+
+window.addEventListener("message", async (evt) => {
+    if (evt.data !== "port-transfer-ack")
+        return;
+
+    // channel.port1 was disentangled in this document and is entangled in the iframe.
+    channel.port2.postMessage("hello");
+    await firstEchoReceived;
+
+    // Calling close() on the disentangled wrapper should not disrupt communication.
+    channel.port1.close();
+
+    // Send a message on channel.port2, which should reach the iframe:
+    channel.port2.postMessage("hello again");
+});
+</script>
+
+</body>
+</html>

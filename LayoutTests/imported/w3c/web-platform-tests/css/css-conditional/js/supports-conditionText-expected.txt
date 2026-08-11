@@ -1,0 +1,17 @@
+
+PASS conditionText getter for @supports (color: red)
+PASS conditionText getter for @supports (color : red) or ( color:blue )
+PASS conditionText getter for @supports not (color: red)
+PASS conditionText getter for @supports ()
+PASS conditionText getter for @supports func()
+PASS conditionText getter for @supports ([])
+PASS conditionText getter for @supports ({})
+PASS conditionText getter for @supports (())
+PASS conditionText getter for @supports (func())
+PASS conditionText getter for @supports (x)
+PASS conditionText getter for @supports func(x)
+PASS conditionText getter for @supports ([x])
+PASS conditionText getter for @supports ({x})
+PASS conditionText getter for @supports ((x))
+PASS conditionText getter for @supports (func(x))
+

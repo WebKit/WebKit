@@ -1,0 +1,96 @@
+<!--
+ Copyright (C) 2025 Apple Inc. All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ THIS SOFTWARE IS PROVIDED BY APPLE INC. "AS IS" AND ANY
+ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+-->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WebKit Commits</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="../static/css/webkit.css">
+        <script type="module" src="../static/js/main.js"></script>
+        <link rel="shortcut icon" type="image/x-icon" href="../static/library/webkit.png"/>
+    </head>
+
+    <body>
+        <div class="topbar">
+            <div class="title">
+                <div class="text huge" style="width: calc(100%-44px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                    <img src="../static/library/webkit.png" height="30"> WebKit Commits
+                </div>
+            </div>
+            <div class="actions">
+                <div class="list">
+                    <div class="item">
+                        <a href="https://github.com/WebKit/WebKit">Repository</a>
+                    </div>
+                    <div class="item">
+                        <a href="https://github.com/WebKit/WebKit/commits/main/">Commit History</a>
+                    </div>
+                    <div class="item">
+                        <a href="https://webkit.org">About WebKit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <h3> Search commits </h3>
+            <div class="row">
+                <div class="col-8">
+                    <div class="input">
+                        <input class="commitInput" name="search" id="commitSearch" type="text" required/>
+                        <label for="commitSearch" id="commitSearchLabel">Enter hash or identifier</label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <button name="searchButton" id="searchButton" class="button primary medium" disabled>Search</button>
+                </div>
+            </div>
+            <span name="message" id="searchMessage"></span>
+            <br>
+
+            <h3> Compare revisions </h3>
+            <div class="row">
+                <div class="col-4">
+                    <div class="input">
+                        <input class="commitInput" name="compare" id="commit1" type="text" required/>
+                        <label for="commit1" id="commit1Label">Old</label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="input">
+                        <input class="commitInput" name="compare" id="commit2" type="text" required/>
+                        <label for="commit2" id="commit2Label">New</label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <button name="compareButton" id="compareButton" class="button primary medium" disabled>View Diff</button>
+                    <button name="compareButton" id="copyButton" class="button primary medium" disabled>Copy Link</button>
+                </div>
+            </div>
+            <span name="message" id="compareMessage"></span>
+        </div>
+    </body>
+</html>

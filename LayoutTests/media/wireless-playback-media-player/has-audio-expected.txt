@@ -1,0 +1,14 @@
+
+Test that toggling a MediaDeviceRoute's audioOptions propagates to the video element's hasAudio state.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(canplaythrough)
+RUN(route.audioOptions = [{ displayName: 'Audio', identifier: 'audio' }])
+EXPECTED (internals.mediaUsageState(video).hasAudio == 'true') OK
+RUN(route.audioOptions = [])
+EXPECTED (internals.mediaUsageState(video).hasAudio == 'false') OK
+END OF TEST
+

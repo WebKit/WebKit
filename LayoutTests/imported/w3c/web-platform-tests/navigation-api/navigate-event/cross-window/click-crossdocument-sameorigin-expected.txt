@@ -1,0 +1,4 @@
+Click me
+
+PASS clicking on an <a> element that navigates cross-document targeting a same-origin window
+

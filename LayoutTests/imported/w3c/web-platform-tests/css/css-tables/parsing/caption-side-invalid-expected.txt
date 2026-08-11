@@ -1,0 +1,6 @@
+
+PASS e.style['caption-side'] = "auto" should not set the property value
+PASS e.style['caption-side'] = "left" should not set the property value
+PASS e.style['caption-side'] = "right" should not set the property value
+PASS e.style['caption-side'] = "top bottom" should not set the property value
+

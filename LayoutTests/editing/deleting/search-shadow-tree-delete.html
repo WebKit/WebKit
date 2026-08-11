@@ -1,0 +1,23 @@
+<html>
+<head>
+    <script type='text/javascript'>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function start()
+    {
+        document.designMode="on";
+        document.getElementById("input_0").focus();
+        window.getSelection().modify("extend", "backward", "line");
+        document.execCommand("forwardDelete",true, null);
+        document.execCommand("delete",true, null);
+        if (window.GCController)
+            GCController.collect();
+        document.getElementById("input_0").blur();
+    }
+    </script>
+</head>
+<body onload="start()">
+    <input id="input_0" type="search" name="fname">
+</body>
+</html>
+

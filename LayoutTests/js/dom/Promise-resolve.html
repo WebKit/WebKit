@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test Promise.');
+
+window.jsTestIsAsync = true;
+
+var firstPromise = new Promise(function(resolve) {
+  resolve('hello');
+});
+
+var secondPromise = firstPromise.then(function(result) {
+  window.thisInFulfillCallback = this;
+  shouldBeFalse('thisInFulfillCallback === secondPromise');
+  shouldBeTrue('thisInFulfillCallback === window');
+  window.result = result;
+  shouldBeEqualToString('result', 'hello');
+  finishJSTest();
+}, function() {
+  fail('rejected');
+  finishJSTest();
+});
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

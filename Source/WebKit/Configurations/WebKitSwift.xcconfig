@@ -1,0 +1,64 @@
+// Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "BaseTarget.xcconfig"
+
+PRODUCT_NAME = libWebKitSwift;
+PRODUCT_MODULE_NAME = WebKitSwift;
+
+INSTALL_PATH = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/$(WK_FRAMEWORK_VERSION_PREFIX)Frameworks;
+
+DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/$(WK_FRAMEWORK_VERSION_PREFIX)Frameworks;
+
+WKS_EXCLUDED_SWIFT_FILE_NAMES = $(WKS_EXCLUDED_SWIFT_FILE_NAMES_$(USE_INTERNAL_SDK));
+WKS_EXCLUDED_SWIFT_FILE_NAMES_ = WKSExperienceController+Transitions.swift;
+
+EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_IOS_RESOURCE_FILE_NAMES) $(EXCLUDED_MACOS_PLUGIN_FILE_NAMES) $(WKS_EXCLUDED_SWIFT_FILE_NAMES);
+
+SWIFT_INSTALL_OBJC_HEADER = NO;
+
+CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING = NO; // Disable PGO profile generation
+WK_PGO_GEN_FLAGS = ; // Disable IR PGO profile generation
+WK_PGO_USE_CFLAGS = ; // Disable IR PGO profile use
+WK_PGO_USE_LDFLAGS = ; // Disable IR PGO profile use
+OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS) $(FRAMEWORK_LDFLAGS_$(WK_PLATFORM_NAME));
+
+FRAMEWORK_LDFLAGS_xros = -framework AVKit;
+FRAMEWORK_LDFLAGS_xrsimulator = -framework AVKit;
+FRAMEWORK_LDFLAGS_xros[sdk=xr*2.*] = -framework LinearMediaKit;
+FRAMEWORK_LDFLAGS_xrsimulator[sdk=xr*2.*] = -framework LinearMediaKit;
+
+// Use handwritten SPI modules on public SDKs.
+SWIFT_INCLUDE_PATHS = $(SWIFT_INCLUDE_PATHS_$(USE_INTERNAL_SDK));
+SWIFT_INCLUDE_PATHS_ = $(SRCROOT)/Platform/spi/visionos $(SRCROOT)/Platform/spi/ios $(SRCROOT)/Platform/spi/Cocoa $(SRCROOT)/Platform/spi/Cocoa/Modules $(inherited);
+
+USER_HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/Platform/spi/Cocoa/Modules;
+
+WEBKITSWIFT_HEADERS_FOLDER_PATH = $(WK_LIBRARY_HEADERS_FOLDER_PATH)/WebKitSwift;
+
+PRIVATE_HEADERS_FOLDER_PATH = $(WEBKITSWIFT_HEADERS_FOLDER_PATH);
+PRIVATE_HEADERS_FOLDER_PATH[sdk=macosx*] = $(PRIVATE_HEADERS_FOLDER_PATH_$(WK_PLATFORM_NAME));
+PRIVATE_HEADERS_FOLDER_PATH_macosx = $(WEBKITSWIFT_HEADERS_FOLDER_PATH);
+PRIVATE_HEADERS_FOLDER_PATH_maccatalyst = $(WK_ALTERNATE_FRAMEWORKS_DIR)/$(WEBKITSWIFT_HEADERS_FOLDER_PATH);
+
+SWIFT_LIBRARY_LEVEL = other;

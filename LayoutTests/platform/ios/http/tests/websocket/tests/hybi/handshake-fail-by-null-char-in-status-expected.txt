@@ -1,0 +1,12 @@
+Connection should fail immediately, rather than succeeding or staying in limbo until timeout, if a null byte is received in the status header.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Connected
+PASS timedOut is false
+FAIL connected should be false. Was true.
+PASS wsOrigin is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

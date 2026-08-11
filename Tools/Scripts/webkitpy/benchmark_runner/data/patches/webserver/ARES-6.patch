@@ -1,0 +1,50 @@
+diff --git a/driver.js b/driver.js
+index 2ef7d63..bbbcc45 100644
+--- a/driver.js
++++ b/driver.js
+@@ -141,6 +141,32 @@ class Driver {
+         this._benchmark = this._iterator ? this._iterator.next().value : null;
+         if (!this._benchmark) {
+             if (!this._numIterations) {
++
++                let tests = {};
++                for (let [benchmark, results] of this._benchmarks) {
++                    let subtests = {};
++                    for (let subResultName of Results.subResults)
++                        subtests[subResultName] = {"metrics": {"Time": {"current": results[subResultName]._data}}};
++                    tests[benchmark.name] = {"metrics": {"Time" : ["Geometric"]}, "tests": subtests};
++                }
++
++                let xhr = new XMLHttpRequest();
++                xhr.open("POST", "/report");
++                let content = JSON.stringify({"ARES-6": {"metrics" : {"Time" : ["Geometric"]}, "tests" : tests}});
++                xhr.setRequestHeader("Content-type", "application/json");
++                xhr.setRequestHeader("Content-length", content.length);
++                xhr.setRequestHeader("Connection", "close");
++
++                xhr.onreadystatechange = () => {
++                   if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++                        closeRequest = new XMLHttpRequest();
++                        closeRequest.open("GET", "/shutdown");
++                        closeRequest.send();
++                    }
++                }
++
++                xhr.send(content);
++
+                 if (isInBrowser) {
+                     this._statusCell.innerHTML = "Restart";
+                     this.readyTrigger();
+diff --git a/index.html b/index.html
+index f676bb3..524220f 100644
+--- a/index.html
++++ b/index.html
+@@ -11,6 +11,8 @@
+         document.getElementById("error").innerHTML = "ERROR: " + url + ":" + lineNumber + ": " + message;
+     }
+ 
++    window.onload = () => { setTimeout(() => driver.start(8), 3000); }
++
+     const isInBrowser = true;
+     </script>
+     <script src="driver.js"></script>

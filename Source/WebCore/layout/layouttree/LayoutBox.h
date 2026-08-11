@@ -1,0 +1,279 @@
+/*
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/LayoutUnits.h>
+#include <WebCore/RenderObject.h>
+#include <WebCore/RenderStyleConstants.h>
+#include <WebCore/StyleComputedStyle.h>
+#include <wtf/CheckedPtr.h>
+#include <wtf/TZoneMalloc.h>
+
+namespace WebCore {
+
+class LayoutShape;
+class RenderObject;
+
+namespace Layout {
+
+class ElementBox;
+class BoxGeometry;
+class InitialContainingBlock;
+class LayoutState;
+class TreeBuilder;
+
+class Box : public CanMakeCheckedPtr<Box> {
+    WTF_MAKE_TZONE_ALLOCATED(Box);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Box);
+public:
+    enum class NodeType : uint8_t {
+        Text,
+        GenericElement,
+        ReplacedElement,
+        DocumentElement,
+        Body,
+        TableWrapperBox, // The table generates a principal block container box called the table wrapper box that contains the table box and any caption boxes.
+        TableBox, // The table box is a block-level box that contains the table's internal table boxes.
+        Image,
+        IFrame,
+        LineBreak,
+        WordBreakOpportunity,
+        ListMarker,
+        ImplicitFlexBox // These boxes are implicit flex boxes with no flex display type and they should probably turned into proper flex boxes.
+    };
+
+    enum class IsAnonymous : bool { No, Yes };
+
+    struct ElementAttributes {
+        NodeType nodeType;
+        IsAnonymous isAnonymous;
+    };
+
+    enum BaseTypeFlag : uint8_t {
+        InlineTextBoxFlag,
+        ElementBoxFlag,
+        InitialContainingBlockFlag,
+    };
+
+    virtual ~Box();
+
+    bool establishesFormattingContext() const;
+    bool establishesBlockFormattingContext() const;
+    bool NODELETE establishesInlineFormattingContext() const;
+    bool NODELETE establishesTableFormattingContext() const;
+    bool NODELETE establishesFlexFormattingContext() const;
+    bool NODELETE establishesGridFormattingContext() const;
+    bool establishesIndependentFormattingContext() const;
+
+    bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
+    bool isPositioned() const { return isInFlowPositioned() || isOutOfFlowPositioned(); }
+    bool isInFlowPositioned() const { return isRelativelyPositioned() || isStickyPositioned(); }
+    bool isOutOfFlowPositioned() const { return isAbsolutelyPositioned(); }
+    bool NODELETE isRelativelyPositioned() const;
+    bool NODELETE isStickyPositioned() const;
+    bool NODELETE isAbsolutelyPositioned() const;
+    bool NODELETE isFixedPositioned() const;
+    bool NODELETE isFloatingPositioned() const;
+    bool NODELETE hasFloatClear() const;
+    bool isFloatAvoider() const;
+
+    bool isFloatingOrOutOfFlowPositioned() const { return isFloatingPositioned() || isOutOfFlowPositioned(); }
+
+    bool isContainingBlockForInFlow() const;
+    inline bool isContainingBlockForFixedPosition() const;
+    inline bool isContainingBlockForOutOfFlowPosition() const;
+
+    bool isAnonymous() const { return m_isAnonymous; }
+
+    // Block level elements generate block level boxes.
+    bool NODELETE isBlockLevelBox() const;
+    // A block-level box that is also a block container.
+    bool NODELETE isBlockBox() const;
+    // A block-level box is also a block container box unless it is a table box or the principal box of a replaced element.
+    bool NODELETE isBlockContainer() const;
+    bool NODELETE isInlineLevelBox() const;
+    bool NODELETE isInlineBox() const;
+    bool NODELETE isAtomicInlineBox() const;
+    bool NODELETE isInlineBlockBox() const;
+    bool NODELETE isInlineTableBox() const;
+    bool isInitialContainingBlock() const { return baseTypeFlags().contains(InitialContainingBlockFlag); }
+    bool isLayoutContainmentBox() const;
+    bool isSizeContainmentBox() const;
+    bool NODELETE isInternalRubyBox() const;
+    bool NODELETE isRubyAnnotationBox() const;
+    bool NODELETE isInterlinearRubyAnnotationBox() const;
+
+    bool isDocumentBox() const { return m_nodeType == NodeType::DocumentElement; }
+    bool isTableWrapperBox() const { return m_nodeType == NodeType::TableWrapperBox; }
+    bool isTableBox() const { return m_nodeType == NodeType::TableBox; }
+    bool isBodyBox() const { return m_nodeType == NodeType::Body; }
+    bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }
+    bool isIFrame() const { return m_nodeType == NodeType::IFrame; }
+    bool isImage() const { return m_nodeType == NodeType::Image; }
+    bool isListMarkerBox() const { return m_nodeType == NodeType::ListMarker; }
+    bool isReplacedBox() const { return m_nodeType == NodeType::ReplacedElement || m_nodeType == NodeType::Image || m_nodeType == NodeType::ListMarker; }
+    bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
+    bool NODELETE isInternalTableBox() const;
+    inline bool NODELETE isRuby() const;
+    bool NODELETE isRubyBase() const;
+    inline bool isRubyInlineBox() const;
+    inline bool isTableCaption() const;
+    inline bool isTableHeader() const;
+    inline bool isTableBody() const;
+    inline bool isTableFooter() const;
+    inline bool isTableRow() const;
+    inline bool isTableColumnGroup() const;
+    inline bool isTableColumn() const;
+    inline bool isTableCell() const;
+    inline bool isFlexBox() const;
+    bool NODELETE isFlexItem() const;
+    inline bool isGridFormattingContext() const;
+    inline bool isGridBox() const;
+    inline bool isGridLanesBox() const;
+    bool NODELETE isGridItem() const;
+    inline bool isListItem() const;
+
+    bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
+    bool isAnonymousTextIndentCandidateForIntegration() const { return m_isAnonymousTextIndentCandidateForIntegration; }
+
+    const ElementBox& parent() const { return *m_parent; }
+    const Box* nextSibling() const { return m_nextSibling.get(); }
+    const Box* NODELETE nextInFlowSibling() const;
+    const Box* NODELETE nextInFlowOrFloatingSibling() const;
+    const Box* NODELETE nextOutOfFlowSibling() const;
+    const Box* previousSibling() const { return m_previousSibling.get(); }
+    const Box* NODELETE previousInFlowSibling() const;
+    const Box* NODELETE previousInFlowOrFloatingSibling() const;
+    const Box* NODELETE previousOutOfFlowSibling() const;
+    bool NODELETE isDescendantOf(const Box&) const;
+    bool isDescendantOfWithinFormattingContext(const Box&) const;
+    bool isInFormattingContextEstablishedBy(const ElementBox& formattingContextRoot) const;
+
+    // FIXME: This is currently needed for style updates.
+    Box* nextSibling() { return m_nextSibling.get(); }
+
+    bool isElementBox() const { return baseTypeFlags().contains(ElementBoxFlag); }
+    bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
+
+    bool NODELETE isPaddingApplicable() const;
+    bool NODELETE isOverflowVisible() const;
+
+    void updateStyle(Style::ComputedStyle&& newStyle, std::unique_ptr<Style::ComputedStyle>&& newFirstLineStyle);
+    const Style::ComputedStyle& style() const LIFETIME_BOUND { return m_style; }
+    const Style::ComputedStyle& firstLineStyle() const LIFETIME_BOUND { return hasRareData() && rareData().firstLineStyle ? *rareData().firstLineStyle : m_style; }
+    WritingMode writingMode() const { return style().writingMode(); }
+
+    // FIXME: Find a better place for random DOM things.
+    void setRowSpan(size_t);
+    size_t rowSpan() const;
+
+    void setColumnSpan(size_t);
+    size_t columnSpan() const;
+
+    void setColumnWidth(LayoutUnit);
+    std::optional<LayoutUnit> columnWidth() const;
+
+    void setIsInlineIntegrationRoot() { m_isInlineIntegrationRoot = true; }
+    void setIsAnonymousTextIndentCandidateForIntegration(bool value) { m_isAnonymousTextIndentCandidateForIntegration = value; }
+
+    const LayoutShape* shape() const;
+    void setShape(RefPtr<const LayoutShape>);
+
+    const ElementBox* NODELETE associatedRubyAnnotationBox() const;
+
+    RenderObject* rendererForIntegration() const { return m_renderer.get(); }
+    void setRendererForIntegration(RenderObject* renderer) { m_renderer = renderer; }
+
+    UniqueRef<Box> removeFromParent();
+
+protected:
+    Box(ElementAttributes&&, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle, EnumSet<BaseTypeFlag>);
+
+private:
+    friend class ElementBox;
+    friend class LayoutState;
+
+    class BoxRareData {
+        WTF_MAKE_TZONE_ALLOCATED(BoxRareData);
+    public:
+        BoxRareData() = default;
+
+        CellSpan tableCellSpan;
+        std::optional<LayoutUnit> columnWidth;
+        std::unique_ptr<Style::ComputedStyle> firstLineStyle;
+        RefPtr<const LayoutShape> shape;
+    };
+
+    bool hasRareData() const { return m_hasRareData; }
+    void setHasRareData(bool hasRareData) { m_hasRareData = hasRareData; }
+    const BoxRareData& rareData() const;
+    Box::BoxRareData& rareData();
+    BoxRareData& ensureRareData();
+    void removeRareData();
+    
+    EnumSet<BaseTypeFlag> baseTypeFlags() const { return EnumSet<BaseTypeFlag>::fromRaw(m_baseTypeFlags); }
+
+    typedef HashMap<const Box*, std::unique_ptr<BoxRareData>> RareDataMap;
+
+    static RareDataMap& NODELETE rareDataMap();
+
+    NodeType m_nodeType : 4;
+    bool m_isAnonymous : 1;
+
+    unsigned m_baseTypeFlags : 4; // EnumSet<BaseTypeFlag>
+    bool m_hasRareData : 1 { false };
+    bool m_isInlineIntegrationRoot : 1 { false };
+    bool m_isAnonymousTextIndentCandidateForIntegration : 1 { false }; // Either first anonymous block box child or simple anonymous block container (e.g flex item).
+
+    Style::ComputedStyle m_style;
+
+    CheckedPtr<ElementBox> m_parent;
+
+    std::unique_ptr<Box> m_nextSibling;
+    CheckedPtr<Box> m_previousSibling;
+
+    // Primary LayoutState gets a direct cache.
+#if ASSERT_ENABLED
+    mutable WeakPtr<LayoutState> m_primaryLayoutState;
+#endif
+    mutable std::unique_ptr<BoxGeometry> m_cachedGeometryForPrimaryLayoutState;
+
+    CheckedPtr<RenderObject> m_renderer;
+};
+
+inline bool Box::isContainingBlockForInFlow() const
+{
+    return isBlockContainer() || establishesFormattingContext();
+}
+
+}
+
+}
+
+#define SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Layout::ToValueTypeName) \
+    static bool isType(const WebCore::Layout::Box& box) { return box.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+var count = 0;
+var format = new Intl.NumberFormat('en-AU-u-nu-fullwide', {
+    localeMatcher: 'best fit',
+    style: 'currency',
+    currency: 'AUD',
+    currencyDisplay: 'name',
+    useGrouping: true,
+    minimumIntegerDigits: 2,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+    // The following options would override the above when formatting.
+    // minimumSignificantDigits: 3,
+    // maximumSignificantDigits: 21
+});
+
+PerfTestRunner.measureRunsPerSecond({run() {
+    format.format(count++);
+}});
+</script>
+</body>

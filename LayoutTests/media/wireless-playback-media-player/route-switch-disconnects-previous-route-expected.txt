@@ -1,0 +1,22 @@
+
+Test that activating a new MediaDeviceRoute disconnects the previously active route.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route1))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(route1.playbackRate = 1)
+RUN(route1.timeRange = { start: 0, duration: 60 })
+RUN(route1.audioOptions = [{ displayName: 'Audio', identifier: 'audio' }])
+RUN(video.play())
+RUN(route1.ready = true)
+EVENT(playing)
+EXPECTED (route1.connected == 'true') OK
+EXPECTED (internals.mediaUsageState(video).hasAudio == 'true') OK
+RUN(route2.playbackRate = 1)
+RUN(route2.timeRange = { start: 0, duration: 60 })
+RUN(route2.audioOptions = [{ displayName: 'Audio', identifier: 'audio' }])
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route2))
+RUN(route2.ready = true)
+EXPECTED (route1.connected == 'false') OK
+EXPECTED (route2.connected == 'true') OK
+END OF TEST
+

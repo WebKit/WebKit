@@ -1,0 +1,20 @@
+<style>
+div::first-letter { color: green; }
+</style>
+<script>
+function runTest() {
+  var div = document.getElementById("div");
+  var p = document.getElementById("p");
+  iframe.contentDocument.body.appendChild(div);
+  document.execCommand("selectAll");
+  p.outerText = "foo";
+  document.body.appendChild(div);
+  window.getSelection().deleteFromDocument();
+}
+</script>
+<body onload="runTest()">
+  <iframe id="iframe"></iframe>
+  <div id="div">
+    <p id="p"></p>
+  </div>
+</body>

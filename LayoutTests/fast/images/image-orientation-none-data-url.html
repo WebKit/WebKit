@@ -1,0 +1,24 @@
+<script src="../../resources/js-test-pre.js"></script>
+<p>The test should display two images, one rotated and one not.</p>
+<br/>
+<output id="log"></output>
+<script>        
+    const localImageLocation = "resources/exif-orientation-5-lu.jpg";
+    if (window.testRunner)
+        testRunner.dumpAsText(pixeltest = false);
+
+    // This is a 2x1 empty JPEG image.
+    const src = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAYAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAAKgAwAEAAAAAQAAAAEAAAAA/8AAEQgAAQACAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMABAIDAwMCBAMDAwQEBAQFCQYFBQUFCwgIBgkNCw0NDQsMDA4QFBEODxMPDAwSGBITFRYXFxcOERkbGRYaFBYXFv/bAEMBBAQEBQUFCgYGChYPDA8WFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFv/dAAQAAf/aAAwDAQACEQMRAD8A+9KKKKok/9k='
+
+    window.rotatedImage = document.createElement("img");
+    rotatedImage.setAttribute("src", src);
+    window.nonRotatedImage = document.createElement("img");
+    nonRotatedImage.setAttribute("src", src);
+    nonRotatedImage.style.imageOrientation = 'none'
+    document.body.appendChild(rotatedImage);
+    document.body.appendChild(nonRotatedImage);
+    window.onload = () => {
+        shouldBe("rotatedImage.offsetWidth", "1")
+        shouldBe("nonRotatedImage.offsetWidth", "2")
+    }
+</script>

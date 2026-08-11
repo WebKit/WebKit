@@ -1,0 +1,19 @@
+Whitespace nodes should be ignored.
+Thre is another child element of the same type.
+There is a prior child element of another type.
+A previous element of the parent should not affect.
+The parent element of the same type should not affect.
+A child of the previous element should not affect.
+The second child element of the same type should not match.
+The second child element of the same type should not match, the first child has case-different tag name.
+
+PASS Whitespace nodes should be ignored.
+PASS Thre is another child element of the same type.
+PASS There is a prior child element of another type.
+PASS A previous element of the parent should not affect.
+PASS The parent element of the same type should not affect.
+PASS A child of the previous element should not affect.
+PASS The second child element of the same type should not match.
+PASS The second child element of the same type should not match, the first child has case-different tag name.
+PASS Dynamic insertion and removal
+

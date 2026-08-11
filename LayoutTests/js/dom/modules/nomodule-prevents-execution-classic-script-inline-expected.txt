@@ -1,0 +1,10 @@
+Test nomodule prevents execution of classic script.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS executed is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,217 @@
+# Copyright 2026 The LibYuv Project Authors. All rights reserved.
+#
+# Description:
+#   The libyuv package provides implementation yuv image conversion, rotation
+#   and scaling.
+
+load("@bazel_skylib//lib:selects.bzl", "selects")
+load(":libyuv.bzl", "libyuv_hdrs", "libyuv_neon_srcs", "libyuv_srcs", "libyuv_sve_srcs", "libyuv_test_srcs")
+
+# Detect if we are in Google's internal repository (where source files are
+# under files/) or open source (where source files are at the root).
+PREFIX = "files/" if len(native.glob(["files/source/*.cc"])) > 0 else ""
+
+# We support NEON for all arm processors, as we only support ARMv7a+.
+SUPPORTS_NEON_COPTS = [
+    "-DLIBYUV_NEON",
+]
+
+# ARMv7a requires that we explicitly enable NEON. arm64 enables it implicitly.
+ENABLE_NEON_COPTS = [
+    "-mfpu=neon",
+]
+
+ENABLE_NEON64_COPTS = [
+    "-march=armv8-a+dotprod+i8mm",
+]
+
+NEON_COPTS = select({
+    "@platforms//cpu:armv7": ENABLE_NEON_COPTS + SUPPORTS_NEON_COPTS,
+    "@platforms//cpu:aarch64": ENABLE_NEON64_COPTS + SUPPORTS_NEON_COPTS,
+    "//conditions:default": [],
+})
+
+SUPPORTS_SVE_COPTS = [
+    "-DLIBYUV_SVE",
+]
+
+ENABLE_SVE_COPTS = [
+    "-march=armv9-a+i8mm+sve2",
+]
+
+SVE_COPTS = select({
+    "@platforms//cpu:aarch64": ENABLE_SVE_COPTS + SUPPORTS_SVE_COPTS,
+    "//conditions:default": [],
+})
+
+PLATFORM_COPTS = select({
+    "@platforms//os:android": ["-DHAVE_JPEG"],
+    "@platforms//os:linux": ["-DHAVE_JPEG"],
+    "@platforms//os:windows": ["-DHAVE_JPEG"],
+    "@platforms//os:macos": ["-DHAVE_JPEG"],
+    "//conditions:default": [],
+}) + [
+    "-DLIBYUV_DISABLE_SME",
+    "-DLIBYUV_USE_ABSL_FLAGS",
+    "-DGOOGLE_COMMANDLINEFLAGS_FULL_API",
+]
+
+ALL_COPTS = PLATFORM_COPTS
+
+ALL_NEON_COPTS = NEON_COPTS + PLATFORM_COPTS
+
+ALL_SVE_COPTS = SVE_COPTS + PLATFORM_COPTS
+
+NEON_DEPS = select({
+    "@platforms//cpu:armv7": [":libyuv_neon_impl"],
+    "@platforms//cpu:aarch64": [":libyuv_neon_impl"],
+    "//conditions:default": [],
+})
+
+SVE_DEPS = select({
+    "@platforms//cpu:aarch64": [":libyuv_sve_impl"],
+    "//conditions:default": [],
+})
+
+PLATFORM_DEPS = select({
+    "@platforms//os:android": ["@libjpeg_turbo//:jpeg"],
+    "@platforms//os:linux": ["@libjpeg_turbo//:jpeg"],
+    "@platforms//os:windows": ["@libjpeg_turbo//:jpeg"],
+    "@platforms//os:macos": ["@libjpeg_turbo//:jpeg"],
+    "//conditions:default": [],
+})
+
+ALL_DEPS = NEON_DEPS + SVE_DEPS + PLATFORM_DEPS
+
+cc_library(
+    name = "libyuv",
+    hdrs = native.glob([PREFIX + "include/**/*.h"]),
+    strip_include_prefix = PREFIX + "include",
+    visibility = ["//visibility:public"],
+    deps = [":libyuv_impl"],
+)
+
+cc_library(
+    name = "libyuv_impl",
+    srcs = libyuv_srcs(PREFIX),
+    hdrs = libyuv_hdrs(PREFIX),
+    copts = ALL_COPTS + selects.with_or({
+        (
+            "@platforms//os:android",
+            "@platforms//os:ios",
+            "@platforms//os:tvos",
+            "@platforms//os:windows",
+            "@platforms//os:macos",
+        ): [],
+        "//conditions:default": [
+            "-fomit-frame-pointer",
+        ],
+    }) + selects.with_or({
+        (
+            "@platforms//os:android",
+            "@platforms//os:ios",
+            "@platforms//os:tvos",
+        ): ["-O2"],
+        "//conditions:default": [],
+    }),
+    includes = [PREFIX + "include"],
+    deps = ALL_DEPS,
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "libyuv_neon_impl",
+    srcs = libyuv_neon_srcs(PREFIX),
+    copts = ALL_NEON_COPTS,
+    includes = [PREFIX + "include"],
+    visibility = ["//visibility:private"],
+    alwayslink = 1,
+)
+
+cc_library(
+    name = "libyuv_sve_impl",
+    srcs = libyuv_sve_srcs(PREFIX),
+    copts = ALL_SVE_COPTS,
+    includes = [PREFIX + "include"],
+    visibility = ["//visibility:private"],
+    alwayslink = 1,
+)
+
+cc_test(
+    name = "libyuv_test",
+    srcs = libyuv_test_srcs(PREFIX),
+    copts = ALL_COPTS + [
+        "-Wno-unused-variable",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":libyuv",
+        "@com_google_googletest//:gtest_main",
+        "@com_google_absl//absl/flags:flag",
+        "@com_google_absl//absl/flags:parse",
+    ],
+)
+
+cc_library(
+    name = "psnr_lib",
+    srcs = [PREFIX + "util/psnr.cc"],
+    hdrs = [PREFIX + "util/psnr.h"],
+    copts = PLATFORM_COPTS,
+    visibility = ["//visibility:private"],
+)
+
+cc_library(
+    name = "ssim_lib",
+    srcs = [PREFIX + "util/ssim.cc"],
+    hdrs = [PREFIX + "util/ssim.h"],
+    visibility = ["//visibility:private"],
+)
+
+cc_binary(
+    name = "psnr",
+    srcs = [PREFIX + "util/psnr_main.cc"],
+    copts = PLATFORM_COPTS + [
+        "-Wframe-larger-than=64000",
+    ],
+    deps = [
+        ":libyuv",
+        ":psnr_lib",
+        ":ssim_lib",
+    ],
+)
+
+cc_binary(
+    name = "i444tonv12_eg",
+    srcs = [PREFIX + "util/i444tonv12_eg.cc"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":libyuv",
+    ],
+)
+
+cc_binary(
+    name = "cpuid",
+    srcs = [PREFIX + "util/cpuid.c"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":libyuv",
+    ],
+)
+
+cc_binary(
+    name = "yuvconstants",
+    srcs = [PREFIX + "util/yuvconstants.c"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":libyuv",
+    ],
+)
+
+cc_binary(
+    name = "yuvconvert",
+    srcs = [PREFIX + "util/yuvconvert.cc"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":libyuv",
+    ],
+)

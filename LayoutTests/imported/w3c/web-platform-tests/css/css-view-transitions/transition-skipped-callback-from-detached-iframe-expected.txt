@@ -1,0 +1,3 @@
+
+FAIL Using a callback from a detached iframe should not crash assert_equals: finished promise should reject with AbortError expected "AbortError" but got "Error"
+

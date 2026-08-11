@@ -1,0 +1,108 @@
+<!--
+Copyright (c) 2022 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../../../webgl_test_files/resources/js-test-style.css"/>
+<script src="../../../../webgl_test_files/js/js-test-pre.js"></script>
+<script src="../../../../webgl_test_files/js/webgl-test-utils.js"></script>
+<script>
+"use strict";
+var wtu = WebGLTestUtils;
+var gl = null;
+var textureLoc = null;
+var successfullyParsed = false;
+var blue = [0, 0, 255];
+var yellow = [255, 255, 0];
+var black = [0, 0, 0];
+initTestingHarness();
+
+function init()
+{
+    description('Verify optimization of repeated uploads of HTMLVideoElement to a texture');
+
+    const canvas = document.getElementById("example");
+    gl = wtu.create3DContext(canvas, { antialias: false, depth: false });
+    const program = wtu.setupTexturedQuad(gl);
+    gl.clearColor(0,0,0,1);
+    gl.clearDepth(1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    const textureLoc = gl.getUniformLocation(program, "tex");
+    gl.uniform1i(textureLoc, 0);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+
+    const video1 = document.getElementById("video1");
+    const video2 = document.getElementById("video2");
+    wtu.startPlayingAndWaitForVideo(video1, (video) => {
+        wtu.startPlayingAndWaitForVideo(video2, (video) => {
+            runTest(video1, video2);
+        });
+    });
+}
+
+function checkFramebufferHasVideo2(gl)
+{
+    const leftColor = blue;
+    const rightColor = yellow;
+    const tolerance = 5;
+    debug("Checking mid left border");
+    wtu.checkCanvasRect(gl, 4, 17, 2, 2, leftColor, "shouldBe " + leftColor, tolerance);
+    debug("Checking mid right border");
+    wtu.checkCanvasRect(gl, 60, 28, 2, 2, rightColor, "shouldBe " + rightColor, tolerance);
+}
+
+function testTwoTexturesBug1(video1, video2)
+{
+    debug("Testing uploading same video to two different textures does not skip the latter upload")
+    const textures = [gl.createTexture(), gl.createTexture()];
+    // Initialize texture[0] to some specific content that fails the test.
+    // Initialization is done with video to exercise the video content identification
+    // algorithm.
+    gl.bindTexture(gl.TEXTURE_2D, textures[0]);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video1);
+
+    // Try to fool the video content identification algorithm by first uploading
+    // the passing content to some other, untested texture.
+    gl.bindTexture(gl.TEXTURE_2D, textures[1]);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video2);
+
+    // Update texture[0] to some content that passes the test.
+    gl.bindTexture(gl.TEXTURE_2D, textures[0]);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video2);
+
+    // Verify that the texture[0] received the new content.
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    wtu.clearAndDrawUnitQuad(gl, [255, 0, 0, 255]);
+    checkFramebufferHasVideo2(gl);
+}
+
+function runTest(video1, video2)
+{
+    testTwoTexturesBug1(video1, video2);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "should be no errors");
+    finishTest();
+}
+</script>
+</head>
+<body onload="init()">
+<canvas id="example" width="64" height="48"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<video id="video1" >
+  <source src="../../../../webgl_test_files/resources/red-green.mp4"  type='video/mp4; codecs="avc1.42E01E"' />
+  <source src="../../../../webgl_test_files/resources/red-green.webmvp8.webm" type='video/webm; codecs="vp8"' />
+  <source src="../../../../webgl_test_files/resources/red-green.theora.ogv"  type='video/ogg; codecs="theora"' />
+</video>
+<video id="video2" >
+    <source src="../../../../webgl_test_files/resources/video-rotation-0.mp4"  type='video/mp4; codecs="avc1.42E01E"' />
+  </video>
+</body>
+</html>

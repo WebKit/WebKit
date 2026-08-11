@@ -1,0 +1,15 @@
+This tests the AXTextMarker and AXTextMarkerRange DebugDescription APIs.
+
+text:
+PASS: containsExpectedFields(axElement.textMarkerRangeDebugDescription(range)) === true
+PASS: containsExpectedFields(axElement.textMarkerDebugDescription(start)) === true
+PASS: containsExpectedFields(axElement.textMarkerDebugDescription(end)) === true
+link:
+PASS: containsExpectedFields(axElement.textMarkerRangeDebugDescription(range)) === true
+PASS: containsExpectedFields(axElement.textMarkerDebugDescription(start)) === true
+PASS: containsExpectedFields(axElement.textMarkerDebugDescription(end)) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

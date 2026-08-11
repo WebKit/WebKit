@@ -1,0 +1,573 @@
+/*
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
+#import "Helpers/cocoa/TestCocoaImageAndCocoaColor.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
+#import "Helpers/cocoa/TestWKWebView.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebCore/Image.h>
+#import <WebCore/ImageAdapter.h>
+#import <WebCore/NativeImage.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <wtf/Expected.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/Base64.h>
+
+namespace TestWebKitAPI {
+
+static bool loadAndDecodeDone;
+
+TEST(WebKit, LoadAndDecodeImage)
+{
+    auto resourceToVector = [] (NSString *resource, NSString *extension) {
+        @autoreleasepool {
+            NSURL *url = [NSBundle.test_resourcesBundle URLForResource:resource withExtension:extension];
+            return makeVector([NSData dataWithContentsOfURL:url]);
+        }
+    };
+    auto pngData = [&] {
+        return resourceToVector(@"icon", @"png");
+    };
+    auto untaggedPNGData = [&] {
+        return resourceToVector(@"400x400-green", @"png");
+    };
+    auto gifData = [&] {
+        return resourceToVector(@"apple", @"gif");
+    };
+
+    HTTPServer server {
+        { "/terminate"_s, { HTTPResponse::Behavior::TerminateConnectionAfterReceivingRequest } },
+        { "/test_png"_s, { pngData() } },
+        { "/test_untagged_png"_s, { untaggedPNGData() } },
+        { "/test_gif"_s, { gifData() } },
+        { "/redirect"_s, { 302, { { "Location"_s, "/test_png"_s } }, "redirecting..."_s } },
+        { "/not_image"_s, { "this is not an image"_s } }
+    };
+    RetainPtr webView = adoptNS([WKWebView new]);
+
+    auto imageOrError = [&] (auto requestPath, CGSize size = CGSizeZero) -> Expected<RetainPtr<Util::PlatformImage>, RetainPtr<NSError>> {
+        __block RetainPtr<Util::PlatformImage> image;
+        __block RetainPtr<NSError> error;
+        __block bool loadAndDecodeDone { false };
+        [webView _loadAndDecodeImage:server.request(requestPath) constrainedToSize:size maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *imageResult, NSError *errorResult) {
+            image = imageResult;
+            error = errorResult;
+            loadAndDecodeDone = true;
+        }];
+        Util::run(&loadAndDecodeDone);
+        EXPECT_NE(!image, !error);
+        if (image)
+            return image;
+        EXPECT_NOT_NULL(error);
+        return makeUnexpected(error);
+    };
+
+    auto colorSpaceForImage = [&] (Util::PlatformImage *image) -> RetainPtr<CGColorSpaceRef> {
+        return CGImageGetColorSpace(Util::convertToCGImage(image).get());
+    };
+
+    auto colorSpaceDescriptionForImage = [&] (Util::PlatformImage *image) -> NSString * {
+        return (__bridge NSString *)adoptCF(CFCopyDescription(colorSpaceForImage(image).get())).autorelease();
+    };
+
+    auto result1 = imageOrError("/terminate"_s);
+    EXPECT_WK_STREQ(result1.error().get().domain, NSURLErrorDomain);
+    EXPECT_EQ(result1.error().get().code, NSURLErrorNetworkConnectionLost);
+
+    auto result2 = imageOrError("/test_png"_s);
+    EXPECT_EQ(result2->get().size.height, 174);
+    EXPECT_EQ(result2->get().size.width, 215);
+
+    auto result3 = imageOrError("/not_image"_s);
+    EXPECT_WK_STREQ(result3.error().get().domain, NSURLErrorDomain);
+    EXPECT_EQ(result3.error().get().code, NSURLErrorCannotDecodeContentData);
+
+    auto result4 = imageOrError("/test_png"_s, CGSizeMake(100, 100));
+    EXPECT_EQ(result4->get().size.height, 80);
+    EXPECT_EQ(result4->get().size.width, 100);
+    EXPECT_TRUE([colorSpaceDescriptionForImage(result4->get()) containsString:@"Calibrated RGB"]);
+
+    auto result5 = imageOrError("/test_png"_s, CGSizeMake(1000, 1000));
+    EXPECT_EQ(result5->get().size.height, 174);
+    EXPECT_EQ(result5->get().size.width, 215);
+
+    auto result6 = imageOrError("/test_gif"_s);
+    EXPECT_EQ(result6->get().size.height, 64);
+    EXPECT_EQ(result6->get().size.width, 52);
+
+    auto result7 = imageOrError("/redirect"_s);
+    EXPECT_EQ(result7->get().size.height, 174);
+    EXPECT_EQ(result7->get().size.width, 215);
+
+    auto result8 = imageOrError("/test_untagged_png"_s, CGSizeMake(100, 100));
+    EXPECT_EQ(result8->get().size.height, 100);
+    EXPECT_EQ(result8->get().size.width, 100);
+    EXPECT_TRUE([colorSpaceDescriptionForImage(result8->get()) containsString:@"sRGB"]);
+
+    HTTPServer tlsServer { {
+        { "/"_s, { pngData() } },
+    }, HTTPServer::Protocol::Https };
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    __block bool loadAndDecodeDone { false };
+    [webView _loadAndDecodeImage:tlsServer.request() constrainedToSize:CGSizeZero maximumBytesFromNetwork:36541 completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        EXPECT_EQ(image.size.height, 174);
+        EXPECT_EQ(image.size.width, 215);
+        EXPECT_NULL(error);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    [webView _loadAndDecodeImage:tlsServer.request() constrainedToSize:CGSizeZero maximumBytesFromNetwork:36540 completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        EXPECT_NULL(image);
+        EXPECT_EQ(error.code, NSURLErrorDataLengthExceedsMaximum);
+        EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    [webView _loadAndDecodeImage:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://127.0.0.1:1/"]] constrainedToSize:CGSizeZero maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        EXPECT_NULL(image);
+        EXPECT_EQ(error.code, 103);
+        EXPECT_WK_STREQ(error.domain, "WebKitErrorDomain");
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    RetainPtr syncedWebView = adoptNS([TestWKWebView new]);
+    [syncedWebView synchronouslyLoadHTMLString:@""];
+    [syncedWebView _close];
+    [syncedWebView _loadAndDecodeImage:tlsServer.request() constrainedToSize:CGSizeZero maximumBytesFromNetwork:36541 completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        EXPECT_NULL(image);
+        EXPECT_EQ(error.code, NSURLErrorCannotDecodeContentData);
+        EXPECT_WK_STREQ(error.domain, "NSURLErrorDomain");
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+}
+
+TEST(WebKit, GetInformationFromImageData)
+{
+    RetainPtr webView = adoptNS([WKWebView new]);
+    loadAndDecodeDone = false;
+    RetainPtr pngData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
+    [webView _getInformationFromImageData:pngData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([typeIdentifier isEqualToString:UTTypePNG.identifier]);
+        EXPECT_EQ(1u, availableSizes.count);
+        NSValue *size = [availableSizes firstObject];
+        EXPECT_EQ(215, [size sizeValue].width);
+        EXPECT_EQ(174, [size sizeValue].height);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    RetainPtr gifData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"apple" withExtension:@"gif"]];
+    [webView _getInformationFromImageData:gifData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([typeIdentifier isEqualToString:UTTypeGIF.identifier]);
+        EXPECT_EQ(1u, availableSizes.count);
+        for (NSValue *size in availableSizes) {
+            EXPECT_EQ(52, [size sizeValue].width);
+            EXPECT_EQ(64, [size sizeValue].height);
+        }
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    RetainPtr svgData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"AllAhem" withExtension:@"svg"]];
+    [webView _getInformationFromImageData:svgData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([typeIdentifier isEqualToString:UTTypeSVG.identifier]);
+        EXPECT_EQ(0u, availableSizes.count);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    RetainPtr pdfData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView _getInformationFromImageData:pdfData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
+        EXPECT_NOT_NULL(error);
+        EXPECT_NULL(typeIdentifier);
+        EXPECT_EQ(0u, availableSizes.count);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+}
+
+TEST(WebKit, GetImageMetadata)
+{
+    RetainPtr webView = adoptNS([WKWebView new]);
+    loadAndDecodeDone = false;
+    RetainPtr pngData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
+    [webView _getImageMetadata:pngData.get() completionHandler:^(NSDictionary *metadata, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(5, (int)[metadata count]);
+        EXPECT_EQ(215, [metadata[@"PixelWidth"] intValue]);
+        EXPECT_EQ(174, [metadata[@"PixelHeight"] intValue]);
+        EXPECT_EQ(72, [metadata[@"DPIWidth"] floatValue]);
+        EXPECT_EQ(72, [metadata[@"DPIHeight"] floatValue]);
+        EXPECT_EQ(1, [metadata[@"ImageCount"] intValue]);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    RetainPtr gifData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"animated-red-green-blue-repeat-infinite" withExtension:@"gif"]];
+    [webView _getImageMetadata:gifData.get() completionHandler:^(NSDictionary *metadata, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(100, [metadata[@"PixelWidth"] intValue]);
+        EXPECT_EQ(100, [metadata[@"PixelHeight"] intValue]);
+        EXPECT_EQ(72, [metadata[@"DPIWidth"] floatValue]);
+        EXPECT_EQ(72, [metadata[@"DPIHeight"] floatValue]);
+        EXPECT_EQ(3, [metadata[@"ImageCount"] intValue]);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    RetainPtr tiffData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"sunset-in-cupertino-100px" withExtension:@"tiff"]];
+    [webView _getImageMetadata:tiffData.get() completionHandler:^(NSDictionary *metadata, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_EQ(100, [metadata[@"PixelWidth"] intValue]);
+        EXPECT_EQ(75, [metadata[@"PixelHeight"] intValue]);
+        EXPECT_EQ(72, [metadata[@"DPIWidth"] floatValue]);
+        EXPECT_EQ(72, [metadata[@"DPIHeight"] floatValue]);
+        EXPECT_EQ(1, [metadata[@"ImageCount"] intValue]);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    RetainPtr svgData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"AllAhem" withExtension:@"svg"]];
+    [webView _getImageMetadata:svgData.get() completionHandler:^(NSDictionary *metadata, NSError *error) {
+        EXPECT_NOT_NULL(error);
+        EXPECT_EQ(0u, [metadata count]);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+}
+
+TEST(WebKit, GetInformationFromImageDataAfterClosingWebView)
+{
+    RetainPtr webView = adoptNS([WKWebView new]);
+    [webView _close];
+
+    loadAndDecodeDone = false;
+    RetainPtr pngData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]];
+    [webView _getInformationFromImageData:pngData.get() completionHandler:^(NSString *typeIdentifier, NSArray<NSValue *> *availableSizes, NSError *error) {
+        EXPECT_NOT_NULL(error);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+}
+
+TEST(WebKit, CreateIconDataFromImageData)
+{
+    RetainPtr webView = adoptNS([WKWebView new]);
+    RetainPtr imageData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"icon" ofType:@"png"]];
+    RetainPtr length1 = [NSNumber numberWithUnsignedInt:16];
+    RetainPtr length2 = [NSNumber numberWithUnsignedInt:256];
+    NSArray *lengths = @[length1.get(), length2.get()];
+    __block RetainPtr<NSData> iconData;
+    loadAndDecodeDone = false;
+    [webView _createIconDataFromImageData:imageData.get() withLengths:lengths completionHandler:^(NSData *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        iconData = result;
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    [webView _decodeImageData:iconData.get() preferredSize:[NSValue valueWithSize:NSMakeSize(16, 16)] completionHandler:^(CocoaImage *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_EQ(result.size.width, 16);
+        EXPECT_EQ(result.size.height, 16);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    [webView _decodeImageData:iconData.get() preferredSize:[NSValue valueWithSize:NSMakeSize(32, 32)] completionHandler:^(CocoaImage *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_EQ(result.size.width, 256);
+        EXPECT_EQ(result.size.height, 256);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+}
+
+RetainPtr<NSData> tiffRepresentation(CocoaImage *image)
+{
+#if USE(APPKIT)
+    return [image TIFFRepresentation];
+#else
+    RetainPtr cgImage = [image CGImage];
+    if (!cgImage)
+        return nullptr;
+
+    RefPtr nativeImage = WebCore::NativeImage::create(WTF::move(cgImage));
+    if (!nativeImage)
+        return nullptr;
+
+    Ref nativeImageRef { nativeImage.releaseNonNull() };
+    return bridge_cast(WebCore::ImageAdapter::tiffRepresentation({ nativeImageRef }));
+#endif
+}
+
+TEST(WebKit, CreateIconDataFromImageDataSVG)
+{
+    RetainPtr webView = adoptNS([WKWebView new]);
+    RetainPtr imageData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"icon" ofType:@"svg"]];
+    RetainPtr expectedIconData16 = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"icon-svg-16" ofType:@"tiff"]];
+    RetainPtr expectedIconData256 = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"icon-svg-256" ofType:@"tiff"]];
+    RetainPtr length1 = [NSNumber numberWithUnsignedInt:16];
+    RetainPtr length2 = [NSNumber numberWithUnsignedInt:256];
+    NSArray *lengths = @[length1.get(), length2.get()];
+    __block RetainPtr<NSData> iconData;
+    loadAndDecodeDone = false;
+    [webView _createIconDataFromImageData:imageData.get() withLengths:lengths completionHandler:^(NSData *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        iconData = result;
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    [webView _decodeImageData:iconData.get() preferredSize:nil completionHandler:^(CocoaImage *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_EQ(result.size.width, 256);
+        EXPECT_EQ(result.size.height, 256);
+        EXPECT_TRUE([tiffRepresentation(result) isEqualToData:expectedIconData256.get()]);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    [webView _decodeImageData:iconData.get() preferredSize:[NSValue valueWithSize:NSMakeSize(16, 16)] completionHandler:^(CocoaImage *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_EQ(result.size.width, 16);
+        EXPECT_EQ(result.size.height, 16);
+        EXPECT_TRUE([tiffRepresentation(result) isEqualToData:expectedIconData16.get()]);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    [webView _decodeImageData:iconData.get() preferredSize:[NSValue valueWithSize:NSMakeSize(32, 32)] completionHandler:^(CocoaImage *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_EQ(result.size.width, 256);
+        EXPECT_EQ(result.size.height, 256);
+        EXPECT_TRUE([tiffRepresentation(result) isEqualToData:expectedIconData256.get()]);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+}
+
+TEST(WebKit, CreateIconDataFromImageDataSVGWithSubresource)
+{
+    RetainPtr webView = adoptNS([WKWebView new]);
+    RetainPtr imageData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"icon-with-subresource" ofType:@"svg"]];
+
+    loadAndDecodeDone = false;
+    [webView _decodeImageData:imageData.get() preferredSize:nil completionHandler:^(CocoaImage *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        EXPECT_EQ(result.size.width, 10);
+        EXPECT_EQ(result.size.height, 10);
+
+        // FIXME: Util::pixelColor gives us NSCalibratedRGBColorSpace instead of sRGB IEC61966-2.1.
+        // This is tracked by <https://bugs.webkit.org/show_bug.cgi?id=290768>.
+        auto lime = [CocoaColor greenColor];
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(result, { 3, 3 }), lime, 0.025));
+        EXPECT_TRUE(Util::compareColors(Util::pixelColor(result, { 8, 8 }), lime, 0.025));
+
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    loadAndDecodeDone = false;
+    [webView _createIconDataFromImageData:imageData.get() withLengths:nil completionHandler:^(NSData *result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(result);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+}
+
+TEST(WebKit, LoadAndDecodeImageInvalidURL)
+{
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@""];
+    auto pid = [webView _webProcessIdentifier];
+    EXPECT_NE(pid, 0);
+
+    __block bool loadAndDecodeDone { false };
+    [webView _loadAndDecodeImage:[NSURLRequest requestWithURL:[NSURL URLWithString:@""]] constrainedToSize:CGSizeZero maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        EXPECT_NULL(image);
+        EXPECT_NOT_NULL(error);
+        loadAndDecodeDone = true;
+    }];
+    Util::run(&loadAndDecodeDone);
+
+    EXPECT_EQ(pid, [webView _webProcessIdentifier]);
+}
+
+TEST(WebKit, LoadAndDecodeImageNilMainDocumentURLAfterNavigation)
+{
+    auto pngData = makeVector([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]]);
+
+    HTTPServer server {
+        { "/"_s, { "<html></html>"_s } },
+        { "/image.png"_s, { WTF::move(pngData) } },
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] init]);
+    [webView synchronouslyLoadRequest:server.request()];
+
+    __block bool completionHandlerCalled { false };
+    __block RetainPtr<Util::PlatformImage> resultImage;
+    __block RetainPtr<NSError> resultError;
+    __block bool processTerminated { false };
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
+        processTerminated = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    // This request has a nil mainDocumentURL.
+    [webView _loadAndDecodeImage:server.request("/image.png"_s) constrainedToSize:CGSizeZero maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        resultImage = image;
+        resultError = error;
+        completionHandlerCalled = true;
+    }];
+
+    Util::run(&completionHandlerCalled);
+    // Give webContentProcessDidTerminate enough time to get called before checking processTerminated.
+    Util::spinRunLoop(10);
+
+    EXPECT_NOT_NULL(resultImage);
+    EXPECT_NULL(resultError);
+    EXPECT_FALSE(processTerminated);
+}
+
+TEST(WebKit, LoadAndDecodeImageBeforeAnyNavigation)
+{
+    auto pngData = makeVector([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]]);
+
+    HTTPServer server {
+        { "/image.png"_s, { WTF::move(pngData) } },
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] init]);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    __block bool processTerminated { false };
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
+        processTerminated = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    EXPECT_NULL([webView URL]);
+
+    __block bool completionHandlerCalled { false };
+    __block RetainPtr<Util::PlatformImage> resultImage;
+    __block RetainPtr<NSError> resultError;
+    [webView _loadAndDecodeImage:server.request("/image.png"_s) constrainedToSize:CGSizeZero maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        resultImage = image;
+        resultError = error;
+        completionHandlerCalled = true;
+    }];
+
+    Util::run(&completionHandlerCalled);
+    Util::spinRunLoop(10);
+
+    EXPECT_NOT_NULL(resultImage);
+    EXPECT_NULL(resultError);
+    EXPECT_FALSE(processTerminated);
+}
+
+TEST(WebKit, LoadAndDecodeImageWithCallerProvidedDisallowedMainDocumentURL)
+{
+    auto pngData = makeVector([NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"icon" withExtension:@"png"]]);
+
+    HTTPServer server {
+        { "/"_s, { "<html></html>"_s } },
+        { "/image.png"_s, { WTF::move(pngData) } },
+    };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] init]);
+    [webView synchronouslyLoadRequest:server.request()];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    __block bool processTerminated { false };
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
+        processTerminated = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    RetainPtr request = adoptNS([[NSMutableURLRequest alloc] initWithURL:server.request("/image.png"_s).URL]);
+    [request setMainDocumentURL:[NSURL URLWithString:@"http://unrelated-domain.example/"]];
+
+    __block bool completionHandlerCalled { false };
+    __block RetainPtr<Util::PlatformImage> resultImage;
+    __block RetainPtr<NSError> resultError;
+    [webView _loadAndDecodeImage:request.get() constrainedToSize:CGSizeZero maximumBytesFromNetwork:std::numeric_limits<size_t>::max() completionHandler:^(Util::PlatformImage *image, NSError *error) {
+        resultImage = image;
+        resultError = error;
+        completionHandlerCalled = true;
+    }];
+
+    Util::run(&completionHandlerCalled);
+    Util::spinRunLoop(10);
+
+    EXPECT_NOT_NULL(resultImage);
+    EXPECT_NULL(resultError);
+    EXPECT_FALSE(processTerminated);
+}
+
+}

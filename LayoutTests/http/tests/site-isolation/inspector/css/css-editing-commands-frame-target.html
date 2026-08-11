@@ -1,0 +1,126 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.CSS.EditingCommands.FrameTarget");
+
+        let childFrameTarget;
+        let styleSheetId;
+        let ruleId;
+        let styleId;
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.EditingCommands.FrameTarget.Setup",
+            description: "Find the child frame target and create an editable inspector stylesheet.",
+            async test() {
+                let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+                let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+                let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+                childFrameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+                InspectorTest.expectNotNull(childFrameTarget, "Should find a child frame target.");
+                InspectorTest.expectNotNull(childFrameTarget.CSSAgent, "Child frame target should have a CSSAgent.");
+
+                let { styleSheetId: newId } = await childFrameTarget.CSSAgent.createStyleSheet("");
+                styleSheetId = newId;
+                InspectorTest.expectNotNull(styleSheetId, "Should create an inspector stylesheet for the frame.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.EditingCommands.FrameTarget.AddRule",
+            description: "addRule should create a rule in the frame's stylesheet via the frame's InspectorHistory.",
+            async test() {
+                let { rule } = await childFrameTarget.CSSAgent.addRule(styleSheetId, ".added-rule");
+                InspectorTest.expectEqual(rule.selectorList.text, ".added-rule", "Added rule should have the requested selector.");
+                InspectorTest.expectNotNull(rule.ruleId, "Added rule should have a ruleId.");
+                InspectorTest.expectNotNull(rule.style.styleId, "Added rule should have a styleId.");
+                ruleId = rule.ruleId;
+                styleId = rule.style.styleId;
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.EditingCommands.FrameTarget.SetStyleText",
+            description: "setStyleText should update the rule's declaration text.",
+            async test() {
+                let { style } = await childFrameTarget.CSSAgent.setStyleText(styleId, "color: blue;");
+                let colorProperty = style.cssProperties.find((property) => property.name === "color");
+                InspectorTest.expectNotNull(colorProperty, "Updated style should contain a color property.");
+                InspectorTest.expectEqual(colorProperty.value, "blue", "color should be updated to 'blue'.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.EditingCommands.FrameTarget.SetRuleSelectorThenUndo",
+            description: "setRuleSelector should change the selector, and undo on the frame target should revert it via the frame's InspectorHistory.",
+            async test() {
+                // Checkpoint so undo() reverts only the selector change that follows.
+                await childFrameTarget.DOMAgent.markUndoableState();
+
+                let { rule } = await childFrameTarget.CSSAgent.setRuleSelector(ruleId, ".renamed-rule");
+                InspectorTest.expectEqual(rule.selectorList.text, ".renamed-rule", "setRuleSelector should update the selector.");
+
+                await childFrameTarget.DOMAgent.undo();
+
+                let { styleSheet } = await childFrameTarget.CSSAgent.getStyleSheet(styleSheetId);
+                let revertedRule = styleSheet.rules.find((r) => r.selectorList.text === ".added-rule");
+                InspectorTest.expectNotNull(revertedRule, "undo() should revert the selector back to '.added-rule'.");
+                let renamedRule = styleSheet.rules.find((r) => r.selectorList.text === ".renamed-rule");
+                InspectorTest.expectNull(renamedRule, "The '.renamed-rule' selector should no longer be present after undo().");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.EditingCommands.FrameTarget.Redo",
+            description: "redo on the frame target should re-apply the undone selector change via the frame's InspectorHistory.",
+            async test() {
+                await childFrameTarget.DOMAgent.redo();
+
+                let { styleSheet } = await childFrameTarget.CSSAgent.getStyleSheet(styleSheetId);
+                let renamedRule = styleSheet.rules.find((r) => r.selectorList.text === ".renamed-rule");
+                InspectorTest.expectNotNull(renamedRule, "redo() should re-apply the selector change back to '.renamed-rule'.");
+                let addedRule = styleSheet.rules.find((r) => r.selectorList.text === ".added-rule");
+                InspectorTest.expectNull(addedRule, "The '.added-rule' selector should no longer be present after redo().");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.CSS.EditingCommands.FrameTarget.SetGroupingHeaderText",
+            description: "setGroupingHeaderText should change an @media grouping's header text.",
+            async test() {
+                let { styleSheetId: groupingStyleSheetId } = await childFrameTarget.CSSAgent.createStyleSheet("");
+
+                let styleSheetChangesApplied = new Promise((resolve) => {
+                    let original = WI.CSSObserver.prototype.styleSheetChanged;
+                    WI.CSSObserver.prototype.styleSheetChanged = function(id) {
+                        if (this._target === childFrameTarget && id === groupingStyleSheetId) {
+                            WI.CSSObserver.prototype.styleSheetChanged = original;
+                            resolve();
+                            return;
+                        }
+                        original.call(this, id);
+                    };
+                });
+                await childFrameTarget.CSSAgent.setStyleSheetText(groupingStyleSheetId, "@media screen { .grouped { color: black; } }");
+                await styleSheetChangesApplied;
+
+                let { styleSheet } = await childFrameTarget.CSSAgent.getStyleSheet(groupingStyleSheetId);
+                let groupedRule = styleSheet.rules.find((rule) => rule.selectorList.text === ".grouped");
+                InspectorTest.expectNotNull(groupedRule, "Should find the rule nested inside the @media grouping.");
+
+                let mediaGrouping = groupedRule.groupings.find((grouping) => grouping.ruleId && grouping.text === "screen");
+                InspectorTest.expectNotNull(mediaGrouping, "Should find the editable @media grouping.");
+
+                let { grouping } = await childFrameTarget.CSSAgent.setGroupingHeaderText(mediaGrouping.ruleId, "print");
+                InspectorTest.expectEqual(grouping.text, "print", "Grouping header text should be updated to 'print'.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that CSS style/rule editing commands (setStyleText, setRuleSelector, setGroupingHeaderText, addRule) work correctly on frame targets under site isolation, routing undoable edits through the frame's InspectorHistory.</p>
+    <iframe src="http://localhost:8000/site-isolation/inspector/css/resources/frame-with-stylesheet.html"></iframe>
+</body>

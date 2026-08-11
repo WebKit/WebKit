@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <default sync-j="4"/>
+
+  <remote fetch="https://git.yoctoproject.org/" name="yocto"/>
+  <remote fetch="https://github.com" name="github"/>
+
+  <!-- Yocto version: scarthgap -->
+
+  <project remote="yocto"  revision="d4576e3c081a7ee7b57d48421c4c4f491cb4defe" name="poky" path="sources/poky"/>
+  <project remote="github" revision="ae7dfb12245c7f9b9a353499e2688015bd4e6413" name="openembedded/meta-openembedded" path="sources/meta-openembedded"/>
+  <project remote="yocto"  revision="2c646d29912dcc873469a57b1c207e1549c5094d" name="meta-raspberrypi" path="sources/meta-raspberrypi"/>
+  <project remote="github" revision="c2ff9fad3831a259256fc2643798f3c6829d15fc" name="Igalia/meta-webkit.git" path="sources/meta-webkit"/>
+  <!-- for meta-clang using currently branch scarthgap-clang20 because scarthgap ships clang19 and chromium requires clang >= 20 -->
+  <project remote="github" revision="f26bab34e6c208149fe1ad04521864b663489f4d" name="kraj/meta-clang.git" path="sources/meta-clang"/>
+  <project remote="github" revision="85eeb6b50883d22c977396f5e8fe211a7961cf2e" name="OSSystems/meta-browser.git" path="sources/meta-browser"/>
+  <project remote="yocto" revision="c19b6da5a3afd3c892b3b1b44983e993ac6d5308" name="meta-lts-mixins" path="sources/meta-lts-mixins"/>
+
+</manifest>

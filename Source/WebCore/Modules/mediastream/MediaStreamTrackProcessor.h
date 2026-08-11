@@ -1,0 +1,214 @@
+/*
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(MEDIA_STREAM) && ENABLE(WEB_CODECS)
+
+#include "MediaStreamTrack.h"
+#include "MediaStreamTrackHandle.h"
+#include "ReadableStreamSource.h"
+#include "RealtimeMediaSource.h"
+#include "WebCodecsVideoFrame.h"
+#include <wtf/TZoneMalloc.h>
+
+namespace JSC {
+class JSGlobaObject;
+}
+
+namespace WebCore {
+
+class ReadableStream;
+class ScriptExecutionContext;
+class WebCodecsVideoFrame;
+template<typename> class ExceptionOr;
+
+class MediaStreamTrackProcessor
+    : public RefCounted<MediaStreamTrackProcessor>
+    , public ContextDestructionObserver {
+    WTF_MAKE_TZONE_ALLOCATED(MediaStreamTrackProcessor);
+public:
+    struct Init {
+        Variant<Ref<MediaStreamTrack>, Ref<MediaStreamTrackHandle>> track;
+        std::optional<unsigned short> maxBufferSize;
+    };
+
+    static ExceptionOr<Ref<MediaStreamTrackProcessor>> create(ScriptExecutionContext&, Init&&);
+    ~MediaStreamTrackProcessor();
+
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); };
+    void deref() const final { RefCounted::deref(); };
+
+    ExceptionOr<Ref<ReadableStream>> readable(JSC::JSGlobalObject&);
+
+    // Lives in ScriptExecutionContext only.
+    class Source final : public ReadableStreamSource {
+        WTF_MAKE_TZONE_ALLOCATED(Source);
+    public:
+        explicit Source(MediaStreamTrackProcessor&);
+        ~Source();
+
+        bool isEnabled() const { return m_processor->isEnabled(); }
+        bool isWaiting() const { return m_isWaiting; }
+        bool isCancelled() const { return m_isCancelled; }
+        void trackEnded();
+        void enqueue(WebCodecsVideoFrame&, ScriptExecutionContext&);
+
+        void ref() const final { m_processor->ref(); };
+        void deref() const final { m_processor->deref(); };
+
+        void setAsCancelled() { m_isCancelled = true; }
+
+    private:
+        // ReadableStreamSource
+        void setActive() { };
+        void setInactive() { };
+        void doStart() final;
+        void doPull() final;
+        void doCancel(JSC::JSValue) final;
+
+        bool m_isWaiting { false };
+        bool m_isCancelled { false };
+        const WeakRef<MediaStreamTrackProcessor> m_processor;
+    };
+    using MediaStreamTrackProcessorSource = MediaStreamTrackProcessor::Source;
+
+private:
+    MediaStreamTrackProcessor(ScriptExecutionContext&, Ref<MediaStreamTrackHandle>&&, unsigned short maxVideoFramesCount);
+
+    // ContextDestructionObserver
+    void contextDestroyed() final;
+
+    bool isEnabled() const { return m_trackKeeper && m_trackKeeper->isTrackEnabled(); }
+    void stopObserving();
+    void tryEnqueueingVideoFrame();
+    void trackEnded();
+
+    class TrackObserver;
+    class TrackObserverWrapper : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TrackObserverWrapper> {
+    public:
+        static Ref<TrackObserverWrapper> create(ScriptExecutionContext&, MediaStreamTrackProcessor&, MediaStreamTrackHandle&);
+        ~TrackObserverWrapper()
+        {
+            ASSERT(m_isStopped);
+        }
+
+        void start();
+        void stop();
+        void trackEnded();
+
+    private:
+        TrackObserverWrapper(ScriptExecutionContext&, MediaStreamTrackProcessor&, MediaStreamTrackHandle&);
+
+        void removeObserver();
+
+#if ASSERT_ENABLED
+        bool m_isStopped { false };
+#endif
+
+        const ScriptExecutionContextIdentifier m_trackContextIdentifier;
+        const ScriptExecutionContextIdentifier m_processorContextIdentifier;
+        const WeakPtr<MediaStreamTrackProcessor> m_processor;
+        const WeakPtr<MediaStreamTrack, WeakPtrImplWithEventTargetData> m_track;
+
+        RefPtr<TrackObserver> m_observer;
+    };
+
+    class TrackObserver final : public MediaStreamTrackPrivateObserver, public RefCounted<TrackObserver> {
+    public:
+        static Ref<TrackObserver> create(TrackObserverWrapper& wrapper) { return adoptRef(*new TrackObserver(wrapper)); }
+
+        void ref() const final { RefCounted::ref(); }
+        void deref() const final { RefCounted::deref(); }
+
+    private:
+        explicit TrackObserver(TrackObserverWrapper& wrapper)
+            : m_wrapper(wrapper)
+        {
+        }
+
+        // MediaStreamTrackPrivateObserver
+        void trackEnded(MediaStreamTrackPrivate&) final
+        {
+            if (RefPtr wrapper = m_wrapper.get())
+                wrapper->trackEnded();
+        }
+        void trackEnabledChanged(MediaStreamTrackPrivate&) final { }
+        void trackMutedChanged(MediaStreamTrackPrivate&) final { }
+        void trackSettingsChanged(MediaStreamTrackPrivate&) final { }
+
+        ThreadSafeWeakPtr<TrackObserverWrapper> m_wrapper;
+    };
+
+    class VideoFrameObserver final : private RealtimeMediaSource::VideoFrameObserver {
+        WTF_MAKE_TZONE_ALLOCATED(VideoFrameObserver);
+    public:
+        explicit VideoFrameObserver(ScriptExecutionContextIdentifier, WeakPtr<MediaStreamTrackProcessor>&&, Ref<RealtimeMediaSource>&&, unsigned short maxVideoFramesCount);
+        ~VideoFrameObserver();
+
+        void start();
+        RefPtr<WebCodecsVideoFrame> takeVideoFrame(ScriptExecutionContext&);
+
+        bool isContextThread() const { return ScriptExecutionContext::isContextThread(m_contextIdentifier); }
+
+    private:
+        // RealtimeMediaSource::VideoFrameObserver
+        void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
+
+        bool m_isStarted WTF_GUARDED_BY_CAPABILITY(mainThread) { false };
+        RefPtr<RealtimeMediaSource> m_realtimeVideoSource WTF_GUARDED_BY_CAPABILITY(mainThread);
+
+        // Accessed on either thread
+        const ScriptExecutionContextIdentifier m_contextIdentifier;
+        const WeakPtr<MediaStreamTrackProcessor> m_processor;
+        Lock m_videoFramesLock;
+        Deque<Ref<VideoFrame>> m_videoFrames WTF_GUARDED_BY_LOCK(m_videoFramesLock);
+        const unsigned short m_maxVideoFramesCount { 1 };
+    };
+
+    class VideoFrameObserverWrapper : public ThreadSafeRefCounted<VideoFrameObserverWrapper, WTF::DestructionThread::Main> {
+    public:
+        static Ref<VideoFrameObserverWrapper> create(ScriptExecutionContextIdentifier, MediaStreamTrackProcessor&, Ref<RealtimeMediaSource>&&, unsigned short maxVideoFramesCount);
+
+        void start();
+        RefPtr<WebCodecsVideoFrame> takeVideoFrame(ScriptExecutionContext& context) { return m_observer->takeVideoFrame(context); }
+
+    private:
+        VideoFrameObserverWrapper(ScriptExecutionContextIdentifier, MediaStreamTrackProcessor&, Ref<RealtimeMediaSource>&&, unsigned short maxVideoFramesCount);
+
+        const UniqueRef<VideoFrameObserver> m_observer;
+    };
+
+    bool m_isTrackEnded { false };
+    RefPtr<const MediaStreamTrack::Keeper> m_trackKeeper;
+    RefPtr<ReadableStream> m_readable;
+    const std::unique_ptr<Source> m_readableStreamSource;
+    RefPtr<VideoFrameObserverWrapper> m_videoFrameObserverWrapper;
+    const Ref<TrackObserverWrapper> m_trackObserver;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM) && ENABLE(WEB_CODECS)

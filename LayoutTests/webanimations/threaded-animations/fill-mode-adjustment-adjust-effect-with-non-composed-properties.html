@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<body>
+<style>
+
+#target {
+    left: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+</style>
+
+<div id="target"></div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+promise_test(async t => {
+    const target = document.getElementById("target");
+
+    const duration = 1000 * 1000;
+    const animations = [
+        target.animate({ opacity: 0 }, duration),
+        target.animate({ translate: "100px" }, { duration, fill : "backwards" }),
+        target.animate({ rotate: "45deg" }, { duration, fill : "none" }),
+        target.animate({ transform: "translateX(50px)" }, { duration, fill : "both" }),
+        target.animate({ scale: 2 }, duration)
+    ];
+
+    await Promise.all(animations.map(animation => animationAcceleration(animation)));
+    
+    const remoteAnimationStack = await UIHelper.remoteAnimationStackForElement(target);
+    const remoteAnimations = remoteAnimationStack.animations;
+    assert_equals(remoteAnimations.length, 5, "We have the expected number of animations in the remote layer tree");
+    assert_equals(remoteAnimations[0].timing.fill, "forwards", 'Omitted fill mode is set to "forwards"');
+    assert_equals(remoteAnimations[1].timing.fill, "both", '"backwards" is set to "both"');
+    assert_equals(remoteAnimations[2].timing.fill, "forwards", '"none" is set to "forwards"');
+    assert_equals(remoteAnimations[3].timing.fill, "both", '"both" is preserved');
+    assert_equals(remoteAnimations[4].timing.fill, "forwards", 'Omitted fill mode is set to "forwards"');
+}, "Fill mode is adjusted to be forward-filling for effects that do not participate in composition.");
+
+</script>
+</body>

@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContactPickerAPIEnabled=true ] -->
+<html>
+    <head>
+        <script src="../resources/js-test.js"></script>
+        <script src="../resources/ui-helper.js"></script>
+    </head>
+    <script>
+        jsTestIsAsync = true;
+
+        const addressBook = [
+            {
+                "name": ["Person A"],
+                "email": ["person.a@webkit.org"],
+                "tel": ["555-5555"]
+            },
+        ];
+
+        async function runTest()
+        {
+            description("This test verifies that navigator.contacts.select fails when a contact picker is already being displayed.\n");
+
+            const contactsButton = document.getElementById("contacts");
+            contactsButton.addEventListener("click", async () => {
+                let promise1 = navigator.contacts.select(['name']).catch((error) => { throw error.message; });
+
+                let promise2 = new Promise((resolve, reject) => {
+                  navigator.contacts.select(['name']).then(contacts => reject("Expected failure."))
+                                                     .catch((error) => resolve(error.name));
+                });
+
+                await UIHelper.waitForContactPickerToShow();
+                UIHelper.dismissContactPickerWithContacts(addressBook);
+                await UIHelper.waitForContactPickerToHide();
+
+                results = await Promise.all([promise1, promise2]);
+                contacts = results[0];
+                shouldBeEqualToNumber("contacts.length", 1);
+                contact = contacts[0];
+                shouldBeEqualToString("contact.name[0]", "Person A");
+                shouldBeEqualToString("results[1]", "InvalidStateError");
+
+                finishJSTest();
+            }, { once: true });
+
+            await UIHelper.activateElement(contactsButton);
+        }
+    </script>
+    <body onload=runTest()>
+        <button id="contacts">Show contacts</button>
+    </body>
+</html>

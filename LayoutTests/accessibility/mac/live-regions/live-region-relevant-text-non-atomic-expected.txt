@@ -1,0 +1,14 @@
+This tests that aria-relevant=text properly announces when setting textContent on a live region.
+
+Received announcement request:
+AnnouncementKey: New Content{
+    AXLanguage = en;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+New Content

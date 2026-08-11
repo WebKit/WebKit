@@ -1,0 +1,21 @@
+<html>
+<head>
+<title>This tests that clipping a block element does not leave cruft behind.</title>
+<style>
+  div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip: rect(0, 100, 6.5em, 0);
+    font-size: 11px;
+    background-color: yellow;
+    -webkit-transform: translateZ(0);
+  }
+</style>
+</head>
+<body>
+  <div></div>
+</body>
+ 

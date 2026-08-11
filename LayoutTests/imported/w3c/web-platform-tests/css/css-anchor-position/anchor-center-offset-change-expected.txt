@@ -1,0 +1,4 @@
+
+PASS Anchored initially have the same width as the anchor
+PASS Increase the height of the anchor to move the anchor-center offset
+

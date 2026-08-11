@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<a id="link" href="#">This is a link that <b>would</b> normally appear <b>as multiple</b> elements</a>.
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that only one element is returned for the link object, instead of many elements that are all links.");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.accessibleElementById("link");
+        shouldBe("obj.description", "'AXLabel: This is a link that would normally appear as multiple elements'");
+        shouldBeFalse("obj.isIgnored");
+    }
+
+    successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+
+
+</body>
+</html>
+

@@ -1,0 +1,4 @@
+
+PASS HTML is not sniffed for a "feed": atom
+PASS HTML is not sniffed for a "feed": rss
+

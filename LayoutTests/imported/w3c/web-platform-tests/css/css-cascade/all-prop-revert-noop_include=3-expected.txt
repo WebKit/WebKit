@@ -1,0 +1,17 @@
+
+PASS area
+PASS blockquote
+PASS col
+PASS dialog
+PASS figure
+PASS h6
+PASS input
+PASS map
+PASS object
+PASS progress
+PASS section
+PASS sub
+PASS textarea
+PASS u
+
+

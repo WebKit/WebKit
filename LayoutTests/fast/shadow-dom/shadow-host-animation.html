@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@keyframes top-keyframes {
+    0% { background: red; }
+    100% { background: green; }
+}
+@keyframes shadow-keyframes {
+    0% { background: green; }
+    100% { background: red; }
+}
+@keyframes slotted-keyframes {
+    0% { background: green; }
+    100% { background: red; }
+}
+@keyframes deep-slotted-keyframes {
+    0% { background: green; }
+    100% { background: red; }
+}
+.test {
+    width: 100px;
+    height: 25px;
+    background: red;
+    color: green;
+}
+
+#host1.green {
+    animation-duration: 0.1s;
+    animation-iteration-count: 1;
+    animation-name: top-keyframes;
+    animation-fill-mode: forwards;
+}
+
+</style>
+</head>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<div id="host1" class="test"><div>text</div></div>
+<div id="host2" class="test"><div>text</div></div>
+<div id="host3" class="test"><div>text</div></div>
+<div id="host4" class="test"><div>text</div></div>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+let expectedEventCount = 0;
+let eventCount = 0;
+
+function animationEndEvent()
+{
+    ++eventCount;
+    if (eventCount == expectedEventCount) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+
+{
+    const host = document.getElementById('host1');
+    host.attachShadow({mode: 'closed'}).innerHTML = `
+        <slot></slot>
+    `;
+
+    getComputedStyle(host.firstChild).backgroundColor;
+    ++expectedEventCount;
+    document.addEventListener('animationend', animationEndEvent);
+    host.classList.toggle('green');
+}
+
+{
+    const host = document.getElementById('host2');
+    host.attachShadow({mode: 'closed'}).innerHTML = `
+    <style>
+    @keyframes shadow-keyframes {
+        0% { background: red; }
+        100% { background: green; }
+    }
+    :host(.green) {
+        animation-duration: 0.1s;
+        animation-iteration-count: 1;
+        animation-name: shadow-keyframes;
+        animation-fill-mode: forwards;
+    }
+    </style>
+    <slot></slot>
+    `;
+
+    getComputedStyle(host.firstChild).backgroundColor;
+    ++expectedEventCount;
+    document.addEventListener('animationend', animationEndEvent);
+    host.classList.toggle('green');
+}
+
+{
+    const host = document.getElementById('host3');
+    const shadow = host.attachShadow({mode: 'closed'});
+    shadow.innerHTML = `
+    <style>
+    @keyframes slotted-keyframes {
+        0% { background: red; }
+        100% { background: green; }
+    }
+    ::slotted(.green) {
+        animation-duration: 0.1s;
+        animation-iteration-count: 1;
+        animation-name: slotted-keyframes;
+        animation-fill-mode: forwards;
+        height: 100%;
+    }
+    div { height: 100%; }
+    </style>
+    <div><slot></slot></div>
+    `;
+
+    shadow.querySelector('div').attachShadow({mode: 'closed'}).innerHTML = `
+    <style>
+    @keyframes slotted-keyframes {
+        0% { background: green; }
+        100% { background: red; }
+    }
+    </style>
+    <slot></slot>
+    `;
+
+    getComputedStyle(host.firstChild).backgroundColor;
+    ++expectedEventCount;
+    document.addEventListener('animationend', animationEndEvent);
+    host.firstChild.classList.toggle('green');
+}
+
+{
+    const host = document.getElementById('host4');
+    const shadow = host.attachShadow({mode: 'closed'});
+    shadow.innerHTML = `
+    <style>
+    @keyframes deep-slotted-keyframes {
+        0% { background: green; }
+        100% { background: red; }
+    }
+    div { height: 100%; }
+    </style>
+    <div><slot></slot></div>
+    `;
+
+    shadow.querySelector('div').attachShadow({mode: 'closed'}).innerHTML = `
+    <style>
+    @keyframes deep-slotted-keyframes {
+        0% { background: red; }
+        100% { background: green; }
+    }
+    ::slotted(.green) {
+        animation-duration: 0.1s;
+        animation-iteration-count: 1;
+        animation-name: deep-slotted-keyframes;
+        animation-fill-mode: forwards;
+        height: 100%;
+    }
+    </style>
+    <slot></slot>
+    `;
+
+    getComputedStyle(host.firstChild).backgroundColor;
+    ++expectedEventCount;
+    document.addEventListener('animationend', animationEndEvent);
+    host.firstChild.classList.toggle('green');
+}
+
+</script>
+</body>
+</html>

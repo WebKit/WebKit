@@ -1,0 +1,121 @@
+// Copyright (C) 2023-2025 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+// This configures any WebKit project to build with clang sanitizers simply
+// by setting ENABLE_*_SANITIZER Xcode variables to YES during a build.
+
+// Requires SDKVariant.xcconfig.
+
+#include "WebKitTargetConditionals.xcconfig"
+
+WK_SANITIZER_GCC_OPTIMIZATION_LEVEL = $(WK_SANITIZER_GCC_OPTIMIZATION_LEVEL_$(CONFIGURATION));
+WK_SANITIZER_GCC_OPTIMIZATION_LEVEL_Debug = 0;
+WK_SANITIZER_GCC_OPTIMIZATION_LEVEL_Production = 1;
+WK_SANITIZER_GCC_OPTIMIZATION_LEVEL_Release = 1;
+
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) $(WK_ENABLE_CONJECTURE_ASSERT_$(WK_ANY_SANITIZER_ENABLED));
+WK_ENABLE_CONJECTURE_ASSERT_YES = ENABLE_CONJECTURE_ASSERT;
+
+WK_SANITIZER_OTHER_CFLAGS = $(WK_ANY_SANITIZER_CFLAGS_$(WK_ANY_SANITIZER_ENABLED)) $(WK_ADDRESS_SANITIZER_OTHER_CFLAGS_$(ENABLE_ADDRESS_SANITIZER)) $(WK_UNDEFINED_BEHAVIOR_SANITIZER_OTHER_CFLAGS_$(ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)) $(WK_FUZZILLI_OTHER_CFLAGS_$(ENABLE_FUZZILLI)) $(WK_LIBFUZZER_OTHER_CFLAGS_$(ENABLE_LIBFUZZER));
+
+WK_SANITIZER_OTHER_LDFLAGS = $(WK_ANY_SANITIZER_LDFLAGS_$(WK_ANY_SANITIZER_ENABLED)) $(WK_ADDRESS_SANITIZER_OTHER_LDFLAGS_$(ENABLE_ADDRESS_SANITIZER)) $(WK_THREAD_SANITIZER_OTHER_LDFLAGS_$(ENABLE_THREAD_SANITIZER)) $(WK_FUZZILLI_OTHER_LDFLAGS_$(ENABLE_FUZZILLI)) $(WK_LIBFUZZER_OTHER_LDFLAGS_$(ENABLE_LIBFUZZER));
+
+WK_SANITIZER_OTHER_TAPI_FLAGS = $(WK_SANITIZER_OTHER_TAPI_FLAGS_ASAN_$(ENABLE_ADDRESS_SANITIZER)) $(WK_SANITIZER_OTHER_TAPI_FLAGS_LIBFUZZER_$(ENABLE_LIBFUZZER)) $(WK_SANITIZER_OTHER_TAPI_FLAGS_TSAN_$(ENABLE_THREAD_SANITIZER)) $(WK_SANITIZER_OTHER_TAPI_FLAGS_UBSAN_$(ENABLE_UNDEFINED_BEHAVIOR_SANITIZER));
+WK_SANITIZER_OTHER_TAPI_FLAGS_ASAN_YES = -Xparser -fsanitize=address;
+WK_SANITIZER_OTHER_TAPI_FLAGS_LIBFUZZER_YES = -Xparser -fsanitize=fuzzer;
+WK_SANITIZER_OTHER_TAPI_FLAGS_TSAN_YES = -Xparser -fsanitize=thread;
+WK_SANITIZER_OTHER_TAPI_FLAGS_UBSAN_YES = -Xparser -fsanitize=undefined;
+
+WK_SANITIZER_WARNING_CFLAGS = $(WK_ANY_SANITIZER_WARNING_CFLAGS_$(WK_ANY_SANITIZER_ENABLED)) $(WK_STATIC_ANALYZER_WARNING_CFLAGS_$(RUN_CLANG_STATIC_ANALYZER));
+
+// Workaround for rdar://170982364
+WK_SANITIZER_OTHER_SWIFT_FLAGS = $(WK_SANITIZER_OTHER_SWIFT_FLAGS_ASAN_$(ENABLE_ADDRESS_SANITIZER)) $(WK_SANITIZER_OTHER_SWIFT_FLAGS_TSAN_$(ENABLE_THREAD_SANITIZER));
+WK_SANITIZER_OTHER_SWIFT_FLAGS_ASAN_YES = -Xcc -D__SANITIZE_ADDRESS__;
+WK_SANITIZER_OTHER_SWIFT_FLAGS_TSAN_YES = -Xcc -D__SANITIZE_THREAD__;
+
+// All Sanitizers
+
+// FIXME: Tell Xcode not to compile host-side tools with sanitizers enabled (see <rdar://99386433>).
+// Workaround is to use `WK_SANITIZER_DISALLOWED = YES`.
+
+WK_ANY_SANITIZER_ENABLED = $(WK_AND_$(WK_OR_$(ENABLE_ADDRESS_SANITIZER)_$(WK_OR_$(ENABLE_THREAD_SANITIZER)_$(WK_OR_$(ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)_$(ENABLE_LIBFUZZER))))_$(WK_NOT_$(WK_SANITIZER_DISALLOWED)));
+
+// -DRELEASE_WITHOUT_OPTIMIZATIONS is from <wtf/Compiler.h>.
+WK_ANY_SANITIZER_CFLAGS_YES = -DRELEASE_WITHOUT_OPTIMIZATIONS -fno-omit-frame-pointer -g;
+
+// Workaround for <rdar://problem/49498092>.
+WK_ANY_SANITIZER_LDFLAGS_YES = -Wl,-rpath,@executable_path/Frameworks;
+
+WK_ANY_SANITIZER_WARNING_CFLAGS_YES = -Wno-error;
+
+// Address Sanitizer
+
+// Add -fsanitize-address-use-after-return=never to disable ASan's "fake stack" to fix JSC garbage collection.
+WK_ADDRESS_SANITIZER_OTHER_CFLAGS_YES = -fsanitize-address-use-after-return=never;
+WK_ADDRESS_SANITIZER_OTHER_LDFLAGS_YES = -fsanitize-address-use-after-return=never;
+
+// Enable contain-overflow checks by default.
+CLANG_ADDRESS_SANITIZER_CONTAINER_OVERFLOW = $(ENABLE_ADDRESS_SANITIZER);
+
+
+// Thread Sanitizer
+
+// Disable compact unwind to work around "Too many personality routines" linker error with TSan builds.
+WK_THREAD_SANITIZER_OTHER_LDFLAGS_YES = $(WK_THREAD_SANITIZER_OTHER_LDFLAGS_$(PRODUCT_NAME));
+WK_THREAD_SANITIZER_OTHER_LDFLAGS_TestIPC = -Wl,-no_compact_unwind;
+WK_THREAD_SANITIZER_OTHER_LDFLAGS_TestWebKitAPI = -Wl,-no_compact_unwind;
+WK_THREAD_SANITIZER_OTHER_LDFLAGS_TestWebKitAPIBundle = -Wl,-no_compact_unwind;
+WK_THREAD_SANITIZER_OTHER_LDFLAGS_WebCore = -Wl,-no_compact_unwind;
+WK_THREAD_SANITIZER_OTHER_LDFLAGS_WebKit = -Wl,-no_compact_unwind;
+
+// Undefined Behavior Sanitizer
+
+// FIXME: <rdar://105760852> Tune list of Undefined Behavior (UBSan) checkers
+// FIXME: UBSan checker -fsanitize=vptr is incompatible with GCC_ENABLE_CPP_RTTI=NO.
+// -fno-delete-null-pointer-checks: do not let the compiler remove nullptr checks that could otherwise be removed because they are considered undefined behavior.
+// -fno-optimize-sibling-calls: disable tail call elimination for more accurate crash stacks.
+WK_UNDEFINED_BEHAVIOR_SANITIZER_OTHER_CFLAGS_YES = -fno-delete-null-pointer-checks -fno-optimize-sibling-calls -fno-sanitize=vptr -fsanitize=enum,local-bounds,return;
+
+// Sanitizer Coverage
+
+WK_SANITIZER_COVERAGE = $(WK_SANITIZER_COVERAGE_FUZZILLI_$(ENABLE_FUZZILLI));
+WK_SANITIZER_COVERAGE_FUZZILLI_ = inline-8bit-counters,trace-cmp;
+WK_SANITIZER_COVERAGE_FUZZILLI_NO = $(WK_SANITIZER_COVERAGE_FUZZILLI_);
+WK_SANITIZER_COVERAGE_FUZZILLI_YES = trace-pc-guard;
+
+WK_SANITIZER_COVERAGE_OTHER_FLAGS = -fsanitize-coverage=$(WK_SANITIZER_COVERAGE);
+
+// LibFuzzer
+
+WK_LIBFUZZER_OTHER_CFLAGS_YES = $(WK_SANITIZER_COVERAGE_OTHER_FLAGS) -DENABLE_LIBFUZZER=1;
+WK_LIBFUZZER_OTHER_LDFLAGS_YES = $(WK_SANITIZER_COVERAGE_OTHER_FLAGS);
+
+// Fuzzilli for JavaScriptCore
+
+WK_FUZZILLI_OTHER_CFLAGS_YES = $(WK_SANITIZER_COVERAGE_OTHER_FLAGS) -DENABLE_FUZZILLI=1;
+WK_FUZZILLI_OTHER_LDFLAGS_YES = $(WK_SANITIZER_COVERAGE_OTHER_FLAGS) -Xlinker -no_warn_inits -Xlinker -not_for_dyld_shared_cache;
+
+// Clang Static Analyzer
+
+// FIXME: Remove -Wno-elaborated-enum-base once <rdar://121475724> is resolved.
+WK_STATIC_ANALYZER_WARNING_CFLAGS_YES = -Wno-elaborated-enum-base;

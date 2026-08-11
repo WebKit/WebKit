@@ -1,0 +1,4 @@
+This tests that style invalidation does not crash when a slotted element has its own author shadow root.
+WebKit should not hit any assertion or crash and you should see PASS below.
+
+PASS - WebKit did not crash

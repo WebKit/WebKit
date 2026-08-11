@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>object-fit, portrait images smaller than content box</title>
+    <style type="text/css">
+      .group > div {
+        display: inline-block;
+        overflow: hidden;
+        height: 144px;
+        width: 144px;
+        margin: 10px;
+        border: 1px solid black;
+        background-color: gray;
+      }
+      div > * > * { display:block; }
+      .group.portrait > *:nth-child(1) > * { width:100%; height:100%; }
+      .group.portrait > *:nth-child(2) > * { height:100%; margin-left:25%; }
+      .group.portrait > *:nth-child(3) > * { width:100%; margin-top:-50%; }
+      .group.portrait > *:nth-child(4) > * { margin-top:36px; margin-left:54px; }
+      .group.portrait > *:nth-child(5) > * { margin-top:36px; margin-left:54px; }
+    </style>
+  </head>
+  <body>
+
+    <!-- Small images, should be scaled up when allowed. -->
+    <div class="group portrait">
+      <div><img src="../resources/circles-portrait-small.png"></div>
+      <div><img src="../resources/circles-portrait-small.png"></div>
+      <div><img src="../resources/circles-portrait-small.png"></div>
+      <div><img src="../resources/circles-portrait-small.png"></div>
+      <div><img src="../resources/circles-portrait-small.png"></div>
+    </div>
+  </body>
+</html>

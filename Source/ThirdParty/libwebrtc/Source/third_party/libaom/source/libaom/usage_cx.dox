@@ -1,0 +1,9 @@
+/*! \page usage_encode Encoding
+
+    The aom_codec_encode() function is at the core of the encode loop. It
+    processes raw images passed by the application, producing packets of
+    compressed data.
+
+    \ref samples
+
+*/

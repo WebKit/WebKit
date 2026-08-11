@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <style type="text/css" media="screen">
+      
+      div {
+        -webkit-box-sizing: border-box;
+      }
+      .solid {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background-color: green;
+      }
+
+      .opacity { opacity: .5; }
+      .a { top: 0px; left: 0px;}
+      .b { top: 200px; left: 200px;}
+      .c { top: 200px; left: 0px;}
+      .d { top: 0px; left: 200px;}
+      * { margin: 0; padding: 0; }
+      .composited {
+        -webkit-transform: translateZ(0);
+      }
+
+    </style>
+  </head>
+    <div class="opacity">
+      <div class="solid a">1</div>
+      <div class="solid b">2</div>
+      <div class="solid c">3</div>
+      <div class="solid d"></div>
+    </div>
+
+</html>

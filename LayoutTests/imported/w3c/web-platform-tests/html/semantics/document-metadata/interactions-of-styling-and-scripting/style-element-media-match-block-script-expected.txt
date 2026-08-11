@@ -1,0 +1,5 @@
+Some text
+
+
+PASS Style element is script-blocking when media matches
+

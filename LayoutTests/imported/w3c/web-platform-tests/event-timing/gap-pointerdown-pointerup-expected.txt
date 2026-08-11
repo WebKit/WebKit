@@ -1,0 +1,4 @@
+Click me
+
+PASS pointerdown duration shouldn't wait for pointerup.
+

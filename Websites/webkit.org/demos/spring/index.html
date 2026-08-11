@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Spring timing function demo</title>
+<style>
+
+body {
+    background-color: #CECECE;
+    font-family: sans-serif;
+    color: #5E275A;
+}
+
+h1 {
+    font-size: 200%;
+    color: #5E275A;
+    border-bottom: 1px solid #888;
+    width: 500px;
+    margin-top: 0;
+}
+
+p {
+    width: 500px;
+}
+
+#canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+#object {
+    position: absolute;
+    left: -20px;
+    top: -20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    box-sizing: border-box;
+    border: 2px solid #6F6F6F;
+    background-color: #6E9FB7;
+    transform: translate(100px, 200px);
+    will-change: transform;
+}
+
+.useSystem #object {
+    transition-property: transform;
+    transition-duration: 10s; /* large enough to let the spring happen */
+    transition-timing-function: spring(1 100 10 0);
+}
+
+</style>
+<script src="dat.gui.min.js"></script>
+<script src="spring.js"></script>
+<script>
+
+var Spring = function(element)
+{
+    this.element = element;
+    this.currentX = 100;
+    this.currentY = 200;
+    this.animationIsRunning = false;
+
+    this.mass = 1;
+    this.stiffness = 100;
+    this.damping = 10;
+    this.initialVelocity = 0;
+    this.useSystemSpring = false;
+};
+
+Spring.prototype = {
+    moveTo: function (x, y)
+    {
+        if (this._useSystemSpring) {
+            this.animationIsRunning = false;
+            this.element.style.transitionTimingFunction = `spring(${this.mass} ${this.stiffness} ${this.damping} ${this.initialVelocity})`;
+            this.element.style.transform = `translate(${x}px, ${y}px)`;
+        } else {
+            this.animationIsRunning = true;
+            var bounds = this.element.getBoundingClientRect();
+            this.currentX = bounds.left + 20;
+            this.currentY = bounds.top + 20;
+            this.startX = this.currentX;
+            this.startY = this.currentY;
+            this.targetX = x;
+            this.targetY = y;
+            this.startTime = Date.now() / 1000;
+            this.solver = new SpringSolver(this.mass, this.stiffness, this.damping, this.initialVelocity);
+            window.requestAnimationFrame(this.step.bind(this));
+        }
+    },
+
+    step: function()
+    {
+        if (!this.animationIsRunning) {
+            return;
+        }
+
+        var elapsed = Date.now() / 1000 - this.startTime;
+        var proportion = this.solver.solve(elapsed);
+
+        this.currentX = this.startX + (this.targetX - this.startX) * proportion;
+        this.currentY = this.startY + (this.targetY - this.startY) * proportion;
+        this.element.style.transform = `translate(${this.currentX}px, ${this.currentY}px)`;
+
+        // Keep animating for 10 seconds. Too bad if it hasn't finished by then.
+        if (elapsed < 10 * 1000) {
+            window.requestAnimationFrame(this.step.bind(this));
+        } else {
+            this.animationIsRunning = false;
+        }
+    },
+
+    get useSystemSpring()
+    {
+        return this._useSystemSpring;
+    },
+
+    set useSystemSpring(newValue)
+    {
+        this._useSystemSpring = newValue;
+        document.body.classList.toggle("useSystem", newValue);
+    }
+};
+
+window.addEventListener("load", function() {
+    var s = new Spring(document.getElementById("object"));
+    var gui = new dat.GUI();
+    gui.add(s, 'mass', 0, 20);
+    gui.add(s, 'stiffness', 0, 200);
+    gui.add(s, 'damping', 0, 50);
+    gui.add(s, 'initialVelocity', -50, 50);
+    gui.add(s, 'useSystemSpring');
+
+    document.getElementById("canvas").addEventListener("click", function (event) {
+        s.moveTo(event.clientX, event.clientY);
+    }, false);
+
+}, false);
+
+</script>
+</head>
+<body>
+    <h1>Spring timing function</h1>
+    <p>
+        Click/tap to move the object. Selecting "useSystemSpring" will run the
+        transition using the spring() timing function. Otherwise it
+        is the embedded JavaScript solver, which should be identical.
+        The <a href="https://lists.w3.org/Archives/Public/www-style/2016Jun/0181.html">
+            proposal is on www-style</a>.
+    </p>
+    
+
+    <div id="canvas">
+        <div id="object"></div>
+    </div>
+
+</body>
+</html>

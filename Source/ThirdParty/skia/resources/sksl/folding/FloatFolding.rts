@@ -1,0 +1,82 @@
+uniform half4 colorRed, colorGreen;
+uniform float unknownInput;
+
+bool test() {
+    half unknown = half(unknownInput);
+
+    bool ok = true;
+    half x = 32.0 + 2.0;
+    ok = ok && (x == 34);
+    x = 32.0 - 2.0;
+    ok = ok && (x == 30);
+    x = 32.0 * 2.0;
+    ok = ok && (x == 64);
+    x = 32.0 / 2.0;
+    ok = ok && (x == 16);
+    x = (12 > 2.0) ? (10 * 2 / 5 + 18 - 3) : 0;
+    ok = ok && (x == 19);
+    x = 0.0 == 0.0 ? 1 : -1;
+    ok = ok && (x == 1);
+    x = 0.0 == 1.0 ? 2 : -2;
+    ok = ok && (x == -2);
+    x = 0.0 != 1.0 ? 3 : -3;
+    ok = ok && (x == 3);
+    x = 0.0 != 0.0 ? 4 : -4;
+    ok = ok && (x == -4);
+    x = 6.0 > 5.0 ? 5 : -5;
+    ok = ok && (x == 5);
+    x = 6.0 > 6.0 ? 6 : -6;
+    ok = ok && (x == -6);
+    x = 6.0 >= 6.0 ? 7 : -7;
+    ok = ok && (x == 7);
+    x = 6.0 >= 7.0 ? 8 : -8;
+    ok = ok && (x == -8);
+    x = 5.0 < 6.0 ? 9 : -9;
+    ok = ok && (x == 9);
+    x = 6.0 < 6.0 ? 10 : -10;
+    ok = ok && (x == -10);
+    x = 6.0 <= 6.0 ? 11 : -11;
+    ok = ok && (x == 11);
+    x = 6.0 <= 5.0 ? 12 : -12;
+    ok = ok && (x == -12);
+
+    x = half(unknown + 0);
+    ok = ok && (x == unknown);
+    x = half(0 + unknown);
+    ok = ok && (x == unknown);
+    x = half(unknown - 0);
+    ok = ok && (x == unknown);
+    x = half(unknown * 0);
+    ok = ok && (x == 0);
+    x = half(unknown * 1);
+    ok = ok && (x == unknown);
+    x = half(1 * unknown);
+    ok = ok && (x == unknown);
+    x = half(0 * unknown);
+    ok = ok && (x == 0);
+    x = half(unknown / 1);
+    ok = ok && (x == unknown);
+    x = half(0 / unknown);  // this should NOT optimize away
+    ok = ok && (x == 0);
+    x += 1;
+    ok = ok && (x == 1);
+    x += 0;
+    ok = ok && (x == 1);
+    x -= 2;
+    ok = ok && (x == -1);
+    x -= 0;
+    ok = ok && (x == -1);
+    x *= 1;
+    ok = ok && (x == -1);
+    x *= 2;
+    ok = ok && (x == -2);
+    x /= 1;
+    ok = ok && (x == -2);
+    x /= 2;
+    ok = ok && (x == -1);
+    return ok;
+}
+
+half4 main(float2 coords) {
+    return test() ? colorGreen : colorRed;
+}

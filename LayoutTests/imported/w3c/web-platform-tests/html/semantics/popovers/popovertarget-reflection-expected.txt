@@ -1,0 +1,4 @@
+toggle popover
+
+FAIL Element attribute reflection of popoverTargetElement/popovertarget should be kept in sync. assert_equals: Setting the popovertarget attribute to empty string right after setting explicit element does remove the explicit element. expected null but got Element node <div id="mypopover" popover="auto">popover</div>
+

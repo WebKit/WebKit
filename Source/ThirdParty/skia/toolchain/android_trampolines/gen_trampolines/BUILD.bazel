@@ -1,0 +1,20 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+go_library(
+    name = "gen_trampolines_lib",
+    srcs = ["gen_trampolines.go"],
+    importpath = "go.skia.org/skia/toolchain/android_trampolines/gen_trampolines",
+    visibility = ["//visibility:private"],
+)
+
+go_binary(
+    name = "gen_trampolines",
+    embed = [":gen_trampolines_lib"],
+    visibility = ["//visibility:public"],
+)

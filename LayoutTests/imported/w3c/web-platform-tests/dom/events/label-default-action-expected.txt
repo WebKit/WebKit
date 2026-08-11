@@ -1,0 +1,3 @@
+
+PASS Label default action should not trigger when clicked button removes itself
+

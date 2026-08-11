@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+a { line-height: 100px }
+a:link { line-height: 200px }
+</style>
+</head>
+<body>
+<div id="gunk">
+    <a id="a_regular">regular anchor</a>
+    <a id="a_link" href="#">link anchor</a>
+</div>
+<script>
+
+description("This test verifies that line-height gets applied from link-only style.");
+
+var regularComputedStyle = window.getComputedStyle(document.getElementById("a_regular"));
+var linkComputedStyle = window.getComputedStyle(document.getElementById("a_link"));
+
+shouldBe("regularComputedStyle.lineHeight", "'100px'");
+shouldBe("linkComputedStyle.lineHeight", "'200px'");
+
+document.getElementById("gunk").remove();
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

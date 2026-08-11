@@ -1,0 +1,22 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (local_init.wast:3)
+PASS #3 Test that WebAssembly compilation fails (local_init.wast:25)
+PASS #4 Test that WebAssembly compilation fails (local_init.wast:29)
+PASS #5 Test that WebAssembly compilation fails (local_init.wast:39)
+PASS #6 Test that WebAssembly compilation fails (local_init.wast:52)
+PASS #7 Test that WebAssembly compilation succeeds (local_init.wast:66)
+PASS #8 Reinitialize the default imports
+PASS #9 Test that WebAssembly compilation succeeds (local_init.wast:3)
+PASS #10 Test that WebAssembly instantiation succeeds (local_init.wast:3)
+PASS #11 Test that a WebAssembly code returns a specific result (local_init.wast:21)
+PASS #12 Test that a WebAssembly code returns a specific result (local_init.wast:22)
+PASS #13 Test that a WebAssembly code returns a specific result (local_init.wast:23)
+PASS #14 Test that WebAssembly compilation fails (local_init.wast:25)
+PASS #15 Test that WebAssembly compilation fails (local_init.wast:29)
+PASS #16 Test that WebAssembly compilation fails (local_init.wast:39)
+PASS #17 Test that WebAssembly compilation fails (local_init.wast:52)
+PASS #18 Test that WebAssembly compilation succeeds (local_init.wast:66)
+PASS #19 Test that WebAssembly instantiation succeeds (local_init.wast:66)
+PASS #20 Test that a WebAssembly code returns a specific result (local_init.wast:74)
+

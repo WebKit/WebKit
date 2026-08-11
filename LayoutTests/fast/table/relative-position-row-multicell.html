@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<title>Absolute child of positioned table row spans full row width</title>
+<link rel="match" href="relative-position-row-multicell-expected.html">
+<style>
+body {
+    margin: 0;
+}
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    border: none;
+}
+td {
+    padding: 0;
+    border: none;
+}
+</style>
+</head>
+<body>
+<!-- The green div should cover the entire row (both cells). -->
+<table>
+    <tr style="position: relative">
+        <td style="width: 100px; height: 50px">
+            Cell 1
+            <div style="position: absolute; inset: 0; background: green"></div>
+        </td>
+        <td style="width: 100px; height: 50px">Cell 2</td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,10 @@
+This test verifies that clipboard items can be written while dispatching the 'copy' event. To manually run the test, copy the 'Copy me' text below.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Successfully wrote to clipboard.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Copy me

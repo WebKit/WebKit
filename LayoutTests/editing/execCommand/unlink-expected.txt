@@ -1,0 +1,66 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 1 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 45 of #text > DIV > LI > OL > BODY > HTML > #document to 45 of #text > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > LI > OL > BODY > HTML > #document to 45 of #text > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 1 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 1 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > LI > OL > BODY > HTML > #document to 7 of #text > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > LI > OL > BODY > HTML > #document to 7 of #text > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 3 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 3 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > LI > OL > BODY > HTML > #document to 87 of #text > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > LI > OL > BODY > HTML > #document to 87 of #text > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 4 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 13 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > DIV > LI > OL > BODY > HTML > #document to 0 of P > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > P > DIV > LI > OL > BODY > HTML > #document to 10 of #text > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of P > DIV > LI > OL > BODY > HTML > #document to 10 of #text > A > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > A > P > DIV > LI > OL > BODY > HTML > #document to 10 of #text > A > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of P > DIV > LI > OL > BODY > HTML > #document to 0 of TD > TR > TBODY > TABLE > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > P > DIV > LI > OL > BODY > HTML > #document to 0 of TD > TR > TBODY > TABLE > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This is a test of execCommand("Unlink"). It tests:
+
+Completely unlinking a link.
+Unlinking a single word inside of a link.
+Unlinking a selection containing linked and unlinked text.
+Unlinking a selection that partially selects a linked table.
+The editable regions below describe what their content should be after the test.
+
+This paragraph should should end up unlinked.
+The second word in this paragraph should end up being unlinked, everything else should be a link.
+This paragraph starts with a link in the middle. Only the 'a' in the previous sentence should be linked after the test.
+This editable region contains lists, tables, styled text, and images. Everything in this region that is not selected should be a link, nothing that is selected should be a link.
+
+Item 1
+Item 2
+1	2	3
+
+This line contains  an image.
+The innerHTML of editable regions after the test:
+
+This paragraph should should end up unlinked.
+<a href="http://www.apple.com/">The</a> second<a href="http://www.apple.com/"> word in this paragraph should end up being unlinked, everything else should be a link.</a>
+This paragraph starts with <a href="http://www.google.com"><i>a</i></a><span id="test3start"> link</span> in the middle. Only the 'a' in the previous sentence should be linked after the test.
+<p>This <i>editable region</i> contains lists, tables, styled text, and images. Everything in this region that is not selected should be a link, nothing that is selected should be a link.</p> <ul> <li>Item 1</li> <li>Item 2</li> </ul> <table border="1"><tbody><tr><td>1</td><td>2</td><td><span id="test4end"><a href="http://www.google.com/">3</a></span></td></tr></tbody></table> <a href="http://www.google.com/"><br> This <b>line</b> contains <img src="../resources/abe.png"> an image. </a>

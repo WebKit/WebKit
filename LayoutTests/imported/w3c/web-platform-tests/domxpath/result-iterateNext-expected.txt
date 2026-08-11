@@ -1,0 +1,9 @@
+
+PASS Using an ordered iterator without modifying the dom should yield the expected elements in correct order without errors.
+PASS Using an unordered iterator without modifying the dom should yield the correct number of elements without errors.
+PASS invalidIteratorState should be false for non-iterable results.
+PASS Calling iterateNext on a non-iterable XPathResult should throw a TypeError.
+PASS Calling iterateNext on a non-iterable XPathResult after modifying the DOM should throw a TypeError.
+PASS Calling iterateNext after having modified the DOM should throw an exception.
+PASS Calling iterateNext after having modified the DOM should throw an exception even if the iterator is exhausted.
+

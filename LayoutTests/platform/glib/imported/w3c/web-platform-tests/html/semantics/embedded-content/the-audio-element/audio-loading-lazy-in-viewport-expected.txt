@@ -1,0 +1,4 @@
+
+
+FAIL In-viewport audio with loading='lazy' does not block window load assert_true: Window load event should fire before lazy audio in viewport finishes loading expected true got false
+

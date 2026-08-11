@@ -1,0 +1,4 @@
+
+PASS same-document traversals are not canceled by fragment navigations and calculate their endpoint based on the original placement
+PASS same-document traversals are not canceled by pushState() and calculate their endpoint based on the original placement
+

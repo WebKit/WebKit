@@ -1,0 +1,26 @@
+<script src="../../resources/dump-as-markup.js"></script>
+<div id="copy" contenteditable="true"><div><div>foo</div>bar</div>baz</div>
+<div id="paste" contenteditable="true">foo</div>
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
+
+var sel = window.getSelection();
+var e = document.getElementById("copy");
+sel.setPosition(e, 0);
+sel.modify("move", "forward", "word");
+sel.modify("extend", "forward", "line");
+sel.modify("extend", "forward", "line");
+document.execCommand("Copy");
+
+e = document.getElementById("paste");
+sel.setPosition(e, 0);
+sel.modify("move", "forward", "word");
+document.execCommand("Paste");
+
+Markup.description('This test ensures that createMarkup puts an interchange newline on the pasteboard for a selection ending at the end of a block.  Both regions below should be visually identical.')
+Markup.dump('copy', 'first region (bar and baz are copied)');
+Markup.dump('paste', 'second region (bar and baz are pasted)');
+</script>

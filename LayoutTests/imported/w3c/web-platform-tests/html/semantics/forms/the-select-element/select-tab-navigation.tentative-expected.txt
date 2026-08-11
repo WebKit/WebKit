@@ -1,0 +1,4 @@
+
+
+PASS Check that <select> occupies just one slot in tab navigation.
+

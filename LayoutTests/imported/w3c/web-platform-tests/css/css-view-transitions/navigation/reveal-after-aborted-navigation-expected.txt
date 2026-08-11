@@ -1,0 +1,3 @@
+
+PASS an aborted navigation while render-blocked still reveals the original document
+

@@ -1,0 +1,5 @@
+XXX
+
+PASS {Element,Range}.prototype.getBoundingClientRect on SVG <tspan>, Element
+PASS {Element,Range}.prototype.getBoundingClientRect on SVG <tspan>, Range
+

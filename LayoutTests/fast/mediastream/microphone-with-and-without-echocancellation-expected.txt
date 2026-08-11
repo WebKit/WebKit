@@ -1,0 +1,6 @@
+
+PASS Capturing without echo cancellation shouldn't affect echo cancelled tracks of the same device
+PASS Capturing with echo cancellation shouldn't affect tracks without echo cancellation of the same device
+PASS Using applyConstraints for enabling/disabling echo cancellation should not interfere with another microphone track
+FAIL Using applyConstraints for enabling/disabling echo cancellation should not interfere with another cloned track assert_true: FIXME: support changing settings of cloned audio tracks - expected true got false
+

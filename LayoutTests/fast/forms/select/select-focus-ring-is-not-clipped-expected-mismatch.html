@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        padding-top: 5px;
+    }
+    #d1, #d2 {
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 30px;
+        background-color: black;
+        position: absolute;
+    }
+</style>
+</head>
+<body>
+<select id="select"><option>Option</option></select>
+<div id="d1"></div>
+<div id="d2"></div>
+</body>
+<script defer>
+    var selectRect = select.getBoundingClientRect();
+    d2.style.left = selectRect.x + selectRect.width - 10 + "px";
+</script>
+</html>

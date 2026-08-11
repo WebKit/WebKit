@@ -1,0 +1,5 @@
+Buttons 1 and 2 should be inert.
+Button 1 (inert)
+
+PASS inert on Shadow host affects content in shadow
+

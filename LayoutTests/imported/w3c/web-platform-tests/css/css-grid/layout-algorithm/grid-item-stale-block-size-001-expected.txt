@@ -1,0 +1,4 @@
+XXX XXX
+
+PASS An intrinsic grid row uses the item's content block size, not a stale block size from a previous layout
+

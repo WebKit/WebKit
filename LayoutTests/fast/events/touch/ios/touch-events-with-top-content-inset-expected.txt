@@ -1,0 +1,11 @@
+Tap here
+This test requires WebKitTestRunner. Verifies that adding a top content inset to the web view's scroll view does not offset touches.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS observedTouchStart became true
+PASS observedTouchEnd became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

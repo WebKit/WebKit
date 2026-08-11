@@ -1,0 +1,31 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Long-pressing text inside a cross-origin iframe should select a word in that iframe, not select the whole iframe element in the parent frame.");
+jsTestIsAsync = true;
+
+let done = false;
+window.lastReportedSelection = "";
+addEventListener("message", async (event) => {
+    if (event.data === "ready") {
+        // The iframe is at (0, 0); long-press over the "Hello" text near the top-left.
+        await UIHelper.longPressAtPoint(30, 12);
+        setTimeout(() => {
+            if (done)
+                return;
+            done = true;
+            testFailed("Long press did not select a word inside the cross-origin iframe (iframe selection was: '" + window.lastReportedSelection + "').");
+            finishJSTest();
+        }, 3000);
+    } else if (typeof event.data === "string" && event.data.startsWith("selection:")) {
+        window.lastReportedSelection = event.data.substring("selection:".length);
+        if (window.lastReportedSelection.length && !done) {
+            done = true;
+            testPassed("A word was selected inside the cross-origin iframe.");
+            finishJSTest();
+        }
+    }
+});
+</script>
+<iframe style="position: absolute; left: 0; top: 0; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/selectable-text-frame.html"></iframe>

@@ -1,0 +1,14 @@
+Tests for `Network.setEmulatedConditions`.
+
+
+== Running test suite: Network.setEmulatedConditions
+-- Running test case: Network.setEmulatedConditions.bytesPerSecondLimit.Slow
+Limiting to 1bps...
+Triggering load...
+Waiting 100ms...
+PASS: Should not have finished loading.
+
+-- Running test case: Network.setEmulatedConditions.bytesPerSecondLimit.Negative
+PASS: Should produce an exception.
+Error: bytesPerSecond cannot be negative
+

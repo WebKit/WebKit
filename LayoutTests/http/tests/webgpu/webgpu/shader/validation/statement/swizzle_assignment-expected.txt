@@ -1,0 +1,21 @@
+
+PASS :valid:elemType="f32";vecSize=2
+PASS :valid:elemType="f32";vecSize=3
+PASS :valid:elemType="f32";vecSize=4
+PASS :valid:elemType="i32";vecSize=2
+PASS :valid:elemType="i32";vecSize=3
+PASS :valid:elemType="i32";vecSize=4
+PASS :valid:elemType="u32";vecSize=2
+PASS :valid:elemType="u32";vecSize=3
+PASS :valid:elemType="u32";vecSize=4
+PASS :invalid_lhs_not_reference:lhs="vec4f()"
+PASS :invalid_lhs_not_reference:lhs="const_vec"
+PASS :invalid_lhs_not_reference:lhs="foo()"
+PASS :invalid_duplicate_components:
+PASS :invalid_component_mismatch:
+PASS :invalid_component_oob:
+PASS :invalid_type_mismatch:
+PASS :invalid_mixed_letter_schemes:
+PASS :invalid_address_of_swizzle_view:
+PASS :invalid_index_into_swizzle_view:
+

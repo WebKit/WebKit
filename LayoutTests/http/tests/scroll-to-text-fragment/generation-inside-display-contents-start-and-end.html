@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8" />
+<title>Scroll to text fragment generation - a long selection inside a display:contents subtree still resolves its end text</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener('load', () => {
+    const range = document.createRange();
+    range.selectNodeContents(document.getElementById("test"));
+    document.body.innerText = internals.textFragmentDirectiveForRange(range).split('#')[1];
+});
+</script>
+</head>
+<body>Prefix words here. <div style="display: contents"><span id="test">This is a long sentence that is being used to test that when a selection exceeds the maximum inline string length the fragment directive generator uses start and end text inside a display contents subtree.</span></div> And suffix words here.</body>
+</html>

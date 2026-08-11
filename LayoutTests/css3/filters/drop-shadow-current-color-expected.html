@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<style>
+  div {
+      margin: 10px;
+      height: 100px;
+      width: 100px;
+  }
+  .a {
+      background: black;
+      filter: drop-shadow(110px 0 0 black);
+  }
+  .b {
+      background: green;
+      filter: drop-shadow(110px 0 0 green);
+  }
+</style>
+A test of drop-shadow with currentColor and a composited layer.
+After 0.1s animation, you should see 8 boxes. The right and left sides should be the same color.
+<div class="a s"></div>
+<div class="a t"></div>
+<div class="b s"></div>
+<div class="b t"></div>
+</html>

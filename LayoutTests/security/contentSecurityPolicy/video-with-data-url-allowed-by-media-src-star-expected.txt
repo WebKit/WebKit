@@ -1,0 +1,4 @@
+This tests that loading a video with a data URL is allowed when the page has Content Security Policy "media-src *".
+
+PASS: Video with data URL loaded successfully under media-src *.
+

@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+addEventListener("message", (event) => {
+    if (event.data == "140,140")
+        testPassed("Correct mouse coordinates");
+    else
+        testFailed("Unexpected mouse coordinates: " + event.data);
+    finishJSTest();
+});
+
+function onLoad() {
+    window.scrollTo(50, 50);
+    
+    async function checkScrollPosition() {
+        if (window.scrollX === 50 && window.scrollY === 95) {
+            await eventSender.asyncMouseMoveTo(100, 100);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseUp();
+        } else
+            requestAnimationFrame(checkScrollPosition);
+    }
+
+    requestAnimationFrame(checkScrollPosition);
+}
+</script>
+<iframe onload="onLoad()" width="1500" height="1500" src="http://localhost:8000/site-isolation/mouse-events/resources/message-mouse-down-coordinates.html"></iframe>

@@ -1,0 +1,8 @@
+<a id="link" href="http://localhost:8000/site-isolation/iframe-top-level-navigation.html#complete" target="_top">Click Me</a>
+<script>
+onload = function() { 
+    internals.withUserGesture(() => {
+        document.getElementById("link").click();
+    });
+}
+</script>

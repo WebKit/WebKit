@@ -1,0 +1,1024 @@
+Test the parsing of :is(selectorList) for querySelector and style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+3 :is(valid, valid, invalid) selectors
+selector ':is(*,*,) { }' parsed: YES
+selector ':is(*,*,    ) { }' parsed: YES
+selector ':is(*,*,,) { }' parsed: YES
+selector ':is(*,*,.123class) { }' parsed: YES
+selector ':is(*,*,#123id) { }' parsed: YES
+selector ':is(*,*,[]) { }' parsed: YES
+selector ':is(*,*,()) { }' parsed: YES
+selector ':is(*,*,)) { }' parsed: NO
+selector ':is(*,*,{}) { }' parsed: YES
+selector ':is(*,*,}) { }' parsed: YES
+selector ':is(*,*,:not() { }' parsed: NO
+selector ':is(*,*,:is() { }' parsed: NO
+selector ':is(*,*,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(*,#id,) { }' parsed: YES
+selector ':is(*,#id,    ) { }' parsed: YES
+selector ':is(*,#id,,) { }' parsed: YES
+selector ':is(*,#id,.123class) { }' parsed: YES
+selector ':is(*,#id,#123id) { }' parsed: YES
+selector ':is(*,#id,[]) { }' parsed: YES
+selector ':is(*,#id,()) { }' parsed: YES
+selector ':is(*,#id,)) { }' parsed: NO
+selector ':is(*,#id,{}) { }' parsed: YES
+selector ':is(*,#id,}) { }' parsed: YES
+selector ':is(*,#id,:not() { }' parsed: NO
+selector ':is(*,#id,:is() { }' parsed: NO
+selector ':is(*,#id,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(*,:first-child,) { }' parsed: YES
+selector ':is(*,:first-child,    ) { }' parsed: YES
+selector ':is(*,:first-child,,) { }' parsed: YES
+selector ':is(*,:first-child,.123class) { }' parsed: YES
+selector ':is(*,:first-child,#123id) { }' parsed: YES
+selector ':is(*,:first-child,[]) { }' parsed: YES
+selector ':is(*,:first-child,()) { }' parsed: YES
+selector ':is(*,:first-child,)) { }' parsed: NO
+selector ':is(*,:first-child,{}) { }' parsed: YES
+selector ':is(*,:first-child,}) { }' parsed: YES
+selector ':is(*,:first-child,:not() { }' parsed: NO
+selector ':is(*,:first-child,:is() { }' parsed: NO
+selector ':is(*,:first-child,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(*,:visited,) { }' parsed: YES
+selector ':is(*,:visited,    ) { }' parsed: YES
+selector ':is(*,:visited,,) { }' parsed: YES
+selector ':is(*,:visited,.123class) { }' parsed: YES
+selector ':is(*,:visited,#123id) { }' parsed: YES
+selector ':is(*,:visited,[]) { }' parsed: YES
+selector ':is(*,:visited,()) { }' parsed: YES
+selector ':is(*,:visited,)) { }' parsed: NO
+selector ':is(*,:visited,{}) { }' parsed: YES
+selector ':is(*,:visited,}) { }' parsed: YES
+selector ':is(*,:visited,:not() { }' parsed: NO
+selector ':is(*,:visited,:is() { }' parsed: NO
+selector ':is(*,:visited,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(*,::first-line,) { }' parsed: YES
+selector ':is(*,::first-line,    ) { }' parsed: YES
+selector ':is(*,::first-line,,) { }' parsed: YES
+selector ':is(*,::first-line,.123class) { }' parsed: YES
+selector ':is(*,::first-line,#123id) { }' parsed: YES
+selector ':is(*,::first-line,[]) { }' parsed: YES
+selector ':is(*,::first-line,()) { }' parsed: YES
+selector ':is(*,::first-line,)) { }' parsed: NO
+selector ':is(*,::first-line,{}) { }' parsed: YES
+selector ':is(*,::first-line,}) { }' parsed: YES
+selector ':is(*,::first-line,:not() { }' parsed: NO
+selector ':is(*,::first-line,:is() { }' parsed: NO
+selector ':is(*,::first-line,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(*,::after,) { }' parsed: YES
+selector ':is(*,::after,    ) { }' parsed: YES
+selector ':is(*,::after,,) { }' parsed: YES
+selector ':is(*,::after,.123class) { }' parsed: YES
+selector ':is(*,::after,#123id) { }' parsed: YES
+selector ':is(*,::after,[]) { }' parsed: YES
+selector ':is(*,::after,()) { }' parsed: YES
+selector ':is(*,::after,)) { }' parsed: NO
+selector ':is(*,::after,{}) { }' parsed: YES
+selector ':is(*,::after,}) { }' parsed: YES
+selector ':is(*,::after,:not() { }' parsed: NO
+selector ':is(*,::after,:is() { }' parsed: NO
+selector ':is(*,::after,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(*,.class:not(.notclass),) { }' parsed: YES
+selector ':is(*,.class:not(.notclass),    ) { }' parsed: YES
+selector ':is(*,.class:not(.notclass),,) { }' parsed: YES
+selector ':is(*,.class:not(.notclass),.123class) { }' parsed: YES
+selector ':is(*,.class:not(.notclass),#123id) { }' parsed: YES
+selector ':is(*,.class:not(.notclass),[]) { }' parsed: YES
+selector ':is(*,.class:not(.notclass),()) { }' parsed: YES
+selector ':is(*,.class:not(.notclass),)) { }' parsed: NO
+selector ':is(*,.class:not(.notclass),{}) { }' parsed: YES
+selector ':is(*,.class:not(.notclass),}) { }' parsed: YES
+selector ':is(*,.class:not(.notclass),:not() { }' parsed: NO
+selector ':is(*,.class:not(.notclass),:is() { }' parsed: NO
+selector ':is(*,.class:not(.notclass),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(*,a > b,) { }' parsed: YES
+selector ':is(*,a > b,    ) { }' parsed: YES
+selector ':is(*,a > b,,) { }' parsed: YES
+selector ':is(*,a > b,.123class) { }' parsed: YES
+selector ':is(*,a > b,#123id) { }' parsed: YES
+selector ':is(*,a > b,[]) { }' parsed: YES
+selector ':is(*,a > b,()) { }' parsed: YES
+selector ':is(*,a > b,)) { }' parsed: NO
+selector ':is(*,a > b,{}) { }' parsed: YES
+selector ':is(*,a > b,}) { }' parsed: YES
+selector ':is(*,a > b,:not() { }' parsed: NO
+selector ':is(*,a > b,:is() { }' parsed: NO
+selector ':is(*,a > b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(*,a + b,) { }' parsed: YES
+selector ':is(*,a + b,    ) { }' parsed: YES
+selector ':is(*,a + b,,) { }' parsed: YES
+selector ':is(*,a + b,.123class) { }' parsed: YES
+selector ':is(*,a + b,#123id) { }' parsed: YES
+selector ':is(*,a + b,[]) { }' parsed: YES
+selector ':is(*,a + b,()) { }' parsed: YES
+selector ':is(*,a + b,)) { }' parsed: NO
+selector ':is(*,a + b,{}) { }' parsed: YES
+selector ':is(*,a + b,}) { }' parsed: YES
+selector ':is(*,a + b,:not() { }' parsed: NO
+selector ':is(*,a + b,:is() { }' parsed: NO
+selector ':is(*,a + b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(*,a + b > c ~ d e + g,) { }' parsed: YES
+selector ':is(*,a + b > c ~ d e + g,    ) { }' parsed: YES
+selector ':is(*,a + b > c ~ d e + g,,) { }' parsed: YES
+selector ':is(*,a + b > c ~ d e + g,.123class) { }' parsed: YES
+selector ':is(*,a + b > c ~ d e + g,#123id) { }' parsed: YES
+selector ':is(*,a + b > c ~ d e + g,[]) { }' parsed: YES
+selector ':is(*,a + b > c ~ d e + g,()) { }' parsed: YES
+selector ':is(*,a + b > c ~ d e + g,)) { }' parsed: NO
+selector ':is(*,a + b > c ~ d e + g,{}) { }' parsed: YES
+selector ':is(*,a + b > c ~ d e + g,}) { }' parsed: YES
+selector ':is(*,a + b > c ~ d e + g,:not() { }' parsed: NO
+selector ':is(*,a + b > c ~ d e + g,:is() { }' parsed: NO
+selector ':is(*,a + b > c ~ d e + g,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(*,:not(:link),) { }' parsed: YES
+selector ':is(*,:not(:link),    ) { }' parsed: YES
+selector ':is(*,:not(:link),,) { }' parsed: YES
+selector ':is(*,:not(:link),.123class) { }' parsed: YES
+selector ':is(*,:not(:link),#123id) { }' parsed: YES
+selector ':is(*,:not(:link),[]) { }' parsed: YES
+selector ':is(*,:not(:link),()) { }' parsed: YES
+selector ':is(*,:not(:link),)) { }' parsed: NO
+selector ':is(*,:not(:link),{}) { }' parsed: YES
+selector ':is(*,:not(:link),}) { }' parsed: YES
+selector ':is(*,:not(:link),:not() { }' parsed: NO
+selector ':is(*,:not(:link),:is() { }' parsed: NO
+selector ':is(*,:not(:link),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(*,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(*,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(*,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(*,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(*,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(*,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(*,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(*,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(*,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(*,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(*,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(*,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(*,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id,#id,) { }' parsed: YES
+selector ':is(#id,#id,    ) { }' parsed: YES
+selector ':is(#id,#id,,) { }' parsed: YES
+selector ':is(#id,#id,.123class) { }' parsed: YES
+selector ':is(#id,#id,#123id) { }' parsed: YES
+selector ':is(#id,#id,[]) { }' parsed: YES
+selector ':is(#id,#id,()) { }' parsed: YES
+selector ':is(#id,#id,)) { }' parsed: NO
+selector ':is(#id,#id,{}) { }' parsed: YES
+selector ':is(#id,#id,}) { }' parsed: YES
+selector ':is(#id,#id,:not() { }' parsed: NO
+selector ':is(#id,#id,:is() { }' parsed: NO
+selector ':is(#id,#id,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id,:first-child,) { }' parsed: YES
+selector ':is(#id,:first-child,    ) { }' parsed: YES
+selector ':is(#id,:first-child,,) { }' parsed: YES
+selector ':is(#id,:first-child,.123class) { }' parsed: YES
+selector ':is(#id,:first-child,#123id) { }' parsed: YES
+selector ':is(#id,:first-child,[]) { }' parsed: YES
+selector ':is(#id,:first-child,()) { }' parsed: YES
+selector ':is(#id,:first-child,)) { }' parsed: NO
+selector ':is(#id,:first-child,{}) { }' parsed: YES
+selector ':is(#id,:first-child,}) { }' parsed: YES
+selector ':is(#id,:first-child,:not() { }' parsed: NO
+selector ':is(#id,:first-child,:is() { }' parsed: NO
+selector ':is(#id,:first-child,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id,:visited,) { }' parsed: YES
+selector ':is(#id,:visited,    ) { }' parsed: YES
+selector ':is(#id,:visited,,) { }' parsed: YES
+selector ':is(#id,:visited,.123class) { }' parsed: YES
+selector ':is(#id,:visited,#123id) { }' parsed: YES
+selector ':is(#id,:visited,[]) { }' parsed: YES
+selector ':is(#id,:visited,()) { }' parsed: YES
+selector ':is(#id,:visited,)) { }' parsed: NO
+selector ':is(#id,:visited,{}) { }' parsed: YES
+selector ':is(#id,:visited,}) { }' parsed: YES
+selector ':is(#id,:visited,:not() { }' parsed: NO
+selector ':is(#id,:visited,:is() { }' parsed: NO
+selector ':is(#id,:visited,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id,::first-line,) { }' parsed: YES
+selector ':is(#id,::first-line,    ) { }' parsed: YES
+selector ':is(#id,::first-line,,) { }' parsed: YES
+selector ':is(#id,::first-line,.123class) { }' parsed: YES
+selector ':is(#id,::first-line,#123id) { }' parsed: YES
+selector ':is(#id,::first-line,[]) { }' parsed: YES
+selector ':is(#id,::first-line,()) { }' parsed: YES
+selector ':is(#id,::first-line,)) { }' parsed: NO
+selector ':is(#id,::first-line,{}) { }' parsed: YES
+selector ':is(#id,::first-line,}) { }' parsed: YES
+selector ':is(#id,::first-line,:not() { }' parsed: NO
+selector ':is(#id,::first-line,:is() { }' parsed: NO
+selector ':is(#id,::first-line,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id,::after,) { }' parsed: YES
+selector ':is(#id,::after,    ) { }' parsed: YES
+selector ':is(#id,::after,,) { }' parsed: YES
+selector ':is(#id,::after,.123class) { }' parsed: YES
+selector ':is(#id,::after,#123id) { }' parsed: YES
+selector ':is(#id,::after,[]) { }' parsed: YES
+selector ':is(#id,::after,()) { }' parsed: YES
+selector ':is(#id,::after,)) { }' parsed: NO
+selector ':is(#id,::after,{}) { }' parsed: YES
+selector ':is(#id,::after,}) { }' parsed: YES
+selector ':is(#id,::after,:not() { }' parsed: NO
+selector ':is(#id,::after,:is() { }' parsed: NO
+selector ':is(#id,::after,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id,.class:not(.notclass),) { }' parsed: YES
+selector ':is(#id,.class:not(.notclass),    ) { }' parsed: YES
+selector ':is(#id,.class:not(.notclass),,) { }' parsed: YES
+selector ':is(#id,.class:not(.notclass),.123class) { }' parsed: YES
+selector ':is(#id,.class:not(.notclass),#123id) { }' parsed: YES
+selector ':is(#id,.class:not(.notclass),[]) { }' parsed: YES
+selector ':is(#id,.class:not(.notclass),()) { }' parsed: YES
+selector ':is(#id,.class:not(.notclass),)) { }' parsed: NO
+selector ':is(#id,.class:not(.notclass),{}) { }' parsed: YES
+selector ':is(#id,.class:not(.notclass),}) { }' parsed: YES
+selector ':is(#id,.class:not(.notclass),:not() { }' parsed: NO
+selector ':is(#id,.class:not(.notclass),:is() { }' parsed: NO
+selector ':is(#id,.class:not(.notclass),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id,a > b,) { }' parsed: YES
+selector ':is(#id,a > b,    ) { }' parsed: YES
+selector ':is(#id,a > b,,) { }' parsed: YES
+selector ':is(#id,a > b,.123class) { }' parsed: YES
+selector ':is(#id,a > b,#123id) { }' parsed: YES
+selector ':is(#id,a > b,[]) { }' parsed: YES
+selector ':is(#id,a > b,()) { }' parsed: YES
+selector ':is(#id,a > b,)) { }' parsed: NO
+selector ':is(#id,a > b,{}) { }' parsed: YES
+selector ':is(#id,a > b,}) { }' parsed: YES
+selector ':is(#id,a > b,:not() { }' parsed: NO
+selector ':is(#id,a > b,:is() { }' parsed: NO
+selector ':is(#id,a > b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id,a + b,) { }' parsed: YES
+selector ':is(#id,a + b,    ) { }' parsed: YES
+selector ':is(#id,a + b,,) { }' parsed: YES
+selector ':is(#id,a + b,.123class) { }' parsed: YES
+selector ':is(#id,a + b,#123id) { }' parsed: YES
+selector ':is(#id,a + b,[]) { }' parsed: YES
+selector ':is(#id,a + b,()) { }' parsed: YES
+selector ':is(#id,a + b,)) { }' parsed: NO
+selector ':is(#id,a + b,{}) { }' parsed: YES
+selector ':is(#id,a + b,}) { }' parsed: YES
+selector ':is(#id,a + b,:not() { }' parsed: NO
+selector ':is(#id,a + b,:is() { }' parsed: NO
+selector ':is(#id,a + b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id,a + b > c ~ d e + g,) { }' parsed: YES
+selector ':is(#id,a + b > c ~ d e + g,    ) { }' parsed: YES
+selector ':is(#id,a + b > c ~ d e + g,,) { }' parsed: YES
+selector ':is(#id,a + b > c ~ d e + g,.123class) { }' parsed: YES
+selector ':is(#id,a + b > c ~ d e + g,#123id) { }' parsed: YES
+selector ':is(#id,a + b > c ~ d e + g,[]) { }' parsed: YES
+selector ':is(#id,a + b > c ~ d e + g,()) { }' parsed: YES
+selector ':is(#id,a + b > c ~ d e + g,)) { }' parsed: NO
+selector ':is(#id,a + b > c ~ d e + g,{}) { }' parsed: YES
+selector ':is(#id,a + b > c ~ d e + g,}) { }' parsed: YES
+selector ':is(#id,a + b > c ~ d e + g,:not() { }' parsed: NO
+selector ':is(#id,a + b > c ~ d e + g,:is() { }' parsed: NO
+selector ':is(#id,a + b > c ~ d e + g,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id,:not(:link),) { }' parsed: YES
+selector ':is(#id,:not(:link),    ) { }' parsed: YES
+selector ':is(#id,:not(:link),,) { }' parsed: YES
+selector ':is(#id,:not(:link),.123class) { }' parsed: YES
+selector ':is(#id,:not(:link),#123id) { }' parsed: YES
+selector ':is(#id,:not(:link),[]) { }' parsed: YES
+selector ':is(#id,:not(:link),()) { }' parsed: YES
+selector ':is(#id,:not(:link),)) { }' parsed: NO
+selector ':is(#id,:not(:link),{}) { }' parsed: YES
+selector ':is(#id,:not(:link),}) { }' parsed: YES
+selector ':is(#id,:not(:link),:not() { }' parsed: NO
+selector ':is(#id,:not(:link),:is() { }' parsed: NO
+selector ':is(#id,:not(:link),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(#id,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(#id,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(#id,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(#id,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(#id,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(#id,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(#id,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(#id,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(#id,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(#id,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(#id,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(#id,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(#id,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:first-child,:first-child,) { }' parsed: YES
+selector ':is(:first-child,:first-child,    ) { }' parsed: YES
+selector ':is(:first-child,:first-child,,) { }' parsed: YES
+selector ':is(:first-child,:first-child,.123class) { }' parsed: YES
+selector ':is(:first-child,:first-child,#123id) { }' parsed: YES
+selector ':is(:first-child,:first-child,[]) { }' parsed: YES
+selector ':is(:first-child,:first-child,()) { }' parsed: YES
+selector ':is(:first-child,:first-child,)) { }' parsed: NO
+selector ':is(:first-child,:first-child,{}) { }' parsed: YES
+selector ':is(:first-child,:first-child,}) { }' parsed: YES
+selector ':is(:first-child,:first-child,:not() { }' parsed: NO
+selector ':is(:first-child,:first-child,:is() { }' parsed: NO
+selector ':is(:first-child,:first-child,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:first-child,:visited,) { }' parsed: YES
+selector ':is(:first-child,:visited,    ) { }' parsed: YES
+selector ':is(:first-child,:visited,,) { }' parsed: YES
+selector ':is(:first-child,:visited,.123class) { }' parsed: YES
+selector ':is(:first-child,:visited,#123id) { }' parsed: YES
+selector ':is(:first-child,:visited,[]) { }' parsed: YES
+selector ':is(:first-child,:visited,()) { }' parsed: YES
+selector ':is(:first-child,:visited,)) { }' parsed: NO
+selector ':is(:first-child,:visited,{}) { }' parsed: YES
+selector ':is(:first-child,:visited,}) { }' parsed: YES
+selector ':is(:first-child,:visited,:not() { }' parsed: NO
+selector ':is(:first-child,:visited,:is() { }' parsed: NO
+selector ':is(:first-child,:visited,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:first-child,::first-line,) { }' parsed: YES
+selector ':is(:first-child,::first-line,    ) { }' parsed: YES
+selector ':is(:first-child,::first-line,,) { }' parsed: YES
+selector ':is(:first-child,::first-line,.123class) { }' parsed: YES
+selector ':is(:first-child,::first-line,#123id) { }' parsed: YES
+selector ':is(:first-child,::first-line,[]) { }' parsed: YES
+selector ':is(:first-child,::first-line,()) { }' parsed: YES
+selector ':is(:first-child,::first-line,)) { }' parsed: NO
+selector ':is(:first-child,::first-line,{}) { }' parsed: YES
+selector ':is(:first-child,::first-line,}) { }' parsed: YES
+selector ':is(:first-child,::first-line,:not() { }' parsed: NO
+selector ':is(:first-child,::first-line,:is() { }' parsed: NO
+selector ':is(:first-child,::first-line,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:first-child,::after,) { }' parsed: YES
+selector ':is(:first-child,::after,    ) { }' parsed: YES
+selector ':is(:first-child,::after,,) { }' parsed: YES
+selector ':is(:first-child,::after,.123class) { }' parsed: YES
+selector ':is(:first-child,::after,#123id) { }' parsed: YES
+selector ':is(:first-child,::after,[]) { }' parsed: YES
+selector ':is(:first-child,::after,()) { }' parsed: YES
+selector ':is(:first-child,::after,)) { }' parsed: NO
+selector ':is(:first-child,::after,{}) { }' parsed: YES
+selector ':is(:first-child,::after,}) { }' parsed: YES
+selector ':is(:first-child,::after,:not() { }' parsed: NO
+selector ':is(:first-child,::after,:is() { }' parsed: NO
+selector ':is(:first-child,::after,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:first-child,.class:not(.notclass),) { }' parsed: YES
+selector ':is(:first-child,.class:not(.notclass),    ) { }' parsed: YES
+selector ':is(:first-child,.class:not(.notclass),,) { }' parsed: YES
+selector ':is(:first-child,.class:not(.notclass),.123class) { }' parsed: YES
+selector ':is(:first-child,.class:not(.notclass),#123id) { }' parsed: YES
+selector ':is(:first-child,.class:not(.notclass),[]) { }' parsed: YES
+selector ':is(:first-child,.class:not(.notclass),()) { }' parsed: YES
+selector ':is(:first-child,.class:not(.notclass),)) { }' parsed: NO
+selector ':is(:first-child,.class:not(.notclass),{}) { }' parsed: YES
+selector ':is(:first-child,.class:not(.notclass),}) { }' parsed: YES
+selector ':is(:first-child,.class:not(.notclass),:not() { }' parsed: NO
+selector ':is(:first-child,.class:not(.notclass),:is() { }' parsed: NO
+selector ':is(:first-child,.class:not(.notclass),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:first-child,a > b,) { }' parsed: YES
+selector ':is(:first-child,a > b,    ) { }' parsed: YES
+selector ':is(:first-child,a > b,,) { }' parsed: YES
+selector ':is(:first-child,a > b,.123class) { }' parsed: YES
+selector ':is(:first-child,a > b,#123id) { }' parsed: YES
+selector ':is(:first-child,a > b,[]) { }' parsed: YES
+selector ':is(:first-child,a > b,()) { }' parsed: YES
+selector ':is(:first-child,a > b,)) { }' parsed: NO
+selector ':is(:first-child,a > b,{}) { }' parsed: YES
+selector ':is(:first-child,a > b,}) { }' parsed: YES
+selector ':is(:first-child,a > b,:not() { }' parsed: NO
+selector ':is(:first-child,a > b,:is() { }' parsed: NO
+selector ':is(:first-child,a > b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:first-child,a + b,) { }' parsed: YES
+selector ':is(:first-child,a + b,    ) { }' parsed: YES
+selector ':is(:first-child,a + b,,) { }' parsed: YES
+selector ':is(:first-child,a + b,.123class) { }' parsed: YES
+selector ':is(:first-child,a + b,#123id) { }' parsed: YES
+selector ':is(:first-child,a + b,[]) { }' parsed: YES
+selector ':is(:first-child,a + b,()) { }' parsed: YES
+selector ':is(:first-child,a + b,)) { }' parsed: NO
+selector ':is(:first-child,a + b,{}) { }' parsed: YES
+selector ':is(:first-child,a + b,}) { }' parsed: YES
+selector ':is(:first-child,a + b,:not() { }' parsed: NO
+selector ':is(:first-child,a + b,:is() { }' parsed: NO
+selector ':is(:first-child,a + b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:first-child,a + b > c ~ d e + g,) { }' parsed: YES
+selector ':is(:first-child,a + b > c ~ d e + g,    ) { }' parsed: YES
+selector ':is(:first-child,a + b > c ~ d e + g,,) { }' parsed: YES
+selector ':is(:first-child,a + b > c ~ d e + g,.123class) { }' parsed: YES
+selector ':is(:first-child,a + b > c ~ d e + g,#123id) { }' parsed: YES
+selector ':is(:first-child,a + b > c ~ d e + g,[]) { }' parsed: YES
+selector ':is(:first-child,a + b > c ~ d e + g,()) { }' parsed: YES
+selector ':is(:first-child,a + b > c ~ d e + g,)) { }' parsed: NO
+selector ':is(:first-child,a + b > c ~ d e + g,{}) { }' parsed: YES
+selector ':is(:first-child,a + b > c ~ d e + g,}) { }' parsed: YES
+selector ':is(:first-child,a + b > c ~ d e + g,:not() { }' parsed: NO
+selector ':is(:first-child,a + b > c ~ d e + g,:is() { }' parsed: NO
+selector ':is(:first-child,a + b > c ~ d e + g,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:first-child,:not(:link),) { }' parsed: YES
+selector ':is(:first-child,:not(:link),    ) { }' parsed: YES
+selector ':is(:first-child,:not(:link),,) { }' parsed: YES
+selector ':is(:first-child,:not(:link),.123class) { }' parsed: YES
+selector ':is(:first-child,:not(:link),#123id) { }' parsed: YES
+selector ':is(:first-child,:not(:link),[]) { }' parsed: YES
+selector ':is(:first-child,:not(:link),()) { }' parsed: YES
+selector ':is(:first-child,:not(:link),)) { }' parsed: NO
+selector ':is(:first-child,:not(:link),{}) { }' parsed: YES
+selector ':is(:first-child,:not(:link),}) { }' parsed: YES
+selector ':is(:first-child,:not(:link),:not() { }' parsed: NO
+selector ':is(:first-child,:not(:link),:is() { }' parsed: NO
+selector ':is(:first-child,:not(:link),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(:first-child,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:visited,:visited,) { }' parsed: YES
+selector ':is(:visited,:visited,    ) { }' parsed: YES
+selector ':is(:visited,:visited,,) { }' parsed: YES
+selector ':is(:visited,:visited,.123class) { }' parsed: YES
+selector ':is(:visited,:visited,#123id) { }' parsed: YES
+selector ':is(:visited,:visited,[]) { }' parsed: YES
+selector ':is(:visited,:visited,()) { }' parsed: YES
+selector ':is(:visited,:visited,)) { }' parsed: NO
+selector ':is(:visited,:visited,{}) { }' parsed: YES
+selector ':is(:visited,:visited,}) { }' parsed: YES
+selector ':is(:visited,:visited,:not() { }' parsed: NO
+selector ':is(:visited,:visited,:is() { }' parsed: NO
+selector ':is(:visited,:visited,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:visited,::first-line,) { }' parsed: YES
+selector ':is(:visited,::first-line,    ) { }' parsed: YES
+selector ':is(:visited,::first-line,,) { }' parsed: YES
+selector ':is(:visited,::first-line,.123class) { }' parsed: YES
+selector ':is(:visited,::first-line,#123id) { }' parsed: YES
+selector ':is(:visited,::first-line,[]) { }' parsed: YES
+selector ':is(:visited,::first-line,()) { }' parsed: YES
+selector ':is(:visited,::first-line,)) { }' parsed: NO
+selector ':is(:visited,::first-line,{}) { }' parsed: YES
+selector ':is(:visited,::first-line,}) { }' parsed: YES
+selector ':is(:visited,::first-line,:not() { }' parsed: NO
+selector ':is(:visited,::first-line,:is() { }' parsed: NO
+selector ':is(:visited,::first-line,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:visited,::after,) { }' parsed: YES
+selector ':is(:visited,::after,    ) { }' parsed: YES
+selector ':is(:visited,::after,,) { }' parsed: YES
+selector ':is(:visited,::after,.123class) { }' parsed: YES
+selector ':is(:visited,::after,#123id) { }' parsed: YES
+selector ':is(:visited,::after,[]) { }' parsed: YES
+selector ':is(:visited,::after,()) { }' parsed: YES
+selector ':is(:visited,::after,)) { }' parsed: NO
+selector ':is(:visited,::after,{}) { }' parsed: YES
+selector ':is(:visited,::after,}) { }' parsed: YES
+selector ':is(:visited,::after,:not() { }' parsed: NO
+selector ':is(:visited,::after,:is() { }' parsed: NO
+selector ':is(:visited,::after,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:visited,.class:not(.notclass),) { }' parsed: YES
+selector ':is(:visited,.class:not(.notclass),    ) { }' parsed: YES
+selector ':is(:visited,.class:not(.notclass),,) { }' parsed: YES
+selector ':is(:visited,.class:not(.notclass),.123class) { }' parsed: YES
+selector ':is(:visited,.class:not(.notclass),#123id) { }' parsed: YES
+selector ':is(:visited,.class:not(.notclass),[]) { }' parsed: YES
+selector ':is(:visited,.class:not(.notclass),()) { }' parsed: YES
+selector ':is(:visited,.class:not(.notclass),)) { }' parsed: NO
+selector ':is(:visited,.class:not(.notclass),{}) { }' parsed: YES
+selector ':is(:visited,.class:not(.notclass),}) { }' parsed: YES
+selector ':is(:visited,.class:not(.notclass),:not() { }' parsed: NO
+selector ':is(:visited,.class:not(.notclass),:is() { }' parsed: NO
+selector ':is(:visited,.class:not(.notclass),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:visited,a > b,) { }' parsed: YES
+selector ':is(:visited,a > b,    ) { }' parsed: YES
+selector ':is(:visited,a > b,,) { }' parsed: YES
+selector ':is(:visited,a > b,.123class) { }' parsed: YES
+selector ':is(:visited,a > b,#123id) { }' parsed: YES
+selector ':is(:visited,a > b,[]) { }' parsed: YES
+selector ':is(:visited,a > b,()) { }' parsed: YES
+selector ':is(:visited,a > b,)) { }' parsed: NO
+selector ':is(:visited,a > b,{}) { }' parsed: YES
+selector ':is(:visited,a > b,}) { }' parsed: YES
+selector ':is(:visited,a > b,:not() { }' parsed: NO
+selector ':is(:visited,a > b,:is() { }' parsed: NO
+selector ':is(:visited,a > b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:visited,a + b,) { }' parsed: YES
+selector ':is(:visited,a + b,    ) { }' parsed: YES
+selector ':is(:visited,a + b,,) { }' parsed: YES
+selector ':is(:visited,a + b,.123class) { }' parsed: YES
+selector ':is(:visited,a + b,#123id) { }' parsed: YES
+selector ':is(:visited,a + b,[]) { }' parsed: YES
+selector ':is(:visited,a + b,()) { }' parsed: YES
+selector ':is(:visited,a + b,)) { }' parsed: NO
+selector ':is(:visited,a + b,{}) { }' parsed: YES
+selector ':is(:visited,a + b,}) { }' parsed: YES
+selector ':is(:visited,a + b,:not() { }' parsed: NO
+selector ':is(:visited,a + b,:is() { }' parsed: NO
+selector ':is(:visited,a + b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:visited,a + b > c ~ d e + g,) { }' parsed: YES
+selector ':is(:visited,a + b > c ~ d e + g,    ) { }' parsed: YES
+selector ':is(:visited,a + b > c ~ d e + g,,) { }' parsed: YES
+selector ':is(:visited,a + b > c ~ d e + g,.123class) { }' parsed: YES
+selector ':is(:visited,a + b > c ~ d e + g,#123id) { }' parsed: YES
+selector ':is(:visited,a + b > c ~ d e + g,[]) { }' parsed: YES
+selector ':is(:visited,a + b > c ~ d e + g,()) { }' parsed: YES
+selector ':is(:visited,a + b > c ~ d e + g,)) { }' parsed: NO
+selector ':is(:visited,a + b > c ~ d e + g,{}) { }' parsed: YES
+selector ':is(:visited,a + b > c ~ d e + g,}) { }' parsed: YES
+selector ':is(:visited,a + b > c ~ d e + g,:not() { }' parsed: NO
+selector ':is(:visited,a + b > c ~ d e + g,:is() { }' parsed: NO
+selector ':is(:visited,a + b > c ~ d e + g,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:visited,:not(:link),) { }' parsed: YES
+selector ':is(:visited,:not(:link),    ) { }' parsed: YES
+selector ':is(:visited,:not(:link),,) { }' parsed: YES
+selector ':is(:visited,:not(:link),.123class) { }' parsed: YES
+selector ':is(:visited,:not(:link),#123id) { }' parsed: YES
+selector ':is(:visited,:not(:link),[]) { }' parsed: YES
+selector ':is(:visited,:not(:link),()) { }' parsed: YES
+selector ':is(:visited,:not(:link),)) { }' parsed: NO
+selector ':is(:visited,:not(:link),{}) { }' parsed: YES
+selector ':is(:visited,:not(:link),}) { }' parsed: YES
+selector ':is(:visited,:not(:link),:not() { }' parsed: NO
+selector ':is(:visited,:not(:link),:is() { }' parsed: NO
+selector ':is(:visited,:not(:link),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(:visited,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-line,::first-line,) { }' parsed: YES
+selector ':is(::first-line,::first-line,    ) { }' parsed: YES
+selector ':is(::first-line,::first-line,,) { }' parsed: YES
+selector ':is(::first-line,::first-line,.123class) { }' parsed: YES
+selector ':is(::first-line,::first-line,#123id) { }' parsed: YES
+selector ':is(::first-line,::first-line,[]) { }' parsed: YES
+selector ':is(::first-line,::first-line,()) { }' parsed: YES
+selector ':is(::first-line,::first-line,)) { }' parsed: NO
+selector ':is(::first-line,::first-line,{}) { }' parsed: YES
+selector ':is(::first-line,::first-line,}) { }' parsed: YES
+selector ':is(::first-line,::first-line,:not() { }' parsed: NO
+selector ':is(::first-line,::first-line,:is() { }' parsed: NO
+selector ':is(::first-line,::first-line,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-line,::after,) { }' parsed: YES
+selector ':is(::first-line,::after,    ) { }' parsed: YES
+selector ':is(::first-line,::after,,) { }' parsed: YES
+selector ':is(::first-line,::after,.123class) { }' parsed: YES
+selector ':is(::first-line,::after,#123id) { }' parsed: YES
+selector ':is(::first-line,::after,[]) { }' parsed: YES
+selector ':is(::first-line,::after,()) { }' parsed: YES
+selector ':is(::first-line,::after,)) { }' parsed: NO
+selector ':is(::first-line,::after,{}) { }' parsed: YES
+selector ':is(::first-line,::after,}) { }' parsed: YES
+selector ':is(::first-line,::after,:not() { }' parsed: NO
+selector ':is(::first-line,::after,:is() { }' parsed: NO
+selector ':is(::first-line,::after,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-line,.class:not(.notclass),) { }' parsed: YES
+selector ':is(::first-line,.class:not(.notclass),    ) { }' parsed: YES
+selector ':is(::first-line,.class:not(.notclass),,) { }' parsed: YES
+selector ':is(::first-line,.class:not(.notclass),.123class) { }' parsed: YES
+selector ':is(::first-line,.class:not(.notclass),#123id) { }' parsed: YES
+selector ':is(::first-line,.class:not(.notclass),[]) { }' parsed: YES
+selector ':is(::first-line,.class:not(.notclass),()) { }' parsed: YES
+selector ':is(::first-line,.class:not(.notclass),)) { }' parsed: NO
+selector ':is(::first-line,.class:not(.notclass),{}) { }' parsed: YES
+selector ':is(::first-line,.class:not(.notclass),}) { }' parsed: YES
+selector ':is(::first-line,.class:not(.notclass),:not() { }' parsed: NO
+selector ':is(::first-line,.class:not(.notclass),:is() { }' parsed: NO
+selector ':is(::first-line,.class:not(.notclass),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-line,a > b,) { }' parsed: YES
+selector ':is(::first-line,a > b,    ) { }' parsed: YES
+selector ':is(::first-line,a > b,,) { }' parsed: YES
+selector ':is(::first-line,a > b,.123class) { }' parsed: YES
+selector ':is(::first-line,a > b,#123id) { }' parsed: YES
+selector ':is(::first-line,a > b,[]) { }' parsed: YES
+selector ':is(::first-line,a > b,()) { }' parsed: YES
+selector ':is(::first-line,a > b,)) { }' parsed: NO
+selector ':is(::first-line,a > b,{}) { }' parsed: YES
+selector ':is(::first-line,a > b,}) { }' parsed: YES
+selector ':is(::first-line,a > b,:not() { }' parsed: NO
+selector ':is(::first-line,a > b,:is() { }' parsed: NO
+selector ':is(::first-line,a > b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-line,a + b,) { }' parsed: YES
+selector ':is(::first-line,a + b,    ) { }' parsed: YES
+selector ':is(::first-line,a + b,,) { }' parsed: YES
+selector ':is(::first-line,a + b,.123class) { }' parsed: YES
+selector ':is(::first-line,a + b,#123id) { }' parsed: YES
+selector ':is(::first-line,a + b,[]) { }' parsed: YES
+selector ':is(::first-line,a + b,()) { }' parsed: YES
+selector ':is(::first-line,a + b,)) { }' parsed: NO
+selector ':is(::first-line,a + b,{}) { }' parsed: YES
+selector ':is(::first-line,a + b,}) { }' parsed: YES
+selector ':is(::first-line,a + b,:not() { }' parsed: NO
+selector ':is(::first-line,a + b,:is() { }' parsed: NO
+selector ':is(::first-line,a + b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-line,a + b > c ~ d e + g,) { }' parsed: YES
+selector ':is(::first-line,a + b > c ~ d e + g,    ) { }' parsed: YES
+selector ':is(::first-line,a + b > c ~ d e + g,,) { }' parsed: YES
+selector ':is(::first-line,a + b > c ~ d e + g,.123class) { }' parsed: YES
+selector ':is(::first-line,a + b > c ~ d e + g,#123id) { }' parsed: YES
+selector ':is(::first-line,a + b > c ~ d e + g,[]) { }' parsed: YES
+selector ':is(::first-line,a + b > c ~ d e + g,()) { }' parsed: YES
+selector ':is(::first-line,a + b > c ~ d e + g,)) { }' parsed: NO
+selector ':is(::first-line,a + b > c ~ d e + g,{}) { }' parsed: YES
+selector ':is(::first-line,a + b > c ~ d e + g,}) { }' parsed: YES
+selector ':is(::first-line,a + b > c ~ d e + g,:not() { }' parsed: NO
+selector ':is(::first-line,a + b > c ~ d e + g,:is() { }' parsed: NO
+selector ':is(::first-line,a + b > c ~ d e + g,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-line,:not(:link),) { }' parsed: YES
+selector ':is(::first-line,:not(:link),    ) { }' parsed: YES
+selector ':is(::first-line,:not(:link),,) { }' parsed: YES
+selector ':is(::first-line,:not(:link),.123class) { }' parsed: YES
+selector ':is(::first-line,:not(:link),#123id) { }' parsed: YES
+selector ':is(::first-line,:not(:link),[]) { }' parsed: YES
+selector ':is(::first-line,:not(:link),()) { }' parsed: YES
+selector ':is(::first-line,:not(:link),)) { }' parsed: NO
+selector ':is(::first-line,:not(:link),{}) { }' parsed: YES
+selector ':is(::first-line,:not(:link),}) { }' parsed: YES
+selector ':is(::first-line,:not(:link),:not() { }' parsed: NO
+selector ':is(::first-line,:not(:link),:is() { }' parsed: NO
+selector ':is(::first-line,:not(:link),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(::first-line,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::after,::after,) { }' parsed: YES
+selector ':is(::after,::after,    ) { }' parsed: YES
+selector ':is(::after,::after,,) { }' parsed: YES
+selector ':is(::after,::after,.123class) { }' parsed: YES
+selector ':is(::after,::after,#123id) { }' parsed: YES
+selector ':is(::after,::after,[]) { }' parsed: YES
+selector ':is(::after,::after,()) { }' parsed: YES
+selector ':is(::after,::after,)) { }' parsed: NO
+selector ':is(::after,::after,{}) { }' parsed: YES
+selector ':is(::after,::after,}) { }' parsed: YES
+selector ':is(::after,::after,:not() { }' parsed: NO
+selector ':is(::after,::after,:is() { }' parsed: NO
+selector ':is(::after,::after,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::after,.class:not(.notclass),) { }' parsed: YES
+selector ':is(::after,.class:not(.notclass),    ) { }' parsed: YES
+selector ':is(::after,.class:not(.notclass),,) { }' parsed: YES
+selector ':is(::after,.class:not(.notclass),.123class) { }' parsed: YES
+selector ':is(::after,.class:not(.notclass),#123id) { }' parsed: YES
+selector ':is(::after,.class:not(.notclass),[]) { }' parsed: YES
+selector ':is(::after,.class:not(.notclass),()) { }' parsed: YES
+selector ':is(::after,.class:not(.notclass),)) { }' parsed: NO
+selector ':is(::after,.class:not(.notclass),{}) { }' parsed: YES
+selector ':is(::after,.class:not(.notclass),}) { }' parsed: YES
+selector ':is(::after,.class:not(.notclass),:not() { }' parsed: NO
+selector ':is(::after,.class:not(.notclass),:is() { }' parsed: NO
+selector ':is(::after,.class:not(.notclass),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::after,a > b,) { }' parsed: YES
+selector ':is(::after,a > b,    ) { }' parsed: YES
+selector ':is(::after,a > b,,) { }' parsed: YES
+selector ':is(::after,a > b,.123class) { }' parsed: YES
+selector ':is(::after,a > b,#123id) { }' parsed: YES
+selector ':is(::after,a > b,[]) { }' parsed: YES
+selector ':is(::after,a > b,()) { }' parsed: YES
+selector ':is(::after,a > b,)) { }' parsed: NO
+selector ':is(::after,a > b,{}) { }' parsed: YES
+selector ':is(::after,a > b,}) { }' parsed: YES
+selector ':is(::after,a > b,:not() { }' parsed: NO
+selector ':is(::after,a > b,:is() { }' parsed: NO
+selector ':is(::after,a > b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::after,a + b,) { }' parsed: YES
+selector ':is(::after,a + b,    ) { }' parsed: YES
+selector ':is(::after,a + b,,) { }' parsed: YES
+selector ':is(::after,a + b,.123class) { }' parsed: YES
+selector ':is(::after,a + b,#123id) { }' parsed: YES
+selector ':is(::after,a + b,[]) { }' parsed: YES
+selector ':is(::after,a + b,()) { }' parsed: YES
+selector ':is(::after,a + b,)) { }' parsed: NO
+selector ':is(::after,a + b,{}) { }' parsed: YES
+selector ':is(::after,a + b,}) { }' parsed: YES
+selector ':is(::after,a + b,:not() { }' parsed: NO
+selector ':is(::after,a + b,:is() { }' parsed: NO
+selector ':is(::after,a + b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::after,a + b > c ~ d e + g,) { }' parsed: YES
+selector ':is(::after,a + b > c ~ d e + g,    ) { }' parsed: YES
+selector ':is(::after,a + b > c ~ d e + g,,) { }' parsed: YES
+selector ':is(::after,a + b > c ~ d e + g,.123class) { }' parsed: YES
+selector ':is(::after,a + b > c ~ d e + g,#123id) { }' parsed: YES
+selector ':is(::after,a + b > c ~ d e + g,[]) { }' parsed: YES
+selector ':is(::after,a + b > c ~ d e + g,()) { }' parsed: YES
+selector ':is(::after,a + b > c ~ d e + g,)) { }' parsed: NO
+selector ':is(::after,a + b > c ~ d e + g,{}) { }' parsed: YES
+selector ':is(::after,a + b > c ~ d e + g,}) { }' parsed: YES
+selector ':is(::after,a + b > c ~ d e + g,:not() { }' parsed: NO
+selector ':is(::after,a + b > c ~ d e + g,:is() { }' parsed: NO
+selector ':is(::after,a + b > c ~ d e + g,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::after,:not(:link),) { }' parsed: YES
+selector ':is(::after,:not(:link),    ) { }' parsed: YES
+selector ':is(::after,:not(:link),,) { }' parsed: YES
+selector ':is(::after,:not(:link),.123class) { }' parsed: YES
+selector ':is(::after,:not(:link),#123id) { }' parsed: YES
+selector ':is(::after,:not(:link),[]) { }' parsed: YES
+selector ':is(::after,:not(:link),()) { }' parsed: YES
+selector ':is(::after,:not(:link),)) { }' parsed: NO
+selector ':is(::after,:not(:link),{}) { }' parsed: YES
+selector ':is(::after,:not(:link),}) { }' parsed: YES
+selector ':is(::after,:not(:link),:not() { }' parsed: NO
+selector ':is(::after,:not(:link),:is() { }' parsed: NO
+selector ':is(::after,:not(:link),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(::after,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(::after,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(::after,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(::after,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(::after,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(::after,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(::after,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(::after,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(::after,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(::after,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(::after,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(::after,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(::after,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class:not(.notclass),.class:not(.notclass),) { }' parsed: YES
+selector ':is(.class:not(.notclass),.class:not(.notclass),    ) { }' parsed: YES
+selector ':is(.class:not(.notclass),.class:not(.notclass),,) { }' parsed: YES
+selector ':is(.class:not(.notclass),.class:not(.notclass),.123class) { }' parsed: YES
+selector ':is(.class:not(.notclass),.class:not(.notclass),#123id) { }' parsed: YES
+selector ':is(.class:not(.notclass),.class:not(.notclass),[]) { }' parsed: YES
+selector ':is(.class:not(.notclass),.class:not(.notclass),()) { }' parsed: YES
+selector ':is(.class:not(.notclass),.class:not(.notclass),)) { }' parsed: NO
+selector ':is(.class:not(.notclass),.class:not(.notclass),{}) { }' parsed: YES
+selector ':is(.class:not(.notclass),.class:not(.notclass),}) { }' parsed: YES
+selector ':is(.class:not(.notclass),.class:not(.notclass),:not() { }' parsed: NO
+selector ':is(.class:not(.notclass),.class:not(.notclass),:is() { }' parsed: NO
+selector ':is(.class:not(.notclass),.class:not(.notclass),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class:not(.notclass),a > b,) { }' parsed: YES
+selector ':is(.class:not(.notclass),a > b,    ) { }' parsed: YES
+selector ':is(.class:not(.notclass),a > b,,) { }' parsed: YES
+selector ':is(.class:not(.notclass),a > b,.123class) { }' parsed: YES
+selector ':is(.class:not(.notclass),a > b,#123id) { }' parsed: YES
+selector ':is(.class:not(.notclass),a > b,[]) { }' parsed: YES
+selector ':is(.class:not(.notclass),a > b,()) { }' parsed: YES
+selector ':is(.class:not(.notclass),a > b,)) { }' parsed: NO
+selector ':is(.class:not(.notclass),a > b,{}) { }' parsed: YES
+selector ':is(.class:not(.notclass),a > b,}) { }' parsed: YES
+selector ':is(.class:not(.notclass),a > b,:not() { }' parsed: NO
+selector ':is(.class:not(.notclass),a > b,:is() { }' parsed: NO
+selector ':is(.class:not(.notclass),a > b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class:not(.notclass),a + b,) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b,    ) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b,,) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b,.123class) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b,#123id) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b,[]) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b,()) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b,)) { }' parsed: NO
+selector ':is(.class:not(.notclass),a + b,{}) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b,}) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b,:not() { }' parsed: NO
+selector ':is(.class:not(.notclass),a + b,:is() { }' parsed: NO
+selector ':is(.class:not(.notclass),a + b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,    ) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,,) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,.123class) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,#123id) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,[]) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,()) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,)) { }' parsed: NO
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,{}) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,}) { }' parsed: YES
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,:not() { }' parsed: NO
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,:is() { }' parsed: NO
+selector ':is(.class:not(.notclass),a + b > c ~ d e + g,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class:not(.notclass),:not(:link),) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:link),    ) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:link),,) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:link),.123class) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:link),#123id) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:link),[]) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:link),()) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:link),)) { }' parsed: NO
+selector ':is(.class:not(.notclass),:not(:link),{}) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:link),}) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:link),:not() { }' parsed: NO
+selector ':is(.class:not(.notclass),:not(:link),:is() { }' parsed: NO
+selector ':is(.class:not(.notclass),:not(:link),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(.class:not(.notclass),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a > b,a > b,) { }' parsed: YES
+selector ':is(a > b,a > b,    ) { }' parsed: YES
+selector ':is(a > b,a > b,,) { }' parsed: YES
+selector ':is(a > b,a > b,.123class) { }' parsed: YES
+selector ':is(a > b,a > b,#123id) { }' parsed: YES
+selector ':is(a > b,a > b,[]) { }' parsed: YES
+selector ':is(a > b,a > b,()) { }' parsed: YES
+selector ':is(a > b,a > b,)) { }' parsed: NO
+selector ':is(a > b,a > b,{}) { }' parsed: YES
+selector ':is(a > b,a > b,}) { }' parsed: YES
+selector ':is(a > b,a > b,:not() { }' parsed: NO
+selector ':is(a > b,a > b,:is() { }' parsed: NO
+selector ':is(a > b,a > b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a > b,a + b,) { }' parsed: YES
+selector ':is(a > b,a + b,    ) { }' parsed: YES
+selector ':is(a > b,a + b,,) { }' parsed: YES
+selector ':is(a > b,a + b,.123class) { }' parsed: YES
+selector ':is(a > b,a + b,#123id) { }' parsed: YES
+selector ':is(a > b,a + b,[]) { }' parsed: YES
+selector ':is(a > b,a + b,()) { }' parsed: YES
+selector ':is(a > b,a + b,)) { }' parsed: NO
+selector ':is(a > b,a + b,{}) { }' parsed: YES
+selector ':is(a > b,a + b,}) { }' parsed: YES
+selector ':is(a > b,a + b,:not() { }' parsed: NO
+selector ':is(a > b,a + b,:is() { }' parsed: NO
+selector ':is(a > b,a + b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a > b,a + b > c ~ d e + g,) { }' parsed: YES
+selector ':is(a > b,a + b > c ~ d e + g,    ) { }' parsed: YES
+selector ':is(a > b,a + b > c ~ d e + g,,) { }' parsed: YES
+selector ':is(a > b,a + b > c ~ d e + g,.123class) { }' parsed: YES
+selector ':is(a > b,a + b > c ~ d e + g,#123id) { }' parsed: YES
+selector ':is(a > b,a + b > c ~ d e + g,[]) { }' parsed: YES
+selector ':is(a > b,a + b > c ~ d e + g,()) { }' parsed: YES
+selector ':is(a > b,a + b > c ~ d e + g,)) { }' parsed: NO
+selector ':is(a > b,a + b > c ~ d e + g,{}) { }' parsed: YES
+selector ':is(a > b,a + b > c ~ d e + g,}) { }' parsed: YES
+selector ':is(a > b,a + b > c ~ d e + g,:not() { }' parsed: NO
+selector ':is(a > b,a + b > c ~ d e + g,:is() { }' parsed: NO
+selector ':is(a > b,a + b > c ~ d e + g,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a > b,:not(:link),) { }' parsed: YES
+selector ':is(a > b,:not(:link),    ) { }' parsed: YES
+selector ':is(a > b,:not(:link),,) { }' parsed: YES
+selector ':is(a > b,:not(:link),.123class) { }' parsed: YES
+selector ':is(a > b,:not(:link),#123id) { }' parsed: YES
+selector ':is(a > b,:not(:link),[]) { }' parsed: YES
+selector ':is(a > b,:not(:link),()) { }' parsed: YES
+selector ':is(a > b,:not(:link),)) { }' parsed: NO
+selector ':is(a > b,:not(:link),{}) { }' parsed: YES
+selector ':is(a > b,:not(:link),}) { }' parsed: YES
+selector ':is(a > b,:not(:link),:not() { }' parsed: NO
+selector ':is(a > b,:not(:link),:is() { }' parsed: NO
+selector ':is(a > b,:not(:link),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(a > b,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a + b,a + b,) { }' parsed: YES
+selector ':is(a + b,a + b,    ) { }' parsed: YES
+selector ':is(a + b,a + b,,) { }' parsed: YES
+selector ':is(a + b,a + b,.123class) { }' parsed: YES
+selector ':is(a + b,a + b,#123id) { }' parsed: YES
+selector ':is(a + b,a + b,[]) { }' parsed: YES
+selector ':is(a + b,a + b,()) { }' parsed: YES
+selector ':is(a + b,a + b,)) { }' parsed: NO
+selector ':is(a + b,a + b,{}) { }' parsed: YES
+selector ':is(a + b,a + b,}) { }' parsed: YES
+selector ':is(a + b,a + b,:not() { }' parsed: NO
+selector ':is(a + b,a + b,:is() { }' parsed: NO
+selector ':is(a + b,a + b,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a + b,a + b > c ~ d e + g,) { }' parsed: YES
+selector ':is(a + b,a + b > c ~ d e + g,    ) { }' parsed: YES
+selector ':is(a + b,a + b > c ~ d e + g,,) { }' parsed: YES
+selector ':is(a + b,a + b > c ~ d e + g,.123class) { }' parsed: YES
+selector ':is(a + b,a + b > c ~ d e + g,#123id) { }' parsed: YES
+selector ':is(a + b,a + b > c ~ d e + g,[]) { }' parsed: YES
+selector ':is(a + b,a + b > c ~ d e + g,()) { }' parsed: YES
+selector ':is(a + b,a + b > c ~ d e + g,)) { }' parsed: NO
+selector ':is(a + b,a + b > c ~ d e + g,{}) { }' parsed: YES
+selector ':is(a + b,a + b > c ~ d e + g,}) { }' parsed: YES
+selector ':is(a + b,a + b > c ~ d e + g,:not() { }' parsed: NO
+selector ':is(a + b,a + b > c ~ d e + g,:is() { }' parsed: NO
+selector ':is(a + b,a + b > c ~ d e + g,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a + b,:not(:link),) { }' parsed: YES
+selector ':is(a + b,:not(:link),    ) { }' parsed: YES
+selector ':is(a + b,:not(:link),,) { }' parsed: YES
+selector ':is(a + b,:not(:link),.123class) { }' parsed: YES
+selector ':is(a + b,:not(:link),#123id) { }' parsed: YES
+selector ':is(a + b,:not(:link),[]) { }' parsed: YES
+selector ':is(a + b,:not(:link),()) { }' parsed: YES
+selector ':is(a + b,:not(:link),)) { }' parsed: NO
+selector ':is(a + b,:not(:link),{}) { }' parsed: YES
+selector ':is(a + b,:not(:link),}) { }' parsed: YES
+selector ':is(a + b,:not(:link),:not() { }' parsed: NO
+selector ':is(a + b,:not(:link),:is() { }' parsed: NO
+selector ':is(a + b,:not(:link),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(a + b,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,    ) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,,) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,.123class) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,#123id) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,[]) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,()) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,)) { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,{}) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,}) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,:not() { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,:is() { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,a + b > c ~ d e + g,:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,:not(:link),) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:link),    ) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:link),,) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:link),.123class) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:link),#123id) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:link),[]) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:link),()) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:link),)) { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,:not(:link),{}) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:link),}) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:link),:not() { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,:not(:link),:is() { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,:not(:link),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(a + b > c ~ d e + g,:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:not(:link),:not(:link),) { }' parsed: YES
+selector ':is(:not(:link),:not(:link),    ) { }' parsed: YES
+selector ':is(:not(:link),:not(:link),,) { }' parsed: YES
+selector ':is(:not(:link),:not(:link),.123class) { }' parsed: YES
+selector ':is(:not(:link),:not(:link),#123id) { }' parsed: YES
+selector ':is(:not(:link),:not(:link),[]) { }' parsed: YES
+selector ':is(:not(:link),:not(:link),()) { }' parsed: YES
+selector ':is(:not(:link),:not(:link),)) { }' parsed: NO
+selector ':is(:not(:link),:not(:link),{}) { }' parsed: YES
+selector ':is(:not(:link),:not(:link),}) { }' parsed: YES
+selector ':is(:not(:link),:not(:link),:not() { }' parsed: NO
+selector ':is(:not(:link),:not(:link),:is() { }' parsed: NO
+selector ':is(:not(:link),:not(:link),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(:not(:link),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),    ) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),,) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),.123class) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),#123id) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),[]) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),()) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),)) { }' parsed: NO
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),{}) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),}) { }' parsed: YES
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:not() { }' parsed: NO
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:is() { }' parsed: NO
+selector ':is(:not(:is(cocoa, cappuccino)),:not(:is(cocoa, cappuccino)),:nth-child(2n+1 of) { }' parsed: NO
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

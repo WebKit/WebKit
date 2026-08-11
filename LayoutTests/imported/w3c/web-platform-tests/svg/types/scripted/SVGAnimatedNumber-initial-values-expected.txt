@@ -1,0 +1,104 @@
+
+FAIL SVGAnimatedNumber, initial values, SVGComponentTransferFunctionElement.prototype.slope (remove) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGComponentTransferFunctionElement.prototype.slope (invalid value) assert_equals: initial after expected 1 but got 0
+PASS SVGAnimatedNumber, initial values, SVGComponentTransferFunctionElement.prototype.intercept (remove)
+PASS SVGAnimatedNumber, initial values, SVGComponentTransferFunctionElement.prototype.intercept (invalid value)
+FAIL SVGAnimatedNumber, initial values, SVGComponentTransferFunctionElement.prototype.amplitude (remove) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGComponentTransferFunctionElement.prototype.amplitude (invalid value) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGComponentTransferFunctionElement.prototype.exponent (remove) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGComponentTransferFunctionElement.prototype.exponent (invalid value) assert_equals: initial after expected 1 but got 0
+PASS SVGAnimatedNumber, initial values, SVGComponentTransferFunctionElement.prototype.offset (remove)
+PASS SVGAnimatedNumber, initial values, SVGComponentTransferFunctionElement.prototype.offset (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFECompositeElement.prototype.k1 (remove)
+PASS SVGAnimatedNumber, initial values, SVGFECompositeElement.prototype.k1 (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFECompositeElement.prototype.k2 (remove)
+PASS SVGAnimatedNumber, initial values, SVGFECompositeElement.prototype.k2 (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFECompositeElement.prototype.k3 (remove)
+PASS SVGAnimatedNumber, initial values, SVGFECompositeElement.prototype.k3 (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFECompositeElement.prototype.k4 (remove)
+PASS SVGAnimatedNumber, initial values, SVGFECompositeElement.prototype.k4 (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEConvolveMatrixElement.prototype.divisor (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEConvolveMatrixElement.prototype.divisor (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEConvolveMatrixElement.prototype.bias (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEConvolveMatrixElement.prototype.bias (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEConvolveMatrixElement.prototype.kernelUnitLengthX (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEConvolveMatrixElement.prototype.kernelUnitLengthX (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEConvolveMatrixElement.prototype.kernelUnitLengthY (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEConvolveMatrixElement.prototype.kernelUnitLengthY (invalid value)
+FAIL SVGAnimatedNumber, initial values, SVGFEDiffuseLightingElement.prototype.surfaceScale (remove) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFEDiffuseLightingElement.prototype.surfaceScale (invalid value) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFEDiffuseLightingElement.prototype.diffuseConstant (remove) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFEDiffuseLightingElement.prototype.diffuseConstant (invalid value) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFEDiffuseLightingElement.prototype.kernelUnitLengthX (remove) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEDiffuseLightingElement.prototype.kernelUnitLengthX (invalid value) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEDiffuseLightingElement.prototype.kernelUnitLengthY (remove) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEDiffuseLightingElement.prototype.kernelUnitLengthY (invalid value) assert_equals: initial after expected 0 but got 42
+PASS SVGAnimatedNumber, initial values, SVGFEDisplacementMapElement.prototype.scale (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEDisplacementMapElement.prototype.scale (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEDistantLightElement.prototype.azimuth (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEDistantLightElement.prototype.azimuth (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEDistantLightElement.prototype.elevation (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEDistantLightElement.prototype.elevation (invalid value)
+FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dx (remove) assert_equals: initial after expected 2 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dx (invalid value) assert_equals: initial after expected 2 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dy (remove) assert_equals: initial after expected 2 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.dy (invalid value) assert_equals: initial after expected 2 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationX (remove) assert_equals: initial after expected 2 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationX (invalid value) assert_equals: initial after expected 2 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationY (remove) assert_equals: initial after expected 2 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEDropShadowElement.prototype.stdDeviationY (invalid value) assert_equals: initial after expected 2 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEGaussianBlurElement.prototype.stdDeviationX (remove) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEGaussianBlurElement.prototype.stdDeviationX (invalid value) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEGaussianBlurElement.prototype.stdDeviationY (remove) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEGaussianBlurElement.prototype.stdDeviationY (invalid value) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEMorphologyElement.prototype.radiusX (remove) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEMorphologyElement.prototype.radiusX (invalid value) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEMorphologyElement.prototype.radiusY (remove) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFEMorphologyElement.prototype.radiusY (invalid value) assert_equals: initial after expected 0 but got 42
+PASS SVGAnimatedNumber, initial values, SVGFEOffsetElement.prototype.dx (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEOffsetElement.prototype.dx (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEOffsetElement.prototype.dy (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEOffsetElement.prototype.dy (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEPointLightElement.prototype.x (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEPointLightElement.prototype.x (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEPointLightElement.prototype.y (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEPointLightElement.prototype.y (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFEPointLightElement.prototype.z (remove)
+PASS SVGAnimatedNumber, initial values, SVGFEPointLightElement.prototype.z (invalid value)
+FAIL SVGAnimatedNumber, initial values, SVGFESpecularLightingElement.prototype.surfaceScale (remove) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFESpecularLightingElement.prototype.surfaceScale (invalid value) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFESpecularLightingElement.prototype.specularConstant (remove) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFESpecularLightingElement.prototype.specularConstant (invalid value) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFESpecularLightingElement.prototype.specularExponent (remove) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFESpecularLightingElement.prototype.specularExponent (invalid value) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFESpecularLightingElement.prototype.kernelUnitLengthX (remove) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFESpecularLightingElement.prototype.kernelUnitLengthX (invalid value) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFESpecularLightingElement.prototype.kernelUnitLengthY (remove) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFESpecularLightingElement.prototype.kernelUnitLengthY (invalid value) assert_equals: initial after expected 0 but got 42
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.x (remove)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.x (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.y (remove)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.y (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.z (remove)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.z (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.pointsAtX (remove)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.pointsAtX (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.pointsAtY (remove)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.pointsAtY (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.pointsAtZ (remove)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.pointsAtZ (invalid value)
+FAIL SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.specularExponent (remove) assert_equals: initial after expected 1 but got 0
+FAIL SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.specularExponent (invalid value) assert_equals: initial after expected 1 but got 0
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.limitingConeAngle (remove)
+PASS SVGAnimatedNumber, initial values, SVGFESpotLightElement.prototype.limitingConeAngle (invalid value)
+FAIL SVGAnimatedNumber, initial values, SVGFETurbulenceElement.prototype.baseFrequencyX (remove) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFETurbulenceElement.prototype.baseFrequencyX (invalid value) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFETurbulenceElement.prototype.baseFrequencyY (remove) assert_equals: initial after expected 0 but got 42
+FAIL SVGAnimatedNumber, initial values, SVGFETurbulenceElement.prototype.baseFrequencyY (invalid value) assert_equals: initial after expected 0 but got 42
+PASS SVGAnimatedNumber, initial values, SVGFETurbulenceElement.prototype.seed (remove)
+PASS SVGAnimatedNumber, initial values, SVGFETurbulenceElement.prototype.seed (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGGeometryElement.prototype.pathLength (remove)
+PASS SVGAnimatedNumber, initial values, SVGGeometryElement.prototype.pathLength (invalid value)
+PASS SVGAnimatedNumber, initial values, SVGStopElement.prototype.offset (remove)
+PASS SVGAnimatedNumber, initial values, SVGStopElement.prototype.offset (invalid value)
+

@@ -1,0 +1,8 @@
+Received scrolling start event for object 'Bottom of the page'.
+Link to Bottom of the page
+This test verifies that jumping to an anchor fires an MSAA event.
+
+
+Bottom of the page
+
+

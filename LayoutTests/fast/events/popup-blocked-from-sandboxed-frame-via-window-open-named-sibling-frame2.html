@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<iframe name="A"></iframe>
+<iframe id="B" sandbox="allow-scripts allow-same-origin allow-popups allow-modals"></iframe>
+<script>
+document.getElementById("B").contentWindow.eval('alert(window.open.call(window.top, "about:blank", "A") ? "FAIL" : "PASS");');
+</script>
+</body>
+</html>

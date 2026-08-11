@@ -1,0 +1,106 @@
+Title: Profiling
+Slug: profiling
+
+# Profiling with Sysprof
+
+## Prerequisites
+
+To work with [Sysprof](https://gitlab.gnome.org/GNOME/sysprof/) one needs to install it first:
+
+- ubuntu:
+```
+apt install sysprof
+```
+- fedora
+```
+dnf install sysprof
+```
+
+## Profiling
+
+To start the profiling one must either:
+
+- start `sysprof-cli` to get a system-wide capture:
+```
+sysprof-cli -f
+```
+- or wrap a command with `sysprof-cli` to get a capture focused on the execution of a particular process tree created by the given command:
+```
+sysprof-cli -f -- MiniBrowser 'http://webkit.org'
+```
+
+For more information, please refer to `sysprof-cli --help`:
+```
+Usage:
+  sysprof-cli [OPTION…] [CAPTURE_FILE] [-- COMMAND ARGS]
+(...)
+```
+
+
+### Profiling WebKit in the SDK
+
+When profiling WebKit in the [SDK](https://github.com/Igalia/webkit-container-sdk), one must use the `Tools/Scripts/run-minibrowser` script as it contains plumbing that makes `sysprof-cli` work correctly:
+
+```
+#if WPE
+WPE_BROWSER=minibrowser sysprof-cli -f -- Tools/Scripts/run-minibrowser --wpe --release 'https://igalia.com'
+#elif GTK
+sysprof-cli -f -- Tools/Scripts/run-minibrowser --gtk --release 'https://igalia.com'
+#endif
+```
+
+## Working with capture files
+
+Once the sysprof capture file (`.syscap`) is produced using `sysprof-cli`, it's possible:
+
+- to visualize the captured data using the Sysprof GUI
+- to further transform it into textual format format that can be used for playing around with the data
+
+### Visualizing captured data
+
+To visualize the captured data, the `sysprof` application needs to be launched and the capture file needs to be loaded. It's possible to open multiple capture files and have them visualized in separate windows.
+
+### Transforming captured data into text
+
+Visualizing sysprof captures is very feature rich, but sometimes one needs to process the data using scripts to e.g. perform statistical analysis etc. For that, sysprof capture file needs to be transformed from binary format, the textual format that can be easily parsed and processed further. This can be easily done using `sysprof-cat`:
+
+```
+sysprof-cat capture.syscap
+sysprof-cat --no-callgraph --no-counters capture.syscap
+```
+
+The output format is "CSS-inspired" yet it's very easy to write a custom parser for it.
+
+## Known problems
+
+### `sysprof-cli` not starting in SDK
+
+If basic `sysprof-cli -f` command yields errors such as:
+```
+(...)
+Sampler: Failed to record copy of “kallsyms” to capture: GDBus.Error:org.freedesktop.DBus.Error.AccessDenied: Not authorized to make request
+Sampler: Failed to load Perf event stream for CPU 0: GDBus.Error:org.freedesktop.DBus.Error.AccessDenied: Not authorized to make request
+Sampler: Failed to load Perf event stream for CPU 1: GDBus.Error:org.freedesktop.DBus.Error.AccessDenied: Not authorized to make request
+Sampler: Failed to load Perf event stream for CPU 2: GDBus.Error:org.freedesktop.DBus.Error.AccessDenied: Not authorized to make request
+Sampler: Failed to load Perf event stream for CPU 3: GDBus.Error:org.freedesktop.DBus.Error.AccessDenied: Not authorized to make request
+(...)
+```
+
+This means that D-Bus calls to the system bus cannot be authorized. To make sure that's the case, one can run the command:
+```
+dbus-send --system --print-reply --dest=org.gnome.Sysprof3 /org/gnome/Sysprof3 org.gnome.Sysprof3.Service.ListProcesses
+```
+
+and confirm it outputs:
+```
+Error org.freedesktop.DBus.Error.AccessDenied: Not authorized to make request
+```
+
+This means the host system does not have Polkit agent running that would normally be used to ask the user for their password. In such case one needs to install and run a Polkit agentN.
+
+E.g. on ubuntu, the following should do the job:
+
+```
+sudo apt install policykit-1-gnome
+/usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
+```

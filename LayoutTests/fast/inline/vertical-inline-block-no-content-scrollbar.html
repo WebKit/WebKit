@@ -1,0 +1,19 @@
+<style>
+.container > div {
+  background-color: green;
+  width: 100px;
+  display: inline-block;
+}
+
+.horizontal {
+  height: 100px;
+}
+
+.vertical {
+  writing-mode: vertical-rl;
+  overflow-y: scroll;
+  border: 50px solid green;
+}
+</style>
+<!-- Do not take (non-visible) scrollbar into account while aligning the empty vertical container -->
+<div class=container><div class=horizontal></div><div class=vertical></div></div>

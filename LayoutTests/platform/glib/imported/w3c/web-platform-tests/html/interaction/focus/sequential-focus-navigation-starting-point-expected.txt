@@ -1,0 +1,18 @@
+(before container)
+button 1button 5button 2button 4
+(after container)
+
+PASS Focus navigation starting point should be maintained when focused element is removed.
+PASS Focus navigation starting point should be maintained when parent element is removed.
+PASS Focus navigation starting point should be maintained when shadow host is removed.
+PASS Focus navigation starting point should be maintained when focused button is disabled.
+PASS Focus navigation starting point should not change when previous element is removed.
+PASS Focus navigation starting point should not change when next element is removed.
+FAIL Focus navigation starting point should not change when next element is moved with moveBefore. promise_test: Unhandled rejection with value: object "TypeError: target.moveBefore is not a function. (In 'target.moveBefore(element, null)', 'target.moveBefore' is undefined)"
+FAIL Focus navigation starting point should not change when previous element is moved with moveBefore. promise_test: Unhandled rejection with value: object "TypeError: target.moveBefore is not a function. (In 'target.moveBefore(element, null)', 'target.moveBefore' is undefined)"
+FAIL Focus navigation starting point should not change when previous element gets new children. assert_equals: Forwards sequential focus navigation should go to BUTTON#button2 expected Element node <button id="button2" data-next="">button2</button> but got Element node <button id="child" data-prev="">child</button>
+PASS Focus navigation starting point should not change when focused element at end of shadow tree is removed.
+PASS Focus navigation starting point should stay on element when it is disabled and re-enabled.
+FAIL Focus navigation starting point should stay on element when it is blurred. assert_equals: Forwards sequential focus navigation should go to BUTTON# expected Element node <button data-next="">button3</button> but got Element node <button id="before-container">(before container)</button>
+FAIL Focus navigation starting point should be maintained when slotted focused element is removed. assert_equals: Forwards sequential focus navigation should go to BUTTON# expected Element node <button data-next="" slot="d">button 4</button> but got Element node <button data-prev="" slot="b">button 2</button>
+

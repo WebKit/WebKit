@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<p>This test passes if it does not assert or crash.</p>
+<input autofocus ontransitionend="transitionFinished();">
+<style>
+input {
+    transition: ease, 50ms;
+    shape-outside: padding-box;
+}
+input:focus-visible {
+    outline-width: 5px;
+}
+</style>
+<script>
+function transitionFinished() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>

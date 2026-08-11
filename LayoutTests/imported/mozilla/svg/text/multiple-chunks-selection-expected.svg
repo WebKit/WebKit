@@ -1,0 +1,17 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="200" viewBox="0 0 700 200">
+  <g transform="translate(100,100)" style="font: 16px sans-serif">
+    <text x='100' text-anchor='end'>he</text>
+    <text x='300' text-anchor='end'>llo</text>
+  </g>
+  <script>
+    var text = document.getElementsByTagName("text");
+    var range = document.createRange();
+    range.setStart(text[0].firstChild, 1);
+    range.setEnd(text[1].firstChild, 2);
+    window.getSelection().addRange(range);
+  </script>
+</svg>

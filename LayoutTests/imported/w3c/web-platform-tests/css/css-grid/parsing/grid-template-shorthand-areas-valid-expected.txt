@@ -1,0 +1,8 @@
+
+PASS grid-template: none / 1px and "grid-template-areas: "a";" should be valid.
+PASS grid-template: none / none and "grid-template-areas: "a";" should be valid.
+PASS grid-template: none / none and "grid-template-areas: "a" "b" "c" "d" "e";" should be valid.
+PASS grid-template: auto / 1px and "grid-template-areas: "a a a";" should be valid.
+PASS grid-template: auto / auto and "grid-template-areas: "a a a";" should be valid.
+PASS grid-template: 10px 20px 30px / 40px 50px 60px 70px and "grid-template-areas: "a . b ." "c d . e" "f g h .";" should be valid.
+

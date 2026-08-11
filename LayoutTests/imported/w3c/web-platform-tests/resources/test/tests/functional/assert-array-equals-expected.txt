@@ -1,0 +1,18 @@
+
+PASS empty and equal
+PASS non-empty and equal
+FAIL length differs assert_array_equals: lengths differ, expected array [1] length 1, got [] length 0
+FAIL property is present assert_array_equals: expected property 0 to be "missing" but was "present" (expected array [] got [1])
+FAIL property is missing assert_array_equals: expected property 0 to be "present" but was "missing" (expected array [1] got [])
+FAIL property 0 differs assert_array_equals: expected property 0 to be "x" but got 0 (expected array ["x", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] got [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+FAIL property 5 differs assert_array_equals: expected property 5 to be "x" but got 5 (expected array [0, 1, 2, 3, 4, "x", 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20] got [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+FAIL lengths differ and input array beyond display limit assert_array_equals: lengths differ, expected array [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21] length 21, got […, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21] length 22
+FAIL lengths differ and expected array beyond display limit assert_array_equals: lengths differ, expected array […, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21] length 22, got [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21] length 21
+FAIL property 0 is present and arrays are beyond display limit assert_array_equals: expected property 0 to be "missing" but was "present" (expected array [, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, …] got [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, …])
+FAIL property 0 is missing and arrays are beyond display limit assert_array_equals: expected property 0 to be "present" but was "missing" (expected array [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, …] got [, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, …])
+FAIL property 18 is present and arrays are beyond display limit assert_array_equals: expected property 18 to be "missing" but was "present" (expected array […, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, , 19, 20, 21] got […, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21])
+FAIL property 18 is missing and arrays are beyond display limit assert_array_equals: expected property 18 to be "present" but was "missing" (expected array […, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21] got […, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, , 19, 20, 21])
+FAIL property 0 differs and arrays are beyond display limit assert_array_equals: expected property 0 to be "x" but got 0 (expected array ["x", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, …] got [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, …])
+FAIL property 5 differs and arrays are beyond display limit assert_array_equals: expected property 5 to be "x" but got 5 (expected array [0, 1, 2, 3, 4, "x", 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, …] got [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, …])
+FAIL property 5 differs and arrays are beyond display limit on both sides assert_array_equals: expected property 12 to be "x" but got 12 (expected array […, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, "x", 13, 14, 15, 16, 17, 18, 19, 20, 21, …] got […, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, …])
+

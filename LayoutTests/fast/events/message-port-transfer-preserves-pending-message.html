@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test that a message already posted to a same-context MessagePort is not lost when
+that port is transferred from within another port's message handler. The message
+should be delivered either to the port in this context (before it is neutered) or
+to the re-entangled port in the destination, but it must not be silently dropped.</p>
+<pre id="log"></pre>
+<script>
+"use strict";
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("log").textContent += message + "\n";
+}
+
+let toBDelivered = false;
+
+function finish()
+{
+    if (toBDelivered)
+        log("PASS: 'toB' was delivered.");
+    else
+        log("FAIL: 'toB' was silently lost.");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+// Channel whose port we will transfer mid-flight.
+const channel1 = new MessageChannel();
+const a = channel1.port1;
+const b = channel1.port2;
+
+// Channel used purely to transfer "b" to a new entangled port in this same context.
+const channel2 = new MessageChannel();
+const sender = channel2.port1;
+const receiver = channel2.port2;
+
+// The spec allows B to get its message before A. However, since we're not transferring
+// anything across contexts, we will assume delivery will happen in the order the
+// messages were sent.
+b.onmessage = (event) => {
+    log("FAIL: out-of-order delivery");
+    if (event.data === "toB")
+        toBDelivered = true;
+};
+
+// "a" receives "toA" first. Its handler runs *after* the message-dispatch tasks for
+// both ports have already drained their queues, which is exactly the window in which
+// the bug drops the in-flight "toB".
+a.onmessage = () => {
+    sender.postMessage("transfer", [b]);
+};
+
+// If "toB" instead travels with the transferred port, the re-entangled port receives it.
+receiver.onmessage = (event) => {
+    const transferredPort = event.ports[0];
+    transferredPort.onmessage = (ev) => {
+        if (ev.data === "toB")
+            toBDelivered = true;
+    };
+    transferredPort.start();
+};
+
+// Post both messages synchronously so their dispatch tasks land in the same batch:
+// "toA" -> a (triggers the transfer), "toB" -> b (the in-flight message under test).
+setTimeout( () => {
+    b.postMessage("toA");
+    a.postMessage("toB");
+}, 10);
+
+// Give every queued task ample time to run, then report the outcome deterministically
+// (rather than relying on a delivery that may never happen).
+setTimeout(finish, 100);
+</script>
+</body>
+</html>

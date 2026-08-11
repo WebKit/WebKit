@@ -1,0 +1,20 @@
+
+RUN(video.disableRemotePlayback = true)
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('audio/mp4; codecs="mp4a.40.2"'))
+RUN(sourceBuffer.appendBuffer(buffer))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+sourceBuffer.buffered = [0, 10.005)
+RUN(source.endOfStream())
+EVENT(sourceended)
+EXPECTED (video.readyState == '4') OK
+video.duration = 10.005
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.currentTime > 0) OK
+EXPECTED (video.paused == 'false') OK
+RUN(video.pause())
+END OF TEST
+

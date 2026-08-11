@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        var timestamp1 = 0;
+        var currentFrame = 0;
+        const MaxFrames = 10;
+
+        function doAnimation(timestamp)
+        {
+            timestamp1 = timestamp;
+            shouldBeGreaterThanOrEqual("Math.round(window.performance.now())", "Math.round(timestamp1)");
+
+            if (++currentFrame == MaxFrames) {
+                finishJSTest();
+                return;
+            }
+
+            requestAnimationFrame(doAnimation);
+        }
+
+        window.jsTestIsAsync = true;
+
+        description("Test performance.now() is at least as the timestamp the rAF callback.");
+        requestAnimationFrame(doAnimation);
+    </script>
+    <script src="../resources/js-test-post.js"></script>
+</body>
+</html>

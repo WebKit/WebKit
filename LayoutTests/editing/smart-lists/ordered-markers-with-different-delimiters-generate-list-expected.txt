@@ -1,0 +1,10 @@
+Ordered-list markers on consecutive lines should be treated as compatible even when they use different delimiters (period and parenthesis), producing a single ordered list.
+| <ol>
+|   class="Apple-decimal-list"
+|   start="1"
+|   style="list-style-type: decimal;"
+|   <li>
+|     "A"
+|     <br>
+|   <li>
+|     "B<#selection-caret>"

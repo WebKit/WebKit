@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+promise_test(async () => {
+    const chunks = [];
+    const stream = new ReadableStream({
+        start : (controller) => {
+            controller.close();
+        }
+    });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const reader = stream.getReader();
+
+    Object.prototype.then = function(chunk) {
+        chunks.push(chunk);
+    }
+    await reader.read();
+    delete Object.prototype.then;
+
+    assert_array_equals(chunks, []);
+}, 'close synchronously');
+
+promise_test(async () => {
+    const chunks = [];
+    const stream = new ReadableStream({
+        start : (controller) => {
+            controller.close();
+        }
+    });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const reader = stream.getReader();
+
+    Object.prototype.then = function(chunk) {
+        chunks.push(chunk);
+    }
+    await reader.read();
+    delete Object.prototype.then;
+
+    assert_array_equals(chunks, []);
+}, 'close asynchronously');
+
+promise_test(async () => {
+    const chunks = [];
+    const stream = new ReadableStream({
+        start : async (controller) => {
+            await new Promise(resolve => setTimeout(resolve, 0));
+            controller.enqueue('chunk');
+        }
+    });
+    const reader = stream.getReader();
+
+    Object.prototype.then = function(chunk) {
+        chunks.push(chunk);
+    }
+    await reader.read();
+    delete Object.prototype.then;
+
+    assert_array_equals(chunks, []);
+}, 'enqueue synchronously');
+
+promise_test(async () => {
+    const chunks = [];
+    const stream = new ReadableStream({
+        start : async (controller) => {
+            await new Promise(resolve => setTimeout(resolve, 0));
+            controller.enqueue('chunk');
+        }
+    });
+    const reader = stream.getReader();
+
+    Object.prototype.then = function(chunk) {
+        chunks.push(chunk);
+    }
+    await reader.read();
+    delete Object.prototype.then;
+
+    assert_array_equals(chunks, []);
+}, 'enqueue asynchronously');
+</script>

@@ -1,0 +1,27 @@
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+This test verifies that active touchstart and touchend event listeners can be added to document, window, documentElement, and body. This test requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS touchstart on body - cancelable: true defaultPrevented: true
+PASS touchstart on documentElement - cancelable: true defaultPrevented: true
+PASS touchstart on document - cancelable: true defaultPrevented: true
+PASS touchstart on window - cancelable: true defaultPrevented: true
+PASS touchmove on body - cancelable: true defaultPrevented: true
+PASS touchmove on documentElement - cancelable: true defaultPrevented: true
+PASS touchmove on document - cancelable: true defaultPrevented: true
+PASS touchmove on window - cancelable: true defaultPrevented: true
+PASS touchend on body - cancelable: true defaultPrevented: true
+PASS touchend on documentElement - cancelable: true defaultPrevented: true
+PASS touchend on document - cancelable: true defaultPrevented: true
+PASS touchend on window - cancelable: true defaultPrevented: true
+PASS touchEndEventCount became 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test requires UIScriptController to run.

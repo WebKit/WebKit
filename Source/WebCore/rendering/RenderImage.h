@@ -1,0 +1,173 @@
+/*
+ * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2006 Allan Sandfeld Jensen (kde@carewolf.com) 
+ *           (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#pragma once
+
+#include <WebCore/RenderImageResource.h>
+#include <WebCore/RenderReplaced.h>
+#include <wtf/Platform.h>
+
+namespace WebCore {
+
+class HTMLAreaElement;
+class HTMLMapElement;
+class GraphicsContext;
+class ImageBuffer;
+
+enum ImageSizeChangeType {
+    ImageSizeChangeNone,
+    ImageSizeChangeForAltText
+};
+
+class RenderImage : public RenderReplaced {
+    WTF_MAKE_TZONE_ALLOCATED(RenderImage);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderImage);
+public:
+    RenderImage(Type, Element&, Style::ComputedStyle&&, Style::Image* = nullptr, const float imageDevicePixelRatio = 1.0f);
+    RenderImage(Type, Document&, Style::ComputedStyle&&, Style::Image* = nullptr);
+    virtual ~RenderImage();
+
+    RenderImageResource& imageResource() { return *m_imageResource; }
+    const RenderImageResource& imageResource() const { return *m_imageResource; }
+    CachedImage* cachedImage() const { return imageResource().cachedImage(); }
+
+    ImageSizeChangeType setImageSizeForAltText(CachedImage* newImage = nullptr);
+
+    void updateAltText();
+
+    RefPtr<HTMLMapElement> imageMap() const;
+    void areaElementFocusChanged(HTMLAreaElement*);
+    
+    void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned, unsigned) override;
+
+    void setIsGeneratedContent(bool generated = true) { m_isGeneratedContent = generated; }
+
+    bool isGeneratedContent() const { return m_isGeneratedContent; }
+
+    const String& altText() const LIFETIME_BOUND { return m_altText; }
+    void setAltText(const String& altText) { m_altText = altText; }
+
+    void setImageDevicePixelRatio(float factor);
+    float imageDevicePixelRatio() const { return m_imageDevicePixelRatio; }
+
+    void setHasShadowControls(bool hasShadowControls) { m_hasShadowControls = hasShadowControls; }
+    void setHasImageOverlay() { m_hasImageOverlay = true; }
+    
+    bool isShowingMissingOrImageError() const;
+    bool isShowingAltText() const;
+
+    virtual bool shouldDisplayBrokenImageIcon() const;
+    bool shouldRespectZeroIntrinsicWidth() const override;
+
+    String accessibilityDescription() const { return imageResource().image()->accessibilityDescription(); }
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    bool isMultiRepresentationHEIC() const;
+#endif
+
+    FloatSize preferredAspectRatioAsSize() const final;
+
+protected:
+    RenderImage(Type, Element&, Style::ComputedStyle&&, OptionSet<ReplacedFlag>, Style::Image* = nullptr, const float imageDevicePixelRatio = 1.0f);
+    void willBeDestroyed() override;
+
+    bool shouldInvalidateContentWidths() const final;
+    RenderReplaced* embeddedSVGRoot() const final;
+    bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;
+
+    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
+
+    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
+
+    ImageDrawResult paintIntoRect(PaintInfo&, const FloatRect&);
+    void paint(PaintInfo&, const LayoutPoint&) final;
+    void layout() override;
+
+    void intrinsicSizeChanged() override
+    {
+        imageChanged(imageResource().imagePtr());
+    }
+
+private:
+    ASCIILiteral renderName() const override { return "RenderImage"_s; }
+
+    bool canHaveChildren() const override;
+
+    bool isImage() const override { return true; }
+
+    void paintReplaced(PaintInfo&, const LayoutPoint&) override;
+    void paintIncompleteImageOutline(PaintInfo&, LayoutPoint, LayoutUnit) const;
+    void paintMissingImageState(PaintInfo&, const LayoutPoint&) const;
+
+    bool computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset) final;
+
+    LayoutUnit minimumReplacedHeight() const override;
+
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
+
+    IntSize imageSizeForError(CachedImage*) const;
+    void repaintOrMarkForLayout(ImageSizeChangeType, const IntRect* = nullptr);
+    void updateIntrinsicSizeIfNeeded(const LayoutSize&);
+    // Update the size of the image to be rendered. Object-fit may cause this to be different from the CSS box's content rect.
+    void updateInnerContentRect();
+
+    void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
+
+    bool isDimensionlessSVG() const;
+
+    bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
+
+    LayoutUnit computeReplacedLogicalWidth(IsComputingIntrinsicSize = IsComputingIntrinsicSize::No) const override;
+    LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const override;
+
+    bool shouldCollapseToEmpty() const;
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    bool axCustomColorModeShouldAdjustImage(Image&);
+    RefPtr<ImageBuffer> axCustomColorModeAdjustedImageBuffer(GraphicsContext&, Image&, const FloatRect&);
+    bool axCustomColorModePaintImage(PaintInfo&, Image&, const FloatRect&);
+#endif
+
+    // Text to display as long as the image isn't available.
+    String m_altText;
+    std::unique_ptr<RenderImageResource> m_imageResource;
+    bool m_needsToSetSizeForAltText { false };
+    bool m_isGeneratedContent { false };
+    bool m_hasShadowControls { false };
+    bool m_hasImageOverlay { false };
+    float m_imageDevicePixelRatio { 1 };
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    std::optional<bool> m_axCustomColorModeShouldAdjustImage;
+    RefPtr<ImageBuffer> m_axCustomColorModeAdjustedBuffer;
+    FloatSize m_axCustomColorModeAdjustedBufferSize;
+#endif
+
+    friend class RenderImageScaleObserver;
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderImage, isRenderImage())

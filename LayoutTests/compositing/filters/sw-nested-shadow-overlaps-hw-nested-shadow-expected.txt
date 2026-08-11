@@ -1,0 +1,24 @@
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (offsetFromRenderer width=-150 height=-150)
+          (position 180.00 180.00)
+          (anchor 0.80 0.80)
+          (bounds 250.00 250.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (bounds 250.00 250.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

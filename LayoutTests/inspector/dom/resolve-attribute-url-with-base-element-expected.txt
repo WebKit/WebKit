@@ -1,0 +1,10 @@
+Testing that attribute URLs resolve against the document's base element.
+
+
+
+== Running test suite: DOM.ResolveAttributeURLWithBaseElement
+-- Running test case: ResolveAttributeURLWithBaseElement
+PASS: Document node should expose the <base> element URL.
+PASS: Base URL should differ from the document URL when a <base> element is present.
+PASS: Relative href should resolve against the <base> element URL.
+

@@ -1,0 +1,9 @@
+Tests list and related roles.
+
+x
+x
+
+PASS first simple list
+PASS first simple listitem
+PASS last simple listitem
+

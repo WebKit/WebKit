@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+function makeElement(t, establishesPortal) {
+    const element = document.createElement("div");
+    if (establishesPortal)
+        element.style.spatial = "portal";
+    document.body.appendChild(element);
+    t.add_cleanup(() => element.remove());
+    return element;
+}
+
+test(t => {
+    assert_equals(getComputedStyle(makeElement(t, true)).portalAction, "none", "on a portal");
+    assert_equals(getComputedStyle(makeElement(t, false)).portalAction, "none", "on a non-portal");
+}, "portal-action initial value is none, whether or not the element establishes a portal");
+
+test(t => {
+    for (const value of ["none", "orbit"]) {
+        const element = makeElement(t, true);
+        element.style.portalAction = value;
+        assert_equals(element.style.portalAction, value, `specified value of "${value}"`);
+        assert_equals(getComputedStyle(element).portalAction, value, `computed value of "${value}"`);
+    }
+}, "portal-action accepts none and orbit");
+
+test(() => {
+    assert_true(CSS.supports("portal-action", "none"), "none");
+    assert_true(CSS.supports("portal-action", "orbit"), "orbit");
+}, "portal-action is a supported property");
+
+const alwaysInvalid = ["3px", "10", "red", "auto", "none none", "orbit orbit", "none orbit", "orbit none", "none, orbit"];
+
+const notYetSupported = ["pan", "pan-x", "pan-y", "pan-z", "pan-inline", "pan-block", "orbit pan", "orbit pan-z"];
+
+for (const [description, values] of [["invalid", alwaysInvalid], ["not yet supported", notYetSupported]]) {
+    test(t => {
+        for (const value of values) {
+            const element = makeElement(t, true);
+            element.style.portalAction = value;
+            assert_equals(element.style.portalAction, "", `"${value}" is not accepted`);
+            assert_equals(getComputedStyle(element).portalAction, "none", `"${value}" leaves the initial value in place`);
+        }
+    }, `portal-action ignores ${description} values`);
+}
+
+</script>
+</body>
+</html>

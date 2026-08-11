@@ -1,0 +1,90 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true TextEffectsEnabled=true ] -->
+<html lang="en">
+<meta charset="UTF-8">
+<style>
+div[contenteditable] {
+    font-family: monospace;
+    font-size: 32px;
+    width: 100%;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+
+<script>
+jsTestIsAsync = true;
+
+description(`This test verifies that grammar text effects are not reapplied when
+    grammar checking re-fires on the same text with the same UUID.
+    This test requires WebKitTestRunner to run.`);
+
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
+async function runTest()
+{
+    const editor = document.getElementById("editor");
+    const grammarText = "She have a dog";
+
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+
+    document.execCommand("insertText", false, grammarText);
+    document.execCommand("insertParagraph");
+    await UIHelper.ensurePresentationUpdate();
+
+    const selection = window.getSelection();
+    selection.collapse(editor.firstChild, 0);
+
+    await shouldBecomeEqual('internals.hasGrammarMarker(4, 4)', 'true');
+
+    effectCountAfterFirstCheck = internals.appliedGrammarTextEffectCount();
+    shouldBeGreaterThanOrEqual('effectCountAfterFirstCheck', '1');
+
+    // Move to the end of "She have a dog", delete the paragraph break,
+    // then re-insert it to trigger grammar re-checking on the same text.
+    selection.collapse(editor.firstChild, grammarText.length);
+    await UIHelper.ensurePresentationUpdate();
+
+    document.execCommand("forwardDelete");
+    await UIHelper.ensurePresentationUpdate();
+
+    document.execCommand("insertParagraph");
+    await UIHelper.ensurePresentationUpdate();
+
+    selection.collapse(editor.firstChild, 0);
+    await shouldBecomeEqual('internals.hasGrammarMarker(4, 4)', 'true');
+
+    effectCountAfterSecondCheck = internals.appliedGrammarTextEffectCount();
+    shouldBe('effectCountAfterSecondCheck', 'effectCountAfterFirstCheck');
+
+    editor.textContent = "";
+    editor.blur();
+    finishJSTest();
+}
+</script>
+<body>
+<div contenteditable="true" id="editor"></div>
+<script>
+UIHelper.setSpellCheckerResults({
+    "She have a dog" : [
+        {
+            type: "grammar",
+            from: 4,
+            to: 8,
+            details: [{ from: 0, to: 4, corrections: ["has"], uuid: "96878B1F-76DC-15F6-CD95-651E9447A4DF" }]
+        }
+    ],
+    "She have a dog\n" : [
+        {
+            type: "grammar",
+            from: 4,
+            to: 8,
+            details: [{ from: 0, to: 4, corrections: ["has"], uuid: "96878B1F-76DC-15F6-CD95-651E9447A4DF" }]
+        }
+    ]
+}).then(runTest);
+</script>
+<pre id="description"></pre>
+<pre id="console"></pre>
+</body>
+</html>

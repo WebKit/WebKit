@@ -1,0 +1,14 @@
+This tests having a declarative shadow DOM inside a form element. form control elements inside the declarative shadow DOM should not be associated with the form in the document tree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS !!document.forms[0]['email'] is false
+PASS !!document.forms[0]['nickname'] is false
+PASS !!document.forms[0]['name'] is true
+PASS !!document.querySelector('some-element').shadowRoot.querySelector('form')['nickname'] is true
+PASS document.querySelector('some-element').shadowRoot.innerHTML is "<input name=\"email\"><form><input name=\"nickname\"></form>"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

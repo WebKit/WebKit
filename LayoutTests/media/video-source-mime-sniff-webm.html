@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-source-mime-sniff-webm</title>
+    <script src=video-test.js></script>
+    <script>
+        window.addEventListener('load', () => {
+            // The <source> declares video/mp4, but the body is actually WebM.
+            // MediaPlayer should detect the engine-selection failure, sniff the
+            // actual Content-Type, re-run engine selection with video/webm, and
+            // let the WebM engine play the file.
+            run('video = document.createElement("video")');
+            run('source = document.createElement("source")');
+            run('source.type = "video/mp4"');
+            run('source.src = "content/test-vp8.webm"');
+            run('video.appendChild(source)');
+            run('document.body.appendChild(video)');
+
+            video.muted = 1;
+
+            source.addEventListener('error', () => {
+                failTest("<source> error fired - sniff fallback did not select the source");
+            });
+
+            video.addEventListener('error', () => {
+                failTest("<video> error fired - sniff fallback failed to play the file");
+            });
+
+            video.addEventListener('loadeddata', () => {
+                consoleWrite(`loadeddata fired`);
+                consoleWrite(`selected source: ${video.currentSrc.split('/').pop()}`);
+                endTest();
+            });
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

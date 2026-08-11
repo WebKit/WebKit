@@ -1,0 +1,209 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script id="shared">
+const log = console.log;
+
+async function gc() {
+  await 0;
+  if (globalThis.GCController) {
+    globalThis.GCController.collect();
+  } else if (globalThis.$vm) {
+    globalThis.$vm.gc();
+  } else {
+    log('no GC available');
+  }
+}
+
+
+/**
+* @returns {Promise<string>}
+*/
+async function makeDataUrl(width, height, color0, color1) {
+  let offscreenCanvas = new OffscreenCanvas(width, height);
+  let ctx = offscreenCanvas.getContext('2d');
+  let gradient = ctx.createLinearGradient(0, 0, width, height);
+  gradient.addColorStop(0, color0);
+  gradient.addColorStop(0.1, color1);
+  gradient.addColorStop(0.3, color0);
+  gradient.addColorStop(0.7, color1);
+  gradient.addColorStop(0.9, color0);
+  gradient.addColorStop(1, color1);
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+  let blob = await offscreenCanvas.convertToBlob();
+  let fileReader = new FileReader();
+  fileReader.readAsDataURL(blob);
+  return new Promise(resolve => {
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+  });
+}
+
+async function imageWithData(width, height, color0, color1) {
+  let dataUrl = await makeDataUrl(width, height, color0, color1);
+  let img = document.createElement('img');
+  img.src = dataUrl;
+  await img.decode();
+  return img;
+}
+
+/**
+ * @param {string} payload
+ * @returns {string}
+ */
+function toBlobUrl(payload) {
+  let blob = new Blob([payload], {type: 'text/javascript'});
+  return URL.createObjectURL(blob);
+}
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+let promise0 = adapter0.requestDevice({
+  requiredFeatures: [
+    'depth32float-stencil8',
+    'texture-compression-etc2',
+    'texture-compression-astc',
+    'indirect-first-instance',
+    'rg11b10ufloat-renderable',
+    'bgra8unorm-storage',
+    'float32-blendable',
+    'float16-renderable',
+    'core-features-and-limits',
+  ],
+  requiredLimits: {
+    maxDynamicStorageBuffersPerPipelineLayout: 4,
+    maxInterStageShaderVariables: 16,
+    maxStorageBufferBindingSize: 165737451,
+    maxTextureArrayLayers: 256,
+    maxUniformBufferBindingSize: 108776169,
+    minStorageBufferOffsetAlignment: 256,
+  },
+});
+let adapter1 = await navigator.gpu.requestAdapter();
+let device0 = await promise0;
+// START
+a = device0.createShaderModule({
+  code : ` 
+              struct b {
+              @location(0) c: vec4f}
+              @fragment fn d() -> b {
+              var e: b;
+              return e;
+            }
+             `
+})
+f = device0.createTexture({
+  size : {width : 8, depthOrArrayLayers : 6},
+  dimension : '3d',
+  format : 'bgra8unorm-srgb',
+  usage : GPUTextureUsage.RENDER_ATTACHMENT
+})
+g = f.createView()
+h = device0.createBuffer({size : 32, usage : GPUBufferUsage.INDEX})
+i = device0.createShaderModule({
+  code : ` 
+              struct j {
+              @builtin(position) position: vec4f}
+              struct k {
+              @location(0) c: vec4u}
+              @vertex fn l(o: k ) -> j {
+              var e: j;
+              while bool(pack4xU8(o.c)) {}
+              return e;
+            }
+             `
+})
+m = device0.createCommandEncoder()
+n = m.beginRenderPass({
+  colorAttachments :
+      [ {view : g, depthSlice : 1, loadOp : 'clear', storeOp : 'discard'} ]
+})
+p = device0.createBuffer({size : 14, usage : GPUBufferUsage.VERTEX})
+q = device0.createPipelineLayout({bindGroupLayouts : []})
+try {
+  n.setIndexBuffer(h, 'uint32')
+} catch {
+}
+r = device0.createRenderPipeline({
+  layout : q,
+  fragment : {module : a, targets : [ {format : 'bgra8unorm-srgb'} ]},
+  vertex : {
+    module : i,
+    buffers : [ {
+      arrayStride : 60,
+      attributes : [ {format : 'uint32x3', offset : 0, shaderLocation : 0} ]
+    } ]
+  },
+  primitive : {topology : 'line-list'}
+})
+try {
+  n.setPipeline(r)
+  n.setVertexBuffer(0, p)
+  n.drawIndexed(2, 8, 0, 5)
+  n.end()
+} catch {
+}
+s = m.finish()
+try {
+  device0.queue.submit([ s ])
+} catch {
+}
+// END
+await device0.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  debug('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  debug('Pass');
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.notifyDone();
+};
+</script>

@@ -1,0 +1,18 @@
+
+FAIL e.style['margin-top'] = "clamp(none, 2px, 3em)" should set the property value assert_equals: serialization should be canonical expected "min(2px, 3em)" but got "clamp(none, 2px, 3em)"
+FAIL e.style['margin-top'] = "calc(clamp(none, 2px, 3em))" should set the property value assert_equals: serialization should be canonical expected "min(2px, 3em)" but got "clamp(none, 2px, 3em)"
+FAIL e.style['margin-top'] = "clamp(1em, 2px, none)" should set the property value assert_equals: serialization should be canonical expected "max(1em, 2px)" but got "clamp(1em, 2px, none)"
+FAIL e.style['margin-top'] = "calc(clamp(1em, 2px, none))" should set the property value assert_equals: serialization should be canonical expected "max(1em, 2px)" but got "clamp(1em, 2px, none)"
+FAIL e.style['margin-top'] = "clamp(1px, 2px, clamp(none, 4px, 5em))" should set the property value assert_equals: serialization should be canonical expected "clamp(1px, 2px, min(4px, 5em))" but got "clamp(1px, 2px, clamp(none, 4px, 5em))"
+FAIL e.style['margin-top'] = "calc(clamp(1px, 2px, clamp(none, 4px, 5em)))" should set the property value assert_equals: serialization should be canonical expected "clamp(1px, 2px, min(4px, 5em))" but got "clamp(1px, 2px, clamp(none, 4px, 5em))"
+FAIL e.style['margin-top'] = "clamp(1px, 2px, clamp(3em, 4px, none))" should set the property value assert_equals: serialization should be canonical expected "clamp(1px, 2px, max(3em, 4px))" but got "clamp(1px, 2px, clamp(3em, 4px, none))"
+FAIL e.style['margin-top'] = "calc(clamp(1px, 2px, clamp(3em, 4px, none)))" should set the property value assert_equals: serialization should be canonical expected "clamp(1px, 2px, max(3em, 4px))" but got "clamp(1px, 2px, clamp(3em, 4px, none))"
+FAIL e.style['margin-top'] = "clamp(clamp(none, 2em, 3px), 4px, clamp(none, 6px, 7em))" should set the property value assert_equals: serialization should be canonical expected "clamp(min(2em, 3px), 4px, min(6px, 7em))" but got "clamp(clamp(none, 2em, 3px), 4px, clamp(none, 6px, 7em))"
+FAIL e.style['margin-top'] = "calc(clamp(clamp(none, 2em, 3px), 4px, clamp(none, 6px, 7em)))" should set the property value assert_equals: serialization should be canonical expected "clamp(min(2em, 3px), 4px, min(6px, 7em))" but got "clamp(clamp(none, 2em, 3px), 4px, clamp(none, 6px, 7em))"
+FAIL e.style['margin-top'] = "clamp(clamp(1em, 2px, none), 4px, clamp(none, 6px, 7em))" should set the property value assert_equals: serialization should be canonical expected "clamp(max(1em, 2px), 4px, min(6px, 7em))" but got "clamp(clamp(1em, 2px, none), 4px, clamp(none, 6px, 7em))"
+FAIL e.style['margin-top'] = "calc(clamp(clamp(1em, 2px, none), 4px, clamp(none, 6px, 7em)))" should set the property value assert_equals: serialization should be canonical expected "clamp(max(1em, 2px), 4px, min(6px, 7em))" but got "clamp(clamp(1em, 2px, none), 4px, clamp(none, 6px, 7em))"
+FAIL e.style['margin-top'] = "clamp(clamp(none, 2em, 3px), 4px, clamp(5em, 6px, none))" should set the property value assert_equals: serialization should be canonical expected "clamp(min(2em, 3px), 4px, max(5em, 6px))" but got "clamp(clamp(none, 2em, 3px), 4px, clamp(5em, 6px, none))"
+FAIL e.style['margin-top'] = "calc(clamp(clamp(none, 2em, 3px), 4px, clamp(5em, 6px, none)))" should set the property value assert_equals: serialization should be canonical expected "clamp(min(2em, 3px), 4px, max(5em, 6px))" but got "clamp(clamp(none, 2em, 3px), 4px, clamp(5em, 6px, none))"
+PASS e.style['margin-top'] = "clamp(clamp(none, 2em, none), 4px, clamp(none, 6em, none))" should set the property value
+PASS e.style['margin-top'] = "calc(clamp(clamp(none, 2em, none), 4px, clamp(none, 6em, none)))" should set the property value
+

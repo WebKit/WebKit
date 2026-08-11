@@ -1,0 +1,11 @@
+This test ensures that we properly report AXVisited after dynamic page changes.
+
+PASS: link.boolAttributeValue('AXVisited') === false
+PASS: link.boolAttributeValue('AXVisited') === true
+PASS: linkText.role.toLowerCase().includes('statictext') === true
+PASS: linkText.boolAttributeValue('AXVisited') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+link

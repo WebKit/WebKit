@@ -1,0 +1,6 @@
+ALERT: Hello world
+PASS didAlert became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

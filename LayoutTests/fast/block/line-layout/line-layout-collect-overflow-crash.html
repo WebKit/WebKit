@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<style>
+  :nth-last-child(odd) {
+    position: absolute;
+  }
+  div {
+    rotate: 0 0 0 0deg;
+  }
+</style>
+<script>
+  onload = () => {
+    let div0 = document.createElement('div');
+    document.body.append(document.createElement('table'));
+    document.body.append(div0);
+    div0.append(document.createElement('img'));
+    document.execCommand('SelectAll');
+    div0.append('a');
+    document.body.append(document.createElement('div'));
+    document.designMode = 'on';
+    document.execCommand('FormatBlock', false, 'div');
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    console.log("This test passes if it does not crash.");
+  };
+</script>

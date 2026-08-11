@@ -1,0 +1,3 @@
+
+PASS Redirect to a cross origin doesn't bring early hints preload
+

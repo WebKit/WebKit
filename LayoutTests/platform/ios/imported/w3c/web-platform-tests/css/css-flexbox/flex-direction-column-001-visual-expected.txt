@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x300
+  RenderBlock {HTML} at (0,0) size 800x300
+    RenderBody {BODY} at (8,16) size 784x276
+      RenderBlock {P} at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 90x19
+          text run at (0,0) width 90: "Test passes if:"
+        RenderBR {BR} at (89,0) size 1x19
+        RenderText {#text} at (0,20) size 618x19
+          text run at (0,20) width 618: "1. the rectangle 1, 2, 3 show up in a vertical column in a red rectangle and no gap between them."
+        RenderBR {BR} at (617,20) size 1x19
+        RenderText {#text} at (0,40) size 354x19
+          text run at (0,40) width 354: "2. They are all appear in upper left of the red rectangle."
+      RenderFlexibleBox {DIV} at (0,76) size 200x200 [bgcolor=#FF0000]
+        RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#7FFF00]
+          RenderText {#text} at (20,0) size 10x23
+            text run at (20,0) width 10: "1"
+        RenderBlock {DIV} at (0,50) size 50x50 [bgcolor=#00FFFF]
+          RenderText {#text} at (20,0) size 10x23
+            text run at (20,0) width 10: "2"
+        RenderBlock {DIV} at (0,100) size 50x50 [bgcolor=#4169E1]
+          RenderText {#text} at (20,0) size 10x23
+            text run at (20,0) width 10: "3"

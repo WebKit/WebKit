@@ -1,0 +1,23 @@
+Checks that element reflection is exposed to the a11y tree for 'ariaFlowToElements'
+
+PASS: axTarget1.ariaFlowToElementAtIndex(0).isEqual(axFlow1) === true
+PASS: axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow2) === true
+PASS: axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1) === true
+PASS: axInnerTarget.ariaFlowToElementAtIndex(0).isEqual(axFlow3) === true
+PASS: axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1) === true
+PASS: axTarget2.ariaFlowToElementAtIndex(1).isEqual(axFlow2) === true
+PASS: axTarget2.ariaFlowToElementAtIndex(2).isEqual(axFlow3) === true
+PASS: axTarget4.ariaFlowToElementAtIndex(0).isEqual(axFlow4) === true
+PASS: axTarget5.ariaFlowToElementAtIndex(0).isEqual(axFlow5) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First flow
+Target 1
+Second flow
+Target 2
+Third flow
+Fourth flow
+Target 4
+Fifth flow

@@ -1,0 +1,1067 @@
+// Copyright (C) 2018-2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+NetworkProcess/Authentication/cocoa/AuthenticationManagerCocoa.mm @nonARC
+
+NetworkProcess/cache/NetworkCacheDataCocoa.mm @nonARC
+NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm @nonARC
+
+NetworkProcess/cocoa/NetworkActivityTrackerCocoa.mm @nonARC
+NetworkProcess/cocoa/NetworkDataTaskCocoa.mm @nonARC
+NetworkProcess/cocoa/NetworkProcessCocoa.mm @nonARC
+NetworkProcess/cocoa/NetworkSessionCocoa.mm @nonARC
+NetworkProcess/cocoa/NetworkTaskCocoa.mm @nonARC
+NetworkProcess/cocoa/WKURLSessionTaskDelegate.mm @nonARC
+
+NetworkProcess/webtransport/cocoa/NetworkTransportSessionCocoa.mm @nonARC
+NetworkProcess/webtransport/cocoa/NetworkTransportStreamCocoa.mm @nonARC
+
+NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
+
+NetworkProcess/Cookies/mac/WebCookieManagerMac.mm @nonARC
+
+NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm @nonARC
+NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp @cost:3
+
+NetworkProcess/Downloads/cocoa/DownloadCocoa.mm @nonARC
+
+NetworkProcess/EntryPoint/Cocoa/Daemon/DaemonEntryPoint.mm @nonARC
+NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm @nonARC
+
+NetworkProcess/Notifications/Cocoa/WebPushDaemonConnectionCocoa.mm @nonARC
+
+NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementConnectionCocoa.mm @nonARC
+NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementNetworkLoaderCocoa.mm @nonARC
+NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementXPCUtilities.mm @nonARC
+
+NetworkProcess/ios/NetworkConnectionToWebProcessIOS.mm @nonARC
+NetworkProcess/ios/NetworkProcessIOS.mm @nonARC
+
+NetworkProcess/mac/NetworkProcessMac.mm @nonARC
+NetworkProcess/mac/SecItemShim.mm @nonARC
+
+NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
+NetworkProcess/webrtc/NetworkRTCMonitor.cpp
+NetworkProcess/webrtc/NetworkRTCSharedMonitorCocoa.mm @nonARC
+NetworkProcess/webrtc/NetworkRTCProvider.cpp
+NetworkProcess/webrtc/NetworkRTCSharedMonitor.cpp
+NetworkProcess/webrtc/NetworkRTCTCPSocketCocoa.mm @nonARC
+NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm @nonARC
+
+GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm @nonARC
+GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm @nonARC
+GPUProcess/cocoa/GPUProcessCocoa.mm @nonARC
+GPUProcess/graphics/Model/MeshImpl.cpp
+GPUProcess/graphics/Model/WebKitMesh.mm
+GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp
+GPUProcess/graphics/ScopedRenderingResourcesRequestCocoa.mm @nonARC @no-unify-when(bundle<=8)
+GPUProcess/ios/GPUProcessIOS.mm @nonARC
+GPUProcess/mac/GPUProcessMac.mm @nonARC
+GPUProcess/mac/LocalAudioSessionRoutingArbitrator.cpp
+GPUProcess/media/RemoteAudioSourceProviderProxy.cpp
+GPUProcess/media/RemoteImageDecoderAVFProxy.cpp
+GPUProcess/media/cocoa/VideoReceiverEndpointManager.mm @nonARC
+GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm @nonARC
+GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp
+GPUProcess/webrtc/LibWebRTCCodecsProxy.mm @nonARC @no-unify // Includes libwebrtc headers with macro pollution.
+GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp
+GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.mm @nonARC
+GPUProcess/webrtc/UserMediaCaptureManagerProxy.cpp @cost:3
+
+ModelProcess/EntryPoint/Cocoa/XPCService/ModelServiceEntryPoint.mm @nonARC
+ModelProcess/cocoa/ModelProcessCocoa.mm @nonARC
+ModelProcess/cocoa/WKModelProcessModelLayer.mm @nonARC
+ModelProcess/cocoa/ModelProcessModelPlayerProxy.mm @nonARC
+ModelProcess/ios/ModelProcessIOS.mm @nonARC
+
+Platform/classifier/cocoa/TextExtractionFilter.mm @nonARC
+Platform/classifier/cocoa/TextExtractionTokenizer.mm @nonARC
+Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
+Platform/classifier/ResourceLoadStatisticsClassifier.cpp
+
+Platform/cocoa/AssertionCapability.mm @nonARC @no-unify-when(bundle<=8)
+Platform/cocoa/ExtensionCapabilityGrant.mm @nonARC
+Platform/cocoa/MediaCapability.mm @nonARC
+Platform/cocoa/MediaPlaybackTargetContextSerialized.mm @nonARC
+Platform/cocoa/MediaPlaybackTargetSerialized.cpp
+Platform/cocoa/PaymentAuthorizationPresenter.mm @nonARC
+Platform/cocoa/PaymentAuthorizationViewController.mm @nonARC
+Platform/cocoa/WKPaymentAuthorizationDelegate.mm @nonARC
+Platform/cocoa/WebKitAdditions.mm @nonARC @no-unify // #includes opaque WebKitAdditions sources.
+Platform/cocoa/WebPrivacyHelpers.mm @nonARC
+
+Platform/ios/PaymentAuthorizationController.mm @nonARC
+Platform/ios/PlaybackSessionInterfaceAVKit.mm @nonARC @no-unify
+Platform/ios/PlaybackSessionInterfaceLMK.mm @nonARC @no-unify
+Platform/ios/VideoPresentationInterfaceAVKit.mm @nonARC @no-unify
+Platform/ios/VideoPresentationInterfaceLMK.mm @nonARC
+Platform/ios/VideoReceiverEndpointMessage.mm @nonARC
+Platform/ios/WKAVContentSource.mm @nonARC @no-unify
+
+Platform/mac/MenuUtilities.mm @nonARC
+Platform/mac/StringUtilities.mm @nonARC
+
+Shared/API/c/cf/WKErrorCF.cpp
+Shared/API/c/cf/WKStringCF.mm @nonARC
+Shared/API/c/cf/WKURLCF.mm @nonARC
+
+Shared/API/c/cg/WKImageCG.cpp
+
+Shared/API/c/mac/WKCertificateInfoMac.mm @nonARC
+Shared/API/c/mac/WKObjCTypeWrapperRef.mm @nonARC
+Shared/API/c/mac/WKURLRequestNS.mm @nonARC
+Shared/API/c/mac/WKURLResponseNS.mm @nonARC
+Shared/API/c/mac/WKWebArchiveRef.cpp
+Shared/API/c/mac/WKWebArchiveResource.cpp
+
+Shared/API/Cocoa/_WKFrameHandle.mm @nonARC
+Shared/API/Cocoa/_WKHitTestResult.mm @nonARC
+Shared/API/Cocoa/_WKNSFileManagerExtras.mm @nonARC
+Shared/API/Cocoa/_WKNSWindowExtras.mm @nonARC
+Shared/API/Cocoa/_WKRemoteObjectInterface.mm @nonARC
+Shared/API/Cocoa/_WKRemoteObjectRegistry.mm @nonARC
+Shared/API/Cocoa/RemoteObjectInvocation.mm @nonARC
+Shared/API/Cocoa/RemoteObjectRegistry.mm @nonARC
+Shared/API/Cocoa/WKBrowsingContextHandle.mm @nonARC
+Shared/API/Cocoa/WKRemoteObject.mm @nonARC
+Shared/API/Cocoa/WKRemoteObjectCoder.mm @nonARC
+
+Shared/ApplePay/ApplePayPaymentSetupFeatures.mm @nonARC
+Shared/ApplePay/WebPaymentCoordinatorProxy.cpp
+Shared/ApplePay/cocoa/AutomaticReloadPaymentRequestCocoa.mm @nonARC
+Shared/ApplePay/cocoa/DeferredPaymentRequestCocoa.mm @nonARC
+Shared/ApplePay/cocoa/DisbursementRequestCocoa.mm @nonARC
+Shared/ApplePay/cocoa/PaymentSetupConfigurationCocoa.mm @nonARC
+Shared/ApplePay/cocoa/PaymentTokenContextCocoa.mm @nonARC
+Shared/ApplePay/cocoa/RecurringPaymentRequestCocoa.mm @nonARC
+Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm @nonARC
+Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm @nonARC
+Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm @nonARC
+
+Shared/APIWebArchive.mm @nonARC
+Shared/APIWebArchiveResource.mm @nonARC
+Shared/JavaScriptEvaluationResult.mm @nonARC
+Shared/DocumentEditingContext.mm @nonARC
+Shared/VisibleContentRectUpdateInfo.cpp
+Shared/WebSQLiteDatabaseTracker.cpp
+
+Shared/cf/CookieStorageUtilsCF.mm @nonARC
+
+Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.mm @nonARC
+
+Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonConnectionSet.mm @nonARC
+Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm @nonARC
+
+Shared/Extensions/WebExtensionRegisteredScriptsSQLiteStoreCocoa.mm
+Shared/Extensions/WebExtensionUtilities.mm
+
+Shared/Extensions/Cocoa/WebExtensionFrameIdentifierCocoa.mm @nonARC
+
+Shared/Cocoa/APIDataCocoa.mm @nonARC
+Shared/Cocoa/APIObject.mm @nonARC
+Shared/Cocoa/AccessibilityPreferences.mm @nonARC
+Shared/Cocoa/AuxiliaryProcessCocoa.mm @nonARC
+Shared/Cocoa/CodeSigning.mm @nonARC
+Shared/Cocoa/CompletionHandlerCallChecker.mm @nonARC
+Shared/Cocoa/DefaultWebBrowserChecks.mm @nonARC
+Shared/Cocoa/EnhancedSecurityLinkUtilities.mm @nonARC
+Shared/Cocoa/InteractionInformationAtPosition.mm @nonARC
+Shared/Cocoa/InteractionInformationRequest.cpp
+Shared/Cocoa/LibAccessibilitySoftLink.mm @nonARC
+Shared/Cocoa/LoadParametersCocoa.mm @nonARC
+Shared/Cocoa/PathsBlockedForSandboxExtensions.mm @nonARC
+Shared/Cocoa/PDFKitSoftLink.mm @nonARC
+Shared/Cocoa/RevealItem.mm @nonARC
+Shared/Cocoa/SandboxExtensionCocoa.mm @nonARC
+Shared/Cocoa/SandboxInitialiationParametersCocoa.mm @nonARC
+Shared/Cocoa/SandboxUtilities.mm @nonARC
+Shared/Cocoa/SharedCARingBuffer.cpp
+Shared/Cocoa/TCCSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
+Shared/Cocoa/WebErrorsCocoa.mm @nonARC
+Shared/Cocoa/WebKit2InitializeCocoa.mm @nonARC
+Shared/Cocoa/WKNSArray.mm @nonARC
+Shared/Cocoa/WKNSData.mm @nonARC
+Shared/Cocoa/WKNSDictionary.mm @nonARC
+Shared/Cocoa/WKNSError.mm @nonARC
+Shared/Cocoa/WKNSNumber.mm @nonARC
+Shared/Cocoa/WKNSString.mm @nonARC
+Shared/Cocoa/WKNSURL.mm @nonARC
+Shared/Cocoa/WKNSURLExtras.mm @nonARC
+Shared/Cocoa/WKNSURLRequest.mm @nonARC
+Shared/Cocoa/WKObject.mm @nonARC
+Shared/Cocoa/WebIconUtilities.mm @nonARC
+Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm @nonARC
+
+Shared/Daemon/DaemonUtilities.mm @nonARC
+
+Shared/EntryPointUtilities/Cocoa/XPCService/XPCEndpointMessages.mm @nonARC
+Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm @nonARC
+Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm @nonARC
+
+Shared/ios/AuxiliaryProcessIOS.mm @nonARC
+Shared/ios/HardwareKeyboardState.cpp
+Shared/ios/NativeWebKeyboardEventIOS.mm @nonARC
+Shared/ios/NativeWebMouseEventIOS.mm @nonARC
+Shared/ios/NativeWebTouchEventIOS.mm @nonARC
+Shared/ios/WebIOSEventFactory.mm @nonARC
+Shared/ios/WebParentalControlsURLFilter.mm @nonARC
+Shared/ios/WebPreferencesDefaultValuesIOS.mm @nonARC
+
+Shared/mac/AuxiliaryProcessMac.mm @nonARC
+Shared/mac/HangDetectionDisablerMac.mm @nonARC
+Shared/mac/NativeWebGestureEventMac.mm @nonARC
+Shared/mac/NativeWebKeyboardEventMac.mm @nonARC
+Shared/mac/NativeWebMouseEventMac.mm @nonARC
+Shared/mac/NativeWebWheelEventMac.mm @nonARC
+Shared/mac/PasteboardTypes.mm @nonARC
+Shared/mac/PrintInfoMac.mm @nonARC
+Shared/mac/ScrollingAccelerationCurveMac.mm @nonARC
+Shared/mac/SecItemRequestData.cpp
+Shared/mac/WebEventFactory.mm @nonARC
+Shared/mac/WebGestureEvent.cpp
+Shared/mac/WebMemorySampler.mac.mm @nonARC
+Shared/mac/CoreIPCDDSecureActionContext.mm
+
+Shared/RemoteLayerTree/DynamicContentScalingBifurcatedImageBuffer.mm @nonARC
+Shared/RemoteLayerTree/DynamicContentScalingImageBufferBackend.mm @nonARC
+Shared/RemoteLayerTree/RemoteLayerBackingStore.mm @nonARC
+Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm @nonARC
+Shared/RemoteLayerTree/RemoteLayerWithInProcessRenderingBackingStore.mm @nonARC
+Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStore.mm @nonARC
+Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm @nonARC
+Shared/RemoteLayerTree/RemoteLayerTreeCommitBundle.mm @nonARC
+Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm @nonARC
+Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp
+Shared/RemoteLayerTree/RemoteScrollingUIState.cpp
+
+WebProcess/Model/WebModelPlayer.mm
+WebProcess/GPU/webrtc/SharedVideoFrame.cpp
+
+UIProcess/_WKWebViewPrintFormatter.mm @nonARC
+UIProcess/ApplicationStateTracker.mm @nonARC
+UIProcess/PerActivityStateCPUUsageSampler.cpp
+UIProcess/ViewGestureController.cpp
+UIProcess/ViewSnapshotStore.cpp
+UIProcess/WebMemoryPressureHandler.cpp
+UIProcess/WKImagePreviewViewController.mm @nonARC
+
+UIProcess/API/APIWebsiteDataRecord.cpp
+
+UIProcess/API/C/WKContextMenuListener.cpp
+UIProcess/API/C/WKTestingSupport.cpp
+
+UIProcess/API/C/cg/WKIconDatabaseCG.cpp
+
+UIProcess/API/C/mac/WKContextPrivateMac.mm @nonARC
+UIProcess/API/C/mac/WKFrameMac.cpp
+UIProcess/API/C/mac/WKNotificationPrivateMac.mm @nonARC
+UIProcess/API/C/mac/WKPagePrivateMac.mm @nonARC
+UIProcess/API/C/mac/WKProtectionSpaceNS.mm @nonARC
+UIProcess/API/C/mac/WKWebsiteDataStoreRefPrivateMac.mm @nonARC
+
+UIProcess/API/Cocoa/_WKActivatedElementInfo.mm @nonARC
+UIProcess/API/Cocoa/_WKAppHighlight.mm @nonARC
+UIProcess/API/Cocoa/_WKApplicationManifest.mm @nonARC
+UIProcess/API/Cocoa/_WKArchiveConfiguration.mm @nonARC
+UIProcess/API/Cocoa/_WKArchiveExclusionRule.mm @nonARC
+UIProcess/API/Cocoa/_WKAttachment.mm @nonARC
+UIProcess/API/Cocoa/_WKAutomationSession.mm @nonARC
+UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.mm @nonARC
+UIProcess/API/Cocoa/_WKAutomationSessionTesting.mm @nonARC
+UIProcess/API/Cocoa/_WKContentRuleListAction.mm @nonARC
+UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm @nonARC
+UIProcess/API/Cocoa/_WKCustomHeaderFields.mm @nonARC @no-unify-when(bundle<=8)
+UIProcess/API/Cocoa/_WKDataTask.mm @nonARC
+UIProcess/API/Cocoa/_WKDownload.mm @nonARC
+UIProcess/API/Cocoa/_WKElementAction.mm @nonARC
+UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.mm @nonARC
+UIProcess/API/Cocoa/_WKExperimentalFeature.mm @nonARC
+UIProcess/API/Cocoa/_WKFeature.mm @nonARC
+UIProcess/API/Cocoa/_WKFrameTreeNode.mm @nonARC
+UIProcess/API/Cocoa/_WKGeolocationPosition.mm @nonARC
+UIProcess/API/Cocoa/_WKInspector.mm @nonARC
+UIProcess/API/Cocoa/_WKInspectorConfiguration.mm @nonARC
+UIProcess/API/Cocoa/_WKInspectorDebuggableInfo.mm @nonARC
+UIProcess/API/Cocoa/_WKInspectorExtension.mm @nonARC
+UIProcess/API/Cocoa/_WKInspectorTesting.mm @nonARC
+UIProcess/API/Cocoa/_WKInspectorWindow.mm @nonARC
+UIProcess/API/Cocoa/_WKInternalDebugFeature.mm @nonARC
+UIProcess/API/Cocoa/_WKLinkIconParameters.mm @nonARC
+UIProcess/API/Cocoa/_WKModalContainerInfo.mm @nonARC
+UIProcess/API/Cocoa/_WKNotificationData.mm @nonARC
+UIProcess/API/Cocoa/_WKNSStringExtras.mm @nonARC
+UIProcess/API/Cocoa/_WKNSURLExtras.mm @nonARC
+UIProcess/API/Cocoa/_WKPageLoadTiming.mm @nonARC
+UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm @nonARC
+UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm @nonARC
+UIProcess/API/Cocoa/_WKResourceLoadInfo.mm @nonARC
+UIProcess/API/Cocoa/_WKSessionState.mm @nonARC
+UIProcess/API/Cocoa/_WKSystemPreferences.mm @nonARC
+UIProcess/API/Cocoa/_WKTargetedElementInfo.mm @nonARC
+UIProcess/API/Cocoa/_WKTargetedElementRequest.mm @nonARC
+UIProcess/API/Cocoa/_WKTextExtraction.mm @nonARC
+UIProcess/API/Cocoa/_WKTextInputContext.mm @nonARC
+UIProcess/API/Cocoa/_WKTextManipulationConfiguration.mm @nonARC
+UIProcess/API/Cocoa/_WKTextManipulationExclusionRule.mm @nonARC
+UIProcess/API/Cocoa/_WKTextManipulationItem.mm @nonARC
+UIProcess/API/Cocoa/_WKTextManipulationToken.mm @nonARC
+UIProcess/API/Cocoa/_WKTextPreview.mm @nonARC
+UIProcess/API/Cocoa/_WKTextRun.mm @nonARC
+UIProcess/API/Cocoa/_WKThumbnailView.mm @nonARC
+UIProcess/API/Cocoa/_WKTouchEventGenerator.mm @nonARC
+UIProcess/API/Cocoa/_WKUserContentExtensionStore.mm @nonARC
+UIProcess/API/Cocoa/_WKUserContentFilter.mm @nonARC
+UIProcess/API/Cocoa/_WKUserContentWorld.mm @nonARC
+UIProcess/API/Cocoa/_WKUserInitiatedAction.mm @nonARC
+UIProcess/API/Cocoa/_WKUserStyleSheet.mm @nonARC
+UIProcess/API/Cocoa/_WKVisitedLinkStore.mm @nonARC
+UIProcess/API/Cocoa/_WKWebAuthenticationAssertionResponse.mm @nonARC
+UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm @nonARC
+UIProcess/API/Cocoa/_WKWebPushDaemonConnection.mm @nonARC
+UIProcess/API/Cocoa/_WKWebPushMessage.mm @nonARC
+UIProcess/API/Cocoa/_WKWebPushSubscriptionData.mm @nonARC
+UIProcess/API/Cocoa/_WKWebExtension.mm @nonARC
+UIProcess/API/Cocoa/_WKWebExtensionSidebar.mm
+UIProcess/API/Cocoa/_WKWebPushAction.mm @nonARC
+UIProcess/API/Cocoa/_WKWebsiteDataSize.mm @nonARC
+UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm @nonARC
+UIProcess/API/Cocoa/APIAttachmentCocoa.mm @nonARC
+UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm @nonARC
+UIProcess/API/Cocoa/APIPageConfigurationCocoa.mm @nonARC
+UIProcess/API/Cocoa/LegacyBundleForClass.mm @nonARC
+UIProcess/API/Cocoa/NSAttributedString.mm @nonARC
+UIProcess/API/Cocoa/WKBackForwardList.mm @nonARC
+UIProcess/API/Cocoa/WKBackForwardListItem.mm @nonARC
+UIProcess/API/Cocoa/WKBrowsingContextController.mm @nonARC
+UIProcess/API/Cocoa/WKContentRuleList.mm @nonARC
+UIProcess/API/Cocoa/WKContentRuleListStore.mm @nonARC
+UIProcess/API/Cocoa/WKContentWorld.mm @nonARC
+UIProcess/API/Cocoa/WKContentWorldConfiguration.mm @nonARC
+UIProcess/API/Cocoa/WKContextMenuElementInfo.mm @nonARC
+UIProcess/API/Cocoa/WKDownload.mm @nonARC
+UIProcess/API/Cocoa/WKError.mm @nonARC
+UIProcess/API/Cocoa/WKFindConfiguration.mm @nonARC
+UIProcess/API/Cocoa/WKFindResult.mm @nonARC
+UIProcess/API/Cocoa/WKFormInfo.mm @nonARC
+UIProcess/API/Cocoa/WKFrameInfo.mm @nonARC
+UIProcess/API/Cocoa/WKHTTPCookieStore.mm @nonARC
+UIProcess/API/Cocoa/WKImmersiveEnvironment.mm @nonARC
+UIProcess/API/Cocoa/WKJSHandle.mm @nonARC
+UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm @nonARC
+UIProcess/API/Cocoa/WKNavigation.mm @nonARC
+UIProcess/API/Cocoa/WKNavigationAction.mm @nonARC
+UIProcess/API/Cocoa/WKNavigationData.mm @nonARC
+UIProcess/API/Cocoa/WKNavigationResponse.mm @nonARC
+UIProcess/API/Cocoa/WKDOMNodeSnapshot.mm @nonARC
+UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm @nonARC
+UIProcess/API/Cocoa/WKOpenPanelParameters.mm @nonARC
+UIProcess/API/Cocoa/WKPDFConfiguration.mm @nonARC
+UIProcess/API/Cocoa/WKPreferences.mm @nonARC
+UIProcess/API/Cocoa/WKPreviewActionItem.mm @nonARC
+UIProcess/API/Cocoa/WKPreviewActionItemIdentifiers.mm @nonARC
+UIProcess/API/Cocoa/WKPreviewElementInfo.mm @nonARC
+UIProcess/API/Cocoa/WKProcessPool.mm @nonARC
+UIProcess/API/Cocoa/WKScriptMessage.mm @nonARC
+UIProcess/API/Cocoa/WKScrollGeometry.mm @nonARC
+UIProcess/API/Cocoa/WKSecurityOrigin.mm @nonARC
+UIProcess/API/Cocoa/WKSnapshotConfiguration.mm @nonARC
+UIProcess/API/Cocoa/WKURLSchemeTask.mm @nonARC
+UIProcess/API/Cocoa/WKUserContentController.mm @nonARC
+UIProcess/API/Cocoa/WKUserScript.mm @nonARC
+UIProcess/API/Cocoa/WKWebExtension.mm
+UIProcess/API/Cocoa/WKWebExtensionAction.mm
+UIProcess/API/Cocoa/WKWebExtensionCommand.mm
+UIProcess/API/Cocoa/WKWebExtensionContext.mm
+UIProcess/API/Cocoa/WKWebExtensionController.mm
+UIProcess/API/Cocoa/WKWebExtensionControllerConfiguration.mm
+UIProcess/API/Cocoa/WKWebExtensionDataRecord.mm
+UIProcess/API/Cocoa/WKWebExtensionDataType.mm
+UIProcess/API/Cocoa/WKWebExtensionMatchPattern.mm
+UIProcess/API/Cocoa/WKWebExtensionMessagePort.mm
+UIProcess/API/Cocoa/WKWebExtensionPermission.mm
+UIProcess/API/Cocoa/WKWebExtensionTabConfiguration.mm
+UIProcess/API/Cocoa/WKWebExtensionWindowConfiguration.mm
+UIProcess/API/Cocoa/WKWebsiteDataRecord.mm @nonARC
+UIProcess/API/Cocoa/WKWebsiteDataStore.mm @nonARC
+UIProcess/API/Cocoa/WKWebView.mm @nonARC
+UIProcess/API/Cocoa/WKWebView+TextExtraction.mm @nonARC
+UIProcess/API/Cocoa/WKWebViewTesting.mm @nonARC
+UIProcess/API/Cocoa/WKWebViewConfiguration.mm @nonARC
+UIProcess/API/Cocoa/WKWebpagePreferences.mm @nonARC
+UIProcess/API/Cocoa/WKWindowFeatures.mm @nonARC
+
+UIProcess/API/ios/WKWebViewIOS.mm @nonARC
+UIProcess/API/ios/WKWebViewTestingIOS.mm @nonARC
+
+UIProcess/API/mac/WKView.mm @nonARC
+UIProcess/API/mac/WKWebViewMac.mm @nonARC
+UIProcess/API/mac/WKWebViewTestingMac.mm @nonARC
+
+UIProcess/Authentication/cocoa/AuthenticationChallengeProxyCocoa.mm @nonARC
+UIProcess/Authentication/cocoa/SecKeyProxyStore.mm @nonARC
+
+UIProcess/Automation/cocoa/WebAutomationSessionCocoa.mm @nonARC
+
+UIProcess/Automation/ios/WebAutomationSessionIOS.mm @nonARC
+
+UIProcess/Automation/mac/WebAutomationSessionMac.mm @nonARC
+
+UIProcess/Cocoa/GroupActivities/GroupActivitiesCoordinator.mm @nonARC
+UIProcess/Cocoa/GroupActivities/GroupActivitiesSession.mm @nonARC
+UIProcess/Cocoa/GroupActivities/GroupActivitiesSessionNotifier.mm @nonARC
+
+UIProcess/Cocoa/SOAuthorization/NavigationSOAuthorizationSession.mm @nonARC
+UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm @nonARC
+UIProcess/Cocoa/SOAuthorization/RedirectSOAuthorizationSession.mm @nonARC
+UIProcess/Cocoa/SOAuthorization/SOAuthorizationCoordinator.mm @nonARC
+UIProcess/Cocoa/SOAuthorization/SOAuthorizationNSURLExtras.mm @nonARC
+UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm @nonARC
+UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm @nonARC
+UIProcess/Cocoa/SOAuthorization/WKSOAuthorizationDelegate.mm @nonARC
+
+UIProcess/Cocoa/AppKitSoftLink.mm @nonARC
+UIProcess/Cocoa/AutomationClient.mm @nonARC
+UIProcess/Cocoa/AutomationSessionClient.mm @nonARC
+UIProcess/Cocoa/BrowsingWarningCocoa.mm @nonARC
+UIProcess/Cocoa/CoreTelephonyUtilities.mm @nonARC
+UIProcess/Cocoa/DiagnosticLoggingClient.mm @nonARC
+UIProcess/Cocoa/DisplayCaptureSessionManager.mm @nonARC @cost:3
+UIProcess/Cocoa/DownloadProxyMapCocoa.mm @nonARC
+UIProcess/Cocoa/ExtensionCapabilityGranter.mm @nonARC
+UIProcess/Cocoa/FindClient.mm @nonARC
+UIProcess/Cocoa/FullscreenClient.mm @nonARC
+UIProcess/Cocoa/GPUProcessProxyCocoa.mm @nonARC
+UIProcess/Cocoa/GlobalFindInPageState.mm @nonARC
+UIProcess/Cocoa/IconLoadingDelegate.mm @nonARC
+UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm @nonARC
+UIProcess/Cocoa/LegacyDownloadClient.mm @nonARC
+UIProcess/Cocoa/LegacySessionStateCoding.cpp
+UIProcess/Cocoa/MediaUtilities.mm @nonARC
+UIProcess/Cocoa/MediaPermissionUtilities.mm @nonARC
+UIProcess/Cocoa/NavigationState.mm @nonARC
+UIProcess/Cocoa/PageClientImplCocoa.mm @nonARC @cost:3
+UIProcess/Cocoa/PlatformWritingToolsUtilities.mm @nonARC
+UIProcess/Cocoa/PlatformXRCoordinator.mm @nonARC
+UIProcess/Cocoa/PlaybackSessionManagerProxy.mm @nonARC
+UIProcess/Cocoa/ProcessAssertionCocoa.mm @nonARC
+UIProcess/Cocoa/ResourceLoadDelegate.mm @nonARC
+UIProcess/Cocoa/SafeBrowsingUtilities.mm @nonARC
+UIProcess/Cocoa/SessionStateCoding.mm @nonARC
+UIProcess/Cocoa/SystemPreviewControllerCocoa.mm @nonARC
+UIProcess/Cocoa/TextCheckingController.mm @nonARC
+UIProcess/Cocoa/TextExtraction/WKTextExtractionUtilities.mm @nonARC
+UIProcess/Cocoa/UIDelegate.mm @nonARC @cost:3
+UIProcess/Cocoa/UIProcessLogInitializationCocoa.mm @nonARC
+UIProcess/Cocoa/UIRemoteObjectRegistry.cpp
+UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm @nonARC
+UIProcess/Cocoa/UserMediaPermissionRequestProxyCocoa.mm @nonARC
+UIProcess/Cocoa/VideoPresentationManagerProxy.mm @nonARC
+UIProcess/Cocoa/ViewSnapshotStoreCocoa.mm @nonARC
+UIProcess/Cocoa/WebGeolocationManagerProxyCocoa.cpp
+UIProcess/Cocoa/WebKitSwiftSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
+UIProcess/Cocoa/WebPagePreferencesLockdownModeObserver.mm @nonARC
+UIProcess/Cocoa/WebPageProxyCocoa.mm @nonARC @cost:12
+UIProcess/Cocoa/WebPasteboardProxyCocoa.mm @nonARC @cost:5
+UIProcess/Cocoa/WebPreferencesCocoa.mm @nonARC
+UIProcess/Cocoa/WebProcessCacheCocoa.mm @nonARC
+UIProcess/Cocoa/WebProcessPoolCocoa.mm @nonARC @cost:5
+UIProcess/Cocoa/WebProcessProxyCocoa.mm @nonARC
+UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm @nonARC
+UIProcess/Cocoa/WKColorExtensionView.mm @nonARC
+UIProcess/Cocoa/WKContactPicker.mm @nonARC
+UIProcess/Cocoa/WKEditCommand.mm @nonARC
+UIProcess/Cocoa/WKFullKeyboardAccessWatcher.mm @nonARC
+UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm @nonARC
+UIProcess/Cocoa/WKScreenTimeConfigurationObserver.mm @nonARC
+UIProcess/Cocoa/WKTextEffectManager.mm @nonARC
+UIProcess/Cocoa/WKTextPlaceholder.mm @nonARC
+UIProcess/Cocoa/WKTextSelectionRect.mm @nonARC
+UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm @nonARC
+
+UIProcess/DigitalCredentials/WKDigitalCredentialsPicker.mm @nonARC
+
+UIProcess/Extensions/Cocoa/_WKWebExtensionDeclarativeNetRequestRule.mm
+UIProcess/Extensions/Cocoa/_WKWebExtensionDeclarativeNetRequestTranslator.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIActionCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIBookmarksCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPICommandsCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPICookiesCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIDeclarativeNetRequestCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIDevToolsInspectedWindow.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIDevToolsPanels.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIEventCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIExtensionCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIMenusCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIOffscreenCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIPermissionsCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIPortCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIRuntimeCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIScriptingCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPISidebarCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPITabsCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIWebNavigationCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIWindowsCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionControllerAPITestCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionActionCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionCommandCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionContextCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionControllerCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionControllerConfigurationCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionDataRecordCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionDeclarativeNetRequestSQLiteStoreCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionDynamicScriptsCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionMatchPatternCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionMenuItemCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionMessagePortCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionSidebarCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionTabCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionURLSchemeHandlerCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionWindowCocoa.mm
+
+UIProcess/Gamepad/cocoa/UIGamepadProviderCocoa.mm @nonARC
+UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm @nonARC
+UIProcess/Gamepad/mac/UIGamepadProviderMac.mm @nonARC
+
+UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm @nonARC
+
+UIProcess/Inspector/ios/WKInspectorHighlightView.mm @nonARC
+UIProcess/Inspector/ios/WKInspectorNodeSearchGestureRecognizer.mm @nonARC
+
+UIProcess/Inspector/mac/RemoteWebInspectorUIProxyMac.mm @nonARC
+UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm @nonARC
+UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm @nonARC
+UIProcess/Inspector/mac/WKInspectorViewController.mm @nonARC
+UIProcess/Inspector/mac/WKInspectorWKWebView.mm @nonARC
+
+UIProcess/Network/NetworkProcessProxyCocoa.mm @nonARC
+
+UIProcess/ios/forms/WKAirPlayRoutePicker.mm @nonARC
+UIProcess/ios/forms/WKDatePickerPopoverController.mm @nonARC
+UIProcess/ios/forms/WKDatePickerViewController.mm @nonARC
+UIProcess/ios/forms/WKDateTimeInputControl.mm @nonARC
+UIProcess/ios/forms/WKFileUploadPanel.mm @nonARC
+UIProcess/ios/forms/WKFocusedFormControlView.mm @nonARC
+UIProcess/ios/forms/WKFormAccessoryView.mm @nonARC
+UIProcess/ios/forms/WKFormColorControl.mm @nonARC
+UIProcess/ios/forms/WKFormPeripheralBase.mm @nonARC
+UIProcess/ios/forms/WKFormPopover.mm @nonARC
+UIProcess/ios/forms/WKFormSelectControl.mm @nonARC
+UIProcess/ios/forms/WKFormSelectPicker.mm @nonARC
+UIProcess/ios/forms/WKFormSelectPopover.mm @nonARC
+UIProcess/ios/forms/WKNumberPadView.mm @nonARC
+UIProcess/ios/forms/WKNumberPadViewController.mm @nonARC
+UIProcess/ios/forms/WKSelectMenuListViewController.mm @nonARC
+UIProcess/ios/forms/WKTextInputListViewController.mm @nonARC
+UIProcess/ios/forms/WKTimePickerViewController.mm @nonARC
+
+UIProcess/ios/fullscreen/FullscreenTouchSecheuristic.cpp
+UIProcess/ios/fullscreen/WKFullscreenStackView.mm @nonARC
+UIProcess/ios/fullscreen/WKFullScreenViewController.mm @nonARC
+UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm @nonARC
+
+UIProcess/ios/CompactContextMenuPresenter.mm @nonARC
+UIProcess/ios/DragDropInteractionState.mm @nonARC
+UIProcess/ios/GestureRecognizerConsistencyEnforcer.mm @nonARC
+UIProcess/ios/LayerHostingVisibilityPropagator.mm @nonARC
+UIProcess/ios/PageClientImplIOS.mm @nonARC
+UIProcess/ios/PointerTouchCompatibilitySimulator.mm @nonARC
+UIProcess/ios/ProcessStateMonitor.mm @nonARC
+UIProcess/ios/RevealFocusedElementDeferrer.mm @nonARC
+UIProcess/ios/SmartMagnificationController.mm @nonARC
+UIProcess/ios/TextCheckerIOS.mm @nonARC
+UIProcess/ios/UIKitUtilities.mm @nonARC
+UIProcess/ios/ViewGestureControllerIOS.mm @nonARC
+UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm @nonARC
+UIProcess/ios/WebPageProxyIOS.mm @nonARC
+UIProcess/ios/WebProcessProxyIOS.mm @nonARC
+UIProcess/ios/WebScreenOrientationManagerProxyIOS.mm @nonARC
+UIProcess/ios/WKActionSheet.mm @nonARC
+UIProcess/ios/WKActionSheetAssistant.mm @nonARC
+UIProcess/ios/WKApplicationStateTrackingView.mm @nonARC
+UIProcess/ios/WKBaseScrollView.mm @nonARC
+UIProcess/ios/WKContentView.mm @nonARC @no-unify
+UIProcess/ios/WKContentViewInteraction.mm @nonARC @no-unify
+UIProcess/ios/WKExtendedTextInputTraits.mm @nonARC
+UIProcess/ios/WKExtrinsicButton.mm @nonARC
+UIProcess/ios/WKGeolocationProviderIOS.mm @nonARC
+UIProcess/ios/WKHighlightLongPressGestureRecognizer.mm @nonARC
+UIProcess/ios/WKImageAnalysisGestureRecognizer.mm @nonARC
+UIProcess/ios/WKKeyboardScrollingAnimator.mm @nonARC
+UIProcess/ios/WKMouseDeviceObserver.mm @nonARC
+UIProcess/ios/WKMouseInteraction.mm @nonARC
+UIProcess/ios/WKPageHostedPortalView.mm @nonARC
+UIProcess/ios/WKPasswordView.mm @nonARC
+UIProcess/ios/WKScrollView.mm @nonARC
+UIProcess/ios/WKScrollViewTrackingTapGestureRecognizer.mm @nonARC
+UIProcess/ios/WKStylusDeviceObserver.mm @nonARC
+UIProcess/ios/WKSyntheticFlagsChangedWebEvent.mm @nonARC
+UIProcess/ios/WKSyntheticTapGestureRecognizer.mm @nonARC
+UIProcess/ios/WKTapHighlightView.mm @nonARC
+UIProcess/ios/WKTextInteractionWrapper.mm @nonARC
+UIProcess/ios/WKTouchActionGestureRecognizer.mm @nonARC
+UIProcess/ios/WKTouchEventsGestureRecognizer.mm @nonARC
+UIProcess/ios/WKUIScrollEdgeEffect.mm @nonARC
+UIProcess/ios/WKUSDPreviewView.mm @nonARC
+UIProcess/ios/WKVideoView.mm @nonARC
+UIProcess/ios/WKVisibilityPropagationView.mm @nonARC
+UIProcess/ios/WKWebGeolocationPolicyDeciderIOS.mm @nonARC
+
+UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm @nonARC
+
+UIProcess/mac/CorrectionPanel.mm @nonARC
+UIProcess/mac/DisplayLinkMac.cpp
+UIProcess/mac/PageClientImplMac.mm @nonARC
+UIProcess/mac/SecItemShimProxy.cpp
+UIProcess/mac/ServicesController.mm @nonARC
+UIProcess/mac/SwipeProgressTrackerMac.mm @nonARC
+UIProcess/mac/TextCheckerMac.mm @nonARC
+UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm @nonARC
+UIProcess/mac/ViewGestureControllerMac.mm @nonARC
+UIProcess/mac/WebColorPickerMac.mm @nonARC
+UIProcess/mac/WebContextMenuProxyMac.mm @nonARC
+UIProcess/mac/WebDataListSuggestionsDropdownMac.mm @nonARC
+UIProcess/mac/WebDateTimePickerMac.mm @nonARC
+UIProcess/mac/WebPageProxyMac.mm @nonARC
+UIProcess/mac/WebPopupMenuProxyMac.mm @nonARC
+UIProcess/mac/WebProcessProxyMac.mm @nonARC
+UIProcess/mac/WindowServerConnection.mm @nonARC
+UIProcess/mac/WKFullScreenWindowController.mm @nonARC
+UIProcess/mac/WKImmediateActionController.mm @nonARC
+UIProcess/mac/WKAppKitGestureController.mm @nonARC
+UIProcess/mac/PositionInformationManager.cpp
+UIProcess/mac/WKPrintingView.mm @nonARC
+UIProcess/mac/WKQuickLookPreviewController.mm @nonARC
+UIProcess/mac/WKRevealItemPresenter.mm @nonARC
+UIProcess/mac/WKSharingServicePickerDelegate.mm @nonARC
+UIProcess/mac/WKTextFinderClient.mm @nonARC
+UIProcess/mac/WKTextAnimationManagerMac.mm @nonARC
+UIProcess/mac/WKViewLayoutStrategy.mm @nonARC
+UIProcess/mac/WebViewImpl.mm @nonARC
+
+UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm @nonARC
+UIProcess/Media/cocoa/MediaUsageManagerCocoa.mm @nonARC
+
+UIProcess/Model/PortalPresentationManagerProxy.mm @nonARC
+UIProcess/Model/cocoa/ModelProcessProxyCocoa.mm @nonARC
+
+UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
+
+UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.mm @nonARC
+
+UIProcess/RemoteLayerTree/mac/RemoteLayerTreeDrawingAreaProxyMac.mm @nonARC
+UIProcess/RemoteLayerTree/mac/RemoteLayerTreeEventDispatcher.mm @nonARC
+UIProcess/RemoteLayerTree/mac/RemoteScrollingCoordinatorProxyMac.mm @nonARC
+UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm @nonARC
+UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp @cost:3
+UIProcess/RemoteLayerTree/mac/ScrollingTreeOverflowScrollingNodeRemoteMac.cpp @cost:3
+UIProcess/RemoteLayerTree/mac/ScrollingTreePluginScrollingNodeRemoteMac.cpp
+
+UIProcess/RemoteLayerTree/ios/RemoteLayerTreeDrawingAreaProxyIOS.mm @nonARC
+UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm @nonARC
+UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm @nonARC
+UIProcess/RemoteLayerTree/ios/RemoteScrollingTreeIOS.cpp
+UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm @nonARC
+UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm @nonARC
+UIProcess/RemoteLayerTree/ios/ScrollingTreePluginScrollingNodeIOS.mm @nonARC
+UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm @nonARC
+
+UIProcess/RemoteLayerTree/RemoteAnimation.cpp
+UIProcess/RemoteLayerTree/RemoteAnimationStack.mm @nonARC
+UIProcess/RemoteLayerTree/RemoteAnimationTimeline.cpp
+UIProcess/RemoteLayerTree/RemoteAnimationUtilities.cpp
+UIProcess/RemoteLayerTree/RemoteMonotonicTimeline.cpp
+UIProcess/RemoteLayerTree/RemoteMonotonicTimelineRegistry.cpp
+UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm @nonARC
+UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm @nonARC
+UIProcess/RemoteLayerTree/RemoteLayerTreeInteractionRegionLayers.mm @nonARC
+UIProcess/RemoteLayerTree/RemoteLayerTreeNode.mm @nonARC
+UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm @nonARC
+UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp @cost:3
+UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp @cost:3
+UIProcess/RemoteLayerTree/RemoteProgressBasedTimeline.cpp
+UIProcess/RemoteLayerTree/RemoteProgressBasedTimelineRegistry.cpp @cost:3
+
+UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
+UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/CcidConnection.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/CcidService.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
+UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/LocalConnection.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/LocalService.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/NearFieldSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
+UIProcess/WebAuthentication/Cocoa/NfcConnection.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/NfcService.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/WKNFReaderSessionDelegate.mm @nonARC
+UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm @nonARC
+
+UIProcess/WebAuthentication/Mock/MockLocalConnection.mm @nonARC
+UIProcess/WebAuthentication/Mock/MockLocalService.mm @nonARC
+UIProcess/WebAuthentication/Mock/MockNfcService.mm @nonARC
+UIProcess/WebAuthentication/Mock/MockCcidService.mm @nonARC
+
+UIProcess/WebsiteData/Cocoa/ScreenTimeWebsiteDataSupport.mm @nonARC
+UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm @nonARC
+
+UIProcess/XR/ios/PlatformXRARKit.mm @nonARC
+UIProcess/XR/ios/PlatformXRSystemIOS.mm @nonARC
+UIProcess/XR/ios/WKARPresentationSession.mm @nonARC
+
+UIProcess/XR/xros/PlatformXRCompositor.mm @nonARC
+UIProcess/XR/xros/PlatformXRSystemXROS.mm @nonARC
+UIProcess/XR/xros/WKSpatialGestureRecognizer.mm @nonARC
+UIProcess/XR/xros/WKXRControllerManager.mm @nonARC
+UIProcess/XR/xros/WKXRTrackingManager.mm @nonARC
+
+WebProcess/API/Cocoa/WKWebProcess.cpp
+
+WebProcess/ApplePay/WebPaymentCoordinator.cpp
+
+WebProcess/ApplePay/cocoa/WebPaymentCoordinatorCocoa.mm @nonARC
+
+WebProcess/cocoa/PlaybackSessionManager.mm @nonARC
+WebProcess/cocoa/RemoteCaptureSampleManager.cpp
+WebProcess/cocoa/RemoteRealtimeAudioSource.cpp
+WebProcess/cocoa/RemoteRealtimeMediaSource.cpp
+WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.cpp
+WebProcess/cocoa/RemoteRealtimeVideoSource.cpp
+WebProcess/cocoa/TextRecognitionRequest.cpp
+WebProcess/cocoa/UserMediaCaptureManager.cpp
+WebProcess/cocoa/VideoPresentationManager.mm @nonARC @cost:7
+WebProcess/cocoa/WebProcessCocoa.mm @nonARC @cost:4
+
+WebProcess/cocoa/IdentityDocumentServices/DigitalCredentialsRequestValidatorBridge.mm @nonARC
+
+WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm @nonARC
+
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIActionCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIBookmarksCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPICommandsCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPICookiesCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIDeclarativeNetRequestCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIDevToolsCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIDevToolsExtensionPanelCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIDevToolsInspectedWindowCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIDevToolsNetworkCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIDevToolsPanelsCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIDOMCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIEventCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIExtensionCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPILocalizationCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIMenusCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPINotificationsCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIOffscreenCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIPermissionsCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIPortCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIRuntimeCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIScriptingCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPISidebarActionCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPISidePanelCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIStorageAreaCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIStorageCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPITabsCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPITestCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebNavigationCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebNavigationEventCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebRequestCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebRequestEventCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIWindowsCocoa.mm
+WebProcess/Extensions/API/Cocoa/WebExtensionAPIWindowsEventCocoa.mm
+
+WebProcess/Extensions/Bindings/JSWebExtensionWrapper.cpp
+
+WebProcess/Extensions/Bindings/Cocoa/JSWebExtensionWrapperCocoa.mm
+
+WebProcess/Extensions/Cocoa/_WKWebExtensionWebNavigationURLFilter.mm
+WebProcess/Extensions/Cocoa/_WKWebExtensionWebRequestFilter.mm
+WebProcess/Extensions/Cocoa/WebExtensionContextProxyCocoa.mm
+WebProcess/Extensions/Cocoa/WebExtensionControllerProxyCocoa.mm
+
+WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.cpp
+WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp
+WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp
+WebProcess/GPU/graphics/cocoa/RemoteGraphicsContextGLProxyCocoa.mm @nonARC
+WebProcess/GPU/media/RemoteAudioSourceProvider.cpp
+WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp
+WebProcess/GPU/media/RemoteImageDecoderAVF.cpp
+WebProcess/GPU/media/RemoteImageDecoderAVFManager.cpp
+WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm @nonARC
+WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.mm @nonARC
+WebProcess/GPU/media/ios/RemoteMediaSessionHelper.cpp
+WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.cpp
+
+WebProcess/InjectedBundle/API/c/WKBundlePageBanner.cpp
+
+WebProcess/InjectedBundle/API/c/mac/WKBundleMac.mm @nonARC
+WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm @nonARC
+
+WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInCSSStyleDeclarationHandle.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm @nonARC
+WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm @nonARC
+
+WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm @nonARC
+WebProcess/InjectedBundle/API/mac/WKDOMElement.mm @nonARC
+WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm @nonARC
+WebProcess/InjectedBundle/API/mac/WKDOMNode.mm @nonARC
+WebProcess/InjectedBundle/API/mac/WKDOMRange.mm @nonARC
+WebProcess/InjectedBundle/API/mac/WKDOMText.mm @nonARC
+WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.mm @nonARC
+WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm @nonARC
+WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm @nonARC
+
+WebProcess/InjectedBundle/mac/InjectedBundleMac.mm @nonARC
+
+WebProcess/Inspector/mac/RemoteWebInspectorUIMac.mm @nonARC
+WebProcess/Inspector/mac/WebInspectorUIMac.mm @nonARC
+
+WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
+
+WebProcess/Plugins/PDF/PDFAnnotationTypeHelpers.mm @nonARC
+WebProcess/Plugins/PDF/PDFIncrementalLoader.mm @nonARC
+WebProcess/Plugins/PDF/PDFPlugin.mm @nonARC
+WebProcess/Plugins/PDF/PDFPluginBase.mm @nonARC @cost:7
+WebProcess/Plugins/PDF/PDFPluginAnnotation.mm @nonARC
+WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm @nonARC
+WebProcess/Plugins/PDF/PDFPluginPasswordField.mm @nonARC
+WebProcess/Plugins/PDF/PDFPluginPasswordForm.mm @nonARC
+WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm @nonARC
+WebProcess/Plugins/PDF/PDFScriptEvaluation.mm @nonARC
+WebProcess/Plugins/PDF/WKAccessibilityPDFDocumentObject.mm @nonARC
+WebProcess/Plugins/PDF/UnifiedPDF/AsyncPDFRenderer.mm @nonARC @cost:3
+WebProcess/Plugins/PDF/UnifiedPDF/PDFDataDetectorItem.mm @nonARC
+WebProcess/Plugins/PDF/UnifiedPDF/PDFDataDetectorOverlayController.mm @nonARC @cost:3
+WebProcess/Plugins/PDF/UnifiedPDF/PDFDiscretePresentationController.mm @nonARC @cost:3
+WebProcess/Plugins/PDF/UnifiedPDF/PDFDocumentLayout.mm @nonARC
+WebProcess/Plugins/PDF/UnifiedPDF/PDFPageCoverage.mm @nonARC
+WebProcess/Plugins/PDF/UnifiedPDF/PDFPresentationController.mm @nonARC @cost:3
+WebProcess/Plugins/PDF/UnifiedPDF/PDFScrollingPresentationController.mm @nonARC @cost:3
+WebProcess/Plugins/PDF/UnifiedPDF/UnifiedPDFPlugin.mm @nonARC @cost:7
+
+WebProcess/WebCoreSupport/WebCaptionPreferencesDelegate.cpp
+WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
+
+WebProcess/WebCoreSupport/cocoa/WebAlternativeTextClient.cpp
+WebProcess/WebCoreSupport/cocoa/WebChromeClientCocoa.mm @nonARC
+WebProcess/WebCoreSupport/cocoa/WebDragClientCocoa.mm @nonARC
+WebProcess/WebCoreSupport/cocoa/WebFrameNetworkingContext.mm @nonARC
+WebProcess/WebCoreSupport/cocoa/WebLocalFrameLoaderClientCocoa.mm @nonARC
+
+WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm @nonARC
+WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm @nonARC
+WebProcess/WebCoreSupport/ios/WebLocalFrameLoaderClientIOS.mm @nonARC
+WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.cpp
+
+WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm @nonARC
+WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm @nonARC
+WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm @nonARC
+
+WebProcess/WebPage/ViewGestureGeometryCollector.cpp
+WebProcess/WebPage/ViewUpdateDispatcher.cpp
+WebProcess/WebPage/WKAccessibilityWebPageObjectIOS.mm @nonARC
+
+WebProcess/WebPage/Cocoa/DrawingAreaCocoa.mm @nonARC
+WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm @nonARC
+WebProcess/WebPage/Cocoa/TextAnimationController.mm @nonARC
+WebProcess/WebPage/Cocoa/WebCookieCacheCocoa.mm @nonARC
+WebProcess/WebPage/Cocoa/WebPageCocoa.mm @nonARC @cost:10
+WebProcess/WebPage/Cocoa/WebRemoteObjectRegistry.cpp
+
+WebProcess/WebPage/ios/FindIndicatorIOS.cpp
+WebProcess/WebPage/ios/WebPageIOS.mm @nonARC
+
+WebProcess/WebPage/mac/PageBannerMac.mm @nonARC
+WebProcess/WebPage/mac/RemoteLayerTreeDrawingAreaMac.mm @nonARC @cost:3
+WebProcess/WebPage/mac/TiledCoreAnimationScrollingCoordinator.mm @nonARC
+WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm @nonARC
+WebProcess/WebPage/mac/WebPageMac.mm @nonARC @cost:7
+WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm @nonARC
+WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm @nonARC
+
+WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm @nonARC @cost:3
+WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm @nonARC @cost:3
+WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.mm @nonARC @cost:3
+WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm @nonARC @cost:3
+WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteHost.mm @nonARC
+WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.mm @nonARC
+WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteTiledBacking.cpp
+WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm @nonARC @cost:4
+WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm @nonARC @no-unify-when(bundle<=8) @cost:4
+WebProcess/WebPage/RemoteLayerTree/RemoteScrollbarsController.mm @nonARC
+WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm @nonARC @cost:3
+
+// Derived Sources
+AudioSessionRoutingArbitratorProxyMessageReceiver.cpp
+AuthenticationManagerMessageReceiver.cpp
+AuxiliaryProcessMessageReceiver.cpp
+DownloadProxyMessageReceiver.cpp
+DrawingAreaMessageReceiver.cpp
+DrawingAreaProxyMessageReceiver.cpp @cost:10
+DigitalCredentialsCoordinatorMessageReceiver.cpp
+EventDispatcherMessageReceiver.cpp
+GPUConnectionToWebProcessMessageReceiver.cpp @cost:6
+GPUProcessConnectionMessageReceiver.cpp
+GPUProcessMessageReceiver.cpp @cost:7
+GPUProcessProxyMessageReceiver.cpp
+LegacyCustomProtocolManagerMessageReceiver.cpp
+LegacyCustomProtocolManagerProxyMessageReceiver.cpp
+LibWebRTCCodecsMessageReceiver.cpp
+LibWebRTCCodecsProxyMessageReceiver.cpp
+LibWebRTCNetworkMessageReceiver.cpp
+LogStreamMessageReceiver.cpp
+Shared/LogStream.mm @no-unify-when(bundle<=8)
+ModelConnectionToWebProcessMessageReceiver.cpp
+MediaPlayerPrivateRemoteMessageReceiver.cpp @cost:5
+ModelProcessConnectionMessageReceiver.cpp
+ModelProcessMessageReceiver.cpp
+ModelProcessModelPlayerProxyMessageReceiver.cpp
+ModelProcessProxyMessageReceiver.cpp
+NetworkConnectionToWebProcessMessageReceiver.cpp @cost:9
+NetworkContentRuleListManagerMessageReceiver.cpp @cost:3
+NetworkMDNSRegisterMessageReceiver.cpp
+NetworkProcessConnectionMessageReceiver.cpp @cost:3
+NetworkProcessMessageReceiver.cpp @cost:9
+NetworkProcessProxyMessageReceiver.cpp @cost:6
+NetworkResourceLoaderMessageReceiver.cpp @cost:5
+NetworkRTCMonitorMessageReceiver.cpp
+NetworkRTCProviderMessageReceiver.cpp @cost:3
+NetworkSocketChannelMessageReceiver.cpp
+NetworkStorageManagerMessageReceiver.cpp @cost:6
+NotificationManagerMessageHandlerMessageReceiver.cpp @cost:3
+PlaybackSessionManagerMessageReceiver.cpp @cost:3
+PlaybackSessionManagerProxyMessageReceiver.cpp @cost:3
+RemoteAudioDestinationManagerMessageReceiver.cpp
+RemoteAudioHardwareListenerMessageReceiver.cpp
+RemoteAudioSessionMessageReceiver.cpp
+RemoteAudioSessionProxyMessageReceiver.cpp
+RemoteAudioSourceProviderManagerMessageReceiver.cpp
+RemoteCaptureSampleManagerMessageReceiver.cpp
+RemoteCDMFactoryProxyMessageReceiver.cpp @cost:3
+RemoteCDMInstanceMessageReceiver.cpp
+RemoteCDMInstanceProxyMessageReceiver.cpp @cost:3
+RemoteCDMInstanceSessionMessageReceiver.cpp
+RemoteCDMInstanceSessionProxyMessageReceiver.cpp
+RemoteCDMProxyMessageReceiver.cpp
+RemoteImageBufferMessageReceiver.cpp @cost:5
+RemoteImageBufferProxyMessageReceiver.cpp
+RemoteImageBufferSetMessageReceiver.cpp @cost:5
+RemoteImageDecoderAVFManagerMessageReceiver.cpp
+RemoteImageDecoderAVFProxyMessageReceiver.cpp
+RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp
+RemoteLegacyCDMFactoryProxyMessageReceiver.cpp
+RemoteLegacyCDMProxyMessageReceiver.cpp
+RemoteLegacyCDMSessionMessageReceiver.cpp
+RemoteLegacyCDMSessionProxyMessageReceiver.cpp
+RemoteMediaEngineConfigurationFactoryProxyMessageReceiver.cpp
+RemoteMediaPlayerManagerProxyMessageReceiver.cpp
+RemoteMediaPlayerProxyMessageReceiver.cpp
+RemoteMediaResourceLoaderMessageReceiver.cpp
+RemoteMediaResourceLoaderProxyMessageReceiver.cpp
+RemoteMediaSessionCoordinatorMessageReceiver.cpp
+RemoteMediaSessionCoordinatorProxyMessageReceiver.cpp
+RemoteMediaSessionHelperMessageReceiver.cpp
+RemoteMediaSessionHelperProxyMessageReceiver.cpp
+RemoteMediaSessionManagerMessageReceiver.cpp
+RemoteMediaSessionManagerProxyMessageReceiver.cpp
+RemoteObjectRegistryMessageReceiver.cpp
+RemoteRemoteCommandListenerMessageReceiver.cpp
+RemoteRemoteCommandListenerProxyMessageReceiver.cpp
+RemoteRenderingBackendMessageReceiver.cpp @cost:7
+RemoteRenderingBackendProxyMessageReceiver.cpp
+RemoteSampleBufferDisplayLayerManagerMessageReceiver.cpp
+RemoteSampleBufferDisplayLayerMessageReceiver.cpp
+RemoteScrollingCoordinatorMessageReceiver.cpp
+RemoteSharedResourceCacheMessageReceiver.cpp @cost:5
+RemoteWebInspectorUIMessageReceiver.cpp
+RemoteWebInspectorUIProxyMessageReceiver.cpp
+SampleBufferDisplayLayerMessageReceiver.cpp
+SecItemShimProxyMessageReceiver.cpp
+SerializedTypeInfo.mm @nonARC @cost:14
+ServiceWorkerFetchTaskMessageReceiver.cpp
+SmartMagnificationControllerMessageReceiver.cpp
+SpeechRecognitionRealtimeMediaSourceManagerMessageReceiver.cpp
+SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp @cost:10
+SpeechRecognitionServerMessageReceiver.cpp @cost:10
+StorageAreaMapMessageReceiver.cpp
+TextCheckingControllerProxyMessageReceiver.cpp
+UserMediaCaptureManagerMessageReceiver.cpp @cost:3
+UserMediaCaptureManagerProxyMessageReceiver.cpp @cost:3
+VideoPresentationManagerMessageReceiver.cpp @cost:3
+VideoPresentationManagerProxyMessageReceiver.cpp @cost:3
+ViewGestureControllerMessageReceiver.cpp @cost:10
+ViewGestureGeometryCollectorMessageReceiver.cpp
+ViewUpdateDispatcherMessageReceiver.cpp
+VisitedLinkStoreMessageReceiver.cpp @cost:9
+VisitedLinkTableControllerMessageReceiver.cpp
+WebAuthenticatorCoordinatorProxyMessageReceiver.cpp @cost:4
+WebAutomationSessionProxyMessageReceiver.cpp @cost:3
+WebBackForwardListMessageReceiver.cpp
+WebCookieManagerMessageReceiver.cpp @cost:3
+WebDeviceOrientationUpdateProviderMessageReceiver.cpp
+WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp
+WebExtensionContextMessageReceiver.cpp @cost:11
+WebExtensionContextProxyMessageReceiver.cpp @cost:7
+WebExtensionControllerMessageReceiver.cpp @cost:6
+WebExtensionControllerProxyMessageReceiver.cpp @cost:6
+WebFileSystemStorageConnectionMessageReceiver.cpp
+WebFullScreenManagerMessageReceiver.cpp @cost:3
+WebFullScreenManagerProxyMessageReceiver.cpp @cost:10
+WebGeolocationManagerMessageReceiver.cpp
+WebGeolocationManagerProxyMessageReceiver.cpp @cost:10
+WebIDBConnectionToServerMessageReceiver.cpp @cost:3
+WasmDebuggerDispatcherMessageReceiver.cpp
+WebInspectorInterruptDispatcherMessageReceiver.cpp
+WebInspectorBackendMessageReceiver.cpp
+WebInspectorBackendProxyMessageReceiver.cpp @cost:4
+ProxyingNetworkAgentMessageReceiver.cpp @cost:3
+ProxyingPageAgentMessageReceiver.cpp @cost:3
+WebInspectorUIExtensionControllerMessageReceiver.cpp @cost:3
+WebInspectorUIExtensionControllerProxyMessageReceiver.cpp
+WebInspectorUIMessageReceiver.cpp @cost:3
+WebInspectorUIProxyMessageReceiver.cpp @cost:4
+WebNotificationManagerMessageReceiver.cpp
+WebPageMessageReceiver.cpp @cost:22
+WebPageProxyMessageReceiver.cpp @cost:33
+WebPageTestingMessageReceiver.cpp
+WebPasteboardProxyMessageReceiver.cpp @cost:15
+WebPaymentCoordinatorMessageReceiver.cpp
+WebPaymentCoordinatorProxyMessageReceiver.cpp @cost:3
+WebProcessMessageReceiver.cpp @cost:9
+WebProcessPoolMessageReceiver.cpp @cost:10
+WebProcessProxyMessageReceiver.cpp @cost:15
+WebResourceLoaderMessageReceiver.cpp @cost:3
+WebRTCMonitorMessageReceiver.cpp @cost:3
+WebRTCResolverMessageReceiver.cpp
+WebSocketChannelMessageReceiver.cpp
+WebSpeechRecognitionConnectionMessageReceiver.cpp
+WebSWClientConnectionMessageReceiver.cpp @cost:3
+WebSWContextManagerConnectionMessageReceiver.cpp @cost:5
+WebSWServerConnectionMessageReceiver.cpp @cost:5
+WebSWServerToContextConnectionMessageReceiver.cpp @cost:5
+WebUserContentControllerMessageReceiver.cpp

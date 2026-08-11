@@ -1,0 +1,83 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the milestone belongs.
+  # milestone: object; Bugzilla::Milestone object representing the
+  #                    milestone the user wants to delete.
+  #%]
+
+[% title = BLOCK %]Delete Milestone of Product '[% product.name FILTER html %]'
+  [% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<table id="admin_table">
+  <tr class="column_header">
+    <th>Field</th>
+    <th>Value</th>
+  </tr>
+  <tr>
+    <td>Milestone</td>
+    <td>[% milestone.name FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>Milestone of Product</td>
+    <td>[% product.name FILTER html %]</td>
+  </tr>
+  <tr>
+    <td>[% terms.Bugs %]</td>
+    <td>
+      [% IF milestone.bug_count %]
+        <a title="List of [% terms.bugs %] targetted at milestone '
+                 [%- milestone.name FILTER html %]'"
+           href="buglist.cgi?target_milestone=[% milestone.name FILTER uri %]&amp;product=
+                [%- product.name FILTER uri %]">
+          [% milestone.bug_count FILTER none %]</a>
+      [% ELSE %]
+        None
+      [% END %]
+    </td>
+  </tr>
+</table>
+
+<h2>Confirmation</h2>
+  
+[% IF milestone.bug_count %]
+
+  <p class="confirmation">
+    There
+    [% IF milestone.bug_count > 1 %] 
+      are [% milestone.bug_count FILTER none %] [%+ terms.bugs %] 
+    [% ELSE %]
+      is 1 [% terms.bug %]
+    [% END %]
+    entered for this milestone! When you delete this milestone,
+    <b>ALL</b> of these [% terms.bugs %] will be retargeted
+    to [% product.default_milestone FILTER html %], the default milestone for 
+    the [% product.name FILTER html %] product.
+  </p>
+[% END %]
+
+<p>Do you really want to delete this milestone?<p>
+
+<form method="post" action="editmilestones.cgi">
+  <input type="submit" id="delete" value="Yes, delete">
+  <input type="hidden" name="action" value="delete">
+  <input type="hidden" name="product" value="[% product.name FILTER html %]">
+  <input type="hidden" name="milestone" value="[% milestone.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+</form>
+
+[% PROCESS admin/milestones/footer.html.tmpl %]
+
+[% PROCESS global/footer.html.tmpl %] 

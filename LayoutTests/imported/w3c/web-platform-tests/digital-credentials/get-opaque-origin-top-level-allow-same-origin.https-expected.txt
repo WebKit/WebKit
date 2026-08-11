@@ -1,0 +1,3 @@
+
+PASS get() from a top-level sandboxed page with allow-same-origin is not rejected as opaque
+

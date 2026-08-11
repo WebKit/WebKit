@@ -1,0 +1,8 @@
+ALERT: PASS (1/2)
+CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to execute a script because its hash, its nonce, or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
+ALERT: PASS (2/2)
+This tests the effect of a valid script-nonce value. It passes if three console warnings are visible, and the two PASS alerts are executed.
+
+PASS

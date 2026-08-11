@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    img {
+        margin: 10px;
+        width: 300px;
+        height: 300px;
+    }
+
+    .clipped {
+        clip-path: url(#clipper);
+    }
+</style>
+</head>
+<body>
+
+<img class="clipped" src="../resources/simple_image_opaque.png">
+
+<svg height="0">
+    <clipPath id="clipper" clipPathUnits="objectBoundingBox">
+        <rect x="0.25" y="0.25" width="0.5" height="0.5"/>
+    </clipPath>
+</svg>
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+Check the complex selectors with :is pseudo class, nested and multiple :is.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing "testcase:is(:is(bb, gg) > testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(bb, gg) > testcase)').length is 4
+PASS document.querySelectorAll('#test-root testcase:is(:is(bb, gg) > testcase)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(:is(bb, gg) > testcase)')[1].id is "testcase2"
+PASS document.querySelectorAll('#test-root testcase:is(:is(bb, gg) > testcase)')[2].id is "testcase3"
+PASS document.querySelectorAll('#test-root testcase:is(:is(bb, gg) > testcase)')[3].id is "testcase4"
+PASS styledElements is ["testcase1","testcase2","testcase3","testcase4"]
+
+Testing "testcase:is(:is(dd, cc) + *)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd, cc) + *)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd, cc) + *)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd, cc) + *)')[1].id is "testcase3"
+PASS styledElements is ["testcase1","testcase3"]
+
+Testing "testcase:is(:is(ee > ee > ee > ff > ee > ee > ff > gg) > *)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(ee > ee > ee > ff > ee > ee > ff > gg) > *)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(:is(ee > ee > ee > ff > ee > ee > ff > gg) > *)')[0].id is "testcase2"
+PASS styledElements is ["testcase2"]
+
+Testing "testcase:is(bb > :is(bb, bb > aa) > aa > bb testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(bb > :is(bb, bb > aa) > aa > bb testcase)').length is 4
+PASS document.querySelectorAll('#test-root testcase:is(bb > :is(bb, bb > aa) > aa > bb testcase)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(bb > :is(bb, bb > aa) > aa > bb testcase)')[1].id is "testcase2"
+PASS document.querySelectorAll('#test-root testcase:is(bb > :is(bb, bb > aa) > aa > bb testcase)')[2].id is "testcase3"
+PASS document.querySelectorAll('#test-root testcase:is(bb > :is(bb, bb > aa) > aa > bb testcase)')[3].id is "testcase4"
+PASS styledElements is ["testcase1","testcase2","testcase3","testcase4"]
+
+Testing "testcase:is(:is(bb > aa > aa > bb > aa) > aa > bb testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(bb > aa > aa > bb > aa) > aa > bb testcase)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(:is(bb > aa > aa > bb > aa) > aa > bb testcase)')[0].id is "testcase3"
+PASS document.querySelectorAll('#test-root testcase:is(:is(bb > aa > aa > bb > aa) > aa > bb testcase)')[1].id is "testcase4"
+PASS styledElements is ["testcase3","testcase4"]
+
+Testing "testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb testcase)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb testcase)')[0].id is "testcase3"
+PASS document.querySelectorAll('#test-root testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb testcase)')[1].id is "testcase4"
+PASS styledElements is ["testcase3","testcase4"]
+
+Testing "testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb > testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb > testcase)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb > testcase)')[0].id is "testcase3"
+PASS styledElements is ["testcase3"]
+
+Testing "testcase:is(:is(dd + dd) + cc + dd ~ testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd + dd) + cc + dd ~ testcase)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd + dd) + cc + dd ~ testcase)')[0].id is "testcase3"
+PASS styledElements is ["testcase3"]
+
+Testing "testcase:is(:is(dd + dd + cc + *) ~ testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd + dd + cc + *) ~ testcase)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd + dd + cc + *) ~ testcase)')[0].id is "testcase3"
+PASS styledElements is ["testcase3"]
+
+Testing "testcase:is(:is(:is(:is(:is(dd) + dd) + *) + dd) ~ testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(:is(:is(:is(dd) + dd) + *) + dd) ~ testcase)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(:is(:is(:is(:is(dd) + dd) + *) + dd) ~ testcase)')[0].id is "testcase3"
+PASS styledElements is ["testcase3"]
+
+Testing "testcase:is(:is(dd + * + :is(cc + dd)) ~ testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd + * + :is(cc + dd)) ~ testcase)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd + * + :is(cc + dd)) ~ testcase)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd + * + :is(cc + dd)) ~ testcase)')[1].id is "testcase3"
+PASS styledElements is ["testcase1","testcase3"]
+
+Testing "testcase:is(:is(* + dd + cc + :is(cc + dd)) ~ testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(* + dd + cc + :is(cc + dd)) ~ testcase)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(:is(* + dd + cc + :is(cc + dd)) ~ testcase)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(:is(* + dd + cc + :is(cc + dd)) ~ testcase)')[1].id is "testcase3"
+PASS styledElements is ["testcase1","testcase3"]
+
+Testing "testcase:is(* + :is(* + cc) + dd ~ testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(* + :is(* + cc) + dd ~ testcase)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(* + :is(* + cc) + dd ~ testcase)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(* + :is(* + cc) + dd ~ testcase)')[1].id is "testcase3"
+PASS styledElements is ["testcase1","testcase3"]
+
+Testing "testcase:is(cc + * + * + :is(cc + cc + cc) + dd ~ testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(cc + * + * + :is(cc + cc + cc) + dd ~ testcase)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(cc + * + * + :is(cc + cc + cc) + dd ~ testcase)')[0].id is "testcase1"
+PASS styledElements is ["testcase1"]
+
+Testing "testcase:is(cc + cc + cc + :is(cc + :is(unknown, *)) ~ testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(cc + cc + cc + :is(cc + :is(unknown, *)) ~ testcase)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(cc + cc + cc + :is(cc + :is(unknown, *)) ~ testcase)')[0].id is "testcase1"
+PASS styledElements is ["testcase1"]
+
+Testing "testcase:is(:is(:is(* + * + * + *) + *, :is(*) + cc + * + * + *) ~ testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(:is(* + * + * + *) + *, :is(*) + cc + * + * + *) ~ testcase)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(:is(:is(* + * + * + *) + *, :is(*) + cc + * + * + *) ~ testcase)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(:is(:is(* + * + * + *) + *, :is(*) + cc + * + * + *) ~ testcase)')[1].id is "testcase3"
+PASS styledElements is ["testcase1","testcase3"]
+
+Testing "testcase:is(:is(:is(aa > aa > aa > *) testcase, * + * + * + * + * ~ testcase))"
+PASS document.querySelectorAll('#test-root testcase:is(:is(:is(aa > aa > aa > *) testcase, * + * + * + * + * ~ testcase))').length is 3
+PASS document.querySelectorAll('#test-root testcase:is(:is(:is(aa > aa > aa > *) testcase, * + * + * + * + * ~ testcase))')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(:is(:is(aa > aa > aa > *) testcase, * + * + * + * + * ~ testcase))')[1].id is "testcase2"
+PASS document.querySelectorAll('#test-root testcase:is(:is(:is(aa > aa > aa > *) testcase, * + * + * + * + * ~ testcase))')[2].id is "testcase3"
+PASS styledElements is ["testcase1","testcase2","testcase3"]
+
+Testing "testcase:is(:visited)"
+PASS document.querySelectorAll('#test-root testcase:is(:visited)').length is 0
+PASS styledElements is []
+
+Testing "testcase:is(cc + *, :visited)"
+PASS document.querySelectorAll('#test-root testcase:is(cc + *, :visited)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(cc + *, :visited)')[0].id is "testcase3"
+PASS styledElements is ["testcase3"]
+
+Testing "testcase:is(:is(bb, gg) > testcase):is(ff > gg > testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(bb, gg) > testcase):is(ff > gg > testcase)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(:is(bb, gg) > testcase):is(ff > gg > testcase)')[0].id is "testcase2"
+PASS document.querySelectorAll('#test-root testcase:is(:is(bb, gg) > testcase):is(ff > gg > testcase)')[1].id is "testcase4"
+PASS styledElements is ["testcase2","testcase4"]
+
+Testing "testcase:is(:is(dd, cc) + *):is(dd + * + *)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd, cc) + *):is(dd + * + *)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(:is(dd, cc) + *):is(dd + * + *)')[0].id is "testcase3"
+PASS styledElements is ["testcase3"]
+
+Testing "testcase:is(:is(ee > ee > ee > ff > ee > ee > ff > gg) > *):is(testcase *)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(ee > ee > ee > ff > ee > ee > ff > gg) > *):is(testcase *)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(:is(ee > ee > ee > ff > ee > ee > ff > gg) > *):is(testcase *)')[0].id is "testcase2"
+PASS styledElements is ["testcase2"]
+
+Testing "testcase:is(:is(:not(dd)) + *)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(:not(dd)) + *)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(:is(:not(dd)) + *)')[0].id is "testcase3"
+PASS styledElements is ["testcase3"]
+
+Testing "testcase:is(:is(:not(cc)) + *)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(:not(cc)) + *)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(:is(:not(cc)) + *)')[0].id is "testcase1"
+PASS styledElements is ["testcase1"]
+
+Testing "testcase:is(:is(:not(cc), :not(dd)) + *)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(:not(cc), :not(dd)) + *)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(:is(:not(cc), :not(dd)) + *)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(:is(:not(cc), :not(dd)) + *)')[1].id is "testcase3"
+PASS styledElements is ["testcase1","testcase3"]
+
+Testing "testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb testcase):is(* + :is(* + cc) + dd ~ testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb testcase):is(* + :is(* + cc) + dd ~ testcase)').length is 1
+PASS document.querySelectorAll('#test-root testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb testcase):is(* + :is(* + cc) + dd ~ testcase)')[0].id is "testcase3"
+PASS styledElements is ["testcase3"]
+
+Testing "testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb testcase, * + :is(* + cc) + dd ~ testcase):is(* + :is(* + cc) + dd ~ testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb testcase, * + :is(* + cc) + dd ~ testcase):is(* + :is(* + cc) + dd ~ testcase)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb testcase, * + :is(* + cc) + dd ~ testcase):is(* + :is(* + cc) + dd ~ testcase)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(:is(aa:is(bb > aa > aa) > bb > aa) > aa > bb testcase, * + :is(* + cc) + dd ~ testcase):is(* + :is(* + cc) + dd ~ testcase)')[1].id is "testcase3"
+PASS styledElements is ["testcase1","testcase3"]
+
+Testing "testcase:is(bb > :is(bb, bb > aa) > aa > bb testcase):is(:is(bb > aa > aa > bb > aa) > aa > bb testcase)"
+PASS document.querySelectorAll('#test-root testcase:is(bb > :is(bb, bb > aa) > aa > bb testcase):is(:is(bb > aa > aa > bb > aa) > aa > bb testcase)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(bb > :is(bb, bb > aa) > aa > bb testcase):is(:is(bb > aa > aa > bb > aa) > aa > bb testcase)')[0].id is "testcase3"
+PASS document.querySelectorAll('#test-root testcase:is(bb > :is(bb, bb > aa) > aa > bb testcase):is(:is(bb > aa > aa > bb > aa) > aa > bb testcase)')[1].id is "testcase4"
+PASS styledElements is ["testcase3","testcase4"]
+
+Testing "testcase:is(aa + *, bb + *, cc + *, dd + *, ee + *, ff + *, gg + *, hh + *, ii + *, jj + *, kk + *, ll + *, mm + *, nn + *)"
+PASS document.querySelectorAll('#test-root testcase:is(aa + *, bb + *, cc + *, dd + *, ee + *, ff + *, gg + *, hh + *, ii + *, jj + *, kk + *, ll + *, mm + *, nn + *)').length is 2
+PASS document.querySelectorAll('#test-root testcase:is(aa + *, bb + *, cc + *, dd + *, ee + *, ff + *, gg + *, hh + *, ii + *, jj + *, kk + *, ll + *, mm + *, nn + *)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(aa + *, bb + *, cc + *, dd + *, ee + *, ff + *, gg + *, hh + *, ii + *, jj + *, kk + *, ll + *, mm + *, nn + *)')[1].id is "testcase3"
+PASS styledElements is ["testcase1","testcase3"]
+
+Testing "testcase:is(aa > aa > aa > aa *, aa > aa > aa > dd *, aa > aa > aa > hh *, cc aa > aa > aa > hh *, cc ff > aa > aa > hh *, bb > aa > aa > bb *, aa > aa > aa > bb *, aa > cc > aa > aa *)"
+PASS document.querySelectorAll('#test-root testcase:is(aa > aa > aa > aa *, aa > aa > aa > dd *, aa > aa > aa > hh *, cc aa > aa > aa > hh *, cc ff > aa > aa > hh *, bb > aa > aa > bb *, aa > aa > aa > bb *, aa > cc > aa > aa *)').length is 4
+PASS document.querySelectorAll('#test-root testcase:is(aa > aa > aa > aa *, aa > aa > aa > dd *, aa > aa > aa > hh *, cc aa > aa > aa > hh *, cc ff > aa > aa > hh *, bb > aa > aa > bb *, aa > aa > aa > bb *, aa > cc > aa > aa *)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:is(aa > aa > aa > aa *, aa > aa > aa > dd *, aa > aa > aa > hh *, cc aa > aa > aa > hh *, cc ff > aa > aa > hh *, bb > aa > aa > bb *, aa > aa > aa > bb *, aa > cc > aa > aa *)')[1].id is "testcase2"
+PASS document.querySelectorAll('#test-root testcase:is(aa > aa > aa > aa *, aa > aa > aa > dd *, aa > aa > aa > hh *, cc aa > aa > aa > hh *, cc ff > aa > aa > hh *, bb > aa > aa > bb *, aa > aa > aa > bb *, aa > cc > aa > aa *)')[2].id is "testcase3"
+PASS document.querySelectorAll('#test-root testcase:is(aa > aa > aa > aa *, aa > aa > aa > dd *, aa > aa > aa > hh *, cc aa > aa > aa > hh *, cc ff > aa > aa > hh *, bb > aa > aa > bb *, aa > aa > aa > bb *, aa > cc > aa > aa *)')[3].id is "testcase4"
+PASS styledElements is ["testcase1","testcase2","testcase3","testcase4"]
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

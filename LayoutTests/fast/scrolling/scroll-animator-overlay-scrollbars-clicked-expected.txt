@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: MainLocalFrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: MainLocalFrameView: mouseEnteredVerticalScrollbar
+CONSOLE MESSAGE: MainLocalFrameView: mouseMovedInContentArea
+CONSOLE MESSAGE: LocalFrameView: mouseEnteredContentArea
+CONSOLE MESSAGE: MainLocalFrameView: mouseIsDownInVerticalScrollbar
+CONSOLE MESSAGE: MainLocalFrameView: mouseIsUpInVerticalScrollbar
+CONSOLE MESSAGE: MainLocalFrameView: mouseExitedVerticalScrollbar
+CONSOLE MESSAGE: LocalFrameView: mouseExitedContentArea
+CONSOLE MESSAGE: MainLocalFrameView: mouseMovedInContentArea
+Test for https://bugs.webkit.org/show_bug.cgi?id=165056.
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

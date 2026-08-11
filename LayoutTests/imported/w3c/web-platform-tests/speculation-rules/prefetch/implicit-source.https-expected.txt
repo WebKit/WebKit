@@ -1,0 +1,3 @@
+
+PASS rules should be accepted without an explicit source
+

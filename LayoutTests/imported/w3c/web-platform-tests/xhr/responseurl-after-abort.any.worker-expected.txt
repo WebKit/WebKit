@@ -1,0 +1,7 @@
+
+PASS abort() during HEADERS_RECEIVED clears responseURL
+PASS abort() during LOADING clears responseURL
+PASS abort() during DONE clears responseURL (async)
+PASS abort() during DONE clears responseURL (sync)
+PASS responseURL reflects the new response after abort() and reuse
+

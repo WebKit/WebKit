@@ -1,0 +1,17 @@
+This test ensures that elements with the HTML hidden attribute are not exposed to assistive technologies, even when they have ARIA relationship attributes like aria-controls or aria-expanded.
+
+PASS: visibleWithControls.role.toLowerCase().includes('button') === true
+PASS: visibleWithControls.isIgnored === false
+PASS: hiddenWithControls === null
+PASS: hiddenWithNonexistentControls === null
+PASS: hiddenWithExpanded === null
+PASS: visibleWithExpanded.role.toLowerCase().includes('button') === true
+PASS: visibleWithExpanded.isIgnored === false
+PASS: dynamicButton.isIgnored === false
+PASS: accessibilityController.accessibleElementById('dynamic-button') === null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Visible button with aria-controls  Visible button with aria-expanded
+Panel content

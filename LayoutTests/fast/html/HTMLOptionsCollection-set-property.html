@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<select id="testSelect">
+<option type="text" id="selectedIndex" name="selectedIndex">
+<option type="text" id="action" name="action">
+<option type="text" id="testOption" name="testOption">
+</select>
+<script>
+description("Tests setting properties on HTMLOptionsCollection");
+
+collection = document.getElementById("testSelect").options;
+
+shouldBe("collection.selectedIndex", "0");
+shouldBe("collection.action", "document.getElementById('action')");
+shouldBe("collection[0]", "document.getElementById('selectedIndex')");
+shouldBe("collection.testOption", "document.getElementById('testOption')");
+shouldBeUndefined("collection.foo");
+
+evalAndLog("collection.selectedIndex = 1");
+shouldThrowErrorName("collection[0] = 'bar'", "TypeError");
+shouldBe("collection.selectedIndex", "1");
+let firstOption = document.getElementById('selectedIndex');
+evalAndLog("firstOption.id = 'bar'");
+evalAndLog("firstOption.name = 'bar'");
+shouldBe("collection.selectedIndex", "1");
+
+evalAndLog("collection.action = 'about:blank'");
+shouldBe("collection.action", "document.getElementById('action')");
+evalAndLog("document.getElementById('action').remove()");
+shouldBeUndefined("collection.action");
+
+evalAndLog("collection.testOption = 'test'");
+shouldBe("collection.testOption", "document.getElementById('testOption')");
+evalAndLog("document.getElementById('testOption').remove()");
+shouldBeUndefined("collection.testOption");
+
+evalAndLog("collection.foo = 'test'");
+shouldBeEqualToString("collection.foo", "test");
+
+shouldBe("collection[0]", "firstOption");
+</script>
+</body>
+</html>

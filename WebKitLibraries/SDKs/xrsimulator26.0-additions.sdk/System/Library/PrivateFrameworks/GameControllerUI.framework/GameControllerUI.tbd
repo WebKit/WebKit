@@ -1,0 +1,8 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [x86_64-xros-simulator, arm64-xros-simulator]
+install-name: /System/Library/PrivateFrameworks/GameControllerUI.framework/GameControllerUI
+current-version: 13.0.39
+swift-abi-version: 7
+exports: []
+...

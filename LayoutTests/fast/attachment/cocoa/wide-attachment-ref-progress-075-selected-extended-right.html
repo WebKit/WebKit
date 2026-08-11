@@ -1,0 +1,15 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true ] -->
+<html class="reftest-wait">
+<head>
+<meta name="fuzzy" content="maxDifference=0-76;totalPixels=0-299" /> <!-- Tolerance for gap between text/span and attachment -->
+<style>span { vertical-align: top; }</style> <!-- Disregard baselines -->
+</head>
+<body>
+<attachment id="a" title="Title.pdf" progress="0.75"></attachment><span id="after">after</span>
+<script src="../resources/attachment-test-utils.js"></script>
+<script>
+window.getSelection().setBaseAndExtent(a.previousSibling, a.previousSibling.length, after.firstChild, 3);
+takeActualScreenshotWhenAttachmentsSettled();
+</script>
+</body>
+</html>

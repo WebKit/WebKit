@@ -1,0 +1,205 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kCoreEndianResourceManagerDomain"},
+      {"access": "public", "name": "kCoreEndianAppleEventManagerDomain"}
+     ],
+     "name": "enum (unnamed at Endian.h:3281)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "noErr"}
+     ],
+     "name": "enum (unnamed at MacTypes.h:3881)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kNilOptions"}
+     ],
+     "name": "enum (unnamed at MacTypes.h:3921)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kVariableLengthArray"}
+     ],
+     "name": "enum (unnamed at MacTypes.h:3971)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kUnknownType"}
+     ],
+     "name": "enum (unnamed at MacTypes.h:4071)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "normal"},
+      {"access": "public", "name": "bold"},
+      {"access": "public", "name": "italic"},
+      {"access": "public", "name": "underline"},
+      {"access": "public", "name": "outline"},
+      {"access": "public", "name": "shadow"},
+      {"access": "public", "name": "condense"},
+      {"access": "public", "name": "extend"}
+     ],
+     "name": "enum (unnamed at MacTypes.h:5721)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "developStage"},
+      {"access": "public", "name": "alphaStage"},
+      {"access": "public", "name": "betaStage"},
+      {"access": "public", "name": "finalStage"}
+     ],
+     "name": "enum (unnamed at MacTypes.h:6621)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "4", "kind": "function", "linkage": "exported", "name": "_CoreEndianFlipData"},
+    {"access": "public", "introduced": "4", "kind": "function", "linkage": "exported", "name": "_CoreEndianGetFlipper"},
+    {"access": "public", "introduced": "4", "kind": "function", "linkage": "exported", "name": "_CoreEndianInstallFlipper"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_DebugStr", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_Debugger", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_SysBreak", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_SysBreakFunc", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_SysBreakStr", "unavailable": true}
+   ],
+   "target": "arm64e-apple-ios",
+   "typedefs": [
+    {"access": "public", "name": "AbsoluteTime"},
+    {"access": "public", "name": "BigEndianFixed"},
+    {"access": "public", "name": "BigEndianLong"},
+    {"access": "public", "name": "BigEndianOSType"},
+    {"access": "public", "name": "BigEndianShort"},
+    {"access": "public", "name": "BigEndianUnsignedFixed"},
+    {"access": "public", "name": "BigEndianUnsignedLong"},
+    {"access": "public", "name": "BigEndianUnsignedShort"},
+    {"access": "public", "name": "Boolean"},
+    {"access": "public", "name": "Byte"},
+    {"access": "public", "name": "ByteCount"},
+    {"access": "public", "name": "ByteOffset"},
+    {"access": "public", "name": "BytePtr"},
+    {"access": "public", "name": "CharParameter"},
+    {"access": "public", "name": "CompTimeValue"},
+    {"access": "public", "name": "ConstLogicalAddress"},
+    {"access": "public", "name": "ConstStr15Param"},
+    {"access": "public", "name": "ConstStr255Param"},
+    {"access": "public", "name": "ConstStr27Param"},
+    {"access": "public", "name": "ConstStr31Param"},
+    {"access": "public", "name": "ConstStr32Param"},
+    {"access": "public", "name": "ConstStr63Param"},
+    {"access": "public", "name": "ConstStrFileNameParam"},
+    {"access": "public", "name": "ConstStringPtr"},
+    {"access": "public", "name": "CoreEndianFlipProc"},
+    {"access": "public", "name": "Duration"},
+    {"access": "public", "name": "Fixed"},
+    {"access": "public", "name": "FixedPoint"},
+    {"access": "public", "name": "FixedPtr"},
+    {"access": "public", "name": "FixedRect"},
+    {"access": "public", "name": "Float32"},
+    {"access": "public", "name": "Float32Point"},
+    {"access": "public", "name": "Float64"},
+    {"access": "public", "name": "Float80"},
+    {"access": "public", "name": "Float96"},
+    {"access": "public", "name": "FourCharCode"},
+    {"access": "public", "name": "Fract"},
+    {"access": "public", "name": "FractPtr"},
+    {"access": "public", "name": "Handle"},
+    {"access": "public", "name": "ItemCount"},
+    {"access": "public", "name": "LangCode"},
+    {"access": "public", "name": "LogicalAddress"},
+    {"access": "public", "name": "NumVersion"},
+    {"access": "public", "name": "NumVersionVariant"},
+    {"access": "public", "name": "NumVersionVariantHandle"},
+    {"access": "public", "name": "NumVersionVariantPtr"},
+    {"access": "public", "name": "OSErr"},
+    {"access": "public", "name": "OSStatus"},
+    {"access": "public", "name": "OSType"},
+    {"access": "public", "name": "OSTypePtr"},
+    {"access": "public", "name": "OptionBits"},
+    {"access": "public", "name": "PBVersion"},
+    {"access": "public", "name": "PRefCon"},
+    {"access": "public", "name": "PhysicalAddress"},
+    {"access": "public", "name": "Point"},
+    {"access": "public", "name": "PointPtr"},
+    {"access": "public", "name": "ProcHandle"},
+    {"access": "public", "name": "ProcPtr"},
+    {"access": "public", "name": "ProcessSerialNumber"},
+    {"access": "public", "name": "ProcessSerialNumberPtr"},
+    {"access": "public", "name": "Ptr"},
+    {"access": "public", "name": "Rect"},
+    {"access": "public", "name": "RectPtr"},
+    {"access": "public", "name": "RegionCode"},
+    {"access": "public", "name": "Register68kProcPtr"},
+    {"access": "public", "name": "ResType"},
+    {"access": "public", "name": "ResTypePtr"},
+    {"access": "public", "name": "SInt16"},
+    {"access": "public", "name": "SInt32"},
+    {"access": "public", "name": "SInt64"},
+    {"access": "public", "name": "SInt8"},
+    {"access": "public", "name": "SRefCon"},
+    {"access": "public", "name": "ScriptCode"},
+    {"access": "public", "name": "ShortFixed"},
+    {"access": "public", "name": "ShortFixedPtr"},
+    {"access": "public", "name": "SignedByte"},
+    {"access": "public", "name": "Size"},
+    {"access": "public", "name": "Str15"},
+    {"access": "public", "name": "Str255"},
+    {"access": "public", "name": "Str27"},
+    {"access": "public", "name": "Str31"},
+    {"access": "public", "name": "Str32"},
+    {"access": "public", "name": "Str32Field"},
+    {"access": "public", "name": "Str63"},
+    {"access": "public", "name": "StrFileName"},
+    {"access": "public", "name": "StringHandle"},
+    {"access": "public", "name": "StringPtr"},
+    {"access": "public", "name": "Style"},
+    {"access": "public", "name": "StyleField"},
+    {"access": "public", "name": "StyleParameter"},
+    {"access": "public", "name": "TimeBase"},
+    {"access": "public", "name": "TimeRecord"},
+    {"access": "public", "name": "TimeScale"},
+    {"access": "public", "name": "TimeValue"},
+    {"access": "public", "name": "TimeValue64"},
+    {"access": "public", "name": "UInt16"},
+    {"access": "public", "name": "UInt32"},
+    {"access": "public", "name": "UInt64"},
+    {"access": "public", "name": "UInt8"},
+    {"access": "public", "name": "URefCon"},
+    {"access": "public", "name": "UTF16Char"},
+    {"access": "public", "name": "UTF32Char"},
+    {"access": "public", "name": "UTF8Char"},
+    {"access": "public", "name": "UniChar"},
+    {"access": "public", "name": "UniCharCount"},
+    {"access": "public", "name": "UniCharCountPtr"},
+    {"access": "public", "name": "UniCharPtr"},
+    {"access": "public", "name": "UnicodeScalarValue"},
+    {"access": "public", "name": "UniversalProcHandle"},
+    {"access": "public", "name": "UniversalProcPtr"},
+    {"access": "public", "name": "UnsignedFixed"},
+    {"access": "public", "name": "UnsignedFixedPtr"},
+    {"access": "public", "name": "UnsignedWide"},
+    {"access": "public", "name": "UnsignedWidePtr"},
+    {"access": "public", "name": "VHSelect"},
+    {"access": "public", "name": "VersRec"},
+    {"access": "public", "name": "VersRecHndl"},
+    {"access": "public", "name": "VersRecPtr"},
+    {"access": "public", "name": "WidePtr"},
+    {"access": "public", "name": "extended80"},
+    {"access": "public", "name": "extended96"},
+    {"access": "public", "name": "wide"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

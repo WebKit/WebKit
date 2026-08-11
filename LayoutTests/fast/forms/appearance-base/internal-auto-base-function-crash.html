@@ -1,0 +1,7 @@
+<!-- webkit-test-runner [ CSSInternalAutoBaseParsingEnabled=true ] -->
+<!DOCTYPE html>
+<div id="div">Test passes if it doesn't crash</div>
+<script>
+    div.style.borderRadius = "-internal-auto-base(initial, 0.5em)";
+    div.style.getPropertyValue("border-radius");
+</script>

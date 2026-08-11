@@ -1,0 +1,161 @@
+/*
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "NetworkCacheData.h"
+#include <wtf/CrossThreadCopier.h>
+#include <wtf/SHA1.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/WTFString.h>
+
+namespace WTF::Persistence {
+template<typename> struct Coder;
+}
+
+namespace WebKit::NetworkCache {
+
+struct DataKey {
+    String partition;
+    String type;
+    SHA1::Digest identifier;
+
+    template <class Encoder> void encodeForPersistence(Encoder& encoder) const
+    {
+        encoder << partition << type << identifier;
+    }
+
+    template <class Decoder> [[nodiscard]] static bool decodeForPersistence(Decoder& decoder, DataKey& dataKey)
+    {
+        return decoder.decode(dataKey.partition) && decoder.decode(dataKey.type) && decoder.decode(dataKey.identifier);
+    }
+};
+
+class Key {
+public:
+    typedef SHA1::Digest HashType;
+
+    Key() { }
+    Key(const Key&);
+    Key(Key&&) = default;
+    Key(const String& partition, const String& type, const String& range, const String& identifier, const Salt&);
+    Key(const DataKey&, const Salt&);
+
+    Key& operator=(const Key&);
+    Key& operator=(Key&&) = default;
+
+    Key(WTF::HashTableDeletedValueType);
+    bool isHashTableDeletedValue() const { return m_identifier.isHashTableDeletedValue(); }
+
+    bool isNull() const { return m_identifier.isNull(); }
+
+    const String& partition() const LIFETIME_BOUND { return m_partition; }
+    const String& identifier() const LIFETIME_BOUND { return m_identifier; }
+    const String& type() const LIFETIME_BOUND { return m_type; }
+    const String& range() const LIFETIME_BOUND { return m_range; }
+
+    const HashType& hash() const LIFETIME_BOUND { return m_hash; }
+    const HashType& partitionHash() const LIFETIME_BOUND { return m_partitionHash; }
+
+    static bool NODELETE stringToHash(const String&, HashType&);
+
+    static size_t hashStringLength() { return 2 * sizeof(m_hash); }
+    String hashAsString() const { return hashAsString(m_hash); }
+    String partitionHashAsString() const { return hashAsString(m_partitionHash); }
+
+    bool operator==(const Key&) const;
+
+    static String partitionToPartitionHashAsString(const String& partition, const Salt&);
+
+    Key isolatedCopy() && { return {
+        crossThreadCopy(WTF::move(m_partition)),
+        crossThreadCopy(WTF::move(m_type)),
+        crossThreadCopy(WTF::move(m_identifier)),
+        crossThreadCopy(WTF::move(m_range)),
+        m_hash,
+        m_partitionHash
+    }; }
+
+    Key isolatedCopy() const & { return {
+        crossThreadCopy(m_partition),
+        crossThreadCopy(m_type),
+        crossThreadCopy(m_identifier),
+        crossThreadCopy(m_range),
+        m_hash,
+        m_partitionHash
+    }; }
+
+private:
+    friend struct WTF::Persistence::Coder<Key>;
+    static String hashAsString(const HashType&);
+    HashType computeHash(const Salt&) const;
+    HashType computePartitionHash(const Salt&) const;
+    static HashType partitionToPartitionHash(const String& partition, const Salt&);
+    Key(String&& partition, String&& type, String&& identifier, String&& range, HashType hash, HashType partitionHash)
+        : m_partition(WTF::move(partition))
+        , m_type(WTF::move(type))
+        , m_identifier(WTF::move(identifier))
+        , m_range(WTF::move(range))
+        , m_hash(hash)
+        , m_partitionHash(partitionHash) { }
+
+    String m_partition;
+    String m_type;
+    String m_identifier;
+    String m_range;
+    HashType m_hash;
+    HashType m_partitionHash;
+};
+
+}
+
+namespace WTF {
+
+struct NetworkCacheKeyHash {
+    static unsigned hash(const WebKit::NetworkCache::Key& key)
+    {
+        static_assert(SHA1::hashSize >= sizeof(unsigned), "Hash size must be greater than sizeof(unsigned)");
+        return reinterpretCastSpanStartTo<const unsigned>(std::span { key.hash() });
+    }
+
+    static bool equal(const WebKit::NetworkCache::Key& a, const WebKit::NetworkCache::Key& b)
+    {
+        return a == b;
+    }
+
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<WebKit::NetworkCache::Key> : NetworkCacheKeyHash { };
+
+template<> struct HashTraits<WebKit::NetworkCache::Key> : SimpleClassHashTraits<WebKit::NetworkCache::Key> {
+    static const bool emptyValueIsZero = false;
+
+    static const bool hasIsEmptyValueFunction = true;
+    static bool isEmptyValue(const WebKit::NetworkCache::Key& key) { return key.isNull(); }
+};
+
+} // namespace WTF

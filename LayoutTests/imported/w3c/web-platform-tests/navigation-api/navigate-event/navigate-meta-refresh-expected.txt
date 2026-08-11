@@ -1,0 +1,4 @@
+
+
+PASS <meta> refresh fires navigate event
+

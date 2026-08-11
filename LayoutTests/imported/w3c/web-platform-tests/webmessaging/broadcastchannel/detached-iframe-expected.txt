@@ -1,0 +1,8 @@
+
+PASS BroadcastChannel messages from detached iframe to parent should be ignored (BC created before detaching)
+PASS BroadcastChannel messages from detached iframe to parent should be ignored (BC created after detaching)
+PASS BroadcastChannel messages from parent to detached iframe should be ignored (BC created before detaching)
+PASS BroadcastChannel messages from parent to detached iframe should be ignored (BC created after detaching)
+PASS BroadcastChannel messages within detached iframe should be ignored (BCs created before detaching)
+PASS BroadcastChannel messages within detached iframe should be ignored (BCs created after detaching)
+

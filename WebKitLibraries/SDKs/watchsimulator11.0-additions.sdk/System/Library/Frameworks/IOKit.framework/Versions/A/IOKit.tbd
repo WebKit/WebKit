@@ -1,0 +1,12 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+install-name: /System/Library/Frameworks/IOKit.framework/Versions/A/IOKit
+current-version: 275
+exports:
+-       targets: [i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator]
+        symbols: [_IOHIDEventAppendEvent, _IOHIDEventCreateDigitizerEvent, _IOHIDEventCreateDigitizerFingerEvent, _IOHIDEventCreateDigitizerStylusEventWithPolarOrientation,
+                _IOHIDEventCreateKeyboardEvent, _IOHIDEventCreateVendorDefinedEvent, _IOHIDEventGetIntegerValue, _IOHIDEventGetType,
+                _IOHIDEventSetFloatValue, _IOHIDEventSetIntegerValue, _IOHIDEventSystemClientCreate, _IOPMAssertionCreateWithDescription,
+                _IOPMAssertionRelease, _IOPSCopyPowerSourcesInfo, _IOPSCopyPowerSourcesList, _IOPSGetPowerSourceDescription]
+...

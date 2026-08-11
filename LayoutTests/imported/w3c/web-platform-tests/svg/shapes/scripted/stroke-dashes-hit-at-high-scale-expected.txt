@@ -1,0 +1,3 @@
+
+FAIL Strokes w/dashes are properly hit-tested, even at large scale factors assert_equals: hit-test the beginning of the dash (t=0) expected Element node <circle id="circle" cx="6" cy="10" r="5" stroke="blue" st... but got Element node <svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://w...
+

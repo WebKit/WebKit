@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('Typing "- " (hyphen-minus, U+002D) at the start of two consecutive lines should auto-convert them into an unordered dashed list, using the hyphen-minus character in the custom list-style-type marker.');
+
+var test = document.getElementById('test');
+test.focus();
+[...'- Hello\n- World'].forEach(typeCharacterCommand);
+Markup.dump('test');
+</script>
+</body>
+</html>

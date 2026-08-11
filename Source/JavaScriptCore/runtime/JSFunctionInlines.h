@@ -1,0 +1,345 @@
+/*
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#pragma once
+
+#include <JavaScriptCore/ExceptionHelpers.h>
+#include <JavaScriptCore/ExecutableBaseInlines.h>
+#include <JavaScriptCore/FunctionExecutable.h>
+#include <JavaScriptCore/JSBoundFunction.h>
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/JSRemoteFunction.h>
+#include <JavaScriptCore/NativeExecutable.h>
+#include <JavaScriptCore/WebAssemblyFunction.h>
+#include <wtf/text/MakeString.h>
+
+namespace JSC {
+
+inline Structure* JSFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    ASSERT(globalObject);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
+inline Structure* JSStrictFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    ASSERT(globalObject);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
+inline Structure* JSSloppyFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    ASSERT(globalObject);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
+inline Structure* JSArrowFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    ASSERT(globalObject);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
+inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSScope* scope)
+{
+    return createWithInvalidatedReallocationWatchpoint(vm, globalObject, executable, scope, selectStructureForNewFuncExp(globalObject, executable));
+}
+
+inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+{
+    ASSERT(executable->singleton().hasBeenInvalidated());
+    return createImpl(vm, executable, scope, structure);
+}
+
+inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+    : Base(vm, scope, structure)
+    , m_executableOrRareData(std::bit_cast<uintptr_t>(executable))
+{
+    assertTypeInfoFlagInvariants();
+}
+
+inline FunctionExecutable* JSFunction::jsExecutable() const
+{
+    ASSERT(!isHostFunctionNonInline());
+    return static_cast<FunctionExecutable*>(executable());
+}
+
+inline bool JSFunction::isHostFunction() const
+{
+    ASSERT(executable());
+    return executable()->isHostFunction();
+}
+
+inline bool JSFunction::isNonBoundHostFunction() const
+{
+    return isHostFunction() && !inherits<JSBoundFunction>();
+}
+
+inline Intrinsic JSFunction::intrinsic() const
+{
+    return executable()->intrinsic();
+}
+
+inline bool JSFunction::isBuiltinFunction() const
+{
+    return !isHostFunction() && jsExecutable()->isBuiltinFunction();
+}
+
+inline bool JSFunction::isHostOrBuiltinFunction() const
+{
+    return isHostFunction() || isBuiltinFunction();
+}
+
+inline bool JSFunction::isClassConstructorFunction() const
+{
+    return !isHostFunction() && jsExecutable()->isClassConstructorFunction();
+}
+
+inline bool JSFunction::isRemoteFunction() const
+{
+    return inherits<JSRemoteFunction>();
+}
+
+inline TaggedNativeFunction JSFunction::nativeFunction()
+{
+    ASSERT(isHostFunctionNonInline());
+    return static_cast<NativeExecutable*>(executable())->function();
+}
+
+inline TaggedNativeFunction JSFunction::nativeConstructor()
+{
+    ASSERT(isHostFunctionNonInline());
+    return static_cast<NativeExecutable*>(executable())->constructor();
+}
+
+inline bool isRemoteFunction(JSValue value)
+{
+    return value.inherits<JSRemoteFunction>();
+}
+
+inline bool JSFunction::hasReifiedLength() const
+{
+    if (FunctionRareData* rareData = this->rareData())
+        return rareData->hasReifiedLength();
+    return false;
+}
+
+inline bool JSFunction::hasReifiedName() const
+{
+    if (FunctionRareData* rareData = this->rareData())
+        return rareData->hasReifiedName();
+    return false;
+}
+
+inline double JSFunction::originalLength(VM& vm)
+{
+    if (inherits<JSBoundFunction>())
+        return uncheckedDowncast<JSBoundFunction>(this)->length(vm);
+    if (inherits<JSRemoteFunction>())
+        return uncheckedDowncast<JSRemoteFunction>(this)->length(vm);
+    if (isHostFunction()) {
+        // The original length is captured in NativeExecutable at creation time.
+        return uncheckedDowncast<NativeExecutable>(executable())->length();
+    }
+    return jsExecutable()->parameterCount();
+}
+
+template<typename... StringTypes>
+ALWAYS_INLINE String makeNameWithOutOfMemoryCheck(JSGlobalObject* globalObject, ThrowScope& throwScope, ASCIILiteral messagePrefix, StringTypes... strings)
+{
+    String name = tryMakeString(strings...);
+    if (!name) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, throwScope, makeString(messagePrefix, "name is too long"_s));
+        return String();
+    }
+    return name;
+}
+
+inline JSString* JSFunction::originalName(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (this->inherits<JSBoundFunction>()) {
+        JSString* nameMayBeNull = uncheckedDowncast<JSBoundFunction>(this)->nameMayBeNull();
+        if (nameMayBeNull)
+            RELEASE_AND_RETURN(scope, jsString(globalObject, vm.smallStrings.boundPrefixString(), nameMayBeNull));
+        return jsEmptyString(vm);
+    }
+
+    if (this->inherits<JSRemoteFunction>()) {
+        JSString* nameMayBeNull = uncheckedDowncast<JSRemoteFunction>(this)->nameMayBeNull();
+        if (nameMayBeNull)
+            return nameMayBeNull;
+        return jsEmptyString(vm);
+    }
+
+    if (isHostFunction()) {
+        // Mirror the JS path below: build a fresh JSString from the original name stored on
+        // NativeExecutable. NativeExecutable is shared and uniquely keyed by name, so this
+        // always returns the original (creation-time) value even after the JSFunction's "name"
+        // property has been reified or mutated.
+        return uncheckedDowncast<NativeExecutable>(executable())->nameJSString(vm);
+    }
+
+    const Identifier& ecmaName = jsExecutable()->ecmaName();
+    String name;
+    // https://tc39.github.io/ecma262/#sec-exports-runtime-semantics-evaluation
+    // When the ident is "*default*", we need to set "default" for the ecma name.
+    // This "*default*" name is never shown to users.
+    if (ecmaName == vm.propertyNames->starDefaultPrivateName)
+        name = vm.propertyNames->defaultKeyword.string();
+    else
+        name = ecmaName.string();
+
+    if (jsExecutable()->isGetter()) {
+        name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Getter "_s, "get "_s, name);
+        RETURN_IF_EXCEPTION(scope, { });
+    } else if (jsExecutable()->isSetter()) {
+        name = makeNameWithOutOfMemoryCheck(globalObject, scope, "Setter "_s, "set "_s, name);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return jsString(vm, WTF::move(name));
+}
+
+inline bool JSFunction::canAssumeNameAndLengthAreOriginal(VM&)
+{
+    // Plain host, builtin, and JS functions all reify length/name lazily; the original value is
+    // recoverable via originalLength()/originalName() (from NativeExecutable for hosts, from
+    // FunctionExecutable for JS), so the only thing we have to refuse is bound functions
+    // (which set their length/name at bind time, not via FunctionRareData tracking) and any
+    // function whose length or name has since been user-mutated.
+    //
+    // This must be synced with JSBoundFunction::canSkipNameAndLengthMaterialization().
+    if (this->inherits<JSBoundFunction>())
+        return false;
+    FunctionRareData* rareData = this->rareData();
+    if (!rareData)
+        return true;
+    if (rareData->hasModifiedNameForBoundOrNonHostFunction())
+        return false;
+    if (rareData->hasModifiedLengthForBoundOrNonHostFunction())
+        return false;
+    return true;
+}
+
+inline bool JSFunction::mayHaveNonReifiedPrototype()
+{
+    return !isHostOrBuiltinFunction() && jsExecutable()->hasPrototypeProperty();
+}
+
+inline bool JSFunction::canUseAllocationProfiles()
+{
+    if (isHostOrBuiltinFunction()) {
+        if (isHostFunction())
+            return false;
+
+        VM& vm = this->vm();
+        unsigned attributes;
+        JSValue prototype = getDirect(vm, vm.propertyNames->prototype, attributes);
+        if (!prototype || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))
+            return false;
+    }
+
+    // If we don't have a prototype property, we're not guaranteed it's
+    // non-configurable. For example, user code can define the prototype
+    // as a getter. JS semantics require that the getter is called every
+    // time |construct| occurs with this function as new.target.
+    return jsExecutable()->hasPrototypeProperty();
+}
+
+inline FunctionRareData* JSFunction::ensureRareDataAndObjectAllocationProfile(JSGlobalObject* globalObject, unsigned inlineCapacity)
+{
+    ASSERT(canUseAllocationProfiles());
+    FunctionRareData* rareData = this->rareData();
+    if (!rareData)
+        return allocateAndInitializeRareData(globalObject, inlineCapacity);
+    if (!rareData->isObjectAllocationProfileInitialized()) [[unlikely]]
+        return initializeRareData(globalObject, inlineCapacity);
+    return rareData;
+}
+
+inline JSString* JSFunction::asStringConcurrently() const
+{
+    if (inherits<JSBoundFunction>() || inherits<JSRemoteFunction>())
+        return nullptr;
+    if (isHostFunction())
+        return static_cast<NativeExecutable*>(executable())->asStringConcurrently();
+    return jsExecutable()->asStringConcurrently();
+}
+
+inline CallData JSFunction::getCallDataInline(JSCell* cell)
+{
+    // Keep this function OK for invocation from concurrent compilers.
+    CallData callData;
+
+    JSFunction* thisObject = uncheckedDowncast<JSFunction>(cell);
+    if (thisObject->isHostFunction()) {
+        callData.type = CallData::Type::Native;
+        callData.native.function = thisObject->nativeFunction();
+        callData.native.isBoundFunction = thisObject->inherits<JSBoundFunction>();
+        callData.native.isWasm = false;
+#if ENABLE(WEBASSEMBLY)
+        callData.native.isWasm = thisObject->inherits<WebAssemblyFunction>();
+#endif
+    } else {
+        callData.type = CallData::Type::JS;
+        callData.js.functionExecutable = thisObject->jsExecutable();
+        callData.js.scope = thisObject->scope();
+    }
+
+    return callData;
+}
+
+inline CallData JSFunction::getConstructDataInline(JSCell* cell)
+{
+    // Keep this function OK for invocation from concurrent compilers.
+    CallData constructData;
+
+    JSFunction* thisObject = uncheckedDowncast<JSFunction>(cell);
+    if (thisObject->isHostFunction()) {
+        if (thisObject->inherits<JSBoundFunction>()) {
+            if (uncheckedDowncast<JSBoundFunction>(thisObject)->canConstruct()) {
+                constructData.type = CallData::Type::Native;
+                constructData.native.function = thisObject->nativeConstructor();
+                constructData.native.isBoundFunction = true;
+                constructData.native.isWasm = false;
+            }
+        } else if (thisObject->nativeConstructor() != callHostFunctionAsConstructor) {
+            constructData.type = CallData::Type::Native;
+            constructData.native.function = thisObject->nativeConstructor();
+        }
+    } else {
+        FunctionExecutable* functionExecutable = thisObject->jsExecutable();
+        if (functionExecutable->constructAbility() != ConstructAbility::CannotConstruct) {
+            constructData.type = CallData::Type::JS;
+            constructData.js.functionExecutable = functionExecutable;
+            constructData.js.scope = thisObject->scope();
+        }
+    }
+
+    return constructData;
+}
+
+} // namespace JSC

@@ -1,0 +1,4 @@
+
+PASS Cross-partition Shared worker shouldn't be created from blob URL.
+PASS Cross-partition Dedicated worker shouldn't be created from blob URL.
+

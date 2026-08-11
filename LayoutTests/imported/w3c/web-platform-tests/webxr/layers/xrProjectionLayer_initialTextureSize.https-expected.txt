@@ -1,0 +1,4 @@
+
+PASS XRProjectionLayer reports a non-zero texture size before the first XR animation frame, scaled by scaleFactor - webgl
+PASS XRProjectionLayer reports a non-zero texture size before the first XR animation frame, scaled by scaleFactor - webgl2
+

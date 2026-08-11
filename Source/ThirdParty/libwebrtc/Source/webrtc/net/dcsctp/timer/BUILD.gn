@@ -1,0 +1,74 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("timer") {
+  deps = [
+    "../../../api/task_queue",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:strong_alias",
+    "../../../rtc_base/containers:flat_set",
+    "../public:socket",
+    "../public:types",
+    "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+  sources = [
+    "fake_timeout.h",
+    "timer.cc",
+    "timer.h",
+  ]
+}
+
+rtc_library("task_queue_timeout") {
+  deps = [
+    "../../../api:scoped_refptr",
+    "../../../api:sequence_checker",
+    "../../../api/task_queue",
+    "../../../api/task_queue:pending_task_safety_flag",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base/system:no_unique_address",
+    "../public:socket",
+    "../public:types",
+  ]
+  sources = [
+    "task_queue_timeout.cc",
+    "task_queue_timeout.h",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("dcsctp_timer_unittests") {
+    testonly = true
+
+    defines = []
+    deps = [
+      ":task_queue_timeout",
+      ":timer",
+      "../../../api/task_queue",
+      "../../../api/task_queue/test:mock_task_queue_base",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../rtc_base:threading",
+      "../../../test:test_support",
+      "../../../test/time_controller",
+      "../public:socket",
+      "../public:types",
+    ]
+    sources = [
+      "task_queue_timeout_test.cc",
+      "timer_test.cc",
+    ]
+  }
+}

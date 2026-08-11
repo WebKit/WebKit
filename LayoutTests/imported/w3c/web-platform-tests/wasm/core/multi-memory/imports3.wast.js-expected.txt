@@ -1,0 +1,39 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (imports3.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (imports3.wast:20)
+PASS #4 Test that WebAssembly compilation succeeds (imports3.wast:27)
+PASS #5 Test that WebAssembly compilation succeeds (imports3.wast:34)
+PASS #6 Test that WebAssembly compilation succeeds (imports3.wast:41)
+PASS #7 Test that WebAssembly compilation succeeds (imports3.wast:48)
+PASS #8 Test that WebAssembly compilation succeeds (imports3.wast:55)
+PASS #9 Test that WebAssembly compilation succeeds (imports3.wast:63)
+PASS #10 Test that WebAssembly compilation succeeds (imports3.wast:70)
+PASS #11 Reinitialize the default imports
+PASS #12 Test that WebAssembly compilation succeeds (imports3.wast:1)
+PASS #13 Test that WebAssembly instantiation succeeds (imports3.wast:1)
+PASS #14 Test that WebAssembly compilation succeeds (imports3.wast:20)
+PASS #15 Test that WebAssembly instantiation fails (imports3.wast:20)
+PASS #16 Test that a WebAssembly module is unlinkable
+PASS #17 Test that WebAssembly compilation succeeds (imports3.wast:27)
+PASS #18 Test that WebAssembly instantiation fails (imports3.wast:27)
+PASS #19 Test that a WebAssembly module is unlinkable
+PASS #20 Test that WebAssembly compilation succeeds (imports3.wast:34)
+PASS #21 Test that WebAssembly instantiation fails (imports3.wast:34)
+PASS #22 Test that a WebAssembly module is unlinkable
+PASS #23 Test that WebAssembly compilation succeeds (imports3.wast:41)
+PASS #24 Test that WebAssembly instantiation fails (imports3.wast:41)
+PASS #25 Test that a WebAssembly module is unlinkable
+PASS #26 Test that WebAssembly compilation succeeds (imports3.wast:48)
+PASS #27 Test that WebAssembly instantiation fails (imports3.wast:48)
+PASS #28 Test that a WebAssembly module is unlinkable
+PASS #29 Test that WebAssembly compilation succeeds (imports3.wast:55)
+PASS #30 Test that WebAssembly instantiation fails (imports3.wast:55)
+PASS #31 Test that a WebAssembly module is unlinkable
+PASS #32 Test that WebAssembly compilation succeeds (imports3.wast:63)
+PASS #33 Test that WebAssembly instantiation fails (imports3.wast:63)
+PASS #34 Test that a WebAssembly module is unlinkable
+PASS #35 Test that WebAssembly compilation succeeds (imports3.wast:70)
+PASS #36 Test that WebAssembly instantiation fails (imports3.wast:70)
+PASS #37 Test that a WebAssembly module is unlinkable
+

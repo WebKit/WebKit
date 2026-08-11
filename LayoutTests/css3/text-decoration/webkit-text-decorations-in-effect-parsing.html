@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="test-underline" style="-webkit-text-decorations-in-effect: underline">Test underline</div>
+<div id="test-spelling" style="-webkit-text-decorations-in-effect: spelling-error">Test spelling-error</div>
+<div id="test-grammar" style="-webkit-text-decorations-in-effect: grammar-error">Test grammar-error</div>
+
+<script>
+test(() => {
+    const el = document.getElementById('test-underline');
+    const value = el.style.getPropertyValue('-webkit-text-decorations-in-effect');
+    assert_equals(value, 'underline', 'underline should be settable via style attribute');
+}, '-webkit-text-decorations-in-effect: underline can be set directly');
+
+test(() => {
+    const el = document.getElementById('test-spelling');
+    const value = el.style.getPropertyValue('-webkit-text-decorations-in-effect');
+    assert_equals(value, 'spelling-error', 'spelling-error should be settable via style attribute');
+}, '-webkit-text-decorations-in-effect: spelling-error can be set directly');
+
+test(() => {
+    const el = document.getElementById('test-grammar');
+    const value = el.style.getPropertyValue('-webkit-text-decorations-in-effect');
+    assert_equals(value, 'grammar-error', 'grammar-error should be settable via style attribute');
+}, '-webkit-text-decorations-in-effect: grammar-error can be set directly');
+</script>
+</body>
+</html>

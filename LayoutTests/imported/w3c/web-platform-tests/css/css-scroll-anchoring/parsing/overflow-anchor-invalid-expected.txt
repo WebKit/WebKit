@@ -1,0 +1,4 @@
+
+PASS e.style['overflow-anchor'] = "all" should not set the property value
+PASS e.style['overflow-anchor'] = "auto none" should not set the property value
+

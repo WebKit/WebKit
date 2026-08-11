@@ -1,0 +1,4 @@
+
+
+PASS User click on <a> during the pageshow event must NOT replace
+

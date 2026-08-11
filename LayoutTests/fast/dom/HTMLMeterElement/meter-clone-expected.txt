@@ -1,0 +1,10 @@
+PASS cloned.value is target.value
+PASS internals.userAgentPart(clonedInnerElement) is internals.userAgentPart(targetInnerElement)
+PASS internals.userAgentPart(clonedInnerElement.firstChild) is internals.userAgentPart(targetInnerElement.firstChild)
+PASS internals.userAgentPart(clonedInnerElement.firstChild.firstChild) is internals.userAgentPart(targetInnerElement.firstChild.firstChild)
+PASS clonedInnerElement.firstChild.firstChild.style.inlineSize is "70%"
+PASS targetInnerElement.firstChild.firstChild.style.inlineSize is "50%"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

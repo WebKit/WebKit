@@ -1,0 +1,40 @@
+syntax = "proto3";
+// Describes a chart generated from WebRTC event log data.
+option optimize_for = LITE_RUNTIME;
+package webrtc.analytics;
+
+import "chart_enums.proto";
+
+message DataSet {
+  repeated float x_values = 1;
+  repeated float y_values = 2;
+  string label = 3;
+  ChartStyle.Type style = 4;
+  bool highlight_points = 5;
+}
+
+message TickLabel {
+  float value = 1;
+  string label = 2;
+}
+
+message Chart {
+  repeated DataSet data_sets = 1;
+  float xaxis_min = 2;
+  float xaxis_max = 3;
+  string xaxis_label = 4;
+  float yaxis_min = 5;
+  float yaxis_max = 6;
+  string yaxis_label = 7;
+  string title = 8;
+  string id = 9;
+  repeated TickLabel yaxis_tick_labels = 10;
+}
+
+message ChartCollection {
+  repeated Chart charts = 1;
+  // `calltime_to_utc_ms` is the UTC time (in ms) for the x-axis in the charts.
+  // In other words, time t ms in the charts corresponds to
+  // t+calltime_to_utc_ms ms in UTC time.
+  int64 calltime_to_utc_ms = 2;
+}

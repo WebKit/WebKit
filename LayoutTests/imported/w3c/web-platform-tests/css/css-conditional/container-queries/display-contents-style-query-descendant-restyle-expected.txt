@@ -1,0 +1,4 @@
+
+PASS Initial style() container match applies under both rendered and display:contents containers
+PASS Restyling a descendant must not lose the style() container match when the container is display:contents
+

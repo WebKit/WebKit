@@ -1,0 +1,162 @@
+
+FAIL :shift_left_abstract:inputSource="const";vectorize="_undef_" assert_unreached:
+  - EXPECTATION FAILED: Pipeline Creation Error, validation:
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    48:49: shift left value must be less than the bit width of the shifted value, which is 64
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:466:44
+ Reached unreachable code
+FAIL :shift_left_abstract:inputSource="const";vectorize=2 assert_unreached:
+  - EXPECTATION FAILED: Pipeline Creation Error, validation:
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    48:61: shift left value must be less than the bit width of the shifted value, which is 64
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:466:44
+ Reached unreachable code
+FAIL :shift_left_abstract:inputSource="const";vectorize=3 assert_unreached:
+  - EXPECTATION FAILED: Pipeline Creation Error, validation:
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    48:64: shift left value must be less than the bit width of the shifted value, which is 64
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:466:44
+ Reached unreachable code
+FAIL :shift_left_abstract:inputSource="const";vectorize=4 assert_unreached:
+  - EXPECTATION FAILED: Pipeline Creation Error, validation:
+      at (elided: below max severity)
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    38:67: shift left value must be less than the bit width of the shifted value, which is 64
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:466:44
+ Reached unreachable code
+PASS :shift_left_concrete:type="i32";inputSource="const";vectorize="_undef_"
+PASS :shift_left_concrete:type="i32";inputSource="const";vectorize=2
+PASS :shift_left_concrete:type="i32";inputSource="const";vectorize=3
+PASS :shift_left_concrete:type="i32";inputSource="const";vectorize=4
+PASS :shift_left_concrete:type="i32";inputSource="uniform";vectorize="_undef_"
+PASS :shift_left_concrete:type="i32";inputSource="uniform";vectorize=2
+PASS :shift_left_concrete:type="i32";inputSource="uniform";vectorize=3
+PASS :shift_left_concrete:type="i32";inputSource="uniform";vectorize=4
+PASS :shift_left_concrete:type="i32";inputSource="storage_r";vectorize="_undef_"
+PASS :shift_left_concrete:type="i32";inputSource="storage_r";vectorize=2
+PASS :shift_left_concrete:type="i32";inputSource="storage_r";vectorize=3
+PASS :shift_left_concrete:type="i32";inputSource="storage_r";vectorize=4
+PASS :shift_left_concrete:type="i32";inputSource="storage_rw";vectorize="_undef_"
+PASS :shift_left_concrete:type="i32";inputSource="storage_rw";vectorize=2
+PASS :shift_left_concrete:type="i32";inputSource="storage_rw";vectorize=3
+PASS :shift_left_concrete:type="i32";inputSource="storage_rw";vectorize=4
+PASS :shift_left_concrete:type="u32";inputSource="const";vectorize="_undef_"
+PASS :shift_left_concrete:type="u32";inputSource="const";vectorize=2
+PASS :shift_left_concrete:type="u32";inputSource="const";vectorize=3
+PASS :shift_left_concrete:type="u32";inputSource="const";vectorize=4
+PASS :shift_left_concrete:type="u32";inputSource="uniform";vectorize="_undef_"
+PASS :shift_left_concrete:type="u32";inputSource="uniform";vectorize=2
+PASS :shift_left_concrete:type="u32";inputSource="uniform";vectorize=3
+PASS :shift_left_concrete:type="u32";inputSource="uniform";vectorize=4
+PASS :shift_left_concrete:type="u32";inputSource="storage_r";vectorize="_undef_"
+PASS :shift_left_concrete:type="u32";inputSource="storage_r";vectorize=2
+PASS :shift_left_concrete:type="u32";inputSource="storage_r";vectorize=3
+PASS :shift_left_concrete:type="u32";inputSource="storage_r";vectorize=4
+PASS :shift_left_concrete:type="u32";inputSource="storage_rw";vectorize="_undef_"
+PASS :shift_left_concrete:type="u32";inputSource="storage_rw";vectorize=2
+PASS :shift_left_concrete:type="u32";inputSource="storage_rw";vectorize=3
+PASS :shift_left_concrete:type="u32";inputSource="storage_rw";vectorize=4
+PASS :shift_left_concrete_compound:type="i32";inputSource="const";vectorize="_undef_"
+PASS :shift_left_concrete_compound:type="i32";inputSource="const";vectorize=2
+PASS :shift_left_concrete_compound:type="i32";inputSource="const";vectorize=3
+PASS :shift_left_concrete_compound:type="i32";inputSource="const";vectorize=4
+PASS :shift_left_concrete_compound:type="i32";inputSource="uniform";vectorize="_undef_"
+PASS :shift_left_concrete_compound:type="i32";inputSource="uniform";vectorize=2
+PASS :shift_left_concrete_compound:type="i32";inputSource="uniform";vectorize=3
+PASS :shift_left_concrete_compound:type="i32";inputSource="uniform";vectorize=4
+PASS :shift_left_concrete_compound:type="i32";inputSource="storage_r";vectorize="_undef_"
+PASS :shift_left_concrete_compound:type="i32";inputSource="storage_r";vectorize=2
+PASS :shift_left_concrete_compound:type="i32";inputSource="storage_r";vectorize=3
+PASS :shift_left_concrete_compound:type="i32";inputSource="storage_r";vectorize=4
+PASS :shift_left_concrete_compound:type="i32";inputSource="storage_rw";vectorize="_undef_"
+PASS :shift_left_concrete_compound:type="i32";inputSource="storage_rw";vectorize=2
+PASS :shift_left_concrete_compound:type="i32";inputSource="storage_rw";vectorize=3
+PASS :shift_left_concrete_compound:type="i32";inputSource="storage_rw";vectorize=4
+PASS :shift_left_concrete_compound:type="u32";inputSource="const";vectorize="_undef_"
+PASS :shift_left_concrete_compound:type="u32";inputSource="const";vectorize=2
+PASS :shift_left_concrete_compound:type="u32";inputSource="const";vectorize=3
+PASS :shift_left_concrete_compound:type="u32";inputSource="const";vectorize=4
+PASS :shift_left_concrete_compound:type="u32";inputSource="uniform";vectorize="_undef_"
+PASS :shift_left_concrete_compound:type="u32";inputSource="uniform";vectorize=2
+PASS :shift_left_concrete_compound:type="u32";inputSource="uniform";vectorize=3
+PASS :shift_left_concrete_compound:type="u32";inputSource="uniform";vectorize=4
+PASS :shift_left_concrete_compound:type="u32";inputSource="storage_r";vectorize="_undef_"
+PASS :shift_left_concrete_compound:type="u32";inputSource="storage_r";vectorize=2
+PASS :shift_left_concrete_compound:type="u32";inputSource="storage_r";vectorize=3
+PASS :shift_left_concrete_compound:type="u32";inputSource="storage_r";vectorize=4
+PASS :shift_left_concrete_compound:type="u32";inputSource="storage_rw";vectorize="_undef_"
+PASS :shift_left_concrete_compound:type="u32";inputSource="storage_rw";vectorize=2
+PASS :shift_left_concrete_compound:type="u32";inputSource="storage_rw";vectorize=3
+PASS :shift_left_concrete_compound:type="u32";inputSource="storage_rw";vectorize=4
+PASS :shift_right_abstract:inputSource="const";vectorize="_undef_"
+PASS :shift_right_abstract:inputSource="const";vectorize=2
+PASS :shift_right_abstract:inputSource="const";vectorize=3
+PASS :shift_right_abstract:inputSource="const";vectorize=4
+PASS :shift_right_concrete:type="i32";inputSource="const";vectorize="_undef_"
+PASS :shift_right_concrete:type="i32";inputSource="const";vectorize=2
+PASS :shift_right_concrete:type="i32";inputSource="const";vectorize=3
+PASS :shift_right_concrete:type="i32";inputSource="const";vectorize=4
+PASS :shift_right_concrete:type="i32";inputSource="uniform";vectorize="_undef_"
+PASS :shift_right_concrete:type="i32";inputSource="uniform";vectorize=2
+PASS :shift_right_concrete:type="i32";inputSource="uniform";vectorize=3
+PASS :shift_right_concrete:type="i32";inputSource="uniform";vectorize=4
+PASS :shift_right_concrete:type="i32";inputSource="storage_r";vectorize="_undef_"
+PASS :shift_right_concrete:type="i32";inputSource="storage_r";vectorize=2
+PASS :shift_right_concrete:type="i32";inputSource="storage_r";vectorize=3
+PASS :shift_right_concrete:type="i32";inputSource="storage_r";vectorize=4
+PASS :shift_right_concrete:type="i32";inputSource="storage_rw";vectorize="_undef_"
+PASS :shift_right_concrete:type="i32";inputSource="storage_rw";vectorize=2
+PASS :shift_right_concrete:type="i32";inputSource="storage_rw";vectorize=3
+PASS :shift_right_concrete:type="i32";inputSource="storage_rw";vectorize=4
+PASS :shift_right_concrete:type="u32";inputSource="const";vectorize="_undef_"
+PASS :shift_right_concrete:type="u32";inputSource="const";vectorize=2
+PASS :shift_right_concrete:type="u32";inputSource="const";vectorize=3
+PASS :shift_right_concrete:type="u32";inputSource="const";vectorize=4
+PASS :shift_right_concrete:type="u32";inputSource="uniform";vectorize="_undef_"
+PASS :shift_right_concrete:type="u32";inputSource="uniform";vectorize=2
+PASS :shift_right_concrete:type="u32";inputSource="uniform";vectorize=3
+PASS :shift_right_concrete:type="u32";inputSource="uniform";vectorize=4
+PASS :shift_right_concrete:type="u32";inputSource="storage_r";vectorize="_undef_"
+PASS :shift_right_concrete:type="u32";inputSource="storage_r";vectorize=2
+PASS :shift_right_concrete:type="u32";inputSource="storage_r";vectorize=3
+PASS :shift_right_concrete:type="u32";inputSource="storage_r";vectorize=4
+PASS :shift_right_concrete:type="u32";inputSource="storage_rw";vectorize="_undef_"
+PASS :shift_right_concrete:type="u32";inputSource="storage_rw";vectorize=2
+PASS :shift_right_concrete:type="u32";inputSource="storage_rw";vectorize=3
+PASS :shift_right_concrete:type="u32";inputSource="storage_rw";vectorize=4
+PASS :shift_right_concrete_compound:type="i32";inputSource="const";vectorize="_undef_"
+PASS :shift_right_concrete_compound:type="i32";inputSource="const";vectorize=2
+PASS :shift_right_concrete_compound:type="i32";inputSource="const";vectorize=3
+PASS :shift_right_concrete_compound:type="i32";inputSource="const";vectorize=4
+PASS :shift_right_concrete_compound:type="i32";inputSource="uniform";vectorize="_undef_"
+PASS :shift_right_concrete_compound:type="i32";inputSource="uniform";vectorize=2
+PASS :shift_right_concrete_compound:type="i32";inputSource="uniform";vectorize=3
+PASS :shift_right_concrete_compound:type="i32";inputSource="uniform";vectorize=4
+PASS :shift_right_concrete_compound:type="i32";inputSource="storage_r";vectorize="_undef_"
+PASS :shift_right_concrete_compound:type="i32";inputSource="storage_r";vectorize=2
+PASS :shift_right_concrete_compound:type="i32";inputSource="storage_r";vectorize=3
+PASS :shift_right_concrete_compound:type="i32";inputSource="storage_r";vectorize=4
+PASS :shift_right_concrete_compound:type="i32";inputSource="storage_rw";vectorize="_undef_"
+PASS :shift_right_concrete_compound:type="i32";inputSource="storage_rw";vectorize=2
+PASS :shift_right_concrete_compound:type="i32";inputSource="storage_rw";vectorize=3
+PASS :shift_right_concrete_compound:type="i32";inputSource="storage_rw";vectorize=4
+PASS :shift_right_concrete_compound:type="u32";inputSource="const";vectorize="_undef_"
+PASS :shift_right_concrete_compound:type="u32";inputSource="const";vectorize=2
+PASS :shift_right_concrete_compound:type="u32";inputSource="const";vectorize=3
+PASS :shift_right_concrete_compound:type="u32";inputSource="const";vectorize=4
+PASS :shift_right_concrete_compound:type="u32";inputSource="uniform";vectorize="_undef_"
+PASS :shift_right_concrete_compound:type="u32";inputSource="uniform";vectorize=2
+PASS :shift_right_concrete_compound:type="u32";inputSource="uniform";vectorize=3
+PASS :shift_right_concrete_compound:type="u32";inputSource="uniform";vectorize=4
+PASS :shift_right_concrete_compound:type="u32";inputSource="storage_r";vectorize="_undef_"
+PASS :shift_right_concrete_compound:type="u32";inputSource="storage_r";vectorize=2
+PASS :shift_right_concrete_compound:type="u32";inputSource="storage_r";vectorize=3
+PASS :shift_right_concrete_compound:type="u32";inputSource="storage_r";vectorize=4
+PASS :shift_right_concrete_compound:type="u32";inputSource="storage_rw";vectorize="_undef_"
+PASS :shift_right_concrete_compound:type="u32";inputSource="storage_rw";vectorize=2
+PASS :shift_right_concrete_compound:type="u32";inputSource="storage_rw";vectorize=3
+PASS :shift_right_concrete_compound:type="u32";inputSource="storage_rw";vectorize=4
+

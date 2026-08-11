@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+    <title>TextTrackList addtrack/removetrack events and TrackEvent</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard:
+//   §4.8.13.10 "Text track API" -- TextTrackList interface, addtrack/
+//   removetrack events, TrackEvent interface:
+//     https://html.spec.whatwg.org/multipage/media.html#texttracklist
+//     https://html.spec.whatwg.org/multipage/media.html#trackevent
+//     https://html.spec.whatwg.org/multipage/media.html#dom-trackevent-track
+//
+// - TextTrackList exposes `onaddtrack` (event type 'addtrack') and
+//   `onremovetrack` (event type 'removetrack') event handler IDL attrs.
+// - The 'addtrack' / 'removetrack' events are TrackEvent instances; their
+//   `track` property returns the track the event relates to (the value it
+//   was initialized to).
+// - addTextTrack() fires 'addtrack' on TextTrackList; removing a <track>
+//   element from its media-element parent fires 'removetrack'.
+
+test(() => {
+    const video = document.createElement("video");
+    assert_true("onaddtrack" in video.textTracks,
+        "TextTrackList exposes onaddtrack");
+    assert_true("onremovetrack" in video.textTracks,
+        "TextTrackList exposes onremovetrack");
+    assert_equals(video.textTracks.onaddtrack, null,
+        "onaddtrack default is null");
+    assert_equals(video.textTracks.onremovetrack, null,
+        "onremovetrack default is null");
+}, "TextTrackList: onaddtrack and onremovetrack IDL attributes exist");
+
+test(() => {
+    // TrackEvent interface: constructor accepts a `track` init dict member;
+    // the .track property returns whatever it was initialized to.
+    const dummy = document.createElement("video").addTextTrack("captions");
+    const ev = new TrackEvent("addtrack", { track: dummy });
+    assert_equals(ev.type, "addtrack");
+    assert_equals(ev.track, dummy,
+        "TrackEvent.track returns the value it was initialized to");
+
+    const evNullDefault = new TrackEvent("removetrack");
+    assert_equals(evNullDefault.track, null,
+        "TrackEvent.track defaults to null when not initialized");
+}, "TrackEvent: .track returns the initialized value (null by default)");
+
+async_test(t => {
+    // addTextTrack must fire 'addtrack' on the TextTrackList, with a
+    // TrackEvent whose .track is the new TextTrack.
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    video.textTracks.addEventListener("addtrack", t.step_func_done(ev => {
+        assert_true(ev instanceof TrackEvent, "event is a TrackEvent");
+        assert_equals(ev.type, "addtrack");
+        assert_equals(ev.track, video.textTracks[0],
+            "TrackEvent.track is the newly-added TextTrack");
+    }), { once: true });
+
+    video.addTextTrack("captions", "test", "en");
+}, "addTextTrack: fires 'addtrack' with TrackEvent.track == new TextTrack");
+
+async_test(t => {
+    // Removing a <track> child from its media-element parent must fire
+    // 'removetrack' with the TextTrack that was removed.
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    const trackEl = document.createElement("track");
+    trackEl.kind = "subtitles";
+    video.appendChild(trackEl);
+    const tt = trackEl.track;
+    assert_equals(video.textTracks.length, 1, "track is in TextTrackList");
+
+    video.textTracks.addEventListener("removetrack", t.step_func_done(ev => {
+        assert_true(ev instanceof TrackEvent, "event is a TrackEvent");
+        assert_equals(ev.type, "removetrack");
+        assert_equals(ev.track, tt,
+            "TrackEvent.track is the removed TextTrack");
+        assert_equals(video.textTracks.length, 0,
+            "TextTrackList no longer contains the removed track");
+    }), { once: true });
+
+    video.removeChild(trackEl);
+}, "track element removal: fires 'removetrack' with TrackEvent.track == removed TextTrack");
+
+async_test(t => {
+    // The IDL onaddtrack handler should receive the same event as a
+    // capturing addEventListener.
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+
+    let listenerEvent = null;
+    let handlerEvent = null;
+    video.textTracks.addEventListener("addtrack", ev => { listenerEvent = ev; });
+    video.textTracks.onaddtrack = ev => { handlerEvent = ev; };
+
+    video.addTextTrack("captions");
+
+    // Both should see the event after the queued task runs.
+    t.step_timeout(t.step_func_done(() => {
+        assert_not_equals(listenerEvent, null,
+            "addEventListener received the event");
+        assert_not_equals(handlerEvent, null,
+            "onaddtrack received the event");
+        assert_equals(handlerEvent, listenerEvent,
+            "both observers see the same event");
+    }), 50);
+}, "onaddtrack IDL handler and addEventListener both fire");
+</script>
+</body>
+</html>

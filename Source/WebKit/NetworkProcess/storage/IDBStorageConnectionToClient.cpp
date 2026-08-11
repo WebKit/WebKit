@@ -1,0 +1,260 @@
+/*
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "IDBStorageConnectionToClient.h"
+
+#include "NetworkStorageManager.h"
+#include "WebIDBConnectionToServerMessages.h"
+#include "WebIDBResult.h"
+#include <WebCore/IDBGetAllResult.h>
+#include <WebCore/IDBGetResult.h>
+#include <WebCore/IDBRequestData.h>
+#include <WebCore/IDBResultData.h>
+#include <WebCore/UniqueIDBDatabaseConnection.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBStorageConnectionToClient);
+
+IDBStorageConnectionToClient::IDBStorageConnectionToClient(IPC::Connection::UniqueID connection, WebCore::IDBConnectionIdentifier identifier, NetworkStorageManager& networkStorageManager)
+    : m_connection(connection)
+    , m_identifier(identifier)
+    , m_connectionToClient(WebCore::IDBServer::IDBConnectionToClient::create(*this))
+    , m_networkStorageManager(networkStorageManager)
+{
+}
+
+IDBStorageConnectionToClient::~IDBStorageConnectionToClient()
+{
+    m_connectionToClient->clearDelegate();
+}
+
+WebCore::IDBServer::IDBConnectionToClient& IDBStorageConnectionToClient::connectionToClient()
+{
+    return m_connectionToClient;
+}
+
+void IDBStorageConnectionToClient::didDeleteDatabase(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidDeleteDatabase(resultData), 0);
+}
+
+void IDBStorageConnectionToClient::didOpenDatabase(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidOpenDatabase(resultData), 0);
+}
+
+void IDBStorageConnectionToClient::didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError& error)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidStartTransaction(transactionIdentifier, error), 0);
+}
+
+void IDBStorageConnectionToClient::didAbortTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError& error)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidAbortTransaction(transactionIdentifier, error), 0);
+}
+
+void IDBStorageConnectionToClient::didCommitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError& error)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidCommitTransaction(transactionIdentifier, error), 0);
+}
+
+void IDBStorageConnectionToClient::didCreateObjectStore(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidCreateObjectStore(resultData), 0);
+}
+
+void IDBStorageConnectionToClient::didDeleteObjectStore(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidDeleteObjectStore(resultData), 0);
+}
+
+void IDBStorageConnectionToClient::didRenameObjectStore(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidRenameObjectStore(resultData), 0);
+}
+
+void IDBStorageConnectionToClient::didClearObjectStore(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidClearObjectStore(resultData), 0);
+}
+
+void IDBStorageConnectionToClient::didCreateIndex(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidCreateIndex(resultData), 0);
+}
+
+void IDBStorageConnectionToClient::didDeleteIndex(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidDeleteIndex(resultData), 0);
+}
+
+void IDBStorageConnectionToClient::didRenameIndex(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidRenameIndex(resultData), 0);
+}
+
+void IDBStorageConnectionToClient::didPutOrAdd(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidPutOrAdd(resultData), 0);
+}
+
+template<typename RegisterFn>
+static WebIDBResult prepareResultImpl(const WebCore::IDBResultData& resultData, RefPtr<NetworkStorageManager>&& networkStorageManager, NOESCAPE RegisterFn&& registerRecords)
+{
+    WebIDBResult result { resultData };
+    if (!networkStorageManager)
+        return result;
+    if (resultData.type() == WebCore::IDBResultType::Error || !resultData.clientOrigin())
+        return result;
+    auto& origin = *resultData.clientOrigin();
+    registerRecords(*networkStorageManager, origin);
+    result.setClientOrigin(WebCore::ClientOrigin { origin });
+    return result;
+}
+
+WebIDBResult IDBStorageConnectionToClient::prepareGetResult(const WebCore::IDBResultData& resultData)
+{
+    return prepareResultImpl(resultData, m_networkStorageManager.get(), [&](auto& networkStorageManager, auto& origin) {
+        networkStorageManager.registerFileSystemHandleRecordsForOrigin(origin, resultData.getResult().value().fileSystemHandleRecords());
+    });
+}
+
+WebIDBResult IDBStorageConnectionToClient::prepareGetAllResult(const WebCore::IDBResultData& resultData)
+{
+    return prepareResultImpl(resultData, m_networkStorageManager.get(), [&](auto& networkStorageManager, auto& origin) {
+        for (auto& value : resultData.getAllResult().values())
+            networkStorageManager.registerFileSystemHandleRecordsForOrigin(origin, value.fileSystemHandleRecords());
+    });
+}
+
+WebIDBResult IDBStorageConnectionToClient::prepareCursorResult(const WebCore::IDBResultData& resultData)
+{
+    return prepareResultImpl(resultData, m_networkStorageManager.get(), [&](auto& networkStorageManager, auto& origin) {
+        networkStorageManager.registerFileSystemHandleRecordsForOrigin(origin, resultData.getResult().value().fileSystemHandleRecords());
+        for (auto& cursorRecord : resultData.getResult().prefetchedRecords())
+            networkStorageManager.registerFileSystemHandleRecordsForOrigin(origin, cursorRecord.value.fileSystemHandleRecords());
+    });
+}
+
+static Vector<String> resultBlobFilePaths(const WebCore::IDBResultData& resultData)
+{
+    Vector<String> paths;
+    switch (resultData.type()) {
+    case WebCore::IDBResultType::GetRecordSuccess:
+    case WebCore::IDBResultType::OpenCursorSuccess:
+    case WebCore::IDBResultType::IterateCursorSuccess:
+        paths.appendVector(resultData.getResult().value().blobFilePaths());
+        for (auto& record : resultData.getResult().prefetchedRecords())
+            paths.appendVector(record.value.blobFilePaths());
+        break;
+    case WebCore::IDBResultType::GetAllRecordsSuccess:
+        for (auto& value : resultData.getAllResult().values())
+            paths.appendVector(value.blobFilePaths());
+        break;
+    default:
+        break;
+    }
+    return paths;
+}
+
+template<typename Message>
+void IDBStorageConnectionToClient::sendResultWithBlobFileAccess(WebIDBResult&& result)
+{
+    auto blobFilePaths = resultBlobFilePaths(result.resultData());
+    RefPtr networkStorageManager = m_networkStorageManager.get();
+    if (!networkStorageManager) {
+        IPC::Connection::send(m_connection, Message(WTF::move(result)), 0);
+        return;
+    }
+    networkStorageManager->allowAccessToBlobFilesForProcess(m_identifier, WTF::move(blobFilePaths), [connection = m_connection, result = WTF::move(result)]() mutable {
+        IPC::Connection::send(connection, Message(WTF::move(result)), 0);
+    });
+}
+
+void IDBStorageConnectionToClient::didGetRecord(const WebCore::IDBResultData& resultData)
+{
+    sendResultWithBlobFileAccess<Messages::WebIDBConnectionToServer::DidGetRecord>(prepareGetResult(resultData));
+}
+
+void IDBStorageConnectionToClient::didGetAllRecords(const WebCore::IDBResultData& resultData)
+{
+    sendResultWithBlobFileAccess<Messages::WebIDBConnectionToServer::DidGetAllRecords>(prepareGetAllResult(resultData));
+}
+
+void IDBStorageConnectionToClient::didGetCount(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidGetCount(resultData), 0);
+}
+
+void IDBStorageConnectionToClient::didDeleteRecord(const WebCore::IDBResultData& resultData)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidDeleteRecord(resultData), 0);
+}
+
+void IDBStorageConnectionToClient::didOpenCursor(const WebCore::IDBResultData& resultData)
+{
+    sendResultWithBlobFileAccess<Messages::WebIDBConnectionToServer::DidOpenCursor>(prepareCursorResult(resultData));
+}
+
+void IDBStorageConnectionToClient::didIterateCursor(const WebCore::IDBResultData& resultData)
+{
+    sendResultWithBlobFileAccess<Messages::WebIDBConnectionToServer::DidIterateCursor>(prepareCursorResult(resultData));
+}
+
+void IDBStorageConnectionToClient::didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, Vector<WebCore::IDBDatabaseNameAndVersion>&& databases)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidGetAllDatabaseNamesAndVersions(requestIdentifier, databases), 0);
+}
+
+void IDBStorageConnectionToClient::fireVersionChangeEvent(WebCore::IDBServer::UniqueIDBDatabaseConnection& connection, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::FireVersionChangeEvent(connection.identifier(), requestIdentifier, requestedVersion), 0);
+}
+
+void IDBStorageConnectionToClient::generateIndexKeyForRecord(const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IDBIndexInfo& indexInfo, const std::optional<WebCore::IDBKeyPath>& keyPath, const WebCore::IDBKeyData& key, const WebCore::IDBValue& value, std::optional<int64_t> recordID)
+{
+    auto sendResult = [connection = m_connection, requestIdentifier, indexInfo, keyPath, key, value, recordID] {
+        IPC::Connection::send(connection, Messages::WebIDBConnectionToServer::GenerateIndexKeyForRecord(requestIdentifier, indexInfo, keyPath, key, value, recordID), 0);
+    };
+    RefPtr networkStorageManager = m_networkStorageManager.get();
+    if (!networkStorageManager)
+        return sendResult();
+    networkStorageManager->allowAccessToBlobFilesForProcess(m_identifier, Vector<String> { value.blobFilePaths() }, WTF::move(sendResult));
+}
+
+void IDBStorageConnectionToClient::didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection& connection, const WebCore::IDBError& error)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidCloseFromServer(connection.identifier(), error), 0);
+}
+
+void IDBStorageConnectionToClient::notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
+{
+    IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::NotifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion), 0);
+}
+
+} // namespace WebKit

@@ -1,0 +1,112 @@
+# Copyright (c) 2019 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("time_controller") {
+  testonly = true
+  sources = [
+    "real_time_controller.cc",
+    "real_time_controller.h",
+    "simulated_time_controller.cc",
+    "simulated_time_controller.h",
+  ]
+
+  deps = [
+    ":time_controller_impl",
+    "../../api:field_trials_view",
+    "../../api:time_controller",
+    "../../api/task_queue",
+    "../../api/task_queue:default_task_queue_factory",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:checks",
+    "../../rtc_base:null_socket_server",
+    "../../rtc_base:rtc_base_tests_utils",
+    "../../rtc_base:socket_server",
+    "../../rtc_base:threading",
+    "../../rtc_base:timeutils",
+    "../../rtc_base/synchronization:yield_policy",
+    "../../system_wrappers",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("time_controller_impl") {
+  sources = [
+    "simulated_task_queue.cc",
+    "simulated_task_queue.h",
+    "simulated_thread.cc",
+    "simulated_thread.h",
+    "simulated_time_controller_impl.cc",
+    "simulated_time_controller_impl.h",
+  ]
+  deps = [
+    "../../api:function_view",
+    "../../api:location",
+    "../../api/task_queue",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:checks",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:platform_thread_types",
+    "../../rtc_base:socket",
+    "../../rtc_base:socket_server",
+    "../../rtc_base:threading",
+    "../../rtc_base:timeutils",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/synchronization:yield_policy",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("simulated_time_task_queue_controller") {
+  sources = [
+    "simulated_time_task_queue_controller.cc",
+    "simulated_time_task_queue_controller.h",
+  ]
+  deps = [
+    ":time_controller_impl",
+    "../../api/task_queue",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:checks",
+    "../../rtc_base/synchronization:yield_policy",
+    "../../system_wrappers",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("time_controller_unittests") {
+    testonly = true
+    sources = [
+      "simulated_time_controller_unittest.cc",
+      "simulated_time_task_queue_controller_unittest.cc",
+      "time_controller_conformance_test.cc",
+    ]
+    deps = [
+      ":simulated_time_task_queue_controller",
+      ":time_controller",
+      "../:test_support",
+      "../../api:time_controller",
+      "../../api/task_queue",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../rtc_base:checks",
+      "../../rtc_base:macromagic",
+      "../../rtc_base:rtc_base_tests_utils",
+      "../../rtc_base:rtc_event",
+      "../../rtc_base:task_queue_for_test",
+      "../../rtc_base:threading",
+      "../../rtc_base/synchronization:mutex",
+      "../../rtc_base/task_utils:repeating_task",
+    ]
+  }
+}

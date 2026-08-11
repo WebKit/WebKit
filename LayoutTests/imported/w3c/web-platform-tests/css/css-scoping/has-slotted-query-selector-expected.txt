@@ -1,0 +1,10 @@
+
+FAIL :has-slotted does not match or querySelector when there are no assigned nodes ':has-slotted' is not a valid selector.
+FAIL :has-slotted must match/querySelector when an element is assigned ':has-slotted' is not a valid selector.
+FAIL :has-slotted does not when child nodes are replaced ':has-slotted' is not a valid selector.
+FAIL :has-slotted must match/querySelector when a text node is assigned ':has-slotted' is not a valid selector.
+FAIL :has-slotted does not match or querySelector when there are no assigned nodes (flattened) ':has-slotted' is not a valid selector.
+FAIL :has-slotted must match/querySelector when an element is assigned (flattened) ':has-slotted' is not a valid selector.
+FAIL :has-slotted does not when child nodes are replaced (flattened) ':has-slotted' is not a valid selector.
+FAIL :has-slotted must match/querySelector when a text node is assigned (flattened) ':has-slotted' is not a valid selector.
+

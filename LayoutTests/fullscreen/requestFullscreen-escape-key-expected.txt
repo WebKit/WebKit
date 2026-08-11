@@ -1,0 +1,1 @@
+PASS - Fullscreen through Escape key was rejected.

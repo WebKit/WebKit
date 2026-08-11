@@ -1,0 +1,39 @@
+<!doctype html><!-- webkit-test-runner [ InputTypeColorEnhancementsEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<input id="empty_colorwell" type="color">
+<input id="good_colorwell" type="color" value="#ff0000">
+<input id="bad_colorwell" type="color" value="not a color">
+<input id="alpha_colorwell" type="color" alpha value="color(srgb .23 .234 .23 / .4)">
+<input id="p3_colorwell" type="color" alpha colorspace="display-p3" value="#ff449942">
+
+<script>
+let output = "This test checks the role of ColorWellRole on an input with type=color\n\n";
+
+if (window.accessibilityController) {
+    let axColorwell = accessibilityController.accessibleElementById("empty_colorwell");
+    output += `Role of input type=color is: ${axColorwell.role}\n`;
+    output += `Value of empty color well: ${axColorwell.stringValue}\n`;
+
+    axColorwell = accessibilityController.accessibleElementById("good_colorwell");
+    output += `Value of good color well: ${axColorwell.stringValue}\n`;
+
+    axColorwell = accessibilityController.accessibleElementById("bad_colorwell");
+    output += `Value of bad color well: ${axColorwell.stringValue}\n`;
+
+    axColorwell = accessibilityController.accessibleElementById("alpha_colorwell");
+    output += `Value of alpha color well: ${axColorwell.stringValue}\n`;
+
+    axColorwell = accessibilityController.accessibleElementById("p3_colorwell");
+    output += `Value of p3 color well: ${axColorwell.stringValue}\n`;
+
+    debug(output);
+}
+</script>
+</body>
+</html>

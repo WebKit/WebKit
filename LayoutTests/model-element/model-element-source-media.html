@@ -1,0 +1,75 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+// The media attribute is evaluated against the screen media type, so "screen"
+// and "all" always match while "print" never does. Using media-type queries
+// (rather than viewport features) keeps the results deterministic regardless of
+// the test window size.
+const makeSource = (src, media, type) => {
+    const source = document.createElement("source");
+    source.src = src;
+    if (media !== undefined)
+        source.media = media;
+    if (type)
+        source.type = type;
+    return source;
+}
+
+test(() => {
+    const model = document.createElement("model");
+    const source = model.appendChild(makeSource("model.usdz", "all"));
+    assert_equals(model.currentSrc, source.src);
+}, "A <source> whose media attribute matches is selected.");
+
+test(() => {
+    const model = document.createElement("model");
+    model.appendChild(makeSource("model.usdz", "print"));
+    assert_equals(model.currentSrc, "");
+}, "A <source> whose media attribute does not match is not selected.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-1.usdz", "print"));
+    const secondSource = model.appendChild(makeSource("model-2.usdz", "screen"));
+    assert_equals(model.currentSrc, secondSource.src);
+}, "A non-matching <source> is skipped in favor of a later matching <source>.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-1.usdz", "print"));
+    const secondSource = model.appendChild(makeSource("model-2.usdz"));
+    assert_equals(model.currentSrc, secondSource.src);
+}, "A <source> without a media attribute acts as a fallback when earlier <source>s do not match.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-1.usdz", "print"));
+    const secondSource = model.appendChild(makeSource("model-2.usdz", "print"));
+    assert_equals(model.currentSrc, "");
+
+    firstSource.media = "screen";
+    assert_equals(model.currentSrc, firstSource.src);
+}, "Changing a <source> media attribute to a matching value selects it.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-1.usdz", "screen"));
+    const secondSource = model.appendChild(makeSource("model-2.usdz", "screen"));
+    assert_equals(model.currentSrc, firstSource.src);
+
+    firstSource.media = "print";
+    assert_equals(model.currentSrc, secondSource.src);
+}, "Changing a <source> media attribute to a non-matching value deselects it.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-1.usdz", "screen", "model/unknown"));
+    const secondSource = model.appendChild(makeSource("model-2.usdz", "screen", "model/vnd.usdz+zip"));
+    assert_equals(model.currentSrc, secondSource.src);
+}, "A <source> must satisfy both its media attribute and a supported type to be selected.");
+
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+This verifies that when a listbox ax object is destroyed, the new object maintains the aria-controls/aria-owns relationship.
+
+PASS: linkedListbox1.role === 'AXRole: AXList'
+
+Hiding List Box #1:
+PASS: !linkedListbox1 === true
+Showing List Box #1:
+PASS: linkedListbox1.role === 'AXRole: AXList'
+Showing List Box #2:
+PASS: linkedListbox2.role === 'AXRole: AXList'
+
+Hiding List Box #2:
+PASS: !linkedListbox2 === true
+Showing List Box #2:
+PASS: linkedListbox2.role === 'AXRole: AXList'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Apple
+Banana
+Carrot
+

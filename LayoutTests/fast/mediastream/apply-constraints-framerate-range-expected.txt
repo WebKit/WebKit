@@ -1,0 +1,31 @@
+Tests applyConstraints with frame rate min/max range constraints on a video stream track.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS stream.getVideoTracks().length is 1
+
+** Constraint: {"width":1280,"height":720,"frameRate":20} - set width, height, and frame rate to valid values.
+PASS settings['width'] is 1280
+PASS settings['height'] is 720
+PASS settings['frameRate'] is 20
+
+** Constraint: {"frameRate":{"min":10,"max":25}} - frame rate 'min' and 'max' set, current value already satisfies both and there is no 'ideal', frame rate should not change.
+PASS settings['frameRate'] is 20
+
+** Constraint: {"frameRate":{"max":25}} - frame rate 'max' only set, current value already satisfies it and there is no 'ideal', frame rate should not change.
+PASS settings['frameRate'] is 20
+
+** Constraint: {"frameRate":{"max":15}} - frame rate 'max' only set, current value exceeds it, frame rate should be clamped down.
+PASS settings['frameRate'] is 15
+
+** Constraint: {"frameRate":{"min":10}} - frame rate 'min' only set, current value already satisfies it and there is no 'ideal', frame rate should not change.
+PASS settings['frameRate'] is 15
+
+** Constraint: {"frameRate":{"min":20}} - frame rate 'min' only set, current value is below it, frame rate should be clamped up.
+PASS settings['frameRate'] is 20
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

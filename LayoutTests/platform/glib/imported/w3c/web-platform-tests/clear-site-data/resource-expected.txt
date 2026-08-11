@@ -1,0 +1,7 @@
+
+
+PASS https resource on a https page
+PASS https resource on a http page
+PASS http resource on a https page
+PASS http resource on a http page
+

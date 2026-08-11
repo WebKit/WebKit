@@ -1,0 +1,4 @@
+
+PASS NaN should not occur during extreme linearRampToValueAtTime events
+PASS Interpolation of linear ramp between very close time values
+

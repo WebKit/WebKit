@@ -1,0 +1,27 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+ <head>
+  <title>CSS 2.1 Test Suite: display</title>
+  <style type="text/css">
+   p, div { color: navy; }
+   .one {display: block;}
+   .two {display: inline;}
+   .three {display: list-item; list-style-type: decimal; list-style-position: inside;}
+   .four {display: none; color: yellow; background: red;}
+   a {display: block;}
+  </style>
+  <link rel="help" href="http://www.w3.org/TR/CSS21/generate.html#q10" title="12.5 Lists">
+  <link rel="help" href="http://www.w3.org/TR/CSS21/visuren.html#display-prop" title="9.2.4 The 'display' property">
+ </head>
+ <body>
+  <p class="pc">There should be eight numbered lines below, all identical except for the numbering, which should match the description. </p>
+  <div class="three"> This should be line one. </div>
+  <div class="one"> 2. This should be line two. </div>
+  <div class="two"> 3. This should </div>
+  <div class="two"> be line three. </div>
+  <div> 4. This should be line four. </div>
+  <div class="four"> FAIL: This text should not appear. </div>
+  <div> 5. This should be line five. <span class="four">FAIL: This text should not appear.</span> </div>
+  <div> 6. This should be line six. <a>7. This should be line seven.</a> 8. This should be line eight. </div>
+ </body>
+</html>

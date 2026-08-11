@@ -1,0 +1,10 @@
+
+FAIL getComputedStyle() for ::search-text assert_equals: Background color is green. expected "rgb(0, 128, 0)" but got ""
+PASS getComputedStyle() for ::search-text: should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::search-text) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::search-text( should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::search-text(foo) should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::search-text() should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for :::search-text should return an empty CSSStyleDeclaration
+PASS getComputedStyle() for ::search-text. should return an empty CSSStyleDeclaration
+

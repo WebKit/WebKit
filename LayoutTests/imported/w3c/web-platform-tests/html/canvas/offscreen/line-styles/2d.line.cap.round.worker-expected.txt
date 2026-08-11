@@ -1,0 +1,3 @@
+
+PASS lineCap 'round' is rendered correctly
+

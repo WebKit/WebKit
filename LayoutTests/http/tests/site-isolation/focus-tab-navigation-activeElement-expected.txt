@@ -1,0 +1,21 @@
+Tests tab navigation and Document.activeElement behavior with cross-origin iframes in site isolation mode
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.activeElement.tagName is 'BODY'
+PASS Initial state: inner Document.activeElement is BODY
+PASS document.activeElement.tagName is 'INPUT'
+PASS When outer input focused: outer Document.activeElement is INPUT
+PASS When outer input focused: inner Document.activeElement is BODY
+PASS Outer input blur handler fired
+PASS document.activeElement.tagName is 'IFRAME'
+PASS When inner input focused: outer Document.activeElement is IFRAME
+PASS Outer input blur handler was fired before inner input focus
+PASS When inner input focused: inner Document.activeElement is INPUT
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This test verifies that Document.activeElement behaves correctly during tab navigation between main frame and cross-origin iframe in site isolation mode.
+
+

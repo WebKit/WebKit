@@ -1,0 +1,4 @@
+
+PASS setParameters() with modified rtcp.cname should reject with InvalidModificationError
+PASS setParameters() with modified rtcp.reducedSize should reject with InvalidModificationError
+

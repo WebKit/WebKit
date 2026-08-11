@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    var callbackFired = false;
+    var cancelFired = false;
+
+    function firstRequestAnimationFrame() {
+        return new Promise(resolve => {
+            window.requestAnimationFrame(() => {
+                window.cancelAnimationFrame(secondCallbackId);
+                cancelFired = true;
+                resolve();
+            });
+        });
+    }
+
+    function secondRequestAnimationFrame() {
+        return new Promise(resolve => {
+            secondCallbackId = window.requestAnimationFrame(() => {
+                callbackFired = true;
+                resolve();
+            });
+            setTimeout(resolve, 100);
+        });
+    }
+
+    description("Tests one requestAnimationFrame callback cancelling a second");
+    window.jsTestIsAsync = true;
+
+    Promise.all([firstRequestAnimationFrame(), secondRequestAnimationFrame()]).then(() => {
+        shouldBeFalse("callbackFired");
+        shouldBeTrue("cancelFired");
+        finishJSTest();
+    });
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+
+(ROOT
+  (TEXT "\nHello world\n\n" {<https://apple.com/> in [7,13]})
+  (TEXT "foo@bar.net" {selected=[4,7]} {editable placeholder="Email" (focused)})
+  (LIST
+    (LISTITEM
+      (TEXT "Plain text in list item\n"))
+    (LISTITEM
+      (TEXT "Link in list item\n" {<https://example.com/> in [0,18]}))
+    (LISTITEM
+      (IMAGE "green-256x256.jpg", altText="Green square")))
+  (TEXT "This is an editable area: WebKit downloads.\n" {editable} {<https://webkit.org/> in [26,32], <https://webkit.org/downloads> in [33,42]}))

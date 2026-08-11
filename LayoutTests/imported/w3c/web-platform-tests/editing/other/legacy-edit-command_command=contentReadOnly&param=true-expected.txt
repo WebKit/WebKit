@@ -1,0 +1,12 @@
+abc
+
+
+PASS Wait for load...
+PASS command: "contentReadOnly", param: "true"
+PASS execCommand("contentReadOnly", false, "true")
+PASS queryCommandState("contentReadOnly")
+PASS queryCommandEnabled("contentReadOnly")
+PASS queryCommandIndeterm("contentReadOnly")
+PASS queryCommandValue("contentReadOnly")
+PASS queryCommandSupported("contentReadOnly")
+

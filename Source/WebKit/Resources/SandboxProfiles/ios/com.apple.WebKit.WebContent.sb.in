@@ -1,0 +1,552 @@
+; Copyright (C) 2010-2025 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+; notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+; notice, this list of conditions and the following disclaimer in the
+; documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "Shared/Sandbox/iOS/common.sb"
+#include "Shared/Sandbox/iOS/webcontent-defines.sb"
+
+#if USE(SANDBOX_VERSION_3)
+(allow dynamic-code-generation)
+(with-filter (lockdown-mode)
+    (deny dynamic-code-generation))
+(with-filter (enhanced-security)
+    (deny dynamic-code-generation))
+
+(with-filter (mac-policy-name "Sandbox")
+    (allow system-mac-syscall (mac-syscall-number 5 65)))
+
+(allow process-info-codesignature)
+#endif
+
+(deny file-read-metadata
+    (literal "/private/var/db/MobileIdentityData/Version.plist"))
+
+(deny file-map-executable)
+
+(deny file-write-mount file-write-unmount)
+
+(when (defined? 'process-iopolicy-get)
+    (deny process-iopolicy-get (with telemetry))
+    (deny process-iopolicy-set (with telemetry)))
+
+(allow file-read-metadata
+    (vnode-type DIRECTORY))
+
+(with-filter (system-attribute apple-internal)
+  (mobile-preferences-read "com.apple.PrototypeTools"))
+
+(rules-with-elevated-precedence)
+
+(with-filter (system-attribute apple-internal)
+    (internal-debugging-support))
+
+#if USE(EXTENSIONKIT)
+(allow file-read* file-write*
+    (container-subpath "tmp"))
+#endif
+
+(allow file-read*
+    required-etc-files
+    (literal "/"))
+
+(allow file-read*
+    (subpath "/private/var/MobileAsset/PreinstalledAssetsV2/InstallWithOs"))
+
+;; FIXME: Remove when rdar://141156558 has been fixed.
+#if ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
+(allow file-read*
+    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_Font7")
+    (subpath "/private/var/MobileAsset/AssetsV2/com_apple_MobileAsset_Font8"))
+#endif
+
+(device-access)
+
+;; <rdar://problem/14215718>
+(deny file-write-data NO_REPORT
+    (literal "/dev/random")
+    (literal "/dev/urandom"))
+
+(allow file-issue-extension
+    (require-all
+        (extension-class "com.apple.app-sandbox.read-write" "com.apple.app-sandbox.read")
+        (extension "com.apple.fileprovider.read-write")))
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#if ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
+(deny mach-lookup NO_REPORT (log-services))
+#else
+(with-filter (require-not (lockdown-mode))
+    (allow mach-lookup (log-services)))
+#endif // ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
+#else
+(allow mach-lookup (log-services))
+#endif
+
+(deny mach-lookup (xpc-service-name-prefix ""))
+
+(deny mach-lookup NO_REPORT
+    (global-name
+        "com.apple.SystemConfiguration.configd"
+        "com.apple.aggregated"
+        "com.apple.analyticsd"
+        "com.apple.audio.AudioComponentRegistrar"
+        "com.apple.containermanagerd"
+        "com.apple.containermanagerd.system"
+        "com.apple.diagnosticd"
+        "com.apple.distributed_notifications@1v3"
+        "com.apple.fontservicesd"
+        "com.apple.lsd.mapdb"
+        "com.apple.runningboard"))
+
+(deny mach-lookup NO_REPORT
+    (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
+
+;; <rdar://problem/12413942>
+(allow file-read*
+   (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
+
+(allow system-sched
+       (require-entitlement "com.apple.private.kernel.override-cpumon"))
+
+(deny sysctl-read NO_REPORT
+      (sysctl-name
+          "hw.cpufrequency_compat"
+          "hw.tbfrequency_compat" ;; <rdar://71740719>
+          "sysctl.proc_native"))
+
+(with-filter (system-attribute apple-internal)
+    (allow sysctl-read sysctl-write
+           (sysctl-name "vm.footprint_suspend")))
+
+(deny network-outbound)
+(with-filter (system-attribute apple-internal)
+    (allow network-outbound
+        (literal "/private/var/run/syslog")))
+
+#if !PLATFORM(IOS_SIMULATOR)
+#if !ENABLE(NOTIFY_BLOCKING)
+(allow-notifyd)
+#endif
+#endif
+
+(managed-configuration-read-public)
+
+(deny system-info NO_REPORT
+    (info-type "net.link.addr"))
+
+(allow file-read*
+    (subpath "/private/var/db/datadetectors/sys"))
+
+(allow-well-known-system-group-container-subpath-read
+    "/systemgroup.com.apple.icloud.findmydevice.managed/Library")
+
+(allow mach-task-name (target self))
+
+;;; process-info* defaults to allow; deny it and then allow operations we actually need.
+(deny process-info*)
+(allow process-info-pidinfo (target self))
+(allow process-info-pidfdinfo (target self))
+(allow process-info-pidfileportinfo (target self))
+(allow process-info-setcontrol (target self))
+(allow process-info-dirtycontrol (target self))
+(allow process-info-rusage (target self))
+
+(deny iokit-get-properties)
+(deny lsopen)
+
+;; Any app can play audio & movies.
+(play-media)
+
+;; Access to media controls
+(media-remote)
+
+(url-translation)
+
+(speech-synthesis-and-voiceover)
+
+;; Permit reading assets via MobileAsset framework.
+(asset-access 'with-media-playback)
+
+;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
+(allow-well-known-system-group-container-literal-read
+    "/systemgroup.com.apple.nsurlstoragedresources/Library/dafsaData.bin")
+
+;; Access the keyboards
+(allow file-read*
+    (home-subpath "/Library/Caches/com.apple.keyboards"))
+
+(mobile-preferences-read-allowed)
+
+;; Silently deny unnecessary accesses caused by MessageUI framework.
+;; This can be removed once <rdar://problem/47038102> is resolved.
+(deny file-read* NO_REPORT
+    (home-literal "/Library/Preferences/com.apple.mobilemail.plist"))
+
+;; <rdar://problem/12985925> Need read access to /var/mobile/Library/Fonts to all apps
+(allow file-read*
+    (home-subpath "/Library/Fonts"))
+
+;; <rdar://problem/7344719&26323449> LaunchServices app icons
+(allow file-read*
+    (well-known-system-group-container-subpath "/systemgroup.com.apple.lsd.iconscache"))
+
+(allow-preferences-common)
+
+;; Home Button
+(with-filter (iokit-registry-entry-class "IOPlatformDevice")
+    (allow iokit-get-properties
+        (iokit-property "home-button-type")))
+
+(uikit-requirements)
+
+;; Silence sandbox violations from apps trying to create the empty plist if it doesn't exist.
+;; <rdar://problem/13796537>
+(deny file-write-create
+    (home-prefix "/Library/Preferences/com.apple.UIKit.plist")
+    NO_REPORT)
+
+(dictionary-support)
+
+; <rdar://problem/8440231>
+(allow file-read*
+    (home-literal "/Library/Caches/DateFormats.plist"))
+; Silently deny writes when CFData attempts to write to the cache directory.
+(deny file-write* NO_REPORT
+    (home-literal "/Library/Caches/DateFormats.plist"))
+
+(framebuffer-access)
+
+; <rdar://problem/7595408> , <rdar://problem/7643881>
+(opengl)
+
+; CRCopyRestrictionsDictionary periodically tries to CFPreferencesAppSynchronize com.apple.springboard.plist
+; which will attempt to create the plist if it doesn't exist -- from any application.  Only SpringBoard is
+; allowed to write its plist; ignore all others, they don't know what they are doing.
+; See <rdar://problem/9375027> for sample backtraces.
+(deny file-write* NO_REPORT
+    (home-prefix "/Library/Preferences/com.apple.springboard.plist"))
+
+(deny file-read* NO_REPORT
+    (home-literal
+        "/Library/Preferences/com.apple.WebKit.WebContent.plist"
+        "/Library/Preferences/com.apple.CFNetwork.plist"
+        "/Library/Preferences/com.apple.AppSupport.plist"))
+
+(with-filter (system-attribute apple-internal)
+    (mobile-preferences-read "com.apple.CFNetwork"))
+
+(deny sysctl*)
+(allow sysctl-read
+    (sysctl-read-allowed)
+    (sysctl-read-prefix-allowed))
+
+(deny sysctl-read NO_REPORT
+    (sysctl-name "vm.task_no_footprint_for_debug"))
+
+(with-filter (require-not (webcontent-process-launched))
+    (allow sysctl-read (sysctl-name "vm.malloc_ranges"))) ;; <rdar://problem/105161083>
+
+(allow iokit-get-properties
+    (iokit-get-property-allowed))
+
+; IOPlatformExpertDevice
+(with-filter (iokit-registry-entry-class "IOPlatformExpertDevice")
+    (allow iokit-get-properties
+        (iokit-property
+            "platform-name" ;; <rdar://problem/79334360>
+            "region-info" ;; <rdar://problem/52903475>
+            "regulatory-model-number"))) ;; <rdar://problem/52903475>
+
+;; Sandbox extensions
+(read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
+(define (read-write-extension-with-telemetry) (with report) (with telemetry) (extension "com.apple.app-sandbox.read-write"))
+(read-write-and-issue-extensions (read-write-extension-with-telemetry))
+
+;; Access to client's cache folder & re-vending to CFNetwork.
+(allow file-issue-extension (require-all
+    (extension "com.apple.app-sandbox.read-write")
+    (extension-class "com.apple.nsurlstorage.extension-cache")))
+
+(accessibility-support)
+
+;; <rdar://problem/10809394>
+(deny file-write-create
+    (home-prefix "/Library/Preferences/com.apple.Accessibility.plist")
+    NO_REPORT)
+
+(media-accessibility-support)
+
+(deny file-write-create (vnode-type SYMLINK))
+(deny file-read-xattr file-write-xattr (xattr-prefix "com.apple.security.private."))
+
+;; Allow loading injected bundles.
+(with-filter (require-not (webcontent-process-launched))
+    (allow file-map-executable))
+
+(deny system-necp-client-action)
+(deny necp-client-open)
+
+(allow file-read-data
+    (literal "/usr/local/lib/log")) ; <rdar://problem/36629495>
+
+;; <rdar://problem/60983812>
+(deny file-write* NO_REPORT
+    (home-subpath "/Library/Preferences/"))
+
+#if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
+(allow iokit-open-user-client
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-user-client-class "IOSurfaceRootUserClient")))
+
+(allow iokit-open* (with report) (with telemetry-backtrace)
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-connection "IOGPU")))
+
+(deny iokit-open-user-client
+    (require-all
+        (require-not (extension "com.apple.webkit.extension.iokit"))
+        (iokit-user-client-class "IOSurfaceAcceleratorClient")))
+#endif
+
+(deny iokit-open-user-client NO_REPORT
+    (iokit-user-client-class "AppleJPEGDriverUserClient"))
+
+#if ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
+(deny iokit-open-service NO_REPORT)
+#else
+(with-filter (state-flag "BlockIOKitInWebContentSandbox")
+    (deny iokit-open-service)
+    (deny iokit-open-user-client (with telemetry-backtrace)
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.iokit"))
+            (iokit-user-client-class "IOSurfaceRootUserClient")))
+    (deny iokit-open* (with telemetry-backtrace)
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.iokit"))
+            (iokit-connection "IOGPU")))
+    (deny mach-lookup (with telemetry-backtrace)
+        (require-all
+            (require-not (extension "com.apple.webkit.extension.mach"))
+            (xpc-service-name "com.apple.MTLCompilerService"))))
+#endif
+
+#if !RC_XBS
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name
+            "com.apple.diagnosticd"
+            "com.apple.osanalytics.osanalyticshelper")))
+#endif
+
+(disable-syscall-inference)
+
+(deny syscall-unix (with telemetry))
+(allow syscall-unix
+    (syscall-unix-in-use-after-launch)
+    (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode))
+
+(with-filter (require-not (webcontent-process-launched))
+    (allow-syscall-unix-only-in-use-during-launch))
+
+(allow syscall-unix
+    (syscall-unix-rarely-in-use)
+    (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)
+    (syscall-quicklook))
+
+(allow syscall-unix (with telemetry)
+    (syscall-unix-allowed-with-telemetry))
+
+#if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
+(with-filter
+    (require-all
+        (state-flag "ParentProcessCanEnableQuickLookStateFlag")
+        (require-not (state-flag "EnableQuickLookSandboxResources")))
+    (deny syscall-unix (with telemetry-backtrace)
+        (syscall-quicklook)))
+#endif
+
+(deny syscall-unix NO_REPORT
+    (syscall-unix-blocked-without-report))
+
+(when (defined? 'SYS_map_with_linking_np)
+    (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
+
+(with-filter (system-attribute developer-mode)
+    (allow-syscall-unix-developer-mode))
+
+(with-filter (lockdown-mode)
+    (deny syscall-unix (with telemetry) (with message "Lockdown mode")
+        (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode))
+    (deny syscall-unix (with telemetry) (with message "Lockdown mode")
+        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)
+        (syscall-quicklook)))
+
+(deny system-fcntl (with telemetry))
+(allow system-fcntl (system-fcntl-allowed))
+
+(when (defined? 'process-codesigning*)
+    ;; csops/csops_audittoken
+    (deny process-codesigning-status-set (with telemetry))
+    (deny process-codesigning-text-offset-get (with telemetry))
+    (deny process-codesigning-cdhash-get (with telemetry))
+    (deny process-codesigning-blob-get (with telemetry))
+    (deny process-codesigning-teamid-get (with telemetry))
+    (allow process-codesigning-identity-get (target self)) ;; codeSigningIdentifierForCurrentProcess
+    (allow process-codesigning-entitlements-blob-get) ;; WK reading entitlments via SecTaskCopyValueForEntitlement and _getSelfParsedEntitlements (accessibility)
+    (allow process-codesigning-status-get) ;; _xpc_get_entitlements
+    (allow process-codesigning-status-set (target self))
+    (deny process-info-codesignature NO_REPORT)) ;; SecTaskCopyValueForEntitlement - granting this grants all the process-codesign-* checks
+
+(when (not (defined? 'process-codesigning*))
+    (allow process-info-codesignature (target self)))
+
+#if !PLATFORM(IOS_SIMULATOR)
+(allow mach-bootstrap
+    (apply-message-filter
+        (deny mach-message-send NO_REPORT)
+#if PLATFORM(IOS) || PLATFORM(VISION)
+        (with-filter (extension "com.apple.webkit.mach-bootstrap")
+            (allow mach-message-send (mach-bootstrap-message-numbers-post-launch)))
+#else
+        (allow mach-message-send (mach-bootstrap-message-numbers-post-launch))
+#endif
+        (with-filter (require-not (webcontent-process-launched))
+            (allow mach-message-send (mach-bootstrap-message-numbers)))))
+#endif
+
+(deny syscall-mach (with telemetry))
+(allow syscall-mach
+    (syscall-mach-blocked-in-lockdown-mode)
+    (syscall-mach-only-in-use-during-launch)
+    (syscall-mach-in-use-after-launch))
+
+(when (defined? 'MSC_mach_msg2_trap)
+    (allow syscall-mach (machtrap-number MSC_mach_msg2_trap)))
+
+(with-filter (require-not (webcontent-process-launched))
+    (allow syscall-mach
+        (syscall-mach-only-in-use-during-launch)))
+(with-filter (webcontent-process-launched)
+    (deny syscall-mach
+        (with telemetry)
+        (with message "Mach syscall used after launch")
+        (syscall-mach-only-in-use-during-launch)))
+
+(with-filter (lockdown-mode)
+    (deny syscall-mach (with telemetry) (with message "Lockdown mode")
+        (syscall-mach-blocked-in-lockdown-mode)))
+
+(deny syscall-mig (with telemetry))
+
+(allow syscall-mig (with telemetry-backtrace)
+    (kernel-mig-routine-rarely-used-need-backtrace)
+    (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode))
+
+(allow syscall-mig (with telemetry)
+    (kernel-mig-routine-rarely-used))
+
+(allow syscall-mig
+    (kernel-mig-routine-blocked-in-lockdown-mode)
+    (kernel-mig-routine-in-use))
+
+#if PLATFORM(WATCHOS)
+(allow syscall-mig
+    (kernel-mig-routine-in-use-watchos))
+#endif
+
+(allow syscall-mig (with telemetry)
+    (kernel-mig-routine mach_vm_remap_external))
+
+(with-filter (require-not (webcontent-process-launched))
+    (allow syscall-mig
+        (kernel-mig-routine-only-in-use-during-launch)))
+(with-filter (webcontent-process-launched)
+    (deny syscall-mig
+        (with telemetry)
+        (with message "kernel mig routine used after launch")
+        (kernel-mig-routine-only-in-use-during-launch)))
+#if ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
+(deny syscall-mig NO_REPORT (kernel-mig-routines-iokit-service))
+#else
+(with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+    (allow syscall-mig (kernel-mig-routines-iokit-service)))
+#endif
+
+#if HAVE(HARDENED_MACH_EXCEPTIONS)
+(with-filter (require-not (lockdown-mode))
+    (allow syscall-mig (kernel-mig-routine thread_adopt_exception_handler))
+    (with-filter (require-not (webcontent-process-launched))
+        (allow syscall-mig (kernel-mig-routine task_register_hardened_exception_handler))))
+#else
+(with-filter (require-not (lockdown-mode))
+    (allow syscall-mig (kernel-mig-routine thread_set_exception_ports)))
+#endif ;; HAVE(HARDENED_MACH_EXCEPTIONS)
+
+(with-filter (lockdown-mode)
+    (deny syscall-mig (with telemetry) (with message "Lockdown mode")
+        (kernel-mig-routine-blocked-in-lockdown-mode))
+    (deny syscall-mig (with telemetry) (with message "Lockdown mode")
+        (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode))
+    (deny syscall-mig (with telemetry) (with message "Lockdown mode")
+        (kernel-mig-routine-rarely-used)))
+
+(when (defined? 'mach_port_is_connection_for_service)
+    (allow syscall-mig (kernel-mig-routine mach_port_is_connection_for_service)))
+
+(deny darwin-notification-post NO_REPORT)
+(allow darwin-notification-post
+    (notification-name
+#if ENABLE(NOTIFY_BLOCKING)
+#define WK_NOTIFICATION_COMMENT(...)
+#define WK_NOTIFICATION(name) name
+#include "Resources/cocoa/NotificationAllowList/ForwardedNotifications.def"
+#include "Resources/cocoa/NotificationAllowList/EmbeddedForwardedNotifications.def"
+#include "Resources/cocoa/NotificationAllowList/NonForwardedNotifications.def"
+#undef WK_NOTIFICATION
+#undef WK_NOTIFICATION_COMMENT
+#endif
+        (darwin-notification-post-allowed)))
+
+(with-filter (webcontent-process-launched)
+    (deny mach-task-special-port-get (with telemetry))
+    (deny mach-task-special-port-set (with telemetry)))
+
+#if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
+#include <WebKitAdditions/SystemContentSandbox-ios.defs>
+
+(allow file-read* file-test-existence
+    (apply subpath file-read-existence-secondary-paths))
+
+(allow file-map-executable
+    (apply subpath secondary-framework-and-dylib-paths))
+
+(allow-read-and-issue-generic-extensions
+    (apply subpath issue-extension-secondary-paths))
+    
+(allow file-issue-extension
+    (require-all
+        (extension-class "com.apple.mediaserverd.read")
+        (require-any
+            (apply subpath issue-extension-secondary-paths))))
+#endif

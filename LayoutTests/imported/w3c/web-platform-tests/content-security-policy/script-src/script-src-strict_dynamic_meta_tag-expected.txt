@@ -1,0 +1,8 @@
+A `strict-dynamic` policy can be served in a META tag.
+
+
+PASS Script injected via `appendChild` is allowed with `strict-dynamic`.
+PASS Script injected via `appendChild` is allowed with `strict-dynamic`, even if it carries an incorrect nonce.
+PASS Script injected via `appendChild` populated via `textContent` is allowed with `strict-dynamic`.
+PASS Script injected via `appendChild` populated via `textContent` is allowed with `strict-dynamic`, even if it carries an incorrect nonce.
+

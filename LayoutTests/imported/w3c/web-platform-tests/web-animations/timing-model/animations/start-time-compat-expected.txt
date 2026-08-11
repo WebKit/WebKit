@@ -1,0 +1,3 @@
+
+PASS Checking the start time of animations started at various times between two page rendering updates
+

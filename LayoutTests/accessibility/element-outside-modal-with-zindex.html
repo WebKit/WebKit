@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test.js"></script>
+    <script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div role="dialog" aria-modal="true" style="z-index: 10">
+    <button id="modalButton" aria-label="Button"></button>
+</div>
+
+<div id="text1" style="z-index: 50; width: 200px; position: absolute;">This is content floating above the modal.</div>
+
+<div id="text2" style="position: absolute; width: 200px;">This is content floating beneath the modal.</div>
+
+<div style="position: absolute; width: 200px; z-index: 100;">
+    <div role="group">
+        <button id="floatingButton">My Button</button>
+    </div>
+</div>
+
+<div role="group" aria-label="content" style="position: absolute; width: 200px; z-index: 100">
+    <button style="display:contents" id="displayContentsButton">Display Contents Button</button>
+</div>
+
+<script>
+var output = "This tests that content with a higher zindex than the active modal is exposed to accessibility.\n\n"
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    document.getElementById("modalButton").focus();
+    setTimeout(async function() {
+        await waitFor(() => accessibilityController.accessibleElementById('text2') == null);
+        output += expect("accessibilityController.accessibleElementById('modalButton').isIgnored", "false");
+        output += expect("accessibilityController.accessibleElementById('text1').childAtIndex(0).isIgnored", "false");
+        output += expect("accessibilityController.accessibleElementById('text2') == null", "true");
+        output += expect("accessibilityController.accessibleElementById('floatingButton').isIgnored", "false");
+        output += expect("accessibilityController.accessibleElementById('displayContentsButton').isIgnored", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

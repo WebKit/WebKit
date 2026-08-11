@@ -1,0 +1,61 @@
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<table id="table1" role="table">
+    <tr id="firstRow"><td>a</td><td>b</td><td>c</td></tr>
+</table>
+
+<script>
+    function outputTableRows(axTable) {
+        let output = "";
+        for (let i = 0; i < axTable.rowCount; ++i)
+            output += axTable.rowAtIndex(i).domIdentifier + "\n";
+        return output;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        let output = "";
+
+        let axTable = accessibilityController.accessibleElementById("table1");
+        output += `Original number of rows: ${axTable.rowCount}\n`;
+        output += outputTableRows(axTable);
+
+        // Create and apend a new row to table.
+        let table = document.getElementById("table1");
+        let row = document.createElement("tr");
+        row.id = "secondRow";
+        let td1 = document.createElement("td");
+        td1.appendChild(document.createTextNode("d"));
+        row.appendChild(td1);
+        let td2 = document.createElement("td");
+        td2.appendChild(document.createTextNode("e"));
+        row.appendChild(td2);
+        let td3 = document.createElement("td");
+        td3.appendChild(document.createTextNode("f"));
+        row.appendChild(td3);
+        table.appendChild(row);
+
+        setTimeout(async () => {
+            await waitFor(() => { return axTable.rowCount == 2; });
+            output += `Number of rows after appending 1 row: ${axTable.rowCount}\n`;
+            output += outputTableRows(axTable);
+
+            // Remove first row.
+            table.removeChild(table.childNodes[1]);
+
+            await waitFor(() => { return axTable.rowCount == 1; });
+            output += `Number of rows after removing first row: ${axTable.rowCount}\n`;
+            output += outputTableRows(axTable);
+
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

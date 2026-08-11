@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+    margin: 0;
+}
+
+.text {
+    font-size: 20px;
+}
+
+.start {
+    border: 1px solid orange;
+}
+
+.end {
+    border: 1px solid cyan;
+}
+
+.container {
+    width: 200px;
+    height: 200px;
+    border: 4px solid red;
+    border-radius: 40px;
+    will-change: transform;
+    z-index: 1;
+    line-height: 200px;
+    text-align: center;
+    font-size: 80px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the highlight appears over selected content in composited layers");
+
+    const container = document.querySelector(".container");
+    let {x, y} = UIHelper.midPointOfRect(container.getBoundingClientRect());
+    viewBeforeSelecting = await UIHelper.frontmostViewAtPoint(x, y);
+
+    const start = document.querySelector(".start");
+    await UIHelper.longPressElement(start);
+    await UIHelper.waitForSelectionToAppear();
+
+    const end = document.querySelector(".end");
+    const range = document.createRange();
+    range.setStartBefore(start);
+    range.setEndAfter(end);
+    getSelection().removeAllRanges();
+    getSelection().addRange(range);
+    await UIHelper.ensurePresentationUpdate();
+
+    viewAfterSelecting = await UIHelper.frontmostViewAtPoint(x, y);
+    shouldNotBe("viewBeforeSelecting", "viewAfterSelecting");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p class="text"><span class="start">Start</span> selecting here</p>
+    <div class="container"><span>Hello</span></div>
+    <p class="text">End selection <span class="end">here</span></p>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "getoutputtimestamp-cross-realm"
+PASS Audit report
+PASS > [getoutputtimestamp-cross-realm]
+PASS   mainContext's performanceTime is greater than iframeContext's performanceTime.
+PASS   mainContext's performanceTime (via iframeContext's method) is mainContext's performanceTime within an error of 0.01.
+PASS < [getoutputtimestamp-cross-realm] All assertions passed. (total 2 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

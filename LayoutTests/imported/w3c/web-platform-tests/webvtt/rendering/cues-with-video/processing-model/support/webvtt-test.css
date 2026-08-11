@@ -1,0 +1,14 @@
+html { overflow: hidden }
+body { margin: 0 }
+video {
+    display: inline-block;
+    width: 320px;
+    height: 180px;
+    position: relative;
+    outline: 1px solid black;
+}
+
+::cue {
+    color: green;
+    font: 9px Ahem, sans-serif; /* Use Ahem because it improves test reliability. */
+}

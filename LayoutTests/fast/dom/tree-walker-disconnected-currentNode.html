@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests holding onto a node via TreeWalker. WebKit should keep the root node alive.');
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let treeWalker = (function setup() {
+    let div = document.createElement('div');
+    let span = document.createElement('span');
+    span.innerHTML = '<b><i></i></b>';
+    div.appendChild(span);
+    return document.createTreeWalker(span);
+})();
+
+treeWalker.nextNode();
+treeWalker.nextNode();
+treeWalker.root.replaceChildren();
+
+if (window.GCController) {
+    GCController.collect();
+    internals.releaseMemoryNow();
+} else
+    testFailed('This tests requires GCController');
+
+shouldBeEqualToString('treeWalker.currentNode.getRootNode().localName', 'b');
+
+</script></body>

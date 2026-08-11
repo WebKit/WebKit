@@ -1,0 +1,11 @@
+Tests that a page with a video element does not go into the back/forward cache when back-forward-cache-with-media is disabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+pageshow - not from cache
+PASS Page was not restored from the back/forward cache
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

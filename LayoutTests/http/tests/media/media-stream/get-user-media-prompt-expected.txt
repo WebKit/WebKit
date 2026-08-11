@@ -1,0 +1,29 @@
+Tests that user is only prompted once per device in the current browsing context.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 0
+
+** Request an audio-only stream, the user should be prompted **
+PASS navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream1); did not throw exception.
+PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 1
+PASS stream.getAudioTracks().length is 1
+PASS stream.getVideoTracks().length is 0
+
+** Request a video-only stream, the user should be prompted **
+PASS navigator.mediaDevices.getUserMedia({video:true}).then(gotStream2); did not throw exception.
+PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 2
+PASS stream.getAudioTracks().length is 0
+PASS stream.getVideoTracks().length is 1
+
+** Request a stream with video and audio, the user should not be prompted again **
+PASS navigator.mediaDevices.getUserMedia({audio:true, video:true}).then(gotStream3); did not throw exception.
+PASS numberOfTimesGetUserMediaPromptHasBeenCalled() is 2
+PASS stream.getAudioTracks().length is 1
+PASS stream.getVideoTracks().length is 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

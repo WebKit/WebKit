@@ -1,0 +1,13 @@
+/lib/*
+/template/en/custom
+/docs/en/html
+/docs/en/txt
+/docs/en/pdf
+/skins/custom
+/graphs
+/data
+/localconfig
+/index.html
+
+/skins/contrib/Dusk/admin.css
+/skins/contrib/Dusk/bug.css

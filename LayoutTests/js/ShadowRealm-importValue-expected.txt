@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: 42
+CONSOLE MESSAGE: 100
+Test to ensure correct behaviour of ShadowRealm.prototype.importValue
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+shadowRealm: calling nested realm wrapper uses correct global: OK
+shadowRealm: nested realm eval uses correct global: OK
+
+PASS can import module in a shadow realm
+PASS can nest realms
+

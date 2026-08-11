@@ -1,0 +1,4 @@
+item1 item2
+
+PASS When the focus is set on the first item of a focusgroup, a backward arrow key press shouldn't move the focus since there aren't any previous item.
+

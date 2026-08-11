@@ -1,0 +1,76 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+    let code = `
+@group(0) @binding(0) var<storage, read_write> buf0: array<u32>;
+
+@compute @workgroup_size(1)
+fn c() {
+  buf0[0x40] = arrayLength(&buf0);
+}
+`;
+    let module = device.createShaderModule({code});
+    let bindGroupLayout0 = device.createBindGroupLayout({
+      entries: [
+        {binding: 0, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 1, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 2, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 3, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 4, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 5, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 6, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 7, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+      ],
+    });
+    let bindGroupLayout1 = device.createBindGroupLayout({
+      entries: [
+        {binding: 0, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+      ],
+    });
+    let storageBuffer0 = device.createBuffer({usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC, size: 256});
+    let outputBuffer0 = device.createBuffer({size: storageBuffer0.size, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ});
+    let pipelineLayout = device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout0, bindGroupLayout1]});
+    let computePipeline1 = device.createComputePipeline({
+      layout: pipelineLayout,
+      compute: {module},
+    });
+    let bindGroup0 = device.createBindGroup({
+      layout: bindGroupLayout0,
+      entries: [
+        {binding: 0, resource: {buffer: storageBuffer0}},
+        {binding: 1, resource: {buffer: storageBuffer0}},
+        {binding: 2, resource: {buffer: storageBuffer0}},
+        {binding: 3, resource: {buffer: storageBuffer0}},
+        {binding: 4, resource: {buffer: storageBuffer0}},
+        {binding: 5, resource: {buffer: storageBuffer0}},
+        {binding: 6, resource: {buffer: storageBuffer0}},
+        {binding: 7, resource: {buffer: storageBuffer0}},
+      ],
+    });
+    let commandEncoder = device.createCommandEncoder();
+    let computePassEncoder = commandEncoder.beginComputePass({});
+    computePassEncoder.setPipeline(computePipeline1);
+    computePassEncoder.setBindGroup(0, bindGroup0);
+    computePassEncoder.dispatchWorkgroups(1);
+    computePassEncoder.end();
+    let commandBuffer = commandEncoder.finish();
+    device.queue.submit([commandBuffer]);
+    await device.queue.onSubmittedWorkDone();
+    await outputBuffer0.mapAsync(GPUMapMode.READ);
+    log([...new Uint32Array(outputBuffer0.getMappedRange())].map(x => x.toString(0x10)).join(', '));
+    outputBuffer0.unmap();
+    let error = await device.popErrorScope();
+    if (error) {
+      log(error.message);
+    } else {
+      log('no validation error');
+    }
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

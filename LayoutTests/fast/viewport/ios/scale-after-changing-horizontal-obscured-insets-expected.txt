@@ -1,0 +1,12 @@
+This test verifies that setting the left obscured inset to zero does not cause the web view to unnecessarily zoom in. To run manually, pinch in and out, and then open and then close the sidebar on iPad; verify that the zoom scale stays at 1.0
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS visualViewport.scale.toFixed(3) became '1.000'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hi
+
+

@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="./resources/paint-api-utils.js"></script>
+</head>
+<body>
+<script>
+description("Ensure PerformanceObservers are notified once for first-contentful-paint.");
+window.jsTestIsAsync = true;
+ 
+(async () => {
+    window.didReceiveFirstContentfulPaint = false;
+    window.startTime = performance.now();
+    await waitForFCP();
+    await new Promise(resolve => {
+        const observer = new PerformanceObserver(entryList => {
+            window.entryList = entryList;
+            shouldBe('entryList.getEntries().length', "1");
+            shouldBe('entryList.getEntriesByName("first-contentful-paint").length', 1);
+            shouldBe('entryList.getEntriesByType("paint").length', "1");
+            window.fcpEntry = entryList.getEntries()[0];
+            shouldBeFalse('didReceiveFirstContentfulPaint');
+            shouldBe('fcpEntry.name', '"first-contentful-paint"');
+            shouldBe('fcpEntry.entryType', '"paint"');
+            shouldBeTrue('fcpEntry.startTime > window.startTime');
+            shouldBeTrue('fcpEntry.startTime < performance.now()');
+            shouldBe('fcpEntry.duration', "0");
+            didReceiveFirstContentfulPaint = true;
+            resolve();
+        });
+
+        observer.observe({entryTypes: ['paint']});
+        document.body.innerText = 'TEXT';
+    })
+    document.body.innerText = 'TEXT2';
+    await waitForFCP();
+    shouldBeTrue('didReceiveFirstContentfulPaint');
+    shouldBe('performance.getEntries().length', "2");
+    shouldBe('performance.getEntriesByName("first-contentful-paint").length', "1");
+    shouldBe('performance.getEntriesByName("first-contentful-paint", "paint").length', "1");
+    shouldBe('performance.getEntriesByType("paint").length', "1");
+    testPassed("PerformanceObserver first-contentful-paint callback wasn't fired again ");
+    finishJSTest();
+})();
+
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

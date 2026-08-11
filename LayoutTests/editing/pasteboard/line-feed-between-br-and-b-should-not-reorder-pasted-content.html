@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+function editingTest() {
+    for (i = 0; i < 3; i++)
+        extendSelectionForwardByLineCommand();
+
+    Markup.description(document.querySelector('.explanation').innerText);
+
+    Markup.dump('root', 'Before cut');
+    cutCommand();
+    Markup.dump('root', 'After cut');
+
+    pasteCommand();
+    Markup.dump('root', 'After paste');
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Bug fix for <a href="rdar://problem/4035648">&lt;rdar://problem/4035648&gt;</a> REGRESSION (Mail): line feed in source HTML file causes bad copy/paste behavior
+<br>
+In particular, the line feed that appears between br and b elements should not reorder the content in createMarkup.
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+Should see the text self-documenting itself correctly:
+<BR>
+<B>bold<BR>
+</B>
+plain
+</div>
+</div>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+<BR>
+<B>bold<BR>
+</B>
+plain
+</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

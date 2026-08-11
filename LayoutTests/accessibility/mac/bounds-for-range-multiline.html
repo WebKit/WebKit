@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!--
+Wraps like the following:
+```
+The quick brown fox
+jumps over the lazy
+dog.
+```
+!-->
+
+<p id="content" style="width: 200px; font-size: 20px;">
+The quick brown fox jumped over the lazy dog.
+</p>
+    
+<script>
+if (window.accessibilityController) {
+    let output = "This test verifies that text marker range bounds for ranges that span across soft line breaks are correct.\n\n";
+    var textChild = accessibilityController.accessibleElementById("content").childAtIndex(0);
+
+    output += expectRectWithVariance("textChild.boundsForRange(0, 3)", -1, -1, 31, 23, 1); // "The"
+    output += expectRectWithVariance("textChild.boundsForRange(0, 19)", -1, -1, 168, 23, 1); // "The quick brown fox" (full width)
+    output += expectRectWithVariance("textChild.boundsForRange(16, 8)", -1, -1, 168, 46, 1); // "fox jumps" (full width)
+    output += expectRectWithVariance("textChild.boundsForRange(0, 42)", -1, -1, 168, 69, 1); // "The quick brown fox jumped over the lazy dog." (full width)
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+
+

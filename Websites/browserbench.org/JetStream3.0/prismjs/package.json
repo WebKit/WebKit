@@ -1,0 +1,24 @@
+{
+  "name": "prismjs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./benchmark-node.mjs",
+    "clean": "rm -rf dist/*",
+    "prebuild": "npm run clean",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@babel/core": "^7.28.3",
+    "@dapplets/unicode-escape-webpack-plugin": "github:dapplets/unicode-escape-webpack-plugin",
+    "babel-loader": "^10.0.0",
+    "license-webpack-plugin": "^4.0.2",
+    "prismjs": "^1.30.0",
+    "terser-webpack-plugin": "^5.3.14",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
+  }
+}

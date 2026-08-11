@@ -1,0 +1,8 @@
+
+
+PASS Wait for image laods
+PASS Cross Origin images
+PASS Cross Origin canvas
+PASS Cross origin OffscreenCanvas
+PASS Cross origin bitmaps
+

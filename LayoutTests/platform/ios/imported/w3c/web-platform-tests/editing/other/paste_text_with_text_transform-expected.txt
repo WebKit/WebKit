@@ -1,0 +1,12 @@
+This Should Not Be Capitalized
+This should be copied as plain text
+
+This Should Be Copied As Plain Text
+●●●●●●●
+●●●●●●● This Should Be Copied As Plain Text This should be copied as plain text This Should Not Be Capitalized
+
+FAIL text-transform should not affect plain text copy assert_equals: HTML content matches the expected structure after copy expected "this should not be capitalized" but got "This Should Not Be Capitalized"
+FAIL text-transform of first letter should not affect plain text copy assert_equals: HTML content matches the expected structure after copy expected "this should be copied as plain text" but got "This should be copied as plain text This Should Not Be Capitalized"
+FAIL white space collapsing should be preserved assert_equals: HTML content matches the expected structure after copy expected "this should be copied as plain text" but got "This Should Be Copied As Plain Text This should be copied as plain text This Should Not Be Capitalized"
+FAIL secured string should be masked assert_equals: HTML content matches the expected structure after copy expected "•••••••" but got "●●●●●●● This Should Be Copied As Plain Text This should be copied as plain text This Should Not Be Capitalized"
+

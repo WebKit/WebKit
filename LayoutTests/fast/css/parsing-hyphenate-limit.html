@@ -1,0 +1,43 @@
+<pre id="console"></pre>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function log(message)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+    }
+
+    function test(declaration, expectedHyphenateLimit, after)
+    {
+        var element = document.createElement("div");
+        element.style.cssText = declaration;
+        var hyphenateLimit = after ? element.style.webkitHyphenateLimitAfter : element.style.webkitHyphenateLimitBefore;
+        if (hyphenateLimit === expectedHyphenateLimit)
+            log("PASS: '" + declaration + "' parsed as '" + hyphenateLimit + "'");
+        else
+            log("FAIL: '" + declaration + "' parsed as '" + hyphenateLimit + "'");
+    }
+
+    test('-webkit-hyphenate-limit-before: initial;', 'initial');
+    test('-webkit-hyphenate-limit-before: inherit;', 'inherit');
+    test('-webkit-hyphenate-limit-before: auto;', 'auto');
+    test('-webkit-hyphenate-limit-before: 0;', '0');
+    test('-webkit-hyphenate-limit-before: 4;', '4');
+    test('-webkit-hyphenate-limit-before: 2 2;', '');
+    test('-webkit-hyphenate-limit-before: 2px;', '');
+    test('-webkit-hyphenate-limit-before: -1;', '');
+    test('-webkit-hyphenate-limit-before: "1";', '');
+
+    log("");
+
+    test('-webkit-hyphenate-limit-after: initial;', 'initial', true);
+    test('-webkit-hyphenate-limit-after: inherit;', 'inherit', true);
+    test('-webkit-hyphenate-limit-after: auto;', 'auto', true);
+    test('-webkit-hyphenate-limit-after: 0;', '0', true);
+    test('-webkit-hyphenate-limit-after: 4;', '4', true);
+    test('-webkit-hyphenate-limit-after: 2 2;', '', true);
+    test('-webkit-hyphenate-limit-after: 2px;', '', true);
+    test('-webkit-hyphenate-limit-after: -1;', '', true);
+    test('-webkit-hyphenate-limit-after: "1";', '', true);
+</script>

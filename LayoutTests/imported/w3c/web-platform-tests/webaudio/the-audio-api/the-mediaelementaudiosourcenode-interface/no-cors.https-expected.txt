@@ -1,0 +1,15 @@
+
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "setting-up-graph"
+PASS Executing "start-playback-and-capture"
+PASS Audit report
+PASS > [setting-up-graph]
+PASS < [setting-up-graph] All assertions passed. (total 0 assertions)
+PASS > [start-playback-and-capture]
+PASS   Recorded channel #0 contains only the constant 0.
+PASS   Recorded channel #1 contains only the constant 0.
+PASS   Recorded channel #2 contains only the constant 0.
+PASS   Recorded channel #3 contains only the constant 0.
+PASS < [start-playback-and-capture] All assertions passed. (total 4 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+

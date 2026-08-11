@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script><![CDATA[
+if (window.testRunner)
+    testRunner.dumpAsText();
+customElements.define('x-a', class extends HTMLElement {
+    constructor() {
+        super();
+        document.documentElement.appendChild(this);
+    }
+});
+]]></script>
+</head>
+<body>
+<p>This test passes if it does not crash.</p>
+<div id="container"><x-a></x-a></div>
+</body>
+</html>

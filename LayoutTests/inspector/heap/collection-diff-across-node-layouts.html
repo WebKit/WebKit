@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("HeapSnapshot.CollectionDiffAcrossNodeLayouts");
+
+    suite.addTestCase({
+        name: "HeapSnapshot.CollectionDiffAcrossNodeLayouts",
+        description: "updateDeadNodesAndGatherCollectionData() must stride the previous snapshot's node list by that snapshot's own field count, not the current snapshot's.",
+        test(resolve, reject) {
+            let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
+            let targetId = WI.mainTarget.identifier;
+
+            // A "GCDebugging" snapshot has 7 fields per node:
+            //   [<id>, <size>, <className>, <flags>, <label>, <cellAddress>, <wrappedAddress>]
+            // Node ordinal 0 is the <root>. Node id 1 will be collected by the next snapshot;
+            // node id 2 survives. The size/cellAddress fields of node id 1 are given values (1
+            // and 77) that a buggy 4-field stride would misread as "deleted" node identifiers.
+            let gcDebuggingSnapshot = JSON.stringify({
+                version: 3,
+                type: "GCDebugging",
+                nodes: [
+                    0, 0, 0, 0, 0, 0, 0,   // <root>, id 0
+                    1, 1, 1, 0, 0, 77, 0,  // id 1 (will be collected)
+                    2, 8, 2, 0, 0, 0, 0,   // id 2 (survives)
+                ],
+                nodeClassNames: ["", "Foo", "Bar"],
+                edges: [
+                    0, 1, 0, 0,            // <root> -> id 1
+                    0, 2, 0, 0,            // <root> -> id 2
+                ],
+                edgeTypes: ["Internal", "Property", "Index", "Variable"],
+                edgeNames: [],
+                roots: [],
+                labels: [],
+            });
+
+            // An "Inspector" snapshot has 4 fields per node:
+            //   [<id>, <size>, <className>, <flags>]
+            // Node id 1 is gone (collected), id 2 survives, id 3 is new.
+            let inspectorSnapshot = JSON.stringify({
+                version: 3,
+                type: "Inspector",
+                nodes: [
+                    0, 0, 0, 0,            // <root>, id 0
+                    2, 8, 2, 0,            // id 2 (survives)
+                    3, 8, 2, 0,            // id 3 (new)
+                ],
+                nodeClassNames: ["", "Foo", "Bar"],
+                edges: [
+                    0, 2, 0, 0,            // <root> -> id 2
+                    0, 3, 0, 0,            // <root> -> id 3
+                ],
+                edgeTypes: ["Internal", "Property", "Index", "Variable"],
+                edgeNames: [],
+            });
+
+            let handled = false;
+            function handleCollection(event) {
+                if (handled)
+                    return;
+                handled = true;
+                workerProxy.removeEventListener(WI.HeapSnapshotWorkerProxy.Event.Collection, handleCollection);
+
+                let {collectedNodes} = event.data;
+                let collectedIdentifiers = Object.keys(collectedNodes).map(Number).sort((a, b) => a - b);
+                InspectorTest.log("Collected node identifiers: " + JSON.stringify(collectedIdentifiers));
+
+                InspectorTest.expectEqual(collectedIdentifiers.length, 1, "Should collect exactly one node identifier.");
+                InspectorTest.expectThat(collectedIdentifiers.includes(1), "Should collect node identifier 1 (the deleted node).");
+                InspectorTest.expectFalse(collectedIdentifiers.includes(77), "Should not collect a garbage identifier read from a misaligned field.");
+
+                resolve();
+            }
+            workerProxy.addEventListener(WI.HeapSnapshotWorkerProxy.Event.Collection, handleCollection);
+
+            // Create the previous (GCDebugging) snapshot, then the current (Inspector) snapshot.
+            // Creating the second snapshot triggers the collection diff, which fires a Collection
+            // event asynchronously from the worker.
+            workerProxy.createSnapshot(targetId, gcDebuggingSnapshot, () => {
+                workerProxy.createSnapshot(targetId, inspectorSnapshot, () => { });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that a heap snapshot collection diff strides the previous snapshot's node list by the previous snapshot's own node field count.</p>
+</body>
+</html>

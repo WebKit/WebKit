@@ -1,0 +1,6 @@
+
+FAIL Validate isSessionSupported behavior without xr-spatial-tracking policy assert_unreached: Should have rejected: Immersive isSessionSupported should reject Reached unreachable code
+FAIL Validate requestSession behavior without xr-spatial-tracking policy assert_unreached: Should have rejected: Inline with features should reject without permissions policy Reached unreachable code
+PASS Validate devicechange event behavior without xr-spatial-tracking policy
+FAIL Validate xr compatibility requests without xr-spatial-tracking policy assert_false: xrCompatibility shouldn't be set when requested without permissions policy expected false got true
+

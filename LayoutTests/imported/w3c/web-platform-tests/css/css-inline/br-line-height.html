@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Test: BR with explicit line-height stretches the line box</title>
+  <link rel="help" href="https://drafts.csswg.org/css-inline-3/#line-height-property">
+  <link rel="match" href="br-line-height-ref.html">
+  <link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+  <meta name="assert" content="A BR element with an explicit line-height should contribute its layout bounds to the line box height.">
+  <style>
+  body {
+      margin: 0;
+  }
+  div {
+      font: 20px/1 Ahem;
+  }
+  br {
+      line-height: 200px;
+  }
+  </style>
+</head>
+<body>
+  <p>Test passes if X appears at approximately 200px from the top.</p>
+  <div><br>X</div>
+</body>
+</html>

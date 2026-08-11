@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+function doTest() {
+  document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_DEVICE_SCALE);
+  testRunner.notifyDone();
+}
+
+window.addEventListener('load', doTest, false);
+</script>
+</head>
+
+<body>
+<p> Tests whether a compositing layer containing only an image uses a standard DPI backing store.</p>
+<img src="resources/simple_image.png" style="transform: translateZ(0px);"></img>
+<pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+
+</html>

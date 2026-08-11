@@ -1,0 +1,16 @@
+Click targeting when targets of down and up are sibling elements
+
+This test verifies that click event always goes to the first common ancestor of down and up event targets.
+Press down the primary button on red div and move to blue box and release.
+Press down the primary button on button b1 and move to button b2 and release.
+Press down the primary button on input i1 and move to input i2 and release.
+Press down the primary button on link 1 and move to link 2 and release.
+Click done.
+b1  b2
+
+link1
+link2
+Done
+
+PASS Click targets the nearest common ancestor
+

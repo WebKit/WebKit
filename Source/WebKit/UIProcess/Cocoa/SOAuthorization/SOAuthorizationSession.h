@@ -1,0 +1,139 @@
+/*
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if HAVE(APP_SSO)
+
+#include <pal/spi/cocoa/AppSSOSPI.h>
+#include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WeakObjCPtr.h>
+#include <wtf/WeakPtr.h>
+
+OBJC_CLASS SOAuthorization;
+OBJC_CLASS WKSOAuthorizationDelegate;
+
+namespace API {
+class NavigationAction;
+}
+
+namespace WebCore {
+class ResourceResponse;
+class SecurityOrigin;
+}
+
+namespace WebKit {
+
+class WebPageProxy;
+
+enum class SOAuthorizationLoadPolicy : bool;
+
+// A session will only be executed once.
+class SOAuthorizationSession : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SOAuthorizationSession, WTF::DestructionThread::MainRunLoop> {
+public:
+    enum class InitiatingAction : uint8_t {
+        Redirect,
+        PopUp,
+        SubFrame
+    };
+
+    using UICallback = void (^)(BOOL, NSError *);
+
+    virtual ~SOAuthorizationSession();
+
+    // Probably not start immediately.
+    void shouldStart();
+
+    // The following should only be called by SOAuthorizationDelegate methods.
+    enum class UserCancel : bool { No, Yes };
+    void fallBackToWebPath(UserCancel = UserCancel::No);
+    void abort();
+    // Only responses that meet all of the following requirements will be processed:
+    // 1) it has the same origin as the request;
+    // 2) it has a status code of 200, 302, 307 (POST only), or 401 (with non-empty body).
+    // Otherwise, it falls back to the web path.
+    // Only the following HTTP headers will be processed:
+    // { Set-Cookie, Location }.
+    void complete(NSHTTPURLResponse *, NSData *);
+    void presentViewController(SOAuthorizationViewController, UICallback);
+
+protected:
+    // FSM depends on derived classes.
+    enum class State : uint8_t {
+        Idle,
+        Active,
+        Waiting,
+        Completed
+    };
+
+    SOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate>, Ref<API::NavigationAction>&&, WebPageProxy&, InitiatingAction);
+
+    void start();
+    virtual void beginAuthorizationIfReady();
+    WebPageProxy* page() const { return m_page.get(); }
+    State state() const { return m_state; }
+    ASCIILiteral stateString() const;
+    ASCIILiteral NODELETE initiatingActionString() const;
+    void setState(State state) { m_state = state; }
+    const API::NavigationAction* navigationAction() { return m_navigationAction.get(); }
+    Ref<API::NavigationAction> releaseNavigationAction();
+
+private:
+    virtual void shouldStartInternal() = 0;
+    virtual void fallBackToWebPathInternal() = 0;
+    virtual void userCancel() { fallBackToWebPathInternal(); }
+    virtual void abortInternal() = 0;
+    virtual void completeInternal(const WebCore::ResourceResponse&, NSData *) = 0;
+
+    void becomeCompleted();
+    void dismissViewController();
+#if PLATFORM(MAC)
+    void dismissModalSheetIfNecessary();
+#endif
+    void continueStartAfterGetAuthorizationHints(const String&);
+    void continueStartAfterDecidePolicy(const SOAuthorizationLoadPolicy&);
+
+    virtual bool shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&) { return false; }
+    State m_state  { State::Idle };
+    RetainPtr<SOAuthorization> m_soAuthorization;
+    RefPtr<API::NavigationAction> m_navigationAction;
+    WeakPtr<WebPageProxy> m_page;
+    InitiatingAction m_action;
+    bool m_isInDestructor { false };
+
+    RetainPtr<SOAuthorizationViewController> m_viewController;
+#if PLATFORM(MAC)
+    RetainPtr<NSWindow> m_sheetWindow;
+    RetainPtr<NSObject> m_sheetWindowWillCloseObserver;
+    RetainPtr<NSObject> m_presentingWindowDidDeminiaturizeObserver;
+    RetainPtr<NSObject> m_applicationDidUnhideObserver;
+#endif
+};
+
+} // namespace WebKit
+
+#endif

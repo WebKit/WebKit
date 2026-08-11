@@ -1,0 +1,13 @@
+Selecting and adjusting a selection inside a CSS-transformed cross-origin iframe should map coordinates through the transform, not treat the iframe's position as a plain translation offset.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS initialSelection is "token3"
+PASS extendedSelection.includes('token3') is true
+PASS extendedSelection.includes('token4') is true
+PASS extendedSelection.includes('token10') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

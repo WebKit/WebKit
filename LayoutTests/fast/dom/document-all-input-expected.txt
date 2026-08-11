@@ -1,0 +1,4 @@
+This tests setting inputs using document.all. If successful, the input should show PASS.
+
+
+PASS

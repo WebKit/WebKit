@@ -1,0 +1,3 @@
+
+PASS with "strict-origin" referrer policy in rule set overriding "strict-origin-when-cross-origin" of referring page
+

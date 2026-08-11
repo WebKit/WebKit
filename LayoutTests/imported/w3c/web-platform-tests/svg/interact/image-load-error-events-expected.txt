@@ -1,0 +1,7 @@
+
+PASS 'load' and 'error' events for SVG <image>, external reference, existing
+PASS 'load' and 'error' events for SVG <image>, external data: URL reference, existing
+PASS 'load' and 'error' events for SVG <image>, external reference, non-existing
+PASS 'load' and 'error' events for SVG <image>, external reference, existing, detached
+PASS 'load' and 'error' events for SVG <image>, external reference, non-existing, detached
+

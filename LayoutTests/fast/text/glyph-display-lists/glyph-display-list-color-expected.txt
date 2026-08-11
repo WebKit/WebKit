@@ -1,0 +1,6 @@
+
+(draw-glyphs
+  (local-anchor (0,0))
+  (font-smoothing-mode antialiased)
+  (length 9))
+

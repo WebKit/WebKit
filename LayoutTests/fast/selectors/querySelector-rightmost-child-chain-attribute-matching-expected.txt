@@ -1,0 +1,11 @@
+The CSS JIT was incorrectly saving a backtracking entry point for the rightmost chain of simple selectors with child relation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("[data-webkit][data-rocks]>[data-when]>[data-it-does-not-crash]").length is 1
+PASS document.querySelectorAll("[data-webkit][data-rocks]>[data-when]>[data-it-does-not-crash]")[0].id is "target"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

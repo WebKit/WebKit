@@ -1,0 +1,2 @@
+PASS: toJSON() propagated the custom getter exception
+

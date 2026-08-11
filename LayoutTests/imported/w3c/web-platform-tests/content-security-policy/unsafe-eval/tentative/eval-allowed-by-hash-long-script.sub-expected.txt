@@ -1,0 +1,5 @@
+
+Harness Error (FAIL), message = TypeError: log is not a function. (In 'log("Fail")', 'log' is undefined)
+
+FAIL Expecting alerts: ["PASS, long text that exceeds the 40 character limit used for report snippets"] assert_unreached: Alert timeout, expected alerts PASS, long text that exceeds the 40 character limit used for report snippets not fired. Reached unreachable code
+

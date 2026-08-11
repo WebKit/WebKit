@@ -1,0 +1,4 @@
+Test for http://crbug.com/366571. This test should not hit an assertion on debug build.
+
+
+PASS

@@ -1,0 +1,32 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Cross-site window.open uses a different process");
+    jsTestIsAsync = true;
+
+    if (!window.internals) {
+        testFailed("This test requires the Internals API");
+        finishJSTest();
+    } else {
+        openerPID = internals.processIdentifier;
+
+        window.addEventListener("message", (event) => {
+            messageType = event.data.type;
+            openedPID = event.data.pid;
+            shouldBeEqualToString("messageType", "processId");
+            shouldNotBe("openerPID", "openedPID");
+            openedWindow.close();
+            finishJSTest();
+        }, { once: true });
+
+        // localhost and 127.0.0.1 are different sites
+        openedWindow = window.open("http://localhost:8000/site-isolation/resources/report-process-id.html");
+    }
+</script>
+</body>
+</html>

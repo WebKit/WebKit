@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function load() {
+    document.getElementById("test").addEventListener("click", (event) => {
+        if (window.internals)
+            TestPage.addResult(window.internals.hasTransientActivation() ? "Has transient activation" : "No transient activation");
+    });
+
+    runTest();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Runtime.evaluate");
+
+    suite.addTestCase({
+        name: "Runtime.evaluate.emulateUserGesture.hasTransientActivation.false",
+        description: "Check that the evaluation is not considered a user interaction when emulateUserGesture is false.",
+        async test() {
+            await RuntimeAgent.evaluate.invoke({expression: `document.getElementById("test").click()`, emulateUserGesture: false});
+        },
+    });
+
+    suite.addTestCase({
+        name: "Runtime.evaluate.emulateUserGesture.hasTransientActivation.true",
+        description: "Check that the evaluation is considered a user interaction when emulateUserGesture is true.",
+        async test() {
+            await RuntimeAgent.evaluate.invoke({expression: `document.getElementById("test").click()`, emulateUserGesture: true});
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests for Runtime emulateUserGesture option.</p>
+    <a id="test"></a>
+</body>
+</html>

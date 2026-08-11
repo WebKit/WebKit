@@ -1,0 +1,6 @@
+
+PASS super() after new AudioWorkletProcessor()
+PASS new AudioWorkletProcessor() after super()
+PASS new AudioWorkletProcessor() after new AudioWorkletProcessor()
+PASS Singleton AudioWorkletProcessor
+

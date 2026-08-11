@@ -1,0 +1,99 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+	        overflow-x: auto;
+	        overflow-y: hidden;
+	        width: 500px;
+	        height: 200px;
+	        border: 1px solid black;
+			will-change: z-index;
+			resize: both;
+        }
+	    .wide {
+	        position: relative;
+	        width: 400%;
+	        border: 1px solid green;
+	    }
+        .sticky {
+	        position: sticky;
+	        top: 10px;
+	        left: 10px;
+	        width: 350px;
+	        height: 200px;
+	        background-color: rgba(0, 0, 0, 0.2);
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+    
+    <script>
+        jsTestIsAsync = true;
+
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        async function doTest()
+        {
+            description('Test hit-testing the overlay scrollbar with a composited element inside the scroller');
+            if (!window.internals) {
+                finishJSTest();                
+                return;
+            }
+
+            await UIHelper.renderingUpdate();
+
+            const scroller = document.querySelector('.scroller');
+            const scrollerBounds = scroller.getBoundingClientRect();
+            const x = scrollerBounds.left + 90;
+            const y = scrollerBounds.bottom - 5;
+
+            debug('Initial state');
+            var scrollbarState = await UIHelper.horizontalScrollbarState(scroller);
+            debug(scrollbarState);
+
+            debug('Hovering horizontal scrollbar should show expanded scrollbar');
+            await UIHelper.mouseWheelScrollAt(x, y, -1, 0, -2, 0); // Horizontal scroll gesture.
+            await UIHelper.waitForConditionAsync(async () => {
+                let state = await UIHelper.horizontalScrollbarState(scroller);
+                let enabled = state.indexOf('enabled') != -1;
+                let expanded = state.indexOf('expanded') != -1;
+                if (enabled && expanded)
+                    testPassed('Scrollbar is enabled and expanded');
+                return expanded;
+            });
+
+            // Flush out scroll events from gesture
+            await UIHelper.renderingUpdate();
+
+            scroller.addEventListener("scroll", async () => {
+                testPassed('Scrolled by dragging the scrollbar');
+            	finishJSTest();
+            });
+			
+            // Now try and click and drag the scrollbar
+            debug('Attempting to drag the scrollbar');
+            eventSender.mouseMoveTo(x, y);
+            eventSender.mouseDown();
+            eventSender.mouseMoveTo(x + 20, y);
+            eventSender.mouseUp();
+        }
+
+        window.addEventListener('load', () => {
+            doTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="wide">
+            <div class="composited sticky">
+                sticky
+            </div>
+        </div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

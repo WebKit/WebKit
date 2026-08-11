@@ -1,0 +1,8 @@
+
+PASS registerProperty requires a Dictionary type
+PASS registerProperty requires a name matching <custom-property-name>
+PASS registerProperty only allows omitting initialValue if syntax is '*'
+PASS registerProperty fails for an already registered property
+PASS registerProperty requires inherits
+PASS Registering a property should not cause a transition
+

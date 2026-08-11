@@ -1,0 +1,8 @@
+
+PASS map(): Maps values correctly
+PASS map(): Mapper errors are emitted to Observer error() handler
+PASS map(): Passes complete() through from source Observable
+PASS map(): Passes error() through from source Observable
+PASS map(): Upon source completion, source Observable teardown sequence happens before downstream mapper complete() is called
+PASS map(): Map observable unsubscription causes source Observable unsubscription. Mapper Observer's complete()/error() are not called
+

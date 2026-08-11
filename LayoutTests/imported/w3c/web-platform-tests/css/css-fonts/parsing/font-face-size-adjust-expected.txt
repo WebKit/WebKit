@@ -1,0 +1,8 @@
+
+PASS Check that size-adjust: 100% is valid
+PASS Check that size-adjust: 0% is valid
+PASS Check that size-adjust: 110% is valid
+PASS Check that size-adjust: 100000000000% is valid
+PASS Check that size-adjust: -100% is invalid
+PASS Check that size-adjust: -1% is invalid
+

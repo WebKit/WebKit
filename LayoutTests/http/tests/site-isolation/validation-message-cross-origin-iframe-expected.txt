@@ -1,0 +1,14 @@
+Test that validation bubble anchor rect is in main-frame coordinates for cross-origin iframes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS bubbleMessage is "Fill out this field"
+PASS anchorX is 150
+PASS anchorY is 130
+PASS anchorWidth is 200
+PASS anchorHeight is 30
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

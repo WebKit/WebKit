@@ -1,0 +1,19 @@
+
+PASS execCommand should return the same value
+PASS The resulting textContent should be the same value
+{
+target
+
+}
+{
+target
+
+}
+{
+target
+
+}
+{
+target
+
+}

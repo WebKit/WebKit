@@ -1,0 +1,12 @@
+Test passes if "127.0.0.1" is returned by the worker.
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+w = new Worker('worker-location.js');
+w.onmessage = function(e){
+    console.log(e.data);
+    testRunner.notifyDone();
+}
+</script>

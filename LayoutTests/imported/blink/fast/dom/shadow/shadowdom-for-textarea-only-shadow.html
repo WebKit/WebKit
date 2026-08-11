@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+
+<p>When the AuthorShadowDOM has only a shadow element, this should be rendered like no Shadow DOM is added.</p>
+<form>
+    <textarea id="host">Something in the air</textarea>
+</form>
+
+<script>
+var shadowRoot = host.createShadowRoot();
+shadowRoot.appendChild(document.createElement('shadow'));
+</script>

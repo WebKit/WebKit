@@ -1,0 +1,5 @@
+
+PASS Reloaded same-host top-level form POSTs are strictly same-site
+PASS Reloaded subdomain top-level form POSTs are strictly same-site
+PASS Reloaded cross-site top-level form POSTs are strictly same-site
+

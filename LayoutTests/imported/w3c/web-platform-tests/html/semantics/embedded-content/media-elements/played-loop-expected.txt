@@ -1,0 +1,4 @@
+
+
+PASS played TimeRanges should be preserved and not reset when video loops
+

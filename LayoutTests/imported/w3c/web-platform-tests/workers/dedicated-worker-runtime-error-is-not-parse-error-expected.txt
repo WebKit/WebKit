@@ -1,0 +1,5 @@
+
+PASS eval() with syntax error dispatches ErrorEvent at Worker
+PASS JSON.parse() error dispatches ErrorEvent at Worker
+PASS Script parse error dispatches plain Event at Worker
+

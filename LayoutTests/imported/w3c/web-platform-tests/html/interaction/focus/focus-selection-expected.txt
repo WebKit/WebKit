@@ -1,0 +1,6 @@
+button
+foo
+
+FAIL div has contenteditable=false assert_equals: Should have 1 selected range after focusing input type = submit expected 1 but got 0
+FAIL div has contenteditable=true assert_equals: Should have 1 selected range after focusing input type = submit expected 1 but got 0
+

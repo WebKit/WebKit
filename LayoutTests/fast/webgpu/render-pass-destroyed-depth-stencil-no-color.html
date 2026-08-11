@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGPU Render Pass with Destroyed Depth-Stencil and No Color Attachments</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async t => {
+    const adapter = await navigator.gpu.requestAdapter();
+    assert_true(adapter !== null, "Failed to get GPU adapter");
+
+    const device = await adapter.requestDevice();
+    assert_true(device !== null, "Failed to get GPU device");
+
+    // Create a depth-stencil texture
+    const depthTexture = device.createTexture({
+        size: { width: 256, height: 256, depthOrArrayLayers: 1 },
+        format: 'depth24plus-stencil8',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+
+    const depthTextureView = depthTexture.createView();
+
+    // Destroy the texture - this makes it invalid but the view still exists
+    depthTexture.destroy();
+
+    const commandEncoder = device.createCommandEncoder();
+
+    // Try to begin render pass with no color attachments and destroyed depth-stencil
+    // This should gracefully fail validation rather than crash
+    const renderPassDescriptor = {
+        colorAttachments: [], // No color attachments - triggers zeroColorTargets path
+        depthStencilAttachment: {
+            view: depthTextureView,
+            depthClearValue: 1.0,
+            depthLoadOp: 'clear',
+            depthStoreOp: 'store',
+        }
+    };
+
+    // This should not crash - it should either succeed or fail gracefully
+    try {
+        const renderPass = commandEncoder.beginRenderPass(renderPassDescriptor);
+        renderPass.end();
+
+        // Try to finish the command encoder
+        const commandBuffer = commandEncoder.finish();
+
+        // Submit should handle the invalid state gracefully
+        device.queue.submit([commandBuffer]);
+    } catch (e) {
+        // Graceful failure is acceptable
+        console.log("Render pass creation failed gracefully:", e.message);
+    }
+
+    // The test passes if we get here without crashing
+}, 'Render pass with destroyed depth-stencil texture and no color attachments should not crash');
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+FAIL InterestEvent propagates across shadow boundaries retargeting invoker source Can't find variable: InterestEvent
+FAIL cross shadow InterestEvent retargets interestee to host element assert_true: InterestEvent gets fired expected true got false
+

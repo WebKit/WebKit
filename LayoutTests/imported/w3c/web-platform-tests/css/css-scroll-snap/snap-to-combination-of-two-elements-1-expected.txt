@@ -1,0 +1,3 @@
+
+PASS Snap to points of combinations of two different elements
+

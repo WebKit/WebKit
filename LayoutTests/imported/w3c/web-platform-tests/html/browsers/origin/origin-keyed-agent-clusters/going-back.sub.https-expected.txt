@@ -1,0 +1,15 @@
+
+PASS Before navigation: parent to child1: messageerror event must occur
+PASS Before navigation: parent to child1: setting document.domain must not give sync access
+PASS Navigation
+PASS Inserting a second iframe
+PASS After navigation: parent to child2: messageerror event must occur
+PASS After navigation: parent to child2: setting document.domain must not give sync access
+PASS Going back in history (navigating back the first iframe)
+PASS After back: parent to child1: messageerror event must occur
+PASS After back: parent to child1: setting document.domain must not give sync access
+PASS After back: parent to child2: messageerror event must occur
+PASS After back: parent to child2: setting document.domain must not give sync access
+PASS child1 to child2: setting document.domain must give sync access
+PASS child2 to child1: setting document.domain must give sync access
+

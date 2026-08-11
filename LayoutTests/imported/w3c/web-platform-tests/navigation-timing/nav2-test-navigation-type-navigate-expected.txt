@@ -1,0 +1,7 @@
+Description
+
+This test validates the value of window.performance.getEntriesByType("navigation")[0].type to be navigate.
+
+
+PASS Navigation type to be navigate.
+

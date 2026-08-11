@@ -1,0 +1,4 @@
+Content
+
+PASS Page with meta viewport "width=device-width, user-scalable=no, initial-scale=0.25, minimum-scale=1.0" should scale to 1.0.
+

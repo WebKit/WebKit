@@ -1,0 +1,3 @@
+
+PASS Trying to focus on an element in a nested hidden/auto subtree will not work
+

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      mediaelementaudiosourcenode-playbackrate.html
+    </title>
+    <script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../resources/audit-util.js"></script>
+    <script src="../resources/audit.js"></script>
+  </head>
+  <body>
+    <script id="layout-test-code">
+        let audit = Audit.createTaskRunner();
+
+        function waitFor(element, type) {
+            return new Promise(resolve => {
+                element.addEventListener(type, resolve, { once: true });
+            });
+        }
+
+        function sleepFor(time) {
+            return new Promise(resolve => setTimeout(resolve, time));
+        }
+
+      audit.define(
+          {
+            label: 'mediaelementsourcenode-playbackrate',
+            description: 'Verify playbackRate at 2.0 generates correctly pitched audio'
+          },
+          async (task, should) => {
+            window.audioElement = new Audio('../resources/media/half-a-second-48000.mp3');
+            audioElement.playbackRate = 2;
+            audioElement.preservesPitch = false;
+            audioElement.loop = true;
+
+            let context = new AudioContext({sampleRate: 48000});
+            let mediaSource = context.createMediaElementSource(audioElement);
+            let analyser = context.createAnalyser();
+            let gain = context.createGain();
+
+            analyser.fftSize = 2048;
+            analyser.smoothingTimeConstant = 0;
+            analyser.minDecibels = -40;
+            let frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
+            // Silence test output
+            gain.gain.value = 0;
+
+            mediaSource.connect(analyser);
+            analyser.connect(gain);
+            gain.connect(context.destination);
+
+            await context.resume();
+            await audioElement.play();
+
+            while (!audioElement.paused) {
+                analyser.getByteFrequencyData(frequencyData);
+                if (frequencyData[13] == 0 && frequencyData[26] > 0)
+                    break;
+                await sleepFor(10);
+            }
+
+            should(frequencyData[13] == 0, 'frequencyData[305hz] == 0').beTrue();
+            should(frequencyData[26] > 0, 'frequencyData[610hz] > 0').beTrue();
+
+            audioElement.pause();
+            context.suspend();
+            task.done();
+          });
+      audit.run();
+    </script>
+  </body>
+</html>

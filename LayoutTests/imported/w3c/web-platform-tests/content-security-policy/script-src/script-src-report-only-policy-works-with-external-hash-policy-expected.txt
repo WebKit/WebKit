@@ -1,0 +1,4 @@
+
+PASS Should fire securitypolicyviolation event
+PASS External script in a script tag with matching SRI hash should run.
+

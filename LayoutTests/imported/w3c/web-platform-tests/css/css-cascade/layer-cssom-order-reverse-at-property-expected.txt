@@ -1,0 +1,6 @@
+Lorem ipsum
+Lorem ipsum
+
+PASS Insert layer invalidates @property
+PASS Delete layer invalidates @property
+

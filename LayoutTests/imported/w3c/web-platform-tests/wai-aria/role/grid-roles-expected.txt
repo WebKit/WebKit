@@ -1,0 +1,18 @@
+Tests grid and related roles.
+
+x x
+x x
+x x x
+x x x
+
+PASS role is grid
+PASS role is row (in grid)
+PASS role is columnheader (in row, in grid)
+PASS role is rowheader (in row, in grid)
+PASS role is gridcell (in row, in grid)
+PASS role is rowgroup (in grid)
+PASS role is row (in rowgroup, in grid)
+PASS role is columnheader (in row, in rowgroup, in grid)
+PASS role is rowheader (in row, in rowgroup, in grid)
+PASS role is gridcell (in row, in rowgroup, in grid)
+

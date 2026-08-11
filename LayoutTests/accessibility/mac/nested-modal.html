@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<style>
+*[role="dialog"] { border: 1px solid black; padding: 1em; margin: 1em; }
+</style>
+<body>
+
+  <p>
+    <button id="before">Before</button>
+  </p>
+
+  <div id="outer" role="dialog" aria-modal="true">
+    <h2>Outer modal dialog</h2>
+    <button id="showInner" autofocus>Show inner dialog</button>
+
+    <div id="inner" role="dialog" aria-modal="true" hidden>
+      <h2>Inner modal dialog</h2>
+      <button id="closeInner">Close inner dialog</button>
+    </div>
+  </div>
+
+<script>
+document.getElementById("showInner").addEventListener("click", () => {
+    document.getElementById("inner").hidden = false;
+    document.getElementById("closeInner").focus();
+});
+
+var output = "This tests nested aria-modal dialogs\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async () => {
+        await waitFor(() => {
+            focus = accessibilityController.focusedElement;
+            return focus && focus.domIdentifier;
+        });
+        output += `Initial focus: ${focus.domIdentifier}\n`;
+
+        before = accessibilityController.accessibleElementById("before");
+        await waitFor(() => {
+            return before == null;
+        });
+        output += `Before button reachable: ${before != null}\n`;
+
+        showInner = accessibilityController.accessibleElementById("showInner");
+        output += `ShowInner button reachable: ${showInner != null}\n`;
+
+        output += "\nClicking on showInner\n\n";
+        document.getElementById("showInner").click();
+
+        await waitFor(() => {
+            focus = accessibilityController.focusedElement;
+            return focus && focus.domIdentifier != "showInner";
+        });
+        output += `New focus: ${focus.domIdentifier}\n`;
+
+        await waitFor(() => {
+            return !accessibilityController.accessibleElementById("showInner");
+        });
+
+        before = accessibilityController.accessibleElementById("before");
+        output += `Before button reachable: ${before != null}\n`;
+
+        showInner = accessibilityController.accessibleElementById("showInner");
+        output += `ShowInner button reachable: ${showInner != null}\n`;
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

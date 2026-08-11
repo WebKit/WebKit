@@ -1,0 +1,17 @@
+<html>
+<head>
+<meta name="referrer" content="always" />
+<script>
+async function runTest() {
+    var link = document.getElementById("link");
+    var iframe = window.parent.document.getElementsByTagName("iframe")[0];
+    await eventSender.asyncMouseMoveTo(link.offsetLeft + iframe.offsetLeft + 2, link.offsetTop + iframe.offsetTop + 2);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
+}
+</script>
+</head>
+<body onload="runTest()">
+<a id="link" href="http://127.0.0.1:8000/security/resources/referrer-policy-log.py" rel="noreferrer">link</a>
+</body>
+</html>

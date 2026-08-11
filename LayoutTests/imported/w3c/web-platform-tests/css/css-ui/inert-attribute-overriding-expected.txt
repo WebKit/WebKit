@@ -1,0 +1,7 @@
+normal button  just inert  interactivity: auto  all: initial
+
+PASS Expect <button>normal button</button> to be non-inert
+PASS Expect <button inert="">just inert</button> to be inert
+PASS Expect <button inert="" style="interactivity: auto">interactivity: auto</button> to be inert
+PASS Expect <button inert="" style="all: initial">all: initial</button> to be inert
+

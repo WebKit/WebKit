@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="testDiv" style="position: absolute;"></div>
+<script>
+description("Tests assigning a calculated value to 'text-shadow' CSS property.");
+
+var testDiv = document.getElementById("testDiv");
+
+debug('');
+shouldBeEmptyString("testDiv.style['text-shadow']");
+testDiv.style['text-shadow'] = 'none';
+evalAndLog("testDiv.style['text-shadow'] = 'calc(1 * 3px) calc(2 * 3px) calc(3 * 3px) rgb(255, 255, 255)'");
+shouldBeEqualToString("testDiv.style['text-shadow']", "rgb(255, 255, 255) calc(3px) calc(6px) calc(9px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('text-shadow')", "rgb(255, 255, 255) 3px 6px 9px");
+
+// Negative h-shadow and v-shadow are allowed.
+debug('');
+testDiv.style['text-shadow'] = 'none';
+evalAndLog("testDiv.style['text-shadow'] = 'calc(-1 * 3px) calc(-2 * 3px) calc(3 * 3px) rgb(255, 255, 255)'");
+shouldBeEqualToString("testDiv.style['text-shadow']", "rgb(255, 255, 255) calc(-3px) calc(-6px) calc(9px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('text-shadow')", "rgb(255, 255, 255) -3px -6px 9px")
+
+// Negative blur-radius is not allowed so it should become 0.
+debug('');
+testDiv.style['text-shadow'] = 'none';
+evalAndLog("testDiv.style['text-shadow'] = 'calc(1 * 3px) calc(2 * 3px) calc(-3 * 3px) rgb(255, 255, 255)'");
+shouldBeEqualToString("testDiv.style['text-shadow']", "rgb(255, 255, 255) calc(3px) calc(6px) calc(-9px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('text-shadow')", "rgb(255, 255, 255) 3px 6px 0px")
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

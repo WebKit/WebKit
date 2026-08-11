@@ -1,0 +1,588 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * This Source Code Form is "Incompatible With Secondary Licenses", as
+ * defined by the Mozilla Public License, v. 2.0.
+ */
+
+#groups_edit_multiple th, .bz_query_head {
+  text-align: center;
+}
+
+.bz_query_timestamp {
+  font-weight: bold;
+}
+
+.search_description {
+  margin: .5em 0;
+  padding: 0;
+}
+.search_description li {
+  list-style-type: none;
+  display: inline;
+  margin-right: 2em;
+}
+
+.zero_results, .zero_result_links {
+  font-size: 120%;
+  font-weight: bold;
+}
+
+.bz_buglist_header th {
+  text-align: left;
+}
+
+.bz_sort_order_primary,
+.bz_sort_order_secondary {
+    display: inline-block;
+    padding-left: .2em;
+    text-decoration: none;
+}
+.bz_sort_order_primary   { color: black; }
+.bz_sort_order_secondary { color: #777;  }
+
+.bz_query_buttons #xml {
+    vertical-align: middle;
+    padding: 0;
+}
+
+.bz_query_buttons button {
+    border: 0px;
+    background: transparent;
+}
+
+.bz_query_buttons form {
+    display: inline;
+}
+
+.bz_query_links a img {
+    vertical-align: bottom;
+    border: 0;
+}
+
+.bz_query_links a {
+    text-decoration: none;
+}
+
+.bz_query_links button, .bz_query_edit button {
+    font-size: small;
+}
+
+.bz_id_column {
+}
+
+.bz_row_odd {
+    background-color: #F7F7F7;
+    color: #000000;
+}
+
+.bz_row_even {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+/* Style bug rows according to severity. */
+.bz_blocker { color: red; font-weight: bold; }
+.bz_critical { color: red; }
+.bz_enhancement { color: #666; background-color: white; }
+
+/* Align columns in the "change multiple bugs" form to the right. */
+table#form tr th { text-align: right; }
+
+table.bz_buglist {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.bz_buglist td, table.bz_buglist th {
+  padding: 0.4em;
+}
+
+/* we use a first-child class and not the pseudo-class because IE
+ * doesn't support it :-( */
+tr.bz_secure td.first-child, a.bz_secure { 
+  background-image: url("../../images/padlock.png");
+  background-position: center left;
+  background-repeat: no-repeat;
+  background-color: inherit;
+}
+
+th.first-child, td.first-child, a.bz_secure {
+  padding-left: 20px !important;
+}
+
+tr.bz_secure_mode_implied td.first-child {
+}
+
+tr.bz_secure_mode_manual td.first-child {
+}
+
+td.bz_estimated_time_column,
+td.bz_remaining_time_column,
+td.bz_actual_time_column,
+td.bz_percentage_complete_column {
+    text-align: right;
+}
+
+td.bz_total_label {
+    font-weight: bold;
+}
+
+td.bz_total {
+    border-top-style: solid;
+    border-top-color: #929bb1;
+    border-top-width: 3px;
+    text-align: right;
+}
+
+#commit, #action {
+  margin-top: .25em;
+}
+
+.bz_query_debug {
+    text-align: left;
+}
+
+.bz_short_desc_column a, .bz_short_short_desc_column a {
+    color: inherit;
+}
+
+.buglist_menu {
+    margin-top: 1em;
+}
+
+.buglist_menu div {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.buglist_menu .bz_query_buttons {
+    display: inline;
+}
+
+div.bz_query_buttons {
+    max-width: 15em;
+}
+
+#groups_edit_multiple, #quips {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+#groups_edit_multiple th, #groups_edit_multiple td,
+#quips th, #quips td {
+    border: 1px solid;
+    padding: 0.3em;
+}
+
+#groups_edit_multiple th.narrow_column {
+    width: 8em;
+}
+
+/* The "filtering" table is specific to request.cgi.
+ * Same for the "requests" class used for tables. */
+
+#filtering #requester, #filtering #requestee {
+    min-width: 8em;
+}
+
+#filtering th {
+    text-align: right;
+}
+
+table.requests {
+    border: 1px solid black;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.requests th, table.requests td {
+    border: 1px solid;
+    padding: 0.5em;
+}
+
+table.requests th {
+    text-align: left;
+}
+
+/* query.cgi (start) */
+
+#summary_field {
+    padding: 1em;
+    margin: 1em;
+    border: 1px solid black;
+    background-color: #eee;
+    white-space: nowrap;
+}
+
+#bug_id_container {
+    display: inline-block;
+    vertical-align: middle;
+    padding-bottom: 1ex;
+}
+
+#bug_id_container input {
+    width: 9em;
+}
+
+#bug_id_container .field_help {
+    font-size: 0.75em
+}
+
+.search_field_grid {
+    margin-top: 1em;
+    display: inline-block;
+}
+
+.search_field_grid .field_help_link,
+.history_query .field_help_link {
+    display: block;
+    text-align: left;
+}
+
+#chart .section_help {
+    font-size: 0.8em;
+    font-weight: normal
+}
+
+.search_field_row {
+    white-space: nowrap;
+    margin-bottom: 0.5em;
+}
+
+.search_field_row .field_label, #field_label_short_desc {
+    width: 14em;
+    display: inline-block;
+    line-height: 2em;
+    margin-right: 0.8em;
+}
+
+.field_label_sup {
+    font-weight: normal;
+}
+
+#keywords_container {
+    padding-bottom: 0;
+}
+
+.search_field_grid .field_label,
+.search_field_grid .field_label {
+    display: block;
+    padding-bottom: 1ex;
+}
+
+.search_field_grid select {
+    width: 17em;
+    height: 15ex;
+}
+
+.search_field_grid, .search_field_row {
+    padding-left: 1.5em;
+}
+
+.search_email_fields {
+    display: inline-block;
+    width: 14.5em;
+    padding-left: 1.5em;
+}
+
+ul.bug_changes {
+    margin: 0;
+    padding: 0;
+}
+
+ul.bug_changes li {
+    display: inline-block;
+    width: 14.5em;
+    vertical-align: top;
+    padding-left: 1.5em;
+}
+
+ul.bug_changes select {
+    width: 15em;
+}
+
+ul.bug_changes li label {
+     display: block;
+}
+
+div.bz_section_title {
+    display: block;
+    margin-top: 2em;
+    font-size: 1.2em;
+}
+
+div.bz_section_title a {
+    font-weight: bold;
+}
+
+div.bz_section_title span {
+    font-size: 0.75em;
+    margin-left: 1em;
+}
+
+#queryform, #reportform {
+    margin-bottom: 2em;
+}
+
+#knob {
+    margin-top: 2em;
+}
+
+.arrow {
+    display: inline;
+    width: 16px;
+    height: 16px;
+}
+
+.bz_search_section, ul.bz_search_section {
+    margin-top: 1em;
+}
+
+/* query.cgi (end) */
+
+/* describecomponents.cgi (start) */
+
+#product_desc {
+    padding: 0 2em;
+    font-style: italic;
+    max-height: 8em;
+    overflow: auto;
+}
+
+#component_table th {
+    padding-right: 1em;
+    text-align: left;
+}
+
+#component_table td {
+    border-bottom: 1px dotted gray;
+}
+
+#component_table td.component_assignee,
+#component_table td.component_qa_contact {
+    border: none;
+    padding-top: 0.5em;
+}
+
+.component_name {
+    font-size: 115%;
+    font-weight: bold;
+    padding-right: 1em;
+    vertical-align: middle;
+    min-width: 8em;
+}
+
+.component_description {
+    padding-bottom: 0.5em;
+    color: #333;
+}
+
+/* describecomponents.cgi (end) */
+
+/* Series & reports (start) */
+
+.t1 {
+    background-color: #ffffff; /* white */
+}
+
+.t2 {
+    background-color: #dfefff;  /* light blue */
+}
+
+.t3 {
+    background-color: #dddddd;  /* grey */
+}
+
+.t4 {
+    background-color: #c3d3ed; /* darker blue */
+}
+
+.ttotal, .ttotal td {
+    background-color: #cfffdf; /* light green */
+}
+
+.tabular_report_container {
+  /* Force tables to be horizontally centered */
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.tabular_report {
+    border: 1px dotted black;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.tabular_report th, .tabular_report td {
+    border: 1px dotted;
+    padding: 0.2em;
+}
+
+#graphical_report {
+    max-width: 100%;
+    height: auto;
+}
+
+.extra_info {
+    font-size: smaller;
+    font-style: italic;
+}
+
+#edit_series th, #create_chart th, #edit_charts th {
+    text-align: center;
+}
+
+#edit_series th, #edit_series td,
+#create_chart th, #create_chart td {
+    vertical-align: top;
+    padding: 0.5em;
+}
+
+#edit_series select, #create_chart select {
+    width: 15em;
+}
+
+#edit_series input {
+    width: 95%;
+}
+
+#edit_series input#frequency {
+    width: 3em;
+}
+
+#edit_charts input#action-sum, #edit_charts input#action-remove {
+    width: 7em;
+}
+
+#tabular_reports_menu, #graphical_reports_menu {
+    width: 30em;
+    margin: 2em auto;
+}
+
+#tabular_reports_menu th, #graphical_reports_menu th {
+    vertical-align: middle;
+    white-space: nowrap;
+    padding: 0.3em;
+}
+
+#tabular_reports_menu th {
+    text-align: center;
+}
+
+#graphical_reports_menu th {
+    text-align: left;
+}
+
+#graphical_reports_menu label {
+    font-weight: normal;
+}
+
+th#reports_menu_multiple_tables {
+    text-align: center;
+    width: 15em;
+    height: 15em;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+/* Series & reports (end) */
+
+/* Show multiple bugs (start) */
+
+.bugfields {
+    font-size: small;
+    background: #eee;
+    padding: 0.3em;
+    border: 1px solid silver;
+    width: 100%;
+}
+
+.bugfields tr {
+    vertical-align: top;
+}
+
+.bugfields th {
+    max-width: 10em;
+    text-align: left;
+}
+
+.bugfields a {
+    color: black;
+    text-decoration: none;
+}
+
+.bugfields .rightcell {
+    padding-left: 1em;
+}
+
+.bugfields table.timetracking th, .bugfields table.timetracking td {
+    max-width: 10em;
+}
+
+/* Show multiple bugs (end) */
+
+/* summarize_time.cgi (start) */
+
+table.zeroitems, table.realitems {
+    margin-left: 2.0em;
+    margin-top: 2px;
+    border: 1px solid black;
+    border: 1px solid black;
+}
+
+tr.section_total {
+    background: #000000;
+    color: #ffffff;
+}
+
+td.subtotal {
+    background: #B0C0D9;
+    text-align: right;
+    font-weight: bold;
+    width: 8em;
+}
+
+.zeroitems .bug_header { background: #d0e0f0 }
+.zeroitems .bug_header2 { background: #f9f9f9 }
+
+/* the fixed headers -- .number uses bug_header so hack it here */
+.number .bug_header, .number .bug_header2 { background: #d0e0f0 }
+.owner_header { background: #d0e0f0 }
+
+
+/* the details headers */
+.number .owner_header, .owner .bug_header { background: #ffffff }
+.number .owner_header2, .owner .bug_header2 { background: #EFEFEF }
+
+table.owner, table.number, table.zeroitems {
+  width: 90%;
+  border-collapse: collapse;
+}
+
+.owner th, .owner td, .number th, .number td,
+.zeroitems th, .zeroitems td {
+    padding: 0.2em;
+}
+
+.warning_swapped_data {
+    border: 1px solid red;
+    margin: 1em;
+    padding: 0.5em;
+}
+
+.realitems th.bug_id, .realitems th.bug_status,
+.zeroitems th.bug_id, .zeroitems th.bug_status {
+    white-space: nowrap;
+    text-align: left;
+    padding-right: 2em;
+    width: 6em;
+}
+
+.time_info {
+    padding-right: 3em;
+}
+
+/* summarize_time.cgi (end) */

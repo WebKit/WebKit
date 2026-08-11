@@ -1,0 +1,6 @@
+
+PASS e.style['ruby-align'] = "auto" should not set the property value
+PASS e.style['ruby-align'] = "left" should not set the property value
+PASS e.style['ruby-align'] = "10px" should not set the property value
+PASS e.style['ruby-align'] = "center start" should not set the property value
+

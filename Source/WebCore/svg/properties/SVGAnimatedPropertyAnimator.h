@@ -1,0 +1,117 @@
+/*
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "SVGAttributeAnimator.h"
+
+namespace WebCore {
+
+class SVGElement;
+
+template<typename AnimatedProperty, typename AnimationFunction>
+class SVGAnimatedPropertyAnimator : public SVGAttributeAnimator {
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(SVGAnimatedPropertyAnimator);
+public:
+    using AnimatorAnimatedProperty = AnimatedProperty;
+
+    template<typename... Arguments>
+    SVGAnimatedPropertyAnimator(const QualifiedName& attributeName, const Ref<AnimatedProperty>& animated, Arguments&&... arguments)
+        : SVGAttributeAnimator(attributeName)
+        , m_animated(animated.copyRef())
+        , m_function(std::forward<Arguments>(arguments)...)
+    {
+    }
+
+    void appendAnimatedInstance(const Ref<AnimatedProperty>& animated)
+    {
+        m_animatedInstances.append(animated.copyRef());
+    }
+
+    bool isDiscrete() const override { return m_function.isDiscrete(); }
+
+    bool setFromAndToValues(SVGElement& targetElement, const String& from, const String& to) override
+    {
+        return m_function.setFromAndToValues(targetElement, from, to);
+    }
+
+    bool setFromAndByValues(SVGElement& targetElement, const String& from, const String& by) override
+    {
+        return m_function.setFromAndByValues(targetElement, from, by);
+    }
+
+    bool setToAtEndOfDurationValue(SVGElement& targetElement, const String& toAtEndOfDuration) override
+    {
+        return m_function.setToAtEndOfDurationValue(targetElement, toAtEndOfDuration);
+    }
+
+    void start(SVGElement&) override
+    {
+        m_animated->startAnimation(*this);
+        for (auto& instance : m_animatedInstances)
+            instance->instanceStartAnimation(*this, m_animated);
+    }
+
+    void apply(SVGElement& targetElement) override
+    {
+        if (isAnimatedStylePropertyAnimator(targetElement))
+            applyAnimatedStylePropertyChange(targetElement, m_animated->animValAsString());
+        applyAnimatedPropertyChange(targetElement);
+    }
+
+    void stop(SVGElement& targetElement) override
+    {
+        if (!m_animated->isAnimating())
+            return;
+
+        m_animated->stopAnimation(*this);
+        for (auto& instance : m_animatedInstances)
+            instance->instanceStopAnimation(*this);
+
+        applyAnimatedPropertyChange(targetElement);
+        if (isAnimatedStylePropertyAnimator(targetElement))
+            removeAnimatedStyleProperty(targetElement);
+    }
+
+    std::optional<float> calculateDistance(SVGElement& targetElement, const String& from, const String& to) const override
+    {
+        return m_function.calculateDistance(targetElement, from, to);
+    }
+
+protected:
+    const Ref<AnimatedProperty> m_animated;
+    Vector<Ref<AnimatedProperty>> m_animatedInstances;
+    AnimationFunction m_function;
+};
+
+#define TZONE_TEMPLATE_PARAMS template<typename AnimatedProperty, typename AnimationFunction>
+#define TZONE_TYPE SVGAnimatedPropertyAnimator<AnimatedProperty, AnimationFunction>
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
+
+#undef TZONE_TEMPLATE_PARAMS
+#undef TZONE_TYPE
+
+} // namespace WebCore

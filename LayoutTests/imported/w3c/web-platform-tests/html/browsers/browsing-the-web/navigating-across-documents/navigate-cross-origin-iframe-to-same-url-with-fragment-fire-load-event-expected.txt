@@ -1,0 +1,4 @@
+
+
+PASS Changing the URL hash of a cross-origin iframe should fire a load event
+

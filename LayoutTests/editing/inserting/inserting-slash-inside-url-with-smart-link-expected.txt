@@ -1,0 +1,9 @@
+Test inserting a character inside a URL with both smart quote and smart link doesn't move the caret to the end of text To manually run this test, enable "Check Spelling While Typing", "Smart Link", and "Smart Quotes", and insert a character inside the URL
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS caretOffset = editor.selectionStart; caretOffset is editor.selectionEnd
+PASS editor.selectionStart is caretOffset + 1
+PASS editor.selectionEnd is caretOffset + 1
+

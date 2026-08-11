@@ -1,0 +1,36 @@
+This test starts some version change transactions, creates some object stores, and variably commits or aborts the version change transactions. At various stages it verifies the object stores in the database are as-expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+Object store names:
+FirstAbortedObjectStore
+Put succeeded
+Initial upgrade versionchange transaction aborted
+Object store names:
+Second upgrade needed: Old version - 0 New version - 1
+Object store names:
+Second upgrade versionchange transaction complete
+Object store names:
+FirstCommittedObjectStore
+Third upgrade needed: Old version - 1 New version - 2
+Object store names:
+FirstCommittedObjectStore
+SecondCommittedObjectStore
+Third upgrade versionchange transaction complete
+Object store names:
+FirstCommittedObjectStore
+SecondCommittedObjectStore
+Fourth upgrade needed: Old version - 2 New version - 3
+Object store names:
+FirstCommittedObjectStore
+SecondCommittedObjectStore
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,193 @@
+This tests applying inline style to a text node, which is a child of the editable root. Style should be applied properly and the test should not crash. (See the bug 39989).
+
+bold first:
+| <b>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
+
+bold middle:
+| "hello, <#selection-anchor>"
+| <b>
+|   "world<#selection-focus>"
+| " WebKit"
+
+bold last:
+| "hello, world<#selection-anchor>"
+| <b>
+|   " WebKit<#selection-focus>"
+
+bold all:
+| <b>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
+
+italic first:
+| <i>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
+
+italic middle:
+| "hello, <#selection-anchor>"
+| <i>
+|   "world<#selection-focus>"
+| " WebKit"
+
+italic last:
+| "hello, world<#selection-anchor>"
+| <i>
+|   " WebKit<#selection-focus>"
+
+italic all:
+| <i>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
+
+underline first:
+| <u>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
+
+underline middle:
+| "hello, <#selection-anchor>"
+| <u>
+|   "world<#selection-focus>"
+| " WebKit"
+
+underline last:
+| "hello, world<#selection-anchor>"
+| <u>
+|   " WebKit<#selection-focus>"
+
+underline all:
+| <u>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
+
+strikeThrough first:
+| <strike>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
+
+strikeThrough middle:
+| "hello, <#selection-anchor>"
+| <strike>
+|   "world<#selection-focus>"
+| " WebKit"
+
+strikeThrough last:
+| "hello, world<#selection-anchor>"
+| <strike>
+|   " WebKit<#selection-focus>"
+
+strikeThrough all:
+| <strike>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
+
+foreColor first:
+| <font>
+|   color="#0000ff"
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
+
+foreColor middle:
+| "hello, <#selection-anchor>"
+| <font>
+|   color="#0000ff"
+|   "world<#selection-focus>"
+| " WebKit"
+
+foreColor last:
+| "hello, world<#selection-anchor>"
+| <font>
+|   color="#0000ff"
+|   " WebKit<#selection-focus>"
+
+foreColor all:
+| <font>
+|   color="#0000ff"
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
+
+hiliteColor first:
+| <span>
+|   style="background-color: blue;"
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
+
+hiliteColor middle:
+| "hello, <#selection-anchor>"
+| <span>
+|   style="background-color: blue;"
+|   "world<#selection-focus>"
+| " WebKit"
+
+hiliteColor last:
+| "hello, world<#selection-anchor>"
+| <span>
+|   style="background-color: blue;"
+|   " WebKit<#selection-focus>"
+
+hiliteColor all:
+| <span>
+|   style="background-color: blue;"
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
+
+subscript first:
+| <sub>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
+
+subscript middle:
+| "hello, <#selection-anchor>"
+| <sub>
+|   "world<#selection-focus>"
+| " WebKit"
+
+subscript last:
+| "hello, world<#selection-anchor>"
+| <sub>
+|   " WebKit<#selection-focus>"
+
+subscript all:
+| <sub>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
+
+superscript first:
+| <sup>
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
+
+superscript middle:
+| "hello, <#selection-anchor>"
+| <sup>
+|   "world<#selection-focus>"
+| " WebKit"
+
+superscript last:
+| "hello, world<#selection-anchor>"
+| <sup>
+|   " WebKit<#selection-focus>"
+
+superscript all:
+| <sup>
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"
+
+createLink first:
+| <a>
+|   href="http://webkit.org/"
+|   "<#selection-anchor>hello, <#selection-focus>"
+| "world WebKit"
+
+createLink middle:
+| "hello, <#selection-anchor>"
+| <a>
+|   href="http://webkit.org/"
+|   "world<#selection-focus>"
+| " WebKit"
+
+createLink last:
+| "hello, world<#selection-anchor>"
+| <a>
+|   href="http://webkit.org/"
+|   " WebKit<#selection-focus>"
+
+createLink all:
+| <a>
+|   href="http://webkit.org/"
+|   "<#selection-anchor>hello, world WebKit<#selection-focus>"

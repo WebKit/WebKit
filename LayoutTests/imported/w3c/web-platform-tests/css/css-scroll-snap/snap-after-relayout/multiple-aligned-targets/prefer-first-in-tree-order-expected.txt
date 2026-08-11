@@ -1,0 +1,6 @@
+Inner 5Inner 4Inner 3Inner 2Inner 1
+Inner Placeholder
+Outer 5Outer 4Outer 3Outer 2Outer 1Outer placeholder
+
+PASS first in tree-order is selected as snap target.
+

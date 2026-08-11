@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 18 18" width="18">
+  <defs>
+    <style>
+      .fill {
+        fill: #464646;
+      }
+    </style>
+  </defs>
+  <title>S TaskList 18 N</title>
+  <rect id="Canvas" fill="#ff13dc" opacity="0" width="18" height="18" /><path class="fill" d="M1,1.5v14a.5.5,0,0,0,.5.5h15a.5.5,0,0,0,.5-.5V1.5a.5.5,0,0,0-.5-.5H1.5A.5.5,0,0,0,1,1.5ZM16,15H2V2H16Z" />
+  <path class="fill" d="M4.775,7.9585a.5.5,0,0,1-.3395-.133L3.397,6.867a.50015.50015,0,1,1,.6785-.735l.6555.6055L6.871,4.218a.50079.50079,0,1,1,.762.65L5.156,7.7845a.5.5,0,0,1-.35.1755Z" />
+  <path class="fill" d="M4.775,12.9585a.5.5,0,0,1-.3395-.133L3.397,11.867a.50015.50015,0,0,1,.6785-.735l.6555.6055L6.871,9.218a.50079.50079,0,1,1,.762.65L5.156,12.7845a.5.5,0,0,1-.35.1755Z" />
+  <rect class="fill" height="2" rx="0.25" width="5" x="9" y="5" />
+  <rect class="fill" height="2" rx="0.25" width="5" x="9" y="10" />
+</svg>

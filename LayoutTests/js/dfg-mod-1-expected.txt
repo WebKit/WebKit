@@ -1,0 +1,11 @@
+Tests that the DFG handles x % 1 correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo(-5.5) is -0.5 on all iterations including after DFG tier-up.
+PASS 1 / foo(-1) is -Infinity on all iterations including after DFG tier-up.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

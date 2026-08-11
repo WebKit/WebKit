@@ -1,0 +1,14 @@
+
+PASS the result of compressing [,Hello,Hello] with deflate should be 'HelloHello'
+PASS the result of compressing [Hello,,Hello] with deflate should be 'HelloHello'
+PASS the result of compressing [Hello,Hello,] with deflate should be 'HelloHello'
+PASS the result of compressing [,Hello,Hello] with deflate-raw should be 'HelloHello'
+PASS the result of compressing [Hello,,Hello] with deflate-raw should be 'HelloHello'
+PASS the result of compressing [Hello,Hello,] with deflate-raw should be 'HelloHello'
+PASS the result of compressing [,Hello,Hello] with gzip should be 'HelloHello'
+PASS the result of compressing [Hello,,Hello] with gzip should be 'HelloHello'
+PASS the result of compressing [Hello,Hello,] with gzip should be 'HelloHello'
+FAIL the result of compressing [,Hello,Hello] with brotli should be 'HelloHello' promise_test: Unhandled rejection with value: object "NotSupportedError: Unsupported algorithm"
+FAIL the result of compressing [Hello,,Hello] with brotli should be 'HelloHello' promise_test: Unhandled rejection with value: object "NotSupportedError: Unsupported algorithm"
+FAIL the result of compressing [Hello,Hello,] with brotli should be 'HelloHello' promise_test: Unhandled rejection with value: object "NotSupportedError: Unsupported algorithm"
+

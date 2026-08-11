@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest()
+{
+    document.firstChild.innerHTML = "PASS";
+}
+
+document.addEventListener("DOMNodeInsertedIntoDocument", runTest, true);
+</script>
+

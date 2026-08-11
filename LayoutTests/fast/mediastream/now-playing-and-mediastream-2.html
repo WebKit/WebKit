@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id=video1 autoplay playsinline></video>
+        <video id=video2 autoplay playsinline></video>
+        <script>
+function waitFor(delay)
+{
+    return new Promise(resolve => setTimeout(resolve, delay));
+}
+
+async function waitForCriteria(test, criteria)
+{
+    let counter = 0;
+    while (!criteria() && ++counter < 100)
+        await waitFor(50);
+}
+
+promise_test(async test => {
+    if (!window.internals)
+        return;
+
+    assert_false(!!internals.nowPlayingState.uniqueIdentifier, "test0");
+
+    video1.srcObject = await navigator.mediaDevices.getUserMedia({ audio:true, video:true });
+    test.add_cleanup(() => video1.srcObject.getTracks().forEach(track => track.stop()));
+    await video1.play();
+
+    await waitFor(500);
+    assert_false(!!internals.nowPlayingState.uniqueIdentifier, "test1");
+
+    video2.src = "../canvas/webgl/resources/red-green.mp4";
+    await video2.play();
+    video2.pause();
+
+    await waitFor(500);
+    assert_false(!!internals.nowPlayingState.uniqueIdentifier, "test2");
+
+    navigator.mediaSession.metadata = new MediaMetadata({ title: "test" });
+    await waitForCriteria(test, () => !!internals.nowPlayingState.uniqueIdentifier);
+    assert_true(!!internals.nowPlayingState.uniqueIdentifier, "test3");
+
+    navigator.mediaSession.metadata = null;
+    await waitForCriteria(test, () => !internals.nowPlayingState.uniqueIdentifier);
+    assert_false(!!internals.nowPlayingState.uniqueIdentifier, "test4");
+
+    navigator.mediaSession.setActionHandler("pause", () => { });
+    await waitForCriteria(test, () => !!internals.nowPlayingState.uniqueIdentifier);
+    assert_true(!!internals.nowPlayingState.uniqueIdentifier, "test5");
+
+    navigator.mediaSession.setActionHandler("pause", null);
+    await waitForCriteria(test, () => !internals.nowPlayingState.uniqueIdentifier);
+    assert_false(!!internals.nowPlayingState.uniqueIdentifier, "test6");
+}, "HTMLMediaElement will not become the now playing info source if active media element is using media stream and mediaSession API is not used");
+
+        </script>
+    </body>
+</html>

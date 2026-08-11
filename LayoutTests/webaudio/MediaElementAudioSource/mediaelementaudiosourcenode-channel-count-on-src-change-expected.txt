@@ -1,0 +1,3 @@
+
+PASS MediaElementAudioSourceNode output channel count adapts when the underlying media changes from stereo to mono via src change
+

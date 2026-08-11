@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    margin: 0;
+}
+</style>
+</head>
+<body>
+<img id="img1" src="../resources/green-400x400.png"></img>
+<img id="img2" src="../resources/green-400x400.png"></img>
+<script>
+function imageOverlayContainer(image) {
+    return internals.shadowRoot(image1).getElementById("image-overlay");
+}
+
+addEventListener("load", () => {
+    image1 = document.getElementById("img1");
+    image2 = document.getElementById("img2");
+    internals.installImageOverlay(image1, [], [
+        {
+            topLeft : new DOMPointReadOnly(0.1, 0.1),
+            topRight : new DOMPointReadOnly(0.4, 0.1),
+            bottomRight : new DOMPointReadOnly(0.4, 0.4),
+            bottomLeft : new DOMPointReadOnly(0.1, 0.4),
+            text : "Hello",
+        }
+    ]);
+    internals.installImageOverlay(image2, [
+        {
+            topLeft : new DOMPointReadOnly(0.5, 0.5),
+            topRight : new DOMPointReadOnly(1, 0.5),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0.5, 1),
+            children: [{
+                text : "World",
+                topLeft : new DOMPointReadOnly(0.5, 0.5),
+                topRight : new DOMPointReadOnly(1, 0.5),
+                bottomRight : new DOMPointReadOnly(1, 1),
+                bottomLeft : new DOMPointReadOnly(0.5, 1),
+            }],
+        }
+    ]);
+    shouldBe("imageOverlayContainer(image1).translate", "false");
+    shouldBe("imageOverlayContainer(image2).translate", "false");
+});
+</script>
+</body>
+</html>

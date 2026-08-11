@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            position: relative;
+            height: 100px;
+            width: 100px;
+            margin: 50px;
+            background-color: blue;
+            box-shadow: 0 0 10px black;
+        }
+        
+        .animating {
+            animation: spin 1 0.1s forwards;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0); }
+            to   { transform: rotate(3deg); }
+        }
+    </style>
+    <script src="../../webanimations/threaded-animations/threaded-animations-utils.js"></script>
+    <script>
+        window.testRunner?.dumpAsText();
+        window.testRunner?.waitUntilDone();
+            
+        window.addEventListener('load', async () => {
+            const animation = document.getElementById('box').getAnimations()[0];
+            await animation.finished;
+            await threadedAnimationsCommit();
+            document.getElementById('results').innerText = window.internals?.layerTreeAsText(document);
+            window.testRunner?.notifyDone();
+        });
+    </script>
+</head>
+<body>
+<div id="box" class="animating box"></div>
+
+<pre id="results">Layer tree dump goes here</pre>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="./resources/timeline-event-utilities.js"></script>
+<script>
+
+function invalidateLayout() {
+    let iframe = document.getElementById("iframe");
+    iframe.contentDocument.getElementById("test").style.width = "200px";
+
+    savePageData({layoutInvalidated: true});
+}
+
+async function test()
+{
+    WI.timelineManager.enabledTimelineTypes = [WI.TimelineRecord.Type.Layout];
+
+    let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+        expression: `invalidateLayout()`,
+        timelineType: WI.TimelineRecord.Type.Layout,
+        eventType: WI.LayoutTimelineRecord.EventType.Layout,
+        silent: true,
+    });
+    InspectorTest.assert(pageRecordingData.layoutInvalidated);
+
+    let recording = WI.timelineManager.activeRecording;
+    let layoutTimeline = recording.timelines.get(WI.TimelineRecord.Type.Layout);
+
+    let expectedEvents = [
+        { type: WI.LayoutTimelineRecord.EventType.InvalidateStyles, nodeType: Node.DOCUMENT_NODE },
+        { type: WI.LayoutTimelineRecord.EventType.RecalculateStyles, nodeType: Node.DOCUMENT_NODE },
+        { type: WI.LayoutTimelineRecord.EventType.InvalidateLayout, nodeType: Node.ELEMENT_NODE },
+        { type: WI.LayoutTimelineRecord.EventType.ScheduleLayout, nodeType: Node.DOCUMENT_NODE },
+        { type: WI.LayoutTimelineRecord.EventType.Layout, nodeType: Node.DOCUMENT_NODE },
+    ];
+    let expectedEventTypes = expectedEvents.map((e) => e.type);
+    let records = layoutTimeline.records.filter((x) => expectedEventTypes.includes(x.eventType));
+
+    InspectorTest.expectEqual(records.length, expectedEventTypes.length, `Should have ${expectedEventTypes.length} Layout records.`);
+
+    for (let i = 0; i < expectedEvents.length; ++i) {
+        let record = records[i];
+        let expectedEvent = expectedEvents[i];
+        InspectorTest.expectEqual(record.eventType, expectedEvent.type, `Record ${i}'s event type should be ${expectedEvent.type}.`);
+        InspectorTest.expectNotNull(record.domNode, `Record ${i} should have a DOM node.`);
+        InspectorTest.expectEqual(record.domNode.nodeType(), expectedEvent.nodeType, `Record ${i}'s DOM node's type should be ${expectedEvent.nodeType}.`);
+        InspectorTest.expectNotEqual(record.domNode.frame, WI.networkManager.mainFrame, `Record ${i}'s DOM node's frame should be the iframe's document frame.`);
+    }
+
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests Layout Timeline event records in an iframe.</p>
+
+    <iframe id="iframe" srcdoc="
+    <div id='test' style='width: 100px; height: 100px; background: green'></div>
+    "></iframe>
+</body>
+</html>

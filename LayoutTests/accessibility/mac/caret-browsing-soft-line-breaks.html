@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<!-- 
+Rendered as:
+
+Good
+morning
+world
+
+-->
+
+<p id ="text" style="width: 80px" tabindex="0">Good morning world</p>
+
+<script>
+if (window.accessibilityController && window.eventSender) {
+    var output = "This tests caret browsing when text soft line breaks and has trimmed spaces.\n\n";
+    var webArea = clearSelectionAndFocusOnWebArea();
+
+    // Enable enhanced accessibility (necessary for accessibility specific selection handling).
+    accessibilityController.enableEnhancedAccessibility(true);
+    output += expect("accessibilityController.enhancedAccessibilityEnabled", "true");
+
+    setCaretBrowsingEnabled(webArea, true);
+    output += expect("caretBrowsingEnabled(webArea)", "true");
+
+    document.getElementById("text").focus();
+
+    // Navigate through "Hello" and verify
+    var string = "";
+    for (let i = 0; i < 4; i++) {
+        string += characterAtStartMarkerOfSelectedTextMarkerRange(webArea);
+        eventSender.keyDown("rightArrow");
+    }
+    output += expect("string", "'Good'")
+
+    // Move through the last character (live tree) or space character (isolated tree)
+    eventSender.keyDown("rightArrow");
+
+    // Navigate through "morning"
+    string = "";
+    for (let i = 0; i < 7; i++) {
+        string += characterAtStartMarkerOfSelectedTextMarkerRange(webArea);
+        eventSender.keyDown("rightArrow");
+    }
+    output += expect("string", "'morning'")
+
+    eventSender.keyDown("rightArrow");
+
+    // Navigate through "world"
+    string = "";
+    for (let i = 0; i < 5; i++) {
+        string += characterAtStartMarkerOfSelectedTextMarkerRange(webArea);
+        eventSender.keyDown("rightArrow");
+    }
+    output += expect("string", "'world'")
+
+    setCaretBrowsingEnabled(webArea, false);
+
+    debug(output);
+}
+</script>
+</body>
+</html>

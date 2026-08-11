@@ -1,0 +1,4 @@
+Test
+
+PASS Computed value of orthogonal writing-mode on table cell
+

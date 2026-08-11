@@ -1,0 +1,25 @@
+include_rules = [
+  "+third_party/libsrtp",
+  "+call",
+  "+common_video",
+  "+logging/rtc_event_log",
+  "+logging/rtc_event_log",
+  "+media",
+  "+modules/audio_device",
+  "+modules/audio_processing",
+  "+modules/congestion_controller",
+  "+modules/rtp_rtcp",
+  "+modules/video_coding",
+  "+modules/video_render",
+  "+net/dcsctp",
+  "+p2p",
+  "+system_wrappers",
+  "+absl/strings",
+]
+
+specific_include_rules = {
+  "rtc_stats_collector_unittest\\.cc": [
+    "+json/reader.h",
+    "+json/value.h",
+  ],
+}

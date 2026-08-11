@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+// Dispatched on every load (including the reload). Awaiting this after reloadPage()
+// guarantees the new load has committed -- and therefore that the main-frame
+// navigation's resource-data clear has already run -- before we assert.
+TestPage.dispatchEventToFrontend("PageLoaded");
+
+function loadImageSubresource() {
+    let img = document.createElement("img");
+    let done = () => TestPage.dispatchEventToFrontend("ImageLoaded");
+    img.onload = done;
+    img.onerror = done;
+    // Cache-bust so this is a distinct, freshly-loaded resource that the reloaded
+    // page will not request again on its own.
+    img.src = "resources/white.png?" + Math.random();
+    document.body.appendChild(img);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.clearResourceDataOnNavigate.NonBufferedResource");
+
+    suite.addTestCase({
+        name: "Network.clearResourceDataOnNavigate.NonBufferedResource.ClearedOnNavigate",
+        description: "A non-text subresource that never buffered content should be removed from the previous loader's resource data after a main-frame navigation.",
+        async test() {
+            // Load a non-text (image) subresource. Image data is not buffered by the Web
+            // Inspector (no text decoder), so the resource is tracked in the request-id map
+            // but never enters the content deque -- exactly the case the partial clear on
+            // navigation must still remove for the previous loader.
+            InspectorTest.evaluateInPage("loadImageSubresource()");
+            await InspectorTest.awaitEvent("ImageLoaded");
+
+            let imageResource = null;
+            for (let resource of WI.networkManager.mainFrame.resourceCollection) {
+                if (/white\.png/.test(resource.url)) {
+                    imageResource = resource;
+                    break;
+                }
+            }
+            InspectorTest.expectThat(imageResource, "Should have tracked the image subresource.");
+
+            let requestId = imageResource.requestIdentifier;
+
+            // Sanity check: before navigating, the inspector still resolves the body (from
+            // the live cached resource), confirming the resource is tracked.
+            let before = await NetworkAgent.getResponseBody(requestId);
+            InspectorTest.expectThat(before.body.length > 0, "Should resolve the image body before navigation.");
+
+            // Navigate the main frame. This commits a new loader, so resource data for the
+            // previous loader must be cleared (clearResourceDataOnNavigate is true by default).
+            // Wait for the reloaded page's load event so the navigation has committed (and the
+            // clear has run) before asserting.
+            InspectorTest.log("Reloading page...");
+            InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent("PageLoaded");
+
+            // The image belonged to the previous loader and never buffered content. If the
+            // partial clear only walked the content deque, the stale map entry would survive
+            // and getResponseBody would not report a missing resource. Once it is removed,
+            // getResponseBody fails with "Missing resource for given requestId".
+            try {
+                await NetworkAgent.getResponseBody(requestId);
+                InspectorTest.fail("The previous loader's non-buffered resource should not be retrievable after navigation.");
+            } catch (error) {
+                InspectorTest.expectThat(/Missing resource for given requestId/.test(error), "The previous loader's non-buffered resource should be removed from resource data after navigation.");
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a non-text subresource that never buffered content is cleared from the previous loader's resource data on main-frame navigation.</p>
+</body>
+</html>

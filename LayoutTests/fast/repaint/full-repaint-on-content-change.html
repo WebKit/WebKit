@@ -1,0 +1,28 @@
+<style>
+body {
+  margin: 0px;
+}
+
+:root {
+  --pseudo-text: "YYYY";
+}
+
+div {
+  display: flex;
+  font-family: Ahem;
+}
+
+div::after {
+  padding-top: 100px;
+  content: var(--pseudo-text);
+}
+</style>
+<!-- Note if we ever run repaint on visual overflow only (and repaint rects here no longer match), just make sure this test produces no artifacts -->
+<div>some text</div>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+<script>
+repaintTest = function() {
+  document.querySelector(":root").style.setProperty("--pseudo-text", '"XXXX"');
+};
+runRepaintTest();
+</script>

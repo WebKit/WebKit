@@ -1,0 +1,14 @@
+
+PASS e.style['text-box'] = "normal" should set text-box-edge
+PASS e.style['text-box'] = "normal" should set text-box-trim
+PASS e.style['text-box'] = "normal" should not set unrelated longhands
+PASS e.style['text-box'] = "none" should set text-box-edge
+PASS e.style['text-box'] = "none" should set text-box-trim
+PASS e.style['text-box'] = "none" should not set unrelated longhands
+PASS e.style['text-box'] = "trim-start" should set text-box-edge
+PASS e.style['text-box'] = "trim-start" should set text-box-trim
+PASS e.style['text-box'] = "trim-start" should not set unrelated longhands
+PASS e.style['text-box'] = "ex" should set text-box-edge
+PASS e.style['text-box'] = "ex" should set text-box-trim
+PASS e.style['text-box'] = "ex" should not set unrelated longhands
+

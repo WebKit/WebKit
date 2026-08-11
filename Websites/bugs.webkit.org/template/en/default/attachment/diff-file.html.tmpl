@@ -1,0 +1,155 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# This line is really long for a reason: to get rid of any possible textnodes
+  # between the elements.  This is necessary because DOM parent-child-sibling
+  # relations can change and screw up the javascript for restoring, collapsing
+  # and expanding.  Do not change without testing all three of those.
+  # Also, the first empty row is required because 'table-layout: fixed' only
+  # considers the first row to determine column widths. If a colspan is found,
+  # it then share the width equally among all columns, which we don't want.
+  #%]
+<table class="file_table"><thead><tr><td class="num"></td><td></td><td
+ class="num"></td><td></td></tr><tr><td class="file_head" colspan="4"><a href="#"
+ onclick="return twisty_click(this)">[% collapsed ? '(+)' : '(-)' %]</a><input
+ type="checkbox" name="[% file.filename FILTER html %]"[% collapsed ? '' : ' checked' %]
+ class="bz_default_hidden">
+  [% file.filename FILTER html %]
+  [% IF file.plus_lines %]
+    [% IF file.minus_lines %]
+      (-[% file.minus_lines %]&nbsp;/&nbsp;+[% file.plus_lines %]&nbsp;lines)
+    [% ELSE %]
+      (+[% file.plus_lines %]&nbsp;lines)
+    [% END %]
+  [% ELSE %]
+    [% IF file.minus_lines %]
+      (-[% file.minus_lines %]&nbsp;lines)
+    [% END %]
+  [% END %]
+</td></tr></thead><tbody class="[% collapsed ? 'file_collapse' : 'file' %]">
+<script type="text/javascript">
+incremental_restore()
+</script>
+
+[% section_num = 0 %]
+[% FOREACH section = sections %]
+  [% section_num = section_num + 1 %]
+  <tr>
+    <th colspan="4" class="section_head">
+      <span id="[% file.filename FILTER html %]_sec[% section_num %]" class="lines_count">
+        [% IF file.is_add %]
+          Added
+        [% ELSIF file.is_remove %]
+          Removed
+        [% ELSE %]
+          [% IF section.old_lines > 1 %]
+            Lines&nbsp;[% section.old_start %]-[% section.old_start + section.old_lines - 1 %]
+          [% ELSE %]
+            Line&nbsp;[% section.old_start %]
+          [% END %]
+          [%+ section.func_info FILTER html IF section.func_info %]
+        [% END %]
+      </span>
+      <span class="link_here">
+        <a href="#[% file.filename FILTER html %]_sec[% section_num %]">Link&nbsp;Here</a>
+      </span>
+    </th>
+  </tr>
+  [% current_line_old = section.old_start %]
+  [% current_line_new = section.new_start %]
+  [% FOREACH group = section.groups %]
+    [% IF group.context %]
+      [% FOREACH line = group.context %]
+        <tr>
+          <td class="num">[% current_line_old %]</td>
+          <td><pre>[% line FILTER html %]</pre></td>
+          <td class="num">[% current_line_new %]</td>
+          <td><pre>[% line FILTER html %]</pre></td>
+        </tr>
+        [% current_line_old = current_line_old + 1 %]
+        [% current_line_new = current_line_new + 1 %]
+      [% END %]
+    [% END %]
+    [% IF group.plus.size %]
+      [% IF group.minus.size %]
+        [% i = 0 %]
+        [% WHILE (i < group.plus.size || i < group.minus.size) %]
+          [%# WHILE cannot loop more than 1000 times by default, so we break it every 500 times. %]
+          [% currentloop = 0 %]
+          [% WHILE currentloop < 500 && (i < group.plus.size || i < group.minus.size) %]
+            <tr>
+            [% IF i < group.minus.size %]
+              <td class="num">[% current_line_old + i %]</td>
+              <td class="changed"><pre>[% group.minus.$i FILTER html %]</pre></td>
+            [% ELSIF i == group.minus.size %]
+              [% rowspan = group.plus.size - group.minus.size %]
+              <td class="num"[% IF rowspan > 1 %] rowspan="[% rowspan FILTER none %]"[% END %]></td>
+              <td class="changed"[% IF rowspan > 1 %] rowspan="[% rowspan FILTER none %]"[% END %]></td>
+            [% END %]
+
+            [% IF i < group.plus.size %]
+              <td class="num">[% current_line_new + i %]</td>
+              <td class="changed"><pre>[% group.plus.$i FILTER html %]</pre></td>
+            [% ELSIF i == group.plus.size %]
+              [% rowspan = group.minus.size - group.plus.size %]
+              <td class="num"[% IF rowspan > 1 %] rowspan="[% rowspan FILTER none %]"[% END %]></td>
+              <td class="changed"[% IF rowspan > 1 %] rowspan="[% rowspan FILTER none %]"[% END %]></td>
+            [% END %]
+            </tr>
+            [% currentloop = currentloop + 1 %]
+            [% i = i + 1 %]
+          [% END %]
+        [% END %]
+        [% current_line_old = current_line_old + group.minus.size %]
+        [% current_line_new = current_line_new + group.plus.size %]
+      [% ELSE %]
+        [% FOREACH line = group.plus %]
+          [% IF file.is_add %]
+            <tr>
+              <td class="num">[% current_line_new %]</td>
+              <td class="added" colspan="3"><pre>[% line FILTER html %]</pre></td>
+            </tr>
+          [% ELSE %]
+            <tr>
+            [% IF loop.first %]
+              <td class="num"[% IF group.plus.size > 1 %] rowspan="[% group.plus.size %]"[% END %]></td>
+              <td[% IF group.plus.size > 1 %] rowspan="[% group.plus.size %]"[% END %]></td>
+            [% END %]
+              <td class="num">[% current_line_new %]</td>
+              <td class="added"><pre>[% line FILTER html %]</pre></td>
+            </tr>
+          [% END %]
+          [% current_line_new = current_line_new + 1 %]
+        [% END %]
+      [% END %]
+    [% ELSE %]
+      [% IF group.minus.size %]
+        [% FOREACH line = group.minus %]
+          [% IF file.is_remove %]
+            <tr>
+              <td class="num">[% current_line_old %]</td>
+              <td class="removed" colspan="3"><pre>[% line FILTER html %]</pre></td>
+            </tr>
+          [% ELSE %]
+            <tr>
+              <td class="num">[% current_line_old %]</td>
+              <td class="removed"><pre>[% line FILTER html %]</pre></td>
+            [% IF loop.first %]
+              <td class="num"[% IF group.minus.size > 1 %] rowspan="[% group.minus.size %]"[% END %]></td>
+              <td[% IF group.minus.size > 1 %] rowspan="[% group.minus.size %]"[% END %]></td>
+            [% END %]
+            </tr>
+          [% END %]
+          [% current_line_old = current_line_old + 1 %]
+        [% END %]
+      [% END %]
+    [% END %]
+  [% END %]
+[% END %]
+
+</table>

@@ -1,0 +1,172 @@
+This tests shift + selecting two discontinuous elements with user-select: all. WebKit should select the both elements instead of moving the selection.
+To manually test, click to select the first element and shift-click the second element. WebKit should select both elements.
+
+After clicking on the first element (mac):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   <#selection-anchor>
+|   "First element"
+|   <#selection-focus>
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   "Second element"
+| "\n"
+
+After shift clicking on the second element (mac):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   "<#selection-anchor>First element"
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   "Second element<#selection-focus>"
+| "\n"
+
+After clicking on the second element (mac):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   "First element"
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   <#selection-anchor>
+|   "Second element"
+|   <#selection-focus>
+| "\n"
+
+After shift clicking on the first element (mac):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   "<#selection-focus>First element"
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   "Second element<#selection-anchor>"
+| "\n"
+
+After clicking on the first element (windows):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   <#selection-anchor>
+|   "First element"
+|   <#selection-focus>
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   "Second element"
+| "\n"
+
+After shift clicking on the second element (windows):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   <#selection-anchor>
+|   "First element"
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   "Second element<#selection-focus>"
+| "\n"
+
+After clicking on the second element (windows):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   "First element"
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   <#selection-anchor>
+|   "Second element"
+|   <#selection-focus>
+| "\n"
+
+After shift clicking on the first element (windows):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   "<#selection-focus>First element"
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   "Second element<#selection-anchor>"
+| "\n"
+
+After clicking on the first element (unix):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   <#selection-anchor>
+|   "First element"
+|   <#selection-focus>
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   "Second element"
+| "\n"
+
+After shift clicking on the second element (unix):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   <#selection-anchor>
+|   "First element"
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   "Second element<#selection-focus>"
+| "\n"
+
+After clicking on the second element (unix):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   "First element"
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   <#selection-anchor>
+|   "Second element"
+|   <#selection-focus>
+| "\n"
+
+After shift clicking on the first element (unix):
+| "\n"
+| <div>
+|   class="select-all"
+|   id="first"
+|   "<#selection-focus>First element"
+| "\nSome other text.\n"
+| <div>
+|   class="select-all"
+|   id="second"
+|   "Second element<#selection-anchor>"
+| "\n"

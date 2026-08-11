@@ -1,0 +1,57 @@
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        let canvas = document.createElement('canvas');
+
+        description("Test drawImage() to a detached canvas won't leak the drawn images.");
+        jsTestIsAsync = true;
+
+        if (window.internals) {
+            internals.clearMemoryCache();
+            internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+        }
+
+        const drawFrame = (image) => {
+            return new Promise((resolve) => {
+                requestAnimationFrame(() => {
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(image, 0, 0);
+                    setTimeout(() => {
+                        resolve();
+                    }, 30);
+                });
+            });
+        }
+
+        const drawImage = (image, frameCount) => {
+            let promise = drawFrame(image);
+            for (let frame = 1; frame < frameCount; ++frame) {
+                promise = promise.then(() => {
+                    return drawFrame(image);
+                });
+            }
+            return promise;
+        }
+
+        const loadAndDrawImage = (src, frameCount) => {
+            return new Promise((resolve) => {
+                let image = new Image;
+                image.onload = (() => {
+                    drawImage(image, frameCount).then(resolve);
+                });
+                image.src = src;
+            });
+        }
+
+        loadAndDrawImage("../images/resources/animated-red-green-blue-repeat-1.gif", 3).then(() => {
+            if (window.internals) {
+                internals.destroyDecodedDataForAllImages();
+                shouldBeZero("internals.remoteImagesCountForTesting()");
+            }
+            finishJSTest();
+        });
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>

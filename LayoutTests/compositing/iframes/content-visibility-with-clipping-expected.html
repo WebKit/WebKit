@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        iframe {
+            position: absolute;
+            display: block;
+            left: 12.5px;
+            will-change: transform;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <iframe scrolling="no" srcdoc="
+        <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: green;
+            transform: translateZ(0);
+        }
+        </style>
+        <div class='box'>&nbsp;</div>
+        "></iframe>
+</body>
+</html>

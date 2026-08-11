@@ -1,0 +1,13 @@
+PASS parentNodeTransformStyle('transform-style-preserve-3d') is "preserve-3d"
+PASS parentNodeTransformStyle('transform-style-flat') is "flat"
+PASS parentNodeTransformStyle('blending-with-transform-style-preserve-3d') is "preserve-3d"
+PASS parentNodeTransformStyle('blending-with-transform-style-flat') is "flat"
+PASS getBoundingClientWidth('transform-style-preserve-3d') is not getBoundingClientWidth('transform-style-flat')
+PASS getBoundingClientWidth('transform-style-flat') is getBoundingClientWidth('blending-with-transform-style-flat')
+PASS getBoundingClientWidth('transform-style-flat') is getBoundingClientWidth('blending-with-transform-style-preserve-3d')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test that an element with mix-blend-mode other than normal forces the used value of transform-style to flat, but not the computed value..
+
+

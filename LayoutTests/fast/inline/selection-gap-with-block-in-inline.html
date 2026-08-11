@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that selection gaps are filled around a block level box nested in an inline box.</title>
+<style>
+  ::selection { background-color: green; }
+  body { margin: 0; font: 16px/16px Ahem; color: transparent; }
+  .narrow { width: 100px; }
+</style>
+</head>
+<body>
+<div id="container"><span><div class="narrow">xx</div></span><div class="narrow">xx</div></div>
+<script>
+  var range = document.createRange();
+  range.selectNode(document.getElementById("container"));
+  window.getSelection().addRange(range);
+</script>
+</body>
+</html>

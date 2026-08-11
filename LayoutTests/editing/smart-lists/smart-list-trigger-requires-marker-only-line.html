@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test-midword" contenteditable></div>
+<div id="test-endword" contenteditable></div>
+<div id="test-afterperiod" contenteditable></div>
+<div id="test-midword-bullet" contenteditable></div>
+<div id="test-activates" contenteditable></div>
+
+<script>
+Markup.description('Smart-list activation requires the just-typed space to immediately follow the marker, with no other content anywhere on the line. The first four cases verify that typing a space in a line that already contains content past the marker (mid-word, end-of-line, or immediately after the period) leaves the content as plain text. The last case should activate list formatting.');
+
+function placeCaret(textNode, offset)
+{
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.setStart(textNode, offset);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+
+// Typing a space mid-word should not trigger smart-list conversion.
+const midwordTarget = document.getElementById('test-midword');
+midwordTarget.innerHTML = '1. apple<br>2. cherrybanana';
+midwordTarget.focus();
+placeCaret(midwordTarget.lastChild, midwordTarget.lastChild.length - 3);
+typeCharacterCommand(' ');
+Markup.dump('test-midword', 'Mid-word space');
+
+// Typing a space after the trailing text should also not trigger smart-list conversion.
+const endwordTarget = document.getElementById('test-endword');
+endwordTarget.innerHTML = '1. apple<br>2. cherrybanana';
+endwordTarget.focus();
+placeCaret(endwordTarget.lastChild, endwordTarget.lastChild.length);
+typeCharacterCommand(' ');
+Markup.dump('test-endword', 'End-of-line space');
+
+// Typing a space right after the list marker in a line that has pre-existing text should not trigger smart-list conversion.
+const afterPeriodTarget = document.getElementById('test-afterperiod');
+afterPeriodTarget.innerHTML = '1. apple<br>2. abc';
+afterPeriodTarget.focus();
+placeCaret(afterPeriodTarget.lastChild, 2);
+typeCharacterCommand(' ');
+Markup.dump('test-afterperiod', 'Space after period');
+
+// Same mid-word case as above but with bullet-point ("*") markers instead of an ordered list.
+const midwordBulletTarget = document.getElementById('test-midword-bullet');
+midwordBulletTarget.innerHTML = '* apple<br>* cherrybanana';
+midwordBulletTarget.focus();
+placeCaret(midwordBulletTarget.lastChild, midwordBulletTarget.lastChild.length - 3);
+typeCharacterCommand(' ');
+Markup.dump('test-midword-bullet', 'Mid-word space with bullet marker');
+
+// Typing a space after the list marker and period, without other text on the line should trigger smart-list conversion.
+const activatesTarget = document.getElementById('test-activates');
+activatesTarget.innerHTML = '1. abc<br>2.';
+activatesTarget.focus();
+placeCaret(activatesTarget.lastChild, activatesTarget.lastChild.length);
+typeCharacterCommand(' ');
+Markup.dump('test-activates', 'Marker followed only by typed space (should activate)');
+</script>
+</body>
+</html>

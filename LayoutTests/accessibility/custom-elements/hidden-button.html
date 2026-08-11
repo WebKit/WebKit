@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-button id="item-1"></custom-button>
+<custom-button id="item-2" aria-hidden="false"></custom-button>
+<custom-button id="item-3" aria-hidden="false" aria-invalid="spelling" aria-keyshortcuts="Command + T"></custom-button>
+<script>
+
+customElements.define('custom-button', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'button';
+        internals.ariaHidden = 'true';
+        internals.ariaInvalid = 'grammar';
+        internals.ariaKeyShortcuts = "Shift + E";
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBe('accessibilityController.accessibleElementById("item-1")', 'null');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("item-2").role', 'AXRole: AXButton');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("item-2").stringAttributeValue("AXInvalid")', 'grammar');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("item-2").stringAttributeValue("AXKeyShortcutsValue")', 'Shift + E');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("item-3").role', 'AXRole: AXButton');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("item-3").stringAttributeValue("AXInvalid")', 'spelling');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("item-3").stringAttributeValue("AXKeyShortcutsValue")', 'Command + T');
+}
+
+</script>
+</body>
+</html>

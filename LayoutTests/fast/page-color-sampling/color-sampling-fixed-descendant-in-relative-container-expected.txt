@@ -1,0 +1,5 @@
+PASS edgeColors.top is "rgb(255, 100, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

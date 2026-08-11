@@ -1,0 +1,959 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# This is a list of all the possible messages. Please keep them in
+  # alphabetical order by message tag, and leave a blank line between messages.
+  #%]
+
+[% message_tag = message %]
+
+[% message = BLOCK %]
+  [% IF    message_tag == "account_created" %]
+    The user account [% otheruser.login FILTER html %] has been created
+    successfully.
+    [% IF groups.size %]
+      You may want to edit the group settings now, using the form below.
+    [% END %]
+
+  [% ELSIF message_tag == "account_creation_canceled" %]
+    [% title = "User Account Creation Canceled" %]
+    The creation of the user account [% account FILTER html %] has been
+    canceled.
+
+  [% ELSIF message_tag == "account_updated" %]
+    [% IF changes.size %]
+      [% title = "User $loginold updated" %]
+      The following changes have been made to the user account
+      [%+ loginold FILTER html %]:
+      <ul>
+        [% FOREACH field = changes.keys %]
+          <li>
+            [% IF    field == 'login_name' %]
+              The login is now [% otheruser.login FILTER html %].
+            [% ELSIF field == 'realname' %]
+              The real name has been updated.
+            [% ELSIF field == 'cryptpassword' %]
+              A new password has been set.
+            [% ELSIF field == 'disabledtext' %]
+              The "login disabled" text has been modified.
+            [% ELSIF field == 'is_enabled' %]
+              Logging in with this user account has been [% otheruser.is_enabled ? 'enabled' : 'disabled' %].
+            [% ELSIF field == 'extern_id' %]
+              The user's External Login ID has been modified.
+            [% ELSIF field == 'disable_mail' %]
+              [% IF otheruser.email_disabled %]
+                [% terms.Bug %]mail has been disabled.
+              [% ELSE %]
+                [% terms.Bug %]mail has been enabled.
+              [% END %]
+            [% ELSIF field == 'groups' %]
+              [% IF changes.groups.1.size %]
+                The account has been added to the
+                [%+ changes.groups.1.join(', ') FILTER html %]
+                group[% 's' IF changes.groups.1.size > 1 %].
+              [% END %]
+              [% IF changes.groups.0.size %]
+                The account has been removed from the
+                [%+ changes.groups.0.join(', ') FILTER html %]
+                group[% 's' IF changes.groups.0.size > 1 %].
+              [% END %]
+            [% ELSIF field == 'bless_groups' %]
+              [% IF changes.bless_groups.1.size %]
+                The account has been granted rights to bless the
+                [%+ changes.bless_groups.1.join(', ') FILTER html %]
+                group[% 's' IF changes.bless_groups.1.size > 1 %].
+              [% END %]
+              [% IF changes.bless_groups.0.size %]
+                The account has been denied rights to bless the
+                [%+ changes.bless_groups.0.join(', ') FILTER html %]
+                group[% 's' IF changes.bless_groups.0.size > 1 %].
+              [% END %]
+            [% END %]
+          </li>
+        [% END %]
+      </ul>
+    [% ELSE %]
+      [% title = "User $otheruser.login not changed" %]
+      You didn't request any changes to the user's account
+      [%+ otheruser.login FILTER html %].
+    [% END %]
+
+  [% ELSIF message_tag == "account_deleted" %]
+    [% title = "User $otheruser.login deleted" %]
+    The user account [% otheruser.login FILTER html %] has been deleted
+    successfully.
+
+  [% ELSIF message_tag == "account_disabled" %]
+    Logging in with this user account [% account FILTER html %] is disabled, so
+    you cannot change its password.
+
+  [% ELSIF message_tag == "attachment_creation_failed" %]
+    The [% terms.bug %] was created successfully, but attachment creation
+    failed.
+    Please add your attachment by clicking the "Add an Attachment" link
+    below.
+
+  [% ELSIF message_tag == "bug_group_description" %]
+    Access to [% terms.bugs %] in the [% product.name FILTER html %] product
+
+  [% ELSIF message_tag == "buglist_adding_field" %]
+    [% title = "Adding field to search page..." %]
+    [% link  = "Click here if the page does not redisplay automatically." %]
+
+  [% ELSIF message_tag == "buglist_updated_named_query" %]
+    [% title = "Search updated" %]
+    Your search named <code><a 
+     href="buglist.cgi?cmdtype=runnamed&amp;namedcmd=[% queryname FILTER uri %]"
+    >[% queryname FILTER html %]</a></code> has been updated.
+
+  [% ELSIF message_tag == "buglist_new_default_query" %]
+    OK, you now have a new default search.  You may
+    also bookmark the result of any individual search.
+
+  [% ELSIF message_tag == "buglist_new_named_query" %]
+    [% title = "Search created" %]
+    OK, you have a new search named <code><a
+     href="buglist.cgi?cmdtype=runnamed&amp;namedcmd=[% queryname FILTER uri %]"
+    >[% queryname FILTER html %]</a></code>.
+
+  [% ELSIF message_tag == "buglist_query_gone" %]
+    [% title = "Search is gone" %]
+    [% link  = "Un-forget the search" %]
+    OK, the <b>[% namedcmd FILTER html %]</b> search is gone.
+
+  [% ELSIF message_tag == "buglist_sorted_by_relevance" %]
+    [% terms.Bugs %] on this list are sorted by relevance, with the most
+    relevant [% terms.bugs %] at the top.
+
+  [% ELSIF message_tag == "change_columns" %]
+    [% title = "Change columns" %]
+    Resubmitting your search with new columns...
+    Click <a href="[% redirect_url FILTER html %]">here</a>
+    if the page does not automatically refresh.
+
+  [% ELSIF message_tag == "classification_created" %]
+    [% title = "New Classification Created" %]
+    The <em>[% classification.name FILTER html %]</em> classification has been created.
+
+  [% ELSIF message_tag == "classification_deleted" %]
+    [% title = "Classification Deleted" %]
+    The <em>[% classification.name FILTER html %]</em> classification has been deleted.
+
+  [% ELSIF message_tag == "classification_updated" %]
+    [% title = "Classification Updated" %]
+    [% IF changes.keys.size %]
+      Changes to the <em>[% classification.name FILTER html %]</em> classification
+      have been saved:
+      <ul>
+        [% IF changes.name.defined %]
+          <li>Name updated to '[% classification.name FILTER html %]'</li>
+        [% END %]
+        [% IF changes.description.defined %]
+          [% IF classification.description %]
+            <li>Description updated to '[% classification.description FILTER html %]'</li>
+          [% ELSE %]
+            <li>Description removed</li>
+          [% END %]
+        [% END %]
+        [% IF changes.sortkey.defined %]
+          <li>Sortkey updated to '[% classification.sortkey FILTER html %]'</li>
+        [% END %]
+        [% Hook.process('classification_updated_fields') %]
+      </ul>
+    [% ELSE %]
+      No changes made to <em>[% classification.name FILTER html %]</em>.
+    [% END %]
+
+  [% ELSIF message_tag == "component_created" %]
+    [% title = "Component Created" %]
+    The component <em>[% comp.name FILTER html %]</em> has been created.
+
+  [% ELSIF message_tag == "component_deleted" %]
+    [% title = "Component Deleted" %]
+    The component <em>[% comp.name FILTER html %]</em> has been deleted.
+    [% IF comp.bug_count %]
+      All [% terms.bugs %] being in this component and all references
+      to them have also been deleted.
+    [% END %]
+
+  [% ELSIF message_tag == "component_updated" %]
+    [% title = "Component Updated" %]
+    [% IF changes.keys.size %]
+      Changes to the component <em>[% comp.name FILTER html %]</em> have been saved:
+      <ul>
+      [% IF changes.name.defined %]
+        <li>Name updated to '[% comp.name FILTER html %]'</li>
+      [% END %]
+      [% IF changes.description.defined %]
+        <li>Description updated to '[% comp.description FILTER html_light %]'</li>
+      [% END %]
+      [% IF changes.initialowner.defined %]
+        <li>Default assignee updated to '[% comp.default_assignee.login FILTER html %]'</li>
+      [% END %]
+      [% IF changes.initialqacontact.defined %]
+        [% IF comp.default_qa_contact %]
+          <li>Default QA contact updated to '[% comp.default_qa_contact.login FILTER html %]'</li>
+        [% ELSE %]
+          <li>Default QA contact deleted</li>
+        [% END %]
+      [% END %]
+      [% IF changes.cc_list.defined %]
+        [% IF comp.initial_cc.size %]
+          [% cc_list = [] %]
+          [% FOREACH cc_user = comp.initial_cc %]
+            [% cc_list.push(cc_user.login) %]
+          [% END %]
+          <li>Default CC list updated to [% cc_list.join(", ") FILTER html %]</li>
+        [% ELSE %]
+          <li>Default CC list deleted</li>
+        [% END %]
+      [% END %]
+      [% IF changes.isactive.defined %]
+        <li>[% comp.is_active ? "Enabled" : "Disabled" %] for [% terms.bugs %]</li>
+      [% END %]
+      [% Hook.process('component_updated_fields') %]
+      </ul>
+    [% ELSE %]
+      No changes made to <em>[% comp.name FILTER html %]</em>.
+    [% END %]
+
+  [% ELSIF message_tag == "custom_field_created" %]
+    [% title = "Custom Field Created" %]
+    The new custom field '[% field.name FILTER html %]' has been
+    successfully created.
+
+  [% ELSIF message_tag == "custom_field_deleted" %]
+    [% title = "Custom Field Deleted" %]
+    The custom field '[% field.name FILTER html %]' has been
+    successfully deleted.
+
+  [% ELSIF message_tag == "custom_field_updated" %]
+    [% title = "Custom Field Updated" %]
+    Properties of the '[% field.name FILTER html %]' field have been
+    successfully updated.
+
+  [% ELSIF message_tag == "default_settings_updated" %]
+    [% IF changes_saved %]
+      Changes to default preferences have been saved.
+    [% ELSE %]
+      No changes made.
+    [% END %]
+
+  [% ELSIF message_tag == "emailold_change_canceled" %]
+    [% title = "Cancel Request to Change Email Address" %]
+    The request to change the email address for your account to
+    [%+ new_email FILTER html %] has been canceled.
+
+  [% ELSIF message_tag == "email_change_canceled" %]
+    [% title = "Cancel Request to Change Email Address" %]
+    The request to change the email address for the
+    account [%+ old_email FILTER html %] to
+    [%+ new_email FILTER html %] has been canceled.
+
+  [% ELSIF message_tag == "email_change_canceled_reinstated" %]
+    [% title = "Cancel Request to Change Email Address" %]
+    The request to change the email address for the
+    account [%+ old_email FILTER html %] to 
+    [%+ new_email FILTER html %] has been canceled.
+    Your old account settings have been reinstated.
+
+  [% ELSIF message_tag == "extension_created" %]
+    An extension named [% name FILTER html %] has been created
+    in [% path FILTER html %].
+
+  [% ELSIF message_tag == "field_value_created" %]
+    [% title = "New Field Value Created" %]
+    The value <em>[% value.name FILTER html %]</em> has been added as a 
+    valid choice for the <em>[% field.description FILTER html %]</em>
+    (<em>[% field.name FILTER html %]</em>) field.
+    [% IF field.name == "bug_status" %]
+      You should now visit the <a href="editworkflow.cgi">status workflow 
+      page</a> to include your new [% terms.bug %] status.
+    [% END %]
+
+  [% ELSIF message_tag == "field_value_deleted" %]
+    [% title = "Field Value Deleted" %]
+    The value <em>[% value.name FILTER html %]</em> of the
+    <em>[% field.description FILTER html %]</em>
+    (<em>[% field.name FILTER html %]</em>) field has been deleted.
+
+  [% ELSIF message_tag == "field_value_updated" %]
+    [% title = "Field Value Updated" %]
+    [% IF changes.keys.size %]
+      The <em>[% value_old FILTER html %]</em> value of the
+      <em>[% field.description FILTER html %]</em>
+      (<em>[% field.name FILTER html %]</em>) field has been changed:
+      <ul>
+        [% IF changes.value %]
+          <li>Field value updated to 
+            <em>[% changes.value.1 FILTER html %]</em>.
+            [% IF value.is_default %]
+              (Note that this value is the default for this field. All
+              references to the default value will now point to this new value.)
+            [% END %]
+          </li>
+        [% END %]
+        [% IF changes.sortkey %]
+          <li>Sortkey updated to 
+            <em>[% changes.sortkey.1 FILTER html %]</em>.</li>
+        [% END %]
+        [% IF changes.visibility_value_id %]
+          [% IF value.visibility_value.defined %]
+            <li>It only appears when 
+              [%+ value.field.value_field.description FILTER html %] is set to
+              '[%+ value.visibility_value.name FILTER html %]'.</li>
+          [% ELSE %]
+            <li>It now always appears, no matter what 
+              [%+ value.field.value_field.description FILTER html %] is set to.
+            </li>
+          [% END %]
+        [% END %]
+      </ul>
+    [% ELSE %]
+      No changes made to the field value <em>[% value_old FILTER html %]</em>.
+    [% END %]
+
+  [% ELSIF message_tag == "flag_cleared" %]
+    Some flags didn't apply in the new product/component
+    and have been cleared.
+
+  [% ELSIF message_tag == "flag_creation_failed" %]
+    [% title = "Flag Creation Failure" %]
+    An error occured while validating flags:
+    [%+ flag_creation_error FILTER none %]
+
+  [% ELSIF message_tag == "get_field_desc" %]
+    [% field_descs.$field_name FILTER html %]
+
+  [% ELSIF message_tag == "get_resolution" %]
+    [% display_value("resolution", resolution) FILTER html %]
+
+  [% ELSIF message_tag == "get_status" %]
+    [% display_value("bug_status", status) FILTER html %]
+
+  [% ELSIF message_tag == "group_created" %]
+    [% title = "New Group Created" %]
+    The group <em>[% group.name FILTER html %]</em> has been created.
+
+  [% ELSIF message_tag == "group_deleted" %]
+    [% title = "Group Deleted" %]
+    The group <em>[% name FILTER html %]</em> has been deleted.
+
+  [% ELSIF message_tag == "group_membership_removed" %]
+    [% title = "Group Membership Removed" %]
+    [% IF users.size %]
+      Explicit membership to the <em>[% group FILTER html %]</em> group removed
+      [% IF regexp %] for users matching '[% regexp FILTER html %]'[% END %]:
+      [% FOREACH user = users %]
+        [%+ user.login FILTER html %]
+      [% END %]
+    [% ELSE %]
+      No users are being affected by your action.
+    [% END %]
+
+  [% ELSIF message_tag == "group_updated" %]
+    [% IF changes.keys.size %]
+      The following changes have been made to the '[% group.name FILTER html %]'
+      group:
+      <ul>
+      [% FOREACH field = changes.keys.sort %]
+        [% SWITCH field %]
+          [% CASE 'name' %]
+            <li>The name was changed to '[% changes.name.1 FILTER html %]'</li>
+          [% CASE 'description' %]
+            <li>The description was updated.</li>
+          [% CASE 'userregexp' %]
+            <li>The regular expression was updated.</li>
+          [% CASE 'isactive' %]
+            [% IF changes.isactive.1 %]
+              <li>The group will now be used for [% terms.bugs %].</li>
+            [% ELSE %]
+              <li>The group will no longer be used for [% terms.bugs %].</li>
+            [% END %]
+          [% CASE 'icon_url' %]
+            <li>The group icon URL has been updated.</li>
+          [% CASE 'members_add' %]
+            <li>The following groups are now members of this group:
+              [%+ changes.members_add.join(', ') FILTER html %]</li>
+          [% CASE 'members_remove' %]
+            <li>The following groups are no longer members of this group:
+              [%+ changes.members_remove.join(', ') FILTER html %]</li>
+          [% CASE 'member_of_add' %]
+            <li>This group is now a member of the following groups:
+              [%+ changes.member_of_add.join(', ') FILTER html %]</li>
+          [% CASE 'member_of_remove' %]
+            <li>This group is no longer a member of the following groups:
+              [%+ changes.member_of_remove.join(', ') FILTER html %]</li>
+          [% CASE 'bless_from_add' %]
+            <li>The following groups may now add users to this group:
+              [%+ changes.bless_from_add.join(', ') FILTER html %]</li>
+          [% CASE 'bless_from_remove' %]
+            <li>The following groups may no longer add users to this group:
+              [%+ changes.bless_from_remove.join(', ') FILTER html %]</li>
+          [% CASE 'bless_to_add' %]
+            <li>This group may now add users to the following groups:
+              [%+ changes.bless_to_add.join(', ') FILTER html %]</li>
+          [% CASE 'bless_to_remove' %]
+            <li>This group may no longer add users to the following groups:
+              [%+ changes.bless_to_remove.join(', ') FILTER html %]</li>
+          [% CASE 'visible_from_add' %]
+            <li>The following groups can now see users in this group:
+              [%+ changes.visible_from_add.join(', ') FILTER html %]</li>
+          [% CASE 'visible_from_remove' %]
+            <li>The following groups may no longer see users in this group:
+              [%+ changes.visible_from_remove.join(', ') FILTER html %]</li>
+          [% CASE 'visible_to_me_add' %]
+            <li>This group may now see users in the following groups:
+              [%+ changes.visible_to_me_add.join(', ') FILTER html %]</li>
+          [% CASE 'visible_to_me_remove' %]
+            <li>This group may no longer see users in the following groups:
+              [%+ changes.visible_to_me_remove.join(', ') FILTER html %]</li>
+          [% CASE %]
+            [% Hook.process('group_updated_fields') %]
+        [% END %]
+      [% END %]
+      </ul>
+    [% ELSE %]
+      You didn't request any change for the '[% group.name FILTER html %]'
+      group.
+    [% END %]
+
+  [% ELSIF message_tag == "invalid_column_name" %]
+    The custom sort order specified contains one or more invalid
+    column names: <em>[% invalid_fragments.join(', ') FILTER html %]</em>.
+    They have been removed from the sort list.
+
+  [% ELSIF message_tag == "job_queue_depth" %]
+    [% count FILTER html %] jobs in the queue.
+
+  [% ELSIF message_tag == "keyword_created" %]
+    [% title = "New Keyword Created" %]
+    The keyword <em>[% name FILTER html %]</em> has been created.
+
+  [% ELSIF message_tag == "keyword_deleted" %]
+    [% title = "Keyword Deleted" %]
+    The <em>[% keyword.name FILTER html %]</em> keyword has been deleted.
+
+  [% ELSIF message_tag == "keyword_updated" %]
+    [% title = "Keyword Updated" %]
+    [% IF changes.keys.size %]
+      Changes to the <em>[% keyword.name FILTER html %]</em> keyword have
+      been saved:
+      <ul>
+        [% IF changes.name.defined %]
+          <li>Keyword renamed to <em>[% keyword.name FILTER html %]</em>.</li>
+        [% END %]
+        [% IF changes.description.defined %]
+          <li>Description updated to <em>[% keyword.description FILTER html %]</em></li>
+        [% END %]
+      </ul>
+    [% ELSE %]
+      No changes made.
+    [% END %]
+
+  [% ELSIF message_tag == "logged_out" %]
+    [% title = "Logged Out" %]
+    [% url = "index.cgi?GoAheadAndLogIn=1" %]
+    [% link = "Log in again." %]
+    <b>You logged out successfully</b>.
+    The cookie that was remembering your login is now gone. You will be
+    prompted for a login the next time it is required.
+
+  [% ELSIF message_tag == "login_changed" %]
+    [% title = "$terms.Bugzilla Login Changed" %]
+    Your [% terms.Bugzilla %] login has been changed.
+
+  [% ELSIF message_tag == "migrate_component_created" %]
+    Component created: [% comp.name FILTER html %]
+    (in [% product.name FILTER html %])
+
+  [% ELSIF message_tag == "migrate_creating_bugs" %]
+    Creating [% terms.bugs %]...
+
+  [% ELSIF message_tag == "migrate_field_created" %]
+    New custom field: [% field.description FILTER html %]
+    ([% field.name FILTER html %])
+
+  [% ELSIF message_tag == "migrate_product_created" %]
+    Product created: [% created.name FILTER html %]
+
+  [% ELSIF message_tag == "migrate_reading_bugs" %]
+    Reading [% terms.bugs %]...
+
+  [% ELSIF message_tag == "migrate_reading_products" %]
+    Reading products...
+
+  [% ELSIF message_tag == "migrate_reading_users" %]
+    Reading users...
+
+  [% ELSIF message_tag == "migrate_translating_bugs" %]
+    Converting [% terms.bug %] values to be appropriate for 
+    [%+ terms.Bugzilla %]...
+
+  [% ELSIF message_tag == "migrate_user_created" %]
+    User created: [% created.email FILTER html %]
+    [% IF password %] Password: [% password FILTER html %][% END %]
+
+  [% ELSIF message_tag == "migrate_value_created" %]
+    [% IF product.defined %]
+      [% product.name FILTER html %]
+    [% END %]
+    [%+ field_descs.${field.name} FILTER html %] value
+    created: [% value FILTER html %]
+
+  [% ELSIF message_tag == "milestone_created" %]
+    [% title = "Milestone Created" %]
+    The milestone <em>[% milestone.name FILTER html %]</em> has been created.
+
+  [% ELSIF message_tag == "milestone_deleted" %]
+    [% title = "Milestone Deleted" %]
+    The milestone <em>[% milestone.name FILTER html %]</em> has been deleted.
+    [% IF milestone.bug_count %]
+      [%+ terms.Bugs %] targetted to this milestone have been retargetted to
+      the default milestone <em>[% product.default_milestone FILTER html %]</em>.
+    [% END %]
+
+  [% ELSIF message_tag == "milestone_updated" %]
+    [% title = "Milestone Updated" %]
+    [% IF changes.size %]
+      Changes to the milestone <em>[% milestone.name FILTER html %]</em>
+      have been saved:
+      <ul>
+        [% IF changes.value.defined %]
+          <li>Milestone name updated to <em>[% milestone.name FILTER html %]</em></li>
+        [% END %]
+        [% IF changes.sortkey.defined %]
+          <li>Sortkey updated to <em>[% milestone.sortkey FILTER html %]</em>
+        [% END %]
+        [% IF changes.isactive.defined %]
+          <li>[% milestone.is_active ? "Enabled" : "Disabled" %] for [% terms.bugs %]</li>
+        [% END %]
+      </ul>
+    [% ELSE %]
+      No changes made to milestone <em>[% milestone.name FILTER html %]</em>.
+    [% END %]
+
+  [% ELSIF message_tag == "parameters_updated" %]
+    [% title = "Parameters Updated" %]
+    [% IF param_changed.size > 0 %]
+      [% FOREACH param = param_changed %]
+        Changed <em>[% param FILTER html %]</em><br>
+        [% IF param == 'utf8' && Param('utf8') %]
+          <strong>You must now re-run <kbd>checksetup.pl</kbd>.</strong><br>
+        [% END %]
+      [% END %]
+    [% ELSE %]
+      No changes made.
+    [% END %]
+
+    [% IF shutdown_is_active == 1 %]
+      <hr>
+      [% terms.Bugzilla %] has now been shut down. To re-enable the system,
+      clear the <em>shutdownhtml</em> field.
+    [% END%]
+
+  [% ELSIF message_tag == "password_change_canceled" %]
+    [% title = "Cancel Request to Change Password" %]
+    Your request has been canceled.
+
+  [% ELSIF message_tag == "password_change_request" %]
+    [% title = "Request to Change Password" %]
+    A token for changing your password has been emailed to
+    <em>[% login_name FILTER html %]</em>.
+    Follow the instructions in that email to change your password.
+
+  [% ELSIF message_tag == "password_changed" %]
+    [% title = "Password Changed" %]
+    Your password has been changed.
+
+  [% ELSIF message_tag == "flag_type_created" %]
+    [% title = BLOCK %]Flag Type '[% name FILTER html %]' Created[% END %]
+    The flag type <em>[% name FILTER html %]</em> has been created.
+
+  [% ELSIF message_tag == "flag_type_updated" %]
+    [% title = BLOCK %]Flag Type '[% flagtype.name FILTER html %]' Updated[% END %]
+    [% IF changes.size %]
+      Changes to the flag type <em>[% flagtype.name FILTER html %]</em>
+      have been saved:
+      <ul>
+        [% IF changes.is_active.defined %]
+          <li>Flag type is now [% flagtype.is_active ? "active" : "inactive" %]</li>
+        [% END %]
+        [% IF changes.name.defined %]
+          <li>Flag type renamed to <em>[% flagtype.name FILTER html %]</em></li>
+        [% END %]
+        [% IF changes.description.defined %]
+          <li>Description updated to <em>[% flagtype.description FILTER html %]</em></li>
+        [% END %]
+        [% IF changes.cc_list.defined %]
+          [% IF flagtype.cc_list %]
+            <li>CC list updated to <em>[% flagtype.cc_list FILTER html %]</em></li>
+          [% ELSE %]
+            <li>CC list is now empty</li>
+          [% END %]
+        [% END %]
+        [% IF changes.sortkey.defined %]
+          <li>Sortkey updated to <em>[% flagtype.sortkey FILTER html %]</em></li>
+        [% END %]
+        [% IF changes.is_requestable.defined %]
+          <li>Flag type is [% "no longer" UNLESS flagtype.is_requestable %] requestable</li>
+        [% END %]
+        [% IF changes.is_requesteeble.defined AND flagtype.is_requestable %]
+          <li>
+            Flag type is [% "no longer" UNLESS flagtype.is_requesteeble %]
+            specifically requestable
+          </li>
+        [% END %]
+        [% IF changes.is_multiplicable.defined %]
+          <li>Flag type is [% "no longer" UNLESS flagtype.is_multiplicable %] multiplicable</li>
+        [% END %]
+        [% IF changes.grant_group_id.defined %]
+          [% IF flagtype.grant_group_id %]
+            <li>Grant group updated to <em>[% flagtype.grant_group.name FILTER html %]</em></li>
+          [% ELSE %]
+            <li>Grant group deleted</li>
+          [% END %]
+        [% END %]
+        [% IF changes.request_group_id.defined %]
+          [% IF flagtype.request_group_id %]
+            <li>Request group updated to <em>[% flagtype.request_group.name FILTER html %]</em></li>
+          [% ELSE %]
+            <li>Request group deleted</li>
+          [% END %]
+        [% END %]
+        [% IF changes.inclusions.defined || changes.exclusions.defined %]
+          <li>The inclusions and exclusions lists have been updated</li>
+        [% END %]
+     </ul>
+    [% ELSE %]
+      No changes made to flag type <em>[% flagtype.name FILTER html %]</em>.
+    [% END %]
+
+  [% ELSIF message_tag == "flag_type_deleted" %]
+    [% title = BLOCK %]Flag Type '[% name FILTER html %]' Deleted[% END %]
+    The flag type <em>[% name FILTER html %]</em> has been deleted.
+
+  [% ELSIF message_tag == "flag_type_deactivated" %]
+    [% title = BLOCK %]Flag Type '[% flag_type.name FILTER html %]' Deactivated[% END %]
+    The flag type <em>[% flag_type.name FILTER html %]</em> has been deactivated.
+
+  [% ELSIF message_tag == "install_admin_get_email" %]
+    Enter the e-mail address of the administrator:
+
+  [% ELSIF message_tag == "install_admin_get_name" %]
+    Enter the real name of the administrator:
+
+  [% ELSIF message_tag == "install_admin_get_password" %]
+    Enter a password for the administrator account:
+
+  [% ELSIF message_tag == "install_admin_created" %]
+    [% user.login FILTER html %] is now set up as an administrator.
+
+  [% ELSIF message_tag == "install_admin_setup" %]
+    Looks like we don't have an administrator set up yet.
+    Either this is your first time using [% terms.Bugzilla %], or your
+    administrator's privileges might have accidentally been deleted.
+
+  [% ELSIF message_tag == "install_column_add" %]
+    Adding new column '[% column FILTER html %]' to the '[% table FILTER html %]' table...
+
+  [% ELSIF message_tag == "install_column_drop" %]
+    Deleting the '[% column FILTER html %]' column from the '[% table FILTER html %]' table...
+
+  [% ELSIF message_tag == "install_column_rename" %]
+    Renaming column '[% old FILTER html %]' to '[% new FILTER html %]'...
+
+  [% ELSIF message_tag == "install_confirm_password" %]
+    Please retype the password to verify:
+
+  [% ELSIF message_tag == "install_default_classification" %]
+    Creating default classification '[% name FILTER html %]'...
+
+  [% ELSIF message_tag == "install_default_product" %]
+    Creating initial dummy product '[% name FILTER html %]'...
+
+  [% ELSIF message_tag == "install_file_perms_fix" %]
+    Fixing file permissions...
+
+  [% ELSIF message_tag == "install_fk_add" %]
+    Adding foreign key: [% table FILTER html %].[% column FILTER html %] -&gt; [% fk.TABLE FILTER html %].[% fk.COLUMN FILTER html %]...
+
+  [% ELSIF message_tag == "install_fk_drop" %]
+    Dropping foreign key: [% table FILTER html %].[% column FILTER html %] -&gt; [% fk.TABLE FILTER html %].[% fk.COLUMN FILTER html %]...
+
+  [% ELSIF message_tag == "install_fk_invalid" %]
+    ERROR: There are invalid values for the [% column FILTER html %] column in the [% table FILTER html %]
+    table. (These values do not exist in the [% foreign_table FILTER html %] table, in the 
+    [%+ foreign_column FILTER html %] column.)
+
+    Before continuing with checksetup, you will need to fix these values,
+    either by deleting these rows from the database, or changing the values
+    of [% column FILTER html %] in [% table FILTER html %] to point to valid values in [% foreign_table FILTER html %].[% foreign_column FILTER html %].
+
+    The bad values from the [% table FILTER html %].[% column FILTER html %] column are:
+    [%+ values.join(', ') FILTER html %]
+
+  [% ELSIF message_tag == "install_fk_invalid_fixed" %]
+    WARNING: There were invalid values in [% table FILTER html %].[% column FILTER html %]
+    that have been [% IF action == 'delete' %]deleted[% ELSE %]set to NULL[% END %]:
+    [%+ values.join(', ') FILTER html %]
+
+  [% ELSIF message_tag == "install_fk_setup" %]
+    Setting up foreign keys...
+
+  [% ELSIF message_tag == "install_group_create" %]
+    Creating group [% name FILTER html %]...
+
+  [% ELSIF message_tag == "install_groups_setup" %]
+    Creating default groups...
+
+  [% ELSIF message_tag == "install_setting_new" %]
+    Adding a new user setting called '[% name FILTER html %]'
+
+  [% ELSIF message_tag == "install_setting_setup" %]
+    Setting up user preferences...
+
+  [% ELSIF message_tag == "install_success" %]
+    checksetup.pl complete.
+
+  [% ELSIF message_tag == "install_table_drop" %]
+    Dropping the '[% name FILTER html %]' table...
+
+  [% ELSIF message_tag == "install_table_rename" %]
+    Renaming the '[% old FILTER html %]' table to '[% new FILTER html %]'...
+
+  [% ELSIF message_tag == "install_urlbase_default" %]
+    Now that you have installed Bugzilla, you should visit the
+    'Parameters' page (linked in the footer of the Administrator
+    account) to ensure it is set up as you wish - this includes
+    setting the 'urlbase' option to the correct URL.
+
+  [% ELSIF message_tag == "install_reset_password" %]
+    Enter a new password for [% user.login FILTER html %]:
+
+  [% ELSIF message_tag == "install_reset_password_done" %]
+    New password set.
+
+  [% ELSIF message_tag == "install_webservergroup_empty" %]
+    ****************************************************************************
+    WARNING! You have not entered a value for the "webservergroup" parameter
+    in localconfig. This means that certain files and directories which need
+    to be editable by both you and the web server must be world writable, and
+    other files (including the localconfig file which stores your database
+    password) must be world readable. This means that _anyone_ who can obtain
+    local access to this machine can do whatever they want to your 
+    Bugzilla installation, and is probably also able to run
+    arbitrary Perl code as the user that the web server runs as.
+
+    You really, really, really need to change this setting.
+    ****************************************************************************
+
+  [% ELSIF message_tag == "install_webservergroup_not_in" %]
+    Warning: you have entered a value for the "webservergroup" parameter in
+    localconfig, but you are not either a) running this script as [% constants.ROOT_USER FILTER html %]; 
+    or b) a member of this group. This can cause permissions problems and 
+    decreased security.  If you experience problems running Bugzilla
+    scripts, log in as [% constants.ROOT_USER FILTER html %] and re-run this script, become a 
+    member of the group, or remove the value of the "webservergroup" parameter.
+
+  [% ELSIF message_tag == "install_webservergroup_windows" %]
+    Warning: You have set webservergroup in [% constants.bz_locations.localconfig FILTER html %]
+    Please understand that this does not bring you any security when
+    running under Windows.
+    Verify that the file permissions in your Bugzilla directory are
+    suitable for your system. Avoid unnecessary write access.
+
+  [% ELSIF message_tag == "install_workflow_init" %]
+    Setting up the default status workflow...
+
+  [% ELSIF message_tag == "product_created" %]
+    [% title = "Product Created" %]
+    The product <em>[% product.name FILTER html %]</em> has been created.
+
+  [% ELSIF message_tag == "product_deleted" %]
+    [% title = "Product Deleted" %]
+    The product <em>[% product.name FILTER html %]</em> and all its versions,
+    components, milestones and group controls have been deleted.
+    [% IF product.bug_count %]
+      All [% terms.bugs %] being in this product and all references
+      to them have also been deleted.
+    [% END %]
+
+  [% ELSIF message_tag == "product_invalid" %]
+    [% title = "$terms.Bugzilla Component Descriptions" %]
+    The product <em>[% product FILTER html %]</em> does not exist
+    or you don't have access to it. The following is a list of the
+    products you can choose from.
+
+  [% ELSIF message_tag == "quips_added" %]
+    Your quip <em>[% added_quip FILTER html %]</em> has been added.
+    [% IF Param("quip_list_entry_control") == "moderated" AND
+          !user.in_group('bz_quip_moderators') %]
+      It will be used as soon as it gets approved.
+    [% END %]
+
+  [% ELSIF message_tag == "quips_deleted" %]
+    The quip <em>[% deleted_quip FILTER html %]</em> has been deleted.
+
+  [% ELSIF message_tag == "quips_approved_unapproved" %]
+    [% IF approved.size == 1 %]
+      One quip
+    [% ELSE %]
+      [% approved.size %] quips
+    [% END %]
+    approved and
+    [% IF unapproved.size == 1 %]
+      one quip
+    [% ELSE %]
+      [%+ unapproved.size %] quips
+    [% END %]
+    unapproved.
+
+  [% ELSIF message_tag == "report_created" %]
+    OK, you have a new saved report named <em>[% reportname FILTER html %]</em>.
+
+  [% ELSIF message_tag == "report_deleted" %]
+    OK, the <em>[% reportname FILTER html %]</em> report is gone.
+
+  [% ELSIF message_tag == "report_updated" %]
+    The saved report <em>[% reportname FILTER html %]</em> has been updated.
+
+  [% ELSIF message_tag == "remaining_time_zeroed" %]
+    The [% field_descs.remaining_time FILTER html %] field has been 
+    set to zero automatically as part of closing this [% terms.bug %]
+    or moving it from one closed state to another.
+
+  [% ELSIF message_tag == "sanitycheck" %]
+    [%# We use this way to call sanitycheck-specific messages so that
+      # we can still use get_text(). %]
+    [% PROCESS "admin/sanitycheck/messages.html.tmpl" %]
+
+  [% ELSIF message_tag == "series_all_open" %]
+    All Open
+
+  [% ELSIF message_tag == "series_all_closed" %]
+    All Closed
+
+  [% ELSIF message_tag == "series_subcategory" %]
+    -All-
+
+  [% ELSIF message_tag == "sudo_started" %]
+    [% title = "Sudo session started" %]
+      The sudo session has been started.  For the next 6 hours, or until you 
+      end the session, everything you do you do as the user you are 
+      impersonating ([% target FILTER html %]).
+  
+  [% ELSIF message_tag == "sudo_ended" %]
+    [% title = "Sudo session complete" %]
+      Your sudo session has ended. All future actions will be attributed
+      to your own account.
+
+  [% ELSIF message_tag == "series_created" %]
+    [% title = "Series Created" %]
+      The series <em>[% series.category FILTER html %] /
+      [%+ series.subcategory FILTER html %] / 
+      [%+ series.name FILTER html %]</em>
+      has been created. Note that you may need to wait up to 
+      [%+ series.frequency * 2 %] days before there will be enough data for a
+      chart of this series to be produced.
+
+  [% ELSIF message_tag == "series_deleted" %]
+    [% title = "Series Deleted" %]
+    The series <em>[% series.category FILTER html %] /
+      [%+ series.subcategory FILTER html %] /
+      [%+ series.name FILTER html %]</em>
+      has been deleted.
+
+  [% ELSIF message_tag == "series_updated" %]
+    [% title = "Series Updated" %]
+    The series <em>[% default.category FILTER html %] /
+    [%+ default.subcategory FILTER html %] /
+    [%+ default.name FILTER html %]</em> has been updated.
+
+  [% ELSIF message_tag == "shutdown" %]
+    [% title = "$terms.Bugzilla is Down" %]
+    [% Param("shutdownhtml") %]
+    [% IF userid %]
+      <p>
+        For security reasons, you have been logged out automatically.
+        The cookie that was remembering your login is now gone.
+      </p>
+    [% END %]
+    <p>
+      If you are an administrator, you can
+      <a href="editparams.cgi?section=general">reactivate [% terms.Bugzilla %]</a>
+      by clearing the <kbd>shutdownhtml</kbd> parameter.
+    </p>
+
+  [% ELSIF message_tag == "term" %]
+    [% terms.$term FILTER html %]
+
+  [% ELSIF message_tag == "unexpected_flag_types" %]
+    Some flags could not be set. Please check your changes.
+
+  [% ELSIF message_tag == "user_match_failed" %]
+    You entered a username that did not match any known 
+    [% terms.Bugzilla %] users, so we have instead left
+    the [% match_field FILTER html %] field blank.
+
+  [% ELSIF message_tag == "user_match_multiple" %]
+    You entered a username that matched more than one
+    user, so we have instead left the [% match_field FILTER html %]
+    field blank.
+
+  [% ELSIF message_tag == "version_created" %]
+    [% title = "Version Created" %]
+    The version <em>[% version.name FILTER html %]</em> of product
+    <em>[% product.name FILTER html %]</em> has been created.
+
+  [% ELSIF message_tag == "version_deleted" %]
+    [% title = "Version Deleted" %]
+    The version <em>[% version.name FILTER html %]</em> of product
+    <em>[% product.name FILTER html %]</em> has been deleted.
+
+  [% ELSIF message_tag == "version_updated" %]
+    [% title = "Version Updated" %]
+    [% IF changes.size %]
+      Changes to the version <em>[% version.name FILTER html %]</em>
+      have been saved:
+      <ul>
+        [% IF changes.value.defined %]
+          <li>Version renamed to <em>[% version.name FILTER html %]</em></li>
+        [% END %]
+        [% IF changes.isactive.defined %]
+          <li>[% version.is_active ? "Enabled" : "Disabled" %] for [% terms.bugs %]</li>
+        [% END %]
+      </ul>
+    [% ELSE %]
+      No changes made to version <em>[% version.name FILTER html %]</em>.
+    [% END %]
+
+  [% ELSIF message_tag == "whine_query_failed" %]
+    The query '[% query_name FILTER html %]' from [% author.login FILTER html %]
+    failed: [% reason FILTER html %]
+
+  [% ELSIF message_tag == "workflow_updated" %]
+    The workflow has been updated.
+  [% END %]
+[% END %]
+
+[% IF !message %]
+  [% message = Hook.process('messages') %]
+[% END %]
+
+[%# Give sensible error if the message function is used incorrectly. #%]
+[% IF !message %]
+  [% message = BLOCK %]
+    You are using Bugzilla's messaging functions incorrectly. You
+    passed in the string '[% message_tag FILTER html %]'. The correct use is to pass
+    in a tag, and define that tag in the file <kbd>messages.html.tmpl</kbd>.<br>
+    <br>
+    If you are a [% terms.Bugzilla %] end-user seeing this message, please
+    save this page and send it to [% Param('maintainer') %].
+  [% END %]
+[% END %]

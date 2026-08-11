@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
+en
+
+peach
+péché
+pêche
+sin
+fr
+
+peach
+péché
+pêche
+sin
+fr-CA
+
+peach
+pêche
+péché
+sin

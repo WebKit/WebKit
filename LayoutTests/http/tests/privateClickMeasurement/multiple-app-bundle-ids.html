@@ -1,0 +1,103 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout(runTest, 0)">
+<div id="description">Tests private click measurement with multiple app bundle IDs, making sure only the matching ID is considered a match.</div>
+<a id="targetLink1" href="http://localhost:8000/privateClickMeasurement/multiple-app-bundle-ids.html?stepTwo" attributionsourceid=23 attributiondestination="http://localhost:8000">Link1</a><br>
+<a id="targetLink2" href="http://localhost:8000/privateClickMeasurement/multiple-app-bundle-ids.html?stepFour" attributionsourceid=33 attributiondestination="http://localhost:8000">Link2</a><br>
+<div id="output"></div>
+<script>
+    const currentTimeMillis = (new Date()).getTime();
+    const highEntropyBits = currentTimeMillis - (Math.floor(currentTimeMillis / 1000000) * 1000000);
+    const nonce = highEntropyBits + "" + Math.floor(Math.random() * 100);
+
+    prepareTest();
+
+    if (window.testRunner) {
+        testRunner.setPrivateClickMeasurementOverrideTimerForTesting(true);
+    }
+
+    function finishTest() {
+        testRunner.dumpPrivateClickMeasurement();
+        tearDownAndFinish();
+    }
+
+    function activateElement(elementID) {
+        var element = document.getElementById(elementID);
+        var centerX = element.offsetLeft + element.offsetWidth / 2;
+        var centerY = element.offsetTop + element.offsetHeight / 2;
+        UIHelper.activateAt(centerX, centerY).then(
+            function () {
+            },
+            function () {
+                document.getElementById("output").innerText = "FAIL Promise rejected.";
+                tearDownAndFinish();
+            }
+        );
+    }
+
+    function appendIframe(url, onloadCallback) {
+        let iframeElement = document.createElement("iframe");
+        iframeElement.src = url;
+        if (onloadCallback)
+            iframeElement.onload = onloadCallback;
+        document.body.appendChild(iframeElement);
+    }
+
+    let reportsReceived = 0;
+    function appendConversionDataIframeAndFinish() {
+        document.body.removeChild(document.getElementById("targetLink1"));
+        document.body.removeChild(document.getElementById("targetLink2"));
+        document.body.removeChild(document.getElementById("pixel"));
+
+        // Click source.
+        appendIframe("http://127.0.0.1:8000/privateClickMeasurement/resources/getConversionData.py?timeout_ms=2000&recipient=ClickSource&nonce=" + nonce, function() {
+            reportsReceived++;
+            if (reportsReceived >= 2)
+                finishTest();
+        });
+
+        // Click destination.
+        appendIframe("http://127.0.0.1:8000/privateClickMeasurement/resources/getConversionData.py?timeout_ms=2000&recipient=ClickDestination&nonce=" + nonce, function() {
+            reportsReceived++;
+            if (reportsReceived >= 2)
+                finishTest();
+        });
+    }
+
+    function runTest() {
+        if (window.testRunner) {
+            if (window.location.search === "?stepTwo") {
+                // Step 2: Go back to the source.
+                document.location.href = "http://127.0.0.1:8000/privateClickMeasurement/multiple-app-bundle-ids.html?stepThree";
+            } else if (window.location.search === "?stepThree") {
+                // Step 3: Change the app bundle ID and click the second link.
+                testRunner.setPrivateClickMeasurementAppBundleIDForTesting("");
+                activateElement("targetLink2");
+            } else if (window.location.search === "?stepFour") {
+                // Step 4: Convert.
+                testRunner.setPrivateClickMeasurementAttributionReportURLsForTesting("http://127.0.0.1:8000/privateClickMeasurement/resources/conversionReport.py?recipient=ClickSource&nonce=" + nonce, "http://localhost:8000/privateClickMeasurement/resources/conversionReport.py?recipient=ClickDestination&nonce=" + nonce);
+                let imageElement = document.createElement("img");
+                imageElement.src = "https://127.0.0.1:8443/privateClickMeasurement/resources/redirectToConversion.py?conversionData=12&nonce=" + nonce;
+                imageElement.id = "pixel";
+                imageElement.onerror = function() {
+                    appendConversionDataIframeAndFinish();
+                };
+                document.body.appendChild(imageElement);
+            } else {
+                // Step 1: Change the app bundle ID and click the first link.
+                testRunner.setPrivateClickMeasurementAppBundleIDForTesting("testBundleID");
+                activateElement("targetLink1");
+            }
+        } else {
+            document.getElementById("output").innerText = "FAIL No testRunner.";
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<title>View transitions: computed transform for position fixed elements doesn't include scroll pos</title>
+<link rel="help" href="https://drafts.csswg.org/css-view-transitions-1/">
+<link rel="author" title="Matt Woodrow" href="mailto:mattwoodrow@apple.com">
+<script src="../../resources/ui-helper.js"></script>
+<style>
+.box {
+  background: lightblue;
+  width: 100px;
+  height: 100px;
+  position: fixed;
+}
+
+/* We're verifying what we capture, so just display the new contents for 5 minutes.  */
+html::view-transition-group(*) { animation-duration: 300s; }
+html::view-transition-new(*) { animation: unset; opacity: 1; }
+html::view-transition-old(*) { animation: unset; opacity: 0; }
+</style>
+<div class=box></div>
+<div style="height: 1000px;"></div>
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  if (testRunner.dontForceRepaint)
+    testRunner.dontForceRepaint();
+  if (window.internals)
+    internals.setUsesOverlayScrollbars(true);
+}
+
+async function runTest() {
+
+  await document.startViewTransition(() => {}).ready;
+
+  await UIHelper.renderingUpdate();
+  await UIHelper.renderingUpdate();
+
+  /* Scroll the doc, position:fixed content inside the snapshot should not move */
+  document.documentElement.scrollTop = 500;
+
+  await UIHelper.renderingUpdate();
+  await UIHelper.renderingUpdate();
+
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+onload = () => requestAnimationFrame(() => requestAnimationFrame(runTest));
+</script>

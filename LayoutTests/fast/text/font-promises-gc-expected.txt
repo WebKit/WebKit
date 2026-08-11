@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Font loaded
+This test should not time out, and should say "SUCCESS".
+Hello
+SUCCESS

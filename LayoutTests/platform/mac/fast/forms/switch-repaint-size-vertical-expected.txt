@@ -1,0 +1,6 @@
+
+(repaint rects
+  (rect 7 6 21 36)
+  (rect 30 30 16 28)
+)
+

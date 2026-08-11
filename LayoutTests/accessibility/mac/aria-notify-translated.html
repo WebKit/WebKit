@@ -1,0 +1,49 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsARIANotifyEnabled=true displayedTranslationLocale=fr announcementTranslationMode=immediate ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<button id="button" lang="da">Hej</button>
+
+<script>
+var output = "Tests that ariaNotify announcements are translated, and reported in the target language, when the page is presented as a machine translation (Core-AAM).\n\n";
+var notificationCount = 0;
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAriaNotifyUserInfo(userInfo);
+        notificationCount++;
+
+        // The source language here is the button's lang="da", not the document's "en", so this also
+        // covers passing the element's own language to the client as the translation source.
+        if (notificationCount == 1)
+            document.getElementById("button").ariaNotify("Hej", { priority: "high" });
+
+        if (notificationCount == 2)
+            testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    accessibilityController.addNotificationListener(notificationCallback);
+
+    document.ariaNotify("San Francisco");
+
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

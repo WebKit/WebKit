@@ -1,0 +1,30 @@
+# This unexport list uses the Itanium mangling rules [1] to hide any symbols
+# emitted from libc++ headers.
+# [1]: https://itanium-cxx-abi.github.io/cxx-abi/abi.html#mangle.type
+
+# std:: namespace, with any valid combination of restrict (r), volatile (V), or const (K)
+__ZSt*
+__Z[KVr]St*
+__ZK[Vr]St*
+__ZKVrSt*
+
+# nested std:: namespace, with the above qualifiers
+__ZNSt*
+__ZN[KVr]St*
+__ZNK[Vr]St*
+__ZNKVrSt*
+
+# vtable for std::, with the above qualifiers
+__ZTVSt*
+__ZTV[KVr]St*
+__ZTVK[Vr]St*
+__ZTVKVrSt*
+
+# typeinfo for std::
+__ZT[IS]St*
+
+# global operator new and new[]
+__Zn[wa]*
+
+# global operator delete and delete[]
+__Zd[la]*

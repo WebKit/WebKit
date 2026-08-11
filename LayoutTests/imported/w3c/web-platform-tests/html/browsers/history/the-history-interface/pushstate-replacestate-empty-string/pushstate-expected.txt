@@ -1,0 +1,3 @@
+
+PASS history.pushState() with an empty string URL
+

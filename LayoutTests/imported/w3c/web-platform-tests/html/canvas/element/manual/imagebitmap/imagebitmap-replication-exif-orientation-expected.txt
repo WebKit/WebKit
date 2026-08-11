@@ -1,0 +1,11 @@
+
+
+PASS ImageBitmap from file with EXIF rotation, duplicated via structuredClone
+PASS ImageBitmap from file with EXIF rotation, loaded via <img>
+PASS ImageBitmap from file with EXIF rotation, loaded via <img> not in DOM, imageOrientation = none
+FAIL ImageBitmap from file with EXIF rotation, loaded via <img> in DOM, imageOrientation = none assert_equals: Bitmap width expected 320 but got 160
+PASS ImageBitmap from file with EXIF rotation, duplicated via createImageBitmap
+PASS ImageBitmap from file with EXIF rotation, duplicated via worker serialization round-trip
+PASS ImageBitmap from file with EXIF rotation, duplicated via worker transfer round-trip
+PASS ImageBitmap from file with EXIF rotation, duplicated via worker transfer round-trip, while referenced by a CanvasPattern
+

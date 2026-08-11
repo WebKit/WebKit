@@ -1,0 +1,11 @@
+15.4.4.22-4-5 (TestCases/chapter15/15.4/15.4.4/15.4.4.22/15.4.4.22-4-5.js) Array.prototype.reduceRight throws TypeError if callbackfn is number
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+PASS ES5Harness.testPassed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

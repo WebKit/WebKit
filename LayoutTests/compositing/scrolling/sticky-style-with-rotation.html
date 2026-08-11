@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<style>
+    body {
+        rotate: y 1turn;
+    }
+</style>
+<body>
+    <p>The HTML page loads as expected</p>
+</body>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    onload = () => {
+        document.body.offsetTop;
+        document.body.style.position = 'sticky';
+        scrollBy(0, 0);
+    };
+</script>
+

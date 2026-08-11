@@ -1,0 +1,6 @@
+
+PASS "mousemove" should be fired on the parent of "mouseover" target which was removed at "mouseover"
+PASS "mousemove" should be fired on the parent of "mouseover" target which was replaced at "mouseover" (rather than new child)
+PASS "mousemove" should be fired on the grandparent of "mouseover" target which was removed at "mouseover" with the parent
+PASS "mousemove" should be fired on the grandparent of "mouseover" target which was replaced at "mouseover" with the parent
+

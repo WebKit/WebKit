@@ -1,0 +1,4 @@
+
+PASS URLPattern rejects an empty regexp group '()' with a TypeError
+PASS URLPattern accepts a non-empty regexp group '(a)'
+

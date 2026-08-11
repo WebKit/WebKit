@@ -1,0 +1,50 @@
+<html>
+<head>
+    <title>media-source-change-source</title>
+    <script src="../../../../media/media-source/media-source-loader.js"></script>
+    <script src="../../../../media/video-test.js"></script>
+    <script>
+    let loader;
+    let source;
+    let sourceBuffer;
+
+    window.addEventListener('load', async event => {
+        failTestIn(5000);
+
+        consoleWrite('Tests that creating an incompatible MediaKeys object with MediaSource does not crash.')
+        findMediaElement();
+        loader = new MediaSourceLoader('../../../../media/media-source/content/test-fragmented-manifest.json', '../../../../media/media-source/');
+        let loaderPromise = new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        })
+        consoleWrite('Loading media data:');
+        await shouldResolve(loaderPromise);
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen'),
+
+        sourceBuffer = source.addSourceBuffer(loader.type());
+        sourceBuffer.appendBuffer(loader.initSegment());
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('Requesting MediaKeySystemAccess:')
+        let access = await shouldResolve(navigator.requestMediaKeySystemAccess('org.w3.clearkey', [{
+            initDataTypes: ["cenc"],
+            videoCapabilities: [{contentType : 'video/mp4; codecs="avc1.64001F"'}]
+        }]));
+
+        consoleWrite('Creating MediaKeys:')
+        let keys = await shouldResolve(access.createMediaKeys());
+
+        consoleWrite('Setting keys on media element:')
+        await shouldResolve(video.setMediaKeys(keys));
+        endTest();
+    });
+    </script>
+</head>
+<body>
+<video controls></video><br>
+</body>
+</html>

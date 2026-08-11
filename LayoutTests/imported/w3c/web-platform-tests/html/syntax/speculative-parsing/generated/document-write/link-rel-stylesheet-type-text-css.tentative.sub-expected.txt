@@ -1,0 +1,8 @@
+
+    <!-- speculative case in document.write -->
+    <link rel=stylesheet href="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=a2c7a4b8-9031-4987-a4f6-652d20cc025f&amp;encodingcheck=&Gbreve;" type=text/css>
+
+
+
+PASS Speculative parsing, document.write(): link-rel-stylesheet-type-text-css
+

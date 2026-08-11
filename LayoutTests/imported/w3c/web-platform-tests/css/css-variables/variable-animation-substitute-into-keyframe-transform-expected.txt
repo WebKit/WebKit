@@ -1,0 +1,5 @@
+This text should scale from half size to double size over a period of 1 second.
+
+PASS Verify transform before animation
+PASS Verify transform after animation
+

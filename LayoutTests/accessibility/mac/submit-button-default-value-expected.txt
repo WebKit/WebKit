@@ -1,0 +1,9 @@
+This tests that a submit button will return its default value as the title.
+
+PASS: button.title === 'AXTitle: Submit'
+PASS: button.title === 'AXTitle: non-default value'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

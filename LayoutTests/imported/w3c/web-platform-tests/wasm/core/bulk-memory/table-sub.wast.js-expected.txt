@@ -1,0 +1,11 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (table-sub.wast:1)
+PASS #3 Test that WebAssembly compilation fails (table-sub.wast:12)
+PASS #4 Test that WebAssembly compilation fails (table-sub.wast:23)
+PASS #5 Reinitialize the default imports
+PASS #6 Test that WebAssembly compilation succeeds (table-sub.wast:1)
+PASS #7 Test that WebAssembly instantiation succeeds (table-sub.wast:1)
+PASS #8 Test that WebAssembly compilation fails (table-sub.wast:12)
+PASS #9 Test that WebAssembly compilation fails (table-sub.wast:23)
+

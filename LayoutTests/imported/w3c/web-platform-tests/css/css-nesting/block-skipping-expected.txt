@@ -1,0 +1,4 @@
+Test passes if this text is green.
+
+PASS CSS Nesting bug: Block ignored after lack of whitespace
+

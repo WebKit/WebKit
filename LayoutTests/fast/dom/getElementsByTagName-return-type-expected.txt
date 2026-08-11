@@ -1,0 +1,13 @@
+Tests that getElementsByTagName*() returns an HTMLCollection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementsByTagName("test").__proto__ is HTMLCollection.prototype
+PASS document.getElementsByTagNameNS("*", "test").__proto__ is HTMLCollection.prototype
+PASS document.body.getElementsByTagName("test").__proto__ is HTMLCollection.prototype
+PASS document.body.getElementsByTagNameNS("*", "test").__proto__ is HTMLCollection.prototype
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

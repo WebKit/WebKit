@@ -1,0 +1,64 @@
+Modules/webaudio/AudioBasicProcessorNode.cpp
+Modules/webaudio/AudioBufferSourceNode.cpp
+Modules/webaudio/AudioDestinationNode.cpp
+Modules/webaudio/AudioNode.cpp
+Modules/webaudio/AudioNodeInput.cpp
+Modules/webaudio/AudioParam.cpp
+Modules/webaudio/AudioWorkletNode.cpp
+Modules/webaudio/ChannelSplitterNode.cpp
+Modules/webaudio/ConstantSourceNode.cpp
+Modules/webaudio/ConvolverNode.cpp
+Modules/webaudio/DynamicsCompressorNode.cpp
+Modules/webaudio/GainNode.cpp
+Modules/webaudio/OscillatorNode.cpp
+Modules/webaudio/PannerNode.cpp
+Modules/webaudio/ScriptProcessorNode.cpp
+Modules/webaudio/StereoPannerNode.cpp
+[ iOS ] Modules/webdatabase/DatabaseTracker.cpp
+accessibility/AccessibilityObject.cpp
+[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
+bindings/js/JSAbortSignalCustom.cpp
+bindings/js/JSCSSRuleListCustom.cpp
+bindings/js/JSCSSStyleDeclarationCustom.cpp
+bindings/js/JSHTMLElementCustom.cpp
+bindings/js/JSIDBCursorCustom.cpp
+bindings/js/JSIDBRequestCustom.cpp
+bindings/js/JSLocationCustom.cpp
+bindings/js/JSMessagePortCustom.cpp
+bindings/js/JSNavigateEventCustom.cpp
+bindings/js/JSPluginElementFunctions.cpp
+bindings/js/JSResizeObserverCustom.cpp
+bindings/js/JSTextTrackCueCustom.cpp
+css/CSSStyleSheet.cpp
+css/values/CSSValueAggregates.h
+dom/ContainerNode.cpp
+dom/Element.cpp
+dom/Position.cpp
+[ macOS ] html/HTMLMediaElement.cpp
+inspector/InspectorIdentifierRegistry.cpp
+inspector/agents/InspectorNetworkAgent.cpp
+inspector/agents/InspectorPageAgent.cpp
+page/IntersectionObserver.cpp
+[ iOS ] page/LocalFrameView.cpp
+[ iOS ] page/Quirks.cpp
+[ iOS ] page/ios/FrameIOS.mm
+[ Mac ] page/mac/ServicesOverlayController.mm
+[ iOS ] platform/audio/ios/AudioSessionIOS.mm
+platform/graphics/filters/software/FEMorphologySoftwareApplier.cpp
+rendering/RenderCounter.cpp
+rendering/RenderLayer.cpp
+rendering/RenderLayerBackingSVGAdditions.cpp
+rendering/RenderLayerCompositor.cpp
+rendering/RenderTreeAsText.cpp
+style/ElementRuleCollector.cpp
+style/StyleBuilderCustom.h
+style/StyleDocumentScope.cpp
+style/StyleInvalidationFunctions.h
+style/UserAgentStyle.cpp
+style/computed/StyleComputedStyleBase.cpp
+style/computed/StyleComputedStyleBase+SettersInlines.h
+style/computed/StyleComputedStyleProperties+SettersCustomInlines.h
+style/values/primitives/StyleLengthResolution.cpp
+svg/SVGUseElement.cpp
+testing/Internals.cpp
+testing/LegacyMockCDM.cpp

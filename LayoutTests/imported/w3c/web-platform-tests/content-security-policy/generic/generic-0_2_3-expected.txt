@@ -1,0 +1,6 @@
+'self' fails with a different host (including sub-host e.g. foo.com as self with content from bar.foo.com)
+
+
+PASS Prevents access to external scripts.
+PASS Should fire violation events for every failed violation
+

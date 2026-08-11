@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("HTMLUtilities");
+
+    suite.addTestCase({
+        name: "HTMLCollection.prototype.indexOf",
+        test() {
+            let parent = document.createElement("div");
+            let child1 = parent.appendChild(document.createElement("div"));
+            let child2 = parent.appendChild(document.createElement("div"));
+            let child3 = parent.appendChild(document.createElement("div"));
+
+            InspectorTest.expectEqual(parent.getElementsByTagName("div").indexOf(child1), 0, "Should find the right index for the first child.");
+            InspectorTest.expectEqual(parent.getElementsByTagName("div").indexOf(child2), 1, "Should find the right index for the second child.");
+            InspectorTest.expectEqual(parent.getElementsByTagName("div").indexOf(child3), 2, "Should find the right index for the third child.");
+            InspectorTest.expectEqual(parent.getElementsByTagName("div").indexOf(null), -1, "Should not find an index for something not in the collection.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

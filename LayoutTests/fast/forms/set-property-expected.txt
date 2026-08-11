@@ -1,0 +1,29 @@
+Tests setting properties on HTMLFormElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS form.action is document.getElementById('action')
+PASS form[0] is document.getElementById('action')
+PASS form.testInput is document.getElementById('testInput')
+PASS form.foo is undefined.
+form.action = 'about:blank'
+form[0] = 'bar'
+PASS form.action is document.getElementById('action')
+document.getElementById('action').remove()
+PASS form.action is "about:blank"
+form.target = 'about:blank'
+PASS form.target is document.getElementById('target')
+document.getElementById('target').remove()
+PASS form.target is "about:blank"
+form.testInput = 'test'
+PASS form.testInput is document.getElementById('testInput')
+document.getElementById('testInput').remove()
+PASS form.testInput is undefined.
+form.foo = 'test'
+PASS form.foo is "test"
+PASS form[0] is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

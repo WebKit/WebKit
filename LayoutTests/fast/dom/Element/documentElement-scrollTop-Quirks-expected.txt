@@ -1,0 +1,13 @@
+Tests that for non-standard mode document.documentElement.scrollTop returns the scroll top as 0
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS document.documentElement.scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

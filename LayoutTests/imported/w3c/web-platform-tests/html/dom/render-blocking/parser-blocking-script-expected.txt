@@ -1,0 +1,6 @@
+text
+Some more text
+
+PASS Rendering is blocked before render-blocking resources are loaded
+PASS Parser-blocking script is evaluated
+

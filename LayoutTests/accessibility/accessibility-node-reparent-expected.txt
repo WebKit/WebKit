@@ -1,0 +1,12 @@
+This test makes sure that AccessibilityNodeObjects are properly detached when the node they point to is reparented to a location that allows them to have a renderer.
+
+PASS: expectedButtonRole !== expectedDetachedRole === true
+PASS: canvasButtonRole === expectedButtonRole
+PASS: detachedCanvasButtonRole === expectedDetachedRole
+PASS: reparentedButtonRole === expectedButtonRole
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

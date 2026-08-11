@@ -1,0 +1,20 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# The javascript block gets used in header.html.tmpl. %]
+[% javascript = BLOCK %]
+  var first_load = true; // Is this the first time we load the page?
+  var last_sel = []; // Caches last selection
+  var cpts = new Array();
+
+  [% n = 1 %]
+  [% FOREACH prod = products %]
+    cpts['[% n %]'] = [[% FOREACH comp = prod.components %]'[% comp.name FILTER js %]'[% ", " UNLESS loop.last %] [%- END -%]];
+    [% n = n+1 %]
+  [% END %]
+[% END %]

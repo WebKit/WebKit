@@ -1,0 +1,28 @@
+<style>
+@media only screen { 
+html { 
+    float: right; 
+    place-content: unsafe flex-end;
+    content-visibility: hidden;
+  }
+} 
+</style>
+<!-- PASS if no crash or assert -->
+<script>
+window.testRunner?.dumpAsText();
+
+(async () => {
+internals.withUserGesture(() => {});
+
+document.documentElement.append(document.createElement('div'));
+
+let n2 = document.documentElement.cloneNode(true); 
+n2.id = 'n2';
+document.documentElement.prepend(n2);
+
+frames.print();
+await (()=>{ let options = { name: `` }; return cookieStore.get(options) })();
+await (()=>{ return document.getElementById("n2").webkitRequestFullscreen() })()
+document.body.offsetHeight;
+})();
+</script>

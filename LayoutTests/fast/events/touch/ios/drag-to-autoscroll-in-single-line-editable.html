@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="../../../../resources/basic-gestures.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+    
+        async function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+        
+            var output = '';
+            var scrollBox = document.getElementById('textbox');
+            var targetRect = scrollBox.getBoundingClientRect();
+            
+            var tapPointX = targetRect.x + targetRect.width / 2;
+            var tapPointY = targetRect.y + targetRect.height / 2;
+            var dragX = targetRect.x + targetRect.width;
+            
+            var textLength = scrollBox.value.length;
+
+            await tapAtPoint(tapPointX - 1, tapPointY - 1);
+            await didShowKeyboard();
+            await longPressAndHoldAtPoint(tapPointX, tapPointY);
+            await continueTouchAndDragFromPointToPoint(tapPointX, tapPointY, dragX, tapPointY);
+            await holdAtPoint(dragX, tapPointY + 20, 1.0);
+            await continueTouchAndDragFromPointToPoint(dragX, tapPointY + 20, dragX + 5, tapPointY + 20);
+            await liftUpAtPoint(dragX + 5, tapPointY + 20);
+            if (scrollBox.scrollLeft > 0)
+                output += 'PASS: Text Box has been scrolled.';
+            else
+                output += 'FAIL: Text Box has not been scrolled';
+            output += '<br>';
+
+            if ((scrollBox.selectionStart == scrollBox.selectionEnd) && (scrollBox.selectionStart == textLength))
+                output += 'PASS: Correct Cursor Location';
+            else
+                output += 'FAIL: cursor is at an unexpected position:' + scrollBox.selectionStart;
+            output += '<br>';
+
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
+        }
+    
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 300px;
+            background-color: silver;
+            font-family: monospace;
+            font-size: 18px;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+    <div id="target">
+        <input id="textbox" type="text" value="Lorem ipsum dolor sit amet, consectetur adipiscing elit" size="25"><br>
+        
+        This test requires UIScriptController to run.
+    </div>
+</body>
+</html>

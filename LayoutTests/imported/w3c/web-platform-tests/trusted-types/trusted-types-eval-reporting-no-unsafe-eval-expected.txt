@@ -1,0 +1,5 @@
+
+PASS Trusted Type violation report: evaluating a string violates both script-src and trusted-types.
+PASS Trusted Type violation report: evaluating a Trusted Script violates script-src.
+PASS Trusted Type violation report: script-src restrictions apply after the default policy runs.
+

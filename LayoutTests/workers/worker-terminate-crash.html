@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ jscOptions=--useSharedArrayBuffer=true ] -->
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+const WORKER_CODE = `
+self.onmessage = e => {
+    const ctrl = e.data;
+
+    const arr = [];
+    arr[0] = 1;
+
+    Object.prototype.return = Reflect.set.bind(null, arr, 5, 1);
+
+    const pairs = [{
+        get 0() {
+            arr[{
+                toString() {
+                    Atomics.store(ctrl, 0, 1);
+
+                    while (ctrl[0] === 1) {
+                        ctrl[1] = 1;
+                    }
+
+                    return 0xfffffffe;
+                }
+            }] = 1;
+        }
+    }];
+
+    new Map(pairs);
+};
+`;
+
+const WORKER_URL = URL.createObjectURL(new Blob([WORKER_CODE], { type: 'text/javascript' }));
+
+async function main() {
+    // It would be nice to run this longer and increase the crash rate but it makes the test quite slow.
+    for (let i = 0; i < 100; ++i) {
+        const ctrl = new Int32Array(new SharedArrayBuffer(4));
+        const worker = new Worker(WORKER_URL);
+
+        worker.postMessage(ctrl);
+
+        await new Promise(resolve => {
+            const id = setInterval(() => {
+                if (Atomics.load(ctrl, 0) !== 0) {
+                    clearInterval(id);
+
+                    resolve();
+                }
+            }, 0);
+        });
+
+        Atomics.store(ctrl, 0, 2);
+        Atomics.notify(ctrl, 0);
+
+        worker.terminate();
+    }
+}
+
+globalThis.testRunner?.waitUntilDone();
+
+main().catch(e => {
+    console.log(e);
+}).finally(() => {
+    testRunner.notifyDone();
+});
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

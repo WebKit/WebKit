@@ -1,0 +1,7 @@
+Momentum event reached main thread
+PASS scrollEventCount > 0 is true
+PASS scrollEventCount is scrollEventCountAtMayBegin
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

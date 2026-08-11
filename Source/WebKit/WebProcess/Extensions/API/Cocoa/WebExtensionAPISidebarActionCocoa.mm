@@ -1,0 +1,279 @@
+/*
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#if !__has_feature(objc_arc)
+#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
+#endif
+
+#include "config.h"
+#import "WebExtensionAPISidebarAction.h"
+#import "WebExtensionAPIKeys.h"
+
+#if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
+
+#import "MessageSenderInlines.h"
+#import "WebExtensionContextMessages.h"
+#import "WebExtensionSidebarParameters.h"
+#import "WebExtensionTabIdentifier.h"
+#import "WebExtensionWindowIdentifier.h"
+#import "WebProcess.h"
+
+namespace WebKit {
+
+
+static ParseResult parseSidebarActionDetails(NSDictionary *details)
+{
+    id maybeTabId = [details objectForKey:tabIdKey];
+    id maybeWindowId = [details objectForKey:windowIdKey];
+
+    if (maybeTabId && maybeWindowId)
+        return makeUnexpected(toErrorString(nullString(), @"details", @"it cannot specify both 'tabId' and 'windowId'"));
+
+    if (maybeTabId && ![maybeTabId isKindOfClass:NSNumber.class])
+        return makeUnexpected(toErrorString(nullString(), @"details", @"'tabId' must be a number"));
+
+    if (maybeWindowId && ![maybeWindowId isKindOfClass:NSNumber.class])
+        return makeUnexpected(toErrorString(nullString(), @"details", @"'windowId' must be a number"));
+
+    if (maybeTabId) {
+        auto tabId = toWebExtensionTabIdentifier(((NSNumber *) maybeTabId).doubleValue);
+        return isValid(tabId) ? ParseResult(tabId.value()) : makeUnexpected(toErrorString(nullString(), @"details", @"'tabId' is invalid"));
+    }
+
+    if (maybeWindowId) {
+        auto windowId = toWebExtensionWindowIdentifier(((NSNumber *) maybeWindowId).doubleValue);
+        return isValid(windowId) ? ParseResult(windowId.value()) : makeUnexpected(toErrorString(nullString(), @"details", @"'windowId' is invalid"));
+    }
+
+    return ParseResult(std::nullopt);
+}
+
+static Expected<std::optional<String>, WebExtensionError> parseDetailsStringFromKey(NSDictionary *dict, NSString *key, bool required = false)
+{
+    RetainPtr<id> maybeValue = [dict objectForKey:key];
+    if (!maybeValue && required)
+        return makeUnexpected(toErrorString(nullString(), @"details", makeString("'"_s, String(key), "' is required"_s)));
+
+    if ([maybeValue isKindOfClass:NSNull.class]) {
+        if (required)
+            return makeUnexpected(toErrorString(nullString(), @"details", makeString("'"_s, String(key), "' is required"_s)));
+        return { std::nullopt };
+    }
+
+    RetainPtr nsStringValue = dynamic_objc_cast<NSString>(maybeValue.get());
+    if (!nsStringValue) {
+        if (required)
+            return makeUnexpected(toErrorString(nullString(), @"details", makeString("'"_s, String(key), "' must be of type 'string'"_s)));
+        return makeUnexpected(toErrorString(nullString(), @"details", makeString("'"_s, String(key), "' must be of type 'string' or 'null'"_s)));
+    }
+
+    return { String(nsStringValue.get()) };
+}
+
+template<typename VariantType>
+static std::tuple<std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>> getIdentifiers(std::optional<VariantType>& maybeVariant)
+{
+    static_assert(isVariantMember<WebExtensionWindowIdentifier, VariantType>::value);
+    static_assert(isVariantMember<WebExtensionTabIdentifier, VariantType>::value);
+
+    if (!maybeVariant.has_value())
+        return std::make_tuple(std::nullopt, std::nullopt);
+
+    auto& variant = maybeVariant.value();
+
+    return std::make_tuple(toOptional<WebExtensionWindowIdentifier>(variant), toOptional<WebExtensionTabIdentifier>(variant));
+}
+
+void WebExtensionAPISidebarAction::open(Ref<WebExtensionCallbackHandler>&& callback , NSString **outExceptionString)
+{
+    if (!WebCore::UserGestureIndicator::processingUserGesture()) {
+        *outExceptionString = toErrorString(nullString(), nullString(), @"it must be called during a user gesture").createNSString().get();
+        return;
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarOpen(std::nullopt, std::nullopt), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPISidebarAction::close(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    if (!WebCore::UserGestureIndicator::processingUserGesture()) {
+        *outExceptionString = toErrorString(nullString(), nullString(), @"it must be called during a user gesture").createNSString().get();
+        return;
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarClose(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPISidebarAction::toggle(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    if (!WebCore::UserGestureIndicator::processingUserGesture()) {
+        *outExceptionString = toErrorString(nullString(), nullString(), @"it must be called during a user gesture").createNSString().get();
+        return;
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarToggle(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPISidebarAction::isOpen(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    // we don't use parseSidebarActionDetails here because we only need windowId for isOpen
+    id maybeWindowId = details[windowIdKey];
+    if (maybeWindowId && ![maybeWindowId isKindOfClass:NSNumber.class]) {
+        *outExceptionString = toErrorString(nullString(), @"details", @"'windowId' must be a number").createNSString().get();
+        return;
+    }
+
+    std::optional<WebExtensionWindowIdentifier> windowId = maybeWindowId ? toWebExtensionWindowIdentifier(((NSNumber *) maybeWindowId).doubleValue) : std::nullopt;
+    if (maybeWindowId && !isValid(windowId)) {
+        *outExceptionString = toErrorString(nullString(), @"details", @"'windowId' is invalid").createNSString().get();
+        return;
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarIsOpen(windowId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<bool, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call(JSValueMakeBoolean(callback->globalContext(), result.value()));
+    }, extensionContext().identifier());
+}
+
+
+void WebExtensionAPISidebarAction::getPanel(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    auto result = parseSidebarActionDetails(details);
+    if ((*outExceptionString = indicatesError(result).get()))
+        return;
+
+    const auto [windowId, tabId] = getIdentifiers(result.value());
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetOptions(windowId, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionSidebarParameters, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call(toJSValueRef(callback->globalContext(), result.value().panelPath));
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPISidebarAction::setPanel(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    auto panelResult = parseDetailsStringFromKey(details, panelKey);
+    if ((*outExceptionString = indicatesError(panelResult).get()))
+        return;
+
+    const auto panelPath = panelResult.value();
+
+    auto result = parseSidebarActionDetails(details);
+    if ((*outExceptionString = indicatesError(result).get()))
+        return;
+
+    const auto [windowId, tabId] = getIdentifiers(result.value());
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetOptions(windowId, tabId, panelPath, std::nullopt), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPISidebarAction::getTitle(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    auto result = parseSidebarActionDetails(details);
+    if ((*outExceptionString = indicatesError(result).get()))
+        return;
+
+    const auto [windowId, tabId] = getIdentifiers(result.value());
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetTitle(windowId, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<String, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call(toJSValueRef(callback->globalContext(), result.value()));
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPISidebarAction::setTitle(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    auto titleResult = parseDetailsStringFromKey(details, titleKey);
+    if ((*outExceptionString = indicatesError(titleResult).get()))
+        return;
+
+    const auto title = WTF::move(titleResult.value());
+
+    auto result = parseSidebarActionDetails(details);
+    if ((*outExceptionString = indicatesError(result).get()))
+        return;
+
+    const auto [windowId, tabId] = getIdentifiers(result.value());
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarSetTitle(windowId, tabId, title), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPISidebarAction::setIcon(NSDictionary *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    // FIXME: <https://webkit.org/b/276833> Implement icon-related functionality
+    static NSString * const apiName = @"sidebarAction.setIcon()";
+    callback->reportError(adoptNS([[NSString alloc] initWithFormat:@"'%@' is unimplemented", apiName]).get());
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)

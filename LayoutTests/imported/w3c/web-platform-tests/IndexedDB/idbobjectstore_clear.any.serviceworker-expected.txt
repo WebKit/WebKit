@@ -1,0 +1,6 @@
+
+PASS Verify clear removes all records
+PASS Clear removes all records from an index
+PASS If the transaction this IDBObjectStore belongs to has its mode set to readonly, throw ReadOnlyError
+PASS If the object store has been deleted, the implementation must throw a DOMException of type InvalidStateError
+

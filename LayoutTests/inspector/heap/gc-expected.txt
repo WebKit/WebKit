@@ -1,0 +1,8 @@
+Test for the Heap.gc command.
+
+
+== Running test suite: Heap.gc
+-- Running test case: TriggerGCShouldCreateGCEvent
+PASS: Event should have GarbageCollection data.
+PASS: GarbageCollection type should be Full.
+

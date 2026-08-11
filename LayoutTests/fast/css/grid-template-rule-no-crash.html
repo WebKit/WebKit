@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+grid {
+  display: grid;
+  grid-template: "test" 100px / 100px;
+  grid-template-rows: subgrid;
+}
+</style>
+</head>
+<body>
+Test passes if no crash.
+<grid></grid>
+</body>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  document.styleSheets[0].cssRules[0].cssText
+</script>
+</html>

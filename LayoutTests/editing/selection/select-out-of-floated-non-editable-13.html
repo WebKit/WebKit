@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div style="overflow: hidden; margin-bottom: 100px;" id="container">select this first<div style="height: 200px; width: 50px; float: left; background-color: green;">float content</div></div><div style="background-color: yellow">and drag the selection all the way to the white area between the green and yellow boxes. PASS if the text [float content] is selected.</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.eventSender) {
+    eventSender.dragMode = false;
+    eventSender.mouseMoveTo(container.offsetLeft + 50, container.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(container.offsetLeft + 50, container.offsetTop + container.offsetHeight);
+    eventSender.mouseUp();
+    if (getSelection().toString().trim() == "select this firstfloat content")
+        document.write("PASS");
+    else
+        document.write("FAIL");
+}
+</script>
+</body>
+</html>

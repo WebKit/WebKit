@@ -1,0 +1,5 @@
+
+PASS navigator.pdfViewerEnabled exists
+PASS navigator.mimeTypes contains the hard-coded list
+PASS navigator.plugins contains the hard-coded list
+

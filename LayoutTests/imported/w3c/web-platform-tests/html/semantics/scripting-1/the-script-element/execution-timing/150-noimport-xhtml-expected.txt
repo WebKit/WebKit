@@ -1,0 +1,4 @@
+Test
+
+PASS Stylesheet in XHTML BODY blocking scripts
+

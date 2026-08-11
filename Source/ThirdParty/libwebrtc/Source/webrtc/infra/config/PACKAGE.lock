@@ -1,0 +1,29 @@
+{
+	"lucicfg": "1.45.8",
+	"packages": [
+		{
+			"name": "@webrtc-project",
+			"deps": [
+				"@chromium-luci"
+			],
+			"lucicfg": "1.45.6",
+			"resources": [
+				"console-header.textpb",
+				"luci-analysis.cfg",
+				"templates/*"
+			],
+			"entrypoints": [
+				"config.star"
+			]
+		},
+		{
+			"name": "@chromium-luci",
+			"source": {
+				"repo": "https://chromium.googlesource.com/infra/chromium/+/refs/heads/main",
+				"revision": "04cdad5911e5d091eba42fc1ede0dd08b9261166",
+				"path": "starlark-libs/chromium-luci"
+			},
+			"lucicfg": "1.45.0"
+		}
+	]
+}

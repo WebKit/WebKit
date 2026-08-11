@@ -1,0 +1,17 @@
+
+PASS WebTransport session is established with status code 200
+PASS WebTransport session is established with status code 204
+PASS WebTransport session establishment fails with status code 301
+PASS WebTransport session establishment with status code 401
+PASS WebTransport session establishment fails with status code 404
+PASS Echo back request headers
+PASS Validate subprotocol headers sent
+PASS Protocol with double-quote is escaped in wt-available-protocols header
+PASS Protocol with backslash is escaped in wt-available-protocols header
+PASS Validate subprotocol response header received
+PASS Validate subprotocol response header received with parameters handled correctly
+PASS Validate subprotocol response header with non-offered protocol gets ignored
+PASS Validate subprotocol response header when no protocols were offered gets ignored
+PASS Validate malformed subprotocol response header gets ignored
+PASS Cookie header is not echoed back
+

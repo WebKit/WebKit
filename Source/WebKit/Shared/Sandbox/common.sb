@@ -1,0 +1,98 @@
+; Copyright (C) 2022 Apple Inc. All rights reserved.
+;
+; Redistribution and use in source and binary forms, with or without
+; modification, are permitted provided that the following conditions
+; are met:
+; 1. Redistributions of source code must retain the above copyright
+;    notice, this list of conditions and the following disclaimer.
+; 2. Redistributions in binary form must reproduce the above copyright
+;    notice, this list of conditions and the following disclaimer in the
+;    documentation and/or other materials provided with the distribution.
+;
+; THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+; BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+; CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+; SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+; INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+; CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+; ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+; THE POSSIBILITY OF SUCH DAMAGE.
+
+#if USE(SANDBOX_VERSION_3)
+(version 3)
+#else
+(version 1)
+#endif
+(deny default)
+
+#ifndef NO_REPORT
+#define NO_REPORT (with no-report)
+#endif
+
+(deny nvram*)
+(deny system-privilege)
+(allow system-audit file-read-metadata)
+
+;; Silence spurious logging due to rdar://20117923 and rdar://72366475
+(deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) NO_REPORT)
+
+#if USE(SANDBOX_VERSION_3)
+#if PLATFORM(MACCATALYST) || PLATFORM(VISION)
+(allow file-link (with telemetry) (with report))
+(allow system-fcntl (with telemetry) (with report))
+(allow file-map-executable (with telemetry) (with report))
+(allow iokit-open-service (with telemetry) (with report))
+(allow system-mac-syscall (with telemetry) (with report))
+(allow darwin-notification-post (with telemetry) (with report))
+(allow file-clone (with telemetry) (with report))
+(allow fs-quota* (with telemetry) (with report))
+(allow fs-snapshot-mount (with telemetry) (with report))
+(allow mach-cross-domain-lookup (with telemetry) (with report))
+(allow process-info-codesignature (with telemetry) (with report))
+#endif
+(allow mach-bootstrap)
+(if (defined? 'syscall-mig)
+    (allow syscall-mig)
+    ;; else
+    (allow mach-kernel-endpoint))
+(allow file-test-existence)
+(allow syscall-mach)
+(allow system-memorystatus-control)
+#endif // USE(SANDBOX_VERSION_3)
+
+;; Sandbox extensions
+(define (apply-read-and-issue-extension op path-filter)
+    (op file-read* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") path-filter)))
+(define (apply-write-and-issue-extension op path-filter)
+    (op file-write* path-filter)
+    (op file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") path-filter)))
+(define (read-only-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter))
+(define (read-write-and-issue-extensions path-filter)
+    (apply-read-and-issue-extension allow path-filter)
+    (apply-write-and-issue-extension allow path-filter))
+
+(define (webcontent-process-launched) (state-flag "local:WebContentProcessLaunched"))
+
+(define (notify-blocking) (require-entitlement "com.apple.developer.web-browser-engine.restrict.notifyd"))
+
+(define (logd-blocking) (require-entitlement "com.apple.private.disable-log-mach-ports"))
+
+(define (debug-features-blocking) (state-flag "local:BlockDebuggingFeaturesInSandbox"))
+
+(define (log-streaming)
+    (with-filter
+        (require-any
+            (system-attribute apple-internal)
+            (require-not (process-attribute is-apple-signed-executable)))
+        (allow mach-lookup (global-name "com.apple.diagnosticd"))))
+
+#if ENABLE(GPU_PROCESS_IOKIT_RESTRICTIONS)
+#define GPU_PROCESS_IOKIT_DEFAULT_FILTER_OPERATION deny
+#else
+#define GPU_PROCESS_IOKIT_DEFAULT_FILTER_OPERATION allow
+#endif

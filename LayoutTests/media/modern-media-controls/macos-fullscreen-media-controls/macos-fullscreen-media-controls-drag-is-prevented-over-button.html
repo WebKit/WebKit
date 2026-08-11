@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("This test pauses the video, presses the fullscreen button, and drags the controls when the mouse is over a button. It should not move.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+let mediaControls = shadowRoot.lastChild;
+
+media.addEventListener("webkitbeginfullscreen", () => {
+    debug("webkitbeginfullscreen");
+});
+
+media.addEventListener("webkitfullscreenchange", () => {
+    shouldBecomeEqual("media.webkitDisplayingFullscreen", "true", () => {
+        mediaControls = shadowRoot.lastChild;
+        
+        // Wait for the controls to be properly laid out
+        window.requestAnimationFrame(() => {
+            // Find any button to test with
+            const anyButton = mediaControls.querySelector('button');
+            if (!anyButton) {
+                testFailed("No buttons found to test");
+                finishJSTest();
+                return;
+            }
+            
+            const buttonBounds = anyButton.getBoundingClientRect();
+            
+            // Click directly in the center of the button
+            const buttonCenterX = buttonBounds.left + buttonBounds.width / 2;
+            const buttonCenterY = buttonBounds.top + buttonBounds.height / 2;
+            
+            // Store initial transform state
+            const controlsBar = mediaControls.querySelector('.controls-bar');
+            const initialTransform = controlsBar.style.transform || "";
+            
+            eventSender.mouseMoveTo(buttonCenterX, buttonCenterY);
+            eventSender.mouseDown();
+            eventSender.mouseMoveTo(buttonCenterX - 50, buttonCenterY - 100);
+            eventSender.mouseUp();
+
+            window.requestAnimationFrame(() => {
+                // Check that transform hasn't changed significantly
+                const finalTransform = controlsBar.style.transform || "";
+                const noSignificantMovement = finalTransform === initialTransform ||
+                    finalTransform === "" ||
+                    finalTransform === "none" ||
+                    finalTransform.includes("translate(0px, 0px)") ||
+                    finalTransform.includes("translate3d(0px, 0px, 0px)");
+                
+                if (noSignificantMovement) {
+                    testPassed("Controls did not move when dragging over a button");
+                } else {
+                    testFailed("Controls moved when dragging over a button. Initial: '" + initialTransform + "', Final: '" + finalTransform + "'");
+                }
+                
+                finishJSTest();
+            });
+        });
+    });
+});
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    window.requestAnimationFrame(() => {
+        const bounds = mediaControls.querySelector("button.fullscreen").getBoundingClientRect();
+        eventSender.mouseMoveTo(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

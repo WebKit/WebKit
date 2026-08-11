@@ -1,0 +1,3 @@
+
+PASS timeOrigins are clamped.
+

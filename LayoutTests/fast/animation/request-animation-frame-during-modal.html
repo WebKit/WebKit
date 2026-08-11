@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ ShowModalDialogEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<script src="../../resources/js-test.js"></script>
+<body>
+
+<script type="text/javascript">
+description('Tests that requestAnimationFrame callbacks are not invoked while modal dialogs are displayed.');
+window.jsTestIsAsync = true;
+
+onload = function()
+{
+    debug('Setting callback');
+    window.requestAnimationFrame(function() { debug('Callback fired'); }, document.body);
+    debug('Showing modal dialog');
+    var src = 'if (window.testRunner) {' +
+              '    testRunner.displayAndTrackRepaints();' +
+              '    window.close();' +
+              '} else {'+
+              '    window.setTimeout(window.close, 10);'+
+              '}';
+    showModalDialog('data:text/html,<script>' + src + '</' + 'script>');
+    debug('Returned from modal dialog');
+    if (window.testRunner) {;
+        testRunner.displayAndTrackRepaints();
+    }
+}
+
+
+setTimeout(function() {
+    finishJSTest();
+}, 200);
+
+</script>
+</body>
+</html>
+

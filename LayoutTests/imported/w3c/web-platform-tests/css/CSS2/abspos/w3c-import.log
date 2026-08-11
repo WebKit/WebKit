@@ -1,0 +1,83 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-001-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004a-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004a.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004b-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004b.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004c-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004c.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004d-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004d.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004e-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004e.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004f-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-004f.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-005-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-005a-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-005a.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-005b-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-005b.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-005c-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-005c.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-005d-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-005d.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-007-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-007-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-007.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009a-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009a.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009b-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009b.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009e-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009e.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009f-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-containing-block-initial-009f.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/abspos-in-block-in-inline-in-relpos-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/adjacent-to-relpos-inline-in-inline-that-had-block.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/adjacent-to-relpos-inline-that-had-block.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/between-float-and-text-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/between-float-and-text.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/hypothetical-box-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/hypothetical-box-dynamic-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/hypothetical-box-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/hypothetical-inline-alone-on-second-line-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/hypothetical-inline-alone-on-second-line-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/hypothetical-inline-alone-on-second-line.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/remove-block-between-inline-and-abspos-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/remove-block-between-inline-and-abspos.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-fixed-inside-abspos-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-fixed-inside-abspos.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-float-inside-inline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-float-inside-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-003-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-block-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-block-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-inline-block.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-table-cell-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/static-inside-table-cell.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/table-caption-is-containing-block-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/table-caption-is-containing-block-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/table-caption-passes-abspos-up-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/abspos/table-caption-passes-abspos-up-001.html

@@ -1,0 +1,29 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<style>
+    #portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<div id="portal">
+    <model id="model"><source src="../model-element/resources/cube.usdz"></model>
+    <span id="content">Hello!</span>
+</div>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const portal = document.getElementById("portal");
+    const model = document.getElementById("model");
+    let loadFired = false;
+    model.addEventListener("load", () => loadFired = true, { once: true });
+    await model.ready;
+    assert_true(loadFired, "load event fired on the child model");
+    assert_equals(model.getBoundingClientRect().width, 0, "delegated <model> has no box of its own");
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 1, "the portal hosts the nested model");
+}, "A <model> nested in a spatial portal fires load/ready and displays properly");
+
+</script>
+</body>
+</html>

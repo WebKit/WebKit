@@ -1,0 +1,1601 @@
+/*
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "MediaPlayerPrivateMediaSourceAVFObjC.h"
+
+#if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
+
+#import "AVAssetMIMETypeCache.h"
+#import "AVAssetTrackUtilities.h"
+#import "AVStreamDataParserMIMETypeCache.h"
+#import "AudioMediaStreamTrackRenderer.h"
+#import "AudioVideoRendererAVFObjC.h"
+#import "CDMInstance.h"
+#import "CDMSessionAVContentKeySession.h"
+#import "ContentTypeUtilities.h"
+#import "GraphicsContext.h"
+#import "IOSurface.h"
+#import "Logging.h"
+#import "MediaPlayerIdentifier.h"
+#import "MediaSessionManagerCocoa.h"
+#import "MediaSourcePrivate.h"
+#import "MediaSourcePrivateAVFObjC.h"
+#import "MediaSourcePrivateClient.h"
+#import "MediaStrategy.h"
+#import "MessageClientForTesting.h"
+#import "MessageForTesting.h"
+#import "PixelBufferConformerCV.h"
+#import "PlatformDynamicRangeLimitCocoa.h"
+#import "PlatformScreen.h"
+#import "PlatformStrategies.h"
+#import "SourceBufferPrivateAVFObjC.h"
+#import "SpatialAudioExperienceHelper.h"
+#import "TextTrackRepresentation.h"
+#import "VideoFrameCV.h"
+#import "VideoLayerManagerObjC.h"
+#import "VideoMediaSampleRenderer.h"
+#import "WebSampleBufferVideoRendering.h"
+#import <AVFoundation/AVFoundation.h>
+#import <CoreMedia/CMTime.h>
+#import <QuartzCore/CALayer.h>
+#import <objc_runtime.h>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/spi/cf/CFNotificationCenterSPI.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/BlockObjCExceptions.h>
+#import <wtf/Deque.h>
+#import <wtf/FileSystem.h>
+#import <wtf/MachSendRightAnnotated.h>
+#import <wtf/MainThread.h>
+#import <wtf/NativePromise.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/TZoneMallocInlines.h>
+#import <wtf/WeakPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
+#import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
+
+#import "CoreVideoSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/MediaToolboxSoftLink.h>
+
+@interface AVSampleBufferDisplayLayer (Staging_100128644)
+@property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
+@end
+
+namespace WebCore {
+
+#pragma mark -
+#pragma mark MediaPlayerPrivateMediaSourceAVFObjC
+
+Ref<AudioVideoRenderer> MediaPlayerPrivateMediaSourceAVFObjC::createRenderer(LoggerHelper& loggerHelper, HTMLMediaElementIdentifier mediaElementIdentifier, MediaPlayerIdentifier playerIdentifier)
+{
+    RELEASE_ASSERT(hasPlatformStrategies());
+    RefPtr renderer = platformStrategies()->mediaStrategy()->createAudioVideoRenderer(&loggerHelper, mediaElementIdentifier, playerIdentifier);
+    // Can't be null on cocoa platform.
+    return renderer.releaseNonNull();
+}
+
+MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer& player)
+    : m_player(player)
+    , m_seekTimer(*this, &MediaPlayerPrivateMediaSourceAVFObjC::seekInternal)
+    , m_waitForTargetRequest(NativePromiseRequest::create())
+    , m_rendererPrepareSeekRequest(NativePromiseRequest::create())
+    , m_rendererFinishSeekRequest(NativePromiseRequest::create())
+    , m_stallRequest(NativePromiseRequest::create())
+    , m_networkState(MediaPlayer::NetworkState::Empty)
+    , m_pageIsVisible { player.pageIsVisible() }
+    , m_viewportVisibility { player.viewportVisibility() }
+    , m_logger(player.mediaPlayerLogger())
+    , m_logIdentifier(player.mediaPlayerLogIdentifier())
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    , m_defaultSpatialTrackingLabel(player.defaultSpatialTrackingLabel())
+    , m_spatialTrackingLabel(player.spatialTrackingLabel())
+#endif
+    , m_playerIdentifier(MediaPlayerIdentifier::generate())
+    , m_renderer(createRenderer(*this, player.clientIdentifier(), m_playerIdentifier))
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+#if PLATFORM(MAC)
+    m_renderer->setScreenReserved(player.screenReserved());
+#endif
+}
+
+MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    // Prevent re-entrant callbacks during member destruction. Without this,
+    // KVO notifications fired during m_mediaSourcePrivate's destruction can
+    // call back into this partially-destroyed object via WeakPtr-guarded
+    // callbacks (such as the error callback calling setNetworkState(),
+    // which accesses the already-destroyed m_logger).
+    weakPtrFactory().revokeAll();
+
+    if (m_stallRequest->hasCallback())
+        protect(m_stallRequest)->disconnect();
+
+    cancelPendingSeek();
+    m_seekTimer.stop();
+    dispatchToRendererQueue([](auto& renderer) {
+        renderer.pause();
+    });
+}
+
+#pragma mark -
+#pragma mark MediaPlayer Factory Methods
+
+class MediaPlayerFactoryMediaSourceAVFObjC final : public MediaPlayerFactory {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaPlayerFactoryMediaSourceAVFObjC);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MediaPlayerFactoryMediaSourceAVFObjC);
+private:
+    MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE; };
+
+    Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer& player) const final
+    {
+        return adoptRef(*new MediaPlayerPrivateMediaSourceAVFObjC(player));
+    }
+
+    void getSupportedTypes(HashSet<String>& types) const final
+    {
+        return MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(types);
+    }
+
+    MediaPlayer::SupportsType supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters) const final
+    {
+        return MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters);
+    }
+
+    // Only reached when registered locally; registerMediaEngine may instead install
+    // a remote proxy for this engine.
+    MediaPlayerScope supportedScope() const final
+    {
+        return hasPlatformStrategies() ? MediaPlayerScope::Playback : MediaPlayerScope::Supports;
+    }
+};
+
+void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegistrar registrar)
+{
+    if (!isAvailable())
+        return;
+
+    ASSERT(AVAssetMIMETypeCache::singleton().isAvailable());
+
+    registrar(makeUnique<MediaPlayerFactoryMediaSourceAVFObjC>());
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
+{
+    return PAL::isAVFoundationFrameworkAvailable()
+        && PAL::isCoreMediaFrameworkAvailable()
+        && PAL::getAVStreamDataParserClassSingleton()
+        && PAL::getAVSampleBufferAudioRendererClassSingleton()
+        && PAL::getAVSampleBufferRenderSynchronizerClassSingleton()
+        && class_getInstanceMethod(PAL::getAVSampleBufferAudioRendererClassSingleton(), @selector(setMuted:));
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::getSupportedTypes(HashSet<String>& types)
+{
+    types.clear();
+}
+
+MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(const MediaEngineSupportParameters& parameters)
+{
+    // This engine does not support non-media-source sources.
+    if (parameters.platformType != PlatformMediaDecodingType::MediaSource)
+        return MediaPlayer::SupportsType::IsNotSupported;
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    // This engine does not support wireless playback.
+    if (parameters.playbackTargetType != MediaPlaybackTargetType::None)
+        return MediaPlayer::SupportsType::IsNotSupported;
+#endif
+
+    if (!contentTypeMeetsContainerAndCodecTypeRequirements(parameters.type, parameters.allowedMediaContainerTypes, parameters.allowedMediaCodecTypes))
+        return MediaPlayer::SupportsType::IsNotSupported;
+
+    auto supported = SourceBufferParser::isContentTypeSupported(parameters.type);
+
+    if (supported != MediaPlayer::SupportsType::IsSupported)
+        return supported;
+
+    if (!contentTypeMeetsHardwareDecodeRequirements(parameters.type, parameters.contentTypesRequiringHardwareSupport))
+        return MediaPlayer::SupportsType::IsNotSupported;
+
+    return MediaPlayer::SupportsType::IsSupported;
+}
+
+#pragma mark -
+#pragma mark MediaPlayerPrivateInterface Overrides
+
+void MediaPlayerPrivateMediaSourceAVFObjC::load(const String&)
+{
+    assertIsMainThread();
+    // This media engine only supports MediaSource URLs.
+    m_networkState = MediaPlayer::NetworkState::FormatError;
+    if (RefPtr player = m_player.get())
+        player->networkStateChanged();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const LoadOptions& options, MediaSourcePrivateClient& client)
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    m_renderer->notifyWhenErrorOccurs([weakThis = WeakPtr { *this }](PlatformMediaError) {
+        ensureOnMainThread([weakThis] {
+            if (RefPtr protectedThis = weakThis.get()) {
+                protectedThis->setNetworkState(MediaPlayer::NetworkState::DecodeError);
+                protectedThis->setReadyState(MediaPlayer::ReadyState::HaveNothing);
+            }
+        });
+    });
+
+    m_renderer->notifyFirstFrameAvailable([weakThis = WeakPtr { *this }] {
+        ensureOnMainThread([weakThis] {
+            if (RefPtr protectedThis = weakThis.get(); protectedThis && !protectedThis->seeking())
+                protectedThis->setHasAvailableVideoFrame(true);
+        });
+    });
+
+    m_renderer->notifyWhenRequiresFlushToResume([weakThis = WeakPtr { *this }] {
+        ensureOnMainThread([weakThis] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->setLayerRequiresFlush();
+        });
+    });
+
+    m_renderer->notifyRenderingModeChanged([weakThis = WeakPtr { *this }] {
+        ensureOnMainThread([weakThis] {
+            if (RefPtr protectedThis = weakThis.get()) {
+                if (RefPtr player = protectedThis->m_player.get())
+                    player->renderingModeChanged();
+            }
+        });
+    });
+
+    m_renderer->notifySizeChanged([weakThis = WeakPtr { *this }](const MediaTime&, FloatSize size) {
+        ensureOnMainThread([weakThis, size] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->setNaturalSize(size);
+        });
+    });
+
+    m_renderer->notifyEffectiveRateChanged([weakThis = WeakPtr { *this }](double) {
+        ensureOnMainThread([weakThis] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->effectiveRateChanged();
+        });
+    });
+
+    m_renderer->notifyVideoLayerSizeChanged([weakThis = WeakPtr { *this }](const MediaTime&, FloatSize size) {
+        ensureOnMainThread([weakThis, size] {
+            if (RefPtr protectedThis = weakThis.get()) {
+                if (RefPtr player = protectedThis->m_player.get())
+                    player->videoLayerSizeDidChange(size);
+            }
+        });
+    });
+
+    m_loadOptions = options;
+    m_renderer->setPreferences(options.videoRendererPreferences);
+    if (RefPtr player = m_player.get()) {
+        m_renderer->setPresentationSize(player->presentationSize());
+        m_renderer->setVideoLayerSize(player->videoLayerSize());
+        m_renderer->renderingCanBeAcceleratedChanged(player->renderingCanBeAccelerated());
+        m_renderer->setVolume(player->volume());
+        m_renderer->setMuted(player->muted());
+        m_renderer->setPreservesPitchAndCorrectionAlgorithm(player->preservesPitch(), player->pitchCorrectionAlgorithm());
+#if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
+        m_renderer->setOutputDeviceId(player->audioOutputDeviceIdOverride());
+#endif
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+        if (RetainPtr videoTarget = player->videoTarget())
+            m_renderer->setVideoTarget(videoTarget.get());
+#endif
+    }
+
+    if (RefPtr mediaSourcePrivate = downcast<MediaSourcePrivateAVFObjC>(client.mediaSourcePrivate())) {
+        mediaSourcePrivate->setPlayer(this);
+        m_mediaSourcePrivate = WTF::move(mediaSourcePrivate);
+        client.reOpen();
+    } else
+        m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setResourceOwner(const ProcessIdentity& resourceOwner)
+{
+    m_renderer->setResourceOwner(resourceOwner);
+}
+
+#if ENABLE(MEDIA_STREAM)
+void MediaPlayerPrivateMediaSourceAVFObjC::load(MediaStreamPrivate&)
+{
+    setNetworkState(MediaPlayer::NetworkState::FormatError);
+}
+#endif
+
+void MediaPlayerPrivateMediaSourceAVFObjC::cancelLoad()
+{
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::prepareToPlay()
+{
+}
+
+PlatformLayer* MediaPlayerPrivateMediaSourceAVFObjC::platformLayer() const
+{
+    return m_renderer->platformVideoLayer();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::play()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    playInternal();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::playInternal(std::optional<MonotonicTime>&& hostTime)
+{
+    assertIsMainThread();
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    if (!mediaSourcePrivate)
+        return;
+
+    if (currentTime() >= mediaSourcePrivate->duration()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "bailing, current time: ", currentTime(), " greater than duration ", mediaSourcePrivate->duration());
+        return;
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+    flushVideoIfNeeded();
+
+    dispatchToRendererQueue([hostTime](auto& renderer) {
+        renderer.play(hostTime);
+    });
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::pause()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    pauseInternal();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal(std::optional<MonotonicTime>&& hostTime)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    dispatchToRendererQueue([hostTime](auto& renderer) {
+        renderer.pause(hostTime);
+    });
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::paused() const
+{
+    return m_renderer->paused();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setVolume(float volume)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, volume);
+    m_renderer->setVolume(volume);
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::supportsScanning() const
+{
+    return true;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setMuted(bool muted)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, muted);
+    m_renderer->setMuted(muted);
+}
+
+FloatSize MediaPlayerPrivateMediaSourceAVFObjC::naturalSize() const
+{
+    return m_naturalSize;
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::hasVideo() const
+{
+    auto* mediaSourcePrivate = m_mediaSourcePrivate.get();
+    return mediaSourcePrivate && mediaSourcePrivate->hasVideo();
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::hasAudio() const
+{
+    auto* mediaSourcePrivate = m_mediaSourcePrivate.get();
+    return mediaSourcePrivate && mediaSourcePrivate->hasAudio();
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::shouldTeardownOnVisibilityChange() const
+{
+    assertIsMainThread();
+    // Some clients continue to display the video layer they host after hiding their web view.
+    // For those, neither the page's visibility nor the element's position in the viewport
+    // indicate whether the video is on screen, and tearing the layer down would leave the
+    // client displaying a black frame.
+    return !m_loadOptions.disableTeardownOnVisibilityChange;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
+{
+    assertIsMainThread();
+    if (m_pageIsVisible == visible)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, visible);
+    m_pageIsVisible = visible;
+    updateRendererVisibility();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setViewportVisibility(ViewportVisibility visibility)
+{
+    assertIsMainThread();
+    if (m_viewportVisibility == visibility)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, visibility);
+    m_viewportVisibility = visibility;
+    updateRendererVisibility();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::updateRendererVisibility()
+{
+    assertIsMainThread();
+    bool visible = m_pageIsVisible && m_viewportVisibility != ViewportVisibility::NotVisible;
+    m_renderer->setIsVisible(visible);
+    // 311380@main started letting the page's and the element's visibility release the video
+    // renderer. Some clients keep displaying the video layer they host after hiding their web
+    // view, so for those restore the previous behaviour where visibility had no such effect.
+    if (shouldTeardownOnVisibilityChange())
+        acceleratedRenderingStateChanged();
+}
+
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::duration() const
+{
+    assertIsMainThread();
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    return mediaSourcePrivate ? mediaSourcePrivate->duration() : MediaTime::zeroTime();
+}
+
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentTime() const
+{
+    return m_renderer->currentTime();
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::timeIsProgressing() const
+{
+    return m_renderer->timeIsProgressing();
+}
+
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::clampTimeToSensicalValue(const MediaTime& time) const
+{
+    assertIsMainThread();
+    if (m_lastSeekTime.isFinite() && time < m_lastSeekTime)
+        return m_lastSeekTime;
+
+    if (time < MediaTime::zeroTime())
+        return MediaTime::zeroTime();
+    if (time > duration())
+        return duration();
+    return time;
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&& callback)
+{
+    assertIsMainThread();
+    m_renderer->setTimeObserver(100_ms, [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](const MediaTime& currentTime) mutable {
+        // This method is only used with the RemoteMediaPlayerProxy and RemoteAudioVideoRendererProxyManager where m_renderer is an AudioVideoRendererAVFObjC that runs on the main thread only (for now).
+        assertIsMainThread();
+        if (RefPtr protectedThis = weakThis.get())
+            callback(protectedThis->clampTimeToSensicalValue(currentTime));
+    });
+
+    return true;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::timeChanged()
+{
+    assertIsMainThread();
+    if (RefPtr player = m_player.get())
+        player->timeChanged();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::stall()
+{
+    assertIsMainThread();
+    dispatchToRendererQueue([](auto& renderer) {
+        renderer.stall();
+    });
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::playAtHostTime(const MonotonicTime& time)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    playInternal(time);
+    return true;
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::pauseAtHostTime(const MonotonicTime& time)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    pauseInternal(time);
+    return true;
+}
+
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::startTime() const
+{
+    return MediaTime::zeroTime();
+}
+
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::initialTime() const
+{
+    return MediaTime::zeroTime();
+}
+
+Ref<MediaTimePromise> MediaPlayerPrivateMediaSourceAVFObjC::seekToTarget(const SeekTarget& target)
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER, "time = ", target.time, ", negativeThreshold = ", target.negativeThreshold, ", positiveThreshold = ", target.positiveThreshold);
+
+    m_pendingSeek = target;
+
+    if (m_seekTimer.isActive())
+        m_seekTimer.stop();
+    m_seekTimer.startOneShot(0_s);
+
+    m_seekPromise.emplace(PlatformMediaError::Cancelled);
+    return *m_seekPromise;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
+{
+    assertIsMainThread();
+    if (!m_pendingSeek)
+        return;
+
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    if (!mediaSourcePrivate)
+        return;
+
+    auto pendingSeek = std::exchange(m_pendingSeek, { }).value();
+    m_lastSeekTime = pendingSeek.time;
+
+    m_seeking = true;
+
+    cancelPendingSeek();
+
+    stall();
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    // Wait until the user agent has established whether or not the
+    // media data for the new playback position is available, and, if it is, until it has decoded enough data
+    // to play back that position" step of the seek algorithm:
+    protect(m_mediaSourcePrivate)->waitForTarget(pendingSeek)->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }] (auto&& result) {
+        assertIsMainThread();
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->m_waitForTargetRequest->complete();
+
+        if (!result)
+            return; // seek cancelled;
+        protectedThis->continueSeek(*result);
+    })->track(m_waitForTargetRequest);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::continueSeek(const MediaTime& seekTime)
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER, seekTime);
+
+    m_lastSeekTime = seekTime;
+    invokeAsync(MediaSourcePrivateAVFObjC::queueSingleton(), [renderer = m_renderer, seekTime] -> Ref<MediaTimePromise> {
+        return renderer->prepareToSeek(seekTime);
+    })->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, seekTime] (auto&& result) {
+        assertIsMainThread();
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        protectedThis->m_rendererPrepareSeekRequest->complete();
+
+        if (!result)
+            return;
+        if (result->isIndefinite()) {
+            protectedThis->setHasAvailableVideoFrame(false);
+            protectedThis->reenqueueMediaForTimeAndFinishSeek(seekTime);
+            return;
+        }
+        if (RefPtr mediaSourcePrivate = protectedThis->m_mediaSourcePrivate)
+            mediaSourcePrivate->clearReenqueuePending();
+        protectedThis->completeSeek(*result);
+    })->track(m_rendererPrepareSeekRequest);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::reenqueueMediaForTimeAndFinishSeek(const MediaTime& seekTime)
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER, seekTime);
+
+    // Refresh the renderer's stall cap before finishSeek, since finishSeek
+    // may resume playback on the GPU side. The cap programmed for the
+    // pre-seek playhead may be stale.
+    resetStallForTime(seekTime);
+
+    GenericPromise::all({
+        protect(m_mediaSourcePrivate)->reenqueueMediaForTime(seekTime),
+        invokeAsync(MediaSourcePrivateAVFObjC::queueSingleton(), [renderer = m_renderer, seekTime] -> Ref<GenericPromise> {
+            return renderer->finishSeek(seekTime);
+        })
+    })->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, seekTime](auto&& result) {
+        assertIsMainThread();
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        protectedThis->m_rendererFinishSeekRequest->complete();
+
+        if (!result)
+            return; // cancelled.
+
+        protectedThis->completeSeek(seekTime);
+    })->track(m_rendererFinishSeekRequest);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::cancelPendingSeek()
+{
+    assertIsMainThread();
+
+    if (m_waitForTargetRequest->hasCallback())
+        m_waitForTargetRequest->disconnect();
+    if (m_rendererPrepareSeekRequest->hasCallback())
+        m_rendererPrepareSeekRequest->disconnect();
+    if (m_rendererFinishSeekRequest->hasCallback())
+        m_rendererFinishSeekRequest->disconnect();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::completeSeek(const MediaTime& seekedTime)
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER, "");
+
+    m_lastSeekTime = seekedTime;
+
+    // The renderer seek is done and its target frame is available.
+    if (hasVideo())
+        setHasAvailableVideoFrame(true);
+    m_seeking = false;
+
+    // Propagate readyState/playback; this also resolves the seek promise (the target position is
+    // buffered and, for video, its frame is available by this point).
+    updateStateFromReadyState();
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const
+{
+    assertIsMainThread();
+    return m_pendingSeek || m_seeking;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setLoadingProgresssed(bool flag)
+{
+    assertIsMainThread();
+    m_loadingProgressed = flag;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
+{
+    assertIsMainThread();
+    // AVSampleBufferRenderSynchronizer does not support negative rate yet.
+    m_rate = std::max<double>(rate, 0);
+    dispatchToRendererQueue([rate = m_rate](auto& renderer) {
+        renderer.setRate(rate);
+    });
+}
+
+double MediaPlayerPrivateMediaSourceAVFObjC::rate() const
+{
+    assertIsMainThread();
+    return m_rate;
+}
+
+double MediaPlayerPrivateMediaSourceAVFObjC::effectiveRate() const
+{
+    assertIsMainThread();
+    return m_renderer->effectiveRate();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch(bool preservesPitch)
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER, preservesPitch);
+    if (RefPtr player = m_player.get())
+        m_renderer->setPreservesPitchAndCorrectionAlgorithm(preservesPitch, player->pitchCorrectionAlgorithm());
+}
+
+MediaPlayer::NetworkState MediaPlayerPrivateMediaSourceAVFObjC::networkState() const
+{
+    assertIsMainThread();
+    return m_networkState;
+}
+
+MediaPlayer::ReadyState MediaPlayerPrivateMediaSourceAVFObjC::readyState() const
+{
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        return mediaSourcePrivate->mediaPlayerReadyState();
+    assertIsMainThread();
+    return m_readyState;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::readyStateFromMediaSourceChanged()
+{
+    assertIsMainThread();
+    updateStateFromReadyState();
+}
+
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::maxTimeSeekable() const
+{
+    return duration();
+}
+
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::minTimeSeekable() const
+{
+    return startTime();
+}
+
+const PlatformTimeRanges& MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
+{
+    return PlatformTimeRanges::emptyRanges();
+}
+
+
+void MediaPlayerPrivateMediaSourceAVFObjC::bufferedChanged()
+{
+    resetStallForTime(currentTime());
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::resetStallForTime(const MediaTime& time)
+{
+    assertIsMainThread();
+    if (m_stallRequest->hasCallback())
+        protect(m_stallRequest)->disconnect();
+    m_renderer->cancelTimeReachedAction();
+
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    UNUSED_PARAM(logSiteIdentifier);
+    auto onStallReached = [weakThis = WeakPtr { *this }, logSiteIdentifier](MediaTimePromise::Result&& result) {
+        assertIsMainThread();
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        if (protectedThis->m_stallRequest->hasCallback())
+            protect(protectedThis->m_stallRequest)->complete();
+
+        if (!result)
+            return;
+
+        // The Request was tracked, so reaching this point means the cap really fired and
+        // hasn't been superseded by a newer resetStallForTime — bufferedChanged would have
+        // disconnected the Request before reinstalling. No need to re-check hasFutureTime.
+        MediaTime now = protectedThis->currentTime();
+        ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "boundary time observer called, now = ", now);
+
+        if (protectedThis->seeking())
+            return; // seek owns state transitions
+        if (now >= protectedThis->duration())
+            protectedThis->pause();
+        protectedThis->timeChanged();
+    };
+
+    if (time >= duration()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "playhead ", time, " is at or past duration ", duration(), "; stalling");
+        if (shouldBePlaying())
+            stall();
+        onStallReached(time);
+        return;
+    }
+
+    if (!protect(m_mediaSourcePrivate)->hasFutureTime(time) && shouldBePlaying()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "Not having data to play at time: ", time, " stalling");
+        stall();
+    }
+
+    auto stallAtTime = protect(m_mediaSourcePrivate)->nextStallTime(time);
+    ALWAYS_LOG(LOGIDENTIFIER, "will stall playback at time: ", stallAtTime);
+    m_renderer->notifyTimeReachedAndStall(stallAtTime)->whenSettled(RunLoop::mainSingleton(), WTF::move(onStallReached))->track(m_stallRequest);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setLayerRequiresFlush()
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_layerRequiresFlush = true;
+#if PLATFORM(IOS_FAMILY)
+    if (m_applicationIsActive || m_isInFullscreenOrPictureInPicture)
+        flushVideoIfNeeded();
+#else
+    flushVideoIfNeeded();
+#endif
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::flushVideoIfNeeded()
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER, "layerRequiresFlush: ", m_layerRequiresFlush);
+    if (!m_layerRequiresFlush)
+        return;
+
+    m_layerRequiresFlush = false;
+
+    // Rendering may have been interrupted while the page was in a non-visible
+    // state, which would require a flush to resume decoding.
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate) {
+        setHasAvailableVideoFrame(false);
+        mediaSourcePrivate->flushAndReenqueueActiveVideoSourceBuffers();
+    }
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::didLoadingProgress() const
+{
+    assertIsMainThread();
+    bool loadingProgressed = m_loadingProgressed;
+    m_loadingProgressed = false;
+    return loadingProgressed;
+}
+
+RefPtr<NativeImage> MediaPlayerPrivateMediaSourceAVFObjC::nativeImageForCurrentTime()
+{
+    assertIsMainThread();
+    updateLastImage();
+    return m_lastImage;
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastVideoFrame()
+{
+    assertIsMainThread();
+    RefPtr videoFrame = m_renderer->currentVideoFrame();
+    if (!videoFrame)
+        return false;
+
+    INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", videoFrame->presentationTime());
+    m_lastVideoFrame = WTF::move(videoFrame);
+    return true;
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastImage()
+{
+    assertIsMainThread();
+    if (m_isGatheringVideoFrameMetadata) {
+        if (!m_videoFrameMetadata)
+            return false;
+        if (m_videoFrameMetadata->presentedFrames == m_lastConvertedSampleCount)
+            return false;
+        m_lastConvertedSampleCount = m_videoFrameMetadata->presentedFrames;
+    }
+
+    m_lastImage = m_renderer->currentNativeImage();
+    return !!m_lastImage;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::maybePurgeLastImage()
+{
+    assertIsMainThread();
+    // If we are in the middle of a rVFC operation, do not purge anything:
+    if (m_isGatheringVideoFrameMetadata)
+        return;
+
+    m_lastImage = nullptr;
+    m_lastVideoFrame = nullptr;
+}
+
+Ref<MediaPlayer::BitmapImagePromise> MediaPlayerPrivateMediaSourceAVFObjC::bitmapImageForCurrentTime()
+{
+    return m_renderer->currentBitmapImage();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::paint(GraphicsContext& context, const FloatRect& rect)
+{
+    paintCurrentFrameInContext(context, rect);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& outputRect)
+{
+    m_renderer->paintCurrentVideoFrameInContext(context, outputRect);
+}
+
+RefPtr<VideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameForCurrentTime()
+{
+    assertIsMainThread();
+    if (!m_isGatheringVideoFrameMetadata)
+        updateLastVideoFrame();
+    return m_lastVideoFrame;
+}
+
+DestinationColorSpace MediaPlayerPrivateMediaSourceAVFObjC::colorSpace()
+{
+    assertIsMainThread();
+    updateLastImage();
+    RefPtr lastImage = m_lastImage;
+    return lastImage ? lastImage->colorSpace() : DestinationColorSpace::SRGB();
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::hasAvailableVideoFrame() const
+{
+    assertIsMainThread();
+    return m_hasAvailableVideoFrame;
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::supportsAcceleratedRendering() const
+{
+    return true;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setPresentationSize(const IntSize& newSize)
+{
+    m_renderer->setPresentationSize(newSize);
+}
+
+Ref<AudioVideoRenderer> MediaPlayerPrivateMediaSourceAVFObjC::audioVideoRenderer() const
+{
+    return m_renderer;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::dispatchToRendererQueue(Function<void(AudioVideoRenderer&)>&& task)
+{
+    Ref queue = MediaSourcePrivateAVFObjC::queueSingleton();
+    if (queue->isCurrent()) {
+        task(m_renderer);
+        return;
+    }
+    queue->dispatch([renderer = m_renderer, task = WTF::move(task)] {
+        task(renderer);
+    });
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
+{
+    assertIsMainThread();
+
+    RefPtr player = m_player.get();
+
+    bool canBeAccelerated = player && player->renderingCanBeAccelerated();
+
+    // Don't create a layer if the player is not visible:
+    if (shouldTeardownOnVisibilityChange())
+        canBeAccelerated = canBeAccelerated && m_pageIsVisible && m_viewportVisibility != ViewportVisibility::NotVisible;
+    m_renderer->renderingCanBeAcceleratedChanged(canBeAccelerated);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::notifyActiveSourceBuffersChanged()
+{
+    assertIsMainThread();
+    if (RefPtr player = m_player.get())
+        player->activeSourceBuffersChanged();
+}
+
+MediaPlayer::MovieLoadType MediaPlayerPrivateMediaSourceAVFObjC::movieLoadType() const
+{
+    return MediaPlayer::MovieLoadType::StoredStream;
+}
+
+String MediaPlayerPrivateMediaSourceAVFObjC::engineDescription() const
+{
+    static NeverDestroyed<String> description(MAKE_STATIC_STRING_IMPL("AVFoundation MediaSource Engine"));
+    return description;
+}
+
+String MediaPlayerPrivateMediaSourceAVFObjC::languageOfPrimaryAudioTrack() const
+{
+    // FIXME(125158): implement languageOfPrimaryAudioTrack()
+    return emptyString();
+}
+
+size_t MediaPlayerPrivateMediaSourceAVFObjC::extraMemoryCost() const
+{
+    return 0;
+}
+
+std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC::videoPlaybackQualityMetrics()
+{
+    return m_renderer->videoPlaybackQualityMetrics();
+}
+
+#pragma mark -
+#pragma mark Utility Methods
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying() const
+{
+    assertIsMainThread();
+    return !m_renderer->paused() && !seeking() && readyState() >= MediaPlayer::ReadyState::HaveFutureData;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)
+{
+    assertIsMainThread();
+    if (m_hasAvailableVideoFrame == flag)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, flag);
+    m_hasAvailableVideoFrame = flag;
+
+    if (!m_hasAvailableVideoFrame)
+        return;
+
+    RefPtr player = m_player.get();
+    if (player)
+        player->firstVideoFrameAvailable();
+
+    if (m_readyStateIsWaitingForAvailableFrame) {
+        m_readyStateIsWaitingForAvailableFrame = false;
+        if (player)
+            player->readyStateChanged();
+    }
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
+{
+    assertIsMainThread();
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    if (!mediaSourcePrivate)
+        return;
+
+    MediaTime duration = mediaSourcePrivate->duration();
+    // Avoid emiting durationchanged in the case where the previous duration was unknown as that case is already handled
+    // by the HTMLMediaElement.
+    if (m_duration != duration && m_duration.isValid()) {
+        if (RefPtr player = m_player.get())
+            player->durationChanged();
+    }
+    m_duration = duration;
+    resetStallForTime(currentTime());
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER, effectiveRate());
+    if (RefPtr player = m_player.get())
+        player->rateChanged();
+    notifyEndOfMediaIfNeeded();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::notifyEndOfMediaIfNeeded()
+{
+    assertIsMainThread();
+    // Observed: in some runs, playback drains at end of media (the renderer
+    // stops producing frames) without the boundary observer programmed in
+    // resetStallForTime() firing. The effective rate still transitions to 0
+    // in that case, which gives us a reliable signal: if MediaSource has
+    // transitioned to 'ended' and there is no future data past the current
+    // time, route a timeChanged() through so HTMLMediaElement's
+    // mediaPlayerTimeChanged schedules the 'ended' event.
+    if (effectiveRate())
+        return;
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    if (!mediaSourcePrivate || !mediaSourcePrivate->isEnded())
+        return;
+    if (mediaSourcePrivate->hasFutureTime(currentTime()))
+        return;
+    timeChanged();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setNaturalSize(const FloatSize& size)
+{
+    assertIsMainThread();
+    if (size == m_naturalSize)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, size);
+
+    m_naturalSize = size;
+    if (RefPtr player = m_player.get())
+        player->sizeChanged();
+}
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+RefPtr<CDMSessionAVContentKeySession> MediaPlayerPrivateMediaSourceAVFObjC::cdmSession() const
+{
+    assertIsMainThread();
+    return m_session.get();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* session)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    m_renderer->setCDMSession(session);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::keyAdded()
+{
+    m_renderer->attemptToDecrypt();
+}
+
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
+void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(const SharedBuffer& initData)
+{
+    if (RefPtr player = m_player.get())
+        player->keyNeeded(initData);
+}
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceAttached(CDMInstance& instance)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_renderer->setCDMInstance(&instance);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached(CDMInstance&)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_renderer->setCDMInstance(nullptr);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance(CDMInstance&)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_renderer->attemptToDecrypt();
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::waitingForKey() const
+{
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    return mediaSourcePrivate && mediaSourcePrivate->waitingForKey();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::waitingForKeyChanged()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    if (RefPtr player = m_player.get())
+        player->waitingForKeyChanged();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::initializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, initDataType);
+    if (RefPtr player = m_player.get())
+        player->initializationDataEncountered(initDataType, WTF::move(initData));
+}
+#endif
+
+const Vector<ContentType>& MediaPlayerPrivateMediaSourceAVFObjC::mediaContentTypesRequiringHardwareSupport() const
+{
+    return m_player.get()->mediaContentTypesRequiringHardwareSupport();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::needsVideoLayerChanged()
+{
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        m_renderer->setHasProtectedVideoContent(mediaSourcePrivate->needsVideoLayer());
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
+{
+    assertIsMainThread();
+    if (m_readyState == readyState)
+        return;
+
+    if (m_readyState > MediaPlayer::ReadyState::HaveCurrentData && readyState == MediaPlayer::ReadyState::HaveCurrentData)
+        ALWAYS_LOG(LOGIDENTIFIER, "stall detected currentTime:", currentTime());
+
+    m_readyState = readyState;
+    updateStateFromReadyState();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::updateStateFromReadyState()
+{
+    assertIsMainThread();
+    // Seek owns renderer rate and event sequencing from prepareToSeek through completeSeek.
+    if (seeking())
+        return;
+
+    if (shouldBePlaying()) {
+        dispatchToRendererQueue([](auto& renderer) {
+            renderer.play();
+        });
+    } else
+        stall();
+
+    if (readyState() >= MediaPlayer::ReadyState::HaveCurrentData && hasVideo() && !m_hasAvailableVideoFrame) {
+        m_readyStateIsWaitingForAvailableFrame = true;
+        return;
+    }
+
+    if (RefPtr player = m_player.get())
+        player->readyStateChanged();
+
+    // Complete any pending seek now that readyState has been propagated, so
+    // loadeddata/canplay/canplaythrough are queued before the 'seeked' event. Reaching here means
+    // the renderer seek finished (!m_seeking) with the target data buffered and, for video, a
+    // frame available.
+    if (auto promise = std::exchange(m_seekPromise, std::nullopt))
+        promise->resolve(m_lastSeekTime);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setNetworkState(MediaPlayer::NetworkState networkState)
+{
+    assertIsMainThread();
+    if (m_networkState == networkState)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, networkState);
+    m_networkState = networkState;
+    if (RefPtr player = m_player.get())
+        player->networkStateChanged();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::mediaSourceHasRetrievedAllData()
+{
+    assertIsMainThread();
+    setNetworkState(MediaPlayer::NetworkState::Loaded);
+    notifyEndOfMediaIfNeeded();
+}
+
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+void MediaPlayerPrivateMediaSourceAVFObjC::addAudioTrack(TrackIdentifier audioTrack)
+ALLOW_NEW_API_WITHOUT_GUARDS_END
+{
+    assertIsMainThread();
+    if (!m_audioTracksMap.add(audioTrack, AudioTrackProperties()).isNewEntry)
+        return;
+
+    if (RefPtr player = m_player.get())
+        player->characteristicChanged();
+}
+
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioTrack(TrackIdentifier audioTrack)
+ALLOW_NEW_API_WITHOUT_GUARDS_END
+{
+    assertIsMainThread();
+    if (auto iter = m_audioTracksMap.find(audioTrack); iter != m_audioTracksMap.end())
+        m_audioTracksMap.remove(iter);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioTrack(AudioTrackPrivate& track)
+{
+    assertIsMainThread();
+    if (RefPtr player = m_player.get())
+        player->removeAudioTrack(track);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::removeVideoTrack(VideoTrackPrivate& track)
+{
+    assertIsMainThread();
+    if (RefPtr player = m_player.get())
+        player->removeVideoTrack(track);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::removeTextTrack(InbandTextTrackPrivate& track)
+{
+    assertIsMainThread();
+    if (RefPtr player = m_player.get())
+        player->removeTextTrack(track);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::characteristicsFromMediaSourceChanged()
+{
+    assertIsMainThread();
+    if (RefPtr player = m_player.get())
+        player->characteristicChanged();
+}
+
+RetainPtr<PlatformLayer> MediaPlayerPrivateMediaSourceAVFObjC::createVideoFullscreenLayer()
+{
+    return adoptNS([[CALayer alloc] init]);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
+{
+    m_renderer->setVideoFullscreenLayer(videoFullscreenLayer, WTF::move(completionHandler));
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame(const FloatRect& frame)
+{
+    m_renderer->setVideoFullscreenFrame(frame);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::syncTextTrackBounds()
+{
+    m_renderer->syncTextTrackBounds();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setTextTrackRepresentation(TextTrackRepresentation* representation)
+{
+    m_renderer->setTextTrackRepresentation(representation);
+}
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+void MediaPlayerPrivateMediaSourceAVFObjC::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& target)
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_playbackTarget = WTF::move(target);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setShouldPlayToPlaybackTarget(bool shouldPlayToTarget)
+{
+    assertIsMainThread();
+    if (shouldPlayToTarget == m_shouldPlayToTarget)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, shouldPlayToTarget);
+    m_shouldPlayToTarget = shouldPlayToTarget;
+
+    if (RefPtr player = m_player.get())
+        player->currentPlaybackTargetIsWirelessChanged(isCurrentPlaybackTargetWireless());
+}
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless() const
+{
+    assertIsMainThread();
+    RefPtr playbackTarget = m_playbackTarget;
+    if (!playbackTarget)
+        return false;
+
+    auto hasTarget = m_shouldPlayToTarget && playbackTarget->hasActiveRoute();
+    INFO_LOG(LOGIDENTIFIER, hasTarget);
+    return hasTarget;
+}
+#endif
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtTime(WTF::Function<void(const MediaTime&)>&& task, const MediaTime& time)
+{
+    m_renderer->performTaskAtTime(time, [task = WTF::move(task)](const MediaTime& time) mutable {
+        ensureOnMainThread([time, task = WTF::move(task)] {
+            task(time);
+        });
+    });
+    return true;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::audioOutputDeviceChanged()
+{
+#if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
+    RefPtr player = m_player.get();
+    if (!player)
+        return;
+    auto deviceId = player->audioOutputDeviceId();
+    m_renderer->setOutputDeviceId(deviceId);
+#endif
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::startVideoFrameMetadataGathering()
+{
+    assertIsMainThread();
+    if (m_isGatheringVideoFrameMetadata)
+        return;
+
+    m_isGatheringVideoFrameMetadata = true;
+    m_renderer->notifyWhenHasAvailableVideoFrame([weakThis = WeakPtr { *this }](const MediaTime& presentationTime, double displayTime) {
+        ensureOnMainThread([weakThis, presentationTime, displayTime] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->checkNewVideoFrameMetadata(presentationTime, displayTime);
+        });
+    });
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::checkNewVideoFrameMetadata(MediaTime presentationTime, double displayTime)
+{
+    assertIsMainThread();
+    RefPtr player = m_player.get();
+    if (!player)
+        return;
+
+    if (!updateLastVideoFrame())
+        return;
+
+    RefPtr lastVideoFrame = m_lastVideoFrame;
+#ifndef NDEBUG
+    if (m_lastVideoFrame->presentationTime() != presentationTime)
+        ALWAYS_LOG(LOGIDENTIFIER, "notification of new frame delayed retrieved:", lastVideoFrame->presentationTime(), " expected:", presentationTime);
+#else
+    UNUSED_PARAM(presentationTime);
+#endif
+    VideoFrameMetadata metadata;
+    metadata.width = m_naturalSize.width();
+    metadata.height = m_naturalSize.height();
+    auto metrics = m_renderer->videoPlaybackQualityMetrics();
+    ASSERT(metrics);
+    metadata.presentedFrames = metrics ? metrics->displayCompositedVideoFrames : 0;
+    metadata.presentationTime = displayTime;
+    metadata.expectedDisplayTime = displayTime;
+    metadata.mediaTime = lastVideoFrame->presentationTime().toDouble();
+
+    m_videoFrameMetadata = metadata;
+    player->onNewVideoFrameMetadata(WTF::move(metadata), lastVideoFrame->pixelBuffer());
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::stopVideoFrameMetadataGathering()
+{
+    assertIsMainThread();
+    m_isGatheringVideoFrameMetadata = false;
+    m_videoFrameMetadata = { };
+    m_renderer->notifyWhenHasAvailableVideoFrame(nullptr);
+}
+
+std::optional<VideoFrameMetadata> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameMetadata()
+{
+    assertIsMainThread();
+    return std::exchange(m_videoFrameMetadata, { });
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setShouldDisableHDR(bool shouldDisable)
+{
+    m_renderer->setShouldDisableHDR(shouldDisable);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit platformDynamicRangeLimit)
+{
+    m_renderer->setPlatformDynamicRangeLimit(platformDynamicRangeLimit);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::playerContentBoxRectChanged(const LayoutRect& newRect)
+{
+    m_renderer->contentBoxRectChanged(newRect);
+}
+
+WTFLogChannel& MediaPlayerPrivateMediaSourceAVFObjC::logChannel() const
+{
+    return LogMediaSource;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio)
+{
+    m_renderer->setShouldMaintainAspectRatio(shouldMaintainAspectRatio);
+}
+
+#if HAVE(SPATIAL_TRACKING_LABEL)
+String MediaPlayerPrivateMediaSourceAVFObjC::defaultSpatialTrackingLabel() const
+{
+    assertIsMainThread();
+    return m_defaultSpatialTrackingLabel;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setDefaultSpatialTrackingLabel(const String& defaultSpatialTrackingLabel)
+{
+    assertIsMainThread();
+    if (m_defaultSpatialTrackingLabel == defaultSpatialTrackingLabel)
+        return;
+    m_defaultSpatialTrackingLabel = defaultSpatialTrackingLabel;
+    updateSpatialTrackingLabel();
+}
+
+String MediaPlayerPrivateMediaSourceAVFObjC::spatialTrackingLabel() const
+{
+    assertIsMainThread();
+    return m_spatialTrackingLabel;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setSpatialTrackingLabel(const String& spatialTrackingLabel)
+{
+    assertIsMainThread();
+    if (m_spatialTrackingLabel == spatialTrackingLabel)
+        return;
+    m_spatialTrackingLabel = spatialTrackingLabel;
+    updateSpatialTrackingLabel();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::updateSpatialTrackingLabel()
+{
+    assertIsMainThread();
+#if HAVE(SPATIAL_AUDIO_EXPERIENCE)
+    RefPtr player = m_player.get();
+    m_renderer->setSpatialTrackingInfo(player && player->prefersSpatialAudioExperience(), player ? player->soundStageSize() : MediaPlayer::SoundStageSize::Auto, player ? player->sceneIdentifier() : emptyString(), m_defaultSpatialTrackingLabel, m_spatialTrackingLabel);
+#else
+    m_renderer->setSpatialTrackingInfo(false, MediaPlayer::SoundStageSize::Auto, { }, m_defaultSpatialTrackingLabel, m_spatialTrackingLabel);
+#endif
+}
+#endif
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoTarget(const PlatformVideoTarget& videoTarget)
+{
+    ALWAYS_LOG(LOGIDENTIFIER, !!videoTarget);
+    m_renderer->setVideoTarget(videoTarget);
+}
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+void MediaPlayerPrivateMediaSourceAVFObjC::sceneIdentifierDidChange()
+{
+#if HAVE(SPATIAL_TRACKING_LABEL)
+    updateSpatialTrackingLabel();
+#endif
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::applicationWillResignActive()
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_renderer->applicationWillResignActive();
+    m_applicationIsActive = false;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::applicationDidBecomeActive()
+{
+    assertIsMainThread();
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_applicationIsActive = true;
+    flushVideoIfNeeded();
+}
+#endif
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::supportsLimitedMatroska() const
+{
+    assertIsMainThread();
+    return m_loadOptions.supportsLimitedMatroska;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::isInFullscreenOrPictureInPictureChanged(bool isInFullscreenOrPictureInPicture)
+{
+    assertIsMainThread();
+    m_isInFullscreenOrPictureInPicture = isInFullscreenOrPictureInPicture;
+    m_renderer->isInFullscreenOrPictureInPictureChanged(isInFullscreenOrPictureInPicture);
+}
+
+WebCore::HostingContext MediaPlayerPrivateMediaSourceAVFObjC::hostingContext() const
+{
+    assertIsMainThread();
+    return m_renderer->hostingContext();
+}
+
+Ref<MediaPlayer::HostingContextPromise> MediaPlayerPrivateMediaSourceAVFObjC::requestHostingContext()
+{
+    assertIsMainThread();
+    return m_renderer->requestHostingContext();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated)
+{
+    m_renderer->setVideoLayerSizeFenced(size, WTF::move(sendRightAnnotated));
+}
+
+#if PLATFORM(MAC)
+void MediaPlayerPrivateMediaSourceAVFObjC::screenReservedChanged(bool reserved)
+{
+    m_renderer->setScreenReserved(reserved);
+}
+#endif
+
+bool MediaPlayerPrivateMediaSourceAVFObjC::supportsProgressMonitoring() const
+{
+    assertIsMainThread();
+    return m_loadOptions.supportsProgressMonitoringOverride.value_or(false);
+}
+
+
+} // namespace WebCore
+
+#endif

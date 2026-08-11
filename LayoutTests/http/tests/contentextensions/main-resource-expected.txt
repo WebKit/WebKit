@@ -1,0 +1,11 @@
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - didStartProvisionalLoadForFrame
+CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/resources/should-not-load.html from loading a resource from http://127.0.0.1:8000/contentextensions/resources/should-not-load.html
+main frame - didFailProvisionalLoadWithError
+main frame - (kWKErrorCodeFrameLoadBlockedByContentBlocker)
+
+http://127.0.0.1:8000/contentextensions/main-resource.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/contentextensions/main-resource.html, main document URL http://127.0.0.1:8000/contentextensions/main-resource.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/contentextensions/main-resource.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/contentextensions/main-resource.html, http status code 200>
+http://127.0.0.1:8000/contentextensions/main-resource.html - didFinishLoading

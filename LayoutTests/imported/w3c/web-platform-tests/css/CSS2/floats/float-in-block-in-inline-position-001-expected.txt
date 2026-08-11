@@ -1,0 +1,12 @@
+X
+X
+X
+X
+
+PASS A line after a self collapsing block containing a float avoids it at the block's position (nested)
+PASS A line after a bordered block containing a float avoids it at the block's position (nested)
+PASS A line after a self collapsing block containing a float avoids it at the block's position (sibling)
+PASS A line after a bordered block containing a float avoids it at the block's position (sibling)
+PASS The float lands in the same place whether the self collapsing block is nested in an inline box or a sibling of inline content
+PASS The float lands in the same place whether the bordered block is nested in an inline box or a sibling of inline content
+

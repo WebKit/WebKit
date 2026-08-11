@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<label for="input1">Username</label>
+<input id="input1" type="text">
+
+<label for="input2">Password</label>
+<input id="input2" type="password">
+
+<div id="not-a-label">Not a label</div>
+
+<script>
+var output = "This test verifies that label elements expose AXServesAsTitleForUIElements.\n\n";
+
+if (window.accessibilityController) {
+    var input1 = accessibilityController.accessibleElementById("input1");
+    var label1 = input1.titleUIElement();
+    output += expect("label1.allAttributes().includes('AXServesAsTitleForUIElements')", "true");
+    output += expect("label1.labelForElementAtIndex(0).domIdentifier", "'input1'");
+
+    var input2 = accessibilityController.accessibleElementById("input2");
+    var label2 = input2.titleUIElement();
+    output += expect("label2.allAttributes().includes('AXServesAsTitleForUIElements')", "true");
+    output += expect("label2.labelForElementAtIndex(0).domIdentifier", "'input2'");
+
+    var notALabel = accessibilityController.accessibleElementById("not-a-label");
+    output += expect("notALabel.allAttributes().includes('AXServesAsTitleForUIElements')", "false");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

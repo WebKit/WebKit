@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+</head>
+<body>
+<p>Move the caret upwards from [ ] on the second line. The caret should appear in the green box inside [ ] on the first line.</p>
+<div dir="rtl" contentEditable="true" style="font-family: monospace;">
+<p dir="rtl">קו <span id="target" style="background-color:green">[ ]</span> ראשון<br></p>
+<p dir="rtl">קו <span id="test">[ ]</span> שני<br></p>
+</div>
+<div id="results">FAILED</div>
+<script src="../editing.js"></script>
+<script>
+function editingTest()
+{
+    execMoveSelectionForwardByCharacterCommand();
+    execMoveSelectionBackwardByLineCommand();
+
+    // Verify that we ended up in "target".
+    if (window.getSelection().anchorNode.parentNode == document.getElementById("target"))
+        document.getElementById("results").innerText = "PASS";
+}
+runDumpAsTextEditingTest(false);
+</script>

@@ -1,0 +1,7 @@
+Ensures a caret/selection move inside a text input in an in-process (local) iframe posts AXSelectedTextChanged on the main-frame web area. Regression test for VoiceOver character navigation being silent inside a local iframe: the child frame's selection change was posted only on the child frame's own web area, never on the main web area (the document text-selection context VoiceOver tracks), so nothing was announced.
+PASS: receivedSelectionChangedOnMainWebArea === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

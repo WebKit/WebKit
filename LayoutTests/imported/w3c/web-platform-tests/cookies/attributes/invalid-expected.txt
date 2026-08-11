@@ -1,0 +1,28 @@
+
+PASS Set cookie with invalid attribute
+PASS Set cookie ending with invalid attribute.
+PASS Set cookie ending with quoted invalid attribute.
+PASS Set cookie ending with double-quoted invalid attribute.
+PASS Set cookie ending with invalid attribute equals.
+PASS Set cookie with two invalid attributes (lol="aaa and bbb).
+PASS Set cookie ending with two invalid attributes (lol="aaa and bbb).
+PASS Set cookie for quoted Secure attribute
+PASS Set cookie for Secure qux
+PASS Ignore invalid attribute name with comma
+PASS Ignore invalid attribute value with comma
+PASS Set cookie ignoring multiple invalid attributes, whitespace, and semicolons
+FAIL Set cookie with multiple '='s in its value, ignoring multiple invalid attributes, whitespace, and semicolons assert_equals: The cookie was set as expected. expected "test=== 13" but got "test===13"
+PASS Set cookie with (invalid) version=1 attribute
+PASS Set cookie with (invalid) version=1000 attribute
+PASS Set cookie ignoring anything after ; (which looks like an invalid attribute)
+PASS Set cookie ignoring anything after ; (which looks like an invalid attribute, with no trailing semicolon)
+PASS Ignore keys after semicolon
+PASS Ignore attributes after semicolon
+PASS Ignore `Set-Cookie: =`
+PASS Ignore empty cookie string
+FAIL Ignore `Set-Cookie: =` with other `Set-Cookie` headers assert_equals: The cookie was set as expected. expected "test22" but got ""
+FAIL Ignore name- and value-less `Set-Cookie: ; bar` assert_equals: The cookie was set as expected. expected "testA23" but got ""
+FAIL Ignore name- and value-less `Set-Cookie:    ` assert_equals: The cookie was set as expected. expected "test24" but got ""
+FAIL Ignore name- and value-less `Set-Cookie: \t` assert_equals: The cookie was set as expected. expected "test25" but got ""
+PASS Ignore cookie with domain that won't domain match (along with other invalid noise)
+

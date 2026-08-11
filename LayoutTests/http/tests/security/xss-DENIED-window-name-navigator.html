@@ -1,0 +1,9 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<iframe sandbox="allow-scripts"
+        src="data:text/html,<script>
+            window.name='navigator';
+            console.log(top.navigator === self ? 'PASS' : 'FAIL');
+            </script>"></iframe>

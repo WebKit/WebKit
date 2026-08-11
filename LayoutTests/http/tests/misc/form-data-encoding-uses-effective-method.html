@@ -1,0 +1,10 @@
+<form method="get" enctype="text/plain" action="resources/post-echo-and-notify-done.cgi">
+<button type="submit" formmethod="post" name="a" value="b c">submit</button>
+</form>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+document.querySelector("button").click();
+</script>

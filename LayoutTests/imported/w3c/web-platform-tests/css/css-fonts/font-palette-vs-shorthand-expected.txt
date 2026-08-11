@@ -1,0 +1,12 @@
+The first three examples should use the 'dark' palette; the fourth, 'normal'.
+
+A
+A
+A
+A
+
+PASS CSS Fonts Module Level 4: interaction of font-palette and font shorthand
+PASS CSS Fonts Module Level 4: interaction of font-palette and font shorthand 1
+PASS CSS Fonts Module Level 4: interaction of font-palette and font shorthand 2
+PASS CSS Fonts Module Level 4: interaction of font-palette and font shorthand 3
+

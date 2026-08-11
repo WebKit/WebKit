@@ -1,0 +1,6 @@
+
+PASS CSSKeywordValue constructed from IDL serializes correctly
+PASS CSSKeywordValue constructed from IDL serializes to escaped strings
+PASS CSSKeywordValue from DOMString modified through "value" setter serializes correctly
+PASS CSSKeywordValue from CSSOM modified through "value" setter serializes correctly
+

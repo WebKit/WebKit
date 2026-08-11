@@ -1,0 +1,46 @@
+
+PASS compileStreaming: undefined
+PASS compileStreaming: undefined in a promise
+PASS compileStreaming: null
+PASS compileStreaming: null in a promise
+PASS compileStreaming: true
+PASS compileStreaming: true in a promise
+PASS compileStreaming: "test"
+PASS compileStreaming: "test" in a promise
+PASS compileStreaming: symbol "Symbol()"
+PASS compileStreaming: symbol "Symbol()" in a promise
+PASS compileStreaming: 0
+PASS compileStreaming: 0 in a promise
+PASS compileStreaming: 0.1
+PASS compileStreaming: 0.1 in a promise
+PASS compileStreaming: NaN
+PASS compileStreaming: NaN in a promise
+PASS compileStreaming: Empty object
+PASS compileStreaming: Empty object in a promise
+PASS compileStreaming: Response interface object
+PASS compileStreaming: Response interface object in a promise
+PASS compileStreaming: Response interface prototype object
+PASS compileStreaming: Response interface prototype object in a promise
+PASS instantiateStreaming: undefined
+PASS instantiateStreaming: undefined in a promise
+PASS instantiateStreaming: null
+PASS instantiateStreaming: null in a promise
+PASS instantiateStreaming: true
+PASS instantiateStreaming: true in a promise
+PASS instantiateStreaming: "test"
+PASS instantiateStreaming: "test" in a promise
+PASS instantiateStreaming: symbol "Symbol()"
+PASS instantiateStreaming: symbol "Symbol()" in a promise
+PASS instantiateStreaming: 0
+PASS instantiateStreaming: 0 in a promise
+PASS instantiateStreaming: 0.1
+PASS instantiateStreaming: 0.1 in a promise
+PASS instantiateStreaming: NaN
+PASS instantiateStreaming: NaN in a promise
+PASS instantiateStreaming: Empty object
+PASS instantiateStreaming: Empty object in a promise
+PASS instantiateStreaming: Response interface object
+PASS instantiateStreaming: Response interface object in a promise
+PASS instantiateStreaming: Response interface prototype object
+PASS instantiateStreaming: Response interface prototype object in a promise
+

@@ -1,0 +1,17 @@
+
+PASS local to local: no preflight required.
+PASS local to private: no preflight required.
+PASS local to public: no preflight required.
+FAIL private to local: failure. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+PASS private to private: no preflight required.
+PASS private to public: no preflight required.
+FAIL public to local: failure. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL public to private: failure. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+PASS public to public: no preflight required.
+FAIL treat-as-public-address to local: failure. assert_equals: error expected (string) "TypeError: Failed to fetch" but got (undefined) undefined
+FAIL treat-as-public-address to private: failure. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+PASS treat-as-public-address to public: no preflight required.
+FAIL private https to local: failure. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL public https to local: failure. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+FAIL public https to private: failure. assert_equals: error expected "TypeError: Failed to fetch" but got "TypeError: Load failed"
+

@@ -1,0 +1,26 @@
+Test ApplePaySetup.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.mockPaymentCoordinator.setupConfiguration.merchantIdentifier is expectedMerchantIdentifier
+PASS internals.mockPaymentCoordinator.setupConfiguration.referrerIdentifier is expectedReferrerIdentifier
+PASS internals.mockPaymentCoordinator.setupConfiguration.signature is expectedSignature
+PASS typeof internals.mockPaymentCoordinator.setupConfiguration.signedFields is "object"
+PASS internals.mockPaymentCoordinator.setupConfiguration.signedFields.length is expectedSignedFields.length
+PASS internals.mockPaymentCoordinator.setupConfiguration.signedFields[0] is expectedSignedFields[0]
+PASS typeof features is "object"
+PASS features.length is 1
+PASS features[0].state is expectedSetupFeatureState
+PASS features[0].type is expectedSetupFeatureType
+PASS features[0].supportsInstallments is expectedSetupFeatureSupportsInstallments
+PASS internals.mockPaymentCoordinator.setupConfiguration.merchantIdentifier is expectedMerchantIdentifier
+PASS internals.mockPaymentCoordinator.setupConfiguration.referrerIdentifier is expectedReferrerIdentifier
+PASS internals.mockPaymentCoordinator.setupConfiguration.signature is expectedSignature
+PASS typeof internals.mockPaymentCoordinator.setupConfiguration.signedFields is "object"
+PASS internals.mockPaymentCoordinator.setupConfiguration.signedFields.length is expectedSignedFields.length
+PASS internals.mockPaymentCoordinator.setupConfiguration.signedFields[0] is expectedSignedFields[0]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

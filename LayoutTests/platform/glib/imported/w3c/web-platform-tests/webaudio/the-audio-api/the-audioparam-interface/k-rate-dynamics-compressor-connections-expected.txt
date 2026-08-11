@@ -1,0 +1,7 @@
+
+PASS Verify k-rate 'attack' with input on DynamicsCompressorNode
+PASS Verify k-rate 'knee' with input on DynamicsCompressorNode
+PASS Verify k-rate 'ratio' with input on DynamicsCompressorNode
+PASS Verify k-rate 'release' with input on DynamicsCompressorNode
+PASS Verify k-rate 'threshold' with input on DynamicsCompressorNode
+

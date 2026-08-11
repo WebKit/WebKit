@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1, viewport-fit=cover">
+    <title>Designing Websites for iPhone X: Safe area illustration</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+    body {
+        height: 10000px;
+    }
+
+    #unsafeArea {
+        background: repeating-linear-gradient(45deg, rgb(246, 194, 194), rgb(246, 194, 194) 10px, rgb(238, 192, 193) 10px, rgb(238, 192, 193) 20px);
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    #safeArea {
+        background-color: rgb(187, 251, 198);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        position: fixed;
+        top: constant(safe-area-inset-top);
+        top: env(safe-area-inset-top);
+        left: constant(safe-area-inset-left);
+        left: env(safe-area-inset-left);
+        right: constant(safe-area-inset-right);
+        right: env(safe-area-inset-right);
+        bottom: constant(safe-area-inset-bottom);
+        bottom: env(safe-area-inset-bottom);
+    }
+
+    .horizontalInsetIndicator {
+        border-left: 4px solid white;
+        border-right: 4px solid white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        position: fixed;
+
+        top: 45px;
+        height: 25px;
+    }
+
+    .horizontalInsetIndicator .midline {
+        border-top: 2px solid white;
+        border-bottom: 2px solid white;
+        width: 100%;
+        height: 0px;
+    }
+
+    .verticalInsetIndicator {
+        border-top: 4px solid white;
+        border-bottom: 4px solid white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        position: fixed;
+
+        left: calc(constant(safe-area-inset-left) + 45px);
+        left: calc(env(safe-area-inset-left) + 45px);
+        width: 25px;
+    }
+
+    .verticalInsetIndicator .midline {
+        border-left: 2px solid white;
+        border-right: 2px solid white;
+        width: 0px;
+        height: 100%;
+    }
+
+    .indicatorLabel {
+        position: fixed;
+        font-family: monospace;
+        font-size: 12pt;
+    }
+
+    #leftInsetIndicator {
+        left: 0;
+        width: constant(safe-area-inset-left);
+        width: env(safe-area-inset-left);
+    }
+
+    #leftInsetIndicator .indicatorLabel {
+        left: calc(constant(safe-area-inset-left) + 12px);
+        left: calc(env(safe-area-inset-left) + 12px);
+    }
+
+    #rightInsetIndicator {
+        right: 0;
+        width: constant(safe-area-inset-left);
+        width: env(safe-area-inset-left);
+    }
+
+    #rightInsetIndicator .indicatorLabel {
+        right: calc(constant(safe-area-inset-right) + 12px);
+        right: calc(env(safe-area-inset-right) + 12px);
+    }
+
+    #bottomInsetIndicator {
+        bottom: 0;
+        height: constant(safe-area-inset-bottom);
+        height: env(safe-area-inset-bottom);
+    }
+
+    #bottomInsetIndicator .indicatorLabel {
+        left: calc(constant(safe-area-inset-left) + 12px);
+        left: calc(env(safe-area-inset-left) + 12px);
+        bottom: calc(constant(safe-area-inset-bottom) + 12px);
+        bottom: calc(env(safe-area-inset-bottom) + 12px);
+    }
+    </style>
+</head>
+<body>
+    <div id="unsafeArea"></div>
+    <div id="safeArea"><h1>Safe Area</h1></div>
+    <div id="leftInsetIndicator" class="horizontalInsetIndicator"><div class="midline"></div><div class="indicatorLabel">env(safe-area-inset-left)</div></div>
+    <div id="rightInsetIndicator" class="horizontalInsetIndicator"><div class="midline"></div><div class="indicatorLabel">env(safe-area-inset-right)</div></div>
+    <div id="bottomInsetIndicator" class="verticalInsetIndicator"><div class="midline"></div><div class="indicatorLabel">env(safe-area-inset-bottom)</div></div>
+</body>
+</html>

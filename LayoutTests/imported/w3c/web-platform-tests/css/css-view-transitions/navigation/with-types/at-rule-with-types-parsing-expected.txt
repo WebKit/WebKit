@@ -1,0 +1,18 @@
+
+PASS types: nOnE shoud result in []
+PASS types: abc shoud result in ["abc"]
+PASS types: abc xyz shoud result in ["abc","xyz"]
+PASS types: abc\ xyz shoud result in ["abc xyz"]
+PASS types:    abc 	xyz  shoud result in ["abc","xyz"]
+PASS types: abc none shoud result in []
+PASS types: abc, def shoud result in []
+PASS types: dEfAuLt shoud result in []
+PASS types: abc -ua-something shoud result in []
+PASS types: abc -uA-something shoud result in ["abc","-uA-something"]
+PASS types: abc -ok-something shoud result in ["abc","-ok-something"]
+PASS types: abc abc shoud result in ["abc","abc"]
+PASS types: abc ABC shoud result in ["abc","ABC"]
+PASS types: 123 shoud result in []
+PASS types: * shoud result in []
+PASS types: *11 abc shoud result in []
+

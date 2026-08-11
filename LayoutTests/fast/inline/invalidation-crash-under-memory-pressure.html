@@ -1,0 +1,11 @@
+<div>PASS <br id=remove_this> if no crash.</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+if (window.internals)
+  internals.beginSimulatedMemoryPressure();
+remove_this.remove();
+if (window.internals)
+  internals.endSimulatedMemoryPressure();
+</script>

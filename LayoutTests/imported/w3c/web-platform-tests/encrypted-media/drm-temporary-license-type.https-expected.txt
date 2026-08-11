@@ -1,0 +1,3 @@
+
+PASS drm, cannot load persistent license into temporary session
+

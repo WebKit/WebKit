@@ -1,0 +1,9 @@
+
+
+
+
+
+
+
+PASS Test <embed> nesting inside <object>
+

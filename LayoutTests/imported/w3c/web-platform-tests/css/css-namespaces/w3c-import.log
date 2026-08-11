@@ -1,0 +1,65 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/README
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-001-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-001.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-002-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-002.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-003-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-003.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-004-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-004.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-005-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-005.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-006-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/prefix-006.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/scope-001-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/scope-001.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/scope-002-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/scope-002.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-001-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-001.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-002-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-002.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-003-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-003.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-004-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-004.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-005-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-005.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-006-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-006.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-007-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-007.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-008-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-008.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-009-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-009.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-010-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-010.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-011-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-011.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-012-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-012.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-013-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-013.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-014-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-014.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-015-expected.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-015.xml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-namespaces/syntax-016.xml

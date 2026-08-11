@@ -1,0 +1,5 @@
+
+PASS e.style['page'] = "auto" should set the property value
+PASS e.style['page'] = "table" should set the property value
+PASS e.style['page'] = "xyzabc" should set the property value
+

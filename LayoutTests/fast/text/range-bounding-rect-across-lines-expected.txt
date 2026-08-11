@@ -1,0 +1,10 @@
+a
+b
+
+
+c
+ab
+
+PASS BoundingClientRect of linebreak character should be calculated correctly
+PASS BoundingClientRect should not include rects from previous text boxes at line break boundaries
+

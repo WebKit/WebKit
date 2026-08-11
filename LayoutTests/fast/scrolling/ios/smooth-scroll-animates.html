@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .tall {
+        height: 5000px;
+        width: 10px;
+        background-image: repeating-linear-gradient(white, silver 250px);
+    }
+</style>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script>
+    jsTestIsAsync = true;
+
+    let scrollEventCount = 0;
+
+    async function runTest()
+    {
+        window.addEventListener('scroll', function(e) {
+          ++scrollEventCount;
+        }, false);
+
+        window.scrollTo({ top: 500, behavior: 'smooth'});
+        await UIHelper.renderingUpdate();
+        
+        shouldBeTrue('window.scrollY < 500');
+        
+        await UIHelper.waitForTargetScrollAnimationToSettle(window);
+        
+        shouldBeTrue('scrollEventCount > 1');
+        finishJSTest();
+    }
+
+    window.addEventListener('load', () => {
+        setTimeout(runTest, 0);
+    }, false);
+</script>
+</head>
+<body>
+<div class="tall"></div>
+<div id="console"></div>
+</body>
+</html>

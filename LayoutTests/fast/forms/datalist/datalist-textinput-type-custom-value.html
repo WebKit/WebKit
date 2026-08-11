@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+input {
+    width: 300px;
+    height: 50px;
+}
+</style>
+</head>
+<body>
+
+<input id="input" list="fruits" type="text" autocapitalize="none"/>
+<datalist id="fruits">
+<option value="Apple">
+<option value="Kiwi">
+<option value="Melon">
+<option value="Orange">
+<option value="Pear">
+<option value="Strawberry">
+</datalist>
+<div id="console"></div>
+
+<script>
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+description("This test verifies that typing into an input with a list attribute allows freely entering text that does not match any datalist option. The type-select filter on the context menu should not consume keystrokes.");
+
+(async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.setHardwareKeyboardAttached(true);
+    await UIHelper.activateElement(input);
+
+    await UIHelper.typeCharacter("M");
+    await new Promise(resolve => shouldBecomeEqual("input.value", "'M'", resolve));
+
+    await UIHelper.typeCharacter("a");
+    await new Promise(resolve => shouldBecomeEqual("input.value", "'Ma'", resolve));
+
+    await UIHelper.typeCharacter("n");
+    await new Promise(resolve => shouldBecomeEqual("input.value", "'Man'", resolve));
+
+    await UIHelper.typeCharacter("g");
+    await new Promise(resolve => shouldBecomeEqual("input.value", "'Mang'", resolve));
+
+    await UIHelper.typeCharacter("o");
+    await new Promise(resolve => shouldBecomeEqual("input.value", "'Mango'", resolve));
+
+    shouldBeEqualToString("input.value", "Mango");
+
+    finishJSTest();
+})();
+
+</script>
+</body>
+</html>

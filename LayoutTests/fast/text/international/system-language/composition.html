@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ language=zh-Hans ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="font: 48px system-ui;"><span id="target1">&#x3114;&#x02c9;&#x3114;&#x02c9;&#x3114;&#x02c9;&#x3114;&#x02c9;&#x3114;&#x02c9;&#x3114;&#x02c9;</span></div>
+<div style="font: 48px system-ui; font-feature-settings: 'abcd';"><span id="target2">&#x3114;&#x02c9;&#x3114;&#x02c9;&#x3114;&#x02c9;&#x3114;&#x02c9;&#x3114;&#x02c9;&#x3114;&#x02c9;</span></div>
+<script>
+const target1 = document.getElementById("target1");
+const target2 = document.getElementById("target2");
+shouldBe("target1.offsetWidth", "target2.offsetWidth");
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

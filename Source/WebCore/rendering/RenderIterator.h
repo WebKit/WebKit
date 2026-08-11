@@ -1,0 +1,577 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "RenderElement.h"
+
+namespace WebCore {
+
+class RenderText;
+
+template <typename T>
+class RenderIterator {
+public:
+    RenderIterator(const RenderElement* root);
+    RenderIterator(const RenderElement* root, T* current);
+
+    T& operator*();
+    T* operator->();
+
+    operator bool() const { return m_current; }
+
+    bool operator==(const RenderIterator&) const;
+
+    RenderIterator& traverseNext();
+    RenderIterator& traverseNextSibling();
+    RenderIterator& traverseNextSkippingChildren();
+    RenderIterator& traversePreviousSibling();
+    RenderIterator& traverseAncestor();
+
+private:
+    const RenderElement* m_root;
+    T* m_current;
+};
+
+template <typename T>
+class RenderConstIterator {
+public:
+    RenderConstIterator(const RenderElement* root);
+    RenderConstIterator(const RenderElement* root, const T* current);
+
+    const T& operator*() const;
+    const T* operator->() const;
+
+    operator bool() const { return m_current; }
+
+    bool operator==(const RenderConstIterator& other) const;
+
+    RenderConstIterator& traverseNext();
+    RenderConstIterator& traverseNextSibling();
+    RenderConstIterator& traverseNextSkippingChildren();
+    RenderConstIterator& traversePreviousSibling();
+    RenderConstIterator& traverseAncestor();
+
+private:
+    const RenderElement* m_root;
+    const T* m_current;
+};
+
+template <typename T>
+class RenderPostOrderIterator {
+public:
+    RenderPostOrderIterator(const RenderElement* root);
+    RenderPostOrderIterator(const RenderElement* root, T* current);
+
+    T& operator*();
+    T* operator->();
+
+    operator bool() const { return m_current; }
+
+    bool operator==(const RenderPostOrderIterator&) const;
+
+    RenderPostOrderIterator& traverseNext();
+
+private:
+    const RenderElement* m_root;
+    T* m_current;
+};
+
+template <typename T>
+class RenderPostOrderConstIterator {
+public:
+    RenderPostOrderConstIterator(const RenderElement* root);
+    RenderPostOrderConstIterator(const RenderElement* root, const T* current);
+
+    const T& operator*() const;
+    const T* operator->() const;
+
+    operator bool() const { return m_current; }
+
+    bool operator==(const RenderPostOrderConstIterator& other) const;
+
+    RenderPostOrderConstIterator& traverseNext();
+
+private:
+    const RenderElement* m_root;
+    const T* m_current;
+};
+
+// Traversal helpers
+
+namespace RenderObjectTraversal {
+
+template <typename U>
+inline RenderObject* firstChild(U& object)
+{
+    return object.firstChild();
+}
+
+inline RenderObject* firstChild(RenderObject& object)
+{
+    return object.firstChildSlow();
+}
+
+inline RenderObject* firstChild(RenderText&)
+{
+    return nullptr;
+}
+
+template <typename U>
+inline RenderObject* nextAncestorSibling(U& current, const RenderObject* stayWithin)
+{
+    for (auto* ancestor = current.parent(); ancestor; ancestor = ancestor->parent()) {
+        if (ancestor == stayWithin)
+            return nullptr;
+        if (auto* sibling = ancestor->nextSibling())
+            return sibling;
+    }
+    return nullptr;
+}
+
+template <typename U>
+inline RenderObject* next(U& current, const RenderObject* stayWithin)
+{
+    if (auto* child = firstChild(current))
+        return child;
+
+    if (&current == stayWithin)
+        return nullptr;
+
+    if (auto* sibling = current.nextSibling())
+        return sibling;
+
+    return nextAncestorSibling(current, stayWithin);
+}
+
+inline RenderObject* nextSkippingChildren(RenderObject& current, const RenderObject* stayWithin)
+{
+    if (&current == stayWithin)
+        return nullptr;
+
+    if (auto* sibling = current.nextSibling())
+        return sibling;
+
+    return nextAncestorSibling(current, stayWithin);
+}
+
+} // namespace WebCore::RenderObjectTraversal
+
+namespace RenderObjectPostOrderTraversal {
+
+inline RenderObject* next(RenderObject& current, const RenderObject* stayWithin)
+{
+    if (auto* sibling = current.nextSibling()) {
+        if (auto* firstLeafChild = sibling->firstLeafChild())
+            return firstLeafChild;
+        return sibling;
+    }
+
+    auto* parent = current.parent();
+    if (parent == stayWithin)
+        return nullptr;
+    return parent;
+}
+
+} // namespace WebCore::RenderObjectPostOrderTraversal
+
+namespace RenderTraversal {
+
+template <typename T, typename U>
+inline T* firstChild(U& current)
+{
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return RenderObjectTraversal::firstChild(current);
+    else {
+        auto* object = RenderObjectTraversal::firstChild(current);
+        while (object && !is<T>(*object))
+            object = object->nextSibling();
+        return uncheckedDowncast<T>(object);
+    }
+}
+
+template <typename T, typename U>
+inline T* lastChild(U& current)
+{
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return current.lastChild();
+    else {
+        auto* object = current.lastChild();
+        while (object && !is<T>(*object))
+            object = object->previousSibling();
+        return uncheckedDowncast<T>(object);
+    }
+}
+
+template <typename T, typename U>
+inline T* nextSibling(U& current)
+{
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return current.nextSibling();
+    else {
+        auto* object = current.nextSibling();
+        while (object && !is<T>(*object))
+            object = object->nextSibling();
+        return uncheckedDowncast<T>(object);
+    }
+}
+
+template <typename T, typename U>
+inline T* previousSibling(U& current)
+{
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return current.previousSibling();
+    else {
+        auto* object = current.previousSibling();
+        while (object && !is<T>(*object))
+            object = object->previousSibling();
+        return uncheckedDowncast<T>(object);
+    }
+}
+
+template <typename T>
+inline T* findAncestorOfType(const RenderObject& current)
+{
+    if constexpr (std::is_same_v<T, RenderObject> || std::is_same_v<T, RenderElement>)
+        return current.parent();
+    else {
+        for (auto* ancestor = current.parent(); ancestor; ancestor = ancestor->parent()) {
+            if (is<T>(*ancestor))
+                return uncheckedDowncast<T>(ancestor);
+        }
+        return nullptr;
+    }
+}
+
+template <typename T, typename U>
+inline T* firstWithin(U& current)
+{
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return RenderObjectTraversal::firstChild(current);
+    else {
+        auto* descendant = RenderObjectTraversal::firstChild(current);
+        while (descendant && !is<T>(*descendant))
+            descendant = RenderObjectTraversal::next(*descendant, &current);
+        return uncheckedDowncast<T>(descendant);
+    }
+}
+
+template <typename T, typename U>
+inline T* next(U& current, const RenderObject* stayWithin)
+{
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return RenderObjectTraversal::next(current, stayWithin);
+    else {
+        auto* descendant = RenderObjectTraversal::next(current, stayWithin);
+        while (descendant && !is<T>(*descendant))
+            descendant = RenderObjectTraversal::next(*descendant, stayWithin);
+        return uncheckedDowncast<T>(descendant);
+    }
+}
+
+} // namespace WebCore::RenderTraversal
+
+namespace RenderPostOrderTraversal {
+
+template <typename T>
+inline T* firstWithin(RenderObject& current)
+{
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return current.firstLeafChild();
+    else {
+        auto* descendant = current.firstLeafChild();
+        while (descendant && !is<T>(*descendant))
+            descendant = RenderObjectPostOrderTraversal::next(*descendant, &current);
+        return uncheckedDowncast<T>(descendant);
+    }
+}
+
+template <typename T>
+inline T* next(RenderObject& current, const RenderObject* stayWithin)
+{
+    if constexpr (std::is_same_v<T, RenderObject>)
+        return RenderObjectPostOrderTraversal::next(current, stayWithin);
+    else {
+        auto* descendant = RenderObjectPostOrderTraversal::next(current, stayWithin);
+        while (descendant && !is<T>(*descendant))
+            descendant = RenderObjectPostOrderTraversal::next(*descendant, stayWithin);
+        return uncheckedDowncast<T>(descendant);
+    }
+}
+
+} // namespace WebCore::RenderPostOrderTraversal
+
+// RenderIterator
+
+template <typename T>
+inline RenderIterator<T>::RenderIterator(const RenderElement* root)
+    : m_root(root)
+    , m_current(nullptr)
+{
+}
+
+template <typename T>
+inline RenderIterator<T>::RenderIterator(const RenderElement* root, T* current)
+    : m_root(root)
+    , m_current(current)
+{
+}
+
+template <typename T>
+inline RenderIterator<T>& RenderIterator<T>::traverseNextSibling()
+{
+    ASSERT(m_current);
+    m_current = RenderTraversal::nextSibling<T>(*m_current);
+    return *this;
+}
+
+template <typename T>
+inline RenderIterator<T>& RenderIterator<T>::traverseNext()
+{
+    ASSERT(m_current);
+    m_current = RenderTraversal::next<T>(*m_current, m_root);
+    return *this;
+}
+
+template <typename T>
+inline RenderIterator<T>& RenderIterator<T>::traverseNextSkippingChildren()
+{
+    ASSERT(m_current);
+    m_current = RenderObjectTraversal::nextSkippingChildren(*m_current, m_root);
+    return *this;
+}
+
+template <typename T>
+inline RenderIterator<T>& RenderIterator<T>::traversePreviousSibling()
+{
+    ASSERT(m_current);
+    m_current = RenderTraversal::previousSibling<T>(*m_current);
+    return *this;
+}
+
+template <typename T>
+inline RenderIterator<T>& RenderIterator<T>::traverseAncestor()
+{
+    ASSERT(m_current);
+    ASSERT(m_current != m_root);
+    m_current = RenderTraversal::findAncestorOfType<T>(*m_current);
+    return *this;
+}
+
+template <typename T>
+inline T& RenderIterator<T>::operator*()
+{
+    ASSERT(m_current);
+    return *m_current;
+}
+
+template <typename T>
+inline T* RenderIterator<T>::operator->()
+{
+    ASSERT(m_current);
+    return m_current;
+}
+
+template <typename T>
+inline bool RenderIterator<T>::operator==(const RenderIterator& other) const
+{
+    ASSERT(m_root == other.m_root);
+    return m_current == other.m_current;
+}
+
+// RenderConstIterator
+
+template <typename T>
+inline RenderConstIterator<T>::RenderConstIterator(const RenderElement* root)
+    : m_root(root)
+    , m_current(nullptr)
+{
+}
+
+template <typename T>
+inline RenderConstIterator<T>::RenderConstIterator(const RenderElement* root, const T* current)
+    : m_root(root)
+    , m_current(current)
+{
+}
+
+template <typename T>
+inline RenderConstIterator<T>& RenderConstIterator<T>::traverseNextSibling()
+{
+    ASSERT(m_current);
+    m_current = RenderTraversal::nextSibling<T>(*m_current);
+    return *this;
+}
+
+template <typename T>
+inline RenderConstIterator<T>& RenderConstIterator<T>::traverseNext()
+{
+    ASSERT(m_current);
+    m_current = RenderTraversal::next<T>(*m_current, m_root);
+    return *this;
+}
+
+template <typename T>
+inline RenderConstIterator<T>& RenderConstIterator<T>::traverseNextSkippingChildren()
+{
+    ASSERT(m_current);
+    m_current = RenderObjectTraversal::nextSkippingChildren(*m_current, m_root);
+    return *this;
+}
+
+template <typename T>
+inline RenderConstIterator<T>& RenderConstIterator<T>::traversePreviousSibling()
+{
+    ASSERT(m_current);
+    m_current = RenderTraversal::previousSibling<T>(m_current);
+    return *this;
+}
+
+
+template <typename T>
+inline RenderConstIterator<T>& RenderConstIterator<T>::traverseAncestor()
+{
+    ASSERT(m_current);
+    ASSERT(m_current != m_root);
+    m_current = RenderTraversal::findAncestorOfType<const T>(*m_current);
+    return *this;
+}
+
+template <typename T>
+inline const T& RenderConstIterator<T>::operator*() const
+{
+    ASSERT(m_current);
+    return *m_current;
+}
+
+template <typename T>
+inline const T* RenderConstIterator<T>::operator->() const
+{
+    ASSERT(m_current);
+    return m_current;
+}
+
+template <typename T>
+inline bool RenderConstIterator<T>::operator==(const RenderConstIterator& other) const
+{
+    ASSERT(m_root == other.m_root);
+    return m_current == other.m_current;
+}
+
+// RenderPostOrderIterator
+
+template <typename T>
+inline RenderPostOrderIterator<T>::RenderPostOrderIterator(const RenderElement* root)
+    : m_root(root)
+    , m_current(nullptr)
+{
+}
+
+template <typename T>
+inline RenderPostOrderIterator<T>::RenderPostOrderIterator(const RenderElement* root, T* current)
+    : m_root(root)
+    , m_current(current)
+{
+}
+
+template <typename T>
+inline RenderPostOrderIterator<T>& RenderPostOrderIterator<T>::traverseNext()
+{
+    ASSERT(m_current);
+    m_current = RenderPostOrderTraversal::next<T>(*m_current, m_root);
+    return *this;
+}
+
+template <typename T>
+inline T& RenderPostOrderIterator<T>::operator*()
+{
+    ASSERT(m_current);
+    return *m_current;
+}
+
+template <typename T>
+inline T* RenderPostOrderIterator<T>::operator->()
+{
+    ASSERT(m_current);
+    return m_current;
+}
+
+template <typename T>
+inline bool RenderPostOrderIterator<T>::operator==(const RenderPostOrderIterator& other) const
+{
+    ASSERT(m_root == other.m_root);
+    return m_current == other.m_current;
+}
+
+// RenderConstIterator
+
+template <typename T>
+inline RenderPostOrderConstIterator<T>::RenderPostOrderConstIterator(const RenderElement* root)
+    : m_root(root)
+    , m_current(nullptr)
+{
+}
+
+template <typename T>
+inline RenderPostOrderConstIterator<T>::RenderPostOrderConstIterator(const RenderElement* root, const T* current)
+    : m_root(root)
+    , m_current(current)
+{
+}
+
+template <typename T>
+inline RenderPostOrderConstIterator<T>& RenderPostOrderConstIterator<T>::traverseNext()
+{
+    ASSERT(m_current);
+    m_current = RenderPostOrderTraversal::next<T>(*m_current, m_root);
+    return *this;
+}
+
+template <typename T>
+inline const T& RenderPostOrderConstIterator<T>::operator*() const
+{
+    ASSERT(m_current);
+    return *m_current;
+}
+
+template <typename T>
+inline const T* RenderPostOrderConstIterator<T>::operator->() const
+{
+    ASSERT(m_current);
+    return m_current;
+}
+
+template <typename T>
+inline bool RenderPostOrderConstIterator<T>::operator==(const RenderPostOrderConstIterator& other) const
+{
+    ASSERT(m_root == other.m_root);
+    return m_current == other.m_current;
+}
+
+} // namespace WebCore
+
+#include "RenderAncestorIterator.h"
+#include "RenderChildIterator.h"

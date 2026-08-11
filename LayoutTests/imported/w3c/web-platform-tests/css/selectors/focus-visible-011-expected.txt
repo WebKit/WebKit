@@ -1,0 +1,9 @@
+This test checks that :focus-visible matches after a keyboard event, even if the event handler calls preventDefault() on the event.
+Click "Click here and press right arrow.".
+Press the right arrow key.
+If the element has a red background, then the test result is FAILURE. If it has a green outline, then the test result is SUCCESS.
+
+Click here and press right arrow.
+
+PASS :focus-visible matches even if preventDefault() is called
+

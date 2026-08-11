@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function imageLoaded()
+        {
+            if (window.internals)
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body>
+<img id="image" src="resources/apple.jpg" onload="imageLoaded()" style="position: fixed;"></img>
+<pre id="layers"></pre>
+<script>
+document.body.offsetWidth; // Force layout before the image loads.
+</script>
+</body>
+</html>

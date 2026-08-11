@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="cached"><span class="foo"></span></div>
+<div id="other"><span class="bar"></span></div>
+<script>
+description("Clearing the querySelectorAll result cache under memory pressure must also clear each node's " +
+    "HasValidQuerySelectorAllResults flag. Otherwise a still-alive node keeps claiming it has cached results " +
+    "while the document's map no longer has an entry for it, and a later class-attribute change asserts.");
+
+if (!window.internals)
+    testFailed("This test requires window.internals.");
+else {
+    var cached = document.getElementById("cached");
+    var other = document.getElementById("other");
+
+    // 1. Populate the cache for #cached: this sets #cached's HasValidQuerySelectorAllResults flag AND adds a
+    //    map entry keyed by #cached (".foo" is a class selector, which is cacheable).
+    cached.querySelectorAll(".foo");
+
+    // 2. Run WebCore::releaseMemory synchronously, which clears the document's querySelectorAll result map.
+    //    (We call releaseMemoryNow() directly rather than beginSimulatedMemoryPressure(): WebKitTestRunner sets
+    //    WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR=1, which suppresses the WebProcess low-memory handler, so
+    //    simulated pressure flips isUnderMemoryPressure() but never invokes releaseMemory / clearQuerySelectorAllResults.)
+    internals.releaseMemoryNow();
+
+    // 3. Repopulate the map through a different node so it is non-empty. This defeats the "empty map" early-out
+    //    in the invalidation path, forcing it to actually look #cached up.
+    other.querySelectorAll(".bar");
+
+    // 4. Mutate #cached's class. Before the fix, #cached still reported a valid cache, so invalidation looked up
+    //    an entry that the memory-pressure clear had removed and hit the assertion.
+    cached.className = "changed";
+
+    testPassed("Did not crash changing a class after the cache was cleared under memory pressure.");
+}
+</script>
+</body>
+</html>

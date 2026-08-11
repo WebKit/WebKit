@@ -1,0 +1,5 @@
+
+FAIL Eligibility (in-flight fetch): Header and body received when in BFCache promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+FAIL Eligibility (in-flight fetch): Header received when in BFCache and body received after BFCache promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+FAIL Eligibility (in-flight fetch): Header and body received after BFCache promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+

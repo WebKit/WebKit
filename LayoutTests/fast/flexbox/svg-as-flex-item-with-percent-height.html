@@ -1,0 +1,23 @@
+<style>
+.flex_box {
+  display: flex;
+  width: 100px;
+  height: 100%;
+}
+
+.svg_box {
+  width: 100px;
+  height: 100%;
+  background-color: green;
+}
+</style>
+<!-- while the size does not match with Chrome/Firefox, the point of this test is that box does not grow vertically on style change. -->
+<button>
+  <div class=flex_box>
+    <svg class=svg_box viewBox="0 0 512 512" width="512" height="512"><defs id=defs><rect></rect></defs></svg>
+  </div>
+</button>
+<script>
+document.body.offsetHeight;
+defs.style.opacity = "0.5";
+</script>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .container {
+        will-change: transform;
+        background-color: #222;
+        border-radius: 5px;
+        height: 300px;
+        margin: 50px;
+        width: 300px;
+        padding: 20px;
+    }
+
+    .inner {
+        background: white;
+        border-radius: 50%;
+        height: 100%;
+        width: 100%;
+        opacity: 1;
+        transition: opacity 50ms linear;
+    }
+
+    body.changed .inner {
+        height: 50%;
+        width: 50%;
+        opacity: 0.5;
+    }
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+window.addEventListener('load', async () => {
+    await UIHelper.renderingUpdate();
+    window.internals?.startTrackingRepaints();
+
+    const inner = document.querySelector('.inner');
+    const transitionEnded = new Promise(resolve => inner.addEventListener("transitionend", resolve, { once: true }));
+    document.body.classList.add("changed");
+    await transitionEnded;
+
+    document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+
+    window.internals?.stopTrackingRepaints();
+    finishJSTest();
+}, false);
+
+</script>
+</head>
+<body>
+    <div class="container">
+        <div class="inner"></div>
+    </div>
+<div id="console"></div>
+<pre id="layers"></pre>
+</body>
+</html>

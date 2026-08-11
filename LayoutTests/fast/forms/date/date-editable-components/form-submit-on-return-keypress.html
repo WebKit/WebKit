@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<form id="form">
+    Enter birthday: <input id="input" type="date" value="2020-09-16"/>
+    <input type="submit"/>
+</form>
+
+<script>
+
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that focusing a date input and pressing the return key submits a form.");
+
+    form.addEventListener("submit", (event) => {
+        debug("Submitted form.");
+        finishJSTest();
+    });
+
+    UIHelper.keyDown("\t");
+    UIHelper.keyDown("\r");
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+<title>This tests that text-indent works with shrink-to-fit width computation.</title>
+<style>
+#percentage_indent, #fixed_indent {
+    border: 1px solid green;
+    color: white;
+    font-family: ahem;
+    font-size: 14px;
+    margin: 10px;
+}
+</style>
+
+<div id=percentage_indent><div style="text-indent: 10%">some text</div></div>
+<div id=fixed_indent><div style="text-indent: 50px;">some text</div></div>
+<script>
+document.body.offsetHeight;
+percentage_indent.style.float = "right";
+fixed_indent.style.float = "right";
+</script>

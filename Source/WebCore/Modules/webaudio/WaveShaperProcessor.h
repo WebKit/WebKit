@@ -1,0 +1,83 @@
+/*
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "AudioDSPKernel.h"
+#include "AudioDSPKernelProcessor.h"
+#include "AudioNode.h"
+#include <memory>
+#include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+// WaveShaperProcessor is an AudioDSPKernelProcessor which uses WaveShaperDSPKernel objects to implement non-linear distortion effects.
+
+class WaveShaperProcessor final : public AudioDSPKernelProcessor {
+    WTF_MAKE_TZONE_ALLOCATED(WaveShaperProcessor);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WaveShaperProcessor);
+public:
+    enum OverSampleType {
+        OverSampleNone,
+        OverSample2x,
+        OverSample4x
+    };
+
+    WaveShaperProcessor(float sampleRate, size_t numberOfChannels);
+
+    virtual ~WaveShaperProcessor();
+
+    std::unique_ptr<AudioDSPKernel> createKernel() final;
+
+    void process(const AudioBus& source, AudioBus& destination, size_t framesToProcess) final;
+
+    void setCurveForBindings(Vector<float>&&);
+    const Vector<float>& curveForBindings() const LIFETIME_BOUND WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_curve; } // Doesn't grab the lock, only safe to call on the main thread.
+    const Vector<float>& curve() const LIFETIME_BOUND WTF_REQUIRES_LOCK(m_processLock) { return m_curve; }
+
+    void setOversampleForBindings(OverSampleType);
+    OverSampleType oversampleForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_oversample; } // Doesn't grab the lock, only safe to call on the main thread.
+    OverSampleType oversample() const WTF_REQUIRES_LOCK(m_processLock) { return m_oversample; }
+
+    Lock& processLock() const LIFETIME_BOUND WTF_RETURNS_LOCK(m_processLock) { return m_processLock; }
+
+private:
+    Type processorType() const final { return Type::WaveShaper; }
+
+    // m_curve represents the non-linear shaping curve.
+    Vector<float> m_curve WTF_GUARDED_BY_LOCK(m_processLock);
+
+    OverSampleType m_oversample WTF_GUARDED_BY_LOCK(m_processLock) { OverSampleNone };
+
+    // This synchronizes process() with setCurve().
+    mutable Lock m_processLock;
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WaveShaperProcessor) \
+    static bool isType(const WebCore::AudioProcessor& processor) { return processor.processorType() == WebCore::AudioProcessor::Type::WaveShaper; } \
+SPECIALIZE_TYPE_TRAITS_END()

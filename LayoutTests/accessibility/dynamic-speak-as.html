@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<span id="span">Text</span>
+
+<script>
+var output = "This test ensures we report the proper speech hints after dynamic page changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var text = webArea.childAtIndex(0);
+
+    output += expect("text.speakAs", "'normal'");
+    document.getElementById("span").setAttribute("style", "speak-as: spell-out");
+    setTimeout(async function() {
+        output += await expectAsync("text.speakAs", "'spell-out'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

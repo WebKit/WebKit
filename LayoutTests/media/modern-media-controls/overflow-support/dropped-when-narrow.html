@@ -1,0 +1,33 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<meta name="viewport" content="width=device-width">
+<script src="../resources/media-controls-utils.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<audio src="../../content/test.mp4" style="position: absolute; left: 0; top: 0; width: 600px;" controls autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>OverflowSupport</code> button does not appear when controls are narrow.");
+
+const media = document.querySelector("audio");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("play", function() {
+    media.pause();
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.overflow')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.overflow').getBoundingClientRect().width", "0", async () => {
+            media.style.width = "200px";
+            shouldBecomeEqual("shadowRoot.querySelector('button.overflow')", "null", async () => {
+                media.remove();
+                finishJSTest();
+            });
+        });
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

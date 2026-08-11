@@ -1,0 +1,27 @@
+Tests that re-declaring a top-level let/const/class in the console rebinds it instead of throwing "has already been declared". Bug 285757
+
+
+== Running test suite: Runtime.evaluate.REPLRedeclaration
+-- Running test case: Runtime.evaluate.REPLRedeclaration.let
+PASS: `let replLet = 1;` should not throw.
+PASS: `replLet` should be 1.
+PASS: Re-declaring `let replLet = 2;` should not throw.
+PASS: `replLet` should now be 2.
+
+-- Running test case: Runtime.evaluate.REPLRedeclaration.const
+PASS: `const replConst = 1;` should not throw.
+PASS: `replConst` should be 1.
+PASS: Re-declaring `const replConst = 2;` should not throw.
+PASS: `replConst` should now be 2.
+
+-- Running test case: Runtime.evaluate.REPLRedeclaration.class
+PASS: First `class ReplClass` should not throw.
+PASS: `new ReplClass().m()` should be 1.
+PASS: Re-declaring `class ReplClass` should not throw.
+PASS: `new ReplClass().m()` should now be 2.
+
+-- Running test case: Runtime.evaluate.REPLRedeclaration.CrossKind
+PASS: `const replCross = 1;` should not throw.
+PASS: Re-declaring as `let replCross = 2;` should not throw.
+PASS: `replCross` should now be 2.
+

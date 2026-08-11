@@ -1,0 +1,16 @@
+U+2028 LINE SEPARATOR forces a line break but does not reset bidi paragraph context (bidi class WS, not B).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('normal').offsetHeight is 20
+PASS document.getElementById('pre').offsetHeight is 20
+PASS document.getElementById('pre-wrap').offsetHeight is 20
+PASS document.getElementById('pre-line').offsetHeight is 20
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a b
+a b
+a b
+a b

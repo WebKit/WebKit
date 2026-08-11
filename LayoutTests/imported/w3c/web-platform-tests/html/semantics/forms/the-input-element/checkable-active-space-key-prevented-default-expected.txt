@@ -1,0 +1,5 @@
+
+
+PASS Space key shouldn't active the checkbox when its default is prevented
+PASS Space key shouldn't active the radio when its default is prevented
+

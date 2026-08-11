@@ -1,0 +1,8 @@
+This test verifies that the scroll area position remains correct after scrolling when a content inset is active.
+
+PASS: scrollArea.y === scrollAreaYBeforeScroll
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

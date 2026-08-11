@@ -1,0 +1,6 @@
+This is some text. This is an anchor element
+This is an SVG anchor element
+
+PASS :any-link & :link pseudo-class invalidation with an HTML link
+PASS :any-link & :link pseudo-class invalidation with an SVG link
+

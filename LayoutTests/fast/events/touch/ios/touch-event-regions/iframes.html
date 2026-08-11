@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        iframe {
+            display: block;
+            border: 10px solid silver;
+            padding: 8px;
+            margin: 10px 10px 120px 10px;
+        }
+    </style>
+    <script src="resources/touch-regions-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', dumpRegions, false);
+    </script>
+</head>
+<body>
+
+<iframe scrolling="no" width="200" height="120" srcdoc="
+    <div ontouchstart='(void)0'>This has a touchstart</div>
+    <div style='width: 100px; height: 100px; margin: 100px;' ontouchstart='(void)0'>This has a touchstart</div>
+"></iframe>
+
+<iframe width="200" height="120" srcdoc="
+    iframe with window touchstart listener
+    <script>
+        window.addEventListener('touchstart', function() { }, false);
+    </script>
+"></iframe>
+
+<iframe style="transform: rotate(10deg)" srcdoc="
+    <div style='width: 100px; height: 100px; margin: 50px;' ontouchstart='(void)0'>This has a touchstart</div>
+"></iframe>
+
+</body>
+</html>

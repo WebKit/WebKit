@@ -1,0 +1,14 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h265.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h265.cc
+index b354bb84f16e..9865d7cb8244 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h265.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h265.cc
+@@ -310,6 +310,9 @@ void RtpPacketizerH265::NextAggregatePacket(RtpPacketToSend* rtp_packet,
+   while (packet->aggregated) {
+     // Add NAL unit length field.
+     rtc::ArrayView<const uint8_t> fragment = packet->source_fragment;
++#ifdef WEBRTC_WEBKIT_BUILD
++    RTC_CHECK_LE(index + kHevcLengthFieldSize + fragment.size(), payload_capacity);
++#endif
+     ByteWriter<uint16_t>::WriteBigEndian(&buffer[index], fragment.size());
+     index += kHevcLengthFieldSize;
+     // Add NAL unit.

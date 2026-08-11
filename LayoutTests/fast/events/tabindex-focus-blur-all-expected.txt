@@ -1,0 +1,2 @@
+338 focus / 338 blur events dispatched, and should be 336 / 336 PASSED
+Total of 0 focus test(s) failed. PASSED

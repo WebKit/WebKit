@@ -1,0 +1,8 @@
+WK_NOTIFICATION_COMMENT("These notifyd notifications are forwarded from the UIProcess to the WebProcess on the Mac.")
+
+WK_NOTIFICATION("com.apple.sessionagent.screenLockUIIsHidden")
+WK_NOTIFICATION("com.apple.sessionagent.screenLockUIIsShowing")
+WK_NOTIFICATION("com.apple.sessionagent.screenLockUIIsShown")
+WK_NOTIFICATION("com.apple.sessionagent.shieldWindowIsShowing")
+WK_NOTIFICATION("com.apple.sessionagent.shieldWindowLowered")
+WK_NOTIFICATION("com.apple.sessionagent.shieldWindowRaised")

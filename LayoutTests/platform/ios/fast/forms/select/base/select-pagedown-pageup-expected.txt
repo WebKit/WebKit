@@ -1,0 +1,32 @@
+Tests Page Down and Page Up keyboard navigation in a base-select picker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS focusedOptionNumber() is 50
+PASS isFocusedOptionVisible() is true
+PASS focusedOptionNumber() is 1
+FAIL focusedOptionNumber() should be >= 2. Was 1 (of type number).
+PASS select.value is savedValue
+PASS focusedOptionNumber() is 100
+FAIL focusedOptionNumber() < 100 should be true. Was false.
+PASS select.value is savedValue
+FAIL secondPageDown should be >= firstPageDown + 1. Was 1 (of type number).
+FAIL afterPageUp < secondPageDown should be true. Was false.
+PASS focusedOptionNumber() is 100
+PASS focusedOptionNumber() is 1
+FAIL Page Down did not make progress: was 1, now 1
+FAIL focusedOptionNumber() should be 100. Was 1.
+FAIL Page Up did not make progress: was 100, now 100
+FAIL focusedOptionNumber() should be 1. Was 100.
+PASS focusedOptionNumber() === pageDownTarget is true
+PASS focusedOptionNumber() === pageUpTarget is true
+FAIL constrainedTarget > 1 should be true. Was false.
+FAIL constrainedTarget < pageDownTarget should be true. Was false.
+PASS firstPartialItem !== null is true
+FAIL isOptionVisible(firstPartialItem) should be true. Was false.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

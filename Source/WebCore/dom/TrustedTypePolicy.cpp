@@ -1,0 +1,154 @@
+/*
+ * Copyright (C) 2024 Igalia S.L. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+#include "config.h"
+#include "TrustedTypePolicy.h"
+
+#include "ExceptionCode.h"
+#include "ExceptionOr.h"
+#include "ScriptWrappableInlines.h"
+#include "TrustedHTML.h"
+#include "TrustedScript.h"
+#include "TrustedScriptURL.h"
+#include "TrustedType.h"
+#include "TrustedTypePolicyOptions.h"
+#include "WebCoreOpaqueRoot.h"
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/MakeString.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TrustedTypePolicy);
+
+Ref<TrustedTypePolicy> TrustedTypePolicy::create(const String& name, const TrustedTypePolicyOptions& options)
+{
+    return adoptRef(*new TrustedTypePolicy(name, options));
+}
+
+TrustedTypePolicy::TrustedTypePolicy(const String& name, const TrustedTypePolicyOptions& options)
+    : m_name(name)
+    , m_options(options)
+{ }
+
+ExceptionOr<Ref<TrustedHTML>> TrustedTypePolicy::createHTML(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
+{
+    auto policyValue = getPolicyValue(TrustedType::TrustedHTML, input, WTF::move(arguments));
+
+    if (policyValue.hasException())
+        return policyValue.releaseException();
+
+    auto dataString = policyValue.releaseReturnValue();
+    if (dataString.isNull())
+        dataString = emptyString();
+
+    return TrustedHTML::create(dataString);
+}
+
+ExceptionOr<Ref<TrustedScript>> TrustedTypePolicy::createScript(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
+{
+    auto policyValue = getPolicyValue(TrustedType::TrustedScript, input, WTF::move(arguments));
+
+    if (policyValue.hasException())
+        return policyValue.releaseException();
+
+    auto dataString = policyValue.releaseReturnValue();
+    if (dataString.isNull())
+        dataString = emptyString();
+
+    return TrustedScript::create(dataString);
+}
+
+ExceptionOr<Ref<TrustedScriptURL>> TrustedTypePolicy::createScriptURL(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
+{
+    auto policyValue = getPolicyValue(TrustedType::TrustedScriptURL, input, WTF::move(arguments));
+
+    if (policyValue.hasException())
+        return policyValue.releaseException();
+
+    auto dataString = policyValue.releaseReturnValue();
+    if (dataString.isNull())
+        dataString = emptyString();
+
+    return TrustedScriptURL::create(dataString);
+}
+
+// https://w3c.github.io/trusted-types/dist/spec/#get-trusted-type-policy-value-algorithm
+ExceptionOr<String> TrustedTypePolicy::getPolicyValue(TrustedType trustedTypeName, const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments, IfMissing ifMissing)
+{
+    CallbackResult<String> policyValue(CallbackResultType::UnableToExecute);
+    if (trustedTypeName == TrustedType::TrustedHTML) {
+        if (m_options.createHTML && m_options.createHTML->hasCallback())
+            policyValue = m_options.createHTML->invokeRethrowingException(input, WTF::move(arguments));
+    } else if (trustedTypeName == TrustedType::TrustedScript) {
+        if (m_options.createScript && m_options.createScript->hasCallback())
+            policyValue = m_options.createScript->invokeRethrowingException(input, WTF::move(arguments));
+    } else if (trustedTypeName == TrustedType::TrustedScriptURL) {
+        if (m_options.createScriptURL && m_options.createScriptURL->hasCallback())
+            policyValue = m_options.createScriptURL->invokeRethrowingException(input, WTF::move(arguments));
+    } else {
+        ASSERT_NOT_REACHED();
+        return Exception { ExceptionCode::TypeError };
+    }
+
+    if (policyValue.type() == CallbackResultType::Success)
+        return policyValue.releaseReturnValue();
+    if (policyValue.type() == CallbackResultType::ExceptionThrown)
+        return Exception { ExceptionCode::ExistingExceptionError };
+
+    if (ifMissing == IfMissing::Throw) {
+        return Exception {
+            ExceptionCode::TypeError,
+            makeString("Policy "_s, m_name,
+                "'s TrustedTypePolicyOptions did not specify a '"_s, trustedTypeToCallbackName(trustedTypeName), "' member."_s)
+        };
+    }
+
+    return String(nullString());
+}
+
+WebCoreOpaqueRoot root(TrustedTypePolicy* policy)
+{
+    return WebCoreOpaqueRoot { policy };
+}
+
+TrustedTypePolicy::~TrustedTypePolicy() = default;
+
+template<typename Visitor>
+void TrustedTypePolicy::visitAdditionalChildrenInGCThread(Visitor& visitor)
+{
+    // No need to lock since m_options is const. m_options's RefPtrs cannot
+    // be modified by the main thread while the GC thread is reading them
+    // here.
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* createHTML = m_options.createHTML.get())
+        SUPPRESS_UNCOUNTED_ARG createHTML->visitJSFunctionInGCThread(visitor);
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* createScript = m_options.createScript.get())
+        SUPPRESS_UNCOUNTED_ARG createScript->visitJSFunctionInGCThread(visitor);
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* createScriptURL = m_options.createScriptURL.get())
+        SUPPRESS_UNCOUNTED_ARG createScriptURL->visitJSFunctionInGCThread(visitor);
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(TrustedTypePolicy);
+
+} // namespace WebCore

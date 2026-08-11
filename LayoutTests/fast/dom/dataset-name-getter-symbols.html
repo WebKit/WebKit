@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body data-webkit-rocks=yes>
+<script>
+description('Test the name getters on DOMStringMap (dataset).');
+
+knownSymbol = Symbol();
+
+shouldBeTrue("document.body.dataset.webkitRocks === 'yes'");
+shouldBeTrue("Object.keys(document.body.dataset).length === 1");
+
+shouldNotThrow("document.body.dataset[''] = 'test'");
+shouldBeTrue("document.body.dataset[''] === 'test'");
+shouldBeTrue("document.body.dataset[Symbol()] === undefined");
+shouldBeTrue("Object.keys(document.body.dataset).length === 2");
+
+shouldBeTrue("document.body.dataset[knownSymbol] === undefined");
+shouldBeTrue("Object.keys(document.body.dataset).length === 2");
+shouldNotThrow("document.body.dataset[knownSymbol] = 'symbol property'");
+shouldBeTrue("document.body.dataset[knownSymbol] === 'symbol property'");
+shouldBeTrue("delete document.body.dataset[knownSymbol]");
+shouldBeTrue("document.body.dataset[knownSymbol] === undefined");
+shouldBeTrue("Object.keys(document.body.dataset).length === 2");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

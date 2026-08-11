@@ -1,0 +1,8 @@
+
+PASS 'font-size: calc(16px)' at zoom level 1
+PASS 'font-size: calc(1em)' at zoom level 1
+PASS 'font-size: calc(1rem)' at zoom level 1
+PASS 'font-size: calc(16px)' at zoom level 2
+PASS 'font-size: calc(1em)' at zoom level 2
+PASS 'font-size: calc(1rem)' at zoom level 2
+

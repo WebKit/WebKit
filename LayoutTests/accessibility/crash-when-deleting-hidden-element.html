@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script>
+window.accessibilityController?.enableEnhancedAccessibility(true);
+
+addEventListener("load", () => {
+    document.execCommand("SelectAll");
+    const span = document.getElementsByTagName("span")[0];
+    span.contentEditable = true;
+    span.textContent = "bar";
+    document.execCommand("InsertText", false, "b");
+    document.body.textContent = "PASS";
+});
+</script>
+
+<style>
+* {
+    visibility: visible;
+}
+
+.inline {
+    display: inline;
+}
+
+* :only-child {
+    visibility: hidden;
+}
+</style>
+</head>
+<body>
+    <table>
+    <tr><td><span><table></table><span></span></span></td></tr>
+    <tr><td><td style="height: 100px;" class="inline">a</td></tr>
+    </table>
+</body>
+</html>

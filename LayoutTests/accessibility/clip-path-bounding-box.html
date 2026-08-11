@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true ] -->
+<!-- runSingly because of the usage of accessibilityController.setForceInitialFrameCaching, which sets a process-global static. -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+.screenreader-only {
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+#partial-clip {
+    clip-path: inset(30%);
+    width: 300px;
+    height: 300px;
+    background-color: green;
+}
+</style>
+</head>
+<body>
+
+<div style="margin-top: 150px"></div>
+<div role="group" id="foo-group">Foo</div>
+<div id="container" role="group" aria-label="wrapper">
+    <input class="screenreader-only" type="radio">
+    <br/>
+    <span class="screenreader-only">This is some text</span>
+    <br/>
+    <div id="partial-clip" role="group" aria-label="partial clip container">
+        This text is clipped and unpainted but still should have a valid and reasonable bounding box.
+    </div>
+</div>
+
+<script>
+var output = "This test ensures we compute the right frame for elements affected by clip-path.\n\n";
+
+var current;
+function verifyRoleAndRect(expectedRole) {
+    output += expect(`current.role.toLowerCase().includes("${expectedRole}")`, "true");
+    output += `x: ${current.pageX}\n`;
+    output += `y: ${current.pageY}\n`;
+    output += `width: ${current.width}\n`;
+    output += `height: ${current.height}\n\n`;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+
+    var fooText = accessibilityController.accessibleElementById("foo-group").childAtIndex(0);
+    var container = accessibilityController.accessibleElementById("container");
+    setTimeout(async function() {
+        await waitFor(() => {
+            // Wait for paint to update accessibility geometry. Assume that if we have a valid width and height, it
+            // must have happened.
+            return fooText.width > 0 && fooText.height > 0;
+        });
+
+        // Use the position of this non-hidden text to give a frame of reference for where the opacity:0 elements should
+        // be placed (they should be nearby if positioned correctly, not at the top of the page or way off-screen).
+        current = fooText;
+        verifyRoleAndRect("statictext");
+
+        current = container.childAtIndex(0);
+        const x = current.pageX;
+        // Allow a bit variance for radio buttons.
+        output += `x is valid: ${x === 9 || x === 10}\n`;
+        const y = current.pageY;
+        output += `y is valid: ${y === 171 || y === 173}\n`;
+        const width = current.width;
+        const height = current.height;
+        const minSize = accessibilityController.platformName === "mac" ? 2 : 1;
+        output += `width is valid: ${width >= minSize}\n`;
+        output += `height is valid: ${height >= minSize}\n\n`;
+
+        current = container.childAtIndex(1);
+        verifyRoleAndRect("statictext");
+
+        current = container.childAtIndex(2);
+        verifyRoleAndRect("group");
+
+        current = container.childAtIndex(2).childAtIndex(0);
+        verifyRoleAndRect("statictext");
+
+        accessibilityController.setForceInitialFrameCaching(false);
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

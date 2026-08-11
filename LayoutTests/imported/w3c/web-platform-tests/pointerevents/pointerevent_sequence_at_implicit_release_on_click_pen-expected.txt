@@ -1,0 +1,10 @@
+Pointer Event: Event sequence at implicit release on click
+
+When a captured pointer is implicitly released after a click, the boundary events should follow the lostpointercapture event.
+
+Click or tap on Black.
+Click or tap on Green.
+
+PASS pen Boundary events are emitted after lostpointercapture
+PASS No extra events are emitted
+

@@ -1,0 +1,3 @@
+
+PASS A piped to readable stream should be freed when gced
+

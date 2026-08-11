@@ -1,0 +1,19 @@
+PASS document.scrollingElement.scrollTop == window.targetScrollTop is true
+PASS document.scrollingElement.scrollLeft == 40 is true
+PASS window.visualViewport.pageTop != 0 is true
+PASS window.visualViewport.scale == 1 is true
+PASS window.visualViewport.width == internals.layoutViewportRect().width is true
+PASS window.visualViewport.height == internals.layoutViewportRect().height is true
+PASS internals.layoutViewportRect().height == window.keyboardTopInView is true
+Scrolled to 0, 0
+PASS document.scrollingElement.scrollTop == 0 is true
+PASS document.scrollingElement.scrollLeft == 0 is true
+PASS window.visualViewport.pageTop == 0 is true
+PASS window.visualViewport.scale == 1 is true
+PASS window.visualViewport.width == internals.layoutViewportRect().width is true
+PASS window.visualViewport.height == internals.layoutViewportRect().height is true
+PASS internals.layoutViewportRect().height == window.keyboardTopInView is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+
+
+FAIL base appearance should not propagate to nested elements which support appearance. assert_equals: nested option should have auto appearance. expected "block" but got "flex"
+

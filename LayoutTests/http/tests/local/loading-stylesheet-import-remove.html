@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+setTimeout(() => {
+    const stylesheet = document.querySelector('link');
+    stylesheet.remove();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 100);
+</script>
+<link rel="stylesheet" href="http://127.0.0.1:8000/local/resources/slow-import.css">
+</head>
+<body>
+<h1>CAN YOU SEE ME NOW?</h1>
+</body>
+</html>

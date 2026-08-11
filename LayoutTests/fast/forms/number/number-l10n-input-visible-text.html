@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+    description('This test verifies that number inputs display the localized decimal separator in the visible text while maintaining the correct DOM value.');
+    if (window.internals)
+        internals.settings.setLangAttributeAwareFormControlUIEnabled(true);
+    else
+        debug('Requires WebKitTestRunner.');
+</script>
+<!-- German: 1.234,56 (period group separator, comma decimal separator) -->
+<input id="input-de" lang="de-de" type="number">
+<!-- French: 1 234,56 (space group separator, comma decimal separator) -->
+<input id="input-fr" lang="fr-fr" type="number">
+<!-- English US: 1,234.56 (comma group separator, period decimal separator) -->
+<input id="input-en" lang="en-us" type="number">
+<script>
+    function getVisibleText(input) {
+        var shadow = internals.shadowRoot(input);
+        return shadow.querySelector('div[contenteditable]').innerText;
+    }
+
+    debug('German locale (comma decimal separator)');
+    var deInput = document.getElementById('input-de');
+    deInput.focus();
+
+    debug('Typing a localized decimal number using comma separator:');
+    shouldBeEqualToString('document.execCommand("InsertText", false, "5,6"); deInput.value', '5.6');
+    shouldBeEqualToString('getVisibleText(deInput)', '5,6');
+    deInput.value = '';
+
+    debug('');
+    debug('Typing a number with a period (also accepted as decimal in German):');
+    shouldBeEqualToString('document.execCommand("InsertText", false, "5.6"); deInput.value', '5.6');
+    shouldBeEqualToString('getVisibleText(deInput)', '5.6');
+    deInput.value = '';
+
+    debug('');
+    debug('Typing a negative decimal number:');
+    shouldBeEqualToString('document.execCommand("InsertText", false, "-3,14"); deInput.value', '-3.14');
+    shouldBeEqualToString('getVisibleText(deInput)', '-3,14');
+    deInput.value = '';
+
+    debug('');
+    debug('Verifying duplicate decimal separator is rejected:');
+    shouldBeEqualToString('document.execCommand("InsertText", false, "1,2,3"); deInput.value', '1.23');
+    shouldBeEqualToString('getVisibleText(deInput)', '1,23');
+    deInput.value = '';
+
+    debug('');
+    debug('Setting value attribute displays localized:');
+    deInput.value = '7.89';
+    shouldBeEqualToString('getVisibleText(deInput)', '7,89');
+    deInput.value = '';
+
+    debug('');
+    debug('French locale (comma decimal separator)');
+    var frInput = document.getElementById('input-fr');
+    frInput.focus();
+
+    shouldBeEqualToString('document.execCommand("InsertText", false, "1,234"); frInput.value', '1.234');
+    shouldBeEqualToString('getVisibleText(frInput)', '1,234');
+    frInput.value = '';
+
+    debug('');
+    debug('English US locale (period decimal separator)');
+    var enInput = document.getElementById('input-en');
+    enInput.focus();
+
+    shouldBeEqualToString('document.execCommand("InsertText", false, "5.6"); enInput.value', '5.6');
+    shouldBeEqualToString('getVisibleText(enInput)', '5.6');
+    enInput.value = '';
+
+    debug('');
+    debug('Duplicate decimal separator rejected in English:');
+    shouldBeEqualToString('document.execCommand("InsertText", false, "1.2.3"); enInput.value', '1.23');
+    shouldBeEqualToString('getVisibleText(enInput)', '1.23');
+    enInput.value = '';
+
+    debug('');
+    debug('Pasting number with comma group separators in German (period decimal):');
+    deInput.focus();
+    shouldBeEqualToString('document.execCommand("InsertText", false, "1,327,489.05"); deInput.value', '1327489.05');
+    shouldBeEqualToString('getVisibleText(deInput)', '1327489.05');
+    deInput.value = '';
+
+    debug('');
+    debug('Pasting number with period group separators in German (comma decimal):');
+    shouldBeEqualToString('document.execCommand("InsertText", false, "1.327.489,05"); deInput.value', '1327489.05');
+    shouldBeEqualToString('getVisibleText(deInput)', '1327489,05');
+    deInput.value = '';
+
+    debug('');
+    debug('Pasting number with comma group separators in English (period decimal):');
+    enInput.focus();
+    shouldBeEqualToString('document.execCommand("InsertText", false, "1,327,489.05"); enInput.value', '1327489.05');
+    shouldBeEqualToString('getVisibleText(enInput)', '1327489.05');
+    enInput.value = '';
+
+    debug('');
+    debug('Pasting number with period group separators in English (treated as multiple decimals):');
+    shouldBeEqualToString('document.execCommand("InsertText", false, "1.327.489,05"); enInput.value', '1.32748905');
+    shouldBeEqualToString('getVisibleText(enInput)', '1.32748905');
+    enInput.value = '';
+</script>
+</body>

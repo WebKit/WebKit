@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("HAR.RemoteAddress");
+
+    suite.addTestCase({
+        name: "HAR.RemoteAddress.Port",
+        description: "WI.HARBuilder.port should extract the trailing port, or undefined when there is none.",
+        test() {
+            InspectorTest.expectEqual(WI.HARBuilder.port("12.34.56.78:443"), 443, "IPv4 address with a port returns the port.");
+            InspectorTest.expectEqual(WI.HARBuilder.port("12.34.56.78:80"), 80, "IPv4 address with a different port returns the port.");
+            InspectorTest.expectEqual(WI.HARBuilder.port("[::1]:8080"), 8080, "Bracketed IPv6 address with a port returns the port.");
+            InspectorTest.expectEqual(WI.HARBuilder.port("[2001:db8::1]:443"), 443, "Bracketed IPv6 address with a port returns the port.");
+
+            // Regression test: lastIndexOf(":") returns -1 when there is no colon.
+            // A `!index` guard fails to catch -1 (which is truthy), so the whole
+            // string was parsed as a port (e.g. parseInt("12.34.56.78") === 12).
+            InspectorTest.expectEqual(WI.HARBuilder.port("12.34.56.78"), undefined, "IPv4 address with no port returns undefined.");
+            InspectorTest.expectEqual(WI.HARBuilder.port("localhost"), undefined, "Hostname with no port returns undefined.");
+
+            InspectorTest.expectEqual(WI.HARBuilder.port(""), undefined, "Empty remote address returns undefined.");
+            InspectorTest.expectEqual(WI.HARBuilder.port(undefined), undefined, "Missing remote address returns undefined.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HAR.RemoteAddress.IPAddress",
+        description: "WI.HARBuilder.ipAddress should strip the trailing port.",
+        test() {
+            InspectorTest.expectEqual(WI.HARBuilder.ipAddress("12.34.56.78:443"), "12.34.56.78", "Strips the port from an IPv4 address.");
+            InspectorTest.expectEqual(WI.HARBuilder.ipAddress("12.34.56.78"), "12.34.56.78", "IPv4 address with no port is unchanged.");
+            InspectorTest.expectEqual(WI.HARBuilder.ipAddress(""), "", "Empty remote address returns the empty string.");
+            InspectorTest.expectEqual(WI.HARBuilder.ipAddress(undefined), "", "Missing remote address returns the empty string.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for WI.HARBuilder.port and WI.HARBuilder.ipAddress remote address parsing.</p>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .container {
+        will-change: transform;
+        padding: 10px;
+        width: 200px;
+        height: 100px;
+    }
+    
+    .intermediate {
+        position: relative;
+        padding: 10px;
+    }
+    
+    img {
+        width: 50px;
+        height: 50px;
+    }
+    
+    pre {
+        min-height: 16px;
+    }
+    
+</style>
+<body>
+    <pre id="layers">Layer tree goes here in DRT</pre>
+    <div class="container">
+        <img>
+    </div>
+
+    <div class="container">
+        <div>
+            <div class="intermediate">
+                <div>
+                    <img style="position: relative">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <img style="opacity: 0.8">
+    </div>
+
+    <div class="container">
+        <img style="scale: 1.1">
+    </div>
+
+    <script>
+        if (window.internals && window.testRunner) {
+            internals.clearMemoryCache();
+            internals.setScreenContentsFormatsForTesting(["RGBA8", "RGBA16F"]);
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+ 
+        var image = new Image;
+        image.onload = (() => {
+            if (window.internals)
+                internals.setHasHDRContentForTesting(image);
+
+            const images = document.getElementsByTagName('img');
+            for (let img of images)
+                img.src = image.src;
+
+            if (window.testRunner) {
+                document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        });
+        image.src = "../../fast/images/resources/green-400x400.png";
+    </script>
+</body>
+</html>

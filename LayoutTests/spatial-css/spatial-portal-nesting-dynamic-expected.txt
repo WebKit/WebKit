@@ -1,0 +1,3 @@
+
+PASS Toggling spatial: portal on an ancestor suppresses and restores a descendant portal
+

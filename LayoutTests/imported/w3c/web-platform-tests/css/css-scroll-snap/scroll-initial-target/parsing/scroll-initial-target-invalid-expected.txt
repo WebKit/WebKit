@@ -1,0 +1,7 @@
+
+PASS e.style['scroll-initial-target'] = "invalid_keyword" should not set the property value
+PASS e.style['scroll-initial-target'] = "100px" should not set the property value
+PASS e.style['scroll-initial-target'] = "none none none" should not set the property value
+PASS e.style['scroll-initial-target'] = "invalid_keyword1 invalid_keyword2" should not set the property value
+PASS e.style['scroll-initial-target'] = "100px 100px" should not set the property value
+

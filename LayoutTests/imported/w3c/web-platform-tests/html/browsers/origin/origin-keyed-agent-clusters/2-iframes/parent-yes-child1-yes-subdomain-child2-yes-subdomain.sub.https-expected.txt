@@ -1,0 +1,11 @@
+
+PASS Parent to child1: messageerror event must occur
+PASS Parent to child1: setting document.domain must not give sync access
+PASS Parent to child2: messageerror event must occur
+PASS Parent to child2: setting document.domain must not give sync access
+PASS child1 to child2: setting document.domain must give sync access
+PASS child2 to child1: setting document.domain must give sync access
+PASS parent: originAgentCluster must equal true
+PASS child1: originAgentCluster must equal true
+PASS child2: originAgentCluster must equal true
+

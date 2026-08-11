@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CSS Test Reference: ::first-letter rebuild after text insertion</title>
+  <style>
+  div::first-letter {
+      color: green;
+  }
+  div {
+      font-size: 50px;
+  }
+  </style>
+</head>
+<body>
+  <p>Test passes if "ABC" appears below with "A" in green.</p>
+  <div>ABC</div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+// Copyright (C) 2022 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+PRODUCT_NAME = TestIPC;
+
+// IR PGO profile generation flags
+WK_PGO_GEN_FLAGS = $(WK_PGO_GEN_FLAGS_$(ENABLE_LLVM_PROFILE_GENERATION));
+WK_PGO_GEN_FLAGS_YES = -fprofile-generate;
+
+GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+
+OTHER_CFLAGS = $(inherited) $(WK_PGO_GEN_FLAGS);
+
+WK_UIKITMACHELPER_LDFLAGS = $(WK_UIKITMACHELPER_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;
+
+WK_BROWSERENGINEKIT_LDFLAGS =
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=iphone*] = -framework BrowserEngineKit
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=appletv*] =
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=watch*] =
+WK_BROWSERENGINEKIT_LDFLAGS[sdk=xr*] =
+
+OTHER_LDFLAGS = $(inherited) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_BROWSERENGINEKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) -framework UniformTypeIdentifiers -framework Testing $(WK_PGO_GEN_FLAGS);
+OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon -framework CoreServices -framework IOSurface -framework CoreVideo;
+OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework CoreGraphics -framework MobileCoreServices -framework UIKit -framework CoreText -framework IOSurface -framework CoreVideo;
+
+LD_RUNPATH_SEARCH_PATHS = "@loader_path";
+
+STRIP_STYLE = debugging;
+
+WEBKIT_FRAMEWORK_RESOURCES_PATH = WebKit.framework;
+WEBKIT_FRAMEWORK_RESOURCES_PATH[sdk=macosx*] = WebKit.framework/Versions/A/Resources;
+INSTALL_PATH = $(PRODUCTION_PUBLIC_FRAMEWORKS_DIR)/$(WEBKIT_FRAMEWORK_RESOURCES_PATH);
+
+ENTITLEMENTS_REQUIRED = $(ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_$(USE_INTERNAL_SDK))
+ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_ = NO;
+ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_NO = NO;
+ENTITLEMENTS_REQUIRED_USE_INTERNAL_SDK_YES = $(ENTITLEMENTS_REQUIRED);
+
+SWIFT_OBJC_BRIDGING_HEADER = Runner/TestWebKitAPI-Bridging-Header.h;

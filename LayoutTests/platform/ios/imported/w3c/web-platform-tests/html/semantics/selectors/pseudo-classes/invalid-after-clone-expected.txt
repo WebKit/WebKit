@@ -1,0 +1,4 @@
+
+
+FAIL Cloned invalid inputs / textareas with interactive changes get their validity state copied correctly assert_true: input should match :invalid expected true got false
+

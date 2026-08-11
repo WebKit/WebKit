@@ -1,0 +1,5 @@
+
+PASS LABEL association
+PASS LABEL click
+PASS ElementInternals.labels should throw NotSupportedError if the target element is not a form-associated custom element
+

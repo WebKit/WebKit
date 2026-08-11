@@ -1,0 +1,42 @@
+Test 1:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test 2:
+SyntaxError: Cannot declare a let variable twice: 'x'.
+Test 3:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test 4:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test 5:
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+Test 6:
+SyntaxError: Cannot declare a let variable twice: 'x'.
+Test 7:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test 8:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test 9:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test a1:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test a2:
+SyntaxError: Cannot declare a let variable twice: 'x'.
+Test a3:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test a4:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test a5:
+SyntaxError: Cannot declare a var variable that shadows a let/const/class variable: 'x'.
+Test a6:
+SyntaxError: Cannot declare a let variable twice: 'x'.
+Test a7:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test a8:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test a9:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test b1:
+SyntaxError: Cannot declare a const variable twice: 'x'.
+Test b2:
+SyntaxError: Cannot declare a let variable twice: 'x'.
+Test b3:
+SyntaxError: Cannot declare a let variable twice: 'x'.

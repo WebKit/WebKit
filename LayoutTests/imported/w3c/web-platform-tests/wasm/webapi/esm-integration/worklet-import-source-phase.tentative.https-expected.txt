@@ -1,0 +1,3 @@
+
+FAIL Import a source phase module to a worklet SyntaxError: Unexpected identifier 'modSource'. Expected 'from' before imported module name.
+

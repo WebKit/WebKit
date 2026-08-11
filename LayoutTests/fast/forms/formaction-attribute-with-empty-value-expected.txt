@@ -1,0 +1,23 @@
+Test to ensure formAction attribute returns the URL of the document when the attribute is not specified or empty.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+element = document.createElement("input");
+PASS element.formAction is location.href
+PASS element.setAttribute("formaction", "http://webkit.org/foo.html"); element.formAction is "http://webkit.org/foo.html"
+PASS element.setAttribute("formaction", ""); element.formAction is location.href
+base = document.createElement("base"); document.head.appendChild(base); base.href = "https://bugs.webkit.org/";
+PASS element.formAction is location.href
+PASS element.setAttribute("formaction", "foo.html"); element.formAction is "https://bugs.webkit.org/foo.html"
+PASS element.setAttribute("formaction", ""); element.formAction is location.href
+
+element = document.createElement("button");
+PASS element.formAction is location.href
+PASS element.setAttribute("formaction", "http://webkit.org/foo.html"); element.formAction is "http://webkit.org/foo.html"
+PASS element.setAttribute("formaction", ""); element.formAction is location.href
+base = document.createElement("base"); document.head.appendChild(base); base.href = "https://bugs.webkit.org/";
+PASS element.formAction is location.href
+PASS element.setAttribute("formaction", "foo.html"); element.formAction is "https://bugs.webkit.org/foo.html"
+PASS element.setAttribute("formaction", ""); element.formAction is location.href
+

@@ -1,0 +1,210 @@
+/*
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "config.h"
+#include "RenderScrollbarPart.h"
+
+#include "PaintInfo.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderScrollbar.h"
+#include "RenderScrollbarTheme.h"
+#include "RenderView.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
+#include <wtf/StackStats.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderScrollbarPart);
+
+RenderScrollbarPart::RenderScrollbarPart(Document& document, Style::ComputedStyle&& style, RenderScrollbar* scrollbar, ScrollbarPart part)
+    : RenderBlock(Type::ScrollbarPart, document, WTF::move(style), { })
+    , m_scrollbar(scrollbar)
+    , m_part(part)
+{
+    ASSERT(isRenderScrollbarPart());
+}
+
+RenderScrollbarPart::~RenderScrollbarPart() = default;
+
+void RenderScrollbarPart::layout()
+{
+    StackStats::LayoutCheckPoint layoutCheckPoint;
+    setLocation(LayoutPoint()); // We don't worry about positioning ourselves. We're just determining our minimum width/height.
+    if (m_scrollbar->orientation() == ScrollbarOrientation::Horizontal)
+        layoutHorizontalPart();
+    else
+        layoutVerticalPart();
+
+    clearNeedsLayout();
+}
+
+void RenderScrollbarPart::layoutHorizontalPart()
+{
+    if (m_part == ScrollbarBGPart) {
+        setBorderBoxWidth(protect(m_scrollbar.get())->width());
+        computeScrollbarHeight();
+    } else {
+        computeScrollbarWidth();
+        setBorderBoxHeight(protect(m_scrollbar.get())->height());
+    }
+}
+
+void RenderScrollbarPart::layoutVerticalPart()
+{
+    if (m_part == ScrollbarBGPart) {
+        computeScrollbarWidth();
+        setBorderBoxHeight(protect(m_scrollbar.get())->height());
+    } else {
+        setBorderBoxWidth(protect(m_scrollbar.get())->width());
+        computeScrollbarHeight();
+    }
+}
+
+static int calcScrollbarThicknessUsing(const Style::PreferredSize& preferredSize, Style::ZoomFactor zoomFactor)
+{
+    if (preferredSize.isFixed())
+        return Style::evaluateMinimum<LayoutUnit>(preferredSize, 0_lu, zoomFactor);
+    return ScrollbarTheme::theme().scrollbarThickness();
+}
+
+static int calcScrollbarThicknessUsing(const Style::MinimumSize& minimumSize, Style::ZoomFactor zoomFactor)
+{
+    if (minimumSize.isFixed() || minimumSize.isAuto())
+        return Style::evaluateMinimum<LayoutUnit>(minimumSize, 0_lu, zoomFactor);
+    return ScrollbarTheme::theme().scrollbarThickness();
+}
+
+static int calcScrollbarThicknessUsing(const Style::MaximumSize& maximumSize, Style::ZoomFactor zoomFactor)
+{
+    if (maximumSize.isFixed())
+        return Style::evaluateMinimum<LayoutUnit>(maximumSize, 0_lu, zoomFactor);
+    return ScrollbarTheme::theme().scrollbarThickness();
+}
+
+void RenderScrollbarPart::computeScrollbarWidth()
+{
+    if (!protect(m_scrollbar.get())->owningRenderer())
+        return;
+    auto zoomFactor = style().usedZoomForLength();
+    auto width = calcScrollbarThicknessUsing(style().width(), zoomFactor);
+    auto minWidth = calcScrollbarThicknessUsing(style().minWidth(), zoomFactor);
+    auto maxWidth = style().maxWidth().isNone() ? width : calcScrollbarThicknessUsing(style().maxWidth(), zoomFactor);
+    setBorderBoxWidth(std::max(minWidth, std::min(maxWidth, width)));
+    
+    // Buttons and track pieces can all have margins along the axis of the scrollbar. 
+    m_marginBox.setLeft(Style::evaluateMinimum<LayoutUnit>(style().marginLeft(), 0_lu, style().usedZoomForLength()));
+    m_marginBox.setRight(Style::evaluateMinimum<LayoutUnit>(style().marginRight(), 0_lu, style().usedZoomForLength()));
+}
+
+void RenderScrollbarPart::computeScrollbarHeight()
+{
+    if (!protect(m_scrollbar.get())->owningRenderer())
+        return;
+    auto zoomFactor = style().usedZoomForLength();
+    auto height = calcScrollbarThicknessUsing(style().height(), zoomFactor);
+    auto minHeight = calcScrollbarThicknessUsing(style().minHeight(), zoomFactor);
+    auto maxHeight = style().maxHeight().isNone() ? height : calcScrollbarThicknessUsing(style().maxHeight(), zoomFactor);
+    setBorderBoxHeight(std::max(minHeight, std::min(maxHeight, height)));
+
+    // Buttons and track pieces can all have margins along the axis of the scrollbar. 
+    m_marginBox.setTop(Style::evaluateMinimum<LayoutUnit>(style().marginTop(), 0_lu, style().usedZoomForLength()));
+    m_marginBox.setBottom(Style::evaluateMinimum<LayoutUnit>(style().marginBottom(), 0_lu, style().usedZoomForLength()));
+}
+
+void RenderScrollbarPart::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+    setInline(false);
+    clearPositionedState();
+    setFloating(false);
+    setHasNonVisibleOverflow(false);
+    if (oldStyle && m_scrollbar && m_part != NoPart && diff >= Style::DifferenceResult::Repaint)
+        m_scrollbar->theme().invalidatePart(protect(*m_scrollbar), m_part);
+}
+
+void RenderScrollbarPart::imageChanged(WrappedImagePtr image, const IntRect* rect)
+{
+    if (m_scrollbar && m_part != NoPart)
+        m_scrollbar->theme().invalidatePart(protect(*m_scrollbar), m_part);
+    else {
+        CheckedRef frameView = view().frameView();
+        if (frameView->isFrameViewScrollCorner(*this)) {
+            frameView->invalidateScrollCorner(frameView->scrollCornerRect());
+            return;
+        }
+        
+        RenderBlock::imageChanged(image, rect);
+    }
+}
+
+void RenderScrollbarPart::paintIntoRect(GraphicsContext& graphicsContext, const LayoutPoint& paintOffset, const LayoutRect& rect)
+{
+    // Make sure our dimensions match the rect.
+    setLocation(rect.location() - toLayoutSize(paintOffset));
+    setBorderBoxWidth(rect.width());
+    setBorderBoxHeight(rect.height());
+
+    if (graphicsContext.paintingDisabled() || style().opacity().isTransparent())
+        return;
+
+    // We don't use RenderLayers for scrollbar parts, so we need to handle opacity here.
+    // Opacity for ScrollbarBGPart is handled by RenderScrollbarTheme::willPaintScrollbar().
+    bool needsTransparencyLayer = m_part != ScrollbarBGPart && !style().opacity().isOpaque();
+    if (needsTransparencyLayer) {
+        graphicsContext.save();
+        graphicsContext.clip(rect);
+        graphicsContext.beginTransparencyLayer(Style::evaluate<float>(style().opacity()));
+    }
+    
+    // Now do the paint.
+    PaintInfo paintInfo(graphicsContext, snappedIntRect(rect), PaintPhase::BlockBackground, PaintBehavior::Normal);
+    paint(paintInfo, paintOffset);
+    paintInfo.phase = PaintPhase::ChildBlockBackgrounds;
+    paint(paintInfo, paintOffset);
+    paintInfo.phase = PaintPhase::Float;
+    paint(paintInfo, paintOffset);
+    paintInfo.phase = PaintPhase::Foreground;
+    paint(paintInfo, paintOffset);
+    paintInfo.phase = PaintPhase::Outline;
+    paint(paintInfo, paintOffset);
+
+    if (needsTransparencyLayer) {
+        graphicsContext.endTransparencyLayer();
+        graphicsContext.restore();
+    }
+}
+
+RenderBox* RenderScrollbarPart::rendererOwningScrollbar() const
+{
+    if (!m_scrollbar)
+        return nullptr;
+    return protect(m_scrollbar.get())->owningRenderer();
+}
+
+}

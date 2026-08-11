@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+        var tests = [];
+
+        function go()
+        {
+            findMediaElement();
+            tests.push(testNoAlternateGroup);
+            tests.push(testSomeInAlternateGroup);
+            tests.push(testAlternateGroupWithFallback);
+            nextTest();
+        }
+
+        function nextTest()
+        {
+            if (!tests.length) {
+                endTest();
+                return;
+            }
+            tests.shift()();
+        }
+
+        function testNoAlternateGroup()
+        {
+            consoleWrite('');
+            consoleWrite('Test that media containing three audio tracks with no alternate group results in three AudioTracks')
+            run('video.src = findMediaFile("video", "../content/audio-tracks-no-alternate-group")');
+            waitForEventOnce('canplaythrough', e => {
+                testExpected('video.audioTracks.length', 3);
+                Array.prototype.forEach.call(video.audioTracks, track => {
+                    consoleWrite(`TRACK id:${ track.id } kind:${ track.kind } language:${ track.language}`);
+                });
+                nextTest();
+            });
+        }
+
+        function testSomeInAlternateGroup()
+        {
+            consoleWrite('');
+            consoleWrite('Test that media containing two audio tracks in one alternate group and one track without an alternate group results in two AudioTracks')
+            run('video.src = findMediaFile("video", "../content/audio-tracks-some-in-alternate-group")');
+            waitForEventOnce('canplaythrough', e => {
+                testExpected('video.audioTracks.length', 2);
+                Array.prototype.forEach.call(video.audioTracks, track => {
+                    consoleWrite(`TRACK id:${ track.id } kind:${ track.kind } language:${ track.language}`);
+                });
+                nextTest();
+            });
+        }
+
+        function testAlternateGroupWithFallback()
+        {
+            consoleWrite('');
+            consoleWrite('Test that media containing six audio tracks, with three audio tracks each referring to a separate track as a fallback track, all in one alternate group, results in three AudioTracks')
+            run('video.src = findMediaFile("video", "../content/audio-tracks-alternate-group-with-fallback")');
+            waitForEventOnce('canplaythrough', e => {
+                testExpected('video.audioTracks.length', 3);
+                Array.prototype.forEach.call(video.audioTracks, track => {
+                    consoleWrite(`TRACK id:${ track.id } kind:${ track.kind } language:${ track.language}`);
+                });
+                nextTest();
+            });
+        }
+
+        </script>
+    </head>
+    <body onload="go()">
+        <video controls></video>
+        <p>Video elements containing audio tracks with alternate groups.</p>
+    </body>
+</html>

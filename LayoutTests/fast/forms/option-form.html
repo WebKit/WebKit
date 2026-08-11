@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<form id="form1"><option id="option1"></form>
+<form id="form2"><optgroup><option id="option2"></optgroup></form>
+<form id="form3"><select><option id="option3"></select></form>
+<form id="form4"><select><optgroup><option id="option4"></optgroup></select></form>
+<form id="form5a"></form><form id="form5b"><select form="form5a"><option id="option5"></select></form>
+<script>
+description(`This tests option element's form IDL attribute returns null when it's not associated with a select element.`);
+shouldBeNull('option1.form');
+shouldBeNull('option2.form');
+shouldBe('option3.form', 'form3');
+shouldBe('option4.form', 'form4');
+shouldBe('option5.form', 'form5a');
+</script>
+</body>
+</html>

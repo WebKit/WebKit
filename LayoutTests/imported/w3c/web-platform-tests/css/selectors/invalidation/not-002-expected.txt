@@ -1,0 +1,17 @@
+Red
+Red
+Green
+Green
+Blue
+Blue
+Red
+Blue
+Red
+
+PASS Preconditions.
+PASS Invalidate :not() for simple selector arguments.
+PASS Invalidate :not() for compound selector arguments.
+PASS Invalidate :not() for complex selector arguments.
+PASS Invalidate nested :is() inside :not().
+PASS Test specificity of :not().
+

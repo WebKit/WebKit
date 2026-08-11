@@ -1,0 +1,25 @@
+Tests dispatching an event that bubbles inside a detached tree. The event should propagate to the ancestors of the target
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+clonedRoot = cloneNode(root)
+clonedTarget = clonedRoot.getElementById("target"); dispatchEventWithLog(clonedTarget);
+PASS clonedRoot instanceof DocumentFragment is true
+PASS log.length is 4
+PASS log[0] is [clonedTarget, clonedTarget]
+PASS log[1] is [clonedTarget.parentNode, clonedTarget]
+PASS log[2] is [clonedTarget.parentNode.parentNode, clonedTarget]
+PASS log[3] is [clonedRoot, clonedTarget]
+PASS clonedRoot.parentNode is null
+
+root.remove(); dispatchEventWithLog(target);
+PASS log.length is 3
+PASS log[0] is [target, target]
+PASS log[1] is [target.parentNode, target]
+PASS log[2] is [root, target]
+PASS root.parentNode is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

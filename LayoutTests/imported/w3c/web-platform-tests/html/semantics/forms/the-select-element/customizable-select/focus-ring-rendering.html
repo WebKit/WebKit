@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>select::picker(select), select::picker-icon { transition-duration: 0s !important; }</style>
+<link rel=help href="https://crbug.com/389729368">
+<link rel=match href="focus-ring-rendering-ref.html">
+
+<style>
+select {
+  appearance: base-select;
+}
+</style>
+
+<select id="target">
+  <option>Option 1</option>
+</select>
+
+<script>
+  onload = () => target.focus();
+</script>

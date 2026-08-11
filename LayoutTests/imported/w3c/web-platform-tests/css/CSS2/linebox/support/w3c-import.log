@@ -1,0 +1,29 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/1x1-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/black15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/blue96x96.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/green15x15.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/green_box.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/iframe-inner.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/inline-formatting-context-022.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/ruler-v-100px-200px.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/swatch-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/swatch-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/swatch-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/linebox/support/swatch-white.png

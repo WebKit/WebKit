@@ -1,0 +1,3 @@
+
+FAIL pointer updates (removing source elements) assert_equals: error events on c expected 1 but got 0
+

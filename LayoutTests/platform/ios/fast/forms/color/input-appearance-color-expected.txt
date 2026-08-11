@@ -1,0 +1,115 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {H3} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 161x22
+          text run at (0,0) width 161: "Default Appearance"
+      RenderBlock (anonymous) at (0,40) size 784x47
+        RenderText {#text} at (0,0) size 457x18
+          text run at (0,0) width 457: "List color controls have different appearance if ENABLE(DATALIST)."
+        RenderBR {BR} at (456,0) size 1x18
+        RenderBlock {INPUT} at (0,18) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#000000]
+        RenderBlock {INPUT} at (28,18) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#000000]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {H3} at (0,105) size 784x23
+        RenderText {#text} at (0,0) size 159x22
+          text run at (0,0) width 159: "Different Font Sizes"
+      RenderBlock (anonymous) at (0,146) size 784x47
+        RenderText {#text} at (0,0) size 590x18
+          text run at (0,0) width 590: "List color controls have different sizes depending on font sizes. Normal color controls don't."
+        RenderBR {BR} at (589,0) size 1x18
+        RenderBlock {INPUT} at (0,18) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#00FF00]
+        RenderText {#text} at (28,26) size 4x19
+          text run at (28,26) width 4: " "
+        RenderBlock {INPUT} at (32,18) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#00FF00]
+        RenderText {#text} at (60,26) size 4x19
+          text run at (60,26) width 4: " "
+        RenderBlock {INPUT} at (64,18) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#00FF00]
+        RenderText {#text} at (92,26) size 4x19
+          text run at (92,26) width 4: " "
+        RenderBlock {INPUT} at (96,18) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#00FF00]
+        RenderText {#text} at (124,26) size 4x19
+          text run at (124,26) width 4: " "
+        RenderBlock {INPUT} at (128,18) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#00FF00]
+        RenderText {#text} at (156,26) size 4x19
+          text run at (156,26) width 4: " "
+        RenderBlock {INPUT} at (160,18) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {H3} at (0,210) size 784x23
+        RenderText {#text} at (0,0) size 120x22
+          text run at (0,0) width 120: "Various Colors"
+      RenderBlock (anonymous) at (0,251) size 784x29
+        RenderBlock {INPUT} at (0,0) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#FF0000]
+        RenderText {#text} at (28,8) size 4x19
+          text run at (28,8) width 4: " "
+        RenderBlock {INPUT} at (32,0) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#00FF00]
+        RenderText {#text} at (60,8) size 4x19
+          text run at (60,8) width 4: " "
+        RenderBlock {INPUT} at (64,0) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#0000FF]
+        RenderText {#text} at (92,8) size 4x19
+          text run at (92,8) width 4: " "
+        RenderBlock {INPUT} at (96,0) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#EC008C]
+        RenderText {#text} at (124,8) size 4x19
+          text run at (124,8) width 4: " "
+        RenderBlock {INPUT} at (128,0) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#40E0D0]
+        RenderText {#text} at (156,8) size 4x19
+          text run at (156,8) width 4: " "
+        RenderBlock {INPUT} at (160,0) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#FF0000]
+        RenderText {#text} at (188,8) size 4x19
+          text run at (188,8) width 4: " "
+        RenderBlock {INPUT} at (192,0) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#00FF00]
+        RenderText {#text} at (220,8) size 4x19
+          text run at (220,8) width 4: " "
+        RenderBlock {INPUT} at (224,0) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#0000FF]
+        RenderText {#text} at (252,8) size 4x19
+          text run at (252,8) width 4: " "
+        RenderBlock {INPUT} at (256,0) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#EC008C]
+        RenderText {#text} at (284,8) size 4x19
+          text run at (284,8) width 4: " "
+        RenderBlock {INPUT} at (288,0) size 28x28 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 22x22
+            RenderBlock {DIV} at (2,2) size 18x18 [bgcolor=#40E0D0]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {H3} at (0,298) size 784x23
+        RenderText {#text} at (0,0) size 116x22
+          text run at (0,0) width 116: "Arbitrary Size"
+      RenderBlock (anonymous) at (0,339) size 784x31
+        RenderBlock {INPUT} at (0,0) size 100x30 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (3,3) size 94x24
+            RenderBlock {DIV} at (2,2) size 90x20 [bgcolor=#FF0000]

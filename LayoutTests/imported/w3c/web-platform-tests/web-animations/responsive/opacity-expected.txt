@@ -1,0 +1,8 @@
+
+PASS fillOpacity responsive to inherited changes
+PASS floodOpacity responsive to inherited changes
+PASS opacity responsive to inherited changes
+PASS shapeImageThreshold responsive to inherited changes
+PASS stopOpacity responsive to inherited changes
+PASS strokeOpacity responsive to inherited changes
+

@@ -1,0 +1,66 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+
+<h1 id="heading-before">Content Before Iframe</h1>
+
+<iframe id="iframe" src="http://localhost:8000/site-isolation/accessibility/resources/iframe-with-headings.html"></iframe>
+
+<h2 id="heading-after">Content After Iframe</h2>
+
+<script>
+var output = "Tests that immediateDescendantsOnly search on an ignored FrameHost returns no results.\n";
+output += "The FrameHost is ignored with ENABLE_ACCESSIBILITY_LOCAL_FRAME. Without the fix, the search\n";
+output += "dispatches to the child frame and returns its content, which VoiceOver cannot place in the\n";
+output += "FrameHost's (empty) children list, causing an infinite navigation loop.\n\n";
+
+window.jsTestIsAsync = true;
+accessibilityController.setClientAccessibilityMode(true);
+
+var frameHost, backwardResults, forwardResults;
+async function runTest() {
+    if (!window.accessibilityController)
+        return;
+
+    if (window.internals) {
+        // Enable mock child frame search results so the cross-process search returns
+        // a result instead of timing out due to the test infrastructure IPC deadlock.
+        internals.setShouldMockChildFrameSearchResultsForTesting(true);
+    }
+
+    await waitForElements([
+        (element) => element.role.includes("Heading"),
+    ]);
+
+    var root = accessibilityController.rootElement;
+    var webArea = root.childAtIndex(0);
+
+    // Get the FrameHost via the remote element parent chain, the same way
+    // VoiceOver discovers it after interacting out of a cross-origin iframe.
+    frameHost = webArea.childAtIndex(1).parentElement();
+    output += expect("frameHost.rawRoleForTesting.includes('FrameHost')", "true");
+    output += expect("frameHost.isIgnored", "true");
+
+    // Backward search from the FrameHost with immediateDescendantsOnly=true.
+    // This is the exact search VoiceOver performs when the user interacts out
+    // of a cross-origin iframe and presses VO-Left. With the fix, the search
+    // returns 0 results because the FrameHost is ignored. Without the fix,
+    // the mock child frame result would be returned, causing the loop.
+    backwardResults = frameHost.uiElementsForSearchPredicate(frameHost, false, "AXAnyTypeSearchKey", "", false, true, 10);
+    output += expect("backwardResults.length", "0");
+
+    // Forward search should also return 0 for the same reason.
+    forwardResults = frameHost.uiElementsForSearchPredicate(frameHost, true, "AXAnyTypeSearchKey", "", false, true, 10);
+    output += expect("forwardResults.length", "0");
+
+    debug(output);
+    finishJSTest();
+}
+
+document.getElementById("iframe").onload = runTest;
+</script>
+</body>
+</html>

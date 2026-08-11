@@ -1,0 +1,7 @@
+
+PASS cookieStore.set with domain on IDNA host
+PASS cookieStore.set with mixed casing domain
+PASS cookieStore.set with public suffix domain
+PASS cookieStore.set with domain on a IDNA host
+PASS cookieStore.set with domain set to the current hostname but differently cased
+

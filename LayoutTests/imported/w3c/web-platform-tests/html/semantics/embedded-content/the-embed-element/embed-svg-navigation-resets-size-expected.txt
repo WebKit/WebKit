@@ -1,0 +1,4 @@
+
+
+PASS Intrinsic sizing of SVG embedded via <embed> should disappear on navigation
+

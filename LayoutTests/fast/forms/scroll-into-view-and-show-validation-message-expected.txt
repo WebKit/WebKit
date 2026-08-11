@@ -1,0 +1,11 @@
+Tests that the validation bubble is shown even if the invalid field needs to be scrolled into view.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS message is "Fill out this field"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Submit
+

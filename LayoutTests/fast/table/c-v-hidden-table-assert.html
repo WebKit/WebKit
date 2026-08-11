@@ -1,0 +1,29 @@
+<script src="../../resources/ui-helper.js"></script>
+<style>
+body {
+  content-visibility: hidden;
+}
+
+tbody {
+  -webkit-text-stroke-width: 2px; 
+  content-visibility: hidden;
+}
+</style>
+<body>PASS if no crash or assert.<table><tbody id=tbody></tbody></table>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+async function runTest() {
+  await UIHelper.renderingUpdate();
+
+  tbody.style.opacity = "0.5";
+  tbody.innerText = "text";
+  document.body.offsetLeft;
+  tbody.innerText = "more text";
+
+  await UIHelper.renderingUpdate();
+
+  testRunner?.notifyDone();
+}
+window.addEventListener('load', runTest, false);
+</script>

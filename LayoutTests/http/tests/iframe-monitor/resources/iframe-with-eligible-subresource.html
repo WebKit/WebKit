@@ -1,0 +1,9 @@
+Using significant resources and eligible for resource monitoring.
+
+<script>
+    const size = 20 * 1024;
+    fetch(`./generate-byte.py?size=${size}&eligibility=--eligible--`).then(async (response) => {
+        const body = await response.blob();
+        parent.postMessage(true, "*");
+    });
+</script>

@@ -1,0 +1,72 @@
+<html>
+<head>
+    <script src="resources/property-names.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function log(message)
+        {
+            var console = document.getElementById("console");
+            console.appendChild(document.createTextNode(message + "\n"));
+        }
+
+        function dumpComputedStyle(element, properties)
+        {
+            var style = getComputedStyle(element);
+
+            if (!properties) {
+                for (var i = 0; i != style.length; ++i) {
+                    var name = style.item(i);
+                    if (!propertiesToTest[name])
+                        continue;
+                    log(name + ": " + style.getPropertyValue(name));
+                }
+                properties = hiddenComputedStyleProperties;
+            }
+
+            for (var i = 0; i != properties.length; ++i) {
+                var name = properties[i];
+                log(name + ": " + style.getPropertyValue(name));
+            }
+            log("");
+        }
+
+        function test()
+        {
+            var outerDiv = document.getElementById("outer");
+            var middleDiv = document.getElementById("middle");
+            var innerDiv = document.getElementById("inner");
+
+            log("Computed style of an element whose parent's 'display' value is 'none':");
+            dumpComputedStyle(innerDiv);
+
+            outerDiv.style.color = "blue";
+            middleDiv.style.fontSize = "large";
+            log("After changing grandparent's 'color' and the parent's 'font-size' inherited properties:");
+            dumpComputedStyle(innerDiv, ["border-top-width", "color"]);
+
+            middleDiv.style.display = "block";
+            log("After changing the parent's 'display' property to 'block', so that the child gets a renderer:");
+            dumpComputedStyle(innerDiv, ["height", "margin-left", "width"]);
+
+            middleDiv.style.display = "";
+            log("After changing the parent's 'display' property back to 'none':");
+            dumpComputedStyle(innerDiv, ["height", "margin-left", "width"]);
+        }
+    </script>
+    <style>
+        div#middle { display: none; width: 700px; }
+        div#inner { background: green; border-top: 1em solid; height: 100px; margin-left: auto; width: 50%; }
+    </style>
+</head>
+<body onload="test()">
+    <pre id="console"></pre>
+    <div id="outer">
+        <div id="middle">
+            <div id="inner">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

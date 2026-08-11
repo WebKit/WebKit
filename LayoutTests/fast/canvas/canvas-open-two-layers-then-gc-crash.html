@@ -1,0 +1,23 @@
+<!-- webkit-test-runner [ GraphicsContextFiltersEnabled=false ]-->
+<!DOCTYPE html>
+
+<title>Shouldn't crash when two canvas layers are opened, then the CanvasRenderingContext2D is garbage collected</title>
+<script src="../../resources/gc.js"></script>
+
+<p>This test passes if it does not crash.</p>
+<canvas width="300" height="300" id="canvas"></canvas>
+
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  let context = canvas.getContext("2d");
+
+  context.beginLayer();
+  context.beginLayer();
+
+  // GC the context and <canvas>.
+  context = null;
+  canvas.remove();
+  gc();
+</script>

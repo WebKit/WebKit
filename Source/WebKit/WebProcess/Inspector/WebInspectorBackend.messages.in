@@ -1,0 +1,96 @@
+# Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+[
+    DispatchedFrom=UI,
+    DispatchedTo=WebContent
+]
+messages -> WebInspectorBackend {
+    Show() -> (bool success) Async
+    Close()
+
+    SetAttached(bool attached)
+
+    ShowConsole()
+    ShowResources()
+
+    ShowMainResourceForFrame(WebCore::FrameIdentifier frameIdentifier)
+
+    StartPageProfiling()
+    StopPageProfiling()
+
+    StartElementSelection()
+    StopElementSelection()
+
+    SetFrontendConnection(IPC::ConnectionHandle connectionHandle)
+
+    EnableNetworkInstrumentation()
+    DisableNetworkInstrumentation()
+
+    # Network overrides forwarded from the UIProcess ProxyingNetworkAgent. See rdar://181060656.
+    SetExtraHTTPHeaders(WebCore::HTTPHeaderMap headers)
+    SetResourceCachingDisabled(bool disabled)
+
+    EnablePageInstrumentation()
+    DisablePageInstrumentation()
+
+    # Fan out the "show paint rects" toggle. Under Site Isolation the Page domain is served by the
+    # UIProcess ProxyingPageAgent, so this never reaches the per-process InspectorPageAgent; each
+    # process instead draws in its own frame's coordinate space.
+    SetShowPaintRects(bool show)
+
+    # Returns, for each requested frame that is local to this process, its committed document's
+    # loaderId and cached subresources as typed data, for the UIProcess ProxyingPageAgent to build
+    # Page.getResourceTree cross-process under Site Isolation. The proxy walks the frame tree and
+    # asks each process only for the frames it hosts. See webkit.org/b/308896.
+    GetFrameResourceData(Vector<WebCore::FrameIdentifier> frameIDs) -> (Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>> resourcesByFrame) Async
+
+    # Returns the content of a resource (the frame's committed main document, or a cached
+    # subresource identified by url) for a frame local to this WebContent process, for the
+    # UIProcess ProxyingPageAgent to serve Page.getResourceContent cross-process under Site
+    # Isolation. errorString is non-empty when the frame isn't local here or the resource
+    # isn't found. See webkit.org/b/171780776.
+    GetFrameResourceContent(WebCore::FrameIdentifier frameID, String url) -> (String content, bool base64Encoded, String errorString) Async
+
+    # Reply: value = success; unexpected with a non-empty error = real failure; unexpected with an
+    # empty error = connection loss (AsyncReplyError), which ProxyingNetworkAgent fails explicitly.
+    GetResponseBody(WebCore::ResourceLoaderIdentifier resourceID) -> (Expected<std::pair<String, bool>, String> result) Async
+
+    # Serialize the resource's response certificate for Network.getSerializedCertificate. Same
+    # Expected error convention as GetResponseBody (empty errorString on the unexpected means
+    # connection loss); only the success payload differs -- here a single certificate String.
+    GetSerializedCertificate(WebCore::ResourceLoaderIdentifier resourceID) -> (Expected<String, String> result) Async
+
+    # Network.loadResource: load a URL in the given frame's document context on behalf of the inspector,
+    # without cross-origin checks. Reply is {content, mimeType, status}, or an unexpected error string
+    # (same empty-string == connection-loss convention as GetResponseBody above).
+    LoadResource(WebCore::FrameIdentifier frameID, String url) -> (Expected<std::tuple<String, String, int>, String> result) Async
+
+    # Page.searchInResource (requestId branch): search one XHR/Fetch body in this process's store.
+    SearchInRequest(WebCore::ResourceLoaderIdentifier resourceID, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchMatch> matches, String errorString) Async
+
+    # Page.searchInResource (frame+URL branch): search one cached resource in a frame local to this process.
+    SearchInFrameResource(WebCore::FrameIdentifier frameID, String url, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchMatch> matches, String errorString) Async
+
+    # Page.searchInResources: search each requested local frame's cached resources plus this process's XHR/Fetch bodies.
+    SearchInFramesAndRequests(Vector<WebCore::FrameIdentifier> frameIDs, String query, bool caseSensitive, bool isRegex) -> (Vector<Inspector::SearchResult> results) Async
+}

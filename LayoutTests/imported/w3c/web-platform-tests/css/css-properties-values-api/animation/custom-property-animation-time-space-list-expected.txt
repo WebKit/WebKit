@@ -1,0 +1,8 @@
+
+PASS Animating a custom property of type <time>+
+PASS Animating a custom property of type <time>+ with a single keyframe
+PASS Animating a custom property of type <time>+ with additivity
+PASS Animating a custom property of type <time>+ with a single keyframe and additivity
+PASS Animating a custom property of type <time>+ with iterationComposite
+PASS Animating a custom property of type <time>+ with different lengths is discrete
+

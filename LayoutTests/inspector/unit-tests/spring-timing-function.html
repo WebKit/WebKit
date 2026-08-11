@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createSyncSuite("WI.SpringTimingFunction");
+
+    suite.addTestCase({
+        name: "WI.SpringTimingFunction.fromString.Valid",
+        test() {
+            let test = (inputString, expectedString) => {
+                expectedString ||= inputString;
+                InspectorTest.expectEqual(WI.SpringTimingFunction.fromString(inputString).toString(), expectedString, `Should parse '${inputString}' as '${expectedString}'.`);
+            };
+
+            test("spring(1 2 3 4)");
+            test("spring(0.1 0.2 0.3 0.4)", "spring(1 1 0.3 0.4)");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.SpringTimingFunction.fromString.Invalid",
+        test() {
+            let test = (inputString) => {
+                InspectorTest.expectNull(WI.SpringTimingFunction.fromString(inputString), `Should not parse invalid '${inputString}'.`);
+            };
+
+            test("spring()");
+            test("spring(0)");
+            test("spring(0 1)");
+            test("spring(0 1 2)");
+            test("spring(\"test\")");
+            test("spring(0 \"test\")");
+            test("spring(0 1 \"test\")");
+            test("spring(0 1 2 \"test\")");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for WI.SpringTimingFunction.</p>
+</body>
+</html>

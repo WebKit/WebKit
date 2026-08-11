@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+        testRunner.waitUntilDone();
+    }
+    if (window.internals)
+        internals.settings.setEnableOpaqueLoadingForMedia(true);
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<video src="http://localhost:8000/media/resources/hls/playlist-with-cookie.m3u8" crossorigin>
+<script>
+    var entries = new Set();
+    let gotMetadata = false;
+    const expectedEntries = 3;
+    let runTest = function() {
+        for (let entry of performance.getEntriesByType('resource')) {
+            if (entries.has(entry.name))
+                continue;
+            entries.add(entry.name);
+            if (entries.size <= expectedEntries)
+                debug(entry.name);
+        }
+
+        if (window.testRunner && gotMetadata && entries.size >= expectedEntries)
+            testRunner.notifyDone();
+    };
+    let video = document.querySelector("video");
+    setInterval(runTest, 100);
+
+    video.addEventListener("loadedmetadata", (e) => {
+        gotMetadata = true;
+        if (window.testRunner && gotMetadata && entries.size >= expectedEntries)
+            testRunner.notifyDone();
+    });
+</script>
+</body>
+</html>

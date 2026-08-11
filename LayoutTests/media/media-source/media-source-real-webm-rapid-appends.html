@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-rapid-appends</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests appending many short segments sequentially, simulating adaptive
+    // streaming behavior. This exercises the IPC pipeline under load — a
+    // pattern that exposed back-pressure and CPU-pegging bugs during the
+    // re-architecture (where each sample dispatched as a separate main-thread task).
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Append 10 one-second segments sequentially
+        for (var i = 0; i < 10; i++) {
+            var media = WebM.mediaSegment({
+                sequenceNumber: i + 1,
+                tracks: [{ id: 1, type: 'video', baseDecodeTime: i * 1000, samples: [
+                    { duration: 1000, isSync: true },
+                ]}]
+            });
+            sourceBuffer.appendBuffer(media);
+            await waitFor(sourceBuffer, 'updateend');
+        }
+
+        // Should have one contiguous range [0, 10)
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 10, 0.05);
+
+        run('source.endOfStream()');
+        testExpected('source.readyState', 'ended');
+        testExpectedEqualWithTolerance('source.duration', 10, 0.05);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

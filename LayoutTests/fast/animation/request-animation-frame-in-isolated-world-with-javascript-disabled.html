@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<title>rAF fires in isolated world when JavaScript is disabled</title>
+<link rel="match" href="request-animation-frame-in-isolated-world-with-javascript-disabled-expected.html">
+<style>
+  #result {
+    width: 150px;
+    height: 150px;
+    background-color: red;
+  }
+</style>
+<p>The box below should be green.</p>
+<div id="result"></div>
+<script>
+if (window.testRunner) {
+    internals.settings.setScriptEnabled(false);
+
+    testRunner.evaluateScriptInIsolatedWorld(0,
+        "requestAnimationFrame(function() {\n" +
+        "    document.getElementById('result').style.backgroundColor = 'green';\n" +
+        "    document.documentElement.classList.remove('reftest-wait');\n" +
+        "});"
+    );
+}
+</script>
+</html>

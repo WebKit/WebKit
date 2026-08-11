@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <title>displaystyle</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- Test dynamic change of displaystyle -->
+    <math id="m1" displaystyle="true">
+      <munder><mo>O</mo><mo>O</mo></munder>
+      <mfrac><mi>x</mi><mi>y</mi></mfrac>
+    </math>
+    <math>
+      <mstyle id="m2" displaystyle="true">
+        <munder><mo>O</mo><mo>O</mo></munder>
+        <mfrac><mi>x</mi><mi>y</mi></mfrac>
+      </mstyle>
+    </math>
+    <math>
+      <mtable id="m3" displaystyle="true">
+        <mtr>
+          <mtd>
+            <munder><mo>O</mo><mo>O</mo></munder>
+            <mfrac><mi>x</mi><mi>y</mi></mfrac>
+          </mtd>
+        </mtr>
+      </mtable>
+    </math>
+    <math id="m4" displaystyle="false">
+      <msub><mo>O</mo><mo>O</mo></msub>
+      <mfrac><mi>x</mi><mi>y</mi></mfrac>
+    </math>
+    <math>
+      <mstyle id="m5" displaystyle="false">
+        <msub><mo>O</mo><mo>O</mo></msub>
+        <mfrac><mi>x</mi><mi>y</mi></mfrac>
+      </mstyle>
+    </math>
+    <math>
+      <mtable id="m6" displaystyle="false">
+        <mtr>
+          <mtd>
+            <msub><mo>O</mo><mo>O</mo></msub>
+            <mfrac><mi>x</mi><mi>y</mi></mfrac>
+          </mtd>
+        </mtr>
+      </mtable>
+    </math>
+
+  </body>
+</html>

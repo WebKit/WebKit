@@ -1,0 +1,3 @@
+
+PASS View Transitions: @view-transition removing opt-in doesn't skip active transition
+

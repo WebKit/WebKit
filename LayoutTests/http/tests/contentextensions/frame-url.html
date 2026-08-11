@@ -1,0 +1,13 @@
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    window.addEventListener("message", (event) => {
+        alert(event.data);
+        if (window.testRunner) {
+            testRunner.notifyDone();
+        }
+    });
+</script>
+<iframe src="resources/iframe.html"></iframe>

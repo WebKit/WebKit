@@ -1,0 +1,39 @@
+<html> 
+<head>
+
+<link rel=stylesheet href="../editingStyle.css" type="text/css">
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    extendSelectionForwardByLineCommand();
+    moveSelectionForwardByCharacterCommand();
+    moveSelectionBackwardByCharacterCommand();
+    extendSelectionBackwardByLineCommand();
+    copyCommand();
+    deleteCommand();
+    pasteAndMatchStyleCommand();
+    
+}
+
+</script>
+
+<title>Pasting plain text loses leading/trailing whitespace</title> 
+</head> 
+<body>
+
+<p>This tests to see if trailing spaces are lost during a copy/paste</p>
+
+<hr>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">there should be a single trailing space between the '.' and the last character in this sentence .</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

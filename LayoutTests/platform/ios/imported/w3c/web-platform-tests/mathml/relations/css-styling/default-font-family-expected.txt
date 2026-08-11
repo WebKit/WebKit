@@ -1,0 +1,4 @@
+
+PASS Default font-family on <math> is not inherited
+PASS Default font-family on <math> is 'math'
+

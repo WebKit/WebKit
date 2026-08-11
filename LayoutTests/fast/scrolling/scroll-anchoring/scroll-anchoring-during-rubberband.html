@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+        
+        .changer {
+            background-color: cyan;
+            width: 300px;
+            height: 200px;
+            overflow-anchor: none;
+        }
+        
+        body.changed .changer {
+            height: 220px;
+        }
+
+        .anchor {
+            background-color: green;
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+
+            if (window.internals)
+                internals.unconstrainedScrollTo(document.scrollingElement, 0, -100);
+
+            shouldBe('window.pageYOffset', '-100');
+            document.body.classList.add('changed');
+            shouldBe('window.pageYOffset', '-100');
+            
+            finishJSTest();
+        }, false);
+    </script>    
+</head>
+<body>
+    <div class="changer"></div>
+    <div class="anchor">
+    </div>
+</body>
+</html>

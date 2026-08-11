@@ -1,0 +1,10 @@
+A superset object-view-box (negative inset) must not let the opaque-foreground optimization suppress an obscured animated background's repaint, since the painted content leaves real gaps. This test requires DRT.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS repaintRects is not ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

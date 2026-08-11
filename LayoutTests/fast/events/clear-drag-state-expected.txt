@@ -1,0 +1,11 @@
+This test ensures we clear the drag state at the end of each drag. To test manually, drag the green box below twice. You should observe the same list of events in the same order twice.
+
+Drag me down twice!
+PASS
+
+span:span:dragenter
+span:div:dragenter
+div:div:dragenter
+span:span:dragleave
+span:div:dragleave
+

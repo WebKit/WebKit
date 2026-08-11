@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<style>
+.outer {
+    display: grid-lanes;
+    grid-template-rows: 10px;
+}
+.inner {
+    display: grid-lanes;
+    grid-template-rows: subgrid;
+}
+.item {
+    grid-row: span 10;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>This test passes if it does not crash.</p>
+<div class="outer"><div class="inner"><div class="item"></div></div></div>

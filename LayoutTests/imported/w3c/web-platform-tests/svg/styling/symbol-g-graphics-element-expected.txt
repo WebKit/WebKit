@@ -1,0 +1,4 @@
+
+FAIL <g> element has transform presentation style from being an SVGGraphicsElement assert_equals: expected "matrix(1, 0, 0, 1, 200, 0)" but got "none"
+FAIL <symbol> element has transform presentation style from being an SVGGraphicsElement assert_equals: expected "matrix(1, 0, 0, 1, 100, 0)" but got "none"
+

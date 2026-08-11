@@ -1,0 +1,2 @@
+This test passes if there is no crash in ASAN mode.
+Hèllo this is some text and let's make it a little bit longer.

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+
+description("Test that the window.navigator.xr wrapper preserves custom properties.");
+jsTestIsAsync = true;
+
+shouldBeUndefined("window.navigator.xr.customProperty");
+evalAndLog("window.navigator.xr.customProperty = 1");
+shouldBe("window.navigator.xr.customProperty", "1");
+gc();
+shouldBe("window.navigator.xr.customProperty", "1");
+
+onload = function() {
+    gc();
+    shouldBe("window.navigator.xr.customProperty", "1");
+    setTimeout(checkAndFinish, 0);
+}
+
+function checkAndFinish() {
+    gc();
+    shouldBe("window.navigator.xr.customProperty", "1");
+    finishJSTest();
+}
+
+</script>
+</body>
+</html>

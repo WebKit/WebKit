@@ -1,0 +1,18 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SmartListsAvailable=true ] -->
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable></div>
+<script>
+Markup.description('A marker on a single line (with no second line bearing a matching marker) should not trigger smart-list conversion. Typing "* Hello" should leave plain text.');
+
+var test = document.getElementById('test');
+test.focus();
+[...'* Hello'].forEach(typeCharacterCommand);
+Markup.dump('test');
+</script>
+</body>
+</html>

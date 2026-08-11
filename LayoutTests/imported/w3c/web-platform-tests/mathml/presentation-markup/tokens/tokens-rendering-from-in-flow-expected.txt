@@ -1,0 +1,11 @@
+
+PASS Rendering of mo should only be affected by in-flow children
+PASS Rendering of mi should only be affected by in-flow children
+PASS Rendering of mn should only be affected by in-flow children
+PASS Rendering of ms should only be affected by in-flow children
+PASS Rendering of mtext should only be affected by in-flow children
+
+
+
+
+

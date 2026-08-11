@@ -1,0 +1,57 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    scroll-snap-type: both mandatory;
+}
+
+.block {
+    height: 500px;
+    border: 1px solid black;
+    box-sizing: border-box;
+    scroll-snap-align: start;
+}
+</style>
+
+<body onload="runTest()">
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+</body>
+
+<script>
+jsTestIsAsync = true;
+
+async function runTest()
+{
+    description("Verifies that a momentum scroll always moves to the next or previous snap position no matter how far away it is.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.dragFromPointToPoint(150, 50, 150, 300, 0.1);
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+    shouldBe("document.body.scrollTop", "500");
+
+    await UIHelper.dragFromPointToPoint(150, 50, 150, 300, 0.1);
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+    shouldBe("document.body.scrollTop", "1000");
+
+    await UIHelper.dragFromPointToPoint(150, 10, 150, 350, 0.1);
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+    shouldBe("document.body.scrollTop", "500");
+   finishJSTest();
+}
+</script>
+</html>

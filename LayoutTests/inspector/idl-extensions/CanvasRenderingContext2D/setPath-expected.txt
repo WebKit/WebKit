@@ -1,0 +1,10 @@
+Test that the IDL extensions for CanvasRenderingContext2D work correctly.
+
+
+== Running test suite: IDLExtensions.CanvasRenderingContext2D
+-- Running test case: IDLExtensions.CanvasRenderingContext2D.setPath
+PASS: Should modify X after setting new path.
+PASS: Should modify Y after setting new path.
+PASS: Should modify X after setting empty path.
+PASS: Should modify Y after setting empty path.
+

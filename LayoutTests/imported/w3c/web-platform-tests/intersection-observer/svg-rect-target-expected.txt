@@ -1,0 +1,6 @@
+
+PASS IntersectionObserver observing an SVG <rect> element
+PASS First rAF.
+PASS document.scrollingElement.scrollTop = 300
+PASS document.scrollingElement.scrollTop = 100
+

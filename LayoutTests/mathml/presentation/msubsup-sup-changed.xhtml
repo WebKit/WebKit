@@ -1,0 +1,19 @@
+<html xmlns='http://www.w3.org/1999/xhtml'> 
+<head> 
+<title>msubsup javascript superscript change test</title> 
+</head> 
+<body> 
+<p> 
+<math xmlns='http://www.w3.org/1998/Math/MathML'> 
+<msubsup id="subsup"><mi>x</mi><mn>1</mn><mi>k</mi></msubsup> 
+</math> 
+</p> 
+<script type='text/javascript'>
+var msubsup = document.getElementById("subsup");
+msubsup.removeChild(msubsup.firstChild.nextSibling.nextSibling);
+var sup = document.createElementNS("http://www.w3.org/1998/Math/MathML","mi");
+sup.appendChild(document.createTextNode("j"));
+msubsup.appendChild(sup);
+</script>
+</body>
+</html>

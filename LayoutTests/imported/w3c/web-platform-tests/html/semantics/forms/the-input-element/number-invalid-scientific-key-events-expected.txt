@@ -1,0 +1,7 @@
++
+
+PASS Reject multiple signs after 'e' (-)
+PASS Reject multiple signs after 'e' (+)
+PASS Leading '+' with existing 'e'
+PASS Insert - at start
+

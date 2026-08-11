@@ -1,0 +1,18 @@
+<style>
+div {
+  font-size: 20px;
+  font-family: Monospace;
+  margin: 10px;
+  border: 1px solid;
+  overflow: hidden;
+}
+span {
+  color: transparent;
+  letter-spacing: -2em;
+}
+</style>
+<div>PASS if this is visible</div>
+<div><br>PASS if this is visible</div>
+<div><span style="margin-left: -5px;"></span>PASS if this is partially visible</div>
+<div><span style="margin-right: -5px;"></span>PASS if this is partially visible</div>
+<div><span style="margin: -2.5px;"></span>PASS if this is partially visible</div>

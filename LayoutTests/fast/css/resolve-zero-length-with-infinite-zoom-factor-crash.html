@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<style>
+  .scaled_up { zoom: 65536; }
+</style>
+<div class="scaled_up">
+  <div class="scaled_up">
+    <div class="scaled_up">
+      <div class="scaled_up">
+        <div class="scaled_up">
+          <div class="scaled_up">
+            <div class="scaled_up">
+              <div class="scaled_up">
+                <!-- Bug 295239 -->
+                <div style="-webkit-logical-height: 0px;"></div>
+                <div style="scroll-padding-right: 0px;"></div>
+
+                <!-- Bug 295240 -->
+                <div style="max-width: 0px;"></div>
+                <div style="flex-basis: 0px;"></div>
+
+                <!-- Bug 295241 -->
+                <div style="-webkit-padding-start: 0px;"></div>
+                <div style="-webkit-padding-end: 0px;"></div>
+                <div style="-webkit-padding-before: 0px;"></div>
+                <div style="-webkit-padding-after: 0px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  onload = _ => {
+    window.testRunner?.dumpAsText();
+    document.body.innerHTML = "PASS if no crash."
+  }
+</script>

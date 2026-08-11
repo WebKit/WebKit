@@ -1,0 +1,3 @@
+
+FAIL Tests that creation of a "new Worker()" will occur in parallel assert_true: expected true got false
+

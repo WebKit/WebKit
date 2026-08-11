@@ -1,0 +1,127 @@
+/*
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "StyleOffsetPosition.h"
+
+#include "CSSKeywordValue.h"
+#include "CSSPositionValue.h"
+#include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+InitialInlines.h"
+#include "StyleKeyword+Logging.h"
+#include "StylePrimitiveNumericOrKeyword+Blending.h"
+#include "StylePrimitiveNumericTypes+Blending.h"
+#include "StylePrimitiveNumericTypes+Logging.h"
+#include <wtf/text/TextStream.h>
+
+namespace WebCore {
+namespace Style {
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+auto OffsetPosition::convert(const AcceleratedEffectOffsetPosition& value) -> Variant<CSS::Keyword::Auto, CSS::Keyword::Normal, Position>
+{
+    return WTF::switchOn(value.value,
+        [](const AcceleratedEffectOffsetPosition::Normal&) -> Variant<CSS::Keyword::Auto, CSS::Keyword::Normal, Position> {
+            return CSS::Keyword::Normal { };
+        },
+        [](const AcceleratedEffectOffsetPosition::Auto&) -> Variant<CSS::Keyword::Auto, CSS::Keyword::Normal, Position> {
+            return CSS::Keyword::Auto { };
+        },
+        [](const FloatPoint& position) -> Variant<CSS::Keyword::Auto, CSS::Keyword::Normal, Position> {
+            return Position { position };
+        }
+    );
+}
+
+#endif
+// MARK: - Conversion
+
+auto CSSValueConversion<OffsetPosition>::operator()(BuilderState& state, const CSSValue& value) -> OffsetPosition
+{
+    if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
+        switch (keywordValue->valueID()) {
+        case CSSValueAuto:
+            return CSS::Keyword::Auto { };
+        case CSSValueNormal:
+            return CSS::Keyword::Normal { };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Auto { };
+        }
+    }
+
+    RefPtr positionValue = requiredDowncast<CSSPositionValue>(state, value);
+    if (!positionValue)
+        return CSS::Keyword::Auto { };
+    return toStyle(positionValue->position(), state);
+}
+
+// MARK: - Blending
+
+auto Blending<OffsetPosition>::canBlend(const OffsetPosition& a, const OffsetPosition& b) -> bool
+{
+    return a.isPosition() && b.isPosition();
+}
+
+auto Blending<OffsetPosition>::requiresInterpolationForAccumulativeIteration(const OffsetPosition& a, const OffsetPosition& b) -> bool
+{
+    ASSERT(canBlend(a, b));
+    return Style::requiresInterpolationForAccumulativeIteration(*a.tryPosition(), *b.tryPosition());
+}
+
+auto Blending<OffsetPosition>::blend(const OffsetPosition& a, const OffsetPosition& b, const BlendingContext& context) -> OffsetPosition
+{
+    if (context.isDiscrete) {
+        ASSERT(!context.progress || context.progress == 1.0);
+        return context.progress ? b : a;
+    }
+
+    ASSERT(canBlend(a, b));
+    return OffsetPosition { Style::blend(*a.tryPosition(), *b.tryPosition(), context) };
+}
+
+// MARK: - Evaluation
+
+#if ENABLE(THREADED_ANIMATIONS)
+
+auto Evaluation<OffsetPosition, AcceleratedEffectOffsetPosition>::operator()(const OffsetPosition& value, FloatSize referenceBox, ZoomFactor zoom) -> AcceleratedEffectOffsetPosition
+{
+    return WTF::switchOn(value,
+        [&](const Style::Position& position) -> AcceleratedEffectOffsetPosition {
+            return { .value = Style::evaluate<FloatPoint>(position, referenceBox, zoom) };
+        },
+        [](const CSS::Keyword::Normal&) -> AcceleratedEffectOffsetPosition {
+            return { .value = AcceleratedEffectOffsetPosition::Normal { } };
+        },
+        [](const CSS::Keyword::Auto&) -> AcceleratedEffectOffsetPosition {
+            return { .value = AcceleratedEffectOffsetPosition::Auto { } };
+        }
+    );
+}
+
+#endif
+
+} // namespace Style
+} // namespace WebCore

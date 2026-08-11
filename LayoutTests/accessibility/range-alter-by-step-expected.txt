@@ -1,0 +1,19 @@
+This test makes sure that if a range type has a step value, that increment and decrement work.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rangeInput.intValue is 25
+PASS rangeInput.intValue === 50
+PASS rangeInput.intValue === 75
+PASS rangeInput.intValue === 100
+PASS rangeInput.intValue === 100
+PASS rangeInput.intValue === 75
+PASS rangeInput.intValue === 50
+PASS rangeInput.intValue === 25
+PASS rangeInput.intValue === 0
+PASS rangeInput.intValue === 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+
+
+PASS focus when a modal dialog is opened
+

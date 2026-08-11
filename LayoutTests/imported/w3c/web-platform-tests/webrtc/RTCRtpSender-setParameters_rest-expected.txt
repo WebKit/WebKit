@@ -1,0 +1,4 @@
+
+PASS setParameters() when transceiver is stopped should reject with InvalidStateError
+FAIL setParameters() with already used parameters should work if the event loop has not been relinquished promise_test: Unhandled rejection with value: object "InvalidStateError: getParameters must be called before setParameters"
+

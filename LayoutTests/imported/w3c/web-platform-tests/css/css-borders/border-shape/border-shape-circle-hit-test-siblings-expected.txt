@@ -1,0 +1,5 @@
+
+FAIL CSS Borders Test: hit testing border-shape circle depth order with siblings assert_equals: Before sibling hit while not overlapping expected (string) "before" but got (object) null
+PASS CSS Borders Test: hit testing border-shape circle depth order with siblings 1
+PASS CSS Borders Test: hit testing border-shape circle depth order with siblings 2
+

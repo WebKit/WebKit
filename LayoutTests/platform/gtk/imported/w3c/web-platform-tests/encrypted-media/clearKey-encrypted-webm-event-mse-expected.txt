@@ -1,0 +1,10 @@
+
+EME API is supported OK
+Media source is opened OK
+EVENT(encrypted)
+EXPECTED (onEncryptedEvent.target == '[object HTMLVideoElement]') OK
+EXPECTED (onEncryptedEvent instanceof 'function MediaEncryptedEvent() { [native code] }') OK
+EXPECTED (onEncryptedEvent.initDataType.toLowerCase() == 'webm'), OBSERVED 'cenc' FAIL
+EXPECTED (onEncryptedEvent.initData != 'null') OK
+END OF TEST
+

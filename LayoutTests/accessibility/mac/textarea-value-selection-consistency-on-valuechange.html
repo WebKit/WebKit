@@ -1,0 +1,134 @@
+<!DOCTYPE html><!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<textarea id="textarea" rows="5" cols="40"></textarea>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("This tests that when an AXValueChanged notification fires for a textarea after inserting text, the accessibility selection (caret position) reported at that moment is consistent with the newly-reported value. Regression test for an isolated-tree bug where value updates and selection updates are delivered to the isolated tree on separate channels, leaving it temporarily inconsistent (value updated, selection stale) at the time the value-changed notification is delivered.");
+
+var textareaElement = document.getElementById("textarea");
+var axTextarea = 0;
+var axWebArea = 0;
+
+// The number of characters we type. Each keystroke should produce an AXValueChanged.
+var charactersToType = 5;
+var valueChangedCount = 0;
+
+// Records any inconsistency seen at AXValueChanged-delivery time. We keep the
+// details in a string (rather than debug()-ing immediately) so the committed
+// expected result stays stable in the passing case; on failure the details are
+// surfaced through testFailed().
+var inconsistencies = [];
+
+// Returns the length of the accessibility value string (stripping "AXValue: ").
+function currentValueLength() {
+    var value = axTextarea.stringValue;
+    if (!value)
+        return -1;
+    return value.replace(/^AXValue: /, "").length;
+}
+
+// Caret offset from the node-level AXSelectedTextRange ("{location, length}").
+function caretOffsetFromSelectedTextRange() {
+    var range = axTextarea.selectedTextRange;
+    if (!range)
+        return -1;
+    var match = /\{(\d+), (\d+)\}/.exec(range);
+    return match ? parseInt(match[1], 10) : -1;
+}
+
+// Caret offset from the tree-level AXSelectedTextMarkerRange.
+function caretOffsetFromSelectedMarkerRange() {
+    var markerRange = axWebArea.selectedTextMarkerRange();
+    if (!markerRange)
+        return -1;
+    var startMarker = axWebArea.startTextMarkerForTextMarkerRange(markerRange);
+    if (!startMarker)
+        return -1;
+    return axWebArea.indexForTextMarker(startMarker);
+}
+
+function notificationCallback(notification) {
+    if (notification != "AXValueChanged")
+        return;
+
+    valueChangedCount++;
+
+    // At the moment the value-changed notification is delivered, the caret should
+    // sit at the end of the inserted text, i.e. the selection should report an
+    // offset equal to the current value length. AXSelectedTextRange is the node-level
+    // selection an assistive technology reads in response to AXValueChanged; if it
+    // lags behind the value, the isolated tree is in an inconsistent state.
+    var valueLength = currentValueLength();
+    var caretFromRange = caretOffsetFromSelectedTextRange();
+    // AXSelectedTextMarkerRange is a second, tree-level selection representation,
+    // reported here for diagnostics only.
+    var caretFromMarker = caretOffsetFromSelectedMarkerRange();
+
+    var detail = `AXValueChanged #${valueChangedCount}: valueLength=${valueLength}, ` +
+        `AXSelectedTextRange caret=${caretFromRange}, AXSelectedTextMarkerRange caret=${caretFromMarker}`;
+
+    if (caretFromRange != valueLength)
+        inconsistencies.push(detail + " (INCONSISTENT: selection is stale relative to value)");
+}
+
+// Returns a promise that wiggles the mouse over the textarea. Doing this concurrently with typing
+// interleaves extra main-thread and AX-thread work, which makes the value-vs-selection race far more
+// likely to reproduce in isolated tree mode.
+async function wigglePromise() {
+    if (!window.eventSender)
+        return;
+    var rect = textareaElement.getBoundingClientRect();
+    for (var i = 0; i < 6; i++) {
+        eventSender.mouseMoveTo(rect.left + (i * 3), rect.top + (i * 2));
+        await new Promise(requestAnimationFrame);
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    textareaElement.focus();
+    axTextarea = accessibilityController.accessibleElementById("textarea");
+    axWebArea = accessibilityController.rootElement.childAtIndex(0);
+    axTextarea.addNotificationListener(notificationCallback);
+
+    setTimeout(async function() {
+        for (var i = 0; i < charactersToType; i++) {
+            var ch = String.fromCharCode("a".charCodeAt(0) + i);
+            // Kick off mouse wiggling concurrently with the keystroke to exercise the race.
+            var wiggle = wigglePromise();
+            if (window.eventSender)
+                eventSender.keyDown(ch);
+            else {
+                // Fallback for environments without eventSender: mutate the DOM directly.
+                textareaElement.value += ch;
+                textareaElement.setSelectionRange(textareaElement.value.length, textareaElement.value.length);
+            }
+            await wiggle;
+            // Wait until the AXValueChanged for this keystroke has been observed.
+            await waitFor(() => valueChangedCount > i);
+        }
+
+        if (!inconsistencies.length)
+            testPassed("Value and selection were consistent at every AXValueChanged notification.");
+        else {
+            for (var i = 0; i < inconsistencies.length; i++)
+                testFailed(inconsistencies[i]);
+        }
+
+        axTextarea.removeNotificationListener(notificationCallback);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+        .box {
+            width: 200px;
+            height: 100px;
+            border: 1px solid black;
+        }
+        
+        .composited {
+/*            transform: translateZ(0);*/
+        }
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        var windowScrollEventCount = 0;
+
+        async function testScrollOverLayer()
+        {
+            if (!window.eventSender)
+                return;
+
+            debug('Test scroll over composited layer');
+            await UIHelper.mouseWheelScrollAt(100, 50);
+            
+            shouldBe('windowScrollEventCount', '0');
+        }
+        
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+
+            window.addEventListener('scroll', () => {
+                ++windowScrollEventCount;
+            }, false);
+
+            window.addEventListener('wheel', (event) => {
+                debug('Got wheel event ' + event.deltaY);
+                event.preventDefault();
+            }, { passive: false });
+
+            await testScrollOverLayer();
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="composited box"></div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<style>
+*:has(> .parent-border) {
+  border: 2px red solid;
+}
+</style>
+<div>
+  <p>This div will have nothing</p>
+</div>
+<div>
+  <ul class="parent-border">
+    <li>This list will have a border because of :has.
+  </ul>
+</div>

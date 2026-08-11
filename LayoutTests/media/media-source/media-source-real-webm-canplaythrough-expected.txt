@@ -1,0 +1,6 @@
+
+EVENT(sourceopen)
+EVENT(loadedmetadata)
+EVENT(updateend)
+END OF TEST
+

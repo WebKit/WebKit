@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<!-- PoC for SVG <use> element accessibility recursion.
+
+     AccessibilitySVGObject::description() and helpText() call targetForUseElement(),
+     which resolves the <use> href to a DOM element, creates an AX object, and calls
+     description()/helpText() on it. If two <use> elements reference each other, this
+     recurses infinitely.
+
+     SVG's rendering engine detects circular <use> references and won't render them.
+     But the accessibility code does its own independent lookup via
+     SVGURIReference::targetElementFromIRIString() on the DOM, not the render tree.
+     If the AX objects are still created (via getOrCreate), the recursion can happen.
+
+     This test verifies:
+     1. Circular <use> references don't cause infinite recursion in accessibility.
+     2. Deep <use> chains don't cause stack overflow.
+-->
+
+<svg style="position: absolute;" xmlns="http://www.w3.org/2000/svg">
+    <!-- Test 1: Direct 2-element <use> cycle. -->
+    <use id="use-a" href="#use-b"/>
+    <use id="use-b" href="#use-a"/>
+
+    <!-- Test 2: Self-referencing <use>. -->
+    <use id="use-self" href="#use-self"/>
+
+    <!-- Test 3: 3-element <use> cycle. -->
+    <use id="use-c" href="#use-d"/>
+    <use id="use-d" href="#use-e"/>
+    <use id="use-e" href="#use-c"/>
+
+    <!-- Test 4: Deep <use> chain (not circular, but tests stack depth). -->
+    <use id="chain-1" href="#chain-2"/>
+    <use id="chain-2" href="#chain-3"/>
+    <use id="chain-3" href="#chain-4"/>
+    <use id="chain-4" href="#chain-5"/>
+    <use id="chain-5" href="#chain-6"/>
+    <use id="chain-6" href="#chain-7"/>
+    <use id="chain-7" href="#chain-8"/>
+    <use id="chain-8" href="#chain-9"/>
+    <use id="chain-9" href="#chain-10"/>
+    <use id="chain-10" href="#chain-end"/>
+    <rect id="chain-end" width="10" height="10">
+        <title>chain end</title>
+    </rect>
+</svg>
+
+<script>
+description("This tests that SVG use element cycles in accessibility do not cause infinite recursion or a crash.");
+
+if (window.accessibilityController) {
+    var output = "";
+
+    // Test 1: Direct 2-element <use> cycle.
+    // Accessing the description should not hang or crash, regardless of whether
+    // the elements are included in the accessibility tree.
+    var useA = accessibilityController.accessibleElementById("use-a");
+    if (useA)
+        output += expect("typeof platformValueForW3CName(useA)", "'string'");
+    else
+        output += "PASS: use-a not in accessibility tree (circular reference excluded)\n";
+
+    // Test 2: Self-referencing <use>.
+    var useSelf = accessibilityController.accessibleElementById("use-self");
+    if (useSelf)
+        output += expect("typeof platformValueForW3CName(useSelf)", "'string'");
+    else
+        output += "PASS: use-self not in accessibility tree (self-reference excluded)\n";
+
+    // Test 3: 3-element <use> cycle.
+    var useC = accessibilityController.accessibleElementById("use-c");
+    if (useC)
+        output += expect("typeof platformValueForW3CName(useC)", "'string'");
+    else
+        output += "PASS: use-c not in accessibility tree (circular reference excluded)\n";
+
+    // Test 4: Deep <use> chain. If the chain resolves, we should get the title
+    // from the final <rect> element.
+    var chain1 = accessibilityController.accessibleElementById("chain-1");
+    if (chain1)
+        output += expect("typeof platformValueForW3CName(chain1)", "'string'");
+    else
+        output += "PASS: chain-1 not in accessibility tree (chain excluded)\n";
+
+    debug(output);
+}
+</script>
+
+</body>
+</html>

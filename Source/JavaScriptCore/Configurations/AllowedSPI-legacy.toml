@@ -1,0 +1,41 @@
+# Longstanding SPI used by JavaScriptCore before we started auditing SPI use.
+# NEVER add to this list, only remove!
+
+[[legacy]]
+selectors = [
+    { name = "_web_looksLikeIPAddress", class = "?" },
+    { name = "matchedLanguagesFromAvailableLanguages:forPreferredLanguages:", class = "?" },
+    { name = "minimizedLanguagesFromLanguages:", class = "?" },
+]
+symbols = [
+    "BOMCopierCopyWithOptions",
+    "BOMCopierFree",
+    "BOMCopierNew",
+    "CFBundleCopyLocalizationForLocalizationInfo",
+    "CFBundleGetLocalizationInfoForLocalization",
+    "CFStringGetRangeOfCharacterClusterAtIndex",
+    "SecTaskCopyValueForEntitlement",
+    "SecTaskCreateFromSelf",
+    "SecTaskCreateWithAuditToken",
+    "_CFProcessPath",
+    "_CFXPCCreateCFObjectFromXPCMessage",
+    "_CFXPCCreateXPCMessageWithCFObject",
+    "_dyld_get_image_uuid",
+    "_dyld_get_shared_cache_uuid",
+    "cache_simulate_memory_warning_event",
+    "dyld_image_header_containing_address",
+    "dyld_shared_cache_file_path",
+    "xpc_connection_copy_entitlement_value",
+]
+
+[[legacy]]
+symbols = ["dyld_get_program_sdk_version"]
+# In internal builds, usage may be dead-stripped depending on WebKitAdditions
+# code in RuntimeApplicationChecks.
+allow-unused = true
+
+[[legacy]]
+symbols = [
+    "_dyld_get_dlopen_image_header",
+]
+requires-sdk = ["iOS <= 26.*"]

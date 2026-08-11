@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>window.opener setter throws TypeError if [[DefineOwnProperty]] fails</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/browsers.html#dom-opener">
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<body>
+<script>
+test(() => {
+    Object.defineProperty(window, "opener", { configurable: false });
+    assert_throws_js(TypeError, () => { window.opener = 1; });
+
+    const desc = Object.getOwnPropertyDescriptor(window, "opener");
+    assert_false("value" in desc);
+    assert_equals(typeof desc.get, "function");
+    assert_equals(typeof desc.set, "function");
+    assert_true(desc.enumerable);
+    assert_false(desc.configurable);
+}, "window.opener setter throws TypeError if called on non-configurable accessor property");
+</script>

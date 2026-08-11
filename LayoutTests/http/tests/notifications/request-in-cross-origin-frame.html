@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<iframe id="testFrame1" src="http://127.0.0.1:8000/notifications/resources/request-in-cross-origin-subframe.html"></iframe>
+<iframe id="testFrame2" src="http://localhost:8000/notifications/resources/request-in-cross-origin-subframe.html"></iframe>
+<script>
+description("This test checks requesting Notification permissions in iframes");
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var received = 0;
+
+onmessage = function(msg) {
+    permissionRequestResult = msg.data;
+    if (msg.origin == window.location.origin) {
+		if (msg.data != "Subframe permission: granted")
+			debug("Same origin frame failed: " + msg.data)
+	} else {
+		if (msg.data != "Subframe permission: denied")
+			debug("Cross origin frame failed: " + msg.data)
+    }
+	
+    if (++received == 2)
+        testCompleted();
+}
+
+onload = () => {
+    testFrame1.contentWindow.postMessage("foo", "*");
+    testFrame2.contentWindow.postMessage("foo", "*");
+};
+</script>

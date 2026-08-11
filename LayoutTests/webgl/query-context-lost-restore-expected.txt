@@ -1,0 +1,69 @@
+Tests that query context loss and restore behavior
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 54 PASS, 0 FAIL
+
+Running test: contextType: webgl, queryTarget: TIME_ELAPSED_EXT
+PASS query is non-null.
+PASS getError was expected value: NO_ERROR : beginQueryEXT(TIME_ELAPSED_EXT) should succeed
+PASS gl.isContextLost() is true
+PASS lostQuery is non-null.
+PASS Active query was collected after context loss
+PASS gl.isContextLost() is false
+PASS newQuery is non-null.
+PASS getError was expected value: NO_ERROR : beginQueryEXT(TIME_ELAPSED_EXT) with new query should succeed after restore
+PASS getError was expected value: NO_ERROR : endQueryEXT(TIME_ELAPSED_EXT) should succeed
+Running test: contextType: webgl, queryTarget: TIMESTAMP_EXT
+PASS query is non-null.
+PASS getError was expected value: NO_ERROR : queryCounterEXT(TIMESTAMP_EXT) should succeed
+PASS gl.isContextLost() is true
+PASS lostQuery is non-null.
+PASS Active query was collected after context loss
+PASS gl.isContextLost() is false
+PASS newQuery is non-null.
+PASS getError was expected value: NO_ERROR : queryCounterEXT(TIMESTAMP_EXT) with new query should succeed after restore
+Running test: contextType: webgl2, queryTarget: ANY_SAMPLES_PASSED
+PASS query is non-null.
+PASS getError was expected value: NO_ERROR : beginQuery(ANY_SAMPLES_PASSED) should succeed
+PASS gl.isContextLost() is true
+PASS lostQuery is non-null.
+PASS Active ANY_SAMPLES_PASSED query was collected after context loss
+PASS gl.isContextLost() is false
+PASS newQuery is non-null.
+PASS getError was expected value: NO_ERROR : beginQuery(ANY_SAMPLES_PASSED) with new query should succeed after restore
+PASS getError was expected value: NO_ERROR : endQuery(ANY_SAMPLES_PASSED) should succeed
+Running test: contextType: webgl2, queryTarget: ANY_SAMPLES_PASSED_CONSERVATIVE
+PASS query is non-null.
+PASS getError was expected value: NO_ERROR : beginQuery(ANY_SAMPLES_PASSED_CONSERVATIVE) should succeed
+PASS gl.isContextLost() is true
+PASS lostQuery is non-null.
+PASS Active ANY_SAMPLES_PASSED_CONSERVATIVE query was collected after context loss
+PASS gl.isContextLost() is false
+PASS newQuery is non-null.
+PASS getError was expected value: NO_ERROR : beginQuery(ANY_SAMPLES_PASSED_CONSERVATIVE) with new query should succeed after restore
+PASS getError was expected value: NO_ERROR : endQuery(ANY_SAMPLES_PASSED_CONSERVATIVE) should succeed
+Running test: contextType: webgl2, queryTarget: TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN
+PASS query is non-null.
+PASS getError was expected value: NO_ERROR : beginQuery(TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN) should succeed
+PASS gl.isContextLost() is true
+PASS lostQuery is non-null.
+PASS Active TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN query was collected after context loss
+PASS gl.isContextLost() is false
+PASS newQuery is non-null.
+PASS getError was expected value: NO_ERROR : beginQuery(TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN) with new query should succeed after restore
+PASS getError was expected value: NO_ERROR : endQuery(TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN) should succeed
+Running test: contextType: webgl2, queryTarget: TIME_ELAPSED_EXT
+PASS query is non-null.
+PASS getError was expected value: NO_ERROR : beginQuery(TIME_ELAPSED_EXT) should succeed
+PASS gl.isContextLost() is true
+PASS lostQuery is non-null.
+PASS Active TIME_ELAPSED_EXT query was collected after context loss
+PASS gl.isContextLost() is false
+PASS newQuery is non-null.
+PASS getError was expected value: NO_ERROR : beginQuery(TIME_ELAPSED_EXT) with new query should succeed after restore
+PASS getError was expected value: NO_ERROR : endQuery(TIME_ELAPSED_EXT) should succeed
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

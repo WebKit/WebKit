@@ -1,0 +1,5 @@
+
+PASS Send and receive messages using a same origin window.
+PASS Send and receive messages using a blob window.
+PASS Send and receive messages using a sandboxed same origin window.
+

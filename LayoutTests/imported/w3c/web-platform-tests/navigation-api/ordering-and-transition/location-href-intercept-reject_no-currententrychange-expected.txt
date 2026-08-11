@@ -1,0 +1,3 @@
+
+PASS event and promise ordering for location.href setter intercepted by passing a rejected promise to intercept()
+

@@ -1,0 +1,3 @@
+
+FAIL inline-size with var-substitution assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
+

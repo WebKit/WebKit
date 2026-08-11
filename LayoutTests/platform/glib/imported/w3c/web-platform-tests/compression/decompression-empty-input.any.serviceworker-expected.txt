@@ -1,0 +1,6 @@
+
+PASS decompressing gzip empty input should work
+PASS decompressing deflate empty input should work
+PASS decompressing deflate-raw empty input should work
+FAIL decompressing brotli empty input should work promise_test: Unhandled rejection with value: object "NotSupportedError: Unsupported algorithm"
+

@@ -1,0 +1,5068 @@
+/*
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WebPage.h"
+
+#if PLATFORM(IOS_FAMILY)
+
+#import "DocumentEditingContext.h"
+#import "DragInitiationResult.h"
+#import "DrawingArea.h"
+#import "EditingRange.h"
+#import "EditorState.h"
+#import "InteractionInformationAtPosition.h"
+#import "KeyEventInterpretationContext.h"
+#import "Logging.h"
+#import "MessageSenderInlines.h"
+#import "NativeWebKeyboardEvent.h"
+#import "PDFPluginBase.h"
+#import "PluginView.h"
+#import "PrintInfo.h"
+#import "RemoteLayerTreeDrawingArea.h"
+#import "RemoteRenderingBackendProxy.h"
+#import "RemoteScrollingCoordinator.h"
+#import "RemoteSnapshotRecorderProxy.h"
+#import "RemoteWebTouchEvent.h"
+#import "RevealItem.h"
+#import "SandboxUtilities.h"
+#import "ShareableBitmapUtilities.h"
+#import "SharedBufferReference.h"
+#import "SyntheticEditingCommandType.h"
+#import "TapHandlingResult.h"
+#import "TextCheckingControllerProxy.h"
+#import "UIKitSPI.h"
+#import "UnifiedPDFPlugin.h"
+#import "UserData.h"
+#import "ViewGestureGeometryCollector.h"
+#import "VisibleContentRectUpdateInfo.h"
+#import "WKAccessibilityWebPageObjectIOS.h"
+#import "WebAutocorrectionContext.h"
+#import "WebAutocorrectionData.h"
+#import "WebChromeClient.h"
+#import "WebEventConversion.h"
+#import "WebFrame.h"
+#import "WebImage.h"
+#import "WebPageInternals.h"
+#import "WebPageMessages.h"
+#import "WebPageProxyMessages.h"
+#import "WebPreviewLoaderClient.h"
+#import "WebProcess.h"
+#import "WebTouchEvent.h"
+#import <CoreText/CTFont.h>
+#import <WebCore/AXObjectCache.h>
+#import <WebCore/AXRemoteTokenIOS.h>
+#import <WebCore/AccessibilityObject.h>
+#import <WebCore/Autofill.h>
+#import <WebCore/AutofillElements.h>
+#import <WebCore/BoundaryPointInlines.h>
+#import <WebCore/Chrome.h>
+#import <WebCore/ContainerNodeInlines.h>
+#import <WebCore/ContentChangeObserver.h>
+#import <WebCore/DOMTimerHoldingTank.h>
+#import <WebCore/DataDetection.h>
+#import <WebCore/DataDetectionResultsStorage.h>
+#import <WebCore/DiagnosticLoggingClient.h>
+#import <WebCore/DiagnosticLoggingKeys.h>
+#import <WebCore/DocumentLoader.h>
+#import <WebCore/DocumentMarkerController.h>
+#import <WebCore/DocumentMarkers.h>
+#import <WebCore/DocumentQuirks.h>
+#import <WebCore/DragController.h>
+#import <WebCore/EditingHTMLConverter.h>
+#import <WebCore/EditingInlines.h>
+#import <WebCore/Editor.h>
+#import <WebCore/EditorClient.h>
+#import <WebCore/Element.h>
+#import <WebCore/ElementAncestorIteratorInlines.h>
+#import <WebCore/ElementAnimationContext.h>
+#import <WebCore/EventHandler.h>
+#import <WebCore/EventNames.h>
+#import <WebCore/EventTargetInlines.h>
+#import <WebCore/File.h>
+#import <WebCore/FloatQuad.h>
+#import <WebCore/FocusController.h>
+#import <WebCore/FocusControllerTypes.h>
+#import <WebCore/FontCache.h>
+#import <WebCore/FontCacheCoreText.h>
+#import <WebCore/FrameDestructionObserverInlines.h>
+#import <WebCore/GeometryUtilities.h>
+#import <WebCore/GraphicsLayer.h>
+#import <WebCore/HTMLAreaElement.h>
+#import <WebCore/HTMLAttachmentElement.h>
+#import <WebCore/HTMLBodyElement.h>
+#import <WebCore/HTMLElement.h>
+#import <WebCore/HTMLElementTypeHelpers.h>
+#import <WebCore/HTMLFormElement.h>
+#import <WebCore/HTMLHRElement.h>
+#import <WebCore/HTMLIFrameElement.h>
+#import <WebCore/HTMLImageElement.h>
+#import <WebCore/HTMLInputElement.h>
+#import <WebCore/HTMLLabelElement.h>
+#import <WebCore/HTMLModelElement.h>
+#import <WebCore/HTMLOptGroupElement.h>
+#import <WebCore/HTMLOptionElement.h>
+#import <WebCore/HTMLPlugInElement.h>
+#import <WebCore/HTMLSelectElement.h>
+#import <WebCore/HTMLSummaryElement.h>
+#import <WebCore/HTMLTextAreaElement.h>
+#import <WebCore/HTMLVideoElement.h>
+#import <WebCore/HandleUserInputEventResult.h>
+#import <WebCore/HistoryItem.h>
+#import <WebCore/HitTestResult.h>
+#import <WebCore/HitTestSource.h>
+#import <WebCore/ICUSearcher.h>
+#import <WebCore/Image.h>
+#import <WebCore/ImageOverlay.h>
+#import <WebCore/InputMode.h>
+#import <WebCore/KeyboardEvent.h>
+#import <WebCore/LibWebRTCProvider.h>
+#import <WebCore/LocalDOMWindow.h>
+#import <WebCore/LocalFrame.h>
+#import <WebCore/LocalFrameLoaderClient.h>
+#import <WebCore/LocalFrameView.h>
+#import <WebCore/MediaSessionManagerIOS.h>
+#import <WebCore/Node.h>
+#import <WebCore/NodeInlines.h>
+#import <WebCore/NodeList.h>
+#import <WebCore/NodeRenderStyle.h>
+#import <WebCore/NotImplemented.h>
+#import <WebCore/Page.h>
+#import <WebCore/PagePasteboardContext.h>
+#import <WebCore/Pasteboard.h>
+#import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/PlatformMediaSessionManager.h>
+#import <WebCore/PlatformMouseEvent.h>
+#import <WebCore/PlatformRenderTheme.h>
+#import <WebCore/PluginDocument.h>
+#import <WebCore/PluginViewBase.h>
+#import <WebCore/PointerCaptureController.h>
+#import <WebCore/PointerCharacteristics.h>
+#import <WebCore/PrintContext.h>
+#import <WebCore/Quirks.h>
+#import <WebCore/Range.h>
+#import <WebCore/RemoteFrame.h>
+#import <WebCore/RemoteFrameGeometryTransformer.h>
+#import <WebCore/RemoteFrameView.h>
+#import <WebCore/RenderBlock.h>
+#import <WebCore/RenderBoxInlines.h>
+#import <WebCore/RenderImage.h>
+#import <WebCore/RenderLayer.h>
+#import <WebCore/RenderLayerBacking.h>
+#import <WebCore/RenderLayerScrollableArea.h>
+#import <WebCore/RenderObjectInlines.h>
+#import <WebCore/RenderVideoInlines.h>
+#import <WebCore/RenderView.h>
+#import <WebCore/RenderedDocumentMarker.h>
+#import <WebCore/ScrollableArea.h>
+#import <WebCore/Settings.h>
+#import <WebCore/ShadowRoot.h>
+#import <WebCore/SharedBuffer.h>
+#import <WebCore/SharedMemory.h>
+#import <WebCore/StylePrimitiveNumericTypes+Evaluation.h>
+#import <WebCore/StyleProperties.h>
+#import <WebCore/TextIndicator.h>
+#import <WebCore/TextIterator.h>
+#import <WebCore/UserAgent.h>
+#import <WebCore/UserGestureIndicator.h>
+#import <WebCore/ViewportArguments.h>
+#import <WebCore/VisibleUnits.h>
+#import <WebCore/WebEvent.h>
+#import <WebCore/WritingSuggestionData.h>
+#import <pal/system/ios/UserInterfaceIdiom.h>
+#import <wtf/CoroutineUtilities.h>
+#import <wtf/MathExtras.h>
+#import <wtf/MemoryPressureHandler.h>
+#import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/Scope.h>
+#import <wtf/SetForScope.h>
+#import <wtf/cocoa/Entitlements.h>
+#import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/text/MakeString.h>
+#import <wtf/text/StringToIntegerConversion.h>
+#import <wtf/text/TextBreakIterator.h>
+#import <wtf/text/TextStream.h>
+#import <wtf/text/WTFString.h>
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+#import <WebCore/PromisedAttachmentInfo.h>
+#endif
+
+#import <pal/cocoa/RevealSoftLink.h>
+
+#define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebPage::" fmt, this, ##__VA_ARGS__)
+#define WEBPAGE_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - WebPage::" fmt, this, ##__VA_ARGS__)
+
+namespace WebKit {
+using namespace WebCore;
+
+static void adjustCandidateAutocorrectionInFrame(const String& correction, LocalFrame& frame)
+{
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    auto startPosition = frame.selection().selection().start();
+    auto endPosition = frame.selection().selection().end();
+
+    auto firstPositionInEditableContent = startOfEditableContent(startPosition);
+
+    auto referenceRange = makeSimpleRange(firstPositionInEditableContent, endPosition);
+    if (!referenceRange)
+        return;
+
+    auto correctedRange = findPlainText(*referenceRange, correction, { FindOption::Backwards });
+    if (correctedRange.collapsed())
+        return;
+
+    addMarker(correctedRange, WebCore::DocumentMarkerType::CorrectionIndicator);
+#else
+    UNUSED_PARAM(frame);
+#endif
+}
+
+// WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
+// we need to ignore differences that are within a small rounding error, with enough leeway
+// to handle rounding differences that may result from round-tripping through UIScrollView.
+bool scalesAreEssentiallyEqual(float a, float b)
+{
+    const auto scaleFactorEpsilon = 0.01f;
+    return WTF::areEssentiallyEqual(a, b, scaleFactorEpsilon);
+}
+
+void WebPage::platformDetach()
+{
+    [m_mockAccessibilityElement setWebPage:nullptr];
+}
+    
+void WebPage::platformInitializeAccessibility(ShouldInitializeNSAccessibility)
+{
+    m_mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
+    [m_mockAccessibilityElement setWebPage:this];
+
+    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
+    if (localMainFrame)
+        accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
+}
+
+void WebPage::platformReinitializeAccessibilityToken()
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
+}
+
+void WebPage::sendAccessibilityTokenIfNeeded()
+{
+    // On iOS, accessibility is always initialized eagerly, so this is a no-op.
+}
+
+RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
+{
+    return [[[NSUUID UUID] UUIDString] dataUsingEncoding:NSUTF8StringEncoding];
+}
+
+void WebPage::relayAccessibilityNotification(String&& notificationName, RetainPtr<NSData>&& notificationData)
+{
+    send(Messages::WebPageProxy::RelayAccessibilityNotification(WTF::move(notificationName), span(notificationData.get())));
+}
+
+void WebPage::relayAriaNotifyNotification(WebCore::AriaNotifyData&& notificationData)
+{
+    send(Messages::WebPageProxy::RelayAriaNotifyNotification(WTF::move(notificationData)));
+}
+
+void WebPage::relayLiveRegionNotification(WebCore::LiveRegionAnnouncementData&& notificationData)
+{
+    send(Messages::WebPageProxy::RelayLiveRegionNotification(WTF::move(notificationData)));
+}
+
+static void computeEditableRootHasContentAndPlainText(const VisibleSelection& selection, EditorState::PostLayoutData& data)
+{
+    data.hasContent = false;
+    data.hasPlainText = false;
+    if (!selection.isContentEditable())
+        return;
+
+    if (data.selectedTextLength || data.characterAfterSelection || data.characterBeforeSelection || data.twoCharacterBeforeSelection) {
+        // If any of these variables have been previously set, the editable root must have plain text content, so we can bail from the remainder of the check.
+        data.hasContent = true;
+        data.hasPlainText = true;
+        return;
+    }
+
+    RefPtr root = selection.rootEditableElement();
+    if (!root || editingIgnoresContent(*root))
+        return;
+
+    auto startInEditableRoot = firstPositionInNode(*root);
+    data.hasContent = root->hasChildNodes() && !isEndOfEditableOrNonEditableContent(startInEditableRoot);
+    if (data.hasContent) {
+        auto range = makeSimpleRange(
+            VisiblePosition { startInEditableRoot },
+            VisiblePosition { lastPositionInNode(*root) }
+        );
+        data.hasPlainText = range && hasAnyPlainText(*range);
+    }
+}
+
+bool WebPage::requiresPostLayoutDataForEditorState(const LocalFrame& frame) const
+{
+    // If we have a composition or are using a hardware keyboard then we need to send the full
+    // editor so that the UIProcess can update UI, including the position of the caret.
+    bool needsLayout = frame.editor().hasComposition();
+#if !PLATFORM(MACCATALYST)
+    needsLayout |= m_keyboardIsAttached;
+#endif
+    return needsLayout;
+}
+
+static void convertContentToRootView(const LocalFrameView& view, Vector<SelectionGeometry>& geometries)
+{
+    for (auto& geometry : geometries)
+        geometry.setQuad(view.contentsToRootView(geometry.quad()));
+}
+
+void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) const
+{
+    getPlatformEditorStateCommon(frame, result);
+
+    if (!result.hasPostLayoutAndVisualData())
+        return;
+
+    auto& postLayoutData = *result.postLayoutData;
+    auto& visualData = *result.visualData;
+
+    if (RefPtr document = frame.document())
+        visualData.needsHideSelectionDuringOverflowScrollQuirk = document->quirks().needsHideSelectionDuringOverflowScrollQuirk();
+
+    Ref view = *frame.view();
+
+    if (frame.editor().hasComposition()) {
+        if (auto compositionRange = protect(frame.editor())->compositionRange()) {
+            visualData.markedTextRects = RenderObject::collectSelectionGeometries(*compositionRange).geometries;
+            convertContentToRootView(view, visualData.markedTextRects);
+
+            postLayoutData.markedText = plainTextForContext(*compositionRange);
+            VisibleSelection compositionSelection(*compositionRange);
+            visualData.markedTextCaretRectAtStart = view->contentsToRootView(compositionSelection.visibleStart().absoluteCaretBounds(nullptr /* insideFixed */));
+            visualData.markedTextCaretRectAtEnd = view->contentsToRootView(compositionSelection.visibleEnd().absoluteCaretBounds(nullptr /* insideFixed */));
+        }
+    }
+
+    const auto& selection = frame.selection().selection();
+    std::optional<SimpleRange> selectedRange;
+    postLayoutData.isStableStateUpdate = m_isInStableState;
+
+    if (selection.isCaret()) {
+        // FIXME: The following check should take into account writing direction.
+        postLayoutData.isReplaceAllowed = result.isContentEditable && atBoundaryOfGranularity(selection.start(), TextGranularity::WordGranularity, SelectionDirection::Forward);
+
+        selectedRange = wordRangeFromPosition(selection.start());
+        postLayoutData.wordAtSelection = plainTextForContext(selectedRange);
+
+        if (selection.isContentEditable())
+            charactersAroundPosition(selection.start(), postLayoutData.characterAfterSelection, postLayoutData.characterBeforeSelection, postLayoutData.twoCharacterBeforeSelection);
+    } else if (selection.isRange()) {
+        selectedRange = selection.toNormalizedRange();
+        String selectedText;
+        if (selectedRange) {
+            selectedText = plainTextForDisplay(*selectedRange);
+            postLayoutData.selectedTextLength = selectedText.length();
+            const int maxSelectedTextLength = 200;
+            postLayoutData.wordAtSelection = selectedText.left(maxSelectedTextLength);
+            auto findSelectedEditableImageElement = [&] {
+                RefPtr<HTMLImageElement> foundImage;
+                if (!result.isContentEditable)
+                    return foundImage;
+
+                for (TextIterator iterator { *selectedRange, { } }; !iterator.atEnd(); iterator.advance()) {
+                    RefPtr imageElement = dynamicDowncast<HTMLImageElement>(iterator.node());
+                    if (!imageElement)
+                        continue;
+
+                    if (foundImage) {
+                        foundImage = nullptr;
+                        break;
+                    }
+
+                    foundImage = imageElement;
+                }
+                return foundImage;
+            };
+
+            if (auto imageElement = findSelectedEditableImageElement())
+                postLayoutData.selectedEditableImage = contextForElement(*imageElement);
+        }
+        // FIXME: We should disallow replace when the string contains only CJ characters.
+        postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.containsOnly<isASCIIWhitespace>();
+    }
+
+#if USE(DICTATION_ALTERNATIVES)
+    if (selectedRange) {
+        auto markers = protect(protect(frame.document())->markers())->markersInRange(*selectedRange, DocumentMarkerType::DictationAlternatives);
+        postLayoutData.dictationContextsForSelection = WTF::map(markers, [] (auto& marker) {
+            return std::get<DocumentMarker::DictationData>(marker->data()).context;
+        });
+    }
+#endif
+
+    if (!selection.isNone()) {
+        bool selectionIsEditable = selection.hasEditableStyle();
+        if (selectionIsEditable) {
+            // FIXME: The caret color style should be computed using the selection caret's container
+            // rather than the focused element. This causes caret colors in editable children to be
+            // ignored in favor of the editing host's caret color. See: <https://webkit.org/b/229809>.
+            if (RefPtr editableRoot = selection.rootEditableElement(); editableRoot && editableRoot->renderer()) {
+                CheckedRef style = protect(editableRoot->renderer())->style();
+                postLayoutData.caretColor = CaretBase::computeCaretColor(style, editableRoot.get());
+                postLayoutData.hasCaretColorAuto = style->caretColor().isAuto();
+                postLayoutData.hasGrammarDocumentMarkers = protect(protect(editableRoot->document())->markers())->hasMarkers(makeRangeSelectingNodeContents(*editableRoot), DocumentMarkerType::Grammar);
+            }
+        }
+
+        computeEditableRootHasContentAndPlainText(selection, postLayoutData);
+        postLayoutData.selectionStartIsAtParagraphBoundary = atBoundaryOfGranularity(selection.visibleStart(), TextGranularity::ParagraphGranularity, SelectionDirection::Backward);
+        postLayoutData.selectionEndIsAtParagraphBoundary = atBoundaryOfGranularity(selection.visibleEnd(), TextGranularity::ParagraphGranularity, SelectionDirection::Forward);
+
+        bool shouldComputeEnclosingLayerID = [&] {
+            if (!m_page->settings().selectionHonorsOverflowScrolling())
+                return false;
+
+            if (selection.isCaret() && !postLayoutData.hasCaretColorAuto && !postLayoutData.caretColor.isVisible())
+                return false;
+
+            return true;
+        }();
+
+        if (shouldComputeEnclosingLayerID)
+            computeEnclosingLayerID(result, selection);
+    }
+
+    // When the selection is in a cross-origin subframe, the rects above are in this frame's local
+    // root-view coordinates. Map them to main-frame coordinates -- applying the frame's offset within
+    // the top-level page as well as any CSS transforms on the remote ancestor frames -- so UIKit reads
+    // the correct location synchronously without a UI-process round-trip. A plain translation offset
+    // could not represent a scale on an ancestor iframe.
+    if (!frame.localMainFrame()) {
+        auto convertRect = [&](IntRect& rect) {
+            rect = roundedIntRect(view->convertToRootViewAcrossIsolatedFrames(FloatRect { rect }));
+        };
+        auto convertGeometries = [&](Vector<SelectionGeometry>& geometries) {
+            for (auto& geometry : geometries)
+                geometry.setQuad(view->convertToRootViewAcrossIsolatedFrames(geometry.quad()));
+        };
+        convertRect(visualData.caretRectAtStart);
+        convertRect(visualData.caretRectAtEnd);
+        convertRect(visualData.selectionClipRect);
+        convertRect(visualData.editableRootBounds);
+        convertRect(visualData.markedTextCaretRectAtStart);
+        convertRect(visualData.markedTextCaretRectAtEnd);
+        convertGeometries(visualData.selectionGeometries);
+        convertGeometries(visualData.markedTextRects);
+    }
+}
+
+void WebPage::platformWillPerformEditingCommand()
+{
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    if (RefPtr document = frame->document()) {
+        if (CheckedPtr holdingTank = document->domTimerHoldingTankIfExists())
+            holdingTank->removeAll();
+    }
+#endif
+}
+
+FloatSize WebPage::screenSize() const
+{
+    return m_screenSize;
+}
+
+FloatSize WebPage::availableScreenSize() const
+{
+    return m_availableScreenSize;
+}
+
+FloatSize WebPage::overrideScreenSize() const
+{
+    return m_overrideScreenSize;
+}
+
+FloatSize WebPage::overrideAvailableScreenSize() const
+{
+    return m_overrideAvailableScreenSize;
+}
+
+void WebPage::didReceiveMobileDocType(bool isMobileDoctype)
+{
+    m_isMobileDoctype = isMobileDoctype;
+    resetViewportDefaultConfiguration(m_mainFrame.ptr(), isMobileDoctype);
+}
+
+void WebPage::savePageState(HistoryItem& historyItem)
+{
+    historyItem.setScaleIsInitial(!m_userHasChangedPageScaleFactor);
+    historyItem.setMinimumLayoutSizeInScrollViewCoordinates(m_viewportConfiguration.minimumLayoutSize());
+    historyItem.setContentSize(m_viewportConfiguration.contentsSize());
+}
+
+static double scaleAfterViewportWidthChange(double currentScale, bool scaleToFitContent, const ViewportConfiguration& viewportConfiguration, float unobscuredWidthInScrollViewCoordinates, const IntSize& newContentSize, const IntSize& oldContentSize, float visibleHorizontalFraction)
+{
+    double scale;
+    if (!scaleToFitContent) {
+        scale = viewportConfiguration.initialScale();
+        LOG(VisibleRects, "scaleAfterViewportWidthChange using initial scale: %.2f", scale);
+        return scale;
+    }
+
+    // When the content size changes, we keep the same relative horizontal content width in view, otherwise we would
+    // end up zoomed too far in landscape->portrait, and too close in portrait->landscape.
+    double widthToKeepInView = visibleHorizontalFraction * newContentSize.width();
+    double newScale = unobscuredWidthInScrollViewCoordinates / widthToKeepInView;
+    scale = std::max(std::min(newScale, viewportConfiguration.maximumScale()), viewportConfiguration.minimumScale());
+    LOG(VisibleRects, "scaleAfterViewportWidthChange scaling content to fit: %.2f", scale);
+    return scale;
+}
+
+static FloatPoint relativeCenterAfterContentSizeChange(const FloatRect& originalContentRect, IntSize oldContentSize, IntSize newContentSize)
+{
+    // If the content size has changed, keep the same relative position.
+    FloatPoint oldContentCenter = originalContentRect.center();
+    float relativeHorizontalPosition = oldContentCenter.x() / oldContentSize.width();
+    float relativeVerticalPosition =  oldContentCenter.y() / oldContentSize.height();
+    return FloatPoint(relativeHorizontalPosition * newContentSize.width(), relativeVerticalPosition * newContentSize.height());
+}
+
+static inline FloatRect adjustExposedRectForNewScale(const FloatRect& exposedRect, double exposedRectScale, double newScale)
+{
+    if (exposedRectScale == newScale)
+        return exposedRect;
+
+    float horizontalChange = exposedRect.width() * exposedRectScale / newScale - exposedRect.width();
+    float verticalChange = exposedRect.height() * exposedRectScale / newScale - exposedRect.height();
+
+    auto adjustedRect = exposedRect;
+    adjustedRect.inflate({ horizontalChange / 2, verticalChange / 2 });
+    return adjustedRect;
+}
+
+void WebPage::restorePageState(const HistoryItem& historyItem)
+{
+    // When a HistoryItem is cleared, its scale factor and scroll point are set to zero. We should not try to restore the other
+    // parameters in those conditions.
+    if (!historyItem.pageScaleFactor()) {
+        send(Messages::WebPageProxy::CouldNotRestorePageState());
+        return;
+    }
+
+    // We can restore the exposed rect and scale, but we cannot touch the scroll position since the obscured insets
+    // may be changing in the UIProcess. The UIProcess can update the position from the information we send and will then
+    // scroll to the correct position through a regular VisibleContentRectUpdate.
+
+    m_userHasChangedPageScaleFactor = !historyItem.scaleIsInitial();
+    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
+    if (!localMainFrame)
+        return;
+    Ref frameView = *localMainFrame->view();
+
+    FloatSize currentMinimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.minimumLayoutSize();
+    if (historyItem.minimumLayoutSizeInScrollViewCoordinates() == currentMinimumLayoutSizeInScrollViewCoordinates) {
+        float boundedScale = historyItem.scaleIsInitial() ? m_viewportConfiguration.initialScale() : historyItem.pageScaleFactor();
+        boundedScale = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), boundedScale));
+        scalePage(boundedScale, IntPoint());
+
+        std::optional<FloatPoint> scrollPosition;
+        if (historyItem.shouldRestoreScrollPosition()) {
+            protect(m_drawingArea)->setExposedContentRect(historyItem.exposedContentRect());
+            m_hasRestoredExposedContentRectAfterDidCommitLoad = true;
+            scrollPosition = FloatPoint(historyItem.scrollPosition());
+        }
+
+        RELEASE_LOG(Scrolling, "WebPage::restorePageState with matching minimumLayoutSize; historyItem.shouldRestoreScrollPosition %d, scrollPosition.y %d", historyItem.shouldRestoreScrollPosition(), historyItem.scrollPosition().y());
+        send(Messages::WebPageProxy::RestorePageState(scrollPosition, frameView->scrollOrigin(), historyItem.obscuredInsets(), boundedScale));
+    } else {
+        IntSize oldContentSize = historyItem.contentSize();
+        IntSize newContentSize = frameView->contentsSize();
+        double visibleHorizontalFraction = static_cast<float>(historyItem.unobscuredContentRect().width()) / oldContentSize.width();
+
+        double newScale = scaleAfterViewportWidthChange(historyItem.pageScaleFactor(), !historyItem.scaleIsInitial(), m_viewportConfiguration, currentMinimumLayoutSizeInScrollViewCoordinates.width(), newContentSize, oldContentSize, visibleHorizontalFraction);
+
+        std::optional<FloatPoint> newCenter;
+        if (historyItem.shouldRestoreScrollPosition()) {
+            if (!oldContentSize.isEmpty() && !newContentSize.isEmpty() && newContentSize != oldContentSize)
+                newCenter = relativeCenterAfterContentSizeChange(historyItem.unobscuredContentRect(), oldContentSize, newContentSize);
+            else
+                newCenter = FloatRect(historyItem.unobscuredContentRect()).center();
+        }
+
+        RELEASE_LOG(Scrolling, "WebPage::restorePageState with mismatched minimumLayoutSize; historyItem.shouldRestoreScrollPosition %d, unobscured rect top %d, scale %.2f", historyItem.shouldRestoreScrollPosition(), historyItem.unobscuredContentRect().y(), newScale);
+        scalePage(newScale, IntPoint());
+        send(Messages::WebPageProxy::RestorePageCenterAndScale(newCenter, newScale));
+    }
+}
+
+double WebPage::minimumPageScaleFactor() const
+{
+    if (!m_viewportConfiguration.allowsUserScaling())
+        return m_page->pageScaleFactor();
+    return m_viewportConfiguration.minimumScale();
+}
+
+double WebPage::maximumPageScaleFactor() const
+{
+    if (!m_viewportConfiguration.allowsUserScaling())
+        return m_page->pageScaleFactor();
+    return m_viewportConfiguration.maximumScale();
+}
+
+double WebPage::maximumPageScaleFactorIgnoringAlwaysScalable() const
+{
+    if (!m_viewportConfiguration.allowsUserScalingIgnoringAlwaysScalable())
+        return m_page->pageScaleFactor();
+    return m_viewportConfiguration.maximumScaleIgnoringAlwaysScalable();
+}
+
+bool WebPage::allowsUserScaling() const
+{
+    return m_viewportConfiguration.allowsUserScaling();
+}
+
+bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
+{
+    auto* platformEvent = event.underlyingPlatformEvent();
+    if (!platformEvent)
+        return false;
+
+    // Don't send synthetic events to the UIProcess. They are only
+    // used for interacting with JavaScript.
+    if (platformEvent->isSyntheticEvent())
+        return false;
+
+    if (handleKeyEventByRelinquishingFocusToChrome(event))
+        return true;
+
+    updateLastNodeBeforeWritingSuggestions(event);
+
+    auto scrollingNodeID = [&] -> std::optional<WebCore::ScrollingNodeID> {
+        RefPtr frame = m_page->focusController().focusedOrMainFrame();
+        if (!frame)
+            return std::nullopt;
+
+        CheckedPtr scrollableArea = frame->eventHandler().focusedScrollableArea();
+        if (!scrollableArea)
+            return std::nullopt;
+
+        return scrollableArea->scrollingNodeID();
+    }();
+
+    auto isCharEvent = platformEvent->type() == PlatformKeyboardEvent::Type::Char;
+    auto context = KeyEventInterpretationContext { isCharEvent, scrollingNodeID };
+
+    // FIXME: Interpret the event immediately upon receiving it in UI process, without sending to WebProcess first.
+    auto sendResult = protect(WebProcess::singleton().parentProcessConnection())->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(ShouldPerformLayout::Yes), context), m_identifier);
+    auto [eventWasHandled] = sendResult.takeReplyOr(false);
+    return eventWasHandled;
+}
+
+static bool disableServiceWorkerEntitlementTestingOverride;
+
+bool WebPage::parentProcessHasServiceWorkerEntitlement() const
+{
+    if (disableServiceWorkerEntitlementTestingOverride)
+        return false;
+
+    RetainPtr xpcConnection = WebProcess::singleton().parentProcessConnection()->xpcConnection();
+    static bool hasEntitlement = WTF::hasEntitlement(xpcConnection.get(), "com.apple.developer.WebKit.ServiceWorkers"_s) || WTF::hasEntitlement(xpcConnection.get(), "com.apple.developer.web-browser"_s);
+    return hasEntitlement;
+}
+
+void WebPage::disableServiceWorkerEntitlement()
+{
+    disableServiceWorkerEntitlementTestingOverride = true;
+}
+
+void WebPage::clearServiceWorkerEntitlementOverride(CompletionHandler<void()>&& completionHandler)
+{
+    disableServiceWorkerEntitlementTestingOverride = false;
+    completionHandler();
+}
+
+bool WebPage::performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*)
+{
+    notImplemented();
+    return false;
+}
+
+void WebPage::getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&& completionHandler)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    static constexpr auto selectionExtendedContextLength = 350;
+
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = focusedPluginViewForFrame(*frame)) {
+        auto [textBefore, textAfter] = pluginView->stringsBeforeAndAfterSelection(selectionExtendedContextLength);
+        return completionHandler(pluginView->selectionString(), WTF::move(textBefore), WTF::move(textAfter));
+    }
+#endif
+
+    if (!frame->selection().isRange())
+        return completionHandler({ }, { }, { });
+
+    auto& selection = frame->selection().selection();
+    String selectedText = plainTextForContext(selection.firstRange());
+    String textBefore = plainTextForDisplay(rangeExpandedByCharactersInDirectionAtWordBoundary(selection.start(), selectionExtendedContextLength, SelectionDirection::Backward));
+    String textAfter = plainTextForDisplay(rangeExpandedByCharactersInDirectionAtWordBoundary(selection.end(), selectionExtendedContextLength, SelectionDirection::Forward));
+
+    completionHandler(selectedText, textBefore, textAfter);
+}
+    
+void WebPage::updateRemotePageOffsetInMainFrame(WebCore::FrameIdentifier, WebCore::IntPoint offset)
+{
+    // Store the offset unconditionally (even when accessibility is not active) so that
+    // remoteFrameOffsetInMainFrame() returns it for both accessibility and selection; the latter is
+    // used by getPlatformEditorStateCommon() to convert selection rects to main-frame coordinates in
+    // the web process.
+    m_remoteFrameOffsetInMainFrame = offset;
+}
+
+static RetainPtr<NSDictionary> createAccessibillityTokenDictionary(WebCore::AccessibilityRemoteToken elementToken)
+{
+    RetainPtr uuid = elementToken.uuid.createNSUUID();
+    return @{ @"ax-pid" : @(elementToken.pid), @"ax-uuid" : [uuid UUIDString], @"ax-register" : @YES };
+}
+
+void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, WebCore::AccessibilityRemoteToken elementToken, WebCore::FrameIdentifier frameID)
+{
+    createMockAccessibilityElement(pid);
+    if ([m_mockAccessibilityElement respondsToSelector:@selector(setRemoteTokenDictionary:)])
+        [m_mockAccessibilityElement setRemoteTokenDictionary:createAccessibillityTokenDictionary(elementToken).get()];
+    [m_mockAccessibilityElement setFrameIdentifier:frameID];
+}
+
+void WebPage::createMockAccessibilityElement(pid_t pid)
+{
+    auto mockAccessibilityElement = adoptNS([[WKAccessibilityWebPageObject alloc] init]);
+
+    [mockAccessibilityElement setWebPage:this];
+    m_mockAccessibilityElement = WTF::move(mockAccessibilityElement);
+}
+
+void WebPage::registerUIProcessAccessibilityTokens(WebCore::AccessibilityRemoteToken elementToken, WebCore::AccessibilityRemoteToken)
+{
+    if ([m_mockAccessibilityElement respondsToSelector:@selector(setRemoteTokenDictionary:)])
+        [m_mockAccessibilityElement setRemoteTokenDictionary:createAccessibillityTokenDictionary(elementToken).get()];
+}
+
+void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler({ });
+}
+
+void WebPage::getDataSelectionForPasteboard(const String, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler({ });
+}
+
+WebCore::IntPoint WebPage::remoteFrameOffsetInMainFrame()
+{
+    return m_remoteFrameOffsetInMainFrame;
+}
+
+bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
+{
+    RetainPtr nsRequest = request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    if (!nsRequest.get().URL)
+        return false;
+
+    return [NSURLConnection canHandleRequest:nsRequest.get()];
+}
+
+void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, CompletionHandler<void(bool)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler(false);
+}
+
+void WebPage::advanceToNextMisspelling(bool)
+{
+    notImplemented();
+}
+
+IntRect WebPage::rectForElementAtInteractionLocation() const
+{
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
+    if (!localMainFrame)
+        return IntRect();
+    HitTestResult result = localMainFrame->eventHandler().hitTestResultAtPoint(flooredIntPoint(m_lastInteractionLocation), hitType);
+    RefPtr hitNode = result.innerNode();
+    if (!hitNode || !hitNode->renderer())
+        return IntRect();
+    return protect(result.innerNodeFrame()->view())->contentsToRootView(protect(hitNode->renderer())->absoluteBoundingBoxRect(true));
+}
+
+void WebPage::updateSelectionAppearance()
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    Ref editor = frame->editor();
+    if (editor->ignoreSelectionChanges())
+        return;
+
+    if (editor->client() && !protect(editor->client())->shouldRevealCurrentSelectionAfterInsertion())
+        return;
+
+    if (!editor->hasComposition() && frame->selection().selection().isNone())
+        return;
+
+    didChangeSelection(*frame);
+}
+
+void WebPage::generateSyntheticEditingCommand(SyntheticEditingCommandType command)
+{
+    PlatformKeyboardEvent keyEvent;
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+    
+    OptionSet<PlatformEvent::Modifier> modifiers;
+    modifiers.add(PlatformEvent::Modifier::MetaKey);
+    
+    switch (command) {
+    case SyntheticEditingCommandType::Undo:
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "z"_s, "z"_s,
+        "z"_s, "KeyZ"_s,
+        "U+005A"_s, 90, false, false, false, modifiers, MonotonicTime::now());
+        break;
+    case SyntheticEditingCommandType::Redo:
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "y"_s, "y"_s,
+        "y"_s, "KeyY"_s,
+        "U+0059"_s, 89, false, false, false, modifiers, MonotonicTime::now());
+        break;
+    case SyntheticEditingCommandType::ToggleBoldface:
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "b"_s, "b"_s,
+        "b"_s, "KeyB"_s,
+        "U+0042"_s, 66, false, false, false, modifiers, MonotonicTime::now());
+        break;
+    case SyntheticEditingCommandType::ToggleItalic:
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "i"_s, "i"_s,
+        "i"_s, "KeyI"_s,
+        "U+0049"_s, 73, false, false, false, modifiers, MonotonicTime::now());
+        break;
+    case SyntheticEditingCommandType::ToggleUnderline:
+        keyEvent = PlatformKeyboardEvent(PlatformEvent::Type::KeyDown, "u"_s, "u"_s,
+        "u"_s, "KeyU"_s,
+        "U+0055"_s, 85, false, false, false, modifiers, MonotonicTime::now());
+        break;
+    default:
+        break;
+    }
+
+    keyEvent.setIsSyntheticEvent();
+    
+    PlatformKeyboardEvent::setCurrentModifierState(modifiers);
+
+    frame->eventHandler().keyEvent(keyEvent);
+}
+
+void WebPage::attemptSyntheticClick(const IntPoint& point, OptionSet<WebEventModifier> modifiers, TransactionID lastLayerTreeTransactionId)
+{
+    FloatPoint adjustedPoint;
+    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
+    RefPtr nodeRespondingToClick = localMainFrame ? localMainFrame->nodeRespondingToClickEvents(point, adjustedPoint) : nullptr;
+    RefPtr frameRespondingToClick = nodeRespondingToClick ? nodeRespondingToClick->document().frame() : nullptr;
+    IntPoint adjustedIntPoint = roundedIntPoint(adjustedPoint);
+
+    bool didNotHandleTapAsClick = !frameRespondingToClick;
+    if (frameRespondingToClick) {
+        auto firstTransactionID = WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad();
+        didNotHandleTapAsClick = !firstTransactionID || lastLayerTreeTransactionId.lessThanSameProcess(*firstTransactionID);
+    }
+
+    if (didNotHandleTapAsClick)
+        send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
+    else if (m_interactionNode == nodeRespondingToClick)
+        completeSyntheticClick(std::nullopt, *nodeRespondingToClick, adjustedPoint, modifiers, WebCore::SyntheticClickType::OneFingerTap);
+    else
+        handleSyntheticClick(std::nullopt, *nodeRespondingToClick, adjustedPoint, modifiers);
+}
+
+void WebPage::requestFocusedElementInformation(CompletionHandler<void(const std::optional<FocusedElementInformation>&)>&& completionHandler)
+{
+    flushPendingFocusedElementUpdateIfNeeded();
+    std::optional<FocusedElementInformation> information;
+    if (m_focusedElement)
+        information = focusedElementInformation();
+
+    completionHandler(information);
+}
+
+void WebPage::updateFocusedElementInformation()
+{
+    m_updateFocusedElementInformationTimer.stop();
+
+    if (!m_focusedElement)
+        return;
+
+    auto information = focusedElementInformation();
+    if (!information)
+        return;
+
+    send(Messages::WebPageProxy::UpdateFocusedElementInformation(*information));
+}
+
+#if ENABLE(DRAG_SUPPORT)
+Awaitable<DragInitiationResult> WebPage::requestDragStart(std::optional<WebCore::FrameIdentifier> remoteFrameID, IntPoint clientPosition, IntPoint globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask)
+{
+    SetForScope allowedActionsForScope(m_allowedDragSourceActions, allowedActionsMask);
+    RefPtr localRootFrame = this->localRootFrame(remoteFrameID);
+    if (!localRootFrame)
+        co_return { false };
+
+    auto handledOrTransformer = co_await AwaitableFromCompletionHandler<Expected<bool, RemoteFrameGeometryTransformer>> { [=] (auto completionHandler) {
+        localRootFrame->eventHandler().tryToBeginDragAtPoint(clientPosition, globalPosition, WTF::move(completionHandler));
+    } };
+    if (handledOrTransformer)
+        co_return { *handledOrTransformer };
+    auto& transformer = handledOrTransformer.error();
+    co_return { DragInitiationResult::RemoteFrameData {
+        transformer.remoteFrameID(),
+        transformer.transformToRemoteFrameCoordinates(clientPosition),
+        transformer.transformToRemoteFrameCoordinates(globalPosition)
+    } };
+}
+
+Awaitable<DragInitiationResult> WebPage::requestAdditionalItemsForDragSession(std::optional<WebCore::FrameIdentifier> rootFrameID, IntPoint clientPosition, IntPoint globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask)
+{
+    SetForScope allowedActionsForScope(m_allowedDragSourceActions, allowedActionsMask);
+    // To augment the platform drag session with additional items, end the current drag session and begin a new drag session with the new drag item.
+    // This process is opaque to the UI process, which still maintains the old drag item in its drag session. Similarly, this persistent drag session
+    // is opaque to the web process, which only sees that the current drag has ended, and that a new one is beginning.
+    PlatformMouseEvent event(clientPosition, globalPosition, MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), 0, WebCore::SyntheticClickType::NoTap, WebCore::MouseEventInputSource::UserDriven);
+    m_page->dragController().dragEnded();
+    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
+    if (!localMainFrame)
+        co_return { false };
+
+    localMainFrame->eventHandler().dragSourceEndedAt(event, { }, MayExtendDragSession::Yes);
+
+    auto handledOrTransformer = co_await AwaitableFromCompletionHandler<Expected<bool, RemoteFrameGeometryTransformer>> { [=] (auto completionHandler) {
+        localMainFrame->eventHandler().tryToBeginDragAtPoint(clientPosition, globalPosition, WTF::move(completionHandler));
+    } };
+    if (handledOrTransformer)
+        co_return { *handledOrTransformer };
+    auto& transformer = handledOrTransformer.error();
+    co_return { DragInitiationResult::RemoteFrameData {
+        transformer.remoteFrameID(),
+        transformer.transformToRemoteFrameCoordinates(clientPosition),
+        transformer.transformToRemoteFrameCoordinates(globalPosition)
+    } };
+}
+
+void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, CompletionHandler<void(const Vector<IntRect>&, RefPtr<WebCore::TextIndicator>)>&& reply)
+{
+    m_page->dragController().insertDroppedImagePlaceholdersAtCaret(imageSizes);
+    auto placeholderRects = m_page->dragController().droppedImagePlaceholders().map([&] (auto& element) {
+        return rootViewBounds(element);
+    });
+
+    auto imagePlaceholderRange = m_page->dragController().droppedImagePlaceholderRange();
+    if (placeholderRects.size() != imageSizes.size()) {
+        RELEASE_LOG(DragAndDrop, "Failed to insert dropped image placeholders: placeholder rect count (%tu) does not match image size count (%tu).", placeholderRects.size(), imageSizes.size());
+        reply({ }, nullptr);
+        return;
+    }
+
+    if (!imagePlaceholderRange) {
+        RELEASE_LOG(DragAndDrop, "Failed to insert dropped image placeholders: no image placeholder range.");
+        reply({ }, nullptr);
+        return;
+    }
+
+    constexpr OptionSet<TextIndicatorOption> textIndicatorOptions {
+        TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
+        TextIndicatorOption::ExpandClipBeyondVisibleRect,
+        TextIndicatorOption::PaintAllContent,
+        TextIndicatorOption::UseSelectionRectForSizing
+    };
+
+    RefPtr textIndicator = TextIndicator::createWithRange(*imagePlaceholderRange, textIndicatorOptions, TextIndicatorPresentationTransition::None, { });
+
+    reply(WTF::move(placeholderRects), WTF::move(textIndicator));
+}
+
+void WebPage::didConcludeDrop()
+{
+    m_rangeForDropSnapshot = std::nullopt;
+    m_pendingImageElementsForDropSnapshot.clear();
+}
+
+void WebPage::didConcludeEditDrag()
+{
+    send(Messages::WebPageProxy::WillReceiveEditDragSnapshot());
+
+    layoutIfNeeded();
+
+    m_pendingImageElementsForDropSnapshot.clear();
+
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    if (auto selectionRange = frame->selection().selection().toNormalizedRange()) {
+        m_pendingImageElementsForDropSnapshot = visibleImageElementsInRangeWithNonLoadedImages(*selectionRange);
+        protect(frame->selection())->setSelectedRange(makeSimpleRange(selectionRange->end), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+        m_rangeForDropSnapshot = WTF::move(selectionRange);
+    }
+
+    if (m_pendingImageElementsForDropSnapshot.isEmpty())
+        computeAndSendEditDragSnapshot();
+}
+
+void WebPage::didFinishLoadingImageForElement(WebCore::HTMLImageElement& element)
+{
+    if (!m_pendingImageElementsForDropSnapshot.remove(&element))
+        return;
+
+    bool shouldSendSnapshot = m_pendingImageElementsForDropSnapshot.isEmpty();
+    m_page->dragController().finalizeDroppedImagePlaceholder(element, [protectedThis = Ref { *this }, shouldSendSnapshot] {
+        if (shouldSendSnapshot)
+            protectedThis->computeAndSendEditDragSnapshot();
+    });
+}
+
+void WebPage::computeAndSendEditDragSnapshot()
+{
+    RefPtr<WebCore::TextIndicator> textIndicator;
+    constexpr OptionSet<TextIndicatorOption> defaultTextIndicatorOptionsForEditDrag {
+        TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
+        TextIndicatorOption::ExpandClipBeyondVisibleRect,
+        TextIndicatorOption::PaintAllContent,
+        TextIndicatorOption::IncludeMarginIfRangeMatchesSelection,
+        TextIndicatorOption::PaintBackgrounds,
+        TextIndicatorOption::ComputeEstimatedBackgroundColor,
+        TextIndicatorOption::UseSelectionRectForSizing,
+        TextIndicatorOption::IncludeSnapshotWithSelectionHighlight
+    };
+    if (auto range = std::exchange(m_rangeForDropSnapshot, std::nullopt))
+        textIndicator = TextIndicator::createWithRange(*range, defaultTextIndicatorOptionsForEditDrag, TextIndicatorPresentationTransition::None, { });
+
+    send(Messages::WebPageProxy::DidReceiveEditDragSnapshot(WTF::move(textIndicator)));
+}
+
+#endif
+
+void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSet<WebKit::WebEventModifier> modifiers, WebKit::TapIdentifier requestID)
+{
+    FloatPoint adjustedPoint;
+    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
+    RefPtr nodeRespondingToClick = localMainFrame ? localMainFrame->nodeRespondingToClickEvents(point, adjustedPoint) : nullptr;
+    if (!nodeRespondingToClick || !nodeRespondingToClick->renderer()) {
+        send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
+        return;
+    }
+    sendTapHighlightForNodeIfNecessary(requestID, nodeRespondingToClick, point);
+    completeSyntheticClick(std::nullopt, *nodeRespondingToClick, adjustedPoint, modifiers, WebCore::SyntheticClickType::TwoFingerTap);
+}
+
+void WebPage::clearSelectionAfterTapIfNeeded()
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = pluginViewForFrame(frame.get())) {
+        pluginView->clearSelection();
+        return;
+    }
+#endif
+
+    if (frame->selection().selection().isContentEditable())
+        return;
+
+    clearSelection();
+}
+
+void WebPage::didRecognizeLongPress()
+{
+    if (RefPtr localMainFrame = protect(*m_page)->localMainFrame())
+        ContentChangeObserver::didRecognizeLongPress(*localMainFrame);
+}
+
+void WebPage::tapHighlightAtPosition(WebKit::TapIdentifier requestID, const FloatPoint& position)
+{
+    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
+    if (!localMainFrame)
+        return;
+    FloatPoint adjustedPoint;
+    sendTapHighlightForNodeIfNecessary(requestID, localMainFrame->nodeRespondingToClickEvents(position, adjustedPoint), position);
+}
+
+void WebPage::inspectorNodeSearchMovedToPosition(const FloatPoint& position)
+{
+    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
+    if (!localMainFrame)
+        return;
+    IntPoint adjustedPoint = roundedIntPoint(position);
+
+    localMainFrame->eventHandler().mouseMoved(PlatformMouseEvent(adjustedPoint, adjustedPoint, MouseButton::None, PlatformEvent::Type::MouseMoved, 0, { }, { }, 0, WebCore::SyntheticClickType::NoTap, WebCore::MouseEventInputSource::UserDriven));
+    protect(localMainFrame->document())->updateStyleIfNeeded();
+}
+
+void WebPage::inspectorNodeSearchEndedAtPosition(const FloatPoint& position)
+{
+    RefPtr localMainFrame = protect(*m_page)->localMainFrame();
+    if (RefPtr node = localMainFrame ? localMainFrame->deepestNodeAtLocation(position) : nullptr)
+        node->inspect();
+}
+
+void WebPage::updateInputContextAfterBlurringAndRefocusingElementIfNeeded(Element& element)
+{
+    if (m_recentlyBlurredElement != &element || !m_isShowingInputViewForFocusedElement)
+        return;
+
+    m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = true;
+    callOnMainRunLoop([this, protectedThis = Ref { *this }] {
+        if (m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement)
+            send(Messages::WebPageProxy::UpdateInputContextAfterBlurringAndRefocusingElement());
+        m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = false;
+    });
+}
+
+void WebPage::didProgrammaticallyClearTextFormControl(const HTMLTextFormControlElement& element)
+{
+    if (!m_isShowingInputViewForFocusedElement)
+        return;
+
+    if (m_focusedElement != &element && m_recentlyBlurredElement != &element)
+        return;
+
+    callOnMainRunLoop([protectedThis = Ref { *this }, element = Ref { element }] {
+        if (protectedThis->m_focusedElement != element.ptr())
+            return;
+
+        auto context = protectedThis->contextForElement(element);
+        if (!context)
+            return;
+
+        protectedThis->send(Messages::WebPageProxy::DidProgrammaticallyClearFocusedElement(WTF::move(*context)));
+    });
+}
+
+void WebPage::blurFocusedElement()
+{
+    if (!m_focusedElement)
+        return;
+
+    protect(m_focusedElement)->blur();
+}
+
+void WebPage::setFocusedElementValue(const WebCore::ElementContext& context, const String& value)
+{
+    // FIXME: should also handle the case of HTMLSelectElement.
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(elementForContext(context)))
+        input->setValue(value, DispatchInputAndChangeEvent);
+}
+
+void WebPage::setFocusedElementSelectedIndex(const WebCore::ElementContext& context, uint32_t index, bool allowMultipleSelection)
+{
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(elementForContext(context)))
+        select->optionSelectedByUser(index, true, allowMultipleSelection);
+}
+
+void WebPage::setSelectElementIsOpen(const WebCore::ElementContext& context, bool isOpen)
+{
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(elementForContext(context)))
+        select->setPopupIsVisible(isOpen);
+}
+
+void WebPage::setIsShowingInputViewForFocusedElement(bool showingInputView)
+{
+    m_isShowingInputViewForFocusedElement = showingInputView;
+    if (!showingInputView)
+        protect(*m_page)->clearIsShowingInputView();
+}
+
+void WebPage::showInspectorHighlight(const WebCore::InspectorOverlay::Highlight& highlight)
+{
+    send(Messages::WebPageProxy::ShowInspectorHighlight(highlight));
+}
+
+void WebPage::hideInspectorHighlight()
+{
+    send(Messages::WebPageProxy::HideInspectorHighlight());
+}
+
+void WebPage::showInspectorIndication()
+{
+    send(Messages::WebPageProxy::ShowInspectorIndication());
+}
+
+void WebPage::hideInspectorIndication()
+{
+    send(Messages::WebPageProxy::HideInspectorIndication());
+}
+
+void WebPage::enableInspectorNodeSearch()
+{
+    send(Messages::WebPageProxy::EnableInspectorNodeSearch());
+}
+
+void WebPage::disableInspectorNodeSearch()
+{
+    send(Messages::WebPageProxy::DisableInspectorNodeSearch());
+}
+
+void WebPage::setForceAlwaysUserScalable(bool userScalable)
+{
+    m_forceAlwaysUserScalable = userScalable;
+    m_viewportConfiguration.setForceAlwaysUserScalable(userScalable);
+}
+
+static bool insideImageOverlay(const VisiblePosition& position)
+{
+    RefPtr container = position.deepEquivalent().containerNode();
+    return container && ImageOverlay::isInsideOverlay(*container);
+}
+
+static std::optional<SimpleRange> expandForImageOverlay(const SimpleRange& range)
+{
+    VisiblePosition expandedStart(makeContainerOffsetPosition(protect(range.startContainer()), range.startOffset()));
+    VisiblePosition expandedEnd(makeContainerOffsetPosition(protect(range.endContainer()), range.endOffset()));
+
+    for (auto start = expandedStart; insideImageOverlay(start); start = start.previous()) {
+        if (RefPtr container = start.deepEquivalent().containerNode(); is<Text>(container)) {
+            expandedStart = firstPositionInNode(*container).downstream();
+            break;
+        }
+    }
+
+    for (auto end = expandedEnd; insideImageOverlay(end); end = end.next()) {
+        if (RefPtr container = end.deepEquivalent().containerNode(); is<Text>(container)) {
+            expandedEnd = lastPositionInNode(*container).upstream();
+            break;
+        }
+    }
+
+    return makeSimpleRange({ expandedStart, expandedEnd });
+}
+
+static std::pair<std::optional<SimpleRange>, SelectionWasFlipped> rangeForPointInRootViewCoordinates(LocalFrame& frame, const IntPoint& pointInRootViewCoordinates, bool baseIsStart, bool selectionFlippingEnabled)
+{
+    VisibleSelection existingSelection = frame.selection().selection();
+    VisiblePosition selectionStart = existingSelection.visibleStart();
+    VisiblePosition selectionEnd = existingSelection.visibleEnd();
+
+    RefPtr localMainFrame = frame.localMainFrame();
+    RefPtr frameView = frame.view();
+    if (!frameView)
+        return { std::nullopt, SelectionWasFlipped::No };
+
+    // Constrain the drag point (in this frame's root-view coordinates) to the visible viewport so the
+    // selection can't be extended outside it. For the main frame its unobscured content rect is used
+    // directly (root-view and contents coincide there). For a cross-origin subframe -- whose main
+    // frame is remote -- use this frame's own unobscured content rect converted to root-view
+    // coordinates; clamping against the contents-space rect directly would fold the frame's scroll
+    // offset into the point, which rootViewToContents would then apply a second time.
+    auto viewportToConstrainWithin = localMainFrame ? protect(localMainFrame->view())->unobscuredContentRect() : frameView->contentsToRootView(frameView->unobscuredContentRect());
+    auto pointInDocument = frameView->rootViewToContents(pointInRootViewCoordinates.constrainedWithin(viewportToConstrainWithin));
+
+    if (!selectionFlippingEnabled) {
+        RefPtr node = selectionStart.deepEquivalent().containerNode();
+        if (node && node->renderStyle() && node->renderStyle()->writingMode().isVertical()) {
+            if (baseIsStart) {
+                int startX = selectionStart.absoluteCaretBounds().center().x();
+                if (pointInDocument.x() > startX)
+                    pointInDocument.setX(startX);
+            } else {
+                int endX = selectionEnd.absoluteCaretBounds().center().x();
+                if (pointInDocument.x() < endX)
+                    pointInDocument.setX(endX);
+            }
+        } else {
+            if (baseIsStart) {
+                int startY = selectionStart.absoluteCaretBounds().center().y();
+                if (pointInDocument.y() < startY)
+                    pointInDocument.setY(startY);
+            } else {
+                int endY = selectionEnd.absoluteCaretBounds().center().y();
+                if (pointInDocument.y() > endY)
+                    pointInDocument.setY(endY);
+            }
+        }
+    }
+
+    auto hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, {
+        HitTestRequest::Type::ReadOnly,
+        HitTestRequest::Type::Active,
+        HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
+    });
+
+    RefPtr targetNode = hitTest.targetNode();
+    if (targetNode && !HTMLElement::shouldExtendSelectionToTargetNode(*targetNode, existingSelection))
+        return { std::nullopt, SelectionWasFlipped::No };
+
+    VisiblePosition result;
+    std::optional<SimpleRange> range;
+    SelectionWasFlipped selectionFlipped = SelectionWasFlipped::No;
+
+    auto shouldUseOldExtentAsNewBase = [&] {
+        return frame.settings().visuallyContiguousBidiTextSelectionEnabled()
+            && crossesBidiTextBoundaryInSameLine(result, baseIsStart ? selectionEnd : selectionStart);
+    };
+
+    if (targetNode)
+        result = frame.eventHandler().selectionExtentRespectingEditingBoundary(frame.selection().selection(), hitTest.localPoint(), targetNode.get()).deepEquivalent();
+    else
+        result = frame.visiblePositionForPoint(pointInDocument).deepEquivalent();
+    
+    if (baseIsStart) {
+        bool flipSelection = result < selectionStart;
+
+        if ((flipSelection && !selectionFlippingEnabled) || result == selectionStart)
+            result = selectionStart.next();
+        else if (RefPtr containerNode = selectionStart.deepEquivalent().containerNode(); containerNode && targetNode && &containerNode->treeScope() != &targetNode->treeScope())
+            result = VisibleSelection::adjustPositionForEnd(result.deepEquivalent(), containerNode.get());
+        
+        if (selectionFlippingEnabled && flipSelection) {
+            range = makeSimpleRange(result, shouldUseOldExtentAsNewBase() ? selectionEnd : selectionStart);
+            selectionFlipped = SelectionWasFlipped::Yes;
+        } else
+            range = makeSimpleRange(selectionStart, result);
+    } else {
+        bool flipSelection = selectionEnd < result;
+        
+        if ((flipSelection && !selectionFlippingEnabled) || result == selectionEnd)
+            result = selectionEnd.previous();
+        else if (RefPtr containerNode = selectionEnd.deepEquivalent().containerNode(); containerNode && targetNode && &containerNode->treeScope() != &targetNode->treeScope())
+            result = VisibleSelection::adjustPositionForStart(result.deepEquivalent(), containerNode.get());
+
+        if (selectionFlippingEnabled && flipSelection) {
+            range = makeSimpleRange(shouldUseOldExtentAsNewBase() ? selectionStart : selectionEnd, result);
+            selectionFlipped = SelectionWasFlipped::Yes;
+        } else
+            range = makeSimpleRange(result, selectionEnd);
+    }
+    
+    if (range && ImageOverlay::isInsideOverlay(*range))
+        return { expandForImageOverlay(*range), SelectionWasFlipped::No };
+
+    return { range, selectionFlipped };
+}
+
+static std::optional<SimpleRange> rangeAtWordBoundaryForPosition(LocalFrame* frame, const VisiblePosition& position, bool baseIsStart)
+{
+    SelectionDirection sameDirection = baseIsStart ? SelectionDirection::Forward : SelectionDirection::Backward;
+    SelectionDirection oppositeDirection = baseIsStart ? SelectionDirection::Backward : SelectionDirection::Forward;
+    VisiblePosition base = baseIsStart ? frame->selection().selection().visibleStart() : frame->selection().selection().visibleEnd();
+    VisiblePosition extent = baseIsStart ? frame->selection().selection().visibleEnd() : frame->selection().selection().visibleStart();
+    VisiblePosition initialExtent = position;
+
+    if (atBoundaryOfGranularity(extent, TextGranularity::WordGranularity, sameDirection)) {
+        // This is a word boundary. Leave selection where it is.
+        return std::nullopt;
+    }
+
+    if (atBoundaryOfGranularity(extent, TextGranularity::WordGranularity, oppositeDirection)) {
+        // This is a word boundary in the wrong direction. Nudge the selection to a character before proceeding.
+        extent = baseIsStart ? extent.previous() : extent.next();
+    }
+
+    // Extend to the boundary of the word.
+
+    VisiblePosition wordBoundary = positionOfNextBoundaryOfGranularity(extent, TextGranularity::WordGranularity, sameDirection);
+    if (wordBoundary.isNotNull()
+        && atBoundaryOfGranularity(wordBoundary, TextGranularity::WordGranularity, sameDirection)
+        && initialExtent != wordBoundary) {
+        extent = wordBoundary;
+        if (!(base < extent))
+            std::swap(base, extent);
+        return makeSimpleRange(base, extent);
+    }
+    // Conversely, if the initial extent equals the current word boundary, then
+    // run the rest of this function to see if the selection should extend
+    // the other direction to the other word.
+
+    // If this is where the extent was initially, then iterate in the other direction in the document until we hit the next word.
+    while (extent.isNotNull()
+        && !atBoundaryOfGranularity(extent, TextGranularity::WordGranularity, sameDirection)
+        && extent != base
+        && !atBoundaryOfGranularity(extent, TextGranularity::LineGranularity, sameDirection)
+        && !atBoundaryOfGranularity(extent, TextGranularity::LineGranularity, oppositeDirection)) {
+        extent = baseIsStart ? extent.next() : extent.previous();
+    }
+
+    // Don't let the smart extension make the extent equal the base.
+    // Expand out to word boundary.
+    if (extent.isNull() || extent == base)
+        extent = wordBoundary;
+    if (extent.isNull())
+        return std::nullopt;
+
+    if (!(base < extent))
+        std::swap(base, extent);
+    return makeSimpleRange(base, extent);
+}
+
+IntRect WebPage::rootViewBounds(const Node& node)
+{
+    RefPtr frame = node.document().frame();
+    if (!frame)
+        return { };
+
+    RefPtr view = frame->view();
+    if (!view)
+        return { };
+
+    CheckedPtr renderer = node.renderer();
+    if (!renderer)
+        return { };
+
+    return view->contentsToRootView(renderer->absoluteBoundingBoxRect());
+}
+
+void WebPage::clearSelection()
+{
+    m_startingGestureRange = std::nullopt;
+    RefPtr focusedOrMainFrame = protect(*m_page)->focusController().focusedOrMainFrame();
+    protect(focusedOrMainFrame->selection())->clear();
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = pluginViewForFrame(focusedOrMainFrame.get()))
+        pluginView->clearSelection();
+#endif
+}
+
+void WebPage::dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch touch, const IntPoint& point)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    if (!frame->selection().selection().isContentEditable())
+        return;
+
+    IntRect focusedElementRect;
+    if (m_focusedElement)
+        focusedElementRect = rootViewInteractionBounds(*protect(m_focusedElement));
+
+    if (focusedElementRect.isEmpty())
+        return;
+
+    RefPtr localMainFrame = protect(m_page)->localMainFrame();
+    if (!localMainFrame)
+        return;
+
+    auto adjustedPoint = point.constrainedBetween(focusedElementRect.minXMinYCorner(), focusedElementRect.maxXMaxYCorner());
+    auto& eventHandler = localMainFrame->eventHandler();
+    switch (touch) {
+    case SelectionTouch::Started:
+        eventHandler.handleMousePressEvent({ adjustedPoint, adjustedPoint, MouseButton::Left, PlatformEvent::Type::MousePressed, 1, { }, MonotonicTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap, WebCore::MouseEventInputSource::UserDriven });
+        break;
+    case SelectionTouch::Moved:
+        eventHandler.dispatchSyntheticMouseMove({ adjustedPoint, adjustedPoint, MouseButton::Left, PlatformEvent::Type::MouseMoved, 0, { }, MonotonicTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap, WebCore::MouseEventInputSource::UserDriven });
+        break;
+    case SelectionTouch::Ended:
+    case SelectionTouch::EndedMovingForward:
+    case SelectionTouch::EndedMovingBackward:
+    case SelectionTouch::EndedNotMoving:
+        eventHandler.handleMouseReleaseEvent({ adjustedPoint, adjustedPoint, MouseButton::Left, PlatformEvent::Type::MouseReleased, 1, { }, MonotonicTime::now(), WebCore::ForceAtClick, WebCore::SyntheticClickType::NoTap, WebCore::MouseEventInputSource::UserDriven });
+        break;
+    }
+}
+
+void WebPage::clearSelectionAfterTappingSelectionHighlightIfNeeded(WebCore::FloatPoint location)
+{
+    RefPtr localMainFrame = protect(m_page)->localMainFrame();
+    if (!localMainFrame)
+        return;
+
+    auto result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint { location }, {
+        HitTestRequest::Type::ReadOnly,
+        HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
+        HitTestRequest::Type::IncludeAllElementsUnderPoint,
+        HitTestRequest::Type::CollectMultipleElements,
+    });
+
+    bool tappedVideo = false;
+    bool tappedLiveText = false;
+    for (Ref node : result.listBasedTestResult()) {
+        if (is<HTMLVideoElement>(node))
+            tappedVideo = true;
+        else if (ImageOverlay::isOverlayText(node))
+            tappedLiveText = true;
+    }
+
+    if (tappedVideo && !tappedLiveText)
+        clearSelection();
+}
+
+bool WebPage::shouldDrawVisuallyContiguousBidiSelection() const
+{
+    return m_page->settings().visuallyContiguousBidiTextSelectionEnabled() && m_activeTextInteractionSources;
+}
+
+void WebPage::addTextInteractionSources(OptionSet<TextInteractionSource> sources)
+{
+    if (sources.isEmpty())
+        return;
+
+    bool wasEmpty = m_activeTextInteractionSources.isEmpty();
+    m_activeTextInteractionSources.add(sources);
+    if (!wasEmpty)
+        return;
+
+    if (m_page->settings().visuallyContiguousBidiTextSelectionEnabled())
+        scheduleFullEditorStateUpdate();
+}
+
+void WebPage::removeTextInteractionSources(OptionSet<TextInteractionSource> sources)
+{
+    if (m_activeTextInteractionSources.isEmpty())
+        return;
+
+    m_activeTextInteractionSources.remove(sources);
+
+    if (!m_activeTextInteractionSources.isEmpty())
+        return;
+
+    if (!m_page->settings().visuallyContiguousBidiTextSelectionEnabled())
+        return;
+
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    auto originalSelection = frame->selection().selection();
+    if (!originalSelection.isNonOrphanedRange())
+        return;
+
+    auto originalSelectedRange = originalSelection.toNormalizedRange();
+    if (!originalSelectedRange)
+        return;
+
+    auto adjustedRange = adjustToVisuallyContiguousRange(*originalSelectedRange);
+    if (originalSelectedRange == adjustedRange)
+        return;
+
+    protect(frame->selection())->setSelectedRange(adjustedRange, originalSelection.affinity(), FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+}
+
+void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch selectionTouch, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&& completionHandler)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler(point, selectionTouch, { });
+
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = focusedPluginViewForFrame(*frame)) {
+        OptionSet<SelectionFlags> resultFlags;
+        auto startOrEnd = baseIsStart ? SelectionEndpoint::End : SelectionEndpoint::Start;
+        if (pluginView->moveSelectionEndpoint(point, startOrEnd) == SelectionWasFlipped::Yes)
+            resultFlags.add(SelectionFlags::SelectionFlipped);
+        return completionHandler(point, selectionTouch, resultFlags);
+    }
+#endif
+
+    if (selectionTouch == SelectionTouch::Moved
+        && m_bidiSelectionFlippingState != BidiSelectionFlippingState::NotFlipping
+        && baseIsStart == (m_bidiSelectionFlippingState == BidiSelectionFlippingState::FlippingToStart)) {
+        // The last selection update caused the selection base and extent to swap. Ignore any in-flight selection
+        // update that's still trying to adjust the new selection base (after flipping).
+        return completionHandler(point, selectionTouch, { });
+    }
+
+    if (selectionTouch == SelectionTouch::Started)
+        addTextInteractionSources(TextInteractionSource::Touch);
+
+    auto localPoint = mainFrameCoordinatesToRootView(point);
+
+    IntPoint pointInDocument = RefPtr(frame->view())->rootViewToContents(localPoint);
+    VisiblePosition position = frame->visiblePositionForPoint(pointInDocument);
+    if (position.isNull())
+        return completionHandler(point, selectionTouch, { });
+
+    if (shouldDispatchSyntheticMouseEventsWhenModifyingSelection())
+        dispatchSyntheticMouseEventsForSelectionGesture(selectionTouch, localPoint);
+
+    std::optional<SimpleRange> range;
+    OptionSet<SelectionFlags> flags;
+    SelectionWasFlipped selectionFlipped = SelectionWasFlipped::No;
+
+    switch (selectionTouch) {
+    case SelectionTouch::Started:
+    case SelectionTouch::EndedNotMoving:
+        break;
+
+    case SelectionTouch::Ended:
+        if (frame->selection().selection().isContentEditable())
+            range = makeSimpleRange(closestWordBoundaryForPosition(position));
+        else
+            std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(*frame, localPoint, baseIsStart, selectionFlippingEnabled());
+        break;
+
+    case SelectionTouch::EndedMovingForward:
+    case SelectionTouch::EndedMovingBackward:
+        range = rangeAtWordBoundaryForPosition(frame.get(), position, baseIsStart);
+        break;
+
+    case SelectionTouch::Moved:
+        std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(*frame, localPoint, baseIsStart, selectionFlippingEnabled());
+        break;
+    }
+
+    if (range)
+        protect(frame->selection())->setSelectedRange(range, position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+
+    switch (selectionTouch) {
+    case SelectionTouch::Started:
+    case SelectionTouch::Moved:
+        break;
+    case SelectionTouch::Ended:
+    case SelectionTouch::EndedMovingForward:
+    case SelectionTouch::EndedMovingBackward:
+    case SelectionTouch::EndedNotMoving:
+        removeTextInteractionSources(TextInteractionSource::Touch);
+        break;
+    }
+
+    if (selectionFlipped == SelectionWasFlipped::Yes) {
+        flags.add(SelectionFlags::SelectionFlipped);
+        m_bidiSelectionFlippingState = baseIsStart ? BidiSelectionFlippingState::FlippingToStart : BidiSelectionFlippingState::FlippingToEnd;
+    } else
+        m_bidiSelectionFlippingState = BidiSelectionFlippingState::NotFlipping;
+
+    completionHandler(point, selectionTouch, flags);
+}
+
+void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType gestureType, GestureRecognizerState gestureState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& completionHandler)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    RefPtr view = frame->view();
+    auto fromPosition = frame->visiblePositionForPoint(view->rootViewToContents(from));
+    auto toPosition = frame->visiblePositionForPoint(view->rootViewToContents(to));
+    if (auto range = makeSimpleRange(fromPosition, toPosition)) {
+        if (!(fromPosition < toPosition))
+            std::swap(range->start, range->end);
+        protect(frame->selection())->setSelectedRange(range, fromPosition.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+    }
+
+    // We can use the same callback for the gestures with one point.
+    completionHandler(from, gestureType, gestureState, { });
+}
+
+void WebPage::extendSelectionForReplacement(CompletionHandler<void()>&& completion)
+{
+    auto callCompletionHandlerOnExit = makeScopeExit(WTF::move(completion));
+
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    RefPtr document = frame->document();
+    if (!document)
+        return;
+
+    auto selectedRange = frame->selection().selection().range();
+    if (!selectedRange || !selectedRange->collapsed())
+        return;
+
+    VisiblePosition position = frame->selection().selection().start();
+    RefPtr container = position.deepEquivalent().containerNode();
+    if (!container)
+        return;
+
+    auto markerRanges = protect(document->markers())->markersFor(*container, { DocumentMarkerType::DictationAlternatives, DocumentMarkerType::CorrectionIndicator, DocumentMarkerType::Grammar }).map([&](auto& marker) {
+        return makeSimpleRange(*container, *marker);
+    });
+
+    std::optional<SimpleRange> rangeToSelect;
+    for (auto& markerRange : markerRanges) {
+        if (contains(makeVisiblePositionRange(markerRange), position)) {
+            // In practice, dictation markers should only span a single text node, so it's sufficient to
+            // grab the first matching range (instead of taking the union of all intersecting ranges).
+            rangeToSelect = markerRange;
+            break;
+        }
+    }
+
+    if (!rangeToSelect)
+        rangeToSelect = wordRangeFromPosition(position);
+
+    if (!rangeToSelect)
+        return;
+
+    if (auto lastRange = std::exchange(m_lastSelectedReplacementRange, { }); lastRange && makeSimpleRange(*lastRange) == rangeToSelect)
+        return;
+
+    setSelectedRangeDispatchingSyntheticMouseEventsIfNeeded(*rangeToSelect, position.affinity());
+    m_lastSelectedReplacementRange = rangeToSelect->makeWeakSimpleRange();
+}
+
+void WebPage::resetLastSelectedReplacementRangeIfNeeded()
+{
+    if (!m_lastSelectedReplacementRange)
+        return;
+
+    auto replacementRange = makeSimpleRange(*m_lastSelectedReplacementRange);
+    if (!replacementRange) {
+        m_lastSelectedReplacementRange = { };
+        return;
+    }
+
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame) {
+        m_lastSelectedReplacementRange = { };
+        return;
+    }
+
+    auto selectedRange = frame->selection().selection().toNormalizedRange();
+    if (!selectedRange) {
+        m_lastSelectedReplacementRange = { };
+        return;
+    }
+
+    if (!contains(ComposedTree, *replacementRange, *selectedRange))
+        m_lastSelectedReplacementRange = { };
+}
+
+void WebPage::extendSelection(WebCore::TextGranularity granularity, CompletionHandler<void()>&& completionHandler)
+{
+    auto callCompletionHandlerOnExit = makeScopeExit(WTF::move(completionHandler));
+
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    // For the moment we handle only TextGranularity::WordGranularity.
+    if (granularity != TextGranularity::WordGranularity || !frame->selection().isCaret())
+        return;
+
+    VisiblePosition position = frame->selection().selection().start();
+    auto wordRange = wordRangeFromPosition(position);
+    if (!wordRange)
+        return;
+
+    setSelectedRangeDispatchingSyntheticMouseEventsIfNeeded(*wordRange, position.affinity());
+}
+
+void WebPage::setSelectedRangeDispatchingSyntheticMouseEventsIfNeeded(const SimpleRange& range, Affinity affinity)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    IntPoint endLocationForSyntheticMouseEvents;
+    bool shouldDispatchMouseEvents = shouldDispatchSyntheticMouseEventsWhenModifyingSelection();
+    if (shouldDispatchMouseEvents) {
+        RefPtr view = frame->view();
+        auto startLocationForSyntheticMouseEvents = view->contentsToRootView(VisiblePosition(makeDeprecatedLegacyPosition(range.start)).absoluteCaretBounds()).center();
+        endLocationForSyntheticMouseEvents = view->contentsToRootView(VisiblePosition(makeDeprecatedLegacyPosition(range.end)).absoluteCaretBounds()).center();
+        dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch::Started, startLocationForSyntheticMouseEvents);
+        dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch::Moved, endLocationForSyntheticMouseEvents);
+    }
+
+    protect(frame->selection())->setSelectedRange(range, affinity, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+
+    if (shouldDispatchMouseEvents)
+        dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch::Ended, endLocationForSyntheticMouseEvents);
+}
+
+void WebPage::platformDidSelectAll()
+{
+    if (!shouldDispatchSyntheticMouseEventsWhenModifyingSelection())
+        return;
+
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    RefPtr view = frame->view();
+    auto startCaretRect = view->contentsToRootView(VisiblePosition(frame->selection().selection().start()).absoluteCaretBounds());
+    auto endCaretRect = view->contentsToRootView(VisiblePosition(frame->selection().selection().end()).absoluteCaretBounds());
+    dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch::Started, startCaretRect.center());
+    dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch::Moved, endCaretRect.center());
+    dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch::Ended, endCaretRect.center());
+}
+
+void WebPage::selectWordBackward()
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    if (!frame->selection().isCaret())
+        return;
+
+    auto position = frame->selection().selection().visibleStart();
+    auto startPosition = positionOfNextBoundaryOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Backward);
+    if (startPosition.isNull() || startPosition == position)
+        return;
+
+    protect(frame->selection())->setSelectedRange(makeSimpleRange(startPosition, position), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+}
+
+void WebPage::moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+    
+    VisiblePosition startPosition = frame->selection().selection().end();
+    if (startPosition.isNull())
+        return;
+    SelectionDirection direction = offset < 0 ? SelectionDirection::Backward : SelectionDirection::Forward;
+    VisiblePosition position = startPosition;
+    for (int i = 0; i < std::abs(offset); ++i) {
+        position = positionOfNextBoundaryOfGranularity(position, TextGranularity::CharacterGranularity, direction);
+        if (position.isNull())
+            break;
+    }
+    if (position.isNotNull() && startPosition != position)
+        protect(frame->selection())->setSelectedRange(makeSimpleRange(position), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+    completionHandler();
+}
+
+void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<FloatRect>&)>&& reply)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return reply({ });
+
+    RefPtr frameView = frame->view();
+    if (!frameView) {
+        reply({ });
+        return;
+    }
+
+    auto selection = frame->selection().selection();
+    if (selection.isNone()) {
+        reply({ });
+        return;
+    }
+
+    auto selectedRange = selection.toNormalizedRange();
+    if (!selectedRange) {
+        reply({ });
+        return;
+    }
+
+    if (!m_focusedElement || !m_focusedElement->renderer() || isTransparentOrFullyClipped(*protect(m_focusedElement))) {
+        reply({ });
+        return;
+    }
+
+    float scaleFactor = pageScaleFactor();
+    const double factorOfContentArea = 0.5;
+    RefPtr localMainFrame = protect(m_page)->localMainFrame();
+    if (!localMainFrame) {
+        reply({ });
+        return;
+    }
+
+    auto unobscuredContentArea = RefPtr(localMainFrame->view())->unobscuredContentRect().area();
+    if (unobscuredContentArea.hasOverflowed()) {
+        reply({ });
+        return;
+    }
+
+    double contextMenuAreaLimit = factorOfContentArea * scaleFactor * unobscuredContentArea.value();
+
+    FloatRect selectionBoundsInRootViewCoordinates;
+    if (selection.isRange())
+        selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(unionRect(RenderObject::absoluteTextRects(*selectedRange)));
+    else
+        selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(protect(frame->selection())->absoluteCaretBounds());
+
+    auto centerOfTargetBounds = selectionBoundsInRootViewCoordinates.center();
+    FloatPoint centerTopInRootViewCoordinates { centerOfTargetBounds.x(), selectionBoundsInRootViewCoordinates.y() };
+
+    auto clickableNonEditableNode = [&](const FloatPoint& locationInRootViewCoordinates) -> RefPtr<Node> {
+        RefPtr localMainFrame = protect(m_page)->localMainFrame();
+        if (!localMainFrame)
+            return nullptr;
+
+        FloatPoint adjustedPoint;
+        RefPtr hitNode = Ref(*localMainFrame)->nodeRespondingToClickEvents(locationInRootViewCoordinates, adjustedPoint);
+        if (!hitNode || is<HTMLBodyElement>(hitNode) || is<Document>(hitNode) || hitNode->hasEditableStyle())
+            return nullptr;
+
+        return hitNode;
+    };
+
+    // This heuristic attempts to find a list of rects to avoid when showing the callout menu on iOS.
+    // First, hit-test several points above the bounds of the selection rect in search of clickable nodes that are not editable.
+    // Secondly, hit-test several points around the edges of the selection rect and exclude any nodes found in the first round of
+    // hit-testing if these nodes are also reachable by moving outwards from the left, right, or bottom edges of the selection.
+    // Additionally, exclude any hit-tested nodes that are either very large relative to the size of the root view, or completely
+    // encompass the selection bounds. The resulting rects are the bounds of these hit-tested nodes in root view coordinates.
+    HashSet<Ref<Node>> hitTestedNodes;
+    Vector<FloatRect> rectsToAvoidInRootViewCoordinates;
+    const Vector<FloatPoint, 5> offsetsForHitTesting { { -30, -50 }, { 30, -50 }, { -60, -35 }, { 60, -35 }, { 0, -20 } };
+    for (auto offset : offsetsForHitTesting) {
+        offset.scale(1 / scaleFactor);
+        if (RefPtr hitNode = clickableNonEditableNode(centerTopInRootViewCoordinates + offset))
+            hitTestedNodes.add(*hitNode);
+    }
+
+    const float marginForHitTestingSurroundingNodes = 80 / scaleFactor;
+    Vector<FloatPoint, 3> exclusionHitTestLocations {
+        { selectionBoundsInRootViewCoordinates.x() - marginForHitTestingSurroundingNodes, centerOfTargetBounds.y() },
+        { centerOfTargetBounds.x(), selectionBoundsInRootViewCoordinates.maxY() + marginForHitTestingSurroundingNodes },
+        { selectionBoundsInRootViewCoordinates.maxX() + marginForHitTestingSurroundingNodes, centerOfTargetBounds.y() }
+    };
+
+    for (auto& location : exclusionHitTestLocations) {
+        if (RefPtr nodeToExclude = clickableNonEditableNode(location))
+            hitTestedNodes.remove(*nodeToExclude);
+    }
+
+    for (auto& node : hitTestedNodes) {
+        RefPtr frameView = node->document().view();
+        CheckedPtr renderer = node->renderer();
+        if (!renderer || !frameView)
+            continue;
+
+        auto bounds = frameView->contentsToRootView(renderer->absoluteBoundingBoxRect());
+        auto area = bounds.area();
+        if (area.hasOverflowed() || area > contextMenuAreaLimit)
+            continue;
+
+        if (bounds.contains(enclosingIntRect(selectionBoundsInRootViewCoordinates)))
+            continue;
+
+        rectsToAvoidInRootViewCoordinates.append(WTF::move(bounds));
+    }
+
+    reply(WTF::move(rectsToAvoidInRootViewCoordinates));
+}
+
+void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, int32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ });
+
+    auto selection = m_internals->storedSelectionForAccessibility.isNone() ? frame->selection().selection() : m_internals->storedSelectionForAccessibility;
+    auto position = visiblePositionForPositionWithOffset(selection.visibleStart(), offset);
+    auto direction = offset < 0 ? SelectionDirection::Backward : SelectionDirection::Forward;
+    auto range = enclosingTextUnitOfGranularity(position, granularity, direction);
+    if (!range || range->collapsed()) {
+        completionHandler({ });
+        return;
+    }
+
+    auto selectionGeometries = RenderObject::collectSelectionGeometriesWithoutUnionInteriorLines(*range);
+    RefPtr view = frame->view();
+    convertContentToRootView(*view, selectionGeometries);
+    completionHandler(selectionGeometries);
+}
+
+void WebPage::storeSelectionForAccessibility(bool shouldStore)
+{
+    if (!shouldStore)
+        m_internals->storedSelectionForAccessibility = VisibleSelection();
+    else {
+        if (RefPtr frame = m_page->focusController().focusedOrMainFrame())
+            m_internals->storedSelectionForAccessibility = frame->selection().selection();
+    }
+}
+
+static std::optional<SimpleRange> rangeNearPositionMatchesText(const VisiblePosition& position, const String& matchText, const VisibleSelection& selection)
+{
+    auto liveRange = selection.firstRange();
+    if (!liveRange)
+        return std::nullopt;
+    SimpleRange range { *liveRange };
+    auto boundaryPoint = makeBoundaryPoint(position);
+    if (!boundaryPoint)
+        return std::nullopt;
+    return findClosestPlainText(range, matchText, { }, characterCount({ range.start, *boundaryPoint }, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions));
+}
+
+void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ });
+    auto& selection = m_internals->storedSelectionForAccessibility.isNone() ? frame->selection().selection() : m_internals->storedSelectionForAccessibility;
+    auto startPosition = visiblePositionForPositionWithOffset(selection.visibleStart(), offset);
+    auto range = makeSimpleRange(startPosition, visiblePositionForPositionWithOffset(startPosition, text.length()));
+    if (!range || range->collapsed()) {
+        completionHandler({ });
+        return;
+    }
+
+    if (plainTextForDisplay(*range) != text) {
+        // Try to search for a range which is the closest to the position within the selection range that matches the passed in text.
+        if (auto wordRange = rangeNearPositionMatchesText(startPosition, text, selection)) {
+            if (!wordRange->collapsed())
+                range = *wordRange;
+        }
+    }
+
+    auto selectionGeometries = RenderObject::collectSelectionGeometriesWithoutUnionInteriorLines(*range);
+    RefPtr view = frame->view();
+    convertContentToRootView(*view, selectionGeometries);
+    completionHandler(selectionGeometries);
+}
+
+void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& point, WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler();
+
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(*frame, point, isInteractingWithFocusedElement);
+
+    if (position.isNotNull()) {
+        position = positionOfNextBoundaryOfGranularity(position, granularity, direction);
+        if (position.isNotNull())
+            protect(frame->selection())->setSelectedRange(makeSimpleRange(position), Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+    }
+    completionHandler();
+}
+
+void WebPage::moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler();
+
+    if (!frame->selection().selection().isNone()) {
+        bool isForward = (direction == SelectionDirection::Forward || direction == SelectionDirection::Right);
+        VisiblePosition position = (isForward) ? frame->selection().selection().visibleEnd() : frame->selection().selection().visibleStart();
+        position = positionOfNextBoundaryOfGranularity(position, granularity, direction);
+        if (position.isNotNull())
+            protect(frame->selection())->setSelectedRange(makeSimpleRange(position), isForward? Affinity::Upstream : Affinity::Downstream, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+    }
+    completionHandler();
+}
+
+void WebPage::beginSelectionInDirection(WebCore::SelectionDirection direction, CompletionHandler<void(bool)>&& completionHandler)
+{
+    m_selectionAnchor = direction == SelectionDirection::Left ? SelectionAnchor::Start : SelectionAnchor::End;
+    completionHandler(m_selectionAnchor == SelectionAnchor::Start);
+}
+
+void WebPage::didReleaseAllTouchPoints()
+{
+    m_hasAnyActiveTouchPoints = false;
+    removeTextInteractionSources(TextInteractionSource::Touch);
+}
+
+#if ENABLE(REVEAL)
+RevealItem WebPage::revealItemForCurrentSelection()
+{
+    RefPtr frame = protect(*m_page)->focusController().focusedOrMainFrame();
+    if (!frame)
+        return { };
+
+    auto selection = frame->selection().selection();
+    if (!selection.isNone()) {
+        std::optional<SimpleRange> fullCharacterRange;
+        if (selection.isRange()) {
+            auto selectionStart = selection.visibleStart();
+            auto selectionEnd = selection.visibleEnd();
+
+            // As context, we are going to use the surrounding paragraphs of text.
+            fullCharacterRange = makeSimpleRange(startOfParagraph(selectionStart), endOfParagraph(selectionEnd));
+            if (!fullCharacterRange)
+                fullCharacterRange = makeSimpleRange(selectionStart, selectionEnd);
+            
+            if (fullCharacterRange) {
+                auto selectionRange = NSMakeRange(characterCount(*makeSimpleRange(fullCharacterRange->start, selectionStart)), characterCount(*makeSimpleRange(selectionStart, selectionEnd)));
+                String itemString = plainText(*fullCharacterRange);
+                return { itemString, selectionRange };
+            }
+        }
+    }
+    return { };
+}
+
+void WebPage::requestRVItemInCurrentSelectedRange(CompletionHandler<void(const WebKit::RevealItem&)>&& completionHandler)
+{
+    completionHandler(RevealItem(revealItemForCurrentSelection()));
+}
+
+void WebPage::prepareSelectionForContextMenuWithLocationInView(IntPoint point, CompletionHandler<void(bool, const RevealItem&)>&& completionHandler)
+{
+    constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+    RefPtr localMainFrame = protect(m_page)->localMainFrame();
+    if (!localMainFrame)
+        return completionHandler(false, { });
+    Ref frame = *localMainFrame;
+    auto result = frame->eventHandler().hitTestResultAtPoint(point, hitType);
+    RefPtr hitNode = result.innerNonSharedNode();
+    if (!hitNode)
+        return completionHandler(false, { });
+
+    if (RefPtr view = frame->view()) {
+        auto pointInContents = view->rootViewToContents(point);
+
+        if (protect(frame->selection())->contains(pointInContents))
+            return completionHandler(true, revealItemForCurrentSelection());
+    }
+
+    auto sendEditorStateAndCallCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](RevealItem&& item) mutable {
+        layoutIfNeeded();
+        sendEditorStateUpdate();
+        completionHandler(true, WTF::move(item));
+    };
+
+    if (is<HTMLImageElement>(*hitNode) && hitNode->hasEditableStyle()) {
+        auto range = makeRangeSelectingNode(*hitNode);
+        if (range && protect(frame->selection())->setSelectedRange(range, Affinity::Upstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes))
+            return sendEditorStateAndCallCompletionHandler({ });
+    }
+
+    frame->eventHandler().selectClosestContextualWordOrLinkFromHitTestResult(result, DontAppendTrailingWhitespace);
+    sendEditorStateAndCallCompletionHandler(revealItemForCurrentSelection());
+}
+#endif
+
+void WebPage::replaceSelectedText(const String& oldText, const String& newText)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    auto wordRange = frame->selection().isCaret() ? wordRangeFromPosition(frame->selection().selection().start()) : frame->selection().selection().toNormalizedRange();
+    if (plainTextForContext(wordRange) != oldText)
+        return;
+
+    IgnoreSelectionChangeForScope ignoreSelectionChanges { *frame };
+    protect(frame->selection())->setSelectedRange(wordRange, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes);
+    protect(frame->editor())->insertText(newText, 0);
+}
+
+void WebPage::replaceDictatedText(const String& oldText, const String& newText)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    if (frame->selection().isNone())
+        return;
+
+    if (frame->selection().isRange()) {
+        protect(frame->editor())->deleteSelectionWithSmartDelete(false);
+        return;
+    }
+
+    auto range = findDictatedTextRangeBeforeCursor(*frame, oldText);
+    if (!range)
+        return;
+
+    // We don't want to notify the client that the selection has changed until we are done inserting the new text.
+    IgnoreSelectionChangeForScope ignoreSelectionChanges { *frame };
+    protect(frame->selection())->setSelectedRange(*range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes);
+    protect(frame->editor())->insertText(newText, 0);
+}
+
+void WebPage::willInsertFinalDictationResult()
+{
+    RefPtr frame = protect(*m_page)->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    if (frame->selection().isNone())
+        return;
+
+    m_ignoreSelectionChangeScopeForDictation = makeUnique<IgnoreSelectionChangeForScope>(*frame);
+}
+
+bool WebPage::shouldRemoveDictationAlternativesAfterEditing() const
+{
+    return !m_ignoreSelectionChangeScopeForDictation;
+}
+
+void WebPage::didInsertFinalDictationResult()
+{
+    m_ignoreSelectionChangeScopeForDictation = nullptr;
+    scheduleFullEditorStateUpdate();
+}
+
+void WebPage::requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& reply)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return reply({ });
+
+    if (!frame->selection().isCaret()) {
+        reply({ });
+        return;
+    }
+
+    auto range = wordRangeFromPosition(frame->selection().selection().visibleStart());
+    if (!range) {
+        reply({ });
+        return;
+    }
+
+    auto textForRange = plainTextForContext(range);
+    const unsigned maxSearchAttempts = 5;
+    for (size_t i = 0;  i < maxSearchAttempts && textForRange != textForAutocorrection; ++i) {
+        auto position = makeDeprecatedLegacyPosition(range->start).previous();
+        if (position.isNull() || position == makeDeprecatedLegacyPosition(range->start))
+            break;
+        auto startRange = wordRangeFromPosition(position);
+        if (!startRange)
+            continue;
+        range = { { startRange->start, range->end } };
+        textForRange = plainTextForContext(range);
+    }
+
+    Vector<SelectionGeometry> selectionGeometries;
+    if (textForRange == textForAutocorrection)
+        selectionGeometries = RenderObject::collectSelectionGeometries(*range).geometries;
+
+    auto rootViewSelectionRects = selectionGeometries.map([&](const auto& selectionGeometry) -> FloatRect {
+        return frame->view()->contentsToRootView(selectionGeometry.rect());
+    });
+
+    bool multipleFonts = false;
+    CTFontRef font = nil;
+    if (auto coreFont = protect(frame->editor())->fontForSelection(multipleFonts))
+        font = coreFont->ctFont();
+
+    reply({ WTF::move(rootViewSelectionRects) , (__bridge UIFont *)font });
+}
+
+void WebPage::applyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(const String&)>&& callback)
+{
+    callback(applyAutocorrectionInternal(correction, originalText, isCandidate) ? correction : String());
+}
+
+Seconds WebPage::eventThrottlingDelay() const
+{
+    auto behaviorOverride = m_page->eventThrottlingBehaviorOverride();
+    if (behaviorOverride) {
+        switch (behaviorOverride.value()) {
+        case EventThrottlingBehavior::Responsive:
+            return 0_s;
+        case EventThrottlingBehavior::Unresponsive:
+            return 1_s;
+        }
+    }
+
+    if (m_isInStableState || m_estimatedLatency <= Seconds(1.0 / 60))
+        return 0_s;
+
+    return std::min(m_estimatedLatency * 2, 1_s);
+}
+
+void WebPage::syncApplyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(bool)>&& reply)
+{
+    reply(applyAutocorrectionInternal(correction, originalText, isCandidate));
+}
+
+bool WebPage::applyAutocorrectionInternal(const String& correction, const String& originalText, bool isCandidate)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return false;
+
+    if (!frame->selection().isCaretOrRange())
+        return false;
+
+    if (correction == originalText)
+        return false;
+
+    std::optional<SimpleRange> range;
+    String textForRange;
+    auto originalTextWithFoldedQuoteMarks = foldQuoteMarks(originalText);
+
+    if (frame->selection().isCaret()) {
+        auto position = frame->selection().selection().visibleStart();
+        range = wordRangeFromPosition(position);
+        textForRange = plainTextForContext(range);
+        
+        // If 'originalText' is not the same as 'textForRange' we need to move 'range'
+        // forward such that it matches the original selection as much as possible.
+        if (foldQuoteMarks(textForRange) != originalTextWithFoldedQuoteMarks) {
+            // Search for the original text near the selection caret.
+            auto characterCount = numGraphemeClusters(originalText);
+            if (!characterCount) {
+                textForRange = emptyString();
+                range = makeSimpleRange(position);
+            } else if (auto searchRange = rangeExpandedAroundPositionByCharacters(position, characterCount)) {
+                if (auto foundRange = findPlainText(*searchRange, originalTextWithFoldedQuoteMarks, { FindOption::DoNotSetSelection, FindOption::DoNotRevealSelection }); !foundRange.collapsed()) {
+                    textForRange = plainTextForContext(foundRange);
+                    range = foundRange;
+                }
+            }
+        } else if (textForRange.isEmpty() && range && !range->collapsed()) {
+            // If 'range' does not include any text but it is not collapsed, we need to set
+            // 'range' to match the selection. Otherwise non-text nodes will be removed.
+            range = makeSimpleRange(position);
+            if (!range)
+                return false;
+        }
+    } else {
+        // Range selection.
+        range = frame->selection().selection().toNormalizedRange();
+        if (!range)
+            return false;
+
+        textForRange = plainTextForContext(range);
+    }
+
+    if (foldQuoteMarks(textForRange) != originalTextWithFoldedQuoteMarks)
+        return false;
+    
+    // Correctly determine affinity, using logic currently only present in VisiblePosition
+    auto affinity = Affinity::Downstream;
+    if (range && range->collapsed())
+        affinity = VisiblePosition(makeDeprecatedLegacyPosition(range->start), Affinity::Upstream).affinity();
+    
+    protect(frame->selection())->setSelectedRange(range, affinity, WebCore::FrameSelection::ShouldCloseTyping::Yes);
+    Ref editor = frame->editor();
+    if (correction.length()) {
+        editor->insertText(correction, 0, originalText.isEmpty() ? TextEventInputKeyboard : TextEventInputAutocompletion);
+        if (isCandidate)
+            adjustCandidateAutocorrectionInFrame(correction, *frame);
+    } else if (originalText.length())
+        editor->deleteWithDirection(SelectionDirection::Backward, TextGranularity::CharacterGranularity, false, true);
+    return true;
+}
+
+WebAutocorrectionContext WebPage::autocorrectionContext()
+{
+    if (!m_focusedElement)
+        return { };
+
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return { };
+
+    if (!frame->selection().selection().hasEditableStyle())
+        return { };
+
+    String contextBefore;
+    String markedText;
+    String selectedText;
+    String contextAfter;
+    EditingRange selectedRangeInMarkedText;
+
+    VisiblePosition startPosition = frame->selection().selection().start();
+    VisiblePosition endPosition = frame->selection().selection().end();
+    const unsigned minContextWordCount = 10;
+    const unsigned minContextLength = 40;
+    const unsigned maxContextLength = 100;
+
+    if (frame->selection().isRange())
+        selectedText = plainTextForContext(frame->selection().selection().toNormalizedRange());
+
+    if (auto compositionRange = protect(frame->editor())->compositionRange()) {
+        auto markedTextBefore = plainTextForContext(makeSimpleRange(compositionRange->start, startPosition));
+        auto markedTextAfter = plainTextForContext(makeSimpleRange(endPosition, compositionRange->end));
+        markedText = makeString(markedTextBefore, selectedText, markedTextAfter);
+        if (!markedText.isEmpty()) {
+            selectedRangeInMarkedText.location = markedTextBefore.length();
+            selectedRangeInMarkedText.length = selectedText.length();
+        }
+    } else {
+        auto firstPositionInEditableContent = startOfEditableContent(startPosition);
+        if (startPosition != firstPositionInEditableContent) {
+            VisiblePosition contextStartPosition = startPosition;
+            VisiblePosition previousPosition;
+            unsigned totalContextLength = 0;
+            for (unsigned i = 0; i < minContextWordCount; ++i) {
+                if (contextBefore.length() >= minContextLength)
+                    break;
+                previousPosition = startOfWord(positionOfNextBoundaryOfGranularity(contextStartPosition, TextGranularity::WordGranularity, SelectionDirection::Backward));
+                if (previousPosition.isNull())
+                    break;
+                String currentWord = plainTextForContext(makeSimpleRange(previousPosition, contextStartPosition));
+                totalContextLength += currentWord.length();
+                if (totalContextLength >= maxContextLength)
+                    break;
+                contextStartPosition = previousPosition;
+            }
+            VisiblePosition sentenceContextStartPosition = startOfSentence(startPosition);
+            if (sentenceContextStartPosition.isNotNull() && sentenceContextStartPosition < contextStartPosition)
+                contextStartPosition = sentenceContextStartPosition;
+            if (contextStartPosition.isNotNull() && contextStartPosition < startPosition) {
+                contextBefore = plainTextForContext(makeSimpleRange(contextStartPosition, startPosition));
+                if (atBoundaryOfGranularity(contextStartPosition, TextGranularity::ParagraphGranularity, SelectionDirection::Backward) && firstPositionInEditableContent != contextStartPosition)
+                    contextBefore = makeString("\n "_s, contextBefore);
+            }
+        }
+
+        if (endPosition != endOfEditableContent(endPosition)) {
+            VisiblePosition nextPosition = endOfSentence(endPosition);
+            if (nextPosition.isNotNull() && nextPosition > endPosition)
+                contextAfter = plainTextForContext(makeSimpleRange(endPosition, nextPosition));
+        }
+    }
+
+    WebAutocorrectionContext correction;
+    correction.contextBefore = WTF::move(contextBefore);
+    correction.markedText = WTF::move(markedText);
+    correction.selectedText = WTF::move(selectedText);
+    correction.contextAfter = WTF::move(contextAfter);
+    correction.selectedRangeInMarkedText = WTF::move(selectedRangeInMarkedText);
+    return correction;
+}
+
+void WebPage::preemptivelySendAutocorrectionContext()
+{
+    send(Messages::WebPageProxy::HandleAutocorrectionContext(autocorrectionContext()));
+}
+
+void WebPage::handleAutocorrectionContextRequest()
+{
+    send(Messages::WebPageProxy::HandleAutocorrectionContext(autocorrectionContext()));
+}
+
+void WebPage::prepareToRunModalJavaScriptDialog()
+{
+    // When a modal dialog is presented while an editable element is focused, UIKit will attempt to request a
+    // WebAutocorrectionContext, which triggers synchronous IPC back to the web process, resulting in deadlock.
+    // To avoid this deadlock, we preemptively compute and send autocorrection context data to the UI process,
+    // such that the UI process can immediately respond to UIKit without synchronous IPC to the web process.
+    preemptivelySendAutocorrectionContext();
+}
+
+static inline bool isObscuredElement(Element& element)
+{
+    RefPtr mainFrameDocument = protect(element.document())->mainFrameDocument();
+    if (!mainFrameDocument) {
+        LOG_ONCE(SiteIsolation, "Unable to properly perform isObscuredElement() without access to the main frame document ");
+        return false;
+    }
+
+    auto elementRectInMainFrame = element.boundingBoxInRootViewCoordinates();
+
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::IgnoreClipping };
+    HitTestResult result(elementRectInMainFrame.center());
+
+    mainFrameDocument->hitTest(hitType, result);
+    result.setToNonUserAgentShadowAncestor();
+
+    if (result.targetElement() == &element)
+        return false;
+
+    return true;
+}
+
+void WebPage::startInteractionWithElementContextOrPosition(std::optional<WebCore::ElementContext>&& elementContext, WebCore::IntPoint&& point)
+{
+    if (elementContext) {
+        m_interactionNode = elementForContext(*elementContext);
+        if (m_interactionNode)
+            return;
+    }
+
+    FloatPoint adjustedPoint;
+    if (RefPtr localMainFrame = protect(m_page)->localMainFrame())
+        m_interactionNode = localMainFrame->nodeRespondingToInteraction(point, adjustedPoint);
+}
+
+void WebPage::stopInteraction()
+{
+    m_interactionNode = nullptr;
+}
+
+static void handleAnimationActions(Element& element, uint32_t action)
+{
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    if (static_cast<SheetAction>(action) == SheetAction::PlayAnimation) {
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element))
+            imageElement->setAllowsAnimation(true);
+    } else if (static_cast<SheetAction>(action) == SheetAction::PauseAnimation) {
+        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element))
+            imageElement->setAllowsAnimation(false);
+    }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+}
+
+void WebPage::performActionOnElement(uint32_t action, const String& authorizationToken, CompletionHandler<void()>&& completionHandler)
+{
+    CompletionHandlerCallingScope callCompletionHandler(WTF::move(completionHandler));
+
+    RefPtr element = dynamicDowncast<HTMLElement>(m_interactionNode);
+    if (!element || !element->renderer())
+        return;
+
+    if (static_cast<SheetAction>(action) == SheetAction::Copy) {
+        Ref interactionNodeEditor = protect(m_interactionNode->document())->editor();
+        Ref elementDocument = element->document();
+        if (is<RenderImage>(*element->renderer())) {
+            URL urlToCopy;
+            String titleToCopy;
+            if (RefPtr linkElement = containingLinkAnchorElement(*element)) {
+                if (auto url = linkElement->href(); !url.isEmpty() && !url.protocolIsJavaScript()) {
+                    urlToCopy = url;
+                    titleToCopy = linkElement->attributeWithoutSynchronization(HTMLNames::titleAttr);
+                    if (!titleToCopy.length())
+                        titleToCopy = linkElement->textContent();
+                    titleToCopy = titleToCopy.trim(isASCIIWhitespace);
+                }
+            }
+            interactionNodeEditor->writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(elementDocument->pageID())), *element, urlToCopy, titleToCopy);
+        } else if (element->isLink())
+            interactionNodeEditor->copyURL(elementDocument->encodingParseURL(element->attributeWithoutSynchronization(HTMLNames::hrefAttr)), element->textContent());
+#if ENABLE(ATTACHMENT_ELEMENT)
+        else if (auto attachmentInfo = protect(elementDocument->editor())->promisedAttachmentInfo(*element))
+            send(Messages::WebPageProxy::WritePromisedAttachmentToPasteboard(WTF::move(attachmentInfo), authorizationToken));
+#endif
+    } else if (static_cast<SheetAction>(action) == SheetAction::SaveImage) {
+        CheckedPtr renderImage = dynamicDowncast<RenderImage>(*element->renderer());
+        if (!renderImage)
+            return;
+        RefPtr cachedImage = renderImage->cachedImage();
+        if (!cachedImage)
+            return;
+        RefPtr<FragmentedSharedBuffer> buffer = cachedImage->resourceBuffer();
+        if (!buffer)
+            return;
+        std::optional<SharedMemory::Handle> handle;
+        {
+            auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
+            if (!sharedMemoryBuffer)
+                return;
+            handle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
+        }
+        if (!handle)
+            return;
+        send(Messages::WebPageProxy::SaveImageToLibrary(WTF::move(*handle), authorizationToken));
+    }
+#if ENABLE(SPATIAL_IMAGE_DETECTION)
+    else if (static_cast<SheetAction>(action) == SheetAction::ViewSpatial)
+        element->webkitRequestFullscreen();
+#endif
+
+    handleAnimationActions(*element, action);
+}
+
+void WebPage::performActionOnElements(uint32_t action, const Vector<WebCore::ElementContext>& elements)
+{
+    for (const auto& elementContext : elements) {
+        if (RefPtr element = elementForContext(elementContext))
+            handleAnimationActions(*element, action);
+    }
+}
+
+static inline RefPtr<Element> nextAssistableElement(Node* startNode, Page& page, bool isForward)
+{
+    RefPtr nextElement = dynamicDowncast<Element>(startNode);
+    if (!nextElement)
+        return nullptr;
+
+    CheckedRef focusController { page.focusController() };
+    do {
+        auto result = isForward ? focusController->nextFocusableElement(*nextElement) : focusController->previousFocusableElement(*nextElement);
+        if (!result.element && result.continuedSearchInRemoteFrame == ContinuedSearchInRemoteFrame::Yes)
+            RELEASE_LOG(SiteIsolation, "Crossing site isolation process barrier searching for `nextAssistableElement` is not yet supported");
+
+        nextElement = result.element;
+    } while (nextElement && (!WebPage::isAssistableElement(*nextElement) || isObscuredElement(*nextElement)));
+
+    return nextElement;
+}
+
+void WebPage::focusNextFocusedElement(bool isForward, CompletionHandler<void()>&& completionHandler)
+{
+    auto nextElement = nextAssistableElement(m_focusedElement.get(), *protect(m_page), isForward);
+    m_userIsInteracting = true;
+    if (nextElement)
+        nextElement->focus();
+    m_userIsInteracting = false;
+    completionHandler();
+}
+
+std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
+{
+    Ref page = *m_page;
+    RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return std::nullopt;
+    RefPtr document = focusedOrMainFrame->document();
+    if (!document || !document->view())
+        return std::nullopt;
+
+    auto focusedElement = m_focusedElement.copyRef();
+    layoutIfNeeded();
+
+    // Layout may have detached the document or caused a change of focus.
+    if (!document->view() || focusedElement != m_focusedElement || !focusedElement)
+        return std::nullopt;
+
+    auto information = focusedElementInformationWithoutLayout(*focusedElement);
+    if (information)
+        scheduleFullEditorStateUpdate();
+    return information;
+}
+
+std::optional<FocusedElementInformation> WebPage::focusedElementInformationWithoutLayout(WebCore::Element& element)
+{
+    ASSERT(m_focusedElement == &element);
+    RefPtr focusedElement = &element;
+    Ref page = *m_page;
+    RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return std::nullopt;
+    RefPtr document = focusedOrMainFrame->document();
+    if (!document || !document->view())
+        return std::nullopt;
+
+    FocusedElementInformation information;
+
+    if (RefPtr webFrame = WebProcess::singleton().webFrame(focusedOrMainFrame->frameID()))
+        information.frame = webFrame->info(WithCertificateInfo::Yes);
+
+    information.lastInteractionLocation = flooredIntPoint(m_lastInteractionLocation);
+    if (auto elementContext = contextForElement(*focusedElement))
+        information.elementContext = WTF::move(*elementContext);
+
+    if (CheckedPtr renderer = focusedElement->renderer()) {
+        information.interactionRect = rootViewInteractionBounds(*focusedElement);
+        information.nodeFontSize = protect(renderer->style())->fontDescription().computedSize();
+
+        bool inFixed = false;
+        renderer->localToContainerPoint(FloatPoint(), nullptr, MapCoordinatesMode::UseTransforms, &inFixed);
+        information.insideFixedPosition = inFixed;
+        information.isRTL = renderer->writingMode().isBidiRTL();
+
+        if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
+            information.containerScrollingNodeID = scrollingCoordinator->scrollableContainerNodeID(*renderer);
+    } else
+        information.interactionRect = { };
+
+    RefPtr htmlElement = dynamicDowncast<HTMLElement>(focusedElement);
+    if (htmlElement)
+        information.isSpellCheckingEnabled = htmlElement->spellcheck();
+
+    information.isWritingSuggestionsEnabled = focusedElement->isWritingSuggestionsEnabled();
+
+    if (RefPtr formControlElement = dynamicDowncast<HTMLFormControlElement>(focusedElement))
+        information.isFocusingWithValidationMessage = formControlElement->isFocusingWithValidationMessage();
+
+    information.minimumScaleFactor = minimumPageScaleFactor();
+    information.maximumScaleFactor = maximumPageScaleFactor();
+    information.maximumScaleFactorIgnoringAlwaysScalable = maximumPageScaleFactorIgnoringAlwaysScalable();
+    information.allowsUserScaling = m_viewportConfiguration.allowsUserScaling();
+    information.allowsUserScalingIgnoringAlwaysScalable = m_viewportConfiguration.allowsUserScalingIgnoringAlwaysScalable();
+    if (auto nextElement = nextAssistableElement(focusedElement.get(), page, true)) {
+        information.nextNodeRect = rootViewBounds(*nextElement);
+        information.hasNextNode = true;
+    }
+    if (auto previousElement = nextAssistableElement(focusedElement.get(), page, false)) {
+        information.previousNodeRect = rootViewBounds(*previousElement);
+        information.hasPreviousNode = true;
+    }
+    information.identifier = m_internals->lastFocusedElementInformationIdentifier.increment();
+
+    if (htmlElement) {
+        if (auto labels = htmlElement->labels()) {
+            Vector<Ref<Element>> associatedLabels;
+            for (unsigned index = 0; index < labels->length(); ++index) {
+                if (RefPtr label = dynamicDowncast<Element>(labels->item(index)); label && label->renderer())
+                    associatedLabels.append(*label);
+            }
+            for (auto& labelElement : associatedLabels) {
+                auto text = labelElement->innerText();
+                if (!text.isEmpty()) {
+                    information.label = WTF::move(text);
+                    break;
+                }
+            }
+        }
+    }
+
+    information.title = focusedElement->title();
+    information.ariaLabel = focusedElement->attributeWithoutSynchronization(HTMLNames::aria_labelAttr);
+    information.elementType = inputTypeForElement(*focusedElement);
+
+    if (RefPtr element = dynamicDowncast<HTMLSelectElement>(*focusedElement)) {
+#if USE(UICONTEXTMENU)
+        static bool selectPickerUsesMenu = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::HasUIContextMenuInteraction);
+#else
+        bool selectPickerUsesMenu = false;
+#endif
+
+        RefPtr<ContainerNode> parentGroup;
+        int parentGroupID = 0;
+        for (auto& item : element->listItems()) {
+            if (RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(item.get())) {
+                if (parentGroup && optionElement->parentNode() != parentGroup) {
+                    parentGroupID++;
+                    parentGroup = nullptr;
+                    information.selectOptions.append(OptionItem(emptyString(), true, false, false, parentGroupID));
+                }
+
+                information.selectOptions.append(OptionItem(optionElement->label(), false, optionElement->selected(), optionElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr), parentGroupID));
+            } else if (RefPtr optGroupElement = dynamicDowncast<HTMLOptGroupElement>(item.get())) {
+                if (selectPickerUsesMenu)
+                    parentGroup = optGroupElement;
+
+                parentGroupID++;
+                information.selectOptions.append(OptionItem(optGroupElement->groupLabelText(), true, false, optGroupElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr), parentGroupID));
+            } else if (selectPickerUsesMenu && is<HTMLHRElement>(item.get())) {
+                parentGroupID++;
+                parentGroup = nullptr;
+                information.selectOptions.append(OptionItem(emptyString(), true, false, false, parentGroupID));
+            }
+        }
+        information.selectedIndex = element->selectedIndex();
+        information.isMultiSelect = element->multiple();
+        information.usesBaseAppearancePicker = element->usesBaseAppearancePicker();
+    } else if (RefPtr element = dynamicDowncast<HTMLTextAreaElement>(*focusedElement)) {
+        information.autocapitalizeType = element->autocapitalizeType();
+        information.isAutocorrect = element->shouldAutocorrect();
+        information.isReadOnly = element->isReadOnly();
+        information.value = element->value();
+        information.hasPlainText = !information.value.isEmpty();
+        information.autofillFieldName = WebCore::toAutofillFieldName(element->autofillData().fieldName);
+        information.nonAutofillCredentialType = element->autofillData().nonAutofillCredentialType;
+        information.placeholder = element->attributeWithoutSynchronization(HTMLNames::placeholderAttr);
+        information.inputMode = element->canonicalInputMode();
+        information.enterKeyHint = element->canonicalEnterKeyHint();
+    } else if (RefPtr element = dynamicDowncast<HTMLInputElement>(*focusedElement)) {
+        RefPtr form = element->form();
+        if (form)
+            information.formAction = form->getURLAttribute(WebCore::HTMLNames::actionAttr).string();
+        if (auto autofillElements = WebCore::AutofillElements::computeAutofillElements(*element)) {
+            information.acceptsAutofilledLoginCredentials = true;
+            information.isAutofillableUsernameField = autofillElements->username() == focusedElement;
+        }
+        information.representingPageURL = protect(element->document())->urlForBindings();
+        information.autocapitalizeType = element->autocapitalizeType();
+        information.isAutocorrect = element->shouldAutocorrect();
+        information.placeholder = element->attributeWithoutSynchronization(HTMLNames::placeholderAttr);
+        information.hasEverBeenPasswordField = element->hasEverBeenPasswordField();
+        if (information.elementType == InputType::Color) {
+            information.colorValue = element->valueAsColor();
+            information.supportsAlpha = element->alpha() ? WebKit::ColorControlSupportsAlpha::Yes : WebKit::ColorControlSupportsAlpha::No;
+            information.suggestedColors = element->suggestedColors();
+        }
+
+        information.isFocusingWithDataListDropdown = element->isFocusingWithDataListDropdown();
+        information.hasSuggestions = !!element->list();
+        information.inputMode = element->canonicalInputMode();
+        information.enterKeyHint = element->canonicalEnterKeyHint();
+        information.isReadOnly = element->isReadOnly();
+        information.value = element->value();
+        information.hasPlainText = !information.value.isEmpty();
+        information.valueAsNumber = element->valueAsNumber();
+        information.autofillFieldName = WebCore::toAutofillFieldName(element->autofillData().fieldName);
+        information.nonAutofillCredentialType = element->autofillData().nonAutofillCredentialType;
+    } else if (focusedElement->hasEditableStyle()) {
+        if (RefPtr focusedHTMLElement = dynamicDowncast<HTMLElement>(*focusedElement)) {
+            information.isAutocorrect = focusedHTMLElement->shouldAutocorrect();
+            information.autocapitalizeType = focusedHTMLElement->autocapitalizeType();
+            information.inputMode = focusedHTMLElement->canonicalInputMode();
+            information.enterKeyHint = focusedHTMLElement->canonicalEnterKeyHint();
+            information.shouldSynthesizeKeyEventsForEditing = true;
+        } else {
+            information.isAutocorrect = true;
+            information.autocapitalizeType = WebCore::AutocapitalizeType::Default;
+        }
+        information.isReadOnly = false;
+        information.hasPlainText = hasAnyPlainText(makeRangeSelectingNodeContents(*focusedElement));
+    }
+
+    Ref focusedElementDocument = focusedElement->document();
+
+    if (focusedElementDocument->quirks().shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() && isTransparentOrFullyClipped(*focusedElement)) {
+        information.autocapitalizeType = WebCore::AutocapitalizeType::None;
+        information.isAutocorrect = false;
+    }
+
+    auto& quirks = focusedElementDocument->quirks();
+    information.shouldAvoidResizingWhenInputViewBoundsChange = quirks.shouldAvoidResizingWhenInputViewBoundsChange();
+    information.shouldAvoidScrollingWhenFocusedContentIsVisible = quirks.shouldAvoidScrollingWhenFocusedContentIsVisible();
+    information.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation = quirks.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation();
+    information.shouldHideSoftTopScrollEdgeEffect = quirks.shouldHideSoftTopScrollEdgeEffectDuringFocus(*focusedElement);
+
+    return information;
+}
+
+void WebPage::emitDeferredFocusedElementUpdate(PendingFocusedElementUpdate&& pending)
+{
+    RefPtr element = pending.element.get();
+    if (!element || element != m_focusedElement)
+        return;
+
+    Ref document = element->document();
+    if (!document->view())
+        return;
+
+    auto information = focusedElementInformationWithoutLayout(*element);
+    if (!information)
+        return;
+
+    information->preventScroll = pending.options.preventScroll;
+    information->isFocusingWithValidationMessage = pending.isFocusingWithValidationMessage;
+    send(Messages::WebPageProxy::ElementDidFocus(information.value(), pending.userIsInteracting, pending.recentlyBlurredElementSnapshot, pending.activityStateChanges, UserData(WebProcess::singleton().transformObjectsToHandles(pending.userData.get()).get())));
+}
+
+void WebPage::flushPendingFocusedElementUpdateIfNeeded()
+{
+    if (!m_pendingFocusedElementUpdate)
+        return;
+
+    auto pendingUpdate = std::exchange(m_pendingFocusedElementUpdate, { });
+    layoutIfNeeded();
+    emitDeferredFocusedElementUpdate(WTF::move(*pendingUpdate));
+}
+
+void WebPage::autofillLoginCredentials(const String& username, const String& password)
+{
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(m_focusedElement)) {
+        if (auto autofillElements = AutofillElements::computeAutofillElements(*input))
+            autofillElements->autofill(username, password);
+    }
+}
+
+void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, double layoutSizeScaleFactorFromClient, double minimumEffectiveDeviceWidth)
+{
+    LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier << " setViewportConfigurationViewLayoutSize " << size << " layoutSizeScaleFactorFromClient " << layoutSizeScaleFactorFromClient << " minimumEffectiveDeviceWidth " << minimumEffectiveDeviceWidth);
+
+    if (!m_viewportConfiguration.isKnownToLayOutWiderThanViewport())
+        m_viewportConfiguration.setMinimumEffectiveDeviceWidthForShrinkToFit(0);
+
+    if (size.isZero() && mainFramePlugInRejectsZeroViewLayoutSizeUpdates())
+        return;
+
+    bool mainFramePluginOverridesViewScale = mainFramePlugInDefersScalingToViewport();
+
+    m_baseViewportLayoutSizeScaleFactor = [&] {
+        if (!m_page->settings().automaticallyAdjustsViewScaleUsingMinimumEffectiveDeviceWidth())
+            return 1.0;
+
+        if (!minimumEffectiveDeviceWidth)
+            return 1.0;
+
+        if (minimumEffectiveDeviceWidth >= size.width())
+            return 1.0;
+
+        if (mainFramePluginOverridesViewScale)
+            return 1.0;
+
+        return size.width() / minimumEffectiveDeviceWidth;
+    }();
+
+    double layoutSizeScaleFactor = mainFramePluginOverridesViewScale ? 1.0 : layoutSizeScaleFactorFromClient * m_baseViewportLayoutSizeScaleFactor;
+
+    auto previousLayoutSizeScaleFactor = m_viewportConfiguration.layoutSizeScaleFactor();
+    if (!m_viewportConfiguration.setViewLayoutSize(size, layoutSizeScaleFactor, minimumEffectiveDeviceWidth))
+        return;
+
+    auto zoomToInitialScale = ZoomToInitialScale::No;
+    auto newInitialScale = m_viewportConfiguration.initialScale();
+    auto currentPageScaleFactor = pageScaleFactor();
+    if (layoutSizeScaleFactor > previousLayoutSizeScaleFactor && newInitialScale > currentPageScaleFactor)
+        zoomToInitialScale = ZoomToInitialScale::Yes;
+    else if (layoutSizeScaleFactor < previousLayoutSizeScaleFactor && newInitialScale < currentPageScaleFactor)
+        zoomToInitialScale = ZoomToInitialScale::Yes;
+
+    viewportConfigurationChanged(zoomToInitialScale);
+}
+
+void WebPage::setDeviceOrientation(IntDegrees deviceOrientation)
+{
+    if (deviceOrientation == m_deviceOrientation)
+        return;
+    m_deviceOrientation = deviceOrientation;
+#if ENABLE(ORIENTATION_EVENTS)
+    if (RefPtr localMainFrame = protect(m_page)->localMainFrame())
+        localMainFrame->orientationChanged();
+#endif
+}
+
+void WebPage::setOverrideViewportArguments(const std::optional<WebCore::ViewportArguments>& arguments)
+{
+    protect(m_page)->setOverrideViewportArguments(arguments);
+}
+
+void WebPage::dynamicViewportSizeUpdate(const DynamicViewportSizeUpdate& target)
+{
+    RefPtr localMainFrame = protect(m_page)->localMainFrame();
+    if (!localMainFrame)
+        return;
+
+    SetForScope dynamicSizeUpdateGuard(m_inDynamicSizeUpdate, true);
+    // FIXME: this does not handle the cases where the content would change the content size or scroll position from JavaScript.
+    // To handle those cases, we would need to redo this computation on every change until the next visible content rect update.
+    LOG_WITH_STREAM(VisibleRects, stream << "\nWebPage::dynamicViewportSizeUpdate - viewLayoutSize " << target.viewLayoutSize << " targetUnobscuredRect " << target.unobscuredRect << " targetExposedContentRect " << target.exposedContentRect << " targetScale " << target.scale);
+
+    Ref frameView = *localMainFrame->view();
+    IntSize oldContentSize = frameView->contentsSize();
+    float oldPageScaleFactor = m_page->pageScaleFactor();
+    auto oldUnobscuredContentRect = frameView->unobscuredContentRect();
+    bool wasAtInitialScale = scalesAreEssentiallyEqual(oldPageScaleFactor, m_viewportConfiguration.initialScale());
+
+    m_internals->dynamicSizeUpdateHistory.add(std::make_pair(oldContentSize, oldPageScaleFactor), frameView->scrollPosition());
+
+    RefPtr<Node> oldNodeAtCenter;
+    double visibleHorizontalFraction = 1;
+    float relativeHorizontalPositionInNodeAtCenter = 0;
+    float relativeVerticalPositionInNodeAtCenter = 0;
+    if (!shouldEnableViewportBehaviorsForResizableWindows()) {
+        visibleHorizontalFraction = frameView->unobscuredContentSize().width() / oldContentSize.width();
+        IntPoint unobscuredContentRectCenter = frameView->unobscuredContentRect().center();
+
+        HitTestResult hitTestResult = HitTestResult(unobscuredContentRectCenter);
+
+        if (RefPtr document = frameView->frame().document())
+            document->hitTest(HitTestRequest(), hitTestResult);
+
+        if (RefPtr node = hitTestResult.innerNode()) {
+            if (CheckedPtr renderer = node->renderer()) {
+                Ref containingView = *node->document().frame()->view();
+                FloatRect boundingBox = containingView->contentsToRootView(renderer->absoluteBoundingBoxRect(true));
+                relativeHorizontalPositionInNodeAtCenter = (unobscuredContentRectCenter.x() - boundingBox.x()) / boundingBox.width();
+                relativeVerticalPositionInNodeAtCenter = (unobscuredContentRectCenter.y() - boundingBox.y()) / boundingBox.height();
+                oldNodeAtCenter = node;
+            }
+        }
+    }
+
+    LOG_WITH_STREAM(VisibleRects, stream << "WebPage::dynamicViewportSizeUpdate setting view layout size to " << target.viewLayoutSize);
+    bool viewportChanged = m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false);
+    viewportChanged |= m_viewportConfiguration.setViewLayoutSize(target.viewLayoutSize, std::nullopt, target.minimumEffectiveDeviceWidth);
+    if (viewportChanged)
+        viewportConfigurationChanged();
+
+    IntSize newLayoutSize = m_viewportConfiguration.layoutSize();
+
+    if (setFixedLayoutSize(newLayoutSize))
+        resetTextAutosizing();
+
+    setDefaultUnobscuredSize(target.maximumUnobscuredSize);
+    setMinimumUnobscuredSize(target.minimumUnobscuredSize);
+    setMaximumUnobscuredSize(target.maximumUnobscuredSize);
+    protect(m_page)->setUnobscuredSafeAreaInsets(target.unobscuredSafeAreaInsets);
+
+    frameView->updateLayoutAndStyleIfNeededRecursive();
+
+    IntSize newContentSize = frameView->contentsSize();
+
+    bool scaleToFitContent = (!shouldEnableViewportBehaviorsForResizableWindows() || !wasAtInitialScale) && m_userHasChangedPageScaleFactor;
+    double scale = scaleAfterViewportWidthChange(target.scale, scaleToFitContent, m_viewportConfiguration, target.unobscuredRectInScrollViewCoordinates.width(), newContentSize, oldContentSize, visibleHorizontalFraction);
+    FloatRect newUnobscuredContentRect = target.unobscuredRect;
+    FloatRect newExposedContentRect = target.exposedContentRect;
+
+    bool scaleChanged = !scalesAreEssentiallyEqual(scale, target.scale);
+    if (scaleChanged) {
+        // The target scale the UI is using cannot be reached by the content. We need to compute new targets based
+        // on the viewport constraint and report everything back to the UIProcess.
+
+        // 1) Compute a new unobscured rect centered around the original one.
+        double scaleDifference = target.scale / scale;
+        double newUnobscuredRectWidth = target.unobscuredRect.width() * scaleDifference;
+        double newUnobscuredRectHeight = target.unobscuredRect.height() * scaleDifference;
+        double newUnobscuredRectX;
+        double newUnobscuredRectY;
+        if (shouldEnableViewportBehaviorsForResizableWindows()) {
+            newUnobscuredRectX = oldUnobscuredContentRect.x();
+            newUnobscuredRectY = oldUnobscuredContentRect.y();
+        } else {
+            newUnobscuredRectX = target.unobscuredRect.x() - (newUnobscuredRectWidth - target.unobscuredRect.width()) / 2;
+            newUnobscuredRectY = target.unobscuredRect.y() - (newUnobscuredRectHeight - target.unobscuredRect.height()) / 2;
+        }
+        newUnobscuredContentRect = FloatRect(newUnobscuredRectX, newUnobscuredRectY, newUnobscuredRectWidth, newUnobscuredRectHeight);
+
+        // 2) Extend our new unobscuredRect by the obscured margins to get a new exposed rect.
+        double obscuredTopMargin = (target.unobscuredRect.y() - target.exposedContentRect.y()) * scaleDifference;
+        double obscuredLeftMargin = (target.unobscuredRect.x() - target.exposedContentRect.x()) * scaleDifference;
+        double obscuredBottomMargin = (target.exposedContentRect.maxY() - target.unobscuredRect.maxY()) * scaleDifference;
+        double obscuredRightMargin = (target.exposedContentRect.maxX() - target.unobscuredRect.maxX()) * scaleDifference;
+        newExposedContentRect = FloatRect(newUnobscuredRectX - obscuredLeftMargin,
+                                          newUnobscuredRectY - obscuredTopMargin,
+                                          newUnobscuredRectWidth + obscuredLeftMargin + obscuredRightMargin,
+                                          newUnobscuredRectHeight + obscuredTopMargin + obscuredBottomMargin);
+    }
+
+    if (oldContentSize != newContentSize || scaleChanged) {
+        // Snap the new unobscured rect back into the content rect.
+        newUnobscuredContentRect.setWidth(std::min(static_cast<float>(newContentSize.width()), newUnobscuredContentRect.width()));
+        newUnobscuredContentRect.setHeight(std::min(static_cast<float>(newContentSize.height()), newUnobscuredContentRect.height()));
+
+        bool positionWasRestoredFromSizeUpdateHistory = false;
+        const auto& previousPosition = m_internals->dynamicSizeUpdateHistory.find(std::pair<IntSize, float>(newContentSize, scale));
+        if (previousPosition != m_internals->dynamicSizeUpdateHistory.end()) {
+            IntPoint restoredPosition = previousPosition->value;
+            FloatPoint deltaPosition(restoredPosition.x() - newUnobscuredContentRect.x(), restoredPosition.y() - newUnobscuredContentRect.y());
+            newUnobscuredContentRect.moveBy(deltaPosition);
+            newExposedContentRect.moveBy(deltaPosition);
+            positionWasRestoredFromSizeUpdateHistory = true;
+        } else if (oldContentSize != newContentSize) {
+            FloatPoint newRelativeContentCenter;
+
+            if (CheckedPtr renderer = oldNodeAtCenter ? oldNodeAtCenter->renderer() : nullptr) {
+                Ref containingView = *oldNodeAtCenter->document().frame()->view();
+                auto newBoundingBox = containingView->contentsToRootView(renderer->absoluteBoundingBoxRect(true));
+                newRelativeContentCenter = FloatPoint(newBoundingBox.x() + relativeHorizontalPositionInNodeAtCenter * newBoundingBox.width(), newBoundingBox.y() + relativeVerticalPositionInNodeAtCenter * newBoundingBox.height());
+            } else
+                newRelativeContentCenter = relativeCenterAfterContentSizeChange(target.unobscuredRect, oldContentSize, newContentSize);
+
+            FloatPoint newUnobscuredContentRectCenter = newUnobscuredContentRect.center();
+            FloatPoint positionDelta(newRelativeContentCenter.x() - newUnobscuredContentRectCenter.x(), newRelativeContentCenter.y() - newUnobscuredContentRectCenter.y());
+            newUnobscuredContentRect.moveBy(positionDelta);
+            newExposedContentRect.moveBy(positionDelta);
+        }
+
+        // Make the top/bottom edges "sticky" within 1 pixel.
+        if (!positionWasRestoredFromSizeUpdateHistory) {
+            if (target.unobscuredRect.maxY() > oldContentSize.height() - 1) {
+                float bottomVerticalPosition = newContentSize.height() - newUnobscuredContentRect.height();
+                newUnobscuredContentRect.setY(bottomVerticalPosition);
+                newExposedContentRect.setY(bottomVerticalPosition);
+            }
+            if (target.unobscuredRect.y() < 1) {
+                newUnobscuredContentRect.setY(0);
+                newExposedContentRect.setY(0);
+            }
+
+            bool likelyResponsiveDesignViewport = newLayoutSize.width() == target.viewLayoutSize.width() && scalesAreEssentiallyEqual(scale, 1);
+            bool contentBleedsOutsideLayoutWidth = newContentSize.width() > newLayoutSize.width();
+            bool originalScrollPositionWasOnTheLeftEdge = target.unobscuredRect.x() <= 0;
+            if (likelyResponsiveDesignViewport && contentBleedsOutsideLayoutWidth && originalScrollPositionWasOnTheLeftEdge) {
+                // This is a special heuristics for "responsive" design with odd layout. It is quite common for responsive design
+                // to have content "bleeding" outside of the minimal layout width, usually from an image or table larger than expected.
+                // In those cases, the design usually does not adapt to the new width and remain at the newLayoutSize except for the
+                // large boxes.
+                // It is worth revisiting this special case as web developers get better with responsive design.
+                newExposedContentRect.setX(0);
+                newUnobscuredContentRect.setX(0);
+            }
+        }
+
+        float horizontalAdjustment = 0;
+        if (newUnobscuredContentRect.maxX() > newContentSize.width())
+            horizontalAdjustment -= newUnobscuredContentRect.maxX() - newContentSize.width();
+        float verticalAdjustment = 0;
+        if (newUnobscuredContentRect.maxY() > newContentSize.height())
+            verticalAdjustment -= newUnobscuredContentRect.maxY() - newContentSize.height();
+        if (newUnobscuredContentRect.x() < 0)
+            horizontalAdjustment += - newUnobscuredContentRect.x();
+        if (newUnobscuredContentRect.y() < 0)
+            verticalAdjustment += - newUnobscuredContentRect.y();
+
+        FloatPoint adjustmentDelta(horizontalAdjustment, verticalAdjustment);
+        newUnobscuredContentRect.moveBy(adjustmentDelta);
+        newExposedContentRect.moveBy(adjustmentDelta);
+    }
+
+    frameView->setScrollVelocity({ 0, 0, 0, MonotonicTime::now() });
+
+    IntPoint roundedUnobscuredContentRectPosition = roundedIntPoint(newUnobscuredContentRect.location());
+    frameView->setUnobscuredContentSize(newUnobscuredContentRect.size());
+    protect(m_drawingArea)->setExposedContentRect(newExposedContentRect);
+
+    scalePage(scale, roundedUnobscuredContentRectPosition);
+
+    frameView->updateLayoutAndStyleIfNeededRecursive();
+
+    // FIXME: Move settings from Frame to Frame and remove this check.
+    auto& settings = frameView->frame().settings();
+    LayoutRect documentRect = IntRect(frameView->scrollOrigin(), frameView->contentsSize());
+    double heightExpansionFactor = m_disallowLayoutViewportHeightExpansionReasons.isEmpty() ? settings.layoutViewportHeightExpansionFactor() : 0;
+    auto layoutViewportSize = LocalFrameView::expandedLayoutViewportSize(frameView->baseLayoutViewportSize(), LayoutSize(documentRect.size()), heightExpansionFactor);
+    LayoutRect layoutViewportRect = LocalFrameView::computeUpdatedLayoutViewportRect(frameView->layoutViewportRect(), documentRect, LayoutSize(newUnobscuredContentRect.size()), LayoutRect(newUnobscuredContentRect), layoutViewportSize, frameView->minStableLayoutViewportOrigin(), frameView->maxStableLayoutViewportOrigin(), LayoutViewportConstraint::ConstrainedToDocumentRect);
+    frameView->setLayoutViewportOverrideRect(layoutViewportRect);
+    frameView->layoutOrVisualViewportChanged();
+
+    frameView->setCustomSizeForResizeEvent(expandedIntSize(target.unobscuredRectInScrollViewCoordinates.size()));
+    setDeviceOrientation(target.deviceOrientation);
+    frameView->setScrollOffset(roundedUnobscuredContentRectPosition);
+
+    protect(m_page)->isolatedUpdateRendering();
+
+#if ENABLE(VIEWPORT_RESIZING)
+    shrinkToFitContent();
+#endif
+
+    protect(m_drawingArea)->triggerRenderingUpdate();
+
+    m_pendingDynamicViewportSizeUpdateID = target.identifier;
+}
+
+void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileDocType)
+{
+    LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier << " resetViewportDefaultConfiguration");
+    if (m_useTestingViewportConfiguration) {
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::testingParameters());
+        return;
+    }
+
+    auto parametersForStandardFrame = [&] {
+#if ENABLE(FULLSCREEN_API)
+        if (m_isInFullscreenMode == IsInFullscreenMode::Yes)
+            return m_viewportConfiguration.nativeWebpageParameters();
+#endif
+        if (shouldIgnoreMetaViewport())
+            return m_viewportConfiguration.nativeWebpageParameters();
+        return ViewportConfiguration::webpageParameters();
+    };
+
+    RefPtr localFrame = frame->coreLocalFrame() ? frame->coreLocalFrame() : frame->provisionalFrame();
+    ASSERT(localFrame);
+    if (!frame || !localFrame) {
+        m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
+        return;
+    }
+
+    RefPtr document = localFrame->document();
+
+    auto updateViewportConfigurationForMobileDocType = [this, protectedThis = Ref { *this }, document] {
+        m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::xhtmlMobileParameters());
+
+        // Do not update the viewport arguments if they are already configured by the website.
+        if (m_viewportConfiguration.viewportArguments().type == ViewportArguments::Type::ViewportMeta)
+            return;
+
+        if (!document || !document->isViewportDocument())
+            return;
+
+        // https://www.w3.org/TR/2016/WD-css-device-adapt-1-20160329/#intro
+        // Certain DOCTYPEs (for instance XHTML Mobile Profile) are used to recognize mobile documents which are assumed
+        // to be designed for handheld devices, hence using the viewport size as the initial containing block size.
+        ViewportArguments viewportArguments { ViewportArguments::Type::ViewportMeta };
+        viewportArguments.width = ViewportArguments::ValueDeviceWidth;
+        viewportArguments.height = ViewportArguments::ValueDeviceHeight;
+        viewportArguments.zoom = 1;
+        document->setViewportArguments(viewportArguments);
+        viewportPropertiesDidChange(viewportArguments);
+    };
+
+    if (hasMobileDocType) {
+        return updateViewportConfigurationForMobileDocType();
+    }
+
+    bool configureWithParametersForStandardFrame = !document;
+
+    if (document) {
+        if (document->isImageDocument())
+            m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::imageDocumentParameters());
+        else if (document->isTextDocument())
+            m_viewportConfiguration.setDefaultConfiguration(ViewportConfiguration::textDocumentParameters());
+#if ENABLE(PDF_PLUGIN)
+        else if (m_page && m_page->settings().unifiedPDFEnabled() && document->isPluginDocument())
+            m_viewportConfiguration.setDefaultConfiguration(UnifiedPDFPlugin::viewportParameters());
+#endif
+        else
+            configureWithParametersForStandardFrame = true;
+    }
+
+    if (configureWithParametersForStandardFrame)
+        return m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
+}
+
+#if ENABLE(TEXT_AUTOSIZING)
+
+void WebPage::updateTextAutosizingEnablementFromInitialScale(double initialScale)
+{
+    if (protect(*m_page)->settings().textAutosizingEnabledAtLargeInitialScale())
+        return;
+
+    bool shouldEnable = initialScale <= 1;
+    if (shouldEnable == m_page->settings().textAutosizingEnabled())
+        return;
+
+    m_page->settings().setTextAutosizingEnabled(shouldEnable);
+}
+
+void WebPage::resetIdempotentTextAutosizingIfNeeded(double previousInitialScale)
+{
+    if (!m_page->settings().textAutosizingEnabled() || !m_page->settings().textAutosizingUsesIdempotentMode())
+        return;
+
+    const float minimumScaleChangeBeforeRecomputingTextAutosizing = 0.01;
+    if (std::abs(previousInitialScale - m_page->initialScaleIgnoringContentSize()) < minimumScaleChangeBeforeRecomputingTextAutosizing)
+        return;
+
+    if (m_page->initialScaleIgnoringContentSize() >= 1 && previousInitialScale >= 1)
+        return;
+    
+    RefPtr localMainFrame = protect(m_page)->localMainFrame();
+    if (!localMainFrame)
+        return;
+
+    if (!localMainFrame->view())
+        return;
+
+    auto textAutoSizingDelay = [&] {
+        Ref frameView = *localMainFrame->view();
+        if (!frameView->isVisuallyNonEmpty()) {
+            // We don't anticipate any painting after the next upcoming layout.
+            const Seconds longTextAutoSizingDelayOnViewportChange = 100_ms;
+            return longTextAutoSizingDelayOnViewportChange;
+        }
+        const Seconds defaultTextAutoSizingDelayOnViewportChange = 80_ms;
+        return defaultTextAutoSizingDelayOnViewportChange;
+    };
+
+    // We don't need to update text sizing eagerly. There might be multiple incoming dynamic viewport changes.
+    m_textAutoSizingAdjustmentTimer.startOneShot(textAutoSizingDelay());
+}
+#endif // ENABLE(TEXT_AUTOSIZING)
+
+void WebPage::resetTextAutosizing()
+{
+#if ENABLE(TEXT_AUTOSIZING)
+    for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        if (!localFrame)
+            continue;
+        RefPtr document = localFrame->document();
+        if (!document || !document->renderView())
+            continue;
+        protect(document->renderView())->resetTextAutosizing();
+    }
+#endif
+}
+
+#if ENABLE(TEXT_AUTOSIZING)
+void WebPage::scheduleTextAutosizingResetAfterLayout()
+{
+    for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        if (!localFrame)
+            continue;
+        RefPtr document = localFrame->document();
+        if (!document || !document->renderView())
+            continue;
+        document->renderView()->setTextAutosizingState(RenderView::TextAutosizingState::ResetScheduled);
+    }
+}
+#else
+void WebPage::scheduleTextAutosizingResetAfterLayout() { }
+#endif
+
+#if ENABLE(VIEWPORT_RESIZING)
+
+void WebPage::shrinkToFitContent(ZoomToInitialScale zoomToInitialScale)
+{
+    if (m_isClosed)
+        return;
+
+    if (!m_page->settings().allowViewportShrinkToFitContent())
+        return;
+
+    if (m_useTestingViewportConfiguration)
+        return;
+
+    if (!shouldIgnoreMetaViewport())
+        return;
+
+    if (!m_viewportConfiguration.viewportArguments().shrinkToFit)
+        return;
+
+    if (m_viewportConfiguration.canIgnoreScalingConstraints())
+        return;
+
+    RefPtr mainFrame = m_mainFrame->coreLocalFrame();
+    if (!mainFrame)
+        return;
+
+    RefPtr view = mainFrame->view();
+    if (!view)
+        return;
+
+    RefPtr mainDocument = mainFrame->document();
+    if (!mainDocument)
+        return;
+
+    mainDocument->updateLayout();
+
+    static const int toleratedHorizontalScrollingDistance = 20;
+    static const int maximumExpandedLayoutWidth = 1280;
+    static const int maximumContentWidthBeforeAvoidingShrinkToFit = 1920;
+
+    auto scaledViewWidth = [&] () -> int {
+        return std::round(m_viewportConfiguration.viewLayoutSize().width() / m_viewportConfiguration.initialScale());
+    };
+
+    int originalContentWidth = view->contentsWidth();
+    int originalViewWidth = scaledViewWidth();
+    int originalLayoutWidth = m_viewportConfiguration.layoutWidth();
+    int originalHorizontalOverflowAmount = originalContentWidth - originalViewWidth;
+    if (originalHorizontalOverflowAmount <= toleratedHorizontalScrollingDistance || originalLayoutWidth >= maximumExpandedLayoutWidth || originalContentWidth <= originalViewWidth || originalContentWidth > maximumContentWidthBeforeAvoidingShrinkToFit)
+        return;
+
+    auto changeMinimumEffectiveDeviceWidth = [this, protectedThis = Ref { *this }, mainDocument] (int targetLayoutWidth) -> bool {
+        if (m_viewportConfiguration.setMinimumEffectiveDeviceWidthForShrinkToFit(targetLayoutWidth)) {
+            viewportConfigurationChanged();
+            mainDocument->updateLayout();
+            return true;
+        }
+        return false;
+    };
+
+    m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(true);
+    double originalMinimumDeviceWidth = m_viewportConfiguration.minimumEffectiveDeviceWidth();
+
+    bool didChangeMinimumEffectiveDeviceWidth = changeMinimumEffectiveDeviceWidth(std::min(maximumExpandedLayoutWidth, originalContentWidth));
+
+    if (didChangeMinimumEffectiveDeviceWidth) {
+        bool hasResponsiveMetaViewportTag = m_viewportConfiguration.viewportArguments().widthWasExplicit && m_viewportConfiguration.viewportArguments().width == ViewportArguments::ValueDeviceWidth;
+
+        if (view->contentsWidth() - scaledViewWidth() > originalHorizontalOverflowAmount) {
+            changeMinimumEffectiveDeviceWidth(originalMinimumDeviceWidth);
+            m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false);
+            if (hasResponsiveMetaViewportTag && m_viewportConfiguration.layoutWidth() != m_lastShrinkToFitLayoutWidth)
+                mainDocument->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, "This page has a responsive meta viewport tag. The page content is wider than the viewport but resizing causes the page overflow to be worse."_s);
+        } else if (hasResponsiveMetaViewportTag && m_viewportConfiguration.layoutWidth() != m_lastShrinkToFitLayoutWidth)
+            mainDocument->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, "This page has a responsive meta viewport tag. The page content is wider than the viewport. The page will be scaled to fit."_s);
+    }
+
+    m_lastShrinkToFitLayoutWidth = m_viewportConfiguration.layoutWidth();
+
+    RELEASE_LOG(ViewportSizing, "Shrink-to-fit: content width %d => %d; layout width %d => %d", originalContentWidth, view->contentsWidth(), originalLayoutWidth, m_viewportConfiguration.layoutWidth());
+    viewportConfigurationChanged(zoomToInitialScale);
+}
+
+#endif // ENABLE(VIEWPORT_RESIZING)
+
+bool WebPage::shouldIgnoreMetaViewport() const
+{
+    if (!m_page)
+        return false;
+
+    RefPtr localMainFrame = protect(m_page)->localMainFrame();
+    if (RefPtr mainDocument = localMainFrame ? localMainFrame->document() : nullptr) {
+        RefPtr loader = mainDocument->loader();
+        if (loader && loader->metaViewportPolicy() == WebCore::MetaViewportPolicy::Ignore)
+            return true;
+    }
+
+    return m_page->settings().shouldIgnoreMetaViewport();
+}
+
+bool WebPage::mainFramePlugInDefersScalingToViewport() const
+{
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr plugin = mainFramePlugIn(); plugin && !plugin->pluginHandlesPageScaleFactor())
+        return true;
+#endif
+    return false;
+}
+
+bool WebPage::mainFramePlugInRejectsZeroViewLayoutSizeUpdates() const
+{
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr plugin = mainFramePlugIn(); plugin && !plugin->pluginHandlesPageScaleFactor())
+        return true;
+#endif
+    return false;
+}
+
+bool WebPage::shouldEnableViewportBehaviorsForResizableWindows() const
+{
+#if HAVE(UIKIT_RESIZABLE_WINDOWS)
+    return shouldIgnoreMetaViewport() && m_isWindowResizingEnabled && !mainFramePlugInDefersScalingToViewport();
+#else
+    return false;
+#endif
+}
+
+void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale)
+{
+    double initialScale = m_viewportConfiguration.initialScale();
+    double initialScaleIgnoringContentSize = m_viewportConfiguration.initialScaleIgnoringContentSize();
+#if ENABLE(TEXT_AUTOSIZING)
+    double previousInitialScaleIgnoringContentSize = m_page->initialScaleIgnoringContentSize();
+    protect(m_page)->setInitialScaleIgnoringContentSize(initialScaleIgnoringContentSize);
+    resetIdempotentTextAutosizingIfNeeded(previousInitialScaleIgnoringContentSize);
+    updateTextAutosizingEnablementFromInitialScale(initialScale);
+#endif
+    if (setFixedLayoutSize(m_viewportConfiguration.layoutSize())) {
+        // During a dynamic viewport size update (rotation/resize), the upcoming
+        // layout may still see stale block widths from before the change, so
+        // running autosize against them would cache an inflated value at the
+        // wrong width. Other viewport changes (initial page load, etc.) precede
+        // the first layout, where there are no pre-existing widths to be stale.
+        if (m_inDynamicSizeUpdate)
+            scheduleTextAutosizingResetAfterLayout();
+        else
+            resetTextAutosizing();
+    }
+
+    auto minimumScale = m_viewportConfiguration.minimumScale();
+    auto previousMinimumScale = m_previousViewportConfigurationMinimumScale.value_or(minimumScale);
+    auto updatePreviousMinimumScale = makeScopeExit([&] {
+        m_previousViewportConfigurationMinimumScale = minimumScale;
+    });
+
+    double scale = [&] {
+        if (!m_userHasChangedPageScaleFactor || zoomToInitialScale == ZoomToInitialScale::Yes)
+            return initialScale;
+
+        auto currentScale = pageScaleFactor();
+        if (scalesAreEssentiallyEqual(previousMinimumScale, currentScale))
+            return minimumScale;
+
+        return std::max(std::min(currentScale, m_viewportConfiguration.maximumScale()), minimumScale);
+    }();
+
+    LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier << " viewportConfigurationChanged - setting zoomedOutPageScaleFactor to " << minimumScale << " and scale to " << scale);
+
+    protect(m_page)->setZoomedOutPageScaleFactor(minimumScale);
+
+    updateSizeForCSSDefaultViewportUnits();
+    updateSizeForCSSSmallViewportUnits();
+    updateSizeForCSSLargeViewportUnits();
+
+    RefPtr mainFrameView = this->localMainFrameView();
+    if (!mainFrameView) {
+        // FIXME: This is hit in some site isolation tests on iOS. Investigate and fix. <rdar://116201382>
+        return;
+    }
+
+    Ref frameView = *mainFrameView;
+    IntPoint scrollPosition = frameView->scrollPosition();
+    if (!m_hasReceivedVisibleContentRectsAfterDidCommitLoad) {
+        FloatSize minimumLayoutSizeInScrollViewCoordinates = m_viewportConfiguration.viewLayoutSize();
+        minimumLayoutSizeInScrollViewCoordinates.scale(1 / scale);
+        IntSize minimumLayoutSizeInDocumentCoordinates = roundedIntSize(minimumLayoutSizeInScrollViewCoordinates);
+        frameView->setUnobscuredContentSize(minimumLayoutSizeInDocumentCoordinates);
+        frameView->setScrollVelocity({ 0, 0, 0, MonotonicTime::now() });
+
+        // FIXME: We could send down the obscured margins to find a better exposed rect and unobscured rect.
+        // It is not a big deal at the moment because the tile coverage will always extend past the obscured bottom inset.
+        if (!m_hasRestoredExposedContentRectAfterDidCommitLoad)
+            protect(m_drawingArea)->setExposedContentRect(FloatRect(scrollPosition, minimumLayoutSizeInDocumentCoordinates));
+    }
+    scalePage(scale, scrollPosition);
+    
+    if (!m_hasReceivedVisibleContentRectsAfterDidCommitLoad) {
+        // This takes scale into account, so do after the scale change.
+        frameView->setCustomFixedPositionLayoutRect(enclosingIntRect(frameView->viewportConstrainedObjectsRect()));
+
+        frameView->setCustomSizeForResizeEvent(expandedIntSize(m_viewportConfiguration.minimumLayoutSize()));
+    }
+}
+
+void WebPage::applicationWillResignActive()
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:protect(WebUIApplicationWillResignActiveNotification).get() object:nil];
+
+    // FIXME(224775): Move to WebProcess
+    if (RefPtr manager = mediaSessionManagerIfExists())
+        manager->applicationWillBecomeInactive();
+
+    if (m_page)
+        protect(m_page)->applicationWillResignActive();
+}
+
+void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:protect(WebUIApplicationDidEnterBackgroundNotification).get() object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];
+
+    m_isSuspendedUnderLock = isSuspendedUnderLock;
+    if (!m_backgroundTextExtractionEnabled)
+        freezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
+
+    // FIXME(224775): Move to WebProcess
+    if (RefPtr manager = mediaSessionManagerIfExists())
+        manager->applicationDidEnterBackground(isSuspendedUnderLock);
+
+    if (m_page)
+        protect(m_page)->applicationDidEnterBackground();
+}
+
+void WebPage::applicationDidFinishSnapshottingAfterEnteringBackground()
+{
+    markLayersVolatile();
+}
+
+void WebPage::applicationWillEnterForeground(bool isSuspendedUnderLock)
+{
+    m_isSuspendedUnderLock = false;
+    cancelMarkLayersVolatile();
+
+    if (!m_backgroundTextExtractionEnabled)
+        unfreezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:protect(WebUIApplicationWillEnterForegroundNotification).get() object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];
+
+    // FIXME(224775): Move to WebProcess
+    if (RefPtr manager = mediaSessionManagerIfExists())
+        manager->applicationWillEnterForeground(isSuspendedUnderLock);
+
+    if (m_page)
+        protect(m_page)->applicationWillEnterForeground();
+}
+
+void WebPage::applicationDidBecomeActive()
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:protect(WebUIApplicationDidBecomeActiveNotification).get() object:nil];
+
+    // FIXME(224775): Move to WebProcess
+    if (RefPtr manager = mediaSessionManagerIfExists())
+        manager->applicationDidBecomeActive();
+
+    if (m_page)
+        protect(m_page)->applicationDidBecomeActive();
+}
+
+void WebPage::applicationDidEnterBackgroundForMedia(bool isSuspendedUnderLock)
+{
+    if (RefPtr manager = mediaSessionManagerIfExists())
+        manager->applicationDidEnterBackground(isSuspendedUnderLock);
+}
+
+void WebPage::applicationWillEnterForegroundForMedia(bool isSuspendedUnderLock)
+{
+    if (RefPtr manager = mediaSessionManagerIfExists())
+        manager->applicationWillEnterForeground(isSuspendedUnderLock);
+}
+
+static inline void adjustVelocityDataForBoundedScale(VelocityData& velocityData, double exposedRectScale, double minimumScale, double maximumScale)
+{
+    if (velocityData.scaleChangeRate) {
+        velocityData.horizontalVelocity = 0;
+        velocityData.verticalVelocity = 0;
+    }
+
+    if (exposedRectScale >= maximumScale || exposedRectScale <= minimumScale || scalesAreEssentiallyEqual(exposedRectScale, minimumScale) || scalesAreEssentiallyEqual(exposedRectScale, maximumScale))
+        velocityData.scaleChangeRate = 0;
+}
+
+std::optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo) const
+{
+    auto transactionIDForLastScaleFromUIProcess = visibleContentRectUpdateInfo.lastLayerTreeTransactionID();
+    if (m_internals->lastTransactionIDWithScaleChange && m_internals->lastTransactionIDWithScaleChange->greaterThanSameProcess(transactionIDForLastScaleFromUIProcess))
+        return std::nullopt;
+
+    float scaleFromUIProcess = visibleContentRectUpdateInfo.scale();
+    float currentScale = m_page->pageScaleFactor();
+
+    double scaleNoiseThreshold = 0.005;
+    if (!m_isInStableState && std::abs(scaleFromUIProcess - currentScale) < scaleNoiseThreshold) {
+        // Tiny changes of scale during interactive zoom cause content to jump by one pixel, creating
+        // visual noise. We filter those useless updates.
+        scaleFromUIProcess = currentScale;
+    }
+    
+    scaleFromUIProcess = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), scaleFromUIProcess));
+    if (scalesAreEssentiallyEqual(currentScale, scaleFromUIProcess))
+        return std::nullopt;
+
+    return scaleFromUIProcess;
+}
+
+static bool selectionIsInsideFixedPositionContainer(LocalFrame& frame)
+{
+    auto& selection = frame.selection().selection();
+    if (selection.isNone())
+        return false;
+
+    bool isInsideFixedPosition = false;
+    if (selection.isCaret()) {
+        protect(frame.selection())->absoluteCaretBounds(&isInsideFixedPosition);
+        return isInsideFixedPosition;
+    }
+
+    selection.visibleStart().absoluteCaretBounds(&isInsideFixedPosition);
+    if (isInsideFixedPosition)
+        return true;
+
+    selection.visibleEnd().absoluteCaretBounds(&isInsideFixedPosition);
+    return isInsideFixedPosition;
+}
+
+void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo, MonotonicTime oldestTimestamp)
+{
+    LOG_WITH_STREAM(VisibleRects, stream << "\nWebPage " << m_identifier << " updateVisibleContentRects " << visibleContentRectUpdateInfo);
+
+    // Skip any VisibleContentRectUpdate that have been queued before DidCommitLoad suppresses the updates in the UIProcess.
+    if (m_mainFrame->firstLayerTreeTransactionIDAfterDidCommitLoad() && visibleContentRectUpdateInfo.lastLayerTreeTransactionID().lessThanSameProcess(*m_mainFrame->firstLayerTreeTransactionIDAfterDidCommitLoad()) && !visibleContentRectUpdateInfo.isFirstUpdateForNewViewSize())
+        return;
+
+    m_hasReceivedVisibleContentRectsAfterDidCommitLoad = true;
+    m_isInStableState = visibleContentRectUpdateInfo.inStableState();
+
+    auto scaleFromUIProcess = this->scaleFromUIProcess(visibleContentRectUpdateInfo);
+
+    // Skip progressively redrawing tiles if pinch-zooming while the system is under memory pressure.
+    if (scaleFromUIProcess && !m_isInStableState && MemoryPressureHandler::singleton().isUnderMemoryPressure())
+        return;
+
+    if (m_isInStableState)
+        m_hasStablePageScaleFactor = true;
+    else {
+        if (!m_oldestNonStableUpdateVisibleContentRectsTimestamp)
+            m_oldestNonStableUpdateVisibleContentRectsTimestamp = oldestTimestamp;
+    }
+
+    float scaleToUse = scaleFromUIProcess.value_or(m_page->pageScaleFactor());
+    FloatRect exposedContentRect = visibleContentRectUpdateInfo.exposedContentRect();
+    FloatRect adjustedExposedContentRect = adjustExposedRectForNewScale(exposedContentRect, visibleContentRectUpdateInfo.scale(), scaleToUse);
+    protect(m_drawingArea)->setExposedContentRect(adjustedExposedContentRect);
+    RefPtr localMainFrame = protect(m_page)->localMainFrame();
+    if (!localMainFrame)
+        return;
+    RefPtr frameView = *localMainFrame->view();
+
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator()) {
+        Ref remoteScrollingCoordinator = downcast<RemoteScrollingCoordinator>(*scrollingCoordinator);
+        if (auto mainFrameScrollingNodeID = frameView->scrollingNodeID()) {
+            if (visibleContentRectUpdateInfo.viewStability().contains(ViewStabilityFlag::ScrollViewRubberBanding))
+                remoteScrollingCoordinator->addNodeWithActiveRubberBanding(*mainFrameScrollingNodeID);
+            else
+                remoteScrollingCoordinator->removeNodeWithActiveRubberBanding(*mainFrameScrollingNodeID);
+        }
+    }
+
+    auto layoutViewportRect = visibleContentRectUpdateInfo.layoutViewportRect();
+    auto unobscuredContentRect = visibleContentRectUpdateInfo.unobscuredContentRect();
+    auto scrollPosition = roundedIntPoint(unobscuredContentRect.location());
+
+    // Computation of layoutViewportRect is done in LayoutUnits which loses some precision, so test with an epsilon.
+    // FIXME (302123): The loss of precision when converting floating point values to LayoutUnit does not, by itself, explain
+    // the differences between the `layoutViewportRect` and `unobscuredContentRect`'s locations. While scrolling on iOS,
+    // the absolute differences can sometimes exceed 3px, which is well over this fractional error threshold.
+    // For now, we maintain behavior shipped in iOS 26 by snapping to the unobscured content rect location as long as
+    // the difference is fairly small (~45 px).
+    static constexpr auto maxEpsilon = 45.0;
+    static constexpr auto epsilonRatio = 1.0 / (2 * kFixedPointDenominator);
+    auto unobscuredContentRectLocation = unobscuredContentRect.location();
+    auto epsilonX = std::min(maxEpsilon, epsilonRatio * std::abs(unobscuredContentRectLocation.x()));
+    auto epsilonY = std::min(maxEpsilon, epsilonRatio * std::abs(unobscuredContentRectLocation.y()));
+    auto layoutViewportRectLocation = layoutViewportRect.location();
+    if (std::abs(unobscuredContentRectLocation.x() - layoutViewportRectLocation.x()) <= epsilonX && std::abs(unobscuredContentRectLocation.y() - layoutViewportRectLocation.y()) <= epsilonY)
+        layoutViewportRect.setLocation(scrollPosition);
+
+    bool pageHasBeenScaledSinceLastLayerTreeCommitThatChangedPageScale = ([&] {
+        if (!m_internals->lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage)
+            return false;
+
+        if (scalesAreEssentiallyEqual(scaleToUse, m_page->pageScaleFactor()))
+            return false;
+
+        auto [transactionIdBeforeScalingPage, scaleBeforeScalingPage] = *m_internals->lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
+        if (!scalesAreEssentiallyEqual(scaleBeforeScalingPage, scaleToUse))
+            return false;
+
+        return transactionIdBeforeScalingPage.greaterThanOrEqualSameProcess( visibleContentRectUpdateInfo.lastLayerTreeTransactionID());
+    })();
+
+    if (!pageHasBeenScaledSinceLastLayerTreeCommitThatChangedPageScale) {
+        bool shouldSetCorePageScale = [this, protectedThis = Ref { *this }] {
+#if ENABLE(PDF_PLUGIN)
+            RefPtr pluginView = mainFramePlugIn();
+            if (!pluginView)
+                return true;
+            return !pluginView->pluginHandlesPageScaleFactor();
+#else
+            UNUSED_PARAM(this);
+            return true;
+#endif
+        }();
+
+        auto setCorePageScaleFactor = [this, protectedThis = Ref { *this }](float scale, const auto& origin, bool inStableState) {
+            m_page->setPageScaleFactor(scale, origin, inStableState);
+#if ENABLE(PDF_PLUGIN)
+            if (RefPtr pluginView = mainFramePlugIn())
+                pluginView->mainFramePageScaleFactorDidChange();
+#endif
+        };
+
+        bool hasSetPageScale = false;
+        if (scaleFromUIProcess) {
+            m_scaleWasSetByUIProcess = true;
+            m_hasStablePageScaleFactor = m_isInStableState;
+
+            m_internals->dynamicSizeUpdateHistory.clear();
+
+            if (shouldSetCorePageScale)
+                setCorePageScaleFactor(scaleFromUIProcess.value(), scrollPosition, m_isInStableState);
+
+            hasSetPageScale = true;
+            send(Messages::WebPageProxy::DidSetPageScaleFactor(scaleFromUIProcess.value()));
+        }
+
+        if (!hasSetPageScale && m_isInStableState && shouldSetCorePageScale)
+            setCorePageScaleFactor(scaleToUse, scrollPosition, true);
+    }
+
+    if (scrollPosition != frameView->scrollPosition())
+        m_internals->dynamicSizeUpdateHistory.clear();
+
+    if (m_viewportConfiguration.setCanIgnoreScalingConstraints(visibleContentRectUpdateInfo.allowShrinkToFit()))
+        viewportConfigurationChanged();
+
+    double minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints = ([&] {
+        RefPtr document = localMainFrame->document();
+        if (!document)
+            return 0;
+
+        if (!document->quirks().shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints())
+            return 0;
+
+        // This value is chosen to be close to the minimum width of a Safari window on macOS.
+        return 500;
+    })();
+
+    if (m_viewportConfiguration.setMinimumEffectiveDeviceWidthWhenIgnoringScalingConstraints(minimumEffectiveDeviceWidthWhenIgnoringScalingConstraints))
+        viewportConfigurationChanged();
+
+    frameView->clearObscuredInsetsAdjustmentsIfNeeded();
+    frameView->setUnobscuredContentSize(unobscuredContentRect.size());
+    Ref page = *m_page;
+    page->setContentInsets(visibleContentRectUpdateInfo.contentInsets());
+    page->setObscuredInsets(visibleContentRectUpdateInfo.obscuredInsets());
+    page->setUnobscuredSafeAreaInsets(visibleContentRectUpdateInfo.unobscuredSafeAreaInsets());
+    page->setEnclosedInScrollableAncestorView(visibleContentRectUpdateInfo.enclosedInScrollableAncestorView());
+
+    VelocityData scrollVelocity = visibleContentRectUpdateInfo.scrollVelocity();
+    adjustVelocityDataForBoundedScale(scrollVelocity, visibleContentRectUpdateInfo.scale(), m_viewportConfiguration.minimumScale(), m_viewportConfiguration.maximumScale());
+    frameView->setScrollVelocity(scrollVelocity);
+
+    bool visualViewportChanged = unobscuredContentRect != visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds();
+    if (visualViewportChanged)
+        frameView->setVisualViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()));
+    else if (m_isInStableState) {
+        frameView->setVisualViewportOverrideRect(std::nullopt);
+        visualViewportChanged = true;
+    }
+
+    bool isChangingObscuredInsetsInteractively = visibleContentRectUpdateInfo.viewStability().contains(ViewStabilityFlag::ChangingObscuredInsetsInteractively);
+    bool shouldPerformLayout = m_isInStableState && !isChangingObscuredInsetsInteractively;
+
+    LOG_WITH_STREAM(VisibleRects, stream << "WebPage::updateVisibleContentRects - setLayoutViewportOverrideRect " << layoutViewportRect);
+    frameView->setLayoutViewportOverrideRect(LayoutRect(layoutViewportRect), shouldPerformLayout ? LocalFrameView::TriggerLayoutOrNot::Yes : LocalFrameView::TriggerLayoutOrNot::No);
+
+    if (m_isInStableState) {
+        if (selectionIsInsideFixedPositionContainer(*localMainFrame)) {
+            // Ensure that the next layer tree commit contains up-to-date caret/selection rects.
+            frameView->frame().selection().setCaretRectNeedsUpdate();
+            scheduleFullEditorStateUpdate();
+        }
+    }
+
+    if (visualViewportChanged)
+        frameView->layoutOrVisualViewportChanged();
+
+    if (!isChangingObscuredInsetsInteractively)
+        frameView->setCustomSizeForResizeEvent(expandedIntSize(visibleContentRectUpdateInfo.unobscuredRectInScrollViewCoordinates().size()));
+
+    if (RefPtr scrollingCoordinator = this->scrollingCoordinator()) {
+        auto viewportStability = ViewportRectStability::Stable;
+        auto layerAction = ScrollingLayerPositionAction::Sync;
+        
+        if (isChangingObscuredInsetsInteractively) {
+            viewportStability = ViewportRectStability::ChangingObscuredInsetsInteractively;
+            layerAction = ScrollingLayerPositionAction::SetApproximate;
+        } else if (!m_isInStableState) {
+            viewportStability = ViewportRectStability::Unstable;
+            layerAction = ScrollingLayerPositionAction::SetApproximate;
+        }
+
+        auto mainFrameScrollingNodeID = frameView->scrollingNodeID();
+        if (!mainFrameScrollingNodeID) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+
+        auto scrollUpdate = ScrollUpdate {
+            .nodeID = *mainFrameScrollingNodeID,
+            .scrollPosition = scrollPosition,
+            .data = ScrollUpdateData {
+                .updateType = ScrollUpdateType::PositionUpdate,
+                .updateLayerPositionAction = layerAction,
+                .layoutViewportOriginOrOverrideRect = visibleContentRectUpdateInfo.layoutViewportRect()
+            }
+        };
+
+        // We don't actually know that these are user scrolls; we get here for all kinds of state changes.
+        scrollingCoordinator->applyScrollUpdate(WTF::move(scrollUpdate), ScrollType::User, viewportStability);
+
+        if (visibleContentRectUpdateInfo.needsScrollend() && frameView->scrollingNodeID()) {
+            auto scrollUpdate = ScrollUpdate {
+                .nodeID = *frameView->scrollingNodeID(),
+                .scrollPosition = { },
+                .data = ScrollUpdateData {
+                    .updateType = ScrollUpdateType::WheelEventScrollDidEnd,
+                }
+            };
+            scrollingCoordinator->applyScrollUpdate(WTF::move(scrollUpdate), ScrollType::User);
+        }
+    }
+}
+
+void WebPage::scheduleLayoutViewportHeightExpansionUpdate()
+{
+    if (!m_page->settings().layoutViewportHeightExpansionFactor())
+        return;
+
+    if (m_updateLayoutViewportHeightExpansionTimer.isActive()) {
+        m_shouldRescheduleLayoutViewportHeightExpansionTimer = true;
+        return;
+    }
+
+    m_updateLayoutViewportHeightExpansionTimer.restart();
+}
+
+void WebPage::updateLayoutViewportHeightExpansionTimerFired()
+{
+    if (m_disallowLayoutViewportHeightExpansionReasons.contains(DisallowLayoutViewportHeightExpansionReason::LargeContainer))
+        return;
+
+    RefPtr mainFrame = m_mainFrame->coreLocalFrame();
+    if (!mainFrame)
+        return;
+
+    RefPtr document = mainFrame->document();
+    if (!document)
+        return;
+
+    RefPtr view = mainFrame->view();
+    if (!view)
+        return;
+
+    FloatRect viewportRect = view->viewportConstrainedObjectsRect();
+
+    bool hitTestedToLargeViewportConstrainedElement = [&] {
+        if (!view->hasViewportConstrainedObjects())
+            return false;
+
+        HashSet<Ref<Element>> largeViewportConstrainedElements;
+        for (CheckedRef renderer : *view->viewportConstrainedObjects()) {
+            RefPtr element = renderer->element();
+            if (!element)
+                continue;
+
+            auto bounds = renderer->absoluteBoundingBoxRect();
+            if (intersection(viewportRect, bounds).height() > 0.9 * viewportRect.height())
+                largeViewportConstrainedElements.add(element.releaseNonNull());
+        }
+
+        if (largeViewportConstrainedElements.isEmpty())
+            return false;
+
+        auto hitTestResult = HitTestResult { LayoutRect { viewportRect } };
+        if (!document->hitTest({ HitTestSource::User, { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::CollectMultipleElements } }, hitTestResult))
+            return false;
+
+        auto& hitTestedNodes = hitTestResult.listBasedTestResult();
+        HashSet<Ref<Element>> elementsOutsideOfAnyLargeViewportConstrainedContainers;
+        for (auto& node : hitTestedNodes) {
+            RefPtr firstParentOrSelf = dynamicDowncast<Element>(node.get()) ?: node->parentElementInComposedTree();
+            Vector<Ref<Element>> ancestorsForHitTestedNode;
+            for (RefPtr parent = firstParentOrSelf; parent; parent = parent->parentElementInComposedTree()) {
+                if (largeViewportConstrainedElements.contains(*parent))
+                    return true;
+
+                if (elementsOutsideOfAnyLargeViewportConstrainedContainers.contains(*parent))
+                    break;
+
+                ancestorsForHitTestedNode.append(*parent);
+            }
+            for (auto& ancestor : ancestorsForHitTestedNode)
+                elementsOutsideOfAnyLargeViewportConstrainedContainers.add(ancestor);
+        }
+        return false;
+    }();
+
+    if (hitTestedToLargeViewportConstrainedElement) {
+        RELEASE_LOG(ViewportSizing, "Shrinking viewport down to normal height (found large fixed-position container)");
+        addReasonsToDisallowLayoutViewportHeightExpansion(DisallowLayoutViewportHeightExpansionReason::LargeContainer);
+    } else if (m_shouldRescheduleLayoutViewportHeightExpansionTimer) {
+        m_shouldRescheduleLayoutViewportHeightExpansionTimer = false;
+        m_updateLayoutViewportHeightExpansionTimer.restart();
+    }
+}
+
+void WebPage::willStartUserTriggeredZooming()
+{
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = mainFramePlugIn())
+        pluginView->didBeginMagnificationGesture();
+#endif
+
+    protect(protect(*m_page)->diagnosticLoggingClient())->logDiagnosticMessage(DiagnosticLoggingKeys::webViewKey(), DiagnosticLoggingKeys::userZoomActionKey(), ShouldSample::No);
+    m_userHasChangedPageScaleFactor = true;
+}
+
+void WebPage::didEndUserTriggeredZooming()
+{
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = mainFramePlugIn())
+        pluginView->didEndMagnificationGesture();
+#endif
+}
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+static std::optional<RemoteWebTouchEvent> transformEventIfNecessary(const Expected<bool, WebCore::RemoteFrameGeometryTransformer>& transformer, WebTouchEvent&& event)
+{
+    if (transformer)
+        return std::nullopt;
+    event.transformToRemoteFrameCoordinates(transformer.error());
+    return RemoteWebTouchEvent { transformer.error().remoteFrameID(), WTF::move(event) };
+}
+
+void WebPage::dispatchAsynchronousTouchEvents(UniqueRef<EventDispatcher::TouchEventQueue>&& queue)
+{
+    for (auto& touchEventData : queue.get()) {
+        auto handleTouchEventResult = dispatchTouchEvent(touchEventData.frameID, touchEventData.event);
+        bool handled = handleTouchEventResult.value_or(false);
+
+        // Invoke coalesced-away completion handlers first. These events were never
+        // dispatched to JS, but their handlers must still be invoked so that state
+        // transitions they carry (e.g. m_touchMovePreventionState) are resolved.
+        for (auto&& completionHandler : touchEventData.completionHandlers | std::views::take(touchEventData.completionHandlers.size() - 1))
+            completionHandler(handled, std::nullopt);
+
+        // The last handler corresponds to the event that was actually dispatched.
+        touchEventData.completionHandlers.last()(handled, transformEventIfNecessary(handleTouchEventResult, WTF::move(touchEventData.event)));
+    }
+}
+
+void WebPage::cancelAsynchronousTouchEvents(UniqueRef<EventDispatcher::TouchEventQueue>&& queue)
+{
+    for (auto& touchEventData : queue.get()) {
+        for (auto& completionHandler : touchEventData.completionHandlers)
+            completionHandler(true, std::nullopt);
+    }
+}
+#endif
+
+void WebPage::computePagesForPrintingiOS(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(uint64_t)>&& reply)
+{
+    ASSERT_WITH_MESSAGE(!printInfo.snapshotFirstPage, "If we are just snapshotting the first page, we don't need a synchronous message to determine the page count, which is 1.");
+
+    Vector<WebCore::IntRect> pageRects;
+    double totalScaleFactor;
+    auto margin = printInfo.margin;
+    computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor, margin);
+
+    RELEASE_LOG(Printing, "Computing pages for printing. Page rects size = %zu", pageRects.size());
+
+    ASSERT(pageRects.size() >= 1);
+    reply(pageRects.size());
+}
+
+void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& reply)
+{  
+    Vector<WebCore::IntRect> pageRects;
+    double totalScaleFactor;
+    auto margin = printInfo.margin;
+    computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor, margin);
+
+    size_t pageCount = pageRects.size();
+
+    RELEASE_LOG(Printing, "Drawing to image. Page rects size = %zu", pageCount);
+
+    ASSERT(pageCount >= 1);
+
+    if (!m_printContext) {
+        reply({ });
+        endPrinting();
+        return;
+    }
+
+    Checked<int> pageWidth = pageRects[0].width();
+    Checked<int> pageHeight = pageRects[0].height();
+
+    // The thumbnail images are always a maximum of 500 x 500.
+    static constexpr float maximumPrintPreviewDimensionSize = 500.0;
+
+    // If the sizes are too large, the bitmap will not be able to be created,
+    // so scale them down.
+    float scaleFactor = maximumPrintPreviewDimensionSize / static_cast<int>(std::max(pageWidth, pageHeight));
+    if (scaleFactor < 1.0) {
+        pageWidth = static_cast<int>(std::floorf(static_cast<int>(pageWidth) * scaleFactor));
+        pageHeight = static_cast<int>(std::floorf(static_cast<int>(pageHeight) * scaleFactor));
+    }
+
+    int imageHeight;
+    if (!WTF::safeMultiply(pageHeight.value<size_t>(), pageCount, imageHeight)) {
+        reply({ });
+        endPrinting();
+        return;
+    }
+
+    auto bitmap = ShareableBitmap::create({ IntSize(pageWidth, imageHeight) });
+    if (!bitmap) {
+        reply({ });
+        endPrinting();
+        return;
+    }
+
+    auto graphicsContext = bitmap->createGraphicsContext();
+    if (!graphicsContext) {
+        reply({ });
+        endPrinting();
+        return;
+    }
+
+    for (size_t pageIndex = 0; pageIndex < pageCount; ++pageIndex) {
+        if (pageIndex >= m_printContext->pageCount())
+            break;
+        graphicsContext->save();
+        graphicsContext->translate(0, pageHeight * static_cast<int>(pageIndex));
+        protect(m_printContext)->spoolPage(*graphicsContext, pageIndex, pageWidth);
+        graphicsContext->restore();
+    }
+
+    auto handle = bitmap->createHandle(SharedMemory::Protection::ReadOnly);
+    reply(WTF::move(handle));
+    endPrinting();
+}
+
+void WebPage::drawPrintingToSnapshotiOS(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(std::optional<WebCore::FloatSize>)>&& completionHandler)
+{
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        completionHandler({ });
+        endPrinting();
+        return;
+    }
+
+    RefPtr coreFrame = frame->coreLocalFrame();
+    if (!coreFrame) {
+        completionHandler({ });
+        endPrinting();
+        return;
+    }
+
+    if (pdfDocumentForPrintingFrame(coreFrame.get())) {
+        // Can't do this remotely.
+        completionHandler({ });
+        endPrinting();
+        return;
+    }
+
+    if (!m_printContext) {
+        completionHandler({ });
+        endPrinting();
+        return;
+    }
+
+    PrintContextAccessScope scope { *this };
+    ASSERT(coreFrame->document()->printing());
+
+    Vector<WebCore::IntRect> pageRects;
+    double totalScaleFactor;
+    auto margin = printInfo.margin;
+    computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor, margin);
+
+    size_t pageCount = pageRects.size();
+
+    RELEASE_LOG(Printing, "Drawing to image. Page rects size = %zu", pageCount);
+
+    Checked<int> pageWidth = pageRects[0].width();
+    Checked<int> pageHeight = pageRects[0].height();
+
+    // The thumbnail images are always a maximum of 500 x 500.
+    static constexpr float maximumPrintPreviewDimensionSize = 500.0;
+
+    // If the sizes are too large, the bitmap will not be able to be created,
+    // so scale them down.
+    float scaleFactor = maximumPrintPreviewDimensionSize / static_cast<int>(std::max(pageWidth, pageHeight));
+    if (scaleFactor < 1.0) {
+        pageWidth = static_cast<int>(std::floorf(static_cast<int>(pageWidth) * scaleFactor));
+        pageHeight = static_cast<int>(std::floorf(static_cast<int>(pageHeight) * scaleFactor));
+    }
+
+    int imageHeight;
+    if (!WTF::safeMultiply(pageHeight.value<size_t>(), pageCount, imageHeight)) {
+        completionHandler({ });
+        endPrinting();
+        return;
+    }
+
+    auto mediaBox = IntRect { 0, 0, pageWidth, imageHeight };
+
+    Ref remoteRenderingBackend = ensureRemoteRenderingBackendProxy();
+    m_remoteSnapshotState = {
+        snapshotIdentifier,
+        remoteRenderingBackend->createSnapshotRecorder(snapshotIdentifier),
+        MainRunLoopSuccessCallbackAggregator::create([completionHandler = WTF::move(completionHandler), snapshotSize = mediaBox.size()] (bool success) mutable {
+            completionHandler(success ? std::optional<FloatSize>(snapshotSize) : std::nullopt);
+        })
+    };
+
+    GraphicsContext& context = m_remoteSnapshotState->recorder.get();
+
+    for (size_t pageIndex = 0; pageIndex < pageCount; ++pageIndex) {
+        if (pageIndex >= m_printContext->pageCount())
+            break;
+        context.save();
+        context.translate(0, pageHeight * static_cast<int>(pageIndex));
+        protect(m_printContext)->spoolPage(context, pageIndex, pageWidth);
+        context.restore();
+    }
+
+    remoteRenderingBackend->sinkSnapshotRecorderIntoSnapshotFrame(WTF::move(m_remoteSnapshotState->recorder), frameID, protect(m_remoteSnapshotState->callback)->chain());
+    m_remoteSnapshotState = std::nullopt;
+}
+
+void WebPage::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, uint64_t pageCount, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& reply)
+{
+    if (printInfo.snapshotFirstPage) {
+        RefPtr localMainFrame = protect(m_page)->localMainFrame();
+        if (!localMainFrame)
+            return;
+
+        auto snapshotRect = IntRect { FloatRect { { }, FloatSize { printInfo.availablePaperWidth, printInfo.availablePaperHeight } } };
+
+        RefPtr buffer = ImageBuffer::create(snapshotRect.size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        if (!buffer)
+            return;
+
+        Ref frameView = *localMainFrame->view();
+        auto originalLayoutViewportOverrideRect = frameView->layoutViewportOverrideRect();
+        frameView->setLayoutViewportOverrideRect(LayoutRect(snapshotRect));
+
+        pdfSnapshotAtSize(*localMainFrame, buffer->context(), snapshotRect, { });
+
+        frameView->setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
+        reply(buffer->sinkIntoPDFDocument());
+        return;
+    }
+
+    RefPtr<SharedBuffer> pdfPageData;
+    drawPagesToPDFImpl(frameID, printInfo, 0, pageCount, pdfPageData);
+    reply(WTF::move(pdfPageData));
+
+    endPrinting();
+}
+
+void WebPage::drawPrintingPagesToSnapshotiOS(RemoteSnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, uint64_t pageCount, CompletionHandler<void(std::optional<WebCore::FloatSize>)>&& completionHandler)
+{
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame) {
+        completionHandler({ });
+        return;
+    }
+
+    RefPtr coreFrame = frame->coreLocalFrame();
+    if (!coreFrame) {
+        completionHandler({ });
+        return;
+    }
+
+    if (pdfDocumentForPrintingFrame(coreFrame.get())) {
+        // Can't do this remotely.
+        completionHandler({ });
+        return;
+    }
+
+    if (!m_printContext) {
+        completionHandler({ });
+        return;
+    }
+
+    PrintContextAccessScope scope { *this };
+    ASSERT(coreFrame->document()->printing());
+
+    auto mediaBox = FloatRect { 0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight };
+    if (!printInfo.snapshotFirstPage && m_printContext && m_printContext->pageCount())
+        mediaBox = m_printContext->pageRect(0);
+
+    Ref remoteRenderingBackend = ensureRemoteRenderingBackendProxy();
+    m_remoteSnapshotState = {
+        snapshotIdentifier,
+        remoteRenderingBackend->createSnapshotRecorder(snapshotIdentifier),
+        MainRunLoopSuccessCallbackAggregator::create([completionHandler = WTF::move(completionHandler), snapshotSize = mediaBox.size()] (bool success) mutable {
+            completionHandler(success ? std::optional<FloatSize>(snapshotSize) : std::nullopt);
+        })
+    };
+
+    GraphicsContext& context = m_remoteSnapshotState->recorder.get();
+
+    if (printInfo.snapshotFirstPage) {
+        Ref frameView = *coreFrame->view();
+        auto originalLayoutViewportOverrideRect = frameView->layoutViewportOverrideRect();
+        frameView->setLayoutViewportOverrideRect(LayoutRect(mediaBox));
+
+        pdfSnapshotAtSize(*coreFrame, context, IntRect { mediaBox }, { });
+
+        frameView->setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
+    } else
+        drawPrintContextPagesToGraphicsContext(context, mediaBox, 0, pageCount);
+
+    remoteRenderingBackend->sinkSnapshotRecorderIntoSnapshotFrame(WTF::move(m_remoteSnapshotState->recorder), frameID, protect(m_remoteSnapshotState->callback)->chain());
+    m_remoteSnapshotState = std::nullopt;
+}
+
+void WebPage::contentSizeCategoryDidChange(const String& contentSizeCategory)
+{
+    setContentSizeCategory(contentSizeCategory);
+    FontCache::invalidateAllFontCaches();
+}
+
+String WebPage::platformUserAgent(const URL&) const
+{
+    return String();
+}
+
+static bool isMousePrimaryPointingDevice()
+{
+#if PLATFORM(MACCATALYST)
+    return true;
+#else
+    return false;
+#endif
+}
+
+bool WebPage::hasAccessoryMousePointingDevice() const
+{
+    if (isMousePrimaryPointingDevice())
+        return true;
+
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+    if (WebProcess::singleton().hasMouseDevice())
+        return true;
+#endif
+
+    return false;
+}
+
+static bool hasAccessoryStylusPointingDevice()
+{
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
+    if (WebProcess::singleton().hasStylusDevice())
+        return true;
+#endif
+
+    return false;
+}
+
+bool WebPage::hoverSupportedByPrimaryPointingDevice() const
+{
+    return isMousePrimaryPointingDevice();
+}
+
+bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
+{
+    return hasAccessoryMousePointingDevice();
+}
+
+std::optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointingDevice() const
+{
+    return isMousePrimaryPointingDevice() ? PointerCharacteristics::Fine : PointerCharacteristics::Coarse;
+}
+
+OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailablePointingDevices() const
+{
+    OptionSet<PointerCharacteristics> result;
+    if (auto pointerCharacteristicsOfPrimaryPointingDevice = this->pointerCharacteristicsOfPrimaryPointingDevice())
+        result.add(*pointerCharacteristicsOfPrimaryPointingDevice);
+    if (hasAccessoryMousePointingDevice() || hasAccessoryStylusPointingDevice())
+        result.add(PointerCharacteristics::Fine);
+    return result;
+}
+
+void WebPage::hardwareKeyboardAvailabilityChanged(HardwareKeyboardState state)
+{
+    m_keyboardIsAttached = state.isAttached;
+    setHardwareKeyboardState(state);
+
+    protect(m_page)->didUpdateHardwareKeyboardAttachment(m_keyboardIsAttached);
+
+    if (RefPtr focusedFrame = m_page->focusController().localFocusedFrame())
+        focusedFrame->eventHandler().capsLockStateMayHaveChanged();
+}
+
+void WebPage::updateStringForFind(const String& findString)
+{
+    send(Messages::WebPageProxy::UpdateStringForFind(findString));
+}
+
+bool WebPage::platformPrefersTextLegibilityBasedZoomScaling() const
+{
+#if PLATFORM(WATCHOS)
+    return true;
+#else
+    return false;
+#endif
+}
+
+void WebPage::updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler();
+
+    RefPtr root = protect(frame->selection())->rootEditableElementOrDocumentElement();
+    auto selectionRange = frame->selection().selection().toNormalizedRange();
+    if (!root || !selectionRange) {
+        completionHandler();
+        return;
+    }
+
+    auto scope = makeRangeSelectingNodeContents(*root);
+    auto selectionCharacterRange = characterRange(scope, *selectionRange);
+    CheckedInt64 newSelectionLocation { selectionCharacterRange.location };
+    CheckedInt64 newSelectionLength { selectionCharacterRange.length };
+    newSelectionLocation += locationDelta;
+    newSelectionLength += lengthDelta;
+    if (newSelectionLocation.hasOverflowed() || newSelectionLength.hasOverflowed()) {
+        completionHandler();
+        return;
+    }
+
+    auto newSelectionRange = CharacterRange(newSelectionLocation, newSelectionLength);
+    auto updatedSelectionRange = resolveCharacterRange(makeRangeSelectingNodeContents(*root), newSelectionRange);
+    protect(frame->selection())->setSelectedRange(updatedSelectionRange, Affinity::Downstream, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+    completionHandler();
+}
+
+static VisiblePosition moveByGranularityRespectingWordBoundary(const VisiblePosition& position, TextGranularity granularity, uint64_t granularityCount, SelectionDirection direction)
+{
+    ASSERT(granularityCount);
+    ASSERT(position.isNotNull());
+    bool backwards = direction == SelectionDirection::Backward;
+    auto farthestPositionInDirection = backwards ? startOfEditableContent(position) : endOfEditableContent(position);
+    if (position == farthestPositionInDirection)
+        return backwards ? startOfWord(position) : endOfWord(position);
+    VisiblePosition currentPosition = position;
+    VisiblePosition nextPosition;
+    do {
+        nextPosition = positionOfNextBoundaryOfGranularity(currentPosition, granularity, direction);
+        if (nextPosition.isNull())
+            break;
+        currentPosition = nextPosition;
+        if (atBoundaryOfGranularity(currentPosition, granularity, direction))
+            --granularityCount;
+    } while (granularityCount);
+    if (granularity == TextGranularity::SentenceGranularity)
+        return currentPosition;
+    // Note that this rounds to the nearest word, which may cross a line boundary when using line granularity.
+    // For example, suppose the text is laid out as follows and the insertion point is at |:
+    //     |This is the first sen
+    //      tence in a paragraph.
+    // Then moving 1 line of granularity forward will return the postion after the 'e' in sentence.
+    return backwards ? startOfWord(currentPosition) : endOfWord(currentPosition);
+}
+
+static VisiblePosition visiblePositionForPointInRootViewCoordinates(LocalFrame& frame, FloatPoint pointInRootViewCoordinates)
+{
+    auto pointInDocument = protect(frame.view())->rootViewToContents(roundedIntPoint(pointInRootViewCoordinates));
+    return frame.visiblePositionForPoint(pointInDocument);
+}
+
+static VisiblePositionRange constrainRangeToSelection(const VisiblePositionRange& selection, const VisiblePositionRange& range)
+{
+    if (intersects(selection, range))
+        return intersection(selection, range);
+    auto rangeMidpoint = midpoint(range);
+    auto position = startOfWord(rangeMidpoint);
+    if (!contains(range, position)) {
+        position = endOfWord(rangeMidpoint);
+        if (!contains(range, position))
+            position = rangeMidpoint;
+    }
+    return { position, position };
+}
+
+void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& request, CompletionHandler<void(DocumentEditingContext&&)>&& completionHandler)
+{
+    bool wantsAttributedText = request.options.contains(DocumentEditingContextRequest::Options::AttributedText);
+    if (!request.options.contains(DocumentEditingContextRequest::Options::Text) && !wantsAttributedText) {
+        completionHandler({ });
+        return;
+    }
+
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return completionHandler({ });
+
+#if ENABLE(PDF_PLUGIN)
+    if (RefPtr pluginView = focusedPluginViewForFrame(*frame))
+        return completionHandler(pluginView->documentEditingContext(WTF::move(request)));
+#endif
+
+    RefPtr view = frame->view();
+    if (!view)
+        return completionHandler({ });
+
+    protect(frame->document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
+
+    VisibleSelection selection = frame->selection().selection();
+
+    VisiblePositionRange rangeOfInterest;
+    auto selectionRange = VisiblePositionRange { selection.visibleStart(), selection.visibleEnd() };
+
+    bool isSpatialRequest = request.options.containsAny({ DocumentEditingContextRequest::Options::Spatial, DocumentEditingContextRequest::Options::SpatialAndCurrentSelection });
+    bool isSpatialRequestWithCurrentSelection = request.options.contains(DocumentEditingContextRequest::Options::SpatialAndCurrentSelection);
+    bool wantsRects = request.options.contains(DocumentEditingContextRequest::Options::Rects);
+    bool wantsMarkedTextRects = request.options.contains(DocumentEditingContextRequest::Options::MarkedTextRects);
+
+    if (auto textInputContext = request.textInputContext) {
+        auto element = elementForContext(*textInputContext);
+        if (!element) {
+            completionHandler({ });
+            return;
+        }
+
+        if (!request.rect.isEmpty()) {
+            rangeOfInterest.start = closestEditablePositionInElementForAbsolutePoint(*element, roundedIntPoint(request.rect.minXMinYCorner()));
+            rangeOfInterest.end = closestEditablePositionInElementForAbsolutePoint(*element, roundedIntPoint(request.rect.maxXMaxYCorner()));
+        } else if (RefPtr textFormControlElement = dynamicDowncast<HTMLTextFormControlElement>(element)) {
+            rangeOfInterest.start = textFormControlElement->visiblePositionForIndex(0);
+            rangeOfInterest.end = textFormControlElement->visiblePositionForIndex(textFormControlElement->value()->length());
+        } else {
+            rangeOfInterest.start = firstPositionInOrBeforeNode(element.get());
+            rangeOfInterest.end = lastPositionInOrAfterNode(element.get());
+        }
+    } else if (isSpatialRequest) {
+        // FIXME: We might need to be a bit more careful that we get something useful (test the other corners?).
+        rangeOfInterest.start = visiblePositionForPointInRootViewCoordinates(*frame, request.rect.minXMinYCorner());
+        rangeOfInterest.end = visiblePositionForPointInRootViewCoordinates(*frame, request.rect.maxXMaxYCorner());
+
+        if (isSpatialRequestWithCurrentSelection && !selection.isNoneOrOrphaned()) {
+            static constexpr auto maximumNumberOfLines = 10;
+            auto intersectsSpatialRect = [&](const VisiblePosition& position) {
+                FloatRect caretInRootView = view->contentsToRootView(position.absoluteCaretBounds());
+                return caretInRootView.intersects(request.rect);
+            };
+
+            auto startPositionNearSelection = [&] {
+                auto start = selectionRange.start;
+                unsigned lineCount = 0;
+                do {
+                    auto previous = previousLinePosition(start, start.lineDirectionPointForBlockDirectionNavigation());
+                    if (previous.isNull() || previous == start)
+                        break;
+                    start = WTF::move(previous);
+                    lineCount++;
+                } while (intersectsSpatialRect(start) && lineCount < maximumNumberOfLines);
+                return start;
+            }();
+
+            auto endPositionNearSelection = [&] {
+                auto end = selectionRange.end;
+                unsigned lineCount = 0;
+                do {
+                    auto next = nextLinePosition(end, end.lineDirectionPointForBlockDirectionNavigation());
+                    if (next.isNull() || next == end)
+                        break;
+                    end = WTF::move(next);
+                    lineCount++;
+                } while (intersectsSpatialRect(end) && lineCount < maximumNumberOfLines);
+                return end;
+            }();
+
+            if (startPositionNearSelection <= endPositionNearSelection) {
+                rangeOfInterest.start = std::clamp(rangeOfInterest.start, startPositionNearSelection, endPositionNearSelection);
+                rangeOfInterest.end = std::clamp(rangeOfInterest.end, startPositionNearSelection, endPositionNearSelection);
+            }
+        }
+        if (request.options.contains(DocumentEditingContextRequest::Options::SpatialAndCurrentSelection)) {
+            if (RefPtr rootEditableElement = selection.rootEditableElement()) {
+                VisiblePosition startOfEditableRoot { firstPositionInOrBeforeNode(rootEditableElement.get()) };
+                VisiblePosition endOfEditableRoot { lastPositionInOrAfterNode(rootEditableElement.get()) };
+                if (startOfEditableRoot <= endOfEditableRoot) {
+                    rangeOfInterest.start = std::clamp(rangeOfInterest.start, startOfEditableRoot, endOfEditableRoot);
+                    rangeOfInterest.end = std::clamp(rangeOfInterest.end, startOfEditableRoot, endOfEditableRoot);
+                }
+            }
+        }
+    } else if (!selection.isNone())
+        rangeOfInterest = selectionRange;
+
+    if (rangeOfInterest.end < rangeOfInterest.start)
+        std::exchange(rangeOfInterest.start, rangeOfInterest.end);
+
+    if (request.options.contains(DocumentEditingContextRequest::Options::SpatialAndCurrentSelection)) {
+        if (selectionRange.start < rangeOfInterest.start)
+            rangeOfInterest.start = selectionRange.start;
+        if (selectionRange.end > rangeOfInterest.end)
+            rangeOfInterest.end = selectionRange.end;
+    }
+
+    if (rangeOfInterest.start.isNull() || rangeOfInterest.start.isOrphan() || rangeOfInterest.end.isNull() || rangeOfInterest.end.isOrphan()) {
+        completionHandler({ });
+        return;
+    }
+
+    // The subset of the selection that is inside the range of interest.
+    auto rangeOfInterestInSelection = constrainRangeToSelection(selection, rangeOfInterest);
+    if (rangeOfInterestInSelection.isNull()) {
+        completionHandler({ });
+        return;
+    }
+
+    VisiblePosition contextBeforeStart;
+    VisiblePosition contextAfterEnd;
+    auto compositionRange = protect(frame->editor())->compositionRange();
+    if (request.granularityCount) {
+        contextBeforeStart = moveByGranularityRespectingWordBoundary(rangeOfInterest.start, request.surroundingGranularity, request.granularityCount, SelectionDirection::Backward);
+        contextAfterEnd = moveByGranularityRespectingWordBoundary(rangeOfInterest.end, request.surroundingGranularity, request.granularityCount, SelectionDirection::Forward);
+    } else {
+        contextBeforeStart = rangeOfInterest.start;
+        contextAfterEnd = rangeOfInterest.end;
+        if (wantsMarkedTextRects && compositionRange) {
+            // In the case where the client has requested marked text rects make sure that the context
+            // range encompasses the entire marked text range so that we don't return a truncated result.
+            auto compositionStart = makeDeprecatedLegacyPosition(compositionRange->start);
+            auto compositionEnd = makeDeprecatedLegacyPosition(compositionRange->end);
+            if (contextBeforeStart > compositionStart)
+                contextBeforeStart = compositionStart;
+            if (contextAfterEnd < compositionEnd)
+                contextAfterEnd = compositionEnd;
+        }
+    }
+
+    auto isTextObscured = [] (const VisiblePosition& visiblePosition) {
+        if (RefPtr textControl = enclosingTextFormControl(visiblePosition.deepEquivalent())) {
+            if (RefPtr input = dynamicDowncast<HTMLInputElement>(textControl.get())) {
+                if (input->autofilledAndObscured())
+                    return true;
+            }
+        }
+        return false;
+    };
+
+    auto makeString = [&] (const VisiblePosition& start, const VisiblePosition& end) -> AttributedString {
+        auto range = makeSimpleRange(start, end);
+        if (!range || range->collapsed())
+            return { };
+
+        auto isObscured = isTextObscured(start);
+        TextIteratorBehaviors textBehaviors = { };
+        if (!isObscured)
+            textBehaviors = TextIteratorBehavior::EmitsOriginalText;
+
+        if (wantsAttributedText)
+            return editingAttributedStringReplacingNoBreakSpace(*range, textBehaviors, { IncludedElement::Images, IncludedElement::Attachments });
+
+        return AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:plainTextReplacingNoBreakSpace(*range, textBehaviors).createNSString().get()]));
+    };
+
+    DocumentEditingContext context;
+    context.contextBefore = makeString(contextBeforeStart, rangeOfInterestInSelection.start);
+    context.selectedText = makeString(rangeOfInterestInSelection.start, rangeOfInterestInSelection.end);
+    context.contextAfter = makeString(rangeOfInterestInSelection.end, contextAfterEnd);
+    if (auto compositionVisiblePositionRange = makeVisiblePositionRange(compositionRange); intersects(rangeOfInterest, compositionVisiblePositionRange)) {
+        context.markedText = makeString(compositionVisiblePositionRange.start, compositionVisiblePositionRange.end);
+        auto markedTextLength = context.markedText.string.length();
+
+        ptrdiff_t distanceToSelectionStart = distanceBetweenPositions(rangeOfInterestInSelection.start, compositionVisiblePositionRange.start);
+        ptrdiff_t distanceToSelectionEnd = distanceToSelectionStart + [context.selectedText.string.createNSString() length];
+
+        distanceToSelectionStart = clampTo<ptrdiff_t>(distanceToSelectionStart, 0, markedTextLength);
+        distanceToSelectionEnd = clampTo<ptrdiff_t>(distanceToSelectionEnd, 0, markedTextLength);
+        RELEASE_ASSERT(distanceToSelectionStart <= distanceToSelectionEnd);
+
+        context.selectedRangeInMarkedText = {
+            static_cast<uint64_t>(distanceToSelectionStart),
+            static_cast<uint64_t>(distanceToSelectionEnd - distanceToSelectionStart)
+        };
+    } else if (auto* suggestion = frame->editor().writingSuggestionData()) {
+        if (auto suffix = suggestion->content(); !suffix.isEmpty()) {
+            context.markedText = AttributedString::fromNSAttributedString(adoptNS([[NSAttributedString alloc] initWithString:suffix.createNSString().get()]));
+            context.selectedRangeInMarkedText = { 0, 0 };
+        }
+    }
+
+    auto characterRectsForRange = [](const SimpleRange& range, unsigned startOffset) {
+        Vector<DocumentEditingContext::TextRectAndRange> rects;
+        unsigned offsetSoFar = startOffset;
+        std::optional<SimpleRange> lastTextRange;
+        for (TextIterator iterator { range }; !iterator.atEnd(); iterator.advance()) {
+            if (iterator.text().isEmpty())
+                continue;
+
+            if (lastTextRange == iterator.range())
+                continue;
+
+            Vector<IntRect> absoluteRects;
+            if (iterator.range().collapsed())
+                absoluteRects = { VisiblePosition(makeContainerOffsetPosition(iterator.range().start)).absoluteCaretBounds() };
+            else {
+                absoluteRects = RenderObject::absoluteTextRects(iterator.range(), {
+                    RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections,
+                    RenderObject::BoundingRectBehavior::ComputeIndividualCharacterRects,
+                });
+                if (absoluteRects.isEmpty())
+                    absoluteRects.append({ });
+            }
+
+            for (auto& absoluteRect : absoluteRects)
+                rects.append({ protect(iterator.range().start.document().view())->contentsToRootView(absoluteRect), { offsetSoFar++, 1 } });
+
+            lastTextRange = iterator.range();
+        }
+        return rects;
+    };
+
+    if (wantsRects) {
+        if (auto contextRange = makeSimpleRange(contextBeforeStart, contextAfterEnd)) {
+            // FIXME (257828): We should ideally ASSERT() here that context.textRects.size() is equal to
+            // the combined length of the context and selection strings; however, there are some corner
+            // cases in which this isn't true. In particular, such an assertion would be hit when running
+            // the layout test editing/selection/ios/update-selection-after-overflow-scroll.html.
+            // See also: <https://bugs.webkit.org/show_bug.cgi?id=257828>.
+            context.textRects = characterRectsForRange(*contextRange, 0);
+        }
+    } else if (wantsMarkedTextRects && compositionRange) {
+        unsigned compositionStartOffset = 0;
+        if (auto range = makeSimpleRange(contextBeforeStart, compositionRange->start))
+            compositionStartOffset = characterCount(*range);
+        context.textRects = characterRectsForRange(*compositionRange, compositionStartOffset);
+    }
+
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    if (request.options.contains(DocumentEditingContextRequest::Options::Annotation))
+        context.annotatedText = m_textCheckingControllerProxy->annotatedSubstringBetweenPositions(contextBeforeStart, contextAfterEnd);
+#endif
+
+    if (request.options.contains(DocumentEditingContextRequest::Options::AutocorrectedRanges)) {
+        if (auto contextRange = makeSimpleRange(contextBeforeStart, contextAfterEnd)) {
+            auto ranges = protect(protect(frame->document())->markers())->rangesForMarkersInRange(*contextRange, DocumentMarkerType::CorrectionIndicator);
+            context.autocorrectedRanges = ranges.map([&] (auto& range) {
+                auto characterRangeInContext = characterRange(*contextRange, range);
+                return DocumentEditingContext::Range { characterRangeInContext.location, characterRangeInContext.length };
+            });
+        }
+    }
+
+    completionHandler(WTF::move(context));
+}
+
+void WebPage::setShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCurrentSelectionAfterInsertion)
+{
+    if (m_shouldRevealCurrentSelectionAfterInsertion == shouldRevealCurrentSelectionAfterInsertion)
+        return;
+    m_shouldRevealCurrentSelectionAfterInsertion = shouldRevealCurrentSelectionAfterInsertion;
+    if (!shouldRevealCurrentSelectionAfterInsertion)
+        return;
+    protect(m_page)->revealCurrentSelection();
+    scheduleFullEditorStateUpdate();
+}
+
+void WebPage::setScreenIsBeingCaptured(bool captured)
+{
+    m_screenIsBeingCaptured = captured;
+}
+
+void WebPage::setInsertionPointColor(WebCore::Color color)
+{
+    RenderThemeIOS::setInsertionPointColor(color);
+}
+
+void WebPage::textInputContextsInRect(FloatRect searchRect, CompletionHandler<void(const Vector<ElementContext>&)>&& completionHandler)
+{
+    auto contexts = protect(m_page)->editableElementsInRect(searchRect).map([&] (const auto& element) {
+        Ref document = element->document();
+
+        ElementContext context;
+        context.webPageIdentifier = m_identifier;
+        context.documentIdentifier = document->identifier();
+        context.nodeIdentifier = element->nodeIdentifier();
+        context.boundingRect = element->boundingBoxInRootViewCoordinates();
+        return context;
+    });
+    completionHandler(contexts);
+#if ENABLE(EDITABLE_REGION)
+    protect(m_page)->setEditableRegionEnabled();
+#endif
+}
+
+void WebPage::focusTextInputContextAndPlaceCaret(const ElementContext& elementContext, const IntPoint& point, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr target = elementForContext(elementContext);
+    if (!target) {
+        completionHandler(false);
+        return;
+    }
+
+    ASSERT(target->document().frame());
+    Ref targetFrame = *target->document().frame();
+
+    protect(targetFrame->document())->updateLayout(LayoutOptions::IgnorePendingStylesheets);
+
+    // Performing layout could have could torn down the element's renderer. Check that we still
+    // have one. Otherwise, bail out as this function only focuses elements that have a visual
+    // representation.
+    if (!target->renderer() || !target->isFocusable()) {
+        completionHandler(false);
+        return;
+    }
+
+    // FIXME: Do not focus an element if it moved or the caret point is outside its bounds
+    // because we only want to do so if the caret can be placed.
+    UserGestureIndicator gestureIndicator { IsProcessingUserGesture::Yes, &target->document() };
+    SetForScope userIsInteractingChange { m_userIsInteracting, true };
+    protect(corePage())->focusController().setFocusedElement(target.get(), targetFrame.ptr());
+
+    // Setting the focused element could tear down the element's renderer. Check that we still have one.
+    if (m_focusedElement != target || !target->renderer()) {
+        completionHandler(false);
+        return;
+    }
+
+    ASSERT(targetFrame->view());
+    auto position = closestEditablePositionInElementForAbsolutePoint(*target, protect(targetFrame->view())->rootViewToContents(point));
+    if (position.isNull()) {
+        completionHandler(false);
+        return;
+    }
+    protect(targetFrame->selection())->setSelectedRange(makeSimpleRange(position), position.affinity(), WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+    flushPendingFocusedElementUpdateIfNeeded();
+    completionHandler(true);
+}
+
+void WebPage::platformDidScalePage()
+{
+    auto transactionID = downcast<RemoteLayerTreeDrawingArea>(*m_drawingArea).lastCommittedTransactionID();
+    m_internals->lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage = { { transactionID, m_lastTransactionPageScaleFactor } };
+}
+
+#if USE(QUICK_LOOK)
+
+void WebPage::didStartLoadForQuickLookDocumentInMainFrame(const String& fileName, const String& uti)
+{
+    send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(fileName, uti));
+}
+
+void WebPage::didFinishLoadForQuickLookDocumentInMainFrame(const FragmentedSharedBuffer& buffer)
+{
+    ASSERT(!buffer.isEmpty());
+
+    // FIXME: In some cases, buffer contains a single segment that wraps an existing ShareableResource.
+    // If we could create a handle from that existing resource then we could avoid this extra
+    // allocation and copy.
+
+    auto sharedMemory = SharedMemory::copyBuffer(buffer);
+    if (!sharedMemory)
+        return;
+
+    auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, buffer.size());
+    if (!shareableResource)
+        return;
+
+    auto handle = shareableResource->createHandle();
+    if (!handle)
+        return;
+
+    send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(WTF::move(*handle)));
+}
+
+void WebPage::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebPageProxy::RequestPasswordForQuickLookDocumentInMainFrame(fileName), WTF::move(completionHandler));
+}
+
+#endif
+
+void WebPage::animationDidFinishForElement(const Element& animatedElement)
+{
+    scheduleEditorStateUpdateAfterAnimationIfNeeded(animatedElement);
+
+    if (!m_page->settings().layoutViewportHeightExpansionFactor())
+        return;
+
+    if (!protect(animatedElement.document())->isTopDocument())
+        return;
+
+    if (CheckedPtr renderer = animatedElement.renderer(); renderer && renderer->isFixedPositioned())
+        scheduleLayoutViewportHeightExpansionUpdate();
+}
+
+void WebPage::scheduleEditorStateUpdateAfterAnimationIfNeeded(const Element& animatedElement)
+{
+    RefPtr frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    auto& selection = frame->selection().selection();
+    if (selection.isNoneOrOrphaned())
+        return;
+
+    if (selection.isCaret() && !selection.hasEditableStyle())
+        return;
+
+    auto scheduleEditorStateUpdateForStartOrEndContainerNodeIfNeeded = [&](const Node* container) {
+        if (!animatedElement.isShadowIncludingInclusiveAncestorOf(container))
+            return false;
+
+        frame->selection().setCaretRectNeedsUpdate();
+        scheduleFullEditorStateUpdate();
+        return true;
+    };
+
+    RefPtr startContainer = selection.start().containerNode();
+    if (scheduleEditorStateUpdateForStartOrEndContainerNodeIfNeeded(startContainer.get()))
+        return;
+
+    RefPtr endContainer = selection.end().containerNode();
+    if (startContainer != endContainer)
+        scheduleEditorStateUpdateForStartOrEndContainerNodeIfNeeded(endContainer.get());
+}
+
+FloatSize WebPage::screenSizeForFingerprintingProtections(const LocalFrame&, FloatSize defaultSize) const
+{
+    if (!PAL::currentUserInterfaceIdiomIsSmallScreen())
+        return m_viewportConfiguration.minimumLayoutSize();
+
+    static constexpr std::array fixedSizes {
+        FloatSize { 320, 568 },
+        FloatSize { 375, 667 },
+        FloatSize { 390, 844 },
+        FloatSize { 414, 896 },
+    };
+
+    for (auto fixedSize : fixedSizes) {
+        if (defaultSize.width() <= fixedSize.width())
+            return fixedSize;
+    }
+
+    return std::get<std::tuple_size_v<decltype(fixedSizes)> - 1>(fixedSizes);
+}
+
+void WebPage::shouldDismissKeyboardAfterTapAtPoint(FloatPoint point, CompletionHandler<void(bool)>&& completion)
+{
+    RefPtr localMainFrame = protect(m_page)->localMainFrame();
+    if (!localMainFrame)
+        return completion(false);
+
+    RefPtr mainFrameView = localMainFrame->view();
+    if (!mainFrameView)
+        return completion(false);
+
+    FloatPoint adjustedPoint;
+    RefPtr target = localMainFrame->nodeRespondingToClickEvents(point, adjustedPoint);
+    if (!target)
+        return completion(true);
+
+    if (target->hasEditableStyle())
+        return completion(false);
+
+    if (RefPtr element = dynamicDowncast<Element>(*target); element && element->isFormControlElement())
+        return completion(false);
+
+    auto minimumSizeForDismissal = FloatSize { 0.9f * mainFrameView->unobscuredContentSize().width(), 150.f };
+
+    bool isReplaced;
+    FloatSize targetSize = target->absoluteBoundingRect(&isReplaced).size();
+    completion(targetSize.width() >= minimumSizeForDismissal.width() && targetSize.height() >= minimumSizeForDismissal.height());
+}
+
+void WebPage::computeEnclosingLayerID(EditorState& state, const VisibleSelection& selection) const
+{
+    auto selectionRange = selection.range();
+
+    if (!selectionRange)
+        return;
+
+    auto [startLayer, endLayer, enclosingLayer, graphicsLayer, enclosingGraphicsLayerID] = computeEnclosingLayer(*selectionRange);
+
+    state.visualData->enclosingLayerID = WTF::move(enclosingGraphicsLayerID);
+
+    if (!state.visualData->enclosingLayerID)
+        return;
+
+    auto nextScroller = [](RenderLayer& layer, IncludeSelfOrNot includeSelf) {
+        return layer.enclosingScrollableLayer(includeSelf, CrossFrameBoundaries::Yes);
+    };
+
+    auto scrollOffsetAndNodeIDForLayer = [](RenderLayer* layer) -> std::pair<ScrollOffset, std::optional<ScrollingNodeID>> {
+        CheckedRef renderer = layer->renderer();
+        WeakPtr scrollableArea = [&] -> ScrollableArea* {
+            if (renderer->isRenderView())
+                return protect(renderer->document())->isTopDocument() ? nullptr : renderer->frame().view();
+
+            return layer->scrollableArea();
+        }();
+
+        if (!scrollableArea)
+            return { };
+
+        auto scrollingNodeID = scrollableArea->scrollingNodeID();
+        if (!scrollingNodeID)
+            return { };
+
+        return { scrollableArea->scrollOffset(), WTF::move(scrollingNodeID) };
+    };
+
+    CheckedPtr<RenderLayer> scrollableLayer;
+    for (CheckedPtr layer = nextScroller(*protect(enclosingLayer), IncludeSelfOrNot::IncludeSelf); layer; layer = nextScroller(*layer, IncludeSelfOrNot::ExcludeSelf)) {
+        if (auto [scrollOffset, scrollingNodeID] = scrollOffsetAndNodeIDForLayer(layer.get()); scrollingNodeID) {
+            state.visualData->enclosingScrollOffset = scrollOffset;
+            state.visualData->enclosingScrollingNodeID = WTF::move(scrollingNodeID);
+            scrollableLayer = WTF::move(layer);
+            break;
+        }
+    }
+
+    ASSERT_IMPLIES(state.visualData->enclosingLayerID, graphicsLayer);
+    state.visualData->enclosingLayerUsesContentsLayer = graphicsLayer && protect(graphicsLayer)->usesContentsLayer();
+
+    if (selection.isCaret()) {
+        state.visualData->scrollingNodeIDAtStart = state.visualData->enclosingScrollingNodeID;
+        state.visualData->scrollingNodeIDAtEnd = state.visualData->enclosingScrollingNodeID;
+        return;
+    }
+
+    auto scrollingNodeIDForEndpoint = [&](RenderLayer* endpointLayer) {
+        for (CheckedPtr layer = endpointLayer; layer && layer != scrollableLayer; layer = nextScroller(*layer, IncludeSelfOrNot::ExcludeSelf)) {
+            if (auto scrollingNodeID = scrollOffsetAndNodeIDForLayer(layer.get()).second)
+                return scrollingNodeID;
+        }
+        return state.visualData->enclosingScrollingNodeID;
+    };
+
+    state.visualData->scrollingNodeIDAtStart = scrollingNodeIDForEndpoint(startLayer.get());
+    state.visualData->scrollingNodeIDAtEnd = scrollingNodeIDForEndpoint(endLayer.get());
+}
+
+void WebPage::callAfterPendingSyntheticClick(CompletionHandler<void(SyntheticClickResult)>&& completion)
+{
+    if (m_pendingSyntheticClickCallback)
+        return completion(SyntheticClickResult::Failed);
+
+    sendWithAsyncReply(Messages::WebPageProxy::IsPotentialTapInProgress(), [weakPage = WeakPtr { *this }, completion = WTF::move(completion)](bool isTapping) mutable {
+        RefPtr page = weakPage.get();
+        if (!page || page->m_isClosed)
+            return completion(SyntheticClickResult::PageInvalid);
+
+        if (!isTapping)
+            return completion(SyntheticClickResult::Failed);
+
+        if (!page->m_potentialTapNode)
+            return completion(SyntheticClickResult::Failed);
+
+        page->m_pendingSyntheticClickCallback = WTF::move(completion);
+    });
+}
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+
+void WebPage::didDispatchClickEvent(const PlatformMouseEvent& event, Node& node)
+{
+    if (!m_userIsInteracting)
+        return;
+
+    if (event.type() != PlatformEventType::MouseReleased)
+        return;
+
+    if (event.syntheticClickType() != SyntheticClickType::NoTap)
+        return;
+
+    RefPtr element = dynamicDowncast<Element>(node) ?: node.parentElementInComposedTree();
+    if (!element)
+        return;
+
+    Ref document = node.document();
+    if (!document->quirks().shouldSynthesizeTouchEventsAfterNonSyntheticClick(*element))
+        return;
+
+    bool isReplaced = false;
+    auto bounds = element->absoluteBoundingRect(&isReplaced);
+    if (bounds.isEmpty())
+        return;
+
+    callOnMainRunLoop([bounds, document = WTF::move(document)] mutable {
+        if (RefPtr frame = document->frame())
+            frame->eventHandler().dispatchSimulatedTouchEvent(roundedIntPoint(bounds.center()));
+    });
+}
+
+#endif // ENABLE(IOS_TOUCH_EVENTS)
+
+#if USE(UICONTEXTMENU)
+
+void WebPage::willBeginContextMenuInteraction()
+{
+    m_hasActiveContextMenuInteraction = true;
+}
+
+void WebPage::didEndContextMenuInteraction()
+{
+    m_hasActiveContextMenuInteraction = false;
+}
+
+#endif // USE(UICONTEXTMENU)
+
+#if ENABLE(PDF_PAGE_NUMBER_INDICATOR)
+
+void WebPage::createPDFPageNumberIndicator(PDFPluginBase& plugin, const IntRect& boundingBox, size_t pageCount)
+{
+    ASSERT(!m_pdfPlugInWithPageNumberIndicator.first || m_pdfPlugInWithPageNumberIndicator.first == plugin.identifier());
+    if (m_pdfPlugInWithPageNumberIndicator.first == plugin.identifier())
+        return;
+    m_pdfPlugInWithPageNumberIndicator = std::make_pair(plugin.identifier(), WeakPtr { plugin });
+    send(Messages::WebPageProxy::CreatePDFPageNumberIndicator(plugin.identifier(), boundingBox, pageCount));
+}
+
+void WebPage::updatePDFPageNumberIndicatorLocation(PDFPluginBase& plugin, const IntRect& boundingBox)
+{
+    if (m_pdfPlugInWithPageNumberIndicator.first == plugin.identifier())
+        send(Messages::WebPageProxy::UpdatePDFPageNumberIndicatorLocation(plugin.identifier(), boundingBox));
+}
+
+void WebPage::updatePDFPageNumberIndicatorCurrentPage(PDFPluginBase& plugin, size_t pageIndex)
+{
+    if (m_pdfPlugInWithPageNumberIndicator.first == plugin.identifier())
+        send(Messages::WebPageProxy::UpdatePDFPageNumberIndicatorCurrentPage(plugin.identifier(), pageIndex));
+}
+
+void WebPage::removePDFPageNumberIndicator(PDFPluginBase& plugin)
+{
+    if (m_pdfPlugInWithPageNumberIndicator.first == plugin.identifier()) {
+        m_pdfPlugInWithPageNumberIndicator = std::make_pair(Markable<PDFPluginIdentifier> { }, nullptr);
+        send(Messages::WebPageProxy::RemovePDFPageNumberIndicator(plugin.identifier()));
+    }
+}
+
+#endif
+
+#if ENABLE(UNIFIED_PDF)
+
+void WebPage::setPDFDisplayMode(PDFPluginDisplayMode mode)
+{
+    send(Messages::WebPageProxy::SetPDFDisplayMode(mode));
+}
+
+void WebPage::requestPDFDisplayMode(PDFPluginDisplayMode mode)
+{
+    if (RefPtr pluginView = mainFramePlugIn())
+        return pluginView->setPDFDisplayMode(mode);
+}
+
+#endif
+
+} // namespace WebKit
+
+#undef WEBPAGE_RELEASE_LOG
+#undef WEBPAGE_RELEASE_LOG_ERROR
+
+#endif // PLATFORM(IOS_FAMILY)

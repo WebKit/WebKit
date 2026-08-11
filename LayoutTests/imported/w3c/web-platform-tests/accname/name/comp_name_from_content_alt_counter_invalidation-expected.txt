@@ -1,0 +1,19 @@
+Tests the #comp_name_from_content portions of the AccName Name Computation algorithm.
+
+This series of tests exercises the button, heading, and link elements, because each have different characteristics worthy of testing in each of the name computation algorithm scenarios:
+
+button is a leaf node with sub-level elements presentational.
+heading is block level, and can contain sub-level interactives like links.
+link (a[href]) is an interactive inline element that can include non-presentational descendants.
+alt counter with ::before
+
+label
+label
+
+label
+
+
+FAIL button with alt counter on ::before assert_equals: <button data-expectedlabel="228 label" data-testname="button with alt counter on ::before" class="ex alt-counter">label</button> expected "228 label" but got "label"
+FAIL heading with alt counter on ::before assert_equals: <h3 data-expectedlabel="228 label" data-testname="heading with alt counter on ::before" class="ex alt-counter">label</h3> expected "228 label" but got "label"
+FAIL link with alt counter on ::before assert_equals: <a href="#" data-expectedlabel="228 label" data-testname="link with alt counter on ::before" class="ex alt-counter">label</a> expected "228 label" but got "label"
+

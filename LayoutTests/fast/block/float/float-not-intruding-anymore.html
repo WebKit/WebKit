@@ -1,0 +1,32 @@
+<style>
+#float {
+  float: left;
+  width: 100px;
+  height: 50px;
+}
+
+.inline {
+  display: inline-block;
+  background-color:green;
+  width: 100px;
+  height: 50px;
+}
+
+.should_not_show {
+  position: absolute;
+  background-color: red;
+  z-index: -1;
+  width: 100px;
+  height: 50px;
+}
+</style>
+<div class=should_not_show></div>
+<div id=float></div>
+<div>
+  <div class=inline></div>
+</div>
+<script>
+document.body.offsetTop;
+// This float is not intruding anymore.
+float.style.marginTop = "-50px";
+</script>

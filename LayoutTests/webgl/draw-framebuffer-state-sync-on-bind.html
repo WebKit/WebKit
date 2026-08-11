@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files/js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files/js/webgl-test-utils.js"></script>
+</head>
+<body onload="test()">
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" width="2" height="2"></canvas>
+<script>
+"use strict";
+description("Test that draw buffer state is properly synced when framebuffer is bound to DRAW after modifications while bound to READ.");
+
+var wtu = WebGLTestUtils;
+var gl;
+
+function test()
+{
+    var canvas = document.getElementById("canvas");
+    gl = wtu.create3DContext(canvas, undefined, 2);
+
+    if (!gl) {
+        testFailed("WebGL2 context does not exist");
+        finishTest();
+        return;
+    }
+
+    testDetachWhileBoundToRead();
+    testAttachWhileBoundToRead();
+    testMultipleDrawBuffers();
+
+    finishTest();
+}
+
+// Test 1: Detach texture while bound to READ, then rebind to DRAW
+function testDetachWhileBoundToRead()
+{
+    debug("");
+    debug("Test 1: Detach while bound to READ_FRAMEBUFFER, then rebind to DRAW_FRAMEBUFFER");
+
+    var fb = gl.createFramebuffer();
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    // Bind to DRAW, configure draw buffers, attach texture
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, fb);
+    gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+    gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+
+    // Verify initial state
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER0)", "gl.COLOR_ATTACHMENT0");
+    shouldBe("gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER)", "gl.FRAMEBUFFER_COMPLETE");
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "setup should succeed");
+
+    // Switch to READ only
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, fb);
+
+    // Detach texture while bound to READ only
+    gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, null, 0);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "detach while bound to READ should succeed");
+
+    // Bind back to DRAW - draw buffer state should be synced
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, fb);
+
+    // getParameter returns user-set values, not internal filtered state
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER0)", "gl.COLOR_ATTACHMENT0");
+
+    // Framebuffer has no attachments, so it's incomplete
+    shouldBe("gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER)", "gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+
+    // Cleanup
+    gl.deleteFramebuffer(fb);
+    gl.deleteTexture(texture);
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, null);
+}
+
+// Test 2: Attach texture while bound to READ, then rebind to DRAW
+function testAttachWhileBoundToRead()
+{
+    debug("");
+    debug("Test 2: Attach while bound to READ_FRAMEBUFFER, then rebind to DRAW_FRAMEBUFFER");
+
+    var fb = gl.createFramebuffer();
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    // Bind to DRAW, configure draw buffers (but don't attach yet)
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, fb);
+    gl.drawBuffers([gl.COLOR_ATTACHMENT0]);
+
+    // getParameter returns user-set values
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER0)", "gl.COLOR_ATTACHMENT0");
+
+    // Framebuffer is incomplete - no attachment yet
+    shouldBe("gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER)", "gl.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+
+    // Switch to READ only
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, fb);
+
+    // Attach texture while bound to READ only
+    gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "attach while bound to READ should succeed");
+
+    // Bind back to DRAW - draw buffer state should be synced
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, fb);
+
+    // Draw buffer should now be COLOR_ATTACHMENT0 (attachment exists)
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER0)", "gl.COLOR_ATTACHMENT0");
+
+    // Framebuffer should be complete
+    shouldBe("gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER)", "gl.FRAMEBUFFER_COMPLETE");
+
+    // Cleanup
+    gl.deleteFramebuffer(fb);
+    gl.deleteTexture(texture);
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, null);
+}
+
+// Test 3: Multiple draw buffers with partial detachment
+function testMultipleDrawBuffers()
+{
+    debug("");
+    debug("Test 3: Multiple draw buffers with partial detachment while bound to READ");
+
+    var fb = gl.createFramebuffer();
+    var texture0 = gl.createTexture();
+    var texture1 = gl.createTexture();
+
+    gl.bindTexture(gl.TEXTURE_2D, texture0);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.bindTexture(gl.TEXTURE_2D, texture1);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    // Bind to DRAW, configure both draw buffers, attach both textures
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, fb);
+    gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1]);
+    gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture0, 0);
+    gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, texture1, 0);
+
+    // Verify initial state
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER0)", "gl.COLOR_ATTACHMENT0");
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER1)", "gl.COLOR_ATTACHMENT1");
+    shouldBe("gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER)", "gl.FRAMEBUFFER_COMPLETE");
+
+    // Switch to READ only
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, fb);
+
+    // Detach texture1 from COLOR_ATTACHMENT1 while bound to READ
+    gl.framebufferTexture2D(gl.READ_FRAMEBUFFER, gl.COLOR_ATTACHMENT1, gl.TEXTURE_2D, null, 0);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "partial detach while bound to READ should succeed");
+
+    // Bind back to DRAW - draw buffer state should be synced
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, fb);
+
+    // getParameter returns user-set values
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER0)", "gl.COLOR_ATTACHMENT0");
+    shouldBe("gl.getParameter(gl.DRAW_BUFFER1)", "gl.COLOR_ATTACHMENT1");
+
+    // Framebuffer should be complete (internal state filters out detached COLOR_ATTACHMENT1)
+    shouldBe("gl.checkFramebufferStatus(gl.DRAW_FRAMEBUFFER)", "gl.FRAMEBUFFER_COMPLETE");
+
+    // Cleanup
+    gl.deleteFramebuffer(fb);
+    gl.deleteTexture(texture0);
+    gl.deleteTexture(texture1);
+    gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.READ_FRAMEBUFFER, null);
+}
+</script>
+</body>
+</html>

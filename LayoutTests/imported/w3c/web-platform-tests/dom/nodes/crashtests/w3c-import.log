@@ -1,0 +1,22 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/attribute-index-when-no-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/childNodes-last_visited-unwrap-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/document-replaceChild-input-documentElement.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/documentElement-remove-descendant-query.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/multiple-append-mutated-in-unload-document.https.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/multiple-append-mutated-in-unload-document.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/multiple-append-mutated-in-unload.https.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/crashtests/multiple-append-mutated-in-unload.https.html.headers

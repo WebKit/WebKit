@@ -1,0 +1,26 @@
+
+RUN(video.src = "../resources/hls/bip-bop-live.m3u8")
+EVENT(canplay)
+EXPECTED (video.duration == 'Infinity') OK
+
+Phase 1: pause, change playbackRate, resume into the live edge.
+RUN(video.play())
+EVENT(playing)
+RUN(video.pause())
+EVENT(pause)
+RUN(video.playbackRate = 2)
+RUN(video.currentTime = video.seekable.end(0) - 0.5)
+EVENT(seeked)
+RUN(video.play())
+EVENT(waiting)
+EXPECTED (video.ended == 'false') OK
+EXPECTED (video.duration == 'Infinity') OK
+
+Phase 2: play forward into the live edge.
+RUN(video.currentTime = video.seekable.end(0) - 1)
+EVENT(seeked)
+RUN(video.play())
+EXPECTED (video.ended == 'false') OK
+EXPECTED (video.duration == 'Infinity') OK
+END OF TEST
+

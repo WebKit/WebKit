@@ -1,0 +1,3 @@
+
+FAIL triggering stops when a trigger's timeline subject is removed and restarts when reattached. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TimelineTrigger"
+

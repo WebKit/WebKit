@@ -1,0 +1,28 @@
+<style>
+  script, html {
+    grid-template-rows: 0 0 1px repeat(auto-fit, 10px);
+  }
+  script {
+    overflow-y: hidden;
+    grid-gap: 100%;
+  }
+  style, script, head, html {
+    display: inline-grid;
+  }
+  style {
+    grid-column-start: 2;
+  }
+  :empty {
+    border-bottom: 5px solid;
+  }
+</style>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+onload = () => {
+  document.head.appendChild(document.createElement('script'));
+  setTimeout(function() { document.write('This test has PASSED if it does not CRASH.'); testRunner.notifyDone(); }, 0);
+};
+</script>

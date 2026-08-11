@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="startTest()">
+    <!-- This is a hack to force setAutodisplay on WK1 -->
+    <div style="will-change: transform"></div>
+    <canvas width="100" height="100">Browser does not support HTML5 Canvas.</canvas>
+    <script>
+        description("This test checks that when drawing an animated image to a canvas it draws the first frame and that the animation doesn't reset.");
+        // The animated image has 6 frames and the test will draw it to a canvas when the image is playing on the 4th frame (yellow)
+        // Then it will check two things:
+        // 1. That what has been drawn into the canvas is the first frame of the image (red)
+        // 2. That the animation itself has continued playing (from the 4th frame to the end) without pausing or going back.
+        // Note that the animation doesn't loop.
+        jsTestIsAsync = true;
+
+        if (window.internals) {
+            internals.clearMemoryCache();
+            internals.settings.setWebkitImageReadyEventEnabled(true);
+        }
+
+        function startTest() {
+            canvasAlreadyDrawed = false;
+            currentFrameIndex = 0;
+            previousFrameIndex = 0;
+            image = new Image();
+            image.src = "resources/animated-red-green-blue-yellow-cyan-black-repeat-1.gif"
+            image.addEventListener("webkitImageFrameReady", imageCheckDrawFrames);
+            image.decode()
+            .then(() => {
+                document.body.appendChild(image);
+                imageLastFrameIndex = internals.imageFrameCount(image) - 1;
+            })
+            .catch((e) => {
+                testFailed("Exception decoding image: " + e.message);
+                finishJSTest();
+            })
+        }
+
+        function drawAndCheckCanvas() {
+            canvasAlreadyDrawed = true;
+            canvas = document.getElementsByTagName("canvas")[0];
+            ctx = canvas.getContext("2d");
+            ctx.drawImage(image, 0, 0);
+            imgData = ctx.getImageData(50, 25, 1, 1).data;
+            // The GIF is playing on the 4th frame (yellow), but the canvas should have drawn the first frame (red).
+            shouldBe("internals.imageFrameIndex(image)", "3");
+            shouldBe("imgData.toString()", "'255,0,0,255'");
+        }
+
+        function imageCheckDrawFrames() {
+            currentFrameIndex = internals.imageFrameIndex(image);
+            // Draw the canvas when the image is playing on the 4th frame (yellow)
+            if (!canvasAlreadyDrawed && currentFrameIndex == 3) {
+                drawAndCheckCanvas();
+            }
+            if (currentFrameIndex < previousFrameIndex) {
+                testFailed("The GIF animation should not be resetted.");
+                finishJSTest();
+            }
+            if (canvasAlreadyDrawed && currentFrameIndex == imageLastFrameIndex) {
+                testPassed("The GIF animation has completed playing and the Canvas has been drawn.");
+                finishJSTest();
+            }
+            previousFrameIndex = currentFrameIndex;
+        }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

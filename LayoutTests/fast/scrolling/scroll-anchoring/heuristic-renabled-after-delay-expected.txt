@@ -1,0 +1,12 @@
+
+Testing anchoring with 11 of size 10 - expect anchoring false
+PASS anchoringActive is false
+
+Waiting for just over 3s
+
+Testing anchoring with 3 of size 10 - expect anchoring true
+PASS anchoringActive is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

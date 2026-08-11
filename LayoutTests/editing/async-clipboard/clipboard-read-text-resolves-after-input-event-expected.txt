@@ -1,0 +1,13 @@
+Regression test for bug 223597: navigator.clipboard.readText() called inside a 'paste' handler that does not preventDefault must resolve in a separate task — after the native paste's 'input' event has fired. Order of observed events should be ['input', 'readText'].
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS doneWritingText became true
+PASS done became true
+PASS order[0] is "input"
+PASS order[1] is "readText:hello"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Copy

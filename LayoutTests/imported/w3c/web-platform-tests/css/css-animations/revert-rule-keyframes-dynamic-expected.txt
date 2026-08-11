@@ -1,0 +1,4 @@
+
+PASS revert-rule in keyframes, reverted-to value changing (standard property)
+PASS revert-rule in keyframes, reverted-to value changing (custom property)
+

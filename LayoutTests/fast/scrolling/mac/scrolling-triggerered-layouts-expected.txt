@@ -1,0 +1,7 @@
+
+Test that scrolling doesn't trigger a layout per scroll
+PASS layoutCount <= 4 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+fixed

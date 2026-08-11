@@ -1,0 +1,134 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "child-frame";
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/resource-content-subframe.html`;
+    return new Promise(resolve => {
+        iframe.addEventListener("load", () => resolve(), { once: true });
+        document.body.appendChild(iframe);
+    });
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.GetResourceContent");
+
+    // Under Site Isolation, use the multiplexing backendTarget: its PageAgent is the UIProcess
+    // ProxyingPageAgent, which sees every WebContent process. getResourceContent routes the
+    // request to the frame's hosting process by IPC and returns the bytes. The per-page target's
+    // PageAgent (== window.PageAgent) would only reach the local frame's process.
+    async function fetchResourceTreeWithChild() {
+        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let frameTarget = (await targetAddedPromise).data.target;
+
+        // Poll getResourceTree until the cross-origin child's committed url reaches the proxy
+        // (via the Page.frameNavigated event). The child's stylesheet subresource is aggregated
+        // in shortly after; wait for it too so the by-url subresource fetch below is stable.
+        let frameTree;
+        let child;
+        for (let attempt = 0; attempt < 50; ++attempt) {
+            if (!frameTarget.executionContext) {
+                await Promise.race([
+                    frameTarget.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded),
+                    new Promise((resolve) => setTimeout(resolve, 100)),
+                ]);
+            }
+            ({ frameTree } = await WI.backendTarget.PageAgent.getResourceTree());
+            child = frameTree.childFrames?.[0];
+            if (child && child.frame.url.endsWith("/resource-content-subframe.html")
+                && (child.resources || []).some((resource) => resource.url.endsWith("/resource-content-subframe-style.css")))
+                break;
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        }
+        return { frameTree, child };
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.GetResourceContent.CrossOriginChildDocument",
+        description: "getResourceContent should return a cross-origin child frame's committed main document over IPC from its hosting process.",
+        async test() {
+            let { frameTree, child } = await fetchResourceTreeWithChild();
+
+            InspectorTest.expectThat(!!child, "Should have found the cross-origin child frame.");
+            if (!child)
+                return;
+
+            let { content, base64Encoded } = await WI.backendTarget.PageAgent.getResourceContent(child.frame.id, child.frame.url);
+            InspectorTest.expectFalse(base64Encoded, "Child document content should not be base64 encoded.");
+            InspectorTest.expectThat(content.includes("RESOURCE_CONTENT_SUBFRAME_MARKER"), "Child document content should contain the document's marker text.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.GetResourceContent.CrossOriginChildSubresource",
+        description: "getResourceContent should return a cross-origin child frame's cached subresource by url from its hosting process.",
+        async test() {
+            let { child } = await fetchResourceTreeWithChild();
+
+            InspectorTest.expectThat(!!child, "Should have found the cross-origin child frame.");
+            if (!child)
+                return;
+
+            let styleResource = (child.resources || []).find((resource) => resource.url.endsWith("/resource-content-subframe-style.css"));
+            InspectorTest.expectThat(!!styleResource, "Child frame's cached stylesheet subresource should be reported.");
+            if (!styleResource)
+                return;
+
+            let { content, base64Encoded } = await WI.backendTarget.PageAgent.getResourceContent(child.frame.id, styleResource.url);
+            InspectorTest.expectFalse(base64Encoded, "Stylesheet subresource content should not be base64 encoded.");
+            InspectorTest.expectThat(content.includes("RESOURCE_CONTENT_SUBFRAME_STYLE_MARKER"), "Stylesheet subresource content should contain the stylesheet's marker text.");
+            InspectorTest.expectThat(content.includes("rebeccapurple"), "Stylesheet subresource content should contain the stylesheet's rule.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.GetResourceContent.MainFrameDocument",
+        description: "getResourceContent should return the main frame's own committed document.",
+        async test() {
+            let { frameTree } = await fetchResourceTreeWithChild();
+
+            let { content } = await WI.backendTarget.PageAgent.getResourceContent(frameTree.frame.id, frameTree.frame.url);
+            InspectorTest.expectThat(content.includes("SiteIsolation.Page.GetResourceContent"), "Main frame document content should contain the inline test script.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.GetResourceContent.InvalidFrameId",
+        description: "getResourceContent should fail cleanly for a malformed frameId rather than crash the UIProcess.",
+        async test() {
+            let threw = false;
+            try {
+                await WI.backendTarget.PageAgent.getResourceContent("not-a-valid-frame-id", "http://127.0.0.1:8000/");
+            } catch {
+                threw = true;
+            }
+            InspectorTest.expectThat(threw, "A malformed frameId should be rejected with an error, not crash the UIProcess.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.GetResourceContent.MissingResource",
+        description: "getResourceContent should fail for a url with no matching resource in the frame.",
+        async test() {
+            let { frameTree } = await fetchResourceTreeWithChild();
+
+            let threw = false;
+            try {
+                await WI.backendTarget.PageAgent.getResourceContent(frameTree.frame.id, "http://127.0.0.1:8000/site-isolation/inspector/page/resources/does-not-exist.css");
+            } catch {
+                threw = true;
+            }
+            InspectorTest.expectThat(threw, "A url with no matching resource should be rejected with an error.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Test that Page.getResourceContent returns resource bytes cross-process under site isolation.</p>
+</body>

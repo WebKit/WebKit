@@ -1,0 +1,5 @@
+
+Target
+
+PASS :focus-visible matches after script focus move
+

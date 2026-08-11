@@ -1,0 +1,5 @@
+PASS color is "rgb(0, 122, 255)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

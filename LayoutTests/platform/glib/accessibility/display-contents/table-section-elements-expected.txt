@@ -1,0 +1,17 @@
+This test ensures the acessibility tree is correct when table section elements (e.g. thead, tbody) have display:contents.
+
+PASS: table.rowCount === 3 === true
+PASS: table.columnCount === 2 === true
+PASS: table.cellForColumnAndRow(0, 0).domIdentifier === 'r0c0'
+PASS: table.cellForColumnAndRow(1, 0).domIdentifier === 'r0c1'
+PASS: table.cellForColumnAndRow(0, 1).domIdentifier === 'r1c0'
+PASS: table.cellForColumnAndRow(1, 1).domIdentifier === 'r1c1'
+PASS: table.cellForColumnAndRow(0, 2).domIdentifier === 'r2c0'
+PASS: table.cellForColumnAndRow(1, 2).domIdentifier === 'r2c1'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Author	Title
+Stephen Hawking	A Brief History of Time
+Carl Sagan	Cosmos

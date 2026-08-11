@@ -1,0 +1,13 @@
+
+
+PASS select[size][style="writing-mode: horizontal-tb"] scrolls correctly
+PASS select[size][style="writing-mode: horizontal-tb"] sizing works correctly
+PASS select[size][style="writing-mode: vertical-lr"] scrolls correctly
+PASS select[size][style="writing-mode: vertical-lr"] sizing works correctly
+PASS select[size][style="writing-mode: vertical-rl"] scrolls correctly
+PASS select[size][style="writing-mode: vertical-rl"] sizing works correctly
+PASS select[size][style="writing-mode: sideways-lr"] scrolls correctly
+PASS select[size][style="writing-mode: sideways-lr"] sizing works correctly
+PASS select[size][style="writing-mode: sideways-rl"] scrolls correctly
+PASS select[size][style="writing-mode: sideways-rl"] sizing works correctly
+

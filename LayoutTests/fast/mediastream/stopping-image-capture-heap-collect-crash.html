@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../../resources/gc.js"></script>
+  </head>
+  <body>
+    <script>
+      function createPeerConnectionImageCapture()
+{
+    const connection = new RTCPeerConnection();
+    const transceiver = connection.addTransceiver('video');
+    return new ImageCapture(transceiver.receiver.track);
+}
+
+promise_test(async test => {
+    const imageCapture = createPeerConnectionImageCapture();
+    imageCapture.grabFrame();
+
+    gc(); 
+    await new Promise(resolve => test.step_timeout(resolve, 100));
+}, "grabFrame while GC");
+    </script>
+  </body>
+</html>

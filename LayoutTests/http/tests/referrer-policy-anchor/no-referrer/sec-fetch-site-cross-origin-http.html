@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body onload="clickLink()">
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function clickLink() {
+    let expected = "cross-site";
+    let a = document.createElement("a");
+    let policy = "no-referrer";
+    a.referrerPolicy = policy;
+    a.href = "http://localhost:8080/referrer-policy/resources/check-sec-fetch-site.py?test&sfs-co&expected=" + expected;
+    a.click();
+}
+</script>
+</body>
+</html>

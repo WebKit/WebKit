@@ -1,0 +1,4 @@
+target
+
+FAIL :target should match the target element even after it is removed and reinserted. assert_equals: :target should match after reinsertion. expected Element node <div id="target">target</div> but got null
+

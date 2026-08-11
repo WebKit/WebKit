@@ -1,0 +1,184 @@
+/*
+ * Copyright (C) 2013-2024 Apple, Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#pragma once
+
+#include <JavaScriptCore/IterationKind.h>
+#include <JavaScriptCore/JSInternalFieldObjectImpl.h>
+#include <JavaScriptCore/JSMap.h>
+
+namespace JSC {
+
+const static uint8_t JSMapIteratorNumberOFInternalFields = 4;
+
+class JSMapIterator final : public JSInternalFieldObjectImpl<JSMapIteratorNumberOFInternalFields> {
+public:
+    using Base = JSInternalFieldObjectImpl<JSMapIteratorNumberOFInternalFields>;
+
+    DECLARE_EXPORT_INFO;
+
+    DECLARE_VISIT_CHILDREN;
+
+    enum class Field : uint8_t {
+        Entry = 0,
+        IteratedObject,
+        Storage,
+        Kind,
+    };
+    static_assert(numberOfInternalFields == JSMapIteratorNumberOFInternalFields);
+
+    static std::array<JSValue, numberOfInternalFields> initialValues()
+    {
+        return { {
+            jsNumber(0),
+            jsNull(),
+            JSValue(),
+            jsNumber(0),
+        } };
+    }
+
+    const WriteBarrier<Unknown>& internalField(Field field) const { return Base::internalField(static_cast<uint32_t>(field)); }
+    WriteBarrier<Unknown>& internalField(Field field) { return Base::internalField(static_cast<uint32_t>(field)); }
+
+    template<typename CellType, SubspaceAccess mode>
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.mapIteratorSpace<mode>();
+    }
+
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+
+    static JSMapIterator* create(VM& vm, Structure* structure, JSMap* iteratedObject, IterationKind kind)
+    {
+        JSMapIterator* instance = new (NotNull, allocateCell<JSMapIterator>(vm)) JSMapIterator(vm, structure);
+        instance->finishCreation(vm, iteratedObject, kind);
+        return instance;
+    }
+
+    static JSMapIterator* createWithInitialValues(VM&, Structure*);
+
+    struct NextResult {
+        JSValue key;
+        JSValue value;
+    };
+    ALWAYS_INLINE NextResult nextWithAdvance(VM& vm)
+    {
+        JSCell* sentinel = vm.orderedHashTableSentinel();
+        JSCell* storage = this->tryGetStorage();
+        if (storage == sentinel)
+            return { };
+
+        if (!storage) {
+            storage = iteratedObject()->storage();
+            if (!storage) [[likely]] {
+                markClosed(sentinel);
+                return { };
+            }
+
+            // This path is very unlikely path. This happens only when
+            // the iterator is created with empty map and map gets a new
+            // entry before this iterator.next() is called.
+            setStorage(vm, storage);
+        }
+
+        JSMap::Storage& storageRef = *uncheckedDowncast<JSMap::Storage>(storage);
+        auto result = JSMap::Helper::transitAndNext(vm, storageRef, entry());
+        if (!result.storage) {
+            markClosed(sentinel);
+            return { };
+        }
+
+        setEntry(vm, result.entry + 1);
+        if (result.storage != storage)
+            setStorage(vm, result.storage);
+        return { result.key, result.value };
+    }
+    bool next(JSGlobalObject* globalObject, JSValue& value)
+    {
+        auto result = nextWithAdvance(globalObject->vm());
+        if (result.key.isEmpty())
+            return false;
+
+        switch (kind()) {
+        case IterationKind::Values:
+            value = result.value;
+            break;
+        case IterationKind::Keys:
+            value = result.key;
+            break;
+        case IterationKind::Entries:
+            value = constructArrayPair(globalObject, result.key, result.value);
+            break;
+        }
+        return true;
+    }
+    bool nextKeyValue(JSGlobalObject* globalObject, JSValue& key, JSValue& value)
+    {
+        auto result = nextWithAdvance(globalObject->vm());
+        if (result.key.isEmpty())
+            return false;
+
+        key = result.key;
+        value = result.value;
+        return true;
+    }
+
+    IterationKind kind() const { return static_cast<IterationKind>(internalField(Field::Kind).get().asUInt32AsAnyInt()); }
+    JSMap* iteratedObject() const { return uncheckedDowncast<JSMap>(internalField(Field::IteratedObject).get()); }
+    JSCell* tryGetStorage() const
+    {
+        JSValue value = internalField(Field::Storage).get();
+        if (!value)
+            return nullptr;
+        return value.asCell();
+    }
+    JSMap::Helper::Entry entry() const { return JSMap::Helper::toNumber(internalField(Field::Entry).get()); }
+
+    void setIteratedObject(VM& vm, JSMap* map) { internalField(Field::IteratedObject).set(vm, this, map); }
+    void setStorage(VM& vm, JSCell* storage) { internalField(Field::Storage).set(vm, this, storage); }
+    void setEntry(VM& vm, JSMap::Helper::Entry entry) { internalField(Field::Entry).set(vm, this, JSMap::Helper::toJSValue(entry)); }
+
+    void close(VM& vm)
+    {
+        markClosed(vm.orderedHashTableSentinel());
+    }
+
+private:
+    JSMapIterator(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    void markClosed(JSCell* sentinel)
+    {
+        internalField(Field::Storage).setWithoutWriteBarrier(sentinel);
+    }
+
+    JS_EXPORT_PRIVATE void finishCreation(VM&, JSMap*, IterationKind);
+    void finishCreation(VM&);
+};
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSMapIterator);
+
+} // namespace JSC

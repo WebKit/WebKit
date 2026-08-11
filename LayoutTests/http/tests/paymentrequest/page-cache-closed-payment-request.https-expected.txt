@@ -1,0 +1,17 @@
+Tests that a page with a PaymentRequest in the Closed state goes into the back/forward cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Creating a PaymentRequest in the Closed state.
+PASS responsePromise rejected promise  with AbortError: The operation was aborted..
+pageshow - not from cache
+pagehide - entering cache
+pageshow - from cache
+PASS Page did enter and was restored from the back/forward cache
+Testing that PaymentRequest remains in the Closed state.
+PASS request.show() rejected promise  with InvalidStateError: The object is in an invalid state..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,89 @@
+<html>
+<script src="../resources/js-test.js"></script>
+<body>
+    
+    <div id="content">
+    
+    <!-- Test radio group without a form-->
+    <form>
+    <input type="radio" id="test1_Yes" name="test1">Yes<BR>
+    <input type="radio" id="test1_No" name="test1">No<BR>
+    <input type="radio" id="test1_Maybe" name="test1">Maybe<BR>
+    </form>
+    <br><br>
+    
+    <!-- Test radio group without a form -->
+    <input type="radio" id="test2_Yes" name="test2">Yes<BR>
+    <input type="radio" id="test2_No" name="test2">No<BR>
+    <br><br>
+
+    <!-- Test radio group with labels -->
+    <form>
+    <input type="radio" id="test3_Yes" name="test3"><label for="test3_Yes">Yes</label><BR>
+    <input type="radio" id="test3_No" name="test3"><label for="test3_No">No</label><BR>
+    </form>
+    <br><br>
+
+    <!-- Test different radio groups -->
+    <form>
+    <input type="radio" id="test4_Yes" name="test4">Yes<BR>
+    <input type="radio" id="test5_No" name="test5">No<BR>
+    </form>
+    <br><br>
+
+    <!-- Test radiogroup parentage -->
+    <div class="radiogroup" role="radiogroup" id="radiogroup">
+    <div>
+       <div role="radio" id="ariaradio1" aria-checked="true">Radio 1</div>
+       <div role="radio" id="ariaradio2" aria-checked="false">Radio 2</div>
+       <div role="radio" aria-checked="false">Radio 3</div>
+    </div>
+    </div>
+
+    </div>
+
+    <p id="description"></p>
+    <div id="console"></div>
+
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            description("This tests that linked UI elements withing a radio group work");
+
+            debug("Radio buttons within the same named group should be able to access their siblings");
+            var test1 = accessibilityController.accessibleElementById("test1_Yes");
+            shouldBeTrue("test1.linkedUIElementAtIndex(0).isEqual(test1)");
+            shouldBeTrue("test1.linkedUIElementAtIndex(1).isEqual(accessibilityController.accessibleElementById('test1_No'))");
+            shouldBeTrue("test1.linkedUIElementAtIndex(2).isEqual(accessibilityController.accessibleElementById('test1_Maybe'))");
+            debug("\n");
+            
+            debug("Radio buttons that are not in a form, but in the same named group should be able to access their siblings");
+            var test2 = accessibilityController.accessibleElementById("test2_Yes");
+            shouldBeTrue("test2.linkedUIElementAtIndex(0).isEqual(test2)");
+            shouldBeTrue("test2.linkedUIElementAtIndex(1).isEqual(accessibilityController.accessibleElementById('test2_No'))");
+            debug("\n");
+
+            debug("Radio buttons labeled by <label> should be able to access their siblings");
+            var test3 = accessibilityController.accessibleElementById("test3_Yes");
+            shouldBeTrue("test3.linkedUIElementAtIndex(0).isEqual(test3)");
+            shouldBeTrue("test3.linkedUIElementAtIndex(1).isEqual(accessibilityController.accessibleElementById('test3_No'))");
+            debug("\n");
+
+            debug("Radio buttons not in a groups should not have siblings (the first linked element is itself)");
+            var test4 = accessibilityController.accessibleElementById("test4_Yes");
+            shouldBeTrue("test4.linkedUIElementAtIndex(0).isEqual(test4)");
+            shouldBeTrue("!test4.linkedUIElementAtIndex(1) || !test4.linkedUIElementAtIndex(1).isValid");
+            debug("\n");
+
+            debug("Radio buttons that just have aria roles should work.");
+            var ariaRadio1 = accessibilityController.accessibleElementById("ariaradio1");
+            var ariaRadio2 = accessibilityController.accessibleElementById("ariaradio2");
+            shouldBeTrue("ariaRadio1.linkedUIElementAtIndex(0).isEqual(ariaRadio1)");
+            shouldBeTrue("ariaRadio1.linkedUIElementAtIndex(1).isEqual(ariaRadio2)");
+  
+            document.getElementById("content").style.visibility = "hidden";
+        }
+    </script>
+</body>
+</html>

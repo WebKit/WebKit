@@ -1,0 +1,18 @@
+
+PASS __Secure: Non-secure origin: Should not set 'Path=/;'
+FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;' assert_equals: expected (undefined) undefined but got (string) "bar2"
+PASS __Secure: Non-secure origin: Should not set 'Secure; Path=/;'
+PASS __SeCuRe: Non-secure origin: Should not set 'Secure; Path=/;'
+PASS __Secure: Non-secure origin: Should not set 'Path=/;domain=web-platform.test'
+FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;domain=web-platform.test' assert_equals: expected (undefined) undefined but got (string) "bar6"
+PASS __Secure: Non-secure origin: Should not set 'Secure; Path=/;domain=web-platform.test'
+PASS __SeCuRe: Non-secure origin: Should not set 'Secure; Path=/;domain=web-platform.test'
+PASS __Secure: Non-secure origin: Should not set 'Path=/;MaxAge=10'
+FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;MaxAge=10' assert_equals: expected (undefined) undefined but got (string) "bar10"
+PASS __Secure: Non-secure origin: Should not set 'Secure; Path=/;MaxAge=10'
+PASS __SeCuRe: Non-secure origin: Should not set 'Secure; Path=/;MaxAge=10'
+PASS __Secure: Non-secure origin: Should not set 'Path=/;HttpOnly'
+FAIL __SeCuRe: Non-secure origin: Should not set 'Path=/;HttpOnly' assert_equals: expected (undefined) undefined but got (string) "bar14"
+PASS __Secure: Non-secure origin: Should not set 'Secure; Path=/;HttpOnly'
+PASS __SeCuRe: Non-secure origin: Should not set 'Secure; Path=/;HttpOnly'
+

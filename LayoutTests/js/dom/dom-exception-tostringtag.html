@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<title>Object.prototype.toString for DOMException after removing @@toStringTag</title>
+<body>
+<p>DOMException has the [[ErrorData]] internal slot (the "is-error" proposal / WebIDL PR #1421),
+so once its @@toStringTag (which is [[Configurable]]: true) is removed, Object.prototype.toString
+reports "[object Error]" per the ECMAScript specification. Note this differs from Chrome and
+Firefox, which still report "[object Object]". This test can be run directly in any browser to
+compare behavior.</p>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var log = [];
+function check(description, actual, expected) {
+    var pass = actual === expected;
+    log.push((pass ? "PASS" : "FAIL") + ": " + description + " is " + JSON.stringify(actual)
+        + (pass ? "" : ", expected " + JSON.stringify(expected)));
+}
+
+function toStringTag(object) {
+    return Object.prototype.toString.call(object);
+}
+
+// WebTransportError is a DOMException subclass, but is only present when WebTransport is enabled.
+// The checks involving it are guarded with "!window.WebTransportError || ..." so that this test
+// produces identical output whether or not WebTransport is enabled.
+
+// The WebIDL @@toStringTag on each interface prototype takes precedence.
+check("toString(new DOMException())", toStringTag(new DOMException()), "[object DOMException]");
+check("toString(new WebTransportError())", !window.WebTransportError || toStringTag(new WebTransportError()) === "[object WebTransportError]", true);
+
+// The [[ErrorData]] slot is observable through Error.isError().
+check("Error.isError(new DOMException())", Error.isError(new DOMException()), true);
+check("Error.isError(new WebTransportError())", !window.WebTransportError || Error.isError(new WebTransportError()), true);
+
+// @@toStringTag is [[Configurable]]: true, so it can be deleted. With no @@toStringTag on the
+// prototype chain, Object.prototype.toString falls back to the "Error" builtin tag because these
+// objects have the [[ErrorData]] internal slot.
+check("delete DOMException.prototype[@@toStringTag]", delete DOMException.prototype[Symbol.toStringTag], true);
+check("delete WebTransportError.prototype[@@toStringTag]", !window.WebTransportError || delete WebTransportError.prototype[Symbol.toStringTag], true);
+
+check("toString(new DOMException()) after delete", toStringTag(new DOMException()), "[object Error]");
+check("toString(new WebTransportError()) after delete", !window.WebTransportError || toStringTag(new WebTransportError()) === "[object Error]", true);
+
+document.getElementById("log").textContent = log.join("\n");
+</script>
+</body>

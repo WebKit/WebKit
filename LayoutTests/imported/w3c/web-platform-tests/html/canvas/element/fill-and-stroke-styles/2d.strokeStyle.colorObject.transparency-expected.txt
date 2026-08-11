@@ -1,0 +1,8 @@
+2d.strokeStyle.colorObject.transparency
+ctx.strokeStyle with color objects has transparency
+Actual output:
+Expected output:
+
+
+FAIL ctx.strokeStyle with color objects has transparency assert_equals: Alpha channel of the pixel at (50, 25) expected 0 but got 255
+

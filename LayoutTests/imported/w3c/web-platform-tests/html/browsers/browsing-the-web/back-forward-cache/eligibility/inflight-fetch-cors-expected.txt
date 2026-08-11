@@ -1,0 +1,4 @@
+
+FAIL Eligibility (in-flight fetch): CORS succeeded when in BFCache promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+PASS Eligibility (in-flight fetch): CORS failed when in BFCache
+

@@ -1,0 +1,3 @@
+
+PASS Module scripts with no imports always execute asynchronously
+

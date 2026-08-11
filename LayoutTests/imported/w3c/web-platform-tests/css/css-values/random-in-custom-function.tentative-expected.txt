@@ -1,0 +1,10 @@
+
+FAIL random() in function result assert_true: expected true got false
+FAIL random() in function typed result assert_true: expected true got false
+FAIL random() in different function same local name assert_true: expected true got false
+FAIL random() in same function different locals assert_true: expected true got false
+FAIL random() in same registered function same locals different positions assert_true: expected true got false
+FAIL random() in different function same default locals assert_true: expected true got false
+FAIL random() in function in local overrides argument assert_true: expected true got false
+FAIL random() in function argument assert_true: expected true got false
+

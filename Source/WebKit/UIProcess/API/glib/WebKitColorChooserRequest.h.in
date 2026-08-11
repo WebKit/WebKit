@@ -1,0 +1,230 @@
+/*
+ * Copyright (C) 2015 Igalia S.L.
+ * Copyright (c) 2012, Samsung Electronics
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitColorChooserRequest_h
+#define WebKitColorChooserRequest_h
+
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#elif PLATFORM(WPE)
+#include <glib-object.h>
+#include <wpe/WebKitColor.h>
+#include <wpe/WebKitRectangle.h>
+#endif
+
+G_BEGIN_DECLS
+
+#define WEBKIT_TYPE_COLOR_CHOOSER_REQUEST            (webkit_color_chooser_request_get_type())
+#if !ENABLE(2022_GLIB_API)
+#define WEBKIT_COLOR_CHOOSER_REQUEST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_COLOR_CHOOSER_REQUEST, WebKitColorChooserRequest))
+#define WEBKIT_IS_COLOR_CHOOSER_REQUEST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_COLOR_CHOOSER_REQUEST))
+#define WEBKIT_COLOR_CHOOSER_REQUEST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_COLOR_CHOOSER_REQUEST, WebKitColorChooserRequestClass))
+#define WEBKIT_IS_COLOR_CHOOSER_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_COLOR_CHOOSER_REQUEST))
+#define WEBKIT_COLOR_CHOOSER_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_COLOR_CHOOSER_REQUEST, WebKitColorChooserRequestClass))
+
+struct _WebKitColorChooserRequestClass {
+    GObjectClass parent_class;
+};
+#endif
+
+#if PLATFORM(GTK)
+/**
+ * WebKitColorChooserRequest:
+ * @See_also: [class@WebView]
+ *
+ * A request to open a color chooser.
+ *
+ * Whenever the user interacts with an <input type='color' />
+ * HTML element, WebKit will need to show a dialog to choose a color. For that
+ * to happen in a general way, instead of just opening a
+ * [iface@Gtk.ColorChooser] (which might be not desirable in some cases, which
+ * could prefer to use their own color chooser dialog), WebKit will fire the
+ * [signal@WebView::run-color-chooser] signal with a
+ * [class@ColorChooserRequest] object, which will allow the client application
+ * to specify the color to be selected, to inspect the details of the request
+ * (e.g. to get initial color) and to cancel the request, in case nothing was
+ * selected.
+ *
+ * In case the client application does not wish to handle this signal,
+ * WebKit will provide a default handler which will asynchronously run
+ * a regular [class@Gtk.ColorChooserDialog] for the user to interact with.
+ */
+
+/**
+ * WebKitColorChooserRequest::finished:
+ * @request: the [class@ColorChooserRequest] on which the signal is emitted
+ *
+ * Emitted when the @request finishes. This signal can be emitted because the
+ * user completed the @request calling [method@ColorChooserRequest.finish],
+ * or cancelled it with [method@ColorChooserRequest.cancel] or because the
+ * color input element is removed from the DOM.
+ *
+ * Since: 2.8
+ */
+#elif PLATFORM(WPE)
+/**
+ * WebKitColorChooserRequest:
+ * @See_also: [class@WebView]
+ *
+ * A request to open a color chooser.
+ *
+ * Whenever the user interacts with an <input type='color' />
+ * HTML element, WebKit will need to show a dialog to choose a color. WebKit
+ * will fire the [signal@WebView::run-color-chooser] signal with a
+ * [class@ColorChooserRequest] object, which will allow the client application
+ * to specify the color to be selected, to inspect the details of the request
+ * (e.g. to get initial color) and to cancel the request, in case nothing was
+ * selected.
+ *
+ * WPE does not provide a default color chooser, so applications must provide
+ * their own.
+ *
+ * Since: 2.56
+ */
+
+/**
+ * WebKitColorChooserRequest::finished:
+ * @request: the [class@ColorChooserRequest] on which the signal is emitted
+ *
+ * Emitted when the @request finishes. This signal can be emitted because the
+ * user completed the @request calling [method@ColorChooserRequest.finish],
+ * or cancelled it with [method@ColorChooserRequest.cancel] or because the
+ * color input element is removed from the DOM.
+ *
+ * Since: 2.56
+ */
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitColorChooserRequest, webkit_color_chooser_request, WEBKIT, COLOR_CHOOSER_REQUEST, GObject)
+
+#if PLATFORM(GTK)
+WEBKIT_API void
+webkit_color_chooser_request_get_rgba              (WebKitColorChooserRequest *request,
+                                                    GdkRGBA                   *rgba);
+
+WEBKIT_API void
+webkit_color_chooser_request_set_rgba              (WebKitColorChooserRequest *request,
+                                                    const GdkRGBA             *rgba);
+
+/**
+ * webkit_color_chooser_request_get_element_rectangle:
+ * @request: a [class@ColorChooserRequest]
+ * @rect: (out): a [struct@Gdk.Rectangle] to fill in with the element area
+ *
+ * Gets the bounding box of the color input element.
+ *
+ * Since: 2.8
+ */
+WEBKIT_API void
+webkit_color_chooser_request_get_element_rectangle (WebKitColorChooserRequest *request,
+                                                    GdkRectangle              *rect);
+
+/**
+ * webkit_color_chooser_request_finish:
+ * @request: a [class@ColorChooserRequest]
+ *
+ * Finishes @request and the input element keeps the currently selected color.
+ *
+ * The [signal@ColorChooserRequest::finished] signal is emitted to notify that
+ * the request has finished.
+ *
+ * Since: 2.8
+ */
+WEBKIT_API void
+webkit_color_chooser_request_finish                (WebKitColorChooserRequest *request);
+
+/**
+ * webkit_color_chooser_request_cancel:
+ * @request: a [class@ColorChooserRequest]
+ *
+ * Cancels @request and the input element changes to use the initial color.
+ *
+ * The initial color is the one the input element had before the request
+ * started. The [signal@ColorChooserRequest::finished] signal is emitted to
+ * notify that the request has finished.
+ *
+ * Since: 2.8
+ */
+WEBKIT_API void
+webkit_color_chooser_request_cancel                (WebKitColorChooserRequest *request);
+#elif PLATFORM(WPE)
+WEBKIT_API void
+webkit_color_chooser_request_get_color             (WebKitColorChooserRequest *request,
+                                                    WebKitColor               *color);
+
+WEBKIT_API void
+webkit_color_chooser_request_set_color             (WebKitColorChooserRequest *request,
+                                                    const WebKitColor         *color);
+
+/**
+ * webkit_color_chooser_request_get_element_rectangle:
+ * @request: a [class@ColorChooserRequest]
+ * @rect: (out): a [struct@Rectangle] to fill in with the element area
+ *
+ * Gets the bounding box of the color input element.
+ *
+ * Since: 2.56
+ */
+WEBKIT_API void
+webkit_color_chooser_request_get_element_rectangle (WebKitColorChooserRequest *request,
+                                                    WebKitRectangle           *rect);
+
+/**
+ * webkit_color_chooser_request_finish:
+ * @request: a [class@ColorChooserRequest]
+ *
+ * Finishes @request and the input element keeps the currently selected color.
+ *
+ * The [signal@ColorChooserRequest::finished] signal is emitted to notify that
+ * the request has finished.
+ *
+ * Since: 2.56
+ */
+WEBKIT_API void
+webkit_color_chooser_request_finish                (WebKitColorChooserRequest *request);
+
+/**
+ * webkit_color_chooser_request_cancel:
+ * @request: a [class@ColorChooserRequest]
+ *
+ * Cancels @request and the input element changes to use the initial color.
+ *
+ * The initial color is the one the input element had before the request
+ * started. The [signal@ColorChooserRequest::finished] signal is emitted to
+ * notify that the request has finished.
+ *
+ * Since: 2.56
+ */
+WEBKIT_API void
+webkit_color_chooser_request_cancel                (WebKitColorChooserRequest *request);
+#endif
+
+G_END_DECLS
+
+#endif

@@ -1,0 +1,14 @@
+This tests that ARIA switches correctly handle the aria-checked attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS switch1.isChecked is false
+PASS switch2.isChecked is true
+PASS switch3.isChecked is false
+PASS switch3.isChecked === true
+PASS switch3.isChecked === false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

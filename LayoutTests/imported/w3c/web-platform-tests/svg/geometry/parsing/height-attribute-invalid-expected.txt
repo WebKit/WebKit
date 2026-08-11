@@ -1,0 +1,9 @@
+
+PASS height="-10" should be an invalid attribute value (ignored)
+PASS height="-10px" should be an invalid attribute value (ignored)
+PASS height="-10%" should be an invalid attribute value (ignored)
+PASS height="auto" should be an invalid attribute value (ignored)
+PASS height="none" should be an invalid attribute value (ignored)
+PASS height="10px 20px" should be an invalid attribute value (ignored)
+PASS height="garbage" should be an invalid attribute value (ignored)
+

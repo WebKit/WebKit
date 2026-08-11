@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script src='../resources/testharness.js'></script>
+<script src='../resources/testharnessreport.js'></script>
+<script>
+promise_test(function() {
+    const writable = new WritableStream();
+    const readable = new ReadableStream({ start: c => c.error("error") });
+    readable.pipeTo(writable).catch(() => {});
+
+    return new Promise((resolve, reject) => {
+        window.onunhandledrejection = () => reject("window.onunhandledrejection should not fire");
+        setTimeout(resolve, 100);
+    });
+}, "Ensure unhandledrejection is not called in case of pipeTo with readable be errored");
+</script>
+</body>
+</html>

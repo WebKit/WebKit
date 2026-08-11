@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: The Content Security Policy directive 'frame-ancestors' is ignored when delivered via an HTML meta element.
+CONSOLE MESSAGE: The Content Security Policy directive 'report-uri' is ignored when delivered via an HTML meta element.
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'aaa'.
+
+This tests that mixed-case Content Security Policy directive names are lowercased, so the console warnings refer to them in lowercase.

@@ -1,0 +1,11 @@
+This test ensures the accessibility search used by the VoiceOver rotor returns a remote frame placeholder for an out-of-process iframe on iOS.
+
+PASS: headingSearchReturnsRemoteFrame() === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+start
+Local heading
+
+

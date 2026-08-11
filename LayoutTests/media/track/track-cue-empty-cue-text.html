@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+        var fragment;
+        function startTest()
+        {
+            var emptyCue = new VTTCue(0, 0, "");
+            fragment = emptyCue.getCueAsHTML();
+
+            consoleWrite("** The getCueAsHTML() method should return a document fragment **");
+            testExpected("fragment", null, "!=");
+
+            consoleWrite("<br>** The document fragment should have one child, an empty Text node **");
+            testExpected("fragment.childNodes.length", 1);
+            testExpected("fragment.childNodes[0].length", 0);
+            testExpected("fragment.childNodes[0].constructor.name", Text.name);
+
+            consoleWrite("");
+
+            endTest();
+          }
+        </script>
+    </head>
+
+    <body onload="startTest()">
+        <p>getCueAsHTML() on an empty cue should return a valid document fragment.</p>
+        <video controls />
+    </body>
+</html>

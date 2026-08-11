@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="grid" role="grid" aria-colcount="16" aria-rowcount="30">
+  <div role="rowgroup">
+    <div role="row" aria-rowindex="7" aria-rowindextext="Seven">
+      <span id="cell1" role="columnheader" aria-colindex="2" aria-colindextext="B">First Name</span>
+      <span role="columnheader" aria-colindex="3" aria-colindextext="C">Last Name</span>
+      <span role="columnheader" aria-colindex="4" aria-colindextext="D">Company</span>
+      <span role="columnheader" aria-colindex="5" aria-colindextext="E">Address</span>
+    </div>
+  </div>
+  <div role="rowgroup">
+    <div role="row" aria-rowindex="8" aria-rowindextext="Eight">
+      <span role="gridcell" aria-colindex="2" aria-colindextext="B" aria-rowindex="8" aria-rowindextext="Eight">Fred</span>
+      <span role="gridcell" aria-colindex="3" aria-colindextext="C" aria-rowindex="8" aria-rowindextext="Eight">Jackson</span>
+      <span id="cell2" role="gridcell" aria-colindex="4" aria-colindextext="D" aria-rowindex="8" aria-rowindextext="Eight" aria-rowspan="2">Acme, Inc.</span>
+      <span id="cell3" role="gridcell" aria-colindex="5" aria-colindextext="E" aria-rowindex="8" aria-rowindextext="Eight" aria-rowspan="3">123 Broad St.</span>
+    </div>
+    <div role="row" aria-rowindex="9" aria-rowindextext="Nine">
+      <span role="gridcell" aria-colindex="2" aria-colindextext="B">Sara</span>
+      <span role="gridcell" aria-colindex="3" aria-colindextext="C">James</span>
+    </div>
+  </div>
+  <div role="rowgroup">
+    <div role="row" aria-rowindex="15" aria-rowindextext="Fifteen">
+      <span role="gridcell" aria-colindex="2" aria-colindextext="B">Footer 1</span>
+      <span role="gridcell" aria-colindex="3" aria-colindextext="C">Footer 2</span>
+      <span role="gridcell" aria-colindex="4" aria-colindextext="D" aria-colspan="2">Footer 3</span>
+    </div>
+  </div>
+</div>
+
+<div id="grid2" role="grid" aria-colcount="16">
+  <div role="rowgroup">
+    <div role="row" aria-colindex="2" aria-colindextext="B">
+      <span id="cell4" role="columnheader">Name</span>
+      <span id="cell5" role="columnheader">Company</span>
+      <span id="cell6" role="columnheader" aria-colspan="3">Address</span>
+    </div>
+  </div>
+</div>
+
+<script>
+var testOutput = "This tests that aria-{row,col}indextext attributes in aria table/grid are working correctly.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var cell1 = accessibilityController.accessibleElementById("cell1");
+    var cell2 = accessibilityController.accessibleElementById("cell2");
+    var cell3 = accessibilityController.accessibleElementById("cell3");
+    var cell4 = accessibilityController.accessibleElementById("cell4");
+    var cell5 = accessibilityController.accessibleElementById("cell5");
+    var cell6 = accessibilityController.accessibleElementById("cell6");
+
+    testOutput += expect("cell1.stringAttributeValue('AXColumnIndexDescription')", "'B'");
+    testOutput += expect("cell1.stringAttributeValue('AXRowIndexDescription')", "'Seven'");
+    testOutput += expect("cell2.stringAttributeValue('AXColumnIndexDescription')", "'D'");
+    testOutput += expect("cell2.stringAttributeValue('AXRowIndexDescription')", "'Eight'");
+    testOutput += expect("cell3.stringAttributeValue('AXColumnIndexDescription')", "'E'");
+    testOutput += expect("cell3.stringAttributeValue('AXRowIndexDescription')", "'Eight'");
+
+    // aria-colindextext is not allowed on a row, so must not be reflected in its cells, not even in the first one
+    testOutput += expect("cell4.stringAttributeValue('AXColumnIndexDescription')", "null");
+    testOutput += expect("cell5.stringAttributeValue('AXColumnIndexDescription')", "null");
+    testOutput += expect("cell6.stringAttributeValue('AXColumnIndexDescription')", "null");
+
+    // Test that dynamic changes to attributes are reflected
+    document.getElementById("cell1").setAttribute("aria-colindextext", "D");
+    setTimeout(async function() {
+        testOutput += await expectAsync("cell1.stringAttributeValue('AXColumnIndexDescription')", "'D'");
+
+        document.getElementById("cell1").setAttribute("aria-rowindextext", "Ten");
+        testOutput += await expectAsync("cell1.stringAttributeValue('AXRowIndexDescription')", "'Ten'");
+
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

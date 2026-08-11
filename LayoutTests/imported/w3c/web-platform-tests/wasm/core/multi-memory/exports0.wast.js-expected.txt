@@ -1,0 +1,28 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (exports0.wast:3)
+PASS #3 Test that WebAssembly compilation succeeds (exports0.wast:4)
+PASS #4 Test that WebAssembly compilation succeeds (exports0.wast:5)
+PASS #5 Test that WebAssembly compilation succeeds (exports0.wast:6)
+PASS #6 Test that WebAssembly compilation succeeds (exports0.wast:32)
+PASS #7 Test that WebAssembly compilation succeeds (exports0.wast:40)
+PASS #8 Test that WebAssembly compilation succeeds (exports0.wast:49)
+PASS #9 Test that WebAssembly compilation succeeds (exports0.wast:50)
+PASS #10 Reinitialize the default imports
+PASS #11 Test that WebAssembly compilation succeeds (exports0.wast:3)
+PASS #12 Test that WebAssembly instantiation succeeds (exports0.wast:3)
+PASS #13 Test that WebAssembly compilation succeeds (exports0.wast:4)
+PASS #14 Test that WebAssembly instantiation succeeds (exports0.wast:4)
+PASS #15 Test that WebAssembly compilation succeeds (exports0.wast:5)
+PASS #16 Test that WebAssembly instantiation succeeds (exports0.wast:5)
+PASS #17 Test that WebAssembly compilation succeeds (exports0.wast:6)
+PASS #18 Test that WebAssembly instantiation succeeds (exports0.wast:6)
+PASS #19 Test that WebAssembly compilation succeeds (exports0.wast:32)
+PASS #20 Test that WebAssembly instantiation succeeds (exports0.wast:32)
+PASS #21 Test that WebAssembly compilation succeeds (exports0.wast:40)
+PASS #22 Test that WebAssembly instantiation succeeds (exports0.wast:40)
+PASS #23 Test that WebAssembly compilation succeeds (exports0.wast:49)
+PASS #24 Test that WebAssembly instantiation succeeds (exports0.wast:49)
+PASS #25 Test that WebAssembly compilation succeeds (exports0.wast:50)
+PASS #26 Test that WebAssembly instantiation succeeds (exports0.wast:50)
+

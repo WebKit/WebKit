@@ -1,0 +1,5 @@
+anchor1anchor2target1target2
+
+PASS getComputedStyle() should return and absolutize the first @try rule style for target1
+PASS getComputedStyle() should return and absolutize the second @try rule style for target2
+

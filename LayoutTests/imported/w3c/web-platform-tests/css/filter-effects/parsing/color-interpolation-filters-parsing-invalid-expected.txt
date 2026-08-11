@@ -1,0 +1,5 @@
+
+PASS e.style['color-interpolation-filters'] = "none" should not set the property value
+PASS e.style['color-interpolation-filters'] = "linearRGB sRGB" should not set the property value
+PASS e.style['color-interpolation-filters'] = "auto sRGB linearRGB" should not set the property value
+

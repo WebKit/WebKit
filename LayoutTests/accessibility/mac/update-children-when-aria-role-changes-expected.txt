@@ -1,0 +1,13 @@
+This tests that when an ARIA role changes, the AX hierarchy is updated accordingly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS container.childAtIndex(0).role is 'AXRole: AXButton'
+PASS container.childAtIndex(1) == null || container.childAtIndex(1).isValid == false is true
+PASS container.childAtIndex(0).role === 'AXRole: AXStaticText'
+PASS container.childAtIndex(1).role === 'AXRole: AXButton'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+button 1

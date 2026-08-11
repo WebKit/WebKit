@@ -1,0 +1,204 @@
+
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=onclick with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=ondblclick with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow, attrName=onmousedown with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=srcdoc with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href with a plain string
+PASS Element.setAttribute works for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=srcdoc with a plain string
+PASS Element.setAttribute works for elementNS=https://example.com/namespace, element=iframe, attrName=srcdoc with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=data-srcdoc with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=src with a plain string
+PASS Element.setAttribute works for elementNS=https://example.com/namespace, element=script, attrName=src with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=data-src with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=href with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=href with a plain string
+PASS Element.setAttribute works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=src with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=onclick with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=ondblclick with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow, attrName=onmousedown with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=srcdoc with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href with a plain string
+PASS Element.setAttributeNS works for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=srcdoc with a plain string
+PASS Element.setAttributeNS works for elementNS=https://example.com/namespace, element=iframe, attrName=srcdoc with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrNS=https://example.com/namespace, attrName=srcdoc with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=data-srcdoc with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=src with a plain string
+PASS Element.setAttributeNS works for elementNS=https://example.com/namespace, element=script, attrName=src with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrNS=https://example.com/namespace, attrName=src with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=data-src with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=href with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=href with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=https://example.com/namespace, attrName=href with a plain string
+PASS Element.setAttributeNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=src with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=onclick with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=ondblclick with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow, attrName=onmousedown with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=srcdoc with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href with a plain string
+PASS Element.setAttributeNode works for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=srcdoc with a plain string
+PASS Element.setAttributeNode works for elementNS=https://example.com/namespace, element=iframe, attrName=srcdoc with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrNS=https://example.com/namespace, attrName=srcdoc with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=data-srcdoc with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=src with a plain string
+PASS Element.setAttributeNode works for elementNS=https://example.com/namespace, element=script, attrName=src with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrNS=https://example.com/namespace, attrName=src with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=data-src with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=href with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=href with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=https://example.com/namespace, attrName=href with a plain string
+PASS Element.setAttributeNode works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=src with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=onclick with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=ondblclick with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow, attrName=onmousedown with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=srcdoc with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=srcdoc with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=https://example.com/namespace, element=iframe, attrName=srcdoc with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrNS=https://example.com/namespace, attrName=srcdoc with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=data-srcdoc with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=src with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=https://example.com/namespace, element=script, attrName=src with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrNS=https://example.com/namespace, attrName=src with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=data-src with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=href with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=href with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=https://example.com/namespace, attrName=href with a plain string
+PASS Element.setAttributeNodeNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=src with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=onclick with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=ondblclick with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow, attrName=onmousedown with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=srcdoc with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=srcdoc with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=https://example.com/namespace, element=iframe, attrName=srcdoc with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrNS=https://example.com/namespace, attrName=srcdoc with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=data-srcdoc with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=src with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=https://example.com/namespace, element=script, attrName=src with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrNS=https://example.com/namespace, attrName=src with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=data-src with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=href with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=href with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=https://example.com/namespace, attrName=href with a plain string
+PASS NamedNodeMap.setNamedItem works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=src with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=onclick with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=ondblclick with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow, attrName=onmousedown with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=srcdoc with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=srcdoc with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=https://example.com/namespace, element=iframe, attrName=srcdoc with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrNS=https://example.com/namespace, attrName=srcdoc with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=data-srcdoc with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=src with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=https://example.com/namespace, element=script, attrName=src with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrNS=https://example.com/namespace, attrName=src with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=data-src with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=href with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=href with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=https://example.com/namespace, attrName=href with a plain string
+PASS NamedNodeMap.setNamedItemNS works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=src with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=onclick with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=ondblclick with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow, attrName=onmousedown with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=srcdoc with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href with a plain string
+PASS Attr.value works for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=srcdoc with a plain string
+PASS Attr.value works for elementNS=https://example.com/namespace, element=iframe, attrName=srcdoc with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrNS=https://example.com/namespace, attrName=srcdoc with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=data-srcdoc with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=src with a plain string
+PASS Attr.value works for elementNS=https://example.com/namespace, element=script, attrName=src with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrNS=https://example.com/namespace, attrName=src with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=data-src with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=href with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=href with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=https://example.com/namespace, attrName=href with a plain string
+PASS Attr.value works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=src with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=onclick with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=ondblclick with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow, attrName=onmousedown with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=srcdoc with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href with a plain string
+PASS Node.nodeValue works for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=srcdoc with a plain string
+PASS Node.nodeValue works for elementNS=https://example.com/namespace, element=iframe, attrName=srcdoc with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrNS=https://example.com/namespace, attrName=srcdoc with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=data-srcdoc with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=src with a plain string
+PASS Node.nodeValue works for elementNS=https://example.com/namespace, element=script, attrName=src with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrNS=https://example.com/namespace, attrName=src with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=data-src with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=href with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=href with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=https://example.com/namespace, attrName=href with a plain string
+PASS Node.nodeValue works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=src with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=onclick with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=ondblclick with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1998/Math/MathML, element=mrow, attrName=onmousedown with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=srcdoc with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=src with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=href with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=http://www.w3.org/1999/xlink, attrName=href with a plain string
+PASS Node.textContent works for elementNS=https://example.com/namespace, element=foo, attrName=onmouseup with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrNS=https://example.com/namespace, attrName=onclick with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=ondoesnotexist with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=data-onclick with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=srcdoc with a plain string
+PASS Node.textContent works for elementNS=https://example.com/namespace, element=iframe, attrName=srcdoc with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrNS=https://example.com/namespace, attrName=srcdoc with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=IFRAME, attrName=data-srcdoc with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=DIV, attrName=src with a plain string
+PASS Node.textContent works for elementNS=https://example.com/namespace, element=script, attrName=src with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrNS=https://example.com/namespace, attrName=src with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=data-src with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/2000/svg, element=g, attrName=href with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/1999/xhtml, element=SCRIPT, attrName=href with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/2000/svg, element=script, attrNS=https://example.com/namespace, attrName=href with a plain string
+PASS Node.textContent works for elementNS=http://www.w3.org/2000/svg, element=script, attrName=src with a plain string
+

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<meta charset="utf-8">
+<title>A clip child's transform change must not be frozen by the clip geometry cache</title>
+<!--
+    Regression test for the LBSE clip-path geometry cache. applyPathClipping() caches the clip
+    geometry, but the clip content's own transform can change via the SVG transform fast path
+    (which repaints the clipper's clients without relaying out the <clipPath>). If that transform
+    were cached along with the geometry it would freeze: the clip would stay at translate(0,0)
+    instead of following the change to translate(100,100). Both should render a green 50x50 square
+    at (100,100).
+-->
+<style>svg { display: block; }</style>
+<script>
+window.addEventListener('load', () => {
+    // First rAF: still before the initial paint. Second rAF: the initial paint (which populates the
+    // clip geometry cache with the translate(0,0) transform) has already happened, so mutating the
+    // transform now exercises the cache invalidation path.
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.getElementById("clipRect").setAttribute("transform", "translate(100, 100)");
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => document.documentElement.classList.remove("reftest-wait"));
+            });
+        });
+    });
+});
+</script>
+</head>
+<body>
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+    <clipPath id="clip">
+        <rect id="clipRect" x="0" y="0" width="50" height="50" transform="translate(0, 0)"/>
+    </clipPath>
+    <rect width="200" height="200" fill="green" clip-path="url(#clip)"/>
+</svg>
+</body>
+</html>

@@ -1,0 +1,13 @@
+This test ensures that the 'Play Animation', 'Pause Animation', 'Play All Animations', and 'Pause All Animations' context menu items do not appear by default.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Open Image in New Window
+Download Image
+Copy Image
+Inspect Element
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

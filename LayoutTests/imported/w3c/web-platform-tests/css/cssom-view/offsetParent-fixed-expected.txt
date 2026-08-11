@@ -1,0 +1,4 @@
+
+PASS If the containing block for a fixed positioned element is viewport, the offsetParent should be null.
+PASS If the containing block for a fixed positioned element is the nearest ancestor box, the offsetParent should be the nearest ancestor box.
+

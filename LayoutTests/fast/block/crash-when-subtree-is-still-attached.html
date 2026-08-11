@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+<b>PASS if<div></div> no crash.<div></div>foobar</b><div></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.designMode = "on";
+document.execCommand("SelectAll");
+document.execCommand("RemoveFormat", true, "Arial");
+</script>
+</body>
+</html>

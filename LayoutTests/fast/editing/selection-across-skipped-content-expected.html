@@ -1,0 +1,20 @@
+<style>
+div {
+  font-family: Monospace;
+}
+.ref {
+  height: 100px;
+  width: 300px;
+  outline: 1px solid green;  
+}
+</style>
+<div id=selection_start>PASS if green box</div>
+<div class=ref></div>
+<div id=selection_end>is selected but the content inside is not.</div>
+<script>
+const selection = window.getSelection();
+const range = document.createRange();
+range.setStart(document.getElementById("selection_start"), 0);
+range.setEnd(document.getElementById("selection_end"), 1);
+selection.addRange(range);
+</script>

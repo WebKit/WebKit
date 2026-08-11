@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Refused to load http://localhost:8000/navigation/resources/form-target.pl because it does not appear in the form-action directive of the Content Security Policy.
+
+Tests that blocking form redirect reports the correct blockedURI.
+
+blockedURI = http://127.0.0.1:8000/navigation/resources/redirection-response.py?host=localhost:8000&status=302&target=form-target.pl
+
+

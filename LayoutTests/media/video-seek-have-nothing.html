@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            function start()
+            {
+                findMediaElement();
+
+                waitForEventOnce('loadedmetadata', function() {
+                    testExpected('video.readyState >= video.HAVE_METADATA', true);
+                });
+                waitForEventOnce('seeked', function() {
+                    // FIXME: This check sometimes fails on the mac-wk2-stress EWS.
+                    // testExpected('video.currentTime', 2);
+                    waitForEventOnce('playing', function() {
+                        testExpected('video.readyState >= video.HAVE_CURRENT_DATA', true);
+                        waitForEventOnce('timeupdate', function() {
+                            testExpected('video.currentTime > 2', true);
+                            testExpected('video.readyState >= video.HAVE_FUTURE_DATA', true);
+                            endTest();
+                        });
+                    });
+                    run('video.play()');
+                });
+
+                video.src = findMediaFile('video', 'content/test');
+                testExpected('video.readyState', video.HAVE_NOTHING);
+                testExpected('video.currentTime', 0);
+                run('video.currentTime = 2');
+                testExpected('video.readyState', video.HAVE_NOTHING);
+                testExpected('video.currentTime', 2);
+
+                setTimeout(function() {
+                    logResult(false, 'FAIL: timeout');
+                    endTest();
+                }, 6000);
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that we can change currentTime when readyState is HAVE_NOTHING, the new value is returned, and a seek is done when readyState increases to HAVE_METADATA.</p>
+        <video controls></video>
+    </body>
+</html>

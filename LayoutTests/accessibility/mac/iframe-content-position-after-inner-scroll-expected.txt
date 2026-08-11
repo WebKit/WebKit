@@ -1,0 +1,8 @@
+This test verifies that scrolling inside an iframe correctly updates the screen position of elements within it.
+
+PASS: delta was equal or approximately equal to 200.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

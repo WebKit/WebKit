@@ -1,0 +1,6 @@
+A
+A
+
+PASS Verify font-palette is animated when `from` keyframe is not specified
+FAIL Verify font-palette is animated when `to` keyframe is not specified assert_equals: expected "normal" but got "--custom"
+

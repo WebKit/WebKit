@@ -1,0 +1,4 @@
+New content
+
+PASS remove-next-sibling-during-replace-with
+

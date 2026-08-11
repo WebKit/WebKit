@@ -1,0 +1,23 @@
+
+PASS "": frame insertion
+PASS "": setting document.domain must give sync access
+PASS "": originAgentCluster must equal false
+PASS "?0": frame insertion
+PASS "?0": setting document.domain must give sync access
+PASS "?0": originAgentCluster must equal false
+PASS "true": frame insertion
+PASS "true": setting document.domain must give sync access
+PASS "true": originAgentCluster must equal false
+PASS ""?1"": frame insertion
+PASS ""?1"": setting document.domain must give sync access
+PASS ""?1"": originAgentCluster must equal false
+PASS "1": frame insertion
+PASS "1": setting document.domain must give sync access
+PASS "1": originAgentCluster must equal false
+PASS "?2": frame insertion
+PASS "?2": setting document.domain must give sync access
+PASS "?2": originAgentCluster must equal false
+PASS "(?1)": frame insertion
+PASS "(?1)": setting document.domain must give sync access
+PASS "(?1)": originAgentCluster must equal false
+

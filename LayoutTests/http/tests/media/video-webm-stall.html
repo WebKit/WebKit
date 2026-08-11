@@ -1,0 +1,38 @@
+<html>
+<head>
+    <script src=../../media-resources/video-test.js></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', async event => {
+            findMediaElement();
+
+            if (video.canPlayType('video/webm; codecs="vp8"') == "") {
+                failTest('"video/webm" not supported');
+                return;
+            }
+
+            waitFor(video, 'error').then(event => { failTest('') });
+
+            let stallOffset = 13;
+            run(`video.src = 'http://127.0.0.1:8000/media/resources/serve_video.py.webm?type=video/webm&name=../media-source/webm/test.webm&stallDuration=99999&stallOffset=${stallOffset}'`);
+            await waitFor(video, 'stalled');
+
+            run(`video.src = ''`);
+            run('video.load()');
+            await waitFor(video, 'emptied');
+
+            run(`video.src = 'http://127.0.0.1:8000/media/resources/serve_video.py.webm?type=video/webm&name=../media-source/webm/test.webm'`);
+            await waitFor(video, 'canplay');
+            endTest();
+        });
+
+    </script>
+</head>
+<body>
+<video id="video" playsinline muted></video>
+</body>
+</html>

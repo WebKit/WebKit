@@ -1,0 +1,21 @@
+Test that `debugger;` statements pause in cross-origin iframes, and can subsequently call evaluateOnCallFrame and resume.
+
+
+
+== Running test suite: SiteIsolation.Debugger.Pause
+-- Running test case: SiteIsolation.Debugger.Pause.Setup
+PASS: Should find a cross-origin frame target.
+PASS: Cross-origin frame target should have a DebuggerAgent.
+
+-- Running test case: SiteIsolation.Debugger.Pause.DebuggerStatement
+PASS: Debugger should be paused.
+PASS: Frame target data should show paused state.
+PASS: Should have call frames.
+PASS: Top call frame should be 'triggerDebugger'.
+
+-- Running test case: SiteIsolation.Debugger.Pause.EvaluateOnCallFrame
+PASS: Should be able to access frame's global variable.
+
+-- Running test case: SiteIsolation.Debugger.Pause.Resume
+PASS: Debugger should no longer be paused.
+

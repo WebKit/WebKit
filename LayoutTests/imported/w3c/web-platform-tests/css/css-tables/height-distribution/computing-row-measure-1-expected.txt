@@ -1,0 +1,12 @@
+Width Distribution
+
+"Computing column measures"
+
+This is testing intermediate min-content width for span 2
+
+
+PASS Checking intermediate min-content width for span 2 (1)
+PASS Checking intermediate min-content width for span 2 (2)
+PASS Checking intermediate min-content width for span 2 (3)
+PASS Checking intermediate min-content width for span 2 (4)
+

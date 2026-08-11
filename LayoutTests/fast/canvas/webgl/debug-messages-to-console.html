@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<canvas></canvas>
+<script>
+jsTestIsAsync = true;
+description("Test that messages output via KHR_debug extension are displayed in the JS console");
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+internals.settings.setWebGLErrorsToConsoleEnabled(true);
+
+const canvas = document.querySelector("canvas");
+const gl = canvas.getContext("webgl2");
+
+const b = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, 32, gl.STREAM_DRAW);
+// CONSOLE MESSAGE: WebGL: INVALID_VALUE: Insufficient buffer size.
+gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 24, new ArrayBuffer(16));
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+// Invalid to respecify an immutable texture
+const texture = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, texture);
+gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, 32, 32);
+// CONSOLE MESSAGE: WebGL: INVALID_OPERATION: Texture is immutable.
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 32, 32, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+// CONSOLE MESSAGE: WebGL: INVALID_ENUM: Invalid enum provided.
+gl.drawElements(0, 0, 0, 0);
+
+while (gl.getError() != 0)
+    /* empty */;
+setTimeout(() => { finishJSTest(); }, 50);
+</script>
+<body>
+</body>
+</html>

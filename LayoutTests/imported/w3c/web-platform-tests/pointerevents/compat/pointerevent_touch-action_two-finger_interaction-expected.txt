@@ -1,0 +1,17 @@
+Pointer Event: touch-action test for two-finger interaction
+
+Follow the test instructions with touch. If you don't have the device skip it.
+
+Tests that a two-finger pan gesture is cancelled in 'touch-action: pan-x pan-y' but is allowed in 'touch-action: pinch-zoom'
+
+Touch on Black with two fingers and drag both fingers down at same speed.
+Tap on Done.
+Touch on Grey with two fingers and drag both fingers down at same speed.
+Tap on Done.
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN touch two-finger pan on 'touch-action: pan-x pan-y'
+NOTRUN touch two-finger pan on 'touch-action: pinch-zoom'
+

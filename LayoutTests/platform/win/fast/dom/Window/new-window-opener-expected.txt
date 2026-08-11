@@ -1,0 +1,40 @@
+This tests that the different arguments given to a new window are honored.
+Take note that menubar is special and always on in Mac but not in Win.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Scrollbar
+PASS newWin.scrollbars.visible is true
+FAIL newWin.scrollbars.visible should be false. Was true.
+PASS newWin.scrollbars.visible is true
+FAIL newWin.scrollbars.visible should be false. Was true.
+
+Toolbar
+PASS newWin.toolbar.visible is true
+FAIL newWin.toolbar.visible should be false. Was true.
+PASS newWin.toolbar.visible is true
+FAIL newWin.toolbar.visible should be false. Was true.
+
+Statusbar
+PASS newWin.statusbar.visible is true
+FAIL newWin.statusbar.visible should be false. Was true.
+PASS newWin.statusbar.visible is true
+FAIL newWin.statusbar.visible should be false. Was true.
+
+Menubar
+PASS newWin.menubar.visible is true
+FAIL newWin.menubar.visible should be false. Was true.
+PASS newWin.menubar.visible is true
+FAIL newWin.menubar.visible should be false. Was true.
+
+Locationbar
+PASS newWin.locationbar.visible is true
+FAIL newWin.locationbar.visible should be false. Was true.
+PASS newWin.locationbar.visible is true
+FAIL newWin.locationbar.visible should be false. Was true.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

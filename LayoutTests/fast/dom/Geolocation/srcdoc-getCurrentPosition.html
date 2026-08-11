@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/security/resources/checkThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod.js"></script>
+</head>
+<body>
+<p>Tests that navigator.geolocation.getCurrentPosition() returns error POSITION_UNAVAILABLE when called from a srcdoc.</p>
+<iframe id="frame" width="100%" height="300"></iframe>
+<script>
+var PositionUnavailableMockMessage = "Origin does not have permission to use Geolocation service";
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationPositionUnavailableError(PositionUnavailableMockMessage);
+    testRunner.setMockGeolocationPosition(37.3317115, -122.0323722, 100.0);
+}
+
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+document.getElementById("frame").srcdoc = markupToCheckThatPositionErrorCallbackIsCalledWithPositionUnavailableForGeolocationMethod("getCurrentPosition", PositionUnavailableMockMessage, done);
+</script>
+</body>
+</html>

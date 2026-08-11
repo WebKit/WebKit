@@ -1,0 +1,4 @@
+
+PASS The implicit anchor element of a pseudo-element is its originating element
+PASS Anchored position after moving
+

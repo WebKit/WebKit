@@ -1,0 +1,9 @@
+Test of requestIdleCallback deadline behavior
+
+This test validates that deadlines returned for requestIdleCallback are less than 50ms.
+
+The test can pass accidentally as idle deadlines have a maximum but they can always be shorter. It runs multiple times to expose potential failures.
+
+
+PASS Check that the deadline is less than 50ms.
+

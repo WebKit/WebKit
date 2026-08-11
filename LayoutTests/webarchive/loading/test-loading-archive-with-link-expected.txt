@@ -1,0 +1,7 @@
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+Click me This tests that clicking a link to a webarchive is cancelled.
+test-loading-archive-with-link.html - willSendRequest <NSURLRequest URL test-loading-archive-with-link.html, main document URL test-loading-archive-with-link.html, http method GET> redirectResponse (null)
+test-loading-archive-with-link.html - didReceiveResponse <NSURLResponse test-loading-archive-with-link.html, http status code 0>
+test-loading-archive-with-link.html - didFinishLoading

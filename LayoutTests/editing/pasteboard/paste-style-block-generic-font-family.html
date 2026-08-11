@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="source">Source</div>
+<div id="destination" contenteditable></div>
+<script>
+if (window.testRunner && window.internals) {
+    internals.settings.setCustomPasteboardDataEnabled(true);
+
+    const source = document.getElementById("source");
+    const destination = document.getElementById("destination");
+
+    source.addEventListener("copy", event => {
+        event.clipboardData.setData("text/html",
+            "<html><head><style>p { font-family: sans-serif; }</style></head>"
+            + "<body><p>This text should be sans-serif.</p></body></html>");
+        event.clipboardData.setData("text/plain", "This text should be sans-serif.");
+        event.preventDefault();
+    });
+
+    getSelection().selectAllChildren(source);
+    testRunner.execCommand("Copy");
+
+    destination.focus();
+    testRunner.execCommand("Paste");
+
+    destination.blur();
+
+    source.remove();
+}
+</script>
+</body>
+</html>

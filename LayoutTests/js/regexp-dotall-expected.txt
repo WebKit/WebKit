@@ -1,0 +1,79 @@
+Test for processing of RegExp dotAll flag
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "aaXcc".match(/.X./)[0].length is 3
+PASS "aaXcc".match(/.X./s)[0].length is 3
+PASS "aa\nXcc".match(/.X./) is null
+PASS "aa\nXcc".match(/.X./m) is null
+PASS "aa\nX\ncc".match(/.X./s)[0] is "\nX\n"
+PASS "aa\nX\ncc".match(/.X./ms)[0] is "\nX\n"
+PASS "aa\nXcc".match(/.*X/)[0] is "X"
+PASS "aa\nXcc".match(/.*X/m)[0] is "X"
+PASS "aa\nXcc".match(/.*X/s)[0] is "aa\nX"
+PASS "aa\nXcc".match(/.*X/sm)[0] is "aa\nX"
+PASS "aaX\ncc".match(/X.*/)[0] is "X"
+PASS "aaX\ncc".match(/X.*/m)[0] is "X"
+PASS "aaX\ncc".match(/X.*/s)[0] is "X\ncc"
+PASS "aaX\ncc".match(/X.*/sm)[0] is "X\ncc"
+PASS "aa\nX\ncc".match(/.*X.*/)[0] is "X"
+PASS "aa\nX\ncc".match(/.*X.*/m)[0] is "X"
+PASS "aa\nX\ncc".match(/.*X.*/s)[0] is "aa\nX\ncc"
+PASS "aa\nX\ncc".match(/.*X.*/sm)[0] is "aa\nX\ncc"
+PASS "aa\nXcc".match(/.*^X/) is null
+PASS "aa\nXcc".match(/.*^X/m)[0] is "X"
+PASS "aa\nXcc".match(/.*^X/s) is null
+PASS "aa\nXcc".match(/.*^X/sm)[0] is "aa\nX"
+PASS "aaX\ncc".match(/X$.*/) is null
+PASS "aaX\ncc".match(/X$.*/m)[0] is "X"
+PASS "aaX\ncc".match(/X$.*/s) is null
+PASS "aaX\ncc".match(/X$.*/sm)[0] is "X\ncc"
+PASS "aa\nX\ncc".match(/.*^X$.*/) is null
+PASS "aa\nX\ncc".match(/.*^X$.*/m)[0] is "X"
+PASS "aa\nX\ncc".match(/.*^X$.*/s) is null
+PASS "aa\nX\ncc".match(/.*^X$.*/sm)[0] is "aa\nX\ncc"
+PASS "aa\nXcc".match(/^.*X/) is null
+PASS "aa\nXcc".match(/^.*X/m)[0] is "X"
+PASS "aa\nXcc".match(/^.*X/s)[0] is "aa\nX"
+PASS "aa\nXcc".match(/^.*X/sm)[0] is "aa\nX"
+PASS "aaX\ncc".match(/X.*$/) is null
+PASS "aaX\ncc".match(/X.*$/m)[0] is "X"
+PASS "aaX\ncc".match(/X.*$/s)[0] is "X\ncc"
+PASS "aaX\ncc".match(/X.*$/sm)[0] is "X\ncc"
+PASS "aa\nX\ncc".match(/^.*X.*$/) is null
+PASS "aa\nX\ncc".match(/^.*X.*$/m)[0] is "X"
+PASS "aa\nX\ncc".match(/^.*X.*$/s)[0] is "aa\nX\ncc"
+PASS "aa\nX\ncc".match(/^.*X.*$/sm)[0] is "aa\nX\ncc"
+PASS "a\na\nX\nc\nc\n".match(/^.*X.*$/) is null
+PASS "a\na\nX\nc\nc\n".match(/^.*X.*$/m)[0] is "X"
+PASS "a\na\nX\nc\nc\n".match(/^.*X.*$/s)[0] is "a\na\nX\nc\nc\n"
+PASS "a\na\nX\nc\nc\n".match(/^.*X.*$/sm)[0] is "a\na\nX\nc\nc\n"
+PASS "a\na\nX\nc\nc\n".match(/^.*X.*$/) is null
+PASS "a\na\nX\nc\nc\n".match(/^.*X.*$/m)[0] is "X"
+PASS "a\na\nX\nc\nc\n".match(/^.*X.*$/s)[0] is "a\na\nX\nc\nc\n"
+PASS "a\na\nX\nc\nc\n".match(/^.*X.*$/sm)[0] is "a\na\nX\nc\nc\n"
+PASS "\n\n\nX".match(/.{1}X/sm)[0] is "\nX"
+PASS "\n\n\nX".match(/.{1,2}X/sm)[0] is "\n\nX"
+PASS "\n\n\nX".match(/.{1,3}X/sm)[0] is "\n\n\nX"
+PASS "\n\n\nX".match(/.{1,4}X/sm)[0] is "\n\n\nX"
+PASS "\n\n\nX".match(/.{1,2}?X/sm)[0] is "\n\nX"
+PASS "\n\n\nX".match(/.{1,3}?X/sm)[0] is "\n\n\nX"
+PASS "\n\n\nX".match(/.{1,4}?X/sm)[0] is "\n\n\nX"
+PASS "X\n\n\nY".match(/X.{1}/sm)[0] is "X\n"
+PASS "X\n\n\nY".match(/X.{1,2}/sm)[0] is "X\n\n"
+PASS "X\n\n\nY".match(/X.{1,3}/sm)[0] is "X\n\n\n"
+PASS "X\n\n\nY".match(/X.{1,4}/sm)[0] is "X\n\n\nY"
+PASS "X\n\n\nY".match(/X.{1,2}?/sm)[0] is "X\n"
+PASS "X\n\n\nY".match(/X.{1,3}?/sm)[0] is "X\n"
+PASS "X\n\n\nY".match(/X.{1,4}?/sm)[0] is "X\n"
+PASS "The\nquick\nbrown\nfox\njumped.".match(/.*brown.*/)[0] is "brown"
+PASS "The\nquick\nbrown\nfox\njumped.".match(/.*brown.*/s)[0] is "The\nquick\nbrown\nfox\njumped."
+PASS "The\nquick\nbrown\nfox\njumped.".match(/The.quick.brown.fox.jumped./) is null
+PASS "The\nquick\nbrown\nfox\njumped.".match(/The.quick.brown.fox.jumped./s)[0] is "The\nquick\nbrown\nfox\njumped."
+PASS /a/.dotAll is false
+PASS /a/s.dotAll is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

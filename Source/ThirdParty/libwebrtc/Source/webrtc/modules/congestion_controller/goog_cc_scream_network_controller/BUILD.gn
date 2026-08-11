@@ -1,0 +1,41 @@
+# Copyright(c) 2025 The WebRTC project authors.All Rights Reserved.
+#
+# Use of this source code is governed by a BSD - style license
+# that can be found in the LICENSE file in the root of the source
+# tree.An additional intellectual property rights grant can be found
+# in the file PATENTS.All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+import("../../../webrtc.gni")
+
+rtc_library("goog_cc_scream_network_controller") {
+  sources = [
+    "goog_cc_scream_network_controller.cc",
+    "goog_cc_scream_network_controller.h",
+  ]
+
+  deps = [
+    "../../../api/environment",
+    "../../../api/transport:network_control",
+    "../../../rtc_base:logging",
+    "../goog_cc",
+    "../scream:scream_network_controller",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("goog_cc_scream_network_controller_unittests") {
+    testonly = true
+    sources = [ "goog_cc_scream_network_controller_unittest.cc" ]
+    deps = [
+      "../../../api/environment",
+      "../../../api/transport:ecn_marking",
+      "../../../api/transport:goog_cc",
+      "../../../api/transport:network_control",
+      "../../../api/units:data_rate",
+      "../../../api/units:data_size",
+      "../../../test:create_test_environment",
+      "../../../test:test_support",
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+This tests that objects in various kinds of tables report they are in the table.
+
+PASS: accessibilityController.accessibleElementById('button1').isInTable === true
+PASS: accessibilityController.accessibleElementById('button2').isInTable === true
+PASS: accessibilityController.accessibleElementById('button3').isInTable === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+c
+a
+b
+1

@@ -1,0 +1,10 @@
+Verifies that mouseenter and mouseleave events work correctly on remote frames.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Mouse events captured: mouseenter on remoteframe, mouseleave on remoteframe, mouseenter on remoteframe, mouseleave on remoteframe, mouseenter on remoteframe, mouseleave on remoteframe, mouseenter on remoteframe, mouseleave on remoteframe, mouseenter on remoteframe, mouseleave on remoteframe, mouseenter on remoteframe, mouseleave on remoteframe, mouseenter on remoteframe, mouseleave on remoteframe, mouseenter on remoteframe, mouseleave on remoteframe, mouseenter on remoteframe, mouseleave on remoteframe, mouseenter on remoteframe, mouseleave on remoteframe
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `paymentMethodType` as part of `ApplePayModifier`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+const lineItem = {
+    label: "Additional Recurring",
+    amount: "20.00",
+    paymentTiming: "recurring",
+    recurringPaymentStartDate: new Date(0),
+    recurringPaymentIntervalUnit: "year",
+    recurringPaymentIntervalCount: 10,
+    recurringPaymentEndDate: new Date(1),
+};
+
+const shippingMethod = {
+    amount: "10.00",
+    detail: "detail",
+    identifier: "additional-shipping",
+    label: "Additional Shipping",
+    dateComponentsRange: {
+        startDateComponents: { days: 5 },
+        endDateComponents: { days: 10 },
+    },
+};
+
+function validPaymentDetailsWithModifierThatHasPaymentMethodType(paymentMethodType) {
+    let details = validPaymentDetails();
+    details.modifiers = [
+        {
+            supportedMethods: "https://apple.com/apple-pay",
+            data: {
+                paymentMethodType,
+                additionalLineItems: [ lineItem ],
+                additionalShippingMethods: [ shippingMethod ],
+            },
+        },
+    ];
+    return details;
+}
+
+function testPaymentShippingOptionData(description, {simulatePaymentMethodChange, paymentMethodType, expectedAdditionalLineItems, expectedAdditionalShippingMethods}) {
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetailsWithModifierThatHasPaymentMethodType(paymentMethodType), { requestShipping: true });
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ });
+
+            if (simulatePaymentMethodChange)
+                internals.mockPaymentCoordinator.changePaymentMethod({ type: "debit" });
+            else
+                internals.mockPaymentCoordinator.acceptPayment();
+        });
+        if (simulatePaymentMethodChange) {
+            request.addEventListener("paymentmethodchange", (event) => {
+                event.updateWith({ });
+
+                internals.mockPaymentCoordinator.acceptPayment();
+            });
+        }
+
+        let response = await request.show();
+
+        let actualLineItems = internals.mockPaymentCoordinator.lineItems;
+        assert_greater_than_equal(actualLineItems.length, expectedAdditionalLineItems.length, `check that there are at least ${expectedAdditionalLineItems.length} line items`);
+        for (let i = 0; i < expectedAdditionalLineItems.length; ++i) {
+            let actualLineItem = actualLineItems[actualLineItems.length - expectedAdditionalLineItems.length + i];
+            let expectedAdditionalLineItem = expectedAdditionalLineItems[i];
+
+            assert_equals(actualLineItem.label, expectedAdditionalLineItem.label, `check that the \`label\` matches for additional line item ${i}`);
+            assert_equals(actualLineItem.amount, expectedAdditionalLineItem.amount, `check that the \`amount\` matches for additional line item ${i}`);
+            assert_equals(actualLineItem.paymentTiming, expectedAdditionalLineItem.paymentTiming, `check that the \`paymentTiming\` matches for additional line item ${i}`);
+            assert_equals(actualLineItem.recurringPaymentStartDate?.getTime(), expectedAdditionalLineItem.recurringPaymentStartDate?.getTime(), `check that the \`recurringPaymentStartDate\` matches for additional line item ${i}`);
+            assert_equals(actualLineItem.recurringPaymentIntervalUnit, expectedAdditionalLineItem.recurringPaymentIntervalUnit, `check that the \`recurringPaymentIntervalUnit\` matches for additional line item ${i}`);
+            assert_equals(actualLineItem.recurringPaymentIntervalCount, expectedAdditionalLineItem.recurringPaymentIntervalCount, `check that the \`recurringPaymentIntervalCount\` matches for additional line item ${i}`);
+            assert_equals(actualLineItem.recurringPaymentEndDate?.getTime(), expectedAdditionalLineItem.recurringPaymentEndDate?.getTime(), `check that the \`recurringPaymentEndDate\` matches for additional line item ${i}`);
+            assert_equals(actualLineItem.deferredPaymentDate?.getTime(), expectedAdditionalLineItem.deferredPaymentDate?.getTime(), `check that the \`deferredPaymentDate\` matches for additional line item ${i}`);
+        }
+
+        let actualShippingMethods = internals.mockPaymentCoordinator.shippingMethods;
+        assert_greater_than_equal(actualShippingMethods.length, expectedAdditionalShippingMethods.length, `check that there are at least ${expectedAdditionalShippingMethods.length} shipping methods`);
+        for (let i = 0; i < expectedAdditionalShippingMethods.length; ++i) {
+            let actualShippingMethod = actualShippingMethods[actualShippingMethods.length - expectedAdditionalShippingMethods.length + i];
+            let expectedAdditionalShippingMethod = expectedAdditionalShippingMethods[i];
+
+            assert_equals(actualShippingMethod.amount, expectedAdditionalShippingMethod.amount, `check that the \`amount\` matches for additional shipping method ${i}`);
+            assert_equals(actualShippingMethod.detail, expectedAdditionalShippingMethod.detail, `check that the \`detail\` matches for additional shipping method ${i}`);
+            assert_equals(actualShippingMethod.identifier, expectedAdditionalShippingMethod.identifier, `check that the \`identifier\` matches for additional shipping method ${i}`);
+            assert_equals(actualShippingMethod.label, expectedAdditionalShippingMethod.label, `check that the \`label\` matches for additional shipping method ${i}`);
+            if (expectedAdditionalShippingMethod.dateComponentsRange)
+                assert_object_equals(actualShippingMethod.dateComponentsRange, expectedAdditionalShippingMethod.dateComponentsRange, `check that the \`dateComponentsRange\` matches for additional shipping method ${i}`);
+            else
+                assert_equals(actualShippingMethod.dateComponentsRange, expectedAdditionalShippingMethod.dateComponentsRange, `check that the \`dateComponentsRange\` matches for additional shipping method ${i}`);
+        }
+
+        await response.complete("success");
+    }, description);
+}
+
+testPaymentShippingOptionData("Should have all additional line items and shipping options if `paymentMethodType` is not provided.", {
+    paymentMethodType: undefined,
+    expectedAdditionalLineItems: [ ],
+    expectedAdditionalShippingMethods: [ ],
+});
+testPaymentShippingOptionData("Should not have any additional line items or shipping options if a non-matching `paymentMethodType` is provided and the user has not chosen a payment method type yet.", {
+    simulatePaymentMethodChange: false,
+    paymentMethodType: "credit",
+    expectedAdditionalLineItems: [ ],
+    expectedAdditionalShippingMethods: [ ],
+});
+testPaymentShippingOptionData("Should not have any additional line items or shipping options if `paymentMethodType` is provided and the user chose a non-matching payment method type.", {
+    simulatePaymentMethodChange: true,
+    paymentMethodType: "credit",
+    expectedAdditionalLineItems: [ ],
+    expectedAdditionalShippingMethods: [ ],
+});
+testPaymentShippingOptionData("Should not have any additional line items or shipping options if a matching `paymentMethodType` is provided and the user has not chosen a payment method type yet.", {
+    simulatePaymentMethodChange: false,
+    paymentMethodType: "debit",
+    expectedAdditionalLineItems: [ ],
+    expectedAdditionalShippingMethods: [ ],
+});
+testPaymentShippingOptionData("Should have all additional line items and shipping options if `paymentMethodType` is provided and the user chose a matching payment method type.", {
+    simulatePaymentMethodChange: true,
+    paymentMethodType: "debit",
+    expectedAdditionalLineItems: [ lineItem ],
+    expectedAdditionalShippingMethods: [ shippingMethod ],
+});
+
+done();
+</script>
+

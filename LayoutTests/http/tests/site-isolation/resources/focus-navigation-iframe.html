@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { margin: 0; }
+input { display: block; width: 200px; font-size: 16px; }
+#first { margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<input type="text" id="first">
+<input type="text" id="second">
+<script>
+// Announce each focus change to the parent frame so the test can react to focus as
+// it actually lands in this (cross-origin) iframe's process, instead of polling.
+let firstFocusCount = 0;
+
+document.getElementById("first").addEventListener("focus", () => {
+    firstFocusCount++;
+    window.parent.postMessage({
+        type: firstFocusCount === 1 ? "firstInputFocused" : "firstInputRefocused",
+        id: document.activeElement.id
+    }, "*");
+});
+
+document.getElementById("second").addEventListener("focus", () => {
+    window.parent.postMessage({ type: "secondInputFocused", id: document.activeElement.id }, "*");
+});
+</script>
+</body>
+</html>

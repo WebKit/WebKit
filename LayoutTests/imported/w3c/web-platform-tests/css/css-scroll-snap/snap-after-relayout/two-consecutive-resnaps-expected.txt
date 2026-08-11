@@ -1,0 +1,4 @@
+123456789
+
+PASS Keep the same snap position while two consecutive re-snappings
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>viewer-mode-should-block-element-fullscreen</title>
+	<script src="../media/video-test.js"></script>
+	<script src="../media/media-file.js"></script>
+	<script>
+	window.addEventListener('load', event => {
+		runTest().then(endTest).catch(failTest);
+	});
+
+	async function keyDownPromise() {
+		return new Promise(resolve => {
+			runWithKeyDown(resolve);
+		});
+	}
+
+	async function runTest() {
+		findMediaElement();
+		video.src = findMediaFile('video', '../media/content/test');
+		await waitFor(video, 'canplay');
+
+		await keyDownPromise();
+		run('window.internals.enterViewerMode(video)');
+		await waitFor(document, 'fullscreenchange');
+		await sleepFor(100);
+
+		await keyDownPromise();
+		await shouldReject(run('document.body.requestFullscreen()'));
+	}
+	</script>
+</head>
+<body>
+	<video controls muted></video>
+</body>
+</html>

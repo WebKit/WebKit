@@ -1,0 +1,45 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ ARIAActionsSupportEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="source" aria-actions="action">Source</button>
+<button id="action">Delete</button>
+<iframe id="frame" srcdoc="<button id='inner'>Inner</button>"></iframe>
+
+<script>
+var output = "This test verifies that when page focus is in a different frame than an aria-actions host, invoking one of its actions falls back to a plain activation (focus may move to the target) rather than losing the focus that was in the other frame.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var actionClicked = false;
+    document.getElementById("action").addEventListener("click", () => actionClicked = true);
+
+    var source = accessibilityController.accessibleElementById("source");
+    var frame = document.getElementById("frame");
+    frame.addEventListener("load", () => {
+        setTimeout(async () => {
+            // Move DOM focus into the (different) local frame.
+            frame.contentDocument.getElementById("inner").focus();
+            output += "Focus starts in a different frame:\n";
+            output += expect("document.activeElement.id", "'frame'");
+            output += expect("frame.contentDocument.activeElement.id", "'inner'");
+            output += "\n";
+
+            output += "Invoking the action falls back to a plain press, so focus is not lost from the other frame:\n";
+            output += expect("source.invokeCustomActionAtIndex(0)", "true");
+            output += expect("actionClicked", "true");
+            output += expect("document.activeElement.id", "'action'");
+
+            debug(output);
+            finishJSTest();
+        }, 0);
+    });
+}
+</script>
+</body>
+</html>

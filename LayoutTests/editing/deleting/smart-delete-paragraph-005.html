@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html> 
+<head>
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
+</head> 
+<body>
+<div contenteditable="true" style="width: 256px; height: 256px; border: 1px solid black"><br><div id='test'>DeleteMe</div></div>
+
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Smart delete when deleting a line with only a blank line above it.
+Test must exist at the top of the file in order to correctly test the original bug.
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+Everything should be deleted.
+</div>
+</div>
+
+<script src="../editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+async function editingTest() {
+    internals.settings.setEditingBehavior("ios");
+    await UIHelper.selectWordByDoubleTapOrClick(document.getElementById('test'));
+    cutCommand();
+}
+
+runDumpAsTextEditingTest(true);
+</script>
+</body>
+</html>

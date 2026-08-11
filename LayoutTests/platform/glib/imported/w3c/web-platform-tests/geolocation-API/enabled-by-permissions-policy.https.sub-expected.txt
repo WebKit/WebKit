@@ -1,0 +1,7 @@
+
+
+
+PASS Permissions-Policy header geolocation=* allows the top-level document.
+PASS Permissions-Policy header geolocation=* allows same-origin iframes.
+PASS Permissions-Policy header geolocation=* allows cross-origin iframes.
+

@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("ResourceCollection");
+
+    function createResource(url, type) {
+        return new WI.Resource(url, {type});
+    }
+
+    function logResourceNames(collection) {
+        InspectorTest.log(Array.from(collection).map((resource) => resource.displayName));
+    }
+
+    suite.addTestCase({
+        name: "WI.ResourceCollection.verifierForType",
+        test(resolve, reject) {
+            let collection = new WI.ResourceCollection(WI.Resource.Type.Image);
+            collection.add(createResource("one"));
+            collection.add(createResource("two", WI.Resource.Type.Image));
+            collection.add(3);
+
+            logResourceNames(collection);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.ResourceCollection.prototype.resourceCollectionForType",
+        test(resolve, reject) {
+            let collection = new WI.ResourceCollection;
+            collection.add(createResource("one", WI.Resource.Type.Image));
+            collection.add(createResource("two", WI.Resource.Type.StyleSheet));
+            collection.add(createResource("three", WI.Resource.Type.Image));
+            collection.add(createResource("four", WI.Resource.Type.Document));
+            collection.add(createResource("five", WI.Resource.Type.StyleSheet));
+
+            logResourceNames(collection.resourceCollectionForType(WI.Resource.Type.Image));
+
+            let typedCollection = new WI.ResourceCollection(WI.Resource.Type.Image);
+            typedCollection.add(createResource("one", WI.Resource.Type.Image));
+            typedCollection.add(createResource("two", WI.Resource.Type.StyleSheet));
+            typedCollection.add(createResource("three", WI.Resource.Type.Image));
+
+            logResourceNames(typedCollection);
+            InspectorTest.expectEqual(typedCollection.resourceCollectionForType(WI.Resource.Type.Image), typedCollection, "resourceCollectionForType will return `this` if a type is specified.")
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.ResourceCollection.prototype._resourceTypeDidChange",
+        test(resolve, reject) {
+            let imageResource = createResource("one");
+
+            let collection = new WI.ResourceCollection;
+            collection.add(imageResource);
+
+            logResourceNames(collection);
+            logResourceNames(collection.resourceCollectionForType(WI.Resource.Type.Image));
+            logResourceNames(collection.resourceCollectionForType(WI.Resource.Type.Other));
+
+            // Dispatch a type change.
+            imageResource._type = WI.Resource.Type.Image;
+            imageResource.dispatchEventToListeners(WI.Resource.Event.TypeDidChange, {oldType: WI.Resource.Type.Image});
+
+            logResourceNames(collection);
+            logResourceNames(collection.resourceCollectionForType(WI.Resource.Type.Image));
+            logResourceNames(collection.resourceCollectionForType(WI.Resource.Type.Other));
+
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing all methods of ResourceCollection.</p>
+</body>
+</html>

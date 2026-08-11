@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<body>
+<style>
+
+html {
+    height: 2000px;
+}
+
+#target {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    background-color: green;
+    opacity: 0;
+}
+
+</style>
+
+<div id="target"></div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+const scrollAndCheckTimeline = async (scroller, progress) => {
+    const maxScrollTop = scroller.scrollHeight - window.innerHeight;
+    const scrollTop = progress * maxScrollTop;
+
+    window.scrollTo(0, scrollTop);
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+
+    const expectedTimelineTime = `${(progress * 100).toFixed(2)}%`;
+
+    const remoteAnimationStack = await UIHelper.remoteAnimationStackForElement(target);
+    assert_equals(remoteAnimationStack.animations.length, 1);
+    const remoteAnimation = remoteAnimationStack.animations[0];
+    assert_equals(remoteAnimation.timeline.currentTime, expectedTimelineTime, `After scrolling to ${scrollTop}, the timeline time is ${expectedTimelineTime}`);
+    assert_equals(remoteAnimation.progress, progress, `After scrolling to ${scrollTop}, the animation progress is ${progress}`);
+};
+
+promise_test(async t => { 
+    const scroller = document.documentElement;
+    const timeline = new ScrollTimeline({ source : scroller });
+    const animation = target.animate({ opacity: 1 }, { timeline });
+
+    await animationAcceleration(animation);
+
+    await scrollAndCheckTimeline(scroller, 0);
+    await scrollAndCheckTimeline(scroller, 0.5);
+    await scrollAndCheckTimeline(scroller, 1);
+    await scrollAndCheckTimeline(scroller, 0.25);
+    await scrollAndCheckTimeline(scroller, 0.75);
+}, "The timeline current time updates as its source is scrolled with a root scroller");
+
+</script>
+</body>

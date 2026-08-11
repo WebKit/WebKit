@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<script>
+
+function keepTransactionAlive(event) {
+    let objectStore = event.target.transaction.objectStore("objectStore");
+    objectStore.put("value", "key").onsuccess = keepTransactionAlive;
+}
+
+function openDatabase() {
+    let databaseName = "database-transaction-cycle-iframe";
+    window.indexedDB.deleteDatabase(databaseName);
+    let openRequest = window.indexedDB.open(databaseName);
+    openRequest.onupgradeneeded = (event) => {
+        let database = event.target.result;
+        let objectStore = database.createObjectStore("objectStore");
+        objectStore.put("value", "key").onsuccess = keepTransactionAlive;
+        event.target.transaction.onabort = () => parent.frameTransactionAborted();
+
+        parent.frameDatabaseOpened();
+    };
+}
+
+openDatabase();
+</script>

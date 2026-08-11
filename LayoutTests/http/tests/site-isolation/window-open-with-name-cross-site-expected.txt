@@ -1,0 +1,10 @@
+Verifies window.open with a target name correctly reuses a main frame
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.data is 'second opened window received: sent to first window, which should be reused'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+click to run test manually in a browser

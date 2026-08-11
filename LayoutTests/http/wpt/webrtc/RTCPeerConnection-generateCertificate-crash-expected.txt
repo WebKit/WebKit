@@ -1,0 +1,4 @@
+Passes if it doesn't crash!
+
+PASS RTCPeerConnection-generateCertificate-crash
+

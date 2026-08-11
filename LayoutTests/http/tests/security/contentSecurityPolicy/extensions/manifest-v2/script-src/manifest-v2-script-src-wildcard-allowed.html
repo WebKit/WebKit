@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ contentSecurityPolicyExtensionMode=v2 ] -->
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="script-src https://*.0.1:8443 'nonce-test';">
+    <p><br>Test that CSP for extensions allows wildcards if they include https://, are not scheme-only, the host string is non-empty and contains more than a TLD.</p>
+</head>
+<body>
+    <div id="result" text="PASS">
+      FAIL
+    </div>
+    <script nonce='test'>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        let script = document.createElement('script');
+        script.src = "https://127.0.0.1:8443/security/contentSecurityPolicy/resources/script.js";
+
+        script.onload = function() {
+            alert("PASS: Successfully loaded script.");
+            testRunner.notifyDone();
+        };
+
+        script.onerror = function() {
+            alert("FAIL: Should have loaded script.");
+            testRunner.notifyDone();
+        };
+
+        document.body.append(script);
+    </script>
+</body>
+</html>
+

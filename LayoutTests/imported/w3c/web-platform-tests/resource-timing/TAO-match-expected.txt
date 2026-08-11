@@ -1,0 +1,12 @@
+
+PASS The timing allow check algorithm will pass when the Timing-Allow-Origin header value list contains a case-sensitive match.
+PASS The timing allow check algorithm will pass when the Timing-Allow-Origin header value list contains a wildcard.
+PASS The timing allow check algorithm will fail when the Timing-Allow-Origin header value list contains a null origin.
+PASS The timing allow check algorithm will pass when the Timing-Allow-Origin header value list contains the origin and a wildcard.
+PASS The timing allow check algorithm will pass when the Timing-Allow-Origin header value list contains multiple wildcards.
+PASS The timing allow check algorithm will pass when the Timing-Allow-Origin header value contains only the origin.
+PASS The timing allow check algorithm will fail when the Timing-Allow-Origin header value contains only the uppercased origin.
+PASS The timing allow check algorithm will fail when the Timing-Allow-Origin header value contains only a space.
+PASS The timing allow check algorithm will fail when the Timing-Allow-Origin header value contains only a wildcard.
+PASS The timing allow check algorithm will fail when the Timing-Allow-Origin header is not present.
+

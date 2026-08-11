@@ -1,0 +1,11 @@
+
+FAIL worker-src 'self' directive should disallow cross origin static import. assert_array_equals: expected property 0 to be "ERROR" but got "export-on-load-script.js" (expected array ["ERROR"] got ["export-on-load-script.js"])
+PASS worker-src * directive should allow cross origin static import.
+FAIL script-src 'self' directive should disallow cross origin static import. assert_array_equals: expected property 0 to be "ERROR" but got "export-on-load-script.js" (expected array ["ERROR"] got ["export-on-load-script.js"])
+PASS script-src * directive should allow cross origin static import.
+PASS worker-src * directive should override script-src 'self' directive and allow cross origin static import.
+FAIL worker-src 'self' directive should override script-src * directive and disallow cross origin static import. assert_array_equals: expected property 0 to be "ERROR" but got "export-on-load-script.js" (expected array ["ERROR"] got ["export-on-load-script.js"])
+PASS script-src 'self' directive should disallow cross origin dynamic import.
+PASS script-src * directive should allow cross origin dynamic import.
+PASS worker-src 'self' directive should not take effect on dynamic import.
+

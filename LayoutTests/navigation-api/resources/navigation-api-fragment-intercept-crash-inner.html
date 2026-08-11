@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<span id="target" hidden="until-found">trigger text</span>
+<script>
+document.addEventListener('beforematch', function (event) {
+  parent.document.querySelector('iframe').remove();
+}, {once: true});
+
+navigation.addEventListener('navigate', function (event) {
+  if (event.destination.url.includes('#target'));
+    event.intercept();
+});
+
+onload = () => {
+  setTimeout(() => {
+    navigation.navigate(location.href + '#target');
+    parent.scheduleFinish();
+  }, 0);
+}
+
+</script>
+</body>
+</html>

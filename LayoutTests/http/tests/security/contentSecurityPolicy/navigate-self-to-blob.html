@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'nonce-test'">
+<script nonce="test">
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+let blob = new Blob(["<script>alert(/FAIL/)<" + "/script>Blob page"], {type : "text/html"});
+if (window.testRunner)
+    testRunner.queueLoad(URL.createObjectURL(blob));
+</script>
+<body>
+<p>Initial page</p>
+</body>
+</head>
+</html>

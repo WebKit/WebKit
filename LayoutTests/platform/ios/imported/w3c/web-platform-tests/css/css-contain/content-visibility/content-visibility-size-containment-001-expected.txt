@@ -1,0 +1,15 @@
+
+PASS content-visibility: visible
+PASS content-visibility: hidden
+PASS content-visibility: auto (far from viewport)
+PASS content-visibility: auto (close from viewport)
+PASS switching content-visibility from visible to hidden
+PASS switching content-visibility from hidden to visible
+PASS switching content-visibility from auto (far from viewport) to visible
+PASS switching content-visibility from visible to auto (far from viewport)
+PASS switching content-visibility from auto (close from viewport) to hidden
+PASS switching content-visibility from hidden to auto (close from viewport)
+FAIL content-visibility: auto, changing proximity to the viewport assert_true: size containment applied when changing back from close to far to the viewport expected true got false
+FAIL content-visibility: auto, after being focused/unfocused assert_true: size containment applied when initially unfocused expected true got false
+FAIL content-visibility: auto, after being selected/unselected assert_true: size containment applied when initially unselected expected true got false
+

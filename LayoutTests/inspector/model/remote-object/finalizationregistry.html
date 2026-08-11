@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/remote-object-utilities.js"></script>
+<script>
+window.live1 = {live: 1};
+window.live2 = {live: 2};
+
+window.heldValue1 = {heldValue: 1};
+window.heldValue2 = {heldValue: 2};
+
+window.unregisterToken1 = {unregisterToken: 1};
+window.unregisterToken2 = {unregisterToken: 2};
+
+function test()
+{
+    const deep = ["cleanupCallback", "live", "dead"];
+
+    let steps = [
+        {expression: `new FinalizationRegistry((a) => {})`, deep},
+        {expression: `var finalizationRegistry = new FinalizationRegistry((b) => {}); finalizationRegistry.register(live1, heldValue1); finalizationRegistry.register(live2, heldValue1, unregisterToken1); finalizationRegistry`, deep},
+        // {expression: `var finalizationRegistry = new FinalizationRegistry((c) => {}); finalizationRegistry.register({}, heldValue1); finalizationRegistry.register({}, heldValue1, unregisterToken1); GCController.collect(); finalizationRegistry`, deep},
+        // {expression: `var finalizationRegistry = new FinalizationRegistry((d) => {}); finalizationRegistry.register(live1, heldValue1, unregisterToken1); finalizationRegistry.register({}, heldValue2, unregisterToken2); GCController.collect(); finalizationRegistry`, deep},
+    ];
+
+    if (!window.WI) {
+        window.steps = steps;
+        return;
+    }
+
+    runSteps(steps);
+}
+</script>
+</head>
+<body onload="runTest(); runInBrowserTest();"></body>
+</html>

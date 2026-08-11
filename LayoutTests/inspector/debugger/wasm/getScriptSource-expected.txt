@@ -1,0 +1,35 @@
+Tests the script metadata and source reported for WebAssembly modules.
+
+
+== Running test suite: Debugger.getScriptSource.WebAssembly
+-- Running test case: Debugger.getScriptSource.WebAssembly.ModuleCreatedBeforeInspector
+PASS: Should discover a WebAssembly module that has not been instantiated.
+"inspector/debugger/wasm/<identifier>.wasm"
+PASS: WebAssembly scripts should not expose source content.
+
+-- Running test case: Debugger.getScriptSource.WebAssembly.SharedModule
+"inspector/debugger/wasm/<identifier>.wasm"
+PASS: WebAssembly scripts should not expose source content.
+PASS: Should report one script for multiple instances of the same module.
+
+-- Running test case: Debugger.getScriptSource.WebAssembly.DefaultURL
+"inspector/debugger/wasm/<identifier>.wasm"
+PASS: WebAssembly scripts should not expose source content.
+
+-- Running test case: Debugger.getScriptSource.WebAssembly.ModuleName
+"inspector/debugger/wasm/<identifier>.wasm"
+PASS: WebAssembly scripts should not expose source content.
+PASS: Should report the module name separately from its URL.
+
+-- Running test case: Debugger.getScriptSource.WebAssembly.StreamingURL
+"data:application/wasm;base64,AGFzbQEAAAABBwFgAn9/AX8DAgEABQMBAAEHEAIDYWRkAAAGbWVtb3J5AgAKCQEHACAAIAFqCwAaBG5hbWUAExJzdHJlYW1lZC1uYW1lLndhc20="
+PASS: WebAssembly scripts should not expose source content.
+PASS: Should report the WebAssembly module's real URL.
+PASS: Should report the module name separately from its URL.
+
+-- Running test case: Debugger.getScriptSource.WebAssembly.ModuleLoaderOpaqueURL
+"data:application/wasm;base64,AGFzbQEAAAABBwFgAn9/AX8DAgEABQMBAAEHEAIDYWRkAAAGbWVtb3J5AgAKCQEHACAAIAFqCwAfBG5hbWUAGBdtb2R1bGUtbG9hZGVyLW5hbWUud2FzbQ=="
+PASS: WebAssembly scripts should not expose source content.
+PASS: Should report the WebAssembly module's real URL.
+PASS: Should report the module name separately from its URL.
+

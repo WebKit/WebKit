@@ -1,0 +1,102 @@
+
+FAIL :pass_end_invalid_order:pass0Type="compute";pass1Type="compute" assert_unreached:
+  - (in subcase: firstPassEnd=true;endPasses=[]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[0,1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[1,0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[1]) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_state.spec.js:81:28
+  - (in subcase: firstPassEnd=false;endPasses=[1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[0,1]) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_state.spec.js:81:28
+  - (in subcase: firstPassEnd=false;endPasses=[0,1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[1,0]) VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: firstPassEnd=false;endPasses=[1,0]) INFO: subcase ran
+ Reached unreachable code
+FAIL :pass_end_invalid_order:pass0Type="compute";pass1Type="render" assert_unreached:
+  - (in subcase: firstPassEnd=true;endPasses=[]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[0,1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[1,0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[1]) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_state.spec.js:81:28
+  - (in subcase: firstPassEnd=false;endPasses=[1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[0,1]) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_state.spec.js:81:28
+  - (in subcase: firstPassEnd=false;endPasses=[0,1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[1,0]) VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: firstPassEnd=false;endPasses=[1,0]) INFO: subcase ran
+ Reached unreachable code
+FAIL :pass_end_invalid_order:pass0Type="render";pass1Type="compute" assert_unreached:
+  - (in subcase: firstPassEnd=true;endPasses=[]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[0,1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[1,0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[1]) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_state.spec.js:81:28
+  - (in subcase: firstPassEnd=false;endPasses=[1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[0,1]) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_state.spec.js:81:28
+  - (in subcase: firstPassEnd=false;endPasses=[0,1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[1,0]) VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: firstPassEnd=false;endPasses=[1,0]) INFO: subcase ran
+ Reached unreachable code
+FAIL :pass_end_invalid_order:pass0Type="render";pass1Type="render" assert_unreached:
+  - (in subcase: firstPassEnd=true;endPasses=[]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[0,1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=true;endPasses=[1,0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[0]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[1]) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_state.spec.js:81:28
+  - (in subcase: firstPassEnd=false;endPasses=[1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[0,1]) VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/encoding/encoder_state.spec.js:81:28
+  - (in subcase: firstPassEnd=false;endPasses=[0,1]) INFO: subcase ran
+  - (in subcase: firstPassEnd=false;endPasses=[1,0]) VALIDATION FAILED: Validation succeeded unexpectedly.
+      at (elided: only 2 shown)
+  - (in subcase: firstPassEnd=false;endPasses=[1,0]) INFO: subcase ran
+ Reached unreachable code
+PASS :call_after_successful_finish:callCmd="beginComputePass"
+PASS :call_after_successful_finish:callCmd="beginRenderPass"
+PASS :call_after_successful_finish:callCmd="finishAndSubmitFirst"
+PASS :call_after_successful_finish:callCmd="finishAndSubmitSecond"
+PASS :call_after_successful_finish:callCmd="insertDebugMarker"
+PASS :pass_end_none:
+PASS :pass_end_twice,basic:
+PASS :pass_end_twice,render_pass_invalid:
+PASS :pass_begin_invalid_encoder:pass0Type="compute";pass1Type="compute"
+PASS :pass_begin_invalid_encoder:pass0Type="compute";pass1Type="render"
+PASS :pass_begin_invalid_encoder:pass0Type="render";pass1Type="compute"
+PASS :pass_begin_invalid_encoder:pass0Type="render";pass1Type="render"
+

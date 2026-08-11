@@ -1,0 +1,19 @@
+
+PASS Test input element with text type
+PASS Test input element with search type
+PASS Test input element with tel type
+PASS Test input element with url type
+PASS Test input element with email type
+PASS Test input element with password type
+PASS Test input element with datetime-local type
+PASS Test input element with date type
+PASS Test input element with month type
+PASS Test input element with week type
+PASS Test input element with time type
+PASS Test input element with color type
+PASS Test input element with file type
+PASS Test input element with submit type
+PASS Test button element with submit type
+PASS Test select element
+PASS Test textarea element
+

@@ -1,0 +1,116 @@
+/*
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "ReadableStreamBYOBRequest.h"
+
+#include "JSReadableStream.h"
+#include "JSReadableStreamBYOBRequest.h"
+#include "JSValueInWrappedObjectInlines.h"
+#include "ReadableByteStreamController.h"
+#include "ReadableStream.h"
+#include <JavaScriptCore/ArrayBufferView.h>
+
+namespace WebCore {
+
+Ref<ReadableStreamBYOBRequest> ReadableStreamBYOBRequest::create(ReadableByteStreamController& controller, Ref<JSC::ArrayBufferView>&& view)
+{
+    return adoptRef(*new ReadableStreamBYOBRequest(controller, WTF::move(view)));
+}
+
+ReadableStreamBYOBRequest::ReadableStreamBYOBRequest(ReadableByteStreamController& controller, Ref<JSC::ArrayBufferView>&& view)
+    : m_controller(controller)
+    , m_view(WTF::move(view))
+{
+    Ref stream = controller.stream();
+    auto* globalObject = stream->globalObject();
+    ASSERT(globalObject);
+    if (!globalObject)
+        return;
+
+    m_streamWrapperForGC.set(*globalObject, globalObject, toJS(globalObject, globalObject, stream.get()));
+}
+
+JSC::ArrayBufferView* ReadableStreamBYOBRequest::view() const
+{
+    return m_view.get();
+}
+
+// https://streams.spec.whatwg.org/#rs-byob-request-respond
+ExceptionOr<void> ReadableStreamBYOBRequest::respond(JSDOMGlobalObject& globalObject, size_t bytesWritten)
+{
+    RefPtr controller = m_controller.get();
+    if (!controller)
+        return Exception { ExceptionCode::TypeError, "controller is undefined"_s };
+
+    RefPtr view = m_view;
+    if (!view || view->isDetached())
+        return Exception { ExceptionCode::TypeError, "buffer is detached"_s };
+
+    ASSERT(view->byteLength() > 0);
+    ASSERT(view->possiblySharedBuffer()->byteLength() > 0);
+    return controller->respond(globalObject, bytesWritten);
+}
+
+// https://streams.spec.whatwg.org/#rs-byob-request-respond-with-new-view
+ExceptionOr<void> ReadableStreamBYOBRequest::respondWithNewView(JSDOMGlobalObject& globalObject, JSC::ArrayBufferView& view)
+{
+    RefPtr controller = m_controller.get();
+    if (!controller)
+        return Exception { ExceptionCode::TypeError, "controller is undefined"_s };
+    if (view.isDetached())
+        return Exception { ExceptionCode::TypeError, "buffer is detached"_s };
+    return controller->respondWithNewView(globalObject, view);
+}
+
+void ReadableStreamBYOBRequest::clearController()
+{
+    m_controller = nullptr;
+    m_streamWrapperForGC.clear();
+}
+
+void ReadableStreamBYOBRequest::clearView()
+{
+    m_view = nullptr;
+}
+
+template<typename Visitor>
+void ReadableStreamBYOBRequest::visitAdditionalChildrenInGCThread(Visitor& visitor)
+{
+    m_streamWrapperForGC.visitInGCThread(visitor);
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(ReadableStreamBYOBRequest);
+
+template<typename Visitor>
+void JSReadableStreamBYOBRequest::visitAdditionalChildrenInGCThread(Visitor& visitor)
+{
+    // Do not ref `wrapped()` here since this function may get called on a GC thread.
+    SUPPRESS_UNCOUNTED_ARG wrapped().visitAdditionalChildrenInGCThread(visitor);
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSReadableStreamBYOBRequest);
+
+} // namespace WebCore

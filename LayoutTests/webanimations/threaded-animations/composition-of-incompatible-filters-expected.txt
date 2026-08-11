@@ -1,0 +1,3 @@
+
+PASS Composing incompatible filter values throughout multiple effects does not allow acceleration.
+

@@ -1,0 +1,9 @@
+
+Test ended by:
+
+Play the inaccurate duration video to the end.
+Verify that 'ended' event fires.
+EVENT(ended)
+EXPECTED (video.ended == 'true') OK
+END OF TEST
+

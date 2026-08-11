@@ -1,0 +1,14 @@
+viewx.length: 4
+viewy.length: 12
+bx === by: true
+viewx.buffer === viewy.buffer: true
+allokx: true
+viewz.length: 4
+allokz: true
+viewy[0]: 0
+viewy[1]: 0
+viewy[2]: 0
+viewy[3]: 0
+viewz[0]: 0.5
+
+Reached end of Execution -- Exiting.

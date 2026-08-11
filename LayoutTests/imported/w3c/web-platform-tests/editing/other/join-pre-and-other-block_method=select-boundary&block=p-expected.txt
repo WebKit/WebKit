@@ -1,0 +1,49 @@
+abcdef
+
+ghi
+
+PASS delete at <pre>abc[</pre><p>]def</p>
+PASS delete at <pre>abc[</pre>\n<p>]def</p>
+PASS delete at <p>abc[</p><pre>]def</pre>
+PASS delete at <p>abc[</p>\n<pre>]def</pre>
+PASS delete at <pre>abc[</pre><p>]def<br>ghi</p>
+PASS delete at <pre>abc[</pre>\n<p>]def<br>ghi</p>
+PASS delete at <p>abc[</p><pre>]def\nghi</pre>
+PASS delete at <p>abc[</p>\n<pre>]def\nghi</pre>
+PASS delete at <p>abc[</p><pre>]def<br>ghi</pre>
+PASS delete at <p>abc[</p>\n<pre>]def<br>ghi</pre>
+PASS delete at <pre>abc[</pre><p><b>]def</b></p>
+PASS delete at <pre>abc[</pre>\n<p><b>]def</b></p>
+PASS delete at <pre>abc[</pre><p><b>]def<br>ghi</b></p>
+PASS delete at <pre>abc[</pre>\n<p><b>]def<br>ghi</b></p>
+PASS delete at <p>abc[</p><pre><b>]def\nghi</b></pre>
+PASS delete at <p>abc[</p>\n<pre><b>]def\nghi</b></pre>
+PASS delete at <p>abc[</p><pre><b>]def<br>ghi</b></pre>
+PASS delete at <p>abc[</p>\n<pre><b>]def<br>ghi</b></pre>
+PASS delete at <p>abc[</p><pre><b>]def</b>\nghi</pre>
+PASS delete at <p>abc[</p>\n<pre><b>]def</b>\nghi</pre>
+PASS delete at <p>abc[</p><pre><b>]def</b><br>ghi</pre>
+PASS delete at <p>abc[</p>\n<pre><b>]def</b><br>ghi</pre>
+PASS delete at <p>abc[</p><pre><b>]def\n</b>ghi</pre>
+PASS delete at <p>abc[</p>\n<pre><b>]def\n</b>ghi</pre>
+PASS delete at <p>abc[</p><pre><b>]def<br></b>ghi</pre>
+PASS delete at <p>abc[</p>\n<pre><b>]def<br></b>ghi</pre>
+PASS delete at <p>abc[</p><pre>]def</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p>\n<pre>]def</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p><pre>]def\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p>\n<pre>]def\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p><pre>]def<br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p>\n<pre>]def<br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p><pre><b>]def\nghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p>\n<pre><b>]def\nghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p><pre><b>]def<br>ghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p>\n<pre><b>]def<br>ghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p><pre><b>]def</b>\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p>\n<pre><b>]def</b>\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p><pre><b>]def</b><br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p>\n<pre><b>]def</b><br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p><pre><b>]def\n</b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p>\n<pre><b>]def\n</b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p><pre><b>]def<br></b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS delete at <p>abc[</p>\n<pre><b>]def<br></b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+

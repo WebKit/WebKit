@@ -1,0 +1,80 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=100 ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    body, html {
+        width: 100%;
+        margin: 0;
+        font-family: system-ui;
+        background: #eee;
+    }
+
+    header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 50px;
+        z-index: 100;
+        background: linear-gradient(to bottom, #aaa, #eee);
+    }
+
+    .header-content {
+        width: 100%;
+        height: 50px;
+        background: rgb(200, 0, 0);
+    }
+
+    .tall {
+        width: 10px;
+        height: 5000px;
+    }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    window.internals?.settings.setAllowUnclampedScrollPosition(true);
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        await UIHelper.ensurePresentationUpdate();
+
+        const header = document.querySelector("header");
+        const headerContent = document.createElement("div");
+        headerContent.classList.add("header-content");
+
+        addEventListener("scroll", () => {
+            if (pageYOffset < 500)
+                headerContent.remove();
+            else if (!headerContent.parentElement)
+                header.appendChild(headerContent);
+        });
+
+        scrollTo(0, 1000);
+        await UIHelper.ensurePresentationUpdate();
+
+        colorsAfterScrollingDown = await UIHelper.fixedContainerEdgeColors();
+        shouldBeNull("colorsAfterScrollingDown.left");
+        shouldBeNull("colorsAfterScrollingDown.right");
+        shouldBeNull("colorsAfterScrollingDown.bottom");
+
+        scrollTo(0, 0);
+        await UIHelper.ensurePresentationUpdate();
+
+        colorsAfterScrollingUp = await UIHelper.fixedContainerEdgeColors();
+        shouldBeNull("colorsAfterScrollingUp.left");
+        shouldBeNull("colorsAfterScrollingUp.right");
+        shouldBeNull("colorsAfterScrollingUp.bottom");
+        shouldBe("colorsAfterScrollingDown.top", "colorsAfterScrollingUp.top");
+
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+    <header>
+    </header>
+    <div class="tall"></div>
+</body>
+</html>

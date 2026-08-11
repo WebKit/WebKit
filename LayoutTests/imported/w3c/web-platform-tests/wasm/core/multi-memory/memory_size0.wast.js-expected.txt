@@ -1,0 +1,14 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (memory_size0.wast:1)
+PASS #3 Reinitialize the default imports
+PASS #4 Test that WebAssembly compilation succeeds (memory_size0.wast:1)
+PASS #5 Test that WebAssembly instantiation succeeds (memory_size0.wast:1)
+PASS #6 Test that a WebAssembly code returns a specific result (memory_size0.wast:12)
+PASS #7 Test that a WebAssembly code returns a specific result (memory_size0.wast:13)
+PASS #8 Test that a WebAssembly code returns a specific result (memory_size0.wast:14)
+PASS #9 Test that a WebAssembly code returns a specific result (memory_size0.wast:15)
+PASS #10 Test that a WebAssembly code returns a specific result (memory_size0.wast:16)
+PASS #11 Test that a WebAssembly code returns a specific result (memory_size0.wast:17)
+PASS #12 Test that a WebAssembly code returns a specific result (memory_size0.wast:18)
+

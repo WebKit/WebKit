@@ -1,0 +1,25 @@
+
+PASS minsize < 0 is treated as 0
+PASS maxsize < minsize is treated as maxsize = minsize
+PASS minsize < maxsize < 0 is treated as maxsize = minsize = 0
+PASS target size = 0 is treated as Tascent = Tdescent = minsize/2
+PASS minsize/maxsize percentages are relative to the unstretched size
+PASS default minsize/maxsize values
+⥯
+
+⥯
+
+⥯
+
+⥯
+
+⥯
+
+⥯
+
+⥯
+
+↨
+
+⥯
+

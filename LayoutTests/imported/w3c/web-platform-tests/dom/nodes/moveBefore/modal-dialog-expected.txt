@@ -1,0 +1,3 @@
+
+PASS when reparenting a modal dialog, the dialog should stay modal
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<style>
+  #container {
+    text-indent: 50000vmin hanging;
+    margin-right: 100%;
+  }
+  #span1, #span2, #span3 {
+    margin-right: 100%;
+    -webkit-padding-start: 100%;
+  }
+  blockquote,:read-write { padding: 100%; }
+  .floatLeft { float: left; }
+</style>
+<script>
+  window.addEventListener("load", _ => {
+    window.testRunner?.dumpAsText();
+    window.testRunner?.waitUntilDone();
+
+    span2.before(span1);
+    object.width;
+    span2.replaceWith("A");
+    document.body.scrollTop;
+
+    let range = document.createRange();
+    range.selectNodeContents(span1);
+    range.surroundContents(span3);
+    summary.scrollTop;
+
+    details.open = false;
+    span3.remove();
+    embed.type = "video/mp4";
+    output.value = "";
+    summary.scrollTop;
+
+    document.body.innerHTML = "PASS if no crash.";
+    window.testRunner?.notifyDone();
+ });
+</script>
+<div id="container">
+  <div>&#xA;A&#xA;A</div>
+  <marquee>
+    <blockquote></blockquote>
+    A
+    <span id="span2"></span>
+  </marquee>
+  <output id="output">
+    <div class="floatLeft"></div>
+    <span id="span1">
+      <span class="floatLeft"></span>
+    </span>
+  </output>
+  <details id="details" open>
+    <embed id="embed">
+      <summary>
+      </summary>
+    </embed>
+    <summary id="summary">
+      <span id="span3" contenteditable="true">
+        <object id="object"></object>
+      </span>
+    </summary>
+  </details>
+</div>

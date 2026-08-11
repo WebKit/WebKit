@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>hello, world</p>
+<script src="../../resources/js-test.js"></script>
+<script>
+description('This tests calling getSelection().modify to update selection. getSelection().getRangeAt(0) should return a distinct range after each modification.');
+
+window.find("hello");
+let range1 = getSelection().getRangeAt(0);
+getSelection().modify('extend', 'forward', 'word');
+let range2 = getSelection().getRangeAt(0);
+shouldBeTrue('range1 != range2');
+getSelection().modify('extend', 'backward', 'word');
+let range3 = getSelection().getRangeAt(0);
+shouldBeTrue('range2 != range3');
+getSelection().modify('extend', 'forward', 'character');
+let range4 = getSelection().getRangeAt(0);
+shouldBeTrue('range3 != range4');
+
+</script>
+</body>
+</html>

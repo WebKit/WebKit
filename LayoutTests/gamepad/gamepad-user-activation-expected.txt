@@ -1,0 +1,3 @@
+
+PASS gamepadconnected should allow to play audio
+

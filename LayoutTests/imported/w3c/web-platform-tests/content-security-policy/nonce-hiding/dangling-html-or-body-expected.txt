@@ -1,0 +1,4 @@
+
+PASS Nonces don't leak via CSS side-channels when a dangling body is injected.
+PASS Nonces don't leak via CSS side-channels when a dangling html is injected.
+

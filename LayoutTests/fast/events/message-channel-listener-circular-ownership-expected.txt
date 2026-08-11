@@ -1,0 +1,5 @@
+Test that a leak is not created by assigning a MessagePort to a property of its own listener.
+
+Only works with run-webkit-tests --leaks.
+
+

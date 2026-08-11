@@ -1,0 +1,19 @@
+
+Test that 'wirelessvideoplaybackdisabled' attribute is set correctly after removing the 'x-webkit-wirelessvideoplaybackdisabled' attribute.
+
+Test a video element without a source.
+EXPECTED (video.hasAttribute("x-webkit-wirelessvideoplaybackdisabled") == 'true') OK
+EXPECTED (video.webkitWirelessVideoPlaybackDisabled == 'true') OK
+RUN(video.removeAttribute("x-webkit-wirelessvideoplaybackdisabled"))
+EXPECTED (video.hasAttribute("x-webkit-wirelessvideoplaybackdisabled") == 'false') OK
+EXPECTED (video.webkitWirelessVideoPlaybackDisabled == 'true') OK
+Test a video element with a source.
+EVENT(canplaythrough)
+RUN(video.setAttribute("x-webkit-wirelessvideoplaybackdisabled", ""))
+EXPECTED (video.hasAttribute("x-webkit-wirelessvideoplaybackdisabled") == 'true') OK
+EXPECTED (video.webkitWirelessVideoPlaybackDisabled == 'true') OK
+RUN(video.removeAttribute("x-webkit-wirelessvideoplaybackdisabled"))
+EXPECTED (video.hasAttribute("x-webkit-wirelessvideoplaybackdisabled") == 'false') OK
+EXPECTED (video.webkitWirelessVideoPlaybackDisabled == 'false') OK
+END OF TEST
+

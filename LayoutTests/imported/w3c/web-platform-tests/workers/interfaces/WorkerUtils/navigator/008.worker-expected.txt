@@ -1,0 +1,3 @@
+
+PASS navigator properties are read-only
+

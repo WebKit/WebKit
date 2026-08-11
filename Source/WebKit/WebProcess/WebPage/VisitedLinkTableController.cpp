@@ -1,0 +1,115 @@
+/*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "VisitedLinkTableController.h"
+
+#include "VisitedLinkStoreMessages.h"
+#include "VisitedLinkTableControllerMessages.h"
+#include "WebPage.h"
+#include "WebProcess.h"
+#include <WebCore/BackForwardCache.h>
+#include <wtf/NeverDestroyed.h>
+
+namespace WebKit {
+using namespace WebCore;
+
+static HashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>& NODELETE visitedLinkTableControllers()
+{
+    static NeverDestroyed<HashMap<VisitedLinkTableIdentifier, WeakPtr<VisitedLinkTableController>>> visitedLinkTableControllers;
+    RELEASE_ASSERT(isMainRunLoop());
+    return visitedLinkTableControllers;
+}
+
+Ref<VisitedLinkTableController> VisitedLinkTableController::getOrCreate(VisitedLinkTableIdentifier identifier)
+{
+    auto& visitedLinkTableControllerPtr = visitedLinkTableControllers().add(identifier, nullptr).iterator->value;
+    if (auto* ptr = visitedLinkTableControllerPtr.get())
+        return *ptr;
+
+    auto visitedLinkTableController = adoptRef(*new VisitedLinkTableController(identifier));
+    visitedLinkTableControllerPtr = visitedLinkTableController.get();
+
+    return visitedLinkTableController;
+}
+
+VisitedLinkTableController::VisitedLinkTableController(VisitedLinkTableIdentifier identifier)
+    : m_identifier(identifier)
+{
+    WebProcess::singleton().addMessageReceiver(Messages::VisitedLinkTableController::messageReceiverName(), m_identifier, *this);
+}
+
+VisitedLinkTableController::~VisitedLinkTableController()
+{
+    ASSERT(visitedLinkTableControllers().contains(m_identifier));
+
+    WebProcess::singleton().removeMessageReceiver(Messages::VisitedLinkTableController::messageReceiverName(), m_identifier);
+
+    visitedLinkTableControllers().remove(m_identifier);
+}
+
+bool VisitedLinkTableController::isLinkVisited(Page&, SharedStringHash linkHash, const URL&, const AtomString&)
+{
+    return m_visitedLinkTable.contains(linkHash);
+}
+
+void VisitedLinkTableController::addVisitedLink(Page& page, SharedStringHash linkHash)
+{
+    if (m_visitedLinkTable.contains(linkHash))
+        return;
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::VisitedLinkStore::AddVisitedLinkHashFromPage(WebPage::fromCorePage(page)->webPageProxyIdentifier(), linkHash), m_identifier);
+}
+
+void VisitedLinkTableController::setVisitedLinkTable(SharedMemory::Handle&& handle)
+{
+    auto sharedMemory = SharedMemory::map(WTF::move(handle), SharedMemory::Protection::ReadOnly);
+    if (!sharedMemory)
+        return;
+
+    m_visitedLinkTable.setSharedMemory(sharedMemory.releaseNonNull());
+
+    invalidateStylesForAllLinks();
+}
+
+void VisitedLinkTableController::visitedLinkStateChanged(const Vector<WebCore::SharedStringHash>& linkHashes)
+{
+    for (auto linkHash : linkHashes)
+        invalidateStylesForLink(linkHash);
+}
+
+void VisitedLinkTableController::allVisitedLinkStateChanged()
+{
+    invalidateStylesForAllLinks();
+}
+
+void VisitedLinkTableController::removeAllVisitedLinks()
+{
+    m_visitedLinkTable.setSharedMemory(nullptr);
+
+    invalidateStylesForAllLinks();
+}
+
+} // namespace WebKit

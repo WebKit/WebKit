@@ -1,0 +1,23 @@
+uniform half4 colorGreen;
+
+float scalar(float x, float y) {
+    x = length(x);
+    x = distance(x, y);
+    x = dot(x, y);
+    x = normalize(x);
+    return x;
+}
+
+float2 vector(float2 x, float2 y) {
+    x = length(x).xx;
+    x = distance(x, y).xx;
+    x = dot(x, y).xx;
+    x = normalize(x);
+    return x;
+}
+
+half4 main(float2 coords) {
+    float x = scalar(1, 2);
+    float2 y = vector(float2(1, 2), float2(3, 4));
+    return colorGreen;
+}

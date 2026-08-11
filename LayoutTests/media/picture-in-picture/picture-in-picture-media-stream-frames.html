@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="../video-test.js"></script>
+	<script>
+	window.addEventListener('load', event => {
+		runTest().then(endTest).catch(failTest);
+	})
+
+	var canvas;
+	var drawTimer;
+
+	function drawFrame()
+	{
+		var context = canvas.getContext('2d');
+		context.fillStyle = context.fillStyle == 'red' ? 'green' : 'red';
+		context.fillRect(0, 0, canvas.width, canvas.height);
+		drawTimer = setTimeout(drawFrame, 50);
+	}
+
+	async function runTest() {
+		if (!window.internals)
+			throw('Requires window.internals');
+
+		run('internals.settings.setAllowsPictureInPictureMediaPlayback(true)');
+		run('internals.setMockVideoPresentationModeEnabled(true)');
+
+		canvas = document.getElementById('canvas');
+		findMediaElement();
+
+		drawFrame();
+		run('video.srcObject = canvas.captureStream()');
+		await waitFor(video, 'playing');
+
+		consoleWrite('');
+		consoleWrite('Test that frames keep arriving while the video is inline:');
+		run('inlineFrameCount = video.getVideoPlaybackQuality().totalVideoFrames');
+		await testExpectedEventually('video.getVideoPlaybackQuality().totalVideoFrames > inlineFrameCount', true, '==', 3000);
+
+		consoleWrite('');
+		consoleWrite('Test that frames keep arriving after entering Picture-in-Picture:');
+		internals.withUserGesture(() => {
+			return run('video.requestPictureInPicture()');
+		});
+		await waitFor(video, 'enterpictureinpicture');
+		await testExpectedEventually('internals.mediaElementViewportVisibility(video)', 'VisibleInPictureInPicture', '==', 1000);
+
+		run('pipFrameCount = video.getVideoPlaybackQuality().totalVideoFrames');
+		await testExpectedEventually('video.getVideoPlaybackQuality().totalVideoFrames > pipFrameCount', true, '==', 3000);
+
+		consoleWrite('');
+		consoleWrite('Test that frames keep arriving after leaving Picture-in-Picture:');
+		internals.withUserGesture(() => {
+			return run('document.exitPictureInPicture()');
+		});
+		await waitFor(video, 'leavepictureinpicture');
+
+		run('inlineAgainFrameCount = video.getVideoPlaybackQuality().totalVideoFrames');
+		await testExpectedEventually('video.getVideoPlaybackQuality().totalVideoFrames > inlineAgainFrameCount', true, '==', 3000);
+
+		clearTimeout(drawTimer);
+	}
+	</script>
+</head>
+<body>
+	<canvas id='canvas' width='160' height='120'></canvas>
+	<video controls autoplay></video>
+</body>
+</html>

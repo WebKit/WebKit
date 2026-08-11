@@ -1,0 +1,15 @@
+# Copyright (c) 2026 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+VIDEO_TIMING_SIMULATOR_TEST_RESOURCES = [
+  "//resources/video/timing/simulator/video_recv_av1_pt45.rtceventlog",
+  "//resources/video/timing/simulator/video_recv_sequential_join_vp8_vp9_av1.rtceventlog",
+  "//resources/video/timing/simulator/video_recv_vp8_pt96.rtceventlog",
+  "//resources/video/timing/simulator/video_recv_vp8_pt96_lossy.rtceventlog",
+  "//resources/video/timing/simulator/video_recv_vp9_pt98.rtceventlog",
+]

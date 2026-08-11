@@ -1,0 +1,7 @@
+Inline script should not run without 'unsafe-inline' script-src directive, even for script-src *.
+
+
+PASS Inline script block
+PASS Inline event handler
+PASS Should fire policy violation events
+

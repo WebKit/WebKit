@@ -1,0 +1,3 @@
+
+PASS A threaded scroll-driven animation should not yield rendering updates.
+

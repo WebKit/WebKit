@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-discontinuity</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests discontinuity detection in the coded frame processing algorithm.
+    // MSE spec section 3.3.1: when the gap between decode timestamps exceeds
+    // 2x the last frame duration, a new coded frame group starts and a
+    // discontinuity is detected.
+    //
+    // This is completely untested per our spec coverage analysis.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(MP4.VIDEO_TYPE);
+
+        var initData = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Segment 1: 2 seconds [0, 2) with 1-second samples
+        var media1 = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, compositionTimeOffset: 0, isSync: true },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media1);
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 2, 0.01);
+
+        // Segment 2: starts at DTS=10s — gap of 8s is >> 2x frame duration (1s).
+        // This should create a discontinuity / new coded frame group,
+        // resulting in two disjoint buffered ranges.
+        var media2 = MP4.mediaSegment({
+            sequenceNumber: 2,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 10000, samples: [
+                { duration: 1000, compositionTimeOffset: 0, isSync: true },
+                { duration: 1000, compositionTimeOffset: 0, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media2);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Should have two disjoint ranges: [0, 2) and [10, 12)
+        testExpected('sourceBuffer.buffered.length', 2);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 2, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(1)', 10, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(1)', 12, 0.01);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

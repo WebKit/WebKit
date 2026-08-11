@@ -1,0 +1,5 @@
+
+PASS em units respond to font-size animation
+PASS ex units respond to font-size animation
+PASS var() references respond to custom property animation
+

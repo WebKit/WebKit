@@ -1,0 +1,70 @@
+In HTML, attributes should be ASCII case-insensitive. This test mostly checks Element.removeAttribute() with different source for setting the attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("target").hasAttribute("data-ÆøÅ") is true
+PASS document.getElementById("target").hasAttribute("data-ÆøÅ") is false
+PASS document.getElementById("target").hasAttribute("data-Æøå") is true
+PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æøå") is true
+PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æØÅ") is true
+PASS document.getElementById("target").getAttribute("data-æØÅ") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æØÅ") is true
+PASS document.getElementById("target").hasAttribute("data-æØÅ") is false
+PASS document.getElementById("target").hasAttribute("data-Æøå") is true
+PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æøå") is true
+PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
+PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
+PASS document.getElementById("target").hasAttribute("data-Æøå") is true
+PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æøå") is true
+PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æøå") is true
+PASS document.getElementById("target").hasAttribute("data-æøå") is false
+PASS document.getElementById("target").hasAttribute("data-Æøå") is true
+PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-Æøå") is true
+PASS document.getElementById("target").hasAttribute("data-Æøå") is false
+PASS document.getElementById("target").hasAttribute("data-ÆøÅ") is true
+PASS document.getElementById("target").hasAttribute("data-ÆøÅ") is false
+PASS document.getElementById("target").hasAttribute("data-Æøå") is true
+PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æøå") is true
+PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æØÅ") is true
+PASS document.getElementById("target").getAttribute("data-æØÅ") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æØÅ") is true
+PASS document.getElementById("target").hasAttribute("data-æØÅ") is false
+PASS document.getElementById("target").hasAttribute("data-Æøå") is true
+PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æøå") is true
+PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
+PASS document.getElementById("target").getAttribute("data-ÆØÅ") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is true
+PASS document.getElementById("target").hasAttribute("data-ÆØÅ") is false
+PASS document.getElementById("target").hasAttribute("data-Æøå") is true
+PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æøå") is true
+PASS document.getElementById("target").getAttribute("data-æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-æøå") is true
+PASS document.getElementById("target").hasAttribute("data-æøå") is false
+PASS document.getElementById("target").hasAttribute("data-Æøå") is true
+PASS document.getElementById("target").getAttribute("data-Æøå") is "WebKit!"
+PASS document.getElementById("target").hasAttribute("data-Æøå") is true
+PASS document.getElementById("target").hasAttribute("data-Æøå") is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

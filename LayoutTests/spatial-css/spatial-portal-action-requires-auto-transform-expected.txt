@@ -1,0 +1,5 @@
+
+PASS portal-action: orbit leaves the transform of a portal-transform: none portal alone
+PASS portal-action: orbit only sets up interaction when portal-transform contains auto
+PASS portal-action: orbit becomes noop when portal-transform stops containing auto
+

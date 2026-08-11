@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Test blocking of top-level navigations by an iframe with `sandbox=allow-top-navigation-by-user-activation` when the user gesture is propagated from another context.");
+jsTestIsAsync = true;
+onload = () => {
+    setTimeout(() => {
+        internals.withUserGesture(() => {
+            document.getElementsByTagName('iframe')[0].contentWindow.postMessage("foo", "*");
+        });
+        setTimeout(() => {
+            testPassed("All navigations by subframes have been blocked");
+            finishJSTest();
+        }, 100);
+    }, 10);
+}
+</script>
+<iframe id="testFrame" src="http://localhost:8000/security/resources/navigate-top-level-frame-to-failure-page-via-message-handler.html" sandbox="allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation"></iframe>
+</body>
+</html>

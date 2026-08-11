@@ -1,0 +1,3 @@
+
+PASS Verify navigator.clipboard behavior in detached frames
+

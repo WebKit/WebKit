@@ -1,0 +1,6 @@
+
+PASS Property scrollbar-color has initial value auto
+PASS Property scrollbar-color inherits
+PASS Property scrollbar-width has initial value auto
+PASS Property scrollbar-width does not inherit
+

@@ -1,0 +1,23 @@
+
+PASS (width: 16px) for .size > .inline > span
+PASS (height: 16px) for .inline > .size > span
+PASS (width: 16px) for .inline > .size > span
+PASS (height: 32px) for .size > .inline > span
+PASS (height: 16px) for .size > .inline > span
+PASS a (width: 32px) for .a-size > .b-size > span
+PASS b (width: 16px) for .a-size > .b-size > span
+PASS c (width) for .a-size > .b-size > span
+PASS a (width: 16px) for .a-size > .a-size > span
+PASS a (width: 32px) for .a-size > .a > span
+PASS a (width: 32px) for .ab-size > .size > span
+PASS b (width: 32px) for .ab-size > .size > span
+PASS c (width) for .ab-size > .size > span
+PASS a (width: 8px) for .a-size > .b-size > .a-inline > span
+PASS b (width: 16px) for .a-size > .b-size > .a-inline > span
+PASS a (height: 32px) for .a-size > .b-size > .a-inline > span
+PASS a (height) for .a-inline > .b-size
+PASS a (inline-size: 8px) for .a-size > .b-size > .a-inline > span
+PASS b (inline-size: 16px) for .a-size > .b-size > .a-inline > span
+PASS a (block-size: 32px) for .a-size > .b-size > .a-inline > span
+PASS a (block-size) for .a-inline > .b-size
+

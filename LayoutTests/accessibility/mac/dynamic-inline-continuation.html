@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="test">
+    <span id="parent1">1<div id="div1" role="group">2</div>3</span>
+    <span>4</span><div id="group-2" role="group">5</div>
+</div>
+
+<div>
+    <span id="parent2">6<div id="div2" role="group">7</div>8</span>
+    <span>9</span><div role="group">10</div>
+</div>
+
+<script>
+var output = "This test ensures the accessibility tree is correct after inserting elements near a render continuation.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    output += `${dumpAXSearchTraversal(webArea)}\n\n`;
+
+    var button = document.createElement("button");
+    button.innerText = "foo";
+
+    var expected = `{AXRole: AXStaticText AXValue: 1}
+
+{AXRole: AXButton}`;
+    var traversalResult;
+    setTimeout(async function() {
+        document.getElementById("parent1").insertBefore(button, document.getElementById("div1"));
+        // Wait for the button to come after the first static text in the accessibility tree.
+        expected = `{AXRole: AXStaticText AXValue: 1}
+
+{AXRole: AXButton}`;
+        await waitFor(() => {
+            traversalResult = dumpAXSearchTraversal(webArea);
+            return traversalResult.includes(expected);
+        });
+        output += `${traversalResult}\n\n`;
+
+        document.getElementById("parent2").insertBefore(button, document.getElementById("div2"));
+        // Wait for the button to come after the sixth static text in the accessibility tree.
+        expected = `{AXRole: AXStaticText AXValue: 6}
+
+{AXRole: AXButton}`;
+        await waitFor(() => {
+            traversalResult = dumpAXSearchTraversal(webArea);
+            return traversalResult.includes(expected);
+        });
+        output += `${traversalResult}\n\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

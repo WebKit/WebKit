@@ -1,0 +1,13 @@
+This tests that the ARIA grids will return and post selected cells.
+
+PASS: grid.isAttributeSupported('AXSelectedCells') === true
+PASS: grid.selectedCells()[0].isEqual(selectedCell) === true
+Received notification AXSelectedCellsChanged for #grid
+Received notification AXSelectedCellsChanged for #cell1
+PASS: selectedCells[0].isEqual(accessibilityController.accessibleElementById('cell1')) === true
+PASS: selectedCells[1].isEqual(accessibilityController.accessibleElementById('cell2')) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

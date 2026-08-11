@@ -1,0 +1,118 @@
+Tests the user agent shadow tree of option and optgroup elements in base-select mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial optgroup shadow tree:
+PASS ogShadow !== null is true
+PASS ogShadow.childNodes.length is 2
+PASS ogShadow.firstChild.tagName is "DIV"
+PASS ogShadow.firstChild.textContent is "Group"
+PASS ogShadow.lastChild.tagName is "SLOT"
+
+Option without label attribute:
+PASS opt1Shadow === null is true
+
+Option with label attribute:
+PASS opt2Shadow !== null is true
+PASS opt2Shadow.childNodes.length is 2
+PASS opt2Shadow.firstChild.textContent is "Label text"
+
+After setting label attribute on option:
+PASS opt1Shadow !== null is true
+PASS opt1Shadow.firstChild.textContent is "Dynamic label"
+
+After changing label attribute on option:
+PASS opt1Shadow.firstChild.textContent is "Changed label"
+
+After removing label attribute from option:
+PASS opt1Shadow.firstChild.textContent is ""
+
+After removing label attribute from option with initial label:
+PASS opt2Shadow.firstChild.textContent is ""
+
+After changing optgroup label attribute:
+PASS ogShadow.firstChild.textContent is "New Group"
+
+After adding legend child to optgroup:
+PASS getComputedStyle(ogShadow.firstChild).display is "none"
+
+After removing legend child from optgroup:
+PASS getComputedStyle(ogShadow.firstChild).display is "block"
+PASS ogShadow.firstChild.textContent is "New Group"
+
+After removing optgroup label attribute:
+PASS getComputedStyle(ogShadow.firstChild).display is "none"
+
+After re-adding optgroup label attribute:
+PASS getComputedStyle(ogShadow.firstChild).display is "block"
+PASS ogShadow.firstChild.textContent is "Re-added"
+
+Optgroup without label attribute:
+PASS og2Shadow === null is true
+
+After setting label on optgroup without initial label:
+PASS og2Shadow !== null is true
+PASS og2Shadow.firstChild.textContent is "Late label"
+
+Optgroup with legend child and label attribute:
+PASS og3Shadow === null is true
+
+After removing legend from optgroup with label:
+PASS og3Shadow !== null is true
+PASS og3Shadow.firstChild.textContent is "Should not show"
+PASS getComputedStyle(og3Shadow.firstChild).display is "block"
+
+Optgroup with legend and label inserted as subtree:
+PASS og4Shadow === null is true
+
+After removing legend from subtree-inserted optgroup:
+PASS og4Shadow !== null is true
+PASS og4Shadow.firstChild.textContent is "Subtree label"
+PASS getComputedStyle(og4Shadow.firstChild).display is "block"
+
+Optgroup with legend inside wrapper inserted as subtree:
+PASS og5Shadow === null is true
+
+After removing legend from wrapper-inserted optgroup:
+PASS og5Shadow !== null is true
+PASS og5Shadow.firstChild.textContent is "Wrapped label"
+PASS getComputedStyle(og5Shadow.firstChild).display is "block"
+
+Optgroup with label not inside a select:
+PASS og6Shadow === null is true
+
+Optgroup gains label while select is disconnected:
+PASS og7Shadow === null is true
+PASS og7Shadow === null is true
+PASS og7Shadow !== null is true
+PASS og7Shadow.firstChild.textContent is "Added while disconnected"
+
+Nested optgroup with legend, ancestor removed then legend removed:
+PASS innerOgShadow === null is true
+PASS innerOgShadow === null is true
+
+Parser-created optgroup with legend via innerHTML:
+PASS ogParsedShadow === null is true
+PASS ogParsedShadow !== null is true
+PASS ogParsedShadow.firstChild.textContent is "Parsed"
+PASS getComputedStyle(ogParsedShadow.firstChild).display is "block"
+
+Multiple legends in optgroup:
+PASS ogMultiShadow !== null is true
+PASS getComputedStyle(ogMultiShadow.firstChild).display is "none"
+PASS getComputedStyle(ogMultiShadow.firstChild).display is "none"
+PASS getComputedStyle(ogMultiShadow.firstChild).display is "block"
+PASS ogMultiShadow.firstChild.textContent is "Multi"
+
+Moving legend between optgroups:
+PASS ogSrcShadow !== null is true
+PASS ogDstShadow !== null is true
+PASS getComputedStyle(ogSrcShadow.firstChild).display is "none"
+PASS getComputedStyle(ogDstShadow.firstChild).display is "block"
+PASS getComputedStyle(ogSrcShadow.firstChild).display is "block"
+PASS getComputedStyle(ogDstShadow.firstChild).display is "none"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

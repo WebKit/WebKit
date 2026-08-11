@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>Setting an animation's effect to null in a CustomEffect callback</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const animation = document.timeline.animate(progress => animation.effect = null, 1000);
+    await waitForAnimationFrames(1);
+}, "Setting an animation's effect to null in a CustomEffect callback.");
+
+</script>
+</body>

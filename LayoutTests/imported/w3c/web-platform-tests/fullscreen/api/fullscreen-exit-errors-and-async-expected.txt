@@ -1,0 +1,4 @@
+
+PASS requestFullscreen and exitFullscreen return Promises synchronously; state updates happen in parallel
+PASS exitFullscreen: rejects with TypeError when document is not fully active
+

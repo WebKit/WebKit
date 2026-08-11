@@ -1,0 +1,7 @@
+
+PASS Property grid-column-gap value 'normal'
+PASS Property grid-column-gap value 'calc(10px + 0.5em)'
+PASS Property grid-column-gap value 'calc(10px - 0.5em)'
+PASS Property grid-column-gap value '40%'
+PASS Property grid-column-gap value 'calc(50% + 60px)'
+

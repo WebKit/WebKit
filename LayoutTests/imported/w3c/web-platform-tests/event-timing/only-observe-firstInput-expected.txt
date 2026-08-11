@@ -1,0 +1,4 @@
+Generate a 'click' event
+
+PASS Event Timing: check first-input for a PerformanceObserver observing only first-input.
+

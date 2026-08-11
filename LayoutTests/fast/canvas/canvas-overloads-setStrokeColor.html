@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Test the behavior of CanvasRenderingContext2D.setStrokeColor() when called with different numbers of arguments.");
+
+let ctx = document.createElement('canvas').getContext('2d');
+
+let TypeError = "TypeError: Type error";
+let TypeErrorNotEnoughArguments = "TypeError: Not enough arguments";
+
+shouldThrow("ctx.setStrokeColor()", "TypeErrorNotEnoughArguments");
+shouldBe("ctx.strokeStyle", "'#000000'");
+
+
+debug("\n\nundefined setStrokeColor(DOMString color, optional unrestricted float alpha)\n")
+shouldBe("ctx.setStrokeColor('red')", "undefined");
+shouldBe("ctx.strokeStyle", "'#ff0000'");
+
+shouldBe("ctx.setStrokeColor('red', .5)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(255, 0, 0, 0.5)'");
+
+shouldBe("ctx.setStrokeColor('red', NaN)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(255, 0, 0, 0.5)'");
+
+
+debug("\n\nundefined setStrokeColor(unrestricted float grayLevel, optional unrestricted float alpha = 1)\n")
+
+shouldBe("ctx.setStrokeColor(.25)", "undefined");
+shouldBe("ctx.strokeStyle", "'#404040'");
+
+shouldBe("ctx.setStrokeColor(.25, .5)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(64, 64, 64, 0.5)'");
+
+shouldBe("ctx.setStrokeColor(NaN, .5)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(64, 64, 64, 0.5)'");
+
+shouldBe("ctx.setStrokeColor(.25, NaN)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(64, 64, 64, 0.5)'");
+
+
+debug("\n\nundefined setStrokeColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a)\n")
+
+shouldThrow("ctx.setStrokeColor(.1, .2, .3)", "TypeError");
+
+shouldBe("ctx.setStrokeColor(.1, .2, .3, .4)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setStrokeColor(NaN, .2, .3, .4)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setStrokeColor(.1, NaN, .3, .4)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setStrokeColor(.1, .2, NaN, .4)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setStrokeColor(.1, .2, .3, NaN)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(26, 51, 77, 0.4)'");
+
+shouldBe("ctx.setStrokeColor(.5, .4, .3, .2, .1)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(128, 102, 77, 0.2)'");
+
+shouldBe("ctx.setStrokeColor(1, .4, .3, .2, .1, 0)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(255, 102, 77, 0.2)'");
+
+shouldBe("ctx.setStrokeColor(1.5, 10, -0.1, -100)", "undefined");
+shouldBe("ctx.strokeStyle", "'rgba(255, 255, 0, 0)'");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

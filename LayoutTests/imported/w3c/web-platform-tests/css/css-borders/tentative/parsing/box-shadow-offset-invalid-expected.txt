@@ -1,0 +1,6 @@
+
+PASS e.style['box-shadow-offset'] = "auto" should not set the property value
+PASS e.style['box-shadow-offset'] = "1 2" should not set the property value
+PASS e.style['box-shadow-offset'] = "1% 2%" should not set the property value
+PASS e.style['box-shadow-offset'] = "1px 2px 3px" should not set the property value
+

@@ -1,0 +1,13 @@
+
+PASS Missing arguments
+PASS Non-Module arguments
+PASS Branding
+PASS Return type
+PASS Empty module
+PASS Empty module: array caching
+PASS exports
+PASS exports with empty name: function
+PASS exports with empty name: table
+PASS exports with empty name: global
+PASS Stray argument
+

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package webrtc.GrpcSignaling;
+
+service PeerConnectionSignaling {
+  rpc Connect(stream SignalingMessage) returns (stream SignalingMessage) {}
+}
+
+message SignalingMessage {
+  oneof Content {
+    SessionDescription description = 1;
+    IceCandidate candidate = 2;
+  }
+}
+
+message SessionDescription {
+  enum SessionDescriptionType {
+    OFFER = 0;
+    ANSWER = 1;
+  }
+  SessionDescriptionType type = 1;
+  string content = 2;
+}
+
+message IceCandidate {
+  string mid = 1;
+  int32 mline_index = 2;
+  string description = 3;
+}

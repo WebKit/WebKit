@@ -1,0 +1,32 @@
+This tests that outdenting a middle list item resets the start attribute to 1 on the second half of the split list.
+
+Before:
+| "\n"
+| <ol>
+|   start="11"
+|   <li>
+|     "eleven"
+|   <li>
+|     id="target"
+|     "twelve"
+|   <li>
+|     "thirteen"
+|   <li>
+|     "fourteen"
+| "\n"
+
+After:
+| "\n"
+| <ol>
+|   start="11"
+|   <li>
+|     "eleven"
+| "<#selection-caret>twelve"
+| <br>
+| <ol>
+|   start="1"
+|   <li>
+|     "thirteen"
+|   <li>
+|     "fourteen"
+| "\n"

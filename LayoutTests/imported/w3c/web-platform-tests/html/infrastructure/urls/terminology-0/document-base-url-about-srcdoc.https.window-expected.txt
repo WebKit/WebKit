@@ -1,0 +1,4 @@
+
+PASS allow-same-origin
+PASS disallow-same-origin
+

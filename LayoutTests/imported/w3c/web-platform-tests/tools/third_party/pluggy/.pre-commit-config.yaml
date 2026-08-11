@@ -1,0 +1,34 @@
+repos:
+-   repo: https://github.com/ambv/black
+    rev: 21.7b0
+    hooks:
+    -   id: black
+        args: [--safe, --quiet]
+-   repo: https://github.com/asottile/blacken-docs
+    rev: v1.10.0
+    hooks:
+    -   id: blacken-docs
+        additional_dependencies: [black==21.7b0]
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.1.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: flake8
+-   repo: local
+    hooks:
+    -   id: rst
+        name: rst
+        entry: rst-lint --encoding utf-8
+        files: ^(CHANGELOG.rst|HOWTORELEASE.rst|README.rst|changelog/.*)$
+        language: python
+        additional_dependencies: [pygments, restructuredtext_lint]
+-   repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.9.0
+    hooks:
+    -   id: rst-backticks
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v2.23.3
+    hooks:
+    -   id: pyupgrade
+        args: [--py36-plus]

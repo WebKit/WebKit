@@ -1,0 +1,247 @@
+<meta name="viewport" content="initial-scale=1.0">
+<style>
+    body {
+        background-color: #999;
+        padding: 0;
+        margin: 0;
+    }
+    
+    p {
+        padding: 0;
+        margin: 0;
+    }
+    
+    svg {
+        width: 100vw;
+        height: 200px;
+    }
+    
+    circle {
+        fill: none;
+        stroke: #333;
+        stroke-width: 8px;
+    }
+
+    circle.main {
+        fill: none;
+        stroke-width: 3px;
+    }
+
+    text {
+        fill: #333;
+        font-family: -apple-system;
+        font-size: 52px;
+        text-anchor: middle;
+    }
+</style>
+<script>
+    let ctx = null;
+    function spin()
+    {
+        var endTime = Date.now() + 750;
+
+        while (true) {
+            var foo = document.cookies;
+
+            var currentTime = Date.now();
+            if (currentTime > endTime)
+                break;
+        }
+    }
+
+    function doSetup()
+    {
+        let circles = document.querySelectorAll("circle:first-of-type");
+        for (let i=0; i < circles.length; i++) {
+            let circle = circles[i];
+            circle.style.fill = `rgb(${Math.floor(255 - (i / circles.length * 240))}, 80, ${Math.floor((i / circles.length * 220))})`;
+        }
+        window.addEventListener("touchmove", function(e) {
+            spin();
+        }, false);
+    }
+
+    window.addEventListener("load", doSetup, false);
+</script>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">a</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">b</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">c</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">d</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">e</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">f</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">g</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">h</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">i</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">j</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">k</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">l</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">m</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">n</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">o</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">p</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">q</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">r</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">s</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">t</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">u</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">v</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">w</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">x</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">y</text>
+    </svg>
+</p>
+<p>
+    <svg viewBox="0 0 100 100">
+        <circle class="main" cx="50" cy="50" r="45"/>
+        <circle cx="50" cy="50" r="38"/>
+        <text x="50" y="64">z</text>
+    </svg>
+</p>

@@ -1,0 +1,17 @@
+1
+
+PASS parser-inserted async script is not implicitly render-blocking
+PASS parser-inserted defer script is not implicitly render-blocking
+PASS parser-inserted module script is not implicitly render-blocking
+PASS parser-inserted async module script is not implicitly render-blocking
+PASS script-inserted script is not implicitly render-blocking
+PASS script-inserted sync script is not implicitly render-blocking
+PASS script-inserted module script is not implicitly render-blocking
+PASS parser-inserted async script should eventually be loaded and evaluated
+PASS parser-inserted defer script should eventually be loaded and evaluated
+PASS parser-inserted module script should eventually be loaded and evaluated
+PASS parser-inserted async module script should eventually be loaded and evaluated
+PASS script-inserted script should eventually be loaded and evaluated
+PASS script-inserted sync script should eventually be loaded and evaluated
+PASS script-inserted module script should eventually be loaded and evaluated
+

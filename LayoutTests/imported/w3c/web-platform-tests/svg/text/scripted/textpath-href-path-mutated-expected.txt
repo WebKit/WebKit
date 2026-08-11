@@ -1,0 +1,4 @@
+Text
+
+FAIL Mutation of 'd' on a 'display: none' <path> referenced by <textPath> assert_equals: after mutation expected 50 but got 25
+

@@ -1,0 +1,8 @@
+
+FAIL loop and playbackRate with duration assert_approx_equals: Output after duration played (remaining 1.0s context time) sample[0] expected 0 +/- 1e-7 but got 1
+FAIL loop and playbackRate 3.0 with duration 3.0 assert_approx_equals: Output after duration played (remaining 1.0s context time) sample[0] expected 0 +/- 1e-7 but got 1
+FAIL loop and playbackRate 0.5 with duration 2.0 assert_approx_equals: Output during playback (first 4.0s context time) sample[6000] expected 1 +/- 1e-7 but got 0
+FAIL loop and playbackRate with fractional duration assert_approx_equals: Output after duration played (remaining context frames) sample[0] expected 0 +/- 1e-7 but got 1
+FAIL loop and duration with dynamic playbackRate automation assert_approx_equals: Output after duration played with dynamic rate sample[0] expected 0 +/- 1e-7 but got 1
+FAIL loop and duration with non-zero start offset assert_approx_equals: Output after duration played should be 0 sample[0] expected 0 +/- 1e-7 but got -1
+

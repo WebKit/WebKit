@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="content">
+<span id="labelShutdown"><label id="labelElement" for="shutdownTime">Shut down computer after</label></span>
+<input id="shutdownTime" type="text" value="10" aria-labelledby="labelShutdown shutdownTime shutdownUnit" />
+<span id="shutdownUnit">minutes</span>
+</div>
+
+<script>
+let output = "This tests that if aria-labelledby is used, then label elements are not used.\n\n";
+
+if (window.accessibilityController) {
+    var text = accessibilityController.accessibleElementById("shutdownTime");
+    output += expect("platformValueForW3CName(text)", "'Shut down computer after 10 minutes'");
+
+    var labelElement = accessibilityController.accessibleElementById("labelElement");
+    // This just makes sure that the label element is still visible in the AX hierarchy, even though
+    // it's a label element (sometimes they are ignored).
+    output += `Label element role is: ${labelElement.role}`;
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

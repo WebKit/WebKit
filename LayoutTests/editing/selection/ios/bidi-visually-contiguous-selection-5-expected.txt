@@ -1,0 +1,12 @@
+Verifies that the selection does not unnecessarily expand to the entire paragraph when selecting bidi text surrounded by bidi embedding characters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionRects.length is 1
+PASS selectionRects[0].width is <= bounds.width - 1
+PASS getSelection().toString() is "iPhone"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

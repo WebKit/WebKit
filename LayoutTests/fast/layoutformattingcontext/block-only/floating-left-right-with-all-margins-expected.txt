@@ -1,0 +1,46 @@
+layer at (0,0) size 785x676
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x676
+  RenderBlock {HTML} at (0,0) size 785x676
+    RenderBody {BODY} at (8,8) size 769x660
+      RenderBlock {DIV} at (0,0) size 500x50
+        RenderBlock (floating) {DIV} at (10,0) size 20x20
+        RenderBlock (floating) {DIV} at (30,0) size 20x20
+        RenderBlock (floating) {DIV} at (70,0) size 20x20
+        RenderBlock (floating) {DIV} at (90,0) size 20x20
+        RenderBlock (floating) {DIV} at (130,10) size 20x20
+        RenderBlock (floating) {DIV} at (170,10) size 20x20
+      RenderBlock {DIV} at (0,50) size 500x50
+        RenderBlock (floating) {DIV} at (480,0) size 20x20
+        RenderBlock (floating) {DIV} at (440,0) size 20x20
+        RenderBlock (floating) {DIV} at (420,0) size 20x20
+        RenderBlock (floating) {DIV} at (380,0) size 20x20
+        RenderBlock (floating) {DIV} at (350,10) size 20x20
+        RenderBlock (floating) {DIV} at (310,10) size 20x20
+      RenderBlock {DIV} at (0,100) size 500x50
+        RenderBlock (floating) {DIV} at (480,0) size 20x20
+        RenderBlock (floating) {DIV} at (440,0) size 20x20
+        RenderBlock (floating) {DIV} at (10,0) size 20x20
+        RenderBlock (floating) {DIV} at (30,0) size 20x20
+      RenderBlock {DIV} at (0,150) size 500x50
+        RenderBlock (floating) {DIV} at (400,0) size 20x20
+        RenderBlock (floating) {DIV} at (0,20) size 20x20
+      RenderBlock {DIV} at (0,200) size 500x50
+        RenderBlock (floating) {DIV} at (480,0) size 20x20
+        RenderBlock (floating) {DIV} at (400,20) size 20x20
+      RenderBlock {DIV} at (0,250) size 500x50
+        RenderBlock (floating) {DIV} at (400,0) size 20x20
+        RenderBlock (floating) {DIV} at (400,20) size 20x20
+      RenderBlock {DIV} at (0,300) size 500x120
+        RenderBlock (floating) {DIV} at (10,10) size 480x20
+        RenderBlock (floating) {DIV} at (480,90) size 20x20
+      RenderBlock {DIV} at (0,420) size 500x50
+        RenderBlock (floating) {DIV} at (10,10) size 20x20
+        RenderBlock (floating) {DIV} at (470,10) size 20x20
+      RenderBlock {DIV} at (0,470) size 500x80
+        RenderBlock (floating) {DIV} at (50,50) size 20x20
+        RenderBlock (floating) {DIV} at (480,0) size 20x20
+      RenderBlock {DIV} at (0,550) size 500x60
+        RenderBlock (floating) {DIV} at (480,50) size 20x20
+      RenderBlock {DIV} at (0,610) size 500x50
+        RenderBlock (floating) {DIV} at (450,10) size 20x20

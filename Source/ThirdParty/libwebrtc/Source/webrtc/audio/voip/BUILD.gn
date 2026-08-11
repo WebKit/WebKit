@@ -1,0 +1,116 @@
+# Copyright(c) 2020 The WebRTC project authors.All Rights Reserved.
+#
+# Use of this source code is governed by a BSD - style license
+# that can be found in the LICENSE file in the root of the source
+# tree.An additional intellectual property rights grant can be found
+# in the file PATENTS.All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("voip_core") {
+  sources = [
+    "voip_core.cc",
+    "voip_core.h",
+  ]
+  deps = [
+    ":audio_channel",
+    "..:audio",
+    "../../api:make_ref_counted",
+    "../../api:scoped_refptr",
+    "../../api:transport_api",
+    "../../api/audio:audio_device",
+    "../../api/audio:audio_mixer_api",
+    "../../api/audio:audio_processing",
+    "../../api/audio_codecs:audio_codecs_api",
+    "../../api/environment",
+    "../../api/voip:voip_api",
+    "../../call:audio_sender_interface",
+    "../../modules/audio_mixer:audio_mixer_impl",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:random",
+    "../../rtc_base/synchronization:mutex",
+  ]
+}
+
+rtc_library("audio_channel") {
+  sources = [
+    "audio_channel.cc",
+    "audio_channel.h",
+  ]
+  deps = [
+    ":audio_egress",
+    ":audio_ingress",
+    "../../api:ref_count",
+    "../../api:rtp_headers",
+    "../../api:scoped_refptr",
+    "../../api:transport_api",
+    "../../api/audio:audio_mixer_api",
+    "../../api/audio_codecs:audio_codecs_api",
+    "../../api/environment",
+    "../../api/voip:voip_api",
+    "../../call:audio_sender_interface",
+    "../../modules/audio_coding:audio_coding_module_typedefs",
+    "../../modules/rtp_rtcp",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../rtc_base:checks",
+  ]
+}
+
+rtc_library("audio_ingress") {
+  sources = [
+    "audio_ingress.cc",
+    "audio_ingress.h",
+  ]
+  deps = [
+    "..:audio",
+    "../../api:field_trials_view",
+    "../../api:scoped_refptr",
+    "../../api/audio:audio_mixer_api",
+    "../../api/audio_codecs:audio_codecs_api",
+    "../../api/environment",
+    "../../api/neteq:default_neteq_factory",
+    "../../api/neteq:neteq_api",
+    "../../api/units:time_delta",
+    "../../api/voip:voip_api",
+    "../../modules/audio_coding",
+    "../../modules/audio_coding:audio_coding_module_typedefs",
+    "../../modules/rtp_rtcp",
+    "../../modules/rtp_rtcp:rtp_rtcp_format",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:rtc_numerics",
+    "../../rtc_base:safe_conversions",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../rtc_base/synchronization:mutex",
+    "../utility:audio_frame_operations",
+  ]
+}
+
+rtc_library("audio_egress") {
+  sources = [
+    "audio_egress.cc",
+    "audio_egress.h",
+  ]
+  deps = [
+    "..:audio",
+    "../../api:sequence_checker",
+    "../../api/audio:audio_frame_api",
+    "../../api/audio_codecs:audio_codecs_api",
+    "../../api/environment",
+    "../../api/task_queue",
+    "../../call:audio_sender_interface",
+    "../../modules/audio_coding",
+    "../../modules/audio_coding:audio_coding_module_typedefs",
+    "../../modules/rtp_rtcp",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:safe_conversions",
+    "../../rtc_base/synchronization:mutex",
+    "../../rtc_base/system:no_unique_address",
+    "../utility:audio_frame_operations",
+  ]
+}

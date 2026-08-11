@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: InvalidStateError: The object is in an invalid state.
+Test passes if doesn't crash

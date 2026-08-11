@@ -1,0 +1,65 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// Prefix header for Swift's embedded Clang — provides platform macros and
+// export macro definitions without triggering SDK framework module builds.
+#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H && defined(BUILDING_WITH_CMAKE)
+#include "cmakeconfig.h"
+#endif
+
+#include <wtf/Platform.h>
+
+#if PLATFORM(COCOA)
+#include <CoreFoundation/CoreFoundation.h>
+#include <CoreGraphics/CoreGraphics.h>
+#ifdef __OBJC__
+#if !USE(APPLE_INTERNAL_SDK)
+#define _SECURITY_SECTASK_H_
+#endif
+#import <Foundation/Foundation.h>
+#endif // __OBJC__
+#endif // PLATFORM(COCOA)
+
+#ifdef __cplusplus
+#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
+#endif
+
+// Export macros defined directly to avoid triggering SDK framework module builds
+// (importing <JavaScriptCore/JSExportMacros.h> would build JSC_Private module
+// which has stale PrivateHeaders incompatible with our WTF).
+#include <wtf/ExportMacros.h>
+
+#ifndef JS_EXPORT_PRIVATE
+#define JS_EXPORT_PRIVATE WTF_EXPORT_DECLARATION
+#endif
+
+#ifndef WEBCORE_EXPORT
+#define WEBCORE_EXPORT WTF_EXPORT_DECLARATION
+#endif
+
+#ifndef PAL_EXPORT
+#define PAL_EXPORT WTF_EXPORT_DECLARATION
+#endif

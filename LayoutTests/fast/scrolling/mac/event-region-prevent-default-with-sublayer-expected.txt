@@ -1,0 +1,8 @@
+Test scroll over composited layer
+Got wheel event 10
+Got wheel event 100
+PASS windowScrollEventCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="./util.js"></script>
+</head>
+<body>
+    <input type="text" id="input">
+    <script>
+        const url = new URL(window.location.href);
+        const shouldFocus = url.searchParams.get("shouldFocus");
+        const exceptionMessage = url.searchParams.get("exceptionMessage");
+
+        function messageToTop(message) {
+            top.postMessage(message, "*");
+        }
+
+        const makeOptions = {
+            publicKey: {
+                rp: {
+                    name: "example.com"
+                },
+                user: {
+                    name: "John Appleseed",
+                    id: asciiToUint8Array("123456"),
+                    displayName: "Appleseed",
+                },
+                challenge: asciiToUint8Array("123456"),
+                pubKeyCredParams: [{ type: "public-key", alg: -7 }]
+            }
+        };
+        const requestOptions = {
+            publicKey: {
+                challenge: asciiToUint8Array("123456"),
+            }
+        };
+
+        if (shouldFocus == "true") {
+            if (window.internals)
+                internals.withUserGesture(() => { input.focus(); });
+        }
+        navigator.credentials.create(makeOptions).then(
+            function(value) {
+                messageToTop("Access granted. " + value);
+            },
+            function(exception) {
+                if (exception.name == "NotAllowedError" && exception.message == exceptionMessage)
+                    return navigator.credentials.get(requestOptions);
+                else
+                    messageToTop("Throw " + exception.name  + ".");
+            }
+        ).then(function(value) {
+                messageToTop("Access granted. " + value);
+            },
+            function(exception) {
+                if (exception.name == "NotAllowedError" && exception.message == exceptionMessage)
+                    messageToTop("PASS.");
+                else
+                    messageToTop("Throw " + exception.name  + ".");
+            }
+        );
+    </script>
+</body>
+</html>

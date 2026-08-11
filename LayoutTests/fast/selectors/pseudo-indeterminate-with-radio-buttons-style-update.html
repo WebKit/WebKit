@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+    input {
+        background-color: rgb(1, 2, 3);
+    }
+    :indeterminate {
+        background-color: rgb(4, 5, 6);
+    }
+</style>
+</head>
+<body>
+    <div id="with-renderer">
+        <!-- With renderer -->
+        <input type="radio" name="group1" id="radio1">
+        <input type="radio" name="group1" id="radio2">
+        <input type="radio" name="group1" id="radio3">
+        <span>
+            <input type="radio" name="group1" id="radio4">
+            <input type="radio" name="group1" id="radio5">
+        </span>
+    </div>
+    <div style="display:none;">
+        <!-- Without renderer -->
+        <input type="radio" name="group2" id="radio6">
+        <span>
+            <input type="radio" name="group2" id="radio7">
+            <input type="radio" name="group2" id="radio8">
+        </span>
+        <input type="radio" name="group2" id="radio9">
+        <input type="radio" name="group2" id="radio10">
+    </div>
+</body>
+<script>
+
+description('Verify we invalidate radio button groups to match :indeterminate when a button is checked/unchecked');
+let allInputs = document.querySelectorAll("input");
+
+function elementsWithIndeterminateStyle() {
+    let elements = [];
+    for (let inputElement of allInputs) {
+        let backgroundColor = getComputedStyle(inputElement).backgroundColor;
+        if (backgroundColor === "rgb(4, 5, 6)")
+            elements.push(inputElement.id);
+    }
+    return elements;
+}
+
+function checkedElements() {
+    let elements = [];
+    for (let inputElement of allInputs) {
+        if (inputElement.checked)
+            elements.push(inputElement.id);
+    }
+    return elements;
+}
+
+shouldBe("elementsWithIndeterminateStyle()", '["radio1", "radio2", "radio3", "radio4", "radio5", "radio6", "radio7", "radio8", "radio9", "radio10"]');
+shouldBe("checkedElements()", '[]');
+
+debug("Check radio3");
+document.getElementById("radio3").checked = true;
+shouldBe("elementsWithIndeterminateStyle()", '["radio6", "radio7", "radio8", "radio9", "radio10"]');
+shouldBe("checkedElements()", '["radio3"]');
+
+debug("Check radio8");
+document.getElementById("radio8").checked = true;
+shouldBe("elementsWithIndeterminateStyle()", '[]');
+shouldBe("checkedElements()", '["radio3", "radio8"]');
+
+debug("Check radio4");
+document.getElementById("radio4").checked = true;
+shouldBe("elementsWithIndeterminateStyle()", '[]');
+shouldBe("checkedElements()", '["radio4", "radio8"]');
+
+debug("Check radio9");
+document.getElementById("radio9").checked = true;
+shouldBe("elementsWithIndeterminateStyle()", '[]');
+shouldBe("checkedElements()", '["radio4", "radio9"]');
+
+debug("Uncheck radio4");
+document.getElementById("radio4").checked = false;
+shouldBe("elementsWithIndeterminateStyle()", '["radio1", "radio2", "radio3", "radio4", "radio5"]');
+shouldBe("checkedElements()", '["radio9"]');
+
+debug("Uncheck radio9");
+document.getElementById("radio9").checked = false;
+shouldBe("elementsWithIndeterminateStyle()", '["radio1", "radio2", "radio3", "radio4", "radio5", "radio6", "radio7", "radio8", "radio9", "radio10"]');
+shouldBe("checkedElements()", '[]');
+
+debug("Check radio1");
+document.getElementById("radio1").checked = true;
+shouldBe("elementsWithIndeterminateStyle()", '["radio6", "radio7", "radio8", "radio9", "radio10"]');
+shouldBe("checkedElements()", '["radio1"]');
+
+debug("Check radio2");
+document.getElementById("radio2").checked = true;
+shouldBe("elementsWithIndeterminateStyle()", '["radio6", "radio7", "radio8", "radio9", "radio10"]');
+shouldBe("checkedElements()", '["radio2"]');
+
+debug("Remove radio3 from its group");
+document.getElementById("radio3").name = "";
+shouldBe("elementsWithIndeterminateStyle()", '["radio3", "radio6", "radio7", "radio8", "radio9", "radio10"]');
+shouldBe("checkedElements()", '["radio2"]');
+
+debug("Remove radio6 from its group");
+document.getElementById("radio6").name = "";
+shouldBe("elementsWithIndeterminateStyle()", '["radio3", "radio6", "radio7", "radio8", "radio9", "radio10"]');
+shouldBe("checkedElements()", '["radio2"]');
+
+debug("Remove radio2 from its group");
+document.getElementById("radio2").name = "";
+shouldBe("elementsWithIndeterminateStyle()", '["radio1", "radio3", "radio4", "radio5", "radio6", "radio7", "radio8", "radio9", "radio10"]');
+shouldBe("checkedElements()", '["radio2"]');
+
+debug("Check radio7");
+document.getElementById("radio7").checked = true;
+shouldBe("elementsWithIndeterminateStyle()", '["radio1", "radio3", "radio4", "radio5", "radio6"]');
+shouldBe("checkedElements()", '["radio2", "radio7"]');
+
+debug("Check radio8");
+document.getElementById("radio8").checked = true;
+shouldBe("elementsWithIndeterminateStyle()", '["radio1", "radio3", "radio4", "radio5", "radio6"]');
+shouldBe("checkedElements()", '["radio2", "radio8"]');
+
+debug("Remove radio9 from its group");
+document.getElementById("radio9").name = "";
+shouldBe("elementsWithIndeterminateStyle()", '["radio1", "radio3", "radio4", "radio5", "radio6", "radio9"]');
+shouldBe("checkedElements()", '["radio2", "radio8"]');
+
+debug("Remove radio8 from its group");
+document.getElementById("radio8").name = "";
+shouldBe("elementsWithIndeterminateStyle()", '["radio1", "radio3", "radio4", "radio5", "radio6", "radio7", "radio9", "radio10"]');
+shouldBe("checkedElements()", '["radio2", "radio8"]');
+
+debug("Remove radio7 from its group");
+document.getElementById("radio7").name = "";
+shouldBe("elementsWithIndeterminateStyle()", '["radio1", "radio3", "radio4", "radio5", "radio6", "radio7", "radio9", "radio10"]');
+shouldBe("checkedElements()", '["radio2", "radio8"]');
+
+
+// Hide the elements to make the results prettier.
+document.getElementById("with-renderer").style.display = "none";
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

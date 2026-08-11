@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true obscuredInset.top=80 ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            width: 100%;
+            margin: 0;
+            font-family: system-ui;
+        }
+
+        header {
+            position: relative;
+            top: 0;
+            height: 100px;
+            width: 100%;
+            background: tomato;
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            line-height: 100px;
+        }
+
+        .tall {
+            width: 10px;
+            height: 5000px;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    addEventListener("load", async () => {
+        const header = document.querySelector("header");
+        addEventListener("scroll", () => {
+            header.style.position = pageYOffset > 0 ? "fixed" : "relative";
+            header.textContent = header.style.position;
+        });
+
+        await UIHelper.setObscuredInsets(80, 0, 0, 0);
+        scrollTo(0, 100);
+        await UIHelper.ensurePresentationUpdate();
+        colorsAfterScrollingDown = await UIHelper.fixedContainerEdgeColors();
+
+        scrollTo(0, 0);
+        await UIHelper.ensurePresentationUpdate();
+        colorsAfterScrollingBackUp = await UIHelper.fixedContainerEdgeColors();
+
+        shouldBeEqualToString("colorsAfterScrollingDown.top", "rgb(255, 99, 71)");
+        shouldBeEqualToString("colorsAfterScrollingBackUp.top", "rgb(255, 99, 71)");
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+<header>relative</header>
+<div class="tall"></div>
+</body>
+</html>

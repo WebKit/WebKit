@@ -1,0 +1,17 @@
+Tests for ES6 arrow function, make sure parsing is OK in strict mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS f1(10) is 10
+PASS f2(20) is 20
+PASS f3(10, 20) is 30
+PASS f4(20, 20) is 40
+PASS foo(x => x + 1) is 11
+PASS foo((x) => x + 1) is 11
+PASS foo(x => { return x + 1; }) is 11
+PASS foo((x) => { return x + 1; }) is 11
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+        var controller;
+        var video2;
+
+        function start() {
+            video = document.getElementsByTagName('video')[0];
+            video2 = document.getElementsByTagName('video')[1];
+
+            consoleWrite("Test presence of MediaController constructor, controller, and mediaGroup attributes:");
+            testExpected("typeof(MediaController)", "undefined", "!=");
+            testExpected("video.controller", null);
+            testExpected("video.mediaGroup", "");
+            consoleWrite("");
+            consoleWrite("Test that the presence of a mediaGroup attribute creates a controller:")
+            testExpected("video2.mediaGroup", 'group');
+            testExpected("video2.controller", null, "!=");
+            consoleWrite("");
+            consoleWrite("Test that setting mediaGroup to an empty string removes the controller:")
+            run("video.mediaGroup = ''");
+            testExpected("video.controller", null);
+            consoleWrite("");
+            consoleWrite("Test manually creating and assigning a controller to a media element:")
+            run("controller = new MediaController()");
+            run("video.controller = controller");
+            testExpected("video.controller", controller);
+            consoleWrite("");
+            consoleWrite("Test that two media elements with the same mediaGroup have the same controller:")
+            run("video.mediaGroup = 'group'");
+            run("video2.mediaGroup = 'group'");
+            testExpected("video.controller === video2.controller", true);
+            endTest();
+        }
+        </script>
+    </head>
+    <body onload="start()">
+        <video></video>
+        <video mediagroup="group"></video>
+    </body>
+</html>

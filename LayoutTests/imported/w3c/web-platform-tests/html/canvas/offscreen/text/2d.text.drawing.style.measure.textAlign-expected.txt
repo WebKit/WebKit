@@ -1,0 +1,7 @@
+2d.text.drawing.style.measure.textAlign
+
+Measurement should be related to textAlignment
+
+
+PASS Measurement should be related to textAlignment
+

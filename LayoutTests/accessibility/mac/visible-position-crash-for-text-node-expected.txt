@@ -1,0 +1,8 @@
+This protects against a crash in asking for visible point for position to ensure that it can handle all RenderText objects.
+
+PASS: content.childAtIndex(0).isEqual(element) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

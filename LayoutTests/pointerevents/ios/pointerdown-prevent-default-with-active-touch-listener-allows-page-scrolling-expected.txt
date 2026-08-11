@@ -1,0 +1,3 @@
+
+PASS Calling preventDefault() on pointerdown does not prevent page scrolling when touch listeners are active (non-passive).
+

@@ -1,0 +1,6 @@
+
+PASS overflow-x:visible: overflow-y stays visible; min-height:auto holds; no scrollbar gutter
+PASS overflow-x:hidden: forces overflow-y to auto; min-height:auto resolves to 0; width includes scrollbar gutter
+PASS overflow-x:scroll: forces overflow-y to auto; min-height:auto resolves to 0; width includes scrollbar gutter
+PASS overflow-x:auto: forces overflow-y to auto; min-height:auto resolves to 0; width includes scrollbar gutter
+

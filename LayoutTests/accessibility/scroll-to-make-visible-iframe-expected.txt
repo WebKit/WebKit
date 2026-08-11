@@ -1,0 +1,12 @@
+Tests that scrolling to make an element visible successfully scrolls an iframe.
+
+PASS: frameWindow.pageYOffset === 0
+PASS: frameWindow.pageYOffset >= minYOffset === true
+PASS: frameWindow.pageYOffset <= maxYOffset === true
+PASS: frameWindow.pageYOffset >= minYOffset === true
+PASS: frameWindow.pageYOffset <= maxYOffset === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

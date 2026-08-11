@@ -1,0 +1,4 @@
+
+PASS Property math-style value 'normal'
+PASS Property math-style value 'compact'
+

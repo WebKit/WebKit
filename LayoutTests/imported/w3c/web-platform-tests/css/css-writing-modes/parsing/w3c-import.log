@@ -1,0 +1,31 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/direction-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/direction-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/direction-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-combine-upright-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-orientation-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-orientation-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/text-orientation-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/unicode-bidi-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/unicode-bidi-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/unicode-bidi-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/writing-mode-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/writing-mode-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/parsing/writing-mode-valid.html

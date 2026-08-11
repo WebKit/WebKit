@@ -1,0 +1,56 @@
+<input type="text" id="input">
+<script>
+    const testAssertionMessageLongBase64 =
+        "AKUBomJpZFhAKAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2" +
+        "w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4GR0eXBlanB1YmxpYy1rZXkCWCVGzH+5" +
+        "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hHMEUCIQCSFTuuBWgB" +
+        "4/F0VB7DlUVM09IHPmxe1MzHUwRoCRZbCAIgGKov6xoAx2MEf6/6qNs8OutzhP2C" +
+        "QoJ1L7Fe64G9uBcEpGJpZFggMIIBkzCCATigAwIBAjCCAZMwggE4oAMCAQIwggGT" +
+        "MIJkaWNvbngoaHR0cHM6Ly9waWNzLmFjbWUuY29tLzAwL3AvYUJqampwcVBiLnBu" +
+        "Z2RuYW1ldmpvaG5wc21pdGhAZXhhbXBsZS5jb21rZGlzcGxheU5hbWVtSm9obiBQ" +
+        "LiBTbWl0aAUC";
+    const testAssertionMessageBase64 =
+        "AKMBomJpZFhAKAitzuj+Tslzelf3/vZwIGtDQNgoKeFd5oEieYzhyzA65saf0tK2" +
+        "w/mooa7tQtGgDdwZIjOhjcuZ0pQ1ajoE4GR0eXBlanB1YmxpYy1rZXkCWCVGzH+5" +
+        "Z51VstuQkuHI2eXh0Ct1gPC0gSx3CWLh5I9a2AEAAABQA1hHMEUCIQCSFTuuBWgB" +
+        "4/F0VB7DlUVM09IHPmxe1MzHUwRoCRZbCAIgGKov6xoAx2MEf6/6qNs8OutzhP2C" +
+        "QoJ1L7Fe64G9uBc=";
+    if (window.internals) {
+        internals.setMockWebAuthenticationConfiguration({ silentFailure: true, hid: { payloadBase64: [testAssertionMessageLongBase64, testAssertionMessageBase64] } });
+        internals.withUserGesture(() => { input.focus(); });
+    }
+
+    function bytesToHexString(bytes)
+    {
+        if (!bytes)
+            return null;
+
+        bytes = new Uint8Array(bytes);
+        var hexBytes = [];
+
+        for (var i = 0; i < bytes.length; ++i) {
+            var byteString = bytes[i].toString(16);
+            if (byteString.length < 2)
+                byteString = "0" + byteString;
+            hexBytes.push(byteString);
+        }
+
+        return hexBytes.join("");
+    }
+
+    const options = {
+        publicKey: {
+            challenge: new Uint8Array(16),
+            timeout: 1000
+        }
+    };
+
+    navigator.credentials.get(options).then(credential => {
+        userHandle = bytesToHexString(credential.response.userHandle);
+        // console.log("Succeeded!");
+        window.webkit.messageHandlers.testHandler.postMessage("Succeeded!");
+    }, error => {
+        // console.log(error.message);
+        window.webkit.messageHandlers.testHandler.postMessage(error.message);
+    });
+</script>

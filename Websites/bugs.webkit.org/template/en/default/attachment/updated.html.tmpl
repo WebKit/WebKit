@@ -1,0 +1,32 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # attachment: object of the attachment we just attached.
+  #%]
+
+[% bug = bugs.0 %]
+
+[% PROCESS "bug/show-header.html.tmpl" %]
+[% PROCESS global/header.html.tmpl
+  title = "Changes Submitted to Attachment $attachment.id of $terms.Bug $attachment.bug_id"
+%]
+
+<dl>
+  <dt>Changes to
+    <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">attachment [% attachment.id %]</a>
+    of [% "$terms.bug $attachment.bug_id" FILTER bug_link(attachment.bug_id) FILTER none %] submitted
+  </dt>
+  <dd>
+    [% PROCESS "bug/process/bugmail.html.tmpl" mailing_bugid = attachment.bug_id %]
+    [%# Links to more information about the changed bug. %]
+    [% Hook.process("links") %]
+  </dd>
+</dl>
+
+[% PROCESS bug/show.html.tmpl %]

@@ -1,0 +1,3 @@
+
+FAIL XR report only mode assert_unreached: isSessionSupported should not throw in ReportOnly mode Reached unreachable code
+

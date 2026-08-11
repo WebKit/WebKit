@@ -1,0 +1,31 @@
+
+PROMISE: requestMediaKeySystemAccess resolved
+PROMISE: createMediaKeys resolved
+FETCH: resources/cert.der OK
+PROMISE: keys.setServerCertificate resolved
+PROMISE: setMediaKeys() resolved
+Created mediaSource
+EVENT(sourceopen)
+-
+Appending Encrypted Audio Header
+Created sourceBuffer
+FETCH: content/elementary-stream-audio-header-keyid-1.m4a OK
+EVENT(encrypted)
+EVENT(message)
+PROMISE: licenseResponse resolved
+PROMISE: session.update() resolved
+EVENT(updateend)
+-
+Appending Encrypted Audio Payload
+FETCH: content/elementary-stream-audio-payload.m4a OK
+EVENT(canplay)
+EVENT(updateend)
+-
+Playing
+RUN(audio.play())
+Promise resolved OK
+EXPECTED (audio.currentTime > '0.1') OK
+EVENT(seeked)
+EXPECTED (audio.currentTime > '1.1') OK
+END OF TEST
+

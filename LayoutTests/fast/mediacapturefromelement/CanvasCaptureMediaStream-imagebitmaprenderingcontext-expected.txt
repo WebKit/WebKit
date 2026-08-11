@@ -1,0 +1,4 @@
+
+FAIL Untitled recorder.start is not a function. (In 'recorder.start(0)', 'recorder.start' is undefined)
+FAIL Untitled 1 recorder.start is not a function. (In 'recorder.start(0)', 'recorder.start' is undefined)
+

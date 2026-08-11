@@ -1,0 +1,63 @@
+<head>
+<style>
+*:not(head):not(script):not(style) {
+    column-rule: solid;
+    column-span: all;
+    column-count: 44;
+}
+#elementID2 {
+    display: flex;
+    float: right;
+    -webkit-user-modify: read-write;
+}
+</style>
+<script>
+let selectSubtreeChangedCount = 0;
+
+function test() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    elementID3.hidden = true;
+    elementID4.addEventListener("DOMSubtreeModified", selectSubtreeChanged);
+    mutateSubtree();
+}
+
+function mutateSubtree() {
+    getSelection().setBaseAndExtent(document.createElement("div"), 0, elementID6, 0);
+    elementID4.options.add(elementID5);
+    document.execCommand("subscript", false);
+    document.execCommand("insertText", false, "1");
+}
+
+function selectSubtreeChanged() {
+    selectSubtreeChangedCount++;
+
+    if (selectSubtreeChangedCount > 1) {
+        requestAnimationFrame(finish);
+        return;
+    }
+
+    requestAnimationFrame(mutateSubtree);
+    elementID2.prepend(String.fromCodePoint(0));
+    elementID4.length = 99;
+    elementID4.lastChild.appendChild(elementID6);
+}
+
+function finish() {
+    document.body.innerHTML = 'PASS if no crash.'
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<body onload="test()">
+    <embed id="elementID1"></embed>
+    <div id="elementID2">
+        <div id="elementID3"></div>
+        <select id="elementID4">
+            <optgroup id="elementID5" tabindex="0"></optgroup>
+        </select>
+    </div>
+    <div id="elementID6"></div>
+</body>

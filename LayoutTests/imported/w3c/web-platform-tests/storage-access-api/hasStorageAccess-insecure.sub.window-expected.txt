@@ -1,0 +1,17 @@
+
+PASS [top-level-context] document.hasStorageAccess() should be supported on the document interface
+PASS [top-level-context] document.hasStorageAccess() should be disallowed in insecure contexts
+PASS [top-level-context] document.hasStorageAccess() should reject in a document that isn't fully active.
+PASS [same-origin-frame] document.hasStorageAccess() should be supported on the document interface
+PASS [same-origin-frame] document.hasStorageAccess() should be disallowed in insecure contexts
+PASS [same-origin-frame] document.hasStorageAccess() should reject in a document that isn't fully active.
+PASS [nested-same-origin-frame] document.hasStorageAccess() should be supported on the document interface
+PASS [nested-same-origin-frame] document.hasStorageAccess() should be disallowed in insecure contexts
+PASS [nested-same-origin-frame] document.hasStorageAccess() should reject in a document that isn't fully active.
+PASS [cross-origin-frame] document.hasStorageAccess() should be supported on the document interface
+PASS [cross-origin-frame] document.hasStorageAccess() should be disallowed in insecure contexts
+PASS [cross-origin-frame] document.hasStorageAccess() should reject in a document that isn't fully active.
+PASS [nested-cross-origin-frame] document.hasStorageAccess() should be supported on the document interface
+PASS [nested-cross-origin-frame] document.hasStorageAccess() should be disallowed in insecure contexts
+PASS [nested-cross-origin-frame] document.hasStorageAccess() should reject in a document that isn't fully active.
+

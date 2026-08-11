@@ -1,0 +1,115 @@
+/**
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved
+ * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/) 
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "RenderTextControlMultiLine.h"
+
+#include "HTMLNames.h"
+#include "HTMLTextAreaElement.h"
+#include "HitTestResult.h"
+#include "LocalFrame.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderLayerScrollableArea.h"
+#include "ShadowRoot.h"
+#include "StyleComputedStyle+SettersInlines.h"
+#include "TextControlInnerElements.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTextControlMultiLine);
+
+RenderTextControlMultiLine::RenderTextControlMultiLine(HTMLTextAreaElement& element, Style::ComputedStyle&& style)
+    : RenderTextControl(Type::TextControlMultiLine, element, WTF::move(style))
+{
+    ASSERT(isRenderTextControlMultiLine());
+}
+
+// Do not add any code in below destructor. Add it to willBeDestroyed() instead.
+RenderTextControlMultiLine::~RenderTextControlMultiLine() = default;
+
+HTMLTextAreaElement& RenderTextControlMultiLine::textAreaElement() const
+{
+    return downcast<HTMLTextAreaElement>(RenderTextControl::textFormControlElement());
+}
+
+bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+{
+    if (!RenderTextControl::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
+        return false;
+
+    const LayoutPoint adjustedPoint(accumulatedOffset + location());
+    if (isPointInOverflowControl(result, locationInContainer.point(), adjustedPoint))
+        return true;
+
+    if (result.innerNode() == &textAreaElement() || result.innerNode() == innerTextElement())
+        hitInnerTextElement(result, locationInContainer.point(), accumulatedOffset);
+
+    return true;
+}
+
+float RenderTextControlMultiLine::getAverageCharWidth()
+{
+#if !PLATFORM(IOS_FAMILY)
+    // Since Lucida Grande is the default font, we want this to match the width
+    // of Courier New, the default font for textareas in IE, Firefox and Safari Win.
+    // 1229 is the avgCharWidth value in the OS/2 table for Courier New.
+    if (style().fontCascade().firstFamily().name == "Lucida Grande"_s)
+        return scaleEmToUnits(1229);
+#endif
+
+    return RenderTextControl::getAverageCharWidth();
+}
+
+LayoutUnit RenderTextControlMultiLine::preferredContentLogicalWidth(float charWidth) const
+{
+    float width = ceilf(charWidth * textAreaElement().cols());
+
+    auto overflow = writingMode().isHorizontal() ? style().overflowY() : style().overflowX();
+
+    // We are able to have a vertical scrollbar if the overflow style is scroll or auto
+    if ((overflow == Overflow::Scroll) || (overflow == Overflow::Auto))
+        width += scrollbarThickness();
+
+    return LayoutUnit(width);
+}
+
+LayoutUnit RenderTextControlMultiLine::computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
+{
+    return lineHeight * textAreaElement().rows() + nonContentHeight;
+}
+
+void RenderTextControlMultiLine::layoutExcludedChildren(RelayoutChildren relayoutChildren)
+{
+    RenderTextControl::layoutExcludedChildren(relayoutChildren);
+    RefPtr placeholder = protect(textFormControlElement())->placeholderElement();
+    CheckedPtr placeholderRenderer = placeholder ? placeholder->renderer() : 0;
+    if (!placeholderRenderer)
+        return;
+    if (CheckedPtr placeholderBox = dynamicDowncast<RenderBox>(placeholderRenderer.get())) {
+        placeholderBox->mutableStyle().setLogicalWidth(Style::PreferredSize::Fixed { contentBoxLogicalWidth() - placeholderBox->borderAndPaddingLogicalWidth() });
+        placeholderBox->layoutIfNeeded();
+        placeholderBox->setX(borderLeft() + paddingLeft());
+        placeholderBox->setY(borderTop() + paddingTop());
+    }
+}
+    
+}

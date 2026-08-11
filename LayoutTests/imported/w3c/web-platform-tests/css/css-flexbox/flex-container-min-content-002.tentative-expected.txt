@@ -1,0 +1,118 @@
+X
+
+X
+
+X
+
+X X
+X X
+
+X X
+X X
+
+X X
+X X
+X
+
+X
+
+X
+
+X X
+X X
+
+X X
+X X
+
+X X
+X X
+X
+
+X
+
+X
+
+X X
+X X
+
+X X
+X X
+
+X X
+X X
+X
+
+X
+
+X
+
+X X
+X X
+
+X X
+X X
+
+X X
+X X
+
+PASS .flex 1
+FAIL .flex 2 assert_equals:
+<div class="flex min" style="flex-flow: row nowrap" data-expected-width="45" data-expected-height="45">
+  <div style="width: 25px; height: 25px">X</div>
+</div>
+height expected 45 but got 10
+PASS .flex 3
+PASS .flex 4
+FAIL .flex 5 assert_equals:
+<div class="flex min" style="flex-flow: row nowrap" data-expected-width="80" data-expected-height="70">
+  <div data-expected-width="35" data-expected-height="60">X X</div>
+  <div data-expected-width="35" data-expected-height="60">X X</div>
+</div>
+height expected 70 but got 10
+PASS .flex 6
+PASS .flex 7
+FAIL .flex 8 assert_equals:
+<div class="flex min" style="flex-flow: column nowrap" data-expected-width="45" data-expected-height="45">
+  <div style="width: 25px; height: 25px">X</div>
+</div>
+height expected 45 but got 10
+PASS .flex 9
+PASS .flex 10
+FAIL .flex 11 assert_equals:
+<div class="flex min" style="flex-flow: column nowrap" data-expected-width="45" data-expected-height="130">
+  <div data-expected-width="35" data-expected-height="60">X X</div>
+  <div data-expected-width="35" data-expected-height="60">X X</div>
+</div>
+height expected 130 but got 10
+PASS .flex 12
+PASS .flex 13
+FAIL .flex 14 assert_equals:
+<div class="flex min" style="flex-flow: row wrap" data-expected-width="45" data-expected-height="45">
+  <div style="width: 25px; height: 25px">X</div>
+</div>
+height expected 45 but got 10
+PASS .flex 15
+PASS .flex 16
+FAIL .flex 17 assert_equals:
+<div class="flex min" style="flex-flow: row wrap" data-expected-width="45" data-expected-height="130">
+  <div data-expected-width="35" data-expected-height="60">X X</div>
+  <div data-expected-width="35" data-expected-height="60">X X</div>
+</div>
+height expected 130 but got 10
+PASS .flex 18
+PASS .flex 19
+FAIL .flex 20 assert_equals:
+<div class="flex min" style="flex-flow: column wrap" data-expected-width="45" data-expected-height="45">
+  <div style="width: 25px; height: 25px">X</div>
+</div>
+height expected 45 but got 10
+PASS .flex 21
+PASS .flex 22
+FAIL .flex 23 assert_equals:
+<div class="flex min" style="flex-flow: column wrap" data-expected-width="45" data-expected-height="70">
+  <div data-expected-width="35" data-expected-height="60">X X</div>
+  <div data-expected-width="35" data-expected-height="60">X X</div>
+</div>
+height expected 70 but got 10
+PASS .flex 24
+

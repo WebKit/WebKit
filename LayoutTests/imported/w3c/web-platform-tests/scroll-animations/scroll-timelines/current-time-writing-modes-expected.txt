@@ -1,0 +1,7 @@
+
+PASS currentTime handles direction: rtl correctly
+PASS currentTime handles writing-mode: vertical-rl correctly
+PASS currentTime handles writing-mode: sideways-rl correctly
+PASS currentTime handles writing-mode: vertical-lr correctly
+PASS currentTime handles writing-mode: sideways-lr correctly
+

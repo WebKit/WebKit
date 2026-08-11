@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+
+<html>
+    <head>
+        <title>local video</title>
+
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+            function ended()
+            {
+                testExpected("video.duration", 0, '>');
+                endTest();
+            }
+
+            function playing()
+            {
+                run("video.currentTime = video.duration - 0.2");
+            }
+
+            function loadedmetadata()
+            {
+                video.addEventListener("ended", ended);
+                video.addEventListener("playing", playing);
+
+                run("video.play()");
+            }
+
+            function start()
+            {
+                findMediaElement();
+
+                video.addEventListener("loadedmetadata", loadedmetadata);
+                video.src = findMediaFile("video", "content/test");
+                consoleWrite("");
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls autobuffer></video>
+        <p>Tests that duration is known after playback ended.</p>
+    </body>
+</html>
+
+

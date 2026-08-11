@@ -1,0 +1,4 @@
+
+FAIL fetch() and duplicate Content-Length/Content-Type headers assert_equals: expected "text/plain, text/plain" but got "text/plain"
+FAIL XMLHttpRequest and duplicate Content-Length/Content-Type headers assert_equals: expected "text/plain, text/plain" but got "text/plain"
+

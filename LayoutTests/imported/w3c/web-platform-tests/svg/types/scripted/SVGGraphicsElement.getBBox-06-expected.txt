@@ -1,0 +1,5 @@
+
+FAIL Non-rendered symbol with rect returns zero bbox assert_equals: symbol1_rect.getBBox().x expected 0 but got 50
+FAIL display:none <g> with rect returns zero bbox assert_equals: g_none_rect.getBBox().x expected 0 but got 70
+PASS display:none <rect> returns zero bbox
+

@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: assert_true
+
+FAIL Control: detected remote PC being closed using a worker data channel assert_true: expected true got false
+PASS While remote PC remains open, its worker datachannel should not be collected
+

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/computed-testcommon.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/color-testcommon.js"></script>
+</head>
+<body>
+<div id="container">
+  <div id="target"></div>
+</div>
+<script>
+
+// Test achromatic colors do not have a hue.
+fuzzy_test_computed_color("oklch(from white l c h)", "oklch(1 0 0)");
+fuzzy_test_computed_color("oklch(from black l c h)", "oklch(0 0 0)");
+fuzzy_test_computed_color("oklch(from grey l c h)", "oklch(0.599 0 0)");
+fuzzy_test_computed_color("lch(from white l c h)", "lch(100 0 0)");
+fuzzy_test_computed_color("lch(from black l c h)", "lch(0 0 0)");
+fuzzy_test_computed_color("lch(from grey l c h)", "lch(53.585 0 0)");
+
+// Test mostly achromatic (less than epsilon chroma) colors do not have a hue.
+// epsilon for oklab/oklch is `0.8 / 100000.0` or `0.000008`
+fuzzy_test_computed_color("oklch(from oklab(0.5 0.0000079 0.0000079) l c h)", "oklch(0.5 0 0)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 -0.0000079 -0.0000079) l c h)", "oklch(0.5 0 0)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 0.0000079 -0.0000079) l c h)", "oklch(0.5 0 0)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 -0.0000079 0.0000079) l c h)", "oklch(0.5 0 0)");
+// epsilon for lab/lch is `250.0 / 100000.0` or `0.0025`
+fuzzy_test_computed_color("lch(from lab(50 0.00249 0.00249) l c h)", "lch(50 0 0)");
+fuzzy_test_computed_color("lch(from lab(50 -0.00249 -0.00249) l c h)", "lch(50 0 0)");
+fuzzy_test_computed_color("lch(from lab(50 0.00249 -0.00249) l c h)", "lch(50 0 0)");
+fuzzy_test_computed_color("lch(from lab(50 -0.00249 0.00249) l c h)", "lch(50 0 0)");
+
+// Test colors that have small chroma (greater than epsilon) do have a hue.
+fuzzy_test_computed_color("oklch(from #e5f6ff l c h)", "oklch(0.963 0.022 230.537)");
+fuzzy_test_computed_color("lch(from #e5f6ff l c h)", "lch(95.815 7.783 234.717)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 0.000008 0.000008) l c h)", "oklch(0.5 0 45)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 -0.0000080 -0.0000080) l c h)", "oklch(0.5 0 225)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 0.0000080 -0.0000080) l c h)", "oklch(0.5 0 315)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 -0.0000080 0.0000080) l c h)", "oklch(0.5 0 135)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 0.1 0.0000080) l c h)", "oklch(0.5 0.1 0)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 -0.1 -0.0000080) l c h)", "oklch(0.5 0.1 180)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 0.1 -0.0000080) l c h)", "oklch(0.5 0.1 360)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 -0.1 0.0000080) l c h)", "oklch(0.5 0.1 180)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 0.0000080 0.1) l c h)", "oklch(0.5 0.1 90)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 -0.0000080 -0.1) l c h)", "oklch(0.5 0.1 270)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 0.0000080 -0.1) l c h)", "oklch(0.5 0.1 270)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 -0.0000080 0.1) l c h)", "oklch(0.5 0.1 90)");
+fuzzy_test_computed_color("lch(from lab(50 0.01 0.01) l c h)", "lch(50 0.014 45)");
+fuzzy_test_computed_color("lch(from lab(50 -0.01 -0.01) l c h)", "lch(50 0.014 225)");
+fuzzy_test_computed_color("lch(from lab(50 0.01 -0.01) l c h)", "lch(50 0.014 315)");
+fuzzy_test_computed_color("lch(from lab(50 -0.01 0.01) l c h)", "lch(50 0.014 135)");
+fuzzy_test_computed_color("lch(from lab(50 25 0.01) l c h)", "lch(50 25 0.023)");
+fuzzy_test_computed_color("lch(from lab(50 -25 -0.01) l c h)", "lch(50 25 180.022)");
+fuzzy_test_computed_color("lch(from lab(50 25 -0.01) l c h)", "lch(50 25 359.977)");
+fuzzy_test_computed_color("lch(from lab(50 -25 0.01) l c h)", "lch(50 25 179.977)");
+fuzzy_test_computed_color("lch(from lab(50 0.01 25) l c h)", "lch(50 25 89.977)");
+fuzzy_test_computed_color("lch(from lab(50 -0.01 -25) l c h)", "lch(50 25 269.977)");
+fuzzy_test_computed_color("lch(from lab(50 0.01 -25) l c h)", "lch(50 25 270.023)");
+fuzzy_test_computed_color("lch(from lab(50 -0.01 25) l c h)", "lch(50 25 90.023)");
+
+</script>
+</body>
+</html>

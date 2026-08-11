@@ -1,0 +1,130 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if PLATFORM(IOS_FAMILY)
+
+#import "EndowmentStateTracker.h"
+#import <wtf/Forward.h>
+#import <wtf/RefCountedAndCanMakeWeakPtr.h>
+#import <wtf/TZoneMalloc.h>
+#import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
+
+OBJC_CLASS BKSApplicationStateMonitor;
+OBJC_CLASS UIView;
+OBJC_CLASS UIViewController;
+OBJC_CLASS UIWindow;
+OBJC_CLASS UIScene;
+OBJC_CLASS WKUIWindowSceneObserver;
+
+namespace WebKit {
+
+enum class ApplicationType : uint8_t {
+    Application,
+    ViewService,
+    Extension,
+};
+
+class ApplicationStateTracker
+    : public RefCountedAndCanMakeWeakPtr<ApplicationStateTracker>
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    , EndowmentStateTrackerClient
+#endif
+{
+    WTF_MAKE_TZONE_ALLOCATED(ApplicationStateTracker);
+public:
+    static RefPtr<ApplicationStateTracker> create(UIView *view, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector)
+    {
+        return adoptRef(new ApplicationStateTracker(view, didEnterBackgroundSelector, willEnterForegroundSelector, willBeginSnapshotSequenceSelector, didCompleteSnapshotSequenceSelector));
+    }
+
+    ~ApplicationStateTracker();
+
+#if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
+    // EndowmentStateTrackerClient
+    USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<ApplicationStateTracker>);
+    void ref() const final { RefCountedAndCanMakeWeakPtr::ref(); }
+    void deref() const final { RefCountedAndCanMakeWeakPtr::deref(); }
+    void isVisibleChanged(bool) final;
+#endif
+
+    bool isInBackground() const { return m_isInBackground; }
+
+    void setWindow(UIWindow *);
+    void setScene(UIScene *);
+
+private:
+    ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector, SEL willBeginSnapshotSequenceSelector, SEL didCompleteSnapshotSequenceSelector);
+
+    void setViewController(UIViewController *);
+
+    void setIsInBackground(bool);
+
+    bool isWindowAndSceneInBackground() const;
+
+    void applicationDidEnterBackground();
+    void applicationDidFinishSnapshottingAfterEnteringBackground();
+    void applicationWillEnterForeground();
+    void willBeginSnapshotSequence();
+    void didCompleteSnapshotSequence();
+    void removeAllObservers();
+
+    enum class SceneState : uint8_t {
+        Unknown,
+        Foreground,
+        Background,
+    };
+    bool shouldBeInBackground(SceneState = SceneState::Unknown) const;
+    void updateIsInBackground(SceneState = SceneState::Unknown);
+
+    WeakObjCPtr<UIView> m_view;
+    WeakObjCPtr<UIWindow> m_window;
+    WeakObjCPtr<UIScene> m_scene;
+    WeakObjCPtr<UIViewController> m_viewController;
+
+    RetainPtr<WKUIWindowSceneObserver> m_observer;
+
+    ApplicationType m_applicationType { ApplicationType::Application };
+
+    SEL m_didEnterBackgroundSelector;
+    SEL m_willEnterForegroundSelector;
+    SEL m_willBeginSnapshotSequenceSelector;
+    SEL m_didCompleteSnapshotSequenceSelector;
+
+    bool m_isInBackground;
+
+    WeakObjCPtr<NSObject> m_didEnterBackgroundObserver;
+    WeakObjCPtr<NSObject> m_willEnterForegroundObserver;
+    WeakObjCPtr<NSObject> m_willBeginSnapshotSequenceObserver;
+    WeakObjCPtr<NSObject> m_didCompleteSnapshotSequenceObserver;
+};
+
+ApplicationType applicationType(UIWindow *);
+
+}
+
+#endif

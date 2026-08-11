@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests if repaint rect is calculated properly for WK1 when parent layer has non-compositing transform.</title>
+<style>
+  .inner {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 2px;
+    height: 2px;
+    border: solid black 0.5px;
+  }
+
+  .outer {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    -webkit-transform: translateX(0px);
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+
+  var container = document.getElementById("container");
+  for (i = 0; i < 30; ++i) {
+    adjustment = 0;
+    for (j = 0; j < 20; ++j) {
+      var outer = document.createElement("div");
+      outer.style.top = 7 * (i + j * adjustment)  + "px";
+      outer.style.left = 7 * (j + i * adjustment)  + "px";
+      outer.className = "outer";
+
+      var inner = document.createElement("div");
+      inner.style.top = (-adjustment) + "px";
+      inner.style.left = (-adjustment) + "px";
+      inner.className = "inner";
+      adjustment += 0.1;
+      
+      outer.appendChild(inner);
+      container.appendChild(outer);
+    }
+  }
+
+  function move() {
+    if (window.testRunner && window.internals) {
+      window.testRunner.dumpAsText(false);
+      window.internals.startTrackingRepaints();
+    }
+
+     divs = document.getElementsByClassName("outer");
+     for (i = 0; i < divs.length; ++i)
+       divs[i].style.left = "-100px";
+
+    if (window.testRunner) {
+        var dummy = document.body.offsetTop;
+        var repaintRects = window.internals.repaintRectsAsText();
+        window.internals.stopTrackingRepaints();
+
+        var pre = document.createElement('pre');
+        document.body.appendChild(pre);
+        pre.innerHTML = repaintRects;
+        testRunner.notifyDone();
+      }
+  }
+
+  setTimeout(move, 1000);
+
+</script>
+</body>
+</html>

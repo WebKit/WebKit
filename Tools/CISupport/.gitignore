@@ -1,0 +1,10 @@
+http.log*
+ews.log*
+ews_console.log*
+twistd.log*
+twistd.pid
+state.sqlite
+passwords.json
+workers/
+archives/
+results/

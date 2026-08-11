@@ -1,0 +1,183 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/HTMLModelElementCamera.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/LayoutPoint.h>
+#include <WebCore/LayoutSize.h>
+#include <WebCore/ModelPlayerAccessibilityChildren.h>
+#include <WebCore/ModelPlayerIdentifier.h>
+#include <WebCore/NodeIdentifier.h>
+#include <optional>
+#include <wtf/Forward.h>
+#include <wtf/MonotonicTime.h>
+#include <wtf/Platform.h>
+#include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+
+#if ENABLE(MODEL_ELEMENT_STAGE_MODE)
+#include <WebCore/StageModeOperations.h>
+#endif
+
+#if ENABLE(SPATIAL_PORTAL)
+#include <WebCore/PortalAction.h>
+#include <WebCore/PortalTransform.h>
+#endif
+
+#if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
+#include <WebCore/PlatformDynamicRangeLimit.h>
+#endif
+
+namespace WebCore {
+
+class FloatPoint3D;
+class GraphicsLayer;
+class ImageBuffer;
+class Model;
+class ModelPlayerAnimationState;
+class ModelPlayerTransformState;
+class SharedBuffer;
+class TransformationMatrix;
+
+class DestinationColorSpace;
+class FloatSize;
+struct ModelPlayerGraphicsLayerConfiguration;
+
+class WEBCORE_EXPORT ModelPlayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ModelPlayer, WTF::DestructionThread::Main> {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ModelPlayer, WEBCORE_EXPORT);
+public:
+    virtual ~ModelPlayer();
+
+    virtual ModelPlayerIdentifier identifier() const = 0;
+    virtual bool NODELETE isPlaceholder() const;
+    virtual bool NODELETE isWebModelPlayerInstance() const;
+
+    // Loading.
+    virtual void load(NodeIdentifier, Model&, LayoutSize, bool) = 0;
+    virtual void unload(NodeIdentifier);
+    virtual void NODELETE reload(NodeIdentifier, Model&, LayoutSize, ModelPlayerAnimationState&, std::unique_ptr<ModelPlayerTransformState>&&);
+
+    // Graphics.
+    virtual void configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) = 0;
+    virtual void NODELETE adoptContentsDisplayDelegateFrom(ModelPlayer&);
+
+    virtual RefPtr<ImageBuffer> snapshotCurrentFrame(const FloatSize& deviceSize, const DestinationColorSpace&);
+
+    // State changes.
+    virtual void NODELETE visibilityStateDidChange();
+    virtual void sizeDidChange(LayoutSize) = 0;
+
+    // State accessors.
+    virtual std::optional<ModelPlayerAnimationState> currentAnimationState(NodeIdentifier) const;
+    virtual std::optional<std::unique_ptr<ModelPlayerTransformState>> currentTransformState(NodeIdentifier) const;
+
+#if ENABLE(MODEL_ELEMENT_BOUNDING_BOX)
+    virtual std::optional<FloatPoint3D> boundingBoxCenter(NodeIdentifier) const;
+    virtual std::optional<FloatPoint3D> boundingBoxExtents(NodeIdentifier) const;
+#endif
+
+#if ENABLE(MODEL_ELEMENT_ENTITY_TRANSFORM)
+    virtual std::optional<TransformationMatrix> entityTransform(NodeIdentifier) const;
+    virtual void setEntityTransform(NodeIdentifier, TransformationMatrix);
+    virtual bool supportsTransform(TransformationMatrix);
+#endif
+
+    // Fullscreen.
+    virtual void enterFullscreen() = 0;
+
+    // Interaction.
+    virtual bool NODELETE supportsMouseInteraction();
+    virtual bool NODELETE supportsDragging();
+    virtual void NODELETE setInteractionEnabled(bool);
+    virtual void handleMouseDown(const LayoutPoint&, MonotonicTime) = 0;
+    virtual void handleMouseMove(const LayoutPoint&, MonotonicTime) = 0;
+    virtual void handleMouseUp(const LayoutPoint&, MonotonicTime) = 0;
+#if ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
+    virtual void beginStageModeTransform(const TransformationMatrix&);
+    virtual void updateStageModeTransform(const TransformationMatrix&);
+    virtual void endStageModeInteraction();
+    virtual void animateModelToFitPortal(CompletionHandler<void(bool)>&&);
+    virtual void resetModelTransformAfterDrag();
+#endif
+
+    virtual void getCamera(CompletionHandler<void(std::optional<HTMLModelElementCamera>&&)>&&) = 0;
+    virtual void setCamera(HTMLModelElementCamera, CompletionHandler<void(bool success)>&&) = 0;
+    virtual void isPlayingAnimation(NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
+    virtual void setAnimationIsPlaying(NodeIdentifier, bool, CompletionHandler<void(bool success)>&&) = 0;
+    virtual void isLoopingAnimation(NodeIdentifier, CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
+    virtual void setIsLoopingAnimation(NodeIdentifier, bool, CompletionHandler<void(bool success)>&&) = 0;
+    virtual void animationDuration(NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&) = 0;
+    virtual void animationCurrentTime(NodeIdentifier, CompletionHandler<void(std::optional<Seconds>&&)>&&) = 0;
+    virtual void setAnimationCurrentTime(NodeIdentifier, Seconds, CompletionHandler<void(bool success)>&&) = 0;
+
+#if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
+    virtual ModelPlayerAccessibilityChildren accessibilityChildren() = 0;
+#endif
+
+#if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
+    virtual void setAutoplay(NodeIdentifier, bool);
+    virtual void setLoop(NodeIdentifier, bool);
+    virtual void setPlaybackRate(NodeIdentifier, double, CompletionHandler<void(double effectivePlaybackRate)>&&);
+    virtual double duration(NodeIdentifier) const;
+    virtual bool paused(NodeIdentifier) const;
+    virtual void setPaused(NodeIdentifier, bool, CompletionHandler<void(bool succeeded)>&&);
+    virtual Seconds currentTime(NodeIdentifier) const;
+    virtual void setCurrentTime(NodeIdentifier, Seconds, CompletionHandler<void()>&&);
+#endif
+
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+    virtual void setEnvironmentMap(Ref<SharedBuffer>&& data);
+#endif
+
+#if ENABLE(MODEL_ELEMENT_PORTAL)
+    virtual void setHasPortal(bool);
+#endif
+
+#if ENABLE(SPATIAL_PORTAL)
+    virtual void setPortalTransform(PortalTransformKind);
+    virtual void setPortalAction(PortalActionKind);
+#endif
+
+#if ENABLE(MODEL_ELEMENT_STAGE_MODE)
+    virtual void setStageMode(StageModeOperation);
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
+    virtual void ensureImmersivePresentation(CompletionHandler<void(std::optional<LayerHostingContextIdentifier>)>&&);
+    virtual void exitImmersivePresentation(CompletionHandler<void()>&&);
+#endif
+
+#if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
+    virtual void setDynamicRangeLimit(PlatformDynamicRangeLimit, float, bool);
+    virtual std::optional<double> getEffectiveDynamicRangeLimitValue() const;
+#endif
+};
+
+} // namespace WebCore

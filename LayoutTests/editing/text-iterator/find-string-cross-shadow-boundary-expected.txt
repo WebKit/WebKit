@@ -1,0 +1,42 @@
+Tests that cross-shadow-boundary matches are found in flat tree mode but rejected with DoNotTraverseFlatTree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Single shadow root with slot
+
+Flat tree mode: cross-boundary matches found
+PASS internals.countFindMatches('shadow-before slotted', []) is 1
+PASS internals.countFindMatches('slotted shadow-after', []) is 1
+PASS internals.countFindMatches('shadow-before slotted shadow-after', []) is 1
+
+DoNotTraverseFlatTree: shadow content not reachable from document scope
+PASS internals.countFindMatches('shadow-before slotted', ['DoNotTraverseFlatTree']) is 0
+PASS internals.countFindMatches('slotted shadow-after', ['DoNotTraverseFlatTree']) is 0
+PASS internals.countFindMatches('shadow-before slotted shadow-after', ['DoNotTraverseFlatTree']) is 0
+PASS internals.countFindMatches('shadow-before', ['DoNotTraverseFlatTree']) is 0
+PASS internals.countFindMatches('shadow-after', ['DoNotTraverseFlatTree']) is 0
+
+Light DOM content found in both modes
+PASS internals.countFindMatches('slotted', ['DoNotTraverseFlatTree']) is 1
+PASS internals.countFindMatches('slotted', []) is 1
+
+Nested shadow roots
+
+Flat tree mode: cross-boundary matches across nesting levels
+PASS internals.countFindMatches('outer-before inner-before deep', []) is 1
+PASS internals.countFindMatches('deep inner-after outer-after', []) is 1
+PASS internals.countFindMatches('outer-before inner-before deep inner-after outer-after', []) is 1
+
+DoNotTraverseFlatTree: nested shadow content not reachable
+PASS internals.countFindMatches('outer-before inner-before deep', ['DoNotTraverseFlatTree']) is 0
+PASS internals.countFindMatches('deep inner-after outer-after', ['DoNotTraverseFlatTree']) is 0
+PASS internals.countFindMatches('outer-before', ['DoNotTraverseFlatTree']) is 0
+PASS internals.countFindMatches('inner-before', ['DoNotTraverseFlatTree']) is 0
+PASS internals.countFindMatches('deep', ['DoNotTraverseFlatTree']) is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+slotted
+deep

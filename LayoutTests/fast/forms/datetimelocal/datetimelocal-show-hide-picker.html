@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    width: 300px;
+    height: 50px;
+}
+
+body {
+    margin: 0;
+}
+</style>
+<head>
+<body onload="runTest()">
+<input id="input" type="datetime-local"/>
+<pre>1. Is showing date picker? <span id="before"></span></pre>
+<pre>2. Is showing date picker? <span id="after"></span></pre>
+<br>
+<div>This test verifies that a date picker is presented when clicking on a datetime-local input.</div>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function runTest() {
+    await UIHelper.activateAndWaitForInputSessionAt(150, 25);
+
+    before.textContent = await UIHelper.isShowingDateTimePicker();
+    input.blur();
+    after.textContent = await UIHelper.isShowingDateTimePicker();
+
+    testRunner.notifyDone();
+}
+</script>
+</html>

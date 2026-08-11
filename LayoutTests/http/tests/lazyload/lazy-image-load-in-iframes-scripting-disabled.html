@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="placeholder.js"></script>
+<script>
+    if (window.internals)
+        internals.settings.setLazyImageLoadingEnabled(true);
+    var t = async_test("Verify that iframe's with scripting off disallow lazy image loading.");
+    function finish() {
+        assert_equals(is_image_fully_loaded(document.getElementById('sandboxedframe').contentWindow.document.getElementById('below_viewport')), true);
+        t.done();
+    }
+</script>
+
+<body>
+    <div style="height:10000px;"></div>
+    <iframe id="sandboxedframe" style="visibility:hidden;display:none" sandbox="allow-same-origin" src="resources/lazy-load-in-iframe.html" onload="finish()"></iframe>
+    <div id="log"></div>
+</body>

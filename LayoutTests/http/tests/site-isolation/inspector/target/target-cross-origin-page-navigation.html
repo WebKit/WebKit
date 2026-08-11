@@ -1,0 +1,142 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+
+<script>
+    function navigateCrossOrigin() {
+        location.hostname = location.hostname === "127.0.0.1" ? "localhost" : "127.0.0.1";
+    }
+
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.Target.CrossOriginPageNavigation");
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.CrossOriginPageNavigation.FrameTargetLifetime",
+            description: "On cross-origin page navigation, frame targets are destroyed and created as appropriate.",
+            async test(script) {
+                let oldFrameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+                InspectorTest.expectEqual(oldFrameTargets.length, 3, "Should have main, middle, and leaf frame targets before navigation.");
+                let urlTargetMap = await fetchDocumentURLsForTargets(oldFrameTargets);
+                InspectorTest.log("Frame URLs before navigation:");
+                InspectorTest.log(Array.from(urlTargetMap.keys()).sort().join("\n"));
+
+                let oldMainFrameTargetId = urlTargetMap.get(WI.networkManager.mainFrame.url).identifier;
+
+                // Promises that wait for the next TargetAdded and DidCommitProvisionalTarget events for a frame.
+                let provisionalFrameTargetAdded = new Promise(function (resolve) {
+                    function handle(event) {
+                        let { target } = event.data;
+                        if (target.type === WI.TargetType.Frame) {
+                            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, handle);
+                            resolve(target.identifier);
+                        }
+                    }
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, handle);
+                });
+                let provisionalFrameTargetCommitted = new Promise(function (resolve) {
+                    function handle(event) {
+                        let { previousTargetId, target } = event.data;
+                        if (target.type === WI.TargetType.Frame) {
+                            WI.targetManager.removeEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handle);
+                            resolve({ previousTargetId, newTargetId: target.identifier });
+                        }
+                    }
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handle);
+                });
+
+                InspectorTest.log("Navigating cross-origin...");
+                InspectorTest.deferOutputUntilTestPageIsReloaded();
+                InspectorTest.evaluateInPage(`navigateCrossOrigin();`);
+
+                // Wait for the log from leaf-iframe to ensure all loading has completed.
+                await WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded);
+
+                let provisionalFrameTargetId = await provisionalFrameTargetAdded;
+                InspectorTest.pass("Provisional main frame target gets created.");
+
+                let { previousTargetId, newTargetId } = await provisionalFrameTargetCommitted;
+                InspectorTest.expectEqual(newTargetId, provisionalFrameTargetId, "Main frame target is committed.");
+                InspectorTest.expectEqual(previousTargetId, oldMainFrameTargetId, "Previous id reported by the commit event should be the old main frame target's id.");
+
+                let newFrameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+                InspectorTest.expectEqual(newFrameTargets.length, 3, "Should have main, middle, and leaf frame targets after navigation.");
+                InspectorTest.log("Frame URLs after navigation:");
+                InspectorTest.log(Array.from((await fetchDocumentURLsForTargets(newFrameTargets)).keys()).sort().join("\n"));
+
+                let oldIds = oldFrameTargets.map((t) => t.identifier);
+                let targetsHaveNewIds = newFrameTargets.every((t) => !oldIds.includes(t.identifier));
+                InspectorTest.expectThat(targetsHaveNewIds, "Frame targets should be new despite the same page structure.");
+            },
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.CrossOriginPageNavigation.ProvisionalLoadCancelsPreviousLoad",
+            description: "Two consecutive cross-origin navigations cancel the first provisional frame target and commit the second.",
+            async test() {
+                // Prevent the first provisional target from resuming, which halts its
+                // provisional loading and gives us time to start a second navigation.
+                let originalResumeIfPaused = WI.Target.prototype._resumeIfPaused;
+                WI.Target.prototype._resumeIfPaused = function () { };
+
+                let firstProvisionalFrameTargetAdded = new Promise(function (resolve) {
+                    function handle(event) {
+                        let { target } = event.data;
+                        if (target.type === WI.TargetType.Frame && target.isProvisional) {
+                            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetAdded, handle);
+                            resolve(target);
+                        }
+                    }
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, handle);
+                });
+
+                InspectorTest.log("Navigating cross-origin while provisional target is paused...");
+                InspectorTest.deferOutputUntilTestPageIsReloaded();
+                InspectorTest.evaluateInPage(`navigateCrossOrigin();`);
+
+                let firstProvisionalTarget = await firstProvisionalFrameTargetAdded;
+                InspectorTest.pass("First provisional frame target was created.");
+
+                // Restore _resumeIfPaused so the second navigation commits normally.
+                WI.Target.prototype._resumeIfPaused = originalResumeIfPaused;
+
+                let frameTargetRemoved = new Promise(function (resolve) {
+                    function handle(event) {
+                        let { target } = event.data;
+                        if (target.type === WI.TargetType.Frame) {
+                            WI.targetManager.removeEventListener(WI.TargetManager.Event.TargetRemoved, handle);
+                            resolve(target);
+                        }
+                    }
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, handle);
+                });
+                let provisionalFrameTargetCommitted = new Promise(function (resolve) {
+                    function handle(event) {
+                        let { target } = event.data;
+                        if (target.type === WI.TargetType.Frame) {
+                            WI.targetManager.removeEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handle);
+                            resolve(target);
+                        }
+                    }
+                    WI.targetManager.addEventListener(WI.TargetManager.Event.DidCommitProvisionalTarget, handle);
+                });
+
+                InspectorTest.log("Navigating cross-origin again to cancel previous load...");
+                InspectorTest.deferOutputUntilTestPageIsReloaded();
+                InspectorTest.evaluateInPage(`navigateCrossOrigin();`);
+
+                let removedTarget = await frameTargetRemoved;
+                InspectorTest.expectEqual(removedTarget.identifier, firstProvisionalTarget.identifier, "First provisional frame target was removed.");
+
+                let committedTarget = await provisionalFrameTargetCommitted;
+                InspectorTest.pass("Second provisional frame target was committed.");
+                InspectorTest.expectNotEqual(committedTarget.identifier, firstProvisionalTarget.identifier, "Committed target should not be the first provisional.");
+            },
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+    <p>Test that frame targets are properly destroyed and created during a cross-origin page navigation.</p>
+    <iframe src="resources/middle-iframe.html"></iframe>
+</body>

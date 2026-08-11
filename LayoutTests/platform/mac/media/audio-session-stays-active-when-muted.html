@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>audio-session-stays-active-when-muted</title>
+	<script src="../../../media/video-test.js"></script>
+	<script src="../../../media/media-file.js"></script>
+	<script>
+	// Regression test for rdar://181517699 / bug 318736 (REGRESSION 316303@main):
+	// muting a playing element made canProduceAudio() false, so
+	// activeAudioSessionRequired() became false, and maybeActivateAudioSession()'s
+	// "not required" branch eagerly tore down the audio session. On pages whose
+	// audible content sits in Autoplaying rather than Playing (e.g. YouTube DASH
+	// audio), that teardown was permanent. maybeActivateAudioSession() is an
+	// "activate or no-op" function; deactivation must be driven only by lifecycle
+	// events (process suspension / last-session removal / capture stop), not by an
+	// audibility re-evaluation. This test asserts muting/unmuting does NOT
+	// deactivate, while a genuine suspend still does.
+	window.addEventListener('load', async event => {
+		if (!window.internals) {
+			failTest('This test requires internals.');
+			return;
+		}
+		failTestIn(20000);
+		run('internals.settings.setShouldDeactivateAudioSession(true)');
+		run('video = document.querySelector("video")');
+		run('video.src = findMediaFile("video", "../../../media/content/test")');
+		runWithKeyDown('video.play()');
+		await waitFor(video, 'playing');
+		testExpected('internals.audioSessionActive()', true);
+
+		// Muting the only playing element fires canProduceAudioChanged and makes
+		// activeAudioSessionRequired() false. The session must stay active.
+		run('video.muted = true');
+		testExpected('internals.audioSessionActive()', true);
+
+		// Unmuting must also keep it active.
+		run('video.muted = false');
+		testExpected('internals.audioSessionActive()', true);
+
+		// A genuine lifecycle event still deactivates (deactivation was not disabled
+		// wholesale, only removed from the audibility re-evaluation path).
+		run('internals.processWillSuspend()');
+		testExpected('internals.audioSessionActive()', false);
+		run('internals.processDidResume()');
+		testExpected('internals.audioSessionActive()', true);
+
+		endTest();
+	});
+	</script>
+</head>
+<body>
+	<video controls></video>
+</body>
+</html>

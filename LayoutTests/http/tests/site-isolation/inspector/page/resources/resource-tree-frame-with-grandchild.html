@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<title>Cross-origin frame with grandchild</title>
+<p>Cross-origin child that embeds a grandchild back on the original host.</p>
+<script>
+// This page is loaded on the cross-origin host (B). Embed a grandchild iframe
+// back on the original host (A) so the grandchild shares the main frame's
+// process -- the main(A) -> child(B) -> grandchild(A) collision topology.
+let grandchildHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+let iframe = document.createElement("iframe");
+iframe.name = "grandchild-frame";
+iframe.src = `http://${grandchildHost}:8000/site-isolation/inspector/page/resources/resource-tree-frame.html`;
+document.body.appendChild(iframe);
+</script>

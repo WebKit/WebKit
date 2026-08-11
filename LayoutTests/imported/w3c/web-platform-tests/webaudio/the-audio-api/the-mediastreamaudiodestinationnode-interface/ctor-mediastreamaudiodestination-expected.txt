@@ -1,0 +1,6 @@
+
+PASS AudioContext can be created without throwing
+PASS MediaStreamAudioDestinationNode: invalid constructor cases
+PASS MediaStreamAudioDestinationNode: default constructor behavior
+PASS MediaStreamAudioDestinationNode applies channelCount from options
+

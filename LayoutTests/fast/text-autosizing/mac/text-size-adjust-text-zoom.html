@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            -webkit-text-size-adjust: none;
+        }
+    </style>
+    <script>
+    if (window.internals) {
+        internals.settings.setTextAutosizingEnabled(false);
+        internals.setPageZoomFactor(2);
+    }
+    </script>
+</head>
+<body>
+    <p>When text autosizing is disabled, the size of this text should increase when using page zoom</p>
+</body>
+</html>

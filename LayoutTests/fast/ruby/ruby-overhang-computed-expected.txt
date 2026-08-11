@@ -1,0 +1,5 @@
+
+PASS Property ruby-overhang value "auto" computes to "auto"
+PASS Property ruby-overhang value "spaces" computes to "spaces"
+PASS Property ruby-overhang value "none" computes to "spaces"
+

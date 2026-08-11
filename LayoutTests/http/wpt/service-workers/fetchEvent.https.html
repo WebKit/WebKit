@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>Service Worker Fetch Event</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+var scope = "";
+var activeWorker;
+
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.register("fetchEvent-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+function doTest(name, title)
+{
+    promise_test(async (test) => {
+        var promise = new Promise((resolve, reject) => {
+            navigator.serviceWorker.addEventListener("message", (event) => {
+                resolve(event.data);
+            });
+            setTimeout(() => reject("No response message from service worker"), 5000);
+        });
+
+        activeWorker.postMessage(name);
+        var result = await promise;
+
+        assert_equals(result, "PASS");
+    }, title);
+}
+
+doTest("respond-twice", "FetchEvent respondWith should throw if called twice");
+doTest("request-sameobject", "FetchEvent request is SameObject");
+doTest("respond-undefined", "FetchEvent should be in error if responding with undefined");
+doTest("respond-not-response", "FetchEvent should be in error if not responding with a Response");
+doTest("respond-promise-not-response", "FetchEvent should be in error if responding with a Promise that does not resolve to a Response");
+doTest("respond-promise-reject", "FetchEvent should be in error if responding with a Promise that rejects");
+doTest("respond-promise-response", "FetchEvent should resolve when responding with a Response");
+
+</script>
+</body>
+</html>

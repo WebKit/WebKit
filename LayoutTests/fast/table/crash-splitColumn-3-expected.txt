@@ -1,0 +1,5 @@
+Bug 70171: Crash in RenderTableSection::splitColumn
+
+This test PASSES if it does not CRASH or ASSERT.
+
+

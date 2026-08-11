@@ -1,0 +1,4 @@
+
+
+PASS navigation.traverseTo() should work in an iframe that has navigated across origins
+

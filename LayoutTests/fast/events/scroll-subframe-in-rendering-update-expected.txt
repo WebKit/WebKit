@@ -1,0 +1,16 @@
+This tests that scroll event is dispatched in the update-the-rendering step in the event loop across all relevant frames
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+iframeB.contentWindow.scrollTo(0, 1000); updateLayout(iframeB)
+iframeA.contentWindow.scrollTo(0, 1000); updateLayout(iframeA)
+iframeAA.contentWindow.scrollTo(0, 1000); updateLayout(iframeAA)
+PASS logs.length is 0
+After requestAnimationFrame
+PASS logs.length is 3
+PASS logs.join(", ") is "A, AA, B"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

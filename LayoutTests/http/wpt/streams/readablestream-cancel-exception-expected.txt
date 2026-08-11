@@ -1,0 +1,3 @@
+
+PASS Stop worker while cancelling a readable stream
+

@@ -1,0 +1,8 @@
+
+done
+
+Harness Error (FAIL), message = Unhandled rejection: assert_unreached: missing pointermove event Reached unreachable code
+
+FAIL Test pointer events in the main document assert_unreached: missing pointerover event Reached unreachable code
+FAIL Test pointer events in an iframe assert_unreached: missing pointerover event Reached unreachable code
+

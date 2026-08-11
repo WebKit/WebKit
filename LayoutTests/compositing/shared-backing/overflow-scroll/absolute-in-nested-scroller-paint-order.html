@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <style>
+      .page {
+        position: absolute;
+        margin: 20px;
+        height: 400px;
+        width: 400px;
+        overflow: auto;
+      }
+
+      .container {
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+      }
+
+      .header {
+        position: absolute;
+        top: 0;
+        background: green;
+        height: 50px;
+        width: 100%;
+      }
+
+      .content {
+        height: 2000px;
+        padding-top: 50px;
+        background: silver;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="container">
+        <div class="header"></div>
+        <div class="content">You should see a green header above</div>
+      </div>
+    </div>
+  </body>
+</html>

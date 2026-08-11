@@ -1,0 +1,5 @@
+
+PASS COOP+COEP blob URL popup: window.open()
+PASS COOP+COEP blob URL popup: <a>
+PASS COOP+COEP blob URL popup: <a rel=noopener>
+

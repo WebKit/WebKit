@@ -1,0 +1,8 @@
+
+PASS pointerdown/up at child1, no capture
+PASS pointerdown/up at child1, capture at child1
+PASS pointerdown/up at child1, capture at child2
+PASS pointerdown at child1, pointerup at child2, no capture
+PASS pointerdown at child1, pointerup at child2, capture at child1
+PASS pointerdown at child1, pointerup at child2, capture at child2
+

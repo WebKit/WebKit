@@ -1,0 +1,6 @@
+
+PASS autonomous: exception thrown in constructor is reported to definition's global
+PASS autonomous: exception thrown by spec due to invalid element state is reported to definition's global
+FAIL customized built-in: exception thrown in constructor is reported to definition's global assert_implements: customized built-in elements not supported undefined
+FAIL customized built-in: exception thrown by spec due to not returning the same value is reported to definition's global assert_implements: customized built-in elements not supported undefined
+

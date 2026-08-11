@@ -1,0 +1,3 @@
+
+PASS requestFullscreen() followed by removing the element
+

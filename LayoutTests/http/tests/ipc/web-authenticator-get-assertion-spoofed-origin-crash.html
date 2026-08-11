@@ -1,0 +1,96 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false ] -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+setTimeout(async () => {
+    if (!window.IPC)
+        return testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    // WebAuthn (and thus this IPC endpoint) is not enabled on every port.
+    if (!CoreIPC.UI.WebAuthenticatorCoordinatorProxy)
+        return testRunner?.notifyDone();
+
+    const spoofedOrigin = {
+        data: {
+            variantType: 'WebCore::SecurityOriginData::Tuple',
+            variant: { protocol: 'https', host: 'evil.com', port: {} }
+        }
+    };
+
+    const requestData = {
+        m_url: { string: '' },
+        m_firstPartyForCookies: { string: '' },
+        m_timeoutInterval: 0,
+        m_httpMethod: 'GET',
+        m_httpHeaderFields: { commonHeaders: [], uncommonHeaders: [] },
+        m_responseContentDispositionEncodingFallbackArray: [],
+        m_cachePolicy: 0,
+        m_sameSiteDisposition: 0,
+        m_priority: 0,
+        m_requester: 0,
+        m_allowCookies: false,
+        m_isTopSite: false,
+        m_isAppInitiated: false,
+        m_privacyProxyFailClosedForUnreachableNonMainHosts: false,
+        m_useAdvancedPrivacyProtections: false,
+        m_didFilterLinkDecoration: false,
+        m_isPrivateTokenUsageByThirdPartyAllowed: false,
+        m_wasSchemeOptimisticallyUpgraded: false,
+        m_targetAddressSpace: 0
+    };
+
+    CoreIPC.UI.WebAuthenticatorCoordinatorProxy.GetAssertion(IPC.webPageProxyID, {
+        frameID: IPC.frameID[0],
+        frameInfo: {
+            isMainFrame: true,
+            frameType: 0,
+            request: {
+                getRequestDataToSerialize: {
+                    variantType: 'WebCore::ResourceRequest::RequestData',
+                    variant: requestData
+                },
+                cachePartition: '',
+                hiddenFromInspector: false
+            },
+            securityOrigin: spoofedOrigin,
+            topOrigin: spoofedOrigin,
+            frameName: '',
+            frameID: IPC.frameID[0],
+            webPageProxyID: { optionalValue: IPC.webPageProxyID },
+            parentFrameID: {},
+            documentID: {},
+            certificateInfo: { trust: {} },
+            processID: { alias: 0 },
+            isFocused: false,
+            errorOccurred: false,
+            frameMetrics: {
+                isScrollable: 0,
+                contentSize: { width: 0, height: 0 },
+                visibleContentSize: { width: 0, height: 0 },
+                visibleContentSizeExcludingScrollbars: { width: 0, height: 0 }
+            }
+        },
+        options: {
+            challenge: { span: [0] },
+            timeout: {},
+            rpId: '',
+            allowCredentials: [],
+            userVerification: 1,
+            extensions: {}
+        },
+        mediation: 0,
+        parentOrigin: {}
+    });
+
+    // If we reach here, the origin validation didn't crash us.
+    setTimeout(() => {
+        console.log("FAIL: Should have crashed due to origin mismatch in GetAssertion");
+        testRunner?.notifyDone();
+    }, 1000);
+}, 0);
+</script>

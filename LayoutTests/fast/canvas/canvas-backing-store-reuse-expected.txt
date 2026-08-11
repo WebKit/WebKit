@@ -1,0 +1,5 @@
+PASS data.data is [0, 0, 0, 0]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    width: 300px;
+    height: 50px;
+}
+
+body {
+    margin: 0;
+}
+</style>
+</head>
+<body>
+
+<input id="fruit" list="fruits" type="text"/>
+<datalist id="fruits">
+    <option>Apple</option>
+    <option>Orange</option>
+    <option>Pear</option>
+</datalist>
+<pre id="output"></pre>
+
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function log(msg) {
+    document.getElementById("output").textContent += msg + "\n";
+}
+
+(async () => {
+    const input = document.getElementById("fruit");
+
+    await UIHelper.activateElementAndWaitForInputSession(input);
+    await UIHelper.tapAt(290, 30);
+    await UIHelper.waitForDataListSuggestionsToChangeVisibility(true);
+
+    const menuRect = await UIHelper.contextMenuRect();
+    const inputBottom = input.offsetTop + input.offsetHeight;
+
+    if (menuRect.width === 0 && menuRect.height === 0)
+        log("FAIL: Could not retrieve suggestions menu rect.");
+    else if (menuRect.top < inputBottom)
+        log("FAIL: Datalist suggestions dropdown overlaps the input field.");
+    else
+        log("PASS: Datalist suggestions dropdown does not obscure the input field.");
+
+    await UIHelper.resignFirstResponder();
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>
+</body>
+</html>

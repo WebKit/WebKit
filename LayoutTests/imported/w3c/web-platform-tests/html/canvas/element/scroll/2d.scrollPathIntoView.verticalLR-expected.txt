@@ -1,0 +1,6 @@
+2d.scrollPathIntoView.verticalLR
+scrollPathIntoView() works in vertical-lr writing mode
+Actual output:
+
+FAIL scrollPathIntoView() works in vertical-lr writing mode ctx.scrollPathIntoView is not a function. (In 'ctx.scrollPathIntoView()', 'ctx.scrollPathIntoView' is undefined)
+

@@ -1,0 +1,13 @@
+Tests that calling an AudioContext does not start rendering when adding a node if suspend() was called right after creation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS audioContext.state is "suspended"
+PASS audioContext.state is "suspended"
+PASS audioContext.state is "suspended"
+PASS audioContext.state is "suspended"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

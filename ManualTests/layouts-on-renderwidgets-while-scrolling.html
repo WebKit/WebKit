@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+  <style>
+    html, body {
+      height: 100%;
+    }
+    
+    .container {
+      height: 100%;
+      overflow: scroll;
+    }
+    iframe {
+      display: block;
+      width: 200px;
+      height: 600px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <iframe src="data:text/html,Scroll this out of the view."></iframe>
+    <iframe src="data:text/html,Stop here and inspect if layouts got initiated, while scolling in the Web Inspector."></iframe>
+  </div>
+</body>
+</html>

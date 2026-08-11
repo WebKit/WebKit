@@ -1,0 +1,60 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true BlobFileAccessEnforcementEnabled=true allowTestOnlyIPC=true ] -->
+<pre id="out"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<script type="module">
+const out = document.getElementById('out');
+const log = s => { out.textContent += s + '\n'; };
+
+if (!window.IPC) {
+    log('Unauthorized file-backed blob registration rejected: PASS');
+    testRunner?.notifyDone();
+} else {
+
+const { CoreIPC } = await import("./coreipc.js");
+
+function blobSize(u) {
+    return new Promise(res => {
+        CoreIPC.Networking.NetworkConnectionToWebProcess.BlobSize(0, { url: { string: u } },
+            (parsed) => res(parsed && parsed.resultSize !== undefined ? Number(parsed.resultSize) : -1));
+    });
+}
+
+function generalStoragePath() {
+    return new Promise(res => {
+        CoreIPC.Networking.NetworkConnectionToWebProcess.GeneralStoragePathForTesting(0, {},
+            (parsed) => res(parsed && parsed.path ? parsed.path : ''));
+    });
+}
+
+(async () => {
+
+    localStorage.setItem('seed', '1');
+
+    let storagePath = await generalStoragePath();
+    if (!storagePath) {
+        log('FAIL: could not retrieve general storage path');
+        testRunner?.notifyDone();
+        return;
+    }
+
+    let targetPath = storagePath + '/salt';
+    let blobURL = URL.createObjectURL(new Blob([new Uint8Array([0])]));
+    CoreIPC.Networking.NetworkConnectionToWebProcess.RegisterInternalBlobURLOptionallyFileBacked(0, {
+        url: { string: blobURL },
+        srcURL: { string: `blob:webkit-internal://${crypto.randomUUID()}` },
+        fileBackedPath: targetPath,
+        contentType: 'application/octet-stream',
+    });
+    let size = await blobSize(blobURL);
+    log('Unauthorized file-backed blob registration rejected: ' + (size === 1 ? 'PASS' : 'FAIL (BlobSize=' + size + ')'));
+
+    testRunner?.notifyDone();
+})().catch(e => { log('FAIL: ' + e); testRunner?.notifyDone(); });
+
+}
+</script>

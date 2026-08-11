@@ -1,0 +1,101 @@
+<!doctype HTML><!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html  class="reftest-wait">
+<head>
+<style type="text/css">
+div {
+  left: 200px;
+  width: 200px;
+  height: 100px;
+  position: absolute;
+}
+
+/* Applies overflow clipping to descendants */
+.container {
+  left: 0px;
+  overflow: scroll;
+  height: 200px;
+}
+
+/* Composited layer behind to force the rest to composite due to overlap */
+.composited {
+  background-color: orange;
+  transform: translateZ(0px);
+  height: 100px;
+  top: 100px;
+}
+
+/* Backing store provider that only scrolls in one direction (to trigger small overlap bounds size) */
+.provider {
+  overflow-y: scroll;
+  overflow-x: clip;
+  left: 150px;
+}
+
+/* Tries to share into provider, but overlaps 'overlap'. */
+.sharing {
+  left: 50px;
+  background-color: green;
+  z-index: 5;
+  height: 200px;
+}
+
+/* Between provider and sharing, and has filter: url to trigger overlapBoundsIncludeChildren */
+.overlap {
+  top: 50px;
+  background-color: red;
+  filter: url(x);
+}
+
+/* Unrelated elements to trigger a compositing update via traverseUnchangeSubtree *.
+.wrapper {
+  transform: translateX(0px);
+  z-index: 6;
+  left: 0px;
+  top: 200px;
+  contain: strict;
+}
+
+.mutation {
+  left: 0px;
+  top: 0px;
+  background-color: red;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+<div class="provider">
+  <div class="sharing"></div>
+</div>
+<div class="composited"></div>
+<div class="overlap"></div>
+
+</div>
+
+<div class="wrapper">
+  <div class="mutation"></div>
+</div>
+
+<p>This test should not crash.</p>
+
+<script>
+
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+async function test() {
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    // Trigger an 'unchanged' compositing update on sharing/overlap, no asserts should be hit.
+    document.getElementsByClassName("mutation")[0].style.width = "250px";
+    document.documentElement.classList.remove("reftest-wait");
+}
+test();
+
+</script>
+
+</body>
+</html>

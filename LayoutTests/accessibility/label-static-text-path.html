@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div style="width: 300px;">
+<label for="input" id="label">This is a label containing only static text that spans several lines in this narrow container</label>
+<input type="text" id="input" />
+</div>
+
+<script>
+var output = "This test ensures labels remapped to StaticText get a multi-line path.\n\n";
+
+if (window.accessibilityController) {
+    var textLabelSupportsPath = accessibilityController.accessibleElementById("label").isAttributeSupported("AXPath");
+    output += expect("textLabelSupportsPath", "true");
+    output += expect("pathSegmentCountOfID('label', 'Line to') > 4", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

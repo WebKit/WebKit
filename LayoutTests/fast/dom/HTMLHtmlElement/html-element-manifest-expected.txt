@@ -1,0 +1,10 @@
+This tests that manifest IDL attribute does not exist on html element
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "manifest" in document.documentElement is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,9 @@
+
+
+PASS Lowercase `http` should allow the image to load. - meta tag
+PASS Lowercase `http` should allow the image to load. - HTTP header
+PASS Mixed-case `http` should allow the image to load. - meta tag
+PASS Mixed-case `http` should allow the image to load. - HTTP header
+PASS Uppercase `http` should allow the image to load. - meta tag
+PASS Uppercase `http` should allow the image to load. - HTTP header
+

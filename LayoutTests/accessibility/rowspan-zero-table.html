@@ -1,0 +1,65 @@
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<table id="table">
+<caption>This is a table caption</caption>
+<thead>
+    <tr id="r0">
+        <th id="r0c0">Author</th>
+        <th id="r0c1">Title</th>
+        <th id="r0c2">Year</th>
+    </tr>
+</thead>
+<tbody id="tbody">
+    <tr id="r1">
+        <td id="r1c0-rowspan0-cell" rowspan="0">Stephen Hawking</td>
+        <td id="r1c1">A Brief History of Time</td>
+        <td id="r1c2">1988</td>
+    </tr>
+    <tr id="r2">
+        <td id="r2c0">Black Holes The Reith Lectures</td>
+        <td id="r2c1">2016</td>
+    </tr>
+    <tr id="r3">
+        <td id="r3c0">Brief Answers to the Big Questions</td>
+        <td id="r3c1">2018</td>
+    </tr>
+</tbody>
+</table>
+
+<table id="table2">
+    <tr id="r4">
+        <td id="r4c0">A Briefer History of Time</td>
+        <td id="r4c1">2005</td>
+    </tr>
+</table>
+
+<script>
+var output = "This test ensures we handle rowspan='0' tables correctly.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var table = accessibilityController.accessibleElementById("table");
+    output += `${dumpAXTable(table)}\n`;
+    output += `${dumpAXSearchTraversal(webArea)}\n`;
+
+    output += "Dynamically adding a new row.\n\n"
+    document.getElementById("tbody").appendChild(document.getElementById("r4"));
+    setTimeout(async function() {
+        output += await expectAsync("table.rowCount", "5");
+        output += `${dumpAXTable(table)}\n`;
+        output += `${dumpAXSearchTraversal(webArea)}\n`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

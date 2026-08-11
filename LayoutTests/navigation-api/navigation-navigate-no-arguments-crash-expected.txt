@@ -1,0 +1,18 @@
+Tests that navigation.navigate() called with zero arguments returns a valid NavigationResult and does not leak a raw JSC::Exception cell to JavaScript.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof result is 'object'
+PASS 'committed' in result is true
+PASS 'finished' in result is true
+PASS result.committed instanceof Promise is true
+PASS result.finished instanceof Promise is true
+PASS committedError.constructor.name is "TypeError"
+PASS finishedError.constructor.name is "TypeError"
+PASS result.foo is 0xdead
+PASS did not crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

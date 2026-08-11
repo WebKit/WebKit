@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body svg {
+        position: absolute;
+        width: 0;
+        height: 0;
+    }
+
+    .box {
+        margin: 10px;
+        height: 200px;
+        width: 200px;
+        border: 20px solid blue;
+        background-color: green;
+        box-sizing: border-box;
+    }
+</style>
+</head>
+<body>
+    <div class='box' style="filter: saturate(0);"></div>
+    <div class='box' style="filter: invert() saturate(0);"></div>
+    <div class='box' style="filter: invert()"></div>
+</body>
+</html>
+ 
+

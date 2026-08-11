@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<div id=""></div>
+    
+<script>
+description('This tests empty strings do not return a value in collections or named items cases.');
+
+shouldBeTrue("document.querySelectorAll('div')[''] === undefined");
+shouldBeTrue("document.getElementsByTagName('div')[''] === undefined");
+shouldBeTrue("document.body.children[''] === undefined");
+shouldBeTrue("document.all[''] === undefined");
+
+// Collections not in the document.
+var container = document.createElement("div");
+var div = document.createElement("div");
+div.id = "";
+container.appendChild(div);
+shouldBeTrue("container.querySelectorAll('div')[''] === undefined");
+shouldBeTrue("container.getElementsByTagName('div')[''] === undefined");
+shouldBeTrue("container.children[''] === undefined");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

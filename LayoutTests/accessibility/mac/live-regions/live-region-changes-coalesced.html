@@ -1,0 +1,71 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<div id="region" aria-live="polite">
+    <p id="item0">Item 0</p>
+    <p id="item1">Item 1</p>
+    <p id="item2">Item 2</p>
+    <p id="item3">Item 3</p>
+    <p id="item4">Item 4</p>
+    <p id="item5">Item 5</p>
+    <p id="item6">Item 6</p>
+    <p id="item7">Item 7</p>
+    <p id="item8">Item 8</p>
+    <p id="item9">Item 9</p>
+</div>
+
+<script>
+var output = "This tests that many changes to distinct descendants of the same live region within a single run loop iteration are coalesced, so the region's snapshot is recomputed only once rather than once per change.\n\n";
+
+var itemCount = 10;
+var announcements = [];
+var buildCount = -1;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested")
+        announcements.push(true);
+}
+
+async function runTest() {
+    accessibilityController.addNotificationListener(notificationCallback);
+
+    // Ensure the accessibility tree exists and the live region is registered before we start.
+    accessibilityController.accessibleElementById("region");
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    // Start counting snapshot recomputations from a clean slate (ignore registration-time builds).
+    internals.resetLiveRegionSnapshotBuildCount();
+
+    // Change the text of every child within a single run loop iteration. Each change walks up to the
+    // same live region; without coalescing, the region's snapshot is recomputed once per change.
+    for (var i = 0; i < itemCount; i++)
+        document.getElementById("item" + i).textContent = "Updated " + i;
+
+    // Wait for the accessibility cache to process the changes (no forced updates).
+    await waitFor(() => announcements.length > 0);
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    buildCount = internals.liveRegionSnapshotBuildCount();
+
+    debug(output);
+    debug(`Changed ${itemCount} distinct descendants of the live region in one run loop iteration.`);
+    debug(`Snapshot recomputations: ${buildCount}`);
+    debug("");
+    shouldBe("buildCount", "1");
+
+    accessibilityController.removeNotificationListener();
+    finishJSTest();
+}
+
+if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
+    runTest();
+}
+</script>
+</body>
+</html>

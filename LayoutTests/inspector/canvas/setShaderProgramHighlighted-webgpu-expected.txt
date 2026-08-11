@@ -1,0 +1,17 @@
+Tests Canvas.setShaderProgramHighlighted for a WebGPU render pipeline.
+
+
+== Running test suite: Canvas.setShaderProgramHighlighted.WebGPU
+-- Running test case: Canvas.setShaderProgramHighlighted.WebGPU.RenderPipeline
+PASS: WebGPU render ShaderProgram should support highlighting.
+PASS: Highlighting the render pipeline should change page rendering.
+PASS: Unhighlighting the render pipeline should restore page rendering.
+
+-- Running test case: Canvas.setShaderProgramHighlighted.WebGPU.ComputePipeline
+PASS: There should be a compute ShaderProgram.
+PASS: Compute ShaderProgram should not support highlighting.
+PASS: Highlighting a compute pipeline should return an error.
+
+-- Running test case: Canvas.setShaderProgramHighlighted.WebGPU.InvalidProgramIdentifier
+PASS: Highlighting an invalid program identifier should return an error.
+

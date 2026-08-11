@@ -1,0 +1,9 @@
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Test that HTTP redirect to a data URL is blocked for subresources.");
+self.redirectedScriptExecuted = false;
+</script>
+<script src=resources/redirect-to-data.py></script>
+<script>
+shouldBeFalse("self.redirectedScriptExecuted");
+</script>

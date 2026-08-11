@@ -1,0 +1,34 @@
+<!doctype html>
+<html class="reftest-wait">
+<script src="../../../resources/ui-helper.js"></script>
+<input type=checkbox switch onclick=end() dir=rtl>
+<div id=state></div>
+<script>
+window.onload = async () => {
+    const input = document.querySelector("input");
+    const x = input.offsetLeft;
+    const y = input.offsetTop;
+    const width = input.offsetWidth;
+
+    if (UIHelper.isIOSFamily()) {
+        const eventStreamData = new UIHelper.EventStreamBuilder()
+            .begin(x + width - 1, y)
+            .wait(0.21)
+            .move(x - 1, y, 0.01)
+            .move(x + width - 1, y, 0.01)
+            .end()
+            .takeResult();
+        UIHelper.sendEventStream(eventStreamData);
+        return;
+    }
+    await eventSender.asyncMouseMoveTo(x + width - 1, y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseMoveTo(x + width - 1, y);
+    await eventSender.asyncMouseUp();
+}
+function end() {
+    document.querySelector("#state").textContent = document.querySelector("input").checked ? "Switched on." : "Switched off.";
+    setTimeout(() => document.documentElement.removeAttribute("class"), 50);
+}
+</script>

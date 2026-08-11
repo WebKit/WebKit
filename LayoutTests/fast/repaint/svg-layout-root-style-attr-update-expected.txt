@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+      RenderBlock {DIV} at (0,0) size 500x0
+      RenderBlock {DIV} at (0,0) size 784x0
+layer at (8,0) size 500x500
+  RenderBlock (positioned) {DIV} at (8,0) size 500x500
+layer at (8,0) size 500x500
+  RenderBlock (positioned) {DIV} at (0,0) size 500x500
+layer at (8,0) size 500x500
+  RenderSVGRoot {svg} at (258,10) size 250x250
+    RenderSVGRect {rect} at (258,10) size 250x250 [fill={[type=SOLID] [color=#FF0000]}] [x=250.00] [y=10.00] [width=250.00] [height=250.00]
+    RenderSVGRect {rect} at (258,10) size 250x250 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=10.00] [width=250.00] [height=250.00]

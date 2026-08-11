@@ -1,0 +1,51 @@
+
+
+PASS button -> text
+PASS text -> button
+PASS checkbox -> text
+PASS text -> checkbox
+PASS color -> text
+PASS text -> color
+FAIL date -> text assert_equals: date input should be focused after change to text expected Element node <input type="text"></input> but got Element node <body>
+<script type="module">
+import inputTypes from "./i...
+PASS text -> date
+FAIL datetime-local -> text assert_equals: datetime-local input should be focused after change to text expected Element node <input type="text"></input> but got Element node <body>
+<script type="module">
+import inputTypes from "./i...
+PASS text -> datetime-local
+PASS email -> text
+PASS text -> email
+PASS file -> text
+PASS text -> file
+PASS image -> text
+PASS text -> image
+FAIL month -> text assert_equals: month input should be focused after change to text expected Element node <input type="text"></input> but got Element node <body>
+<script type="module">
+import inputTypes from "./i...
+PASS text -> month
+PASS number -> text
+PASS text -> number
+PASS password -> text
+PASS text -> password
+PASS radio -> text
+PASS text -> radio
+PASS range -> text
+PASS text -> range
+PASS reset -> text
+PASS text -> reset
+PASS search -> text
+PASS text -> search
+PASS submit -> text
+PASS text -> submit
+PASS tel -> text
+PASS text -> tel
+FAIL time -> text assert_equals: time input should be focused after change to text expected Element node <input type="text"></input> but got Element node <body>
+<script type="module">
+import inputTypes from "./i...
+PASS text -> time
+PASS url -> text
+PASS text -> url
+PASS week -> text
+PASS text -> week
+

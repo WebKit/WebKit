@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+
+<script>
+    var output = "This tests that accessibility APIs can focus a text field inside of an iframe.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        function runTest() {
+            axInnerInput = accessibilityController.accessibleElementById('card');
+            axInnerInput.takeFocus();
+        }
+
+        window.addEventListener("message", e => {
+            if (e.data == "ready") {
+                runTest();
+            } else if (e.data == "text-field-focused") {
+                output += 'PASS: Text field in iframe was successfully focused.';
+                debug(output);
+                finishJSTest();
+            }
+        });
+    }
+</script>
+
+<iframe sandbox="allow-scripts" id="iframe" aria-label="iframe" src="./resources/text-field-frame.html"></iframe>
+
+</body>
+</html>

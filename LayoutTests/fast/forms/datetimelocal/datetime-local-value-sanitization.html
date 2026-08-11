@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests the sanitization of the value of <input> elements of type datetime-local.");
+
+function testSanitization(inputValue, expectedOutputValue)
+{
+    input = document.createElement("input");
+    input.type = "datetime-local";
+    input.value = inputValue;
+    shouldBeEqualToString("input.value", "" + expectedOutputValue);
+}
+
+let tests = [
+    ["2000-01-01 12:30:00.5", "2000-01-01T12:30:00.5"],
+    ["2000-01-01 12:30:00.60", "2000-01-01T12:30:00.6"],
+    ["2000-01-01 12:30:00.700", "2000-01-01T12:30:00.7"],
+    ["2000-01-01 12:30:00.04", "2000-01-01T12:30:00.04"],
+    ["2000-01-01 12:30:00.003", "2000-01-01T12:30:00.003"],
+    ["2000-01-01 12:30:00.1234", ""],
+    ["2000-01-01 12:30:00", "2000-01-01T12:30"],
+    ["2000-01-01 12:30:00.0", "2000-01-01T12:30"],
+    ["2000-01-01 12:30:01.0", "2000-01-01T12:30:01"],
+    ["2000-01-01 12:30:10.0", "2000-01-01T12:30:10"],
+];
+
+for (let test of tests)
+    testSanitization(test[0], test[1]);
+</script>
+</body>
+</html>

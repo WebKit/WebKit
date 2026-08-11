@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.nodeLayoutFlagsChanged.Rendered");
+
+    function addTestCase({name, description, selector, setup, domNodeHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            setup,
+            async test() {
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+                await domNodeHandler(domNode);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.Existing.Direct.Display.None",
+        description: "Test that existing nodes with `display: none` are not rendered.",
+        selector: "#direct-display-none",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should not render existing nodes with `display: none`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.Existing.Direct.Display.Block",
+        description: "Test that existing nodes with `display: block` are rendered.",
+        selector: "#direct-display-block",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should render existing nodes with `display: block`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.Existing.Parent.Display.None",
+        description: "Test that existing nodes that have a parent with `display: none` are not rendered.",
+        selector: "#parent-display-none",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should not render existing nodes that have a parent with `display: none`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.Existing.Parent.Display.Block",
+        description: "Test that existing nodes that have a parent with with `display: block` are rendered.",
+        selector: "#parent-display-block",
+        async domNodeHandler(domNode) {
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should render existing nodes that have a parent with `display: block`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.New.Direct.Display.None",
+        description: "Test that new nodes with `display: none` are not rendered.",
+        selector: "#new-direct-display-none",
+        async setup() {
+            await InspectorTest.evaluateInPage(`document.body.insertAdjacentHTML("beforeend", "<div id='new-direct-display-none' style='display: none'></div>")`);
+        },
+        async domNodeHandler(domNode) {
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should not render new nodes with `display: none`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.New.Direct.Display.Block",
+        description: "Test that new nodes with `display: block` are rendered.",
+        selector: "#new-direct-display-block",
+        async setup() {
+            await InspectorTest.evaluateInPage(`document.body.insertAdjacentHTML("beforeend", "<div id='new-direct-display-block' style='display: block'></div>")`);
+        },
+        async domNodeHandler(domNode) {
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should render new nodes with `display: block`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.New.Direct.Display.None",
+        description: "Test that new nodes that have a parent with `display: none` are not rendered.",
+        selector: "#new-direct-display-none",
+        async setup() {
+            await InspectorTest.evaluateInPage(`document.body.insertAdjacentHTML("beforeend", "<div style='display: none'><div id='new-direct-display-none'></div></div>")`);
+        },
+        async domNodeHandler(domNode) {
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should not render new nodes that have a parent with `display: none`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.New.Direct.Display.Block",
+        description: "Test that new nodes that have a parent with `display: block` are rendered.",
+        selector: "#new-direct-display-block",
+        async setup() {
+            await InspectorTest.evaluateInPage(`document.body.insertAdjacentHTML("beforeend", "<div style='display: block'><div id='new-direct-display-block'></div></div>")`);
+        },
+        async domNodeHandler(domNode) {
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should render new nodes that have a parent with `display: block`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.Change.Direct.Display.None",
+        description: "Test that nodes changed to `display: block` are rendered.",
+        selector: "#direct-display-block",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should render existing nodes with `display: block`.");
+
+            InspectorTest.log("Changing to `display: none`...");
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                domNode.setAttributeValue("style", "display: none"),
+            ]);
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should not render nodes changed to `display: none`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.Change.Direct.Display.Block",
+        description: "Test that nodes changed to `display: none` are not rendered.",
+        selector: "#direct-display-none",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(!domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should not render existing nodes with `display: none`.");
+
+            InspectorTest.log("Changing to `display: block`...");
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                domNode.setAttributeValue("style", "display: block"),
+            ]);
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should render nodes changed to `display: block`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.Change.Parent.Display.None",
+        description: "Test that nodes that have a parent changed to `display: block` are rendered.",
+        selector: "#parent-display-block",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should render existing nodes that have a parent with `display: block`.");
+
+            InspectorTest.log("Changing to `display: none`...");
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                domNode.parentNode.setAttributeValue("style", "display: none"),
+            ]);
+            InspectorTest.expectFalse(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should not render nodes that have a parent changed to `display: none`.");
+        },
+    });
+
+    addTestCase({
+        name: "CSS.nodeLayoutFlagsChanged.Rendered.Change.Parent.Display.Block",
+        description: "Test that nodes that have a parent changed to `display: none` are not rendered.",
+        selector: "#parent-display-none",
+        async domNodeHandler(domNode) {
+            InspectorTest.assert(!domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should not render existing nodes that have a parent with `display: none`.");
+
+            InspectorTest.log("Changing to `display: block`...");
+            await Promise.all([
+                domNode.awaitEvent(WI.DOMNode.Event.LayoutFlagsChanged),
+                domNode.parentNode.setAttributeValue("style", "display: block"),
+            ]);
+            InspectorTest.expectTrue(domNode.layoutFlags.includes(WI.DOMNode.LayoutFlag.Rendered), "Should render nodes that have a parent changed to `display: block`.");
+        },
+    });
+
+    WI.domManager.requestDocument().then((doc) => {
+        documentNode = doc;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.nodeLayoutFlagsChanged event with the Rendered enum.</p>
+
+    <div id="direct-display-none" style="display: none"></div>
+    <div id="direct-display-block" style="display: block"></div>
+
+    <div style="display: none"><div id="parent-display-none"></div></div>
+    <div style="display: block"><div id="parent-display-block"></div></div>
+</body>
+</html>

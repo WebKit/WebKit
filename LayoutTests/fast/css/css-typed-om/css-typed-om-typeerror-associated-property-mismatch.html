@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script>
+
+// This test checks that we throw a type error when using Typed OM set() to set CSSStyleValues on properties with mismatching [[associatedProperty]] internal slots.
+
+test(t => {
+  const element = document.createElement('div');
+  document.body.append(element);
+
+  assert_throws_js(TypeError, () => {
+    element.attributeStyleMap.set('font-variation-settings', element.computedStyleMap().get('color-scheme'));
+  });
+
+  element.remove();
+}, "TypeError thrown when trying to set `font-variation-settings` to result of element.computedStyleMap().get('color-scheme');");
+
+test(t => {
+  const element = document.createElement('div');
+  document.body.append(element);
+
+  assert_throws_js(TypeError, () => {
+    element.attributeStyleMap.set('width', CSSStyleValue.parse('border-bottom-left-radius', '30px'))
+  });
+  
+  element.remove();
+}, "TypeError thrown when trying to set `width` to result of CSSStyleValue.parse('border-bottom-left-radius', '30px')");
+
+test(t => {
+  const element = document.createElement('div');
+  document.body.append(element);
+
+  assert_throws_js(TypeError, () => {
+    element.attributeStyleMap.set('width', CSSStyleValue.parse('border-bottom-left-radius', '30px 10px'))
+  });
+  
+  element.remove();
+}, "TypeError thrown when trying to set `width` to result of CSSStyleValue.parse('border-bottom-left-radius', '30px 10px')");
+
+test(t => {
+  const element = document.createElement('div');
+  element.style = "border-image-width: auto;";
+  document.body.append(element);
+
+  assert_throws_js(TypeError, () => {
+    element.attributeStyleMap.set('accent-color', element.computedStyleMap().get('border-image-width'));
+  });
+  
+  element.remove();
+}, "TypeError thrown when trying to set `accent-color` to result of element.computedStyleMap().get('border-image-width')");
+
+test(t => {
+  const element = document.createElement('div');
+  document.body.append(element);
+
+  assert_throws_js(TypeError, () => {
+    element.attributeStyleMap.set('accent-color', element.computedStyleMap().get('mask-border-width'));
+  });
+  
+  element.remove();
+}, "TypeError thrown when trying to set `accent-color` to result of element.computedStyleMap().get('mask-border-width')");
+
+test(t => {
+  const element = document.createElement('div');
+  document.body.append(element);
+
+  assert_throws_js(TypeError, () => {
+    element.attributeStyleMap.set('-webkit-initial-letter', element.computedStyleMap().get('border-image-outset'));
+  });
+  
+  element.remove();
+}, "TypeError thrown when trying to set `-webkit-initial-letter` to result of element.computedStyleMap().get('border-image-outset');");
+
+test(t => {
+  const element = document.createElement('div');
+  document.body.append(element);
+
+  assert_throws_js(TypeError, () => {
+    element.attributeStyleMap.set('translate', ...element.computedStyleMap().getAll('border-image-slice'));
+  });
+  
+  element.remove();
+}, "TypeError thrown when trying to set `translate` to result of ...element.computedStyleMap().getAll('border-image-slice');");
+
+</script>
+</body>
+</html>

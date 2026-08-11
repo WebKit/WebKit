@@ -1,0 +1,9 @@
+This test passes if it does not crash.
+
+𝑋
+𝑌
+𝑋
+2
+𝑌
+2
+

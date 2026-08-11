@@ -1,0 +1,152 @@
+/*
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "BoxSides.h"
+#include "LayoutRange.h"
+#include "RenderBox.h"
+#include "StyleInset.h"
+#include "StyleMargin.h"
+#include "StylePrimitiveNumericTypes+EvaluationMinimum.h"
+#include "StyleSelfAlignmentData.h"
+
+namespace WebCore {
+
+class PositionedLayoutConstraints {
+public:
+    PositionedLayoutConstraints(const RenderBox&, LogicalBoxAxis selfAxis);
+    PositionedLayoutConstraints(const RenderBox&, const Style::ComputedStyle& selfStyleOverride, LogicalBoxAxis selfAxis);
+    void computeInsets();
+
+    /*** The following are available without calling computeInsets(). ***/
+
+    const RenderBoxModelObject& container() const { return *m_container; }
+    LayoutUnit containingSize() const { return m_containingRange.size(); }
+    LayoutUnit containingInlineSize() const { return m_containingInlineSize; }
+    LayoutRange containingRange() const { return m_containingRange; }
+    LayoutRange originalContainingRange() const { return m_originalContainingRange; }
+    LayoutRange extractRange(LayoutRect);
+
+    BoxAxis physicalAxis() const { return m_physicalAxis; }
+    LogicalBoxAxis containingAxis() const { return m_containingAxis; }
+    WritingMode containingWritingMode() const { return m_containingWritingMode; }
+    WritingMode selfWritingMode() const { return m_writingMode; }
+
+    bool NODELETE needsAnchor() const;
+    const RenderBoxModelObject* defaultAnchorBox() const { return m_defaultAnchorBox.get(); }
+    const StyleSelfAlignmentData& alignment() const LIFETIME_BOUND { return m_alignment; }
+    ItemPosition resolveAlignmentValue() const; // Convert auto/normal as necessary.
+    bool NODELETE alignmentAppliesStretch(ItemPosition normalAlignment) const;
+
+    bool isOrthogonal() const { return m_containingWritingMode.isOrthogonal(m_writingMode); }
+    inline bool isOpposing() const;
+    bool isBlockOpposing() const { return m_containingWritingMode.isBlockOpposing(m_writingMode); }
+    bool isBlockFlipped() const { return m_containingWritingMode.isBlockFlipped(); }
+    bool startIsBefore() const { return m_containingAxis == LogicalBoxAxis::Block || m_containingWritingMode.isLogicalLeftInlineStart(); }
+
+    /*** For everything else, you MUST call computeInsets() after the constructor. ***/
+
+    // Before = logical top or left wrt containing block (i.e. the lower-coordinate side).
+    // After = logical bottom or right wrt containing block (i.e. the higher-coordinate side).
+    LayoutUnit bordersPlusPadding() const { return m_bordersPlusPadding; }
+    Style::MarginEdge marginBefore() const { return m_marginBefore; }
+    Style::MarginEdge marginAfter() const { return m_marginAfter; }
+    Style::InsetEdge insetBefore() const { return m_insetBefore; }
+    Style::InsetEdge insetAfter() const { return m_insetAfter; }
+    LayoutUnit marginBeforeValue() const { return Style::evaluateMinimum<LayoutUnit>(m_marginBefore, m_containingInlineSize, m_style.usedZoomForLength()); }
+    LayoutUnit marginAfterValue() const { return Style::evaluateMinimum<LayoutUnit>(m_marginAfter, m_containingInlineSize, m_style.usedZoomForLength()); }
+    LayoutUnit insetBeforeValue() const { return Style::evaluateMinimum<LayoutUnit>(m_insetBefore, containingSize(), m_style.usedZoomForLength()); }
+    LayoutUnit insetAfterValue() const { return Style::evaluateMinimum<LayoutUnit>(m_insetAfter, containingSize(), m_style.usedZoomForLength()); }
+    bool insetFitsContent() const; // One or both insets are auto for sizing purposes.
+
+    LayoutUnit insetModifiedContainingSize() const { return m_insetModifiedContainingRange.size(); }
+    LayoutRange insetModifiedContainingRange() const { return m_insetModifiedContainingRange; }
+    LayoutUnit availableContentSpace() const { return std::max(0_lu, insetModifiedContainingSize() - marginBeforeValue() - bordersPlusPadding() - marginAfterValue()); }
+
+    void resolvePosition(RenderBox::LogicalExtentComputedValues&) const;
+    LayoutUnit resolveAlignmentShift(const LayoutUnit unusedSpace, const LayoutUnit itemSize) const;
+
+    void fixupLogicalLeftPosition(RenderBox::LogicalExtentComputedValues&) const;
+    void NODELETE adjustLogicalTopWithLogicalHeightIfNeeded(RenderBox::LogicalExtentComputedValues&) const;
+
+    LayoutUnit computedInlineStaticDistance() const;
+
+private:
+    bool NODELETE containingCoordsAreFlipped() const;
+    bool isOrthogonalToContainingBlockWithFlippedParent() const;
+    bool isParentOpposingContainingBlock() const;
+
+    void captureInsets();
+    void captureGridArea();
+    void captureAnchorGeometry();
+    void expandToScrollableArea(LayoutRange&, const std::optional<ScrollPosition> fromScrollPosition = { }) const;
+    LayoutRange adjustForPositionArea(const LayoutRange rangeToAdjust, const LayoutRange anchorArea, const BoxAxis containerAxis);
+    std::pair<bool, bool> containerAllowsInfiniteOverflow() const;
+
+    bool NODELETE needsGridAreaAdjustmentBeforeStaticPositioning() const;
+    std::optional<LayoutUnit> remainingSpaceForStaticAlignment(LayoutUnit itemSize) const;
+    bool shouldAlignStaticPositionInInlineAxis() const;
+    void computeStaticPosition();
+    LayoutUnit computedBlockStaticDistance() const;
+
+    CheckedRef<const RenderBox> m_renderer;
+    CheckedPtr<const RenderBoxModelObject> m_container;
+    const WritingMode m_containingWritingMode;
+    const WritingMode m_parentWritingMode;
+    const WritingMode m_writingMode;
+    const LogicalBoxAxis m_selfAxis;
+    const LogicalBoxAxis m_containingAxis;
+    const BoxAxis m_physicalAxis;
+    const Style::ComputedStyle& m_style;
+    StyleSelfAlignmentData m_alignment;
+    const CheckedPtr<const RenderBoxModelObject> m_defaultAnchorBox; // Only set if needed.
+
+    LayoutRange m_anchorArea; // Only valid if defaultAnchor exists.
+    LayoutRange m_containingRange;
+    LayoutRange m_originalContainingRange;
+    LayoutRange m_insetModifiedContainingRange;
+    LayoutUnit m_containingInlineSize;
+
+    LayoutUnit m_bordersPlusPadding;
+    Style::MarginEdge m_marginBefore;
+    Style::MarginEdge m_marginAfter;
+    Style::InsetEdge m_insetBefore;
+    Style::InsetEdge m_insetAfter;
+    bool m_useStaticPosition { false };
+#if ASSERT_ENABLED
+    mutable bool m_isEligibleForStaticRangeAlignment { false };
+#endif
+};
+
+inline bool PositionedLayoutConstraints::isOpposing() const
+{
+    return m_containingAxis == LogicalBoxAxis::Inline
+        ? m_containingWritingMode.isInlineOpposing(m_writingMode)
+        : m_containingWritingMode.isBlockOpposing(m_writingMode);
+
+}
+
+}

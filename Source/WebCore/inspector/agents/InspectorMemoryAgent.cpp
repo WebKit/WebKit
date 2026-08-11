@@ -1,0 +1,177 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "InspectorMemoryAgent.h"
+
+#if ENABLE(RESOURCE_USAGE)
+
+#include "InstrumentingAgents.h"
+#include "ResourceUsageThread.h"
+#include <JavaScriptCore/InspectorEnvironment.h>
+#include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
+
+
+namespace WebCore {
+
+using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorMemoryAgent);
+
+InspectorMemoryAgent::InspectorMemoryAgent(PageAgentContext& context)
+    : InspectorAgentBase("Memory"_s, context)
+    , m_frontendDispatcher(makeUniqueRef<Inspector::MemoryFrontendDispatcher>(context.frontendRouter))
+    , m_backendDispatcher(Inspector::MemoryBackendDispatcher::create(context.backendDispatcher, this))
+{
+}
+
+InspectorMemoryAgent::~InspectorMemoryAgent() = default;
+
+void InspectorMemoryAgent::didCreateFrontendAndBackend()
+{
+    Ref { m_instrumentingAgents.get() }->setPersistentMemoryAgent(this);
+}
+
+void InspectorMemoryAgent::willDestroyFrontendAndBackend(DisconnectReason)
+{
+    std::ignore = disable();
+
+    Ref { m_instrumentingAgents.get() }->setPersistentMemoryAgent(nullptr);
+}
+
+Inspector::Protocol::ErrorStringOr<void> InspectorMemoryAgent::enable()
+{
+    Ref agents = m_instrumentingAgents.get();
+    if (agents->enabledMemoryAgent() == this)
+        return makeUnexpected("Memory domain already enabled"_s);
+
+    agents->setEnabledMemoryAgent(this);
+
+    return { };
+}
+
+Inspector::Protocol::ErrorStringOr<void> InspectorMemoryAgent::disable()
+{
+    Ref agents = m_instrumentingAgents.get();
+    if (agents->enabledMemoryAgent() != this)
+        return makeUnexpected("Memory domain already disabled"_s);
+
+    agents->setEnabledMemoryAgent(nullptr);
+
+    m_tracking = false;
+
+    ResourceUsageThread::removeObserver(this);
+
+    return { };
+}
+
+Inspector::Protocol::ErrorStringOr<void> InspectorMemoryAgent::startTracking()
+{
+    if (m_tracking)
+        return { };
+
+    ResourceUsageThread::addObserver(this, Memory, [this] (const ResourceUsageData& data) {
+        collectSample(data);
+    });
+
+    m_tracking = true;
+
+    m_frontendDispatcher->trackingStart(protect(environment())->executionStopwatch().elapsedTime().seconds());
+
+    return { };
+}
+
+Inspector::Protocol::ErrorStringOr<void> InspectorMemoryAgent::stopTracking()
+{
+    if (!m_tracking)
+        return { };
+
+    ResourceUsageThread::removeObserver(this);
+
+    m_tracking = false;
+
+    m_frontendDispatcher->trackingComplete(protect(environment())->executionStopwatch().elapsedTime().seconds());
+
+    return { };
+}
+
+void InspectorMemoryAgent::didHandleMemoryPressure(Critical critical)
+{
+    MemoryFrontendDispatcher::Severity severity = critical == Critical::Yes ? MemoryFrontendDispatcher::Severity::Critical : MemoryFrontendDispatcher::Severity::NonCritical;
+    m_frontendDispatcher->memoryPressure(protect(environment())->executionStopwatch().elapsedTime().seconds(), Inspector::Protocol::Helpers::getEnumConstantValue(severity));
+}
+
+void InspectorMemoryAgent::collectSample(const ResourceUsageData& data)
+{
+    auto javascriptCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::JavaScript)
+        .setSize(data.categories[MemoryCategory::GCHeap].totalSize() + data.categories[MemoryCategory::GCOwned].totalSize())
+        .release();
+
+    auto jitCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::JIT)
+        .setSize(data.categories[MemoryCategory::JSJIT].totalSize())
+        .release();
+
+    auto imagesCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::Images)
+        .setSize(data.categories[MemoryCategory::Images].totalSize())
+        .release();
+
+    auto layersCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::Layers)
+        .setSize(data.categories[MemoryCategory::Layers].totalSize())
+        .release();
+
+    auto pageCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::Page)
+        .setSize(data.categories[MemoryCategory::bmalloc].totalSize() + data.categories[MemoryCategory::LibcMalloc].totalSize())
+        .release();
+
+    auto otherCategory = Inspector::Protocol::Memory::CategoryData::create()
+        .setType(Inspector::Protocol::Memory::CategoryData::Type::Other)
+        .setSize(data.categories[MemoryCategory::Other].totalSize())
+        .release();
+
+    auto categories = JSON::ArrayOf<Inspector::Protocol::Memory::CategoryData>::create();
+    categories->addItem(WTF::move(javascriptCategory));
+    categories->addItem(WTF::move(jitCategory));
+    categories->addItem(WTF::move(imagesCategory));
+    categories->addItem(WTF::move(layersCategory));
+    categories->addItem(WTF::move(pageCategory));
+    categories->addItem(WTF::move(otherCategory));
+
+    auto event = Inspector::Protocol::Memory::Event::create()
+        .setTimestamp(protect(environment())->executionStopwatch().elapsedTimeSince(data.timestamp).seconds())
+        .setCategories(WTF::move(categories))
+        .release();
+
+    m_frontendDispatcher->trackingUpdate(WTF::move(event));
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(RESOURCE_USAGE)

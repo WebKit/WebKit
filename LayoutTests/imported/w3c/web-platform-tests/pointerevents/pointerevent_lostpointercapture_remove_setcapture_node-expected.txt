@@ -1,0 +1,4 @@
+
+
+PASS setPointerCapture target removed by lostpointercapture
+

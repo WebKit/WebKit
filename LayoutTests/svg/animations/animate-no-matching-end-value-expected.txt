@@ -1,0 +1,3 @@
+
+PASS Test animate intervals having begin-value without a matching end-value
+

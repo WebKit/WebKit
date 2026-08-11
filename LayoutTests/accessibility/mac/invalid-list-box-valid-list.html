@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<ul id="listbox" role="listbox" aria-label="Unnecessary listbox role">
+    <li id="item0"><a href=#>Category A</a></li>
+    <li id="item1"><a href=#>Category B</a></li>
+    <li id="item2"><a href=#>Category C</a></li>
+</ul>
+
+<script>
+  var output = "This test ensures that if role='listbox' is used on what's clearly a static list, we interpret it as a list role instead.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // The listbox in its initial state is invalid — it has no `option` descendants. We should map it to a content list.
+    output += expect("accessibilityController.accessibleElementById('listbox').role", "'AXRole: AXList'");
+    output += expect("accessibilityController.accessibleElementById('listbox').subrole", "'AXSubrole: AXContentList'");
+
+    // Change one descendant to an option and ensure the role is now reported to be a proper listbox.
+    document.getElementById("item1").setAttribute("role", "option");
+    setTimeout(async function() {
+        output += await expectAsync("accessibilityController.accessibleElementById('listbox').role", "'AXRole: AXList'");
+        output += await expectAsync("accessibilityController.accessibleElementById('listbox').subrole", "'AXSubrole: '");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

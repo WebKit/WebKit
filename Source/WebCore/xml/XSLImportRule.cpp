@@ -1,0 +1,123 @@
+/*
+ * This file is part of the XSL implementation.
+ *
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#include "config.h"
+#include "XSLImportRule.h"
+
+#if ENABLE(XSLT)
+
+#include "CachedXSLStyleSheet.h"
+#include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
+#include "Document.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XSLImportRule);
+
+Ref<XSLImportRule> XSLImportRule::create(XSLStyleSheet& parentSheet, const String& href)
+{
+    return adoptRef(*new XSLImportRule(parentSheet, href));
+}
+
+XSLImportRule::XSLImportRule(XSLStyleSheet& parent, const String& href)
+    : m_parentStyleSheet(parent)
+    , m_strHref(href)
+{
+}
+
+XSLImportRule::~XSLImportRule()
+{
+    if (m_styleSheet)
+        styleSheet()->setParentStyleSheet(nullptr);
+
+    if (m_cachedSheet)
+        m_cachedSheet->removeClient(*this);
+}
+
+void XSLImportRule::setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet)
+{
+    if (m_styleSheet)
+        styleSheet()->setParentStyleSheet(nullptr);
+
+    // FIXME: parentStyleSheet() should never be null here.
+    RefPtr parent = parentStyleSheet();
+    m_styleSheet = XSLStyleSheet::create(parent.get(), href, baseURL);
+
+    protect(styleSheet())->parseString(sheet);
+    m_loading = false;
+
+    if (parent)
+        parent->checkLoaded();
+}
+
+bool XSLImportRule::isLoading()
+{
+    return (m_loading || (m_styleSheet && protect(m_styleSheet)->isLoading()));
+}
+
+void XSLImportRule::loadSheet()
+{
+    RefPtr rootSheet = parentStyleSheet();
+    while (RefPtr parentSheet = rootSheet->parentStyleSheet())
+        rootSheet = parentSheet;
+
+    RefPtr cachedResourceLoader = rootSheet->cachedResourceLoader();
+
+    String absHref = m_strHref;
+    RefPtr parentSheet = parentStyleSheet();
+    if (!parentSheet->baseURL().isNull())
+        // use parent styleheet's URL as the base URL
+        absHref = URL(parentSheet->baseURL(), m_strHref).string();
+
+    // Check for a cycle in our import chain.  If we encounter a stylesheet
+    // in our parent chain with the same URL, then just bail.
+    for (RefPtr parentSheet = parentStyleSheet(); parentSheet; parentSheet = parentSheet->parentStyleSheet()) {
+        if (absHref == parentSheet->baseURL().string())
+            return;
+    }
+
+    if (m_cachedSheet)
+        protect(m_cachedSheet)->removeClient(*this);
+
+    auto options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.mode = FetchOptions::Mode::SameOrigin;
+    if (auto result = cachedResourceLoader->requestXSLStyleSheet({ ResourceRequest(protect(cachedResourceLoader->document())->encodingParseURL(absHref)), options }))
+        m_cachedSheet = WTF::move(result.value());
+    else
+        m_cachedSheet = nullptr;
+
+    if (m_cachedSheet) {
+        protect(m_cachedSheet)->addClient(*this);
+
+        // If the imported sheet is in the cache, then setXSLStyleSheet gets called,
+        // and the sheet even gets parsed (via parseString).  In this case we have
+        // loaded (even if our subresources haven't), so if we have a stylesheet after
+        // checking the cache, then we've clearly loaded.
+        if (!m_styleSheet)
+            m_loading = true;
+    }
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(XSLT)

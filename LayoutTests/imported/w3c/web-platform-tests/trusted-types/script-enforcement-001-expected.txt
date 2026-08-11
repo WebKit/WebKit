@@ -1,0 +1,36 @@
+
+PASS The HTMLScriptElement is initially trusted.
+PASS Script source set via TrustedScript sink HTMLScriptElement.innerText keeps trustworthiness.
+PASS Script source set via HTMLElement.innerText drops trustworthiness.
+PASS Script source set via TrustedScript sink HTMLScriptElement.textContent keeps trustworthiness.
+PASS Script source set Node.textContent drops trustworthiness.
+PASS Script source set via TrustedScript sink HTMLScriptElement.text keeps trustworthiness.
+PASS Script source set via TrustedHTML sink Element.innerHTML drops trustworthiness.
+PASS Script source set via TrustedHTML sink Element.setHTMLUnsafe() drops trustworthiness.
+PASS Splitting script source via Text.splitText() keeps trustworthiness.
+PASS Normalizing script source via Element.normalize() keeps trustworthiness.
+PASS Script source set via Node.nodeValue drops trustworthiness.
+PASS Setting script source via CharacterData.data drops trustworthiness.
+PASS Setting script source via CharacterData.appendData() drops trustworthiness.
+PASS Setting script source via CharacterData.insertData() drops trustworthiness.
+PASS Setting script source via CharacterData.replaceData() drops trustworthiness.
+PASS Setting script source via CharacterData.deleteData() drops trustworthiness.
+PASS Setting script source via CharacterData.before() drops trustworthiness.
+PASS Setting script source via CharacterData.after() drops trustworthiness.
+PASS Setting script source via CharacterData.remove() drops trustworthiness.
+PASS Setting script source via CharacterData.replaceWith() drops trustworthiness.
+PASS Setting script source via Node.appendChild() drops trustworthiness.
+PASS Setting script source via Node.insertBefore() drops trustworthiness.
+PASS Setting script source via Node.replaceChild() drops trustworthiness.
+PASS Setting script source via Node.removeChild() drops trustworthiness.
+PASS Setting script source via Element.prepend() drops trustworthiness.
+PASS Setting script source via Element.append() drops trustworthiness.
+PASS Setting script source via Element.replaceChildren() drops trustworthiness.
+FAIL Setting script source via Element.moveBefore() drops trustworthiness. promise_test: Unhandled rejection with value: object "TypeError: script.moveBefore is not a function. (In 'script.moveBefore(text, script.firstChild)', 'script.moveBefore' is undefined)"
+PASS Setting script source via TrustedHTML sink Node.insertAdjacentHTML() drops trustworthiness.
+PASS Setting script source via Node.insertAdjacentText() drops trustworthiness.
+PASS Setting script source via Range.insertNode() drops trustworthiness.
+PASS Setting script source via Range.deleteContents() drops trustworthiness.
+PASS Cloning a script via Node.cloneNode() drops trustworthiness.
+PASS Cloning a script via Range.cloneContents() drops trustworthiness.
+

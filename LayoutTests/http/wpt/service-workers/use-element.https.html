@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>Service Worker Fetch Event for use element</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="myDiv">
+<img id="image1"></img>
+<img id="image2"></img>
+<br>
+<div id="svg1"></div>
+<div id="svg2"></div>
+</div>
+<script>
+var scope1 = "";
+var scope2 = "resources/";
+let registration1, registration2;
+let port1, port2;
+
+async function waitForActive(registration)
+{
+    var activeWorker = registration.active;
+    if (!activeWorker) {
+        activeWorker = registration.installing;
+        await new Promise(resolve => {
+            activeWorker.addEventListener('statechange', () => {
+                if (activeWorker.state === "activated")
+                    resolve();
+            });
+        });
+    }
+
+    const channel = new MessageChannel();
+    activeWorker.postMessage(channel.port1, [channel.port1]);
+    return new Promise(resolve => channel.port2.onmessage = (event) => {
+        resolve(channel.port2);
+    });
+}
+
+function createSVG(url)
+{
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute("width", 300);
+    svg.setAttribute("height", 300);
+    svg.setAttribute("viewBox", "0 0 88 88");
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    use.setAttribute("x", 10);
+    use.setAttribute("y", 10);
+    use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', url);
+    svg.appendChild(use);
+
+    return svg;
+}
+
+function waitForMessage(port)
+{
+    return new Promise(resolve => port.onmessage = (event) => resolve(event.data));
+}
+
+promise_test(async () => {
+    // registration controlling this document.
+    registration1 = await navigator.serviceWorker.register("use-element-worker.js", { scope : scope1 });
+    port1 = await waitForActive(registration1);
+
+    // registration not controlling this document.
+    registration2 = await navigator.serviceWorker.register("use-element-worker.js", { scope : scope2 });
+    port2 = await waitForActive(registration2);
+}, "register service workers");
+
+promise_test(async (test) => {
+    image1.src = 'image1.svg?img';
+    return waitForMessage(port1);
+}, "image1 load");
+
+promise_test(async (test) => {
+    image2.src = 'resources/image1.svg?img';
+    return waitForMessage(port1);
+}, "image2 load");
+
+promise_test(async (test) => {
+    myDiv.appendChild(createSVG('image1.svg#all'));
+    const result = await waitForMessage(port1);
+    assert_equals(result.destination, "image");
+}, "svg1 load");
+
+promise_test(async (test) => {
+    // We do not want the load to match registration2.
+    myDiv.appendChild(createSVG('resources/image1.svg#all'));
+    const result = await waitForMessage(port1);
+    assert_equals(result.destination, "image");
+}, "svg2 load");
+</script>
+</body>
+</html>

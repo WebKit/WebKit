@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</head>
+<body>
+<script>
+promise_test(async t => {
+    if (!('AudioEncoder' in window))
+        return;
+
+    const encoder = new AudioEncoder({
+        output: () => { },
+        error: e => { assert_unreached('Unexpected error: ' + e); }
+    });
+    t.add_cleanup(() => { if (encoder.state !== 'closed') encoder.close(); });
+
+    encoder.configure({
+        codec: 'mp4a.40.2',
+        sampleRate: 48000,
+        numberOfChannels: 1,
+    });
+
+    const sampleRate = 48000;
+    const numberOfChannels = 1;
+    const numberOfFrames = 1024;
+
+    const f32Data = new Float32Array(numberOfFrames);
+    for (let i = 0; i < numberOfFrames; i++)
+        f32Data[i] = Math.sin(2 * Math.PI * 440 * i / sampleRate);
+    const f32Frame = new AudioData({ timestamp: 0, data: f32Data, numberOfChannels, numberOfFrames, sampleRate, format: 'f32-planar' });
+    t.add_cleanup(() => { if (!f32Frame.closed) f32Frame.close(); });
+
+    const s16Data = new Int16Array(numberOfFrames);
+    for (let i = 0; i < numberOfFrames; i++)
+        s16Data[i] = Math.round(Math.sin(2 * Math.PI * 440 * i / sampleRate) * 32767);
+    const s16Frame = new AudioData({ timestamp: 21333, data: s16Data, numberOfChannels, numberOfFrames, sampleRate, format: 's16' });
+    t.add_cleanup(() => { if (!s16Frame.closed) s16Frame.close(); });
+
+    encoder.encode(f32Frame);
+    f32Frame.close();
+    encoder.encode(s16Frame);
+    s16Frame.close();
+
+    await encoder.flush();
+    encoder.close();
+}, 'AudioEncoder handles switching PCM sample format from f32-planar to s16 mid-stream');
+</script>
+</body>
+</html>

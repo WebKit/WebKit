@@ -1,0 +1,7 @@
+There should be a blue rectangle below, and possibly a scrollbar (depending on OS / browser), that should not obscure any parts of the rectangle. The word "FAIL" should not be seen.
+
+
+FAIL
+
+PASS Auto scrollbar affects size of children
+

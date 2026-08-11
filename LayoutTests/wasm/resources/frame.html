@@ -1,0 +1,15 @@
+<script>
+function listener(event) {
+  var mod = event.data;
+  try {
+    var i = new WebAssembly.Instance(mod);
+    var ans = i.exports.calc(5);
+    event.source.postMessage(ans, event.origin);
+  } catch (e) {
+    event.source.postMessage(e, event.origin);
+  }
+}
+
+addEventListener("message", listener, false);
+window.parent.postMessage("ready", "*");
+</script>

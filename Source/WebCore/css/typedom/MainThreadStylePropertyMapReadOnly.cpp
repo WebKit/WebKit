@@ -1,0 +1,129 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "MainThreadStylePropertyMapReadOnly.h"
+
+#include "CSSProperty.h"
+#include "CSSPropertyNames.h"
+#include "CSSPropertyParser.h"
+#include "CSSShorthandSubstitutionValue.h"
+#include "CSSStyleValue.h"
+#include "CSSStyleValueFactory.h"
+#include "CSSTokenizer.h"
+#include "CSSUnparsedValue.h"
+#include "CSSVariableData.h"
+#include "Document.h"
+#include "ExceptionOr.h"
+#include "PaintWorkletGlobalScope.h"
+#include "StylePropertyShorthand.h"
+#include <wtf/text/MakeString.h>
+
+namespace WebCore {
+
+MainThreadStylePropertyMapReadOnly::MainThreadStylePropertyMapReadOnly() = default;
+
+Document* MainThreadStylePropertyMapReadOnly::documentFromContext(ScriptExecutionContext& context)
+{
+    ASSERT(isMainThread());
+
+    if (auto* paintWorklet = dynamicDowncast<PaintWorkletGlobalScope>(context))
+        return paintWorklet->responsibleDocument();
+    return &downcast<Document>(context);
+}
+
+// https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-get
+ExceptionOr<MainThreadStylePropertyMapReadOnly::CSSStyleValueOrUndefined> MainThreadStylePropertyMapReadOnly::get(ScriptExecutionContext& context, const AtomString& property) const
+{
+    RefPtr document = documentFromContext(context);
+    if (!document)
+        return { std::monostate { } };
+
+    if (isCustomPropertyName(property)) {
+        if (RefPtr value = reifyValue(*document, customPropertyValue(property), property))
+            return { value.releaseNonNull() };
+
+        return { std::monostate { } };
+    }
+
+    auto propertyID = cssPropertyID(property);
+    if (!isExposed(propertyID, &document->settings()))
+        return Exception { ExceptionCode::TypeError, makeString("Invalid property "_s, property) };
+
+    if (isShorthand(propertyID)) {
+        if (RefPtr value = CSSStyleValueFactory::constructStyleValueForShorthandSerialization(*document, shorthandPropertySerialization(propertyID), propertyID))
+            return { value.releaseNonNull() };
+
+        return { std::monostate { } };
+    }
+
+    if (RefPtr value = reifyValue(*document, propertyValue(propertyID), propertyID))
+        return { value.releaseNonNull() };
+
+    return { std::monostate { } };
+}
+
+// https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-getall
+ExceptionOr<Vector<RefPtr<CSSStyleValue>>> MainThreadStylePropertyMapReadOnly::getAll(ScriptExecutionContext& context, const AtomString& property) const
+{
+    RefPtr document = documentFromContext(context);
+    if (!document)
+        return Vector<RefPtr<CSSStyleValue>> { };
+
+    if (isCustomPropertyName(property))
+        return reifyValueToVector(*document, customPropertyValue(property), AtomString { property });
+
+    auto propertyID = cssPropertyID(property);
+    if (!isExposed(propertyID, &document->settings()))
+        return Exception { ExceptionCode::TypeError, makeString("Invalid property "_s, property) };
+
+    if (isShorthand(propertyID)) {
+        if (RefPtr value = CSSStyleValueFactory::constructStyleValueForShorthandSerialization(*document, shorthandPropertySerialization(propertyID), propertyID))
+            return Vector<RefPtr<CSSStyleValue>> { WTF::move(value) };
+        return Vector<RefPtr<CSSStyleValue>> { };
+    }
+
+    return reifyValueToVector(*document, propertyValue(propertyID), propertyID);
+}
+
+// https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-has
+ExceptionOr<bool> MainThreadStylePropertyMapReadOnly::has(ScriptExecutionContext& context, const AtomString& property) const
+{
+    auto result = get(context, property);
+    if (result.hasException())
+        return result.releaseException();
+
+    return WTF::switchOn(result.returnValue(),
+        [](const Ref<CSSStyleValue>&) {
+            return true;
+        },
+        [](std::monostate) {
+            return false;
+        }
+    );
+}
+
+} // namespace WebCore

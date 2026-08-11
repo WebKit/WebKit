@@ -1,0 +1,292 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "WasmStreamingCompiler.h"
+
+#include "JSBigInt.h"
+#include "JSWebAssembly.h"
+#include "JSWebAssemblyCompileError.h"
+#include "JSWebAssemblyHelpers.h"
+#include "JSWebAssemblyInstance.h"
+#include "JSWebAssemblyModule.h"
+#include "StrongInlines.h"
+#include "WasmIPIntPlan.h"
+#include "WasmStreamingPlan.h"
+#include "WasmWorklist.h"
+#include "WebAssemblyCompileOptions.h"
+
+#if ENABLE(WEBASSEMBLY)
+
+namespace JSC { namespace Wasm {
+
+StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, String wasmSourceURL, uint64_t requestIdentifier)
+    : m_vm(vm)
+    , m_compilerMode(compilerMode)
+    , m_compileOptions(WTF::move(compileOptions))
+    , m_info(Wasm::ModuleInformation::create())
+    , m_parser(m_info.get(), *this)
+    , m_source(source)
+{
+    m_info->sourceURL = Name(byteCast<char8_t>(wasmSourceURL.utf8().span()));
+    m_info->requestIdentifier = requestIdentifier;
+    Vector<JSCell*> dependencies;
+    dependencies.append(globalObject);
+    if (importObject)
+        dependencies.append(importObject);
+    m_ticket = vm.deferredWorkTimer->addPendingWork(DeferredWorkTimer::WorkType::AtSomePoint, vm, promise, WTF::move(dependencies));
+#if ASSERT_ENABLED
+    RefPtr ticket = m_ticket.get();
+    ASSERT(ticket);
+    ASSERT(vm.deferredWorkTimer->hasPendingWork(*ticket));
+    ASSERT(vm.deferredWorkTimer->hasDependencyInPendingWork(*ticket, globalObject));
+    ASSERT(!importObject || vm.deferredWorkTimer->hasDependencyInPendingWork(*ticket, importObject));
+#endif
+}
+
+StreamingCompiler::~StreamingCompiler()
+{
+    m_vm.deferredWorkTimer->scheduleWorkSoonIfActive(m_ticket, [](DeferredWorkTimer::Ticket&) { });
+    m_ticket = nullptr;
+}
+
+Ref<StreamingCompiler> StreamingCompiler::create(VM& vm, CompilerMode compilerMode, JSGlobalObject* globalObject, JSPromise* promise, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&& compileOptions, const SourceCode& source, String wasmSourceURL, uint64_t requestIdentifier)
+{
+    return adoptRef(*new StreamingCompiler(vm, compilerMode, globalObject, promise, importObject, WTF::move(compileOptions), source, WTF::move(wasmSourceURL), requestIdentifier));
+}
+
+bool StreamingCompiler::didReceiveFunctionData(FunctionCodeIndex functionIndex, const Wasm::FunctionData&)
+{
+    if (!m_plan) {
+        m_plan = adoptRef(*new IPIntPlan(m_vm, m_info.copyRef(), m_compilerMode, Plan::dontFinalize()));
+
+        // Plan already failed in preparation. We do not start threaded compilation.
+        // Keep Plan failed, and "finalize" will reject promise with that failure.
+        if (!m_plan->failed()) {
+            m_remainingCompilationRequests = m_info->functions.size();
+            m_threadedCompilationStarted = true;
+        }
+    }
+
+    if (m_threadedCompilationStarted) {
+        Ref<Plan> plan = adoptRef(*new StreamingPlan(m_vm, m_info.copyRef(), *m_plan, functionIndex, createSharedTask<Plan::CallbackType>([compiler = Ref { *this }](Plan& plan) {
+            compiler->didCompileFunction(static_cast<StreamingPlan&>(plan));
+        })));
+        ensureWorklist().enqueue(WTF::move(plan));
+    }
+
+    return true;
+}
+
+void StreamingCompiler::didCompileFunction(StreamingPlan& plan)
+{
+    Locker locker { m_lock };
+    ASSERT(m_threadedCompilationStarted);
+    if (plan.failed())
+        m_plan->didFailInStreaming(plan.errorMessage());
+    m_remainingCompilationRequests--;
+    if (!m_remainingCompilationRequests)
+        m_plan->didCompileFunctionInStreaming();
+    completeIfNecessary();
+}
+
+void StreamingCompiler::didFinishParsing()
+{
+    if (!m_plan) {
+        // Reaching here means that this WebAssembly module has no functions.
+        ASSERT(!m_info->functions.size());
+        ASSERT(!m_remainingCompilationRequests);
+        m_plan = adoptRef(*new IPIntPlan(m_vm, m_info.copyRef(), m_compilerMode, Plan::dontFinalize()));
+        // If plan is already failed in preparation, we will reject promise with plan's failure soon in finalize.
+    }
+}
+
+void StreamingCompiler::completeIfNecessary()
+{
+    if (m_eagerFailed)
+        return;
+
+    if (!m_remainingCompilationRequests && m_finalized) {
+        m_plan->completeInStreaming();
+        didComplete();
+    }
+}
+
+void StreamingCompiler::didComplete()
+{
+
+    auto makeValidationResult = [](EntryPlan& plan) -> Module::ValidationResult {
+        ASSERT(!plan.hasWork());
+        if (plan.failed())
+            return std::unexpected<String>(plan.errorMessage());
+        return JSC::Wasm::Module::ValidationResult(Module::create(static_cast<IPIntPlan&>(plan)));
+    };
+
+    auto result = makeValidationResult(*m_plan);
+    switch (m_compilerMode) {
+    case CompilerMode::Validation: {
+        m_vm.deferredWorkTimer->scheduleWorkSoonIfActive(m_ticket, [result = WTF::move(result), compileOptions = WTF::move(m_compileOptions)](DeferredWorkTimer::Ticket& ticket) mutable {
+            JSPromise* promise = uncheckedDowncast<JSPromise>(ticket.target());
+            JSGlobalObject* globalObject = uncheckedDowncast<JSGlobalObject>(ticket.dependencies()[0]);
+            VM& vm = globalObject->vm();
+            auto scope = DECLARE_THROW_SCOPE(vm);
+
+            if (!result.has_value()) [[unlikely]] {
+                throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, result.error()));
+                promise->rejectWithCaughtException(vm, scope);
+                return;
+            }
+
+            if (compileOptions) {
+                auto errorMessage = compileOptions->validateBuiltinsAndImportedStrings(result.value());
+                if (errorMessage.has_value()) {
+                    throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, errorMessage.value()));
+                    promise->rejectWithCaughtException(vm, scope);
+                    return;
+                }
+                result.value()->applyCompileOptions(compileOptions.value());
+            }
+
+            JSWebAssemblyModule* module = JSWebAssemblyModule::create(vm, globalObject->webAssemblyModuleStructure(), WTF::move(result.value()));
+
+            scope.release();
+            promise->resolve(globalObject, vm, module);
+        });
+        m_ticket = nullptr;
+        return;
+    }
+
+    case CompilerMode::FullCompile: {
+        RefPtr<SourceProvider> provider = m_source.provider();
+        m_vm.deferredWorkTimer->scheduleWorkSoonIfActive(m_ticket, [result = WTF::move(result), provider = WTF::move(provider), compileOptions = WTF::move(m_compileOptions)](DeferredWorkTimer::Ticket& ticket) mutable {
+            JSPromise* promise = uncheckedDowncast<JSPromise>(ticket.target());
+            auto& dependencies = ticket.dependencies();
+            JSGlobalObject* globalObject = uncheckedDowncast<JSGlobalObject>(dependencies[0]);
+            JSObject* importObject = nullptr;
+            if (dependencies.size() > 2)
+                importObject = uncheckedDowncast<JSObject>(dependencies[1]);
+            VM& vm = globalObject->vm();
+            auto scope = DECLARE_THROW_SCOPE(vm);
+
+            if (!result.has_value()) [[unlikely]] {
+                throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, result.error()));
+                promise->rejectWithCaughtException(vm, scope);
+                return;
+            }
+
+            if (compileOptions) {
+                auto errorMessage = compileOptions->validateBuiltinsAndImportedStrings(result.value());
+                if (errorMessage.has_value()) {
+                    throwException(globalObject, scope, createJSWebAssemblyCompileError(globalObject, vm, errorMessage.value()));
+                    promise->rejectWithCaughtException(vm, scope);
+                    return;
+                }
+                result.value()->applyCompileOptions(compileOptions.value());
+            }
+
+            JSWebAssemblyModule* module = JSWebAssemblyModule::create(vm, globalObject->webAssemblyModuleStructure(), WTF::move(result.value()));
+            JSWebAssembly::instantiateForStreaming(vm, globalObject, promise, module, importObject, WTF::move(provider));
+            if (scope.exception()) [[unlikely]] {
+                promise->rejectWithCaughtException(vm, scope);
+                return;
+            }
+        });
+        m_ticket = nullptr;
+        return;
+    }
+    }
+}
+
+void StreamingCompiler::finalize(JSGlobalObject* globalObject)
+{
+    auto state = m_parser.finalize();
+    if (state != StreamingParser::State::Finished) {
+        fail(globalObject, createJSWebAssemblyCompileError(globalObject, globalObject->vm(), m_parser.errorMessage()));
+        return;
+    }
+    {
+        Locker locker { m_lock };
+        m_finalized = true;
+        completeIfNecessary();
+    }
+}
+
+void StreamingCompiler::fail(JSGlobalObject*, JSValue error)
+{
+    {
+        Locker locker { m_lock };
+        ASSERT(!m_finalized);
+        if (m_eagerFailed)
+            return;
+        m_eagerFailed = true;
+    }
+    auto ticket = takeTicketIfActive();
+    if (!ticket)
+        return;
+    JSPromise* promise = uncheckedDowncast<JSPromise>(ticket->target());
+    // The pending work Ticket was keeping the promise alive. We need to
+    // make sure it is reachable from the stack before we remove it from the
+    // pending work list.
+    WTF::compilerFence();
+    m_vm.deferredWorkTimer->cancelPendingWork(*ticket);
+    promise->reject(m_vm, error);
+}
+
+void StreamingCompiler::cancel()
+{
+    {
+        Locker locker { m_lock };
+        ASSERT(!m_finalized);
+        if (m_eagerFailed)
+            return;
+        m_eagerFailed = true;
+    }
+    auto ticket = takeTicketIfActive();
+    if (!ticket)
+        return;
+    m_vm.deferredWorkTimer->cancelPendingWork(*ticket);
+}
+
+RefPtr<DeferredWorkTimer::Ticket> StreamingCompiler::takeTicketIfActive()
+{
+    auto ticket = m_ticket.get();
+    m_ticket = nullptr;
+    if (!ticket || ticket->isCancelled())
+        return nullptr;
+    return ticket;
+}
+
+JSGlobalObject* StreamingCompiler::globalObjectIfActive()
+{
+    auto ticket = m_ticket.get();
+    if (!ticket || ticket->isCancelled())
+        return nullptr;
+    return uncheckedDowncast<JSGlobalObject>(ticket->dependencies()[0]);
+}
+
+
+} } // namespace JSC::Wasm
+
+#endif // ENABLE(WEBASSEMBLY)

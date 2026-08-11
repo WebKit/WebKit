@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<embed>
+<div pseudo="-webkit-plugin-replacement" style="display: inline-block; position: relative; width: 100; height: 100;" id="group">
+<iframe width="100%" id="iframe" style="max-height: 100%" height="350" src="resources/cake.png" onload="runTest()" frameborder="0" scrolling="no"></iframe>
+</div>
+</embed>
+
+<script>
+let output = "Make sure that an inline block element is not cast incorrectly causing an assertion.\n\n";
+let element;
+function runTest() {
+    if (window.accessibilityController) {
+        element = accessibilityController.accessibleElementById("group").childAtIndex(0).childAtIndex(0);
+        output += expect("element.role", "'AXRole: AXWebArea'");
+        debug(output);
+    }
+}
+</script>
+</body>
+</html>

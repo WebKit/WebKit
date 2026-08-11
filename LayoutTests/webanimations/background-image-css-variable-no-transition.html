@@ -1,0 +1,39 @@
+<html>
+<head>
+<style>
+
+    :root {
+        --checkbox-icon: url("data:image/svg+xml,%3Csvg width='29' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M27.707.293a.997.997 0 0 0-1.414 0L9 17.586l-7.293-7.293a1 1 0 0 0-1.414 1.414l8 8a.997.997 0 0 0 1.414 0l18-18a.997.997 0 0 0 0-1.414z' fill='black'/%3E%3C/svg%3E");
+    }
+
+    .box {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 90%;
+        background-image: var(--checkbox-icon);
+        transition: 2s linear;
+    }
+
+    body.changed .box {
+        visibility: visible;
+    }
+
+</style>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+    <div class="box"></div>
+    <script>
+        const numberOfAnimationsBeforeStyleChange = document.getAnimations().length;
+        shouldBe("numberOfAnimationsBeforeStyleChange", "0");
+
+        document.body.classList.add('changed');
+
+        const numberOfAnimationsAfterStyleChange = document.getAnimations().length;
+        shouldBe("numberOfAnimationsAfterStyleChange", "0");
+    </script>
+</body>
+</html>

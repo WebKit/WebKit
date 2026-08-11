@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Viewport argument value "resize-content" for key "interactive-widget" is invalid, and has been ignored.
+PASS internals.layoutViewportRect().height == window.initialLayoutViewportHeight is true
+PASS window.visualViewport.height < window.initialVisualViewportHeight is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

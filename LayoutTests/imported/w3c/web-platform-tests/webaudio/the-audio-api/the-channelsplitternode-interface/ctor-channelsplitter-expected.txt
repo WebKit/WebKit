@@ -1,0 +1,7 @@
+
+PASS initialize
+PASS invalid constructor
+PASS default constructor
+PASS AudioNodeOptions immutability
+PASS constructor options
+

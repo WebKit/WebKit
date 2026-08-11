@@ -1,0 +1,11 @@
+Tests the behavior of document.scrollingElement in standards mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+In standards mode the scrolling element is supposed to be `HTML`
+PASS document.scrollingElement is document.documentElement
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

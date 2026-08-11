@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<style>
+.container {
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+  background: red;
+}
+#floatBox {
+  display: none;
+  width: 40px;
+  height: 20px;
+  background: green;
+}
+.sibling {
+  margin-top: 20px;
+  width: 40px;
+  height: 20px;
+  background: green;
+}
+</style>
+<div>There should be a green square below, and no red.</div>
+<div class=container>
+    <span>
+        <div id=floatBox></div><div class=sibling></div>
+    </span>
+</div>
+<script>
+document.body.offsetTop;
+floatBox.style.display = "block";
+floatBox.style.float = "left";
+</script>

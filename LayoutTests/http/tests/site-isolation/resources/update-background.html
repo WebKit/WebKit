@@ -1,0 +1,29 @@
+<head>
+    <style>
+        .top {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background-color: rgb(0, 122, 255);
+            z-index: 100;
+        }
+    </style>
+</head>
+
+<body style='background-color:black'/>
+
+<script>
+    onload = () => {
+        document.body.style = 'background-color:white';
+        iframe = document.createElement('iframe');
+        iframe.src = 'http://127.0.0.1:8000/site-isolation/resources/localhostiframe.html';
+        iframe.onload = ()=> {
+            document.body.style = 'background-color:black';
+            iframe.parentNode.removeChild(iframe);
+            setTimeout(onload, 100)
+        }
+        document.body.appendChild(iframe);
+    }
+</script>

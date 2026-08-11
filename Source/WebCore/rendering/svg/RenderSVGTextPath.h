@@ -1,0 +1,53 @@
+/*
+ * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2009 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#pragma once
+
+#include "Path.h"
+#include "RenderSVGInline.h"
+
+namespace WebCore {
+
+class SVGGeometryElement;
+class SVGLengthValue;
+class SVGTextPathElement;
+
+class RenderSVGTextPath final : public RenderSVGInline {
+    WTF_MAKE_TZONE_ALLOCATED(RenderSVGTextPath);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGTextPath);
+public:
+    RenderSVGTextPath(SVGTextPathElement&, Style::ComputedStyle&&);
+    virtual ~RenderSVGTextPath();
+
+    SVGTextPathElement& NODELETE textPathElement() const;
+    RefPtr<SVGGeometryElement> targetElement() const;
+
+    Path layoutPath() const;
+    const SVGLengthValue& NODELETE startOffset() const LIFETIME_BOUND;
+
+private:
+    void graphicsElement() const = delete;
+
+    ASCIILiteral renderName() const override { return "RenderSVGTextPath"_s; }
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGTextPath, isRenderSVGTextPath())

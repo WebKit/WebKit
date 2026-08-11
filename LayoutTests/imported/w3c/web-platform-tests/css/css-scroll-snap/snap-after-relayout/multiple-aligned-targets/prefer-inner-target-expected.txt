@@ -1,0 +1,5 @@
+Top LeftTop RightOuter I1 I2 I3 I4
+
+PASS snap container selects innermost area as snap target
+PASS snap container follows the innermost snap target after layout change (not the co-located outer target)
+

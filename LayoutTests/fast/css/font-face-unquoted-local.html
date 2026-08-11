@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style id="testStyle">
+</style>
+<script>
+  const sheet = testStyle.sheet;
+  tests = [
+    { src: "local(unquoted name);", valid: true},
+    { src: "local(invalid '' name);", valid: false}
+  ];
+
+  for (let t of tests) {
+    test(() => {
+      assert_equals(sheet.cssRules.length, 0, "testSheet should initially be empty");
+      sheet.insertRule("@font-face { src: " + t.src + "}");
+      assert_equals(sheet.cssRules[0].style.getPropertyValue("src") != "", t.valid);
+      sheet.deleteRule(0);
+    }, "Check that src: " + t.src + " is " + (t.valid ? "valid" : "invalid"));
+  }
+</script>

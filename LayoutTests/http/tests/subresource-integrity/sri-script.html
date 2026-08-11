@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+    <script src="resources/sri-utilities.js"></script>
+</head>
+<body>
+    <div id="log"></div>
+    <div id="container"></div>
+<script>
+
+var main_host = '127.0.0.1';
+var remote_host = 'localhost';
+var port_string = "8000";
+var main_host_and_port = main_host + ':' + port_string;
+var remote_host_and_port = remote_host + ':' + port_string;
+
+var crossorigin_anon_script = location.protocol + '//' + remote_host_and_port + '/subresource-integrity/resources/crossorigin-anon-script.js';
+var crossorigin_creds_script = location.protocol + '//' + remote_host_and_port + '/subresource-integrity/resources/crossorigin-creds-script.js';
+var crossorigin_ineligible_script = location.protocol + '//' + remote_host_and_port + '/subresource-integrity/resources/crossorigin-ineligible-script.js';
+
+// Script tests from web-platform-tests/subresource-integrity
+
+new SRIScriptTest(
+    true,
+    "Same-origin with correct sha256 hash.",
+    "resources/matching-digest.js",
+    "sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9E="
+);
+
+new SRIScriptTest(
+    true,
+    "Same-origin with correct sha384 hash.",
+    "resources/matching-digest.js",
+    "sha384-BDRTPSywZFyxfLEAzaLcL4FfERBgJgXfEkuT0r04LG93Yqn1PWNYPZMomaqEfE3H"
+);
+
+new SRIScriptTest(
+    true,
+    "Same-origin with correct sha512 hash.",
+    "resources/matching-digest.js",
+    "sha512-geByvIIRspbnUnwooKGNNCb39nvg+EW0O9hDScTXeo/9pVZztLSUYU3LNV6H0lZapo8bCJUpyPPLAzE9fDzpxg=="
+);
+
+new SRIScriptTest(
+    true,
+    "Same-origin with empty integrity.",
+    "resources/matching-digest.js",
+    ""
+);
+
+new SRIScriptTest(
+    false,
+    "Same-origin with incorrect hash.",
+    "resources/non-matching-digest.js",
+    "sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9e="
+);
+
+new SRIScriptTest(
+    true,
+    "Same-origin with multiple sha256 hashes, including correct.",
+    "resources/matching-digest.js",
+    "sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9E= sha256-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead"
+);
+
+new SRIScriptTest(
+    true,
+    "Same-origin with multiple sha256 hashes, including unknown algorithm.",
+    "resources/matching-digest.js",
+    "sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9E= foo666-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead"
+);
+
+new SRIScriptTest(
+    true,
+    "Same-origin with sha256 mismatch, sha512 match",
+    "resources/matching-digest.js",
+    "sha512-geByvIIRspbnUnwooKGNNCb39nvg+EW0O9hDScTXeo/9pVZztLSUYU3LNV6H0lZapo8bCJUpyPPLAzE9fDzpxg== sha256-deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead"
+);
+
+new SRIScriptTest(
+    false,
+    "Same-origin with sha256 match, sha512 mismatch",
+    "resources/matching-digest.js",
+    "sha512-deadbeefspbnUnwooKGNNCb39nvg+EW0O9hDScTXeo/9pVZztLSUYU3LNV6H0lZapo8bCJUpyPPLAzE9fDzpxg== sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9E="
+);
+
+new SRIScriptTest(
+    true,
+    "<crossorigin='anonymous'> with correct hash, ACAO: *",
+    crossorigin_anon_script,
+    "sha256-51AjITq701Y0yKSx3/UoIKtIY2UQ9+H8WGyyMuOWOC0=",
+    "anonymous"
+);
+
+new SRIScriptTest(
+    false,
+    "<crossorigin='anonymous'> with incorrect hash, ACAO: *",
+    crossorigin_anon_script,
+    "sha256-deadbeefcSLlbFZCj1OACLxTxVck2TOrBTEdUbwz1yU=",
+    "anonymous"
+);
+
+new SRIScriptTest(
+    true,
+    "<crossorigin='use-credentials'> with correct hash, CORS-eligible",
+    crossorigin_creds_script,
+    "sha256-IaGApVboXPQxVSm2wVFmhMq1Yu37gWklajgMdxKLIvc=",
+    "use-credentials"
+);
+
+new SRIScriptTest(
+    false,
+    "<crossorigin='use-credentials'> with incorrect hash CORS-eligible",
+    crossorigin_creds_script,
+    "sha256-deadbeef2S+pTRZgiw3DWrhC6JLDlt2zRyGpwH7unU8=",
+    "use-credentials"
+);
+
+new SRIScriptTest(
+    false,
+    "<crossorigin='anonymous'> with CORS-ineligible resource",
+    crossorigin_ineligible_script,
+    "sha256-F5fXKTX7SiWjtgybxiBZIo2qhh2WiQnNx372E60XrOo=",
+    "anonymous"
+);
+
+new SRIScriptTest(
+    false,
+    "Cross-origin, not CORS request, with correct hash",
+    crossorigin_anon_script,
+    "sha256-51AjITq701Y0yKSx3/UoIKtIY2UQ9+H8WGyyMuOWOC0="
+);
+
+new SRIScriptTest(
+    false,
+    "Cross-origin, not CORS request, with hash mismatch",
+    crossorigin_anon_script,
+    "sha256-deadbeef01Y0yKSx3/UoIKtIY2UQ9+H8WGyyMuOWOC0="
+);
+
+new SRIScriptTest(
+    true,
+    "Cross-origin, empty integrity",
+    crossorigin_anon_script,
+    ""
+);
+
+new SRIScriptTest(
+    true,
+    "Same-origin with correct hash, options.",
+    "resources/matching-digest.js",
+    "sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9E=?foo=bar?spam=eggs"
+);
+
+new SRIScriptTest(
+    true,
+    "Same-origin with unknown algorithm only.",
+    "resources/matching-digest.js",
+    "foo666-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9E="
+);
+
+// WebKit additions to the web-platform-tests test cases.
+// FIXME: Upstream these additional tests to the official web-platform-tests repository.
+
+new SRIScriptTest(
+    true,
+    "Same-origin with correct sha256 hash, using base64URL encoding.",
+    "resources/matching-digest.js",
+    "sha256-U9WYDtBWkcHx13-9UKk_3Q5eoqDc4YGxYb07EPWzb9E="
+);
+
+new SRIScriptTest(
+    false,
+    "Same-origin with correct sha256 hash, using intermixed base64 and base64URL encoding, should fail.",
+    "resources/matching-digest.js",
+    "sha256-U9WYDtBWkcHx13+9UKk_3Q5eoqDc4YGxYb07EPWzb9E="
+);
+
+new SRIScriptTest(
+    true,
+    "Same-origin with invalid syntax only.",
+    "resources/matching-digest.js",
+    "?foo=bar?spam=eggs"
+);
+
+new SRIScriptTest(
+    true,
+    "Same-origin with multiple valid sha256 hashes, including correct.",
+    "resources/matching-digest.js",
+    "sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9e= sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9E="
+);
+
+new SRIScriptTest(
+    false,
+    "Same-origin with incorrect hash, options.",
+    "resources/matching-digest.js",
+    "sha256-U9WYDtBWkcHx13+9UKk/3Q5eoqDc4YGxYb07EPWzb9e=?foo=bar?spam=eggs"
+);
+
+SRITests.execute();
+
+</script>
+</body>
+</html>

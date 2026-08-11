@@ -1,0 +1,28 @@
+Platform/cf/ModuleCF.cpp
+
+Platform/cocoa/CocoaHelpers.mm
+Platform/cocoa/CocoaImage.mm @nonARC
+Platform/cocoa/ImageAnalysisUtilities.mm @nonARC
+Platform/cocoa/LayerHostingContext.mm @nonARC
+Platform/cocoa/LayerHostingContextManager.mm @nonARC
+Platform/cocoa/NetworkIssueReporter.mm @nonARC
+Platform/cocoa/WKCrashReporter.mm @nonARC
+Platform/cocoa/XPCUtilities.mm @nonARC
+
+Platform/foundation/LoggingFoundation.mm @nonARC
+
+Platform/IPC/cocoa/ConnectionCocoa.mm @nonARC
+Platform/IPC/cocoa/DaemonConnectionCocoa.mm @nonARC
+Platform/IPC/cocoa/MachMessage.cpp
+Platform/IPC/cocoa/TransferStringCocoa.mm @nonARC
+
+Platform/IPC/darwin/IPCEventDarwin.cpp
+Platform/IPC/darwin/IPCSemaphoreDarwin.cpp
+Platform/IPC/darwin/MachPort.mm @nonARC
+
+Platform/mac/MachUtilities.cpp
+
+Platform/unix/EnvironmentUtilities.cpp
+
+// Derived sources.
+MessageNames.cpp

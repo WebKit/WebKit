@@ -1,0 +1,13 @@
+Tests that Network.getResponseBody returns base64-encoded content for a binary resource in a cross-origin iframe.
+
+
+== Running test suite: Network.getResponseBody.CrossOriginIframe.Binary
+-- Running test case: Network.getResponseBody.CrossOriginIframe.Binary.PNG
+Child frame added: http://localhost:8000/inspector/network/resources/echo.py?mimetype=text/html&content=%3Cimg%20src%3D%22%2Finspector%2Fnetwork%2Fresources%2Fwhite.png%22%3E
+Resource added: http://localhost:8000/inspector/network/resources/white.png
+PASS: Resource should be the PNG image.
+PASS: MIME type should be image/png.
+PASS: Should not have an error retrieving content.
+PASS: Content should be base64 encoded.
+PASS: Image content should be a Blob.
+

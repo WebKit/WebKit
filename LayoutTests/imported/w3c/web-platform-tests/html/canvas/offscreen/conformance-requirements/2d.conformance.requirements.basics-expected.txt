@@ -1,0 +1,9 @@
+2d.conformance.requirements.basics
+
+void methods return undefined
+
+Defined in "Web IDL" (draft)
+
+
+PASS void methods return undefined
+

@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="main-content" inert>
+    <p id="article">Main article content</p>
+</div>
+
+<div aria-hidden="true">
+    <div role="dialog" aria-modal="true">
+        <h2 id="dialog-heading">Terms and Conditions</h2>
+        <button id="agree-button">Agree</button>
+    </div>
+</div>
+
+<script>
+var output = "This tests that when all page content is inert and an aria-modal dialog is inside an aria-hidden container, the dialog content is still accessible.\n\n";
+var heading, button;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // The main content is inert, so it should not be accessible.
+    output += expect("accessibilityController.accessibleElementById('article')", "null");
+
+    (async function() {
+        // The dialog content should be accessible despite the ancestor aria-hidden,
+        // because without the override the page would be completely empty.
+        await waitFor(() => {
+            heading = accessibilityController.accessibleElementById("dialog-heading");
+            return heading && !heading.isIgnored;
+        });
+        output += expect("heading && !heading.isIgnored", "true");
+        button = accessibilityController.accessibleElementById("agree-button");
+        output += expect("button && !button.isIgnored", "true");
+
+        document.getElementById("main-content").style.display = "none";
+        debug(output);
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>

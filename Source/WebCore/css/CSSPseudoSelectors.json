@@ -1,0 +1,628 @@
+{
+    "documentation": {
+        "description": "This file is used to generate code for pseudo-classes and pseudo-elements.",
+        "fields": {
+            "aliases": "Legacy name aliases for the pseudo. They will serialize to their modern counterpart.",
+            "argument": [
+                "Specifies if the pseudo takes an argument, and whether that argument is required or optional.",
+                "The 'optional' value is for pseudos like `:host` which support both `:host` and `:host(argument)`.",
+                "The 'required' value is for pseudos which don't support the argument-free syntax like: `::highlight(name)`.",
+                "Omit this field if the pseudo never takes an argument."
+            ],
+            "comment": "Add a description of how the pseudo is used. Especially useful for non-standard or internal ones.",
+            "conditional": "Compile-time `#if ENABLE()` conditional for the feature.",
+            "settings-flag": "Settings flag queried from CSSSelectorParserContext. Note that the flag needs to be manually added there.",
+            "status": "Specifies the standardization state of the pseudo.",
+            "supports-single-colon-for-compatibility": [
+                "For pseudo-elements only. Whether the pseudo-element supports the single colon form (e.g. `:after` instead of `::after`).",
+                "You should not have to add more of these. They exist only for compatibility with CSS 2.1."
+            ],
+            "user-agent-part": [
+                "For pseudo-elements only. Whether the pseudo-element represents an element in an user agent shadow tree.",
+                "They internally map to `PseudoElement::UserAgentPart` or `PseudoElement::UserAgentPartLegacyAlias` for aliases.",
+                "Also creates an entry in UserAgentParts."
+            ],
+            "user-agent-part-string": [
+                "For pseudo-elements only. When the pseudo-element needs to be in UserAgentParts despite not being a `PseudoElement::UserAgentPart`.",
+                "Mutually exclusive with the user-agent-part field."
+            ]
+        },
+        "notes": [
+            "Pseudos that start with `-apple-` require a 'settings-flag' field that points to a setting that is not exposed to web content.",
+            "Pseudos that start with `-internal-` will automatically be restricted to user agent stylesheets.",
+            "Please do not add new `-webkit-` pseudos. They exist mainly for historical and compatibility purposes. There is a mechanism to ensure no new ones are added."
+        ]
+    },
+    "pseudo-classes": {
+        "-apple-has-attachment": {
+            "comment": "For use in Apple internal apps.",
+            "conditional": "ENABLE(ATTACHMENT_ELEMENT)",
+            "settings-flag": "DeprecatedGlobalSettings::attachmentElementEnabled"
+        },
+        "-internal-animating-fullscreen-transition": {
+            "conditional": "ENABLE(FULLSCREEN_API)"
+        },
+        "-internal-fullscreen-document": {
+            "conditional": "ENABLE(FULLSCREEN_API)"
+        },
+        "-internal-html-document": {},
+        "-internal-in-window-fullscreen": {
+            "conditional": "ENABLE(FULLSCREEN_API)"
+        },
+        "-internal-media-document": {},
+        "-internal-select-popover": {},
+        "-internal-uses-menulist": {},
+        "-webkit-any": {
+            "argument": "required",
+            "comment": "Alias of :is() with different specificity rules.",
+            "status": "non-standard"
+        },
+        "-webkit-autofill-and-obscured": {
+            "comment": "For UA stylesheet use.",
+            "status": "non-standard"
+        },
+        "-webkit-autofill-strong-password": {
+            "comment": "For UA stylesheet use.",
+            "status": "non-standard"
+        },
+        "-webkit-autofill-strong-password-viewable": {
+            "comment": "For UA stylesheet use.",
+            "status": "non-standard"
+        },
+        "-webkit-drag": {
+            "comment": "Currently has no standard equivalent.",
+            "status": "non-standard"
+        },
+        "active": {},
+        "active-view-transition": { },
+        "active-view-transition-type": {
+            "argument": "required"
+        },
+        "any-link": {
+            "aliases": [
+                "-webkit-any-link"
+            ]
+        },
+        "autofill": {
+            "aliases": [
+                "-webkit-autofill"
+            ]
+        },
+        "buffering": {
+            "conditional": "ENABLE(VIDEO)"
+        },
+        "checked": {},
+        "corner-present": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "decrement": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "default": {},
+        "defined": {},
+        "dir": {
+            "argument": "required"
+        },
+        "disabled": {},
+        "double-button": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "empty": {},
+        "enabled": {},
+        "end": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "even-less-good": {
+            "settings-flag": "cssAppearanceBaseEnabled"
+        },
+        "first-child": {},
+        "first-of-type": {},
+        "focus": {},
+        "focus-visible": {},
+        "focus-within": {},
+        "fullscreen": {
+            "aliases": [
+                "-webkit-full-screen"
+            ],
+            "conditional": "ENABLE(FULLSCREEN_API)"
+        },
+        "future": {
+            "conditional": "ENABLE(VIDEO)"
+        },
+        "has": {
+            "argument": "required"
+        },
+        "heading": {
+            "argument": "optional"
+        },
+        "horizontal": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "host": {
+            "argument": "optional"
+        },
+        "hover": {},
+        "immersive": {
+            "conditional": "ENABLE(MODEL_ELEMENT_IMMERSIVE)"
+        },
+        "in-range": {},
+        "increment": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "indeterminate": {},
+        "invalid": {},
+        "is": {
+            "aliases": [
+                "matches"
+            ],
+            "argument": "required"
+        },
+        "lang": {
+            "argument": "required"
+        },
+        "last-child": {},
+        "last-of-type": {},
+        "link": {},
+        "modal": {},
+        "muted": {
+            "conditional": "ENABLE(VIDEO)"
+        },
+        "no-button": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "not": {
+            "argument": "required"
+        },
+        "nth-child": {
+            "argument": "required"
+        },
+        "nth-last-child": {
+            "argument": "required"
+        },
+        "nth-last-of-type": {
+            "argument": "required"
+        },
+        "nth-of-type": {
+            "argument": "required"
+        },
+        "only-child": {},
+        "only-of-type": {},
+        "open": {
+            "settings-flag": "openPseudoClassEnabled"
+        },
+        "optimum": {
+            "settings-flag": "cssAppearanceBaseEnabled"
+        },
+        "optional": {},
+        "out-of-range": {},
+        "past": {
+            "conditional": "ENABLE(VIDEO)"
+        },
+        "paused": {
+            "conditional": "ENABLE(VIDEO)"
+        },
+        "picture-in-picture": {
+            "conditional": "ENABLE(PICTURE_IN_PICTURE_API)"
+        },
+        "placeholder-shown": {},
+        "playing": {
+            "conditional": "ENABLE(VIDEO)"
+        },
+        "popover-open": {
+            "settings-flag": "popoverAttributeEnabled"
+        },
+        "read-only": {},
+        "read-write": {},
+        "required": {},
+        "root": {},
+        "scope": {},
+        "seeking": {
+            "conditional": "ENABLE(VIDEO)"
+        },
+        "stalled": {
+            "conditional": "ENABLE(VIDEO)"
+        },
+        "state": {
+            "argument": "required"
+        },
+        "single-button": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "start": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "suboptimum": {
+            "settings-flag": "cssAppearanceBaseEnabled"
+        },
+        "target": {},
+        "user-invalid": {},
+        "user-valid": {},
+        "valid": {},
+        "vertical": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "visited": {},
+        "volume-locked": {
+            "conditional": "ENABLE(VIDEO)"
+        },
+        "where": {
+            "argument": "required"
+        },
+        "window-inactive": {
+            "comment": "Standards track point towards a media query rather than a pseudo-class: https://github.com/w3c/csswg-drafts/issues/5828.",
+            "status": "non-standard"
+        }
+    },
+    "pseudo-elements": {
+        "-apple-attachment-controls-container": {
+            "comment": "For use in Apple internal apps.",
+            "conditional": "ENABLE(SERVICE_CONTROLS)",
+            "settings-flag": "imageControlsEnabled",
+            "user-agent-part": true
+        },
+        "-internal-loading-auto-fill-button": {
+            "user-agent-part": true
+        },
+        "-internal-writing-suggestions": {},
+        "-webkit-caps-lock-indicator": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-color-swatch": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-internal-color-swatch-overlay": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-internal-fallback-popup-menu": {
+            "user-agent-part": true
+        },
+        "-internal-fallback-popup-menu-group-label": {
+            "user-agent-part": true
+        },
+        "-internal-fallback-popup-menu-item": {
+            "user-agent-part": true
+        },
+        "-internal-fallback-popup-menu-item-selected": {
+            "user-agent-part": true
+        },
+        "-internal-fallback-popup-menu-separator": {
+            "user-agent-part": true
+        },
+        "-webkit-color-swatch-wrapper": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-contacts-auto-fill-button": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-credentials-auto-fill-button": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-credit-card-auto-fill-button": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-date-and-time-value": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-datetime-edit": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-datetime-edit-day-field": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-datetime-edit-fields-wrapper": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-datetime-edit-hour-field": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-datetime-edit-meridiem-field": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-datetime-edit-millisecond-field": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-datetime-edit-minute-field": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-datetime-edit-month-field": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-datetime-edit-second-field": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-datetime-edit-text": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-datetime-edit-year-field": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-generic-cue-root": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-inner-spin-button": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-list-button": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-media-controls": {
+            "comment": "For needsChromeMediaControlsPseudoElement quirk",
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-media-text-track-container": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-media-text-track-display": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-media-text-track-display-backdrop": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-media-text-track-region": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-media-text-track-region-container": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-meter-bar": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-meter-even-less-good-value": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-meter-inner-element": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-meter-optimum-value": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-meter-suboptimum-value": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-progress-bar": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-progress-inner-element": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-progress-value": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-resizer": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar-button": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar-corner": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar-thumb": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar-track": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar-track-piece": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-search-cancel-button": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-search-decoration": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-search-results-button": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-search-results-decoration": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-slider-container": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-slider-runnable-track": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-slider-thumb": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-strong-password-auto-fill-button": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-textfield-decoration-container": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-validation-bubble": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-validation-bubble-arrow": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-validation-bubble-arrow-clipper": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-validation-bubble-body": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-validation-bubble-heading": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-validation-bubble-icon": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-validation-bubble-message": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-webkit-validation-bubble-text-block": {
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "after": {
+            "supports-single-colon-for-compatibility": true
+        },
+        "backdrop": {},
+        "before": {
+            "supports-single-colon-for-compatibility": true
+        },
+        "checkmark": {
+            "settings-flag": "htmlEnhancedSelectEnabled || cssAppearanceBaseEnabled"
+        },
+        "cue": {
+            "argument": "optional",
+            "conditional": "ENABLE(VIDEO)",
+            "user-agent-part-string": true
+        },
+        "details-content": {
+            "user-agent-part": true
+        },
+        "-internal-cue-background": {
+            "conditional": "ENABLE(VIDEO)",
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "-internal-image-overlay-text": {
+            "conditional": "ENABLE(IMAGE_ANALYSIS)",
+            "status": "non-standard",
+            "user-agent-part": true
+        },
+        "file-selector-button": {
+            "aliases": [
+                "-webkit-file-upload-button"
+            ],
+            "user-agent-part": true
+        },
+        "first-letter": {
+            "supports-single-colon-for-compatibility": true
+        },
+        "first-line": {
+            "supports-single-colon-for-compatibility": true
+        },
+        "grammar-error": {},
+        "highlight": {
+            "argument": "required"
+        },
+        "marker": {},
+        "part": {
+            "argument": "required"
+        },
+        "picker": {
+            "argument": "required",
+            "settings-flag": "htmlEnhancedSelectEnabled && cssPickerPseudoElementEnabled"
+        },
+        "picker-icon": {
+            "settings-flag": "htmlEnhancedSelectEnabled"
+        },
+        "placeholder": {
+            "aliases": [
+                "-webkit-input-placeholder"
+            ],
+            "user-agent-part": true
+        },
+        "selection": {},
+        "slider-fill": {
+            "settings-flag": "cssAppearanceBaseEnabled",
+            "user-agent-part": true
+        },
+        "slider-thumb": {
+            "settings-flag": "cssAppearanceBaseEnabled",
+            "user-agent-part": true
+        },
+        "slider-track": {
+            "settings-flag": "cssAppearanceBaseEnabled",
+            "user-agent-part": true
+        },
+        "slotted": {
+            "argument": "required"
+        },
+        "spelling-error": {},
+        "target-text": {
+            "settings-flag": "targetTextPseudoElementEnabled"
+        },
+        "view-transition": { },
+        "view-transition-group": {
+            "argument": "required"
+        },
+        "view-transition-image-pair": {
+            "argument": "required"
+        },
+        "view-transition-new": {
+            "argument": "required"
+        },
+        "view-transition-old": {
+            "argument": "required"
+        }
+    }
+}

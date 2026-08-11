@@ -1,0 +1,3 @@
+
+PASS back() and intercept() with a fulfilled promise
+

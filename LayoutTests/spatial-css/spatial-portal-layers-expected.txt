@@ -1,0 +1,22 @@
+
+(CALayer tree root
+  (layer bounds [x: 0 y: 0 width: 353 height: 214])
+  (layer position [x: 198.5 y: 123])
+  (sublayers
+    (
+      (layer bounds [x: 0 y: 0 width: 320 height: 184])
+      (layer position [x: 168 y: 112])
+      (sublayers
+        (
+          (layer bounds [x: 0 y: 0 width: 320 height: 184])
+          (layer position [x: 160 y: 92]))
+        (
+          (layer bounds [x: 0 y: 0 width: 320 height: 184])
+          (layer position [x: 160 y: 92])
+          (sublayers
+            (
+              (layer bounds [x: 0 y: 0 width: 320 height: 184])
+              (layer position [x: 160 y: 92]))))))
+    (
+      (layer bounds [x: 0 y: 0 width: 353 height: 214])
+      (layer position [x: 176.5 y: 107]))))

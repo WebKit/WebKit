@@ -1,0 +1,8 @@
+
+PASS Blocked eval in SharedWorkerGlobalScope.
+PASS Blocked indirect eval in SharedWorkerGlobalScope.
+PASS Blocked Function constructor in SharedWorkerGlobalScope.
+PASS Blocked AsyncFunction constructor in SharedWorkerGlobalScope.
+PASS Blocked GeneratorFunction constructor in SharedWorkerGlobalScope.
+PASS Blocked AsyncGeneratorFunction constructor in SharedWorkerGlobalScope.
+

@@ -1,0 +1,5 @@
+
+Harness Error (FAIL), message = Error: assert_equals: pseudoTarget should be null since the pseudo-element was removed before click dispatch expected (object) null but got (undefined) undefined
+
+FAIL Click on pseudo-element that disappears on mousedown promise_test: Unhandled rejection with value: object "TypeError: target.pseudo is not a function. (In 'target.pseudo("::after")', 'target.pseudo' is undefined)"
+

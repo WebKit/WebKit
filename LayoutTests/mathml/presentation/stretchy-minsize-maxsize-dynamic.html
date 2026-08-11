@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <title>stretch minsize/maxsize (dynamic)</title>
+    <meta charset="utf-8">
+    <script type="text/javascript">
+      function test() {
+          // Adding a maxsize.
+          var mo1 = document.getElementById("mo1");
+          mo1.setAttribute("maxsize", "4em");
+
+          // Removing a maxsize.
+          var mo2 = document.getElementById("mo2");
+          mo2.removeAttribute("maxsize");
+
+          // Adding a minsize.
+          var mo3 = document.getElementById("mo3");
+          mo3.setAttribute("minsize", "4em");
+
+          // Removing a minsize.
+          var mo4 = document.getElementById("mo4");
+          mo4.removeAttribute("minsize");
+      }
+    </script>
+  </head>
+  <body onload="test()">
+
+    <p>
+      <!-- We test dynamic changes of the minsize/maxsize attributes. They should render the same as the static reference. -->
+
+      <math>
+        <mo id="mo1">|</mo><mspace height="5em" depth="5em"/>
+      </math>
+
+      <math>
+        <mo id="mo2" maxsize="4em">|</mo><mspace height="5em" depth="5em"/>
+      </math>
+
+      <math>
+        <mo id="mo3">|</mo><mspace height="1em" depth="1em"/>
+      </math>
+
+      <math>
+        <mo id="mo4" minsize="4em">|</mo><mspace height="1em" depth="1em"/>
+      </math>
+    </p>
+
+  </body>
+</html>

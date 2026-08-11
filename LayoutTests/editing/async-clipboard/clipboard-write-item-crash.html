@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AsyncClipboardAPIEnabled=true ] -->
+<body><script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
+}
+
+(async () => {
+  const item = new ClipboardItem({
+    "text/plain": new Promise(() => {}),
+    "text/html":  Promise.resolve("x"),
+    "text/uri-list": Promise.resolve("http://a/")
+  });
+
+  navigator.clipboard.write([item]).catch(() => {});
+
+  await 0; // Drain microtasks
+
+  navigator.clipboard.write([item]).catch(() => {});
+  
+  document.body.innerHTML = '<p>This test passes if WebKit does not hit assertions or crash under ASAN.</p><p>PASS</p>';
+
+  globalThis.testRunner?.notifyDone();
+})();
+</script>

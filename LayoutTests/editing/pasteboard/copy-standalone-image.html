@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>
+function editingTest() {
+    frames['imageframe'].document.execCommand("Copy");
+    
+    var s = window.getSelection();
+    var e = document.getElementById("dest");
+    s.setPosition(e, 0);
+    document.execCommand("Paste");
+    frames['imageframe'].focus();
+}
+</script>
+</head>
+<body>
+<p>This is an automatic test of copying an image document.</p>
+<p>To perform this test manually, click once in the image frame, choose Edit -> Copy
+then click in the red box and paste the image. If the image pastes successfully the
+test is passed.</p>
+
+<iframe name="imageframe" src="../resources/abe.png" onload="editingTest()"></iframe>
+
+<div id="dest" contenteditable="true"></div>
+</body>
+</html>

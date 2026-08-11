@@ -1,0 +1,60 @@
+<style>
+.container {
+  width: 50px;
+  overflow: hidden;
+  margin-bottom: 5px;
+  border: 1px solid black;
+}
+.inline-block {
+  display: inline-block;
+  width: 25px;
+  height: 20px;
+  border: 1px solid blue;
+  box-sizing: border-box;
+}
+.float_like {
+  width: 25px;
+  height: 10px;
+  background: green;
+  display: inline-block;
+}
+</style>
+<div class=container>
+  <div class=float_like style="position: relative; top: -10px;"></div><div class=inline-block></div><div class=float_like></div>
+</div>
+<div class=container>
+  <div class=inline-block></div><div class=float_like style="position: relative; top: -10px;"></div><div class=float_like></div>
+</div>
+<div class=container>
+  <div class=inline-block></div><div class=float_like style="position: relative; top: -10px;"></div><div class=float_like style="position: relative; left: 25px;"></div>
+</div>
+<div class=container style="height: 20px;">
+  <div class=float_like style="position: relative; top: -10px;"></div><div class=inline-block></div><div class=float_like style="position: relative; top: -10px;"></div>
+</div>
+<div class=container>
+  <div class=float_like style="position: relative; top: -10px;"></div><div class=inline-block></div><div class=float_like></div>
+</div>
+<div class=container>
+  <div class=float_like style="position: relative; top: -10px;"></div><div class=inline-block></div><div class=float_like style="position: relative; left: 25px;"></div>
+</div>
+<div class=container style="height: 20px;">
+  <div class=inline-block></div><div class=float_like style="position: relative; top: -10px;"></div><div class=float_like style="position: relative; top: -10px; left: 25px"></div>
+</div>
+<div class=container style="height: 20px;">
+  <div class=float_like style="position: relative; top: -10px;"></div><div class=inline-block></div><div class=float_like style="position: relative; top: -10px; width: 20px;"></div>
+</div>
+<div class=container>
+  <div class=float_like style="position: relative; top: -10px;"></div><div class=inline-block></div><div class=float_like style="width: 30px;"></div>
+</div>
+<div class=container style="height: 20px;">
+  <div class=inline-block></div><div class=float_like style="position: relative; top: -10px;"></div><div class=float_like style="position: relative; top: -10px; left: 30px; width: 20px;"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div><div class=float_like style="position: relative; top: -10px;"></div><div class=float_like style="position: relative; left: 20px; width: 30px;"></div>
+</div>
+<div class=container>
+  <div class=float_like style="position: relative; top: -10px; width: 10px;"></div><div class=inline-block></div><div class=float_like style="position: relative; left: 30px; width: 20px;"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div><div class=float_like style="position: relative; top: -10px; left: 15px; width: 10px;"></div><div class=float_like style="position: relative; width: 20px;"></div>
+</div>

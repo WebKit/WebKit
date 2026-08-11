@@ -1,0 +1,42 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsARIANotifyEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<script>
+var output = "This test verifies that aria-notify notifications are properly formatted on iOS devices.\n\n";
+var notificationCount = 0;
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Announcement received, notification: ${notification}, attributed string: ${userInfo["AXAnnouncementRequested"]}\n`;
+        notificationCount++;
+
+        if (notificationCount == 1)
+            document.ariaNotify("World", { priority: "high", interrupt: "pending" });
+        else if (notificationCount == 2)
+            testFinished = true;
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    accessibilityController.addNotificationListener(notificationCallback);
+    document.ariaNotify("Hello");
+
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+ }
+</script>
+</body>
+</html>

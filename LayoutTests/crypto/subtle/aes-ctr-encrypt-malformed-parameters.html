@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test encrypting using AES-CTR with malformed parameters");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var plainText = asciiToUint8Array("Hello, World!Hello, World!Hello, World!Hello, World!");
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+
+crypto.subtle.importKey("raw", rawKey, "aes-ctr", extractable, ["encrypt"]).then(function(result) {
+    key = result;
+
+    // Wrong length
+    shouldReject('crypto.subtle.encrypt({name: "aes-ctr", counter: asciiToUint8Array("jnOw99oOZFLIEPMr"), length: -1}, key, plainText)');
+    shouldReject('crypto.subtle.encrypt({name: "aes-ctr", counter: asciiToUint8Array("jnOw99oOZFLIEPMr"), length: 0}, key, plainText)');
+    shouldReject('crypto.subtle.encrypt({name: "aes-ctr", counter: asciiToUint8Array("jnOw99oOZFLIEPMr"), length: 129}, key, plainText)');
+    // Loop counter
+    shouldReject('crypto.subtle.encrypt({name: "aes-ctr", counter: asciiToUint8Array("jnOw99oOZFLIEPMr"), length: 1}, key, plainText)').then(finishJSTest);
+});
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+
+PASS HighlightRegistry initializes as it should.
+PASS HighlightRegistry has a maplike interface.
+

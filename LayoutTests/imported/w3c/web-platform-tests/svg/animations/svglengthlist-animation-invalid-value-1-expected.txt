@@ -1,0 +1,4 @@
+ABCD
+
+PASS Test SVGLengthList animation with invalid values: String value in length list values for from and to attributes.
+

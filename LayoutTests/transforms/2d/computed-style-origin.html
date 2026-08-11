@@ -1,0 +1,108 @@
+<html>
+<head>
+<style type="text/css" media="screen">
+    #test1 {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        position: relative;
+        transform: translate(0);
+        // default transform and perspective origin
+    }
+    #test2 {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        position: relative;
+        transform: translate(0);
+        transform-origin: 50% 50%;
+        perspective-origin: 50% 50%;
+    }
+    #test3 {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        position: relative;
+        transform: translate(0);
+        transform-origin: 0% 100%;
+        perspective-origin: 0% 100%;
+    }
+    #test4 {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        position: relative;
+        transform: translate(0);
+        transform-origin: 5px 7px;
+        perspective-origin: 5px 7px;
+    }
+    #test5 {
+        width: 10px;
+        height: 10px;
+        padding: 5px;
+        margin: 5px;
+        border: 5px solid green;
+        background-color: blue;
+        position: relative;
+        transform: translate(0);
+        transform-origin: 50% 50%;
+        perspective-origin: 50% 50%;
+    }
+    #test6 {
+        width: 100px;
+        height: 100px;
+        background-color: blue;
+        position: relative;
+        transform: translate(0);
+        perspective-origin: 10% 20% 30%;
+    }
+
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="test1"></p>
+<p id="test2"></p>
+<p id="test3"></p>
+<p id="test4"></p>
+<p id="test5"></p>
+<p id="test6"></p>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests computed style values for transform-origin and perspective-origin.");
+
+var test1 = document.getElementById("test1");
+var test2 = document.getElementById("test2");
+var test3 = document.getElementById("test3");
+var test4 = document.getElementById("test4");
+var test5 = document.getElementById("test5");
+var test6 = document.getElementById("test6");
+
+var test1Style = window.getComputedStyle(test1);
+var test2Style = window.getComputedStyle(test2);
+var test3Style = window.getComputedStyle(test3);
+var test4Style = window.getComputedStyle(test4);
+var test5Style = window.getComputedStyle(test5);
+var test6Style = window.getComputedStyle(test6);
+
+shouldBe("test1Style.transformOrigin", "'10px 10px'");
+shouldBe("test2Style.transformOrigin", "'10px 10px'");
+shouldBe("test3Style.transformOrigin", "'0px 20px'");
+shouldBe("test4Style.transformOrigin", "'5px 7px'");
+shouldBe("test5Style.transformOrigin", "'15px 15px'");
+
+shouldBe("test1Style.perspectiveOrigin", "'10px 10px'");
+shouldBe("test2Style.perspectiveOrigin", "'10px 10px'");
+shouldBe("test3Style.perspectiveOrigin", "'0px 20px'");
+shouldBe("test4Style.perspectiveOrigin", "'5px 7px'");
+shouldBe("test5Style.perspectiveOrigin", "'15px 15px'");
+shouldBe("test6Style.perspectiveOrigin", "'50px 50px'");
+
+debug("");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

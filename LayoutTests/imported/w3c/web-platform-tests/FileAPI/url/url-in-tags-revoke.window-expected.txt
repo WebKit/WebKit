@@ -1,0 +1,8 @@
+
+PASS Fetching a blob URL immediately before revoking it works in an iframe.
+PASS Fetching a blob URL immediately before revoking it works in an iframe navigation.
+PASS Opening a blob URL in a new window immediately before revoking it works.
+PASS Opening a blob URL in a noopener about:blank window immediately before revoking it works.
+PASS Fetching a blob URL immediately before revoking it works in <script> tags.
+PASS Opening a blob URL in a new window by clicking an <a> tag works immediately before revoking the URL.
+

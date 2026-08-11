@@ -1,0 +1,4 @@
+
+
+PASS test_driver.click lands in an offset subframe with the top document scrolled
+

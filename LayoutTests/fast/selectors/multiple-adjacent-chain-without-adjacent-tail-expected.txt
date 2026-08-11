@@ -1,0 +1,14 @@
+Test very long backtracking of a direct adjacent chain.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("li+li~li+li").length is 38
+PASS document.querySelectorAll("li+li~li+li~li+li").length is 36
+PASS document.querySelectorAll("li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li~li+li").length is 20
+PASS allItems.length is 41
+PASS coloredCount is 20
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

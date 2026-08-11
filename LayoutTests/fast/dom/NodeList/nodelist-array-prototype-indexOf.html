@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Array.prototype.indexOf on NodeList</title>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<div id="container">
+    <div id="div1"></div>
+    <div id="div2"></div>
+    <div id="div3"></div>
+    <div id="div4"></div>
+    <div id="div5"></div>
+</div>
+<div id="outside"></div>
+<script>
+"use strict";
+const indexOf = Array.prototype.indexOf;
+
+test(function() {
+    const nodeList = container.querySelectorAll("div");
+    assert_equals(indexOf.call(nodeList, div1), 0);
+    assert_equals(indexOf.call(nodeList, div3), 2);
+    assert_equals(indexOf.call(nodeList, div5), 4);
+}, "indexOf finds elements at correct index in static NodeList");
+
+test(function() {
+    const nodeList = container.querySelectorAll("div");
+    assert_equals(indexOf.call(nodeList, outside), -1);
+}, "indexOf returns -1 for node not in the list");
+
+test(function() {
+    const nodeList = container.querySelectorAll("div");
+    assert_equals(indexOf.call(nodeList, "string"), -1);
+    assert_equals(indexOf.call(nodeList, 42), -1);
+    assert_equals(indexOf.call(nodeList, {}), -1);
+    assert_equals(indexOf.call(nodeList, true), -1);
+}, "indexOf returns -1 for non-Node values");
+
+test(function() {
+    const nodeList = container.querySelectorAll("div");
+    assert_equals(indexOf.call(nodeList, undefined), -1);
+    assert_equals(indexOf.call(nodeList, null), -1);
+}, "indexOf returns -1 for undefined and null");
+
+test(function() {
+    const nodeList = container.querySelectorAll("div");
+    assert_equals(indexOf.call(nodeList, div3, 3), -1, "fromIndex past target");
+    assert_equals(indexOf.call(nodeList, div3, 2), 2, "fromIndex at target");
+    assert_equals(indexOf.call(nodeList, div3, 0), 2, "fromIndex before target");
+}, "indexOf respects fromIndex parameter");
+
+test(function() {
+    const nodeList = container.querySelectorAll("div");
+    assert_equals(indexOf.call(nodeList, div5, -1), 4, "negative fromIndex resolves from end");
+    assert_equals(indexOf.call(nodeList, div1, -1), -1, "negative fromIndex skips earlier elements");
+    assert_equals(indexOf.call(nodeList, div3, -3), 2, "negative fromIndex exactly at target");
+    assert_equals(indexOf.call(nodeList, div1, -100), 0, "negative fromIndex exceeding length starts from 0");
+}, "indexOf handles negative fromIndex");
+
+test(function() {
+    const nodeList = container.querySelectorAll("div");
+    assert_equals(indexOf.call(nodeList, div2, 1.5), 1, "fractional fromIndex is truncated to 1, not rounded to 2");
+    assert_equals(indexOf.call(nodeList, div1, NaN), 0, "NaN fromIndex starts from 0");
+    assert_equals(indexOf.call(nodeList, div1, -Infinity), 0, "-Infinity fromIndex starts from 0");
+    assert_equals(indexOf.call(nodeList, div1, Infinity), -1, "Infinity fromIndex finds nothing");
+    assert_equals(indexOf.call(nodeList, div1, "1"), -1, "string fromIndex is coerced via ToNumber");
+    assert_equals(indexOf.call(nodeList, div1, "abc"), 0, "non-numeric string fromIndex becomes 0");
+    assert_equals(indexOf.call(nodeList, div1, {}), 0, "object fromIndex becomes 0");
+}, "indexOf handles non-integer fromIndex");
+
+test(function() {
+    const nodeList = container.childNodes;
+    assert_equals(indexOf.call(nodeList, container.firstChild), 0);
+    assert_equals(indexOf.call(nodeList, outside), -1);
+}, "indexOf works on live ChildNodeList");
+
+test(function() {
+    const nodeList = container.querySelectorAll(".nonexistent");
+    assert_equals(nodeList.length, 0);
+    assert_equals(indexOf.call(nodeList, div1), -1);
+}, "indexOf returns -1 on empty NodeList");
+</script>

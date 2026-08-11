@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    #box {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        width: 100px;
+        height: 100px;
+        background-color: silver;
+    }
+
+    .dot {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 4px;
+        width: 4px;
+        background-color: silver;
+    }
+    
+    #box.animating {
+        animation: move 100s linear;
+    }
+
+    @keyframes move {
+        from { transform: translate3d(100px, 2000px, 0); }
+        80%  { transform: translate3d(100px, 2000px, 0); }
+        to   { transform: translate3d(100px, 2100px, 0); }
+    }
+
+</style>
+<script src="../resources/compositing-test-utils.js"></script>
+<script src="../../webanimations/threaded-animations/threaded-animations-utils.js"></script>
+<script>
+
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+window.addEventListener('load', async () => {
+    makeDots(5, 5, 60);
+
+    const box = document.getElementById('box');
+    box.classList.add('animating');
+
+    await new Promise(resolve => box.addEventListener('animationstart', resolve));
+    await animationAcceleration(box.getAnimations()[0]);
+
+    document.getElementById('out').innerText = layerTreeWithoutTransforms(window.internals?.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED);
+
+    window.testRunner?.notifyDone();
+});
+
+</script>
+</head>
+<body>
+<p>An in-view element animating off-screen should not have backing store.</p>
+<pre id="out"></pre>
+<div id="box">
+    Some text here to force backing store.
+</div>
+
+</body>
+</html>

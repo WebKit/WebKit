@@ -1,0 +1,8 @@
+<p>Cross-origin iframe that triggers a failing network load on demand.</p>
+
+<script>
+function triggerFailedFetch() {
+    let url = "http://localhost:54321/site-isolation-inspector-failed-load?" + Math.random();
+    fetch(url).then(() => {}).catch(() => {});
+}
+</script>

@@ -1,0 +1,16 @@
+<style>
+    #x1 {
+        float: right;
+    }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function main() {
+        style = x1.style;
+        style.setProperty("-webkit-shape-outside", "image-set(url(\"\") type(\"a\"))");
+    }
+</script>
+
+<body onload=main()>
+<p id="x1">This passes if it does not crash</p>

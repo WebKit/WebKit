@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+customElements.define("test-element", class TestElement extends HTMLElement {
+    connectedCallback() {
+        let shadowRoot = this.attachShadow({
+            mode: "open",
+            slotAssignment: this.id.substring(0, this.id.indexOf("-")),
+        });
+
+        this._slotElement = shadowRoot.appendChild(document.createElement("slot"));
+        this._slotElement.name = "test-slot";
+    }
+
+    assign(...nodes) {
+        this._slotElement.assign(...nodes);
+    }
+});
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOM.requestAssignedNodes");
+
+    async function checkAssignedNodes(slotNode, expectedIDs) {
+        let assignedNodes = await slotNode.requestAssignedNodes();
+
+        InspectorTest.expectShallowEqual(assignedNodes.map((assignedNode) => assignedNode.getAttribute("id")), expectedIDs, `Should have assigned nodes: ${JSON.stringify(expectedIDs)}.`);
+    }
+
+    function addTestCase({name, selector, domNodeHandler})
+    {
+        suite.addTestCase({
+            name,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+
+                let containerNodeId = await documentNode.querySelector(selector);
+                let containerNode = WI.domManager.nodeForId(containerNodeId);
+                InspectorTest.assert(containerNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let slotNodeId = await containerNode.shadowRoots()[0].querySelector("slot");
+                let slotNode = WI.domManager.nodeForId(slotNodeId);
+                InspectorTest.assert(slotNode, `Should find <slot> inside DOM Node for selector '${selector}'.`);
+
+                await domNodeHandler(slotNode);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "DOM.requestAssignedNodes.Named.Empty",
+        selector: "#named-empty",
+        async domNodeHandler(domNode) {
+            await checkAssignedNodes(domNode, []);
+
+            InspectorTest.log("Changing slot of child...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#named-empty-1").slot = "test-slot"`);
+            await checkAssignedNodes(domNode, ["named-empty-1"]);
+
+            InspectorTest.log("Adding child with slot...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#named-empty").appendChild(document.querySelector("#named-empty-2"))`);
+            await checkAssignedNodes(domNode, ["named-empty-1", "named-empty-2"]);
+        },
+    });
+
+    addTestCase({
+        name: "DOM.requestAssignedNodes.Named.Filled",
+        selector: "#named-filled",
+        async domNodeHandler(domNode) {
+            await checkAssignedNodes(domNode, ["named-filled-1", "named-filled-2"]);
+
+            InspectorTest.log("Removing first assigned node...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#named-filled-1").remove()`);
+            await checkAssignedNodes(domNode, ["named-filled-2"]);
+
+            InspectorTest.log("Removing last assigned node...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#named-filled-2").slot = "invalid-slot"`);
+            await checkAssignedNodes(domNode, []);
+        },
+    });
+
+    addTestCase({
+        name: "DOM.requestAssignedNodes.Manual.Empty",
+        selector: "#manual-empty",
+        async domNodeHandler(domNode) {
+            await checkAssignedNodes(domNode, []);
+
+            InspectorTest.log("Adding second child as assigned node...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#manual-empty").assign(document.querySelector("#manual-empty-2"))`);
+            await checkAssignedNodes(domNode, ["manual-empty-2"]);
+
+            InspectorTest.log("Adding first child as assigned nodes...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#manual-empty").assign(...document.querySelectorAll("#manual-empty > span"))`);
+            await checkAssignedNodes(domNode, ["manual-empty-1", "manual-empty-2"]);
+        },
+    });
+
+    addTestCase({
+        name: "DOM.requestAssignedNodes.Manual.Filled",
+        selector: "#manual-filled",
+        async domNodeHandler(domNode) {
+            await checkAssignedNodes(domNode, ["manual-filled-1", "manual-filled-2"]);
+
+            InspectorTest.log("Removing first assigned node...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#manual-filled").assign(document.querySelector("#manual-filled-2"))`);
+            await checkAssignedNodes(domNode, ["manual-filled-2"]);
+
+            InspectorTest.log("Removing last assigned node...");
+            await InspectorTest.evaluateInPage(`document.querySelector("#manual-filled").assign()`);
+            await checkAssignedNodes(domNode, []);
+        },
+    });
+
+    suite.addTestCase({
+        name: "DOM.requestAssignedNodes.MissingNode",
+        async test() {
+            await InspectorTest.expectException(() => DOMAgent.requestAssignedNodes(9999999));
+        },
+    });
+
+    suite.addTestCase({
+        name: "DOM.requestAssignedNodes.WrongNode",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            await InspectorTest.expectException(() => documentNode.requestAssignedNodes());
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <test-element id="named-empty">
+        <span slot="invalid-slot" id="named-empty-1"></span>
+    </test-element>
+    <span slot="test-slot" id="named-empty-2"></span>
+
+    <test-element id="named-filled">
+        <span slot="test-slot" id="named-filled-1"></span>
+        <span slot="test-slot" id="named-filled-2"></span>
+    </test-element>
+
+    <test-element id="manual-empty">
+        <span slot="test-slot" id="manual-empty-1"></span>
+        <span slot="test-slot" id="manual-empty-2"></span>
+    </test-element>
+
+    <test-element id="manual-filled">
+        <span slot="invalid-slot" id="manual-filled-1"></span>
+        <span slot="invalid-slot" id="manual-filled-2"></span>
+    </test-element>
+
+    <script>
+        document.querySelector("#manual-filled").assign(...document.querySelectorAll("#manual-filled > span"));
+    </script>
+</body>
+</html>

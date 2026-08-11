@@ -1,0 +1,128 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 40cm; height: 20cm; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+const centeredCube = "2x2x2-center.usdz";
+const offsetCube = "2x2x2-at-100x50x200.usdz";
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, centeredCube);
+
+    await model.ready;
+    const boxFit = await waitForPortalTransform(portal, portalTransformIsResolved, "initial bounding box fit");
+
+    portal.style.portalAction = "orbit";
+    const sphereFit = await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, boxFit), "bounding sphere fit after switching to orbit");
+
+    assert_true(sphereFit.m11 < boxFit.m11, `the bounding sphere scale is smaller than the bounding box scale (${sphereFit.m11} < ${boxFit.m11})`);
+
+    portal.style.portalAction = "none";
+    const restoredFit = await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, sphereFit), "bounding box fit after switching back to none");
+    assert_3d_matrix_approx_equals(restoredFit, boxFit);
+}, `portal-action switches portal-transform: auto between the bounding box and bounding sphere fits`);
+
+promise_test(async t => {
+    const portal = createPortal(t, { portalAction: "orbit" });
+    const centered = appendModel(portal, centeredCube);
+
+    await centered.ready;
+    const before = await waitForPortalTransform(portal, portalTransformIsResolved, "sphere fit with one model");
+
+    const offset = appendModel(portal, offsetCube);
+    await offset.ready;
+    const after = await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, before), "sphere fit with both models");
+
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 2, "the portal hosts both models");
+    assert_true(after.m11 < before.m11, `the merged bounding sphere is larger, so the fit scale shrinks (${after.m11} < ${before.m11})`);
+}, `portal-action: orbit recomputes the fit against the merged bounding sphere when a model is added`);
+
+promise_test(async t => {
+    const portal = createPortal(t, { portalTransform: "none" });
+    const model = appendModel(portal, centeredCube);
+
+    await model.ready;
+    const before = await waitForPortalTransform(portal, portalTransformIsResolved, "initial 1:1 mapping");
+    assert_true(portalTransformScaleIsUnit(before), "portal-transform: none yields a 1:1 CSS unit mapping");
+
+    portal.style.portalAction = "orbit";
+    await UIHelper.ensureStablePresentationUpdate();
+
+    // portal-transform: none opts out of fitting entirely, so orbit must not change the mapping.
+    const after = await waitForPortalTransform(portal, portalTransformIsResolved, "1:1 mapping after switching to orbit");
+    assert_true(portalTransformScaleIsUnit(after), "portal-transform: none still yields a 1:1 CSS unit mapping");
+}, `portal-action: orbit does not fit the content when portal-transform is none`);
+
+// Only a portal taking part in the gesture registers touch handlers and advertises a model element to
+// the page, so the two follow portal-action together.
+promise_test(async t => {
+    const before = internals.touchEventHandlerCount();
+
+    const portal = createPortal(t);
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_equals(internals.touchEventHandlerCount(), before, "portal-action: none registers no touch handlers");
+
+    portal.style.portalAction = "orbit";
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_greater_than(internals.touchEventHandlerCount(), before, "orbit registers touch handlers");
+
+    portal.style.portalAction = "none";
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_equals(internals.touchEventHandlerCount(), before, "switching back to none removes them");
+}, `portal-action drives the portal's gesture handling`);
+
+promise_test(async t => {
+    const before = internals.touchEventHandlerCount();
+
+    const portal = createPortal(t, { portalAction: "orbit" });
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_greater_than(internals.touchEventHandlerCount(), before, "orbit registers touch handlers");
+
+    portal.style.portalAction = "none";
+    await UIHelper.ensureStablePresentationUpdate();
+    portal.remove();
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_equals(internals.touchEventHandlerCount(), before, "removing the portal removes them exactly once");
+}, `portal-action: orbit removes its gesture handling once when the portal is removed`);
+
+promise_test(async t => {
+    const before = internals.touchEventHandlerCount();
+
+    const portal = createPortal(t, { portalAction: "orbit" });
+    const model = appendModel(portal, centeredCube);
+
+    await model.ready;
+    const fit = await waitForPortalTransform(portal, portalTransformIsResolved, "initial bounding sphere fit");
+    const withOrbit = internals.touchEventHandlerCount();
+    assert_greater_than(withOrbit, before, "orbit registers touch handlers");
+
+    portal.style.display = "none";
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_false(internals.establishesSpatialPortal(portal), "the element no longer establishes a portal");
+    assert_equals(internals.touchEventHandlerCount(), before, "its touch handlers are removed");
+    await waitForPortalTransform(portal, portalTransformIsCleared, "the resolved transform is cleared");
+
+    portal.style.display = "block";
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_true(internals.establishesSpatialPortal(portal), "the element establishes a portal again");
+    assert_equals(internals.touchEventHandlerCount(), withOrbit, "its touch handlers are registered again");
+
+    const refit = await waitForPortalTransform(portal, portalTransformIsResolved, "bounding sphere fit once the box is back");
+    assert_3d_matrix_approx_equals(refit, fit);
+}, `portal-action: orbit behavior is restored after toggling the display property off and back on`);
+
+</script>
+</body>
+</html>

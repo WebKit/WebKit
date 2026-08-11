@@ -1,0 +1,15 @@
+When selecting content crossing multi columns, the highlight box of each column should not be coalesced.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectionRects.length is 4
+PASS 150 is > selectionRects[0].width
+PASS selectionRects[1].width is 150
+PASS selectionRects[2].width is 150
+PASS 150 is > selectionRects[3].width
+PASS secondColumnLeft is > firstColumnRight
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Start. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi mauris ex, finibus quis aliquam ac, interdum facilisis ligula. End.

@@ -1,0 +1,477 @@
+/*
+ * Copyright (C) 2014 Alex Christensen <achristensen@webkit.org>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(VIDEO) && USE(MEDIA_FOUNDATION)
+
+#include "COMPtr.h"
+#include "MediaPlayerPrivate.h"
+
+#include <Mferror.h>
+#include <d3d9.h>
+#include <dxva2api.h>
+#include <evcode.h>
+#include <evr.h>
+#include <mfapi.h>
+#include <mfidl.h>
+
+#include <wtf/Deque.h>
+#include <wtf/Lock.h>
+#include <wtf/NativePromise.h>
+#include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadingPrimitives.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/win/Win32Handle.h>
+
+namespace WebCore {
+
+class MediaPlayerPrivateMediaFoundation final
+    : public MediaPlayerPrivateInterface
+    , public CanMakeWeakPtr<MediaPlayerPrivateMediaFoundation>
+    , public RefCounted<MediaPlayerPrivateMediaFoundation> {
+    WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateMediaFoundation);
+public:
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    explicit MediaPlayerPrivateMediaFoundation(MediaPlayer&);
+    ~MediaPlayerPrivateMediaFoundation();
+
+    constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::MediaFoundation; }
+
+    static void registerMediaEngine(MediaEngineRegistrar);
+
+    static void getSupportedTypes(HashSet<String>& types);
+    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
+    static bool isAvailable();
+
+    void load(const String& url) final;
+    void cancelLoad() final;
+
+    void play() final;
+    void pause() final;
+
+    bool supportsFullscreen() const final;
+
+    FloatSize naturalSize() const final;
+
+    bool hasVideo() const final;
+    bool hasAudio() const final;
+
+    void setPageIsVisible(bool) final;
+
+    Ref<MediaTimePromise> seekToTarget(const SeekTarget&) final;
+
+    void setRate(float) final;
+
+    MediaTime duration() const final;
+
+    MediaTime currentTime() const final;
+
+    bool paused() const final;
+
+    void setVolume(float) final;
+
+    void setMuted(bool) final;
+
+    MediaPlayer::NetworkState networkState() const final;
+    MediaPlayer::ReadyState readyState() const final;
+
+    MediaTime maxTimeSeekable() const final;
+
+    const PlatformTimeRanges& buffered() const final;
+
+    bool didLoadingProgress() const final;
+
+    void paint(GraphicsContext&, const FloatRect&) final;
+
+    DestinationColorSpace colorSpace() final;
+
+protected:
+    void onCreatedMediaSource(COMPtr<IMFMediaSource>&&, bool loadingProgress);
+    void onNetworkStateChanged(MediaPlayer::NetworkState);
+    void onTopologySet();
+    void onBufferingStarted();
+    void onBufferingStopped();
+    void onSessionStarted();
+    void onSessionEnded();
+
+    friend HRESULT beginGetEvent(WeakPtr<MediaPlayerPrivateMediaFoundation>, COMPtr<IMFMediaSession>);
+
+private:
+
+    WeakPtr<MediaPlayerPrivateMediaFoundation> m_weakThis;
+    ThreadSafeWeakPtr<MediaPlayer> m_player;
+    bool m_visible;
+    bool m_loadingProgress;
+    bool m_paused;
+    std::optional<MediaTimePromise::AutoRejectProducer> m_seekPromise;
+    bool m_sessionEnded { false };
+    bool m_hasAudio;
+    bool m_hasVideo;
+    float m_volume;
+    mutable PlatformTimeRanges m_buffered;
+    MediaPlayer::NetworkState m_networkState;
+    MediaPlayer::ReadyState m_readyState;
+
+    class MediaPlayerListener;
+    HashSet<MediaPlayerListener*> m_listeners;
+    Lock m_mutexListeners;
+
+    FloatSize m_cachedNaturalSize;
+    mutable Lock m_cachedNaturalSizeLock;
+
+    COMPtr<IMFMediaSession> m_mediaSession;
+    COMPtr<IMFMediaSource> m_mediaSource;
+    COMPtr<IMFTopology> m_topology;
+    COMPtr<IMFPresentationDescriptor> m_sourcePD;
+    COMPtr<IMFVideoDisplayControl> m_videoDisplay;
+
+    bool createSession();
+    bool startSession();
+    bool endSession();
+    bool startCreateMediaSource(const String& url);
+    bool createTopologyFromSource();
+    bool addBranchToPartialTopology(int stream);
+    bool createOutputNode(COMPtr<IMFStreamDescriptor> sourceSD, COMPtr<IMFTopologyNode>&);
+    bool createSourceStreamNode(COMPtr<IMFStreamDescriptor> sourceSD, COMPtr<IMFTopologyNode>&);
+
+    void updateReadyState();
+
+    COMPtr<IMFVideoDisplayControl> videoDisplay();
+
+    HWND hostWindow();
+    void invalidateVideoArea();
+
+    void addListener(MediaPlayerListener*);
+    void removeListener(MediaPlayerListener*);
+    void setNaturalSize(const FloatSize&);
+    void notifyDeleted();
+
+    bool setAllChannelVolumes(float);
+
+    class MediaPlayerListener {
+    public:
+        MediaPlayerListener() = default;
+        virtual ~MediaPlayerListener() = default;
+
+        virtual void onMediaPlayerDeleted() { }
+    };
+
+    class AsyncCallback;
+
+    typedef Deque<COMPtr<IMFSample>> VideoSampleList;
+
+    class VideoSamplePool {
+        WTF_MAKE_TZONE_ALLOCATED(VideoSamplePool);
+    public:
+        VideoSamplePool() = default;
+        virtual ~VideoSamplePool() = default;
+
+        HRESULT initialize(VideoSampleList& samples);
+        void clear();
+
+        HRESULT getSample(COMPtr<IMFSample>&);
+        HRESULT returnSample(IMFSample*);
+        bool areSamplesPending();
+
+    private:
+        Lock m_lock;
+        VideoSampleList m_videoSampleQueue;
+        bool m_initialized { false };
+        unsigned m_pending { 0 };
+    };
+
+    class Direct3DPresenter;
+
+    class VideoScheduler {
+        WTF_MAKE_TZONE_ALLOCATED(VideoScheduler);
+    public:
+        VideoScheduler() = default;
+        virtual ~VideoScheduler() = default;
+
+        void setPresenter(Direct3DPresenter* presenter) { m_presenter = presenter; }
+
+        void setFrameRate(const MFRatio& fps);
+        void setClockRate(float rate) { m_playbackRate = rate; }
+
+        const LONGLONG& lastSampleTime() const LIFETIME_BOUND { return m_lastSampleTime; }
+        const LONGLONG& frameDuration() const LIFETIME_BOUND { return m_frameDuration; }
+
+        HRESULT startScheduler(IMFClock*);
+        HRESULT stopScheduler();
+
+        HRESULT scheduleSample(IMFSample*, bool presentNow);
+        HRESULT processSamplesInQueue(LONG& nextSleep);
+        HRESULT processSample(IMFSample*, LONG& nextSleep);
+        HRESULT flush();
+
+    private:
+        static DWORD WINAPI schedulerThreadProc(LPVOID lpParameter);
+        DWORD schedulerThreadProcPrivate();
+
+        Deque<COMPtr<IMFSample>> m_scheduledSamples;
+        Lock m_lock;
+
+        COMPtr<IMFClock> m_clock;
+        Direct3DPresenter* m_presenter { nullptr };
+
+        DWORD m_threadID { 0 };
+        WTF::Win32Handle m_schedulerThread;
+        WTF::Win32Handle m_threadReadyEvent;
+        WTF::Win32Handle m_flushEvent;
+
+        float m_playbackRate { 1.0f };
+        MFTIME m_frameDuration { 0 };
+        MFTIME m_lastSampleTime { 0 };
+
+        std::atomic<bool> m_exitThread { false };
+
+        void stopThread() { m_exitThread = true; }
+    };
+
+    class Direct3DPresenter {
+        WTF_MAKE_TZONE_ALLOCATED(Direct3DPresenter);
+    public:
+        Direct3DPresenter();
+        ~Direct3DPresenter();
+
+        enum DeviceState {
+            DeviceOK,
+            DeviceReset,
+            DeviceRemoved,
+        };
+
+        // Returns the IDirect3DDeviceManager9 interface.
+        HRESULT getService(REFGUID guidService, REFIID riid, void** ppv);
+
+        HRESULT checkFormat(D3DFORMAT);
+
+        HRESULT setVideoWindow(HWND);
+        HWND getVideoWindow() const { return m_hwnd; }
+        HRESULT setDestinationRect(const RECT& destRect);
+        RECT getDestinationRect() const { return m_destRect; };
+
+        HRESULT createVideoSamples(IMFMediaType* format, VideoSampleList& videoSampleQueue);
+        void releaseResources();
+
+        HRESULT checkDeviceState(DeviceState&);
+        HRESULT presentSample(IMFSample*, LONGLONG target);
+
+        UINT refreshRate() const { return m_displayMode.RefreshRate; }
+
+        void paintCurrentFrame(GraphicsContext&, const FloatRect&);
+
+    private:
+        HRESULT initializeD3D();
+        HRESULT getSwapChainPresentParameters(IMFMediaType*, D3DPRESENT_PARAMETERS* presentParams);
+        HRESULT createD3DDevice();
+        HRESULT createD3DSample(IDirect3DSwapChain9*, COMPtr<IMFSample>& videoSample);
+
+        UINT m_deviceResetToken { 0 };
+        HWND m_hwnd { nullptr };
+        RECT m_destRect;
+        D3DDISPLAYMODE m_displayMode;
+
+        Lock m_lock;
+
+        COMPtr<IDirect3D9Ex> m_direct3D9;
+        COMPtr<IDirect3DDevice9Ex> m_device;
+        COMPtr<IDirect3DDeviceManager9> m_deviceManager;
+        COMPtr<IDirect3DSurface9> m_surfaceRepaint;
+
+        COMPtr<IDirect3DSurface9> m_memSurface;
+        int m_width { 0 };
+        int m_height { 0 };
+    };
+
+    class CustomVideoPresenter
+        : public IMFVideoPresenter
+        , public IMFVideoDeviceID
+        , public IMFTopologyServiceLookupClient
+        , public IMFGetService
+        , public IMFActivate
+        , public IMFVideoDisplayControl
+        , public IMFAsyncCallback
+        , public MediaPlayerListener {
+        WTF_MAKE_TZONE_ALLOCATED(CustomVideoPresenter);
+    public:
+        CustomVideoPresenter(MediaPlayerPrivateMediaFoundation*);
+        ~CustomVideoPresenter();
+
+        HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject) override;
+        ULONG STDMETHODCALLTYPE AddRef() override;
+        ULONG STDMETHODCALLTYPE Release() override;
+
+        // IMFClockStateSink
+        HRESULT STDMETHODCALLTYPE OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffset) override;
+        HRESULT STDMETHODCALLTYPE OnClockStop(MFTIME hnsSystemTime) override;
+        HRESULT STDMETHODCALLTYPE OnClockPause(MFTIME hnsSystemTime) override;
+        HRESULT STDMETHODCALLTYPE OnClockRestart(MFTIME hnsSystemTime) override;
+        HRESULT STDMETHODCALLTYPE OnClockSetRate(MFTIME hnsSystemTime, float flRate) override;
+
+        // IMFVideoPresenter
+        HRESULT STDMETHODCALLTYPE ProcessMessage(MFVP_MESSAGE_TYPE eMessage, ULONG_PTR ulParam) override;
+        HRESULT STDMETHODCALLTYPE GetCurrentMediaType(_Outptr_  IMFVideoMediaType **ppMediaType) override;
+
+        // IMFVideoDeviceID
+        HRESULT STDMETHODCALLTYPE GetDeviceID(IID* pDeviceID) override;
+
+        // IMFTopologyServiceLookupClient
+        HRESULT STDMETHODCALLTYPE InitServicePointers(_In_  IMFTopologyServiceLookup *pLookup) override;
+        HRESULT STDMETHODCALLTYPE ReleaseServicePointers(void) override;
+
+        // IMFGetService
+        HRESULT STDMETHODCALLTYPE GetService(REFGUID guidService, REFIID riid, LPVOID *ppvObject) override;
+
+        // IMFActivate
+        HRESULT STDMETHODCALLTYPE ActivateObject(REFIID riid, void **ppv) override;
+        HRESULT STDMETHODCALLTYPE DetachObject() override;
+        HRESULT STDMETHODCALLTYPE ShutdownObject() override;
+
+        // IMFAttributes
+        HRESULT STDMETHODCALLTYPE GetItem(__RPC__in REFGUID, __RPC__inout_opt PROPVARIANT*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetItemType(__RPC__in REFGUID, __RPC__out MF_ATTRIBUTE_TYPE*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE CompareItem(__RPC__in REFGUID, __RPC__in REFPROPVARIANT, __RPC__out BOOL*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE Compare(__RPC__in_opt IMFAttributes*, MF_ATTRIBUTES_MATCH_TYPE, __RPC__out BOOL*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetUINT32(__RPC__in REFGUID, __RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetUINT64(__RPC__in REFGUID, __RPC__out UINT64*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetDouble(__RPC__in REFGUID, __RPC__out double*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetGUID(__RPC__in REFGUID, __RPC__out GUID*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetStringLength(__RPC__in REFGUID, __RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetString(__RPC__in REFGUID, __RPC__out_ecount_full(cchBufSize) LPWSTR, UINT32, __RPC__inout_opt UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetAllocatedString(__RPC__in REFGUID, __RPC__deref_out_ecount_full_opt((*pcchLength + 1)) LPWSTR*, __RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetBlobSize(__RPC__in REFGUID, __RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetBlob(__RPC__in REFGUID, __RPC__out_ecount_full(cbBufSize) UINT8*, UINT32, __RPC__inout_opt UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetAllocatedBlob(__RPC__in REFGUID, __RPC__deref_out_ecount_full_opt(*pcbSize) UINT8**, __RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetUnknown(__RPC__in REFGUID, __RPC__in REFIID, __RPC__deref_out_opt LPVOID*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetItem(__RPC__in REFGUID, __RPC__in REFPROPVARIANT) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE DeleteItem(__RPC__in REFGUID) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE DeleteAllItems(void) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetUINT32(__RPC__in REFGUID, UINT32) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetUINT64(__RPC__in REFGUID, UINT64) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetDouble(__RPC__in REFGUID, double) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetGUID(__RPC__in REFGUID, __RPC__in REFGUID) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetString(__RPC__in REFGUID, __RPC__in_string LPCWSTR) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetBlob(__RPC__in REFGUID, __RPC__in_ecount_full(cbBufSize) const UINT8*, UINT32) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetUnknown(__RPC__in REFGUID, __RPC__in_opt IUnknown*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE LockStore(void) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE UnlockStore(void) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetCount(__RPC__out UINT32*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetItemByIndex(UINT32, __RPC__out GUID*, __RPC__inout_opt PROPVARIANT*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE CopyAllItems(__RPC__in_opt IMFAttributes*) override { return E_NOTIMPL; }
+
+        // IMFVideoDisplayControl
+        HRESULT STDMETHODCALLTYPE GetNativeVideoSize(SIZE*, SIZE*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetIdealVideoSize(SIZE*, SIZE*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetVideoPosition(const MFVideoNormalizedRect* pnrcSource, const LPRECT prcDest) override;
+        HRESULT STDMETHODCALLTYPE GetVideoPosition(MFVideoNormalizedRect* pnrcSource, LPRECT prcDest) override;
+        HRESULT STDMETHODCALLTYPE SetAspectRatioMode(DWORD) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetAspectRatioMode(DWORD*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetVideoWindow(HWND hwndVideo) override;
+        HRESULT STDMETHODCALLTYPE GetVideoWindow(HWND* phwndVideo) override;
+        HRESULT STDMETHODCALLTYPE RepaintVideo() override;
+        HRESULT STDMETHODCALLTYPE GetCurrentImage(BITMAPINFOHEADER*, BYTE**, DWORD*, LONGLONG*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetBorderColor(COLORREF) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetBorderColor(COLORREF*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetRenderingPrefs(DWORD) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetRenderingPrefs(DWORD*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE SetFullscreen(BOOL) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE GetFullscreen(BOOL*) override { return E_NOTIMPL; }
+
+        // IMFAsyncCallback methods
+        HRESULT STDMETHODCALLTYPE GetParameters(DWORD*, DWORD*) override { return E_NOTIMPL; }
+        HRESULT STDMETHODCALLTYPE Invoke(IMFAsyncResult*) override;
+
+        // MediaPlayerListener
+        void onMediaPlayerDeleted() override;
+
+        void paintCurrentFrame(GraphicsContext&, const FloatRect&);
+
+    private:
+        ULONG m_refCount { 0 };
+        Lock m_lock;
+        MediaPlayerPrivateMediaFoundation* m_mediaPlayer;
+
+        enum RenderState {
+            RenderStateStarted = 1,
+            RenderStateStopped,
+            RenderStatePaused,
+            RenderStateShutdown,
+        };
+
+        RenderState m_renderState { RenderStateShutdown };
+        COMPtr<IMFClock> m_clock;
+        COMPtr<IMediaEventSink> m_mediaEventSink;
+        COMPtr<IMFTransform> m_mixer;
+        COMPtr<IMFMediaType> m_mediaType;
+        std::unique_ptr<Direct3DPresenter> m_presenterEngine;
+        MFVideoNormalizedRect m_sourceRect;
+        bool m_sampleNotify { false };
+        bool m_prerolled { false };
+        bool m_repaint { false };
+        bool m_endStreaming { false };
+        VideoScheduler m_scheduler;
+        VideoSamplePool m_samplePool;
+        unsigned m_tokenCounter { 0 };
+        float m_rate { 1.0f };
+
+        bool isActive() const;
+
+        bool isScrubbing() const { return m_rate == 0.0f; }
+
+        HRESULT configureMixer(IMFTransform* mixer);
+        HRESULT flush();
+        HRESULT setMediaType(IMFMediaType*);
+        HRESULT checkShutdown() const;
+        HRESULT renegotiateMediaType();
+        HRESULT processInputNotify();
+        HRESULT beginStreaming();
+        HRESULT endStreaming();
+        HRESULT checkEndOfStream();
+        HRESULT isMediaTypeSupported(IMFMediaType*);
+        HRESULT createOptimalVideoType(IMFMediaType* proposedType, IMFMediaType** optimalType);
+        HRESULT calculateOutputRectangle(IMFMediaType* proposedType, RECT& outputRect);
+
+        void processOutputLoop();
+        HRESULT processOutput();
+        HRESULT deliverSample(IMFSample*, bool repaint);
+        HRESULT trackSample(IMFSample*);
+        void releaseResources();
+
+        HRESULT onSampleFree(IMFAsyncResult*);
+
+        void notifyEvent(long EventCode, LONG_PTR Param1, LONG_PTR Param2);
+    };
+
+    COMPtr<CustomVideoPresenter> m_presenter;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(VIDEO) && USE(MEDIA_FOUNDATION)

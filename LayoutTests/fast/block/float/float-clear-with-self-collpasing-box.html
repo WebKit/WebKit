@@ -1,0 +1,35 @@
+<style>
+.spacer {
+  margin-top: 50px;
+  clear:both;
+}
+
+.floater {
+  width: 50px;
+  height: 50px;
+  float: left;
+  background-color: blue;
+}
+
+.content {
+  background-color: green;
+  width: 50px;
+  height: 50px;
+  font-family: Monospace;
+  color: transparent;
+  font-size: 10px;
+}
+</style>
+<div class=container>
+  <div class=floater></div>
+  <div class=spacer></div>
+  <div class=content></div>
+  <div class=spacer></div>
+  <div class=content></div>
+</div>
+<div class=container>
+  <div class=floater></div>
+  <div class=content>should not overlap</div>
+  <div class=spacer></div>
+  <div class=content></div>
+</div>

@@ -1,0 +1,15 @@
+
+page load
+Step 1
+iframe onload
+Step 2
+Step 3
+iframe onload
+Step 4
+Step 5
+iframe onload
+Step 6
+Step 7
+
+PASS Retaining window.name on history traversal
+

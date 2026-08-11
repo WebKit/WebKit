@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+    <title>track element IDL attribute reflection and canonicalization</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// HTML Living Standard:
+//   §4.8.13.3 "The track element"
+//     https://html.spec.whatwg.org/multipage/media.html#the-track-element
+//   §4.8.13.7 "Text tracks" -> text track model
+//     https://html.spec.whatwg.org/multipage/media.html#text-track-model
+//
+// Covers:
+//   - kind content attribute: missing-value default "subtitles",
+//     invalid-value default "metadata", IDL reflection (limited to known values)
+//   - label IDL attribute reflects label content attribute
+//   - default IDL attribute reflects default boolean content attribute
+//   - track.track returns the corresponding TextTrack object (stable identity)
+//   - TextTrack.kind/.label update dynamically when the backing track
+//     element's attributes change
+const KNOWN_KINDS = ["subtitles", "captions", "descriptions", "chapters", "metadata"];
+
+test(() => {
+    const track = document.createElement("track");
+    assert_equals(track.kind, "subtitles", "missing kind reflects as 'subtitles'");
+}, "kind: missing value default is 'subtitles'");
+
+test(() => {
+    // Missing value default only applies when the attribute is absent.
+    // An empty-string attribute is "present, no keyword match" -> invalid
+    // value default ("metadata").
+    const track = document.createElement("track");
+    track.setAttribute("kind", "");
+    assert_equals(track.kind, "metadata", "empty kind reflects as 'metadata' (invalid value default)");
+}, "kind: empty value reflects as 'metadata' (invalid value default, not missing value default)");
+
+test(() => {
+    for (const kind of KNOWN_KINDS) {
+        const track = document.createElement("track");
+        track.setAttribute("kind", kind);
+        assert_equals(track.kind, kind, kind);
+        // Case insensitivity per HTML enumerated-attribute rules.
+        track.setAttribute("kind", kind.toUpperCase());
+        assert_equals(track.kind, kind, kind.toUpperCase() + " canonicalizes to " + kind);
+    }
+}, "kind: IDL getter canonicalizes known values (case-insensitive)");
+
+test(() => {
+    const track = document.createElement("track");
+    track.setAttribute("kind", "bogus");
+    // "limited to only known values" -> invalid value defaults to "metadata"
+    // (the kind state's invalid value default per HTML spec).
+    assert_equals(track.kind, "metadata", "invalid kind reflects as 'metadata'");
+}, "kind: invalid value reflects as 'metadata' (invalid value default)");
+
+test(() => {
+    const track = document.createElement("track");
+    track.kind = "captions";
+    assert_equals(track.getAttribute("kind"), "captions", "IDL setter writes content attribute");
+    assert_equals(track.kind, "captions", "IDL getter reads back");
+}, "kind: IDL setter writes through to content attribute");
+
+test(() => {
+    const track = document.createElement("track");
+    assert_equals(track.label, "", "no label attribute -> empty string");
+    track.setAttribute("label", "");
+    assert_equals(track.label, "", "empty label attribute -> empty string");
+    track.setAttribute("label", "English");
+    assert_equals(track.label, "English", "non-empty reflects verbatim");
+    track.label = "Français";
+    assert_equals(track.getAttribute("label"), "Français", "IDL setter writes content attribute");
+}, "label: IDL attribute reflects content attribute");
+
+test(() => {
+    const track = document.createElement("track");
+    assert_equals(track.default, false, "missing default attribute -> false");
+    track.setAttribute("default", "");
+    assert_equals(track.default, true, "present default attribute -> true");
+    track.default = false;
+    assert_false(track.hasAttribute("default"), "setter false removes attribute");
+    track.default = true;
+    assert_true(track.hasAttribute("default"), "setter true adds attribute");
+}, "default: IDL attribute reflects boolean content attribute");
+
+test(() => {
+    const track = document.createElement("track");
+    const t = track.track;
+    assert_true(t instanceof TextTrack, ".track is a TextTrack");
+    assert_equals(track.track, t, ".track returns the same TextTrack across calls");
+}, "track.track returns the corresponding TextTrack object (stable identity)");
+
+test(() => {
+    const a = document.createElement("track");
+    const b = document.createElement("track");
+    assert_not_equals(a.track, b.track, "distinct track elements have distinct TextTrack objects");
+}, "each text track has its own TextTrack object");
+
+test(() => {
+    const track = document.createElement("track");
+    // Default kind state ("subtitles") + empty label + empty srclang
+    // ⇒ TextTrack.kind/.label/.language reflect those.
+    assert_equals(track.track.kind, "subtitles", "default TextTrack.kind");
+    assert_equals(track.track.label, "", "default TextTrack.label");
+
+    track.kind = "captions";
+    assert_equals(track.track.kind, "captions", "TextTrack.kind tracks track-element kind change");
+
+    track.label = "Closed captions";
+    assert_equals(track.track.label, "Closed captions", "TextTrack.label tracks track-element label change");
+
+    track.label = "";
+    assert_equals(track.track.label, "", "label cleared -> TextTrack.label empty");
+}, "TextTrack.kind/.label update when the track element's attributes change");
+</script>
+</body>
+</html>

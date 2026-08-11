@@ -1,0 +1,34 @@
+
+PASS :u32:inputSource="const";width=1
+PASS :u32:inputSource="const";width=2
+PASS :u32:inputSource="const";width=3
+PASS :u32:inputSource="const";width=4
+PASS :u32:inputSource="uniform";width=1
+PASS :u32:inputSource="uniform";width=2
+PASS :u32:inputSource="uniform";width=3
+PASS :u32:inputSource="uniform";width=4
+PASS :u32:inputSource="storage_r";width=1
+PASS :u32:inputSource="storage_r";width=2
+PASS :u32:inputSource="storage_r";width=3
+PASS :u32:inputSource="storage_r";width=4
+PASS :u32:inputSource="storage_rw";width=1
+PASS :u32:inputSource="storage_rw";width=2
+PASS :u32:inputSource="storage_rw";width=3
+PASS :u32:inputSource="storage_rw";width=4
+PASS :i32:inputSource="const";width=1
+PASS :i32:inputSource="const";width=2
+PASS :i32:inputSource="const";width=3
+PASS :i32:inputSource="const";width=4
+PASS :i32:inputSource="uniform";width=1
+PASS :i32:inputSource="uniform";width=2
+PASS :i32:inputSource="uniform";width=3
+PASS :i32:inputSource="uniform";width=4
+PASS :i32:inputSource="storage_r";width=1
+PASS :i32:inputSource="storage_r";width=2
+PASS :i32:inputSource="storage_r";width=3
+PASS :i32:inputSource="storage_r";width=4
+PASS :i32:inputSource="storage_rw";width=1
+PASS :i32:inputSource="storage_rw";width=2
+PASS :i32:inputSource="storage_rw";width=3
+PASS :i32:inputSource="storage_rw";width=4
+

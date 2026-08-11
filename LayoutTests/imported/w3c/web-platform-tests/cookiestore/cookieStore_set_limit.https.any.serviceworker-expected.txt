@@ -1,0 +1,12 @@
+
+PASS Set max-size cookie with largest possible name and value (4096 bytes)
+PASS Ignore cookie with name larger than 4096 and 1 byte value
+PASS Set max-size value-less cookie
+PASS Ignore value-less cookie with name larger than 4096 bytes
+PASS Set max-size cookie with largest possible value (4095 bytes)
+PASS Ignore named cookie (with non-zero length) and value larger than 4095 bytes
+PASS Ignore named cookie with length larger than 4095 bytes, and a non-zero value
+FAIL Set max-size name-less cookie assert_equals: expected (undefined) undefined but got (object) object "[object Object]"
+PASS Ignore name-less cookie with value larger than 4096 bytes
+PASS Ignore name-less cookie (without leading =) with value larger than 4096 bytes
+

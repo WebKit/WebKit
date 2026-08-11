@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/60x60-green.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/bidi-005-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/bidi-007-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/border-seams-001.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/boxes_same_color_100px_black_50px_margin.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/filler-text-below-green.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/float-applies-to-001-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/inline-svg-100-percent-in-body-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/inline-svg-margin-padding-border-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/margin-collapse-002-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/no-red-filler-text-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/no-red-on-blank-page-ref.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/no_red_bold_italic_small-caps_ahem.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/pass-if-number-0-30px.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/pass_if_box_ahem.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/ref-black-96px-square-no-red.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/ref-filled-black-96px-square.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/ref-filled-green-100px-square.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/ref-green-background.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/ref-if-there-is-no-red.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/ref-no-vert-space-between.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/ref-nothing-below.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/ref-this-text-should-be-green.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/ref-transparent-or-black-square-black.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/reference/ref-transparent-or-black-square-transparent.xht

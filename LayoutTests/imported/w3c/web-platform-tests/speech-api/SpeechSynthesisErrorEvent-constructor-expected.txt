@@ -1,0 +1,13 @@
+
+PASS SpeechSynthesisErrorEvent with no arguments throws TypeError
+PASS SpeechSynthesisErrorEvent with no eventInitDict throws TypeError
+PASS SpeechSynthesisErrorEvent with empty eventInitDict throws TypeError (requires
+    utterance and error)
+PASS SpeechSynthesisErrorEvent with eventInitDict without utterance throws
+    TypeError
+PASS SpeechSynthesisErrorEvent with eventInitDict without error throws
+    TypeError
+PASS SpeechSynthesisErrorEvent with eventInitDict having utterance and error
+PASS SpeechSynthesisErrorEvent with custom eventInitDict
+PASS SpeechSynthesisErrorEvent with wrong error enum
+

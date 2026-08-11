@@ -1,0 +1,603 @@
+/*
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "MediaControlTextTrackContainerElement.h"
+
+#if ENABLE(VIDEO)
+
+#include "ContainerNodeInlines.h"
+#include "DOMTokenList.h"
+#include "DocumentEventLoop.h"
+#include "DocumentFullscreen.h"
+#include "DocumentView.h"
+#include "ElementChildIteratorInlines.h"
+#include "EventHandler.h"
+#include "EventLoop.h"
+#include "EventNames.h"
+#include "GraphicsContext.h"
+#include "HTMLVideoElement.h"
+#include "ImageBuffer.h"
+#include "LocalFrame.h"
+#include "LocalizedStrings.h"
+#include "Logging.h"
+#include "NativeImage.h"
+#include "PODInterval.h"
+#include "Page.h"
+#include "PageGroup.h"
+#include "RenderLayer.h"
+#include "RenderLayerInlines.h"
+#include "RenderMediaInlines.h"
+#include "RenderVideo.h"
+#include "RenderView.h"
+#include "Settings.h"
+#include "ShadowRoot.h"
+#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
+#include "TextTrackCueGeneric.h"
+#include "TextTrackList.h"
+#include "UserAgentParts.h"
+#include "VTTCue.h"
+#include "VTTRegionList.h"
+#include <ranges>
+#include <wtf/Language.h>
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaControlTextTrackContainerElement);
+
+using namespace HTMLNames;
+
+Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement::create(Document& document, HTMLMediaElement& mediaElement)
+{
+    auto element = adoptRef(*new MediaControlTextTrackContainerElement(document, mediaElement));
+    element->setUserAgentPart(UserAgentParts::webkitMediaTextTrackContainer());
+    element->hide();
+    return element;
+}
+
+MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Document& document, HTMLMediaElement& element)
+    : HTMLDivElement(document)
+    , m_mediaElement(element)
+{
+}
+
+MediaControlTextTrackContainerElement::~MediaControlTextTrackContainerElement() = default;
+
+RenderPtr<RenderElement> MediaControlTextTrackContainerElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)
+{
+    return createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, *this, WTF::move(style));
+}
+
+static bool compareCueIntervalForDisplay(const CueInterval& one, const CueInterval& two)
+{
+    return protect(one.data())->isPositionedAbove(protect(two.data()));
+};
+
+void MediaControlTextTrackContainerElement::updateDisplay()
+{
+    RefPtr mediaElement = m_mediaElement.get();
+    if (mediaElement && !mediaElement->closedCaptionsVisible() && !m_shouldShowCaptionPreviewCue)
+        removeChildren();
+
+    // 1. If the media element is an audio element, or is another playback
+    // mechanism with no rendering area, abort these steps. There is nothing to
+    // render.
+    if (!mediaElement || m_videoDisplaySize.size().isEmpty())
+        return;
+
+    // 2. Let video be the media element or other playback mechanism.
+    RefPtr video = dynamicDowncast<HTMLVideoElement>(*mediaElement);
+    if (!video)
+        return;
+
+    // 3. Let output be an empty list of absolutely positioned CSS block boxes.
+
+    // 4. If the user agent is exposing a user interface for video, add to
+    // output one or more completely transparent positioned CSS block boxes that
+    // cover the same region as the user interface.
+
+    // 5. If the last time these rules were run, the user agent was not exposing
+    // a user interface for video, but now it is, optionally let reset be true. Otherwise,
+    // let reset be false.
+
+    // There is nothing to be done explicitly for 4th and 5th steps, as
+    // everything is handled through CSS. The caption box is on top of the
+    // controls box, in a container set with the -webkit-box display property.
+
+    // 6. Let tracks be the subset of video's list of text tracks that have as
+    // their rules for updating the text track rendering these rules for
+    // updating the display of WebVTT text tracks, and whose text track mode is
+    // showing or showing by default.
+    // 7. Let cues be an empty list of text track cues.
+    // 8. For each track track in tracks, append to cues all the cues from
+    // track's list of cues that have their text track cue active flag set.
+    CueList activeCues = currentlyActiveCues();
+
+    // 9. Let regions be an empty list of WebVTT regions.
+
+    // 10. For each track track in tracks, append to regions all the regions with an
+    // identifier from track’s list of regions.
+
+    // Steps 9 and 10 are unneccesary because we will initialize each region
+    // individually in text track cue order.
+
+    // There is nothing explicitly to be done here, as all the caching occurs
+    // within the TextTrackCue instance itself. If parameters of the cue change,
+    // the display tree is cleared.
+
+    // 11. If reset is false, then, for each WebVTT region in regions let regionNode
+    // be a WebVTT region object.
+
+    // Steps 12 and 13 are performed in VTTRegion
+
+    // If the number of CSS boxes in the output is less than the number of cues
+    // we wish to render (e.g., we are adding another cue in a set of roll-up
+    // cues), remove all the existing CSS boxes representing the cues and re-add
+    // them so that the new cue is at the bottom.
+    // FIXME: Calling countChildNodes() here is inefficient. We don't need to
+    // traverse all children just to check if there are less children than cues.
+    if (countChildNodes() < activeCues.size())
+        removeChildren();
+
+    activeCues.removeAllMatching([] (CueInterval& cueInterval) {
+        auto& cue = *cueInterval.data();
+        if (!cue.isActive() || !cue.isRenderable())
+            return true;
+        auto* track = cue.track();
+        return !track || !track->isRendered() || track->mode() == TextTrack::Mode::Disabled;
+    });
+
+    // Sort the active cues for the appropriate display order. For example, for roll-up
+    // or paint-on captions, we need to add the cues in reverse chronological order,
+    // so that the newest captions appear at the bottom.
+    std::ranges::sort(activeCues, &compareCueIntervalForDisplay);
+
+    if (mediaElement->closedCaptionsVisible() || m_shouldShowCaptionPreviewCue) {
+        // 10. For each text track cue in cues that has not yet had
+        // corresponding CSS boxes added to output, in text track cue order, run the
+        // following substeps:
+        for (auto& interval : activeCues) {
+            Ref cue = *interval.data();
+
+            if (cue->track()->isSpoken())
+                continue;
+
+            if (RefPtr vttCue = dynamicDowncast<VTTCue>(cue))
+                processActiveVTTCue(*vttCue);
+            else {
+                auto displayBox = cue->getDisplayTree();
+                if (displayBox->hasChildNodes() && !contains(displayBox.get()))
+                    appendChild(*displayBox);
+            }
+        }
+    }
+
+    // 11. Return output.
+    if (hasChildNodes())
+        show();
+    else
+        hide();
+
+    updateTextTrackRepresentationIfNeeded();
+    updateTextTrackStyle();
+}
+
+void MediaControlTextTrackContainerElement::updateTextTrackRepresentationImageIfNeeded()
+{
+    if (!m_needsToGenerateTextTrackRepresentation)
+        return;
+
+    m_needsToGenerateTextTrackRepresentation = false;
+
+    // We should call m_textTrackRepresentation->update() to paint the subtree of
+    // the RenderTextTrackContainerElement after the layout is clean.
+    if (m_textTrackRepresentation) {
+        m_textTrackRepresentation->update();
+        m_textTrackRepresentation->setHidden(false);
+    }
+}
+
+void MediaControlTextTrackContainerElement::processActiveVTTCue(VTTCue& cue)
+{
+    DEBUG_LOG(LOGIDENTIFIER, "adding and positioning cue: \"", cue.text(), "\", start=", cue.startTime(), ", end=", cue.endTime());
+
+    if (RefPtr region = protect(protect(cue.track())->regions())->getRegionById(cue.regionId())) {
+        // Let region be the WebVTT region whose region identifier
+        // matches the text track cue region identifier of cue.
+        Ref regionNode = region->getDisplayTree();
+
+        if (!contains(regionNode.ptr()))
+            appendChild(regionNode);
+
+        region->appendTextTrackCueBox(*cue.getDisplayTree());
+    } else {
+        // If cue has an empty text track cue region identifier or there is no
+        // WebVTT region whose region identifier is identical to cue's text
+        // track cue region identifier, run the following substeps:
+        Ref<TextTrackCueBox> displayBox = *cue.getDisplayTree();
+        if (displayBox->hasChildNodes() && !contains(displayBox.ptr())) {
+            // Note: the display tree of a cue is removed when the active flag of the cue is unset.
+            appendChild(displayBox);
+        }
+    }
+}
+
+void MediaControlTextTrackContainerElement::updateActiveCuesFontSize()
+{
+    RefPtr page = document().page();
+    if (!page)
+        return;
+
+    RefPtr mediaElement = m_mediaElement.get();
+    if (!mediaElement)
+        return;
+
+    float fontScale = protect(protect(page->group())->ensureCaptionPreferences())->captionFontSizeScaleAndImportance(m_fontSizeIsImportant);
+
+    // Caption fonts are defined as |size vh| units, so there's no need to
+    // scale by display size. Since |vh| is a decimal percentage, multiply
+    // the scale factor by 100 to achive the final font size.
+    m_fontSize = lroundf(100 * fontScale);
+}
+
+void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
+{
+    RefPtr page = document().page();
+    if (!page)
+        return;
+
+    RefPtr mediaElement = m_mediaElement.get();
+    if (!mediaElement)
+        return;
+
+    String language;
+
+    // FIXME: Since it is possible to have more than one text track enabled, the following code may not find the correct language.
+    // The default UI only allows a user to enable one track at a time, so it should be OK for now, but we should consider doing
+    // this differently, see <https://bugs.webkit.org/show_bug.cgi?id=169875>.
+    if (RefPtr tracks = mediaElement->textTracks()) {
+        for (unsigned i = 0; i < tracks->length(); ++i) {
+            RefPtr track = tracks->item(i);
+            if (track && track->mode() == TextTrack::Mode::Showing) {
+                language = track->validBCP47Language();
+                break;
+            }
+        }
+    }
+
+    float strokeWidth;
+    bool important;
+
+    // FIXME: find a way to set this property in the stylesheet like the other user style preferences, see <https://bugs.webkit.org/show_bug.cgi?id=169874>.
+    if (protect(protect(page->group())->ensureCaptionPreferences())->captionStrokeWidthForFont(m_fontSize, language, strokeWidth, important))
+        setInlineStyleProperty(CSSPropertyStrokeWidth, strokeWidth, CSSUnitType::Px, important ? IsImportant::Yes : IsImportant::No);
+}
+
+void MediaControlTextTrackContainerElement::updateTextTrackRepresentationIfNeeded()
+{
+    RefPtr mediaElement = m_mediaElement.get();
+    if (!mediaElement)
+        return;
+
+    auto requiresTextTrackRepresentation = mediaElement->requiresTextTrackRepresentation();
+    if (!hasChildNodes() || !requiresTextTrackRepresentation) {
+        if (m_textTrackRepresentation) {
+            if (!requiresTextTrackRepresentation)
+                clearTextTrackRepresentation();
+            else
+                m_textTrackRepresentation->setHidden(true);
+        }
+        return;
+    }
+
+    if (!m_textTrackRepresentation) {
+        ALWAYS_LOG(LOGIDENTIFIER);
+
+        m_textTrackRepresentation = TextTrackRepresentation::create(*this, *mediaElement);
+        if (document().page())
+            m_textTrackRepresentation->setContentScale(document().page()->deviceScaleFactor());
+        mediaElement->setTextTrackRepresentation(m_textTrackRepresentation.get());
+    }
+
+    m_needsToGenerateTextTrackRepresentation = true;
+}
+
+void MediaControlTextTrackContainerElement::clearTextTrackRepresentation()
+{
+    if (!m_textTrackRepresentation)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    m_textTrackRepresentation = nullptr;
+    if (RefPtr mediaElement = m_mediaElement.get())
+        mediaElement->setTextTrackRepresentation(nullptr);
+}
+
+void MediaControlTextTrackContainerElement::updateTextTrackStyle()
+{
+    if (m_textTrackRepresentation) {
+        setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
+        setInlineStyleProperty(CSSPropertyWidth, m_videoDisplaySize.size().width(), CSSUnitType::Px);
+        setInlineStyleProperty(CSSPropertyHeight, m_videoDisplaySize.size().height(), CSSUnitType::Px);
+        setInlineStyleProperty(CSSPropertyLeft, 0, CSSUnitType::Px);
+        setInlineStyleProperty(CSSPropertyTop, 0, CSSUnitType::Px);
+        return;
+    }
+
+    removeInlineStyleProperty(CSSPropertyPosition);
+    removeInlineStyleProperty(CSSPropertyWidth);
+    removeInlineStyleProperty(CSSPropertyHeight);
+    removeInlineStyleProperty(CSSPropertyLeft);
+    removeInlineStyleProperty(CSSPropertyTop);
+}
+
+void MediaControlTextTrackContainerElement::requiresTextTrackRepresentationChanged()
+{
+    updateTextTrackRepresentationIfNeeded();
+    updateSizes(ForceUpdate::Yes);
+}
+
+void MediaControlTextTrackContainerElement::enteredFullscreen()
+{
+    updateTextTrackRepresentationIfNeeded();
+    updateSizes(ForceUpdate::Yes);
+}
+
+void MediaControlTextTrackContainerElement::exitedFullscreen()
+{
+    clearTextTrackRepresentation();
+    updateSizes(ForceUpdate::Yes);
+}
+
+void MediaControlTextTrackContainerElement::showCaptionDisplaySettingsPreview()
+{
+    if (m_shouldShowCaptionPreviewCue)
+        return;
+
+    removeChildren();
+
+    // Normally, the HTMLMediaElement will call updateDisplayTree() with its
+    // currentMediaTime from updateActiveTextTrackCues(). But since the preview
+    // cue is not a real cue with a real TextTrack, it won't be updated by the
+    // HTMLMediaElement. Do so here.
+    protect(ensurePreviewCue())->updateDisplayTree(MediaTime::zeroTime());
+
+    m_shouldShowCaptionPreviewCue = true;
+    updateDisplay();
+}
+
+void MediaControlTextTrackContainerElement::hideCaptionDisplaySettingsPreview()
+{
+    if (!m_shouldShowCaptionPreviewCue)
+        return;
+    m_shouldShowCaptionPreviewCue = false;
+
+    removeChildren();
+
+    updateDisplay();
+}
+
+bool MediaControlTextTrackContainerElement::updateVideoDisplaySize()
+{
+    if (!document().page())
+        return false;
+
+    RefPtr mediaElement = m_mediaElement.get();
+    if (!mediaElement)
+        return false;
+
+    IntRect videoBox;
+    if (m_textTrackRepresentation)
+        videoBox = m_textTrackRepresentation->bounds();
+    else {
+        if (CheckedPtr renderVideo = dynamicDowncast<RenderVideo>(mediaElement->renderer()))
+            videoBox = renderVideo->videoBox();
+        else
+            return false;
+    }
+
+    if (m_videoDisplaySize == videoBox)
+        return false;
+
+    m_videoDisplaySize = videoBox;
+    return true;
+}
+
+void MediaControlTextTrackContainerElement::captionPreferencesChanged()
+{
+    if (RefPtr page = document().page()) {
+        if (RefPtr previewCue = m_previewCue) {
+            previewCue->setText(protect(protect(page->group())->ensureCaptionPreferences())->captionPreviewTitle());
+            previewCue->updateDisplayTree(MediaTime::zeroTime());
+        }
+    }
+    updateSizes(ForceUpdate::Yes);
+}
+
+void MediaControlTextTrackContainerElement::updateSizes(ForceUpdate force)
+{
+    if (!updateVideoDisplaySize() && force != ForceUpdate::Yes)
+        return;
+
+    Ref document = this->document();
+    if (!document->page())
+        return;
+
+    RefPtr mediaElement = m_mediaElement.get();
+    if (!mediaElement)
+        return;
+
+    mediaElement->syncTextTrackBounds();
+
+    updateActiveCuesFontSize();
+    updateTextStrokeStyle();
+    for (auto& activeCue : currentlyActiveCues())
+        protect(activeCue.data())->recalculateStyles();
+
+    protect(document->eventLoop())->queueTask(TaskSource::MediaElement, [weakThis = WeakPtr { *this }] () {
+        if (weakThis)
+            weakThis->updateDisplay();
+    });
+}
+
+RefPtr<NativeImage> MediaControlTextTrackContainerElement::createTextTrackRepresentationImage()
+{
+    if (!hasChildNodes())
+        return nullptr;
+
+    RefPtr frame = document().frame();
+    if (!frame)
+        return nullptr;
+
+    protect(document())->updateLayout();
+
+    CheckedPtr renderer = this->renderer();
+    if (!renderer)
+        return nullptr;
+
+    if (!renderer->hasLayer())
+        return nullptr;
+
+    CheckedPtr layer = downcast<RenderLayerModelObject>(*renderer).layer();
+
+    float deviceScaleFactor = 1;
+    if (Page* page = document().page())
+        deviceScaleFactor = page->deviceScaleFactor();
+
+    IntRect paintingRect = IntRect(IntPoint(), layer->size());
+
+    // FIXME (149422): This buffer should not be unconditionally unaccelerated.
+    auto buffer = ImageBuffer::create(paintingRect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!buffer)
+        return nullptr;
+
+    auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags();
+    paintFlags.add(RenderLayer::PaintLayerFlag::TemporaryClipRects);
+    paintFlags.add(RenderLayer::PaintLayerFlag::AppliedTransform);
+    layer->paint(buffer->context(), paintingRect, LayoutSize(), { PaintBehavior::FlattenCompositingLayers, PaintBehavior::Snapshotting }, nullptr, paintFlags);
+
+    return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
+}
+
+void MediaControlTextTrackContainerElement::textTrackRepresentationBoundsChanged(const IntRect&)
+{
+    updateTextTrackRepresentationIfNeeded();
+    updateSizes();
+}
+
+void MediaControlTextTrackContainerElement::hide()
+{
+    setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
+}
+
+void MediaControlTextTrackContainerElement::show()
+{
+    removeInlineStyleProperty(CSSPropertyDisplay);
+}
+
+bool MediaControlTextTrackContainerElement::isShowing() const
+{
+    RefPtr propertySet = inlineStyle();
+
+    // Following the code from show() and hide() above, we only have
+    // to check for the presense of inline display.
+    return (!propertySet || !propertySet->getPropertyCSSValue(CSSPropertyDisplay));
+}
+
+CueList MediaControlTextTrackContainerElement::currentlyActiveCues() const
+{
+    if (m_shouldShowCaptionPreviewCue) {
+        Ref previewCue = ensurePreviewCue();
+        CueInterval previewInterval { MediaTime::zeroTime(), MediaTime::positiveInfiniteTime(), previewCue.ptr() };
+        return { previewInterval };
+    }
+
+    if (RefPtr mediaElement = m_mediaElement.get())
+        return mediaElement->currentlyActiveCues();
+
+    return { };
+}
+
+VTTCue& MediaControlTextTrackContainerElement::ensurePreviewCue() const
+{
+    if (!m_previewTrack) {
+        lazyInitialize(m_previewTrack, TextTrack::create(nullptr, "Preview Track"_s, emptyAtom(), emptyAtom(), emptyAtom()));
+        m_previewTrack->setMode(TextTrack::Mode::Showing);
+    }
+
+    if (!m_previewCue) {
+        lazyInitialize(m_previewCue, VTTCue::create(protect(document()), 0, 0, { }).releaseReturnValue());
+        m_previewCue->setSnapToLines(false);
+        m_previewCue->setLine(25.);
+        m_previewCue->setStartTime(MediaTime::zeroTime());
+        m_previewCue->setEndTime(MediaTime::positiveInfiniteTime());
+        m_previewCue->setIsActive(true);
+
+        if (RefPtr page = document().page())
+            m_previewCue->setText(protect(protect(page->group())->ensureCaptionPreferences())->captionPreviewTitle());
+
+        m_previewTrack->addCue(*m_previewCue);
+    }
+    return *m_previewCue;
+}
+
+#if !RELEASE_LOG_DISABLED
+const Logger& MediaControlTextTrackContainerElement::logger() const
+{
+    if (!m_logger)
+        m_logger = protect(document())->logger();
+
+    return *m_logger;
+}
+
+uint64_t MediaControlTextTrackContainerElement::logIdentifier() const
+{
+    if (m_logIdentifier)
+        return m_logIdentifier;
+
+    if (RefPtr mediaElement = m_mediaElement.get())
+        m_logIdentifier = mediaElement->logIdentifier();
+
+    return m_logIdentifier;
+}
+
+WTFLogChannel& MediaControlTextTrackContainerElement::logChannel() const
+{
+    return LogMedia;
+}
+#endif // !RELEASE_LOG_DISABLED
+
+// ----------------------------
+
+} // namespace WebCore
+
+#endif // ENABLE(VIDEO)

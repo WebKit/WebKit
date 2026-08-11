@@ -1,0 +1,149 @@
+/*
+ * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#if ENABLE(WEBASSEMBLY)
+
+#include "IndexingType.h"
+#include "JITOperationValidation.h"
+#include "JSCJSValue.h"
+#include "OperationResult.h"
+#include "WasmExceptionType.h"
+#include "WasmFormat.h"
+#include "WasmOSREntryData.h"
+#include "WasmTypeDefinition.h"
+
+namespace JSC {
+
+class JSArray;
+class JSWebAssemblyInstance;
+class WebAssemblyFunction;
+
+namespace Probe {
+class Context;
+} // namespace JSC::Probe
+namespace Wasm {
+
+enum class UseDefaultValue : bool { No, Yes };
+enum class ArrayGetKind : unsigned { New, NewDefault, NewFixed };
+
+class CallProfile;
+class TypeDefinition;
+class JSToWasmCallee;
+
+typedef int64_t EncodedWasmValue;
+
+JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSToWasmCallee*, (void*, CallFrame*, WebAssemblyFunction*));
+JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJSValue, (void*, CallFrame*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationGetWasmCalleeStackSize, UCPUStrictInt32, (JSWebAssemblyInstance*, WasmCallableFunction*));
+JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, void, (void*, CallFrame*, void*, JSWebAssemblyInstance*));
+JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* sp, CallFrame*, JSWebAssemblyInstance*));
+
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+void loadValuesIntoBuffer(Probe::Context&, const StackMap&, Wasm::Context::ScratchBufferEntry*);
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (CallFrame*, JSWebAssemblyInstance*));
+#endif
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe::Context&));
+#endif
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmMaterializeBaselineData, void, (CallFrame*, JSWebAssemblyInstance*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmMaterializePolymorphicCallee, WasmOrJSImportableFunction*, (CallProfile*, WasmOrJSImportableFunction*));
+#endif
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmUnwind, void*, (JSWebAssemblyInstance*));
+
+JSC_DECLARE_JIT_OPERATION(operationConvertToI64, int64_t, (JSWebAssemblyInstance*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToF64, double, (JSWebAssemblyInstance*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToI32, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToF32, float, (JSWebAssemblyInstance*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (JSWebAssemblyInstance*, const RTT*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToAnyref, EncodedJSValue, (JSWebAssemblyInstance*, const RTT*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (JSWebAssemblyInstance*, EncodedWasmValue));
+
+JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance*, const RTT*, EncodedJSValue, uint64_t*, uint64_t*));
+JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssemblyInstance*, const RTT*, IndexingType, JSValue*));
+
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmWriteBarrierSlowPath, void, (JSCell*, VM*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationPopcount32, UCPUStrictInt32, (int32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationPopcount64, uint64_t, (int64_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationGrowMemory, int64_t, (JSWebAssemblyInstance*, int64_t, uint8_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmMemorySizeInPages, int64_t, (JSWebAssemblyInstance* instance, uint8_t memoryIndex));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryFill, UCPUStrictInt32, (JSWebAssemblyInstance*, uint64_t dstAddress, uint32_t targetValue, uint64_t count, uint8_t memoryIndex));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryCopy, UCPUStrictInt32, (JSWebAssemblyInstance*, uint64_t dstAddress, uint64_t srcAddress, uint64_t count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex));
+
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (JSWebAssemblyInstance*, unsigned, uint64_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationSetWasmTableElement, UCPUStrictInt32, (JSWebAssemblyInstance*, unsigned, uint64_t, EncodedJSValue encValue));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (JSWebAssemblyInstance*, uint32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmTableInit, UCPUStrictInt32, (JSWebAssemblyInstance*, unsigned elementIndex, unsigned tableIndex, uint64_t dstOffset, uint32_t srcOffset, uint32_t length));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmElemDrop, void, (JSWebAssemblyInstance*, unsigned elementIndex));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmTableGrow, int64_t, (JSWebAssemblyInstance*, unsigned, EncodedJSValue fill, uint64_t delta));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmTableFill, UCPUStrictInt32, (JSWebAssemblyInstance*, unsigned, uint64_t offset, EncodedJSValue fill, uint64_t count));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmTableCopy, UCPUStrictInt32, (JSWebAssemblyInstance*, unsigned dstTableIndex, unsigned srcTableIndex, uint64_t dstOffset, uint64_t srcOffset, uint64_t length));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationGetWasmTableSize, UCPUStrictInt32, (JSWebAssemblyInstance*, unsigned));
+
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicWait32, UCPUStrictInt32, (JSWebAssemblyInstance* instance, uint64_t base, uint64_t offset, int32_t value, int64_t timeout, uint8_t memoryIndex));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicWait64, UCPUStrictInt32, (JSWebAssemblyInstance* instance, uint64_t base, uint64_t offset, int64_t value, int64_t timeout, uint8_t memoryIndex));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicNotify, UCPUStrictInt32, (JSWebAssemblyInstance*, uint64_t, uint64_t, int32_t, uint8_t memoryIndex));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryInit, UCPUStrictInt32, (JSWebAssemblyInstance*, unsigned dataSegmentIndex, uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint8_t memoryIndex));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmDataDrop, void, (JSWebAssemblyInstance*, unsigned dataSegmentIndex));
+
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmStructNewEmpty, EncodedJSValue, (JSWebAssemblyInstance*, uint32_t));
+
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmThrow, void*, (JSWebAssemblyInstance*, unsigned exceptionIndex, uint64_t*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmRethrow, void*, (JSWebAssemblyInstance*, EncodedJSValue thrownValue));
+
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmToJSException, void*, (JSWebAssemblyInstance*, Wasm::ExceptionType));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationThrowExceptionFromOMG, void*, (JSWebAssemblyInstance*, Wasm::ExceptionType, void* returnAddress));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationCrashDueToBBQStackOverflow, void, ());
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationCrashDueToOMGStackOverflow, void, ());
+
+struct ThrownExceptionInfo {
+    EncodedJSValue thrownValue;
+    void* payload;
+};
+static_assert(sizeof(ThrownExceptionInfo) == sizeof(UCPURegister) * 2, "ThrownExceptionInfo should fit in two machine registers");
+
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNew, EncodedJSValue, (JSWebAssemblyInstance* instance, uint32_t typeIndex, uint32_t size, uint64_t value));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNewVector, EncodedJSValue, (JSWebAssemblyInstance* instance, uint32_t typeIndex, uint32_t size, uint64_t lane0, uint64_t lane1));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNewData, EncodedJSValue, (JSWebAssemblyInstance* instance, uint32_t typeIndex, uint32_t dataSegmentIndex, uint32_t arraySize, uint32_t offset));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNewElem, EncodedJSValue, (JSWebAssemblyInstance* instance, uint32_t typeIndex, uint32_t elemSegmentIndex, uint32_t arraySize, uint32_t offset));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNewEmpty, EncodedJSValue, (JSWebAssemblyInstance* instance, uint32_t typeIndex, uint32_t size));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, uint64_t, uint32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFillVector, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, uint64_t, uint64_t, uint32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayCopy, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, EncodedJSValue, uint32_t, uint32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayInitElem, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, uint32_t, uint32_t, uint32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayInitData, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, uint32_t, uint32_t, uint32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmAnyConvertExtern, EncodedJSValue, (EncodedJSValue));
+
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmRefTest, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, int32_t, bool));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmRefCast, EncodedJSValue, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, int32_t));
+
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, ThrownExceptionInfo, (JSWebAssemblyInstance*));
+
+} } // namespace JSC::Wasm
+
+#endif // ENABLE(WEBASSEMBLY)

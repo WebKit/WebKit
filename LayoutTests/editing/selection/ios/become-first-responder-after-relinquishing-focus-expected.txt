@@ -1,0 +1,15 @@
+This test verifies that after relinquishing focus by pressing shift-tab and then becoming first responder in an editable web view, we'll begin an input session. This test requires WebKitTestRunner; to test manually, use the iOS Mail app.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 1. Input view disappeared after pressing Shift-Tab
+PASS 2. Input view appeared after becoming first responder
+PASS caretRect.width > 0 is true
+PASS caretRect.height > 0 is true
+PASS 3. Input view disappeared after blurring focused element
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

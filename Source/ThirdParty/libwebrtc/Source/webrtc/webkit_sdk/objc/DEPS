@@ -1,0 +1,18 @@
+include_rules = [
+  "+base",
+  "+components",
+  "+helpers",
+  "+sdk",
+  "+common_video/h264",
+  "+common_video/include",
+  "+common_video/libyuv/include",
+  "+logging/rtc_event_log/rtc_event_log_factory.h",
+  "+media",
+  "+modules/video_coding",
+  "+pc",
+  "+system_wrappers",
+  "+modules/audio_device",
+  "+modules/audio_processing",
+  "+native",
+  "+third_party/libyuv",
+]

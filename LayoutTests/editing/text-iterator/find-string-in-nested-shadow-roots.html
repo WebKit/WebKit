@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="test-content">doc-before <span id="outer-host"></span> doc-after</div>
+<pre id="console" style="visibility: hidden;"></pre>
+<script>
+
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+var outerHost = document.getElementById('outer-host');
+var outerShadowRoot = outerHost.attachShadow({mode: 'closed'});
+outerShadowRoot.innerHTML = 'outer-before <span id="inner-host"></span> outer-after';
+outerShadowRoot.id = 'outer-shadow-root';
+
+var innerHost = outerShadowRoot.getElementById('inner-host');
+var innerShadowRoot = innerHost.attachShadow({mode: 'closed'});
+innerShadowRoot.innerHTML = 'inner-text';
+innerShadowRoot.id = 'inner-shadow-root';
+
+function nodeLabel(node)
+{
+    if (node.nodeType != Node.TEXT_NODE)
+        return '#' + node.id;
+    let offset = 0;
+    for (let child = node.previousSibling; child; child = child.previousSibling)
+        offset++;
+    return `(#${node.parentNode.id}, ${offset})`;
+}
+
+function rangeText(range)
+{
+    if (!range)
+        return null;
+    if (range.startContainer == range.endContainer)
+        return `${nodeLabel(range.startContainer)} ${range.startOffset} to ${range.endOffset}`;
+    return `(${nodeLabel(range.startContainer)}, ${range.startOffset}) to (${nodeLabel(range.endContainer)}, ${range.endOffset})`;
+}
+
+async function testFind(target, options, expectedRange)
+{
+    var found = await testRunner.findString(target, options);
+    if (expectedRange === null) {
+        if (!found)
+            log("PASS: '" + target + "' was not found.");
+        else
+            log("FAIL: '" + target + "' was found but should not have been.");
+    } else {
+        if (!found) {
+            log("FAIL: '" + target + "' was not found, expected " + expectedRange);
+        } else {
+            var result = rangeText(internals.selectedRange());
+            if (result === expectedRange)
+                log("PASS: '" + target + "' found at " + result);
+            else
+                log("FAIL: '" + target + "' found at " + result + ", expected " + expectedRange);
+        }
+    }
+}
+
+function testCount(target, options, expected)
+{
+    var count = internals.countFindMatches(target, options);
+    if (count === expected)
+        log("PASS: countFindMatches('" + target + "') is " + count + ".");
+    else
+        log("FAIL: countFindMatches('" + target + "') is " + count + ", expected " + expected + ".");
+}
+
+onload = async () => {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    var selection = getSelection();
+
+    log("Baseline: find text in each scope from document");
+    selection.empty();
+    await testFind('doc-before', [], '(#test-content, 0) 0 to 10');
+    selection.empty();
+    await testFind('outer-before', [], '(#outer-shadow-root, 0) 0 to 12');
+    selection.empty();
+    await testFind('inner-text', [], '(#inner-shadow-root, 0) 0 to 10');
+
+    log("");
+    log("Cross-scope matches are rejected");
+    selection.empty();
+    await testFind('outer-before inner-text', [], null);
+    selection.empty();
+    await testFind('inner-text outer-after', [], null);
+
+    log("");
+    log("Sequential find navigates from inner shadow root to outer scope");
+    selection.empty();
+    await testFind('inner-text', [], '(#inner-shadow-root, 0) 0 to 10');
+    await testFind('outer-after', [], '(#outer-shadow-root, 2) 1 to 12');
+    await testFind('doc-after', [], '(#test-content, 2) 1 to 10');
+
+    log("");
+    log("Count matches across nested shadow roots");
+    testCount('outer-before', [], 1);
+    testCount('inner-text', [], 1);
+    testCount('doc-before', [], 1);
+
+    document.getElementById("console").style.removeProperty("visibility");
+    testRunner.notifyDone();
+};
+
+</script>
+</body>
+</html>

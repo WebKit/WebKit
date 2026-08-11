@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            display: inline-block;
+        }
+    </style>
+<head>
+<body>
+<script>
+    function createDiv(color) {
+        var divElement = document.createElement("div");
+        divElement.style.backgroundColor = color;
+        document.body.appendChild(divElement);
+    }
+
+    createDiv("red");
+    createDiv("green");
+    createDiv("blue");
+</script>
+</body>
+</html>

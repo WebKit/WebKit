@@ -1,0 +1,34 @@
+This test checks if the playing event fires when the ready state changes from HAVE_METADATA to HAVE_FUTURE_DATA or higher.
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(loadstart)
+EVENT(sourceopen)
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(loadedmetadata)
+EVENT(updateend)
+video.readyState : HAVE_METADATA
+RUN(sourceBuffer.appendBuffer(sample))
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(updateend)
+video.readyState : HAVE_FUTURE_DATA
+RUN(sourceBuffer.appendBuffer(sample))
+EVENT(canplaythrough)
+EVENT(playing)
+EVENT(updateend)
+EXPECTED (video.readyState >= readyStateString.indexOf("HAVE_CURRENT_DATA") == 'true') OK
+RUN(sourceBuffer.remove(0,10))
+EVENT(waiting)
+EVENT(updateend)
+video.readyState : HAVE_METADATA
+RUN(sourceBuffer.appendBuffer(sample))
+EVENT(updateend)
+video.readyState : HAVE_METADATA
+RUN(sourceBuffer.appendBuffer(sample))
+EVENT(canplay)
+EVENT(playing)
+EVENT(canplaythrough)
+EVENT(updateend)
+video.readyState : HAVE_ENOUGH_DATA
+END OF TEST
+

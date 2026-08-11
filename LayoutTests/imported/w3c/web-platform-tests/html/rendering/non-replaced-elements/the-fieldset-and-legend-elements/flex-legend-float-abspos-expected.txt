@@ -1,0 +1,11 @@
+
+div
+legend1
+legend2
+legend3legend4legend5
+
+FAIL no dynamic changes assert_equals: legend5.offsetTop expected 0 but got 30
+FAIL inserting a new legend and removing it again assert_equals: legend5.offsetTop expected 0 but got 30
+FAIL dynamic changes to float assert_equals: .offsetTop expected 0 but got 30
+FAIL dynamic changes to position assert_equals: .offsetTop expected 0 but got 30
+

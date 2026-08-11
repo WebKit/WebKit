@@ -1,0 +1,18 @@
+This tests that the number of rows and columns of a grid are correct after adding and removing rows and columns.
+Initial count:
+PASS: grid.rowCount === 1
+PASS: grid.columnCount === 3
+Count after adding 3 rows:
+PASS: grid.rowCount === 4
+PASS: grid.columnCount === 3
+Count after clearing data:
+PASS: grid.rowCount === 1
+PASS: grid.columnCount === 3
+Count after adding 3 rows again:
+PASS: grid.rowCount === 4
+PASS: grid.columnCount === 3
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,23 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/cookies/third-party-cookies/resources/test-helpers.js
+/LayoutTests/imported/w3c/web-platform-tests/cookies/third-party-cookies/resources/third-party-cookies-cross-site-embed.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/third-party-cookies/resources/third-party-cookies-cross-site-embedder-opener.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/third-party-cookies/resources/third-party-cookies-cross-site-embedder.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/third-party-cookies/resources/third-party-cookies-cross-site-popup-opener.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/third-party-cookies/resources/third-party-cookies-cross-site-popup-verify.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/third-party-cookies/resources/third-party-cookies-cross-site-popup.html

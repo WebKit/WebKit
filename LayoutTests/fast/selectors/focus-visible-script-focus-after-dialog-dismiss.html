@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>:focus-visible should not match when focus is restored after dismissing a modal dialog</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        *:focus,
+        *:focus-visible {
+            outline: none;
+        }
+        #trigger:focus-visible {
+            outline: 3px solid red;
+        }
+        #close {
+            width: 60px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <p>Dismissing a modal dialog by clicking a close button inside it, and restoring focus to the
+    element that opened it, should not show :focus-visible on that element.</p>
+
+    <button id="trigger" type="button">Open</button>
+
+    <dialog id="dialog">
+        <button id="close" type="button" aria-label="Close"></button>
+    </dialog>
+
+    <script>
+    // showModal()'s focusing steps reset the document's recorded focus trigger,
+    // so unlike the [tabindex] variant of this test, this one does not
+    // depend on being the document's first interaction.
+    promise_test(async t => {
+        const trigger = document.getElementById("trigger");
+        const dialog = document.getElementById("dialog");
+        const close = document.getElementById("close");
+        t.add_cleanup(() => { if (dialog.open) dialog.close(); trigger.blur(); });
+
+        dialog.showModal();
+        dialog.focus();
+
+        // The dialog itself must be focused: an open <dialog> can be focused by clicking, so a
+        // click inside it finds an ancestor that can take focus yet leaves the focus unchanged.
+        assert_equals(document.activeElement, dialog, "dialog should be focused while open");
+
+        close.addEventListener("click", () => { dialog.close(); trigger.focus(); }, { once: true });
+
+        // #close is empty, so the click lands on the button itself, and clicking a <button> does
+        // not focus it on macOS or iOS.
+        const rect = close.getBoundingClientRect();
+        await UIHelper.activateAt(rect.x + rect.width / 2, rect.y + rect.height / 2);
+
+        assert_equals(document.activeElement, trigger, "trigger should be focused after dismissal");
+        assert_false(trigger.matches(":focus-visible"),
+            ":focus-visible should not match on the opener after focus() restored from dismissing the dialog");
+    }, "focus() restored after dismissing a modal <dialog> should not show :focus-visible");
+    </script>
+</body>
+</html>

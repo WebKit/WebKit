@@ -1,0 +1,3 @@
+
+PASS Modifying one sheet containing @position-try rule doesn't affect another sheet
+

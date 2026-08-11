@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-abort-resets-parser</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function runTest() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        loader.onload = mediaDataLoaded;
+        loader.onerror = mediaDataLoadingFailed;
+    }
+
+    function mediaDataLoadingFailed() {
+        failTest('Media data loading failed');
+    }
+
+    function mediaDataLoaded() {
+        source = new MediaSource();
+        waitForEvent('sourceopen', sourceOpen, false, false, source);
+        waitForEventAndFail('error');
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('source.duration = loader.duration()');
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        waitForEventOn(sourceBuffer, 'update', sourceInitialized, false, true);
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+    }
+
+    function sourceInitialized() {
+        waitForEventOn(sourceBuffer, 'update', partialMediaSegmentAppended1, false, true);
+        consoleWrite('Append a partial media segment.')
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegment(0).byteLength / 2))');
+    }
+
+    function partialMediaSegmentAppended1() {
+        consoleWrite('Abort and append a new initialization segment.')
+        run('sourceBuffer.abort()');
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+        waitForEventOn(sourceBuffer, 'update', initSegmentAppended, false, true);
+    }
+
+    function initSegmentAppended() {
+        waitForEventOn(sourceBuffer, 'update', partialMediaSegmentAppended2, false, true);
+        consoleWrite('Append a partial media segment.')
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegment(0).byteLength / 2))');
+    }
+
+    function partialMediaSegmentAppended2() {
+        consoleWrite('Abort and append a new media segment.')
+        run('sourceBuffer.abort()');
+        run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
+        waitForEventOn(sourceBuffer, 'update', endTest, false, true);
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <div>
+        This tests the ability of the SourceBuffer to reset the parser after an abort(). A SourceBuffer in this state should be able to accept
+        a new initialization segment or a new media segment.
+    </div>
+    <video controls></video>
+</body>
+</html>

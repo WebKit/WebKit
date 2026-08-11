@@ -1,0 +1,4 @@
+
+PASS ElementInternals.form should return the target element's form owner
+PASS ElementInternals.form should throws NotSupportedError if the target element is not a form-associated custom element
+

@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="button" style="display:contents">Click me</button>
+
+<script>
+var testOutput = "This test ensures that we can get the text under a display:contents element in accessibility requests.\n\n";
+
+function textUnderElement(axElement) {
+    if (accessibilityController.platformName === "ios")
+        return axElement.description;
+    return axElement.title;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    const axButton = accessibilityController.accessibleElementById("button");
+    testOutput += `${textUnderElement(axButton)}\n`;
+
+    document.getElementById("button").innerHTML = "";
+    testOutput += "\nClearing innerHTML of #button.\n\n";
+    setTimeout(async function() {
+        await waitFor(() => !textUnderElement(axButton).includes("Click me"));
+        testOutput += `${textUnderElement(axButton)}\n`;
+
+        debug(testOutput);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<style>
+* { font-size: 16px; }
+div { font-size: 8px; }
+</style>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description('Test parsing and computed style of flood-opacity');
+
+function computedStyle(property, value) {
+    var div = document.createElement("div");
+    document.body.appendChild(div);
+    div.style.setProperty(property, value);
+    var computedValue = getComputedStyle(div).getPropertyValue(property);
+    document.body.removeChild(div);
+    return computedValue;
+}
+
+function innerStyle(property, value) {
+    var div = document.createElement("div");
+    div.style.setProperty(property, value);
+    return div.style.getPropertyValue(property);
+}
+
+function testComputed(property, value, expected) {
+    shouldBeEqualToString('computedStyle("' + property + '", "' + value + '")', expected);
+}
+
+function testInner(property, value, expected) {
+    if (expected === null)
+        expected = "";
+    shouldBeEqualToString('innerStyle("' + property + '", "' + value + '")', expected);
+}
+
+function negativeTest(property, value) {
+    testInner(property, value, null);
+    // FIXME: Computed style not yet implemented.
+    // testComputed(property, value, 'none');
+}
+
+testInner("flood-opacity", "0", "0");
+testInner("flood-opacity", "0.5", "0.5");
+testInner("flood-opacity", "1", "1");
+testInner("flood-opacity", "1000", "1000");
+testInner("flood-opacity", "-400", "-400");
+testInner("flood-opacity", "20%", "0.2");
+testInner("flood-opacity", "-600%", "-6");
+testInner("flood-opacity", "700%", "7");
+testInner("flood-opacity", "2.5e-1", "0.25");
+testInner("flood-opacity", "2.5e1%", "0.25");
+testInner("flood-opacity", "100.25%", "1.0025");
+testComputed("flood-opacity", "0", "0");
+testComputed("flood-opacity", "0.5", "0.5");
+testComputed("flood-opacity", "1", "1");
+testComputed("flood-opacity", "1000", "1");
+testComputed("flood-opacity", "-400", "0");
+testComputed("flood-opacity", "25%", "0.25");
+testComputed("flood-opacity", "-600%", "0");
+testComputed("flood-opacity", "700%", "1");
+testComputed("flood-opacity", "2.5e-1", "0.25");
+testComputed("flood-opacity", "2.5e1%", "0.25");
+testComputed("flood-opacity", "100.25%", "1");
+negativeTest("flood-opacity", "2px");
+negativeTest("flood-opacity", "auto");
+negativeTest("flood-opacity", "none");
+negativeTest("flood-opacity", "'str'");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

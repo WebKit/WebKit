@@ -1,0 +1,8 @@
+PASS internals.countMatchesForText(target, [], '') is 50
+PASS internals.countMatchesForText(target, [], '') is 51
+PASS found is true
+PASS getSelection().toString() is "wkfindtoken"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

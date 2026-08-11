@@ -1,0 +1,4 @@
+
+FAIL Access-Control-Request-Private-Network is a forbidden request header assert_not_equals: Access-Control-Request-Private-Network does not have the value we defined got disallowed value ""
+FAIL Adding invalid request header "Access-Control-Request-Private-Network: KO" assert_equals: expected (object) null but got (string) "KO"
+

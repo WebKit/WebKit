@@ -1,0 +1,64 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function loadScriptWithURL(url) {
+    let script = document.createElement("script");
+    script.src = url;
+    script.addEventListener("load", (event) => {
+        TestPage.dispatchEventToFrontend("ScriptLoad");
+    });
+    document.body.appendChild(script);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Storage.getCookies");
+
+    suite.addTestCase({
+        name: "Storage.getCookies.Enable",
+        description: "Enable the Storage domain.",
+        async test() {
+            await WI.backendTarget.StorageAgent.enable();
+            InspectorTest.log("Storage domain enabled.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Storage.getCookies.InitiallyEmpty",
+        description: "There should be no cookies before any are set.",
+        async test() {
+            let {cookies} = await WI.backendTarget.StorageAgent.getCookies();
+            InspectorTest.expectEqual(cookies.length, 0, "Should be no cookies.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Storage.getCookies.AfterSet",
+        description: "A cookie set by a same-origin resource should be visible.",
+        async test() {
+            await Promise.all([
+                InspectorTest.awaitEvent("ScriptLoad"),
+                InspectorTest.evaluateInPage(`loadScriptWithURL("http://127.0.0.1:8000/site-isolation/inspector/storage/resources/set-cookie.py?name=Baseline&value=PASS")`),
+            ]);
+
+            let {cookies} = await WI.backendTarget.StorageAgent.getCookies();
+            let cookie = cookies.find((c) => c.name === "Baseline");
+
+            InspectorTest.expectNotNull(cookie, "Should have found the 'Baseline' cookie.");
+            InspectorTest.expectEqual(cookie.value, "PASS", "Cookie value should be 'PASS'.");
+            InspectorTest.expectEqual(cookie.domain, "127.0.0.1", "Cookie domain should be '127.0.0.1'.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Storage.getCookies returns cookies from the NetworkProcess-backed cookie store under Site Isolation.</p>
+</body>
+</html>

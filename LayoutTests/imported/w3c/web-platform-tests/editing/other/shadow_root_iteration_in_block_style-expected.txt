@@ -1,0 +1,4 @@
+helloworld
+
+FAIL RemoveFormat should remove CSS styles of selected node assert_equals: expected "hello<span id=\"span\" contenteditable=\"\" style=\"\">world</span>" but got "hello<span id=\"span\" contenteditable=\"\">world</span>"
+

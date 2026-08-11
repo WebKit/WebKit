@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: XSLT is deprecated and will be removed in a future version of WebKit.
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+This is the first paragraph
+
+This is another paragraph
+
+This is the last paragraph

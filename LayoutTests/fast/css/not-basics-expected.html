@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * {
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <p>Test various use cases of the :not() pseudo class. If the test succeed, the text "GREEN" should be colored green.</p>
+    <div>
+        <span>WebKit</span> <span style="color: green">GREEN</span> <span>WebKit</span>
+        <span>WebKit</span> <span style="color: green">GREEN</span> <span>WebKit</span>
+
+        <span>WebKit</span> <span style="color: green">GREEN</span> <span>WebKit</span>
+        <span>WebKit</span> <span style="color: green">GREEN</span> <span>WebKit</span>
+
+        <div>
+            <a>
+                <div>
+                    <span>WebKit</span>
+                    <span>WebKit</span>
+                    <span>WebKit</span>
+                </div>
+            </a>
+        </div>
+        <div>
+            <div>
+                <div>
+                    <span>WebKit</span>
+                    <span style="color: green">GREEN</span>
+                    <span>WebKit</span>
+                    <div>
+                        <span>WebKit</span>
+                        <span style="color: green">GREEN</span>
+                        <span>WebKit</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <span>WebKit</span> <span style="color: green">GREEN</span> <span>WebKit</span>
+        <span>WebKit</span> <span style="color: green">GREEN</span> <span>WebKit</span>
+    </div>
+</body>
+</html>

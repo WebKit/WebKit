@@ -1,0 +1,5 @@
+
+PASS Check computed writing-mode for body element.
+PASS Check computed writing-mode for html root element.
+PASS Check computed writing-mode for body element when style no longer applies.
+

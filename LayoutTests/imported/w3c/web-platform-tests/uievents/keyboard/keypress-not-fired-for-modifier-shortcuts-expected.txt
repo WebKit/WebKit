@@ -1,0 +1,6 @@
+Target
+
+PASS keypress must not be dispatched for Control + v
+PASS keypress must not be dispatched for Meta + v
+PASS keypress must be dispatched for a plain key
+

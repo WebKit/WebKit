@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+const sheet = new CSSStyleSheet();
+sheet.replaceSync(`div#target { background: steelblue; height: 100px; }`);
+document.adoptedStyleSheets = [sheet];
+
+async function test()
+{
+    try {
+        await InspectorProtocol.awaitCommand({
+            method: "Page.enable",
+            params: {},
+        });
+
+        let {root} = await InspectorProtocol.awaitCommand({
+            method: "DOM.getDocument",
+            params: {},
+        });
+
+        let {nodeId} = await InspectorProtocol.awaitCommand({
+            method: "DOM.querySelector",
+            params: {
+                nodeId: root.nodeId,
+                selector: "div#target",
+            },
+        });
+
+        let {matchedCSSRules} = await InspectorProtocol.awaitCommand({
+            method: "CSS.getMatchedStylesForNode",
+            params: {
+                nodeId,
+                includePseudo: false,
+                includeInherited: false,
+            },
+        });
+
+        let adoptedRule = null;
+        for (let ruleMatch of matchedCSSRules) {
+            const selector = ruleMatch.rule.selectorList ? ruleMatch.rule.selectorList.text : "";
+            if (selector === "div#target") {
+                adoptedRule = ruleMatch.rule;
+                break;
+            }
+        }
+
+        ProtocolTest.expectThat(!!adoptedRule, "Should have a rule matching \"div#target\".");
+        if (adoptedRule)
+            ProtocolTest.expectEqual(adoptedRule.origin, "author", "Adopted stylesheet rule should have \"author\" origin, not \"user-agent\".");
+    } catch (error) {
+        ProtocolTest.log(error);
+    } finally {
+        ProtocolTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onLoad="runTest()">
+<p>Testing that rules from a constructable CSSStyleSheet attached via document.adoptedStyleSheets are reported with Author origin (not User Agent), so they appear editable in the Web Inspector. <a href="https://bugs.webkit.org/show_bug.cgi?id=277893">Tracking bug</a>.</p>
+<div id="target"></div>
+</body>
+</html>

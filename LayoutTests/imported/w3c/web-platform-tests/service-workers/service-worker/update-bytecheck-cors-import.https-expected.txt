@@ -1,0 +1,10 @@
+
+PASS Test(main: default, imported: default)
+PASS Test(main: default, imported: time)
+PASS Test(main: time, imported: default)
+PASS Test(main: time, imported: time)
+PASS Test module script(main: default, imported: default)
+PASS Test module script(main: default, imported: time)
+PASS Test module script(main: time, imported: default)
+PASS Test module script(main: time, imported: time)
+

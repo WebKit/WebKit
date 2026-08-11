@@ -1,0 +1,4 @@
+Policy delegate: attempt to load http://a=a&b=b/ with navigation type 'other'
+Tests that we do not redirect to an invalid URL initiated by <meta http-equiv="refresh">. This test PASSED if you see an entry in the dumped frame load callbacks of the form: "willPerformClientRedirectToURL: http://A=a&B=b" followed by "didCancelClientRedirectForFrame".
+
+Note, this test must be run in DumpRenderTree.

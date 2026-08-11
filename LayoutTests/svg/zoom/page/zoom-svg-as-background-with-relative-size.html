@@ -1,0 +1,21 @@
+<html>
+<head>
+<style>
+div {
+  background: green;
+  background-repeat: no-repeat;
+  background-image: url(../../as-background-image/resources/svg-as-background-with-relative-size.svg);
+  height: 500px;
+  width: 500px;
+}
+</style>
+</head>
+<!-- The background shouldn't be red in a debug build -->
+<body style='margin: 0px' onload="runRepaintTest()">
+<div>&nbsp;</div>
+
+<script>var zoomCount = 3; window.shouldZoomOut = true;</script>
+<script src="../../../fast/repaint/resources/repaint.js"></script>
+<script src="../resources/testPageZoom.js"></script>
+</body>
+</html>

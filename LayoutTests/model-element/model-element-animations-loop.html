@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> animations playback</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    await model.play();
+    model.currentTime = model.duration - 0.01;
+    await sleepForSeconds(0.2);
+    assert_true(model.paused, "Model animation is paused after animation finishes without looping");
+}, `<model> with loop=false should stop after reaching its duration`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    model.playbackRate = -100;
+    await model.play();
+    model.currentTime = 0.5;
+    await sleepForSeconds(0.8);
+    assert_true(model.paused, "Model animation is paused after animation finishes without looping with negative rate and seek");
+}, `<model> with negative playbackRate and loop=false should stop after seeking near the beginning`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    model.loop = true;
+    await model.play();
+    model.currentTime = model.duration - 0.01;
+    await sleepForSeconds(0.2);
+    assert_false(model.paused, "Model animation should keep playing after animation finishes with looping");
+}, `<model> with loop=true should loop and continue playing after reaching its duration`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    model.loop = true;
+    model.playbackRate = -10;
+    await model.play();
+    model.currentTime = 0.01;
+    await sleepForSeconds(0.2);
+    assert_false(model.paused, "Model animation should keep playing after reaching beginning with negative rate and looping");
+}, `<model> with negative playbackRate and loop=true should loop and continue playing after reaching the beginning`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    await model.play();
+    model.currentTime = model.duration - 0.01;
+    await sleepForSeconds(0.2);
+    assert_true(model.paused, "Model animation should be paused after completion");
+    assert_approx_equals(model.currentTime, model.duration, 0.1, "currentTime should hold at duration after non-looping animation completes");
+}, `<model> with loop=false should have currentTime equal to duration after animation completes`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/stopwatch-60s.usdz");
+    await model.ready;
+
+    await model.play();
+    model.currentTime = model.duration - 0.01;
+    await sleepForSeconds(0.2);
+    assert_true(model.paused, "Model animation should be paused after completion");
+
+    model.currentTime = 0;
+    assert_approx_equals(model.currentTime, 0, 0.1, "currentTime should be 0 after seeking");
+    await model.play();
+    assert_false(model.paused, "Model animation should be playing after replay");
+}, `<model> with loop=false should be replayable after animation completes`);
+
+</script>
+</body>

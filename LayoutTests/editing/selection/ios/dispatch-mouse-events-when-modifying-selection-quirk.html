@@ -1,0 +1,108 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/basic-gestures.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+body, html {
+    margin: 0;
+}
+.editor {
+    border: 2px solid tomato;
+    width: 300px;
+    height: 300px;
+    box-sizing: border-box;
+    font-size: 32px;
+    padding: 10px;
+}
+
+#console, #description {
+    width: 300px;
+    height: 100px;
+    overflow: scroll;
+}
+</style>
+<script>
+if (window.internals)
+    internals.settings.setShouldDispatchSyntheticMouseEventsWhenModifyingSelection(true);
+
+lastEvent = null;
+jsTestIsAsync = true;
+
+function recordEvent() {
+    if (!lastEvent || event.type !== lastEvent.type)
+        debug(`Observed event type: ${event.type}`);
+    lastEvent = event;
+}
+
+addEventListener("mousedown", recordEvent);
+addEventListener("mousemove", recordEvent);
+addEventListener("mouseup", recordEvent);
+
+async function waitForCaretToAppear()
+{
+    while (true) {
+        const rect = await UIHelper.getUICaretViewRect();
+        if (rect && rect.top && rect.left && rect.width > 0 && rect.height > 0)
+            return rect;
+    }
+}
+
+async function waitForSelectionToAppear()
+{
+    while (true) {
+        const rects = await UIHelper.getUISelectionViewRects();
+        if (rects.length)
+            return rects;
+    }
+}
+
+function midPointOfRect(rect) {
+    return [rect.left + (rect.width / 2), rect.top + (rect.height / 2)];
+}
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    description("This test verifies that when the 'mouse event synthesis on selection' quirk is enabled, text selection dispatches mouse events that mimic the user selecting text. To run the test manually, use the callout menu to select text or selection handles, and verify that mousedown, mousemove and mouseup are dispatched and logged in the output area below.");
+
+    debug("\nAttempting to show the callout bar.");
+    const editor = document.querySelector(".editor");
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+    const [caretX, caretY] = midPointOfRect(await waitForCaretToAppear());
+    await UIHelper.activateAt(caretX, caretY);
+    await UIHelper.waitForMenuToShow();
+    testPassed("Displayed the callout bar.");
+
+    debug("\nAttempting to select the last word.");
+    await UIHelper.chooseMenuAction("Select");
+    const rects = await waitForSelectionToAppear();
+    testPassed("Selected the last word.");
+
+    debug("\nAttempting to dismiss the callout bar by executing 'SelectAll'.");
+    document.execCommand("SelectAll");
+    await UIHelper.waitForMenuToHide();
+    testPassed("Dismissed the callout bar.");
+
+    debug("\nAttempting to move the selection grabber.");
+    const [grabberX, grabberY] = midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    const touchDestinationX = grabberX - rects[0].width;
+
+    await touchAndDragFromPointToPoint(grabberX, grabberY, touchDestinationX, grabberY);
+    await liftUpAtPoint(touchDestinationX, grabberY);
+    testPassed("Moved the selection grabber.");
+
+    document.querySelector(".editor").remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<div class="editor" contenteditable>The quick brown fox jumped over the lazy dog.</div>
+<div id="description"></div>
+<div id="console"></div>
+</body>
+</html>

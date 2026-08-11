@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<!-- Reference: plain HTML divs in DOM order matching expected stacking. -->
+<div style="position: absolute; overflow: hidden; width: 400px; height: 200px;">
+  <div style="position: absolute; left: 50px; top: 30px; width: 120px; height: 120px; background: orange;"></div>
+  <div style="position: absolute; left: 100px; top: 50px; width: 120px; height: 120px; background: purple; transform: rotate(15deg); transform-origin: -100px -50px;"></div>
+  <div style="position: absolute; left: 220px; top: 60px; width: 80px; height: 80px; background: cyan;"></div>
+  <div style="position: absolute; left: 240px; top: 50px; width: 120px; height: 120px; background: gold;"></div>
+</div>
+</body>
+</html>

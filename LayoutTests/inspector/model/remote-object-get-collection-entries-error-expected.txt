@@ -1,0 +1,13 @@
+Tests that WI.RemoteObject.prototype.getCollectionEntries handles a protocol error gracefully.
+
+
+== Running test suite: WI.RemoteObject.prototype.getCollectionEntries.Error
+-- Running test case: WI.RemoteObject.prototype.getCollectionEntries.Success
+PASS: Should get an array of entries.
+PASS: Should get 2 entries.
+PASS: Each entry should be a WI.CollectionEntry.
+PASS: Each entry should be a WI.CollectionEntry.
+
+-- Running test case: WI.RemoteObject.prototype.getCollectionEntries.StaleObject
+PASS: Should invoke the callback with null on a protocol error, not throw.
+

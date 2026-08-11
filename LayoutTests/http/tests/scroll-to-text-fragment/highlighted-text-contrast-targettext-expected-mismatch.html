@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Scroll to Text Fragment - Highlighted text contrast with ::target-text</title>
+<link rel="help" href="https://wicg.github.io/scroll-to-text-fragment/">
+<style>
+div { 
+    color: black;
+    font-size: 48pt;
+}
+
+::target-text {
+    background-color: black;
+}
+
+span {
+    color: white;
+}
+</style>
+
+<p>The test passes if the following word is NOT legible when highlighted.</p>
+<div>This <span>word</span> should not be visible</div>
+
+<script>
+    location.href = "#:~:text=This-,word,-should";
+</script>
+</html>

@@ -1,0 +1,6 @@
+
+PASS Passing platform objects for blobParts should throw a TypeError.
+PASS A platform object that supports indexed properties should be treated as a sequence for the blobParts argument (overwritten 'length'.)
+PASS Passing an platform object that supports indexed properties as the blobParts array should work (select).
+PASS Passing an platform object that supports indexed properties as the blobParts array should work (attributes).
+

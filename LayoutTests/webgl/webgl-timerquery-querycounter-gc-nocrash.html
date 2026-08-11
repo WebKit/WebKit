@@ -1,0 +1,33 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WebGLTimerQueriesEnabled=true ] -->
+<body>
+</body>
+<script>
+window?.testRunner?.dumpAsText();
+window?.testRunner?.waitUntilDone();
+// Test for case where queryCounterEXT would schedule a event loop task
+// without taking ref to the query object.
+(async () => {
+    let canvas = document.createElement('canvas');
+    let gl = canvas.getContext('webgl');
+    let ext = gl.getExtension('EXT_disjoint_timer_query');
+    for (let i = 0; i < 50; i++)
+        ext.queryCounterEXT(ext.createQueryEXT(), ext.TIMESTAMP_EXT);
+    window?.GCController?.collect();
+    await Promise.resolve();
+    window?.GCController?.collect();
+    await Promise.resolve();
+
+    canvas = document.createElement('canvas');
+    gl = canvas.getContext('webgl2');
+    ext = gl.getExtension('EXT_disjoint_timer_query_webgl2');
+    for (let i = 0; i < 50; i++)
+        ext.queryCounterEXT(gl.createQuery(), ext.TIMESTAMP_EXT);
+    window?.GCController?.collect();
+    await Promise.resolve();
+    window?.GCController?.collect();
+    await Promise.resolve();
+
+    document.body.textContent = 'PASS.';
+    window?.testRunner?.notifyDone();
+})();
+</script>

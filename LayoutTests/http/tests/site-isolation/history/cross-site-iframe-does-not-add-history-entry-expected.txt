@@ -1,0 +1,10 @@
+Verifies that navigating a subframe to a cross-site URL does not create an extra back/forward list entry.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS history.length is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

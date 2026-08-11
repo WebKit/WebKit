@@ -1,0 +1,14 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     font-family="monospace" font-size="20" xml:space="preserve">
+
+  <title>Testcase to check that altGlyph falls back to tspan behaviour</title>
+
+  <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=456286 -->
+
+  <text><altGlyph x="20" y="20" rotate="90">T</altGlyph>EST1</text>
+
+</svg>

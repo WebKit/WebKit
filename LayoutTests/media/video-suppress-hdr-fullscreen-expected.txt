@@ -1,0 +1,21 @@
+
+Test how fullscreen influences suppress-HDR notification handling.
+
+RUN(internals.setPageShouldSuppressHDR(false))
+RUN(internals.setPageShouldSuppressHDR(true))
+RUN(internals.setPageShouldSuppressHDR(false))
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+RUN(video.play().then(playing);)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+RUN(internals.setPageShouldSuppressHDR(true))
+RUN(internals.setPageShouldSuppressHDR(false))
+RUN(video.webkitExitFullscreen())
+EVENT(webkitpresentationmodechanged)
+EXPECTED (internals.isChangingPresentationMode(video) == 'false') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+EXPECTED (video.paused == 'false') OK
+RUN(internals.setPageShouldSuppressHDR(true))
+RUN(internals.setPageShouldSuppressHDR(false))
+END OF TEST
+

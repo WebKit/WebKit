@@ -1,0 +1,78 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+    <style>
+        .outer.scroller {
+            margin-top: 80px;
+            width: 600px;
+            height: 500px;
+        }
+
+        .scroller {
+            overflow-y: scroll;
+            border: 1px solid black;
+        }
+
+        .animator {
+            position: absolute;
+            z-index: 2;
+            top: 10px;
+            left: 10px;
+            height: 20px;
+            width: 200px;
+            padding: 10px;
+            background-color: gray;
+            color: white;
+            transition: opacity 20s;
+        }
+    
+        .animator:hover {
+            opacity: 0.7;
+        }
+    
+        .relative {
+            position: relative;
+            z-index: 1;
+            margin: 20px;
+            height: 150px;
+            width: 500px;
+            background-color: green;
+        }
+
+        .fixed {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            /* This is invisible */
+        }
+    
+        .spacer {
+            height: 120px;
+            width: 10px;
+            background-color: #eee;
+            margin: 10px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('layers').textContent = internals.layerTreeAsText(document);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="outer scroller">
+        <div class="animator">
+            Hover here to see the bug
+        </div>
+        <div class="spacer"></div>
+        <div class="relative">
+            <div class="fixed"></div>
+        </div>
+        <div class="relative"></div>
+        <div class="spacer"></div>
+    </div>
+<pre id="layers"></pre>
+</body>

@@ -1,0 +1,2 @@
+PASS: UseRedirectionForCurrentNavigation with non-redirect response was rejected
+

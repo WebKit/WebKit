@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Checks that a cross origin iframe can be navigated using location.replace().");
+jsTestIsAsync = true;
+
+if (window.testRunner && testRunner.setShouldDecideNavigationPolicyAfterDelay) 
+    testRunner.setShouldDecideNavigationPolicyAfterDelay(true);
+
+onload = function()
+{
+    addEventListener("message", function() {
+        testPassed("Navigated cross-origin frame via Location.replace");
+        shouldBeEqualToString("window.frames['crossDomainFrame'].location.href", "http://127.0.0.1:8000/security/resources/postMessage.html");
+        finishJSTest();
+    });
+    window.frames['crossDomainFrame'].location.replace("http://127.0.0.1:8000/security/resources/postMessage.html");
+    setTimeout(function() {
+        testFailed("Failed to navigate cross-origin frame via Location.replace");
+        finishJSTest();
+    }, 10000);
+}
+</script>
+<iframe id="crossDomainFrame" name="crossDomainFrame" src="http://localhost:8000/misc/resources/failure.html"></iframe>
+</body>
+</html>
+<!--     
+<rdar://problem/4808039> 
+http://bugs.webkit.org/show_bug.cgi?id=11230
+-->

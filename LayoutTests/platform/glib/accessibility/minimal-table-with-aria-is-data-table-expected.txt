@@ -1,0 +1,17 @@
+This tests that minimal tables are treated as data tables if they have ARIA table-related properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+cell1: AXRole: AXCell
+cell2: AXRole: AXCell
+cell3: AXRole: AXCell
+cell4: AXRole: AXCell
+cell5: AXRole: AXCell
+cell6: AXRole: AXCell
+cell7: AXRole: AXCell
+cell8: AXRole: AXSection
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

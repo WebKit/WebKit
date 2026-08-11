@@ -1,0 +1,50 @@
+# Copyright 2024 The BoringSSL Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# This is a bazelrc file, documented in https://bazel.build/run/bazelrc and
+# specifies default flags when BoringSSL is the root project. It has no effect
+# on downstream projects, which define their own toolchains and configs.
+
+# See https://bazel.build/run/bazelrc#enable_platform_specific_config.
+# This expands to --config=osname which, in turn, expands to the options
+# specified below.
+build --enable_platform_specific_config
+
+# Enable additional checks.
+build --features=layering_check
+build --features=parse_headers
+
+# Bazel has no abstractions for setting C++ versions and expects the root
+# project to use the compiler-specific options for their toolchains. (Bazel only
+# wants the root to set the C++ version for the sake of projects like Abseil
+# whose ABI depends on the C++ version.)
+build:linux --cxxopt=-std=c++17
+build:macos --cxxopt=-std=c++17
+build:windows --cxxopt=/std:c++17
+
+# Our own builds should strictly build without warnings, but we don't add those
+# in targets like other flags because we can't assume all users will have clean
+# builds too.
+build:linux --cxxopt=-Werror
+build:macos --cxxopt=-Werror
+
+# Without setting a minimum macOS version, std::optional does not work.
+build:macos --cxxopt=-mmacosx-version-min=10.15
+
+# Without /Zc:__cplusplus, MSVC does not define the right value for
+# __cplusplus. See https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
+build:windows --cxxopt=/Zc:__cplusplus
+
+# https://bazel.build/configure/best-practices#bazelrc-file
+try-import %workspace%/user.bazelrc

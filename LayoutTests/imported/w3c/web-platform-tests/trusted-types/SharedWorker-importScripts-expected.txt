@@ -1,0 +1,10 @@
+
+PASS importScripts with TrustedScriptURL works in shared worker
+PASS importScripts with untrusted URLs throws in shared worker
+PASS null is not a trusted script URL throws in shared worker
+PASS importScripts with two URLs, both trusted, in shared worker
+PASS importScripts with two URLs, both strings, in shared worker
+PASS importScripts with two URLs, one trusted, in shared worker
+PASS importScripts with untrusted URLs and default policy works in shared worker
+PASS importScripts with one trusted and one untrusted URLs and default policy works in shared worker
+

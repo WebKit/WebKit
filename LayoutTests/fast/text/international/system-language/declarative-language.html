@@ -1,0 +1,22 @@
+<!DOCTYPE html><!-- webkit-test-runner [ language=ko,zh ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+if (window.internals) {
+    // minimizedLanguagesFromLanguages() simplifies the language list.
+    // This is intentional.
+    shouldBe("internals.userPreferredLanguages().length", "1");
+    shouldBeTrue("internals.userPreferredLanguages()[0].startsWith('ko')");
+    internals.setUserPreferredLanguages(["hi", "jp", "in"]);
+    shouldBe("internals.userPreferredLanguages().length", "3");
+    shouldBeEqualToString("internals.userPreferredLanguages()[0]", "hi");
+    shouldBeEqualToString("internals.userPreferredLanguages()[1]", "jp");
+    shouldBeEqualToString("internals.userPreferredLanguages()[2]", "in");
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

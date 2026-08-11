@@ -1,0 +1,27 @@
+
+
+PASS INPUT  text
+FAIL INPUT  date assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+FAIL INPUT  time assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+FAIL INPUT  datetime-local assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+FAIL INPUT  checkbox assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+FAIL INPUT  radio assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+FAIL INPUT  file assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+PASS INPUT  range
+FAIL INPUT  color assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+PASS INPUT  hidden
+PASS INPUT  search
+PASS VIDEO  true
+PASS VIDEO
+FAIL INPUT appearance: none; checkbox assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+FAIL INPUT appearance: none; radio assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+PASS INPUT appearance: none; text
+FAIL INPUT appearance: none; date assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+FAIL INPUT appearance: none; time assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+FAIL INPUT appearance: none; datetime-local assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+FAIL INPUT appearance: none; file assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+PASS INPUT appearance: none; range
+FAIL INPUT appearance: none; color assert_equals: Should only generate a box for pseudo-elements if it generates a box for child elements expected true but got false
+PASS INPUT appearance: none; hidden
+PASS INPUT appearance: none; search
+

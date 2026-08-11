@@ -1,0 +1,135 @@
+/*
+ * Copyright 2024 Google LLC
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+#ifndef SkPngCodecBase_DEFINED
+#define SkPngCodecBase_DEFINED
+
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
+
+#include "include/codec/SkCodec.h"
+#include "include/codec/SkEncodedOrigin.h"
+#include "include/core/SkImageInfo.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkSpan.h"
+#include "include/private/SkDebug.h"
+#include "include/private/SkEncodedInfo.h"
+#include "include/private/SkGainmapInfo.h"
+#include "include/private/SkTemplates.h"
+#include "src/codec/SkPngCompositeChunkReader.h"
+
+class SkColorPalette;
+class SkSampler;
+class SkStream;
+class SkSwizzler;
+enum class SkEncodedImageFormat;
+
+// This class implements functionality shared between `SkPngCodec` and
+// `SkPngRustCodec`.
+class SkPngCodecBase : public SkCodec {
+public:
+    ~SkPngCodecBase() override;
+
+    static bool IsPng(const void*, size_t);
+
+    static bool isCompatibleColorProfileAndType(const SkCodecs::ColorProfile* profile,
+                                                SkEncodedInfo::Color color);
+protected:
+    SkPngCodecBase(SkEncodedInfo&&,
+                   std::unique_ptr<SkStream>,
+                   SkEncodedOrigin origin,
+                   sk_sp<SkPngCompositeChunkReader> chunkReader,
+                   std::unique_ptr<SkStream> gainmapStream,
+                   std::optional<SkGainmapInfo> gainmapInfo);
+
+    // Initialize most fields needed by `applyXformRow`.
+    //
+    // Each call to `applyXformRow` will transform `frameWidth` pixels
+    // (which may be less than `dstInfo.width()` when decoding frames that
+    // depend on earlier frames).
+    Result initializeXforms(const SkImageInfo& dstInfo, const Options& options, int frameWidth);
+
+    // Initialize other fields needed by `applyXformRow`.
+    //
+    // Needs to be called *after* (i.e. outside of) `onStartIncrementalDecode`.
+    // This timing ensures that the `swizzler` (if present) is in its final
+    // state (e.g. setting up subsampling by the user of the codec can affect `swizzleWidth`).
+    void initializeXformParams();
+
+    // Transforms a decoded row into the `dstInfo` format that was earlier
+    // passed to `initializeXforms`.
+    //
+    // The first bytes/pixels of `srcRow` will be transformed into the first
+    // bytes/pixels of `dstRow`.  In other words, the transformation ignores
+    // `fcTL.x_offset` field - the caller should offset `dstRow` if desired
+    // (it may not be desirable when working with interlaced rows which are
+    // first transformed into an intermediate buffer).
+    void applyXformRow(SkSpan<uint8_t> dstRow, SkSpan<const uint8_t> srcRow);
+    void applyXformRow(void* dstRow, const uint8_t* srcRow);
+
+    size_t getEncodedRowBytes() const { return fEncodedRowBytes; }
+    size_t getDstRowSize() const { return fDstRowSize; }
+    const SkSwizzler* swizzler() const { return fSwizzler.get(); }
+
+    struct PaletteColorEntry {
+        uint8_t red;
+        uint8_t green;
+        uint8_t blue;
+    };
+    virtual std::optional<SkSpan<const PaletteColorEntry>> onTryGetPlteChunk() = 0;
+    virtual std::optional<SkSpan<const uint8_t>> onTryGetTrnsChunk() = 0;
+
+    virtual std::unique_ptr<SkCodec> onDecodeGainmap(std::unique_ptr<SkStream> stream,
+                                                     SkCodec::Result* result) = 0;
+
+    sk_sp<SkPngCompositeChunkReader> fPngChunkReader;
+
+    // SkCodec overrides:
+    SkSampler* getSampler(bool createIfNecessary) override;
+
+private:
+    bool onGetGainmapCodec(SkGainmapInfo* info, std::unique_ptr<SkCodec>* gainmapCodec) final;
+    bool onGetGainmapInfo(SkGainmapInfo* info) final;
+
+    // SkCodec overrides:
+    SkEncodedImageFormat onGetEncodedFormat() const final;
+
+    void allocateStorage(const SkImageInfo& dstInfo);
+    Result initializeSwizzler(const SkImageInfo& dstInfo,
+                              const Options& options,
+                              bool skipFormatConversion,
+                              int frameWidth);
+    bool createColorTable(const SkImageInfo& dstInfo);
+
+    enum XformMode {
+        // Requires only a swizzle pass.
+        kSwizzleOnly_XformMode,
+
+        // Requires only a color xform pass.
+        kColorOnly_XformMode,
+
+        // Requires a swizzle and a color xform.
+        kSwizzleColor_XformMode,
+    };
+    XformMode fXformMode;
+
+    std::unique_ptr<SkSwizzler> fSwizzler;
+    skia_private::AutoTMalloc<uint8_t> fStorage;
+    int fXformWidth = -1;
+    sk_sp<SkColorPalette> fColorTable;
+
+    size_t fEncodedRowBytes = 0;  // Size of encoded/source row in bytes.
+    size_t fDstRowSize = 0;       // Size of active destination row in bytes (excluding padding).
+
+    std::optional<SkImageInfo> fDstInfoOfPreviousColorTableCreation;
+
+    std::unique_ptr<SkStream> fGainmapStream;
+    std::optional<SkGainmapInfo> fGainmapInfo;
+};
+
+#endif  // SkPngCodecBase_DEFINED

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<script>
+    function startTest() {
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.setBackingScaleFactor(2, finishTest);
+        } else
+            finishTest();
+    }
+
+    function finishTest() {
+        var ctx = document.getCSSCanvasContext("2d", "test", 100, 100);
+
+        ctx.fillStyle = "rgb(200, 0, 0)";
+        ctx.fillRect(10, 10, 50, 50);
+
+        ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+        ctx.fillRect(25, 25, 90, 90);
+
+        if (window.testRunner)
+            setTimeout(function() { testRunner.notifyDone() }, 0);
+    }
+</script>
+<style>
+.test {
+    content: -webkit-canvas(test);
+    width: 100px;
+    height: 100px;
+}
+</style>
+</head>
+<body onload="startTest()">
+<div class="test"></div>
+</body>
+</html>

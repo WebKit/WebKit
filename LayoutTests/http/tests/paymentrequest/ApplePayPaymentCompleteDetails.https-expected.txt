@@ -1,0 +1,3 @@
+
+PASS Should error if not JSON serializable
+

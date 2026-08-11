@@ -1,0 +1,23 @@
+Test importing a PKCS8 RSA-OAEP public key and then export it in JWK format
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a key...
+Exporting a key...
+PASS exportedJwkKey.kty is jwkKey.kty
+PASS exportedJwkKey.alg is jwkKey.alg
+PASS exportedJwkKey.key_ops is jwkKey.key_ops
+PASS exportedJwkKey.ext is jwkKey.ext
+PASS exportedJwkKey.n is jwkKey.n
+PASS exportedJwkKey.e is jwkKey.e
+PASS exportedJwkKey.d is jwkKey.d
+PASS exportedJwkKey.p is jwkKey.p
+PASS exportedJwkKey.q is jwkKey.q
+PASS exportedJwkKey.dp is jwkKey.dp
+PASS exportedJwkKey.dq is jwkKey.dq
+PASS exportedJwkKey.qi is jwkKey.qi
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,98 @@
+/*
+ * Copyright (C) 2010 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "BlobBuilder.h"
+#include "EndingType.h"
+
+#include "Blob.h"
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBufferView.h>
+#include <pal/text/TextCodecUTF8.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/LineEnding.h>
+
+namespace WebCore {
+
+BlobBuilder::BlobBuilder(EndingType endings)
+    : m_endings(endings)
+{
+}
+
+void BlobBuilder::append(Ref<ArrayBuffer>&& arrayBuffer)
+{
+    m_appendableData.append(arrayBuffer->span());
+}
+
+void BlobBuilder::append(Ref<ArrayBufferView>&& arrayBufferView)
+{
+    m_appendableData.append(arrayBufferView->span());
+}
+
+void BlobBuilder::append(Ref<Blob>&& blob)
+{
+    if (!m_appendableData.isEmpty())
+        m_items.append(std::exchange(m_appendableData, { }));
+    m_items.append(blob->url());
+}
+
+void BlobBuilder::append(const String& text)
+{
+    auto bytes = PAL::TextCodecUTF8::encodeUTF8(text);
+
+    if (m_endings == EndingType::Native)
+        bytes = normalizeLineEndingsToNative(WTF::move(bytes));
+
+    if (m_appendableData.isEmpty())
+        m_appendableData = WTF::move(bytes);
+    else {
+        // FIXME: Would it be better to move multiple vectors into m_items instead of merging them into one?
+        m_appendableData.appendVector(bytes);
+    }
+}
+
+void BlobBuilder::append(Ref<FragmentedSharedBuffer>&& buffer)
+{
+    if (!m_appendableData.isEmpty())
+        m_items.append(std::exchange(m_appendableData, { }));
+
+    buffer->forEachSegmentAsSharedBuffer([&](Ref<SharedBuffer>&& sharedBuffer) {
+        m_items.append(WTF::move(sharedBuffer));
+    });
+}
+
+Vector<BlobPart> BlobBuilder::finalize()
+{
+    if (!m_appendableData.isEmpty())
+        m_items.append(std::exchange(m_appendableData, { }));
+    return WTF::move(m_items);
+}
+
+} // namespace WebCore

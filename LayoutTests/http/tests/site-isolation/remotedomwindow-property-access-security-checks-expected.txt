@@ -1,0 +1,29 @@
+ALERT: PASS: Accessing document threw SecurityError
+ALERT: PASS: Accessing $vm threw SecurityError
+ALERT: PASS: Accessing navigator threw SecurityError
+ALERT: PASS: Accessing screen threw SecurityError
+ALERT: PASS: Accessing history threw SecurityError
+ALERT: PASS: Accessing innerHeight threw SecurityError
+ALERT: PASS: Accessing innerWidth threw SecurityError
+ALERT: PASS: Accessing scrollX threw SecurityError
+ALERT: PASS: Accessing scrollY threw SecurityError
+ALERT: PASS: Accessing name threw SecurityError
+ALERT: PASS: Accessing menubar threw SecurityError
+ALERT: PASS: Accessing toolbar threw SecurityError
+ALERT: PASS: Accessing localStorage threw SecurityError
+ALERT: PASS: Accessing sessionStorage threw SecurityError
+ALERT: PASS: Accessing alert threw SecurityError
+ALERT: PASS: Accessing confirm threw SecurityError
+ALERT: PASS: Accessing prompt threw SecurityError
+ALERT: PASS: Accessing print threw SecurityError
+ALERT: PASS: Accessing open threw SecurityError
+ALERT: PASS: Accessing constructor threw SecurityError
+ALERT: PASS: Accessing fetch threw SecurityError
+ALERT: PASS: Accessing location did not throw
+ALERT: PASS: postMessage did not throw
+ALERT: PASS: blur() did not throw
+ALERT: PASS: focus() did not throw
+ALERT: PASS: close() did not throw
+This test verifies RemoteDOMWindow property access security checks
+
+

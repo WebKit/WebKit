@@ -1,0 +1,5 @@
+
+PASS getComputedStyle when container is display:contents
+PASS getComputedStyle when container becomes display:contents
+PASS getComputedStyle when intermediate container becomes display:contents
+

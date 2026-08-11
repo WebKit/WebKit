@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<script src="../../resources/js-test.js"></script>
+
+<div id="a">
+    <div id="b">
+    </div>
+</div>
+
+<div id="c">
+</div>
+
+<script>
+window.jsTestIsAsync = true;
+if (window.testRunner) {
+    testRunner.dumpChildFramesAsText();
+}
+
+var frame = document.createElement('iframe');
+var a = document.getElementById('a');
+var b = document.getElementById('b');
+var c = document.getElementById('c');
+
+onload = function() {
+    b.appendChild(frame);
+
+    frame.onload = function() {
+        frame.contentDocument.body.innerHTML = 'Should be visible.';
+    };
+
+    frame.contentWindow.onunload = function() {
+        b.parentNode.removeChild(b);
+        shouldBeNull('frame.contentDocument');
+        c.appendChild(b);
+        shouldNotBe('frame.contentDocument', 'null');
+        finishJSTest();
+    };
+
+    a.parentNode.removeChild(a);
+};
+</script>

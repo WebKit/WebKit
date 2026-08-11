@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        const maxNestingLevel = 5;
+        let i = 0;
+        let handle = null;
+
+        function step()
+        {
+            i++;
+            if (i == maxNestingLevel)
+                parent.window.postMessage("timerReachedMaxNestingLevel", "*");
+        }
+
+        window.onmessage = function(message)
+        {
+            var re = /report-throttle-(cross|same)/;
+            var match = re.exec(message.data);
+
+            if (match) {
+                var frameId = match[1];
+                if (window.internals)
+                    parent.window.postMessage("throttled[" + frameId + "]: " + internals.isTimerThrottled(handle), "*");
+            }
+        }
+
+        window.addEventListener("load", function() {
+            handle = setInterval(step, 5);
+        }, false);
+    </script>
+</head>
+<body>
+    <div style="height: 100px; width: 100px; background: silver" onclick=""></div>
+    Child frame.
+</body>
+</html>

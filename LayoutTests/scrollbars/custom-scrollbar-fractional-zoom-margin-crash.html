@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style>
+.scroller {
+    width: 100px;
+    height: 100px;
+    overflow-y: scroll;
+    zoom: 0.9;
+}
+.scroller::-webkit-scrollbar {
+    width: 15px;
+}
+.scroller::-webkit-scrollbar-track {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.content {
+    height: 1000px;
+}
+</style>
+<div class="scroller">
+    <div class="content"></div>
+</div>
+<p>PASS if no crash.</p>
+<script>
+window.testRunner?.dumpAsText();
+document.body.offsetHeight;
+</script>

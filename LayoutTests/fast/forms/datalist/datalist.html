@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<datalist id="dl1">
+ The choices are
+ <option>value1</option>, 
+ <option value="value2">label2</option>,
+ <option label="label3">value3</option>, and
+ <option id="o4">value4</option>.
+ <option></option>
+</datalist>
+
+<script>
+
+description('Test for the datalist element.');
+
+var datalist = document.getElementById('dl1');
+
+// An option element with empty value is not a suggestion, but still is included in the options collection.
+shouldBe('datalist.options.length', '5');
+
+// A disabled option element is no longer a suggestion, but still is included in the options collection.
+document.getElementById('o4').disabled = true;
+shouldBe('datalist.options.length', '5');
+
+// Also, the expected text should not contain the text in the datalist element.
+
+</script>
+</body>
+</html>

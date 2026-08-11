@@ -1,0 +1,140 @@
+Name
+
+    ANGLE_webgpu_texture_client_buffer
+
+Name Strings
+
+    EGL_ANGLE_webgpu_texture_client_buffer
+
+Contributors
+
+    Geoff Lang
+
+Contacts
+
+    Geoff Lang, Google Inc. (geofflang 'at' google.com)
+
+Status
+
+    Draft
+
+Version
+
+    Version 1, May 15, 2025
+
+Number
+
+    EGL Extension #??
+
+Dependencies
+
+    This extension is written against the wording of the EGL 1.2
+    Specification.
+
+    References the EGL_ANGLE_device_webgpu and EGL_KHR_image_base extensions.
+
+Overview
+
+    This extension allows creating EGL surfaces and EGL images from D3D texture
+    objects.
+
+New Types
+
+    None
+
+New Procedures and Functions
+
+    None
+
+New Tokens
+
+    Accepted by the <target> parameter of eglCreateImageKHR and <buftype>
+    parameter of eglCreatePbufferFromClientBuffer:
+
+        EGL_WEBGPU_TEXTURE_ANGLE            0x34F5
+
+    Accepted in the <attribute> parameter of eglCreateImageKHR and
+    eglCreatePbufferFromClientBuffer:
+
+        EGL_TEXTURE_TYPE_ANGLE              0x345C
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE   0x345D
+
+Additions to Chapter 2 of the EGL 1.2 Specification (EGL Operation)
+
+    Add to section 2.5.1 "EGLImage Specification" (as defined by the
+    EGL_KHR_image_base specification), in the description of
+    eglCreateImageKHR:
+
+   "Values accepted for <target> are listed in Table aaa, below.
+
+      +----------------------------+-----------------------------------------+
+      |  <target>                  |  Notes                                  |
+      +----------------------------+-----------------------------------------+
+      |  EGL_WEBGPU_TEXTURE_ANGLE  |  Used for WebGPU texture objects        |
+      +----------------------------+-----------------------------------------+
+       Table aaa.  Legal values for eglCreateImageKHR <target> parameter
+
+    ...
+
+    If <target> is EGL_WEBGPU_TEXTURE_ANGLE, <dpy> must be a valid display, <ctx>
+    must be EGL_NO_CONTEXT, <buffer> must be a pointer to a valid WGPUTexture
+    handle (cast into the type EGLClientBuffer), and attributes other than
+    EGL_TEXTURE_INTERNAL_FORMAT_ANGLE or EGL_TEXTURE_TYPE_ANGLE are ignored.
+    The width and height of the pbuffer are determined by the width and height of
+    <buffer>.
+
+    If EGL_TEXTURE_INTERNAL_FORMAT_ANGLE and EGL_TEXTURE_TYPE_ANGLE is specified,
+    they are used to interpret <buffer> according to the provided internal format.
+    If EGL_TEXTURE_INTERNAL_FORMAT_ANGLE is a sized internal format,
+    EGL_TEXTURE_TYPE_ANGLE is not required. If either EGL_TEXTURE_INTERNAL_FORMAT_ANGLE
+    or EGL_TEXTURE_TYPE_ANGLE is provided and they are not a valid texture format
+    or the texture format is not a valid reinterpretation of the provided texture,
+    EGL_BAD_PARAMETER is generated.
+
+    If the EGL_ANGLE_device_webgpu extension is present, the provided WGPUTexture
+    handle must have been created by the same WGPUDevice queried from the
+    display. It is undefined behaviour to import a WGPUTexture created on a
+    different WGPUDevice.
+
+    The image may later be used as a GL_TEXTURE_2D or GL_TEXTURE_EXTERNAL_OES
+    target sibling based on the availability of GL_OES_EGL_image and/or
+    GL_OES_EGL_image_external extensions."
+
+Additions to Chapter 3 of the EGL 1.2 Specification (EGL Functions and Errors)
+
+    Replace the last sentence of paragraph 1 of Section 3.5.3 with the
+    following text.
+    "Currently, the only client API resources which may be bound in this
+    fashion are OpenVG VGImage objects and Direct3D texture objects."
+
+    Replace the last sentence of paragraph 2 ("To bind a client API...") of
+    Section 3.5.3 with the following text.
+    "When <buftype> is EGL_OPENVG_IMAGE or EGL_WEBGPU_TEXTURE_ANGLE, the width and
+    height of the pbuffer are determined by the width and height of <buffer>."
+
+    Replace the third paragraph of Section 3.5.3 with the following text.
+    "<buftype> specifies the type of buffer to be bound. The only allowed values
+    of <buftype> are EGL_OPENVG_IMAGE and EGL_WEBGPU_TEXTURE_ANGLE".
+
+    Append the following text to the fourth paragraph of Section 3.5.3.
+    "When <buftype> is EGL_WEBGPU_TEXTURE_ANGLE, <buffer> must be
+    a valid D3D texture object, cast into the type EGLClientBuffer. If the
+    EGL_ANGLE_device_webgpu extension is present, the provided WGPUTexture handle
+    must have been created by the same WGPUDevice queried from the display.
+    It is undefined behaviour to import a WGPUTexture created on a
+    different WGPUDevice."
+
+    Append to the end of Section 3.5.3.
+    "When a pbuffer is created with type EGL_WEBGPU_TEXTURE_ANGLE, the contents
+    of the associated WGPUTexture are undefined while the pbuffer is
+    the current read surface, draw surface or bound to a client texture."
+
+Issues
+
+    None
+
+Revision History
+
+    Version 1, May 15, 2025 (Geoff Lang)
+        - Initial Draft
+

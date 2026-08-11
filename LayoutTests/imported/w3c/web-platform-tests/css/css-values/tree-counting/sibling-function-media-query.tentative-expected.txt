@@ -1,0 +1,6 @@
+
+PASS Should be parseable: '(width > calc(0px * sibling-index()))'
+PASS Should be unknown: '(width > calc(0px * sibling-index()))'
+PASS Should be parseable: '(width > calc(0px * sibling-count()))'
+PASS Should be unknown: '(width > calc(0px * sibling-count()))'
+

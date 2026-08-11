@@ -1,0 +1,3 @@
+
+PASS A custom property of type <url> can yield a discrete CSS Transition
+

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+var asyncNodeDeletionLimit = 100000;
+var startingNodeCount = window.internals.numberOfLiveNodes();
+
+async function runTest() {
+    let rootDiv = document.createElement("div");
+    for (let i = 0; i < asyncNodeDeletionLimit + 1; ++i)
+        rootDiv.appendChild(document.createElement('div'));
+    rootDiv.innerHTML = "";
+    await timeout(0);
+    gc();
+    shouldBeTrue("window.internals.numberOfLiveNodes() < startingNodeCount + asyncNodeDeletionLimit");
+
+    let nodeWithManyChildren = document.createElement("div");
+    for (let i = 0; i < asyncNodeDeletionLimit + 1; ++i)
+        nodeWithManyChildren.appendChild(document.createElement("p"));
+    let hostNode = document.createElement("div");
+    shadowRoot = hostNode.attachShadow({mode: 'closed'});
+    shadowRoot.appendChild(nodeWithManyChildren);
+    rootDiv.appendChild(hostNode);
+    rootDiv.innerHTML = "";
+    shadowRoot = null;
+    hostNode = null;
+    rootDiv = null;
+    nodeWithManyChildren = null;
+    await timeout(0);
+    gc();
+    shouldBeTrue("window.internals.numberOfLiveNodes() < startingNodeCount + asyncNodeDeletionLimit");
+    finishJSTest();
+}
+
+function timeout(miliseconds) {
+    return new Promise(resolve => setTimeout(resolve, miliseconds));
+}
+
+jsTestIsAsync = true;
+
+runTest();
+
+var successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

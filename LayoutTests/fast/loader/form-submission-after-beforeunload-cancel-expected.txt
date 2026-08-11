@@ -1,0 +1,3 @@
+CONFIRM NAVIGATION: Click 'Stay on Page'
+CONFIRM NAVIGATION: Click 'Leave Page'
+PASS

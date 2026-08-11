@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Test that a rect with no width/height does not display even with a filter</title>
+
+  <rect width="100%" height="100%" fill="lime"/>
+
+  <filter id="filter" filterUnits="userSpaceOnUse"
+          x="0" y="0" width="100%" height="100%">
+    <!-- data: URI is a 1x1 red GIF -->
+    <feImage preserveAspectRatio="xMidYMid slice"
+             style="image-rendering: optimizeSpeed;"
+             xlink:href="data:image/gif,GIF87a%01%00%01%00%80%01%00%FF%00%00%FF%FF%FF%2C%00%00%00%00%01%00%01%00%00%02%02D%01%00%3B">
+    </feImage>
+  </filter>
+
+  <rect filter="url(#filter)"/>
+
+</svg>

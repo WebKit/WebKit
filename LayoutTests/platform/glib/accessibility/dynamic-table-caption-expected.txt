@@ -1,0 +1,22 @@
+This test ensures we maintain the right accessibility text for tables after dynamic caption changes.
+
+	AXTitle: Initial caption
+	AXDescription:
+PASS: text.includes('Initial caption') === true
+	AXTitle: Second caption
+	AXDescription:
+PASS: text.includes('Second caption') === true
+	AXTitle:
+	AXDescription:
+PASS: !text.includes('caption') === true
+	AXTitle: Final caption
+	AXDescription:
+PASS: text.includes('Final caption') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Final caption
+Author	Title
+Stephen Hawking	A Brief History of Time
+Carl Sagan	Cosmos

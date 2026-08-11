@@ -1,0 +1,35 @@
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="range" id="slider" min="10" max="100" value="50">
+
+<script>
+var output = "Test minValue and maxValue via the client accessibility APIs.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        await waitForElements([
+            (element) => element.role.includes("AXSlider"),
+        ]);
+
+        var webArea = accessibilityController.rootElement.childAtIndex(0);
+        var slider = webArea.childAtIndex(0);
+        output += `Slider role: ${slider.role}\n`;
+        output += `Slider minValue: ${slider.minValue}\n`;
+        output += `Slider maxValue: ${slider.maxValue}\n`;
+
+        debug(output);
+        document.getElementById("slider").hidden = true;
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

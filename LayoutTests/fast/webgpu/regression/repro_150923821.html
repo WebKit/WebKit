@@ -1,0 +1,41 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice({});
+
+    device.pushErrorScope('validation');
+
+    let shaderModule = device.createShaderModule({ code: `
+    @group(1) @binding(1) var<storage, read_write> x: f32;
+    @compute @workgroup_size(3) fn compute1() {
+        while true {
+            x = 1;
+        }
+    }
+    `});
+    let pipeline = device.createComputePipeline({ layout: 'auto', compute: { module: shaderModule }});
+    let bindGroupLayout = pipeline.getBindGroupLayout(1);
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout]});
+    let shaderModule2 = device.createShaderModule({ code : ` 
+    var<private> y = f32();
+    @compute @workgroup_size(1) fn compute2() {
+        while true {
+            y = 1;
+        }
+    }
+    `});
+    device.createComputePipeline({ layout: pipelineLayout, compute: { module: shaderModule2 }});
+    await device.queue.onSubmittedWorkDone();
+
+    const error = await device.popErrorScope();
+  if (error) {
+        debug('Error');
+        debug(error.message);
+  } else
+        debug('Pass');
+    globalThis.testRunner?.notifyDone();
+};
+</script>

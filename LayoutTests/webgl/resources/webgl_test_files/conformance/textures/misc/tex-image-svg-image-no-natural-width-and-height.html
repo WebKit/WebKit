@@ -1,0 +1,89 @@
+<!--
+Copyright (c) 2025 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>WebGL texImage2D w/ &lt;img> with SVG image without natural width and height</title>
+<link rel="stylesheet" href="../../../resources/js-test-style.css"/>
+<script src="../../../js/js-test-pre.js"></script>
+<script src="../../../js/webgl-test-utils.js"> </script>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+"use strict";
+
+description("Test texImage2D from an img element with an SVG image without natural width and height.");
+
+const wtu = WebGLTestUtils;
+
+function makeTexture(image, variant) {
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+
+  if (variant === "texSubImage2D") {
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.width, image.height, 0, gl.RGBA,
+                  gl.UNSIGNED_BYTE, null);
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  } else {
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  }
+}
+
+function testWidthHeightSet(image, variant, description) {
+  debug('');
+  debug(`${variant} (HTMLImageElement.width/height set)`);
+
+  makeTexture(image, variant);
+  wtu.checkTextureSize(gl, 100, 100);
+
+  wtu.clearAndDrawUnitQuad(gl);
+
+  wtu.checkCanvasRect(gl, 75, 37, 2, 2, [0, 0, 255, 255], "should be blue");
+  wtu.checkCanvasRect(gl, 75, 108, 2, 2, [0, 0, 0, 0], "should be transparent");
+  wtu.checkCanvasRect(gl, 225, 108, 2, 2, [255, 255, 0, 255], "should be yellow");
+  wtu.checkCanvasRect(gl, 225, 37, 2, 2, [0, 0, 0, 0], "should be transparent");
+}
+
+function testWidthHeightNotSet(image, variant) {
+  debug('');
+  debug(`${variant} (HTMLImageElement.width/height not set)`);
+
+  makeTexture(image, variant);
+  while (gl.getError()) {}
+
+  // Try to change the texture. This should fail because dimensions should have
+  // been specified as 0x0.
+  const buf = new Uint8Array(4);
+  gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+  wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, "texture size should be 0x0");
+}
+
+const SVG_IMAGE = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+                     <rect width='50' height='50' fill='blue'/>
+                     <rect x='50' y='50' width='50' height='50' fill='yellow'/>
+                   </svg>`;
+const gl = wtu.create3DContext();
+const program = wtu.setupTexturedQuad(gl);
+
+wtu.loadImageAsync(`data:image/svg+xml,${SVG_IMAGE}`, image => {
+  testWidthHeightNotSet(image, "texImage2D");
+  testWidthHeightNotSet(image, "texSubImage2D");
+
+  image.width = 100;
+  image.height = 100;
+
+  testWidthHeightSet(image, "texImage2D");
+  testWidthHeightSet(image, "texSubImage2D");
+
+  debug('');
+  finishTest();
+});
+
+var successfullyParsed = true;
+</script>

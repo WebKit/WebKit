@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<select id="horizontal"><option>Option 1</option></select>
+<select id="verticalRL" style="writing-mode: vertical-rl"><option>Option 1</option></select>
+<select id="verticalLR" style="writing-mode: vertical-lr"><option>Option 1</option></select>
+<select id="sidewaysRL" style="writing-mode: sideways-rl"><option>Option 1</option></select>
+<select id="sidewaysLR" style="writing-mode: sideways-lr"><option>Option 1</option></select>
+
+<select id="horizontalRTL" dir="rtl"><option>Option 1</option></select>
+<select id="verticalRL_RTL" style="writing-mode: vertical-rl; direction: rtl"><option>Option 1</option></select>
+<select id="verticalLR_RTL" style="writing-mode: vertical-lr; direction: rtl"><option>Option 1</option></select>
+<select id="sidewaysRL_RTL" style="writing-mode: sideways-rl; direction: rtl"><option>Option 1</option></select>
+<select id="sidewaysLR_RTL" style="writing-mode: sideways-lr; direction: rtl"><option>Option 1</option></select>
+</body>
+<script>
+
+description("Test that vertical writing mode selects have swapped dimensions compared to a horizontal one");
+
+var horizontal = document.getElementById("horizontal");
+
+debug("vertical-rl");
+shouldBe("verticalRL.offsetWidth", "horizontal.offsetHeight");
+shouldBe("verticalRL.offsetHeight", "horizontal.offsetWidth");
+debug("");
+
+debug("vertical-lr");
+shouldBe("verticalLR.offsetWidth", "horizontal.offsetHeight");
+shouldBe("verticalLR.offsetHeight", "horizontal.offsetWidth");
+debug("");
+
+debug("sideways-rl");
+shouldBe("sidewaysRL.offsetWidth", "horizontal.offsetHeight");
+shouldBe("sidewaysRL.offsetHeight", "horizontal.offsetWidth");
+debug("");
+
+debug("sideways-lr");
+shouldBe("sidewaysLR.offsetWidth", "horizontal.offsetHeight");
+shouldBe("sidewaysLR.offsetHeight", "horizontal.offsetWidth");
+debug("");
+
+debug("direction: rtl should not change dimensions");
+debug("");
+
+debug("horizontal rtl");
+shouldBe("horizontalRTL.offsetWidth", "horizontal.offsetWidth");
+shouldBe("horizontalRTL.offsetHeight", "horizontal.offsetHeight");
+debug("");
+
+debug("vertical-rl rtl");
+shouldBe("verticalRL_RTL.offsetWidth", "verticalRL.offsetWidth");
+shouldBe("verticalRL_RTL.offsetHeight", "verticalRL.offsetHeight");
+debug("");
+
+debug("vertical-lr rtl");
+shouldBe("verticalLR_RTL.offsetWidth", "verticalLR.offsetWidth");
+shouldBe("verticalLR_RTL.offsetHeight", "verticalLR.offsetHeight");
+debug("");
+
+debug("sideways-rl rtl");
+shouldBe("sidewaysRL_RTL.offsetWidth", "sidewaysRL.offsetWidth");
+shouldBe("sidewaysRL_RTL.offsetHeight", "sidewaysRL.offsetHeight");
+debug("");
+
+debug("sideways-lr rtl");
+shouldBe("sidewaysLR_RTL.offsetWidth", "sidewaysLR.offsetWidth");
+shouldBe("sidewaysLR_RTL.offsetHeight", "sidewaysLR.offsetHeight");
+
+</script>
+</html>

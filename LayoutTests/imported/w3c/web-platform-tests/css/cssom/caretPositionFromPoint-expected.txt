@@ -1,0 +1,10 @@
+aaa
+
+PASS document.caretPositionFromPoint() throws when called without the correct parameters
+PASS document.caretPositionFromPoint() should return null for a document with no viewport
+PASS document.caretPositionFromPoint() should return null if given coordinates outside of the viewport
+PASS document.caretPositionFromPoint() should return a CaretPosition at the specified location
+PASS document.caretPositionFromPoint() should return a CaretPosition over elements with `user-select: none`
+PASS document.caretPositionFromPoint() should return a CaretPosition over SVG elements
+PASS CaretRange.getClientRect() should return a DOMRect that matches one obtained from a manually constructed Range
+

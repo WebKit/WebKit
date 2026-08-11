@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description('Testing of NodeList iterable capacities.');
+
+            var testingGround = document.createElement('div');
+            var nodes = [document.createElement('div'), document.createElement('ol')];
+            testingGround.appendChild(nodes[0]);
+            testingGround.appendChild(nodes[1]);
+            document.body.appendChild(testingGround);
+
+            var nodeList = testingGround.childNodes;
+
+            function checkItemType(item) {
+                return item instanceof Node;
+            }
+            function createIterable(items) {
+                items.push(nodes[0]);
+                items.push(nodes[1]);
+                return nodeList;
+            }
+            function updateIterable() {
+                testingGround.appendChild(document.createElement('ul'));
+                testingGround.appendChild(document.createElement('p'));
+            }
+        </script>
+        <script src="iterable-tests.js"></script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

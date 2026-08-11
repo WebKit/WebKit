@@ -1,0 +1,161 @@
+/*
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#include "pas_config.h"
+
+#if LIBPAS_ENABLED
+
+#include "pas_create_basic_heap_page_caches_with_reserved_memory.h"
+
+#include "pas_basic_heap_page_caches.h"
+#include "pas_basic_heap_runtime_config.h"
+#include "pas_immortal_heap.h"
+#include "pas_large_heap_physical_page_sharing_cache.h"
+#include "pas_megapage_cache.h"
+#include "pas_mte.h"
+#include "pas_reserved_memory_provider.h"
+
+static pas_allocation_result allocate_from_compact_megapages(
+    size_t size,
+    pas_alignment alignment,
+    const char* name,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction,
+    void* arg)
+{
+    const pas_heap_config* heap_config;
+
+    PAS_UNUSED_PARAM(name);
+    PAS_UNUSED_PARAM(arg);
+    PAS_ASSERT(heap);
+    PAS_ASSERT(transaction);
+    PAS_ASSERT(!alignment.alignment_begin);
+
+    heap_config = pas_heap_config_kind_get_config(heap->config_kind);
+
+    return pas_large_heap_try_allocate_and_forget(
+        &heap->large_heap, size, alignment.alignment, pas_non_compact_allocation_mode,
+        heap_config, transaction);
+}
+
+static pas_allocation_result allocate_from_megapages(
+    size_t size,
+    pas_alignment alignment,
+    const char* name,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction,
+    void* arg)
+{
+    const pas_heap_config* heap_config;
+    pas_megapage_cache_size cache_size = (pas_megapage_cache_size)(uintptr_t)arg;
+
+    PAS_UNUSED_PARAM(name);
+    PAS_ASSERT(heap);
+    PAS_ASSERT(transaction);
+    PAS_ASSERT(!alignment.alignment_begin);
+
+    heap_config = pas_heap_config_kind_get_config(heap->config_kind);
+
+    PAS_PROFILE(MEGAPAGES_ALLOCATION, heap, size, alignment.alignment, heap_config, cache_size);
+    PAS_MTE_HANDLE(MEGAPAGES_ALLOCATION, heap, size, alignment.alignment, heap_config);
+
+    return pas_large_heap_try_allocate_and_forget(
+        &heap->megapage_large_heap, size, alignment.alignment, pas_non_compact_allocation_mode,
+        heap_config, transaction);
+}
+
+/* Warning: This creates caches that allow type confusion. Only use this for primitive heaps! */
+pas_basic_heap_page_caches* pas_create_basic_heap_page_caches_with_reserved_memory(
+    pas_basic_heap_runtime_config* template_runtime_config,
+    uintptr_t begin,
+    uintptr_t end)
+{
+    pas_reserved_memory_provider* provider;
+    pas_basic_heap_page_caches* caches;
+
+    PAS_UNUSED_PARAM(template_runtime_config);
+
+    pas_heap_lock_lock();
+
+    provider = pas_immortal_heap_allocate(
+        sizeof(pas_reserved_memory_provider),
+        "pas_reserved_memory_provider",
+        pas_object_allocation);
+
+    pas_reserved_memory_provider_construct(provider, begin, end);
+
+    caches = pas_immortal_heap_allocate(
+        sizeof(pas_basic_heap_page_caches),
+        "pas_basic_heap_page_caches",
+        pas_object_allocation);
+
+    pas_large_heap_physical_page_sharing_cache_construct(
+        &caches->megapage_large_heap_cache,
+        pas_reserved_memory_provider_try_allocate,
+        provider,
+        pas_decommitted);
+
+    pas_large_heap_physical_page_sharing_cache_construct(
+        &caches->large_heap_cache,
+        pas_reserved_memory_provider_try_allocate,
+        provider,
+        pas_decommitted);
+    
+    pas_megapage_cache_construct(
+        &caches->small_exclusive_segregated_megapage_cache,
+        allocate_from_megapages,
+        pas_megapage_cache_size_small);
+
+    pas_megapage_cache_construct(
+        &caches->small_other_megapage_cache,
+        allocate_from_megapages,
+        pas_megapage_cache_size_small);
+
+    pas_megapage_cache_construct(
+        &caches->medium_megapage_cache,
+        allocate_from_megapages,
+        pas_megapage_cache_size_medium);
+
+    pas_megapage_cache_construct(
+        &caches->small_compact_exclusive_segregated_megapage_cache,
+        allocate_from_compact_megapages,
+        pas_megapage_cache_size_small_compact);
+
+    pas_megapage_cache_construct(
+        &caches->small_compact_other_megapage_cache,
+        allocate_from_compact_megapages,
+        pas_megapage_cache_size_small_compact);
+
+    pas_megapage_cache_construct(
+        &caches->medium_compact_megapage_cache,
+        allocate_from_compact_megapages,
+        pas_megapage_cache_size_medium_compact);
+
+    pas_heap_lock_unlock();
+
+    return caches;
+}
+
+#endif /* LIBPAS_ENABLED */

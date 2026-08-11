@@ -1,0 +1,7 @@
+2d.fillRect.shadow
+
+fillRect draws shadows
+
+
+PASS fillRect draws shadows
+

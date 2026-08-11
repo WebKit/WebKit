@@ -1,0 +1,38 @@
+<html>
+<head>
+<script>  
+if (window.testRunner)
+    testRunner.dumpAsText();
+            
+function test() {
+    var start = new Date().getTime();
+    var e = document.getElementById('t');
+    var console = document.getElementById('console');
+    for (n = 0; n < 1000; n++)
+        e.offsetLeft;
+    var time = new Date().getTime() - start;
+    console.innerHTML = ((time < 500) ? "<span style='color:green'>PASS</span> " :  "<span style='color:red'>FAIL</span> ");// + time;
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+
+<link rel=stylesheet href="http://127.0.0.1:8000/local/slow-css-pass.cgi">
+
+</head>
+<body>
+This page has a slow loading external style sheet. Calling offsetLeft shouldn't be slow when stylesheets are loading. 
+Works as HTTP test only.
+<div id=console></div>
+<div id=t></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+// increase document complexity a bit
+for (n = 0; n < 500; n++)
+    document.write("<div><span></span><div><span></span></div></div>");
+setTimeout(test, 0);
+</script>
+</body>
+</html>

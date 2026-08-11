@@ -1,0 +1,3 @@
+
+PASS Window.open should throw SyntaxError when an invalid url is passed as the first parameter
+

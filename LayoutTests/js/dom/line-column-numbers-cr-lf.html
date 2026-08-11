@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	    <script src="../../resources/js-test.js"></script>
+    </head>
+    <body>
+        <script>
+            description('This test checks line and column numbers in CR LF line ending HTML file.');
+
+            testId = 0;
+            function printStack(stackTrace) {
+                debug("--> Case " + testId + " Stack Trace:")
+                stackTrace = stackTrace.split("\n");
+                var length = Math.min(stackTrace.length, 20);
+                for (var i = 0; i < length; i++) {
+                    var indexOfAt = stackTrace[i].indexOf('@')
+                    var indexOfLastSlash = stackTrace[i].lastIndexOf('/');
+                    if (indexOfLastSlash == -1)
+                        indexOfLastSlash = indexOfAt
+                    var functionName = stackTrace[i].substring(0, indexOfAt);
+                    var fileName = stackTrace[i].substring(indexOfLastSlash + 1);
+                    debug("    " + i + "   " + functionName + " at " + fileName);
+                }
+                debug('');
+            }
+        </script>
+
+        <script>testId++;</script>
+        <script>try { throw new Error(); } catch (e) { printStack(e.stack); }</script>
+
+        <script>testId++;</script>
+        <script>
+            try { throw new Error(); } catch (e) { printStack(e.stack); }
+        </script>
+    </body>
+</html>

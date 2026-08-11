@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: attributionsourceid must have a non-negative value less than or equal to 255 for Private Click Measurement.
+CONSOLE MESSAGE: Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work.
+CONSOLE MESSAGE: attributiondestination could not be converted to a valid HTTP-family URL.
+CONSOLE MESSAGE: attributiondestination could not be converted to a valid HTTP-family URL.
+CONSOLE MESSAGE: attributiondestination could not be converted to a valid HTTP-family URL.
+CONSOLE MESSAGE: Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work.
+CONSOLE MESSAGE: attributiondestination can not be the same site as the current website.
+CONSOLE MESSAGE: Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work.
+Test for validity of private click measurement attributes on anchor tags.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

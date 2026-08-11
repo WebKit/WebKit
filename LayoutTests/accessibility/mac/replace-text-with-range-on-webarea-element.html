@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body id="body" contenteditable="true" role="textbox">
+hello
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that the replace with range API functions as expected when called on the web area element.");
+
+    if (window.accessibilityController) {
+        var webArea = accessibilityController.accessibleElementById("body").parentElement();
+        shouldBeTrue('webArea.replaceTextInRange("world", 0, 5)');
+        shouldBe("webArea.childAtIndex(0).stringValue.substring(9, 14)", "'world'");
+    }
+
+</script>
+
+</body>
+</html>

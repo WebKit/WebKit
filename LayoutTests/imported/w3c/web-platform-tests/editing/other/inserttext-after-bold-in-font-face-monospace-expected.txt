@@ -1,0 +1,5 @@
+abc
+def g
+
+PASS inserttext-after-bold-in-font-face-monospace
+

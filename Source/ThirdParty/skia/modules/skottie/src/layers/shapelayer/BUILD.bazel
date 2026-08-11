@@ -1,0 +1,27 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "Ellipse.cpp",
+        "FillStroke.cpp",
+        "Gradient.cpp",
+        "MergePaths.cpp",
+        "OffsetPaths.cpp",
+        "Polystar.cpp",
+        "PuckerBloat.cpp",
+        "Rectangle.cpp",
+        "Repeater.cpp",
+        "RoundCorners.cpp",
+        "ShapeLayer.cpp",
+        "ShapeLayer.h",
+        "TrimPaths.cpp",
+    ],
+    visibility = ["//modules/skottie/src/layers:__pkg__"],
+)

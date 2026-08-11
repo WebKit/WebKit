@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/async-stack-trace-test.js"></script>
+<script>
+
+function triggerChainedRequestAnimationFrame(count) {
+    if (count <= 0)
+        return;
+
+    function handleAnimationFrame() {
+        if (!--count) {
+            debugger;
+            return;
+        }
+        requestAnimationFrame(handleAnimationFrame);
+    }
+
+    requestAnimationFrame(handleAnimationFrame);
+}
+
+function triggerDeeplyNestedAsyncMicrotask() {
+    return new Promise((resolve, reject) => {
+        function recursiveMicrotask(iteration = 0) {
+            queueMicrotask(() => {
+                if (iteration !== 0 && (iteration % 1_000_000) == 0) {
+                    try {
+                        // Throwing will log the error to the console.
+                        throw "Reached 1 million iterations";
+                    } catch (error) {
+                        console.error(error);
+                        resolve();
+                    }
+
+                    return;
+                }
+
+                recursiveMicrotask(iteration + 1);
+            });
+        }
+
+        recursiveMicrotask();
+    });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("AsyncStackTrace.Truncate");
+
+    function addTruncateTestCase(suite, args) {
+        function setup(resolve) {
+            this.savedStackTraceDepth = WI.debuggerManager.asyncStackTraceDepth;
+            InspectorTest.log(`Set maximum stack trace depth = ${args.maximumStackTraceSize}.`);
+            WI.debuggerManager.asyncStackTraceDepth = args.maximumStackTraceSize;
+            resolve();
+        }
+        function teardown(resolve) {
+            WI.debuggerManager.asyncStackTraceDepth = this.savedStackTraceDepth;
+            resolve();
+        }
+        addAsyncStackTraceTestCase(suite, {...args, setup, teardown});
+    }
+
+    function isTruncated(stackTrace) {
+        while (stackTrace) {
+            if (stackTrace.truncated)
+                return true;
+            stackTrace = stackTrace.parentStackTrace;
+        }
+        return false;
+    }
+
+    addTruncateTestCase(suite, {
+        name: "AsyncStackTrace.DisableAsyncStackTrace",
+        description: "Check that no async stack trace is present when the maximum depth is set to zero.",
+        expression: "triggerChainedRequestAnimationFrame(1)",
+        maximumStackTraceSize: 0,
+        pausedHandler(stackTrace) {
+            InspectorTest.expectNull(stackTrace.parentStackTrace, "Async stack trace should be null.");
+        }
+    });
+
+    addTruncateTestCase(suite, {
+        name: "AsyncStackTrace.CheckTruncated",
+        description: "Check that an async stack trace that exceeds the maximum depth is truncated.",
+        expression: "triggerChainedRequestAnimationFrame(20)",
+        maximumStackTraceSize: 10,
+        pausedHandler(stackTrace) {
+            InspectorTest.expectThat(isTruncated(stackTrace), "Async stack trace should be truncated.");
+        }
+    });
+
+    addTruncateTestCase(suite, {
+        name: "AsyncStackTrace.CheckNotTruncated",
+        description: "Check that an async stack trace is not truncated when below the maximum depth.",
+        expression: "triggerChainedRequestAnimationFrame(1)",
+        maximumStackTraceSize: 10,
+        pausedHandler(stackTrace) {
+            InspectorTest.expectFalse(isTruncated(stackTrace), "Async stack trace should not be truncated.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "AsyncStackTrace.CheckDeeplyNestedDoesNotCrash",
+        description: "Ensure that very deeply nested stack traces do not result in a crash.",
+        async test() {
+            InspectorTest.log("Performing deeply nested microtask.")
+            await InspectorTest.evaluateInPage(`triggerDeeplyNestedAsyncMicrotask()`);
+
+            // triggerDeeplyNestedAsyncMicrotask() logged a stack trace to the console that was very deeply nested.
+            // Clear the console to release ownership of the logged stack trace.
+            InspectorTest.log("Clearing console.")
+            let consoleClearedEvent = WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared);
+            ConsoleAgent.clearMessages();
+            await consoleClearedEvent;
+
+            InspectorTest.log("Running GC.")
+            let garbageCollectedEvent = WI.heapManager.awaitEvent(WI.HeapManager.Event.GarbageCollected);
+            HeapAgent.gc();
+            await garbageCollectedEvent;
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for truncating async stack traces that exceed the maximum async stack trace depth.</p>
+</body>
+</html>

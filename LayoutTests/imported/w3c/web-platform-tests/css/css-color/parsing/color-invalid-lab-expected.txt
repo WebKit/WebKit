@@ -1,0 +1,20 @@
+
+PASS e.style['color'] = "lab(0% 0 0 1)" should not set the property value
+PASS e.style['color'] = "lab(0% 0 0 10%)" should not set the property value
+PASS e.style['color'] = "lab(0% 0 0deg)" should not set the property value
+PASS e.style['color'] = "lab(0% 0% 0deg)" should not set the property value
+PASS e.style['color'] = "lab(40% 0 0deg)" should not set the property value
+PASS e.style['color'] = "color(lab 20% 0 10 / 50%)" should not set the property value
+PASS e.style['color'] = "oklab(0% 0 0 1)" should not set the property value
+PASS e.style['color'] = "oklab(0% 0 0 10%)" should not set the property value
+PASS e.style['color'] = "oklab(0% 0 0deg)" should not set the property value
+PASS e.style['color'] = "oklab(0% 0% 0deg)" should not set the property value
+PASS e.style['color'] = "oklab(40% 0 0deg)" should not set the property value
+PASS e.style['color'] = "color(oklab 20% 0 10 / 50%)" should not set the property value
+PASS e.style['color'] = "lch(20% 10 10deg 10)" should not set the property value
+PASS e.style['color'] = "lch(20% 10 10deg 10 / 0.5)" should not set the property value
+PASS e.style['color'] = "color(lch 20% 0 10 / 50%)" should not set the property value
+PASS e.style['color'] = "oklch(20% 10 10deg 10)" should not set the property value
+PASS e.style['color'] = "oklch(20% 10 10deg 10 / 0.5)" should not set the property value
+PASS e.style['color'] = "color(oklch 20% 0 10 / 50%)" should not set the property value
+

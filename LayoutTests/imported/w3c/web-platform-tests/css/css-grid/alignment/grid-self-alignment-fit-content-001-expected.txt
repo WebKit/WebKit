@@ -1,0 +1,19 @@
+
+PASS justify-self: stretch on an item with an automatic width uses the stretch-fit size
+PASS justify-self: start on an item with an automatic width uses the fit-content size
+PASS justify-self: center on an item with an automatic width uses the fit-content size
+PASS justify-self: end on an item with an automatic width uses the fit-content size
+PASS justify-self: center on an item with an automatic width clamps the fit-content size by the stretch-fit size
+PASS align-self: stretch on an item with an automatic height uses the stretch-fit size
+PASS align-self: start on an item with an automatic height uses the fit-content size
+PASS align-self: center on an item with an automatic height uses the fit-content size
+PASS align-self: end on an item with an automatic height uses the fit-content size
+XXXXX
+XXXXX
+XXXXX
+XXXXX
+XX XX
+XXXXX
+XXXXX
+XXXXX
+XXXXX

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<script>
+    var url = new URL(location.href);
+    var path = url.pathname.replace('load-web-archive-1.html', 'helloworld.webarchive');
+    url.pathname = path;
+    url.host = 'test';
+
+    document.location.href = url.href;
+</script>
+</html>

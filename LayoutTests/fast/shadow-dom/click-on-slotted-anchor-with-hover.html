@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests for tapping or clicking on an anchor element assigned to a slot with :hover rule.<br>
+Tapping on "Tap me" below exactly once should activate the hyperlink.</p>
+<div id="host"><a href="#" onclick="activated();">Tap me</a></div>
+<div id="result">FAIL</div>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+let shadowHost = document.getElementById('host');
+shadowHost.attachShadow({mode: 'closed'}).innerHTML = '<slot></slot>';
+
+function activated() {
+    document.getElementById('result').textContent = 'PASS';
+}
+
+document.onclick = function () {
+    document.getElementById('result').style.display = null;
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    UIHelper.wait(UIHelper.activateAt(shadowHost.offsetLeft + 5, shadowHost.offsetTop + 5));
+} else
+    document.getElementById('result').style.display = 'none';
+
+</script>
+</body>
+</html>

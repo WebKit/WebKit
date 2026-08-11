@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Test blocking of top-level navigations by a third-party iframe which gives itself a sandbox which allows top navigation via CSP.");
+jsTestIsAsync = true;
+onload = () => {
+    setTimeout(() => {
+        testPassed("All navigations by subframes have been blocked");
+        finishJSTest();
+    }, 10);
+};
+</script>
+<iframe id="testFrame" src="/security/resources/attempt-top-level-navigation-with-csp.py"></iframe>
+</body>
+</html>

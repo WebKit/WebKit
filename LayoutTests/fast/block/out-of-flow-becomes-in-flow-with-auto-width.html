@@ -1,0 +1,18 @@
+<style>
+.outerDiv {
+  position: absolute;
+  background-color: green;
+  white-space: nowrap;
+  font-family: Ahem;
+  font-size: 10px;
+}
+
+#innerDiv {
+  position: absolute;
+  width: 0px;
+}
+</style><div class=outerDiv><div id=innerDiv>PASS if background is green</div></div><script>
+innerDiv.offsetWidth;
+innerDiv.style.position = "static";
+innerDiv.style.width = "auto";
+</script>

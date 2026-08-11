@@ -1,0 +1,15 @@
+<style>
+pre { 
+  writing-mode: vertical-lr;
+}
+</style>
+<pre id=pre>PASS if no crash</pre>
+<br id=move_this>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+document.body.style.columnCount = "2";
+document.body.offsetHeight;
+pre.appendChild(move_this);
+</script>

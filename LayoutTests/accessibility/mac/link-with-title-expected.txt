@@ -1,0 +1,10 @@
+This tests that a link with a title attribute will only include that in the help field.
+Link with title and visible text
+PASS: link1.description === 'AXDescription: '
+PASS: link1.title === 'AXTitle: TEXT'
+PASS: link1.helpText === 'AXHelp: TITLE'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+TEXT

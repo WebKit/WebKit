@@ -1,0 +1,149 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.Accessibility");
+
+    let frameTarget = null;
+    let frameBody = null;
+
+    function bid(node) { return node.backendNodeId; }
+
+    async function findChildElement(parent, predicate) {
+        await new Promise((resolve) => parent.getChildNodes(resolve));
+        return parent.children.find(predicate);
+    }
+
+    async function axFor(node) {
+        let {properties} = await frameTarget.DOMAgent.getAccessibilityPropertiesForNode(bid(node));
+        return properties;
+    }
+
+    async function findById(id) {
+        let nodeId = await frameBody.querySelector("#" + id);
+        return WI.domManager.nodeForIdInFrameTarget(nodeId, frameTarget);
+    }
+
+    async function evaluateInFrame(expression) {
+        return frameTarget.RuntimeAgent.evaluate.invoke({
+            expression,
+            objectGroup: "test",
+            includeCommandLineAPI: false,
+            contextId: frameTarget.executionContext.id,
+        });
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and walk to its body.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            frameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+            InspectorTest.expectNotNull(frameTarget, "Should find a cross-origin frame target.");
+
+            if (frameTarget.isProvisional) {
+                let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                frameTarget = committedEvent.data.target;
+            }
+            await frameTarget.ensureTargetExecutionContext();
+
+            let frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!frameDoc) {
+                let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                frameDoc = docEvent.data.document;
+            }
+            let htmlNode = await findChildElement(frameDoc, (n) => n.nodeName() === "HTML");
+            frameBody = await findChildElement(htmlNode, (n) => n.nodeName() === "BODY");
+            InspectorTest.expectNotNull(frameBody, "Should find iframe BODY.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Heading.RoleAndLevel",
+        description: "h1 should report role 'heading' with headingLevel 1.",
+        async test() {
+            let heading = await findById("heading");
+            let ax = await axFor(heading);
+            InspectorTest.expectThat(ax.exists, "AX object should exist for h1.");
+            InspectorTest.expectEqual(ax.role, "heading", "Role should be 'heading'.");
+            InspectorTest.expectEqual(ax.headingLevel, 1, "headingLevel should be 1.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Button.RoleAndLabel",
+        description: "Button with aria-label should report role 'button' and the override label.",
+        async test() {
+            let button = await findById("action-button");
+            let ax = await axFor(button);
+            InspectorTest.expectThat(ax.exists, "AX object should exist for button.");
+            InspectorTest.expectEqual(ax.role, "button", "Role should be 'button'.");
+            InspectorTest.expectEqual(ax.label, "Submit form", "Label should be the aria-label override.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Listbox.BusyAndLabel",
+        description: "div[role=listbox][aria-busy=true] should report busy.",
+        async test() {
+            let listbox = await findById("busy-region");
+            let ax = await axFor(listbox);
+            InspectorTest.expectThat(ax.exists, "AX object should exist for listbox.");
+            InspectorTest.expectEqual(ax.role, "listbox", "Role should be 'listbox'.");
+            InspectorTest.expectThat(ax.busy, "busy should be true.");
+            InspectorTest.expectEqual(ax.label, "Loading list", "Label should be the aria-label override.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Input.Required",
+        description: "input[required] should report required: true.",
+        async test() {
+            let input = await findById("required-input");
+            let ax = await axFor(input);
+            InspectorTest.expectThat(ax.exists, "AX object should exist for input.");
+            InspectorTest.expectThat(ax.required, "required should be true.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "DynamicUpdate.AriaBusyReflectsLiveState",
+        description: "Mutating aria-busy in the iframe's process should be reflected in the next AX query, proving the AXObjectCache lookup is process-local.",
+        async test() {
+            let listbox = await findById("busy-region");
+
+            let before = await axFor(listbox);
+            InspectorTest.expectThat(before.busy, "Listbox starts busy.");
+
+            await evaluateInFrame(`document.getElementById("busy-region").setAttribute("aria-busy", "false")`);
+
+            let after = await axFor(listbox);
+            InspectorTest.expectThat(!after.busy, "Listbox no longer reports busy after live mutation.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "InvalidNodeId",
+        description: "getAccessibilityPropertiesForNode with a bogus nodeId should reject.",
+        async test() {
+            let threw = false;
+            try {
+                await frameTarget.DOMAgent.getAccessibilityPropertiesForNode(9999999);
+            } catch (e) {
+                threw = true;
+            }
+            InspectorTest.expectThat(threw, "Unknown nodeId should reject.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests FrameDOMAgent.getAccessibilityPropertiesForNode for nodes inside a cross-origin iframe.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/ax-frame.html"></iframe>
+</body>

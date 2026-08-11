@@ -1,0 +1,510 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "InProcessIDBServer.h"
+
+#include <WebCore/ClientOrigin.h>
+#include <WebCore/IDBConnectionToClient.h>
+#include <WebCore/IDBConnectionToServer.h>
+#include <WebCore/IDBCursorInfo.h>
+#include <WebCore/IDBGetRecordData.h>
+#include <WebCore/IDBIterateCursorData.h>
+#include <WebCore/IDBKeyRangeData.h>
+#include <WebCore/IDBOpenDBRequest.h>
+#include <WebCore/IDBRequestData.h>
+#include <WebCore/IDBResultData.h>
+#include <WebCore/IDBTransactionInfo.h>
+#include <WebCore/IDBValue.h>
+#include <wtf/WorkQueue.h>
+#include <wtf/threads/BinarySemaphore.h>
+
+using namespace WebCore;
+
+Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID)
+{
+    ASSERT(sessionID.isEphemeral());
+
+    return adoptRef(*new InProcessIDBServer(sessionID));
+}
+
+Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID, const String& databaseDirectoryPath)
+{
+    ASSERT(!sessionID.isEphemeral());
+
+    return adoptRef(*new InProcessIDBServer(sessionID, databaseDirectoryPath));
+}
+
+InProcessIDBServer::~InProcessIDBServer()
+{
+    BinarySemaphore semaphore;
+    dispatchTask([this, &semaphore] {
+        assertIsCurrent(m_queue.get());
+        m_server = nullptr;
+        m_connectionToClient = nullptr;
+        semaphore.signal();
+    });
+    semaphore.wait();
+}
+
+InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath)
+    : m_queue(WorkQueue::create("com.apple.WebKit.IndexedDBServer"_s))
+{
+    ASSERT(isMainThread());
+    m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this, sessionID);
+    dispatchTask([this, protectedThis = Ref { *this }, directory = databaseDirectoryPath.isolatedCopy()] () mutable {
+        assertIsCurrent(m_queue.get());
+        Ref connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
+        m_connectionToClient = connectionToClient.copyRef();
+
+        m_server = makeUnique<IDBServer::IDBServer>(directory, [](const ClientOrigin&, uint64_t) {
+            return true;
+        });
+        m_server->registerConnection(connectionToClient);
+    });
+}
+
+std::optional<IDBConnectionIdentifier> InProcessIDBServer::identifier() const
+{
+    // An instance of InProcessIDBServer always has a 1:1 relationship with its instance of IDBServer.
+    // Therefore the connection identifier between the two can always be "1".
+    return Process::identifier();
+}
+
+IDBClient::IDBConnectionToServer& InProcessIDBServer::connectionToServer() const
+{
+    return *m_connectionToServer;
+}
+
+IDBServer::IDBConnectionToClient& InProcessIDBServer::connectionToClient() const
+{
+    return *m_connectionToClient;
+}
+
+void InProcessIDBServer::deleteDatabase(const WebCore::IDBOpenRequestData& requestData)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->deleteDatabase(requestData);
+    });
+}
+
+void InProcessIDBServer::didDeleteDatabase(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didDeleteDatabase(resultData);
+    });
+}
+
+void InProcessIDBServer::openDatabase(const WebCore::IDBOpenRequestData& requestData)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->openDatabase(requestData);
+    });
+}
+
+void InProcessIDBServer::didOpenDatabase(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didOpenDatabase(resultData);
+    });
+}
+
+void InProcessIDBServer::didAbortTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, transactionIdentifier = transactionIdentifier.isolatedCopy(), error = error.isolatedCopy()] {
+        m_connectionToServer->didAbortTransaction(transactionIdentifier, error);
+    });
+}
+
+void InProcessIDBServer::didCommitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, transactionIdentifier = transactionIdentifier.isolatedCopy(), error = error.isolatedCopy()] {
+        m_connectionToServer->didCommitTransaction(transactionIdentifier, error);
+    });
+}
+
+void InProcessIDBServer::didCreateObjectStore(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didCreateObjectStore(resultData);
+    });
+}
+
+void InProcessIDBServer::didDeleteObjectStore(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didDeleteObjectStore(resultData);
+    });
+}
+
+void InProcessIDBServer::didRenameObjectStore(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didRenameObjectStore(resultData);
+    });
+}
+
+void InProcessIDBServer::didClearObjectStore(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didClearObjectStore(resultData);
+    });
+}
+
+void InProcessIDBServer::didCreateIndex(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didCreateIndex(resultData);
+    });
+}
+
+void InProcessIDBServer::didDeleteIndex(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didDeleteIndex(resultData);
+    });
+}
+
+void InProcessIDBServer::didRenameIndex(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didRenameIndex(resultData);
+    });
+}
+
+void InProcessIDBServer::didPutOrAdd(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didPutOrAdd(resultData);
+    });
+}
+
+void InProcessIDBServer::didGetRecord(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didGetRecord(resultData);
+    });
+}
+
+void InProcessIDBServer::didGetAllRecords(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didGetAllRecords(resultData);
+    });
+}
+
+void InProcessIDBServer::didGetCount(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didGetCount(resultData);
+    });
+}
+
+void InProcessIDBServer::didDeleteRecord(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didDeleteRecord(resultData);
+    });
+}
+
+void InProcessIDBServer::didOpenCursor(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didOpenCursor(resultData);
+    });
+}
+
+void InProcessIDBServer::didIterateCursor(const IDBResultData& resultData)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy()] {
+        m_connectionToServer->didIterateCursor(resultData);
+    });
+}
+
+void InProcessIDBServer::abortTransaction(const WebCore::IDBResourceIdentifier& resourceIdentifier)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, resourceIdentifier = resourceIdentifier.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->abortTransaction(resourceIdentifier);
+    });
+}
+
+void InProcessIDBServer::commitTransaction(const WebCore::IDBResourceIdentifier& resourceIdentifier, uint64_t pendingCountRequest)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, resourceIdentifier = resourceIdentifier.isolatedCopy(), pendingCountRequest] {
+        assertIsCurrent(m_queue.get());
+        m_server->commitTransaction(resourceIdentifier, pendingCountRequest);
+    });
+}
+
+void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, transactionIdentifier = transactionIdentifier.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->didFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier);
+    });
+}
+
+void InProcessIDBServer::createObjectStore(const WebCore::IDBRequestData& resultData, const IDBObjectStoreInfo& info)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, resultData = resultData.isolatedCopy(), info = info.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->createObjectStore(resultData, info);
+    });
+}
+
+void InProcessIDBServer::deleteObjectStore(const WebCore::IDBRequestData& requestData, const String& objectStoreName)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreName = objectStoreName.isolatedCopy()] () mutable {
+        assertIsCurrent(m_queue.get());
+        m_server->deleteObjectStore(requestData, objectStoreName);
+    });
+}
+
+void InProcessIDBServer::renameObjectStore(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, newName = newName.isolatedCopy()] () mutable {
+        assertIsCurrent(m_queue.get());
+        m_server->renameObjectStore(requestData, objectStoreIdentifier, newName);
+    });
+}
+
+void InProcessIDBServer::clearObjectStore(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier] {
+        assertIsCurrent(m_queue.get());
+        m_server->clearObjectStore(requestData, objectStoreIdentifier);
+    });
+}
+
+void InProcessIDBServer::createIndex(const WebCore::IDBRequestData& requestData, const IDBIndexInfo& info)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), info = info.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->createIndex(requestData, info);
+    });
+}
+
+void InProcessIDBServer::deleteIndex(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, indexName = indexName.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->deleteIndex(requestData, objectStoreIdentifier, indexName);
+    });
+}
+
+void InProcessIDBServer::renameIndex(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, WebCore::IDBIndexIdentifier indexIdentifier, const String& newName)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), objectStoreIdentifier, indexIdentifier, newName = newName.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
+    });
+}
+
+void InProcessIDBServer::putOrAdd(const WebCore::IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexIDToIndexKeyMap& indexKeys, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), keyData = keyData.isolatedCopy(), value = value.isolatedCopy(), indexKeys = crossThreadCopy(indexKeys), overwriteMode] {
+        assertIsCurrent(m_queue.get());
+        m_server->putOrAdd(requestData, keyData, value, indexKeys, overwriteMode);
+    });
+}
+
+void InProcessIDBServer::getRecord(const WebCore::IDBRequestData& requestData, const IDBGetRecordData& getRecordData)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), getRecordData = getRecordData.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->getRecord(requestData, getRecordData);
+    });
+}
+
+void InProcessIDBServer::getAllRecords(const WebCore::IDBRequestData& requestData, const IDBGetAllRecordsData& getAllRecordsData)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), getAllRecordsData = getAllRecordsData.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->getAllRecords(requestData, getAllRecordsData);
+    });
+}
+
+void InProcessIDBServer::getCount(const WebCore::IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), keyRangeData = keyRangeData.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->getCount(requestData, keyRangeData);
+    });
+}
+
+void InProcessIDBServer::deleteRecord(const WebCore::IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), keyRangeData = keyRangeData.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->deleteRecord(requestData, keyRangeData);
+    });
+}
+
+void InProcessIDBServer::openCursor(const WebCore::IDBRequestData& requestData, const IDBCursorInfo& info)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), info = info.isolatedCopy()] () mutable {
+        assertIsCurrent(m_queue.get());
+        m_server->openCursor(requestData, info);
+    });
+}
+
+void InProcessIDBServer::iterateCursor(const WebCore::IDBRequestData& requestData, const IDBIterateCursorData& data)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), data = data.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->iterateCursor(requestData, data);
+    });
+}
+
+void InProcessIDBServer::establishTransaction(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const IDBTransactionInfo& info)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, info = info.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->establishTransaction(databaseConnectionIdentifier, info);
+    });
+}
+
+void InProcessIDBServer::fireVersionChangeEvent(IDBServer::UniqueIDBDatabaseConnection& connection, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, databaseConnectionIdentifier = connection.identifier(), requestIdentifier = requestIdentifier.isolatedCopy(), requestedVersion] {
+        m_connectionToServer->fireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, requestedVersion);
+    });
+}
+
+void InProcessIDBServer::generateIndexKeyForRecord(const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IDBIndexInfo& indexInfo, const std::optional<WebCore::IDBKeyPath>& keyPath, const WebCore::IDBKeyData& key, const WebCore::IDBValue& value, std::optional<int64_t> recordID)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, requestIdentifier = crossThreadCopy(requestIdentifier), indexInfo = crossThreadCopy(indexInfo), keyPath = crossThreadCopy(keyPath), key = crossThreadCopy(key), value = crossThreadCopy(value), recordID] {
+        m_connectionToServer->generateIndexKeyForRecord(requestIdentifier, indexInfo, keyPath, key, value, recordID);
+    });
+}
+
+void InProcessIDBServer::didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, transactionIdentifier = transactionIdentifier.isolatedCopy(), error = error.isolatedCopy()] {
+        m_connectionToServer->didStartTransaction(transactionIdentifier, error);
+    });
+}
+
+void InProcessIDBServer::didCloseFromServer(IDBServer::UniqueIDBDatabaseConnection& connection, const IDBError& error)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, databaseConnectionIdentifier = connection.identifier(), error = error.isolatedCopy()] {
+        m_connectionToServer->didCloseFromServer(databaseConnectionIdentifier, error);
+    });
+}
+
+void InProcessIDBServer::notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, requestIdentifier = requestIdentifier.isolatedCopy(), oldVersion, newVersion] {
+        m_connectionToServer->notifyOpenDBRequestBlocked(requestIdentifier, oldVersion, newVersion);
+    });
+}
+
+void InProcessIDBServer::databaseConnectionPendingClose(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier] {
+        assertIsCurrent(m_queue.get());
+        m_server->databaseConnectionPendingClose(databaseConnectionIdentifier);
+    });
+}
+
+void InProcessIDBServer::databaseConnectionClosed(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier] {
+        assertIsCurrent(m_queue.get());
+        m_server->databaseConnectionClosed(databaseConnectionIdentifier);
+    });
+}
+
+void InProcessIDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier)
+{
+    std::optional<WebCore::IDBResourceIdentifier> transactionIdentifierCopy;
+    if (transactionIdentifier)
+        transactionIdentifierCopy = transactionIdentifier->isolatedCopy();
+    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, transactionIdentifier = WTF::move(transactionIdentifierCopy)] {
+        assertIsCurrent(m_queue.get());
+        m_server->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
+    });
+}
+
+void InProcessIDBServer::didFireVersionChangeEvent(IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, databaseConnectionIdentifier, requestIdentifier = crossThreadCopy(requestIdentifier), connectionClosed] {
+        assertIsCurrent(m_queue.get());
+        m_server->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed);
+    });
+}
+
+void InProcessIDBServer::didGenerateIndexKeyForRecord(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IDBIndexInfo& indexInfo, const IDBKeyData& key, const IndexKey& indexKey, std::optional<int64_t> recordID)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, transactionIdentifier = crossThreadCopy(transactionIdentifier), requestIdentifier = crossThreadCopy(requestIdentifier), indexInfo = crossThreadCopy(indexInfo), key = crossThreadCopy(key), indexKey = crossThreadCopy(indexKey), recordID] {
+        assertIsCurrent(m_queue.get());
+        m_server->didGenerateIndexKeyForRecord(transactionIdentifier, requestIdentifier, indexInfo, key, indexKey, recordID);
+    });
+}
+
+void InProcessIDBServer::openDBRequestCancelled(const WebCore::IDBOpenRequestData& requestData)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->openDBRequestCancelled(requestData);
+    });
+}
+
+void InProcessIDBServer::getAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, const ClientOrigin& origin)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, identifier = m_connectionToServer->identifier(), requestIdentifier, origin = origin.isolatedCopy()] {
+        assertIsCurrent(m_queue.get());
+        m_server->getAllDatabaseNamesAndVersions(identifier, requestIdentifier, origin);
+    });
+}
+
+void InProcessIDBServer::didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, Vector<WebCore::IDBDatabaseNameAndVersion>&& databases)
+{
+    dispatchTaskReply([this, protectedThis = Ref { *this }, requestIdentifier, databases = crossThreadCopy(WTF::move(databases))]() mutable {
+        m_connectionToServer->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTF::move(databases));
+    });
+}
+
+void InProcessIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime)
+{
+    dispatchTask([this, protectedThis = Ref { *this }, modificationTime] {
+        assertIsCurrent(m_queue.get());
+        m_server->closeAndDeleteDatabasesModifiedSince(modificationTime);
+    });
+}
+
+void InProcessIDBServer::dispatchTask(Function<void()>&& function)
+{
+    ASSERT(isMainThread());
+    m_queue->dispatch(WTF::move(function));
+}
+
+void InProcessIDBServer::dispatchTaskReply(Function<void()>&& function)
+{
+    ASSERT(!isMainThread());
+    callOnMainThread(WTF::move(function));
+}

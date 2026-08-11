@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .scroller {
+            width: 400px;
+            height: 400px;
+            overflow-y: scroll;
+            border: 1px solid black;
+        }
+        
+        .changer {
+            background-color: cyan;
+            width: 200px;
+            height: 200px;
+        }
+
+        .anchor {
+            background-color: green;
+            width: 200px;
+            height: 200px;
+        }
+        
+        .spacer {
+            height: 2000px;
+        }
+    </style>
+    <script src="../../../resources/js-test.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="resources/scroll-anchoring-utils.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        
+        async function doAdjustments(numAdjustments, amount, expectAnchoring)
+        {
+            const scroller = document.querySelector('.scroller');
+            const changer = document.querySelector('.changer');
+            
+            scroller.scrollTo(0, 250);
+            
+            for (let i = 0; i < numAdjustments - 1; ++i) {
+                toggleHeight(changer, amount);
+                await UIHelper.renderingUpdate();
+            }
+
+            // Test whether anchoring is active on the last one.
+            const currentScrollTop = scroller.scrollTop;
+            toggleHeight(changer, amount);
+            anchoringActive = scroller.scrollTop === (currentScrollTop + amount);
+
+            if (expectAnchoring)
+                shouldBeTrue('anchoringActive');
+            else
+                shouldBeFalse('anchoringActive');
+        }
+
+        window.addEventListener('load', async () => {
+            await UIHelper.delayFor(0);
+
+            let iterations = 10;
+            let amount = 10;
+            let expectAnchor = false;
+            debug(`\nTesting anchoring with ${iterations} of size ${amount} - expect anchoring ${expectAnchor}`);
+            await doAdjustments(iterations, amount, expectAnchor);
+
+            window.scrollTo(0, 0);
+            finishJSTest();
+            
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="changer"></div>
+        <div class="anchor"></div>
+        <div class="spacer"></div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

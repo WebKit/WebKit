@@ -1,0 +1,11 @@
+Tests that we don't scroll back to the top when scrolled to the end of a scroller with a snap port having fractional height.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS maximumScrollOffset > 0 is true
+PASS Math.abs(scroller.scrollTop - maximumScrollOffset) <= 1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

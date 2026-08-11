@@ -1,0 +1,11 @@
+PASS - "stroke-width" property for "box1" element at 0.5s saw something close to: 61
+PASS - "stroke-width" property for "box1" element at 0.95s saw something close to: 55
+PASS - "stroke-width" property for "box2" element at 0.1s saw something close to: -6
+PASS - "stroke-width" property for "box2" element at 0.5s saw something close to: 19
+PASS - "stroke-width" property for "box2" element at 0.95s saw something close to: 54
+PASS - "stroke-width" property for "box3" element at 0.1s saw something close to: -12
+PASS - "stroke-width" property for "box3" element at 0.5s saw something close to: -53
+PASS - "stroke-width" property for "box4" element at 0.15s saw something close to: 64
+PASS - "stroke-width" property for "box4" element at 0.5s saw something close to: 26
+PASS - "stroke-width" property for "box4" element at 0.8s saw something close to: -11
+

@@ -1,0 +1,120 @@
+/*
+ * Copyright (C) 2025 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitXRPermissionRequest_h
+#define WebKitXRPermissionRequest_h
+
+#include <glib-object.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+#include <@API_INCLUDE_PREFIX@/WebKitSecurityOrigin.h>
+
+G_BEGIN_DECLS
+
+#define WEBKIT_TYPE_XR_PERMISSION_REQUEST            (webkit_xr_permission_request_get_type())
+#if !ENABLE(2022_GLIB_API)
+#define WEBKIT_XR_PERMISSION_REQUEST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_XR_PERMISSION_REQUEST, WebKitXRPermissionRequest))
+#define WEBKIT_XR_PERMISSION_REQUEST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_XR_PERMISSION_REQUEST, WebKitXRPermissionRequestClass))
+#define WEBKIT_IS_XR_PERMISSION_REQUEST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_XR_PERMISSION_REQUEST))
+#define WEBKIT_IS_XR_PERMISSION_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_XR_PERMISSION_REQUEST))
+#define WEBKIT_XR_PERMISSION_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_XR_PERMISSION_REQUEST, WebKitXRPermissionRequestClass))
+
+struct _WebKitXRPermissionRequestClass {
+    GObjectClass parent_class;
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitXRPermissionRequest, webkit_xr_permission_request, WEBKIT, XR_PERMISSION_REQUEST, GObject)
+
+/**
+ * WebKitXRSessionMode:
+ * @WEBKIT_XR_SESSION_MODE_INLINE: inline session mode.
+ * @WEBKIT_XR_SESSION_MODE_IMMERSIVE_VR: immersive-vr session mode.
+ * @WEBKIT_XR_SESSION_MODE_IMMERSIVE_AR: immersive-ar session mode.
+ *
+ * Enum values representing the XR session mode.
+ *
+ * See <https://immersive-web.github.io/webxr/#xrsessionmode-enum>
+ *
+ * Since: 2.52
+ */
+typedef enum {
+    WEBKIT_XR_SESSION_MODE_INLINE,
+    WEBKIT_XR_SESSION_MODE_IMMERSIVE_VR,
+    WEBKIT_XR_SESSION_MODE_IMMERSIVE_AR,
+} WebKitXRSessionMode;
+
+/**
+ * WebKitXRSessionFeatures:
+ * @WEBKIT_XR_SESSION_FEATURES_VIEWER: viewer feature.
+ * @WEBKIT_XR_SESSION_FEATURES_LOCAL: local feature.
+ * @WEBKIT_XR_SESSION_FEATURES_LOCAL_FLOOR: local-floor feature.
+ * @WEBKIT_XR_SESSION_FEATURES_BOUNDED_FLOOR: bounded-floor feature.
+ * @WEBKIT_XR_SESSION_FEATURES_UNBOUNDED: unbounded feature.
+ * @WEBKIT_XR_SESSION_FEATURES_HAND_TRACKING: hand tracking feature.
+ * @WEBKIT_XR_SESSION_FEATURES_HIT_TEST: hit test feature.
+ * @WEBKIT_XR_SESSION_FEATURES_LAYERS: WebXR Layers feature.
+ *
+ * Enum values representing the XR session features.
+ *
+ * See <https://immersive-web.github.io/webxr/#xrreferencespace-interface>.
+ * And, see <https://immersive-web.github.io/webxr-hand-input/> for hand tracking.
+ *
+ * Since: 2.52
+ */
+typedef enum {
+    WEBKIT_XR_SESSION_FEATURES_VIEWER        = 1 << 0,
+    WEBKIT_XR_SESSION_FEATURES_LOCAL         = 1 << 1,
+    WEBKIT_XR_SESSION_FEATURES_LOCAL_FLOOR   = 1 << 2,
+    WEBKIT_XR_SESSION_FEATURES_BOUNDED_FLOOR = 1 << 3,
+    WEBKIT_XR_SESSION_FEATURES_UNBOUNDED     = 1 << 4,
+    WEBKIT_XR_SESSION_FEATURES_HAND_TRACKING = 1 << 5,
+    WEBKIT_XR_SESSION_FEATURES_HIT_TEST      = 1 << 6,
+    WEBKIT_XR_SESSION_FEATURES_LAYERS        = 1 << 7,
+} WebKitXRSessionFeatures;
+
+WEBKIT_API WebKitSecurityOrigin *
+webkit_xr_permission_request_get_security_origin             (WebKitXRPermissionRequest *request);
+
+WEBKIT_API WebKitXRSessionMode
+webkit_xr_permission_request_get_session_mode                (WebKitXRPermissionRequest *request);
+
+WEBKIT_API WebKitXRSessionFeatures
+webkit_xr_permission_request_get_granted_features            (WebKitXRPermissionRequest *request) G_GNUC_WARN_UNUSED_RESULT;
+
+WEBKIT_API WebKitXRSessionFeatures
+webkit_xr_permission_request_get_consent_required_features   (WebKitXRPermissionRequest *request) G_GNUC_WARN_UNUSED_RESULT;
+
+WEBKIT_API WebKitXRSessionFeatures
+webkit_xr_permission_request_get_consent_optional_features   (WebKitXRPermissionRequest *request) G_GNUC_WARN_UNUSED_RESULT;
+
+WEBKIT_API WebKitXRSessionFeatures
+webkit_xr_permission_request_get_required_features_requested (WebKitXRPermissionRequest *request) G_GNUC_WARN_UNUSED_RESULT;
+
+WEBKIT_API WebKitXRSessionFeatures
+webkit_xr_permission_request_get_optional_features_requested (WebKitXRPermissionRequest *request) G_GNUC_WARN_UNUSED_RESULT;
+
+WEBKIT_API void
+webkit_xr_permission_request_set_granted_optional_features   (WebKitXRPermissionRequest *request,
+                                                              WebKitXRSessionFeatures    granted);
+
+G_END_DECLS
+
+#endif

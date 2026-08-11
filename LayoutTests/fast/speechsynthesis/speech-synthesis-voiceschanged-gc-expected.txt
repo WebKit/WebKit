@@ -1,0 +1,11 @@
+This tests SpeechSynthesis can fire voiceschanged event without crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS speechSynthesis.testProperty !== undefined is true
+PASS speechSynthesis.testProperty is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

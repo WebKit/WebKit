@@ -1,0 +1,88 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true KeyboardDismissalGestureEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    margin: 1em auto;
+}
+
+.outer-container {
+    width: 100%;
+    border: solid 1px lightgray;
+    padding: 100px 0;
+    box-sizing: border-box;
+}
+
+input {
+    font-size: 16px;
+    border: 1px solid lightgray;
+    border-radius: 22px;
+    width: 250px;
+    height: 24px;
+    padding: 1em;
+    outline: none;
+}
+
+.name-container {
+    margin-bottom: 1em;
+}
+</style>
+</head>
+<body>
+<div class="outer-container">
+    <div class="name-container"><input type="text" class="top" autocomplete="none" spellcheck="false" placeholder="Name"></div>
+    <input type="text" class="bottom" autocomplete="none" spellcheck="false" placeholder="Address">
+</div>
+<pre id="description"></pre>
+<pre id="console"></pre>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that tapping over a large element with a click handler dismisses the keyboard when <code>keyboardDismissalGestureEnabled</code> is enabled, even if the event handler prevents default. Requires WebKitTestRunner");
+
+    const topTextField = document.querySelector("input.top");
+    const bottomTextField = document.querySelector("input.bottom");
+    const container = document.querySelector(".outer-container");
+    for (const event of ["touchend", "mousedown", "click"]) {
+        container.addEventListener(event, event => {
+            if (event.target?.tagName !== "INPUT")
+                event.preventDefault();
+        });
+    }
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.setHardwareKeyboardAttached(false);
+    await UIHelper.activateElementAndWaitForInputSession(topTextField);
+    initialKeyboardWillHideCount = await UIHelper.keyboardWillHideCount();
+
+    // Tapping another text field again should not dismiss the keyboard.
+    await UIHelper.activateElement(bottomTextField);
+    await UIHelper.waitForDoubleTapDelay();
+    keyboardWillHideCountAfterTap = await UIHelper.keyboardWillHideCount();
+    shouldBe("initialKeyboardWillHideCount", "keyboardWillHideCountAfterTap");
+
+    // Tapping outside of the text field should dismiss the keyboard.
+    await UIHelper.tapAt(10, 100);
+    await UIHelper.waitForKeyboardToHide();
+    testPassed("Dismissed keyboard after tap");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

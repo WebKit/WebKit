@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<script src="../../../resources/js-test.js"></script>
+<body>
+<img id="plain" src="../resources/green-400x400.png">
+<img id="unselectable" style="-webkit-user-select: none" src="../resources/green-400x400.png">
+<div inert>
+    <img id="inInert" src="../resources/green-400x400.png">
+</div>
+<script>
+description('The user-select value of recognized text inside an image overlay should be all or none.');
+
+jsTestIsAsync = true;
+
+function overlayText(image) {
+    return internals.shadowRoot(image).querySelector(".image-overlay-text");
+}
+
+addEventListener("load", () => {
+    for (const image of document.querySelectorAll("img")) {
+        internals.installImageOverlay(image, [
+            {
+                topLeft : new DOMPointReadOnly(0, 0),
+                topRight : new DOMPointReadOnly(1, 0),
+                bottomRight : new DOMPointReadOnly(1, 1),
+                bottomLeft : new DOMPointReadOnly(0, 1),
+                children: [
+                    {
+                        text : "Hello",
+                        topLeft : new DOMPointReadOnly(0, 0),
+                        topRight : new DOMPointReadOnly(1, 0),
+                        bottomRight : new DOMPointReadOnly(1, 1),
+                        bottomLeft : new DOMPointReadOnly(0, 1),
+                    }
+                ],
+            }
+        ]);
+    }
+
+    shouldBeEqualToString("getComputedStyle(overlayText(plain)).webkitUserSelect", "all");
+    shouldBeEqualToString("getComputedStyle(overlayText(unselectable)).webkitUserSelect", "none");
+
+    shouldBeEqualToString("getComputedStyle(overlayText(inInert)).webkitUserSelect", "all");
+    getSelection().selectAllChildren(overlayText(inInert));
+    shouldBeEqualToString("getSelection().toString()", "");
+
+    plain.style.webkitUserSelect = "none";
+    shouldBeEqualToString("getComputedStyle(overlayText(plain)).webkitUserSelect", "none");
+    plain.style.webkitUserSelect = "text";
+    shouldBeEqualToString("getComputedStyle(overlayText(plain)).webkitUserSelect", "all");
+
+    getSelection().removeAllRanges();
+    finishJSTest();
+});
+</script>
+</body>
+</html>

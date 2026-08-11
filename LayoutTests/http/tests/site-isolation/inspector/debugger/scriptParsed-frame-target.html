@@ -1,0 +1,54 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.ScriptParsed");
+
+    let crossOriginTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.ScriptParsed.FrameTargetCreated",
+        description: "The static cross-origin iframe should have a frame target with a DebuggerAgent.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            crossOriginTarget = frameTargets.find((t) => t !== mainFrameTarget);
+
+            InspectorTest.expectNotNull(crossOriginTarget, "Should find a cross-origin frame target.");
+            InspectorTest.expectNotNull(crossOriginTarget.DebuggerAgent, "Cross-origin frame target should have a DebuggerAgent.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.ScriptParsed.FrameTargetHasScripts",
+        description: "Frame target should have received scriptParsed events for its scripts.",
+        async test() {
+            let targetData = WI.debuggerManager.dataForTarget(crossOriginTarget);
+
+            InspectorTest.expectGreaterThan(targetData.scripts.length, 0, "Frame target should have at least one parsed script.");
+
+            let hasFrameScript = targetData.scripts.some((script) => script.url && script.url.includes("debugger-frame-script.js"));
+            InspectorTest.expectThat(hasFrameScript, "Frame target should have the debugger-frame-script.js script.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.ScriptParsed.ScriptsIsolatedFromMainTarget",
+        description: "Main target should not have the frame target's scripts.",
+        async test() {
+            let mainTargetData = WI.debuggerManager.dataForTarget(WI.pageTarget);
+            let hasFrameScript = mainTargetData.scripts.some((script) => script.url && script.url.includes("debugger-frame-script.js"));
+            InspectorTest.expectFalse(hasFrameScript, "Main target should not have the debugger-frame-script.js script.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a frame target receives Debugger.scriptParsed events and scripts are isolated from the main target.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/debugger-frame.html"></iframe>
+</body>

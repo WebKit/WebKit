@@ -1,0 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true ] -->
+<html>
+<body>
+<div id="container">some<attachment id="attachment" title="title" subtitle="subtitle" action="action" progress="0.5"></attachment>text</div>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('Verify that SimplifiedBackwardsTextIterator treats <attachment> as elements as replaced element');
+
+const range = new Range;
+range.selectNodeContents(container);
+shouldBe('internals.rangeAsTextUsingBackwardsTextIterator(range)', '"some,text"');
+
+container.innerHTML = '';
+
+successfullyParsed = true;
+</script>
+</body>
+</html>

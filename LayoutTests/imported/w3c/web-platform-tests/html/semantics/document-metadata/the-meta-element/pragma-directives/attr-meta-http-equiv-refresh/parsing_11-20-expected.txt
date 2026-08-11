@@ -1,0 +1,12 @@
+
+PASS <meta>: "1\f"
+PASS <meta>: "1;"
+PASS Refresh header: "1;"
+PASS <meta>: "1,"
+PASS Refresh header: "1,"
+PASS <meta>: "1; url=foo"
+PASS Refresh header: "1; url=foo"
+PASS <meta>: "1, url=foo"
+PASS Refresh header: "1, url=foo"
+PASS <meta>: "1 url=foo"
+

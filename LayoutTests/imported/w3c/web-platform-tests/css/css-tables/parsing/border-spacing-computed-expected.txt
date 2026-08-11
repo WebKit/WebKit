@@ -1,0 +1,6 @@
+
+PASS Property border-spacing value '10px 20px'
+PASS Property border-spacing value '0'
+PASS Property border-spacing value 'calc(10px + 0.5em) calc(10px - 0.5em)'
+PASS Property border-spacing value 'calc(10px - 0.5em) calc(10px + 0.5em)'
+

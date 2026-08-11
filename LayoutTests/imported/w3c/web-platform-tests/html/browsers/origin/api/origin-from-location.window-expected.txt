@@ -1,0 +1,4 @@
+
+PASS Origin.from(window.location) throws.
+PASS Origin.from(Location) throws for cross-origin frames.
+

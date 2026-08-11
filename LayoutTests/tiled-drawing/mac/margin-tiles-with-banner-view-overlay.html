@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            width: 1200px;
+            height: 2000px;
+            /* The setBackgroundShouldExtendBeyondPage setting will only create margin tiles for documents
+               that have background images. */
+            background-image: url(resources/greenbox.png);
+            background-repeat: repeat;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function promiseNextFrame() {
+          return new Promise(resolve => {
+            requestAnimationFrame(resolve);
+          });
+        }
+
+        async function doTest()
+        {
+            if (!window.internals)
+                return;
+
+            internals.settings.setBackgroundShouldExtendBeyondPage(true);
+            internals.setSpeculativeTilingDelayDisabledForTesting(true);
+
+            await promiseNextFrame();
+
+            var output = '';
+
+            output += 'Without banner view overlay:\n';
+            output += internals.layerTreeAsText(document,
+                internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+
+            internals.setPageHasBannerViewOverlayForTesting(true);
+            await promiseNextFrame();
+
+            output += '\nWith banner view overlay:\n';
+            output += internals.layerTreeAsText(document,
+                internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+
+            internals.setPageHasBannerViewOverlayForTesting(false);
+            await promiseNextFrame();
+
+            output += '\nAfter removing banner view overlay:\n';
+            output += internals.layerTreeAsText(document,
+                internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+
+            document.getElementById('layers').innerText = output;
+            testRunner.notifyDone();
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<pre id="layers">Layer tree goes here</pre>
+</body>
+</html>

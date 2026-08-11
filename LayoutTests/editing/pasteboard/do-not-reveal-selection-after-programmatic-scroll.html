@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../editing.js"></script>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        description("This test verifies that we do not scroll to reveal the selection after pasting images in an editable area, if the page programmatically scrolls the editor. To run the test manually, copy the selected images and paste into the red editable container above. The container's scroll position should remain at 0.");
+
+        function allImagesAreDoneLoading() {
+            for (const image of Array.from(document.body.querySelectorAll("img"))) {
+                if (!image.complete)
+                    return false;
+            }
+            return true;
+        }
+
+        addEventListener("load", () => {
+            editor = document.getElementById("editor");
+            images = document.getElementById("images-to-copy");
+            lastLine = document.getElementById("lastLine");
+
+            editor.scrollTo(0, 200);
+            setSelectionCommand(images.firstChild, 0, images.lastChild, 1);
+
+            if (!window.testRunner) {
+                editor.addEventListener("paste", () => setTimeout(() => editor.scrollTo(0, 0)));
+                return;
+            }
+
+            execCopyCommand();
+            setSelectionCommand(lastLine, 0, lastLine, 0);
+            execPasteCommand();
+            editor.scrollTo(0, 0);
+
+            shouldBecomeEqual("allImagesAreDoneLoading()", "true", () => {
+                shouldBe("editor.scrollTop", "0");
+                finishJSTest();
+            });
+        });
+    </script>
+    <style>
+        div#editor {
+            width: 200px;
+            height: 200px;
+            overflow: scroll;
+            border: 1px solid tomato;
+        }
+    </style>
+</head>
+<body>
+    <div id="editor" contenteditable>
+        <span>Here's to the crazy ones, the misfits, the rebels, the trouble makers, the round pegs in the square holes, the ones who see things differently. There not fond of rules, and they have no respect for the status quo, you can quote then, disagree with them, glorify or vilify them, about the only thing you can't do is ignore them. Because they change things. They push the human race forward. And while some may see them as the crazy ones, we see genius. Because the people who are crazy enough to think they can change the world are the ones who do.</span>
+        <div><br id="lastLine"></div>
+    </div>
+    <div id="images-to-copy">
+        <div><img src="resources/mozilla.gif"></img></div>
+        <div><img src="resources/apple.gif"></img></div>
+        <div><img src="../resources/abe.png"></img></div>
+    </div>
+</body>
+</html>

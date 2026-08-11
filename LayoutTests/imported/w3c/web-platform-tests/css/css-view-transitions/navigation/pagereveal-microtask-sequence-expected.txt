@@ -1,0 +1,6 @@
+
+PASS
+  View transition promise reactions in incoming page should resolve before
+  the rendering continues (rAF, style/layout etc)
+
+

@@ -1,0 +1,17 @@
+Tests that Network.loadResource loads a resource in the context of a cross-origin iframe's frame under Site Isolation, routed through ProxyingNetworkAgent to the frame's owning WebContent process.
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.LoadResource
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.LoadResource.AwaitCrossOriginFrame
+PASS: Cross-origin child frame should appear in WI.networkManager.frames.
+PASS: Cross-origin child should have a different security origin from the main frame.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.LoadResource.Success
+PASS: loadResource should return the served body content.
+PASS: loadResource should return the served MIME type.
+PASS: loadResource should return HTTP status 200.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.LoadResource.InvalidFrameId
+PASS: Should produce an exception.
+Error: Invalid frameId format
+

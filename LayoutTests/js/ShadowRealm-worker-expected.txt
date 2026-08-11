@@ -1,0 +1,14 @@
+This tests that Shadow Realm APIs are available and work properly inside worker contexts
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/shadow-realm-worker.js
+PASS [Worker] import-value
+[Worker] shadowRealm: calling nested realm wrapper uses correct global: OK
+[Worker] shadowRealm: nested realm eval uses correct global: OK
+PASS [Worker] nested
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

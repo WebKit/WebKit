@@ -1,0 +1,3 @@
+Bug 106384: Heap-use-after-free in WebCore::RenderObject::willBeRemovedFromTree.
+
+Passed if this test did not crash or assert.

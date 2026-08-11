@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: <script> script evaluation
+CONSOLE MESSAGE: 'click' event dispatched
+CONSOLE MESSAGE: timer fired
+Tests for generating a ScriptProfiler.Event with ScriptProfiler.EventType.Other type. Web script evaluations are classified as "Other".
+
+
+== Running test suite: ScriptProfiler.EventType.Microtask
+-- Running test case: TrackingSession
+ScriptProfiler.trackingStart
+ScriptProfiler.trackingUpdate
+PASS: Event type should be Other.
+ScriptProfiler.trackingUpdate
+PASS: Event type should be Other.
+ScriptProfiler.trackingUpdate
+PASS: Event type should be Other.
+ScriptProfiler.trackingComplete
+

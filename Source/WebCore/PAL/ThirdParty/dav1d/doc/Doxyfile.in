@@ -1,0 +1,19 @@
+PROJECT_NAME            = dav1d
+OUTPUT_DIRECTORY        = @DOXYGEN_OUTPUT@
+STRIP_FROM_PATH         = @DOXYGEN_STRIP@
+OUTPUT_LANGUAGE         = English
+TAB_SIZE                = 4
+EXTRACT_ALL             = YES
+OPTIMIZE_OUTPUT_FOR_C   = YES
+DOXYFILE_ENCODING       = UTF-8
+TYPEDEF_HIDES_STRUCT    = YES
+
+QUIET                   = YES
+WARNINGS                = YES
+WARN_IF_UNDOCUMENTED    = YES
+
+INPUT                   = @DOXYGEN_INPUT@
+FILE_PATTERNS           = *.h
+
+GENERATE_HTML           = YES
+GENERATE_LATEX          = NO

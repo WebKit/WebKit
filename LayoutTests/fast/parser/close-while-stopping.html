@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<iframe id="aframe"></iframe>
+<script>
+description("Test that explicitly closing the document while it is already closing doesn't result in running the end twice.");
+
+var frameDocument = document.getElementById("aframe").contentDocument;
+frameDocument.open();
+frameDocument.onreadystatechange = function()
+{
+    debug(frameDocument.readyState);
+    frameDocument.close();
+};
+frameDocument.write("<script>document.close()</scr"+"ipt>");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

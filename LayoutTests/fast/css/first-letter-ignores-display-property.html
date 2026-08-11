@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .none::first-letter {
+        color: green;
+        display: none;
+    }
+
+    .block::first-letter {
+        color: green;
+        display: block;
+    }
+
+    .table::first-letter {
+        color: green;
+        display: table;
+    }
+
+    .flex::first-letter {
+        color: green;
+        display: -webkit-flex;
+        display: flex;
+    }
+
+    .grid::first-letter {
+        color: green;
+        display: grid;
+        display: grid;
+    }
+</style>
+
+<body>
+<p>This test checks that display property is ignored in ::first-letter pseudo-element.</p>
+<p>The tests passes if you see 5 lines with "Text" and the first letter green.</p>
+
+<div class="none">
+    Text
+</div>
+
+<div class="block">
+    Text
+</div>
+
+<div class="table">
+    Text
+</div>
+
+<div class="flex">
+    Text
+</div>
+
+<div class="grid">
+    Text
+</div>
+
+</body>
+</html>

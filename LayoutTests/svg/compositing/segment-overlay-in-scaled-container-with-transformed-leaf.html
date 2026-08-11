@@ -1,0 +1,20 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 240px; height: 240px; }
+    .anchor { will-change: transform; }
+</style>
+</head>
+<body>
+<!-- Plain rect between two composited anchors in a scaled opacity <g>, the rect itself rotated, painting in DOM order. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+    <g style="opacity: 0.8; transform: scale(1.3); transform-origin: 0 0">
+        <rect class="anchor" x="10" y="10" width="40" height="40" fill="red"/>
+        <rect x="70" y="70" width="40" height="40" fill="orange" style="transform: rotate(25deg); transform-origin: 90px 90px"/>
+        <rect class="anchor" x="130" y="130" width="40" height="40" fill="blue"/>
+    </g>
+</svg>
+</body>
+</html>

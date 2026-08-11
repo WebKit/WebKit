@@ -1,0 +1,3 @@
+
+PASS Test the supported value for <link rel=preload as="...">
+

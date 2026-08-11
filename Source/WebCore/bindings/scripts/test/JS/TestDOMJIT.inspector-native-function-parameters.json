@@ -1,0 +1,10 @@
+{
+    "TestDOMJIT": {
+        "prototype": {
+            "getAttribute": "name",
+            "getElementById": "elementId",
+            "getElementsByName": "elementName",
+            "item": "x, y"
+        }
+    }
+}

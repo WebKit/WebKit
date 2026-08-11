@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import logging
+import os
+import platform
+import sys
+
+libraries = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, libraries)
+
+from webkitcorepy import AutoInstall, Package, Version
+from webkitcorepy.config import Config
+
+AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
+
+
+def main(*args):
+    parser = argparse.ArgumentParser(description='Render a templated JSON or YAML config')
+    parser.add_argument(
+        'config_file',
+        nargs='?',
+        default=None,
+        help='Path to JSON or YAML configuration file (reads from stdin if omitted)',
+    )
+    parser.add_argument(
+        '--format', '-f',
+        choices=list(Config.Mode),
+        type=lambda v: Config.Mode[v.upper()],
+        metavar='{' + ','.join(mode.name.lower() for mode in Config.Mode) + '}',
+        help='Output format (default: matches input format)',
+    )
+    for mode in Config.Mode:
+        parser.add_argument(
+            '--{}'.format(mode.name.lower()),
+            dest='format',
+            action='store_const',
+            const=mode,
+            help='Output as {} (shorthand for --format {})'.format(mode.name, mode.name.lower()),
+        )
+    args = parser.parse_args(args)
+
+    if args.config_file and args.config_file != '-':
+        with open(args.config_file, 'r', encoding='utf-8') as f:
+            config = Config.load(f)
+    else:
+        if sys.stdin.isatty():
+            print('Error: no input provided. Specify a file or pipe content to stdin.', file=sys.stderr)
+            return 1
+        config = Config.loads(sys.stdin.read())
+
+    print(config.dumps(mode=args.format))
+    return 0
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.WARNING)
+    sys.exit(main(*sys.argv[1:]))

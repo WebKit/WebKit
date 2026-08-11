@@ -1,0 +1,10 @@
+
+FAIL setPathData() updates the attribute; CSS d property overrides used value path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "L", values: [10, 10] }
+  ])', 'path.setPathData' is undefined)
+FAIL setPathData() drives used value when no CSS d property is set path.setPathData is not a function. (In 'path.setPathData([
+    { type: "M", values: [0, 0] },
+    { type: "L", values: [20, 20] }
+  ])', 'path.setPathData' is undefined)
+

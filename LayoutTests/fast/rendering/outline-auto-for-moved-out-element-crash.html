@@ -1,0 +1,28 @@
+<style>
+    * {
+        outline: auto;
+    }
+    body {
+        column-count: 2;
+        column-span: all;
+    }
+    html {
+        overflow: -webkit-paged-y;
+    }
+</style>
+<html id="htmlID">
+<body>
+    foobar
+    <div id="divID" style="float: left; width: 10px; height: 10px;"></div>
+</body>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.body.offsetHeight;
+    document.getElementById("htmlID").style.outline = "1px solid";
+    document.body.offsetHeight;
+    document.body.style.columnSpan = "none";
+    document.body.offsetHeight;
+    document.body.innerHTML = 'PASS if no crash.';
+</script>
+</html>

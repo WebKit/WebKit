@@ -1,0 +1,10 @@
+Tests that percent lengths of fractional td width should rendered correctly even it is smaller than 1.
+
+
+
+PASS .cell 1
+PASS .cell 2
+PASS .cell 3
+0.5%
+1%
+5%

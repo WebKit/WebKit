@@ -1,0 +1,31 @@
+<html>
+<body>
+<canvas width="200" height="200" style="border: solid 1px gray"></canvas>
+<script>
+const text = "Hi";
+const clip = 20;
+const iterations = 10;
+const increment = 4;
+
+const canvas = document.getElementsByTagName('canvas')[0];
+const width = canvas.width / 2 - clip;
+const height = canvas.height / 2;
+const ctx = canvas.getContext('2d');
+
+ctx.font = "10px monospace";
+ctx.fillStyle = "blue";
+
+const maxWidth = Math.floor(ctx.measureText(text).width) - 1;
+
+for (let i = 0; i < iterations; ++i) {
+  const x = width + (i - iterations / 2) * increment;
+  const y = i * 10;
+  ctx.fillText("Hi", x, y, maxWidth);
+}
+
+ctx.clearRect(width, 0, canvas.width, canvas.height);
+ctx.clearRect(0, height, canvas.width, canvas.height);
+
+</script>
+</body>
+</html>

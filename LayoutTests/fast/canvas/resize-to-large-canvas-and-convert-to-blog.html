@@ -1,0 +1,9 @@
+<!doctype>
+<p>This test passes if it doesn't crash.</p>
+<canvas id="canvas" height="1">
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  canvas.width = 67566398;
+  canvas.toBlob(() => {})
+</script>

@@ -1,0 +1,37 @@
+
+PASS checkAddTransceiverNoTrack
+PASS checkAddTransceiverWithTrack
+PASS checkAddTransceiverWithAddTrack
+PASS checkAddTransceiverWithDirection
+PASS checkAddTransceiverWithSetRemoteOfferSending
+PASS checkAddTransceiverWithSetRemoteOfferNoSend
+PASS checkAddTransceiverBadKind
+PASS checkNoMidOffer
+PASS checkNoMidAnswer
+PASS checkSetDirection
+PASS checkSendrecvWithNoSendTrack
+PASS checkSendrecvWithTracklessStream
+PASS checkAddTransceiverNoTrackDoesntPair
+PASS checkAddTransceiverWithTrackDoesntPair
+PASS checkAddTransceiverThenReplaceTrackDoesntPair
+PASS checkAddTransceiverThenAddTrackPairs
+PASS checkAddTrackPairs
+PASS checkReplaceTrackNullDoesntPreventPairing
+PASS checkRemoveAndReadd
+PASS checkAddTrackExistingTransceiverThenRemove
+PASS checkRemoveTrackNegotiation
+PASS checkStopAfterClose
+FAIL checkRollbackAndSetRemoteOfferWithDifferentType promise_test: Unhandled rejection with value: object "InvalidAccessError: Failed to set remote offer sdp: A BUNDLE group contains a codec collision for header extension id=1. The id must be the same across all bundled media descriptions"
+PASS checkStopAfterCreateOfferWithReusedMsection
+PASS checkAddIceCandidateToStoppedTransceiver
+PASS checkBundleTagRejected
+PASS track with audio is muted after SRD
+PASS track with audio gets unmuted when packets flow.
+PASS track with audio gets muted when setting the transceiver direction to 'inactive'
+PASS track with audio gets unmuted when setting the transceiver direction to 'sendrecv' after 'inactive'
+PASS track with video is muted after SRD
+PASS track with video gets unmuted when packets flow.
+PASS track with video gets muted when setting the transceiver direction to 'inactive'
+PASS track with video gets unmuted when setting the transceiver direction to 'sendrecv' after 'inactive'
+PASS track with video stays muted when setting the transceiver direction to 'sendrecv' after 'inactive' but no packets flow
+

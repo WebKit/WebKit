@@ -1,0 +1,16 @@
+Test that Page.searchInResource routes by frameId's hosting process and returns per-line matches under site isolation.
+
+
+
+== Running test suite: SiteIsolation.Page.SearchInResource
+-- Running test case: SiteIsolation.Page.SearchInResource.RoutesToFramesHostingProcess
+PASS: Should resolve the cross-origin child frame's id.
+PASS: Should resolve the cross-origin child's stylesheet url.
+PASS: Result should be an array.
+PASS: Should report exactly one matching line.
+PASS: Match should be on line 0.
+PASS: Match's lineContent should include the query.
+
+-- Running test case: SiteIsolation.Page.SearchInResource.MalformedFrameIdFails
+PASS: searchInResource should fail for a malformed frameId.
+

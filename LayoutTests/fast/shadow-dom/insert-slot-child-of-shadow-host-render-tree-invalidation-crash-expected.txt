@@ -1,0 +1,6 @@
+This tests inserting a slot child under a shadow host.
+WebKit should not hit any assertion or crash and you should see 1, 2, & PASS below each on its own line.
+
+1
+2
+PASS - WebKit did not crash

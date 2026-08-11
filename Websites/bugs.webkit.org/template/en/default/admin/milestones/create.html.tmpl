@@ -1,0 +1,45 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product: object; Bugzilla::Product object representing the product to
+  #               which the milestone belongs.
+  #%]
+  
+[% title = BLOCK %]Add Milestone to Product '[% product.name FILTER html %]'[% END %]
+[% subheader = BLOCK %]This page allows you to add a new milestone to product
+                '[% product.name FILTER html %]'.[% END %]
+[% PROCESS global/header.html.tmpl
+  title = title
+  subheader = subheader
+  style_urls = ['skins/standard/admin.css']
+%]
+
+<form name="f" method="post" action="editmilestones.cgi">
+  <table id="admin_table_edit">
+    <tr>
+      <th><label for="milestone">Milestone:</label></th>
+      <td><input id="milestone" size="64" maxlength="64" name="milestone"
+                 autofocus required></td>
+    </tr>
+    <tr>
+      <th><label for="sortkey">Sortkey:</label></th>
+      <td><input id="sortkey" size="20" maxlength="20" name="sortkey"></td>
+    </tr>
+  </table>
+  <input type="submit" id="create" value="Add">
+  <input type="hidden" name="action" value="new">
+  <input type="hidden" name='product' value="[% product.name FILTER html %]">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+</form>
+
+[% PROCESS admin/milestones/footer.html.tmpl
+    no_add_milestone_link = 1
+ %]
+
+[% PROCESS global/footer.html.tmpl %]

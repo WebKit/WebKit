@@ -1,0 +1,24 @@
+This tests inserting an ordered list inside a shadow tree. WebKit should not hang.
+
+Before:
+| <div>
+|   contenteditable=""
+|   id="editor"
+|   "\n    one"
+|   <br>
+|   "\n    two"
+|   <br>
+|   "\n"
+
+After:
+| <div>
+|   contenteditable=""
+|   id="editor"
+|   <ol>
+|     <li>
+|       "one"
+|       <br>
+|     <li>
+|       "two"
+|       <br>
+|   "\n"

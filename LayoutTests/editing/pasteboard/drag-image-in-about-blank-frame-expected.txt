@@ -1,0 +1,3 @@
+Bug 14428: FCKEditor: Images disappear on drag/drop and copy/paste
+
+SUCCESS

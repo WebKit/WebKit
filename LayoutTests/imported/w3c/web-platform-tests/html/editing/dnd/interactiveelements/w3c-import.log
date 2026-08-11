@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/002.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/003.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/004.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/005.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/006.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/007.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/008.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/009.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/010.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/011.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/012.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/015.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/016.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/017.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/018.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/019.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/020.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/021.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/interactiveelements/022.html

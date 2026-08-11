@@ -1,0 +1,7 @@
+PASS internals.hasSpellingMarker(0, 5) became true
+PASS internals.hasSpellingMarker(6, 5) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Helol wordl this is a test
+Helol wordl this is a test

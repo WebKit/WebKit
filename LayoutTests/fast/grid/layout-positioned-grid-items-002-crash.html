@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<style>
+#container2 {
+    display: inline-grid;
+    -webkit-perspective: 1px;
+}
+#child1 {
+    grid-column: b / a;
+    position: absolute;
+}
+#child2 {
+    display: inline-grid;
+    position: absolute;
+}
+</style>
+<object>
+  <div id="container">
+    <div id="container2">
+      <span id="child1"></span>
+      <link id="child2">A</link>
+    </div>
+  </div>
+</object>
+<script>
+  onload = () => {
+    testRunner?.dumpAsText();
+    testRunner?.waitUntilDone();
+    container.appendChild(child1);
+    requestAnimationFrame(() => {
+      document.body.innerHTML = "PASS if no crash.";
+      testRunner?.notifyDone();
+    });
+}
+</script>

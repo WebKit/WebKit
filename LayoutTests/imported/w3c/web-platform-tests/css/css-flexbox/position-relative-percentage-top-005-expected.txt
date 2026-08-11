@@ -1,0 +1,10 @@
+
+PASS Row flex, flex-end item with height:100%, top: 50%
+PASS Row flex, flex-end item with auto height, top: 50%
+PASS Row flex, center item with height:100%, top: 50%
+PASS Row flex, flex-start item with height:50%, top: 50%
+PASS Nested flex, outer stretched, inner flex-end with height:100%, top: 50%
+PASS Row flex, flex-end item with fixed height:100px, top: 50%
+PASS Row flex, flex-end item with height:100%, auto-height container, top: 50%
+PASS Column flex with definite height, item with height:50%, top: 50%
+

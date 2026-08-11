@@ -1,0 +1,4 @@
+Scroll target
+
+PASS Scroll anchor is re-selected after adjustment if there are dirty descendants at selection time
+

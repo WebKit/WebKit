@@ -1,0 +1,40 @@
+<html>
+<head>
+<style>
+div {
+  display: -moz-box;
+  display: -webkit-box;
+  display: box;
+  background-color: blue;
+  width: 100px;
+  height: 100px;
+}
+
+.first {
+  visibility: hidden;
+  background-color: red;
+  -moz-box-flex: 1;
+  -webkit-box-flex: 1;
+  box-flex: 1;
+  width: 50px;
+  height: 100px;
+}
+
+.second {
+  background-color: green;
+  -moz-box-flex: 1;
+  -webkit-box-flex: 1;
+  box-flex: 1;
+  width: 50px;
+  height: 100px;
+}
+
+</style>
+</head>
+<body>
+<div>
+  <div class="first"></div>
+  <div class="second"></div>
+</div>
+</body>
+</html>

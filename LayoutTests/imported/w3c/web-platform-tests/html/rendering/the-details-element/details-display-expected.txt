@@ -1,0 +1,12 @@
+This is the real summary.
+This summary is not special.
+
+PASS default display of details element is block
+PASS default display of first summary child of details is list-item
+PASS default display of other summary element in details is block
+PASS default display of summary element outside details is block
+PASS display of details element can be changed
+PASS display of first summary child of details can be changed
+PASS display of other summary element in details can be changed
+PASS display of summary element outside details can be changed
+

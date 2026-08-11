@@ -1,0 +1,14 @@
+
+FAIL close assert_own_property: expected property "session-close-info" missing
+PASS close without waiting for ready
+FAIL close with code and reason assert_own_property: expected property "session-close-info" missing
+FAIL close with code and long reason assert_own_property: expected property "session-close-info" missing
+PASS server initiated closure without code and reason
+PASS server initiated closure with code and reason
+PASS server initiated connection closure
+PASS opening unidirectional stream before ready
+PASS opening bidirectional stream before ready
+PASS server initiated closure while opening unidirectional stream before ready
+PASS server initiated closure while opening bidirectional stream before ready
+PASS reading closed property after close should work
+

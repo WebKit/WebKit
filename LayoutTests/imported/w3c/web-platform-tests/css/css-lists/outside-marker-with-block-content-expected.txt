@@ -1,0 +1,6 @@
+x
+x
+
+PASS A list item with an outside marker and block level content is as tall as that content
+PASS The same holds after the marker changes from inside to outside
+

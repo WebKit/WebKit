@@ -1,0 +1,51 @@
+<html> 
+<head>
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+</style>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+function editingTest() {
+    for (i = 0; i < 4; i++)
+        moveSelectionForwardByCharacterCommand();
+    for (i = 0; i < 3; i++)
+        insertParagraphCommand();
+    typeCharacterCommand();
+    extendSelectionBackwardByLineCommand();
+    deleteCommand();
+
+    Markup.description(document.querySelector('.explanation').textContent);
+    Markup.dump('root');
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div class="explanation">
+Should see two blank lines after "foo" each in a separate red box (class=editing).
+</div>
+
+<div contenteditable="true" id="root" style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;">
+<div id="test" class="editing">foo</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

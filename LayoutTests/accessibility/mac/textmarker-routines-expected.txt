@@ -1,0 +1,15 @@
+This verifies usage of isTextMarkerValid, indexForTextMarker and textMarkerForIndex.
+
+PASS: item1.isTextMarkerValid(firstTextMarker) === true
+PASS: item1.indexForTextMarker(firstTextMarker) === 0
+PASS: item1.textMarkerForIndex(0).isEqual(firstTextMarker) === true
+PASS: item1.isTextMarkerValid(firstTextMarker) === false
+PASS: item2.isTextMarkerValid(secondTextMarker) === true
+PASS: item2.indexForTextMarker(secondTextMarker) === 5
+PASS: item2.textMarkerForIndex(item2.indexForTextMarker(secondTextMarker)).isEqual(secondTextMarker) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+text
+text

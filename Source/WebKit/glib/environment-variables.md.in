@@ -1,0 +1,93 @@
+Title: Environment variables
+Slug: environment-variables
+
+# List of environment variables
+
+WebKit uses several environment variables, most of which are designed for developers or debugging purposes. These variables should be used carefully, as they can impact the behavior of the software. These environment variables and their behavior are not guaranteed to remain stable across versions of WebKit. Always ensure that your WebKit version corresponds to the documentation you are referencing to avoid compatibility issues.
+
+## Debugging Variables
+
+- `WEBKIT_DEBUG`
+Defines a comma-separated list of logging channels and their levels for WebKit's debugging output. Logging channels correspond to specific areas of functionality, such as networking, storage, and scrolling. For detailed usage, refer to [WebKit's Logging Guide](https://docs.webkit.org/Build%20%26%20Debug/Logging.html).
+    - **Enabling a channel**: Specify the channel's name with an optional level (e.g., `Loading=warning` outputs warnings and errors for the Loading channel).
+    - **Disabling a channel**: Prefix the name with a minus sign (`-`) (e.g., `all,-Network` enables all channels, except Network).
+    - **Enabling all channels**: Use the wildcard `"all"` as the content of `WEBKIT_DEBUG`.
+    - **Child processes**: The same configuration is shared to child processes spawned by the browser, like the `WebProcess` and `NetworkProcess`.
+    - **WebDriver-related channels**: In addition to the browser, the WebDriver service executable also uses WebKit's logging infrastructure, defining the following channels:
+        - `WebDriverClassic` - For the HTTP-based [WebDriver](https://w3c.github.io/webdriver/) Classic prototol.
+        - `WebDriverBiDi` - For the WebSockets-based [WebDriver BiDi](https://github.com/w3c/webdriver-bidi) protocol.
+        - `SessionHost` - For messages related to the management of the Browser under automation.
+    - **OpenGL context debugging**: When the `GLContext` logging channel is enabled, WebKit creates
+      EGL contexts with [debug logging](https://wikis.khronos.org/opengl/Debug_Output) configured,
+      which may result in a small graphics performance penalty. If the log level is set to `debug`,
+      e.g. with `WEBKIT_DEBUG='GLContext=debug'`, backtraces leading to errors are added to the
+      error messages.
+
+- `WEBKIT_DEBUG_OUTPUT`
+Selects where the log messages that would be sent the journal should actually go. Only available when
+WebKit is built with journald support (`ENABLE_JOURNALD_LOG`, the default for the GTK and WPE ports).
+It does not alter channel filtering or which messages are enabled.
+    - **Default** (unset): messages go to the systemd journal, if its socket is present, and can be
+      read back filtering by the `WEBKIT_SUBSYSTEM` and `WEBKIT_CHANNEL` fields, e.g.
+      `journalctl WEBKIT_SUBSYSTEM=WPEWebKit WEBKIT_CHANNEL=WebDriverBiDi`. Use `WebKitGTK` as the
+      subsystem for the GTK port. When the journal is not reachable, for instance in a container or
+      a CI image that has no journald running, messages are written to standard error instead.
+    - `journal` - Always write to the systemd journal, even if it's inaccessible.
+    - `stderr` - Always write to standard error, one line per message, prefixed with the subsystem,
+      the channel and the priority, and followed by the source location, if available. Useful to
+      capture the output of a single process into a file, and to force the fallback on a machine
+      that does run journald.
+
+## Graphics-related variables
+
+#if WPE
+
+- `WPE_DRM_DEVICE`
+Specifies the primary device that WebKit will use for gpu buffer allocation when it needs access to the main device. It is interesting for DRM backend. You need to specify a file path.
+Example: `/dev/dri/card0`
+
+- `WPE_DRM_RENDER_NODE`:
+Specifies the render device that WebKit will use for buffer allocation, this is the one used for allocating general gpu buffers. You need to specify a file path.
+Example: `/dev/dri/renderD128`
+
+- `WPE_BUFFER_FORMAT`:
+You can ask WebKit to try to use a format instead the one that is recommended by the underlying system (wayland, drm, etc.), when you define this variable then no other data is going to be used from wayland so it is recommended to also define the drm devices. The value must follow the following format: `pixel_format:memory_layout:usage`:
+    - Pixel format, specifies the pixel format as a fourcc code, example: `AR24`
+    - Memory layout, defines the memory layout of the buffer, 0 for linear layout
+    - Usage, indicates how the buffers is going to be used: `rendering`, `mapping` and `scanout`
+Example: `AR24:0:scanout`
+
+#endif
+
+- `WEBKIT_SKIA_CPU_PAINTING_THREADS`:
+Specifies the amount of CPU worker threads to use for multi-threaded tile rendering using Skia.
+By default we use as much CPU worker threads as the amount of CPU cores in the system divided by two, capped at eight.
+Example: `2`
+
+- `WEBKIT_SKIA_GPU_PAINTING_THREADS`:
+Specifies the amount of GPU worker threads to use for multi-threaded tile rendering using Skia.
+By default we use two GPU worker threads if the number of CPU cores in the system exceeds 3,
+otherwise we a single GPU worker thread.
+Example: `0` (don't use GPU for tile rendering)
+
+- `WEBKIT_SKIA_ENABLE_CPU_RENDERING`:
+Disallow the use of GPU for rendering purposes. If only setting `WEBKIT_SKIA_GPU_PAINTING_THREADS=0`,
+the GPU may still be used for e.g. accelerated filters (anything using accelerated ImageBuffers),
+even though the tile painting is performed using the CPU only.
+Example: `1`
+
+- `WEBKIT_SKIA_USE_LINEAR_TILE_TEXTURES`:
+Force using a linear texture format for the tile textures -- this allows to bypass OpenGL for texture updates,
+directly modifying dma-buf contents. This might degrade performance, depending on the capabilities of the GPU
+and display controller -- use with care. However, if supported by the GPU/IPU combination, it can reduce the
+kernel load, reduce staging copies in Mesa, etc. Currently some devices out of the i.MX8 line might benefit.
+
+## Remote Web Inspector Variables
+
+- `WEBKIT_INSPECTOR_SERVER`: The address and port in `ip:port` format (e.g.
+  `127.0.0.1:10000`) where the remote inspector service will listen for
+  connections.
+- `WEBKIT_INSPECTOR_HTTP_SERVER`: The address and port in `ip:port` format
+  where the remote inspector service will listen for HTTP connections.
+
+See [Remote Web Inspector](remote-inspector.html) for more details.

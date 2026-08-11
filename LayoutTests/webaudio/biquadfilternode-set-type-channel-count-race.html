@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function runTest()
+{
+    const context = new OfflineAudioContext(1, 48000 * 30, 48000);
+    const biquad = new BiquadFilterNode(context);
+    biquad.channelCountMode = 'explicit';
+    biquad.channelCount = 32;
+    biquad.connect(context.destination);
+
+    let last = biquad;
+    for (let i = 0; i < 50; ++i) {
+        const node = new BiquadFilterNode(context);
+        last.connect(node);
+        last = node;
+    }
+    last.connect(context.destination);
+
+    context.startRendering();
+
+    const types = ['lowpass', 'highpass'];
+    const counts = [31, 32];
+    let k = 0;
+    const deadline = performance.now() + 2000;
+
+    function spin()
+    {
+        for (let outer = 0; outer < 200; ++outer) {
+            biquad.channelCount = counts[k & 1];
+            ++k;
+            for (let i = 0; i < 4000; ++i)
+                biquad.type = types[i & 1];
+        }
+        if (performance.now() < deadline)
+            setTimeout(spin, 0);
+        else {
+            document.getElementById('result').textContent = 'PASS: did not crash.';
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    }
+    spin();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>This test passes if it does not crash when toggling BiquadFilterNode.type while the channel count changes on the audio thread.</p>
+<p id="result"></p>
+</body>
+</html>

@@ -1,0 +1,5 @@
+| <span>
+|   contenteditable=""
+|   style="display: block; white-space: pre-line;"
+|   "\n"
+|   "<#selection-caret>\n"

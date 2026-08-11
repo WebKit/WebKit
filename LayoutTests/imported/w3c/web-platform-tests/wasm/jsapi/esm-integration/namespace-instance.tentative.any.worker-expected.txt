@@ -1,0 +1,5 @@
+
+FAIL WebAssembly.namespaceInstance() should return the underlying instance with shared state promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.namespaceInstance is not a function. (In 'WebAssembly.namespaceInstance(wasmNamespace)', 'WebAssembly.namespaceInstance' is undefined)"
+PASS WebAssembly.namespaceInstance() should throw TypeError for non-WebAssembly namespaces
+FAIL WebAssembly.namespaceInstance() should work correctly with multiple modules promise_test: Unhandled rejection with value: object "TypeError: WebAssembly.namespaceInstance is not a function. (In 'WebAssembly.namespaceInstance(exportsModule)', 'WebAssembly.namespaceInstance' is undefined)"
+

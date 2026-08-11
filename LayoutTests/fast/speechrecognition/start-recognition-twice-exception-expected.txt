@@ -1,0 +1,12 @@
+Verify that starting a started recognition throws exception.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS recognition = new webkitSpeechRecognition(); did not throw exception.
+PASS recognition.start() did not throw exception.
+PASS recognition.start() threw exception InvalidStateError: Recognition is being started or already started.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

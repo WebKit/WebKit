@@ -1,0 +1,17 @@
+Verifies that drawing a WebGL canvas to a 2D canvas captures the WebGL contents at draw time, even when the WebGL drawing buffer is mutated afterwards.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+TEST COMPLETE: 5 PASS, 0 FAIL
+
+HTMLCanvasElement WebGL drawn into 2D canvas via drawImage:
+PASS getError was expected value: NO_ERROR :
+PASS No failures HTMLCanvasElement
+OffscreenCanvas WebGL transferred to ImageBitmap, then drawn into 2D canvas:
+PASS getError was expected value: NO_ERROR :
+PASS No failures OffscreenCanvas
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

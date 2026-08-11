@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+    var promise;
+
+    function doTest()
+    {
+        if (!window.internals) {
+            failTest("Internals is required for this test.")
+            return;
+        }
+
+         run('internals.enableMockMediaCapabilities()');
+         next();
+    }
+
+    function next() {
+         if (!tests.length) {
+            endTest();
+            return;
+        }
+
+        var nextTest = tests.shift();
+        consoleWrite('');
+        nextTest();
+    }
+
+    tests = [
+         function() {
+             consoleWrite('Smooth and power efficient 720P MP4 decoding');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"avc1\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, true, true, true);
+                 next();
+             }, next);
+         },
+         function() {
+             consoleWrite('Not smooth (too high framerate) but power efficient 720P MP4 decoding');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"avc1\"', height: 720, bitrate: 1000, width: 1280, framerate: 60.4/2 } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, true, false, true);
+                 next();
+             }, next);
+         },
+         function() {
+             consoleWrite('Unsupported protocol: MSE');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"avc1\"', height: 720, bitrate: 1000, width: 1280, framerate: 24 } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, false, false, false);
+                 next();
+             }, next);
+         },
+         function() {
+             consoleWrite('Unsupported video resolution: 1080P');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"avc1\"', height: 1080, bitrate: 1000, width: 1920, framerate: 24 } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, false, false, false);
+                 next();
+             }, next);
+         },
+         function() {
+             consoleWrite('Smooth and power efficient audio MP4 decoding');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs=\"mp4a.40.2\"', channels: '2', bitrate: 1000, samplerate: 44100  } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, true, true, true);
+                 next();
+             }, next);
+         },
+         function() {
+             consoleWrite('Smooth but power inefficient audio MP4 decoding');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs=\"mp4a.40.2\"', channels: '2', bitrate: 2000, samplerate: 44100  } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, true, true, false);
+                 next();
+             }, next);
+         },
+         function() {
+             consoleWrite('Not smooth but power efficient audio MP4 decoding');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs=\"mp4a.40.2\"', channels: '5.1', bitrate: 1000, samplerate: 44100  } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, true, false, true);
+                 next();
+             }, next);
+         },
+         function() {
+             consoleWrite('Not smooth and power inefficient audio MP4 decoding');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp4; codecs=\"mp4a.40.2\"', channels: '5.1', bitrate: 2000, samplerate: 44100  } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, true, false, false);
+                 next();
+             }, next);
+         },
+         function() {
+             consoleWrite('Unsupported audio codec: ogg vorbis');
+             run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/ogg; codecs=\"vorbis\"', channels: '2' } });");
+             shouldResolve(promise).then((info) => {
+                 checkMediaCapabilitiesInfo(info, false, false, false);
+                 next();
+             }, next);
+         },
+    ];
+    </script>
+</head>
+<body onload="doTest()" />
+</html>

@@ -1,0 +1,9 @@
+This test ensures toggling aria-hidden on a deep DOM does not crash due to unbounded recursion in enumerateDescendantsIncludingIgnored.
+
+PASS: webArea.childrenCount === 0
+PASS: webArea.childrenCount > 0 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Deep content

@@ -1,0 +1,5 @@
+
+PASS AudioParam: defaultValue attribute value
+PASS AudioParam: defaultValue is a read-only attribute
+PASS AudioParam: value attribute is initialized correctly
+

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:padding="8dp"
+  tools:context="org.webrtc.examples.androidnativeapi.MainActivity">
+
+  <org.webrtc.SurfaceViewRenderer
+    android:id="@+id/local_renderer"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:layout_margin="8dp"/>
+
+  <org.webrtc.SurfaceViewRenderer
+    android:id="@+id/remote_renderer"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:layout_margin="8dp"/>
+
+
+  <LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    style="?android:attr/buttonBarStyle">
+
+    <Button
+      android:id="@+id/call_button"
+      android:text="@string/call_button"
+      style="?android:attr/buttonBarButtonStyle"
+      android:layout_width="0dp"
+      android:layout_height="48dp"
+      android:layout_weight="1"
+      android:layout_margin="8dp"/>
+
+    <Button
+      android:id="@+id/hangup_button"
+      android:text="@string/hangup_button"
+      style="?android:attr/buttonBarButtonStyle"
+      android:layout_width="0dp"
+      android:layout_height="48dp"
+      android:layout_weight="1"
+      android:layout_margin="8dp"/>
+
+  </LinearLayout>
+
+</LinearLayout>

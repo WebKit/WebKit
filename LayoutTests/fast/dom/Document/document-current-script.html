@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description('Test basic usage of document.currentScript')
+
+function logCurrentScript() {
+    var script = document.currentScript
+    var s = '&lt;script id="' + script.id + '"';
+    if (script.src)
+        s += ' src="..."';
+    if (script.defer)
+        s += ' defer';
+    if (script.async)
+        s += ' async';
+    s += '>';
+    debug(s);
+}
+
+</script>
+<script id="a">
+logCurrentScript();
+</script>
+<script id="b">
+logCurrentScript();
+</script>
+<script id="c">
+logCurrentScript();
+document.write('<script id="d">logCurrentScript();<\/script>');
+logCurrentScript();
+</script>
+
+<script id="defer-1" defer src="resources/log-current-script.js"></script>
+<script id="e" src="resources/log-current-script.js"></script>
+
+
+<script id="f">
+logCurrentScript();
+document.write('<script id="g" src="resources/log-current-script.js"><\/script>');
+logCurrentScript();
+</script>
+
+<script id="h">
+logCurrentScript();
+document.write('<script id="defer-2" defer src="resources/log-current-script.js"><\/script>');
+logCurrentScript();
+</script>
+
+<script id="i">
+logCurrentScript();
+
+var script = document.createElement('script');
+script.id = 'j';
+script.textContent = 'logCurrentScript();';
+script.async = false;
+script.defer = false;
+document.head.appendChild(script);
+
+logCurrentScript();
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+<script>
+window.onload = function() {
+  shouldBeNull('document.currentScript');
+  finishJSTest();
+};
+</script>
+</body>
+</html>
+

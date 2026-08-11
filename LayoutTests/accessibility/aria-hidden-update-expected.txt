@@ -1,0 +1,19 @@
+This test makes sure that when aria-hidden changes, the AX hierarchy is updated.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS container.childAtIndex(0).isEqual(button1) is true
+PASS container.childAtIndex(1).isEqual(button2) is true
+PASS container.childAtIndex(2).isEqual(button3) is true
+PASS container.childAtIndex(0).isEqual(button1) is true
+PASS container.childAtIndex(1).isEqual(button3) === true
+PASS container.childAtIndex(0).isEqual(button3) === true
+PASS container.childAtIndex(0).isEqual(button2) === true
+PASS container.childAtIndex(1).isEqual(button3) === true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Button 1
+Button 2
+Button 3

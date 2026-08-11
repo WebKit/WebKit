@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+#target {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    animation: anim1 50ms forwards, anim2 5s 50ms;
+}
+
+@keyframes anim1 {
+    0%, 100% { background-color: red; }
+    50% { background-color: orange; }
+}
+
+@keyframes anim2 {
+    0% { transform: translateX(0) }
+    5%, 100% { transform: translateX(500px) }
+}
+
+body {
+    background-color: white;
+}
+
+#cache > div {
+    position: absolute;
+    background-color: white;
+}
+
+#cache > div:nth-of-type(1) {
+    top: 0;
+    left: 100px;
+    right: 0;
+    height: 100%;
+}
+
+#cache > div:nth-of-type(2) {
+    top: 100px;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+</style>
+</head>
+<body>
+<div id="target"></div>
+<div id="cache">
+    <div></div>
+    <div></div>
+</div>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    document.getElementById("target").addEventListener("animationstart", event => {
+        if (event.animationName == "anim2")
+            setTimeout(() => testRunner.notifyDone(), 100);
+    });
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+
+
+FAIL With credentials promise_test: Unhandled rejection with value: "assert_equals: Socket unexpectedly reused expected \"ok\" but got \"Multiple partition IDs used on a socket\""
+FAIL Without credentials promise_test: Unhandled rejection with value: "assert_equals: Socket unexpectedly reused expected \"ok\" but got \"Multiple partition IDs used on a socket\""
+FAIL Cross-site resources with credentials promise_test: Unhandled rejection with value: "assert_equals: Socket unexpectedly reused expected \"ok\" but got \"Multiple partition IDs used on a socket\""
+FAIL Cross-site resources without credentials promise_test: Unhandled rejection with value: "assert_equals: Socket unexpectedly reused expected \"ok\" but got \"Multiple partition IDs used on a socket\""
+FAIL Iframes promise_test: Unhandled rejection with value: "assert_equals: Socket unexpectedly reused expected \"ok\" but got \"Multiple partition IDs used on a socket\""
+FAIL Workers promise_test: Unhandled rejection with value: "assert_equals: Socket unexpectedly reused expected \"ok\" but got \"Multiple partition IDs used on a socket\""
+FAIL Workers with cross-site resources promise_test: Unhandled rejection with value: "assert_equals: Socket unexpectedly reused expected \"ok\" but got \"Multiple partition IDs used on a socket\""
+FAIL CSP sandbox promise_test: Unhandled rejection with value: "assert_equals: Socket unexpectedly reused expected \"ok\" but got \"Multiple partition IDs used on a socket\""
+FAIL about:blank from opaque origin iframe promise_test: Unhandled rejection with value: "assert_equals: Socket unexpectedly reused expected \"ok\" but got \"Multiple partition IDs used on a socket\""
+

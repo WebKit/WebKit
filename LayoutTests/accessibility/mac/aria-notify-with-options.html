@@ -1,0 +1,56 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsARIANotifyEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<meta http-equiv="content-language" content="en">
+</head>
+<body>
+
+<button id="button" lang="da">Hej</button>
+
+<script>
+var output = "Tests that ariaNotify sends the right userInfo when options are specified.\n\n";    
+var notificationCount = 0;
+var testFinished = false;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested") {
+        output += `Received announcement request:\n`;
+        output += formatAriaNotifyUserInfo(userInfo);
+        notificationCount++;
+
+        if (notificationCount == 1) {
+            // Specify both a priority and interrupt.
+            document.ariaNotify("Chicago", { priority: "high", interrupt: "all" });
+        }
+
+        if (notificationCount == 2)
+            document.getElementById("button").ariaNotify("Boston", { priority: "high", interrupt: "pending" });
+
+        if (notificationCount == 3)
+            document.getElementById("button").ariaNotify("Boston", { priority: "high" });
+
+        if (notificationCount == 4)
+            testFinished = true;
+    }
+}
+
+if (accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    accessibilityController.addNotificationListener(notificationCallback);
+
+    // Just specify a priority.
+    document.ariaNotify("San Francisco", { priority: "high" });
+
+    setTimeout(async function() {
+        await waitFor(() => testFinished);
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

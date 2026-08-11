@@ -1,0 +1,63 @@
+
+PASS :decl:case="uses"
+PASS :decl:case="shadowed"
+PASS :decl:case="gone"
+FAIL :eval_order: assert_unreached:
+  - EXPECTATION FAILED: expect_order(1)) unexpectedly reached at event 3
+    Output values (length: 6): 1, 5, 6, 5, 2, 3
+    expect_order@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:118:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/statement/compound.spec.js:158:19
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:102:39
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/statement/compound.spec.js:143:21
+    runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:528:22
+    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:680:31
+    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
+    WGSL:
+
+    struct Outputs {
+      count : u32,
+      data  : array<u32>,
+    };
+    @group(0) @binding(0) var<storage, read>       inputs  : array<i32>;
+    @group(0) @binding(1) var<storage, read_write> outputs : Outputs;
+
+    fn push_output(value : u32) {
+      outputs.data[outputs.count] = value;
+      outputs.count++;
+    }
+
+    @compute @workgroup_size(1)
+    fn main() {
+      _ = &inputs;
+      _ = &outputs;
+
+    arr[0] = 41;
+    push_output(1); // expect_order(0)
+    arr[idx()] += foo();
+    push_output(2); // expect_order(3)
+    if (arr[0] == 42) {
+      push_output(3); // expect_order(4)
+    } else {
+      push_output(4); // expect_not_reached()
+    }
+
+    }
+
+    var<private> arr : array<u32, 1>;
+    fn idx() -> u32 {
+      push_output(5); // expect_order(1)
+      return 0;
+    }
+    fn foo() -> u32 {
+      push_output(6); // expect_order(2)
+      arr[0] = 10;
+      return 1;
+    }
+
+
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:416:34
+    runFlowControlTest@http://127.0.0.1:8000/webgpu/webgpu/shader/execution/flow_control/harness.js:203:21
+    @http://127.0.0.1:8000/webgpu/webgpu/shader/execution/statement/compound.spec.js:143:21
+ Reached unreachable code
+

@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div tabindex=0 id="grid" role="grid" aria-readonly="true">
+    <div role="presentation">
+        <table role="presentation">
+            <thead>
+                <tr id="r0">
+                    <th role="columnheader" aria-sort="ascending">&nbsp;</th>
+                    <th role="columnheader">Name</th>
+                    <th role="columnheader">Time</th>
+                    <th role="columnheader">Popularity</th>
+                    <th role="columnheader"> Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr role="row" id="r1">
+                    <td role="gridcell">
+                        <span class="index"><span>1</span></span>
+                    </td>
+                    <td role="gridcell">
+                        <span><span>Test</span></span>
+                    </td>
+                    <td role="gridcell">
+                        <span><span>Test</span></span>
+                    </td>
+                    <td role="gridcell">
+                        <span><span>Test</span></span>
+                    </td>
+                </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+var output = "This tests that an ARIA grid with a hierarchy that ignores render elements in between will still expose the correct elements.\n\n";
+
+if (window.accessibilityController) {
+    var grid = accessibilityController.accessibleElementById("grid");
+    output += expect("grid.childrenCount", "8");
+
+    var rowOne = grid.childAtIndex(0);
+    output += expect("rowOne.role", "'AXRole: AXRow'");
+    var rowTwo = grid.childAtIndex(1);
+    output += expect("rowTwo.role", "'AXRole: AXRow'");
+    output += expect("grid.childAtIndex(3).role", "'AXRole: AXColumn'");
+
+    output += expect("rowOne.childrenCount", "5");
+    output += expect("rowOne.childAtIndex(0).role", "'AXRole: AXCell'");
+    output += expect("rowOne.childAtIndex(1).role", "'AXRole: AXCell'");
+    output += expect("rowOne.childAtIndex(1).childAtIndex(0).role", "'AXRole: AXStaticText'");
+    output += expect("rowOne.childAtIndex(1).childAtIndex(0).stringValue", "'AXValue: Name'");
+
+    output += expect("rowTwo.childrenCount", "4");
+    output += expect("rowTwo.childAtIndex(0).role", "'AXRole: AXCell'");
+    output += expect("rowTwo.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXStaticText'");
+    output += expect("rowTwo.childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: 1'");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

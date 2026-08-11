@@ -1,0 +1,10 @@
+
+PASS testing width: calc(10% + 2em)
+PASS testing width: calc(5% + 4rem)
+PASS testing width: calc(8lh + 7px)
+PASS testing height: calc(10% + 6pt)
+PASS testing width: calc(4em + 2.6458333cm)
+PASS testing height: calc(5em + 26.458333mm)
+PASS testing width: calc(2in + 101.6Q)
+PASS testing height: calc(1pc + 3pt)
+

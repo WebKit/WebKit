@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/routines.js"></script>
+</head>
+<body>
+<script>
+var activeWorker;
+var waitingWorker;
+var registration;
+
+promise_test(async (test) => {
+    if (window.testRunner) {
+        testRunner.setUseSeparateServiceWorkerProcess(true);
+        await fetch("").then(() => { }, () => { });
+    }
+
+    registration = await navigator.serviceWorker.register("changing-service-worker-lengthy-worker.py", { scope : "lengthy-fetch" });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    const promise = withIframe("lengthy-fetch");
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    let counter1 = 0;
+    while (!registration.waiting && counter1++ < 100) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    assert_not_equals(registration.waiting, null);
+    waitingWorker = registration.waiting;
+
+    const frame = await promise;
+
+    // We now have an active worker and a waiting worker
+    // Let's kill the service worker process.
+    if (window.testRunner)
+        testRunner.terminateServiceWorkers();
+
+    // Let's now remove frame to trigger activation of the waiting worker.
+    await new Promise(resolve => setTimeout(resolve, 50));
+    frame.remove();
+
+    let counter2 = 0;
+    while (registration.activeWorker != waitingWorker && counter2++ < 100)
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+    // The waiting worker should have been activated.
+    assert_equals(registration.active, waitingWorker);
+    registration.active.postMessage("get_didActivateEventFired")
+
+    // Let's send a message to the worker to ensure it receives the activate event.
+    assert_true(await new Promise(resolve => navigator.serviceWorker.onmessage = (e) => resolve(e.data)));
+}, "Service worker process crashes between installed and activating");
+</script>
+</body>
+</html>

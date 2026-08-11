@@ -1,0 +1,12 @@
+
+PASS `SAMEORIGIN` allows same-origin framing
+PASS `SAMEORIGIN` blocks cross-origin framing
+PASS `sameOriGin` allows same-origin framing
+PASS `sameOriGin` blocks cross-origin framing
+PASS `  SAMEORIGIN ` allows same-origin framing
+PASS `  SAMEORIGIN ` blocks cross-origin framing
+PASS SAMEORIGIN allows same-origin nested in same-origin framing
+PASS SAMEORIGIN blocks cross-origin nested in same-origin framing
+PASS SAMEORIGIN blocks same-origin nested in cross-origin framing
+PASS SAMEORIGIN blocks cross-origin nested in cross-origin framing
+

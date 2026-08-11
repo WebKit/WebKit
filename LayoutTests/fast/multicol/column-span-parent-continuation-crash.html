@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="console"></div>
+<style>
+div { -webkit-column-count: 1; }
+h2 { -webkit-column-span: all; }
+</style>
+<script src="../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function runTest()
+{
+    document.body.offsetTop;
+    child = document.getElementById('test');
+    child.parentNode.removeChild(child);
+    child = document.getElementById('anything');
+    gc();
+    document.body.innerHTML = "PASS";
+
+    finishJSTest();
+}
+
+onload = function() { setTimeout(runTest, 0); }
+</script>
+<div>
+<span id="test"><h2></span>
+</div>
+</body>
+</html>

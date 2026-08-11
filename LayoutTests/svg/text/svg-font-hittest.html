@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@font-face {
+    font-family: 'Litherum';
+    src: url("./resources/Litherum.svg") format(svg)
+}
+#p {
+    font: 1000px 'Litherum';
+}
+</style>
+</head>
+<body onload="test()">
+This code triggers the glyph hit-testing code, which should not
+crash when a glyph is drawn with SVG fonts.
+<div id="result"></div>
+<div id="p">|</div>
+<script>
+function test() {
+    if (document.caretRangeFromPoint(400, 300))
+        document.getElementById("result").innerText = "Pass";
+    else
+        document.getElementById("result").innerText = "Fail";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+// Force layout, so that fonts begin to load before the document finishes loading, and thus delay the load event.
+document.body.offsetTop;
+</script>
+</body>
+</html>

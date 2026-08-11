@@ -1,0 +1,22 @@
+U+2029 PARAGRAPH SEPARATOR resets bidi paragraph direction; U+2028 LINE SEPARATOR does not.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('ls-rtl').offsetHeight is 20
+PASS document.getElementById('ps-rtl').offsetHeight is 20
+PASS document.getElementById('ps-plain-rtl').offsetHeight is 20
+PASS document.getElementById('ps-ltr').offsetHeight is 20
+PASS document.getElementById('ps-ltr').offsetHeight is 20
+PASS document.getElementById('ls-offset').offsetHeight is 20
+PASS document.getElementById('ps-offset').offsetHeight is 20
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ab
+a b
+a b
+a b
+a b
+a b
+a b

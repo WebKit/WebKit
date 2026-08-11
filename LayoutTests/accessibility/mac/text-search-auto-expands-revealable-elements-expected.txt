@@ -1,0 +1,21 @@
+This test ensures that AXUIElementsForSearchPredicate queries with a search-text component auto-expands collapsed details and hidden='until-found' elements if a match is found within them.
+
+PASS: resultElement.role === 'AXRole: AXStaticText'
+PASS: resultElement.stringValue === 'AXValue: First'
+PASS: document.getElementById('details').hasAttribute('open') === true
+PASS: !!resultElement === false
+PASS: document.getElementById('details-2').hasAttribute('open') === false
+PASS: resultElement.role === 'AXRole: AXStaticText'
+PASS: resultElement.stringValue === 'AXValue: Third'
+PASS: document.getElementById('hidden').hasAttribute('hidden') === false
+PASS: !!resultElement === false
+PASS: document.getElementById('permanent-hidden').hasAttribute('hidden') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+First
+Foo
+Third
+

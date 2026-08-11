@@ -1,0 +1,26 @@
+The test verifies if the spelling markers remain if whitespace is added before or after the misspelled word or the caret is moved. The test succeeds if the word 'meagesga' has a red underline.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test: Has misspelled word:
+PASS internals.hasSpellingMarker(7, 8) became true
+
+Test: Insert space before misspelled word:
+test.setSelectionRange(7, 7)
+typeCharacterCommand(' ')
+PASS internals.hasSpellingMarker(8, 8) became true
+
+Test: Insert space after misspelled word:
+test.setSelectionRange(15, 15)
+typeCharacterCommand(' ')
+PASS internals.hasSpellingMarker(7, 8) became true
+
+Test: Move caret:
+execMoveSelectionBackwardByCharacterCommand()
+PASS internals.hasSpellingMarker(7, 8) became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,17 @@
+This test ensures that basic AXTextMarkerRangeForLine functionality works.
+
+Line 1: Foo
+Line 2: Bar
+Line 3: Wrapping
+Line 4: text
+Line 5: here,
+Line 6: and
+Line 7: some
+Line 8: more
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+Bar
+Wrapping text here, and some more

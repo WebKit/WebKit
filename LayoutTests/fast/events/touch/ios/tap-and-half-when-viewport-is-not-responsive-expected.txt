@@ -1,0 +1,15 @@
+This test verifies that a tap-and-half gesture dispatches touch events when the page is zoomed in. To manually run the test, tap the red square and then immediately perform a pan gesture starting in the same location as the tap. The resulting events should consist of 'touchstart', 'touchend', 'touchstart', one or more 'touchmove', and finally a 'touchend'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Observed touchstart
+PASS Observed touchend
+PASS Observed touchstart
+PASS Observed touchmove
+PASS Observed touchend
+PASS touchendCount became 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/maxi_cov.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/protocol.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_auth.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_client.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_connection.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_datastructures.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_exceptions.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_exports.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_frames.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_headers.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_http.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_http11.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_imports.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_localhost.cnf
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_localhost.pem
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_protocol.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_server.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_streams.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_typing.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_uri.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/test_utils.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/websockets/tests/utils.py

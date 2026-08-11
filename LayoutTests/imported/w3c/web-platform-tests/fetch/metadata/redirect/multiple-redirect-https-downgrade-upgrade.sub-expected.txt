@@ -1,0 +1,15 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Https downgrade-upgrade top level navigation
+TIMEOUT Https downgrade-upgrade embed Test timed out
+NOTRUN Https downgrade-upgrade object
+PASS Https downgrade-upgrade preload
+NOTRUN Https downgrade-upgrade stylesheet
+NOTRUN Https downgrade-upgrade track
+PASS Https downgrade-upgrade top level navigation: sec-fetch-dest
+PASS Https downgrade-upgrade top level navigation: sec-fetch-mode
+PASS Https downgrade-upgrade top level navigation: sec-fetch-site
+PASS Https downgrade-upgrade top level navigation: sec-fetch-user
+

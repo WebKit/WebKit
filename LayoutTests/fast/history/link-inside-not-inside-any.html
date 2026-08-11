@@ -1,0 +1,157 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description(":link inside :not inside :-webkit-any `:-webkit-any(:not(:link))`");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    window.testRunner.keepWebHistory();
+
+function generateLink(color) {
+    var anchor = document.createElement("a");
+    anchor.href="http://madeup.site.com";
+    anchor.innerHTML = "Link should be " + color + ".";
+    return anchor;
+}
+
+var GREEN = 'rgb(0, 128, 0)';
+var RED = 'rgb(255, 0, 0)';
+
+anchors = [];
+
+function done() {
+    return anchors.every(function (set) {
+        return internals.computedStyleIncludingVisitedInfo(set[0]).color === set[1];;
+    });
+}
+
+function compareStyles()
+{
+    var anchor;
+
+    anchor = generateLink('green');
+    document.getElementById('enclosure1').appendChild(anchor);
+    anchors.push([anchor, GREEN]);
+
+    anchor = generateLink('green');
+    document.getElementById('enclosure2').appendChild(anchor);
+    anchors.push([anchor, GREEN]);
+
+    anchor = generateLink('red');
+    document.getElementById('test3').appendChild(anchor);
+    anchors.push([anchor, RED]);
+
+    anchor = generateLink('red');
+    document.getElementById('enclosure4').appendChild(anchor);
+    anchors.push([anchor, RED]);
+
+    anchor = generateLink('green');
+    document.getElementById('enclosure5').appendChild(anchor);
+    anchors.push([anchor, GREEN]);
+
+    anchor = generateLink('green');
+    document.getElementById('enclosure6').appendChild(anchor);
+    anchors.push([anchor, GREEN]);
+
+    anchor = generateLink('green');
+    document.getElementById('test7').appendChild(anchor);
+    anchors.push([anchor, GREEN]);
+
+    anchor = generateLink('green');
+    document.getElementById('test8').appendChild(anchor);
+    anchors.push([anchor, GREEN]);
+
+    if (window.internals) {
+        shouldBecomeEqual('done()', 'true', finishJSTest);
+    }
+}
+</script>
+<style>
+a {
+    color: red;
+}
+
+#test1 :-webkit-any(:not(:link), a) a {
+    color: green;
+}
+
+#test2 a {
+    color: green;
+}
+#test2 :-webkit-any(:not(:link)) a {
+    color: red;
+}
+
+/* :not(:link) doesn't match to the link element. */
+#test3 :-webkit-any(:not(:link)) {
+    color: green;
+}
+
+/* :not(:link) doesn't match to the link element. */
+#test4 :-webkit-any(:not(:link)) {
+    color: green;
+}
+
+#test5 :-webkit-any(a, :not(:link)) a {
+    color: green;
+}
+
+#test6 a {
+    color: green;
+}
+#test6 :-webkit-any(div, :not(:link)) a {
+    color: red;
+}
+
+#test7 :-webkit-any(:not(:visited)) {
+    color: green;
+}
+
+
+#test8 a {
+    color: green;
+}
+#test8 :-webkit-any(:visited) {
+    color: red;
+}
+</style>
+</head>
+<body onload="compareStyles()">
+<iframe src="resources/dummy.html" style="display:none"></iframe>
+
+<p id="area">
+    <p id="test1">
+        <a id="enclosure1" href="resources/dummy.html"></a>
+    </p>
+
+    <p id="test2">
+        <a id="enclosure2" href="resources/dummy.html"></a>
+    </p>
+
+    <p id="test3">
+    </p>
+
+    <p id="test4">
+        <a id="enclosure4" href="resources/dummy.html"></a>
+    </p>
+
+    <p id="test5">
+        <a id="enclosure5" href="resources/dummy.html"></a>
+    </p>
+
+    <p id="test6">
+        <a id="enclosure6" href="resources/dummy.html"></a>
+    </p>
+
+    <p id="test7">
+    </p>
+
+    <p id="test8">
+    </p>
+</p>
+
+<div id=console></div>
+</body>
+<script src="../../resources/js-test-post.js"></script>
+</html>

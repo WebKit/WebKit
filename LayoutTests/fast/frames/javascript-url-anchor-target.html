@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that javascript URL execute in the right context when set as href on an anchor with a target frame.");
+jsTestIsAsync = true;
+
+function didRunJSURLInContext(_contextName)
+{
+    contextName = _contextName;
+    // Since the anchor has target="testFrame", the javascript URL should execute in the context of the testFrame, not the top frame.
+    shouldBeEqualToString("contextName", "testFrame");
+    finishJSTest();
+}
+
+onload = () => {
+    window.name = "topWindow";
+    document.getElementById("testAnchor").click();
+};
+</script>
+<iframe id="testFrame" name="testFrame"></iframe>
+<a id="testAnchor" target="testFrame" href="javascript:top.didRunJSURLInContext(window.name);" style="display:none">Click me</a>
+</body>
+</html>

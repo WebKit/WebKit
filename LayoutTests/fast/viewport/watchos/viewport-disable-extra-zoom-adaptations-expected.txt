@@ -1,0 +1,22 @@
+PASS scaleAtDeviceWidthWithDefaultAdaptations is '0.488'
+PASS scaleAtDeviceWidthWithAdaptationDisabled is '1.000'
+PASS scaleAtDeviceWidthWithShrinkToFitDisabled is '0.488'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+1. Default viewport
+[width=150] (150, 168)
+[width=device-width] (320, 359)
+[width=600] (600, 673)
+
+2. extra zoom mode adaptations disabled
+[width=150; one,	watch   ,two] (150, 168)
+[width=device-width; watch, three, four, watch] (156, 175)
+[width=600; five, watch] (600, 673)
+
+3. shrink-to-fit disabled
+[width=150, shrink-to-fit=no; ] (150, 168)
+[width=device-width, shrink-to-fit=0; bogus, values] (320, 359)
+[width=600, shrink-to-fit=-0.5; ,,,] (600, 673)

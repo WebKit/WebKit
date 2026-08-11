@@ -1,0 +1,3 @@
+
+PASS BroadcastChannel works in service workers
+

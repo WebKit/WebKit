@@ -1,0 +1,3 @@
+
+PASS Test that object image not displayed is not loaded unnecessarily.
+

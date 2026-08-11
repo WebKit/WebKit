@@ -1,0 +1,9 @@
+
+PASS Static name
+PASS Static id
+PASS Static name on the prototype
+PASS constructor
+PASS duplicate property names
+PASS Dynamic name
+PASS Ghost name
+

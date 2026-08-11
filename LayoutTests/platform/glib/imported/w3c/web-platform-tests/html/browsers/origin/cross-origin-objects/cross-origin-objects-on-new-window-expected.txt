@@ -1,0 +1,3 @@
+
+PASS Cross-origin object identity preserved across document.domain
+

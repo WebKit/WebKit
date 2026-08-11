@@ -1,0 +1,11 @@
+Test EventSource reconnect after end of event stream. Should print a series of PASS messages followed by DONE.
+
+PASS: state is CONNECTING
+PASS: state is OPEN
+PASS: got lastEventId "77"
+PASS: state is CONNECTING
+PASS: state is OPEN
+PASS: Last-Event-ID header and the lastEventId property were correct
+PASS: state is CLOSED
+DONE
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>CanonicalName</key>
+        <string>macosx13.0.internal-additions</string>
+        <key>IsBaseSDK</key>
+        <string>NO</string>
+        <key>FrameworkSearchPaths</key>
+        <array>
+            <!-- Make additional private frameworks (i.e. AppleJPEGXL.framework) implicitly visible in internal builds. -->
+            <string>System/Library/PrivateFrameworks</string>
+        </array>
+</dict>
+</plist>
+

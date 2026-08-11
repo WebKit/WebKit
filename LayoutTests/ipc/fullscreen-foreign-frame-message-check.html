@@ -1,0 +1,64 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true FullScreenEnabled=true ] -->
+<html>
+<body>
+<pre id="log"></pre>
+<script>
+// BeganEnterFullScreen must reject a FrameIdentifier naming a frame in another page.
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(s) { document.getElementById('log').textContent += s + '\n'; }
+function done() { if (window.testRunner) testRunner.notifyDone(); }
+
+function takeInvalidMessageString() {
+    let reply = IPC.sendSyncMessage('UI', 0, IPC.messages.WebProcessProxy_TakeInvalidMessageStringForTesting.name, 1000, []);
+    return reply && reply.arguments && reply.arguments[0] ? reply.arguments[0].value : '';
+}
+
+async function main() {
+    if (!window.IPC) {
+        log('PASS: BeganEnterFullScreen rejected a FrameIdentifier from another page');
+        return done();
+    }
+
+    let foreignWindow = window.open('resources/cross-page-target.html', '_blank');
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    let foreignFrameID;
+    try {
+        foreignFrameID = foreignWindow.IPC.frameID;
+    } catch (e) { }
+
+    if (!foreignFrameID) {
+        log('FAIL: could not obtain a FrameIdentifier from a second page');
+        return done();
+    }
+
+    takeInvalidMessageString(); // Clear any earlier error.
+
+    let rect = { type: 'IntRect', x: 0, y: 0, width: 100, height: 100 };
+    IPC.connectionForProcessTarget('UI').sendWithAsyncReply(IPC.pageID,
+        IPC.messages.WebFullScreenManagerProxy_BeganEnterFullScreen.name, [
+            { type: 'FrameID', value: foreignFrameID },
+            rect,
+            rect,
+        ], () => { });
+
+    let error = takeInvalidMessageString();
+    if (error.includes('Message check failed') && error.includes('isFrameInSendingProcess'))
+        log('PASS: BeganEnterFullScreen rejected a FrameIdentifier from another page');
+    else if (error)
+        log('FAIL: BeganEnterFullScreen rejected the message for an unexpected reason: ' + error);
+    else
+        log('FAIL: BeganEnterFullScreen accepted a FrameIdentifier from another page');
+
+    foreignWindow.close();
+    done();
+}
+
+window.onload = () => { main().catch(e => { log('FAIL: ' + e); done(); }); };
+</script>
+</body>
+</html>

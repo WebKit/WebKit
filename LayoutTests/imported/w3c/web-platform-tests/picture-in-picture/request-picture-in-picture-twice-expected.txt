@@ -1,0 +1,4 @@
+
+PASS request Picture-in-Picture consumes user gesture
+PASS request Picture-in-Picture does not require user gesture if document.pictureInPictureElement is set
+

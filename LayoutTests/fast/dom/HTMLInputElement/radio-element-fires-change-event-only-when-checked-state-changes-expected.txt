@@ -1,0 +1,13 @@
+Tests that clicking a radio element only fires a 'change' event if its checked state actually changes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS a_events.toString() is "click"
+PASS b_events.toString() is ""
+PASS a_events.toString() is ""
+PASS b_events.toString() is "click,input,change"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a b

@@ -1,0 +1,7 @@
+Visibility collapse changes table height even when its height is fixed
+
+a
+b
+
+FAIL collapsed row shrinks table height assert_equals: expected 100 but got 150
+

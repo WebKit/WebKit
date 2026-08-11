@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div role="group" id="group">non landmark</div>
+<div role="main" id="main">text</div>
+<div role="banner" id="banner">text</div>
+<div role="region" id="region" aria-label="testregion">text</div>
+<footer id="footer">footer</footer>
+<div role="article" id="article">article</div>
+<div role="document" id="documentcontainer">document</div>
+<div role="note" id="note">note</div>
+
+<script>
+var output = "This tests that landmarks return their type as part of the AX label.\n\n";
+
+if (window.accessibilityController) {
+    var main = accessibilityController.accessibleElementById("main");
+    output += expect("main.description", "'AXLabel: main'");
+
+    var banner = accessibilityController.accessibleElementById("banner");
+    output += expect("banner.description", "'AXLabel: banner'");
+
+    var region = accessibilityController.accessibleElementById("region");
+    output += expect("region.description", "'AXLabel: testregion, region'");
+
+    var footer = accessibilityController.accessibleElementById("footer");
+    output += expect("footer.description", "'AXLabel: content information'");
+
+    var article = accessibilityController.accessibleElementById("article");
+    output += expect("article.description", "'AXLabel: article'");
+
+    var note = accessibilityController.accessibleElementById("note");
+    output += expect("note.description", "'AXLabel: note'");
+
+    var documentContainer = accessibilityController.accessibleElementById("documentcontainer");
+    output += expect("documentContainer.description", "'AXLabel: document'");
+
+    output += expect("region.childAtIndex(0).traits == main.childAtIndex(0).traits", "true");
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>
+

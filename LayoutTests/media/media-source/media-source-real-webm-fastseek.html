@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-fastseek</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-WebM equivalent of media-source-fastseek.html
+    // Tests that fastSeek() snaps to the nearest sync frame.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        var initData = WebM.initSegment({
+            tracks: [{ id: 1, type: 'video' }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // 8 samples, sync at 0 and 4
+        var media = WebM.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+                { duration: 1000, isSync: false },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('source.duration = 8');
+        run('source.endOfStream()');
+
+        // Seek to 1 (exact)
+        run('video.currentTime = 1');
+        await waitFor(video, 'seeking', true);
+        await waitFor(video, 'seeked');
+        testExpected('video.currentTime.toFixed(1)', 1);
+
+        // fastSeek(5) should snap to sync frame at 4
+        run('video.fastSeek(5)');
+        await waitFor(video, 'seeking', true);
+        await waitFor(video, 'seeked');
+        testExpected('video.currentTime.toFixed(1)', 4);
+
+        // Seek to 3 (exact)
+        run('video.currentTime = 3');
+        await waitFor(video, 'seeking', true);
+        await waitFor(video, 'seeked');
+        testExpected('video.currentTime.toFixed(1)', 3);
+
+        // fastSeek(2) should snap to sync frame at 0
+        run('video.fastSeek(2)');
+        await waitFor(video, 'seeking', true);
+        await waitFor(video, 'seeked');
+        testExpected('video.currentTime.toFixed(1)', 0);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

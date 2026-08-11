@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Content blocker prevented frame displaying http://127.0.0.1:8000/contentextensions/service-worker-block-everything-if-localhost.html from loading a resource from http://127.0.0.1:8000/security/resources/abe-allow-star.py
+CONSOLE MESSAGE: Resource blocked by content blocker
+CONSOLE MESSAGE: Fetch API cannot load http://127.0.0.1:8000/security/resources/abe-allow-star.py due to access control checks.
+
+PASS Setup service worker
+PASS Validate that localhost load is blocked
+PASS Validate that localhost load is not blocked if content extension is off
+

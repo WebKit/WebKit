@@ -1,0 +1,223 @@
+/*
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "InbandTextTrack.h"
+
+#if ENABLE(VIDEO)
+
+#include "InbandDataTextTrack.h"
+#include "InbandGenericTextTrack.h"
+#include "InbandTextTrackPrivate.h"
+#include "InbandWebVTTTextTrack.h"
+#include "ScriptExecutionContext.h"
+#include "TextTrackClient.h"
+#include <wtf/TZoneMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InbandTextTrack);
+
+Ref<InbandTextTrack> InbandTextTrack::create(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)
+{
+    switch (trackPrivate.cueFormat()) {
+    case InbandTextTrackPrivate::CueFormat::Data:
+        return InbandDataTextTrack::create(context, trackPrivate);
+    case InbandTextTrackPrivate::CueFormat::Generic:
+        return InbandGenericTextTrack::create(context, trackPrivate);
+    case InbandTextTrackPrivate::CueFormat::WebVTT:
+        return InbandWebVTTTextTrack::create(context, trackPrivate);
+    case InbandTextTrackPrivate::CueFormat::Unknown:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    auto textTrack = InbandDataTextTrack::create(context, trackPrivate);
+    textTrack->suspendIfNeeded();
+    return textTrack;
+}
+
+InbandTextTrack::InbandTextTrack(ScriptExecutionContext& context, InbandTextTrackPrivate& trackPrivate)
+    : TextTrack(&context, emptyAtom(), trackPrivate.id(), AtomString { trackPrivate.label().isolatedCopy() }, AtomString { trackPrivate.language().isolatedCopy() }, InBand)
+    , m_private(trackPrivate)
+{
+    addClientToTrackPrivateBase(*this, trackPrivate);
+    updateKindFromPrivate();
+}
+
+InbandTextTrack::~InbandTextTrack()
+{
+    removeClientFromTrackPrivateBase(Ref { m_private });
+}
+
+void InbandTextTrack::setPrivate(InbandTextTrackPrivate& trackPrivate)
+{
+    if (m_private.ptr() == &trackPrivate)
+        return;
+
+    removeClientFromTrackPrivateBase(Ref { m_private });
+    m_private = trackPrivate;
+    addClientToTrackPrivateBase(*this, trackPrivate);
+
+    setModeInternal(mode());
+    updateKindFromPrivate();
+    setId(protect(m_private)->id());
+}
+
+void InbandTextTrack::setMode(Mode mode)
+{
+    TextTrack::setMode(mode);
+    setModeInternal(mode);
+}
+
+static inline InbandTextTrackPrivate::Mode NODELETE toPrivate(TextTrack::Mode mode)
+{
+    switch (mode) {
+    case TextTrack::Mode::Disabled:
+        return InbandTextTrackPrivate::Mode::Disabled;
+    case TextTrack::Mode::Hidden:
+        return InbandTextTrackPrivate::Mode::Hidden;
+    case TextTrack::Mode::Showing:
+        return InbandTextTrackPrivate::Mode::Showing;
+    }
+    ASSERT_NOT_REACHED();
+    return InbandTextTrackPrivate::Mode::Disabled;
+}
+
+void InbandTextTrack::setModeInternal(Mode mode)
+{
+    protect(m_private)->setMode(toPrivate(mode));
+}
+
+bool InbandTextTrack::isClosedCaptions() const
+{
+    return protect(m_private)->isClosedCaptions();
+}
+
+bool InbandTextTrack::isSDH() const
+{
+    return protect(m_private)->isSDH();
+}
+
+bool InbandTextTrack::containsOnlyForcedSubtitles() const
+{
+    return protect(m_private)->containsOnlyForcedSubtitles();
+}
+
+bool InbandTextTrack::isMainProgramContent() const
+{
+    return protect(m_private)->isMainProgramContent();
+}
+
+bool InbandTextTrack::isEasyToRead() const
+{
+    return protect(m_private)->isEasyToRead();
+}
+
+bool InbandTextTrack::isDefault() const
+{
+    return protect(m_private)->isDefault();
+}
+
+bool InbandTextTrack::isMachineGenerated() const
+{
+    return protect(m_private)->isMachineGenerated();
+}
+
+size_t InbandTextTrack::inbandTrackIndex()
+{
+    return protect(m_private)->trackIndex();
+}
+
+String InbandTextTrack::inBandMetadataTrackDispatchType() const
+{
+    return protect(m_private)->inBandMetadataTrackDispatchType();
+}
+
+void InbandTextTrack::idChanged(TrackID id)
+{
+    setId(id);
+}
+
+void InbandTextTrack::labelChanged(const String& label)
+{
+    setLabel(AtomString { label.isolatedCopy() });
+}
+
+void InbandTextTrack::languageChanged(const String& language)
+{
+    setLanguage(AtomString { language.isolatedCopy() });
+}
+
+void InbandTextTrack::willRemove()
+{
+    m_clients.forEach([&] (auto& client) {
+        client.willRemoveTextTrack(*this);
+    });
+}
+
+void InbandTextTrack::updateKindFromPrivate()
+{
+    switch (protect(m_private)->kind()) {
+    case InbandTextTrackPrivate::Kind::Subtitles:
+        setKind(Kind::Subtitles);
+        return;
+    case InbandTextTrackPrivate::Kind::Captions:
+        setKind(Kind::Captions);
+        return;
+    case InbandTextTrackPrivate::Kind::Descriptions:
+        setKind(Kind::Descriptions);
+        return;
+    case InbandTextTrackPrivate::Kind::Chapters:
+        setKind(Kind::Chapters);
+        return;
+    case InbandTextTrackPrivate::Kind::Metadata:
+        setKind(Kind::Metadata);
+        return;
+    case InbandTextTrackPrivate::Kind::Forced:
+        setKind(Kind::Forced);
+        return;
+    case InbandTextTrackPrivate::Kind::None:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+MediaTime InbandTextTrack::startTimeVariance() const
+{
+    return protect(m_private)->startTimeVariance();
+}
+
+#if !RELEASE_LOG_DISABLED
+void InbandTextTrack::setLogger(const Logger& logger, uint64_t logIdentifier)
+{
+    TextTrack::setLogger(logger, logIdentifier);
+    protect(m_private)->setLogger(logger, this->logIdentifier());
+}
+#endif
+
+} // namespace WebCore
+
+#endif

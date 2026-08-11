@@ -1,0 +1,29 @@
+
+PASS :abstract_float:inputSource="const";dim=2
+PASS :abstract_float:inputSource="const";dim=3
+PASS :abstract_float:inputSource="const";dim=4
+PASS :f32:inputSource="const";dim=2
+PASS :f32:inputSource="const";dim=3
+PASS :f32:inputSource="const";dim=4
+PASS :f32:inputSource="uniform";dim=2
+PASS :f32:inputSource="uniform";dim=3
+PASS :f32:inputSource="uniform";dim=4
+PASS :f32:inputSource="storage_r";dim=2
+PASS :f32:inputSource="storage_r";dim=3
+PASS :f32:inputSource="storage_r";dim=4
+PASS :f32:inputSource="storage_rw";dim=2
+PASS :f32:inputSource="storage_rw";dim=3
+PASS :f32:inputSource="storage_rw";dim=4
+PASS :f16:inputSource="const";dim=2
+PASS :f16:inputSource="const";dim=3
+PASS :f16:inputSource="const";dim=4
+PASS :f16:inputSource="uniform";dim=2
+PASS :f16:inputSource="uniform";dim=3
+PASS :f16:inputSource="uniform";dim=4
+PASS :f16:inputSource="storage_r";dim=2
+PASS :f16:inputSource="storage_r";dim=3
+PASS :f16:inputSource="storage_r";dim=4
+PASS :f16:inputSource="storage_rw";dim=2
+PASS :f16:inputSource="storage_rw";dim=3
+PASS :f16:inputSource="storage_rw";dim=4
+

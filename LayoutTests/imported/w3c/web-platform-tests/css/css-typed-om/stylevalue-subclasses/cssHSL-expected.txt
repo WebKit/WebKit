@@ -1,0 +1,26 @@
+
+PASS Constructing a CSSHSL with a number for the hue works as intended.
+PASS CSSHSL.h can be updated with a a number.
+PASS Constructing a CSSHSL with degrees for the hue works as intended.
+PASS CSSHSL.h can be updated with a degrees.
+PASS Constructing a CSSHSL with radians for the hue works as intended.
+PASS CSSHSL.h can be updated with a radians.
+PASS Constructing a CSSHSL with gradians for the hue works as intended.
+PASS CSSHSL.h can be updated with a gradians.
+PASS Constructing a CSSHSL with undefined for the hue works as intended.
+PASS CSSHSL.h can be updated with a undefined.
+PASS Constructing a CSSHSL with css pixels for hue throws a SyntaxError.
+PASS Constructing a CSSHSL with css em for hue throws a SyntaxError.
+PASS CSSHSL can be constructed from three numbers and will get an alpha of 100%.
+PASS CSSHSL can be constructed from four numbers.
+PASS Constructing a CSSHSL with CSS.number for s, l or alpha throws a TypeError
+PASS Updating a CSSHSL with CSS.number for s throws a SyntaxError
+PASS CSSHSL.s can be updated to a number.
+PASS CSSHSL.s can be updated with a CSS percent.
+PASS Updating a CSSHSL with CSS.number for l throws a SyntaxError
+PASS CSSHSL.l can be updated to a number.
+PASS CSSHSL.l can be updated with a CSS percent.
+PASS Updating a CSSHSL with CSS.number for alpha throws a SyntaxError
+PASS CSSHSL.alpha can be updated to a number.
+PASS CSSHSL.alpha can be updated with a CSS percent.
+

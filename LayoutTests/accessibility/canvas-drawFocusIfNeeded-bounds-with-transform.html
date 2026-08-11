@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<canvas id="canvas" width="400" height="300" style="transform: scale(2); transform-origin: 0 0;">
+    <button id="button">Canvas Button</button>
+</canvas>
+
+<script>
+var output = "This test ensures that drawFocusIfNeeded() accessibility bounds account for CSS transforms on the canvas.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    // The canvas is at (8, 8) due to body margin and has transform: scale(2)
+    // with transform-origin: 0 0. A focus path at canvas-local (100, 50) with
+    // size (80, 40) should appear at page position (8 + 100*2, 8 + 50*2) with
+    // size (80*2, 40*2).
+    setTimeout(async function() {
+        output += await verifyCanvasFocusBounds({
+            canvasId: "canvas", canvasDescendantId: "button",
+            focusX: 100, focusY: 50, focusWidth: 80, focusHeight: 40,
+            expectedPageX: 8 + 100 * 2, expectedPageY: 8 + 50 * 2,
+            expectedWidth: 80 * 2, expectedHeight: 40 * 2,
+            variance: 1,
+        });
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

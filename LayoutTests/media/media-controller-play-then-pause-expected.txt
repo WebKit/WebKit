@@ -1,0 +1,14 @@
+
+RUN(controller = video.controller)
+EVENT(canplaythrough)
+RUN(controller.play())
+EVENT(playing)
+RUN(controller.pause())
+EVENT(pause)
+RUN(controller.play())
+EVENT(play)
+EXPECTED (controller.playbackState == 'playing') OK
+EXPECTED (!internals.isPlayerPaused(video)) OK
+EXPECTED (!internals.isPlayerPaused(video2)) OK
+END OF TEST
+

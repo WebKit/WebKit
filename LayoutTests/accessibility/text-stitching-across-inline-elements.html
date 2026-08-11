@@ -1,0 +1,25 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityTextStitchingEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Text after a link boundary should stitch with text inside inline formatting elements. -->
+<p id="test1"><a href="#">Easter</a>. The text of the <i>Shepherd Cantata</i> was written by <a href="#">Picander</a></p>
+<p id="test2"><a href="#">Easter</a>. The text of the <span>Shepherd Cantata</span> was written by <a href="#">Picander</a></p>
+
+<script>
+var output = "This test ensures text after a link stitches with text inside inline formatting elements.\n\n";
+
+if (window.accessibilityController) {
+    output += "Test 1 (italic):\n";
+    output += dumpAXSearchTraversal(accessibilityController.accessibleElementById("test1"), { excludeRoles: ["group"] }) + "\n";
+    output += "Test 2 (span):\n";
+    output += dumpAXSearchTraversal(accessibilityController.accessibleElementById("test2"), { excludeRoles: ["group"] }) + "\n";
+    debug(output);
+}
+</script>
+</body>
+</html>

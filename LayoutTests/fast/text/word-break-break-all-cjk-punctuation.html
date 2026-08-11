@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>word-break: break-all should not break before CJK close punctuation</title>
+<link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#word-break-property">
+<style>
+div {
+    font: 20px/1 Ahem;
+    width: 0;
+    word-break: break-all;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>word-break: break-all should not put CJK close punctuation at the start of a line.</p>
+<div id="d1">あえ、かけ</div>
+<div id="d2">あ。か</div>
+<pre id="result"></pre>
+<script>
+function check(id, expectLines) {
+    var el = document.getElementById(id);
+    var lineHeight = 20;
+    var lines = Math.round(el.offsetHeight / lineHeight);
+    var pass = lines === expectLines;
+    return (pass ? "PASS" : "FAIL") + ": '" + el.textContent + "' lines=" + lines + (pass ? "" : " (expected " + expectLines + ")");
+}
+
+var results = [
+    check("d1", 4),
+    check("d2", 2),
+];
+document.getElementById("result").textContent = results.join('\n') + '\n';
+</script>

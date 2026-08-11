@@ -1,0 +1,6 @@
+
+PASS "*:*" with a path allows the path on the document's own origin
+PASS "*:*" with a path allows the path on a different port
+PASS "*:*" with a path allows the path on a different host
+PASS "*:*" with a path does not allow other paths
+

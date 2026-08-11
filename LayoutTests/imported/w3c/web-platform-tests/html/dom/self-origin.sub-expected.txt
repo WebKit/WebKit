@@ -1,0 +1,13 @@
+
+PASS Assigning blob url
+PASS Should have the right origin for cross-origin subframe
+PASS Should have the right origin for cross-origin subframe after setting document.domain
+PASS Should have the right origin for IDN subframe
+PASS Should have the right origin for IDN subframe after setting document.domain
+PASS Should have the right origin for sandboxed iframe
+PASS We should have the right origin for our page
+PASS about:blank subframe origins
+FAIL blob: subframe origins assert_equals: Should have the right location origin for blob: iframe expected "http://web-platform.test:8800" but got "null"
+PASS javascript: subframe origins
+PASS srcdoc subframe origins
+

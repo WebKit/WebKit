@@ -1,0 +1,3 @@
+Test for bug 13480: window.Attr is undefined.
+
+SUCCESS

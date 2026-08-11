@@ -1,0 +1,43 @@
+This test checks whether various seal/freeze/preventExtentions work on a regular object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (new inextensible).prototypeExists is true
+PASS (new sealed).prototypeExists is true
+PASS (new frozen).prototypeExists is true
+PASS test(obj()) is "(b:4)(c:3)E"
+PASS test(preventExtensions(obj())) is "(b:4)"
+PASS test(seal(obj())) is "(a:1)(b:4)S"
+PASS test(freeze(obj())) is "(a:1)(b:2)SF"
+PASS Object.preventExtensions(Math.sin) is Math.sin
+PASS var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" }; o.newProp; threw exception TypeError: Attempted to assign to readonly property..
+PASS "use strict"; var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" }; o.newProp; threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.preventExtensions(Math); Math.sqrt(4) is 2
+PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr[0] is undefined.
+PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr.length is 0
+PASS "use strict"; var arr = Object.preventExtensions([]); arr[0] = 42; arr[0] threw exception TypeError: Attempted to assign to readonly property..
+PASS obj.foo is 1
+PASS Object.isFrozen(func) is true
+PASS func.prototype === 42 is false
+PASS Object.getOwnPropertyDescriptor(func, "prototype").writable is false
+PASS Object.isFrozen(strictFunc) is true
+PASS strictFunc.prototype === 42 is false
+PASS Object.getOwnPropertyDescriptor(strictFunc, "prototype").writable is false
+PASS Object.isFrozen(array) is true
+PASS array[0] is 0
+PASS Object.getOwnPropertyDescriptor(array, "length").writable is false
+PASS Object.isFrozen(args) is true
+PASS args[0] is 0
+PASS Object.getOwnPropertyDescriptor(args, "length").writable is false
+PASS Object.getOwnPropertyDescriptor(args, "callee").writable is false
+PASS preventExtensionsFreezeIsFrozen(function foo(){}) is true
+PASS preventExtensionsFreezeIsFrozen(function foo(){ "use strict"; }) is true
+PASS preventExtensionsFreezeIsFrozen([0,1,2]) is true
+PASS preventExtensionsFreezeIsFrozen((function(){ return arguments; })(0,1,2)) is true
+PASS Object.getOwnPropertyDescriptor(freeze({0:0}), 0).configurable is false
+PASS Object.getOwnPropertyDescriptor(freeze({10000001:0}), 10000001).configurable is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

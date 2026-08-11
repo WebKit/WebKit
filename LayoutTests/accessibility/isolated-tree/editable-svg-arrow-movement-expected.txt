@@ -1,0 +1,11 @@
+This test ensures we do not enter an infinite loop when moving the cursor through this markup.
+
+PASS: accessibilityController.accessibleElementById('button').isExpanded === true
+PASS: accessibilityController.accessibleElementById('button').isExpanded === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+Foo

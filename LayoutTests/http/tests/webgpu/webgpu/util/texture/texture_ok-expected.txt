@@ -1,0 +1,14 @@
+
+PASS :float32:format="rgba32float"
+PASS :float32:format="rg32float"
+PASS :norm:mode="bytes";format="r8unorm"
+PASS :norm:mode="bytes";format="r8snorm"
+PASS :norm:mode="bytes";format="r16unorm"
+PASS :norm:mode="bytes";format="r16snorm"
+PASS :norm:mode="colors";format="r8unorm"
+PASS :norm:mode="colors";format="r8snorm"
+PASS :norm:mode="colors";format="r16unorm"
+PASS :norm:mode="colors";format="r16snorm"
+PASS :snorm_min:mode="bytes";format="r8snorm"
+PASS :snorm_min:mode="colors";format="r8snorm"
+

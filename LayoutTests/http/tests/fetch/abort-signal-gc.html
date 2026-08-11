@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Abort Signal GC</title>
+        <script src="/js-test-resources/gc.js"></script>
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <script>
+function testAbortControllerSignal(callback)
+{
+     const controller = new AbortController();
+     controller.signal.addEventListener("abort", callback);
+     setTimeout(() => controller.abort(), 100);
+}
+
+promise_test(() => {
+    let resolve;
+    const promise = new Promise(r => resolve = r);
+    testAbortControllerSignal(resolve);
+    window.gc();
+    return promise;
+}, "GC should collect a signal after its controller");
+
+function testFetchRequestSignal(callback)
+{
+     const controller = new AbortController();
+     const request = new Request("/", {signal : controller.signal});
+     request.signal.addEventListener("abort", callback);
+     setTimeout(() => controller.abort(), 100);
+}
+
+promise_test(() => {
+    let resolve;
+    const promise = new Promise(r => resolve = r);
+    testFetchRequestSignal(resolve);
+    window.gc();
+    return promise;
+}, "GC should collect a signal after its request");
+
+function createAbortedController(message)
+{
+    const controller = new AbortController();
+    controller.abort(new Error(message));
+    return controller;
+}
+
+test(() => {
+    const errorMessage = "my potato";
+    const controller = createAbortedController(errorMessage);
+
+    window.gc();
+
+    assert_equals(controller.signal.reason.message, errorMessage);
+}, "GC should not collect reason of a controller signal");
+        </script>
+    </body>
+</html>

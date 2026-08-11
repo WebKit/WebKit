@@ -1,0 +1,12 @@
+
+PASS Property anchor-scope value 'none'
+PASS Property anchor-scope value 'initial'
+PASS Property anchor-scope value 'all'
+PASS Property anchor-scope value '--a'
+PASS Property anchor-scope value '--a, --b'
+PASS Property anchor-scope value '--a, --b, --c'
+PASS Property anchor-scope value '--foo, --bar'
+PASS Property anchor-scope value '--bar, --foo'
+PASS Property anchor-scope has initial value none
+PASS Property anchor-scope does not inherit
+

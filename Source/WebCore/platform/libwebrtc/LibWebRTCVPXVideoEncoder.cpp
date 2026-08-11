@@ -1,0 +1,363 @@
+/*
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "LibWebRTCVPXVideoEncoder.h"
+
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
+
+#include "ImageTransferSessionVT.h"
+#include "LibWebRTCMacros.h"
+#include "LibWebRTCColorSpaceUtilities.h"
+#include "LibWebRTCVideoFrameUtilities.h"
+#include "VideoFrameLibWebRTC.h"
+#include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WorkQueue.h>
+#include <wtf/text/MakeString.h>
+
+#include <CoreVideo/CoreVideo.h>
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+
+#include <webrtc/api/environment/environment_factory.h>
+#include <webrtc/modules/video_coding/codecs/av1/libaom_av1_encoder.h>
+#include <webrtc/modules/video_coding/codecs/vp8/include/vp8.h>
+#include <webrtc/modules/video_coding/codecs/vp9/include/vp9.h>
+#include <webrtc/rtc_base/cpu_info.h>
+#include <webrtc/webkit_sdk/WebKit/WebKitEncoder.h>
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+
+namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCVPXVideoEncoder);
+
+static constexpr double defaultFrameRate = 30.0;
+
+static WorkQueue& vpxEncoderQueueSingleton()
+{
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<Ref<WorkQueue>> queue;
+    std::call_once(onceKey, [] {
+        queue.construct(WorkQueue::create("VPx VideoEncoder Queue"_s));
+    });
+    return queue.get();
+}
+
+class LibWebRTCVPXInternalVideoEncoder : public ThreadSafeRefCounted<LibWebRTCVPXInternalVideoEncoder> , public webrtc::EncodedImageCallback {
+public:
+    static Ref<LibWebRTCVPXInternalVideoEncoder> create(LibWebRTCVPXVideoEncoder::Type type, VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback) { return adoptRef(*new LibWebRTCVPXInternalVideoEncoder(type, WTF::move(descriptionCallback), WTF::move(outputCallback))); }
+    ~LibWebRTCVPXInternalVideoEncoder() = default;
+
+    int initialize(LibWebRTCVPXVideoEncoder::Type, const VideoEncoder::Config&);
+
+    Ref<VideoEncoder::EncodePromise> encode(VideoEncoder::RawFrame&&, bool shouldGenerateKeyFrame);
+    void close() { m_isClosed = true; }
+    void setRates(uint64_t bitRate, double frameRate);
+
+private:
+    LibWebRTCVPXInternalVideoEncoder(LibWebRTCVPXVideoEncoder::Type, VideoEncoder::DescriptionCallback&&, VideoEncoder::OutputCallback&&);
+    webrtc::EncodedImageCallback::Result OnEncodedImage(const webrtc::EncodedImage&, const webrtc::CodecSpecificInfo*) final;
+    void OnFrameDropped(uint32_t rtpTimestamp, int spatialID, bool isEndOfTemporalUnit) final;
+
+    VideoEncoder::DescriptionCallback m_descriptionCallback;
+    VideoEncoder::OutputCallback m_outputCallback;
+    const UniqueRef<webrtc::VideoEncoder> m_internalEncoder;
+    int64_t m_timestamp { 0 };
+    int64_t m_timestampOffset { 0 };
+    std::optional<uint64_t> m_duration;
+    bool m_isClosed { false };
+    VideoEncoder::Config m_config;
+    bool m_isInitialized { false };
+    bool m_hasEncoded { false };
+    bool m_hasMultipleTemporalLayers { false };
+    bool m_shouldCallDescriptionCallback { true };
+    std::optional<PlatformVideoColorSpace> m_currentColorSpace;
+};
+
+void LibWebRTCVPXVideoEncoder::create(Type type, const VideoEncoder::Config& config, CreateCallback&& callback, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+{
+    Ref encoder = adoptRef(*new LibWebRTCVPXVideoEncoder(type, WTF::move(descriptionCallback), WTF::move(outputCallback)));
+    auto error = encoder->initialize(type, config);
+
+    if (error) {
+        callback(makeUnexpected(makeString("VPx encoding initialization failed with error "_s, error)));
+        return;
+    }
+    callback(Ref<VideoEncoder> { WTF::move(encoder) });
+}
+
+LibWebRTCVPXVideoEncoder::LibWebRTCVPXVideoEncoder(Type type, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback)
+    : m_internalEncoder(LibWebRTCVPXInternalVideoEncoder::create(type, WTF::move(descriptionCallback), WTF::move(outputCallback)))
+{
+}
+
+LibWebRTCVPXVideoEncoder::~LibWebRTCVPXVideoEncoder() = default;
+
+int LibWebRTCVPXVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type type, const VideoEncoder::Config& config)
+{
+    return m_internalEncoder->initialize(type, config);
+}
+
+Ref<VideoEncoder::EncodePromise> LibWebRTCVPXVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame)
+{
+    return invokeAsync(vpxEncoderQueueSingleton(), [frame = WTF::move(frame), shouldGenerateKeyFrame, encoder = m_internalEncoder]() mutable {
+        return encoder->encode(WTF::move(frame), shouldGenerateKeyFrame);
+    });
+}
+
+Ref<GenericPromise> LibWebRTCVPXVideoEncoder::flush()
+{
+    return invokeAsync(vpxEncoderQueueSingleton(), [] {
+        return GenericPromise::createAndResolve();
+    });
+}
+
+void LibWebRTCVPXVideoEncoder::reset()
+{
+    m_internalEncoder->close();
+}
+
+void LibWebRTCVPXVideoEncoder::close()
+{
+    m_internalEncoder->close();
+}
+
+Ref<GenericPromise> LibWebRTCVPXVideoEncoder::setRates(uint64_t bitRate, double frameRate)
+{
+    return invokeAsync(vpxEncoderQueueSingleton(), [encoder = m_internalEncoder, bitRate, frameRate] {
+        encoder->setRates(bitRate, frameRate);
+        return GenericPromise::createAndResolve();
+    });
+}
+
+static UniqueRef<webrtc::VideoEncoder> createInternalEncoder(LibWebRTCVPXVideoEncoder::Type type)
+{
+    switch (type) {
+    case LibWebRTCVPXVideoEncoder::Type::VP8:
+        return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateVp8Encoder(webrtc::EnvironmentFactory().Create()));
+    case LibWebRTCVPXVideoEncoder::Type::VP9:
+        return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateVp9Encoder(webrtc::EnvironmentFactory().Create()));
+    case LibWebRTCVPXVideoEncoder::Type::VP9_P2:
+        return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateVp9Encoder(webrtc::EnvironmentFactory().Create(), { webrtc::VP9Profile::kProfile2 }));
+#if ENABLE(AV1)
+    case LibWebRTCVPXVideoEncoder::Type::AV1:
+        return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateLibaomAv1Encoder(webrtc::EnvironmentFactory().Create()));
+#endif
+    }
+}
+
+LibWebRTCVPXInternalVideoEncoder::LibWebRTCVPXInternalVideoEncoder(LibWebRTCVPXVideoEncoder::Type type, VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback)
+    : m_descriptionCallback(WTF::move(descriptionCallback))
+    , m_outputCallback(WTF::move(outputCallback))
+    , m_internalEncoder(createInternalEncoder(type))
+{
+}
+
+static webrtc::VideoBitrateAllocation computeAllocation(const VideoEncoder::Config& config)
+{
+    auto totalBitRate = config.bitRate ? config.bitRate : 3 * config.width * config.height;
+
+    webrtc::VideoBitrateAllocation allocation;
+    switch (config.scalabilityMode) {
+    case VideoEncoder::ScalabilityMode::L1T1:
+        allocation.SetBitrate(0, 0, totalBitRate);
+        break;
+    case VideoEncoder::ScalabilityMode::L1T2:
+        allocation.SetBitrate(0, 0, totalBitRate * 0.6);
+        allocation.SetBitrate(0, 1, totalBitRate * 0.4);
+        break;
+    case VideoEncoder::ScalabilityMode::L1T3:
+        allocation.SetBitrate(0, 0, totalBitRate * 0.5);
+        allocation.SetBitrate(0, 1, totalBitRate * 0.2);
+        allocation.SetBitrate(0, 2, totalBitRate * 0.3);
+        break;
+    }
+    return allocation;
+}
+
+int LibWebRTCVPXInternalVideoEncoder::initialize(LibWebRTCVPXVideoEncoder::Type type, const VideoEncoder::Config& config)
+{
+    m_config = config;
+
+    const int defaultPayloadSize = 1440;
+    webrtc::VideoCodec videoCodec;
+    videoCodec.width = config.width;
+    videoCodec.height = config.height;
+    videoCodec.maxFramerate = 100;
+
+    switch (config.scalabilityMode) {
+    case VideoEncoder::ScalabilityMode::L1T1:
+        videoCodec.SetScalabilityMode(webrtc::ScalabilityMode::kL1T1);
+        break;
+    case VideoEncoder::ScalabilityMode::L1T2:
+        m_hasMultipleTemporalLayers = true;
+        videoCodec.SetScalabilityMode(webrtc::ScalabilityMode::kL1T2);
+        break;
+    case VideoEncoder::ScalabilityMode::L1T3:
+        m_hasMultipleTemporalLayers = true;
+        videoCodec.SetScalabilityMode(webrtc::ScalabilityMode::kL1T3);
+        break;
+    }
+
+    switch (type) {
+    case LibWebRTCVPXVideoEncoder::Type::VP8:
+        videoCodec.codecType = webrtc::kVideoCodecVP8;
+        switch (config.scalabilityMode) {
+        case VideoEncoder::ScalabilityMode::L1T1:
+            videoCodec.VP8()->numberOfTemporalLayers = 1;
+            break;
+        case VideoEncoder::ScalabilityMode::L1T2:
+            videoCodec.VP8()->numberOfTemporalLayers = 2;
+            break;
+        case VideoEncoder::ScalabilityMode::L1T3:
+            videoCodec.VP8()->numberOfTemporalLayers = 3;
+            break;
+        }
+        break;
+    case LibWebRTCVPXVideoEncoder::Type::VP9:
+    case LibWebRTCVPXVideoEncoder::Type::VP9_P2:
+        videoCodec.codecType = webrtc::kVideoCodecVP9;
+        videoCodec.VP9()->numberOfSpatialLayers = 1;
+        break;
+#if ENABLE(AV1)
+    case LibWebRTCVPXVideoEncoder::Type::AV1:
+        videoCodec.codecType = webrtc::kVideoCodecAV1;
+        videoCodec.qpMax = 56; // default qp max
+        break;
+#endif
+    }
+
+    if (auto error = m_internalEncoder->InitEncode(&videoCodec, webrtc::VideoEncoder::Settings { webrtc::VideoEncoder::Capabilities { true }, static_cast<int>(webrtc::cpu_info::DetectNumberOfCores()), defaultPayloadSize }))
+        return error;
+
+    m_isInitialized = true;
+    m_internalEncoder->SetRates({ computeAllocation(config), config.frameRate ? config.frameRate : defaultFrameRate });
+
+    m_internalEncoder->RegisterEncodeCompleteCallback(this);
+    return 0;
+}
+
+Ref<VideoEncoder::EncodePromise> LibWebRTCVPXInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bool shouldGenerateKeyFrame)
+{
+    if (!m_isInitialized)
+        return VideoEncoder::EncodePromise::createAndReject("Encoder is not initialized"_s);
+
+    if (rawFrame.timestamp + m_timestampOffset <= 0)
+        m_timestampOffset = 1 - rawFrame.timestamp;
+    m_timestamp = rawFrame.timestamp;
+    m_duration = rawFrame.duration;
+
+    auto frameType = (shouldGenerateKeyFrame || !m_hasEncoded) ? webrtc::VideoFrameType::kVideoFrameKey : webrtc::VideoFrameType::kVideoFrameDelta;
+    std::vector<webrtc::VideoFrameType> frameTypes { frameType };
+
+    Ref protectedFrame = rawFrame.frame;
+    RetainPtr buffer = protectedFrame->pixelBuffer();
+    auto colorSpace = protectedFrame->colorSpace();
+    if (auto pixelFormat = convertVideoFramePixelFormat(protectedFrame->pixelFormat(), true)) {
+        if (isRGBVideoPixelFormat(*pixelFormat)) {
+            // We do our own conversion to get matching color space handling, instead of letting libwebrtc do it.
+            colorSpace = { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false };
+            buffer = ImageTransferSessionVT::convertPixelBuffer(buffer.get(), kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, ImageTransferSessionVT::DestinationColorSpace::BT709);
+        }
+    }
+
+    auto frameBuffer = webrtc::pixelBufferToFrame(buffer.get());
+    if (m_config.width != static_cast<size_t>(frameBuffer->width()) || m_config.height != static_cast<size_t>(frameBuffer->height()))
+        frameBuffer = frameBuffer->Scale(m_config.width, m_config.height);
+
+    webrtc::VideoFrame frame { frameBuffer, webrtc::kVideoRotation_0, rawFrame.timestamp + m_timestampOffset };
+
+    if (m_currentColorSpace != colorSpace) {
+        m_shouldCallDescriptionCallback = true;
+        m_currentColorSpace = colorSpace.isValid() ? std::make_optional(colorSpace) : std::nullopt;
+        if (m_currentColorSpace) {
+            if (auto webrtColorSpace = toWebRTCColorSpace(*m_currentColorSpace))
+                frame.set_color_space(*webrtColorSpace);
+        }
+    }
+
+    auto error = m_internalEncoder->Encode(frame, &frameTypes);
+
+    if (!m_hasEncoded)
+        m_hasEncoded = !error;
+
+    if (error)
+        return VideoEncoder::EncodePromise::createAndReject("Encoder task failed"_s);
+
+    return VideoEncoder::EncodePromise::createAndResolve();
+}
+
+void LibWebRTCVPXInternalVideoEncoder::setRates(uint64_t bitRate, double frameRate)
+{
+    if (bitRate)
+        m_config.bitRate = bitRate;
+    if (frameRate)
+        m_config.frameRate = frameRate;
+    m_internalEncoder->SetRates({ computeAllocation(m_config), m_config.frameRate ? m_config.frameRate : defaultFrameRate });
+}
+
+webrtc::EncodedImageCallback::Result LibWebRTCVPXInternalVideoEncoder::OnEncodedImage(const webrtc::EncodedImage& encodedImage, const webrtc::CodecSpecificInfo*)
+{
+    if (m_isClosed)
+        return EncodedImageCallback::Result { EncodedImageCallback::Result::OK };
+
+    std::optional<unsigned> frameTemporalIndex;
+    if (m_hasMultipleTemporalLayers) {
+        if (auto temporalIndex = encodedImage.TemporalIndex())
+            frameTemporalIndex = *temporalIndex;
+    }
+
+    VideoEncoder::EncodedFrame encodedFrame {
+        Vector<uint8_t> { unsafeMakeSpan(encodedImage.data(), encodedImage.size()) },
+        encodedImage._frameType == webrtc::VideoFrameType::kVideoFrameKey,
+        m_timestamp,
+        m_duration,
+        frameTemporalIndex
+    };
+
+    if (m_shouldCallDescriptionCallback) {
+        m_shouldCallDescriptionCallback = false;
+        VideoEncoder::ActiveConfiguration configuration;
+        configuration.colorSpace = m_currentColorSpace.value_or(PlatformVideoColorSpace { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Bt709, PlatformVideoMatrixCoefficients::Bt709, false });
+        m_descriptionCallback(WTF::move(configuration));
+    }
+    m_outputCallback({ WTF::move(encodedFrame) });
+
+    return EncodedImageCallback::Result { EncodedImageCallback::Result::OK };
+}
+
+void LibWebRTCVPXInternalVideoEncoder::OnFrameDropped(uint32_t rtpTimestamp, int spatialID, bool isEndOfTemporalUnit)
+{
+    UNUSED_PARAM(rtpTimestamp);
+    UNUSED_PARAM(spatialID);
+    UNUSED_PARAM(isEndOfTemporalUnit);
+}
+
+}
+
+#endif // USE(LIBWEBRTC)

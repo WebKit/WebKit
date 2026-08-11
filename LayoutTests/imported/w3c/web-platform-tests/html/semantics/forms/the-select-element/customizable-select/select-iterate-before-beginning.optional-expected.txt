@@ -1,0 +1,5 @@
+button
+
+PASS Attempting to focus the previous option while focused on the first option should not crash.
+PASS Keyboard navigating backwards over an <hr> and <optgroup> should not crash.
+

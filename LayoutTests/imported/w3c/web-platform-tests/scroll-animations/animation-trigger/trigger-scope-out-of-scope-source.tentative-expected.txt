@@ -1,0 +1,6 @@
+In-scope In-Flow Target
+SOURCE
+Out-of-scope In-Flow False Target
+
+FAIL trigger-scope prevents in-scope target from finding trigger outside scope; target outside trigger-scope finds trigger assert_equals: animation on in_scope_target has playState paused. expected "paused" but got "running"
+

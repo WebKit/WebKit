@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            position: relative;
+            z-index: 0;
+            width: 200px;
+            height: 200px;
+            border: 1px solid green;
+        }
+
+        .fixed {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        .top {
+            top: 0;
+        }
+        .bottom {
+            bottom: 0;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        window.addEventListener('load', () => {
+            if (window.internals)
+                document.getElementById('scrollingtree').textContent = internals.scrollingStateTreeAsText();
+            
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="top fixed">
+            Top
+        </div>
+    </div>
+
+    <div class="bottom fixed">
+        Bottom
+    </div>
+<pre id="scrollingtree"></pre>
+</body>
+</html>

@@ -1,0 +1,12 @@
+Test that a video element with "crossorigin='anonymous'" can use a data: url
+
+
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+EXPECTED (mediaElement.duration > '0') OK
+END OF TEST
+

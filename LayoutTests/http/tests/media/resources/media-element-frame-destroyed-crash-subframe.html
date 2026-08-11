@@ -1,0 +1,17 @@
+<script>
+  onload = async () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    let embed0 = document.createElement('embed');
+    embed0.src = 'empty.ts';
+    document.body.appendChild(embed0);
+    await new Blob().text();
+    try {
+      await new FontFace('a', 'url(data:)').load();
+    } catch {}
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    document.execCommand('Bold');
+    parent.postMessage('done');
+  };
+</script>

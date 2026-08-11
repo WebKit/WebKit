@@ -1,0 +1,22 @@
+
+PASS 0px
+PASS -0px
+FAIL 0.1px assert_equals: expected "1px" but got "0.1px"
+FAIL -0.1px assert_equals: expected "-1px" but got "-0.1px"
+FAIL 0.25px assert_equals: expected "1px" but got "0.25px"
+FAIL -0.25px assert_equals: expected "-1px" but got "-0.25px"
+FAIL 0.5px assert_equals: expected "1px" but got "0.5px"
+FAIL -0.5px assert_equals: expected "-1px" but got "-0.5px"
+FAIL 0.9px assert_equals: expected "1px" but got "0.9px"
+FAIL -0.9px assert_equals: expected "-1px" but got "-0.9px"
+PASS 1px
+PASS -1px
+FAIL 1.25px assert_equals: expected "1px" but got "1.25px"
+FAIL -1.25px assert_equals: expected "-1px" but got "-1.25px"
+FAIL 1.5px assert_equals: expected "1px" but got "1.5px"
+FAIL -1.5px assert_equals: expected "-1px" but got "-1.5px"
+PASS 2px
+PASS -2px
+FAIL 2.75px assert_equals: expected "2px" but got "2.75px"
+FAIL -2.75px assert_equals: expected "-2px" but got "-2.75px"
+

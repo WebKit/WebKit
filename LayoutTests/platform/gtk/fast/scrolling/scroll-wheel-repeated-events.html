@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Repeated wheel events should scroll the same regardless of animations</title>
+        <style type="text/css">
+            body {
+                height: 10000px;
+            }
+        </style>
+        <script src="../../../../resources/js-test.js"></script>
+        <script src="../../../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function onLoad()
+        {
+            if (window.eventSender == undefined) {
+                document.getElementById('console').innerText = "Repeated wheel events should scroll the same regardless of animations";
+                return;
+            }
+
+            try {
+                eventSender.mouseMoveTo(100, 100);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+                eventSender.mouseScrollBy(0, -1);
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+                eventSender.mouseScrollBy(0, -1);
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+                eventSender.mouseScrollBy(0, -1);
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+                eventSender.mouseScrollBy(0, -1);
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+                eventSender.mouseScrollBy(0, -1);
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+
+                let destinationWithSerializedAnimations = document.scrollingElement.scrollTop;
+                document.scrollingElement.scrollTop = 0;
+
+                eventSender.mouseScrollBy(0, -1);
+                eventSender.mouseScrollBy(0, -1);
+                eventSender.mouseScrollBy(0, -1);
+                eventSender.mouseScrollBy(0, -1);
+                eventSender.mouseScrollBy(0, -1);
+
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+                expectTrue(document.scrollingElement.scrollTop == destinationWithSerializedAnimations, "Overlapping animations should not affect scroll destination during wheel events.");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div id="console"></div>
+    </body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!--
+Laid out like:
+A
+B
+C
+D
+E
+-->
+<div id="editable" contenteditable="true" style="word-break: break-all; font-size: 100pt; width: 50px;">ABCDE</div>
+
+<script>
+var output = "This test ensures we compute the correct line range after basic arrow key movement in a contenteditable with single letters separated by soft linebreaks.\n\n";
+
+var webarea;
+var endMarker, markerRange;
+var editable = document.getElementById("editable");
+async function verify(numberOfRightArrows, expectedLineIndex, expectedLineIndexAfterDownArrow) {
+    // Reset to the beginning of the contenteditable.
+    const range = document.createRange();
+    range.setStart(editable, 0);
+    range.collapse(true);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    for (let i = 0; i < numberOfRightArrows; i++)
+        eventSender.keyDown("rightArrow");
+
+    await waitFor(() => {
+        markerRange = webarea.selectedTextMarkerRange();
+        if (!markerRange)
+            return false;
+        endMarker = webarea.endTextMarkerForTextMarkerRange(markerRange);
+        return webarea.lineIndexForTextMarker(endMarker) === expectedLineIndex;
+    });
+    output += `PASS: Got line index '${expectedLineIndex}'\n`;
+
+    eventSender.keyDown("downArrow");
+    await waitFor(() => {
+        markerRange = webarea.selectedTextMarkerRange();
+        if (!markerRange)
+            return false;
+        endMarker = webarea.endTextMarkerForTextMarkerRange(markerRange);
+        return webarea.lineIndexForTextMarker(endMarker) === expectedLineIndexAfterDownArrow;
+    });
+    output += `PASS: Got line index '${expectedLineIndexAfterDownArrow}' after down arrow\n\n`;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    editable.focus();
+    webarea = accessibilityController.rootElement.childAtIndex(0);
+    setTimeout(async function() {
+        await verify(/* numberOfRightArrows */ 0, /* expectedLineIndex*/ 0, /* expectedLineIndexAfterDownArrow */ 1);
+        await verify(/* numberOfRightArrows */ 1, /* expectedLineIndex*/ 1, /* expectedLineIndexAfterDownArrow */ 2);
+        await verify(/* numberOfRightArrows */ 2, /* expectedLineIndex*/ 2, /* expectedLineIndexAfterDownArrow */ 3);
+        await verify(/* numberOfRightArrows */ 3, /* expectedLineIndex*/ 3, /* expectedLineIndexAfterDownArrow */ 4);
+        await verify(/* numberOfRightArrows */ 4, /* expectedLineIndex*/ 4, /* expectedLineIndexAfterDownArrow */ 4);
+        await verify(/* numberOfRightArrows */ 5, /* expectedLineIndex*/ 4, /* expectedLineIndexAfterDownArrow */ 4);
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

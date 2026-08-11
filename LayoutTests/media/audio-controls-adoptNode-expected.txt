@@ -1,0 +1,6 @@
+Test that UA shadow from 'controls' attribute is still populated when using adoptNode.
+
+EXPECTED (mediaElement.getAttribute('controls') == '') OK
+EXPECTED (shadow?.childNodes.length > '0') OK
+END OF TEST
+

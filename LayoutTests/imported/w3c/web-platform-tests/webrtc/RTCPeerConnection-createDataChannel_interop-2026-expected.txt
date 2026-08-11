@@ -1,0 +1,6 @@
+
+PASS createDataChannel with id 0 and negotiated not set should succeed, but not set the channel's id
+PASS createDataChannel with id 1 and negotiated not set should succeed, but not set the channel's id
+PASS createDataChannel with id 65534 and negotiated not set should succeed, but not set the channel's id
+PASS createDataChannel with id 65535 and negotiated not set should succeed, but not set the channel's id
+

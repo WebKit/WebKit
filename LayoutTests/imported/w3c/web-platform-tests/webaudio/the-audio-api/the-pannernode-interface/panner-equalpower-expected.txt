@@ -1,0 +1,5 @@
+
+PASS Equal-power panner model of AudioPannerNode
+PASS Mono source and listener at the same position
+PASS Stereo source and listener at the same position
+

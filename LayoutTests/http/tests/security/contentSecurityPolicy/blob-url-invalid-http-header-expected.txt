@@ -1,0 +1,5 @@
+This tests that a blob-URL JavaScript script loads with Content Security Policy containing invalid characters for an HTTP header value.
+
+PASS executed blob-URL script.
+PASS fired load event for blob-URL script.
+

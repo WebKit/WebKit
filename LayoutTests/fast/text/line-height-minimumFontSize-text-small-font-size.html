@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals) {
+    internals.settings.setMinimumFontSize(32);
+}
+</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body style="font-size: 16px;">
+<div id="target" style="font-size: 0px; line-height: 1rem;">Hi</div>
+<script>
+shouldBeTrue("document.getElementById('target').offsetHeight < 100");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

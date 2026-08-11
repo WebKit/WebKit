@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+select {
+    appearance: base-select;
+    font-size: 30px;
+    inline-size: 250px;
+    block-size: 50px;
+    color: transparent;
+}
+
+select::picker-icon {
+    display: none;
+}
+</style>
+</head>
+<body>
+<select id="target">
+    <option>Option 1</option>
+</select>
+<script>
+    onload = () => target.focus();
+</script>
+</body>
+</html>

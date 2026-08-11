@@ -1,0 +1,19 @@
+<style>
+    div {
+        width: 200px;
+        text-decoration: underline;
+    }
+</style>
+<div id="webtest8" style="direction: rtl; text-align: justify;">
+This test passes if it doesn't crash. https://bugs.webkit.org/show_bug.cgi?id=151055
+</div>
+
+<script>
+   if (window.testRunner)
+       testRunner.dumpAsText();
+   
+   var webtest8 = document.getElementById("webtest8")
+
+   webtest8.appendChild(document.createElement("image"));
+   webtest8.appendChild(document.createElement("textarea"));
+</script>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="video-test.js"></script>
+        <script>
+         function start() {
+             video = mediaElement = document.getElementsByTagName('video')[0];
+
+             testExpected("video.canPlayType('audio/mpeg')", "maybe");
+             testExpected("video.canPlayType('audio/mpeg;   codecs=\"mp3\"')", "probably");
+             testExpected("video.canPlayType('audio/mpeg;codecs=\"mp3\"')", "probably");
+             testExpected("video.canPlayType('audio/mpeg; codecs=\"xp3\"')", "");
+
+             endTest();
+         }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method for a non standard, but commonly used, MP3 mime type.</p>
+    </body>
+</html>

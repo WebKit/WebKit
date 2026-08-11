@@ -1,0 +1,3 @@
+
+PASS Blob URL SharedWorker should survive across navigations with extendedLifetime
+

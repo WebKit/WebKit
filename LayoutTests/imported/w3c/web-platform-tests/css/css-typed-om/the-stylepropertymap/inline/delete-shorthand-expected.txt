@@ -1,0 +1,5 @@
+
+PASS Deleting a shorthand property not in the inline style is a no-op
+PASS Deleting a shorthand property in the inline style removes both it and its longhands
+PASS Deleting a longhand property in the inline style removes both it and its shorthand
+

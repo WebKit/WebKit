@@ -1,0 +1,14 @@
+Tests that scrolling to move an element to a specific point successfully scrolls an iframe.
+
+PASS: window.pageYOffset === 0
+PASS: frameWindow.pageYOffset === 0
+PASS: target.getBoundingClientRect().top === 0
+PASS: target.getBoundingClientRect().top === 300
+PASS: target.getBoundingClientRect().top === 3000
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+5000-pixel box
+
+5000-pixel box

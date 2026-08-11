@@ -1,0 +1,2 @@
+Pass if no assert in debug.
+foo

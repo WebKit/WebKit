@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .scroller {
+                overflow: scroll;
+                position: relative;
+                height: 400px;
+                width: 400px;
+                border: solid 1px black;
+                scroll-snap-type: y mandatory;
+            }
+            .no-snap { scroll-snap-align: none; }
+            .large-space {
+                height: 300vh;
+                width: 300vw;
+            }
+            .target {
+                scroll-snap-align: start;
+                position: absolute;
+                width: 100px;
+                height: 100px;
+                border: solid 1px black;
+            }
+            .top { top: 0px; }
+            .left { left: 0px; }
+            .right { left: 200px; }
+            .bottom { top: 200px; }
+        </style>
+        <script src="../../resources/js-test.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        var scroller;
+        var bottomleft;
+        var bottomright;
+
+        function scrollSettle()
+        {
+            return new Promise(resolve => {
+                scroller.addEventListener("scrollend", resolve, { once: true });
+            });
+        }
+
+        async function scrollToAndSettle(x, y)
+        {
+            if (scroller.scrollLeft === x && scroller.scrollTop === y)
+                return;
+            const promise = scrollSettle();
+            scroller.scrollTo(x, y);
+            await promise;
+        }
+
+        async function runTest()
+        {
+            scroller = document.getElementById("scroller");
+            bottomleft = document.getElementById("bottomleft");
+            bottomright = document.getElementById("bottomright");
+
+            // Pinch-zoom the main frame. The subscroller's own coordinate
+            // space (scroll offsets, viewport size, snap area rects) is in
+            // unscaled layout units and should be unaffected by this.
+            await testRunner.setPageScaleFactor(2, 0, 0);
+            await UIHelper.renderingUpdate();
+
+            // Move bottomright out of the snapport in the x axis, which does
+            // not snap for this scroller.
+            bottomright.style.left = "500px";
+
+            // Focus bottomright without scrolling to it.
+            bottomright.focus({ preventScroll: true });
+            if (document.activeElement === bottomright)
+                testPassed("focused bottomright without scrolling to it.");
+            else
+                testFailed("failed to focus bottomright.");
+
+            // Snap to the row shared by bottomleft and bottomright.
+            await scrollToAndSettle(0, bottomleft.offsetTop);
+            if (scroller.scrollTop === bottomleft.offsetTop)
+                testPassed("scroller snapped to the shared row.");
+            else
+                testFailed("scroller did not snap to the shared row; scrollTop is " + scroller.scrollTop);
+
+            // Shift bottomleft down. If the scroller had selected the
+            // focused-but-offscreen bottomright as its snap target, it would
+            // stay put; it should instead follow bottomleft. Reading
+            // offsetTop/scrollTop below forces the layout (and the resnap it
+            // triggers) to happen synchronously, so there is no event to wait for.
+            const initialScrollTop = scroller.scrollTop;
+            bottomleft.style.top = "400px";
+
+            if (scroller.scrollTop === bottomleft.offsetTop)
+                testPassed("scroller followed bottomleft, not the focused offscreen bottomright.");
+            else
+                testFailed("scroller did not follow bottomleft; scrollTop is " + scroller.scrollTop);
+
+            if (scroller.scrollTop !== initialScrollTop)
+                testPassed("scroller actually scrolled after the layout change.");
+            else
+                testFailed("scroller did not scroll after the layout change.");
+
+            finishJSTest();
+        }
+
+        function onLoad()
+        {
+            if (window.testRunner && window.internals)
+                runTest();
+            else {
+                var message = document.createElement("p");
+                message.innerHTML = "This test requires testRunner and internals.";
+                document.body.appendChild(message);
+                finishJSTest();
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div id="scroller" class="scroller">
+            <div class="large-space no-snap" tabindex="1" id="space"></div>
+            <div id="topleft" tabindex="1" class="top left target"></div>
+            <div id="topright" tabindex="1" class="top right target"></div>
+            <div id="bottomleft" tabindex="1" class="bottom left target"></div>
+            <div id="bottomright" tabindex="1" class="bottom right target"></div>
+        </div>
+    </body>
+</html>

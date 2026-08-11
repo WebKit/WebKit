@@ -1,0 +1,13 @@
+Test to make sure border-color shorthand property returns proper results
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedStyle.getPropertyValue('border-color') is 'rgb(255, 0, 0) rgb(0, 0, 255) rgb(0, 128, 0) rgb(255, 255, 255)'
+PASS computedStyle.getPropertyValue('border-color') is 'rgb(0, 0, 0)'
+PASS computedStyle.getPropertyValue('border-color') is 'rgb(102, 102, 102)'
+PASS computedStyle.getPropertyValue('border-color') is 'rgb(0, 0, 0)'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

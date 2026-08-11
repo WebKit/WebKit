@@ -1,0 +1,3 @@
+Tests uniquing attributes via setAttribute. WebKit shouldn't crash under GuardMalloc or ASAN builds.
+
+PASS. WebKit didn't crash.

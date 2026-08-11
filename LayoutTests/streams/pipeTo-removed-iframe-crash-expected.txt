@@ -1,0 +1,4 @@
+Tests that pipeTo does not crash when the document frame is detached during error propagation.
+WebKit should not crash, and you should see PASS below.
+
+PASS

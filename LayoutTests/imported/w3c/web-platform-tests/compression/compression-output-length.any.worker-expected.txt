@@ -1,0 +1,6 @@
+
+PASS the length of deflate data should be shorter than that of the original data
+PASS the length of deflate-raw data should be shorter than that of the original data
+PASS the length of gzip data should be shorter than that of the original data
+PASS the length of brotli data should be shorter than that of the original data
+

@@ -1,0 +1,15 @@
+<html><!-- webkit-test-runner [ NeedsStorageAccessFromFileURLsQuirk=true AllowUniversalAccessFromFileURLs=false ] -->
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<iframe src="resources/unblocked-example.html"></iframe>
+<div id="results"></div>
+Test that we can access localStorage from a file URL even if universal access is turned off.
+</body>
+</html>

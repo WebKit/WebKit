@@ -1,0 +1,6 @@
+
+PASS <model> has interactive property
+PASS <model> interactive property default to false
+PASS <model> interactive property reflects the interactive HTML attribute
+PASS <model> interactive HTML attribute reflects the interactive property
+

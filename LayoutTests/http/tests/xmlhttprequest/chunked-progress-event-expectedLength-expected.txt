@@ -1,0 +1,12 @@
+Test case for bug 36156: XHR 'progress' event code assumes wrongly that expectedLength >= 0
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Verify that the progress event total property is 0 when the expected overall length can't be computed.
+PASS Length is not computable
+PASS gotRelevantProgressEvent is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

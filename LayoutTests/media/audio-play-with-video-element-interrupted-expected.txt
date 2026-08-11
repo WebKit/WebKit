@@ -1,0 +1,14 @@
+Test that a video element with an audio source always gets paused when audio is interrupted.
+
+
+RUN(video.src = findMediaFile("audio", "content/silence"))
+RUN(video.play())
+EVENT(playing)
+RUN(internals.beginAudioSessionInterruption())
+EVENT(pause)
+RUN(video.play())
+EVENT(playing)
+RUN(internals.beginAudioSessionInterruption())
+EVENT(pause)
+END OF TEST
+

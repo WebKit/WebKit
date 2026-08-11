@@ -1,0 +1,16 @@
+// Copyright 2019 Google LLC
+// Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+#include "tools/fiddle/examples.h"
+REG_FIDDLE(Path_rArcTo, 256, 108, false, 0) {
+void draw(SkCanvas* canvas) {
+    SkPaint paint;
+    SkPathBuilder path;
+    const SkPoint starts[] = {{20, 20}, {120, 20}, {70, 60}};
+    for (auto start : starts) {
+        path.moveTo(start.fX, start.fY);
+        path.rArcTo({20, 20}, 0, SkPathBuilder::kSmall_ArcSize,
+                    SkPathDirection::kCCW, {60, 0});
+    }
+    canvas->drawPath(path.detach(), paint);
+}
+}  // END FIDDLE

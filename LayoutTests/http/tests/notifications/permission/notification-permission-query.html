@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This test checks that Permissions::query() returns the true permission state of the Notifications API.")
+
+jsTestIsAsync = true;
+
+function defaultTest()
+{
+    debug("No permission state is set");
+    navigator.permissions.query({ name: "notifications" }).then((status)=>{
+        permissionsQueryResult = status.state;
+        shouldBeEqualToString("permissionsQueryResult", "prompt");
+        
+        grantTest();
+    });
+}
+
+function grantTest() 
+{    
+    internals.withUserGesture(() => {
+        // Permission is granted by default when requestPermission() is called.
+        debug("Permission has been granted");
+        window.Notification.requestPermission().then((result)=> {
+            requestPermissionResult = result;
+            shouldBeEqualToString("requestPermissionResult", "granted");
+            navigator.permissions.query({ name: "notifications" }).then((status)=>{
+                permissionsQueryResult = status.state;
+                shouldBeEqualToString("permissionsQueryResult", "granted");
+
+                denyTest();
+            });
+        }); 
+    });
+}
+
+function denyTest() 
+{
+    internals.withUserGesture(() => {
+        testRunner.denyWebNotificationPermissionOnPrompt(testURL);
+        debug("Permission has been denied");
+        window.Notification.requestPermission().then((result)=> {
+            requestPermissionResult = result;
+            shouldBeEqualToString("requestPermissionResult", "denied");
+            navigator.permissions.query({ name: "notifications" }).then((status)=>{
+                permissionsQueryResult = status.state;
+                shouldBeEqualToString("permissionsQueryResult", "denied");
+
+                finishJSTest();
+            });
+        }); 
+    });
+}
+
+defaultTest();
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

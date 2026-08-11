@@ -1,0 +1,5 @@
+
+PASS Cross-realm getter throws when called on incompatible object
+PASS Cross-realm setter throws when called on incompatible object
+PASS Cross-realm operation throws when called on incompatible object
+

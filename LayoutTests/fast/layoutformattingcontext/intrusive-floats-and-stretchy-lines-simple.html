@@ -1,0 +1,17 @@
+<!-- webkit-test-runner [ LayoutFormattingContextEnabled=true InlineFormattingContextIntegrationEnabled=false ] -->
+<style>
+.floaty {
+  float: left;
+  background-color: green;
+  height: 50px;
+}
+.inline_content {
+  font-size: 20px;
+  font-family: ahem;
+}
+</style>
+<div style="width: 400px;">
+<div class=floaty style="width: 50px;"></div>
+<div class=floaty style="width: 100px; clear: left;"></div>
+<div class=inline_content><img src="foo" style="width: 20px; height: 80px; background-color: blue">text</div>
+</div>

@@ -1,0 +1,15 @@
+Testing that the overflow button is properly marked as `on` only when the context menu is showing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('button.overflow') became different from null
+PASS shadowRoot.querySelector('button.overflow').getBoundingClientRect().width became different from 0
+Tapping overflow button...
+PASS shadowRoot.querySelector('button.overflow').classList.contains('on') became true
+Dismissing contextmenu...
+PASS shadowRoot.querySelector('button.overflow').classList.contains('on') became false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

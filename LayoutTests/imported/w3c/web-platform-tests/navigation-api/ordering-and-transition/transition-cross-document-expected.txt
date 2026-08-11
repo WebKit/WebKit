@@ -1,0 +1,6 @@
+
+
+PASS cross-document reload() must leave transition null
+PASS cross-document navigate() must leave transition null
+PASS cross-document back() must leave transition null
+

@@ -1,0 +1,10 @@
+Make sure that the length returned by OfflineAudioContext even if we failed to construct the rendering buffer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new OfflineAudioContext(1, 2**29, 44000).length is 2**29
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

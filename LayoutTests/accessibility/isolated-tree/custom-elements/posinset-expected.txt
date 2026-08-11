@@ -1,0 +1,13 @@
+This tests that aria fallback roles work correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.accessibleElementById("item-1").numberAttributeValue("AXARIASetSize") is 100
+PASS accessibilityController.accessibleElementById("item-1").numberAttributeValue("AXARIAPosInSet") is 5
+PASS accessibilityController.accessibleElementById("item-2").numberAttributeValue("AXARIASetSize") is 50
+PASS accessibilityController.accessibleElementById("item-2").numberAttributeValue("AXARIAPosInSet") is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

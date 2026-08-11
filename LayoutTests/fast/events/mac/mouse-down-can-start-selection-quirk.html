@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    font-family: system-ui;
+    font-size: 18px;
+}
+
+.slider {
+    width: 200px;
+    height: 40px;
+    touch-action: none;
+    background: #efefef;
+    border-radius: 4px;
+    padding: 4px;
+    display: inline-block;
+}
+
+.track {
+    width: 200px;
+    height: 2px;
+    background: lightgray;
+    top: 21px;
+    position: relative;
+    border-radius: 2px;
+}
+
+.grabber {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border: 2px solid green;
+    border-radius: 20px;
+    top: 10px;
+    left: 0;
+    position: relative;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.text {
+    display: inline-block;
+    height: 24px;
+    margin-top: -34px;
+    vertical-align: middle;
+
+}
+</style>
+<script>
+addEventListener("load", () => {
+    window.internals?.setTopDocumentURLForQuirks("https://open.spotify.com");
+
+    sliderPosition = 0;
+    isDraggingSlider = false;
+    const grabber = document.querySelector(".grabber");
+    grabber.addEventListener("mousedown", () => {
+        isDraggingSlider = true;
+    });
+
+    addEventListener("mousemove", (event) => {
+        if (!isDraggingSlider)
+            return;
+
+        sliderPosition = Math.min(180, Math.max(0, event.clientX - 20));
+        grabber.style.left = `${sliderPosition}px`;
+    });
+
+    addEventListener("mouseup", () => {
+        isDraggingSlider = false;
+    });
+
+    const rect = grabber.getBoundingClientRect();
+    eventSender.mouseMoveTo(rect.left + 10, rect.top + 10);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(rect.left + 250, rect.top + 10);
+    eventSender.mouseUp();
+
+    shouldBeEqualToString("getSelection().toString()", "");
+    shouldBe("sliderPosition", "180");
+    shouldBeFalse("isDraggingSlider");
+});
+</script>
+</head>
+<body>
+    <div class="slider">
+        <div class="track"></div>
+        <div class="grabber"></div>
+    </div>
+    <div class="text">Hello world</div>
+</body>
+</html>

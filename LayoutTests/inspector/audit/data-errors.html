@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+
+let x = {};
+
+function test()
+{
+    let suite = InspectorTest.Audit.createSuite("Audit.Errors");
+
+    InspectorTest.Audit.addFunctionlessTest("Audit.Errors.MissingVariable", "y", WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addFunctionlessTest("Audit.Errors.UndefinedAsObject", "x.x.x", WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addFunctionlessTest("Audit.Errors.NotAFunction", "x()", WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.Errors.InvalidLevel", {level: "INVALID"}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.Errors.UserGenerated", {level: WI.AuditTestCaseResult.Level.Pass, errors: ["user generated error"]}, WI.AuditTestCaseResult.Level.Error);
+
+    InspectorTest.Audit.addObjectTest("Audit.Errors.Undefined", {level: WI.AuditTestCaseResult.Level.Pass, errors: undefined}, WI.AuditTestCaseResult.Level.Pass);
+
+    InspectorTest.Audit.addObjectTest("Audit.Errors.Error.Null", {level: WI.AuditTestCaseResult.Level.Pass, errors: null}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.Errors.Error.Number", {level: WI.AuditTestCaseResult.Level.Pass, errors: 42}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.Errors.Error.String", {level: WI.AuditTestCaseResult.Level.Pass, errors: "foo"}, WI.AuditTestCaseResult.Level.Error);
+    InspectorTest.Audit.addObjectTest("Audit.Errors.Error.Object", {level: WI.AuditTestCaseResult.Level.Pass, errors: {}}, WI.AuditTestCaseResult.Level.Error);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing audits involving DOM attributes.</p>
+    <div id="id1" class="class2 class3"></div>
+    <div id="id2" class="class3 class1"></div>
+    <div id="id3" class="class1 class2"></div>
+</body>
+</html>

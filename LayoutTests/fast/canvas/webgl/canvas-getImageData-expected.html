@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="resources/webgl-test.js"></script>
+    <script src="resources/webgl-test-utils.js"></script>
+    <script id="quadFragmentShader" type="x-shader/x-fragment">
+      precision highp float;
+      varying vec2 texCoord;
+
+      void main() {
+          gl_FragColor = vec4(texCoord, 0.5, 1.0);
+      }
+    </script>
+    <script>
+      "use strict";
+
+      var wtu = WebGLTestUtils;
+
+      function runTest(canvas)
+      {
+          const gl = wtu.create3DContext(canvas);
+          const program = wtu.setupSimpleTextureProgram(gl);
+          const samplerLoc = gl.getUniformLocation(program, "tex");
+          const buffers = wtu.setupUnitQuad(gl);
+          const tex = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, tex);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+          const pixels = new Uint8Array(256*256*4);
+          for (var y = 0; y < 256; y++)
+              for (var x = 0; x < 256; x++)
+                  pixels.set([x, y, 127, 255], 4 * (256 * y + x));
+
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 256, 256, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+          gl.uniform1i(samplerLoc, 0);
+          wtu.clearAndDrawUnitQuad(gl);
+      }
+
+      function init()
+      {
+          runTest(document.getElementById("canvas0"));
+          runTest(document.getElementById("canvas1"));
+          finishTest();
+      }
+    </script>
+  </head>
+  <body onload="init()">
+    <canvas id="canvas0" width="256" height="256"></canvas>
+    <canvas id="canvas1" width="256" height="256"></canvas>
+  </body>
+</html>

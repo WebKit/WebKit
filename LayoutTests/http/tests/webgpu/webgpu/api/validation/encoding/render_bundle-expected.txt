@@ -1,0 +1,23 @@
+
+PASS :empty_bundle_list:
+PASS :device_mismatch:
+PASS :color_formats_mismatch:bundleFormats=["bgra8unorm","rg8unorm"];passFormats=["bgra8unorm","rg8unorm"]
+PASS :color_formats_mismatch:bundleFormats=["bgra8unorm","rg8unorm"];passFormats=["bgra8unorm","bgra8unorm"]
+PASS :color_formats_mismatch:bundleFormats=["bgra8unorm","rg8unorm"];passFormats=["rg8unorm","bgra8unorm"]
+PASS :color_formats_mismatch:bundleFormats=["bgra8unorm","rg8unorm"];passFormats=["rg8unorm","bgra8unorm","rgba8unorm"]
+PASS :color_formats_mismatch:bundleFormats=["bgra8unorm","rg8unorm","rgba8unorm"];passFormats=["rg8unorm","bgra8unorm"]
+PASS :depth_stencil_formats_mismatch:bundleFormat="depth24plus";passFormat="depth24plus"
+PASS :depth_stencil_formats_mismatch:bundleFormat="depth24plus";passFormat="depth16unorm"
+PASS :depth_stencil_formats_mismatch:bundleFormat="depth24plus";passFormat="depth24plus-stencil8"
+PASS :depth_stencil_formats_mismatch:bundleFormat="stencil8";passFormat="depth24plus-stencil8"
+PASS :depth_stencil_readonly_mismatch:depthStencilFormat="stencil8"
+PASS :depth_stencil_readonly_mismatch:depthStencilFormat="depth16unorm"
+PASS :depth_stencil_readonly_mismatch:depthStencilFormat="depth32float"
+PASS :depth_stencil_readonly_mismatch:depthStencilFormat="depth24plus"
+PASS :depth_stencil_readonly_mismatch:depthStencilFormat="depth24plus-stencil8"
+PASS :depth_stencil_readonly_mismatch:depthStencilFormat="depth32float-stencil8"
+PASS :sample_count_mismatch:bundleSamples=1;passSamples=1
+PASS :sample_count_mismatch:bundleSamples=4;passSamples=4
+PASS :sample_count_mismatch:bundleFormat=4;passFormat=1
+PASS :sample_count_mismatch:bundleFormat=1;passFormat=4
+

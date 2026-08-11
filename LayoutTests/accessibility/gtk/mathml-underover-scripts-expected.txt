@@ -1,0 +1,12 @@
+This tests the AT-SPI roles of MathML underover elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+munder: AXRole: AXSection
+mover: AXRole: AXSection
+munderover: AXRole: AXSection
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,9 @@
+Verifies that history.back() works correctly after the main frame is redirected into a new process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

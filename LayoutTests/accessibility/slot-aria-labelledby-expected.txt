@@ -1,0 +1,27 @@
+This test ensures slot elements referenced by aria-labelledby correctly use slotted content over fallback, and exclude hidden slotted content.
+
+Test 1: Button labelled by slot with slotted content should use slotted content.
+PASS: Text alternatives include 'Slotted'
+PASS: Text alternatives do not include 'Fallback'
+
+Test 2: Button labelled by slot should exclude hidden slotted content.
+PASS: Text alternatives include 'Visible'
+PASS: Text alternatives do not include 'Hidden'
+PASS: Text alternatives do not include 'Fallback'
+
+Test 3: Button labelled by slot with no slotted content should use fallback.
+PASS: Text alternatives include 'Fallback'
+
+Test 4: Button labelled by slot with only hidden slotted content should use fallback.
+PASS: Text alternatives include 'Fallback'
+PASS: Text alternatives do not include 'Hidden'
+
+Test 5: Dynamically adding slotted content should update the label.
+PASS: Text alternatives include 'Fallback'
+PASS: Text alternatives include 'Dynamic'
+PASS: Text alternatives do not include 'Fallback'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Slotted Visible Dynamic

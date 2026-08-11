@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/licenses/publicdomain/
+-->
+<svg xmlns="http://www.w3.org/2000/svg">
+  <title>Test that suspendRedraw doesn't apply after the end of a script</title>
+  <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=734079 -->
+
+  <rect width="100%" height="100%" fill="lime"/>
+  <script>
+    document.documentElement.suspendRedraw(10000);
+  </script>
+</svg>

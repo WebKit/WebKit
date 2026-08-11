@@ -1,0 +1,20 @@
+<style>
+  #x {
+    container-type: inline-size;
+    position: sticky;
+    width: 10%;
+  }
+  :read-only {
+    border-width: 250px;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    location.hash = 'x';
+    document.designMode = 'on';
+  };
+</script>
+<iframe id="x"></iframe>
+This test passes if it doesn't crash.

@@ -1,0 +1,75 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+function addCrossOriginIframeThatSetsCookie() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    let iframe = document.createElement("iframe");
+    iframe.name = "cookie-frame";
+    // Cross-origin => separate WebContent process under Site Isolation. The iframe's own script
+    // sets a cookie for a path the parent process never fetches.
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/storage/resources/set-cookie-via-script.html`;
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Storage.getCookies");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Storage.getCookies.CrossOriginIframe",
+        description: "A cookie set by script inside a cross-origin iframe (a separate WebContent process under Site Isolation) must be visible via Storage.getCookies, which reads the authoritative NetworkProcess store, and must NOT be visible via the in-process Page.getCookies, which can only find cookies for URLs the inspected page's process already knows about.",
+        async test() {
+            await WI.backendTarget.StorageAgent.enable();
+            await InspectorTest.evaluateInPage(`if (window.testRunner) testRunner.setAlwaysAcceptCookies(true);`);
+
+            // Adding the cross-origin iframe spawns a Frame Target under Site Isolation. Await it
+            // before asserting anything: TargetAdded is dispatched asynchronously, so the FrameTarget
+            // is not registered synchronously after evaluateInPage() returns. Awaiting the event is
+            // both the reliable "Site Isolation is active" signal and what lets the child's script run.
+            let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+            InspectorTest.evaluateInPage("addCrossOriginIframeThatSetsCookie()");
+
+            let frameTarget = (await targetAddedPromise).data.target;
+            InspectorTest.expectThat(frameTarget instanceof WI.FrameTarget, "Cross-origin iframe should be its own Frame Target (out-of-process).");
+
+            // A freshly-added cross-origin frame target starts provisional; wait for it to commit so
+            // its script (which sets the cookie) has actually run in its own process.
+            if (frameTarget.isProvisional)
+                await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+
+            // The cookie write from the child's script round-trips to the NetworkProcess; poll until
+            // Storage.getCookies observes it.
+            let cookie = null;
+            for (let attempt = 0; attempt < 50 && !cookie; ++attempt) {
+                let {cookies} = await WI.backendTarget.StorageAgent.getCookies();
+                cookie = cookies.find((c) => c.name === "CrossOriginScriptCookie");
+                if (!cookie)
+                    await new Promise((resolve) => setTimeout(resolve, 20));
+            }
+
+            InspectorTest.expectNotNull(cookie, "Storage.getCookies should see the cross-origin iframe's cookie.");
+            if (cookie)
+                InspectorTest.expectEqual(cookie.value, "PASS", "Cross-origin cookie value should be 'PASS'.");
+
+            // Negative control: Page.getCookies runs in the inspected page's process and looks up
+            // cookies only for URLs that process knows as resources. It has no resource URL for the
+            // private-scope path, so it must not see this cookie. If it did, the iframe would not
+            // be out-of-process and the test would not be exercising the Site Isolation path.
+            let {cookies: pageCookies} = await WI.pageTarget.PageAgent.getCookies();
+            let pageCookie = pageCookies.find((c) => c.name === "CrossOriginScriptCookie");
+            InspectorTest.expectNull(pageCookie, "Page.getCookies must NOT see the cross-origin iframe's cookie (it is out-of-process and the URL is unknown to the inspected page).");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that Storage.getCookies sees a cookie set by script inside a cross-origin iframe under Site Isolation, which the in-process Page.getCookies cannot.</p>
+</body>
+</html>

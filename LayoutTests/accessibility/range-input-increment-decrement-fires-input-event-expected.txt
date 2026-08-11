@@ -1,0 +1,13 @@
+This test ensures that incrementing and decrementing a range input fires the input event.
+
+PASS: inputEventCount === 0
+PASS: axRange.intValue === 50
+PASS: inputEventCount === 1
+PASS: axRange.intValue > 50 === true
+PASS: inputEventCount === 3
+PASS: axRange.intValue < 50 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

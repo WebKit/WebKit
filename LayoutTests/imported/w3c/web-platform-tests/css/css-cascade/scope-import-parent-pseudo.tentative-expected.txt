@@ -1,0 +1,7 @@
+Inside
+Inner (W)
+Inner (U)
+
+FAIL The & selector matches the scoping root assert_equals: expected "1" but got ""
+FAIL The & selector behaves like :scope assert_equals: expected "1" but got ""
+

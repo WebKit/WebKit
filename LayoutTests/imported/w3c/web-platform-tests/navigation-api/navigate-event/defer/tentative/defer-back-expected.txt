@@ -1,0 +1,6 @@
+
+FAIL
+  navigateEvent.deferPageSwap: deferring is not allowed for cross-document traverse
+  navigations
+ assert_array_equals: lengths differ, expected array ["navigate", "pagehide"] length 2, got ["pagehide"] length 1
+

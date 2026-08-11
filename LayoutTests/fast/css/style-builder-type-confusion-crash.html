@@ -1,0 +1,10 @@
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    d.attributeStyleMap.set('clip-path', 'circle()');
+    document.body.offsetHeight;
+    document.body.innerHTML = 'PASS if no crash';
+  };
+</script>
+<div id="d"></div>

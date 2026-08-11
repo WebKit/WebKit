@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="resources/SVGTestCase.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+</head>
+<body onload="runRepaintTest()">
+<h1>SVG 1.1 dynamic update tests</h1>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+// [Name] SVGImageElement-svgdom-preserveAspectRatio-prop.js
+// [Expected rendering result] image at 0x0 size 200x200 - and a series of PASS messages
+
+description("Tests dynamic updates of the 'preserveAspectRatio' property of the SVGImageElement object")
+createSVGTestCase();
+
+var imageElement = createSVGElement("image");
+imageElement.setAttributeNS(xlinkNS, "xlink:href", "../custom/resources/green-checker.png");
+imageElement.setAttribute("preserveAspectRatio", "xMaxYMax meet");
+imageElement.setAttribute("x", "0");
+imageElement.setAttribute("y", "0");
+imageElement.setAttribute("width", "200");
+imageElement.setAttribute("height", "200");
+rootSVGElement.appendChild(imageElement);
+
+shouldBe("imageElement.preserveAspectRatio.baseVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_XMAXYMAX");
+shouldBe("imageElement.preserveAspectRatio.baseVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET");
+
+function repaintTest() {
+    imageElement.preserveAspectRatio.baseVal.align = SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_NONE;
+    shouldBe("imageElement.preserveAspectRatio.baseVal.align", "SVGPreserveAspectRatio.SVG_PRESERVEASPECTRATIO_NONE");
+    shouldBe("imageElement.preserveAspectRatio.baseVal.meetOrSlice", "SVGPreserveAspectRatio.SVG_MEETORSLICE_MEET");
+
+    completeTest();
+}
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

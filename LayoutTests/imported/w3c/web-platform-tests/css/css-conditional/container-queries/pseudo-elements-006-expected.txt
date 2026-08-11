@@ -1,0 +1,12 @@
+First-line
+First-line
+
+PASS Originating element container for ::before
+PASS Originating element container for ::after
+PASS Originating element container for ::marker
+PASS Originating element container for ::first-line
+PASS Originating element container for ::first-letter
+PASS Originating element container for outer ::first-line
+PASS Originating element container for outer ::first-letter
+PASS Originating element container for ::backdrop
+

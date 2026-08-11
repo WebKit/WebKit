@@ -1,0 +1,20 @@
+<body>
+This test passes if it doesn't crash.
+<host-element id=host>
+<template shadowrootmode=open>foo</template>
+</host-element>
+<div id=t></div>
+<script>
+window.testRunner?.dumpAsText();
+
+const css = new CSSStyleSheet();
+css.replaceSync(`[foo=bar] {
+    @media(screen) { }
+    color: green;
+}`);
+document.adoptedStyleSheets.push(css);
+host.shadowRoot.adoptedStyleSheets.push(css);
+document.body.offsetWidth;
+
+t.setAttribute("foo", "baz");
+</script>

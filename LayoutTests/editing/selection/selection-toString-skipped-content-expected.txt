@@ -1,0 +1,5 @@
+PASS getSelection().toString() is "hello"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello

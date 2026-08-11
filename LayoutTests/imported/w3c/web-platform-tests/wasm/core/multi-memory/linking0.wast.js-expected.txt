@@ -1,0 +1,17 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (linking0.wast:1)
+PASS #3 Test that WebAssembly compilation succeeds (linking0.wast:17)
+PASS #4 Test that WebAssembly compilation succeeds (linking0.wast:31)
+PASS #5 Reinitialize the default imports
+PASS #6 Test that WebAssembly compilation succeeds (linking0.wast:1)
+PASS #7 Test that WebAssembly instantiation succeeds (linking0.wast:1)
+PASS #8 Test that WebAssembly compilation succeeds (linking0.wast:17)
+PASS #9 Test that WebAssembly instantiation fails (linking0.wast:17)
+PASS #10 Test that a WebAssembly module is unlinkable
+PASS #11 Test that a WebAssembly code traps (linking0.wast:27)
+PASS #12 Test that WebAssembly compilation succeeds (linking0.wast:31)
+PASS #13 Test that WebAssembly instantiation fails (linking0.wast:31)
+PASS #14 Test that a WebAssembly module is uninstantiable
+PASS #15 Test that a WebAssembly code returns a specific result (linking0.wast:42)
+

@@ -1,0 +1,4 @@
+This tests removing a focused element from a document and calling activeElement on a shadow tree in the same document.
+WebKit should clear the focused element even if the removed element was focused during removal and should not crash or hit an assertion.
+
+PASS - did not crash

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<body>
+<style>
+#target { width: 100px; height: 100px; background-color: black; }
+</style>
+<div id="target"></div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+<script>
+
+promise_test(async t => {
+    const target = document.getElementById("target");
+    const duration = 1000 * 1000;
+    // Use a cubic-bezier easing so TimingFunction::transformProgress() does
+    // non-trivial work, widening the window during which both the main and
+    // scrolling threads hold a transient ref on the same TimingFunction.
+    const easing = "cubic-bezier(0.1, 0.7, 1.0, 0.1)";
+    const animations = [
+        target.animate({ translate: ["100px", "200px"] }, { duration, easing }),
+        target.animate({ translate: ["300px", "400px"] }, { duration, easing, composite: "add" }),
+        target.animate({ scale: [1, 2] }, { duration, easing }),
+        target.animate({ scale: [3, 4] }, { duration, easing, composite: "add" })
+    ];
+    await Promise.all(animations.map(animation => animationAcceleration(animation)));
+
+    // Repeatedly resolve the animation stack on the main thread while the
+    // scrolling thread is concurrently applying effects. Both paths call
+    // AnimationEffectTiming::resolve() which protects the effect's
+    // TimingFunction; this must not trip the RefCounted threading check.
+    for (let i = 0; i < 50; ++i)
+        await UIHelper.remoteAnimationStackForElement(target);
+}, "Resolving threaded-animation timing on the main and scrolling threads concurrently does not trip the RefCounted threading check.");
+
+</script>
+</body>

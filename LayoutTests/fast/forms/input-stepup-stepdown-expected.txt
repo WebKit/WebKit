@@ -1,0 +1,14 @@
+Check stepUp() and stepDown() bahevior for unsupported types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Unsupported type
+PASS input.step = "3"; input.min = ""; input.max = ""; input.value = "2"; input.stepDown() threw exception InvalidStateError: The object is in an invalid state..
+PASS input.stepDown(0) threw exception InvalidStateError: The object is in an invalid state..
+PASS input.stepUp() threw exception InvalidStateError: The object is in an invalid state..
+PASS input.stepUp(0) threw exception InvalidStateError: The object is in an invalid state..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

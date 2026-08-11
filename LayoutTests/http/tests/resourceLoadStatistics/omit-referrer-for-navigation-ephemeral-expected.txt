@@ -1,0 +1,10 @@
+Check that document.referrer is omitted after a cross-site navigation with link query while in private browsing mode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The referrer is omitted.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

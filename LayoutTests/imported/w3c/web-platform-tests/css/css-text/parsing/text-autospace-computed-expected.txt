@@ -1,0 +1,34 @@
+
+FAIL Property text-autospace value 'initial' assert_equals: expected "normal" but got "no-autospace"
+PASS Property text-autospace value 'normal'
+PASS Property text-autospace value 'no-autospace'
+PASS Property text-autospace value 'auto'
+PASS Property text-autospace value 'ideograph-alpha'
+PASS Property text-autospace value 'ideograph-numeric'
+PASS Property text-autospace value 'ideograph-alpha ideograph-numeric'
+FAIL Property text-autospace value 'punctuation' assert_true: 'punctuation' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'punctuation ideograph-alpha' assert_true: 'punctuation ideograph-alpha' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'punctuation ideograph-alpha ideograph-numeric' assert_true: 'punctuation ideograph-alpha ideograph-numeric' is a supported value for text-autospace. expected true got false
+PASS Property text-autospace value 'ideograph-alpha insert'
+PASS Property text-autospace value 'ideograph-numeric insert'
+PASS Property text-autospace value 'ideograph-alpha ideograph-numeric insert'
+FAIL Property text-autospace value 'punctuation insert' assert_true: 'punctuation insert' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'punctuation ideograph-alpha insert' assert_true: 'punctuation ideograph-alpha insert' is a supported value for text-autospace. expected true got false
+PASS Property text-autospace value 'insert ideograph-alpha'
+PASS Property text-autospace value 'insert ideograph-numeric'
+PASS Property text-autospace value 'insert ideograph-alpha ideograph-numeric'
+FAIL Property text-autospace value 'insert punctuation' assert_true: 'insert punctuation' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'insert punctuation ideograph-alpha' assert_true: 'insert punctuation ideograph-alpha' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'insert punctuation ideograph-alpha ideograph-numeric' assert_true: 'insert punctuation ideograph-alpha ideograph-numeric' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'ideograph-alpha replace' assert_true: 'ideograph-alpha replace' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'ideograph-numeric replace' assert_true: 'ideograph-numeric replace' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'ideograph-alpha ideograph-numeric replace' assert_true: 'ideograph-alpha ideograph-numeric replace' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'punctuation replace' assert_true: 'punctuation replace' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'punctuation ideograph-alpha replace' assert_true: 'punctuation ideograph-alpha replace' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'replace ideograph-alpha' assert_true: 'replace ideograph-alpha' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'replace ideograph-numeric' assert_true: 'replace ideograph-numeric' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'replace ideograph-alpha ideograph-numeric' assert_true: 'replace ideograph-alpha ideograph-numeric' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'replace punctuation' assert_true: 'replace punctuation' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'replace punctuation ideograph-alpha' assert_true: 'replace punctuation ideograph-alpha' is a supported value for text-autospace. expected true got false
+FAIL Property text-autospace value 'replace punctuation ideograph-alpha ideograph-numeric' assert_true: 'replace punctuation ideograph-alpha ideograph-numeric' is a supported value for text-autospace. expected true got false
+

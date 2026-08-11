@@ -1,0 +1,11 @@
+hello world child  hello world child
+
+FAIL Testing dblclick events when clicking child of disabled button. assert_equals: child element received dblclick events expected true but got false
+FAIL Testing dblclick events when clicking child of disabled my-control. assert_equals: child element received dblclick events expected true but got false
+PASS Testing dblclick events when clicking disabled button.
+PASS Testing dblclick events when clicking disabled my-control.
+FAIL Testing auxclick events when clicking child of disabled button. assert_equals: parent element received auxclick events expected true but got false
+FAIL Testing auxclick events when clicking child of disabled my-control. assert_equals: parent element received auxclick events expected true but got false
+FAIL Testing auxclick events when clicking disabled button. assert_equals: parent element received auxclick events expected true but got false
+FAIL Testing auxclick events when clicking disabled my-control. assert_equals: parent element received auxclick events expected true but got false
+

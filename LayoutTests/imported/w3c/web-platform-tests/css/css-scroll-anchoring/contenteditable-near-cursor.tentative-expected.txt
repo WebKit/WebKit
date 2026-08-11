@@ -1,0 +1,9 @@
+test
+test
+test
+test
+test
+test
+
+PASS Ensure scroll is adjusted to keep element next to the cursor stable
+

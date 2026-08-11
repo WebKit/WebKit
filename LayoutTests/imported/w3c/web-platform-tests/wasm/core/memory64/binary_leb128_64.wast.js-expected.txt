@@ -1,0 +1,9 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (binary_leb128_64.wast:1)
+PASS #3 Test that WebAssembly compilation fails (binary_leb128_64.wast:16)
+PASS #4 Reinitialize the default imports
+PASS #5 Test that WebAssembly compilation succeeds (binary_leb128_64.wast:1)
+PASS #6 Test that WebAssembly instantiation succeeds (binary_leb128_64.wast:1)
+PASS #7 Test that WebAssembly compilation fails (binary_leb128_64.wast:16)
+

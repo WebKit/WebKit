@@ -1,0 +1,14 @@
+Test repaint rects when the drop-shadow filter property changes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+(repaint rects
+  (rect 24 36 268 268)
+  (rect 24 256 268 268)
+)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

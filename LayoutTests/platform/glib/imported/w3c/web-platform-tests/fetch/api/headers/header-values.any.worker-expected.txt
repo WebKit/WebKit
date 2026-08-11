@@ -1,0 +1,6 @@
+
+PASS fetch() with value x%00x needs to throw
+PASS fetch() with value x%0Ax needs to throw
+PASS fetch() with value x%0Dx needs to throw
+FAIL fetch() with all valid values assert_equals: expected "xx" but got "xÂx"
+

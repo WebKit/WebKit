@@ -1,0 +1,40 @@
+<!doctype html>
+<head>
+<title>line-box-contain parsing test</title>
+<style>
+.test { font: 64px/1em Ahem; background-color:lime; width:5em; overflow:hidden; margin:0.5em 0 }
+.goodline { color: green; line-height:2 }
+.invalid1 { -webkit-line-box-contain: block inline inline }
+.invalid2 { -webkit-line-box-contain: block block }
+.invalid3 { -webkit-line-box-contain: block replaced inline inline }
+.invalid4 { -webkit-line-box-contain: none block }
+</style>
+</head>
+<body>
+All of these blocks should look the same.
+
+<div class="test">
+<span class="goodline">xxxxx</span><br>
+<div style="display:inline-block; width:4em;background-color:lime; color:green">xxxx</div><span class="goodline">x</span>
+</div>
+
+<div class="test invalid1">
+<span class="goodline">xxxxx</span><br>
+<div style="display:inline-block; width:4em;background-color:lime; color:green">xxxx</div><span class="goodline">x</span>
+</div>
+
+<div class="test invalid2">
+<span class="goodline">xxxxx</span><br>
+<div style="display:inline-block; width:4em;background-color:lime; color:green">xxxx</div><span class="goodline">x</span>
+</div>
+
+<div class="test invalid3">
+<span class="goodline">xxxxx</span><br>
+<div style="display:inline-block; width:4em;background-color:lime; color:green">xxxx</div><span class="goodline">x</span>
+</div>
+
+<div class="test invalid4">
+<span class="goodline">xxxxx</span><br>
+<div style="display:inline-block; width:4em;background-color:lime; color:green">xxxx</div><span class="goodline">x</span>
+</div>
+

@@ -1,0 +1,18 @@
+<button id="button">Click to run test manually</button>
+<p>Test passes if there is no crash</p>
+<div id="target">To be fullscreened</div>
+<script src="full-screen-test.js"></script>
+<script>
+    function test() {
+        target.requestFullscreen();
+        requestAnimationFrame(() => {
+            target.remove();
+            endTest();
+        });
+    }
+    button.onclick = test;
+    onload = () => {
+        if (window.internals)
+            runWithKeyDown(test);
+    }
+</script>

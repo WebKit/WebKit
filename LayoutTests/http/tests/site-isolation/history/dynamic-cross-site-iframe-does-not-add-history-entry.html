@@ -1,0 +1,31 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that navigating a dynamically created subframe from about:blank to a cross-site URL does not create an extra back/forward list entry.");
+jsTestIsAsync = true;
+
+onload = async () => {
+    if (sessionStorage.step === "check") {
+        delete sessionStorage.step;
+
+        // Create an iframe, append it, and immediately navigate via
+        // contentWindow.location.href without waiting for about:blank onload.
+        // This mimics third-party JS that creates and navigates iframes
+        // without waiting for the initial load.
+        const iframe = document.createElement("iframe");
+        document.body.appendChild(iframe);
+        iframe.contentWindow.location.href = "http://localhost:8000/site-isolation/resources/simple.html";
+
+        iframe.onload = () => {
+            shouldBe("history.length", "2");
+            finishJSTest();
+        };
+        return;
+    }
+
+    await testRunner?.clearBackForwardList();
+
+    sessionStorage.step = "check";
+    location.href = location.pathname + "?step2";
+}
+</script>

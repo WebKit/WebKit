@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) { testRunner.dumpAsText(); testRunner.waitUntilDone(); }
+
+// This test verifies the fix for rdar://170649679
+// It ensures copyExternalImageToTexture uses intrinsic pixel dimensions,
+// not HTML/CSS width/height attributes, to prevent heap buffer over-reads.
+
+onload = async () => {
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        if (!adapter) {
+            console.log("FAIL: No WebGPU adapter available");
+            if (window.testRunner) testRunner.notifyDone();
+            return;
+        }
+
+        const device = await adapter.requestDevice();
+
+        // Create a 10x10 pixel red image using data URL
+        const img = document.createElement('img');
+        const canvas = document.createElement('canvas');
+        canvas.width = 10;
+        canvas.height = 10;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'red';
+        ctx.fillRect(0, 0, 10, 10);
+        
+        img.src = canvas.toDataURL();
+        await new Promise(resolve => img.onload = resolve);
+
+        // Set HTML dimensions much larger than intrinsic dimensions
+        // Before the fix, this would cause an out-of-bounds heap read
+        img.width = 100;
+        img.height = 100;
+
+        // Create a texture to copy into
+        const texture = device.createTexture({
+            size: { width: 10, height: 10 },
+            format: 'rgba8unorm',
+            usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+        });
+
+        // This should use intrinsic dimensions (10x10), not HTML dimensions (100x100)
+        device.queue.copyExternalImageToTexture(
+            { source: img },
+            { texture: texture },
+            { width: 10, height: 10 }
+        );
+
+        // Wait for operations to complete
+        await device.queue.onSubmittedWorkDone();
+
+        console.log("PASS: copyExternalImageToTexture correctly used intrinsic dimensions");
+        
+    } catch (e) {
+        console.log("FAIL: " + e.message);
+    }
+    
+    if (window.testRunner) testRunner.notifyDone();
+};
+</script>
+This test passes if it does not crash and prints PASS.
+

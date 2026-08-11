@@ -1,0 +1,12 @@
+
+PASS `DENY` blocks same-origin framing
+PASS `DENY` blocks cross-origin framing
+PASS `denY` blocks same-origin framing
+PASS `denY` blocks cross-origin framing
+PASS `  DENY ` blocks same-origin framing
+PASS `  DENY ` blocks cross-origin framing
+PASS `DENY` blocks same-origin framing with CSP default-src 'self'
+PASS `DENY` blocks cross-origin framing with CSP default-src 'self'
+PASS `DENY` allows same-origin framing with CSP frame-ancestors 'self'
+PASS `DENY` blocks cross-origin framing with CSP frame-ancestors 'self'
+

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (t) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const track = stream.getAudioTracks()[0];
+    t.add_cleanup(() => track.stop());
+
+    assert_true(track.getSettings().echoCancellation);
+
+    // Currently, iOS platforms do not support capturing audio with and without echo cancellation.
+    if (!window.internals || internals.supportsMultiMicrophoneCaptureWithoutEchoCancellation())
+        return;
+
+    let promise = new Promise((resolve, reject) => {
+        track.onconfigurationchange = resolve;
+        setTimeout(()=> reject("waited too long for configurationchange"), 5000);
+    });
+
+    const stream2 = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false } });
+    const track2 = stream2.getAudioTracks()[0];
+    t.add_cleanup(() => track2.stop());
+
+    assert_false(track2.getSettings().echoCancellation, "track2");
+
+    await promise;
+    assert_false(track.getSettings().echoCancellation, "track");
+
+    promise = new Promise((resolve, reject) => {
+        track2.onconfigurationchange = resolve;
+        setTimeout(()=> reject("waited too long for configurationchange2"), 5000);
+    });
+
+    track.applyConstraints({echoCancellation: true});
+
+    await promise;
+    assert_true(track2.getSettings().echoCancellation, "track2");
+}, "Trigger configurationchange event in case echo cancellation changes");
+</script>
+</body>
+</html>

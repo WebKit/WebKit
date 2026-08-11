@@ -1,0 +1,33 @@
+<head>
+    <meta name="viewport" content="width=device-width">
+    <script>
+        var haveClicked = false;
+        function runTest(e) {
+            if (haveClicked) {
+                e.value = "Test passed";
+                e.disabled = true;
+                return;
+            }
+            e.value = "Click me again";
+            e.focus();
+            haveClicked = true;
+        }
+    </script>
+</head>
+
+<body>
+    <center>
+        <input type=submit onclick="runTest(this); return false;" value="Click me" style="font-size: 36px">
+    </center>
+    <br><br>
+    <div style="font-size: 20px; font-family: helvetica;">
+        Test for WebKit bug #<a href="https://bugs.webkit.org/show_bug.cgi?id=143624">143624</a>
+        <br><br>
+        Tap button above twice to run test. &ldquo;Test passed&rdquo; will
+        appear above if the test passes. If you cannot click the button a
+        second time, the test failed.
+        <br><br>
+        To rerun this test, open it in a new tab. Do not reload.
+    </div>
+</body>
+

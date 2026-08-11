@@ -1,0 +1,25 @@
+<!doctype html>
+<!--
+  Test that the renderer uses the animated value of orientType.
+  To test this, the final animated value must be of a different type than the initial value.
+  To verify rendering, DumpRenderTree output must be examined, not DOM values.
+ -->
+<script>
+function doTest() {
+    if (testRunner) {
+        var svg = document.querySelector("svg");
+        svg.pauseAnimations();
+        svg.setCurrentTime(5);
+    }
+}
+</script>
+<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 150 150" width="500" height="500" onload="doTest()">
+    <defs>
+        <marker id="arrow" orient="auto" markerWidth="10" markerHeight="10" style="overflow:visible">
+            <path d="M5,0 L 0,-5 L0,5 z" fill="green" opacity="0.5" />
+            <animate attributeName="orient" from="auto" to="80" begin="0s" dur="1s" fill="freeze"/>
+        </marker>
+    </defs>
+    <path d="M 20,20 L 80,80" marker-start="url(#arrow)" stroke="black"/>
+</svg>
+

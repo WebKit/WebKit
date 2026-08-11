@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body, html {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.wide, .tall {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.wide {
+    width: 800px;
+    height: 50px;
+    background: orange;
+}
+
+.tall {
+    width: 50px;
+    height: 600px;
+    background: plum;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+window.internals?.setUsesOverlayScrollbars(true);
+
+addEventListener("load", async () => {
+    window.testRunner?.waitUntilDone();
+    await window.testRunner?.setObscuredContentInsets(0, 150, 50, 0);
+
+    eventSender.mouseMoveTo(300, 300);
+
+    async function scrollWithDeltas(x, y) {
+        await UIHelper.startMonitoringWheelEvents();
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(x, y, "began", "none", true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(x, y, "changed", "none", true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(x, y, "changed", "none", true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none", true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(x, y, "none", "begin", true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(x, y, "none", "continue", true);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "none", "end", true);
+        await UIHelper.waitForScrollCompletion();
+    }
+
+    await scrollWithDeltas(-10, 0);
+    await scrollWithDeltas(0, -10);
+
+    window.testRunner?.notifyDone();
+});
+</script>
+</head>
+<body>
+    <div class="wide"></div>
+    <div class="tall"></div>
+</body>
+</html>

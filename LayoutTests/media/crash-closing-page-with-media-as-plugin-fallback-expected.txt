@@ -1,0 +1,6 @@
+This test makes sure that closing a window with a video element that has a poster image doesn't crash (radar 10576732 and https://bugs.webkit.org/show_bug.cgi?id=74533)
+If it doesn't crash, it passes.
+Click here to open test window
+Closed the window without crashing!
+
+

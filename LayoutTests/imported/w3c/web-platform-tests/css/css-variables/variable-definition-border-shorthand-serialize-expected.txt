@@ -1,0 +1,3 @@
+
+PASS border-color should serialize to empty when border shorthand references a variable
+

@@ -1,0 +1,34 @@
+uniform half4 color;
+
+half fma(half a, half b) { return 0; /* allowed */ }
+half fma(half a, half b, half c) { return 0; /* error: overloads a builtin */ }
+half fma(half a, half b, half c, half d) { return 0; /* allowed */ }
+
+half2 sin(half2 a) { return half2(0); /* error: overloads a builtin */ }
+float3 sin(float3 a) { return float3(0); /* error: overloads a builtin */ }
+float4 sin(inout float4 a) { return float4(0); /* error: overloads a builtin */ }
+half2x2 sin(half2x2 a) { return half2x2(0); /* allowed */ }
+float3x3 sin(float3x3 a) { return float3x3(0); /* allowed */ }
+
+half cos(half2 a) { return 0; /* error: overloads a builtin (despite return type mismatch) */ }
+float2 cos(half2 a) { return 0; /* error: overloads a builtin (despite return type mismatch) */ }
+int cos(out half3 a) { return 0; /* error: overloads a builtin (despite return type mismatch) */ }
+
+float pow(float x, float y) { return 0; /* error: overloads a builtin */ }
+float pow(float2 x, float y) { return 0; /* allowed */ }
+float pow(half x, float y) { return 0; /* allowed */ }
+
+/*%%*
+duplicate definition of intrinsic function 'fma'
+duplicate definition of intrinsic function 'sin'
+duplicate definition of intrinsic function 'sin'
+modifiers on parameter 1 differ between declaration and definition
+duplicate definition of intrinsic function 'cos'
+functions 'float2 cos(half2 a)' and '$pure $genHType cos($genHType
+functions 'int cos(out half3 a)' and '$pure $genHType cos($genHType
+duplicate definition of intrinsic function 'pow'
+*%%*/
+
+// The `cos` errors are truncated early because the message differs between debug builds
+// (which retain the parameter names on intrinsic functions) and release builds (which
+// minify the parameter names to save space).

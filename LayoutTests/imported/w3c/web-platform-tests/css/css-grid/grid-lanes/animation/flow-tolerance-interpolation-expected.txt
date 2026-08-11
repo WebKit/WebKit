@@ -1,0 +1,242 @@
+
+FAIL CSS Transitions: property <flow-tolerance> from [10px] to [50px] at (-1) should be [0px] assert_equals: expected "0px " but got "10px "
+PASS CSS Transitions: property <flow-tolerance> from [10px] to [50px] at (0) should be [10px]
+FAIL CSS Transitions: property <flow-tolerance> from [10px] to [50px] at (0.25) should be [20px] assert_equals: expected "20px " but got "10px "
+FAIL CSS Transitions: property <flow-tolerance> from [10px] to [50px] at (0.5) should be [30px] assert_equals: expected "30px " but got "10px "
+FAIL CSS Transitions: property <flow-tolerance> from [10px] to [50px] at (0.75) should be [40px] assert_equals: expected "40px " but got "10px "
+FAIL CSS Transitions: property <flow-tolerance> from [10px] to [50px] at (1) should be [50px] assert_equals: expected "50px " but got "10px "
+FAIL CSS Transitions: property <flow-tolerance> from [10px] to [50px] at (2) should be [90px] assert_equals: expected "90px " but got "10px "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [50px] at (-1) should be [0px] assert_equals: expected "0px " but got "10px "
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [50px] at (0) should be [10px]
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [50px] at (0.25) should be [20px] assert_equals: expected "20px " but got "10px "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [50px] at (0.5) should be [30px] assert_equals: expected "30px " but got "10px "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [50px] at (0.75) should be [40px] assert_equals: expected "40px " but got "10px "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [50px] at (1) should be [50px] assert_equals: expected "50px " but got "10px "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [50px] at (2) should be [90px] assert_equals: expected "90px " but got "10px "
+FAIL CSS Animations: property <flow-tolerance> from [10px] to [50px] at (-1) should be [0px] assert_equals: expected "0px " but got "10px "
+PASS CSS Animations: property <flow-tolerance> from [10px] to [50px] at (0) should be [10px]
+FAIL CSS Animations: property <flow-tolerance> from [10px] to [50px] at (0.25) should be [20px] assert_equals: expected "20px " but got "10px "
+FAIL CSS Animations: property <flow-tolerance> from [10px] to [50px] at (0.5) should be [30px] assert_equals: expected "30px " but got "10px "
+FAIL CSS Animations: property <flow-tolerance> from [10px] to [50px] at (0.75) should be [40px] assert_equals: expected "40px " but got "10px "
+FAIL CSS Animations: property <flow-tolerance> from [10px] to [50px] at (1) should be [50px] assert_equals: expected "50px " but got "10px "
+FAIL CSS Animations: property <flow-tolerance> from [10px] to [50px] at (2) should be [90px] assert_equals: expected "90px " but got "10px "
+FAIL Web Animations: property <flow-tolerance> from [10px] to [50px] at (-1) should be [0px] assert_equals: expected "0px " but got "10px "
+PASS Web Animations: property <flow-tolerance> from [10px] to [50px] at (0) should be [10px]
+FAIL Web Animations: property <flow-tolerance> from [10px] to [50px] at (0.25) should be [20px] assert_equals: expected "20px " but got "10px "
+FAIL Web Animations: property <flow-tolerance> from [10px] to [50px] at (0.5) should be [30px] assert_equals: expected "30px " but got "10px "
+FAIL Web Animations: property <flow-tolerance> from [10px] to [50px] at (0.75) should be [40px] assert_equals: expected "40px " but got "10px "
+FAIL Web Animations: property <flow-tolerance> from [10px] to [50px] at (1) should be [50px] assert_equals: expected "50px " but got "10px "
+FAIL Web Animations: property <flow-tolerance> from [10px] to [50px] at (2) should be [90px] assert_equals: expected "90px " but got "10px "
+PASS CSS Transitions: property <flow-tolerance> from [10%] to [50%] at (0) should be [10%]
+FAIL CSS Transitions: property <flow-tolerance> from [10%] to [50%] at (0.5) should be [30%] assert_equals: expected "30 % " but got "10 % "
+FAIL CSS Transitions: property <flow-tolerance> from [10%] to [50%] at (1) should be [50%] assert_equals: expected "50 % " but got "10 % "
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [10%] to [50%] at (0) should be [10%]
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [10%] to [50%] at (0.5) should be [30%] assert_equals: expected "30 % " but got "10 % "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [10%] to [50%] at (1) should be [50%] assert_equals: expected "50 % " but got "10 % "
+PASS CSS Animations: property <flow-tolerance> from [10%] to [50%] at (0) should be [10%]
+FAIL CSS Animations: property <flow-tolerance> from [10%] to [50%] at (0.5) should be [30%] assert_equals: expected "30 % " but got "10 % "
+FAIL CSS Animations: property <flow-tolerance> from [10%] to [50%] at (1) should be [50%] assert_equals: expected "50 % " but got "10 % "
+PASS Web Animations: property <flow-tolerance> from [10%] to [50%] at (0) should be [10%]
+FAIL Web Animations: property <flow-tolerance> from [10%] to [50%] at (0.5) should be [30%] assert_equals: expected "30 % " but got "10 % "
+FAIL Web Animations: property <flow-tolerance> from [10%] to [50%] at (1) should be [50%] assert_equals: expected "50 % " but got "10 % "
+FAIL CSS Transitions: property <flow-tolerance> from [10px] to [50%] at (0) should be [calc(10px + 0%)] assert_equals: expected "calc ( 0 % + 10px ) " but got "10px "
+FAIL CSS Transitions: property <flow-tolerance> from [10px] to [50%] at (0.5) should be [calc(5px + 25%)] assert_equals: expected "calc ( 25 % + 5px ) " but got "10px "
+FAIL CSS Transitions: property <flow-tolerance> from [10px] to [50%] at (1) should be [50%] assert_equals: expected "50 % " but got "10px "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [50%] at (0) should be [calc(10px + 0%)] assert_equals: expected "calc ( 0 % + 10px ) " but got "10px "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [50%] at (0.5) should be [calc(5px + 25%)] assert_equals: expected "calc ( 25 % + 5px ) " but got "10px "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [50%] at (1) should be [50%] assert_equals: expected "50 % " but got "10px "
+FAIL CSS Animations: property <flow-tolerance> from [10px] to [50%] at (0) should be [calc(10px + 0%)] assert_equals: expected "calc ( 0 % + 10px ) " but got "10px "
+FAIL CSS Animations: property <flow-tolerance> from [10px] to [50%] at (0.5) should be [calc(5px + 25%)] assert_equals: expected "calc ( 25 % + 5px ) " but got "10px "
+FAIL CSS Animations: property <flow-tolerance> from [10px] to [50%] at (1) should be [50%] assert_equals: expected "50 % " but got "10px "
+FAIL Web Animations: property <flow-tolerance> from [10px] to [50%] at (0) should be [calc(10px + 0%)] assert_equals: expected "calc ( 0 % + 10px ) " but got "10px "
+FAIL Web Animations: property <flow-tolerance> from [10px] to [50%] at (0.5) should be [calc(5px + 25%)] assert_equals: expected "calc ( 25 % + 5px ) " but got "10px "
+FAIL Web Animations: property <flow-tolerance> from [10px] to [50%] at (1) should be [50%] assert_equals: expected "50 % " but got "10px "
+PASS CSS Transitions: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0) should be [calc(10px + 20%)]
+FAIL CSS Transitions: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.25) should be [calc(20px + 30%)] assert_equals: expected "calc ( 30 % + 20px ) " but got "calc ( 20 % + 10px ) "
+FAIL CSS Transitions: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.5) should be [calc(30px + 40%)] assert_equals: expected "calc ( 40 % + 30px ) " but got "calc ( 20 % + 10px ) "
+FAIL CSS Transitions: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.75) should be [calc(40px + 50%)] assert_equals: expected "calc ( 50 % + 40px ) " but got "calc ( 20 % + 10px ) "
+FAIL CSS Transitions: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (1) should be [calc(50px + 60%)] assert_equals: expected "calc ( 60 % + 50px ) " but got "calc ( 20 % + 10px ) "
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0) should be [calc(10px + 20%)]
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.25) should be [calc(20px + 30%)] assert_equals: expected "calc ( 30 % + 20px ) " but got "calc ( 20 % + 10px ) "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.5) should be [calc(30px + 40%)] assert_equals: expected "calc ( 40 % + 30px ) " but got "calc ( 20 % + 10px ) "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.75) should be [calc(40px + 50%)] assert_equals: expected "calc ( 50 % + 40px ) " but got "calc ( 20 % + 10px ) "
+FAIL CSS Transitions with transition: all: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (1) should be [calc(50px + 60%)] assert_equals: expected "calc ( 60 % + 50px ) " but got "calc ( 20 % + 10px ) "
+PASS CSS Animations: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0) should be [calc(10px + 20%)]
+FAIL CSS Animations: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.25) should be [calc(20px + 30%)] assert_equals: expected "calc ( 30 % + 20px ) " but got "calc ( 20 % + 10px ) "
+FAIL CSS Animations: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.5) should be [calc(30px + 40%)] assert_equals: expected "calc ( 40 % + 30px ) " but got "calc ( 20 % + 10px ) "
+FAIL CSS Animations: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.75) should be [calc(40px + 50%)] assert_equals: expected "calc ( 50 % + 40px ) " but got "calc ( 20 % + 10px ) "
+FAIL CSS Animations: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (1) should be [calc(50px + 60%)] assert_equals: expected "calc ( 60 % + 50px ) " but got "calc ( 20 % + 10px ) "
+PASS Web Animations: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0) should be [calc(10px + 20%)]
+FAIL Web Animations: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.25) should be [calc(20px + 30%)] assert_equals: expected "calc ( 30 % + 20px ) " but got "calc ( 20 % + 10px ) "
+FAIL Web Animations: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.5) should be [calc(30px + 40%)] assert_equals: expected "calc ( 40 % + 30px ) " but got "calc ( 20 % + 10px ) "
+FAIL Web Animations: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (0.75) should be [calc(40px + 50%)] assert_equals: expected "calc ( 50 % + 40px ) " but got "calc ( 20 % + 10px ) "
+FAIL Web Animations: property <flow-tolerance> from [calc(20% + 10px)] to [calc(60% + 50px)] at (1) should be [calc(50px + 60%)] assert_equals: expected "calc ( 60 % + 50px ) " but got "calc ( 20 % + 10px ) "
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (-0.3) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (0) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (0.3) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (0.5) should be [50px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (0.6) should be [50px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (1) should be [50px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (1.5) should be [50px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (-0.3) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (0) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (0.3) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (0.5) should be [50px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (0.6) should be [50px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (1) should be [50px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [50px] at (1.5) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [50px] at (-0.3) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [50px] at (0) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [50px] at (0.3) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [50px] at (0.5) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [50px] at (0.6) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [50px] at (1) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [50px] at (1.5) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [50px] at (-0.3) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [50px] at (0) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [50px] at (0.3) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [50px] at (0.5) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [50px] at (0.6) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [50px] at (1) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [50px] at (1.5) should be [50px]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [50px] at (-0.3) should be [normal]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [50px] at (0) should be [normal]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [50px] at (0.3) should be [normal]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [50px] at (0.5) should be [50px]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [50px] at (0.6) should be [50px]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [50px] at (1) should be [50px]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [50px] at (1.5) should be [50px]
+PASS Web Animations: property <flow-tolerance> from [normal] to [50px] at (-0.3) should be [normal]
+PASS Web Animations: property <flow-tolerance> from [normal] to [50px] at (0) should be [normal]
+PASS Web Animations: property <flow-tolerance> from [normal] to [50px] at (0.3) should be [normal]
+PASS Web Animations: property <flow-tolerance> from [normal] to [50px] at (0.5) should be [50px]
+PASS Web Animations: property <flow-tolerance> from [normal] to [50px] at (0.6) should be [50px]
+PASS Web Animations: property <flow-tolerance> from [normal] to [50px] at (1) should be [50px]
+PASS Web Animations: property <flow-tolerance> from [normal] to [50px] at (1.5) should be [50px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (-0.3) should be [infinite]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (0) should be [infinite]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (0.3) should be [infinite]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (0.5) should be [50px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (0.6) should be [50px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (1) should be [50px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (1.5) should be [50px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (-0.3) should be [infinite]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (0) should be [infinite]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (0.3) should be [infinite]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (0.5) should be [50px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (0.6) should be [50px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (1) should be [50px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [infinite] to [50px] at (1.5) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [infinite] to [50px] at (-0.3) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [infinite] to [50px] at (0) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [infinite] to [50px] at (0.3) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [infinite] to [50px] at (0.5) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [infinite] to [50px] at (0.6) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [infinite] to [50px] at (1) should be [50px]
+PASS CSS Transitions: property <flow-tolerance> from [infinite] to [50px] at (1.5) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [infinite] to [50px] at (-0.3) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [infinite] to [50px] at (0) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [infinite] to [50px] at (0.3) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [infinite] to [50px] at (0.5) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [infinite] to [50px] at (0.6) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [infinite] to [50px] at (1) should be [50px]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [infinite] to [50px] at (1.5) should be [50px]
+PASS CSS Animations: property <flow-tolerance> from [infinite] to [50px] at (-0.3) should be [infinite]
+PASS CSS Animations: property <flow-tolerance> from [infinite] to [50px] at (0) should be [infinite]
+PASS CSS Animations: property <flow-tolerance> from [infinite] to [50px] at (0.3) should be [infinite]
+PASS CSS Animations: property <flow-tolerance> from [infinite] to [50px] at (0.5) should be [50px]
+PASS CSS Animations: property <flow-tolerance> from [infinite] to [50px] at (0.6) should be [50px]
+PASS CSS Animations: property <flow-tolerance> from [infinite] to [50px] at (1) should be [50px]
+PASS CSS Animations: property <flow-tolerance> from [infinite] to [50px] at (1.5) should be [50px]
+PASS Web Animations: property <flow-tolerance> from [infinite] to [50px] at (-0.3) should be [infinite]
+PASS Web Animations: property <flow-tolerance> from [infinite] to [50px] at (0) should be [infinite]
+PASS Web Animations: property <flow-tolerance> from [infinite] to [50px] at (0.3) should be [infinite]
+PASS Web Animations: property <flow-tolerance> from [infinite] to [50px] at (0.5) should be [50px]
+PASS Web Animations: property <flow-tolerance> from [infinite] to [50px] at (0.6) should be [50px]
+PASS Web Animations: property <flow-tolerance> from [infinite] to [50px] at (1) should be [50px]
+PASS Web Animations: property <flow-tolerance> from [infinite] to [50px] at (1.5) should be [50px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (-0.3) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (0) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (0.3) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (0.5) should be [infinite]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (0.6) should be [infinite]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (1) should be [infinite]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (1.5) should be [infinite]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (-0.3) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (0) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (0.3) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (0.5) should be [infinite]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (0.6) should be [infinite]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (1) should be [infinite]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [normal] to [infinite] at (1.5) should be [infinite]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [infinite] at (-0.3) should be [infinite]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [infinite] at (0) should be [infinite]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [infinite] at (0.3) should be [infinite]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [infinite] at (0.5) should be [infinite]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [infinite] at (0.6) should be [infinite]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [infinite] at (1) should be [infinite]
+PASS CSS Transitions: property <flow-tolerance> from [normal] to [infinite] at (1.5) should be [infinite]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [infinite] at (-0.3) should be [infinite]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [infinite] at (0) should be [infinite]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [infinite] at (0.3) should be [infinite]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [infinite] at (0.5) should be [infinite]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [infinite] at (0.6) should be [infinite]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [infinite] at (1) should be [infinite]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [normal] to [infinite] at (1.5) should be [infinite]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [infinite] at (-0.3) should be [normal]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [infinite] at (0) should be [normal]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [infinite] at (0.3) should be [normal]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [infinite] at (0.5) should be [infinite]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [infinite] at (0.6) should be [infinite]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [infinite] at (1) should be [infinite]
+PASS CSS Animations: property <flow-tolerance> from [normal] to [infinite] at (1.5) should be [infinite]
+PASS Web Animations: property <flow-tolerance> from [normal] to [infinite] at (-0.3) should be [normal]
+PASS Web Animations: property <flow-tolerance> from [normal] to [infinite] at (0) should be [normal]
+PASS Web Animations: property <flow-tolerance> from [normal] to [infinite] at (0.3) should be [normal]
+PASS Web Animations: property <flow-tolerance> from [normal] to [infinite] at (0.5) should be [infinite]
+PASS Web Animations: property <flow-tolerance> from [normal] to [infinite] at (0.6) should be [infinite]
+PASS Web Animations: property <flow-tolerance> from [normal] to [infinite] at (1) should be [infinite]
+PASS Web Animations: property <flow-tolerance> from [normal] to [infinite] at (1.5) should be [infinite]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (-0.3) should be [10px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (0) should be [10px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (0.3) should be [10px]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (0.5) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (0.6) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (1) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (1.5) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (-0.3) should be [10px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (0) should be [10px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (0.3) should be [10px]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (0.5) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (0.6) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (1) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <flow-tolerance> from [10px] to [normal] at (1.5) should be [normal]
+PASS CSS Transitions: property <flow-tolerance> from [10px] to [normal] at (-0.3) should be [normal]
+PASS CSS Transitions: property <flow-tolerance> from [10px] to [normal] at (0) should be [normal]
+PASS CSS Transitions: property <flow-tolerance> from [10px] to [normal] at (0.3) should be [normal]
+PASS CSS Transitions: property <flow-tolerance> from [10px] to [normal] at (0.5) should be [normal]
+PASS CSS Transitions: property <flow-tolerance> from [10px] to [normal] at (0.6) should be [normal]
+PASS CSS Transitions: property <flow-tolerance> from [10px] to [normal] at (1) should be [normal]
+PASS CSS Transitions: property <flow-tolerance> from [10px] to [normal] at (1.5) should be [normal]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [normal] at (-0.3) should be [normal]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [normal] at (0) should be [normal]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [normal] at (0.3) should be [normal]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [normal] at (0.5) should be [normal]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [normal] at (0.6) should be [normal]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [normal] at (1) should be [normal]
+PASS CSS Transitions with transition: all: property <flow-tolerance> from [10px] to [normal] at (1.5) should be [normal]
+PASS CSS Animations: property <flow-tolerance> from [10px] to [normal] at (-0.3) should be [10px]
+PASS CSS Animations: property <flow-tolerance> from [10px] to [normal] at (0) should be [10px]
+PASS CSS Animations: property <flow-tolerance> from [10px] to [normal] at (0.3) should be [10px]
+PASS CSS Animations: property <flow-tolerance> from [10px] to [normal] at (0.5) should be [normal]
+PASS CSS Animations: property <flow-tolerance> from [10px] to [normal] at (0.6) should be [normal]
+PASS CSS Animations: property <flow-tolerance> from [10px] to [normal] at (1) should be [normal]
+PASS CSS Animations: property <flow-tolerance> from [10px] to [normal] at (1.5) should be [normal]
+PASS Web Animations: property <flow-tolerance> from [10px] to [normal] at (-0.3) should be [10px]
+PASS Web Animations: property <flow-tolerance> from [10px] to [normal] at (0) should be [10px]
+PASS Web Animations: property <flow-tolerance> from [10px] to [normal] at (0.3) should be [10px]
+PASS Web Animations: property <flow-tolerance> from [10px] to [normal] at (0.5) should be [normal]
+PASS Web Animations: property <flow-tolerance> from [10px] to [normal] at (0.6) should be [normal]
+PASS Web Animations: property <flow-tolerance> from [10px] to [normal] at (1) should be [normal]
+PASS Web Animations: property <flow-tolerance> from [10px] to [normal] at (1.5) should be [normal]
+

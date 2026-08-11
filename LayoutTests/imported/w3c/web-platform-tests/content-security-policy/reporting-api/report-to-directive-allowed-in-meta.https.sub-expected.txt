@@ -1,0 +1,7 @@
+
+
+PASS Test that image does not load
+PASS Event is fired
+PASS Report is observable to ReportingObserver
+PASS Violation report status OK.
+

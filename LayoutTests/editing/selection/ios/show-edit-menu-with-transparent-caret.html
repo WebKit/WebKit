@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+    margin: 0;
+    padding: 20px;
+}
+
+textarea {
+    width: 200px;
+    height: 100px;
+    font-size: 16px;
+    padding: 10px;
+    border: 2px solid tomato;
+    caret-color: transparent;
+    transition: none;
+}
+
+.composited {
+    will-change: transform;
+    border: 2px solid seagreen;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that edit menu can be shown on textarea with caret-color: transparent during rapid layer changes");
+
+    const textarea = document.querySelector("textarea");
+    setInterval(() => {
+        textarea.classList.toggle("composited");
+    }, 30);
+
+    await UIHelper.activateElementAndWaitForInputSession(textarea);
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.activateElement(textarea);
+    await UIHelper.waitForMenuToShow();
+
+    testPassed("Revealed edit menu");
+    textarea.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <h1>Textarea Layer Toggle Test</h1>
+    <textarea>Hello</textarea>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

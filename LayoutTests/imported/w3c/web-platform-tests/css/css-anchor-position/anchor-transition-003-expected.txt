@@ -1,0 +1,3 @@
+
+PASS Transition with anchor names defined in three different tree scopes
+

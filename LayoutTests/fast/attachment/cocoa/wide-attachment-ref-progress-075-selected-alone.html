@@ -1,0 +1,13 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true ] -->
+<html class="reftest-wait">
+<head>
+</head>
+<body>
+<attachment id="a" title="Title.pdf" progress="0.75"></attachment>
+<script src="../resources/attachment-test-utils.js"></script>
+<script>
+window.getSelection().setBaseAndExtent(a.previousSibling, a.previousSibling.length, a.nextSibling, 0);
+takeActualScreenshotWhenAttachmentsSettled();
+</script>
+</body>
+</html>

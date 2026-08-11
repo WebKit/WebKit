@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Dynamic invalidation of container style range queries on custom property changes</title>
+<link rel="help" href="https://drafts.csswg.org/css-conditional-5/#typedef-style-range">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+  #container { container-name: c; }
+
+  /* The queried custom property is a comparison bound, not the range center. */
+  @container c style(10px < --foo) { #t1 { --applied: yes; } }
+
+  /* The queried custom property is the right operand of a two-property comparison. */
+  @container c style(--a > --b) { #t2 { --applied: yes; } }
+
+  /* The queried custom property is referenced via var() in the range center. */
+  @container c style(var(--x) > 10px) { #t3 { --applied: yes; } }
+</style>
+<div id="container">
+  <div id="t1"></div>
+  <div id="t2"></div>
+  <div id="t3"></div>
+</div>
+<script>
+function applied(id) {
+  return getComputedStyle(document.getElementById(id)).getPropertyValue('--applied').trim();
+}
+const container = document.getElementById('container');
+
+test(() => {
+  container.style.setProperty('--foo', '20px'); // 10px < 20px -> true
+  assert_equals(applied('t1'), 'yes', 'matches before change');
+  container.style.setProperty('--foo', '5px'); // 10px < 5px -> false
+  assert_equals(applied('t1'), '', 're-evaluated after change');
+}, 'style(10px < --foo): changing the bound custom property re-evaluates');
+
+test(() => {
+  container.style.setProperty('--a', '10px');
+  container.style.setProperty('--b', '5px'); // 10px > 5px -> true
+  assert_equals(applied('t2'), 'yes', 'matches before change');
+  container.style.setProperty('--b', '20px'); // 10px > 20px -> false
+  assert_equals(applied('t2'), '', 're-evaluated after change');
+}, 'style(--a > --b): changing the right operand re-evaluates');
+
+test(() => {
+  container.style.setProperty('--x', '20px'); // 20px > 10px -> true
+  assert_equals(applied('t3'), 'yes', 'matches before change');
+  container.style.setProperty('--x', '5px'); // 5px > 10px -> false
+  assert_equals(applied('t3'), '', 're-evaluated after change');
+}, 'style(var(--x) > 10px): changing the var()-referenced property re-evaluates');
+</script>

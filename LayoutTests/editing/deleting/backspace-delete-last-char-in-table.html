@@ -1,0 +1,14 @@
+<!doctype html>
+<script src=../editing.js ></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<div contenteditable id="root">First<table border="1"><tr><td id="test">1</td></tr></table>Second</div>
+<script>
+Markup.description("In this test the last character of a single-cell table is deleted, just using the backspace key. Only the table cell's content should be deleted, and not the table itself.")
+
+const element = document.getElementById("test");
+getSelection().collapse(element, 1);
+Markup.dump('root', 'BeforeDeletion');
+
+deleteCommand();
+Markup.dump('root', 'AfterDeletion');
+</script>

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<select id="select">
+    <option>Apple</option>
+    <option selected>Banana</option>
+    <option>Cherry</option>
+</select>
+</div>
+
+<script>
+var output = "This test verifies that pressing an option via accessibility (e.g. VoiceOver) in a base-appearance select closes the popover and updates the selection.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var select = accessibilityController.accessibleElementById("select");
+
+    setTimeout(async function() {
+        output += expect("select.stringValue.includes('Banana')", "true");
+        output += expect("select.isExpanded", "false");
+
+        // Open the select.
+        select.press();
+        output += await expectAsync("select.isExpanded", "true");
+
+        window.menu = findBaseSelectMenu(select);
+        output += expect("menu.role.toLowerCase().includes('menu')", "true");
+
+        // Press an unselected option (Apple). This simulates VoiceOver activating a menu item.
+        window.option = menu.childAtIndex(0);
+        output += expect("option.role.toLowerCase().includes('menuitem')", "true");
+        option.press();
+
+        // The popover should close and the selection should update.
+        output += await expectAsync("select.isExpanded", "false");
+        output += expect("select.stringValue.includes('Apple')", "true");
+
+        document.getElementById("content").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+
+FAIL navigator.keyboard instanceof Keyboard Can't find variable: Keyboard
+PASS navigator.keyboard SameObject
+FAIL navigator.keyboard.lock instanceof Function undefined is not an object (evaluating 'navigator.keyboard.lock')
+FAIL navigator.keyboard.unlock instanceof Function undefined is not an object (evaluating 'navigator.keyboard.unlock')
+FAIL [Keyboard Lock] keyboard.lock undefined is not an object (evaluating 'navigator.keyboard.lock')
+

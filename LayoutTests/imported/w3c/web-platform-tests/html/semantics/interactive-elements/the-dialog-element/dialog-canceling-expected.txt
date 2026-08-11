@@ -1,0 +1,3 @@
+
+PASS Modal dialogs should close when the escape key is pressed.
+

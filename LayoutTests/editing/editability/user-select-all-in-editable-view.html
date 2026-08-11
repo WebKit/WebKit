@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests that moving the cursor inside a 'user-select: all' element expands the selection to the entire element. The cursor should not end up inside the 'user-select: all' element, but rather in the middle of "after". To test manually, ensure this page is opened in an editable web view.</p>
+
+<div id="container">before <span id="inner" style="-webkit-user-select: all;">a long select-all</span> after</div>
+
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+Markup.waitUntilDone();
+
+addEventListener("load", async () => {
+    Markup.description(document.getElementById('description').textContent);
+
+    if (window.testRunner && testRunner.runUIScript)
+        await UIHelper.setWebViewEditable(true);
+
+    var selection = window.getSelection();
+    selection.setPosition(container, 0);
+
+    for (var i = 0; i < 12; i++)
+        selection.modify("move", "forward", "character");
+
+    Markup.dump('container');
+    Markup.notifyDone();
+});
+
+</script>
+</body>
+</html>

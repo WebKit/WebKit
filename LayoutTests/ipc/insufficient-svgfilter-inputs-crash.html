@@ -1,0 +1,114 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    window.setTimeout(async () => {
+        if (!window.IPC)
+            return window.testRunner?.notifyDone();
+    
+        const { CoreIPC } = await import('./coreipc.js');
+    
+        const streamConnection = CoreIPC.newStreamConnection();
+
+        const renderingBackendIdentifier = Math.floor(Math.random() * 0x1000000);
+        CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+            renderingBackendIdentifier: renderingBackendIdentifier,
+            connectionHandle: streamConnection
+        });
+        const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+    
+        const didInitializeReply = streamConnection.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1)
+        streamConnection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
+    
+        const imageBufferIdentifier = Math.floor(Math.random() * 0x1000000);
+        const contextIdentifier = Math.floor(Math.random() * 0x1000000);
+        remoteRenderingBackend.CreateImageBuffer({
+            logicalSize: {width: 128, height: 128},
+            renderingMode: 0,
+            renderingPurpose: 0,
+            resolutionScale: 1.0,
+            colorSpace: {serializableColorSpace: {alias: {optionalValue: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}}},
+            bufferFormat: { pixelFormat: 1, useLosslessCompression: 0 },
+            identifier: imageBufferIdentifier,
+            contextIdentifier: contextIdentifier,
+        });
+        const didCreateBackendReply = streamConnection.connection.waitForMessage(imageBufferIdentifier, IPC.messages.RemoteImageBufferProxy_DidCreateBackend.name, 1);
+    
+        const remoteImageBuffer = streamConnection.newInterface("RemoteImageBuffer", imageBufferIdentifier);
+    
+        remoteImageBuffer.FilteredNativeImage({
+            filter: {
+                subclasses: {
+                    variantType: 'WebCore::SVGFilterRenderer',
+                    variant: {
+                        targetBoundingBox: {
+                            location: {x: 0, y: 0},
+                            size: {width: 0, height: 0},
+                        },
+                        primitiveUnits: 0,
+                        expression: {
+                            alias: [
+                                {index: 0, level: 0, geometry: 0},
+                            ]
+                        },
+                        effects: [
+                            {
+                                subclasses: {
+                                    variantType: 'WebCore::FEBlend',
+                                    variant: {
+                                        blendMode: 8,
+                                        operatingColorSpace: {serializableColorSpace: {alias: {optionalValue: {m_cgColorSpace: {alias: {variantType: 'WebCore::ColorSpace', variant: 1}}}}}}
+                                    }
+                                }
+                            }
+                        ],
+                        geometry: {
+                            referenceBox : {
+                                location : {
+                                    x : 0,
+                                    y : 0
+                                },
+                                size : {
+                                    width : 0,
+                                    height : 0
+                                }
+                            },
+                            filterRegion : {
+                                location : {
+                                    x : 0,
+                                    y : 0
+                                },
+                                size : {
+                                    width : 0,
+                                    height : 0
+                                }
+                            },
+                            scale : {
+                                width : 0,
+                                height : 0
+                            }
+                        },
+                        filterRenderingModes: 1,
+                        renderingOptions : 0,
+                        renderingResourceIdentifierIfExists: {},
+                    }
+                },
+            }
+        });
+
+        streamConnection.connection.invalidate();
+
+        // Allow some time for the GPUP to receive the FilteredNativeImage message, otherwise we can finish
+        // the test before we detect a possible GPUP crash.
+        setTimeout(()=>{
+            window.testRunner?.notifyDone();
+        }, 500);
+    }, 20);
+    
+    </script>
+    
+    This test passes if WebKit does not crash.
+    

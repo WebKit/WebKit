@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+<body>
+Test passes if it does not CRASH.
+<div style="display: grid; min-width: max-content;">
+  <div style="display: grid; grid-template-columns: subgrid [a] [b] [c]">
+    <div></div>
+  </div>
+  <div></div>
+  <div style="display: grid;" id="subgrid">
+    <div id="remove"></div>
+  </div>
+</div>
+</body>
+<script>
+document.body.offsetHeight;
+
+let subgrid = document.getElementById("subgrid");
+let remove = document.getElementById("remove");
+subgrid.removeChild(remove);
+
+subgrid.style["grid-template-columns"] = "subgrid [a] [b] [c]";
+subgrid.style["grid-template-areas"] = '"a"';
+
+document.body.offsetHeight;
+</script>
+</html>

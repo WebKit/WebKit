@@ -1,0 +1,16 @@
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+promise_test(() => {
+    const url = window.location.href + "?test";
+    fetch(url, { integrity: "A" });
+
+    new EventSource(url);
+
+    return new Promise(resolve => setTimeout(resolve, 50));
+}, "ensure event source do not reuse memory cache");
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+
+PASS Description with no BUNDLE group and PT number reuse validates
+

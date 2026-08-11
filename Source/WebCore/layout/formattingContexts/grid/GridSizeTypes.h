@@ -1,0 +1,72 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "LayoutUnit.h"
+
+namespace WebCore {
+namespace Layout {
+
+struct ContentBoxSize {
+    friend auto operator<=>(ContentBoxSize, ContentBoxSize) = default;
+
+    LayoutUnit value;
+};
+
+struct BorderBoxSize {
+    BorderBoxSize(ContentBoxSize contentBox, LayoutUnit borderAndPadding)
+        : value(contentBox.value + borderAndPadding) { }
+
+    static BorderBoxSize zeroSized() { return BorderBoxSize { 0_lu }; }
+    static BorderBoxSize maxSized() { return BorderBoxSize { LayoutUnit::max() }; }
+    static BorderBoxSize fromIntegrationFunction(LayoutUnit v) { return BorderBoxSize { v }; }
+
+    friend auto operator<=>(BorderBoxSize, BorderBoxSize) = default;
+
+    LayoutUnit value;
+
+private:
+    explicit BorderBoxSize(LayoutUnit v)
+        : value(v) { }
+};
+
+struct MarginBoxSize {
+    MarginBoxSize(BorderBoxSize borderBox, LayoutUnit margins)
+        : value(borderBox.value + margins) { }
+
+    static MarginBoxSize zeroSized() { return MarginBoxSize { 0_lu }; }
+
+    friend auto operator<=>(MarginBoxSize, MarginBoxSize) = default;
+
+    LayoutUnit value;
+
+private:
+    explicit MarginBoxSize(LayoutUnit v)
+        : value(v) { }
+};
+
+} // namespace Layout
+} // namespace WebCore

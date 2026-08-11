@@ -1,0 +1,15 @@
+ Link Random text.
+ Link Random text.
+This test checks selection drag edge cases on Mac. To run the test manually:
+
+Select everything above, start the drag over the image, and with no delay, drag it to the content editable area. Only the image should be dragged.
+Select everything above, start the drag over the link, and with no delay, drag it to the content editable area. The entire selection should be dragged.
+Select everything above, start the drag over the text, and with no delay, drag it to the content editable area. Nothing should be dragged, but a bunch of text should be selected instead.
+Dumping info about contenteditable div:
+Number of children: 4
+Contents:
+IMG
+IMG
+A
+SPAN
+Number of selected ranges: 1

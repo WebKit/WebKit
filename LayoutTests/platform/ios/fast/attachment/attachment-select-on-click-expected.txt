@@ -1,0 +1,4 @@
+| "text before "
+| <attachment>
+|   id="attachment"
+| " text after"

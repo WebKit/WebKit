@@ -1,0 +1,1 @@
+This test checks for an exception in [WebScriptObject valueForKey:(NSString *)key] That method is liable to throw an exception which caused the JSLock to never be released, leading to a possible deadlock. If this test doesn't hang, it passed.

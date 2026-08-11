@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test not counting third-party images as third-party script loads</title>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    window.jsTestIsAsync = true;
+    const thirdPartyOrigin = "http://localhost:8000";
+    const thirdPartyBaseUrl = thirdPartyOrigin + "/resources";
+
+    function finishTest() {
+        testRunner.dumpResourceLoadStatistics();
+        setEnableFeature(false, function() {
+            finishJSTest();
+        });
+    }
+
+    async function runTest() {
+        switch (document.location.hash) {
+            case "":
+                if (window.testRunner && window.internals) {
+                    setEnableFeature(true, function() {
+                        document.location.hash = "step1";
+                        runTest();
+                    });
+                }
+                break;
+            case "#step1":
+                document.location.hash = "step2";
+                let imgElement = document.createElement("img");
+                imgElement.onload = runTest;
+                imgElement.src = thirdPartyBaseUrl + "/square20.jpg?dummyParam=" + Math.random();
+                document.body.appendChild(imgElement);
+                break;
+            case "#step2":
+                await testRunner.statisticsNotifyObserver();
+                finishTest();
+                break;
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+Tests for the CSS.nodeLayoutFlagsChanged event with the Rendered enum.
+
+
+== Running test suite: CSS.nodeLayoutFlagsChanged.Rendered
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.Existing.Direct.Display.None
+PASS: Should not render existing nodes with `display: none`.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.Existing.Direct.Display.Block
+PASS: Should render existing nodes with `display: block`.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.Existing.Parent.Display.None
+PASS: Should not render existing nodes that have a parent with `display: none`.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.Existing.Parent.Display.Block
+PASS: Should render existing nodes that have a parent with `display: block`.
+
+-- Running test setup.
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.New.Direct.Display.None
+PASS: Should not render new nodes with `display: none`.
+
+-- Running test setup.
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.New.Direct.Display.Block
+PASS: Should render new nodes with `display: block`.
+
+-- Running test setup.
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.New.Direct.Display.None
+PASS: Should not render new nodes that have a parent with `display: none`.
+
+-- Running test setup.
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.New.Direct.Display.Block
+PASS: Should render new nodes that have a parent with `display: block`.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.Change.Direct.Display.None
+Changing to `display: none`...
+PASS: Should not render nodes changed to `display: none`.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.Change.Direct.Display.Block
+Changing to `display: block`...
+PASS: Should render nodes changed to `display: block`.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.Change.Parent.Display.None
+Changing to `display: none`...
+PASS: Should not render nodes that have a parent changed to `display: none`.
+
+-- Running test case: CSS.nodeLayoutFlagsChanged.Rendered.Change.Parent.Display.Block
+Changing to `display: block`...
+PASS: Should render nodes that have a parent changed to `display: block`.
+

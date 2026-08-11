@@ -1,0 +1,6 @@
+
+PASS RTCPeerConnection establishes using ecdsa and ecdsa certificates
+PASS RTCPeerConnection establishes using ecdsa and rsa certificates
+PASS RTCPeerConnection establishes using rsa and ecdsa certificates
+PASS RTCPeerConnection establishes using rsa and rsa certificates
+

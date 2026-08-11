@@ -1,0 +1,32 @@
+TBODY/TR Element sizes and border spacing
+
+Legacy Chrome:TR includes start/end, not before/after. 1st TBODY includes before/after, 2nd TBODY includes only after, not before.
+
+Firefox: TR/TBODY do not include start/end before/after.
+
+Proposal: match firefox
+
+0,0
+TR width is used for TD's percentage resolution
+
+0,0
+
+FAIL table 1 assert_equals:
+<table style="width:100px;border-spacing:10px;background:#ddd">
+  <tbody data-expected-width="80">
+    <tr data-expected-width="80">
+      <td data-expected-width="80">0,0</td>
+    </tr>
+  </tbody>
+</table>
+width expected 80 but got 100
+FAIL table 2 assert_equals:
+<table style="width:120px;border-spacing:10px;background:#ddd">
+  <tbody data-expected-width="100">
+    <tr data-expected-width="100">
+      <td style="padding:30%" data-expected-width="100"><div data-offset-x="30">0,0</div></td>
+    </tr>
+  </tbody>
+</table>
+width expected 100 but got 120
+

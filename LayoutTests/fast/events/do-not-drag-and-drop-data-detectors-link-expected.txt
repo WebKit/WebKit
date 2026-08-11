@@ -1,0 +1,10 @@
+This test checks that drag-and-drop is blocked for Data Detectors links.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Trying to drag Data Detectors link (should fail)
+
+
+TEST COMPLETE
+

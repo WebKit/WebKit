@@ -1,0 +1,68 @@
+
+FAIL Convert 4x4 null I420 frames to RGBA / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 smpte170m I420 frames to RGBA / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 bt709 I420 frames to RGBA / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 null I420 frames to RGBX / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 smpte170m I420 frames to RGBX / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 bt709 I420 frames to RGBX / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 null I420 frames to BGRA / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 smpte170m I420 frames to BGRA / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 bt709 I420 frames to BGRA / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 null I420 frames to BGRX / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 smpte170m I420 frames to BGRX / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 bt709 I420 frames to BGRX / srgb assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 null I420 frames to RGBA / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 smpte170m I420 frames to RGBA / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 bt709 I420 frames to RGBA / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 null I420 frames to RGBX / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 smpte170m I420 frames to RGBX / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 bt709 I420 frames to RGBX / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 null I420 frames to BGRA / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 smpte170m I420 frames to BGRA / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 bt709 I420 frames to BGRA / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 null I420 frames to BGRX / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 smpte170m I420 frames to BGRX / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 bt709 I420 frames to BGRX / display-p3 assert_unreached: copyTo() failure: Error: assert_equals: expected 64 but got 24 Reached unreachable code
+FAIL Convert 4x4 null RGBX frames to RGBA / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 smpte170m RGBX frames to RGBA / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 bt709 RGBX frames to RGBA / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 null RGBX frames to RGBX / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 smpte170m RGBX frames to RGBX / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 bt709 RGBX frames to RGBX / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 null RGBX frames to BGRA / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 smpte170m RGBX frames to BGRA / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 bt709 RGBX frames to BGRA / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 null RGBX frames to BGRX / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 smpte170m RGBX frames to BGRX / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 bt709 RGBX frames to BGRX / srgb assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 null RGBX frames to RGBA / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 smpte170m RGBX frames to RGBA / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 bt709 RGBX frames to RGBA / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 null RGBX frames to RGBX / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 smpte170m RGBX frames to RGBX / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 bt709 RGBX frames to RGBX / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 null RGBX frames to BGRA / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 smpte170m RGBX frames to BGRA / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 bt709 RGBX frames to BGRA / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 null RGBX frames to BGRX / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 smpte170m RGBX frames to BGRX / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4x4 bt709 RGBX frames to BGRX / display-p3 assert_unreached: copyTo() failure: TypeError: Unable to copy data Reached unreachable code
+FAIL Convert 4-color canvas frame to RGBA / srgb assert_approx_equals: Frame: {"format":"BGRA","width":32,"height":16,"matrix":"rgb","primaries":"bt709","transfer":"iec61966-2-1"} Mismatch at offset 0 R: actual: 0 expected: 255 expected 255 +/- 1 but got 0
+FAIL Convert 4-color canvas frame to RGBX / srgb assert_approx_equals: Frame: {"format":"BGRA","width":32,"height":16,"matrix":"rgb","primaries":"bt709","transfer":"iec61966-2-1"} Mismatch at offset 0 R: actual: 0 expected: 255 expected 255 +/- 1 but got 0
+PASS Convert 4-color canvas frame to BGRA / srgb
+PASS Convert 4-color canvas frame to BGRX / srgb
+FAIL Convert 4-color canvas frame to RGBA / display-p3 assert_approx_equals: Frame: {"format":"BGRA","width":32,"height":16,"matrix":"rgb","primaries":"bt709","transfer":"iec61966-2-1"} Mismatch at offset 0 R: actual: 0 expected: 255 expected 255 +/- 1 but got 0
+FAIL Convert 4-color canvas frame to RGBX / display-p3 assert_approx_equals: Frame: {"format":"BGRA","width":32,"height":16,"matrix":"rgb","primaries":"bt709","transfer":"iec61966-2-1"} Mismatch at offset 0 R: actual: 0 expected: 255 expected 255 +/- 1 but got 0
+FAIL Convert 4-color canvas frame to BGRA / display-p3 assert_approx_equals: Frame: {"format":"BGRA","width":32,"height":16,"matrix":"rgb","primaries":"bt709","transfer":"iec61966-2-1"} Mismatch at offset 0 R: actual: 0 expected: 84 expected 84 +/- 1 but got 0
+FAIL Convert 4-color canvas frame to BGRX / display-p3 assert_approx_equals: Frame: {"format":"BGRA","width":32,"height":16,"matrix":"rgb","primaries":"bt709","transfer":"iec61966-2-1"} Mismatch at offset 0 R: actual: 0 expected: 84 expected 84 +/- 1 but got 0
+PASS copyTo() with layout
+FAIL Unsupported format I420 assert_throws_dom: function "() => frame.allocationSize(options)" did not throw
+FAIL Unsupported format I420P10 assert_throws_dom: function "() => frame.allocationSize(options)" did not throw
+FAIL Unsupported format I420P12 assert_throws_dom: function "() => frame.allocationSize(options)" did not throw
+FAIL Unsupported format I420A assert_throws_dom: function "() => frame.allocationSize(options)" did not throw
+FAIL Unsupported format I422 assert_throws_dom: function "() => frame.allocationSize(options)" did not throw
+FAIL Unsupported format I422A assert_throws_dom: function "() => frame.allocationSize(options)" did not throw
+FAIL Unsupported format I444 assert_throws_dom: function "() => frame.allocationSize(options)" did not throw
+FAIL Unsupported format I444A assert_throws_dom: function "() => frame.allocationSize(options)" did not throw
+FAIL Unsupported format NV12 assert_throws_dom: function "() => frame.allocationSize(options)" did not throw
+

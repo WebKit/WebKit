@@ -1,0 +1,10 @@
+
+FAIL same-site > w => w["iframeName"] assert_equals: expected 1 but got 0
+FAIL cross-origin > w => w["iframeName"] assert_equals: expected 1 but got 0
+FAIL same-site > w => w["divID"] assert_equals: expected 1 but got 0
+PASS cross-origin > w => w["divID"]
+PASS same-site > w => w["existingGlobal"]
+PASS cross-origin > w => w["existingGlobal"]
+PASS same-site > w => w["missingGlobal"]
+PASS cross-origin > w => w["missingGlobal"]
+

@@ -1,0 +1,4 @@
+
+PASS CookieListItem - cookieStore.set with empty string path defaults to current URL
+PASS CookieListItem - cookieStore.set with empty string path defaults to current URL with __host- prefix
+

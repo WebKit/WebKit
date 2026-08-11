@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test passes if you see a single 100px by 100px green box below.</p>
+<svg style="width: 100px; height: 100px;" viewbox="0 0 100 100">
+    <defs>
+        <path id="path1" d="M0,50 L100,50 Z" />
+        <path id="path2" d="M0,-5 L100,-5 Z" />
+    </defs>
+    <rect x="0" y="0" width="100" height="100" fill="green"></rect>
+    <text>
+        <textPath href="#path1">FAIL</textPath>
+    </text>
+</svg>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        document.querySelector('textPath').setAttribute('href', '#path2');
+        if (window.testRunner)
+            requestAnimationFrame(() => testRunner.notifyDone());
+    });
+}
+
+</script>
+</body>
+</html>

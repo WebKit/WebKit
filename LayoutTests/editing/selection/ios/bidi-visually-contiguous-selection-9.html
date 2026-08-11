@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+body, html {
+    font-size: 24px;
+    font-family: system-ui;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that 'Hello' does not get visually unselected while extending the selection handle across Indic numerals");
+
+    paragraph = document.querySelector("p[dir='rtl']");
+    helloMidpoint = UIHelper.midPointOfRect(UIHelper.computeLineBounds(paragraph, 0));
+    urduTextMidpoint = UIHelper.midPointOfRect(UIHelper.computeLineBounds(paragraph, 2));
+
+    await UIHelper.longPressAtPoint(helloMidpoint.x, helloMidpoint.y);
+    await UIHelper.waitForSelectionToAppear();
+
+    const endHandlePoint = UIHelper.midPointOfRect(await UIHelper.getSelectionEndGrabberViewRect());
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(endHandlePoint.x, endHandlePoint.y)
+        .move(urduTextMidpoint.x + 30, urduTextMidpoint.y, 0.8)
+        .wait(0.2)
+        .takeResult());
+    await UIHelper.ensurePresentationUpdate();
+
+    visuallyContiguousBeforeEndingSelection = await UIHelper.isSelectionVisuallyContiguous();
+    selectionRectBeforeEndingSelection = await UIHelper.selectionBounds();
+
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder().end().takeResult());
+    await UIHelper.ensurePresentationUpdate();
+
+    visuallyContiguousAfterEndingSelection = await UIHelper.isSelectionVisuallyContiguous();
+    selectionRectAfterEndingSelection = await UIHelper.selectionBounds();
+
+    shouldBeTrue("visuallyContiguousBeforeEndingSelection");
+    shouldBeTrue("visuallyContiguousAfterEndingSelection");
+    shouldBe("selectionRectAfterEndingSelection.left", "selectionRectBeforeEndingSelection.left");
+    shouldBeGreaterThan("selectionRectAfterEndingSelection.width", "selectionRectBeforeEndingSelection.width");
+    shouldBeEqualToString("getSelection().toString()", paragraph.textContent);
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p dir="rtl">۲۸۴۷۴۸۵۸۳۸۵۸۴۹ Hello</p>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

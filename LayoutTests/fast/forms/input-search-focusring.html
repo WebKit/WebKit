@@ -1,0 +1,15 @@
+<p>PASS if focusring does not bleed</p>
+<input type="search" id="focusring" style="position: absolute;">
+<input type="search" style="outline: 3px solid red; position: absolute;">
+
+<script>
+focusring.focus();
+</script>
+
+<style>
+input {
+    appearance: textfield;
+    position: absolute;
+    border: 1px solid;
+}
+</style>

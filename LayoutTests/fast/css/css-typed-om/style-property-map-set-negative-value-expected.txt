@@ -1,0 +1,133 @@
+Checks that calling StylePropertyMap.set() with a negative value wraps it into a calc.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS target.attributeStyleMap.set('background-size', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.backgroundSize is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-block-start-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderBlockStartWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-block-end-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderBlockEndWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-inline-start-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderInlineStartWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-inline-end-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderInlineEndWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-top-left-radius', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderTopLeftRadius is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-top-right-radius', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderTopRightRadius is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-bottom-right-radius', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderBottomRightRadius is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-bottom-left-radius', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderBottomLeftRadius is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-top-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderTopWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-right-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderRightWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-bottom-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderBottomWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-left-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderLeftWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-image-outset', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderImageOutset is "calc(-32px)"
+PASS target.attributeStyleMap.set('border-image-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.borderImageWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('column-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.columnWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('flex-basis', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.flexBasis is "calc(-32px)"
+PASS target.attributeStyleMap.set('grid-auto-columns', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.gridAutoColumns is "calc(-32px)"
+PASS target.attributeStyleMap.set('grid-auto-rows', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.gridAutoRows is "calc(-32px)"
+PASS target.attributeStyleMap.set('line-height', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.lineHeight is "calc(-32px)"
+PASS target.attributeStyleMap.set('max-height', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.maxHeight is "calc(-32px)"
+PASS target.attributeStyleMap.set('max-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.maxWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('outline-width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.outlineWidth is "calc(-32px)"
+PASS target.attributeStyleMap.set('perspective', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.perspective is "calc(-32px)"
+PASS target.attributeStyleMap.set('row-gap', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.rowGap is "calc(-32px)"
+PASS target.attributeStyleMap.set('column-gap', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.columnGap is "calc(-32px)"
+PASS target.attributeStyleMap.set('scroll-padding-inline-start', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.scrollPaddingInlineStart is "calc(-32px)"
+PASS target.attributeStyleMap.set('scroll-padding-block-start', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.scrollPaddingBlockStart is "calc(-32px)"
+PASS target.attributeStyleMap.set('scroll-padding-inline-end', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.scrollPaddingInlineEnd is "calc(-32px)"
+PASS target.attributeStyleMap.set('scroll-padding-block-end', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.scrollPaddingBlockEnd is "calc(-32px)"
+PASS target.attributeStyleMap.set('width', new CSSUnitValue(-32, 'px')) did not throw exception.
+PASS target.style.width is "calc(-32px)"
+PASS target.attributeStyleMap.set('background-size', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.backgroundSize is "calc(-32%)"
+PASS target.attributeStyleMap.set('border-top-left-radius', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.borderTopLeftRadius is "calc(-32%)"
+PASS target.attributeStyleMap.set('border-top-right-radius', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.borderTopRightRadius is "calc(-32%)"
+PASS target.attributeStyleMap.set('border-bottom-right-radius', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.borderBottomRightRadius is "calc(-32%)"
+PASS target.attributeStyleMap.set('border-bottom-left-radius', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.borderBottomLeftRadius is "calc(-32%)"
+PASS target.attributeStyleMap.set('border-image-slice', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.borderImageSlice is "calc(-32%)"
+PASS target.attributeStyleMap.set('border-image-width', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.borderImageWidth is "calc(-32%)"
+PASS target.attributeStyleMap.set('flex-basis', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.flexBasis is "calc(-32%)"
+PASS target.attributeStyleMap.set('grid-auto-columns', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.gridAutoColumns is "calc(-32%)"
+PASS target.attributeStyleMap.set('grid-auto-rows', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.gridAutoRows is "calc(-32%)"
+PASS target.attributeStyleMap.set('line-height', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.lineHeight is "calc(-32%)"
+PASS target.attributeStyleMap.set('max-height', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.maxHeight is "calc(-32%)"
+PASS target.attributeStyleMap.set('max-width', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.maxWidth is "calc(-32%)"
+PASS target.attributeStyleMap.set('row-gap', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.rowGap is "calc(-32%)"
+PASS target.attributeStyleMap.set('column-gap', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.columnGap is "calc(-32%)"
+PASS target.attributeStyleMap.set('scroll-padding-inline-start', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.scrollPaddingInlineStart is "calc(-32%)"
+PASS target.attributeStyleMap.set('scroll-padding-block-start', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.scrollPaddingBlockStart is "calc(-32%)"
+PASS target.attributeStyleMap.set('scroll-padding-inline-end', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.scrollPaddingInlineEnd is "calc(-32%)"
+PASS target.attributeStyleMap.set('scroll-padding-block-end', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.scrollPaddingBlockEnd is "calc(-32%)"
+PASS target.attributeStyleMap.set('width', new CSSUnitValue(-32, 'percent')) did not throw exception.
+PASS target.style.width is "calc(-32%)"
+PASS target.attributeStyleMap.set('animation-iteration-count', new CSSUnitValue(-32, 'number')) did not throw exception.
+PASS target.style.animationIterationCount is "calc(-32)"
+PASS target.attributeStyleMap.set('border-image-outset', new CSSUnitValue(-32, 'number')) did not throw exception.
+PASS target.style.borderImageOutset is "calc(-32)"
+PASS target.attributeStyleMap.set('border-image-slice', new CSSUnitValue(-32, 'number')) did not throw exception.
+PASS target.style.borderImageSlice is "calc(-32)"
+PASS target.attributeStyleMap.set('border-image-width', new CSSUnitValue(-32, 'number')) did not throw exception.
+PASS target.style.borderImageWidth is "calc(-32)"
+PASS target.attributeStyleMap.set('line-height', new CSSUnitValue(-32, 'number')) did not throw exception.
+PASS target.style.lineHeight is "calc(-32)"
+PASS target.attributeStyleMap.set('stroke-miterlimit', new CSSUnitValue(-32, 'number')) did not throw exception.
+PASS target.style.strokeMiterlimit is "calc(-32)"
+PASS target.attributeStyleMap.set('animation-duration', new CSSUnitValue(-32, 's')) did not throw exception.
+PASS target.style.animationDuration is "calc(-32s)"
+PASS target.attributeStyleMap.set('font-weight', new CSSUnitValue(0, 'number')) did not throw exception.
+PASS target.style.fontWeight is "calc(0)"
+PASS target.attributeStyleMap.set('font-weight', new CSSUnitValue(-32, 'number')) did not throw exception.
+PASS target.style.fontWeight is "calc(-32)"
+PASS target.attributeStyleMap.set('font-weight', new CSSUnitValue(100, 'number')) did not throw exception.
+PASS target.style.fontWeight is "100"
+PASS target.attributeStyleMap.set('font-weight', new CSSUnitValue(1001, 'number')) did not throw exception.
+PASS target.style.fontWeight is "calc(1001)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

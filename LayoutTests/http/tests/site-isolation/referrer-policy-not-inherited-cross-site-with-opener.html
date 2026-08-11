@@ -1,0 +1,27 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="referrer" content="no-referrer">
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that no-referrer referrer policy is not inherited via cross-site navigation with opener under site isolation.");
+jsTestIsAsync = true;
+
+var w = window.open("about:blank");
+
+window.onmessage = function(event) {
+    referrer = event.data.referrer;
+    // Referrer should be present because the no-referrer policy should NOT have persisted.
+    shouldNotBe("referrer", "''");
+    w.close();
+    finishJSTest();
+};
+
+// Navigate the opened window cross-site; triggers PSON with m_shouldReuseMainFrame.
+w.location = "http://localhost:8000/site-isolation/resources/check-and-report-referrer.html";
+</script>
+</body>
+</html>

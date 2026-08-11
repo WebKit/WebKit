@@ -1,0 +1,6 @@
+
+
+Harness Error (FAIL), message = Error: assert_unreached: Audio should not fire loadstart event when not visible in viewport Reached unreachable code
+
+FAIL Audio with loading=lazy and autoplay that is not visible in viewport does not load audio data or autoplay assert_equals: expected 0 but got 4
+

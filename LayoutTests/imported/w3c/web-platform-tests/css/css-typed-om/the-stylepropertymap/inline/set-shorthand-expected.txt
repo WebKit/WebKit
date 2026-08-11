@@ -1,0 +1,6 @@
+
+PASS Setting a shorthand with an invalid CSSStyleValue on inline style throws TypeError
+PASS Setting a shorthand with an invalid String on inline style throws TypeError
+PASS Setting a shorthand with a CSSStyleValue updates inline style
+PASS Setting a shorthand with a string updates inline style
+

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    div {
+        width: 200px;
+        height: 200px;
+    }
+
+    /* Same gradients as the test but without 'none' components, so they go
+       through the direct CGGradient path which correctly passes the
+       premultiplied alpha interpolation option to CoreGraphics. */
+
+    #linear {
+        background-image: linear-gradient(rgba(0, 0, 0, 0), rgb(0, 128, 0));
+    }
+</style>
+</head>
+<body>
+<div id="linear"></div>
+</body>
+</html>

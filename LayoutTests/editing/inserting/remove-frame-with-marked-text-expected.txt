@@ -1,0 +1,5 @@
+PASS Removed the subframe
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Typing in the above iframe using an input method should not trigger a crash.

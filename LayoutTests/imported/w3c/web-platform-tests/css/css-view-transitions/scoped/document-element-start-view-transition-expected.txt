@@ -1,0 +1,9 @@
+
+FAIL Synchronously starting a view transition on document.documentElement skips the previously active document view transition. promise_test: Unhandled rejection with value: object "TypeError: scope2.startViewTransition is not a function. (In 'scope2.startViewTransition(() => {
+        assert_equals(target.className, 'update-1');
+        target.className = 'update-2';
+      })', 'scope2.startViewTransition' is undefined)"
+FAIL Synchronously starting a view transition on document skips the previously active view transition on document.documentElement. promise_test: Unhandled rejection with value: object "TypeError: scope1.startViewTransition is not a function. (In 'scope1.startViewTransition(() => {
+        target.className = 'update-1';
+      })', 'scope1.startViewTransition' is undefined)"
+

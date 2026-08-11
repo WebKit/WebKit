@@ -1,0 +1,8 @@
+Some text
+
+PASS body ::selection uses the originating custom property
+PASS body ::selection uses its own custom property
+PASS div::selection uses the originating element custom property
+PASS div::selection uses its own custom property
+PASS div::selection properties are not present on the originating element
+

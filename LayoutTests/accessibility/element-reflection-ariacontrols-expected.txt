@@ -1,0 +1,22 @@
+Checks that element reflection is exposed to the a11y tree for 'ariaControlsElements'
+PASS: axTab1.ariaControlsElementAtIndex(0).isEqual(axPanel1) === true
+PASS: axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel2) === true
+PASS: axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1) === true
+PASS: axTab3.ariaControlsElementAtIndex(0).isEqual(axPanel3) === true
+PASS: axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1) === true
+PASS: axTab2.ariaControlsElementAtIndex(1).isEqual(axPanel2) === true
+PASS: axTab2.ariaControlsElementAtIndex(2).isEqual(axPanel3) === true
+PASS: axTab4.ariaControlsElementAtIndex(0).isEqual(axPanel4) === true
+PASS: axTab5.ariaControlsElementAtIndex(0).isEqual(axPanel5) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First panel
+Tab 1
+Second panel
+Tab 2
+Third panel
+Fourth panel
+Tab 4
+Fifth panel

@@ -1,0 +1,19 @@
+PASS new DOMParser().parseFromString(htmlContent, "text/html").contentType is "text/html"
+PASS new DOMParser().parseFromString(xmlContent, "application/xml").contentType is "application/xml"
+PASS new DOMParser().parseFromString(xhtmlContent, "application/xhtml+xml").contentType is "application/xhtml+xml"
+PASS new DOMParser().parseFromString(svgImageContent, "image/svg+xml").contentType is "image/svg+xml"
+PASS new DOMParser().parseFromString(xslContent, "text/xsl").contentType threw exception TypeError: Type error.
+PASS new DOMParser().parseFromString(xmlContent, "text/dummy+xml").contentType threw exception TypeError: Type error.
+PASS new DOMParser().parseFromString(xmlContent, "text/XML").contentType threw exception TypeError: Type error.
+PASS new DOMParser().parseFromString(htmlContent, "TEXT/html").contentType threw exception TypeError: Type error.
+PASS parsedContent.body.firstChild.nodeName is "DIV"
+PASS parsedContent.body.childNodes.length is 2
+PASS parsedContent.body.childNodes[1].nodeName is "#text"
+PASS div.firstChild.nodeName is "#text"
+PASS div.childNodes.length is 3
+PASS div.childNodes[2].nodeName is "#text"
+PASS new DOMParser().parseFromString(htmlContentWithJustSpaces, "text/html").body.childNodes.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

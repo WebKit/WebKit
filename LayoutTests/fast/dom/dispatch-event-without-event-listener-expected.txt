@@ -1,0 +1,10 @@
+This tests dispatching a CustomEvent without adding a matching event listener. The event target should still be set.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.target is target
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

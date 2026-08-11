@@ -1,0 +1,4 @@
+some text
+
+PASS Script-inserted module script elements with "blocking=render" are render-blocking
+

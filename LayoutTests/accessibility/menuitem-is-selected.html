@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div role="application">
+    <ul role="menu" style="display:none">
+        <li style="list-style: none" tabindex="-2" aria-posinset="1" aria-setsize="2" role="menuitem" id="menu-item-one">Menuitem one</li>
+        <li style="list-style: none" tabindex="-2" aria-posinset="2" aria-setsize="2" role="menuitem">Menuitem two</li>
+    </ul>
+    <div role="group" id="group" aria-labelledby="menu-item-one"></div>
+</div>
+
+<script>
+var output = "This test ensures that calling isSelected on a menuitem within an unrendered container doesn't cause a crash.\n\n";
+
+if (window.accessibilityController) {
+    output += dumpAXSearchTraversal(accessibilityController.rootElement, { excludeRoles: "scrollbar" });
+    // Accessing isSelected() should not cause a crash.
+    output += expect("accessibilityController.accessibleElementById('group').ariaLabelledByElementAtIndex(0).isSelected", "false");
+    debug(output);
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,4 @@
+
+PASS Comparison of `Origin.from(Worker)` for opaque data URL origin.
+PASS Comparison of `Origin.from(Worker)` tuple origins.
+

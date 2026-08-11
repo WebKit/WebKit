@@ -1,0 +1,225 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+async function gc() {
+  await 0;
+  if (globalThis.GCController) {
+    globalThis.GCController.collect();
+  } else if (globalThis.$vm) {
+    globalThis.$vm.gc();
+  } else {
+    log('no GC available');
+  }
+}
+async function makeDataUrl(width, height, color0, color1) {
+  let offscreenCanvas = new OffscreenCanvas(width, height);
+  let ctx = offscreenCanvas.getContext('2d');
+  let gradient = ctx.createLinearGradient(0, 0, width, height);
+  let blob = await offscreenCanvas.convertToBlob();
+  let fileReader = new FileReader();
+  fileReader.readAsDataURL(blob);
+  return new Promise(resolve => {
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+  });
+}
+
+async function imageWithData(width, height, color0, color1) {
+  let dataUrl = await makeDataUrl(width, height, color0, color1);
+  let img = document.createElement('img');
+  img.src = dataUrl;
+  await img.decode();
+  return img;
+  return URL.createObjectURL(blob);
+}
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let promise0 = navigator.gpu.requestAdapter({});
+let adapter0 = await promise0;
+let device0 = await adapter0.requestDevice({
+  requiredLimits: {
+    maxBindingsPerBindGroup: 1000,
+    maxUniformBufferBindingSize: 21715455,
+  },
+  requiredFeatures: ['shader-f16'],
+});
+// START
+let shaderModule4 = device0.createShaderModule({ code: `
+enable f16;
+requires packed_4x8_integer_dot_product;
+
+struct VertexOutput1 {
+    @builtin(position) position: vec4f,
+}
+
+struct VertexInput19 {
+    @location(5) @interpolate(flat, first) location_5: i32,
+}
+
+@id(65227) override override10: f16;
+
+@vertex fn vertex2(a14: VertexInput19) -> VertexOutput1 {
+    var out: VertexOutput1;
+    out.position *= vec4f(f32(a14.location_5));
+    return out;
+}
+
+@fragment fn fragment3() -> @location(0) vec4f {
+    var out: vec4f;
+    return out;
+    _ = override10;
+}
+`});
+let veryExplicitBindGroupLayout0_ = device0.createBindGroupLayout({
+    entries: [{
+        binding: 8,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: {
+            type: 'storage',
+            hasDynamicOffset: true
+        }
+    }, ],
+});
+
+let buffer11_ = device0.createBuffer({ size: 24, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDEX });
+let buffer29_ = device0.createBuffer({ size: 6004, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC | GPUBufferUsage.STORAGE });
+let buffer36_ = device0.createBuffer({ size: 12, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX });
+let buffer47_ = device0.createBuffer({ size: 168, usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDIRECT | GPUBufferUsage.VERTEX });
+let buffer53_ = device0.createBuffer({ size: 132, usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.UNIFORM | GPUBufferUsage.VERTEX });
+
+let texture18 = device0.createTexture({
+    size: [4, 7, 36],
+    format: 'r32float',
+    usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+});
+
+let textureView118 = texture18.createView({ dimension: '2d', baseArrayLayer: 4 });
+
+let bindGroup0_ = device0.createBindGroup({
+    layout: veryExplicitBindGroupLayout0_,
+    entries: [{
+        binding: 8,
+        resource: {
+            buffer: buffer29_
+        }
+    }],
+});
+let veryExplicitBindGroupLayout2_ = device0.createBindGroupLayout({
+    entries: [{
+        binding: 14,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: {
+            type: 'storage',
+            hasDynamicOffset: true
+        }
+    }, ],
+});
+let bindGroup63_ = device0.createBindGroup({
+    layout: veryExplicitBindGroupLayout2_,
+    entries: [
+        { binding: 14, resource: { buffer: buffer29_ } },
+    ],
+});
+let pipelineLayout0_ = device0.createPipelineLayout({
+    bindGroupLayouts: [veryExplicitBindGroupLayout0_]
+});
+let pipeline6_ = await device0.createRenderPipelineAsync({
+    layout: pipelineLayout0_,
+    fragment: {
+        module: shaderModule4,
+        entryPoint: 'fragment3',
+        constants: {
+            65_227: 1
+        },
+        targets: [{
+            format: 'r32float',
+            writeMask: GPUColorWrite.ALL | GPUColorWrite.ALPHA | GPUColorWrite.BLUE
+        }],
+    },
+    vertex: {
+        module: shaderModule4,
+        constants: {},
+        buffers: [{
+            arrayStride: 8,
+            attributes: [{
+                format: 'sint16x2',
+                offset: 0,
+                shaderLocation: 5
+            }],
+        }, ],
+    },
+});
+let pipelineLayout1_ = device0.createPipelineLayout({
+    bindGroupLayouts: [veryExplicitBindGroupLayout2_]
+});
+let pipeline15_ = device0.createRenderPipeline({
+    layout: pipelineLayout1_,
+    fragment: {
+        module: shaderModule4,
+        entryPoint: 'fragment3',
+        constants: {
+            65_227: 1
+        },
+        targets: [{
+            format: 'r32float',
+            writeMask: 0
+        }],
+    },
+    vertex: {
+        module: shaderModule4,
+        buffers: [{
+            arrayStride: 96,
+            attributes: [{
+                format: 'sint16x4',
+                offset: 32,
+                shaderLocation: 5
+            }],
+        }, ],
+    },
+});
+
+let renderBundleEncoder0 = device0.createRenderBundleEncoder({ colorFormats: ['r32float'] });
+renderBundleEncoder0.setPipeline(pipeline6_);
+renderBundleEncoder0.setBindGroup(0, bindGroup0_, [0]);
+renderBundleEncoder0.setIndexBuffer(buffer11_, 'uint32', 0, 0);
+renderBundleEncoder0.setVertexBuffer(0, buffer47_);
+renderBundleEncoder0.draw(1, 1, 1, 1);
+renderBundleEncoder0.setPipeline(pipeline15_);
+renderBundleEncoder0.setBindGroup(0, bindGroup63_, [0]);
+renderBundleEncoder0.draw(1, 1, 1, 1);
+renderBundleEncoder0.setVertexBuffer(0, buffer36_, 0, 1);
+renderBundleEncoder0.drawIndirect(buffer53_, 56);
+let renderBundle21 = renderBundleEncoder0.finish({});
+let commandEncoder133 = device0.createCommandEncoder({});
+let renderPassEncoder22 = commandEncoder133.beginRenderPass({
+    colorAttachments: [{ view: textureView118, loadOp: 'load', storeOp: 'store', }],
+});
+renderPassEncoder22.executeBundles([renderBundle21]);
+// END
+  await device0.queue.onSubmittedWorkDone();
+
+  log('Pass');
+  globalThis.testRunner?.dumpAsText();
+  globalThis.testRunner?.notifyDone();
+}
+onload = async () => {
+  try {
+  let workers = [
+  ];
+  let promises = [ window0() ];
+  } catch (e) {
+    if (e instanceof GPUPipelineError) {
+      if (e.name === 'OperationError') {
+      }
+    }
+  }
+};
+</script>

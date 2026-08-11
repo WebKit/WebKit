@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<style>
+
+::-webkit-scrollbar {
+    width: 20px;
+    height: 20px;
+}
+
+::-webkit-scrollbar-button {
+    height: 20px;
+    width: 20px;
+    background-color: blue;
+}
+
+::-webkit-scrollbar-track-piece  {
+    background-color: gray;
+}
+
+::-webkit-scrollbar-thumb {
+    height: 20px;
+    width: 20px;
+    background-color: red;
+}
+
+select {
+    writing-mode: vertical-lr;
+    border: 1px solid black;
+}
+
+</style>
+</head>
+<body>
+<select multiple>
+    <option>Option 1</option>
+    <option>Option 2</option>
+    <option>Option 3</option>
+    <option>Option 4</option>
+    <option>Option 5</option>
+</select>
+</body>
+<script>
+
+description("Test that &lt;select multiple&gt; with a vertical writing mode can be scrolled by dragging a horizontal scrollbar");
+
+if (window.eventSender) {
+    var select = document.querySelector("select");
+
+    debug("Initial state");
+    shouldBeEqualToNumber("select.scrollTop", 0);
+    shouldBeEqualToNumber("select.scrollLeft", 0);
+    debug("\n");
+
+    debug("Attempt to drag as if vertical scrollbar was present");
+    eventSender.mouseMoveTo(select.offsetLeft + select.offsetWidth - 5, select.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(select.offsetLeft + select.offsetWidth - 5, select.offsetTop + 25);
+    eventSender.mouseUp();
+    shouldBeEqualToNumber("select.scrollTop", 0);
+    shouldBeEqualToNumber("select.scrollLeft", 0);
+    debug("\n");
+
+    debug("Drag horizontal scrollbar");
+    eventSender.mouseMoveTo(select.offsetLeft + 5, select.offsetTop + select.offsetHeight - 5);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(select.offsetLeft + 25, select.offsetTop + select.offsetHeight - 5);
+    eventSender.mouseUp();
+    shouldBeEqualToNumber("select.scrollTop", 0);
+    shouldBeGreaterThan("select.scrollLeft", "0");
+    debug("\n");
+}
+
+</script>

@@ -1,0 +1,17 @@
+Tests Canvas.setShaderProgramDisabled for a WebGPU render pipeline.
+
+
+== Running test suite: Canvas.setShaderProgramDisabled.WebGPU
+-- Running test case: Canvas.setShaderProgramDisabled.WebGPU.RenderPipeline
+PASS: WebGPU render ShaderProgram should support disabling.
+PASS: Disabling the render pipeline should change render output.
+PASS: Re-enabling the render pipeline should restore render output.
+
+-- Running test case: Canvas.setShaderProgramDisabled.WebGPU.RenderBundlePipeline
+PASS: Disabling the render pipeline should suppress a render bundle draw call.
+PASS: Re-enabling the render pipeline should restore render bundle encoding.
+
+-- Running test case: Canvas.setShaderProgramDisabled.WebGPU.UnsupportedActions
+PASS: There should be a compute ShaderProgram.
+PASS: Disabling a compute pipeline should return an error.
+

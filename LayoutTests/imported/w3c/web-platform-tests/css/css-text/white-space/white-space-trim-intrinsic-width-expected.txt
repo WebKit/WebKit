@@ -1,0 +1,11 @@
+ab a b a b ab a b a b XYYYY X YYYY X YYYY YYYYX YYYY X YYYY X
+
+PASS sanity: collapsible space before box adds max-content width
+PASS sanity: collapsible space after box adds max-content width
+PASS discard-before: max-content excludes the collapsed leading space
+PASS discard-after: max-content excludes the collapsed trailing space
+PASS sanity: a wrap opportunity at the space lowers min-content
+PASS sanity: a wrap opportunity at the trailing space lowers min-content
+PASS discard-before: min-content merges the words (removes the wrap opportunity)
+PASS discard-after: min-content merges the words (removes the wrap opportunity)
+

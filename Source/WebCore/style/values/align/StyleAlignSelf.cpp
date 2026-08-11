@@ -1,0 +1,192 @@
+/*
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "StyleAlignSelf.h"
+
+#include "AnchorPositionEvaluator.h"
+#include "CSSKeywordValue.h"
+#include "StyleAlignItems.h"
+#include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+GettersInlines.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversion.h"
+
+namespace WebCore {
+namespace Style {
+
+StyleSelfAlignmentData AlignSelf::resolve(const Style::ComputedStyle* containerStyle) const
+{
+    if (PrimaryKind::Auto == primary())
+        return containerStyle ? containerStyle->alignItems().resolve() : StyleSelfAlignmentData { ItemPosition::Normal };
+
+    auto resolveOverflowPosition = [&](auto itemPosition) -> StyleSelfAlignmentData {
+        switch (overflowPosition()) {
+        case OverflowPositionKind::None:
+            return { itemPosition };
+        case OverflowPositionKind::Unsafe:
+            return { itemPosition, OverflowAlignment::Unsafe };
+        case OverflowPositionKind::Safe:
+            return { itemPosition, OverflowAlignment::Safe };
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    switch (primary()) {
+    case PrimaryKind::Auto:
+        ASSERT_NOT_REACHED();
+        return { ItemPosition::Auto };
+    case PrimaryKind::Normal:
+        return { ItemPosition::Normal };
+    case PrimaryKind::Stretch:
+        return { ItemPosition::Stretch };
+    case PrimaryKind::Baseline:
+        if (baselineAlignmentPreference() == BaselineAlignmentPreferenceKind::Last)
+            return { ItemPosition::LastBaseline };
+        return { ItemPosition::Baseline };
+    case PrimaryKind::Center:
+        return resolveOverflowPosition(ItemPosition::Center);
+    case PrimaryKind::Start:
+        return resolveOverflowPosition(ItemPosition::Start);
+    case PrimaryKind::End:
+        return resolveOverflowPosition(ItemPosition::End);
+    case PrimaryKind::SelfStart:
+        return resolveOverflowPosition(ItemPosition::SelfStart);
+    case PrimaryKind::SelfEnd:
+        return resolveOverflowPosition(ItemPosition::SelfEnd);
+    case PrimaryKind::FlexStart:
+        return resolveOverflowPosition(ItemPosition::FlexStart);
+    case PrimaryKind::FlexEnd:
+        return resolveOverflowPosition(ItemPosition::FlexEnd);
+    case PrimaryKind::AnchorCenter:
+        return resolveOverflowPosition(ItemPosition::AnchorCenter);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+// MARK: - Conversion
+
+auto CSSValueConversion<AlignSelf>::operator()(BuilderState& state, const CSSValue& value) -> AlignSelf
+{
+    auto applyPositionTryFallbackTactics = [](auto& state, auto position) -> CSSValueID {
+        // Flip the position according to position-try fallback, if specified.
+        if (auto positionTryFallback = state.positionTryFallback())
+            position = AnchorPositionEvaluator::resolvePositionTryFallbackValueForSelfPosition(state.cssPropertyID(), position, state.style().writingMode(), *positionTryFallback);
+        return position;
+    };
+
+    if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
+        switch (applyPositionTryFallbackTactics(state, keywordValue->valueID())) {
+        // auto
+        case CSSValueAuto:
+            return CSS::Keyword::Auto { };
+        // normal
+        case CSSValueNormal:
+            return CSS::Keyword::Normal { };
+        // stretch
+        case CSSValueStretch:
+            return CSS::Keyword::Stretch { };
+        // <baseline-position>
+        case CSSValueBaseline:
+            return CSS::Keyword::Baseline { };
+        // <overflow-position>? <self-position>
+        case CSSValueCenter:
+            return CSS::Keyword::Center { };
+        case CSSValueStart:
+            return CSS::Keyword::Start { };
+        case CSSValueEnd:
+            return CSS::Keyword::End { };
+        case CSSValueSelfStart:
+            return CSS::Keyword::SelfStart { };
+        case CSSValueSelfEnd:
+            return CSS::Keyword::SelfEnd { };
+        case CSSValueFlexStart:
+            return CSS::Keyword::FlexStart { };
+        case CSSValueFlexEnd:
+            return CSS::Keyword::FlexEnd { };
+        case CSSValueAnchorCenter:
+            return CSS::Keyword::AnchorCenter { };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Auto { };
+        }
+    }
+
+    auto pair = requiredPairDowncast<CSSKeywordValue>(state, value);
+    if (!pair)
+        return CSS::Keyword::Auto { };
+
+    auto consumeAfterBaselinePositionPreference = [&](auto baselinePositionPreference, auto secondValueID) -> AlignSelf {
+        switch (secondValueID) {
+        case CSSValueBaseline:
+            return { CSS::Keyword::Baseline { }, { baselinePositionPreference } };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Auto { };
+        }
+    };
+
+    auto consumeAfterOverflowPosition = [&](auto overflowPosition, auto secondValueID) -> AlignSelf {
+        switch (applyPositionTryFallbackTactics(state, secondValueID)) {
+        case CSSValueStart:
+            return { CSS::Keyword::Start { }, overflowPosition };
+        case CSSValueEnd:
+            return { CSS::Keyword::End { }, overflowPosition };
+        case CSSValueCenter:
+            return { CSS::Keyword::Center { }, overflowPosition };
+        case CSSValueSelfStart:
+            return { CSS::Keyword::SelfStart { }, overflowPosition };
+        case CSSValueSelfEnd:
+            return { CSS::Keyword::SelfEnd { }, overflowPosition };
+        case CSSValueFlexStart:
+            return { CSS::Keyword::FlexStart { }, overflowPosition };
+        case CSSValueFlexEnd:
+            return { CSS::Keyword::FlexEnd { }, overflowPosition };
+        case CSSValueAnchorCenter:
+            return { CSS::Keyword::AnchorCenter { }, overflowPosition };
+        default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return CSS::Keyword::Auto { };
+        }
+    };
+
+    switch (pair->first->valueID()) {
+    // <baseline-position>
+    case CSSValueFirst:
+        return consumeAfterBaselinePositionPreference(CSS::Keyword::First { }, pair->second->valueID());
+    case CSSValueLast:
+        return consumeAfterBaselinePositionPreference(CSS::Keyword::Last { }, pair->second->valueID());
+    // <overflow-position>? <self-position>
+    case CSSValueUnsafe:
+        return consumeAfterOverflowPosition(CSS::Keyword::Unsafe { }, pair->second->valueID());
+    case CSSValueSafe:
+        return consumeAfterOverflowPosition(CSS::Keyword::Safe { }, pair->second->valueID());
+    default:
+        state.setCurrentPropertyInvalidAtComputedValueTime();
+        return CSS::Keyword::Auto { };
+    }
+}
+
+} // namespace Style
+} // namespace WebCore

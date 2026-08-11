@@ -1,0 +1,7 @@
+
+PASS Property marker value 'none'
+PASS Property marker value 'url("https://example.com/")'
+PASS url values are made absolute
+PASS Setting a single marker value results in empty marker computed value
+PASS Setting a single marker value to "none" results in empty marker computed value
+

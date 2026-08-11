@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+var updatedFrameURL = "resources/dummy-frame-2.html";
+var updatedObjectURL = "resources/dummy-frame-1.html";
+
+function runTests()
+{
+    shouldBe("window.frames.length", "2");
+    shouldBe("window.frames[0].frameElement.name", '"frame"');
+    shouldBe("window.frames[0].frameElement.contentWindow", "window.frames[0].frameElement.contentDocument.defaultView");
+    shouldBe("window.frames[0].frameElement.contentWindow.document", "window.frames[0].frameElement.contentDocument");
+    shouldBe("window.frames[1].frameElement.name", '"obj"');
+    shouldBe("window.frames[1].frameElement.contentWindow", "window.frames[1].frameElement.contentDocument.defaultView");
+    shouldBe("window.frames[1].frameElement.contentWindow.document", "window.frames[1].frameElement.contentDocument");
+
+    document.getElementsByName('frame')[0].onload = handleLoad;
+    document.getElementsByName('obj')[0].onload = handleLoad;
+
+    debug("Loading '" + updatedFrameURL + "' in iframe...");
+    debug("Loading '" + updatedObjectURL + "' in object...");
+    open(updatedFrameURL, "frame");
+    open(updatedObjectURL, "obj");
+}
+
+var numLoads = 0;
+
+function handleLoad()
+{
+    numLoads++;
+    if (numLoads < 2)
+        return;
+
+    shouldBeTrue(`window.frames[0].location.href.endsWith("${updatedFrameURL}")`);
+    shouldBeTrue(`window.frames[1].location.href.endsWith("${updatedObjectURL}")`);
+
+    finishJSTest();
+}
+</script>
+
+</head>
+<body onload="runTests()">
+
+<iframe name="frame" src="resources/dummy-frame-1.html"></iframe>
+<object name="obj" type="text/html" data="resources/dummy-frame-2.html"></object>
+
+</body>
+</html>

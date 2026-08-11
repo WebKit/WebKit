@@ -1,0 +1,7 @@
+
+Selected range: (0, 2)
+Verifies that text inside an input element can be selected using a tap-and-half gesture.
+
+To manually test, tap once to focus the input. Then tap and tap and hold in quick succession to select the word "aa".
+
+This test is best run under WebKitTestRunner.

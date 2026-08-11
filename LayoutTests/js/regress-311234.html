@@ -1,0 +1,28 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useSharedArrayBuffer=true ] -->
+<script>
+if (testRunner) testRunner.waitUntilDone();
+
+function gc() { GCController.collect(); }
+
+const sab = new SharedArrayBuffer(4);
+
+const worker = new Worker(URL.createObjectURL(new Blob([`
+    onmessage = e => {
+        Atomics.waitAsync(new Int32Array(e.data), 0, 0);
+        postMessage("ready");
+    };
+`])));
+
+worker.onmessage = () => {
+    const f = document.createElement("iframe");
+    document.body.appendChild(f);
+    f.contentWindow.__sab__ = sab;
+    f.contentWindow.eval("Atomics.waitAsync(new Int32Array(__sab__), 0, 0)");
+    document.body.removeChild(f);
+    worker.terminate();
+    gc();
+    testRunner?.notifyDone();
+};
+
+worker.postMessage(sab);
+</script>

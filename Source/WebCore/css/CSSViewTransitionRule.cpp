@@ -1,0 +1,144 @@
+/*
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "CSSViewTransitionRule.h"
+
+#include "CSSCustomIdentValue.h"
+#include "CSSKeywordValue.h"
+#include "CSSMarkup.h"
+#include "CSSPropertyParser.h"
+#include "CSSStyleSheet.h"
+#include "CSSTokenizer.h"
+#include "CSSValueList.h"
+#include "CSSValuePair.h"
+#include "MutableStyleProperties.h"
+#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
+#include <wtf/text/StringBuilder.h>
+
+namespace WebCore {
+
+static std::optional<ViewTransitionNavigation> NODELETE toViewTransitionNavigationEnum(RefPtr<CSSValue> navigation)
+{
+    RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(navigation);
+    if (!keywordValue)
+        return std::nullopt;
+
+    if (keywordValue->valueID() == CSSValueAuto)
+        return ViewTransitionNavigation::Auto;
+    return ViewTransitionNavigation::None;
+}
+
+StyleRuleViewTransition::StyleRuleViewTransition(Ref<StyleProperties>&& properties)
+    : StyleRuleBase(StyleRuleType::ViewTransition)
+{
+    m_navigation = toViewTransitionNavigationEnum(properties->getPropertyCSSValue(CSSPropertyNavigation));
+
+    if (auto value = properties->getPropertyCSSValue(CSSPropertyTypes)) {
+        m_explicitlySetTypes = true;
+
+        auto processSingleValue = [&](const CSSValue& currentValue) {
+            if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(currentValue))
+                m_types.append(customIdentValue->customIdent().value);
+        };
+        if (auto* list = dynamicDowncast<CSSValueList>(*value)) {
+            for (Ref currentValue : *list)
+                processSingleValue(currentValue);
+        } else
+            processSingleValue(*value);
+    } else
+        m_explicitlySetTypes = false;
+}
+
+Ref<StyleRuleViewTransition> StyleRuleViewTransition::create(Ref<StyleProperties>&& properties)
+{
+    return adoptRef(*new StyleRuleViewTransition(WTF::move(properties)));
+}
+
+StyleRuleViewTransition::~StyleRuleViewTransition() = default;
+
+Ref<CSSViewTransitionRule> CSSViewTransitionRule::create(StyleRuleViewTransition& rule, CSSStyleSheet* sheet)
+{
+    return adoptRef(*new CSSViewTransitionRule(rule, sheet));
+}
+
+CSSViewTransitionRule::CSSViewTransitionRule(StyleRuleViewTransition& viewTransitionRule, CSSStyleSheet* parent)
+    : CSSRule(parent)
+    , m_viewTransitionRule(viewTransitionRule)
+{
+}
+
+CSSViewTransitionRule::~CSSViewTransitionRule() = default;
+
+String CSSViewTransitionRule::cssText() const
+{
+    StringBuilder builder;
+    builder.append("@view-transition { "_s);
+
+    if (m_viewTransitionRule->navigation()) {
+        builder.append("navigation: "_s);
+        if (*m_viewTransitionRule->navigation() == ViewTransitionNavigation::Auto)
+            builder.append("auto"_s);
+        else
+            builder.append("none"_s);
+        builder.append("; "_s);
+    }
+
+    if (m_viewTransitionRule->explicitlySetTypes()) {
+        builder.append("types:"_s);
+
+        const auto& types = this->types();
+
+        if (!types.isEmpty()) {
+            for (auto& type : types) {
+                builder.append(' ');
+                serializeIdentifier(builder, type);
+            }
+        } else
+            builder.append(" none"_s);
+
+        builder.append("; "_s);
+    }
+
+    builder.append('}');
+    return builder.toString();
+}
+
+AtomString CSSViewTransitionRule::navigation() const
+{
+    if (!m_viewTransitionRule->navigation())
+        return emptyAtom();
+    if (*m_viewTransitionRule->navigation() == ViewTransitionNavigation::Auto)
+        return "auto"_s;
+    return "none"_s;
+}
+
+void CSSViewTransitionRule::reattach(StyleRuleBase& rule)
+{
+    m_viewTransitionRule = downcast<StyleRuleViewTransition>(rule);
+}
+
+} // namespace WebCore

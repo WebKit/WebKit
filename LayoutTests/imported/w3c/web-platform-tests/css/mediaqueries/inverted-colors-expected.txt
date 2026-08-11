@@ -1,0 +1,17 @@
+
+PASS Should be known: '(inverted-colors)'
+PASS Should be known: '(inverted-colors: none)'
+PASS Should be known: '(inverted-colors: inverted)'
+PASS Should be parseable: '(inverted-colors: 0)'
+PASS Should be unknown: '(inverted-colors: 0)'
+PASS Should be parseable: '(inverted-colors: no-preference)'
+PASS Should be unknown: '(inverted-colors: no-preference)'
+PASS Should be parseable: '(inverted-colors: 10px)'
+PASS Should be unknown: '(inverted-colors: 10px)'
+PASS Should be parseable: '(inverted-colors: none inverted)'
+PASS Should be unknown: '(inverted-colors: none inverted)'
+PASS Should be parseable: '(inverted-colors: none/inverted)'
+PASS Should be unknown: '(inverted-colors: none/inverted)'
+PASS Check that none evaluates to false in the boolean context
+PASS Check that invalid evaluates to false
+

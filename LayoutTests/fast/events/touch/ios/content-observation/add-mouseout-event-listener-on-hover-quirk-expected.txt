@@ -1,0 +1,9 @@
+Tap here
+PASS expandedContainer became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+To run this test manually, tap the green box above; it should expand vertically and stay green.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

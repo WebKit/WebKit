@@ -1,0 +1,19 @@
+Testing that calling CSS.setStyleText works immediately after CSS.setStyleSheetText without an intermediate call to CSS.getStyleSheetText.
+
+
+== Running test suite: CSS.setStyleTextRace
+-- Running test case: CSS.setStyleTextAfterSetStylesheetText
+INFO: Get stylesheet text
+body { color: red; }
+
+INFO: Get style for 'body' CSS rule
+ color: red;
+INFO: Set stylesheet text with identical contents
+INFO: 'styleSheetChanged' event fired
+INFO: Update style for 'body' CSS rule
+PASS: CSS rule text was updated
+INFO: Get stylesheet text again
+body {color: green;}
+
+PASS: Stylsheet text reflects change to CSS rule
+

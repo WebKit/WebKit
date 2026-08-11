@@ -1,0 +1,27 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" autoplay></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>StartSupport</code> behavior with autoplay.");
+
+const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const media = document.querySelector("video");
+const mediaController = createControls(shadowRoot, media, null);
+
+media.addEventListener("play", function() {
+    debug("Media is playing");
+    shouldBeFalse("mediaController.controls.showsStartButton");
+    debug("");
+    shadowRoot.host.remove();
+    media.remove();
+    finishJSTest();
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

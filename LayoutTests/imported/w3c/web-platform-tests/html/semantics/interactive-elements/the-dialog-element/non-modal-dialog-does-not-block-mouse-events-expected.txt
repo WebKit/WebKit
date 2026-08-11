@@ -1,0 +1,5 @@
+To test manually, click the red box. The test succeeds if the red box turns green.
+
+
+PASS Ensure that non-modal dialogs do not block mouse events.
+

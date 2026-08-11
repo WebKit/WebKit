@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test.js"></script>
+</head>
+<body>
+    <script>
+        description("Testing that the legacy AudioBufferSourceNode API is not exposed on the unprefixed AudioBufferSourceNode");
+
+        shouldBeUndefined("AudioBufferSourceNode.prototype.playbackState");
+        shouldBeUndefined("AudioBufferSourceNode.prototype.gain");
+
+        shouldBeUndefined("AudioBufferSourceNode.UNSCHEDULED_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.SCHEDULED_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.PLAYING_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.FINISHED_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.prototype.UNSCHEDULED_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.prototype.SCHEDULED_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.prototype.PLAYING_STATE");
+        shouldBeUndefined("AudioBufferSourceNode.prototype.FINISHED_STATE");
+
+        let context = new AudioContext;
+        let bufferSource = context.createBufferSource();
+        shouldBeUndefined("bufferSource.playbackState");
+        shouldBeUndefined("bufferSource.gain");
+        shouldBeUndefined("bufferSource.UNSCHEDULED_STATE");
+        shouldBeUndefined("bufferSource.SCHEDULED_STATE");
+        shouldBeUndefined("bufferSource.PLAYING_STATE");
+        shouldBeUndefined("bufferSource.FINISHED_STATE");
+        shouldBeUndefined("bufferSource.__proto__.playbackState");
+        shouldBeUndefined("bufferSource.__proto__.gain");
+        shouldBeUndefined("bufferSource.__proto__.UNSCHEDULED_STATE");
+        shouldBeUndefined("bufferSource.__proto__.SCHEDULED_STATE");
+        shouldBeUndefined("bufferSource.__proto__.PLAYING_STATE");
+        shouldBeUndefined("bufferSource.__proto__.FINISHED_STATE");
+    </script>
+</body>
+</html>

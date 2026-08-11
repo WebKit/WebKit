@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mediacapabilities-allowed-containers</title>
+    <script src="../video-test.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        if (!window.internals) {
+            failTest('Requires window.internals');
+            return;
+        }
+
+        video = document.createElement('video');
+        promise = null;
+
+        run('internals.settings.setAllowedMediaContainerTypes(null)');
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"avc1\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });");
+        info = await shouldResolve(promise);
+        testExpected("info.supported", true);
+
+        run('internals.settings.setAllowedMediaContainerTypes("video/null")');
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"avc1\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });");
+        info = await shouldResolve(promise);
+        testExpected("info.supported", false);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"avc1\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });");
+        info = await shouldResolve(promise);
+        testExpected("info.supported", false);
+
+        run('internals.settings.setAllowedMediaContainerTypes("video/mp4")');
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', audio: { contentType: 'audio/mp3', channels: '2', bitrate: 1000, samplerate: 44100  } });");
+        info = await shouldResolve(promise);
+        testExpected("info.supported", false);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', audio: { contentType: 'audio/mp3', channels: '2', bitrate: 1000, samplerate: 44100  } });");
+        info = await shouldResolve(promise);
+        testExpected("info.supported", false);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'file', video: { contentType: 'video/mp4; codecs=\"avc1\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });");
+        info = await shouldResolve(promise);
+        testExpected("info.supported", true);
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"avc1\"', height: 720, bitrate: 1000, width: 1280, framerate: 24.5 } });");
+        info = await shouldResolve(promise);
+        testExpected("info.supported", true);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+</body>
+</html>

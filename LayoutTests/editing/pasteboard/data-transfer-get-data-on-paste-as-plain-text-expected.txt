@@ -1,0 +1,15 @@
+Tests that pasting as plain text only exposes "text/plain" in the clipboard. To manually test, press "Copy" below and paste (Command+V on macOS and Control+V elsewhere).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS JSON.stringify(event.clipboardData.types) is "[\"text/plain\"]"
+PASS event.clipboardData.getData("text/plain") is "hello, world\nWebKit"
+PASS event.clipboardData.getData("text/html") is ""
+PASS event.clipboardData.items.length is 1
+PASS item = event.clipboardData.items[0]; item.kind is "string"
+PASS item.type is "text/plain"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

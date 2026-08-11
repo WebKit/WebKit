@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    let expectedStyle;
+    let actualStyle;
+    
+    function test()
+    {
+        debug('Test parsing various invalid rgb colors');
+        const tests = [
+            { test: "rgb(128, 123, 255, 0.2%)", expected: "rgba(128, 123, 255, 0.004)" },
+            { test: "rgb(128, 123, 255, 2.%)", expected: "transparent" },
+            { test: "rgb(128, 123, 255, 20.)", expected: "transparent" },
+        ];
+
+        const expectedResultDiv = document.createElement('div');
+        const actualResultDiv = document.createElement('div');
+
+        for (const test of tests) {
+            expectedResultDiv.style.color = 'transparent';
+            actualResultDiv.style.color = 'transparent';
+
+            expectedResultDiv.style.color = test.test;
+            actualResultDiv.style.color = test.expected;
+            
+            expectedStyle = expectedResultDiv.style.color;
+            actualStyle = actualResultDiv.style.color;
+
+            debug(`Parsing ${test.test}`)
+            shouldBe('expectedStyle', 'actualStyle');
+        }
+    }
+
+    test();
+</script>    
+</body>
+</html>

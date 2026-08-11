@@ -1,0 +1,21 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% PROCESS "global/value-descs.none.tmpl" %]
+
+BUGZILLA.value_descs = {
+  [% FOREACH vd_field = value_descs.keys %]
+    [% vd_field FILTER js %]: {
+      [% FOREACH vd_value = value_descs.${vd_field}.keys %]
+        '[% vd_value FILTER js %]':
+        '[% value_descs.${vd_field}.${vd_value} FILTER js %]'
+        [%~ ',' UNLESS loop.last %]
+      [% END %]
+    }[% ',' UNLESS loop.last %]
+  [% END %]
+};

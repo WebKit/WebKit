@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+        .sticky {
+            position: sticky;
+            top: 0px;
+            left: 100px;
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+        }
+        body.changed .sticky {
+            height: 5000px;
+        }
+
+        .green {
+            width: 100px;
+            height: 100px;
+            background-color: green;
+        }
+
+        .red {
+            position: absolute;
+            top: 0px;
+            left: 100px;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+        
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                document.body.classList.add('changed');
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            })
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="red"></div>
+    <div class="sticky">
+        <div class="green"></div>
+    </div>
+</body>
+</html>

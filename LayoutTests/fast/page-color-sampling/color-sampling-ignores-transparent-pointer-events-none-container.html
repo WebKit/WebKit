@@ -1,0 +1,88 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ContentInsetBackgroundFillEnabled=true pageTopColorSamplingEnabled=true useFlexibleViewport=true TopContentInsetBackgroundCanChangeAfterScrolling=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            font-family: system-ui;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        .box {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 50px;
+            box-sizing: border-box;
+            border-radius: 1em;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background: rgb(0, 122, 255);
+            color: white;
+            line-height: 50px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .invisible-popup {
+            opacity: 0;
+            pointer-events: none;
+            background-color: rgb(255, 59, 48);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            color: white;
+            text-align: center;
+            line-height: 100vh;
+            font-size: 20px;
+            z-index: 100;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+    jsTestIsAsync = true;
+
+    async function showPopup() {
+        document.querySelector(".invisible-popup").style.opacity = 1;
+        document.querySelector(".invisible-popup").style.pointerEvents = "auto";
+        await UIHelper.ensurePresentationUpdate();
+    }
+
+    addEventListener("load", async () => {
+        await UIHelper.setObscuredInsets(50, 50, 50, 50);
+        await UIHelper.ensurePresentationUpdate();
+        colorsBeforeShowingPopup = await UIHelper.fixedContainerEdgeColors();
+        shouldBeNull("colorsBeforeShowingPopup.top");
+        shouldBeNull("colorsBeforeShowingPopup.left");
+        shouldBeNull("colorsBeforeShowingPopup.right");
+        shouldBeEqualToString("colorsBeforeShowingPopup.bottom", "rgb(0, 122, 255)");
+
+        await showPopup();
+
+        colorsAfterShowingPopup = await UIHelper.fixedContainerEdgeColors();
+        shouldBeEqualToString("colorsAfterShowingPopup.top", "rgb(255, 59, 48)");
+        shouldBeNull("colorsAfterShowingPopup.left");
+        shouldBeNull("colorsAfterShowingPopup.right");
+        shouldBeEqualToString("colorsAfterShowingPopup.bottom", "rgb(0, 122, 255)");
+
+        finishJSTest();
+    });
+    </script>
+</head>
+<body>
+    <pre id="console"></pre>
+    <pre id="description"></pre>
+    <footer>Footer text</footer>
+    <div class="invisible-popup">Popup text</div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+
+PASS new RTCPeerConnection({ iceTransports: 'relay' }) should have no effect
+PASS new RTCPeerConnection({ iceTransports: 'invalid' }) should have no effect
+PASS new RTCPeerConnection({ iceTransports: null }) should have no effect
+

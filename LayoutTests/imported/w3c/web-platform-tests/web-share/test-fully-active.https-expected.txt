@@ -1,0 +1,5 @@
+
+PASS calling share() on non-fully active document returns a promise rejected with InvalidStateError
+PASS calling share() with transient activation on non-fully active document returns a promise rejected with InvalidStateError
+PASS calling canShare() on a non-fully active document returns false
+

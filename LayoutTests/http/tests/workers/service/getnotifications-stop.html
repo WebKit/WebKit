@@ -1,0 +1,116 @@
+<head>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/gc.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<script>
+function failTheTest(msg)
+{
+    testFailed(msg);
+    if (testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.grantWebNotificationPermission(testURL);
+}
+
+description("This tests that persistent notifications created by a service worker are visible to getNotifications() even after Notification objects are stopped");
+
+shouldBeEqualToString("Notification.permission", "granted");
+
+var registration;
+async function registerServiceWorker() {
+    registration = await navigator.serviceWorker.register('resources/shownotification-worker.js');
+
+    if (!registration)
+        return testFailed("No registration");
+
+    if (registration.active) {
+        registration.active.postMessage("Start");
+        return;
+    }
+
+    var installingWorker = registration.installing;
+    if (!installingWorker)
+        failTheTest("No active *or* installing worker");
+
+    installingWorker.addEventListener("statechange", () => {
+        if (installingWorker.state === "activated") {
+            installingWorker.postMessage("getnotes");
+        }
+    });
+}
+
+var numberShown = 0;
+var numberGot = 0;
+
+function with_iframe(url) {
+  return new Promise(function(resolve) {
+      var frame = document.createElement('iframe');
+      frame.src = url;
+      frame.onload = function() { resolve(frame); };
+      document.body.appendChild(frame);
+    });
+}
+
+async function gotNotes(event)
+{
+    ++numberGot;
+
+    debug("Got notifications");
+    message = event.data.split('|')
+    for (var i = 1; i < message.length; ++i)
+        debug(message[i]);
+
+    if (numberGot == 1) {
+        event.source.postMessage("tryshow|Hello|Body1|tag-a");
+        event.source.postMessage("tryshow|There|Body2|tag-b");
+        event.source.postMessage("tryshow|Buddy|Body3|tag-b|Data3");
+    } else if (numberGot == 4) {
+        debug("Loading iframe");
+        const frame = await with_iframe("resources/getNotifications-iframe.html");
+        debug("Get notifications from iframe");
+        await frame.contentWindow.getNotifications();
+        debug("Remove iframes to stop notifications");
+        frame.remove();
+
+        const notifications = await registration.getNotifications({ tag: "" });
+
+        debug("Retrieving notifications from page registration object - " + notifications.length);
+        notifications.forEach(notification => {
+            debug("Notification: " + notification.title + " / " + notification.body + " / " + notification.tag + " / " + notification.data);
+        });    
+        debug("Retrieving notifications from page registration object - end");
+
+        testCompleted();
+    }
+}
+
+function shown(event)
+{
+    debug("Notification was shown");
+    ++numberShown;
+    if (numberShown == 2) {
+        event.source.postMessage("getnotes");
+        event.source.postMessage("getnotes|tag-a");
+        event.source.postMessage("getnotes|tag-b");
+    }
+}
+
+navigator.serviceWorker.addEventListener('message', event => {
+    var messageName = event.data.split('|')[0];
+
+    if (messageName == "gotnotes") {
+        gotNotes(event);
+    } else if (messageName == "shown") {
+        shown(event);
+    } else {
+        debug("Unexpected message: " + event.data);
+    }
+});
+
+</script>
+</head>
+<body onload="registerServiceWorker()">
+</body>

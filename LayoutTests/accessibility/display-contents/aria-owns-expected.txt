@@ -1,0 +1,14 @@
+This test ensures aria-owns works for display:contents elements.
+
+#list role: AXRole: AXList
+#list supports AXOwns: true
+Child 1 #item1 AXRole: AXGroup
+Child 2 #item2 AXRole: AXGroup
+Child 3 #item3 AXRole: AXGroup
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+1
+2
+3

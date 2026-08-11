@@ -1,0 +1,134 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface XRRenderState: original interface defined
+PASS Partial interface XRRenderState: valid exposure set
+PASS Partial interface XRRenderState: member names are unique
+PASS XRCompositionLayer interface: existence and properties of interface object
+PASS XRCompositionLayer interface object length
+PASS XRCompositionLayer interface object name
+PASS XRCompositionLayer interface: existence and properties of interface prototype object
+PASS XRCompositionLayer interface: existence and properties of interface prototype object's "constructor" property
+PASS XRCompositionLayer interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRCompositionLayer interface: attribute layout
+PASS XRCompositionLayer interface: attribute blendTextureSourceAlpha
+PASS XRCompositionLayer interface: attribute forceMonoPresentation
+PASS XRCompositionLayer interface: attribute opacity
+PASS XRCompositionLayer interface: attribute mipLevels
+PASS XRCompositionLayer interface: attribute quality
+PASS XRCompositionLayer interface: attribute needsRedraw
+PASS XRCompositionLayer interface: operation destroy()
+PASS XRProjectionLayer interface: existence and properties of interface object
+PASS XRProjectionLayer interface object length
+PASS XRProjectionLayer interface object name
+PASS XRProjectionLayer interface: existence and properties of interface prototype object
+PASS XRProjectionLayer interface: existence and properties of interface prototype object's "constructor" property
+PASS XRProjectionLayer interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRProjectionLayer interface: attribute textureWidth
+PASS XRProjectionLayer interface: attribute textureHeight
+PASS XRProjectionLayer interface: attribute textureArrayLength
+PASS XRProjectionLayer interface: attribute ignoreDepthValues
+PASS XRProjectionLayer interface: attribute fixedFoveation
+PASS XRProjectionLayer interface: attribute deltaPose
+PASS XRQuadLayer interface: existence and properties of interface object
+PASS XRQuadLayer interface object length
+PASS XRQuadLayer interface object name
+PASS XRQuadLayer interface: existence and properties of interface prototype object
+PASS XRQuadLayer interface: existence and properties of interface prototype object's "constructor" property
+PASS XRQuadLayer interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRQuadLayer interface: attribute space
+PASS XRQuadLayer interface: attribute transform
+PASS XRQuadLayer interface: attribute width
+PASS XRQuadLayer interface: attribute height
+PASS XRQuadLayer interface: attribute onredraw
+PASS XRCylinderLayer interface: existence and properties of interface object
+PASS XRCylinderLayer interface object length
+PASS XRCylinderLayer interface object name
+PASS XRCylinderLayer interface: existence and properties of interface prototype object
+PASS XRCylinderLayer interface: existence and properties of interface prototype object's "constructor" property
+PASS XRCylinderLayer interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRCylinderLayer interface: attribute space
+PASS XRCylinderLayer interface: attribute transform
+PASS XRCylinderLayer interface: attribute radius
+PASS XRCylinderLayer interface: attribute centralAngle
+PASS XRCylinderLayer interface: attribute aspectRatio
+PASS XRCylinderLayer interface: attribute onredraw
+PASS XREquirectLayer interface: existence and properties of interface object
+PASS XREquirectLayer interface object length
+PASS XREquirectLayer interface object name
+PASS XREquirectLayer interface: existence and properties of interface prototype object
+PASS XREquirectLayer interface: existence and properties of interface prototype object's "constructor" property
+PASS XREquirectLayer interface: existence and properties of interface prototype object's @@unscopables property
+PASS XREquirectLayer interface: attribute space
+PASS XREquirectLayer interface: attribute transform
+PASS XREquirectLayer interface: attribute radius
+PASS XREquirectLayer interface: attribute centralHorizontalAngle
+PASS XREquirectLayer interface: attribute upperVerticalAngle
+PASS XREquirectLayer interface: attribute lowerVerticalAngle
+PASS XREquirectLayer interface: attribute onredraw
+PASS XRCubeLayer interface: existence and properties of interface object
+PASS XRCubeLayer interface object length
+PASS XRCubeLayer interface object name
+PASS XRCubeLayer interface: existence and properties of interface prototype object
+PASS XRCubeLayer interface: existence and properties of interface prototype object's "constructor" property
+PASS XRCubeLayer interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRCubeLayer interface: attribute space
+PASS XRCubeLayer interface: attribute orientation
+PASS XRCubeLayer interface: attribute onredraw
+PASS XRSubImage interface: existence and properties of interface object
+PASS XRSubImage interface object length
+PASS XRSubImage interface object name
+PASS XRSubImage interface: existence and properties of interface prototype object
+PASS XRSubImage interface: existence and properties of interface prototype object's "constructor" property
+PASS XRSubImage interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRSubImage interface: attribute viewport
+PASS XRWebGLSubImage interface: existence and properties of interface object
+PASS XRWebGLSubImage interface object length
+PASS XRWebGLSubImage interface object name
+PASS XRWebGLSubImage interface: existence and properties of interface prototype object
+PASS XRWebGLSubImage interface: existence and properties of interface prototype object's "constructor" property
+PASS XRWebGLSubImage interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRWebGLSubImage interface: attribute colorTexture
+PASS XRWebGLSubImage interface: attribute depthStencilTexture
+PASS XRWebGLSubImage interface: attribute motionVectorTexture
+PASS XRWebGLSubImage interface: attribute imageIndex
+PASS XRWebGLSubImage interface: attribute colorTextureWidth
+PASS XRWebGLSubImage interface: attribute colorTextureHeight
+PASS XRWebGLSubImage interface: attribute depthStencilTextureWidth
+PASS XRWebGLSubImage interface: attribute depthStencilTextureHeight
+PASS XRWebGLSubImage interface: attribute motionVectorTextureWidth
+PASS XRWebGLSubImage interface: attribute motionVectorTextureHeight
+PASS XRWebGLBinding interface: existence and properties of interface object
+PASS XRWebGLBinding interface object length
+PASS XRWebGLBinding interface object name
+PASS XRWebGLBinding interface: existence and properties of interface prototype object
+PASS XRWebGLBinding interface: existence and properties of interface prototype object's "constructor" property
+PASS XRWebGLBinding interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRWebGLBinding interface: attribute nativeProjectionScaleFactor
+PASS XRWebGLBinding interface: attribute usesDepthValues
+PASS XRWebGLBinding interface: operation createProjectionLayer(optional XRProjectionLayerInit)
+PASS XRWebGLBinding interface: operation createQuadLayer(optional XRQuadLayerInit)
+PASS XRWebGLBinding interface: operation createCylinderLayer(optional XRCylinderLayerInit)
+PASS XRWebGLBinding interface: operation createEquirectLayer(optional XREquirectLayerInit)
+PASS XRWebGLBinding interface: operation createCubeLayer(optional XRCubeLayerInit)
+PASS XRWebGLBinding interface: operation getSubImage(XRCompositionLayer, XRFrame, optional XREye)
+PASS XRWebGLBinding interface: operation getViewSubImage(XRProjectionLayer, XRView)
+FAIL XRWebGLBinding interface: operation foveateBoundTexture(GLenum, float) assert_own_property: interface prototype object missing non-static operation expected property "foveateBoundTexture" missing
+FAIL XRMediaBinding interface: existence and properties of interface object assert_own_property: self does not have own property "XRMediaBinding" expected property "XRMediaBinding" missing
+FAIL XRMediaBinding interface object length assert_own_property: self does not have own property "XRMediaBinding" expected property "XRMediaBinding" missing
+FAIL XRMediaBinding interface object name assert_own_property: self does not have own property "XRMediaBinding" expected property "XRMediaBinding" missing
+FAIL XRMediaBinding interface: existence and properties of interface prototype object assert_own_property: self does not have own property "XRMediaBinding" expected property "XRMediaBinding" missing
+FAIL XRMediaBinding interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "XRMediaBinding" expected property "XRMediaBinding" missing
+FAIL XRMediaBinding interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "XRMediaBinding" expected property "XRMediaBinding" missing
+FAIL XRMediaBinding interface: operation createQuadLayer(HTMLVideoElement, optional XRMediaQuadLayerInit) assert_own_property: self does not have own property "XRMediaBinding" expected property "XRMediaBinding" missing
+FAIL XRMediaBinding interface: operation createCylinderLayer(HTMLVideoElement, optional XRMediaCylinderLayerInit) assert_own_property: self does not have own property "XRMediaBinding" expected property "XRMediaBinding" missing
+FAIL XRMediaBinding interface: operation createEquirectLayer(HTMLVideoElement, optional XRMediaEquirectLayerInit) assert_own_property: self does not have own property "XRMediaBinding" expected property "XRMediaBinding" missing
+PASS XRLayerEvent interface: existence and properties of interface object
+PASS XRLayerEvent interface object length
+PASS XRLayerEvent interface object name
+PASS XRLayerEvent interface: existence and properties of interface prototype object
+PASS XRLayerEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS XRLayerEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS XRLayerEvent interface: attribute layer
+PASS XRRenderState interface: attribute layers
+

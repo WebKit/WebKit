@@ -1,0 +1,6 @@
+2d.text.measure.fontBoundingBox-reduced-ascent
+Testing fontBoundingBox for OffscreenCanvas with reduced ascent metric
+Actual output:
+
+PASS Testing fontBoundingBox for OffscreenCanvas with reduced ascent metric
+

@@ -1,0 +1,7 @@
+
+PASS Same-site popup with coop/coep
+PASS Same-site popup with coop unsafe-none/coep
+PASS Same-site popup with coop unsafe-none without coep
+PASS Same-site popup without coep
+PASS Bonus: window.crossOriginIsolated
+

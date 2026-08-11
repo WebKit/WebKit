@@ -1,0 +1,10 @@
+This webpage should not hang when we try to move beyond the quotes.
+
+content
+acontenta
+content
+acontenta
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

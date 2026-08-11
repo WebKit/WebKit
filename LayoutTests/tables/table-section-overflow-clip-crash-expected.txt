@@ -1,0 +1,2 @@
+WebKit Bug 87445 - RenderTableSection::paintCell.
+Test passes if it does not crash.

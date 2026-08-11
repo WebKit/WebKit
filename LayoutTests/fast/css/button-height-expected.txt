@@ -1,0 +1,12 @@
+This tests that the specified height is honored (*) for <input> and <button> elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('button1').offsetHeight is document.getElementById('button2').offsetHeight
+PASS document.getElementById('button3').offsetHeight is 40
+PASS document.getElementById('button4').offsetHeight is 40
+PASS document.getElementById('button5').offsetHeight is 40
+
+TEST COMPLETE
+

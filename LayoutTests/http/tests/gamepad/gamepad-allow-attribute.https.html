@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Test allow attribute with "gamepad" and getGamepads() method
+    </title>
+    <script src="../resources/js-test-pre.js"></script>
+    <script>
+      testRunner?.dumpAsText();
+      testRunner?.waitUntilDone();
+
+      function waitFor(target, eventName) {
+        return new Promise((resolve) => {
+          target.addEventListener(eventName, resolve, { once: true });
+        });
+      }
+
+      const iframeDetails = [
+        // Enabled by default via '*' (all) in the spec
+        {
+            src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html",
+            enabled: "true",
+        },
+        {
+          enabled: "true",
+          src: "./resources/gamepad-postmessage.html",
+        },
+        // Set permission policy explicitly going forward.
+        {
+          allow: "gamepad",
+          enabled: "true",
+          src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html",
+        },
+        {
+          allow: "gamepad",
+          enabled: "true",
+          src: "./resources/gamepad-postmessage.html",
+        },
+        {
+          allow: "gamepad *",
+          enabled: "true",
+          src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html",
+        },
+        {
+          allow: "gamepad *",
+          enabled: "true",
+          src: "./resources/gamepad-postmessage.html",
+        },
+        {
+          allow: "gamepad 'none'",
+          enabled: "false",
+          src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html",
+        },
+        {
+          allow: "gamepad 'none'",
+          enabled: "false",
+          src: "./resources/gamepad-postmessage.html",
+        },
+        {
+          allow: "gamepad 'self'",
+          enabled: "false",
+          src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html",
+        },
+        {
+          allow: "gamepad 'self'",
+          enabled: "true",
+          src: "./resources/gamepad-postmessage.html",
+        },
+        {
+          allow: "gamepad https://localhost:8443",
+          enabled: "true",
+          src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html",
+        },
+        {
+          allow: "gamepad https://localhost:8443",
+          enabled: "false",
+          src: "./resources/gamepad-postmessage.html",
+        },
+      ];
+
+      async function loadIframe(details) {
+        const iframe = document.createElement("iframe");
+        if (details.hasOwnProperty("allow")) {
+          iframe.setAttribute("allow", details.allow);
+        }
+        iframe.dataset.enabled = details.enabled;
+        iframe.src = details.src;
+        document.body.appendChild(iframe);
+        await waitFor(iframe, "load");
+        return iframe;
+      }
+
+      async function runTests() {
+        for (const details of iframeDetails) {
+          const iframe = await loadIframe(details);
+          const { enabled } = iframe.dataset;
+          const isAllowed = enabled === "true";
+          const action = "call getGamepads()";
+          iframe.contentWindow.postMessage({ action }, "*");
+          const { data } = await waitFor(window, "message");
+          const { exceptionMessage, exceptionName, result } = data;
+          const msg = `iframe src: "${iframe.src}" with allow="${
+            iframe.allow
+          }" ${
+            isAllowed ? "is allowed to" : "MUST NOT be allowed to"
+          } ${action}. ${exceptionName ?? ""} ${exceptionMessage ?? ""}`;
+          switch (result) {
+            case "[]":
+              isAllowed ? testPassed(msg) : testFailed(msg);
+              break;
+            case "exception":
+              if (
+                !isAllowed &&
+                exceptionName === "SecurityError" &&
+                exceptionMessage.endsWith("Feature-Policy (gamepad)")
+              ) {
+                testPassed(msg);
+              } else {
+                testFailed(msg);
+              }
+              break;
+            default:
+              testFailed(msg + ` - result was: ${result}`);
+          }
+          iframe.remove();
+        }
+        testRunner.notifyDone();
+      }
+    </script>
+  </head>
+  <body onload="runTests()">
+</html>

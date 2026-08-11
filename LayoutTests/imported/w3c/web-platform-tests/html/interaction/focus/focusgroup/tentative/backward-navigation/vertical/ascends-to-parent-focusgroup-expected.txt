@@ -1,0 +1,8 @@
+item1
+item3 item4
+item5
+
+FAIL When the focus is set on the first item of an extending focusgroup that doesn't support the axis of the arrow key pressed but the parent focusgroup does, ascend to that focusgroup. This should work whether the extending focusgroup is the child of the other focusgroup or a distant descendant. assert_equals: expected Element node <div id="item2" tabindex="-1">
+    <div>
+      <div focus... but got Element node <span id="item3" tabindex="-1">item3</span>
+

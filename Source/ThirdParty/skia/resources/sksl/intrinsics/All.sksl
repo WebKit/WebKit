@@ -1,0 +1,14 @@
+uniform half4 colorGreen, colorRed;
+
+half4 main(float2 coords) {
+    bool4 inputVal = bool4(colorRed.rrba);   // TTFT
+    bool4 expected = bool4(colorRed.rgbb);   // TFFF
+
+    const bool4 constVal = bool4(true, true, false, true);
+    return (all(inputVal.xy)   == expected.x &&
+            all(inputVal.xyz)  == expected.y &&
+            all(inputVal.xyzw) == expected.z &&
+            all(constVal.xy)   == expected.x &&
+            all(constVal.xyz)  == expected.y &&
+            all(constVal.xyzw) == expected.z) ? colorGreen : colorRed;
+}

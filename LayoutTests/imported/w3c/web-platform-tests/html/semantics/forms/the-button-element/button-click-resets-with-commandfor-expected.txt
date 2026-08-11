@@ -1,0 +1,6 @@
+
+
+PASS clicking a reset button should trigger a reset (with command attribute)
+PASS clicking a button should trigger a reset (with commandfor attribute)
+PASS clicking a button should trigger a reset (with command and commandfor attribute)
+

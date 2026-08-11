@@ -1,0 +1,5 @@
+
+EVENT(canplaythrough)
+EXPECTED (window.internals.mediaElementHasCharacteristic(video, 'Audible') == 'true') OK
+END OF TEST
+

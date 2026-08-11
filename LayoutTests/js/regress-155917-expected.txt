@@ -1,0 +1,9 @@
+Regression test for https://webkit.org/b/155917. This test should run without throwing an exception.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

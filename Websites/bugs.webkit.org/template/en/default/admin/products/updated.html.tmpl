@@ -1,0 +1,90 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # product : Bugzilla::Product Object; new product.
+  # classification: Bugzilla::Classification Object; The product classification (may be empty or missing)
+  # changes: hashref with all changes made to the product. Each key is an edited field,
+  #          and its value is an arrayref of the form [old values, new values].
+  #%]
+
+[% IF classification %]
+  [% classification_text = BLOCK %]
+    of classification '[% classification.name FILTER html %]'
+  [% END %]
+[% END %]
+
+[% title = BLOCK %]Updating Product '[% product.name FILTER html %]' 
+                   [% classification_text FILTER none %][% END %]
+[% PROCESS global/header.html.tmpl
+  title = title
+  style_urls = ['skins/standard/admin.css']
+%]
+
+[% IF changes.name.defined %]
+  <p>
+  Updated product name from '[% changes.name.0 FILTER html %]' to
+  '<a href="editproducts.cgi?action=edit&amp;product=
+  [%- product.name FILTER uri %]">[% product.name FILTER html %]</a>'.
+  </p>
+[% END %]
+
+
+[% IF changes.description.defined %]
+  <p>
+    Updated description to:
+  </p>
+  <p class="indented">[% product.description FILTER html_light %]</p>
+[% END %]
+
+[% IF changes.isactive.defined %]
+  <p>
+  Product is now
+  [% IF product.is_active %]
+    open for
+  [% ELSE %]
+    closed to 
+  [% END %]
+  new [% terms.bugs %].
+  </p>
+[% END %]
+
+[% IF changes.defaultmilestone.defined %]
+  <p>
+  Updated default milestone from '[% changes.defaultmilestone.0 FILTER html %]' to
+  '[% product.default_milestone FILTER html %]'.
+  </p>
+[% END %]
+
+[% IF changes.allows_unconfirmed.defined %]
+  <p>
+  [% IF product.allows_unconfirmed %]
+    The product now allows the 
+    [%+ display_value('bug_status', 'UNCONFIRMED') FILTER html %] status.
+  [% ELSE %]
+    The product no longer allows the 
+    [%+ display_value('bug_status', 'UNCONFIRMED') FILTER html %] status.
+    Note that any 
+    <a href="buglist.cgi?product=
+            [%- product.name FILTER uri %]&amp;bug_status=UNCONFIRMED"> 
+    [%- terms.bugs %] that currently have the 
+    [%+ display_value('bug_status', 'UNCONFIRMED') FILTER html %] status</a>
+    will remain in that status until they are edited.
+  [% END %]
+  </p>
+[% END %]
+
+[% Hook.process('changes') %]
+
+[% IF !changes.keys.size %]
+  <p>Nothing changed for product '[% product.name FILTER html %]'.</p>
+[% END %]
+
+[% PROCESS admin/products/footer.html.tmpl %]
+
+[% PROCESS global/footer.html.tmpl %]

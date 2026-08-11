@@ -1,0 +1,6 @@
+blob: URLs should not match the 'self' source in a frame-src directive because blob: is a non-HTTP(S) scheme that must be explicitly listed.
+
+
+
+PASS Expecting logs: ["violated-directive=frame-src"]
+

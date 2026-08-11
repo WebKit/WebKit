@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="target" data-name="--x"></div>
+<script>
+description("var() with a name argument that is not a literal &lt;custom-property-name&gt; reifies as text in Typed OM.");
+
+// The name argument is a <declaration-value> that is parsed as a <custom-property-name> only at
+// computed-value time, so these have no variable reference to reify.
+// https://drafts.csswg.org/css-variables-2/#funcdef-var
+
+var target = document.getElementById("target");
+
+function unparsedValue(declaration)
+{
+    target.setAttribute("style", declaration);
+    var value = target.attributeStyleMap.get("width");
+    target.removeAttribute("style");
+    return value;
+}
+
+shouldBeEqualToString('unparsedValue("width: var(20px)").toString()', "var(20px)");
+shouldBeEqualToString('unparsedValue("width: var(not-a-name)").toString()', "var(not-a-name)");
+shouldBeEqualToString('unparsedValue("width: var(--x ())").toString()', "var(--x ())");
+shouldBeEqualToString('unparsedValue("width: var({--x})").toString()', "var({--x})");
+shouldBeEqualToString('unparsedValue("width: var(attr(data-name type(*)))").toString()', "var(attr(data-name type(*)))");
+
+// A literal name still reifies as a CSSVariableReferenceValue, with or without a fallback.
+shouldBeEqualToString('unparsedValue("width: var(--x)")[0].variable', "--x");
+shouldBeEqualToString('unparsedValue("width: var(--x, 10px)")[0].variable', "--x");
+shouldBeEqualToString('unparsedValue("width: var(var(--name))")[1].variable', "--name");
+</script>
+</body>
+</html>

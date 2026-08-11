@@ -1,0 +1,8 @@
+희진DJ
+
+
+PASS Korean/Latin transition should be considered a word boundary when moving forward
+PASS Korean/Latin transition should be considered a word boundary when moving backward
+FAIL Latin/Korean transition should be considered a word boundary when moving forward assert_equals: Caret should move after the Latin characters expected 2 but got 0
+FAIL Latin/Korean transition should be considered a word boundary when moving backward assert_equals: Caret should move before the Korean characters expected 2 but got 4
+

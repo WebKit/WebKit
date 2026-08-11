@@ -1,0 +1,13 @@
+Description
+
+This test validates that pointer lock will be lost when the target is disconnected.
+
+Manual Test Steps:
+
+Click the "lockTarget" button to request a pointer lock.
+Test is done.
+lockTarget
+Pointer lock exited!
+
+PASS Test that pointer lock will be lost when taking the target element out of the DOM.
+

@@ -1,0 +1,10 @@
+The spellchecker shouldn't mark substrings of words after pasting.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+FAIL markedText should be zz. Was .
+PASS successfullyParsed is true
+
+TEST COMPLETE
+foo zz
+food.

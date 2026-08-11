@@ -1,0 +1,204 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+<script id="shared">
+const log = console.log;
+
+</script>
+
+<script>
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+let device0 = await adapter0.requestDevice({
+  defaultQueue: {},
+  requiredFeatures: [
+    'depth-clip-control',
+    'depth32float-stencil8',
+    'texture-compression-etc2',
+    'texture-compression-astc',
+    'shader-f16',
+    'bgra8unorm-storage',
+  ],
+});
+// START
+b = device0.createShaderModule({
+  code : ` 
+              fn c(e: ptr<workgroup, d>, u: u32) -> f32 {
+              var f: f32;
+              return f;
+              _ = g;
+              _ = h;
+            }
+              @id(9193) override h: f16;
+              struct d {
+              i: vec4i   }
+              var<workgroup> j: d;
+              override g: bool;
+              @vertex fn k() -> @builtin(position) vec4f {
+              var f: vec4f;
+              return f;
+            }
+              @compute @workgroup_size(1) fn l() {
+              c(&j, pack4xI8Clamp(j.i));
+            }
+             `
+})
+m = device0.createBuffer({size : 208, usage : GPUBufferUsage.INDIRECT})
+n = device0.createBindGroupLayout({
+  entries : [ {
+    binding : 0,
+    visibility : GPUShaderStage.FRAGMENT,
+    buffer : {type : 'storage', hasDynamicOffset : true}
+  } ]
+})
+o = device0.createPipelineLayout({bindGroupLayouts : [ n ]})
+p = device0.createTexture({
+  size : [ 2, 2, 6 ],
+  dimension : '3d',
+  format : 'rg32float',
+  usage : GPUTextureUsage.RENDER_ATTACHMENT
+})
+q = device0.createShaderModule({
+  code : ` 
+              @fragment fn a() -> @location(200) vec2f {
+              var f: vec2f;
+              return f;
+            }
+             `
+})
+r = device0.createShaderModule({
+  code : ` 
+              struct ab {
+              @location(0) i: vec2f}
+              @group(0) @binding(0) var<storage, read_write> ad: array<array<array<array<array<array<f16, 1>, 1>, 5>, 2>, 19>>;
+              struct s {
+              @builtin(position) e: vec4f}
+              @vertex fn v() -> s {
+              var f: s;
+              return f;
+            }
+              @fragment fn w() -> ab {
+              var f: ab;
+              loop {
+           f.i = vec2f(f32(ad[u32()][8][1][0][0][0]));
+           break;
+         }
+              return f;
+            }
+             `
+})
+t = device0.createPipelineLayout({bindGroupLayouts : []})
+af = device0.createRenderPipeline({
+  layout : t,
+  fragment : {module : q, targets : [ {format : 'rg32float'} ]},
+  vertex : {module : b}
+})
+ag = device0.createRenderBundleEncoder({colorFormats : [ 'rg32float' ]})
+try {
+  ag.setPipeline(af)
+} catch {
+}
+ah = device0.createComputePipeline(
+    {layout : o, compute : {module : b, constants : {g : 1, 9_193 : 1}}})
+try {
+  ag.drawIndirect(m, 4)
+} catch {
+}
+ai = device0.createRenderPipelineAsync({
+  layout : o,
+  fragment : {module : r, targets : [ {format : 'rg32float'} ]},
+  vertex : {module : r},
+  primitive : {topology : 'point-list'}
+})
+aj = ag.finish()
+ak = await ai
+al = p.createView()
+am = device0.createBuffer({size : 4, usage : GPUBufferUsage.INDEX})
+an = device0.createBuffer({size : 1024, usage : GPUBufferUsage.STORAGE})
+ao = device0.createCommandEncoder()
+ap = ao.beginRenderPass({
+  colorAttachments :
+      [ {view : al, depthSlice : 5, loadOp : 'load', storeOp : 'discard'} ]
+})
+try {
+  ap.setIndexBuffer(am, 'uint32')
+} catch {
+}
+ar = ah.getBindGroupLayout(0)
+try {
+  ap.setPipeline(ak)
+} catch {
+}
+as = device0.createBindGroup(
+    {layout : ar, entries : [ {binding : 0, resource : {buffer : an}} ]})
+try {
+  ap.setBindGroup(0, as, new Uint32Array(86), 6, 1)
+  ap.drawIndexed(0)
+  ap.executeBundles([ aj ])
+  ap.drawIndexed(1)
+  ap.end()
+} catch {
+}
+at = ao.finish()
+try {
+  device0.queue.submit([ at ])
+} catch {
+}
+// END
+await device0.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  debug('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  debug('Pass')
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+    globalThis.testRunner?.notifyDone();
+};
+</script>
+

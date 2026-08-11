@@ -1,0 +1,18 @@
+ <script>
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <h1>Blob URL Loaded</h1>
+        </html>
+        `;
+    
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const blobUrl = URL.createObjectURL(blob);
+    const newWindow = window.open(blobUrl, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+
+    window.parent.postMessage('ping', '*');
+</script>
+
+<body>
+    <h1>blob-popup-local-iframe</h1>
+</body>

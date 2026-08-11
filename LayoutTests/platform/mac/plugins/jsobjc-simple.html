@@ -1,0 +1,36 @@
+<html>
+<head><title> simple.html </title>
+<script>
+function print(message) {
+    var paragraph = document.createElement('p');
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById('console').appendChild(paragraph);
+}
+
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    if (!window.objCPlugin)
+        return print('FAIL - no objCPlugin');
+    objCPlugin.removeBridgeRestrictions_(window);
+    if (!window.objc)
+        return print('FAIL - no window.objc');
+    
+    // test creating an obj-c object
+    var NSCell = objc('NSCell');
+    print('got class: ' + NSCell);
+    var cell = NSCell.alloc().init().autorelease();
+    print('created object: <' + cell.className() + '>');
+    cell.setValue_forKey_('zoe', 'stringValue');
+    print('set string value: ' + cell.stringValue());
+    if (cell.stringValue() == 'zoe')
+        print('PASS');
+    else
+        print('FAIL');
+}
+</script>
+</head>
+<body onload="test();">
+<div id='console'/>
+</body>
+</html>

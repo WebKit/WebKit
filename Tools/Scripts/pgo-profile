@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+
+import argparse
+import logging
+import os
+import subprocess
+
+from webkitpy.llvm_profile_utils import (LLVMProfileData, simplify_profile_weights,
+                                         merge_raw_profiles_in_directory_by_prefixes)
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+logger = logging.getLogger()
+
+
+PROFILED_DYLIBS = ['JavaScriptCore', 'WebCore', 'WebKit']
+BENCHMARK_GROUP_WEIGHTS = [('speedometer3', 0.6), ('jetstream3', 0.2), ('motionmark', 0.2)]
+
+
+def pad(string, max_length):
+    if len(string) > max_length:
+        return string[:max_length - 1] + u'…'
+    return string.ljust(max_length)
+
+
+def shortened(name):
+    return name if len(name) < 200 else name[0:99] + u'…' + name[-98:]
+
+
+def assert_directory(directory_path):
+    assert os.path.isdir(directory_path), f'No directory at {directory_path}'
+    return directory_path
+
+
+def assert_file(file_path):
+    assert os.path.isfile(file_path), f'No file at {file_path}'
+    return file_path
+
+
+def summarize_parser(subparsers, parent_parser):
+    parser = subparsers.add_parser('summarize', parents=[parent_parser],
+                                   help='Dumps function names in a given .profraw file, '
+                                        'sorted in descending order by function count')
+    parser.add_argument('file', help='Path to the .profraw file')
+    parser.set_defaults(func=summarize)
+    return parser
+
+
+def summarize(args):
+    file = assert_file(args.file)
+
+    show_process = LLVMProfileData.show(file)
+    show_process.check_returncode()
+
+    lines = show_process.stdout.splitlines()
+
+    counts_and_functions = []
+
+    for line_number in range(len(lines)):
+        line = lines[line_number].strip()
+        if line.startswith('Function count: '):
+            count = int(line.split()[-1])
+            symbol = lines[line_number - 3].strip()[:-1]
+            counts_and_functions.append((count, symbol))
+
+    counts_and_functions.sort(reverse=True)
+    for count, name in counts_and_functions:
+        print(pad(str(count), 15), shortened(name))
+
+
+def merge_parser(subparsers, parent_parser):
+    parser = subparsers.add_parser('merge', parents=[parent_parser],
+                                   help='Merge a pile of *.profraw files into the *.profdata files we can build with.')
+    parser.add_argument('directory', help='Path to the directory containing the *.profraw files')
+    parser.set_defaults(func=merge)
+    return parser
+
+
+def merge(args):
+    directory = assert_directory(args.directory)
+    merge_raw_profiles_in_directory_by_prefixes(PROFILED_DYLIBS, directory)
+
+
+def combine_parser(subparsers, parent_parser):
+    parser = subparsers.add_parser('combine', parents=[parent_parser],
+                                   help='Combine directories containing *.profdata files from different platforms together.')
+    for i in range(0, len(BENCHMARK_GROUP_WEIGHTS)):
+        group, _ = BENCHMARK_GROUP_WEIGHTS[i]
+        parser.add_argument(f'--{group}', default=None,
+                            help=f'Path to the directory containing the *.profdata files from a {group} run.')
+    parser.add_argument('--output', help='Path to the directory where the output will be placed.')
+    parser.set_defaults(func=combine)
+    return parser
+
+
+def combine(args):
+    assert args.output, 'Must specify output directory.'
+
+    out = assert_directory(args.output)
+    args = vars(args)
+    profile_weight_pairs = []
+
+    for i in range(0, len(BENCHMARK_GROUP_WEIGHTS)):
+        group, weight = BENCHMARK_GROUP_WEIGHTS[i]
+        if args[group]:
+            profile_group = assert_directory(args[group])
+            profile_weight_pairs.append((profile_group, weight))
+
+    assert len(profile_weight_pairs) > 0, 'Must specify at least one group.'
+
+    profile_weight_pairs = simplify_profile_weights(profile_weight_pairs)
+    logger.info(f'Simplified group weights: {profile_weight_pairs}')
+
+    for lib in PROFILED_DYLIBS:
+        logger.info(f'Merging {lib}')
+        weighted_profiles = [(os.path.join(path, f'{lib}.profdata'), weight)
+                             for path, weight in profile_weight_pairs]
+
+        output_file = os.path.join(out, f'{lib}.profdata')
+        merge_process = LLVMProfileData.merge(output_file, weighted_profiles=weighted_profiles)
+        logger.info(f'stdout: {merge_process.stdout}')
+        logger.info(f'stderr: {merge_process.stderr}')
+        merge_process.check_returncode()
+        logger.info(f'{lib} is successfully merged')
+
+
+def compress_parser(subparsers, parent_parser):
+    parser = subparsers.add_parser('compress', parents=[parent_parser],
+                                   help='Compress *.profdata files so that they can be checked in.')
+    parser.add_argument('--input', help='Path to the directory containing the input *.profdata files.')
+    parser.add_argument('--output', help='Path to the directory where the output will be placed.')
+    parser.set_defaults(func=compress)
+    return parser
+
+def decompress_parser(subparsers, parent_parser):
+    parser = subparsers.add_parser('decompress', parents=[parent_parser],
+                                   help='Decompress *.profdata files so that they can be checked in.')
+    parser.add_argument('--input', help='Path to the directory containing the input *.profdata.compressed files.')
+    parser.add_argument('--output', help='Path to the directory where the output will be placed.')
+    parser.set_defaults(func=decompress)
+    return parser
+
+
+def compress(args):
+    out = assert_directory(args.output)
+    input_directory = assert_directory(args.input)
+
+    for lib in PROFILED_DYLIBS:
+        logger.info(f'Compressing {lib}')
+        input_file = os.path.join(input_directory, f'{lib}.profdata')
+        output_file = os.path.join(out, f'{lib}.profdata.compressed')
+
+        compress_process = LLVMProfileData.compress(input_file, output_file)
+        logger.info(f'stdout: {compress_process.stdout}')
+        logger.info(f'stderr: {compress_process.stderr}')
+        compress_process.check_returncode()
+        logger.info(f'{lib} is successfully compressed')
+
+def decompress(args):
+    out = assert_directory(args.output)
+    input_directory = assert_directory(args.input)
+
+    for lib in PROFILED_DYLIBS:
+        logger.info(f'Decompressing {lib}')
+        input_file = os.path.join(input_directory, f'{lib}.profdata.compressed')
+        output_file = os.path.join(out, f'{lib}.profdata')
+
+        compress_process = LLVMProfileData.decompress(input_file, output_file)
+        logger.info(f'stdout: {compress_process.stdout}')
+        logger.info(f'stderr: {compress_process.stderr}')
+        compress_process.check_returncode()
+        logger.info(f'{lib} is successfully compressed')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(prog='pgo-profile')
+    verbose_parser = argparse.ArgumentParser(add_help=False)
+    verbose_parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Turn on debug logging')
+    subparsers = parser.add_subparsers(help='valid sub-commands', required=True, dest='sub command')
+    merge_parser(subparsers, verbose_parser)
+    summarize_parser(subparsers, verbose_parser)
+    combine_parser(subparsers, verbose_parser)
+    compress_parser(subparsers, verbose_parser)
+    decompress_parser(subparsers, verbose_parser)
+
+    args = parser.parse_args()
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
+    try:
+        args.func(args)
+    except subprocess.CalledProcessError as e:
+        logger.error(e.stdout)
+        raise e

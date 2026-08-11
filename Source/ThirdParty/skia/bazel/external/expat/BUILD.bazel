@@ -1,0 +1,51 @@
+# This file will be copied into //third_party/externals/expat via the new_local_repository
+# rule in WORKSPACE.bazel, so all files should be relative to that path.
+
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+EXPAT_HDRS = [
+    "expat/lib/expat.h",
+]
+
+EXPAT_SRCS = [
+    "expat/lib/ascii.h",
+    "expat/lib/asciitab.h",
+    "expat/lib/expat.h",
+    "expat/lib/expat_external.h",
+    "expat/lib/iasciitab.h",
+    "expat/lib/internal.h",
+    "expat/lib/latin1tab.h",
+    "expat/lib/nametab.h",
+    "expat/lib/siphash.h",
+    "expat/lib/utf8tab.h",
+    "expat/lib/winconfig.h",
+    "expat/lib/xmlparse.c",
+    "expat/lib/xmlrole.c",
+    "expat/lib/xmlrole.h",
+    "expat/lib/xmltok.c",
+    "expat/lib/xmltok.h",
+    "expat/lib/xmltok_impl.h",
+    # We expect this to be copied in via the repository_rule that checks out expat
+    "expat_config.h",
+]
+
+TEXTUAL_HDRS = [
+    "expat/lib/xmltok_impl.c",
+    "expat/lib/xmltok_ns.c",
+]
+
+cc_library(
+    name = "expat",
+    srcs = EXPAT_SRCS,
+    hdrs = EXPAT_HDRS,
+    # EXPAT_FMT_PTRDIFF_T uses outdated format specifiers
+    copts = ["-Wno-format"],
+    defines = [
+        "XML_STATIC",
+    ],
+    includes = [
+        "expat/lib",
+    ],
+    textual_hdrs = TEXTUAL_HDRS,
+    visibility = ["//visibility:public"],
+)

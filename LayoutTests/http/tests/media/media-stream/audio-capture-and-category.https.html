@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<video id="audio" autoplay playsInline></video>
+<script>
+async function negotiate(pc1, pc2)
+{
+     pc1.onicecandidate = (event) => { pc2.addIceCandidate(event.candidate) };
+     pc2.onicecandidate = (event) => { pc1.addIceCandidate(event.candidate) };
+
+     const offer = await pc1.createOffer();
+     await pc1.setLocalDescription(offer);
+     await pc2.setRemoteDescription(offer);
+     const answer = await pc2.createAnswer();
+     await pc2.setLocalDescription(answer);
+     await pc1.setRemoteDescription(answer);
+}
+
+promise_test(async (t) => {
+     if (!window.internals)
+        return Promise.reject("Test require internals API");
+     internals.settings.setShouldManageAudioSessionCategory(true);
+
+     const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+
+     let counter = 0;
+     while (++counter < 100 && internals.audioSessionCategory() !== "PlayAndRecord")
+         await new Promise(resolve => setTimeout(resolve, 50));
+     assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "category when capturing and not playing audio");
+
+     const pc1 = new RTCPeerConnection();
+     const pc2 = new RTCPeerConnection();
+
+     pc1.addTrack(stream.getAudioTracks()[0], stream);
+
+     await negotiate(pc1, pc2);
+
+     // We play the remote track, which will stay live even if the microphone track gets stopped.
+     audio.srcObject = new MediaStream([pc2.getReceivers()[0].track]);
+     await audio.play();
+
+     assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "category when capturing and audio is being played");
+
+     stream.getAudioTracks()[0].stop();
+
+     await new Promise(resolve => setTimeout(resolve, 1000));
+     assert_equals(internals.audioSessionCategory(), "PlayAndRecord", "category when capture has stopped but audio contines to play");
+
+     audio.pause();
+
+     counter = 0;
+     while (++counter < 100 && internals.audioSessionCategory() === "PlayAndRecord")
+         await new Promise(resolve => setTimeout(resolve, 50));
+     assert_not_equals(internals.audioSessionCategory(), "PlayAndRecord", "category when capture has stopped and audio stopped playing");
+}, "Validate audio session category is set to PlayAndRecord after frame stopped capturing but continued playing audio");
+</script>
+</body>
+</html>

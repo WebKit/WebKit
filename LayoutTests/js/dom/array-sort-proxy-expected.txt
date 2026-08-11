@@ -1,0 +1,28 @@
+.sort():
+get ['length']
+has ['0']
+get ['0']
+has ['1']
+get ['1']
+has ['2']
+has ['3']
+get ['3']
+has ['4']
+get ['4']
+has ['5']
+has ['6']
+get ['6']
+has ['7']
+get ['7']
+set ['0'] = a
+set ['1'] = b
+set ['2'] = c
+set ['3'] = d
+set ['4'] = undefined
+set ['5'] = undefined
+delete ['6']
+delete ['7']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

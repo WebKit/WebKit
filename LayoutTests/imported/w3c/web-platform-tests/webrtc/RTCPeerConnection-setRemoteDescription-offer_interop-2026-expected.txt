@@ -1,0 +1,4 @@
+
+PASS setRemoteDescription(offer) from have-local-offer fires signalingstatechange twice
+PASS setRemoteDescription(offer) in have-local-offer should update internal state with a queued task, in the right order
+

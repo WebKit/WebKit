@@ -1,0 +1,17 @@
+
+PASS Declarations are serialized on one line, rules on two.
+PASS Mixed declarations/rules are on two lines.
+PASS Implicit rule is serialized
+PASS Implicit rule not removed
+PASS Implicit + empty hover rule
+PASS Implicit like rule not in first position
+PASS Two implicit-like rules
+PASS Implicit like rule after decls
+PASS Implicit like rule after decls, missing closing braces
+PASS Implicit like rule with other selectors
+PASS Implicit-like rule in style rule
+PASS Empty conditional rule
+PASS Empty style rule
+PASS Empty conditional inside style rule
+PASS Empty style inside conditional
+

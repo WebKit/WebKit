@@ -1,0 +1,6 @@
+Inline box with negative margin-left that cancels padding-left should still shift the border box left.
+
+XXXXXX
+PASS: x = 20
+PASS: width = 150
+

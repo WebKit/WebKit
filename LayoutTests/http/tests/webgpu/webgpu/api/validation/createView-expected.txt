@@ -1,0 +1,1771 @@
+
+PASS :format:textureFormatFeature="_undef_";viewFormatFeature="_undef_"
+PASS :format:textureFormatFeature="_undef_";viewFormatFeature="texture-formats-tier1"
+PASS :format:textureFormatFeature="_undef_";viewFormatFeature="depth32float-stencil8"
+PASS :format:textureFormatFeature="_undef_";viewFormatFeature="texture-compression-bc"
+PASS :format:textureFormatFeature="_undef_";viewFormatFeature="texture-compression-etc2"
+PASS :format:textureFormatFeature="_undef_";viewFormatFeature="texture-compression-astc"
+PASS :format:textureFormatFeature="texture-formats-tier1";viewFormatFeature="_undef_"
+PASS :format:textureFormatFeature="texture-formats-tier1";viewFormatFeature="texture-formats-tier1"
+PASS :format:textureFormatFeature="texture-formats-tier1";viewFormatFeature="depth32float-stencil8"
+PASS :format:textureFormatFeature="texture-formats-tier1";viewFormatFeature="texture-compression-bc"
+PASS :format:textureFormatFeature="texture-formats-tier1";viewFormatFeature="texture-compression-etc2"
+PASS :format:textureFormatFeature="texture-formats-tier1";viewFormatFeature="texture-compression-astc"
+PASS :format:textureFormatFeature="depth32float-stencil8";viewFormatFeature="_undef_"
+PASS :format:textureFormatFeature="depth32float-stencil8";viewFormatFeature="texture-formats-tier1"
+PASS :format:textureFormatFeature="depth32float-stencil8";viewFormatFeature="depth32float-stencil8"
+PASS :format:textureFormatFeature="depth32float-stencil8";viewFormatFeature="texture-compression-bc"
+PASS :format:textureFormatFeature="depth32float-stencil8";viewFormatFeature="texture-compression-etc2"
+PASS :format:textureFormatFeature="depth32float-stencil8";viewFormatFeature="texture-compression-astc"
+PASS :format:textureFormatFeature="texture-compression-bc";viewFormatFeature="_undef_"
+PASS :format:textureFormatFeature="texture-compression-bc";viewFormatFeature="texture-formats-tier1"
+PASS :format:textureFormatFeature="texture-compression-bc";viewFormatFeature="depth32float-stencil8"
+PASS :format:textureFormatFeature="texture-compression-bc";viewFormatFeature="texture-compression-bc"
+PASS :format:textureFormatFeature="texture-compression-bc";viewFormatFeature="texture-compression-etc2"
+PASS :format:textureFormatFeature="texture-compression-bc";viewFormatFeature="texture-compression-astc"
+PASS :format:textureFormatFeature="texture-compression-etc2";viewFormatFeature="_undef_"
+PASS :format:textureFormatFeature="texture-compression-etc2";viewFormatFeature="texture-formats-tier1"
+PASS :format:textureFormatFeature="texture-compression-etc2";viewFormatFeature="depth32float-stencil8"
+PASS :format:textureFormatFeature="texture-compression-etc2";viewFormatFeature="texture-compression-bc"
+PASS :format:textureFormatFeature="texture-compression-etc2";viewFormatFeature="texture-compression-etc2"
+PASS :format:textureFormatFeature="texture-compression-etc2";viewFormatFeature="texture-compression-astc"
+PASS :format:textureFormatFeature="texture-compression-astc";viewFormatFeature="_undef_"
+PASS :format:textureFormatFeature="texture-compression-astc";viewFormatFeature="texture-formats-tier1"
+PASS :format:textureFormatFeature="texture-compression-astc";viewFormatFeature="depth32float-stencil8"
+PASS :format:textureFormatFeature="texture-compression-astc";viewFormatFeature="texture-compression-bc"
+PASS :format:textureFormatFeature="texture-compression-astc";viewFormatFeature="texture-compression-etc2"
+PASS :format:textureFormatFeature="texture-compression-astc";viewFormatFeature="texture-compression-astc"
+PASS :dimension:textureDimension="1d";viewDimension="1d"
+PASS :dimension:textureDimension="1d";viewDimension="2d"
+PASS :dimension:textureDimension="1d";viewDimension="2d-array"
+PASS :dimension:textureDimension="1d";viewDimension="cube"
+PASS :dimension:textureDimension="1d";viewDimension="cube-array"
+PASS :dimension:textureDimension="1d";viewDimension="3d"
+PASS :dimension:textureDimension="1d";viewDimension="_undef_"
+PASS :dimension:textureDimension="2d";viewDimension="1d"
+PASS :dimension:textureDimension="2d";viewDimension="2d"
+PASS :dimension:textureDimension="2d";viewDimension="2d-array"
+PASS :dimension:textureDimension="2d";viewDimension="cube"
+PASS :dimension:textureDimension="2d";viewDimension="cube-array"
+PASS :dimension:textureDimension="2d";viewDimension="3d"
+PASS :dimension:textureDimension="2d";viewDimension="_undef_"
+PASS :dimension:textureDimension="3d";viewDimension="1d"
+PASS :dimension:textureDimension="3d";viewDimension="2d"
+PASS :dimension:textureDimension="3d";viewDimension="2d-array"
+PASS :dimension:textureDimension="3d";viewDimension="cube"
+PASS :dimension:textureDimension="3d";viewDimension="cube-array"
+PASS :dimension:textureDimension="3d";viewDimension="3d"
+PASS :dimension:textureDimension="3d";viewDimension="_undef_"
+PASS :aspect:format="r8unorm";aspect="all"
+PASS :aspect:format="r8unorm";aspect="depth-only"
+PASS :aspect:format="r8unorm";aspect="stencil-only"
+PASS :aspect:format="r8snorm";aspect="all"
+PASS :aspect:format="r8snorm";aspect="depth-only"
+PASS :aspect:format="r8snorm";aspect="stencil-only"
+PASS :aspect:format="r8uint";aspect="all"
+PASS :aspect:format="r8uint";aspect="depth-only"
+PASS :aspect:format="r8uint";aspect="stencil-only"
+PASS :aspect:format="r8sint";aspect="all"
+PASS :aspect:format="r8sint";aspect="depth-only"
+PASS :aspect:format="r8sint";aspect="stencil-only"
+PASS :aspect:format="rg8unorm";aspect="all"
+PASS :aspect:format="rg8unorm";aspect="depth-only"
+PASS :aspect:format="rg8unorm";aspect="stencil-only"
+PASS :aspect:format="rg8snorm";aspect="all"
+PASS :aspect:format="rg8snorm";aspect="depth-only"
+PASS :aspect:format="rg8snorm";aspect="stencil-only"
+PASS :aspect:format="rg8uint";aspect="all"
+PASS :aspect:format="rg8uint";aspect="depth-only"
+PASS :aspect:format="rg8uint";aspect="stencil-only"
+PASS :aspect:format="rg8sint";aspect="all"
+PASS :aspect:format="rg8sint";aspect="depth-only"
+PASS :aspect:format="rg8sint";aspect="stencil-only"
+PASS :aspect:format="rgba8unorm";aspect="all"
+PASS :aspect:format="rgba8unorm";aspect="depth-only"
+PASS :aspect:format="rgba8unorm";aspect="stencil-only"
+PASS :aspect:format="rgba8unorm-srgb";aspect="all"
+PASS :aspect:format="rgba8unorm-srgb";aspect="depth-only"
+PASS :aspect:format="rgba8unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="rgba8snorm";aspect="all"
+PASS :aspect:format="rgba8snorm";aspect="depth-only"
+PASS :aspect:format="rgba8snorm";aspect="stencil-only"
+PASS :aspect:format="rgba8uint";aspect="all"
+PASS :aspect:format="rgba8uint";aspect="depth-only"
+PASS :aspect:format="rgba8uint";aspect="stencil-only"
+PASS :aspect:format="rgba8sint";aspect="all"
+PASS :aspect:format="rgba8sint";aspect="depth-only"
+PASS :aspect:format="rgba8sint";aspect="stencil-only"
+PASS :aspect:format="bgra8unorm";aspect="all"
+PASS :aspect:format="bgra8unorm";aspect="depth-only"
+PASS :aspect:format="bgra8unorm";aspect="stencil-only"
+PASS :aspect:format="bgra8unorm-srgb";aspect="all"
+PASS :aspect:format="bgra8unorm-srgb";aspect="depth-only"
+PASS :aspect:format="bgra8unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="r16unorm";aspect="all"
+PASS :aspect:format="r16unorm";aspect="depth-only"
+PASS :aspect:format="r16unorm";aspect="stencil-only"
+PASS :aspect:format="r16snorm";aspect="all"
+PASS :aspect:format="r16snorm";aspect="depth-only"
+PASS :aspect:format="r16snorm";aspect="stencil-only"
+PASS :aspect:format="r16uint";aspect="all"
+PASS :aspect:format="r16uint";aspect="depth-only"
+PASS :aspect:format="r16uint";aspect="stencil-only"
+PASS :aspect:format="r16sint";aspect="all"
+PASS :aspect:format="r16sint";aspect="depth-only"
+PASS :aspect:format="r16sint";aspect="stencil-only"
+PASS :aspect:format="r16float";aspect="all"
+PASS :aspect:format="r16float";aspect="depth-only"
+PASS :aspect:format="r16float";aspect="stencil-only"
+PASS :aspect:format="rg16unorm";aspect="all"
+PASS :aspect:format="rg16unorm";aspect="depth-only"
+PASS :aspect:format="rg16unorm";aspect="stencil-only"
+PASS :aspect:format="rg16snorm";aspect="all"
+PASS :aspect:format="rg16snorm";aspect="depth-only"
+PASS :aspect:format="rg16snorm";aspect="stencil-only"
+PASS :aspect:format="rg16uint";aspect="all"
+PASS :aspect:format="rg16uint";aspect="depth-only"
+PASS :aspect:format="rg16uint";aspect="stencil-only"
+PASS :aspect:format="rg16sint";aspect="all"
+PASS :aspect:format="rg16sint";aspect="depth-only"
+PASS :aspect:format="rg16sint";aspect="stencil-only"
+PASS :aspect:format="rg16float";aspect="all"
+PASS :aspect:format="rg16float";aspect="depth-only"
+PASS :aspect:format="rg16float";aspect="stencil-only"
+PASS :aspect:format="rgba16unorm";aspect="all"
+PASS :aspect:format="rgba16unorm";aspect="depth-only"
+PASS :aspect:format="rgba16unorm";aspect="stencil-only"
+PASS :aspect:format="rgba16snorm";aspect="all"
+PASS :aspect:format="rgba16snorm";aspect="depth-only"
+PASS :aspect:format="rgba16snorm";aspect="stencil-only"
+PASS :aspect:format="rgba16uint";aspect="all"
+PASS :aspect:format="rgba16uint";aspect="depth-only"
+PASS :aspect:format="rgba16uint";aspect="stencil-only"
+PASS :aspect:format="rgba16sint";aspect="all"
+PASS :aspect:format="rgba16sint";aspect="depth-only"
+PASS :aspect:format="rgba16sint";aspect="stencil-only"
+PASS :aspect:format="rgba16float";aspect="all"
+PASS :aspect:format="rgba16float";aspect="depth-only"
+PASS :aspect:format="rgba16float";aspect="stencil-only"
+PASS :aspect:format="r32uint";aspect="all"
+PASS :aspect:format="r32uint";aspect="depth-only"
+PASS :aspect:format="r32uint";aspect="stencil-only"
+PASS :aspect:format="r32sint";aspect="all"
+PASS :aspect:format="r32sint";aspect="depth-only"
+PASS :aspect:format="r32sint";aspect="stencil-only"
+PASS :aspect:format="r32float";aspect="all"
+PASS :aspect:format="r32float";aspect="depth-only"
+PASS :aspect:format="r32float";aspect="stencil-only"
+PASS :aspect:format="rg32uint";aspect="all"
+PASS :aspect:format="rg32uint";aspect="depth-only"
+PASS :aspect:format="rg32uint";aspect="stencil-only"
+PASS :aspect:format="rg32sint";aspect="all"
+PASS :aspect:format="rg32sint";aspect="depth-only"
+PASS :aspect:format="rg32sint";aspect="stencil-only"
+PASS :aspect:format="rg32float";aspect="all"
+PASS :aspect:format="rg32float";aspect="depth-only"
+PASS :aspect:format="rg32float";aspect="stencil-only"
+PASS :aspect:format="rgba32uint";aspect="all"
+PASS :aspect:format="rgba32uint";aspect="depth-only"
+PASS :aspect:format="rgba32uint";aspect="stencil-only"
+PASS :aspect:format="rgba32sint";aspect="all"
+PASS :aspect:format="rgba32sint";aspect="depth-only"
+PASS :aspect:format="rgba32sint";aspect="stencil-only"
+PASS :aspect:format="rgba32float";aspect="all"
+PASS :aspect:format="rgba32float";aspect="depth-only"
+PASS :aspect:format="rgba32float";aspect="stencil-only"
+PASS :aspect:format="rgb10a2uint";aspect="all"
+PASS :aspect:format="rgb10a2uint";aspect="depth-only"
+PASS :aspect:format="rgb10a2uint";aspect="stencil-only"
+PASS :aspect:format="rgb10a2unorm";aspect="all"
+PASS :aspect:format="rgb10a2unorm";aspect="depth-only"
+PASS :aspect:format="rgb10a2unorm";aspect="stencil-only"
+PASS :aspect:format="rg11b10ufloat";aspect="all"
+PASS :aspect:format="rg11b10ufloat";aspect="depth-only"
+PASS :aspect:format="rg11b10ufloat";aspect="stencil-only"
+PASS :aspect:format="rgb9e5ufloat";aspect="all"
+PASS :aspect:format="rgb9e5ufloat";aspect="depth-only"
+PASS :aspect:format="rgb9e5ufloat";aspect="stencil-only"
+PASS :aspect:format="stencil8";aspect="all"
+PASS :aspect:format="stencil8";aspect="depth-only"
+PASS :aspect:format="stencil8";aspect="stencil-only"
+PASS :aspect:format="depth16unorm";aspect="all"
+PASS :aspect:format="depth16unorm";aspect="depth-only"
+PASS :aspect:format="depth16unorm";aspect="stencil-only"
+PASS :aspect:format="depth32float";aspect="all"
+PASS :aspect:format="depth32float";aspect="depth-only"
+PASS :aspect:format="depth32float";aspect="stencil-only"
+PASS :aspect:format="depth24plus";aspect="all"
+PASS :aspect:format="depth24plus";aspect="depth-only"
+PASS :aspect:format="depth24plus";aspect="stencil-only"
+PASS :aspect:format="depth24plus-stencil8";aspect="all"
+PASS :aspect:format="depth24plus-stencil8";aspect="depth-only"
+PASS :aspect:format="depth24plus-stencil8";aspect="stencil-only"
+PASS :aspect:format="depth32float-stencil8";aspect="all"
+PASS :aspect:format="depth32float-stencil8";aspect="depth-only"
+PASS :aspect:format="depth32float-stencil8";aspect="stencil-only"
+PASS :aspect:format="bc1-rgba-unorm";aspect="all"
+PASS :aspect:format="bc1-rgba-unorm";aspect="depth-only"
+PASS :aspect:format="bc1-rgba-unorm";aspect="stencil-only"
+PASS :aspect:format="bc1-rgba-unorm-srgb";aspect="all"
+PASS :aspect:format="bc1-rgba-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="bc1-rgba-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="bc2-rgba-unorm";aspect="all"
+PASS :aspect:format="bc2-rgba-unorm";aspect="depth-only"
+PASS :aspect:format="bc2-rgba-unorm";aspect="stencil-only"
+PASS :aspect:format="bc2-rgba-unorm-srgb";aspect="all"
+PASS :aspect:format="bc2-rgba-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="bc2-rgba-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="bc3-rgba-unorm";aspect="all"
+PASS :aspect:format="bc3-rgba-unorm";aspect="depth-only"
+PASS :aspect:format="bc3-rgba-unorm";aspect="stencil-only"
+PASS :aspect:format="bc3-rgba-unorm-srgb";aspect="all"
+PASS :aspect:format="bc3-rgba-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="bc3-rgba-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="bc4-r-unorm";aspect="all"
+PASS :aspect:format="bc4-r-unorm";aspect="depth-only"
+PASS :aspect:format="bc4-r-unorm";aspect="stencil-only"
+PASS :aspect:format="bc4-r-snorm";aspect="all"
+PASS :aspect:format="bc4-r-snorm";aspect="depth-only"
+PASS :aspect:format="bc4-r-snorm";aspect="stencil-only"
+PASS :aspect:format="bc5-rg-unorm";aspect="all"
+PASS :aspect:format="bc5-rg-unorm";aspect="depth-only"
+PASS :aspect:format="bc5-rg-unorm";aspect="stencil-only"
+PASS :aspect:format="bc5-rg-snorm";aspect="all"
+PASS :aspect:format="bc5-rg-snorm";aspect="depth-only"
+PASS :aspect:format="bc5-rg-snorm";aspect="stencil-only"
+PASS :aspect:format="bc6h-rgb-ufloat";aspect="all"
+PASS :aspect:format="bc6h-rgb-ufloat";aspect="depth-only"
+PASS :aspect:format="bc6h-rgb-ufloat";aspect="stencil-only"
+PASS :aspect:format="bc6h-rgb-float";aspect="all"
+PASS :aspect:format="bc6h-rgb-float";aspect="depth-only"
+PASS :aspect:format="bc6h-rgb-float";aspect="stencil-only"
+PASS :aspect:format="bc7-rgba-unorm";aspect="all"
+PASS :aspect:format="bc7-rgba-unorm";aspect="depth-only"
+PASS :aspect:format="bc7-rgba-unorm";aspect="stencil-only"
+PASS :aspect:format="bc7-rgba-unorm-srgb";aspect="all"
+PASS :aspect:format="bc7-rgba-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="bc7-rgba-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="etc2-rgb8unorm";aspect="all"
+PASS :aspect:format="etc2-rgb8unorm";aspect="depth-only"
+PASS :aspect:format="etc2-rgb8unorm";aspect="stencil-only"
+PASS :aspect:format="etc2-rgb8unorm-srgb";aspect="all"
+PASS :aspect:format="etc2-rgb8unorm-srgb";aspect="depth-only"
+PASS :aspect:format="etc2-rgb8unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="etc2-rgb8a1unorm";aspect="all"
+PASS :aspect:format="etc2-rgb8a1unorm";aspect="depth-only"
+PASS :aspect:format="etc2-rgb8a1unorm";aspect="stencil-only"
+PASS :aspect:format="etc2-rgb8a1unorm-srgb";aspect="all"
+PASS :aspect:format="etc2-rgb8a1unorm-srgb";aspect="depth-only"
+PASS :aspect:format="etc2-rgb8a1unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="etc2-rgba8unorm";aspect="all"
+PASS :aspect:format="etc2-rgba8unorm";aspect="depth-only"
+PASS :aspect:format="etc2-rgba8unorm";aspect="stencil-only"
+PASS :aspect:format="etc2-rgba8unorm-srgb";aspect="all"
+PASS :aspect:format="etc2-rgba8unorm-srgb";aspect="depth-only"
+PASS :aspect:format="etc2-rgba8unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="eac-r11unorm";aspect="all"
+PASS :aspect:format="eac-r11unorm";aspect="depth-only"
+PASS :aspect:format="eac-r11unorm";aspect="stencil-only"
+PASS :aspect:format="eac-r11snorm";aspect="all"
+PASS :aspect:format="eac-r11snorm";aspect="depth-only"
+PASS :aspect:format="eac-r11snorm";aspect="stencil-only"
+PASS :aspect:format="eac-rg11unorm";aspect="all"
+PASS :aspect:format="eac-rg11unorm";aspect="depth-only"
+PASS :aspect:format="eac-rg11unorm";aspect="stencil-only"
+PASS :aspect:format="eac-rg11snorm";aspect="all"
+PASS :aspect:format="eac-rg11snorm";aspect="depth-only"
+PASS :aspect:format="eac-rg11snorm";aspect="stencil-only"
+PASS :aspect:format="astc-4x4-unorm";aspect="all"
+PASS :aspect:format="astc-4x4-unorm";aspect="depth-only"
+PASS :aspect:format="astc-4x4-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-4x4-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-4x4-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-4x4-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-5x4-unorm";aspect="all"
+PASS :aspect:format="astc-5x4-unorm";aspect="depth-only"
+PASS :aspect:format="astc-5x4-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-5x4-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-5x4-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-5x4-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-5x5-unorm";aspect="all"
+PASS :aspect:format="astc-5x5-unorm";aspect="depth-only"
+PASS :aspect:format="astc-5x5-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-5x5-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-5x5-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-5x5-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-6x5-unorm";aspect="all"
+PASS :aspect:format="astc-6x5-unorm";aspect="depth-only"
+PASS :aspect:format="astc-6x5-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-6x5-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-6x5-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-6x5-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-6x6-unorm";aspect="all"
+PASS :aspect:format="astc-6x6-unorm";aspect="depth-only"
+PASS :aspect:format="astc-6x6-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-6x6-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-6x6-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-6x6-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-8x5-unorm";aspect="all"
+PASS :aspect:format="astc-8x5-unorm";aspect="depth-only"
+PASS :aspect:format="astc-8x5-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-8x5-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-8x5-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-8x5-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-8x6-unorm";aspect="all"
+PASS :aspect:format="astc-8x6-unorm";aspect="depth-only"
+PASS :aspect:format="astc-8x6-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-8x6-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-8x6-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-8x6-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-8x8-unorm";aspect="all"
+PASS :aspect:format="astc-8x8-unorm";aspect="depth-only"
+PASS :aspect:format="astc-8x8-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-8x8-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-8x8-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-8x8-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-10x5-unorm";aspect="all"
+PASS :aspect:format="astc-10x5-unorm";aspect="depth-only"
+PASS :aspect:format="astc-10x5-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-10x5-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-10x5-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-10x5-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-10x6-unorm";aspect="all"
+PASS :aspect:format="astc-10x6-unorm";aspect="depth-only"
+PASS :aspect:format="astc-10x6-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-10x6-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-10x6-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-10x6-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-10x8-unorm";aspect="all"
+PASS :aspect:format="astc-10x8-unorm";aspect="depth-only"
+PASS :aspect:format="astc-10x8-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-10x8-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-10x8-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-10x8-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-10x10-unorm";aspect="all"
+PASS :aspect:format="astc-10x10-unorm";aspect="depth-only"
+PASS :aspect:format="astc-10x10-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-10x10-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-10x10-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-10x10-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-12x10-unorm";aspect="all"
+PASS :aspect:format="astc-12x10-unorm";aspect="depth-only"
+PASS :aspect:format="astc-12x10-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-12x10-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-12x10-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-12x10-unorm-srgb";aspect="stencil-only"
+PASS :aspect:format="astc-12x12-unorm";aspect="all"
+PASS :aspect:format="astc-12x12-unorm";aspect="depth-only"
+PASS :aspect:format="astc-12x12-unorm";aspect="stencil-only"
+PASS :aspect:format="astc-12x12-unorm-srgb";aspect="all"
+PASS :aspect:format="astc-12x12-unorm-srgb";aspect="depth-only"
+PASS :aspect:format="astc-12x12-unorm-srgb";aspect="stencil-only"
+PASS :array_layers:textureDimension="1d";viewDimension="_undef_"
+PASS :array_layers:textureDimension="1d";viewDimension="1d"
+PASS :array_layers:textureDimension="2d";viewDimension="_undef_"
+PASS :array_layers:textureDimension="2d";viewDimension="2d"
+PASS :array_layers:textureDimension="2d";viewDimension="2d-array"
+PASS :array_layers:textureDimension="2d";viewDimension="cube"
+PASS :array_layers:textureDimension="2d";viewDimension="cube-array"
+PASS :array_layers:textureDimension="3d";viewDimension="_undef_"
+PASS :array_layers:textureDimension="3d";viewDimension="3d"
+PASS :mip_levels:textureDimension="1d";viewDimension="_undef_"
+PASS :mip_levels:textureDimension="1d";viewDimension="1d"
+PASS :mip_levels:textureDimension="2d";viewDimension="_undef_"
+PASS :mip_levels:textureDimension="2d";viewDimension="2d"
+PASS :mip_levels:textureDimension="2d";viewDimension="2d-array"
+PASS :mip_levels:textureDimension="2d";viewDimension="cube"
+PASS :mip_levels:textureDimension="2d";viewDimension="cube-array"
+PASS :mip_levels:textureDimension="3d";viewDimension="_undef_"
+PASS :mip_levels:textureDimension="3d";viewDimension="3d"
+PASS :cube_faces_square:dimension="2d";size=[4,4,6]
+PASS :cube_faces_square:dimension="2d";size=[5,5,6]
+PASS :cube_faces_square:dimension="2d";size=[4,5,6]
+PASS :cube_faces_square:dimension="2d";size=[4,8,6]
+PASS :cube_faces_square:dimension="2d";size=[8,4,6]
+PASS :cube_faces_square:dimension="cube";size=[4,4,6]
+PASS :cube_faces_square:dimension="cube";size=[5,5,6]
+PASS :cube_faces_square:dimension="cube";size=[4,5,6]
+PASS :cube_faces_square:dimension="cube";size=[4,8,6]
+PASS :cube_faces_square:dimension="cube";size=[8,4,6]
+PASS :cube_faces_square:dimension="cube-array";size=[4,4,6]
+PASS :cube_faces_square:dimension="cube-array";size=[5,5,6]
+PASS :cube_faces_square:dimension="cube-array";size=[4,5,6]
+PASS :cube_faces_square:dimension="cube-array";size=[4,8,6]
+PASS :cube_faces_square:dimension="cube-array";size=[8,4,6]
+PASS :texture_state:
+PASS :texture_view_usage:format="r8unorm";textureUsage=1
+PASS :texture_view_usage:format="r8unorm";textureUsage=2
+PASS :texture_view_usage:format="r8unorm";textureUsage=4
+PASS :texture_view_usage:format="r8unorm";textureUsage=8
+PASS :texture_view_usage:format="r8unorm";textureUsage=16
+PASS :texture_view_usage:format="r8snorm";textureUsage=1
+PASS :texture_view_usage:format="r8snorm";textureUsage=2
+PASS :texture_view_usage:format="r8snorm";textureUsage=4
+PASS :texture_view_usage:format="r8snorm";textureUsage=8
+PASS :texture_view_usage:format="r8snorm";textureUsage=16
+PASS :texture_view_usage:format="r8uint";textureUsage=1
+PASS :texture_view_usage:format="r8uint";textureUsage=2
+PASS :texture_view_usage:format="r8uint";textureUsage=4
+PASS :texture_view_usage:format="r8uint";textureUsage=8
+PASS :texture_view_usage:format="r8uint";textureUsage=16
+PASS :texture_view_usage:format="r8sint";textureUsage=1
+PASS :texture_view_usage:format="r8sint";textureUsage=2
+PASS :texture_view_usage:format="r8sint";textureUsage=4
+PASS :texture_view_usage:format="r8sint";textureUsage=8
+PASS :texture_view_usage:format="r8sint";textureUsage=16
+PASS :texture_view_usage:format="rg8unorm";textureUsage=1
+PASS :texture_view_usage:format="rg8unorm";textureUsage=2
+PASS :texture_view_usage:format="rg8unorm";textureUsage=4
+PASS :texture_view_usage:format="rg8unorm";textureUsage=8
+PASS :texture_view_usage:format="rg8unorm";textureUsage=16
+PASS :texture_view_usage:format="rg8snorm";textureUsage=1
+PASS :texture_view_usage:format="rg8snorm";textureUsage=2
+PASS :texture_view_usage:format="rg8snorm";textureUsage=4
+PASS :texture_view_usage:format="rg8snorm";textureUsage=8
+PASS :texture_view_usage:format="rg8snorm";textureUsage=16
+PASS :texture_view_usage:format="rg8uint";textureUsage=1
+PASS :texture_view_usage:format="rg8uint";textureUsage=2
+PASS :texture_view_usage:format="rg8uint";textureUsage=4
+PASS :texture_view_usage:format="rg8uint";textureUsage=8
+PASS :texture_view_usage:format="rg8uint";textureUsage=16
+PASS :texture_view_usage:format="rg8sint";textureUsage=1
+PASS :texture_view_usage:format="rg8sint";textureUsage=2
+PASS :texture_view_usage:format="rg8sint";textureUsage=4
+PASS :texture_view_usage:format="rg8sint";textureUsage=8
+PASS :texture_view_usage:format="rg8sint";textureUsage=16
+PASS :texture_view_usage:format="rgba8unorm";textureUsage=1
+PASS :texture_view_usage:format="rgba8unorm";textureUsage=2
+PASS :texture_view_usage:format="rgba8unorm";textureUsage=4
+PASS :texture_view_usage:format="rgba8unorm";textureUsage=8
+PASS :texture_view_usage:format="rgba8unorm";textureUsage=16
+PASS :texture_view_usage:format="rgba8unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="rgba8unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="rgba8unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="rgba8unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="rgba8unorm-srgb";textureUsage=16
+PASS :texture_view_usage:format="rgba8snorm";textureUsage=1
+PASS :texture_view_usage:format="rgba8snorm";textureUsage=2
+PASS :texture_view_usage:format="rgba8snorm";textureUsage=4
+PASS :texture_view_usage:format="rgba8snorm";textureUsage=8
+PASS :texture_view_usage:format="rgba8snorm";textureUsage=16
+PASS :texture_view_usage:format="rgba8uint";textureUsage=1
+PASS :texture_view_usage:format="rgba8uint";textureUsage=2
+PASS :texture_view_usage:format="rgba8uint";textureUsage=4
+PASS :texture_view_usage:format="rgba8uint";textureUsage=8
+PASS :texture_view_usage:format="rgba8uint";textureUsage=16
+PASS :texture_view_usage:format="rgba8sint";textureUsage=1
+PASS :texture_view_usage:format="rgba8sint";textureUsage=2
+PASS :texture_view_usage:format="rgba8sint";textureUsage=4
+PASS :texture_view_usage:format="rgba8sint";textureUsage=8
+PASS :texture_view_usage:format="rgba8sint";textureUsage=16
+PASS :texture_view_usage:format="bgra8unorm";textureUsage=1
+PASS :texture_view_usage:format="bgra8unorm";textureUsage=2
+PASS :texture_view_usage:format="bgra8unorm";textureUsage=4
+PASS :texture_view_usage:format="bgra8unorm";textureUsage=8
+PASS :texture_view_usage:format="bgra8unorm";textureUsage=16
+PASS :texture_view_usage:format="bgra8unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="bgra8unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="bgra8unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="bgra8unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="bgra8unorm-srgb";textureUsage=16
+PASS :texture_view_usage:format="r16unorm";textureUsage=1
+PASS :texture_view_usage:format="r16unorm";textureUsage=2
+PASS :texture_view_usage:format="r16unorm";textureUsage=4
+PASS :texture_view_usage:format="r16unorm";textureUsage=8
+PASS :texture_view_usage:format="r16unorm";textureUsage=16
+PASS :texture_view_usage:format="r16snorm";textureUsage=1
+PASS :texture_view_usage:format="r16snorm";textureUsage=2
+PASS :texture_view_usage:format="r16snorm";textureUsage=4
+PASS :texture_view_usage:format="r16snorm";textureUsage=8
+PASS :texture_view_usage:format="r16snorm";textureUsage=16
+PASS :texture_view_usage:format="r16uint";textureUsage=1
+PASS :texture_view_usage:format="r16uint";textureUsage=2
+PASS :texture_view_usage:format="r16uint";textureUsage=4
+PASS :texture_view_usage:format="r16uint";textureUsage=8
+PASS :texture_view_usage:format="r16uint";textureUsage=16
+PASS :texture_view_usage:format="r16sint";textureUsage=1
+PASS :texture_view_usage:format="r16sint";textureUsage=2
+PASS :texture_view_usage:format="r16sint";textureUsage=4
+PASS :texture_view_usage:format="r16sint";textureUsage=8
+PASS :texture_view_usage:format="r16sint";textureUsage=16
+PASS :texture_view_usage:format="r16float";textureUsage=1
+PASS :texture_view_usage:format="r16float";textureUsage=2
+PASS :texture_view_usage:format="r16float";textureUsage=4
+PASS :texture_view_usage:format="r16float";textureUsage=8
+PASS :texture_view_usage:format="r16float";textureUsage=16
+PASS :texture_view_usage:format="rg16unorm";textureUsage=1
+PASS :texture_view_usage:format="rg16unorm";textureUsage=2
+PASS :texture_view_usage:format="rg16unorm";textureUsage=4
+PASS :texture_view_usage:format="rg16unorm";textureUsage=8
+PASS :texture_view_usage:format="rg16unorm";textureUsage=16
+PASS :texture_view_usage:format="rg16snorm";textureUsage=1
+PASS :texture_view_usage:format="rg16snorm";textureUsage=2
+PASS :texture_view_usage:format="rg16snorm";textureUsage=4
+PASS :texture_view_usage:format="rg16snorm";textureUsage=8
+PASS :texture_view_usage:format="rg16snorm";textureUsage=16
+PASS :texture_view_usage:format="rg16uint";textureUsage=1
+PASS :texture_view_usage:format="rg16uint";textureUsage=2
+PASS :texture_view_usage:format="rg16uint";textureUsage=4
+PASS :texture_view_usage:format="rg16uint";textureUsage=8
+PASS :texture_view_usage:format="rg16uint";textureUsage=16
+PASS :texture_view_usage:format="rg16sint";textureUsage=1
+PASS :texture_view_usage:format="rg16sint";textureUsage=2
+PASS :texture_view_usage:format="rg16sint";textureUsage=4
+PASS :texture_view_usage:format="rg16sint";textureUsage=8
+PASS :texture_view_usage:format="rg16sint";textureUsage=16
+PASS :texture_view_usage:format="rg16float";textureUsage=1
+PASS :texture_view_usage:format="rg16float";textureUsage=2
+PASS :texture_view_usage:format="rg16float";textureUsage=4
+PASS :texture_view_usage:format="rg16float";textureUsage=8
+PASS :texture_view_usage:format="rg16float";textureUsage=16
+PASS :texture_view_usage:format="rgba16unorm";textureUsage=1
+PASS :texture_view_usage:format="rgba16unorm";textureUsage=2
+PASS :texture_view_usage:format="rgba16unorm";textureUsage=4
+PASS :texture_view_usage:format="rgba16unorm";textureUsage=8
+PASS :texture_view_usage:format="rgba16unorm";textureUsage=16
+PASS :texture_view_usage:format="rgba16snorm";textureUsage=1
+PASS :texture_view_usage:format="rgba16snorm";textureUsage=2
+PASS :texture_view_usage:format="rgba16snorm";textureUsage=4
+PASS :texture_view_usage:format="rgba16snorm";textureUsage=8
+PASS :texture_view_usage:format="rgba16snorm";textureUsage=16
+PASS :texture_view_usage:format="rgba16uint";textureUsage=1
+PASS :texture_view_usage:format="rgba16uint";textureUsage=2
+PASS :texture_view_usage:format="rgba16uint";textureUsage=4
+PASS :texture_view_usage:format="rgba16uint";textureUsage=8
+PASS :texture_view_usage:format="rgba16uint";textureUsage=16
+PASS :texture_view_usage:format="rgba16sint";textureUsage=1
+PASS :texture_view_usage:format="rgba16sint";textureUsage=2
+PASS :texture_view_usage:format="rgba16sint";textureUsage=4
+PASS :texture_view_usage:format="rgba16sint";textureUsage=8
+PASS :texture_view_usage:format="rgba16sint";textureUsage=16
+PASS :texture_view_usage:format="rgba16float";textureUsage=1
+PASS :texture_view_usage:format="rgba16float";textureUsage=2
+PASS :texture_view_usage:format="rgba16float";textureUsage=4
+PASS :texture_view_usage:format="rgba16float";textureUsage=8
+PASS :texture_view_usage:format="rgba16float";textureUsage=16
+PASS :texture_view_usage:format="r32uint";textureUsage=1
+PASS :texture_view_usage:format="r32uint";textureUsage=2
+PASS :texture_view_usage:format="r32uint";textureUsage=4
+PASS :texture_view_usage:format="r32uint";textureUsage=8
+PASS :texture_view_usage:format="r32uint";textureUsage=16
+PASS :texture_view_usage:format="r32sint";textureUsage=1
+PASS :texture_view_usage:format="r32sint";textureUsage=2
+PASS :texture_view_usage:format="r32sint";textureUsage=4
+PASS :texture_view_usage:format="r32sint";textureUsage=8
+PASS :texture_view_usage:format="r32sint";textureUsage=16
+PASS :texture_view_usage:format="r32float";textureUsage=1
+PASS :texture_view_usage:format="r32float";textureUsage=2
+PASS :texture_view_usage:format="r32float";textureUsage=4
+PASS :texture_view_usage:format="r32float";textureUsage=8
+PASS :texture_view_usage:format="r32float";textureUsage=16
+PASS :texture_view_usage:format="rg32uint";textureUsage=1
+PASS :texture_view_usage:format="rg32uint";textureUsage=2
+PASS :texture_view_usage:format="rg32uint";textureUsage=4
+PASS :texture_view_usage:format="rg32uint";textureUsage=8
+PASS :texture_view_usage:format="rg32uint";textureUsage=16
+PASS :texture_view_usage:format="rg32sint";textureUsage=1
+PASS :texture_view_usage:format="rg32sint";textureUsage=2
+PASS :texture_view_usage:format="rg32sint";textureUsage=4
+PASS :texture_view_usage:format="rg32sint";textureUsage=8
+PASS :texture_view_usage:format="rg32sint";textureUsage=16
+PASS :texture_view_usage:format="rg32float";textureUsage=1
+PASS :texture_view_usage:format="rg32float";textureUsage=2
+PASS :texture_view_usage:format="rg32float";textureUsage=4
+PASS :texture_view_usage:format="rg32float";textureUsage=8
+PASS :texture_view_usage:format="rg32float";textureUsage=16
+PASS :texture_view_usage:format="rgba32uint";textureUsage=1
+PASS :texture_view_usage:format="rgba32uint";textureUsage=2
+PASS :texture_view_usage:format="rgba32uint";textureUsage=4
+PASS :texture_view_usage:format="rgba32uint";textureUsage=8
+PASS :texture_view_usage:format="rgba32uint";textureUsage=16
+PASS :texture_view_usage:format="rgba32sint";textureUsage=1
+PASS :texture_view_usage:format="rgba32sint";textureUsage=2
+PASS :texture_view_usage:format="rgba32sint";textureUsage=4
+PASS :texture_view_usage:format="rgba32sint";textureUsage=8
+PASS :texture_view_usage:format="rgba32sint";textureUsage=16
+PASS :texture_view_usage:format="rgba32float";textureUsage=1
+PASS :texture_view_usage:format="rgba32float";textureUsage=2
+PASS :texture_view_usage:format="rgba32float";textureUsage=4
+PASS :texture_view_usage:format="rgba32float";textureUsage=8
+PASS :texture_view_usage:format="rgba32float";textureUsage=16
+PASS :texture_view_usage:format="rgb10a2uint";textureUsage=1
+PASS :texture_view_usage:format="rgb10a2uint";textureUsage=2
+PASS :texture_view_usage:format="rgb10a2uint";textureUsage=4
+PASS :texture_view_usage:format="rgb10a2uint";textureUsage=8
+PASS :texture_view_usage:format="rgb10a2uint";textureUsage=16
+PASS :texture_view_usage:format="rgb10a2unorm";textureUsage=1
+PASS :texture_view_usage:format="rgb10a2unorm";textureUsage=2
+PASS :texture_view_usage:format="rgb10a2unorm";textureUsage=4
+PASS :texture_view_usage:format="rgb10a2unorm";textureUsage=8
+PASS :texture_view_usage:format="rgb10a2unorm";textureUsage=16
+PASS :texture_view_usage:format="rg11b10ufloat";textureUsage=1
+PASS :texture_view_usage:format="rg11b10ufloat";textureUsage=2
+PASS :texture_view_usage:format="rg11b10ufloat";textureUsage=4
+PASS :texture_view_usage:format="rg11b10ufloat";textureUsage=8
+PASS :texture_view_usage:format="rg11b10ufloat";textureUsage=16
+PASS :texture_view_usage:format="rgb9e5ufloat";textureUsage=1
+PASS :texture_view_usage:format="rgb9e5ufloat";textureUsage=2
+PASS :texture_view_usage:format="rgb9e5ufloat";textureUsage=4
+PASS :texture_view_usage:format="rgb9e5ufloat";textureUsage=8
+PASS :texture_view_usage:format="stencil8";textureUsage=1
+PASS :texture_view_usage:format="stencil8";textureUsage=2
+PASS :texture_view_usage:format="stencil8";textureUsage=4
+PASS :texture_view_usage:format="stencil8";textureUsage=8
+PASS :texture_view_usage:format="stencil8";textureUsage=16
+PASS :texture_view_usage:format="depth16unorm";textureUsage=1
+PASS :texture_view_usage:format="depth16unorm";textureUsage=2
+PASS :texture_view_usage:format="depth16unorm";textureUsage=4
+PASS :texture_view_usage:format="depth16unorm";textureUsage=8
+PASS :texture_view_usage:format="depth16unorm";textureUsage=16
+PASS :texture_view_usage:format="depth32float";textureUsage=1
+PASS :texture_view_usage:format="depth32float";textureUsage=2
+PASS :texture_view_usage:format="depth32float";textureUsage=4
+PASS :texture_view_usage:format="depth32float";textureUsage=8
+PASS :texture_view_usage:format="depth32float";textureUsage=16
+PASS :texture_view_usage:format="depth24plus";textureUsage=1
+PASS :texture_view_usage:format="depth24plus";textureUsage=2
+PASS :texture_view_usage:format="depth24plus";textureUsage=4
+PASS :texture_view_usage:format="depth24plus";textureUsage=8
+PASS :texture_view_usage:format="depth24plus";textureUsage=16
+PASS :texture_view_usage:format="depth24plus-stencil8";textureUsage=1
+PASS :texture_view_usage:format="depth24plus-stencil8";textureUsage=2
+PASS :texture_view_usage:format="depth24plus-stencil8";textureUsage=4
+PASS :texture_view_usage:format="depth24plus-stencil8";textureUsage=8
+PASS :texture_view_usage:format="depth24plus-stencil8";textureUsage=16
+PASS :texture_view_usage:format="depth32float-stencil8";textureUsage=1
+PASS :texture_view_usage:format="depth32float-stencil8";textureUsage=2
+PASS :texture_view_usage:format="depth32float-stencil8";textureUsage=4
+PASS :texture_view_usage:format="depth32float-stencil8";textureUsage=8
+PASS :texture_view_usage:format="depth32float-stencil8";textureUsage=16
+PASS :texture_view_usage:format="bc1-rgba-unorm";textureUsage=1
+PASS :texture_view_usage:format="bc1-rgba-unorm";textureUsage=2
+PASS :texture_view_usage:format="bc1-rgba-unorm";textureUsage=4
+PASS :texture_view_usage:format="bc1-rgba-unorm";textureUsage=8
+PASS :texture_view_usage:format="bc1-rgba-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="bc1-rgba-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="bc1-rgba-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="bc1-rgba-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="bc2-rgba-unorm";textureUsage=1
+PASS :texture_view_usage:format="bc2-rgba-unorm";textureUsage=2
+PASS :texture_view_usage:format="bc2-rgba-unorm";textureUsage=4
+PASS :texture_view_usage:format="bc2-rgba-unorm";textureUsage=8
+PASS :texture_view_usage:format="bc2-rgba-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="bc2-rgba-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="bc2-rgba-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="bc2-rgba-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="bc3-rgba-unorm";textureUsage=1
+PASS :texture_view_usage:format="bc3-rgba-unorm";textureUsage=2
+PASS :texture_view_usage:format="bc3-rgba-unorm";textureUsage=4
+PASS :texture_view_usage:format="bc3-rgba-unorm";textureUsage=8
+PASS :texture_view_usage:format="bc3-rgba-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="bc3-rgba-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="bc3-rgba-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="bc3-rgba-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="bc4-r-unorm";textureUsage=1
+PASS :texture_view_usage:format="bc4-r-unorm";textureUsage=2
+PASS :texture_view_usage:format="bc4-r-unorm";textureUsage=4
+PASS :texture_view_usage:format="bc4-r-unorm";textureUsage=8
+PASS :texture_view_usage:format="bc4-r-snorm";textureUsage=1
+PASS :texture_view_usage:format="bc4-r-snorm";textureUsage=2
+PASS :texture_view_usage:format="bc4-r-snorm";textureUsage=4
+PASS :texture_view_usage:format="bc4-r-snorm";textureUsage=8
+PASS :texture_view_usage:format="bc5-rg-unorm";textureUsage=1
+PASS :texture_view_usage:format="bc5-rg-unorm";textureUsage=2
+PASS :texture_view_usage:format="bc5-rg-unorm";textureUsage=4
+PASS :texture_view_usage:format="bc5-rg-unorm";textureUsage=8
+PASS :texture_view_usage:format="bc5-rg-snorm";textureUsage=1
+PASS :texture_view_usage:format="bc5-rg-snorm";textureUsage=2
+PASS :texture_view_usage:format="bc5-rg-snorm";textureUsage=4
+PASS :texture_view_usage:format="bc5-rg-snorm";textureUsage=8
+PASS :texture_view_usage:format="bc6h-rgb-ufloat";textureUsage=1
+PASS :texture_view_usage:format="bc6h-rgb-ufloat";textureUsage=2
+PASS :texture_view_usage:format="bc6h-rgb-ufloat";textureUsage=4
+PASS :texture_view_usage:format="bc6h-rgb-ufloat";textureUsage=8
+PASS :texture_view_usage:format="bc6h-rgb-float";textureUsage=1
+PASS :texture_view_usage:format="bc6h-rgb-float";textureUsage=2
+PASS :texture_view_usage:format="bc6h-rgb-float";textureUsage=4
+PASS :texture_view_usage:format="bc6h-rgb-float";textureUsage=8
+PASS :texture_view_usage:format="bc7-rgba-unorm";textureUsage=1
+PASS :texture_view_usage:format="bc7-rgba-unorm";textureUsage=2
+PASS :texture_view_usage:format="bc7-rgba-unorm";textureUsage=4
+PASS :texture_view_usage:format="bc7-rgba-unorm";textureUsage=8
+PASS :texture_view_usage:format="bc7-rgba-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="bc7-rgba-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="bc7-rgba-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="bc7-rgba-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="etc2-rgb8unorm";textureUsage=1
+PASS :texture_view_usage:format="etc2-rgb8unorm";textureUsage=2
+PASS :texture_view_usage:format="etc2-rgb8unorm";textureUsage=4
+PASS :texture_view_usage:format="etc2-rgb8unorm";textureUsage=8
+PASS :texture_view_usage:format="etc2-rgb8unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="etc2-rgb8unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="etc2-rgb8unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="etc2-rgb8unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="etc2-rgb8a1unorm";textureUsage=1
+PASS :texture_view_usage:format="etc2-rgb8a1unorm";textureUsage=2
+PASS :texture_view_usage:format="etc2-rgb8a1unorm";textureUsage=4
+PASS :texture_view_usage:format="etc2-rgb8a1unorm";textureUsage=8
+PASS :texture_view_usage:format="etc2-rgb8a1unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="etc2-rgb8a1unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="etc2-rgb8a1unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="etc2-rgb8a1unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="etc2-rgba8unorm";textureUsage=1
+PASS :texture_view_usage:format="etc2-rgba8unorm";textureUsage=2
+PASS :texture_view_usage:format="etc2-rgba8unorm";textureUsage=4
+PASS :texture_view_usage:format="etc2-rgba8unorm";textureUsage=8
+PASS :texture_view_usage:format="etc2-rgba8unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="etc2-rgba8unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="etc2-rgba8unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="etc2-rgba8unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="eac-r11unorm";textureUsage=1
+PASS :texture_view_usage:format="eac-r11unorm";textureUsage=2
+PASS :texture_view_usage:format="eac-r11unorm";textureUsage=4
+PASS :texture_view_usage:format="eac-r11unorm";textureUsage=8
+PASS :texture_view_usage:format="eac-r11snorm";textureUsage=1
+PASS :texture_view_usage:format="eac-r11snorm";textureUsage=2
+PASS :texture_view_usage:format="eac-r11snorm";textureUsage=4
+PASS :texture_view_usage:format="eac-r11snorm";textureUsage=8
+PASS :texture_view_usage:format="eac-rg11unorm";textureUsage=1
+PASS :texture_view_usage:format="eac-rg11unorm";textureUsage=2
+PASS :texture_view_usage:format="eac-rg11unorm";textureUsage=4
+PASS :texture_view_usage:format="eac-rg11unorm";textureUsage=8
+PASS :texture_view_usage:format="eac-rg11snorm";textureUsage=1
+PASS :texture_view_usage:format="eac-rg11snorm";textureUsage=2
+PASS :texture_view_usage:format="eac-rg11snorm";textureUsage=4
+PASS :texture_view_usage:format="eac-rg11snorm";textureUsage=8
+PASS :texture_view_usage:format="astc-4x4-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-4x4-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-4x4-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-4x4-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-4x4-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-4x4-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-4x4-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-4x4-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-5x4-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-5x4-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-5x4-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-5x4-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-5x4-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-5x4-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-5x4-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-5x4-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-5x5-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-5x5-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-5x5-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-5x5-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-5x5-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-5x5-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-5x5-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-5x5-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-6x5-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-6x5-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-6x5-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-6x5-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-6x5-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-6x5-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-6x5-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-6x5-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-6x6-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-6x6-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-6x6-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-6x6-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-6x6-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-6x6-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-6x6-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-6x6-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-8x5-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-8x5-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-8x5-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-8x5-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-8x5-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-8x5-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-8x5-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-8x5-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-8x6-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-8x6-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-8x6-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-8x6-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-8x6-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-8x6-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-8x6-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-8x6-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-8x8-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-8x8-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-8x8-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-8x8-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-8x8-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-8x8-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-8x8-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-8x8-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-10x5-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-10x5-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-10x5-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-10x5-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-10x5-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-10x5-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-10x5-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-10x5-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-10x6-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-10x6-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-10x6-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-10x6-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-10x6-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-10x6-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-10x6-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-10x6-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-10x8-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-10x8-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-10x8-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-10x8-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-10x8-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-10x8-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-10x8-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-10x8-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-10x10-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-10x10-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-10x10-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-10x10-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-10x10-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-10x10-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-10x10-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-10x10-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-12x10-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-12x10-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-12x10-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-12x10-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-12x10-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-12x10-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-12x10-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-12x10-unorm-srgb";textureUsage=8
+PASS :texture_view_usage:format="astc-12x12-unorm";textureUsage=1
+PASS :texture_view_usage:format="astc-12x12-unorm";textureUsage=2
+PASS :texture_view_usage:format="astc-12x12-unorm";textureUsage=4
+PASS :texture_view_usage:format="astc-12x12-unorm";textureUsage=8
+PASS :texture_view_usage:format="astc-12x12-unorm-srgb";textureUsage=1
+PASS :texture_view_usage:format="astc-12x12-unorm-srgb";textureUsage=2
+PASS :texture_view_usage:format="astc-12x12-unorm-srgb";textureUsage=4
+PASS :texture_view_usage:format="astc-12x12-unorm-srgb";textureUsage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r8unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r8unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r8unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r8unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r8unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="r8snorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r8snorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r8snorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r8snorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r8snorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="r8uint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r8uint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r8uint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r8uint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r8uint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="r8sint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r8sint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r8sint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r8sint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r8sint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg8unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg8unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg8unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg8unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg8unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg8snorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg8snorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg8snorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg8snorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg8snorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg8uint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg8uint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg8uint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg8uint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg8uint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg8sint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg8sint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg8sint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg8sint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg8sint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8unorm";usage=4
+FAIL :texture_view_usage_with_view_format:textureFormat="rgba8unorm";usage=8 assert_unreached:
+  - (in subcase: viewFormat="r8unorm") SKIP: "rgba8unorm" and "r8unorm" are not view-compatible
+  - (in subcase: viewFormat="r8unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="r8snorm") SKIP: subcase skipped: "rgba8unorm" and "r8snorm" are not view-compatible
+  - (in subcase: viewFormat="r8snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="r8uint") SKIP: subcase skipped: "rgba8unorm" and "r8uint" are not view-compatible
+  - (in subcase: viewFormat="r8uint") INFO: subcase skipped
+  - (in subcase: viewFormat="r8sint") SKIP: subcase skipped: "rgba8unorm" and "r8sint" are not view-compatible
+  - (in subcase: viewFormat="r8sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg8unorm") SKIP: subcase skipped: "rgba8unorm" and "rg8unorm" are not view-compatible
+  - (in subcase: viewFormat="rg8unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rg8snorm") SKIP: subcase skipped: "rgba8unorm" and "rg8snorm" are not view-compatible
+  - (in subcase: viewFormat="rg8snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rg8uint") SKIP: subcase skipped: "rgba8unorm" and "rg8uint" are not view-compatible
+  - (in subcase: viewFormat="rg8uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg8sint") SKIP: subcase skipped: "rgba8unorm" and "rg8sint" are not view-compatible
+  - (in subcase: viewFormat="rg8sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba8unorm") INFO: subcase ran
+  - (in subcase: viewFormat="rgba8unorm-srgb") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createView.spec.js:443:26
+  - (in subcase: viewFormat="rgba8unorm-srgb") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createView.spec.js:451:26
+  - (in subcase: viewFormat="rgba8unorm-srgb") INFO: subcase ran
+  - (in subcase: viewFormat="rgba8snorm") SKIP: subcase skipped: "rgba8unorm" and "rgba8snorm" are not view-compatible
+  - (in subcase: viewFormat="rgba8snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba8uint") SKIP: subcase skipped: "rgba8unorm" and "rgba8uint" are not view-compatible
+  - (in subcase: viewFormat="rgba8uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba8sint") SKIP: subcase skipped: "rgba8unorm" and "rgba8sint" are not view-compatible
+  - (in subcase: viewFormat="rgba8sint") INFO: subcase skipped
+  - (in subcase: viewFormat="bgra8unorm") SKIP: subcase skipped: "rgba8unorm" and "bgra8unorm" are not view-compatible
+  - (in subcase: viewFormat="bgra8unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bgra8unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "bgra8unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="bgra8unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="r16unorm") SKIP: subcase skipped: "rgba8unorm" and "r16unorm" are not view-compatible
+  - (in subcase: viewFormat="r16unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="r16snorm") SKIP: subcase skipped: "rgba8unorm" and "r16snorm" are not view-compatible
+  - (in subcase: viewFormat="r16snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="r16uint") SKIP: subcase skipped: "rgba8unorm" and "r16uint" are not view-compatible
+  - (in subcase: viewFormat="r16uint") INFO: subcase skipped
+  - (in subcase: viewFormat="r16sint") SKIP: subcase skipped: "rgba8unorm" and "r16sint" are not view-compatible
+  - (in subcase: viewFormat="r16sint") INFO: subcase skipped
+  - (in subcase: viewFormat="r16float") SKIP: subcase skipped: "rgba8unorm" and "r16float" are not view-compatible
+  - (in subcase: viewFormat="r16float") INFO: subcase skipped
+  - (in subcase: viewFormat="rg16unorm") SKIP: subcase skipped: "rgba8unorm" and "rg16unorm" are not view-compatible
+  - (in subcase: viewFormat="rg16unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rg16snorm") SKIP: subcase skipped: "rgba8unorm" and "rg16snorm" are not view-compatible
+  - (in subcase: viewFormat="rg16snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rg16uint") SKIP: subcase skipped: "rgba8unorm" and "rg16uint" are not view-compatible
+  - (in subcase: viewFormat="rg16uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg16sint") SKIP: subcase skipped: "rgba8unorm" and "rg16sint" are not view-compatible
+  - (in subcase: viewFormat="rg16sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg16float") SKIP: subcase skipped: "rgba8unorm" and "rg16float" are not view-compatible
+  - (in subcase: viewFormat="rg16float") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba16unorm") SKIP: subcase skipped: "rgba8unorm" and "rgba16unorm" are not view-compatible
+  - (in subcase: viewFormat="rgba16unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba16snorm") SKIP: subcase skipped: "rgba8unorm" and "rgba16snorm" are not view-compatible
+  - (in subcase: viewFormat="rgba16snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba16uint") SKIP: subcase skipped: "rgba8unorm" and "rgba16uint" are not view-compatible
+  - (in subcase: viewFormat="rgba16uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba16sint") SKIP: subcase skipped: "rgba8unorm" and "rgba16sint" are not view-compatible
+  - (in subcase: viewFormat="rgba16sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba16float") SKIP: subcase skipped: "rgba8unorm" and "rgba16float" are not view-compatible
+  - (in subcase: viewFormat="rgba16float") INFO: subcase skipped
+  - (in subcase: viewFormat="r32uint") SKIP: subcase skipped: "rgba8unorm" and "r32uint" are not view-compatible
+  - (in subcase: viewFormat="r32uint") INFO: subcase skipped
+  - (in subcase: viewFormat="r32sint") SKIP: subcase skipped: "rgba8unorm" and "r32sint" are not view-compatible
+  - (in subcase: viewFormat="r32sint") INFO: subcase skipped
+  - (in subcase: viewFormat="r32float") SKIP: subcase skipped: "rgba8unorm" and "r32float" are not view-compatible
+  - (in subcase: viewFormat="r32float") INFO: subcase skipped
+  - (in subcase: viewFormat="rg32uint") SKIP: subcase skipped: "rgba8unorm" and "rg32uint" are not view-compatible
+  - (in subcase: viewFormat="rg32uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg32sint") SKIP: subcase skipped: "rgba8unorm" and "rg32sint" are not view-compatible
+  - (in subcase: viewFormat="rg32sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg32float") SKIP: subcase skipped: "rgba8unorm" and "rg32float" are not view-compatible
+  - (in subcase: viewFormat="rg32float") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba32uint") SKIP: subcase skipped: "rgba8unorm" and "rgba32uint" are not view-compatible
+  - (in subcase: viewFormat="rgba32uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba32sint") SKIP: subcase skipped: "rgba8unorm" and "rgba32sint" are not view-compatible
+  - (in subcase: viewFormat="rgba32sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba32float") SKIP: subcase skipped: "rgba8unorm" and "rgba32float" are not view-compatible
+  - (in subcase: viewFormat="rgba32float") INFO: subcase skipped
+  - (in subcase: viewFormat="rgb10a2uint") SKIP: subcase skipped: "rgba8unorm" and "rgb10a2uint" are not view-compatible
+  - (in subcase: viewFormat="rgb10a2uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgb10a2unorm") SKIP: subcase skipped: "rgba8unorm" and "rgb10a2unorm" are not view-compatible
+  - (in subcase: viewFormat="rgb10a2unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rg11b10ufloat") SKIP: subcase skipped: "rgba8unorm" and "rg11b10ufloat" are not view-compatible
+  - (in subcase: viewFormat="rg11b10ufloat") INFO: subcase skipped
+  - (in subcase: viewFormat="rgb9e5ufloat") SKIP: subcase skipped: "rgba8unorm" and "rgb9e5ufloat" are not view-compatible
+  - (in subcase: viewFormat="rgb9e5ufloat") INFO: subcase skipped
+  - (in subcase: viewFormat="stencil8") SKIP: subcase skipped: "rgba8unorm" and "stencil8" are not view-compatible
+  - (in subcase: viewFormat="stencil8") INFO: subcase skipped
+  - (in subcase: viewFormat="depth16unorm") SKIP: subcase skipped: "rgba8unorm" and "depth16unorm" are not view-compatible
+  - (in subcase: viewFormat="depth16unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="depth32float") SKIP: subcase skipped: "rgba8unorm" and "depth32float" are not view-compatible
+  - (in subcase: viewFormat="depth32float") INFO: subcase skipped
+  - (in subcase: viewFormat="depth24plus") SKIP: subcase skipped: "rgba8unorm" and "depth24plus" are not view-compatible
+  - (in subcase: viewFormat="depth24plus") INFO: subcase skipped
+  - (in subcase: viewFormat="depth24plus-stencil8") SKIP: subcase skipped: "rgba8unorm" and "depth24plus-stencil8" are not view-compatible
+  - (in subcase: viewFormat="depth24plus-stencil8") INFO: subcase skipped
+  - (in subcase: viewFormat="depth32float-stencil8") SKIP: subcase skipped: "rgba8unorm" and "depth32float-stencil8" are not view-compatible
+  - (in subcase: viewFormat="depth32float-stencil8") INFO: subcase skipped
+  - (in subcase: viewFormat="bc1-rgba-unorm") SKIP: subcase skipped: "rgba8unorm" and "bc1-rgba-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc1-rgba-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc1-rgba-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "bc1-rgba-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="bc1-rgba-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="bc2-rgba-unorm") SKIP: subcase skipped: "rgba8unorm" and "bc2-rgba-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc2-rgba-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc2-rgba-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "bc2-rgba-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="bc2-rgba-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="bc3-rgba-unorm") SKIP: subcase skipped: "rgba8unorm" and "bc3-rgba-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc3-rgba-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc3-rgba-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "bc3-rgba-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="bc3-rgba-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="bc4-r-unorm") SKIP: subcase skipped: "rgba8unorm" and "bc4-r-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc4-r-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc4-r-snorm") SKIP: subcase skipped: "rgba8unorm" and "bc4-r-snorm" are not view-compatible
+  - (in subcase: viewFormat="bc4-r-snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc5-rg-unorm") SKIP: subcase skipped: "rgba8unorm" and "bc5-rg-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc5-rg-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc5-rg-snorm") SKIP: subcase skipped: "rgba8unorm" and "bc5-rg-snorm" are not view-compatible
+  - (in subcase: viewFormat="bc5-rg-snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc6h-rgb-ufloat") SKIP: subcase skipped: "rgba8unorm" and "bc6h-rgb-ufloat" are not view-compatible
+  - (in subcase: viewFormat="bc6h-rgb-ufloat") INFO: subcase skipped
+  - (in subcase: viewFormat="bc6h-rgb-float") SKIP: subcase skipped: "rgba8unorm" and "bc6h-rgb-float" are not view-compatible
+  - (in subcase: viewFormat="bc6h-rgb-float") INFO: subcase skipped
+  - (in subcase: viewFormat="bc7-rgba-unorm") SKIP: subcase skipped: "rgba8unorm" and "bc7-rgba-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc7-rgba-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc7-rgba-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "bc7-rgba-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="bc7-rgba-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgb8unorm") SKIP: subcase skipped: "rgba8unorm" and "etc2-rgb8unorm" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgb8unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgb8unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "etc2-rgb8unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgb8unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgb8a1unorm") SKIP: subcase skipped: "rgba8unorm" and "etc2-rgb8a1unorm" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgb8a1unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgb8a1unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "etc2-rgb8a1unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgb8a1unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgba8unorm") SKIP: subcase skipped: "rgba8unorm" and "etc2-rgba8unorm" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgba8unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgba8unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "etc2-rgba8unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgba8unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="eac-r11unorm") SKIP: subcase skipped: "rgba8unorm" and "eac-r11unorm" are not view-compatible
+  - (in subcase: viewFormat="eac-r11unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="eac-r11snorm") SKIP: subcase skipped: "rgba8unorm" and "eac-r11snorm" are not view-compatible
+  - (in subcase: viewFormat="eac-r11snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="eac-rg11unorm") SKIP: subcase skipped: "rgba8unorm" and "eac-rg11unorm" are not view-compatible
+  - (in subcase: viewFormat="eac-rg11unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="eac-rg11snorm") SKIP: subcase skipped: "rgba8unorm" and "eac-rg11snorm" are not view-compatible
+  - (in subcase: viewFormat="eac-rg11snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-4x4-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-4x4-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-4x4-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-4x4-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-4x4-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-4x4-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-5x4-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-5x4-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-5x4-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-5x4-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-5x4-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-5x4-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-5x5-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-5x5-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-5x5-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-5x5-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-5x5-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-5x5-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-6x5-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-6x5-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-6x5-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-6x5-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-6x5-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-6x5-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-6x6-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-6x6-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-6x6-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-6x6-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-6x6-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-6x6-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x5-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-8x5-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-8x5-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x5-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-8x5-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-8x5-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x6-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-8x6-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-8x6-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x6-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-8x6-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-8x6-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x8-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-8x8-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-8x8-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x8-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-8x8-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-8x8-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x5-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-10x5-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-10x5-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x5-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-10x5-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-10x5-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x6-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-10x6-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-10x6-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x6-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-10x6-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-10x6-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x8-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-10x8-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-10x8-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x8-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-10x8-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-10x8-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x10-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-10x10-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-10x10-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x10-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-10x10-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-10x10-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-12x10-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-12x10-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-12x10-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-12x10-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-12x10-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-12x10-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-12x12-unorm") SKIP: subcase skipped: "rgba8unorm" and "astc-12x12-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-12x12-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-12x12-unorm-srgb") SKIP: subcase skipped: "rgba8unorm" and "astc-12x12-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-12x12-unorm-srgb") INFO: subcase skipped
+ Reached unreachable code
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8snorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8snorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8snorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8snorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8snorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8uint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8uint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8uint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8uint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8uint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8sint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8sint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8sint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8sint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba8sint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bgra8unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bgra8unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bgra8unorm";usage=4
+FAIL :texture_view_usage_with_view_format:textureFormat="bgra8unorm";usage=8 assert_unreached:
+  - (in subcase: viewFormat="r8unorm") SKIP: "bgra8unorm" and "r8unorm" are not view-compatible
+  - (in subcase: viewFormat="r8unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="r8snorm") SKIP: subcase skipped: "bgra8unorm" and "r8snorm" are not view-compatible
+  - (in subcase: viewFormat="r8snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="r8uint") SKIP: subcase skipped: "bgra8unorm" and "r8uint" are not view-compatible
+  - (in subcase: viewFormat="r8uint") INFO: subcase skipped
+  - (in subcase: viewFormat="r8sint") SKIP: subcase skipped: "bgra8unorm" and "r8sint" are not view-compatible
+  - (in subcase: viewFormat="r8sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg8unorm") SKIP: subcase skipped: "bgra8unorm" and "rg8unorm" are not view-compatible
+  - (in subcase: viewFormat="rg8unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rg8snorm") SKIP: subcase skipped: "bgra8unorm" and "rg8snorm" are not view-compatible
+  - (in subcase: viewFormat="rg8snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rg8uint") SKIP: subcase skipped: "bgra8unorm" and "rg8uint" are not view-compatible
+  - (in subcase: viewFormat="rg8uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg8sint") SKIP: subcase skipped: "bgra8unorm" and "rg8sint" are not view-compatible
+  - (in subcase: viewFormat="rg8sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba8unorm") SKIP: subcase skipped: "bgra8unorm" and "rgba8unorm" are not view-compatible
+  - (in subcase: viewFormat="rgba8unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba8unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "rgba8unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="rgba8unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba8snorm") SKIP: subcase skipped: "bgra8unorm" and "rgba8snorm" are not view-compatible
+  - (in subcase: viewFormat="rgba8snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba8uint") SKIP: subcase skipped: "bgra8unorm" and "rgba8uint" are not view-compatible
+  - (in subcase: viewFormat="rgba8uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba8sint") SKIP: subcase skipped: "bgra8unorm" and "rgba8sint" are not view-compatible
+  - (in subcase: viewFormat="rgba8sint") INFO: subcase skipped
+  - (in subcase: viewFormat="bgra8unorm") INFO: subcase ran
+  - (in subcase: viewFormat="bgra8unorm-srgb") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createView.spec.js:443:26
+  - (in subcase: viewFormat="bgra8unorm-srgb") VALIDATION FAILED: Validation succeeded unexpectedly.
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
+    expectValidationError@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1221:36
+    @http://127.0.0.1:8000/webgpu/webgpu/api/validation/createView.spec.js:451:26
+  - (in subcase: viewFormat="bgra8unorm-srgb") INFO: subcase ran
+  - (in subcase: viewFormat="r16unorm") SKIP: subcase skipped: "bgra8unorm" and "r16unorm" are not view-compatible
+  - (in subcase: viewFormat="r16unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="r16snorm") SKIP: subcase skipped: "bgra8unorm" and "r16snorm" are not view-compatible
+  - (in subcase: viewFormat="r16snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="r16uint") SKIP: subcase skipped: "bgra8unorm" and "r16uint" are not view-compatible
+  - (in subcase: viewFormat="r16uint") INFO: subcase skipped
+  - (in subcase: viewFormat="r16sint") SKIP: subcase skipped: "bgra8unorm" and "r16sint" are not view-compatible
+  - (in subcase: viewFormat="r16sint") INFO: subcase skipped
+  - (in subcase: viewFormat="r16float") SKIP: subcase skipped: "bgra8unorm" and "r16float" are not view-compatible
+  - (in subcase: viewFormat="r16float") INFO: subcase skipped
+  - (in subcase: viewFormat="rg16unorm") SKIP: subcase skipped: "bgra8unorm" and "rg16unorm" are not view-compatible
+  - (in subcase: viewFormat="rg16unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rg16snorm") SKIP: subcase skipped: "bgra8unorm" and "rg16snorm" are not view-compatible
+  - (in subcase: viewFormat="rg16snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rg16uint") SKIP: subcase skipped: "bgra8unorm" and "rg16uint" are not view-compatible
+  - (in subcase: viewFormat="rg16uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg16sint") SKIP: subcase skipped: "bgra8unorm" and "rg16sint" are not view-compatible
+  - (in subcase: viewFormat="rg16sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg16float") SKIP: subcase skipped: "bgra8unorm" and "rg16float" are not view-compatible
+  - (in subcase: viewFormat="rg16float") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba16unorm") SKIP: subcase skipped: "bgra8unorm" and "rgba16unorm" are not view-compatible
+  - (in subcase: viewFormat="rgba16unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba16snorm") SKIP: subcase skipped: "bgra8unorm" and "rgba16snorm" are not view-compatible
+  - (in subcase: viewFormat="rgba16snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba16uint") SKIP: subcase skipped: "bgra8unorm" and "rgba16uint" are not view-compatible
+  - (in subcase: viewFormat="rgba16uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba16sint") SKIP: subcase skipped: "bgra8unorm" and "rgba16sint" are not view-compatible
+  - (in subcase: viewFormat="rgba16sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba16float") SKIP: subcase skipped: "bgra8unorm" and "rgba16float" are not view-compatible
+  - (in subcase: viewFormat="rgba16float") INFO: subcase skipped
+  - (in subcase: viewFormat="r32uint") SKIP: subcase skipped: "bgra8unorm" and "r32uint" are not view-compatible
+  - (in subcase: viewFormat="r32uint") INFO: subcase skipped
+  - (in subcase: viewFormat="r32sint") SKIP: subcase skipped: "bgra8unorm" and "r32sint" are not view-compatible
+  - (in subcase: viewFormat="r32sint") INFO: subcase skipped
+  - (in subcase: viewFormat="r32float") SKIP: subcase skipped: "bgra8unorm" and "r32float" are not view-compatible
+  - (in subcase: viewFormat="r32float") INFO: subcase skipped
+  - (in subcase: viewFormat="rg32uint") SKIP: subcase skipped: "bgra8unorm" and "rg32uint" are not view-compatible
+  - (in subcase: viewFormat="rg32uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg32sint") SKIP: subcase skipped: "bgra8unorm" and "rg32sint" are not view-compatible
+  - (in subcase: viewFormat="rg32sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rg32float") SKIP: subcase skipped: "bgra8unorm" and "rg32float" are not view-compatible
+  - (in subcase: viewFormat="rg32float") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba32uint") SKIP: subcase skipped: "bgra8unorm" and "rgba32uint" are not view-compatible
+  - (in subcase: viewFormat="rgba32uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba32sint") SKIP: subcase skipped: "bgra8unorm" and "rgba32sint" are not view-compatible
+  - (in subcase: viewFormat="rgba32sint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgba32float") SKIP: subcase skipped: "bgra8unorm" and "rgba32float" are not view-compatible
+  - (in subcase: viewFormat="rgba32float") INFO: subcase skipped
+  - (in subcase: viewFormat="rgb10a2uint") SKIP: subcase skipped: "bgra8unorm" and "rgb10a2uint" are not view-compatible
+  - (in subcase: viewFormat="rgb10a2uint") INFO: subcase skipped
+  - (in subcase: viewFormat="rgb10a2unorm") SKIP: subcase skipped: "bgra8unorm" and "rgb10a2unorm" are not view-compatible
+  - (in subcase: viewFormat="rgb10a2unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="rg11b10ufloat") SKIP: subcase skipped: "bgra8unorm" and "rg11b10ufloat" are not view-compatible
+  - (in subcase: viewFormat="rg11b10ufloat") INFO: subcase skipped
+  - (in subcase: viewFormat="rgb9e5ufloat") SKIP: subcase skipped: "bgra8unorm" and "rgb9e5ufloat" are not view-compatible
+  - (in subcase: viewFormat="rgb9e5ufloat") INFO: subcase skipped
+  - (in subcase: viewFormat="stencil8") SKIP: subcase skipped: "bgra8unorm" and "stencil8" are not view-compatible
+  - (in subcase: viewFormat="stencil8") INFO: subcase skipped
+  - (in subcase: viewFormat="depth16unorm") SKIP: subcase skipped: "bgra8unorm" and "depth16unorm" are not view-compatible
+  - (in subcase: viewFormat="depth16unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="depth32float") SKIP: subcase skipped: "bgra8unorm" and "depth32float" are not view-compatible
+  - (in subcase: viewFormat="depth32float") INFO: subcase skipped
+  - (in subcase: viewFormat="depth24plus") SKIP: subcase skipped: "bgra8unorm" and "depth24plus" are not view-compatible
+  - (in subcase: viewFormat="depth24plus") INFO: subcase skipped
+  - (in subcase: viewFormat="depth24plus-stencil8") SKIP: subcase skipped: "bgra8unorm" and "depth24plus-stencil8" are not view-compatible
+  - (in subcase: viewFormat="depth24plus-stencil8") INFO: subcase skipped
+  - (in subcase: viewFormat="depth32float-stencil8") SKIP: subcase skipped: "bgra8unorm" and "depth32float-stencil8" are not view-compatible
+  - (in subcase: viewFormat="depth32float-stencil8") INFO: subcase skipped
+  - (in subcase: viewFormat="bc1-rgba-unorm") SKIP: subcase skipped: "bgra8unorm" and "bc1-rgba-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc1-rgba-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc1-rgba-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "bc1-rgba-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="bc1-rgba-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="bc2-rgba-unorm") SKIP: subcase skipped: "bgra8unorm" and "bc2-rgba-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc2-rgba-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc2-rgba-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "bc2-rgba-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="bc2-rgba-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="bc3-rgba-unorm") SKIP: subcase skipped: "bgra8unorm" and "bc3-rgba-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc3-rgba-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc3-rgba-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "bc3-rgba-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="bc3-rgba-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="bc4-r-unorm") SKIP: subcase skipped: "bgra8unorm" and "bc4-r-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc4-r-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc4-r-snorm") SKIP: subcase skipped: "bgra8unorm" and "bc4-r-snorm" are not view-compatible
+  - (in subcase: viewFormat="bc4-r-snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc5-rg-unorm") SKIP: subcase skipped: "bgra8unorm" and "bc5-rg-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc5-rg-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc5-rg-snorm") SKIP: subcase skipped: "bgra8unorm" and "bc5-rg-snorm" are not view-compatible
+  - (in subcase: viewFormat="bc5-rg-snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc6h-rgb-ufloat") SKIP: subcase skipped: "bgra8unorm" and "bc6h-rgb-ufloat" are not view-compatible
+  - (in subcase: viewFormat="bc6h-rgb-ufloat") INFO: subcase skipped
+  - (in subcase: viewFormat="bc6h-rgb-float") SKIP: subcase skipped: "bgra8unorm" and "bc6h-rgb-float" are not view-compatible
+  - (in subcase: viewFormat="bc6h-rgb-float") INFO: subcase skipped
+  - (in subcase: viewFormat="bc7-rgba-unorm") SKIP: subcase skipped: "bgra8unorm" and "bc7-rgba-unorm" are not view-compatible
+  - (in subcase: viewFormat="bc7-rgba-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="bc7-rgba-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "bc7-rgba-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="bc7-rgba-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgb8unorm") SKIP: subcase skipped: "bgra8unorm" and "etc2-rgb8unorm" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgb8unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgb8unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "etc2-rgb8unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgb8unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgb8a1unorm") SKIP: subcase skipped: "bgra8unorm" and "etc2-rgb8a1unorm" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgb8a1unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgb8a1unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "etc2-rgb8a1unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgb8a1unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgba8unorm") SKIP: subcase skipped: "bgra8unorm" and "etc2-rgba8unorm" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgba8unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="etc2-rgba8unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "etc2-rgba8unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="etc2-rgba8unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="eac-r11unorm") SKIP: subcase skipped: "bgra8unorm" and "eac-r11unorm" are not view-compatible
+  - (in subcase: viewFormat="eac-r11unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="eac-r11snorm") SKIP: subcase skipped: "bgra8unorm" and "eac-r11snorm" are not view-compatible
+  - (in subcase: viewFormat="eac-r11snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="eac-rg11unorm") SKIP: subcase skipped: "bgra8unorm" and "eac-rg11unorm" are not view-compatible
+  - (in subcase: viewFormat="eac-rg11unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="eac-rg11snorm") SKIP: subcase skipped: "bgra8unorm" and "eac-rg11snorm" are not view-compatible
+  - (in subcase: viewFormat="eac-rg11snorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-4x4-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-4x4-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-4x4-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-4x4-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-4x4-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-4x4-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-5x4-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-5x4-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-5x4-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-5x4-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-5x4-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-5x4-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-5x5-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-5x5-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-5x5-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-5x5-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-5x5-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-5x5-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-6x5-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-6x5-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-6x5-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-6x5-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-6x5-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-6x5-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-6x6-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-6x6-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-6x6-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-6x6-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-6x6-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-6x6-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x5-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-8x5-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-8x5-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x5-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-8x5-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-8x5-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x6-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-8x6-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-8x6-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x6-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-8x6-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-8x6-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x8-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-8x8-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-8x8-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-8x8-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-8x8-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-8x8-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x5-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-10x5-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-10x5-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x5-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-10x5-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-10x5-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x6-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-10x6-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-10x6-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x6-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-10x6-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-10x6-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x8-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-10x8-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-10x8-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x8-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-10x8-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-10x8-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x10-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-10x10-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-10x10-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-10x10-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-10x10-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-10x10-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-12x10-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-12x10-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-12x10-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-12x10-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-12x10-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-12x10-unorm-srgb") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-12x12-unorm") SKIP: subcase skipped: "bgra8unorm" and "astc-12x12-unorm" are not view-compatible
+  - (in subcase: viewFormat="astc-12x12-unorm") INFO: subcase skipped
+  - (in subcase: viewFormat="astc-12x12-unorm-srgb") SKIP: subcase skipped: "bgra8unorm" and "astc-12x12-unorm-srgb" are not view-compatible
+  - (in subcase: viewFormat="astc-12x12-unorm-srgb") INFO: subcase skipped
+ Reached unreachable code
+PASS :texture_view_usage_with_view_format:textureFormat="bgra8unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bgra8unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bgra8unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bgra8unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bgra8unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bgra8unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="r16unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r16unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r16unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r16unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r16unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="r16snorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r16snorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r16snorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r16snorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r16snorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="r16uint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r16uint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r16uint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r16uint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r16uint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="r16sint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r16sint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r16sint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r16sint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r16sint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="r16float";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r16float";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r16float";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r16float";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r16float";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg16unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg16unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg16unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg16unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg16unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg16snorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg16snorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg16snorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg16snorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg16snorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg16uint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg16uint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg16uint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg16uint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg16uint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg16sint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg16sint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg16sint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg16sint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg16sint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg16float";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg16float";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg16float";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg16float";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg16float";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16snorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16snorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16snorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16snorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16snorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16uint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16uint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16uint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16uint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16uint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16sint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16sint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16sint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16sint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16sint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16float";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16float";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16float";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16float";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba16float";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="r32uint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r32uint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r32uint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r32uint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r32uint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="r32sint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r32sint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r32sint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r32sint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r32sint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="r32float";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="r32float";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="r32float";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="r32float";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="r32float";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg32uint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg32uint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg32uint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg32uint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg32uint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg32sint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg32sint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg32sint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg32sint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg32sint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg32float";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg32float";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg32float";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg32float";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg32float";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32uint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32uint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32uint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32uint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32uint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32sint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32sint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32sint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32sint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32sint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32float";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32float";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32float";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32float";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgba32float";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgb10a2uint";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgb10a2uint";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgb10a2uint";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgb10a2uint";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgb10a2uint";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgb10a2unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgb10a2unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgb10a2unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgb10a2unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgb10a2unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rg11b10ufloat";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rg11b10ufloat";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rg11b10ufloat";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rg11b10ufloat";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rg11b10ufloat";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="rgb9e5ufloat";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="rgb9e5ufloat";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="rgb9e5ufloat";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="rgb9e5ufloat";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="rgb9e5ufloat";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="stencil8";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="stencil8";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="stencil8";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="stencil8";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="stencil8";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="depth16unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="depth16unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="depth16unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="depth16unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="depth16unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="depth32float";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="depth32float";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="depth32float";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="depth32float";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="depth32float";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="depth24plus";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="depth24plus";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="depth24plus";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="depth24plus";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="depth24plus";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="depth24plus-stencil8";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="depth24plus-stencil8";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="depth24plus-stencil8";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="depth24plus-stencil8";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="depth24plus-stencil8";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="depth32float-stencil8";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="depth32float-stencil8";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="depth32float-stencil8";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="depth32float-stencil8";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="depth32float-stencil8";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc1-rgba-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc1-rgba-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc1-rgba-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc1-rgba-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc1-rgba-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc1-rgba-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc1-rgba-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc1-rgba-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc1-rgba-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc1-rgba-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc2-rgba-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc2-rgba-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc2-rgba-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc2-rgba-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc2-rgba-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc2-rgba-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc2-rgba-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc2-rgba-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc2-rgba-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc2-rgba-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc3-rgba-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc3-rgba-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc3-rgba-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc3-rgba-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc3-rgba-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc3-rgba-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc3-rgba-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc3-rgba-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc3-rgba-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc3-rgba-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc4-r-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc4-r-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc4-r-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc4-r-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc4-r-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc4-r-snorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc4-r-snorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc4-r-snorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc4-r-snorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc4-r-snorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc5-rg-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc5-rg-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc5-rg-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc5-rg-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc5-rg-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc5-rg-snorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc5-rg-snorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc5-rg-snorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc5-rg-snorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc5-rg-snorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc6h-rgb-ufloat";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc6h-rgb-ufloat";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc6h-rgb-ufloat";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc6h-rgb-ufloat";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc6h-rgb-ufloat";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc6h-rgb-float";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc6h-rgb-float";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc6h-rgb-float";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc6h-rgb-float";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc6h-rgb-float";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc7-rgba-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc7-rgba-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc7-rgba-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc7-rgba-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc7-rgba-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="bc7-rgba-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="bc7-rgba-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="bc7-rgba-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="bc7-rgba-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="bc7-rgba-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8a1unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8a1unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8a1unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8a1unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8a1unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8a1unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8a1unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8a1unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8a1unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgb8a1unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgba8unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgba8unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgba8unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgba8unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgba8unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgba8unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgba8unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgba8unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgba8unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="etc2-rgba8unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="eac-r11unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="eac-r11unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="eac-r11unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="eac-r11unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="eac-r11unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="eac-r11snorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="eac-r11snorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="eac-r11snorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="eac-r11snorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="eac-r11snorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="eac-rg11unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="eac-rg11unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="eac-rg11unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="eac-rg11unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="eac-rg11unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="eac-rg11snorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="eac-rg11snorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="eac-rg11snorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="eac-rg11snorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="eac-rg11snorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-4x4-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-4x4-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-4x4-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-4x4-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-4x4-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-4x4-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-4x4-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-4x4-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-4x4-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-4x4-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x4-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x4-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x4-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x4-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x4-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x4-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x4-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x4-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x4-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x4-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x5-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x5-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x5-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x5-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x5-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x5-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x5-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x5-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x5-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-5x5-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x5-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x5-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x5-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x5-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x5-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x5-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x5-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x5-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x5-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x5-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x6-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x6-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x6-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x6-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x6-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x6-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x6-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x6-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x6-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-6x6-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x5-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x5-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x5-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x5-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x5-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x5-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x5-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x5-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x5-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x5-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x6-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x6-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x6-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x6-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x6-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x6-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x6-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x6-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x6-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x6-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x8-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x8-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x8-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x8-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x8-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x8-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x8-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x8-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x8-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-8x8-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x5-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x5-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x5-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x5-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x5-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x5-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x5-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x5-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x5-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x5-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x6-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x6-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x6-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x6-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x6-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x6-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x6-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x6-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x6-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x6-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x8-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x8-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x8-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x8-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x8-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x8-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x8-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x8-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x8-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x8-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x10-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x10-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x10-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x10-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x10-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x10-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x10-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x10-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x10-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-10x10-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x10-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x10-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x10-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x10-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x10-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x10-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x10-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x10-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x10-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x10-unorm-srgb";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x12-unorm";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x12-unorm";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x12-unorm";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x12-unorm";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x12-unorm";usage=16
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x12-unorm-srgb";usage=1
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x12-unorm-srgb";usage=2
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x12-unorm-srgb";usage=4
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x12-unorm-srgb";usage=8
+PASS :texture_view_usage_with_view_format:textureFormat="astc-12x12-unorm-srgb";usage=16
+

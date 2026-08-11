@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/style.css" />
+        <title>TipTap Test</title>
+    </head>
+    <body>
+        <div id="app">
+            <div id="controls">
+                <button id="create">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-square-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
+                        <path d="M9 12l6 0"></path>
+                        <path d="M12 9l0 6"></path>
+                    </svg>
+                    Create
+                </button>
+                &nbsp;
+                <button id="long">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="icon icon-tabler icon-tabler-arrow-big-up-lines-filled"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path
+                            d="M10.586 3l-6.586 6.586a2 2 0 0 0 -.434 2.18l.068 .145a2 2 0 0 0 1.78 1.089h2.586v2a1 1 0 0 0 1 1h6l.117 -.007a1 1 0 0 0 .883 -.993l-.001 -2h2.587a2 2 0 0 0 1.414 -3.414l-6.586 -6.586a2 2 0 0 0 -2.828 0z"
+                            stroke-width="0"
+                            fill="currentColor"
+                        ></path>
+                        <path d="M15 20a1 1 0 0 1 .117 1.993l-.117 .007h-6a1 1 0 0 1 -.117 -1.993l.117 -.007h6z" stroke-width="0" fill="currentColor"></path>
+                        <path d="M15 17a1 1 0 0 1 .117 1.993l-.117 .007h-6a1 1 0 0 1 -.117 -1.993l.117 -.007h6z" stroke-width="0" fill="currentColor"></path>
+                    </svg>
+                    Long text
+                </button>
+                <button id="short">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="icon icon-tabler icon-tabler-arrow-big-down-lines-filled"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path
+                            d="M9 8l-.117 .007a1 1 0 0 0 -.883 .993v1.999l-2.586 .001a2 2 0 0 0 -1.414 3.414l6.586 6.586a2 2 0 0 0 2.828 0l6.586 -6.586a2 2 0 0 0 .434 -2.18l-.068 -.145a2 2 0 0 0 -1.78 -1.089l-2.586 -.001v-1.999a1 1 0 0 0 -1 -1h-6z"
+                            stroke-width="0"
+                            fill="currentColor"
+                        ></path>
+                        <path d="M15 2a1 1 0 0 1 .117 1.993l-.117 .007h-6a1 1 0 0 1 -.117 -1.993l.117 -.007h6z" stroke-width="0" fill="currentColor"></path>
+                        <path d="M15 5a1 1 0 0 1 .117 1.993l-.117 .007h-6a1 1 0 0 1 -.117 -1.993l.117 -.007h6z" stroke-width="0" fill="currentColor"></path>
+                    </svg>
+                    Short text
+                </button>
+                &nbsp;
+                <button id="highlight">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-highlight" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M3 19h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"></path>
+                        <path d="M12.5 5.5l4 4"></path>
+                        <path d="M4.5 13.5l4 4"></path>
+                        <path d="M21 15v4h-8l4 -4z"></path>
+                    </svg>
+                    Highlight
+                </button>
+                <button id="unhighlight">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="icon icon-tabler icon-tabler-highlight-off"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M9 9l-6 6v4h4l6 -6m2 -2l2.503 -2.503a2.828 2.828 0 1 0 -4 -4l-2.497 2.497"></path>
+                        <path d="M12.5 5.5l4 4"></path>
+                        <path d="M4.5 13.5l4 4"></path>
+                        <path d="M19 15h2v2m-2 2h-6l3 -3"></path>
+                        <path d="M3 3l18 18"></path>
+                    </svg>
+                    Unhighlight
+                </button>
+                &nbsp;
+                <button id="scroll">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-line-height" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M3 8l3 -3l3 3"></path>
+                        <path d="M3 16l3 3l3 -3"></path>
+                        <path d="M6 5l0 14"></path>
+                        <path d="M13 6l7 0"></path>
+                        <path d="M13 12l7 0"></path>
+                        <path d="M13 18l7 0"></path>
+                    </svg>
+                    Scroll
+                </button>
+                &nbsp;
+                <button id="layout">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-refresh-dot" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"></path>
+                        <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path>
+                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="editor"></div>
+        </div>
+        <script type="module">
+            import { text as shorttext } from "./shorttext.js";
+            import { text as longtext } from "./longtext.js";
+            import editor from "./tiptap.js";
+
+            let editorContainer = document.querySelector("#editor");
+            let editorInstance = null;
+
+            let buttons = {
+                create: document.querySelector("#create"),
+                highlight: document.querySelector("#highlight"),
+                unhighlight: document.querySelector("#unhighlight"),
+                long: document.querySelector("#long"),
+                short: document.querySelector("#short"),
+                scroll: document.querySelector("#scroll"),
+                layout: document.querySelector("#layout"),
+            };
+            buttons.scroll.addEventListener("click", scroll);
+            buttons.highlight.addEventListener("click", highlight);
+            buttons.unhighlight.addEventListener("click", unhighlight);
+            buttons.long.addEventListener("click", long);
+            buttons.short.addEventListener("click", short);
+            buttons.layout.addEventListener("click", layout);
+
+            buttons.create.addEventListener("click", (e) => {
+                if (!editorInstance) {
+                    editorInstance = editor(editorContainer);
+                    editorInstance.ready.then(() => {
+                        buttons.unhighlight.classList.add("active", "true");
+                        buttons.create.setAttribute("disabled", "true");
+                    });
+                }
+            });
+
+            function layout() {
+                // Todo - is this necessary with the runner?
+                const body = document.body.getBoundingClientRect();
+                layout.e = document.elementFromPoint((body.width / 2) | 0, (body.height / 2) | 0);
+            }
+
+            function highlight() {
+                buttons.unhighlight.classList.toggle("active", false);
+                buttons.highlight.classList.toggle("active", true);
+                editorInstance.format(true);
+            }
+            function unhighlight() {
+                buttons.unhighlight.classList.toggle("active", true);
+                buttons.highlight.classList.toggle("active", false);
+                editorInstance.format(false);
+            }
+            function long() {
+                buttons.short.classList.toggle("active", false);
+                buttons.long.classList.toggle("active", true);
+                editorInstance.setValue(longtext);
+            }
+            function short() {
+                buttons.short.classList.toggle("active", true);
+                buttons.long.classList.toggle("active", false);
+                editorInstance.setValue(shorttext);
+            }
+
+            function scroll() {
+                let isTop = editorInstance.getScrollTop() == 0;
+                editorInstance.setScrollTop(isTop ? editorInstance.getScrollHeight() : 0);
+            }
+        </script>
+    </body>
+</html>

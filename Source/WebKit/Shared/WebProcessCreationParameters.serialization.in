@@ -1,0 +1,251 @@
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+using WebCore::SystemSettings::State = WebCore::SystemSettingsState;
+#endif
+
+[RValue, DebugDecodingFailure] struct WebKit::WebProcessCreationParameters {
+    WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
+    String injectedBundlePath;
+    WebKit::SandboxExtensionHandle injectedBundlePathExtensionHandle;
+    Vector<WebKit::SandboxExtensionHandle> additionalSandboxExtensionHandles;
+
+    WebKit::UserData initializationUserData;
+
+#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
+    Vector<WebKit::SandboxExtensionHandle> enableRemoteWebInspectorExtensionHandles;
+#endif
+
+    Vector<String> urlSchemesRegisteredAsEmptyDocument;
+    Vector<String> urlSchemesRegisteredAsSecure;
+    Vector<String> urlSchemesRegisteredAsBypassingContentSecurityPolicy;
+    Vector<String> urlSchemesForWhichDomainRelaxationIsForbidden;
+    Vector<String> urlSchemesRegisteredAsLocal;
+#if ENABLE(ALL_LEGACY_REGISTERED_SPECIAL_URL_SCHEMES)
+    Vector<String> urlSchemesRegisteredAsNoAccess;
+#endif
+    Vector<String> urlSchemesRegisteredAsDisplayIsolated;
+    Vector<String> urlSchemesRegisteredAsCORSEnabled;
+    Vector<String> urlSchemesRegisteredAsAlwaysRevalidated;
+    Vector<String> urlSchemesRegisteredAsCachePartitioned;
+    Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    Vector<String> urlSchemesRegisteredAsWebExtensions;
+#endif
+
+    Vector<String> fontAllowList;
+    Vector<String> overrideLanguages;
+#if USE(GSTREAMER)
+    Vector<String> gstreamerOptions;
+#endif
+
+    WebKit::CacheModel cacheModel;
+
+    Markable<double> defaultRequestTimeoutInterval;
+    unsigned backForwardCacheCapacity;
+
+    bool shouldAlwaysUseComplexTextCodePath;
+    bool shouldEnableMemoryPressureReliefLogging;
+    bool shouldSuppressMemoryPressureHandler;
+    bool disableFontSubpixelAntialiasingForTesting;
+    bool fullKeyboardAccessEnabled;
+#if HAVE(MOUSE_DEVICE_OBSERVATION)
+    bool hasMouseDevice;
+#endif
+#if HAVE(STYLUS_DEVICE_OBSERVATION)
+    bool hasStylusDevice;
+#endif
+    bool memoryCacheDisabled;
+    bool attrStyleEnabled;
+    bool shouldThrowExceptionForGlobalConstantRedeclaration;
+    WebCore::CrossOriginMode crossOriginMode;
+    WebKit::JSCOptionsForWebProcess jscOptions;
+
+#if ENABLE(SERVICE_CONTROLS)
+    bool hasImageServices;
+    bool hasSelectionServices;
+    bool hasRichContentServices;
+#endif
+
+    OptionSet<WebKit::TextCheckerState> textCheckerState;
+
+#if PLATFORM(COCOA)
+    String uiProcessBundleIdentifier;
+    int latencyQOS;
+    int throughputQOS;
+#endif
+
+    ProcessID presentingApplicationPID;
+
+#if PLATFORM(COCOA)
+    String uiProcessBundleResourcePath;
+    WebKit::SandboxExtensionHandle uiProcessBundleResourcePathExtensionHandle;
+
+    bool shouldEnableJIT;
+    bool shouldEnableFTLJIT;
+    bool accessibilityEnhancedUserInterfaceEnabled;
+    
+    RefPtr<API::Data> bundleParameterData;
+#endif // PLATFORM(COCOA)
+
+#if ENABLE(NOTIFICATIONS)
+    HashMap<String, bool> notificationPermissions;
+#endif
+
+#if PLATFORM(WAYLAND)
+    String waylandCompositorDisplayName;
+#endif
+
+#if PLATFORM(COCOA)
+    Vector<String> mediaMIMETypes;
+    HashMap<String, bool> mediaSourceTypesSupported;
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+    WebCore::ScreenProperties screenProperties;
+#endif
+
+#if !RELEASE_LOG_DISABLED
+    bool shouldLogUserInteraction;
+#endif
+
+#if PLATFORM(MAC)
+    bool useOverlayScrollbars;
+#endif
+
+#if USE(WPE_RENDERER)
+    bool isServiceWorkerProcess;
+    UnixFileDescriptor hostClientFileDescriptor;
+    CString implementationLibraryName;
+#endif
+
+    std::optional<WebKit::WebProcessDataStoreParameters> websiteDataStoreParameters;
+
+#if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && !ENABLE(LAUNCHSERVICES_SANDBOX_EXTENSION_BLOCKING)
+    std::optional<WebKit::SandboxExtensionHandle> launchServicesExtensionHandle;
+#endif
+
+#if (PLATFORM(MAC) || PLATFORM(MACCATALYST)) && HAVE(VIDEO_RESTRICTED_DECODING) && !ENABLE(TRUSTD_BLOCKING_IN_WEBCONTENT)
+    WebKit::SandboxExtensionHandle trustdExtensionHandle;
+#endif
+#if HAVE(VIDEO_RESTRICTED_DECODING)
+    bool enableDecodingHEIC;
+    bool enableDecodingAVIF;
+#endif
+
+#if PLATFORM(VISION)
+    Vector<WebKit::SandboxExtensionHandle> metalCacheDirectoryExtensionHandles;
+#endif
+
+#if PLATFORM(COCOA)
+    bool systemHasBattery;
+    bool systemHasAC;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    PAL::UserInterfaceIdiom currentUserInterfaceIdiom;
+    bool supportsPictureInPicture;
+    WebCore::CSSValueToSystemColorMap cssValueToSystemColorMap;
+    WebCore::Color focusRingColor;
+    String localizedDeviceModel;
+    String contentSizeCategory;
+#endif
+
+#endif
+
+#if USE(GBM)
+    WebCore::DRMDevice drmDevice;
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    OptionSet<WebKit::RendererBufferTransportMode> rendererBufferTransportMode;
+    WebCore::SystemSettings::State systemSettings;
+    std::optional<WTF::MemoryPressureHandler::Configuration> memoryPressureHandlerConfiguration;
+    bool disableFontHintingForTesting;
+    OptionSet<WebKit::AvailableInputDevices> availableInputDevices;
+#endif
+
+#if PLATFORM(GTK)
+    bool useSystemAppearanceForScrollbars;
+#endif
+
+#if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
+    std::pair<int64_t, double> overrideUserInterfaceIdiomAndScale;
+#endif
+
+#if HAVE(IOSURFACE)
+    WebCore::IntSize maximumIOSurfaceSize;
+    uint64_t bytesPerRowIOSurfaceAlignment;
+#endif
+    
+    WebKit::AccessibilityPreferences accessibilityPreferences;
+#if PLATFORM(IOS_FAMILY)
+    bool applicationAccessibilityEnabled;
+#endif
+
+#if USE(GLIB)
+    String applicationID;
+    String applicationName;
+#endif
+#if USE(GLIB) && ENABLE(REMOTE_INSPECTOR)
+    CString inspectorServerAddress;
+#endif
+
+#if USE(ATSPI)
+    String accessibilityBusAddress;
+    String accessibilityBusName;
+#endif
+
+    String timeZoneOverride;
+
+    HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
+    HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
+    WebKit::ScriptTrackingPrivacyRules scriptTrackingPrivacyRules;
+
+    Seconds memoryFootprintPollIntervalForTesting;
+    Vector<uint64_t> memoryFootprintNotificationThresholds;
+
+    std::optional<Seconds> overridePersistentNotificationMinimumLifetime;
+
+#if ENABLE(NOTIFY_BLOCKING)
+    Vector<std::pair<String, uint64_t>> notifyState;
+#endif
+
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+    bool shouldInitializeAccessibility;
+#endif
+
+#if HAVE(LIQUID_GLASS)
+    bool isLiquidGlassEnabled;
+#endif
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    bool isDebugLoggingEnabled;
+#endif
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)
+    bool shouldEnableWebAssemblyDebugger;
+#endif
+};

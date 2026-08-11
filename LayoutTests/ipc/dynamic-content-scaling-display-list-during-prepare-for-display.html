@@ -1,0 +1,93 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>RemoteImageBufferSet rejects DynamicContentScalingDisplayList during prepare-for-display</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ipc.js"></script>
+<body>
+<script>
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+    if (!IPC.messages.RemoteImageBufferSet_DynamicContentScalingDisplayList)
+        return;
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const streamConnection = CoreIPC.newStreamConnection();
+    const renderingBackendIdentifier = randomIPCID();
+
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: renderingBackendIdentifier,
+        connectionHandle: streamConnection
+    });
+
+    const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+    const didInitializeReply = streamConnection.connection.waitForMessage(
+        renderingBackendIdentifier,
+        IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name,
+        1
+    );
+    streamConnection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
+
+    const imageBufferSetIdentifier = randomIPCID();
+    const graphicsContextIdentifier = randomIPCID();
+
+    remoteRenderingBackend.CreateImageBufferSet({
+        identifier: imageBufferSetIdentifier,
+        contextIdentifier: graphicsContextIdentifier,
+    });
+
+    const remoteImageBufferSet = streamConnection.newInterface("RemoteImageBufferSet", imageBufferSetIdentifier);
+
+    remoteImageBufferSet.UpdateConfiguration({
+        configuration: {
+            logicalSize: { width: 128, height: 128 },
+            resolutionScale: 1.0,
+            colorSpace: {
+                serializableColorSpace: {
+                    alias: {
+                        optionalValue: {
+                            m_cgColorSpace: {
+                                alias: {
+                                    variantType: 'WebCore::ColorSpace',
+                                    variant: 19
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            contentsFormat: 1,
+            bufferFormat: { pixelFormat: 2, useLosslessCompression: 0 },
+            renderingMode: 1,
+            renderingPurpose: 3,
+            includeDisplayList: 1,
+        },
+    });
+
+    // Begin prepare-for-display: this allocates the front buffer as a
+    // DynamicContentScalingBifurcatedImageBuffer and creates the
+    // RemoteImageBufferGraphicsContext receiver. We do not send EndPrepareForDisplay,
+    // so RemoteImageBufferSet::m_context (and the raw GraphicsContext& it holds via
+    // RemoteGraphicsContext::m_context) is still live for the assertion below.
+    remoteRenderingBackend.PrepareImageBufferSetsForDisplaySync({
+        swapBuffersInput: [{
+            remoteBufferSet: imageBufferSetIdentifier,
+            dirtyRegion: { data: { m_segments: [], m_spans: [] } },
+            supportsPartialRepaint: false,
+            hasEmptyDirtyRegion: false,
+            requiresClearedPixels: false,
+        }],
+    });
+
+    try {
+        assert_throws_js(TypeError,
+            () => remoteImageBufferSet.DynamicContentScalingDisplayList({}),
+            "DynamicContentScalingDisplayList during prepare-for-display must be rejected by MESSAGE_CHECK");
+    } finally {
+        streamConnection.connection.invalidate();
+    }
+}, "RemoteImageBufferSet rejects DynamicContentScalingDisplayList during prepare-for-display");
+</script>
+</body>

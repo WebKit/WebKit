@@ -1,0 +1,10 @@
+
+This test verifies that dead keys don't break text input if keydown is prevented. To manually run the test, type Option+E and then O, and verify that ó is inserted.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS input.value is "óâÿ"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

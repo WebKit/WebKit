@@ -1,0 +1,12 @@
+
+PASS Stability with large fftSize 4096 at 3000Hz & hint 1
+PASS Default fftSize processing at 3000Hz & hint 1
+PASS Stability with large fftSize 4096 at 48000Hz & hint 256
+PASS Default fftSize processing at 48000Hz & hint 256
+PASS Stability with large fftSize 4096 at 48000Hz & hint 100
+PASS Default fftSize processing at 48000Hz & hint 100
+PASS Stability with large fftSize 4096 at 192000Hz & hint 4096
+PASS Default fftSize processing at 192000Hz & hint 4096
+PASS Stability with large fftSize 4096 at 11000Hz & hint 66000
+PASS Default fftSize processing at 11000Hz & hint 66000
+

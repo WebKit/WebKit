@@ -1,0 +1,17 @@
+
+PASS e.style['top'] = "--func(myident)" should set the property value
+PASS e.style['top'] = "--func(--myident)" should set the property value
+PASS e.style['top'] = "--func(--)" should set the property value
+PASS e.style['top'] = "--func(50px --myident:)" should set the property value
+FAIL e.style['top'] = "--func(--myident:)" should not set the property value assert_equals: expected "" but got "--func(--myident:)"
+FAIL e.style['top'] = "--func( --myident:)" should not set the property value assert_equals: expected "" but got "--func( --myident:)"
+FAIL e.style['top'] = "--func(--myident :)" should not set the property value assert_equals: expected "" but got "--func(--myident :)"
+FAIL e.style['top'] = "--func(--myident: )" should not set the property value assert_equals: expected "" but got "--func(--myident: )"
+FAIL e.style['top'] = "--func( --myident : )" should not set the property value assert_equals: expected "" but got "--func( --myident : )"
+FAIL e.style['top'] = "--func(10px, --myident : )" should not set the property value assert_equals: expected "" but got "--func(10px, --myident : )"
+PASS e.style['top'] = "--func({--myident:})" should set the property value
+PASS e.style['top'] = "--func({ --myident:})" should set the property value
+PASS e.style['top'] = "--func({--myident :})" should set the property value
+PASS e.style['top'] = "--func({--myident: })" should set the property value
+PASS e.style['top'] = "--func(10px, { --myident : })" should set the property value
+

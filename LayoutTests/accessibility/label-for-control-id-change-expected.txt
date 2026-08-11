@@ -1,0 +1,12 @@
+This tests that a label-for association updates when a control's id attribute changes to (or away from) the label's for value.
+
+PASS: hasNoTitleUIElement('control') === true
+document.getElementById('control').id = 'target';
+PASS: isLabelledBy('target', 'label') === true
+document.getElementById('target').id = 'control';
+PASS: hasNoTitleUIElement('control') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,56 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<style>
+.event {
+    position:relative;
+    background-color:blue;
+    width:200px;
+    height:200px;
+}
+.child {
+    position:relative;
+    background-color:blue;
+    left:200px;
+    width:50px;
+    height:50px;
+}
+.offset {
+    left: 200px;
+}
+
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = () => {
+    document.body.offsetLeft;
+
+    function listener() {
+        results.textContent += 'wheel\n';
+    }
+    window.addEventListener("wheel", listener);
+
+    let log = "";
+    if (window.internals)
+        log += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+
+    window.removeEventListener('wheel', listener);
+    document.addEventListener('wheel', () => { results.textContent += 'passive wheel\n' }, { passive: true });
+
+    if (window.internals)
+        log += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+
+    results.textContent = log;
+}
+</script>
+<body>
+<div class="event" id="active">
+    <div class="child"></div>
+</div>
+<div class="event offset" id="passive">
+    <div class="child"></div>
+</div>
+<pre id="results"></pre>
+</body>
+</html>

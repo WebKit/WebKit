@@ -1,0 +1,19 @@
+line 1
+
+line 2
+
+line 3
+
+test;
+
+
+PASS The extra line break is missing after the paragraph that ends with a comment.
+PASS The extra line break is missing after the paragraph that ends with a display:none span.
+PASS The extra line break is missing after the paragraph that ends with a hidden span.
+PASS The extra line break is missing after the paragraph that ends with a meta tag.
+PASS The extra line break is missing after the paragraph that ends with a style tag.
+PASS The extra line break is missing after the paragraph that ends with a base tag.
+FAIL Line break should not be present before semicolon after block elements styled as inline-flex. assert_equals: expected "test;" but got "line 1\n\nline 2\n\nline 3"
+FAIL Line break should not be present before semicolon after block elements styled as inline-block. assert_equals: expected "test;" but got "line 1\n\nline 2\n\nline 3"
+FAIL Line break should not be present before semicolon after block elements styled as inline-grid. assert_equals: expected "test;" but got "line 1\n\nline 2\n\nline 3"
+

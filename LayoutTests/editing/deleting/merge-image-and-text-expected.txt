@@ -1,0 +1,25 @@
+When your cursor is after a block element, hitting delete should bring the cursor (and the content following the cursor) back at the end of the block, instead of placing the text before the block.
+
+Before Deletion:
+| "\n  "
+| <div>
+|   <span>
+|     <img>
+|       src="abe.png"
+| "\n  "
+| <div>
+|   <span>
+|     id="textSpan"
+|     <#selection-caret>
+|     "text"
+| "\n"
+
+After Deletion:
+| "\n  "
+| <div>
+|   <span>
+|     <img>
+|       src="abe.png"
+|     <#selection-caret>
+|     "text"
+| "\n"

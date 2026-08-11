@@ -1,0 +1,7 @@
+x
+x
+
+PASS Empty second line in #inner does not generate baseline for #span
+PASS Empty second line in #inner does not generate baseline for #span with white-space: pre-line
+PASS Empty second line in #inner does not generate baseline for #span with white-space: pre
+

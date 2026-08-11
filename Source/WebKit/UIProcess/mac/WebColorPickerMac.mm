@@ -1,0 +1,326 @@
+/* 
+ * Copyright (c) 2013 The Chromium Authors. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *    * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *    * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *    * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WebColorPickerMac.h"
+
+#if USE(APPKIT)
+
+#import <WebCore/Color.h>
+#import <WebCore/ColorMac.h>
+#import <pal/spi/mac/NSColorWellSPI.h>
+#import <pal/spi/mac/NSPopoverColorWellSPI.h>
+#import <pal/spi/mac/NSPopoverSPI.h>
+#import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
+
+// FIXME: <rdar://problem/41173525> We should not have to track changes in NSPopoverColorWell's implementation.
+static constexpr CGFloat colorPickerMatrixNumColumns = 12.0;
+
+@protocol WKPopoverColorWellDelegate <NSObject>
+- (void)didClosePopover;
+@end
+
+@interface WKPopoverColorWell : NSPopoverColorWell {
+    RetainPtr<NSColorList> _suggestedColors;
+    WeakObjCPtr<id <WKPopoverColorWellDelegate>> _webDelegate;
+}
+
+@property (nonatomic, weak) id<WKPopoverColorWellDelegate> webDelegate;
+
+- (void)setSuggestedColors:(NSColorList *)suggestedColors;
+@end
+
+@interface WKColorPopoverMac : NSObject<WKColorPickerUIMac, WKPopoverColorWellDelegate, NSWindowDelegate> {
+@private
+    BOOL _lastChangedByUser;
+    WeakPtr<WebKit::WebColorPickerMac> _picker;
+    RetainPtr<WKPopoverColorWell> _popoverWell;
+    WeakObjCPtr<NSView> _owningView;
+}
+- (id)initWithFrame:(const WebCore::IntRect&)rect inView:(NSView *)view;
+@end
+
+namespace WebKit {
+
+Ref<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WebKit::ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&& suggestions, NSView *view, std::optional<WebCore::FrameIdentifier> frameID)
+{
+    return adoptRef(*new WebColorPickerMac(client, initialColor, rect, supportsAlpha, WTF::move(suggestions), view, frameID));
+}
+
+WebColorPickerMac::~WebColorPickerMac()
+{
+    if (m_colorPickerUI) {
+        [m_colorPickerUI invalidate];
+        m_colorPickerUI = nil;
+    }
+}
+
+WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WebKit::ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&& suggestions, NSView *view, std::optional<WebCore::FrameIdentifier> frameID)
+    : WebColorPicker(client, frameID)
+    , m_supportsAlpha(supportsAlpha)
+    , m_suggestions(WTF::move(suggestions))
+{
+    m_colorPickerUI = adoptNS([[WKColorPopoverMac alloc] initWithFrame:rect inView:view]);
+}
+
+void WebColorPickerMac::endPicker()
+{
+    [m_colorPickerUI invalidate];
+    m_colorPickerUI = nil;
+    WebColorPicker::endPicker();
+}
+
+void WebColorPickerMac::setSelectedColor(const WebCore::Color& color)
+{
+    if (!client() || !m_colorPickerUI)
+        return;
+    
+    [m_colorPickerUI setColor:cocoaColor(color).get()];
+}
+
+void WebColorPickerMac::didChooseColor(const WebCore::Color& color)
+{
+    if (CheckedPtr client = this->client())
+        client->didChooseColor(color);
+}
+
+void WebColorPickerMac::showColorPicker(const WebCore::Color& color, const WebCore::IntRect& rect)
+{
+    if (!client())
+        return;
+
+    [m_colorPickerUI setAndShowPicker:this withColor:cocoaColor(color).get() supportsAlpha:m_supportsAlpha suggestions:WTF::move(m_suggestions) rect:rect];
+}
+
+} // namespace WebKit
+
+@implementation WKPopoverColorWell
+
++ (NSPopover *)_colorPopoverCreateIfNecessary:(BOOL)forceCreation
+{
+    static NeverDestroyed<RetainPtr<NSPopover>> colorPopover;
+    if (forceCreation) {
+        auto popover = adoptNS([[NSPopover alloc] init]);
+        [popover _setRequiresCorrectContentAppearance:YES];
+        [popover setBehavior:NSPopoverBehaviorTransient];
+
+        auto controller = adoptNS([[NSClassFromString(@"NSColorPopoverController") alloc] init]);
+        [popover setContentViewController:controller.get()];
+        [controller setPopover:popover.get()];
+
+        colorPopover.get() = WTF::move(popover);
+    }
+
+    return colorPopover.get().get();
+}
+
+- (id <WKPopoverColorWellDelegate>)webDelegate
+{
+    return _webDelegate.getAutoreleased();
+}
+
+- (void)setWebDelegate:(id <WKPopoverColorWellDelegate>)webDelegate
+{
+    _webDelegate = webDelegate;
+}
+
+- (void)_showPopover
+{
+    RetainPtr popover = [[self class] _colorPopoverCreateIfNecessary:YES];
+    popover.get().delegate = (id)self;
+
+    [self deactivate];
+
+    // Deactivate previous NSPopoverColorWell
+    if (RetainPtr owner = dynamic_objc_cast<NSPopoverColorWell>([NSColorWell _exclusiveColorPanelOwner]))
+        [owner deactivate];
+
+    RetainPtr controller = checked_objc_cast<NSColorPopoverController>([popover.get() contentViewController]);
+    controller.get().delegate = self;
+
+    if (_suggestedColors) {
+        // topBarMatrixView cannot be accessed until view has been loaded
+        if (!controller.get().isViewLoaded)
+            [controller loadView];
+
+        RetainPtr<NSColorPickerMatrixView> topMatrix = controller.get().topBarMatrixView;
+        NSUInteger numColors = [[_suggestedColors allKeys] count];
+        [topMatrix setNumberOfColumns:numColors];
+
+#if HAVE(NSCOLORPICKERMATRIXVIEW_CUSTOM_SWATCH_SIZE)
+        // FIXME: <rdar://problem/41173525> We should not have to track changes in NSPopoverColorWell's implementation.
+        static constexpr CGFloat colorPickerMatrixSwatchWidth = 13.0;
+        static constexpr CGFloat colorPickerMatrixBorderWidth = 1.0;
+
+        CGFloat swatchWidth = (colorPickerMatrixNumColumns * colorPickerMatrixSwatchWidth + (colorPickerMatrixNumColumns * colorPickerMatrixBorderWidth - numColors)) / numColors;
+        CGFloat swatchHeight = colorPickerMatrixSwatchWidth;
+        [topMatrix setSwatchSize:NSMakeSize(swatchWidth, swatchHeight)];
+#endif
+
+        [topMatrix setColorList:_suggestedColors.get()];
+    }
+
+    [self activate:YES];
+    [popover showRelativeToRect:self.bounds ofView:self preferredEdge:NSMinYEdge];
+}
+
+- (void)popoverDidClose:(NSNotification *)notification
+{
+    [retainPtr(self.webDelegate) didClosePopover];
+}
+
+- (NSView *)hitTest:(NSPoint)point
+{
+    return nil;
+}
+
+- (void)setSuggestedColors:(NSColorList *)suggestedColors
+{
+    _suggestedColors = suggestedColors;
+}
+
+@end
+
+@implementation WKColorPopoverMac
+- (id)initWithFrame:(const WebCore::IntRect&)rect inView:(NSView *)view
+{
+    if(!(self = [super init]))
+        return self;
+
+    _owningView = view;
+    _popoverWell = adoptNS([[WKPopoverColorWell alloc] initWithFrame:[view convertRect:NSRectFromCGRect(rect) toView:nil]]);
+    if (!_popoverWell)
+        return self;
+
+    [_popoverWell setAlphaValue:0.0];
+    [retainPtr([view window].contentView) addSubview:_popoverWell.get()];
+
+    return self;
+}
+
+- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color supportsAlpha:(WebKit::ColorControlSupportsAlpha)supportsAlpha suggestions:(Vector<WebCore::Color>&&)suggestions rect:(const WebCore::IntRect&)rect
+{
+    _picker = picker;
+
+    if (RetainPtr view = _owningView.get())
+        [_popoverWell setFrame:[view convertRect:NSRectFromCGRect(rect) toView:nil]];
+
+    [_popoverWell setTarget:self];
+    [_popoverWell setWebDelegate:self];
+    [_popoverWell setAction:@selector(didChooseColor:)];
+    [_popoverWell setColor:color];
+    [_popoverWell setSupportsAlpha:supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes];
+
+    RetainPtr<NSColorList> suggestedColors;
+    if (suggestions.size()) {
+        suggestedColors = adoptNS([[NSColorList alloc] init]);
+        for (size_t i = 0; i < std::min(suggestions.size(), clampTo<size_t>(colorPickerMatrixNumColumns)); i++)
+            [suggestedColors insertColor:cocoaColor(suggestions.at(i)).get() key:retainPtr(@(i).stringValue).get() atIndex:i];
+    }
+
+    [_popoverWell setSuggestedColors:suggestedColors.get()];
+    [_popoverWell _showPopover];
+
+    [[NSColorPanel sharedColorPanel] setDelegate:self];
+    
+    _lastChangedByUser = YES;
+}
+
+- (void)invalidate
+{
+    [_popoverWell removeFromSuperviewWithoutNeedingDisplay];
+    [_popoverWell setTarget:nil];
+    [_popoverWell setAction:nil];
+    [_popoverWell deactivate];
+    
+    _popoverWell = nil;
+    _picker = nil;
+
+    RetainPtr panel = [NSColorPanel sharedColorPanel];
+    if (panel.get().delegate == self) {
+        panel.get().delegate = nil;
+        [panel close];
+    }
+}
+
+- (void)didClosePopover
+{
+    callOnMainRunLoop([retainedSelf = retainPtr(self), self] {
+        RefPtr picker = _picker.get();
+        if (!picker)
+            return;
+
+        if (![NSColorPanel sharedColorPanel].isVisible)
+            picker->endPicker();
+    });
+}
+
+- (void)windowWillClose:(NSNotification *)notification
+{
+    if (notification.object != [NSColorPanel sharedColorPanel])
+        return;
+
+    callOnMainRunLoop([retainedSelf = retainPtr(self), self] {
+        RefPtr picker = _picker.get();
+        if (!picker)
+            return;
+
+        _lastChangedByUser = YES;
+        picker->endPicker();
+    });
+}
+
+- (void)didChooseColor:(id)sender
+{
+    if (sender != _popoverWell)
+        return;
+
+    // Handle the case where the <input type='color'> value is programmatically set.
+    if (!_lastChangedByUser) {
+        _lastChangedByUser = YES;
+        return;
+    }
+
+    if (RefPtr picker = _picker.get())
+        picker->didChooseColor(WebCore::colorFromCocoaColor(retainPtr([_popoverWell color]).get()));
+}
+
+- (void)setColor:(NSColor *)color
+{
+    _lastChangedByUser = NO;
+    [_popoverWell setColor:color];
+}
+
+@end
+
+#endif // USE(APPKIT)

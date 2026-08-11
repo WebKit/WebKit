@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x50
+  RenderBlock {HTML} at (0,0) size 800x50
+    RenderBody {BODY} at (0,0) size 800x50
+      RenderFlexibleBox {DIV} at (0,0) size 50x50 [bgcolor=#800080] [border: (1px solid #A9A9A9)]
+        RenderImage {IMG} at (20,16) size 10x18
+      RenderText {#text} at (0,0) size 0x0

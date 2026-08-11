@@ -1,0 +1,16 @@
+Test that Network.loadingFinished forwards the sourceMapURL for cross-origin iframe stylesheets under Site Isolation, from both the SourceMap response header and an inline sourceMappingURL comment.
+
+
+Installing hook for downloadSourceMap.
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrameSourceMapURL
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.SourceMapURLFromHeader
+PASS: Resource should be created.
+PASS: Resource should be a stylesheet.
+PASS: loadingFinished should carry the SourceMap header value.
+
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.SourceMapURLFromInlineComment
+PASS: Resource should be created.
+PASS: Resource should be a stylesheet.
+PASS: loadingFinished should carry the inline sourceMappingURL comment value.
+

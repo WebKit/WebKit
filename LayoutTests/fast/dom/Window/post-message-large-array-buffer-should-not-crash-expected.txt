@@ -1,0 +1,9 @@
+Check that trying to deserialize an ArrayBuffer when there's not enough memory does not crash (test may only fail flakily)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

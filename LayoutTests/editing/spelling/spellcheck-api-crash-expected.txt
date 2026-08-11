@@ -1,0 +1,7 @@
+This tests thats WebKit does not crash when we call removeSpellcheckRange() with a null parameter. To test manually, open this HTML file and check if the browser can open this file without a crash.
+
+
+
+wellcome
+
+

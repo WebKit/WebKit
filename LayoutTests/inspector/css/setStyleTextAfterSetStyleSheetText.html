@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<link rel="stylesheet" href="resources/external.css">
+<script>
+function test() {
+    let suite = ProtocolTest.createAsyncSuite("CSS.setStyleTextRace");
+
+    suite.addTestCase({
+        name: "CSS.setStyleTextAfterSetStylesheetText",
+        description: "Ensure that editing the style of a CSS rule works after immediately updating the stylesheet text",
+        test: async () => {
+            await InspectorProtocol.awaitCommand({ method: "Page.enable" });
+
+            let { root } = await InspectorProtocol.awaitCommand({ method: "DOM.getDocument" });
+            let body = await InspectorProtocol.awaitCommand({
+                method: "DOM.querySelector",
+                params: { nodeId: root.nodeId, selector: "body" },
+            });
+
+            async function getAuthorStylesheetId() {
+                let { headers } = await InspectorProtocol.awaitCommand({ method: "CSS.getAllStyleSheets" });
+                return headers.find((header) => header.origin === "author")?.styleSheetId;
+            }
+
+            let styleSheetId = await getAuthorStylesheetId();
+            if (!styleSheetId)
+                ProtocolTest.log("FAIL: Missing author style sheet");
+
+            ProtocolTest.log("INFO: Get stylesheet text");
+            let { text } = await InspectorProtocol.awaitCommand({
+                method: "CSS.getStyleSheetText",
+                params: { styleSheetId },
+            });
+            ProtocolTest.log(text);
+
+            async function getAuthorStyleMatchingElementAndSelector(element, selector) {
+                let { matchedCSSRules } = await InspectorProtocol.awaitCommand({
+                    method: "CSS.getMatchedStylesForNode",
+                    params: { nodeId: element.nodeId },
+                });
+
+                let ruleMatchingSelector = matchedCSSRules
+                    .map(({ rule }) => rule)
+                    .find((rule) => {
+                        if (rule.origin !== "author")
+                            return false;
+
+                        return rule.selectorList.selectors.find(cssSelector => cssSelector.text === selector);
+                    })
+
+                return ruleMatchingSelector?.style;
+            };
+
+            ProtocolTest.log("INFO: Get style for 'body' CSS rule");
+            let bodyStyle = await getAuthorStyleMatchingElementAndSelector(body, "body");
+            if (!bodyStyle)
+                ProtocolTest.log("FAIL: Missing 'body' CSS rule");
+
+            ProtocolTest.log(bodyStyle.cssText);
+
+            ProtocolTest.log("INFO: Set stylesheet text with identical contents");
+            InspectorProtocol.sendCommand({
+                method: "CSS.setStyleSheetText",
+                params: { styleSheetId, text },
+            });
+
+            await InspectorProtocol.awaitEvent({event: "CSS.styleSheetChanged"});
+            ProtocolTest.log("INFO: 'styleSheetChanged' event fired");
+
+            ProtocolTest.log("INFO: Update style for 'body' CSS rule");
+            let updatedCSSText = "color: green;"
+            let setStyleTextResult = await InspectorProtocol.awaitCommand({
+                method: "CSS.setStyleText",
+                params: { styleId: bodyStyle.styleId, text: updatedCSSText },
+            });
+
+            ProtocolTest.expectEqual(setStyleTextResult.style.cssText, updatedCSSText, "CSS rule text was updated");
+
+            ProtocolTest.log("INFO: Get stylesheet text again");
+            let getStyleSheetTextResult = await InspectorProtocol.awaitCommand({
+                method: "CSS.getStyleSheetText",
+                params: { styleSheetId },
+            });
+            ProtocolTest.log(getStyleSheetTextResult.text);
+            ProtocolTest.expectNotEqual(text, getStyleSheetTextResult.text, "Stylsheet text reflects change to CSS rule");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that calling CSS.setStyleText works immediately after CSS.setStyleSheetText without an intermediate call to CSS.getStyleSheetText.</p>
+</body>
+</html>

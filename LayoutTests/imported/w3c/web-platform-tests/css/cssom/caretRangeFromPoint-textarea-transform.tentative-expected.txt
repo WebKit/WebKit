@@ -1,0 +1,5 @@
+
+
+PASS document.caretRangeFromPoint(0, 0)
+PASS document.caretRangeFromPoint(10, 10)
+

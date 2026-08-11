@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
+<script src="resources/recording-bitmaprenderer.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingOffscreenBitmapRenderer");
+
+    suite.addTestCase({
+        name: "Canvas.recordingOffscreenBitmapRenderer.Console",
+        description: "Check that a recording can be triggered by console.record().",
+        test(resolve, reject) {
+            consoleRecord(WI.Canvas.ContextType.OffscreenBitmapRenderer, resolve, reject);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load({offscreen: true})">
+    <p>Test that CanvasManager is able to record actions made to offscreen BitmapRenderer canvas contexts.</p>
+</body>
+</html>

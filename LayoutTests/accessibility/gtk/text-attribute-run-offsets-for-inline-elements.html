@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<p>before <a id="inline" href="#">link</a> after</p>
+<p><a href="#">one</a> <a id="second" href="#">two</a></p>
+<ul><li id="solo-item"><a href="#">solo</a></li></ul>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+ description("An inline element that starts right after preceding text must report in-bounds text-attribute-run offsets without hanging or crashing.");
+
+ if (window.accessibilityController) {
+     var inline = accessibilityController.accessibleElementById("inline");
+     var inlineRuns = inline.attributedStringForRange(0, 4);
+     shouldBeTrue("inlineRuns.includes(\"Range attributes for 'link'\")");
+
+     var second = accessibilityController.accessibleElementById("second");
+     var secondRuns = second.attributedStringForRange(0, 3);
+     shouldBeTrue("secondRuns.includes(\"Range attributes for 'two'\")");
+
+     var soloItem = accessibilityController.accessibleElementById("solo-item");
+     var soloItemRuns = soloItem.attributedStringForRange(0, 1);
+     shouldBeTrue("soloItemRuns.includes(\"Range attributes for '<obj>'\")");
+ }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

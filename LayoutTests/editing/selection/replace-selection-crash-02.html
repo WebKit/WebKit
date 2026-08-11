@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<style>
+sub {
+    -webkit-user-select: all;
+}
+.div {
+     overflow: scroll;
+}
+</style>
+<script>
+onload = () => {
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+    let div = document.createElement('div');
+    div.className = 'div';
+    document.body.appendChild(div);
+    let span0 = document.createElement('span');
+    document.body.appendChild(span0);
+    span0.appendChild(document.createElement('div'));
+    let span1 = document.createElement('span');
+    span0.appendChild(span1);
+    div = document.createElement('div');
+    div.className = 'div';
+    span1.appendChild(div);
+    div = document.createElement('div');
+    div.className = 'div';
+    document.body.appendChild(div);
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    document.execCommand('Subscript');
+    document.execCommand('Copy');
+    document.execCommand('Paste');
+    document.write("Test passes if it does not crash.");
+};
+</script>

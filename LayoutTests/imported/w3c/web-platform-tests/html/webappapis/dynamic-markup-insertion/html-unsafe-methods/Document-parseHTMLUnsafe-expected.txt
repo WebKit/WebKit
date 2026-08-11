@@ -1,0 +1,11 @@
+
+PASS Parsing of id attribute
+PASS contentType
+PASS compatMode
+PASS compatMode for a proper DOCTYPE
+PASS Location value
+PASS Document.parseHTMLUnsafe parses HTML tag soup with no problems
+PASS Document.parseHTMLUnsafe should handle the content of <noembed> as raw text
+PASS script is found synchronously even when there is a css import
+PASS must be parsed with scripting disabled, so noscript works
+

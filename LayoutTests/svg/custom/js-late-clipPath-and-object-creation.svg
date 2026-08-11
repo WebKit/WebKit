@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Basic//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">  
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root" width="100%" height="100%" viewBox="0 0 480 360" onload="runRepaintTest()">
+<script xlink:href="../../fast/repaint/resources/repaint.js"/>
+<g id="content" transform="scale(1, 1.5)"/>
+<script>
+    var content = document.getElementById("content");
+    function repaintTest() {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        setTimeout(createObject, 0);
+    }
+
+    function createObject()
+    {
+        var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("font-size", "60");
+        text.setAttribute("fill", "navy");
+        text.setAttribute("clip-path", "url(#dynClip)");
+        text.setAttribute("x", "10");
+        text.setAttribute("y", "70");
+
+        text.appendChild(document.createTextNode("Clipped. INVISIBLE."));        
+        content.appendChild(text);
+
+        setTimeout(createClipPath, 0);
+    }
+
+    function createClipPath()
+    {
+        var clipPath = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
+        clipPath.setAttribute("id", "dynClip");
+        clipPath.setAttribute("clipPathUnits", "userSpaceOnUse");
+
+        var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", "M 0 0 l 200 0 l 0 200 l -200 0 Z");
+
+        clipPath.appendChild(path);
+        content.appendChild(clipPath);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+
+</svg>

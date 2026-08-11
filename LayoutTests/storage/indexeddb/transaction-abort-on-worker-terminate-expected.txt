@@ -1,0 +1,8 @@
+Starting worker: resources/transaction-abort-on-worker-terminate.js
+PASS event.data is "continue"
+PASS String(transaction) is "[object IDBTransaction]"
+PASS event.target.result is
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

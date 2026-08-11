@@ -1,0 +1,33 @@
+{{ .Build.Builder.Builder }} failed to run
+
+<p>There was a failure on builder "{{ .Build.Builder.Builder }}".</p>
+
+<p><a href="https://ci.chromium.org/b/{{ .Build.Id }}">Full details are available here.</a></p>
+
+<table>
+  <tr>
+    <td>Builder:</td>
+    <td>
+      <a href="https://ci.chromium.org/p/webrtc/builders/luci.webrtc.cron/{{ .Build.Builder.Builder }}">
+        {{ .Build.Builder.Builder }}
+      </a>
+      (<a href="https://ci.chromium.org/p/webrtc/g/cron/console">Console</a>)
+    </td>
+  </tr>
+  <tr>
+    <td>New status:</td>
+    <td><b><a href="https://ci.chromium.org/b/{{ .Build.Id }}">{{ .Build.Status }}</a></b></td>
+  </tr>
+  <tr>
+    <td>Previous status:</td>
+    <td>{{ .OldStatus }}</td>
+  </tr>
+  <tr>
+    <td>Created at:</td>
+    <td>{{ .Build.CreateTime | time }}</td>
+  </tr>
+  <tr>
+    <td>Finished at:</td>
+    <td>{{ .Build.EndTime | time }}</td>
+  </tr>
+</table>

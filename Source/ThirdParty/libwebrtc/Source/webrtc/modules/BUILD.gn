@@ -1,0 +1,123 @@
+# Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../webrtc.gni")
+import("audio_coding/audio_coding.gni")
+
+group("modules") {
+  deps = [
+    "audio_coding",
+    "audio_device",
+    "audio_mixer",
+    "audio_processing",
+    "congestion_controller",
+    "pacing",
+    "remote_bitrate_estimator",
+    "rtp_rtcp",
+    "utility",
+    "video_coding",
+  ]
+
+  if (rtc_desktop_capture_supported) {
+    deps += [ "desktop_capture" ]
+  }
+}
+
+rtc_source_set("module_api_public") {
+  sources = [ "include/module_common_types_public.h" ]
+}
+
+rtc_source_set("module_api") {
+  visibility = [ "*" ]
+  sources = [ "include/module_common_types.h" ]
+}
+
+rtc_source_set("module_fec_api") {
+  visibility = [ "*" ]
+  sources = [ "include/module_fec_types.h" ]
+}
+
+if (rtc_include_tests && !build_with_chromium) {
+  rtc_test("modules_tests") {
+    testonly = true
+
+    deps = [
+      "../test:video_test_common",
+      "audio_coding:audio_coding_modules_tests",
+      "rtp_rtcp:rtp_rtcp_modules_tests",
+      "video_coding:video_coding_modules_tests",
+      "//testing/gtest",
+    ]
+
+    if (rtc_desktop_capture_supported) {
+      deps += [ "desktop_capture:desktop_capture_modules_tests" ]
+    }
+
+    data_deps = [ "../resources:modules_tests_data" ]
+
+    if (is_android) {
+      use_default_launcher = false
+      deps += [
+        # NOTE(brandtr): Including Java classes seems only to be possible from
+        # rtc_test targets. Therefore we include this target here, instead of
+        # in video_coding_modules_tests, where it is actually used.
+        "../sdk/android:libjingle_peerconnection_java",
+      ]
+      shard_timeout = 900
+    }
+
+    if (is_ios) {
+      deps += [ "../resources:modules_tests_bundle_data" ]
+    }
+  }
+  rtc_test("modules_unittests") {
+    testonly = true
+    defines = []
+    sources = [ "module_common_types_public_unittest.cc" ]
+
+    deps = [
+      ":module_api",
+      ":module_api_public",
+      "../test:run_loop",
+      "../test:test_support",
+      "audio_coding:audio_coding_unittests",
+      "audio_device:audio_device_unittests",
+      "audio_mixer:audio_mixer_unittests",
+      "audio_processing:audio_processing_unittests",
+      "audio_processing/aec3:aec3_unittests",
+      "audio_processing/ns:ns_unittests",
+      "congestion_controller:congestion_controller_unittests",
+      "pacing:pacing_unittests",
+      "remote_bitrate_estimator:remote_bitrate_estimator_unittests",
+      "rtp_rtcp:rtp_rtcp_unittests",
+      "video_coding:video_coding_unittests",
+      "video_coding/timing:timing_unittests",
+    ]
+
+    if (rtc_enable_protobuf) {
+      deps += [ "audio_processing/aec3/neural_residual_echo_estimator:neural_residual_echo_estimator_unittest" ]
+    }
+    if (rtc_desktop_capture_supported) {
+      deps += [ "desktop_capture:desktop_capture_unittests" ]
+    }
+
+    data_deps = [ "../resources:modules_unittests_data" ]
+
+    if (is_android) {
+      use_default_launcher = false
+      deps += [ "../sdk/android:libjingle_peerconnection_java" ]
+      shard_timeout = 900
+    }
+    if (is_ios) {
+      info_plist = "../test/ios/Info.plist"
+      deps += [ "../resources:modules_unittests_bundle_data" ]
+      configs += [ "..:common_objc" ]
+      ldflags = [ "-ObjC" ]
+    }
+  }
+}

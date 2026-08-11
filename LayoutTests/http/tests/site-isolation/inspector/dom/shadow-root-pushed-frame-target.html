@@ -1,0 +1,89 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.ShadowRoot");
+
+    let frameTarget = null;
+    let frameDoc = null;
+    let hostNode = null;
+
+    function evaluateInFrame(expression) {
+        return frameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
+    }
+
+    // NodeInserted is manager-wide and also fires for the page target, so filter by owningTarget
+    // rather than taking the first event.
+    function awaitFrameTargetNodeInserted(predicate) {
+        return new Promise((resolve) => {
+            WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, function listener(event) {
+                let node = event.data.node;
+                if (!node || node.owningTarget !== frameTarget || !predicate(node, event.data))
+                    return;
+                WI.domManager.removeEventListener(WI.DOMManager.Event.NodeInserted, listener, null);
+                resolve(event.data);
+            });
+        });
+    }
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and expand down to the shadow host.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            frameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+
+            InspectorTest.expectNotNull(frameTarget, "Should find a cross-origin frame target.");
+
+            frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            InspectorTest.expectNotNull(frameDoc, "Frame target should have a document.");
+
+            let htmlNode = frameDoc.children.find((child) => child.nodeName() === "HTML");
+            await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+
+            let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+            await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+
+            let containerNode = bodyNode.children.find((child) => child.getAttribute("id") === "container");
+            InspectorTest.expectNotNull(containerNode, "Should find #container.");
+            await new Promise((resolve) => containerNode.getChildNodes(resolve));
+
+            hostNode = containerNode.children.find((child) => child.getAttribute("id") === "host");
+            InspectorTest.expectNotNull(hostNode, "Should find #host.");
+            InspectorTest.expectEqual(hostNode.owningTarget, frameTarget, "#host should be owned by the frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.ShadowRoot.Pushed",
+        description: "Attaching a shadow root in a cross-origin frame should fire shadowRootPushed on the frame target.",
+        async test() {
+            let eventPromise = awaitFrameTargetNodeInserted((node) => node.isShadowRoot());
+            evaluateInFrame("attachShadowToHost()");
+
+            let {node, parent} = await eventPromise;
+            InspectorTest.expectEqual(parent, hostNode, "Shadow root's parent should be #host.");
+            InspectorTest.expectThat(node.isShadowRoot(), "Inserted node should be a shadow root.");
+            InspectorTest.expectEqual(node.shadowRootType(), WI.DOMNode.ShadowRootType.Open, "Shadow root should be open.");
+            InspectorTest.expectEqual(node.owningTarget, frameTarget, "Shadow root should be owned by the frame target, not the main page.");
+            InspectorTest.expectEqual(WI.domManager.nodeForIdInFrameTarget(node._rawNodeId, frameTarget), node, "Shadow root should be reachable via its scoped id on the frame target.");
+        }
+    });
+
+    // No shadowRootPopped case: author shadow roots have no scriptable detach, so willPopShadowRoot
+    // only fires when the host is destroyed — and removing the host first unbinds the root
+    // (FrameDOMAgent::unbind), leaving boundNodeId 0 so the backend suppresses the event. The
+    // frontend routing is wired regardless; it just can't be triggered deterministically here.
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that shadow root push events from a cross-origin iframe are routed to the frame target under site isolation.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/shadow-root-frame.html"></iframe>
+</body>
+</html>

@@ -1,0 +1,17 @@
+
+FAIL Getter and setter for attribute of anchor element(0): hash assert_equals: expected (string) "#somehash" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(1): hash assert_equals: expected (string) "#somehash" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(2): host assert_equals: expected (string) "google.com:1234" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(3): hostname assert_equals: expected (string) "google.com" but got (undefined) undefined
+PASS Getter and setter for attribute of anchor element(4): href
+FAIL Getter and setter for attribute of anchor element(5): password assert_equals: expected (string) "flabada" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(6): pathname assert_equals: expected (string) "/somedir/someotherdir/index.html" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(7): port assert_equals: expected (string) "1234" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(8): protocol assert_equals: expected (string) "http:" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(9): protocol assert_equals: expected (string) "http:" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(10): search assert_equals: expected (string) "?ho" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(11): search assert_equals: expected (string) "?ho" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(12): search assert_equals: expected (string) "?ho" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(13): search assert_equals: expected (string) "?ho" but got (undefined) undefined
+FAIL Getter and setter for attribute of anchor element(14): username assert_equals: expected (string) "anonymous" but got (undefined) undefined
+

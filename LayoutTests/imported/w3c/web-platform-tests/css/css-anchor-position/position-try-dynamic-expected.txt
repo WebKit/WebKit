@@ -1,0 +1,4 @@
+
+PASS Initial static left position is 0
+PASS Left position set to right edge of anchor with @position-try
+

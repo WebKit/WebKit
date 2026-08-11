@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true SelectionHonorsOverflowScrolling=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    font-family: system-ui;
+    margin: 0;
+}
+
+textarea {
+    width: 250px;
+    height: 80px;
+    font-size: 18px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+caretRects = [];
+
+addEventListener("load", async () => {
+    description("Verifies that the selection caret rect updates properly when inserting newlines in a textarea with vertical overflow.");
+
+    const textarea = document.querySelector("textarea");
+    await UIHelper.activateElementAndWaitForInputSession(textarea);
+
+    for (const stringToType of ["\n", "One\n", "Two\n", "Three\n", "Four\n", "Five\n"]) {
+        await UIHelper.typeCharacters(stringToType);
+        await UIHelper.ensurePresentationUpdate();
+        caretRects.push(UIHelper.roundRectToDevicePixel(await UIHelper.getUICaretViewRect()));
+    }
+
+    shouldBe("caretRects[0].height", "caretRects[1].height");
+    shouldBe("caretRects[0].height", "caretRects[2].height");
+    shouldBe("caretRects[0].height", "caretRects[3].height");
+    shouldBe("caretRects[0].height", "caretRects[4].height");
+    shouldBe("caretRects[0].height", "caretRects[5].height");
+    shouldBe("caretRects[4].top", "caretRects[5].top");
+    shouldBeGreaterThan("caretRects[5].width", "1");
+    shouldBeGreaterThan("caretRects[5].height", "1");
+
+    textarea.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <textarea>Zero</textarea>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+</body>
+</html>

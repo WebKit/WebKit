@@ -1,0 +1,12 @@
+<style>
+span { 
+  -webkit-box-decoration-break: clone;
+  padding-left: 10px;
+  margin-left: 20px;
+}
+</style>
+<!-- test the start side of the decoration clone -->
+<div><span>this<br>inline box<br>has padding<br>and margin clone</span></div>
+<div><span><span>this<br>inline box<br>has padding<br>and margin clone</span></span></div>
+<div><span>this<br><span>inline box<br>has padding<br>and margin clone</span></span></div>
+<div><span>this<br>inline box<br>has padding<br><span>and margin clone</span></span></div>

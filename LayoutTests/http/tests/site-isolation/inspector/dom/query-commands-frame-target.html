@@ -1,0 +1,200 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameDOMAgent.Queries");
+
+    let frameTarget = null;
+    let frameDoc = null;
+    let containerNode = null;
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Find the cross-origin frame target and expand the DOM tree.",
+        async test() {
+            let frameTargets = WI.targets.filter((t) => t.type === WI.TargetType.Frame);
+            let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+            let mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+            frameTarget = frameTargets.find((t) => t !== mainFrameTarget);
+
+            InspectorTest.expectNotNull(frameTarget, "Should find a cross-origin frame target.");
+
+            if (frameTarget.isProvisional) {
+                let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                frameTarget = committedEvent.data.target;
+            }
+            InspectorTest.assert(!frameTarget.isProvisional, "Frame target should be committed.");
+
+            await frameTarget.ensureTargetExecutionContext();
+
+            frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!frameDoc) {
+                let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                frameDoc = docEvent.data.document;
+            }
+            InspectorTest.expectNotNull(frameDoc, "Frame target should have a document.");
+
+            let htmlNode = frameDoc.children.find((child) => child.nodeName() === "HTML");
+            await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+
+            let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+            await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+
+            containerNode = bodyNode.children.find((child) => child.getAttribute("id") === "container");
+            InspectorTest.expectNotNull(containerNode, "Should find #container.");
+            await new Promise((resolve) => containerNode.getChildNodes(resolve));
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Queries.QuerySelector",
+        description: "querySelector should return a single matching node from the frame document.",
+        async test() {
+            let nodeId = await containerNode.querySelector("#heading");
+            InspectorTest.expectNotNull(nodeId, "Should get a nodeId for '#heading'.");
+
+            let node = WI.domManager.nodeForIdInFrameTarget(nodeId, frameTarget);
+            InspectorTest.expectNotNull(node, "Frontend should resolve the nodeId to a DOMNode.");
+            InspectorTest.expectEqual(node.nodeName(), "H1", "Resolved node should be an H1.");
+            InspectorTest.expectEqual(node.getAttribute("id"), "heading", "Resolved node id should be 'heading'.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Queries.QuerySelector.NoMatch",
+        description: "querySelector with no match should resolve to a falsy nodeId.",
+        async test() {
+            let nodeId = await containerNode.querySelector("#does-not-exist");
+            InspectorTest.expectThat(!nodeId, "Should return a falsy nodeId when nothing matches.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Queries.QuerySelectorAll",
+        description: "querySelectorAll should return all matching nodeIds from the frame document.",
+        async test() {
+            let nodeIds = await containerNode.querySelectorAll("li.item");
+            InspectorTest.expectEqual(nodeIds.length, 2, "Should return two li.item nodeIds.");
+            for (let nodeId of nodeIds) {
+                let node = WI.domManager.nodeForIdInFrameTarget(nodeId, frameTarget);
+                InspectorTest.expectNotNull(node, "Frontend should resolve each nodeId.");
+                InspectorTest.expectEqual(node.nodeName(), "LI", "Resolved node should be LI.");
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Queries.GetOuterHTML",
+        description: "getOuterHTML should return the serialized subtree of a frame-target node.",
+        async test() {
+            let headingId = await containerNode.querySelector("#heading");
+            let heading = WI.domManager.nodeForIdInFrameTarget(headingId, frameTarget);
+            let outerHTML = await heading.getOuterHTML();
+            InspectorTest.expectEqual(outerHTML, `<h1 id="heading">Cross-Origin Heading</h1>`, "Should serialize the H1 subtree.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Queries.GetSupportedEventNames",
+        description: "getSupportedEventNames should return a non-empty list of event names.",
+        async test() {
+            let {eventNames} = await frameTarget.DOMAgent.getSupportedEventNames();
+            InspectorTest.expectThat(Array.isArray(eventNames), "Should return an array.");
+            InspectorTest.expectGreaterThan(eventNames.length, 0, "Event names list should be non-empty.");
+            InspectorTest.expectThat(eventNames.includes("click"), "Event names should include 'click'.");
+            InspectorTest.expectThat(eventNames.includes("load"), "Event names should include 'load'.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Queries.PushNodeByPathToFrontend",
+        description: "pushNodeByPathToFrontend should resolve a serialized path to a backend nodeId.",
+        async test() {
+            // The backend path format is rooted at the frame's document. Walk up from
+            // containerNode, stopping at frameDoc (don't cross into the main page tree
+            // where the frame document was spliced as an iframe's contentDocument).
+            let path = [];
+            let node = containerNode;
+            while (node && node !== frameDoc) {
+                let parent = node.parentNode;
+                if (!parent)
+                    break;
+                let index = parent.children.indexOf(node);
+                path.unshift(index + "," + node.nodeName());
+                node = parent;
+            }
+            let pathString = path.join(",");
+
+            let {nodeId} = await frameTarget.DOMAgent.pushNodeByPathToFrontend(pathString);
+            InspectorTest.expectNotNull(nodeId, "Should resolve the path to a nodeId.");
+
+            let resolved = WI.domManager.nodeForIdInFrameTarget(nodeId, frameTarget);
+            InspectorTest.expectEqual(resolved, containerNode, "Resolved node should be #container.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Queries.Search",
+        description: "performSearch / getSearchResults / discardSearchResults should work on the frame document.",
+        async test() {
+            let {searchId, resultCount} = await frameTarget.DOMAgent.performSearch.invoke({query: "frame-root"});
+            InspectorTest.expectNotNull(searchId, "performSearch should return a searchId.");
+            InspectorTest.expectEqual(resultCount, 1, "Search for 'frame-root' should match exactly one node.");
+
+            let {nodeIds} = await frameTarget.DOMAgent.getSearchResults(searchId, 0, resultCount);
+            InspectorTest.expectEqual(nodeIds.length, resultCount, "getSearchResults should return resultCount ids.");
+
+            let node = WI.domManager.nodeForIdInFrameTarget(nodeIds[0], frameTarget);
+            InspectorTest.expectNotNull(node, "Search result should resolve on the frontend.");
+            InspectorTest.expectEqual(node.getAttribute("id"), "container", "Search result should be #container.");
+
+            await frameTarget.DOMAgent.discardSearchResults(searchId);
+
+            await InspectorTest.expectException(() => frameTarget.DOMAgent.getSearchResults(searchId, 0, resultCount));
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Queries.Search.CaseSensitive",
+        description: "performSearch with caseSensitive:true should not match differently-cased attribute values.",
+        async test() {
+            let insensitive = await frameTarget.DOMAgent.performSearch.invoke({query: "FRAME-ROOT", caseSensitive: false});
+            InspectorTest.expectGreaterThanOrEqual(insensitive.resultCount, 1, "Case-insensitive search for 'FRAME-ROOT' should match.");
+            await frameTarget.DOMAgent.discardSearchResults(insensitive.searchId);
+
+            let sensitive = await frameTarget.DOMAgent.performSearch.invoke({query: "FRAME-ROOT", caseSensitive: true});
+            InspectorTest.expectEqual(sensitive.resultCount, 0, "Case-sensitive search for 'FRAME-ROOT' should not match.");
+            await frameTarget.DOMAgent.discardSearchResults(sensitive.searchId);
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.DOM.Queries.Search.ScopedToSubtree",
+        description: "performSearch with a nodeIds subtree filter should only match within those subtrees.",
+        async test() {
+            let listId = await containerNode.querySelector("#list");
+            InspectorTest.expectNotNull(listId, "Should find #list for scoping.");
+
+            let unscoped = await frameTarget.DOMAgent.performSearch.invoke({query: "heading"});
+            InspectorTest.expectGreaterThanOrEqual(unscoped.resultCount, 1, "Unscoped search should match the H1.");
+            await frameTarget.DOMAgent.discardSearchResults(unscoped.searchId);
+
+            let scoped = await frameTarget.DOMAgent.performSearch.invoke({query: "heading", nodeIds: [listId]});
+            InspectorTest.expectEqual(scoped.resultCount, 0, "Search scoped to #list should not match H1.");
+            await frameTarget.DOMAgent.discardSearchResults(scoped.searchId);
+
+            let scopedPositive = await frameTarget.DOMAgent.performSearch.invoke({query: "Item", nodeIds: [listId]});
+            InspectorTest.expectGreaterThanOrEqual(scopedPositive.resultCount, 1, "Search scoped to #list should match 'Item'.");
+            await frameTarget.DOMAgent.discardSearchResults(scopedPositive.searchId);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests FrameDOMAgent read-only queries: querySelector, querySelectorAll, getOuterHTML, and the search flow.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/dom-frame.html"></iframe>
+</body>

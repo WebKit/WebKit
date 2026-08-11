@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<!--
+Test up mixing from mono to 5.1.
+-->
+
+<html>
+<head>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+<script type="text/javascript" src="resources/mix-testing.js"></script>
+</head>
+<body>
+
+<script>
+
+function runTest() {
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
+
+    window.jsTestAsync = true;
+
+    // Create offline audio context
+    var sampleRate = 44100.0;
+    var context = new OfflineAudioContext(6, sampleRate * toneLengthSeconds, sampleRate);
+    var toneBuffer = createToneBuffer(context, 440, toneLengthSeconds, 1); 
+
+    var source = context.createBufferSource();
+    source.buffer = toneBuffer;
+    
+    source.connect(context.destination);
+    source.start(0);
+    
+    context.oncomplete = finishAudioTest;
+    context.startRendering();    
+}
+
+runTest();
+</script>
+
+</body>
+</html>

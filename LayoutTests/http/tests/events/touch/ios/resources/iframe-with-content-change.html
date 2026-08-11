@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="target">Click this element</div>
+<div id="popup"></div>
+
+<script>
+    let target = document.getElementById("target");
+    let popup = document.getElementById("popup");
+
+    target.addEventListener("mousemove", () => {
+        popup.textContent = "Trigger a content change";
+        window.parent.postMessage('content changed', '*');
+    });
+
+    target.addEventListener("click", () => {
+        window.parent.postMessage('clicked', '*');
+    });
+
+    window.parent.postMessage('iframe loaded', '*');
+</script>
+</body>
+</html>

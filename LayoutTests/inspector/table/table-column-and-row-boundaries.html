@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/table-utilities.js"></script>
+<script>
+function test()
+{
+    InspectorTest.redirectRequestAnimationFrame();
+
+    let suite = InspectorTest.createSyncSuite("Table.ColumnAndRowBoundaries");
+
+    suite.addTestCase({
+        name: "Table.IsRowVisible.ExclusiveEnd",
+        description: "_isRowVisible should treat _visibleRowIndexEnd as an exclusive bound (the end index is not rendered).",
+        test() {
+            let table = InspectorTest.createTable(100);
+
+            // Simulate a strict visible window: rows [10, 20) are rendered, row 20 is not.
+            table._previousRevealedRowCount = 100;
+            table._visibleRowIndexStart = 10;
+            table._visibleRowIndexEnd = 20;
+
+            InspectorTest.expectFalse(table._isRowVisible(9), "Row just before the start should not be visible.");
+            InspectorTest.expectTrue(table._isRowVisible(10), "First rendered row should be visible.");
+            InspectorTest.expectTrue(table._isRowVisible(19), "Last rendered row should be visible.");
+            InspectorTest.expectFalse(table._isRowVisible(20), "End index is exclusive, so row 20 should not be visible.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Table.ShowColumn.IntoEmptyVisibleSet",
+        description: "showColumn should not throw when the shown column becomes the only visible column.",
+        test() {
+            let table = InspectorTest.createTable(10);
+
+            let indexColumn = table.columnWithIdentifier("index");
+            let nameColumn = table.columnWithIdentifier("name");
+
+            // Hide every column so the visible set is empty.
+            table.hideColumn(indexColumn);
+            table.hideColumn(nameColumn);
+            InspectorTest.expectShallowEqual(table.columns.filter((column) => !column.hidden).map((column) => column.identifier), [], "No columns should be visible.");
+
+            // Showing a column that is not first in column order previously dereferenced
+            // _visibleColumns[0] on an empty array and threw.
+            table.showColumn(nameColumn);
+
+            InspectorTest.expectFalse(nameColumn.hidden, "The shown column should no longer be hidden.");
+            InspectorTest.expectShallowEqual(table.columns.filter((column) => !column.hidden).map((column) => column.identifier), ["name"], "Only the shown column should be visible.");
+
+            return true;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+    <p>Tests Table row-visibility boundary checks and showing a column into an empty visible column set.</p>
+</body>
+</html>

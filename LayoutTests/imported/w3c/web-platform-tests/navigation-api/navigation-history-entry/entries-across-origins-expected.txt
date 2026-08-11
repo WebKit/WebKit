@@ -1,0 +1,4 @@
+
+
+PASS navigation.entries() should only contain entries that are both same-origin and contiguous
+

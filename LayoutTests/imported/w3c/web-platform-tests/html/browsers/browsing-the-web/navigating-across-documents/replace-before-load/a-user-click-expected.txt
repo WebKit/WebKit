@@ -1,0 +1,4 @@
+
+
+PASS User click on <a> before the load event must NOT replace
+

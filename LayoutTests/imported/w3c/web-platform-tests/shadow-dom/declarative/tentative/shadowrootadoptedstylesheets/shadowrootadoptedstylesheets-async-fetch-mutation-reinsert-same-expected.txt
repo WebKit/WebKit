@@ -1,0 +1,3 @@
+
+FAIL Placeholder removed and reinserted at same position is replaced by fetched sheet. assert_equals: Before removal: expected 1 placeholder(s). expected 1 but got 0
+

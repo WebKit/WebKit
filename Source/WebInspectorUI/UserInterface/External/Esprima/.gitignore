@@ -1,0 +1,2 @@
+# Ignore the temporary repository clone created by the script to update Web Inspector's checkout of esprima-next
+esprima-next/

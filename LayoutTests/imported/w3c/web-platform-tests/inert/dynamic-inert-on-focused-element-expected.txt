@@ -1,0 +1,12 @@
+
+PASS <input> that gets 'inert' attribute
+PASS <input> whose parent gets 'inert' attribute
+PASS <button> that gets 'inert' attribute
+PASS <div> that gets 'inert' attribute
+PASS <div> whose parent gets 'inert' attribute
+PASS <div> whose grandparent gets 'inert' attribute
+
+
+foo
+bar
+baz

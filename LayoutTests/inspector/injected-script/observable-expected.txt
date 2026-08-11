@@ -1,0 +1,57 @@
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: a,b,c
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object Set]
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object Map]
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: count of 1
+CONSOLE MESSAGE: [object Object]
+CONSOLE MESSAGE: hello
+CONSOLE MESSAGE: [object Object]
+Test that Injected Script operations are not observable by user code.
+
+
+== Running test suite: InjectedScript.Observable
+-- Running test case: InjectedScript.Observable:Array.prototype[Symbol.iterator]
+PASS: Paused.
+PASS: Resumed.
+PASS: Array.prototype[Symbol.iterator] call count should be 1.
+
+-- Running test case: InjectedScript.Observable:Set.prototype[Symbol.iterator]
+PASS: Paused.
+PASS: Resumed.
+PASS: Set.prototype[Symbol.iterator] call count should be 1.
+
+-- Running test case: InjectedScript.Observable:Map.prototype[Symbol.iterator]
+PASS: Paused.
+PASS: Resumed.
+PASS: Map.prototype[Symbol.iterator] call count should be 1.
+
+-- Running test case: InjectedScript.Observable:Array.prototype.push
+PASS: Paused.
+PASS: Resumed.
+PASS: Array.prototype["push"] call count should be 1.
+
+-- Running test case: InjectedScript.Observable:Set.prototype.add
+PASS: Paused.
+PASS: Resumed.
+PASS: Set.prototype["add"] call count should be 1.
+
+-- Running test case: InjectedScript.Observable:String
+PASS: Paused.
+PASS: Resumed.
+PASS: String call count should be 1.
+
+-- Running test case: InjectedScript.Observable:Array.prototype.index
+PASS: Paused.
+PASS: Resumed.
+PASS: Array.prototype["42"] call count should be 1.
+
+-- Running test case: InjectedScript.Observable:Object.prototype.destructuredProperty
+PASS: Paused.
+PASS: Resumed.
+PASS: Object.prototype["fetchStart"] call count should be 1.
+

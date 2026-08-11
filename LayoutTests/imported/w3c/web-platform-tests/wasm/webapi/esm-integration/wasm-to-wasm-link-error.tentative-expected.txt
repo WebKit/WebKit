@@ -1,0 +1,3 @@
+
+PASS Link errors for imports between WebAssembly modules should be reported.
+

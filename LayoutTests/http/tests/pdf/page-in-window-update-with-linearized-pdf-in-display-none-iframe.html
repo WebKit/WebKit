@@ -1,0 +1,35 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true ] -->
+<html>
+<head>
+    <style>
+        iframe {
+            display: none;
+            width: 700px;
+            height: 500px;
+            border: 1px solid black;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function testComplete()
+        {
+            internals.setPageIsInWindow(false);
+            internals.setPageIsInWindow(true);
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, 0);
+            });
+        }
+    </script>
+</head>
+<body>
+    <p>This test should not crash</p>
+    <iframe onload="testComplete()" src="/resources/network-simulator.py?test=pdf-load&path=/pdf/resources/linearized.pdf&chunksize=1024&chunkdelay=16"></iframe>
+</body>
+</html>

@@ -1,0 +1,15 @@
+Tests that an observation is received when calling IntersectionObserver.observe() with a disconnected target.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS receivedObservations is false
+PASS observations.length is 1
+PASS observations[0].target.tagName is "DIV"
+PASS observations[0].isIntersecting is false
+PASS observations[0].intersectionRatio is 0.0
+PASS observations[0].target.foo is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,6 @@
+First: Lorem ipsum dolor sit amet Second: Lorem ipsum dolor sit amet
+
+FAIL Text with user-select:text is selectable even if it is inside a user-select:none element. assert_equals: Anchor node:  expected Text node " dolor sit" but got null
+FAIL Select user-select:text content and then extend selection to user-select:none content. assert_equals: Anchor node:  expected Text node " dolor sit" but got null
+FAIL Select user-select:text content and then extend selection to the next user-select:text element by crossing the user-select:none element. assert_equals: Anchor node:  expected Text node " dolor sit" but got null
+

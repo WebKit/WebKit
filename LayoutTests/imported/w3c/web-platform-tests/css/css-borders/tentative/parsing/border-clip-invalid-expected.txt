@@ -1,0 +1,6 @@
+
+PASS e.style['border-clip'] = "auto" should not set the property value
+PASS e.style['border-clip'] = "none" should not set the property value
+PASS e.style['border-clip'] = "padding-box" should not set the property value
+PASS e.style['border-clip'] = "-10px" should not set the property value
+

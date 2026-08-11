@@ -1,0 +1,25 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function main() {
+    input.addEventListener('focusin', inputFocus, {once: true});
+    dialog.addEventListener('focus', dialogChange, {once: true});
+    dialog.addEventListener('blur', dialogChange, {once: true});
+    input.focus();
+    input.stepUp(1);
+    document.body.innerHTML = 'PASS';
+}
+
+function inputFocus() {
+    dialog.show();
+}
+function dialogChange() {
+    dialog.close();
+    input.type = "range";
+}
+</script>
+<body onload="main()">
+<dialog id="dialog" tabindex="0">
+</dialog>
+<input id="input" type="time">

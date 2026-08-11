@@ -1,0 +1,7 @@
+
+PASS Offsets for position-area: span-all and insets: {"top":"5px","bottom":"5px","left":"5px","right":"5px"}
+PASS Offsets for position-area: center center and insets: {"top":"10px","bottom":"40px","left":"5px","right":"15px"}
+PASS Offsets for position-area: left bottom and insets: {"top":"10px","bottom":"40px","left":"5px","right":"15px"}
+PASS Offsets for position-area: span-right center and insets: {"top":"20%","bottom":"auto","left":"auto","right":"25%"}
+PASS Offsets for position-area: bottom right and insets: {"left":"50px","right":"100px","top":"30px","bottom":"10px"}
+

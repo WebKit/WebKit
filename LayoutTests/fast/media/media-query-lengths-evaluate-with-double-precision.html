@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Test: @media <length> values are evaluated with greater-than-int precision.</title>
+    <meta name="assert" content="All boxes are blue.">
+    <style>
+        div {
+            display: inline-block;
+            width: 250px;
+            height: 250px;
+            margin: 30px;
+            background-color: blue;
+        }
+        @media (min-width: 99999999999px) {
+            #box-one {
+                background-color: yellow;
+            }
+        }
+        @media (min-height: 99999999999px) {
+            #box-two {
+                background-color: yellow;
+            }
+        }
+        @media (min-device-width: 99999999999px) {
+            #box-three {
+                background-color: yellow;
+            }
+        }
+        @media (min-device-height: 99999999999px) {
+            #box-four {
+                background-color: yellow;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="box-one"></div>
+<div id="box-two"></div>
+<div id="box-three"></div>
+<div id="box-four"></div>
+</body>
+</html>
+

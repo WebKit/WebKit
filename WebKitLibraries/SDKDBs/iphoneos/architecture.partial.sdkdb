@@ -1,0 +1,61 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NX_UnknownByteOrder"},
+      {"access": "public", "name": "NX_LittleEndian"},
+      {"access": "public", "name": "NX_BigEndian"}
+     ],
+     "name": "NXByteOrder"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXConvertHostDoubleToSwapped"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXConvertHostFloatToSwapped"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXConvertSwappedDoubleToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXConvertSwappedFloatToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXHostByteOrder"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapBigDoubleToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapBigFloatToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapBigIntToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapBigLongLongToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapBigLongToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapBigShortToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapDouble"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapFloat"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostDoubleToBig"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostDoubleToLittle"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostFloatToBig"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostFloatToLittle"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostIntToBig"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostIntToLittle"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostLongLongToBig"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostLongLongToLittle"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostLongToBig"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostLongToLittle"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostShortToBig"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapHostShortToLittle"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapInt"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapLittleDoubleToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapLittleFloatToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapLittleIntToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapLittleLongLongToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapLittleLongToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapLittleShortToHost"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapLong"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapLongLong"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "_NXSwapShort"}
+   ],
+   "target": "arm64e-apple-ios",
+   "typedefs": [
+    {"access": "public", "name": "NXSwappedDouble"},
+    {"access": "public", "name": "NXSwappedFloat"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

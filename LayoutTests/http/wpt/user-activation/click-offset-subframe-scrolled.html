@@ -1,0 +1,63 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>
+    test_driver.click lands in an offset subframe when the top document is scrolled
+</title>
+<meta name="timeout" content="long" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<style>
+    body { margin: 0; }
+    /* Push the frame far down so the top document must be scrolled to see it. */
+    #spacer { height: 2400px; }
+    #frame { position: absolute; top: 2000px; left: 130px; width: 200px; height: 120px; border: 0; }
+</style>
+<body>
+    <div id="spacer"></div>
+    <iframe id="frame"></iframe>
+</body>
+<script type="module">
+    const iframe = document.getElementById("frame");
+
+    function runInFrame(frame) {
+        const { promise, resolve, reject } = Promise.withResolvers();
+        const timer = step_timeout(() => {
+            window.removeEventListener("message", onMessage);
+            reject(new Error("frame did not report back in time"));
+        }, 8000);
+        function onMessage(event) {
+            if (event.source !== frame) return;
+            clearTimeout(timer);
+            window.removeEventListener("message", onMessage);
+            resolve(event.data);
+        }
+        window.addEventListener("message", onMessage);
+        frame.postMessage("run", "*");
+        return promise;
+    }
+
+    promise_test(async (t) => {
+        await new Promise((resolve) => {
+            iframe.onload = resolve;
+            iframe.src = new URL("resources/click-target.html", location.href).href;
+        });
+        t.add_cleanup(() => window.scrollTo(0, 0));
+
+        // Scroll so the frame sits partway down the viewport, not at the origin.
+        // On iOS the scroll is applied asynchronously, so poll until scrollY
+        // reflects it rather than assuming a single frame is enough.
+        window.scrollTo(0, 1900);
+        await new Promise((resolve) => {
+            (function check() {
+                window.scrollY > 0 ? resolve() : requestAnimationFrame(check);
+            })();
+        });
+        assert_greater_than(window.scrollY, 0, "top document is actually scrolled");
+
+        const report = await runInFrame(iframe.contentWindow);
+        assert_true(report.mousedown && report.mouseup,
+            "the synthetic click landed on the target inside the offset, scrolled subframe");
+    }, "test_driver.click lands in an offset subframe with the top document scrolled");
+</script>

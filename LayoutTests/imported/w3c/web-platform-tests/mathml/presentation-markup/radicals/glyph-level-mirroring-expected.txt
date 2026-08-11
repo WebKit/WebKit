@@ -1,0 +1,9 @@
+
+PASS LTR Direction
+FAIL RTL Direction assert_approx_equals: Base glyph expected 32 +/- 1 but got 80
+
+
+
+
+
+

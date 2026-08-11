@@ -1,0 +1,79 @@
+<html> 
+<head>
+<title>Unfilled Properties Test</title> 
+<style type="text/css" media="screen">
+#box {
+    height: 50px;
+    width: 200px;
+    background-color: blue;
+
+    transition-property: opacity, left, opacity, top, width, opacity, height, opacity;
+    transition-duration: 1s,2s;
+    transition-delay: 3s,4s,5s;
+    transition-timing-function: linear;
+    
+    animation-name: a, b, c, d, e;
+    animation-duration: 10s, 20s;
+    animation-delay: 1s;
+    animation-direction: normal, alternate, reverse, alternate-reverse;
+    animation-fill-mode: forwards, backwards;
+    animation-play-state: running, paused, running;
+    animation-iteration-count: 1, 2, 3;
+    animation-timing-function: linear;
+    animation-composition: add, replace, accumulate;
+}
+@keyframes a { }
+@keyframes b { }
+@keyframes c { }
+@keyframes d { }
+@keyframes e { }
+</style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  
+    const kExpectedResults = [
+      { 'property': 'transitionDuration', 'value': '1s, 2s' },
+      { 'property': 'transitionProperty', 'value': 'opacity, left, opacity, top, width, opacity, height, opacity' },
+      { 'property': 'transitionDelay',    'value': '3s, 4s, 5s' },
+      { 'property': 'transitionTimingFunction', 'value': 'linear' },
+      { 'property': 'animationName',      'value': 'a, b, c, d, e' },
+      { 'property': 'animationDuration',  'value': '10s, 20s' },
+      { 'property': 'animationDelay',     'value': '1s' },
+      { 'property': 'animationDirection', 'value': 'normal, alternate, reverse, alternate-reverse' },
+      { 'property': 'animationFillMode',  'value': 'forwards, backwards' },
+      { 'property': 'animationPlayState', 'value': 'running, paused, running' },
+      { 'property': 'animationIterationCount', 'value': '1, 2, 3' },
+      { 'property': 'animationTimingFunction', 'value': 'linear' },
+      { 'property': 'animationComposition', 'value': 'add, replace, accumulate' }
+    ];
+    
+    function start()
+    {
+        var box = document.getElementById('box');
+        var resultsString = "";
+        var boxStyle = window.getComputedStyle(box);
+        
+        kExpectedResults.forEach(function(curItem) {
+          var computedValue = boxStyle[curItem.property];
+          var expectedValue = curItem.value;
+          if (computedValue == expectedValue)
+            resultsString += "Testing " + curItem.property + ": PASS" + "<br>";
+          else
+            resultsString += "Testing " + curItem.property + " expected <code>" + curItem.value + "</code> got <code>" + computedValue + "</code>: FAIL" + "<br>";
+        });
+
+        var results = document.getElementById('result');
+        results.innerHTML = resultsString;
+    }
+    
+    window.addEventListener('load', start, false);
+  </script>
+</head> 
+<body>
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

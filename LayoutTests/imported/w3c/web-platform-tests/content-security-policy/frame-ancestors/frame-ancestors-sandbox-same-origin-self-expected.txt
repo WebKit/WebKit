@@ -1,0 +1,4 @@
+
+
+PASS A 'frame-ancestors' CSP directive with a 'self' value should compare the child URL (self) against each parent's origin's URL rather then URL. When the ancestors are sandboxed, they never match.
+

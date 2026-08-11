@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body id="body" role="group">
+
+Hello
+<img src="../resources/svg-face.svg" alt="image 1" />
+<img src="../resources/svg-face.svg" alt="image 2" />
+world 
+
+<script>
+var output = "This test verifies that we don't enter an infinite loop when we have two references to the same remote SVG file.\n";
+
+if (window.accessibilityController) {
+    var container = accessibilityController.accessibleElementById("body");
+    container.textMarkerRangeForElement(container)
+    debug(output);
+}
+</script>
+</body>
+</html>

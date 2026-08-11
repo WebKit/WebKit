@@ -1,0 +1,9 @@
+
+PASS A <source> whose media attribute matches is selected.
+PASS A <source> whose media attribute does not match is not selected.
+PASS A non-matching <source> is skipped in favor of a later matching <source>.
+PASS A <source> without a media attribute acts as a fallback when earlier <source>s do not match.
+PASS Changing a <source> media attribute to a matching value selects it.
+PASS Changing a <source> media attribute to a non-matching value deselects it.
+PASS A <source> must satisfy both its media attribute and a supported type to be selected.
+

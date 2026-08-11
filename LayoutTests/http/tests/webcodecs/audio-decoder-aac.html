@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <script>
+// Data offsets for audio-aac.mp4
+// - AudioSpecificConfig (description): offset 1757, size 25 bytes
+// - First AAC sample: offset 44, size 28 bytes
+// - Sample rate: 48000 Hz
+// - Channels: 4 (quad)
+// - First sample timestamp: 0 (in 48000 Hz time base)
+// - Sample duration: 1024 samples
+
+const descriptionOffset = 1757;
+const descriptionSize = 25;
+const sampleOffset = 44;
+const sampleSize = 28;
+const sampleRate = 48000;
+const numberOfChannels = 4;
+const sampleTimestamp = 0; // in 48000 Hz time base
+const sampleDuration = 1024; // in samples
+
+promise_test(async () => {
+    const response = await fetch("./resources/audio-aac.mp4");
+    const buffer = await response.arrayBuffer();
+
+    let decodedFrames = [];
+    let decodeError = null;
+
+    const decoder = new AudioDecoder({
+        output(frame) {
+            decodedFrames.push({
+                timestamp: frame.timestamp,
+                duration: frame.duration,
+                numberOfFrames: frame.numberOfFrames,
+                numberOfChannels: frame.numberOfChannels,
+                sampleRate: frame.sampleRate,
+                format: frame.format
+            });
+            frame.close();
+        },
+        error(e) {
+            decodeError = e;
+        }
+    });
+
+    // Configure the decoder with AAC-LC codec and the AudioSpecificConfig from the MP4 file
+    const description = new Uint8Array(buffer, descriptionOffset, descriptionSize);
+    decoder.configure({
+        codec: 'mp4a.40.2', // AAC-LC
+        sampleRate: sampleRate,
+        numberOfChannels: numberOfChannels,
+        description: description
+    });
+
+    // Create an EncodedAudioChunk from the first AAC sample
+    const sampleData = new Uint8Array(buffer, sampleOffset, sampleSize);
+    // Convert timestamp from 48000 Hz time base to microseconds
+    const timestampMicroseconds = Math.round((sampleTimestamp / sampleRate) * 1000000);
+    const durationMicroseconds = Math.round((sampleDuration / sampleRate) * 1000000);
+
+    const chunk = new EncodedAudioChunk({
+        type: 'key',
+        timestamp: timestampMicroseconds,
+        duration: durationMicroseconds,
+        data: sampleData
+    });
+
+    decoder.decode(chunk);
+    await decoder.flush();
+
+    assert_equals(decodeError, null, "No decode error should occur");
+    assert_equals(decodedFrames.length, 1, "Should have decoded exactly one frame");
+
+    const frame = decodedFrames[0];
+    assert_equals(frame.numberOfChannels, numberOfChannels, "Decoded frame should have correct number of channels");
+    assert_equals(frame.sampleRate, sampleRate, "Decoded frame should have correct sample rate");
+    assert_equals(frame.numberOfFrames, sampleDuration, "Decoded frame should have correct number of samples");
+    assert_equals(frame.timestamp, timestampMicroseconds, "Decoded frame should have correct timestamp");
+
+    decoder.close();
+}, "Decode first AAC sample from MP4 file with extended AudioSpecificConfig");
+    </script>
+</body>
+</html>

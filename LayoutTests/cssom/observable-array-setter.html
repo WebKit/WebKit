@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests for ObservableArray's [[Put]]");
+
+let sheet1 = null;
+let sheet2 = null;
+let descriptor = null;
+
+function runTest() {
+    "use strict";
+
+    sheet1 = new CSSStyleSheet()
+    sheet1.replaceSync('div { color: red }')
+    document.adoptedStyleSheets.push(sheet1)
+
+    shouldBe("document.adoptedStyleSheets.length", "1");
+    descriptor = Object.getOwnPropertyDescriptor(document.adoptedStyleSheets, 'length');
+    shouldBeFalse("descriptor.configurable");
+    shouldBeFalse("descriptor.enumerable");
+    shouldBeTrue("descriptor.writable");
+    shouldBe("descriptor.value", "1");
+    shouldBe("document.adoptedStyleSheets[0]", "sheet1");
+
+    evalAndLog("document.adoptedStyleSheets.length = 0");
+    shouldBe("document.adoptedStyleSheets.length", "0");
+    shouldBeUndefined("document.adoptedStyleSheets[0]");
+
+    sheet2 = new CSSStyleSheet()
+    sheet2.replaceSync('div { color: blue }')
+    document.adoptedStyleSheets.push(sheet1)
+    document.adoptedStyleSheets.push(sheet2)
+    shouldBe("document.adoptedStyleSheets.length", "2");
+    evalAndLog("document.adoptedStyleSheets.length = 1");
+    shouldBe("document.adoptedStyleSheets.length", "1");
+    shouldBe("document.adoptedStyleSheets[0]", "sheet1");
+    shouldBeUndefined("document.adoptedStyleSheets[1]");
+
+    evalAndLog("document.adoptedStyleSheets.length = 5");
+    shouldBe("document.adoptedStyleSheets.length", "1");
+    shouldBe("document.adoptedStyleSheets[0]", "sheet1");
+    shouldBeUndefined("document.adoptedStyleSheets[1]");
+
+    shouldThrowErrorName("document.adoptedStyleSheets.length = 0.5", "RangeError");
+
+    evalAndLog("document.adoptedStyleSheets.foo = 1;");
+    shouldBe("document.adoptedStyleSheets.foo", "1");
+
+    document.adoptedStyleSheets.length = 0;
+}
+
+runTest();
+</script>
+</body>

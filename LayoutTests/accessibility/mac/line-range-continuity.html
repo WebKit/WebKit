@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container">
+<div id="text" style="width:200px;" contenteditable="true">Lorem ipsum vivamus nibh urna mollis at aliquam taciti, etiam arcu mi semper nostra taciti nulla dolor</div>
+</div>
+
+<script>
+let output = "Tests continuity of line ranges in soft line breaks, i.e., the end of the current line range is the start of the next line range.\n\n";
+
+if (window.accessibilityController) {
+    let text = accessibilityController.accessibleElementById("text").childAtIndex(0);
+    let textRange = text.textMarkerRangeForElement(text);
+
+    let start = text.startTextMarkerForTextMarkerRange(textRange);
+    let firstLine = text.lineTextMarkerRangeForTextMarker(start);
+    var firstEnd = text.endTextMarkerForTextMarkerRange(firstLine);
+    output += `First Line: '${text.stringForTextMarkerRange(firstLine)}'\n`;
+
+    // Use the end of the firs line range to get the range for the second line,
+    // since the end of the first line should be the start of the second line.
+    let secondLine = text.lineTextMarkerRangeForTextMarker(firstEnd);
+    var secondStart = text.startTextMarkerForTextMarkerRange(secondLine);
+    output += `Second Line: '${text.stringForTextMarkerRange(secondLine)}'\n`;
+
+    // Re-confirm that the end marker of the first line is equal to the start marker of the second line.
+    output += expect("firstEnd.isEqual(secondStart)", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

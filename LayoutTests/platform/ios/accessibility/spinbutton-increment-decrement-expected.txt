@@ -1,0 +1,14 @@
+This test ensures that increment and decrement simulate up and down keypresses for ARIA spinbuttons.
+
+#spinbutton initial value: AXValue: 2022.00
+
+Key event received: {keyIdentifier: Up, key: ArrowUp, keyCode: 38}
+#spinbutton value after increment: AXValue: 2023.00
+
+Key event received: {keyIdentifier: Down, key: ArrowDown, keyCode: 40}
+#spinbutton value after decrement: AXValue: 2022.00
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+2022

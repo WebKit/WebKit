@@ -1,0 +1,9 @@
+
+PASS ImageData(w, h), width cannot be 0
+PASS ImageData(w, h), height cannot be 0
+PASS ImageData(w, h), exposed attributes check
+PASS ImageData(buffer, w), the buffer size must be a multiple of 4
+PASS ImageData(buffer, w), buffer size must be a multiple of the image width
+PASS ImageData(buffer, w, h), buffer.length == 4 * w * h must be true
+PASS ImageData(buffer, w, opt h), exposed attributes check
+

@@ -1,0 +1,14 @@
+This text should be green.
+This text should be blue (not green).
+This text should be green.
+This text should be green.
+This text should be green.
+This text should be green.
+
+FAIL Basic local support assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Mixin is not cached if locals are different assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+FAIL Locals resolve against each other assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Locals resolve against parameters assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Parameters do not resolve against locals assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL Locals after @result are seen assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+

@@ -1,0 +1,46 @@
+<html dir="rtl">
+<head>
+    <style>
+        .wide {
+            width: 2000px;
+            height: 10px;
+            background-color: silver;
+        }
+        .origin {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            background-color: blue;
+        }
+        
+        #lefty {
+            position: absolute;
+            left: -200px;
+            width: 100px;
+            height: 100px;
+            background-color: orange;
+        }
+    </style>
+    <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function runTest()
+    {
+        document.getElementById('lefty').scrollIntoView();
+        document.getElementById('result').textContent = 'document.scrollingElement.scrollLeft = ' + document.scrollingElement.scrollLeft;
+    }
+    
+    window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <div class="wide"></div>
+    <div class="origin"></div>
+    <div id="lefty"></div>
+    <div id="result">
+    </div>
+</body>
+</html>

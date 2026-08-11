@@ -1,0 +1,10 @@
+Check that GPU process ImageBuffer resource limits are enforced
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Platform does not enforce ImageBuffer resource limits
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

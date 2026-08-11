@@ -1,0 +1,16 @@
+This tests that a spin button supports range value attributes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS spinbutton.intValue is 5
+PASS endsWith(spinbutton.intValue, '5') is true
+PASS endsWith(spinbutton.minValue, '1') is true
+PASS endsWith(spinbutton.maxValue, '9') is true
+PASS endsWith(spinbutton.valueDescription, '5 of 9') is true
+PASS spinbutton.title is untitledButton.title
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+42

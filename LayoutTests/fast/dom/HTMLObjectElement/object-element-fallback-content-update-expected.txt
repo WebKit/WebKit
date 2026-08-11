@@ -1,0 +1,10 @@
+This tests updating an object element which was showing fallback content while it's disconnected from the document.
+WebKit should update the object element when it gets reinserted back into the document.
+Test passes if you see "PASS" below:
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+PASS

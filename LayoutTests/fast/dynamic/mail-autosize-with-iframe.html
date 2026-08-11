@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>This tests that autosize reports the main frame content height.</title>
+<script>
+if (window.internals)
+    internals.enableFixedWidthAutoSizeMode(true, 100, 100);
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function run() {
+  setTimeout(function() {
+    document.body.offsetHeight;
+    document.getElementById("result").textContent = window.innerHeight;  
+    if (window.internals)
+        internals.enableFixedWidthAutoSizeMode(false, 0, 0, 0, 0);
+    if (window.testRunner)
+        testRunner.notifyDone();
+  }, 0);
+}
+</script>
+</head>
+<body>
+<div style="width: 100px; height: 1000px"></div>
+<iframe onload="run()" scrolling="no" style="width: 0px; height: 0px" src="about:blank"></iframe>
+<pre id=result></pre>
+</body>
+</html>

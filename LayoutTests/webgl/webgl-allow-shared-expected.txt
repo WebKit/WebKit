@@ -1,0 +1,5 @@
+
+
+PASS WebGL AllowShared
+PASS WebGL2 AllowShared
+

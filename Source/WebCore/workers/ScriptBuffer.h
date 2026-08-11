@@ -1,0 +1,66 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <WebCore/SharedBuffer.h>
+#include <wtf/Platform.h>
+
+namespace WebCore {
+
+class ScriptBuffer {
+public:
+    ScriptBuffer() = default;
+    WEBCORE_EXPORT explicit ScriptBuffer(const String&);
+    WEBCORE_EXPORT explicit ScriptBuffer(RefPtr<const FragmentedSharedBuffer>&&);
+
+    static ScriptBuffer empty();
+
+    String toString() const;
+    const SharedBufferBuilder& bufferBuilder() const LIFETIME_BOUND { return m_buffer; }
+    const FragmentedSharedBuffer* buffer() const { return m_buffer.buffer(); }
+    RefPtr<const FragmentedSharedBuffer> bufferForSerialization() const { return m_buffer.buffer(); }
+    size_t size() const { return m_buffer.size(); }
+
+    ScriptBuffer isolatedCopy() const { return ScriptBuffer(m_buffer ? RefPtr<FragmentedSharedBuffer>(m_buffer.copyBuffer()) : nullptr); }
+    explicit operator bool() const { return !!m_buffer; }
+    bool isEmpty() const { return m_buffer.isEmpty(); }
+
+    WEBCORE_EXPORT bool NODELETE containsSingleFileMappedSegment() const;
+    void append(const String&);
+    void append(const FragmentedSharedBuffer&);
+
+    bool operator==(const ScriptBuffer& other) const { return m_buffer == other.m_buffer; }
+
+private:
+    SharedBufferBuilder m_buffer; // Contains the UTF-8 encoded script.
+};
+
+} // namespace WebCore

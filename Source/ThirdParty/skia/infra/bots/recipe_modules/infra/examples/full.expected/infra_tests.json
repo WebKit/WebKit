@@ -1,0 +1,46 @@
+[
+  {
+    "cmd": [
+      "realpath",
+      "[START_DIR]/go/go/VERSION"
+    ],
+    "name": "realpath go/go/VERSION"
+  },
+  {
+    "cmd": [
+      "dirname",
+      ""
+    ],
+    "name": "dirname"
+  },
+  {
+    "cmd": [
+      "realpath",
+      "[START_DIR]/go/go/VERSION"
+    ],
+    "name": "realpath go/go/VERSION (2)"
+  },
+  {
+    "cmd": [
+      "dirname",
+      ""
+    ],
+    "name": "dirname (2)"
+  },
+  {
+    "cmd": [
+      "echo",
+      "hello world"
+    ],
+    "env": {
+      "GOCACHE": "[START_DIR]/cache/go_cache",
+      "GOPATH": "[START_DIR]/cache/gopath",
+      "GOROOT": "[START_DIR]/go/go",
+      "PATH": "[START_DIR]/go/go/bin:[START_DIR]/cache/gopath/bin:<PATH>"
+    },
+    "name": "hello"
+  },
+  {
+    "name": "$result"
+  }
+]

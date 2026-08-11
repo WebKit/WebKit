@@ -1,0 +1,22 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="400">
+<rect x="0" y="0" width="40" height="40" fill="rgba(255,0,0,1)"></rect>
+<rect x="40" y="0" width="40" height="40" fill="rgba(0,255,0,1)"></rect>
+<rect x="80" y="0" width="40" height="40" fill="rgba(0,0,255,1)"></rect>
+<rect x="120" y="0" width="40" height="40" fill="rgba(254,0,0,1)"></rect>
+<rect x="0" y="40" width="40" height="40" fill="rgba(255,0,0,1)"></rect>
+<rect x="40" y="40" width="40" height="40" fill="rgba(0,255,0,1)"></rect>
+<rect x="80" y="40" width="40" height="40" fill="rgba(0,0,255,1)"></rect>
+<rect x="120" y="40" width="40" height="40" fill="rgba(0,254,0,1)"></rect>
+<rect x="0" y="80" width="40" height="40" fill="rgba(255,0,0,1)"></rect>
+<rect x="40" y="80" width="40" height="40" fill="rgba(0,255,0,1)"></rect>
+<rect x="80" y="80" width="40" height="40" fill="rgba(0,0,255,1)"></rect>
+<rect x="120" y="80" width="40" height="40" fill="rgba(0,0,0,1)"></rect>
+<rect x="0" y="120" width="40" height="40" fill="rgba(255,0,0,1)"></rect>
+<rect x="40" y="120" width="40" height="40" fill="rgba(0,255,0,1)"></rect>
+<rect x="80" y="120" width="40" height="40" fill="rgba(0,0,255,1)"></rect>
+<rect x="120" y="120" width="40" height="40" fill="rgba(126,126,0,1)"></rect>
+</svg>

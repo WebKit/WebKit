@@ -1,0 +1,24 @@
+Bug 295662: a backing-sharing layer whose clip comes from an ancestor that clips one axis while the other stays overflow:visible must not inflate its backing provider's bounds with that unbounded clip. Test passes if no composited layer is near-LayoutUnit::max tall.
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 8.00 86.00)
+          (bounds 50.00 50.00)
+        )
+        (GraphicsLayer
+          (position 20.00 20.00)
+          (bounds 300.00 600.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

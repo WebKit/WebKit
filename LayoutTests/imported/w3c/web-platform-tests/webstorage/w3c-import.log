@@ -1,0 +1,67 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/README.md
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/defineProperty.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/document-domain.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/eventTestHarness.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_basic.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_basic.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_body_attribute.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_body_attribute.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_case_sensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_case_sensitive.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_constructor.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_initstorageevent.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_local_key.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_local_newvalue.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_local_oldvalue.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_local_removeitem.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_local_storagearea.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_local_url.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_no_duplicates.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_session_key.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_session_newvalue.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_session_oldvalue.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_session_removeitem.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_session_storagearea.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_session_url.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_setattribute.html
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/event_setattribute.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/missing_arguments.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/set.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_builtins.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_clear.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_enumerate.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_functions_not_overwritten.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_getitem.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_in.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_indexing.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_key.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_key_empty_string.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_length.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_local_setitem_quotaexceedederr.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_local_window_open.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_removeitem.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_session_setitem_quotaexceedederr.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_session_window_noopener.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_session_window_open.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_set_value_enumerate.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_setitem.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_string_conversion.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/storage_supported_property_names.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webstorage/symbol-props.window.js

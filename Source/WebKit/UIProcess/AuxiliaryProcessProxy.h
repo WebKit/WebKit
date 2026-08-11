@@ -1,0 +1,477 @@
+/*
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "Connection.h"
+#include "MessageReceiverMap.h"
+#include "ProcessLauncher.h"
+#include "ProcessThrottler.h"
+#include "ResponsivenessTimer.h"
+#include <WebCore/ProcessIdentifier.h>
+#include <memory>
+#include <wtf/CheckedRef.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Forward.h>
+#include <wtf/HashMap.h>
+#include <wtf/ProcessID.h>
+#include <wtf/Seconds.h>
+#include <wtf/SwiftBridging.h>
+#include <wtf/SystemTracing.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/WeakPtrFactory.h>
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "LogStream.h"
+#include "LogStreamIdentifier.h"
+#include "ScopedActiveMessageReceiveQueue.h"
+#include "XPCEventHandler.h"
+#include <wtf/OSObjectPtr.h>
+#endif
+
+namespace WebCore {
+class SharedBuffer;
+}
+
+namespace WebKit {
+
+class ExtensionCapabilityGrant;
+class ProcessThrottler;
+class ProcessAssertion;
+class SandboxExtensionHandle;
+
+struct AuxiliaryProcessCreationParameters;
+
+enum class ProcessThrottleState : uint8_t;
+
+enum class ShouldTakeUIBackgroundAssertion : bool { No, Yes };
+enum class AlwaysRunsAtBackgroundPriority : bool { No, Yes };
+
+using ExtensionCapabilityGrantMap = HashMap<String, ExtensionCapabilityGrant>;
+
+class AuxiliaryProcessProxy
+    : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>
+    , public ResponsivenessTimer::Client
+    , private ProcessLauncher::Client
+    , public IPC::Connection::Client {
+    WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
+    WTF_MAKE_TZONE_ALLOCATED(AuxiliaryProcessProxy);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AuxiliaryProcessProxy);
+protected:
+    AuxiliaryProcessProxy(ASCIILiteral clientName, ShouldTakeUIBackgroundAssertion, AlwaysRunsAtBackgroundPriority = AlwaysRunsAtBackgroundPriority::No, Seconds responsivenessTimeout = ResponsivenessTimer::defaultResponsivenessTimeout);
+
+public:
+    USING_CAN_MAKE_WEAKPTR(ResponsivenessTimer::Client);
+
+    // ProcessLauncher::Client
+    uint32_t checkedPtrCount() const final { return IPC::Connection::Client::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return IPC::Connection::Client::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { IPC::Connection::Client::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { IPC::Connection::Client::decrementCheckedPtrCount(); }
+    void setDidBeginCheckedPtrDeletion() final { IPC::Connection::Client::setDidBeginCheckedPtrDeletion(); }
+
+    virtual ~AuxiliaryProcessProxy();
+
+    static AuxiliaryProcessCreationParameters auxiliaryProcessParameters();
+
+    enum class Type : uint8_t {
+        GraphicsProcessing,
+        Network,
+#if ENABLE(MODEL_PROCESS)
+        Model,
+#endif
+        WebContent,
+    };
+    virtual Type type() const = 0;
+
+    void connect();
+    virtual void terminate(std::optional<IPC::MessageName> invalidMessageName = std::nullopt);
+
+    ProcessThrottler& throttler() { return m_throttler; }
+    const ProcessThrottler& throttler() const { return m_throttler; }
+
+    template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
+
+    enum class ShouldStartProcessThrottlerActivity : bool { No, Yes };
+
+    template<typename T> using SendSyncResult = IPC::Connection::SendSyncResult<T>;
+    template<typename T> SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, IPC::Timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+
+    using AsyncReplyID = IPC::Connection::AsyncReplyID;
+    template<typename T, typename C> std::optional<AsyncReplyID> sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+
+    template<typename T, typename C, typename RawValue>
+    std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
+    {
+        return sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), destinationID.toUInt64(), sendOptions, shouldStartProcessThrottlerActivity);
+    }
+
+    // Like sendWithAsyncReply(), but the reply is dispatched on the provided dispatcher (e.g. a WorkQueue) instead of the
+    // Connection's main-run-loop dispatcher. Like sendWithAsyncReply(), this takes a ProcessThrottler activity by default
+    // to keep the process alive while the IPC is in flight; the activity is released on the main thread after the reply
+    // has been dispatched onto the provided dispatcher.
+    template<typename T, typename C> std::optional<AsyncReplyID> sendWithAsyncReplyOnDispatcher(T&&, GuaranteedSerialFunctionDispatcher&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+
+    template<typename T, typename RawValue>
+    bool send(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID, OptionSet<IPC::SendOption> sendOptions = { })
+    {
+        return send<T>(std::forward<T>(message), destinationID.toUInt64(), sendOptions);
+    }
+
+    template<typename T, typename RawValue>
+    SendSyncResult<T> sendSync(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID, IPC::Timeout timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
+    {
+        return sendSync<T>(std::forward<T>(message), destinationID.toUInt64(), timeout, sendSyncOptions, shouldStartProcessThrottlerActivity);
+    }
+
+    IPC::Connection& connection() const
+    {
+        RELEASE_ASSERT(m_connection);
+        return *m_connection;
+    }
+
+
+    bool hasConnection() const
+    {
+        return !!m_connection;
+    }
+    
+    bool hasConnection(const IPC::Connection& connection) const
+    {
+        return m_connection == &connection;
+    }
+    static AuxiliaryProcessProxy* NODELETE WTF_NULLABLE fromConnection(const IPC::Connection&);
+
+    void addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&);
+    void addMessageReceiver(IPC::ReceiverName, uint64_t destinationID, IPC::MessageReceiver&);
+    void removeMessageReceiver(IPC::ReceiverName, uint64_t destinationID);
+    void removeMessageReceiver(IPC::ReceiverName);
+    
+    template<typename RawValue>
+    void addMessageReceiver(IPC::ReceiverName messageReceiverName, const ObjectIdentifierGenericBase<RawValue>& destinationID, IPC::MessageReceiver& receiver)
+    {
+        addMessageReceiver(messageReceiverName, destinationID.toUInt64(), receiver);
+    }
+    
+    template<typename RawValue>
+    void removeMessageReceiver(IPC::ReceiverName messageReceiverName, const ObjectIdentifierGenericBase<RawValue>& destinationID)
+    {
+        removeMessageReceiver(messageReceiverName, destinationID.toUInt64());
+    }
+
+    enum class State {
+        Launching,
+        Running,
+        Terminated,
+    };
+    inline State state() const;
+
+    String stateString() const;
+    bool isLaunching() const { return state() == State::Launching; }
+    bool wasTerminated() const;
+    bool isSuspended() const { return m_isSuspended; }
+
+    ProcessID processID() const { return m_processLauncher ? m_processLauncher->processID() : 0; }
+
+    bool canSendMessage() const { return state() != State::Terminated;}
+    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, std::optional<IPC::Connection::AsyncReplyHandler> = std::nullopt, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+    bool sendMessageWithDispatcher(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, IPC::Connection::AsyncReplyHandlerWithDispatcher&&, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+    bool sendMessageAfterResuming(Vector<uint8_t>&& coalescingKey, UniqueRef<IPC::Encoder>&&);
+
+    void replyToPendingMessages();
+
+    void shutDownProcess();
+
+    WebCore::ProcessIdentifier coreProcessIdentifier() const { return m_processIdentifier; }
+
+    void setProcessSuppressionEnabled(bool);
+    bool platformIsBeingDebugged() const;
+
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    bool runningBoardThrottlingEnabled();
+    void setRunningBoardThrottlingEnabled();
+#endif
+
+    enum class UseLazyStop : bool { No, Yes };
+    void startResponsivenessTimer(UseLazyStop = UseLazyStop::No);
+    void stopResponsivenessTimer();
+
+    void checkForResponsiveness(CompletionHandler<void()>&& = nullptr, UseLazyStop = UseLazyStop::No);
+
+    ResponsivenessTimer& responsivenessTimer() const { return m_responsivenessTimer.get(); }
+
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
+    bool operator==(const AuxiliaryProcessProxy& other) const { return (this == &other); }
+
+    std::optional<SandboxExtensionHandle> createMobileGestaltSandboxExtensionIfNeeded() const;
+
+#if USE(RUNNINGBOARD)
+    void wakeUpTemporarilyForIPC();
+#endif
+
+#if USE(EXTENSIONKIT)
+    std::optional<ExtensionProcess> extensionProcess() const;
+    LaunchGrant* launchGrant() const;
+#endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    ExtensionCapabilityGrantMap& extensionCapabilityGrants() LIFETIME_BOUND { return m_extensionCapabilityGrants; }
+#endif
+
+#if PLATFORM(COCOA)
+    struct TaskInfo {
+        ProcessID pid;
+        ProcessThrottleState state;
+        Seconds totalUserCPUTime;
+        Seconds totalSystemCPUTime;
+        size_t physicalFootprint;
+    };
+
+    std::optional<TaskInfo> taskInfo() const;
+#endif
+
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
+#endif
+
+    enum ResumeReason : bool { ForegroundActivity, BackgroundActivity };
+    virtual void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) = 0;
+    virtual void sendProcessDidResume(ResumeReason) = 0;
+    virtual void didChangeThrottleState(ProcessThrottleState);
+    ASCIILiteral clientName() const { return m_clientName; }
+    String environmentIdentifier();
+    virtual void prepareToDropLastAssertion(CompletionHandler<void()>&& completionHandler) { completionHandler(); }
+    virtual void didDropLastAssertion() { }
+
+protected:
+    // ProcessLauncher::Client
+    void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier&&) override;
+
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+
+    void logInvalidMessage(IPC::Connection&, IPC::MessageName);
+    virtual ASCIILiteral processName() const = 0;
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    // Re-emits os_log messages forwarded by a child process during its launch window, before the
+    // streaming LogStream is established. Shared by every process type that forwards logs.
+    class LogXPCEventHandler final : public XPCEventHandler {
+    public:
+        explicit LogXPCEventHandler(const AuxiliaryProcessProxy&);
+
+        bool handleXPCEvent(xpc_object_t) final;
+
+    private:
+        WeakPtr<AuxiliaryProcessProxy> m_process;
+        bool m_logEndpointEnabled { true };
+    };
+
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    void createLogStream(IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&&);
+#else
+    void createLogStream(LogStreamIdentifier, CompletionHandler<void()>&&);
+#endif
+    void stopLogStream();
+
+    virtual void didReceiveLogsDuringLaunchForTesting() { }
+#endif
+
+    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&);
+    virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&) { }
+
+    using ReplyHandler = Variant<std::monostate, IPC::Connection::AsyncReplyHandler, IPC::Connection::AsyncReplyHandlerWithDispatcher>;
+    struct PendingMessage {
+        UniqueRef<IPC::Encoder> encoder;
+        OptionSet<IPC::SendOption> sendOptions;
+        ReplyHandler asyncReplyHandler;
+    };
+
+    virtual bool shouldSendPendingMessage(const IPC::Encoder&) { return true; }
+
+    void beginResponsivenessChecks();
+
+    // ResponsivenessTimer::Client.
+    void didBecomeUnresponsive() override;
+    void didBecomeResponsive() override { }
+    void willChangeIsResponsive() override { }
+    void didChangeIsResponsive() override { }
+    bool mayBecomeUnresponsive() override;
+
+#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
+    static RefPtr<WebCore::SharedBuffer> fetchAudioComponentServerRegistrations();
+#endif
+
+    struct InitializationActivityAndGrant {
+        Ref<ProcessThrottler::ForegroundActivity> foregroundActivity;
+#if USE(EXTENSIONKIT)
+        RefPtr<LaunchGrant> launchGrant;
+#endif
+    };
+
+    InitializationActivityAndGrant initializationActivityAndGrant();
+
+private:
+    virtual void connectionWillOpen(IPC::Connection&);
+    virtual void processWillShutDown(IPC::Connection&) = 0;
+    void outgoingMessageQueueIsGrowingLarge();
+
+    void populateOverrideLanguagesLaunchOptions(ProcessLauncher::LaunchOptions&) const;
+    Vector<String> platformOverrideLanguages() const;
+    void platformStartConnectionTerminationWatchdog();
+
+    // Connection::Client
+    void requestRemoteProcessTermination() final;
+
+    bool sendMessageImpl(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, ReplyHandler&&, ShouldStartProcessThrottlerActivity);
+    static IPC::Error sendOverConnection(IPC::Connection&, UniqueRef<IPC::Encoder>&&, ReplyHandler&, OptionSet<IPC::SendOption>);
+    void drainPendingMessages(IPC::Connection&);
+
+    const Ref<ResponsivenessTimer> m_responsivenessTimer;
+    Vector<PendingMessage> m_pendingMessages;
+    RefPtr<ProcessLauncher> m_processLauncher;
+    RefPtr<IPC::Connection> m_connection;
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    IPC::ScopedActiveMessageReceiveQueue<LogStream> m_logStream;
+#endif
+    IPC::MessageReceiverMap m_messageReceiverMap;
+    bool m_alwaysRunsAtBackgroundPriority { false };
+    bool m_didBeginResponsivenessChecks { false };
+    bool m_isSuspended { false };
+    const WebCore::ProcessIdentifier m_processIdentifier { WebCore::Process::generateIdentifier() };
+    std::optional<UseLazyStop> m_delayedResponsivenessCheck;
+    MonotonicTime m_processStart;
+    ProcessThrottler m_throttler;
+#if USE(RUNNINGBOARD)
+    bool m_startedTerminationWatchdog { false };
+#if PLATFORM(MAC)
+    RefPtr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
+    RefPtr<ProcessAssertion> m_boostedJetsamAssertion;
+#endif
+#endif
+#if ENABLE(EXTENSION_CAPABILITIES)
+    ExtensionCapabilityGrantMap m_extensionCapabilityGrants;
+#endif
+    String m_environmentIdentifier;
+    const ASCIILiteral m_clientName;
+    HashMap<Vector<uint8_t>, std::pair<unsigned, std::unique_ptr<IPC::Encoder>>> m_messagesToSendOnResume;
+    unsigned m_messagesToSendOnResumeIndex { 0 };
+} SWIFT_SHARED_REFERENCE(refAuxiliaryProcessProxy, derefAuxiliaryProcessProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+
+template<typename T>
+bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions)
+{
+    static_assert(!T::isSync, "Async message expected");
+
+    if constexpr (T::deferSendingIfSuspended) {
+        if (m_isSuspended) [[unlikely]] {
+            auto coalescingKeyEncoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
+            message.encodeCoalescingKey(coalescingKeyEncoder.get());
+            Vector<uint8_t> coalescingKey { coalescingKeyEncoder->mutableSpan() };
+
+            auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
+            message.encode(encoder.get());
+            return sendMessageAfterResuming(WTF::move(coalescingKey), WTF::move(encoder));
+        }
+    }
+
+    auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
+    message.encode(encoder.get());
+    return sendMessage(WTF::move(encoder), sendOptions);
+}
+
+template<typename T>
+AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& message, uint64_t destinationID, IPC::Timeout timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
+{
+    static_assert(T::isSync, "Sync message expected");
+
+    RefPtr connection = m_connection;
+    if (!connection)
+        return { IPC::Error::InvalidConnection };
+
+    TraceScope scope(SyncMessageStart, SyncMessageEnd);
+
+    RefPtr<ProcessThrottlerActivity> activity;
+    if (shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes)
+        activity = protect(throttler())->quietBackgroundActivity(description(T::name()));
+
+    return connection->sendSync(std::forward<T>(message), destinationID, timeout, sendSyncOptions);
+}
+
+template<typename T, typename C>
+std::optional<AuxiliaryProcessProxy::AsyncReplyID> AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
+{
+    static_assert(!T::isSync, "Async message expected");
+
+    auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
+    message.encode(encoder.get());
+    auto handler = IPC::Connection::makeAsyncReplyHandler<T>(std::forward<C>(completionHandler));
+    auto replyID = handler.replyID;
+    if (sendMessage(WTF::move(encoder), sendOptions, WTF::move(handler), shouldStartProcessThrottlerActivity))
+        return replyID;
+    return std::nullopt;
+}
+
+template<typename T, typename C>
+std::optional<AuxiliaryProcessProxy::AsyncReplyID> AuxiliaryProcessProxy::sendWithAsyncReplyOnDispatcher(T&& message, GuaranteedSerialFunctionDispatcher& dispatcher, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
+{
+    static_assert(!T::isSync, "Async message expected");
+
+    auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
+    message.encode(encoder.get());
+    auto handler = IPC::Connection::makeAsyncReplyHandlerWithDispatcher<T>(std::forward<C>(completionHandler), dispatcher);
+    auto replyID = handler.replyID;
+    if (sendMessageWithDispatcher(WTF::move(encoder), sendOptions, WTF::move(handler), shouldStartProcessThrottlerActivity))
+        return replyID;
+    return std::nullopt;
+}
+
+inline AuxiliaryProcessProxy::State AuxiliaryProcessProxy::state() const
+{
+    if (m_processLauncher && m_processLauncher->isLaunching())
+        return AuxiliaryProcessProxy::State::Launching;
+
+    if (!m_connection)
+        return AuxiliaryProcessProxy::State::Terminated;
+
+    return AuxiliaryProcessProxy::State::Running;
+}
+
+} // namespace WebKit
+
+inline void refAuxiliaryProcessProxy(WebKit::AuxiliaryProcessProxy* WTF_NONNULL obj)
+{
+    obj->ref();
+}
+
+inline void derefAuxiliaryProcessProxy(WebKit::AuxiliaryProcessProxy* WTF_NONNULL obj)
+{
+    obj->deref();
+}

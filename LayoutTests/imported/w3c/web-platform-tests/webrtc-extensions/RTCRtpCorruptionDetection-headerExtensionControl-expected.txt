@@ -1,0 +1,15 @@
+
+Harness Error (FAIL), message = Unhandled rejection: transceiver.getHeaderExtensionsToNegotiate is not a function. (In 'transceiver.getHeaderExtensionsToNegotiate()', 'transceiver.getHeaderExtensionsToNegotiate' is undefined)
+
+TIMEOUT If the corruption-detection header extension is present in the RTP packets,corruption metrics must be present. Test timed out
+NOTRUN If the corruption-detection header extension is present in the RTP packets,corruption metrics must be present, both ways.
+NOTRUN Each measurement added to totalCorruptionProbability MUST be in the range [0.0, 1.0].
+NOTRUN Corruption metrics must not exists for audio.
+
+Harness Error (FAIL), message = Unhandled rejection: transceiver.getHeaderExtensionsToNegotiate is not a function. (In 'transceiver.getHeaderExtensionsToNegotiate()', 'transceiver.getHeaderExtensionsToNegotiate' is undefined)
+
+TIMEOUT If the corruption-detection header extension is present in the RTP packets,corruption metrics must be present. Test timed out
+NOTRUN If the corruption-detection header extension is present in the RTP packets,corruption metrics must be present, both ways.
+NOTRUN Each measurement added to totalCorruptionProbability MUST be in the range [0.0, 1.0].
+NOTRUN Corruption metrics must not exists for audio.
+

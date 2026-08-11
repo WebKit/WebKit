@@ -1,0 +1,5 @@
+1
+2
+
+PASS Keep the same snap position on overflowing-snap-area when re-snapping
+

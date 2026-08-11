@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+<select id="default"><option id="default-opt">Default</option><option>Other</option></select>
+<select id="solid"><option id="solid-opt">Solid</option><option>Other</option></select>
+<select id="wide"><option id="wide-opt">Wide</option><option>Other</option></select>
+<select id="zoomed"><option id="zoomed-opt">Zoomed</option><option>Other</option></select>
+<select id="solid-zoomed"><option id="solid-zoomed-opt">Solid zoomed</option><option>Other</option></select>
+
+<style>
+#solid-opt { outline-style: solid; outline-width: 2px; }
+#wide-opt { outline-style: solid; outline-width: 10px; }
+#zoomed-opt { zoom: 2; }
+#solid-zoomed-opt { outline-style: solid; outline-width: 5px; zoom: 2; }
+</style>
+
+<script>
+description("Tests that inset outline-offset used value equals the negative of the outline-width.");
+
+jsTestIsAsync = true;
+
+async function openAndCheck(selectId, optId, expectedOffset) {
+    const select = document.getElementById(selectId);
+    const opt = document.getElementById(optId);
+
+    select.focus();
+    await UIHelper.keyDown(" ");
+    await UIHelper.animationFrame();
+
+    window.usedOffset = internals.usedOutlineOffset(opt);
+    window.expectedOffset = expectedOffset;
+    shouldBeEqualToNumber('usedOffset', expectedOffset);
+
+    await UIHelper.keyDown("\x1B");
+    await UIHelper.animationFrame();
+}
+
+(async () => {
+    // Default: outline-style: auto, platform focus ring width (3px Mac, 2px Adwaita).
+    const defaultOpt = document.getElementById("default-opt");
+    document.getElementById("default").focus();
+    await UIHelper.keyDown(" ");
+    await UIHelper.animationFrame();
+    window.defaultOffset = internals.usedOutlineOffset(defaultOpt);
+    shouldBeTrue('defaultOffset == -3 || defaultOffset == -2');
+    await UIHelper.keyDown("\x1B");
+    await UIHelper.animationFrame();
+
+    // Solid 2px: offset should be -2px.
+    await openAndCheck("solid", "solid-opt", -2);
+
+    // Solid 10px: offset should be -10px.
+    await openAndCheck("wide", "wide-opt", -10);
+
+    // Auto with zoom: 2, used value is pre-zoom.
+    const zoomedOpt = document.getElementById("zoomed-opt");
+    document.getElementById("zoomed").focus();
+    await UIHelper.keyDown(" ");
+    await UIHelper.animationFrame();
+    window.zoomedOffset = internals.usedOutlineOffset(zoomedOpt);
+    shouldBeTrue('zoomedOffset == -6 || zoomedOffset == -4');
+    await UIHelper.keyDown("\x1B");
+    await UIHelper.animationFrame();
+
+    // Solid 5px with zoom: 2, used value is pre-zoom.
+    await openAndCheck("solid-zoomed", "solid-zoomed-opt", -10);
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

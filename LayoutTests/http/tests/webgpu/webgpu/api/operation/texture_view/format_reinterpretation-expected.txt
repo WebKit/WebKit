@@ -1,0 +1,8 @@
+
+PASS :texture_binding:format="rgba8unorm-srgb"
+PASS :texture_binding:format="bgra8unorm-srgb"
+PASS :render_and_resolve_attachment:format="rgba8unorm-srgb";sampleCount=1
+PASS :render_and_resolve_attachment:format="rgba8unorm-srgb";sampleCount=4
+PASS :render_and_resolve_attachment:format="bgra8unorm-srgb";sampleCount=1
+PASS :render_and_resolve_attachment:format="bgra8unorm-srgb";sampleCount=4
+

@@ -1,0 +1,14 @@
+
+PASS em relative inline-size
+PASS rem relative inline-size
+PASS ex relative inline-size
+PASS rex relative inline-size
+PASS ch relative inline-size
+PASS rch relative inline-size
+PASS ic relative inline-size
+PASS ric relative inline-size
+PASS lh relative inline-size
+PASS rlh relative inline-size
+PASS cap relative inline-size
+PASS rcap relative inline-size
+

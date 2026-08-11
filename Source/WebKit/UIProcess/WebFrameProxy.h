@@ -1,0 +1,406 @@
+/*
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "APIObject.h"
+#include "FrameLoadState.h"
+#include "MessageReceiver.h"
+#include "ProvisionalFrameCreationParameters.h"
+#include <WebCore/CertificateInfo.h>
+#include <WebCore/DocumentSecurityPolicy.h>
+#include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/IntRect.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/PageIdentifier.h>
+#include <WebCore/ReferrerPolicy.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/SecurityOriginData.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Forward.h>
+#include <wtf/ListHashSet.h>
+#include <wtf/ProcessID.h>
+#include <wtf/SwiftBridging.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
+
+#if ENABLE(CONTENT_FILTERING)
+#include <WebCore/ContentFilterUnblockHandler.h>
+#endif
+
+namespace API {
+class Data;
+class Navigation;
+class URL;
+class WebsitePolicies;
+}
+
+namespace IPC {
+class Connection;
+class Decoder;
+}
+
+namespace WebCore {
+class FloatRect;
+class FrameTreeSyncData;
+class ResourceRequest;
+class SecurityOrigin;
+class ShareableBitmapHandle;
+class TextIndicator;
+
+struct FocusEventData;
+struct FrameIdentifierType;
+struct JSHandleIdentifierType;
+struct NavigationIdentifierType;
+struct NodeIdentifierType;
+
+enum class FocusDirection : uint8_t;
+enum class FoundElementInRemoteFrame : bool;
+enum class MouseEventPolicy : uint8_t;
+enum class ResourceResponseSource : uint8_t;
+enum class SandboxFlag : uint16_t;
+enum class ScrollbarMode : uint8_t;
+enum class ShouldFocusElement : bool;
+
+namespace TextExtraction {
+struct ExtractedText;
+struct InteractionDescription;
+struct Interaction;
+struct Request;
+struct Result;
+}
+
+using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
+using NavigationIdentifier = ObjectIdentifier<NavigationIdentifierType, uint64_t>;
+using NodeIdentifier = ObjectIdentifier<NodeIdentifierType>;
+using SandboxFlags = OptionSet<SandboxFlag>;
+using WebProcessJSHandleIdentifier = ObjectIdentifier<JSHandleIdentifierType>;
+using JSHandleIdentifier = ProcessQualified<WebProcessJSHandleIdentifier>;
+}
+
+namespace WebKit {
+
+class BrowsingContextGroup;
+class FrameProcess;
+class FrameState;
+class ProvisionalFrameProxy;
+class BrowsingWarning;
+class UserData;
+class WebBackForwardListFrameItem;
+class WebFramePolicyListenerProxy;
+class WebPageProxy;
+class WebProcessProxy;
+class WebsiteDataStore;
+
+enum class CanWrap : bool { No, Yes };
+enum class DidWrap : bool { No, Yes };
+enum class IsMainFrame : bool { No, Yes };
+enum class NavigatingToAppBoundDomain : bool;
+enum class ShouldExpectSafeBrowsingResult : bool;
+enum class ShouldExpectAppBoundDomainResult : bool;
+enum class ShouldWaitForInitialLinkDecorationFilteringData : bool;
+enum class ShouldWaitForSiteHasStorageCheck : bool;
+enum class ShouldWaitForEnhancedSecurityLinkCheck : bool;
+enum class ProcessSwapRequestedByClient : bool;
+enum class WasNavigationIntercepted : bool;
+
+struct FrameInfoData;
+struct FrameTreeCreationParameters;
+struct FrameTreeNodeData;
+struct JSHandleInfo;
+struct SharedPreferencesForWebProcess;
+struct WebsitePoliciesData;
+
+class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public IPC::MessageReceiver {
+public:
+    static Ref<WebFrameProxy> create(WebPageProxy& page, FrameProcess& process, WebCore::FrameIdentifier frameID, WebCore::SandboxFlags sandboxFlags, WebCore::ReferrerPolicy referrerPolicy, WebCore::ScrollbarMode scrollingMode, WebFrameProxy* opener, WebFrameProxy* parent, IsMainFrame isMainFrame, std::optional<URL>&& previousURL)
+    {
+        return adoptRef(*new WebFrameProxy(page, process, frameID, sandboxFlags, referrerPolicy, scrollingMode, opener, parent, isMainFrame, WTF::move(previousURL)));
+    }
+
+    void ref() const final { API::ObjectImpl<API::Object::Type::Frame>::ref(); }
+    void deref() const final { API::ObjectImpl<API::Object::Type::Frame>::deref(); }
+
+    static WebFrameProxy* NODELETE webFrame(std::optional<WebCore::FrameIdentifier>);
+
+    static bool NODELETE canCreateFrame(WebCore::FrameIdentifier);
+
+    virtual ~WebFrameProxy();
+
+    WebCore::FrameIdentifier frameID() const { return m_frameID; }
+    WebPageProxy* NODELETE page() const;
+
+    bool pageIsClosed() const { return !m_page; } // Needs to be thread-safe.
+
+    void webProcessWillShutDown();
+
+    bool NODELETE isMainFrame() const;
+
+    FrameLoadState& frameLoadState() LIFETIME_BOUND { return m_frameLoadState; }
+
+    void navigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, const URL&, CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)>&&);
+
+    void loadURL(const URL&, const String& referrer = String());
+    // Sub frames only. For main frames, use WebPageProxy::loadData.
+    void loadData(std::span<const uint8_t>, const String& MIMEType, const String& encodingName, const URL& baseURL);
+
+    const URL& url() const LIFETIME_BOUND { return m_frameLoadState.url(); }
+    const URL& provisionalURL() const LIFETIME_BOUND { return m_frameLoadState.provisionalURL(); }
+
+    void setUnreachableURL(const URL&);
+    const URL& unreachableURL() const LIFETIME_BOUND { return m_frameLoadState.unreachableURL(); }
+
+    const String& mimeType() const LIFETIME_BOUND { return m_MIMEType; }
+    bool containsPluginDocument() const { return m_containsPluginDocument; }
+
+    const String& title() const LIFETIME_BOUND { return m_title; }
+
+    void setSpecifiedName(const String& name) { m_frameName = name; }
+    const String& frameName() const LIFETIME_BOUND { return m_frameName; }
+    const ListHashSet<Ref<WebFrameProxy>>& childFrames() const LIFETIME_BOUND { return m_childFrames; }
+    WebCore::SecurityOriginData documentSecurityOriginData() const;
+
+    const WebCore::CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_certificateInfo; }
+
+    void commitCertificateInfo(const URL&, bool hasCertificateInfo);
+    void receivedMainResourceResponseWithCertificateInfo(String&&, WebCore::CertificateInfo&&);
+    void copyCertificateInfoForProcessSwapOnNavigationResponse(const URL&, const WebFrameProxy&);
+
+    bool canProvideSource() const;
+
+    bool isSameOriginAs(const WebFrameProxy&) const;
+
+    bool isDisplayingStandaloneImageDocument() const;
+    bool isDisplayingStandaloneMediaDocument() const;
+    bool isDisplayingMarkupDocument() const;
+    bool isDisplayingPDFDocument() const;
+
+    void getWebArchive(CompletionHandler<void(API::Data*)>&&);
+    void getMainResourceData(CompletionHandler<void(API::Data*)>&&);
+    void getResourceData(API::URL*, CompletionHandler<void(API::Data*)>&&);
+
+    void didStartProvisionalLoad(URL&&);
+    void didExplicitOpen(URL&&, String&& mimeType);
+    void didReceiveServerRedirectForProvisionalLoad(URL&&);
+    void didFailProvisionalLoad();
+    void didCommitLoad(const String& contentType, bool containsPluginDocument, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations);
+    void didFinishLoad();
+    void didFailLoad();
+    void didSameDocumentNavigation(URL&&); // eg. anchor navigation, session state change.
+    void didChangeTitle(String&&);
+
+    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted)>&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck);
+
+#if ENABLE(CONTENT_FILTERING)
+    void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTF::move(contentFilterUnblockHandler); }
+    bool didHandleContentFilterUnblockNavigation(const WebCore::ResourceRequest&);
+#endif
+
+#if PLATFORM(GTK)
+    void collapseSelection();
+#endif
+
+    void transferNavigationCallbackToFrame(WebFrameProxy&);
+    void setNavigationCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)>&&);
+
+    void disconnect();
+    bool isConnected() const;
+    void didCreateSubframe(WebCore::FrameIdentifier, String&& frameName, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode);
+
+    Vector<Ref<WebFrameProxy>> takeChildFrames();
+    void adoptChildFrames(Vector<Ref<WebFrameProxy>>&&);
+    ProcessID NODELETE processID() const;
+    void prepareForProvisionalLoadInProcess(WebProcessProxy&, API::Navigation&, BrowsingContextGroup&, std::optional<WebCore::SecurityOriginData>, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
+
+    void commitProvisionalFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, String&& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, bool hasCertificateInfo, bool usedLegacyTLS, bool privateRelayed, String&& proxyName, WebCore::ResourceResponseSource, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const UserData&, WebCore::RestoredFromBackForwardCache, RefPtr<FrameState>&& redirectReplaceFrameState);
+
+    void getFrameTree(CompletionHandler<void(std::optional<FrameTreeNodeData>&&)>&&);
+    void getFrameInfo(CompletionHandler<void(std::optional<FrameInfoData>&&)>&&);
+    FrameTreeCreationParameters frameTreeCreationParameters() const;
+
+    WebFrameProxy* parentFrame() const { return m_parentFrame; }
+    Ref<WebFrameProxy> rootFrame();
+    RefPtr<WebFrameProxy> childFrame(uint64_t index) const;
+    std::optional<uint64_t> NODELETE indexInFrameTreeSiblings() const;
+
+    WebProcessProxy& NODELETE process() const;
+    void setProcess(FrameProcess&);
+    const FrameProcess& frameProcess() const { return m_frameProcess.get(); }
+    FrameProcess& frameProcess() { return m_frameProcess.get(); }
+    void removeChildFrames();
+    ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
+    RefPtr<ProvisionalFrameProxy> takeProvisionalFrame();
+    WebProcessProxy& NODELETE provisionalLoadProcess();
+    std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess() const;
+    void notifyParentOfLoadCompletion(WebProcessProxy&);
+
+    enum class ClearFrameTreeSyncData : bool {
+        No,
+        Yes
+    };
+    void remoteProcessDidTerminate(WebProcessProxy&, ClearFrameTreeSyncData);
+
+    Ref<WebCore::FrameTreeSyncData> calculateFrameTreeSyncData() const;
+    void broadcastFrameTreeSyncData(Ref<WebCore::FrameTreeSyncData>&&);
+
+    void removeRemotePagesForSuspension();
+    void bindAccessibilityFrameWithData(std::span<const uint8_t>);
+
+    bool NODELETE isFocused() const;
+
+    struct TraversalResult {
+        RefPtr<WebFrameProxy> frame;
+        DidWrap didWrap { DidWrap::No };
+    };
+    TraversalResult traverseNext() const;
+    TraversalResult traverseNext(CanWrap) const;
+    WebFrameProxy* NODELETE traverseNext(const WebFrameProxy* stayWithin) const;
+    TraversalResult traversePrevious(CanWrap);
+
+    void setIsPendingInitialHistoryItem(bool isPending) { m_isPendingInitialHistoryItem = isPending; }
+    bool isPendingInitialHistoryItem() const { return m_isPendingInitialHistoryItem; }
+
+    bool isShowingInitialAboutBlank() const { return m_isShowingInitialAboutBlank; }
+
+    WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
+    void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge);
+    void didChangeCSPOriginsThatUpgradeInsecureNavigations(HashSet<WebCore::SecurityOriginData>&&);
+    void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
+    void findFocusableElementContinuingFromFrame(WebCore::FocusDirection, WebCore::FrameIdentifier, const WebCore::FocusEventData&, WebCore::ShouldFocusElement);
+
+    std::optional<WebCore::DocumentSecurityPolicy> documentSecurityPolicy() const { return m_documentSecurityPolicy; }
+
+    WebCore::SandboxFlags effectiveSandboxFlags() const { return m_effectiveSandboxFlags; }
+    void updateSandboxFlags(WebCore::SandboxFlags sandboxFlags) { m_effectiveSandboxFlags = sandboxFlags; }
+
+    WebCore::ReferrerPolicy effectiveReferrerPolicy() const { return m_effectiveReferrerPolicy; }
+    void updateReferrerPolicy(WebCore::ReferrerPolicy referrerPolicy) { m_effectiveReferrerPolicy = referrerPolicy; }
+
+    WebCore::ScrollbarMode scrollingMode() const { return m_scrollingMode; }
+    void updateScrollingMode(WebCore::ScrollbarMode);
+
+    const HashSet<WebCore::SecurityOriginData>& cspOriginsThatUpgradeInsecureNavigations() const { return m_cspOriginsThatUpgradeInsecureNavigations; }
+    void setCSPOriginsThatUpgradeInsecureNavigations(HashSet<WebCore::SecurityOriginData>&& origins) { m_cspOriginsThatUpgradeInsecureNavigations = WTF::move(origins); }
+
+    void updateOpener(std::optional<WebCore::FrameIdentifier>);
+    WebFrameProxy* opener() const { return m_opener; }
+    void disownOpener() { m_opener = nullptr; }
+    WebFrameProxy* disownedOpener() const { return m_disownedOpener; }
+
+    std::optional<WebCore::IntRect> remoteFrameRect() const { return m_remoteFrameRect; }
+    void setRemoteFrameRect(WebCore::IntRect rect) { m_remoteFrameRect = rect; }
+
+    void takeSnapshotOfNode(WebCore::JSHandleIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void didReceiveMessageWithReceiverName(IPC::Connection&, IPC::Decoder&);
+    static void sendCancelReply(IPC::Connection&, IPC::Decoder&);
+    template<typename M, typename C> void sendWithAsyncReply(M&&, C&&);
+    template<typename M> void send(M&&);
+
+    void sendMessageToInspectorFrontend(const String& targetId, const String& message);
+
+    void requestTextExtraction(WebCore::TextExtraction::Request&&, CompletionHandler<void(WebCore::TextExtraction::Result&&)>&&);
+    void handleTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(bool, String&&, WebCore::FloatRect)>&&);
+    void describeTextExtractionInteraction(WebCore::TextExtraction::Interaction&&, CompletionHandler<void(WebCore::TextExtraction::InteractionDescription&&)>&&);
+    void takeSnapshotOfExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&&);
+    void requestJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+    void requestContainerJSHandleForExtractedText(WebCore::TextExtraction::ExtractedText&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+    void requestContainerJSHandleForSearchTexts(Vector<String>&&, std::optional<WebCore::NodeIdentifier>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+    void requestContentFrameIdentifierForNode(WebCore::NodeIdentifier, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>&&)>&&);
+
+    void getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<String>>&&)>&&);
+    void getNodeForSelectorPaths(Vector<HashSet<String>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+
+    ProvisionalFrameCreationParameters NODELETE provisionalFrameCreationParameters(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::LayerHostingContextIdentifier>, CommitTiming);
+
+    Ref<WebCore::SecurityOrigin> NODELETE securityOrigin() const;
+
+private:
+    WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode, WebFrameProxy*, WebFrameProxy*, IsMainFrame, std::optional<URL>&&);
+
+    std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
+    WebCore::CertificateInfo certificateInfoFromNetworkProcess(const URL&) const;
+
+    std::optional<WebCore::PageIdentifier> NODELETE pageIdentifier() const;
+
+    enum class ForInitialization : bool { No, Yes };
+    void updateDocumentSecurityOrigin(WebFrameProxy*, ForInitialization = ForInitialization::No);
+
+    RefPtr<WebFrameProxy> deepLastChild();
+    WebFrameProxy* NODELETE firstChild() const;
+    WebFrameProxy* NODELETE lastChild() const;
+    WebFrameProxy* NODELETE nextSibling() const;
+    WebFrameProxy* NODELETE previousSibling() const;
+
+    WeakPtr<WebPageProxy> m_page;
+    Ref<FrameProcess> m_frameProcess;
+    WeakPtr<WebFrameProxy> m_opener;
+    WeakPtr<WebFrameProxy> m_disownedOpener;
+
+    FrameLoadState m_frameLoadState;
+
+    String m_MIMEType;
+    String m_title;
+    String m_frameName;
+    bool m_containsPluginDocument { false };
+    WebCore::CertificateInfo m_certificateInfo;
+    HashMap<String, WebCore::CertificateInfo> m_hostAndPortToCertificateInfo;
+    RefPtr<WebFramePolicyListenerProxy> m_activeListener;
+    WebCore::FrameIdentifier m_frameID;
+    ListHashSet<Ref<WebFrameProxy>> m_childFrames;
+    WeakPtr<WebFrameProxy> m_parentFrame;
+    RefPtr<ProvisionalFrameProxy> m_provisionalFrame;
+#if ENABLE(CONTENT_FILTERING)
+    WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;
+#endif
+    CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<WebCore::FrameIdentifier>)> m_navigateCallback;
+    const WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
+    bool m_isPendingInitialHistoryItem { false };
+    bool m_isShowingInitialAboutBlank { true };
+    std::optional<WebCore::IntRect> m_remoteFrameRect;
+    WebCore::SandboxFlags m_effectiveSandboxFlags;
+    WebCore::ReferrerPolicy m_effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
+    WebCore::ScrollbarMode m_scrollingMode;
+    std::optional<WebCore::DocumentSecurityPolicy> m_documentSecurityPolicy;
+    RefPtr<WebCore::SecurityOrigin> m_documentSecurityOrigin;
+    HashSet<WebCore::SecurityOriginData> m_cspOriginsThatUpgradeInsecureNavigations;
+} SWIFT_SHARED_REFERENCE(refWebFrameProxy, derefWebFrameProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+
+} // namespace WebKit
+
+inline void refWebFrameProxy(WebKit::WebFrameProxy* WTF_NONNULL obj)
+{
+    obj->ref();
+}
+
+inline void derefWebFrameProxy(WebKit::WebFrameProxy* WTF_NONNULL obj)
+{
+    obj->deref();
+}
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebFrameProxy)
+    static bool isType(const API::Object& object) { return object.type() == API::Object::Type::Frame; }
+SPECIALIZE_TYPE_TRAITS_END()

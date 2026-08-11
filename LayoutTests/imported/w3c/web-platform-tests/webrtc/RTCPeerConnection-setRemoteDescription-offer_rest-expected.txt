@@ -1,0 +1,17 @@
+
+Harness Error (FAIL), message = Timeout while running cleanup for test named "setRemoteDescription(invalidOffer) from have-local-offer does not undo rollback".
+
+PASS setRemoteDescription with valid offer should succeed
+PASS setRemoteDescription multiple times should succeed
+PASS setRemoteDescription multiple times with different offer should succeed
+FAIL setRemoteDescription(offer) with invalid SDP should reject with RTCError assert_equals: Expect error detail field to set to sdp-syntax-error expected (string) "sdp-syntax-error" but got (undefined) undefined
+PASS setRemoteDescription(offer) from have-local-offer should roll back and succeed
+PASS setRemoteDescription(offer) in stable should update internal state with a queued task, in the right order
+FAIL Naive rollback approach is not glare-proof (control) assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS setRemoteDescription(offer) from have-local-offer is glare-proof
+FAIL setRemoteDescription(invalidOffer) from have-local-offer does not undo rollback assert_unreached: State should have changed Reached unreachable code
+NOTRUN repeated sRD(offer) works
+NOTRUN sRD(reoffer) with candidates and without trickle works
+NOTRUN Transceivers added by sRD(offer) should not show up until sRD resolves
+NOTRUN setRemoteDescription(section with duplicate msid) rejects
+

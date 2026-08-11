@@ -1,0 +1,4 @@
+Click me
+
+PASS PerformanceObserver buffering independent of durationThreshold
+

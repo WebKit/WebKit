@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content" role="group" />
+
+<script>
+    if (window.accessibilityController) {
+        description("This tests that trying to retrieve AX objects deeper than the 512 level allowed in the DOM tree fails gracefully.");
+
+        // Add a 500 levels deep hierarchy and enssure that deepest AX object can be retrieved successfully.
+        let parent = document.getElementById("content");
+        let child = null;
+        for (let i = 0; i < 500; ++i) {
+            child = document.createElement("div");
+            child.setAttribute("role", "group");
+            parent.appendChild(child);
+            parent = child;
+        }
+        child.id = "deepest-child";
+        child.innerText = "deepest child";
+        var axChild = accessibilityController.accessibleElementById("deepest-child");
+        if (accessibilityController.platformName == "mac")
+            shouldBe("axChild.childAtIndex(0).stringValue", "'AXValue: deepest child'");
+        else if (accessibilityController.platformName == "atspi")
+            shouldBe("axChild.stringValue", "'AXValue: deepest child'");
+
+        // Add an additional 10 levels to the tree and check that trying to retrieve the deepest AX object fails gracefully.
+        for (let i = 0; i < 10; ++i) {
+            child = document.createElement("div");
+            child.setAttribute("role", "group");
+            parent.insertBefore(child, parent.firstChild);
+            parent = child;
+        }
+        child.id = "deepest-deepest-child";
+        child.innerText = "deepest deepest child";
+        axChild = accessibilityController.accessibleElementById("deepest-deepest-child");
+        shouldBe("axChild", "null");
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content" role="group">
+   <input type="hidden">
+</div>
+
+<script>
+ var output = "This tests that input type of hidden are not exposed when aria-hidden=false\n\n";
+
+ if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // By default, this should have no children because input type=hidden is hidden.
+    var content = accessibilityController.accessibleElementById("content");
+    output += expect("content.childrenCount", "0");
+
+    // When aria-hidden=true, content should not even be there
+    document.getElementById("content").setAttribute("aria-hidden", "true");
+    setTimeout(async function() {
+        output += await expectAsync("!accessibilityController.accessibleElementById('content')", "true");
+
+        // When aria-hidden=false, we should NOT expose input type=hidden
+        document.getElementById("content").setAttribute("aria-hidden", "false");
+        output += await expectAsync("accessibilityController.accessibleElementById('content')?.childrenCount === 0", "true");
+
+        // And changing back to true on the fly should have a similar effect
+        document.getElementById("content").setAttribute("aria-hidden", "true");
+        output += await expectAsync("!accessibilityController.accessibleElementById('content')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

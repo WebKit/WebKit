@@ -1,0 +1,75 @@
+/*
+ * Copyright (C) 2025 Igalia S.L.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+@API_SINGLE_HEADER_CHECK@
+
+#ifndef WebKitImage_h
+#define WebKitImage_h
+
+#if ENABLE(2022_GLIB_API)
+
+#include <gio/gio.h>
+#include <glib-object.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+
+G_BEGIN_DECLS
+
+#define WEBKIT_TYPE_IMAGE      (webkit_image_get_type())
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitImage, webkit_image, WEBKIT, IMAGE, GObject)
+
+WEBKIT_API int
+webkit_image_get_width         (WebKitImage *image);
+
+WEBKIT_API int
+webkit_image_get_height        (WebKitImage *image);
+
+WEBKIT_API guint
+webkit_image_get_stride        (WebKitImage *image);
+
+WEBKIT_API GBytes *
+webkit_image_as_bytes          (WebKitImage *image);
+
+#define WEBKIT_TYPE_IMAGE_LIST (webkit_image_list_get_type())
+
+typedef struct _WebKitImageList WebKitImageList;
+
+WEBKIT_API GType
+webkit_image_list_get_type     (void);
+
+WEBKIT_API WebKitImageList *
+webkit_image_list_ref          (WebKitImageList *image_list);
+
+WEBKIT_API void
+webkit_image_list_unref        (WebKitImageList *image_list);
+
+WEBKIT_API gsize
+webkit_image_list_get_length   (WebKitImageList *image_list);
+
+WEBKIT_API WebKitImage *
+webkit_image_list_get          (WebKitImageList *image_list,
+                                gsize            index);
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(WebKitImageList, webkit_image_list_unref)
+
+G_END_DECLS
+
+#endif // ENABLE(2022_GLIB_API)
+
+#endif

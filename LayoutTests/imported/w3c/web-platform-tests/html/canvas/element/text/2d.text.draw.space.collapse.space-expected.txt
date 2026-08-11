@@ -1,0 +1,8 @@
+2d.text.draw.space.collapse.space
+Space characters are converted to U+0020, and are NOT collapsed
+Actual output:
+Expected output:
+
+
+PASS Space characters are converted to U+0020, and are NOT collapsed
+

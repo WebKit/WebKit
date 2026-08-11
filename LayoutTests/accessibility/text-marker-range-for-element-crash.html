@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<script>
+  if (window.testRunner)
+      testRunner.dumpAsText();
+  onload = function() {
+    if (window.accessibilityController)
+        accessibilityController.rootElement.textMarkerRangeForElement();
+    document.body.innerHTML = "PASS if no crash.";
+  }
+</script>

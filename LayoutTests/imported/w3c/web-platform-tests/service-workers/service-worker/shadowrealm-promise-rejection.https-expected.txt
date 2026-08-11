@@ -1,0 +1,3 @@
+
+PASS Promise rejections within worker thread ShadowRealms are handled
+

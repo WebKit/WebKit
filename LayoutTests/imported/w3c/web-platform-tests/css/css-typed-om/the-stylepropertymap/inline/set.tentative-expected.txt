@@ -1,0 +1,17 @@
+
+PASS Setting a StylePropertyMap with an unsupported property name throws TypeError
+PASS Setting a StylePropertyMap with an null property name throws TypeError
+PASS Setting a StylePropertyMap with a descriptor throws TypeError
+PASS Setting a StylePropertyMap with an invalid CSSStyleValue throws TypeError
+PASS Setting a StylePropertyMap with an invalid String throws TypeError
+PASS Setting a non list-valued property with multiple arguments throws TypeError
+PASS Setting a non list-valued property with list-valued string throws TypeError
+PASS Setting a list-valued property with a CSSUnparsedValue and other values throws TypeError
+PASS Setting a list-valued property with a var ref() and other values throws TypeError
+PASS Setting a property with CSSStyleValue or String updates its value
+PASS Setting a list-valued property with CSSStyleValue or String updates its values
+PASS Setting a list-valued property with a list-valued string updates its value
+PASS Setting a custom property with CSSStyleValue or String updates its value
+PASS StylePropertyMap.set is case-insensitive
+PASS Setting a property with a CSSStyleValue whose associated property does not match throws TypeError
+

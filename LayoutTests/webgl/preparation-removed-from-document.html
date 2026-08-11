@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<style>
+canvas {
+    width: 200px;
+    height: 200px;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let canvas;
+
+function startTest()
+{
+    canvas = document.createElement("canvas");
+    canvas.width = 200;
+    canvas.height = 200;
+    document.body.appendChild(canvas);
+    requestAnimationFrame(updateAndRemoveCanvas);
+}
+
+function updateAndRemoveCanvas()
+{
+    let gl = canvas.getContext("webgl");
+    gl.clearColor(0, 1, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    canvas.remove();
+    canvas = null;
+    gl = null;
+    if (window.GCController)
+        GCController.collect();
+
+    requestAnimationFrame(finishTest);
+}
+
+function finishTest()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.addEventListener("DOMContentLoaded", startTest, false);
+</script>

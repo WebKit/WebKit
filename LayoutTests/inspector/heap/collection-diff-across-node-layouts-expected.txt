@@ -1,0 +1,10 @@
+Test that a heap snapshot collection diff strides the previous snapshot's node list by the previous snapshot's own node field count.
+
+
+== Running test suite: HeapSnapshot.CollectionDiffAcrossNodeLayouts
+-- Running test case: HeapSnapshot.CollectionDiffAcrossNodeLayouts
+Collected node identifiers: [1]
+PASS: Should collect exactly one node identifier.
+PASS: Should collect node identifier 1 (the deleted node).
+PASS: Should not collect a garbage identifier read from a misaligned field.
+

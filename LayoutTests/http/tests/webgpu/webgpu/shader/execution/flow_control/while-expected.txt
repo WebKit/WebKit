@@ -1,0 +1,16 @@
+
+PASS :while_basic:preventValueOptimizations=true
+PASS :while_basic:preventValueOptimizations=false
+PASS :while_break:preventValueOptimizations=true
+PASS :while_break:preventValueOptimizations=false
+PASS :while_continue:preventValueOptimizations=true
+PASS :while_continue:preventValueOptimizations=false
+PASS :while_nested_break:preventValueOptimizations=true
+PASS :while_nested_break:preventValueOptimizations=false
+PASS :while_nested_continue:preventValueOptimizations=true
+PASS :while_nested_continue:preventValueOptimizations=false
+PASS :while_logical_and_condition:preventValueOptimizations=true
+PASS :while_logical_and_condition:preventValueOptimizations=false
+PASS :while_logical_or_condition:preventValueOptimizations=true
+PASS :while_logical_or_condition:preventValueOptimizations=false
+

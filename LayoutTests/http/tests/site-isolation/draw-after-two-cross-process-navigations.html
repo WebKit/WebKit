@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=112; totalPixels=900"/>
+<style>
+body { margin: 0; background: blue; }
+iframe { border: 0; }
+#testframe { width: 200px; height: 200px; }
+#sibling { position: absolute; top: 300px; left: 0; width: 1px; height: 1px; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function navigate(frame, url)
+{
+    return new Promise(resolve => {
+        frame.onload = resolve;
+        frame.src = url;
+    });
+}
+
+async function runTest()
+{
+    let testFrame = document.getElementById("testframe");
+
+    // Red, in the process #sibling keeps alive after this frame leaves it. That process reports
+    // the red layer as destroyed, which must detach it rather than leave the hosting layer
+    // retaining it.
+    await navigate(testFrame, "http://localhost:8000/site-isolation/resources/red-background.html");
+    await navigate(testFrame, "https://localhost:8443/site-isolation/resources/green-background.html");
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Blocked, so a transparent document commits in a third process and nothing opaque is left
+    // to hide a stale layer.
+    await navigate(testFrame, "https://127.0.0.1:8443/security/XFrameOptions/resources/x-frame-options-deny.cgi");
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }));
+}
+
+onload = runTest;
+</script>
+</head>
+<body>
+<iframe id="testframe"></iframe>
+<iframe id="sibling" src="http://localhost:8000/site-isolation/resources/no-background.html"></iframe>
+</body>
+</html>

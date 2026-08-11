@@ -1,0 +1,10 @@
+Arabic text هذه جملة باللغة العربية
+This test verifies that the text selection appears visually contiguous when selecting with a tap-and-drag gesture across bidi text boundaries.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS getSelection().toString() became 'Arabic text هذه جملة باللغة العربية'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+
+
+PASS Largest Contentful Paint: CSS generated image is observable.
+

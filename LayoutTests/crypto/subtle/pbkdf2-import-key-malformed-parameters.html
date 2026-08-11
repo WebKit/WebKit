@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a PBKDF2 raw key with malformed parameters");
+
+var nonExtractable = false;
+var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
+var jwkKey = {
+    kty: "EC",
+    crv: "P-256",
+    x: "1FSVWieTvikFkG1NOyhkUCaMbdQhxwH6aCu4Ez-sRtA",
+    y: "9jmNTLqM4cjBhdAnHcNI9YQV3O8LFmo-EdZWk8ntAaI",
+};
+
+// Non raw format
+shouldReject('crypto.subtle.importKey("spki", rawKey, { name: "PBKDF2" }, nonExtractable, ["deriveKey", "deriveBits"])');
+shouldReject('crypto.subtle.importKey("pkcs8", rawKey, { name: "PBKDF2" }, nonExtractable, ["deriveKey", "deriveBits"])');
+shouldReject('crypto.subtle.importKey("jwk", jwkKey, { name: "PBKDF2" }, nonExtractable, ["deriveKey", "deriveBits"])');
+// Wrong usages
+shouldReject('crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["encrypt"])');
+shouldReject('crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["decrypt"])');
+shouldReject('crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["sign"])');
+shouldReject('crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["verify"])');
+shouldReject('crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["wrapKey"])');
+shouldReject('crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, nonExtractable, ["unwrapKey"])');
+// Extractable
+shouldReject('crypto.subtle.importKey("raw", rawKey, { name: "PBKDF2" }, true, ["deriveKey", "deriveBits"])');
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

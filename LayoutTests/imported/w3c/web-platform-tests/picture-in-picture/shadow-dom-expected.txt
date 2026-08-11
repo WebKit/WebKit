@@ -1,0 +1,7 @@
+
+PASS Test for Picture-In-Picture and Shadow DOM
+PASS Picture-in-Picture on a video inside an open shadow root attached to a disconnected host
+PASS Picture-in-Picture on a video inside a closed shadow root attached to a disconnected host
+PASS Connecting a previously-disconnected shadow host after Picture-in-Picture starts exposes the video through shadowRoot.pictureInPictureElement
+PASS Picture-in-Picture on a video inside nested shadow roots whose outer host is disconnected
+

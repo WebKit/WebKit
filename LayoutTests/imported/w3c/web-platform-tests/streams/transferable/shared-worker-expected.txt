@@ -1,0 +1,4 @@
+
+PASS worker.postMessage should be able to transfer a ReadableStream
+PASS postMessage in a worker should be able to transfer a ReadableStream
+

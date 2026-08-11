@@ -1,0 +1,16 @@
+Verifies that switching to a RTL input mode and then pressing Return automatically sets the base writing direction to RTL
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS caretRectUsingArabic.top is caretRectUsingEnglish.top
+PASS caretRectUsingArabic.width is caretRectUsingEnglish.width
+PASS caretRectUsingArabic.height is caretRectUsingEnglish.height
+PASS caretRectUsingArabic.left is > caretRectUsingEnglish.left
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world
+
+
+

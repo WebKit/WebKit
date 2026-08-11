@@ -1,0 +1,6 @@
+
+PASS Require trusted types for 'script' block create HTML.
+PASS Require trusted types for 'script' block create script.
+PASS Require trusted types for 'script' block create script URL.
+PASS Set require trusted types for 'script' without CSP for trusted types don't block policy creation and using.
+

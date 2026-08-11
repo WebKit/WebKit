@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+canvas {
+    display: block;
+}
+</style>
+</head>
+<body>
+<canvas id="canvas1" width="100" height="100">
+    <button id="btn1" tabindex="0">X</button>
+</canvas>
+<canvas id="canvas2" width="100" height="100">
+    <button id="btn2" tabindex="0">X</button>
+</canvas>
+<script>
+description("This test ensures that the canvas drawFocusIfNeeded focus ring scales correctly under a rotated non-uniform transform, exercising the singular value decomposition.");
+
+function countFocusRingPixels(canvas, setupTransform) {
+    var context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (setupTransform) {
+        context.save();
+        setupTransform(context);
+    }
+
+    var button = canvas.querySelector("button");
+    context.beginPath();
+    context.rect(10, 10, 20, 20);
+    button.focus();
+    context.drawFocusIfNeeded(button);
+    button.blur();
+
+    if (setupTransform)
+        context.restore();
+
+    var imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    var count = 0;
+    for (var i = 3; i < imageData.length; i += 4) {
+        if (imageData[i] > 0)
+            count++;
+    }
+    return count;
+}
+
+var canvas1 = document.getElementById("canvas1");
+var canvas2 = document.getElementById("canvas2");
+
+var pixelsIdentity = countFocusRingPixels(canvas1);
+
+// Rotate 45 degrees then scale non-uniformly (2x, 1x). The largest singular
+// value is 2, but reading just the diagonal entries of the resulting matrix
+// would give sqrt(2.5) ≈ 1.58 — only the full eigenvalue decomposition
+// produces the correct value.
+var pixelsRotatedScale = countFocusRingPixels(canvas2, function(ctx) {
+    ctx.rotate(Math.PI / 4);
+    ctx.scale(2, 1);
+});
+
+shouldBeTrue("pixelsRotatedScale > pixelsIdentity");
+</script>
+</body>
+</html>

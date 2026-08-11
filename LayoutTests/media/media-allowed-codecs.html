@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-allowed-codecs</title>
+    <script src="video-test.js"></script>
+    <script>
+    window.addEventListener('load', async event => {
+        if (!window.internals) {
+            failTest('Requires window.internals');
+            return;
+        }
+
+        video = document.createElement('video');
+        run('internals.settings.setAllowedMediaVideoCodecIDs(null)');
+        run('internals.settings.setAllowedMediaAudioCodecIDs(null)');
+        run('internals.settings.setAllowedMediaCodecTypes(null)');
+        testExpected('video.canPlayType("video/mp4; codecs=avc1")', 'probably');
+        testExpected('video.canPlayType("video/mp4; codecs=mp4v")', 'probably');
+        run('video.src = "content/test.mp4"');
+        await Promise.race([waitForAndSucceed(video, 'canplay'), waitForAndFail(video, 'error')]);
+
+        video = document.createElement('video');
+        run('internals.settings.setAllowedMediaVideoCodecIDs("avc1")');
+        run('internals.settings.setAllowedMediaAudioCodecIDs("aac ")');
+        run('internals.settings.setAllowedMediaCodecTypes("avc1,mp4a.40")');
+        testExpected('video.canPlayType("video/mp4; codecs=avc1")', 'probably');
+        testExpected('video.canPlayType("video/mp4; codecs=mp4v")', '');
+        run('video.src = "content/test.mp4"');
+        await Promise.race([waitForAndSucceed(video, 'canplay'), waitForAndFail(video, 'error')]);
+
+        video = document.createElement('video');
+        run('internals.settings.setAllowedMediaVideoCodecIDs("vp09")');
+        run('internals.settings.setAllowedMediaAudioCodecIDs("opus")');
+        run('internals.settings.setAllowedMediaCodecTypes("vp09,opus")');
+        testExpected('video.canPlayType("video/mp4; codecs=avc1")', '');
+        testExpected('video.canPlayType("video/mp4; codecs=mp4v")', '');
+        run('video.src = "content/test.mp4"');
+        await Promise.race([waitForAndSucceed(video, 'error'), waitForAndFail(video, 'canplay')]);
+
+        video = document.createElement('video');
+        run('internals.settings.setAllowedMediaVideoCodecIDs("avc1")');
+        run('internals.settings.setAllowedMediaAudioCodecIDs("opus")');
+        run('internals.settings.setAllowedMediaCodecTypes("avc1,opus")');
+        run('video.src = "content/test.mp4"');
+        await Promise.race([waitForAndSucceed(video, 'error'), waitForAndFail(video, 'canplay')]);
+
+        video = document.createElement('video');
+        run('internals.settings.setAllowedMediaVideoCodecIDs("vp09")');
+        run('internals.settings.setAllowedMediaAudioCodecIDs("aac ")');
+        run('internals.settings.setAllowedMediaCodecTypes("vp09,mp4a.40")');
+        run('video.src = "content/test.mp4"');
+        await Promise.race([waitForAndSucceed(video, 'error'), waitForAndFail(video, 'canplay')]);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+</body>
+</html>

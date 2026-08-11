@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test PromiseRejectionEvent constructor follows WebIDL promise conversion rule.');
+window.jsTestIsAsync = true;
+
+var event = null;
+var value = null;
+var promise = null;
+
+event = new PromiseRejectionEvent("rejectionhandled", {
+    promise: 42,
+    reason: `Cappuccino`
+});
+shouldBeType(`event.promise`, `Promise`);
+shouldBe(`event.reason`, `"Cappuccino"`);
+event.promise.then(function (v) {
+    value = v;
+    shouldBe(`value`, `42`);
+
+    promise = Promise.resolve(42);
+    event = new PromiseRejectionEvent("rejectionhandled", {
+        promise: promise,
+        reason: `Cocoa`
+    });
+
+    shouldBeType(`event.promise`, `Promise`);
+    shouldBe(`event.promise`, `promise`);
+    shouldBe(`event.reason`, `"Cocoa"`);
+    finishJSTest();
+});
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+(repaint rects
+  (rect 44 21 100 100)
+)
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+  if (window.internals) {
+    window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+
+    addEventListener("load", function() {
+      if (window.testRunner)
+        window.testRunner.setPageScaleFactor(0.5, 0, 0).then(() => {
+          setTimeout(async function() {
+            var layerTreeScaledDown = internals.layerTreeAsText(document.getElementById("iframe").contentDocument);
+            if (window.testRunner)
+              window.testRunner.setPageScaleFactor(1.5, 0, 0).then(() => {
+                setTimeout(function() {
+                  var layerTreeScaledUp = internals.layerTreeAsText(document.getElementById("iframe").contentDocument);
+                  // Because logical size of the frame is unchanged, the layer tree in the frame should not be affected by the page scale.
+                  document.getElementById("result").innerText =
+                  layerTreeScaledUp == layerTreeScaledDown ? "PASS" : "FAIL";
+                  testRunner.notifyDone();
+                }, 0);
+              });
+          }, 0);
+        });
+    }, false);
+  }
+</script>
+</head>
+<body>
+<iframe id="iframe" src="resources/fixed-position-out-of-view-frame-scroll.html" style="width: 800px; height: 600px"></iframe>
+<pre id="result"></pre>
+</body>
+</html>

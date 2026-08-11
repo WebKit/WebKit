@@ -1,0 +1,71 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+    <head>
+        <title>Dragging a view should not snap back when the scroll event triggers a relayout</title>
+        <style type="text/css">
+            html {
+                scroll-snap-type: both mandatory
+            }
+
+            html, body {
+                margin: 0;
+                height: 100%;
+                width: 100%;
+            }
+
+            .horizontal-drawer {
+                width: 500%;
+                height: 100%;
+            }
+
+            .block {
+                height: 100%;
+                width: 100%;
+                scroll-snap-align: start;
+            }
+
+            #console, #output {
+                position: fixed;
+                top: 0px;
+                left: 0px;
+            }
+        </style>
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script>
+        window.jsTestIsAsync = true;
+
+        async function onLoad()
+        {
+            let sawZero = false;
+            window.addEventListener('scroll', () => {
+                document.getElementById('output').innerText = document.scrollingElement.scrollTop;
+                sawZero ||= document.scrollingElement.scrollTop == 0;
+            })
+
+            if (window.eventSender == undefined) {
+                document.getElementById('console').innerText = "A scroll drag should not snap until user interaction is finished.";
+                return;
+            }
+
+            try {
+                await UIHelper.dragFromPointToPoint(150, 150, 150, 50, 0.1);
+                await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+                expectTrue(document.scrollingElement.scrollTop == window.innerHeight, "vertical drag snapped to next snap point");
+                expectTrue(sawZero === false, "relayouts should not have snapped back");
+            } catch (e) {
+                console.log(e);
+            } finally {
+                finishJSTest();
+            }
+        }
+        </script>
+    </head>
+    <body onload="onLoad();">
+        <div class="block" style="background: #CC5A71"></div>
+        <div class="block" style="background: #80475E"></div>
+        <div class="block" style="background: #CC5A71"></div>
+        <p id="console"></p>
+        <p id="output"></p>
+    </body>
+</html>

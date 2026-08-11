@@ -1,0 +1,13 @@
+Verifies that a momentum scroll always moves to the next or previous snap position no matter how far away it is.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL document.body.scrollTop should be 500. Was 0.
+FAIL document.body.scrollTop should be 1000. Was 0.
+FAIL document.body.scrollTop should be 500. Was 0.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

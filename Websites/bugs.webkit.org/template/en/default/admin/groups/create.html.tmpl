@@ -1,0 +1,99 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[%# INTERFACE:
+  # none
+  #%]
+
+[% PROCESS global/header.html.tmpl
+  title = "Add group"
+  subheader = "This page allows you to define a new user group."
+  style_urls = ['skins/standard/admin.css']
+  doc_section = "administering/groups.html#creating-groups"
+%]
+
+<form method="post" action="editgroups.cgi">
+  <table id="admin_table_edit">
+    <tr>
+      <th>Group Name:</th>
+      <td><input size="60" maxlength="255" name="name" required></td>
+    </tr>
+    <tr>
+      <th>Description:</th>
+      <td><input size="60" name="desc" required></td>
+    </tr>
+    <tr>
+      <th>User Regexp:</th>
+      <td><input size="60" name="regexp"></td>
+    </tr>
+    <tr>
+      <th>Icon URL:</th>
+      <td><input type="text" size="60" id="icon_url" name="icon_url"></td>
+    </tr>
+    <tr>
+      <th>Use For [% terms.Bugs %]:</th>
+      <td><input type="checkbox" name="isactive" value="1" checked></td>
+    </tr>
+    [% Hook.process('field') %]
+  </table>
+
+  <input type="checkbox" id="insertnew" name="insertnew" value="1"
+    [% IF Param("makeproductgroups") %] checked[% END %]>
+  <label for="insertnew">Insert new group into all existing products.</label>
+  <p>
+  <input type="submit" id="create" value="Add">
+  <input type="hidden" name="action" value="new">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+</form>
+
+<hr>
+
+<p><b>Group Name</b> is what is used with the B[%%]ugzilla->user->in_group()
+function in any customized cgi files you write that use a given group.
+It can also be used by people submitting [% terms.bugs %] by email to
+limit [% terms.abug %] to a certain set of groups.</p>
+
+<p><b>Description</b> is what will be shown in the [% terms.bug %] reports
+to members of the group where they can choose whether
+the [% terms.bug %] will be restricted to others in the same group.</p>
+
+<p><b>User RegExp</b> is optional, and if filled in, will 
+automatically grant membership to this group to anyone with an 
+email address that matches this regular expression.</p>
+
+<p>
+  <b>Icon URL</b> is optional, and is the URL pointing to the icon
+  used to identify the group. It may be either a relative URL to the base URL
+  of this installation or an absolute URL. This icon will be displayed
+  in comments in [% terms.bugs %] besides the name of the author of comments.
+</p>
+
+<p>The <b>Use For [% terms.Bugs %]</b> flag determines whether or not the
+group is eligible to be used for [% terms.bugs %]. If you clear this, it will
+no longer be possible for users to add [% terms.bugs %] to this group,
+although [% terms.bugs %] already in the group will remain in the group.
+Doing so is a much less drastic way to stop a group from growing
+than deleting the group would be. <b>Note: If you are creating
+a group, you probably want it to be usable for [% terms.bugs %], in which
+case you should leave this checked.</b></p>
+
+[% IF Param("makeproductgroups") %]
+  <p>By default, the new group will be associated with existing products.
+  Unchecking the "Insert new group into all existing products" option will
+  prevent this and make the group become visible only when its controls have
+  been added to a product.</p>
+[% ELSE %]
+  <p>Checking the "Insert new group into all existing products" option will
+  make the new group be associated with existing products. Leaving it unchecked
+  will make the group become visible only when its controls have been added to
+  a product.</p>
+[% END %]
+
+<p>Back to the <a href="editgroups.cgi">group list</a>.</p>
+
+[% PROCESS global/footer.html.tmpl %] 

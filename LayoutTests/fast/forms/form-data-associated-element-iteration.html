@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<form id="form"></form>
+<div>This test passes if the web content process does not crash.</div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    textAreaCount = 100;
+    for (let i = 1; i <= textAreaCount; ++i) {
+        let textarea = document.createElement("textarea");
+        textarea.id = textarea.name = `textarea-${i}`;
+        form.appendChild(textarea);
+    }
+
+    layoutCount = 1;
+    frame = document.body.appendChild(document.createElement("iframe"));
+    frame.contentWindow.matchMedia("(max-width: 100px)").addListener(listener);
+    new FormData(form);
+
+    function listener() {
+        if (layoutCount == textAreaCount - 1) {
+            for (let i = 0; i <= textAreaCount; ++i) {
+                let textarea = document.getElementById(`textarea-${i}`);
+                if (!textarea)
+                    continue;
+
+                textarea.remove();
+                textarea = null;
+            }
+        }
+
+        if (layoutCount <= textAreaCount) {
+            frame.contentWindow.matchMedia(`(max-width: ${layoutCount + 1}px)`).addListener(listener);
+            frame.width = layoutCount++;
+        }
+    }
+
+    form.remove();
+</script>
+</html>

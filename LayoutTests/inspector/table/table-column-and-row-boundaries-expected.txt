@@ -1,0 +1,15 @@
+Tests Table row-visibility boundary checks and showing a column into an empty visible column set.
+
+
+== Running test suite: Table.ColumnAndRowBoundaries
+-- Running test case: Table.IsRowVisible.ExclusiveEnd
+PASS: Row just before the start should not be visible.
+PASS: First rendered row should be visible.
+PASS: Last rendered row should be visible.
+PASS: End index is exclusive, so row 20 should not be visible.
+
+-- Running test case: Table.ShowColumn.IntoEmptyVisibleSet
+PASS: No columns should be visible.
+PASS: The shown column should no longer be hidden.
+PASS: Only the shown column should be visible.
+

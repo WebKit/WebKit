@@ -1,0 +1,5 @@
+
+
+PASS select should support :open pseudo selector.
+PASS select :open and :not(:open) should invalidate correctly.
+

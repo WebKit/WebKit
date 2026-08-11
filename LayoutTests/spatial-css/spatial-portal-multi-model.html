@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const first = appendModel(portal, "cube.usdz");
+    const second = appendModel(portal, "2x2x2-center.usdz");
+
+    let firstLoadFired = false;
+    let secondLoadFired = false;
+    first.addEventListener("load", () => firstLoadFired = true, { once: true });
+    second.addEventListener("load", () => secondLoadFired = true, { once: true });
+
+    await Promise.all([first.ready, second.ready]);
+
+    assert_true(firstLoadFired, "load event fired on the first child model");
+    assert_true(secondLoadFired, "load event fired on the second child model");
+    assert_equals(first.getBoundingClientRect().width, 0, "the first delegated <model> has no box of its own");
+    assert_equals(second.getBoundingClientRect().width, 0, "the second delegated <model> has no box of its own");
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 2, "the portal hosts both nested models");
+}, "Two <model>s nested in a spatial portal both load");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const first = appendModel(portal, "cube.usdz");
+    const second = appendModel(portal, "cube.usdz");
+
+    await Promise.all([first.ready, second.ready]);
+
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 2, "models sharing a source are hosted independently");
+}, "Two <model>s with the same source both load in a spatial portal");
+
+</script>
+</body>
+</html>

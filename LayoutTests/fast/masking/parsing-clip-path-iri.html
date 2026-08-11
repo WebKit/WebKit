@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/computed-testcommon.js"></script>
+<style>
+* { font-size: 16px; }
+div { font-size: 8px; }
+</style>
+</head>
+<body>
+<div id="container">
+  <div id="target"></div>
+</div>
+<script>
+
+test_valid_value("-webkit-clip-path", "url(#clip1)", "url(\"#clip1\")");
+test_valid_value("-webkit-clip-path", "url(clip.svg#clip1)", "url(\"clip.svg#clip1\")");
+
+test_computed_value("-webkit-clip-path", "url(#clip1)", "url(\"#clip1\")");
+const resolved = new URL("clip.svg#clip1", document.URL).href;
+test_computed_value("-webkit-clip-path", "url(clip.svg#clip1)", "url(\"" + resolved + "\")");
+
+</script>
+</body>
+</html>

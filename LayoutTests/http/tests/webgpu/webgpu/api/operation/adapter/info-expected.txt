@@ -1,0 +1,6 @@
+
+PASS :adapter_info:
+PASS :same_object:
+PASS :device_matches_adapter:
+PASS :subgroup_sizes:
+

@@ -1,0 +1,152 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "ChromeClient.h"
+
+#include "AXObjectCache.h"
+#include "AXSearchManager.h"
+#include "BarcodeDetectorInterface.h"
+#include "BarcodeDetectorOptionsInterface.h"
+#include "BarcodeFormatInterface.h"
+#include "FaceDetectorInterface.h"
+#include "FaceDetectorOptionsInterface.h"
+#include "PointerLockController.h"
+#include "ScrollableArea.h"
+#include "ScrollbarsController.h"
+#include "ScrollingCoordinator.h"
+#include "TextDetectorInterface.h"
+#include "WorkerClient.h"
+
+#if ENABLE(WEBGL)
+#include "GraphicsContextGL.h"
+#endif
+
+namespace WebCore {
+
+ChromeClient::ChromeClient() = default;
+
+ChromeClient::~ChromeClient() = default;
+
+std::unique_ptr<WorkerClient> ChromeClient::createWorkerClient(SerialFunctionDispatcher&)
+{
+    return nullptr;
+}
+
+#if ENABLE(WEBGL)
+RefPtr<GraphicsContextGL> ChromeClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
+{
+    return createWebProcessGraphicsContextGL(attributes);
+}
+#endif
+
+RefPtr<ImageBuffer> ChromeClient::sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer> imageBuffer)
+{
+    return SerializedImageBuffer::sinkIntoImageBuffer(WTF::move(imageBuffer));
+}
+
+void ChromeClient::ensureScrollbarsController(Page&, ScrollableArea& area, bool update) const
+{
+    if (update)
+        return;
+
+    area.ScrollableArea::createScrollbarsController();
+}
+
+RefPtr<ScrollingCoordinator> ChromeClient::createScrollingCoordinator(Page&) const
+{
+    return nullptr;
+}
+
+RefPtr<ShapeDetection::BarcodeDetector> ChromeClient::createBarcodeDetector(const ShapeDetection::BarcodeDetectorOptions&) const
+{
+    return nullptr;
+}
+
+void ChromeClient::getBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<ShapeDetection::BarcodeFormat>&&)>&& completionHandler) const
+{
+    completionHandler({ });
+}
+
+RefPtr<ShapeDetection::FaceDetector> ChromeClient::createFaceDetector(const ShapeDetection::FaceDetectorOptions&) const
+{
+    return nullptr;
+}
+
+RefPtr<ShapeDetection::TextDetector> ChromeClient::createTextDetector() const
+{
+    return nullptr;
+}
+
+#if ENABLE(WEB_AUTHN)
+ExceptionOr<Vector<ValidatedDigitalCredentialRequest>> ChromeClient::validateAndParseDigitalCredentialRequests(const SecurityOrigin&, const Document&, const Vector<UnvalidatedDigitalCredentialRequest>&)
+{
+    return Exception { ExceptionCode::NotSupportedError, "Digital credentials are not supported."_s };
+};
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+void ChromeClient::enterFullScreenForElement(Element&, HTMLMediaElementEnums::VideoFullscreenMode, CompletionHandler<void(ExceptionOr<void>)>&& willEnterFullscreen, CompletionHandler<bool(bool)>&& didEnterFullscreen)
+{
+    willEnterFullscreen({ });
+    didEnterFullscreen(false);
+}
+#endif
+
+#if ENABLE(POINTER_LOCK)
+void ChromeClient::requestPointerLock(CompletionHandler<void(PointerLockRequestResult)>&& completionHandler)
+{
+    completionHandler(PointerLockRequestResult::Unsupported);
+}
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+void ChromeClient::requestTextRecognition(Element&, TextRecognitionOptions&&, CompletionHandler<void(RefPtr<Element>&&)>&& completion)
+{
+    if (completion)
+        completion({ });
+}
+#endif
+
+#if ENABLE(VIDEO)
+void ChromeClient::showCaptionDisplaySettings(HTMLMediaElement&, const ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
+{
+    completionHandler(Exception { ExceptionCode::NotSupportedError, "Caption Display Settings are not supported."_s });
+}
+#endif
+
+#if PLATFORM(MAC)
+void ChromeClient::performAccessibilitySearchInRemoteFrame(FrameIdentifier, const AccessibilitySearchCriteriaIPC&, CompletionHandler<void(Vector<AccessibilityRemoteToken>&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
+void ChromeClient::continueAccessibilitySearchFromChildFrame(FrameIdentifier, const AccessibilitySearchCriteriaIPC&, CompletionHandler<void(Vector<AccessibilityRemoteToken>&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+#endif // PLATFORM(MAC)
+
+} // namespace WebCore

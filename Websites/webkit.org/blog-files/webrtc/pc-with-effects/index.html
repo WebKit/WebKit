@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<!--
+ *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
+ *
+ *  Use of this source code is governed by a BSD-style license
+ *  that can be found in the LICENSE file in the root of the source
+ *  tree.
+-->
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="description" content="A zest of canvas capture and replaceTrack">
+  <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
+
+  <title>A zest of canvas capture and replaceTrack</title>
+
+  <link rel="stylesheet" href="main.css" />
+
+</head>
+
+<body>
+
+  <h1>A zest of canvas capture and replaceTrack</h1>
+  <h2>Inspired by well-known <a href="//webrtc.github.io/samples/" title="WebRTC samples homepage">WebRTC samples</a></h2>
+
+  <video id="localVideo" autoplay muted playsInline></video>
+  <br>
+  <video id="remoteVideo" autoplay playsInline></video>
+
+  <div>
+    <button id="startButton">Start</button>
+    <button id="callButton">Call</button>
+  </div>
+
+  <p>This page illustrates use of the canvas capture and replaceTrack.
+  To add spice to this typical WebRTC video exchange, the camera video track (displayed in the first video element) is sent to a canvas.
+  Some processing is done to pixellate it in the canvas.
+  The canvas stream is captured and sent to the second video element through WebRTC.
+  The pixellation will slowly decrease up to no pixellation at all.
+  Once there is no more pixellation, the canvas capture track will be replaced by the camera video track to optimize the performaces.
+  </p>
+
+  <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+  <script src="glfx.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

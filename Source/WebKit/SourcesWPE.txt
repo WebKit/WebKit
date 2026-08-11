@@ -1,0 +1,356 @@
+// Copyright (C) 2018 Igalia S.L.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+GPUProcess/glib/GPUProcessGLib.cpp
+GPUProcess/glib/GPUProcessMainGLib.cpp
+
+GPUProcess/graphics/RemoteGraphicsContextGLGBM.cpp @no-unify
+
+GPUProcess/media/RemoteAudioDestinationManager.cpp
+
+GPUProcess/media/gstreamer/RemoteMediaPlayerProxyGStreamer.cpp
+
+NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
+
+NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp
+
+NetworkProcess/NetworkDataTaskDataURL.cpp
+
+NetworkProcess/cache/NetworkCacheDataGLib.cpp
+NetworkProcess/cache/NetworkCacheIOChannelGLib.cpp
+
+NetworkProcess/glib/DNSCache.cpp
+NetworkProcess/glib/NetworkMDNSRegisterGLib.cpp
+NetworkProcess/glib/WebKitCachedResolver.cpp
+NetworkProcess/glib/WebKitOverridingResolver.cpp
+
+NetworkProcess/soup/NetworkDataTaskSoup.cpp
+NetworkProcess/soup/NetworkProcessMainSoup.cpp
+NetworkProcess/soup/NetworkProcessSoup.cpp
+NetworkProcess/soup/NetworkSessionSoup.cpp
+NetworkProcess/soup/WebKitDirectoryInputStream.cpp
+NetworkProcess/soup/WebSocketTaskSoup.cpp
+
+NetworkProcess/webrtc/LibWebRTCSocketClient.cpp
+NetworkProcess/webrtc/NetworkRTCMonitor.cpp
+NetworkProcess/webrtc/NetworkRTCProvider.cpp
+NetworkProcess/webrtc/NetworkRTCSharedMonitor.cpp
+
+Platform/IPC/android/ArgumentCodersAndroid.cpp
+
+Platform/IPC/glib/ConnectionGLib.cpp
+
+Platform/IPC/unix/ArgumentCodersUnix.cpp
+Platform/IPC/unix/IPCSemaphoreUnix.cpp
+Platform/IPC/unix/IPCUtilitiesUnix.cpp
+
+Platform/classifier/ResourceLoadStatisticsClassifier.cpp
+
+Platform/glib/ModuleGlib.cpp
+
+Platform/unix/LoggingUnix.cpp
+
+Shared/API/APISerializedScriptValue.cpp
+
+Shared/API/glib/WebKitContextMenu.cpp @no-unify
+Shared/API/glib/WebKitContextMenuActions.cpp @no-unify
+Shared/API/glib/WebKitContextMenuItem.cpp @no-unify
+Shared/API/glib/WebKitHitTestResult.cpp @no-unify
+Shared/API/glib/WebKitURIRequest.cpp @no-unify
+Shared/API/glib/WebKitURIResponse.cpp @no-unify
+Shared/API/glib/WebKitUserMessage.cpp @no-unify
+
+Shared/glib/ArgumentCodersGLib.cpp
+Shared/glib/InputMethodState.cpp
+Shared/glib/JavaScriptEvaluationResultGLib.cpp
+Shared/glib/ProcessExecutablePathGLib.cpp
+Shared/glib/UserMessage.cpp
+Shared/glib/WebContextMenuItemGlib.cpp
+Shared/glib/WebKitContextMenuGAction.cpp @no-unify
+
+Shared/libwpe/NativeWebKeyboardEventLibWPE.cpp
+Shared/libwpe/NativeWebMouseEventLibWPE.cpp
+Shared/libwpe/NativeWebTouchEventLibWPE.cpp
+Shared/libwpe/NativeWebWheelEventLibWPE.cpp
+Shared/libwpe/WebEventFactory.cpp
+
+Shared/linux/WebMemorySamplerLinux.cpp
+
+Shared/soup/WebErrorsSoup.cpp
+
+Shared/unix/AuxiliaryProcessMain.cpp
+
+Shared/wpe/NativeWebKeyboardEventWPE.cpp
+Shared/wpe/NativeWebMouseEventWPE.cpp
+Shared/wpe/NativeWebTouchEventWPE.cpp
+Shared/wpe/NativeWebWheelEventWPE.cpp
+Shared/wpe/WebEventFactoryWPE.cpp
+Shared/wpe/WebKeyboardEventWPE.cpp
+
+UIProcess/DefaultUndoController.cpp
+UIProcess/LegacySessionStateCodingNone.cpp
+UIProcess/ViewSnapshotStore.cpp
+UIProcess/WebGrammarDetail.cpp
+UIProcess/WebMemoryPressureHandler.cpp @no-unify
+UIProcess/WebViewportAttributes.cpp
+
+UIProcess/API/C/WKGrammarDetail.cpp
+UIProcess/API/C/WKViewportAttributes.cpp
+
+UIProcess/API/C/glib/WKContextConfigurationGlib.cpp
+UIProcess/API/C/glib/WKTextCheckerGLib.cpp
+
+UIProcess/API/C/wpe/WKView.cpp
+UIProcess/API/C/wpe/WKPagePrivateWPE.cpp
+
+Shared/API/c/wpe/WKEventWPE.cpp
+
+Shared/Extensions/wpe/WebExtensionUtilitiesWPE.cpp
+
+UIProcess/API/glib/APIContentRuleListStoreGLib.cpp @no-unify
+UIProcess/API/glib/IconDatabase.cpp @no-unify
+UIProcess/API/glib/InputMethodFilter.cpp @no-unify
+UIProcess/API/glib/KeyAutoRepeatHandler.cpp @no-unify
+UIProcess/API/glib/WebKitApplicationInfo.cpp @no-unify
+UIProcess/API/glib/WebKitAuthenticationRequest.cpp @no-unify
+UIProcess/API/glib/WebKitAutomationSession.cpp @no-unify
+UIProcess/API/glib/WebKitBackForwardList.cpp @no-unify
+UIProcess/API/glib/WebKitBackForwardListItem.cpp @no-unify
+UIProcess/API/glib/WebKitClipboardPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitColorChooserRequest.cpp @no-unify
+UIProcess/API/glib/WebKitContextMenuClient.cpp @no-unify
+UIProcess/API/glib/WebKitCookieManager.cpp @no-unify
+UIProcess/API/glib/WebKitCredential.cpp @no-unify
+UIProcess/API/glib/WebKitDeviceInfoPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitDownload.cpp @no-unify
+UIProcess/API/glib/WebKitDownloadClient.cpp @no-unify
+UIProcess/API/glib/WebKitEditorState.cpp @no-unify
+UIProcess/API/glib/WebKitError.cpp @no-unify
+UIProcess/API/glib/WebKitFaviconDatabase.cpp @no-unify
+UIProcess/API/glib/WebKitFeature.cpp @no-unify
+UIProcess/API/glib/WebKitFileChooserRequest.cpp @no-unify
+UIProcess/API/glib/WebKitFindController.cpp @no-unify
+UIProcess/API/glib/WebKitFormClient.cpp @no-unify
+UIProcess/API/glib/WebKitFormSubmissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitGeolocationManager.cpp @no-unify
+UIProcess/API/glib/WebKitGeolocationPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitIconLoadingClient.cpp @no-unify
+UIProcess/API/glib/WebKitImage.cpp @no-unify
+UIProcess/API/glib/WebKitInitialize.cpp @no-unify
+UIProcess/API/glib/WebKitInjectedBundleClient.cpp @no-unify
+UIProcess/API/glib/WebKitInputMethodContext.cpp @no-unify
+UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitMediaKeySystemPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitMemoryPressureSettings.cpp @no-unify
+UIProcess/API/glib/WebKitNavigationAction.cpp @no-unify
+UIProcess/API/glib/WebKitNavigationClient.cpp @no-unify
+UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp @no-unify
+UIProcess/API/glib/WebKitNetworkProxySettings.cpp @no-unify
+UIProcess/API/glib/WebKitNetworkSession.cpp @no-unify
+UIProcess/API/glib/WebKitNotification.cpp @no-unify
+UIProcess/API/glib/WebKitNotificationPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitNotificationProvider.cpp @no-unify
+UIProcess/API/glib/WebKitOptionMenu.cpp @no-unify
+UIProcess/API/glib/WebKitOptionMenuItem.cpp @no-unify
+UIProcess/API/glib/WebKitPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitPermissionStateQuery.cpp @no-unify
+UIProcess/API/glib/WebKitPointerLockPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitPolicyDecision.cpp @no-unify
+UIProcess/API/glib/WebKitPrivate.cpp @no-unify
+UIProcess/API/glib/WebKitProtocolHandler.cpp @no-unify
+UIProcess/API/glib/WebKitResponsePolicyDecision.cpp @no-unify
+UIProcess/API/glib/WebKitScriptDialog.cpp @no-unify
+UIProcess/API/glib/WebKitSecurityManager.cpp @no-unify
+UIProcess/API/glib/WebKitSecurityOrigin.cpp @no-unify
+UIProcess/API/glib/WebKitSettings.cpp @no-unify
+UIProcess/API/glib/WebKitUIClient.cpp @no-unify
+UIProcess/API/glib/WebKitURISchemeRequest.cpp @no-unify
+UIProcess/API/glib/WebKitURISchemeResponse.cpp @no-unify
+UIProcess/API/glib/WebKitURIUtilities.cpp @no-unify
+UIProcess/API/glib/WebKitUserContent.cpp @no-unify
+UIProcess/API/glib/WebKitUserContentFilterStore.cpp @no-unify
+UIProcess/API/glib/WebKitUserContentManager.cpp @no-unify
+UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitVersion.cpp @no-unify
+UIProcess/API/glib/WebKitWebContext.cpp @no-unify
+UIProcess/API/glib/WebKitWebExtensionMatchPattern.cpp @no-unify
+UIProcess/API/glib/WebKitWebResource.cpp @no-unify
+UIProcess/API/glib/WebKitWebResourceLoadManager.cpp @no-unify
+UIProcess/API/glib/WebKitWebView.cpp @no-unify
+UIProcess/API/glib/WebKitWebViewAccessible.cpp @no-unify
+UIProcess/API/glib/WebKitWebViewSessionState.cpp @no-unify
+UIProcess/API/glib/WebKitWebsiteData.cpp @no-unify
+UIProcess/API/glib/WebKitWebsiteDataAccessPermissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitWebsiteDataManager.cpp @no-unify
+UIProcess/API/glib/WebKitWindowProperties.cpp @no-unify
+UIProcess/API/glib/WebKitWebsitePolicies.cpp @no-unify
+UIProcess/API/glib/WebKitXRPermissionRequest.cpp @no-unify
+
+UIProcess/API/libwpe/TouchGestureController.cpp @no-unify
+
+UIProcess/API/soup/HTTPCookieStoreSoup.cpp
+
+UIProcess/API/wpe/InputMethodFilterWPE.cpp @no-unify
+UIProcess/API/wpe/PageClientImpl.cpp @no-unify
+UIProcess/API/wpe/WebKitColor.cpp @no-unify
+UIProcess/API/wpe/WebKitColorChooser.cpp @no-unify
+UIProcess/API/wpe/WebKitInputMethodContextWPE.cpp @no-unify
+UIProcess/API/wpe/WebKitInputMethodContextImplWPE.cpp @no-unify
+UIProcess/API/wpe/WebKitPopupMenu.cpp @no-unify
+UIProcess/API/wpe/WebKitRectangle.cpp @no-unify
+UIProcess/API/wpe/WebKitScriptDialogWPE.cpp @no-unify
+UIProcess/API/wpe/WebKitWebViewBackend.cpp @no-unify
+UIProcess/API/wpe/WebKitWebViewWPE1.cpp @no-unify
+UIProcess/API/wpe/WebKitWebViewWPE2.cpp @no-unify
+UIProcess/API/wpe/WebKitWebViewWPE.cpp @no-unify
+UIProcess/API/wpe/WPEWebView.cpp @no-unify
+UIProcess/API/wpe/WPEWebViewLegacy.cpp @no-unify
+UIProcess/API/wpe/WPEWebViewPlatform.cpp @no-unify
+
+UIProcess/Automation/libwpe/WebAutomationSessionLibWPE.cpp
+UIProcess/Automation/libwpe/WebAutomationSessionWPE.cpp
+UIProcess/Automation/glib/BidiBrowserAgentGlib.cpp @no-unify
+
+UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
+
+UIProcess/Extensions/glib/WebExtensionGLib.cpp
+UIProcess/Extensions/glib/WebExtensionContextGLib.cpp
+
+UIProcess/Extensions/wpe/WebExtensionWPE.cpp
+
+UIProcess/Gamepad/libwpe/UIGamepadProviderLibWPE.cpp
+
+UIProcess/Gamepad/wpe/GamepadProviderWPE.cpp
+UIProcess/Gamepad/wpe/PlatformGamepadWPE.cpp
+
+UIProcess/geoclue/GeoclueGeolocationProvider.cpp
+
+UIProcess/glib/DRMMainDevice.cpp @no-unify
+UIProcess/glib/DisplayLinkGLib.cpp
+UIProcess/glib/DisplayVBlankMonitor.cpp
+UIProcess/glib/DisplayVBlankMonitorDRM.cpp
+UIProcess/glib/DisplayVBlankMonitorThreaded.cpp
+UIProcess/glib/DisplayVBlankMonitorTimer.cpp
+UIProcess/glib/FenceMonitor.cpp
+UIProcess/glib/ScreenManager.cpp
+UIProcess/glib/SystemSettingsManagerProxy.cpp
+UIProcess/glib/TextCheckerGLib.cpp
+UIProcess/glib/WebPageProxyGLib.cpp
+UIProcess/glib/WebProcessPoolGLib.cpp
+UIProcess/glib/WebProcessProxyGLib.cpp
+UIProcess/glib/WebTextCheckerClient.cpp
+UIProcess/glib/WebTextChecker.cpp
+
+UIProcess/gstreamer/WebPageProxyGStreamer.cpp
+
+UIProcess/Inspector/glib/RemoteInspectorClient.cpp
+UIProcess/Inspector/glib/RemoteInspectorHTTPServer.cpp
+UIProcess/Inspector/glib/WebInspectorUIProxyGLib.cpp
+
+UIProcess/Inspector/wpe/WebInspectorUIProxyWPE.cpp
+
+UIProcess/Launcher/glib/BubblewrapLauncher.cpp
+UIProcess/Launcher/glib/FlatpakLauncher.cpp
+UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
+UIProcess/Launcher/glib/ProcessProviderGLib.cpp
+UIProcess/Launcher/glib/XDGDBusProxy.cpp
+
+UIProcess/Launcher/libwpe/ProcessProviderLibWPE.cpp
+
+UIProcess/Notifications/glib/NotificationService.cpp
+
+UIProcess/WebsiteData/glib/WebsiteDataStoreGLib.cpp
+UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
+
+UIProcess/linux/MemoryPressureMonitor.cpp
+
+UIProcess/skia/ViewSnapshotSkia.cpp
+
+UIProcess/soup/WebProcessPoolSoup.cpp
+
+UIProcess/wpe/AcceleratedBackingStore.cpp
+UIProcess/wpe/DisplayVBlankMonitorWPE.cpp
+UIProcess/wpe/ScreenManagerWPE.cpp
+UIProcess/wpe/SystemSettingsManagerProxyWPE.cpp
+UIProcess/wpe/WPEUtilities.cpp
+UIProcess/wpe/WebPageProxyWPE.cpp
+UIProcess/wpe/WebPasteboardProxyWPE.cpp
+UIProcess/wpe/WebPreferencesWPE.cpp
+UIProcess/wpe/WebContextMenuProxyWPE.cpp
+
+UIProcess/XR/openxr/OpenXRExtensions.cpp
+UIProcess/XR/openxr/OpenXRGraphicsBindingOpenGLES.cpp
+UIProcess/XR/openxr/OpenXRHitTestManager.cpp
+UIProcess/XR/openxr/OpenXRInput.cpp
+UIProcess/XR/openxr/OpenXRInputSource.cpp
+UIProcess/XR/openxr/OpenXRLayer.cpp
+UIProcess/XR/openxr/OpenXRSwapchain.cpp
+UIProcess/XR/openxr/PlatformXROpenXR.cpp
+UIProcess/XR/openxr/PlatformXRSystemOpenXR.cpp
+
+WebProcess/GPU/graphics/gbm/RemoteGraphicsContextGLProxyGBM.cpp
+
+WebProcess/GPU/media/gstreamer/VideoLayerRemoteGStreamer.cpp
+
+WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/WebKitWebEditor.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/WebKitWebFormManager.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp @no-unify
+WebProcess/InjectedBundle/API/glib/WebProcessExtensionManager.cpp @no-unify
+
+WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp
+
+WebProcess/Inspector/wpe/WebInspectorUIWPE.cpp
+
+WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
+
+WebProcess/WebCoreSupport/glib/WebEditorClientGLib.cpp
+
+WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp
+
+WebProcess/WebCoreSupport/wpe/WebDragClientWPE.cpp
+WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp
+
+WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurface.cpp
+WebProcess/WebPage/CoordinatedGraphics/CoordinatedSceneState.cpp
+WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphicsGLib.cpp
+WebProcess/WebPage/CoordinatedGraphics/FrameRenderer.cpp
+WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
+WebProcess/WebPage/CoordinatedGraphics/NonCompositedFrameRenderer.cpp
+WebProcess/WebPage/CoordinatedGraphics/ScrollbarsControllerCoordinated.cpp
+WebProcess/WebPage/CoordinatedGraphics/ScrollingCoordinatorCoordinated.cpp
+WebProcess/WebPage/CoordinatedGraphics/ThreadedCompositor.cpp
+
+WebProcess/WebPage/glib/WebPageGLib.cpp
+
+WebProcess/WebPage/soup/WebCookieCacheSoup.cpp
+
+WebProcess/WebPage/wpe/WebPageWPE.cpp
+
+WebProcess/glib/SystemSettingsManager.cpp
+WebProcess/glib/WebProcessGLib.cpp
+
+WebProcess/wpe/WebProcessMainWPE.cpp

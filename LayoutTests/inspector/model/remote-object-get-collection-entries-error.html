@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+var map = new Map([["a", 1], ["b", 2]]);
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WI.RemoteObject.prototype.getCollectionEntries.Error");
+
+    suite.addTestCase({
+        name: "WI.RemoteObject.prototype.getCollectionEntries.Success",
+        description: "getCollectionEntries should resolve to an array of WI.CollectionEntry for a live collection.",
+        test(resolve, reject) {
+            WI.runtimeManager.evaluateInInspectedWindow("window.map", {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true}, (remoteObject, wasThrown) => {
+                InspectorTest.assert(remoteObject instanceof WI.RemoteObject, "Should get a WI.RemoteObject.");
+                InspectorTest.assert(!wasThrown, "Should not throw.");
+
+                remoteObject.getCollectionEntries((entries) => {
+                    InspectorTest.expectThat(Array.isArray(entries), "Should get an array of entries.");
+                    InspectorTest.expectEqual(entries.length, 2, "Should get 2 entries.");
+                    for (let entry of entries)
+                        InspectorTest.expectThat(entry instanceof WI.CollectionEntry, "Each entry should be a WI.CollectionEntry.");
+                    resolve();
+                });
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.RemoteObject.prototype.getCollectionEntries.StaleObject",
+        description: "getCollectionEntries should invoke the callback with null (not throw) when the backend returns an error for a released object.",
+        test(resolve, reject) {
+            WI.runtimeManager.evaluateInInspectedWindow("new Map([[1, 2]])", {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true}, async (remoteObject, wasThrown) => {
+                InspectorTest.assert(remoteObject instanceof WI.RemoteObject, "Should get a WI.RemoteObject.");
+                InspectorTest.assert(!wasThrown, "Should not throw.");
+
+                // Release the object so its objectId becomes stale. A subsequent
+                // getCollectionEntries will produce a protocol error on the backend.
+                await remoteObject.target.RuntimeAgent.releaseObject(remoteObject._objectId);
+
+                remoteObject.getCollectionEntries((entries) => {
+                    InspectorTest.expectNull(entries, "Should invoke the callback with null on a protocol error, not throw.");
+                    resolve();
+                });
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that WI.RemoteObject.prototype.getCollectionEntries handles a protocol error gracefully.</p>
+</body>
+</html>

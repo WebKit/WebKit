@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+     width="100" height="100">
+  <defs>
+    <!-- So that other documents can svg:use this one and force it to
+         load before onload -->
+    <g id="empty" />
+
+    <pattern id="p1" patternUnits="userSpaceOnUse" width="100%" height="100%">
+      <rect width="100%" height="100%" fill="lime"/>
+      <rect id="r1" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Script" width="100%" height="100%" fill="orange"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="lime"/>
+  <rect requiredFeatures="http://www.w3.org/TR/SVG11/feature#Script" width="100%" height="100%" fill="blue"/>
+</svg>

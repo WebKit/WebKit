@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="hidden-div" aria-labelledby="heading" hidden>
+    <h2 id="heading">Hidden</h2>
+</div>
+
+<script>
+var output = "This test ensures we don't include hidden elements in the accessibility tree.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var hiddenDiv = accessibilityController.accessibleElementById("hidden-div");
+    output += expect("!hiddenDiv || hiddenDiv.isIgnored");
+    var heading = accessibilityController.accessibleElementById("heading");
+    output += expect("!heading || heading.isIgnored");
+
+    document.getElementById("hidden-div").removeAttribute("hidden");
+    setTimeout(async function() {
+        await waitFor(() => {
+            hiddenDiv = accessibilityController.accessibleElementById("hidden-div");
+            heading = accessibilityController.accessibleElementById("heading");
+            return hiddenDiv && heading;
+        });
+        output += await expectAsync("hiddenDiv.isIgnored", "false");
+        output += await expectAsync("heading.isIgnored", "false");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

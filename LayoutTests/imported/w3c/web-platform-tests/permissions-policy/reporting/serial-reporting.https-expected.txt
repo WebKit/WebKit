@@ -1,0 +1,4 @@
+
+FAIL requestPort in serial reporting mode assert_equals: expected (number) 18 but got (undefined) undefined
+FAIL getPorts in serial reporting mode assert_equals: expected (number) 18 but got (undefined) undefined
+

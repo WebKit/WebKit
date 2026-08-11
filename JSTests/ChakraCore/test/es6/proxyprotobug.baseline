@@ -1,0 +1,21 @@
+has enumerable
+get enumerable
+has configurable
+get configurable
+has value
+get value
+has writable
+get writable
+has get
+has set
+======================
+has enumerable
+get enumerable
+has configurable
+get configurable
+has value
+get value
+has writable
+get writable
+has get
+has set

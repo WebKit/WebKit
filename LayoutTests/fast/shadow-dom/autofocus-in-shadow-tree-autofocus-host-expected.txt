@@ -1,0 +1,3 @@
+
+PASS an element with autofocus content attribute in a shadow tree whereby shadow host also has autofocus should automatically get focus
+

@@ -1,0 +1,33 @@
+This tests that we recover appropriately from an ARIA misuse, namely, wrapping a  with a
+ and then removing the role attribute for the wrapper.
+
+#The wrapper is initially exposed as a table, hiding the actual table and stealing its rows and cells.
+PASS: wrapper.role === 'AXRole: AXTable'
+PASS: wrapper.columnCount === 2
+PASS: wrapper.rowCount === 2
+PASS: wrapper.cellForColumnAndRow(0, 0).role === 'AXRole: AXCell'
+PASS: wrapper.cellForColumnAndRow(0, 1).childAtIndex(0).stringValue === 'AXValue: 3'
+PASS: table === null
+#Remove the role attribute from the wrapper, and the table should become exposed and functional, at the same time that the wrapper is no longer a table.
+PASS: wrapper.role === 'AXRole: '
+PASS: wrapper.columnCount === 0
+PASS: wrapper.rowCount === 0
+PASS: wrapper.cellForColumnAndRow(0, 0) === null
+PASS: table.role === 'AXRole: AXTable'
+PASS: table.columnCount === 2
+PASS: table.rowCount === 2
+PASS: table.cellForColumnAndRow(0, 0).role === 'AXRole: AXCell'
+PASS: table.cellForColumnAndRow(0, 1).childAtIndex(0).stringValue === 'AXValue: 3'
+#Set the role attribute for the wrapper to an appropriate role like 'group' and both the wrapper and the table should now be exposed accordingly.
+PASS: wrapper.role === 'AXRole: AXGroup'
+PASS: table.role === 'AXRole: AXTable'
+PASS: table.columnCount === 2
+PASS: table.rowCount === 2
+PASS: table.cellForColumnAndRow(0, 0).role === 'AXRole: AXCell'
+PASS: table.cellForColumnAndRow(0, 1).childAtIndex(0).stringValue === 'AXValue: 3'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+1	2
+3	4

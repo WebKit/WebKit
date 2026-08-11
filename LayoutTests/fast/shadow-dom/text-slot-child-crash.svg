@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <text id="text">
+        <tspan>PASS</tspan>
+    </text>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        var slotElement = document.createElementNS("http://www.w3.org/1999/xhtml", "slot");
+        slotElement.innerHTML = "Some text";
+        var parent = document.getElementById("text");
+        parent.appendChild(slotElement);
+    </script>
+</svg>

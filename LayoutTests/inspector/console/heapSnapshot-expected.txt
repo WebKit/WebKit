@@ -1,0 +1,16 @@
+Test for the Console.heapSnapshot event triggered by console.takeHeapSnapshot.
+
+
+== Running test suite: Console.heapSnapshot
+-- Running test case: TriggerHeapSnapshotNoTitle
+Console.heapSnapshot
+PASS: Should have a timestamp.
+PASS: Should have snapshotData.
+PASS: Should not have a title.
+
+-- Running test case: TriggerHeapSnapshotWithTitle
+Console.heapSnapshot
+PASS: Should have a timestamp.
+PASS: Should have snapshotData.
+PASS: Should have expected title.
+

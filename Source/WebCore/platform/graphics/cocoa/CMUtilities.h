@@ -1,0 +1,140 @@
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <wtf/Platform.h>
+#if PLATFORM(COCOA)
+
+#include <CoreAudio/CoreAudioTypes.h>
+#include <CoreMedia/CMSampleBuffer.h>
+#include <WebCore/CAAudioStreamDescription.h>
+#include <WebCore/TrackInfo.h>
+#include <memory>
+#include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/SystemFree.h>
+#include <wtf/TZoneMalloc.h>
+
+typedef struct AudioFormatVorbisModeInfo AudioFormatVorbisModeInfo;
+typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
+typedef const struct opaqueCMFormatDescription* CMVideoFormatDescriptionRef;
+typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
+typedef struct OpaqueCMBlockBuffer* CMBlockBufferRef;
+
+namespace WebCore {
+
+class MediaSamplesBlock;
+class SharedBuffer;
+struct PlatformVideoColorSpace;
+
+WEBCORE_EXPORT RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const TrackInfo&);
+WEBCORE_EXPORT RefPtr<AudioInfo> createAudioInfoFromFormatDescription(CMFormatDescriptionRef);
+// audioStreamDescriptFromAudioInfo only works with compressed audio format (non PCM)
+WEBCORE_EXPORT CAAudioStreamDescription audioStreamDescriptionFromAudioInfo(const AudioInfo&);
+WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef);
+WEBCORE_EXPORT Ref<SharedBuffer> sharedBufferFromCMBlockBuffer(CMBlockBufferRef);
+WEBCORE_EXPORT RetainPtr<CMBlockBufferRef> ensureContiguousBlockBuffer(CMBlockBufferRef);
+
+// Convert MediaSamplesBlock to the equivalent CMSampleBufferRef. If CMFormatDescriptionRef
+// is set it will be used, otherwise it will be created from the MediaSamplesBlock's TrackInfo.
+WEBCORE_EXPORT Expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamplesBlock&, CMFormatDescriptionRef = nullptr);
+// Convert CMSampleBufferRef to the equivalent MediaSamplesBlock. If TrackInfo
+// is set it will be used, otherwise it will be created from the CMSampleBufferRef's CMFormatDescriptionRef.
+WEBCORE_EXPORT UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef, const TrackInfo* = nullptr);
+
+WEBCORE_EXPORT void attachColorSpaceToPixelBuffer(const PlatformVideoColorSpace&, CVPixelBufferRef);
+
+PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef);
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+WEBCORE_EXPORT Vector<Ref<SharedBuffer>> getKeyIDs(CMFormatDescriptionRef);
+#endif
+
+WEBCORE_EXPORT FourCC NODELETE computeBoxType(FourCC);
+
+WEBCORE_EXPORT std::pair<std::unique_ptr<AudioChannelLayout, WTF::SystemFree<AudioChannelLayout>>, size_t> channelLayoutFromChannelLayoutTag(UInt32);
+// Retrieve channel layout name string for debugging.
+WEBCORE_EXPORT String channelLayoutDescription(UInt32);
+
+class PacketDurationParser final {
+    WTF_MAKE_TZONE_ALLOCATED(PacketDurationParser);
+public:
+    explicit PacketDurationParser(const AudioInfo&);
+    ~PacketDurationParser();
+
+    bool isValid() const { return m_isValid; }
+    size_t framesInPacket(std::span<const uint8_t>);
+    void NODELETE reset();
+
+private:
+    uint32_t m_audioFormatID { 0 };
+    uint32_t m_constantFramesPerPacket { 0 };
+    std::optional<Seconds> m_frameDuration;
+    uint32_t m_sampleRate { 0 };
+#if ENABLE(VORBIS)
+#if HAVE(AUDIOFORMATPROPERTY_VARIABLEPACKET_SUPPORTED)
+    std::unique_ptr<AudioFormatVorbisModeInfo> m_vorbisModeInfo;
+    uint32_t m_vorbisModeMask { 0 };
+#endif
+    uint32_t m_lastVorbisBlockSize { 0 };
+#endif
+    bool m_isValid { false };
+};
+
+Vector<AudioStreamPacketDescription> getPacketDescriptions(CMSampleBufferRef);
+
+// Read the sample timing info array out of a CMSampleBufferRef. Returns an
+// empty Vector on failure or if the buffer carries no timing entries.
+Vector<CMSampleTimingInfo> getSampleTimingInfoArray(CMSampleBufferRef);
+
+RetainPtr<CMSampleBufferRef> sampleBufferFromVideoData(std::span<const uint8_t>, CMVideoFormatDescriptionRef);
+
+// Iterate over each sub-sample contained in a CMSampleBufferRef.
+// Transparently handles the kCMSampleBufferError_BufferHasNoSampleSizes shape
+// (e.g. compressed audio that carries per-packet sizes in the audio stream
+// packet description array, such as ADTS framing) by walking the packet
+// description array and synthesizing per-packet sub-CMSampleBuffers that
+// reference the source block buffer (zero-copy). For the normal shape this
+// delegates to PAL::CMSampleBufferCallBlockForEachSample.
+//
+// The callback is invoked once per sub-sample with the synthesized
+// CMSampleBufferRef and its zero-based index. Returning a non-noErr status
+// from the callback stops iteration; that status is returned to the caller.
+// Returns noErr after a complete walk.
+OSStatus forEachSample(CMSampleBufferRef, NOESCAPE const Function<OSStatus(CMSampleBufferRef, CMItemCount)>&);
+
+// Copy a contiguous range of sub-samples out of a CMSampleBufferRef into a new
+// CMSampleBufferRef. Transparently handles the BufferHasNoSampleSizes shape by
+// slicing the packet description array; otherwise delegates to
+// PAL::CMSampleBufferCopySampleBufferForRange. Returns nullptr on failure.
+RetainPtr<CMSampleBufferRef> copySampleBufferForRange(CMSampleBufferRef, CFRange);
+
+WEBCORE_EXPORT bool isCMSampleBufferRandomAccess(CMSampleBufferRef);
+
+}
+
+#endif

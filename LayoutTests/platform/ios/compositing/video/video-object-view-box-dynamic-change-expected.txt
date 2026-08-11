@@ -1,0 +1,52 @@
+This test verifies that dynamically setting object-view-box on an explicitly-sized <video> (a change that does not by itself dirty layout) still updates the compositing contents/clipping rects, by comparing the layer tree before and after the style change.
+
+
+Before (no object-view-box):
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 13.00 86.00)
+          (bounds 100.00 100.00)
+          (contents layer (media)
+            (position 0.00 0.00)
+            (bounds 100.00 100.00)
+          )
+        )
+      )
+    )
+  )
+)
+After (object-view-box: inset(50px 0px 0px 0px)):
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 13.00 86.00)
+          (bounds 100.00 100.00)
+          (contents clipping layer
+            (position 0.00 0.00)
+            (bounds 100.00 100.00)
+          )
+          (contents layer (media)
+            (position 0.00 -11.50)
+            (bounds 100.00 111.50)
+          )
+        )
+      )
+    )
+  )
+)
+

@@ -1,0 +1,8 @@
+
+x
+after
+
+PASS The inline-block is as tall as its two line boxes
+PASS The block level box sits on the inline-block's last line box
+PASS An inline-block whose last line box holds a block level box exports that line's baseline
+

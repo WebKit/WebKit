@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="tree" role="tree">
+<div id="treeitem" role="treeitem" aria-checked="true">item</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    var treeItem;
+    function notificationCallback(notification, userInfo) {
+        if (notification == "AXValueChanged") {
+            debug("final tree item value: " + treeItem.stringValue);
+            treeItem.removeNotificationListener();
+            finishJSTest();
+        }
+    }
+
+    description("This tests that aria-checked is supported on tree items and changes generate notifications.");
+    if (window.accessibilityController) {
+        jsTestIsAsync = true;
+        treeItem = accessibilityController.accessibleElementById("treeitem");
+
+        var addedNotification = treeItem.addNotificationListener(notificationCallback);
+        shouldBe("addedNotification", "true");
+
+        debug("initial tree item value: " + treeItem.stringValue);
+
+        document.getElementById("treeitem").ariaChecked = "false";
+     }
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

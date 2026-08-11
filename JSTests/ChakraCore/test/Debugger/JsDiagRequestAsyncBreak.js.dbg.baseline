@@ -1,0 +1,23 @@
+[
+  {
+    "evaluate": {
+      "count": "number 3"
+    }
+  },
+  {
+    "callStack": [
+      {
+        "line": 16,
+        "column": 2,
+        "sourceText": "x = 2",
+        "function": "foo"
+      },
+      {
+        "line": 18,
+        "column": 0,
+        "sourceText": "foo()",
+        "function": "Global code"
+      }
+    ]
+  }
+]

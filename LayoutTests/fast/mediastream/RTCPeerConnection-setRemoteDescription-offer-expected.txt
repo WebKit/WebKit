@@ -1,0 +1,39 @@
+Test RTCPeerConnection.setRemoteDescription called with an RTCSessionDescription of type 'offer'
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+*** Create (remote) offer with audio (remoteOffer1)
+*** Done, start testing with remoteOffer1
+PASS pc.signalingState is 'stable'
+PASS pc.remoteDescription is null
+PASS pc.pendingRemoteDescription is null
+PASS pc.currentRemoteDescription is null
+
+PASS remoteOffer1 set as remote description
+PASS pc.signalingState is 'have-remote-offer'
+FAIL pc.remoteDescription should be [object Object]. Was null.
+FAIL pc.pendingRemoteDescription should be [object Object]. Was null.
+PASS pc.currentRemoteDescription is null
+
+PASS remoteOffer1 set as remote description (again)
+PASS pc.signalingState is 'have-remote-offer'
+
+*** Try setting local descriptions with bad types for the current state
+PASS promise pc.setRemoteDescription({type:'answer', sdp:remoteOffer1.sdp}); rejected with InvalidStateError: The object is in an invalid state.
+PASS promise pc.setRemoteDescription({type:'pranswer', sdp:remoteOffer1.sdp}); rejected with InvalidStateError: The object is in an invalid state.
+
+*** Create (remote) offer with video (remoteOffer2)
+*** Done, start testing with remoteOffer2
+PASS pc.signalingState is 'have-remote-offer'
+
+PASS remoteOffer2 set as remote description
+PASS pc.signalingState is 'have-remote-offer'
+FAIL pc.remoteDescription should be [object Object]. Was null.
+FAIL pc.pendingRemoteDescription should be [object Object]. Was null.
+PASS pc.currentRemoteDescription is null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

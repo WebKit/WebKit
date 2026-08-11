@@ -1,0 +1,111 @@
+/*
+ * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2004, 2005, 2006, 2009, 2010, 2013 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ */
+
+#pragma once
+
+#include <WebCore/HTMLFrameOwnerElement.h>
+#include <WebCore/OverlapTestRequestClient.h>
+#include <WebCore/RenderReplaced.h>
+#include <WebCore/Widget.h>
+
+namespace WebCore {
+
+class RemoteFrame;
+
+class WidgetHierarchyUpdatesSuspensionScope {
+public:
+    WidgetHierarchyUpdatesSuspensionScope()
+    {
+        s_widgetHierarchyUpdateSuspendCount++;
+    }
+    ~WidgetHierarchyUpdatesSuspensionScope()
+    {
+        ASSERT(s_widgetHierarchyUpdateSuspendCount);
+        if (s_widgetHierarchyUpdateSuspendCount == 1 && s_haveScheduledWidgetToMove)
+            moveWidgets();
+        s_widgetHierarchyUpdateSuspendCount--;
+    }
+
+    static bool isSuspended() { return s_widgetHierarchyUpdateSuspendCount; }
+    static void scheduleWidgetToMove(Widget&, LocalFrameView*);
+
+private:
+    using WidgetToParentMap = HashMap<Ref<Widget>, SingleThreadWeakPtr<LocalFrameView>>;
+    static WidgetToParentMap& NODELETE widgetNewParentMap();
+
+    WEBCORE_EXPORT void moveWidgets();
+    WEBCORE_EXPORT static unsigned s_widgetHierarchyUpdateSuspendCount;
+    WEBCORE_EXPORT static bool s_haveScheduledWidgetToMove;
+};
+
+class RenderWidget : public RenderReplaced, private OverlapTestRequestClient, public RefCounted<RenderWidget> {
+    WTF_MAKE_TZONE_ALLOCATED(RenderWidget);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderWidget);
+public:
+    virtual ~RenderWidget();
+
+    inline HTMLFrameOwnerElement& frameOwnerElement() const; // Defined in RenderWidgetInlines.h
+
+    Widget* widget() const { return m_widget.get(); }
+    WEBCORE_EXPORT void setWidget(RefPtr<Widget>&&);
+
+    static RenderWidget* NODELETE find(const Widget&);
+
+    enum class ChildWidgetState { Valid, Destroyed };
+    [[nodiscard]] ChildWidgetState updateWidgetPosition();
+    WEBCORE_EXPORT IntRect windowClipRect() const;
+
+    virtual bool requiresAcceleratedCompositing() const;
+
+    RemoteFrame* NODELETE remoteFrame() const;
+
+protected:
+    RenderWidget(Type, HTMLFrameOwnerElement&, Style::ComputedStyle&&);
+
+    void willBeDestroyed() override;
+    void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+    void layout() override;
+    void paint(PaintInfo&, const LayoutPoint&) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+    bool requiresLayer() const override;
+
+private:
+    void element() const = delete;
+
+    bool shouldInvalidateContentWidths() const final;
+    RenderReplaced* embeddedSVGRoot() const final;
+    FloatSize preferredAspectRatioAsSize() const final;
+
+    void setSelectionState(HighlightState) final;
+    void setOverlapTestResult(bool) final;
+
+    bool setWidgetGeometry(const LayoutRect&);
+    bool updateWidgetGeometry();
+
+    void paintContents(PaintInfo&, const LayoutPoint&);
+
+    RefPtr<Widget> m_widget;
+    IntRect m_clipRect; // The rectangle needs to remain correct after scrolling, so it is stored in content view coordinates, and not clipped to window.
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderWidget, isRenderWidget())

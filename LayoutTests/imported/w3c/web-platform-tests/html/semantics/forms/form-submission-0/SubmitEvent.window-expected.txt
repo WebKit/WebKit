@@ -1,0 +1,8 @@
+
+PASS Failing SubmitEvent constructor
+PASS Successful SubmitEvent constructor
+PASS Successful SubmitEvent constructor; null/undefined submitter
+PASS Successful SubmitEvent constructor; null/undefined dictionary
+PASS Successful SubmitEvent constructor; empty dictionary
+PASS Successful SubmitEvent constructor; missing dictionary
+

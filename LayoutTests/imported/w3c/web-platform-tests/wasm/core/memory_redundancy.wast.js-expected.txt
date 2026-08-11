@@ -1,0 +1,17 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (memory_redundancy.wast:5)
+PASS #3 Test that WebAssembly compilation succeeds (wrapper)
+PASS #4 Reinitialize the default imports
+PASS #5 Test that WebAssembly compilation succeeds (memory_redundancy.wast:5)
+PASS #6 Test that WebAssembly instantiation succeeds (memory_redundancy.wast:5)
+PASS #7 Test that a WebAssembly code returns a specific result (memory_redundancy.wast:59)
+PASS #8 Run a WebAssembly test without special assertions (memory_redundancy.wast:60)
+PASS #9 Test that a WebAssembly code returns a specific result (memory_redundancy.wast:61)
+PASS #10 Run a WebAssembly test without special assertions (memory_redundancy.wast:62)
+PASS #11 Test that WebAssembly compilation succeeds (wrapper)
+PASS #12 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #13 Run a WebAssembly test without special assertions (memory_redundancy.wast:63)
+PASS #14 Run a WebAssembly test without special assertions (memory_redundancy.wast:64)
+PASS #15 Test that a WebAssembly code returns a specific result (memory_redundancy.wast:65)
+

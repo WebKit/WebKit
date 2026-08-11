@@ -1,0 +1,41 @@
+This test pushes a series of state objects with different URLs and fragment identifiers meant to test the hashChange event as states are popped.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS history.pushState(null, null, 'some-other.html') threw
+PASS history.replaceState(null, null, 'some-other.html') threw
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html?withsomeotherquery
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html?withsomeotherquery#
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html?withsomeotherquery#
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html?withsomeotherquery
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html?withsomeotherquery
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html?withsomeotherquery#somehash
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html?withsomeotherquery#somehash
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html?withsomeotherquery#someotherhash
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html?withsomeotherquery#someotherhash
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html?withquery#someotherhash
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html?withquery#
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html?withquery#
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html?withquery#somehash
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html?withquery#somehash
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html?withquery
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html?withquery
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html?withquery#
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html?withquery#
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html?withquery
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html?withquery
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html#
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html#
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html#otherhash
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html#otherhash
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html#hash
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html#hash
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html#
+Hash change fired and last path component is pushstate-with-fragment-urls-and-hashchange.html#
+State popped with event null (type object) and last path component pushstate-with-fragment-urls-and-hashchange.html#
+State popped with event OriginalEntry (type string) and last path component pushstate-with-fragment-urls-and-hashchange.html
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

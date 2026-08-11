@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="range" min="0" max="100" value="50" id="slider">
+<span id="val">50</span>
+    
+<script>
+var output = "This test ensures slider increment and decrement actions work as expected, and verifies other general properties of sliders.\n\n";
+
+document.getElementById("slider").addEventListener("change", event => {
+    document.getElementById("val").innerText = event.target.value;
+});
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var slider = document.getElementById("slider");
+    var sliderAXObject = accessibilityController.accessibleElementById("slider");
+    var valueDiv = document.getElementById("val");
+    var thumbAXObject;
+
+    async function testMinMax(min, max) {
+        await waitFor(() => sliderAXObject.minValue === min && sliderAXObject.maxValue === max);
+        output += expect("sliderAXObject.minValue", min);
+        output += expect("sliderAXObject.maxValue", max);
+    }
+
+    async function testValues(oldValue, direction) {
+        // Increment and decrement operations modify the slider's value by 5%.
+        const range = slider.getAttribute("max") - slider.getAttribute("min");
+        const expected = direction * range * 0.05 + (oldValue * 1);
+        await waitFor(() => slider.value == expected && valueDiv.innerText == expected);
+        output += expect("slider.value",  `'${expected}'`);
+        output += expect("valueDiv.innerText", `'${expected}'`);
+    }
+
+    async function testIncrement() {
+        const oldValue = slider.value;
+        output += `${evalAndReturn("sliderAXObject.increment()")}\n`;
+        await testValues(oldValue, 1)
+    }
+
+    async function testDecrement() {
+        const oldValue = slider.value;
+        output += `${evalAndReturn("sliderAXObject.decrement()")}\n`;
+        await testValues(oldValue, -1)
+    }
+
+    setTimeout(async function() {
+        output += "** Verify basic slider accessibility attributes\n";
+        await testMinMax(0, 100);
+        output += expect("sliderAXObject.childrenCount", 1);
+        output += expect("sliderAXObject.role", "'AXRole: AXSlider'");
+        
+        output += "\n** Verify basic thumb accessibility attributes\n";
+        output += `${evalAndReturn("thumbAXObject = sliderAXObject.childAtIndex(0)")}\n`;
+        output += expect("thumbAXObject.childrenCount", 0);
+        output += expect("thumbAXObject.role", "'AXRole: AXValueIndicator'");
+
+        output += "\n** Increment the slider, test slider value and div set on 'update' event\n";
+        await testIncrement();
+
+        output += "\n** Decrement the slider, test slider value and div set on 'update' event\n";
+        output += `${evalAndReturn("slider.value = 22")}\n`;
+        await testDecrement();
+
+        output += "\n** Change slider range\n";
+        output += `${evalAndReturn("slider.setAttribute('max', 1000)")}\n`;
+        output += `${evalAndReturn("slider.setAttribute('min', 500)")}\n`;
+        await testMinMax(500, 1000);
+
+        output += "\n** Re-test incrementing the slider\n";
+        output += `${evalAndReturn("slider.value = 600")}\n`;
+        await testIncrement();
+
+        output += "\n** Re-test decrementing the slider\n";
+        output += `${evalAndReturn("slider.value = 850")}\n`;
+        await testDecrement();
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

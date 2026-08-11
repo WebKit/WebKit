@@ -1,0 +1,3 @@
+
+PASS Trigger configurationchange event in case echo cancellation changes
+

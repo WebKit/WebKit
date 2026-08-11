@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="routines.js"></script>
+<script src="canvas-to-peer-connection.js"></script>
+<style type="text/css">
+video { width: 40px; }
+canvas { width: 40px; }
+</style>
+</head>
+<body>
+<div id="debuge"></div>
+<script>
+function testDescription(subcase) {
+    return Object.keys(subcase).map((k) => `${k}: ${typeof subcase[k] === "function" ? subcase[k].name : subcase[k]}`).join(",");
+}
+
+const testcase = {draw: with2DContext};
+promise_test(async t => { await testCanvasToPeerConnection(t, testcase); }, testDescription(testcase));
+</script>
+</body>
+</html>

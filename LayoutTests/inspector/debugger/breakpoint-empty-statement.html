@@ -1,0 +1,56 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/empty-statement.js"></script>
+<script>
+function test()
+{
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    let paused = false;
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (!/resources\/empty-statement\.js$/.test(messageObject.params.url))
+            return;
+
+        let scriptId = messageObject.params.scriptId;
+
+        function probe(lineNumber, next) {
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location: {scriptId, lineNumber, columnNumber: 0}}, function(response) {
+                let actual = response.result ? response.result.actualLocation : null;
+                ProtocolTest.log(`line ${lineNumber} -> actualLocation ${actual ? "line " + actual.lineNumber + " col " + actual.columnNumber : "(none)"}`);
+                if (response.result && response.result.breakpointId)
+                    InspectorProtocol.sendCommand("Debugger.removeBreakpoint", {breakpointId: response.result.breakpointId}, next);
+                else
+                    next();
+            });
+        }
+
+        probe(2, () => probe(3, () => probe(4, () => {
+            let location = {scriptId, lineNumber: 3, columnNumber: 0};
+            InspectorProtocol.sendCommand("Debugger.setBreakpoint", {location}, function(response) {
+                InspectorProtocol.checkForError(response);
+                InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "testEmptyStatementBreakpoint()"}, function() {
+                    ProtocolTest.log(paused ? "PASS: breakpoint on the empty statement was triggered." : "FAIL: breakpoint on the empty statement was NOT triggered.");
+                    InspectorProtocol.sendCommand("Debugger.disable");
+                    ProtocolTest.completeTest();
+                });
+            });
+        })));
+    };
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        paused = true;
+        ProtocolTest.log("Paused at line: " + messageObject.params.callFrames[0].location.lineNumber);
+        InspectorProtocol.sendCommand("Debugger.resume", {});
+    };
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing that a breakpoint on a line containing only an empty statement is triggered.</p>
+</body>
+</html>

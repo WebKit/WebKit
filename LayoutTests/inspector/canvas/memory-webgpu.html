@@ -1,0 +1,83 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let adapter = null;
+let device = null;
+let buffer = null;
+let texture = null;
+
+async function load() {
+    adapter = await navigator.gpu.requestAdapter();
+    device = await adapter.requestDevice();
+    runTest();
+}
+
+function allocateBuffer() {
+    buffer = device.createBuffer({
+        size: 1024 * 1024,
+        usage: GPUBufferUsage.COPY_DST,
+    });
+}
+
+function allocateTexture() {
+    texture = device.createTexture({
+        size: [256, 256],
+        format: "rgba8unorm",
+        usage: GPUTextureUsage.TEXTURE_BINDING,
+    });
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.MemoryWebGPU");
+
+    suite.addTestCase({
+        name: "Canvas.MemoryWebGPU.Buffer",
+        description: "Check that allocating a GPUBuffer updates the device's memory cost.",
+        async test() {
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGPU);
+            let initialMemoryCost = isNaN(canvas.memoryCost) ? 0 : canvas.memoryCost;
+            let memoryChangedPromise = canvas.awaitEvent(WI.Canvas.Event.MemoryChanged);
+            InspectorTest.evaluateInPage("allocateBuffer()");
+            await memoryChangedPromise;
+            InspectorTest.expectGreaterThan(canvas.memoryCost, initialMemoryCost, "Allocating a GPUBuffer should increase the memory cost.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.MemoryWebGPU.Texture",
+        description: "Check that allocating a GPUTexture updates the device's memory cost.",
+        async test() {
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGPU);
+            let initialMemoryCost = canvas.memoryCost;
+            let memoryChangedPromise = canvas.awaitEvent(WI.Canvas.Event.MemoryChanged);
+            InspectorTest.evaluateInPage("allocateTexture()");
+            await memoryChangedPromise;
+            InspectorTest.expectGreaterThan(canvas.memoryCost, initialMemoryCost, "Allocating a GPUTexture should increase the memory cost.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Canvas.MemoryWebGPU.Destroy",
+        description: "Check that destroying WebGPU resources updates the device's memory cost.",
+        async test() {
+            let canvas = Array.from(WI.canvasManager.canvasCollection).find((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGPU);
+            let initialMemoryCost = canvas.memoryCost;
+            let memoryChangedPromise = canvas.awaitEvent(WI.Canvas.Event.MemoryChanged);
+            InspectorTest.evaluateInPage("buffer.destroy()");
+            await memoryChangedPromise;
+            InspectorTest.expectLessThan(canvas.memoryCost, initialMemoryCost, "Destroying a GPUBuffer should decrease the memory cost.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager includes WebGPU resources in device memory costs.</p>
+</body>
+</html>
+

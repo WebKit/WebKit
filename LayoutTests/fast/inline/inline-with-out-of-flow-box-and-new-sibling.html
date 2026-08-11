@@ -1,0 +1,27 @@
+<style>
+#container {
+  text-align: center;
+  width: 200px;
+  height: 100px;
+  background-color: red;
+  position: relative;
+}
+#abs_pos {
+  display: inline;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  background-color: green;
+  width: 200px;
+  height: 100px;
+}
+</style>
+<div id=container>
+  <div id=abs_pos></div>
+</div>
+<script>
+document.body.offsetHeight;
+let inline_content = document.createElement("span");
+inline_content.innerText = "PASS if no red";
+container.insertBefore(inline_content, abs_pos);
+</script>

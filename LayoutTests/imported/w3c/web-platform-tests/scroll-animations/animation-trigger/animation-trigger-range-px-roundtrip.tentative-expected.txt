@@ -1,0 +1,3 @@
+
+FAIL Ranges of triggers created by script are read in CSS pixels promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: TimelineTrigger"
+

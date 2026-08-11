@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.rect { position: absolute; background: green; }
+.bounding-rect { position: absolute; border: solid 1px #00f; }
+</style>
+<script>
+
+onload = () => {
+    const startContainer = document.getElementById('s1').firstChild;
+    const endContainer = document.getElementById('s2');
+
+    const range = document.createRange();
+    range.setStart(startContainer, startContainer.textContent.length);
+    range.setEnd(endContainer, 0)
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+
+    const rectRoot = document.getElementById('rectRoot');
+    const rects = Array.from(range.getClientRects());
+    const boundingRect = range.getBoundingClientRect();
+
+    rectRoot.innerHTML = rects.map(rect => 
+    `<div class="rect" style="left: ${rect.left}px; top: ${rect.top}px; width: ${rect.width}px; height: ${rect.height}px"></div>`
+    ).join('') + `<div class="bounding-rect" style="left: ${boundingRect.left}px; top: ${boundingRect.top}px; width: ${boundingRect.width}px; height: ${boundingRect.height}px"></div>`;
+}
+
+</script>
+</head>
+<body>
+<p>
+<span id="s1">ABCD</span><span style="color: orange">EFGHIJKL</span><span id="s2">MNOPQRSTUVWXYZ</span>
+</p>
+<div id="rectRoot"></div>
+</body>
+</html>

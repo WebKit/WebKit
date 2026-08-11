@@ -1,0 +1,3625 @@
+# Japanese translation for webkit.
+# Copyright (C) 2013 webkit's COPYRIGHT HOLDER
+# This file is distributed under the same license as the webkit package.
+# Noriko Mizumoto <noriko@fedoraproject.org>, 2013.
+# Ryo Nakano <ryonakaknock3@gmail.com>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit HEAD\n"
+"Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?"
+"product=WebKit&component=WebKitGTK\n"
+"POT-Creation-Date: 2026-02-28 15:59+0000\n"
+"PO-Revision-Date: 2021-01-05 14:31+0900\n"
+"Last-Translator: Ryo Nakano <ryonakaknock3@gmail.com>\n"
+"Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../LocalizedStringsGtk.cpp:43
+msgid "Copy Link Loc_ation"
+msgstr "リンク先のコピー(_A)"
+
+#: ../LocalizedStringsGtk.cpp:48
+msgid "Sa_ve Image As"
+msgstr "名前を付けて画像を保存(_V)"
+
+#: ../LocalizedStringsGtk.cpp:53
+msgid "Copy Image _Address"
+msgstr "画像のアドレスをコピー(_A)"
+
+#: ../LocalizedStringsGtk.cpp:58
+msgid "Cop_y Video Link Location"
+msgstr "ビデオのリンク先アドレスをコピー(_Y)"
+
+#: ../LocalizedStringsGtk.cpp:63
+msgid "Cop_y Audio Link Location"
+msgstr "オーディオのリンク先アドレスをコピー(_Y)"
+
+#: ../LocalizedStringsGtk.cpp:68
+msgid "_Toggle Media Controls"
+msgstr "再生コントローラーの切り替え(_T)"
+
+#: ../LocalizedStringsGtk.cpp:73
+msgid "_Show Media Controls"
+msgstr "再生コントローラーを表示する(_S)"
+
+#: ../LocalizedStringsGtk.cpp:78
+msgid "_Hide Media Controls"
+msgstr "再生コントローラーを表示しない(_H)"
+
+#: ../LocalizedStringsGtk.cpp:83
+msgid "Toggle Media _Loop Playback"
+msgstr "メディアループ再生の切り替え(_L)"
+
+#: ../LocalizedStringsGtk.cpp:88
+msgid "Switch Video to _Fullscreen"
+msgstr "ビデオをフルスクリーン表示に切り替え(_F)"
+
+#: ../LocalizedStringsGtk.cpp:93
+msgid "Paste As Plain _Text"
+msgstr "プレーンテキストとして貼り付け(_T)"
+
+#: ../LocalizedStringsGtk.cpp:98
+msgid "_Delete"
+msgstr "削除(_D)"
+
+#: ../LocalizedStringsGtk.cpp:103
+msgid "Select _All"
+msgstr "すべて選択(_A)"
+
+#: ../LocalizedStringsGtk.cpp:108
+msgid "Insert _Emoji"
+msgstr "絵文字を挿入(_E)"
+
+#: ../LocalizedStringsGtk.cpp:113
+msgid "_Insert Unicode Control Character"
+msgstr "Unicode 制御文字を挿入(_I)"
+
+#: ../LocalizedStringsGtk.cpp:118
+msgid "Input _Methods"
+msgstr "入力メソッド(_M)"
+
+#: ../LocalizedStringsGtk.cpp:123
+msgid "LRM _Left-to-right mark"
+msgstr "LRM (Left-to-right mark)(_L)"
+
+#: ../LocalizedStringsGtk.cpp:128
+msgid "RLM _Right-to-left mark"
+msgstr "RLM (Right-to-left mark)(_R)"
+
+#: ../LocalizedStringsGtk.cpp:133
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE (Left-to-right embedding)(_E)"
+
+#: ../LocalizedStringsGtk.cpp:138
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE (Right-to-left embedding)(_M)"
+
+#: ../LocalizedStringsGtk.cpp:143
+msgid "LRO Left-to-right _override"
+msgstr "LRO (Left-to-right override)(_O)"
+
+#: ../LocalizedStringsGtk.cpp:148
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO (Right-to-left override)(_V)"
+
+#: ../LocalizedStringsGtk.cpp:153
+msgid "PDF _Pop directional formatting"
+msgstr "PDF (Pop directional formatting)(_P)"
+
+#: ../LocalizedStringsGtk.cpp:158
+msgid "ZWS _Zero width space"
+msgstr "ZWS (Zero width space)(_Z)"
+
+#: ../LocalizedStringsGtk.cpp:163
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ (Zero width joiner)(_J)"
+
+#: ../LocalizedStringsGtk.cpp:168
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ (Zero width non-joiner)(_N)"
+
+#: ../LocalizedStringsGtk.cpp:174
+#, c-format
+msgid "Use at least one character"
+msgid_plural "Use at least %d characters"
+msgstr[0] ""
+
+#: ../LocalizedStringsGtk.cpp:180
+#, c-format
+msgid "Use no more than one character"
+msgid_plural "Use no more than %d characters"
+msgstr[0] ""
+
+#: ../../LocalizedStrings.cpp:151
+msgctxt "alt text for <input> elements with no alt, title, or value"
+msgid "Submit"
+msgstr "送信"
+
+#: ../../LocalizedStrings.cpp:156
+msgid "Reset"
+msgstr "リセット"
+
+#: ../../LocalizedStrings.cpp:161
+msgid "This is a searchable index. Enter search keywords: "
+msgstr "検索可能なインデックスです。検索するキーワードを入力してください: "
+
+#: ../../LocalizedStrings.cpp:167
+msgid "Submit"
+msgstr "送信"
+
+#: ../../LocalizedStrings.cpp:172
+msgid "Choose File"
+msgstr "ファイルの選択"
+
+#: ../../LocalizedStrings.cpp:177
+msgid "Choose Files"
+msgstr "ファイルの選択"
+
+#: ../../LocalizedStrings.cpp:182
+msgid "no file selected"
+msgstr "ファイルを選択していません"
+
+#: ../../LocalizedStrings.cpp:187
+msgid "no files selected"
+msgstr "ファイルを選択していません"
+
+#: ../../LocalizedStrings.cpp:192
+msgid "Details"
+msgstr "詳細"
+
+#: ../../LocalizedStrings.cpp:199
+msgid "Open Link in New _Window"
+msgstr "リンクを新しいウィンドウで開く(_W)"
+
+#: ../../LocalizedStrings.cpp:204
+msgid "_Download Linked File"
+msgstr "リンク先ファイルをダウンロード(_D)"
+
+#: ../../LocalizedStrings.cpp:210
+msgid "Copy Link"
+msgstr "リンクをコピー"
+
+#: ../../LocalizedStrings.cpp:216
+msgid "Open _Image in New Window"
+msgstr "画像を新しいウィンドウで開く(_I)"
+
+#: ../../LocalizedStrings.cpp:222
+msgid "Download Image"
+msgstr "画像をダウンロード"
+
+#: ../../LocalizedStrings.cpp:228
+msgid "Cop_y Image"
+msgstr "画像をコピー(_Y)"
+
+#: ../../LocalizedStrings.cpp:233
+msgid "Open _Frame in New Window"
+msgstr "フレームを新しいウィンドウで開く(_F)"
+
+#: ../../LocalizedStrings.cpp:238
+msgid "_Copy"
+msgstr "コピー(_C)"
+
+#: ../../LocalizedStrings.cpp:243
+msgid "_Back"
+msgstr "戻る(_B)"
+
+#: ../../LocalizedStrings.cpp:248
+msgid "_Forward"
+msgstr "進む(_F)"
+
+#: ../../LocalizedStrings.cpp:253
+msgid "_Stop"
+msgstr "停止(_S)"
+
+#: ../../LocalizedStrings.cpp:258
+msgid "_Reload"
+msgstr "再読み込み(_R)"
+
+#: ../../LocalizedStrings.cpp:263
+msgid "Cu_t"
+msgstr "切り取り(_T)"
+
+#: ../../LocalizedStrings.cpp:268
+msgid "_Paste"
+msgstr "貼り付け(_P)"
+
+#: ../../LocalizedStrings.cpp:273
+msgid "No Guesses Found"
+msgstr "候補が見つかりませんでした"
+
+#: ../../LocalizedStrings.cpp:278
+msgid "_Ignore Spelling"
+msgstr "スペルを無視する(_I)"
+
+#: ../../LocalizedStrings.cpp:283
+msgid "_Learn Spelling"
+msgstr "スペルを学習する(_L)"
+
+#: ../../LocalizedStrings.cpp:289
+msgid "_Search the Web"
+msgstr "Web を検索(_S)"
+
+#: ../../LocalizedStrings.cpp:303
+msgid "_Open Link"
+msgstr "リンクを開く(_O)"
+
+#: ../../LocalizedStrings.cpp:308
+msgid "Ignore _Grammar"
+msgstr "文法を無視(_G)"
+
+#: ../../LocalizedStrings.cpp:313
+msgid "Spelling and _Grammar"
+msgstr "スペルと文法(_G)"
+
+#: ../../LocalizedStrings.cpp:319
+msgid "_Show Spelling and Grammar"
+msgstr "スペルと文法を表示する(_S)"
+
+#: ../../LocalizedStrings.cpp:320
+msgid "_Hide Spelling and Grammar"
+msgstr "スペルと文法を表示しない(_H)"
+
+#: ../../LocalizedStrings.cpp:325
+msgid "_Check Document Now"
+msgstr "今すぐドキュメントをチェック(_C)"
+
+#: ../../LocalizedStrings.cpp:330
+msgid "Check Spelling While _Typing"
+msgstr "入力中にスペルをチェックする(_T)"
+
+#: ../../LocalizedStrings.cpp:335
+msgid "Check _Grammar With Spelling"
+msgstr "文法とスペルをチェックする(_G)"
+
+#: ../../LocalizedStrings.cpp:340
+msgid "_Font"
+msgstr "フォント(_F)"
+
+#: ../../LocalizedStrings.cpp:345
+msgid "_Bold"
+msgstr "太字(_B)"
+
+#: ../../LocalizedStrings.cpp:350
+msgid "_Italic"
+msgstr "斜体(_I)"
+
+#: ../../LocalizedStrings.cpp:355
+msgid "_Underline"
+msgstr "下線(_U)"
+
+#: ../../LocalizedStrings.cpp:360
+msgid "_Outline"
+msgstr "アウトライン(_O)"
+
+#: ../../LocalizedStrings.cpp:366
+msgid "Paragraph Direction"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:371
+#, fuzzy
+#| msgid "Select File"
+msgid "Selection Direction"
+msgstr "ファイルの選択"
+
+#: ../../LocalizedStrings.cpp:376 ../../LocalizedStrings.cpp:621
+msgid "Default"
+msgstr "デフォルト"
+
+#: ../../LocalizedStrings.cpp:381
+msgid "Left to Right"
+msgstr "左から右"
+
+#: ../../LocalizedStrings.cpp:386
+msgid "Right to Left"
+msgstr "右から左"
+
+#: ../../LocalizedStrings.cpp:392
+msgid "Open _Video in New Window"
+msgstr "ビデオを新しいウィンドウで開く(_V)"
+
+#: ../../LocalizedStrings.cpp:397
+msgid "Open _Audio in New Window"
+msgstr "オーディオを新しいウィンドウで開く(_A)"
+
+#: ../../LocalizedStrings.cpp:402
+msgid "Download _Video"
+msgstr "ビデオをダウンロード(_V)"
+
+#: ../../LocalizedStrings.cpp:407
+msgid "Download _Audio"
+msgstr "オーディオをダウンロード(_A)"
+
+#: ../../LocalizedStrings.cpp:413
+msgid "Copy Video Address"
+msgstr "ビデオのアドレスをコピー"
+
+#: ../../LocalizedStrings.cpp:418
+msgid "Copy Audio Address"
+msgstr "オーディオのアドレスをコピー"
+
+#: ../../LocalizedStrings.cpp:423
+msgid "Controls"
+msgstr "コントロール"
+
+#: ../../LocalizedStrings.cpp:428
+msgid "Show Controls"
+msgstr "コントロールを表示"
+
+#: ../../LocalizedStrings.cpp:433
+msgid "Hide Controls"
+msgstr "コントロールを表示しない"
+
+#: ../../LocalizedStrings.cpp:438
+msgid "Loop"
+msgstr "ループ再生"
+
+#: ../../LocalizedStrings.cpp:443
+msgid "Enter Full Screen"
+msgstr "全画面表示"
+
+#: ../../LocalizedStrings.cpp:448
+msgctxt "Video Exit Full Screen context menu item"
+msgid "Exit Full Screen"
+msgstr "全画面表示を終了"
+
+#: ../../LocalizedStrings.cpp:454
+msgid "_Play"
+msgstr "再生(_P)"
+
+#: ../../LocalizedStrings.cpp:459
+msgid "_Pause"
+msgstr "一時停止(_P)"
+
+#: ../../LocalizedStrings.cpp:464
+msgid "_Mute"
+msgstr "ミュート(_M)"
+
+#: ../../LocalizedStrings.cpp:470
+msgid "Play All Animations"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:475
+msgid "Pause All Animations"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:480
+msgid "Play Animation"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:485
+msgid "Pause Animation"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:491
+msgid "Inspect _Element"
+msgstr "要素の点検(_E)"
+
+#: ../../LocalizedStrings.cpp:506
+msgid "Show Writing Tools"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:508
+msgid "Writing Tools"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:514
+msgid "Proofread"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:519
+msgid "Rewrite"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:524
+msgid "Summarize"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:538
+msgid "_Single Page Continuous"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:543
+msgid "_Two Pages Continuous"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:548
+msgid "_Zoom In"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:553
+msgid "_Zoom Out"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:558
+#, fuzzy
+#| msgid "Total Size"
+msgid "_Actual Size"
+msgstr "合計サイズ"
+
+#: ../../LocalizedStrings.cpp:563
+msgid "_Automatically Resize"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:568
+msgid "_Next Page"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:573
+msgid "_Previous Page"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:582
+msgid "_Single Page"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:587
+msgid "_Two Pages"
+msgstr ""
+
+#. Also exposed to DOM.
+#: ../../LocalizedStrings.cpp:595
+msgid "Portable Document Format"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:603
+msgid "No recent searches"
+msgstr "検索履歴はありません"
+
+#: ../../LocalizedStrings.cpp:608
+msgid "Recent Searches"
+msgstr "検索履歴"
+
+#: ../../LocalizedStrings.cpp:613
+msgid "Clear Recent Searches"
+msgstr "検索履歴を消去"
+
+#: ../../LocalizedStrings.cpp:627
+msgid "HTML content"
+msgstr "HTML コンテンツ"
+
+#: ../../LocalizedStrings.cpp:632
+msgid "link"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:637
+msgid "list marker"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:642
+msgid "image map"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:647
+msgid "heading"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:652
+msgid "color well"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:657
+msgid "definition"
+msgstr "定義"
+
+#: ../../LocalizedStrings.cpp:662
+msgid "description list"
+msgstr "詳細リスト"
+
+#: ../../LocalizedStrings.cpp:667
+msgid "term"
+msgstr "用語"
+
+#: ../../LocalizedStrings.cpp:672
+msgid "description"
+msgstr "詳細"
+
+#: ../../LocalizedStrings.cpp:677
+msgid "details"
+msgstr "詳細"
+
+#: ../../LocalizedStrings.cpp:682
+msgid "summary"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:687 ../../LocalizedStrings.cpp:851
+#, fuzzy
+#| msgid "footer"
+msgid "section footer"
+msgstr "フッター"
+
+#: ../../LocalizedStrings.cpp:692 ../../LocalizedStrings.cpp:853
+msgid "section header"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:697
+msgid "suggestion"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:702
+msgid "file upload button"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:707
+msgid "output"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:712
+msgid "attachment"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:717
+msgid "cancel"
+msgstr "取り消し"
+
+#: ../../LocalizedStrings.cpp:722
+msgid "feed"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:727
+msgid "figure"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:732
+msgid "email field"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:737
+msgid "telephone number field"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:742
+msgid "URL field"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:747
+msgid "date field"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:752
+msgid "time field"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:757
+msgid "month"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:762
+msgid "day"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:767
+msgid "year"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:772
+msgid "hour"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:777
+msgid "minutes"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:782
+#, fuzzy
+#| msgid "back 30 seconds"
+msgid "seconds"
+msgstr "30 秒戻る"
+
+#: ../../LocalizedStrings.cpp:787
+msgid "milliseconds"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:792
+msgid "date and time field"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:797
+msgid "month and year field"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:802
+msgid "number field"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:807
+msgid "week and year field"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:813
+msgid "alert"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:815
+#, fuzzy
+#| msgid "Allow modal dialogs"
+msgid "web alert dialog"
+msgstr "モードダイアログを許可する"
+
+#: ../../LocalizedStrings.cpp:817
+msgid "web dialog"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:819
+msgid "log"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:821
+msgid "marquee"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:823
+msgid "application status"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:825
+msgid "timer"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:827
+msgid "document"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:829
+msgid "article"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:831
+msgid "note"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:833
+msgid "web application"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:835
+msgid "banner"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:837
+msgid "complementary"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:839
+#, fuzzy
+#| msgid "Destination"
+msgid "content information"
+msgstr "保存先"
+
+#: ../../LocalizedStrings.cpp:841
+msgid "form"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:843
+msgid "main"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:845
+#, fuzzy
+#| msgid "Navigation type"
+msgid "navigation"
+msgstr "ナビゲーションタイプ"
+
+#: ../../LocalizedStrings.cpp:847
+msgid "region"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:849
+msgid "search"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:855
+msgid "tooltip"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:857
+msgid "tab panel"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:859
+msgid "math"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:865
+msgid "separator"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:870
+msgid "highlighted"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:875
+msgid "press"
+msgstr "押す"
+
+#: ../../LocalizedStrings.cpp:880
+msgid "select"
+msgstr "選択"
+
+#: ../../LocalizedStrings.cpp:885
+msgid "activate"
+msgstr "アクティベート"
+
+#: ../../LocalizedStrings.cpp:890
+msgid "uncheck"
+msgstr "チェックを外す"
+
+#: ../../LocalizedStrings.cpp:895
+msgid "check"
+msgstr "チェックする"
+
+#: ../../LocalizedStrings.cpp:900
+msgid "jump"
+msgstr "ジャンプ"
+
+#: ../../LocalizedStrings.cpp:924
+msgid "Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:929
+msgid "Buy with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:934
+msgid "Set up with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:939
+msgid "Donate with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:944
+msgid "Check out with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:949
+msgid "Book with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:954
+msgid "Subscribe with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:960
+msgid "Reload with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:964
+msgid "Add money with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:968
+msgid "Top up with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:972
+msgid "Order with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:976
+msgid "Rent with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:980
+msgid "Support with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:984
+msgid "Contribute with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:988
+msgid "Tip with Apple Pay"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:995
+msgid "password AutoFill"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1000
+msgid "contact info AutoFill"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1005
+msgid "strong password AutoFill"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1010
+msgid "credit card AutoFill"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1015
+msgid "loading AutoFill"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1020
+msgid "Strong Password"
+msgstr "強力なパスワード"
+
+#: ../../LocalizedStrings.cpp:1025
+msgid "Missing Plug-in"
+msgstr "不足しているプラグイン"
+
+#: ../../LocalizedStrings.cpp:1030
+msgid "Plug-in Failure"
+msgstr "プラグイン障害"
+
+#: ../../LocalizedStrings.cpp:1035
+#, fuzzy
+#| msgid "Enable Plugins"
+msgctxt ""
+"Label text to be used if plugin is blocked by a page's Content Security "
+"Policy"
+msgid "Blocked Plug-in"
+msgstr "プラグインを有効にする"
+
+#: ../../LocalizedStrings.cpp:1040
+#, fuzzy
+#| msgid "Enable Plugins"
+msgctxt ""
+"Label text to be used when an insecure plug-in version was blocked from "
+"loading"
+msgid "Blocked Plug-in"
+msgstr "プラグインを有効にする"
+
+#: ../../LocalizedStrings.cpp:1045
+msgctxt ""
+"Label text to be used when an unsupported plug-in was blocked from loading"
+msgid "Unsupported Plug-in"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1050
+msgctxt ""
+"Label text to be used when a plug-in was blocked from loading because it was "
+"too small"
+msgid "Plug-In too small"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1060
+msgctxt "Unknown filesize FTP directory listing item"
+msgid "Unknown"
+msgstr "不明"
+
+#: ../../LocalizedStrings.cpp:1089
+msgid "Loading…"
+msgstr "読み込み中…"
+
+#: ../../LocalizedStrings.cpp:1094
+msgid "Live Broadcast"
+msgstr "ライブブロードキャスト"
+
+#: ../../LocalizedStrings.cpp:1100
+msgid "audio playback"
+msgstr "オーディオ再生"
+
+#: ../../LocalizedStrings.cpp:1102
+msgid "video playback"
+msgstr "ビデオ再生"
+
+#: ../../LocalizedStrings.cpp:1104
+msgid "mute"
+msgstr "ミュート"
+
+#: ../../LocalizedStrings.cpp:1106
+msgid "unmute"
+msgstr "ミュートを外す"
+
+#: ../../LocalizedStrings.cpp:1108
+msgid "play"
+msgstr "再生"
+
+#: ../../LocalizedStrings.cpp:1110
+msgid "pause"
+msgstr "一時停止"
+
+#: ../../LocalizedStrings.cpp:1112
+msgid "movie time"
+msgstr "動画時間"
+
+#: ../../LocalizedStrings.cpp:1114
+msgid "timeline slider thumb"
+msgstr "タイムラインスライダーサム"
+
+#: ../../LocalizedStrings.cpp:1116
+msgid "back 30 seconds"
+msgstr "30 秒戻る"
+
+#: ../../LocalizedStrings.cpp:1118
+msgid "return to real time"
+msgstr "リアルタイムに戻る"
+
+#: ../../LocalizedStrings.cpp:1120
+msgid "elapsed time"
+msgstr "経過時間"
+
+#: ../../LocalizedStrings.cpp:1122
+msgid "remaining time"
+msgstr "残り時間"
+
+#: ../../LocalizedStrings.cpp:1124
+msgid "status"
+msgstr "状態"
+
+#: ../../LocalizedStrings.cpp:1126
+msgid "enter full screen"
+msgstr "全画面表示にする"
+
+#: ../../LocalizedStrings.cpp:1128
+msgid "exit full screen"
+msgstr "全画面表示を終了"
+
+#: ../../LocalizedStrings.cpp:1130
+msgid "fast forward"
+msgstr "早送り"
+
+#: ../../LocalizedStrings.cpp:1132
+msgid "fast reverse"
+msgstr "巻き戻し"
+
+#: ../../LocalizedStrings.cpp:1134
+msgid "show closed captions"
+msgstr "字幕を表示する"
+
+#: ../../LocalizedStrings.cpp:1136
+msgid "hide closed captions"
+msgstr "字幕を隠す"
+
+#: ../../LocalizedStrings.cpp:1149
+msgid "audio element playback controls and status display"
+msgstr "オーディオ要素の再生コントロールと状態の表示"
+
+#: ../../LocalizedStrings.cpp:1151
+msgid "video element playback controls and status display"
+msgstr "ビデオ要素の再生コントロールと状態の表示"
+
+#: ../../LocalizedStrings.cpp:1153
+msgid "mute audio tracks"
+msgstr "オーディオトラックのミュート"
+
+#: ../../LocalizedStrings.cpp:1155
+msgid "unmute audio tracks"
+msgstr "オーディオトラックのミュートを解除"
+
+#: ../../LocalizedStrings.cpp:1157
+msgid "begin playback"
+msgstr "再生開始"
+
+#: ../../LocalizedStrings.cpp:1159
+msgid "pause playback"
+msgstr "一時停止"
+
+#: ../../LocalizedStrings.cpp:1161
+msgid "movie time scrubber"
+msgstr "動画タイムスクラバー"
+
+#: ../../LocalizedStrings.cpp:1163
+msgid "movie time scrubber thumb"
+msgstr "動画タイムスクラバーサム"
+
+#: ../../LocalizedStrings.cpp:1165
+msgid "seek movie back 30 seconds"
+msgstr "30 秒戻って動画をシークする"
+
+#: ../../LocalizedStrings.cpp:1167
+msgid "resume real time streaming"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1169
+msgid "current movie time in seconds"
+msgstr "現在の動画時間 (秒単位)"
+
+#: ../../LocalizedStrings.cpp:1171
+msgid "number of seconds of movie remaining"
+msgstr "動画の残り秒数"
+
+#: ../../LocalizedStrings.cpp:1173
+msgid "current movie status"
+msgstr "現在の動画の状態"
+
+#: ../../LocalizedStrings.cpp:1175
+msgid "seek quickly back"
+msgstr "シーク巻き戻し"
+
+#: ../../LocalizedStrings.cpp:1177
+msgid "seek quickly forward"
+msgstr "シーク早送り"
+
+#: ../../LocalizedStrings.cpp:1179
+msgid "Play movie in full screen mode"
+msgstr "全画面表示モードで動画を再生"
+
+#: ../../LocalizedStrings.cpp:1181
+msgid "start displaying closed captions"
+msgstr "字幕の表示を開始"
+
+#: ../../LocalizedStrings.cpp:1183
+msgid "stop displaying closed captions"
+msgstr "字幕の表示を停止"
+
+#: ../../LocalizedStrings.cpp:1196
+msgid "indefinite time"
+msgstr "無期限"
+
+#: ../../LocalizedStrings.cpp:1215
+msgid "Fill out this field"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1220
+msgid "Select this checkbox"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1225
+#, fuzzy
+#| msgid "Select File"
+msgid "Select a file"
+msgstr "ファイルの選択"
+
+#: ../../LocalizedStrings.cpp:1235
+msgid "Select one of these options"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1240
+msgid "Select an item in the list"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1245
+msgid "Tap this switch"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1250
+#, fuzzy
+#| msgid "Invalid page range"
+msgid "Invalid value"
+msgstr "無効なページ範囲です"
+
+#: ../../LocalizedStrings.cpp:1255
+msgid "Enter an email address"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1265
+msgid "Enter a URL"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1270
+msgid "Match the requested format"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1307
+msgid "range underflow"
+msgstr "範囲アンダーフロー"
+
+#: ../../LocalizedStrings.cpp:1319
+msgid "range overflow"
+msgstr "範囲オーバーフロー"
+
+#: ../../LocalizedStrings.cpp:1325
+msgid "Enter a valid value"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1330
+msgid "Enter a number"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1335
+#, fuzzy
+#| msgid "Exit Fullscreen"
+msgid "Click to Exit Full Screen"
+msgstr "全画面の終了"
+
+#: ../../LocalizedStrings.cpp:1342
+#, fuzzy
+#| msgctxt "Unknown filesize FTP directory listing item"
+#| msgid "Unknown"
+msgctxt "Menu item label for a audio/text track that has no other name."
+msgid "Unknown"
+msgstr "不明"
+
+#: ../../LocalizedStrings.cpp:1347
+#, fuzzy
+#| msgctxt ""
+#| "Menu item label for the track that represents disabling closed captions"
+#| msgid "Off"
+msgctxt ""
+"Menu item label for the track that represents disabling closed captions."
+msgid "Off"
+msgstr "オフ"
+
+#: ../../LocalizedStrings.cpp:1352
+msgctxt ""
+"Menu item label for the track that represents enabling closed captions."
+msgid "On"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1357
+msgctxt "Menu item label for automatic track selection behavior."
+msgid "Auto (Recommended)"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1367
+msgctxt "Caption Style Preview String"
+msgid "This is a preview style"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1501
+#, fuzzy
+#| msgid "_Show Media Controls"
+msgid "Show Media Statistics"
+msgstr "再生コントローラーを表示する(_S)"
+
+#: ../../LocalizedStrings.cpp:1515
+msgid "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1524
+msgctxt "Title of the OK button for the number pad in zoomed form controls."
+msgid "OK"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1529
+#, fuzzy
+#| msgid "cancel"
+msgid "Cancel"
+msgstr "取り消し"
+
+#: ../../LocalizedStrings.cpp:1534
+msgid "Hide"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1539
+msgid "Go"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1544
+#, fuzzy
+#| msgid "Search text"
+msgid "Search"
+msgstr "検索テキスト"
+
+#: ../../LocalizedStrings.cpp:1549
+msgctxt "Set button below date picker"
+msgid "Set"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1554
+msgctxt "Day label in date picker"
+msgid "DAY"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1559
+msgctxt "Month label in date picker"
+msgid "MONTH"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1564
+msgctxt "Year label in date picker"
+msgid "YEAR"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1583
+msgid "Unacceptable TLS certificate"
+msgstr "受諾できない TLS 証明書"
+
+#: ../../LocalizedStrings.cpp:1602
+msgid "Continue with Touch ID."
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1608
+msgid "This document is password protected."
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1613
+msgid "Please enter the password below."
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1618
+#, fuzzy
+#| msgid "Strong Password"
+msgid "Invalid Password"
+msgstr "強力なパスワード"
+
+#: ../../LocalizedStrings.cpp:1623
+msgid "Copy Link with Highlight"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1629
+msgid "View Spatial"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1634
+msgid "View Immersive"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1641
+msgid "SPATIAL"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1646
+msgid "PANORAMA"
+msgstr ""
+
+#: ../../network/soup/NetworkStorageSessionSoup.cpp:331
+#, fuzzy
+#| msgid "_Remember password"
+msgid "WebKitGTK password"
+msgstr "パスワードを記憶する(_R)"
+
+#: ../../../editing/EditAction.cpp:43
+msgctxt "Undo action name"
+msgid "Set Color"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:45
+#, fuzzy
+#| msgid "Print Backgrounds"
+msgctxt "Undo action name"
+msgid "Set Background Color"
+msgstr "背景の出力"
+
+#: ../../../editing/EditAction.cpp:47
+msgctxt "Undo action name"
+msgid "Turn Off Kerning"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:49
+msgctxt "Undo action name"
+msgid "Tighten Kerning"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:51
+msgctxt "Undo action name"
+msgid "Loosen Kerning"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:53
+msgctxt "Undo action name"
+msgid "Use Standard Kerning"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:55
+msgctxt "Undo action name"
+msgid "Turn Off Ligatures"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:57
+msgctxt "Undo action name"
+msgid "Use Standard Ligatures"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:59
+msgctxt "Undo action name"
+msgid "Use All Ligatures"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:61
+msgctxt "Undo action name"
+msgid "Raise Baseline"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:63
+msgctxt "Undo action name"
+msgid "Lower Baseline"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:65
+msgctxt "Undo action name"
+msgid "Set Traditional Character Shape"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:67
+#, fuzzy
+#| msgid "_Font"
+msgctxt "Undo action name"
+msgid "Set Font"
+msgstr "フォント(_F)"
+
+#: ../../../editing/EditAction.cpp:69
+#, fuzzy
+#| msgid "Viewport Attributes"
+msgctxt "Undo action name"
+msgid "Change Attributes"
+msgstr "表示域の属性"
+
+#: ../../../editing/EditAction.cpp:71
+msgctxt "Undo action name"
+msgid "Align Left"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:73
+msgctxt "Undo action name"
+msgid "Align Right"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:75
+msgctxt "Undo action name"
+msgid "Center"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:77
+msgctxt "Undo action name"
+msgid "Justify"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:80
+msgctxt "Undo action name"
+msgid "Set Writing Direction"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:82
+#, fuzzy
+#| msgid "description"
+msgctxt "Undo action name"
+msgid "Subscript"
+msgstr "詳細"
+
+#: ../../../editing/EditAction.cpp:84
+#, fuzzy
+#| msgid "description"
+msgctxt "Undo action name"
+msgid "Superscript"
+msgstr "詳細"
+
+#: ../../../editing/EditAction.cpp:86
+msgctxt "Undo action name"
+msgid "Underline"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:88
+msgctxt "Undo action name"
+msgid "StrikeThrough"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:90
+#, fuzzy
+#| msgid "_Outline"
+msgctxt "Undo action name"
+msgid "Outline"
+msgstr "アウトライン(_O)"
+
+#: ../../../editing/EditAction.cpp:92
+#, fuzzy
+#| msgid "description"
+msgctxt "Undo action name"
+msgid "Unscript"
+msgstr "詳細"
+
+#: ../../../editing/EditAction.cpp:94
+msgctxt "Undo action name"
+msgid "Drag"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:96
+msgctxt "Undo action name"
+msgid "Cut"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:98
+msgctxt "Undo action name"
+msgid "Bold"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:100
+msgctxt "Undo action name"
+msgid "Italics"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:102
+msgctxt "Undo action name"
+msgid "Delete"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:104
+#, fuzzy
+#| msgid "Destination"
+msgctxt "Undo action name"
+msgid "Dictation"
+msgstr "保存先"
+
+#: ../../../editing/EditAction.cpp:106
+msgctxt "Undo action name"
+msgid "Paste"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:108
+msgctxt "Undo action name"
+msgid "Paste Font"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:110
+msgctxt "Undo action name"
+msgid "Paste Ruler"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:125
+msgctxt "Undo action name"
+msgid "Typing"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:127
+msgctxt "Undo action name"
+msgid "Create Link"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:129
+msgctxt "Undo action name"
+msgid "Unlink"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:132
+msgctxt "Undo action name"
+msgid "Insert List"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:134
+msgctxt "Undo action name"
+msgid "Formatting"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:136
+msgctxt "Undo action name"
+msgid "Indent"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:138
+msgctxt "Undo action name"
+msgid "Outdent"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:142
+msgctxt "Undo action name"
+msgid "Convert to Ordered List"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:144
+msgctxt "Undo action name"
+msgid "Convert to Unordered List"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:146
+#, fuzzy
+#| msgid "Print Backgrounds"
+msgctxt "Undo action name"
+msgid "Remove Background"
+msgstr "背景の出力"
+
+#: ../../../../JavaScriptCore/API/glib/JSCOptions.cpp:686
+#, fuzzy
+#| msgid "Search Options"
+msgid "JSC Options"
+msgstr "検索オプション"
+
+#: ../../../../JavaScriptCore/API/glib/JSCOptions.cpp:686
+#, fuzzy
+#| msgid "Search Options"
+msgid "Show JSC Options"
+msgstr "検索オプション"
+
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:66
+msgid "Name"
+msgstr "名前"
+
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:67
+msgid "Size"
+msgstr "サイズ"
+
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:68
+msgid "Date Modified"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:42
+msgid "Not allowed to use restricted network port"
+msgstr "制限付きネットワークポートの使用は許可されていません"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:47
+msgid "The URL was blocked by a content blocker"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:52
+#, fuzzy
+#| msgid "URL cannot be shown"
+msgid "The URL can’t be shown"
+msgstr "URL を表示できません"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:57
+msgid "The URL was blocked by device restrictions"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:62
+#, fuzzy
+#| msgid "Frame load was interrupted"
+msgid "Frame load interrupted"
+msgstr "フレームの読み込みが中断されました"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:72
+msgid "Error handling synchronous load with custom protocol"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:78
+msgid "The URL was blocked by a content filter"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:84
+#, fuzzy
+#| msgid "Content with the specified MIME type cannot be shown"
+msgid "Content with specified MIME type can’t be shown"
+msgstr "指定された MIME タイプのコンテンツは表示できません"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:89
+#, fuzzy
+#| msgid "Plugin will handle load"
+msgid "Plug-in handled load"
+msgstr "プラグインが読み込みを処理します"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:95
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2659
+msgid "Load request cancelled"
+msgstr "読み込み要求が取り消されました"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:100
+msgid "File does not exist"
+msgstr "ファイルは存在しません"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:111
+msgid "HTTPS Upgrade redirect loop detected"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:116
+msgid ""
+"Navigation failed because the request was for an HTTP URL with HTTPS-Only "
+"enabled"
+msgstr ""
+
+#: ../../../../WebKit/Shared/gtk/WebErrorsGtk.cpp:38
+msgid "Invalid page range"
+msgstr "無効なページ範囲です"
+
+#: ../../../../WebKit/Shared/soup/WebErrorsSoup.cpp:44
+msgid "User cancelled the download"
+msgstr "このダウンロードはユーザーにより取り消されました"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:179
+msgid "Favicons database not initialized yet"
+msgstr "ファビコンデータベースがまだ初期化されていません"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:185
+#, c-format
+msgid "Page %s does not have a favicon"
+msgstr "ページ %s にはファビコンはありません"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:195
+#, c-format
+msgid "Unknown favicon for page %s"
+msgstr "ページ %s の不明なファビコンです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:259
+msgid "Failed to create texture"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:674
+msgid "Enable JavaScript"
+msgstr "JavaScript を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:675
+msgid "Enable JavaScript."
+msgstr "JavaScript を有効にします。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:689
+msgid "Auto load images"
+msgstr "画像の自動読み込み"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:690
+msgid "Load images automatically."
+msgstr "画像を自動的に読み込みます。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:704
+msgid "Load icons ignoring image load setting"
+msgstr "画像の読み込み設定を無視してアイコンを読み込む"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:705
+msgid "Whether to load site icons ignoring image load setting."
+msgstr "画像の読み込み設定を無視してサイトアイコンを読み込むかどうかです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:719
+msgid "Enable offline web application cache"
+msgstr "オフライン Web アプリケーションキャッシュを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:720
+msgid "Whether to enable offline web application cache."
+msgstr "オフライン Web アプリケーションキャッシュを有効にするかどうかです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:736
+msgid "Enable HTML5 local storage"
+msgstr "HTML5 ローカルストレージを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:737
+msgid "Whether to enable HTML5 Local Storage support."
+msgstr "HTML5 ローカルストレージのサポートを有効にするかどうかです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:749
+msgid "Enable HTML5 database"
+msgstr "HTML5 データベースを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:750
+msgid "Whether to enable HTML5 database support."
+msgstr "HTML5 データベースのサポートを有効にするかどうかです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:766
+msgid "Enable XSS auditor"
+msgstr "XSS Auditor を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:767
+msgid "Whether to enable the XSS auditor."
+msgstr "XSS Auditor を有効にするかどうかです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:781
+msgid "Enable frame flattening"
+msgstr "フレーム平坦化を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:782
+msgid "Whether to enable frame flattening."
+msgstr "フレーム平坦化を有効にするかどうかです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:796
+msgid "Enable plugins"
+msgstr "プラグインを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:797
+msgid "Enable embedded plugin objects."
+msgstr "埋め込みのプラグインオブジェクトを有効します。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:811
+msgid "Enable Java"
+msgstr "Java を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:812
+msgid "Whether Java support should be enabled."
+msgstr "Java サポートを有効にするかどうかです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:826
+msgid "JavaScript can open windows automatically"
+msgstr "JavaScript にウィンドウの自動オープンを許可する"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:827
+msgid "Whether JavaScript can open windows automatically."
+msgstr "JavaScript によるウィンドウの自動オープンを許可するかどうかです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:844
+msgid "Enable hyperlink auditing"
+msgstr "ハイパーリンクの監査を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:845
+msgid "Whether <a ping> should be able to send pings."
+msgstr "<a ping> による ping の送信を許可するかどうかです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:857
+msgid "Default font family"
+msgstr "デフォルトのフォントファミリー"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:858
+msgid ""
+"The font family to use as the default for content that does not specify a "
+"font."
+msgstr ""
+"フォントの指定をしていないコンテンツのデフォルトとして使用するフォントファミ"
+"リーです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:871
+msgid "Monospace font family"
+msgstr "Monospace フォントファミリー"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:872
+msgid "The font family used as the default for content using monospace font."
+msgstr ""
+"monospace フォントを使用するコンテンツのデフォルトとして使用するフォントファ"
+"ミリーです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:884
+msgid "Serif font family"
+msgstr "Serif フォントファミリー"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:885
+msgid "The font family used as the default for content using serif font."
+msgstr ""
+"serif フォント使用するコンテンツのデフォルトとして使用するフォントファミリー"
+"です。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:897
+msgid "Sans-serif font family"
+msgstr "Sans-serif フォントファミリー"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:898
+msgid "The font family used as the default for content using sans-serif font."
+msgstr ""
+"sans-serif フォントを使用するコンテンツのデフォルトとして使用するフォントファ"
+"ミリーです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:910
+msgid "Cursive font family"
+msgstr "Cursive フォントファミリー"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:911
+msgid "The font family used as the default for content using cursive font."
+msgstr ""
+"cursive フォントを使用するコンテンツのデフォルトして使用するフォントファミ"
+"リーです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:923
+msgid "Fantasy font family"
+msgstr "Fantasy フォントファミリー"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:924
+msgid "The font family used as the default for content using fantasy font."
+msgstr ""
+"fantasy フォントを使用するコンテンツのデフォルトとして使用するフォントファミ"
+"リーです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:936
+msgid "Pictograph font family"
+msgstr "Pictograph フォントファミリー"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:937
+msgid "The font family used as the default for content using pictograph font."
+msgstr ""
+"pictograph フォントを使用するコンテンツのデフォルトとして使用するフォントファ"
+"ミリーです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:951
+#, fuzzy
+#| msgid "Default font family"
+msgid "Math font family"
+msgstr "デフォルトのフォントファミリー"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:952
+#, fuzzy
+#| msgid "The font family used as the default for content using fantasy font."
+msgid "The font family used as the default for content using math font."
+msgstr ""
+"fantasy フォントを使用するコンテンツのデフォルトとして使用するフォントファミ"
+"リーです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:965
+msgid "Default font size"
+msgstr "デフォルトのフォントサイズ"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:966
+msgid "The default font size used to display text."
+msgstr "テキストの表示に使用するデフォルトのフォントサイズです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:979
+msgid "Default monospace font size"
+msgstr "デフォルトの monospace フォントサイズ"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:980
+msgid "The default font size used to display monospace text."
+msgstr "monospace テキストの表示に使用するデフォルトのフォントサイズです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:994
+msgid "Minimum font size"
+msgstr "最小フォントサイズ"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:995
+msgid "The minimum font size used to display text."
+msgstr "テキストの表示に使用するフォントの最小サイズです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1007
+msgid "Default charset"
+msgstr "デフォルトの文字セット"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1008
+msgid ""
+"The default text charset used when interpreting content with unspecified "
+"charset."
+msgstr ""
+"文字セットが指定されていないコンテンツの解釈に利用するデフォルトのテキスト文"
+"字セットです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1024
+msgid "Enable private browsing"
+msgstr "プライベートブラウズを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1025
+msgid "Whether to enable private browsing"
+msgstr "プライベートブラウズを有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1038
+msgid "Enable developer extras"
+msgstr "Developer Extras を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1039
+msgid "Whether to enable developer extras"
+msgstr "Developer Extras を有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1051
+msgid "Enable resizable text areas"
+msgstr "サイズ変更可能なテキスト領域を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1052
+msgid "Whether to enable resizable text areas"
+msgstr "サイズ変更可能なテキスト領域を有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1067
+msgid "Enable tabs to links"
+msgstr "リンクへのタブを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1068
+msgid "Whether to enable tabs to links"
+msgstr "リンクへのタブを有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1083
+msgid "Enable DNS prefetching"
+msgstr "DNS のプレフェッチを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1084
+msgid "Whether to enable DNS prefetching"
+msgstr "DNS プレフェッチを有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1096
+msgid "Enable Caret Browsing"
+msgstr "キャレットブラウズを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1097
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr "アクセシビリティを強化したキーボード操作を有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1112
+msgid "Enable Fullscreen"
+msgstr "フルスクリーンを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1113
+#, fuzzy
+#| msgid "Whether to enable the Javascriipt Fullscreen API"
+msgid "Whether to enable the Javascript Fullscreen API"
+msgstr "Javascriipt Fullscreen API を有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1129
+msgid "Print Backgrounds"
+msgstr "背景の出力"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1130
+msgid "Whether background images should be drawn during printing"
+msgstr "印刷時に背景の画像を描画するかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1146
+msgid "Enable WebAudio"
+msgstr "WebAudio を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1147
+msgid "Whether WebAudio content should be handled"
+msgstr "WebAudio のコンテンツを処理するかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1164
+msgid "Enable WebGL"
+msgstr "WebGL を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1165
+msgid "Whether WebGL content should be rendered"
+msgstr "WebGL コンテンツを表示させるかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1182
+msgid "Allow modal dialogs"
+msgstr "モードダイアログを許可する"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1183
+msgid "Whether it is possible to create modal dialogs"
+msgstr "モードダイアログの作成を可能にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1198
+msgid "Zoom Text Only"
+msgstr "テキストのみズーム"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1199
+msgid "Whether zoom level of web view changes only the text size"
+msgstr "Web ビューのズームレベルによる変更をテキストサイズに限るかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1213
+msgid "JavaScript can access clipboard"
+msgstr "JavaScript によるクリップボードへのアクセスを許可する"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1214
+msgid "Whether JavaScript can access Clipboard"
+msgstr "JavaScript にクリップボードへのアクセスを許可するかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1230
+msgid "Media playback requires user gesture"
+msgstr "メディアの再生にユーザーのジェスチャを必要とする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1231
+msgid "Whether media playback requires user gesture"
+msgstr "メディアの再生にユーザーのジェスチャを必要とするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1245
+msgid "Media playback allows inline"
+msgstr "メディア再生でインラインを許可する"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1246
+msgid "Whether media playback allows inline"
+msgstr "メディア再生でインラインを許可するかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1260
+msgid "Draw compositing indicators"
+msgstr "合成インジケーターの描画"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1261
+msgid "Whether to draw compositing borders and repaint counters"
+msgstr "合成境界線を引いてカウンターを描画し直すかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1281
+msgid "Enable Site Specific Quirks"
+msgstr "サイト固有の Quirks を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1282
+msgid "Enables the site-specific compatibility workarounds"
+msgstr "サイト固有の互換性のある回避方法を有効にします"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1302
+msgid "Enable page cache"
+msgstr "ページキャッシュを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1303
+msgid "Whether the page cache should be used"
+msgstr "ページキャッシュを使用させるかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1322
+msgid "User agent string"
+msgstr "ユーザーエージェント文字列"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1323
+msgid "The user agent string"
+msgstr "ユーザーエージェント文字列"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1335
+msgid "Enable smooth scrolling"
+msgstr "スムーズスクロールを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1336
+msgid "Whether to enable smooth scrolling"
+msgstr "スムーズスクロールを有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1356
+msgid "Enable accelerated 2D canvas"
+msgstr "アクセラレート 2D キャンバスを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1357
+msgid "Whether to enable accelerated 2D canvas"
+msgstr "アクセラレート 2D キャンバスを有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1375
+#, fuzzy
+#| msgid "Enable accelerated compositing"
+msgid "Enable 2D canvas acceleration"
+msgstr "アクセラレート合成を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1376
+#, fuzzy
+#| msgid "Whether to enable Spatial Navigation"
+msgid "Whether to enable 2D canvas acceleration"
+msgstr "空間ナビゲーションを有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1391
+msgid "Write console messages on stdout"
+msgstr "コンソールメッセージを標準出力に書き出す"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1392
+msgid "Whether to write console messages on stdout"
+msgstr "コンソールメッセージを標準出力に書き出すかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1410
+#, fuzzy
+#| msgid "Enable Media Stream"
+msgid "Enable MediaStream"
+msgstr "メディアストリームを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1411
+#, fuzzy
+#| msgid "Whether WebAudio content should be handled"
+msgid "Whether MediaStream content should be handled"
+msgstr "WebAudio のコンテンツを処理するかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1430
+msgid "Enable mock capture devices"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1431
+msgid "Whether we expose mock capture devices or not"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1454
+msgid "Enable Spatial Navigation"
+msgstr "空間ナビゲーションを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1455
+#, fuzzy
+#| msgid "Whether to enable Spatial Navigation"
+msgid "Whether to enable Spatial Navigation support."
+msgstr "空間ナビゲーションを有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1473
+#, fuzzy
+#| msgid "Enable Media Stream"
+msgid "Enable MediaSource"
+msgstr "メディアストリームを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1474
+#, fuzzy
+#| msgid "Whether Media Stream should be enabled"
+msgid "Whether MediaSource should be enabled."
+msgstr "メディアストリームを有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1497
+#, fuzzy
+#| msgid "Enable Scripts"
+msgid "Enable EncryptedMedia"
+msgstr "スクリプトを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1498
+#, fuzzy
+#| msgid "Whether Media Stream should be enabled"
+msgid "Whether EncryptedMedia should be enabled."
+msgstr "メディアストリームを有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1523
+#, fuzzy
+#| msgid "Enable Media Stream"
+msgid "Enable MediaCapabilities"
+msgstr "メディアストリームを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1524
+#, fuzzy
+#| msgid "Whether Media Stream should be enabled"
+msgid "Whether MediaCapabilities should be enabled."
+msgstr "メディアストリームを有効にするかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1542
+#, fuzzy
+#| msgid "Enable universal access from file URIs"
+msgid "Allow file access from file URLs"
+msgstr "ファイル URI からの普遍的なアクセスを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1543
+#, fuzzy
+#| msgid "Whether to allow universal access from file URIs"
+msgid "Whether file access is allowed from file URLs."
+msgstr "ファイル URI からの普遍的なアクセスを許可するかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1562
+#, fuzzy
+#| msgid "Enable universal access from file URIs"
+msgid "Allow universal access from the context of file scheme URLs"
+msgstr "ファイル URI からの普遍的なアクセスを有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1563
+#, fuzzy
+#| msgid "Whether to allow universal access from file URIs"
+msgid ""
+"Whether or not universal access is allowed from the context of file scheme "
+"URLs"
+msgstr "ファイル URI からの普遍的なアクセスを許可するかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1580
+msgid "Allow top frame navigation to data URLs"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1581
+msgid "Whether or not top frame navigation is allowed to data URLs"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1602
+msgid "Hardware Acceleration Policy"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1603
+msgid "The policy to decide how to enable and disable hardware acceleration"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1618
+msgid "Enable back-forward navigation gestures"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1619
+msgid "Whether horizontal swipe gesture will trigger back-forward navigation"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1636
+#, fuzzy
+#| msgid "Enable JavaScript"
+msgid "Enable JavaScript Markup"
+msgstr "JavaScript を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1637
+#, fuzzy
+#| msgid "Enable JavaScript."
+msgid "Enable JavaScript in document markup."
+msgstr "JavaScript を有効にします。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1653
+#, fuzzy
+#| msgid "Enable WebAudio"
+msgid "Enable media"
+msgstr "WebAudio を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1654
+#, fuzzy
+#| msgid "Whether WebAudio content should be handled"
+msgid "Whether media content should be handled"
+msgstr "WebAudio のコンテンツを処理するかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1673
+msgid "Media content types requiring hardware support"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1674
+msgid "List of media content types requiring hardware support."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1692
+#, fuzzy
+#| msgid "Enable WebGL"
+msgid "Enable WebRTC"
+msgstr "WebGL を有効にする"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1693
+#, fuzzy
+#| msgid "Whether WebAudio content should be handled"
+msgid "Whether WebRTC content should be handled"
+msgstr "WebAudio のコンテンツを処理するかどうかです"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1715
+msgid "Disable web security"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1716
+#, fuzzy
+#| msgid "Whether Java support should be enabled."
+msgid "Whether web security should be disabled."
+msgstr "Java サポートを有効にするかどうかです。"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1735
+msgid "WebRTC UDP ports range"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1736
+msgid "WebRTC UDP ports range, the format is min-port:max-port"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:358
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5481
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:281
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:949
+msgid "Operation was cancelled"
+msgstr "操作は取り消されました"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteData.cpp:196
+#, fuzzy
+#| msgid " files"
+msgid "Local files"
+msgstr " ファイル"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5241
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5266
+msgid "There was an error creating the snapshot"
+msgstr "スナップショットの作成中にエラーが発生しました"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:5487
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:287
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:955
+#, c-format
+msgid "Message %s was not handled"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:107
+msgid "Authentication Required"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:133
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:322
+#, fuzzy
+#| msgid "cancel"
+msgid "_Cancel"
+msgstr "取り消し"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:143
+msgid "_Authenticate"
+msgstr ""
+
+#. Prompt on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:160
+#, c-format
+msgid "Authentication required by %s:%i"
+msgstr ""
+
+#. Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:173
+#, c-format
+msgid "The site says: “%s”"
+msgstr ""
+
+#. Check button on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:184
+msgid "_Remember password"
+msgstr "パスワードを記憶する(_R)"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:196
+#, fuzzy
+#| msgid "Username:"
+msgid "_Username"
+msgstr "ユーザー名:"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:208
+#, fuzzy
+#| msgid "Password:"
+msgid "_Password"
+msgstr "パスワード:"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:372
+msgid "Printer not found"
+msgstr "プリンターが見つかりません"
+
+#. Translators: this is the print job name, for example "WebKit job #15".
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:379
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:460
+#, c-format
+msgid "%s job #%u"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:463
+#, c-format
+msgid "Required print backend is not available"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:540
+#, c-format
+msgid "Error opening %s: %s"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:555
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:625
+msgid "Print Web Page"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:300
+msgid "_Close"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:324
+msgid "_OK"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:331
+msgid "Are you sure you want to leave this page?"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:333
+msgid "Stay on Page"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:335
+msgid "Leave Page"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2660
+#, fuzzy
+#| msgid "Exit from fullscreen mode"
+msgid "Website running in fullscreen mode"
+msgstr "全画面モードを終了する"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:115
+msgid "Select Files"
+msgstr "ファイルの選択"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:115
+msgid "Select File"
+msgstr "ファイルの選択"
+
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:65
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:83
+msgid "Web Inspector"
+msgstr "Web Inspector"
+
+#. TRANSLATORS: the default action for a desktop notification created by a website.
+#: ../../../../WebKit/UIProcess/Notifications/glib/NotificationService.cpp:425
+msgid "Acknowledge"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:228
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:255
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:284
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:347
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:373
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:399
+msgid "Failed to connect to geolocation service"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:446
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:528
+msgid "Failed to determine position from geolocation service"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:97
+#, fuzzy
+#| msgid "Select File"
+msgid "Select Color"
+msgstr "ファイルの選択"
+
+#: ../../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:40
+msgid "Local documents on your computer"
+msgstr ""
+
+#, c-format
+#~ msgid "Look Up “%s”"
+#~ msgstr "“%s” を検索"
+
+#~ msgid "Look Up “<selection>”"
+#~ msgstr "“<selection>” を検索"
+
+#, c-format
+#~ msgid "%d files"
+#~ msgstr "%d 項目のファイル"
+
+#, c-format
+#~ msgid "%s %d×%d pixels"
+#~ msgstr "%s %dx%d ピクセル"
+
+#, c-format
+#~ msgid "<filename> %d×%d pixels"
+#~ msgstr "<ファイル名> %d×%d ピクセル"
+
+#, fuzzy
+#~| msgctxt "Menu section heading for subtitles"
+#~| msgid "Subtitles"
+#~ msgid "Subtitles"
+#~ msgstr "字幕"
+
+#, fuzzy
+#~| msgid "Unknown"
+#~ msgctxt "Menu item label for a text track that has no other name"
+#~ msgid "Unknown"
+#~ msgstr "不明"
+
+#, fuzzy
+#~| msgid "Unknown"
+#~ msgctxt "Menu item label for an audio track that has no other name"
+#~ msgid "Unknown"
+#~ msgstr "不明"
+
+#~ msgid "Context"
+#~ msgstr "コンテキスト"
+
+#~ msgid "Flags with the context of the WebKitHitTestResult"
+#~ msgstr "WebKitHitTestResult のコンテキストを持つフラグです"
+
+#~ msgid "Link URI"
+#~ msgstr "リンク URI"
+
+#~ msgid "The link URI"
+#~ msgstr "リンク URI"
+
+#~ msgid "Link Title"
+#~ msgstr "リンクタイトル"
+
+#~ msgid "The link title"
+#~ msgstr "リンクタイトル"
+
+#~ msgid "Link Label"
+#~ msgstr "リンクラベル"
+
+#~ msgid "The link label"
+#~ msgstr "リンクラベル"
+
+#~ msgid "Image URI"
+#~ msgstr "画像の URI"
+
+#~ msgid "The image URI"
+#~ msgstr "画像の URI"
+
+#~ msgid "Media URI"
+#~ msgstr "メディア URI"
+
+#~ msgid "The media URI"
+#~ msgstr "メディア URI"
+
+#~ msgid "URI"
+#~ msgstr "URI"
+
+#~ msgid "The URI to which the request will be made."
+#~ msgstr "要求先の URI です。"
+
+#~ msgid "The URI for which the response was made."
+#~ msgstr "応答が行なわれた URI です。"
+
+#~ msgid "Status Code"
+#~ msgstr "ステータスコード"
+
+#~ msgid "The status code of the response as returned by the server."
+#~ msgstr "サーバーから返される応答のステータスコードです。"
+
+#~ msgid "Content Length"
+#~ msgstr "コンテンツの長さ"
+
+#~ msgid "The expected content length of the response."
+#~ msgstr "期待される応答コンテンツの長さです。"
+
+#~ msgid "MIME Type"
+#~ msgstr "MIME タイプ"
+
+#~ msgid "The MIME type of the response"
+#~ msgstr "応答の MIME タイプ"
+
+#~ msgid "Suggested Filename"
+#~ msgstr "提案ファイル名"
+
+#~ msgid "The suggested filename for the URI response"
+#~ msgstr "URI 応答の提案ファイル名です"
+
+#, fuzzy
+#~| msgid "The MIME type of the response"
+#~ msgid "The HTTP headers of the response"
+#~ msgstr "応答の MIME タイプ"
+
+#, fuzzy
+#~| msgid "The user agent string"
+#~ msgid "The user message name"
+#~ msgstr "ユーザーエージェント文字列"
+
+#, fuzzy
+#~| msgid "The user agent string"
+#~ msgid "The user message parameters"
+#~ msgstr "ユーザーエージェント文字列"
+
+#, fuzzy
+#~| msgid "description list"
+#~ msgid "File Descriptor List"
+#~ msgstr "詳細リスト"
+
+#~ msgid "Destination"
+#~ msgstr "保存先"
+
+#~ msgid "The local URI to where the download will be saved"
+#~ msgstr "ダウンロードの保存先となるローカルの URI です"
+
+#~ msgid "Response"
+#~ msgstr "応答"
+
+#~ msgid "The response of the download"
+#~ msgstr "ダウンロードの応答"
+
+#~ msgid "Estimated Progress"
+#~ msgstr "推定進捗状況"
+
+#~ msgid "Determines the current progress of the download"
+#~ msgstr "現在のダウンロード進捗状況を判定します"
+
+#, fuzzy
+#~| msgid "Whether the window can be resized."
+#~ msgid "Whether the destination may be overwritten"
+#~ msgstr "ウィンドウのサイズを調整できるかどうかです。"
+
+#, fuzzy
+#~| msgid "Viewport Attributes"
+#~ msgid "Typing Attributes"
+#~ msgstr "表示域の属性"
+
+#~ msgid "MIME types filter"
+#~ msgstr "MIME タイプフィルター"
+
+#~ msgid "The filter currently associated with the request"
+#~ msgstr "現在、この要求に関連しているフィルター"
+
+#~ msgid "MIME types"
+#~ msgstr "MIME タイプ"
+
+#~ msgid "The list of MIME types associated with the request"
+#~ msgstr "この要求に関連している MIME タイプの一覧"
+
+#~ msgid "Select multiple files"
+#~ msgstr "複数のファイルを選択"
+
+#~ msgid "Whether the file chooser should allow selecting multiple files"
+#~ msgstr "ファイル選択機能に複数ファイルの選択を許可するかどうかです"
+
+#~ msgid "Selected files"
+#~ msgstr "選択ファイル"
+
+#~ msgid "The list of selected files associated with the request"
+#~ msgstr "この要求に関連している選択ファイルの一覧"
+
+#~ msgid "Search text"
+#~ msgstr "検索テキスト"
+
+#~ msgid "Text to search for in the view"
+#~ msgstr "ビューで検索するテキストです"
+
+#~ msgid "Search Options"
+#~ msgstr "検索オプション"
+
+#~ msgid "Search options to be used in the search operation"
+#~ msgstr "検索で使用する検索オプションです"
+
+#~ msgid "Maximum matches count"
+#~ msgstr "最大一致件数"
+
+#~ msgid "The maximum number of matches in a given text to report"
+#~ msgstr "指定報告テキスト内の最大一致件数です"
+
+#~ msgid "WebView"
+#~ msgstr "WebView"
+
+#~ msgid "The WebView associated with this find controller"
+#~ msgstr "この検索コントローラーに関連する WebView です"
+
+#, fuzzy
+#~| msgid "Enable page cache"
+#~ msgid "Enable high accuracy"
+#~ msgstr "ページキャッシュを有効にする"
+
+#, fuzzy
+#~| msgid "Whether the plugin is enabled"
+#~ msgid "Whether high accuracy is enabled"
+#~ msgstr "プラグインを有効にするかどうかです"
+
+#, fuzzy
+#~| msgid "Navigation type"
+#~ msgid "Navigation action"
+#~ msgstr "ナビゲーションタイプ"
+
+#, fuzzy
+#~| msgid "The type of navigation triggering this decision"
+#~ msgid "The WebKitNavigationAction triggering this decision"
+#~ msgstr "この決定をもたらすナビゲーションタイプです"
+
+#~ msgid "Navigation type"
+#~ msgstr "ナビゲーションタイプ"
+
+#~ msgid "The type of navigation triggering this decision"
+#~ msgstr "この決定をもたらすナビゲーションタイプです"
+
+#~ msgid "Mouse button"
+#~ msgstr "マウスボタン"
+
+#~ msgid ""
+#~ "The mouse button used if this decision was triggered by a mouse event"
+#~ msgstr ""
+#~ "マウスイベントでこの決定がもたらされた場合に使用するマウスボタンです"
+
+#~ msgid "Mouse event modifiers"
+#~ msgstr "マウスイベントの修飾子"
+
+#~ msgid "The modifiers active if this decision was triggered by a mouse event"
+#~ msgstr "この決定がマウスイベントにより発生した場合にアクティブになる修飾子"
+
+#~ msgid "Navigation URI request"
+#~ msgstr "ナビゲーション URI 要求"
+
+#~ msgid "The URI request that is associated with this navigation"
+#~ msgstr "このナビゲーションに関連する URI 要求です"
+
+#~ msgid "Frame name"
+#~ msgstr "フレーム名"
+
+#~ msgid "The name of the new frame this navigation action targets"
+#~ msgstr "このナビゲーション動作の対象となる新しいフレームの名前です"
+
+#, fuzzy
+#~| msgid "The target frame for the navigation"
+#~ msgid "The unique id for the notification"
+#~ msgstr "ナビゲーション用ターゲットフレーム"
+
+#~ msgid "Title"
+#~ msgstr "タイトル"
+
+#, fuzzy
+#~| msgid "The target frame for the navigation"
+#~ msgid "The title for the notification"
+#~ msgstr "ナビゲーション用ターゲットフレーム"
+
+#, fuzzy
+#~| msgid "The target frame for the navigation"
+#~ msgid "The body for the notification"
+#~ msgstr "ナビゲーション用ターゲットフレーム"
+
+#, fuzzy
+#~| msgid "The target frame for the navigation"
+#~ msgid "The tag identifier for the notification"
+#~ msgstr "ナビゲーション用ターゲットフレーム"
+
+#~ msgid "Response URI request"
+#~ msgstr "応答の URI 要求"
+
+#~ msgid "The URI request that is associated with this policy decision"
+#~ msgstr "このポリシー決定に関連する URI 要求です"
+
+#~ msgid "URI response"
+#~ msgstr "URI 応答"
+
+#~ msgid "The URI response that is associated with this policy decision"
+#~ msgstr "このポリシー決定に関連する URI 応答です"
+
+#, fuzzy
+#~| msgid "Local Storage Database Path"
+#~ msgid "Local Storage Directory"
+#~ msgstr "ローカルストレージデータベースのパス"
+
+#, fuzzy
+#~| msgid "The local URI to where the download will be saved"
+#~ msgid "The directory where local storage data will be saved"
+#~ msgstr "ダウンロードの保存先となるローカルの URI です"
+
+#, fuzzy
+#~| msgid "Web Database Usage"
+#~ msgid "Website Data Manager"
+#~ msgstr "Web Database 使用量"
+
+#, fuzzy
+#~| msgid "The WebView associated with this find controller"
+#~ msgid "The WebKitWebsiteDataManager associated with this context"
+#~ msgstr "この検索コントローラーに関連する WebView です"
+
+#~ msgid "The current active URI of the resource"
+#~ msgstr "リソースの現在アクティブな URI"
+
+#~ msgid "The response of the resource"
+#~ msgstr "リソースの応答"
+
+#, fuzzy
+#~| msgid "The path to where HTML5 Local Storage databases are stored."
+#~ msgid "The directory where local storage data will be stored"
+#~ msgstr "HTML5 ローカルストレージデータベースの格納先のパスです。"
+
+#, fuzzy
+#~| msgid "Enable offline web application cache"
+#~ msgid "Offline Web Application Cache Directory"
+#~ msgstr "オフライン Web アプリケーションキャッシュを有効にする"
+
+#, fuzzy
+#~| msgid "Whether to enable offline web application cache"
+#~ msgid "The directory where offline web application cache will be stored"
+#~ msgstr "オフライン Web アプリケーションキャッシュを有効にするかどうかです"
+
+#, fuzzy
+#~| msgid "Web Inspector"
+#~ msgid "WebSQL Directory"
+#~ msgstr "Web Inspector"
+
+#, fuzzy
+#~| msgid "The path to where HTML5 Local Storage databases are stored."
+#~ msgid "The directory where WebSQL databases will be stored"
+#~ msgstr "HTML5 ローカルストレージデータベースの格納先のパスです。"
+
+#, fuzzy
+#~| msgid "The local URI to where the download will be saved"
+#~ msgid "The directory where DOM cache will be stored"
+#~ msgstr "ダウンロードの保存先となるローカルの URI です"
+
+#, fuzzy
+#~| msgid "The custom encoding of the web view"
+#~ msgid "The backend for the web view"
+#~ msgstr "web ビューのカスタムのエンコーディングです"
+
+#~ msgid "Web Context"
+#~ msgstr "Web コンテキスト"
+
+#~ msgid "The web context for the view"
+#~ msgstr "ビューの Web コンテキストです"
+
+#, fuzzy
+#~| msgid "WebView"
+#~ msgid "Related WebView"
+#~ msgstr "WebView"
+
+#, fuzzy
+#~| msgid "WebView"
+#~ msgid "WebView settings"
+#~ msgstr "WebView"
+
+#, fuzzy
+#~| msgid "The WebKitWebViewGroup of the view"
+#~ msgid "The WebKitSettings of the view"
+#~ msgstr "ビューの WebKitWebViewGroup です"
+
+#, fuzzy
+#~| msgid "The WebKitWebViewGroup of the view"
+#~ msgid "The WebKitUserContentManager of the view"
+#~ msgstr "ビューの WebKitWebViewGroup です"
+
+#~ msgid "Main frame document title"
+#~ msgstr "メインフレームのドキュメントタイトル"
+
+#~ msgid "Estimated Load Progress"
+#~ msgstr "推定読み込み進捗状況"
+
+#~ msgid "An estimate of the percent completion for a document load"
+#~ msgstr "ドキュメントの推定読み込み完了率です"
+
+#~ msgid "Favicon"
+#~ msgstr "ファビコン"
+
+#~ msgid "The favicon associated to the view, if any"
+#~ msgstr "ビューに関連するファビコン (ある場合のみ)"
+
+#~ msgid "The current active URI of the view"
+#~ msgstr "ビューの現在アクティブな URI"
+
+#~ msgid "Zoom level"
+#~ msgstr "ズームレベル"
+
+#~ msgid "The zoom level of the view content"
+#~ msgstr "ビューコンテンツのズームレベル"
+
+#, fuzzy
+#~| msgid "Loading..."
+#~ msgid "Is Loading"
+#~ msgstr "読み込み中..."
+
+#~ msgid "Whether the view is loading a page"
+#~ msgstr "ビューがページを読み込んでいるかどうかです"
+
+#, fuzzy
+#~| msgid "Whether the view is loading a page"
+#~ msgid "Whether the view is playing audio"
+#~ msgstr "ビューがページを読み込んでいるかどうかです"
+
+#, fuzzy
+#~| msgid "Whether the view is loading a page"
+#~ msgid "Whether the web view is ephemeral"
+#~ msgstr "ビューがページを読み込んでいるかどうかです"
+
+#, fuzzy
+#~| msgid "Whether the view is loading a page"
+#~ msgid "Whether the web view is controlled by automation"
+#~ msgstr "ビューがページを読み込んでいるかどうかです"
+
+#~ msgid "Editable"
+#~ msgstr "編集可能"
+
+#, fuzzy
+#~| msgid "Whether content can be modified by the user"
+#~ msgid "Whether the content can be modified by the user."
+#~ msgstr "ユーザーによるコンテンツの変更を許可するかどうかです"
+
+#, fuzzy
+#~| msgid "Whether the view is loading a page"
+#~ msgid "Whether the view audio is muted"
+#~ msgstr "ビューがページを読み込んでいるかどうかです"
+
+#~ msgid "Geometry"
+#~ msgstr "配置"
+
+#~ msgid "The size and position of the window on the screen."
+#~ msgstr "画面上のウィンドウのサイズと位置。"
+
+#~ msgid "Toolbar Visible"
+#~ msgstr "ツールバーを表示させる"
+
+#~ msgid "Whether the toolbar should be visible for the window."
+#~ msgstr "ウィンドウのツールバーを見えるようにするかどうかです。"
+
+#~ msgid "Statusbar Visible"
+#~ msgstr "状態バーを表示させる"
+
+#~ msgid "Whether the statusbar should be visible for the window."
+#~ msgstr "ウィンドウの状態バーを見えるようにするかどうかです。"
+
+#~ msgid "Scrollbars Visible"
+#~ msgstr "スクロールバーを表示させる"
+
+#~ msgid "Whether the scrollbars should be visible for the window."
+#~ msgstr "ウィンドウのスクロールバーを見えるようにするかどうかです。"
+
+#~ msgid "Menubar Visible"
+#~ msgstr "メニューバーを表示させる"
+
+#~ msgid "Whether the menubar should be visible for the window."
+#~ msgstr "ウィンドウのメニューバーを見えるようにするかどうかです。"
+
+#~ msgid "Locationbar Visible"
+#~ msgstr "ロケーションバーを表示させる"
+
+#~ msgid "Whether the locationbar should be visible for the window."
+#~ msgstr "ウィンドウのロケーションバーを見えるようにするかどうかです。"
+
+#~ msgid "Resizable"
+#~ msgstr "サイズ変更可能"
+
+#~ msgid "Whether the window can be resized."
+#~ msgstr "ウィンドウのサイズを調整できるかどうかです。"
+
+#~ msgid "Fullscreen"
+#~ msgstr "フルスクリーン"
+
+#~ msgid "Whether window will be displayed fullscreen."
+#~ msgstr "ウィンドウをフルスクリーンで表示するかどうかです。"
+
+#, fuzzy
+#~| msgid "The current active URI of the resource"
+#~ msgid "The current RGBA color for the request"
+#~ msgstr "リソースの現在アクティブな URI"
+
+#, fuzzy
+#~| msgid "No Guesses Found"
+#~ msgid "No Results Found"
+#~ msgstr "推測は見つかりませんでした"
+
+#, fuzzy
+#~| msgid "No recent searches"
+#~ msgid "Try a different search"
+#~ msgstr "最近の検索はありません"
+
+#, fuzzy
+#~| msgid "activate"
+#~ msgid "Activities"
+#~ msgstr "アクティベート"
+
+#~ msgid "Web View"
+#~ msgstr "Web View"
+
+#~ msgid "The web view that will be printed"
+#~ msgstr "印刷される Web ビューです"
+
+#~ msgid "Print Settings"
+#~ msgstr "印刷設定"
+
+#~ msgid "The initial print settings for the print operation"
+#~ msgstr "印刷動作用の初期印刷設定です"
+
+#~ msgid "Page Setup"
+#~ msgstr "ページ設定"
+
+#~ msgid "The initial page setup for the print operation"
+#~ msgstr "印刷動作用の初期ページ設定です"
+
+#~ msgid "Inspected URI"
+#~ msgstr "インスペクトしている URI"
+
+#~ msgid "The URI that is currently being inspected"
+#~ msgstr "現在インスペクト中の URI です"
+
+#~ msgid "Attached Height"
+#~ msgstr "接続時の高さ"
+
+#~ msgid "The height that the inspector view should have when it is attached"
+#~ msgstr ""
+#~ "インスペクターを接続する場合、そのインスペクタービューに設定する高さです"
+
+#, fuzzy
+#~| msgid "The current active URI of the view"
+#~ msgid "The current active URI of the web page"
+#~ msgstr "ビューの現在アクティブな URI"
+
+#~ msgid "(None)"
+#~ msgstr "(なし)"
+
+#~ msgid "_Look Up in Dictionary"
+#~ msgstr "辞書で検索(_L)"
+
+#~ msgid "return streaming movie to real time"
+#~ msgstr "ストリーミング動画をリアルタイムに戻す"
+
+#~ msgid "Exit fullscreen mode"
+#~ msgstr "フルスクリーンモードの終了"
+
+#~ msgid "value missing"
+#~ msgstr "値がありません"
+
+#~ msgid "type mismatch"
+#~ msgstr "タイプの不一致"
+
+#~ msgid "pattern mismatch"
+#~ msgstr "パターンの不一致"
+
+#~ msgid "too long"
+#~ msgstr "長すぎます"
+
+#~ msgid "step mismatch"
+#~ msgstr "ステップの不一致"
+
+#~ msgctxt "Closed Captions"
+#~ msgid "Menu section heading for closed captions"
+#~ msgstr "字幕用メニューセクション見出し"
+
+#~ msgctxt "Menu item label for the automatically chosen track"
+#~ msgid "Auto"
+#~ msgstr "自動"
+
+#~ msgctxt "Menu item label for a closed captions track that has no other name"
+#~ msgid "No label"
+#~ msgstr "ラベルなし"
+
+#~ msgctxt "Snapshotted Plug-In"
+#~ msgid "Title of the label to show on a snapshotted plug-in"
+#~ msgstr "スナップショット撮影したプラグインで表示させるラベルのタイトル"
+
+#~ msgctxt "Click to restart"
+#~ msgid "Subtitle of the label to show on a snapshotted plug-in"
+#~ msgstr "スナップショット撮影したプラグインで表示させるラベルの字幕"
+
+#~ msgid "The site %s:%i requests a username and password"
+#~ msgstr "サイト %s:%i によりユーザー名とパスワードの入力が求められています"
+
+#~ msgid "Server message:"
+#~ msgstr "サーバーメッセージ:"
+
+#~ msgid "Network Request"
+#~ msgstr "ネットワーク要求"
+
+#~ msgid "The network request for the URI that should be downloaded"
+#~ msgstr "ダウンロードすべき URI のネットワーク要求です"
+
+#~ msgid "Network Response"
+#~ msgstr "ネットワーク応答"
+
+#~ msgid "The network response for the URI that should be downloaded"
+#~ msgstr "ダウンロードすべき URI のネットワーク応答です"
+
+#~ msgid "Destination URI"
+#~ msgstr "保存先 URI"
+
+#~ msgid "The destination URI where to save the file"
+#~ msgstr "ファイルの保存先となる URI です"
+
+#~ msgid "The filename suggested as default when saving"
+#~ msgstr "保存時のデフォルトとして提案されるファイル名です"
+
+#~ msgid "Progress"
+#~ msgstr "進捗状況"
+
+#~ msgid "Status"
+#~ msgstr "状態"
+
+#~ msgid "Determines the current status of the download"
+#~ msgstr "現在のダウンロード状態を判定します"
+
+#~ msgid "Current Size"
+#~ msgstr "現在のサイズ"
+
+#~ msgid "The length of the data already downloaded"
+#~ msgstr "すでにダウンロードが完了したデータのサイズ"
+
+#~ msgid "The total size of the file"
+#~ msgstr "ファイルの合計サイズ"
+
+#~ msgid "Path"
+#~ msgstr "パス"
+
+#~ msgid "The absolute path of the icon database folder"
+#~ msgstr "アイコンデータベースフォルダーの絶対パス"
+
+#~ msgid "Flags indicating the kind of target that received the event."
+#~ msgstr "イベントを受信したターゲットの種類を示すフラグです。"
+
+#~ msgid "The URI to which the target that received the event points, if any."
+#~ msgstr ""
+#~ "イベントを受信したターゲットのポイント先となる URI です (ある場合のみ)。"
+
+#~ msgid ""
+#~ "The URI of the image that is part of the target that received the event, "
+#~ "if any."
+#~ msgstr ""
+#~ "イベントを受信したターゲットの一部となる画像の URI です (ある場合のみ)。"
+
+#~ msgid ""
+#~ "The URI of the media that is part of the target that received the event, "
+#~ "if any."
+#~ msgstr ""
+#~ "イベントを受信したターゲットの一部となるメディアの URI です (ある場合の"
+#~ "み)。"
+
+#~ msgid "Inner node"
+#~ msgstr "内部ノード"
+
+#~ msgid "The inner DOM node associated with the hit test result."
+#~ msgstr "ヒットテストの結果に関連する内部 DOM ノードです。"
+
+#~ msgid "X coordinate"
+#~ msgstr "X 座標"
+
+#~ msgid "The x coordinate of the event relative to the view's window."
+#~ msgstr "ビューウィンドウに対するイベントの X 座標です。"
+
+#~ msgid "Y coordinate"
+#~ msgstr "Y 座標"
+
+#~ msgid "The y coordinate of the event relative to the view's window."
+#~ msgstr "ビューウィンドウに対するイベントの Y 座標です。"
+
+#~ msgid "Message"
+#~ msgstr "メッセージ"
+
+#~ msgid "The URI to which the response will be made."
+#~ msgstr "応答先の URI です。"
+
+#~ msgid "Suggested filename"
+#~ msgstr "提案ファイル名"
+
+#~ msgid "The suggested filename for the response."
+#~ msgstr "応答に提案されるファイル名です。"
+
+#~ msgid "Protocol"
+#~ msgstr "プロトコル"
+
+#~ msgid "The protocol of the security origin"
+#~ msgstr "セキュリティオリジンのプロトコルです"
+
+#~ msgid "Host"
+#~ msgstr "ホスト"
+
+#~ msgid "The host of the security origin"
+#~ msgstr "セキュリティオリジンのホストです"
+
+#~ msgid "Port"
+#~ msgstr "ポート"
+
+#~ msgid "The port of the security origin"
+#~ msgstr "セキュリティオリジンのポートです"
+
+#~ msgid "The cumulative size of all web databases in the security origin"
+#~ msgstr "セキュリティオリジン内の全 Web データベースの合算サイズです"
+
+#~ msgid "Web Database Quota"
+#~ msgstr "Web Database クォータ"
+
+#~ msgid "The web database quota of the security origin in bytes"
+#~ msgstr "セキュリティオリジンの Web データベースクォータです (バイト単位)"
+
+#~ msgid "Device Width"
+#~ msgstr "デバイスの幅"
+
+#~ msgid "The width of the screen."
+#~ msgstr "画面の幅です。"
+
+#~ msgid "Device Height"
+#~ msgstr "デバイスの高さ"
+
+#~ msgid "The height of the screen."
+#~ msgstr "画面の高さです。"
+
+#~ msgid "Available Width"
+#~ msgstr "設定可能な幅"
+
+#~ msgid "The width of the visible area."
+#~ msgstr "可視領域の幅です。"
+
+#~ msgid "Available Height"
+#~ msgstr "設定可能な高さ"
+
+#~ msgid "The height of the visible area."
+#~ msgstr "可視領域の高さです。"
+
+#~ msgid "Desktop Width"
+#~ msgstr "デスクトップ幅"
+
+#~ msgid ""
+#~ "The width of viewport that works well for most web pages designed for "
+#~ "desktop."
+#~ msgstr ""
+#~ "デスクトップ向けに設計されている Web ページのほとんどで適切に表示される表"
+#~ "示域の幅です。"
+
+#~ msgid "Device DPI"
+#~ msgstr "デバイス DPI"
+
+#~ msgid "The number of dots per inch of the screen."
+#~ msgstr "画面 1 インチあたりのドット数です。"
+
+#~ msgid "Width"
+#~ msgstr "幅"
+
+#~ msgid "The width of the viewport."
+#~ msgstr "表示域の幅です。"
+
+#~ msgid "Height"
+#~ msgstr "高さ"
+
+#~ msgid "The height of the viewport."
+#~ msgstr "表示域の高さです。"
+
+#~ msgid "Initial Scale Factor"
+#~ msgstr "初期倍率"
+
+#~ msgid "The initial scale of the viewport."
+#~ msgstr "表示域の初期スケールです。"
+
+#~ msgid "Minimum Scale Factor"
+#~ msgstr "最小倍率"
+
+#~ msgid "The minimum scale of the viewport."
+#~ msgstr "表示域の最小スケールです。"
+
+#~ msgid "Maximum Scale Factor"
+#~ msgstr "最大倍率"
+
+#~ msgid "The maximum scale of the viewport."
+#~ msgstr "表示域の最大スケールです。"
+
+#~ msgid "Device Pixel Ratio"
+#~ msgstr "デバイスピクセル率"
+
+#~ msgid "The device pixel ratio of the viewport."
+#~ msgstr "表示域のデバイスピクセル率です。"
+
+#~ msgid "User Scalable"
+#~ msgstr "ユーザーによる拡大縮小"
+
+#~ msgid "Determines whether or not the user can zoom in and out."
+#~ msgstr ""
+#~ "ユーザーによるズームインおよびズームアウトが可能かどうかを指定します。"
+
+#~ msgid "Valid"
+#~ msgstr "有効性"
+
+#~ msgid "Determines whether or not the attributes are valid, and can be used."
+#~ msgstr "属性が有効かどうか、また使用できるかどうかを指定します。"
+
+#~ msgid "Security Origin"
+#~ msgstr "セキュリティオリジン"
+
+#~ msgid "The security origin of the database"
+#~ msgstr "データベースのセキュリティオリジンです"
+
+#~ msgid "The name of the Web Database database"
+#~ msgstr "Web Database データベースの名前 "
+
+#~ msgid "Display Name"
+#~ msgstr "表示名"
+
+#~ msgid "The display name of the Web Storage database"
+#~ msgstr "Web Storage データベースの表示名"
+
+#~ msgid "Expected Size"
+#~ msgstr "期待サイズ"
+
+#~ msgid "The expected size of the Web Database database"
+#~ msgstr "Web Database データベースの期待サイズ"
+
+#~ msgid "The current size of the Web Database database"
+#~ msgstr "Web Database データベースの現在のサイズ"
+
+#~ msgid "Filename"
+#~ msgstr "ファイル名"
+
+#~ msgid "The absolute filename of the Web Storage database"
+#~ msgstr "Web Storage データベースの絶対ファイル名"
+
+#~ msgid "The name of the frame"
+#~ msgstr "フレーム名"
+
+#~ msgid "The document title of the frame"
+#~ msgstr "フレームのドキュメントタイトル"
+
+#~ msgid "The current URI of the contents displayed by the frame"
+#~ msgstr "フレームで表示されるコンテンツの現在の URI"
+
+#~ msgid "Horizontal Scrollbar Policy"
+#~ msgstr "水平スクロールバーポリシー"
+
+#~ msgid ""
+#~ "Determines the current policy for the horizontal scrollbar of the frame."
+#~ msgstr "フレームの水平スクロールバーの現在のポリシーを指定します。"
+
+#~ msgid "Vertical Scrollbar Policy"
+#~ msgstr "垂直スクロールバーポリシー"
+
+#~ msgid ""
+#~ "Determines the current policy for the vertical scrollbar of the frame."
+#~ msgstr "フレームの垂直スクロールバーの現在のポリシーを指定します。"
+
+#~ msgid "The title of the history item"
+#~ msgstr "履歴アイテムのタイトル"
+
+#~ msgid "Alternate Title"
+#~ msgstr "代替タイトル"
+
+#~ msgid "The alternate title of the history item"
+#~ msgstr "履歴アイテムの代替タイトル"
+
+#~ msgid "The URI of the history item"
+#~ msgstr "履歴アイテムの URI"
+
+#~ msgid "Original URI"
+#~ msgstr "オリジナル URI"
+
+#~ msgid "The original URI of the history item"
+#~ msgstr "履歴アイテムのオリジナルの URI"
+
+#~ msgid "Last visited Time"
+#~ msgstr "最後に閲覧した時間"
+
+#~ msgid "The time at which the history item was last visited"
+#~ msgstr "履歴アイテムが最後に閲覧された時間です"
+
+#~ msgid "The Web View that renders the Web Inspector itself"
+#~ msgstr "Web Inspector 自体を表示させる Web View です"
+
+#~ msgid "Enable JavaScript profiling"
+#~ msgstr "JavaScript プロファイリングを有効にする"
+
+#~ msgid "Profile the executed JavaScript."
+#~ msgstr "実行された JavaScript のプロファイリングを行ないます。"
+
+#~ msgid "Enable Timeline profiling"
+#~ msgstr "Timeline プロファイリングを有効にする"
+
+#~ msgid "Profile the WebCore instrumentation."
+#~ msgstr "WebCore 計装のプロファイル"
+
+#~ msgid "Reason"
+#~ msgstr "原因"
+
+#~ msgid "The reason why this navigation is occurring"
+#~ msgstr "このナビゲーションが発生する原因です"
+
+#~ msgid "The URI that was requested as the target for the navigation"
+#~ msgstr "ナビゲーションのターゲットとして要求された URI です"
+
+#~ msgid "Button"
+#~ msgstr "ボタン"
+
+#~ msgid "The button used to click"
+#~ msgstr "クリックに使用するボタン"
+
+#~ msgid "Modifier state"
+#~ msgstr "修飾子の状態"
+
+#~ msgid "A bitmask representing the state of the modifier keys"
+#~ msgstr "修飾子の状態を示すビットマスク"
+
+#~ msgid "Target frame"
+#~ msgstr "ターゲットフレーム"
+
+#~ msgid "Enabled"
+#~ msgstr "有効"
+
+#~ msgid "The URI of the resource"
+#~ msgstr "リソースの URI"
+
+#~ msgid "The MIME type of the resource"
+#~ msgstr "リソースの MIME タイプ"
+
+#~ msgid "Encoding"
+#~ msgstr "エンコーディング"
+
+#~ msgid "The text encoding name of the resource"
+#~ msgstr "リソースのテキストエンコーディング名"
+
+#~ msgid "Frame Name"
+#~ msgstr "フレーム名"
+
+#~ msgid "The frame name of the resource"
+#~ msgstr "リソースのフレーム名"
+
+#~ msgid "Default Encoding"
+#~ msgstr "デフォルトエンコーディング"
+
+#~ msgid "The default encoding used to display text."
+#~ msgstr "テキストの表示に使用するデフォルトのエンコーディングです。"
+
+#~ msgid "Cursive Font Family"
+#~ msgstr "Cursive フォントファミリー"
+
+#~ msgid "The default Cursive font family used to display text."
+#~ msgstr ""
+#~ "テキストの表示に使用するデフォルトの Cursive フォントファミリーです。"
+
+#~ msgid "Default Font Family"
+#~ msgstr "デフォルトのフォントファミリー"
+
+#~ msgid "The default font family used to display text."
+#~ msgstr "テキストの表示に使用するデフォルトのフォントファミリーです。"
+
+#~ msgid "Fantasy Font Family"
+#~ msgstr "Fantasy フォントファミリー"
+
+#~ msgid "The default Fantasy font family used to display text."
+#~ msgstr ""
+#~ "テキストの表示に使用するデフォルトの Fantasy フォントファミリーです。"
+
+#~ msgid "Monospace Font Family"
+#~ msgstr "Monospace フォントファミリー"
+
+#~ msgid "The default font family used to display monospace text."
+#~ msgstr ""
+#~ "monospace テキストの表示に使用するデフォルトのフォントファミリーです。"
+
+#~ msgid "Sans Serif Font Family"
+#~ msgstr "Sans Serif フォントファミリー"
+
+#~ msgid "The default Sans Serif font family used to display text."
+#~ msgstr ""
+#~ "テキストの表示に使用するデフォルトの Sans Serif フォントファミリーです。"
+
+#~ msgid "Serif Font Family"
+#~ msgstr "Serif フォントファミリー"
+
+#~ msgid "The default Serif font family used to display text."
+#~ msgstr "テキストの表示に使用するデフォルトの Serif フォントファミリーです。"
+
+#~ msgid "Default Font Size"
+#~ msgstr "デフォルトのフォントサイズ"
+
+#~ msgid "Default Monospace Font Size"
+#~ msgstr "デフォルトの Monospace フォントサイズ"
+
+#~ msgid "Minimum Font Size"
+#~ msgstr "最小フォントサイズ"
+
+#~ msgid "Minimum Logical Font Size"
+#~ msgstr "最小論理フォントサイズ"
+
+#~ msgid "The minimum logical font size used to display text."
+#~ msgstr "テキストの表示に使用する論理フォントの最小サイズです。"
+
+#~ msgid "Enforce 96 DPI"
+#~ msgstr "96 DPI を強制する"
+
+#~ msgid "Enforce a resolution of 96 DPI"
+#~ msgstr "解像度 96 DPI を強制します"
+
+#~ msgid "Auto Load Images"
+#~ msgstr "画像の自動読み込み"
+
+#~ msgid "Auto Shrink Images"
+#~ msgstr "画像の自動縮小"
+
+#~ msgid "Automatically shrink standalone images to fit."
+#~ msgstr "スタンドアローンの画像を自動的に適切なサイズに縮小します。"
+
+#~ msgid "Respect Image Orientation"
+#~ msgstr "画像の向きに合わせる"
+
+#~ msgid "Whether WebKit should respect image orientation."
+#~ msgstr "WebKit に画像の向きを合わさせるかどうかです。"
+
+#~ msgid "Whether background images should be printed."
+#~ msgstr "背景の画像を出力させるかどうかです。"
+
+#~ msgid "Enable embedded scripting languages."
+#~ msgstr "組み込みのスクリプト言語を有効にします。"
+
+#~ msgid "Resizable Text Areas"
+#~ msgstr "サイズ変更可能なテキスト領域"
+
+#~ msgid "Whether text areas are resizable."
+#~ msgstr "テキスト領域のサイズを変更可能にするかどうかです。"
+
+#~ msgid "User Stylesheet URI"
+#~ msgstr "ユーザースタイルシート URI"
+
+#~ msgid "The URI of a stylesheet that is applied to every page."
+#~ msgstr "各ページに適用されるスタイルシートの URI です。"
+
+#~ msgid "Zoom Stepping Value"
+#~ msgstr "ズームステップ値"
+
+#~ msgid "The value by which the zoom level is changed when zooming in or out."
+#~ msgstr "ズームインやズームアウト時のズームレベル変更の値です。"
+
+#~ msgid "Enable Developer Extras"
+#~ msgstr "Developer Extras を有効にする"
+
+#~ msgid "Enables special extensions that help developers"
+#~ msgstr "開発者向けの特殊な拡張機能を有効にします"
+
+#~ msgid "Enable Private Browsing"
+#~ msgstr "プライベートブラウズを有効にする"
+
+#~ msgid "Enables private browsing mode"
+#~ msgstr "プライベートブラウズモードを有効にします"
+
+#~ msgid "Enable Spell Checking"
+#~ msgstr "スペルチェックを有効にする"
+
+#~ msgid "Enables spell checking while typing"
+#~ msgstr "入力中のスペルチェックを有効にします"
+
+#~ msgid "Languages to use for spell checking"
+#~ msgstr "スペルチェックに使用する言語"
+
+#~ msgid "Comma separated list of languages to use for spell checking"
+#~ msgstr "スペルチェックに使用する言語の一覧 (コンマ区切り)"
+
+#~ msgid "Enable HTML5 Database"
+#~ msgstr "HTML5 データベースを有効にする"
+
+#~ msgid "Whether to enable HTML5 database support"
+#~ msgstr "HTML5 データベースサポートを有効にするかどうかです"
+
+#~ msgid "Enable HTML5 Local Storage"
+#~ msgstr "HTML5 ローカルストレージを有効にする"
+
+#~ msgid "Whether to enable HTML5 Local Storage support"
+#~ msgstr "HTML5 ローカルストレージのサポートを有効にするかどうかです"
+
+#~ msgid "Enable XSS Auditor"
+#~ msgstr "XSS Auditor を有効にする"
+
+#~ msgid "Whether to enable the XSS auditor"
+#~ msgstr "XSS Auditor を有効にするかどうかです。"
+
+#~ msgid "Enable Frame Flattening"
+#~ msgstr "フレーム平坦化を有効にする"
+
+#~ msgid "Whether to enable Frame Flattening"
+#~ msgstr "フレーム平坦化を有効にするかどうかです"
+
+#~ msgid "User Agent"
+#~ msgstr "ユーザーエージェント"
+
+#~ msgid "The User-Agent string used by WebKitGtk"
+#~ msgstr "WebKitGtk で使用されるユーザーエージェント文字列です"
+
+#~ msgid "Whether JavaScript can open windows automatically"
+#~ msgstr "JavaScript によるウィンドウの自動オープンを許可するかどうかです"
+
+#~ msgid "JavaScript can access Clipboard"
+#~ msgstr "JavaScript にクリップボードへのアクセスを許可する"
+
+#~ msgid "Editing behavior"
+#~ msgstr "編集動作"
+
+#~ msgid "The behavior mode to use in editing mode"
+#~ msgstr "編集モードで使用する動作モードです"
+
+#~ msgid "Enable DOM paste"
+#~ msgstr "DOM 貼り付けを有効にする"
+
+#~ msgid "Whether to enable DOM paste"
+#~ msgstr "DOM 貼り付けを有効にするかどうかです"
+
+#~ msgid "Tab key cycles through elements"
+#~ msgstr "Tab キーによる要素間の移動"
+
+#~ msgid "Whether the tab key cycles through elements on the page."
+#~ msgstr "Tab キーによるページ上の要素間の移動を有効にするかどうかです。"
+
+#~ msgid "Enable Default Context Menu"
+#~ msgstr "デフォルトのコンテキストメニューを有効にする"
+
+#~ msgid ""
+#~ "Enables the handling of right-clicks for the creation of the default "
+#~ "context menu"
+#~ msgstr "右クリックでデフォルトのコンテキストメニューを表示します"
+
+#~ msgid "Auto Resize Window"
+#~ msgstr "ウィンドウのサイズを自動調整する"
+
+#~ msgid "Automatically resize the toplevel window when a page requests it"
+#~ msgstr ""
+#~ "ページにより要求された場合にトップレベルのウィンドウサイズを自動的に調整し"
+#~ "ます"
+
+#~ msgid "Enable Java Applet"
+#~ msgstr "Java アプレットを有効にする"
+
+#~ msgid "Whether Java Applet support through <applet> should be enabled"
+#~ msgstr "<applet> を使った Java アプレットのサポートを有効にするかどうかです"
+
+#~ msgid "Enable Hyperlink Auditing"
+#~ msgstr "ハイパーリンク監査を有効にする"
+
+#~ msgid "Whether <a ping> should be able to send pings"
+#~ msgstr "<a ping> による ping の送信を許可するかどうかです"
+
+#~ msgid "Whether the Mozilla style API should be enabled."
+#~ msgstr "Mozilla スタイルの API を有効にするかどうかです。"
+
+#~ msgid "Whether accelerated compositing should be enabled"
+#~ msgstr "アクセラレート合成を有効にするかどうかです"
+
+#~ msgid "WebKit prefetches domain names"
+#~ msgstr "WebKit にドメイン名をプレフェッチさせる"
+
+#~ msgid "Whether WebKit prefetches domain names"
+#~ msgstr "WebKit にドメイン名をプレフェッチさせるかどうかです"
+
+#~ msgid "Enable Media Stream"
+#~ msgstr "メディアストリームを有効にする"
+
+#~ msgid "Enable CSS shaders"
+#~ msgstr "CSS シェーダーを有効にする"
+
+#~ msgid "Whether to enable css shaders"
+#~ msgstr "CSS シェーダーを有効にするかどうかです"
+
+#~ msgid "Enable display of insecure content"
+#~ msgstr "安全性が不確かなコンテンツの表示を有効にする"
+
+#~ msgid "Whether non-HTTPS resources can display on HTTPS pages."
+#~ msgstr "HTTPS ページで非 HTTPS のリソースの表示を許可するかどうかです。"
+
+#~ msgid "Enable running of insecure content"
+#~ msgstr "安全性が不確かなコンテンツの実行を有効にする"
+
+#~ msgid "Whether non-HTTPS resources can run on HTTPS pages."
+#~ msgstr "HTTPS ページで非 HTTPS のリソースの実行を許可するかどうかです。"
+
+#~ msgid "Returns the @web_view's document title"
+#~ msgstr "@web_view のドキュメントタイトルを返す"
+
+#~ msgid "Returns the current URI of the contents displayed by the @web_view"
+#~ msgstr "@web_view で表示されるコンテンツの現在の URI を返します"
+
+#~ msgid "Copy target list"
+#~ msgstr "ターゲット一覧のコピー"
+
+#~ msgid "The list of targets this web view supports for clipboard copying"
+#~ msgstr ""
+#~ "クリップボードをコピーする際、この Web ビューで対応しているターゲットの一"
+#~ "覧です"
+
+#~ msgid "Paste target list"
+#~ msgstr "ターゲット一覧の貼り付け"
+
+#~ msgid "The list of targets this web view supports for clipboard pasting"
+#~ msgstr ""
+#~ "クリップボードの貼り付けを行なう際、この Web ビューで対応しているターゲッ"
+#~ "トの一覧です"
+
+#~ msgid "Settings"
+#~ msgstr "設定"
+
+#~ msgid "An associated WebKitWebSettings instance"
+#~ msgstr "関連する WebKitWebSettings インスタンス"
+
+#~ msgid "The associated WebKitWebInspector instance"
+#~ msgstr "関連する WebKitWebInspector インスタンス"
+
+#~ msgid "The associated WebKitViewportAttributes instance"
+#~ msgstr "関連する WebKitViewportAttributes インスタンス"
+
+#~ msgid "Transparent"
+#~ msgstr "透過的"
+
+#~ msgid "Whether content has a transparent background"
+#~ msgstr "コンテンツに透過的な背景を持たせるかどうかです"
+
+#~ msgid "The level of zoom of the content"
+#~ msgstr "コンテンツのズームレベルです"
+
+#~ msgid "Full content zoom"
+#~ msgstr "フルコンテンツズーム"
+
+#~ msgid "Whether the full content is scaled when zooming"
+#~ msgstr "ズームを行なう際、全コンテンツを縮小拡大するかどうかです"
+
+#~ msgid "The default encoding of the web view"
+#~ msgstr "web ビューのデフォルトエンコーディング"
+
+#~ msgid "Custom Encoding"
+#~ msgstr "カスタムエンコーディング"
+
+#~ msgid "Icon URI"
+#~ msgstr "アイコン URI"
+
+#~ msgid "The URI for the favicon for the #WebKitWebView."
+#~ msgstr "#WebKitWebView 用ファビコンの URI です。"
+
+#~ msgid ""
+#~ "Cannot determine destination URI for download with suggested filename %s"
+#~ msgstr "提案ファイル名が %s のダウンロード保存先 URI を確定できません"
+
+#~ msgid "WebView Group"
+#~ msgstr "WebView グループ"
+
+#~ msgid "The view mode to display the web view contents"
+#~ msgstr "web ビューコンテンツを表示するビューモードです"
+
+#~ msgid "An exception was raised in JavaScript"
+#~ msgstr "JavaScript で例外が発生しました"
+
+#~ msgid "Play"
+#~ msgstr "再生"
+
+#~ msgid "Pause"
+#~ msgstr "一時停止"
+
+#~ msgid "Play / Pause"
+#~ msgstr "再生 / 一時停止"
+
+#~ msgid "Play or pause the media"
+#~ msgstr "メディアを再生または一時停止します"
+
+#~ msgid "Time:"
+#~ msgstr "時間:"

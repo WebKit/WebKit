@@ -1,0 +1,30 @@
+Ensure we can associate scripts with Workers and get their contents.
+
+
+== Running test suite: Worker.Debugger.Script
+-- Running test case: Worker.Debugger.Script.MainResource
+PASS: Worker target's main resource should be a Script.
+PASS: Worker target's main resource should be owned by a Worker target.
+PASS: Worker DebuggerData should include script.
+PASS: Worker DebuggerData should include script by identifier.
+PASS: Worker DebuggerData should include script by URL.
+PASS: Main DebuggerData should not include the script.
+PASS: Worker target's main resource should have content.
+
+-- Running test case: Worker.Debugger.Script.ImportedScript
+PASS: ScriptAdded - inspector/worker/resources/worker-import-1.js
+PASS: Script should be owned by a Worker target.
+PASS: Worker DebuggerData should include script.
+PASS: Worker DebuggerData should include script by identifier.
+PASS: Worker DebuggerData should include script by URL.
+PASS: Main DebuggerData should not include the script.
+PASS: Imported script content should have 'workerImport1'.
+
+-- Running test case: Worker.Debugger.Script.NamedEval
+PASS: ScriptAdded - worker-eval.js
+PASS: Script should be owned by a Worker target.
+PASS: Worker DebuggerData should include script.
+PASS: Worker DebuggerData should include script by identifier.
+PASS: Main DebuggerData should not include the script.
+PASS: Eval script content should have 'workerEval'.
+

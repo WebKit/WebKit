@@ -1,0 +1,15 @@
+
+PASS #1 Reinitialize the default imports
+PASS #2 Test that WebAssembly compilation succeeds (float_exprs1.wast:4)
+PASS #3 Test that WebAssembly compilation succeeds (wrapper)
+PASS #4 Test that WebAssembly compilation succeeds (wrapper)
+PASS #5 Reinitialize the default imports
+PASS #6 Test that WebAssembly compilation succeeds (float_exprs1.wast:4)
+PASS #7 Test that WebAssembly instantiation succeeds (float_exprs1.wast:4)
+PASS #8 Test that WebAssembly compilation succeeds (wrapper)
+PASS #9 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #10 Run a WebAssembly test without special assertions (float_exprs1.wast:103)
+PASS #11 Test that WebAssembly compilation succeeds (wrapper)
+PASS #12 Test that WebAssembly instantiation succeeds (wrapper)
+PASS #13 Run a WebAssembly test without special assertions (float_exprs1.wast:104)
+

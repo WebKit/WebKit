@@ -1,0 +1,10 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+RUN(source.duration = 11)
+RUN(source.endOfStream())
+RUN(video.currentTime = 10)
+EVENT(seeked)
+END OF TEST
+

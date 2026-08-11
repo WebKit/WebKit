@@ -1,0 +1,10 @@
+Tests that a ScriptProcessorNode connected to an AudioParam does not crash when the node gets destroyed on the audio rendering thread. This test passes if it does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Did not crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

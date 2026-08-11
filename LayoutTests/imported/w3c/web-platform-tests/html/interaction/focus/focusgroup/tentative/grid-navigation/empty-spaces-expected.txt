@@ -1,0 +1,10 @@
+r1c1	r1c3	r1c4	r1c5	r1c6	r1c7
+r2c3
+r3c1	r3c2
+r4c1	r4c6
+
+FAIL A right arrow press should move the focus to the next column, dealing correctly with the empty spaces. assert_equals: expected Element node <td id="r1c4" tabindex="-1" rowspan="3">r1c4</td> but got Element node <td id="r3c2" tabindex="-1">r3c2</td>
+FAIL A down arrow press should move the focus to the right cell on the next row, dealing correctly with empty spaces. assert_equals: expected Element node <td id="r4c1" tabindex="-1" colspan="5">r4c1</td> but got Element node <td id="r2c3" tabindex="-1">r2c3</td>
+FAIL A left arrow press should move to the previous column, dealing correctly with the empty spaces. assert_equals: expected Element node <td id="r4c6" tabindex="-1">r4c6</td> but got Element node <td id="r1c1" tabindex="-1" rowspan="2" colspan="2">r1c1<...
+FAIL An up arrow press should move the focus to the right cell on the previous row, dealing correctly with empty spaces. assert_equals: expected Element node <td id="r4c6" tabindex="-1">r4c6</td> but got Element node <td id="r1c7" tabindex="-1">r1c7</td>
+

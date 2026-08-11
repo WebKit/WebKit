@@ -1,0 +1,15 @@
+
+
+FAIL Permissions policy header "private-state-token-issuance=()" disallows the top-level document. assert_throws_dom: function "() => {
+      const issue_request = new Request("https://issuer.example/", {
+        privateToken: {
+          version: 1,
+          operation: "token-request"
+        }
+      });
+    }" did not throw
+FAIL Permissions policy header "private-state-token-issuance=()" disallows same-origin iframes. assert_equals: Private State Token issuance request expected 0 but got 1
+FAIL Permissions policy header "private-state-token-issuance=()" disallows cross-origin iframes. assert_equals: Private State Token issuance request expected 0 but got 1
+FAIL Permissions policy header "private-state-token-issuance=()" and allow="private-state-token-issuance" disallows same-origin iframes. assert_equals: Private State Token issuance request expected 0 but got 1
+FAIL Permissions policy header "private-state-token-issuance=()" and allow="private-state-token-issuance" disallows cross-origin iframes. assert_equals: Private State Token issuance request expected 0 but got 1
+

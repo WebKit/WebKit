@@ -1,0 +1,2 @@
+This test checks that a table with 'width' exceeding 'max-width' is correctly constrained.
+PASS

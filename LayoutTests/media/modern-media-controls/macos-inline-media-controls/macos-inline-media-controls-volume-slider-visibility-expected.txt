@@ -1,0 +1,24 @@
+Testing the MacOSInlineMediaControls volume slider visibility.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Default state
+volumeSliderContainer.parent.constructor.name: MacOSInlineMediaControls
+
+Mouse enters the mute button
+volumeSliderContainer.parent.constructor.name: MacOSInlineMediaControls
+
+Mouse leaves the mute button
+volumeSliderContainer.parent.constructor.name: MacOSInlineMediaControls
+
+Mouse enters the mute button, then leaves it but enters the volume slider container
+volumeSliderContainer.parent.constructor.name: MacOSInlineMediaControls
+
+Mouse leaves the volume slider container
+volumeSliderContainer.parent.constructor.name: MacOSInlineMediaControls
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

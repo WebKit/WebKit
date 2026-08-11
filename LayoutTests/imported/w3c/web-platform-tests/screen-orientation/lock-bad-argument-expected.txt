@@ -1,0 +1,4 @@
+
+PASS screen.orientation.lock() must throw given invalid input.
+PASS screen.orientation.lock() must throw when the input is missing.
+

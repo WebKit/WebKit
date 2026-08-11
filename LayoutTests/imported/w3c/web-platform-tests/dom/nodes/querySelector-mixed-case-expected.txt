@@ -1,0 +1,3 @@
+
+PASS Mixed HTML/SVG/MathML tree with various mixed-case attributes
+

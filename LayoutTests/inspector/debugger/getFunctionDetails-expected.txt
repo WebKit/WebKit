@@ -1,0 +1,40 @@
+Tests for Debugger.getFunctionDetails command.
+
+
+== Running test suite: Debugger.getFunctionDetails
+-- Running test case: Debugger.getFunctionDetails.Regular
+PASS: Should have source code line.
+PASS: Should have source code column.
+PASS: Should have name.
+PASS: Should have displayName.
+
+-- Running test case: Debugger.getFunctionDetails.Regular.Bound.Once
+PASS: Should have source code line.
+PASS: Should have source code column.
+PASS: Should have name.
+PASS: Should have displayName.
+
+-- Running test case: Debugger.getFunctionDetails.Regular.Bound.Twice
+PASS: Should have source code line.
+PASS: Should have source code column.
+PASS: Should have name.
+PASS: Should not have displayName.
+
+-- Running test case: Debugger.getFunctionDetails.Arrow
+PASS: Should have source code line.
+PASS: Should have source code column.
+PASS: Should not have name.
+PASS: Should have displayName.
+
+-- Running test case: Debugger.getFunctionDetails.Arrow.Bound.Once
+PASS: Should have source code line.
+PASS: Should have source code column.
+PASS: Should have name.
+PASS: Should have displayName.
+
+-- Running test case: Debugger.getFunctionDetails.Arrow.Bound.Twice
+PASS: Should have source code line.
+PASS: Should have source code column.
+PASS: Should have name.
+PASS: Should not have displayName.
+

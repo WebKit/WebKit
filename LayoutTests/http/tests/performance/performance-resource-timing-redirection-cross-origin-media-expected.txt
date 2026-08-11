@@ -1,0 +1,4 @@
+http://127.0.0.1:8000/resources/js-test-pre.js
+http://127.0.0.1:8000/resources/redirect.py?url=http%3A%2F%2Flocalhost%3A8000%2Fmedia%2Fresources%2Fhls%2Fplaylist-with-cookie.m3u8%3F
+http://localhost:8000/media/resources/hls/playlist-with-cookie.m3u8?
+

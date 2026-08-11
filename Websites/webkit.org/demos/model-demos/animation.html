@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animation timing</title>
+    <style>
+      html,
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+        font-size: 1.4rem;
+        padding: 1vw;
+      }
+      model {
+        background-color: white;
+        width: 400px;
+        height: 400px;
+      }
+      .left {
+        width:50vw;
+        display:inline-block;
+      }
+
+      button {
+        font-size: 1rem;
+      }
+      #time-info {
+      }
+    </style>
+  </head>
+  <body>
+    <div class="left">
+
+        <h1>Model animation timing</h1>
+        <hr />
+        <p>
+            This page demonstrates the use of the
+            <code>HTMLModelElement</code> animation API.
+        </p>
+        <div id="time-info">Current time: <span id="curtime">00:00</span></div>
+        <button id="startanim">Start</button>
+        <button id="stopanim">Stop</button>
+        <button id="resetanim">Reset</button>
+        <br />
+    </div>
+
+    <model id="stopwatch" stagemode="orbit" autoplay loop>
+      <source src="./models/stopwatch.usdz" />
+    </model>
+  </body>
+
+  <script type="module">
+    const stopwatch = document.getElementById("stopwatch");
+    const curTime = document.getElementById("curtime");
+
+    document
+      .querySelector("#startanim")
+      .addEventListener("click", (e) => stopwatch.play());
+    document
+      .querySelector("#stopanim")
+      .addEventListener("click", (e) => stopwatch.pause());
+    document
+      .querySelector("#resetanim")
+      .addEventListener("click", (e) => (stopwatch.currentTime = 0));
+
+    requestAnimationFrame(update);
+
+    function update() {
+      curTime.innerText = stopwatch.currentTime.toFixed(2) + "s";
+
+      requestAnimationFrame(update);
+    }
+  </script>
+</html>

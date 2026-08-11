@@ -1,0 +1,8 @@
+
+PASS Worker constructor
+PASS SharedWorker constructor
+PASS importScripts() in a dedicated worker
+PASS Worker() in a dedicated worker
+PASS importScripts() in a shared worker
+PASS Worker() in a shared worker
+

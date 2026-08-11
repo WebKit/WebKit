@@ -1,0 +1,8 @@
+
+PASS Wait for load event
+PASS execCommand("insertText", false, "typed value") in <input>
+PASS execCommand("delete") in <input>
+PASS <input> is hidden by "keydown" event listener
+PASS <input> is hidden by "keypress" event listener
+PASS <input> is hidden by "beforeinput" event listener
+

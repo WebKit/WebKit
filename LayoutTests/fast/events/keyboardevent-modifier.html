@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<script src=../../resources/testharness.js></script>
+<script src=../../resources/testharnessreport.js></script>
+<input type="text" id="testInput">
+<script>
+var input = document.getElementById("testInput");
+input.focus();
+
+function sendKeyAndTest(key, ctrlKey, altKey, shiftKey)
+{
+    input.onkeydown = function(event) {
+        test(function() {
+          assert_equals(event.ctrlKey, ctrlKey, "event.ctrlKey is: " + ctrlKey ? "true" : "false");
+          assert_equals(event.altKey, altKey, "event.altKey is: " + altKey ? "true" : "false");
+          assert_equals(event.shiftKey, shiftKey, "event.shiftKey is: " + shiftKey ? "true" : "false");
+        }, "Check key: " + key + " - event.key: " + event.key);
+    };
+    eventSender.keyDown(key, []);
+}
+
+sendKeyAndTest("leftControl", true, false, false);
+sendKeyAndTest("rightControl", true, false, false);
+sendKeyAndTest("leftAlt", false, true, false);
+sendKeyAndTest("rightAlt", false, true, false);
+sendKeyAndTest("leftShift", false, false, true);
+sendKeyAndTest("rightShift", false, false, true);
+
+</script>

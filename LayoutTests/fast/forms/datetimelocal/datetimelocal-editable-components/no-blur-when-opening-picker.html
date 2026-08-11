@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/common.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="date-input" type="datetime-local" value="2020-09-16T10:45"/>
+<input id="text-input" type="text" />
+
+<script>
+window.jsTestIsAsync = true;
+
+let blurEventCount = 0;
+
+function clickOnDayField() {
+    const shadowRoot = internals.shadowRoot(document.getElementById("date-input"));
+    const monthField = getElementByPseudoId(shadowRoot, "-webkit-datetime-edit-day-field");
+    const rect = monthField.getBoundingClientRect();
+    eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+addEventListener("load", async () => {
+    description("Tests that no blur is fired when the date picker is opened, and that the focused element remains after opening the picker.");
+
+    // Track blur events
+    document.addEventListener("blur", () => blurEventCount++, true);
+
+    await UIHelper.ensurePresentationUpdate();
+    // Tab to focus the first subfield of the date input.
+    UIHelper.keyDown("\t", ["altKey"]);
+    shouldBeTrue("document.activeElement.id === 'date-input'");
+
+    // Press space to open the picker.
+    UIHelper.keyDown(" ");
+    await UIHelper.ensurePresentationUpdate();
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeTrue("showingPicker");
+
+    shouldBeTrue("document.activeElement.id === 'date-input'");
+    shouldBe("blurEventCount", "0");
+
+    // Escape should close the picker and return focus to the subfield we were on before opening the picker (the month field).
+    UIHelper.keyDown("escape");
+    await UIHelper.ensurePresentationUpdate();
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeFalse("showingPicker");
+
+    clickOnDayField();
+    await UIHelper.ensurePresentationUpdate();
+    showingPicker = await UIHelper.isShowingDateTimePicker();
+    shouldBeTrue("showingPicker");
+    // Clicking to activate the picker should also not cause a blur.
+    shouldBeTrue("document.activeElement.id === 'date-input'");
+    shouldBe("blurEventCount", "0");
+
+    // Move focus to the text input.
+    for (let i = 0; i < 5; i++)
+        UIHelper.keyDown("\t", ["altKey"]);
+    shouldBeTrue("document.activeElement.id === 'text-input'");
+    shouldBe("blurEventCount", "1");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>
+

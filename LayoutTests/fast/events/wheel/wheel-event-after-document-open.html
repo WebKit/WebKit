@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+async function testScroll()
+{
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.mouseWheelScrollAt(100, 100);
+
+    shouldBeTrue('didFireWheelEvent');
+
+    finishJSTest();
+}
+
+let didFireWheelEvent = false;
+
+description('This tests triggering wheel scroll on an element after document.open. The element should receive wheel event.')
+
+window.addEventListener('load', () => {
+    let target = document.getElementById('target');
+    target.style = 'width: 200px; height: 200px; background-color: silver; margin:20px;'
+    let description = document.getElementById('description');
+    let console = document.getElementById('console');
+
+    target.addEventListener('wheel', (event) => {
+        event.preventDefault();
+        didFireWheelEvent = true;
+    }, false);
+    target.remove();
+
+    setTimeout(async () => {
+        document.open();
+        document.write('<!DOCTYPE html><head><body>');
+        document.close();
+        document.body.append(target, description, console);
+
+        await testScroll();                
+    }, 100);
+
+}, false);
+</script>
+</head>
+<body>
+    <div id="target"></div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

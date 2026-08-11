@@ -1,0 +1,10 @@
+This test checks that using keyboard combinations with [Ctrl], [Alt] or [Cmd] do not trigger :focus-visible matching.
+If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
+Click the element below that says "Click me, then use a keyboard shortcut."
+Press a keyboard combination including [Ctrl], [Alt] or [Cmd], such as Ctrl + y
+If the element has a red background, then the test result is FAILURE. If the element has a green outline, then the test result is SUCCESS.
+
+Click me, then use a keyboard shortcut.
+
+PASS Keyboard focus should match :focus-visible
+

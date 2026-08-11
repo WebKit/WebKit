@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>ImageCapture grabFrame</title>
+    <script src='../../resources/testharness.js'></script>
+    <script src='../../resources/testharnessreport.js'></script>
+</head>
+<body>
+    <video id=video autoplay playsinline></video>
+    <br>
+    <canvas id=canvas1></canvas>
+    <canvas id=canvas2></canvas>
+    <script>
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+    const [track] = stream.getVideoTracks();
+    test.add_cleanup(() => track.stop());
+
+    assert_equals(track.readyState, 'live');
+    track.stop();
+    assert_equals(track.readyState, 'ended');
+
+    const imageCapture = new ImageCapture(track);
+    const promise = imageCapture.grabFrame();
+
+    let result;
+    promise.then(
+        (value) => { result = value; },
+        (error) => { result = error; }
+    );
+
+    await Promise.resolve();
+    assert_equals(result['name'], 'InvalidStateError');
+    return promise_rejects_dom(test, 'InvalidStateError', promise);
+
+}, `'grabFrame()' on an 'ended' track should reject "InvalidStateError"`);
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+    const [track] = stream.getVideoTracks();
+    test.add_cleanup(() => track.stop());
+
+    assert_equals(track.readyState, 'live');
+
+    const imageCapture = new ImageCapture(track);
+    const promise = imageCapture.grabFrame();
+
+    track.stop();
+    assert_equals(track.readyState, 'ended');
+
+    return promise_rejects_dom(test, 'OperationError', promise);
+
+}, `"grabFrame" should reject if the track ends before the 'grabFrame()' promise resolves`);
+
+promise_test(async (test) => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+    const [track] = stream.getVideoTracks();
+    test.add_cleanup(() => track.stop());
+
+    const imageCapture = new ImageCapture(track);
+    let settings = track.getSettings();
+    assert_equals(settings.width, 640);
+
+    let image = await imageCapture.grabFrame();
+    assert_equals(image.width, settings.width, "image width 1");
+    assert_equals(image.height, settings.height, "image height 1");
+
+    await track.applyConstraints({ width: 320 });
+    settings = track.getSettings();
+    assert_equals(settings.width, 320);
+
+    image = await imageCapture.grabFrame();
+    assert_equals(image.width, settings.width, "image width 2");
+    assert_equals(image.height, settings.height, "image height 2");
+}, `The image returned by 'grabFrame()' should have the same size as track settings`);
+
+async function validateImages(test, rotation)
+{
+    if (!window.testRunner)
+        return;
+    testRunner.setMockCameraOrientation(rotation);
+
+    let width = 640;
+    let height = 480;
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width, height, frameRate : 5 } });
+    const [track] = stream.getVideoTracks();
+    test.add_cleanup(() => track.stop());
+
+    video.srcObject = stream;
+    await video.play();
+
+    const imageCapture = new ImageCapture(track);
+    const imagePromise = imageCapture.grabFrame();
+    const videoFramePromise = new Promise(resolve => video.requestVideoFrameCallback(() => resolve(new VideoFrame(video))));
+
+    const image = await imagePromise;
+    const videoFrame = await videoFramePromise;
+    test.add_cleanup(() => videoFrame.close());
+
+    if (rotation === 90 || rotation === 270) {
+        width = 480;
+        height = 640;
+    }
+
+    canvas1.width = width;
+    canvas1.height = height;
+    canvas1.getContext('2d').drawImage(image, 0, 0, width, height);
+    const data1 = canvas1.getContext('2d').getImageData(0, 0, width, height).data;
+
+    canvas2.width = width;
+    canvas2.height = height;
+    if (rotation === 0) {
+       canvas2.getContext('2d').reset();
+       canvas2.getContext('2d').drawImage(videoFrame, 0, 0, 640, 480);
+    } else if (rotation === 90) {
+       canvas2.getContext('2d').reset();
+       canvas2.getContext('2d').translate(240, 320);
+       canvas2.getContext('2d').rotate(Math.PI / 2);
+       canvas2.getContext('2d').drawImage(videoFrame, -320, -240, 640, 480);
+    } else if (rotation === 180) {
+       canvas2.getContext('2d').reset();
+       canvas2.getContext('2d').translate(320, 240);
+       canvas2.getContext('2d').rotate(-Math.PI);
+       canvas2.getContext('2d').drawImage(videoFrame, -320, -240, 640, 480);
+    } else if (rotation === 270) {
+       canvas2.getContext('2d').reset();
+       canvas2.getContext('2d').translate(240, 320);
+       canvas2.getContext('2d').rotate(-Math.PI / 2);
+       canvas2.getContext('2d').drawImage(videoFrame, -320, -240, 640, 480);
+    }
+
+    const data2 = canvas2.getContext('2d').getImageData(0, 0, width, height).data;
+
+    let error = 10;
+    let checkRoughlyEqual = (a, b) => {
+       return Math.abs(a - b) < error;
+    };
+
+    let differenceCounter = 0;
+    for (let i = 0; i < data1.length; i = i + 4) {
+        if (!checkRoughlyEqual(data1[i], data2[i]) || !checkRoughlyEqual(data1[i + 1], data2[i + 1]) || !checkRoughlyEqual(data1[i + 2], data2[i + 2]))
+            differenceCounter++;
+    }
+
+    const threshold = canvas1.width * canvas1.height / 25;
+    assert_less_than(differenceCounter, threshold);
+}
+
+promise_test(async (test) => {
+    return validateImages(test, 0);
+}, "Validate 0 rotated frame");
+
+promise_test(async (test) => {
+    return validateImages(test, 90);
+}, "Validate 90 rotated frame");
+
+promise_test(async (test) => {
+    return validateImages(test, 180);
+}, "Validate 180 rotated frame");
+
+promise_test(async (test) => {
+    return validateImages(test, 270);
+}, "Validate 270 rotated frame");
+    </script>
+</body>
+</html>

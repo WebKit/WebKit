@@ -1,0 +1,3 @@
+
+PASS test document rule with disjunction predicate
+

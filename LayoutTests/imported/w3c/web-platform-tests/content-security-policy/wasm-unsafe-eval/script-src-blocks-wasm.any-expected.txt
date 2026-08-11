@@ -1,0 +1,5 @@
+
+PASS WebAssembly.instantiate() is blocked
+PASS WebAssembly.compile() is blocked
+PASS new WebAssembly.Module() is blocked
+

@@ -1,0 +1,8 @@
+
+PASS webkitMaskBoxImage found on CSSStyleDeclaration
+PASS webkitMaskBoxImageOutset found on CSSStyleDeclaration
+PASS webkitMaskBoxImageRepeat found on CSSStyleDeclaration
+PASS webkitMaskBoxImageSlice found on CSSStyleDeclaration
+PASS webkitMaskBoxImageSource found on CSSStyleDeclaration
+PASS webkitMaskBoxImageWidth found on CSSStyleDeclaration
+

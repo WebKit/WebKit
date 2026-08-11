@@ -1,0 +1,309 @@
+Tests the accName for elements defined in HTML-AAM: Accessible Name Computations By HTML Element. These tests are meant to show whether an element returns a name per the naming mechanism used. See wpt: accname for expanded accName testing.
+
+address element
+
+x
+x
+x
+x
+x
+x
+x
+x
+aside element
+
+x
+x
+x
+x
+x
+x
+x
+x
+blockquote element
+
+x
+x
+x
+x
+x
+x
+x
+x
+details element
+
+x
+x
+x
+x
+x
+x
+x
+x
+figure element
+
+x
+x
+x
+x
+x
+x
+x
+x
+footer element
+
+x
+x
+x
+x
+x
+x
+x
+x
+form element
+
+x
+x
+x
+x
+x
+x
+x
+x
+hgroup element
+
+x
+
+y
+
+x
+
+y
+
+x
+
+y
+
+x
+
+y
+
+x
+
+y
+
+x
+
+y
+
+x
+
+y
+
+x
+
+y
+
+hr element
+
+ol element
+
+x
+x
+x
+x
+x
+x
+x
+x
+main element
+
+x
+x
+x
+x
+x
+x
+x
+x
+menu element
+
+x
+x
+x
+x
+x
+x
+x
+x
+nav element
+
+x
+x
+x
+x
+x
+x
+x
+x
+search element
+
+x
+x
+x
+x
+x
+x
+x
+x
+section element
+
+x
+x
+x
+x
+x
+x
+x
+x
+ul element
+
+x
+x
+x
+x
+x
+x
+x
+x
+labelledby
+
+PASS address no name
+PASS address aria-label
+PASS address aria-labelledby
+PASS address title
+PASS address aria-labelledby vs aria-label vs title
+PASS address aria-labelledby vs aria-label
+PASS address aria-labelledby vs title
+PASS address aria-label vs title
+PASS aside no name
+PASS aside aria-label
+PASS aside aria-labelledby
+PASS aside title
+PASS aside aria-labelledby vs aria-label vs title
+PASS aside aria-labelledby vs aria-label
+PASS aside aria-labelledby vs title
+PASS aside aria-label vs title
+PASS blockquote no name
+PASS blockquote aria-label
+PASS blockquote aria-labelledby
+PASS blockquote title
+PASS blockquote aria-labelledby vs aria-label vs title
+PASS blockquote aria-labelledby vs aria-label
+PASS blockquote aria-labelledby vs title
+PASS blockquote aria-label vs title
+PASS details no name
+PASS details aria-label
+PASS details aria-labelledby
+PASS details title
+PASS details aria-labelledby vs aria-label vs title
+PASS details aria-labelledby vs aria-label
+PASS details aria-labelledby vs title
+PASS details aria-label vs title
+PASS figure no name
+PASS figure aria-label
+PASS figure aria-labelledby
+PASS figure title
+PASS figure aria-labelledby vs aria-label vs title
+PASS figure aria-labelledby vs aria-label
+PASS figure aria-labelledby vs title
+PASS figure aria-label vs title
+PASS footer no name
+PASS footer aria-label
+PASS footer aria-labelledby
+PASS footer title
+PASS footer aria-labelledby vs aria-label vs title
+PASS footer aria-labelledby vs aria-label
+PASS footer aria-labelledby vs title
+PASS footer aria-label vs title
+PASS form no name
+PASS form aria-label
+PASS form aria-labelledby
+PASS form title
+PASS form aria-labelledby vs aria-label vs title
+PASS form aria-labelledby vs aria-label
+PASS form aria-labelledby vs title
+PASS form aria-label vs title
+PASS hgroup no name
+PASS hgroup aria-label
+PASS hgroup aria-labelledby
+PASS hgroup title
+PASS hgroup aria-labelledby vs aria-label vs title
+PASS hgroup aria-labelledby vs aria-label
+PASS hgroup aria-labelledby vs title
+PASS hgroup aria-label vs title
+PASS hr no name
+PASS hr aria-label
+PASS hr aria-labelledby
+PASS hr title
+PASS hr aria-labelledby vs aria-label vs title
+PASS hr aria-labelledby vs aria-label
+PASS hr aria-labelledby vs title
+PASS hr aria-label vs title
+PASS ol no name
+PASS ol aria-label
+PASS ol aria-labelledby
+PASS ol title
+PASS ol aria-labelledby vs aria-label vs title
+PASS ol aria-labelledby vs aria-label
+PASS ol aria-labelledby vs title
+PASS ol aria-label vs title
+PASS main no name
+PASS main aria-label
+PASS main aria-labelledby
+PASS main title
+PASS main aria-labelledby vs aria-label vs title
+PASS main aria-labelledby vs aria-label
+PASS main aria-labelledby vs title
+PASS main aria-label vs title
+PASS menu no name
+PASS menu aria-label
+PASS menu aria-labelledby
+PASS menu title
+PASS menu aria-labelledby vs aria-label vs title
+PASS menu aria-labelledby vs aria-label
+PASS menu aria-labelledby vs title
+PASS menu aria-label vs title
+PASS nav no name
+PASS nav aria-label
+PASS nav aria-labelledby
+PASS nav title
+PASS nav aria-labelledby vs aria-label vs title
+PASS nav aria-labelledby vs aria-label
+PASS nav aria-labelledby vs title
+PASS nav aria-label vs title
+PASS search no name
+PASS search aria-label
+PASS search aria-labelledby
+PASS search title
+PASS search aria-labelledby vs aria-label vs title
+PASS search aria-labelledby vs aria-label
+PASS search aria-labelledby vs title
+PASS search aria-label vs title
+PASS section no name
+PASS section aria-label
+PASS section aria-labelledby
+PASS section title
+PASS section aria-labelledby vs aria-label vs title
+PASS section aria-labelledby vs aria-label
+PASS section aria-labelledby vs title
+PASS section aria-label vs title
+PASS ul no name
+PASS ul aria-label
+PASS ul aria-labelledby
+PASS ul title
+PASS ul aria-labelledby vs aria-label vs title
+PASS ul aria-labelledby vs aria-label
+PASS ul aria-labelledby vs title
+PASS ul aria-label vs title
+

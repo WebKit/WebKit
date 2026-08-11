@@ -1,0 +1,9 @@
+
+PASS e.style['page'] = "auto" should set the property value
+PASS e.style['page'] = "small_page" should set the property value
+PASS e.style['page'] = "large_page" should set the property value
+PASS e.style['page'] = "auto small_page" should not set the property value
+PASS e.style['page'] = "large_page auto" should not set the property value
+PASS e.style['page'] = "small_page large_page" should not set the property value
+PASS e.style['page'] = "1cm" should not set the property value
+

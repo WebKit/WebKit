@@ -1,0 +1,8 @@
+
+
+PASS select[multiple][style="writing-mode: horizontal-tb"] scrolls correctly
+PASS select[multiple][style="writing-mode: vertical-lr"] scrolls correctly
+PASS select[multiple][style="writing-mode: vertical-rl"] scrolls correctly
+PASS select[multiple][style="writing-mode: sideways-lr"] scrolls correctly
+PASS select[multiple][style="writing-mode: sideways-rl"] scrolls correctly
+

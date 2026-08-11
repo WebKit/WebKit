@@ -1,0 +1,199 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html><body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+let currentIdentifier = 0x4000 + Math.floor(Math.random() * 0x100000);
+function genId() { return currentIdentifier++; }
+
+async function main() {
+    if (!window.IPC)
+        return;
+
+    const { CoreIPC, ArgumentSerializer, StreamConnection } = await import('./coreipc.js');
+
+    // CoreIPC.js aliases RetainPtr<CGColorSpaceRef> -> CoreIPCCGColorSpace, but the
+    // generated coder wraps it in a leading `bool isEngaged`. Override the field type
+    // so serializeOptional inserts the bool.
+    CoreIPC.typeInfo['WebCore::PlatformColorSpace'][0].type =
+        'std::optional<WebKit::CoreIPCCGColorSpace>';
+
+    // CoreIPC.js's StreamConnection uses a 0.1s defaultTimeout which silently drops
+    // messages on a busy machine; use a longer one.
+    function newStreamConnectionLongTimeout() {
+        const pair = IPC.createStreamClientConnection(14, 60);
+        const sc = Object.create(StreamConnection.prototype);
+        sc.handle = pair[1];
+        sc.connection = pair[0];
+        sc.connection.open();
+        sc.newInterface = (name, id) => {
+            const iface = { connection: sc.connection };
+            for (const [k, v] of Object.entries(CoreIPC.messages)) {
+                const us = k.indexOf('_');
+                if (k.substring(0, us) !== name)
+                    continue;
+                const fn = k.substring(us + 1);
+                if (v.replyArguments === null) {
+                    iface[fn] = (args) => {
+                        const s = ArgumentSerializer.serializeArguments(v.arguments, args);
+                        sc.connection.sendMessage(id, v.name, s);
+                    };
+                } else {
+                    iface[fn] = (args, cb) => {
+                        const s = ArgumentSerializer.serializeArguments(v.arguments, args);
+                        sc.connection.sendWithAsyncReply(id, v.name, s, (r) => cb && cb(r));
+                    };
+                }
+            }
+            return iface;
+        };
+        return sc;
+    }
+
+    function createRemoteRenderingBackend() {
+        const streamConnection = newStreamConnectionLongTimeout();
+        const renderingBackendIdentifier = genId();
+        CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+            renderingBackendIdentifier: renderingBackendIdentifier,
+            connectionHandle: streamConnection
+        });
+        const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+        const didInitializeReply = streamConnection.connection.waitForMessage(
+            renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 5);
+        streamConnection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
+        return { streamConnection, remoteRenderingBackend, remoteRenderingBackendIdentifier: renderingBackendIdentifier };
+    }
+
+    function createRemoteImageBuffer(rb) {
+        const imageBufferIdentifier = genId();
+        const graphicsContextIdentifier = genId();
+        rb.remoteRenderingBackend.CreateImageBuffer({
+            logicalSize: { width: 64, height: 64 },
+            renderingMode: 0,
+            renderingPurpose: 0,
+            resolutionScale: 1.0,
+            colorSpace: { serializableColorSpace: { alias: { optionalValue: { m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpace', variant: 19 } } } } } },
+            bufferFormat: { pixelFormat: 2, useLosslessCompression: 1 },
+            identifier: imageBufferIdentifier,
+            contextIdentifier: graphicsContextIdentifier
+        });
+        return {
+            remoteGraphicsContext: rb.streamConnection.newInterface("RemoteGraphicsContext", graphicsContextIdentifier),
+            graphicsContextIdentifier
+        };
+    }
+
+    function createDisplayListRecorder(rb) {
+        const recorderIdentifier = genId();
+        rb.remoteRenderingBackend.CreateDisplayListRecorder({ identifier: recorderIdentifier });
+        return {
+            remoteGraphicsContext: rb.streamConnection.newInterface("RemoteGraphicsContext", recorderIdentifier),
+            recorderIdentifier
+        };
+    }
+
+    function createDisplayListFromRecorder(rb, recorderIdentifier) {
+        const displayListIdentifier = genId();
+        rb.remoteRenderingBackend.SinkDisplayListRecorderIntoDisplayList({
+            identifier: recorderIdentifier,
+            displayListIdentifier
+        });
+        return { displayListIdentifier };
+    }
+
+    function makeControlPartArgs(variantType, type, sizePx) {
+        const variant = (type === undefined) ? {} : { type: type };
+        return {
+            part: { subclasses: { variantType: variantType, variant: variant } },
+            borderRect: {
+                rect: { location: { x: 0, y: 0 }, size: { width: sizePx, height: sizePx } },
+                radiiTopLeft:     { width: 0, height: 0 },
+                radiiTopRight:    { width: 0, height: 0 },
+                radiiBottomLeft:  { width: 0, height: 0 },
+                radiiBottomRight: { width: 0, height: 0 }
+            },
+            deviceScaleFactor: 1,
+            style: {
+                states: 0, fontSize: 13, zoomFactor: 1,
+                accentColor: { data: {} }, textColor: { data: {} },
+                borderWidth: { top: 0, right: 0, bottom: 0, left: 0 }
+            }
+        };
+    }
+
+    function recordControlParts(ctx, sizePx, count) {
+        // Mix part types so the singleton ControlFactoryMac would touch several
+        // distinct lazy NSCell members and the shared WebControlView on every replay.
+        // StyleAppearance integer values match Source/WebCore/platform/StyleAppearance.h
+        // on main: None=0, Auto=1, Base=2, BaseSelect=3, Checkbox=4, Radio=5,
+        // PushButton=6, SquareButton=7, Button=8, DefaultButton=9. Each value must be
+        // valid for its ControlPart subclass (ButtonPart accepts Button/DefaultButton/
+        // PushButton/SquareButton; ToggleButtonPart accepts Checkbox/Radio) or CoreIPC's
+        // serializer throws a SerializationError (visible text-diff failure) rather than
+        // silently passing.
+        const items = [
+            ['WebCore::ButtonPart', 8],          // Button         -> m_buttonCell
+            ['WebCore::ButtonPart', 9],          // DefaultButton  -> m_defaultButtonCell
+            ['WebCore::ButtonPart', 6],          // PushButton     -> m_buttonCell
+            ['WebCore::ToggleButtonPart', 4],    // Checkbox       -> m_checkboxCell
+            ['WebCore::ToggleButtonPart', 5],    // Radio          -> m_radioCell
+            ['WebCore::MenuListPart', undefined],
+            ['WebCore::SearchFieldPart', undefined],
+        ];
+        for (let i = 0; i < count; i++) {
+            const [vt, ty] = items[i % items.length];
+            ctx.DrawControlPart(makeControlPartArgs(vt, ty, sizePx));
+        }
+    }
+
+    // For one rendering backend: build innerDL (with DrawControlPart items), wrap it in
+    // outerDL (with a DrawDisplayList(innerDL) item), and create a CG-backed ImageBuffer
+    // whose RemoteGraphicsContext can replay outerDL.
+    function setupBackend(sizePx) {
+        const rb = createRemoteRenderingBackend();
+
+        const inner = createDisplayListRecorder(rb);
+        recordControlParts(inner.remoteGraphicsContext, sizePx, 30);
+        const innerDL = createDisplayListFromRecorder(rb, inner.recorderIdentifier);
+
+        const outer = createDisplayListRecorder(rb);
+        outer.remoteGraphicsContext.DrawDisplayList({ identifier: innerDL.displayListIdentifier });
+        const outerDL = createDisplayListFromRecorder(rb, outer.recorderIdentifier);
+
+        const ib = createRemoteImageBuffer(rb);
+
+        return { rb, ib, outerDL: outerDL.displayListIdentifier };
+    }
+
+    // Race nested DrawDisplayList replay across multiple RemoteRenderingBackend
+    // work-queue threads. Before the fix, the inner replay falls back to
+    // ControlFactory::singleton() and concurrently mutates shared NSCell state.
+    const A = setupBackend(20);
+    const B = setupBackend(200);
+    const C = setupBackend(40);
+    const D = setupBackend(120);
+
+    for (let i = 0; i < 0x40; i++) {
+        A.ib.remoteGraphicsContext.DrawDisplayList({ identifier: A.outerDL });
+        B.ib.remoteGraphicsContext.DrawDisplayList({ identifier: B.outerDL });
+        C.ib.remoteGraphicsContext.DrawDisplayList({ identifier: C.outerDL });
+        D.ib.remoteGraphicsContext.DrawDisplayList({ identifier: D.outerDL });
+    }
+
+    const deadline = performance.now() + 2000;
+    while (performance.now() < deadline) { }
+    for (const backend of [A, B, C, D])
+        backend.rb.streamConnection.connection.invalidate();
+}
+
+setTimeout(() => {
+    main().catch(e => console.log('FAIL: ' + e + '\n' + (e.stack || '')))
+          .finally(() => window.testRunner?.notifyDone());
+}, 0);
+setTimeout(() => window.testRunner?.notifyDone(), 20000);
+</script>
+</body></html>

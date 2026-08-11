@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const WIDTH = 320, HEIGHT = 240;
+const MAX_ITERATIONS = 3000;
+
+async function getVP8Keyframe(w, h) {
+    return new Promise((resolve, reject) => {
+        const chunks = [];
+        const enc = new VideoEncoder({
+            output: (chunk) => chunks.push(chunk),
+            error: reject
+        });
+        enc.configure({
+            codec: 'vp8',
+            width: w,
+            height: h,
+            bitrate: 500000,
+            framerate: 30
+        });
+
+        const canvas = new OffscreenCanvas(w, h);
+        const ctx = canvas.getContext('2d');
+        // Draw some content so it's a real frame
+        ctx.fillStyle = '#336699';
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#FF0000';
+        ctx.fillRect(10, 10, 50, 50);
+        const bitmap = canvas.transferToImageBitmap();
+        const vf = new VideoFrame(bitmap, { timestamp: 0 });
+        enc.encode(vf, { keyFrame: true });
+        vf.close();
+        bitmap.close();
+
+        enc.flush().then(() => {
+            enc.close();
+            if (!chunks.length) { reject(new Error('No encoded chunks')); return; }
+            const buf = new ArrayBuffer(chunks[0].byteLength);
+            chunks[0].copyTo(buf);
+            resolve(buf);
+        }).catch(reject);
+    });
+}
+
+async function getVideoFrame(test)
+{
+    const vp8Data = await getVP8Keyframe(WIDTH, HEIGHT);
+    let resolveCallback;
+    const promise = new Promise((resolve, reject)  => {
+        resolveCallback = resolve;
+        test.step_timeout(() => reject("decoding timed out"), 5000);
+    });
+    const raceDecoder = new VideoDecoder({
+        output: frame => resolveCallback(frame),
+        error: (e) => {}
+    });
+    raceDecoder.configure({ codec: 'vp8' });
+    raceDecoder.decode(new EncodedVideoChunk({
+        type: 'key',
+        timestamp: 0,
+        data: vp8Data
+    }));
+
+    return promise;
+}
+
+promise_test(async t => {
+    let shouldDelay = false;
+    for (let i = 0; i < 10; ++i) {
+        const frame = await getVideoFrame(t);
+        t.add_cleanup(() => frame.close());
+
+        const raceEncoder = new VideoEncoder({
+            output: () => {},
+            error: (e) => {}
+        });
+        raceEncoder.configure({
+            codec: 'vp8',
+            width: WIDTH,
+            height: HEIGHT,
+            bitrate: 500000,
+            framerate: 30
+        });
+
+        const encodeCloneEncoder = new VideoEncoder({
+            output: () => {},
+            error: (e) => {}
+        });
+        encodeCloneEncoder.configure({
+            codec: 'vp8',
+            width: WIDTH,
+            height: HEIGHT,
+            bitrate: 500000,
+            framerate: 30
+        });
+
+        raceEncoder.encode(frame, { keyFrame: true });
+        if (shouldDelay)
+            await new Promise(resolve => t.step_timeout(resolve, 1));
+        shouldDelay = !shouldDelay;
+
+        const frameClone = new VideoFrame(frame, { timestamp: 1000 });
+        t.add_cleanup(() => frameClone.close());
+
+        encodeCloneEncoder.encode(frameClone, { keyFrame: true });
+    }
+});
+</script>
+</body>
+</html>

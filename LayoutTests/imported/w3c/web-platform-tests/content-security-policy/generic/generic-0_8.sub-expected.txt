@@ -1,0 +1,6 @@
+test wildcard host name matching (asterisk as a subdomain of the current domain)
+
+
+PASS Test that script does not fire violation event
+PASS Wildcard host matching works.
+

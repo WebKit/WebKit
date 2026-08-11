@@ -1,0 +1,4 @@
+a
+
+PASS The intersectionRect of an img element overflowing is computed correctly
+

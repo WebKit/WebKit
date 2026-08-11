@@ -1,0 +1,229 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% USE Bugzilla %]
+[% cgi = Bugzilla.cgi %]
+
+[% PROCESS "global/js-products.html.tmpl" %]
+
+[% PROCESS global/header.html.tmpl
+  title="Request Queue"
+  generate_api_token = 1
+  onload="var f = document.request_form; selectProduct(f.product, f.component, 'Any');"
+  javascript_urls=["js/productform.js", "js/field.js"]
+  style_urls = ['skins/standard/buglist.css']
+  yui = ['autocomplete']
+%]
+
+<p>
+When you are logged in, only requests made by you or addressed to you
+are shown by default.  You can change the criteria using the form below.
+When you are logged out, all pending requests that are not restricted
+to some group are shown by default.
+</p>
+
+<form id="request_form" name="request_form" action="request.cgi" method="get">
+  <input type="hidden" name="action" value="queue">
+
+  <table id="filtering">
+    <tr>
+      <th>Requester:</th>
+      <td>
+        [% INCLUDE global/userselect.html.tmpl
+           id => "requester"
+           name => "requester"
+           value => cgi.param('requester')
+           size => 20
+           emptyok => 1
+           field_title => "Requester's email address"
+        %]
+      </td>
+      <th>Product:</th>
+      <td>
+        [% INCLUDE "global/product-select.html.tmpl"
+           id       => "product"
+           name     => "product"
+           add      => "Any"
+           onchange => "selectProduct(this, this.form.component, 'Any');"
+        %]
+      </td>
+      <th>Flag:</th>
+      <td>
+        [% PROCESS "global/select-menu.html.tmpl"
+                    name="type"
+                    options=types
+                    default=cgi.param('type') %]
+      </td>
+
+      [%# We could let people see a "queue" of non-pending requests. %]
+      <!--
+      <th>Status:</th>
+      <td>
+        [%# PROCESS "global/select-menu.html.tmpl"
+                    name="status"
+                    options=["all", "?", "+-", "+", "-"]
+                    default=cgi.param('status') %]
+      </td>
+      -->
+
+    </tr>
+    <tr>
+      <th>Requestee:</th>
+      <td>
+        [% INCLUDE global/userselect.html.tmpl
+           id => "requestee"
+           name => "requestee"
+           value => cgi.param('requestee')
+           size => 20
+           emptyok => 1
+           hyphenok => 1
+           field_title => "Requestee's email address or \"-\" (hyphen) for requests with no requestee"
+        %]
+      </td>
+      <th>Component:</th>
+      <td>
+        <select name="component">
+          <option value="">Any</option>
+          [% FOREACH comp = components %]
+            <option value="[% comp FILTER html %]" [% "selected" IF cgi.param('component') == comp %]>
+              [% comp FILTER html %]</option>
+          [% END %]
+        </select>
+      </td>
+      <th>Group By:</th>
+      <td>
+        [% groups = {
+            "Requester" => 'requester' ,
+            "Requestee" => 'requestee',
+            "Flag" => 'type' ,
+            "Product/Component" => 'category'
+          } %]
+        [% PROCESS "global/select-menu.html.tmpl" name="group" options=groups default=cgi.param('group') %]
+      </td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>
+        <select id="do_union" name="do_union">
+          <option value="0">Match the requester AND requestee</option>
+          <option value="1" [% 'selected="selected"' IF cgi.param('do_union') %]>
+            Match the requester OR requestee</option>
+        </select>
+      </td>
+      <td colspan="3"></td>
+      <td><input type="submit" id="filter" value="Filter"></td>
+    </tr>
+  </table>
+</form>
+
+[% column_headers = {
+      "type"       => "Flag" ,
+      "status"     => "Status" ,
+      "bug"        => "$terms.Bug" ,
+      "attachment" => "Attachment" ,
+      "requester"  => "Requester" ,
+      "requestee"  => "Requestee" ,
+      "created"    => "Created" ,
+      "category"   => "Product/Component"    } %]
+
+[% DEFAULT display_columns = ["requester", "requestee", "type", "bug", "attachment", "created"]
+           group_field     = "Requestee"
+           group_value     = ""
+%]
+
+[% IF debug %]
+  <p>[% query FILTER html %]</p>
+[% END %]
+
+[% IF requests.size == 0 %]
+  <p>
+    No requests.
+  </p>
+[% ELSE %]
+  [% FOREACH request = requests %]
+    [% IF request.$group_field != group_value || loop.first %]
+      [% group_value = request.$group_field %]
+      [% PROCESS display_buglist UNLESS loop.first %]
+      [% PROCESS start_new_table %]
+    [% END %]
+    [% buglist.${request.bug_id} = 1 %]
+    <tr>
+      [% FOREACH column = display_columns %]
+        [% NEXT IF column == group_field || excluded_columns.contains(column) %]
+        <td>
+          [% PROCESS "display_$column" %]
+          [% Hook.process('after_column') %]
+        </td>
+      [% END %]
+    </tr>
+  [% END %]
+  [% PROCESS display_buglist %]
+  <br><br>
+  <a href="request.cgi?[% urlquerypart FILTER html %]&amp;ctype=csv">View entire list as CSV</a>
+[% END %]
+
+[% PROCESS global/footer.html.tmpl %]
+
+[% BLOCK start_new_table %]
+  [% buglist = {} %]
+
+  <h3>[% column_headers.$group_field %]: 
+    [%+ (request.$group_field || "None") FILTER email FILTER html %]</h3>
+  <table class="requests">
+    <tr>
+      [% FOREACH column = display_columns %]
+        [% NEXT IF column == group_field || excluded_columns.contains(column) %]
+        <th>[% column_headers.$column %]</th>
+      [% END %]
+    </tr>
+[% END %]
+
+[% BLOCK display_type %]
+  [% request.type FILTER html %]
+[% END %]
+
+[% BLOCK display_status %]
+  [% request.status %]
+[% END %]
+
+[% BLOCK display_bug %]
+  <a href="show_bug.cgi?id=[% request.bug_id %]"
+     [%- ' class="bz_secure"' IF request.restricted %]>
+    [% request.bug_id %]: [%+ request.bug_summary FILTER html %]</a>
+[% END %]
+
+[% BLOCK display_attachment %]
+  [% IF request.attach_id %]
+[%# if WEBKIT_CHANGES #%]
+    <a href="attachment.cgi?id=[% request.attach_id %]&amp;action=review">
+[%# endif // WEBKIT_CHANGES #%]
+      [% request.attach_id %]: [%+ request.attach_summary FILTER html %]</a>
+  [% ELSE %]
+    N/A
+  [% END %]
+[% END %]
+
+[% BLOCK display_requestee %]
+  [% request.requestee FILTER email FILTER html %]
+[% END %]
+
+[% BLOCK display_requester %]
+  [% request.requester FILTER email FILTER html %]
+[% END %]
+
+[% BLOCK display_created %]
+  [% request.created FILTER time %]
+[% END %]
+
+[% BLOCK display_buglist %]
+  </table>
+  [% NEXT UNLESS buglist.keys.size %]
+  <a href="buglist.cgi?bug_id=
+           [%- buglist.keys.nsort.join(",") FILTER html %]">View as
+  [%+ terms.bug %] list</a>
+[% END %]

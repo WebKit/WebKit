@@ -1,0 +1,12 @@
+
+Harness Error (FAIL), message = TypeError: Import assertion type "css" is not valid
+
+NOTRUN inline, 200, parser-inserted
+NOTRUN inline, 404, parser-inserted
+NOTRUN src, 200, parser-inserted
+NOTRUN src, 404, parser-inserted
+NOTRUN src, 200, not parser-inserted
+NOTRUN src, 404, not parser-inserted
+NOTRUN inline, 200, not parser-inserted
+NOTRUN inline, 404, not parser-inserted
+

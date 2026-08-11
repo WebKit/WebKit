@@ -1,0 +1,8 @@
+
+PASS overallProgress of a newly created animation without an effect is unresolved
+PASS overallProgress of an animation whose currentTime is unresolved is unresolved.
+PASS overallProgress of an animation whose effect's endTime is zero is zero if its currentTime is negative.
+PASS overallProgress of an animation whose effect's endTime is zero is one if its currentTime is non-negative.
+PASS overallProgress of an animation whose effect's endTime is infinity is zero.
+PASS overallProgress of an animation is calculated by currentTime / effect endTime.
+

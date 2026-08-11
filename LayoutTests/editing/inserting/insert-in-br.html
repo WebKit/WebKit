@@ -1,0 +1,10 @@
+<br id="id_0"><bdo id="id_1" contentEditable>
+<script>
+    var parent = document.getElementById('id_0')
+    parent.appendChild(document.createElement('svg_desc'))
+    parent = document.getElementById('id_1')
+    parent.focus()
+    document.body.innerText = "Tests inserting elements in br. The test passes if WebKit doesn't crash or hit an assertion.";
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>

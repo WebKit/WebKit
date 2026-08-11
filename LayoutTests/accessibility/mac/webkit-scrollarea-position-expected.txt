@@ -1,0 +1,13 @@
+This test verifies that the scroll area (viewport) and web area have correct screen positions, and that the scroll area position remains fixed after scrolling.
+
+PASS: scroll.role === 'AXRole: AXScrollArea'
+PASS: web.role === 'AXRole: AXWebArea'
+PASS: scroll.y === initialScrollY
+PASS: web.y > initialWebY === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+text
+
+text

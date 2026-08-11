@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>
+    Tests for providing `disbursementRequest` as part of
+    `ApplePayModifier`.
+</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<body>
+    <script>
+        setup({ explicit_done: true, explicit_timeout: true });
+
+        test((test) => {
+            const method = validPaymentMethod();
+            try {
+                method.data.features = ["invalidFeatureThatsNotDisbursements"];
+                new PaymentRequest([method], validPaymentDetails());
+                assert_unreached("Should have thrown with an invalid feature");
+            } catch {
+                method.data.features = ["paymentRequestDisbursements"];
+                new PaymentRequest([method], validPaymentDetails());
+            }
+        }, "Should have a feature for `disbursementRequest`.");
+
+        const RESOLVED_PROMISE = Promise.resolve({});
+
+        const lineItems = {
+            total: {
+                label: "Chime",
+                amount: "15.00",
+            },
+            ifo: {
+                label: "Instant Transfer Fee",
+                amount: "0.15",
+                disbursementLineItemType: "instantFundsOutFee",
+            },
+            disbursement: {
+                label: "Total Amount",
+                amount: "14.85",
+                disbursementLineItemType: "disbursement",
+            },
+        };
+
+        const validLineItems = [
+            lineItems.total,
+            lineItems.ifo,
+            lineItems.disbursement,
+        ];
+
+        function modifiersWithData(data, lineItems) {
+            data.additionalLineItems = lineItems;
+            return [
+                {
+                    supportedMethods: "https://apple.com/apple-pay",
+                    data: { ...data },
+                },
+            ];
+        }
+
+        function testValidDisbursementRequest(description, options) {
+            const {
+                initialDisbursementRequest,
+                expectedDisbursementRequest,
+            } = options;
+            user_activation_test(async (test) => {
+                const detailsInit = {
+                    total: {
+                        label: "Disbursement",
+                        amount: {
+                            value: "14.85",
+                            currency: "USD",
+                        },
+                    },
+                };
+                if (initialDisbursementRequest !== undefined) {
+                    detailsInit.modifiers = modifiersWithData(
+                        {
+                            disbursementRequest:
+                                initialDisbursementRequest,
+                        },
+                        validLineItems
+                    );
+                }
+
+                const request = new PaymentRequest(
+                    [validPaymentMethod()],
+                    detailsInit
+                );
+                request.addEventListener("merchantvalidation", (event) => {
+                    event.complete(RESOLVED_PROMISE);
+                });
+
+                request.addEventListener("shippingaddresschange", (event) => {
+                    event.updateWith({});
+                    internals.mockPaymentCoordinator.changePaymentMethod({
+                        type: "debit",
+                    });
+                });
+
+                request.addEventListener("paymentmethodchange", (event) => {
+                    event.updateWith(RESOLVED_PROMISE);
+                    internals.mockPaymentCoordinator.acceptPayment();
+                });
+
+                const response = await request.show();
+
+                const { disbursementRequest } =
+                    internals.mockPaymentCoordinator;
+                const assert = disbursementRequest
+                    ? assert_object_equals
+                    : assert_equals;
+                assert(
+                    disbursementRequest,
+                    expectedDisbursementRequest,
+                    "check that the `DisbursementRequest` matches"
+                );
+                await response.complete("success");
+            }, description + " as part of the request.");
+        }
+
+        function testInvalidDisbursementRequest(
+            description,
+            { disbursementRequest, expectedErrorType }
+        ) {
+            user_activation_test(async (test) => {
+                const detailsInit = {
+                    total: {
+                        label: "Disbursement",
+                        amount: {
+                            value: "14.85",
+                            currency: "USD",
+                        },
+                    },
+                };
+
+                if (disbursementRequest) {
+                    detailsInit.modifiers = modifiersWithData(
+                        { disbursementRequest },
+                        validLineItems
+                    );
+                }
+
+                const request = new PaymentRequest(
+                    [validPaymentMethod()],
+                    detailsInit
+                );
+
+                try {
+                    await request.show();
+                } catch (e) {
+                    assert_true(
+                        e instanceof expectedErrorType,
+                        `Expected ${expectedErrorType}`
+                    );
+                }
+            }, description + " as part of the request.");
+        }
+
+        testValidDisbursementRequest("Should propagate all data", {
+            initialDisbursementRequest: {},
+            expectedDisbursementRequest: {},
+        });
+
+        testValidDisbursementRequest(
+            "Should propagate recipient contact information",
+            {
+                initialDisbursementRequest: {
+                    requiredRecipientContactFields: ["email", "name"],
+                },
+                expectedDisbursementRequest: {
+                    requiredRecipientContactFields: ["email", "name"],
+                },
+            }
+        );
+
+        testInvalidDisbursementRequest(
+            "Should error when incorrect `requiredRecipientContactFields` are provided",
+            {
+                disbursementRequest: {
+                    requiredRecipientContactFields: ["invalid1", "invalid2"],
+                },
+                expectedErrorType: TypeError,
+            }
+        );
+
+        // We don't need invalidation tests since a disbursement request is an empty dictionary.
+
+        done();
+    </script>
+</body>

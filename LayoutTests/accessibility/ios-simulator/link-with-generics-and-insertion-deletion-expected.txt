@@ -1,0 +1,13 @@
+This test ensures we consider links to be leaf accessibility elements if they only contain text, generics, insertions, and deletions.
+
+Found accessibility element with role Link
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+10% OFF
+Foobar 9000
+Category Name
+$430.10
+$550.00
+

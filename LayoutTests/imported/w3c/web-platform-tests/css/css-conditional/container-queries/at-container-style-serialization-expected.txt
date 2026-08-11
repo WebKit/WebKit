@@ -1,0 +1,19 @@
+
+PASS Normalize spaces
+PASS Empty declaration value - spaces
+PASS Empty declaration value
+PASS No declaration value
+PASS Unknown CSS property after 'or'
+PASS Not a style function with space before '('
+PASS Spaces preserved in custom property value
+PASS Original string number in custom property value
+PASS Single extra parens
+PASS Double extra parens
+PASS Multiple extra parens
+PASS Extra parens and Not
+PASS Subexpressions and extra parens
+PASS Multiple subexpressions and extra parens
+PASS Multiple subexpressions and unknowns
+PASS Escape custom property identifier
+PASS Escape custom property identifier - range syntax
+

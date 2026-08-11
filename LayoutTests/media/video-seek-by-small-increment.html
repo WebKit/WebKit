@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+            var seekedEventCount = 0;
+            var increment = 0;
+
+            function seekIncrement()
+            {
+                // We want to verify that seeking by an increment smaller than the test movie's time scale
+                // (the smallest unit of time in that file) succeeds. test.mp4 has a time scale of 2500, 
+                // 0.0004 seconds, so start with that and decrease by half each time.
+                if (!increment)
+                    increment = 0.0004;
+                else
+                    increment /= 2;
+                return increment;
+            }
+
+            function seeked()
+            {
+                if (++seekedEventCount == 8) {
+                    consoleWrite("");
+                    endTest();
+                    return;
+                }
+                attemptSeek();
+            }
+
+            function attemptSeek()
+            {
+                var increment = seekIncrement();
+                consoleWrite("<br>** Seeking by " + increment);
+                video.currentTime += increment;
+            }
+
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+
+                waitForEvent('canplaythrough', attemptSeek);
+                waitForEvent('seeked', seeked);
+                waitForEvent('seeking');
+                waitForEvent('play');
+                waitForEvent('pause');
+            }
+        </script>
+    </head>
+    <body>
+        <video controls></video>
+        <p>Test seeking by very small increments.</p>
+        <script>start()</script>
+    </body>
+</html>

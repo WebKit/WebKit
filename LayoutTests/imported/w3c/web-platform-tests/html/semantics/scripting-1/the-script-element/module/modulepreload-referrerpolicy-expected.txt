@@ -1,0 +1,9 @@
+
+PASS Modulepreload should use default referrer policy
+PASS Modulepreload with no-referrer policy should not send referrer
+PASS Modulepreload with origin policy should send origin-only referrer
+PASS Modulepreload with same-origin policy should send full referrer for same-origin requests
+PASS Modulepreload with strict-origin policy should send origin-only referrer
+PASS Modulepreload with strict-origin-when-cross-origin policy should send full referrer for same-origin requests
+PASS Modulepreload with unsafe-url policy should send full referrer
+

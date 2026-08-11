@@ -1,0 +1,3 @@
+
+PASS offsetRotate responsive to inherited offsetRotate changes
+

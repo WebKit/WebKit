@@ -1,0 +1,4 @@
+
+FAIL Test isConfigSupported() and configure() using a SharedArrayBuffer promise_test: Unhandled rejection with value: object "TypeError: SharedArrayBuffer is not allowed"
+FAIL Test isConfigSupported() and configure() using a Uint8Array(SharedArrayBuffer) promise_test: Unhandled rejection with value: object "TypeError: SharedArrayBuffer is not allowed"
+

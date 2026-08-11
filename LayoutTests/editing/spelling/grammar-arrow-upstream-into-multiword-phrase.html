@@ -1,0 +1,82 @@
+<!DOCTYPE html><!-- webkit-test-runner [ spellCheckingDots=true ] -->
+<html lang="en">
+<meta charset="UTF-8">
+<style>
+div[contenteditable] {
+    font-family: monospace;
+    font-size: 32px;
+    width: 100%;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+
+<script>
+jsTestIsAsync = true;
+
+description(`This test verifies that the grammar correction UI does not appear when
+    arrowing into a multi-word grammar marker from upstream (left).
+    This test requires WebKitTestRunner to run.`);
+
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(true);
+
+async function runTest()
+{
+    const editor = document.getElementById("editor");
+    const grammarText = "Let's go in then store";
+
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+
+    document.execCommand("insertText", false, grammarText);
+    document.execCommand("insertParagraph");
+    await UIHelper.ensurePresentationUpdate();
+
+    const selection = window.getSelection();
+    selection.collapse(editor.firstChild, 0);
+
+    await shouldBecomeEqual('internals.hasGrammarMarker(9, 7)', 'true');
+
+    // Place the caret just before the marker and immediately arrow right
+    // into it. The UI should NOT appear.
+    selection.collapse(editor.firstChild, 8);
+    eventSender.keyDown("rightArrow");
+
+    // Wait longer than the 300ms alternative text UI timer to ensure
+    // it does not fire.
+    await new Promise(resolve => setTimeout(resolve, 500));
+    await UIHelper.ensurePresentationUpdate();
+
+    shouldBeFalse('internals.isAlternativeTextUIActive()');
+
+    editor.textContent = "";
+    editor.blur();
+    finishJSTest();
+}
+</script>
+<body>
+<div contenteditable="true" id="editor"></div>
+<script>
+UIHelper.setSpellCheckerResults({
+    "Let's go in then store" : [
+        {
+            type: "grammar",
+            from: 9,
+            to: 16,
+            details: [{ from: 0, to: 7, corrections: ["in the"] }]
+        }
+    ],
+    "Let's go in then store\n" : [
+        {
+            type: "grammar",
+            from: 9,
+            to: 16,
+            details: [{ from: 0, to: 7, corrections: ["in the"] }]
+        }
+    ]
+}).then(runTest);
+</script>
+<pre id="description"></pre>
+<pre id="console"></pre>
+</body>
+</html>

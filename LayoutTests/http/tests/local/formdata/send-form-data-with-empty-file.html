@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form action="http://127.0.0.1:8000/xmlhttprequest/resources/post-echo.cgi" method="post" enctype="multipart/form-data">
+  <input name="file" type="file">
+</form>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script>
+
+description("Test that we correctly send forms with empty files");
+
+window.jsTestIsAsync = true;
+
+const form = document.forms[0];
+const request = new XMLHttpRequest();
+request.open("POST", form.action);
+request.onload = function() {
+    lines = request.responseText.trim().split('\r\n');
+    shouldBe('lines[0] + "--"', 'lines[lines.length - 1]');
+    finishJSTest();
+}
+request.send(new FormData(form));
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>
+

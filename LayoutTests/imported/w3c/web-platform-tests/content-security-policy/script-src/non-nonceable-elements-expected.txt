@@ -1,0 +1,12 @@
+
+PASS Nonceable script element 0
+PASS Non-nonceable script element 1
+PASS Non-nonceable script element 2
+PASS Non-nonceable script element 3
+PASS Non-nonceable script element 4
+FAIL Non-nonceable script element 5 assert_false: <script> element with attribute '<link' should not execute expected false got true
+FAIL Non-nonceable script element 6 assert_false: <script> element with attribute '<LinK' should not execute expected false got true
+PASS Non-nonceable script element 7
+PASS Non-nonceable script element 8
+FAIL Non-nonceable script element 9 assert_false: <script> element with attribute 'cc<lInKddd' should not execute expected false got true
+

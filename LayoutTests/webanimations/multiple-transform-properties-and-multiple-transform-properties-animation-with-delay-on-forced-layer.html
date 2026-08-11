@@ -1,0 +1,54 @@
+<style>
+
+div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+
+    will-change: transform;
+    translate: 100px 100px;
+    rotate: 180deg;
+    scale: 0.5;
+    transform: translate(-50px -50px);
+
+    animation-name: translate, rotate, scale, transform;
+    animation-delay: 1000s;
+    animation-duration: 1000s;
+}
+
+div::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 50%;
+    background-color: gray;
+}
+
+@keyframes translate {
+    from { translate: 200px 200px }
+    to { scale: 200px 200px }
+}
+
+@keyframes rotate {
+    from { rotate: 90deg }
+    to { rotate: 90deg }
+}
+
+@keyframes scale {
+    from { scale: 2 }
+    to { scale: 2 }
+}
+
+@keyframes transform {
+    from { transform: translate(200px, 200px) }
+    to { transform: translate(200px, 200px) }
+}
+    
+</style>
+<div></div>
+<script src="resources/wait-until-animations-are-committed.js"></script>

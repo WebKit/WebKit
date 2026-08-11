@@ -1,0 +1,11 @@
+
+PASS e.style['reading-order'] = "auto" should not set the property value
+PASS e.style['reading-order'] = "none" should not set the property value
+PASS e.style['reading-order'] = "legacy" should not set the property value
+PASS e.style['reading-order'] = "normal auto" should not set the property value
+PASS e.style['reading-order'] = "flex-visual" should not set the property value
+PASS e.style['reading-order'] = "1.5" should not set the property value
+PASS e.style['reading-order'] = "1 2" should not set the property value
+PASS e.style['reading-order'] = "100%" should not set the property value
+PASS e.style['reading-order'] = "10px" should not set the property value
+

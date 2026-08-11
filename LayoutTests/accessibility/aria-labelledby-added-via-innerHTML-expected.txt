@@ -1,0 +1,8 @@
+This test checks that a relation resolves once its aria-labelledby target is inserted via innerHTML after the initial relations build.
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+fallback name
+the resolved label

@@ -1,0 +1,27 @@
+Tests navigation by misspelled words.
+
+Find all misspelled word from the beginning of content:
+tezt
+isd
+mispeled
+Therd
+paragrph
+Loock
+thes
+Find all misspelled words backwards from the end of content:
+thes
+Loock
+paragrph
+Therd
+mispeled
+isd
+tezt
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+

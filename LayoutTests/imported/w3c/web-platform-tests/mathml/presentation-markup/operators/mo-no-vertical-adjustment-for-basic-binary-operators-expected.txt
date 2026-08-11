@@ -1,0 +1,11 @@
+↯
++
+=
+*
+−
+≤
+≥
+×
+
+PASS Vertical alignment of basic binary operators is not adjusted.
+

@@ -1,0 +1,620 @@
+/*
+
+Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1.  Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+2.  Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+#include "config.h"
+#include <wtf/text/StringView.h>
+
+#include <unicode/ubrk.h>
+#include <unicode/unorm2.h>
+#include <wtf/ASCIICType.h>
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/ZippedRange.h>
+#include <wtf/text/AdaptiveStringSearcher.h>
+#include <wtf/text/MakeString.h>
+#include <wtf/text/TextBreakIterator.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
+
+namespace WTF {
+
+SUPPRESS_NODELETE bool StringView::containsIgnoringASCIICase(StringView matchString) const
+{
+    return findIgnoringASCIICase(matchString) != notFound;
+}
+
+SUPPRESS_NODELETE bool StringView::containsIgnoringASCIICase(StringView matchString, unsigned startOffset) const
+{
+    return findIgnoringASCIICase(matchString, startOffset) != notFound;
+}
+
+SUPPRESS_NODELETE size_t StringView::findIgnoringASCIICase(StringView matchString) const
+{
+    return ::WTF::findIgnoringASCIICase(*this, matchString, 0);
+}
+
+SUPPRESS_NODELETE size_t StringView::findIgnoringASCIICase(StringView matchString, unsigned startOffset) const
+{
+    return ::WTF::findIgnoringASCIICase(*this, matchString, startOffset);
+}
+
+bool StringView::startsWith(char16_t character) const
+{
+    return m_length && (*this)[0] == character;
+}
+
+bool StringView::startsWith(StringView prefix) const
+{
+    return ::WTF::startsWith(*this, prefix);
+}
+
+bool StringView::hasInfixStartingAt(StringView prefix, unsigned start) const
+{
+    if (start > length())
+        return false;
+    return ::WTF::startsWith(substring(start), prefix);
+}
+
+bool StringView::startsWithIgnoringASCIICase(StringView prefix) const
+{
+    return ::WTF::startsWithIgnoringASCIICase(*this, prefix);
+}
+
+bool StringView::endsWith(char16_t character) const
+{
+    return m_length && (*this)[m_length - 1] == character;
+}
+
+bool StringView::endsWith(StringView suffix) const
+{
+    return ::WTF::endsWith(*this, suffix);
+}
+
+bool StringView::hasInfixEndingAt(StringView suffix, unsigned end) const
+{
+    if (end < suffix.length())
+        return false;
+    size_t start = end - suffix.length();
+    return hasInfixStartingAt(suffix, start);
+}
+
+bool StringView::endsWithIgnoringASCIICase(StringView suffix) const
+{
+    return ::WTF::endsWithIgnoringASCIICase(*this, suffix);
+}
+
+Expected<CString, UTF8ConversionError> StringView::tryGetUTF8(ConversionMode mode) const
+{
+    if (isNull())
+        return CString { ""_span };
+    if (is8Bit())
+        return StringImpl::utf8ForCharacters(span8());
+    return StringImpl::utf8ForCharacters(span16(), mode);
+}
+
+CString StringView::utf8(ConversionMode mode) const
+{
+    auto expectedString = tryGetUTF8(mode);
+    RELEASE_ASSERT(expectedString);
+    return expectedString.value();
+}
+
+size_t StringView::find(StringView matchString, unsigned start) const
+{
+    return findCommon(*this, matchString, start);
+}
+
+SUPPRESS_NODELETE size_t StringView::find(AdaptiveStringSearcherTables& tables, StringView matchString, unsigned start) const
+{
+    unsigned subjectLength = length();
+    unsigned matchLength = matchString.length();
+
+    if (start > subjectLength)
+        return notFound;
+
+    if (!matchLength)
+        return start;
+
+    if (subjectLength > INT32_MAX || matchLength > INT32_MAX) [[unlikely]]
+        return find(matchString, start);
+
+    if (is8Bit()) {
+        if (matchString.is8Bit())
+            return searchString(tables, span8(), matchString.span8(), start);
+        return searchString(tables, span8(), matchString.span16(), start);
+    }
+
+    if (matchString.is8Bit())
+        return searchString(tables, span16(), matchString.span8(), start);
+    return searchString(tables, span16(), matchString.span16(), start);
+}
+
+size_t StringView::find(std::span<const Latin1Character> match, unsigned start) const
+{
+    ASSERT(!match.empty());
+    auto length = this->length();
+    if (start > length)
+        return notFound;
+
+    unsigned searchLength = length - start;
+    if (match.size() > searchLength)
+        return notFound;
+
+    if (is8Bit())
+        return findInner(span8().subspan(start), match, start);
+    return findInner(span16().subspan(start), match, start);
+}
+
+SUPPRESS_NODELETE size_t StringView::reverseFind(std::span<const Latin1Character> match, unsigned start) const
+{
+    ASSERT(!match.empty());
+    if (match.size() > length())
+        return notFound;
+
+    if (is8Bit())
+        return reverseFindInner(span8(), match, start);
+    return reverseFindInner(span16(), match, start);
+}
+
+void StringView::SplitResult::Iterator::findNextSubstring()
+{
+    for (size_t separatorPosition; (separatorPosition = m_result.m_string.find(m_result.m_separator, m_position)) != notFound; ++m_position) {
+        if (m_result.m_allowEmptyEntries || separatorPosition > m_position) {
+            m_length = separatorPosition - m_position;
+            return;
+        }
+    }
+    m_length = m_result.m_string.length() - m_position;
+    if (!m_length && !m_result.m_allowEmptyEntries)
+        m_isDone = true;
+}
+
+auto StringView::SplitResult::Iterator::operator++() -> Iterator&
+{
+    ASSERT(m_position <= m_result.m_string.length());
+    ASSERT(!m_isDone);
+    m_position += m_length;
+    if (m_position < m_result.m_string.length()) {
+        ++m_position;
+        findNextSubstring();
+    } else if (!m_isDone)
+        m_isDone = true;
+    return *this;
+}
+
+class StringView::GraphemeClusters::Iterator::Impl {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Impl);
+public:
+    Impl(StringView stringView, std::optional<NonSharedCharacterBreakIterator>&& iterator, unsigned index)
+        : m_stringView(stringView)
+        , m_iterator(WTF::move(iterator))
+        , m_index(index)
+        , m_indexEnd(computeIndexEnd())
+    {
+    }
+
+    void operator++()
+    {
+        ASSERT(m_indexEnd > m_index);
+        m_index = m_indexEnd;
+        m_indexEnd = computeIndexEnd();
+    }
+
+    StringView operator*() const
+    {
+        return m_stringView.substring(m_index, m_indexEnd - m_index);
+    }
+
+    bool operator==(const Impl& other) const
+    {
+        ASSERT(m_stringView.m_characters == other.m_stringView.m_characters);
+        ASSERT(m_stringView.m_length == other.m_stringView.m_length);
+        auto result = m_index == other.m_index;
+        ASSERT(!result || m_indexEnd == other.m_indexEnd);
+        return result;
+    }
+
+    unsigned computeIndexEnd()
+    {
+        if (!m_iterator)
+            return 0;
+        if (m_index == m_stringView.length())
+            return m_index;
+        return ubrk_following(m_iterator.value(), m_index);
+    }
+
+private:
+    StringView m_stringView;
+    std::optional<NonSharedCharacterBreakIterator> m_iterator;
+    unsigned m_index;
+    unsigned m_indexEnd;
+};
+
+StringView::GraphemeClusters::Iterator::Iterator(StringView stringView LIFETIME_BOUND, unsigned index)
+    : m_impl(makeUnique<Impl>(stringView, stringView.isNull() ? std::nullopt : std::optional<NonSharedCharacterBreakIterator>(NonSharedCharacterBreakIterator(stringView)), index))
+{
+}
+
+StringView::GraphemeClusters::Iterator::~Iterator() = default;
+
+StringView::GraphemeClusters::Iterator::Iterator(Iterator&& other)
+    : m_impl(WTF::move(other.m_impl))
+{
+}
+
+auto StringView::GraphemeClusters::Iterator::operator++() -> Iterator&
+{
+    ++(*m_impl);
+    return *this;
+}
+
+StringView StringView::GraphemeClusters::Iterator::operator*() const
+{
+    return **m_impl;
+}
+
+bool StringView::GraphemeClusters::Iterator::operator==(const Iterator& other) const
+{
+    return *m_impl == *(other.m_impl);
+}
+
+enum class ASCIICase { Lower, Upper };
+
+template<ASCIICase type, typename CharacterType>
+String convertASCIICase(std::span<const CharacterType> input)
+{
+    if (!input)
+        return { };
+
+    std::span<CharacterType> characters;
+    auto result = String::createUninitialized(input.size(), characters);
+    size_t i = 0;
+    for (auto character : input)
+        characters[i++] = type == ASCIICase::Lower ? toASCIILower(character) : toASCIIUpper(character);
+    return result;
+}
+
+String StringView::convertToASCIILowercase() const
+{
+    if (m_is8Bit)
+        return convertASCIICase<ASCIICase::Lower>(span8());
+    return convertASCIICase<ASCIICase::Lower>(span16());
+}
+
+String StringView::convertToASCIIUppercase() const
+{
+    if (m_is8Bit)
+        return convertASCIICase<ASCIICase::Upper>(span8());
+    return convertASCIICase<ASCIICase::Upper>(span16());
+}
+
+template<typename CharacterType>
+static AtomString convertASCIILowercaseAtom(std::span<const CharacterType> input)
+{
+    for (auto character : input) {
+        if (isASCIIUpper(character)) [[unlikely]]
+            return makeAtomString(asASCIILowercase(input));
+    }
+    // Fast path when the StringView is already all lowercase.
+    return input;
+}
+
+AtomString StringView::convertToASCIILowercaseAtom() const
+{
+    if (m_is8Bit)
+        return convertASCIILowercaseAtom(span8());
+    return convertASCIILowercaseAtom(span16());
+}
+
+std::optional<char32_t> StringView::convertToSingleCodePoint() const
+{
+    auto points = codePoints();
+    auto iterator = points.begin();
+    if (iterator == points.end())
+        return std::nullopt;
+    std::optional<char32_t> character { *iterator };
+    ++iterator;
+    return iterator == points.end() ? character : std::nullopt;
+}
+
+template<typename DestinationCharacterType, typename SourceCharacterType>
+void getCharactersWithASCIICaseInternal(StringView::CaseConvertType type, std::span<DestinationCharacterType> destination, std::span<const SourceCharacterType> source)
+{
+    static_assert(std::is_same<SourceCharacterType, Latin1Character>::value || std::is_same<SourceCharacterType, char16_t>::value);
+    static_assert(std::is_same<DestinationCharacterType, Latin1Character>::value || std::is_same<DestinationCharacterType, char16_t>::value);
+    static_assert(sizeof(DestinationCharacterType) >= sizeof(SourceCharacterType));
+    auto caseConvert = (type == StringView::CaseConvertType::Lower) ? toASCIILower<SourceCharacterType> : toASCIIUpper<SourceCharacterType>;
+    for (auto [destinationCharacter, character] : zippedRange(destination, source))
+        destinationCharacter = caseConvert(character);
+}
+
+void StringView::getCharactersWithASCIICase(CaseConvertType type, std::span<Latin1Character> destination) const
+{
+    ASSERT(is8Bit());
+    getCharactersWithASCIICaseInternal(type, destination, span8());
+}
+
+void StringView::getCharactersWithASCIICase(CaseConvertType type, std::span<char16_t> destination) const
+{
+    if (is8Bit()) {
+        getCharactersWithASCIICaseInternal(type, destination, span8());
+        return;
+    }
+    getCharactersWithASCIICaseInternal(type, destination, span16());
+}
+
+StringViewWithUnderlyingString normalizedNFC(StringView string)
+{
+    // Latin-1 characters are unaffected by normalization.
+    if (string.is8Bit())
+        return { string, { } };
+
+    UErrorCode status = U_ZERO_ERROR;
+    const UNormalizer2* normalizer = unorm2_getNFCInstance(&status);
+    ASSERT(U_SUCCESS(status));
+
+    // No need to normalize if already normalized.
+    auto span = string.span16();
+    UBool checkResult = unorm2_isNormalized(normalizer, span.data(), span.size(), &status);
+    if (checkResult)
+        return { string, { } };
+
+    unsigned normalizedLength = unorm2_normalize(normalizer, span.data(), span.size(), nullptr, 0, &status);
+    ASSERT(needsToGrowToProduceBuffer(status));
+
+    std::span<char16_t> characters;
+    String result = String::createUninitialized(normalizedLength, characters);
+
+    status = U_ZERO_ERROR;
+    unorm2_normalize(normalizer, span.data(), span.size(), characters.data(), characters.size(), &status);
+    ASSERT(U_SUCCESS(status));
+
+    StringView view { result };
+    return { view, WTF::move(result) };
+}
+
+String normalizedNFC(const String& string)
+{
+    auto result = normalizedNFC(StringView { string });
+    if (result.underlyingString.isNull())
+        return string;
+    return result.underlyingString;
+}
+
+bool equalRespectingNullity(StringView a, StringView b)
+{
+    if (a.m_characters == b.m_characters) {
+        ASSERT(a.is8Bit() == b.is8Bit());
+        return a.length() == b.length();
+    }
+
+    if (a.isEmpty() && b.isEmpty())
+        return a.isNull() == b.isNull();
+
+    return equalCommon(a, b);
+}
+
+SUPPRESS_NODELETE size_t StringView::reverseFind(StringView matchString, unsigned start) const
+{
+    if (isNull() || matchString.isNull())
+        return notFound;
+
+    if (matchString.isEmpty())
+        return std::min(start, length());
+
+    // Check start & matchLength are in range.
+    if (matchString.length() > length())
+        return notFound;
+
+    if (is8Bit()) {
+        if (matchString.is8Bit())
+            return reverseFindInner(span8(), matchString.span8(), start);
+        return reverseFindInner(span8(), matchString.span16(), start);
+    }
+
+    if (matchString.is8Bit())
+        return reverseFindInner(span16(), matchString.span8(), start);
+    return reverseFindInner(span16(), matchString.span16(), start);
+}
+
+String makeStringByReplacingAll(StringView string, char16_t target, char16_t replacement)
+{
+    auto replaceAll = [&](auto characters) -> String {
+        // find() is SIMD-accelerated, and its Latin1 overload returns notFound for a
+        // non-Latin1 target, so an 8-bit string with a 16-bit target is handled here too.
+        size_t i = find(characters, target);
+        if (i == notFound)
+            return string.toString();
+        return StringImpl::createByReplacingInCharacters(characters, target, replacement, i);
+    };
+
+    if (string.is8Bit())
+        return replaceAll(string.span8());
+    return replaceAll(string.span16());
+}
+
+SUPPRESS_NODELETE std::strong_ordering codePointCompare(StringView lhs, StringView rhs)
+{
+    bool lhsIs8Bit = lhs.is8Bit();
+    bool rhsIs8Bit = rhs.is8Bit();
+    if (lhsIs8Bit) {
+        if (rhsIs8Bit)
+            return codePointCompare(lhs.span8(), rhs.span8());
+        return codePointCompare(lhs.span8(), rhs.span16());
+    }
+    if (rhsIs8Bit)
+        return codePointCompare(lhs.span16(), rhs.span8());
+    return codePointCompare(lhs.span16(), rhs.span16());
+}
+
+template<typename CharacterType> static String makeStringBySimplifyingNewLinesSlowCase(const String& string, unsigned firstCarriageReturn)
+{
+    unsigned length = string.length();
+    unsigned resultLength = firstCarriageReturn;
+    auto characters = string.span<CharacterType>();
+    std::span<CharacterType> resultCharacters;
+    auto result = String::createUninitialized(length, resultCharacters);
+    memcpySpan(resultCharacters, characters.first(firstCarriageReturn));
+    for (unsigned i = firstCarriageReturn; i < length; ++i) {
+        if (characters[i] != '\r')
+            resultCharacters[resultLength++] = characters[i];
+        else {
+            resultCharacters[resultLength++] = '\n';
+            if (i + 1 < length && characters[i + 1] == '\n')
+                ++i;
+        }
+    }
+    if (resultLength < length)
+        result = StringImpl::createSubstringSharingImpl(Ref { *result.impl() }, 0, resultLength);
+    return result;
+}
+
+String makeStringBySimplifyingNewLinesSlowCase(const String& string, unsigned firstCarriageReturn)
+{
+    if (string.is8Bit())
+        return makeStringBySimplifyingNewLinesSlowCase<Latin1Character>(string, firstCarriageReturn);
+    return makeStringBySimplifyingNewLinesSlowCase<char16_t>(string, firstCarriageReturn);
+}
+
+#if CHECK_STRINGVIEW_LIFETIME
+
+// Manage reference count manually so UnderlyingString does not need to be defined in the header.
+
+struct StringView::UnderlyingString {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(UnderlyingString);
+    std::atomic_uint refCount { 1u };
+    bool isValid { true };
+    SUPPRESS_UNCOUNTED_MEMBER const StringImpl& string;
+    explicit UnderlyingString(const StringImpl&);
+};
+
+StringView::UnderlyingString::UnderlyingString(const StringImpl& string)
+    : string(string)
+{
+}
+
+static Lock underlyingStringsLock;
+
+static HashMap<const StringImpl*, StringView::UnderlyingString*>& underlyingStrings() WTF_REQUIRES_LOCK(underlyingStringsLock)
+{
+    static NeverDestroyed<HashMap<const StringImpl*, StringView::UnderlyingString*>> map;
+    return map;
+}
+
+void StringView::invalidate(const StringImpl& stringToBeDestroyed)
+{
+    UnderlyingString* underlyingString;
+    {
+        Locker locker { underlyingStringsLock };
+        underlyingString = underlyingStrings().take(&stringToBeDestroyed);
+        if (!underlyingString)
+            return;
+    }
+    ASSERT(underlyingString->isValid);
+    underlyingString->isValid = false;
+}
+
+bool StringView::underlyingStringIsValidImpl() const
+{
+    return !m_underlyingString || m_underlyingString->isValid;
+}
+
+void StringView::adoptUnderlyingString(UnderlyingString* underlyingString)
+{
+    if (m_underlyingString) {
+        Locker locker { underlyingStringsLock };
+        if (!--m_underlyingString->refCount) {
+            if (m_underlyingString->isValid) {
+                underlyingStrings().remove(&m_underlyingString->string);
+            }
+            delete m_underlyingString;
+        }
+    }
+    m_underlyingString = underlyingString;
+}
+
+void StringView::setUnderlyingStringImpl(const StringImpl* string)
+{
+    UnderlyingString* underlyingString;
+    if (!string)
+        underlyingString = nullptr;
+    else {
+        Locker locker { underlyingStringsLock };
+        auto result = underlyingStrings().add(string, nullptr);
+        if (result.isNewEntry)
+            result.iterator->value = new UnderlyingString(*string);
+        else
+            ++result.iterator->value->refCount;
+        underlyingString = result.iterator->value;
+    }
+    adoptUnderlyingString(underlyingString);
+}
+
+void StringView::setUnderlyingStringImpl(const StringView& otherString)
+{
+    UnderlyingString* underlyingString = otherString.m_underlyingString;
+    if (underlyingString) {
+        // It's safe to inc the refCount here without locking underlyingStringsLock
+        // because UnderlyingString::refCount is a std::atomic_uint, and we're
+        // guaranteed that the StringView we're copying it from will at least
+        // have 1 ref on it, thereby keeping it alive regardless of what other
+        // threads may be doing.
+        ++underlyingString->refCount;
+    }
+    adoptUnderlyingString(underlyingString);
+}
+
+#else
+
+bool StringView::underlyingStringIsValidImpl() const
+{
+    return true;
+}
+
+void StringView::setUnderlyingStringImpl(const StringImpl*)
+{
+}
+
+void StringView::setUnderlyingStringImpl(const StringView&)
+{
+}
+
+#endif // not CHECK_STRINGVIEW_LIFETIME
+
+#ifndef NDEBUG
+void StringView::show() const
+{
+    toStringWithoutCopying().show();
+}
+#endif
+
+#if !defined(NDEBUG)
+namespace Detail {
+std::atomic<int> wtfStringCopyCount;
+}
+#endif
+
+} // namespace WTF

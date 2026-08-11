@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+<style>
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#target {
+    width: 100%;
+    height: 100%;
+    background: tomato;
+}
+</style>
+</head>
+<body>
+<div id="target"></div>
+<script>
+function handleTouchEvent(event) {
+    webkit.messageHandlers.testHandler.postMessage(event.type);
+}
+
+let target = document.getElementById("target");
+target.addEventListener("touchstart", handleTouchEvent);
+target.addEventListener("touchmove", handleTouchEvent);
+target.addEventListener("touchcancel", handleTouchEvent);
+target.addEventListener("touchend", handleTouchEvent);
+</script>
+</body>
+</html>

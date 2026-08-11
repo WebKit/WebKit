@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Checks that setting an iframe's src attribute to a javascript URL runs the javascript asynchronously");
+jsTestIsAsync = true;
+
+let messages = "";
+const expectedMessageCount = 3;
+function log(msg)
+{
+    messages += msg;
+    if (messages.length == expectedMessageCount) {
+        shouldBeEqualToString("messages", "123");
+        shouldBe("frame1.contentWindow", "initialFrame1Window");
+        shouldBe("frame1.contentDocument", "initialFrame1Document");
+        shouldBe("frame2.contentWindow", "initialFrame2Window");
+        // Firefox 66 and Chrome 74 disagree here, we match Chrome.
+        shouldNotBe("frame2.contentDocument", "initialFrame2Document");
+        setTimeout(() => {
+            shouldBe("frame2.contentWindow", "initialFrame2Window");
+            shouldNotBe("frame2.contentDocument", "initialFrame2Document");
+            shouldBeEqualToString("frame2.contentDocument.documentElement.textContent", "1");
+            finishJSTest();
+        }), 0;
+    }
+}
+</script>
+<iframe id="frame1"></iframe>
+<script>
+document.write("<iframe id=frame2 src=javascript:'1'></iframe>");
+
+frame1 = document.getElementById("frame1");
+frame2 = document.getElementById("frame2");
+initialFrame1Window = frame1.contentWindow;
+initialFrame1Document = frame1.contentDocument;
+initialFrame2Window = frame2.contentWindow;
+initialFrame2Document = frame2.contentDocument;
+log('1');
+frame1.src = "javascript:parent.log('3')";
+shouldBe("frame1.contentWindow", "initialFrame1Window");
+shouldBe("frame1.contentDocument", "initialFrame1Document");
+log('2');
+</script>
+</body>
+</html>

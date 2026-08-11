@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id=canvas width=640 height=480></canvas>
+<script>
+
+async function createWorker(script)
+{
+    script += "self.postMessage('ready');";
+    const blob = new Blob([script], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+    await new Promise(resolve => worker.onmessage = () => {
+        resolve();
+    });
+    URL.revokeObjectURL(url);
+    return worker;
+}
+
+async function getFrameFromTrack(test, worker, track)
+{
+    worker.postMessage({ track });
+
+    const result = await new Promise(resolve => worker.onmessage = e => resolve(e.data));
+    test.add_cleanup(() => result.value.close());
+
+    assert_equals(result.value.codedWidth, 640);
+    assert_equals(result.value.codedHeight, 480);
+}
+
+promise_test(async test => {
+    if (!window.internals)
+        return;
+
+    window.internals.setTopDocumentURLForQuirks("https://zoom.us");
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+    test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+
+    const worker = await createWorker(`
+        self.onmessage = async (event) => {
+            const processor = new MediaStreamTrackProcessor({ track: event.data.track });
+            const data = await processor.readable.getReader().read();
+            self.postMessage(data);
+            data.value.close();
+        }
+    `);
+    test.add_cleanup(() => worker.terminate());
+    const track = stream.getVideoTracks()[0];
+
+    await getFrameFromTrack(test, worker, track);
+
+    assert_equals(track.readyState, "live");
+
+    await getFrameFromTrack(test, worker, track);
+}, "Serialize MediaStreamTrack to dedicated worker and use MediaStreamTrackProcessor");
+
+</script>
+</body>
+</html>

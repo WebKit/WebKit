@@ -1,0 +1,4 @@
+
+PASS attachShadow() on declarative shadow root with manual slotAssignment
+PASS attachShadow() on declarative shadow root does not change slotAssignment
+

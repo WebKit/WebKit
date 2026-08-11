@@ -1,0 +1,1007 @@
+/*
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <wtf/Compiler.h>
+#include <wtf/Platform.h>
+
+#if ENABLE(WEBASSEMBLY)
+
+#include <JavaScriptCore/CCallHelpers.h>
+#include <JavaScriptCore/CallLinkInfo.h>
+#include <JavaScriptCore/CodeLocation.h>
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <JavaScriptCore/MathCommon.h>
+#include <JavaScriptCore/PageCount.h>
+#include <JavaScriptCore/RegisterAtOffsetList.h>
+#include <JavaScriptCore/WasmAddressType.h>
+#include <JavaScriptCore/WasmMemoryInformation.h>
+#include <JavaScriptCore/WasmName.h>
+#include <JavaScriptCore/WasmNameSection.h>
+#include <JavaScriptCore/WasmOps.h>
+#include <JavaScriptCore/WasmTypeDefinition.h>
+#include <cstdint>
+#include <limits>
+#include <memory>
+#include <wtf/FixedBitVector.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+namespace JSC {
+
+class Compilation;
+
+namespace Wasm {
+
+struct CompilationContext;
+struct ModuleInformation;
+struct UnlinkedHandlerInfo;
+
+class BlockSignature {
+    WTF_MAKE_TZONE_ALLOCATED(BlockSignature);
+public:
+    BlockSignature()
+        : m_storage(Types::Void)
+    {
+    }
+
+    // Constructor for simple case: no arguments, single return type (or void)
+    explicit BlockSignature(Type resultType)
+        : m_storage(resultType)
+    {
+    }
+
+    // Constructor from RTT held by Wasm::Module.
+    explicit BlockSignature(const RTT& signature)
+        : m_storage(&signature)
+    {
+        ASSERT(signature.kind() == RTTKind::Function);
+    }
+
+    unsigned argumentCount() const
+    {
+        return WTF::switchOn(m_storage,
+            [](const RTT* signature) -> unsigned {
+                return signature->argumentCount();
+            },
+            [](Type) -> unsigned {
+                return 0;
+            }
+        );
+    }
+
+    unsigned returnCount() const
+    {
+        return WTF::switchOn(m_storage,
+            [](const RTT* signature) -> unsigned {
+                return signature->returnCount();
+            },
+            [](Type type) -> unsigned {
+                return type.isVoid() ? 0 : 1;
+            }
+        );
+    }
+
+    Type argumentType(unsigned index) const
+    {
+        return WTF::switchOn(m_storage,
+            [&](const RTT* signature) -> Type {
+                ASSERT(index < signature->argumentCount());
+                return signature->argumentType(index);
+            },
+            [](Type) -> Type {
+                RELEASE_ASSERT_NOT_REACHED();
+                return Types::Void;
+            }
+        );
+    }
+
+    Type returnType(unsigned index) const
+    {
+        return WTF::switchOn(m_storage,
+            [&](const RTT* signature) -> Type {
+                ASSERT(index < signature->returnCount());
+                return signature->returnType(index);
+            },
+            [](Type type) -> Type {
+                ASSERT(!type.isVoid());
+                return type;
+            }
+        );
+    }
+
+    bool hasReturnedV128() const
+    {
+        return WTF::switchOn(m_storage,
+            [](const RTT* signature) -> bool {
+                return signature->hasReturnedV128();
+            },
+            [](Type type) -> bool {
+                return type.isV128();
+            }
+        );
+    }
+
+    bool holdsRTT() const { return std::holds_alternative<const RTT*>(m_storage); }
+
+    const RTT& rtt() const
+    {
+        ASSERT(holdsRTT());
+        return *std::get<const RTT*>(m_storage);
+    }
+
+    void dump(PrintStream& out) const;
+
+private:
+    WTF::Variant<const RTT*, Type> m_storage;
+};
+
+enum class TableElementType : uint8_t {
+    Externref,
+    Funcref
+};
+
+constexpr int32_t maxI31ref = 1073741823;
+constexpr int32_t minI31ref = -1073741824;
+
+inline bool isValueType(Type type)
+{
+    switch (type.kind()) {
+    case TypeKind::I32:
+    case TypeKind::I64:
+    case TypeKind::F32:
+    case TypeKind::F64:
+        return true;
+    case TypeKind::Exnref:
+    case TypeKind::Externref:
+    case TypeKind::Funcref:
+        return false;
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+        return type.index() != invalidTypeIndex;
+    case TypeKind::V128:
+        return Options::useWasmSIMD();
+    default:
+        break;
+    }
+    return false;
+}
+
+
+// Type hierarchy of Ref types is here
+//
+//     any -> eq -> i31    ----+
+//             |               |
+//             +--> array  ----+-> none
+//             |               |
+//             +--> struct ----+
+//
+//     func -> nofunc
+//
+//     extern -> noextern
+//
+//     exn -> noexn
+//
+
+inline bool isRefType(Type type)
+{
+    return type.isRef() || type.isRefNull();
+}
+
+// If this is a type, returns true iff it's a ref type; if it's a packed type, returns false
+inline bool isRefType(StorageType type)
+{
+    if (type.is<Type>())
+        return isRefType(type.as<Type>());
+    return false;
+}
+
+inline bool isExternref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Externref);
+}
+
+inline bool isFuncref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Funcref);
+}
+
+inline bool isEqref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Eqref);
+}
+
+inline bool isAnyref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Anyref);
+}
+
+inline bool isNoexnref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Noexnref);
+}
+
+inline bool isNoneref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Noneref);
+}
+
+inline bool isNofuncref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Nofuncref);
+}
+
+inline bool isNoexternref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Noexternref);
+}
+
+inline bool isInternalref(Type type)
+{
+    if (!isRefType(type))
+        return false;
+    if (isAbstractTypeIndex(type.index())) {
+        switch (typeIndexAsTypeKind(type.index())) {
+        case TypeKind::I31ref:
+        case TypeKind::Arrayref:
+        case TypeKind::Structref:
+        case TypeKind::Eqref:
+        case TypeKind::Anyref:
+        case TypeKind::Noneref:
+            return true;
+        default:
+            return false;
+        }
+    }
+    return TypeInformation::getCanonicalRTT(type.index())->kind() != RTTKind::Function;
+}
+
+inline bool isI31ref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::I31ref);
+}
+
+inline bool isArrayref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Arrayref);
+}
+
+inline bool isStructref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Structref);
+}
+
+inline bool isExnref(Type type)
+{
+    return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Exnref);
+}
+
+inline JSString* typeToJSAPIString(VM& vm, Type type)
+{
+    switch (type.kind()) {
+    case TypeKind::I32:
+        return jsNontrivialString(vm, "i32"_s);
+    case TypeKind::I64:
+        return jsNontrivialString(vm, "i64"_s);
+    case TypeKind::F32:
+        return jsNontrivialString(vm, "f32"_s);
+    case TypeKind::F64:
+        return jsNontrivialString(vm, "f64"_s);
+    case TypeKind::V128:
+        return jsNontrivialString(vm, "v128"_s);
+    default: {
+        if (isFuncref(type) && type.isNullable())
+            return jsNontrivialString(vm, "funcref"_s);
+        if (isExternref(type) && type.isNullable())
+            return jsNontrivialString(vm, "externref"_s);
+        // Some Wasm reference types are currently unrepresentable for the JS API.
+        return nullptr;
+    }
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline Type nonNullFuncrefType()
+{
+    return Wasm::Type { Wasm::TypeKind::Ref, typeIndexFromTypeKind(Wasm::TypeKind::Funcref) };
+}
+
+inline Type funcrefType()
+{
+    return Wasm::Type { Wasm::TypeKind::RefNull, typeIndexFromTypeKind(Wasm::TypeKind::Funcref) };
+}
+
+inline Type externrefType(bool isNullable = true)
+{
+    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, typeIndexFromTypeKind(Wasm::TypeKind::Externref) };
+}
+
+inline Type eqrefType()
+{
+    return Wasm::Type { Wasm::TypeKind::RefNull, typeIndexFromTypeKind(Wasm::TypeKind::Eqref) };
+}
+
+inline Type anyrefType(bool isNullable = true)
+{
+    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, typeIndexFromTypeKind(Wasm::TypeKind::Anyref) };
+}
+
+inline Type arrayrefType(bool isNullable = true)
+{
+    // Returns a non-null ref type, since this is used for the return types of array operations
+    // that are guaranteed to return a non-null array reference
+    return Wasm::Type { isNullable ? Wasm::TypeKind::RefNull : Wasm::TypeKind::Ref, typeIndexFromTypeKind(Wasm::TypeKind::Arrayref) };
+}
+
+inline Type exnrefType()
+{
+    return Wasm::Type { Wasm::TypeKind::RefNull, typeIndexFromTypeKind(Wasm::TypeKind::Exnref) };
+}
+
+inline bool isRefWithTypeIndex(Type type)
+{
+    return isRefType(type) && !isAbstractTypeIndex(type.index());
+}
+
+inline bool isTypeIndexHeapType(int32_t heapType)
+{
+    return heapType >= 0;
+}
+
+inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
+{
+    if (sub == parent)
+        return true;
+
+    auto subRTT = TypeInformation::getCanonicalRTT(sub);
+    auto parentRTT = TypeInformation::getCanonicalRTT(parent);
+    return subRTT->isStrictSubRTT(parentRTT.get());
+}
+
+bool isSubtype(Type, Type);
+
+inline bool isSubtypeSlow(Type sub, Type parent)
+{
+    // Before the typed funcref proposal there is no non-trivial subtyping.
+    if (sub.isNullable() && !parent.isNullable())
+        return false;
+
+    if (isRefWithTypeIndex(sub)) {
+        if (isRefWithTypeIndex(parent))
+            return isSubtypeIndex(sub.index(), parent.index());
+
+        Ref<const RTT> subRTT = TypeInformation::getCanonicalRTT(sub.index());
+
+        if ((isAnyref(parent) || isEqref(parent)))
+            return subRTT->kind() != RTTKind::Function;
+
+        if (isArrayref(parent))
+            return subRTT->kind() == RTTKind::Array;
+
+        if (isStructref(parent))
+            return subRTT->kind() == RTTKind::Struct;
+
+        if (isFuncref(parent))
+            return subRTT->kind() == RTTKind::Function;
+    }
+
+    if ((isI31ref(sub) || isStructref(sub) || isArrayref(sub)) && (isAnyref(parent) || isEqref(parent)))
+        return true;
+
+    if (isEqref(sub) && isAnyref(parent))
+        return true;
+
+    if (isNoneref(sub))
+        return isInternalref(parent);
+
+    if (isNofuncref(sub))
+        return isSubtype(parent, funcrefType());
+
+    if (isNoexternref(sub) && isExternref(parent))
+        return true;
+
+    if (isNoexnref(sub) && isExnref(parent))
+        return true;
+
+    if (sub.isRef() && parent.isRefNull())
+        return sub.index() == parent.index();
+
+    return false;
+}
+
+ALWAYS_INLINE bool isSubtype(Type sub, Type parent)
+{
+    // Fast path.
+    if (sub == parent)
+        return true;
+    return isSubtypeSlow(sub, parent);
+}
+
+inline bool isSubtype(StorageType sub, StorageType parent)
+{
+    if (sub.is<PackedType>() || parent.is<PackedType>())
+        return sub == parent;
+
+    ASSERT(sub.is<Type>() && parent.is<Type>());
+    return isSubtype(sub.as<Type>(), parent.as<Type>());
+}
+
+inline bool isValidHeapTypeKind(intptr_t kind)
+{
+    switch (kind) {
+    case static_cast<intptr_t>(TypeKind::Funcref):
+    case static_cast<intptr_t>(TypeKind::Externref):
+    case static_cast<intptr_t>(TypeKind::Exnref):
+    case static_cast<intptr_t>(TypeKind::I31ref):
+    case static_cast<intptr_t>(TypeKind::Arrayref):
+    case static_cast<intptr_t>(TypeKind::Structref):
+    case static_cast<intptr_t>(TypeKind::Eqref):
+    case static_cast<intptr_t>(TypeKind::Anyref):
+    case static_cast<intptr_t>(TypeKind::Noexnref):
+    case static_cast<intptr_t>(TypeKind::Noneref):
+    case static_cast<intptr_t>(TypeKind::Nofuncref):
+    case static_cast<intptr_t>(TypeKind::Noexternref):
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
+// FIXME: separating out heap types in wasm.json could be cleaner in the long term.
+inline const char* heapTypeKindAsString(TypeKind kind)
+{
+    ASSERT(isValidHeapTypeKind(static_cast<intptr_t>(kind)));
+    switch (kind) {
+    case TypeKind::Funcref:
+        return "func";
+    case TypeKind::Externref:
+        return "extern";
+    case TypeKind::I31ref:
+        return "i31";
+    case TypeKind::Arrayref:
+        return "array";
+    case TypeKind::Structref:
+        return "struct";
+    case TypeKind::Eqref:
+        return "eq";
+    case TypeKind::Anyref:
+        return "any";
+    case TypeKind::Noneref:
+        return "none";
+    case TypeKind::Nofuncref:
+        return "nofunc";
+    case TypeKind::Noexternref:
+        return "noextern";
+    case TypeKind::Exnref:
+        return "exnref";
+    case TypeKind::Noexnref:
+        return "noexnref";
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return "";
+    }
+}
+
+inline bool isDefaultableType(Type type)
+{
+    return !type.isRef();
+}
+
+inline bool isDefaultableType(StorageType type)
+{
+    if (type.is<Type>())
+        return !type.as<Type>().isRef();
+    // All packed types are defaultable.
+    return true;
+}
+
+inline size_t sizeOfType(TypeKind kind)
+{
+    switch (kind) {
+    case Wasm::TypeKind::I32:
+    case Wasm::TypeKind::F32:
+        return sizeof(uint32_t);
+    case Wasm::TypeKind::I64:
+    case Wasm::TypeKind::F64:
+    case Wasm::TypeKind::Ref:
+    case Wasm::TypeKind::RefNull:
+        return sizeof(uint64_t);
+    case Wasm::TypeKind::V128:
+        return sizeof(v128_t);
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+inline JSValue internalizeExternref(JSValue value)
+{
+    if (value.isDouble()) {
+        if (auto int32Value = tryConvertToStrictInt32(value.asDouble())) {
+            if (int32Value.value() <= Wasm::maxI31ref && int32Value.value() >= Wasm::minI31ref)
+                return jsNumber(int32Value.value());
+        }
+    }
+
+    return value;
+}
+
+enum class ExternalKind : uint8_t {
+    // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231
+    Function = 0,
+    Table = 1,
+    Memory = 2,
+    Global = 3,
+    Exception = 4,
+};
+
+template<typename Int>
+inline bool isValidExternalKind(Int val)
+{
+    switch (val) {
+    case static_cast<Int>(ExternalKind::Function):
+    case static_cast<Int>(ExternalKind::Table):
+    case static_cast<Int>(ExternalKind::Memory):
+    case static_cast<Int>(ExternalKind::Global):
+    case static_cast<Int>(ExternalKind::Exception):
+        return true;
+    }
+    return false;
+}
+
+static_assert(static_cast<int>(ExternalKind::Function) == 0, "Wasm needs Function to have the value 0");
+static_assert(static_cast<int>(ExternalKind::Table)    == 1, "Wasm needs Table to have the value 1");
+static_assert(static_cast<int>(ExternalKind::Memory)   == 2, "Wasm needs Memory to have the value 2");
+static_assert(static_cast<int>(ExternalKind::Global)   == 3, "Wasm needs Global to have the value 3");
+static_assert(static_cast<int>(ExternalKind::Exception)   == 4, "Wasm needs Exception to have the value 4");
+
+inline ASCIILiteral makeString(ExternalKind kind)
+{
+    switch (kind) {
+    case ExternalKind::Function: return "function"_s;
+    case ExternalKind::Table: return "table"_s;
+    case ExternalKind::Memory: return "memory"_s;
+    case ExternalKind::Global: return "global"_s;
+    case ExternalKind::Exception: return "tag"_s;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return "?"_s;
+}
+
+struct Import {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Import);
+    const Name module;
+    const Name field;
+    ExternalKind kind;
+    unsigned kindIndex; // Index in the vector of the corresponding kind.
+};
+
+struct Export {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Export);
+    const Name field;
+    ExternalKind kind;
+    unsigned kindIndex; // Index in the vector of the corresponding kind.
+};
+
+String makeString(const Name& characters);
+
+struct GlobalInformation {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(GlobalInformation);
+
+    enum InitializationType : uint8_t {
+        IsImport,
+        FromGlobalImport,
+        FromRefFunc,
+        FromExpression,
+        FromVector,
+        FromExtendedExpression,
+    };
+
+    enum class BindingMode : uint8_t {
+        EmbeddedInInstance = 0,
+        Portable,
+    };
+
+    Mutability mutability;
+    Type type;
+    InitializationType initializationType { IsImport };
+    BindingMode bindingMode { BindingMode::EmbeddedInInstance };
+    union {
+        uint64_t initialBitsOrImportNumber;
+        v128_t initialVector { };
+    } initialBits;
+};
+
+struct FunctionData {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FunctionData);
+    size_t start;
+    size_t end;
+    Vector<uint8_t> data;
+    bool usesSIMD : 1 { false };
+    bool usesExceptions : 1 { false };
+    bool usesAtomics : 1 { false };
+    bool finishedValidating : 1 { false };
+};
+
+class I32InitExpr {
+    WTF_MAKE_TZONE_ALLOCATED(I32InitExpr);
+    enum Type : uint8_t {
+        Global,
+        Const,
+        ExtendedExpression
+    };
+
+    I32InitExpr(Type type, uint64_t bits)
+        : m_bits(bits)
+        , m_type(type)
+    { }
+
+public:
+    I32InitExpr() = delete;
+
+    static I32InitExpr globalImport(uint64_t globalImportNumber) { return I32InitExpr(Global, globalImportNumber); }
+    static I32InitExpr constValue(uint64_t constValue) { return I32InitExpr(Const, constValue); }
+    static I32InitExpr extendedExpression(uint64_t constantExpressionNumber) { return I32InitExpr(ExtendedExpression, constantExpressionNumber); }
+
+    bool isConst() const { return m_type == Const; }
+    bool isGlobalImport() const { return m_type == Global; }
+    bool isExtendedExpression() const { return m_type == ExtendedExpression; }
+    uint64_t constValue() const
+    {
+        RELEASE_ASSERT(isConst());
+        return m_bits;
+    }
+    uint64_t globalImportIndex() const
+    {
+        RELEASE_ASSERT(isGlobalImport());
+        return m_bits;
+    }
+    uint64_t constantExpressionIndex() const
+    {
+        RELEASE_ASSERT(isExtendedExpression());
+        return m_bits;
+    }
+
+private:
+    uint64_t m_bits;
+    Type m_type;
+};
+
+using I64InitExpr = I32InitExpr;
+
+class Segment final : public TrailingArray<Segment, uint8_t> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Segment);
+    WTF_MAKE_NONCOPYABLE(Segment);
+    WTF_MAKE_NONMOVABLE(Segment);
+    using Base = TrailingArray<Segment, uint8_t>;
+    friend Base;
+public:
+    enum class Kind : uint8_t {
+        Active,
+        Passive,
+    };
+
+    uint8_t& byte(uint32_t pos)
+    {
+        return Base::at(pos);
+    }
+    uint32_t sizeInBytes() const { return Base::size(); }
+
+    Segment(size_t sizeInBytes, Kind passedKind, std::optional<I32InitExpr>&& passedOffsetIfActive, uint32_t memoryIndex = 0)
+        : Base(sizeInBytes)
+        , m_kind(passedKind)
+        , m_offsetIfActive(WTF::move(passedOffsetIfActive))
+        , m_memoryIndex(memoryIndex)
+    {
+    }
+
+    static std::unique_ptr<Segment> tryCreate(std::optional<I32InitExpr>, uint32_t, Kind, uint32_t memoryIndex = 0);
+
+    bool isActive() const { return m_kind == Kind::Active; }
+    bool isPassive() const { return m_kind == Kind::Passive; }
+    Kind kind() const { return m_kind; }
+    std::optional<I32InitExpr> offsetIfActive() const { return m_offsetIfActive; }
+    uint32_t memoryIndex() const { return m_memoryIndex; }
+
+private:
+    const Kind m_kind;
+    const std::optional<I32InitExpr> m_offsetIfActive;
+    const uint32_t m_memoryIndex;
+};
+
+struct Element {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Element);
+
+    enum class Kind : uint8_t {
+        Active,
+        Passive,
+        Declared,
+    };
+
+    enum InitializationType : uint8_t {
+        FromGlobal,
+        FromRefFunc,
+        FromRefNull,
+        FromExtendedExpression,
+    };
+
+    Element(Element::Kind kind, Type elementType, std::optional<uint32_t> tableIndex, std::optional<I32InitExpr> initExpr)
+        : kind(kind)
+        , elementType(elementType)
+        , tableIndexIfActive(WTF::move(tableIndex))
+        , offsetIfActive(WTF::move(initExpr))
+    { }
+
+    Element(Element::Kind kind, Type elemType)
+        : Element(kind, elemType, std::nullopt, std::nullopt)
+    { }
+
+    uint32_t length() const { return initTypes.size(); }
+
+    bool isActive() const { return kind == Kind::Active; }
+    bool isPassive() const { return kind == Kind::Passive; }
+
+    Kind kind;
+    Type elementType;
+    std::optional<uint32_t> tableIndexIfActive;
+    std::optional<I32InitExpr> offsetIfActive;
+
+    Vector<InitializationType> initTypes;
+    Vector<uint64_t> initialBitsOrIndices;
+};
+
+class TableInformation {
+    WTF_MAKE_TZONE_ALLOCATED(TableInformation);
+public:
+    enum InitializationType : uint8_t {
+        Default,
+        FromGlobalImport,
+        FromRefFunc,
+        FromRefNull,
+        FromExtendedExpression,
+    };
+
+    TableInformation()
+    {
+        ASSERT(!*this);
+    }
+
+    TableInformation(uint64_t initial, std::optional<uint64_t> maximum, bool isImport, TableElementType type, Type wasmType, InitializationType initType, uint64_t initialBitsOrImportNumber, bool isTable64)
+        : m_wasmType(wasmType)
+        , m_maximum(maximum)
+        , m_initialBitsOrImportNumber(initialBitsOrImportNumber)
+        , m_initial(initial)
+        , m_type(type)
+        , m_addressType(isTable64)
+        , m_initType(initType)
+        , m_isImport(isImport)
+        , m_isValid(true)
+    {
+        ASSERT(*this);
+    }
+
+    explicit operator bool() const { return m_isValid; }
+    bool isImport() const { return m_isImport; }
+    // The size the module declared, which may be larger than any table this implementation can
+    // create. It is checked when the table is created, not when the declaration is parsed.
+    uint64_t initial() const { return m_initial; }
+    std::optional<uint64_t> maximum() const { return m_maximum; }
+    TableElementType type() const { return m_type; }
+    Type wasmType() const { return m_wasmType; }
+    InitializationType initType() const { return m_initType; }
+    uint64_t initialBitsOrImportNumber() const { return m_initialBitsOrImportNumber; }
+    Wasm::AddressType addressType() const { return m_addressType; }
+
+private:
+    Type m_wasmType;
+    std::optional<uint64_t> m_maximum;
+    uint64_t m_initialBitsOrImportNumber;
+    uint64_t m_initial;
+    TableElementType m_type;
+    Wasm::AddressType m_addressType;
+    InitializationType m_initType { Default };
+    bool m_isImport { false };
+    bool m_isValid { false };
+};
+    
+struct CustomSection {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CustomSection);
+    Name name;
+    Vector<uint8_t> payload;
+};
+
+enum class NameType : uint8_t {
+    Module = 0,
+    Function = 1,
+    Local = 2,
+};
+    
+template<typename Int>
+inline bool isValidNameType(Int val)
+{
+    switch (val) {
+    case static_cast<Int>(NameType::Module):
+    case static_cast<Int>(NameType::Function):
+    case static_cast<Int>(NameType::Local):
+        return true;
+    }
+    return false;
+}
+
+// A code index is an index in the code section of the module, thus does not include imports. This is also sometimes called an internal function.
+// A space index is an index into the total function space of a module and includes imports. It's broken down into [ imports..., code section... ].
+// These are **NOT** convertable without knowing how many imports there are e.g. via ModuleInformation/CalleeGroup's toCodeIndex/toSpaceIndex
+
+class FunctionSpaceIndex;
+class TRIVIAL_ABI FunctionCodeIndex {
+public:
+    FunctionCodeIndex() = default;
+    FunctionCodeIndex(FunctionSpaceIndex) = delete;
+    explicit constexpr FunctionCodeIndex(uint32_t index)
+        : m_index(index)
+    { }
+
+    size_t rawIndex() const { return m_index; }
+    operator size_t() const { return m_index; }
+    void dump(PrintStream& out) const { out.print(m_index); }
+
+private:
+    uint32_t m_index { UINT_MAX };
+};
+
+class TRIVIAL_ABI FunctionSpaceIndex {
+public:
+    FunctionSpaceIndex() = default;
+    FunctionSpaceIndex(FunctionCodeIndex) = delete;
+    explicit constexpr FunctionSpaceIndex(uint32_t index)
+        : m_index(index)
+    { }
+
+    size_t rawIndex() const { return m_index; }
+    operator size_t() const { return m_index; }
+    void dump(PrintStream& out) const { out.print(m_index); }
+
+private:
+    uint32_t m_index { UINT_MAX };
+};
+
+// An index into the type section of a module (typeSignatures / expandedTypeSignatures vectors).
+// NOT interchangeable with TypeIndex, which is a global canonical identity.
+class TRIVIAL_ABI TypeSignatureIndex {
+public:
+    TypeSignatureIndex() = default;
+    explicit constexpr TypeSignatureIndex(uint32_t index)
+        : m_index(index)
+    { }
+
+    uint32_t rawIndex() const { return m_index; }
+    void dump(PrintStream& out) const { out.print(m_index); }
+
+private:
+    uint32_t m_index { UINT_MAX };
+};
+
+struct UnlinkedWasmToWasmCall {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(UnlinkedWasmToWasmCall);
+    CodeLocationNearCall<WasmEntryPtrTag> callLocation;
+    FunctionSpaceIndex functionIndexSpace;
+
+};
+
+#if ENABLE(JIT)
+struct Entrypoint {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(Entrypoint);
+    std::unique_ptr<Compilation> compilation;
+    RegisterAtOffsetList calleeSaveRegisters;
+};
+#endif
+
+class OSREntryValue;
+using StackMap = FixedVector<OSREntryValue>;
+using StackMaps = UncheckedKeyHashMap<CallSiteIndex, StackMap>;
+
+struct InternalFunction {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(InternalFunction);
+#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
+    StackMaps stackmaps;
+#endif
+    Vector<UnlinkedHandlerInfo> exceptionHandlers;
+#if ENABLE(JIT)
+    Vector<CCallHelpers::Label> bbqLoopEntrypoints;
+    std::optional<CCallHelpers::Label> bbqSharedLoopEntrypoint;
+    Entrypoint entrypoint;
+    FixedBitVector outgoingJITDirectCallees;
+#endif
+    unsigned osrEntryScratchBufferSize { 0 };
+};
+
+struct alignas(8) WasmCallableFunction {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WasmCallableFunction);
+    using LoadLocation = CodePtr<WasmEntryPtrTag>*;
+    static constexpr ptrdiff_t offsetOfBoxedCallee() { return OBJECT_OFFSETOF(WasmCallableFunction, boxedCallee); }
+    static constexpr ptrdiff_t offsetOfTargetInstance() { return OBJECT_OFFSETOF(WasmCallableFunction, targetInstance); }
+    static constexpr ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WasmCallableFunction, entrypointLoadLocation); }
+
+    // LoadLocation's dereference.
+    static constexpr ptrdiff_t offsetOfValueOfLoadLocation() { return 0; }
+
+    bool isJS() const;
+
+    CalleeBits boxedCallee { };
+    // Target instance and entrypoint are only set for wasm->wasm calls, and are otherwise nullptr. The js-specific logic occurs through import function.
+    WriteBarrier<JSWebAssemblyInstance> targetInstance { };
+    LoadLocation entrypointLoadLocation { };
+};
+
+// WebAssembly direct calls and call_indirect use indices into "function index space". This space starts
+// with all imports, and then all internal functions. WasmToWasmImportableFunction and FunctionIndexSpace are only
+// meant as fast lookup tables for these opcodes and do not own code.
+struct WasmToWasmImportableFunction : public WasmCallableFunction {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WasmToWasmImportableFunction);
+    static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, rtt); }
+    bool isEmpty() const { return !rtt; }
+
+    const RTT* rtt { nullptr };
+};
+using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;
+
+struct WasmOrJSImportableFunction : public WasmToWasmImportableFunction {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WasmOrJSImportableFunction);
+    using LoadLocation = CodePtr<WasmEntryPtrTag>*;
+
+    CodePtr<WasmEntryPtrTag> importFunctionStub;
+    WriteBarrier<JSObject> importFunction { };
+};
+
+struct WasmOrJSImportableFunctionCallLinkInfo final : public WasmOrJSImportableFunction {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WasmOrJSImportableFunctionCallLinkInfo);
+    static constexpr ptrdiff_t offsetOfCallLinkInfo() { return OBJECT_OFFSETOF(WasmOrJSImportableFunctionCallLinkInfo, callLinkInfo); }
+
+    std::unique_ptr<DataOnlyCallLinkInfo> callLinkInfo { };
+};
+
+#if ASSERT_ENABLED
+void validateWasmValue(uint64_t wasmValue, Type expectedType);
+#else
+ALWAYS_INLINE void validateWasmValue(uint64_t, Type) { }
+#endif
+
+} } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+namespace WTF {
+
+void printInternal(PrintStream&, JSC::Wasm::TableElementType);
+
+} // namespace WTF
+
+#endif // ENABLE(WEBASSEMBLY)

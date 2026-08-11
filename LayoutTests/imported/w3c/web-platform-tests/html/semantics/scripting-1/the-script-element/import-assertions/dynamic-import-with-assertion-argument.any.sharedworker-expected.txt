@@ -1,0 +1,5 @@
+
+PASS Dynamic import with an empty assert clause should succeed
+PASS Dynamic import with an unsupported import assertion should succeed
+PASS Dynamic import with an unsupported type assertion should fail
+

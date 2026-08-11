@@ -1,0 +1,3 @@
+
+PASS Changing 'direction' to 'reverse' in flight should immediately prevent acceleration of the entire effect stack.
+

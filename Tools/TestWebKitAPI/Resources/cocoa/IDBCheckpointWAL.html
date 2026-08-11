@@ -1,0 +1,53 @@
+<script>
+
+// 5 MB is larger than default WAL auto-checkpoint limit of 4 MB.
+const ROW_SIZE = 5 << 20;
+
+function openIDBAsync() {
+    return new Promise((resolve, reject) => {
+        let req = indexedDB.open('test-wal-checkpoint');
+        req.onupgradeneeded = e => e.target.result.createObjectStore('objects');
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = reject;
+    });
+}
+
+// This creates a hanging cursor that doesn't let go of its associated
+// read transaction until the next count() call in older WebKits (202137).
+function countAsync(db) {
+    let txn;
+    let txnPromise = new Promise((resolve, reject) => {
+        txn = db.transaction('objects', 'readwrite');
+        [txn.oncomplete, txn.onerror] = [resolve, reject];
+    });
+
+    let reqPromise = new Promise((resolve, reject) => {
+        let req = txn.objectStore('objects').count(IDBKeyRange.lowerBound(0xff));
+        [req.onsuccess, req.onerror] = [resolve, reject];
+    });
+
+    return Promise.all([txnPromise, reqPromise]).then(_ => db);
+}
+
+function insertRowAsync(db) {
+    let txn;
+    let txnPromise = new Promise((resolve, reject) => {
+        txn = db.transaction('objects', 'readwrite');
+        [txn.oncomplete, txn.onerror] = [resolve, reject];
+    });
+
+    let reqPromise = new Promise((resolve, reject) => {
+        let req = txn.objectStore('objects').put(new Int8Array(ROW_SIZE), 0xff);
+        [req.onsuccess, req.onerror] = [resolve, reject];
+    });
+
+    return Promise.all([txnPromise, reqPromise]).then(_ => db);
+}
+
+openIDBAsync()
+    .then(countAsync)
+    .then(insertRowAsync)
+    .then(_ => window.webkit.messageHandlers.testHandler.postMessage('Success'))
+    .catch(e => window.webkit.messageHandlers.testHandler.postMessage('Failed inserting row: ' + (e?.target?.error || e)))
+
+</script>

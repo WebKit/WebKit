@@ -1,0 +1,89 @@
+
+PASS Invalid Unicode input is replaced: utf-8
+PASS Invalid Unicode input is replaced: utf-16le
+PASS Invalid Unicode input is replaced: utf-16be
+PASS Single-byte encodings are ASCII supersets: windows-1252
+PASS Single-byte encodings are ASCII supersets: ibm866
+PASS Most legacy multi-byte encodings are ASCII supersets: gbk
+PASS Most legacy multi-byte encodings are ASCII supersets: gb18030
+PASS Most legacy multi-byte encodings are ASCII supersets: big5
+PASS Most legacy multi-byte encodings are ASCII supersets: euc-jp
+PASS Most legacy multi-byte encodings are ASCII supersets: shift_jis
+PASS Most legacy multi-byte encodings are ASCII supersets: euc-kr
+PASS Fast path misdetection: windows-874
+PASS Fast path misdetection: windows-1250
+PASS Fast path misdetection: windows-1252
+PASS Fast path misdetection: windows-1253
+PASS Fast path misdetection: windows-1254
+PASS Fast path misdetection: windows-1255
+PASS Fast path misdetection: windows-1257
+PASS Fast path misdetection: windows-1258
+PASS Fast path misdetection: latin1
+PASS Fast path misdetection: ascii
+PASS utf-16le does not produce more chars than truncated
+PASS utf-16be does not produce more chars than truncated
+PASS windows-1252 maps bytes outside of latin1: windows-1252
+PASS windows-1252 maps bytes outside of latin1: latin1
+PASS windows-1252 maps bytes outside of latin1: ascii
+PASS windows-1252 does not contain unmapped chars: windows-1252
+PASS windows-1252 does not contain unmapped chars: latin1
+PASS windows-1252 does not contain unmapped chars: ascii
+PASS specific: x-user-defined
+PASS specific: big5
+PASS iso-8859-8-i decodes bytes the same way as iso-8859-8
+PASS selected single-byte: koi8-u
+PASS selected single-byte: windows-874
+PASS selected single-byte: windows-1252
+PASS selected single-byte: windows-1253
+PASS selected single-byte: windows-1255
+PASS selected single-byte: macintosh
+PASS selected single-byte: windows-1250
+PASS selected single-byte: windows-1251
+PASS selected single-byte: windows-1254
+PASS selected single-byte: windows-1257
+PASS selected single-byte: windows-1258
+PASS selected single-byte: iso-8859-8-i
+PASS selected single-byte: iso-8859-16
+PASS selected single-byte: x-mac-cyrillic
+PASS Concatenating two ISO-2022-JP outputs is not always valid
+PASS gb18030 version and ranges
+PASS gbk version and ranges
+PASS gbk decoder is gb18030 decoder
+PASS Replacement, push back ASCII characters: big5
+PASS Replacement, push back ASCII characters: iso-2022-jp
+PASS Replacement, push back ASCII characters: gb18030
+PASS Replacement, push back ASCII characters: euc-jp
+PASS Replacement, push back ASCII characters: euc-kr
+PASS Replacement, push back ASCII characters: shift_jis
+PASS Replacement, push back ASCII characters: gbk
+PASS Sticky multibyte state: iso-2022-jp
+PASS Sticky multibyte state: gb18030
+PASS Sticky multibyte state: big5
+PASS Sticky multibyte state: shift_jis
+PASS Sticky multibyte state: euc-kr
+PASS Sticky multibyte state: gbk
+PASS Sticky multibyte state: euc-jp
+PASS Sticky fatal BOM: utf-8
+PASS Sticky fatal BOM: utf-16le
+PASS Sticky fatal BOM: utf-16be
+PASS BOM splitting / repeats: utf-8
+PASS BOM splitting / repeats: utf-16le
+PASS BOM splitting / repeats: utf-16be
+PASS stream: utf-8
+PASS stream: gbk
+PASS stream: gb18030
+PASS stream: big5
+PASS stream: shift_jis
+PASS stream: euc-kr
+PASS stream: euc-jp
+PASS stream: iso-2022-jp
+PASS fatal stream: utf-8
+PASS fatal stream: utf-16le
+PASS fatal stream: utf-16be
+PASS fatal stream: iso-2022-jp
+PASS WPT mislabels: euc-jp
+PASS WPT mislabels: shift_jis
+PASS WPT mislabels: iso-2022-jp
+PASS labels: invalid non-ascii
+PASS labels: transformed
+

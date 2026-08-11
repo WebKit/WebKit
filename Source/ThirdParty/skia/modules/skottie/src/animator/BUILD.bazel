@@ -1,0 +1,24 @@
+load("//bazel:skia_rules.bzl", "skia_filegroup")
+
+package(
+    default_applicable_licenses = ["//:license"],
+)
+
+licenses(["notice"])
+
+skia_filegroup(
+    name = "srcs",
+    srcs = [
+        "Animator.cpp",
+        "Animator.h",
+        "KeyframeAnimator.cpp",
+        "KeyframeAnimator.h",
+        "ScalarKeyframeAnimator.cpp",
+        "ShapeKeyframeAnimator.cpp",
+        "TextKeyframeAnimator.cpp",
+        "Vec2KeyframeAnimator.cpp",
+        "VectorKeyframeAnimator.cpp",
+        "VectorKeyframeAnimator.h",
+    ],
+    visibility = ["//modules/skottie/src:__pkg__"],
+)

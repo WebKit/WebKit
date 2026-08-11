@@ -1,0 +1,12 @@
+Test that calling blur() on a shadow host of a focused element clears the focus.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input = shadowRoot.querySelector("input"); input.focus(); shadowRoot.activeElement is input
+PASS document.activeElement is shadowHost
+PASS shadowHost.blur(); shadowRoot.activeElement is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

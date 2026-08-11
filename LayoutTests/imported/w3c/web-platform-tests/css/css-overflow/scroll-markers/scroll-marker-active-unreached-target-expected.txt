@@ -1,0 +1,4 @@
+1 2
+
+FAIL target whose target position is not yet reached only get selected when its less than half a scroll port away. assert_equals: marker 1 should be unselected. expected "rgb(255, 0, 0)" but got ""
+

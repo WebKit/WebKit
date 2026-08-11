@@ -1,0 +1,3 @@
+
+PASS Constructing MediaStreamAudioDestinationNode on a closed AudioContext succeeds
+

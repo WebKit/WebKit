@@ -1,0 +1,33 @@
+Smart-list activation requires the just-typed space to immediately follow the marker, with no other content anywhere on the line. The first four cases verify that typing a space in a line that already contains content past the marker (mid-word, end-of-line, or immediately after the period) leaves the content as plain text. The last case should activate list formatting.
+
+Mid-word space:
+| "1. apple"
+| <br>
+| "2. cherryban <#selection-caret>ana"
+
+End-of-line space:
+| "1. apple"
+| <br>
+| "2. cherrybanana <#selection-caret>"
+
+Space after period:
+| "1. apple"
+| <br>
+| "2. <#selection-caret> abc"
+
+Mid-word space with bullet marker:
+| "* apple"
+| <br>
+| "* cherryban <#selection-caret>ana"
+
+Marker followed only by typed space (should activate):
+| <ol>
+|   class="Apple-decimal-list"
+|   start="1"
+|   style="list-style-type: decimal;"
+|   <li>
+|     "abc"
+|     <br>
+|   <li>
+|     <#selection-caret>
+|     <br>

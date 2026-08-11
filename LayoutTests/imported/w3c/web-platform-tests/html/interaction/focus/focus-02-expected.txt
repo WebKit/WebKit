@@ -1,0 +1,5 @@
+
+PASS The keydown event must be targeted at the body element
+PASS The keypress event must be targeted at the body element
+PASS The keyup event must be targeted at the body element
+

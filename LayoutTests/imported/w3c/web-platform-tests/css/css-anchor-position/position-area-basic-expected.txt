@@ -1,0 +1,49 @@
+
+PASS Offsets for: none
+PASS Offsets for: span-all
+PASS Offsets for: span-all span-all
+PASS Offsets for: top left
+PASS Offsets for: top center
+PASS Offsets for: top right
+PASS Offsets for: center left
+PASS Offsets for: center center
+PASS Offsets for: center right
+PASS Offsets for: bottom left
+PASS Offsets for: bottom center
+PASS Offsets for: bottom right
+PASS Offsets for: start start
+PASS Offsets for: start center
+PASS Offsets for: start end
+PASS Offsets for: center start
+PASS Offsets for: center end
+PASS Offsets for: end start
+PASS Offsets for: end center
+PASS Offsets for: end end
+PASS Offsets for: self-start self-start
+PASS Offsets for: self-start center
+PASS Offsets for: self-start self-end
+PASS Offsets for: center self-start
+PASS Offsets for: center self-end
+PASS Offsets for: self-end self-start
+PASS Offsets for: self-end center
+PASS Offsets for: self-end self-end
+PASS Offsets for: y-start x-start
+PASS Offsets for: y-start center
+PASS Offsets for: y-start x-end
+PASS Offsets for: center x-start
+PASS Offsets for: center x-end
+PASS Offsets for: y-end x-start
+PASS Offsets for: y-end center
+PASS Offsets for: y-end x-end
+PASS Offsets for: self-y-start self-x-start
+PASS Offsets for: self-y-start center
+PASS Offsets for: self-y-start self-x-end
+PASS Offsets for: center self-x-start
+PASS Offsets for: center self-x-end
+PASS Offsets for: self-y-end self-x-start
+PASS Offsets for: self-y-end center
+PASS Offsets for: self-y-end self-x-end
+PASS Offsets for: span-self-y-start span-self-x-end
+PASS Offsets for: span-bottom span-all
+PASS Offsets for: span-all top
+

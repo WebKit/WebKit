@@ -1,0 +1,3 @@
+
+PASS Transtioning two properties, one of which can be accelerated while the other cannot, yields only one accelerated animation.
+

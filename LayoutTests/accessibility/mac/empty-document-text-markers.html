@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+var output = "This test ensures the start and end text markers of a text-less document both resolve to a valid element and to the same element. Regression test for the isolated tree: the start marker must not become null when there is no text for it to anchor to.\n\n";
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    // Resolve the start and end markers to elements BEFORE debug()/description() injects any text
+    // into the (intentionally text-less) document, so the document genuinely has no text runs.
+    var startElement = webArea.accessibilityElementForTextMarker(webArea.startTextMarker);
+    var endElement = webArea.accessibilityElementForTextMarker(webArea.endTextMarker);
+    var emptyRangeString = webArea.stringForTextMarkerRange(webArea.textMarkerRangeForMarkers(webArea.startTextMarker, webArea.endTextMarker));
+
+    output += expect("startElement == null", "false");
+    output += expect("endElement == null", "false");
+    output += expect("endElement.isEqual(startElement)", "true");
+    output += expect("emptyRangeString", "''");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

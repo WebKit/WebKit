@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+
+.myClass, #myId
+{
+  color: green;
+  font-weight: bold;
+}
+
+.myclass, #myid
+{
+  color: red;
+  font-weight: bold;
+}
+
+.myclass::after, #myid::after
+{
+  content: " (this should have been green!)";
+}
+</style>
+</head>
+<body>
+<div id="description"></div>
+<div id="container"></div>
+<div id="console"></div>
+<script>
+description("Tests that Document.adoptNode() properly deals with the documents having a different quirks mode");
+jsTestIsAsync = true;
+
+var tests = ["resources/document-quirks-class.html", "resources/document-quirks-id.html"];
+var currentTest = -1;
+
+function documentLoaded()
+{
+    var parsedBodyChild = this.response.body.children[0];
+
+    var container = document.getElementById("container");
+    container.appendChild(document.adoptNode(parsedBodyChild));
+
+    shouldBeEqualToString("window.getComputedStyle(container.lastChild).color", "rgb(0, 128, 0)");
+
+    runNextTest();
+}
+
+function runNextTest()
+{
+    currentTest++;
+    if (currentTest >= tests.length) {
+        finishJSTest();
+        return;
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = "document";
+    xhr.addEventListener("load", documentLoaded);
+    xhr.open("GET", tests[currentTest], true);
+  
+    xhr.send();
+}
+
+runNextTest();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

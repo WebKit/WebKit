@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="target"></div>
+<script>
+description("env() does not substitute its name argument. This is a WebKit limitation: env()'s argument grammar is env( &lt;declaration-value&gt;, &lt;declaration-value&gt;? ), so env(var(--name)) should be valid at parse time and resolve the name at computed-value time.");
+
+var target = document.getElementById("target");
+
+function computedWidth(declaration)
+{
+    target.setAttribute("style", declaration);
+    var value = getComputedStyle(target).width;
+    target.removeAttribute("style");
+    return value;
+}
+
+var initialWidth = computedWidth("width: initial;");
+
+shouldBeFalse('CSS.supports("width", "env(var(--myvar))")');
+shouldBe('computedWidth("--myvar: safe-area-inset-top; width: env(var(--myvar), 150px);")', 'initialWidth');
+</script>
+</body>
+</html>

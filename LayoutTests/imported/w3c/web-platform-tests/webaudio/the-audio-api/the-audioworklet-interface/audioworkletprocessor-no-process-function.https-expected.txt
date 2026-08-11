@@ -1,0 +1,3 @@
+
+PASS Test an AudioWorkletProcessor with undefined process function.
+

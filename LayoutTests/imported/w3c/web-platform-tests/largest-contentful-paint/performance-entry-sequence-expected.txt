@@ -1,0 +1,9 @@
+AB
+ABC
+A
+ABCD
+ABCDE
+
+
+PASS Exactly one LargestContentfulPaint entry is emitted per frame when a new candidate is rendered
+

@@ -1,0 +1,41 @@
+This test verifies the basic use of binary keys.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Initial upgrade needed: Old version - 0 New version - 1
+PASS key instanceof ArrayBuffer is true
+PASS key.byteLength is 0
+PASS key.byteLength is binary.byteLength
+PASS key instanceof ArrayBuffer is true
+PASS key.byteLength is 4
+PASS dataView.getUint32(0) is new DataView(key).getUint32(0)
+PASS key instanceof ArrayBuffer is true
+PASS key.byteLength is 4
+PASS dataView.getUint32(0) is new DataView(key).getUint32(0)
+PASS key instanceof ArrayBuffer is true
+PASS key.byteLength is 4
+PASS keyInInt8Array[i] is int8Array[i]
+PASS keyInInt8Array[i] is int8Array[i]
+PASS keyInInt8Array[i] is int8Array[i]
+PASS keyInInt8Array[i] is int8Array[i]
+Got the key and value with a cursor
+PASS key instanceof ArrayBuffer is true
+PASS key.byteLength is 4
+PASS keyInInt8Array[i] is int8Array[i]
+PASS keyInInt8Array[i] is int8Array[i]
+PASS keyInInt8Array[i] is int8Array[i]
+PASS keyInInt8Array[i] is int8Array[i]
+PASS retrievedValue is expectedValue
+Got the value with a DataView key: Value
+Got the value with an ArrayBuffer key: Value
+Got the value with a Typed Array key: Value
+Got the value with a Typed Array key, but changed from the original put: undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

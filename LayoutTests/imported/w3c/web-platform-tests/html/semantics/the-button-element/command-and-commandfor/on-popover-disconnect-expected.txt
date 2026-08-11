@@ -1,0 +1,4 @@
+
+
+PASS invoking a popover and removing during command event does not raise an error
+

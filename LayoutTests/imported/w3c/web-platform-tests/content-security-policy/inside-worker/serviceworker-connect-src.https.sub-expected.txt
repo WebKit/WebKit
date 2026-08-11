@@ -1,0 +1,14 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS serviceworker-connect-src
+TIMEOUT serviceworker-connect-src 1 Test timed out
+NOTRUN serviceworker-connect-src 2
+PASS Same-origin 'fetch()' in https: without CSP
+FAIL Cross-origin 'fetch()' in https: without CSP promise_test: Unhandled rejection with value: object "TypeError: A server with the specified hostname could not be found."
+FAIL Same-origin => cross-origin 'fetch()' in https: without CSP promise_test: Unhandled rejection with value: object "TypeError: A server with the specified hostname could not be found."
+PASS Same-origin 'fetch()' in https: with connect-src 'self'
+TIMEOUT Cross-origin 'fetch()' in https: with connect-src 'self' Test timed out
+NOTRUN Same-origin => cross-origin 'fetch()' in https: with connect-src 'self'
+NOTRUN Reports match in https: with connect-src 'self'
+

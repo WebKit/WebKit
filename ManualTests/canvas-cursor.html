@@ -1,0 +1,41 @@
+<html>
+<body>
+This is a test of our ability to convert a canvas to a data url and use it as a cursor. We pass if the cursor animates smoothly and without flickering.<br>
+See https://bugs.webkit.org/show_bug.cgi?id=64321.
+<canvas id="c" width="40" height="40"></canvas>
+<script type="text/javascript">
+var icon = new Image;
+icon.src = 'resources/drag-image.png'
+
+function drawArrow(angle) {
+    var canvas = document.getElementById('c');
+    canvas.width = canvas.width // reset canvas
+    var ctx = canvas.getContext('2d');
+
+    ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
+    ctx.rotate(angle);
+    ctx.drawImage(icon, -icon.width / 2, -icon.height / 2);
+
+    var x = 20;//Math.floor(Math.cos(angle) * icon.width / 2) + icon.width / 2;
+    var y = 20;//Math.floor(Math.sin(angle) * icon.width / 2) + icon.width / 2;
+
+    var data = canvas.toDataURL();
+    if (data)
+        document.body.style.cursor = 'url('+data+') ' + x + ' ' + y + ', pointer';
+    else
+        console.log('failure');
+}
+
+(function() {
+    var angle = 0;
+    var run = function() {
+        angle += Math.PI / 16;
+        drawArrow(angle);
+        setTimeout(run, 100);
+    };
+    run();
+})();
+    drawArrow();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+Tests for WI.SpringTimingFunction.
+
+
+== Running test suite: WI.SpringTimingFunction
+-- Running test case: WI.SpringTimingFunction.fromString.Valid
+PASS: Should parse 'spring(1 2 3 4)' as 'spring(1 2 3 4)'.
+PASS: Should parse 'spring(0.1 0.2 0.3 0.4)' as 'spring(1 1 0.3 0.4)'.
+
+-- Running test case: WI.SpringTimingFunction.fromString.Invalid
+PASS: Should not parse invalid 'spring()'.
+PASS: Should not parse invalid 'spring(0)'.
+PASS: Should not parse invalid 'spring(0 1)'.
+PASS: Should not parse invalid 'spring(0 1 2)'.
+PASS: Should not parse invalid 'spring("test")'.
+PASS: Should not parse invalid 'spring(0 "test")'.
+PASS: Should not parse invalid 'spring(0 1 "test")'.
+PASS: Should not parse invalid 'spring(0 1 2 "test")'.
+

@@ -1,0 +1,6 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS history.forward() uses this's associated document's browsing context to determine if navigation is allowed
+

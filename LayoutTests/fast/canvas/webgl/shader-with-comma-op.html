@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/js-test.js" type="text/javascript"></script>
+    <script src="resources/webgl-test.js" type="text/javascript"></script>
+    <script src="resources/webgl-test-utils.js"> </script>
+    
+</head>
+<body>
+    <canvas id="webgl-canvas" width="100px" height="100px"></canvas>
+    <script>
+    var wtu = WebGLTestUtils;
+    
+    function runShaderTest(gl, vShaderSource, fshaderSource, errorShouldBeText)
+    {
+        var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        var program = gl.createProgram();
+        var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, vShaderSource);
+        gl.compileShader(vertexShader);
+        gl.shaderSource(fragmentShader, fshaderSource);
+        gl.compileShader(fragmentShader);
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);  
+        wtu.glErrorShouldBe(gl,0,errorShouldBeText);
+        gl.deleteProgram(program)
+        gl.deleteShader(vertexShader);
+        gl.deleteShader(fragmentShader);
+    }
+    function runTest()
+    {
+        description("Tests compiling programs that use the 'sequence' operator..");
+        var canvas = document.getElementById('webgl-canvas');
+        var gl = canvas.getContext("webgl");
+        {
+            var vShaderSource =  "void f(vec2 a) {} void main() { f(vec2(0.)), gl_Position = vec4(0.,0.,0.,1.); }";
+            var fshaderSource = "void main() { gl_FragColor = vec4(0.); }";
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using comma operator with void function")
+        }
+
+        {
+            var vShaderSource =  "vec2 f(vec2 a) { return a; } void main() { f(vec2(0.)), gl_Position = vec4(0.,0.,0.,1.); }";
+            var fshaderSource = "void main() { gl_FragColor = vec4(0.); }";
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using comma operator with non-void  function")
+        }
+
+        {
+            var vShaderSource =  "void main() { vec2(0.), gl_Position = vec4(0.,0.,0.,1.); }";
+            var fshaderSource =  "void main() { gl_FragColor = vec4(0.); }";
+            runShaderTest(gl, vShaderSource, fshaderSource, "no error for using comma operator with standard type")
+        }
+    }
+    runTest();
+
+    </script>
+</body>
+</html>

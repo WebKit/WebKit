@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/frame-programmatic-resize.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+
+window.onload = runTests;
+
+function runTests()
+{
+    if (!window.eventSender)
+        return; // Cannot run this test without DRT.
+
+    description("This tests that frames in a frameset with a noresize attribute can be resized after programmatically removing the frameset's noresize attribute. HTMLFrameSetElement::attributeChanged must clear m_noresize when the attribute is removed.");
+    setTestFrameById("testFrame");
+    shouldAllowFrameResizeAfterProcessingFrame(function(frame) { frame.parentNode.removeAttribute("noresize") });
+}
+</script>
+</head>
+<frameset cols="200,*" border="10" noresize>
+    <frame id="testFrame" name="testFrame" src="about:blank">
+    <frame id="results" name="results" src="data:text/html,<p id='description'>This test can only be run using DRT.</p><pre id='console'></pre>">
+</frameset>
+</html>

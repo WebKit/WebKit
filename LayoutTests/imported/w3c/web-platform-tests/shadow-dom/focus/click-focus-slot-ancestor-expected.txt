@@ -1,0 +1,7 @@
+Text to click and select
+Slotted text to click and select
+
+PASS Clicking on non-focusable slot inside focusable div will make the flat-tree focusable ancestor get focused
+PASS Select on non-focusable slot inside focusable div will select text
+PASS Select on non-focusable non-editable slot in a contenteditable shadow DOM and inside focusable div will select text
+

@@ -1,0 +1,82 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            { binding: 0, visibility: GPUShaderStage.VERTEX, sampler: {} },
+            { binding: 1, visibility: GPUShaderStage.VERTEX, externalTexture: {} },
+            { binding: 2, visibility: GPUShaderStage.VERTEX, texture: { viewDimension: '2d', sampleType: 'depth', multisampled: false } },
+            { binding: 3, visibility: GPUShaderStage.VERTEX, buffer: {} },
+            { binding: 4, visibility: GPUShaderStage.VERTEX, texture: {} },
+        ]
+    });
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+    let shaderModule = device.createShaderModule({ code: `
+        @group(0) @binding(0) var sampler1: sampler;
+        @group(0) @binding(2) var texture3: texture_depth_2d;
+        @group(0) @binding(3) var<uniform> buffer: array<mat2x4h, 1>;
+        @group(0) @binding(4) var texture1: texture_2d<f32>;
+
+        var<private> vp = vec4f();
+
+        fn fn0() -> vec4f {
+            var out: vec4f;
+            vp += vec4f(textureLoad(texture1, vec2u(), 0));
+            vp += vec4f(buffer[0][0]);
+            let z = textureSampleLevel(texture3, sampler1, vec2f(), 0);
+            let w = vec4f(f32(buffer[0][0][u32(z)]));
+            return out;
+        }
+
+        @vertex fn vertex0() -> @builtin(position) vec4f {
+            fn0();
+            return vec4f();
+        }
+
+        @fragment fn fragment0() -> @location(0) i32 {
+            return 0;
+        }
+    `});
+    let texture1 = device.createTexture({ size: [1, 1], format: 'r8snorm', usage: GPUTextureUsage.TEXTURE_BINDING });
+    let texture2 = device.createTexture({ size: [4, 1], format: 'r8sint', usage: GPUTextureUsage.RENDER_ATTACHMENT });
+    let texture3 = device.createTexture({ size: [1, 1], format: 'depth16unorm', usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING });
+    let textureView1 = texture1.createView();
+    let textureView2 = texture2.createView();
+    let textureView3 = texture3.createView();
+    let videoFrame = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'BGRX', timestamp: 0 });
+    let externalTexture = device.importExternalTexture({ source: videoFrame });
+    let sampler1 = device.createSampler();
+    let pipeline = await device.createRenderPipelineAsync({ layout: pipelineLayout, fragment: { module: shaderModule, targets: [{ format: 'r8sint' }] }, vertex: { module: shaderModule, buffers: [] } });
+    let commandEncoder = device.createCommandEncoder();
+    let renderPassEncoder = commandEncoder.beginRenderPass({ colorAttachments: [{ view: textureView2, loadOp: 'load', storeOp: 'store' }] });
+    let buffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM });
+    let bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [
+            { binding: 0, resource: sampler1 },
+            { binding: 1, resource: externalTexture },
+            { binding: 2, resource: textureView3 },
+            { binding: 3, resource: { buffer: buffer } },
+            { binding: 4, resource: textureView1 },
+        ],
+    });
+    renderPassEncoder.setPipeline(pipeline);
+    renderPassEncoder.setBindGroup(0, bindGroup);
+    renderPassEncoder.draw(3);
+    renderPassEncoder.end();
+    let commandBuffer = commandEncoder.finish();
+    device.queue.submit([commandBuffer]);
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

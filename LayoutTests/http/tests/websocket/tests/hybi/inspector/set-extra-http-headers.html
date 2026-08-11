@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../../../inspector/resources/inspector-test.js"></script>
+<script>
+function createWebSocketConnection()
+{
+    let webSocket = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/inspector/echo-headers");
+    webSocket.addEventListener("open", () => {
+        webSocket.send("X-WebKit-Test-Extra-Header");
+    });
+    webSocket.addEventListener("message", (event) => {
+        TestPage.dispatchEventToFrontend("InspectedPage_WebSocket_Message", event.data);
+        webSocket.close();
+    });
+}
+
+function test()
+{
+    const headerName = "X-WebKit-Test-Extra-Header";
+    const headerValue = "TestValue123";
+
+    let suite = InspectorTest.createAsyncSuite("Network.setExtraHTTPHeaders");
+
+    suite.addTestCase({
+        name: "Network.setExtraHTTPHeaders.WebSocket.Request",
+        description: "Headers set via Network.setExtraHTTPHeaders should be included in the WebSocket handshake request.",
+        async test() {
+            await NetworkAgent.setExtraHTTPHeaders({[headerName]: headerValue});
+
+            let [resourceWasAddedEvent, inspectedPageWebSocketMessageEvent] = await Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                InspectorTest.awaitEvent("InspectedPage_WebSocket_Message"),
+                InspectorTest.evaluateInPage(`createWebSocketConnection()`),
+            ]);
+
+            let webSocketResource = resourceWasAddedEvent.data.resource;
+            InspectorTest.expectThat(webSocketResource instanceof WI.WebSocketResource, "Resource should be a WebSocket.");
+            InspectorTest.expectEqual(webSocketResource.requestHeaders.valueForCaseInsensitiveKey(headerName), headerValue, `Resource request headers should include "${headerName}: ${headerValue}".`);
+
+            let echoedHeaderValue = inspectedPageWebSocketMessageEvent.data;
+            InspectorTest.expectEqual(echoedHeaderValue, headerValue, `Server should have received header "${headerName}" with value "${headerValue}".`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Network.setExtraHTTPHeaders.</p>
+</body>
+</html>

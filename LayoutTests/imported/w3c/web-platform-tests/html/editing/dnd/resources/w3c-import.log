@@ -1,0 +1,26 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/resources/100x100-navy.png
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/resources/1x1-transparent.gif
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/resources/32mb.py
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/resources/boxnavy.swf
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/resources/circle.png
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/resources/crossorigin.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/resources/dragdrop_support.js
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/resources/fail.png
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/resources/filler.html
+/LayoutTests/imported/w3c/web-platform-tests/html/editing/dnd/resources/pass.png

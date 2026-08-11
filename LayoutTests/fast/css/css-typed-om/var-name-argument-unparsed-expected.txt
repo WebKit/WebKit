@@ -1,0 +1,17 @@
+var() with a name argument that is not a literal <custom-property-name> reifies as text in Typed OM.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS unparsedValue("width: var(20px)").toString() is "var(20px)"
+PASS unparsedValue("width: var(not-a-name)").toString() is "var(not-a-name)"
+PASS unparsedValue("width: var(--x ())").toString() is "var(--x ())"
+PASS unparsedValue("width: var({--x})").toString() is "var({--x})"
+PASS unparsedValue("width: var(attr(data-name type(*)))").toString() is "var(attr(data-name type(*)))"
+PASS unparsedValue("width: var(--x)")[0].variable is "--x"
+PASS unparsedValue("width: var(--x, 10px)")[0].variable is "--x"
+PASS unparsedValue("width: var(var(--name))")[1].variable is "--name"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

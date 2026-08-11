@@ -1,0 +1,599 @@
+Checking pause locations when stepping with "stepOver".
+
+
+== Running test suite: Debugger.stepOver.await
+-- Running test case: Debugger.stepOver.await.statements
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:6:5
+      2    async function c() { return "c"; }
+      3
+      4    async function testStatements() {
+ ->   5        |debugger;
+      6        let x = await 1;
+      7        let y = await 2;
+      8        TestPage.dispatchEventToFrontend("done");
+
+PAUSE AT <anonymous>:7:5
+      3
+      4    async function testStatements() {
+      5        debugger;
+ ->   6        |let x = await 1;
+      7        let y = await 2;
+      8        TestPage.dispatchEventToFrontend("done");
+      9    }
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:8:5
+      4    async function testStatements() {
+      5        debugger;
+      6        let x = await 1;
+ ->   7        |let y = await 2;
+      8        TestPage.dispatchEventToFrontend("done");
+      9    }
+     10
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:9:5
+      5        debugger;
+      6        let x = await 1;
+      7        let y = await 2;
+ ->   8        |TestPage.dispatchEventToFrontend("done");
+      9    }
+     10
+     11    async function testFunctions() {
+
+RESUMED
+
+-- Running test case: Debugger.stepOver.await.functions
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:13:5
+      9    }
+     10
+     11    async function testFunctions() {
+ ->  12        |debugger;
+     13        let before = await 1;
+     14        await a();
+     15        let after = await 2;
+
+PAUSE AT <anonymous>:14:5
+     10
+     11    async function testFunctions() {
+     12        debugger;
+ ->  13        |let before = await 1;
+     14        await a();
+     15        let after = await 2;
+     16        TestPage.dispatchEventToFrontend("done");
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:15:5
+     11    async function testFunctions() {
+     12        debugger;
+     13        let before = await 1;
+ ->  14        |await a();
+     15        let after = await 2;
+     16        TestPage.dispatchEventToFrontend("done");
+     17    }
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:16:5
+     12        debugger;
+     13        let before = await 1;
+     14        await a();
+ ->  15        |let after = await 2;
+     16        TestPage.dispatchEventToFrontend("done");
+     17    }
+     18
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:17:5
+     13        let before = await 1;
+     14        await a();
+     15        let after = await 2;
+ ->  16        |TestPage.dispatchEventToFrontend("done");
+     17    }
+     18
+     19    async function testEval() {
+
+RESUMED
+
+-- Running test case: Debugger.stepOver.await.eval
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:21:5
+     17    }
+     18
+     19    async function testEval() {
+ ->  20        |debugger;
+     21        let before = await 1;
+     22        await eval("1 + 1");
+     23        let after = await 2;
+
+PAUSE AT <anonymous>:22:5
+     18
+     19    async function testEval() {
+     20        debugger;
+ ->  21        |let before = await 1;
+     22        await eval("1 + 1");
+     23        let after = await 2;
+     24        TestPage.dispatchEventToFrontend("done");
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:23:5
+     19    async function testEval() {
+     20        debugger;
+     21        let before = await 1;
+ ->  22        |await eval("1 + 1");
+     23        let after = await 2;
+     24        TestPage.dispatchEventToFrontend("done");
+     25    }
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:24:5
+     20        debugger;
+     21        let before = await 1;
+     22        await eval("1 + 1");
+ ->  23        |let after = await 2;
+     24        TestPage.dispatchEventToFrontend("done");
+     25    }
+     26
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:25:5
+     21        let before = await 1;
+     22        await eval("1 + 1");
+     23        let after = await 2;
+ ->  24        |TestPage.dispatchEventToFrontend("done");
+     25    }
+     26
+     27    async function testAnonymousFunction() {
+
+RESUMED
+
+-- Running test case: Debugger.stepOver.await.anonymousFunction
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:30:9
+     26
+     27    async function testAnonymousFunction() {
+     28        await (async function() {
+ ->  29            |debugger;
+     30            let inner = await 1;
+     31        })();
+     32        let outer = await 2;
+
+PAUSE AT <anonymous>:31:9
+     27    async function testAnonymousFunction() {
+     28        await (async function() {
+     29            debugger;
+ ->  30            |let inner = await 1;
+     31        })();
+     32        let outer = await 2;
+     33        TestPage.dispatchEventToFrontend("done");
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:33:5
+     29            debugger;
+     30            let inner = await 1;
+     31        })();
+ ->  32        |let outer = await 2;
+     33        TestPage.dispatchEventToFrontend("done");
+     34    }
+     35
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:34:5
+     30            let inner = await 1;
+     31        })();
+     32        let outer = await 2;
+ ->  33        |TestPage.dispatchEventToFrontend("done");
+     34    }
+     35
+     36    async function testCommas() {
+
+RESUMED
+
+-- Running test case: Debugger.stepOver.await.commas
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:38:5
+     34    }
+     35
+     36    async function testCommas() {
+ ->  37        |debugger;
+     38        let x = await 1,
+     39            y = await 2,
+     40            z = await 3;
+
+PAUSE AT <anonymous>:39:5
+     35
+     36    async function testCommas() {
+     37        debugger;
+ ->  38        |let x = await 1,
+     39            y = await 2,
+     40            z = await 3;
+     41        await a(), await b(), await c();
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:40:9
+     36    async function testCommas() {
+     37        debugger;
+     38        let x = await 1,
+ ->  39            |y = await 2,
+     40            z = await 3;
+     41        await a(), await b(), await c();
+     42        await true && (await a(), await b(), await c()) && await true;
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:41:9
+     37        debugger;
+     38        let x = await 1,
+     39            y = await 2,
+ ->  40            |z = await 3;
+     41        await a(), await b(), await c();
+     42        await true && (await a(), await b(), await c()) && await true;
+     43        TestPage.dispatchEventToFrontend("done");
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:42:5
+     38        let x = await 1,
+     39            y = await 2,
+     40            z = await 3;
+ ->  41        |await a(), await b(), await c();
+     42        await true && (await a(), await b(), await c()) && await true;
+     43        TestPage.dispatchEventToFrontend("done");
+     44    }
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:42:16
+     38        let x = await 1,
+     39            y = await 2,
+     40            z = await 3;
+ ->  41        await a(), |await b(), await c();
+     42        await true && (await a(), await b(), await c()) && await true;
+     43        TestPage.dispatchEventToFrontend("done");
+     44    }
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:42:27
+     38        let x = await 1,
+     39            y = await 2,
+     40            z = await 3;
+ ->  41        await a(), await b(), |await c();
+     42        await true && (await a(), await b(), await c()) && await true;
+     43        TestPage.dispatchEventToFrontend("done");
+     44    }
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:43:5
+     39            y = await 2,
+     40            z = await 3;
+     41        await a(), await b(), await c();
+ ->  42        |await true && (await a(), await b(), await c()) && await true;
+     43        TestPage.dispatchEventToFrontend("done");
+     44    }
+     45
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:43:20
+     39            y = await 2,
+     40            z = await 3;
+     41        await a(), await b(), await c();
+ ->  42        await true && (|await a(), await b(), await c()) && await true;
+     43        TestPage.dispatchEventToFrontend("done");
+     44    }
+     45
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:43:31
+     39            y = await 2,
+     40            z = await 3;
+     41        await a(), await b(), await c();
+ ->  42        await true && (await a(), |await b(), await c()) && await true;
+     43        TestPage.dispatchEventToFrontend("done");
+     44    }
+     45
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:43:42
+     39            y = await 2,
+     40            z = await 3;
+     41        await a(), await b(), await c();
+ ->  42        await true && (await a(), await b(), |await c()) && await true;
+     43        TestPage.dispatchEventToFrontend("done");
+     44    }
+     45
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:44:5
+     40            z = await 3;
+     41        await a(), await b(), await c();
+     42        await true && (await a(), await b(), await c()) && await true;
+ ->  43        |TestPage.dispatchEventToFrontend("done");
+     44    }
+     45
+     46    async function testChainedExpressions() {
+
+RESUMED
+
+-- Running test case: Debugger.stepOver.await.chainedExpressions
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:48:5
+     44    }
+     45
+     46    async function testChainedExpressions() {
+ ->  47        |debugger;
+     48        await a() && await b() && await c();
+     49        TestPage.dispatchEventToFrontend("done");
+     50    }
+
+PAUSE AT <anonymous>:49:5
+     45
+     46    async function testChainedExpressions() {
+     47        debugger;
+ ->  48        |await a() && await b() && await c();
+     49        TestPage.dispatchEventToFrontend("done");
+     50    }
+     51
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:49:24
+     45
+     46    async function testChainedExpressions() {
+     47        debugger;
+ ->  48        await a() && await |b() && await c();
+     49        TestPage.dispatchEventToFrontend("done");
+     50    }
+     51
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:49:37
+     45
+     46    async function testChainedExpressions() {
+     47        debugger;
+ ->  48        await a() && await b() && await |c();
+     49        TestPage.dispatchEventToFrontend("done");
+     50    }
+     51
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:50:5
+     46    async function testChainedExpressions() {
+     47        debugger;
+     48        await a() && await b() && await c();
+ ->  49        |TestPage.dispatchEventToFrontend("done");
+     50    }
+     51
+     52    async function testDeclarations() {
+
+RESUMED
+
+-- Running test case: Debugger.stepOver.await.declarations
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:54:5
+     50    }
+     51
+     52    async function testDeclarations() {
+ ->  53        |debugger;
+     54        let x = await a(),
+     55            y = await b(),
+     56            z = await c();
+
+PAUSE AT <anonymous>:55:5
+     51
+     52    async function testDeclarations() {
+     53        debugger;
+ ->  54        |let x = await a(),
+     55            y = await b(),
+     56            z = await c();
+     57        TestPage.dispatchEventToFrontend("done");
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:56:9
+     52    async function testDeclarations() {
+     53        debugger;
+     54        let x = await a(),
+ ->  55            |y = await b(),
+     56            z = await c();
+     57        TestPage.dispatchEventToFrontend("done");
+     58    }
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:57:9
+     53        debugger;
+     54        let x = await a(),
+     55            y = await b(),
+ ->  56            |z = await c();
+     57        TestPage.dispatchEventToFrontend("done");
+     58    }
+     59
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:58:5
+     54        let x = await a(),
+     55            y = await b(),
+     56            z = await c();
+ ->  57        |TestPage.dispatchEventToFrontend("done");
+     58    }
+     59
+     60    async function testInnerFunction() {
+
+RESUMED
+
+-- Running test case: Debugger.stepOver.await.innerFunction
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:66:9
+     62            await beta();
+     63        }
+     64        async function beta() {
+ ->  65            |debugger;
+     66        }
+     67        await alpha();
+     68        TestPage.dispatchEventToFrontend("done");
+
+RESUMED
+
+-- Running test case: Debugger.stepOver.await.testFor
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:73:5
+     69    }
+     70
+     71    async function testFor() {
+ ->  72        |debugger;
+     73        for await (let item of [a(), b()]) {
+     74            c();
+     75        }
+
+PAUSE AT <anonymous>:74:28
+     70
+     71    async function testFor() {
+     72        debugger;
+ ->  73        for await (let item of |[a(), b()]) {
+     74            c();
+     75        }
+     76        TestPage.dispatchEventToFrontend("done");
+
+PAUSE AT <anonymous>:74:16
+     70
+     71    async function testFor() {
+     72        debugger;
+ ->  73        for await (|let item of [a(), b()]) {
+     74            c();
+     75        }
+     76        TestPage.dispatchEventToFrontend("done");
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:75:9
+     71    async function testFor() {
+     72        debugger;
+     73        for await (let item of [a(), b()]) {
+ ->  74            |c();
+     75        }
+     76        TestPage.dispatchEventToFrontend("done");
+     77    }
+
+PAUSE AT <anonymous>:74:16
+     70
+     71    async function testFor() {
+     72        debugger;
+ ->  73        for await (|let item of [a(), b()]) {
+     74            c();
+     75        }
+     76        TestPage.dispatchEventToFrontend("done");
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:75:9
+     71    async function testFor() {
+     72        debugger;
+     73        for await (let item of [a(), b()]) {
+ ->  74            |c();
+     75        }
+     76        TestPage.dispatchEventToFrontend("done");
+     77    }
+
+PAUSE AT <anonymous>:74:16
+     70
+     71    async function testFor() {
+     72        debugger;
+ ->  73        for await (|let item of [a(), b()]) {
+     74            c();
+     75        }
+     76        TestPage.dispatchEventToFrontend("done");
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:77:5
+     73        for await (let item of [a(), b()]) {
+     74            c();
+     75        }
+ ->  76        |TestPage.dispatchEventToFrontend("done");
+     77    }
+     78
+     79    async function testRepeatedInvocation() {
+
+RESUMED
+
+-- Running test case: Debugger.stepOver.await.testRepeatedInvocation
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:83:13
+     79    async function testRepeatedInvocation() {
+     80        async function wrap(state) {
+     81            if (state === 2)
+ ->  82                |debugger;
+     83            if (state === 1)
+     84                await a(); // should not pause on this line
+     85            await b();
+
+PAUSE AT <anonymous>:84:13
+     80        async function wrap(state) {
+     81            if (state === 2)
+     82                debugger;
+ ->  83            if (|state === 1)
+     84                await a(); // should not pause on this line
+     85            await b();
+     86            if (state === 1)
+
+PAUSE AT <anonymous>:86:9
+     82                debugger;
+     83            if (state === 1)
+     84                await a(); // should not pause on this line
+ ->  85            |await b();
+     86            if (state === 1)
+     87                await c(); // should not pause on this line
+     88            if (state === 2)
+
+RESUMED
+PAUSED (debugger-statement)
+PAUSE AT <anonymous>:87:13
+     83            if (state === 1)
+     84                await a(); // should not pause on this line
+     85            await b();
+ ->  86            if (|state === 1)
+     87                await c(); // should not pause on this line
+     88            if (state === 2)
+     89                TestPage.dispatchEventToFrontend("done");
+
+PAUSE AT <anonymous>:89:13
+     85            await b();
+     86            if (state === 1)
+     87                await c(); // should not pause on this line
+ ->  88            if (|state === 2)
+     89                TestPage.dispatchEventToFrontend("done");
+     90        }
+     91
+
+PAUSE AT <anonymous>:90:13
+     86            if (state === 1)
+     87                await c(); // should not pause on this line
+     88            if (state === 2)
+ ->  89                |TestPage.dispatchEventToFrontend("done");
+     90        }
+     91
+     92        wrap(1);
+
+RESUMED
+

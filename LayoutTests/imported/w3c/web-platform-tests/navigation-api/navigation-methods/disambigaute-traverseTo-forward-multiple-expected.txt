@@ -1,0 +1,4 @@
+
+
+PASS navigation.traverseTo() goes to the nearest entry when going forward
+

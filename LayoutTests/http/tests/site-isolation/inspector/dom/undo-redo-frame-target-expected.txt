@@ -1,0 +1,17 @@
+Tests that FrameDOMAgent exposes undo, redo, and markUndoableState. Functional undo/redo coverage lands alongside DOM editing commands in a follow-up.
+
+
+
+== Running test suite: SiteIsolation.DOM.FrameDOMAgent.UndoRedo
+-- Running test case: Setup
+PASS: Should find a cross-origin frame target.
+
+-- Running test case: SiteIsolation.DOM.UndoRedo.UndoEmptyStack
+PASS: undo() on an empty stack should not reject.
+
+-- Running test case: SiteIsolation.DOM.UndoRedo.RedoEmptyStack
+PASS: redo() on an empty stack should not reject.
+
+-- Running test case: SiteIsolation.DOM.UndoRedo.MarkUndoableState
+PASS: markUndoableState() should not reject.
+

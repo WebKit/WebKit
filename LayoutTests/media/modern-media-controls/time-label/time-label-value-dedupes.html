@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing that setting <code>TimeLabel.value</code> to an unchanged value does not re-commit (and therefore does not re-format) the label.");
+
+const timeLabel = new TimeLabel(TimeLabel.Type.Elapsed);
+
+// Count how many times the "value" property is actually committed (each commit
+// performs two formatting passes plus a setAttribute).
+let numberOfValueCommits = 0;
+const originalCommitProperty = timeLabel.commitProperty.bind(timeLabel);
+timeLabel.commitProperty = function(propertyName) {
+    if (propertyName === "value")
+        numberOfValueCommits++;
+    originalCommitProperty(propertyName);
+};
+
+function commitAndReset() {
+    timeLabel.commit();
+}
+
+debug("Initial value and number of digits are committed once.");
+timeLabel.setValueWithNumberOfDigits(10, 4);
+commitAndReset();
+shouldBe("numberOfValueCommits", "1");
+shouldBeEqualToString("timeLabel.element.textContent", "00:10");
+
+debug("");
+debug("Setting the same value again does not mark the label dirty...");
+timeLabel.value = 10;
+shouldBeFalse("timeLabel.needsLayout");
+commitAndReset();
+shouldBe("numberOfValueCommits", "1");
+
+debug("");
+debug("...but setting a different value does.");
+timeLabel.value = 11;
+shouldBeTrue("timeLabel.needsLayout");
+commitAndReset();
+shouldBe("numberOfValueCommits", "2");
+shouldBeEqualToString("timeLabel.element.textContent", "00:11");
+
+debug("");
+debug("Transitioning to NaN re-commits, then a second NaN is deduped.");
+timeLabel.value = NaN;
+commitAndReset();
+shouldBe("numberOfValueCommits", "3");
+shouldBeEqualToString("timeLabel.element.textContent", "--:--");
+timeLabel.value = NaN;
+shouldBeFalse("timeLabel.needsLayout");
+commitAndReset();
+shouldBe("numberOfValueCommits", "3");
+
+debug("");
+
+</script>
+</body>

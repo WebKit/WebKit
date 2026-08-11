@@ -1,0 +1,12 @@
+X
+X
+X
+X
+
+PASS A self collapsing block's margin stays inside a containing block with a border (nested)
+PASS A self collapsing block's margin stays inside a containing block with a border (sibling)
+PASS A self collapsing block's margin collapses out of a containing block without one (nested)
+PASS A self collapsing block's margin collapses out of a containing block without one (sibling)
+PASS The margin behaves the same whether the self collapsing block is nested in an inline box or a sibling of inline content (bordered containing block)
+PASS The margin behaves the same whether the self collapsing block is nested in an inline box or a sibling of inline content (plain containing block)
+

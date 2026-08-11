@@ -1,0 +1,12 @@
+world
+This tests that the replace with range API functions as expected when called on the web area element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS webArea.replaceTextInRange("world", 0, 5) is true
+PASS webArea.childAtIndex(0).stringValue.substring(9, 14) is 'world'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

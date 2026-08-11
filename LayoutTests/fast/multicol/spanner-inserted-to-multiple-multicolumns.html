@@ -1,0 +1,27 @@
+<style>
+  div {
+    column-span: all;
+  }
+  :nth-last-child(2) {
+    float: left;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  onload = () => {
+    document.styleSheets[0]?.insertRule(`html { column-width: 1px; }`);
+    document.styleSheets[0]?.insertRule(`body { column-width: 1px; }`);
+    let n0 = document.createElement('span');
+    document.body.appendChild(n0);
+    let n1 = document.createElement('div');
+    n1.appendChild(document.createElement('div'));
+    n0.appendChild(n1);
+    n0.appendChild(document.createElement('div'));
+    document.body.offsetTop;
+    n0.appendChild(document.createElement('div'));
+    document.querySelector('style').appendChild(document.createTextNode(''));
+  };
+</script>
+
+<!--  PASS if no crash or assert -->

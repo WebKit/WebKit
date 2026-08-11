@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<script>
+    window.addEventListener('load', event => {
+        const numberOfIterations = 20;
+        const numberOfItems = 1000;
+
+        PerfTestRunner.prepareToMeasureValuesAsync({
+            customIterationCount: numberOfIterations,
+            unit: 'ms',
+            done: function () {
+                PerfTestRunner.gc();
+            }
+        });
+
+        function startIteration()
+        {
+            testGenerator = runIteration();
+            testGenerator.next();
+        }
+
+        function *runIteration()
+        {
+            var startTime = PerfTestRunner.now();
+
+            for (let i = 0; i < numberOfItems; ++i)
+                document.createElement('audio');
+
+            if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+                return;
+
+            PerfTestRunner.gc();
+            setTimeout(startIteration, 0);
+        }
+
+        startIteration();
+    })
+</script>
+</head>
+<body></body>
+</html>

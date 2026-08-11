@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ jscOptions=--useShadowRealm=true ] -->
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script src =../resources/testharness.js></script>
+<script src =../resources/testharnessreport.js></script>
+<script>
+    description("Test to ensure correct behaviour of ShadowRealm global scope");
+
+    promise_test(async t => {
+        const bootstrap = function() {
+            const shadowRealm = new ShadowRealm;
+            const install = shadowRealm.evaluate(`(function(name, fn) {
+                globalThis[name] = fn;
+                return;
+            })`);
+            install("debug", (...args) => { debug(...args); });
+            return shadowRealm;
+        }
+
+        debug(`Object.getPrototypeOf(globalThis) === Object.prototype`);
+        let shadowRealm = bootstrap();
+        assert_equals(shadowRealm.evaluate("Object.getPrototypeOf(globalThis) === Object.prototype"), true);
+
+        debug(`globalThis.__proto__ = { alpha: "omega" };`);
+        shadowRealm.evaluate(`try {
+            globalThis.__proto__ = { alpha: "omega" };
+            "ok";
+        } catch (e) {
+            debug("Failed to set globalThis.__proto__");
+        }`);
+        assert_equals(shadowRealm.evaluate("globalThis.alpha"), "omega");
+
+        debug(`Object.setPrototypeOf(globalThis, { chuckle: "buckle" });`);
+        shadowRealm = bootstrap();
+        shadowRealm.evaluate(`try {
+            Object.setPrototypeOf(globalThis, { chuckle: "buckle" });
+            "ok";
+        } catch (e) {
+            debug("Failure in Object.setPrototypeOf(globalThis)");
+        }`);
+        assert_equals(shadowRealm.evaluate("globalThis.chuckle"), "buckle");
+
+        debug(`Reflect.setPrototypeOf(globalThis, { zoo: "moo" });`);
+        shadowRealm = bootstrap();
+        shadowRealm.evaluate(`try {
+            Reflect.setPrototypeOf(globalThis, { zoo: "moo" });
+            "ok";
+        } catch (e) {
+            debug("Failure in Reflect.setPrototypeOf(globalThis)");
+        }`);
+        assert_equals(shadowRealm.evaluate("globalThis.zoo"), "moo");
+    }, "ShadowRealm global scope is an ordinary object");
+</script>
+</body>
+</html>

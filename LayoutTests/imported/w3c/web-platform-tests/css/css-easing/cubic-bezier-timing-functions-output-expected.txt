@@ -1,0 +1,6 @@
+
+PASS cubic-bezier easing with input progress greater than 1
+PASS cubic-bezier easing with input progress greater than 1 and where the tangent on the upper boundary is infinity
+PASS cubic-bezier easing with input progress less than 0
+PASS cubic-bezier easing with input progress less than 0 and where the tangent on the lower boundary is infinity
+

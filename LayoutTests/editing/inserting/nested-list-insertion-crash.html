@@ -1,0 +1,10 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function run() {
+        window.getSelection().setPosition(li,1);
+        document.execCommand("insertUnorderedList", false);
+    }
+</script>
+<body  contentEditable="true"><span>Test nested list insertion. The test passes if WebKit doesn't crash or hit an assertion.</span><li id=li><iframe hidden="hidden" onload="run()"></iframe>

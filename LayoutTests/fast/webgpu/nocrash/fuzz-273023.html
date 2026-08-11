@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+async function run() {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+    let texture = device.createTexture({ size: { width: 207, height: 14 }, format: 'rgba16uint', usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC });
+    let texture2 = device.createTexture({ size: { width: 1414, height: 1, depthOrArrayLayers: 1981 }, dimension: '3d', format: 'rgba16uint', usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING });
+    let commandEncoder = device.createCommandEncoder();
+    commandEncoder.copyTextureToTexture(
+        { texture: texture },
+        { texture: texture2, origin: { x: 0, y: 0, z: 198 } },
+        { width: 1, height: 1 }
+    );
+    await device.queue.onSubmittedWorkDone();
+    debug('Pass')
+    globalThis.testRunner?.notifyDone();
+}
+globalThis.testRunner?.dumpAsText();
+globalThis.testRunner?.waitUntilDone();
+
+run();
+</script>
+

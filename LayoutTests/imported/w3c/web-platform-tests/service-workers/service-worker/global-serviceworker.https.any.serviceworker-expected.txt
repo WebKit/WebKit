@@ -1,0 +1,6 @@
+
+PASS First run
+PASS Can post message to self during startup
+PASS During install
+PASS During activate
+

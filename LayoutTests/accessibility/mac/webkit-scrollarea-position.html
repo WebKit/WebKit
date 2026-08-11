@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div tabindex="0" id="text1">text</div>
+<img src="resources/cake.png" width="5000" height="5000">
+<br>
+<div tabindex="0" id="text2">text</div>
+
+<script>
+window.jsTestIsAsync = true;
+
+var output = "This test verifies that the scroll area (viewport) and web area have correct screen positions, and that the scroll area position remains fixed after scrolling.\n\n";
+
+var scroll, web, initialScrollY, initialWebY;
+if (window.accessibilityController) {
+    setTimeout(async () => {
+        await waitForFrameGeometryReady();
+
+        // Ensure scroll position is at the top.
+        document.getElementById("text1").focus();
+
+        scroll = accessibilityController.rootElement;
+        web = scroll.childAtIndex(0);
+
+        output += expect("scroll.role", "'AXRole: AXScrollArea'");
+        output += expect("web.role", "'AXRole: AXWebArea'");
+
+        initialScrollY = scroll.y;
+        initialWebY = web.y;
+
+        // Scroll down by focusing an element at the bottom of the page.
+        document.getElementById("text2").focus();
+
+        // Wait for the scroll-triggered position update.
+        await waitFor(() => web.y !== initialWebY);
+
+        // The scroll area (viewport) should have a fixed screen position
+        // regardless of scroll.
+        output += expect("scroll.y", "initialScrollY");
+        // The web area (content) position should change after scrolling.
+        // In bottom-left screen coordinates, scrolling down shifts the content
+        // origin up (higher y value).
+        output += expect("web.y > initialWebY", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

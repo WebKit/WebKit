@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ <head>
+  <title>CSS Test: Reference Result</title>
+  <style type="text/css">
+    .test {
+        height: 2em;
+        font: 40px/60px Ahem; color: blue;
+    }
+
+    #control {
+      height: 40px;
+      margin-bottom: -18px;
+    }
+    #control2 {
+      height: 40px;
+      width: 15px;
+      margin-bottom: -18px;
+    }
+
+    img {
+      background: blue;
+    }
+  </style>
+ </head>
+ <body>
+  <p>There should be a single blue rectangle with perfectly straight sides below.</p>
+  <div class="test">
+    <img id="control" src="support/swatch-blue.png" alt="FAIL"><!--
+ --><img id="control2" src="support/swatch-blue.png" alt="FAIL"><!--
+ --><img id="control2" src="support/swatch-blue.png" alt="FAIL"><!--
+ --><img id="control2" src="support/swatch-blue.png" alt="FAIL"><!--
+ --><img id="control2" src="support/swatch-blue.png" alt="FAIL"><!--
+ --><img id="control2" src="support/swatch-blue.png" alt="FAIL"><!--
+ --><img id="control2" src="support/swatch-blue.png" alt="FAIL">
+  </div>
+
+ </body>
+</html>

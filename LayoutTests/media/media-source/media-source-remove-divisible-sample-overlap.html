@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SourceBuffer.remove() with divisible AAC sample overlapped by a smaller sample</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    let source;
+    let sourceBuffer;
+    let seg1Init;
+    let seg1Media;
+    let seg2Media;
+
+    async function runTest() {
+        findMediaElement();
+        if (!MediaSource.isTypeSupported(MP4.AUDIO_TYPE)) {
+            failTest(`${MP4.AUDIO_TYPE} not supported`);
+            return;
+        }
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.AUDIO_TYPE}')`);
+
+        const TIMESCALE = 44100;
+        const FRAME = 1024;
+
+        seg1Init = MP4.initSegment({
+            timescale: TIMESCALE,
+            tracks: [{ id: 1, type: 'audio', timescale: TIMESCALE }],
+        });
+        seg1Media = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'audio', baseDecodeTime: 0,
+                samples: Array.from({length: 32}, () => ({
+                    duration: FRAME, compositionTimeOffset: 0, isSync: true,
+                })),
+            }],
+        });
+        seg2Media = MP4.mediaSegment({
+            sequenceNumber: 2,
+            tracks: [{ id: 1, type: 'audio', baseDecodeTime: 4600,
+                samples: [{ duration: FRAME, compositionTimeOffset: 0, isSync: true }],
+            }],
+        });
+
+        run('sourceBuffer.appendBuffer(MP4.concat(seg1Init, seg1Media))');
+        await waitFor(sourceBuffer, 'updateend');
+        run('sourceBuffer.appendBuffer(seg2Media)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.remove(4200/44100, 4500/44100)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        consoleWrite('PASS: remove() returned without crashing');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

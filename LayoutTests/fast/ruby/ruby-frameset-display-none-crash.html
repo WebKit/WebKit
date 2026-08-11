@@ -1,0 +1,14 @@
+This test passes if it doesn't crash.
+<style>
+frameset { display:none }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test() {
+    ruby.appendChild(document.createElement("frameset"));
+}
+</script>
+<body onload=test()>
+<ruby id="ruby"></ruby>

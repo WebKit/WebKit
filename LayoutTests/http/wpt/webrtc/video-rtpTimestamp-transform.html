@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsInline></video>
+        <script src="routines.js"></script>
+        <script>
+function waitForMessage(port, data)
+{
+    let lastData;
+    let gotMessage;
+    const promise = new Promise((resolve, reject) => {
+        gotMessage = resolve;
+        setTimeout(() => { reject("did not get " + data + ", got: '" + lastData + "'") }, 5000);
+    });
+    port.onmessage = event => {
+       lastData = event.data;
+       if (event.data === data)
+           gotMessage();
+    };
+    return promise;
+}
+
+let senderTransform, receiverTransform;
+let stream;
+let worker;
+
+async function doSetup(test, senderPCCallback)
+{
+    worker = new Worker('video-rtpTimestamp-transform.js');
+    const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
+    assert_equals(data, "registered");
+
+    const localStream = await navigator.mediaDevices.getUserMedia({video: true});
+    test.add_cleanup(() => localStream.getTracks().forEach(t => t.stop()));
+
+    const senderChannel = new MessageChannel;
+    const receiverChannel = new MessageChannel;
+    let sender, receiver;
+    senderTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'video', side:'sender', port:senderChannel.port2}, [senderChannel.port2]);
+    receiverTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'video', side:'receiver', port:receiverChannel.port2}, [receiverChannel.port2]);
+    senderTransform.port = senderChannel.port1;
+    receiverTransform.port = receiverChannel.port1;
+
+    promise1 = waitForMessage(senderTransform.port, "started video sender");
+    promise2 = waitForMessage(receiverTransform.port, "started video receiver");
+
+    const codecs = RTCRtpSender.getCapabilities("video").codecs;
+    const h264Codec = codecs.filter(codec => { return codec.mimeType === "video/H264"; })[0];
+
+    let pc1, pc2;
+    stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            sender = firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            sender.transform = senderTransform;
+            senderPCCallback(firstConnection);
+            pc1 = firstConnection;
+        }, (secondConnection) => {
+            secondConnection.ontrack = (trackEvent) => {
+                receiver = trackEvent.receiver;
+                receiver.transform = receiverTransform;
+                resolve(trackEvent.streams[0]);
+            };
+            pc2 = secondConnection;
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    await promise1;
+    await promise2;
+    return [pc1, pc2];
+}
+
+promise_test(async (test) => {
+    const codecs = RTCRtpSender.getCapabilities("video").codecs;
+    const vp8Codec = codecs.filter(codec => { return codec.mimeType === "video/VP8"; })[0];
+
+    const [pc1, pc2 ] = await doSetup(test, senderPc => senderPc.getTransceivers().forEach((transceiver) => { transceiver.setCodecPreferences([vp8Codec]); }));
+
+    senderTransform.port.postMessage("validateRTPTimestamp");
+    receiverTransform.port.postMessage("validateRTPTimestamp");
+
+    await waitForMessage(senderTransform.port, "PASS");
+    await waitForMessage(receiverTransform.port, "PASS");
+
+    pc1.close();
+    pc2.close();
+}, "VP8 Validate RTP timestamp progression");
+
+promise_test(async (test) => {
+    const codecs = RTCRtpSender.getCapabilities("video").codecs;
+    const h264Codec = codecs.filter(codec => { return codec.mimeType === "video/H264"; })[0];
+
+    const [pc1, pc2 ] = await doSetup(test, senderPc => senderPc.getTransceivers().forEach((transceiver) => { transceiver.setCodecPreferences([h264Codec]); }));
+
+    senderTransform.port.postMessage("validateRTPTimestamp");
+    receiverTransform.port.postMessage("validateRTPTimestamp");
+
+    await waitForMessage(senderTransform.port, "PASS");
+    await waitForMessage(receiverTransform.port, "PASS");
+
+    pc1.close();
+    pc2.close();
+}, "H264 Validate RTP timestamp progression");
+        </script>
+    </body>
+</html>

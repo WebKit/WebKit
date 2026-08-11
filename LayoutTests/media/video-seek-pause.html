@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>video-seek-pause</title>
+        <script src="video-test.js"></script>
+        <script src="media-file.js"></script>
+        <script>
+async function startTest()
+{
+    findMediaElement();
+    video.src = findMediaFile('video', 'content/test');
+    await waitFor(video, 'canplaythrough');
+    consoleWrite("RUN('video.play()')");
+    await video.play();
+    testExpected('video.paused', false);
+    testExpected('internals.isPlayerPaused(video)', false);
+    run('video.currentTime = 2');
+    await sleepFor(5);
+    run('video.pause()');
+    await waitForConditionOrTimeout('internals.isPlayerPaused(video)', false, 2000);
+    testExpected('video.paused', true);
+    endTest();
+}
+        </script>
+    </head>
+    <body onload="startTest()">
+        <video controls></video>
+    </body>
+</html>

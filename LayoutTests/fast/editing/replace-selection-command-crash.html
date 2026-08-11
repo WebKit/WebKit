@@ -1,0 +1,30 @@
+<style>
+.class3 { display: list-item; }
+*:dir(ltr) { font-variant-caps: all-petite-caps }
+</style>
+<script>
+function onLoadCallback() {
+    column = document.createElement("col");
+    dataID.appendChild(column);
+    window.getSelection().collapse(column);
+    if (window.testRunner)
+        testRunner.dumpAsText();
+}
+function onFocusCallback() {
+    window.document.designMode = "on";
+    window.document.dir = "auto";
+    window.document.execCommand("insertHTML", false, ulID.outerHTML);
+    document.body.innerHTML = 'PASS if no crash';
+}
+</script>
+<body onload="onLoadCallback()">
+  <ul id="ulID" translate="no">
+    <li itemid="A">
+    </li>
+  </ul>
+  <slot contenteditable="true" class="class3" onfocusin="onFocusCallback()">
+    <data id="dataID">
+    </data>
+    A
+  </slot>
+</body>

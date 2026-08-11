@@ -1,0 +1,8 @@
+
+PASS Animating a custom property of type <angle>+
+PASS Animating a custom property of type <angle>+ with a single keyframe
+PASS Animating a custom property of type <angle>+ with additivity
+PASS Animating a custom property of type <angle>+ with a single keyframe and additivity
+PASS Animating a custom property of type <angle>+ with iterationComposite
+PASS Animating a custom property of type <angle>+ with different lengths is discrete
+

@@ -1,0 +1,42 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSInlineMediaControls</code> handling of placards.");
+
+const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 300 });
+
+debug("By default, no placard is shown.");
+shouldBeNull("mediaControls.placard");
+debug("mediaControls.children: " + Array.from(mediaControls.children).map(child => child.constructor.name).join(", "));
+
+debug("");
+debug("Showing the Airplay placard");
+mediaControls.placard = mediaControls.airplayPlacard;
+debug("mediaControls.placard.constructor.name " + mediaControls.placard.constructor.name);
+debug("mediaControls.children: " + Array.from(mediaControls.children).map(child => child.constructor.name).join(", "));
+
+debug("");
+debug("Showing the Invalid placard, hides the controls bar");
+mediaControls.placard = mediaControls.invalidPlacard;
+debug("mediaControls.placard.constructor.name " + mediaControls.placard.constructor.name);
+debug("mediaControls.children: " + Array.from(mediaControls.children).map(child => child.constructor.name).join(", "));
+
+debug("");
+debug("Showing the PiP placard, hides the controls bar");
+mediaControls.placard = mediaControls.pipPlacard;
+debug("mediaControls.placard.constructor.name " + mediaControls.placard.constructor.name);
+debug("mediaControls.children: " + Array.from(mediaControls.children).map(child => child.constructor.name).join(", "));
+
+debug("");
+debug("Hide placard");
+mediaControls.placard = null;
+shouldBeNull("mediaControls.placard");
+debug("mediaControls.children: " + Array.from(mediaControls.children).map(child => child.constructor.name).join(", "));
+
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

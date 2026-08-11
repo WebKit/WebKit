@@ -1,0 +1,17 @@
+
+PASS Property animation-duration value '500ms'
+PASS Property animation-duration value 'calc(2 * 3s)'
+PASS Property animation-duration value 'calc(10s + (sign(2cqw - 10px) * 5s))'
+PASS Property animation-duration value '20s, 10s'
+PASS Property animation-duration value 'auto'
+PASS Property animation-duration value 'auto, auto'
+PASS Resolved value of animation-duration:auto with animation-timeline:auto
+PASS Resolved value of animation-duration:auto with animation-timeline:auto, auto
+PASS Resolved value of animation-duration:auto with animation-timeline:--t
+PASS Resolved value of animation-duration:auto with animation-timeline:--t, --t2
+PASS Resolved value of animation-duration:auto with animation-timeline:none
+PASS Resolved value of animation-duration:auto with animation-timeline:scroll()
+PASS Resolved value of animation-duration:auto with animation-timeline:view()
+PASS Resolved value of animation-duration:0s with animation-timeline:auto
+PASS Resolved value of animation-duration:0s with animation-timeline:auto, auto
+

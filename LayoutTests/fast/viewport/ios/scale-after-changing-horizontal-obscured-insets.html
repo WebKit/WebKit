@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+.tall {
+    height: 300vh;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+async function pinchOut() {
+    await UIHelper.pinch(250, pageYOffset + 100, 50, pageYOffset + 400, 150, pageYOffset + 250, 150,  pageYOffset + 300);
+    await UIHelper.ensureStablePresentationUpdate();
+}
+
+addEventListener("load", async () => {
+    description(`This test verifies that setting the left obscured inset to zero does not cause the
+        web view to unnecessarily zoom in. To run manually, pinch in and out, and then open and then
+        close the sidebar on iPad; verify that the zoom scale stays at 1.0`);
+
+    await pinchOut();
+
+    await UIHelper.setObscuredInsets(0, 100, 0, 0);
+    await UIHelper.ensureStablePresentationUpdate();
+
+    await UIHelper.setObscuredInsets(0, 0, 0, 0);
+    await UIHelper.ensureStablePresentationUpdate();
+
+    await shouldBecomeEqual("visualViewport.scale.toFixed(3)", "'1.000'");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<h1>Hi</h1>
+<div class="tall"></div>
+</body>
+</html>

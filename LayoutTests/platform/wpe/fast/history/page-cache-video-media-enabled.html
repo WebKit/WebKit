@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true BackForwardCacheWithMediaEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script>
+description('Tests that a page with a video element goes into the back/forward cache when back-forward-cache-with-media is enabled.');
+window.jsTestIsAsync = true;
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+    if (!window.sessionStorage.pageWithVideoMediaEnabledTestStarted)
+        return;
+
+    delete window.sessionStorage.pageWithVideoMediaEnabledTestStarted;
+
+    if (event.persisted)
+        testPassed("Page did enter and was restored from the back/forward cache");
+    else
+        testFailed("Page was not restored from the back/forward cache");
+
+    finishJSTest();
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+}, false);
+
+window.addEventListener('load', function() {
+    if (window.sessionStorage.pageWithVideoMediaEnabledTestStarted)
+        return;
+
+    var video = document.createElement("video");
+    document.body.appendChild(video);
+
+    setTimeout(function() {
+        window.sessionStorage.pageWithVideoMediaEnabledTestStarted = true;
+        window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+}, false);
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>media-can-play-type-case-sensitive</title>
+    <script src="video-test.js"></script>
+    <script>
+        window.addEventListener('load', event => {
+            mediaElement = document.createElement('video');
+            testExpected(`mediaElement.canPlayType('audio/mp4; codecs="flac"')`, 'probably');
+            testExpected(`mediaElement.canPlayType('audio/mp4; codecs="fLaC"')`, 'probably');
+            testExpected(`mediaElement.canPlayType('audio/mp4; codecs="FlAc"')`, '');
+            endTest();
+        });
+    </script>
+</head>
+<body>
+    <div>Tests that both <code>flac</code> and <code>fLaC</code> are reported as playable in a mp4 container.</div>
+</body>
+</html>

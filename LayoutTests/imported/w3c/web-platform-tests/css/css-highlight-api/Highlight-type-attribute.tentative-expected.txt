@@ -1,0 +1,3 @@
+
+PASS Highlight has a mutable 'type' attribute that is a HighlightType enum.
+

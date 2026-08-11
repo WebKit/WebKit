@@ -1,0 +1,579 @@
+/*
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 the V8 project authors. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <limits>
+#include <wtf/text/StringCommon.h>
+#include <wtf/text/StringView.h>
+
+namespace WTF {
+
+//---------------------------------------------------------------------
+// String Search object.
+//---------------------------------------------------------------------
+
+// Class holding constants and methods that apply to all string search variants,
+// independently of subject and pattern char size.
+class AdaptiveStringSearcherBase {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AdaptiveStringSearcherBase);
+public:
+    // Cap on the maximal shift in the Boyer-Moore implementation. By setting a
+    // limit, we can fix the size of tables. For a needle longer than this limit,
+    // search will not be optimal, since we only build tables for a suffix
+    // of the string, but it is a safe approximation.
+    static constexpr int bmMaxShift = 250;
+
+    // Reduce alphabet to this size.
+    // One of the tables used by Boyer-Moore and Boyer-Moore-Horspool has size
+    // proportional to the input alphabet. We reduce the alphabet size by
+    // equating input characters modulo a smaller alphabet size. This gives
+    // a potentially less efficient searching, but is a safe approximation.
+    // For needles using only characters in the same Unicode 256-code point page,
+    // there is no search speed degradation.
+    static constexpr int latin1AlphabetSize = 256;
+    static constexpr int ucharAlphabetSize = 256;
+
+    // Bad-char shift table stored in the state. It's length is the alphabet size.
+    // For patterns below this length, the skip length of Boyer-Moore is too short
+    // to compensate for the algorithmic overhead compared to simple brute force.
+    static constexpr int bmMinPatternLength = 7;
+
+    static constexpr bool exceedsOneByte(Latin1Character) { return false; }
+    static constexpr bool exceedsOneByte(char16_t c) { return c > 0xff; }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    template <typename PatternChar, typename SubjectChar>
+    static inline int findFirstCharacter(std::span<const PatternChar> pattern, std::span<const SubjectChar> subject, int index)
+    {
+        const auto* subjectPtr = subject.data();
+        PatternChar patternFirstChar = pattern[0];
+
+        if constexpr (sizeof(PatternChar) == 2 && sizeof(SubjectChar) == 1) {
+            if (!isLatin1(patternFirstChar))
+                return -1;
+        }
+
+        const int maxN = (subject.size() - pattern.size() + 1);
+        const SubjectChar searchCharacter = static_cast<SubjectChar>(patternFirstChar);
+        const auto* start = subjectPtr + index;
+        const auto searchLength = maxN - index;
+        const SubjectChar* charPos = nullptr;
+        ASSERT(maxN - index >= 0);
+        if constexpr (sizeof(SubjectChar) == 2)
+            charPos = std::bit_cast<const SubjectChar*>(find16(std::bit_cast<const uint16_t*>(start), searchCharacter, searchLength));
+        else
+            charPos = std::bit_cast<const SubjectChar*>(find8(std::bit_cast<const uint8_t*>(start), searchCharacter, searchLength));
+        if (charPos == nullptr)
+            return -1;
+        return static_cast<int>(charPos - subjectPtr);
+    }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+};
+
+class AdaptiveStringSearcherTables {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(AdaptiveStringSearcherTables);
+public:
+    static constexpr size_t badCharShiftTableSize = AdaptiveStringSearcherBase::ucharAlphabetSize;
+    static constexpr size_t shiftTableSize = AdaptiveStringSearcherBase::bmMaxShift + 1;
+
+    std::span<int, badCharShiftTableSize> badCharShiftTable() LIFETIME_BOUND { return m_badCharShiftTable; }
+    std::span<int, shiftTableSize> goodSuffixShiftTable() LIFETIME_BOUND { return m_goodSuffixShiftTable; }
+    std::span<int, shiftTableSize> suffixTable() LIFETIME_BOUND { return m_suffixTable; }
+
+private:
+    std::array<int, badCharShiftTableSize> m_badCharShiftTable { };
+    std::array<int, shiftTableSize> m_goodSuffixShiftTable { };
+    std::array<int, shiftTableSize> m_suffixTable { };
+};
+
+// Maps pattern indices in [start, patternLength] onto a shift table that only covers the last
+// bmMaxShift + 1 positions of the pattern. Unlike a biased pointer, both ends are bounds-checked
+// against the physical table, and the check is against a compile-time constant extent.
+class BiasedShiftTable {
+public:
+    using Table = std::span<int, AdaptiveStringSearcherTables::shiftTableSize>;
+
+    BiasedShiftTable(Table table, int start)
+        : m_table(table)
+        , m_start(start)
+    { }
+
+    int& operator[](int patternIndex) const { return m_table[static_cast<size_t>(patternIndex - m_start)]; }
+
+private:
+    Table m_table;
+    int m_start;
+};
+
+template <typename PatternChar, typename SubjectChar>
+class AdaptiveStringSearcher : private AdaptiveStringSearcherBase {
+public:
+    AdaptiveStringSearcher(AdaptiveStringSearcherTables& tables, std::span<const PatternChar> pattern)
+        : m_tables(tables)
+        , m_pattern(pattern)
+        , m_start(std::max<int>(0, pattern.size() - bmMaxShift))
+    {
+        if (sizeof(PatternChar) > sizeof(SubjectChar)) {
+            if (!charactersAreAllLatin1(m_pattern)) {
+                m_strategy = &failSearch;
+                return;
+            }
+        }
+        int patternLength = m_pattern.size();
+        if (patternLength == 1) {
+            m_strategy = &singleCharSearch;
+            return;
+        }
+        m_strategy = &initialSearch;
+    }
+
+    int search(std::span<const SubjectChar> subject, int index)
+    {
+        return m_strategy(*this, subject, index);
+    }
+
+    static constexpr int alphabetSize()
+    {
+        if constexpr (sizeof(PatternChar) == 1) {
+            // Latin1 needle.
+            return latin1AlphabetSize;
+        } else {
+            ASSERT_UNDER_CONSTEXPR_CONTEXT(sizeof(PatternChar) == 2);
+            // UC16 needle.
+            return ucharAlphabetSize;
+        }
+    }
+
+private:
+    using SearchFunction = int (*)(AdaptiveStringSearcher<PatternChar, SubjectChar>&, std::span<const SubjectChar>, int);
+
+    static int failSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>&, std::span<const SubjectChar>, int)
+    {
+        return -1;
+    }
+
+    static int singleCharSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>&, std::span<const SubjectChar>, int startIndex);
+
+    static int linearSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>&, std::span<const SubjectChar>, int startIndex);
+
+    static int boyerMooreHorspoolSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>&, std::span<const SubjectChar>, int startIndex);
+
+    static int boyerMooreSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>&, std::span<const SubjectChar>, int startIndex);
+
+    static int initialSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>&, std::span<const SubjectChar>, int startIndex);
+
+    void populateBoyerMooreHorspoolTable();
+
+    void populateBoyerMooreTable();
+
+    // The index is always reduced into [0, ucharAlphabetSize) so that the bounds check against the
+    // table's constant extent folds away.
+    static inline int charOccurrence(std::span<const int, AdaptiveStringSearcherTables::badCharShiftTableSize> badCharOccurrence, SubjectChar charCode)
+    {
+        if constexpr (sizeof(SubjectChar) == 1)
+            return badCharOccurrence[static_cast<uint8_t>(charCode)];
+
+        if constexpr (sizeof(PatternChar) == 1) {
+            if (exceedsOneByte(charCode))
+                return -1;
+            return badCharOccurrence[static_cast<uint8_t>(charCode)];
+        }
+        // Both pattern and subject are UC16. Reduce character to equivalence
+        // class.
+        return badCharOccurrence[static_cast<uint16_t>(charCode) % ucharAlphabetSize];
+    }
+
+    // The following tables are shared by all searches.
+    // TODO(lrn): Introduce a way for a pattern to keep its tables
+    // between searches (e.g., for an Atom RegExp).
+
+    // Store for the BoyerMoore(Horspool) bad char shift table.
+    // Return a table covering the last bmMaxShift+1 positions of
+    // pattern.
+    std::span<int, AdaptiveStringSearcherTables::badCharShiftTableSize> badCharTable() LIFETIME_BOUND { return m_tables.badCharShiftTable(); }
+
+    // Store for the BoyerMoore good suffix shift table, indexed by pattern index.
+    BiasedShiftTable goodSuffixShiftTable() { return { m_tables.goodSuffixShiftTable(), m_start }; }
+
+    // Table used temporarily while building the BoyerMoore good suffix
+    // shift table.
+    BiasedShiftTable suffixTable() { return { m_tables.suffixTable(), m_start }; }
+
+    AdaptiveStringSearcherTables& m_tables;
+    // The pattern to search for.
+    std::span<const PatternChar> m_pattern;
+    // Pointer to implementation of the search.
+    SearchFunction m_strategy;
+    // Cache value of max(0, pattern_size() - bmMaxShift)
+    int m_start;
+};
+
+//---------------------------------------------------------------------
+// Single Character Pattern Search Strategy
+//---------------------------------------------------------------------
+
+template <typename PatternChar, typename SubjectChar>
+int AdaptiveStringSearcher<PatternChar, SubjectChar>::singleCharSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>& search, std::span<const SubjectChar> subject, int index)
+{
+    ASSERT(search.m_pattern.size() == 1);
+    PatternChar patternFirstChar = search.m_pattern[0];
+    if constexpr (sizeof(PatternChar) > sizeof(SubjectChar)) {
+        if (exceedsOneByte(patternFirstChar))
+            return -1;
+    }
+    return findFirstCharacter(search.m_pattern, subject, index);
+}
+
+//---------------------------------------------------------------------
+// Linear Search Strategy
+//---------------------------------------------------------------------
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+// Simple linear search for short patterns. Never bails out.
+template <typename PatternChar, typename SubjectChar>
+int AdaptiveStringSearcher<PatternChar, SubjectChar>::linearSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>& search, std::span<const SubjectChar> subject, int index)
+{
+    auto charCompare = [](const PatternChar* pattern, const SubjectChar* subject, int length) ALWAYS_INLINE_LAMBDA {
+        ASSERT(length > 0);
+        int pos = 0;
+        do {
+            if (pattern[pos] != subject[pos])
+                return false;
+            pos++;
+        } while (pos < length);
+        return true;
+    };
+
+    std::span<const PatternChar> pattern = search.m_pattern;
+    ASSERT(pattern.size() > 1);
+    int patternLength = pattern.size();
+    int i = index;
+    int n = subject.size() - patternLength;
+    while (i <= n) {
+        i = findFirstCharacter(pattern, subject, i);
+        if (i == -1)
+            return -1;
+        ASSERT(i <= n);
+        i++;
+        // Loop extracted to separate function to allow using return to do
+        // a deeper break.
+        if (charCompare(pattern.data() + 1, subject.data() + i, patternLength - 1))
+            return i - 1;
+    }
+    return -1;
+}
+
+//---------------------------------------------------------------------
+// Initial Search Strategy using SIMD pair search with bailout to BMH.
+//---------------------------------------------------------------------
+
+// SIMD pair search for short patterns, which bails out if too much false-positive happens.
+// We will fallback to BMH in this case.
+template <typename PatternChar, typename SubjectChar>
+int AdaptiveStringSearcher<PatternChar, SubjectChar>::initialSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>& search, std::span<const SubjectChar> subject, int startIndex)
+{
+    auto pattern = search.m_pattern;
+    const auto* patternPtr = pattern.data();
+    const auto* subjectPtr = subject.data();
+    int patternLength = pattern.size();
+    int subjectLength = subject.size();
+    ASSERT(patternLength >= 2);
+    int maxIndex = subjectLength - patternLength;
+    if (startIndex > maxIndex)
+        return -1;
+
+    auto patternFirst = patternPtr[0];
+    auto patternLast = patternPtr[patternLength - 1];
+    auto searchFirst = static_cast<SubjectChar>(patternFirst);
+    auto searchLast = static_cast<SubjectChar>(patternLast);
+
+    using UnsignedChar = SameSizeUnsignedInteger<SubjectChar>;
+    constexpr int stride = SIMD::stride<UnsignedChar>;
+    auto firstVec = SIMD::splat(static_cast<UnsignedChar>(searchFirst));
+    auto lastVec = SIMD::splat(static_cast<UnsignedChar>(searchLast));
+
+    int i = startIndex;
+    int simdLimit = maxIndex - stride + 1;
+    unsigned failureCount = 0;
+    constexpr unsigned failureThreshold = 16;
+    while (i <= simdLimit) {
+        auto firstBlock = SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i));
+        auto lastBlock = SIMD::load(std::bit_cast<const UnsignedChar*>(subjectPtr + i + patternLength - 1));
+        auto mask1 = SIMD::equal(firstBlock, firstVec);
+        auto mask2 = SIMD::equal(lastBlock, lastVec);
+        auto candidates = SIMD::bitAnd2(mask1, mask2);
+
+        auto index = SIMD::findFirstNonZeroIndex(candidates);
+        if (!index) {
+            i += stride;
+            continue;
+        }
+
+        int pos = i + static_cast<int>(index.value());
+
+        bool match = true;
+        for (int j = 1; j < patternLength - 1; j++) {
+            if (patternPtr[j] != subjectPtr[pos + j]) {
+                match = false;
+                break;
+            }
+        }
+
+        if (match)
+            return pos;
+
+        i = pos + 1;
+
+        if (++failureCount > failureThreshold) {
+            search.populateBoyerMooreHorspoolTable();
+            search.m_strategy = &boyerMooreHorspoolSearch;
+            return boyerMooreHorspoolSearch(search, subject, i);
+        }
+    }
+
+    while (i <= maxIndex) {
+        if (subjectPtr[i] == searchFirst && subjectPtr[i + patternLength - 1] == searchLast) {
+            bool match = true;
+            for (int j = 1; j < patternLength - 1; j++) {
+                if (patternPtr[j] != subjectPtr[i + j]) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match)
+                return i;
+        }
+        i++;
+    }
+
+    return -1;
+}
+
+//---------------------------------------------------------------------
+// Boyer-Moore string search
+//---------------------------------------------------------------------
+
+template <typename PatternChar, typename SubjectChar>
+int AdaptiveStringSearcher<PatternChar, SubjectChar>::boyerMooreSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>& search, std::span<const SubjectChar> subject, int startIndex)
+{
+    std::span<const PatternChar> pattern = search.m_pattern;
+    const auto* subjectPtr = subject.data();
+    const auto* patternPtr = pattern.data();
+    int subjectLength = subject.size();
+    int patternLength = pattern.size();
+    // Only preprocess at most bmMaxShift last characters of pattern.
+    int start = search.m_start;
+
+    auto badCharOccurrence = search.badCharTable();
+    auto goodSuffixShift = search.goodSuffixShiftTable();
+
+    PatternChar lastChar = patternPtr[patternLength - 1];
+    int index = startIndex;
+    // Continue search from i.
+    while (index <= subjectLength - patternLength) {
+        int j = patternLength - 1;
+        int c;
+        while (lastChar != (c = subjectPtr[index + j])) {
+            int shift = j - charOccurrence(badCharOccurrence, c);
+            index += shift;
+            if (index > subjectLength - patternLength)
+                return -1;
+        }
+        while (j >= 0 && patternPtr[j] == (c = subjectPtr[index + j]))
+            j--;
+        if (j < 0)
+            return index;
+        if (j < start) {
+            // we have matched more than our tables allow us to be smart about.
+            // Fall back on BMH shift.
+            index += patternLength - 1 - charOccurrence(badCharOccurrence, static_cast<SubjectChar>(lastChar));
+        } else {
+            int gsShift = goodSuffixShift[j + 1];
+            int bcOcc = charOccurrence(badCharOccurrence, c);
+            int shift = j - bcOcc;
+            if (gsShift > shift)
+                shift = gsShift;
+            index += shift;
+        }
+    }
+
+    return -1;
+}
+
+template <typename PatternChar, typename SubjectChar>
+void AdaptiveStringSearcher<PatternChar, SubjectChar>::populateBoyerMooreTable()
+{
+    const auto* patternPtr = m_pattern.data();
+    int patternLength = m_pattern.size();
+    // Only look at the last bmMaxShift characters of pattern (from m_start
+    // to patternLength).
+    int start = m_start;
+    int length = patternLength - start;
+
+    // Biased tables so that we can use pattern indices as table indices,
+    // even if we only cover the part of the pattern from offset start.
+    auto shiftTable = goodSuffixShiftTable();
+    auto suffixTable = this->suffixTable();
+
+    // Initialize table.
+    for (int i = start; i < patternLength; i++)
+        shiftTable[i] = length;
+    shiftTable[patternLength] = 1;
+    suffixTable[patternLength] = patternLength + 1;
+
+    if (patternLength <= start)
+        return;
+
+    // Find suffixes.
+    PatternChar lastChar = patternPtr[patternLength - 1];
+    int suffix = patternLength + 1;
+    {
+        int i = patternLength;
+        while (i > start) {
+            PatternChar c = patternPtr[i - 1];
+            while (suffix <= patternLength && c != patternPtr[suffix - 1]) {
+                if (shiftTable[suffix] == length)
+                    shiftTable[suffix] = suffix - i;
+                suffix = suffixTable[suffix];
+            }
+            suffixTable[--i] = --suffix;
+            if (suffix == patternLength) {
+                // No suffix to extend, so we check against lastChar only.
+                while ((i > start) && (patternPtr[i - 1] != lastChar)) {
+                    if (shiftTable[patternLength] == length)
+                        shiftTable[patternLength] = patternLength - i;
+                    suffixTable[--i] = patternLength;
+                }
+                if (i > start)
+                    suffixTable[--i] = --suffix;
+            }
+        }
+    }
+    // Build shift table using suffixes.
+    if (suffix < patternLength) {
+        for (int i = start; i <= patternLength; i++) {
+            if (shiftTable[i] == length)
+                shiftTable[i] = suffix - start;
+            if (i == suffix)
+                suffix = suffixTable[suffix];
+        }
+    }
+}
+
+//---------------------------------------------------------------------
+// Boyer-Moore-Horspool string search.
+//---------------------------------------------------------------------
+
+template <typename PatternChar, typename SubjectChar>
+int AdaptiveStringSearcher<PatternChar, SubjectChar>::boyerMooreHorspoolSearch(AdaptiveStringSearcher<PatternChar, SubjectChar>& search, std::span<const SubjectChar> subject, int startIndex)
+{
+    std::span<const PatternChar> pattern = search.m_pattern;
+    const auto* subjectPtr = subject.data();
+    const auto* patternPtr = pattern.data();
+    int subjectLength = subject.size();
+    int patternLength = pattern.size();
+    auto charOccurrences = search.badCharTable();
+    int badness = -patternLength;
+
+    // How bad we are doing without a good-suffix table.
+    PatternChar lastChar = patternPtr[patternLength - 1];
+    int lastCharShift = patternLength - 1 - charOccurrence(charOccurrences, static_cast<SubjectChar>(lastChar));
+    // Perform search
+    int index = startIndex; // No matches found prior to this index.
+    while (index <= subjectLength - patternLength) {
+        int j = patternLength - 1;
+        int subjectChar;
+        while (lastChar != (subjectChar = subjectPtr[index + j])) {
+            int bcOcc = charOccurrence(charOccurrences, subjectChar);
+            int shift = j - bcOcc;
+            index += shift;
+            badness += 1 - shift; // at most zero, so badness cannot increase.
+            if (index > subjectLength - patternLength)
+                return -1;
+        }
+        j--;
+        while (j >= 0 && patternPtr[j] == (subjectPtr[index + j]))
+            j--;
+        if (j < 0)
+            return index;
+
+        index += lastCharShift;
+        // Badness increases by the number of characters we have
+        // checked, and decreases by the number of characters we
+        // can skip by shifting. It's a measure of how we are doing
+        // compared to reading each character exactly once.
+        badness += (patternLength - j) - lastCharShift;
+        if (badness > 0) {
+            search.populateBoyerMooreTable();
+            search.m_strategy = &boyerMooreSearch;
+            return boyerMooreSearch(search, subject, index);
+        }
+    }
+    return -1;
+}
+
+template <typename PatternChar, typename SubjectChar>
+void AdaptiveStringSearcher<PatternChar, SubjectChar>::populateBoyerMooreHorspoolTable()
+{
+    int patternLength = m_pattern.size();
+
+    auto badCharOccurrence = badCharTable();
+    static_assert(alphabetSize() == AdaptiveStringSearcherTables::badCharShiftTableSize);
+
+    // Only preprocess at most bmMaxShift last characters of pattern.
+    int start = m_start;
+    // Run forwards to populate badCharTable, so that *last* instance
+    // of character equivalence class is the one registered.
+    // Notice: Doesn't include the last character.
+    std::ranges::fill(badCharOccurrence, start - 1); // -1 for all patterns shorter than bmMaxShift.
+
+    const auto* patternPtr = m_pattern.data();
+    for (int i = start; i < patternLength - 1; i++) {
+        PatternChar c = patternPtr[i];
+        int bucket = (sizeof(PatternChar) == 1) ? c : c % alphabetSize();
+        badCharOccurrence[bucket] = i;
+    }
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+// Perform a a single stand-alone search.
+// If searching multiple times for the same pattern, a search
+// object should be constructed once and the Search function then called
+// for each search.
+template <typename SubjectChar, typename PatternChar>
+int searchString(AdaptiveStringSearcherTables& tables, std::span<const SubjectChar> subject, std::span<const PatternChar> pattern, int startIndex)
+{
+    AdaptiveStringSearcher<PatternChar, SubjectChar> search(tables, pattern);
+    return search.search(subject, startIndex);
+}
+
+} // namespace WTF
+
+using WTF::AdaptiveStringSearcher;
+using WTF::AdaptiveStringSearcherTables;
+using WTF::searchString;

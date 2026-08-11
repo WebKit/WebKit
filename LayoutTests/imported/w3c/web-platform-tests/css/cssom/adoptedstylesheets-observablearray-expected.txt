@@ -1,0 +1,7 @@
+Test Span
+
+PASS document.adoptedStyleSheets should allow mutation in-place
+PASS shadowRoot.adoptedStyleSheets should allow mutation in-place
+PASS adoptedStyleSheets should return true for isArray()
+PASS adoptedStyleSheets should not expose its backing object via prototype
+

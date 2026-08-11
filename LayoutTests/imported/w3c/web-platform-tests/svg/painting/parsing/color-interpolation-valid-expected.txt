@@ -1,0 +1,5 @@
+
+PASS e.style['color-interpolation'] = "auto" should set the property value
+PASS e.style['color-interpolation'] = "srgb" should set the property value
+PASS e.style['color-interpolation'] = "linearrgb" should set the property value
+

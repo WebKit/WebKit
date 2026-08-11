@@ -1,0 +1,4 @@
+PASS: Should have recieved at least two event names.
+PASS: Should have recieved the "click" event name.
+PASS: Should have recieved the "load" event name.
+

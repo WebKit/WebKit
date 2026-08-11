@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function testBranchingTruncate(repeatCount) {
+    let count = 0;
+    function repeat() {
+        if (count++ === repeatCount) {
+            debugger;
+            TestPage.dispatchEventToFrontend("AfterTestFunction");
+            return;
+        }
+
+        setInterval(() => {}, 1000);
+        setTimeout(repeat, 0);
+    }
+    setTimeout(repeat, 0);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("AsyncStackTrace.truncate");
+
+    suite.addTestCase({
+        name: "TruncateBranchingStackTrace",
+        description: "Check that branching stack traces can be truncated.",
+        test(resolve, reject) {
+            WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused)
+            .then((event) => {
+                InspectorTest.pass("Paused in branching stack trace.");
+                WI.debuggerManager.resume();
+            });
+
+            InspectorTest.awaitEvent("AfterTestFunction").then(resolve, reject);
+
+            let repeatCount = WI.debuggerManager.asyncStackTraceDepth;
+            InspectorTest.evaluateInPage(`testBranchingTruncate(${repeatCount})`);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for truncated async stack traces.</p>
+</body>
+</html>

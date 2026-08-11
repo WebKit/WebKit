@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script>
+// We do the xhr load first so that this load will trigger the gathering by NetworkProcess of content blockers.
+const promise = new Promise(resolve => {
+var xhr = new XMLHttpRequest;
+xhr.onloadend = resolve;
+xhr.open("GET", ".", true);
+xhr.send();
+xhr.abort();
+});
+    </script>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script>
+promise_test((test) => {
+    return promise;
+}, "Test that aborting the XHR while gathering content blockers will not crash the Network Process");
+    </script>
+</body>
+</html>

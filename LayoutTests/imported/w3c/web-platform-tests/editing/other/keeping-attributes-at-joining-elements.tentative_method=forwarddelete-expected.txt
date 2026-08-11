@@ -1,0 +1,115 @@
+abcdef
+
+PASS Joining <div id="left"> and <div id="right">
+PASS Joining <div class="left"> and <div class="right">
+PASS Joining <div style="font-size:0.8rem"> and <div style="font-weight:bold">
+PASS Joining <div data-foo="left"> and <div data-bar="right">
+PASS Joining <li id="left"> and <li id="right">
+PASS Joining <li class="left"> and <li class="right">
+PASS Joining <li style="font-size:0.8rem"> and <li style="font-weight:bold">
+PASS Joining <li data-foo="left"> and <li data-bar="right">
+PASS Joining <dt id="left"> and <dt id="right">
+PASS Joining <dt class="left"> and <dt class="right">
+PASS Joining <dt style="font-size:0.8rem"> and <dt style="font-weight:bold">
+PASS Joining <dt data-foo="left"> and <dt data-bar="right">
+PASS Joining <dd id="left"> and <dd id="right">
+PASS Joining <dd class="left"> and <dd class="right">
+PASS Joining <dd style="font-size:0.8rem"> and <dd style="font-weight:bold">
+PASS Joining <dd data-foo="left"> and <dd data-bar="right">
+PASS Joining <dt id="left"> and <dd id="right">
+PASS Joining <dt class="left"> and <dd class="right">
+PASS Joining <dt style="font-size:0.8rem"> and <dd style="font-weight:bold">
+PASS Joining <dt data-foo="left"> and <dd data-bar="right">
+PASS Joining <dd id="left"> and <dt id="right">
+PASS Joining <dd class="left"> and <dt class="right">
+PASS Joining <dd style="font-size:0.8rem"> and <dt style="font-weight:bold">
+PASS Joining <dd data-foo="left"> and <dt data-bar="right">
+PASS Joining <h3 id="left"> and <div id="right">
+PASS Joining <h3 class="left"> and <div class="right">
+PASS Joining <h3 style="font-size:0.8rem"> and <div style="font-weight:bold">
+PASS Joining <h3 data-foo="left"> and <div data-bar="right">
+PASS Joining <div id="left"> and <h3 id="right">
+PASS Joining <div class="left"> and <h3 class="right">
+PASS Joining <div style="font-size:0.8rem"> and <h3 style="font-weight:bold">
+PASS Joining <div data-foo="left"> and <h3 data-bar="right">
+PASS Not merging attributes at joining elements in contenteditable
+PASS Not merging attributes at joining elements in contenteditable 1
+PASS Not merging attributes at joining elements in contenteditable 2
+PASS Not merging attributes at joining elements in contenteditable 3
+PASS Not merging attributes at joining elements in contenteditable 4
+PASS Not merging attributes at joining elements in contenteditable 5
+PASS Not merging attributes at joining elements in contenteditable 6
+PASS Not merging attributes at joining elements in contenteditable 7
+PASS Not merging attributes at joining elements in contenteditable 8
+PASS Not merging attributes at joining elements in contenteditable 9
+PASS Not merging attributes at joining elements in contenteditable 10
+PASS Not merging attributes at joining elements in contenteditable 11
+PASS Not merging attributes at joining elements in contenteditable 12
+PASS Not merging attributes at joining elements in contenteditable 13
+PASS Not merging attributes at joining elements in contenteditable 14
+PASS Not merging attributes at joining elements in contenteditable 15
+PASS Not merging attributes at joining elements in contenteditable 16
+PASS Not merging attributes at joining elements in contenteditable 17
+PASS Not merging attributes at joining elements in contenteditable 18
+PASS Not merging attributes at joining elements in contenteditable 19
+PASS Not merging attributes at joining elements in contenteditable 20
+PASS Not merging attributes at joining elements in contenteditable 21
+PASS Not merging attributes at joining elements in contenteditable 22
+PASS Not merging attributes at joining elements in contenteditable 23
+PASS Not merging attributes at joining elements in contenteditable 24
+PASS Not merging attributes at joining elements in contenteditable 25
+PASS Not merging attributes at joining elements in contenteditable 26
+PASS Not merging attributes at joining elements in contenteditable 27
+PASS Not merging attributes at joining elements in contenteditable 28
+PASS Not merging attributes at joining elements in contenteditable 29
+PASS Not merging attributes at joining elements in contenteditable 30
+PASS Not merging attributes at joining elements in contenteditable 31
+PASS Not merging attributes at joining elements in contenteditable 32
+PASS Not merging attributes at joining elements in contenteditable 33
+PASS Not merging attributes at joining elements in contenteditable 34
+PASS Not merging attributes at joining elements in contenteditable 35
+PASS Not merging attributes at joining elements in contenteditable 36
+PASS Not merging attributes at joining elements in contenteditable 37
+PASS Not merging attributes at joining elements in contenteditable 38
+PASS Not merging attributes at joining elements in contenteditable 39
+PASS Not merging attributes at joining elements in contenteditable 40
+PASS Not merging attributes at joining elements in contenteditable 41
+PASS Not merging attributes at joining elements in contenteditable 42
+PASS Not merging attributes at joining elements in contenteditable 43
+PASS Not merging attributes at joining elements in contenteditable 44
+PASS Not merging attributes at joining elements in contenteditable 45
+PASS Not merging attributes at joining elements in contenteditable 46
+PASS Not merging attributes at joining elements in contenteditable 47
+PASS Not merging attributes at joining elements in contenteditable 48
+PASS Not merging attributes at joining elements in contenteditable 49
+PASS Not merging attributes at joining elements in contenteditable 50
+PASS Not merging attributes at joining elements in contenteditable 51
+PASS Not merging attributes at joining elements in contenteditable 52
+PASS Not merging attributes at joining elements in contenteditable 53
+PASS Not merging attributes at joining elements in contenteditable 54
+PASS Not merging attributes at joining elements in contenteditable 55
+PASS Not merging attributes at joining elements in contenteditable 56
+PASS Not merging attributes at joining elements in contenteditable 57
+PASS Not merging attributes at joining elements in contenteditable 58
+PASS Not merging attributes at joining elements in contenteditable 59
+PASS Not merging attributes at joining elements in contenteditable 60
+PASS Not merging attributes at joining elements in contenteditable 61
+PASS Not merging attributes at joining elements in contenteditable 62
+PASS Not merging attributes at joining elements in contenteditable 63
+PASS Not merging attributes at joining elements in contenteditable 64
+PASS Not merging attributes at joining elements in contenteditable 65
+PASS Not merging attributes at joining elements in contenteditable 66
+PASS Not merging attributes at joining elements in contenteditable 67
+PASS Not merging attributes at joining elements in contenteditable 68
+PASS Not merging attributes at joining elements in contenteditable 69
+PASS Not merging attributes at joining elements in contenteditable 70
+PASS Not merging attributes at joining elements in contenteditable 71
+PASS Not merging attributes at joining elements in contenteditable 72
+PASS Not merging attributes at joining elements in contenteditable 73
+PASS Not merging attributes at joining elements in contenteditable 74
+PASS Not merging attributes at joining elements in contenteditable 75
+PASS Not merging attributes at joining elements in contenteditable 76
+PASS Not merging attributes at joining elements in contenteditable 77
+PASS Not merging attributes at joining elements in contenteditable 78
+PASS Not merging attributes at joining elements in contenteditable 79
+

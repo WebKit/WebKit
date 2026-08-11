@@ -1,0 +1,23 @@
+This test verifies that the Transformations context menu items correctly transform the selected text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test 1: Make Upper Case transforms text to uppercase
+PASS actualText is "HELLO WORLD"
+
+Test 2: Make Lower Case transforms text to lowercase
+PASS actualText is "hello world"
+
+Test 3: Capitalize transforms text to title case
+PASS actualText is "Hello World"
+
+Test 4: Convert to Traditional Chinese transforms simplified to traditional
+PASS actualText is "圖書館"
+
+Test 5: Convert to Simplified Chinese transforms traditional to simplified
+PASS actualText is "图书馆"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

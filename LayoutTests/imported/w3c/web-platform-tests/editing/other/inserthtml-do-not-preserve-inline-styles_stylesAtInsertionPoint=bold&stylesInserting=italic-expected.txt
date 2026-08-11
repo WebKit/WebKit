@@ -1,0 +1,6 @@
+abc
+
+PASS insertHTML with "<i>abc</i>" into <b>[]def</b>
+PASS insertHTML with "<i>def</i>" into <b>abc[]</b>
+PASS insertHTML with "<i>b</i>" into <b>a[]c</b>
+

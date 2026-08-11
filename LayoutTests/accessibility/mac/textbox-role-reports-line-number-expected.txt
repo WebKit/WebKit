@@ -1,0 +1,12 @@
+This tests that the AXSelection property is correctly reported for non-native text boxes.
+
+PASS: axElement.insertionPointLineNumber === 0
+PASS: axElement.insertionPointLineNumber === 0
+PASS: axElement.insertionPointLineNumber === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Some text in a textbox
+Some text in a
+multiline textbox.

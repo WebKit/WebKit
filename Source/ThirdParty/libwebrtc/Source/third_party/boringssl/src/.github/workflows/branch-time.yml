@@ -1,0 +1,70 @@
+# Copyright 2026 The BoringSSL Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Check Branch Time
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # Run every 12 hours.
+  workflow_dispatch: # Allows you to run the check manually from the UI
+
+env:
+  UPSTREAM_URL: 'https://boringssl.googlesource.com/boringssl'
+  BRANCH_NAME: 'main'
+
+  MAX_TIME_LAG_SECONDS: 86400  # 24 hours
+
+jobs:
+  check-mirror:
+    if: github.repository == 'google/boringssl'
+    runs-on: ubuntu-latest
+    permissions: read-all
+    steps:
+      - name: Checkout GitHub Repository
+        uses: actions/checkout@v4
+        with:
+          ref: 'main'
+          fetch-depth:  0 # Required to accurately count commits and find ancestors
+      - name: Add and Fetch Upstream Source of Truth
+        run: |
+          git remote add upstream ${{ env.UPSTREAM_URL }}
+          git fetch upstream ${{ env.BRANCH_NAME }}
+      - name: Verify Commit Times & Lag
+        run: |
+          # Check if the current GitHub HEAD exists in Upstream
+          GH_HEAD_HASH=$(git rev-parse HEAD)
+          if ! git merge-base --is-ancestor $GH_HEAD_HASH upstream/${{ env.BRANCH_NAME }}; then
+              echo "::error::GitHub HEAD ($GH_HEAD_HASH) is not an ancestor of Upstream HEAD. Has the mirror diverged or rebased?"
+              exit 1
+          fi
+
+          # Get the hash of the most recent upstream commit that is older than MAX_TIME_LAG_SECONDS
+          WANT_COMMIT=$(git rev-list -n 1 --before="${{ env.MAX_TIME_LAG_SECONDS }} seconds ago" upstream/${{ env.BRANCH_NAME }})
+
+          # This should not happen.
+          if [ -z "$WANT_COMMIT" ]; then
+              echo "::error::Could not find an upstream commit older than ${{ env.MAX_TIME_LAG_SECONDS }} seconds."
+              exit 1
+          fi
+
+          echo "Latest upstream commit as of ${{ env.MAX_TIME_LAG_SECONDS }} seconds ago: $WANT_COMMIT"
+
+          if git merge-base --is-ancestor $WANT_COMMIT $GH_HEAD_HASH; then
+              echo "GitHub HEAD is up-to-date with upstream as of ${{ env.MAX_TIME_LAG_SECONDS }} seconds ago."
+              exit 0
+          else
+              echo "::error::GitHub HEAD ($GH_HEAD_HASH) is behind the upstream commit from ${{ env.MAX_TIME_LAG_SECONDS }} seconds ago ($WANT_COMMIT)."
+              echo "The import may be stuck or delayed."
+              exit 1
+          fi

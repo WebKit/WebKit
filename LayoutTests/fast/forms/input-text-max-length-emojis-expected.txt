@@ -1,0 +1,10 @@
+Tests that input length limits use code units and not grapheme clusters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testInput.value is "👨‍👩‍👧‍"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

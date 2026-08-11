@@ -1,0 +1,7 @@
+Test that a cross-origin XHR involving redirects works correctly. If this test passes, you will see a series of PASS messages.
+
+Currently not working, see http://webkit.org/b/57600
+
+FAIL: sync XHR failed
+FAIL: async XHR failed
+

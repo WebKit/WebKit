@@ -1,0 +1,11 @@
+
+PASS :device_mismatch:
+PASS :invalid,vertex:isAsync=true;isVertexShaderValid=true
+PASS :invalid,vertex:isAsync=true;isVertexShaderValid=false
+PASS :invalid,vertex:isAsync=false;isVertexShaderValid=true
+PASS :invalid,vertex:isAsync=false;isVertexShaderValid=false
+PASS :invalid,fragment:isAsync=true;isFragmentShaderValid=true
+PASS :invalid,fragment:isAsync=true;isFragmentShaderValid=false
+PASS :invalid,fragment:isAsync=false;isFragmentShaderValid=true
+PASS :invalid,fragment:isAsync=false;isFragmentShaderValid=false
+

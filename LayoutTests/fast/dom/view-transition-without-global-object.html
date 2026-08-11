@@ -1,0 +1,6 @@
+<script>
+if (window.testRunner) { testRunner.dumpAsText() }
+let d = document.implementation.createDocument("", null);
+alert("result should be null:" + d.startViewTransition(()=>{alert('callback should not be called')}))
+</script>
+This test passes if it does not crash.

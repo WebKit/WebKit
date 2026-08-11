@@ -1,0 +1,13 @@
+<script>
+    function crash() {
+        document.startViewTransition();
+        style = document.activeElement.style;
+        style.setProperty("overflow-y", "-webkit-paged-x");
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    }
+</script>
+<body onload=crash()>
+    <video controls></video>
+    <p>Test passes if it doesn't crash</p>
+</body>

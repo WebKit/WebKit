@@ -1,0 +1,5 @@
+
+PASS createAnswer() with null remoteDescription should reject with InvalidStateError
+PASS createAnswer() returns RTCSessionDescriptionInit
+PASS createAnswer() when connection is closed should reject with InvalidStateError
+

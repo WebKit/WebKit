@@ -1,0 +1,10 @@
+
+PASS Property flood-color value 'currentcolor'
+PASS Property flood-color value 'red'
+PASS Property flood-color value '#00FF00'
+PASS Property flood-color value 'rgb(0, 0, 255)'
+PASS Property flood-color value 'rgb(100%, 100%, 0%)'
+PASS Property flood-color value 'hsl(120, 100%, 50%)'
+PASS Property flood-color value 'teal'
+PASS Property flood-color value 'transparent'
+

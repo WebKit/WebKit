@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<textarea id="source">
+Line one
+Line two
+Line three
+</textarea>
+<div id="test" contenteditable>
+<ul><li><br></li></ul>
+</div>
+<script>
+Markup.description('This tests that pasting plain text into an empty list item produces flat sibling list items, not nested ones');
+
+var textarea = document.getElementById('source');
+textarea.focus();
+document.execCommand('SelectAll');
+document.execCommand('Copy');
+
+var listItem = document.querySelector('li');
+setSelectionCommand(listItem, 0, listItem, 0);
+
+Markup.dump('test', 'Before');
+
+document.execCommand('Paste');
+
+Markup.dump('test', 'After');
+
+</script>
+</body>
+</html>

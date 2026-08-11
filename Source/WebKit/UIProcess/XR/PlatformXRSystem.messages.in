@@ -1,0 +1,59 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ 
+#if ENABLE(WEBXR)
+
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=UI,
+    SharedPreferencesNeedsConnection,
+    EnabledBy=WebXREnabled
+]
+messages -> PlatformXRSystem {
+    EnumerateImmersiveXRDevices() -> (Vector<WebKit::XRDeviceInfo> devicesInfos)
+    RequestPermissionOnSessionFeatures(WebCore::SecurityOriginData origin, PlatformXR::SessionMode mode, Vector<PlatformXR::SessionFeature> granted, Vector<PlatformXR::SessionFeature> consentRequired, Vector<PlatformXR::SessionFeature> consentOptional, Vector<PlatformXR::SessionFeature> requiredFeaturesRequested, Vector<PlatformXR::SessionFeature> optionalFeaturesRequested) -> (std::optional<Vector<PlatformXR::SessionFeature>> userGranted)
+    InitializeTrackingAndRendering(std::optional<WebCore::WebGPU::TextureFormat> colorFormat, std::optional<WebCore::WebGPU::TextureFormat> depthStencilFormat)
+    ShutDownTrackingAndRendering()
+    RequestFrame(struct std::optional<PlatformXR::RequestData> requestData) -> (struct PlatformXR::FrameData frameData)
+#if USE(OPENXR)
+    CreateLayerProjection(uint32_t width, uint32_t height, bool alpha) -> (struct std::optional<PlatformXR::LayerInfo> info) Synchronous
+    SubmitFrame(Vector<PlatformXR::DeviceLayer> layers)
+#endif
+#if ENABLE(WEBXR_LAYERS)
+    CreateCompositionLayer(PlatformXR::CompositionLayerType type, WebCore::IntSize size, PlatformXR::LayerLayout layout) -> (struct std::optional<PlatformXR::LayerInfo> info) Synchronous
+#endif
+#if !USE(OPENXR)
+    SubmitFrame()
+#endif
+#if ENABLE(WEBXR_HIT_TEST)
+    RequestHitTestSource(PlatformXR::HitTestOptions hitTestOptions) -> (Expected<PlatformXR::HitTestSource, WebCore::ExceptionData> exceptionOrSource)
+    DeleteHitTestSource(PlatformXR::HitTestSource source)
+    RequestTransientInputHitTestSource(PlatformXR::TransientInputHitTestOptions hitTestOptions) -> (Expected<PlatformXR::TransientInputHitTestSource, WebCore::ExceptionData> exceptionOrSource)
+    DeleteTransientInputHitTestSource(PlatformXR::TransientInputHitTestSource source)
+#endif
+    DidCompleteShutdownTriggeredBySystem()
+}
+
+#endif

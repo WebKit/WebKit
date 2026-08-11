@@ -1,0 +1,29 @@
+This tests that an atomic region within a live region is announced together when changed.
+
+Received announcement request:
+AnnouncementKey: 1. California 1. Cupertino
+2. San Francisco
+3. Los Angeles{
+    AXLanguage = en;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+Received announcement request:
+AnnouncementKey: 4. Washington{
+    AXLanguage = en;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+California
+Cupertino
+San Francisco
+Los Angeles
+Hawaii
+Illinois
+Washington

@@ -1,0 +1,5 @@
+
+PASS Getting an shorthand property set explicitly in inline style returns a base CSSStyleValue
+PASS Getting a shorthand property that is partially set in inline style returns null
+PASS Getting an attributeStyleMap shorthand property from an element without a style attribute
+

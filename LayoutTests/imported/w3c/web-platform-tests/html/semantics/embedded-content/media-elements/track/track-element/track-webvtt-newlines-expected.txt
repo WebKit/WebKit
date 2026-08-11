@@ -1,0 +1,4 @@
+
+
+PASS A cue with no newline at eof is parsed properly
+

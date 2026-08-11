@@ -1,0 +1,10 @@
+Tests that padding-top does not clip out listbox' items once it scrolled upwards.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS i > 0 && i < maxAttempts is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

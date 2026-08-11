@@ -1,0 +1,15 @@
+<!--
+     Any copyright is dedicated to the Public Domain.
+     http://creativecommons.org/publicdomain/zero/1.0/
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="200" viewBox="0 0 700 200">
+  <style>
+    @font-face {
+      font-family: Ahem;
+      src: url(../../resources/fonts/Ahem.ttf);
+    }
+  </style>
+  <g transform="translate(100,100)" style="font: 16px Ahem">
+    <text x='200' dx='0 0 -16' direction='rtl' text-anchor='middle'><tspan direction='rtl' unicode-bidi='bidi-override'><tspan fill="green">a</tspan> b c d e</tspan></text>
+  </g>
+</svg>

@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/exports.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/global-exports-live-bindings.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/global-exports.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/js-wasm-cycle.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/mutable-global-sharing.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/namespace-instance.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/reserved-import-names.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/resolve-export.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/source-phase-string-builtins.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/source-phase-string-constants.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/source-phase.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/string-builtins.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/string-constants.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/v128-tdz.tentative.any.js
+/LayoutTests/imported/w3c/web-platform-tests/wasm/jsapi/esm-integration/wasm-import-wasm-export.tentative.any.js

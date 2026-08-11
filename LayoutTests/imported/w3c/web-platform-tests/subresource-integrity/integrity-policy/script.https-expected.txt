@@ -1,0 +1,15 @@
+
+
+PASS Ensure that a script without integrity did not run
+PASS Ensure that a script with unknown integrity algorithm did not run
+PASS Ensure that a script without integrity algorithm runs and gets reported in report-only mode
+PASS Ensure that a no-cors script gets blocked
+PASS Ensure that ReportingObserver gets called without endpoints
+PASS Ensure that a script with integrity runs
+PASS Ensure that a data URI script with no integrity runs
+PASS Ensure that a no-CORS data URI script with no integrity runs
+PASS Ensure that a blob URL script with no integrity runs
+PASS Ensure that a no-CORS blob URL script with no integrity runs
+PASS Ensure that an about:blank URL script with no integrity runs
+PASS Ensure that a no-CORS about:blank URL script with no integrity runs
+

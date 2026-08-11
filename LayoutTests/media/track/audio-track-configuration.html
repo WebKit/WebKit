@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>video-track-configuration</title>
+	<script src="../video-test.js"></script>
+	<script>
+    window.addEventListener('load', async event => {
+      findMediaElement();
+      const timeout = 100;
+      run('video.src = "../content/audio-tracks.mp4"');
+      await waitFor(video, 'canplay');
+      await testExpectedEventually('video.audioTracks.length', 0, '>', timeout);
+      await testExpectedEventually('video.audioTracks[0].configuration', null, '!=', timeout);
+      await testExpectedEventually('video.audioTracks[0].configuration.codec', 'mp4a.40.2', '==', timeout);
+      await testExpectedEventually('video.audioTracks[0].configuration.sampleRate', 44100, '==', timeout);
+      await testExpectedEventually('video.audioTracks[0].configuration.numberOfChannels', 2, '==', timeout);
+      await testExpectedEventually('video.audioTracks[0].configuration.bitrate', 100000, '>=', timeout);
+      endTest();
+	  });
+	</script>
+</head>
+<body>
+	<video controls muted></video>
+</body>
+</html>

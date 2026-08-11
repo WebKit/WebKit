@@ -1,0 +1,23 @@
+
+RUN(source = new ManagedMediaSource())
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(videoSourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(audioSourceBuffer = source.addSourceBuffer("audio/mock; codecs=mock"))
+RUN(videoSourceBuffer.appendBuffer(initVideoSegment))
+RUN(audioSourceBuffer.appendBuffer(initAudioSegment))
+EXPECTED (source.sourceBuffers.length == '2') OK
+EXPECTED (videoSourceBuffer.updating == 'true') OK
+EXPECTED (audioSourceBuffer.updating == 'true') OK
+got all updateend
+EXPECTED (videoSourceBuffer.updating == 'false') OK
+EXPECTED (audioSourceBuffer.updating == 'false') OK
+EXPECTED (videoSourceBuffer.videoTracks.length == '1') OK
+EXPECTED (audioSourceBuffer.audioTracks.length == '1') OK
+EXPECTED (source.activeSourceBuffers.length == '2') OK
+EXPECTED (video.videoTracks.length == '1') OK
+EXPECTED (video.audioTracks.length == '1') OK
+EXPECTED (video.videoTracks[0].sourceBuffer == '[object ManagedSourceBuffer]') OK
+EXPECTED (video.audioTracks[0].sourceBuffer == '[object ManagedSourceBuffer]') OK
+END OF TEST
+

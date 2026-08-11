@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<span hidden id="description-span">descriptive text</span>
+
+<script>
+var output = "This test ensures we don't crash when text color dynamically changes with dirty style and accessibility relations cache.\n\n";
+// This test is exactly the same as dynamic-font-change-dirty-style-and-relations.html, just changing the text color
+// instead of font. See that test for a detailed description of how this script triggers the crash being tested.
+
+if (window.accessibilityController) {
+    const html = document.documentElement;
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    html.offsetParent;
+    const button = document.createElement("button");
+    button.style.display = "contents";
+    button.setAttribute("aria-describedby", "description-span");
+    button.id = "button";
+
+    document.body.appendChild(button);
+    document.body.style.color = "rebeccapurple";
+    html.offsetParent;
+
+    touchAccessibilityTree(accessibilityController.rootElement);
+    output += "PASS: No crash.\n";
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

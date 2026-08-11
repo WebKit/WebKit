@@ -1,0 +1,7 @@
+
+
+FAIL <select>: Typeahead should focus options without checking them. assert_equals: Pressing "t" should move focus to option "two". expected Element node <option class="two">two</option> but got Element node <body><select size="4">
+  <option class="one">one</option...
+FAIL <select multiple>: Typeahead should focus options without checking them. assert_equals: Pressing "t" should move focus to option "two". expected Element node <option class="two">two</option> but got Element node <body><select size="4">
+  <option class="one">one</option...
+

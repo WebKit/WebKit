@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SupportHDRDisplayEnabled=true ] -->
+<html id="html">
+<body>
+<script src='../../resources/js-test-pre.js'></script>
+<div id="div"></div>
+<video id="video"></video>
+<div id="div-standard" style="dynamic-range-limit: standard">
+    <div id="div-under-standard"></div>
+    <video id="video-under-standard"></video>
+    <video id="video-constrained" style="dynamic-range-limit: constrained"></video>
+</div>
+<script>
+debug("Start of test, successful results are silent.");
+var defaultLimit = "no-limit";
+if (CSS.supports("dynamic-range-limit", "standard") && CSS.supports("dynamic-range-limit", "no-limit")) {
+    const quiet = true; // So that the non-failure output is the same if dynamic-range-limit is not supported.
+    shouldBe('document.documentElement.style["dynamic-range-limit"]', '""', quiet);
+    shouldBe('getComputedStyle(document.documentElement)["dynamic-range-limit"]', 'defaultLimit', quiet);
+    shouldBe('document.getElementById("html").style["dynamic-range-limit"]', '""', quiet);
+    shouldBe('getComputedStyle(document.getElementById("html"))["dynamic-range-limit"]', 'defaultLimit', quiet);
+    shouldBe('document.getElementById("div").style["dynamic-range-limit"]', '""', quiet);
+    shouldBe('getComputedStyle(document.getElementById("div"))["dynamic-range-limit"]', 'defaultLimit', quiet);
+    shouldBe('document.getElementById("video").style["dynamic-range-limit"]', '""', quiet);
+    shouldBe('getComputedStyle(document.getElementById("video"))["dynamic-range-limit"]', 'defaultLimit', quiet);
+    shouldBe('document.getElementById("div-standard").style["dynamic-range-limit"]', '"standard"', quiet);
+    shouldBe('getComputedStyle(document.getElementById("div-standard"))["dynamic-range-limit"]', '"standard"', quiet);
+    shouldBe('document.getElementById("div-under-standard").style["dynamic-range-limit"]', '""', quiet);
+    shouldBe('getComputedStyle(document.getElementById("div-under-standard"))["dynamic-range-limit"]', '"standard"', quiet);
+    shouldBe('document.getElementById("video-under-standard").style["dynamic-range-limit"]', '""', quiet);
+    shouldBe('getComputedStyle(document.getElementById("video-under-standard"))["dynamic-range-limit"]', '"standard"', quiet);
+
+    if (CSS.supports("dynamic-range-limit", "constrained")) {
+        shouldBe('document.getElementById("video-constrained").style["dynamic-range-limit"]', '"constrained"', quiet);
+        shouldBe('getComputedStyle(document.getElementById("video-constrained"))["dynamic-range-limit"]', '"constrained"', quiet);
+    } else {
+        shouldBe('document.getElementById("video-constrained").style["dynamic-range-limit"]', '""', quiet);
+        shouldBe('getComputedStyle(document.getElementById("video-constrained"))["dynamic-range-limit"]', 'defaultLimit', quiet);
+    }
+}
+testPassed("End of test, successful results are silent.");
+</script>
+<script src='../../resources/js-test-post.js'></script>
+</body>
+</html>

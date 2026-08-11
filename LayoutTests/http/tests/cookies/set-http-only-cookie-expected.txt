@@ -1,0 +1,11 @@
+Get DOM cookies while setting a cookie asynchronously with Cookie Store API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Do not have DOM cookie "foo".
+PASS Do not have DOM cookie "foo".
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

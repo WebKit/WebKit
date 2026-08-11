@@ -1,0 +1,91 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+From: [% Param('mailfrom') %]
+To: [% emailaddress %]
+Subject: [% PROCESS subject %]
+X-Bugzilla-Type: admin
+
+[% PROCESS subject %] from [% remoteaddress %].
+
+If you did not request this, it could be either an honest
+mistake or someone attempting to break into your [% terms.Bugzilla %] account.
+
+Take a look at the information below and forward this email
+to [% Param('maintainer') %] if you suspect foul play.
+
+            Token: [% token %]
+       Token Type: [% tokentype %]
+             User: [% emailaddress %]
+       Issue Date: [% issuedate FILTER time("%Y-%m-%d %H:%M:%S %Z", timezone) %]
+       Event Data: [% eventdata %]
+Canceled Because: [% PROCESS cancelactionmessage %]
+
+[% BLOCK subject %]
+  [% IF tokentype == 'new_account' %]
+    User account creation request canceled
+  [% ELSIF tokentype == 'password' %]
+    Password change request canceled
+  [% ELSIF tokentype == 'emailnew' OR tokentype == 'emailold' %]
+    Email change request canceled
+  [% ELSE %]
+    [% tokentype %] token canceled
+  [% END %]
+[% END %]
+
+[% BLOCK cancelactionmessage %]
+  [% IF    cancelaction == 'account_exists' %]
+    Account [% email %] already exists.
+
+  [% ELSIF cancelaction == 'email_change_canceled' %]
+    The request to change the email address for
+    the [% old_email %] account to [% new_email %] has
+    been canceled.
+
+  [% ELSIF cancelaction == 'email_change_canceled_reinstated' %]
+    The request to change the email address for your account
+    to [% new_email %] has been canceled. Your old account
+    settings have been reinstated.
+
+  [% ELSIF cancelaction == 'emailold_change_canceled' %]
+    The request to change the email address for your account
+    to [% new_email %] has been canceled.
+
+  [% ELSIF cancelaction == 'password_change_canceled' %]
+    You have requested cancellation.
+
+  [% ELSIF cancelaction == 'account_creation_canceled' %]
+    The creation of the user account [% emailaddress %]
+    has been canceled.
+
+  [% ELSIF cancelaction == 'user_logged_in' %]
+    You have logged in.
+
+  [% ELSIF cancelaction == 'wrong_token_for_changing_passwd' %]
+    You have tried to use the token to change the password.
+
+  [% ELSIF cancelaction == 'wrong_token_for_cancelling_email_change' %]
+    You have tried to use the token to cancel the email address change.
+
+  [% ELSIF cancelaction == 'wrong_token_for_confirming_email_change' %]
+    You have tried to use the token to confirm the email address change.
+
+  [% ELSIF cancelaction == 'wrong_token_for_creating_account' %]
+    You have tried to use the token to create a user account.
+
+  [% ELSE %]
+    [%# Give sensible error if the cancel-token function is used incorrectly.
+      #%]
+    You are using Bugzilla's cancel-token function incorrectly. You
+    passed in the string '[% cancelaction %]'. The correct use is to pass
+    in a tag, and define that tag in the file <kbd>cancel-token.txt.tmpl</kbd>.
+
+    If you are a [% terms.Bugzilla %] end-user seeing this message, please forward this
+    email to [% Param('maintainer') %].
+  [% END %]
+[% END %]

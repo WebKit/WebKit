@@ -1,0 +1,4 @@
+
+
+FAIL Destroying iframe during async adoptedStyleSheets fetch does not crash. assert_equals: Before iframe destruction: expected 1 placeholder(s). expected 1 but got 0
+

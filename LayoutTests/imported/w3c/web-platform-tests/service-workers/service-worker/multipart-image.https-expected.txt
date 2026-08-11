@@ -1,0 +1,8 @@
+
+PASS initialize global state
+FAIL same-origin multipart image via SW should be readable promise_test: Unhandled rejection with value: object "NetworkError: load failed"
+FAIL cross-origin multipart image via SW with approved CORS should be readable promise_test: Unhandled rejection with value: object "NetworkError: load failed"
+FAIL cross-origin multipart image with no-cors via SW should not be readable promise_test: Unhandled rejection with value: object "NetworkError: load failed"
+PASS cross-origin multipart image via SW with rejected CORS should fail to load
+PASS restore global state
+

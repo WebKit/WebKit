@@ -1,0 +1,10 @@
+Tests that declaring a const variable without initializing has the correct behavior and does not crash
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS const f threw exception SyntaxError: Unexpected end of script.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

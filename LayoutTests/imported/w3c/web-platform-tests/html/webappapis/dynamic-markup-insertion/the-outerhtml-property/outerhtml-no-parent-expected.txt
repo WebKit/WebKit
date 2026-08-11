@@ -1,0 +1,3 @@
+
+PASS Setting outerHTML on element with no parent should be a no-op.
+

@@ -1,0 +1,6 @@
+Initial Position
+
+FAIL mousemove event should be fired on the host parent when pointermove event listener removes the shadow DOM assert_equals: expected "pointermove@child, (shadow-host-removed), mousemove@parent" but got "pointermove@child, (shadow-host-removed)"
+FAIL mousedown event should be fired on the host parent when pointerdown event listener removes the shadow DOM assert_equals: expected "pointerdown@child, (shadow-host-removed), mousedown@parent" but got "pointerdown@child, (shadow-host-removed)"
+FAIL mouseup event should be fired on the host parent when pointerup event listener removes the shadow DOM assert_equals: expected "pointerup@child, (shadow-host-removed), mouseup@parent" but got "pointerup@child, (shadow-host-removed)"
+

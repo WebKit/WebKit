@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: 42
+Test for the ConsoleMessage.timestamp event.
+
+
+== Running test suite: ConsoleMessage.Timestamp
+-- Running test case: ConsoleMessage.Timestamp.Basic
+PASS: Should be after pre-captured timestamp.
+PASS: Should be before post-captured timestamp.
+

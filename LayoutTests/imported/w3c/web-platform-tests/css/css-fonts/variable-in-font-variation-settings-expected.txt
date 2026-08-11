@@ -1,0 +1,3 @@
+
+PASS var() in font-variation-settings
+

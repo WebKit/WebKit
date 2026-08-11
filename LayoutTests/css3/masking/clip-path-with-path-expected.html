@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            margin: 20px;
+            height: 150px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <svg width="100%" height="100%" viewBox="0 0 200 150">
+		<clipPath id="clip1">
+			<path d="M100,40l20,0 0,60 20,0 0,-20 -60,0 0,-20 80,0 0,60 -60,0 0,-80z"/>
+		</clipPath>
+		<rect x="50" y="30" width="350" height="100" fill="blue" clip-path="url(#clip1)"/>
+    </svg>
+</div>
+
+<div class="evenodd box">
+    <svg width="100%" height="100%" viewBox="0 0 200 150">
+		<clipPath id="clip2">
+			<path clip-rule="evenodd" d="M100,40l20,0 0,60 20,0 0,-20 -60,0 0,-20 80,0 0,60 -60,0 0,-80z"/>
+		</clipPath>
+		<rect x="50" y="30" width="350" height="100" fill="green" clip-path="url(#clip2)"/>
+    </svg>
+</div>
+
+</body>
+</html>

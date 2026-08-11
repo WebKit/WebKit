@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true ] -->
+<head>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+        async function runTest() {
+            if (window.UIHelper) {
+                await UIHelper.setObscuredInsets(100, 0, 100, 0);
+                await UIHelper.ensurePresentationUpdate();
+                color = await UIHelper.fixedContainerEdgeColors();
+                alert(color.top == "rgb(255, 0, 0)" ? "PASS" : ("FAIL " + color.top));
+                if (window.testRunner) { testRunner.notifyDone() }
+            }
+        }
+        onload = runTest;
+    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: system-ui;
+        }
+
+        .top {
+            position: fixed;
+            top: 0;
+            height: 60px;
+            left: 0;
+            right: 0;
+        }
+
+        .content {
+            width: 100%;
+            height: 100%;
+        }
+
+        .top > .content {
+            background: red;
+        }
+
+        iframe { margin: 0px; padding: 0px; border: 0px; top: 0; left: 0; right: 0; position: fixed; width: 100% }
+    </style>
+</head>
+<body bgcolor=blue>
+<iframe src="http://localhost:8000/site-isolation/resources/update-background.html"></iframe>
+<div class="top"><div class="content"></div></div>
+</body>

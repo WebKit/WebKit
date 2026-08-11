@@ -1,0 +1,3 @@
+
+PASS treat legacy referrer policy values as invalid
+
