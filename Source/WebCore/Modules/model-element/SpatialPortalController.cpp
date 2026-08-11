@@ -28,11 +28,14 @@
 
 #if ENABLE(SPATIAL_PORTAL)
 
+#include "AbortSignal.h"
 #include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentPage.h"
 #include "Element.h"
 #include "ElementInlines.h"
+#include "EventListener.h"
+#include "EventNames.h"
 #include "GraphicsLayer.h"
 #include "HTMLModelElement.h"
 #include "IntersectionObserver.h"
@@ -56,6 +59,23 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpatialPortalController);
+
+#if ENABLE(TOUCH_EVENTS)
+class SpatialPortalEventListener final : public EventListener {
+public:
+    static Ref<SpatialPortalEventListener> create()
+    {
+        return adoptRef(*new SpatialPortalEventListener());
+    }
+
+    void handleEvent(ScriptExecutionContext&, Event&) override { }
+
+private:
+    explicit SpatialPortalEventListener()
+        : EventListener(EventListener::CPPEventListenerType)
+    { }
+};
+#endif
 
 class PortalModelPlayerClient final : public RefCounted<PortalModelPlayerClient>, public ModelPlayerClient {
 public:
@@ -177,13 +197,26 @@ private:
 SpatialPortalController::SpatialPortalController(Element& element)
     : m_portalElement(element)
 {
+#if ENABLE(MODEL_PROCESS)
+    if (RefPtr page = element.document().page())
+        m_page = *page;
+#endif
 }
 
 SpatialPortalController::~SpatialPortalController()
 {
     if (RefPtr observer = m_intersectionObserver)
         observer->disconnect();
+
+    ASSERT(!m_handlesGesture);
+
     deleteModelPlayer();
+}
+
+void SpatialPortalController::prepareForRemoval()
+{
+    m_portalAction = PortalActionKind::None;
+    updateGestureHandling();
 }
 
 unsigned SpatialPortalController::numberOfLoadedModels() const
@@ -341,6 +374,7 @@ ModelPlayer* SpatialPortalController::ensureModelPlayer()
         return nullptr;
 
     m_modelPlayer->setPortalTransform(m_portalTransform);
+    m_modelPlayer->setPortalAction(m_portalAction);
 
     return m_modelPlayer.get();
 }
@@ -355,6 +389,98 @@ void SpatialPortalController::setPortalTransform(PortalTransformKind kind)
     if (RefPtr player = m_modelPlayer)
         player->setPortalTransform(m_portalTransform);
 }
+
+void SpatialPortalController::setPortalAction(PortalActionKind kind)
+{
+    if (m_portalAction == kind)
+        return;
+
+    m_portalAction = kind;
+
+    if (RefPtr player = m_modelPlayer)
+        player->setPortalAction(m_portalAction);
+
+    updateGestureHandling();
+}
+
+void SpatialPortalController::updateGestureHandling()
+{
+    bool shouldHandleGesture = m_portalAction != PortalActionKind::None;
+    if (m_handlesGesture == shouldHandleGesture)
+        return;
+
+    m_handlesGesture = shouldHandleGesture;
+
+#if ENABLE(TOUCH_EVENTS)
+    if (RefPtr element = m_portalElement.get()) {
+        if (!m_eventListener)
+            m_eventListener = SpatialPortalEventListener::create();
+
+        if (shouldHandleGesture) {
+            element->addEventListener(eventNames().touchstartEvent, *m_eventListener, { });
+            element->addEventListener(eventNames().touchmoveEvent, *m_eventListener, { });
+            element->addEventListener(eventNames().touchendEvent, *m_eventListener, { });
+        } else {
+            element->removeEventListener(eventNames().touchstartEvent, *m_eventListener, { });
+            element->removeEventListener(eventNames().touchmoveEvent, *m_eventListener, { });
+            element->removeEventListener(eventNames().touchendEvent, *m_eventListener, { });
+        }
+    }
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    if (RefPtr page = m_page.get()) {
+        if (shouldHandleGesture)
+            page->incrementModelElementCount();
+        else
+            page->decrementModelElementCount();
+    }
+#endif
+}
+
+#if ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
+
+CheckedPtr<SpatialPortalController> SpatialPortalController::interactiveControllerForHitTestedElement(Element* element)
+{
+    if (!element)
+        return nullptr;
+
+    CheckedPtr controller = element->spatialPortalController();
+    if (!controller) {
+        if (RefPtr model = dynamicDowncast<HTMLModelElement>(*element))
+            controller = model->lastRegisteredPortalController();
+    }
+
+    if (!controller || !controller->supportsInteraction())
+        return nullptr;
+
+    return controller;
+}
+
+bool SpatialPortalController::supportsInteraction() const
+{
+    return m_portalAction != PortalActionKind::None;
+}
+
+void SpatialPortalController::beginStageModeTransform(const TransformationMatrix& transform)
+{
+    if (RefPtr player = m_modelPlayer)
+        player->beginStageModeTransform(transform);
+}
+
+void SpatialPortalController::updateStageModeTransform(const TransformationMatrix& transform)
+{
+    if (RefPtr player = m_modelPlayer)
+        player->updateStageModeTransform(transform);
+}
+
+void SpatialPortalController::endStageModeInteraction()
+{
+    if (RefPtr player = m_modelPlayer)
+        player->endStageModeInteraction();
+}
+
+#endif
 
 void SpatialPortalController::deleteModelPlayer()
 {

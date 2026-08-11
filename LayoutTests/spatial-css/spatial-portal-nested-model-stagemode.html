@@ -1,0 +1,110 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 40cm; height: 20cm; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+const centeredCube = "2x2x2-center.usdz";
+
+const portalWidth = "40cm";
+const portalHeight = "20cm";
+
+const appendStandaloneModel = (test, asset, stageMode) => {
+    const model = appendModel(document.body, asset, stageMode);
+    model.style.width = portalWidth;
+    model.style.height = portalHeight;
+    test.add_cleanup(() => model.remove());
+    return model;
+};
+
+promise_test(async t => {
+    const plainPortal = createPortal(t);
+    const plainModel = appendModel(plainPortal, centeredCube);
+
+    const stageModePortal = createPortal(t);
+    const stageModeModel = appendModel(stageModePortal, centeredCube, "orbit");
+
+    await plainModel.ready;
+    await stageModeModel.ready;
+
+    const plainTransform = await waitForPortalTransform(plainPortal, portalTransformIsResolved, "portal with a plain model");
+    const stageModeTransform = await waitForPortalTransform(stageModePortal, portalTransformIsResolved, "portal with a stagemode model");
+
+    assert_equals(stageModeModel.stageMode, "orbit", "the attribute is still reflected");
+    assert_3d_matrix_approx_equals(stageModeTransform, plainTransform);
+}, `stagemode on a nested <model> is ignored: the bounding box fit is unchanged`);
+
+promise_test(async t => {
+    const boxPortal = createPortal(t);
+    const boxModel = appendModel(boxPortal, centeredCube);
+
+    const orbitPortal = createPortal(t, { portalAction: "orbit" });
+    const orbitModel = appendModel(orbitPortal, centeredCube, "orbit");
+
+    await boxModel.ready;
+    await orbitModel.ready;
+
+    const boxFit = await waitForPortalTransform(boxPortal, portalTransformIsResolved, "bounding box fit");
+    const sphereFit = await waitForPortalTransform(orbitPortal, portalTransformIsResolved, "bounding sphere fit");
+
+    assert_true(sphereFit.m11 < boxFit.m11, `the portal uses the bounding sphere fit (${sphereFit.m11} < ${boxFit.m11})`);
+}, `portal-action on the portal takes effect regardless of a nested <model>'s stagemode`);
+
+promise_test(async t => {
+    const model = appendStandaloneModel(t, centeredCube, "orbit");
+    await model.ready;
+
+    assert_throws_dom("InvalidStateError", () => {
+        model.entityTransform = new DOMMatrix();
+    }, "entityTransform is read-only while stagemode is orbit");
+}, `stagemode on a standalone <model> is still honored`);
+
+promise_test(async t => {
+    const portal = createPortal(t, { width: portalWidth, height: portalHeight, portalAction: "orbit" });
+    const nested = appendModel(portal, centeredCube);
+    const standalone = appendStandaloneModel(t, centeredCube, "orbit");
+
+    await nested.ready;
+    await standalone.ready;
+    await UIHelper.ensureStablePresentationUpdate();
+
+    const portalFit = await waitForPortalTransform(portal, portalTransformIsResolved, "portal-action: orbit fit");
+
+    assert_3d_matrix_approx_equals(portalFit, standalone.entityTransform);
+}, `portal-action: orbit fits the content the same way stagemode: orbit fits a standalone <model>`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, centeredCube, "orbit");
+
+    await model.ready;
+    await waitForPortalTransform(portal, portalTransformIsResolved, "transform while nested");
+
+    const container = document.createElement("div");
+    container.style.width = "40cm";
+    container.style.height = "20cm";
+    document.body.appendChild(container);
+    t.add_cleanup(() => container.remove());
+    container.appendChild(model);
+
+    await waitForPortalTransform(portal, portalTransformIsCleared, "transform after the model leaves the portal");
+    await model.ready;
+
+    assert_throws_dom("InvalidStateError", () => {
+        model.entityTransform = new DOMMatrix();
+    }, "entityTransform is read-only once the model is no longer nested");
+}, `stagemode becomes live again when a <model> is moved out of a spatial portal`);
+
+</script>
+</body>
+</html>

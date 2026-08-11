@@ -516,6 +516,15 @@ void ModelProcessModelPlayer::setPortalTransform(WebCore::PortalTransformKind ki
     send(Messages::ModelProcessModelPlayerProxy::SetPortalTransform(m_portalTransform));
 }
 
+void ModelProcessModelPlayer::setPortalAction(WebCore::PortalActionKind kind)
+{
+    if (m_portalAction == kind)
+        return;
+
+    m_portalAction = kind;
+    send(Messages::ModelProcessModelPlayerProxy::SetPortalAction(m_portalAction));
+}
+
 #endif
 
 void ModelProcessModelPlayer::setStageMode(WebCore::StageModeOperation stagemodeOp)

@@ -416,6 +416,11 @@ SpatialPortalController* HTMLModelElement::findPortalController() const
     return ancestor ? ancestor->spatialPortalController() : nullptr;
 }
 
+SpatialPortalController* HTMLModelElement::lastRegisteredPortalController() const
+{
+    return m_lastRegisteredPortalController.get();
+}
+
 void HTMLModelElement::updateSpatialPortalController()
 {
     CheckedPtr controller = findPortalController();
@@ -449,6 +454,10 @@ void HTMLModelElement::didFailLoadingInsidePortal(const ResourceError&)
 void HTMLModelElement::spatialPortalContextDidChange()
 {
     updateSpatialPortalController();
+
+#if ENABLE(MODEL_ELEMENT_STAGE_MODE)
+    updateStageMode();
+#endif
 
     queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [](auto& element) {
         element.deletePendingModelPlayer();
@@ -1552,6 +1561,11 @@ void HTMLModelElement::setCurrentTime(double currentTime)
 
 WebCore::StageModeOperation HTMLModelElement::stageMode() const
 {
+#if ENABLE(SPATIAL_PORTAL)
+    if (isInsidePortal())
+        return WebCore::StageModeOperation::None;
+#endif
+
     String attr = attributeWithoutSynchronization(HTMLNames::stagemodeAttr);
     if (equalLettersIgnoringASCIICase(attr, "orbit"_s))
         return WebCore::StageModeOperation::Orbit;
@@ -1573,12 +1587,10 @@ void HTMLModelElement::updateStageMode()
         addEventListener(eventNames().touchstartEvent, *m_eventListener, { });
         addEventListener(eventNames().touchmoveEvent, *m_eventListener, { });
         addEventListener(eventNames().touchendEvent, *m_eventListener, { });
-        document().didAddTouchEventHandler(*this);
     } else {
         removeEventListener(eventNames().touchstartEvent, *m_eventListener, { });
         removeEventListener(eventNames().touchmoveEvent, *m_eventListener, { });
         removeEventListener(eventNames().touchendEvent, *m_eventListener, { });
-        document().didRemoveTouchEventHandler(*this);
     }
 
 #endif

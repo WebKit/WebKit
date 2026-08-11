@@ -668,9 +668,9 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
     }
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    RESRT newSRT = computeSRT(m_layer.get(), boundingBoxExtents, boundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), m_stageModeOperation, currentModelRotation, m_immersivePresentation);
+    RESRT newSRT = computeSRT(m_layer.get(), boundingBoxExtents, boundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), effectiveStageModeOperation(), currentModelRotation, m_immersivePresentation);
 #else
-    RESRT newSRT = computeSRT(m_layer.get(), boundingBoxExtents, boundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), m_stageModeOperation, currentModelRotation, false);
+    RESRT newSRT = computeSRT(m_layer.get(), boundingBoxExtents, boundingBoxCenter, boundingRadius, m_hasPortal, effectivePointsPerMeter(m_layer.get()), effectiveStageModeOperation(), currentModelRotation, false);
 #endif
     m_transformSRT = newSRT;
 
@@ -721,7 +721,7 @@ void ModelProcessModelPlayerProxy::updateTransformAfterLayout()
 {
     if (m_transformNeedsUpdateAfterNextLayout) {
         m_transformNeedsUpdateAfterNextLayout = false;
-        if (m_stageModeOperation == WebCore::StageModeOperation::None) {
+        if (effectiveStageModeOperation() == WebCore::StageModeOperation::None) {
             if (!m_entityTransformSetByScript)
                 computeTransform(false);
             updateTransform();
@@ -822,7 +822,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     }
 
 #if HAVE(CORE_RE)
-    applyStageModeOperationToDriver();
+    [m_stageModeInteractionDriver setContainerTransformInPortal];
 #endif // HAVE(CORE_RE)
 
     if (m_entityTransformToRestore) {
@@ -835,7 +835,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     }
 
 #if HAVE(CORE_RE)
-    [m_stageModeInteractionDriver setContainerTransformInPortal];
+    applyStageModeOperationToDriver();
 #endif // HAVE(CORE_RE)
 
     updateOpacity();
@@ -1329,7 +1329,7 @@ void ModelProcessModelPlayerProxy::resetModelTransformAfterDrag()
 void ModelProcessModelPlayerProxy::stageModeInteractionDidUpdateModel()
 {
 #if HAVE(CORE_RE)
-    if (stageModeInteractionInProgress() && m_modelRKEntity)
+    if (stageModeInteractionInProgress())
         updateTransformSRT();
 #endif
 }
@@ -1424,15 +1424,40 @@ void ModelProcessModelPlayerProxy::setPortalTransform(WebCore::PortalTransformKi
 
     m_portalTransform = kind;
 
-    computeTransform(m_stageModeOperation == WebCore::StageModeOperation::None);
+    computeTransform(effectiveStageModeOperation() == WebCore::StageModeOperation::None);
     updateTransform();
+}
+
+void ModelProcessModelPlayerProxy::setPortalAction(WebCore::PortalActionKind kind)
+{
+    if (m_portalAction == kind)
+        return;
+
+    m_portalAction = kind;
+
+    if (m_portalAction == WebCore::PortalActionKind::None) {
+        computeTransform(true);
+        updateTransform();
+    }
+
+    updateForCurrentStageMode();
 }
 
 #endif
 
+WebCore::StageModeOperation ModelProcessModelPlayerProxy::effectiveStageModeOperation() const
+{
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_portalAction == WebCore::PortalActionKind::Orbit)
+        return WebCore::StageModeOperation::Orbit;
+#endif
+
+    return m_stageModeOperation;
+}
+
 void ModelProcessModelPlayerProxy::updateForCurrentStageMode()
 {
-    if (m_stageModeOperation != WebCore::StageModeOperation::None) {
+    if (effectiveStageModeOperation() != WebCore::StageModeOperation::None) {
         computeTransform(false);
 #if HAVE(CORE_RE)
         [m_containerEntityWrapper recenterEntityAtTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
@@ -1490,7 +1515,7 @@ void ModelProcessModelPlayerProxy::updateTransformSRT()
 #if HAVE(CORE_RE)
 void ModelProcessModelPlayerProxy::applyStageModeOperationToDriver()
 {
-    switch (m_stageModeOperation) {
+    switch (effectiveStageModeOperation()) {
     case WebCore::StageModeOperation::Orbit: {
         [m_stageModeInteractionDriver operationDidUpdate:WKStageModeOperationOrbit];
         break;

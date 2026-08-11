@@ -77,6 +77,10 @@
 #import <WebCore/VisibleUnits.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
+#if ENABLE(SPATIAL_PORTAL)
+#import <WebCore/SpatialPortalController.h>
+#endif
+
 namespace WebKit {
 
 static void focusedElementPositionInformation(WebPage& page, WebCore::Element& focusedElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
@@ -735,6 +739,13 @@ InteractionInformationAtPosition positionInformationForWebPage(WebPage& page, co
 #if ENABLE(MODEL_PROCESS)
     if (RefPtr modelElement = dynamicDowncast<WebCore::HTMLModelElement>(hitTestNode))
         info.isInteractiveModel = modelElement->model() && modelElement->supportsStageModeInteraction();
+#endif
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (!info.isInteractiveModel) {
+        RefPtr element = dynamicDowncast<WebCore::Element>(hitTestNode);
+        info.isInteractiveModel = !!WebCore::SpatialPortalController::interactiveControllerForHitTestedElement(element.get());
+    }
 #endif
 
 #if ENABLE(MODEL_ELEMENT)

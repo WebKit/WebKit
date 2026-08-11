@@ -5838,8 +5838,13 @@ SpatialPortalController* Element::spatialPortalController() const
 
 void Element::clearSpatialPortalController()
 {
-    if (hasRareData())
-        elementRareData()->setSpatialPortalController(nullptr);
+    if (!hasRareData())
+        return;
+
+    if (CheckedPtr controller = elementRareData()->spatialPortalController())
+        controller->prepareForRemoval();
+
+    elementRareData()->setSpatialPortalController(nullptr);
 }
 
 bool Element::establishesSpatialPortal() const

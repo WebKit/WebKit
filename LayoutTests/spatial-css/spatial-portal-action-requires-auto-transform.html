@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 40cm; height: 20cm; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+const centeredCube = "2x2x2-center.usdz";
+
+promise_test(async t => {
+    const inert = createPortal(t, { portalTransform: "none", portalAction: "orbit" });
+    const inertModel = appendModel(inert, centeredCube);
+
+    const baseline = createPortal(t, { portalTransform: "none" });
+    const baselineModel = appendModel(baseline, centeredCube);
+
+    await inertModel.ready;
+    await baselineModel.ready;
+    await UIHelper.ensureStablePresentationUpdate();
+
+    const inertFit = await waitForPortalTransform(inert, portalTransformIsResolved, "portal-transform: none with orbit");
+    const baselineFit = await waitForPortalTransform(baseline, portalTransformIsResolved, "portal-transform: none without orbit");
+
+    assert_true(portalTransformScaleIsUnit(inertFit), "portal-transform: none still yields a 1:1 CSS unit mapping");
+    assert_3d_matrix_approx_equals(inertFit, baselineFit);
+}, `portal-action: orbit leaves the transform of a portal-transform: none portal alone`);
+
+promise_test(async t => {
+    const before = internals.touchEventHandlerCount();
+
+    const inert = createPortal(t, { portalTransform: "none", portalAction: "orbit" });
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_equals(internals.touchEventHandlerCount(), before, "orbit registers no touch handlers without an auto portal-transform");
+    assert_true(internals.establishesSpatialPortal(inert), "the inert element still establishes a portal");
+
+    createPortal(t, { portalAction: "orbit" });
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_greater_than(internals.touchEventHandlerCount(), before, "orbit registers touch handlers when portal-transform is auto");
+}, `portal-action: orbit only sets up interaction when portal-transform contains auto`);
+
+promise_test(async t => {
+    const portal = createPortal(t, { portalAction: "orbit" });
+    const model = appendModel(portal, centeredCube);
+
+    await model.ready;
+    const sphereFit = await waitForPortalTransform(portal, portalTransformIsResolved, "bounding sphere fit");
+    const withInteraction = internals.touchEventHandlerCount();
+
+    portal.style.portalTransform = "none";
+    await UIHelper.ensureStablePresentationUpdate();
+
+    const unfitted = await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, sphereFit), "1:1 mapping after opting out of the fit");
+    assert_true(portalTransformScaleIsUnit(unfitted), "the portal falls back to a 1:1 CSS unit mapping");
+    assert_less_than(internals.touchEventHandlerCount(), withInteraction, "the orbit touch handlers are withdrawn");
+}, `portal-action: orbit becomes noop when portal-transform stops containing auto`);
+
+</script>
+</body>
+</html>

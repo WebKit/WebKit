@@ -1,0 +1,7 @@
+
+PASS portal-action initial value is none, whether or not the element establishes a portal
+PASS portal-action accepts none and orbit
+PASS portal-action is a supported property
+PASS portal-action ignores invalid values
+PASS portal-action ignores not yet supported values
+

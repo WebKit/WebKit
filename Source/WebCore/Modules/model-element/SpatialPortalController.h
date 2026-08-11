@@ -29,6 +29,7 @@
 
 #include "LayoutSize.h"
 #include <WebCore/NodeIdentifier.h>
+#include <WebCore/PortalAction.h>
 #include <WebCore/PortalTransform.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/CheckedPtr.h>
@@ -48,8 +49,10 @@ class IntersectionObserver;
 class Model;
 class ModelPlayer;
 class ModelPlayerProvider;
+class Page;
 class PortalModelPlayerClient;
 class ResourceError;
+class SpatialPortalEventListener;
 class WeakPtrImplWithEventTargetData;
 
 // Manages the portal / ModelPlayer for an element with `spatial: portal`.
@@ -62,11 +65,14 @@ public:
     explicit SpatialPortalController(Element&);
     ~SpatialPortalController();
 
+    void prepareForRemoval();
+
     void unregisterChildModel(HTMLModelElement&);
     void registerChildModel(HTMLModelElement&);
     void childModelDidChange(HTMLModelElement&);
 
     ModelPlayer* modelPlayer() const { return m_modelPlayer.get(); }
+    Element* portalElement() const { return m_portalElement.get(); }
     unsigned numberOfHostedModels() const { return m_hostedModels.size(); }
     WEBCORE_EXPORT unsigned numberOfLoadedModels() const;
     void configureGraphicsLayer(GraphicsLayer&, const Color& backgroundColor);
@@ -74,6 +80,16 @@ public:
 
     void setPortalTransform(PortalTransformKind);
     const std::optional<TransformationMatrix>& resolvedPortalTransform() const { return m_resolvedPortalTransform; }
+
+    void setPortalAction(PortalActionKind);
+
+#if ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
+    WEBCORE_EXPORT static CheckedPtr<SpatialPortalController> interactiveControllerForHitTestedElement(Element*);
+    WEBCORE_EXPORT bool supportsInteraction() const;
+    WEBCORE_EXPORT void beginStageModeTransform(const TransformationMatrix&);
+    WEBCORE_EXPORT void updateStageModeTransform(const TransformationMatrix&);
+    WEBCORE_EXPORT void endStageModeInteraction();
+#endif
 
     bool isPortalVisible() const;
 
@@ -96,6 +112,7 @@ private:
     void reconfigurePortalLayer();
     void observePortalVisibility();
     LayoutSize portalContentSize() const;
+    void updateGestureHandling();
 
     const WeakPtr<Element, WeakPtrImplWithEventTargetData> m_portalElement;
 
@@ -106,12 +123,20 @@ private:
     HashMap<NodeIdentifier, HostedModel> m_hostedModels;
 
     WeakPtr<ModelPlayerProvider> m_modelPlayerProvider;
+#if ENABLE(MODEL_PROCESS)
+    WeakPtr<Page> m_page;
+#endif
     RefPtr<ModelPlayer> m_modelPlayer;
     const RefPtr<PortalModelPlayerClient> m_playerClient;
     RefPtr<IntersectionObserver> m_intersectionObserver;
+#if ENABLE(TOUCH_EVENTS)
+    RefPtr<SpatialPortalEventListener> m_eventListener;
+#endif
     std::optional<LayoutSize> m_lastPushedContentSize;
     std::optional<TransformationMatrix> m_resolvedPortalTransform;
     PortalTransformKind m_portalTransform { PortalTransformKind::Auto };
+    PortalActionKind m_portalAction { PortalActionKind::None };
+    bool m_handlesGesture { false };
     bool m_isIntersectingViewport { false };
 };
 

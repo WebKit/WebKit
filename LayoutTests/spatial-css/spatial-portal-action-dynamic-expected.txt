@@ -1,0 +1,8 @@
+
+PASS portal-action switches portal-transform: auto between the bounding box and bounding sphere fits
+PASS portal-action: orbit recomputes the fit against the merged bounding sphere when a model is added
+PASS portal-action: orbit does not fit the content when portal-transform is none
+PASS portal-action drives the portal's gesture handling
+PASS portal-action: orbit removes its gesture handling once when the portal is removed
+PASS portal-action: orbit behavior is restored after toggling the display property off and back on
+

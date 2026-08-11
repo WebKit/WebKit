@@ -75,6 +75,10 @@
 #import <WebKitAdditions/EventHandlerIOSTouch.cpp>
 #endif
 
+#if ENABLE(SPATIAL_PORTAL)
+#import "SpatialPortalController.h"
+#endif
+
 namespace WebCore {
 
 static RetainPtr<WebEvent>& currentEventSlot()
@@ -695,6 +699,19 @@ std::optional<NodeIdentifier> EventHandler::requestInteractiveModelElementAtPoin
     }
 
     RefPtr targetElement = hitTestedMouseEvent.hitTestResult().targetElement();
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (CheckedPtr controller = SpatialPortalController::interactiveControllerForHitTestedElement(targetElement.get())) {
+        if (RefPtr portalElement = controller->portalElement()) {
+            auto transform = TransformationMatrix::identity;
+            transform.translate(clientPosition.x(), clientPosition.y());
+
+            controller->beginStageModeTransform(transform);
+            return portalElement->nodeIdentifier();
+        }
+    }
+#endif
+
     if (RefPtr modelElement = dynamicDowncast<HTMLModelElement>(targetElement)) {
         if (modelElement->supportsStageModeInteraction()) {
             auto transform = TransformationMatrix::identity;
@@ -717,6 +734,15 @@ void EventHandler::stageModeSessionDidUpdate(std::optional<NodeIdentifier> nodeI
     if (!node)
         return;
 
+#if ENABLE(SPATIAL_PORTAL)
+    if (RefPtr element = dynamicDowncast<Element>(node.get())) {
+        if (CheckedPtr controller = element->spatialPortalController(); controller && controller->supportsInteraction()) {
+            controller->updateStageModeTransform(transform);
+            return;
+        }
+    }
+#endif
+
     RefPtr modelElement = dynamicDowncast<HTMLModelElement>(node);
     if (!modelElement)
         return;
@@ -736,6 +762,15 @@ void EventHandler::stageModeSessionDidEnd(std::optional<NodeIdentifier> nodeID)
     RefPtr node = Node::fromIdentifier(*nodeID);
     if (!node)
         return;
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (RefPtr element = dynamicDowncast<Element>(node.get())) {
+        if (CheckedPtr controller = element->spatialPortalController(); controller && controller->supportsInteraction()) {
+            controller->endStageModeInteraction();
+            return;
+        }
+    }
+#endif
 
     RefPtr modelElement = dynamicDowncast<HTMLModelElement>(node);
     if (!modelElement)

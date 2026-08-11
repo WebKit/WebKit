@@ -170,6 +170,7 @@ public:
     void setHasPortal(bool) final;
 #if ENABLE(SPATIAL_PORTAL)
     void setPortalTransform(WebCore::PortalTransformKind) final;
+    void setPortalAction(WebCore::PortalActionKind) final;
 #endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -215,6 +216,7 @@ private:
     void applyEnvironmentMapDataAndRelease(CompletionHandler<void()>&&);
     void applyStageModeOperationToDriver();
     bool stageModeInteractionInProgress() const;
+    WebCore::StageModeOperation effectiveStageModeOperation() const;
     void updateTransformSRT();
     void notifyModelPlayerOfTransformChange();
     void applyDefaultIBL();
@@ -267,6 +269,7 @@ private:
     bool m_hasPortal { true };
 #if ENABLE(SPATIAL_PORTAL)
     WebCore::PortalTransformKind m_portalTransform { WebCore::PortalTransformKind::Auto };
+    WebCore::PortalActionKind m_portalAction { WebCore::PortalActionKind::None };
 #endif
 
     // For interactions

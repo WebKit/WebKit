@@ -207,6 +207,13 @@ void RenderBox::willBeDestroyed()
             layoutContext().removeScrollerFromAnchorScrollAdjusters(*this);
     }
 
+#if ENABLE(SPATIAL_PORTAL)
+    if (hasInitializedStyle() && style().spatial() == SpatialType::Portal) {
+        if (RefPtr element = this->element())
+            element->clearSpatialPortalController();
+    }
+#endif
+
     RenderBoxModelObject::willBeDestroyed();
 }
 
@@ -362,6 +369,43 @@ static bool isNestedInsideSpatialPortal(const Element& element)
     return false;
 }
 
+// TODO: rdar://182292652
+static PortalTransformKind portalTransformKind(const Style::PortalTransform& portalTransform)
+{
+    return portalTransform.switchOn(
+        [](CSS::Keyword::None) { return PortalTransformKind::None; },
+        [](CSS::Keyword::Auto) { return PortalTransformKind::Auto; }
+    );
+}
+
+static PortalActionKind portalActionKind(PortalActionType portalAction)
+{
+    switch (portalAction) {
+    case PortalActionType::None:
+        return PortalActionKind::None;
+    case PortalActionType::Orbit:
+        return PortalActionKind::Orbit;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+// `portal-action: orbit` requires `auto` to be part of the `portal-transform`.
+static PortalActionKind usedPortalActionKind(PortalActionKind portalAction, PortalTransformKind portalTransform)
+{
+    if (portalTransform != PortalTransformKind::Auto)
+        return PortalActionKind::None;
+    return portalAction;
+}
+
+static void pushSpatialPortalProperties(Element& element, const Style::ComputedStyle& style)
+{
+    if (CheckedPtr controller = element.spatialPortalController()) {
+        auto portalTransform = portalTransformKind(style.portalTransform());
+        controller->setPortalTransform(portalTransform);
+        controller->setPortalAction(usedPortalActionKind(portalActionKind(style.portalAction()), portalTransform));
+    }
+}
+
 static void updateSpatialPortalController(Element& element)
 {
     bool hadController = element.establishesSpatialPortal();
@@ -373,6 +417,8 @@ static void updateSpatialPortalController(Element& element)
         element.clearSpatialPortalController();
 
     if (box && hadController != element.establishesSpatialPortal()) {
+        pushSpatialPortalProperties(element, box->style());
+
         if (CheckedPtr layer = box->layer())
             layer->setNeedsCompositingConfigurationUpdate();
     }
@@ -389,15 +435,6 @@ static void spatialPortalStyleDidChange(Element& element)
 
     for (Ref model : descendantsOfType<HTMLModelElement>(element))
         model->spatialPortalContextDidChange();
-}
-
-// TODO: rdar://182292652
-static PortalTransformKind portalTransformKind(const Style::PortalTransform& portalTransform)
-{
-    return portalTransform.switchOn(
-        [](CSS::Keyword::None) { return PortalTransformKind::None; },
-        [](CSS::Keyword::Auto) { return PortalTransformKind::Auto; }
-    );
 }
 #endif
 
@@ -483,7 +520,7 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
 
     if (isDocElementRenderer || isBodyRenderer) {
         protect(view())->frameView().recalculateScrollbarOverlayStyle();
-        
+
         if (diff != Style::DifferenceResult::Equal)
             view().compositor().rootOrBodyStyleChanged(*this, oldStyle);
     }
@@ -522,10 +559,8 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
         if (oldSpatial != newStyle.spatial())
             spatialPortalStyleDidChange(*element);
 
-        if (newStyle.spatial() == SpatialType::Portal) {
-            if (CheckedPtr controller = element->spatialPortalController())
-                controller->setPortalTransform(portalTransformKind(newStyle.portalTransform()));
-        }
+        if (newStyle.spatial() == SpatialType::Portal)
+            pushSpatialPortalProperties(*element, newStyle);
     }
 #endif
 }

@@ -135,6 +135,7 @@ private:
     void setHasPortal(bool) final;
 #if ENABLE(SPATIAL_PORTAL)
     void setPortalTransform(WebCore::PortalTransformKind) final;
+    void setPortalAction(WebCore::PortalActionKind) final;
 #endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -160,6 +161,7 @@ private:
     bool m_hasPortal { true };
 #if ENABLE(SPATIAL_PORTAL)
     WebCore::PortalTransformKind m_portalTransform { WebCore::PortalTransformKind::Auto };
+    WebCore::PortalActionKind m_portalAction { WebCore::PortalActionKind::None };
 #endif
     WebCore::StageModeOperation m_stageModeOperation { WebCore::StageModeOperation::None };
     HashMap<WebCore::NodeIdentifier, NodeAnimationState> m_animationStates;

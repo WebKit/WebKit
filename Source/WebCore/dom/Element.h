@@ -82,7 +82,6 @@ class RenderTreePosition;
 class Settings;
 class ShadowRoot;
 class SpaceSplitString;
-class SpatialPortalController;
 class StylePropertyMap;
 class StylePropertyMapReadOnly;
 class Text;
@@ -95,6 +94,10 @@ class WebAnimation;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 class AttachmentAssociatedElement;
+#endif
+
+#if ENABLE(SPATIAL_PORTAL)
+class SpatialPortalController;
 #endif
 
 enum CSSPropertyID : uint16_t;

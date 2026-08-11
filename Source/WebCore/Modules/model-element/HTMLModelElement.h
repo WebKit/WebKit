@@ -108,6 +108,7 @@ public:
     void didFinishLoadingInsidePortal();
     void didFailLoadingInsidePortal(const ResourceError&);
     void spatialPortalContextDidChange();
+    SpatialPortalController* lastRegisteredPortalController() const;
 #endif
 
     std::optional<PlatformLayerIdentifier> layerID() const;

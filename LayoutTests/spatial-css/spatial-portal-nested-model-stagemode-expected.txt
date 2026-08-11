@@ -1,0 +1,7 @@
+
+PASS stagemode on a nested <model> is ignored: the bounding box fit is unchanged
+PASS portal-action on the portal takes effect regardless of a nested <model>'s stagemode
+PASS stagemode on a standalone <model> is still honored
+PASS portal-action: orbit fits the content the same way stagemode: orbit fits a standalone <model>
+PASS stagemode becomes live again when a <model> is moved out of a spatial portal
+

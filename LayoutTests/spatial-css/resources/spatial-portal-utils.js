@@ -1,4 +1,4 @@
-const createPortal = (test, { width, height, portalTransform } = {}) => {
+const createPortal = (test, { width, height, portalTransform, portalAction } = {}) => {
     const portal = document.createElement("div");
     portal.className = "portal";
     if (width)
@@ -7,13 +7,17 @@ const createPortal = (test, { width, height, portalTransform } = {}) => {
         portal.style.height = height;
     if (portalTransform)
         portal.style.portalTransform = portalTransform;
+    if (portalAction)
+        portal.style.portalAction = portalAction;
     document.body.appendChild(portal);
     test.add_cleanup(() => portal.remove());
     return portal;
 };
 
-const appendModel = (portal, asset) => {
+const appendModel = (portal, asset, stageMode) => {
     const model = document.createElement("model");
+    if (stageMode)
+        model.stageMode = stageMode;
     portal.appendChild(model);
     const source = document.createElement("source");
     source.src = `../model-element/resources/${asset}`;

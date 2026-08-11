@@ -1060,6 +1060,15 @@ TextStream& operator<<(TextStream& ts, SpatialType spatial)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, PortalActionType portalAction)
+{
+    switch (portalAction) {
+    case PortalActionType::None: ts << "None"_s; break;
+    case PortalActionType::Orbit: ts << "Orbit"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, TextCombine textCombine)
 {
     switch (textCombine) {

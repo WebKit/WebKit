@@ -1,0 +1,3 @@
+portal-action is supported: false
+portal-action computed style is exposed: false
+portal-action survives in cssText: false

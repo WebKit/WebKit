@@ -108,6 +108,7 @@ NonInheritedRareData::NonInheritedRareData()
     , blockStepInsert(static_cast<unsigned>(ComputedStyle::initialBlockStepInsert()))
     , blockStepRound(static_cast<unsigned>(ComputedStyle::initialBlockStepRound()))
     , spatial(static_cast<unsigned>(SpatialType::None))
+    , portalAction(static_cast<unsigned>(PortalActionType::None))
     , overscrollBehaviorX(static_cast<unsigned>(ComputedStyle::initialOverscrollBehaviorX()))
     , overscrollBehaviorY(static_cast<unsigned>(ComputedStyle::initialOverscrollBehaviorY()))
     , transformStyle3D(static_cast<unsigned>(ComputedStyle::initialTransformStyle3D()))
@@ -221,6 +222,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , blockStepInsert(o.blockStepInsert)
     , blockStepRound(o.blockStepRound)
     , spatial(o.spatial)
+    , portalAction(o.portalAction)
     , overscrollBehaviorX(o.overscrollBehaviorX)
     , overscrollBehaviorY(o.overscrollBehaviorY)
     , transformStyle3D(o.transformStyle3D)
@@ -339,6 +341,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && blockStepInsert == o.blockStepInsert
         && blockStepRound == o.blockStepRound
         && spatial == o.spatial
+        && portalAction == o.portalAction
         && overscrollBehaviorX == o.overscrollBehaviorX
         && overscrollBehaviorY == o.overscrollBehaviorY
         && transformStyle3D == o.transformStyle3D
@@ -497,6 +500,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
     LOG_IF_DIFFERENT_WITH_CAST(BlockStepInsert, blockStepInsert);
     LOG_IF_DIFFERENT_WITH_CAST(BlockStepRound, blockStepRound);
     LOG_IF_DIFFERENT_WITH_CAST(SpatialType, spatial);
+    LOG_IF_DIFFERENT_WITH_CAST(PortalActionType, portalAction);
 
     LOG_IF_DIFFERENT_WITH_CAST(OverscrollBehavior, overscrollBehaviorX);
     LOG_IF_DIFFERENT_WITH_CAST(OverscrollBehavior, overscrollBehaviorY);

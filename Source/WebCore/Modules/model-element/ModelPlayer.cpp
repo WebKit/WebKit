@@ -195,6 +195,10 @@ void ModelPlayer::setPortalTransform(PortalTransformKind)
 {
 }
 
+void ModelPlayer::setPortalAction(PortalActionKind)
+{
+}
+
 #endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)

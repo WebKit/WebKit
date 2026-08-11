@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 40cm; height: 20cm; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+// Deliberately spread out, so the merged bounds move as each one loads.
+const spreadAssets = ["2x2x2-center.usdz", "2x2x2-at-100x50x200.usdz", "2x2x2-positive.usdz"];
+
+const loadPortalInOrder = async (test, assets, options) => {
+    const portal = createPortal(test, options);
+
+    let previous = null;
+    for (const [index, asset] of assets.entries()) {
+        const model = appendModel(portal, asset);
+        await model.ready;
+        await UIHelper.ensureStablePresentationUpdate();
+
+        assert_equals(internals.numberOfLoadedModelsInSpatialPortal(portal), index + 1, `${index + 1} model(s) loaded after ${asset}`);
+
+        const transform = await waitForPortalTransform(portal, portalTransformIsResolved, `fit after loading ${asset}`);
+        if (previous)
+            assert_less_than_equal(transform.m11, previous.m11, `the scale does not grow when ${asset} joins the merged bounds`);
+        previous = transform;
+    }
+
+    return portal;
+};
+
+for (const portalAction of ["none", "orbit"]) {
+    promise_test(async t => {
+        const forward = await loadPortalInOrder(t, spreadAssets, { portalAction });
+        const reversed = await loadPortalInOrder(t, [...spreadAssets].reverse(), { portalAction });
+
+        assert_3d_matrix_approx_equals(resolvedPortalTransform(reversed), resolvedPortalTransform(forward));
+    }, `portal-action: ${portalAction} fits the merged bounds independently of model load order`);
+}
+
+promise_test(async t => {
+    const incremental = await loadPortalInOrder(t, spreadAssets, { portalAction: "orbit" });
+
+    const batched = createPortal(t, { portalAction: "orbit" });
+    await Promise.all(spreadAssets.map(asset => appendModel(batched, asset).ready));
+    await waitForPortalTransform(batched, portalTransformIsResolved, "batched portal");
+
+    assert_3d_matrix_approx_equals(resolvedPortalTransform(batched), resolvedPortalTransform(incremental));
+}, `portal-action: orbit fits the merged bounds the same whether models load one by one or together`);
+
+</script>
+</body>
+</html>

@@ -7944,6 +7944,26 @@
                 "url": "https://svgwg.org/svg2-draft/interact.html#PointerEventsProperty"
             }
         },
+        "portal-action": {
+            "animation-type": "discrete",
+            "initial": "none",
+            "values": [
+                "none",
+                "orbit"
+            ],
+            "codegen-properties": {
+                "enable-if": "ENABLE_SPATIAL_PORTAL",
+                "settings-flag": "spatialPortalEnabled",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "enum",
+                "computed-style-type": "PortalActionType",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "url": "https://webkit.github.io/explainers/css-spatial/Overview.html#stage-interactivity"
+            },
+            "status": "in development"
+        },
         "portal-transform": {
             "animation-type": "discrete",
             "initial": "auto",
