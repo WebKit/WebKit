@@ -28,9 +28,13 @@
 
 #include "ColorBlending.h"
 #include "ElementRuleCollector.h"
+#include "IntSize.h"
+#include "LocalFrameView.h"
 #include "RenderElement.h"
+#include "RenderObjectDocument.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
@@ -61,7 +65,7 @@ static void computeDecorationStylesForPseudoElementStyle(StyledMarkedText::Style
     }
 }
 
-static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, const Style::ComputedStyle* pseudoElementStyle, const PaintInfo& paintInfo)
+static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, const Style::ComputedStyle* pseudoElementStyle, IntSize viewportSize, const PaintInfo& paintInfo)
 {
     if (!pseudoElementStyle)
         return;
@@ -69,7 +73,12 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
     CheckedRef checkedPseudoElementStyle = *pseudoElementStyle;
     style.backgroundColor = checkedPseudoElementStyle->visitedDependentBackgroundColorApplyingColorFilter(paintInfo.paintBehavior);
     style.textStyles.fillColor = checkedPseudoElementStyle->visitedDependentTextFillColorApplyingColorFilter(paintInfo.paintBehavior);
-    style.textStyles.strokeColor = checkedPseudoElementStyle->usedStrokeColor();
+    // Highlight pseudos apply only the unprefixed stroke properties; the legacy -webkit-text-stroke pair does not apply, so don't inherit the originating element's text stroke.
+    if (checkedPseudoElementStyle->hasExplicitlySetStrokeColor()) {
+        style.textStyles.strokeColor = checkedPseudoElementStyle->usedStrokeColor();
+        style.textStyles.strokeWidth = checkedPseudoElementStyle->usedStrokeWidth(viewportSize);
+    } else
+        style.textStyles.strokeWidth = 0;
     style.textStyles.hasExplicitlySetFillColor = checkedPseudoElementStyle->hasExplicitlySetColor();
 
     computeDecorationStylesForPseudoElementStyle(style, checkedPseudoElementStyle.get(), paintInfo);
@@ -77,7 +86,7 @@ static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, co
     style.textShadow = checkedPseudoElementStyle->textShadow();
 }
 
-static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, const StyledMarkedText::Style& baseStyle, const RenderText& renderer, const Style::ComputedStyle& lineStyle, const PaintInfo& paintInfo)
+static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, const StyledMarkedText::Style& baseStyle, const RenderText& renderer, const Style::ComputedStyle& lineStyle, IntSize viewportSize, const PaintInfo& paintInfo)
 {
     static constexpr OptionSet systemAppearanceOptions { StyleColorOptions::UseSystemAppearance };
 
@@ -96,22 +105,22 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
         break;
     case MarkedText::Type::GrammarError: {
         auto* renderStyle = renderer.grammarErrorPseudoStyle();
-        computeStyleForPseudoElementStyle(style, renderStyle, paintInfo);
+        computeStyleForPseudoElementStyle(style, renderStyle, viewportSize, paintInfo);
         break;
     }
     case MarkedText::Type::Highlight: {
         auto renderStyle = renderer.parent()->resolvePseudoElementStyle({ PseudoElementType::Highlight, markedText.highlightName }, &renderer.style());
-        computeStyleForPseudoElementStyle(style, renderStyle.get(), paintInfo);
+        computeStyleForPseudoElementStyle(style, renderStyle.get(), viewportSize, paintInfo);
         break;
     }
     case MarkedText::Type::SpellingError: {
         auto* renderStyle = renderer.spellingErrorPseudoStyle();
-        computeStyleForPseudoElementStyle(style, renderStyle, paintInfo);
+        computeStyleForPseudoElementStyle(style, renderStyle, viewportSize, paintInfo);
         break;
     }
     case MarkedText::Type::FragmentHighlight: {
         if (CheckedPtr renderStyle = renderer.targetTextPseudoStyle()) {
-            computeStyleForPseudoElementStyle(style, renderStyle.get(), paintInfo);
+            computeStyleForPseudoElementStyle(style, renderStyle.get(), viewportSize, paintInfo);
             break;
         }
 
@@ -225,9 +234,12 @@ static Vector<StyledMarkedText> coalesceAdjacentWithSameRanges(Vector<StyledMark
             // Take text color of StyledMarkedText, maintaining insertion and priority order.
             if (text.type != MarkedText::Type::Unmarked && text.style.textStyles.hasExplicitlySetFillColor)
                 previousStyledMarkedText.style.textStyles.fillColor = text.style.textStyles.fillColor;
-            // Take the text-shadow of the frontmost highlight.
-            if (!text.highlightName.isNull())
+            // Take the text-shadow and stroke of the frontmost highlight.
+            if (!text.highlightName.isNull()) {
                 previousStyledMarkedText.style.textShadow = text.style.textShadow;
+                previousStyledMarkedText.style.textStyles.strokeColor = text.style.textStyles.strokeColor;
+                previousStyledMarkedText.style.textStyles.strokeWidth = text.style.textStyles.strokeWidth;
+            }
             // Take the highlightName of the latest StyledMarkedText, regardless of priority.
             if (!text.highlightName.isNull())
                 previousStyledMarkedText.highlightName = text.highlightName;
@@ -296,6 +308,8 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
         return { styledMarkedText };
     }
 
+    auto viewportSize = renderer.view().frameView().size();
+
     auto markedTexts = MarkedText::subdivide(textsToSubdivide, OverlapStrategy::None);
     ASSERT(!markedTexts.isEmpty());
     if (markedTexts.isEmpty()) [[unlikely]]
@@ -312,7 +326,7 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
             orderHighlights(markedTextsNames, markedTexts);
 
             auto frontmostMarkedTexts = WTF::map(markedTexts, [&](auto& markedText) {
-                return resolveStyleForMarkedText(markedText, baseStyle, renderer, lineStyle, paintInfo);
+                return resolveStyleForMarkedText(markedText, baseStyle, renderer, lineStyle, viewportSize, paintInfo);
             });
 
             return coalesceAdjacentWithSameRanges(WTF::move(frontmostMarkedTexts));
@@ -322,16 +336,16 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
     // Compute frontmost overlapping styled marked texts.
     Vector<StyledMarkedText> frontmostMarkedTexts;
     frontmostMarkedTexts.reserveInitialCapacity(markedTexts.size());
-    frontmostMarkedTexts.append(resolveStyleForMarkedText(markedTexts[0], baseStyle, renderer, lineStyle, paintInfo));
+    frontmostMarkedTexts.append(resolveStyleForMarkedText(markedTexts[0], baseStyle, renderer, lineStyle, viewportSize, paintInfo));
     for (size_t i = 1; i < markedTexts.size(); ++i) {
         auto& text = markedTexts[i];
         auto& previousStyledMarkedText = frontmostMarkedTexts.last();
         // Marked texts completely cover each other.
         if (previousStyledMarkedText.startOffset == text.startOffset && previousStyledMarkedText.endOffset == text.endOffset) {
-            previousStyledMarkedText = resolveStyleForMarkedText(text, previousStyledMarkedText.style, renderer, lineStyle, paintInfo);
+            previousStyledMarkedText = resolveStyleForMarkedText(text, previousStyledMarkedText.style, renderer, lineStyle, viewportSize, paintInfo);
             continue;
         }
-        frontmostMarkedTexts.append(resolveStyleForMarkedText(text, baseStyle, renderer, lineStyle, paintInfo));
+        frontmostMarkedTexts.append(resolveStyleForMarkedText(text, baseStyle, renderer, lineStyle, viewportSize, paintInfo));
     }
 
     return frontmostMarkedTexts;

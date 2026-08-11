@@ -696,6 +696,29 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
 
     if (isInsideShapedContent() && paintForegroundForShapeRange(textPainter))
         return;
+
+    // Backgrounds paint before all text, so clip a stroked partial segment to its forward edge to keep its stroke overflow off a following highlight's background (adjacent inline boxes composite this way); the slack leaves the other edges effectively unclipped.
+    GraphicsContextStateSaver clipStateSaver(context, false);
+    if (markedText.style.textStyles.strokeWidth > 0 && markedText.endOffset < m_paintTextRun.length()) {
+        LayoutRect segmentRect { m_paintRect };
+        fontCascade().adjustSelectionRectForText(m_renderer->canUseSimplifiedTextMeasuring().value_or(false), m_paintTextRun, segmentRect, markedText.startOffset, markedText.endOffset);
+        auto snapped = snapRectToDevicePixelsWithWritingDirection(segmentRect, m_document->deviceScaleFactor(), m_paintTextRun.ltr());
+        static constexpr float overflowSlack = 4096;
+        bool ltr = m_paintTextRun.ltr();
+        FloatRect clipRect;
+        if (writingMode().isHorizontal()) {
+            float minX = ltr ? m_paintRect.x() - overflowSlack : snapped.x();
+            float maxX = ltr ? snapped.maxX() : m_paintRect.maxX() + overflowSlack;
+            clipRect = { minX, m_paintRect.y() - overflowSlack, maxX - minX, m_paintRect.height() + 2 * overflowSlack };
+        } else {
+            float minY = ltr ? m_paintRect.y() - overflowSlack : snapped.y();
+            float maxY = ltr ? snapped.maxY() : m_paintRect.maxY() + overflowSlack;
+            clipRect = { m_paintRect.x() - overflowSlack, minY, m_paintRect.width() + 2 * overflowSlack, maxY - minY };
+        }
+        clipStateSaver.save();
+        context.clip(clipRect);
+    }
+
     textPainter.setGlyphDisplayListIfNeeded(textBox().box(), m_paintInfo, m_style, m_paintTextRun);
     // TextPainter wants the box rectangle and text origin of the entire line box.
     textPainter.paintRange(m_paintTextRun, m_paintRect, textOriginFromPaintRect(m_paintRect), markedText.startOffset, markedText.endOffset);
