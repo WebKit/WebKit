@@ -34,38 +34,20 @@ requests = CallByNeed(lambda: __import__('requests'))
 HTTPBasicAuth = CallByNeed(lambda: __import__('requests.auth', fromlist=['HTTPBasicAuth']).HTTPBasicAuth)
 
 
-def _fetch(path, remote):
-    log.info('    Fetching {}...'.format(remote))
-    return run([local.Git.executable(), 'fetch', '--prune', remote], cwd=path, capture_output=True).returncode
-
-
 class Setup(Command):
     name = 'setup'
     help = 'Configure local settings for the current repository'
 
     @classmethod
     def fetch(cls, repository):
-        from webkitscmpy.mocks.local import Git as MockGit
-
-        remote_cmd = run(
-            [repository.executable(), 'remote'],
+        log.warning('Fetching all remotes...')
+        fetch_cmd = run(
+            [repository.executable(), 'fetch', '--prune', '--all', '--jobs=12'],
             capture_output=True, cwd=repository.root_path,
             encoding='utf-8',
         )
-        if remote_cmd.returncode:
-            sys.stderr.write('Failed to list remotes in repository\n')
-            sys.stderr.write(remote_cmd.stderr)
-            return remote_cmd.returncode
-        remotes = remote_cmd.stdout.split()
-
-        log.warning('Fetching {}...'.format(string_utils.pluralize(len(remotes), 'remote')))
-        results = []
-        with TaskPool(workers=(1 if MockGit.top else 12)) as pool:
-            for remote in remotes:
-                pool.do(_fetch, repository.path, remote, callback=lambda value: results.append(value))
-            pool.wait()
-        log.warning('Fetched {}!'.format(string_utils.pluralize(len([n for n in results if not n]), 'remote')))
-        return 1 if any(results) else 0
+        log.warning('Fetched all remotes!')
+        return 1 if fetch_cmd.returncode else 0
 
     @classmethod
     def github(cls, args, repository, additional_setup=None, remote=None, team=None, **kwargs):
