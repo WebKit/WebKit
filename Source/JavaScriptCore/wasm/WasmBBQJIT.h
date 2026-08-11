@@ -1926,7 +1926,7 @@ public:
 
     [[nodiscard]] PartialResult addRefIsNull(Value operand, Value& result);
 
-    [[nodiscard]] PartialResult addRefAsNonNull(Value value, Value& result);
+    [[nodiscard]] PartialResult addRefAsNonNull(TypedExpression value, Value& result);
 
     [[nodiscard]] PartialResult addRefEq(Value ref0, Value ref1, Value& result);
 
@@ -1987,7 +1987,7 @@ public:
 
     [[nodiscard]] PartialResult addRethrow(unsigned, ControlType& data);
 
-    [[nodiscard]] PartialResult addThrowRef(ExpressionType exception, std::span<TypedExpression>);
+    [[nodiscard]] PartialResult addThrowRef(TypedExpression exception, std::span<TypedExpression>);
 
     void prepareForExceptions();
 

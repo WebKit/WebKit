@@ -3165,8 +3165,9 @@ PartialResult BBQJIT::addI32WrapI64(Value operand, Value& result)
     return { };
 }
 
-[[nodiscard]] PartialResult BBQJIT::addRefAsNonNull(Value value, Value& result)
+[[nodiscard]] PartialResult BBQJIT::addRefAsNonNull(TypedExpression typedValue, Value& result)
 {
+    auto value = typedValue.value();
     Location valueLocation;
     if (value.isConst()) {
         valueLocation = Location::fromGPR(wasmScratchGPR);
@@ -3179,7 +3180,8 @@ PartialResult BBQJIT::addI32WrapI64(Value operand, Value& result)
     result = topValue(TypeKind::Ref);
     Location resultLocation = allocate(result);
     ASSERT(JSValue::encode(jsNull()) >= 0 && JSValue::encode(jsNull()) <= INT32_MAX);
-    emitThrowOnNullReference(ExceptionType::NullRefAsNonNull, valueLocation);
+    if (typedValue.type().isNullable())
+        emitThrowOnNullReference(ExceptionType::NullRefAsNonNull, valueLocation);
     emitMove(TypeKind::Ref, valueLocation, resultLocation);
 
     return { };
@@ -3367,8 +3369,9 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     targetControl.addBranch(m_jit.jump());
 }
 
-[[nodiscard]] PartialResult BBQJIT::addThrowRef(Value exception, std::span<TypedExpression>)
+[[nodiscard]] PartialResult BBQJIT::addThrowRef(TypedExpression typedException, std::span<TypedExpression>)
 {
+    auto exception = typedException.value();
     LOG_INSTRUCTION("ThrowRef", exception);
 
     emitMove(exception, Location::fromGPR(GPRInfo::argumentGPR1));
@@ -3380,16 +3383,20 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
         flushRegisters();
     }
 
-    // Check for a null exception
-    m_jit.move(CCallHelpers::TrustedImmPtr(JSValue::encode(jsNull())), wasmScratchGPR);
-    auto noexnref = m_jit.branchPtr(CCallHelpers::Equal, GPRInfo::argumentGPR1, wasmScratchGPR);
+    if (typedException.type().isNullable()) {
+        m_jit.move(CCallHelpers::TrustedImmPtr(JSValue::encode(jsNull())), wasmScratchGPR);
+        auto noexnref = m_jit.branchPtr(CCallHelpers::Equal, GPRInfo::argumentGPR1, wasmScratchGPR);
 
-    m_jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
-    emitThrowRefImpl(m_jit);
+        m_jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
+        emitThrowRefImpl(m_jit);
 
-    noexnref.linkTo(m_jit.label(), &m_jit);
+        noexnref.linkTo(m_jit.label(), &m_jit);
 
-    emitThrowException(ExceptionType::NullExnrefReference);
+        emitThrowException(ExceptionType::NullExnrefReference);
+    } else {
+        m_jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
+        emitThrowRefImpl(m_jit);
+    }
 
     return { };
 }
@@ -5138,7 +5145,8 @@ void BBQJIT::emitMove(StorageType type, Value src, Address dst)
 [[nodiscard]] PartialResult BBQJIT::addCallRef(unsigned callProfileIndex, const RTT& signature, ArgumentList& args, ResultList& results, CallType callType)
 {
     emitIncrementCallProfileCount(callProfileIndex);
-    Value callee = args.takeLast();
+    TypedExpression typedCallee = args.takeLast();
+    Value callee = typedCallee.value();
     ASSERT(signature.argumentCount() == args.size());
 
     CallInformation callInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
@@ -5162,7 +5170,8 @@ void BBQJIT::emitMove(StorageType type, Value src, Address dst)
             } else
                 calleeLocation = loadIfNecessary(callee);
             consume(callee);
-            emitThrowOnNullReferenceBeforeAccess(calleeLocation, WebAssemblyFunctionBase::offsetOfTargetInstance());
+            if (typedCallee.type().isNullable())
+                emitThrowOnNullReferenceBeforeAccess(calleeLocation, WebAssemblyFunctionBase::offsetOfTargetInstance());
 
             GPRReg calleePtr = calleeLocation.asGPR();
             m_jit.addPtr(TrustedImm32(WebAssemblyFunctionBase::offsetOfImportableFunction()), calleePtr, importableFunction);
