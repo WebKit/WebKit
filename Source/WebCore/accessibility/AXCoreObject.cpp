@@ -414,6 +414,19 @@ size_t AXCoreObject::stitchedUnignoredChildrenCount()
     return stitchedUnignoredChildren().size();
 }
 
+RefPtr<AXCoreObject> AXCoreObject::stitchRepresentativeOrSelf()
+{
+    std::optional<AXID> representativeID = stitchedIntoID();
+    if (!representativeID || *representativeID == objectID())
+        return this;
+    // The AXTextMarker is not a text position here (offset 0 is unused); it is the idiomatic way to
+    // resolve an { treeID, AXID } pair to its object on whichever tree we are on, dispatching to the
+    // isolated tree off the main thread or the main-thread cache on it.
+    if (RefPtr representative = AXTextMarker { treeID(), *representativeID, 0 }.object())
+        return representative;
+    return this;
+}
+
 AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameUnignoredChildrenInRange(size_t start, size_t maxCount)
 {
     auto children = crossFrameUnignoredChildren();
