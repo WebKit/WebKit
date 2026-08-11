@@ -1,7 +1,7 @@
 supportsFullScreen() == true
 enterFullScreenForElement()
-beganEnterFullScreen() - initialRect.size: {800, 600}, finalRect.size: {800, 600}
+beganEnterFullScreen() - initialRect.size: {300, 150}, finalRect.size: {800, 600}
 exitFullScreenForElement()
-beganExitFullScreen() - initialRect.size: {800, 600}, finalRect.size: {800, 600}
+beganExitFullScreen() - initialRect.size: {800, 600}, finalRect.size: {300, 150}
 
 

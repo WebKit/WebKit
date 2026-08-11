@@ -6,11 +6,19 @@
 
     document.documentElement.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement) { window.parent.postMessage("Exited",  "*"); }});
 
+    async function waitUntilSizedByParent() {
+        while (window.innerWidth !== 300 || window.innerHeight !== 150)
+            await new Promise(requestAnimationFrame);
+    }
+
     if (window.internals) {
-        internals.withUserGesture(async () => {
-            await enterFullScreen();
-            window.parent.postMessage("Entered", "*");
-        });
+        (async () => {
+            await waitUntilSizedByParent();
+            internals.withUserGesture(async () => {
+                await enterFullScreen();
+                window.parent.postMessage("Entered", "*");
+            });
+        })();
     }
 </script>
 <button onclick="enterFullScreen()">Enter</button>
