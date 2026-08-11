@@ -107,9 +107,6 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoSetterFuncValue, (JSGlobalObject*
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    if (callFrame->argumentCount() < 1) [[unlikely]]
-        return JSValue::encode(throwException(globalObject, throwScope, createNotEnoughArgumentsError(globalObject)));
-
     JSWebAssemblyGlobal* global = getGlobal(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
