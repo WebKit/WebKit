@@ -139,6 +139,7 @@ runtime/Watchdog.cpp
 tools/FunctionOverrides.cpp
 tools/JSDollarVM.cpp
 wasm/WasmBBQJIT.cpp
+wasm/WasmBBQJIT64.cpp
 wasm/WasmCallee.cpp
 wasm/WasmCalleeGroup.cpp
 wasm/WasmEntryPlan.cpp
