@@ -41,8 +41,6 @@ namespace CSSPropertyParserHelpers {
 enum class BasicShapeParsingOptions : uint8_t {
     None                       = 0,
     RejectPathFunctionFillRule = 1 << 0,
-    RejectPathFunction         = 1 << 1,
-    RejectShapeFunction        = 1 << 2,
 };
 
 // <basic-shape> = <circle()> | <ellipse() | <inset()> | <path()> | <polygon()> | <rect()> | <shape()> | <xywh()>

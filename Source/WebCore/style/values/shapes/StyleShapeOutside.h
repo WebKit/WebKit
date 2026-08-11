@@ -92,6 +92,8 @@ struct ShapeOutside {
     }
 
     const BasicShape* shape() const { RefPtr value = m_value; return value ? value->shape() : nullptr; }
+    const ShapeBox* shapeBox() const { RefPtr value = m_value; return value ? value->shapeBox() : nullptr; }
+    const ImageWrapper* imageWrapper() const { RefPtr value = m_value; return value ? value->imageWrapper() : nullptr; }
     CSSBoxType effectiveCSSBox() const { RefPtr value = m_value; return value ? value->effectiveCSSBox() : CSSBoxType::BoxMissing; }
     RefPtr<Style::Image> image() const { RefPtr value = m_value; return value ? value->image() : nullptr; }
 
@@ -111,6 +113,8 @@ private:
         ~Value();
 
         inline const BasicShape* shape() const;
+        inline const ShapeBox* shapeBox() const;
+        inline const ImageWrapper* imageWrapper() const;
         inline CSSBoxType effectiveCSSBox() const;
         inline RefPtr<Style::Image> image() const;
 
@@ -145,6 +149,26 @@ inline const BasicShape* ShapeOutside::Value::shape() const
     );
 }
 
+inline const ShapeOutside::ShapeBox* ShapeOutside::Value::shapeBox() const
+{
+    return WTF::switchOn(value,
+        [](const ShapeOutside::Shape&) -> const ShapeBox* { return nullptr; },
+        [](const ShapeOutside::ShapeBox& box) -> const ShapeBox* { return &box; },
+        [](const ShapeOutside::ShapeAndShapeBox& shapeAndShapeBox) -> const ShapeBox* { return &shapeAndShapeBox.box; },
+        [](const ShapeOutside::Image&) -> const ShapeBox* { return nullptr; }
+    );
+}
+
+inline const ImageWrapper* ShapeOutside::Value::imageWrapper() const
+{
+    return WTF::switchOn(value,
+        [](const ShapeOutside::Shape&) -> const ImageWrapper* { return nullptr; },
+        [](const ShapeOutside::ShapeBox&) -> const ImageWrapper* { return nullptr; },
+        [](const ShapeOutside::ShapeAndShapeBox&) -> const ImageWrapper* { return nullptr; },
+        [](const ShapeOutside::Image& image) -> const ImageWrapper* { return &image.image; }
+    );
+}
+
 inline RefPtr<Style::Image> ShapeOutside::Value::image() const
 {
     return WTF::switchOn(value,
@@ -167,7 +191,19 @@ CSSBoxType ShapeOutside::Value::effectiveCSSBox() const
 
 // MARK: - Conversion
 
-template<> struct CSSValueConversion<ShapeOutside> { auto operator()(BuilderState&, const CSSValue&) -> ShapeOutside; };
+template<> struct CSSValueConversion<ShapeOutside> {
+    auto operator()(BuilderState&, const CSSValue&) -> ShapeOutside;
+};
+
+template<> struct CSSValueCreation<ShapeOutside> {
+    Ref<CSSValue> operator()(CSSValuePool&, const Style::ComputedStyle&, const ShapeOutside&);
+};
+
+// MARK: - Serialization
+
+template<> struct Serialize<ShapeOutside> {
+    void operator()(StringBuilder&, const CSS::SerializationContext&, const Style::ComputedStyle&, const ShapeOutside&);
+};
 
 // MARK: - Blending
 

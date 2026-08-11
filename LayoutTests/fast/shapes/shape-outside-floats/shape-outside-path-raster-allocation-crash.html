@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Oversized and empty shape-outside path rasters do not crash</title>
+<style>
+.case { height: 20px; width: 200px; }
+.float { float: left; }
+#empty { height: 100px; width: 100px; shape-outside: path('M 0 0'); }
+#oversized { height: 1000000px; width: 1000000px; shape-outside: path('M 0 0 H 1000000 V 1000000 H 0 Z'); }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>This test passes if it does not crash.</p>
+<div class="case"><div id="empty" class="float"></div>empty</div>
+<div class="case"><div id="oversized" class="float"></div>oversized</div>
+<script>
+document.body.offsetTop;
+</script>

@@ -236,6 +236,22 @@ static LayoutRect shapeImageMarginRect(const RenderBox& renderBox, const LayoutS
     return LayoutRect(marginBoxOffsetFromContentBox, marginRectSize);
 }
 
+static LayoutRect shapeMarginRect(const RenderBox& renderer, bool isHorizontalWritingMode)
+{
+    auto size = isHorizontalWritingMode ? renderer.borderBoxSize() : renderer.borderBoxSize().transposedSize();
+    if (isHorizontalWritingMode)
+        size.expand(renderer.horizontalMarginExtent(), renderer.verticalMarginExtent());
+    else
+        size.expand(renderer.verticalMarginExtent(), renderer.horizontalMarginExtent());
+    size.clampNegativeToZero();
+
+    auto location = LayoutPoint {
+        isHorizontalWritingMode ? -renderer.marginLeft() : -renderer.marginTop(),
+        -renderer.marginBefore(renderer.containingBlock()->writingMode())
+    };
+    return { location, size };
+}
+
 Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
 {
     auto& style = renderer.style();
@@ -247,6 +263,7 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
     auto zoom = style.usedZoomForLength();
 
     auto boxSize = computeLogicalBoxSize(renderer, isHorizontalWritingMode);
+    auto logicalMarginRect = shapeMarginRect(renderer, isHorizontalWritingMode);
     auto borderBoxLogicalWidth = isHorizontalWritingMode ? renderer.borderBoxWidth() : renderer.borderBoxHeight();
 
     auto logicalMargin = [&] {
@@ -257,11 +274,11 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
     return WTF::switchOn(shapeOutside,
         [&](const Style::ShapeOutside::Shape& shape) {
             auto offset = LayoutPoint { logicalLeftOffset(renderer), logicalTopOffset(renderer) };
-            return LayoutShape::createShape(shape, offset, boxSize, borderBoxLogicalWidth, writingMode, logicalMargin, zoom);
+            return LayoutShape::createShape(shape, offset, boxSize, logicalMarginRect, borderBoxLogicalWidth, writingMode, logicalMargin, zoom);
         },
         [&](const Style::ShapeOutside::ShapeAndShapeBox& shapeAndShapeBox) {
             auto offset = LayoutPoint { logicalLeftOffset(renderer), logicalTopOffset(renderer) };
-            return LayoutShape::createShape(shapeAndShapeBox.shape, offset, boxSize, borderBoxLogicalWidth, writingMode, logicalMargin, zoom);
+            return LayoutShape::createShape(shapeAndShapeBox.shape, offset, boxSize, logicalMarginRect, borderBoxLogicalWidth, writingMode, logicalMargin, zoom);
         },
         [&](const Style::ShapeOutside::Image& shapeImage) {
             ASSERT(shapeImage.isValid());
@@ -270,7 +287,7 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
             auto logicalImageSize = renderer.calculateImageIntrinsicDimensions(styleImage.ptr(), boxSize, RenderImage::ScaleByUsedZoom::Yes);
             styleImage->setContainerContextForRenderer(renderer, logicalImageSize, style.usedZoom());
 
-            auto logicalMarginRect = shapeImageMarginRect(renderer, boxSize);
+            auto logicalImageMarginRect = shapeImageMarginRect(renderer, boxSize);
             auto* renderImage = dynamicDowncast<RenderImage>(renderer);
             auto logicalImageRect = renderImage ? renderImage->replacedContentRect() : LayoutRect { { }, logicalImageSize };
 
@@ -278,7 +295,7 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
             auto physicalImageSize = writingMode.isHorizontal() ? logicalImageSize : logicalImageSize.transposedSize();
 
             RefPtr image = styleImage->image(const_cast<RenderBox*>(&renderer), physicalImageSize, NullGraphicsContext());
-            return LayoutShape::createRasterShape(image.get(), shapeImageThreshold.value, logicalImageRect, logicalMarginRect, writingMode, logicalMargin);
+            return LayoutShape::createRasterShape(image.get(), shapeImageThreshold.value, logicalImageRect, logicalImageMarginRect, writingMode, logicalMargin);
         },
         [&](const Style::ShapeOutside::ShapeBox&) {
             auto shapeRect = computeRoundedRectForBoxShape(shapeOutside.effectiveCSSBox(), renderer);

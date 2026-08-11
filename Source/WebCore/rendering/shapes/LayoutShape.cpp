@@ -39,6 +39,7 @@
 #include "RectangleLayoutShape.h"
 #include "StyleBasicShape.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include <limits>
 
 namespace WebCore {
 
@@ -74,6 +75,15 @@ static inline FloatRect NODELETE physicalRectToLogical(const FloatRect& rect, fl
     return rect.transposedRect();
 }
 
+static inline FloatRect NODELETE logicalRectToPhysical(const FloatRect& rect, float logicalBoxHeight, WritingMode writingMode)
+{
+    if (writingMode.isHorizontal())
+        return rect;
+    if (writingMode.isBlockFlipped())
+        return FloatRect(logicalBoxHeight - rect.maxY(), rect.x(), rect.height(), rect.width());
+    return rect.transposedRect();
+}
+
 static inline FloatPoint NODELETE physicalPointToLogical(const FloatPoint& point, float logicalBoxHeight, WritingMode writingMode)
 {
     if (writingMode.isHorizontal())
@@ -90,7 +100,114 @@ static inline FloatSize NODELETE physicalSizeToLogical(const FloatSize& size, Wr
     return size.transposedSize();
 }
 
-Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, LayoutUnit borderBoxLogicalWidth, WritingMode writingMode, float logicalMargin, Style::ZoomFactor zoom)
+static Ref<LayoutShape> createRasterLayoutShape(PixelBuffer* pixelBuffer, const LayoutRect& logicalImageRect, const LayoutRect& logicalMarginRect, WritingMode writingMode, float threshold, std::optional<float> logicalBoxWidthForFlipping = std::nullopt)
+{
+    ASSERT(logicalMarginRect.height() >= 0);
+
+    auto snappedLogicalImageRect = snappedIntRect(logicalImageRect);
+    auto snappedPhysicalImageSize = writingMode.isHorizontal() ? snappedLogicalImageRect.size() : snappedLogicalImageRect.size().transposedSize();
+    auto snappedLogicalMarginRect = snappedIntRect(logicalMarginRect);
+    auto rectHasValidDimensions = [](const IntRect& rect) {
+        return rect.width() >= 0
+            && rect.height() >= 0
+            && isInBounds<int>(static_cast<int64_t>(rect.x()) + rect.width())
+            && isInBounds<int>(static_cast<int64_t>(rect.y()) + rect.height());
+    };
+    if (!rectHasValidDimensions(snappedLogicalMarginRect) || snappedLogicalMarginRect.y() == std::numeric_limits<int>::min())
+        return adoptRef(*new RasterLayoutShape(makeUnique<RasterShapeIntervals>(0), { }, 0));
+
+    auto intervals = makeUnique<RasterShapeIntervals>(static_cast<unsigned>(snappedLogicalMarginRect.height()), -snappedLogicalMarginRect.y());
+
+    if (intervals->allocationSucceeded() && rectHasValidDimensions(snappedLogicalImageRect) && pixelBuffer && pixelBuffer->size() == snappedPhysicalImageSize) {
+        auto expectedBufferSize = PixelBuffer::computeBufferSize(PixelFormat::RGBA8, snappedPhysicalImageSize);
+        if (!expectedBufferSize.hasOverflowed() && expectedBufferSize.value() == pixelBuffer->bytes().size()) {
+            constexpr unsigned pixelArraySize = 4; // Each pixel is four bytes: RGBA.
+            constexpr unsigned alphaBitOffset = 3;
+            uint8_t alphaPixelThreshold = static_cast<uint8_t>(lroundf(clampTo<float>(threshold, 0, 1) * 255.0f));
+
+            int64_t marginMinYInBuffer = static_cast<int64_t>(snappedLogicalMarginRect.y()) - snappedLogicalImageRect.y();
+            int64_t marginMaxYInBuffer = static_cast<int64_t>(snappedLogicalMarginRect.y()) + snappedLogicalMarginRect.height() - snappedLogicalImageRect.y();
+            int minBufferY = clampTo<int>(std::max<int64_t>(0, marginMinYInBuffer));
+            int maxBufferY = clampTo<int>(std::min<int64_t>(snappedLogicalImageRect.height(), marginMaxYInBuffer));
+
+            for (int y = minBufferY; y < maxBufferY; ++y) {
+                int startX = -1;
+                for (int x = 0; x < snappedLogicalImageRect.width(); ++x) {
+                    size_t pixelPosition;
+                    if (writingMode.isHorizontal())
+                        pixelPosition = static_cast<size_t>(snappedLogicalImageRect.width()) * y + x;
+                    else if (writingMode.isBlockFlipped())
+                        pixelPosition = static_cast<size_t>(snappedLogicalImageRect.height()) * (static_cast<size_t>(x) + 1) - (static_cast<size_t>(y) + 1);
+                    else
+                        pixelPosition = static_cast<size_t>(snappedLogicalImageRect.height()) * x + y;
+                    uint8_t alpha = pixelBuffer->item(pixelPosition * pixelArraySize + alphaBitOffset);
+
+                    bool alphaAboveThreshold = alpha > alphaPixelThreshold;
+                    if (startX == -1 && alphaAboveThreshold)
+                        startX = x;
+                    else if (startX != -1 && (!alphaAboveThreshold || x == snappedLogicalImageRect.width() - 1)) {
+                        // We're creating "end-point exclusive" intervals here. The value of an interval's x1 is
+                        // the first index of an above-threshold pixel for y, and the value of x2 is 1+ the index
+                        // of the last above-threshold pixel.
+                        int endX = alphaAboveThreshold ? x + 1 : x;
+                        intervals->intervalAt(y + snappedLogicalImageRect.y()).unite(IntShapeInterval(startX + snappedLogicalImageRect.x(), endX + snappedLogicalImageRect.x()));
+                        startX = -1;
+                    }
+                }
+            }
+        }
+    }
+
+    return adoptRef(*new RasterLayoutShape(WTF::move(intervals), snappedLogicalMarginRect.size(), logicalBoxWidthForFlipping.value_or(snappedLogicalMarginRect.width())));
+}
+
+static Ref<LayoutShape> createPathShape(const Style::BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, const LayoutRect& logicalMarginRect, LayoutUnit borderBoxLogicalWidth, WritingMode writingMode, Style::ZoomFactor zoom)
+{
+    bool horizontalWritingMode = writingMode.isHorizontal();
+    float boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
+    float boxHeight = horizontalWritingMode ? logicalBoxSize.height() : logicalBoxSize.width();
+
+    auto path = Style::path(basicShape, FloatRect { FloatPoint { }, FloatSize { boxWidth, boxHeight } }, zoom);
+
+    FloatRect logicalMarginRectInReferenceBoxCoordinates = logicalMarginRect;
+    logicalMarginRectInReferenceBoxCoordinates.move(-borderBoxOffset.x(), -borderBoxOffset.y());
+    auto physicalMarginRect = logicalRectToPhysical(logicalMarginRectInReferenceBoxCoordinates, logicalBoxSize.height(), writingMode);
+    auto physicalRasterBounds = intersection(path.boundingRect(), physicalMarginRect);
+
+    auto createEmptyShape = [&] {
+        return createRasterLayoutShape(nullptr, { }, logicalMarginRect, writingMode, 0, borderBoxLogicalWidth);
+    };
+
+    if (physicalRasterBounds.isEmpty() || !physicalRasterBounds.isExpressibleAsIntRect())
+        return createEmptyShape();
+
+    auto physicalRasterRect = enclosingIntRect(physicalRasterBounds);
+    if (physicalRasterRect.isEmpty())
+        return createEmptyShape();
+
+    // FIXME (149420): This buffer should not be unconditionally unaccelerated.
+    auto imageBuffer = ImageBuffer::create(physicalRasterRect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return createEmptyShape();
+
+    path.translate(-toFloatSize(physicalRasterRect.location()));
+    GraphicsContext& graphicsContext = imageBuffer->context();
+    graphicsContext.clearRect(IntRect { { }, physicalRasterRect.size() });
+    graphicsContext.setFillColor(Color::black);
+    graphicsContext.setFillRule(Style::windRule(basicShape));
+    graphicsContext.fillPath(path);
+
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    auto pixelBuffer = imageBuffer->getPixelBuffer(format, { { }, physicalRasterRect.size() });
+    if (!pixelBuffer)
+        return createEmptyShape();
+
+    auto logicalRasterRect = physicalRectToLogical(physicalRasterRect, logicalBoxSize.height(), writingMode);
+    logicalRasterRect.moveBy(borderBoxOffset);
+    return createRasterLayoutShape(pixelBuffer.get(), LayoutRect { logicalRasterRect }, logicalMarginRect, writingMode, 0, borderBoxLogicalWidth);
+}
+
+Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, const LayoutRect& logicalMarginRect, LayoutUnit borderBoxLogicalWidth, WritingMode writingMode, float logicalMargin, Style::ZoomFactor zoom)
 {
     bool horizontalWritingMode = writingMode.isHorizontal();
     float boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
@@ -156,10 +273,10 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
             return createPolygonShape(WTF::move(vertices), borderBoxLogicalWidth);
         },
         [&](const Style::PathFunction&) -> Ref<LayoutShape> {
-            RELEASE_ASSERT_NOT_REACHED();
+            return createPathShape(basicShape, borderBoxOffset, logicalBoxSize, logicalMarginRect, borderBoxLogicalWidth, writingMode, zoom);
         },
         [&](const Style::ShapeFunction&) -> Ref<LayoutShape> {
-            RELEASE_ASSERT_NOT_REACHED();
+            return createPathShape(basicShape, borderBoxOffset, logicalBoxSize, logicalMarginRect, borderBoxLogicalWidth, writingMode, zoom);
         }
     );
 
@@ -175,13 +292,11 @@ Ref<const LayoutShape> LayoutShape::createRasterShape(Image* image, float thresh
 
     auto snappedLogicalImageRect = snappedIntRect(logicalImageRect);
     auto snappedPhysicalImageSize = writingMode.isHorizontal() ? snappedLogicalImageRect.size() : snappedLogicalImageRect.size().transposedSize();
-    auto snappedLogicalMarginRect = snappedIntRect(logicalMarginRect);
-    auto intervals = makeUnique<RasterShapeIntervals>(snappedLogicalMarginRect.height(), -snappedLogicalMarginRect.y());
     // FIXME (149420): This buffer should not be unconditionally unaccelerated.
     auto imageBuffer = ImageBuffer::create(snappedPhysicalImageSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
 
-    auto createShape = [&]() {
-        auto rasterShape = adoptRef(*new RasterLayoutShape(WTF::move(intervals), snappedLogicalMarginRect.size()));
+    auto createShape = [&](PixelBuffer* pixelBuffer = nullptr) {
+        auto rasterShape = createRasterLayoutShape(pixelBuffer, snappedLogicalImageRect, logicalMarginRect, writingMode, threshold);
         rasterShape->m_writingMode = writingMode;
         rasterShape->m_margin = logicalMargin;
         return rasterShape;
@@ -202,37 +317,7 @@ Ref<const LayoutShape> LayoutShape::createRasterShape(Image* image, float thresh
     if (!pixelBuffer)
         return createShape();
 
-    constexpr unsigned pixelArraySize = 4; // Each pixel is four bytes: RGBA.
-    constexpr unsigned alphaBitOffset = 3;
-
-    if (snappedLogicalImageRect.area() * pixelArraySize == pixelBuffer->bytes().size()) {
-        uint8_t alphaPixelThreshold = static_cast<uint8_t>(lroundf(clampTo<float>(threshold, 0, 1) * 255.0f));
-
-        int minBufferY = std::max(0, snappedLogicalMarginRect.y() - snappedLogicalImageRect.y());
-        int maxBufferY = std::min(snappedLogicalImageRect.height(), snappedLogicalMarginRect.maxY() - snappedLogicalImageRect.y());
-
-        for (int y = minBufferY; y < maxBufferY; ++y) {
-            int startX = -1;
-            for (int x = 0; x < snappedLogicalImageRect.width(); ++x) {
-                size_t pixelPosition = writingMode.isHorizontal() ? snappedLogicalImageRect.width() * y + x : snappedLogicalImageRect.height() * (x + 1) - (y + 1);
-                uint8_t alpha = pixelBuffer->item(pixelPosition * pixelArraySize + alphaBitOffset);
-
-                bool alphaAboveThreshold = alpha > alphaPixelThreshold;
-                if (startX == -1 && alphaAboveThreshold) {
-                    startX = x;
-                } else if (startX != -1 && (!alphaAboveThreshold || x == snappedLogicalImageRect.width() - 1)) {
-                    // We're creating "end-point exclusive" intervals here. The value of an interval's x1 is
-                    // the first index of an above-threshold pixel for y, and the value of x2 is 1+ the index
-                    // of the last above-threshold pixel.
-                    int endX = alphaAboveThreshold ? x + 1 : x;
-                    intervals->intervalAt(y + snappedLogicalImageRect.y()).unite(IntShapeInterval(startX + snappedLogicalImageRect.x(), endX + snappedLogicalImageRect.x()));
-                    startX = -1;
-                }
-            }
-        }
-    }
-
-    return createShape();
+    return createShape(pixelBuffer.get());
 }
 
 Ref<const LayoutShape> LayoutShape::createBoxShape(const LayoutRoundedRect& roundedRect, WritingMode writingMode, float logicalMargin)

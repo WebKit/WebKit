@@ -8213,15 +8213,6 @@ imported/w3c/web-platform-tests/scroll-animations/animation-trigger/timeline-tri
 
 webkit.org/b/314830 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.serviceworker.html [ Failure ]
 
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/path/shape-outside-path-000.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/path/shape-outside-path-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/path/shape-outside-path-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/path/shape-outside-path-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/shape/shape-outside-shape-000.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/shape/shape-outside-shape-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/shape/shape-outside-shape-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/shape/shape-outside-shape-003.html [ ImageOnlyFailure ]
-
 webkit.org/b/317017 imported/w3c/web-platform-tests/largest-contentful-paint/multiple-redirects-TAO.html [ Pass Failure ]
 
 # Compression Dictionary Transport is not implemented, so these time out waiting for a dictionary load that never happens.
