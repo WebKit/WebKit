@@ -507,6 +507,13 @@
     "imported/selenium/py/test/selenium/webdriver/common/print_pdf_tests.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/217173"}}
     },
+    "imported/selenium/py/test/selenium/webdriver/common/quit_tests.py": {
+        "subtests": {
+            "test_quit": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/321475"}}
+            }
+        }
+    },
     "imported/selenium/py/test/selenium/webdriver/common/select_class_tests.py": {
         "subtests": {
             "test_select_by_index_multiple": {
