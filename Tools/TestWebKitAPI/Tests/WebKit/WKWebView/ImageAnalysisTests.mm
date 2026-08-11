@@ -318,8 +318,6 @@ TEST(ImageAnalysisTests, ImageAnalysisWithTransparentImages)
     EXPECT_FALSE(reader.isTransparentBlack(reader.width() / 2, reader.height() / 2));
 }
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
 static RetainPtr<CGImageRef> iconImage()
 {
     auto iconPath = [NSBundle.test_resourcesBundle pathForResource:@"icon" ofType:@"png"];
@@ -331,9 +329,7 @@ static RetainPtr<CGImageRef> iconImage()
 #endif
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 static void simulateEditMenuAppearance(TestWKWebView *webView)
 {
@@ -486,9 +482,9 @@ TEST(ImageAnalysisTests, AllowRemoveBackgroundOnce)
     EXPECT_NULL([menuBuilder actionWithTitle:WebCore::contextMenuItemTitleRemoveBackground().createNSString().get()]);
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && ENABLE(SERVICE_CONTROLS)
+#if ENABLE(SERVICE_CONTROLS)
 
 TEST(ImageAnalysisTests, RemoveBackgroundItemInServicesMenu)
 {
@@ -518,7 +514,7 @@ TEST(ImageAnalysisTests, RemoveBackgroundItemInServicesMenu)
     Util::run(&foundRemoveBackgroundItem);
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS) && ENABLE(SERVICE_CONTROLS)
+#endif // ENABLE(SERVICE_CONTROLS)
 
 } // namespace TestWebKitAPI
 

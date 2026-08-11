@@ -55,20 +55,12 @@ using namespace WebCore;
 
 RetainPtr<CocoaImageAnalyzer> createImageAnalyzer()
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     return adoptNS([PAL::allocVKCImageAnalyzerInstance() init]);
-#else
-    return adoptNS([PAL::allocVKImageAnalyzerInstance() init]);
-#endif
 }
 
 RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef image, VKAnalysisTypes types)
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     return adoptNS([(PAL::allocVKCImageAnalyzerRequestInstance()) initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
-#else
-    return adoptNS([PAL::allocVKImageAnalyzerRequestInstance() initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
-#endif
 }
 
 static FloatQuad floatQuad(VKQuad *quad)
@@ -140,26 +132,19 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
     }
 #endif // ENABLE(DATA_DETECTION)
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     if ([analysis isKindOfClass:PAL::getVKCImageAnalysisClassSingleton()])
         result.imageAnalysisData = TextRecognitionResult::extractAttributedString(analysis);
-#endif
 
     return result;
 }
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 static String languageCodeForLocale(NSString *localeIdentifier)
 {
     return [NSLocale localeWithLocaleIdentifier:localeIdentifier].languageCode;
 }
 
-#endif
-
 bool languageIdentifierSupportsLiveText(NSString *languageIdentifier)
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     auto languageCode = languageCodeForLocale(languageIdentifier);
     if (languageCode.isEmpty())
         return true;
@@ -173,13 +158,7 @@ bool languageIdentifierSupportsLiveText(NSString *languageIdentifier)
         return set;
     }();
     return supportedLanguages->contains(languageCode);
-#else
-    UNUSED_PARAM(languageIdentifier);
-    return true;
-#endif
 }
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslation *translation, TransactionID transactionID)
 {
@@ -345,14 +324,10 @@ void prepareImageAnalysisForOverlayView(PlatformImageAnalysisObject *interaction
     [interactionOrView setActionInfoViewHidden:NO animated:YES];
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
 bool isLiveTextAvailableAndEnabled()
 {
     return PAL::isVisionKitCoreFrameworkAvailable();
 }
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackground(CGImageRef image, const String& sourceMIMEType)
 {
@@ -370,8 +345,6 @@ std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackgroun
 
     return transcodeWithPreferredMIMEType(image, CFSTR("image/png"));
 }
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 

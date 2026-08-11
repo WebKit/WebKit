@@ -111,7 +111,7 @@ void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<std
 
 static RetainPtr<NSAttributedString> selectionInImageOverlayAsAttributedString(const VisibleSelection& selection)
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     RefPtr page = selection.document()->page();
     if (!page)
         return nil;

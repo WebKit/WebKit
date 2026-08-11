@@ -311,7 +311,7 @@ static void *WKContentViewKVOTransformContext = &WKContentViewKVOTransformContex
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 @interface WKContentView (ImageAnalysisInteraction) <VKCImageAnalysisInteractionDelegate>
 @end
@@ -325,13 +325,9 @@ static bool canAttemptTextRecognitionForNonImageElements(const WebKit::Interacti
     return preferences.textRecognitionInVideosEnabled() && information.isPausedVideo;
 }
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
 @interface AVPlayerViewController (Staging_86237428)
 - (void)setImageAnalysis:(CocoaImageAnalysis *)analysis;
 @end
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
@@ -3691,7 +3687,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)hasSelectablePositionAtPoint:(CGPoint)point
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     if ([_imageAnalysisInteraction interactableItemExistsAtPoint:point])
         return NO;
 #endif
@@ -3724,7 +3720,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)pointIsNearMarkedText:(CGPoint)point
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     if ([_imageAnalysisInteraction interactableItemExistsAtPoint:point])
         return NO;
 #endif
@@ -3753,7 +3749,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return [self hasSelectablePositionAtPoint:point];
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     if ([_imageAnalysisInteraction interactableItemExistsAtPoint:point])
         return NO;
 #endif
@@ -4122,7 +4118,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (!_isExpectingFastSingleTapCommit)
         [self _finishInteraction];
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     if (![_imageAnalysisInteraction interactableItemExistsAtPoint:_lastInteractionLocation])
         [_imageAnalysisInteraction resetSelection];
 #endif
@@ -5719,7 +5715,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
         });
     };
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     [self doAfterComputingImageAnalysisResultsForBackgroundRemoval:WTF::move(requestRectsToEvadeIfNeeded)];
 #else
     requestRectsToEvadeIfNeeded();
@@ -5728,7 +5724,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
 
 #endif // HAVE(UI_EDIT_MENU_INTERACTION)
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 - (UIMenu *)removeBackgroundMenu
 {
@@ -5822,7 +5818,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
     });
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 - (BOOL)_handleTapOverInteractiveControl:(CGPoint)position
 {
@@ -5830,7 +5826,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
     if (!hitButton)
         return NO;
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     UIButton *analysisButton = [_imageAnalysisInteraction analysisButton];
     // This has to be a class check instead of a straight equality check because the `analysisButton`
     // isn't in the view hierarchy, so this is the only way to disambiguate this particular button.
@@ -6282,7 +6278,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
     [self _invalidateCurrentPositionInformation];
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     [self uninstallImageAnalysisInteraction];
 #endif
 
@@ -9674,7 +9670,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (void)_internalSelectTextForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, const WebKit::RevealItem& item))completionHandler
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     _removeBackgroundData = std::nullopt;
 #endif
 
@@ -9686,7 +9682,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         if (shouldPresentMenu && ![strongSelf shouldSuppressEditMenu])
             [strongSelf->_textInteractionWrapper activateSelection];
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
         [strongSelf doAfterComputingImageAnalysisResultsForBackgroundRemoval:[completionHandler, shouldPresentMenu, item, weakSelf] {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
@@ -10092,7 +10088,7 @@ static String fallbackLabelTextForUnlabeledInputFieldInZoomedFormControls(WebCor
 {
     _touchEventsCanPreventNativeGestures = YES;
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     if ([_imageAnalysisInteraction interactableItemExistsAtPoint:[_touchEventGestureRecognizer locationInView:self]])
         return YES;
 #endif
@@ -10541,7 +10537,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 {
     protect(self.gestureRecognizerConsistencyEnforcer)->beginTracking(deferringGestureRecognizer);
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     if ([_imageAnalysisInteraction interactableItemExistsAtPoint:[deferringGestureRecognizer locationInView:self]])
         return NO;
 #endif
@@ -12293,7 +12289,7 @@ static WebKit::DocumentEditingContextRequest toWebRequest(id request)
 
 - (void)buildMenuForWebViewWithBuilder:(id <UIMenuBuilder>)builder
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     if (auto menu = self.removeBackgroundMenu)
         [builder insertSiblingMenu:menu beforeMenuForIdentifier:UIMenuFormat];
 #endif
@@ -13171,9 +13167,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     _elementPendingImageAnalysis = std::nullopt;
     _imageAnalysisGestureRecognizer = adoptNS([[WKImageAnalysisGestureRecognizer alloc] initWithImageAnalysisGestureDelegate:self]);
     [self addGestureRecognizer:_imageAnalysisGestureRecognizer.get()];
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     _removeBackgroundData = std::nullopt;
-#endif
     _dynamicImageAnalysisContextMenuState = WebKit::DynamicImageAnalysisContextMenuState::NotWaiting;
     _imageAnalysisContextMenuActionData = std::nullopt;
 }
@@ -13193,10 +13187,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [std::exchange(_imageAnalyzer, nil) cancelAllRequests];
 ALLOW_DEPRECATED_DECLARATIONS_END
     [self _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     [self uninstallImageAnalysisInteraction];
     _removeBackgroundData = std::nullopt;
-#endif
     _dynamicImageAnalysisContextMenuState = WebKit::DynamicImageAnalysisContextMenuState::NotWaiting;
     _imageAnalysisContextMenuActionData = std::nullopt;
 }
@@ -13267,13 +13259,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     if (targetLanguageIdentifier.length)
         return WebKit::requestVisualTranslation(self.imageAnalyzer, imageURL, sourceLanguageIdentifier, targetLanguageIdentifier, cgImage.get(), WTF::move(completion));
-#else
-    UNUSED_PARAM(sourceLanguageIdentifier);
-    UNUSED_PARAM(targetLanguageIdentifier);
-#endif
 
     auto request = [self createImageAnalyzerRequest:VKAnalysisTypeText image:cgImage.get()];
     [self.imageAnalyzer processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTF::move(completion)] (CocoaImageAnalysis *result, NSError *) mutable {
@@ -13451,14 +13438,12 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 #endif
     }];
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     if (protect(_page->preferences())->removeBackgroundEnabled()) {
         WebKit::requestBackgroundRemoval(image, [weakSelf = WeakObjCPtr<WKContentView>(self), aggregator = aggregator.copyRef(), data](CGImageRef result) mutable {
             if (auto strongSelf = weakSelf.get())
                 data->copySubjectResult = result;
         });
     }
-#endif
 }
 
 - (void)_insertDynamicImageAnalysisContextMenuItemsIfPossible
@@ -13537,7 +13522,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 - (BOOL)actionSheetAssistantShouldIncludeCopySubjectAction:(WKActionSheetAssistant *)assistant
 {
@@ -13574,11 +13559,11 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     return interaction.hasActiveTextSelection || [interaction interactableItemExistsAtPoint:point];
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 - (void)beginTextRecognitionForFullscreenVideo:(WebCore::ShareableBitmap::Handle&&)imageData playerViewController:(AVPlayerViewController *)controller
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     ASSERT(_page->preferences().textRecognitionInVideosEnabled());
 
     if (_fullscreenVideoImageAnalysisRequestIdentifier)
@@ -13604,12 +13589,12 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
         if ([controller respondsToSelector:@selector(setImageAnalysis:)])
             [controller setImageAnalysis:result];
     }).get()];
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 }
 
 - (void)cancelTextRecognitionForFullscreenVideo:(AVPlayerViewController *)controller
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     if (auto identifier = std::exchange(_fullscreenVideoImageAnalysisRequestIdentifier, 0))
         [_imageAnalyzer cancelRequestID:identifier];
 
@@ -13620,7 +13605,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 - (BOOL)isTextRecognitionInFullscreenVideoEnabled
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     return protect(_page->preferences())->textRecognitionInVideosEnabled();
 #else
     return NO;
@@ -13629,7 +13614,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 
 - (void)beginTextRecognitionForVideoInElementFullscreen:(WebCore::ShareableBitmap::Handle&&)bitmapHandle bounds:(WebCore::FloatRect)bounds
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     auto imageBitmap = WebCore::ShareableBitmap::create(WTF::move(bitmapHandle));
     if (!imageBitmap)
         return;
@@ -13652,12 +13637,12 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
         strongSelf->_imageAnalysisInteractionBounds = bounds;
         [strongSelf installImageAnalysisInteraction:result];
     }];
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 }
 
 - (void)cancelTextRecognitionForVideoInElementFullscreen
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     [self uninstallImageAnalysisInteraction];
 
     if (auto previousIdentifier = std::exchange(_fullscreenVideoImageAnalysisRequestIdentifier, 0))
@@ -13665,7 +13650,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 #endif
 }
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 - (void)installImageAnalysisInteraction:(VKCImageAnalysis *)analysis
 {
@@ -13705,14 +13690,14 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
     [_imageAnalysisGestureRecognizer setEnabled:WebKit::isLiveTextAvailableAndEnabled()];
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 - (BOOL)_shouldAvoidSecurityHeuristicScoreUpdates
 {
     // FIXME: The whole security heuristic thing should be a USE/HAVE.
 #if PLATFORM(VISION)
     return YES;
-#elif ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#elif ENABLE(IMAGE_ANALYSIS)
     return [_imageAnalysisInteraction hasActiveTextSelection];
 #else
     return NO;

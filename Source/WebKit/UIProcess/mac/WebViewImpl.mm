@@ -1211,7 +1211,7 @@ static NSArray<NSString *> *passwordTextTouchBarDefaultItemIdentifiers()
 
 #endif // HAVE(TOUCH_BAR)
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 @interface WKImageAnalysisOverlayViewDelegate : NSObject<VKCImageAnalysisOverlayViewDelegate>
 - (instancetype)initWithWebViewImpl:(WebKit::WebViewImpl&)impl;
@@ -1295,7 +1295,7 @@ static void* imageOverlayObservationContext = &imageOverlayObservationContext;
 
 @end
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 namespace WebKit {
 
@@ -6945,7 +6945,7 @@ void WebViewImpl::mouseUp(NSEvent *event, WebEventInputSource inputSource, WebCo
 
     setLastMouseDownEvent(nil);
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     fulfillDeferredImageAnalysisOverlayViewHierarchyTask();
 #endif
 
@@ -7737,13 +7737,8 @@ void WebViewImpl::requestTextRecognition(const URL& imageURL, ShareableBitmap::H
 
     RetainPtr cgImage = imageBitmap->createPlatformImage(DontCopyBackingStore);
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     if (!targetLanguageIdentifier.isEmpty())
         return requestVisualTranslation(protect(ensureImageAnalyzer()).get(), imageURL.createNSURL().get(), sourceLanguageIdentifier, targetLanguageIdentifier, cgImage.get(), WTF::move(completion));
-#else
-    UNUSED_PARAM(sourceLanguageIdentifier);
-    UNUSED_PARAM(targetLanguageIdentifier);
-#endif
 
     auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeText);
     auto startTime = MonotonicTime::now();
@@ -7779,7 +7774,7 @@ void WebViewImpl::computeHasVisualSearchResults(const URL& imageURL, ShareableBi
 
 bool WebViewImpl::imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInView) const
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     return [m_imageAnalysisOverlayView interactableItemExistsAtPoint:locationInView];
 #else
     UNUSED_PARAM(locationInView);
@@ -7789,7 +7784,7 @@ bool WebViewImpl::imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInVie
 
 void WebViewImpl::beginTextRecognitionForVideoInElementFullscreen(ShareableBitmap::Handle&& bitmapHandle, WebCore::FloatRect bounds)
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     auto imageBitmap = ShareableBitmap::create(WTF::move(bitmapHandle));
     if (!imageBitmap)
         return;
@@ -7819,14 +7814,14 @@ void WebViewImpl::beginTextRecognitionForVideoInElementFullscreen(ShareableBitma
 
 void WebViewImpl::cancelTextRecognitionForVideoInElementFullscreen()
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     if (auto identifier = std::exchange(m_currentImageAnalysisRequestID, 0))
         [m_imageAnalyzer cancelRequestID:identifier];
     uninstallImageAnalysisOverlayView();
 #endif
 }
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 void WebViewImpl::installImageAnalysisOverlayView(RetainPtr<VKCImageAnalysis>&& analysis)
 {
@@ -7882,7 +7877,7 @@ void WebViewImpl::fulfillDeferredImageAnalysisOverlayViewHierarchyTask()
         task();
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
 

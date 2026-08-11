@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 std::optional<WebCore::AttributedString> TextRecognitionResult::extractAttributedString(VKCImageAnalysis *analysis)
 {
@@ -64,6 +64,6 @@ RetainPtr<NSAttributedString> stringForRange(const TextRecognitionResult& result
     return [wholeString attributedSubstringFromRange:NSMakeRange(range.location, clampedLength)];
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 } // namespace WebCore

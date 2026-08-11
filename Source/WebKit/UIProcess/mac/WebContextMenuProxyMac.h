@@ -71,7 +71,7 @@ public:
 
     NSWindow *window() const;
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     RetainPtr<CGImageRef> imageForCopySubject() const final { return m_copySubjectResult; }
 #endif
 
@@ -114,7 +114,7 @@ private:
     RetainPtr<NSMenu> m_menu;
     RetainPtr<WKMenuDelegate> m_menuDelegate;
     WeakObjCPtr<NSView> m_webView;
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     RetainPtr<CGImageRef> m_copySubjectResult;
 #endif
 #if ENABLE(VIDEO)

@@ -134,31 +134,19 @@ bool defaultExtendedProofreadingEnabled()
 
 bool defaultTextRecognitionInVideosEnabled()
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     static bool enabled = os_feature_enabled(VisualIntelligence, LiveText);
-#else
-    static bool enabled = false;
-#endif
     return enabled;
 }
 
 bool defaultVisualTranslationEnabled()
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     static bool enabled = os_feature_enabled(Translate, EnableVisualIntelligenceUI);
-#else
-    static bool enabled = false;
-#endif
     return enabled;
 }
 
 bool defaultRemoveBackgroundEnabled()
 {
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     static bool enabled = os_feature_enabled(VisualIntelligence, RemoveBackground);
-#else
-    static bool enabled = false;
-#endif
     return enabled;
 }
 

@@ -159,7 +159,7 @@ class EmptyContextMenuClient final : public ContextMenuClient {
     bool NODELETE supportsLookUpInImages() final { return false; }
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     bool NODELETE supportsCopySubject() final { return false; }
 #endif
 };

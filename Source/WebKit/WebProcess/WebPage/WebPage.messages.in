@@ -623,7 +623,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     SetCaretBlinkingSuspended(bool blinkSuspended)
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     ReplaceImageForRemoveBackground(struct WebCore::ElementContext context, Vector<String> types, std::span<const uint8_t> data)
     ShouldAllowRemoveBackground(struct WebCore::ElementContext context) -> (bool result)
 #endif

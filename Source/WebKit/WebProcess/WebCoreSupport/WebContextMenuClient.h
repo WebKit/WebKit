@@ -54,7 +54,7 @@ private:
     bool supportsLookUpInImages() final { return true; }
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
     bool supportsCopySubject() final { return true; }
 #endif
 

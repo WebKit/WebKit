@@ -12548,7 +12548,7 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item, c
         return;
 
     case ContextMenuItemTagCopySubject:
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
         handleContextMenuCopySubject(hitTestData.sourceImageMIMEType);
 #endif
         return;
@@ -18369,7 +18369,7 @@ void WebPageProxy::cancelTextRecognitionForVideoInElementFullScreen()
 }
 #endif // #if ENABLE(IMAGE_ANALYSIS) && ENABLE(VIDEO)
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 void WebPageProxy::shouldAllowRemoveBackground(const ElementContext& context, CompletionHandler<void(bool)>&& completion)
 {

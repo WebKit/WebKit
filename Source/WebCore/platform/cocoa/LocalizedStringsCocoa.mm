@@ -317,7 +317,7 @@ String contextMenuItemTagLookUpImage()
 
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#if ENABLE(IMAGE_ANALYSIS)
 
 String contextMenuItemTagCopySubject()
 {
@@ -329,6 +329,6 @@ String contextMenuItemTitleRemoveBackground()
     return WEB_UI_STRING("Remove Background", "Remove Background menu item");
 }
 
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 } // namespace WebCore
