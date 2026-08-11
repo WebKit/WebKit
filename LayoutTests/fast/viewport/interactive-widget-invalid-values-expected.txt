@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Viewport argument value "" for key "interactive-widget" is invalid, and has been ignored.
+CONSOLE MESSAGE: Viewport argument value "" for key "interactive-widget" is invalid, and has been ignored.
+CONSOLE MESSAGE: Viewport argument value "foo" for key "interactive-widget" is invalid, and has been ignored.
+CONSOLE MESSAGE: Viewport argument value "resizes" for key "interactive-widget" is invalid, and has been ignored.
+CONSOLE MESSAGE: Viewport argument value "resizes-contentt" for key "interactive-widget" is invalid, and has been ignored.
+CONSOLE MESSAGE: Viewport argument value "overlays_content" for key "interactive-widget" is invalid, and has been ignored.
+CONSOLE MESSAGE: Viewport argument value "RESize-CONTENT" for key "interactive-widget" is invalid, and has been ignored.
+CONSOLE MESSAGE: Viewport argument value "RESİZES-VİSUAL" for key "interactive-widget" is invalid, and has been ignored.
+CONSOLE MESSAGE: Viewport argument value "resizes-visual;" for key "interactive-widget" is invalid, and has been ignored. Note that ';' is not a separator in viewport values. The list should be comma-separated.
+ALERT: viewport size 320x352 scale 1 with limits [1, 5] and userScalable true
+

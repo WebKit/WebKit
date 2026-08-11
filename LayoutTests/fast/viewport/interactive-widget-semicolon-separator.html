@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<head>
+    <title>";" is not a viewport argument separator, so it is part of the preceding value ("device-width;" is rejected), while the interactive-widget argument after it is still parsed.</title>
+    <meta name="viewport" content="width=device-width; interactive-widget=resizes-content">
+    <script>
+        function test() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                alert(internals.configurationForViewport(1, 320, 480, 320, 352));
+            }
+        }
+    </script>
+</head>
+<body onload="test();">
