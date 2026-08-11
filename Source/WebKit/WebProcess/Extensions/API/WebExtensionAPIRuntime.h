@@ -67,7 +67,7 @@ public:
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
 
     NSURL *getURL(const String& resourcePath, NSString **outExceptionString);
-    NSDictionary *NODELETE getManifest();
+    RefPtr<JSON::Object> getManifest();
     String getVersion();
     void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
     void getBackgroundPage(Ref<WebExtensionCallbackHandler>&&);

@@ -26,9 +26,10 @@
 [
     Conditional=WK_WEB_EXTENSIONS,
     ReturnsPromiseWhenCallbackIsOmitted,
+    UseCPPAPI,
 ] interface WebExtensionAPIWebPageNamespace {
 
-    readonly attribute WebExtensionAPIWebPageRuntime runtime;
+    [Platform=COCOA] readonly attribute WebExtensionAPIWebPageRuntime runtime;
     [Dynamic] readonly attribute WebExtensionAPITest test;
 
 };

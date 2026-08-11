@@ -23,6 +23,10 @@
             "values": ["*"],
             "supportsConjunction": true
         },
+        "Platform": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"]
+        },
         "CallbackHandler": {
             "contextsAllowed": ["argument"]
         },

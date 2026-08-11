@@ -708,7 +708,9 @@ WebProcess/Extensions/WebExtensionContextProxy.cpp
 WebProcess/Extensions/WebExtensionControllerProxy.cpp
 
 WebProcess/Extensions/API/WebExtensionAPIAlarms.cpp
+WebProcess/Extensions/API/WebExtensionAPINamespace.cpp
 WebProcess/Extensions/API/WebExtensionAPITest.cpp
+WebProcess/Extensions/API/WebExtensionAPIWebPageNamespace.cpp
 
 WebProcess/FileAPI/BlobRegistryProxy.cpp
 

@@ -65,9 +65,8 @@ class WebExtensionAPINamespace : public WebExtensionAPIObject, public JSWebExten
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPINamespace, namespace, browser);
 
 public:
-#if PLATFORM(COCOA)
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
-
+#if PLATFORM(COCOA)
     WebExtensionAPIAction& action();
 #endif
     WebExtensionAPIAlarms& alarms();

@@ -23,21 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !__has_feature(objc_arc)
-#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
-#endif
-
-#import "config.h"
-#import "WebExtensionAPIWebPageNamespace.h"
+#include "config.h"
+#include "WebExtensionAPIWebPageNamespace.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "WebExtensionAPINamespace.h"
-#import "WebExtensionAPIRuntime.h"
-#import "WebExtensionAPITest.h"
-#import "WebExtensionContextProxy.h"
-#import "WebExtensionControllerProxy.h"
-#import "WebPage.h"
+#include "WebExtensionAPINamespace.h"
+#include "WebExtensionAPIRuntime.h"
+#include "WebExtensionAPITest.h"
+#include "WebExtensionContextProxy.h"
+#include "WebExtensionControllerProxy.h"
+#include "WebPage.h"
 
 namespace WebKit {
 
@@ -55,6 +51,7 @@ bool WebExtensionAPIWebPageNamespace::isPropertyAllowed(const ASCIILiteral& name
     return false;
 }
 
+#if PLATFORM(COCOA)
 WebExtensionAPIWebPageRuntime& WebExtensionAPIWebPageNamespace::runtime() const
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime
@@ -66,6 +63,7 @@ WebExtensionAPIWebPageRuntime& WebExtensionAPIWebPageNamespace::runtime() const
 
     return *m_runtime;
 }
+#endif
 
 WebExtensionAPITest& WebExtensionAPIWebPageNamespace::test()
 {

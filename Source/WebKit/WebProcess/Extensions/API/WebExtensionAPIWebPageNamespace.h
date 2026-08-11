@@ -41,9 +41,8 @@ class WebExtensionAPIWebPageNamespace : public WebExtensionAPIObject, public JSW
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIWebPageNamespace, webPageNamespace, browser);
 
 public:
-#if PLATFORM(COCOA)
     bool isPropertyAllowed(const ASCIILiteral& propertyName, WebPage*);
-
+#if PLATFORM(COCOA)
     WebExtensionAPIWebPageRuntime& runtime() const;
 #endif
     WebExtensionAPITest& test();

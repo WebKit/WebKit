@@ -77,8 +77,8 @@ public:
     explicit WebExtension(NSDictionary *manifest, Resources&& = { });
 #else
     explicit WebExtension(GFile *resourcesFile, RefPtr<API::Error>&);
-    explicit WebExtension(const JSON::Value& manifest, Resources&& = { });
 #endif
+    explicit WebExtension(const JSON::Value& manifest, Resources&& = { });
 
     explicit WebExtension(Resources&& = { });
 

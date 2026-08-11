@@ -170,16 +170,17 @@ NSURL *WebExtensionAPIRuntime::getURL(const String& resourcePath, NSString **out
     return URL { extensionContext().baseURL(), resourcePath }.createNSURL().autorelease();
 }
 
-NSDictionary *WebExtensionAPIRuntime::getManifest()
+RefPtr<JSON::Object> WebExtensionAPIRuntime::getManifest()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getManifest
 
-    return extensionContext().manifest();
+    return protect(extensionContext())->manifest();
 }
 
 String WebExtensionAPIRuntime::getVersion()
 {
-    return objectForKey<NSString>(extensionContext().manifest(), versionKey);
+    RefPtr manifest = protect(extensionContext())->manifest();
+    return manifest ? manifest->getString(versionKey) : nullString();
 }
 
 String WebExtensionAPIRuntime::runtimeIdentifier()

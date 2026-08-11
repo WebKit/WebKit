@@ -86,12 +86,10 @@ public:
 
     bool isURLForThisExtension(const URL&) const;
 
-#if PLATFORM(COCOA)
-    NSDictionary *manifest() const { return m_manifest.get(); }
+    RefPtr<JSON::Object> manifest() const { return m_manifest ? m_manifest.get()->asObject() : nullptr; }
 
     double manifestVersion() const { return m_manifestVersion; }
     bool supportsManifestVersion(double version) const { return manifestVersion() >= version; }
-#endif
     RefPtr<WebExtensionLocalization> localization() const { return m_localization; }
 
     bool isSessionStorageAllowedInContentScripts() const { return m_isSessionStorageAllowedInContentScripts; }
@@ -248,9 +246,7 @@ private:
     String m_uniqueIdentifier;
     HashSet<String> m_unsupportedAPIs;
     RefPtr<WebExtensionLocalization> m_localization;
-#if PLATFORM(COCOA)
-    RetainPtr<NSDictionary> m_manifest;
-#endif
+    RefPtr<JSON::Value> m_manifest;
     double m_manifestVersion { 0 };
     bool m_isSessionStorageAllowedInContentScripts { false };
     PAL::SessionID m_defaultSessionID { PAL::SessionID::defaultSessionID() };

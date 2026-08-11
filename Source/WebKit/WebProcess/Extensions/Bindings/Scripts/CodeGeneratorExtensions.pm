@@ -153,6 +153,14 @@ sub conditionalString
     return CodeGenerator::GenerateConditionalStringFromAttributeValue(0, $conditional);
 }
 
+sub platformString
+{
+    my ($node) = @_;
+    my $platform = $node->extendedAttributes->{"Platform"};
+    return "" unless $platform;
+    return "PLATFORM($platform)";
+}
+
 sub _generateHeaderFile
 {
     my ($self, $interface) = @_;
@@ -214,13 +222,16 @@ EOF
             $hasMainWorldOnlyProperties = 1 if $function->extendedAttributes->{"MainWorldOnly"};
 
             my $conditionalString = conditionalString($function);
+            my $platformString = platformString($function);
 
+            push(@contents, "#if ${platformString}\n") if $platformString;
             push(@contents, "#if ${conditionalString}\n") if $conditionalString;
             push(@contents, "    static JSValueRef @{[$function->name]}(JSContextRef, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*);\n");
             push(@contents, "    static bool setProperty(JSContextRef, JSObjectRef, JSStringRef, JSValueRef, JSValueRef*);\n") if $function->extendedAttributes->{"SetProperty"};
             push(@contents, "    static JSValueRef getProperty(JSContextRef, JSObjectRef, JSStringRef, JSValueRef*);\n") if $function->extendedAttributes->{"GetProperty"};
             push(@contents, "    static bool deleteProperty(JSContextRef, JSObjectRef, JSStringRef, JSValueRef*);\n") if $function->extendedAttributes->{"DeleteProperty"};
             push(@contents, "#endif // ${conditionalString}\n") if $conditionalString;
+            push(@contents, "#endif // ${platformString}\n") if $platformString;
         }
     }
 
@@ -241,11 +252,14 @@ EOF
             $hasMainWorldOnlyProperties = 1 if $attribute->extendedAttributes->{"MainWorldOnly"};
 
             my $conditionalString = conditionalString($attribute);
+            my $platformString = platformString($attribute);
 
+            push(@contents, "#if ${platformString}\n") if $platformString;
             push(@contents, "#if ${conditionalString}\n") if $conditionalString;
             push(@contents, "    static JSValueRef @{[$self->_getterName($attribute)]}(JSContextRef, JSObjectRef, JSStringRef, JSValueRef*);\n");
             push(@contents, "    static bool @{[$self->_setterName($attribute)]}(JSContextRef, JSObjectRef, JSStringRef, JSValueRef, JSValueRef*);\n") unless $attribute->isReadOnly;
             push(@contents, "#endif // ${conditionalString}\n") if $conditionalString;
+            push(@contents, "#endif // ${platformString}\n") if $platformString;
         }
     }
 
@@ -901,6 +915,11 @@ EOF
 
 EOF
 
+            my $platformString = platformString($attribute);
+            push(@contents, <<EOF) if $platformString;
+#if ${platformString}
+EOF
+
             my $conditionalString = conditionalString($attribute);
             push(@contents, <<EOF) if $conditionalString;
 #if ${conditionalString}
@@ -1001,6 +1020,9 @@ EOF
 
             push(@contents, <<EOF) if $conditionalString;
 #endif // ${conditionalString}
+EOF
+            push(@contents, <<EOF) if $platformString;
+#endif // ${platformString}
 EOF
         }
     }
@@ -1673,8 +1695,12 @@ sub _staticValuesGetterImplementation
         push(@attributes, "kJSPropertyAttributeDontEnum") if $_->extendedAttributes->{"DontEnum"};
         my $jsproperties = scalar @attributes == 0 ? "kJSPropertyAttributeNone" : join(" | ", @attributes);
         my $conditionalString = conditionalString($_);
+        my $platformString = platformString($_);
+        my $platformConditional = $platformString ? "\n#if ${platformString}\n" : "";
+        my $platformConditionalEnd = $platformString ? "#endif // ${platformString}" : "";
 
-        return "#if ${conditionalString}\n        { \"$attributeName\", $getterName, $setterName, $jsproperties },\n        #endif" if $conditionalString;
+        return "${platformConditional}#if ${conditionalString}\n        { \"$attributeName\", $getterName, $setterName, $jsproperties },\n        #endif${platformConditionalEnd}" if $conditionalString;
+        return "${platformConditional}        { \"$attributeName\", $getterName, $setterName, $jsproperties },\n        ${platformConditionalEnd}" if $platformString;
         return "{ \"$attributeName\", $getterName, $setterName, $jsproperties },";
     };
 
@@ -1764,12 +1790,15 @@ EOF
 
         my $condition = &$generateCondition($_);
         my $conditionalString = conditionalString($_);
+        my $platformString = platformString($_);
 
         my $content = "";
+        $content .= "#if ${platformString}\n" if $platformString;
         $content .= "#if ${conditionalString}\n" if $conditionalString;
         $content .= "    if (${condition})\n";
         $content .= "        SUPPRESS_UNCOUNTED_ARG JSPropertyNameAccumulatorAddName(propertyNames, toJSString(\"${name}\"_s).get());\n";
         $content .= "#endif // ${conditionalString}\n" if $conditionalString;
+        $content .= "#endif // ${platformString}\n" if $platformString;
         $content .= "\n";
         return $content;
     };
@@ -1797,12 +1826,15 @@ EOF
         my $name = $_->name;
         my $condition = &$generateCondition($_);
         my $conditionalString = conditionalString($_);
+        my $platformString = platformString($_);
 
         my $content = "";
+        $content .= "#if ${platformString}\n" if $platformString;
         $content .= "#if ${conditionalString}\n" if $conditionalString;
         $content .= "    if (JSStringIsEqualToUTF8CString(propertyName, \"${name}\"))\n";
         $content .= "        return ${condition};\n";
         $content .= "#endif // ${conditionalString}\n" if $conditionalString;
+        $content .= "#endif // ${platformString}\n" if $platformString;
         $content .= "\n";
         return $content;
     };
@@ -1843,11 +1875,14 @@ EOF
             $condition = &$generateCondition($attribute, "JSStringIsEqualToUTF8CString(propertyName, \"${name}\")") if $hasDynamicProperties;
 
             my $conditionalString = conditionalString($attribute);
+            my $platformString = platformString($attribute);
 
+            push(@contents, "#if ${platformString}\n") if $platformString;
             push(@contents, "#if ${conditionalString}\n") if $conditionalString;
             push(@contents, "    if (${condition})\n");
             push(@contents, "        return ${getterName}(context, thisObject, propertyName, exception);\n");
             push(@contents, "#endif // ${conditionalString}\n") if $conditionalString;
+            push(@contents, "#endif // ${platformString}\n") if $platformString;
             push(@contents, "\n");
         }
     }

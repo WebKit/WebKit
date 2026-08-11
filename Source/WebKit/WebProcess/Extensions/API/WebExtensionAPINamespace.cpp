@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +24,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !__has_feature(objc_arc)
-#error This file requires ARC. Add the "-fobjc-arc" compiler flag for this file.
-#endif
-
-#import "config.h"
-#import "WebExtensionAPINamespace.h"
+#include "config.h"
+#include "WebExtensionAPINamespace.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#import "CocoaHelpers.h"
-#import "WKWebExtensionPermission.h"
-#import "WebExtensionControllerProxy.h"
+#include "WebExtensionControllerProxy.h"
+#include "WebExtensionPermission.h"
 
 #if ENABLE(INSPECTOR_EXTENSIONS) || ENABLE(WK_WEB_EXTENSIONS_SIDEBAR) ||  ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
-#import "WebPage.h"
-#import <WebCore/Page.h>
-#import <WebCore/Settings.h>
+#include "WebPage.h"
+#include <WebCore/Page.h>
+#include <WebCore/Settings.h>
 #endif
 
 namespace WebKit {
+
+static bool doesDictionaryExist(RefPtr<JSON::Object> value, const String& name, bool returningFalseIfEmpty = false)
+{
+    RefPtr object = value ? value->getObject(name) : nullptr;
+    if (!object)
+        return false;
+    return !returningFalseIfEmpty || object->size();
+}
+
+#if ENABLE(INSPECTOR_EXTENSIONS)
+static bool doesKeyExist(RefPtr<JSON::Object> value, const String& key)
+{
+    return value && !value->getString(key).isEmpty();
+}
+#endif
 
 bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPage* page)
 {
@@ -51,7 +62,7 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
         return false;
 
     if (name == "action"_s)
-        return extensionContext->supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext->manifest(), @"action", false);
+        return extensionContext->supportsManifestVersion(3) && doesDictionaryExist(extensionContext->manifest(), "action"_s);
 
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
     if (name == "bookmarks"_s)
@@ -59,17 +70,17 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
 #endif
 
     if (name == "commands"_s)
-        return objectForKey<NSDictionary>(extensionContext->manifest(), @"commands", false);
+        return doesDictionaryExist(extensionContext->manifest(), "commands"_s);
 
     if (name == "declarativeNetRequest"_s)
         return extensionContext->hasPermission(name) || extensionContext->hasPermission("declarativeNetRequestWithHostAccess"_s);
 
     if (name == "browserAction"_s)
-        return !extensionContext->supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext->manifest(), @"browser_action", false);
+        return !extensionContext->supportsManifestVersion(3) && doesDictionaryExist(extensionContext->manifest(), "browser_action"_s);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (name == "devtools"_s)
-        return objectForKey<NSString>(extensionContext->manifest(), @"devtools_page") && page && (page->isInspectorPage() || extensionContext->isInspectorBackgroundPage(*page));
+        return doesKeyExist(extensionContext->manifest(), "devtools_page"_s) && page && (page->isInspectorPage() || extensionContext->isInspectorBackgroundPage(*page));
 #else
     if (name == "devtools"_s)
         return false;
@@ -84,16 +95,16 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
     }
 
     if (name == "pageAction"_s)
-        return !extensionContext->supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext->manifest(), @"page_action", false);
+        return !extensionContext->supportsManifestVersion(3) && doesDictionaryExist(extensionContext->manifest(), "page_action"_s);
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
     // If the extension requests both sidePanel and sidebarAction, we will give them sidebarAction --
     // we check in sidePanel that there is no sidebar_action key, but we do not check in sidebarAction
     // that there is no sidePanel permission
     if (name == "sidePanel"_s)
-        return page->corePage()->settings().webExtensionSidebarEnabled() && extensionContext->hasPermission("sidePanel"_s) && !objectForKey<NSDictionary>(extensionContext->manifest(), @"sidebar_action", true);
+        return page->corePage()->settings().webExtensionSidebarEnabled() && extensionContext->hasPermission("sidePanel"_s) && !doesDictionaryExist(extensionContext->manifest(), "sidebar_action"_s, true);
     if (name == "sidebarAction"_s)
-        return page->corePage()->settings().webExtensionSidebarEnabled() && objectForKey<NSDictionary>(extensionContext->manifest(), @"sidebar_action", true);
+        return page->corePage()->settings().webExtensionSidebarEnabled() && doesDictionaryExist(extensionContext->manifest(), "sidebar_action"_s, true);
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     if (name == "storage"_s)
@@ -108,6 +119,7 @@ finish:
     return extensionContext->hasPermission(name);
 }
 
+#if PLATFORM(COCOA)
 WebExtensionAPIAction& WebExtensionAPINamespace::action()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/action
@@ -117,6 +129,7 @@ WebExtensionAPIAction& WebExtensionAPINamespace::action()
 
     return *m_action;
 }
+#endif
 
 WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms()
 {
@@ -128,6 +141,7 @@ WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms()
     return *m_alarms;
 }
 
+#if PLATFORM(COCOA)
 WebExtensionAPICommands& WebExtensionAPINamespace::commands()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands
@@ -317,6 +331,7 @@ WebExtensionAPITabs& WebExtensionAPINamespace::tabs()
 
     return *m_tabs;
 }
+#endif
 
 WebExtensionAPITest& WebExtensionAPINamespace::test()
 {
@@ -328,6 +343,7 @@ WebExtensionAPITest& WebExtensionAPINamespace::test()
     return *m_test;
 }
 
+#if PLATFORM(COCOA)
 WebExtensionAPIWindows& WebExtensionAPINamespace::windows()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/windows
@@ -357,6 +373,7 @@ WebExtensionAPIWebRequest& WebExtensionAPINamespace::webRequest()
 
     return *m_webRequest;
 }
+#endif
 
 } // namespace WebKit
 

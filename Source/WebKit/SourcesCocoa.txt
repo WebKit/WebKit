@@ -771,7 +771,6 @@ WebProcess/Extensions/API/Cocoa/WebExtensionAPIEventCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIExtensionCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPILocalizationCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIMenusCocoa.mm
-WebProcess/Extensions/API/Cocoa/WebExtensionAPINamespaceCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPINotificationsCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIOffscreenCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIPermissionsCocoa.mm
@@ -786,7 +785,6 @@ WebProcess/Extensions/API/Cocoa/WebExtensionAPITabsCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPITestCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebNavigationCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebNavigationEventCocoa.mm
-WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebPageNamespaceCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebRequestCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIWebRequestEventCocoa.mm
 WebProcess/Extensions/API/Cocoa/WebExtensionAPIWindowsCocoa.mm

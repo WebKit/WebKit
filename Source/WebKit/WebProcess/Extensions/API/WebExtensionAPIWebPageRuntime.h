@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-// FIXME: Remove once JSWebExtensionAPIWebPageNamespace.mm doesn't auto include it.
+// FIXME: Remove once JSWebExtensionAPIWebPageNamespace.cpp doesn't auto include it.
 
 } // namespace WebKit
 

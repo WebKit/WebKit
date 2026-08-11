@@ -157,7 +157,6 @@ set(WebKit_BINDINGS_IN_FILES
     WebProcess/Extensions/Interfaces/WebExtensionAPIExtension
     WebProcess/Extensions/Interfaces/WebExtensionAPILocalization
     WebProcess/Extensions/Interfaces/WebExtensionAPIMenus
-    WebProcess/Extensions/Interfaces/WebExtensionAPINamespace
     WebProcess/Extensions/Interfaces/WebExtensionAPINotifications
     WebProcess/Extensions/Interfaces/WebExtensionAPIOffscreen
     WebProcess/Extensions/Interfaces/WebExtensionAPIPermissions
@@ -171,7 +170,6 @@ set(WebKit_BINDINGS_IN_FILES
     WebProcess/Extensions/Interfaces/WebExtensionAPITabs
     WebProcess/Extensions/Interfaces/WebExtensionAPIWebNavigation
     WebProcess/Extensions/Interfaces/WebExtensionAPIWebNavigationEvent
-    WebProcess/Extensions/Interfaces/WebExtensionAPIWebPageNamespace
     WebProcess/Extensions/Interfaces/WebExtensionAPIWebPageRuntime
     WebProcess/Extensions/Interfaces/WebExtensionAPIWebRequest
     WebProcess/Extensions/Interfaces/WebExtensionAPIWebRequestEvent
@@ -181,7 +179,9 @@ set(WebKit_BINDINGS_IN_FILES
 
 set(WebKit_CPP_BINDINGS_IN_FILES
     WebProcess/Extensions/Interfaces/WebExtensionAPIAlarms
+    WebProcess/Extensions/Interfaces/WebExtensionAPINamespace
     WebProcess/Extensions/Interfaces/WebExtensionAPITest
+    WebProcess/Extensions/Interfaces/WebExtensionAPIWebPageNamespace
 )
 
 set(WebKit_MESSAGES_IN_FILES

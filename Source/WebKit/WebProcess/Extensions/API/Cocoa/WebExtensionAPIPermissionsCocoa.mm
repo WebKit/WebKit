@@ -169,7 +169,12 @@ bool WebExtensionAPIPermissions::parseDetailsDictionary(NSDictionary *details, H
 
 bool WebExtensionAPIPermissions::verifyRequestedPermissions(HashSet<String>& permissions, HashSet<Ref<WebExtensionMatchPattern>>& matchPatterns, NSString *callingAPIName, NSString **outExceptionString)
 {
-    auto extension = WebExtension::create(extensionContext().manifest());
+    Ref extensionContext = this->extensionContext();
+    RefPtr manifest = extensionContext->manifest();
+    if (!manifest)
+        return false;
+
+    Ref extension = WebExtension::create(*manifest);
     HashSet<String> allowedPermissions = extension->requestedPermissions();
     WebExtension::MatchPatternSet allowedHostPermissions = extension->allRequestedMatchPatterns();
 
