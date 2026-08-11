@@ -1331,8 +1331,37 @@ void JIT::emit_op_switch_string(const JSInstruction* currentInstruction)
 
     using BaselineJITRegisters::SwitchString::globalObjectGPR;
     using BaselineJITRegisters::SwitchString::scrutineeJSR;
+    using BaselineJITRegisters::SwitchString::scratch1GPR;
 
     emitGetVirtualRegister(scrutinee, scrutineeJSR);
+
+    // Fast path: if the scrutinee is an atom, dispatch inline using pointer comparison.
+    // Switch keys are always atoms as asserted in BytecodeGenerator::endSwitch, and also here.
+    unsigned caseCount = unlinkedTable.m_offsetTable.size();
+    if (caseCount && caseCount <= Options::maximumInlineStringSwitchCaseCount()) {
+        Vector<int64_t, 16> caseKeys;
+        Vector<int32_t, 16> caseTargets;
+        caseKeys.reserveInitialCapacity(caseCount);
+        caseTargets.reserveInitialCapacity(caseCount);
+        for (auto& entry : unlinkedTable.m_offsetTable) {
+            ASSERT(entry.key->isAtom());
+            caseKeys.append(static_cast<int64_t>(std::bit_cast<intptr_t>(entry.key.get())));
+            caseTargets.append(entry.value.m_branchOffset);
+        }
+
+        JumpList slowCases;
+        slowCases.append(branchIfNotCell(scrutineeJSR));
+        slowCases.append(branchIfNotString(scrutineeJSR.payloadGPR()));
+        slowCases.append(loadCacheableIdentifierImpl(scrutineeJSR.payloadGPR(), scratch1GPR, /* propertyIsString */ true, /* propertyIsSymbol */ false));
+
+        BinarySwitch binarySwitch(scratch1GPR, caseKeys.span(), BinarySwitch::IntPtr);
+        while (binarySwitch.advance(*this))
+            addJump(jump(), caseTargets[binarySwitch.caseIndex()]);
+        addJump(binarySwitch.fallThrough(), defaultOffset);
+
+        slowCases.link(this);
+    }
+
     loadGlobalObject(globalObjectGPR);
     callOperation(operationSwitchStringWithUnknownKeyType, globalObjectGPR, scrutineeJSR, tableIndex);
     farJump(returnValueGPR, JSSwitchPtrTag);
