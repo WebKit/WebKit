@@ -55,7 +55,8 @@ static bool NODELETE isValueIDPair(const CSSValue& value, CSSValueID valueID)
     return value.isPair() && isValueID(value.first(), valueID) && isValueID(value.second(), valueID);
 }
 
-static bool NODELETE isNumber(const CSSPrimitiveValue& value, CSSPrimitiveValue::Raw number)
+// FIXME: SUPPRESS_NODELETE shouldn't be necessary.
+SUPPRESS_NODELETE static bool NODELETE isNumber(const CSSPrimitiveValue& value, CSSPrimitiveValue::Raw number)
 {
     return WTF::switchOn(value,
         [&](const CSSPrimitiveValue::Calc&) {
@@ -67,8 +68,9 @@ static bool NODELETE isNumber(const CSSPrimitiveValue& value, CSSPrimitiveValue:
     );
 }
 
+// FIXME: SUPPRESS_NODELETE shouldn't be necessary.
 template<auto unit>
-static bool NODELETE isNumber(const CSSPrimitiveValue& value, CSS::ValueLiteral<unit> literal)
+SUPPRESS_NODELETE static bool NODELETE isNumber(const CSSPrimitiveValue& value, CSS::ValueLiteral<unit> literal)
 {
     return WTF::switchOn(value,
         [&](const CSSPrimitiveValue::Calc&) {

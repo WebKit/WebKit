@@ -4,12 +4,8 @@ Modules/streams/ReadableByteStreamController.cpp
 Modules/streams/ReadableStreamBYOBReader.cpp
 Modules/websockets/WebSocketChannelInspector.cpp
 Modules/webtransport/WebTransportDatagramsWritable.cpp
-css/CSSComputedStyleDeclaration.cpp
-css/CSSPropertyInitialValues.cpp
 css/DOMMatrixReadOnly.cpp
 css/SelectorChecker.cpp
-css/StyleSheetList.cpp
-css/parser/CSSPropertyParserConsumer+String.cpp
 dom/ContainerNode.cpp
 dom/Document.cpp
 dom/Element.cpp
