@@ -131,14 +131,16 @@ template<typename ConcreteParser>
 std::optional<QueryInParens> GenericMediaQueryParser<ConcreteParser>::consumeQueryInParens(CSSParserTokenRange& range, const MediaQueryParserContext& context, State& state)
 {
     std::optional<CSSValueID> functionId;
+    std::optional<StringView> functionName;
 
     if (range.peek().type() == FunctionToken) {
         if (state.inFunctionId)
             return { };
 
         functionId = range.peek().functionId();
+        functionName = range.peek().value();
+
         if (!ConcreteParser::isValidFunctionId(*functionId)) {
-            auto name = range.peek().value();
             auto functionRange = range.consumeBlock();
             range.consumeWhitespace();
 
@@ -146,7 +148,7 @@ std::optional<QueryInParens> GenericMediaQueryParser<ConcreteParser>::consumeQue
             if (!validationRange.consumeAnyValue())
                 return { };
 
-            return GeneralEnclosed { name.toString(), functionRange.serialize(CSSParserToken::SerializationMode::CustomProperty) };
+            return GeneralEnclosed { functionName->toString(), functionRange.serialize(CSSParserToken::SerializationMode::CustomProperty) };
         }
     }
 
@@ -181,7 +183,7 @@ std::optional<QueryInParens> GenericMediaQueryParser<ConcreteParser>::consumeQue
     if (!validationRange.consumeAnyValue())
         return { };
 
-    return GeneralEnclosed { functionId ? nameString(*functionId) : nullAtom(), originalBlockRange.serialize(CSSParserToken::SerializationMode::CustomProperty) };
+    return GeneralEnclosed { functionName ? functionName->toString() : nullString(), originalBlockRange.serialize(CSSParserToken::SerializationMode::CustomProperty) };
 }
 
 template<typename ConcreteParser>

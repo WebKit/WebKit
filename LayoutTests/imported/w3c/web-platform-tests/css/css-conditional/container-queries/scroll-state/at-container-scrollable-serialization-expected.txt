@@ -1,6 +1,6 @@
 
 PASS Normalize spaces
-FAIL No value - invalid, serializes as <general-enclosed> assert_equals: expected "scroll-STate(scrollable:    )" but got "scroll-state(scrollable:    )"
+PASS No value - invalid, serializes as <general-enclosed>
 PASS Boolean context
 PASS Logical with 'or'
 PASS Not a scroll-state function with space before '('
