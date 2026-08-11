@@ -9,6 +9,7 @@ flags:
   iterator-sequencing: useIteratorSequencing
   explicit-resource-management: useExplicitResourceManagement
   import-defer: useImportDefer
+  import-text: useImportText
   joint-iteration: useJointIteration
 skip:
   features:

@@ -139,6 +139,7 @@ template<> struct EnumTraitsForPersistence<WebCore::FetchOptions::Destination> {
         WebCore::FetchOptions::Destination::Font,
         WebCore::FetchOptions::Destination::Image,
         WebCore::FetchOptions::Destination::Iframe,
+        WebCore::FetchOptions::Destination::Json,
         WebCore::FetchOptions::Destination::Manifest,
         WebCore::FetchOptions::Destination::Model,
         WebCore::FetchOptions::Destination::Object,
@@ -152,7 +153,8 @@ template<> struct EnumTraitsForPersistence<WebCore::FetchOptions::Destination> {
         WebCore::FetchOptions::Destination::Track,
         WebCore::FetchOptions::Destination::Video,
         WebCore::FetchOptions::Destination::Worker,
-        WebCore::FetchOptions::Destination::Xslt
+        WebCore::FetchOptions::Destination::Xslt,
+        WebCore::FetchOptions::Destination::Text
     >;
 };
 

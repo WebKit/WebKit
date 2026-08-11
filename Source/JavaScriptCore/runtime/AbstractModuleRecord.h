@@ -43,6 +43,8 @@ class JSModuleNamespaceObject;
 class JSMap;
 class JSPromise;
 
+enum class SourceProviderSourceType : uint8_t;
+
 // Based on the Source Text Module Record
 // http://www.ecma-international.org/ecma-262/6.0/#sec-source-text-module-records
 class AbstractModuleRecord : public JSInternalFieldObjectImpl<2> {
@@ -254,7 +256,7 @@ public:
     JSPromise* evaluate(JSGlobalObject*);
 
 protected:
-    AbstractModuleRecord(VM&, Structure*, Identifier);
+    AbstractModuleRecord(VM&, Structure*, Identifier, SourceProviderSourceType);
     void finishCreation(JSGlobalObject*, VM&);
 
     void setModuleEnvironment(JSGlobalObject*, JSModuleEnvironment*);
@@ -309,6 +311,7 @@ protected:
     std::optional<int> m_pendingAsyncDependencies;
 
     bool m_hasTLA { false };
+    SourceProviderSourceType m_sourceType;
 };
 
 } // namespace JSC

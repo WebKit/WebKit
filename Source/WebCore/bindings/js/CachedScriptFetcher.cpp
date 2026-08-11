@@ -62,7 +62,7 @@ RefPtr<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& docum
     options.fetchPriority = m_fetchPriority;
     options.nonce = m_nonce;
     options.destination = destination;
-    ASSERT(destination == FetchOptionsDestination::Script || destination == FetchOptionsDestination::Json);
+    ASSERT(destination == FetchOptionsDestination::Script || destination == FetchOptionsDestination::Json || destination == FetchOptionsDestination::Text);
 
     auto request = createPotentialAccessControlRequest(URL { sourceURL }, WTF::move(options), document, crossOriginMode);
     request.upgradeInsecureRequestIfNeeded(document);

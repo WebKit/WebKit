@@ -544,6 +544,8 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
             return ResourceLoadInfo::Type::Document;
         case WebCore::FetchOptions::Destination::Json:
             return ResourceLoadInfo::Type::Script;
+        case WebCore::FetchOptions::Destination::Text:
+            return ResourceLoadInfo::Type::Script;
         case WebCore::FetchOptions::Destination::Embed:
             return ResourceLoadInfo::Type::Object;
         case WebCore::FetchOptions::Destination::Environmentmap:

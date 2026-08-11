@@ -51,5 +51,6 @@ enum FetchRequestDestination {
     "track",
     "video",
     "worker",
-    "xslt"
+    "xslt",
+    "text"
 };

@@ -178,6 +178,7 @@ static Seconds NODELETE maximumBufferingTime(CachedResource* resource)
     case CachedResource::Type::Beacon:
     case CachedResource::Type::Ping:
     case CachedResource::Type::CSSStyleSheet:
+    case CachedResource::Type::Text:
     case CachedResource::Type::JSON:
     case CachedResource::Type::Script:
     case CachedResource::Type::SVGFontResource:

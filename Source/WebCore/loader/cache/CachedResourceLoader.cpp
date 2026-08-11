@@ -145,6 +145,7 @@ static Ref<CachedResource> createResource(CachedResource::Type type, CachedResou
         return adoptRef(*new CachedImage(WTF::move(request), sessionID, cookieJar));
     case CachedResource::Type::CSSStyleSheet:
         return adoptRef(*new CachedCSSStyleSheet(WTF::move(request), sessionID, cookieJar));
+    case CachedResource::Type::Text:
     case CachedResource::Type::JSON:
     case CachedResource::Type::Script:
         return adoptRef(*new CachedScript(WTF::move(request), sessionID, cookieJar, requiresScriptTrackingPrivacyProtections(document, request.resourceRequest())));
@@ -190,6 +191,7 @@ static Ref<CachedResource> createResource(CachedResourceRequest&& request, Cache
         return adoptRef(*new CachedImage(WTF::move(request), resource.sessionID(), resource.cookieJar()));
     case CachedResource::Type::CSSStyleSheet:
         return adoptRef(*new CachedCSSStyleSheet(WTF::move(request), resource.sessionID(), resource.cookieJar()));
+    case CachedResource::Type::Text:
     case CachedResource::Type::JSON:
     case CachedResource::Type::Script:
         return adoptRef(*new CachedScript(WTF::move(request), resource.sessionID(), resource.cookieJar(), requiresScriptTrackingPrivacyProtections(document, request.resourceRequest())));
@@ -340,8 +342,18 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 
 ResourceErrorOr<Ref<CachedScript>> CachedResourceLoader::requestScript(CachedResourceRequest&& request)
 {
-    return castCachedResourceTo<CachedScript>(requestResource(
-        request.options().destination == FetchOptionsDestination::Json ? CachedResource::Type::JSON : CachedResource::Type::Script, WTF::move(request)));
+    auto type = CachedResource::Type::Script;
+    switch (request.options().destination) {
+    case FetchOptionsDestination::Json:
+        type = CachedResource::Type::JSON;
+        break;
+    case FetchOptionsDestination::Text:
+        type = CachedResource::Type::Text;
+        break;
+    default:
+        break;
+    }
+    return castCachedResourceTo<CachedScript>(requestResource(type, WTF::move(request)));
 }
 
 #if ENABLE(XSLT)
@@ -456,6 +468,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 
     switch (type) {
     case CachedResource::Type::JSON:
+    case CachedResource::Type::Text:
     case CachedResource::Type::Script:
 #if ENABLE(XSLT)
     case CachedResource::Type::XSLStyleSheet:
@@ -522,6 +535,7 @@ bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type t
 
     switch (type) {
     case CachedResource::Type::JSON:
+    case CachedResource::Type::Text:
         if (!contentSecurityPolicy->allowConnectToSource(url, document->currentParserSourcePosition(), redirectResponseReceived, preRedirectURL))
             return false;
         break;
@@ -1046,6 +1060,8 @@ static FetchOptions::Destination NODELETE destinationForType(CachedResource::Typ
         return FetchOptions::Destination::Style;
     case CachedResource::Type::JSON:
         return FetchOptions::Destination::Json;
+    case CachedResource::Type::Text:
+        return FetchOptions::Destination::Text;
     case CachedResource::Type::Script:
         return FetchOptions::Destination::Script;
     case CachedResource::Type::FontResource:
@@ -1361,7 +1377,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     ASSERT(resource);
     resource->setOriginalRequest(WTF::move(originalRequest));
 
-    if ((type == CachedResource::Type::Script || type == CachedResource::Type::JSON) && contentSecurityPolicy) {
+    if ((type == CachedResource::Type::Script || type == CachedResource::Type::JSON || type == CachedResource::Type::Text) && contentSecurityPolicy) {
         auto hashes = contentSecurityPolicy->hashesToReport();
         if (!hashes.isEmpty())
             resource->setIsHashReportingNeeded();
@@ -1839,7 +1855,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::preload(CachedResourc
 
     RefPtr document = m_document;
     ASSERT(document);
-    if (request.charset().isEmpty() && document && (type == CachedResource::Type::Script || type == CachedResource::Type::JSON || type == CachedResource::Type::CSSStyleSheet))
+    if (request.charset().isEmpty() && document && (type == CachedResource::Type::Script || type == CachedResource::Type::JSON || type == CachedResource::Type::Text || type == CachedResource::Type::CSSStyleSheet))
         request.setCharset(document->charset());
 
     auto resource = requestResource(type, WTF::move(request), ForPreload::Yes);

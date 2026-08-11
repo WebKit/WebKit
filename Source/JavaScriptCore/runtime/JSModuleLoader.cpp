@@ -1045,13 +1045,25 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
 #endif
 
     // https://tc39.es/proposal-json-modules/#sec-parse-json-module
-    if (sourceCode.provider()->sourceType() == SourceProviderSourceType::JSON) {
+    switch (sourceCode.provider()->sourceType()) {
+    case SourceProviderSourceType::JSON: {
         auto* moduleRecord = SyntheticModuleRecord::parseJSONModule(globalObject, moduleKey, SourceCode { sourceCode });
-        attachErrorInfo(globalObject, scope, moduleRecord, moduleKey, ScriptFetchParameters::JSON, ModuleFailure::Kind::Evaluation);
+        attachErrorInfo(globalObject, scope, moduleRecord, moduleKey, ScriptFetchParameters::Type::JSON, ModuleFailure::Kind::Evaluation);
         RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(vm, scope));
         scope.release();
         promise->fulfill(vm, moduleRecord);
         return promise;
+    }
+    case SourceProviderSourceType::Text: {
+        auto* moduleRecord = SyntheticModuleRecord::createTextModule(globalObject, moduleKey, SourceCode { sourceCode });
+        attachErrorInfo(globalObject, scope, moduleRecord, moduleKey, ScriptFetchParameters::Type::Text, ModuleFailure::Kind::Evaluation);
+        RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(vm, scope));
+        scope.release();
+        promise->fulfill(vm, moduleRecord);
+        return promise;
+    }
+    default:
+        break;
     }
 
     ParserError error;

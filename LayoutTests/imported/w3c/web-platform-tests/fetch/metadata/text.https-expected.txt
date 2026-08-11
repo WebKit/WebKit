@@ -1,3 +1,7 @@
 
-FAIL The fetch metadata for text module promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "text" is not valid"
+PASS The fetch metadata for text module
+PASS undefined: sec-fetch-dest
+PASS undefined: sec-fetch-mode
+PASS undefined: sec-fetch-site
+PASS undefined: sec-fetch-user
 

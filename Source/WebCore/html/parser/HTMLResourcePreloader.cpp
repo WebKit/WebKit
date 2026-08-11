@@ -54,7 +54,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
 
     bool skipContentSecurityPolicyCheck = false;
     if (!m_nonceAttribute.isEmpty()) {
-        if (m_resourceType == CachedResource::Type::Script || m_resourceType == CachedResource::Type::JSON)
+        if (m_resourceType == CachedResource::Type::Script || m_resourceType == CachedResource::Type::JSON || m_resourceType == CachedResource::Type::Text)
             skipContentSecurityPolicyCheck = protect(document.contentSecurityPolicy())->allowScriptWithNonce(m_nonceAttribute);
         else if (m_resourceType == CachedResource::Type::CSSStyleSheet)
             skipContentSecurityPolicyCheck = protect(document.contentSecurityPolicy())->allowStyleWithNonce(m_nonceAttribute);
@@ -69,7 +69,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
         if (crossOriginMode.isNull())
             crossOriginMode = ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule;
     }
-    if (m_resourceType == CachedResource::Type::Script || m_resourceType == CachedResource::Type::JSON || m_resourceType == CachedResource::Type::ImageResource)
+    if (m_resourceType == CachedResource::Type::Script || m_resourceType == CachedResource::Type::JSON || m_resourceType == CachedResource::Type::Text || m_resourceType == CachedResource::Type::ImageResource)
         options.referrerPolicy = m_referrerPolicy;
     options.fetchPriority = m_fetchPriority;
     options.nonce = m_nonceAttribute;

@@ -2641,7 +2641,7 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
 _ALLOW_ALL_UPPERCASE_ENUM = ['JSTokenType']
 
 # Enum value allowlist
-_ALLOW_ABBREVIATION_ENUM_VALUES = ['AM', 'CF', 'COOP', 'GPU', 'LTR', 'PM', 'RTL', 'URL', 'XHR']
+_ALLOW_ABBREVIATION_ENUM_VALUES = ['AM', 'CF', 'COOP', 'GPU', 'JSON', 'LTR', 'PM', 'RTL', 'URL', 'XHR']
 
 
 def check_enum_members(clean_lines, line_number, enum_state, error):

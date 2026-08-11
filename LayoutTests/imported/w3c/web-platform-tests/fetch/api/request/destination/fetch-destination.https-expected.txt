@@ -14,7 +14,7 @@ FAIL AudioWorklet module fetches with a "audioworklet" Request.destination promi
 PASS HTMLLinkElement with rel=stylesheet fetches with a "style" Request.destination
 FAIL Import declaration with `type: "css"` fetches with a "style" Request.destination promise_test: Unhandled rejection with value: "TypeError: Import attribute type \"css\" is not valid"
 PASS Import declaration with `type: "json"` fetches with a "json" Request.destination
-FAIL Import declaration with `type: "text"` fetches with a "text" Request.destination promise_test: Unhandled rejection with value: "TypeError: Import attribute type \"text\" is not valid"
+PASS Import declaration with `type: "text"` fetches with a "text" Request.destination
 PASS HTMLLinkElement with rel=preload and as=fetch fetches with an empty string Request.destination
 PASS HTMLLinkElement with rel=preload and as=style fetches with a "style" Request.destination
 PASS HTMLLinkElement with rel=preload and as=json fetches with a "json" Request.destination

@@ -102,6 +102,7 @@ static Protocol::Debugger::ScriptType scriptTypeForScript(const JSC::Debugger::S
         return Protocol::Debugger::ScriptType::WebAssembly;
     case JSC::SourceProviderSourceType::Program:
     case JSC::SourceProviderSourceType::JSON:
+    case JSC::SourceProviderSourceType::Text:
     case JSC::SourceProviderSourceType::ImportMap:
         return Protocol::Debugger::ScriptType::Program;
     }

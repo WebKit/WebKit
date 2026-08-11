@@ -95,6 +95,7 @@ public:
         XSLStyleSheet,
 #endif
         LinkPrefetch,
+        Text,
 #if ENABLE(VIDEO)
         TextTrackResource,
 #endif

@@ -210,7 +210,9 @@ ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse&
     if (!response.isSuccessful() && response.httpStatusCode())
         return { errorDomainWebKitInternal, 0, response.url(), "Response is not 2xx"_s, ResourceError::Type::General };
 
-    if (!isScriptAllowedByNosniff(response)) {
+    // https://fetch.spec.whatwg.org/#should-response-to-request-be-blocked-due-to-nosniff
+    // Only a script-like destination is blocked; a JSON or text module accepts any MIME type.
+    if (isScriptLikeDestination(destination) && !isScriptAllowedByNosniff(response)) {
         auto message = makeString("Refused to execute "_s, response.url().stringCenterEllipsizedToLength(), " as script because \"X-Content-Type-Options: nosniff\" was given and its Content-Type is not a script MIME type."_s);
         return { errorDomainWebKitInternal, 0, response.url(), WTF::move(message), ResourceError::Type::General };
     }

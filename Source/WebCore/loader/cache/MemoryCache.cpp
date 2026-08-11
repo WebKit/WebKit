@@ -726,6 +726,7 @@ MemoryCache::Statistics MemoryCache::getStatistics()
             case CachedResource::Type::CSSStyleSheet:
                 stats.cssStyleSheets.addResource(*resource);
                 break;
+            case CachedResource::Type::Text:
             case CachedResource::Type::JSON:
             case CachedResource::Type::Script:
                 stats.scripts.addResource(*resource);

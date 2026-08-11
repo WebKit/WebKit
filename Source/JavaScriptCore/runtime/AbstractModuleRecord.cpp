@@ -66,9 +66,10 @@ auto AbstractModuleRecord::AsyncEvaluationOrder::order(int64_t order) -> AsyncEv
     return *this;
 }
 
-AbstractModuleRecord::AbstractModuleRecord(VM& vm, Structure* structure, Identifier moduleKey)
+AbstractModuleRecord::AbstractModuleRecord(VM& vm, Structure* structure, Identifier moduleKey, SourceProviderSourceType sourceType)
     : Base(vm, structure)
     , m_moduleKey(WTF::move(moduleKey))
+    , m_sourceType(sourceType)
 {
 }
 
@@ -1411,16 +1412,21 @@ static String printableName(const Identifier& ident)
 
 ScriptFetchParameters::Type AbstractModuleRecord::moduleType() const
 {
-    if (is<JSModuleRecord>(this))
-        return ScriptFetchParameters::JavaScript;
-    if (is<SyntheticModuleRecord>(this))
-        return ScriptFetchParameters::JSON;
-#if ENABLE(WEBASSEMBLY)
-    if (is<WebAssemblyModuleRecord>(this))
-        return ScriptFetchParameters::WebAssembly;
-#endif
-    RELEASE_ASSERT_NOT_REACHED();
-    return ScriptFetchParameters::None;
+    switch (m_sourceType) {
+    case SourceProviderSourceType::Text:
+        return ScriptFetchParameters::Type::Text;
+    case SourceProviderSourceType::JSON:
+        return ScriptFetchParameters::Type::JSON;
+    case SourceProviderSourceType::Module:
+    case SourceProviderSourceType::Program:
+        return ScriptFetchParameters::Type::JavaScript;
+    case SourceProviderSourceType::WebAssembly:
+        return ScriptFetchParameters::Type::WebAssembly;
+    case SourceProviderSourceType::ImportMap:
+        RELEASE_ASSERT_NOT_REACHED();
+        return ScriptFetchParameters::Type::None;
+    }
+    return ScriptFetchParameters::Type::None;
 }
 
 void AbstractModuleRecord::setCycleRoot(VM& vm, CyclicModuleRecord* newRoot)

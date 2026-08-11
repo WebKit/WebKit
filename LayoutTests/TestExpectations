@@ -1216,7 +1216,6 @@ imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/scr
 imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/script-url-blocked-report-contains-hash-shared-worker.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/script-src/tentative/script-url-blocked-report-contains-hash.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/child-src/child-src-cross-origin-load.sub.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-text-import-blocked.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-webtransport-allowed.sub.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-webtransport-hashes.sub.https.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-cross-none-block.html [ Skip ]
@@ -1447,8 +1446,6 @@ imported/w3c/web-platform-tests/fetch/fetch-later [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/crashtests/huge-fetch.any.serviceworker.html [ Skip ]
 
 # These fetch tests time out.
-imported/w3c/web-platform-tests/fetch/metadata/generated/script-text-module-import-static.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/generated/script-text-module-import-static.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/object.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/orb/tentative/status.sub.html [ Skip ]

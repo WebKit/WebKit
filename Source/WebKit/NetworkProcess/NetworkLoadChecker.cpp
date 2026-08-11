@@ -437,6 +437,7 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
     case FetchOptions::Destination::Serviceworker:
     case FetchOptions::Destination::Sharedworker:
         return contentSecurityPolicy->allowWorkerFromSource(request.url(), { }, redirectResponseReceived, preRedirectURL);
+    case FetchOptions::Destination::Text:
     case FetchOptions::Destination::Json:
     case FetchOptions::Destination::Script:
     case FetchOptions::Destination::Speculationrules:

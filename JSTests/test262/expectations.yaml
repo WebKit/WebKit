@@ -102,9 +102,6 @@ test/language/expressions/call/tco-non-eval-with.js:
 test/language/expressions/delete/super-property-uninitialized-this.js:
   default: 3
   strict mode: 3
-test/language/expressions/dynamic-import/import-attributes/2nd-param-with-type-text.js:
-  default: 3
-  strict mode: 3
 test/language/expressions/new/non-ctor-err-realm.js:
   default: 3
   strict mode: 3
@@ -134,16 +131,6 @@ test/language/expressions/yield/star-rhs-iter-thrw-res-done-no-value.js:
   strict mode: 3
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: 3
-test/language/import/import-attributes/text-empty.js:
-  module: 3
-test/language/import/import-attributes/text-javascript.js:
-  module: 3
-test/language/import/import-attributes/text-self.js:
-  module: 3
-test/language/import/import-attributes/text-string.js:
-  module: 3
-test/language/import/import-attributes/text-via-namespace.js:
-  module: 3
 test/language/statements/class/elements/private-class-field-on-nonextensible-objects.js:
   strict mode: 3
 test/language/statements/class/subclass/private-class-field-on-nonextensible-return-override.js:

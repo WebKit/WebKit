@@ -60,6 +60,7 @@ OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceReques
 #endif
         return { ResourceType::StyleSheet };
 
+    case CachedResource::Type::Text:
     case CachedResource::Type::JSON:
     case CachedResource::Type::Script:
         return { ResourceType::Script };

@@ -93,12 +93,15 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
             sourcePosition = document->currentParserSourcePosition();
 
         CheckedPtr contentSecurityPolicy = context.contentSecurityPolicy();
-        // Worklets and scripts are governed by script-src; workers are governed by worker-src.
+        // Worklets and scripts are governed by script-src; JSON and text modules by connect-src; workers by worker-src.
         bool shouldEnforceScriptSrc = fetchOptions.destination == FetchOptions::Destination::Script
             || isWorkletDestination(fetchOptions.destination);
         if (shouldEnforceScriptSrc) {
             cspCheckFailed = contentSecurityPolicy && !contentSecurityPolicy->allowScriptFromSource(m_sourceURL, WTF::move(sourcePosition));
             contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective;
+        } else if (fetchOptions.destination == FetchOptions::Destination::Text) {
+            cspCheckFailed = contentSecurityPolicy && !contentSecurityPolicy->allowConnectToSource(m_sourceURL, WTF::move(sourcePosition));
+            contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective;
         } else {
             cspCheckFailed = contentSecurityPolicy && !contentSecurityPolicy->allowWorkerFromSource(m_sourceURL, WTF::move(sourcePosition));
             contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective;

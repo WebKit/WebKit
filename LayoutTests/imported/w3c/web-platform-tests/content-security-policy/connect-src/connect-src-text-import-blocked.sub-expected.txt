@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT connect-src-text-import-blocked Test timed out
+PASS connect-src-text-import-blocked
 

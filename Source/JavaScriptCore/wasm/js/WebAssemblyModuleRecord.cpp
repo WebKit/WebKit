@@ -66,7 +66,7 @@ WebAssemblyModuleRecord* WebAssemblyModuleRecord::create(JSGlobalObject* globalO
 }
 
 WebAssemblyModuleRecord::WebAssemblyModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey)
-    : Base(vm, structure, moduleKey)
+    : Base(vm, structure, moduleKey, SourceProviderSourceType::WebAssembly)
 {
 }
 

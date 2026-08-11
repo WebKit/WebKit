@@ -628,6 +628,7 @@ static void logResourceLoaded(LocalFrame* frame, CachedResource::Type type)
     case CachedResource::Type::CSSStyleSheet:
         resourceType = DiagnosticLoggingKeys::styleSheetKey();
         break;
+    case CachedResource::Type::Text:
     case CachedResource::Type::JSON:
     case CachedResource::Type::Script:
         resourceType = DiagnosticLoggingKeys::scriptKey();

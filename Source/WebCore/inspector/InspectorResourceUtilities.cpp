@@ -280,6 +280,7 @@ Inspector::ResourceType inspectorResourceType(CachedResource::Type type)
     case CachedResource::Type::CSSStyleSheet:
         return ResourceType::StyleSheet;
     case CachedResource::Type::JSON: // FIXME: Add ResourceType::JSON.
+    case CachedResource::Type::Text:
     case CachedResource::Type::Script:
         return ResourceType::Script;
     case CachedResource::Type::MainResource:
@@ -407,6 +408,7 @@ bool cachedResourceContent(CachedResource& resource, String* result, bool* base6
         // The above can return a null String if the MIME type is invalid.
         return !result->isNull();
     case CachedResource::Type::JSON:
+    case CachedResource::Type::Text:
     case CachedResource::Type::Script:
         *base64Encoded = false;
         *result = downcast<CachedScript>(resource).script().toString();

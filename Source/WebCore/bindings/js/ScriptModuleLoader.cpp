@@ -360,6 +360,17 @@ JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalOb
     URL baseURL;
     RefPtr<JSC::ScriptFetcher> scriptFetcher;
     RefPtr<ModuleFetchParameters> parameters;
+    auto destination = FetchOptions::Destination::Script;
+    switch (type) {
+    case JSC::ScriptFetchParameters::Type::JSON:
+        destination = FetchOptions::Destination::Json;
+        break;
+    case JSC::ScriptFetchParameters::Type::Text:
+        destination = FetchOptions::Destination::Text;
+        break;
+    default:
+        break;
+    }
     if (sourceOrigin.isNull()) {
         parameters = ModuleFetchParameters::create(type, emptyString(), /* isTopLevelModule */ true);
 
@@ -370,7 +381,6 @@ JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalOb
         } else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#default-classic-script-fetch-options
             baseURL = protect(m_context)->url();
-            auto destination = type == JSC::ScriptFetchParameters::JSON ? FetchOptions::Destination::Json : FetchOptions::Destination::Script;
             scriptFetcher = WorkerScriptFetcher::create(*parameters, FetchOptions::Credentials::SameOrigin, destination, ReferrerPolicy::EmptyString);
         }
     } else {
@@ -382,7 +392,6 @@ JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalOb
 
         URL moduleURL = globalObject.importMap().resolve(specifier, baseURL);
         parameters = ModuleFetchParameters::create(type, globalObject.importMap().integrityForURL(moduleURL), /* isTopLevelModule */ true);
-        auto destination = type == JSC::ScriptFetchParameters::JSON ? FetchOptions::Destination::Json : FetchOptions::Destination::Script;
 
         if (sourceOrigin.fetcher()) {
             scriptFetcher = sourceOrigin.fetcher();
@@ -504,13 +513,18 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
 
         ModuleType type = ModuleType::Invalid;
         auto mimeType = cachedScript->response().mimeType();
-        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
+        auto requestedType = loader.parameters() ? loader.parameters()->type() : JSC::ScriptFetchParameters::Type::None;
+        // A text module accepts any MIME type, and its content must never be parsed as JavaScript,
+        // so it has to be decided before the JavaScript MIME type is considered.
+        if (requestedType == JSC::ScriptFetchParameters::Type::Text)
+            type = ModuleType::Text;
+        else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
             type = ModuleType::JavaScript;
 #if ENABLE(WEBASSEMBLY)
         else if (context->settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(mimeType))
             type = ModuleType::WebAssembly;
 #endif
-        else if (loader.parameters() && loader.parameters()->type() == JSC::ScriptFetchParameters::JSON && MIMETypeRegistry::isSupportedJSONMIMEType(mimeType))
+        else if (requestedType == JSC::ScriptFetchParameters::Type::JSON && MIMETypeRegistry::isSupportedJSONMIMEType(mimeType))
             type = ModuleType::JSON;
         else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
@@ -548,6 +562,9 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         case ModuleType::JSON:
             sourceCode = JSC::SourceCode { ScriptSourceCode { cachedScript.ptr(), JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() };
             break;
+        case ModuleType::Text:
+            sourceCode = JSC::SourceCode { ScriptSourceCode { cachedScript.ptr(), JSC::SourceProviderSourceType::Text, loader.scriptFetcher() }.jsSourceCode() };
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -574,13 +591,18 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
 
         ModuleType type = ModuleType::Invalid;
         auto mimeType = loader.responseMIMEType();
-        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
+        auto requestedType = loader.parameters() ? loader.parameters()->type() : JSC::ScriptFetchParameters::Type::None;
+        // A text module accepts any MIME type, and its content must never be parsed as JavaScript,
+        // so it has to be decided before the JavaScript MIME type is considered.
+        if (requestedType == JSC::ScriptFetchParameters::Type::Text)
+            type = ModuleType::Text;
+        else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
             type = ModuleType::JavaScript;
 #if ENABLE(WEBASSEMBLY)
         else if (context->settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(mimeType))
             type = ModuleType::WebAssembly;
 #endif
-        else if (loader.parameters() && loader.parameters()->type() == JSC::ScriptFetchParameters::JSON && MIMETypeRegistry::isSupportedJSONMIMEType(mimeType))
+        else if (requestedType == JSC::ScriptFetchParameters::Type::JSON && MIMETypeRegistry::isSupportedJSONMIMEType(mimeType))
             type = ModuleType::JSON;
         else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
@@ -615,6 +637,9 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
 #endif
         case ModuleType::JSON:
             sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTF::move(responseURL), WTF::move(sourceURL), { }, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() };
+            break;
+        case ModuleType::Text:
+            sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTF::move(responseURL), WTF::move(sourceURL), { }, JSC::SourceProviderSourceType::Text, loader.scriptFetcher() }.jsSourceCode() };
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

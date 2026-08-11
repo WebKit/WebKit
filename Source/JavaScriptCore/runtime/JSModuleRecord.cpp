@@ -54,7 +54,7 @@ JSModuleRecord* JSModuleRecord::create(JSGlobalObject* globalObject, VM& vm, Str
 }
 
 JSModuleRecord::JSModuleRecord(VM& vm, Structure* structure, const Identifier& moduleKey, const SourceCode& sourceCode, CodeFeatures features)
-    : Base(vm, structure, moduleKey)
+    : Base(vm, structure, moduleKey, SourceProviderSourceType::Module)
     , m_sourceCode(sourceCode)
     , m_features(features)
 {

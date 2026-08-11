@@ -30,6 +30,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSModuleRecord.h"
 #include "ModuleAnalyzer.h"
+#include "Options.h"
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
@@ -50,6 +51,8 @@ static Expected<RefPtr<ScriptFetchParameters>, std::tuple<ErrorType, String>> tr
     for (auto& [key, value] : attributesList->attributes()) {
         if (*key == vm.propertyNames->type) {
             type = ScriptFetchParameters::parseType(value->impl());
+            if (type == ScriptFetchParameters::Type::Text && !Options::useImportText())
+                type = std::nullopt;
             if (!type)
                 return makeUnexpected(std::tuple { ErrorType::TypeError, makeString("Import attribute type \""_s, StringView(value->impl()), "\" is not valid"_s) });
         }

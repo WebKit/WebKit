@@ -4194,6 +4194,19 @@ ImportDeferEnabled:
     WebKit:
       default: true
 
+ImportTextEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "Import Text"
+  humanReadableDescription: "Enable text module import."
+  webcoreBinding: none
+  jscOptionName: useImportText
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: true
+
 InactiveMediaCaptureStreamRepromptIntervalInMinutes:
   type: double
   status: embedder
