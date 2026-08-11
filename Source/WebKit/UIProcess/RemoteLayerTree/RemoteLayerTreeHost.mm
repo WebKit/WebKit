@@ -293,16 +293,26 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::ProcessIdentifier processI
 #if ENABLE(THREADED_ANIMATIONS)
         animationsWereRemovedFromNode(*node);
 #endif
-        if (auto hostingIdentifier = node->remoteContextHostingIdentifier())
-            m_hostingLayers.remove(*hostingIdentifier);
+        // A hosting context identifier outlives the layers on both of its sides, so its entry may
+        // already have been reassigned to a layer that is still in use. Only clear an entry that
+        // still refers to the layer going away.
+        if (auto hostingIdentifier = node->remoteContextHostingIdentifier()) {
+            if (m_hostingLayers.getOptional(*hostingIdentifier) == layerID)
+                m_hostingLayers.remove(*hostingIdentifier);
+        }
         if (auto hostedIdentifier = node->remoteContextHostedIdentifier()) {
-            if (auto layerID = m_hostedLayers.takeOptional(*hostedIdentifier)) {
-                auto it = m_hostedLayersInProcess.find(processIdentifier);
-                if (it != m_hostedLayersInProcess.end()) {
-                    it->value.remove(*layerID);
-                    if (it->value.isEmpty())
-                        m_hostedLayersInProcess.remove(it);
-                }
+            // The hosting node retains this layer, so dropping the node does not stop it being
+            // drawn.
+            node->removeFromHostingNode();
+
+            if (m_hostedLayers.getOptional(*hostedIdentifier) == layerID)
+                m_hostedLayers.remove(*hostedIdentifier);
+
+            auto it = m_hostedLayersInProcess.find(processIdentifier);
+            if (it != m_hostedLayersInProcess.end()) {
+                it->value.remove(layerID);
+                if (it->value.isEmpty())
+                    m_hostedLayersInProcess.remove(it);
             }
         }
     }
@@ -536,11 +546,8 @@ RefPtr<const RemoteAnimationStack> RemoteLayerTreeHost::animationStackForNodeWit
 
 void RemoteLayerTreeHost::remotePageProcessDidTerminate(WebCore::ProcessIdentifier processIdentifier)
 {
-    for (auto layerID : m_hostedLayersInProcess.take(processIdentifier)) {
-        if (RefPtr node = nodeForID(layerID))
-            node->removeFromHostingNode();
+    for (auto layerID : m_hostedLayersInProcess.take(processIdentifier))
         layerWillBeRemoved(processIdentifier, layerID);
-    }
 }
 
 } // namespace WebKit
