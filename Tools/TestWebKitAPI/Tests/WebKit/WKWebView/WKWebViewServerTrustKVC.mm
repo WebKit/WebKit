@@ -122,9 +122,7 @@ TEST(WKWebView, ServerTrustKVCWithCOOP)
     [webView evaluateJavaScript:@"window.open('https://webkit.org/path2')" completionHandler:nil];
     [observer waitUntilServerTrustChanged];
 
-    // FIXME: This should be null. The web process should say whether to include a cert,
-    // it just shouldn't provide the cert.
     [webView loadHTMLString:@"<script>alert('loaded')</script>" baseURL:[NSURL URLWithString:@"https://webkit.org/path1"]];
     EXPECT_WK_STREQ([uiDelegate waitForAlert], "loaded");
-    EXPECT_NOT_NULL(webView.get().serverTrust);
+    EXPECT_NULL(webView.get().serverTrust);
 }
