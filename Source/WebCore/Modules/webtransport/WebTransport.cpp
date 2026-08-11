@@ -45,6 +45,7 @@
 #include "JSWebTransportCloseInfo.h"
 #include "JSWebTransportConnectionStats.h"
 #include "JSWebTransportSendStream.h"
+#include "RFC8941.h"
 #include "ReadableStream.h"
 #include "ScriptExecutionContextInlines.h"
 #include "SocketProvider.h"
@@ -86,17 +87,18 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
         return Exception { ExceptionCode::NotSupportedError };
 
     HashSet<String> uniqueProtocols;
+    Vector<String> escapedProtocols;
+    escapedProtocols.reserveInitialCapacity(options.protocols.size());
     for (auto& protocol : options.protocols) {
-        if (!isValidHTTPToken(protocol))
+        auto escapedProtocol = RFC8941::escapeString(protocol);
+        if (!escapedProtocol || escapedProtocol->isEmpty() || escapedProtocol->length() > 512)
             return Exception { ExceptionCode::SyntaxError };
 
-        auto utf8 = protocol.utf8();
-        if (utf8.isEmpty() || utf8.length() > 512)
+        if (!uniqueProtocols.add(*escapedProtocol).isNewEntry)
             return Exception { ExceptionCode::SyntaxError };
-
-        if (!uniqueProtocols.add(protocol).isNewEntry)
-            return Exception { ExceptionCode::SyntaxError };
+        escapedProtocols.append(WTF::move(*escapedProtocol));
     }
+    options.protocols = WTF::move(escapedProtocols);
 
     auto* globalObject = context.globalObject();
     if (!globalObject) {

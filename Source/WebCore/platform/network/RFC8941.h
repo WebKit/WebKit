@@ -67,6 +67,7 @@ using ItemOrInnerList = Variant<BareItem, InnerList>;
 WEBCORE_EXPORT std::optional<std::pair<BareItem, Parameters>> parseItemStructuredFieldValue(StringView header);
 WEBCORE_EXPORT std::optional<Vector<std::pair<ItemOrInnerList, Parameters>>> parseListStructuredFieldValue(StringView header);
 WEBCORE_EXPORT std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDictionaryStructuredFieldValue(StringView header);
+std::optional<String> escapeString(StringView);
 
 } // namespace RFC8941
 

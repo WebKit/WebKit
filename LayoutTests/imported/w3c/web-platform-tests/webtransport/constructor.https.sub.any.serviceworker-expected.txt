@@ -11,6 +11,15 @@ PASS WebTransport constructor should reject protocol list ''
 PASS WebTransport constructor should reject protocol list '誤'
 PASS WebTransport constructor should reject protocol list 'test,test'
 PASS WebTransport constructor should reject protocol list 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+PASS WebTransport constructor should reject protocol list '\r'
+PASS WebTransport constructor should reject protocol list '
+'
+PASS WebTransport constructor should reject protocol list 'a\rb'
+PASS WebTransport constructor should reject protocol list 'a
+b'
+PASS WebTransport constructor should reject protocol list '\0'
+PASS WebTransport constructor should reject protocol list ''
+PASS WebTransport constructor should reject protocol list ''
 PASS WebTransport constructor should allow options {"allowPooling":true}
 PASS WebTransport constructor should allow options {"requireUnreliable":true}
 PASS WebTransport constructor should allow options {"allowPooling":true,"requireUnreliable":true}

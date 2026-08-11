@@ -378,4 +378,22 @@ std::optional<HashMap<String, std::pair<ItemOrInnerList, Parameters>>> parseDict
     });
 }
 
+std::optional<String> escapeString(StringView input)
+{
+    // https://datatracker.ietf.org/doc/html/rfc8941#section-3.3.3
+    StringBuilder builder;
+    builder.reserveCapacity(input.length());
+    for (char16_t codeUnit : input.codeUnits()) {
+        if (codeUnit < 0x20 || codeUnit > 0x7E)
+            return std::nullopt;
+        if (codeUnit == '"')
+            builder.append("\\\""_s);
+        else if (codeUnit == '\\')
+            builder.append("\\\\"_s);
+        else
+            builder.append(static_cast<Latin1Character>(codeUnit));
+    }
+    return builder.toString();
+};
+
 } // namespace RFC8941
