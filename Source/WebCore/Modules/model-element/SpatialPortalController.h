@@ -27,7 +27,7 @@
 
 #if ENABLE(SPATIAL_PORTAL)
 
-#include "LayoutSize.h"
+#include <WebCore/LayoutSize.h>
 #include <WebCore/NodeIdentifier.h>
 #include <WebCore/PortalAction.h>
 #include <WebCore/PortalTransform.h>
