@@ -1,9 +1,5 @@
 Modules/indexeddb/server/IndexValueStore.cpp
-Modules/notifications/NotificationPayload.cpp
-Modules/streams/ReadableByteStreamController.cpp
-Modules/streams/ReadableStreamBYOBReader.cpp
 Modules/websockets/WebSocketChannelInspector.cpp
-Modules/webtransport/WebTransportDatagramsWritable.cpp
 css/DOMMatrixReadOnly.cpp
 css/SelectorChecker.cpp
 dom/ContainerNode.cpp
