@@ -31,7 +31,6 @@
 #include "GPUDevice.h"
 #include "WebGPUXRBinding.h"
 #include "WebGPUXREye.h"
-#include "WebGPUXRView.h"
 #include "WebXRFrame.h"
 #include "WebXRView.h"
 #include "XRCompositionLayer.h"
