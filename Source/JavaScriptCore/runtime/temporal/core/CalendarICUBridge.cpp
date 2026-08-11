@@ -178,38 +178,6 @@ static auto withCalendar(CalendarID calendarId, F&& fn) -> decltype(fn(static_ca
     return fn(entry->cal.get());
 }
 
-// lunarCalendarExtendedYearFor1972 — probes UCAL_EXTENDED_YEAR for the given lunisolar calendar
-// at ISO 1972-02-15. Returns 1972 on ISO-proleptic ICU; epoch-based year on older Apple ICU.
-// Chinese uses epoch 2637 BCE -> returns 4609 on ICU ≥76; Dangi uses epoch 2333 BCE -> returns 4305.
-// Result is cached per calendar: ICU version is fixed for the process lifetime.
-int32_t lunarCalendarExtendedYearFor1972(CalendarID calendarId)
-{
-    static std::atomic<int32_t> chineseCached { INT32_MIN };
-    static std::atomic<int32_t> dangiCached { INT32_MIN };
-    auto& cached = (calendarId == dangiCalendarID()) ? dangiCached : chineseCached;
-    int32_t value = cached.load(std::memory_order_relaxed);
-    if (value != INT32_MIN)
-        return value;
-    // Use ucal_setMillis with a precomputed ISO epoch time — NOT ucal_setDateTime which
-    // sets calendar-native fields (not ISO fields) on a non-Gregorian calendar.
-    // ISO 1972-02-15 00:00:00 UTC = 66,960,000,000 ms from Unix epoch (1970-01-01).
-    static constexpr double iso1972Feb15EpochMs = 66960000000.0;
-    value = withCalendar(calendarId, [&](UCalendar* cal) -> int32_t {
-        if (!cal) [[unlikely]]
-            return 1972; // fallback: assume ISO-proleptic
-        UErrorCode status = U_ZERO_ERROR;
-        ucal_setMillis(cal, iso1972Feb15EpochMs, &status);
-        if (U_FAILURE(status)) [[unlikely]]
-            return 1972; // fallback: assume ISO-proleptic
-        int32_t extYear = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-        if (U_FAILURE(status)) [[unlikely]]
-            return 1972; // fallback: assume ISO-proleptic
-        return extYear;
-    });
-    cached.store(value, std::memory_order_relaxed);
-    return value;
-}
-
 // isoDateToEpochMs — internal: converts ISO PlainDate to epoch ms at noon UTC
 // (avoids DST boundary issues).
 static double isoDateToEpochMs(const ISO8601::PlainDate& date)

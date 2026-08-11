@@ -134,8 +134,6 @@ enum class EcmaReferenceYearError : uint8_t {
 
 Expected<int32_t, EcmaReferenceYearError> ecmaReferenceYear(CalendarID, uint8_t monthNumber, bool isLeapMonth, uint8_t day);
 
-JS_EXPORT_PRIVATE int32_t lunarCalendarExtendedYearFor1972(CalendarID);
-
 JS_EXPORT_PRIVATE std::optional<ASCIILiteral> canonicalizeEraInCalendar(CalendarID, StringView era);
 
 JS_EXPORT_PRIVATE std::optional<std::pair<ASCIILiteral, int32_t>> remapNonPositiveEraYear(CalendarID, StringView era, int32_t eraYear);
