@@ -101,6 +101,9 @@ webkit.org/b/197386 imported/w3c/web-platform-tests/payment-request/payment-requ
 # test_driver.minimize_window() times out in WebKit test infrastructure
 imported/w3c/web-platform-tests/payment-request/payment-request-disallowed-when-hidden.https.html [ Skip ]
 
+# Debug assertion in PaymentRequest::suspend() when a request is Interactive as the document enters the back/forward cache
+webkit.org/b/321524 [ Debug ] imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html [ Skip ]
+
 imported/w3c/web-platform-tests/css/css-pseudo/selection-over-highlight-001.html [ Pass ]
 
 # Tests that require wheel events
