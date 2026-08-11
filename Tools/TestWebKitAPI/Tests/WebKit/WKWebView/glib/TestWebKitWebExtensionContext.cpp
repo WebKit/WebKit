@@ -34,6 +34,118 @@ static GRefPtr<GBytes> createGBytes(const gchar* string)
     return adoptGRef(g_bytes_new_static(string, strlen(string)));
 }
 
+static void testContentScriptsParsing(Test* test, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+    auto parseExtensionManifest = [&](const gchar* contentScripts) {
+        auto manifestString = makeString("{ \"manifest_version\": 2, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"content_scripts\": "_s, String::fromUTF8(contentScripts), " }"_s);
+        GRefPtr extension = adoptGRef(webkitWebExtensionCreate({ { "manifest.json"_s, createGBytes(manifestString.utf8().data()) } }, &error.outPtr()));
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(extension.get()));
+        return extension;
+    };
+
+    GRefPtr<WebKitWebExtension> extension = parseExtensionManifest("[{ \"js\": [ \"test.js\", 1, \"\" ], \"css\": [ false, \"test.css\", \"\" ], \"matches\": [ \"*://*/\" ] }]");
+    g_assert_no_error(error.get());
+    GRefPtr<WebKitWebExtensionContext> context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    g_assert_no_error(error.get());
+
+    g_assert_true(webkit_web_extension_context_get_has_injected_content(context.get()));
+    g_assert_true(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://webkit.org/"));
+    g_assert_true(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://example.com/"));
+
+    extension = parseExtensionManifest("[{ \"js\": [ \"test.js\", 1, \"\" ], \"css\": [ false, \"test.css\", \"\" ], \"matches\": [ \"*://*/\" ], \"exclude_matches\": [ \"*://*.example.com/\" ] }]");
+    g_assert_no_error(error.get());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_true(webkit_web_extension_context_get_has_injected_content(context.get()));
+    g_assert_true(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://webkit.org/"));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://example.com/"));
+
+    extension = parseExtensionManifest("[{ \"js\": [ \"test.js\", 1, \"\" ], \"css\": [ false, \"test.css\", \"\" ], \"matches\": [ \"*://*.example.com/\" ] }]");
+    g_assert_no_error(error.get());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_true(webkit_web_extension_context_get_has_injected_content(context.get()));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://webkit.org/"));
+    g_assert_true(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://example.com/"));
+
+    extension = parseExtensionManifest("[{ \"css\": [ false, \"test.css\", \"\" ], \"css_origin\": \"user\", \"matches\": [ \"*://*.example.com/\" ] }]");
+    g_assert_no_error(error.get());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_true(webkit_web_extension_context_get_has_injected_content(context.get()));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://webkit.org/"));
+    g_assert_true(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://example.com/"));
+
+    extension = parseExtensionManifest("[{ \"css\": [ false, \"test.css\", \"\" ], \"css_origin\": \"author\", \"matches\": [ \"*://*.example.com/\" ] }]");
+    g_assert_no_error(error.get());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_true(webkit_web_extension_context_get_has_injected_content(context.get()));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://webkit.org/"));
+    g_assert_true(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://example.com/"));
+
+    // Invalid cases
+
+    extension = parseExtensionManifest("[]");
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_get_has_injected_content(context.get()));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://webkit.org/"));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://example.com/"));
+
+    extension = parseExtensionManifest("{ \"invalid\": true }");
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_get_has_injected_content(context.get()));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://webkit.org/"));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://example.com/"));
+
+    extension = parseExtensionManifest("[{ \"js\": [ \"test.js\" ], \"matches\": [] }]");
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_false(webkit_web_extension_context_get_has_injected_content(context.get()));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://webkit.org/"));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://example.com/"));
+
+    extension = parseExtensionManifest("[{ \"js\": [ \"test.js\" ], \"matches\": [ \"*://*.example.com/\" ], \"world\": \"INVALID\" }]");
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_true(webkit_web_extension_context_get_has_injected_content(context.get()));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://webkit.org/"));
+    g_assert_true(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://example.com/"));
+
+    extension = parseExtensionManifest("[{ \"css\": [ false, \"test.css\", \"\" ], \"css_origin\": \"bad\", \"matches\": [ \"*://*.example.com/\" ] }]");
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_assert_no_error(error.get());
+
+    g_assert_true(webkit_web_extension_context_get_has_injected_content(context.get()));
+    g_assert_false(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://webkit.org/"));
+    g_assert_true(webkit_web_extension_context_has_injected_content_for_uri(context.get(), "https://example.com/"));
+}
+
 static void testOptionsPageURIParsing(Test* test, gconstpointer)
 {
     GUniqueOutPtr<GError> error;
@@ -96,6 +208,7 @@ static void testOptionsPageURIParsing(Test* test, gconstpointer)
 
 void beforeAll()
 {
+    Test::add("WebKitWebExtensionContext", "content-scripts-parsing", testContentScriptsParsing);
     Test::add("WebKitWebExtensionContext", "options-page-uri-parsing", testOptionsPageURIParsing);
 }
 

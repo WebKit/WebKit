@@ -54,6 +54,13 @@ webkit_web_extension_context_set_base_uri                                   (Web
 WEBKIT_API const gchar *
 webkit_web_extension_context_get_options_page_uri                           (WebKitWebExtensionContext *context);
 
+WEBKIT_API gboolean
+webkit_web_extension_context_get_has_injected_content                       (WebKitWebExtensionContext *context);
+
+WEBKIT_API gboolean
+webkit_web_extension_context_has_injected_content_for_uri                   (WebKitWebExtensionContext *context,
+                                                                             const gchar               *uri);
+
 G_END_DECLS
 
 #endif // ENABLE(2022_GLIB_API)

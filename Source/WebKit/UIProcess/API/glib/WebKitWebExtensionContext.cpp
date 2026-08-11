@@ -66,6 +66,7 @@ enum {
     PROP_WEB_EXTENSION,
     PROP_BASE_URI,
     PROP_OPTIONS_PAGE_URI,
+    PROP_HAS_INJECTED_CONTENT,
     N_PROPERTIES,
 };
 
@@ -84,6 +85,9 @@ static void webkitWebExtensionContextGetProperty(GObject* object, guint propId, 
         break;
     case PROP_OPTIONS_PAGE_URI:
         g_value_set_string(value, webkit_web_extension_context_get_options_page_uri(context));
+        break;
+    case PROP_HAS_INJECTED_CONTENT:
+        g_value_set_boolean(value, webkit_web_extension_context_get_has_injected_content(context));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -157,6 +161,22 @@ static void webkit_web_extension_context_class_init(WebKitWebExtensionContextCla
             "options-page-uri",
             nullptr, nullptr,
             nullptr,
+            WEBKIT_PARAM_READABLE
+        );
+
+    /**
+     * WebKitWebExtensionContext:has-injected-content:
+     * 
+     * Whether the extension has script or stylesheet content that can be injected into webpages.
+     * See [method@WebExtensionContext.get_has_injected_content] for more details.
+     *
+     * Since: 2.56
+     */
+    properties[PROP_HAS_INJECTED_CONTENT] =
+        g_param_spec_boolean(
+            "has-injected-content",
+            nullptr, nullptr,
+            FALSE,
             WEBKIT_PARAM_READABLE
         );
 
@@ -331,6 +351,50 @@ const gchar* webkit_web_extension_context_get_options_page_uri(WebKitWebExtensio
     return priv->optionsPageURI.data();
 }
 
+/**
+ * webkit_web_extension_context_get_has_injected_content:
+ * @context: a [class@WebExtensionContext]
+ *
+ * Get whether the extension has script or stylesheet content that can be injected into webpages.
+ * 
+ * If this property is %TRUE, the extension has content that can be injected by matching against the extension's requested match patterns.
+ * 
+ * Returns: %TRUE if the extension contains content that can be injected into webpages.
+ * 
+ * Since: 2.56
+ */
+gboolean webkit_web_extension_context_get_has_injected_content(WebKitWebExtensionContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), FALSE);
+    g_return_val_if_fail(context->priv->extension, FALSE);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    return priv->context->hasInjectedContent();
+}
+
+/**
+ * webkit_web_extension_context_has_injected_content_for_uri:
+ * @context: a [class@WebExtensionContext]
+ * @uri: The webpage URI to check
+ *
+ * Checks if the extension has script or stylesheet content that can be injected into the specified URL.
+ * 
+ * The extension context will still need to be loaded and have granted website permissions for its content to actually be injected.
+ * 
+ * Returns: %TRUE if the extension has content that can be injected by matching the URL against the extension's requested match patterns.
+ * 
+ * Since: 2.56
+ */
+gboolean webkit_web_extension_context_has_injected_content_for_uri(WebKitWebExtensionContext* context, const gchar* uri)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), FALSE);
+    g_return_val_if_fail(context->priv->extension, FALSE);
+    g_return_val_if_fail(uri, FALSE);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    return priv->context->hasInjectedContentForURL(URL { String::fromUTF8(uri) });
+}
+
 #else // ENABLE(WK_WEB_EXTENSIONS)
 
 void webkitWebExtensionContextSetWebExtension(WebKitWebExtensionContext* context, WebKitWebExtension* extension)
@@ -361,6 +425,16 @@ void webkit_web_extension_context_set_base_uri(WebKitWebExtensionContext* contex
 const gchar* webkit_web_extension_context_get_options_page_uri(WebKitWebExtensionContext* context)
 {
     return "";
+}
+
+gboolean webkit_web_extension_context_get_has_injected_content(WebKitWebExtensionContext* context)
+{
+    return FALSE;
+}
+
+gboolean webkit_web_extension_context_has_injected_content_for_uri(WebKitWebExtensionContext* context, const gchar* uri)
+{
+    return FALSE;
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
