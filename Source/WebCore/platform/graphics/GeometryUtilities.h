@@ -43,8 +43,11 @@ float NODELETE dotProduct(const FloatSize&, const FloatSize&);
 // Which side of the directed line lineStart->lineEnd a point lies on: > 0 to the left of the direction, < 0 to the right, 0 on the line.
 float NODELETE signedDistanceToLine(const FloatPoint&, const FloatPoint& lineStart, const FloatPoint& lineEnd);
 
-// Find point where lines through the two pairs of points intersect. Returns std::nullopt if the lines are parallel.
+// Find where two infinite lines intersect, each given by a pair of points lying on it. Returns std::nullopt if the lines are parallel.
 WEBCORE_EXPORT std::optional<FloatPoint> NODELETE findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2);
+
+// Find where the segment crosses the infinite line through lineA and lineB. Returns std::nullopt if they are parallel or the crossing lies beyond the segment's ends.
+std::optional<FloatPoint> NODELETE findSegmentLineIntersection(const FloatPoint& segmentStart, const FloatPoint& segmentEnd, const FloatPoint& lineA, const FloatPoint& lineB);
 
 WEBCORE_EXPORT IntRect unionRect(const Vector<IntRect>&);
 WEBCORE_EXPORT IntRect unionRectIgnoringZeroRects(const Vector<IntRect>&);
