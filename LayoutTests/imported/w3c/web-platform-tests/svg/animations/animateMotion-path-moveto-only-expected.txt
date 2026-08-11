@@ -1,0 +1,7 @@
+
+
+PASS path="M 100 100" translates to the initial point of the path
+PASS <mpath> referencing d="M 100 100" translates to the initial point of the path
+PASS accumulate="sum" on a single-moveto path adds the end of the path per repeat
+PASS path="M 200 100" with rotate="auto" uses a 0 degree angle, not the position vector
+

@@ -227,17 +227,14 @@ void SVGAnimateMotionElement::calculateAnimatedValue(float percentage, unsigned 
         // its normal angle, and at most once more for the accumulated repeats.
         float pathLength = m_animationPath.length();
 
+        // A zero-length path never reports success(), but current() is still its initial point.
         auto traversalState = m_animationPath.traversalStateAtLength(pathLength * percentage);
-        if (traversalState.success())
-            transform->translate(traversalState.current());
+        transform->translate(traversalState.current());
 
         if (isAccumulated() && repeatCount) {
-            auto endOfPathState = m_animationPath.traversalStateAtLength(pathLength);
-            if (endOfPathState.success()) {
-                auto endOfPath = endOfPathState.current();
-                for (unsigned i = 0; i < repeatCount; ++i)
-                    transform->translate(endOfPath);
-            }
+            auto endOfPath = m_animationPath.traversalStateAtLength(pathLength).current();
+            for (unsigned i = 0; i < repeatCount; ++i)
+                transform->translate(endOfPath);
         }
 
         angle = traversalState.normalAngle();
