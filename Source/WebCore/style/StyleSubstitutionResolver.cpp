@@ -303,6 +303,61 @@ bool SubstitutionResolver::substituteFirstValid(CSSParserTokenRange range, Vecto
     return false;
 }
 
+// https://drafts.csswg.org/css-values-5/#funcdef-inherit
+// inherit() = inherit( <custom-property-name> , <declaration-value>? )
+// https://drafts.csswg.org/css-values-5/#replace-an-inherit-function
+bool SubstitutionResolver::substituteInheritFunction(CSSParserTokenRange range, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
+{
+    // <inherit-args> is the same argument grammar as var()'s, including leaving an unparseable name
+    // unset so that the fallback still gets used.
+    auto arguments = substituteVarArgumentGrammar(range, context);
+
+    auto inheritedValue = [&]() -> RefPtr<const CustomProperty> {
+        if (!arguments.name)
+            return nullptr;
+
+        // Inside a custom function the parent is the calling context's element, whose custom
+        // properties are resolved lazily, so force this one before reading it. Otherwise the result
+        // would depend on the order the calling element's declarations happen to be applied in.
+        // https://drafts.csswg.org/css-mixins/#evaluating-custom-functions
+        if (auto* callingContextBuilder = m_styleBuilder.state().callingContextBuilder())
+            callingContextBuilder->applyCustomProperty(*arguments.name);
+
+        // The property read may be one that does not itself inherit, so a change to the parent's
+        // non-inherited properties has to re-resolve this element. Set this even when the fallback
+        // ends up being used, since the parent gaining the property later flips that choice.
+        protect(m_styleBuilder.state().style())->setHasExplicitlyInheritedProperties();
+
+        return protect(m_styleBuilder.state().parentStyle())->customPropertyValue(*arguments.name);
+    }();
+
+    auto startIndex = tokens.size();
+
+    if (inheritedValue && !inheritedValue->isGuaranteedInvalid()) {
+        if (inheritedValue->tokens().size() > maxSubstitutionTokens)
+            return false;
+
+        // https://drafts.csswg.org/css-values-5/#attr-security
+        // Propagate attr()-taint through inherit() references.
+        propagateAttrTaint(inheritedValue->isAttrTainted(), inheritedValue->tokens());
+
+        tokens.appendVector(inheritedValue->tokens());
+    } else if (arguments.fallbackRange) {
+        auto fallbackTokens = substituteTokenRange(*arguments.fallbackRange, context);
+        if (!fallbackTokens || fallbackTokens->size() > maxSubstitutionTokens)
+            return false;
+
+        tokens.appendVector(*fallbackTokens);
+    } else
+        return false;
+
+    // https://drafts.csswg.org/css-values-5/#attr-security
+    // A name argument resolved from attr()-tainted values taints the whole substitution value.
+    propagateAttrTaint(arguments.isNameAttrTainted, std::span(tokens).subspan(startIndex));
+
+    return true;
+}
+
 // https://drafts.csswg.org/css-mixins/#evaluate-a-custom-function
 // Registers each parameter with its type, resolves argument styles, then updates registrations
 // to universal syntax with resolved values as initial values.
@@ -1154,6 +1209,11 @@ std::optional<Vector<CSSParserToken>> SubstitutionResolver::substituteTokenRange
             }
             if (functionId == CSSValueEnv) {
                 if (!substituteEnvFunction(range.consumeBlock(), tokens, context))
+                    success = false;
+                continue;
+            }
+            if (functionId == CSSValueInherit && context.cssInheritFunctionEnabled) {
+                if (!substituteInheritFunction(range.consumeBlock(), tokens, context))
                     success = false;
                 continue;
             }

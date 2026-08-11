@@ -61,6 +61,11 @@ public:
 
     const CSSVariableData& data() const { return m_data.get(); }
 
+    // https://drafts.csswg.org/css-values-5/#funcdef-inherit
+    // inherit() reads a value from the parent that may be a property which does not itself inherit,
+    // so the cascade has to know a declaration contains one before deciding whether to re-apply it.
+    bool containsInheritFunction() const { return m_containsInheritFunction; }
+
 private:
     friend class Style::SubstitutionResolver;
 
@@ -78,6 +83,8 @@ private:
         CSSValueID functionId;
     };
     std::optional<SimpleReference> m_simpleReference;
+
+    bool m_containsInheritFunction { false };
 
     struct Cache {
         // For var() case: cache key is the substituted data pointer.

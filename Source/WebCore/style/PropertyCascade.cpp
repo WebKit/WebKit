@@ -29,6 +29,8 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSKeywordValueInlines.h"
 #include "CSSPaintImageValue.h"
+#include "CSSShorthandSubstitutionValue.h"
+#include "CSSSubstitutionValue.h"
 #include "CSSValuePool.h"
 #include "ComputedStyleDependencies.h"
 #include "PaintWorkletGlobalScope.h"
@@ -263,6 +265,28 @@ const PropertyCascade::Property* PropertyCascade::lastPropertyResolvingLogicalPr
     return nullptr;
 }
 
+// inherit() reads a value from the parent that may be a custom property which does not itself
+// inherit, so like the inherit keyword it has to be re-applied when the parent's non-inherited
+// style changes. https://drafts.csswg.org/css-values-5/#funcdef-inherit
+static bool explicitlyInheritsFromParent(const CSSValue& value)
+{
+    if (isValueID(value, CSSValueInherit))
+        return true;
+    if (RefPtr shorthandValue = dynamicDowncast<CSSShorthandSubstitutionValue>(value))
+        return shorthandValue->shorthandValue().containsInheritFunction();
+    if (RefPtr substitutionValue = dynamicDowncast<CSSSubstitutionValue>(value))
+        return substitutionValue->containsInheritFunction();
+    if (RefPtr customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(value)) {
+        return WTF::switchOn(customPropertyValue->value(),
+            [](const Ref<CSSSubstitutionValue>& substitution) { return substitution->containsInheritFunction(); },
+            [](const Ref<CSSVariableData>&) { return false; },
+            [](CSSWideKeyword keyword) {
+                return keyword == CSSWideKeyword::Inherit;
+            });
+    }
+    return false;
+}
+
 bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Origin origin, IsImportant important)
 {
     auto includePropertiesForRollback = [&] {
@@ -329,8 +353,11 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Origi
             bool currentIsInherited = CSSProperty::isInheritedProperty(current.id());
             if (m_includedProperties.types.contains(PropertyType::Inherited) && currentIsInherited)
                 return true;
-            if (m_includedProperties.types.contains(PropertyType::ExplicitlyInherited) && isValueID(*current.value(), CSSValueInherit))
-                return true;
+            if (m_includedProperties.types.contains(PropertyType::ExplicitlyInherited)) {
+                RefPtr value = current.value();
+                if (explicitlyInheritsFromParent(*value))
+                    return true;
+            }
             if (m_includedProperties.types.contains(PropertyType::NonInherited) && !currentIsInherited)
                 return true;
 

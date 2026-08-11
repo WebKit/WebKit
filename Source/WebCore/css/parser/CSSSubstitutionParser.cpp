@@ -136,6 +136,13 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
                 result.hasSubstitutionFunctions = true;
                 continue;
             }
+            if (token.functionId() == CSSValueInherit && parserContext.cssInheritFunctionEnabled) {
+                // <inherit-args> is the same argument grammar as var()'s.
+                if (!isValidVariableReference(block, parserContext))
+                    return { };
+                result.hasSubstitutionFunctions = true;
+                continue;
+            }
             if (token.functionId() == CSSValueAttr && parserContext.cssAttrSubstitutionFunctionEnabled) {
                 if (!isValidAttrReference(block, parserContext))
                     return { };

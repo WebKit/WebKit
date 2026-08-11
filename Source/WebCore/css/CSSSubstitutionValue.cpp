@@ -35,10 +35,24 @@
 
 namespace WebCore {
 
+// The tokens are flat, including nested ones, and functionId() is CSSValueInvalid for anything that
+// is not a function token, so a linear scan finds inherit() at any depth.
+static bool containsInheritFunctionToken(const CSSVariableData& data)
+{
+    if (!data.context().cssInheritFunctionEnabled)
+        return false;
+    for (auto& token : data.tokens()) {
+        if (token.functionId() == CSSValueInherit)
+            return true;
+    }
+    return false;
+}
+
 CSSSubstitutionValue::CSSSubstitutionValue(Ref<CSSVariableData>&& data, const CSSNamespacePrefixMap& namespacePrefixMap)
     : CSSValue(ClassType::Substitution)
     , m_data(WTF::move(data))
     , m_namespacePrefixMap(namespacePrefixMap)
+    , m_containsInheritFunction(containsInheritFunctionToken(m_data))
 {
     cacheSimpleReference();
 }
