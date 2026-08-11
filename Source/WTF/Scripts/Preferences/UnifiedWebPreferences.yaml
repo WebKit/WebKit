@@ -1317,7 +1317,7 @@ CSSFunctionAtRuleEnabled:
 
 CSSIdentFunctionEnabled:
   type: bool
-  status: testable
+  status: preview
   category: css
   humanReadableName: "CSS ident() function"
   humanReadableDescription: "Enable the CSS Values 5 ident() function"

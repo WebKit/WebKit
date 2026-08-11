@@ -1,0 +1,13 @@
+ident() rejects an identifier past the length WebKit allows. There is no specified limit, so this is a WebKit implementation detail: ident() collapses its argument into a single token, which means the substitution token limit no longer bounds the length and nesting would multiply it at every level.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS identLength(`--result: ident("${repeated(1024)}")`) is 1024
+PASS identLength(`--result: ident("${repeated(1025)}")`) is 0
+PASS identLength(`--a: ident("${repeated(100)}"); --result: var(--a)`) is 100
+PASS identLength(`--a: ident("${repeated(100)}"); --result: ident(${"var(--a) ".repeat(100)})`) is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

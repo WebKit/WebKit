@@ -33,6 +33,8 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+IntegerDefinitions.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserState.h"
 #include "CSSRandomKeyParser.h"
@@ -75,6 +77,10 @@ namespace Style {
 // The maximum number of tokens that may be produced by a substitution function reference or fallback value.
 // https://drafts.csswg.org/css-variables/#long-variables
 static constexpr size_t maxSubstitutionTokens = 65536;
+
+// ident() collapses its argument into one token, so maxSubstitutionTokens does not bound its length.
+// https://drafts.csswg.org/css-values-5/#long-substitution
+static constexpr size_t maxIdentFunctionLength = 1024;
 
 static bool containsURLTokens(std::span<const CSSParserToken> tokens)
 {
@@ -892,6 +898,55 @@ auto SubstitutionResolver::substituteRandomItemArgumentGrammar(CSSParserTokenRan
     return RandomItemArgumentGrammarSubstitution { WTF::move(*substitutedRandomKey), WTF::move(items) };
 }
 
+bool SubstitutionResolver::substituteIdentFunction(CSSParserTokenRange range, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
+{
+    // https://drafts.csswg.org/css-values-5/#ident
+    // <ident-args> = ident( <declaration-value> )
+    // ident() = ident( <ident-arg>+ ), <ident-arg> = <string> | <integer> | <ident>
+    // The argument is substituted first, then parsed as <ident-arg>+. The parts are concatenated with
+    // no separator, so ident("--" attr(id)) makes a <dashed-ident> out of an attribute value.
+
+    auto substitutedArgument = substituteTokenRange(unwrapArgumentBraces(range), context);
+    if (!substitutedArgument)
+        return false;
+
+    // https://drafts.csswg.org/css-variables/#long-variables
+    if (substitutedArgument->size() > maxSubstitutionTokens)
+        return false;
+
+    StringBuilder builder;
+    auto parserState = CSS::PropertyParserState { .context = context, .currentProperty = m_styleBuilder.state().cssPropertyID() };
+
+    auto argumentRange = CSSParserTokenRange { *substitutedArgument };
+    argumentRange.consumeWhitespace();
+    while (!argumentRange.atEnd()) {
+        auto tokenType = argumentRange.peek().type();
+        if (tokenType == IdentToken || tokenType == StringToken) {
+            auto part = argumentRange.consumeIncludingWhitespace().value();
+            if (builder.length() + part.length() > maxIdentFunctionLength)
+                return false;
+            builder.append(part);
+            continue;
+        }
+
+        // <integer> covers math functions too, so ident("--prop" calc(1 + 2)) names --prop3.
+        auto integer = CSSPropertyParserHelpers::MetaConsumer<CSS::Integer<>>::consume(argumentRange, parserState);
+        if (!integer)
+            return false;
+        builder.append(toStyle(*integer, m_styleBuilder.state()).value);
+        if (builder.length() > maxIdentFunctionLength)
+            return false;
+    }
+
+    // <ident-arg>+ is one or more arguments, and an empty identifier is not one.
+    if (builder.isEmpty())
+        return false;
+
+    m_intermediateTokenStrings.append(builder.toString());
+    tokens.append(CSSParserToken(IdentToken, StringView { m_intermediateTokenStrings.last() }));
+    return true;
+}
+
 bool SubstitutionResolver::substituteRandomItemFunction(CSSParserTokenRange range, Vector<CSSParserToken>& tokens, const CSSParserContext& context)
 {
     // https://drafts.csswg.org/css-values-5/#funcdef-random-item
@@ -1127,6 +1182,11 @@ std::optional<Vector<CSSParserToken>> SubstitutionResolver::substituteTokenRange
             }
             if (functionId == CSSValueRandomItem) {
                 if (!substituteRandomItemFunction(range.consumeBlock(), tokens, context))
+                    success = false;
+                continue;
+            }
+            if (functionId == CSSValueIdent) {
+                if (!substituteIdentFunction(range.consumeBlock(), tokens, context))
                     success = false;
                 continue;
             }

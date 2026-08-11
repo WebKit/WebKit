@@ -67,6 +67,7 @@ static bool isValidDashedFunction(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidAttrReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidRandomItemReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidIfReference(CSSParserTokenRange, const CSSParserContext&);
+static bool isValidIdentReference(CSSParserTokenRange, const CSSParserContext&);
 
 struct ClassifyBlockResult {
     bool hasSubstitutionFunctions { false };
@@ -149,6 +150,12 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
             }
             if (token.functionId() == CSSValueIf && parserContext.cssIfFunctionEnabled) {
                 if (!isValidIfReference(block, parserContext))
+                    return { };
+                result.hasSubstitutionFunctions = true;
+                continue;
+            }
+            if (token.functionId() == CSSValueIdent && parserContext.cssIdentFunctionEnabled) {
+                if (!isValidIdentReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
@@ -371,6 +378,24 @@ bool isValidIfReference(CSSParserTokenRange range, const CSSParserContext& parse
             return false;
     }
     return true;
+}
+
+// https://drafts.csswg.org/css-values-5/#ident
+// <ident-args> = ident( <declaration-value> )
+// Validate using the argument grammar. Parsing the argument as <ident-arg>+ and building the
+// identifier happen at substitution time.
+bool isValidIdentReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+{
+    range.consumeWhitespace();
+
+    // ident() takes a single argument, so a top-level comma cannot match its grammar.
+    auto argumentStart = range;
+    while (!range.atEnd() && range.peek().type() != CommaToken)
+        range.consumeComponentValue();
+    if (!range.atEnd())
+        return false;
+
+    return isValidDeclarationValueArgument(argumentStart.rangeUntil(range), parserContext, /* allowEmpty */ false);
 }
 
 struct VariableType {
