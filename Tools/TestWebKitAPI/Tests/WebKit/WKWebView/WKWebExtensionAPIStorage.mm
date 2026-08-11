@@ -103,9 +103,6 @@ TEST(WKWebExtensionAPIStorage, Errors)
 TEST(WKWebExtensionAPIStorage, UndefinedProperties)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.assertEq(browser?.storage?.local?.setAccessLevel, undefined)",
-        @"browser.test.assertEq(browser?.storage?.sync?.setAccessLevel, undefined)",
-
         @"browser.test.assertEq(browser?.storage?.local?.QUOTA_BYTES_PER_ITEM, undefined)",
         @"browser.test.assertEq(browser?.storage?.session?.QUOTA_BYTES_PER_ITEM, undefined)",
 
@@ -138,9 +135,14 @@ TEST(WKWebExtensionAPIStorage, SetAccessLevelTrustedContexts)
         @"  const tabId = tabs[0].id",
 
         @"  await browser?.storage?.session?.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' })",
+        @"  await browser.storage.local.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' })",
+        @"  await browser.storage.sync.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' })",
 
         @"  const response = await browser.test.assertSafeResolve(() => browser?.tabs?.sendMessage(tabId, { content: 'Access level set' }))",
-        @"  browser.test.assertEq(response?.content, undefined)",
+        @"  browser.test.assertEq(response.session, undefined)",
+        @"  browser.test.assertEq(response.local, undefined)",
+        @"  browser.test.assertEq(response.sync, undefined)",
+
 
         @"  browser.test.notifyPass()",
         @"})",
@@ -152,7 +154,7 @@ TEST(WKWebExtensionAPIStorage, SetAccessLevelTrustedContexts)
         @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
         @"  browser.test.assertEq(message?.content, 'Access level set', 'Should receive the correct message content')",
 
-        @"  sendResponse({ content: browser?.storage?.session })",
+        @"  sendResponse({ session: browser.storage.session, local: browser.storage.local, sync: browser.storage.sync  })",
         @"})",
 
         @"browser.runtime.sendMessage('Ready')"
@@ -214,6 +216,104 @@ TEST(WKWebExtensionAPIStorage, SetAccessLevelTrustedAndUntrustedContexts)
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
+}
+
+TEST(WKWebExtensionAPIStorage, DefaultAccessLevels)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'Ready')",
+
+        @"  const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"  const tabId = tabs[0].id",
+
+        @"  const response = await browser.test.assertSafeResolve(() => browser.tabs.sendMessage(tabId, { content: 'Report access' }))",
+        @"  browser.test.assertEq(response.local, 'object', 'Local storage should be available to content scripts by default')",
+        @"  browser.test.assertEq(response.sync, 'object', 'Sync storage should be available to content scripts by default')",
+        @"  browser.test.assertEq(response.session, 'undefined', 'Session storage should not be available to content scripts by default')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message.content, 'Report access', 'Should receive the correct message content')",
+
+        @"  sendResponse({ local: typeof browser.storage.local, sync: typeof browser.storage?.sync, session: typeof browser.storage.session })",
+        @"})",
+
+        @"browser.runtime.sendMessage('Ready')"
+    ]);
+
+    auto manager = Util::loadExtension(storageManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIStorage, MigratesLegacySessionStorageAllowedInUntrusedContextsState)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message.session, 'object', 'The legacy session storage opt-in should have been migrated')",
+        @"  browser.test.sendMessage('Content script reported')",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.sendMessage({ session: typeof browser.storage.session })"
+    ]);
+
+    auto manager = Util::parseExtension(storageManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript }, WKWebExtensionControllerConfiguration._temporaryConfiguration);
+
+    // Give the extension a unique identifier so it opts into saving state in the temporary configuration.
+    manager.get().context.uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    auto *storageDirectory = [manager.get().controller.configuration._storageDirectoryPath stringByAppendingPathComponent:manager.get().context.uniqueIdentifier];
+    EXPECT_TRUE([NSFileManager.defaultManager createDirectoryAtPath:storageDirectory withIntermediateDirectories:YES attributes:nil error:nullptr]);
+
+    auto *stateFileURL = [NSURL fileURLWithPath:[storageDirectory stringByAppendingPathComponent:@"State.plist"]];
+    EXPECT_TRUE([@{ @"SessionStorageAllowedInContentScripts": @YES } writeToURL:stateFileURL error:nullptr]);
+
+    [manager load];
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    [manager runUntilTestMessage:@"Content script reported"];
+
+    // The migration should have rewritten the state with the new key.
+    auto *savedState = [NSDictionary dictionaryWithContentsOfURL:stateFileURL];
+    EXPECT_NULL(savedState[@"SessionStorageAllowedInContentScripts"]);
+    EXPECT_NS_EQUAL(savedState[@"StorageAccessLevels"], @{ @"session": @"TRUSTED_AND_UNTRUSTED_CONTEXTS" });
+
+    [manager unload];
+    [manager load];
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+    [manager runUntilTestMessage:@"Content script reported"];
 }
 
 TEST(WKWebExtensionAPIStorage, Set)

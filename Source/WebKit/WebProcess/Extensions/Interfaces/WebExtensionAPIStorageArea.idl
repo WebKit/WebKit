@@ -36,7 +36,7 @@
     [RaisesException] void remove([NSObject] any keys, [Optional, CallbackHandler] function callback);
     void clear([Optional, CallbackHandler] function callback);
 
-    [RaisesException, Dynamic, MainWorldOnly] void setAccessLevel([NSDictionary] any accessOptions, [Optional, CallbackHandler] function callback);
+    [RaisesException, Dynamic] void setAccessLevel([NSDictionary] any accessOptions, [Optional, CallbackHandler] function callback);
 
     readonly attribute WebExtensionAPIEvent onChanged;
 

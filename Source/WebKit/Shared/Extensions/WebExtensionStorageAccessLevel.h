@@ -27,6 +27,8 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "WebExtensionDataType.h"
+#include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -35,6 +37,59 @@ enum class WebExtensionStorageAccessLevel : uint8_t {
     TrustedContexts,
     TrustedAndUntrustedContexts,
 };
+
+using WebExtensionStorageAccessLevelMap = HashMap<WebExtensionDataType, WebExtensionStorageAccessLevel>;
+
+inline WebExtensionStorageAccessLevel defaultStorageAccessLevel(WebExtensionDataType dataType)
+{
+    switch (dataType) {
+    case WebExtensionDataType::Local:
+    case WebExtensionDataType::Sync:
+        return WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts;
+    case WebExtensionDataType::Session:
+        return WebExtensionStorageAccessLevel::TrustedContexts;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebExtensionStorageAccessLevel::TrustedContexts;
+}
+
+inline WebExtensionStorageAccessLevel storageAccessLevel(const WebExtensionStorageAccessLevelMap& accessLevels, WebExtensionDataType dataType)
+{
+    return accessLevels.getOptional(dataType).value_or(defaultStorageAccessLevel(dataType));
+}
+
+inline bool isStorageTypeAllowedInUntrustedContexts(const WebExtensionStorageAccessLevelMap& accessLevels, WebExtensionDataType dataType)
+{
+    return storageAccessLevel(accessLevels, dataType) == WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts;
+}
+
+inline String toAPIString(WebExtensionStorageAccessLevel accessLevel)
+{
+    switch (accessLevel) {
+    case WebExtensionStorageAccessLevel::TrustedContexts:
+        return "TRUSTED_CONTEXTS"_s;
+    case WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts:
+        return "TRUSTED_AND_UNTRUSTED_CONTEXTS"_s;
+    }
+
+    ASSERT_NOT_REACHED();
+    return emptyString();
+}
+
+inline std::optional<WebExtensionStorageAccessLevel> toWebExtensionStorageAccessLevel(const String& accessLevelString)
+{
+    if (accessLevelString == "TRUSTED_CONTEXTS"_s)
+        return WebExtensionStorageAccessLevel::TrustedContexts;
+    if (accessLevelString == "TRUSTED_AND_UNTRUSTED_CONTEXTS"_s)
+        return WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts;
+
+    // An empty string means no access level was saved for the data type, which is expected.
+    // In this case, we fallback to the default value. Anything else implies an invalid accessLevel.
+    ASSERT(accessLevelString.isEmpty());
+
+    return std::nullopt;
+}
 
 } // namespace WebKit
 

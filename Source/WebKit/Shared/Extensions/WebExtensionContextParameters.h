@@ -30,6 +30,7 @@
 #include "APIData.h"
 #include "WebExtensionContext.h"
 #include "WebExtensionContextIdentifier.h"
+#include "WebExtensionStorageAccessLevel.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebExtensionWindowIdentifier.h"
 #include <pal/SessionID.h>
@@ -51,7 +52,8 @@ struct WebExtensionContextParameters {
     RefPtr<API::Data> manifestJSON;
 
     double manifestVersion { 0 };
-    bool isSessionStorageAllowedInContentScripts { false };
+
+    WebExtensionStorageAccessLevelMap storageAccessLevels;
 
     PAL::SessionID defaultSessionID;
 

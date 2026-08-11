@@ -186,9 +186,9 @@ void WebExtensionContextProxy::addTabPageIdentifier(WebCore::PageIdentifier page
         addTabPage(*page, tabIdentifier, windowIdentifier);
 }
 
-void WebExtensionContextProxy::setStorageAccessLevel(bool allowedInContentScripts)
+void WebExtensionContextProxy::setStorageAccessLevel(WebExtensionDataType dataType, WebExtensionStorageAccessLevel accessLevel)
 {
-    m_isSessionStorageAllowedInContentScripts = allowedInContentScripts;
+    m_storageAccessLevels.set(dataType, accessLevel);
 }
 
 void WebExtensionContextProxy::setContentScriptWorld(WebCore::DOMWrapperWorld& world)

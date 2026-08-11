@@ -209,7 +209,7 @@ void WebExtensionContext::storageClear(WebPageProxyIdentifier webPageProxyIdenti
 
 void WebExtensionContext::storageSetAccessLevel(WebPageProxyIdentifier webPageProxyIdentifier, WebExtensionDataType dataType, const WebExtensionStorageAccessLevel accessLevel, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)
 {
-    setSessionStorageAllowedInContentScripts(accessLevel == WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts);
+    setStorageAccessLevel(dataType, accessLevel);
 
     completionHandler({ });
 }
@@ -273,7 +273,8 @@ void WebExtensionContext::fireStorageChangedEventIfNeeded(HashMap<String, String
         WorkQueue::mainSingleton().dispatch([this, protectedThis = Ref { *this }, serializedJSONStrings = crossThreadCopy(WTF::move(serializedJSONStrings)), dataType]() mutable {
             // Unlike other extension events which are only dispatched to the web process that hosts all the extension-related web views (background page, popup, full page extension content),
             // content scripts are allowed to listen to storage.onChanged events.
-            sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(serializedJSONStrings, dataType, WebExtensionContentWorldType::ContentScript));
+            if (isStorageAllowedInUntrustedContexts(dataType))
+                sendToContentScriptProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(serializedJSONStrings, dataType, WebExtensionContentWorldType::ContentScript));
 
             wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
                 sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchStorageChangedEvent(serializedJSONStrings, dataType, WebExtensionContentWorldType::Main));

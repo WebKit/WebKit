@@ -1685,7 +1685,7 @@ WebExtensionContextParameters WebExtensionContext::parameters(IncludePrivilegedI
         extension->serializeLocalization(),
         extension->serializeManifest(),
         extension->manifestVersion(),
-        isSessionStorageAllowedInContentScripts(),
+        m_storageAccessLevels,
         extensionController()->configuration().defaultWebsiteDataStore().sessionID(),
         backgroundPageIdentifier(),
 #if ENABLE(INSPECTOR_EXTENSIONS)

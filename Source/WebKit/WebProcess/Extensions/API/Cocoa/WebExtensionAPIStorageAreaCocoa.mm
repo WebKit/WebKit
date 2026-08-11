@@ -59,7 +59,7 @@ bool WebExtensionAPIStorageArea::isPropertyAllowed(const ASCIILiteral& propertyN
         return m_type == WebExtensionDataType::Sync;
 
     if (propertyName == "setAccessLevel"_s)
-        return m_type == WebExtensionDataType::Session;
+        return isForTrustedContext();
 
     ASSERT_NOT_REACHED();
     return false;

@@ -36,7 +36,8 @@ struct WebKit::WebExtensionContextParameters {
     RefPtr<API::Data> manifestJSON;
 
     double manifestVersion;
-    bool isSessionStorageAllowedInContentScripts;
+
+    HashMap<WebKit::WebExtensionDataType, WebKit::WebExtensionStorageAccessLevel> storageAccessLevels;
 
     PAL::SessionID defaultSessionID;
 

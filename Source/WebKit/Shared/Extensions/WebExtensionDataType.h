@@ -39,6 +39,15 @@ enum class WebExtensionDataType : uint8_t {
     Sync    = 1 << 2,
 };
 
+static constexpr OptionSet<WebExtensionDataType> allWebExtensionDataTypes()
+{
+    return {
+        WebExtensionDataType::Local,
+        WebExtensionDataType::Session,
+        WebExtensionDataType::Sync
+    };
+}
+
 inline String toAPIString(WebExtensionDataType dataType)
 {
     switch (dataType) {
@@ -52,6 +61,19 @@ inline String toAPIString(WebExtensionDataType dataType)
 
     ASSERT_NOT_REACHED();
     return { };
+}
+
+inline WebExtensionDataType toWebExtensionDataType(const String& storageAreaName)
+{
+    if (storageAreaName == "local"_s)
+        return WebExtensionDataType::Local;
+    if (storageAreaName == "session"_s)
+        return WebExtensionDataType::Session;
+    if (storageAreaName == "sync"_s)
+        return WebExtensionDataType::Sync;
+
+    ASSERT_NOT_REACHED();
+    return WebExtensionDataType::Local;
 }
 
 } // namespace WebKit

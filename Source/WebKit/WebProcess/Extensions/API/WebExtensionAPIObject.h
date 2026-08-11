@@ -72,6 +72,10 @@ public:
     virtual ~WebExtensionAPIObject() = default;
 
     bool isForMainWorld() const { return m_contentWorldType == WebExtensionContentWorldType::Main; }
+
+    // Returns true for devtools pages.
+    bool isForTrustedContext() const { return isEqual(m_contentWorldType, WebExtensionContentWorldType::Main); }
+
     WebExtensionContentWorldType contentWorldType() const { return m_contentWorldType; }
 
     virtual WebExtensionAPIRuntimeBase& runtime() const { return *m_runtime; }

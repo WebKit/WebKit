@@ -120,7 +120,9 @@ static NSString * const lastSeenVersionStateKey = @"LastSeenVersion";
 static NSString * const lastSeenDisplayNameStateKey = @"LastSeenDisplayName";
 static NSString * const lastLoadedDeclarativeNetRequestHashStateKey = @"LastLoadedDeclarativeNetRequestHash";
 
+// Read-only, legacy key. Use storageAccessLevelsKey instead.
 static NSString * const sessionStorageAllowedInContentScriptsKey = @"SessionStorageAllowedInContentScripts";
+static NSString * const storageAccessLevelsKey = @"StorageAccessLevels";
 
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
 static constexpr NSInteger currentBackgroundContentListenerStateVersion = 4;
@@ -293,7 +295,7 @@ Expected<bool, RefPtr<API::Error>> WebExtensionContext::load(WebExtensionControl
     if (RetainPtr displayName = protect(m_extension)->displayName().createNSString())
         [m_state setObject:displayName.get() forKey:lastSeenDisplayNameStateKey];
 
-    m_isSessionStorageAllowedInContentScripts = boolForKey(m_state.get(), sessionStorageAllowedInContentScriptsKey, false);
+    loadStorageAccessLevelsFromStorage();
 
     determineInstallReasonDuringLoad();
 
@@ -574,6 +576,7 @@ void WebExtensionContext::invalidateStorage()
     m_localStorageStore = nullptr;
     m_sessionStorageStore = nullptr;
     m_syncStorageStore = nullptr;
+    m_storageAccessLevels.clear();
 }
 
 void WebExtensionContext::setInspectable(bool inspectable)
@@ -3481,19 +3484,54 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
     });
 }
 
-void WebExtensionContext::setSessionStorageAllowedInContentScripts(bool allowed)
+void WebExtensionContext::loadStorageAccessLevelsFromStorage()
 {
-    m_isSessionStorageAllowedInContentScripts = allowed;
+    auto *savedLevels = objectForKey<NSDictionary>(m_state.get(), storageAccessLevelsKey);
+    bool legacySessionStorageAllowed = boolForKey(m_state.get(), sessionStorageAllowedInContentScriptsKey, false);
 
-    [m_state setObject:@(allowed) forKey:sessionStorageAllowedInContentScriptsKey];
+    // Remove the legacy key.
+    [m_state removeObjectForKey:sessionStorageAllowedInContentScriptsKey];
 
+    if (savedLevels) {
+        for (auto dataType : allWebExtensionDataTypes()) {
+            auto *accessLevelString = objectForKey<NSString>(savedLevels, toAPIString(dataType).createNSString().get());
+            if (auto accessLevel = toWebExtensionStorageAccessLevel(String { accessLevelString }))
+                m_storageAccessLevels.set(dataType, *accessLevel);
+        }
+
+        return;
+    }
+
+    // Migrate the existing value.
+    if (legacySessionStorageAllowed) {
+        m_storageAccessLevels.set(WebExtensionDataType::Session, WebExtensionStorageAccessLevel::TrustedAndUntrustedContexts);
+
+        saveStorageAccessLevelsToStorage();
+    }
+}
+
+void WebExtensionContext::saveStorageAccessLevelsToStorage()
+{
+    auto *savedLevels = [NSMutableDictionary dictionaryWithCapacity:m_storageAccessLevels.size()];
+
+    for (auto [dataType, accessLevel] : m_storageAccessLevels)
+        [savedLevels setObject:toAPIString(accessLevel).createNSString().get() forKey:toAPIString(dataType).createNSString().get()];
+
+    [m_state setObject:savedLevels forKey:storageAccessLevelsKey];
     writeStateToStorage();
+}
+
+void WebExtensionContext::setStorageAccessLevel(WebExtensionDataType dataType, WebExtensionStorageAccessLevel accessLevel)
+{
+    m_storageAccessLevels.set(dataType, accessLevel);
+
+    saveStorageAccessLevelsToStorage();
 
     if (!isLoaded())
         return;
 
     if (RefPtr extensionController = this->extensionController())
-        extensionController->sendToAllProcesses(Messages::WebExtensionContextProxy::SetStorageAccessLevel(allowed), identifier());
+        extensionController->sendToAllProcesses(Messages::WebExtensionContextProxy::SetStorageAccessLevel(dataType, accessLevel), identifier());
 }
 
 void WebExtensionContext::sendTestMessage(const String& message, id argument)

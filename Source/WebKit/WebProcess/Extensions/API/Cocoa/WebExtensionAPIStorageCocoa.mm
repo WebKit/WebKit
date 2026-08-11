@@ -37,6 +37,7 @@
 #import "WebExtensionAPIStorageArea.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxy.h"
+#import "WebExtensionDataType.h"
 
 namespace WebKit {
 
@@ -45,11 +46,10 @@ bool WebExtensionAPIStorage::isPropertyAllowed(const ASCIILiteral& propertyName,
     if (protect(extensionContext())->isUnsupportedAPI(propertyPath(), propertyName)) [[unlikely]]
         return false;
 
-    if (propertyName == "session"_s)
-        return extensionContext().isSessionStorageAllowedInContentScripts() || isForMainWorld();
+    if (isForTrustedContext())
+        return true;
 
-    ASSERT_NOT_REACHED();
-    return false;
+    return extensionContext().isStorageAllowedInUntrustedContexts(toWebExtensionDataType(propertyName));
 }
 
 WebExtensionAPIStorageArea& WebExtensionAPIStorage::local()

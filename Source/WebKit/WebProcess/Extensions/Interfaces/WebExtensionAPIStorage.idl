@@ -28,9 +28,9 @@
     ReturnsPromiseWhenCallbackIsOmitted,
 ] interface WebExtensionAPIStorage {
 
-    readonly attribute WebExtensionAPIStorageArea local;
+    [Dynamic] readonly attribute WebExtensionAPIStorageArea local;
     [Dynamic] readonly attribute WebExtensionAPIStorageArea session;
-    readonly attribute WebExtensionAPIStorageArea sync;
+    [Dynamic] readonly attribute WebExtensionAPIStorageArea sync;
 
     readonly attribute WebExtensionAPIEvent onChanged;
 };

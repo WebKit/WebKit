@@ -81,7 +81,7 @@ messages -> WebExtensionContextProxy {
     DispatchRuntimeStartupEvent()
 
     // Storage
-    SetStorageAccessLevel(bool allowedInContentScripts)
+    SetStorageAccessLevel(WebKit::WebExtensionDataType dataType, enum:uint8_t WebKit::WebExtensionStorageAccessLevel accessLevel)
     DispatchStorageChangedEvent(Vector<String> onChangedJSON, WebKit::WebExtensionDataType dataType, WebKit::WebExtensionContentWorldType contentWorldType)
 
     // Tabs Events

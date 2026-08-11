@@ -52,7 +52,7 @@ public:
 
     double NODELETE quotaBytes();
 
-    // Exposed only by storage.session.
+    // Only exposed to trusted contexts.
     void setAccessLevel(WebPageProxyIdentifier, NSDictionary *, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     // Exposed only by storage.sync.

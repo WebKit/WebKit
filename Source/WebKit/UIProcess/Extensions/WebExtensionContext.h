@@ -705,6 +705,9 @@ private:
     NSDictionary *readStateFromStorage();
     void writeStateToStorage() const;
 
+    void loadStorageAccessLevelsFromStorage();
+    void saveStorageAccessLevelsToStorage();
+
     void determineInstallReasonDuringLoad();
     void moveLocalStorageIfNeeded(const URL& previousBaseURL, CompletionHandler<void()>&&);
     void removeStaleExtensionWebsiteData();
@@ -812,8 +815,9 @@ private:
     Ref<WebExtensionRegisteredScriptsSQLiteStore> registeredContentScriptsStore();
 
     // Storage
-    void setSessionStorageAllowedInContentScripts(bool);
-    bool isSessionStorageAllowedInContentScripts() const { return m_isSessionStorageAllowedInContentScripts; }
+    void setStorageAccessLevel(WebExtensionDataType, WebExtensionStorageAccessLevel);
+    WebExtensionStorageAccessLevel storageAccessLevel(WebExtensionDataType dataType) const { return WebKit::storageAccessLevel(m_storageAccessLevels, dataType); }
+    bool isStorageAllowedInUntrustedContexts(WebExtensionDataType dataType) const { return isStorageTypeAllowedInUntrustedContexts(m_storageAccessLevels, dataType); }
     size_t quotaForStorageType(WebExtensionDataType);
 
     Ref<WebExtensionStorageSQLiteStore> localStorageStore();
@@ -1189,7 +1193,7 @@ private:
     MenuItemMap m_menuItems;
     MenuItemVector m_mainMenuItems;
 
-    bool m_isSessionStorageAllowedInContentScripts { false };
+    WebExtensionStorageAccessLevelMap m_storageAccessLevels;
 
     RefPtr<WebExtensionStorageSQLiteStore> m_localStorageStore;
     RefPtr<WebExtensionStorageSQLiteStore> m_sessionStorageStore;
