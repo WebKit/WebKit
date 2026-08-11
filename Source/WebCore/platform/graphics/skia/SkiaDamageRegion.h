@@ -89,6 +89,9 @@ public:
     // region along an edge triggers an intersection - this is conservative, but for sure not wrong.
     bool intersects(const SkRect& deviceRect) const { return m_region.intersects(deviceRect.roundOut()); }
 
+    // roundOut() grows the rect, so coverage is under-reported, never over-reported.
+    bool covers(const SkRect& deviceRect) const { return m_region.contains(deviceRect.roundOut()); }
+
     // How to limit one draw to the damage. A draw is split into as many rects as touch it, with no limit,
     // because the parts share a paint and Skia batches them into one op. Clipping is the slow path instead:
     // a clip of more than one rect cannot be a scissor, so it costs a stencil buffer or a mask texture.
@@ -140,6 +143,11 @@ public:
         const auto ctm = canvas.getLocalToDeviceAs3x3();
         SkRect deviceRect;
         ctm.mapRect(&deviceRect, dstRectFull);
+
+        if (covers(deviceRect)) {
+            draw(srcRectFull, dstRectFull);
+            return;
+        }
 
         SkMatrix inverse;
         switch (planDraw(ctm, deviceRect, inverse)) {
