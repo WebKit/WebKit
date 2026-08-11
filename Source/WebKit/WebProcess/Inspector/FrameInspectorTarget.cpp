@@ -30,10 +30,10 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include <WebCore/FrameInspectorController.h>
+#include <WebCore/InspectorIdentifierRegistry.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 
@@ -92,7 +92,11 @@ void FrameInspectorTarget::sendMessageToTargetBackend(const String& message)
 
 String FrameInspectorTarget::toTargetID(WebCore::FrameIdentifier frameID, WebCore::ProcessIdentifier processID)
 {
-    return makeString("frame-"_s, frameID.toUInt64(), '-', processID.toUInt64());
+    // Must match IdentifierRegistry::protocolFrameId(), the source of frame IDs in the Page,
+    // Network, DOM and CSS domains. This used to emit "frame-<frameID>-<processID>" while that
+    // emits "frame-<processID>.<frameID>", so the same frame had two spellings and only the dotted
+    // form round-tripped through parseProtocolFrameId().
+    return Inspector::IdentifierRegistry::protocolFrameId(frameID, processID);
 }
 
 } // namespace WebKit
