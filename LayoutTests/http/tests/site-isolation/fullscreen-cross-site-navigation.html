@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!--
+  A fullscreen frame that navigates itself cross-site is unloaded in another process
+  under site isolation, so neither of the hooks that clear the embedder runs and the
+  <iframe> is left fullscreen and viewport-sized. Expected failure, webkit.org/b/321255.
+  The same test passes with SiteIsolationEnabled=false, which is where this baseline
+  came from.
+-->
+<style>
+  iframe { width: 300px; height: 100px; border: 0; }
+</style>
+<iframe id="frame" allowfullscreen src="http://localhost:8000/site-isolation/resources/fullscreen-navigate-away.html"></iframe>
+<pre id="out"></pre>
+<script>
+function log(message) {
+    document.getElementById("out").textContent += message + "\n";
+}
+
+function fullscreenElementDescription() {
+    return document.fullscreenElement ? document.fullscreenElement.tagName : "null";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("message", async (event) => {
+    if (event.data !== "entered") {
+        log("unexpected message from the frame: " + event.data);
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    log("after enter: fullscreenElement = " + fullscreenElementDescription());
+
+    const frame = document.getElementById("frame");
+    // The navigation commits in another process, so wait for the embedder's own load
+    // event for the replacement document rather than guessing at a delay.
+    const navigated = new Promise((resolve) => frame.addEventListener("load", resolve, { once: true }));
+    frame.contentWindow.postMessage("navigate", "*");
+    await navigated;
+    if (window.testRunner)
+        await testRunner.updatePresentation();
+
+    log("after cross-site self-navigation: fullscreenElement = " + fullscreenElementDescription());
+    const rect = frame.getBoundingClientRect();
+    log("iframe size: " + Math.round(rect.width) + "x" + Math.round(rect.height));
+    log("matches :fullscreen: " + frame.matches(":fullscreen"));
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

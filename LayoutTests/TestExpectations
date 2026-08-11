@@ -7609,6 +7609,7 @@ http/tests/ipc/write-web-archive-frame-ancestry-check.html [ Skip ]
 http/tests/site-isolation/touch-events [ Skip ]
 http/tests/site-isolation/ios [ Skip ]
 http/tests/site-isolation/iframe-dark-mode-print.html [ ImageOnlyFailure ]
+webkit.org/b/321255 http/tests/site-isolation/fullscreen-cross-site-navigation.html [ Failure ]
 
 # CSS syntax
 imported/w3c/web-platform-tests/css/css-scoping/scoped-reference-animation-002.html [ ImageOnlyFailure ]
