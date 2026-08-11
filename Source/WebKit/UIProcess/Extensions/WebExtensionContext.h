@@ -329,6 +329,9 @@ public:
         Popup,
         Sidebar,
         Tab,
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+        Offscreen,
+#endif
     };
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -596,6 +599,12 @@ public:
     URL backgroundContentURL();
 #if PLATFORM(COCOA)
     WKWebView *backgroundWebView() const { return m_backgroundWebView.get(); }
+
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    WKWebView *offscreenWebView() const { return m_offscreenWebView.get(); }
+    bool isOffscreenWebView(WKWebView *webView) const { return webView == m_offscreenWebView; }
+#endif
+
 #endif
     bool safeToLoadBackgroundContent() const { return m_safeToLoadBackgroundContent; }
 
@@ -733,6 +742,11 @@ private:
     void unloadBackgroundWebView();
     void scheduleBackgroundContentToUnload();
     void unloadBackgroundContentIfPossible();
+
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    void unloadOffscreenWebView();
+    void performTasksAfterOffscreenContentLoads();
+#endif
 
     uint64_t loadBackgroundPageListenersVersionNumberFromStorage();
     void loadBackgroundPageListenersFromStorage();
@@ -1121,6 +1135,13 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<WKWebView> m_backgroundWebView;
     Variant<std::monostate, Ref<ProcessThrottlerActivity>, Ref<ProcessActivityGroup>> m_backgroundWebViewActivity;
+
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    RetainPtr<WKWebView> m_offscreenWebView;
+    Variant<std::monostate, Ref<ProcessThrottlerActivity>, Ref<ProcessActivityGroup>> m_offscreenWebViewActivity;
+    Vector<CompletionHandler<void(Expected<void, WebExtensionError>&&)>> m_offscreenDocumentLoadCompletionHandlers;
+#endif
+
     RetainPtr<_WKWebExtensionContextDelegate> m_delegate;
 #elif ENABLE(2022_GLIB_API)
     GWeakPtr<WebKitWebExtensionContext> m_delegate;

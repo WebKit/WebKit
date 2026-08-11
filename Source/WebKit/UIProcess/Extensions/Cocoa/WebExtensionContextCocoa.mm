@@ -173,6 +173,11 @@ static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 6
     extensionContext->didFinishDocumentLoad(webView, navigation);
 }
 
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
+{
+    [self webView:webView didFailNavigation:navigation withError:error];
+}
+
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     RefPtr extensionContext = _webExtensionContext.get();
@@ -344,6 +349,10 @@ Expected<bool, RefPtr<API::Error>> WebExtensionContext::unload()
     writeStateToStorage();
 
     unloadBackgroundWebView();
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    unloadOffscreenWebView();
+#endif
+
     removeInjectedContent();
 
     invalidateStorage();
@@ -2866,10 +2875,16 @@ void WebExtensionContext::reportWebViewConfigurationErrorIfNeeded(const WebExten
 
 bool WebExtensionContext::decidePolicyForNavigationAction(WKWebView *webView, WKNavigationAction *navigationAction)
 {
+#ifndef NDEBUG
+    bool isValidWebView = (webView == m_backgroundWebView);
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    ASSERT(webView == m_backgroundWebView || isInspectorBackgroundPage(webView));
-#else
-    ASSERT(webView == m_backgroundWebView);
+    isValidWebView |= isInspectorBackgroundPage(webView);
+#endif
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    isValidWebView |= isOffscreenWebView(webView);
+#endif
+
+    ASSERT(isValidWebView);
 #endif
 
     NSURL *url = navigationAction.request.URL;
@@ -2881,6 +2896,13 @@ bool WebExtensionContext::decidePolicyForNavigationAction(WKWebView *webView, WK
 
 void WebExtensionContext::didFinishDocumentLoad(WKWebView *webView, WKNavigation *)
 {
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    if (isOffscreenWebView(webView)) {
+        performTasksAfterOffscreenContentLoads();
+        return;
+    }
+#endif
+
     if (webView != m_backgroundWebView)
         return;
 
@@ -2893,6 +2915,13 @@ void WebExtensionContext::didFinishDocumentLoad(WKWebView *webView, WKNavigation
 
 void WebExtensionContext::didFailNavigation(WKWebView *webView, WKNavigation *, RefPtr<API::Error> error)
 {
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    if (isOffscreenWebView(webView)) {
+        unloadOffscreenWebView();
+        return;
+    }
+#endif
+
     if (webView != m_backgroundWebView)
         return;
 
@@ -2916,6 +2945,13 @@ void WebExtensionContext::webViewWebContentProcessDidTerminate(WKWebView *webVie
 #if ENABLE(INSPECTOR_EXTENSIONS)
     if (isInspectorBackgroundPage(webView)) {
         [webView loadRequest:[NSURLRequest requestWithURL:inspectorBackgroundPageURL().createNSURL().get()]];
+        return;
+    }
+#endif
+
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    if (isOffscreenWebView(webView)) {
+        unloadOffscreenWebView();
         return;
     }
 #endif

@@ -44,6 +44,7 @@ static auto *offscreenManifest = @{
     @"permissions": @[ @"offscreen" ],
     @"background": @{
         @"service_worker": @"background.js",
+        @"type": @"module"
     },
 };
 
@@ -56,6 +57,7 @@ static auto *noOffscreenManifest = @{
     @"permissions": @[],
     @"background": @{
         @"service_worker": @"background.js",
+        @"type": @"module"
     },
 };
 
@@ -154,6 +156,120 @@ TEST_F(WKWebExtensionAPIOffscreen, OffscreenCreateDocumentArgumentValidation)
     ];
 
     Util::loadAndRunExtension(offscreenManifest, @{ @"background.js": Util::constructScript(script) }, offscreenConfig);
+}
+
+TEST_F(WKWebExtensionAPIOffscreen, CreateAndHasDocument)
+{
+    auto *script = @[
+        @"browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' }).then(async () => {",
+        @"  browser.test.assertTrue(await browser.offscreen.hasDocument())",
+        @"  browser.test.notifyPass()",
+        @"})",
+    ];
+
+    Util::loadAndRunExtension(offscreenManifest, @{
+        @"background.js": Util::constructScript(script),
+        @"offscreen.html": @"<!DOCTYPE html><html></html>",
+    }, offscreenConfig);
+}
+
+TEST_F(WKWebExtensionAPIOffscreen, CreateDocumentFails)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' }), /Offscreen document was closed/)",
+        @"browser.test.assertFalse(await browser.offscreen.hasDocument())",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(offscreenManifest, @{ @"background.js": Util::constructScript(script) }, offscreenConfig);
+}
+
+TEST_F(WKWebExtensionAPIOffscreen, CreateDocumentTwiceFails)
+{
+    auto *script = @[
+        @"await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
+        @"await browser.test.assertRejects(browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' }), /Only a single offscreen document/)",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(offscreenManifest, @{
+        @"background.js": Util::constructScript(script),
+        @"offscreen.html": @"<!DOCTYPE html><html></html>",
+    }, offscreenConfig);
+}
+
+TEST_F(WKWebExtensionAPIOffscreen, CloseDocument)
+{
+    auto *script = @[
+        @"await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
+        @"browser.test.assertTrue(await browser.offscreen.hasDocument())",
+        @"await browser.offscreen.closeDocument()",
+        @"browser.test.assertFalse(await browser.offscreen.hasDocument())",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(offscreenManifest, @{
+        @"background.js": Util::constructScript(script),
+        @"offscreen.html": @"<!DOCTYPE html><html></html>",
+    }, offscreenConfig);
+}
+
+TEST_F(WKWebExtensionAPIOffscreen, CloseDocumentWithoutOneOpenFails)
+{
+    auto *script = @[
+        @"await browser.test.assertRejects(browser.offscreen.closeDocument(), /No offscreen document is open/)",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(offscreenManifest, @{ @"background.js": Util::constructScript(script) }, offscreenConfig);
+}
+
+TEST_F(WKWebExtensionAPIOffscreen, HasDocumentFalseByDefault)
+{
+    auto *script = @[
+        @"browser.test.assertFalse(await browser.offscreen.hasDocument())",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(offscreenManifest, @{ @"background.js": Util::constructScript(script) }, offscreenConfig);
+}
+
+TEST_F(WKWebExtensionAPIOffscreen, DocumentContentLoads)
+{
+    auto *script = @[
+        @"browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
+    ];
+
+    auto *offscreenScript = @[
+        @"browser.test.notifyPass()"
+    ];
+
+    Util::loadAndRunExtension(offscreenManifest, @{
+        @"background.js": Util::constructScript(script),
+        @"offscreen.html": @"<script type='module' src='offscreen.js'></script>",
+        @"offscreen.js": Util::constructScript(offscreenScript),
+    }, offscreenConfig);
+}
+
+TEST_F(WKWebExtensionAPIOffscreen, SendMessageToDocument)
+{
+    auto *backgroundScript = @[
+        @"await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
+        @"browser.runtime.sendMessage('Hello from background')",
+    ];
+
+    auto *offscreenScript = @[
+        @"browser.runtime.onMessage.addListener((message) => {",
+        @"  browser.test.assertEq(message, 'Hello from background', 'Should receive the expected message from the background page')",
+        @"  browser.test.notifyPass()",
+        @"})",
+    ];
+
+    Util::loadAndRunExtension(offscreenManifest, @{
+        @"background.js": Util::constructScript(backgroundScript),
+        @"offscreen.html": @"<script type='module' src='offscreen.js'></script>",
+        @"offscreen.js": Util::constructScript(offscreenScript),
+    }, offscreenConfig);
 }
 
 } // namespace TestWebKitAPI
