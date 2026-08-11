@@ -1097,6 +1097,60 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
  */
 #endif
 
+#if PLATFORM(GTK)
+#if USE(GTK4)
+/**
+ * WebKitWebView:favicon:
+ *
+ * The favicon currently associated to the #WebKitWebView.
+ * See webkit_web_view_get_favicon() for more details.
+ *
+ * New applications should use [property@WebView:page-icons] instead.
+ *
+ * Deprecated: 2.54
+ */
+
+/**
+ * webkit_web_view_get_favicon:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns favicon currently associated to @web_view.
+ *
+ * Returns favicon currently associated to @web_view, if any. You can
+ * connect to notify::favicon signal of @web_view to be notified when
+ * the favicon is available.
+ *
+ * New applications should use [method@WebView.get_page_icons] instead.
+ *
+ * Returns: (transfer none): the favicon image or %NULL if there's no
+ *    icon associated with @web_view.
+ *
+ * Deprecated: 2.54
+ */
+#else
+/**
+ * WebKitWebView:favicon:
+ *
+ * The favicon currently associated to the #WebKitWebView.
+ * See webkit_web_view_get_favicon() for more details.
+ */
+
+/**
+ * webkit_web_view_get_favicon:
+ * @web_view: a #WebKitWebView
+ *
+ * Returns favicon currently associated to @web_view.
+ *
+ * Returns favicon currently associated to @web_view, if any. You can
+ * connect to notify::favicon signal of @web_view to be notified when
+ * the favicon is available.
+ *
+ * Returns: (transfer none): the favicon image or %NULL if there's no
+ *    icon associated with @web_view.
+ */
+#endif // USE(GTK4)
+#endif // PLATFORM(GTK)
+
 G_END_DECLS
 
 #endif

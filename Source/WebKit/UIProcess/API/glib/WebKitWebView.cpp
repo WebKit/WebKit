@@ -1485,12 +1485,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_PARAM_READABLE);
 
 #if PLATFORM(GTK)
-    /**
-     * WebKitWebView:favicon:
-     *
-     * The favicon currently associated to the #WebKitWebView.
-     * See webkit_web_view_get_favicon() for more details.
-     */
     sObjProperties[PROP_FAVICON] =
 #if USE(GTK4)
         g_param_spec_object(
@@ -3985,19 +3979,6 @@ const gchar* webkit_web_view_get_uri(WebKitWebView* webView)
 }
 
 #if PLATFORM(GTK)
-/**
- * webkit_web_view_get_favicon:
- * @web_view: a #WebKitWebView
- *
- * Returns favicon currently associated to @web_view.
- *
- * Returns favicon currently associated to @web_view, if any. You can
- * connect to notify::favicon signal of @web_view to be notified when
- * the favicon is available.
- *
- * Returns: (transfer none): the favicon image or %NULL if there's no
- *    icon associated with @web_view.
- */
 #if USE(GTK4)
 GdkTexture* webkit_web_view_get_favicon(WebKitWebView* webView)
 #else
