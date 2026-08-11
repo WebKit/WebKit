@@ -207,8 +207,6 @@ public:
     void setSubFrameDomainsForStorageAccessQuirk(Vector<RegistrableDomain>&& domains) { m_subFrameDomainsForStorageAccessQuirk = WTF::move(domains); }
     const Vector<RegistrableDomain>& subFrameDomainsForStorageAccessQuirk() const LIFETIME_BOUND { return m_subFrameDomainsForStorageAccessQuirk; }
 
-    bool needsVP9FullRangeFlagQuirk() const;
-
     bool requiresUserGestureToPauseInPictureInPicture() const;
     bool requiresUserGestureToLoadInPictureInPicture() const;
     bool requiresUserGestureToPlayInFullscreen() const;

@@ -1625,14 +1625,6 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
     return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 }
 
-// youtube.com rdar://66242343
-bool Quirks::needsVP9FullRangeFlagQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsVP9FullRangeFlagQuirk);
-}
-
 // facebook.com: rdar://67273166
 // forbes.com:
 // reddit.com: rdar://80550715
@@ -4033,8 +4025,6 @@ static void handleYouTubeQuirks(QuirksData& quirksData, const URL& quirksURL, co
         QuirksData::SiteSpecificQuirk::HasBrokenEncryptedMediaAPISupportQuirk,
         // youtube.com rdar://135886305
         QuirksData::SiteSpecificQuirk::NeedsScrollbarWidthThinDisabledQuirk,
-        // youtube.com rdar://66242343
-        QuirksData::SiteSpecificQuirk::NeedsVP9FullRangeFlagQuirk,
 #if PLATFORM(COCOA)
         QuirksData::SiteSpecificQuirk::NeedsYouTubeCaptionQuirk,
 #endif

@@ -681,35 +681,6 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
     });
 }
 
-static ContentType addVP9FullRangeVideoFlagToContentType(const ContentType& type)
-{
-    auto countPeriods = [] (const String& codec) {
-        unsigned count = 0;
-        unsigned position = 0;
-
-        while (codec.find('.', position) != notFound) {
-            ++count;
-            ++position;
-        }
-
-        return count;
-    };
-
-    for (auto codec : type.codecs()) {
-        if (!codec.startsWith("vp09"_s) || countPeriods(codec) != 7)
-            continue;
-
-        auto rawType = type.raw();
-        auto position = rawType.find(codec);
-        ASSERT(position != notFound);
-        if (position == notFound)
-            continue;
-
-        return ContentType(makeStringByInserting(rawType, ".00"_s, position + codec.length()));
-    }
-    return type;
-}
-
 ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 {
     DEBUG_LOG(LOGIDENTIFIER, type);
@@ -742,9 +713,6 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 
     // 5. Create a new SourceBuffer object and associated resources.
     ContentType contentType(type);
-    if (document && document->quirks().needsVP9FullRangeFlagQuirk())
-        contentType = addVP9FullRangeVideoFlagToContentType(contentType);
-
     auto sourceBufferPrivate = createSourceBufferPrivate(contentType);
 
     if (sourceBufferPrivate.hasException()) {
@@ -999,8 +967,6 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
 
     ContentType contentType(type);
     RefPtr document = dynamicDowncast<Document>(context);
-    if (document && document->quirks().needsVP9FullRangeFlagQuirk())
-        contentType = addVP9FullRangeVideoFlagToContentType(contentType);
 
     String codecs = contentType.parameter("codecs"_s);
 
@@ -1262,16 +1228,14 @@ Vector<PlatformTimeRanges> MediaSource::activeRanges() const
     });
 }
 
-ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(const ContentType& incomingType)
+ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(const ContentType& type)
 {
-    ContentType type { incomingType };
-
-    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
-    if (document && document->quirks().needsVP9FullRangeFlagQuirk())
-        type = addVP9FullRangeVideoFlagToContentType(incomingType);
-
     ASSERT(isOpen());
     Ref msp = *m_private;
+
+#if ENABLE(MEDIA_RECORDER_WEBM)
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+#endif
 
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
     MediaSourceConfiguration configuration = {

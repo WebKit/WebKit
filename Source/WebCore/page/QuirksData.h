@@ -133,7 +133,6 @@ struct QuirksData {
         NeedsSeekingSupportDisabledQuirk,
         NeedsSuppressPostLayoutBoundaryEventsQuirk,
         NeedsTikTokOverflowingContentQuirk,
-        NeedsVP9FullRangeFlagQuirk,
         NeedsVideoShouldMaintainAspectRatioQuirk,
         NeedsWebKitMediaTextTrackDisplayQuirk,
 #if PLATFORM(COCOA)
