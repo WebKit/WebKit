@@ -82,7 +82,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hidden-display-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hidden-display.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-crash.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-dialog-dismisses-unrelated-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-hierarchy.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-hint-reentrant-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-iframe-backdrop-expected.html
