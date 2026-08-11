@@ -123,7 +123,7 @@ SpecialPropertyCache& StructureRareData::ensureSpecialPropertyCacheSlow()
 inline void StructureRareData::giveUpOnSpecialPropertyCache(CachedSpecialPropertyKey key)
 {
     // Invalidate the memoized fast-path verdict along with the cache it is derived from.
-    m_cachedHasDefaultToPrimitiveFastAndNonObservable = TriState::Indeterminate;
+    setCachedHasDefaultToPrimitiveFastAndNonObservable(TriState::Indeterminate);
     ensureSpecialPropertyCache().m_cache[static_cast<unsigned>(key)].m_value.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 }
 
@@ -225,7 +225,7 @@ void StructureRareData::clearCachedSpecialProperty(CachedSpecialPropertyKey key)
     // The fast-path verdict is derived from every special property except ToJSON, so invalidate it
     // whenever one of those caches is cleared.
     if (key != CachedSpecialPropertyKey::ToJSON)
-        m_cachedHasDefaultToPrimitiveFastAndNonObservable = TriState::Indeterminate;
+        setCachedHasDefaultToPrimitiveFastAndNonObservable(TriState::Indeterminate);
 
     auto* objectToStringCache = m_specialPropertyCache.get();
     if (!objectToStringCache)
