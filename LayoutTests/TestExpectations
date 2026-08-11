@@ -4968,9 +4968,6 @@ imported/w3c/web-platform-tests/css/css-fonts/font-weight-normal-001.xht [ Image
 # DEQP is skipped on the main fleet of bots because of the long run time.
 webgl/2.0.y/deqp [ Skip ]
 
-# webkit.org/b/211220 svg_image WebGL 2.0 tests currently fail due to inconsistencies between browsers
-webgl/2.0.y/conformance2/textures/svg_image [ Skip ]
-
 # Flaky failures
 
 webgl/1.0.x/conformance/glsl [ Slow ]
