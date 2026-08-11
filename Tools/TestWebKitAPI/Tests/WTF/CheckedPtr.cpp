@@ -30,6 +30,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Threading.h>
 #include <wtf/UniquelyOwned.h>
 #include <wtf/UniquelyOwnedPtr.h>
@@ -39,11 +40,10 @@
 namespace {
 
 class UniquelyOwnedObject : public UniquelyOwned<UniquelyOwnedObject> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(UniquelyOwnedObject);
 public:
     static UniquelyOwnedPtr<UniquelyOwnedObject> create()
     {
-        return adoptUniquelyOwned(new UniquelyOwnedObject);
+        return makeUniquelyOwned<UniquelyOwnedObject>();
     }
 };
 

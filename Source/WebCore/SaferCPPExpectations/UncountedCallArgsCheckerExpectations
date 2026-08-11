@@ -651,7 +651,6 @@ rendering/RenderGeometryMap.cpp
 rendering/RenderHTMLCanvas.cpp
 rendering/RenderImage.cpp
 rendering/RenderLayer.cpp
-rendering/RenderLayer.h
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBacking.h
 rendering/RenderLayerCompositor.cpp
