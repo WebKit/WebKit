@@ -320,6 +320,8 @@ private:
     };
     [[nodiscard]] PartialResult parseTableCopyImmediates(TableCopyImmediates&);
 
+    [[nodiscard]] PartialResult parseCallIndirectImmediates(uint32_t& signatureIndex, uint32_t& tableIndex);
+
     struct AnnotatedSelectImmediates {
         unsigned sizeOfAnnotationVector;
         Type targetType;
@@ -1741,6 +1743,19 @@ auto FunctionParser<Context>::parseTableCopyImmediates(TableCopyImmediates& resu
     result.dstTableIndex = dstTableIndex;
     result.srcTableIndex = srcTableIndex;
 
+    return { };
+}
+
+template<typename Context>
+auto FunctionParser<Context>::parseCallIndirectImmediates(uint32_t& signatureIndex, uint32_t& tableIndex) -> PartialResult
+{
+    WASM_PARSER_FAIL_IF(!m_info.tableCount(), "call_indirect is only valid when a table is defined or imported"_s);
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(signatureIndex), "can't get call_indirect's signature index"_s);
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get call_indirect's table index"_s);
+    WASM_PARSER_FAIL_IF(tableIndex >= m_info.tableCount(), "call_indirect's table index "_s, tableIndex, " invalid, limit is "_s, m_info.tableCount());
+    WASM_PARSER_FAIL_IF(m_info.typeCount() <= signatureIndex, "call_indirect's signature index "_s, signatureIndex, " exceeds known signatures "_s, m_info.typeCount());
+    WASM_PARSER_FAIL_IF(m_info.tables[tableIndex].type() != TableElementType::Funcref, "call_indirect is only valid when a table has type funcref"_s);
+    WASM_VALIDATOR_FAIL_IF(m_info.rtt(TypeSignatureIndex(signatureIndex)).kind() != RTTKind::Function, "invalid type index (not a function signature) for call_indirect, got ", signatureIndex);
     return { };
 }
 
@@ -3325,16 +3340,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     case CallIndirect: {
         uint32_t signatureIndex;
         uint32_t tableIndex;
-        WASM_PARSER_FAIL_IF(!m_info.tableCount(), "call_indirect is only valid when a table is defined or imported"_s);
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(signatureIndex), "can't get call_indirect's signature index"_s);
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get call_indirect's table index"_s);
-        WASM_PARSER_FAIL_IF(tableIndex >= m_info.tableCount(), "call_indirect's table index "_s, tableIndex, " invalid, limit is "_s, m_info.tableCount());
-        WASM_PARSER_FAIL_IF(m_info.typeCount() <= signatureIndex, "call_indirect's signature index "_s, signatureIndex, " exceeds known signatures "_s, m_info.typeCount());
-        WASM_PARSER_FAIL_IF(m_info.tables[tableIndex].type() != TableElementType::Funcref, "call_indirect is only valid when a table has type funcref"_s);
+        WASM_FAIL_IF_HELPER_FAILS(parseCallIndirectImmediates(signatureIndex, tableIndex));
 
-        auto index = TypeSignatureIndex(signatureIndex);
-        const auto& calleeSignature = m_info.rtt(index);
-        WASM_VALIDATOR_FAIL_IF(calleeSignature.kind() != RTTKind::Function, "invalid type index (not a function signature) for call_indirect, got ", signatureIndex);
+        const auto& calleeSignature = m_info.rtt(TypeSignatureIndex(signatureIndex));
         size_t argumentCount = calleeSignature.argumentCount() + 1; // Add the callee's index.
         WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size() - m_currentStackBegin, "call_indirect expects "_s, argumentCount, " arguments, but the expression stack currently holds "_s, m_expressionStack.size() - m_currentStackBegin, " values"_s);
 
@@ -4129,11 +4137,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case CallIndirect: {
         uint32_t signatureIndex;
         uint32_t tableIndex;
-        WASM_PARSER_FAIL_IF(!m_info.tableCount(), "call_indirect is only valid when a table is defined or imported"_s);
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(signatureIndex), "can't get call_indirect's signature index in unreachable context"_s);
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get call_indirect's table index in unreachable context"_s);
-        WASM_PARSER_FAIL_IF(tableIndex >= m_info.tableCount(), "call_indirect's table index "_s, tableIndex, " invalid, limit is "_s, m_info.tableCount());
-        WASM_PARSER_FAIL_IF(m_info.typeCount() <= signatureIndex, "call_indirect's signature index "_s, signatureIndex, " exceeds known signatures "_s, m_info.typeCount());
+        WASM_FAIL_IF_HELPER_FAILS(parseCallIndirectImmediates(signatureIndex, tableIndex));
         return { };
     }
 

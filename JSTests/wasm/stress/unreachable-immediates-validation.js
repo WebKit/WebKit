@@ -25,12 +25,17 @@ function section(id, payload) {
     return [id, ...leb(payload.length), ...payload];
 }
 
-function moduleBytes({ withMemory = false, withTable = false, body }) {
+function moduleBytes({ withMemory = false, withTable = false, withExternrefTable = false, withStructType = false, body }) {
     let bytes = [0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00];
-    bytes.push(...section(SECTION_TYPE, [0x01, 0x60, 0x00, 0x00])); // one type: () -> ()
+    if (withStructType)
+        bytes.push(...section(SECTION_TYPE, [0x02, 0x60, 0x00, 0x00, 0x5f, 0x00])); // type 0: () -> (), type 1: (struct)
+    else
+        bytes.push(...section(SECTION_TYPE, [0x01, 0x60, 0x00, 0x00])); // one type: () -> ()
     bytes.push(...section(SECTION_FUNCTION, [0x01, 0x00]));
     if (withTable)
         bytes.push(...section(SECTION_TABLE, [0x01, 0x70, 0x00, 0x01])); // one funcref table, min 1
+    else if (withExternrefTable)
+        bytes.push(...section(SECTION_TABLE, [0x01, 0x6f, 0x00, 0x01])); // one externref table, min 1
     if (withMemory)
         bytes.push(...section(SECTION_MEMORY, [0x01, 0x00, 0x01])); // one memory, min 1
     const code = [0x00, 0x00, ...body, 0x0b]; // no locals, unreachable, body, end
@@ -72,7 +77,12 @@ assertValid("table.get 0", { withTable: true, body: [0x25, 0x00] });
 assertInvalid("call_indirect type 0 table 7", { withTable: true, body: [0x11, 0x00, 0x07] });
 assertInvalid("call_indirect type 99 table 0", { withTable: true, body: [0x11, 0x63, 0x00] });
 assertInvalid("call_indirect with no table section", { body: [0x11, 0x00, 0x00] });
+assertInvalid("call_indirect over an externref table", { withExternrefTable: true, body: [0x11, 0x00, 0x00] });
+assertInvalid("call_indirect with a struct type index", { withTable: true, withStructType: true, body: [0x11, 0x01, 0x00] });
+assertInvalid("return_call_indirect over an externref table", { withExternrefTable: true, body: [0x13, 0x00, 0x00] });
+assertInvalid("return_call_indirect with a struct type index", { withTable: true, withStructType: true, body: [0x13, 0x01, 0x00] });
 assertValid("call_indirect type 0 table 0", { withTable: true, body: [0x11, 0x00, 0x00] });
+assertValid("call_indirect type 0 table 0 alongside a struct type", { withTable: true, withStructType: true, body: [0x11, 0x00, 0x00] });
 
 // ref.func needs an index inside the function index space, and a declaration.
 assertInvalid("ref.func 99", { body: [0xd2, 0x63, 0x1a] });
