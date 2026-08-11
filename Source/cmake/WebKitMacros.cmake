@@ -825,6 +825,7 @@ function(WEBKIT_COPY_FILES target_name)
         list(APPEND dst_files ${dst_file})
     endforeach ()
     add_custom_target(${target_name} ALL DEPENDS ${dst_files})
+    set_property(GLOBAL PROPERTY ${target_name}_STAGED_FILES "${dst_files}")
 endfunction()
 
 function(WEBKIT_SYMLINK_FILES target_name)
@@ -1502,6 +1503,18 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         elseif (NOT _skip_swift_cxx_header)
             list(APPEND _trigger_deps "${_header_stamp_path}")
         endif ()
+        # Swift imports the C++ modules of the frameworks it depends on, so their
+        # staged headers are inputs too. Swift does emit a .d file containing these,
+        # but cmake currently ignores it - this works around it.
+        foreach (_lib IN ITEMS WTF ${${_target}_FRAMEWORKS})
+            foreach (_suffix IN ITEMS _CopyHeaders _CopyPrivateHeaders)
+                get_property(_staged GLOBAL PROPERTY ${_lib}${_suffix}_STAGED_FILES)
+                if (_staged)
+                    list(APPEND _trigger_deps ${_staged})
+                endif ()
+            endforeach ()
+        endforeach ()
+        list(REMOVE_DUPLICATES _trigger_deps)
         add_custom_command(
             OUTPUT "${_trigger_path}"
             DEPENDS ${_trigger_deps}
