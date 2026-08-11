@@ -291,6 +291,12 @@ def phase_prepare(ctx):
         # config.
         git(["config", "diff.objcpp.xfuncname", r"^[-+@a-zA-Z_].*$"], cwd=work)
         git(["config", "diff.objcppheader.xfuncname", r"^[@a-zA-Z_].*$"], cwd=work)
+        # The synthetic commit identity has no signing key.
+        git(["config", "commit.gpgsign", "false"], cwd=work)
+        # run_code_generation.py calls `git cl format`, which aborts unless it
+        # can name a commit to diff against. It normally uses the branch
+        # upstream, but the merge worktree is detached, so point it at HEAD.
+        git(["config", "rietveld.upstream-branch", "HEAD"], cwd=work)
 
     # Read the previously-imported upstream commit from ANGLE.plist.
     plist = os.path.join(ANGLE_DIR, "ANGLE.plist")
@@ -469,8 +475,8 @@ def phase_codegen_a(ctx):
         res = run([sys.executable, "scripts/run_code_generation.py"],
                   cwd=merge, check=False)
         if res.returncode != 0:
-            warn("run_code_generation.py returned %d; continuing with "
-                 "merged outputs." % res.returncode)
+            fail("run_code_generation.py returned %d; refusing to export stale "
+                 "or conflicted generated outputs." % res.returncode)
     finally:
         # Remove the overlay symlinks so they never reach bookkeep/export.
         for rel in links:
@@ -749,6 +755,27 @@ def phase_codegen_b(ctx):
     _run_webkit_source_generators(merge)
 
 
+_CMAKE_SRC_REF_RE = re.compile(
+    r'"((?:src|include)/[^"\s${}*]+\.(?:c|cc|cpp|cxx|h|hh|hpp|hxx|inl|inc|mm|m))"')
+
+
+def _check_cmake_source_refs(merge):
+    """Return sources named in CMakeLists.txt / *.cmake but absent from the merged
+    tree, which are files upstream removed that WebKit's build lists still name, which
+    breaks the CMake build. Matches literal quoted paths only."""
+    missing = set()
+    build_files = [os.path.join(merge, "CMakeLists.txt")]
+    build_files += sorted(glob.glob(os.path.join(merge, "*.cmake")))
+    for bf in build_files:
+        if not os.path.exists(bf):
+            continue
+        with open(bf) as f:
+            for ref in _CMAKE_SRC_REF_RE.findall(f.read()):
+                if not os.path.exists(os.path.join(merge, ref)):
+                    missing.add(ref)
+    return sorted(missing)
+
+
 def phase_bookkeep(ctx):
     """Update ANGLE.plist and changes.diff, and write the commit message."""
     work = ctx["work"]
@@ -756,6 +783,15 @@ def phase_bookkeep(ctx):
     target_hash = ctx["state"].data["target_hash"]
     prev_hash = ctx["state"].data["previous_hash"]
     target_date = git(["show", "-s", "--format=%cs", target_hash], cwd=work)
+
+    # Flag stale build-list refs (see _check_cmake_source_refs).
+    missing_refs = _check_cmake_source_refs(merge)
+    if missing_refs:
+        warn("CMakeLists.txt / *.cmake still reference %d file(s) missing from the "
+             "merged tree (removed upstream?); the CMake build will fail:"
+             % len(missing_refs))
+        for p in missing_refs:
+            warn("    %s" % p)
 
     # ANGLE.plist: 40-char hash (appears in OpenSourceVersion and the SCM
     # checkout command) + Update date (the target commit's date).
