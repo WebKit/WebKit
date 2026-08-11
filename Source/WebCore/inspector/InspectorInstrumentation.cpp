@@ -673,6 +673,11 @@ void InspectorInstrumentation::didPaintImpl(InstrumentingAgents& instrumentingAg
 
     if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->didPaint(renderer, rect);
+
+    // Under Site Isolation a cross-origin subframe process has no enabled InspectorPageAgent; its
+    // per-frame PageAgentProxy draws paint rects instead.
+    if (CheckedPtr pageProxy = instrumentingAgents.enabledPageProxy())
+        pageProxy->didPaint(renderer, rect);
 }
 
 void InspectorInstrumentation::willRecalculateStyleImpl(InstrumentingAgents& instrumentingAgents)

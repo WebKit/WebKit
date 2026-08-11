@@ -775,6 +775,14 @@ void WebInspectorUIProxy::timelineRecordingChanged(bool active)
     m_isProfilingPage = active;
 }
 
+void WebInspectorUIProxy::showPaintRectsChanged(bool show)
+{
+    // The main-frame process already drew its own paint rects; hand the toggle to the inspector
+    // controller so its ProxyingPageAgent fans it out to the cross-origin subframe processes.
+    if (RefPtr inspectedPage = m_inspectedPage.get())
+        inspectedPage->inspectorController().setShowPaintRects(show);
+}
+
 void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     switch (developerPreference) {

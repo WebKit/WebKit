@@ -270,6 +270,14 @@ void WebInspectorBackend::timelineRecordingChanged(bool active)
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::TimelineRecordingChanged(active), m_page->identifier());
 }
 
+void WebInspectorBackend::showPaintRectsChanged(bool show)
+{
+    // Forward the main-frame process's paint-rects toggle to the UIProcess, which fans it out to the
+    // cross-origin subframe processes via ProxyingPageAgent (the frontend's Page domain only reaches
+    // this main-frame process).
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::ShowPaintRectsChanged(show), m_page->identifier());
+}
+
 void WebInspectorBackend::setDeveloperPreferenceOverride(InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebInspectorBackendProxy::SetDeveloperPreferenceOverride(developerPreference, overrideValue), m_page->identifier());
@@ -416,6 +424,13 @@ void WebInspectorBackend::removeInstrumentationForFrame(FrameIdentifier frameID)
 {
     m_frameNetworkAgentProxies.remove(frameID);
     m_framePageAgentProxies.remove(frameID);
+
+    // Tear down the frame's paint-rect overlay (if it owned one). The overlay is held by the page
+    // overlay controller, so it wouldn't be released just by the proxy above going away.
+    if (RefPtr corePage = m_page ? m_page->corePage() : nullptr) {
+        if (auto* client = corePage->inspectorController().inspectorBackendClient())
+            client->willDestroyFrameOverlays(frameID);
+    }
 }
 
 void WebInspectorBackend::getResponseBody(ResourceLoaderIdentifier resourceID, CompletionHandler<void(Expected<std::pair<String, bool>, String>&&)>&& completionHandler)
@@ -682,6 +697,11 @@ void WebInspectorBackend::ensurePageInstrumentationForFrame(LocalFrame& frame)
 
     auto proxy = makeUnique<PageAgentProxy>(webContext, *page);
     proxy->enable();
+
+    // Seed the just-created proxy with the current toggle: a frame can commit after
+    // setShowPaintRects(true) was fanned out, and would otherwise default to off.
+    proxy->setShowPaintRects(m_showPaintRects);
+
     m_framePageAgentProxies.add(frameID, WTF::move(proxy));
 }
 
@@ -715,8 +735,20 @@ void WebInspectorBackend::disablePageInstrumentation()
     // DisablePageInstrumentation IPC, not process teardown).
     m_framePageAgentProxies.clear();
     m_pageInstrumentationEnabled = false;
+
+    // Reset so a later re-enable seeds fresh proxies as off; the UIProcess ProxyingPageAgent also
+    // resets on disable().
+    m_showPaintRects = false;
 }
 
+void WebInspectorBackend::setShowPaintRects(bool show)
+{
+    // Remember it for frames that commit later (ensurePageInstrumentationForFrame), then drive every
+    // per-frame proxy this process hosts; each draws its frame's paint rects locally.
+    m_showPaintRects = show;
+    for (auto& proxy : m_framePageAgentProxies.values())
+        proxy->setShowPaintRects(show);
+}
 
 void WebInspectorBackend::getFrameResourceData(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>>&&)>&& completionHandler)
 {

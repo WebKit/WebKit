@@ -37,17 +37,24 @@
 #include "WebProcess.h"
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/DocumentView.h>
 #include <WebCore/ElementInlines.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLNames.h>
+#include <WebCore/InspectorBackendClient.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
+#include <WebCore/InstrumentingAgents.h>
+#include <WebCore/LayoutRect.h>
 #include <WebCore/LocalFrameInlines.h>
+#include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageInspectorController.h>
+#include <WebCore/RenderObjectInlines.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Stopwatch.h>
@@ -205,8 +212,41 @@ void PageAgentProxy::didClearWindowObjectInWorld(LocalFrame&, DOMWrapperWorld&)
 {
 }
 
-void PageAgentProxy::didPaint(RenderObject&, const LayoutRect&)
+void PageAgentProxy::didPaint(RenderObject& renderer, const LayoutRect& rect)
 {
+    if (!m_showPaintRects)
+        return;
+
+    // The main-frame process has a real, enabled InspectorPageAgent that already drew this paint via
+    // the enabledPageAgent() branch in didPaintImpl; drawing again here would double-flash it. This
+    // proxy only draws where no real page agent is enabled -- the cross-origin subframe processes.
+    Ref agents = m_instrumentingAgents.get();
+    if (agents->enabledPageAgent())
+        return;
+
+    Ref inspectedPage = m_inspectedPage.get();
+    auto* client = inspectedPage->inspectorController().inspectorBackendClient();
+    if (!client)
+        return;
+
+    RefPtr view = renderer.document().view();
+    if (!view)
+        return;
+
+    // Draw in this frame's own contents coordinate space. The overlay's layer lives inside the
+    // scrolled-contents layer that the compositor already offsets by -scrollPosition, so passing
+    // contents coords applies that offset exactly once. Do NOT convert with contentsToRootView()
+    // (double-counts scroll) or remap through the main frame (it is a RemoteFrame here).
+    // FIXME: localToAbsoluteQuad is frame-local, so coords are in the painting frame's own space --
+    // correct only when that frame is its own local root. A same-site child frame nested inside a
+    // local root in the same process, or a local subframe reached through a remote ancestor, is
+    // drawn at the wrong offset. See webkit.org/b/308899.
+    LayoutRect absoluteRect = LayoutRect(renderer.localToAbsoluteQuad(FloatRect(rect)).boundingBox());
+
+    // Scope to this frame's local root: the overlay for that root is attached to its own compositing
+    // tree, so sibling local roots in one process each flash independently.
+    Ref rootFrame = view->frame().rootFrame();
+    client->showPaintRect(rootFrame.get(), snappedIntRect(absoluteRect));
 }
 
 void PageAgentProxy::didLayout()

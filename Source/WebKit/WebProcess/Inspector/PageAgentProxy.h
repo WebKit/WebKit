@@ -68,6 +68,8 @@ public:
     Inspector::CommandResult<void> enable() final;
     Inspector::CommandResult<void> disable() final;
 
+    void setShowPaintRects(bool show) { m_showPaintRects = show; }
+
     void domContentEventFired() final;
     void loadEventFired() final;
     void frameNavigated(WebCore::LocalFrame&) final;
@@ -89,6 +91,8 @@ public:
 private:
     WeakRef<WebCore::Page> m_inspectedPage;
     WeakRef<WebPage> m_page;
+
+    bool m_showPaintRects { false };
 };
 
 } // namespace WebKit

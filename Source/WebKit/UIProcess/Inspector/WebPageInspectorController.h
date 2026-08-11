@@ -100,6 +100,8 @@ public:
     bool isNetworkInstrumentationEnabled() const;
     bool isPageInstrumentationEnabled() const;
 
+    void setShowPaintRects(bool);
+
 private:
     WebPageAgentContext NODELETE webPageAgentContext();
     void createLazyAgents();

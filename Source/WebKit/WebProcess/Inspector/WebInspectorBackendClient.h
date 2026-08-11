@@ -29,11 +29,13 @@
 #include <WebCore/PageOverlay.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 class GraphicsContext;
 class GraphicsLayer;
 class IntRect;
+class LocalFrame;
 class PageOverlay;
 }
 
@@ -72,8 +74,11 @@ private:
     void timelineRecordingChanged(bool) override;
 
     bool overridesShowPaintRects() const override { return true; }
+    void setShowPaintRects(bool) override;
     void showPaintRect(const WebCore::FloatRect&) override;
-    unsigned paintRectCount() const override { return m_paintRectLayers.size(); }
+    void showPaintRect(WebCore::LocalFrame&, const WebCore::FloatRect&) override;
+    void willDestroyFrameOverlays(WebCore::FrameIdentifier) override;
+    unsigned paintRectCount() const override;
 
     void setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference, std::optional<bool>) final;
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
@@ -86,14 +91,23 @@ private:
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect&) override;
     bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
 
-    void animationEndedForLayer(const WebCore::GraphicsLayer*);
+    // The frame identifying the owning bucket comes from the layer client that fired (each bucket
+    // has its own), so there is no scan over frames.
+    void animationEndedForLayer(WebCore::LocalFrame*, const WebCore::GraphicsLayer*);
 
     WeakPtr<WebPage> m_page;
     WeakPtr<WebCore::PageOverlay> m_highlightOverlay;
 
-    RefPtr<WebCore::PageOverlay> m_paintRectOverlay;
-    std::unique_ptr<RepaintIndicatorLayerClient> m_paintIndicatorLayerClient;
-    HashSet<Ref<WebCore::GraphicsLayer>> m_paintRectLayers;
+    // Paint-rect overlays are per local root frame: under Site Isolation one process can host several
+    // local roots, each with its own compositing tree, so each needs its own Document overlay.
+    struct PaintRectOverlayForFrame {
+        RefPtr<WebCore::PageOverlay> overlay;
+        std::unique_ptr<RepaintIndicatorLayerClient> layerClient;
+        HashSet<Ref<WebCore::GraphicsLayer>> layers;
+    };
+    PaintRectOverlayForFrame& ensurePaintRectOverlayForFrame(WebCore::LocalFrame&);
+
+    WeakHashMap<WebCore::LocalFrame, PaintRectOverlayForFrame> m_paintRectOverlays;
 };
 
 } // namespace WebKit

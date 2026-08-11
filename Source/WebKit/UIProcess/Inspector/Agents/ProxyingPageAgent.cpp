@@ -185,6 +185,12 @@ void ProxyingPageAgent::enableInstrumentationForProcess(WebProcessProxy& webProc
     });
     webProcess.addMessageReceiver(Messages::ProxyingPageAgent::messageReceiverName(), pageID, *this);
     webProcess.send(Messages::WebInspectorBackend::EnablePageInstrumentation { }, pageID);
+
+    // Replay the current toggle to this newly-registered process (a cross-origin navigation can
+    // spawn a new WebContent process after setShowPaintRects(true)). This choke point is passed
+    // exactly once per (process, page) registration, guarded above.
+    if (m_showPaintRects)
+        webProcess.send(Messages::WebInspectorBackend::SetShowPaintRects { true }, pageID);
 }
 
 void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webProcess, PageIdentifier pageID)
@@ -238,6 +244,10 @@ CommandResult<void> ProxyingPageAgent::disable()
 
     m_enabled = false;
     m_cachedFrameDocumentInfo.clear();
+
+    // Reset so a later frontend reconnect doesn't replay a stale "on" toggle via
+    // enableInstrumentationForProcess. The processes are torn down below, so no "off" send is needed.
+    m_showPaintRects = false;
 
     // Force-teardown: disable all processes unconditionally, bypassing the
     // refcount discipline in disableInstrumentationForProcess(). This is
@@ -661,7 +671,9 @@ void ProxyingPageAgent::searchInResources(const String& text, std::optional<bool
     }
 }
 
-// FIXME: <https://webkit.org/b/308899> Forward overlay state to all WebContent processes.
+// FIXME: <https://webkit.org/b/308899> Draw rulers in every WebContent process. Rulers render via
+// InspectorOverlay, which subframe processes don't have wired up, and need page-wide (cross-process)
+// geometry rather than the per-frame local drawing used for paint rects.
 #if !PLATFORM(IOS_FAMILY)
 CommandResult<void> ProxyingPageAgent::setShowRulers(bool)
 {
@@ -669,8 +681,18 @@ CommandResult<void> ProxyingPageAgent::setShowRulers(bool)
 }
 #endif
 
-CommandResult<void> ProxyingPageAgent::setShowPaintRects(bool)
+// Fan the paint-rects toggle out to every WebContent process and remember it so a process that
+// registers later (enableInstrumentationForProcess) gets it replayed. Each process draws in its own
+// frame's coordinate space; the compositor already positions each process's layer tree.
+CommandResult<void> ProxyingPageAgent::setShowPaintRects(bool show)
 {
+    m_showPaintRects = show;
+
+    Ref inspectedPage = m_inspectedPage.get();
+    inspectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebInspectorBackend::SetShowPaintRects { show }, pageID);
+    });
+
     return { };
 }
 

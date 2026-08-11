@@ -561,6 +561,12 @@ bool WebPageInspectorController::isPageInstrumentationEnabled() const
     return m_pageAgent && m_pageAgent->isEnabled();
 }
 
+void WebPageInspectorController::setShowPaintRects(bool show)
+{
+    if (RefPtr pageAgent = m_pageAgent)
+        std::ignore = pageAgent->setShowPaintRects(show);
+}
+
 void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* agent)
 {
     if (m_enabledBrowserAgent == agent)

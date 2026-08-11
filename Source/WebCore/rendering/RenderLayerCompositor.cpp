@@ -2050,7 +2050,9 @@ void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<Ref<GraphicsLayer
     if (!page().pageOverlayController().hasDocumentOverlays())
         return;
 
-    Ref<GraphicsLayer> overlayHost = page().pageOverlayController().layerWithDocumentOverlays();
+    // Host the document-overlay root scoped to THIS root frame; under Site Isolation several local
+    // roots can share a process and each needs its own container (a GraphicsLayer has one parent).
+    Ref<GraphicsLayer> overlayHost = page().pageOverlayController().layerWithDocumentOverlaysForFrame(&m_renderView.frameView().frame());
     childList.append(WTF::move(overlayHost));
 }
 
@@ -5392,7 +5394,7 @@ void RenderLayerCompositor::updateRootLayerAttachment()
 
 void RenderLayerCompositor::rootLayerAttachmentChanged()
 {
-    // The document-relative page overlay layer (which is pinned to the main frame's layer tree)
+    // The document-relative page overlay layer (which is pinned to the root frame's layer tree)
     // is moved between different RenderLayerCompositors' layer trees, and needs to be
     // reattached whenever we swap in a new RenderLayerCompositor.
     if (m_rootLayerAttachment == RootLayerUnattached)
@@ -5404,10 +5406,14 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
     if (auto* backing = layer ? layer->backing() : nullptr)
         backing->updateDrawsContent();
 
-    if (!m_renderView.frameView().frame().isMainFrame())
+    // Host the document overlay in the root frame's layer tree. Under Site Isolation the main frame
+    // can be remote here, so the local root frame owns the compositing tree that reaches the screen
+    // (isRootFrameCompositor(), matching appendDocumentOverlayLayers()). Gating on isMainFrame() would
+    // orphan the overlay in a subframe process across a root-layer re-attach.
+    if (!isRootFrameCompositor())
         return;
 
-    Ref<GraphicsLayer> overlayHost = page().pageOverlayController().layerWithDocumentOverlays();
+    Ref<GraphicsLayer> overlayHost = page().pageOverlayController().layerWithDocumentOverlaysForFrame(&m_renderView.frameView().frame());
     RefPtr { m_rootContentsLayer }->addChild(WTF::move(overlayHost));
 }
 

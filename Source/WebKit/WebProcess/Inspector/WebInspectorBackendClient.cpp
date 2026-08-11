@@ -51,18 +51,23 @@ using namespace WebCore;
 class RepaintIndicatorLayerClient final : public GraphicsLayerClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RepaintIndicatorLayerClient);
 public:
-    RepaintIndicatorLayerClient(WebInspectorBackendClient& inspectorBackendClient)
+    RepaintIndicatorLayerClient(WebInspectorBackendClient& inspectorBackendClient, LocalFrame& frame)
         : m_inspectorBackendClient(inspectorBackendClient)
+        , m_frame(frame)
     {
     }
     virtual ~RepaintIndicatorLayerClient() = default;
 private:
     void notifyAnimationEnded(const GraphicsLayer* layer, const String&) override
     {
-        m_inspectorBackendClient.animationEndedForLayer(layer);
+        RefPtr frame = m_frame.get();
+        m_inspectorBackendClient.animationEndedForLayer(frame.get(), layer);
     }
 
     WebInspectorBackendClient& m_inspectorBackendClient;
+    // The local root frame whose bucket owns the animating layers. Weak: the frame can be torn down
+    // (cross-origin navigation) mid-fade, after which animationEndedForLayer() no-ops.
+    WeakPtr<LocalFrame> m_frame;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebInspectorBackendClient);
@@ -74,16 +79,26 @@ WebInspectorBackendClient::WebInspectorBackendClient(WebPage* page)
 
 WebInspectorBackendClient::~WebInspectorBackendClient()
 {
-    for (auto& layer : m_paintRectLayers)
-        layer->removeFromParent();
+    RefPtr page = m_page.get();
+    RefPtr corePage = page ? page->corePage() : nullptr;
 
-    m_paintRectLayers.clear();
+    // Tear down every per-frame bucket: detach its layers, uninstall its overlay (the controller
+    // holds the only Ref keeping it alive), and drop the controller's per-frame container. The page
+    // may already be gone, in which case the controller torn down with it.
+    for (auto entry : m_paintRectOverlays) {
+        Ref frame = entry.key;
+        auto& bucket = entry.value;
+        for (auto& layer : bucket.layers)
+            protect(layer)->removeFromParent();
+        bucket.layers.clear();
 
-    if (RefPtr paintRectOverlay = m_paintRectOverlay) {
-        RefPtr page = m_page.get();
-        if (page && page->corePage())
-            page->corePage()->pageOverlayController().uninstallPageOverlay(*paintRectOverlay, PageOverlay::FadeMode::Fade);
+        if (corePage) {
+            if (RefPtr overlay = bucket.overlay)
+                corePage->pageOverlayController().uninstallPageOverlay(*overlay, PageOverlay::FadeMode::DoNotFade);
+            corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(frame.get());
+        }
     }
+    m_paintRectOverlays.clear();
 }
 
 void WebInspectorBackendClient::inspectedPageDestroyed()
@@ -186,7 +201,42 @@ void WebInspectorBackendClient::hideHighlight()
 #endif
 }
 
+auto WebInspectorBackendClient::ensurePaintRectOverlayForFrame(LocalFrame& frame) -> PaintRectOverlayForFrame&
+{
+    RefPtr page = m_page.get();
+    ASSERT(page && page->corePage());
+
+    auto& bucket = m_paintRectOverlays.ensure(frame, [&] {
+        PaintRectOverlayForFrame newBucket;
+        Ref overlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
+        // Scope the overlay to this local root so the controller hosts it in that frame's own
+        // compositing tree; sibling local roots in one process each flash in the right place.
+        overlay->setAssociatedFrame(&frame);
+        newBucket.overlay = overlay.copyRef();
+        newBucket.layerClient = makeUnique<RepaintIndicatorLayerClient>(*this, frame);
+        page->corePage()->pageOverlayController().installPageOverlay(overlay, PageOverlay::FadeMode::DoNotFade);
+        return newBucket;
+    }).iterator->value;
+
+    return bucket;
+}
+
 void WebInspectorBackendClient::showPaintRect(const FloatRect& rect)
+{
+    // Frame-less entry point (single-process main-frame path): resolve this process's overlay-owning
+    // frame and delegate to the frame-aware path.
+    RefPtr page = m_page.get();
+    if (!page || !page->corePage())
+        return;
+
+    RefPtr frame = page->corePage()->localMainOrRootFrame();
+    if (!frame)
+        return;
+
+    showPaintRect(*frame, rect);
+}
+
+void WebInspectorBackendClient::showPaintRect(LocalFrame& frame, const FloatRect& rect)
 {
     RefPtr page = m_page.get();
     if (!page)
@@ -195,17 +245,12 @@ void WebInspectorBackendClient::showPaintRect(const FloatRect& rect)
     if (!page->corePage()->settings().acceleratedCompositingEnabled())
         return;
 
-    RefPtr paintRectOverlay = m_paintRectOverlay;
-    if (!paintRectOverlay) {
-        m_paintRectOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
-        paintRectOverlay = m_paintRectOverlay.copyRef();
-        page->corePage()->pageOverlayController().installPageOverlay(*paintRectOverlay, PageOverlay::FadeMode::DoNotFade);
-    }
+    auto& bucket = ensurePaintRectOverlayForFrame(frame);
+    RefPtr paintRectOverlay = bucket.overlay;
+    if (!paintRectOverlay)
+        return;
 
-    if (!m_paintIndicatorLayerClient)
-        m_paintIndicatorLayerClient = makeUnique<RepaintIndicatorLayerClient>(*this);
-
-    Ref paintLayer = GraphicsLayer::create(protect(page->drawingArea())->graphicsLayerFactory(), *m_paintIndicatorLayerClient);
+    Ref paintLayer = GraphicsLayer::create(protect(page->drawingArea())->graphicsLayerFactory(), *bucket.layerClient);
 
     paintLayer->setName(MAKE_STATIC_STRING_IMPL("paint rect"));
     paintLayer->setAnchorPoint(FloatPoint3D());
@@ -224,17 +269,63 @@ void WebInspectorBackendClient::showPaintRect(const FloatRect& rect)
     paintLayer->addAnimation(fadeKeyframes, opacityAnimation.ptr(), "opacity"_s, 0);
 
     Ref rawLayer = paintLayer.get();
-    m_paintRectLayers.add(WTF::move(paintLayer));
+    bucket.layers.add(WTF::move(paintLayer));
 
     Ref overlayRootLayer = paintRectOverlay->layer();
     overlayRootLayer->addChild(rawLayer.get());
 }
 
-void WebInspectorBackendClient::animationEndedForLayer(const GraphicsLayer* layer)
+unsigned WebInspectorBackendClient::paintRectCount() const
 {
+    unsigned count = 0;
+    for (auto entry : m_paintRectOverlays)
+        count += entry.value.layers.size();
+    return count;
+}
+
+void WebInspectorBackendClient::animationEndedForLayer(LocalFrame* frame, const GraphicsLayer* layer)
+{
+    // The layer client that fired identifies the bucket directly. If the frame is gone (torn down
+    // mid-fade), its bucket was already uninstalled by willDestroyFrameOverlays -- nothing to do.
+    if (!frame)
+        return;
+
+    auto it = m_paintRectOverlays.find(*frame);
+    if (it == m_paintRectOverlays.end())
+        return;
+
     GraphicsLayer* nonConstLayer = const_cast<GraphicsLayer*>(layer);
     nonConstLayer->removeFromParent();
-    m_paintRectLayers.remove(*nonConstLayer);
+    it->value.layers.remove(*nonConstLayer);
+}
+
+void WebInspectorBackendClient::willDestroyFrameOverlays(WebCore::FrameIdentifier frameID)
+{
+    RefPtr page = m_page.get();
+    RefPtr corePage = page ? page->corePage() : nullptr;
+
+    // Buckets are keyed by local root frame; a detaching frame owns a bucket only if it is that root.
+    // Find it by identity, uninstall its overlay, detach its layers, and drop the controller's
+    // per-frame container so nothing is retained past the frame's lifetime.
+    m_paintRectOverlays.removeIf([frameID, corePage](auto& entry) {
+        Ref frame = entry.key;
+        if (frame->frameID() != frameID)
+            return false;
+
+        auto& bucket = entry.value;
+        for (auto& paintLayer : bucket.layers)
+            paintLayer->removeFromParent();
+        bucket.layers.clear();
+
+        if (corePage) {
+            if (RefPtr overlay = bucket.overlay) {
+                Ref protectedOverlay = overlay.releaseNonNull();
+                corePage->pageOverlayController().uninstallPageOverlay(protectedOverlay, PageOverlay::FadeMode::DoNotFade);
+            }
+            corePage->pageOverlayController().willDestroyRootFrameOverlayContainer(frame.get());
+        }
+        return true;
+    });
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -281,6 +372,26 @@ void WebInspectorBackendClient::timelineRecordingChanged(bool active)
 
     if (RefPtr inspector = page->inspector())
         inspector->timelineRecordingChanged(active);
+}
+
+void WebInspectorBackendClient::setShowPaintRects(bool show)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    // Without Site Isolation this is the single-process path: the whole frame tree lives here, the
+    // real InspectorPageAgent already drives the flash via didPaint, and there are no other processes
+    // to fan out to. Leave that path untouched.
+    RefPtr corePage = page->corePage();
+    if (!corePage || !corePage->settings().siteIsolationEnabled())
+        return;
+
+    // Under Site Isolation cross-origin subframes run in their own processes, which the frontend's
+    // Page domain never reaches. Notify the UIProcess so its ProxyingPageAgent fans the toggle out to
+    // every WebContent process (see WebInspectorBackend::setShowPaintRects).
+    if (RefPtr inspector = page->inspector())
+        inspector->showPaintRectsChanged(show);
 }
 
 void WebInspectorBackendClient::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)

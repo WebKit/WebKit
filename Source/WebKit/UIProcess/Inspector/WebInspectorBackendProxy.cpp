@@ -58,6 +58,11 @@ void WebInspectorBackendProxy::timelineRecordingChanged(bool active)
     m_proxy->timelineRecordingChanged(active);
 }
 
+void WebInspectorBackendProxy::showPaintRectsChanged(bool show)
+{
+    protect(m_proxy)->showPaintRectsChanged(show);
+}
+
 void WebInspectorBackendProxy::setDeveloperPreferenceOverride(WebCore::InspectorBackendClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 {
     protect(m_proxy)->setDeveloperPreferenceOverride(developerPreference, overrideValue);

@@ -53,6 +53,11 @@ messages -> WebInspectorBackend {
     EnablePageInstrumentation()
     DisablePageInstrumentation()
 
+    # Fan out the "show paint rects" toggle. Under Site Isolation the Page domain is served by the
+    # UIProcess ProxyingPageAgent, so this never reaches the per-process InspectorPageAgent; each
+    # process instead draws in its own frame's coordinate space.
+    SetShowPaintRects(bool show)
+
     # Returns, for each requested frame that is local to this process, its committed document's
     # loaderId and cached subresources as typed data, for the UIProcess ProxyingPageAgent to build
     # Page.getResourceTree cross-process under Site Isolation. The proxy walks the frame tree and

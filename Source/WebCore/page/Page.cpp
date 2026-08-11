@@ -4555,6 +4555,21 @@ LocalFrame* Page::localMainFrame() const
     return dynamicDowncast<LocalFrame>(mainFrame());
 }
 
+LocalFrame* Page::localMainOrRootFrame() const
+{
+    if (auto* localMainFrame = this->localMainFrame())
+        return localMainFrame;
+
+    // Under Site Isolation the main frame can be remote in this process; fall back to the first
+    // live local root frame (normally exactly one per WebContent process for a given page).
+    for (auto& rootFrame : m_rootFrames) {
+        if (rootFrame->view())
+            return rootFrame.ptr();
+    }
+
+    return nullptr;
+}
+
 Document* Page::localTopDocument() const
 {
     if (auto* localMainFrame = this->localMainFrame())

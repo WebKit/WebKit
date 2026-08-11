@@ -49,8 +49,13 @@ public:
     bool NODELETE hasDocumentOverlays() const;
     bool NODELETE hasViewOverlays() const;
 
-    GraphicsLayer& layerWithDocumentOverlays();
+    GraphicsLayer& layerWithDocumentOverlaysForFrame(LocalFrame* rootFrame);
     GraphicsLayer& layerWithViewOverlays();
+
+    // Drop the per-frame document-overlay container created for `rootFrame` (see
+    // layerWithDocumentOverlaysForFrame) when that local root is going away, so it isn't retained
+    // for the page's lifetime. No-op for frames that never had one.
+    WEBCORE_EXPORT void willDestroyRootFrameOverlayContainer(LocalFrame&);
 
     const Vector<Ref<PageOverlay>>& pageOverlays() const LIFETIME_BOUND { return m_pageOverlays; }
 
@@ -84,6 +89,7 @@ private:
     void createRootLayersIfNeeded();
 
     WEBCORE_EXPORT GraphicsLayer* NODELETE documentOverlayRootLayer() const;
+    GraphicsLayer& documentOverlayRootLayerForFrame(LocalFrame* rootFrame);
 
     WEBCORE_EXPORT GraphicsLayer* NODELETE viewOverlayRootLayer() const;
 
@@ -105,6 +111,10 @@ private:
     WeakRef<Page> m_page;
     RefPtr<GraphicsLayer> m_documentOverlayRootLayer;
     RefPtr<GraphicsLayer> m_viewOverlayRootLayer;
+
+    // Per-local-root-frame document overlay root layers, for overlays scoped to a specific frame
+    // (see PageOverlay::setAssociatedFrame). The main frame keeps using m_documentOverlayRootLayer.
+    WeakHashMap<LocalFrame, Ref<GraphicsLayer>> m_frameDocumentOverlayRootLayers;
 
     WeakHashMap<PageOverlay, Ref<GraphicsLayer>> m_overlayGraphicsLayers;
     Vector<Ref<PageOverlay>> m_pageOverlays;

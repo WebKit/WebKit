@@ -429,6 +429,10 @@ public:
     WEBCORE_EXPORT bool hasAnyLocalFrame() const;
     WEBCORE_EXPORT Document* localTopDocument() const;
 
+    // localMainFrame() normally; under Site Isolation the main frame can be remote in this process,
+    // so falls back to the local root frame. Document overlays and their geometry are relative to it.
+    WEBCORE_EXPORT LocalFrame* NODELETE localMainOrRootFrame() const;
+
     Frame& mainFrame() const { return m_mainFrame.get(); }
     WEBCORE_EXPORT void setMainFrame(Ref<Frame>&&);
     WEBCORE_EXPORT const URL& NODELETE mainFrameURL() const LIFETIME_BOUND;
