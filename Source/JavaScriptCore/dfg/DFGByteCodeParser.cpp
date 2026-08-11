@@ -2186,6 +2186,16 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, Operand result,
         VERBOSE_LOG("Bailing inlining: too many arguments for varargs inlining.\n");
         return false;
     }
+
+    auto hasVarargsOverflowExit = [&] {
+        for (unsigned checkpoint = 0; checkpoint < BytecodeIndex::numberOfCheckpoints; ++checkpoint) {
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex.withCheckpoint(checkpoint), VarargsOverflow))
+                return true;
+        }
+        return false;
+    };
+    if (hasVarargsOverflowExit())
+        return false;
     if (callLinkStatus.couldTakeSlowPath() || callLinkStatus.size() != 1) {
         VERBOSE_LOG("Bailing inlining: polymorphic inlining is not yet supported for varargs.\n");
         return false;
