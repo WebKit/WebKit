@@ -1429,17 +1429,17 @@ CSSMathDepthEnabled:
       
 CSSObjectViewBoxEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS object-view-box property"
   humanReadableDescription: "Enable support for CSS object-view-box property"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSOverflowClipMarginEnabled:
   type: bool
