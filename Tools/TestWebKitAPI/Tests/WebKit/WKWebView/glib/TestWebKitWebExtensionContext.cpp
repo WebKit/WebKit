@@ -206,10 +206,77 @@ static void testOptionsPageURIParsing(Test* test, gconstpointer)
     g_assert_null(webkit_web_extension_context_get_options_page_uri(context.get()));
 }
 
+static void testURIOverridesParsing(Test*, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+    auto parseExtensionManifest = [&](const gchar* manifestString) {
+        return adoptGRef(webkitWebExtensionCreate({ { "manifest.json"_s, createGBytes(manifestString) } }, &error.outPtr()));
+    };
+
+    GRefPtr<WebKitWebExtension> extension = parseExtensionManifest("{ \"browser_url_overrides\": { \"newtab\": \"newtab.html\" }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_no_error(error.get());
+    GRefPtr<WebKitWebExtensionContext> context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    g_assert_no_error(error.get());
+
+    GUniquePtr<char> newTabPageURI(g_strconcat(webkit_web_extension_context_get_base_uri(context.get()), "newtab.html", nullptr));
+    g_assert_cmpstr(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()), ==, newTabPageURI.get());
+
+    extension = parseExtensionManifest("{ \"browser_url_overrides\": { \"newtab\": 123 }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    g_assert_no_error(error.get());
+
+    g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
+
+    extension = parseExtensionManifest("{ \"browser_url_overrides\": { }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    g_assert_no_error(error.get());
+
+    g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
+
+    extension = parseExtensionManifest("{ \"browser_url_overrides\": { \"newtab\": \"\" }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    g_assert_no_error(error.get());
+
+    g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
+
+    extension = parseExtensionManifest("{ \"chrome_url_overrides\": { \"newtab\": \"newtab.html\" }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_no_error(error.get());
+    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    g_assert_no_error(error.get());
+
+    newTabPageURI.reset(g_strconcat(webkit_web_extension_context_get_base_uri(context.get()), "newtab.html", nullptr));
+    g_assert_cmpstr(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()), ==, newTabPageURI.get());
+
+    extension = parseExtensionManifest("{ \"chrome_url_overrides\": { \"newtab\": 123 }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    g_assert_no_error(error.get());
+
+    g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
+
+    extension = parseExtensionManifest("{ \"chrome_url_overrides\": { }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    g_assert_no_error(error.get());
+
+    g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
+
+    extension = parseExtensionManifest("{ \"chrome_url_overrides\": { \"newtab\": \"\" }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
+    g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
+    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    g_assert_no_error(error.get());
+
+    g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
+}
+
 void beforeAll()
 {
     Test::add("WebKitWebExtensionContext", "content-scripts-parsing", testContentScriptsParsing);
     Test::add("WebKitWebExtensionContext", "options-page-uri-parsing", testOptionsPageURIParsing);
+    Test::add("WebKitWebExtensionContext", "uri-overrides-parsing", testURIOverridesParsing);
 }
 
 void afterAll()

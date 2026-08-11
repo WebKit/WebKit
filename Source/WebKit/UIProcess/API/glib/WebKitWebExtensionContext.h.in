@@ -61,6 +61,9 @@ WEBKIT_API gboolean
 webkit_web_extension_context_has_injected_content_for_uri                   (WebKitWebExtensionContext *context,
                                                                              const gchar               *uri);
 
+WEBKIT_API const gchar *
+webkit_web_extension_context_get_override_new_tab_page_uri                  (WebKitWebExtensionContext *context);
+
 G_END_DECLS
 
 #endif // ENABLE(2022_GLIB_API)
