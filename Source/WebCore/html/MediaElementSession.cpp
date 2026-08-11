@@ -1546,9 +1546,10 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
 
     bool supportsSeeking = element->supportsSeeking();
     double rate = element->playbackRate();
-    double duration = supportsSeeking ? element->duration() : std::numeric_limits<double>::quiet_NaN();
+    // Report position independently of seekability.
+    double duration = element->duration();
     double currentTime = element->currentTime();
-    if (!std::isfinite(currentTime) || !supportsSeeking)
+    if (!std::isfinite(currentTime))
         currentTime = std::numeric_limits<double>::quiet_NaN();
     auto sourceApplicationIdentifier = element->sourceApplicationIdentifier();
 #if PLATFORM(COCOA)
