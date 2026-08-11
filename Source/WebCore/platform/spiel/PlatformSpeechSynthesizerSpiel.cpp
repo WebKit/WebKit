@@ -108,35 +108,43 @@ void SpielSpeechWrapper::finishSpeakerInitialization()
     // TODO: Plumb support for boundaryEventOccurred? Using range-started signal?
 
     g_signal_connect_swapped(m_speaker.get(), "utterance-started", G_CALLBACK(+[](SpielSpeechWrapper* self, SpielUtterance*) {
-        self->m_platformSynthesizer.client().didStartSpeaking(*self->m_utterance);
+        if (RefPtr client = self->m_platformSynthesizer.client())
+            client->didStartSpeaking(*self->m_utterance);
     }), this);
 
     g_signal_connect_swapped(m_speaker.get(), "utterance-finished", G_CALLBACK(+[](SpielSpeechWrapper* self, SpielUtterance*) {
-        self->m_platformSynthesizer.client().didFinishSpeaking(*self->m_utterance);
+        if (RefPtr client = self->m_platformSynthesizer.client())
+            client->didFinishSpeaking(*self->m_utterance);
         self->clearUtterance();
     }), this);
 
     g_signal_connect_swapped(m_speaker.get(), "utterance-canceled", G_CALLBACK(+[](SpielSpeechWrapper* self, SpielUtterance*) {
-        self->m_platformSynthesizer.client().didFinishSpeaking(*self->m_utterance);
+        if (RefPtr client = self->m_platformSynthesizer.client())
+            client->didFinishSpeaking(*self->m_utterance);
         self->clearUtterance();
     }), this);
 
     g_signal_connect_swapped(m_speaker.get(), "utterance-error", G_CALLBACK(+[](SpielSpeechWrapper* self, SpielUtterance*) {
-        self->m_platformSynthesizer.client().speakingErrorOccurred(*self->m_utterance);
+        if (RefPtr client = self->m_platformSynthesizer.client())
+            client->speakingErrorOccurred(*self->m_utterance);
         self->clearUtterance();
     }), this);
 
     g_signal_connect_swapped(m_speaker.get(), "notify::paused", G_CALLBACK(+[](SpielSpeechWrapper* self, SpielSpeaker* speaker) {
+        RefPtr client = self->m_platformSynthesizer.client();
+        if (!client)
+            return;
         gboolean isPaused;
         g_object_get(speaker, "paused", &isPaused, nullptr);
         if (isPaused)
-            self->m_platformSynthesizer.client().didPauseSpeaking(*self->m_utterance);
+            client->didPauseSpeaking(*self->m_utterance);
         else
-            self->m_platformSynthesizer.client().didResumeSpeaking(*self->m_utterance);
+            client->didResumeSpeaking(*self->m_utterance);
     }), this);
 
     g_signal_connect_swapped(m_speaker.get(), "notify::voices", G_CALLBACK(+[](SpielSpeechWrapper* self, SpielSpeaker*) {
-        self->m_platformSynthesizer.client().voicesDidChange();
+        if (RefPtr client = self->m_platformSynthesizer.client())
+            client->voicesDidChange();
     }), this);
 
     m_speakerCreatedCallback();
@@ -203,7 +211,8 @@ void SpielSpeechWrapper::speakUtterance(RefPtr<PlatformSpeechSynthesisUtterance>
     }
 
     if (!utterance->voice()) {
-        m_platformSynthesizer.client().didFinishSpeaking(*utterance);
+        if (RefPtr client = m_platformSynthesizer.client())
+            client->didFinishSpeaking(*utterance);
         return;
     }
 
@@ -256,7 +265,8 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
     if (!m_platformSpeechWrapper) {
         m_platformSpeechWrapper = makeUnique<SpielSpeechWrapper>(*this, [&] {
             m_voiceList = m_platformSpeechWrapper->initializeVoiceList();
-            client().voicesDidChange();
+            if (RefPtr speechClient = client())
+                speechClient->voicesDidChange();
         });
         return;
     }

@@ -138,7 +138,8 @@ void GstSpeechSynthesisWrapper::pause()
     webkitGstSetElementStateSynchronously(m_pipeline.get(), GST_STATE_PAUSED, [this](GstMessage* message) -> bool {
         return handleMessage(message);
     });
-    m_platformSynthesizer.client().didPauseSpeaking(*m_utterance);
+    if (RefPtr client = m_platformSynthesizer.client())
+        client->didPauseSpeaking(*m_utterance);
 }
 
 void GstSpeechSynthesisWrapper::resume()
@@ -149,7 +150,8 @@ void GstSpeechSynthesisWrapper::resume()
     webkitGstSetElementStateSynchronously(m_pipeline.get(), GST_STATE_PLAYING, [this](GstMessage* message) -> bool {
         return handleMessage(message);
     });
-    m_platformSynthesizer.client().didResumeSpeaking(*m_utterance);
+    if (RefPtr client = m_platformSynthesizer.client())
+        client->didResumeSpeaking(*m_utterance);
 }
 
 void GstSpeechSynthesisWrapper::speakUtterance(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
@@ -176,7 +178,8 @@ void GstSpeechSynthesisWrapper::speakUtterance(RefPtr<PlatformSpeechSynthesisUtt
         return handleMessage(message);
     });
 
-    m_platformSynthesizer.client().didStartSpeaking(*m_utterance);
+    if (RefPtr client = m_platformSynthesizer.client())
+        client->didStartSpeaking(*m_utterance);
 }
 
 void GstSpeechSynthesisWrapper::cancel()
@@ -187,7 +190,8 @@ void GstSpeechSynthesisWrapper::cancel()
     webkitGstSetElementStateSynchronously(m_pipeline.get(), GST_STATE_READY, [this](GstMessage* message) -> bool {
         return handleMessage(message);
     });
-    m_platformSynthesizer.client().didFinishSpeaking(*m_utterance);
+    if (RefPtr client = m_platformSynthesizer.client())
+        client->didFinishSpeaking(*m_utterance);
 }
 
 void GstSpeechSynthesisWrapper::resetState()
