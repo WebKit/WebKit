@@ -112,6 +112,8 @@ public:
 #if ENABLE(VIDEO)
     bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) final;
 #endif
+    bool copyTextureFromNativeImage(NativeImage&, GCGLenum destTarget, PlatformGLObject destId, GCGLint destLevel, GCGLint internalFormat, GCGLenum destType, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha) final;
+    bool copySubTextureFromNativeImage(NativeImage&, GCGLenum destTarget, PlatformGLObject destId, GCGLint destLevel, GCGLenum format, GCGLint xoffset, GCGLint yoffset, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha) final;
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif
@@ -134,6 +136,9 @@ protected:
     void invalidateKnownTextureContent(GCGLuint) final;
     bool reshapeDrawingBuffer() final;
     void prepareForDrawingBufferWrite() final;
+
+    bool copyTextureFromNativeImageInternal(NativeImage&, GCGLenum destTarget, PlatformGLObject destId, GCGLint destLevel, GCGLint internalFormat, GCGLenum destType, std::optional<IntPoint> destOffset, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha);
+    void releaseNativeImageCopySources();
 
     IOSurfacePbuffer& NODELETE drawingBuffer();
     IOSurfacePbuffer& NODELETE displayBuffer();
@@ -163,6 +168,14 @@ protected:
 #endif
     RetainPtr<MTLSharedEventListener> m_finishedMetalSharedEventListener;
     RetainPtr<id> m_finishedMetalSharedEvent; // FIXME: Remove all C++ includees and use id<MTLSharedEvent>.
+
+    struct NativeImageCopySource {
+        uint32_t surfaceID { 0 };
+        void* pbuffer { nullptr };
+        PlatformGLObject texture { 0 };
+        RetainPtr<IOSurfaceRef> surface;
+    };
+    Vector<NativeImageCopySource> m_nativeImageCopySources;
 #if ENABLE(WEBXR)
     using RasterizationRateMapArray =  EnumeratedArray<PlatformXR::Layout, RetainPtr<MTLRasterizationRateMap>, PlatformXR::Layout::Layered>;
     RasterizationRateMapArray m_rasterizationRateMap;

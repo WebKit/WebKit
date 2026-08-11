@@ -31,6 +31,8 @@
 #include "GPUConnectionToWebProcess.h"
 #include "IPCUtilities.h"
 #include "RemoteSharedResourceCache.h"
+#include <WebCore/GraphicsContextGLCocoa.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/MachSendRight.h>
@@ -75,6 +77,56 @@ void RemoteGraphicsContextGL::setSharedVideoFrameMemory(WebCore::SharedMemory::H
     m_sharedVideoFrameReader.setSharedMemory(WTF::move(handle));
 }
 #endif
+
+RefPtr<WebCore::NativeImage> RemoteGraphicsContextGL::takeSharedNativeImage(WebCore::RenderingResourceIdentifier sharedImageIdentifier)
+{
+    assertIsCurrent(workQueue());
+    return m_sharedResourceCache->takeNativeImage(sharedImageIdentifier, 8_s);
+}
+
+void RemoteGraphicsContextGL::copyTextureFromNativeImage(WebCore::RenderingResourceIdentifier sharedImageIdentifier, uint32_t destTarget, PlatformGLObject destId, int32_t destLevel, int32_t internalFormat, uint32_t destType, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha)
+{
+    assertIsCurrent(workQueue());
+
+    RefPtr image = takeSharedNativeImage(sharedImageIdentifier);
+    if (!image)
+        return;
+
+    if (!m_objectNames.isValidKey(destId)) {
+        ASSERT_IS_TESTING_IPC();
+        return;
+    }
+    PlatformGLObject destTextureName = m_objectNames.get(destId);
+    if (!destTextureName)
+        return;
+
+    RefPtr context = m_context;
+    if (!context)
+        return;
+    context->copyTextureFromNativeImage(*image, destTarget, destTextureName, destLevel, internalFormat, destType, unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
+}
+
+void RemoteGraphicsContextGL::copySubTextureFromNativeImage(WebCore::RenderingResourceIdentifier sharedImageIdentifier, uint32_t destTarget, PlatformGLObject destId, int32_t destLevel, uint32_t format, int32_t xoffset, int32_t yoffset, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha)
+{
+    assertIsCurrent(workQueue());
+
+    RefPtr image = takeSharedNativeImage(sharedImageIdentifier);
+    if (!image)
+        return;
+
+    if (!m_objectNames.isValidKey(destId)) {
+        ASSERT_IS_TESTING_IPC();
+        return;
+    }
+    PlatformGLObject destTextureName = m_objectNames.get(destId);
+    if (!destTextureName)
+        return;
+
+    RefPtr context = m_context;
+    if (!context)
+        return;
+    context->copySubTextureFromNativeImage(*image, destTarget, destTextureName, destLevel, format, xoffset, yoffset, unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
+}
 
 namespace {
 

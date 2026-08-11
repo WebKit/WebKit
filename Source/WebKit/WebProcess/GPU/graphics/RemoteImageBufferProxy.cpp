@@ -274,12 +274,17 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackend() const
 
 RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
 {
+    return copyNativeImage(NativeImageCopyMode::CopyOnWrite);
+}
+
+RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage(NativeImageCopyMode mode) const
+{
     auto* backend = ensureBackend();
     if (!backend)
         return nullptr;
-    if (backend->canMapBackingStore()) {
+    if (mode == NativeImageCopyMode::CopyOnWrite && backend->canMapBackingStore()) {
         const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
-        return ImageBuffer::copyNativeImage();
+        return ImageBuffer::copyNativeImage(mode);
     }
     RefPtr renderingBackend = m_renderingBackend.get();
     if (!renderingBackend) [[unlikely]]
@@ -289,7 +294,7 @@ RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
     // This read-back bypasses flushDrawingContext(), so send any buffered line
     // strokes into the stream before the (in-order) CopyNativeImage message.
     sendPendingDrawsIfNecessary();
-    const_cast<RemoteImageBufferProxy*>(this)->send(Messages::RemoteImageBuffer::CopyNativeImage(nativeImage->renderingResourceIdentifier()));
+    const_cast<RemoteImageBufferProxy*>(this)->send(Messages::RemoteImageBuffer::CopyNativeImage(nativeImage->renderingResourceIdentifier(), mode));
     return nativeImage;
 }
 

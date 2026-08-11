@@ -71,6 +71,7 @@ struct GCGLSpanTuple;
 
 namespace WebCore {
 class ImageBuffer;
+class NativeImage;
 class PixelBuffer;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
@@ -1685,6 +1686,9 @@ public:
     virtual bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum  format, GCGLenum type, bool premultiplyAlpha, bool flipY) = 0;
     WEBCORE_EXPORT virtual RefPtr<Image> videoFrameToImage(VideoFrame&);
 #endif
+
+    virtual bool copyTextureFromNativeImage(NativeImage&, GCGLenum /*destTarget*/, PlatformGLObject /*destId*/, GCGLint /*destLevel*/, GCGLint /*internalFormat*/, GCGLenum /*destType*/, bool /*unpackFlipY*/, bool /*unpackPremultiplyAlpha*/, bool /*unpackUnmultiplyAlpha*/) { return false; }
+    virtual bool copySubTextureFromNativeImage(NativeImage&, GCGLenum /*destTarget*/, PlatformGLObject /*destId*/, GCGLint /*destLevel*/, GCGLenum /*format*/, GCGLint /*xoffset*/, GCGLint /*yoffset*/, bool /*unpackFlipY*/, bool /*unpackPremultiplyAlpha*/, bool /*unpackUnmultiplyAlpha*/) { return false; }
 
     IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }
 

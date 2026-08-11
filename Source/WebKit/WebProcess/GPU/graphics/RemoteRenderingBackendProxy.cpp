@@ -421,6 +421,11 @@ void RemoteRenderingBackendProxy::cacheNativeImageFromSharedNativeImage(const Re
     send(Messages::RemoteRenderingBackend::CacheNativeImageFromSharedNativeImage(image.renderingResourceIdentifier()));
 }
 
+void RemoteRenderingBackendProxy::shareNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::RenderingResourceIdentifier sharedImageIdentifier)
+{
+    send(Messages::RemoteRenderingBackend::ShareNativeImage(imageIdentifier, sharedImageIdentifier));
+}
+
 void RemoteRenderingBackendProxy::releaseNativeImage(RenderingResourceIdentifier identifier)
 {
     if (!m_connection)

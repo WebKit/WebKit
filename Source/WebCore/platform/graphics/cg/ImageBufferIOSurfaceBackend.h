@@ -62,8 +62,10 @@ protected:
     bool flushContextDraws();
     
     RefPtr<NativeImage> copyNativeImage() override;
+    RefPtr<NativeImage> copyNativeImage(NativeImageCopyMode) override;
     RefPtr<NativeImage> createNativeImageReference() override;
     RefPtr<NativeImage> sinkIntoNativeImage() override;
+    RefPtr<NativeImage> copyNativeImageWithCopiedBackingStore();
 
     void getPixelBuffer(const IntRect&, PixelBuffer&) override;
     void putPixelBuffer(const PixelBufferSourceView&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;

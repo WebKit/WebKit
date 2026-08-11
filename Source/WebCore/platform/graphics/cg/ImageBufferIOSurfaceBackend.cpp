@@ -184,6 +184,48 @@ RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage()
     return NativeImage::create(createImage());
 }
 
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(NativeImageCopyMode mode)
+{
+    if (mode == NativeImageCopyMode::CopyBackingStore) {
+        if (auto image = copyNativeImageWithCopiedBackingStore())
+            return image;
+    }
+    return copyNativeImage();
+}
+
+RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImageWithCopiedBackingStore()
+{
+    if (m_parameters.bufferFormat.pixelFormat != PixelFormat::BGRA8)
+        return nullptr;
+    auto copySurface = IOSurface::create(m_ioSurfacePool.get(), m_surface->size(), m_parameters.colorSpace, IOSurface::Name::ImageBuffer);
+    if (!copySurface)
+        return nullptr;
+    RetainPtr copyContext = copySurface->createPlatformContext(m_displayID);
+    if (!copyContext)
+        return nullptr;
+    RetainPtr sourceImage = createImageReference();
+    if (!sourceImage)
+        return nullptr;
+    CGContextSetBlendMode(copyContext.get(), kCGBlendModeCopy);
+    auto size = m_surface->size();
+    CGContextDrawImage(copyContext.get(), CGRectMake(0, 0, size.width(), size.height()), sourceImage.get());
+    CGContextFlush(copyContext.get());
+    RetainPtr<IOSurfaceRef> surface = copySurface->surface();
+    RetainPtr snapshotImage = adoptCF(CGIOSurfaceContextCreateImageReference(copyContext.get()));
+    copyContext = nullptr;
+    auto image = NativeImage::create(WTF::move(snapshotImage));
+    if (!image)
+        return nullptr;
+    Function<void()> releaseHandler;
+    if (RefPtr pool = m_ioSurfacePool) {
+        releaseHandler = [pool = WTF::move(pool), snapshotSurface = WTF::move(copySurface)]() mutable {
+            IOSurface::moveToPool(WTF::move(snapshotSurface), pool.get());
+        };
+    }
+    image->setBackingIOSurface(WTF::move(surface), WTF::move(releaseHandler));
+    return image;
+}
+
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::createNativeImageReference()
 {
     // The destination backend needs to read the actual pixels. Returning non-refence will

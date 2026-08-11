@@ -186,6 +186,8 @@ public:
     // Returns NativeImage of the current drawing results. Results in an immutable copy of the current back buffer.
     WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage() const;
 
+    WEBCORE_EXPORT virtual RefPtr<NativeImage> copyNativeImage(NativeImageCopyMode) const;
+
     // Returns NativeImage referencing the back buffer. Changes to ImageBuffer might be reflected to the NativeImage.
     // Useful when caller can guarantee the use of the NativeImage ends "immediately", before the next draw to this ImageBuffer.
     WEBCORE_EXPORT virtual RefPtr<NativeImage> createNativeImageReference() const;

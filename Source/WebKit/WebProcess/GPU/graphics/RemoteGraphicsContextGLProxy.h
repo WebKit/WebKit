@@ -39,6 +39,7 @@
 #include <WebCore/GCGLSpan.h>
 #include <WebCore/GraphicsContextGL.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
@@ -100,6 +101,11 @@ public:
 #if ENABLE(VIDEO)
     bool copyTextureFromVideoFrame(WebCore::VideoFrame&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type , bool premultiplyAlpha, bool flipY) final;
     RefPtr<WebCore::Image> videoFrameToImage(WebCore::VideoFrame&) final;
+#endif
+    bool copyTextureFromNativeImage(WebCore::NativeImage&, GCGLenum destTarget, PlatformGLObject destId, GCGLint destLevel, GCGLint internalFormat, GCGLenum destType, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha) final;
+    bool copySubTextureFromNativeImage(WebCore::NativeImage&, GCGLenum destTarget, PlatformGLObject destId, GCGLint destLevel, GCGLenum format, GCGLint xoffset, GCGLint yoffset, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha) final;
+#if PLATFORM(COCOA)
+    std::optional<WebCore::RenderingResourceIdentifier> shareNativeImageForCopy(WebCore::NativeImage&);
 #endif
 
     void simulateEventForTesting(WebCore::GraphicsContextGLSimulatedEventForTesting) final;

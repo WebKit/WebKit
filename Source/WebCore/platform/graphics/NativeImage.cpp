@@ -70,6 +70,10 @@ NativeImage::~NativeImage()
 {
     for (CheckedRef observer : m_observers)
         observer->willDestroyNativeImage(*this);
+#if HAVE(IOSURFACE)
+    if (m_backingIOSurfaceReleaseHandler)
+        m_backingIOSurfaceReleaseHandler();
+#endif
 }
 
 const PlatformImagePtr& NativeImage::platformImage() const

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="source"></canvas>
+<canvas id="target"></canvas>
+<script src="../resources/runner.js"></script>
+<script>
+source.width = 2048;
+source.height = 2048;
+const ctx = source.getContext("2d");
+ctx.fillStyle = "#a08040";
+ctx.fillRect(0, 0, source.width, source.height);
+
+target.width = source.width;
+target.height = source.height;
+const gl = target.getContext("webgl");
+const tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+
+let isDone = false;
+PerfTestRunner.prepareToMeasureValuesAsync({ done: () => { isDone = true; }, unit: 'ms' });
+
+function runTest() {
+    const start = PerfTestRunner.now();
+    for (let i = 0; i < 30; ++i) {
+        // Force the canvas backing to be dirtied so any caching is invalidated.
+        ctx.fillStyle = `rgb(${i * 8 & 0xff}, 128, 64)`;
+        ctx.fillRect(0, 0, source.width, source.height);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+    }
+    gl.finish();
+    PerfTestRunner.measureValueAsync(PerfTestRunner.now() - start);
+    if (!isDone)
+        setTimeout(runTest, 0);
+}
+runTest();
+</script>
+</body>
+</html>

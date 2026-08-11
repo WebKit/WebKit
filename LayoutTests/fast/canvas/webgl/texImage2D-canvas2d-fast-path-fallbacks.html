@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>texImage2D with HTMLCanvasElement (2D) — pixel correctness in cases where the GPU-GPU fast path is intentionally bypassed.</title>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("The canvas-2D → WebGL fast path must skip and fall back to the generic upload path for: WebGL2 with a bound PIXEL_UNPACK_BUFFER (which must raise INVALID_OPERATION), level > 0 uploads, type != UNSIGNED_BYTE, and format outside {RGB, RGBA}. In every such case the observable behavior must match the generic path.");
+
+const W = 8;
+const H = 8;
+
+function makeSource()
+{
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = "#ff8040";
+    ctx.fillRect(0, 0, W, H);
+    return c;
+}
+
+function makeWebGLContext(version)
+{
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    return c.getContext(version);
+}
+
+function firstPixel(gl)
+{
+    const fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    const tex = gl.getParameter(gl.TEXTURE_BINDING_2D);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    const buf = new Uint8Array(4);
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.deleteFramebuffer(fb);
+    return buf;
+}
+
+function isOpaqueOrange(pixel)
+{
+    return Math.abs(pixel[0] - 255) <= 2 && Math.abs(pixel[1] - 128) <= 2 && Math.abs(pixel[2] - 64) <= 2 && Math.abs(pixel[3] - 255) <= 2;
+}
+
+// Case 1: WebGL2 with a bound PIXEL_UNPACK_BUFFER must raise INVALID_OPERATION and upload nothing.
+debug("\n--- WebGL2 with bound PIXEL_UNPACK_BUFFER ---");
+(function() {
+    const gl = makeWebGLContext("webgl2");
+    if (!gl) {
+        testFailed("WebGL2 not available");
+        return;
+    }
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    const pbo = gl.createBuffer();
+    gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, pbo);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, makeSource());
+    window.pboUploadError = gl.getError();
+    window.GL_INVALID_OPERATION = gl.INVALID_OPERATION;
+    shouldBe("pboUploadError", "GL_INVALID_OPERATION");
+    // After unbinding the buffer the same upload must succeed with correct pixels.
+    gl.bindBuffer(gl.PIXEL_UNPACK_BUFFER, null);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, makeSource());
+    const pixel = firstPixel(gl);
+    debug(`after unbinding: first pixel = [${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]}]`);
+    window.pboUnboundPixelIsOrange = isOpaqueOrange(pixel);
+    shouldBeTrue("pboUnboundPixelIsOrange");
+})();
+
+// Case 2: level > 0 must take the generic path.
+debug("\n--- level > 0 ---");
+(function() {
+    const gl = makeWebGLContext("webgl");
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, W, H, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texImage2D(gl.TEXTURE_2D, 1, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, makeSource());
+    window.levelUploadError = gl.getError();
+    shouldBe("levelUploadError", "0");
+})();
+
+// Case 3: type != UNSIGNED_BYTE must take the generic path.
+debug("\n--- type=UNSIGNED_SHORT_4_4_4_4 ---");
+(function() {
+    const gl = makeWebGLContext("webgl");
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, makeSource());
+    window.shortTypeUploadError = gl.getError();
+    shouldBe("shortTypeUploadError", "0");
+    const pixel = firstPixel(gl);
+    debug(`first pixel = [${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]}]`);
+    window.shortTypePixelIsOrange = Math.abs(pixel[0] - 255) <= 20 && Math.abs(pixel[1] - 128) <= 20 && Math.abs(pixel[2] - 64) <= 20 && Math.abs(pixel[3] - 255) <= 20;
+    shouldBeTrue("shortTypePixelIsOrange");
+})();
+
+// Case 4: format=LUMINANCE_ALPHA must take the generic path.
+debug("\n--- format=LUMINANCE_ALPHA ---");
+(function() {
+    const gl = makeWebGLContext("webgl");
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE_ALPHA, gl.LUMINANCE_ALPHA, gl.UNSIGNED_BYTE, makeSource());
+    window.luminanceAlphaUploadError = gl.getError();
+    shouldBe("luminanceAlphaUploadError", "0");
+})();
+</script>
+</body>
+</html>

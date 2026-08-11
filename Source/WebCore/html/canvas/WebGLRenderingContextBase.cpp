@@ -3366,7 +3366,38 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
 
     if (RefPtr imageData = source.getImageData()) {
         texImageSourceHelper(functionID, target, level, internalformat, border, format, type, xoffset, yoffset, zoffset, sourceImageRect, depth, unpackImageHeight, TexImageSource(imageData.releaseNonNull()));
-    } else if (RefPtr image = source.copiedImage()) {
+        return { };
+    }
+
+#if PLATFORM(COCOA)
+    bool sourceImageRectIsDefault = sourceImageRect == texImageSourceSize(source);
+    bool isFastPathFunction = functionID == TexImageFunctionID::TexImage2D || functionID == TexImageFunctionID::TexSubImage2D;
+    RefPtr sourceContext = source.renderingContext();
+    if (isFastPathFunction && sourceImageRectIsDefault && texture
+        && sourceContext && sourceContext->is2d()
+        && target == GraphicsContextGL::TEXTURE_2D
+        && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA)
+        && (functionID == TexImageFunctionID::TexSubImage2D || internalformat == GraphicsContextGL::RGB || internalformat == GraphicsContextGL::RGBA || internalformat == GraphicsContextGL::RGB8 || internalformat == GraphicsContextGL::RGBA8)
+        && type == GraphicsContextGL::UNSIGNED_BYTE
+        && !level && depth == 1
+        && !hasBoundPixelUnpackBuffer()) {
+        RefPtr buffer = source.makeRenderingResultsAvailable();
+        if (buffer && buffer->renderingMode() == RenderingMode::Accelerated && buffer->pixelFormat() == PixelFormat::BGRA8 && buffer->colorSpace() == DestinationColorSpace::SRGB()) {
+            if (RefPtr image = buffer->copyNativeImage(NativeImageCopyMode::CopyBackingStore)) {
+                bool copied = false;
+                RefPtr context = graphicsContextGL();
+                if (functionID == TexImageFunctionID::TexSubImage2D)
+                    copied = context->copySubTextureFromNativeImage(*image, target, texture->object(), level, format, xoffset, yoffset, m_unpackFlipY, false, !m_unpackPremultiplyAlpha);
+                else
+                    copied = context->copyTextureFromNativeImage(*image, target, texture->object(), level, internalformat, type, m_unpackFlipY, false, !m_unpackPremultiplyAlpha);
+                if (copied)
+                    return { };
+            }
+        }
+    }
+#endif
+
+    if (RefPtr image = source.copiedImage()) {
         texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *image, GraphicsContextGL::DOMSource::Canvas, m_unpackFlipY, m_unpackPremultiplyAlpha, false, sourceImageRect, depth, unpackImageHeight);
     }
     return { };

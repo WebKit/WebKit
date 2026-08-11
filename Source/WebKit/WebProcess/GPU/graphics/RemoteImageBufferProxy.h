@@ -92,6 +92,7 @@ private:
     RemoteImageBufferProxy(Parameters, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&);
 
     RefPtr<WebCore::NativeImage> copyNativeImage() const final;
+    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::NativeImageCopyMode) const final;
     RefPtr<WebCore::NativeImage> createNativeImageReference() const final;
     bool isRemoteImageBufferProxy() const final { return true; }
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;

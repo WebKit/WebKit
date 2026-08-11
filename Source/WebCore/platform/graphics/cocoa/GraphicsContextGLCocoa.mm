@@ -33,11 +33,13 @@
 #import "ANGLEUtilitiesCocoa.h"
 #import "CVUtilities.h"
 #import "GraphicsLayerContentsDisplayDelegate.h"
+#import "IOSurface.h"
 #import "IOSurfacePool.h"
 #import "Logging.h"
 #import "PixelBuffer.h"
 #import "ProcessIdentity.h"
 #import <CoreGraphics/CGBitmapContext.h>
+#import <CoreVideo/CVPixelBuffer.h>
 #import <Metal/Metal.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/MetalSPI.h>
@@ -187,8 +189,10 @@ GraphicsContextGLCocoa::GraphicsContextGLCocoa(GraphicsContextGLAttributes&& cre
 
 GraphicsContextGLCocoa::~GraphicsContextGLCocoa()
 {
-    if (makeContextCurrent())
+    if (makeContextCurrent()) {
+        releaseNativeImageCopySources();
         freeDrawingBuffers();
+    }
 }
 
 IOSurface* GraphicsContextGLCocoa::displayBufferSurface()
@@ -889,6 +893,141 @@ bool GraphicsContextGLCocoa::copyTextureFromVideoFrame(VideoFrame& videoFrame, P
     return contextCV->copyVideoSampleToTexture(*videoFrameCV, texture, level, internalFormat, format, type, WebCore::GraphicsContextGL::FlipY(flipY));
 }
 #endif
+
+bool GraphicsContextGLCocoa::copyTextureFromNativeImage(NativeImage& image, GCGLenum destTarget, PlatformGLObject destId, GCGLint destLevel, GCGLint internalFormat, GCGLenum destType, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha)
+{
+    if (destType != GL::UNSIGNED_BYTE)
+        return false;
+    switch (internalFormat) {
+    case GL::RGB:
+    case GL::RGBA:
+    case GL::RGB8:
+    case GL::RGBA8:
+        break;
+    default:
+        return false;
+    }
+    return copyTextureFromNativeImageInternal(image, destTarget, destId, destLevel, internalFormat, destType, std::nullopt, unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
+}
+
+bool GraphicsContextGLCocoa::copySubTextureFromNativeImage(NativeImage& image, GCGLenum destTarget, PlatformGLObject destId, GCGLint destLevel, GCGLenum format, GCGLint xoffset, GCGLint yoffset, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha)
+{
+    if (!destId || destTarget != GL::TEXTURE_2D)
+        return false;
+    if (!makeContextCurrent())
+        return false;
+
+    {
+        ScopedRestoreTextureBinding restoreBinding(GL::TEXTURE_BINDING_2D, GL::TEXTURE_2D);
+        GL_BindTexture(GL_TEXTURE_2D, destId);
+        updateErrors();
+        GL_TexSubImage2D(GL_TEXTURE_2D, destLevel, xoffset, yoffset, 0, 0, format, GL::UNSIGNED_BYTE, nullptr);
+        if (auto error = GL_GetError(); error != GL_NO_ERROR) {
+            addError(enumToErrorCode(error));
+            return true;
+        }
+    }
+    return copyTextureFromNativeImageInternal(image, destTarget, destId, destLevel, 0, 0, IntPoint { xoffset, yoffset }, unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
+}
+
+bool GraphicsContextGLCocoa::copyTextureFromNativeImageInternal(NativeImage& image, GCGLenum destTarget, PlatformGLObject destId, GCGLint destLevel, GCGLint internalFormat, GCGLenum destType, std::optional<IntPoint> destOffset, bool unpackFlipY, bool unpackPremultiplyAlpha, bool unpackUnmultiplyAlpha)
+{
+    if (!destId || destTarget != GL::TEXTURE_2D)
+        return false;
+    if (!makeContextCurrent())
+        return false;
+
+    if (!enableExtensionsImpl({ "GL_CHROMIUM_copy_texture"_s }))
+        return false;
+
+    RetainPtr<IOSurfaceRef> surface = image.backingIOSurface();
+    if (surface) {
+        auto pixelFormat = IOSurfaceGetPixelFormat(surface.get());
+        bool isBGRA8 = pixelFormat == kCVPixelFormatType_32BGRA || pixelFormat == kCVPixelFormatType_Lossless_32BGRA;
+        if (!isBGRA8 || !image.hasAlpha() || image.colorSpace() != DestinationColorSpace::SRGB())
+            surface = nullptr;
+    }
+
+    std::unique_ptr<IOSurface> normalizedSurface;
+    if (!surface) {
+        RetainPtr platformImage = image.platformImage();
+        if (!platformImage)
+            return false;
+        auto size = image.size();
+        if (size.isEmpty())
+            return false;
+        normalizedSurface = IOSurface::create(nullptr, size, DestinationColorSpace::SRGB(), IOSurface::Name::GraphicsContextGL);
+        if (!normalizedSurface)
+            return false;
+        RetainPtr normalizedContext = normalizedSurface->createPlatformContext();
+        if (!normalizedContext)
+            return false;
+        CGContextSetBlendMode(normalizedContext.get(), kCGBlendModeCopy);
+        CGContextDrawImage(normalizedContext.get(), CGRectMake(0, 0, size.width(), size.height()), platformImage.get());
+        CGContextFlush(normalizedContext.get());
+        surface = normalizedSurface->surface();
+    }
+
+    int width = IOSurfaceGetWidth(surface.get());
+    int height = IOSurfaceGetHeight(surface.get());
+    if (width <= 0 || height <= 0)
+        return false;
+
+    static constexpr size_t maxCachedNativeImageCopySources = 16;
+    uint32_t surfaceID = IOSurfaceGetID(surface.get());
+    PlatformGLObject sourceTexture = 0;
+    for (size_t i = 0; i < m_nativeImageCopySources.size(); ++i) {
+        if (m_nativeImageCopySources[i].surfaceID == surfaceID) {
+            sourceTexture = m_nativeImageCopySources[i].texture;
+            if (i) {
+                auto entry = WTF::move(m_nativeImageCopySources[i]);
+                m_nativeImageCopySources.removeAt(i);
+                m_nativeImageCopySources.insert(0, WTF::move(entry));
+            }
+            break;
+        }
+    }
+    if (!sourceTexture) {
+        ScopedRestoreTextureBinding restoreBinding(GL::TEXTURE_BINDING_2D, GL::TEXTURE_2D);
+        GL_GenTextures(1, &sourceTexture);
+        if (!sourceTexture)
+            return false;
+        GL_BindTexture(GL_TEXTURE_2D, sourceTexture);
+        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        void* pbuffer = createPbufferAndAttachIOSurface(GL_TEXTURE_2D, PbufferAttachmentUsage::Read, GL_BGRA_EXT, width, height, GL_UNSIGNED_BYTE, surface.get(), 0);
+        if (!pbuffer) {
+            GL_DeleteTextures(1, &sourceTexture);
+            return false;
+        }
+        m_nativeImageCopySources.insert(0, { surfaceID, pbuffer, sourceTexture, surface });
+        if (m_nativeImageCopySources.size() > maxCachedNativeImageCopySources) {
+            auto& evicted = m_nativeImageCopySources.last();
+            destroyPbufferAndDetachIOSurface(evicted.pbuffer);
+            GL_DeleteTextures(1, &evicted.texture);
+            m_nativeImageCopySources.removeLast();
+        }
+    }
+    if (destOffset)
+        GL_CopySubTextureCHROMIUM(sourceTexture, 0, destTarget, destId, destLevel, destOffset->x(), destOffset->y(), 0, 0, width, height, unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
+    else
+        GL_CopyTextureCHROMIUM(sourceTexture, 0, destTarget, destId, destLevel, internalFormat, destType, unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
+    // Destroying the image recycles its backing IOSurface to the pool, where it may be purged or
+    // overwritten by the next snapshot. Hold the image until the GPU has executed the copy.
+    insertFinishedSignalOrInvoke([image = Ref { image }] { });
+    return true;
+}
+
+void GraphicsContextGLCocoa::releaseNativeImageCopySources()
+{
+    for (auto& entry : m_nativeImageCopySources) {
+        destroyPbufferAndDetachIOSurface(entry.pbuffer);
+        GL_DeleteTextures(1, &entry.texture);
+    }
+    m_nativeImageCopySources.clear();
+}
 
 void GraphicsContextGLCocoa::prepareForDrawingBufferWrite()
 {

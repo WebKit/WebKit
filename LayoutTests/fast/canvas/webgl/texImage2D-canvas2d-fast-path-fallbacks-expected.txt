@@ -1,0 +1,25 @@
+CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: a buffer is bound to PIXEL_UNPACK_BUFFER
+The canvas-2D â†’ WebGL fast path must skip and fall back to the generic upload path for: WebGL2 with a bound PIXEL_UNPACK_BUFFER (which must raise INVALID_OPERATION), level > 0 uploads, type != UNSIGNED_BYTE, and format outside {RGB, RGBA}. In every such case the observable behavior must match the generic path.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+--- WebGL2 with bound PIXEL_UNPACK_BUFFER ---
+PASS pboUploadError is GL_INVALID_OPERATION
+after unbinding: first pixel = [255, 128, 64, 255]
+PASS pboUnboundPixelIsOrange is true
+
+--- level > 0 ---
+PASS levelUploadError is 0
+
+--- type=UNSIGNED_SHORT_4_4_4_4 ---
+PASS shortTypeUploadError is 0
+first pixel = [255, 136, 68, 255]
+PASS shortTypePixelIsOrange is true
+
+--- format=LUMINANCE_ALPHA ---
+PASS luminanceAlphaUploadError is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

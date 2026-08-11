@@ -355,6 +355,13 @@ RefPtr<NativeImage> ImageBuffer::copyNativeImage() const
     return nullptr;
 }
 
+RefPtr<NativeImage> ImageBuffer::copyNativeImage(NativeImageCopyMode mode) const
+{
+    if (auto* backend = ensureBackend())
+        return backend->copyNativeImage(mode);
+    return nullptr;
+}
+
 RefPtr<NativeImage> ImageBuffer::createNativeImageReference() const
 {
     if (auto* backend = ensureBackend())

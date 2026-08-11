@@ -140,10 +140,10 @@ void RemoteImageBuffer::putPixelBuffer(const WebCore::PixelBufferSourceView& pix
     m_imageBuffer->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
 }
 
-void RemoteImageBuffer::copyNativeImage(RenderingResourceIdentifier imageIdentifier)
+void RemoteImageBuffer::copyNativeImage(RenderingResourceIdentifier imageIdentifier, WebCore::NativeImageCopyMode mode)
 {
     assertIsCurrent(workQueue());
-    RefPtr image = m_imageBuffer->copyNativeImage();
+    RefPtr image = m_imageBuffer->copyNativeImage(mode);
     // FIXME: Handle OOM.
     MESSAGE_CHECK(image, "OOM");
     bool success = m_renderingBackend->remoteResourceCache().cacheNativeImage(imageIdentifier, image.releaseNonNull());

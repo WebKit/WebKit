@@ -32,7 +32,7 @@ messages -> RemoteImageBuffer Stream {
     GetPixelBuffer(struct WebCore::PixelBufferFormat outputFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize) -> () Synchronous
     GetPixelBufferWithNewMemory(WebCore::SharedMemory::Handle handle, struct WebCore::PixelBufferFormat outputFormat, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize) -> () Synchronous NotStreamEncodable
     PutPixelBuffer(WebCore::PixelBufferSourceView pixelBuffer, WebCore::IntPoint srcPoint, WebCore::IntSize srcSize, WebCore::IntPoint destPoint, enum:uint8_t WebCore::AlphaPremultiplication destFormat) StreamBatched
-    CopyNativeImage(WebCore::RenderingResourceIdentifier image)
+    CopyNativeImage(WebCore::RenderingResourceIdentifier image, enum:bool WebCore::NativeImageCopyMode mode)
     FilteredNativeImage(Ref<WebCore::Filter> filter) -> (std::optional<WebCore::ShareableBitmapHandle> handle) Synchronous NotStreamEncodableReply
     ConvertToLuminanceMask()
     TransformToColorSpace(WebCore::DestinationColorSpace colorSpace)
