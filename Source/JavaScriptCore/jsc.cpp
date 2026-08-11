@@ -222,8 +222,6 @@ static unsigned asyncTestExpectedPasses { 0 };
 
 }
 
-template<typename Vector>
-static bool fillBufferWithContentsOfFile(const String& fileName, Vector& buffer);
 static RefPtr<Uint8Array> fillBufferWithContentsOfFile(const String& fileName);
 
 class CommandLine;

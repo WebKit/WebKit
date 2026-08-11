@@ -381,15 +381,6 @@ static void decode(Decoder& decoder, const T& src, SourceType<T>& dst, Args... a
         src.decode(decoder, dst, args...);
 }
 
-template<typename T>
-static T decode(Decoder& decoder, T src)
-{
-    if constexpr (std::is_same_v<T, SourceType<T>>)
-        return src;
-    else
-        return src.decode(decoder);
-}
-
 template<typename Source>
 class CachedObject {
     WTF_MAKE_NONCOPYABLE(CachedObject);

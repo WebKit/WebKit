@@ -1155,12 +1155,6 @@ private:
         append(opcode, tmp(right), result);
     }
 
-    template<Air::Opcode opcode32, Air::Opcode opcode64, Commutativity commutativity = NotCommutative>
-    void appendBinOp(Value* left, Value* right)
-    {
-        appendBinOp<opcode32, opcode64, Air::Oops, Air::Oops, commutativity>(left, right);
-    }
-
     template<Air::Opcode opcode32, Air::Opcode opcode64>
     void appendShift(Value* value, Value* amount)
     {
@@ -1724,15 +1718,16 @@ private:
         append(Air::MoveFloatTo32, vectorTmp, dst);
     }
 
+    // Kept for debugging: emits a runtime print of the given values.
     template<typename... Arguments>
-    void print(Arguments&&... arguments)
+    [[maybe_unused]] void print(Arguments&&... arguments)
     {
         Value* origin = m_value;
         print(origin, std::forward<Arguments>(arguments)...);
     }
 
     template<typename... Arguments>
-    void print(Value* origin, Arguments&&... arguments)
+    [[maybe_unused]] void print(Value* origin, Arguments&&... arguments)
     {
         auto printList = Printer::makePrintRecordList(arguments...);
         auto printSpecial = static_cast<Air::PrintSpecial*>(m_code.addSpecial(makeUnique<Air::PrintSpecial>(printList)));

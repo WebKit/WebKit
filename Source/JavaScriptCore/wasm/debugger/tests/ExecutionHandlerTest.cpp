@@ -75,7 +75,7 @@ static uint32_t failuresFound = 0;
 static uint32_t expectedVMCount = 0;
 static DebugServer* debugServer = nullptr;
 static ExecutionHandler* executionHandler = nullptr;
-static const TestScript* currentScript = nullptr;
+UNUSED_FUNCTION static const TestScript* currentScript = nullptr;
 UNUSED_FUNCTION bool doneTesting = false;
 
 #define VLOG(...) dataLogLnIf(verboseLogging, __VA_ARGS__)

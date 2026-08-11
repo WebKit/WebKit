@@ -457,7 +457,7 @@ auto FunctionParser<Context>::parseBlockSignatureAndNotifySIMDUseIfNeeded(BlockS
 }
 
 template<typename ControlType>
-static bool isTryOrCatch(ControlType& data)
+bool isTryOrCatch(ControlType& data)
 {
     return ControlType::isTry(data) || ControlType::isCatch(data);
 }

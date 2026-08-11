@@ -54,7 +54,7 @@ bool NODELETE shouldValidateIRAtEachPhase();
 bool NODELETE shouldSaveIRBeforePhase();
 
 template<typename IntType>
-static IntType chillDiv(IntType numerator, IntType denominator)
+IntType chillDiv(IntType numerator, IntType denominator)
 {
     if (!denominator)
         return 0;
@@ -64,7 +64,7 @@ static IntType chillDiv(IntType numerator, IntType denominator)
 }
 
 template<typename IntType>
-static IntType chillMod(IntType numerator, IntType denominator)
+IntType chillMod(IntType numerator, IntType denominator)
 {
     if (!denominator)
         return 0;
@@ -74,7 +74,7 @@ static IntType chillMod(IntType numerator, IntType denominator)
 }
 
 template<typename IntType>
-static IntType chillUDiv(IntType numerator, IntType denominator)
+IntType chillUDiv(IntType numerator, IntType denominator)
 {
     auto unsignedNumerator = unsignedCast(numerator);
     auto unsignedDenominator = unsignedCast(denominator);
@@ -84,7 +84,7 @@ static IntType chillUDiv(IntType numerator, IntType denominator)
 }
 
 template<typename IntType>
-static IntType chillUMod(IntType numerator, IntType denominator)
+IntType chillUMod(IntType numerator, IntType denominator)
 {
     auto unsignedNumerator = unsignedCast(numerator);
     auto unsignedDenominator = unsignedCast(denominator);
@@ -94,7 +94,7 @@ static IntType chillUMod(IntType numerator, IntType denominator)
 }
 
 template<typename IntType>
-static IntType rotateRight(IntType value, int32_t shift)
+IntType rotateRight(IntType value, int32_t shift)
 {
     auto uValue = unsignedCast(value);
     int32_t bits = sizeof(IntType) * 8;
@@ -104,7 +104,7 @@ static IntType rotateRight(IntType value, int32_t shift)
 }
 
 template<typename IntType>
-static IntType rotateLeft(IntType value, int32_t shift)
+IntType rotateLeft(IntType value, int32_t shift)
 {
     auto uValue = unsignedCast(value);
     int32_t bits = sizeof(IntType) * 8;

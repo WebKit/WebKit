@@ -905,16 +905,6 @@ private:
         return true;
     }
 
-    template<typename Filter>
-    void handleMemoryValue(Value* ptr, HeapRange range, const Filter& filter)
-    {
-        handleMemoryValue(
-            ptr, range, filter,
-            [] (MemoryValue*, Vector<Value*>&) -> Value* {
-                return nullptr;
-            });
-    }
-
     template<typename Filter, typename Replace>
     void handleMemoryValue(
         Value* ptr, HeapRange range, const Filter& filter, const Replace& replace)

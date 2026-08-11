@@ -4394,7 +4394,7 @@ void testLoadExtend_BaseIndex_RegisterID(const Scenario* scenarios, size_t numbe
 }
 
 template<typename T, typename Scenario, typename CompileFunctor>
-void testLoadExtend_voidp_RegisterID(const Scenario* scenarios, size_t numberOfScenarios, CompileFunctor compileFunctor)
+UNUSED_FUNCTION void testLoadExtend_voidp_RegisterID(const Scenario* scenarios, size_t numberOfScenarios, CompileFunctor compileFunctor)
 {
     for (size_t i = 0; i < numberOfScenarios; ++i) {
         auto test = compile([&] (CCallHelpers& jit) {
