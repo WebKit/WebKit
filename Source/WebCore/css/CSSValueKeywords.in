@@ -1572,6 +1572,8 @@ to-zero
 no-clamp
 random
 element-scoped
+property-scoped
+property-index-scoped
 // fixed
 sibling-count
 sibling-index

@@ -934,33 +934,50 @@ bool SubstitutionResolver::substituteRandomItemFunction(CSSParserTokenRange rang
     return true;
 }
 
+// Whether the key explicitly asked for a property scope, i.e. property-scoped or property-index-scoped.
+// `auto` also keys on the property, but rejecting it would break the omitted-key form, so it is excluded.
+static bool randomKeyHasExplicitPropertyScope(const CSSCalc::Random::Sharing& sharing)
+{
+    auto* key = std::get_if<CSSCalc::Random::Key>(&sharing);
+    return key && key->propertyScoped;
+}
+
 std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParserToken> randomKey)
 {
     // <random-key> = auto | <random-cache-key> | fixed <number [0,1]>
-    // Parsed with the shared consumer so random-item()'s <random-key> stays in sync with random()'s.
-    // The supported subset matches random(): [ [ auto | <dashed-ident> ] || element-scoped ] | fixed <number [0,1]>;
-    // property-scoped / property-index-scoped / <random-ua-ident> are a follow-up, in sync with random().
+    // Parsed with the shared consumer so random-item()'s <random-key> stays in sync with random()'s
+    // (<dashed-ident>, element-scoped, property-scoped, property-index-scoped, fixed). <random-ua-ident>
+    // is a follow-up.
     CSSParserTokenRange randomKeyRange { randomKey };
     randomKeyRange.consumeWhitespace();
 
     auto parserState = CSS::PropertyParserState { .context = m_substitutionValue->context() };
 
-    // "auto" (or an omitted identifier alongside element-scoped) keys on the current property,
-    // disambiguated by a per-resolver index so independent auto instances in one declaration select
-    // independently.
+    auto propertyID = m_styleBuilder.state().cssPropertyID();
+
+    // FIXME: § 9.4.1 turns `auto` into element-scoped property-index-scoped unconditionally, for both
+    // random() and random-item(), but this keys random-item()'s `auto` on the current property
+    // document-wide instead. This is pre-existing behavior, kept because there is no element to scope to
+    // in every substitution context (element-scoping would make the value invalid at computed-value time
+    // where there is none). Reconciling it with the spec is a follow-up.
     //
     // FIXME: This index is counted here, at substitution time, in a separate space from random()'s
     // parse-time cssRandomFunctionCount. An auto random-item() and an auto random() in the same
     // property value can therefore land on the same RandomCachingKey and share a base value, and the
     // index follows the selected branch rather than parse position. Unifying this with random()'s
     // counter is a follow-up.
-    auto sharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(randomKeyRange, parserState, [&] {
-        return CSSCalc::RandomSharingOptions::Auto {
-            .property = m_styleBuilder.state().cssPropertyID(),
-            .index = m_randomItemAutoIndex++
-        };
+    auto keySource = CSSPropertyParserHelpers::RandomKeySource { .property = propertyID, .autoElementScoped = std::nullopt };
+    auto sharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(randomKeyRange, parserState, keySource, [&] {
+        return m_randomItemAutoIndex++;
     });
     if (!sharing || !randomKeyRange.atEnd())
+        return { };
+
+    // cssPropertyID() is CSSPropertyCustom for every custom property, since the name is not threaded into
+    // the caching key, so honoring a property scope here would collapse all custom properties onto one
+    // shared base value. Reject instead of sharing incorrectly; random() likewise refuses to parse inside
+    // a custom property. Threading the name through is a follow-up.
+    if (propertyID == CSSPropertyCustom && randomKeyHasExplicitPropertyScope(*sharing))
         return { };
 
     return CSSCalc::resolveRandomBaseValue(*sharing, m_styleBuilder.state());

@@ -400,22 +400,38 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<P
 void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<Random>& fn, SerializationState& state)
 {
     WTF::switchOn(fn->sharing,
-        [&](const Random::SharingOptions& options) {
-            WTF::switchOn(options.identifier,
-                [&](const Random::SharingOptions::Auto&) {
-                    // Noting to do.
-                },
-                [&](const CSS::CustomIdent& customIdent) {
-                    if (!customIdent.value.isNull()) {
-                        CSS::serializationForCSS(builder, state.serializationContext, customIdent);
-                        if (options.elementScoped)
-                            builder.append(' ', nameLiteralForSerialization(CSSValueElementScoped), ", "_s);
-                        else
-                            builder.append(", "_s);
-                    } else if (options.elementScoped)
-                        builder.append(' ', nameLiteralForSerialization(CSSValueElementScoped), ", "_s);
-                }
-            );
+        [&](const Random::SharingAuto&) {
+            // `auto` serializes as omitted.
+        },
+        [&](const Random::Key& key) {
+            bool wroteSomething = false;
+            auto separate = [&] {
+                if (wroteSomething)
+                    builder.append(' ');
+                wroteSomething = true;
+            };
+            if (key.name) {
+                separate();
+                CSS::serializationForCSS(builder, state.serializationContext, *key.name);
+            }
+            if (key.elementScoped) {
+                separate();
+                builder.append(nameLiteralForSerialization(CSSValueElementScoped));
+            }
+            if (key.propertyScoped) {
+                separate();
+                WTF::switchOn(*key.propertyScoped,
+                    [&](const Random::Key::PropertyScoped&) {
+                        builder.append(nameLiteralForSerialization(CSSValuePropertyScoped));
+                    },
+                    [&](const Random::Key::PropertyIndexScoped&) {
+                        builder.append(nameLiteralForSerialization(CSSValuePropertyIndexScoped));
+                    }
+                );
+            }
+            // The parser never produces an empty <random-cache-key>.
+            ASSERT(wroteSomething);
+            builder.append(", "_s);
         },
         [&](const Random::SharingFixed& fixed) {
             builder.append(nameLiteralForSerialization(CSSValueFixed), ' ');

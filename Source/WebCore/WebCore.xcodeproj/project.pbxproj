@@ -2747,7 +2747,7 @@
 		62CB37701D0713A0F5D51239 /* UnifiedSource43-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47F192EF33A4783F5E6E60F0 /* UnifiedSource43-header-RenderStyleGetters.cpp */; };
 		62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 62CD32571157E57C0063B0A7 /* CustomEvent.h */; };
 		62D1605F2F35A2FA0044D953 /* StyleOverflowClipMargin.h in Headers */ = {isa = PBXBuildFile; fileRef = 62D1605E2F35A2750044D953 /* StyleOverflowClipMargin.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		62E7A81B328ECC03C163FD37 /* CSSCalcRandomSharingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AEA6F2D310E7B97572112B8C /* CSSCalcRandomSharingOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		62E7A81B328ECC03C163FD37 /* CSSCalcRandomSharing.h in Headers */ = {isa = PBXBuildFile; fileRef = AEA6F2D310E7B97572112B8C /* CSSCalcRandomSharing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		63152D191F9531EE007A5E4B /* ApplicationManifestLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 63152D171F9531EE007A5E4B /* ApplicationManifestLoader.h */; };
 		63189AE30E83A33300012E41 /* NodeRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 63189AE20E83A33300012E41 /* NodeRareData.h */; settings = {ATTRIBUTES = (); }; };
 		6325E2DF2A8A08D400F6EE78 /* AvailableLineWidthOverride.h in Headers */ = {isa = PBXBuildFile; fileRef = 6325E2DE2A8A08BC00F6EE78 /* AvailableLineWidthOverride.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -18327,7 +18327,7 @@
 		AE4332C27E66AB57CEA63858 /* MediaSelector-fullscreen.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MediaSelector-fullscreen.svg"; sourceTree = "<group>"; };
 		AE5BDBDB2CA4817400550C8C /* CredentialPropertiesOutput.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CredentialPropertiesOutput.idl; sourceTree = "<group>"; };
 		AE5BDBDC2CA481C600550C8C /* CredentialPropertiesOutput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CredentialPropertiesOutput.h; sourceTree = "<group>"; };
-		AEA6F2D310E7B97572112B8C /* CSSCalcRandomSharingOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSCalcRandomSharingOptions.h; sourceTree = "<group>"; };
+		AEA6F2D310E7B97572112B8C /* CSSCalcRandomSharing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSCalcRandomSharing.h; sourceTree = "<group>"; };
 		AEBAFFAC2D65D459008311A5 /* UnknownCredentialOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnknownCredentialOptions.h; sourceTree = "<group>"; };
 		AEBAFFAE2D65D462008311A5 /* UnknownCredentialOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnknownCredentialOptions.idl; sourceTree = "<group>"; };
 		AEBAFFAF2D65D478008311A5 /* AllAcceptedCredentialsOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AllAcceptedCredentialsOptions.h; sourceTree = "<group>"; };
@@ -39412,7 +39412,7 @@
 				BC4630B92E9D59D000EA911F /* CSSCalcOperator.h */,
 				BC3079442D0761AC00630D75 /* CSSCalcRandomCachingKey.h */,
 				BC3079432D07610100630D75 /* CSSCalcRandomCachingKeyMap.h */,
-				AEA6F2D310E7B97572112B8C /* CSSCalcRandomSharingOptions.h */,
+				AEA6F2D310E7B97572112B8C /* CSSCalcRandomSharing.h */,
 				BC33012B2BEBE8FB00A2A878 /* CSSCalcSymbolsAllowed.cpp */,
 				BC33012C2BEBE8FB00A2A878 /* CSSCalcSymbolsAllowed.h */,
 				BC709DDF266323CE00B9A21C /* CSSCalcSymbolTable.cpp */,
@@ -44782,7 +44782,7 @@
 				BC4630BE2E9D5CAD00EA911F /* CSSCalcOperator.h in Headers */,
 				BC3079472D0783D500630D75 /* CSSCalcRandomCachingKey.h in Headers */,
 				BC3079462D0783C900630D75 /* CSSCalcRandomCachingKeyMap.h in Headers */,
-				62E7A81B328ECC03C163FD37 /* CSSCalcRandomSharingOptions.h in Headers */,
+				62E7A81B328ECC03C163FD37 /* CSSCalcRandomSharing.h in Headers */,
 				BC3301312BEC1AA700A2A878 /* CSSCalcSymbolsAllowed.h in Headers */,
 				BC709DE0266323CF00B9A21C /* CSSCalcSymbolTable.h in Headers */,
 				BC000BE72C6011020033AA75 /* CSSCalcTree.h in Headers */,

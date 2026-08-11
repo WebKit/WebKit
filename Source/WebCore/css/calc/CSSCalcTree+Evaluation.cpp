@@ -238,18 +238,25 @@ std::optional<double> evaluate(const IndirectNode<Tan>& root, const EvaluationOp
 std::optional<double> resolveRandomBaseValue(const Random::Sharing& sharing, Style::BuilderState& builderState)
 {
     return WTF::switchOn(sharing,
-        [&](const Random::SharingOptions& sharingOptions) -> std::optional<double> {
-            if (sharingOptions.elementScoped.has_value() && !builderState.element())
+        [&](const Random::SharingAuto& sharingAuto) -> std::optional<double> {
+            if (sharingAuto.elementScoped && !builderState.element())
                 return { };
 
-            return WTF::switchOn(sharingOptions.identifier,
-                [&](const Random::SharingOptions::Auto& autoValue) {
-                    return builderState.lookupCSSRandomBaseValue(autoValue, sharingOptions.elementScoped);
-                },
-                [&](const CSS::CustomIdent& customIdent) {
-                    return builderState.lookupCSSRandomBaseValue(Style::toStyle(customIdent, builderState), sharingOptions.elementScoped);
-                }
-            );
+            RandomCachingKey::Key key {
+                .name = std::nullopt,
+                .propertyScoped = Random::Key::PropertyIndexScoped { sharingAuto.property, sharingAuto.index }
+            };
+            return builderState.lookupCSSRandomBaseValue(RandomCachingKey { WTF::move(key) }, sharingAuto.elementScoped);
+        },
+        [&](const Random::Key& sharingKey) -> std::optional<double> {
+            if (sharingKey.elementScoped && !builderState.element())
+                return { };
+
+            RandomCachingKey::Key key;
+            if (sharingKey.name)
+                key.name = Style::toStyle(*sharingKey.name, builderState);
+            key.propertyScoped = sharingKey.propertyScoped;
+            return builderState.lookupCSSRandomBaseValue(RandomCachingKey { WTF::move(key) }, sharingKey.elementScoped);
         },
         [&](const Random::SharingFixed& sharingFixed) -> std::optional<double> {
             return Style::toStyle(sharingFixed.value, builderState).value;

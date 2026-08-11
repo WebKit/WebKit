@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSCalcTree.h"
+#include "CSSPropertyNames.h"
 #include <optional>
 #include <wtf/Compiler.h>
 #include <wtf/Function.h>
@@ -44,13 +45,24 @@ namespace CSSPropertyParserHelpers {
 // <random-cache-key> = <dashed-ident> || element-scoped || [ property-scoped | property-index-scoped | <random-ua-ident> ]
 // https://drafts.csswg.org/css-values-5/#random-caching
 //
-// property-scoped / property-index-scoped / <random-ua-ident> are not yet supported by this consumer; only the
-// subset needed by random() and random-item() ([ [ auto | <dashed-ident> ] || element-scoped ] | fixed <number [0,1]>)
-// is parsed. `makeAuto` is called (at most once) to produce the caching key used for `auto`, letting callers pick
-// their own auto-index scheme (e.g. parse-time vs. substitution-time counters).
-std::optional<CSSCalc::Random::Sharing> consumeUnresolvedRandomKey(CSSParserTokenRange&, CSS::PropertyParserState&, NOESCAPE const Function<CSSCalc::RandomSharingOptions::Auto()>& makeAuto);
+// <random-ua-ident> is intentionally not yet supported by this consumer (follow-up).
+//
+// The implementation-derived parts of a <random-key> come from the caller: `property` is the property the
+// value is being parsed for, `autoElementScoped` is the scoping `auto` resolves to, and `consumeIndex`
+// yields the value index under the caller's own scheme (parse-time for random(), substitution-time for
+// random-item()). `property` is a plain value, and `consumeIndex` is only called for the productions that
+// actually carry an index (`auto` and property-index-scoped), so property-scoped cannot disturb a caller's
+// index counter.
+struct RandomKeySource {
+    CSSPropertyID property { CSSPropertyInvalid };
+    std::optional<CSS::Keyword::ElementScoped> autoElementScoped;
+};
 
-CSSCalc::RandomSharingOptions::Auto autoRandomSharingKey(const CSS::PropertyParserState&);
+std::optional<CSSCalc::Random::Sharing> consumeUnresolvedRandomKey(CSSParserTokenRange&, CSS::PropertyParserState&, const RandomKeySource&, NOESCAPE const Function<unsigned()>& consumeIndex);
+
+// Builds the sharing `auto` resolves to. Shared with callers that need it for an omitted <random-key>,
+// which means the same thing as `auto`.
+CSSCalc::RandomSharingAuto randomSharingAuto(const RandomKeySource&, unsigned index);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

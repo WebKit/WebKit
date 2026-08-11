@@ -237,44 +237,24 @@ auto toStyle(const CSSCalc::Random::Sharing& randomSharing, const ToStyleConvers
     ASSERT(options.evaluation.conversionData);
     ASSERT(options.evaluation.conversionData->styleBuilderState());
 
-    return WTF::switchOn(randomSharing,
-        [&](const CSSCalc::Random::SharingOptions& sharingOptions) -> Random::Fixed {
-            CheckedPtr builderState = options.evaluation.conversionData->styleBuilderState();
-
-            if (!sharingOptions.elementScoped.has_value()) {
-                ASSERT(builderState->element());
+    if (auto* sharingFixed = std::get_if<CSSCalc::Random::SharingFixed>(&randomSharing)) {
+        return WTF::switchOn(sharingFixed->value,
+            [&](const CSS::Number<CSS::ClosedUnitRange>::Raw& raw) -> Random::Fixed {
+                return Random::Fixed { raw.value };
+            },
+            [&](const CSS::Number<CSS::ClosedUnitRange>::Calc& calc) -> Random::Fixed {
+                return Random::Fixed { calc.evaluate(*protect(options.evaluation.conversionData->styleBuilderState())) };
             }
+        );
+    }
 
-            return WTF::switchOn(sharingOptions.identifier,
-                [&](const CSSCalc::Random::SharingOptions::Auto& autoValue) {
-                    return Random::Fixed {
-                        builderState->lookupCSSRandomBaseValue(
-                            autoValue,
-                            sharingOptions.elementScoped
-                        )
-                    };
-                },
-                [&](const CSS::CustomIdent& customIdent) {
-                    return Random::Fixed {
-                        builderState->lookupCSSRandomBaseValue(
-                            Style::toStyle(customIdent, *builderState),
-                            sharingOptions.elementScoped
-                        )
-                    };
-                }
-            );
-        },
-        [&](const CSSCalc::Random::SharingFixed& sharingFixed) -> Random::Fixed {
-            return WTF::switchOn(sharingFixed.value,
-                [&](const CSS::Number<CSS::ClosedUnitRange>::Raw& raw) -> Random::Fixed {
-                    return Random::Fixed { raw.value };
-                },
-                [&](const CSS::Number<CSS::ClosedUnitRange>::Calc& calc) -> Random::Fixed {
-                    return Random::Fixed { calc.evaluate(*protect(options.evaluation.conversionData->styleBuilderState())) };
-                }
-            );
-        }
-    );
+    // resolveRandomBaseValue only returns nullopt for element-scoped sharing with no element, which does not
+    // happen during element style building. Assert the invariant rather than letting a future violation
+    // silently resolve to min.
+    CheckedPtr builderState = options.evaluation.conversionData->styleBuilderState();
+    auto baseValue = resolveRandomBaseValue(randomSharing, *builderState);
+    ASSERT(baseValue);
+    return Random::Fixed { baseValue.value_or(0) };
 }
 
 std::optional<Child> toStyle(const std::optional<CSSCalc::Child>& optionalChild, const ToStyleConversionOptions& options)

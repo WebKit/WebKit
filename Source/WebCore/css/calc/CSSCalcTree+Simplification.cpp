@@ -1341,39 +1341,22 @@ std::optional<Child> simplify(Random& root, const SimplificationOptions& options
                 valueStep = numericStep.value;
             }
 
-            auto randomBaseValue = WTF::switchOn(root.sharing,
-                [&](const Random::SharingOptions& sharingOptions) -> std::optional<double> {
-                    CheckedPtr builderState = options.conversionData->styleBuilderState();
-
-                    if (sharingOptions.elementScoped.has_value() && !builderState->element())
+            // A fixed <number> can only be simplified here when it is a raw value; a calc-based fixed value
+            // needs full evaluation. All other sharing resolves through the shared resolver.
+            std::optional<double> randomBaseValue;
+            if (auto* sharingFixed = std::get_if<Random::SharingFixed>(&root.sharing)) {
+                randomBaseValue = WTF::switchOn(sharingFixed->value,
+                    [](const CSS::Number<CSS::ClosedUnitRange>::Raw& raw) -> std::optional<double> {
+                        return raw.value;
+                    },
+                    [](const CSS::Number<CSS::ClosedUnitRange>::Calc&) -> std::optional<double> {
                         return { };
-
-                    return WTF::switchOn(sharingOptions.identifier,
-                        [&](const Random::SharingOptions::Auto& autoValue) {
-                            return builderState->lookupCSSRandomBaseValue(
-                                autoValue,
-                                sharingOptions.elementScoped
-                            );
-                        },
-                        [&](const CSS::CustomIdent& customIdent) {
-                            return builderState->lookupCSSRandomBaseValue(
-                                Style::toStyle(customIdent, *builderState),
-                                sharingOptions.elementScoped
-                            );
-                        }
-                    );
-                },
-                [&](const Random::SharingFixed& sharingFixed) -> std::optional<double> {
-                    return WTF::switchOn(sharingFixed.value,
-                        [](const CSS::Number<CSS::ClosedUnitRange>::Raw& raw) -> std::optional<double> {
-                            return raw.value;
-                        },
-                        [](const CSS::Number<CSS::ClosedUnitRange>::Calc&) -> std::optional<double> {
-                            return { };
-                        }
-                    );
-                }
-            );
+                    }
+                );
+            } else {
+                CheckedPtr builderState = options.conversionData->styleBuilderState();
+                randomBaseValue = resolveRandomBaseValue(root.sharing, *builderState);
+            }
             if (!randomBaseValue)
                 return { };
 

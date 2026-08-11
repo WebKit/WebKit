@@ -36,18 +36,39 @@ enum CSSPropertyID : uint16_t;
 
 namespace CSSCalc {
 
-// <random-value-sharing> = [ [ auto | <dashed-ident> ] || element-scoped ] | fixed <number [0,1]>
-struct RandomSharingOptions {
-    struct Auto {
+// `auto` is a top-level <random-key> alternative; its scoping is chosen per-usage by the caller.
+// The (property, index) pair is the implementation-derived caching identity.
+//
+// `index` is 0-based. § 9.4.1 spells the simplified form ua-PROPERTY-INDEX with a 1-indexed INDEX, so
+// the <random-ua-ident> serialization follow-up has to add one when serializing.
+struct RandomSharingAuto {
+    CSSPropertyID property;
+    unsigned index;
+    std::optional<CSS::Keyword::ElementScoped> elementScoped;
+
+    bool operator==(const RandomSharingAuto&) const = default;
+};
+
+// <random-cache-key> = <dashed-ident> || element-scoped || [ property-scoped | property-index-scoped ]
+// NOTE: <random-ua-ident> is intentionally not yet supported (follow-up).
+struct RandomSharingKey {
+    struct PropertyScoped {
+        CSSPropertyID property;
+
+        bool operator==(const PropertyScoped&) const = default;
+    };
+    // `index` is 0-based; see the note on RandomSharingAuto.
+    struct PropertyIndexScoped {
         CSSPropertyID property;
         unsigned index;
 
-        bool operator==(const Auto&) const = default;
+        bool operator==(const PropertyIndexScoped&) const = default;
     };
-    Variant<Auto, CSS::CustomIdent> identifier;
+    std::optional<CSS::CustomIdent> name;
     std::optional<CSS::Keyword::ElementScoped> elementScoped;
+    std::optional<Variant<PropertyScoped, PropertyIndexScoped>> propertyScoped;
 
-    bool operator==(const RandomSharingOptions&) const = default;
+    bool operator==(const RandomSharingKey&) const = default;
 };
 
 } // namespace CSSCalc

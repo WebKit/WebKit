@@ -658,7 +658,7 @@ static std::optional<TypedChild> consumeRound(CSSParserTokenRange& tokens, int d
 
 static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int depth, ParserState& state)
 {
-    // <random()> = random( <random-value-sharing>? , <calc-sum>, <calc-sum>, <calc-sum>? )
+    // <random()> = random( <random-key>? , <calc-sum>, <calc-sum>, <calc-sum>? )
 
     if (!state.propertyParserState.context.cssRandomFunctionEnabled)
         return { };
@@ -674,20 +674,23 @@ static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int 
 
     using Op = Random;
 
+    auto keySource = CSSPropertyParserHelpers::RandomKeySource {
+        .property = state.propertyParserState.currentProperty,
+        .autoElementScoped = CSS::Keyword::ElementScoped { }
+    };
+
     std::optional<Random::Sharing> sharing;
-    if (auto optionalSharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(tokens, state.propertyParserState, [&] { return CSSPropertyParserHelpers::autoRandomSharingKey(state.propertyParserState); })) {
+    if (auto optionalSharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(tokens, state.propertyParserState, keySource, [&] {
+        return state.propertyParserState.cssRandomFunctionCount;
+    })) {
         if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
-            LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - missing comma after <random-value-sharing>");
+            LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - missing comma after <random-key>");
             return { };
         }
 
         sharing = WTF::move(optionalSharing);
-    } else {
-        sharing = Random::SharingOptions {
-            .identifier = CSSPropertyParserHelpers::autoRandomSharingKey(state.propertyParserState),
-            .elementScoped = CSS::Keyword::ElementScoped { },
-        };
-    }
+    } else
+        sharing = CSSPropertyParserHelpers::randomSharingAuto(keySource, state.propertyParserState.cssRandomFunctionCount);
 
     // Increment the random function count early, but after processing the the sharing production to
     // ensure that any nested random() functions in the <calc-sum> productions have an incremented value.
@@ -1325,7 +1328,7 @@ std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValu
         return consumeExactlyOneArgument<Sign>(tokens, depth, state);
 
     case CSSValueRandom:
-        // <random()> = random( <random-value-sharing>? , <calc-sum>, <calc-sum>, <calc-sum>? )
+        // <random()> = random( <random-key>? , <calc-sum>, <calc-sum>, <calc-sum>? )
         //     - INPUT: "same" <number>, <dimension>, or <percentage>
         //     - OUTPUT: same type
         return consumeRandom(tokens, depth, state);
