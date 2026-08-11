@@ -371,16 +371,16 @@ TemporalResult<std::optional<ISO8601::ExactTime>> getTimeZoneTransition(const Ti
 
             // Check if offset actually changed at this transition by querying before/after on cal directly.
             double beforeMs = transitionMs - 1.0;
-            double afterMs = transitionMs;
-            ucal_setMillis(cal, beforeMs, &status);
-            int32_t offsetBefore = ucal_get(cal, UCAL_ZONE_OFFSET, &status) + ucal_get(cal, UCAL_DST_OFFSET, &status);
-            ucal_setMillis(cal, afterMs, &status);
-            int32_t offsetAfter = ucal_get(cal, UCAL_ZONE_OFFSET, &status) + ucal_get(cal, UCAL_DST_OFFSET, &status);
-            if (U_FAILURE(status)) [[unlikely]]
-                return std::optional<ISO8601::ExactTime> { transition };
-            if (offsetBefore != offsetAfter)
+            auto offsetBefore = getOffsetMsAtEpoch(cal, beforeMs);
+            if (!offsetBefore) [[unlikely]]
+                return makeUnexpected(rangeError(icuTransitionFailed));
+            auto offsetAfter = getOffsetMsAtEpoch(cal, transitionMs);
+            if (!offsetAfter) [[unlikely]]
+                return makeUnexpected(rangeError(icuTransitionFailed));
+            if (*offsetBefore != *offsetAfter)
                 return std::optional<ISO8601::ExactTime> { transition };
 
+            status = U_ZERO_ERROR;
             ucal_setMillis(cal, direction == TransitionDirection::Previous ? beforeMs : transitionMs + 1.0, &status);
             if (U_FAILURE(status)) [[unlikely]]
                 return makeUnexpected(rangeError(icuTransitionFailed));

@@ -49,7 +49,7 @@ ISO8601::PlainDateTime interpretTemporalDateTimeFields(JSGlobalObject*, Calendar
 
 ISO8601::PlainDate isoDateAdd(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
 ISO8601::PlainDate calendarDateAdd(JSGlobalObject*, CalendarID, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
-ISO8601::Duration calendarDateUntil(CalendarID, const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);
+ISO8601::Duration calendarDateUntil(JSGlobalObject*, CalendarID, const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);
 
 enum class FieldSetType { Date, YearMonth, MonthDay, DateTime };
 template<FieldSetType type = FieldSetType::Date>

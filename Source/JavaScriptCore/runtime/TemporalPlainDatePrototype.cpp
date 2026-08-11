@@ -816,7 +816,9 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDatePrototypeGetterEra, (JSGlobalObject* g
 
     // Step 3: Return CalendarISOToDate(calendar, isoDate).[[Era]].
     auto result = TemporalCore::calendarEra(plainDate->calendarID(), plainDate->plainDate());
-    if (!result || !*result)
+    if (!result) [[unlikely]]
+        return throwVMRangeError(globalObject, scope, result.error().message);
+    if (!*result)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(jsString(vm, **result));
 }
@@ -833,7 +835,9 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainDatePrototypeGetterEraYear, (JSGlobalObjec
 
     // Steps 3-5: Return CalendarISOToDate(calendar, isoDate).[[EraYear]], or undefined.
     auto result = TemporalCore::calendarEraYear(plainDate->calendarID(), plainDate->plainDate());
-    if (!result || !*result)
+    if (!result) [[unlikely]]
+        return throwVMRangeError(globalObject, scope, result.error().message);
+    if (!*result)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(jsNumber(**result));
 }

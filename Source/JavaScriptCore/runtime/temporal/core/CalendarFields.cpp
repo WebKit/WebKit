@@ -195,12 +195,21 @@ TemporalResult<void> nonISOResolveFields(CalendarID calendarId, CalendarFieldsIn
             if (!calendarIsLunisolar(calendarId))
                 ordinal = static_cast<uint8_t>(mc.monthNumber);
             else {
-                // ~constrain~ is spec-pinned here → can't throw, .value() safe.
-                auto constrained = yearContainsMonthCode(calendarId, *fields.year, mc)
-                    ? mc
-                    : constrainMonthCode(calendarId, *fields.year, mc, TemporalOverflow::Constrain).value();
+                auto contained = yearContainsMonthCode(calendarId, *fields.year, mc);
+                if (!contained) [[unlikely]]
+                    return makeUnexpected(contained.error());
+                auto constrained = mc;
+                if (!*contained) {
+                    auto constrainResult = constrainMonthCode(calendarId, *fields.year, mc, TemporalOverflow::Constrain);
+                    if (!constrainResult) [[unlikely]]
+                        return makeUnexpected(constrainResult.error());
+                    constrained = *constrainResult;
+                }
                 // Step 18.b.ii: MonthCodeToOrdinal (precondition guaranteed by constrain above).
-                ordinal = static_cast<uint8_t>(monthCodeOrdinalInYear(calendarId, constrained, *fields.year));
+                auto ordinalResult = monthCodeOrdinalInYear(calendarId, constrained, *fields.year);
+                if (!ordinalResult) [[unlikely]]
+                    return makeUnexpected(ordinalResult.error());
+                ordinal = static_cast<uint8_t>(*ordinalResult);
             }
             if (ordinal) {
                 // Step 18.b.iii: consistency.
@@ -425,32 +434,37 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
 
         // Re-resolve: get monthCode+day from first resolution, then use ecmaReferenceYear.
         auto resolvedFields = isoToCalendarFields(calendarId, *result);
-        if (resolvedFields && !resolvedFields->monthCode.isEmpty()) {
-            auto resolvedMonthCode = ISO8601::parseMonthCode(resolvedFields->monthCode);
-            if (resolvedMonthCode) {
-                auto refYearOr = ecmaReferenceYear(calendarId, resolvedMonthCode->monthNumber, resolvedMonthCode->isLeapMonth, resolvedFields->day);
-                int32_t refYear;
-                std::optional<ParsedMonthCode> effectiveRefMonthCode = resolvedMonthCode;
-                if (!refYearOr) {
-                    switch (refYearOr.error()) {
-                    case EcmaReferenceYearError::MonthNotInCalendar:
-                        return makeUnexpected(rangeError("This month code does not exist in this calendar"_s));
-                    case EcmaReferenceYearError::UseRegularIfConstrain:
-                        if (overflow == TemporalOverflow::Reject)
-                            return makeUnexpected(rangeError("Leap month does not exist near the reference year"_s));
-                        auto fallback = ecmaReferenceYear(calendarId, resolvedMonthCode->monthNumber, /* isLeapMonth */ false, resolvedFields->day);
-                        RELEASE_ASSERT(fallback);
-                        refYear = *fallback;
-                        effectiveRefMonthCode = ParsedMonthCode { resolvedMonthCode->monthNumber, /* isLeapMonth */ false };
-                        break;
-                    }
-                } else
-                    refYear = *refYearOr;
-                auto refResult = nonISOCalendarDateToISO(calendarId, std::optional<int32_t>(refYear), resolvedFields->month, resolvedFields->day, effectiveRefMonthCode, TemporalOverflow::Constrain);
-                if (refResult)
-                    return ResolvedCalendarDate { *refResult, calendarId };
+        if (!resolvedFields)
+            return makeUnexpected(resolvedFields.error());
+        if (resolvedFields->monthCode.isEmpty())
+            return makeUnexpected(rangeError(icuReadCalendarFailed));
+        auto resolvedMonthCode = ISO8601::parseMonthCode(resolvedFields->monthCode);
+        if (!resolvedMonthCode)
+            return makeUnexpected(rangeError(icuReadCalendarFailed));
+
+        auto refYearOr = ecmaReferenceYear(calendarId, resolvedMonthCode->monthNumber, resolvedMonthCode->isLeapMonth, resolvedFields->day);
+        int32_t refYear = 0;
+        std::optional<ParsedMonthCode> effectiveRefMonthCode = resolvedMonthCode;
+        if (!refYearOr) {
+            switch (refYearOr.error()) {
+            case EcmaReferenceYearError::MonthNotInCalendar:
+                return makeUnexpected(rangeError("This month code does not exist in this calendar"_s));
+            case EcmaReferenceYearError::UseRegularIfConstrain: {
+                if (overflow == TemporalOverflow::Reject)
+                    return makeUnexpected(rangeError("Leap month does not exist near the reference year"_s));
+                auto fallback = ecmaReferenceYear(calendarId, resolvedMonthCode->monthNumber, /* isLeapMonth */ false, resolvedFields->day);
+                RELEASE_ASSERT(fallback);
+                refYear = *fallback;
+                effectiveRefMonthCode = ParsedMonthCode { resolvedMonthCode->monthNumber, /* isLeapMonth */ false };
+                break;
             }
-        }
+            }
+        } else
+            refYear = *refYearOr;
+        auto refResult = nonISOCalendarDateToISO(calendarId, std::optional<int32_t>(refYear), resolvedFields->month, resolvedFields->day, effectiveRefMonthCode, TemporalOverflow::Constrain);
+        if (!refResult)
+            return makeUnexpected(refResult.error());
+        return ResolvedCalendarDate { *refResult, calendarId };
     }
 
     // Step 3: Assert: ISODateWithinLimits(result) — reference year is always within limits.

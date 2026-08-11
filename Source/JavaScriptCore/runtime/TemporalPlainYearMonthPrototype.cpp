@@ -299,16 +299,13 @@ static JSC::EncodedJSValue differenceTemporalPlainYearMonth(JSGlobalObject* glob
 
     // Steps 7-13: thisFields/otherFields with day=1 → thisDate/otherDate → dateDifference.
     //   TemporalCore::differenceYearMonth fuses the fields+day=1+dateFromFields for both endpoints
-    //   before invoking CalendarDateUntil. Fallback to direct calendarDateUntil on failure.
-    ISO8601::Duration dateDifference;
+    //   before invoking CalendarDateUntil.
     auto dateDiffResult = TemporalCore::differenceYearMonth(calendarId, thisIsoDate, otherIsoDate, largestUnit);
-    if (!dateDiffResult) {
-        if (calendarId != iso8601CalendarID())
-            dateDifference = calendarDateUntil(calendarId, thisIsoDate, otherIsoDate, largestUnit);
-        else
-            dateDifference = TemporalCore::calendarDateUntil(thisIsoDate, otherIsoDate, largestUnit);
-    } else
-        dateDifference = *dateDiffResult;
+    if (!dateDiffResult) [[unlikely]] {
+        throwTemporalError(globalObject, scope, dateDiffResult.error());
+        return { };
+    }
+    ISO8601::Duration dateDifference = *dateDiffResult;
 
     // Steps 14-15: yearsMonthsDifference = ! AdjustDateDurationRecord(dateDifference, 0, 0)  — zero weeks and days;
     //              duration = CombineDateAndTimeDuration(yearsMonthsDifference, 0).
@@ -688,7 +685,9 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterEra, (JSGlobalObje
 
     // Steps 3-4: result = CalendarISOToDate(calendar, isoDate).[[Era]]; if undefined, return undefined.
     auto result = TemporalCore::calendarEra(yearMonth->calendarID(), yearMonth->plainYearMonth().isoPlainDate());
-    if (!result || !*result)
+    if (!result) [[unlikely]]
+        return throwVMRangeError(globalObject, scope, result.error().message);
+    if (!*result)
         return JSValue::encode(jsUndefined());
     // Step 5: Return result.
     return JSValue::encode(jsString(vm, **result));
@@ -707,7 +706,9 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterEraYear, (JSGlobal
 
     // Steps 3-4: result = CalendarISOToDate(calendar, isoDate).[[EraYear]]; if undefined, return undefined.
     auto result = TemporalCore::calendarEraYear(yearMonth->calendarID(), yearMonth->plainYearMonth().isoPlainDate());
-    if (!result || !*result)
+    if (!result) [[unlikely]]
+        return throwVMRangeError(globalObject, scope, result.error().message);
+    if (!*result)
         return JSValue::encode(jsUndefined());
     // Step 5: Return 𝔽(result).
     return JSValue::encode(jsNumber(**result));
