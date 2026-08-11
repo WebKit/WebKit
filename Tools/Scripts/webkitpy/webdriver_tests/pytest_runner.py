@@ -110,7 +110,10 @@ class SubtestResultRecorder(object):
         return hasattr(report.longrepr, 'reprcrash') and report.longrepr.reprcrash.message.startswith('Failed: Timeout >')
 
     def record_pass(self, report):
-        if hasattr(report, 'wasxfail'):
+        expected = dict(report.user_properties).get("expectations", [])
+        # Avoid expected flaky passes from being reported as XPASS, distracting from
+        # true XPASS tests.
+        if hasattr(report, 'wasxfail') and 'PASS' not in expected:
             if report.wasxfail == 'Timeout':
                 self.record(report.nodeid, 'XPASS_TIMEOUT')
             else:
@@ -131,8 +134,11 @@ class SubtestResultRecorder(object):
         self.record(report.nodeid, 'ERROR', message, report.longrepr)
 
     def record_skip(self, report):
+        expected = dict(report.user_properties).get("expectations", [])
         if hasattr(report, 'wasxfail'):
-            if self._was_timeout(report) and report.wasxfail != 'Timeout':
+            # Avoid expected flaky fail/timeouts from being reported as unexpected TIMEOUT,
+            # distracting from true TIMEOUT regressions.
+            if self._was_timeout(report) and report.wasxfail != 'Timeout' and 'TIMEOUT' not in expected:
                 self.record(report.nodeid, 'TIMEOUT', stack=report.longrepr)
             else:
                 self.record(report.nodeid, 'XFAIL')
@@ -160,13 +166,17 @@ class TestExpectationsMarker(object):
             item_name = get_item_name(item, self._ignore_param)
             if self._expectations.is_slow(test, item_name):
                 item.add_marker(pytest.mark.timeout(self._timeout * 5))
-            expected = self._expectations.get_expectation(test, item_name)[0]
-            if expected == 'FAIL':
+            expected = self._expectations.get_expectation(test, item_name)
+            if 'FAIL' in expected:
+                # Adding a "flaky" reason would overwrite the actual reason the test failed,
+                # making it harder to identify the actual reason
                 item.add_marker(pytest.mark.xfail)
-            elif expected == 'TIMEOUT':
+            elif 'TIMEOUT' in expected:
                 item.add_marker(pytest.mark.xfail(reason="Timeout"))
-            elif expected == 'SKIP':
+            elif 'SKIP' in expected:
                 item.add_marker(pytest.mark.skip)
+
+            item.user_properties.append(("expectations", expected))
 
 
 def collect(directory, args, ignore_param=None):
