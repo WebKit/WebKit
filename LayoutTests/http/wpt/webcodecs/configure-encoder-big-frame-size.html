@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</head>
+<body>
+<script>
+
+function configureEncoder(width, height)
+{
+    let resolve;
+    const promise = new Promise(r => resolve = r);
+    const encoder = new VideoEncoder({
+        output: () => { },
+        error: (e) => { resolve(false);}
+    });
+    encoder.configure({ codec: "vp09.00.10.08", width, height, bitrate: 1, framerate: 1 });
+    setTimeout(() => resolve(true), 0);
+    return promise;
+}
+
+promise_test(async t => {
+    assert_true(await configureEncoder(32767, 32767));
+    assert_false(await configureEncoder(32768, 32767));
+    assert_false(await configureEncoder(32767, 32768));
+    assert_false(await configureEncoder(32768, 32768));
+}, 'Test big frame sizes.');
+</script>
+</body>
+</html>
