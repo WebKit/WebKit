@@ -52,7 +52,3 @@ skip:
     - test/intl402/Locale/extensions-grandfathered.js
     - test/intl402/Locale/getters-grandfathered.js
     - test/intl402/Locale/likely-subtags-grandfathered.js
-
-    # Skipping temporarily due to a bug with handling case-insensitive \p escapes
-    - test/built-ins/RegExp/regexp-modifiers/add-ignoreCase-affects-slash-upper-p.js
-    - test/built-ins/RegExp/regexp-modifiers/add-ignoreCase-affects-slash-lower-p.js

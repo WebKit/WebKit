@@ -336,6 +336,22 @@ public:
         }
     }
 
+    void putUnicodeIgnoreCase(const CharacterClass* other)
+    {
+        ASSERT(m_isCaseInsensitive && m_canonicalMode == CanonicalMode::Unicode && isUnionSetOp());
+        for (auto& string : other->m_strings)
+            m_strings.append(string);
+        for (char32_t ch : other->m_matches8)
+            putChar(ch);
+        for (auto& range : other->m_ranges8)
+            putRange(range.begin, range.end);
+        for (char32_t ch : other->m_matches32)
+            putChar(ch);
+        for (auto& range : other->m_ranges32)
+            putRange(range.begin, range.end);
+        m_mayContainStrings |= other->hasStrings();
+    }
+
     void atomClassStringDisjunction(Vector<Vector<char32_t>>& disjunctionStrings)
     {
         Vector<Vector<char32_t>> utf32Strings;
@@ -1076,8 +1092,12 @@ private:
                     }
                 }
 
-                while (matchesIndex < matches.size() && matches[matchesIndex] < ranges[rangesIndex].end + 1)
-                    matchesIndex++;
+                size_t endIndex = matchesIndex;
+                while (endIndex < matches.size() && matches[endIndex] < ranges[rangesIndex].end + 1)
+                    endIndex++;
+
+                if (matchesIndex != endIndex)
+                    matches.removeAt(matchesIndex, endIndex - matchesIndex);
 
                 if (matchesIndex < matches.size()) {
                     if (matches[matchesIndex] > ranges[rangesIndex].end + 1) {
@@ -1157,6 +1177,36 @@ private:
     Vector<char32_t> m_matches32;
     Vector<CharacterRange> m_ranges32;
 };
+
+static std::unique_ptr<CharacterClass> invertedCharacterClass(const CharacterClass* characterClass, CompileMode compileMode)
+{
+    CharacterClassConstructor constructor(false, compileMode);
+    constructor.appendInverted(characterClass);
+    return constructor.charClass();
+}
+
+CharacterClass* YarrPattern::unicodeCharacterClassFor(BuiltInCharacterClassID unicodeClassID, bool ignoreCase, bool invert)
+{
+    ASSERT(unicodeClassID >= BuiltInCharacterClassID::BaseUnicodePropertyID);
+
+    ignoreCase = ignoreCase && eitherUnicode();
+    invert = invert && ignoreCase && !unicodeSets();
+    unsigned key = static_cast<unsigned>(unicodeClassID) << 2 | static_cast<unsigned>(ignoreCase) << 1 | static_cast<unsigned>(invert);
+    return unicodePropertiesCached.ensure(key, [&] {
+        std::unique_ptr<CharacterClass> characterClass = createUnicodeCharacterClassFor(unicodeClassID);
+        if (ignoreCase) {
+            if (invert)
+                characterClass = invertedCharacterClass(characterClass.get(), compileMode());
+            CharacterClassConstructor constructor(true, compileMode());
+            constructor.putUnicodeIgnoreCase(characterClass.get());
+            characterClass = constructor.charClass();
+            if (invert)
+                characterClass = invertedCharacterClass(characterClass.get(), compileMode());
+        }
+        m_userCharacterClasses.append(WTF::move(characterClass));
+        return m_userCharacterClasses.last().get();
+    }).iterator->value;
+}
 
 class YarrPatternConstructor {
     class UnresolvedForwardReference {
@@ -1364,37 +1414,34 @@ public:
                 m_alternative->m_terms.append(PatternTerm(m_pattern.newlineCharacterClass(), true, m_flags, parenthesisMatchDirection()));
             break;
         default: {
-            if (characterClassMayContainStrings(classID)) {
-                auto characterClass = m_pattern.unicodeCharacterClassFor(classID);
-                if (characterClass->hasStrings()) {
-                    atomParenthesesSubpatternBegin(false);
-                    unsigned alternativeCount = 0;
-                    for (unsigned i = 0; i < characterClass->m_strings.size(); ++i) {
-                        if (alternativeCount)
-                            disjunction(CreateDisjunctionPurpose::ForNextAlternative);
+            CharacterClass* characterClass = m_pattern.unicodeCharacterClassFor(classID, ignoreCase(), invert);
+            if (characterClass->hasStrings()) {
+                atomParenthesesSubpatternBegin(false);
+                unsigned alternativeCount = 0;
+                for (unsigned i = 0; i < characterClass->m_strings.size(); ++i) {
+                    if (alternativeCount)
+                        disjunction(CreateDisjunctionPurpose::ForNextAlternative);
 
-                        auto string = characterClass->m_strings[i];
+                    auto string = characterClass->m_strings[i];
 
-                        for (auto ch : string)
-                            atomPatternCharacter(ch, /* hyphenIsRange */ false);
+                    for (auto ch : string)
+                        atomPatternCharacter(ch, /* hyphenIsRange */ false);
 
-                        ++alternativeCount;
-                    }
-
-                    if (characterClass->hasSingleCharacters()) {
-                        if (alternativeCount)
-                            disjunction(CreateDisjunctionPurpose::ForNextAlternative);
-
-                        m_alternative->m_terms.append(PatternTerm(characterClass, invert, m_flags, parenthesisMatchDirection()));
-                    }
-
-                    atomParenthesesEnd();
-                    break;
+                    ++alternativeCount;
                 }
-                // Fall through for the case where the characterClass REALLY doesn't have strings.
+
+                if (characterClass->hasSingleCharacters()) {
+                    if (alternativeCount)
+                        disjunction(CreateDisjunctionPurpose::ForNextAlternative);
+
+                    m_alternative->m_terms.append(PatternTerm(characterClass, invert, m_flags, parenthesisMatchDirection()));
+                }
+
+                atomParenthesesEnd();
+                break;
             }
 
-            m_alternative->m_terms.append(PatternTerm(m_pattern.unicodeCharacterClassFor(classID), invert, m_flags, parenthesisMatchDirection()));
+            m_alternative->m_terms.append(PatternTerm(characterClass, invert, m_flags, parenthesisMatchDirection()));
             break;
         }
         }
@@ -1438,11 +1485,13 @@ public:
                 m_currentCharacterClassConstructor->append(invert ? m_pattern.nonwordcharCharacterClass() : m_pattern.wordcharCharacterClass());
             break;
         
-        default:
+        default: {
+            CharacterClass* characterClass = m_pattern.unicodeCharacterClassFor(classID, ignoreCase(), invert);
             if (!invert)
-                m_currentCharacterClassConstructor->append(m_pattern.unicodeCharacterClassFor(classID));
+                m_currentCharacterClassConstructor->append(characterClass);
             else
-                m_currentCharacterClassConstructor->appendInverted(m_pattern.unicodeCharacterClassFor(classID));
+                m_currentCharacterClassConstructor->appendInverted(characterClass);
+        }
         }
     }
 

@@ -747,21 +747,7 @@ struct YarrPattern {
         }
         return nonwordUnicodeIgnoreCasecharCached;
     }
-    CharacterClass* unicodeCharacterClassFor(BuiltInCharacterClassID unicodeClassID)
-    {
-        ASSERT(unicodeClassID >= BuiltInCharacterClassID::BaseUnicodePropertyID);
-
-        unsigned classID = static_cast<unsigned>(unicodeClassID);
-
-        if (unicodePropertiesCached.find(classID) == unicodePropertiesCached.end()) {
-            m_userCharacterClasses.append(createUnicodeCharacterClassFor(unicodeClassID));
-            CharacterClass* result = m_userCharacterClasses.last().get();
-            unicodePropertiesCached.add(classID, result);
-            return result;
-        }
-
-        return unicodePropertiesCached.get(classID);
-    }
+    CharacterClass* unicodeCharacterClassFor(BuiltInCharacterClassID, bool ignoreCase, bool invert);
 
     unsigned offsetVectorBaseForNamedCaptures() const
     {
