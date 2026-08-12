@@ -504,13 +504,13 @@ class Manager(object):
                 runner.STATUS_TIMEOUT: Upload.Expectations.TIMEOUT,
             }
             upload_results = {}
-            for test, result in iteritems(runner.results):
-                if result[0] not in status_to_test_result:
+            for test, test_result in iteritems(runner.results):
+                if test_result[0] not in status_to_test_result:
                     continue
                 upload_results[test] = Upload.create_test_result(
                     expected=self._expected_results_for_upload(self._expectations.get_expectation(test, current_config)),
-                    actual=status_to_test_result[result[0]],
-                    time=int(result[2] * 1000),
+                    actual=status_to_test_result[test_result[0]],
+                    time=int(test_result[2] * 1000),
                 )
             upload = Upload(
                 suite=self._options.suite or 'api-tests',
