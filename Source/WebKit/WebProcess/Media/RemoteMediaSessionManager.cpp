@@ -86,7 +86,16 @@ RemoteMediaSessionManager::~RemoteMediaSessionManager()
 void RemoteMediaSessionManager::addSession(WebCore::PlatformMediaSessionInterface& session)
 {
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addSession(session);
-    send(Messages::RemoteMediaSessionManagerProxy::AddMediaSession(currentSessionState(session)));
+    sendWithAsyncReply(Messages::RemoteMediaSessionManagerProxy::AddMediaSession(currentSessionState(session)),
+        [](WebCore::AudioSessionCategory category, WebCore::AudioSessionMode mode, WebCore::RouteSharingPolicy policy) {
+#if USE(AUDIO_SESSION)
+            WebCore::AudioSession::singleton().setCategory(category, mode, policy);
+#else
+            UNUSED_PARAM(category);
+            UNUSED_PARAM(mode);
+            UNUSED_PARAM(policy);
+#endif
+        });
 }
 
 void RemoteMediaSessionManager::removeSession(WebCore::PlatformMediaSessionInterface& session)

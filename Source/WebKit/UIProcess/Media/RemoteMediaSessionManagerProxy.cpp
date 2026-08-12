@@ -202,7 +202,7 @@ RemoteMediaSessionManagerProxy::~RemoteMediaSessionManagerProxy()
 {
 }
 
-void RemoteMediaSessionManagerProxy::addMediaSession(IPC::Connection& connection, RemoteMediaSessionState&& state)
+void RemoteMediaSessionManagerProxy::addMediaSession(IPC::Connection& connection, RemoteMediaSessionState&& state, CompletionHandler<void(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&& completionHandler)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
 
@@ -215,6 +215,12 @@ void RemoteMediaSessionManagerProxy::addMediaSession(IPC::Connection& connection
         session->updateState(state);
 
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addSession(session);
+
+#if USE(AUDIO_SESSION)
+    completionHandler(m_category, m_mode, m_routeSharingPolicy);
+#else
+    completionHandler(WebCore::AudioSessionCategory::None, WebCore::AudioSessionMode::Default, WebCore::RouteSharingPolicy::Default);
+#endif
 }
 
 void RemoteMediaSessionManagerProxy::removeMediaSession(IPC::Connection& connection, RemoteMediaSessionState&& state)

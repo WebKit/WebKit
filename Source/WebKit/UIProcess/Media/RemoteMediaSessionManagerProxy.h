@@ -100,7 +100,7 @@ private:
     RemoteMediaSessionManagerProxy();
 
     // Messages
-    void addMediaSession(IPC::Connection&, RemoteMediaSessionState&&);
+    void addMediaSession(IPC::Connection&, RemoteMediaSessionState&&, CompletionHandler<void(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&&);
     void removeMediaSession(IPC::Connection&, RemoteMediaSessionState&&);
     void setCurrentMediaSession(IPC::Connection&, RemoteMediaSessionState&&);
     void updateMediaSessionStates(IPC::Connection&, WebCore::PageIdentifier, Vector<RemoteMediaSessionState>&&, uint64_t audioCaptureSourceCount, WebCore::AudioSessionCategory categoryOverride, CompletionHandler<void(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&&);
