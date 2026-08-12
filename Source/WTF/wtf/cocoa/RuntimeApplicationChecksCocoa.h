@@ -176,6 +176,8 @@ WTF_EXPORT_PRIVATE void setApplicationAuditToken(audit_token_t);
 WTF_EXPORT_PRIVATE std::optional<audit_token_t> applicationAuditToken();
 #endif
 
+WTF_EXPORT_PRIVATE bool isInBaseSystem();
+
 namespace CocoaApplication {
 
 WTF_EXPORT_PRIVATE bool isAppleApplication();
@@ -261,5 +263,7 @@ using WTF::setSDKAlignedBehaviors;
 using WTF::applicationAuditToken;
 using WTF::setApplicationAuditToken;
 #endif
+
+using WTF::isInBaseSystem;
 
 #endif // PLATFORM(COCOA)

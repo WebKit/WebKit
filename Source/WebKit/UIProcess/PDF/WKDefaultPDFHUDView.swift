@@ -27,7 +27,7 @@ import AppKit
 public import Foundation
 internal import WebKit_Internal
 private import pal.spi.mac.NSImageSPI
-private import wtf.SPI.darwin.OSVariantSPI
+private import wtf.Core.cocoa.RuntimeApplicationChecksCocoa
 
 private let barVerticalOffset: CGFloat = 40
 private let barHorizontalPadding: CGFloat = 16
@@ -49,11 +49,6 @@ private let fadeInDuration: TimeInterval = 0.25
 private let fadeOutDuration: TimeInterval = 0.5
 private let autoHideDelay: TimeInterval = 3.0
 private let hoverInset: CGFloat = -16.0
-
-// FIXME: (rdar://164559261) understand/document/remove unsafety
-func isInRecoveryOS() -> Bool {
-    unsafe os_variant_is_basesystem("WebKit")
-}
 
 @objc
 @implementation
@@ -123,7 +118,7 @@ extension WKDefaultPDFHUDView {
         zoomGroup.alignment = .centerY
 
         self.stackView = NSStackView(views: [zoomGroup])
-        if !isInRecoveryOS() {
+        if !WTF.isInBaseSystem() {
             stackView.addArrangedSubview(separatorView)
             let fileGroup = NSStackView(views: [openInPreviewButton, saveButton])
             fileGroup.orientation = .horizontal

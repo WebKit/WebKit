@@ -28,6 +28,7 @@ public import Foundation
 import WebKit_Internal
 @_weakLinked @_spi(Private) import SwiftUI
 private import Observation
+private import wtf.Core.cocoa.RuntimeApplicationChecksCocoa
 
 @Observable
 @MainActor
@@ -145,7 +146,7 @@ extension WKAlternatePDFHUDView {
 
         super.init(frame: frame)
 
-        let controls = PDFHUDControls(showSystemActions: !isInRecoveryOS(), action: actionHandler)
+        let controls = PDFHUDControls(showSystemActions: !WTF.isInBaseSystem(), action: actionHandler)
             .environment(model)
 
         let hostingView = NSHostingView(rootView: controls)
