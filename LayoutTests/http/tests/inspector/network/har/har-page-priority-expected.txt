@@ -6,8 +6,8 @@ HAR Priorities Test.
 LOG: Got 3 resources
 PASS: HTML http://127.0.0.1:8000/inspector/network/har/har-page-priority.html should start with a Very High priority
 PASS: - HTML should still have Very High priority
-PASS: Stylesheet http://127.0.0.1:8000/resources/dummy.css should start with a High priority
-PASS: - Screen stylesheet should stay at a High priority
+PASS: Stylesheet http://127.0.0.1:8000/resources/dummy.css?print should start with a High priority
+PASS: - Print stylesheet should be reduced to a Very Low priority
 PASS: JavaScript http://127.0.0.1:8000/inspector/resources/inspector-test.js should start with a High priority
 PASS: - JavaScript should still have a High priority
 

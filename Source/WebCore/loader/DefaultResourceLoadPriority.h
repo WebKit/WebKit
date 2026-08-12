@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "CachedResource.h"
-#include "ResourceLoadPriority.h"
+#include <WebCore/CachedResource.h>
+#include <WebCore/ResourceLoadPriority.h>
 
 namespace WebCore {
 

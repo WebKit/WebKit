@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<link rel="stylesheet" href="/resources/dummy.css" media="screen" />
+<link rel="stylesheet" href="/resources/dummy.css?print" media="print" />
 <script src="../../resources/inspector-test.js"></script>
 <script>
 function test()
@@ -15,7 +15,22 @@ function test()
     suite.addTestCase({
         name: "HAR.Page.Priority",
         description: "Should be able to generate a HAR with all of this test page's resources.",
+        waitForResource: async function(capturedResourceData) {
+            return new Promise((resolve) => {
+                function onResourceAdded(event) {
+                    let resource = event.data.resource;
+                    if (!resource || !resource.url)
+                        return;
+                    capturedResourceData.push(resource);
+                    resolve(resource);
+                }
+                WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+            });
+        },
         async test() {
+            let resources = [];
+            let resourcePromise = this.waitForResource(resources);
+
             await NetworkAgent.setResourceCachingDisabled(false);
 
             await Promise.all([
@@ -27,13 +42,14 @@ function test()
 
             await Promise.all([
                 InspectorTest.awaitEvent("LoadComplete"),
-                InspectorTest.reloadPage({ignoreCache: true}),
+                InspectorTest.reloadPage({ignoreCache: true, revalidateAllResources: true}),
             ]);
+
+            resources.unshift(WI.networkManager.mainFrame.mainResource);
 
             await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
 
-            let {frameTree} = await PageAgent.getResourceTree(); // wait for all resources
-            let resources = frameTree.resources;
+            await resourcePromise;
 
             if (resources.length) {
                 console.log(`Got ${resources.length} resources`);
@@ -67,7 +83,8 @@ function test()
                     }
                 });
             } else {
-                console.log('Got no resources');
+                const dn = new Date();
+                console.log(`Got no resources ${dn.getTime()}.${dn.getMilliseconds()}`);
             }
         }
     });

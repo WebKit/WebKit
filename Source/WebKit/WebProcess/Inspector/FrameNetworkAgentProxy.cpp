@@ -37,6 +37,7 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <WebCore/CachedResource.h>
+#include <WebCore/loader/DefaultResourceLoadPriority.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
@@ -48,9 +49,11 @@
 #include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/InstrumentingAgents.h>
 #include <WebCore/LocalFrameInlines.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageInspectorController.h>
 #include <WebCore/ProcessQualified.h>
+#include <WebCore/ResourceLoader.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
@@ -61,6 +64,23 @@ using namespace Inspector;
 using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameNetworkAgentProxy);
+
+static WebCore::NetworkLoadPriority toNetworkLoadPriority(WebCore::ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case ResourceLoadPriority::VeryLow:
+        return WebCore::NetworkLoadPriority::Verylow;
+    case ResourceLoadPriority::Low:
+        return WebCore::NetworkLoadPriority::Low;
+    case ResourceLoadPriority::Medium:
+        return WebCore::NetworkLoadPriority::Medium;
+    case ResourceLoadPriority::High:
+        return WebCore::NetworkLoadPriority::High;
+    case ResourceLoadPriority::VeryHigh:
+        return WebCore::NetworkLoadPriority::Veryhigh;
+    }
+    return WebCore::NetworkLoadPriority::Unknown;
+}
 
 static ScopedResourceLoaderIdentifier qualifyResourceID(ResourceLoaderIdentifier resourceID)
 {
@@ -281,7 +301,7 @@ void FrameNetworkAgentProxy::didReceiveData(ResourceLoaderIdentifier resourceID,
         page->identifier());
 }
 
-void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const NetworkLoadMetrics&, ResourceLoader*)
+void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
 {
     if (!loader || !loader->frame() || !loader->frame()->document())
         return;
@@ -303,6 +323,22 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     if (!page)
         return;
 
+    // Make a mutable copy of the metrics so we can ensure initialPriority
+    // is based on the resource type rather than whatever the NetworkProcess
+    // happened to send (which may reflect the default priority).
+    auto mutableMetrics = networkLoadMetrics;
+    if (!mutableMetrics.additionalNetworkLoadMetricsForWebInspector)
+        mutableMetrics.additionalNetworkLoadMetricsForWebInspector = AdditionalNetworkLoadMetricsForWebInspector::create(
+            WebCore::NetworkLoadPriority::Unknown, WebCore::NetworkLoadPriority::Unknown, String(), String(), String(), String(), WebCore::HTTPHeaderMap(),
+            std::numeric_limits<uint64_t>::max(), std::numeric_limits<uint64_t>::max(), std::numeric_limits<uint64_t>::max(), false);
+
+    if (resourceLoader) {
+        if (auto* cachedResource = resourceLoader->cachedResource()) {
+            auto type = cachedResource->type();
+            mutableMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = toNetworkLoadPriority(DefaultResourceLoadPriority::forResourceType(type));
+        }
+    }
+
     // The Network domain's sourceMapURL is CSS-only by design; scripts flow through
     // the Debugger domain. Mirror ResourceUtilities::sourceMapURLForResource: prefer the
     // SourceMap/X-SourceMap response header (captured at response time), then fall back to
@@ -317,7 +353,7 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
-        Messages::ProxyingNetworkAgent::LoadingFinished(qualifyResourceID(resourceID), timestamp, sourceMapURL),
+        Messages::ProxyingNetworkAgent::LoadingFinished(qualifyResourceID(resourceID), timestamp, sourceMapURL, mutableMetrics),
         page->identifier());
 }
 
