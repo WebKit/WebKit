@@ -104,11 +104,6 @@
 #include "WebParentalControlsURLFilter.h"
 #endif
 
-#if PLATFORM(COCOA)
-#include "PathsBlockedForSandboxExtensions.h"
-#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
-#endif
-
 #define LOADER_RELEASE_LOG_WITH_THIS(thisPtr, fmt, ...) RELEASE_LOG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, WTF::getPtr(thisPtr), thisPtr->webPageProxyID().toUInt64(), thisPtr->pageID().toUInt64(), thisPtr->frameID().toUInt64(), thisPtr->coreIdentifier().toUInt64(), thisPtr->isMainResource(), static_cast<unsigned>(thisPtr->m_parameters.options.destination), thisPtr->isSynchronous(), ##__VA_ARGS__)
 #define LOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, webPageProxyID().toUInt64(), pageID().toUInt64(), frameID().toUInt64(), coreIdentifier().toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
 #define LOADER_RELEASE_LOG_DEBUG(fmt, ...) RELEASE_LOG_DEBUG(Network, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", isMainResource=%d, destination=%u, isSynchronous=%d] NetworkResourceLoader::" fmt, this, webPageProxyID().toUInt64(), pageID().toUInt64(), frameID().toUInt64(), coreIdentifier().toUInt64(), isMainResource(), static_cast<unsigned>(m_parameters.options.destination), isSynchronous(), ##__VA_ARGS__)
@@ -404,11 +399,38 @@ bool NetworkResourceLoader::shouldSendResourceLoadMessages() const
 }
 
 #if ENABLE(BLOCKING_OF_LOCAL_FILE_LOADS_WITHOUT_SANDBOX_EXTENSION)
+<<<<<<< HEAD
 bool NetworkResourceLoader::isLocalFileLoadAllowed(const URL& url)
 {
     bool pathIsAllowed = !pathIsBlockedForSandboxExtensions(url.fileSystemPath());
     LOADER_RELEASE_LOG("isLocalFileLoadAllowed: allowed = %d, path = %{public}s", pathIsAllowed, url.fileSystemPath().utf8().data());
     return pathIsAllowed;
+=======
+static String userInterfaceProcessTemporaryDirectory()
+{
+    // The Networking process's temp directory is a subdirectory of the UI process's temp directory with the name `com.apple.WebKit.Networking`.
+    // This was done to isolate its temp directory, and we need to remove that path component before checking the ancestry.
+    auto networkingProcessTemporaryDirectorySpan = byteCast<char8_t>(unsafeSpan(getenv("TMPDIR")));
+    String networkProcessTemporaryDirectory = FileSystem::realPath(networkingProcessTemporaryDirectorySpan);
+    FileSystem::removeTrailingSlash(networkProcessTemporaryDirectory);
+    return FileSystem::parentPath(networkProcessTemporaryDirectory);
+}
+
+static bool shouldAllowLocalFileLoad(const URL& url, bool hasSandboxExtension)
+{
+    if (hasSandboxExtension)
+        return true;
+
+    RELEASE_LOG(Network, "shouldAllowLocalFileLoad: sandbox extension for local file is not provided");
+
+    // Some applications are relying on using the fetch JS API to load local files they have created in their temp directory.
+    // In this case, the WebContent process will not provide the Networking process with a sandbox extension to that file, since it does not have access.
+    // This is because the load is not initiated from the UI process which would provide an extension, but from JS in the WebContent process.
+    // To continue supporting this undocumented feature, we should allow local file loads from that location.
+
+    String directory = userInterfaceProcessTemporaryDirectory();
+    return !directory.isEmpty() && FileSystem::isAncestor(directory, FileSystem::realPath(url.fileSystemPath()));
+>>>>>>> b26ec4bb34c9 (Can no longer load pages from a temp dir)
 }
 #endif // ENABLE(BLOCKING_OF_LOCAL_FILE_LOADS_WITHOUT_SANDBOX_EXTENSION)
 
@@ -419,7 +441,11 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
         LOADER_RELEASE_LOG_ERROR("startNetworkLoad: local file load, resourceSandboxExtension not provided");
     }
 #if ENABLE(BLOCKING_OF_LOCAL_FILE_LOADS_WITHOUT_SANDBOX_EXTENSION)
+<<<<<<< HEAD
         if (request.url().protocolIsFile() && !isLocalFileLoadAllowed(request.url())) {
+=======
+        if (request.url().protocolIsFile() && !shouldAllowLocalFileLoad(request.url(), m_parameters.resourceSandboxExtension.has_value())) {
+>>>>>>> b26ec4bb34c9 (Can no longer load pages from a temp dir)
             LOADER_RELEASE_LOG("startNetworkLoad: stop local file load because a sandbox extension is not provided");
             didFailLoading(internalError(request.url()));
             return;

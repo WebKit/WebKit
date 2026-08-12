@@ -32,7 +32,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/FileHandle.h>
 #import <wtf/FileSystem.h>
-#import <wtf/text/MakeString.h>
 
 #define HTML_FORMAT_STRING @" \
     <body> \
@@ -74,6 +73,7 @@ TEST(WebKit, FetchLocalFile)
 
     RetainPtr nsFetchFileURL = fetchFileURL.createNSURL();
 
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKPage/cocoa/FetchLocalFile.mm
     __block bool fetchDone = false;
     [webView performAfterReceivingMessage:@"done" action:^{
         fetchDone = true;
@@ -84,6 +84,13 @@ TEST(WebKit, FetchLocalFile)
     __block bool done = false;
     [webView evaluateJavaScript:@"window.local_file_content" completionHandler:^(id result, NSError *err) {
         EXPECT_TRUE(result == nil);
+=======
+    [webView synchronouslyLoadRequest:request.get()];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"window.local_file_content" completionHandler:^(id result, NSError *err) {
+        EXPECT_TRUE(result == nil && err);
+>>>>>>> b26ec4bb34c9 (Can no longer load pages from a temp dir):Tools/TestWebKitAPI/Tests/WebKit/FetchLocalFile.mm
         done = true;
     }];
 
@@ -202,6 +209,7 @@ TEST(WebKit, FetchLocalFileFromTempDirectory)
     FileSystem::deleteFile(tempFilePath);
     FileSystem::deleteFile(fetchFilePath);
 }
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKPage/cocoa/FetchLocalFile.mm
 
 static String libraryRootDirectory()
 {
@@ -303,3 +311,5 @@ TEST(WebKit, ReloadLocalFileAfterWebContentProcessTermination)
     FileSystem::deleteFile(filePath);
 }
 #endif // ENABLE(BLOCKING_OF_LOCAL_FILE_LOADS_WITHOUT_SANDBOX_EXTENSION) && !PLATFORM(IOS_SIMULATOR)
+=======
+>>>>>>> b26ec4bb34c9 (Can no longer load pages from a temp dir):Tools/TestWebKitAPI/Tests/WebKit/FetchLocalFile.mm
