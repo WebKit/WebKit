@@ -26,6 +26,7 @@
 #pragma once
 
 #include "HTMLDivElement.h"
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 
 namespace WebCore {
 
@@ -35,7 +36,7 @@ class DataListButtonElement final : public HTMLDivElement {
     WTF_MAKE_TZONE_ALLOCATED(DataListButtonElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DataListButtonElement);
 public:
-    class DataListButtonOwner {
+    class DataListButtonOwner : public AbstractRefCountedAndCanMakeWeakPtr<DataListButtonOwner> {
     public:
         virtual ~DataListButtonOwner() = default;
         virtual void dataListButtonElementWasClicked() = 0;
@@ -47,6 +48,8 @@ public:
 
     bool canAdjustStyleForAppearance() const { return m_canAdjustStyleForAppearance; }
 
+    void removeOwner() { m_owner = nullptr; }
+
 private:
     explicit DataListButtonElement(Document&, DataListButtonOwner&);
 
@@ -56,7 +59,7 @@ private:
     void defaultEventHandler(Event&) final;
     bool isDisabledFormControl() const final;
 
-    DataListButtonOwner& m_owner;
+    WeakPtr<DataListButtonOwner> m_owner;
     bool m_canAdjustStyleForAppearance { true };
 };
 
