@@ -3,13 +3,13 @@ HAR Priorities Test.
 First image
 
 
-Boosted image is first of the duplicated set
+Priority boosted image is first of the duplicated set
 
 
 Another image
 
 
-The second of the duplicated set
+The second image of the duplicated set
 
 
 
