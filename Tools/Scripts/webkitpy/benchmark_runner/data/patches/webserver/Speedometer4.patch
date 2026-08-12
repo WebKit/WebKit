@@ -5,7 +5,7 @@
  else
      init();
 +
-+window.onload = function () {
++window.addEventListener("SpeedometerReady", function () {
 +    const benchmarkClient = globalThis.benchmarkClient;
 +    const originalDidFinishLastIteration = benchmarkClient.didFinishLastIteration;
 +    benchmarkClient.didFinishLastIteration = function (...args) {
@@ -55,4 +55,4 @@
 +        xhr.send(JSON.stringify(results));
 +    }
 +    document.querySelector(".start-tests-button").click();
-+};
++});
