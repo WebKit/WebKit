@@ -280,6 +280,7 @@
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/RemoteUserInputEventData.h>
 #include <WebCore/RenderEmbeddedObject.h>
+#include <WebCore/ResourceLoadPriority.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceTiming.h>
 #include <WebCore/RunJavaScriptParameters.h>
@@ -8118,7 +8119,7 @@ void WebPageProxy::preconnectTo(ResourceRequest&& request)
         }
     }
     request.setFirstPartyForCookies(request.url());
-    request.setPriority(ResourceLoadPriority::VeryHigh);
+    request.setPriority(WebCore::ResourceLoadPriority::VeryHigh);
     protect(websiteDataStore->networkProcess())->preconnectTo(sessionID(), identifier(), webPageIDInMainFrameProcess(), WTF::move(request), storedCredentialsPolicy, isNavigatingToAppBoundDomain());
 }
 

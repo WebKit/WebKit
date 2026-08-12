@@ -181,46 +181,6 @@ Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildOb
         .release();
 }
 
-static Inspector::Protocol::Network::LoadPriority NODELETE toProtocol(NetworkLoadPriority priority)
-{
-    switch (priority) {
-    case NetworkLoadPriority::Verylow:
-        return Inspector::Protocol::Network::LoadPriority::Verylow;
-    case NetworkLoadPriority::Low:
-        return Inspector::Protocol::Network::LoadPriority::Low;
-    case NetworkLoadPriority::Medium:
-        return Inspector::Protocol::Network::LoadPriority::Medium;
-    case NetworkLoadPriority::High:
-        return Inspector::Protocol::Network::LoadPriority::High;
-    case NetworkLoadPriority::Veryhigh:
-        return Inspector::Protocol::Network::LoadPriority::Veryhigh;
-    case NetworkLoadPriority::Unknown:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Network::LoadPriority::Medium;
-}
-
-static Inspector::Protocol::Network::LoadPriority NODELETE toProtocol(WebCore::ResourceLoadPriority priority)
-{
-    switch (priority) {
-    case ResourceLoadPriority::VeryLow:
-        return Inspector::Protocol::Network::LoadPriority::Verylow;
-    case ResourceLoadPriority::Low:
-        return Inspector::Protocol::Network::LoadPriority::Low;
-    case ResourceLoadPriority::Medium:
-        return Inspector::Protocol::Network::LoadPriority::Medium;
-    case ResourceLoadPriority::High:
-        return Inspector::Protocol::Network::LoadPriority::High;
-    case ResourceLoadPriority::VeryHigh:
-        return Inspector::Protocol::Network::LoadPriority::Veryhigh;
-    }
-
-    ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Network::LoadPriority::Medium;
-}
-
 Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics, const CachedResource::Type& resourceRequestType)
 {
     auto metrics = Inspector::Protocol::Network::Metrics::create().release();
@@ -228,10 +188,10 @@ Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectFor
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
     if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
-        metrics->setInitialPriority(toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
+        metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
 
         if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
-            metrics->setPriority(toProtocol(additionalMetrics->priority));
+            metrics->setPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->priority));
         if (!additionalMetrics->remoteAddress.isNull())
             metrics->setRemoteAddress(additionalMetrics->remoteAddress);
         if (!additionalMetrics->connectionIdentifier.isNull())

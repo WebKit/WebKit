@@ -42,6 +42,7 @@
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
 #include "Page.h"
+#include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
@@ -52,6 +53,51 @@
 #include <wtf/URL.h>
 
 namespace Inspector {
+
+namespace Protocol {
+namespace Network {
+
+LoadPriority NODELETE toProtocol(WebCore::ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case WebCore::ResourceLoadPriority::VeryLow:
+        return LoadPriority::Verylow;
+    case WebCore::ResourceLoadPriority::Low:
+        return LoadPriority::Low;
+    case WebCore::ResourceLoadPriority::Medium:
+        return LoadPriority::Medium;
+    case WebCore::ResourceLoadPriority::High:
+        return LoadPriority::High;
+    case WebCore::ResourceLoadPriority::VeryHigh:
+        return Network::LoadPriority::Veryhigh;
+    }
+    ASSERT_NOT_REACHED();
+    return LoadPriority::Verylow;
+}
+
+LoadPriority NODELETE toProtocol(WebCore::NetworkLoadPriority priority)
+{
+    switch (priority) {
+    case WebCore::NetworkLoadPriority::Verylow:
+        return LoadPriority::Verylow;
+    case WebCore::NetworkLoadPriority::Low:
+        return LoadPriority::Low;
+    case WebCore::NetworkLoadPriority::Medium:
+        return LoadPriority::Medium;
+    case WebCore::NetworkLoadPriority::High:
+        return LoadPriority::High;
+    case WebCore::NetworkLoadPriority::Veryhigh:
+        return LoadPriority::Veryhigh;
+    case WebCore::NetworkLoadPriority::Unknown:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return LoadPriority::Medium;
+}
+
+} // namespace Network
+} // namespace Protocol
 
 namespace ResourceUtilities {
 

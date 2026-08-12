@@ -41,6 +41,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
+#include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/loader/DefaultResourceLoadPriority.h>
@@ -156,27 +157,6 @@ static RefPtr<Protocol::Network::Response> buildObjectForResourceResponse(const 
         .release();
 }
 
-static Inspector::Protocol::Network::LoadPriority toProtocol(NetworkLoadPriority priority)
-{
-    switch (priority) {
-    case NetworkLoadPriority::Verylow:
-        return Inspector::Protocol::Network::LoadPriority::Verylow;
-    case NetworkLoadPriority::Low:
-        return Inspector::Protocol::Network::LoadPriority::Low;
-    case NetworkLoadPriority::Medium:
-        return Inspector::Protocol::Network::LoadPriority::Medium;
-    case NetworkLoadPriority::High:
-        return Inspector::Protocol::Network::LoadPriority::High;
-    case NetworkLoadPriority::Veryhigh:
-        return Inspector::Protocol::Network::LoadPriority::Veryhigh;
-    case NetworkLoadPriority::Unknown:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Network::LoadPriority::Medium;
-}
-
 static Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
 {
     auto metrics = Inspector::Protocol::Network::Metrics::create().release();
@@ -184,10 +164,10 @@ static Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const Ne
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
     if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
-        metrics->setInitialPriority(toProtocol(additionalMetrics->initialPriority));
+        metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->initialPriority));
 
-        if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
-            metrics->setPriority(toProtocol(additionalMetrics->priority));
+        if (additionalMetrics->priority != WebCore::NetworkLoadPriority::Unknown)
+            metrics->setPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->priority));
         if (!additionalMetrics->remoteAddress.isNull())
             metrics->setRemoteAddress(additionalMetrics->remoteAddress);
         if (!additionalMetrics->connectionIdentifier.isNull())
