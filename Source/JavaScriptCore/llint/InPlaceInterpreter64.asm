@@ -911,7 +911,7 @@ reservedOpcode(0x27)
 # Pops the address operand of a memory access, whose width follows memory 0's address type.
 macro popMemoryAddress(reg)
     popInt64(reg) # Note that popInt32 and popInt64 are same implementation.
-    btbnz JSWebAssemblyInstance::m_cachedIsMemory64[wasmInstance], .done
+    btbnz JSWebAssemblyInstance::m_cachedMemory0IsMemory64[wasmInstance], .done
     zxi2q reg, reg
 .done:
 end
@@ -10109,7 +10109,7 @@ ipintAtomicOp(_memory_atomic_wait32, macro()
     loadb IPInt::AtomicMemoryAccessMetadata::memoryIndex[MC], t0
     pushInt32(t0)
     loadq (StackValueSize * 3)[sp], t0
-    btbnz JSWebAssemblyInstance::m_cachedIsMemory64[wasmInstance], .pointerIsMemory64
+    btbnz JSWebAssemblyInstance::m_cachedMemory0IsMemory64[wasmInstance], .pointerIsMemory64
     zxi2q t0, t0
 .pointerIsMemory64:
     loadq IPInt::AtomicMemoryAccessMetadata::offset[MC], t1
@@ -10142,7 +10142,7 @@ ipintAtomicOp(_memory_atomic_wait64, macro()
     loadb IPInt::AtomicMemoryAccessMetadata::memoryIndex[MC], t0
     pushInt32(t0)
     loadq (StackValueSize * 3)[sp], t0
-    btbnz JSWebAssemblyInstance::m_cachedIsMemory64[wasmInstance], .pointerIsMemory64
+    btbnz JSWebAssemblyInstance::m_cachedMemory0IsMemory64[wasmInstance], .pointerIsMemory64
     zxi2q t0, t0
 .pointerIsMemory64:
     loadq IPInt::AtomicMemoryAccessMetadata::offset[MC], t1

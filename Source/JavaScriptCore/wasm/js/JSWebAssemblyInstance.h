@@ -124,7 +124,7 @@ public:
             m_cachedMemory0Size = m_memories[i]->memory().size();
             m_wasmMemory = value->memory();
         }
-        m_cachedIsMemory64 = moduleInformation().memory(0).isMemory64();
+        m_cachedMemory0IsMemory64 = moduleInformation().memory(0).isMemory64();
         m_memories[i]->memory().registerInstance(*this);
     }
 
@@ -229,7 +229,7 @@ public:
     uint32_t cachedTable0Length() const { return m_cachedTable0Length; }
     Wasm::FuncRefTable::Function* cachedTable0Buffer() const { return m_cachedTable0Buffer; }
 
-    bool cachedIsMemory64() const { return m_cachedIsMemory64; }
+    bool cachedMemory0IsMemory64() const { return m_cachedMemory0IsMemory64; }
 
     void updateCachedTable0();
 
@@ -306,7 +306,7 @@ public:
     static constexpr ptrdiff_t offsetOfCachedTable0Buffer() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedTable0Buffer); }
     static constexpr ptrdiff_t offsetOfCachedTable0Length() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedTable0Length); }
     static constexpr ptrdiff_t offsetOfBuiltinCalleeBits() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_builtinCalleeBits); }
-    static constexpr ptrdiff_t offsetOfCachedIsMemory64() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedIsMemory64); }
+    static constexpr ptrdiff_t offsetOfCachedMemory0IsMemory64() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedMemory0IsMemory64); }
     static constexpr ptrdiff_t offsetOfCachedMemory0Size() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedMemory0Size); }
 
     // Tail accessors.
@@ -456,7 +456,7 @@ private:
     const Ref<const Wasm::ModuleInformation> m_moduleInformation;
     RefPtr<Wasm::InstanceAnchor> m_anchor;
     RefPtr<SourceProvider> m_sourceProvider;
-    bool m_cachedIsMemory64 { false }; // FIXME(wasm-memory64): rename this to cachedMemory0IsMemory64 or something similar
+    bool m_cachedMemory0IsMemory64 { false };
     uint64_t m_cachedMemory0Size { 0 }; // memory.size for memory 0, handled specially to avoid performance regressions
 
     RefPtr<Wasm::Memory> m_wasmMemory;
