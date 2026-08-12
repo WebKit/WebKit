@@ -51,10 +51,6 @@ protected:
     virtual ~URLTextEncoding() = default;
 };
 
-// Maximum length (in code units) of a URL that may be passed across an IPC boundary.
-// Matches Chromium's url::kMaxURLChars; URLs longer than this are rejected when decoded.
-constexpr unsigned maxURLLength = 2 * 1024 * 1024;
-
 class URL {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(URL);
 public:

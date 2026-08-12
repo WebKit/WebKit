@@ -36,8 +36,6 @@
 #include <WebCore/ShareableResource.h>
 #include <limits>
 #include <wtf/StdLibExtras.h>
-#include <wtf/URL.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace TestWebKitAPI {
 
@@ -778,62 +776,5 @@ TEST(ArgumentCoderShareableResourceHandle, OverflowingOffsetAndSizeIsRejectedNot
     EXPECT_FALSE(result.has_value());
 }
 #endif // ENABLE(SHAREABLE_RESOURCE)
-
-// Builds a valid "https://webkit.org/aaa...a" URL string of exactly the requested length.
-static String makeURLStringOfLength(size_t length)
-{
-    ASSERT(length >= 19);
-    StringBuilder builder;
-    builder.append("https://webkit.org/"_s);
-    while (builder.length() < length)
-        builder.append('a');
-    return builder.toString();
-}
-
-// Round-trips a URL wire payload (a String) through an Encoder/Decoder and decodes it as a URL,
-// exercising the decode-side length validator.
-static std::optional<URL> decodeURLFromWireString(const String& wireString)
-{
-    IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
-    encoder << wireString;
-    auto decoder = IPC::Decoder::create(encoder.span(), encoder.releaseAttachments());
-    if (!decoder)
-        return std::nullopt;
-    return decoder->decode<URL>();
-}
-
-TEST(ArgumentCoderURL, RoundTripsNormalURL)
-{
-    auto url = decodeURLFromWireString("https://webkit.org/path?q=1"_str);
-    ASSERT_TRUE(url.has_value());
-    EXPECT_TRUE(url->isValid());
-    EXPECT_EQ(url->string(), "https://webkit.org/path?q=1"_str);
-}
-
-TEST(ArgumentCoderURL, URLAtLengthLimitIsPreserved)
-{
-    auto urlString = makeURLStringOfLength(WTF::maxURLLength);
-    ASSERT_EQ(urlString.length(), WTF::maxURLLength);
-
-    auto url = decodeURLFromWireString(urlString);
-    ASSERT_TRUE(url.has_value());
-    EXPECT_TRUE(url->isValid());
-    EXPECT_EQ(url->string().length(), WTF::maxURLLength);
-}
-
-// The over-limit rejection is enforced by the WTF::URL IPC validator, which is
-// currently Cocoa-only (see WTFArgumentCoders.serialization.in).
-#if PLATFORM(COCOA)
-TEST(ArgumentCoderURL, OversizedURLIsRejectedOnDecode)
-{
-    auto urlString = makeURLStringOfLength(WTF::maxURLLength + 1);
-    ASSERT_EQ(urlString.length(), WTF::maxURLLength + 1);
-
-    // An over-limit URL on the wire fails to decode (the message is rejected) and is
-    // never parsed, matching Chromium's GURL/KURL mojo traits.
-    auto url = decodeURLFromWireString(urlString);
-    EXPECT_FALSE(url.has_value());
-}
-#endif // PLATFORM(COCOA)
 
 } // namespace TestWebKitAPI
