@@ -488,14 +488,10 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
 
     auto& [customFunction, foundScopeOrdinal] = *resolved;
 
-    auto guard = m_styleBuilder.state().guardSubstitutionContext({ SubstitutionContext::Type::Function, scopedFunctionName.name, foundScopeOrdinal });
-
-    if (guard.isCyclicContext())
-        return false;
-
     auto& parameters = customFunction->parameters;
 
-    // Parse and substitute arguments.
+    // Arguments are substituted before the context is guarded, so an argument that calls the same
+    // function is not a cycle. https://drafts.csswg.org/css-mixins/#replace-a-dashed-function
     auto substitutedArguments = [&] -> std::optional<Vector<Vector<CSSParserToken>>> {
         Vector<Vector<CSSParserToken>> result;
         for (unsigned i = 0; !range.atEnd(); ++i) {
@@ -513,6 +509,13 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
     }();
 
     if (!substitutedArguments)
+        return false;
+
+    // Parameter default values and the body are resolved inside the guard, so a function that reaches
+    // itself through either is still cyclic.
+    auto guard = m_styleBuilder.state().guardSubstitutionContext({ SubstitutionContext::Type::Function, scopedFunctionName.name, foundScopeOrdinal });
+
+    if (guard.isCyclicContext())
         return false;
 
     // "Let registrations be an initially empty set of custom property registrations."

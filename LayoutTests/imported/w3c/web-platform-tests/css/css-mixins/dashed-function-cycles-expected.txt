@@ -24,4 +24,9 @@ PASS Function in a cycle with its own default
 PASS Cyclic defaults
 PASS Cyclic outer --b shadows custom property
 PASS Locals are function specific
+PASS Argument calling the same function is not a cycle
+PASS Argument calling the same function does not invalidate the inner call
+PASS Argument calling the same function is not a cycle, dependency declared last
+PASS Argument calling the same function is not a cycle, chained three deep
+PASS Argument reading the property being declared is still a cycle
 
