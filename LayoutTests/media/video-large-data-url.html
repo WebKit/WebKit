@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<title>Test that a video element can load a data: url larger than the 2MB URL size limit</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="media-file.js"></script>
+<script>
+// A data: url longer than WTF::maxURLLength (2MB) used to fail to decode when the
+// MediaPlayer's Load message was received by the GPU process, which then terminated
+// the WebContent process.
+const minimumURLLength = 2 * 1024 * 1024;
+
+function base64Encode(bytes)
+{
+    let string = "";
+    const chunkSize = 0x8000;
+    for (let i = 0; i < bytes.length; i += chunkSize)
+        string += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+    return btoa(string);
+}
+
+// Returns the media file contained in `url` with a trailing ISO-BMFF 'free' box
+// appended to it, whose content is ignored by demuxers, so that the resulting data:
+// url is longer than `minimumLength` characters.
+function padDataURL(url, minimumLength)
+{
+    const dataStart = url.indexOf(",") + 1;
+    const header = url.substring(0, dataStart).replace(/\s/g, "");
+    const bytes = Uint8Array.from(atob(url.substring(dataStart).replace(/\s/g, "")), character => character.charCodeAt(0));
+
+    // 3 bytes of data produce 4 base64 characters.
+    const paddedSize = Math.max(3 * Math.ceil((minimumLength - header.length) / 4) + 3, bytes.length + 8);
+    const padded = new Uint8Array(paddedSize);
+    padded.set(bytes);
+
+    const box = new DataView(padded.buffer, bytes.length);
+    box.setUint32(0, padded.length - bytes.length);
+    for (const [index, character] of [..."free"].entries())
+        box.setUint8(4 + index, character.charCodeAt(0));
+
+    return header + base64Encode(padded);
+}
+
+promise_test(async (test) => {
+    const video = document.createElement("video");
+
+    const url = findDataURL("video");
+    assert_not_equals(url, "", "a supported video data: url was found");
+
+    const largeURL = padDataURL(url, minimumURLLength);
+    assert_greater_than(largeURL.length, minimumURLLength, "data: url length");
+
+    const loadedmetadata = new Promise((resolve, reject) => {
+        video.onloadedmetadata = resolve;
+        video.onerror = () => reject(new Error(`video failed to load: ${video.error ? video.error.message : "unknown error"}`));
+    });
+
+    video.src = largeURL;
+    await loadedmetadata;
+
+    assert_greater_than(video.videoWidth, 0, "videoWidth");
+    assert_greater_than(video.videoHeight, 0, "videoHeight");
+}, "A video element loads a data: url larger than 2MB without terminating any process");
+</script>

@@ -1,0 +1,3 @@
+
+PASS A video element loads a data: url larger than 2MB without terminating any process
+
