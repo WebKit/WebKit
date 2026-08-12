@@ -4543,6 +4543,11 @@ void WebPageProxy::sendMouseEvent(FrameIdentifier frameID, const NativeWebMouseE
     if (event.type() == WebEventType::MouseDown || event.type() == WebEventType::MouseUp)
         processContainingFrame(frameID)->recordUserGestureAuthorizationToken(frameID, webPageIDInMainFrameProcess(), event.authorizationToken());
 
+    if (event.isActivationTriggeringEvent()) {
+        if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+            frame->notifyActivated(internals().lastActivationTimestamp);
+    }
+
     sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::MouseEvent(frameID, event, WTF::move(sandboxExtensions)), [weakThis = WeakPtr { *this }, eventType = event.type()] (IPC::Connection* connection, bool handled, std::optional<RemoteUserInputEventData> remoteUserInputEventData) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !connection)
@@ -5099,6 +5104,8 @@ void WebPageProxy::sendKeyEvent(const NativeWebKeyboardEvent& event)
     Ref targetProcess = targetFrame->process();
     targetProcess->startResponsivenessTimer(event.type() == WebEventType::KeyDown ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
     targetProcess->recordUserGestureAuthorizationToken(targetFrameID, webPageIDInMainFrameProcess(), event.authorizationToken());
+    if (event.isActivationTriggeringEvent())
+        targetFrame->notifyActivated(internals().lastActivationTimestamp);
     sendWithAsyncReplyToProcessContainingFrame(targetFrameID, Messages::WebPage::KeyEvent(targetFrameID, event), [weakThis = WeakPtr { *this }] (IPC::Connection* connection, bool handled) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !connection)
@@ -5289,6 +5296,11 @@ void WebPageProxy::sendPreventableTouchEvent(WebCore::FrameIdentifier frameID, c
     if (event.type() == WebEventType::TouchEnd && protect(preferences())->verifyWindowOpenUserGestureFromUIProcess())
         processContainingFrame(frameID)->recordUserGestureAuthorizationToken(frameID, webPageIDInMainFrameProcess(), event.authorizationToken());
 
+    if (event.isActivationTriggeringEvent()) {
+        if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+            frame->notifyActivated(internals().lastActivationTimestamp);
+    }
+
     sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, event), [this, weakThis = WeakPtr { *this }, event] (IPC::Connection* connection, bool handled, std::optional<RemoteWebTouchEvent> remoteWebTouchEvent) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
@@ -5418,6 +5430,11 @@ void WebPageProxy::sendUnpreventableTouchEvent(WebCore::FrameIdentifier frameID,
 {
     if (event.type() == WebEventType::TouchEnd && protect(preferences())->verifyWindowOpenUserGestureFromUIProcess())
         processContainingFrame(frameID)->recordUserGestureAuthorizationToken(frameID, webPageIDInMainFrameProcess(), event.authorizationToken());
+
+    if (event.isActivationTriggeringEvent()) {
+        if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+            frame->notifyActivated(internals().lastActivationTimestamp);
+    }
 
     sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, event), [protectedThis = Ref { *this }] (bool, std::optional<RemoteWebTouchEvent> remoteWebTouchEvent) mutable {
         if (!remoteWebTouchEvent)
@@ -12229,6 +12246,14 @@ void WebPageProxy::requestDOMPasteAccess(IPC::Connection& connection, DOMPasteAc
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     // The frame can be gone due to a site isolation race, so deny rather than treat it as a bad message.
     if (!frame || frame->page() != this) {
+        completionHandler(DOMPasteAccessResponse::DeniedForGesture);
+        return;
+    }
+
+    // Independently validate transient activation in the UIProcess so that a compromised
+    // WebContent process cannot bypass the WebCore-side check by calling this IPC directly.
+    // See https://w3c.github.io/clipboard-apis/.
+    if (!frame->hasTransientActivation()) {
         completionHandler(DOMPasteAccessResponse::DeniedForGesture);
         return;
     }
