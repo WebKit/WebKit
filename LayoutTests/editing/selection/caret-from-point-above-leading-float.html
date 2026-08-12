@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that a point above a container resolves to its leading float when the container also has a block level box on a line, and that a container with inline content only still resolves to that content.</title>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { font: 20px/20px monospace; }
+  .float { float: left; width: 80px; height: 20px; }
+  #inlineOnly { width: 400px; }
+  p ~ div { display: contents; }
+</style>
+</head>
+<body>
+<div id="target"><span class="float">F</span><p></p><div>foo</div></div>
+<div id="inlineOnly"><span class="float">G</span>bar</div>
+<pre id="console"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function describe(range)
+{
+    var container = range ? range.startContainer : null;
+    if (!container)
+        return "null";
+    if (container.nodeType === Node.TEXT_NODE)
+        return 'text "' + container.data.trim() + '"';
+    return container.nodeName;
+}
+
+function check(description, range, expected)
+{
+    var actual = describe(range);
+    return actual === expected ? "PASS " + description : "FAIL " + description + ": expected " + expected + ", got " + actual;
+}
+
+var log = [];
+log.push(check("point above the container resolves to the leading float", document.caretRangeFromPoint(0, 0), 'text "F"'));
+
+// The point is past the end of the line, so it is answered by the container rather than by a box on the line.
+var inlineOnly = document.getElementById("inlineOnly").getBoundingClientRect();
+log.push(check("point on the line of a leading float resolves to the line's content", document.caretRangeFromPoint(inlineOnly.left + 300, inlineOnly.top + 10), 'text "bar"'));
+
+document.getElementById("console").textContent = log.join("\n");
+</script>
+</body>
+</html>

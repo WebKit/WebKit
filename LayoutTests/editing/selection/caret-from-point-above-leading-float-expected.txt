@@ -1,0 +1,5 @@
+F
+foo
+Gbar
+PASS point above the container resolves to the leading float
+PASS point on the line of a leading float resolves to the line's content

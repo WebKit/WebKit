@@ -2216,8 +2216,30 @@ PositionWithAffinity RenderBlock::positionForPoint(const LayoutPoint& point, Hit
     if (!isHorizontalWritingMode())
         pointInLogicalContents = pointInLogicalContents.transposedPoint();
 
-    if (childrenInline())
+    if (childrenInline()) {
+        // The line boxes this walk visits do not include the floats, so a container with a block level box on a line
+        // answers a point above its content with that box. Take the leading floats here instead, the way the block
+        // level children walk below does.
+        auto positionForPointOnLeadingFloat = [&]() -> std::optional<PositionWithAffinity> {
+            if (!containsFloats())
+                return { };
+            CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*this);
+            if (!blockFlow || !blockFlow->hasBlocksInInlineLayout())
+                return { };
+            for (auto& childBox : childrenOfType<RenderBox>(*this)) {
+                if (!childBox.isFloating())
+                    return { };
+                if (!isChildHitTestCandidate(childBox, source))
+                    continue;
+                if (pointInLogicalContents.y() < logicalTopForChild(childBox) + logicalHeightForChild(childBox))
+                    return positionForPointRespectingEditingBoundaries(*this, childBox, pointInContents, source);
+            }
+            return { };
+        };
+        if (auto position = positionForPointOnLeadingFloat())
+            return *position;
         return positionForPointWithInlineChildren(pointInLogicalContents, source);
+    }
 
     RenderBox* lastCandidateBox = lastChildBox();
 
