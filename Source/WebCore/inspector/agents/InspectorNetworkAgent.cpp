@@ -40,6 +40,7 @@
 #include "CertificateInfo.h"
 #include "CertificateSummary.h"
 #include "CookieJar.h"
+#include "DefaultResourceLoadPriority.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
@@ -201,15 +202,34 @@ static Inspector::Protocol::Network::LoadPriority NODELETE toProtocol(NetworkLoa
     return Inspector::Protocol::Network::LoadPriority::Medium;
 }
 
-Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
+static Inspector::Protocol::Network::LoadPriority NODELETE toProtocol(WebCore::ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case ResourceLoadPriority::VeryLow:
+        return Inspector::Protocol::Network::LoadPriority::Verylow;
+    case ResourceLoadPriority::Low:
+        return Inspector::Protocol::Network::LoadPriority::Low;
+    case ResourceLoadPriority::Medium:
+        return Inspector::Protocol::Network::LoadPriority::Medium;
+    case ResourceLoadPriority::High:
+        return Inspector::Protocol::Network::LoadPriority::High;
+    case ResourceLoadPriority::VeryHigh:
+        return Inspector::Protocol::Network::LoadPriority::Veryhigh;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Network::LoadPriority::Medium;
+}
+
+Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics, const CachedResource::Type& resourceRequestType)
 {
     auto metrics = Inspector::Protocol::Network::Metrics::create().release();
 
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
     if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
-        if (additionalMetrics->initialPriority != NetworkLoadPriority::Unknown)
-            metrics->setInitialPriority(toProtocol(additionalMetrics->initialPriority));
+        metrics->setInitialPriority(toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
+
         if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
             metrics->setPriority(toProtocol(additionalMetrics->priority));
         if (!additionalMetrics->remoteAddress.isNull())
@@ -612,7 +632,11 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
             realMetrics = platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(identifier).isolatedCopy();
         });
     }
-    auto metrics = buildObjectForMetrics(realMetrics ? *realMetrics : networkLoadMetrics);
+    CachedResource::Type resourceRequestType = CachedResource::Type::RawResource;
+    if (resourceData)
+        resourceRequestType = resourceData->cachedResource()->type();
+
+    auto metrics = buildObjectForMetrics(realMetrics ? *realMetrics : networkLoadMetrics, resourceRequestType);
 
     m_frontendDispatcher->loadingFinished(requestId, elapsedFinishTime, sourceMappingURL, WTF::move(metrics));
 }

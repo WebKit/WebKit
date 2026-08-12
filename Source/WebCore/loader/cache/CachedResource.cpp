@@ -224,7 +224,6 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     if (type() == Type::LinkPrefetch)
         m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::SecPurpose, "prefetch"_s);
     m_resourceRequest.setPriority(loadPriority());
-    m_resourceRequest.setInitialPriority(DefaultResourceLoadPriority::forResourceType(type()));
 
     // Navigation algorithm is setting up the request before sending it to CachedResourceLoader?CachedResource.
     // So no need for extra fields for MainResource.
