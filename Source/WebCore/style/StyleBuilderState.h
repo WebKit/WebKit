@@ -52,6 +52,7 @@ struct RandomCachingKey;
 
 namespace Style {
 
+class BuilderStatePropertyScope;
 class BuilderState;
 class Builder;
 class CustomPropertyRegistry;
@@ -258,6 +259,7 @@ public:
 private:
     // See the comment in maybeUpdateFontForLetterSpacingOrWordSpacing() about why this needs to be a friend.
     friend void maybeUpdateFontForLetterSpacingOrWordSpacing(BuilderState&, CSSValue&);
+    friend class BuilderStatePropertyScope;
     friend class Builder;
     friend class SubstitutionResolver;
 
@@ -274,10 +276,21 @@ private:
     void updateFontForOrientationChange();
     void updateFontForSizeChange();
 
+    void setCurrentProperty(const PropertyCascade::Property* property)
+    {
+        if (property) {
+            m_currentProperty = property;
+            m_cssToLengthConversionData.m_property = m_currentProperty->id;
+        } else {
+            m_currentProperty = nullptr;
+            m_cssToLengthConversionData.m_property = CSSPropertyInvalid;
+        }
+    }
+
     Style::ComputedStyle& m_style;
     BuilderContext m_context;
 
-    const CSSToLengthConversionData m_cssToLengthConversionData;
+    CSSToLengthConversionData m_cssToLengthConversionData;
 
     HashSet<AtomString> m_appliedCustomProperties;
     GuardedSubstitutionContexts m_guardedSubstitutionContexts;
@@ -294,6 +307,25 @@ private:
     bool m_isBuildingKeyframeStyle { false };
     bool m_hasRevertRuleOrLayerInKeyframeStyle { false };
     bool m_isResolvingContainerQueries { false };
+};
+
+class BuilderStatePropertyScope {
+public:
+    BuilderStatePropertyScope(BuilderState& state, const PropertyCascade::Property* newProperty)
+        : m_state { state }
+        , m_propertyToRestore { m_state.m_currentProperty }
+    {
+        m_state.setCurrentProperty(newProperty);
+    }
+
+    ~BuilderStatePropertyScope()
+    {
+        m_state.setCurrentProperty(m_propertyToRestore);
+    }
+
+private:
+    BuilderState& m_state;
+    const PropertyCascade::Property* m_propertyToRestore;
 };
 
 } // namespace Style

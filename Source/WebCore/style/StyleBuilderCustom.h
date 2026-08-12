@@ -624,8 +624,6 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
         // FIXME: Checking `primitiveValue->isPercentageOrParentFontRelativeLength()` is not sufficient to determine if any parent relative length units have been used, as arbitrary calc() expressions may contain them as well. For example, `font-size: calc(1px + 1em)`.
         builderState.setFontDescriptionIsAbsoluteSize(parentIsAbsoluteSize || !primitiveValue->isPercentageOrParentFontRelativeLength());
 
-        auto conversionData = builderState.cssToLengthConversionData().copyForFontSize();
-
         using StyleType = LengthPercentage<CSS::Nonnegative>;
 
         auto handleLength = [](const auto& length) -> float { return length.resolveZoom(ZoomFactor::none()); };
@@ -636,7 +634,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
             [&](const CSSPrimitiveValue::Calc& calc) -> float {
                 using CSSRaw = typename StyleType::CSS::Raw;
 
-                auto resolved = toStyle(CSS::UnevaluatedCalc<CSSRaw> { calc }, conversionData);
+                auto resolved = toStyle(CSS::UnevaluatedCalc<CSSRaw> { calc }, builderState);
                 return WTF::switchOn(resolved,
                     [&](const typename StyleType::Dimension& length) {
                         return handleLength(length);
@@ -654,9 +652,9 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
                 using CSSPercentageRaw = typename StyleType::Percentage::CSS::Raw;
 
                 if (auto unit = CSSDimensionRaw::UnitTraits::validate(raw.unit))
-                    return handleLength(toStyle(CSSDimensionRaw(*unit, raw.value), conversionData));
+                    return handleLength(toStyle(CSSDimensionRaw(*unit, raw.value), builderState));
                 if (auto unit = CSSPercentageRaw::UnitTraits::validate(raw.unit))
-                    return handlePercentage(toStyle(CSSPercentageRaw(*unit, raw.value), conversionData));
+                    return handlePercentage(toStyle(CSSPercentageRaw(*unit, raw.value), builderState));
 
                 builderState.setCurrentPropertyInvalidAtComputedValueTime();
                 return 0;

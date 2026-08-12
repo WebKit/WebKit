@@ -62,21 +62,9 @@ public:
     CSSPropertyID property() const { return m_property; }
     Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }
 
-    CSSToLengthConversionData copyForFontSize() const
-    {
-        CSSToLengthConversionData copy(*this);
-        copy.m_property = CSSPropertyFontSize;
-        return copy;
-    };
-
-    CSSToLengthConversionData copyForLineHeight() const
-    {
-        CSSToLengthConversionData copy(*this);
-        copy.m_property = CSSPropertyLineHeight;
-        return copy;
-    }
-
 private:
+    friend class Style::BuilderState;
+
     const Style::ComputedStyle& m_style;
     const Style::ComputedStyle* m_rootStyle { nullptr };
     const Style::ComputedStyle* m_parentStyle { nullptr };

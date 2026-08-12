@@ -280,7 +280,8 @@ static std::optional<double> resolveContainerUnit(CQ::Axis physicalAxis, const a
             auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentBoxWidth() : containerRenderer->contentBoxHeight();
             auto adjustedWidthOrHeight = widthOrHeight.toDouble();
 
-            if (!adaptor.computingFontSize())
+            // FIXME: Document why `font-size` is excluded or remove this special case.
+            if (adaptor.property() != CSSPropertyFontSize)
                 adjustedWidthOrHeight = adjustedWidthOrHeight / adaptor.renderViewForViewportUnits()->pageZoomFactor();
 
             return adjustedWidthOrHeight / 100;
@@ -313,12 +314,40 @@ struct CSSToLengthConversionDataAdaptor {
         return conversionData.property();
     }
 
-    bool computingFontSize() const
+    bool computingFontProperty() const
     {
-        return conversionData.property() == CSSPropertyFontSize;
+        // FIXME: This should be generated but first we need to determine if using `font-*` so literally is the right choice. It might make more sense to have this be all properties that effect font-relative units, so would need to include things like `math-depth`.
+        // See https://github.com/w3c/csswg-drafts/issues/14306.
+        switch (conversionData.property()) {
+        case CSSPropertyFontFeatureSettings:
+        case CSSPropertyFontKerning:
+        case CSSPropertyFontPalette:
+        case CSSPropertyFontSize:
+        case CSSPropertyFontSizeAdjust:
+        case CSSPropertyFontStyle:
+        case CSSPropertyFontSynthesisSmallCaps:
+        case CSSPropertyFontSynthesisStyle:
+        case CSSPropertyFontSynthesisWeight:
+        case CSSPropertyFontVariantAlternates:
+        case CSSPropertyFontVariantCaps:
+        case CSSPropertyFontVariantEastAsian:
+        case CSSPropertyFontVariantEmoji:
+        case CSSPropertyFontVariantLigatures:
+        case CSSPropertyFontVariantNumeric:
+        case CSSPropertyFontVariantPosition:
+        case CSSPropertyFontWeight:
+        case CSSPropertyFontWidth:
+#if ENABLE(VARIATION_FONTS)
+        case CSSPropertyFontOpticalSizing:
+        case CSSPropertyFontVariationSettings:
+#endif
+            return true;
+        default:
+            return false;
+        }
     }
 
-    bool computingLineHeight() const
+    bool computingLineHeightProperty() const
     {
         return conversionData.property() == CSSPropertyLineHeight;
     }
@@ -332,7 +361,7 @@ struct CSSToLengthConversionDataAdaptor {
 
     const FontCascade& fontCascadeForFontUnits() const
     {
-        if (computingFontSize()) {
+        if (computingFontProperty()) {
             ASSERT(conversionData.parentStyle());
             return conversionData.parentStyle()->fontCascade();
         }
@@ -351,7 +380,7 @@ struct CSSToLengthConversionDataAdaptor {
 
     const ComputedStyle* styleForLineHeightUnits() const
     {
-        if (computingLineHeight() || computingFontSize())
+        if (computingLineHeightProperty() || computingFontProperty())
             return conversionData.parentStyle();
 
         // FIXME: This should fallback to the initial style, not the element style. To fix this, we will need to make the initial style (Document::initialStyle()) available to CSSToLengthConversionData.
@@ -406,17 +435,6 @@ struct DirectDataAdaptor {
     {
         return propertyToCompute;
     }
-
-    bool computingFontSize() const
-    {
-        return propertyToCompute == CSSPropertyFontSize;
-    }
-
-    bool computingLineHeight() const
-    {
-        return propertyToCompute == CSSPropertyLineHeight;
-    }
-
 
     double applyTextZoom(double value) const
     {
@@ -474,25 +492,25 @@ static double resolveLengthImpl(double value, CSS::LengthUnit lengthUnit, const 
 {
     using enum CSS::LengthUnit;
 
-    auto applyTextZoomIf = [&](bool condition, double value) {
-        return condition ? adaptor.applyTextZoom(value) : value;
+    auto applyTextZoomIfComputingLineHeight = [&](double value) {
+        return adaptor.property() == CSSPropertyLineHeight ? adaptor.applyTextZoom(value) : value;
     };
 
     switch (lengthUnit) {
     case Px:
-        return value * applyTextZoomIf(adaptor.computingLineHeight(), 1.0);
+        return value * applyTextZoomIfComputingLineHeight(1.0);
     case Cm:
-        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerCm);
+        return value * applyTextZoomIfComputingLineHeight(CSS::pixelsPerCm);
     case Mm:
-        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerMm);
+        return value * applyTextZoomIfComputingLineHeight(CSS::pixelsPerMm);
     case Q:
-        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerQ);
+        return value * applyTextZoomIfComputingLineHeight(CSS::pixelsPerQ);
     case In:
-        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerInch);
+        return value * applyTextZoomIfComputingLineHeight(CSS::pixelsPerInch);
     case Pt:
-        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerPt);
+        return value * applyTextZoomIfComputingLineHeight(CSS::pixelsPerPt);
     case Pc:
-        return value * applyTextZoomIf(adaptor.computingLineHeight(), CSS::pixelsPerPc);
+        return value * applyTextZoomIfComputingLineHeight(CSS::pixelsPerPc);
 
     // MARK: "font dependent" resolution
 
@@ -510,7 +528,7 @@ static double resolveLengthImpl(double value, CSS::LengthUnit lengthUnit, const 
         return value * adaptor.applyTextZoom(resolveIc(adaptor.property(), adaptor.fontCascadeForFontUnits()));
 
     case Lh:
-        return value * applyTextZoomIf(adaptor.computingLineHeight(), resolveLh(adaptor.styleForLineHeightUnits(), adaptor.fontCascadeForFontUnits()));
+        return value * applyTextZoomIfComputingLineHeight(resolveLh(adaptor.styleForLineHeightUnits(), adaptor.fontCascadeForFontUnits()));
 
     // MARK: "root font dependent" resolution
 
@@ -526,7 +544,7 @@ static double resolveLengthImpl(double value, CSS::LengthUnit lengthUnit, const 
         return value * adaptor.applyTextZoom(resolveIc(adaptor.property(), adaptor.fontCascadeForRootFontUnits()));
 
     case Rlh:
-        return value * applyTextZoomIf(adaptor.computingLineHeight(), resolveLh(adaptor.styleForRootLineHeightUnits(), adaptor.fontCascadeForRootFontUnits()));
+        return value * applyTextZoomIfComputingLineHeight(resolveLh(adaptor.styleForRootLineHeightUnits(), adaptor.fontCascadeForRootFontUnits()));
 
     // MARK: "viewport-percentage" resolution
 

@@ -1,0 +1,11 @@
+
+PASS Property font-feature-settings value '"swsh" calc(1em / 1px)'
+PASS Property font-palette value 'ident("--test-" calc(1em / 1px))'
+PASS Property font-size-adjust value 'calc(1em / 1px)'
+PASS Property font-style value 'oblique calc(1em / 1px * 1deg)'
+PASS Property font-variant-alternates value 'stylistic(ident("test-" calc(1em / 1px)))'
+PASS Property font-variation-settings value '"xhgt" calc(1em / 1px)'
+PASS Property font-weight value 'calc(1em / 1px)'
+PASS Property font-width value 'calc(1em / 1px * 1%)'
+PASS Property font-size value 'calc(1em / 1)'
+

@@ -53,10 +53,6 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
     if (!primitiveValue)
         return CSS::Keyword::Normal { };
 
-    auto conversionData = state
-        .cssToLengthConversionData()
-        .copyForLineHeight();
-
     using StyleLengthPercentage = LengthPercentage<CSS::Nonnegative>;
     using CSSRaw = typename StyleLengthPercentage::CSS::Raw;
     using CSSDimensionRaw = typename CSSRaw::Dimension;
@@ -101,14 +97,14 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
     return WTF::switchOn(*primitiveValue,
         [&](const CSSPrimitiveValue::Calc& calc) -> LineHeight {
             if (calc.runtimeCategory() == CSS::Category::Number || calc.runtimeCategory() == CSS::Category::Integer)
-                return handleNumber(toStyle(CSS::UnevaluatedCalc<CSSNumberRaw> { calc }, conversionData));
+                return handleNumber(toStyle(CSS::UnevaluatedCalc<CSSNumberRaw> { calc }, state));
 
             ASSERT(calc.runtimeCategory() == CSS::Category::Length || calc.runtimeCategory() == CSS::Category::Percentage || calc.runtimeCategory() == CSS::Category::LengthPercentage);
 
             // <length-percentage> calc() can become a raw <length> or <percentage>, or can stay a calc() when converting,
             // so we have to handle all those cases here.
 
-            auto convertedCalc = toStyle(CSS::UnevaluatedCalc<CSSRaw> { calc }, conversionData);
+            auto convertedCalc = toStyle(CSS::UnevaluatedCalc<CSSRaw> { calc }, state);
             return WTF::switchOn(convertedCalc,
                 [&](const StyleLengthPercentage::Dimension& length) {
                     return handleLength(length);
@@ -123,13 +119,13 @@ auto CSSValueConversion<LineHeight>::operator()(BuilderState& state, const CSSVa
         },
         [&](const CSSPrimitiveValue::Raw& raw) -> LineHeight {
             if (auto unit = CSSNumberRaw::UnitTraits::validate(raw.unit))
-                return handleNumber(toStyle(CSSNumberRaw(*unit, raw.value), conversionData));
+                return handleNumber(toStyle(CSSNumberRaw(*unit, raw.value), state));
 
             if (auto unit = CSSPercentageRaw::UnitTraits::validate(raw.unit))
-                return handlePercentage(toStyle(CSSPercentageRaw(*unit, raw.value), conversionData));
+                return handlePercentage(toStyle(CSSPercentageRaw(*unit, raw.value), state));
 
             if (auto unit = CSSDimensionRaw::UnitTraits::validate(raw.unit))
-                return handleLength(toStyle(CSSDimensionRaw(*unit, raw.value), conversionData));
+                return handleLength(toStyle(CSSDimensionRaw(*unit, raw.value), state));
 
             state.setCurrentPropertyInvalidAtComputedValueTime();
             return CSS::Keyword::Normal { };
