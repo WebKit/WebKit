@@ -1,0 +1,54 @@
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: clip;
+    }
+    canvas {
+        width: 100px;
+        height: 100px;
+        margin-left: 0;
+        margin-right: 20px;
+        background: red;
+    }
+</style>
+<body>
+    <canvas id="src"></canvas>
+    <canvas id="dest"></canvas>
+    <script>
+        (async () => {
+            var srcCanvas = document.getElementById('src');
+            srcCanvas.width = 100;
+            srcCanvas.height = 100;
+
+            var destCanvas = document.getElementById('dest');
+            destCanvas.width = 100;
+            destCanvas.height = 100;
+
+            // 1. Capture the stream of the source canvas while it is still origin-clean.
+            var stream = srcCanvas.captureStream(0);
+            var track = stream.getVideoTracks()[0];
+            track.requestFrame();
+
+            // 2. Load the cross-origin image.
+            var img = new Image();
+            img.src = 'http://localhost:8000/canvas/resources/100x100-lime-rect.svg';
+            await new Promise(function(ok, fail) {
+                img.onload = ok;
+            });
+
+            // 3. Draw the the cross-origin image onto the canvas — this taints it; direct reads are now blocked.
+            var srcCtx = srcCanvas.getContext('2d');
+            srcCtx.drawImage(img, 0, 0);
+
+            // 4. grabFrame() snapshots the tainted canvas.
+            var bmp = await new ImageCapture(track).grabFrame();
+
+            // 5. Draw the frame to a fresh canvas - nothing should be drawn from the tainted canvas.
+            var destCtx = destCanvas.getContext('2d');
+            destCtx.drawImage(bmp, 0, 0);
+
+            window.parent.postMessage("onload", "*");
+        })();
+    </script>
+</body>
