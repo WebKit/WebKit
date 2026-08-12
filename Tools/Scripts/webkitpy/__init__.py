@@ -106,7 +106,7 @@ if sys.version_info < (3, 11):
     AutoInstall.register(Package('backports.asyncio_runner', Version(1, 2, 0), pypi_name="backports-asyncio-runner", wheel=True))
 
 AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1)))
-AutoInstall.register(Package('typing_extensions', Version(4, 12, 2), wheel=True))
+AutoInstall.register(Package('typing_extensions', Version(4, 13, 2), wheel=True))
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
 AutoInstall.register(Package('attrs', Version(21, 3, 0), aliases=['attr']))
 AutoInstall.register(Package('bs4', Version(4, 12, 0), pypi_name='beautifulsoup4'))
