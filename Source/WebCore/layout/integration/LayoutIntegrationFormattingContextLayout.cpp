@@ -33,6 +33,7 @@
 #include "LayoutIntegrationUtils.h"
 #include "RenderBlock.h"
 #include "RenderBlockFlowInlines.h"
+#include "RenderStyleConstants.h"
 #include "RenderBoxInlines.h"
 #include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
@@ -249,7 +250,12 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
             blockGeometry.setVerticalMargin({ { }, { } });
         } else {
             borderBoxTop = positionAndMargin.childLogicalTop - blockLineLogicalTopLeft.y();
-            blockGeometry.setVerticalMargin({ borderBoxTop, { } });
+            auto forcedBreakAfterAdvance = LayoutUnit { };
+            if (alwaysPageBreak(blockRenderer->style().breakAfter())) {
+                // A forced break after the box moves the container's logical height to the top of the next page.
+                forcedBreakAfterAdvance = std::max(0_lu, positionAndMargin.containerLogicalBottom - positionAndMargin.childLogicalTop - blockRenderer->logicalHeight());
+            }
+            blockGeometry.setVerticalMargin({ borderBoxTop, forcedBreakAfterAdvance });
         }
         blockGeometry.setTopLeft(LayoutPoint { blockGeometry.marginStart(), borderBoxTop });
 

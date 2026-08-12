@@ -1,0 +1,5 @@
+This sentence must be on the first page.
+This sentence must be on the second page.
+
+PASS: page number of "after" is 1
+All tests passed
