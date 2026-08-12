@@ -150,6 +150,18 @@ String toWebAPI(WebExtension::InjectionTime injectionTime)
     }
 }
 
+SUPPRESS_NODELETE NSDictionary *WebExtensionAPIScripting::executionWorld()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/ExecutionWorld
+
+    static NSDictionary *worlds = @{
+        @"ISOLATED": @"ISOLATED",
+        @"MAIN": @"MAIN",
+    };
+
+    return worlds;
+}
+
 void WebExtensionAPIScripting::executeScript(NSDictionary *script, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/executeScript

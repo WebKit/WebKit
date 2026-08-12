@@ -759,6 +759,22 @@ TEST(WKWebExtensionAPIScripting, CSSAuthorOrigin)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIScripting, ExecutionWorld)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser.scripting.ExecutionWorld, 'object', 'ExecutionWorld should be an object')",
+
+        @"browser.test.assertEq(browser.scripting.ExecutionWorld.ISOLATED, 'ISOLATED', 'ISOLATED should be defined')",
+        @"browser.test.assertEq(browser.scripting.ExecutionWorld.MAIN, 'MAIN', 'MAIN should be defined')",
+
+        @"browser.test.assertDeepEq(Object.keys(browser.scripting.ExecutionWorld).sort(), [ 'ISOLATED', 'MAIN' ], 'ExecutionWorld should only define ISOLATED and MAIN')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(scriptingManifest, @{ @"background.js": backgroundScript });
+}
+
 TEST(WKWebExtensionAPIScripting, World)
 {
     TestWebKitAPI::HTTPServer server({

@@ -37,4 +37,6 @@
     [RaisesException] void getRegisteredContentScripts([Optional, NSDictionary] any filter, [Optional, CallbackHandler] function callback);
     [RaisesException] void unregisterContentScripts([Optional, NSDictionary] any filter, [Optional, CallbackHandler] function callback);
     [RaisesException] void updateContentScripts([NSArray=NSDictionary] array scripts, [Optional, CallbackHandler] function callback);
+
+    [ImplementedAs=executionWorld] readonly attribute any ExecutionWorld;
 };
