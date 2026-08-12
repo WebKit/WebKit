@@ -183,7 +183,7 @@ public:
     PREFERRED_TYPE(OverflowWrap) unsigned overflowWrap : 2;
     PREFERRED_TYPE(NBSPMode) unsigned nbspMode : 1;
     PREFERRED_TYPE(LineBreak) unsigned lineBreak : 3;
-    PREFERRED_TYPE(UserSelect) unsigned userSelect : 2;
+    PREFERRED_TYPE(UserSelect) unsigned webkitUserSelect : 2;
     PREFERRED_TYPE(SpeakAs) unsigned speakAs : 4;
     PREFERRED_TYPE(Hyphens) unsigned hyphens : 2;
     PREFERRED_TYPE(TextCombine) unsigned textCombine : 1;
@@ -215,6 +215,7 @@ public:
     PREFERRED_TYPE(LineJoin) unsigned joinStyle : 2;
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetStrokeWidth : 1;
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetStrokeColor : 1;
+    PREFERRED_TYPE(bool) unsigned hasExplicitlySetWebkitUserSelect : 1;
     PREFERRED_TYPE(bool) unsigned effectiveInert : 1;
     PREFERRED_TYPE(bool) unsigned effectivelyTransparent : 1;
     PREFERRED_TYPE(bool) unsigned effectiveWrapInsideAvoid : 1; // This box or an ancestor has wrap-inside: avoid.

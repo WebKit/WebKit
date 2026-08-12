@@ -1234,6 +1234,8 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 constexpr CSSValueID toCSSValueID(UserSelect e)
 {
     switch (e) {
+    case UserSelect::Auto:
+        return CSSValueAuto;
     case UserSelect::None:
         return CSSValueNone;
     case UserSelect::Text:
@@ -1249,7 +1251,7 @@ template<> constexpr UserSelect fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
     case CSSValueAuto:
-        return UserSelect::Text;
+        return UserSelect::Auto;
     case CSSValueNone:
         return UserSelect::None;
     case CSSValueText:
