@@ -27,9 +27,9 @@
 
 namespace WebCore {
 
-class JSTestException : public JSDOMErrorWrapper<TestException> {
+class JSTestException : public JSDOMWrapper<TestException> {
 public:
-    using Base = JSDOMErrorWrapper<TestException>;
+    using Base = JSDOMWrapper<TestException>;
     static JSTestException* create(JSC::Structure*, JSDOMGlobalObject*, Ref<TestException>&&);
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);

@@ -527,7 +527,6 @@ sub GetParentClassName
     return $interface->extendedAttributes->{JSLegacyParent} if $interface->extendedAttributes->{JSLegacyParent};
     return "JSDOMObject" unless NeedsImplementationClass($interface);
     return "JS" . $interface->parentType->name if $interface->parentType;
-    return "JSDOMErrorWrapper<" . GetImplClassName($interface) . ">" if $interface->extendedAttributes->{Exception};
     return "JSDOMEmbedderArrayLikeWrapper<" . GetImplClassName($interface) . ">" if $interface->extendedAttributes->{EmbedderArrayLike};
     return "JSDOMWrapper<" . GetImplClassName($interface) . ", SignedPtrTraits<" . GetImplClassName($interface) . ", " . GetImplClassPtrTag($interface) . ">>" if HasTaggedWrapperForInterface($interface);
     return "JSDOMWrapper<" . GetImplClassName($interface) . ">";
@@ -3396,10 +3395,7 @@ sub GenerateHeader
         push(@headerContent, "    static size_t estimatedSize(JSCell*, JSC::VM&);\n");
     }
     
-    # Exception wrappers (IDL [Exception] interfaces) are allocated in per-class subspaces whose
-    # custom heap cell type captures &destroy statically, so each subclass needs its own destroy
-    # (unlike other wrappers, which share a heap cell type with virtual, method-table dispatch).
-    if (!$hasParent || $codeGenerator->InheritsExtendedAttribute($interface, "Exception")) {
+    if (!$hasParent) {
         push(@headerContent, "    static void destroy(JSC::JSCell*);\n");
     }
 
@@ -5344,8 +5340,6 @@ sub GenerateImplementation
         push(@implContent, "    return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType($type), StructureFlags), info(), $indexingModeIncludingHistory);\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "Event")) {
         push(@implContent, "    return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSEventType), StructureFlags), info(), $indexingModeIncludingHistory);\n");
-    } elsif ($codeGenerator->InheritsExtendedAttribute($interface, "Exception")) {
-        push(@implContent, "    return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ErrorInstanceType, StructureFlags), info(), $indexingModeIncludingHistory);\n");
     } elsif ($interface->extendedAttributes->{EmbedderArrayLike}) {
         push(@implContent, "    return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSEmbedderArrayLikeType), StructureFlags), info(), $indexingModeIncludingHistory);\n");
     } else {
@@ -5390,7 +5384,7 @@ sub GenerateImplementation
         }
     }
 
-    if (!$hasParent || $codeGenerator->InheritsExtendedAttribute($interface, "Exception")) {
+    if (!$hasParent) {
         push(@implContent, "void ${className}::destroy(JSC::JSCell* cell)\n");
         push(@implContent, "{\n");
         push(@implContent, "    SUPPRESS_MEMORY_UNSAFE_CAST ${className}* thisObject = static_cast<${className}*>(cell);\n");
@@ -5463,14 +5457,12 @@ sub GenerateImplementation
     push(@implContent, "{\n");
 
     my $isGlobal = IsDOMGlobalObject($interface);
-    my $isError = $codeGenerator->InheritsExtendedAttribute($interface, "Exception");
-    my $usesCustomHeapCellType = $isGlobal || $isError;
-    push(@implContent, "    return WebCore::subspaceForImpl<${className}, UseCustomHeapCellType::" . ($usesCustomHeapCellType ? "Yes" : "No") . ">(vm, \"${className}\"_s,\n");
+    push(@implContent, "    return WebCore::subspaceForImpl<${className}, UseCustomHeapCellType::" . ($isGlobal ? "Yes" : "No") . ">(vm, \"${className}\"_s,\n");
     push(@implContent, "        [] (auto& spaces) { return spaces.m_clientSubspaceFor${interfaceName}.get(); },\n");
     push(@implContent, "        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceFor${interfaceName} = std::forward<decltype(space)>(space); },\n");
     push(@implContent, "        [] (auto& spaces) { return spaces.m_subspaceFor${interfaceName}.get(); },\n");
-    push(@implContent, "        [] (auto& spaces, auto&& space) { spaces.m_subspaceFor${interfaceName} = std::forward<decltype(space)>(space); }" . ($usesCustomHeapCellType ? "," : "") . "\n");
-    push(@implContent, "        [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeFor${className}; }\n") if $usesCustomHeapCellType;
+    push(@implContent, "        [] (auto& spaces, auto&& space) { spaces.m_subspaceFor${interfaceName} = std::forward<decltype(space)>(space); }" . ($isGlobal ? "," : "") . "\n");
+    push(@implContent, "        [] (auto& server) -> JSC::HeapCellType& { return server.m_heapCellTypeFor${className}; }\n") if $isGlobal;
     push(@implContent, "    );\n");
     push(@implContent, "}\n\n");
 
