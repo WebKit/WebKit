@@ -45,9 +45,8 @@ function test()
 
             let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
             if (resources.length) {
-                console.warn(`Got ${resources.length} resources`);
+                console.log(`LOG: Got ${resources.length} resources`);
                 let har = buildHAR(resources);
-                InspectorTest.json(har);
                 let localResources = WI.networkManager.processHAR({json: har});
 
                 localResources?.forEach((entry) => {
