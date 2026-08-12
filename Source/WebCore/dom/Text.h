@@ -27,6 +27,14 @@
 namespace WebCore {
 
 class RenderText;
+class DOMPoint;
+class DOMQuad;
+class DOMRectReadOnly;
+class Element;
+struct BoxQuadOptions;
+struct ConvertCoordinateOptions;
+struct DOMPointInit;
+struct DOMQuadInit;
 
 class Text : public CharacterData {
     WTF_MAKE_TZONE_ALLOCATED(Text);
@@ -54,6 +62,11 @@ public:
     bool canContainRangeEndPoint() const final { return true; }
 
     RenderText* renderer() const;
+
+    ExceptionOr<Vector<Ref<DOMQuad>>> getBoxQuads(BoxQuadOptions&&);
+    ExceptionOr<Ref<DOMQuad>> convertQuadFromNode(DOMQuadInit&&, Variant<Ref<Text>, Ref<Element>, Ref<Document>>&&, ConvertCoordinateOptions&&);
+    ExceptionOr<Ref<DOMQuad>> convertRectFromNode(DOMRectReadOnly&, Variant<Ref<Text>, Ref<Element>, Ref<Document>>&&, ConvertCoordinateOptions&&);
+    ExceptionOr<Ref<DOMPoint>> convertPointFromNode(DOMPointInit&&, Variant<Ref<Text>, Ref<Element>, Ref<Document>>&&, ConvertCoordinateOptions&&);
 
     void updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 

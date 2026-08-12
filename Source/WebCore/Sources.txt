@@ -1294,6 +1294,7 @@ dom/DOMQuad.cpp
 dom/DOMRectList.cpp
 dom/DOMRectReadOnly.cpp
 dom/DOMStringList.cpp
+dom/GeometryUtils.cpp
 dom/DOMTZoneImpls.cpp
 dom/DataTransfer.cpp
 dom/DataTransferItem.cpp
@@ -3935,6 +3936,7 @@ JSCORPViolationReportBody.cpp
 JSCSPViolationReportBody.cpp
 JSCSSAnimation.cpp
 JSCSSAnimationEvent.cpp
+JSCSSBoxType.cpp
 JSCSSConditionRule.cpp
 JSCSSContainerRule.cpp
 JSCSSCounterStyleRule.cpp
@@ -4153,6 +4155,8 @@ JSDOMTokenList.cpp
 JSDOMURL.cpp
 JSDOMWindow.cpp @no-unify-when(bundle<=8) @cost:22
 JSDOMWindowConstructorAttributes.cpp @no-unify-when(bundle<=8) @cost:22
+JSBoxQuadOptions.cpp
+JSConvertCoordinateOptions.cpp
 JSDataCue.cpp
 JSDataTransfer.cpp
 JSDataTransferItem.cpp
