@@ -110,11 +110,9 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER PRIVATE ON)
 
 # No support planned
 
-# The Swift prototype features default on for any Clang host with a new-enough
-# swiftc, which now includes this port. They can't build here yet; Windows
-# Swift support is in progress.
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_BACK_FORWARD_LIST_SWIFT PRIVATE OFF)
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SWIFT_DEMO_URI_SCHEME PRIVATE OFF)
+# Force Swift features on just for testing purposes - do not merge
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_BACK_FORWARD_LIST_SWIFT PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SWIFT_DEMO_URI_SCHEME PRIVATE ON)
 
 # WebDriver options
 SET_AND_EXPOSE_TO_BUILD(ENABLE_WEBDRIVER_KEYBOARD_INTERACTIONS ON)
