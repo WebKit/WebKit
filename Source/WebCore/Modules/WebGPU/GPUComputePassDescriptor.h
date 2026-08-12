@@ -40,6 +40,8 @@ struct GPUComputePassDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
+    Ref<JSON::Object> toJSON() const;
+
     std::optional<GPUComputePassTimestampWrites> timestampWrites;
 };
 

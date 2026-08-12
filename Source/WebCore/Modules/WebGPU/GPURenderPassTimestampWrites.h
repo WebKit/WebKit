@@ -28,6 +28,7 @@
 #include "GPUIntegralTypes.h"
 #include "GPUQuerySet.h"
 #include "WebGPURenderPassTimestampWrites.h"
+#include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
@@ -42,6 +43,8 @@ struct GPURenderPassTimestampWrites {
             endOfPassWriteIndex.value_or(WebGPU::kQuerySetIndexUndefined),
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     Ref<GPUQuerySet> querySet;
     std::optional<GPUSize32> beginningOfPassWriteIndex;

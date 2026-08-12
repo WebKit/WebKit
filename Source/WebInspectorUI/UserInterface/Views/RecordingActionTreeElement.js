@@ -33,8 +33,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         let titleFragment = WI.RecordingActionTreeElement._generateDOM(representedObject, recording);
         let classNames = WI.RecordingActionTreeElement._getClassNames(representedObject);
 
-        const subtitle = null;
-        super(classNames, titleFragment, subtitle, representedObject);
+        super(classNames, titleFragment, representedObject.result, representedObject);
 
         this._index = index;
 
@@ -49,6 +48,53 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         let recordingType = recording.type;
         let parameterCount = recordingAction.parameters.length;
 
+        function appendJSON(parent, value, objectReferences, indent = 0) {
+            if (objectReferences.has(value)) {
+                let objectReferenceElement = parent.appendChild(document.createElement("span"));
+                objectReferenceElement.classList.add("object-handle");
+                let [identifier, swizzleType] = value;
+                if (WI.Recording.isObjectSwizzleType(swizzleType))
+                    objectReferenceElement.textContent = recording.displayNameForReference(value);
+                else if (swizzleType === WI.Recording.Swizzle.None)
+                    objectReferenceElement.textContent = recording.data[identifier];
+                else
+                    objectReferenceElement.textContent = WI.Recording.displayNameForSwizzleType(swizzleType);
+                return;
+            }
+
+            let braceIndent = WI.indentString().repeat(indent);
+            let valueIndent = WI.indentString().repeat(indent + 1);
+
+            if (Array.isArray(value)) {
+                parent.appendChild(document.createTextNode("["));
+                let added = false;
+                for (let item of value) {
+                    let comma = added ? "," : "";
+                    parent.appendChild(document.createTextNode(`${comma}\n${valueIndent}`));
+                    appendJSON(parent, item, objectReferences, indent + 1);
+                    added = true;
+                }
+                parent.appendChild(document.createTextNode(added ? `\n${braceIndent}]` : " ]"));
+                return;
+            }
+
+            if (value && typeof value === "object") {
+                parent.appendChild(document.createTextNode("{"));
+                let added = false;
+                for (let [name, item] of Object.entries(value)) {
+                    let comma = added ? "," : "";
+                    let propertyName = WI.ScriptSyntaxTree.isIdentifierName(name) ? name : JSON.stringify(name);
+                    parent.appendChild(document.createTextNode(`${comma}\n${valueIndent}${propertyName}: `));
+                    appendJSON(parent, item, objectReferences, indent + 1);
+                    added = true;
+                }
+                parent.appendChild(document.createTextNode(added ? `\n${braceIndent}}` : " }"));
+                return;
+            }
+
+            parent.appendChild(document.createTextNode(JSON.stringify(value)));
+        }
+
         function createParameterElement(parameter, swizzleType, index) {
             let parameterElement = document.createElement("span");
             parameterElement.classList.add("parameter");
@@ -56,11 +102,17 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             if (WI.Recording.isObjectSwizzleType(swizzleType)) {
                 if (!isNaN(parameter)) {
                     parameterElement.classList.add("object-handle");
-                    parameterElement.textContent = recording.displayNameForReceiver([parameter, swizzleType]);
+                    parameterElement.textContent = recording.displayNameForReference([parameter, swizzleType]);
                 } else {
                     parameterElement.classList.add("swizzled");
                     parameterElement.textContent = WI.Recording.displayNameForSwizzleType(swizzleType);
                 }
+                return parameterElement;
+            }
+
+            if (WI.Recording.isReferenceSwizzleType(swizzleType)) {
+                let objectReferences = WI.RecordingAction.objectReferencesForParameter(recordingType, recordingAction.name, parameter, index);
+                appendJSON(parameterElement, parameter, objectReferences);
                 return parameterElement;
             }
 
@@ -83,11 +135,6 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
                 break;
 
             case WI.Recording.Swizzle.String:
-                parameterElement.textContent = JSON.stringify(parameter);
-                break;
-
-            case WI.Recording.Swizzle.Array:
-                parameterElement.classList.add("swizzled");
                 parameterElement.textContent = JSON.stringify(parameter);
                 break;
 

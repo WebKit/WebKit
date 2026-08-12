@@ -21,21 +21,21 @@ frames:
         3: performActions
       snapshot: <filtered>
   1: (duration)
-    0: width
+    0: canvas.width
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-    1: width = 2
+    1: canvas.width = 2
       swizzleTypes: [Number]
       trace:
         0: (anonymous function)
         1: executeFrameFunction
   2: (duration)
-    0: height
+    0: canvas.height
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-    1: height = 2
+    1: canvas.height = 2
       swizzleTypes: [Number]
       trace:
         0: (anonymous function)

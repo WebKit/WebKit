@@ -29,6 +29,7 @@
 #include "GPUObjectDescriptorBase.h"
 #include "GPUPipelineLayout.h"
 #include "WebGPUPipelineDescriptorBase.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -87,6 +88,8 @@ struct GPUPipelineDescriptorBase : public GPUObjectDescriptorBase {
             &convertPipelineLayoutToBacking(layout, autoLayout)
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPULayoutMode layout;
 };

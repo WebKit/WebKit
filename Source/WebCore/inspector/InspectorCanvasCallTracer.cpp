@@ -109,4 +109,23 @@ void InspectorCanvasCallTracer::recordAction(GPUDevice& device, ProcessedArgumen
         canvasAgent->recordAction(device, WTF::move(receiver), WTF::move(name), WTF::move(arguments));
 }
 
+void InspectorCanvasCallTracer::recordActionResult(CanvasRenderingContext& canvasRenderingContext, ProcessedArgument&& result)
+{
+    if (CheckedPtr canvasAgent = enabledCanvasAgent(canvasRenderingContext))
+        canvasAgent->recordActionResult(canvasRenderingContext, WTF::move(result));
+}
+
+void InspectorCanvasCallTracer::recordActionResult(const CanvasBase& canvasBase, ProcessedArgument&& result)
+{
+    ASSERT(canvasBase.renderingContext());
+    Ref context = *canvasBase.renderingContext();
+    recordActionResult(context, WTF::move(result));
+}
+
+void InspectorCanvasCallTracer::recordActionResult(GPUDevice& device, ProcessedArgument&& result)
+{
+    if (CheckedPtr canvasAgent = enabledCanvasAgent(device))
+        canvasAgent->recordActionResult(device, WTF::move(result));
+}
+
 } // namespace WebCore

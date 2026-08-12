@@ -28,6 +28,7 @@
 #include "GPUIntegralTypes.h"
 #include "GPUVertexFormat.h"
 #include "WebGPUVertexAttribute.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -40,6 +41,8 @@ struct GPUVertexAttribute {
             shaderLocation,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUVertexFormat format { GPUVertexFormat::Uint8x2 };
     GPUSize64 offset { 0 };

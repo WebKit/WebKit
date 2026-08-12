@@ -25,7 +25,7 @@
 
 WI.RecordingAction = class RecordingAction extends WI.Object
 {
-    constructor(name, parameters, swizzleTypes, stackTrace, receiver, snapshot)
+    constructor(name, parameters, swizzleTypes, stackTrace, result, receiver, snapshot)
     {
         super();
 
@@ -33,6 +33,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._payloadParameters = parameters;
         this._payloadSwizzleTypes = swizzleTypes;
         this._payloadStackTrace = stackTrace;
+        this._payloadResult = result ?? -1;
         this._payloadReceiver = receiver ?? -1;
         this._payloadSnapshot = snapshot ?? -1;
 
@@ -41,6 +42,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._stackTrace = null;
         this._snapshot = "";
         this._receiver = "";
+        this._result = "";
 
         this._valid = true;
         this._isFunction = false;
@@ -61,12 +63,12 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     {
         // Version 1: (name, parameters, swizzleTypes, [stackTrace, [snapshot]])
         // Version 2: (name, parameters, swizzleTypes, [stackTrace, [snapshot]])
-        // Version 3: (name, parameters, swizzleTypes, [stackTrace, [receiver, [snapshot]]])
+        // Version 3: (name, parameters, swizzleTypes, [stackTrace, [result, [receiver, [snapshot]]]])
 
         if (!Array.isArray(payload))
             payload = [];
 
-        let [name, parameters, swizzleTypes, stackTrace, receiver, snapshot] = payload;
+        let [name, parameters, swizzleTypes, stackTrace, result, receiver, snapshot] = payload;
 
         if (typeof name !== "number") {
             if (payload.length > 0)
@@ -97,23 +99,31 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         }
 
         if (version < 3) {
-            snapshot = receiver;
+            snapshot = result;
+            result = -1;
             receiver = -1;
-        } else if (!Array.isArray(receiver) || receiver.length !== 2 || receiver.some((item) => typeof item !== "number" || isNaN(item))) {
-            if (payload.length > 4 && receiver !== -1)
+        } else if (!Array.isArray(result) || result.length !== 2 || result.some((item) => typeof item !== "number" || isNaN(item))) {
+            if (payload.length > 4 && result !== -1)
+                WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("result")));
+
+            result = -1;
+        }
+
+        if (version >= 3 && (!Array.isArray(receiver) || receiver.length !== 2 || receiver.some((item) => typeof item !== "number" || isNaN(item)))) {
+            if (payload.length > 5 && receiver !== -1)
                 WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("receiver")));
 
             receiver = -1;
         }
 
         if (typeof snapshot !== "number" || isNaN(snapshot)) {
-            if (payload.length > (version >= 3 ? 5 : 4))
+            if (payload.length > (version >= 3 ? 6 : 4))
                 WI.Recording.synthesizeWarning(WI.UIString("non-number %s").format(WI.unlocalizedString("snapshot")));
 
             snapshot = -1;
         }
 
-        return new WI.RecordingAction(name, parameters, swizzleTypes, stackTrace, receiver, snapshot);
+        return new WI.RecordingAction(name, parameters, swizzleTypes, stackTrace, result, receiver, snapshot);
     }
 
     static isFunctionForType(type, name)
@@ -227,6 +237,22 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         return null;
     }
 
+    static objectReferencesForParameter(type, name, value, index)
+    {
+        let result = new Set;
+        WI.RecordingAction._objectReferenceCollectors[type]?.[name]?.[index]?.(value, function(reference, swizzleTypes) {
+            if (!Array.isArray(reference) || reference.length !== 2)
+                return;
+
+            let [identifier, swizzleType] = reference;
+            if (typeof identifier !== "number" || isNaN(identifier) || !swizzleTypes.includes(swizzleType))
+                return;
+
+            result.add(reference);
+        });
+        return result;
+    }
+
     static _prototypeForType(type)
     {
         switch (type) {
@@ -265,17 +291,28 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get parameters() { return this._parameters; }
     get swizzleTypes() { return this._payloadSwizzleTypes; }
 
-    get recordingObjectIdentifiers()
+    async recordingObjectIdentifiers(recording)
     {
         let result = [];
+        if (Array.isArray(this._payloadResult))
+            result.push(this._payloadResult);
         if (Array.isArray(this._payloadReceiver))
             result.push(this._payloadReceiver);
 
+        let name = await recording.swizzle(this._payloadName, WI.Recording.Swizzle.String);
         for (let index = 0; index < this._payloadSwizzleTypes.length; ++index) {
             let swizzleType = this._payloadSwizzleTypes[index];
-            let identifier = this._payloadParameters[index];
-            if (WI.Recording.isObjectSwizzleType(swizzleType) && !isNaN(identifier))
-                result.push([identifier, swizzleType]);
+            let value = this._payloadParameters[index];
+            if (WI.Recording.isReferenceSwizzleType(swizzleType))
+                value = await recording.swizzle(value, swizzleType);
+            if (WI.Recording.isObjectSwizzleType(swizzleType) && !isNaN(value))
+                result.push([value, swizzleType]);
+            else {
+                for (let reference of WI.RecordingAction.objectReferencesForParameter(recording.type, name, value, index)) {
+                    if (WI.Recording.isObjectSwizzleType(reference[1]))
+                        result.push(reference);
+                }
+            }
         }
 
         return result;
@@ -284,6 +321,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get stackTrace() { return this._stackTrace; }
     get snapshot() { return this._snapshot; }
     get receiver() { return this._receiver; }
+    get result() { return this._result; }
     get valid() { return this._valid; }
     get isFunction() { return this._isFunction; }
     get isGetter() { return this._isGetter; }
@@ -401,8 +439,10 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         this._stackTrace = stackTrace;
         if (this._payloadSnapshot >= 0)
             this._snapshot = snapshot;
+        if (Array.isArray(this._payloadResult))
+            this._result = recording.displayNameForReference(this._payloadResult);
         if (Array.isArray(this._payloadReceiver))
-            this._receiver = recording.displayNameForReceiver(this._payloadReceiver);
+            this._receiver = recording.displayNameForReference(this._payloadReceiver);
 
         if (this.isCanvasReceiver) {
             this._isFunction = false;
@@ -410,7 +450,8 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             this._isVisual = !this._isGetter;
         } else {
             let isWebGLObjectAction = this._receiver && (recording.isCanvasWebGL || recording.isCanvasWebGL2);
-            this._isFunction = isWebGLObjectAction || WI.RecordingAction.isFunctionForType(recording.type, this._name);
+            let isDefinitelyFunction = this._parameters.length > 1;
+            this._isFunction = isWebGLObjectAction || isDefinitelyFunction || WI.RecordingAction.isFunctionForType(recording.type, this._name);
             this._isGetter = !this._isFunction && !this._parameters.length;
 
             if (this._snapshot)
@@ -420,7 +461,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 this._isVisual = visualNames ? visualNames.has(this._name) : false;
             }
 
-            if (this._valid && !isWebGLObjectAction) {
+            if (this._valid && !isWebGLObjectAction && !isDefinitelyFunction) {
                 let prototype = WI.RecordingAction._prototypeForType(recording.type);
                 if (prototype && !(name in prototype)) {
                     this.markInvalid();
@@ -547,10 +588,14 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         let json = [this._payloadName, this._payloadParameters, this._payloadSwizzleTypes, this._payloadStackTrace];
         if (version >= 3) {
             if (this._payloadSnapshot >= 0) {
+                json.push(this._payloadResult);
                 json.push(this._payloadReceiver);
                 json.push(this._payloadSnapshot);
-            } else if (Array.isArray(this._payloadReceiver))
+            } else if (Array.isArray(this._payloadReceiver)) {
+                json.push(this._payloadResult);
                 json.push(this._payloadReceiver);
+            } else if (Array.isArray(this._payloadResult))
+                json.push(this._payloadResult);
             return json;
         }
 
@@ -739,6 +784,156 @@ WI.RecordingAction._constantIndexes = {
 };
 WI.RecordingAction._constantIndexes[WI.Recording.Type.OffscreenCanvasWebGL] = WI.RecordingAction._constantIndexes[WI.Recording.Type.CanvasWebGL];
 WI.RecordingAction._constantIndexes[WI.Recording.Type.OffscreenCanvasWebGL2] = WI.RecordingAction._constantIndexes[WI.Recording.Type.CanvasWebGL2];
+
+WI.RecordingAction._objectReferenceCollectors = {
+    [WI.Recording.Type.CanvasWebGPU]: {
+        "beginComputePass": [
+            function(value, collect) {
+                collect(value?.timestampWrites?.querySet, [WI.Recording.Swizzle.GPUQuerySet]);
+            },
+        ],
+        "beginRenderPass": [
+            function(value, collect) {
+                let textureSwizzleTypes = [WI.Recording.Swizzle.GPUTexture, WI.Recording.Swizzle.GPUTextureView];
+                for (let attachment of (Array.isArray(value?.colorAttachments) ? value.colorAttachments : [])) {
+                    if (!attachment)
+                        continue;
+                    collect(attachment.view, textureSwizzleTypes);
+                    collect(attachment.resolveTarget, textureSwizzleTypes);
+                }
+                collect(value?.depthStencilAttachment?.view, textureSwizzleTypes);
+                collect(value?.occlusionQuerySet, [WI.Recording.Swizzle.GPUQuerySet]);
+                collect(value?.timestampWrites?.querySet, [WI.Recording.Swizzle.GPUQuerySet]);
+            },
+        ],
+        "copyBufferToTexture": [
+            function(value, collect) {
+                collect(value?.buffer, [WI.Recording.Swizzle.GPUBuffer]);
+            },
+            function(value, collect) {
+                collect(value?.texture, [WI.Recording.Swizzle.GPUTexture]);
+            },
+        ],
+        "copyElementImageToTexture": [
+            function(value, collect) {
+                collect(value?.source, [WI.Recording.Swizzle.None]);
+            },
+            function(value, collect) {
+                collect(value?.destination?.texture, [WI.Recording.Swizzle.GPUTexture]);
+            },
+        ],
+        "copyExternalImageToTexture": [
+            function(value, collect) {
+                collect(value?.source, [
+                    WI.Recording.Swizzle.Image,
+                    WI.Recording.Swizzle.ImageBitmap,
+                    WI.Recording.Swizzle.ImageData,
+                ]);
+            },
+            function(value, collect) {
+                collect(value?.texture, [WI.Recording.Swizzle.GPUTexture]);
+            },
+        ],
+        "copyTextureToBuffer": [
+            function(value, collect) {
+                collect(value?.texture, [WI.Recording.Swizzle.GPUTexture]);
+            },
+            function(value, collect) {
+                collect(value?.buffer, [WI.Recording.Swizzle.GPUBuffer]);
+            },
+        ],
+        "copyTextureToTexture": [
+            function(value, collect) {
+                collect(value?.texture, [WI.Recording.Swizzle.GPUTexture]);
+            },
+            function(value, collect) {
+                collect(value?.texture, [WI.Recording.Swizzle.GPUTexture]);
+            },
+        ],
+        "createBindGroup": [
+            function(value, collect) {
+                let descriptor = value;
+                collect(descriptor?.layout, [WI.Recording.Swizzle.GPUBindGroupLayout]);
+                for (let entry of (Array.isArray(descriptor?.entries) ? descriptor.entries : [])) {
+                    if (Array.isArray(entry?.resource)) {
+                        collect(entry.resource, [
+                            WI.Recording.Swizzle.GPUBuffer,
+                            WI.Recording.Swizzle.GPUExternalTexture,
+                            WI.Recording.Swizzle.GPUSampler,
+                            WI.Recording.Swizzle.GPUTexture,
+                            WI.Recording.Swizzle.GPUTextureView,
+                        ]);
+                    } else
+                        collect(entry?.resource?.buffer, [WI.Recording.Swizzle.GPUBuffer]);
+                }
+            },
+        ],
+        "createComputePipeline": [
+            function(value, collect) {
+                let descriptor = value;
+                collect(descriptor?.layout, [WI.Recording.Swizzle.GPUPipelineLayout]);
+                collect(descriptor?.compute?.module, [WI.Recording.Swizzle.GPUShaderModule]);
+            },
+        ],
+        "createComputePipelineAsync": [
+            function(value, collect) {
+                let descriptor = value;
+                collect(descriptor?.layout, [WI.Recording.Swizzle.GPUPipelineLayout]);
+                collect(descriptor?.compute?.module, [WI.Recording.Swizzle.GPUShaderModule]);
+            },
+        ],
+        "createPipelineLayout": [
+            function(value, collect) {
+                for (let bindGroupLayout of (Array.isArray(value?.bindGroupLayouts) ? value.bindGroupLayouts : []))
+                    collect(bindGroupLayout, [WI.Recording.Swizzle.GPUBindGroupLayout]);
+            },
+        ],
+        "createRenderPipeline": [
+            function(value, collect) {
+                let descriptor = value;
+                collect(descriptor?.layout, [WI.Recording.Swizzle.GPUPipelineLayout]);
+                collect(descriptor?.vertex?.module, [WI.Recording.Swizzle.GPUShaderModule]);
+                collect(descriptor?.fragment?.module, [WI.Recording.Swizzle.GPUShaderModule]);
+            },
+        ],
+        "createRenderPipelineAsync": [
+            function(value, collect) {
+                let descriptor = value;
+                collect(descriptor?.layout, [WI.Recording.Swizzle.GPUPipelineLayout]);
+                collect(descriptor?.vertex?.module, [WI.Recording.Swizzle.GPUShaderModule]);
+                collect(descriptor?.fragment?.module, [WI.Recording.Swizzle.GPUShaderModule]);
+            },
+        ],
+        "createShaderModule": [
+            function(value, collect) {
+                for (let hint of Object.values(value?.hints || {}))
+                    collect(hint?.layout, [WI.Recording.Swizzle.GPUPipelineLayout]);
+            },
+        ],
+        "executeBundles": [
+            function(value, collect) {
+                for (let bundle of (Array.isArray(value) ? value : []))
+                    collect(bundle, [WI.Recording.Swizzle.GPURenderBundle]);
+            },
+        ],
+        "importExternalTexture": [
+            function(value, collect) {
+                collect(value?.source, [WI.Recording.Swizzle.Image]);
+            },
+        ],
+        "submit": [
+            function(value, collect) {
+                for (let commandBuffer of (Array.isArray(value) ? value : []))
+                    collect(commandBuffer, [WI.Recording.Swizzle.GPUCommandBuffer]);
+            },
+        ],
+        "writeTexture": [
+            function(value, collect) {
+                collect(value?.texture, [WI.Recording.Swizzle.GPUTexture]);
+            },
+        ],
+    },
+};
 
 WI.RecordingAction._webGPUAttributeNames = new Set([
     "label",

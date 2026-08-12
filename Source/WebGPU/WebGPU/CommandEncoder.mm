@@ -2421,7 +2421,8 @@ void CommandEncoder::trackEncoder(CommandEncoder& commandEncoder, HashSet<uint64
 
 void CommandEncoder::addOnCommitHandler(Function<bool(CommandBuffer&, CommandEncoder&)>&& onCommitHandler)
 {
-    ASSERT(m_commandBuffer);
+    if (!m_commandBuffer)
+        return;
     m_onCommitHandlers.append(WTF::move(onCommitHandler));
 }
 

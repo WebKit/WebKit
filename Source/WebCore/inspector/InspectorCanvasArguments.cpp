@@ -27,6 +27,20 @@
 #include "config.h"
 #include "InspectorCanvasArguments.h"
 
+#include "GPUBindGroupDescriptor.h"
+#include "GPUComputePassDescriptor.h"
+#include "GPUComputePipelineDescriptor.h"
+#include "GPUCopyElementImageDestination.h"
+#include "GPUCopyElementImageSource.h"
+#include "GPUExternalTextureDescriptor.h"
+#include "GPUImageCopyBuffer.h"
+#include "GPUImageCopyExternalImage.h"
+#include "GPUImageCopyTexture.h"
+#include "GPUImageCopyTextureTagged.h"
+#include "GPUPipelineLayoutDescriptor.h"
+#include "GPURenderPassDescriptor.h"
+#include "GPURenderPipelineDescriptor.h"
+#include "GPUShaderModuleDescriptor.h"
 #include "Path2D.h"
 #include "WebGLBuffer.h"
 #include "WebGLFramebuffer.h"
@@ -47,7 +61,324 @@
 
 namespace WebCore {
 
+// MARK: - Helpers
+
+static Ref<JSON::ArrayOf<JSON::Value>> process(const InspectorCanvasProcessedArgument& processed)
+{
+    auto reference = JSON::ArrayOf<JSON::Value>::create();
+    reference->addItem(processed.value.copyRef());
+    reference->addItem(static_cast<int>(processed.swizzleType));
+    return reference;
+}
+
+static Ref<JSON::ArrayOf<JSON::Value>> process(InspectorCanvas& inspectorCanvas, const auto& object)
+{
+    using ObjectType = std::remove_cvref_t<decltype(object.get())>;
+    auto processed = InspectorCanvasArgumentProcessor<IDLInterface<ObjectType>>{}(inspectorCanvas, object);
+    RELEASE_ASSERT(processed);
+    return process(*processed);
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUFragmentState& state)
+{
+    Ref object = state.toJSON();
+    object->setArray("module"_s, process(inspectorCanvas, state.module));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUVertexState& state)
+{
+    Ref object = state.toJSON();
+    object->setArray("module"_s, process(inspectorCanvas, state.module));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUBindGroupDescriptor& descriptor)
+{
+    Ref object = descriptor.toJSON();
+    object->setArray("layout"_s, process(inspectorCanvas, descriptor.layout));
+
+    auto entries = JSON::Array::create();
+    for (auto& entry : descriptor.entries) {
+        auto entryObject = JSON::Object::create();
+        entryObject->setDouble("binding"_s, entry.binding);
+        WTF::switchOn(entry.resource, [&](const auto& resource) {
+            using Resource = std::remove_cvref_t<decltype(resource)>;
+            if constexpr (std::is_same_v<Resource, GPUBufferBinding>) {
+                auto bufferBinding = JSON::Object::create();
+                bufferBinding->setArray("buffer"_s, process(inspectorCanvas, resource.buffer));
+                bufferBinding->setDouble("offset"_s, resource.offset);
+                if (resource.size)
+                    bufferBinding->setDouble("size"_s, *resource.size);
+                entryObject->setValue("resource"_s, WTF::move(bufferBinding));
+            } else
+                entryObject->setArray("resource"_s, process(inspectorCanvas, resource));
+        });
+        entries->pushValue(WTF::move(entryObject));
+    }
+    object->setValue("entries"_s, WTF::move(entries));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUComputePassTimestampWrites& timestampWrites)
+{
+    Ref object = timestampWrites.toJSON();
+    object->setArray("querySet"_s, process(inspectorCanvas, timestampWrites.querySet));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUComputePassDescriptor& descriptor)
+{
+    Ref object = descriptor.toJSON();
+    if (descriptor.timestampWrites)
+        object->setObject("timestampWrites"_s, process(inspectorCanvas, *descriptor.timestampWrites));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUImageCopyTexture& imageCopyTexture)
+{
+    Ref object = imageCopyTexture.toJSON();
+    object->setArray("texture"_s, process(inspectorCanvas, imageCopyTexture.texture));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUImageCopyTextureTagged& imageCopyTexture)
+{
+    Ref object = imageCopyTexture.toJSON();
+    object->setArray("texture"_s, process(inspectorCanvas, imageCopyTexture.texture));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUCopyElementImageDestination& descriptor)
+{
+    Ref object = descriptor.toJSON();
+    object->setObject("destination"_s, process(inspectorCanvas, descriptor.destination));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUCopyElementImageSource& descriptor)
+{
+    Ref object = descriptor.toJSON();
+    WTF::switchOn(descriptor.source, [&](const auto& source) {
+        object->setArray("source"_s, process(inspectorCanvas, source));
+    });
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUExternalTextureDescriptor& descriptor)
+{
+    Ref object = descriptor.toJSON();
+#if ENABLE(VIDEO)
+#if ENABLE(WEB_CODECS)
+    WTF::switchOn(descriptor.source, [&](const auto& source) {
+        object->setArray("source"_s, process(inspectorCanvas, source));
+    });
+#else // ENABLE(WEB_CODECS)
+    object->setArray("source"_s, process(inspectorCanvas, descriptor.source));
+#endif // !ENABLE(WEB_CODECS)
+#endif // ENABLE(VIDEO)
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUImageCopyBuffer& imageCopyBuffer)
+{
+    Ref object = imageCopyBuffer.toJSON();
+    object->setArray("buffer"_s, process(inspectorCanvas, imageCopyBuffer.buffer));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUImageCopyExternalImage& imageCopyExternalImage)
+{
+    Ref object = imageCopyExternalImage.toJSON();
+    WTF::switchOn(imageCopyExternalImage.source, [&](const auto& source) {
+        object->setArray("source"_s, process(inspectorCanvas, source));
+    });
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUPipelineLayoutDescriptor& descriptor)
+{
+    Ref object = descriptor.toJSON();
+    auto bindGroupLayouts = JSON::Array::create();
+    for (auto& bindGroupLayout : descriptor.bindGroupLayouts) {
+        if (bindGroupLayout)
+            bindGroupLayouts->pushArray(process(inspectorCanvas, Ref { *bindGroupLayout }));
+        else
+            bindGroupLayouts->pushValue(JSON::Value::null());
+    }
+    object->setArray("bindGroupLayouts"_s, WTF::move(bindGroupLayouts));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURenderPassColorAttachment& colorAttachment)
+{
+    Ref object = colorAttachment.toJSON();
+    WTF::switchOn(colorAttachment.view, [&](const auto& view) {
+        object->setArray("view"_s, process(inspectorCanvas, view));
+    });
+    if (colorAttachment.resolveTarget) {
+        WTF::switchOn(*colorAttachment.resolveTarget, [&](const auto& resolveTarget) {
+            object->setArray("resolveTarget"_s, process(inspectorCanvas, resolveTarget));
+        });
+    }
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURenderPassDepthStencilAttachment& depthStencilAttachment)
+{
+    Ref object = depthStencilAttachment.toJSON();
+    WTF::switchOn(depthStencilAttachment.view, [&](const auto& view) {
+        object->setArray("view"_s, process(inspectorCanvas, view));
+    });
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURenderPassTimestampWrites& timestampWrites)
+{
+    Ref object = timestampWrites.toJSON();
+    object->setArray("querySet"_s, process(inspectorCanvas, timestampWrites.querySet));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURenderPassDescriptor& descriptor)
+{
+    Ref object = descriptor.toJSON();
+
+    auto colorAttachments = JSON::Array::create();
+    for (auto& colorAttachment : descriptor.colorAttachments) {
+        if (colorAttachment)
+            colorAttachments->pushObject(process(inspectorCanvas, *colorAttachment));
+        else
+            colorAttachments->pushValue(JSON::Value::null());
+    }
+    object->setArray("colorAttachments"_s, WTF::move(colorAttachments));
+
+    if (descriptor.depthStencilAttachment)
+        object->setObject("depthStencilAttachment"_s, process(inspectorCanvas, *descriptor.depthStencilAttachment));
+    if (descriptor.occlusionQuerySet)
+        object->setArray("occlusionQuerySet"_s, process(inspectorCanvas, Ref { *descriptor.occlusionQuerySet }));
+    if (descriptor.timestampWrites)
+        object->setObject("timestampWrites"_s, process(inspectorCanvas, *descriptor.timestampWrites));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUShaderModuleCompilationHint& hint)
+{
+    Ref object = hint.toJSON();
+    if (auto* layout = std::get_if<Ref<GPUPipelineLayout>>(&hint.layout))
+        object->setArray("layout"_s, process(inspectorCanvas, *layout));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUShaderModuleDescriptor& descriptor)
+{
+    Ref object = descriptor.toJSON();
+    auto hints = JSON::Object::create();
+    for (auto& hint : descriptor.hints)
+        hints->setObject(hint.key, process(inspectorCanvas, hint.value));
+    object->setObject("hints"_s, WTF::move(hints));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPUComputePipelineDescriptor& descriptor)
+{
+    Ref object = descriptor.toJSON();
+    if (auto* layout = std::get_if<Ref<GPUPipelineLayout>>(&descriptor.layout))
+        object->setArray("layout"_s, process(inspectorCanvas, *layout));
+
+    Ref compute = descriptor.compute.toJSON();
+    compute->setArray("module"_s, process(inspectorCanvas, descriptor.compute.module));
+    object->setObject("compute"_s, WTF::move(compute));
+    return object;
+}
+
+static Ref<JSON::Object> process(InspectorCanvas& inspectorCanvas, const GPURenderPipelineDescriptor& descriptor)
+{
+    Ref object = descriptor.toJSON();
+    if (auto* layout = std::get_if<Ref<GPUPipelineLayout>>(&descriptor.layout))
+        object->setArray("layout"_s, process(inspectorCanvas, *layout));
+    object->setObject("vertex"_s, process(inspectorCanvas, descriptor.vertex));
+    if (descriptor.fragment)
+        object->setObject("fragment"_s, process(inspectorCanvas, *descriptor.fragment));
+    return object;
+}
+
+static std::optional<InspectorCanvasProcessedArgument> processJSON(Ref<JSON::Value>&& valueIndex, RecordingSwizzleType swizzleType = RecordingSwizzleType::JSON)
+{
+    return { { WTF::move(valueIndex), swizzleType } };
+}
+
 // MARK: - Dictionaries
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUComputePassDescriptor>>::operator()(InspectorCanvas& context, const GPUComputePassDescriptor& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUComputePassDescriptor);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUComputePipelineDescriptor>>::operator()(InspectorCanvas& context, const GPUComputePipelineDescriptor& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUComputePipelineDescriptor);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUCopyElementImageDestination>>::operator()(InspectorCanvas& context, const GPUCopyElementImageDestination& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUCopyElementImageDestination);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUCopyElementImageSource>>::operator()(InspectorCanvas& context, const GPUCopyElementImageSource& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUCopyElementImageSource);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUExternalTextureDescriptor>>::operator()(InspectorCanvas& context, const GPUExternalTextureDescriptor& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUExternalTextureDescriptor);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUImageCopyBuffer>>::operator()(InspectorCanvas& context, const GPUImageCopyBuffer& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUImageCopyBuffer);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUImageCopyExternalImage>>::operator()(InspectorCanvas& context, const GPUImageCopyExternalImage& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUImageCopyExternalImage);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUImageCopyTexture>>::operator()(InspectorCanvas& context, const GPUImageCopyTexture& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUImageCopyTexture);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUImageCopyTextureTagged>>::operator()(InspectorCanvas& context, const GPUImageCopyTextureTagged& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUImageCopyTextureTagged);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUPipelineLayoutDescriptor>>::operator()(InspectorCanvas& context, const GPUPipelineLayoutDescriptor& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUPipelineLayoutDescriptor);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPURenderPassDescriptor>>::operator()(InspectorCanvas& context, const GPURenderPassDescriptor& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPURenderPassDescriptor);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUBindGroupDescriptor>>::operator()(InspectorCanvas& context, const GPUBindGroupDescriptor& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUBindGroupDescriptor);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPURenderPipelineDescriptor>>::operator()(InspectorCanvas& context, const GPURenderPipelineDescriptor& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPURenderPipelineDescriptor);
+}
+
+auto InspectorCanvasArgumentProcessor<IDLDictionary<GPUShaderModuleDescriptor>>::operator()(InspectorCanvas& context, const GPUShaderModuleDescriptor& argument) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return processJSON(context.valueIndexForData(process(context, argument)->toJSONString()), RecordingSwizzleType::GPUShaderModuleDescriptor);
+}
 
 auto InspectorCanvasArgumentProcessor<IDLDictionary<DOMMatrix2DInit>>::operator()(InspectorCanvas&, const DOMMatrix2DInit& argument) -> std::optional<InspectorCanvasProcessedArgument>
 {
@@ -59,18 +390,6 @@ auto InspectorCanvasArgumentProcessor<IDLDictionary<DOMMatrix2DInit>>::operator(
     array->addItem(argument.e.value_or(0));
     array->addItem(argument.f.value_or(0));
     return {{ WTF::move(array), RecordingSwizzleType::DOMMatrix }};
-}
-
-auto InspectorCanvasArgumentProcessor<IDLDictionary<ImageDataSettings>>::operator()(InspectorCanvas&, const ImageDataSettings&) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    // FIXME: Implement.
-    return std::nullopt;
-}
-
-auto InspectorCanvasArgumentProcessor<IDLDictionary<WebGLCopyElementImageConfig>>::operator()(InspectorCanvas&, const WebGLCopyElementImageConfig&) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    // FIXME: Implement.
-    return std::nullopt;
 }
 
 // MARK: - Strings
@@ -320,165 +639,5 @@ RecordingSwizzleType recordingSwizzleTypeForWebGLExtension(WebGLExtensionName na
 }
 
 #endif // ENABLE(WEBGL)
-
-// MARK: - Unions
-
-auto InspectorCanvasArgumentProcessor<IDLCanvasImageSourceUnion>::operator()(InspectorCanvas& context, const CanvasImageSource& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return WTF::switchOn(argument,
-        [&]<typename T>(const Ref<T>& value) {
-            return InspectorCanvasArgumentProcessor<IDLInterface<T>>{}(context, value);
-        }
-    );
-}
-
-auto InspectorCanvasArgumentProcessor<IDLCanvasStyleVariantUnion>::operator()(InspectorCanvas& context, const CanvasRenderingContext2DBase::StyleVariant& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return WTF::switchOn(argument,
-        [&](const String& value) {
-            return InspectorCanvasArgumentProcessor<IDLDOMString>{}(context, value);
-        },
-        [&]<typename T>(const Ref<T>& value) {
-            return InspectorCanvasArgumentProcessor<IDLInterface<T>>{}(context, value);
-        }
-    );
-}
-
-auto InspectorCanvasArgumentProcessor<IDLCanvasPathRadiusUnion>::operator()(InspectorCanvas&, const CanvasPath::RadiusVariant& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return WTF::switchOn(argument,
-        [](const DOMPointInit&) -> std::optional<InspectorCanvasProcessedArgument> {
-            // FIXME: We'd likely want to either create a new RecordingSwizzleType::DOMPointInit or RecordingSwizzleType::Object to avoid encoding the same data multiple times. See https://webkit.org/b/233255.
-            return std::nullopt;
-        },
-        [](double radius) -> std::optional<InspectorCanvasProcessedArgument> {
-            return {{ JSON::Value::create(radius), RecordingSwizzleType::Number }};
-        }
-    );
-}
-
-auto InspectorCanvasArgumentProcessor<IDLCanvasElementImageSourceUnion>::operator()(InspectorCanvas& context, const CanvasElementImageSource& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return WTF::switchOn(argument,
-        [&]<typename T>(const Ref<T>& value) {
-            return InspectorCanvasArgumentProcessor<IDLInterface<T>>{}(context, value);
-        }
-    );
-}
-
-#if ENABLE(WEBGL)
-
-auto InspectorCanvasArgumentProcessor<IDLTexImageSourceUnion>::operator()(InspectorCanvas& context, const WebGLRenderingContextBase::TexImageSource& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return WTF::switchOn(argument,
-        [&]<typename T>(const Ref<T>& value) {
-            return InspectorCanvasArgumentProcessor<IDLInterface<T>>{}(context, value);
-        }
-    );
-}
-
-auto InspectorCanvasArgumentProcessor<IDLBufferDataSourceUnion>::operator()(InspectorCanvas& context, const WebGLRenderingContextBase::BufferDataSource& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return WTF::switchOn(argument,
-        [&](const Ref<ArrayBuffer>& value) -> std::optional<InspectorCanvasProcessedArgument> {
-            return InspectorCanvasArgumentProcessor<IDLArrayBuffer>{}(context, value);
-        },
-        [&](const Ref<ArrayBufferView>& value) -> std::optional<InspectorCanvasProcessedArgument> {
-            return InspectorCanvasArgumentProcessor<IDLArrayBufferView>{}(context, value);
-        }
-    );
-}
-
-auto InspectorCanvasArgumentProcessor<IDLFloat32ListUnion>::operator()(InspectorCanvas& context, const WebGLRenderingContextBase::Float32List::VariantType& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return WTF::switchOn(argument,
-        [&](const Ref<Float32Array>& value) {
-            return InspectorCanvasArgumentProcessor<IDLAllowSharedAdaptor<IDLFloat32Array>>{}(context, value);
-        },
-        [&](const Vector<float>& value) {
-            return InspectorCanvasArgumentProcessor<IDLSequence<IDLUnrestrictedFloat>>{}(context, value);
-        }
-    );
-}
-
-auto InspectorCanvasArgumentProcessor<IDLInt32ListUnion>::operator()(InspectorCanvas& context, const WebGLRenderingContextBase::Int32List::VariantType& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return WTF::switchOn(argument,
-        [&](const Ref<Int32Array>& value) {
-            return InspectorCanvasArgumentProcessor<IDLAllowSharedAdaptor<IDLInt32Array>>{}(context, value);
-        },
-        [&](const Vector<int>& value) {
-            return InspectorCanvasArgumentProcessor<IDLSequence<IDLLong>>{}(context, value);
-        }
-    );
-}
-
-auto InspectorCanvasArgumentProcessor<IDLUint32ListUnion>::operator()(InspectorCanvas& context, const WebGLRenderingContextBase::Uint32List::VariantType& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return WTF::switchOn(argument,
-        [&](const Ref<Uint32Array>& value) {
-            return InspectorCanvasArgumentProcessor<IDLAllowSharedAdaptor<IDLUint32Array>>{}(context, value);
-        },
-        [&](const Vector<uint32_t>& value) {
-            return InspectorCanvasArgumentProcessor<IDLSequence<IDLUnsignedLong>>{}(context, value);
-        }
-    );
-}
-
-#endif // ENABLE(WEBGL)
-
-// MARK: - Sequences
-
-static Ref<JSON::ArrayOf<JSON::Value>> mapToArray(const auto& range, NOESCAPE auto&& functor)
-{
-    auto array = JSON::ArrayOf<JSON::Value>::create();
-    for (auto& item : range)
-        array->addItem(functor(item));
-    return array;
-}
-
-auto InspectorCanvasArgumentProcessor<IDLSequence<IDLDOMString>>::operator()(InspectorCanvas& context, const Vector<String>& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return {{ mapToArray(argument, [&](const auto& item) { return context.indexForData(item); }), RecordingSwizzleType::String }};
-}
-
-auto InspectorCanvasArgumentProcessor<IDLSequence<IDLUnrestrictedDouble>>::operator()(InspectorCanvas&, const Vector<double>& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return {{ Inspector::Protocol::buildArray(argument), RecordingSwizzleType::Array }};
-}
-
-auto InspectorCanvasArgumentProcessor<IDLSequence<IDLUnrestrictedFloat>>::operator()(InspectorCanvas&, const Vector<float>& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return {{ Inspector::Protocol::buildArray(argument), RecordingSwizzleType::Array }};
-}
-
-auto InspectorCanvasArgumentProcessor<IDLSequence<IDLUnsignedLong>>::operator()(InspectorCanvas&, const Vector<uint32_t>& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return {{ mapToArray(argument, [&](const auto& item) { return static_cast<double>(item); }), RecordingSwizzleType::Array }};
-}
-
-auto InspectorCanvasArgumentProcessor<IDLSequence<IDLLong>>::operator()(InspectorCanvas&, const Vector<int32_t>& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return {{ mapToArray(argument, [&](const auto& item) { return static_cast<double>(item); }), RecordingSwizzleType::Array }};
-}
-
-auto InspectorCanvasArgumentProcessor<IDLSequence<IDLCanvasPathRadiusUnion>>::operator()(InspectorCanvas&, const Vector<CanvasPath::RadiusVariant>& argument) -> std::optional<InspectorCanvasProcessedArgument>
-{
-    return {{ mapToArray(argument, [&](const CanvasPath::RadiusVariant& item) -> Ref<JSON::Value> {
-        return WTF::switchOn(item,
-            [](DOMPointInit point) -> Ref<JSON::Value> {
-                auto object = JSON::Object::create();
-                object->setDouble("x"_s, point.x);
-                object->setDouble("y"_s, point.y);
-                object->setDouble("z"_s, point.z);
-                object->setDouble("w"_s, point.w);
-                // FIXME: We'd likely want to either create a new RecordingSwizzleType::DOMPointInit or RecordingSwizzleType::Object to avoid encoding the same data multiple times.
-                return object;
-            },
-            [](double radius) -> Ref<JSON::Value> {
-                return JSON::Value::create(radius);
-            });
-    }), RecordingSwizzleType::Array }};
-}
 
 } // namespace WebCore

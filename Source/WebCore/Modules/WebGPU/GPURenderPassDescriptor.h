@@ -52,6 +52,8 @@ struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
+    Ref<JSON::Object> toJSON() const;
+
     Vector<std::optional<GPURenderPassColorAttachment>> colorAttachments;
     std::optional<GPURenderPassDepthStencilAttachment> depthStencilAttachment;
     RefPtr<GPUQuerySet> occlusionQuerySet;

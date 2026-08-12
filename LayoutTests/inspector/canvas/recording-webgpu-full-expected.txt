@@ -1,0 +1,840 @@
+Test that CanvasManager is able to record actions made to WebGPU devices.
+
+
+== Running test suite: Canvas.recordingWebGPU
+-- Running test case: Canvas.recordingWebGPU.multipleFrames
+initialState:
+  attributes:
+  parameters:
+  content: <filtered>
+frames:
+  0: (duration)
+    0: label = "device"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+        2: performActions
+        3: Global Code
+    1: label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+        2: performActions
+        3: Global Code
+  1: (duration)
+    0: pushErrorScope("validation")
+      swizzleTypes: [String]
+      trace:
+        0: pushErrorScope
+        1: (anonymous function)
+        2: executeFrameFunction
+  2: (duration)
+    0: popErrorScope()
+      trace:
+        0: popErrorScope
+        1: (anonymous function)
+        2: executeFrameFunction
+  3: (duration)
+    0: buffer = createBuffer({"size":256,"usage":892,"mappedAtCreation":false})
+      swizzleTypes: [JSON]
+      trace:
+        0: createBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  4: (duration)
+    0: texture = createTexture({"size":{"width":4,"height":4,"depthOrArrayLayers":1},"mipLevelCount":1,"sampleCount":1,"dimension":"2d","format":"bgra8unorm","usage":23,"viewFormats":[]})
+      swizzleTypes: [JSON]
+      trace:
+        0: createTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+  5: (duration)
+    0: sampler = createSampler({"addressModeU":"clamp-to-edge","addressModeV":"clamp-to-edge","addressModeW":"clamp-to-edge","magFilter":"nearest","minFilter":"nearest","mipmapFilter":"nearest","lodMinClamp":0,"lodMaxClamp":32,"maxAnisotropy":1})
+      swizzleTypes: [JSON]
+      trace:
+        0: createSampler
+        1: (anonymous function)
+        2: executeFrameFunction
+  6: (duration)
+    0: externalTexture = importExternalTexture({"colorSpace":"srgb","source":"<Image>"})
+      swizzleTypes: [GPUExternalTextureDescriptor]
+      trace:
+        0: importExternalTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+  7: (duration)
+    0: bindGroupLayout = createBindGroupLayout({"entries":[{"binding":0,"visibility":7,"buffer":{"type":"uniform","hasDynamicOffset":false,"minBindingSize":0}}]})
+      swizzleTypes: [JSON]
+      trace:
+        0: createBindGroupLayout
+        1: (anonymous function)
+        2: executeFrameFunction
+  8: (duration)
+    0: pipelineLayout = createPipelineLayout({"bindGroupLayouts":["<bindGroupLayout>",null]})
+      swizzleTypes: [GPUPipelineLayoutDescriptor]
+      trace:
+        0: createPipelineLayout
+        1: (anonymous function)
+        2: executeFrameFunction
+  9: (duration)
+    0: bindGroup = createBindGroup({"layout":"<bindGroupLayout>","entries":[{"binding":0,"resource":{"buffer":"<buffer>","offset":0}}]})
+      swizzleTypes: [GPUBindGroupDescriptor]
+      trace:
+        0: createBindGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  10: (duration)
+    0: shaderModule = createShaderModule({"code":"\n    @vertex fn vertexMain(@builtin(vertex_index) vertexIndex: u32) -> @builtin(position) vec4f {\n        let x = f32(i32(vertexIndex) - 1);\n        let y = f32(i32(vertexIndex & 1u) * 2 - 1);\n        return vec4f(x, y, 0, 1);\n    }\n\n    @fragment fn fragmentMain() -> @location(0) vec4f {\n        return vec4f(1, 0, 0, 1);\n    }\n\n    @compute @workgroup_size(1) fn computeMain() {\n    }\n","hints":{"computeMain":{"layout":"auto"},"vertexMain":{"layout":"<pipelineLayout>"}}})
+      swizzleTypes: [GPUShaderModuleDescriptor]
+      trace:
+        0: createShaderModule
+        1: (anonymous function)
+        2: executeFrameFunction
+  11: (duration)
+    0: computePipeline = createComputePipeline({"layout":"<pipelineLayout>","compute":{"entryPoint":"computeMain","module":"<shaderModule>"}})
+      swizzleTypes: [GPUComputePipelineDescriptor]
+      trace:
+        0: createComputePipeline
+        1: (anonymous function)
+        2: executeFrameFunction
+  12: (duration)
+    0: renderPipeline = createRenderPipeline({"vertex":{"entryPoint":"vertexMain","module":"<shaderModule>"},"fragment":{"entryPoint":"fragmentMain","targets":[{"format":"bgra8unorm","writeMask":15}],"module":"<shaderModule>"},"layout":"<pipelineLayout>"})
+      swizzleTypes: [GPURenderPipelineDescriptor]
+      trace:
+        0: createRenderPipeline
+        1: (anonymous function)
+        2: executeFrameFunction
+  13: (duration)
+    0: createComputePipelineAsync({"layout":"<pipelineLayout>","compute":{"entryPoint":"computeMain","module":"<shaderModule>"}})
+      swizzleTypes: [GPUComputePipelineDescriptor]
+      trace:
+        0: createComputePipelineAsync
+        1: (anonymous function)
+        2: executeFrameFunction
+  14: (duration)
+    0: createRenderPipelineAsync({"vertex":{"entryPoint":"vertexMain","module":"<shaderModule>"},"fragment":{"entryPoint":"fragmentMain","targets":[{"format":"bgra8unorm","writeMask":15}],"module":"<shaderModule>"},"layout":"<pipelineLayout>"})
+      swizzleTypes: [GPURenderPipelineDescriptor]
+      trace:
+        0: createRenderPipelineAsync
+        1: (anonymous function)
+        2: executeFrameFunction
+  15: (duration)
+    0: commandEncoder = createCommandEncoder({})
+      swizzleTypes: [JSON]
+      trace:
+        0: createCommandEncoder
+        1: (anonymous function)
+        2: executeFrameFunction
+  16: (duration)
+    0: renderBundleEncoder = createRenderBundleEncoder({"colorFormats":["bgra8unorm"],"sampleCount":1,"depthReadOnly":false,"stencilReadOnly":false})
+      swizzleTypes: [JSON]
+      trace:
+        0: createRenderBundleEncoder
+        1: (anonymous function)
+        2: executeFrameFunction
+  17: (duration)
+    0: querySet = createQuerySet({"type":"occlusion","count":2})
+      swizzleTypes: [JSON]
+      trace:
+        0: createQuerySet
+        1: (anonymous function)
+        2: executeFrameFunction
+  18: (duration)
+    0: bindGroup.label = "bindGroup"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: bindGroup.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  19: (duration)
+    0: bindGroupLayout.label = "bindGroupLayout"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: bindGroupLayout.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  20: (duration)
+    0: externalTexture.label = "externalTexture"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: externalTexture.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  21: (duration)
+    0: pipelineLayout.label = "pipelineLayout"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: pipelineLayout.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  22: (duration)
+    0: sampler.label = "sampler"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: sampler.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  23: (duration)
+    0: texture.label = "texture"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: texture.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  24: (duration)
+    0: textureView = texture.createView({"usage":0,"aspect":"all","baseMipLevel":0,"baseArrayLayer":0})
+      swizzleTypes: [JSON]
+      trace:
+        0: createView
+        1: (anonymous function)
+        2: executeFrameFunction
+  25: (duration)
+    0: textureView.label = "textureView"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: textureView.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  26: (duration)
+    0: shaderModule.label = "shaderModule"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: shaderModule.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  27: (duration)
+    0: shaderModule.getCompilationInfo()
+      trace:
+        0: getCompilationInfo
+        1: (anonymous function)
+        2: executeFrameFunction
+  28: (duration)
+    0: computePipeline.label = "computePipeline"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: computePipeline.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  29: (duration)
+    0: bindGroupLayout2 = computePipeline.getBindGroupLayout(0)
+      swizzleTypes: [Number]
+      trace:
+        0: getBindGroupLayout
+        1: (anonymous function)
+        2: executeFrameFunction
+  30: (duration)
+    0: renderPipeline.label = "renderPipeline"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: renderPipeline.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  31: (duration)
+    0: bindGroupLayout3 = renderPipeline.getBindGroupLayout(0)
+      swizzleTypes: [Number]
+      trace:
+        0: getBindGroupLayout
+        1: (anonymous function)
+        2: executeFrameFunction
+  32: (duration)
+    0: querySet.label = "querySet"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: querySet.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  33: (duration)
+    0: renderBundleEncoder.label = "renderBundleEncoder"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: renderBundleEncoder.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  34: (duration)
+    0: renderBundleEncoder.pushDebugGroup("debugGroup")
+      swizzleTypes: [String]
+      trace:
+        0: pushDebugGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  35: (duration)
+    0: renderBundleEncoder.insertDebugMarker("debugMarker")
+      swizzleTypes: [String]
+      trace:
+        0: insertDebugMarker
+        1: (anonymous function)
+        2: executeFrameFunction
+  36: (duration)
+    0: renderBundleEncoder.popDebugGroup()
+      trace:
+        0: popDebugGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  37: (duration)
+    0: renderBundleEncoder.setBindGroup(0, 1, [0])
+      swizzleTypes: [Number, GPUBindGroup, JSON]
+      trace:
+        0: setBindGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: renderBundleEncoder.setBindGroup(0, 1, 0, 0, 1)
+      swizzleTypes: [Number, GPUBindGroup, TypedArray, Number, Number]
+      trace:
+        0: setBindGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  38: (duration)
+    0: renderBundleEncoder.setPipeline(1)
+      swizzleTypes: [GPURenderPipeline]
+      trace:
+        0: setPipeline
+        1: (anonymous function)
+        2: executeFrameFunction
+  39: (duration)
+    0: renderBundleEncoder.setIndexBuffer(1, "uint16", 0, 4)
+      swizzleTypes: [GPUBuffer, String, Number, Number]
+      trace:
+        0: setIndexBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  40: (duration)
+    0: renderBundleEncoder.setVertexBuffer(0, 1, 0, 4)
+      swizzleTypes: [Number, GPUBuffer, Number, Number]
+      trace:
+        0: setVertexBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  41: (duration)
+    0: renderBundleEncoder.draw(3, 1, 0, 0)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: draw
+        1: (anonymous function)
+        2: executeFrameFunction
+  42: (duration)
+    0: renderBundleEncoder.drawIndexed(3, 1, 0, 0, 0)
+      swizzleTypes: [Number, Number, Number, Number, Number]
+      trace:
+        0: drawIndexed
+        1: (anonymous function)
+        2: executeFrameFunction
+  43: (duration)
+    0: renderBundleEncoder.drawIndirect(1, 0)
+      swizzleTypes: [GPUBuffer, Number]
+      trace:
+        0: drawIndirect
+        1: (anonymous function)
+        2: executeFrameFunction
+  44: (duration)
+    0: renderBundleEncoder.drawIndexedIndirect(1, 0)
+      swizzleTypes: [GPUBuffer, Number]
+      trace:
+        0: drawIndexedIndirect
+        1: (anonymous function)
+        2: executeFrameFunction
+  45: (duration)
+    0: renderBundle = renderBundleEncoder.finish({})
+      swizzleTypes: [JSON]
+      trace:
+        0: finish
+        1: (anonymous function)
+        2: executeFrameFunction
+  46: (duration)
+    0: renderBundle.label = "renderBundle"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: renderBundle.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  47: (duration)
+    0: commandEncoder.label = "commandEncoder"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: commandEncoder.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  48: (duration)
+    0: commandEncoder.pushDebugGroup("debugGroup")
+      swizzleTypes: [String]
+      trace:
+        0: pushDebugGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  49: (duration)
+    0: commandEncoder.insertDebugMarker("debugMarker")
+      swizzleTypes: [String]
+      trace:
+        0: insertDebugMarker
+        1: (anonymous function)
+        2: executeFrameFunction
+  50: (duration)
+    0: commandEncoder.popDebugGroup()
+      trace:
+        0: popDebugGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  51: (duration)
+    0: commandEncoder.copyBufferToBuffer(1, 1, 4)
+      swizzleTypes: [GPUBuffer, GPUBuffer, Number]
+      trace:
+        0: copyBufferToBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: commandEncoder.copyBufferToBuffer(1, 0, 1, 4, 4)
+      swizzleTypes: [GPUBuffer, Number, GPUBuffer, Number, Number]
+      trace:
+        0: copyBufferToBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  52: (duration)
+    0: commandEncoder.copyBufferToTexture({"offset":4,"bytesPerRow":256,"rowsPerImage":1,"buffer":"<buffer>"}, {"mipLevel":0,"aspect":"all","texture":"<texture>"}, {"width":1,"height":1,"depthOrArrayLayers":1})
+      swizzleTypes: [GPUImageCopyBuffer, GPUImageCopyTexture, JSON]
+      trace:
+        0: copyBufferToTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+  53: (duration)
+    0: commandEncoder.copyTextureToBuffer({"mipLevel":1,"origin":[1,1,0],"aspect":"depth-only","texture":"<texture>"}, {"offset":0,"bytesPerRow":256,"buffer":"<buffer>"}, [1,1,1])
+      swizzleTypes: [GPUImageCopyTexture, GPUImageCopyBuffer, JSON]
+      trace:
+        0: copyTextureToBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  54: (duration)
+    0: commandEncoder.copyTextureToTexture({"mipLevel":0,"origin":{"x":1,"y":1,"z":0},"aspect":"all","texture":"<texture>"}, {"mipLevel":0,"origin":[0,0,0],"aspect":"all","texture":"<texture>"}, {"width":1,"height":1,"depthOrArrayLayers":1})
+      swizzleTypes: [GPUImageCopyTexture, GPUImageCopyTexture, JSON]
+      trace:
+        0: copyTextureToTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+  55: (duration)
+    0: commandEncoder.clearBuffer(1, 0, 4)
+      swizzleTypes: [GPUBuffer, Number, Number]
+      trace:
+        0: clearBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  56: (duration)
+    0: computePassEncoder = commandEncoder.beginComputePass({"timestampWrites":{"beginningOfPassWriteIndex":0,"endOfPassWriteIndex":1,"querySet":"<querySet>"}})
+      swizzleTypes: [GPUComputePassDescriptor]
+      trace:
+        0: beginComputePass
+        1: (anonymous function)
+        2: executeFrameFunction
+  57: (duration)
+    0: computePassEncoder.label = "computePassEncoder"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: computePassEncoder.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  58: (duration)
+    0: computePassEncoder.pushDebugGroup("debugGroup")
+      swizzleTypes: [String]
+      trace:
+        0: pushDebugGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  59: (duration)
+    0: computePassEncoder.insertDebugMarker("debugMarker")
+      swizzleTypes: [String]
+      trace:
+        0: insertDebugMarker
+        1: (anonymous function)
+        2: executeFrameFunction
+  60: (duration)
+    0: computePassEncoder.popDebugGroup()
+      trace:
+        0: popDebugGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  61: (duration)
+    0: computePassEncoder.setBindGroup(0, 1, [0])
+      swizzleTypes: [Number, GPUBindGroup, JSON]
+      trace:
+        0: setBindGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: computePassEncoder.setBindGroup(0, 1, 0, 0, 1)
+      swizzleTypes: [Number, GPUBindGroup, TypedArray, Number, Number]
+      trace:
+        0: setBindGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  62: (duration)
+    0: computePassEncoder.setPipeline(1)
+      swizzleTypes: [GPUComputePipeline]
+      trace:
+        0: setPipeline
+        1: (anonymous function)
+        2: executeFrameFunction
+  63: (duration)
+    0: computePassEncoder.dispatchWorkgroups(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: dispatchWorkgroups
+        1: (anonymous function)
+        2: executeFrameFunction
+  64: (duration)
+    0: computePassEncoder.dispatchWorkgroupsIndirect(1, 0)
+      swizzleTypes: [GPUBuffer, Number]
+      trace:
+        0: dispatchWorkgroupsIndirect
+        1: (anonymous function)
+        2: executeFrameFunction
+  65: (duration)
+    0: computePassEncoder.end()
+      trace:
+        0: end
+        1: (anonymous function)
+        2: executeFrameFunction
+  66: (duration)
+    0: renderPassEncoder = commandEncoder.beginRenderPass({"colorAttachments":[{"clearValue":{"r":0,"g":0,"b":0,"a":1},"loadOp":"clear","storeOp":"store","view":"<textureView>","resolveTarget":"<texture>"},null,{"depthSlice":0,"clearValue":[1,0,0,1],"loadOp":"load","storeOp":"store","view":"<texture>","resolveTarget":"<textureView>"}],"depthStencilAttachment":{"depthClearValue":1,"depthLoadOp":"clear","depthStoreOp":"store","depthReadOnly":true,"stencilClearValue":1,"stencilLoadOp":"clear","stencilStoreOp":"store","stencilReadOnly":true,"view":"<textureView>"},"timestampWrites":{"beginningOfPassWriteIndex":0,"endOfPassWriteIndex":1,"querySet":"<querySet>"},"maxDrawCount":1,"occlusionQuerySet":"<querySet>"})
+      swizzleTypes: [GPURenderPassDescriptor]
+      trace:
+        0: beginRenderPass
+        1: (anonymous function)
+        2: executeFrameFunction
+  67: (duration)
+    0: renderPassEncoder.label = "renderPassEncoder"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: renderPassEncoder.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  68: (duration)
+    0: renderPassEncoder.pushDebugGroup("debugGroup")
+      swizzleTypes: [String]
+      trace:
+        0: pushDebugGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  69: (duration)
+    0: renderPassEncoder.insertDebugMarker("debugMarker")
+      swizzleTypes: [String]
+      trace:
+        0: insertDebugMarker
+        1: (anonymous function)
+        2: executeFrameFunction
+  70: (duration)
+    0: renderPassEncoder.popDebugGroup()
+      trace:
+        0: popDebugGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  71: (duration)
+    0: renderPassEncoder.setBindGroup(0, 1, [0])
+      swizzleTypes: [Number, GPUBindGroup, JSON]
+      trace:
+        0: setBindGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: renderPassEncoder.setBindGroup(0, 1, 0, 0, 1)
+      swizzleTypes: [Number, GPUBindGroup, TypedArray, Number, Number]
+      trace:
+        0: setBindGroup
+        1: (anonymous function)
+        2: executeFrameFunction
+  72: (duration)
+    0: renderPassEncoder.setPipeline(1)
+      swizzleTypes: [GPURenderPipeline]
+      trace:
+        0: setPipeline
+        1: (anonymous function)
+        2: executeFrameFunction
+  73: (duration)
+    0: renderPassEncoder.setIndexBuffer(1, "uint16", 0, 4)
+      swizzleTypes: [GPUBuffer, String, Number, Number]
+      trace:
+        0: setIndexBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  74: (duration)
+    0: renderPassEncoder.setVertexBuffer(0, 1, 0, 4)
+      swizzleTypes: [Number, GPUBuffer, Number, Number]
+      trace:
+        0: setVertexBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  75: (duration)
+    0: renderPassEncoder.draw(3, 1, 0, 0)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: draw
+        1: (anonymous function)
+        2: executeFrameFunction
+  76: (duration)
+    0: renderPassEncoder.drawIndexed(3, 1, 0, 0, 0)
+      swizzleTypes: [Number, Number, Number, Number, Number]
+      trace:
+        0: drawIndexed
+        1: (anonymous function)
+        2: executeFrameFunction
+  77: (duration)
+    0: renderPassEncoder.drawIndirect(1, 0)
+      swizzleTypes: [GPUBuffer, Number]
+      trace:
+        0: drawIndirect
+        1: (anonymous function)
+        2: executeFrameFunction
+  78: (duration)
+    0: renderPassEncoder.drawIndexedIndirect(1, 0)
+      swizzleTypes: [GPUBuffer, Number]
+      trace:
+        0: drawIndexedIndirect
+        1: (anonymous function)
+        2: executeFrameFunction
+  79: (duration)
+    0: renderPassEncoder.setViewport(0, 0, 4, 4, 0, 1)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number]
+      trace:
+        0: setViewport
+        1: (anonymous function)
+        2: executeFrameFunction
+  80: (duration)
+    0: renderPassEncoder.setScissorRect(0, 0, 4, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: setScissorRect
+        1: (anonymous function)
+        2: executeFrameFunction
+  81: (duration)
+    0: renderPassEncoder.setBlendConstant([1,0,0,1])
+      swizzleTypes: [JSON]
+      trace:
+        0: setBlendConstant
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: renderPassEncoder.setBlendConstant({"r":0,"g":1,"b":0,"a":1})
+      swizzleTypes: [JSON]
+      trace:
+        0: setBlendConstant
+        1: (anonymous function)
+        2: executeFrameFunction
+  82: (duration)
+    0: renderPassEncoder.setStencilReference(1)
+      swizzleTypes: [Number]
+      trace:
+        0: setStencilReference
+        1: (anonymous function)
+        2: executeFrameFunction
+  83: (duration)
+    0: renderPassEncoder.beginOcclusionQuery(0)
+      swizzleTypes: [Number]
+      trace:
+        0: beginOcclusionQuery
+        1: (anonymous function)
+        2: executeFrameFunction
+  84: (duration)
+    0: renderPassEncoder.endOcclusionQuery()
+      trace:
+        0: endOcclusionQuery
+        1: (anonymous function)
+        2: executeFrameFunction
+  85: (duration)
+    0: renderPassEncoder.executeBundles(["<renderBundle>"])
+      swizzleTypes: [ArrayOf]
+      trace:
+        0: executeBundles
+        1: (anonymous function)
+        2: executeFrameFunction
+  86: (duration)
+    0: renderPassEncoder.end()
+      trace:
+        0: end
+        1: (anonymous function)
+        2: executeFrameFunction
+  87: (duration)
+    0: commandEncoder.resolveQuerySet(1, 0, 1, 1, 0)
+      swizzleTypes: [GPUQuerySet, Number, Number, GPUBuffer, Number]
+      trace:
+        0: resolveQuerySet
+        1: (anonymous function)
+        2: executeFrameFunction
+  88: (duration)
+    0: commandBuffer = commandEncoder.finish({})
+      swizzleTypes: [JSON]
+      trace:
+        0: finish
+        1: (anonymous function)
+        2: executeFrameFunction
+  89: (duration)
+    0: commandBuffer.label = "commandBuffer"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: commandBuffer.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  90: (duration)
+    0: queue.label = "queue"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: queue.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  91: (duration)
+    0: queue.writeBuffer(1, 0, 0, 0, 4)
+      swizzleTypes: [GPUBuffer, Number, TypedArray, Number, Number]
+      trace:
+        0: writeBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: queue.writeBuffer(1, 0, 0, 0, 4)
+      swizzleTypes: [GPUBuffer, Number, TypedArray, Number, Number]
+      trace:
+        0: writeBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  92: (duration)
+    0: queue.writeTexture({"mipLevel":0,"aspect":"all","texture":"<texture>"}, 0, {"offset":0,"bytesPerRow":256}, [1,1,1])
+      swizzleTypes: [GPUImageCopyTexture, TypedArray, JSON, JSON]
+      trace:
+        0: writeTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+      snapshot: <filtered>
+  93: (duration)
+    0: queue.copyExternalImageToTexture({"origin":[0,0],"flipY":true,"source":"<Image>"}, {"mipLevel":1,"origin":{"x":0,"y":0,"z":0},"aspect":"stencil-only","colorSpace":"srgb","premultipliedAlpha":true,"texture":"<texture>"}, {"width":1,"height":1,"depthOrArrayLayers":1})
+      swizzleTypes: [GPUImageCopyExternalImage, GPUImageCopyTextureTagged, JSON]
+      trace:
+        0: copyExternalImageToTexture
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+      snapshot: <filtered>
+  94: (duration)
+    0: queue.copyElementImageToTexture({"sx":0,"sy":0,"swidth":1,"sheight":1,"source":"<Element>"}, {"destination":{"mipLevel":0,"aspect":"all","colorSpace":"srgb","premultipliedAlpha":false,"texture":"<texture>"},"width":1,"height":1})
+      swizzleTypes: [GPUCopyElementImageSource, GPUCopyElementImageDestination]
+      trace:
+        0: copyElementImageToTexture
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+  95: (duration)
+    0: queue.submit(["<commandBuffer>"])
+      swizzleTypes: [ArrayOf]
+      trace:
+        0: submit
+        1: (anonymous function)
+        2: executeFrameFunction
+      snapshot: <filtered>
+  96: (duration)
+    0: queue.onSubmittedWorkDone()
+      trace:
+        0: onSubmittedWorkDone
+        1: (anonymous function)
+        2: executeFrameFunction
+  97: (duration)
+    0: buffer.label = "buffer"
+      swizzleTypes: [String]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: buffer.label
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  98: (duration)
+    0: buffer.mapAsync(1, 0, 4)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: mapAsync
+        1: (anonymous function)
+        2: executeFrameFunction
+  99: (duration)
+    0: buffer.getMappedRange(0, 4)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: getMappedRange
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
+  100: (duration)
+    0: buffer.unmap()
+      trace:
+        0: unmap
+        1: (anonymous function)
+        2: executeFrameFunction
+  101: (duration)
+    0: buffer.destroy()
+      trace:
+        0: destroy
+        1: (anonymous function)
+        2: executeFrameFunction
+  102: (duration)
+    0: texture.destroy()
+      trace:
+        0: destroy
+        1: (anonymous function)
+        2: executeFrameFunction
+  103: (duration)
+    0: querySet.destroy()
+      trace:
+        0: destroy
+        1: (anonymous function)
+        2: executeFrameFunction
+  104: (duration)
+    0: destroy()
+      trace:
+        0: destroy
+        1: (anonymous function)
+        2: executeFrameFunction
+

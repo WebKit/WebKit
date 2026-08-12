@@ -32,6 +32,7 @@
 #include "GPUPrimitiveTopology.h"
 #include "WebGPUPrimitiveState.h"
 #include <optional>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -46,6 +47,8 @@ struct GPUPrimitiveState {
             unclippedDepth,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUPrimitiveTopology topology { GPUPrimitiveTopology::TriangleList };
     std::optional<GPUIndexFormat> stripIndexFormat;

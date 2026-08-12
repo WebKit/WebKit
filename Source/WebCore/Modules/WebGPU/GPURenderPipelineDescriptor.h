@@ -33,6 +33,7 @@
 #include "GPUVertexState.h"
 #include "WebGPURenderPipelineDescriptor.h"
 #include <optional>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -51,6 +52,8 @@ struct GPURenderPipelineDescriptor : public GPUPipelineDescriptorBase {
             fragment ? std::optional { fragment->convertToBacking() } : std::nullopt,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUVertexState vertex;
     std::optional<GPUPrimitiveState> primitive;

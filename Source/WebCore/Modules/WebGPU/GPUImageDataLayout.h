@@ -28,6 +28,7 @@
 #include "GPUIntegralTypes.h"
 #include "WebGPUImageDataLayout.h"
 #include <optional>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -40,6 +41,8 @@ struct GPUImageDataLayout {
             rowsPerImage,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUSize64 offset { 0 };
     std::optional<GPUSize32> bytesPerRow;

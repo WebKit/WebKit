@@ -26,10 +26,13 @@
 #pragma once
 
 #include "CanvasElementImage.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct GPUCopyElementImageSource {
+    Ref<JSON::Object> toJSON() const;
+
     CanvasElementImageSource source;
     std::optional<float> sx;
     std::optional<float> sy;

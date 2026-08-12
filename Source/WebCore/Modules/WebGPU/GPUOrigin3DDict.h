@@ -27,6 +27,7 @@
 
 #include "GPUIntegralTypes.h"
 #include "WebGPUOrigin3D.h"
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -41,12 +42,16 @@ struct GPUOrigin3DDict {
         };
     }
 
+    Ref<JSON::Object> toJSON() const;
+
     GPUIntegerCoordinate x { 0 };
     GPUIntegerCoordinate y { 0 };
     GPUIntegerCoordinate z { 0 };
 };
 
 using GPUOrigin3D = Variant<Vector<GPUIntegerCoordinate>, GPUOrigin3DDict>;
+
+Ref<JSON::Value> toJSON(const GPUOrigin3D&);
 
 inline WebGPU::Origin3D convertToBacking(const GPUOrigin3D& origin3D)
 {

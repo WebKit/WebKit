@@ -4226,9 +4226,12 @@ webkit.org/b/236298 fast/text/combining-character-sequence-vertical.html [ Image
 
 fast/webgpu [ Skip ]
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
+inspector/canvas/console-record-webgpu.html [ Skip ]
 inspector/canvas/create-context-webgpu.html [ Skip ]
 inspector/canvas/memory-webgpu.html [ Skip ]
-inspector/canvas/recording-webgpu.html [ Skip ]
+inspector/canvas/recording-webgpu-frameCount.html [ Skip ]
+inspector/canvas/recording-webgpu-full.html [ Skip ]
+inspector/canvas/recording-webgpu-memoryLimit.html [ Skip ]
 inspector/canvas/requestClientNodes-webgpu.html [ Skip ]
 inspector/canvas/requestContent-webgpu.html [ Skip ]
 inspector/canvas/requestShaderSource-webgpu.html [ Skip ]

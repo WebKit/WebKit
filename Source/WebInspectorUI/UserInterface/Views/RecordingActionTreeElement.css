@@ -54,8 +54,9 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
     opacity: 1;
 }
 
-.item.recording-action > .titles .parameter.object-handle {
+.item.recording-action > .titles :is(.object-handle, .receiver, .subtitle) {
     color: var(--text-color-gray-medium);
+    font-style: italic;
 }
 
 .item.recording-action > .titles .parameter.swizzled {
@@ -68,7 +69,7 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
     font-style: italic;
 }
 
-body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected > .titles .parameter.swizzled,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected > .titles :is(.object-handle, .parameter.swizzled, .receiver, .subtitle),
 body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected::before {
     color: var(--selected-secondary-text-color);
 }

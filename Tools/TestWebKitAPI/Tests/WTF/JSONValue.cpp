@@ -221,6 +221,23 @@ TEST(JSONArray, Basic)
     EXPECT_TRUE(it == array->end());
 }
 
+TEST(JSONArray, Set)
+{
+    Ref array = JSON::Array::create();
+    for (unsigned i = 0; i < 7; ++i)
+        array->pushValue(JSON::Value::null());
+
+    array->setBoolean(0, true);
+    array->setInteger(1, 1);
+    array->setDouble(2, 1.5);
+    array->setString(3, "webkit"_s);
+    array->setValue(4, JSON::Value::null());
+    array->setObject(5, JSON::Object::create());
+    array->setArray(6, JSON::Array::create());
+
+    EXPECT_EQ(array->toJSONString(), "[true,1,1.5,\"webkit\",null,{},[]]"_s);
+}
+
 TEST(JSONArrayOf, Basic)
 {
     Ref<JSON::ArrayOf<JSON::Value>> array = JSON::ArrayOf<JSON::Value>::create();
@@ -303,6 +320,23 @@ TEST(JSONArrayOf, Basic)
     EXPECT_TRUE(value->type() == JSON::Value::Type::Array);
     ++it;
     EXPECT_TRUE(it == array->end());
+}
+
+TEST(JSONArrayOf, Set)
+{
+    Ref array = JSON::ArrayOf<JSON::Value>::create();
+    for (unsigned i = 0; i < 7; ++i)
+        array->addItem(JSON::Value::null());
+
+    array->setItem(0, true);
+    array->setItem(1, 1);
+    array->setItem(2, 1.5);
+    array->setItem(3, makeString("webkit"_s));
+    array->setItem(4, JSON::Value::null());
+    array->setItem(5, JSON::Object::create());
+    array->setItem(6, JSON::Array::create());
+
+    EXPECT_EQ(array->toJSONString(), "[true,1,1.5,\"webkit\",null,{},[]]"_s);
 }
 
 TEST(JSONObject, Basic)

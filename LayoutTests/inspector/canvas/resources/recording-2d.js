@@ -104,7 +104,7 @@ function performActions() {
         },
         () => {
             ignoreException(() => ctx.createImageData(imageData14));
-            ignoreException(() => ctx.createImageData(2, 3));
+            ignoreException(() => ctx.createImageData(2, 3, {}));
         },
         () => {
             ignoreException(() => ctx.createLinearGradient(1, 2, 3, 4));
@@ -391,10 +391,10 @@ function performActions() {
             ctx.canvas.height = 2;
         },
         () => {
-            // FIXME Add overload testing the non-vector DOMPointInit after bug233255
             ctx.roundRect(0, 0, 50, 50, 42);
             ctx.roundRect(0, 0, 50, 50, [23]);
             ctx.roundRect(0, 0, 150, 150, [{x: 24, y: 42}]);
+            ctx.roundRect(0, 0, 150, 150, {x: 24, y: 42});
         },
         () => {
             TestPage.dispatchEventToFrontend("LastFrame");

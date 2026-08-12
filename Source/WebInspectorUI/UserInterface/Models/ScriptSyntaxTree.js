@@ -43,6 +43,13 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
         }
     }
 
+    // Static
+
+    static isIdentifierName(string)
+    {
+        return /^[$_\p{ID_Start}][$\u200C\u200D\p{ID_Continue}]*$/u.test(string);
+    }
+
     // Public
 
     get parsedSuccessfully()

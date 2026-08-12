@@ -33,6 +33,7 @@
 #include "GPUTextureViewDimension.h"
 #include "WebGPUTextureViewDescriptor.h"
 #include <optional>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -51,6 +52,8 @@ struct GPUTextureViewDescriptor : public GPUObjectDescriptorBase {
             arrayLayerCount,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     std::optional<GPUTextureFormat> format;
     std::optional<GPUTextureViewDimension> dimension;

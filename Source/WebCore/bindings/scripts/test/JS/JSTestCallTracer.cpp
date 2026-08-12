@@ -44,6 +44,7 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
+#include "JSTestCallTracer.h"
 #include "ScriptExecutionContext.h"
 #include "TestAttributeCallTracer.h"
 #include "TestInterfaceCallTracer.h"
@@ -363,7 +364,10 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunction_testOperatio
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
     if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
         TestInterfaceCallTracer::recordAction(impl, "testOperationInterface"_s);
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.testOperationInterface(); })));
+    decltype(auto) nativeResult = impl.testOperationInterface();
+    if (impl.hasActiveTestInterfaceCallTracer()) [[unlikely]]
+        TestInterfaceCallTracer::recordActionResult<IDLInterface<TestCallTracer>>(impl, nativeResult);
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLInterface<TestCallTracer>>(*lexicalGlobalObject, *castedThis->realm(), throwScope, std::forward<decltype(nativeResult)>(nativeResult))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsTestCallTracerPrototypeFunction_testOperationInterface, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))

@@ -32,6 +32,7 @@
 #include "GPUTextureFormat.h"
 #include "GPUTextureUsage.h"
 #include "WebGPUTextureDescriptor.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -51,6 +52,8 @@ struct GPUTextureDescriptor : public GPUObjectDescriptorBase {
             }),
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUExtent3D size;
     GPUIntegerCoordinate mipLevelCount { 1 };

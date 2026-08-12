@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebGPUObjectDescriptorBase.h"
+#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,6 +36,8 @@ struct GPUObjectDescriptorBase {
     {
         return { label };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     String label;
 };

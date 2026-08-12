@@ -29,6 +29,7 @@
 #include "GPUVertexAttribute.h"
 #include "GPUVertexStepMode.h"
 #include "WebGPUVertexBufferLayout.h"
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -44,6 +45,8 @@ struct GPUVertexBufferLayout {
             }),
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUSize64 arrayStride { 0 };
     GPUVertexStepMode stepMode { GPUVertexStepMode::Vertex };

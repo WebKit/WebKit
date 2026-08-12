@@ -31,6 +31,7 @@
 #include "GPUTexture.h"
 #include "GPUTextureView.h"
 #include "WebGPURenderPassDepthStencilAttachment.h"
+#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -59,6 +60,8 @@ struct GPURenderPassDepthStencilAttachment {
             stencilReadOnly,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPURenderPassDepthAttachmentView view;
 

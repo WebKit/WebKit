@@ -37,7 +37,7 @@ typedef (boolean or float or DOMString) VariantType;
 
     const boolean testConstValue = false;
 
-    undefined testOperationInterface();
+    TestCallTracer testOperationInterface();
     [CallTracer=TestOperationCallTracer] undefined testOperationSpecified();
 
     undefined testOperationWithArguments(boolean a, float b, DOMString c);

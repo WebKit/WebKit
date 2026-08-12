@@ -28,6 +28,7 @@
 #include "GPUBufferBindingType.h"
 #include "GPUIntegralTypes.h"
 #include "WebGPUBufferBindingLayout.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -40,6 +41,8 @@ struct GPUBufferBindingLayout {
             minBindingSize,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUBufferBindingType type { GPUBufferBindingType::Uniform };
     bool hasDynamicOffset { false };

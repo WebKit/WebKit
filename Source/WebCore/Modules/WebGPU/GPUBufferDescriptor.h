@@ -29,6 +29,7 @@
 #include "GPUIntegralTypes.h"
 #include "GPUObjectDescriptorBase.h"
 #include "WebGPUBufferDescriptor.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -42,6 +43,8 @@ struct GPUBufferDescriptor : public GPUObjectDescriptorBase {
             mappedAtCreation,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUSize64 size { 0 };
     GPUBufferUsageFlags usage { 0 };

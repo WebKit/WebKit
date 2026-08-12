@@ -45,6 +45,8 @@ struct GPUImageCopyBuffer : public GPUImageDataLayout {
         };
     }
 
+    Ref<JSON::Object> toJSON() const;
+
     Ref<GPUBuffer> buffer;
 };
 

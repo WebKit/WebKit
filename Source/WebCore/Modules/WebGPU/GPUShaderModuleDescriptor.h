@@ -47,6 +47,8 @@ struct GPUShaderModuleDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
+    Ref<JSON::Object> toJSON() const;
+
     String code;
     JSC::Strong<JSC::JSObject> sourceMap;
     Vector<KeyValuePair<String, GPUShaderModuleCompilationHint>> hints;

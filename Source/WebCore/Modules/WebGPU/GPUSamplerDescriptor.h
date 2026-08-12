@@ -33,6 +33,7 @@
 #include "WebGPUSamplerDescriptor.h"
 #include <cstdint>
 #include <optional>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -53,6 +54,8 @@ struct GPUSamplerDescriptor : public GPUObjectDescriptorBase {
             maxAnisotropy,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUAddressMode addressModeU { GPUAddressMode::ClampToEdge };
     GPUAddressMode addressModeV { GPUAddressMode::ClampToEdge };

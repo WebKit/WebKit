@@ -26,12 +26,15 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "GPUDevice.h"
 #include "InspectorCanvas.h"
 #include "InspectorCanvasArguments.h"
 #include "InspectorCanvasProcessedArguments.h"
 #include <type_traits>
 #include <wtf/Forward.h>
+#include <wtf/GetPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -71,20 +74,9 @@ public:
                 return std::nullopt;
             return processArgument<typename IDLType::InnerType>(device, *argument);
         }
-        if constexpr (IsIDLInterface<IDLType>::value) {
-            using InterfaceType = typename IDLType::RawType;
-            if constexpr (requires (InterfaceType& object) { object.device(); }) {
-                using Processor = InspectorCanvasArgumentProcessor<IDLType>;
-                return Processor { }(*inspectorCanvas, std::forward<ArgumentType>(argument));
-            }
-        }
-        if constexpr (IsIDLString<IDLType>::value)
-            return InspectorCanvasArgumentProcessor<IDLDOMString> { }(*inspectorCanvas, std::forward<ArgumentType>(argument));
-        if constexpr (std::is_same_v<IDLType, IDLBoolean> || IsIDLNumber<IDLType>::value || IsIDLEnumeration<IDLType>::value) {
-            using Processor = InspectorCanvasArgumentProcessor<IDLType>;
-            return Processor { }(*inspectorCanvas, std::forward<ArgumentType>(argument));
-        }
-        return std::nullopt;
+
+        using Processor = InspectorCanvasArgumentProcessor<IDLType>;
+        return Processor { }(*inspectorCanvas, std::forward<ArgumentType>(argument));
     }
 
     template<typename IDLType, typename Receiver, typename ArgumentType>
@@ -110,6 +102,66 @@ public:
     static void recordAction(CanvasRenderingContext&, String&&, ProcessedArguments&& = { });
     static void recordAction(const CanvasBase&, String&&, ProcessedArguments&& = { });
     static void recordAction(GPUDevice&, String&&, ProcessedArguments&& = { });
+
+    template<typename IDLType, typename Receiver, typename Result>
+    static void recordActionResult(Receiver& receiver, Result& result)
+    {
+        if constexpr (WTF::IsTemplate<IDLType, IDLNullable>::value || WTF::IsTemplate<IDLType, IDLOptional>::value) {
+            recordActionResult<typename IDLType::InnerType>(receiver, result);
+            return;
+        }
+
+        if constexpr (IsExceptionOr<Result>) {
+            if (!result.hasException())
+                recordActionResult<IDLType>(receiver, result.returnValue());
+            return;
+        }
+
+        if constexpr (IsIDLInterface<IDLType>::value) {
+            using InterfaceType = typename IDLType::RawType;
+            if constexpr (recordingSwizzleTypeForWebGPUReceiver<InterfaceType>() != RecordingSwizzleType::None
+#if ENABLE(WEBGL)
+                || recordingSwizzleTypeForWebGLReceiver<InterfaceType>() != RecordingSwizzleType::None
+#endif
+            ) {
+                InterfaceType* object = nullptr;
+                if constexpr (std::is_base_of_v<InterfaceType, std::remove_cv_t<std::remove_reference_t<Result>>>)
+                    object = const_cast<InterfaceType*>(static_cast<const InterfaceType*>(&result));
+                else if constexpr (requires { static_cast<InterfaceType*>(WTF::getPtr(result)); })
+                    object = static_cast<InterfaceType*>(WTF::getPtr(result));
+                else if constexpr (requires { static_cast<InterfaceType*>(&result.get()); })
+                    object = static_cast<InterfaceType*>(&result.get());
+                if (!object)
+                    return;
+
+                auto processedResult = processArgument<IDLType>(receiver, Ref { *object });
+                if (processedResult)
+                    recordActionResult(receiver, WTF::move(*processedResult));
+            }
+        }
+    }
+
+    static void recordActionResult(CanvasRenderingContext&, ProcessedArgument&&);
+    static void recordActionResult(const CanvasBase&, ProcessedArgument&&);
+    static void recordActionResult(GPUDevice&, ProcessedArgument&&);
+
+    template<typename Receiver>
+        requires (requires (Receiver& receiver) { receiver.context(); })
+    static void recordActionResult(Receiver& receiver, ProcessedArgument&& result)
+    {
+        RefPtr context = receiver.context();
+        if (context)
+            recordActionResult(*context, WTF::move(result));
+    }
+
+    template<typename Receiver>
+        requires (requires (Receiver& receiver) { receiver.device(); })
+    static void recordActionResult(Receiver& receiver, ProcessedArgument&& result)
+    {
+        RefPtr device = receiver.device();
+        if (device)
+            recordActionResult(*device, WTF::move(result));
+    }
 
     template<typename Receiver>
         requires (requires (Receiver& receiver) { receiver.context(); })

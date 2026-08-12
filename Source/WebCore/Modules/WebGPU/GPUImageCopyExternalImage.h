@@ -35,6 +35,7 @@
 #include "WebCodecsVideoFrame.h"
 #include "WebGPUImageCopyExternalImage.h"
 #include <optional>
+#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -62,6 +63,8 @@ struct GPUImageCopyExternalImage {
             flipY,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     SourceType source;
     std::optional<GPUOrigin2D> origin;

@@ -96,6 +96,7 @@ public:
 
     void recordAction(String&&, InspectorCanvasProcessedArguments&& = { });
     void recordAction(String&&, InspectorCanvasProcessedArgument&& receiver, InspectorCanvasProcessedArguments&& = { });
+    void recordActionResult(InspectorCanvasProcessedArgument&&);
 
     Ref<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> releaseFrames() { return m_frames.releaseNonNull(); }
 

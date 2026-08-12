@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebGPUExternalTextureBindingLayout.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -34,6 +35,8 @@ struct GPUExternalTextureBindingLayout {
     {
         return { };
     }
+
+    Ref<JSON::Object> toJSON() const;
 };
 
 }

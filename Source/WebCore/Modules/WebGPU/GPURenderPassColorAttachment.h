@@ -32,6 +32,7 @@
 #include "GPUTexture.h"
 #include "GPUTextureView.h"
 #include "WebGPURenderPassColorAttachment.h"
+#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -75,6 +76,8 @@ struct GPURenderPassColorAttachment {
             .storeOp = WebCore::convertToBacking(storeOp),
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPURenderPassColorAttachmentView view;
     std::optional<GPUIntegerCoordinate> depthSlice;

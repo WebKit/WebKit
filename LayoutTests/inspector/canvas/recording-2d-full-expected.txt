@@ -3,6 +3,13 @@ Test that CanvasManager is able to record actions made to 2D canvas contexts.
 
 == Running test suite: Canvas.recording2D
 -- Running test case: Canvas.recording2D.multipleFrames
+WARN: Recording Warning: "createPattern" threw an error
+WARN: Recording Warning: "createPattern" threw an error
+WARN: Recording Warning: "createPattern" threw an error
+WARN: Recording Warning: "createPattern" threw an error
+WARN: Recording Warning: "drawImage" threw an error
+WARN: Recording Warning: "drawImage" threw an error
+WARN: Recording Warning: "drawImage" threw an error
 initialState:
   attributes:
     width: 2
@@ -130,8 +137,8 @@ frames:
         2: ignoreException
         3: (anonymous function)
         4: executeFrameFunction
-    1: createImageData(2, 3)
-      swizzleTypes: [Number, Number]
+    1: createImageData(2, 3, {"pixelFormat":"rgba-unorm8"})
+      swizzleTypes: [Number, Number, JSON]
       trace:
         0: createImageData
         1: (anonymous function)
@@ -402,8 +409,8 @@ frames:
         0: (anonymous function)
         1: executeFrameFunction
   21: (duration)
-    0: getImageData(1, 2, 3, 4)
-      swizzleTypes: [Number, Number, Number, Number]
+    0: getImageData(1, 2, 3, 4, {"pixelFormat":"rgba-unorm8"})
+      swizzleTypes: [Number, Number, Number, Number, JSON]
       trace:
         0: getImageData
         1: (anonymous function)
@@ -666,7 +673,7 @@ frames:
         2: executeFrameFunction
   48: (duration)
     0: setLineDash([1,2])
-      swizzleTypes: [Array]
+      swizzleTypes: [JSON]
       trace:
         0: setLineDash
         1: (anonymous function)
@@ -928,7 +935,7 @@ frames:
         0: (anonymous function)
         1: executeFrameFunction
     1: webkitLineDash = [1,2]
-      swizzleTypes: [Array]
+      swizzleTypes: [JSON]
       trace:
         0: (anonymous function)
         1: executeFrameFunction
@@ -943,21 +950,21 @@ frames:
         0: (anonymous function)
         1: executeFrameFunction
   69: (duration)
-    0: width
+    0: canvas.width
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-    1: width = 2
+    1: canvas.width = 2
       swizzleTypes: [Number]
       trace:
         0: (anonymous function)
         1: executeFrameFunction
   70: (duration)
-    0: height
+    0: canvas.height
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-    1: height = 2
+    1: canvas.height = 2
       swizzleTypes: [Number]
       trace:
         0: (anonymous function)
@@ -970,13 +977,19 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
     1: roundRect(0, 0, 50, 50, [23])
-      swizzleTypes: [Number, Number, Number, Number, Array]
+      swizzleTypes: [Number, Number, Number, Number, JSON]
       trace:
         0: roundRect
         1: (anonymous function)
         2: executeFrameFunction
     2: roundRect(0, 0, 150, 150, [{"x":24,"y":42,"z":0,"w":1}])
-      swizzleTypes: [Number, Number, Number, Number, Array]
+      swizzleTypes: [Number, Number, Number, Number, JSON]
+      trace:
+        0: roundRect
+        1: (anonymous function)
+        2: executeFrameFunction
+    3: roundRect(0, 0, 150, 150, {"x":24,"y":42,"z":0,"w":1})
+      swizzleTypes: [Number, Number, Number, Number, JSON]
       trace:
         0: roundRect
         1: (anonymous function)

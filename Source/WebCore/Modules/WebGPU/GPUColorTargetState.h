@@ -30,6 +30,7 @@
 #include "GPUTextureFormat.h"
 #include "WebGPUColorTargetState.h"
 #include <optional>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -42,6 +43,8 @@ struct GPUColorTargetState {
             convertColorWriteFlagsToBacking(writeMask),
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUTextureFormat format { GPUTextureFormat::R8unorm };
 

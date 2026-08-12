@@ -27,6 +27,7 @@
 
 #include "GPUBlendComponent.h"
 #include "WebGPUBlendState.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -38,6 +39,8 @@ struct GPUBlendState {
             alpha.convertToBacking(),
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUBlendComponent color;
     GPUBlendComponent alpha;

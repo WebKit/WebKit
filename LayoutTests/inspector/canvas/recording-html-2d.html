@@ -123,27 +123,13 @@ function test() {
         name: "Recording.prototype.toHTML.2D",
         test(resolve, reject) {
             startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {
-                callback(recording) {
-                    let promise = new Promise((resolve, reject) => {
-                        let listener = recording.addEventListener(WI.Recording.Event.ProcessedAction, (event) => {
-                            if (!recording.ready)
-                                return;
+                async callback(recording) {
+                    let html = recording.toHTML();
+                    html = html.replace(/"data:image\/png;base64,[^"]+"/g, "<filtered>");
 
-                            let html = recording.toHTML();
-                            html = html.replace(/"data:image\/png;base64,[^"]+"/g, "<filtered>");
-
-                            InspectorTest.log("++++++++++ HTML ++++++++++");
-                            InspectorTest.log(html);
-                            InspectorTest.log("++++++++++ HTML ++++++++++");
-
-                            recording.removeEventListener(WI.Recording.Event.ProcessedAction, listener);
-                            resolve();
-                        });
-                    });
-
-                    recording.startProcessing();
-
-                    return promise;
+                    InspectorTest.log("++++++++++ HTML ++++++++++");
+                    InspectorTest.log(html);
+                    InspectorTest.log("++++++++++ HTML ++++++++++");
                 },
             });
         },

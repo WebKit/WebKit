@@ -189,25 +189,25 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   24: (duration)
-    0: createBuffer()
+    0: buffer2 = createBuffer()
       trace:
         0: createBuffer
         1: (anonymous function)
         2: executeFrameFunction
   25: (duration)
-    0: createFramebuffer()
+    0: framebuffer2 = createFramebuffer()
       trace:
         0: createFramebuffer
         1: (anonymous function)
         2: executeFrameFunction
   26: (duration)
-    0: createProgram()
+    0: program2 = createProgram()
       trace:
         0: createProgram
         1: (anonymous function)
         2: executeFrameFunction
   27: (duration)
-    0: createRenderbuffer()
+    0: renderbuffer2 = createRenderbuffer()
       trace:
         0: createRenderbuffer
         1: (anonymous function)
@@ -220,7 +220,7 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   29: (duration)
-    0: createTexture()
+    0: texture2 = createTexture()
       trace:
         0: createTexture
         1: (anonymous function)
@@ -943,23 +943,41 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   133: (duration)
-    0: width
+    0: canvas.width
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-    1: width = 2
+    1: canvas.width = 2
       swizzleTypes: [Number]
       trace:
         0: (anonymous function)
         1: executeFrameFunction
   134: (duration)
-    0: height
+    0: canvas.height
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-    1: height = 2
+    1: canvas.height = 2
       swizzleTypes: [Number]
       trace:
         0: (anonymous function)
         1: executeFrameFunction
+  135: (duration)
+    0: loseContext.restoreContext()
+      trace:
+        0: restoreContext
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: loseContext.restoreContext()
+      trace:
+        0: restoreContext
+        1: (anonymous function)
+        2: executeFrameFunction
+  136: (duration)
+    0: transformFeedbackVaryings(1, ["test"], 1)
+      swizzleTypes: [WebGLProgram, JSON, Number]
+      trace:
+        0: transformFeedbackVaryings
+        1: (anonymous function)
+        2: executeFrameFunction
 

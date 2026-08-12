@@ -28,6 +28,7 @@
 #include "GPUBindGroupLayoutEntry.h"
 #include "GPUObjectDescriptorBase.h"
 #include "WebGPUBindGroupLayoutDescriptor.h"
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -42,6 +43,8 @@ struct GPUBindGroupLayoutDescriptor : public GPUObjectDescriptorBase {
             }),
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     Vector<GPUBindGroupLayoutEntry> entries;
 };

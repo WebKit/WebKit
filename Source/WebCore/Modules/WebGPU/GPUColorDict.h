@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebGPUColor.h"
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,6 +42,8 @@ struct GPUColorDict {
             a,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     double r { 0 };
     double g { 0 };
@@ -58,5 +61,7 @@ inline WebGPU::Color convertToBacking(const GPUColor& color)
         return color.convertToBacking();
     });
 }
+
+Ref<JSON::Value> toJSON(const GPUColor&);
 
 }

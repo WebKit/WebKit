@@ -34,6 +34,7 @@
 #include "GPUTextureBindingLayout.h"
 #include "WebGPUBindGroupLayoutEntry.h"
 #include <optional>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -50,6 +51,8 @@ struct GPUBindGroupLayoutEntry {
             externalTexture ? std::optional { externalTexture->convertToBacking() } : std::nullopt,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUIndex32 binding { 0 };
     GPUShaderStageFlags visibility { 0 };

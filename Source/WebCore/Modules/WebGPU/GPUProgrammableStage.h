@@ -27,6 +27,7 @@
 
 #include "GPUShaderModule.h"
 #include "WebGPUProgrammableStage.h"
+#include <wtf/Forward.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -44,6 +45,8 @@ struct GPUProgrammableStage {
             constants,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     Ref<GPUShaderModule> module;
     String entryPoint;

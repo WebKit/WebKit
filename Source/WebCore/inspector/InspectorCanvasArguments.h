@@ -34,6 +34,8 @@
 #include "DOMMatrix2DInit.h"
 #include "DOMPointInit.h"
 #include "Element.h"
+#include "GPUColorDict.h"
+#include "GPUExtent3DDict.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -54,6 +56,7 @@
 #include <limits>
 #include <type_traits>
 #include <wtf/Ref.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -64,6 +67,20 @@
 
 namespace WebCore {
 
+struct GPUBindGroupDescriptor;
+struct GPUComputePassDescriptor;
+struct GPUComputePipelineDescriptor;
+struct GPUCopyElementImageDestination;
+struct GPUCopyElementImageSource;
+struct GPUExternalTextureDescriptor;
+struct GPUImageCopyBuffer;
+struct GPUImageCopyExternalImage;
+struct GPUImageCopyTexture;
+struct GPUImageCopyTextureTagged;
+struct GPUPipelineLayoutDescriptor;
+struct GPURenderPassDescriptor;
+struct GPURenderPipelineDescriptor;
+struct GPUShaderModuleDescriptor;
 class GPUBindGroup;
 class GPUBindGroupLayout;
 class GPUBuffer;
@@ -84,7 +101,21 @@ class GPUShaderModule;
 class GPUTexture;
 class GPUTextureView;
 
-template<typename> struct InspectorCanvasArgumentProcessor;
+template<typename IDLType> struct InspectorCanvasArgumentProcessor {
+    template<typename T>
+        requires (IsIDLDictionary<IDLType>::value && requires (const T& value) { value.toJSON(); })
+    static Ref<JSON::Value> toJSON(const T& argument)
+    {
+        return argument.toJSON();
+    }
+
+    template<typename T>
+        requires (IsIDLDictionary<IDLType>::value && requires (const T& value) { value.toJSON(); })
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const T& argument)
+    {
+        return { { context.valueIndexForData(toJSON(argument)->toJSONString()), RecordingSwizzleType::JSON } };
+    }
+};
 
 // MARK: - Adaptors
 
@@ -106,25 +137,48 @@ template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLNullable<I
     }
 };
 
-template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLNullable<IDLType>> {
+template<typename IDLType> struct InspectorCanvasNullableArgumentProcessor {
+    template<typename T>
+    static decltype(auto) extractValue(const T& value)
+    {
+        if constexpr (requires { *value; })
+            return *value;
+        else
+            return IDLType::extractValueFromNullable(value);
+    }
+
+    template<typename T>
+        requires (requires (const T& value) {
+            IDLType::isNullValue(value);
+            InspectorCanvasArgumentProcessor<IDLType>::toJSON(extractValue(value));
+        })
+    static Ref<JSON::Value> toJSON(const T& value)
+    {
+        if (IDLType::isNullValue(value))
+            return JSON::Value::null();
+        return InspectorCanvasArgumentProcessor<IDLType>::toJSON(extractValue(value));
+    }
+
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const auto& value)
     {
-        if (!value)
+        if (IDLType::isNullValue(value))
             return std::nullopt;
-        return InspectorCanvasArgumentProcessor<IDLType>{}(context, *value);
+        return InspectorCanvasArgumentProcessor<IDLType>{}(context, extractValue(value));
     }
 };
 
-template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLOptional<IDLType>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const auto& value)
-    {
-        if (!value)
-            return std::nullopt;
-        return InspectorCanvasArgumentProcessor<IDLType>{}(context, *value);
-    }
-};
+template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLNullable<IDLType>> : InspectorCanvasNullableArgumentProcessor<IDLType> { };
+
+template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLOptional<IDLType>> : InspectorCanvasNullableArgumentProcessor<IDLType> { };
 
 template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLLegacyNullToEmptyStringAdaptor<IDLType>> {
+    template<typename T>
+        requires requires (const T& value) { InspectorCanvasArgumentProcessor<IDLType>::toJSON(value); }
+    static Ref<JSON::Value> toJSON(const T& value)
+    {
+        return InspectorCanvasArgumentProcessor<IDLType>::toJSON(value);
+    }
+
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const auto& value)
     {
         return InspectorCanvasArgumentProcessor<IDLType>{}(context, value);
@@ -132,6 +186,13 @@ template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLLegacyNull
 };
 
 template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLEnforceRangeAdaptor<IDLType>> {
+    template<typename T>
+        requires requires (const T& value) { InspectorCanvasArgumentProcessor<IDLType>::toJSON(value); }
+    static Ref<JSON::Value> toJSON(const T& value)
+    {
+        return InspectorCanvasArgumentProcessor<IDLType>::toJSON(value);
+    }
+
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const auto& value)
     {
         return InspectorCanvasArgumentProcessor<IDLType>{}(context, value);
@@ -139,6 +200,13 @@ template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLEnforceRan
 };
 
 template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLAllowSharedAdaptor<IDLType>> {
+    template<typename T>
+        requires requires (const T& value) { InspectorCanvasArgumentProcessor<IDLType>::toJSON(value); }
+    static Ref<JSON::Value> toJSON(const T& value)
+    {
+        return InspectorCanvasArgumentProcessor<IDLType>::toJSON(value);
+    }
+
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const auto& value)
     {
         return InspectorCanvasArgumentProcessor<IDLType>{}(context, value);
@@ -148,6 +216,11 @@ template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLAllowShare
 // MARK: - Enumerations
 
 template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLEnumeration<IDLType>> {
+    static Ref<JSON::Value> toJSON(IDLType argument)
+    {
+        return JSON::Value::create(convertEnumerationToString(argument));
+    }
+
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, auto argument)
     {
         return {{ context.valueIndexForData(convertEnumerationToString(argument)), RecordingSwizzleType::String }};
@@ -160,29 +233,96 @@ template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<DOMMatrix2DInit
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const DOMMatrix2DInit&);
 };
 
-template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<ImageDataSettings>> {
-    std::optional<InspectorCanvasProcessedArgument> NODELETE operator()(InspectorCanvas&, const ImageDataSettings&);
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUComputePassDescriptor>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUComputePassDescriptor&);
 };
 
-template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<WebGLCopyElementImageConfig>> {
-    std::optional<InspectorCanvasProcessedArgument> NODELETE operator()(InspectorCanvas&, const WebGLCopyElementImageConfig&);
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUComputePipelineDescriptor>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUComputePipelineDescriptor&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUCopyElementImageDestination>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUCopyElementImageDestination&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUCopyElementImageSource>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUCopyElementImageSource&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUExternalTextureDescriptor>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUExternalTextureDescriptor&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUImageCopyBuffer>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUImageCopyBuffer&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUImageCopyExternalImage>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUImageCopyExternalImage&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUImageCopyTexture>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUImageCopyTexture&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUImageCopyTextureTagged>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUImageCopyTextureTagged&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUPipelineLayoutDescriptor>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUPipelineLayoutDescriptor&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPURenderPassDescriptor>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPURenderPassDescriptor&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUBindGroupDescriptor>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUBindGroupDescriptor&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPURenderPipelineDescriptor>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPURenderPipelineDescriptor&);
+};
+
+template<> struct InspectorCanvasArgumentProcessor<IDLDictionary<GPUShaderModuleDescriptor>> {
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const GPUShaderModuleDescriptor&);
 };
 
 // MARK: - Strings
 
 template<> struct InspectorCanvasArgumentProcessor<IDLDOMString> {
+    static Ref<JSON::Value> toJSON(const String& value)
+    {
+        return JSON::Value::create(value);
+    }
+
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const String&);
 };
+
+template<typename IDLType>
+    requires (IsIDLString<IDLType>::value)
+struct InspectorCanvasArgumentProcessor<IDLType> : InspectorCanvasArgumentProcessor<IDLDOMString> { };
 
 // MARK: - Numerics
 
 template<> struct InspectorCanvasArgumentProcessor<IDLBoolean> {
+    static Ref<JSON::Value> toJSON(bool value)
+    {
+        return JSON::Value::create(value);
+    }
+
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, bool);
 };
 
 template<typename IDLType>
     requires (IsIDLNumber<IDLType>::value)
 struct InspectorCanvasArgumentProcessor<IDLType> {
+    static Ref<JSON::Value> toJSON(auto argument)
+    {
+        return JSON::Value::create(static_cast<double>(argument));
+    }
+
     std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, auto argument)
     {
         return {{ JSON::Value::create(static_cast<double>(argument)), RecordingSwizzleType::Number }};
@@ -412,142 +552,76 @@ struct InspectorCanvasArgumentProcessor<IDLInterface<IDLType>> {
 
 // MARK: - Unions
 
-using IDLCanvasImageSourceUnion = IDLUnion<
-    IDLInterface<HTMLImageElement>,
-    IDLInterface<SVGImageElement>,
-    IDLInterface<HTMLCanvasElement>,
-    IDLInterface<ImageBitmap>,
-    IDLInterface<CSSStyleImageValue>
-#if ENABLE(OFFSCREEN_CANVAS)
-    , IDLInterface<OffscreenCanvas>
-#endif
-#if ENABLE(VIDEO)
-    , IDLInterface<HTMLVideoElement>
-#endif
-#if ENABLE(WEB_CODECS)
-    , IDLInterface<WebCodecsVideoFrame>
-#endif
->;
+template<typename... IDLTypes> struct InspectorCanvasArgumentProcessor<IDLUnion<IDLTypes...>> {
+    using ImplementationType = typename IDLUnion<IDLTypes...>::ImplementationType;
 
-using IDLCanvasStyleVariantUnion = IDLUnion<
-    IDLDOMString,
-    IDLInterface<CanvasGradient>,
-    IDLInterface<CanvasPattern>
->;
+    static Ref<JSON::Value> toJSON(const ImplementationType& argument)
+        requires ((requires (const typename IDLTypes::UnionStorageType& value) {
+            InspectorCanvasArgumentProcessor<IDLTypes>::toJSON(value);
+        }) && ...)
+    {
+        return WTF::switchOn(argument, [](const typename IDLTypes::UnionStorageType& value) {
+            return InspectorCanvasArgumentProcessor<IDLTypes>::toJSON(value);
+        }...);
+    }
 
-using IDLCanvasPathRadiusUnion = IDLUnion<
-    IDLUnrestrictedDouble,
-    IDLDictionary<DOMPointInit>
->;
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const ImplementationType& argument)
+    {
+        return WTF::switchOn(argument, [&](const typename IDLTypes::UnionStorageType& value) {
+            return InspectorCanvasArgumentProcessor<IDLTypes>{}(context, value);
+        }...);
+    }
 
-using IDLCanvasElementImageSourceUnion = IDLUnion<
-    IDLInterface<Element>,
-    IDLInterface<CanvasElementImage>
->;
-
-template<> struct InspectorCanvasArgumentProcessor<IDLCanvasImageSourceUnion> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const CanvasImageSource&);
+    template<typename T>
+        requires requires (const T& value) { static_cast<const ImplementationType&>(value.variant()); }
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const T& argument)
+    {
+        return operator()(context, static_cast<const ImplementationType&>(argument.variant()));
+    }
 };
-
-template<> struct InspectorCanvasArgumentProcessor<IDLCanvasStyleVariantUnion> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const CanvasRenderingContext2DBase::StyleVariant&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLCanvasPathRadiusUnion> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const CanvasPath::RadiusVariant&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLCanvasElementImageSourceUnion> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const CanvasElementImageSource&);
-};
-
-#if ENABLE(WEBGL)
-
-using IDLTexImageSourceUnion = IDLUnion<
-    IDLInterface<ImageBitmap>,
-    IDLInterface<ImageData>,
-    IDLInterface<HTMLImageElement>,
-    IDLInterface<HTMLCanvasElement>
-#if ENABLE(VIDEO)
-    , IDLInterface<HTMLVideoElement>
-#endif
-#if ENABLE(OFFSCREEN_CANVAS)
-    , IDLInterface<OffscreenCanvas>
-#endif
-#if ENABLE(WEB_CODECS)
-    , IDLInterface<WebCodecsVideoFrame>
-#endif
->;
-
-using IDLBufferDataSourceUnion = IDLUnion<
-    IDLAllowSharedAdaptor<IDLArrayBuffer>,
-    IDLAllowSharedAdaptor<IDLArrayBufferView>
->;
-
-using IDLFloat32ListUnion = IDLUnion<
-    IDLAllowSharedAdaptor<IDLFloat32Array>,
-    IDLSequence<IDLUnrestrictedFloat>
->;
-
-using IDLInt32ListUnion = IDLUnion<
-    IDLAllowSharedAdaptor<IDLInt32Array>,
-    IDLSequence<IDLLong>
->;
-
-using IDLUint32ListUnion = IDLUnion<
-    IDLAllowSharedAdaptor<IDLUint32Array>,
-    IDLSequence<IDLUnsignedLong>
->;
-
-template<> struct InspectorCanvasArgumentProcessor<IDLTexImageSourceUnion> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const WebGLRenderingContextBase::TexImageSource&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLBufferDataSourceUnion> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const WebGLRenderingContextBase::BufferDataSource&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLFloat32ListUnion> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const WebGLRenderingContextBase::Float32List::VariantType&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLInt32ListUnion> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const WebGLRenderingContextBase::Int32List::VariantType&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLUint32ListUnion> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const WebGL2RenderingContext::Uint32List::VariantType&);
-};
-
-template<> struct InspectorCanvasArgumentProcessor<IDLUnion<IDLInt32Array, IDLSequence<IDLLong>>> : InspectorCanvasArgumentProcessor<IDLInt32ListUnion> { };
-template<> struct InspectorCanvasArgumentProcessor<IDLUnion<IDLUint32Array, IDLSequence<IDLUnsignedLong>>> : InspectorCanvasArgumentProcessor<IDLUint32ListUnion> { };
-
-#endif // ENABLE(WEBGL)
 
 // MARK: - Sequences
 
-template<> struct InspectorCanvasArgumentProcessor<IDLSequence<IDLDOMString>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Vector<String>&);
-};
+static Ref<JSON::ArrayOf<JSON::Value>> mapToArray(const auto& range, NOESCAPE auto&& functor)
+{
+    auto array = JSON::ArrayOf<JSON::Value>::create();
+    for (auto& item : range)
+        array->addItem(functor(item));
+    return array;
+}
 
-template<> struct InspectorCanvasArgumentProcessor<IDLSequence<IDLUnrestrictedDouble>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Vector<double>&);
-};
+template<typename IDLType, size_t inlineCapacity> struct InspectorCanvasArgumentProcessor<IDLSequence<IDLType, inlineCapacity>> {
+    using SequenceType = IDLSequence<IDLType, inlineCapacity>;
+    using ImplementationType = typename SequenceType::ImplementationType;
 
-template<> struct InspectorCanvasArgumentProcessor<IDLSequence<IDLUnrestrictedFloat>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Vector<float>&);
-};
+    static Ref<JSON::Value> toJSON(const ImplementationType& argument)
+        requires (requires (const typename IDLType::InnerParameterType& value) {
+            InspectorCanvasArgumentProcessor<IDLType>::toJSON(value);
+        })
+    {
+        return mapToArray(argument, [](const auto& value) {
+            return InspectorCanvasArgumentProcessor<IDLType>::toJSON(value);
+        });
+    }
 
-template<> struct InspectorCanvasArgumentProcessor<IDLSequence<IDLUnsignedLong>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Vector<uint32_t>&);
-};
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const ImplementationType& argument)
+    {
+        if constexpr (requires { toJSON(argument); })
+            return { { context.valueIndexForData(toJSON(argument)->toJSONString()), RecordingSwizzleType::JSON } };
 
-template<> struct InspectorCanvasArgumentProcessor<IDLSequence<IDLLong>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Vector<int32_t>&);
-};
+        auto array = JSON::ArrayOf<JSON::Value>::create();
+        for (const auto& value : argument) {
+            auto processed = InspectorCanvasArgumentProcessor<IDLType>{}(context, value);
+            if (!processed)
+                return std::nullopt;
 
-template<> struct InspectorCanvasArgumentProcessor<IDLSequence<IDLCanvasPathRadiusUnion>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas&, const Vector<CanvasPath::RadiusVariant>&);
+            auto item = JSON::ArrayOf<JSON::Value>::create();
+            item->addItem(processed->value.copyRef());
+            item->addItem(static_cast<int>(processed->swizzleType));
+            array->addItem(WTF::move(item));
+        }
+        return { { context.valueIndexForData(array->toJSONString()), RecordingSwizzleType::ArrayOf } };
+    }
 };
 
 } // namespace WebCore

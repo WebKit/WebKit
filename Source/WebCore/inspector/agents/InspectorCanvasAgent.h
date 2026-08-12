@@ -131,6 +131,8 @@ public:
     void recordAction(CanvasRenderingContext&, InspectorCanvasProcessedArgument&& receiver, String&&, InspectorCanvasProcessedArguments&& = { });
     void recordAction(GPUDevice&, String&&, InspectorCanvasProcessedArguments&& = { });
     void recordAction(GPUDevice&, InspectorCanvasProcessedArgument&& receiver, String&&, InspectorCanvasProcessedArguments&& = { });
+    void recordActionResult(CanvasRenderingContext&, InspectorCanvasProcessedArgument&&);
+    void recordActionResult(GPUDevice&, InspectorCanvasProcessedArgument&&);
 
     RefPtr<InspectorCanvas> assertInspectorCanvas(Inspector::Protocol::ErrorString&, const String& canvasId);
     RefPtr<InspectorCanvas> findInspectorCanvas(const CanvasRenderingContext&);

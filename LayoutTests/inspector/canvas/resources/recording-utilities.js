@@ -1,4 +1,22 @@
 TestPage.registerInitializer(() => {
+    function processRecording(recording) {
+        if (recording.ready)
+            return Promise.resolve();
+
+        return new Promise((resolve) => {
+            let listener = recording.addEventListener(WI.Recording.Event.ProcessedAction, () => {
+                if (!recording.ready)
+                    return;
+
+                recording.removeEventListener(WI.Recording.Event.ProcessedAction, listener);
+                resolve();
+            });
+
+            if (!recording.processing)
+                recording.startProcessing();
+        });
+    }
+
     async function logRecording(recording, options = {}) {
         let lines = [];
 
@@ -48,9 +66,31 @@ TestPage.registerInitializer(() => {
 
             for (let j = 0; j < frame.actions.length; ++j) {
                 let action = frame.actions[j];
-                let actionText = `    ${j}: ${action.name}`;
+                let actionText = `    ${j}: `;
+                if (action.result)
+                    actionText += action.result + " = ";
+                if (action.receiver)
+                    actionText += action.receiver + ".";
+                actionText += action.name;
 
-                let parameters = action.parameters.map((parameter) => {
+                let parameters = action.parameters.map((parameter, index) => {
+                    if (WI.Recording.isReferenceSwizzleType(action.swizzleTypes[index])) {
+                        let objectReferences = WI.RecordingAction.objectReferencesForParameter(recording.type, action.name, parameter, index);
+                        return JSON.stringify(parameter, (key, value) => {
+                            if (!objectReferences.has(value))
+                                return value;
+
+                            let [identifier, swizzleType] = value;
+                            let reference = "";
+                            if (WI.Recording.isObjectSwizzleType(swizzleType))
+                                reference = recording.displayNameForReference(value);
+                            else if (swizzleType === WI.Recording.Swizzle.None)
+                                reference = recording.data[identifier];
+                            else
+                                reference = WI.Recording.displayNameForSwizzleType(swizzleType);
+                            return `<${reference}>`;
+                        });
+                    }
                     if (typeof parameter === "object" && !Array.isArray(parameter))
                         return String(parameter);
                     return JSON.stringify(parameter);
@@ -152,7 +192,7 @@ TestPage.registerInitializer(() => {
             if (frameCount)
                 InspectorTest.assert(recording.frames.length === frameCount, `Recording frame count should match the provided value ${frameCount}.`)
 
-            Promise.all(recording.actions.map((action) => action.swizzle(recording))).then(() => {
+            processRecording(recording).then(() => {
                 swizzled = true;
 
                 (callback ? callback(recording) : logRecording(recording, {checkForContentChange}))

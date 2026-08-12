@@ -25,9 +25,13 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 struct WebGLCopyElementImageConfig {
+    Ref<JSON::Object> toJSON() const;
+
     std::optional<float> sx;
     std::optional<float> sy;
     std::optional<float> swidth;

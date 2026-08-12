@@ -27,6 +27,7 @@
 
 #include "GPURenderPassLayout.h"
 #include "WebGPURenderBundleEncoderDescriptor.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -48,6 +49,8 @@ struct GPURenderBundleEncoderDescriptor : public GPURenderPassLayout {
             stencilReadOnly,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     bool depthReadOnly { false };
     bool stencilReadOnly { false };

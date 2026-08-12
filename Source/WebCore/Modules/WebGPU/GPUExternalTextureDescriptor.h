@@ -99,6 +99,8 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
+    Ref<JSON::Object> toJSON() const;
+
 #if ENABLE(VIDEO)
     GPUVideoSource source;
 #endif

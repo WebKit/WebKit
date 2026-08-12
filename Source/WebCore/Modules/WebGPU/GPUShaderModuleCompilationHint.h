@@ -28,6 +28,7 @@
 #include "GPUPipelineDescriptorBase.h"
 #include "GPUPipelineLayout.h"
 #include "WebGPUShaderModuleCompilationHint.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -38,6 +39,8 @@ struct GPUShaderModuleCompilationHint {
             convertPipelineLayoutToBacking(layout, autoLayout)
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPULayoutMode layout;
 };

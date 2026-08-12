@@ -28,6 +28,7 @@
 #include "GPUTextureSampleType.h"
 #include "GPUTextureViewDimension.h"
 #include "WebGPUTextureBindingLayout.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -40,6 +41,8 @@ struct GPUTextureBindingLayout {
             multisampled,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUTextureSampleType sampleType { GPUTextureSampleType::Float };
     GPUTextureViewDimension viewDimension { GPUTextureViewDimension::_2d };

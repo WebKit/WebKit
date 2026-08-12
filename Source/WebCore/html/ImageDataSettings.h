@@ -27,10 +27,13 @@
 
 #include <WebCore/ImageDataPixelFormat.h>
 #include <WebCore/PredefinedColorSpace.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct ImageDataSettings {
+    Ref<JSON::Object> toJSON() const;
+
     std::optional<PredefinedColorSpace> colorSpace;
     ImageDataPixelFormat pixelFormat { ImageDataPixelFormat::RgbaUnorm8 };
 };

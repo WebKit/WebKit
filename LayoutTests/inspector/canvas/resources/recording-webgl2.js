@@ -15,6 +15,7 @@ let uniformLocation = null;
 let renderbuffer = null;
 let shader = null;
 let texture = null;
+let loseContextExtension = null;
 
 function load({offscreen} = {}) {
     createProgram("webgl2", {offscreen});
@@ -29,6 +30,7 @@ function load({offscreen} = {}) {
     renderbuffer = context.createRenderbuffer();
     shader = context.createShader(context.VERTEX_SHADER);
     texture = context.createTexture();
+    loseContextExtension = context.getExtension("WEBGL_lose_context");
 
     cancelActions();
 
@@ -460,6 +462,13 @@ function performActions() {
         () => {
             context.canvas.height;
             context.canvas.height = 2;
+        },
+        () => {
+            loseContextExtension.restoreContext();
+            loseContextExtension.restoreContext();
+        },
+        () => {
+            context.transformFeedbackVaryings(program, ["test"], 1);
         },
         () => {
             TestPage.dispatchEventToFrontend("LastFrame");

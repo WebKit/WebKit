@@ -284,6 +284,14 @@ protected:
     void pushObject(Ref<ObjectBase>&&);
     void pushArray(Ref<ArrayBase>&&);
 
+    void setBoolean(size_t, bool);
+    void setInteger(size_t, int);
+    void setDouble(size_t, double);
+    void setString(size_t, const String&);
+    void setValue(size_t, Ref<Value>&&);
+    void setObject(size_t, Ref<ObjectBase>&&);
+    void setArray(size_t, Ref<ArrayBase>&&);
+
     iterator begin() LIFETIME_BOUND { return m_map.begin(); }
     iterator end() LIFETIME_BOUND { return m_map.end(); }
     const_iterator begin() const LIFETIME_BOUND { return m_map.begin(); }
@@ -311,6 +319,14 @@ public:
     using ArrayBase::pushValue;
     using ArrayBase::pushObject;
     using ArrayBase::pushArray;
+
+    using ArrayBase::setBoolean;
+    using ArrayBase::setInteger;
+    using ArrayBase::setDouble;
+    using ArrayBase::setString;
+    using ArrayBase::setValue;
+    using ArrayBase::setObject;
+    using ArrayBase::setArray;
 
     using ArrayBase::get;
 
@@ -460,6 +476,55 @@ public:
     void addItem(Ref<ArrayBase>&& value)
     {
         castedArray().pushArray(WTF::move(value));
+    }
+
+    template<typename V = T>
+        requires (std::same_as<bool, V> || std::same_as<Value, V>)
+    void setItem(size_t index, bool value)
+    {
+        castedArray().setBoolean(index, value);
+    }
+
+    template<typename V = T>
+        requires (std::same_as<int, V> || std::same_as<Value, V>)
+    void setItem(size_t index, int value)
+    {
+        castedArray().setInteger(index, value);
+    }
+
+    template<typename V = T>
+        requires (std::same_as<double, V> || std::same_as<Value, V>)
+    void setItem(size_t index, double value)
+    {
+        castedArray().setDouble(index, value);
+    }
+
+    template<typename V = T>
+        requires (std::same_as<String, V> || std::same_as<Value, V>)
+    void setItem(size_t index, const String& value)
+    {
+        castedArray().setString(index, value);
+    }
+
+    template<typename V = T>
+        requires (std::is_base_of_v<Value, V> && !std::is_base_of_v<ObjectBase, V> && !std::is_base_of_v<ArrayBase, V>)
+    void setItem(size_t index, Ref<Value>&& value)
+    {
+        castedArray().setValue(index, WTF::move(value));
+    }
+
+    template<typename V = T>
+        requires (std::is_base_of_v<ObjectBase, V>)
+    void setItem(size_t index, Ref<ObjectBase>&& value)
+    {
+        castedArray().setObject(index, WTF::move(value));
+    }
+
+    template<typename V = T>
+        requires (std::is_base_of_v<ArrayBase, V>)
+    void setItem(size_t index, Ref<ArrayBase>&& value)
+    {
+        castedArray().setArray(index, WTF::move(value));
     }
 
     static Ref<ArrayOf<T>> create()

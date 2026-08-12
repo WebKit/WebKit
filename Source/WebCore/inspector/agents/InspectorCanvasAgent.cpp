@@ -806,6 +806,36 @@ void InspectorCanvasAgent::recordAction(GPUDevice& device, InspectorCanvasProces
         didFinishRecordingCanvasFrame(device, true);
 }
 
+void InspectorCanvasAgent::recordActionResult(CanvasRenderingContext& canvasRenderingContext, InspectorCanvasProcessedArgument&& result)
+{
+    ASSERT(canvasRenderingContext.hasActiveInspectorCanvasCallTracer());
+
+    RefPtr inspectorCanvas = findInspectorCanvas(canvasRenderingContext);
+    ASSERT(inspectorCanvas);
+    if (!inspectorCanvas)
+        return;
+
+    inspectorCanvas->recordActionResult(WTF::move(result));
+
+    if (!inspectorCanvas->hasBufferSpace())
+        didFinishRecordingCanvasFrame(canvasRenderingContext, true);
+}
+
+void InspectorCanvasAgent::recordActionResult(GPUDevice& device, InspectorCanvasProcessedArgument&& result)
+{
+    ASSERT(device.hasActiveInspectorCanvasCallTracer());
+
+    RefPtr inspectorCanvas = findInspectorCanvas(device);
+    ASSERT(inspectorCanvas);
+    if (!inspectorCanvas)
+        return;
+
+    inspectorCanvas->recordActionResult(WTF::move(result));
+
+    if (!inspectorCanvas->hasBufferSpace())
+        didFinishRecordingCanvasFrame(device, true);
+}
+
 void InspectorCanvasAgent::scheduleRecordingCanvasFrame(InspectorCanvas& inspectorCanvas)
 {
     // Only enqueue one microtask for all actively recording canvases.

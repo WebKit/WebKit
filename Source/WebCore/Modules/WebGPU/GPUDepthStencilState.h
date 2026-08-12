@@ -31,6 +31,7 @@
 #include "GPUTextureFormat.h"
 #include "WebGPUDepthStencilState.h"
 #include <optional>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -50,6 +51,8 @@ struct GPUDepthStencilState {
             .depthBiasClamp = depthBiasClamp,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUTextureFormat format { GPUTextureFormat::R8unorm };
 

@@ -196,25 +196,25 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   25: (duration)
-    0: createBuffer()
+    0: buffer2 = createBuffer()
       trace:
         0: createBuffer
         1: (anonymous function)
         2: executeFrameFunction
   26: (duration)
-    0: createFramebuffer()
+    0: framebuffer2 = createFramebuffer()
       trace:
         0: createFramebuffer
         1: (anonymous function)
         2: executeFrameFunction
   27: (duration)
-    0: createProgram()
+    0: program2 = createProgram()
       trace:
         0: createProgram
         1: (anonymous function)
         2: executeFrameFunction
   28: (duration)
-    0: createRenderbuffer()
+    0: renderbuffer2 = createRenderbuffer()
       trace:
         0: createRenderbuffer
         1: (anonymous function)
@@ -227,7 +227,7 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   30: (duration)
-    0: createTexture()
+    0: texture2 = createTexture()
       trace:
         0: createTexture
         1: (anonymous function)
@@ -731,6 +731,14 @@ frames:
         0: texImage2D
         1: (anonymous function)
         2: executeFrameFunction
+    2: texElementImage2D(14, 15, "Element", {"sx":16,"sy":17,"swidth":18,"sheight":19,"width":20,"height":21})
+      swizzleTypes: [Number, Number, None, JSON]
+      trace:
+        0: texElementImage2D
+        1: (anonymous function)
+        2: ignoreException
+        3: (anonymous function)
+        4: executeFrameFunction
   102: (duration)
     0: texParameterf(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
@@ -976,23 +984,34 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   136: (duration)
-    0: width
+    0: canvas.width
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-    1: width = 2
+    1: canvas.width = 2
       swizzleTypes: [Number]
       trace:
         0: (anonymous function)
         1: executeFrameFunction
   137: (duration)
-    0: height
+    0: canvas.height
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-    1: height = 2
+    1: canvas.height = 2
       swizzleTypes: [Number]
       trace:
         0: (anonymous function)
         1: executeFrameFunction
+  138: (duration)
+    0: loseContext.restoreContext()
+      trace:
+        0: restoreContext
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: loseContext.restoreContext()
+      trace:
+        0: restoreContext
+        1: (anonymous function)
+        2: executeFrameFunction
 

@@ -29,6 +29,7 @@
 #include "GPUTextureFormat.h"
 #include "GPUTextureViewDimension.h"
 #include "WebGPUStorageTextureBindingLayout.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -41,6 +42,8 @@ struct GPUStorageTextureBindingLayout {
             WebCore::convertToBacking(viewDimension),
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUStorageTextureAccess access { GPUStorageTextureAccess::WriteOnly };
     GPUTextureFormat format { GPUTextureFormat::R8unorm };

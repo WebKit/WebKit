@@ -29,6 +29,7 @@
 #include "GPUVertexBufferLayout.h"
 #include "WebGPUVertexState.h"
 #include <optional>
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -49,6 +50,8 @@ struct GPUVertexState : public GPUProgrammableStage {
             }),
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     Vector<std::optional<GPUVertexBufferLayout>> buffers;
 };

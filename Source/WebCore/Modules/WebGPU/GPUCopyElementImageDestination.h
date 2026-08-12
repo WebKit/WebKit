@@ -26,10 +26,13 @@
 #pragma once
 
 #include "GPUImageCopyTextureTagged.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct GPUCopyElementImageDestination {
+    Ref<JSON::Object> toJSON() const;
+
     GPUImageCopyTextureTagged destination;
     std::optional<unsigned> width;
     std::optional<unsigned> height;

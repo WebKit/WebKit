@@ -44,6 +44,8 @@ struct GPUPipelineLayoutDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
+    Ref<JSON::Object> toJSON() const;
+
     Vector<RefPtr<GPUBindGroupLayout>> bindGroupLayouts;
 };
 

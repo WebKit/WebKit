@@ -30,9 +30,13 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 struct DOMPointInit {
+    Ref<JSON::Object> toJSON() const;
+
     double x { 0 };
     double y { 0 };
     double z { 0 };

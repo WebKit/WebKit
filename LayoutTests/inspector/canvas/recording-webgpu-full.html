@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ HTMLInCanvasEnabled=true WebGPUEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
+<script src="resources/recording-webgpu.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingWebGPU");
+
+    suite.addTestCase({
+        name: "Canvas.recordingWebGPU.multipleFrames",
+        description: "Check that recording data is serialized correctly for multiple frames.",
+        test(resolve, reject) {
+            startRecording(WI.Canvas.ContextType.WebGPU, resolve, reject);
+        },
+        timeout: -1,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="window.testRunner?.waitUntilDone(); load()">
+    <canvas width="4" height="4"></canvas>
+    <p>Test that CanvasManager is able to record actions made to WebGPU devices.</p>
+</body>
+</html>

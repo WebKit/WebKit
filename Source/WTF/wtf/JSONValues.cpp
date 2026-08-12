@@ -812,6 +812,42 @@ Ref<Value> ArrayBase::get(size_t index) const
     return m_map[index];
 }
 
+void ArrayBase::setBoolean(size_t index, bool value)
+{
+    setValue(index, Value::create(value));
+}
+
+void ArrayBase::setInteger(size_t index, int value)
+{
+    setValue(index, Value::create(value));
+}
+
+void ArrayBase::setDouble(size_t index, double value)
+{
+    setValue(index, Value::create(value));
+}
+
+void ArrayBase::setString(size_t index, const String& value)
+{
+    setValue(index, Value::create(value));
+}
+
+void ArrayBase::setValue(size_t index, Ref<Value>&& value)
+{
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < m_map.size());
+    m_map[index] = WTF::move(value);
+}
+
+void ArrayBase::setObject(size_t index, Ref<ObjectBase>&& value)
+{
+    setValue(index, WTF::move(value));
+}
+
+void ArrayBase::setArray(size_t index, Ref<ArrayBase>&& value)
+{
+    setValue(index, WTF::move(value));
+}
+
 Ref<Object> Object::create()
 {
     return adoptRef(*new Object);

@@ -7612,6 +7612,13 @@ sub GenerateImplementationFunctionCall
         GenerateWriteBarriersForArguments($outputArray, $operation, $indent);
         push(@$outputArray, $indent . "return JSValue::encode($returnArgumentName.value());\n");
     } else {
+        if ($callTracer && $codeGenerator->IsInterfaceType($operation->type)) {
+            push(@$outputArray, $indent . "decltype(auto) nativeResult = $functionString;\n");
+            push(@$outputArray, $indent . "if (impl.hasActive" . $callTracer . "()) [[unlikely]]\n");
+            push(@$outputArray, $indent . "    " . $callTracer . "::recordActionResult<" . GetIDLType($interface, $operation->type) . ">(impl, nativeResult);\n");
+            $functionString = "std::forward<decltype(nativeResult)>(nativeResult)";
+        }
+
         my $globalObjectReference = $operation->isStatic ? "*uncheckedDowncast<JSDOMGlobalObject>(lexicalGlobalObject)" : "*castedThis->realm()";
         if ($hasWriteBarriersForArguments) {
             push(@$outputArray, $indent . "auto result = JSValue::encode(" . NativeToJSValueUsingPointers($operation, $interface, $functionString, $globalObjectReference) . ");\n");
@@ -9219,7 +9226,10 @@ sub GenerateCallTracer()
     push(@$outputArray, $indent . "if (impl.hasActive" . $callTracer . "()) [[unlikely]]\n");
     push(@$outputArray, $indent . "    " . $callTracer . "::recordAction(impl, \"" . $name . "\"_s");
     if (scalar(@$arguments)) {
-        push(@$outputArray, ", { " . join(", ", map { $callTracer . "::processArgument<". @$_[0] . ">(impl, " . @$_[1] . ")" } @$arguments) . " }");
+        push(@$outputArray, ", { " . join(", ", map {
+            my ($idlType, @processArguments) = @$_;
+            $callTracer . "::processArgument<$idlType>(impl, " . join(", ", @processArguments) . ")";
+        } @$arguments) . " }");
     }
     push(@$outputArray, ");\n");
 }

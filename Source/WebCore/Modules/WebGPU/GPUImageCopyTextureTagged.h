@@ -46,6 +46,8 @@ struct GPUImageCopyTextureTagged : public GPUImageCopyTexture {
         };
     }
 
+    Ref<JSON::Object> toJSON() const;
+
     PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
     bool premultipliedAlpha { false };
 };

@@ -30,6 +30,7 @@
 #include "GPUTextureFormat.h"
 #include "WebGPURenderPassLayout.h"
 #include <optional>
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -46,6 +47,8 @@ struct GPURenderPassLayout : public GPUObjectDescriptorBase {
             sampleCount,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     Vector<std::optional<GPUTextureFormat>> colorFormats;
     std::optional<GPUTextureFormat> depthStencilFormat;

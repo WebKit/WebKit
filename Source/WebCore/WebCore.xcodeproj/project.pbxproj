@@ -9518,6 +9518,59 @@
 		1C66A8142A4F786F0086DB6F /* GPUSampler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUSampler.h; sourceTree = "<group>"; };
 		1C66A8152A4F78700086DB6F /* GPUDebugCommandsMixin.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUDebugCommandsMixin.idl; sourceTree = "<group>"; };
 		1C66A8162A4F78700086DB6F /* GPUPipelineErrorInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUPipelineErrorInit.h; sourceTree = "<group>"; };
+		1C66A8172A4F78700086DB6F /* GPUBlendComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBlendComponent.cpp; sourceTree = "<group>"; };
+		1C66A8182A4F78700086DB6F /* GPUBlendState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBlendState.cpp; sourceTree = "<group>"; };
+		1C66A8192A4F78700086DB6F /* GPUBufferDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBufferDescriptor.cpp; sourceTree = "<group>"; };
+		1C66A81A2A4F78700086DB6F /* GPUColorTargetState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUColorTargetState.cpp; sourceTree = "<group>"; };
+		1C66A81B2A4F78700086DB6F /* GPUDepthStencilState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUDepthStencilState.cpp; sourceTree = "<group>"; };
+		1C66A81C2A4F78700086DB6F /* GPUMultisampleState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUMultisampleState.cpp; sourceTree = "<group>"; };
+		1C66A81D2A4F78700086DB6F /* GPUObjectDescriptorBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUObjectDescriptorBase.cpp; sourceTree = "<group>"; };
+		1C66A81E2A4F78700086DB6F /* GPUPrimitiveState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUPrimitiveState.cpp; sourceTree = "<group>"; };
+		1C66A81F2A4F78700086DB6F /* GPUStencilFaceState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUStencilFaceState.cpp; sourceTree = "<group>"; };
+		1C66A8202A4F78700086DB6F /* GPUVertexAttribute.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUVertexAttribute.cpp; sourceTree = "<group>"; };
+		1C66A8212A4F78700086DB6F /* GPUVertexBufferLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUVertexBufferLayout.cpp; sourceTree = "<group>"; };
+		1C66A8222A4F78700086DB6F /* GPUFragmentState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUFragmentState.cpp; sourceTree = "<group>"; };
+		1C66A8232A4F78700086DB6F /* GPUPipelineDescriptorBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUPipelineDescriptorBase.cpp; sourceTree = "<group>"; };
+		1C66A8242A4F78700086DB6F /* GPUProgrammableStage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProgrammableStage.cpp; sourceTree = "<group>"; };
+		1C66A8252A4F78700086DB6F /* GPURenderPipelineDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPURenderPipelineDescriptor.cpp; sourceTree = "<group>"; };
+		1C66A8262A4F78700086DB6F /* GPUVertexState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUVertexState.cpp; sourceTree = "<group>"; };
+		1C66A8272A4F78700086DB6F /* GPUColorDict.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUColorDict.cpp; sourceTree = "<group>"; };
+		D32148900000000000000001 /* GPUComputePassDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUComputePassDescriptor.cpp; sourceTree = "<group>"; };
+		D32148900000000000000002 /* GPUComputePassTimestampWrites.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUComputePassTimestampWrites.cpp; sourceTree = "<group>"; };
+		D32148900000000000000003 /* GPUCopyElementImageDestination.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUCopyElementImageDestination.cpp; sourceTree = "<group>"; };
+		D32148900000000000000004 /* GPUCopyElementImageSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUCopyElementImageSource.cpp; sourceTree = "<group>"; };
+		D32148900000000000000005 /* GPUExternalTextureDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUExternalTextureDescriptor.cpp; sourceTree = "<group>"; };
+		D32148900000000000000006 /* GPUImageCopyBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUImageCopyBuffer.cpp; sourceTree = "<group>"; };
+		D32148900000000000000007 /* GPUImageCopyExternalImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUImageCopyExternalImage.cpp; sourceTree = "<group>"; };
+		D32148900000000000000008 /* GPUImageCopyTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUImageCopyTexture.cpp; sourceTree = "<group>"; };
+		D32148900000000000000009 /* GPUImageCopyTextureTagged.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUImageCopyTextureTagged.cpp; sourceTree = "<group>"; };
+		D3214890000000000000000A /* GPUOrigin2DDict.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUOrigin2DDict.cpp; sourceTree = "<group>"; };
+		D3214890000000000000000B /* GPUOrigin3DDict.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUOrigin3DDict.cpp; sourceTree = "<group>"; };
+		D3214890000000000000000C /* GPUPipelineLayoutDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUPipelineLayoutDescriptor.cpp; sourceTree = "<group>"; };
+		D3214890000000000000000D /* GPURenderPassColorAttachment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPURenderPassColorAttachment.cpp; sourceTree = "<group>"; };
+		D3214890000000000000000E /* GPURenderPassDepthStencilAttachment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPURenderPassDepthStencilAttachment.cpp; sourceTree = "<group>"; };
+		D3214890000000000000000F /* GPURenderPassDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPURenderPassDescriptor.cpp; sourceTree = "<group>"; };
+		D32148900000000000000010 /* GPURenderPassTimestampWrites.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPURenderPassTimestampWrites.cpp; sourceTree = "<group>"; };
+		D32148900000000000000011 /* GPUShaderModuleCompilationHint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUShaderModuleCompilationHint.cpp; sourceTree = "<group>"; };
+		D32148900000000000000012 /* GPUShaderModuleDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUShaderModuleDescriptor.cpp; sourceTree = "<group>"; };
+		1C66A8282A4F78700086DB6F /* GPUExtent3DDict.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUExtent3DDict.cpp; sourceTree = "<group>"; };
+		1C66A8292A4F78700086DB6F /* GPUImageDataLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUImageDataLayout.cpp; sourceTree = "<group>"; };
+		1C66A82A2A4F78700086DB6F /* GPUQuerySetDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUQuerySetDescriptor.cpp; sourceTree = "<group>"; };
+		1C66A82B2A4F78700086DB6F /* GPUSamplerDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUSamplerDescriptor.cpp; sourceTree = "<group>"; };
+		1C66A82C2A4F78700086DB6F /* GPUTextureDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUTextureDescriptor.cpp; sourceTree = "<group>"; };
+		1C66A82D2A4F78700086DB6F /* GPUTextureViewDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUTextureViewDescriptor.cpp; sourceTree = "<group>"; };
+		1C66A82E2A4F78700086DB6F /* GPUBindGroupLayoutDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBindGroupLayoutDescriptor.cpp; sourceTree = "<group>"; };
+		1C66A82F2A4F78700086DB6F /* GPUBindGroupLayoutEntry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBindGroupLayoutEntry.cpp; sourceTree = "<group>"; };
+		1C66A8302A4F78700086DB6F /* GPUBufferBindingLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUBufferBindingLayout.cpp; sourceTree = "<group>"; };
+		1C66A8312A4F78700086DB6F /* GPUExternalTextureBindingLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUExternalTextureBindingLayout.cpp; sourceTree = "<group>"; };
+		1C66A8322A4F78700086DB6F /* GPURenderBundleEncoderDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPURenderBundleEncoderDescriptor.cpp; sourceTree = "<group>"; };
+		1C66A8332A4F78700086DB6F /* GPURenderPassLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPURenderPassLayout.cpp; sourceTree = "<group>"; };
+		1C66A8342A4F78700086DB6F /* GPUSamplerBindingLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUSamplerBindingLayout.cpp; sourceTree = "<group>"; };
+		1C66A8352A4F78700086DB6F /* GPUStorageTextureBindingLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUStorageTextureBindingLayout.cpp; sourceTree = "<group>"; };
+		1C66A8362A4F78700086DB6F /* GPUTextureBindingLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUTextureBindingLayout.cpp; sourceTree = "<group>"; };
+		1C66A8372A4F78700086DB6F /* DOMPointInit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMPointInit.cpp; sourceTree = "<group>"; };
+		1C66A8382A4F78700086DB6F /* ImageDataSettings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDataSettings.cpp; sourceTree = "<group>"; };
+		1C66A8392A4F78700086DB6F /* WebGLCopyElementImageConfig.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLCopyElementImageConfig.cpp; sourceTree = "<group>"; };
 		1C6FD8AC250A294D00D6E920 /* FontPlatformDataCoreText.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontPlatformDataCoreText.cpp; sourceTree = "<group>"; };
 		1C6FD8AD250A2E5300D6E920 /* GlyphPageCoreText.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphPageCoreText.cpp; sourceTree = "<group>"; };
 		1C6FD8AE250A311500D6E920 /* FontCascadeCoreText.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontCascadeCoreText.cpp; sourceTree = "<group>"; };
@@ -25806,16 +25859,20 @@
 				1C66A6E82A4F78110086DB6F /* GPUBindGroupLayout.cpp */,
 				1C66A6E32A4F780F0086DB6F /* GPUBindGroupLayout.h */,
 				1C66A7B82A4F78540086DB6F /* GPUBindGroupLayout.idl */,
+				1C66A82E2A4F78700086DB6F /* GPUBindGroupLayoutDescriptor.cpp */,
 				1C66A8072A4F786B0086DB6F /* GPUBindGroupLayoutDescriptor.h */,
 				1C66A6FC2A4F78170086DB6F /* GPUBindGroupLayoutDescriptor.idl */,
+				1C66A82F2A4F78700086DB6F /* GPUBindGroupLayoutEntry.cpp */,
 				1C66A6E12A4F780F0086DB6F /* GPUBindGroupLayoutEntry.h */,
 				1C66A7DF2A4F78600086DB6F /* GPUBindGroupLayoutEntry.idl */,
+				1C66A8172A4F78700086DB6F /* GPUBlendComponent.cpp */,
 				1C66A7142A4F781E0086DB6F /* GPUBlendComponent.h */,
 				1C66A7922A4F78490086DB6F /* GPUBlendComponent.idl */,
 				1C66A7332A4F78270086DB6F /* GPUBlendFactor.h */,
 				1C66A76C2A4F783D0086DB6F /* GPUBlendFactor.idl */,
 				1C66A80B2A4F786D0086DB6F /* GPUBlendOperation.h */,
 				1C66A70E2A4F781C0086DB6F /* GPUBlendOperation.idl */,
+				1C66A8182A4F78700086DB6F /* GPUBlendState.cpp */,
 				1C66A7652A4F783B0086DB6F /* GPUBlendState.h */,
 				1C66A7992A4F784B0086DB6F /* GPUBlendState.idl */,
 				1C66A7982A4F784B0086DB6F /* GPUBuffer.cpp */,
@@ -25823,10 +25880,12 @@
 				1C66A75F2A4F78390086DB6F /* GPUBuffer.idl */,
 				1C66A6F02A4F78130086DB6F /* GPUBufferBinding.h */,
 				1C66A77F2A4F78430086DB6F /* GPUBufferBinding.idl */,
+				1C66A8302A4F78700086DB6F /* GPUBufferBindingLayout.cpp */,
 				1C66A7AD2A4F78510086DB6F /* GPUBufferBindingLayout.h */,
 				1C66A74E2A4F78330086DB6F /* GPUBufferBindingLayout.idl */,
 				1C66A7D82A4F785D0086DB6F /* GPUBufferBindingType.h */,
 				1C66A7EB2A4F78630086DB6F /* GPUBufferBindingType.idl */,
+				1C66A8192A4F78700086DB6F /* GPUBufferDescriptor.cpp */,
 				1C66A6E52A4F78100086DB6F /* GPUBufferDescriptor.h */,
 				1C66A7F12A4F78650086DB6F /* GPUBufferDescriptor.idl */,
 				1C66A7E72A4F78620086DB6F /* GPUBufferMapState.h */,
@@ -25841,8 +25900,10 @@
 				1C66A6EE4A4F78130086DB6F /* GPUCanvasToneMapping.idl */,
 				1C66A8113A4F786E0086DB6F /* GPUCanvasToneMappingMode.h */,
 				1C66A6EE3A4F78130086DB6F /* GPUCanvasToneMappingMode.idl */,
+				1C66A8272A4F78700086DB6F /* GPUColorDict.cpp */,
 				1C66A7242A4F78230086DB6F /* GPUColorDict.h */,
 				1C66A77A2A4F78410086DB6F /* GPUColorDict.idl */,
+				1C66A81A2A4F78700086DB6F /* GPUColorTargetState.cpp */,
 				1C66A7E42A4F78610086DB6F /* GPUColorTargetState.h */,
 				1C66A7862A4F78450086DB6F /* GPUColorTargetState.idl */,
 				1C66A70B2A4F781B0086DB6F /* GPUColorWrite.h */,
@@ -25870,11 +25931,13 @@
 				1C66A7FA2A4F78680086DB6F /* GPUCompilationMessageType.idl */,
 				1C66A7302A4F78260086DB6F /* GPUCompositorIntegration.cpp */,
 				1C66A79E2A4F784C0086DB6F /* GPUCompositorIntegration.h */,
+				D32148900000000000000001 /* GPUComputePassDescriptor.cpp */,
 				1C66A71B2A4F78200086DB6F /* GPUComputePassDescriptor.h */,
 				1C66A7772A4F78400086DB6F /* GPUComputePassDescriptor.idl */,
 				1C66A7822A4F78440086DB6F /* GPUComputePassEncoder.cpp */,
 				1C66A7FF2A4F78690086DB6F /* GPUComputePassEncoder.h */,
 				1C66A75C2A4F78380086DB6F /* GPUComputePassEncoder.idl */,
+				D32148900000000000000002 /* GPUComputePassTimestampWrites.cpp */,
 				1C66A6F32A4F78140086DB6F /* GPUComputePassTimestampWrites.h */,
 				1C66A78E2A4F78480086DB6F /* GPUComputePassTimestampWrites.idl */,
 				1C66A7322A4F78270086DB6F /* GPUComputePipeline.cpp */,
@@ -25882,13 +25945,16 @@
 				1C66A7A32A4F784E0086DB6F /* GPUComputePipeline.idl */,
 				1C66A6F82A4F78160086DB6F /* GPUComputePipelineDescriptor.h */,
 				1C66A71A2A4F78200086DB6F /* GPUComputePipelineDescriptor.idl */,
+				D32148900000000000000003 /* GPUCopyElementImageDestination.cpp */,
 				721292A5301BAE31009DA7C9 /* GPUCopyElementImageDestination.h */,
 				7224293D301ACFD400856621 /* GPUCopyElementImageDestination.idl */,
+				D32148900000000000000004 /* GPUCopyElementImageSource.cpp */,
 				721292A4301BAE1A009DA7C9 /* GPUCopyElementImageSource.h */,
 				7224293E301ACFD400856621 /* GPUCopyElementImageSource.idl */,
 				1C66A6DB2A4F780D0086DB6F /* GPUCullMode.h */,
 				1C66A73C2A4F782A0086DB6F /* GPUCullMode.idl */,
 				1C66A8152A4F78700086DB6F /* GPUDebugCommandsMixin.idl */,
+				1C66A81B2A4F78700086DB6F /* GPUDepthStencilState.cpp */,
 				1C66A7792A4F78410086DB6F /* GPUDepthStencilState.h */,
 				1C66A79C2A4F784C0086DB6F /* GPUDepthStencilState.idl */,
 				1C66A7492A4F782E0086DB6F /* GPUDevice.cpp */,
@@ -25907,31 +25973,40 @@
 				1C66A7182A4F781F0086DB6F /* GPUError.h */,
 				1C66A7442A4F782C0086DB6F /* GPUErrorFilter.h */,
 				1C66A7432A4F782C0086DB6F /* GPUErrorFilter.idl */,
+				1C66A8282A4F78700086DB6F /* GPUExtent3DDict.cpp */,
 				1C66A70C2A4F781C0086DB6F /* GPUExtent3DDict.h */,
 				1C66A7D02A4F785B0086DB6F /* GPUExtent3DDict.idl */,
 				1C66A7B32A4F78530086DB6F /* GPUExternalTexture.cpp */,
 				1C66A7D92A4F785E0086DB6F /* GPUExternalTexture.h */,
 				1C66A7DB2A4F785E0086DB6F /* GPUExternalTexture.idl */,
+				1C66A8312A4F78700086DB6F /* GPUExternalTextureBindingLayout.cpp */,
 				1C66A7E62A4F78620086DB6F /* GPUExternalTextureBindingLayout.h */,
 				1C66A7122A4F781D0086DB6F /* GPUExternalTextureBindingLayout.idl */,
+				D32148900000000000000005 /* GPUExternalTextureDescriptor.cpp */,
 				1C66A7B12A4F78520086DB6F /* GPUExternalTextureDescriptor.h */,
 				1C66A6F62A4F78150086DB6F /* GPUExternalTextureDescriptor.idl */,
 				1C66A72D2A4F78250086DB6F /* GPUFeatureName.h */,
 				1C66A7892A4F78460086DB6F /* GPUFeatureName.idl */,
 				1C66A7CF2A4F785B0086DB6F /* GPUFilterMode.h */,
 				1C66A7E12A4F78600086DB6F /* GPUFilterMode.idl */,
+				1C66A8222A4F78700086DB6F /* GPUFragmentState.cpp */,
 				1C66A71D2A4F78210086DB6F /* GPUFragmentState.h */,
 				1C66A7C52A4F78580086DB6F /* GPUFragmentState.idl */,
 				1C66A6DC2A4F780D0086DB6F /* GPUFrontFace.h */,
 				1C66A6E72A4F78110086DB6F /* GPUFrontFace.idl */,
+				D32148900000000000000006 /* GPUImageCopyBuffer.cpp */,
 				1C66A7152A4F781E0086DB6F /* GPUImageCopyBuffer.h */,
 				1C66A7A12A4F784D0086DB6F /* GPUImageCopyBuffer.idl */,
+				D32148900000000000000007 /* GPUImageCopyExternalImage.cpp */,
 				1C66A6E92A4F78110086DB6F /* GPUImageCopyExternalImage.h */,
 				1C66A7272A4F78240086DB6F /* GPUImageCopyExternalImage.idl */,
+				D32148900000000000000008 /* GPUImageCopyTexture.cpp */,
 				1C66A7D62A4F785D0086DB6F /* GPUImageCopyTexture.h */,
 				1C66A6EB2A4F78120086DB6F /* GPUImageCopyTexture.idl */,
+				D32148900000000000000009 /* GPUImageCopyTextureTagged.cpp */,
 				1C66A7932A4F78490086DB6F /* GPUImageCopyTextureTagged.h */,
 				1C66A8032A4F786A0086DB6F /* GPUImageCopyTextureTagged.idl */,
+				1C66A8292A4F78700086DB6F /* GPUImageDataLayout.cpp */,
 				1C66A80F2A4F786E0086DB6F /* GPUImageDataLayout.h */,
 				1C66A7D52A4F785D0086DB6F /* GPUImageDataLayout.idl */,
 				1C66A7C22A4F78570086DB6F /* GPUIndexFormat.h */,
@@ -25946,18 +26021,23 @@
 				1C66A7E52A4F78610086DB6F /* GPUMapMode.idl */,
 				1C66A6EA2A4F78110086DB6F /* GPUMipmapFilterMode.h */,
 				1C66A7F32A4F78660086DB6F /* GPUMipmapFilterMode.idl */,
+				1C66A81C2A4F78700086DB6F /* GPUMultisampleState.cpp */,
 				1C66A77B2A4F78420086DB6F /* GPUMultisampleState.h */,
 				1C66A7CB2A4F785A0086DB6F /* GPUMultisampleState.idl */,
 				1C66A7212A4F78220086DB6F /* GPUObjectBase.idl */,
+				1C66A81D2A4F78700086DB6F /* GPUObjectDescriptorBase.cpp */,
 				1C66A74A2A4F782E0086DB6F /* GPUObjectDescriptorBase.h */,
 				1C66A79D2A4F784C0086DB6F /* GPUObjectDescriptorBase.idl */,
+				D3214890000000000000000A /* GPUOrigin2DDict.cpp */,
 				1C66A76F2A4F783E0086DB6F /* GPUOrigin2DDict.h */,
 				1C66A7A82A4F784F0086DB6F /* GPUOrigin2DDict.idl */,
+				D3214890000000000000000B /* GPUOrigin3DDict.cpp */,
 				1C66A7632A4F783A0086DB6F /* GPUOrigin3DDict.h */,
 				1C66A7CD2A4F785A0086DB6F /* GPUOrigin3DDict.idl */,
 				1C66A7ED2A4F78640086DB6F /* GPUOutOfMemoryError.h */,
 				1C66A8042A4F786B0086DB6F /* GPUOutOfMemoryError.idl */,
 				1C66A73A2A4F78290086DB6F /* GPUPipelineBase.idl */,
+				1C66A8232A4F78700086DB6F /* GPUPipelineDescriptorBase.cpp */,
 				1C66A72C2A4F78250086DB6F /* GPUPipelineDescriptorBase.h */,
 				1C66A6E22A4F780F0086DB6F /* GPUPipelineDescriptorBase.idl */,
 				1C66A7AA2A4F78500086DB6F /* GPUPipelineError.cpp */,
@@ -25970,6 +26050,7 @@
 				1C66A70F2A4F781D0086DB6F /* GPUPipelineLayout.cpp */,
 				1C66A7872A4F78450086DB6F /* GPUPipelineLayout.h */,
 				1C66A7802A4F78430086DB6F /* GPUPipelineLayout.idl */,
+				D3214890000000000000000C /* GPUPipelineLayoutDescriptor.cpp */,
 				1C66A7852A4F78450086DB6F /* GPUPipelineLayoutDescriptor.h */,
 				1C66A7592A4F78370086DB6F /* GPUPipelineLayoutDescriptor.idl */,
 				1C66A7FC2A4F78680086DB6F /* GPUPowerPreference.h */,
@@ -25979,16 +26060,19 @@
 				1C66A7192A4F781F0086DB6F /* GPUPresentationContext.cpp */,
 				1C66A6F12A4F78140086DB6F /* GPUPresentationContext.h */,
 				1C66A7752A4F78400086DB6F /* GPUPresentationContextDescriptor.h */,
+				1C66A81E2A4F78700086DB6F /* GPUPrimitiveState.cpp */,
 				1C66A7BC2A4F78550086DB6F /* GPUPrimitiveState.h */,
 				1C66A78F2A4F78480086DB6F /* GPUPrimitiveState.idl */,
 				1C66A7AB2A4F78500086DB6F /* GPUPrimitiveTopology.h */,
 				1C66A6ED2A4F78120086DB6F /* GPUPrimitiveTopology.idl */,
 				1C66A7B72A4F78540086DB6F /* GPUProgrammablePassEncoder.idl */,
+				1C66A8242A4F78700086DB6F /* GPUProgrammableStage.cpp */,
 				1C66A76D2A4F783D0086DB6F /* GPUProgrammableStage.h */,
 				1C66A8092A4F786C0086DB6F /* GPUProgrammableStage.idl */,
 				1C66A7A62A4F784F0086DB6F /* GPUQuerySet.cpp */,
 				1C66A6FD2A4F78170086DB6F /* GPUQuerySet.h */,
 				1C66A7462A4F782D0086DB6F /* GPUQuerySet.idl */,
+				1C66A82A2A4F78700086DB6F /* GPUQuerySetDescriptor.cpp */,
 				1C66A7382A4F78290086DB6F /* GPUQuerySetDescriptor.h */,
 				1C66A8102A4F786E0086DB6F /* GPUQuerySetDescriptor.idl */,
 				1C66A71E2A4F78210086DB6F /* GPUQueryType.h */,
@@ -26006,25 +26090,32 @@
 				1C66A7AE2A4F78510086DB6F /* GPURenderBundleEncoder.cpp */,
 				1C66A7202A4F78220086DB6F /* GPURenderBundleEncoder.h */,
 				1C66A7132A4F781E0086DB6F /* GPURenderBundleEncoder.idl */,
+				1C66A8322A4F78700086DB6F /* GPURenderBundleEncoderDescriptor.cpp */,
 				1C66A8132A4F786F0086DB6F /* GPURenderBundleEncoderDescriptor.h */,
 				1C66A7052A4F781A0086DB6F /* GPURenderBundleEncoderDescriptor.idl */,
 				1C66A6E02A4F780E0086DB6F /* GPURenderEncoderBase.idl */,
+				D3214890000000000000000D /* GPURenderPassColorAttachment.cpp */,
 				1C66A6EF2A4F78130086DB6F /* GPURenderPassColorAttachment.h */,
 				1C66A7EC2A4F78630086DB6F /* GPURenderPassColorAttachment.idl */,
+				D3214890000000000000000E /* GPURenderPassDepthStencilAttachment.cpp */,
 				1C66A7952A4F784A0086DB6F /* GPURenderPassDepthStencilAttachment.h */,
 				1C66A73E2A4F782A0086DB6F /* GPURenderPassDepthStencilAttachment.idl */,
+				D3214890000000000000000F /* GPURenderPassDescriptor.cpp */,
 				1C66A7672A4F783B0086DB6F /* GPURenderPassDescriptor.h */,
 				1C66A6F42A4F78140086DB6F /* GPURenderPassDescriptor.idl */,
 				1C66A7A92A4F78500086DB6F /* GPURenderPassEncoder.cpp */,
 				1C66A7BB2A4F78550086DB6F /* GPURenderPassEncoder.h */,
 				1C66A7042A4F78190086DB6F /* GPURenderPassEncoder.idl */,
+				1C66A8332A4F78700086DB6F /* GPURenderPassLayout.cpp */,
 				1C66A6DE2A4F780E0086DB6F /* GPURenderPassLayout.h */,
 				1C66A80C2A4F786D0086DB6F /* GPURenderPassLayout.idl */,
+				D32148900000000000000010 /* GPURenderPassTimestampWrites.cpp */,
 				1C66A7DE2A4F785F0086DB6F /* GPURenderPassTimestampWrites.h */,
 				1C66A74F2A4F78340086DB6F /* GPURenderPassTimestampWrites.idl */,
 				1C66A7BE2A4F78560086DB6F /* GPURenderPipeline.cpp */,
 				1C66A7602A4F78390086DB6F /* GPURenderPipeline.h */,
 				1C66A6F52A4F78150086DB6F /* GPURenderPipeline.idl */,
+				1C66A8252A4F78700086DB6F /* GPURenderPipelineDescriptor.cpp */,
 				1C66A79A2A4F784B0086DB6F /* GPURenderPipelineDescriptor.h */,
 				1C66A73B2A4F782A0086DB6F /* GPURenderPipelineDescriptor.idl */,
 				1C66A7062A4F781A0086DB6F /* GPURequestAdapterOptions.h */,
@@ -26032,27 +26123,33 @@
 				1C66A7B92A4F78540086DB6F /* GPUSampler.cpp */,
 				1C66A8142A4F786F0086DB6F /* GPUSampler.h */,
 				1C66A71F2A4F78210086DB6F /* GPUSampler.idl */,
+				1C66A8342A4F78700086DB6F /* GPUSamplerBindingLayout.cpp */,
 				1C66A7692A4F783C0086DB6F /* GPUSamplerBindingLayout.h */,
 				1C66A7612A4F78390086DB6F /* GPUSamplerBindingLayout.idl */,
 				1C66A7522A4F78340086DB6F /* GPUSamplerBindingType.h */,
 				1C66A7D22A4F785C0086DB6F /* GPUSamplerBindingType.idl */,
+				1C66A82B2A4F78700086DB6F /* GPUSamplerDescriptor.cpp */,
 				1C66A7282A4F78240086DB6F /* GPUSamplerDescriptor.h */,
 				1C66A7162A4F781F0086DB6F /* GPUSamplerDescriptor.idl */,
 				1C66A7222A4F78220086DB6F /* GPUShaderModule.cpp */,
 				1C66A7782A4F78410086DB6F /* GPUShaderModule.h */,
 				1C66A7D72A4F785D0086DB6F /* GPUShaderModule.idl */,
+				D32148900000000000000011 /* GPUShaderModuleCompilationHint.cpp */,
 				1C66A7662A4F783B0086DB6F /* GPUShaderModuleCompilationHint.h */,
 				1C66A8082A4F786C0086DB6F /* GPUShaderModuleCompilationHint.idl */,
+				D32148900000000000000012 /* GPUShaderModuleDescriptor.cpp */,
 				1C66A7622A4F783A0086DB6F /* GPUShaderModuleDescriptor.h */,
 				1C66A7F52A4F78660086DB6F /* GPUShaderModuleDescriptor.idl */,
 				1C66A7762A4F78400086DB6F /* GPUShaderStage.h */,
 				1C66A7642A4F783A0086DB6F /* GPUShaderStage.idl */,
+				1C66A81F2A4F78700086DB6F /* GPUStencilFaceState.cpp */,
 				1C66A7102A4F781D0086DB6F /* GPUStencilFaceState.h */,
 				1C66A72E2A4F78260086DB6F /* GPUStencilFaceState.idl */,
 				1C66A7B62A4F78530086DB6F /* GPUStencilOperation.h */,
 				1C66A7F02A4F78650086DB6F /* GPUStencilOperation.idl */,
 				1C66A7EE2A4F78640086DB6F /* GPUStorageTextureAccess.h */,
 				1C66A7BF2A4F78560086DB6F /* GPUStorageTextureAccess.idl */,
+				1C66A8352A4F78700086DB6F /* GPUStorageTextureBindingLayout.cpp */,
 				1C66A74C2A4F78330086DB6F /* GPUStorageTextureBindingLayout.h */,
 				1C66A7372A4F78280086DB6F /* GPUStorageTextureBindingLayout.idl */,
 				1C66A8012A4F786A0086DB6F /* GPUStoreOp.h */,
@@ -26068,8 +26165,10 @@
 				1C66A7712A4F783F0086DB6F /* GPUTexture.idl */,
 				1C66A7092A4F781B0086DB6F /* GPUTextureAspect.h */,
 				1C66A78B2A4F78470086DB6F /* GPUTextureAspect.idl */,
+				1C66A8362A4F78700086DB6F /* GPUTextureBindingLayout.cpp */,
 				1C66A6F22A4F78140086DB6F /* GPUTextureBindingLayout.h */,
 				1C66A8122A4F786F0086DB6F /* GPUTextureBindingLayout.idl */,
+				1C66A82C2A4F78700086DB6F /* GPUTextureDescriptor.cpp */,
 				1C66A8062A4F786B0086DB6F /* GPUTextureDescriptor.h */,
 				1C66A6E62A4F78100086DB6F /* GPUTextureDescriptor.idl */,
 				1C66A7C12A4F78570086DB6F /* GPUTextureDimension.h */,
@@ -26083,6 +26182,7 @@
 				1C66A7C62A4F78580086DB6F /* GPUTextureView.cpp */,
 				1C66A7F42A4F78660086DB6F /* GPUTextureView.h */,
 				1C66A7532A4F78350086DB6F /* GPUTextureView.idl */,
+				1C66A82D2A4F78700086DB6F /* GPUTextureViewDescriptor.cpp */,
 				1C66A7F82A4F78670086DB6F /* GPUTextureViewDescriptor.h */,
 				1C66A7A52A4F784E0086DB6F /* GPUTextureViewDescriptor.idl */,
 				1C66A7472A4F782D0086DB6F /* GPUTextureViewDimension.h */,
@@ -26095,12 +26195,15 @@
 				1C66A79B2A4F784B0086DB6F /* GPUValidationError.cpp */,
 				1C66A7482A4F782D0086DB6F /* GPUValidationError.h */,
 				1C66A7CA2A4F78590086DB6F /* GPUValidationError.idl */,
+				1C66A8202A4F78700086DB6F /* GPUVertexAttribute.cpp */,
 				1C66A7452A4F782C0086DB6F /* GPUVertexAttribute.h */,
 				1C66A7502A4F78340086DB6F /* GPUVertexAttribute.idl */,
+				1C66A8212A4F78700086DB6F /* GPUVertexBufferLayout.cpp */,
 				1C66A74B2A4F782E0086DB6F /* GPUVertexBufferLayout.h */,
 				1C66A7D32A4F785C0086DB6F /* GPUVertexBufferLayout.idl */,
 				1C66A7F72A4F78670086DB6F /* GPUVertexFormat.h */,
 				1C66A6FA2A4F78160086DB6F /* GPUVertexFormat.idl */,
+				1C66A8262A4F78700086DB6F /* GPUVertexState.cpp */,
 				1C66A7B02A4F78520086DB6F /* GPUVertexState.h */,
 				1C66A7172A4F781F0086DB6F /* GPUVertexState.idl */,
 				1C66A7EF2A4F78640086DB6F /* GPUVertexStepMode.h */,
@@ -28480,6 +28583,7 @@
 				93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */,
 				93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */,
 				93F6F1EC127F70B10055CB06 /* WebGLContextEvent.idl */,
+				1C66A8392A4F78700086DB6F /* WebGLCopyElementImageConfig.cpp */,
 				72242943301ADA9800856621 /* WebGLCopyElementImageConfig.h */,
 				7224293A301AB8B700856621 /* WebGLCopyElementImageConfig.idl */,
 				A0EE0DF1144F825500F80B0D /* WebGLDebugRendererInfo.cpp */,
@@ -33486,6 +33590,7 @@
 				A77979141D6B9D0C003851B9 /* ImageDataArray.h */,
 				BCA088F2264E1BFA003E2A6C /* ImageDataPixelFormat.h */,
 				BCA088F4264E1BFA003E2A6C /* ImageDataPixelFormat.idl */,
+				1C66A8382A4F78700086DB6F /* ImageDataSettings.cpp */,
 				BCA088F2264E1BF9003E2A6C /* ImageDataSettings.h */,
 				BCA088F4264E1BF9003E2A6C /* ImageDataSettings.idl */,
 				97205AB11239291000B17380 /* ImageDocument.cpp */,
@@ -42683,6 +42788,7 @@
 				F4B422C2220C0000009E1E7D /* DOMPasteAccess.h */,
 				0F4966991DB408C100A274BB /* DOMPoint.h */,
 				0F49669A1DB408C100A274BB /* DOMPoint.idl */,
+				1C66A8372A4F78700086DB6F /* DOMPointInit.cpp */,
 				0F4966A21DB4091000A274BB /* DOMPointInit.h */,
 				0F4966A11DB4090100A274BB /* DOMPointInit.idl */,
 				0FF835B71EE3274F008B4CC7 /* DOMPointReadOnly.cpp */,

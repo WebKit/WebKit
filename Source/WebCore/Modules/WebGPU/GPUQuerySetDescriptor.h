@@ -29,6 +29,7 @@
 #include "GPUObjectDescriptorBase.h"
 #include "GPUQueryType.h"
 #include "WebGPUQuerySetDescriptor.h"
+#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -43,6 +44,8 @@ struct GPUQuerySetDescriptor : public GPUObjectDescriptorBase {
             count,
         };
     }
+
+    Ref<JSON::Object> toJSON() const;
 
     GPUQueryType type { GPUQueryType::Occlusion };
     GPUSize32 count { 0 };
