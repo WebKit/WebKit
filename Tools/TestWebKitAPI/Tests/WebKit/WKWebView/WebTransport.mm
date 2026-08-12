@@ -37,6 +37,7 @@
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/WebTransportServer.h"
 #import <CommonCrypto/CommonDigest.h>
+#import <Network/Network.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKInternalDebugFeature.h>
@@ -1108,6 +1109,78 @@ TEST(WebTransport, DISABLED_ServerStreamAborts)
     [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "received abc, read error: 789, write error: 456");
 }
+
+static NSString *datagramEchoHTML(uint16_t port)
+{
+    return [NSString stringWithFormat:@""
+        "<script>async function test() {"
+        "  try {"
+        "    let t = new WebTransport('https://127.0.0.1:%d/');"
+        "    await t.ready;"
+        "    let w = t.datagrams.createWritable().getWriter();"
+        "    await w.write(new TextEncoder().encode('abc'));"
+        "    let r = t.datagrams.readable.getReader();"
+        "    const { value, done } = await r.read();"
+        "    alert('successfully read ' + new TextDecoder().decode(value));"
+        "  } catch (e) { alert('caught'); }"
+        "}; test();"
+        "</script>", port];
+}
+
+#if HAVE(NW_PROXY_CONFIG)
+static RetainPtr<WKWebView> webTransportWebView(nw_proxy_config_t proxyConfig, RetainPtr<TestNavigationDelegate>& delegate)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    enableWebTransport(configuration.get());
+    if (proxyConfig)
+        configuration.get().websiteDataStore.proxyConfigurations = @[ proxyConfig ];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:delegate.get()];
+    return webView;
+}
+
+TEST(WebTransport, Proxies)
+{
+    if (!WebTransportServer::isAvailable())
+        return;
+
+    WebTransportServer echoServer([](ConnectionGroup group) -> ConnectionTask {
+        auto datagramConnection = group.createWebTransportConnection(ConnectionGroup::ConnectionType::Datagram);
+        auto request = co_await datagramConnection.awaitableReceiveBytes();
+        co_await datagramConnection.awaitableSend(WTF::move(request));
+    });
+
+    {
+        RetainPtr<TestNavigationDelegate> delegate;
+        RetainPtr webView = webTransportWebView(nullptr, delegate);
+        [webView loadHTMLString:datagramEchoHTML(echoServer.port()) baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc");
+    }
+
+    {
+        RetainPtr endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", "9000"));
+        RetainPtr proxyConfig = adoptNS(nw_proxy_config_create_socksv5(endpoint.get()));
+
+        RetainPtr<TestNavigationDelegate> delegate;
+        RetainPtr webView = webTransportWebView(proxyConfig.get(), delegate);
+        [webView loadHTMLString:datagramEchoHTML(echoServer.port()) baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        EXPECT_WK_STREQ([webView _test_waitForAlert], "caught");
+    }
+
+    {
+        RetainPtr endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", "9000"));
+        RetainPtr proxyConfig = adoptNS(nw_proxy_config_create_http_connect(endpoint.get(), nil));
+
+        RetainPtr<TestNavigationDelegate> delegate;
+        RetainPtr webView = webTransportWebView(proxyConfig.get(), delegate);
+        [webView loadHTMLString:datagramEchoHTML(echoServer.port()) baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        EXPECT_WK_STREQ([webView _test_waitForAlert], "caught");
+    }
+}
+#endif
 
 } // namespace TestWebKitAPI
 

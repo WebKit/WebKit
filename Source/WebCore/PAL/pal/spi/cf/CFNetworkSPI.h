@@ -150,6 +150,8 @@ bool nw_resolver_set_update_handler(nw_resolver_t, dispatch_queue_t, nw_resolver
 bool nw_resolver_cancel(nw_resolver_t);
 void nw_context_set_privacy_level(nw_context_t, nw_context_privacy_level_t);
 void nw_parameters_set_context(nw_parameters_t, nw_context_t);
+void nw_parameters_add_custom_proxy_config(nw_parameters_t, nw_proxy_config_t);
+void nw_parameters_clear_custom_proxy_configs(nw_parameters_t);
 OS_OBJECT_RETURNS_RETAINED nw_path_evaluator_t nw_path_create_evaluator_for_endpoint(nw_endpoint_t, nw_parameters_t);
 OS_OBJECT_RETURNS_RETAINED nw_path_t nw_path_evaluator_copy_path(nw_path_evaluator_t);
 OS_OBJECT_RETURNS_RETAINED nw_resolver_t nw_resolver_create_with_path(nw_path_t);
@@ -205,6 +207,17 @@ typedef enum {
     nw_connection_privacy_stance_failed = 3,
     nw_connection_privacy_stance_direct = 4,
 } nw_connection_privacy_stance_t;
+
+typedef enum {
+    nw_proxy_type_http = 2001,
+    nw_proxy_type_https = 2002,
+    nw_proxy_type_socksv4 = 3001,
+    nw_proxy_type_socksv5 = 3002,
+    nw_proxy_type_shoes = 3003,
+    nw_proxy_type_http_connect = 3004,
+    nw_proxy_type_https_transparent = 4001,
+    nw_proxy_type_http_connect_over_tls = 4002,
+} nw_proxy_type_t;
 
 #if defined(__OBJC__)
 
