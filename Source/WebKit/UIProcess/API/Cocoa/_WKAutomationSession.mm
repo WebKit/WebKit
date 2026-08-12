@@ -50,7 +50,7 @@
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebAutomationSession>(self);
+    API::Object::constructInWrapper<WebKit::WebAutomationSession>(self, [configuration siteIsolationEnabled]);
 
     _configuration = adoptNS([configuration copy]);
 

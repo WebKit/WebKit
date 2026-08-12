@@ -141,7 +141,7 @@ friend class InspectorPassthroughChannel;
 #endif
 
 public:
-    WebAutomationSession();
+    WebAutomationSession(bool siteIsolationEnabled = false);
     ~WebAutomationSession() override;
 
     void ref() const final { API::Object::ref(); }
@@ -172,6 +172,8 @@ public:
 
     void setSessionIdentifier(const String& sessionIdentifier) { m_sessionIdentifier = sessionIdentifier; }
     String sessionIdentifier() const { return m_sessionIdentifier; }
+
+    bool siteIsolationEnabled() const { return m_siteIsolationEnabled; }
 
     WebProcessPool* NODELETE processPool() const;
     void setProcessPool(WebProcessPool*);
@@ -419,6 +421,7 @@ private:
 
     std::unique_ptr<API::AutomationSessionClient> m_client;
     String m_sessionIdentifier { "Untitled Session"_s };
+    const bool m_siteIsolationEnabled;
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     const Ref<Inspector::AutomationBackendDispatcher> m_domainDispatcher;

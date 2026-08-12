@@ -47,6 +47,7 @@
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include "WebProcessPool.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
@@ -153,8 +154,9 @@ void WebAutomationSession::Debuggable::disconnect(Inspector::FrontendChannel& ch
 }
 #endif // ENABLE(REMOTE_INSPECTOR)
 
-WebAutomationSession::WebAutomationSession()
+WebAutomationSession::WebAutomationSession(bool siteIsolationEnabled)
     : m_client(makeUnique<API::AutomationSessionClient>())
+    , m_siteIsolationEnabled(siteIsolationEnabled)
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_domainDispatcher(AutomationBackendDispatcher::create(m_backendDispatcher, this))
@@ -543,6 +545,12 @@ void WebAutomationSession::createBrowsingContext(std::optional<Inspector::Protoc
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!page, InternalError, "The remote session failed to create a new browsing context."_s);
 
         RefPtr protectedPage = page;
+
+        if (protectedThis->siteIsolationEnabled()) {
+            Ref preferences = protectedPage->preferences();
+            preferences->setSiteIsolationEnabled(true);
+        }
+
         // WebDriver allows running commands in a browsing context which has not done any loads yet. Force WebProcess to be created so it can receive messages.
         protectedPage->launchInitialProcessIfNecessary();
 

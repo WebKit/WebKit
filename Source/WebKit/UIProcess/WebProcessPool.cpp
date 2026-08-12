@@ -2314,7 +2314,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     if (!m_configuration->processSwapsOnNavigation())
         return { WTF::move(sourceProcess), nullptr, "Feature is disabled"_s };
 
-    if (m_automationSession)
+    if (m_automationSession && !protect(page.preferences())->siteIsolationEnabled())
         return { WTF::move(sourceProcess), nullptr, "An automation session is active"_s };
 
     // Redirects to a different scheme for which the client has registered their own custom handler.
