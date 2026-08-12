@@ -70,6 +70,7 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     setFirstPartyForCookies(other.firstPartyForCookies().isolatedCopy());
     setHTTPMethod(other.httpMethod().isolatedCopy());
     setPriority(other.priority());
+    setInitialPriority(other.initialPriority());
     setRequester(other.requester());
     setInitiatorIdentifier(other.initiatorIdentifier().isolatedCopy());
     setShouldBlockThirdPartyStorage(other.shouldBlockThirdPartyStorage());
@@ -619,6 +620,26 @@ void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
         return;
 
     m_requestData.m_priority = priority;
+
+    m_platformRequestUpdated = false;
+}
+
+// Initial priority information only for the Web Inspector
+ResourceLoadPriority ResourceRequestBase::initialPriority() const
+{
+    updateResourceRequest();
+
+    return m_requestData.m_initialPriority;
+}
+
+void ResourceRequestBase::setInitialPriority(ResourceLoadPriority priority)
+{
+    updateResourceRequest();
+
+    if (m_requestData.m_initialPriority == priority)
+        return;
+
+    m_requestData.m_initialPriority = priority;
 
     m_platformRequestUpdated = false;
 }

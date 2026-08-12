@@ -1,0 +1,45 @@
+HAR Priorities Test.
+
+First image
+
+
+Boosted image
+
+
+Another image
+
+
+Duplicate request
+
+
+
+== Running test suite: HAR.Page
+-- Running test case: HAR.Page.Priorities
+PASS: HTML http://127.0.0.1:8000/inspector/network/har/har-page-priorities.html should start with a VeryHigh priority
+PASS: - HTML should still have VeryHigh priority
+PASS: Stylesheet http://127.0.0.1:8000/resources/dummy.css should start with a High priority
+PASS: - Screen stylesheet should stay at a High priority
+PASS: Stylesheet http://127.0.0.1:8000/resources/dummy.css?print should start with a High priority
+PASS: - Print stylesheet should be reduced to a VeryLow priority
+PASS: Stylesheet http://127.0.0.1:8000/resources/dummy.css?low should start with a High priority
+PASS: - Priority was only reduced to Medium
+PASS: JavaScript http://127.0.0.1:8000/inspector/resources/inspector-test.js should start with a High priority
+PASS: - JavaScript should still have a High priority
+PASS: JavaScript http://127.0.0.1:8000/cookies/resources/cookie-utilities.js?async should start with a High priority
+PASS: - Async JavaScript should be reduced to Medium priority
+PASS: Image http://127.0.0.1:8000/resources/square100.png?1 should have a Low priority
+PASS: First duplicate http://127.0.0.1:8000/resources/square100.png?duplicate should start with a Low priority
+PASS: - First duplicate priority has been boosted
+PASS: Image http://127.0.0.1:8000/resources/square100.png?3 should have a Low priority
+PASS: - Second duplicate image has not been boosted
+PASS: JavaScript http://127.0.0.1:8000/cookies/resources/cookie-utilities.js?async should start with a High priority
+PASS: - Async JavaScript should be reduced to Medium priority
+PASS: Image http://127.0.0.1:8000/resources/square100.png?1 should have a Low priority
+PASS: First duplicate http://127.0.0.1:8000/resources/square100.png?duplicate should start with a Low priority
+PASS: - First duplicate priority has been boosted
+PASS: Image http://127.0.0.1:8000/resources/square100.png?3 should have a Low priority
+PASS: - Second duplicate image has not been boosted
+PASS: Beacon https://localhost:8443/resources/save-beacon.py?name=same-origin should have VeryLow priority
+PASS: Font http://127.0.0.1:8000/resources/Ahem.woff should start with a Medium priority
+PASS: - Font should stay with a Medium priority
+

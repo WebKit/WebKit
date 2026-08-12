@@ -270,6 +270,19 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         if (this._resource.remoteAddress)
             this._summarySection.appendKeyValuePair(WI.UIString("Address"), this._resource.displayRemoteAddress);
 
+        if (this._resource.priority !== undefined &&
+            this._resource.priority !== WI.Resource.NetworkPriority.Unknown) {
+            let priorityText = WI.Resource.displayNameForPriority(this._resource.priority);
+
+            if (this._resource.initialPriority !== undefined &&
+                this._resource.initialPriority !== WI.Resource.NetworkPriority.Unknown &&
+                this._resource.initialPriority !== this._resource.priority) {
+                priorityText += ` (initial: ${WI.Resource.displayNameForPriority(this._resource.initialPriority)})`;
+            }
+
+            this._summarySection.appendKeyValuePair(WI.UIString("Priority"), priorityText);
+        }
+
         let initiatorLocation = this._resource.initiatorSourceCodeLocation;
         if (initiatorLocation) {
 

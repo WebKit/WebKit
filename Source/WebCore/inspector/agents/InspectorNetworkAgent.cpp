@@ -183,18 +183,43 @@ Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildOb
 static Inspector::Protocol::Network::Metrics::Priority NODELETE toProtocol(NetworkLoadPriority priority)
 {
     switch (priority) {
+    case NetworkLoadPriority::Verylow:
+        return Inspector::Protocol::Network::Metrics::Priority::Verylow;
     case NetworkLoadPriority::Low:
         return Inspector::Protocol::Network::Metrics::Priority::Low;
     case NetworkLoadPriority::Medium:
         return Inspector::Protocol::Network::Metrics::Priority::Medium;
     case NetworkLoadPriority::High:
         return Inspector::Protocol::Network::Metrics::Priority::High;
+    case NetworkLoadPriority::Veryhigh:
+        return Inspector::Protocol::Network::Metrics::Priority::Veryhigh;
     case NetworkLoadPriority::Unknown:
         break;
     }
 
     ASSERT_NOT_REACHED();
     return Inspector::Protocol::Network::Metrics::Priority::Medium;
+}
+
+static Inspector::Protocol::Network::Metrics::InitialPriority NODELETE toInitialProtocolValue(NetworkLoadPriority priority)
+{
+    switch (priority) {
+    case NetworkLoadPriority::Verylow:
+        return Inspector::Protocol::Network::Metrics::InitialPriority::Verylow;
+    case NetworkLoadPriority::Low:
+        return Inspector::Protocol::Network::Metrics::InitialPriority::Low;
+    case NetworkLoadPriority::Medium:
+        return Inspector::Protocol::Network::Metrics::InitialPriority::Medium;
+    case NetworkLoadPriority::High:
+        return Inspector::Protocol::Network::Metrics::InitialPriority::High;
+    case NetworkLoadPriority::Veryhigh:
+        return Inspector::Protocol::Network::Metrics::InitialPriority::Veryhigh;
+    case NetworkLoadPriority::Unknown:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Network::Metrics::InitialPriority::Medium;
 }
 
 Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
@@ -204,6 +229,8 @@ Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectFor
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
     if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
+        if (additionalMetrics->initialPriority != NetworkLoadPriority::Unknown)
+            metrics->setInitialPriority(toInitialProtocolValue(additionalMetrics->initialPriority));
         if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
             metrics->setPriority(toProtocol(additionalMetrics->priority));
         if (!additionalMetrics->remoteAddress.isNull())
@@ -524,7 +551,7 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
     // 'Raw' is used for loading worker scripts, and those should stay as 'Script' and not change to 'XHR' type.
     if (type != newType && newType != ResourceType::XHR && newType != ResourceType::Other)
         type = newType;
-    
+
     // FIXME: <webkit.org/b/216125> 304 Not Modified responses for XHR/Fetch do not have all their information from the cache.
     if (isNotModified && (type == ResourceType::XHR || type == ResourceType::Fetch) && (!cachedResource || !cachedResource->encodedSize())) {
         if (auto previousResourceData = m_resourcesData->dataForURL(response.url().string())) {
@@ -535,12 +562,12 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
                     m_resourcesData->maybeAddResourceData(requestId, buffer);
                 });
             }
-            
+
             resourceResponse->setString("mimeType"_s, previousResourceData->mimeType());
-            
+
             resourceResponse->setInteger("status"_s, previousResourceData->httpStatusCode());
             resourceResponse->setString("statusText"_s, previousResourceData->httpStatusText());
-            
+
             resourceResponse->setString("source"_s, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Network::Response::Source::DiskCache));
         }
     }
