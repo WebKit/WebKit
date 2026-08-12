@@ -34,14 +34,14 @@
 
 namespace WebCore::GeometryUtils {
 
-static Node& nodeForGeometryNode(const GeometryNode& geometryNode)
+static Ref<Node> nodeForGeometryNode(const GeometryNode& geometryNode)
 {
-    return WTF::switchOn(geometryNode, [](const auto& node) -> Node& {
-        return node.get();
+    return WTF::switchOn(geometryNode, [](const auto& node) -> Ref<Node> {
+        return node;
     });
 }
 
-static RenderObject* rendererForNode(Node& node)
+static CheckedPtr<RenderObject> rendererForNode(Node& node)
 {
     if (auto* document = dynamicDowncast<Document>(node))
         return document->renderView();
@@ -54,9 +54,9 @@ static RenderObject* rendererForNode(Node& node)
 
 // Text nodes use their parent element's coordinate system for conversion,
 // while their own renderer supplies the fragments returned by getBoxQuads().
-static RenderObject* coordinateRendererForNode(Node& node)
+static CheckedPtr<RenderObject> coordinateRendererForNode(Node& node)
 {
-    if (auto* text = dynamicDowncast<Text>(node)) {
+    if (RefPtr text = dynamicDowncast<Text>(node)) {
         if (RefPtr parent = text->parentElement())
             return parent->renderer();
     }
@@ -65,7 +65,8 @@ static RenderObject* coordinateRendererForNode(Node& node)
 
 static RefPtr<LocalFrame> sameOriginRoot(Document& document)
 {
-    RefPtr frame = document.frame();
+    Ref protectedDocument = document;
+    RefPtr frame = protectedDocument->frame();
     if (!frame)
         return nullptr;
 
@@ -77,7 +78,9 @@ static RefPtr<LocalFrame> sameOriginRoot(Document& document)
         RefPtr parentDocument = localParent->document();
         if (!childDocument || !parentDocument)
             return nullptr;
-        if (!childDocument->securityOrigin().isSameOriginDomain(parentDocument->securityOrigin()))
+        Ref childOrigin = childDocument->securityOrigin();
+        Ref parentOrigin = parentDocument->securityOrigin();
+        if (!childOrigin->isSameOriginDomain(parentOrigin))
             return nullptr;
         frame = WTF::move(localParent);
     }
@@ -92,7 +95,7 @@ static bool canMapBetween(Document& source, Document& target)
     return sourceRoot && sourceRoot == sameOriginRoot(target);
 }
 
-static Element* layoutUpdateContext(Node& node)
+static RefPtr<Element> layoutUpdateContext(Node& node)
 {
     if (auto* element = dynamicDowncast<Element>(node))
         return element;
@@ -103,21 +106,22 @@ static Element* layoutUpdateContext(Node& node)
     return nullptr;
 }
 
-static void updateLayoutForGeometryNode(Node& node)
+static void updateLayoutForGeometryNode(Ref<Node> node)
 {
     auto options = OptionSet<LayoutOptions> { LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible, LayoutOptions::CanDeferUpdateLayerPositions, LayoutOptions::IgnorePendingStylesheets };
-    if (auto* context = layoutUpdateContext(node)) {
-        node.document().updateLayoutIfDimensionsOutOfDate(*context, { DimensionsCheck::Left, DimensionsCheck::Top, DimensionsCheck::Width, DimensionsCheck::Height, DimensionsCheck::IgnoreOverflow }, options);
+    Ref document = node->document();
+    if (RefPtr context = layoutUpdateContext(node)) {
+        document->updateLayoutIfDimensionsOutOfDate(*context, { DimensionsCheck::Left, DimensionsCheck::Top, DimensionsCheck::Width, DimensionsCheck::Height, DimensionsCheck::IgnoreOverflow }, options);
         return;
     }
-    node.document().updateLayoutIgnorePendingStylesheets(options);
+    document->updateLayoutIgnorePendingStylesheets(options);
 }
 
-static void updateLayoutForGeometryNodes(Node& source, Node* target)
+static void updateLayoutForGeometryNodes(Ref<Node> source, RefPtr<Node> target)
 {
-    updateLayoutForGeometryNode(source);
-    if (target && target != &source && !target->isShadowIncludingInclusiveAncestorOf(source))
-        updateLayoutForGeometryNode(*target);
+    updateLayoutForGeometryNode(source.copyRef());
+    if (target && target != source.ptr() && !target->isShadowIncludingInclusiveAncestorOf(source))
+        updateLayoutForGeometryNode(target.releaseNonNull());
 }
 
 static LayoutRect boxRect(const RenderObject& renderer, GeometryBox boxType)
@@ -196,13 +200,14 @@ static FloatQuad absoluteToClient(FloatQuad quad, Document& document, const Styl
 
 static FloatQuad mapAbsoluteToTarget(FloatQuad quad, Document& sourceDocument, Node& target, const Style::ComputedStyle& sourceStyle)
 {
-    Document& targetDocument = target.document();
+    Ref protectedTarget = target;
+    Ref targetDocument = protectedTarget->document();
     quad = mapAbsoluteBetweenDocuments(quad, sourceDocument, targetDocument);
 
-    if (is<Document>(target))
+    if (is<Document>(protectedTarget.get()))
         return absoluteToClient(quad, targetDocument, sourceStyle);
 
-    auto* targetRenderer = coordinateRendererForNode(target);
+    CheckedPtr targetRenderer = coordinateRendererForNode(protectedTarget);
     ASSERT(targetRenderer);
     quad = targetRenderer->absoluteToLocalQuad(quad);
     auto origin = boxRect(*targetRenderer, GeometryBox::Border).location();
@@ -231,57 +236,59 @@ static FloatQuad fromDOMQuad(const DOMQuadInit& quad)
 
 ExceptionOr<Vector<Ref<DOMQuad>>> getBoxQuads(Node& source, BoxQuadOptions&& options)
 {
-    Document& sourceDocument = source.document();
-    Node* target = options.relativeTo ? &nodeForGeometryNode(*options.relativeTo) : &sourceDocument;
-    Document& targetDocument = target->document();
+    Ref protectedSource = source;
+    Ref sourceDocument = protectedSource->document();
+    Ref<Node> target = options.relativeTo ? nodeForGeometryNode(*options.relativeTo) : Ref<Node> { sourceDocument.get() };
+    Ref targetDocument = target->document();
 
-    updateLayoutForGeometryNodes(source, target);
+    updateLayoutForGeometryNodes(protectedSource.copyRef(), target.copyRef());
 
     if (!canMapBetween(sourceDocument, targetDocument))
         return Exception { ExceptionCode::SecurityError };
 
-    auto* targetRenderer = coordinateRendererForNode(*target);
-    if (!is<Document>(*target) && !targetRenderer)
+    CheckedPtr targetRenderer = coordinateRendererForNode(target);
+    if (!is<Document>(target.get()) && !targetRenderer)
         return Exception { ExceptionCode::NotFoundError };
 
     Vector<FloatQuad> sourceQuads;
-    RenderObject* sourceRenderer = rendererForNode(source);
-    if (is<Document>(source)) {
-        RefPtr view = sourceDocument.view();
-        if (!view || !sourceRenderer)
+    CheckedPtr sourceRenderer = rendererForNode(protectedSource);
+    if (!sourceRenderer)
+        return Vector<Ref<DOMQuad>> { };
+    CheckedRef sourceStyle = sourceRenderer->style();
+    if (is<Document>(protectedSource.get())) {
+        RefPtr view = sourceDocument->view();
+        if (!view)
             return Vector<Ref<DOMQuad>> { };
         auto viewportSize = view->layoutViewportRect().size();
         FloatQuad viewportQuad { FloatRect { { }, FloatSize { viewportSize } } };
-        sourceQuads.append(clientToAbsolute(viewportQuad, sourceDocument, sourceRenderer->style()));
-    } else {
-        if (!sourceRenderer)
-            return Vector<Ref<DOMQuad>> { };
+        sourceQuads.append(clientToAbsolute(viewportQuad, sourceDocument, sourceStyle));
+    } else
         sourceQuads = absoluteBoxQuads(*sourceRenderer, options.box);
-    }
 
     Vector<Ref<DOMQuad>> result;
     result.reserveInitialCapacity(sourceQuads.size());
     for (auto& quad : sourceQuads)
-        result.append(toDOMQuad(mapAbsoluteToTarget(quad, sourceDocument, *target, sourceRenderer->style())));
+        result.append(toDOMQuad(mapAbsoluteToTarget(quad, sourceDocument, target, sourceStyle)));
     return result;
 }
 
-static ExceptionOr<FloatQuad> convertQuad(Node& target, FloatQuad quad, Node& source, const ConvertCoordinateOptions& options)
+static ExceptionOr<FloatQuad> convertQuad(Ref<Node> target, FloatQuad quad, Ref<Node> source, const ConvertCoordinateOptions& options)
 {
-    Document& sourceDocument = source.document();
-    Document& targetDocument = target.document();
-    updateLayoutForGeometryNodes(source, &target);
+    Ref sourceDocument = source->document();
+    Ref targetDocument = target->document();
+    updateLayoutForGeometryNodes(source.copyRef(), target.copyRef());
 
     if (!canMapBetween(sourceDocument, targetDocument))
         return Exception { ExceptionCode::SecurityError };
 
-    RenderObject* sourceRenderer = coordinateRendererForNode(source);
-    RenderObject* targetRenderer = coordinateRendererForNode(target);
+    CheckedPtr sourceRenderer = coordinateRendererForNode(source);
+    CheckedPtr targetRenderer = coordinateRendererForNode(target);
     if (!sourceRenderer || !targetRenderer)
         return Exception { ExceptionCode::NotFoundError };
 
-    if (is<Document>(source))
-        quad = clientToAbsolute(quad, sourceDocument, sourceRenderer->style());
+    CheckedRef sourceStyle = sourceRenderer->style();
+    if (is<Document>(source.get()))
+        quad = clientToAbsolute(quad, sourceDocument, sourceStyle);
     else {
         float zoom = sourceRenderer->style().usedZoom();
         if (zoom && zoom != 1)
@@ -292,8 +299,8 @@ static ExceptionOr<FloatQuad> convertQuad(Node& target, FloatQuad quad, Node& so
     }
 
     quad = mapAbsoluteBetweenDocuments(quad, sourceDocument, targetDocument);
-    if (is<Document>(target))
-        return absoluteToClient(quad, targetDocument, sourceRenderer->style());
+    if (is<Document>(target.get()))
+        return absoluteToClient(quad, targetDocument, sourceStyle);
 
     quad = targetRenderer->absoluteToLocalQuad(quad);
     auto targetOrigin = boxRect(*targetRenderer, options.toBox).location();
@@ -306,7 +313,7 @@ static ExceptionOr<FloatQuad> convertQuad(Node& target, FloatQuad quad, Node& so
 
 ExceptionOr<Ref<DOMQuad>> convertQuadFromNode(Node& target, DOMQuadInit&& quad, GeometryNode&& from, ConvertCoordinateOptions&& options)
 {
-    auto converted = convertQuad(target, fromDOMQuad(quad), nodeForGeometryNode(from), options);
+    auto converted = convertQuad(Ref { target }, fromDOMQuad(quad), nodeForGeometryNode(from), options);
     if (converted.hasException())
         return converted.releaseException();
     return toDOMQuad(converted.releaseReturnValue());
@@ -315,7 +322,7 @@ ExceptionOr<Ref<DOMQuad>> convertQuadFromNode(Node& target, DOMQuadInit&& quad, 
 ExceptionOr<Ref<DOMQuad>> convertRectFromNode(Node& target, DOMRectReadOnly& rect, GeometryNode&& from, ConvertCoordinateOptions&& options)
 {
     FloatQuad quad { rect.toFloatRect() };
-    auto converted = convertQuad(target, quad, nodeForGeometryNode(from), options);
+    auto converted = convertQuad(Ref { target }, quad, nodeForGeometryNode(from), options);
     if (converted.hasException())
         return converted.releaseException();
     return toDOMQuad(converted.releaseReturnValue());
@@ -324,7 +331,7 @@ ExceptionOr<Ref<DOMQuad>> convertRectFromNode(Node& target, DOMRectReadOnly& rec
 ExceptionOr<Ref<DOMPoint>> convertPointFromNode(Node& target, DOMPointInit&& point, GeometryNode&& from, ConvertCoordinateOptions&& options)
 {
     FloatPoint floatPoint { narrowPrecisionToFloat(point.x), narrowPrecisionToFloat(point.y) };
-    auto converted = convertQuad(target, FloatQuad { floatPoint, floatPoint, floatPoint, floatPoint }, nodeForGeometryNode(from), options);
+    auto converted = convertQuad(Ref { target }, FloatQuad { floatPoint, floatPoint, floatPoint, floatPoint }, nodeForGeometryNode(from), options);
     if (converted.hasException())
         return converted.releaseException();
     auto result = converted.releaseReturnValue().p1();
