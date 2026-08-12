@@ -48,6 +48,7 @@ auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64
     }
 
     uint64_t boundary = static_cast<uint64_t>(sizeOfOperation) + uoffset - 1;
+    Width accessWidth = widthForBytes(sizeOfOperation);
 
     ScratchScope<1, 0> scratches(*this);
     Location pointerLocation;
@@ -75,7 +76,7 @@ auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64
             recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
         else {
             uint64_t finalOffset = constantPointer + uoffset;
-            if (finalOffset <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) && B3::Air::Arg::isValidAddrForm(B3::Air::Move, static_cast<int32_t>(finalOffset), Width::Width128)) {
+            if (finalOffset <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) && B3::Air::Arg::isValidAddrForm(B3::Air::Move, static_cast<int32_t>(finalOffset), accessWidth)) {
                 switch (m_info.memoryModeForAccess(memoryIndex, m_mode)) {
                 case MemoryMode::BoundsChecking: {
                     m_jit.move(TrustedImmPtr(constantPointer + boundary), wasmScratchGPR);
@@ -147,7 +148,7 @@ auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64
     }
     }
 
-    bool canUseOffsetForm = uoffset <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) && B3::Air::Arg::isValidAddrForm(B3::Air::Move, static_cast<int32_t>(uoffset), Width::Width128);
+    bool canUseOffsetForm = uoffset <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) && B3::Air::Arg::isValidAddrForm(B3::Air::Move, static_cast<int32_t>(uoffset), accessWidth);
 #if CPU(ARM64)
     if (canUseOffsetForm) {
         if (m_info.memory(memoryIndex).isMemory64())

@@ -1273,7 +1273,7 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    Address materializePointer(Location pointerLocation, uint64_t uoffset);
+    Address materializePointer(Location pointerLocation, uint64_t uoffset, Width accessWidth);
 
     constexpr static const char* LOAD_OP_NAMES[14] = {
         "I32Load", "I64Load", "F32Load", "F64Load",

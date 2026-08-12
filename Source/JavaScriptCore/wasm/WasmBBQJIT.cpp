@@ -1100,9 +1100,9 @@ void BBQJIT::emitMutatorFence()
 
 // Memory
 
-Address BBQJIT::materializePointer(Location pointerLocation, uint64_t uoffset)
+Address BBQJIT::materializePointer(Location pointerLocation, uint64_t uoffset, Width accessWidth)
 {
-    if (uoffset > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) || !B3::Air::Arg::isValidAddrForm(B3::Air::Move, static_cast<int32_t>(uoffset), Width::Width128)) {
+    if (uoffset > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) || !B3::Air::Arg::isValidAddrForm(B3::Air::Move, static_cast<int32_t>(uoffset), accessWidth)) {
         m_jit.addPtr(TrustedImmPtr(uoffset), pointerLocation.asGPR());
         return Address(pointerLocation.asGPR());
     }

@@ -3843,7 +3843,7 @@ void NODELETE BBQJIT::notifyFunctionUsesSIMD()
         RELEASE_ASSERT_NOT_REACHED();
     }
     Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(width), memoryIndex);
-    Address address = materializePointer(pointerLocation, uoffset);
+    Address address = materializePointer(pointerLocation, uoffset, width);
 
     result = topValue(TypeKind::V128);
     Location resultLocation = allocate(result);
@@ -3896,7 +3896,7 @@ void NODELETE BBQJIT::notifyFunctionUsesSIMD()
         RELEASE_ASSERT_NOT_REACHED();
     }
     Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(width), memoryIndex);
-    Address address = materializePointer(pointerLocation, uoffset);
+    Address address = materializePointer(pointerLocation, uoffset, width);
 
     Location vectorLocation = loadIfNecessary(vector);
     consume(vector);
@@ -3947,7 +3947,7 @@ void NODELETE BBQJIT::notifyFunctionUsesSIMD()
         RELEASE_ASSERT_NOT_REACHED();
     }
     Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(width), memoryIndex);
-    Address address = materializePointer(pointerLocation, uoffset);
+    Address address = materializePointer(pointerLocation, uoffset, width);
 
     Location vectorLocation = loadIfNecessary(vector);
     consume(vector);
