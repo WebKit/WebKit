@@ -157,26 +157,26 @@ void NavigateEvent::processScrollBehavior(Document& document)
         return;
     }
 
-    if (!document.url().hasFragmentIdentifier()) {
-        if (m_navigationType == NavigationNavigationType::Reload)
-            document.frame()->loader().history().restoreScrollPositionAndViewState();
-        else
-            protect(protect(document)->frame()->view())->setScrollPosition({ 0, 0 });
-        return;
+    if (document.url().hasFragmentIdentifier()) {
+        if (!document.haveStylesheetsLoaded()) {
+            document.setGotoAnchorNeededAfterStylesheetsLoad(true);
+            return;
+        }
+
+        // LocalFrameView::scrollToFragment() only fails when the document's indicated part
+        // is null, and it clears the CSS :target element itself in that case.
+        if (protect(protect(document)->frame()->view())->scrollToFragment(document.url()))
+            return;
     }
 
-    // LocalFrameView::scrollToFragment() will fail only when anchor is not found
-    // if the url has fragment and the fragment is not text fragment.
-    if (!document.findAnchor(document.url().fragmentIdentifier())) {
-        if (m_navigationType == NavigationNavigationType::Reload)
-            document.frame()->loader().history().restoreScrollPositionAndViewState();
-        return;
-    }
+    // The document's indicated part is null, so clear the CSS :target element and scroll
+    // to the beginning of the document.
+    document.setCSSTarget(nullptr);
 
-    if (!document.haveStylesheetsLoaded())
-        document.setGotoAnchorNeededAfterStylesheetsLoad(true);
+    if (m_navigationType == NavigationNavigationType::Reload)
+        document.frame()->loader().history().restoreScrollPositionAndViewState();
     else
-        protect(protect(document)->frame()->view())->scrollToFragment(document.url());
+        protect(protect(document)->frame()->view())->setScrollPosition({ 0, 0 });
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigateevent-scroll
