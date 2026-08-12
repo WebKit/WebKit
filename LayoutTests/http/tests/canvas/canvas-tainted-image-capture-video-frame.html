@@ -1,0 +1,17 @@
+<style>
+    img {
+        margin: 10px;
+        width: 100px;
+        height: 100px;
+    }
+    iframe {
+        margin: 10px;
+        width: 250px;
+        height: 100px;
+    }
+</style>
+<body>
+    <h3>The third box has to be red. It is canvas draws an image capture from another tainted canavas.</h3>
+    <img src="http://localhost:8000/canvas/resources/100x100-lime-rect.svg">
+    <iframe src="http://127.0.0.1:8000/canvas/resources/cross-origin-image-capture-video-frame.html" frameborder=0></iframe>
+</body>
