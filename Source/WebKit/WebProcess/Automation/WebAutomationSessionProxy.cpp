@@ -818,10 +818,17 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         // FIXME: Wait in an implementation-specific way up to the session implicit wait timeout for the element to become in view.
     }
 
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->coreFrame()->mainFrame());
-    if (!localFrame)
+    // Convert through this frame's local root rather than the page's main frame.
+    // Under site isolation, an out-of-process iframe's main frame is a RemoteFrame in this process
+    // and has no LocalFrameView, so the local root is the deepest frame reachable here.
+    // Without site isolation the local root is the main frame, so this preserves behavior.
+    Ref localRootFrame = coreLocalFrame->rootFrame();
+    RefPtr rootView = localRootFrame->view();
+    if (!rootView) {
+        String windowNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound);
+        completionHandler(windowNotFoundErrorType, { }, std::nullopt, false);
         return;
-    RefPtr mainView = localFrame->view();
+    }
 
     WebCore::FloatRect resultElementBounds;
     std::optional<WebCore::IntPoint> resultInViewCenterPoint;
@@ -833,7 +840,7 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         break;
     case CoordinateSystem::LayoutViewport: {
         auto elementBoundsInRootCoordinates = convertRectFromFrameClientToRootView(frameView.get(), coreElement->boundingClientRect());
-        resultElementBounds = mainView->absoluteToLayoutViewportRect(mainView->rootViewToContents(elementBoundsInRootCoordinates));
+        resultElementBounds = rootView->absoluteToLayoutViewportRect(rootView->rootViewToContents(elementBoundsInRootCoordinates));
         break;
     }
     }
@@ -893,7 +900,7 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         break;
     case CoordinateSystem::LayoutViewport: {
         auto inViewCenterPointInRootCoordinates = convertPointFromFrameClientToRootView(frameView.get(), elementInViewCenterPoint);
-        resultInViewCenterPoint = flooredIntPoint(mainView->absoluteToLayoutViewportPoint(mainView->rootViewToContents(inViewCenterPointInRootCoordinates)));
+        resultInViewCenterPoint = flooredIntPoint(rootView->absoluteToLayoutViewportPoint(rootView->rootViewToContents(inViewCenterPointInRootCoordinates)));
         break;
     }
     }
@@ -1064,10 +1071,13 @@ void WebAutomationSessionProxy::takeScreenshot(WebCore::PageIdentifier pageID, s
         ASSERT(page);
         RefPtr frame = frameID ? WebProcess::singleton().webFrame(*frameID) : &page->mainWebFrame();
         ASSERT(frame && frame->coreLocalFrame());
-        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(frame->coreFrame()->mainFrame());
-        if (!localMainFrame)
-            return;
-        auto snapshotRect = WebCore::IntRect(protect(localMainFrame->view())->clientToDocumentRect(rect));
+        // Convert through this frame's local root rather than the page's main frame, which is a
+        // RemoteFrame with no LocalFrameView in this process under site isolation.
+        RefPtr localRootFrame = frame ? frame->coreLocalFrame() : nullptr;
+        RefPtr localRootView = localRootFrame ? localRootFrame->rootFrame().view() : nullptr;
+        if (!localRootView)
+            return completionHandler(std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError));
+        auto snapshotRect = WebCore::IntRect(localRootView->clientToDocumentRect(rect));
         RefPtr<WebImage> image = page->scaledSnapshotWithOptions(snapshotRect, 1, SnapshotOption::Shareable);
         if (!image)
             return completionHandler(std::nullopt, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ScreenshotError));
