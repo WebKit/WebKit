@@ -203,7 +203,7 @@ void* CompleteSubspace::reallocatePreciseAllocationNonVirtual(VM& vm, HeapCell* 
 
 void CompleteSubspace::prepareAllAllocators()
 {
-    for (unsigned i = MarkedSpace::numSizeClasses - 1; i--;) {
+    for (unsigned i = MarkedSpace::numSizeClasses; i--;) {
         if (!m_allocatorForSizeStep[i])
             allocatorForSlow(MarkedSpace::s_sizeClassForSizeStep[i]);
         ASSERT(m_allocatorForSizeStep[i]);

@@ -3674,6 +3674,7 @@ auto OMGIRGenerator::addArrayNew(TypeSignatureIndex typeIndex, ExpressionType si
     m_proc.setUsesWasmGCArrayAllocations();
 
     auto* array = m_currentBlock->appendNew<WasmArrayNewValue>(m_proc, origin(), wasmRefType(), Ref { rtt }, typeIndex.rawIndex(), allocatorsBaseOffset, instanceValue(), structureID, sizeValue, initValue);
+    m_heaps.decorateWasmArrayNew(&m_heaps.VM_heapState, array);
 
     mutatorFence();
     result = push(array);
@@ -3715,6 +3716,7 @@ auto OMGIRGenerator::addArrayNewDefault(TypeSignatureIndex typeIndex, Expression
     m_proc.setUsesWasmGCArrayAllocations();
 
     auto* array = m_currentBlock->appendNew<WasmArrayNewValue>(m_proc, origin(), wasmRefType(), Ref { rtt }, typeIndex.rawIndex(), allocatorsBaseOffset, instanceValue(), structureID, sizeValue, initValue);
+    m_heaps.decorateWasmArrayNew(&m_heaps.VM_heapState, array);
 
     mutatorFence();
     result = push(array);
@@ -3748,6 +3750,7 @@ auto OMGIRGenerator::addArrayNewFixed(TypeSignatureIndex typeIndex, ArgumentList
     m_proc.setUsesWasmGCArrayAllocations();
 
     auto* object = m_currentBlock->appendNew<WasmArrayNewValue>(m_proc, origin(), wasmRefType(), Ref { rtt }, typeIndex.rawIndex(), allocatorsBaseOffset, instanceValue(), structureID, size);
+    m_heaps.decorateWasmArrayNew(&m_heaps.VM_heapState, object);
 
     for (uint32_t i = 0; i < args.size(); ++i) {
         // Emit the array set code -- note that this omits the bounds check, since
@@ -4038,6 +4041,7 @@ auto OMGIRGenerator::addStructNew(TypeSignatureIndex typeIndex, ArgumentList& ar
     m_proc.setUsesWasmGCStructAllocations();
 
     auto* structNew = m_currentBlock->appendNew<WasmStructNewValue>(m_proc, origin(), wasmRefType(), Ref { rtt }, typeIndex.rawIndex(), allocatorsBaseOffset, instanceValue(), structureID);
+    m_heaps.decorateWasmStructNew(&m_heaps.VM_heapState, structNew);
 
     for (uint32_t i = 0; i < args.size(); ++i) {
         bool needsWriteBarrier = emitStructSet(/* canTrap */ false, structNew, i, rtt, get(args[i]));
@@ -4058,6 +4062,7 @@ auto OMGIRGenerator::addStructNewDefault(TypeSignatureIndex typeIndex, Expressio
     m_proc.setUsesWasmGCStructAllocations();
 
     auto* structNew = m_currentBlock->appendNew<WasmStructNewValue>(m_proc, origin(), wasmRefType(), Ref { rtt }, typeIndex.rawIndex(), allocatorsBaseOffset, instanceValue(), structureID);
+    m_heaps.decorateWasmStructNew(&m_heaps.VM_heapState, structNew);
 
     for (StructFieldCount i = 0; i < rtt.fieldCount(); ++i) {
         Value* initValue;

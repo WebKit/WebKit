@@ -1463,7 +1463,7 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
             size_t sizeClassIndex = MarkedSpace::sizeClassToIndex(sizeInBytes.value());
             m_jit.loadPtr(allocatorBufferBase.withOffset(sizeClassIndex * sizeof(Allocator)), scratchGPR2);
             JIT_COMMENT(m_jit, "Do array allocation constant sized");
-            m_jit.emitAllocateWithNonNullAllocator(resultGPR, JITAllocator::variableNonNull(), scratchGPR2, scratchGPR, slowPath, AssemblyHelpers::SlowAllocationResult::UndefinedBehavior);
+            m_jit.emitAllocateWithNonNullAllocator(resultGPR, JITAllocator::variableNonNullWithConstantCellSize(MarkedSpace::s_sizeClassForSizeStep[sizeClassIndex]), scratchGPR2, scratchGPR, slowPath, AssemblyHelpers::SlowAllocationResult::UndefinedBehavior);
             m_jit.load32(structureIDAddress, scratchGPR);
             m_jit.move(TrustedImm32(JSWebAssemblyArray::typeInfoBlob().blob()), scratchGPR2);
             static_assert(JSCell::structureIDOffset() + sizeof(int32_t) == JSCell::indexingTypeAndMiscOffset());
@@ -2001,7 +2001,7 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
         size_t sizeClassIndex = MarkedSpace::sizeClassToIndex(sizeInBytes);
         m_jit.loadPtr(allocatorBufferBase.withOffset(sizeClassIndex * sizeof(Allocator)), scratchGPR2);
         JIT_COMMENT(m_jit, "Do struct allocation");
-        m_jit.emitAllocateWithNonNullAllocator(resultGPR, JITAllocator::variableNonNull(), scratchGPR2, scratchGPR, slowPath, AssemblyHelpers::SlowAllocationResult::UndefinedBehavior);
+        m_jit.emitAllocateWithNonNullAllocator(resultGPR, JITAllocator::variableNonNullWithConstantCellSize(MarkedSpace::s_sizeClassForSizeStep[sizeClassIndex]), scratchGPR2, scratchGPR, slowPath, AssemblyHelpers::SlowAllocationResult::UndefinedBehavior);
         m_jit.load32(structureIDAddress, scratchGPR);
         m_jit.move(TrustedImm32(JSWebAssemblyStruct::typeInfoBlob().blob()), scratchGPR2);
         static_assert(JSCell::structureIDOffset() + sizeof(int32_t) == JSCell::indexingTypeAndMiscOffset());

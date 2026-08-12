@@ -38,6 +38,7 @@ namespace JSC::B3 {
     macro(TypedArrayProperties) \
     macro(JSCellHeaderAndNamedProperties) \
     macro(OrderedHashTableData) \
+    macro(VM_heapState) \
 
 // macro(name, offset, mutability)
 #define FOR_EACH_ABSTRACT_FIELD(macro) \
@@ -359,8 +360,10 @@ public:
     void decorateFencedAccess(const AbstractHeap*, Value*);
     void decorateWasmStructGet(const AbstractHeap*, Value*);
     void decorateWasmStructSet(const AbstractHeap*, Value*);
+    void decorateWasmStructNew(const AbstractHeap*, Value*);
     void decorateWasmArrayGet(const AbstractHeap*, Value*);
     void decorateWasmArraySet(const AbstractHeap*, Value*);
+    void decorateWasmArrayNew(const AbstractHeap*, Value*);
     void decorateWasmArrayLength(const AbstractHeap*, Value*);
 
     void computeRangesAndDecorateInstructions();
@@ -392,8 +395,10 @@ private:
     Vector<HeapForValue> m_heapForFencedAccess;
     Vector<HeapForValue> m_heapForWasmStructGet;
     Vector<HeapForValue> m_heapForWasmStructSet;
+    Vector<HeapForValue> m_heapForWasmStructNew;
     Vector<HeapForValue> m_heapForWasmArrayGet;
     Vector<HeapForValue> m_heapForWasmArraySet;
+    Vector<HeapForValue> m_heapForWasmArrayNew;
     Vector<HeapForValue> m_heapForWasmArrayLength;
 };
 

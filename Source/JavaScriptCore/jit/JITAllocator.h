@@ -36,38 +36,56 @@ public:
         Constant,
         Variable,
         VariableNonNull,
+        VariableNonNullWithConstantCellSize,
     };
     using enum Kind;
-    
+
     JITAllocator() = default;
-    
+
     static JITAllocator constant(Allocator allocator)
     {
         JITAllocator result(Constant);
         result.m_allocator = allocator;
         return result;
     }
-    
+
     static JITAllocator variable() { return JITAllocator(Variable); }
     static JITAllocator variableNonNull() { return JITAllocator(VariableNonNull); }
-    
+
+    static JITAllocator variableNonNullWithConstantCellSize(unsigned cellSize)
+    {
+        JITAllocator result(VariableNonNullWithConstantCellSize);
+        result.m_cellSize = cellSize;
+        return result;
+    }
+
     friend bool operator==(const JITAllocator&, const JITAllocator&) = default;
-    
+
     explicit operator bool() const
     {
         return *this != JITAllocator();
     }
-    
+
     Kind kind() const { return m_kind; }
     bool isConstant() const { return m_kind == Constant; }
     bool isVariable() const { return m_kind != Constant; }
-    
+
+    bool hasConstantCellSize() const { return m_kind == Constant || m_kind == VariableNonNullWithConstantCellSize; }
+
+    unsigned constantCellSize() const
+    {
+        RELEASE_ASSERT(hasConstantCellSize());
+        if (m_kind == Constant)
+            return m_allocator.cellSize();
+        return m_cellSize;
+    }
+
     Allocator allocator() const
     {
         RELEASE_ASSERT(isConstant());
         return m_allocator;
     }
-    
+
 private:
     JITAllocator(Kind kind)
         : m_kind(kind)
@@ -75,6 +93,7 @@ private:
 
     Kind m_kind { Constant };
     Allocator m_allocator;
+    unsigned m_cellSize { 0 };
 };
 
 } // namespace JSC

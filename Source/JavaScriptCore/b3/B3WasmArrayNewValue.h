@@ -27,6 +27,8 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3Effects.h"
+#include "B3HeapRange.h"
 #include "B3Value.h"
 #include "WasmTypeDefinition.h"
 #include <wtf/StdLibExtras.h>
@@ -57,6 +59,10 @@ public:
 
     // Offset from instance for allocator lookup (pre-computed from ModuleInformation)
     int32_t allocatorsBaseOffset() const { return m_allocatorsBaseOffset; }
+
+    // The GC state that a collection triggered by this allocation may mutate.
+    const HeapRange& range() const { return m_range; }
+    void setRange(HeapRange range) { m_range = range; }
 
     B3_SPECIALIZE_VALUE_FOR_NON_VARARGS_CHILDREN
     B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
@@ -93,6 +99,7 @@ private:
     const Ref<const Wasm::RTT> m_rtt;
     uint32_t m_typeIndex;
     int32_t m_allocatorsBaseOffset;
+    HeapRange m_range { HeapRange::top() };
     bool m_hasInitValue;
 };
 
