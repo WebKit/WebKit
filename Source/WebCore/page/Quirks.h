@@ -151,7 +151,6 @@ public:
     bool NODELETE needsGoogleMapsScrollingQuirk() const;
     bool NODELETE needsGoogleTranslateScrollingQuirk() const;
     bool NODELETE needsNetflixVolumeSliderQuirk() const;
-    bool needsGeforcenowWarningDisplayNoneQuirk() const;
 
     bool needsYahooVolumeSliderQuirk() const;
 

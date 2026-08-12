@@ -113,7 +113,6 @@ struct QuirksData {
 #if PLATFORM(IOS) || PLATFORM(VISION)
         NeedsNetflixVolumeSliderQuirk,
 #endif
-        NeedsGeforcenowWarningDisplayNoneQuirk,
         NeedsExpediaGroupAnimationQuirk,
         NeedsMediaRewriteRangeRequestQuirk,
         NeedsMozillaFileTypeForDataTransferQuirk,
