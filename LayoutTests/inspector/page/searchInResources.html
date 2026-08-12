@@ -24,6 +24,10 @@ function test()
         return url.replace(/^.*?LayoutTests\//, "");
     }
 
+    function pageAgent() {
+        return WI.networkManager.enabledPageForSiteIsolation && WI.backendTarget ? WI.backendTarget.PageAgent : window.PageAgent;
+    }
+
     let suite = InspectorTest.createAsyncSuite("Page.searchInResources and Page.searchInResource");
 
     const searchString = "SeArCh-StRiNg";
@@ -39,7 +43,7 @@ function test()
         name: "SearchAllResources",
         description: "Able to find text results in different resources.",
         test(resolve, reject) {
-            PageAgent.searchInResources(searchString, (error, results) => {
+            pageAgent().searchInResources(searchString, (error, results) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(results.length > 0, "Should find results in multiple resources.");
                 searchResults = results.sort((a, b) => a.url.localeCompare(b.url));
@@ -55,7 +59,7 @@ function test()
         description: "Able to find text results in different resources.",
         test(resolve, reject) {
             const caseSensitive = true;
-            PageAgent.searchInResources(searchStringCaseSensitive, caseSensitive, (error, results) => {
+            pageAgent().searchInResources(searchStringCaseSensitive, caseSensitive, (error, results) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(results.length > 0, "Should find results in multiple resources.");
                 searchResultsCaseSensitive = results.sort((a, b) => a.url.localeCompare(b.url));
@@ -72,7 +76,7 @@ function test()
         test(resolve, reject) {
             const caseSensitive = undefined;
             const isRegex = true;
-            PageAgent.searchInResources(searchStringRegex, caseSensitive, isRegex, (error, results) => {
+            pageAgent().searchInResources(searchStringRegex, caseSensitive, isRegex, (error, results) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(results.length > 0, "Should find results in multiple resources.");
                 searchResultsIsRegex = results.sort((a, b) => a.url.localeCompare(b.url));
@@ -89,7 +93,7 @@ function test()
         test(resolve, reject) {
             const caseSensitive = true;
             const isRegex = true;
-            PageAgent.searchInResources(searchStringRegex, caseSensitive, isRegex, (error, results) => {
+            pageAgent().searchInResources(searchStringRegex, caseSensitive, isRegex, (error, results) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(results.length > 0, "Should find results in multiple resources.");
                 searchResultsCaseSensitiveIsRegex = results.sort((a, b) => a.url.localeCompare(b.url));
@@ -108,7 +112,7 @@ function test()
             if (!result)
                 reject();
 
-            PageAgent.searchInResource(result.frameId, result.url, searchString, (error, matches) => {
+            pageAgent().searchInResource(result.frameId, result.url, searchString, (error, matches) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
                 for (let match of matches)
@@ -127,7 +131,7 @@ function test()
                 reject();
 
             const caseSensitive = true;
-            PageAgent.searchInResource(result.frameId, result.url, searchStringCaseSensitive, caseSensitive, (error, matches) => {
+            pageAgent().searchInResource(result.frameId, result.url, searchStringCaseSensitive, caseSensitive, (error, matches) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
                 for (let match of matches)
@@ -147,7 +151,7 @@ function test()
 
             const caseSensitive = undefined;
             const isRegex = true;
-            PageAgent.searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, (error, matches) => {
+            pageAgent().searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, (error, matches) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
                 for (let match of matches)
@@ -167,7 +171,7 @@ function test()
 
             const caseSensitive = true;
             const isRegex = true;
-            PageAgent.searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, (error, matches) => {
+            pageAgent().searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, (error, matches) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
                 for (let match of matches)
@@ -188,7 +192,7 @@ function test()
             const isRegex = undefined;
             const caseSensitive = undefined;
 
-            PageAgent.searchInResource(result.frameId, result.url, searchString, caseSensitive, isRegex, result.requestId, (error, matches) => {
+            pageAgent().searchInResource(result.frameId, result.url, searchString, caseSensitive, isRegex, result.requestId, (error, matches) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
                 for (let match of matches)
@@ -209,7 +213,7 @@ function test()
             const isRegex = undefined;
             const caseSensitive = true;
 
-            PageAgent.searchInResource(result.frameId, result.url, searchStringCaseSensitive, caseSensitive, isRegex, result.requestId, (error, matches) => {
+            pageAgent().searchInResource(result.frameId, result.url, searchStringCaseSensitive, caseSensitive, isRegex, result.requestId, (error, matches) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
                 for (let match of matches)
@@ -230,7 +234,7 @@ function test()
             const isRegex = true;
             const caseSensitive = undefined;
 
-            PageAgent.searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, result.requestId, (error, matches) => {
+            pageAgent().searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, result.requestId, (error, matches) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
                 for (let match of matches)
@@ -251,7 +255,7 @@ function test()
             const isRegex = true;
             const caseSensitive = true;
 
-            PageAgent.searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, result.requestId, (error, matches) => {
+            pageAgent().searchInResource(result.frameId, result.url, searchStringRegex, caseSensitive, isRegex, result.requestId, (error, matches) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.expectThat(matches.length === result.matchesCount, `Should find ${result.matchesCount} matches.`);
                 for (let match of matches)
