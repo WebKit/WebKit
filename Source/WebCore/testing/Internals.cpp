@@ -8128,7 +8128,7 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
             promise->reject(Exception { ExceptionCode::InvalidAccessError, "No image retrieved."_s });
             return;
         }
-        promise->settle(WebCodecsVideoFrame::create(*document, *nativeImage));
+        promise->settle(WebCodecsVideoFrame::create(*document, *nativeImage, { }));
     });
     m_artworkLoader->requestImageResource();
 }

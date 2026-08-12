@@ -34,15 +34,36 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCodecsImageTrackList);
 
-Ref<WebCodecsImageTrackList> WebCodecsImageTrackList::create(Vector<Ref<WebCodecsImageTrack>>&& list)
+Ref<WebCodecsImageTrackList> WebCodecsImageTrackList::create()
 {
-    return adoptRef(*new WebCodecsImageTrackList(WTF::move(list)));
+    return adoptRef(*new WebCodecsImageTrackList());
 }
 
-WebCodecsImageTrackList::WebCodecsImageTrackList(Vector<Ref<WebCodecsImageTrack>>&& list)
+WebCodecsImageTrackList::WebCodecsImageTrackList()
     : m_readyPromise(makeUniqueRef<ReadyPromise>())
-    , m_list(WTF::move(list))
 {
+}
+
+void WebCodecsImageTrackList::setTrackList(Vector<Ref<WebCodecsImageTrack>>&& list)
+{
+    if (list.isEmpty())
+        return;
+    m_list = WTF::move(list);
+    m_selectedIndex = 0;
+    m_readyPromise->resolve();
+}
+
+void WebCodecsImageTrackList::clearTrackList(const Exception& exception)
+{
+    // If readyPromise is not fulfilled, reject it with exception.
+    if (!m_readyPromise->isFulfilled()) {
+        m_readyPromise->reject(exception);
+        return;
+    }
+
+    // Remove all entries from the list and set the selected index to -1.
+    m_list.clear();
+    m_selectedIndex = -1;
 }
 
 RefPtr<WebCodecsImageTrack> WebCodecsImageTrackList::selectedTrack() const

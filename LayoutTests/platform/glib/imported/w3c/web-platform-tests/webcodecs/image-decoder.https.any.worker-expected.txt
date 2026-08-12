@@ -1,11 +1,11 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL Test JPEG image decoding. assert_array_approx_equals: top left corner is yellow property 2, expected 0 +/- 0, expected 0 but got 1
-FAIL Test JPEG w/ EXIF orientation top-left. assert_equals: top left corner expected "Yellow" but got "#ffff01ff"
-FAIL Test JPEG w/ EXIF orientation top-right. assert_equals: top left corner expected "Red" but got "#ffff01ff"
-FAIL Test JPEG w/ EXIF orientation bottom-right. assert_equals: top left corner expected "Green" but got "#ffff01ff"
-FAIL Test JPEG w/ EXIF orientation bottom-left. assert_equals: top left corner expected "Blue" but got "#ffff01ff"
+PASS Test JPEG image decoding.
+PASS Test JPEG w/ EXIF orientation top-left.
+FAIL Test JPEG w/ EXIF orientation top-right. assert_equals: top left corner expected "Red" but got "Yellow"
+FAIL Test JPEG w/ EXIF orientation bottom-right. assert_equals: top left corner expected "Green" but got "Yellow"
+FAIL Test JPEG w/ EXIF orientation bottom-left. assert_equals: top left corner expected "Blue" but got "Yellow"
 FAIL Test JPEG w/ EXIF orientation left-top. assert_equals: expected 240 but got 320
 FAIL Test JPEG w/ EXIF orientation right-top. assert_equals: expected 240 but got 320
 FAIL Test JPEG w/ EXIF orientation right-bottom. assert_equals: expected 240 but got 320
@@ -25,16 +25,14 @@ FAIL Test multi-track AVIF image decoding w/ preferAnimation=false. assert_great
 FAIL Test multi-track AVIF image decoding w/ preferAnimation=true. assert_greater_than: expected a number greater than 1 but got 1
 PASS Test WEBP image decoding.
 PASS Test GIF image decoding.
-FAIL Test JPEG image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "RGBA"
-FAIL Test AVIF image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "RGBA"
-FAIL Test AVIF image YUV 4:2:2 decoding. assert_equals: expected "I422" but got "RGBA"
-FAIL Test AVIF image YUV 4:4:4 decoding. assert_equals: expected "I444" but got "RGBA"
-FAIL Test WEBP image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "RGBA"
+FAIL Test JPEG image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "BGRA"
+FAIL Test AVIF image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "BGRA"
+FAIL Test AVIF image YUV 4:2:2 decoding. assert_equals: expected "I422" but got "BGRA"
+FAIL Test AVIF image YUV 4:4:4 decoding. assert_equals: expected "I444" but got "BGRA"
+FAIL Test WEBP image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "BGRA"
 FAIL Test invalid mime type rejects decode() requests assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Test invalid mime type rejects decodeMetadata() requests assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Test out of range index returns RangeError promise_rejects_js: function "function() { throw e; }" threw object "DataError: Decoding error" ("DataError") expected instance of function "function RangeError() {
-    [native code]
-}" ("RangeError")
+FAIL Test out of range index returns RangeError assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Test decoding a partial ArrayBuffer results in EncodingError promise_rejects_dom: function "function() { throw e; }" threw object "DataError: Decoding error" that is not a DOMException EncodingError: property "name" is equal to "DataError", expected "EncodingError"
 PASS Test completed property on fully buffered decode
 FAIL Test decode, decodeMetadata after no track selected. assert_equals: expected -1 but got 0

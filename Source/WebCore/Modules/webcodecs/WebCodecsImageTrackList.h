@@ -39,7 +39,11 @@ namespace WebCore {
 class WebCodecsImageTrackList final : public RefCounted<WebCodecsImageTrackList> {
     WTF_MAKE_TZONE_ALLOCATED(WebCodecsImageTrackList);
 public:
-    static Ref<WebCodecsImageTrackList> create(Vector<Ref<WebCodecsImageTrack>>&&);
+    static Ref<WebCodecsImageTrackList> create();
+
+    void setTrackList(Vector<Ref<WebCodecsImageTrack>>&&);
+    void clearTrackList(const Exception&);
+    bool isEstablished() const { return length() > 0; }
 
     using ReadyPromise = DOMPromiseProxy<IDLUndefined>;
     ReadyPromise& ready() { return m_readyPromise.get(); }
@@ -52,7 +56,7 @@ public:
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
 
 private:
-    WebCodecsImageTrackList(Vector<Ref<WebCodecsImageTrack>>&&);
+    WebCodecsImageTrackList();
 
     UniqueRef<ReadyPromise> m_readyPromise;
     int m_selectedIndex { -1 };

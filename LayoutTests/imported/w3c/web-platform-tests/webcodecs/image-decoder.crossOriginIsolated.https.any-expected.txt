@@ -1,4 +1,4 @@
 
-FAIL Test ImageDecoder decoding with a SharedArrayBuffer source Can't find variable: ImageDecoder
-FAIL Test ImageDecoder decoding with a Uint8Array(SharedArrayBuffer) source Can't find variable: ImageDecoder
+FAIL Test ImageDecoder decoding with a SharedArrayBuffer source promise_test: Unhandled rejection with value: object "TypeError: SharedArrayBuffer is not allowed"
+PASS Test ImageDecoder decoding with a Uint8Array(SharedArrayBuffer) source
 

@@ -10210,9 +10210,8 @@ WebCodecsHEVCEnabled:
 
 WebCodecsImageEnabled:
   type: bool
-  status: unstable
+  status: testable
   category: media
-  webcoreOnChange: setNeedsRelayoutAllFrames
   humanReadableName: "WebCodecs Image API"
   humanReadableDescription: "Enable WebCodecs Image API"
   condition: ENABLE(WEB_CODECS)

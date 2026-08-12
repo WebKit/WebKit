@@ -32,15 +32,22 @@
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferredForward.h"
+#include "SharedBuffer.h"
 #include "WebCodecsBase.h"
 #include "WebCodecsImageTrackList.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
+#include <wtf/NativePromise.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
+class ImageDecoder;
+class NativeImage;
 class ReadableStream;
+class ReadableStreamToSharedBufferSink;
+class SharedBuffer;
 class WebCodecsVideoFrame;
 
 using ImageBufferSource = Variant
@@ -73,32 +80,57 @@ public:
     static Ref<WebCodecsImageDecoder> create(ScriptExecutionContext&, Init&&);
 
     String type() const { return m_type; }
-    bool complete() const { return true; }
+    bool complete() const { return m_completedPromise->isFulfilled(); }
 
     using CompletedPromise = DOMPromiseProxy<IDLUndefined>;
     CompletedPromise& completed() { return m_completedPromise.get(); }
 
-    Ref<WebCodecsImageTrackList> tracks() const;
+    Ref<WebCodecsImageTrackList> tracks() const { return m_tracks; }
 
-    ExceptionOr<void> decode(std::optional<DecodeOptions>&&, Ref<DeferredPromise>&&);
+    void decode(std::optional<DecodeOptions>&&, Ref<DeferredPromise>&&);
+
     ExceptionOr<void> reset();
     ExceptionOr<void> close();
 
-    static void isTypeSupported(ScriptExecutionContext&, String&& type, Ref<DeferredPromise>&&);
+    static void isTypeSupported(ScriptExecutionContext&, String&& type, DOMPromiseDeferred<IDLBoolean>&&);
 
 private:
     WebCodecsImageDecoder(ScriptExecutionContext&, Init&&);
 
     // ActiveDOMObject.
-    void stop() final;
     void NODELETE suspend(ReasonForSuspension) final;
+    void stop() final;
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebCodecsImageDecoder; }
 
+    void sinkStreamToInternalDecoder(const Ref<ReadableStream>&, const String& type);
+    void setInternalDecoderData(FragmentedSharedBuffer&, const String& type, bool allDataReceived);
+    void establishTrackList();
+
+    static WorkQueue& queueSingleton();
+
+    using DecodePromise = NativePromise<RefPtr<NativeImage>, void>;
+    Ref<DecodePromise> createNativeImageAtIndex(size_t frameIndex);
+
+    void fulfillPendingDecodePromises(size_t frameIndex, RefPtr<NativeImage>&&);
+    void rejectPendingDecodePromises(size_t frameIndex, const Exception&);
+
+    void queueDecodeRequest(std::optional<DecodeOptions>&&);
+    void queuePendingDecodeRequests();
+
+    ExceptionOr<void> resetDecoder(const Exception&);
+    ExceptionOr<void> closeDecoder(const Exception&);
+
     String m_type;
     UniqueRef<CompletedPromise> m_completedPromise;
-    mutable RefPtr<WebCodecsImageTrackList> m_tracks;
+    mutable Ref<WebCodecsImageTrackList> m_tracks;
+
+    RefPtr<ImageDecoder> m_internalDecoder;
+    HashMap<size_t, Vector<Ref<DeferredPromise>>> m_pendingDecodePromises;
+
+    RefPtr<ReadableStreamToSharedBufferSink> m_sink;
+    SharedBufferBuilder m_bufferBuilder;
 };
 
 } // namespace WebCore

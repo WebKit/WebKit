@@ -1,0 +1,4 @@
+
+FAIL Test ImageDecoder decoding with a SharedArrayBuffer source promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
+FAIL Test ImageDecoder decoding with a Uint8Array(SharedArrayBuffer) source promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: SharedArrayBuffer"
+

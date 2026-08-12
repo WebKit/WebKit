@@ -8,5 +8,5 @@ FAIL Test transfering ArrayBuffer to EncodedAudioChunk assert_equals: data.lengt
 FAIL Test transfering ArrayBuffer to EncodedVideoChunk assert_equals: data.length after detach expected 0 but got 10
 FAIL Test transfering ArrayBuffer to AudioData assert_equals: data.length after detach expected 0 but got 10
 FAIL Encoding from AudioData with transferred buffer assert_equals: buffer.length after detach expected 0 but got 9600
-FAIL Test transfering ArrayBuffer to ImageDecoder. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ImageDecoder"
+FAIL Test transfering ArrayBuffer to ImageDecoder. assert_equals: buffer.byteLength after detach expected 0 but got 1442
 

@@ -1,8 +1,8 @@
 
-FAIL Test JPEG w/ EXIF orientation top-left on canvas w/o orientation assert_equals: top left corner expected "Yellow" but got "#ffff01ff"
-FAIL Test JPEG w/ EXIF orientation top-right on canvas w/o orientation. assert_equals: top left corner expected "Yellow" but got "#ffff01ff"
-FAIL Test JPEG w/ EXIF orientation bottom-right on canvas w/o orientation. assert_equals: top left corner expected "Yellow" but got "#ffff01ff"
-FAIL Test JPEG w/ EXIF orientation bottom-left on canvas w/o orientation. assert_equals: top left corner expected "Yellow" but got "#ffff01ff"
+PASS Test JPEG w/ EXIF orientation top-left on canvas w/o orientation
+PASS Test JPEG w/ EXIF orientation top-right on canvas w/o orientation.
+PASS Test JPEG w/ EXIF orientation bottom-right on canvas w/o orientation.
+PASS Test JPEG w/ EXIF orientation bottom-left on canvas w/o orientation.
 FAIL Test JPEG w/ EXIF orientation left-top on canvas w/o orientation. assert_equals: expected 320 but got 240
 FAIL Test JPEG w/ EXIF orientation right-top on canvas w/o orientation. assert_equals: expected 320 but got 240
 FAIL Test JPEG w/ EXIF orientation right-bottom on canvas w/o orientation. assert_equals: expected 320 but got 240

@@ -28,12 +28,25 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "ImageDecoder.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebCodecsImageDecodeResult.h"
+#include "MIMETypeRegistry.h"
+#include "NativeImage.h"
+#include "ReadableStreamToSharedBufferSink.h"
+#include "ScriptExecutionContext.h"
+#include "ScriptExecutionContextInlines.h"
+#include "WebCodecsControlMessage.h"
 #include "WebCodecsImageDecodeResult.h"
 #include "WebCodecsVideoFrame.h"
 #include <wtf/TZoneMallocInlines.h>
+
+#if USE(CG)
+#include "UTIRegistry.h"
+#include "UTIUtilities.h"
+#endif
 
 namespace WebCore {
 
@@ -46,39 +59,277 @@ Ref<WebCodecsImageDecoder> WebCodecsImageDecoder::create(ScriptExecutionContext&
     return decoder;
 }
 
-WebCodecsImageDecoder::WebCodecsImageDecoder(ScriptExecutionContext& context, Init&&)
+WebCodecsImageDecoder::WebCodecsImageDecoder(ScriptExecutionContext& context, Init&& init)
     : WebCodecsBase(context)
     , m_completedPromise(makeUniqueRef<CompletedPromise>())
+    , m_tracks(WebCodecsImageTrackList::create())
 {
+    RefPtr<SharedBuffer> buffer;
+
+    // FIXME: Support SharedArrayBuffer.
+    WTF::switchOn(init.data,
+        [&](const Ref<JSC::ArrayBuffer>& data) {
+            if (RefPtr buffer = SharedBuffer::create(data->span()))
+                setInternalDecoderData(*buffer, init.type, true);
+        },
+        [&](const Ref<JSC::ArrayBufferView>& data) {
+            if (RefPtr buffer = SharedBuffer::create(data->span()))
+                setInternalDecoderData(*buffer, init.type, true);
+        },
+        [&](const Ref<ReadableStream>& stream) {
+            sinkStreamToInternalDecoder(stream, init.type);
+        }
+    );
 }
 
 WebCodecsImageDecoder::~WebCodecsImageDecoder() = default;
 
-Ref<WebCodecsImageTrackList> WebCodecsImageDecoder::tracks() const
+void WebCodecsImageDecoder::sinkStreamToInternalDecoder(const Ref<ReadableStream>& stream, const String& type)
 {
-    if (!m_tracks)
-        m_tracks = WebCodecsImageTrackList::create({ WebCodecsImageTrack::create() });
-
-    return *m_tracks;
+    m_sink = ReadableStreamToSharedBufferSink::create([weakThis = ThreadSafeWeakPtr { *this }, type](auto&& result) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        WTF::switchOn(WTF::move(result),
+            [&](std::nullptr_t) {
+                if (RefPtr buffer = protectedThis->m_bufferBuilder.copyBuffer())
+                    protectedThis->setInternalDecoderData(*buffer, type, true);
+            },
+            [&](std::span<const uint8_t>&& chunk) {
+                protectedThis->m_bufferBuilder.append(chunk);
+                if (RefPtr buffer = protectedThis->m_bufferBuilder.copyBuffer())
+                    protectedThis->setInternalDecoderData(*buffer, type, false);
+            },
+            [&](JSC::JSValue) {
+                protectedThis->closeDecoder(Exception { ExceptionCode::AbortError, "ReadableStream cancelled"_s });
+            },
+            [&](Exception&& exception) {
+                protectedThis->closeDecoder(WTF::move(exception));
+            }
+        );
+    });
+    protect(m_sink)->pipeFrom(stream);
 }
 
-ExceptionOr<void> WebCodecsImageDecoder::decode(std::optional<DecodeOptions>&&, Ref<DeferredPromise>&&)
+void WebCodecsImageDecoder::setInternalDecoderData(FragmentedSharedBuffer& buffer, const String& type, bool allDataReceived)
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    if (state() == WebCodecsCodecState::Closed)
+        return;
+
+    if (!m_internalDecoder)
+        m_internalDecoder = ImageDecoder::create(buffer, type, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+
+    if (!m_internalDecoder)
+        return;
+
+    // Set all accumulated encoded data in m_internalDecoder.
+    protect(m_internalDecoder)->setData(buffer, allDataReceived);
+    if (!allDataReceived)
+        return;
+
+    // Now m_internalDecoder has received all data, finish configuring
+    // the state of WebCodecsImageDecoder.
+    establishTrackList();
+    setState(WebCodecsCodecState::Configured);
+    m_completedPromise->resolve();
+
+    // Begin queuing the pending decode requests which were received while
+    // the encoded data was being received.
+    queuePendingDecodeRequests();
+}
+
+void WebCodecsImageDecoder::establishTrackList()
+{
+    ASSERT(m_internalDecoder);
+    ASSERT(!m_tracks->isEstablished());
+
+    // FIXME: Can images can have more than one track?
+    auto frameCount = protect(m_internalDecoder)->frameCount();
+    auto repetitionCount = protect(m_internalDecoder)->repetitionCount();
+    Ref track = WebCodecsImageTrack::create(repetitionCount, frameCount, frameCount > 1, true);
+
+    protect(m_tracks)->setTrackList({ WTF::move(track) });
+}
+
+WorkQueue& WebCodecsImageDecoder::queueSingleton()
+{
+    static NeverDestroyed<Ref<WorkQueue>> workQueue = WorkQueue::create("WebCodecsImageDecoder Work Queue"_s);
+    return workQueue.get();
+}
+
+Ref<WebCodecsImageDecoder::DecodePromise> WebCodecsImageDecoder::createNativeImageAtIndex(size_t frameIndex)
+{
+    if (state() == WebCodecsCodecState::Closed)
+        return DecodePromise::createAndReject();
+
+    ASSERT(m_internalDecoder);
+    return invokeAsync(WebCodecsImageDecoder::queueSingleton(), [decoder = m_internalDecoder, frameIndex] {
+        if (auto result = decoder->createNativeImageAtIndex(frameIndex, SubsamplingLevel::Default, { }))
+            return DecodePromise::createAndResolve(WTF::move(std::get<Ref<NativeImage>>(*result)));
+        return DecodePromise::createAndReject();
+    });
+}
+
+void WebCodecsImageDecoder::fulfillPendingDecodePromises(size_t frameIndex, RefPtr<NativeImage>&& nativeImage)
+{
+    if (state() == WebCodecsCodecState::Closed) {
+        rejectPendingDecodePromises(frameIndex, Exception { ExceptionCode::DataError, "ImageDecoder is closed"_s });
+        return;
+    }
+
+    if (!nativeImage) {
+        rejectPendingDecodePromises(frameIndex, Exception { ExceptionCode::DataError, "Decoding error"_s });
+        return;
+    }
+
+    ASSERT(m_internalDecoder);
+    Ref internalDecoder = *m_internalDecoder;
+
+    IntSize frameSize = internalDecoder->frameSizeAtIndex(frameIndex);
+
+    WebCodecsVideoFrame::Init init {
+        .duration = static_cast<uint64_t>(internalDecoder->frameDurationAtIndex(frameIndex).value()),
+        .timestamp = std::nullopt,
+        .alpha = WebCodecsAlphaOption::Keep,
+        .visibleRect = std::nullopt,
+        .displayWidth = static_cast<size_t>(frameSize.width()),
+        .displayHeight = static_cast<size_t>(frameSize.height())
+    };
+
+    // FIXME: nativeImage should be rotated based on the frame ImageOrientation.
+    auto videoFrame = WebCodecsVideoFrame::create(*protect(scriptExecutionContext()), nativeImage.releaseNonNull(), WTF::move(init));
+    if (videoFrame.hasException()) {
+        rejectPendingDecodePromises(frameIndex, videoFrame.releaseException());
+        return;
+    }
+
+    auto decodeResult = WebCodecsImageDecodeResult { videoFrame.releaseReturnValue(), true };
+    for (auto& promise : m_pendingDecodePromises.take(frameIndex + 1))
+        promise->resolve<IDLDictionary<WebCodecsImageDecodeResult>>(decodeResult);
+}
+
+void WebCodecsImageDecoder::rejectPendingDecodePromises(size_t frameIndex, const Exception& exception)
+{
+    for (auto& promise : m_pendingDecodePromises.take(frameIndex + 1))
+        promise->reject(exception);
+}
+
+void WebCodecsImageDecoder::queueDecodeRequest(std::optional<DecodeOptions>&& options)
+{
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, options = WTF::move(options)]() mutable {
+        protect(scriptExecutionContext())->enqueueTaskWhenSettled(
+            createNativeImageAtIndex(options->frameIndex),
+            TaskSource::MediaElement,
+            [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this), options = WTF::move(options)](auto&& result) {
+                if (RefPtr protectedThis = weakThis.get()) {
+                    if (result.has_value())
+                        protectedThis->fulfillPendingDecodePromises(options->frameIndex, WTF::move(result.value()));
+                    else
+                        protectedThis->fulfillPendingDecodePromises(options->frameIndex, nullptr);
+                }
+        });
+        return WebCodecsControlMessageOutcome::Processed;
+    } });
+}
+
+void WebCodecsImageDecoder::queuePendingDecodeRequests()
+{
+    for (auto frameIndex : m_pendingDecodePromises.keys())
+        queueDecodeRequest(DecodeOptions { frameIndex - 1, true });
+}
+
+void WebCodecsImageDecoder::decode(std::optional<DecodeOptions>&& options, Ref<DeferredPromise>&& promise)
+{
+    // If state is closed, return a Promise rejected.
+    if (state() == WebCodecsCodecState::Closed) {
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "ImageDecoder is closed"_s });
+        return;
+    }
+
+    // If options is undefined, assign a new ImageDecodeOptions to options.
+    if (!options)
+        options = DecodeOptions { };
+
+    // Append promise to the pendingDecodePromises.
+    auto addResult = m_pendingDecodePromises.ensure(options->frameIndex + 1, [] -> Vector<Ref<DeferredPromise>> {
+        return { };
+    });
+
+    addResult.iterator->value.append(WTF::move(promise));
+
+    if (!addResult.isNewEntry)
+        return;
+
+    // Wait for the tracks to be established.
+    if (!m_tracks->isEstablished())
+        return;
+
+    queueDecodeRequest(WTF::move(options));
+}
+
+ExceptionOr<void> WebCodecsImageDecoder::resetDecoder(const Exception& exception)
+{
+    if (state() == WebCodecsCodecState::Closed)
+        return Exception { ExceptionCode::InvalidStateError, "ImageDecoder is closed"_s };
+
+    // Abort any active decoding operation.
+    clearControlMessageQueueAndMaybeScheduleDequeueEvent();
+
+    // Reject pendding decoding promises with exception.
+    auto pendingDecodePromises = std::exchange(m_pendingDecodePromises, { });
+    for (auto& framePromises : pendingDecodePromises.values()) {
+        for (auto& promise : framePromises)
+            promise->reject(exception);
+    }
+
+    return { };
+}
+
+ExceptionOr<void> WebCodecsImageDecoder::closeDecoder(const Exception& exception)
+{
+    // Run Reset ImageDecoder algorithm with exception
+    auto result = resetDecoder(exception);
+    if (result.hasException())
+        return result;
+
+    // Set state to closed.
+    setState(WebCodecsCodecState::Closed);
+
+    // Clear the internal decoder and release associated system resources.
+    m_internalDecoder = nullptr;
+    m_sink = nullptr;
+
+    // Clear the ImageTrackList;
+    protect(m_tracks)->clearTrackList(exception);
+
+    // If completed is not resolved, reject it with exception.
+    if (!m_completedPromise->isFulfilled())
+        m_completedPromise->reject(exception);
+    return { };
 }
 
 ExceptionOr<void> WebCodecsImageDecoder::reset()
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    return resetDecoder(Exception { ExceptionCode::AbortError, "Reset called"_s });
 }
 
 ExceptionOr<void> WebCodecsImageDecoder::close()
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    return closeDecoder(Exception { ExceptionCode::AbortError, "Close called"_s });
 }
 
-void WebCodecsImageDecoder::isTypeSupported(ScriptExecutionContext&, String&&, Ref<DeferredPromise>&&)
+void WebCodecsImageDecoder::isTypeSupported(ScriptExecutionContext&, String&& mimeType, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
+#if USE(CG)
+    bool isTypeSupported = isSupportedImageType(UTIFromMIMEType(mimeType));
+#else
+    bool isTypeSupported = MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
+#endif
+
+    if (isTypeSupported)
+        promise.resolve(true);
+    else
+        promise.reject(Exception { ExceptionCode::TypeError, "Image type is not supported"_s });
 }
 
 void WebCodecsImageDecoder::suspend(ReasonForSuspension)
@@ -87,6 +338,11 @@ void WebCodecsImageDecoder::suspend(ReasonForSuspension)
 
 void WebCodecsImageDecoder::stop()
 {
+    setState(WebCodecsCodecState::Closed);
+    m_internalDecoder = nullptr;
+    m_sink = nullptr;
+    clearControlMessageQueue();
+    m_pendingDecodePromises.clear();
 }
 
 } // namespace WebCore
