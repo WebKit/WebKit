@@ -1,10 +1,10 @@
 
-FAIL random() in function result assert_true: expected true got false
-FAIL random() in function typed result assert_true: expected true got false
-FAIL random() in different function same local name assert_true: expected true got false
-FAIL random() in same function different locals assert_true: expected true got false
-FAIL random() in same registered function same locals different positions assert_true: expected true got false
+PASS random() in function result
+FAIL random() in function typed result assert_false: Random values should not be equal expected false got true
+PASS random() in different function same local name
+PASS random() in same function different locals
+PASS random() in same registered function same locals different positions
 FAIL random() in different function same default locals assert_true: expected true got false
-FAIL random() in function in local overrides argument assert_true: expected true got false
-FAIL random() in function argument assert_true: expected true got false
+FAIL random() in function in local overrides argument assert_false: Random values should not be equal expected false got true
+PASS random() in function argument
 

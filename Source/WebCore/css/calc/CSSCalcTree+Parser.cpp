@@ -668,12 +668,14 @@ static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int 
     if (state.propertyParserState.currentProperty == CSSPropertyInvalid)
         return { };
 
-    // FIXME: Add support for custom properties by including the custom property name in CSS::PropertyParserState for registered properties.
-    if (state.propertyParserState.currentProperty == CSSPropertyCustom)
+    if (state.propertyParserState.randomFunctionsDisallowed)
         return { };
 
     using Op = Random;
 
+    // FIXME: currentProperty is CSSPropertyCustom for every custom property, so an `auto` or
+    // property-scoped key in one collapses all custom properties onto a single base value. The name
+    // needs to be part of the key.
     auto keySource = CSSPropertyParserHelpers::RandomKeySource {
         .property = state.propertyParserState.currentProperty,
         .autoElementScoped = CSS::Keyword::ElementScoped { }

@@ -90,7 +90,7 @@ FAIL Property border-image-slice value 'random(10%, 30%)' assert_true: Computed 
 PASS Property background-color value 'rgb(225, 215, 0, random(30%, 10%))'
 PASS Property font-size value 'random(30%, 10%)'
 FAIL Property font-size value 'random(10px * 10% / 1%, 0%)' assert_true: Random values should be equal expected true got false
-FAIL Property --percent value 'random(10%, 30%)' assert_greater_than_equal: random(10%, 30%) expected a number greater than or equal to 10 but got 3
+PASS Property --percent value 'random(10%, 30%)'
 FAIL Property width value 'random(fixed random(1, 2), 10px, 100px)' assert_true: 'random(fixed random(1, 2), 10px, 100px)' is a supported value for width. expected true got false
 FAIL Property translate value 'random(fixed random(-2, -1), 10%, 100%)' assert_true: 'random(fixed random(-2, -1), 10%, 100%)' is a supported value for translate. expected true got false
 PASS Property color value 'rgb(random(30, 10) random(60, 10) random(90, 10))'
