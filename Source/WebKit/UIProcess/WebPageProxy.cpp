@@ -11583,9 +11583,9 @@ void WebPageProxy::setVirtualWalletBehaviorForTesting(const String& action, cons
 
     settlePendingTestingDigitalCredentialHandler("Virtual wallet behavior replaced."_s);
 
-    // FIXME: Only org-iso-mdoc is supported, so the requested protocol is ignored (webkit.org/b/317545).
-    UNUSED_PARAM(protocol);
-    internals().testingVirtualWalletBehavior = VirtualWalletBehavior { *parsedAction, WebCore::DigitalCredentialPresentationProtocol::OrgIsoMdoc, responseJSON };
+    auto parsedProtocol = WebCore::digitalCredentialPresentationProtocolFromString(protocol).value_or(WebCore::DigitalCredentialPresentationProtocol::OrgIsoMdoc);
+
+    internals().testingVirtualWalletBehavior = VirtualWalletBehavior { *parsedAction, parsedProtocol, responseJSON };
 }
 #endif
 

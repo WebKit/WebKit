@@ -46,6 +46,12 @@ static WebCore::DigitalCredentialPresentationProtocol toPresentationProtocol(Ins
     switch (protocol) {
     case Inspector::Protocol::BidiDigitalCredentials::DigitalCredentialProtocol::OrgIsoMdoc:
         return WebCore::DigitalCredentialPresentationProtocol::OrgIsoMdoc;
+    case Inspector::Protocol::BidiDigitalCredentials::DigitalCredentialProtocol::Openid4vpV1Unsigned:
+        return WebCore::DigitalCredentialPresentationProtocol::Openid4vpV1Unsigned;
+    case Inspector::Protocol::BidiDigitalCredentials::DigitalCredentialProtocol::Openid4vpV1Signed:
+        return WebCore::DigitalCredentialPresentationProtocol::Openid4vpV1Signed;
+    case Inspector::Protocol::BidiDigitalCredentials::DigitalCredentialProtocol::Openid4vpV1Multisigned:
+        return WebCore::DigitalCredentialPresentationProtocol::Openid4vpV1Multisigned;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

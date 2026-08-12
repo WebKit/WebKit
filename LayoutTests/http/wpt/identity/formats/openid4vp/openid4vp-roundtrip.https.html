@@ -1,0 +1,79 @@
+<!-- webkit-test-runner [ DigitalCredentialsOpenID4VPEnabled=true ] -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Digital Credential API: OpenID4VP virtual wallet roundtrip</title>
+<link rel="help" href="https://w3c-fedid.github.io/digital-credentials/" />
+<link rel="author" href="mailto:pascoe@apple.com">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js?feature=bidi"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<body></body>
+<script type="module">
+import { makeGetOptions } from "../ISO18013/support/helper.js";
+
+async function setMockResponse(t, protocol, responseObj) {
+  await test_driver.set_virtual_wallet_behavior("respond", protocol, responseObj);
+  t.add_cleanup(() => test_driver.set_virtual_wallet_behavior("clear"));
+}
+
+promise_test(async (t) => {
+  const responseData = { vp_token: { pid: ["eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJ3YWxsZXQifQ.signature"] } };
+  await setMockResponse(t, "openid4vp-v1-signed", responseData);
+  await test_driver.bless("user activation");
+
+  const options = makeGetOptions({ protocol: "openid4vp-v1-signed" });
+  const result = await navigator.credentials.get(options);
+
+  assert_equals(result.type, "digital");
+  assert_equals(result.protocol, "openid4vp-v1-signed");
+  assert_array_equals(result.data.vp_token.pid, responseData.vp_token.pid);
+}, "openid4vp-v1-signed request: virtual wallet response is passed through with correct protocol and data.");
+
+promise_test(async (t) => {
+  const responseData = { vp_token: { pid: ["eyJhbGciOiJFZERTQSJ9.eyJpc3MiOiJ3YWxsZXQifQ.multisig"] } };
+  await setMockResponse(t, "openid4vp-v1-multisigned", responseData);
+  await test_driver.bless("user activation");
+
+  const options = makeGetOptions({ protocol: "openid4vp-v1-multisigned" });
+  const result = await navigator.credentials.get(options);
+
+  assert_equals(result.type, "digital");
+  assert_equals(result.protocol, "openid4vp-v1-multisigned");
+  assert_array_equals(result.data.vp_token.pid, responseData.vp_token.pid);
+}, "openid4vp-v1-multisigned request: virtual wallet response is passed through with correct protocol and data.");
+
+promise_test(async (t) => {
+  const responseData = { vp_token: { pid: ["mixed-response-token"] } };
+  await setMockResponse(t, "openid4vp-v1-signed", responseData);
+  await test_driver.bless("user activation");
+
+  const options = makeGetOptions({ protocol: ["org-iso-mdoc", "openid4vp-v1-signed"] });
+  const result = await navigator.credentials.get(options);
+
+  assert_equals(result.type, "digital");
+  assert_equals(result.protocol, "openid4vp-v1-signed");
+  assert_array_equals(result.data.vp_token.pid, ["mixed-response-token"]);
+}, "Mixed mdoc + openid4vp-v1-signed request: virtual wallet can respond with a specific protocol.");
+
+promise_test(async (t) => {
+  await test_driver.set_virtual_wallet_behavior("decline");
+  t.add_cleanup(() => test_driver.set_virtual_wallet_behavior("clear"));
+  await test_driver.bless("user activation");
+
+  const options = makeGetOptions({ protocol: "openid4vp-v1-signed" });
+  await promise_rejects_dom(t, "NotAllowedError", navigator.credentials.get(options));
+}, "openid4vp-v1-signed request: virtual wallet decline rejects with NotAllowedError.");
+
+promise_test(async (t) => {
+  await test_driver.set_virtual_wallet_behavior("wait");
+  t.add_cleanup(() => test_driver.set_virtual_wallet_behavior("clear"));
+  await test_driver.bless("user activation");
+
+  const controller = new AbortController();
+  const options = makeGetOptions({ protocol: "openid4vp-v1-signed", signal: controller.signal });
+  const promise = navigator.credentials.get(options);
+  controller.abort();
+  await promise_rejects_dom(t, "AbortError", promise);
+}, "openid4vp-v1-signed request: wait + abort rejects with AbortError.");
+</script>

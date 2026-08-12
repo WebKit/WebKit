@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <optional>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 enum class DigitalCredentialPresentationProtocol : uint8_t {
@@ -33,5 +36,18 @@ enum class DigitalCredentialPresentationProtocol : uint8_t {
     Openid4vpV1Signed,
     Openid4vpV1Multisigned,
 };
+
+inline std::optional<DigitalCredentialPresentationProtocol> digitalCredentialPresentationProtocolFromString(const String& protocol)
+{
+    if (protocol == "org-iso-mdoc"_s)
+        return DigitalCredentialPresentationProtocol::OrgIsoMdoc;
+    if (protocol == "openid4vp-v1-unsigned"_s)
+        return DigitalCredentialPresentationProtocol::Openid4vpV1Unsigned;
+    if (protocol == "openid4vp-v1-signed"_s)
+        return DigitalCredentialPresentationProtocol::Openid4vpV1Signed;
+    if (protocol == "openid4vp-v1-multisigned"_s)
+        return DigitalCredentialPresentationProtocol::Openid4vpV1Multisigned;
+    return std::nullopt;
+}
 
 } // namespace WebCore

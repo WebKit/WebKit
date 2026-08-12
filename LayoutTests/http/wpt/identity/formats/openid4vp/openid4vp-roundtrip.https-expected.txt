@@ -1,0 +1,7 @@
+
+PASS openid4vp-v1-signed request: virtual wallet response is passed through with correct protocol and data.
+PASS openid4vp-v1-multisigned request: virtual wallet response is passed through with correct protocol and data.
+PASS Mixed mdoc + openid4vp-v1-signed request: virtual wallet can respond with a specific protocol.
+PASS openid4vp-v1-signed request: virtual wallet decline rejects with NotAllowedError.
+PASS openid4vp-v1-signed request: wait + abort rejects with AbortError.
+

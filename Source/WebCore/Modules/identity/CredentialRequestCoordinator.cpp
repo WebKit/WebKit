@@ -149,10 +149,11 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
 
     auto validatedCredentialRequests = validatedRequestsOrException.releaseReturnValue();
 
-    // FIXME: validatedCredentialRequests only reflects org-iso-mdoc validation, so this
-    // empty check is correct only while mdoc is the sole supported protocol; account for
-    // other protocols' surviving requests once one is added (webkit.org/b/317545).
-    if (validatedCredentialRequests.isEmpty())
+    bool hasOpenID4VPRequest = unvalidatedRequests.containsIf([](auto& request) {
+        return std::holds_alternative<OpenID4VPSignedRequest>(request)
+            || std::holds_alternative<OpenID4VPMultisignedRequest>(request);
+    });
+    if (validatedCredentialRequests.isEmpty() && !hasOpenID4VPRequest)
         return rejectTheCredentialRequestWith(Exception { ExceptionCode::TypeError, "No valid credential requests remain after validation"_s });
 
     if (signal) {
