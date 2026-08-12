@@ -1345,17 +1345,17 @@ CSSIfFunctionEnabled:
 
 CSSInheritFunctionEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS inherit() function"
   humanReadableDescription: "Enable the CSS Values 5 inherit() function"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSInputSecurityEnabled:
   type: bool
