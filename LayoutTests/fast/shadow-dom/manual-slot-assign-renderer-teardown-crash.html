@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function setup(ghosts, pumps) {
+    const host = document.body.appendChild(document.createElement('div'));
+    const shadowRoot = host.attachShadow({ mode: 'open', slotAssignment: 'manual' });
+
+    const targetSlot = shadowRoot.appendChild(document.createElement('slot'));
+    const otherSlot = shadowRoot.appendChild(document.createElement('slot'));
+    const childA = host.appendChild(document.createElement('span'));
+    const childB = host.appendChild(document.createElement('span'));
+    targetSlot.assign(childA);
+    otherSlot.assign(childB);
+
+    // Insert and remove ghost slots so m_slots accumulates entries whose WeakPtr keys go null after GC.
+    for (let i = 0; i < ghosts; ++i)
+        shadowRoot.appendChild(document.createElement('slot')).remove();
+
+    return { host, targetSlot, pumps };
+}
+
+function trigger({ host, targetSlot, pumps }) {
+    // Advance the WeakHashMap operation counter toward its amortized-cleanup threshold.
+    for (let i = 0; i < pumps; ++i)
+        targetSlot.assignedNodes();
+
+    // Reassigning targetSlot tears down renderers; the composed-tree iterator visits otherSlot,
+    // re-enters assignedNodesForSlot, and may trigger a rehash that frees the bucket array.
+    targetSlot.assign(host.appendChild(document.createElement('span')));
+    host.remove();
+}
+
+// Each case uses its own shadow root (its own m_slots), and GC only nulls the ghost WeakPtr keys
+// without touching the operation counter, so building every case before a single GCController.collect()
+// is equivalent to collecting per case but avoids ~1000 separate full GCs.
+//
+// The reentrant rehash fires when the WeakHashMap operation counter crosses its amortized-cleanup
+// threshold, which is reset to 2 * table size after each cleanup. With ~ghosts entries in the table
+// that threshold sits near 2 * ghosts, so sweep a band of pump counts bracketing it.
+const cases = [];
+for (let ghosts = 20; ghosts <= 100; ghosts += 10)
+    for (let pumps = ghosts; pumps <= ghosts * 3; ++pumps)
+        cases.push(setup(ghosts, pumps));
+
+if (window.GCController)
+    GCController.collect();
+
+// One layout pass gives every host a renderer so tearDownRenderersAfterSlotChange traverses the
+// composed tree. Doing it once up front (rather than per case) avoids O(n^2) relayout, since each
+// host.remove() below would otherwise re-dirty the document for the next case's forced layout.
+document.body.offsetHeight;
+
+for (const testCase of cases)
+    trigger(testCase);
+
+document.body.textContent = 'This test passes if it does not crash.';
+</script>
+</body>
