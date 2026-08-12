@@ -1,6 +1,7 @@
 var localizedStrings = new Object;
 
 localizedStrings[" (Prototype)"] = " (Prototype)";
+localizedStrings[" (initially %s)"] = " (initially %s)";
 localizedStrings[" (line %s)"] = " (line %s)";
 localizedStrings["${expr} = expression"] = "${expr} = expression";
 localizedStrings["% Progress"] = "% Progress";
@@ -1940,10 +1941,10 @@ localizedStrings["Version"] = "Version";
 localizedStrings["Vertex"] = "Vertex";
 localizedStrings["Vertex Shader"] = "Vertex Shader";
 localizedStrings["Vertex/Fragment Shader"] = "Vertex/Fragment Shader";
-localizedStrings["Veryhigh @ Network Priority"] = "VeryHigh";
+localizedStrings["Very high @ Network Priority"] = "Very High";
 /* Energy Impact: Very High */
 localizedStrings["Very High @ Timeline Energy Impact"] = "Very High";
-localizedStrings["Verylow @ Network Priority"] = "VeryLow";
+localizedStrings["Very low @ Network Priority"] = "Very Low";
 /* Title for Video Codec row in Media Sidebar */
 localizedStrings["Video Codec @ Media Sidebar"] = "Video Codec";
 /* Title for Video Details section in Media Sidebar */
