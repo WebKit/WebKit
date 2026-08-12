@@ -37,7 +37,6 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <WebCore/CachedResource.h>
-#include <WebCore/loader/DefaultResourceLoadPriority.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
@@ -55,6 +54,7 @@
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/loader/DefaultResourceLoadPriority.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 
@@ -327,10 +327,11 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     // is based on the resource type rather than whatever the NetworkProcess
     // happened to send (which may reflect the default priority).
     auto mutableMetrics = networkLoadMetrics;
-    if (!mutableMetrics.additionalNetworkLoadMetricsForWebInspector)
+    if (!mutableMetrics.additionalNetworkLoadMetricsForWebInspector) {
         mutableMetrics.additionalNetworkLoadMetricsForWebInspector = AdditionalNetworkLoadMetricsForWebInspector::create(
             WebCore::NetworkLoadPriority::Unknown, WebCore::NetworkLoadPriority::Unknown, String(), String(), String(), String(), WebCore::HTTPHeaderMap(),
             std::numeric_limits<uint64_t>::max(), std::numeric_limits<uint64_t>::max(), std::numeric_limits<uint64_t>::max(), false);
+    }
 
     if (resourceLoader) {
         if (auto* cachedResource = resourceLoader->cachedResource()) {

@@ -41,9 +41,9 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
-#include <WebCore/loader/DefaultResourceLoadPriority.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProcessQualified.h>
+#include <WebCore/loader/DefaultResourceLoadPriority.h>
 #include <tuple>
 #include <utility>
 #include <wtf/Expected.h>
