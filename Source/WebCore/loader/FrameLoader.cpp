@@ -4584,7 +4584,9 @@ bool FrameLoader::dispatchNavigateEvent(FrameLoadType loadType, const FrameLoadR
     if (navigationType == NavigationNavigationType::Traverse)
         return true;
 
-    RefPtr sourceElement = event ? dynamicDowncast<Element>(event->target()) : nullptr;
+    RefPtr sourceElement = request.sourceElement();
+    if (!sourceElement && event)
+        sourceElement = dynamicDowncast<Element>(event->target());
 
     return protect(window->navigation())->dispatchPushReplaceReloadNavigateEvent(newURL, navigationType, isSameDocument, formState, classicHistoryAPIState, sourceElement.get());
 }
