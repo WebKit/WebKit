@@ -27,17 +27,17 @@
 
 #include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class NavigationInterceptHandler : public ThreadSafeRefCounted<NavigationInterceptHandler>, public ActiveDOMCallback {
+class NavigationInterceptHandler : public RefCounted<NavigationInterceptHandler>, public ActiveDOMCallback {
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     // ContextDestructionObserver.
-    void ref() const final { ThreadSafeRefCounted::ref(); }
-    void deref() const final { ThreadSafeRefCounted::deref(); }
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     virtual bool isJSNavigationInterceptHandler() const { return false; }
     virtual CallbackResult<Ref<DOMPromise>> invoke() = 0;
