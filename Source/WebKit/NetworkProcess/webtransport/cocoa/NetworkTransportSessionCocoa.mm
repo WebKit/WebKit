@@ -256,7 +256,10 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
     auto configureTCP = options.requireUnreliable ? NW_PARAMETERS_DISABLE_PROTOCOL : NW_PARAMETERS_DEFAULT_CONFIGURATION;
 
     RetainPtr parameters = adoptNS(nw_parameters_create_webtransport_http(configureWebTransport, configureTLS, configureQUIC, configureTCP));
-    setNWParametersApplicationIdentifiers(parameters.get(), connectionToWebProcess.networkProcess().uiProcessBundleIdentifier().utf8().data(), connectionToWebProcess.networkProcess().sourceApplicationAuditToken(), emptyString());
+    String bundleIdentifier = connectionToWebProcess.networkProcess().uiProcessBundleIdentifier();
+    if (CheckedPtr sessionCocoa = downcast<NetworkSessionCocoa>(connectionToWebProcess.networkProcess().networkSession(connectionToWebProcess.sessionID())))
+        bundleIdentifier = sessionCocoa->sourceApplicationBundleIdentifier();
+    setNWParametersApplicationIdentifiers(parameters.get(), bundleIdentifier.utf8().data(), connectionToWebProcess.networkProcess().sourceApplicationAuditToken(), emptyString());
     bool isTracker = isKnownTracker(WebCore::RegistrableDomain { url });
     bool isFirstParty = WebCore::RegistrableDomain { clientOrigin.clientOrigin } == WebCore::RegistrableDomain { clientOrigin.topOrigin };
     setNWParametersTrackerOptions(parameters.get(), false, isFirstParty, isTracker, IsRTC::No);
