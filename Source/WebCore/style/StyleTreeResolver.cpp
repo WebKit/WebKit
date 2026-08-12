@@ -27,6 +27,7 @@
 #include "StyleTreeResolver.h"
 
 #include "AXObjectCache.h"
+#include "AbstractRange.h"
 #include "AnchorPositionEvaluator.h"
 #include "CSSFontSelector.h"
 #include "CSSPositionTryRule.h"
@@ -46,6 +47,8 @@
 #include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLSlotElement.h"
+#include "Highlight.h"
+#include "HighlightRegistry.h"
 #include "KeyframeEffectStack.h"
 #include "LoaderStrategy.h"
 #include "LocalFrame.h"
@@ -63,6 +66,7 @@
 #include "SelectPopoverElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "SimpleRange.h"
 #include "StyleAdjuster.h"
 #include "StyleBuilder.h"
 #include "StyleComputedStyle+SettersInlines.h"
@@ -79,6 +83,7 @@
 #include "WebAnimationTypes.h"
 #include "WebAnimationUtilities.h"
 #include <ranges>
+#include <wtf/HashSet.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -432,12 +437,30 @@ auto TreeResolver::resolveElement(Element& element, const Style::ComputedStyle* 
         }
     }
 
-    // Highlight pseudo-elements are resolved lazily and have no other resolution trigger.
-    // Re-resolve any that were previously cached.
-    if (existingStyle) {
-        for (auto& [identifier, _] : existingStyle->pseudoElementStyles()) {
-            if (isHighlightPseudoElement(identifier.type))
+    // Highlight pseudo-elements have no selector-based invalidation; cache those covering this element so a change is caught by Style::difference.
+    {
+        HashSet<PseudoElementIdentifier> resolvedHighlightPseudos;
+        auto resolveHighlightPseudoStyle = [&](const PseudoElementIdentifier& identifier) {
+            if (resolvedHighlightPseudos.add(identifier).isNewEntry)
                 resolveAndAddPseudoElementStyle(identifier);
+        };
+
+        if (existingStyle) {
+            for (const auto& identifier : existingStyle->pseudoElementStyles().keys()) {
+                if (isHighlightPseudoElement(identifier.type))
+                    resolveHighlightPseudoStyle(identifier);
+            }
+        }
+
+        if (RefPtr highlightRegistry = m_document->highlightRegistryIfExists()) {
+            Ref protectedElement = element;
+            for (auto& [highlightName, highlight] : highlightRegistry->map()) {
+                bool coversElement = std::ranges::any_of(highlight->highlightRanges(), [&](auto& highlightRange) {
+                    return intersects(makeSimpleRange(highlightRange->range()), protectedElement.get());
+                });
+                if (coversElement)
+                    resolveHighlightPseudoStyle({ PseudoElementType::Highlight, highlightName });
+            }
         }
     }
 

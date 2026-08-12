@@ -844,8 +844,43 @@ public:
         return false;
     }
 
+    // Highlight pseudo-elements have no renderer of their own; the originating element paints them, so a change confined to one must still repaint that element.
+    static bool highlightPseudoStyleRequiresRepaint(const Style::ComputedStyle& a, const Style::ComputedStyle& b)
+    {
+        if (!a.hasPseudoElementStyles() && !b.hasPseudoElementStyles())
+            return false;
+
+        auto highlightPseudoCount = [](const Style::ComputedStyle& style) {
+            unsigned count = 0;
+            for (const auto& identifier : style.pseudoElementStyles().keys()) {
+                if (isHighlightPseudoElement(identifier.type))
+                    ++count;
+            }
+            return count;
+        };
+
+        if (highlightPseudoCount(a) != highlightPseudoCount(b))
+            return true;
+
+        for (const auto& identifier : a.pseudoElementStyles().keys()) {
+            if (!isHighlightPseudoElement(identifier.type))
+                continue;
+            CheckedPtr aStyle = a.pseudoElementStyle(identifier);
+            CheckedPtr bStyle = b.pseudoElementStyle(identifier);
+            if (!aStyle || !bStyle)
+                return true;
+            auto pseudoChangedProperties = OptionSet<DifferenceContextSensitiveProperty>();
+            if (changeRequiresRepaint(*aStyle, *bStyle, pseudoChangedProperties))
+                return true;
+        }
+        return false;
+    }
+
     static bool changeRequiresRepaint(const Style::ComputedStyle& a, const Style::ComputedStyle& b, OptionSet<DifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
     {
+        if (highlightPseudoStyleRequiresRepaint(a, b))
+            return true;
+
         bool currentColorDiffers = a.inheritedData().color != b.inheritedData().color;
 
         if (currentColorDiffers || &a.svgData() != &b.svgData()) {
