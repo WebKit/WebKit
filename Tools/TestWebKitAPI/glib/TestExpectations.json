@@ -409,7 +409,10 @@
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/264505"}}
             },
             "/webkit/WebKitWebProcessExtension/user-messages": {
-                "expected": {"all": {"slow": true, "bug": "webkit.org/b/284812"}}
+                "expected": {
+                    "wpe:arm64": {"status": ["TIMEOUT", "PASS"], "slow": true, "bug": "webkit.org/b/321565"},
+                    "all": {"slow": true, "bug": "webkit.org/b/284812"}
+                }
             },
             "/webkit/WebKitWebView/web-process-crashed": {
                 "expected": {"all": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/297780"}}
