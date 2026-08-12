@@ -172,6 +172,7 @@ static bool isSampleBufferVideoRenderer(id object)
             RetainPtr renderer = (WebSampleBufferVideoRendering *)object;
 
             ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTF::move(renderer), error = WTF::move(error)] {
+                assertIsMainThread();
                 ASSERT(_videoRenderers.contains(renderer.get()));
                 if (RefPtr client = _client.get())
                     client->videoRendererDidReceiveError(renderer.get(), error.get());
@@ -183,6 +184,7 @@ static bool isSampleBufferVideoRenderer(id object)
             RetainPtr renderer = (AVSampleBufferAudioRenderer *)object;
 
             ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTF::move(renderer), error = WTF::move(error)] {
+                assertIsMainThread();
                 ASSERT(_audioRenderers.contains(renderer.get()));
                 if (RefPtr client = _client.get())
                     client->audioRendererDidReceiveError(renderer.get(), error.get());
@@ -199,6 +201,7 @@ static bool isSampleBufferVideoRenderer(id object)
         BOOL isObscured = [[change valueForKey:NSKeyValueChangeNewKey] boolValue];
 
         ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTF::move(renderer), isObscured] {
+            assertIsMainThread();
             ASSERT(_videoRenderers.contains(renderer.get()));
             if (RefPtr client = _client.get())
                 client->outputObscuredDueToInsufficientExternalProtectionChanged(isObscured);
@@ -215,6 +218,7 @@ static bool isSampleBufferVideoRenderer(id object)
     RetainPtr error = dynamic_objc_cast<NSError>([retainPtr(notification.userInfo) valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey]);
 
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTF::move(renderer), error = WTF::move(error)] {
+        assertIsMainThread();
         if (!_videoRenderers.contains(renderer.get()))
             return;
         if (RefPtr client = _client.get())
@@ -228,6 +232,7 @@ static bool isSampleBufferVideoRenderer(id object)
     BOOL requiresFlush = [renderer requiresFlushToResumeDecoding];
 
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTF::move(renderer), requiresFlush] {
+        assertIsMainThread();
         if (!_videoRenderers.contains(renderer.get()))
             return;
         if (RefPtr client = _client.get())
@@ -244,6 +249,7 @@ static bool isSampleBufferVideoRenderer(id object)
     BOOL isReadyForDisplay = [layer isReadyForDisplay];
 
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, layer = WTF::move(layer), isReadyForDisplay] {
+        assertIsMainThread();
         if (!_videoRenderers.contains(layer.get()))
             return;
         if (RefPtr client = _client.get())
@@ -257,6 +263,7 @@ static bool isSampleBufferVideoRenderer(id object)
     CMTime flushTime = [[retainPtr(notification.userInfo) valueForKey:AVSampleBufferAudioRendererFlushTimeKey] CMTimeValue];
 
     ensureOnMainThread([self, protectedSelf = RetainPtr { self }, renderer = WTF::move(renderer), flushTime] {
+        assertIsMainThread();
         if (!_audioRenderers.contains(renderer.get()))
             return;
         if (RefPtr client = _client.get())
