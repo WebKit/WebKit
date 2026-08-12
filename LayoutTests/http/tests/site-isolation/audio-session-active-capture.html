@@ -1,0 +1,27 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+<script>
+description("Under site isolation, capturing microphone audio activates the audio session, and stopping capture deactivates it. The UI process drives capture activation from each web process's capture-source count.");
+jsTestIsAsync = true;
+
+let stream;
+
+onload = async () => {
+    internals.settings.setShouldDeactivateAudioSession(true);
+
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        await waitForAudioSessionActiveState(true);
+        testPassed("the audio session is active once microphone capture starts");
+
+        stream.getTracks().forEach(track => track.stop());
+        await waitForAudioSessionActiveState(false);
+        testPassed("the audio session is inactive once microphone capture stops");
+    } catch (e) {
+        testFailed(e.message);
+    }
+
+    finishJSTest();
+};
+</script>

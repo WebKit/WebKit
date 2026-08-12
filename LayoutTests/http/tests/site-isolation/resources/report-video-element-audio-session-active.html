@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/media-resources/utilities.js"></script>
+<script>
+let video;
+
+window.addEventListener("load", async () => {
+    if (!window.opener || !window.internals)
+        return;
+
+    video = document.querySelector("video");
+    video.src = "/media/resources/test.mp4";
+    video.volume = 0.001;
+    playIgnoringAbort(video);
+
+    let active = true;
+    try {
+        await waitForAudioSessionActiveState(true);
+    } catch (e) {
+        active = false;
+    }
+    window.opener.postMessage({ type: "audioSessionActive", active }, "*");
+});
+</script>
+</head>
+<body>
+<video></video>
+This page plays a near-silent &lt;video&gt; and reports whether its own process's audio session is active to its opener.
+</body>
+</html>

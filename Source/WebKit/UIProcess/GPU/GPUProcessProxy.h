@@ -235,6 +235,10 @@ private:
 #endif
 #endif // ENABLE(MEDIA_STREAM)
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    void audioSessionActiveStateChangedForProcess(WebCore::ProcessIdentifier, bool active);
+#endif
+
     GPUProcessCreationParameters processCreationParameters();
     void platformInitializeGPUProcessParameters(GPUProcessCreationParameters&);
 

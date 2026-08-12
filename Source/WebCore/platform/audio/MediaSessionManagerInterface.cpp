@@ -175,6 +175,24 @@ void MediaSessionManagerInterface::resetRestrictions()
     m_restrictions[indexFromMediaType(PlatformMediaSession::MediaType::DOMMediaSession)] = MediaSessionRestriction::NoRestrictions;
 }
 
+void MediaSessionManagerInterface::resetToConsistentStateForTesting()
+{
+#if ENABLE(VIDEO)
+    resetHaveEverRegisteredAsNowPlayingApplicationForTesting();
+    resetRestrictions();
+    resetSessionState();
+    setWillIgnoreSystemInterruptions(true);
+    applicationWillEnterForeground(false);
+#endif
+    setIsPlayingToAutomotiveHeadUnit(false);
+
+#if USE(AUDIO_SESSION)
+    AudioSession::singleton().setCategoryOverride(AudioSessionCategory::None);
+    AudioSession::singleton().tryToSetActive(false)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
+    AudioSession::singleton().endInterruptionForTesting();
+#endif
+}
+
 bool MediaSessionManagerInterface::isMediaSessionManagerGLib() const
 {
     return false;
@@ -201,7 +219,7 @@ bool MediaSessionManagerInterface::activeAudioSessionRequired() const
 #endif
 }
 
-bool MediaSessionManagerInterface::hasActiveAudioSession() const
+bool MediaSessionManagerInterface::hasActiveAudioSession(PlatformMediaSessionInterface&) const
 {
 #if USE(AUDIO_SESSION)
     return m_becameActive;
@@ -561,7 +579,7 @@ void MediaSessionManagerInterface::sessionWillBeginPlayback(PlatformMediaSession
     }
 #endif
 
-    if (!activeAudioSessionRequired() || m_becameActive) {
+    if (!activeAudioSessionRequired() || hasActiveAudioSession(session)) {
         completeWillBeginPlayback(true);
         return;
     }

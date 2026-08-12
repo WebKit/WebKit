@@ -1,0 +1,12 @@
+Under site isolation, audio played in a cross-site iframe activates the audio session in the iframe's own process. The main frame runs in a separate process that produced no audio, so it does not observe the session as active (own-process attribution).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frameResult is "active"
+PASS event.origin is "http://localhost:8000"
+PASS internals.audioSessionActive() is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
+#include "GPUProcessProxyMessages.h"
 #include "Logging.h"
 #include "RemoteAudioSessionMessages.h"
 #include "RemoteAudioSessionProxyManager.h"
@@ -124,8 +125,16 @@ void RemoteAudioSessionProxy::tryToSetActive(bool active, SetActiveCompletion&& 
 #endif
             }
             completion(success);
-            if (hasActiveChanged && m_gpuConnection.get())
+            if (hasActiveChanged && m_gpuConnection.get()) {
                 configurationChanged();
+                // Also tell the UI-process RemoteMediaSessionManagerProxy singleton (the audio-session
+                // authority under site isolation) this process's active state, so its activation gate uses
+                // the value the GPU process owns rather than one relayed by the untrusted WebContent
+                // process. Guarded by the connection being live: processIdentifier() dereferences it, and
+                // when the process is gone the UI process cleans up via webProcessWillShutDown anyway.
+                if (RefPtr parentConnection = GPUProcess::singleton().parentProcessConnection())
+                    parentConnection->send(Messages::GPUProcessProxy::AudioSessionActiveStateChangedForProcess(processIdentifier(), m_active), 0);
+            }
             manager->updatePresentingProcesses();
             manager->updateSpatialExperience();
         });

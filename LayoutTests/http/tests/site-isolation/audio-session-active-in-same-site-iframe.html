@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Under site isolation, audio played in a same-site iframe activates the audio session; because the iframe shares the main frame's process, the main frame observes the session as active too.");
+jsTestIsAsync = true;
+
+onload = () => {
+    window.onmessage = (event) => {
+        frameResult = event.data;
+        shouldBeEqualToString("frameResult", "active");
+        shouldBeTrue("internals.audioSessionActive()");
+        finishJSTest();
+    };
+    const iframe = document.createElement("iframe");
+    iframe.src = "http://127.0.0.1:8000/site-isolation/resources/audio-session-active-frame.html";
+    document.body.appendChild(iframe);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/media-resources/utilities.js"></script>
+<script>
+let context;
+
+window.addEventListener("load", async () => {
+    if (!window.opener || !window.internals)
+        return;
+
+    context = await startNearSilentAudioContext();
+
+    let active = true;
+    try {
+        await waitForAudioSessionActiveState(true);
+    } catch (e) {
+        active = false;
+    }
+    window.opener.postMessage({ type: "audioSessionActive", active }, "*");
+});
+</script>
+</head>
+<body>
+This page plays near-silent audio and reports whether its own process's audio session is active to its opener.
+</body>
+</html>

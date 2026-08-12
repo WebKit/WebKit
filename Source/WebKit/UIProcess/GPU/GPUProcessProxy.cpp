@@ -39,6 +39,7 @@
 #include "OverrideLanguages.h"
 #include "ProcessTerminationReason.h"
 #include "ProvisionalPageProxy.h"
+#include "RemoteMediaSessionManagerProxy.h"
 #include "SharedFileHandle.h"
 #include "WebKitServiceNames.h"
 #include "WebPageGroup.h"
@@ -894,6 +895,22 @@ void GPUProcessProxy::statusBarWasTapped(CompletionHandler<void()>&& completionH
 }
 #endif
 #endif // ENABLE(MEDIA_STREAM)
+
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+void GPUProcessProxy::audioSessionActiveStateChangedForProcess(WebCore::ProcessIdentifier webProcessIdentifier, bool active)
+{
+    // The GPU process owns each web process's real audio-session active state; forward it to the
+    // UI-process RemoteMediaSessionManagerProxy singleton, which uses it at its activation gate instead
+    // of a value relayed by the (untrusted) WebContent process.
+#if USE(AUDIO_SESSION)
+    if (RefPtr manager = RemoteMediaSessionManagerProxy::singletonIfCreated())
+        manager->setAudioSessionActiveForProcess(webProcessIdentifier, active);
+#else
+    UNUSED_PARAM(webProcessIdentifier);
+    UNUSED_PARAM(active);
+#endif
+}
+#endif
 
 #if HAVE(AUDIT_TOKEN)
 void GPUProcessProxy::setPresentingApplicationAuditToken(WebCore::ProcessIdentifier processIdentifier, WebCore::PageIdentifier pageIdentifier, std::optional<CoreIPCAuditToken> auditToken)

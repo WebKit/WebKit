@@ -140,6 +140,12 @@ MediaSessionManagerGLib::MediaSessionManagerGLib(GRefPtr<GDBusNodeInfo>&& mprisI
 
 MediaSessionManagerGLib::~MediaSessionManagerGLib() = default;
 
+void MediaSessionManagerGLib::resetToConsistentStateForTesting()
+{
+    PlatformMediaSessionManager::resetToConsistentStateForTesting();
+    setDBusNotificationsEnabled(false);
+}
+
 void MediaSessionManagerGLib::beginInterruption(PlatformMediaSession::InterruptionType type)
 {
     if (type == PlatformMediaSession::InterruptionType::SystemInterruption) {

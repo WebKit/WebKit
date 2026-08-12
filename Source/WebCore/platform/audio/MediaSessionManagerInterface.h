@@ -72,7 +72,7 @@ public:
     virtual bool hasNoSession() const;
 
     virtual bool activeAudioSessionRequired() const;
-    virtual bool hasActiveAudioSession() const;
+    virtual bool hasActiveAudioSession(PlatformMediaSessionInterface&) const;
     virtual bool canProduceAudio() const;
 
     virtual void setShouldDeactivateAudioSession(bool should) { m_shouldDeactivateAudioSession = should; };
@@ -96,6 +96,7 @@ public:
     virtual bool registeredAsNowPlayingApplication() const { return false; }
     virtual bool haveEverRegisteredAsNowPlayingApplication() const { return false; }
     virtual void resetHaveEverRegisteredAsNowPlayingApplicationForTesting() { };
+    virtual void resetToConsistentStateForTesting();
 
     virtual bool willIgnoreSystemInterruptions() const { return m_willIgnoreSystemInterruptions; }
     virtual void setWillIgnoreSystemInterruptions(bool ignore) { m_willIgnoreSystemInterruptions = ignore; }
@@ -253,7 +254,9 @@ private:
     bool m_alreadyScheduledSessionStatedUpdate { false };
     bool m_hasScheduledSessionStateUpdate { false };
     mutable bool m_isApplicationInBackground { false };
+#if USE(AUDIO_SESSION)
     bool m_becameActive { false };
+#endif
 };
 
 #if !RELEASE_LOG_DISABLED

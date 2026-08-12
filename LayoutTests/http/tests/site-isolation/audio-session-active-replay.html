@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+<script>
+description("Under site isolation, stopping audio and immediately starting it again re-activates the audio session, without racing the stale in-flight deactivation.");
+jsTestIsAsync = true;
+
+let context;
+
+onload = async () => {
+    try {
+        context = await startNearSilentAudioContext();
+        await waitForAudioSessionActiveState(true);
+        testPassed("the audio session is active");
+
+        // Stop, then immediately replay. close()'s deactivation is still in flight when the new context
+        // starts; the replay must still leave the audio session active rather than have the late
+        // deactivation win.
+        await context.close();
+        context = await startNearSilentAudioContext();
+        await waitForAudioSessionActiveState(true);
+        testPassed("the audio session is active after replay");
+
+        await context.close();
+    } catch (e) {
+        testFailed(e.message);
+    }
+    finishJSTest();
+};
+</script>

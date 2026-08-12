@@ -49,6 +49,8 @@ messages -> RemoteMediaSessionManagerProxy {
 
 #if USE(AUDIO_SESSION)
     void RemoteAudioConfigurationChanged(struct WebKit::RemoteAudioSessionConfiguration configuration);
+    void RemoteProcessWillSuspend();
+    void RemoteProcessDidResume();
 #endif
 }
 

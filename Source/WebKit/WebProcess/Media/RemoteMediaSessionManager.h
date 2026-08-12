@@ -78,7 +78,6 @@ protected:
 #if USE(AUDIO_SESSION)
     void setAudioSessionCategory(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy);
     void setAudioSessionPreferredBufferSize(uint64_t);
-    void tryToSetAudioSessionActive(bool);
 #endif
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -100,6 +99,8 @@ private:
     void sessionWillBeginPlayback(WebCore::PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&) final;
     Ref<GenericPromise> updateSessionState() final;
     void sessionStateChanged(WebCore::PlatformMediaSessionInterface&) final;
+    void processWillSuspend() final;
+    void processDidResume() final;
 
     void addRestriction(WebCore::PlatformMediaSessionMediaType, WebCore::MediaSessionRestrictions) final;
     void removeRestriction(WebCore::PlatformMediaSessionMediaType, WebCore::MediaSessionRestrictions) final;

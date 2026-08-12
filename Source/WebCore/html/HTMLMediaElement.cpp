@@ -6787,7 +6787,7 @@ bool HTMLMediaElement::couldPlayIfEnoughData() const
         return false;
 
     RefPtr manager = sessionManager();
-    if (!canProduceAudio() || (manager && manager->hasActiveAudioSession()))
+    if (!canProduceAudio() || (manager && manager->hasActiveAudioSession(mediaSession())))
         return true;
 
     Ref mediaSession = this->mediaSession();

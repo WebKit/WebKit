@@ -1,0 +1,50 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+</head>
+<body>
+<video></video>
+<script>
+description("Under site isolation, two pages in different processes each playing a video element activate their own audio session; one page being active must not deny the other activation.");
+jsTestIsAsync = true;
+
+let video;
+
+onload = async () => {
+    if (!window.internals) {
+        testFailed("This test requires the Internals API");
+        finishJSTest();
+        return;
+    }
+
+    video = document.querySelector("video");
+    video.src = "/media/resources/test.mp4";
+    video.volume = 0.001;
+    playIgnoringAbort(video);
+    try {
+        await waitForAudioSessionActiveState(true);
+        testPassed("the audio session is active in this page");
+    } catch (e) {
+        testFailed(e.message);
+        finishJSTest();
+        return;
+    }
+
+    window.addEventListener("message", (event) => {
+        messageType = event.data.type;
+        openedPageAudioSessionActive = event.data.active;
+        shouldBeEqualToString("messageType", "audioSessionActive");
+        shouldBeTrue("openedPageAudioSessionActive");
+        openedWindow.close();
+        finishJSTest();
+    }, { once: true });
+
+    // localhost and 127.0.0.1 are different sites, so the opened page runs in a different process.
+    openedWindow = window.open("http://localhost:8000/site-isolation/resources/report-video-element-audio-session-active.html");
+};
+</script>
+</body>
+</html>

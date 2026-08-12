@@ -433,10 +433,6 @@
 #include "NavigatorMediaSession.h"
 #endif
 
-#if ENABLE(MEDIA_SESSION) && USE(GLIB)
-#include "MediaSessionManagerGLib.h"
-#endif
-
 #if ENABLE(IMAGE_ANALYSIS)
 #include "TextRecognitionResult.h"
 #endif
@@ -671,22 +667,17 @@ void Internals::resetToConsistentState(Page& page)
         localMainFrame->editor().toggleOverwriteModeEnabled();
     localMainFrame->loader().clearTestingOverrides();
 
-    RefPtr sessionManager = page.mediaSessionManager();
 #if ENABLE(VIDEO)
     page.group().ensureCaptionPreferences().setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode::ForcedOnly);
     page.group().ensureCaptionPreferences().setCaptionsStyleSheetOverride(emptyString());
     page.group().ensureCaptionPreferences().setPreferredLanguage(emptyString());
 
-    sessionManager->resetHaveEverRegisteredAsNowPlayingApplicationForTesting();
-    sessionManager->resetRestrictions();
-    sessionManager->resetSessionState();
-    sessionManager->setWillIgnoreSystemInterruptions(true);
-    sessionManager->applicationWillEnterForeground(false);
     if (page.mediaPlaybackIsSuspended())
         page.resumeAllMediaPlayback();
 #endif
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    sessionManager->setIsPlayingToAutomotiveHeadUnit(false);
+    if (RefPtr sessionManager = page.mediaSessionManager())
+        sessionManager->resetToConsistentStateForTesting();
 #endif
     AXObjectCache::setEnhancedUserInterfaceAccessibility(false);
     AXObjectCache::disableAccessibilityForTesting();
@@ -765,22 +756,11 @@ void Internals::resetToConsistentState(Page& page)
     WebCore::setContentSizeCategory(kCTFontContentSizeCategoryL);
 #endif
 
-#if ENABLE(MEDIA_SESSION) && USE(GLIB)
-    if (auto* glibSessionManager = dynamicDowncast<MediaSessionManagerGLib>(sessionManager.get()))
-        glibSessionManager->setDBusNotificationsEnabled(false);
-#endif
-
 #if PLATFORM(COCOA)
     setOverrideEnhanceTextLegibility(false);
 #endif
 
     TextPainter::setForceUseGlyphDisplayListForTesting(false);
-
-#if USE(AUDIO_SESSION)
-    AudioSession::singleton().setCategoryOverride(AudioSessionCategory::None);
-    AudioSession::singleton().tryToSetActive(false)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
-    AudioSession::singleton().endInterruptionForTesting();
-#endif
 
 #if ENABLE(DAMAGE_TRACKING)
     page.chrome().client().resetDamageHistoryForTesting();
