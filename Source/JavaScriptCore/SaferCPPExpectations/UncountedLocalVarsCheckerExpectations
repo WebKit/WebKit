@@ -69,7 +69,6 @@ llint/LLIntEntrypoint.cpp
 parser/Lexer.h
 parser/Parser.cpp
 parser/Parser.h
-parser/SourceProviderCacheItem.h
 parser/SourceTaintedOrigin.cpp
 profiler/ProfilerDatabase.cpp
 runtime/CachedTypes.cpp

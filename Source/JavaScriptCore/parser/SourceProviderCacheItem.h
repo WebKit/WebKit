@@ -29,11 +29,11 @@
 #include <JavaScriptCore/ImplementationVisibility.h>
 #include <JavaScriptCore/ParserModes.h>
 #include <JavaScriptCore/ParserTokens.h>
+#include <wtf/PackedRefPtr.h>
+#include <wtf/TrailingArray.h>
 #include <wtf/Vector.h>
 #include <wtf/text/UniquedStringImpl.h>
 #include <wtf/text/WTFString.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
@@ -59,11 +59,12 @@ struct SourceProviderCacheItemCreationParameters {
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem);
-class SourceProviderCacheItem {
+class SourceProviderCacheItem final : public TrailingArray<SourceProviderCacheItem, PackedRefPtr<UniquedStringImpl>> {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem, SourceProviderCacheItem);
 public:
+    using Base = TrailingArray<SourceProviderCacheItem, PackedRefPtr<UniquedStringImpl>>;
+
     static std::unique_ptr<SourceProviderCacheItem> create(const SourceProviderCacheItemCreationParameters&);
-    ~SourceProviderCacheItem();
 
     JSToken endFunctionToken() const 
     {
@@ -102,37 +103,27 @@ public:
     bool taintedByWithScope : 1;
     unsigned lastTokenLineStartOffset : 31;
     bool isBodyArrowExpression : 1;
-    unsigned usedVariablesCount;
     unsigned tokenType : 24; // JSTokenType
     unsigned innerArrowFunctionFeatures : 6; // InnerArrowFunctionCodeFeatures
     unsigned constructorKind : 2; // ConstructorKind
     unsigned implementationVisibility : 2; // ImplementationVisibility
     bool usesImportMeta : 1 { false };
 
-    PackedPtr<UniquedStringImpl>* usedVariables() const { return const_cast<PackedPtr<UniquedStringImpl>*>(m_variables); }
+    std::span<const PackedRefPtr<UniquedStringImpl>> usedVariables() const LIFETIME_BOUND { return span(); }
 
 private:
     SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters&);
-
-    PackedPtr<UniquedStringImpl> m_variables[0];
 };
-
-inline SourceProviderCacheItem::~SourceProviderCacheItem()
-{
-    for (unsigned i = 0; i < usedVariablesCount; ++i)
-        m_variables[i]->deref();
-}
 
 inline std::unique_ptr<SourceProviderCacheItem> SourceProviderCacheItem::create(const SourceProviderCacheItemCreationParameters& parameters)
 {
-    size_t variableCount = parameters.usedVariables.size();
-    size_t objectSize = sizeof(SourceProviderCacheItem) + sizeof(UniquedStringImpl*) * variableCount;
-    void* slot = SourceProviderCacheItemMalloc::malloc(objectSize);
-    return std::unique_ptr<SourceProviderCacheItem>(new (slot) SourceProviderCacheItem(parameters));
+    void* slot = SourceProviderCacheItemMalloc::malloc(Base::allocationSize(parameters.usedVariables.size()));
+    return std::unique_ptr<SourceProviderCacheItem>(new (NotNull, slot) SourceProviderCacheItem(parameters));
 }
 
 inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters& parameters)
-    : needsFullActivation(parameters.needsFullActivation)
+    : Base(parameters.usedVariables.span())
+    , needsFullActivation(parameters.needsFullActivation)
     , endFunctionOffset(parameters.endFunctionOffset)
     , usesEval(parameters.usesEval)
     , lastTokenLine(parameters.lastTokenLine)
@@ -145,7 +136,6 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , taintedByWithScope(parameters.lexicallyScopedFeatures & TaintedByWithScopeLexicallyScopedFeature)
     , lastTokenLineStartOffset(parameters.lastTokenLineStartOffset)
     , isBodyArrowExpression(parameters.isBodyArrowExpression)
-    , usedVariablesCount(parameters.usedVariables.size())
     , tokenType(static_cast<unsigned>(parameters.tokenType))
     , innerArrowFunctionFeatures(static_cast<unsigned>(parameters.innerArrowFunctionFeatures))
     , constructorKind(static_cast<unsigned>(parameters.constructorKind))
@@ -157,13 +147,6 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     ASSERT(constructorKind == static_cast<unsigned>(parameters.constructorKind));
     ASSERT(implementationVisibility == static_cast<unsigned>(parameters.implementationVisibility));
     ASSERT(expectedSuperBinding == static_cast<unsigned>(parameters.expectedSuperBinding));
-    for (unsigned i = 0; i < usedVariablesCount; ++i) {
-        auto* pointer = parameters.usedVariables[i];
-        pointer->ref();
-        m_variables[i] = pointer;
-    }
 }
 
 } // namespace JSC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -877,8 +877,8 @@ public:
         m_needsFullActivation = info->needsFullActivation;
         m_needsSuperBinding = info->needsSuperBinding;
         UniquedStringImplPtrSet& destSet = m_usedVariables.last();
-        for (unsigned i = 0; i < info->usedVariablesCount; ++i)
-            destSet.add(info->usedVariables()[i].get());
+        for (auto& variable : info->usedVariables())
+            destSet.add(variable.get());
     }
 
     class MaybeParseAsGeneratorFunctionForScope;
