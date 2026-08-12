@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Security-Policy" content="trusted-types 'none'; require-trusted-types-for 'script'">
+<body>
+<div id="ed" contenteditable="true">editable target</div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const ed = document.getElementById("ed");
+const logNode = document.getElementById("log");
+
+function log(s) {
+    logNode.textContent += s + "\n";
+}
+
+function tryInsert(commandName) {
+    ed.focus();
+    const range = document.createRange();
+    range.selectNodeContents(ed);
+    range.collapse(false);
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    try {
+        document.execCommand(commandName, false, "<b>test</b>");
+        log(`FAIL: ${commandName} did not throw`);
+    } catch (e) {
+        log(`PASS: ${commandName} threw ${e.name}`);
+    }
+}
+
+tryInsert("insertHTML");
+tryInsert("InsertHTML");
+tryInsert("inserthtml");
+tryInsert("INSERTHTML");
+tryInsert("iNsErThTmL");
+</script>
+</body>
