@@ -858,9 +858,9 @@ static Node::Editability NODELETE computeEditabilityFromComputedStyle(const Styl
     // ContainerNode::setFocus() calls invalidateStyleForSubtree(), so the assertion
     // would fire in the middle of Document::setFocusedElement().
 
-    // Elements with user-select: all style are considered atomic
+    // Elements with -webkit-user-select: all are considered atomic
     // therefore non editable.
-    if (treatment == Node::UserSelectAllTreatment::NotEditable && style.usedUserSelect() == UserSelect::All)
+    if (treatment == Node::UserSelectAllTreatment::NotEditable && style.usedUserSelect() == UserSelect::All && style.hasExplicitlySetWebkitUserSelect())
         return Node::Editability::ReadOnly;
 
     if (pageIsEditable == PageIsEditable::Yes)

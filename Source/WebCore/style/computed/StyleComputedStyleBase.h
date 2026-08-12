@@ -558,6 +558,9 @@ public:
     inline StyleAppearance usedAppearance() const;
     inline void setUsedAppearance(StyleAppearance);
 
+    inline UserSelect usedUserSelectIgnoringEffectivelyInert() const;
+    inline void setUsedUserSelect(UserSelect);
+
     // usedContentVisibility will return ContentVisibility::Hidden in a content-visibility: hidden subtree (overriding
     // content-visibility: auto at all times), ContentVisibility::Auto in a content-visibility: auto subtree (when the
     // content is not user relevant and thus skipped), and ContentVisibility::Visible otherwise.

@@ -12541,14 +12541,14 @@
                 "all"
             ],
             "codegen-properties": {
-                "computed-style-has-explicitly-set-policy": "value-only",
+                "computed-style-has-explicitly-set-policy": "all-author-origin",
                 "computed-style-has-explicitly-set-storage-path": ["m_inheritedRareData"],
                 "computed-style-name-for-methods": "WebkitUserSelect",
                 "computed-style-storage-path": ["m_inheritedRareData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "UserSelect",
                 "parser-grammar": "<<values>>",
-                "comment": "Not an alias of 'user-select': this property is inherited, it overrides 'user-select' whenever it has been specified (hence the has-explicitly-set flag)."
+                "comment": "Not an alias of 'user-select': this property is inherited and, when present, overrides 'user-select' for the entire subtree (see the has-explicitly-set flag)."
             },
             "status": "non-standard"
         },

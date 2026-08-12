@@ -423,6 +423,7 @@ input {
 #endif
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;
+    user-select: text;
     cursor: auto;
 }
 
@@ -592,6 +593,7 @@ input::-webkit-inner-spin-button {
     height: 1.5em;
     flex: none;
     -webkit-user-select: none;
+    user-select: none;
 }
 
 input::-webkit-strong-password-auto-fill-button {
@@ -599,6 +601,7 @@ input::-webkit-strong-password-auto-fill-button {
     font-family: -apple-system !important;
     -webkit-text-security: none !important;
     -webkit-user-select: none !important;
+    user-select: none !important;
     pointer-events: none !important;
     text-align: right !important;
     color: rgba(0, 0, 0, 0.8) !important;
@@ -623,6 +626,7 @@ input::-webkit-credentials-auto-fill-button {
 #endif
     flex: none;
     -webkit-user-select: none;
+    user-select: none;
 }
 
 input::-webkit-credentials-auto-fill-button:hover {
@@ -650,6 +654,7 @@ input::-webkit-contacts-auto-fill-button {
     background-color: black;
     flex: none;
     -webkit-user-select: none;
+    user-select: none;
 }
 
 input::-webkit-contacts-auto-fill-button:hover {
@@ -669,6 +674,7 @@ input::-webkit-credit-card-auto-fill-button {
     background-color: black;
     flex: none;
     -webkit-user-select: none;
+    user-select: none;
 }
 
 input::-webkit-credit-card-auto-fill-button:hover {
@@ -686,6 +692,7 @@ input::-internal-loading-auto-fill-button {
     margin-inline: 3px 2px;
     flex: none;
     -webkit-user-select: none;
+    user-select: none;
 }
 
 input::-webkit-caps-lock-indicator {
@@ -694,6 +701,7 @@ input::-webkit-caps-lock-indicator {
     align-self: stretch;
     flex: none;
     -webkit-user-select: none;
+    user-select: none;
 }
 
 input::-webkit-list-button {
@@ -704,6 +712,7 @@ input::-webkit-list-button {
     align-self: stretch;
     flex: none;
     -webkit-user-select: none;
+    user-select: none;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     /* Make it easier to hit the button on iOS */
     padding: 7px;
@@ -721,6 +730,7 @@ textarea {
     border: 1px solid;
     -webkit-rtl-ordering: logical;
     -webkit-user-select: text;
+    user-select: text;
     padding: 2px;
 #else
     -webkit-nbsp-mode: space;
@@ -777,6 +787,7 @@ input:-webkit-autofill-and-obscured {
 
 input:-webkit-autofill-strong-password {
     -webkit-user-select: none !important;
+    user-select: none !important;
 }
 
 input:-webkit-autofill-strong-password, input:-webkit-autofill-strong-password-viewable {

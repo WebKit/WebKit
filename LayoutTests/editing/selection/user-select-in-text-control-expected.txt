@@ -1,0 +1,47 @@
+
+Verifies the used user-select value for the inner text element of a text control.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The inner text element is editable in a mutable control and read-only in a read-only one.
+PASS innerTextElementContentEditableValue("mutable") is "plaintext-only"
+PASS innerTextElementContentEditableValue("textarea") is "plaintext-only"
+PASS innerTextElementContentEditableValue("readOnly") is "false"
+PASS innerTextElementContentEditableValue("textareaReadOnly") is "false"
+
+By default, a control's value is selectable.
+PASS selectTextIn("mutable") is "mutable"
+PASS selectTextIn("readOnly") is "readOnly"
+PASS selectTextIn("textarea") is "textarea"
+PASS selectTextIn("textareaReadOnly") is "textareaReadOnly"
+
+'none' makes it unselectable, but it is overridden if text is editable
+PASS selectTextIn("prefixedNone") is "prefixedNone"
+PASS selectTextIn("unprefixedNone") is "unprefixedNone"
+PASS selectTextIn("textareaPrefixedNone") is "textareaPrefixedNone"
+PASS selectTextIn("textareaUnprefixedNone") is "textareaUnprefixedNone"
+PASS selectTextIn("readOnlyPrefixedNone") is ""
+PASS selectTextIn("readOnlyUnprefixedNone") is ""
+PASS selectTextIn("textareaReadOnlyPrefixedNone") is ""
+PASS selectTextIn("textareaReadOnlyUnprefixedNone") is ""
+
+By default, a control's value is not atomically selectable (all).
+PASS extendOneCharacterIn("mutable") is "m"
+PASS extendOneCharacterIn("readOnly") is "r"
+PASS extendOneCharacterIn("textarea") is "t"
+PASS extendOneCharacterIn("textareaReadOnly") is "t"
+
+'all' is overridden if editable and unprefixed
+PASS extendOneCharacterIn("prefixedAll") is "prefixedAll"
+PASS extendOneCharacterIn("unprefixedAll") is "u"
+PASS extendOneCharacterIn("textareaPrefixedAll") is "textareaPrefixedAll"
+PASS extendOneCharacterIn("textareaUnprefixedAll") is "t"
+PASS extendOneCharacterIn("readOnlyPrefixedAll") is "readOnlyPrefixedAll"
+PASS extendOneCharacterIn("readOnlyUnprefixedAll") is "readOnlyUnprefixedAll"
+PASS extendOneCharacterIn("textareaReadOnlyPrefixedAll") is "textareaReadOnlyPrefixedAll"
+PASS extendOneCharacterIn("textareaReadOnlyUnprefixedAll") is "textareaReadOnlyUnprefixedAll"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

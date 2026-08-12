@@ -1,0 +1,18 @@
+
+An author's user-select: none should override -webkit-user-select set on the UA's stylesheet.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+A read-only control is selectable by default.
+PASS selectValueOfControl("selectable") is "selectable value"
+
+Setting either spelling of 'user-select: none' on the control makes its value unselectable.
+PASS selectValueOfControl("unprefixedNone") is ""
+PASS selectValueOfControl("prefixedNone") is ""
+PASS selectValueOfControl("textareaUnprefixedNone") is ""
+PASS selectValueOfControl("textareaPrefixedNone") is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

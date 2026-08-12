@@ -184,6 +184,7 @@ public:
     PREFERRED_TYPE(NBSPMode) unsigned nbspMode : 1;
     PREFERRED_TYPE(LineBreak) unsigned lineBreak : 3;
     PREFERRED_TYPE(UserSelect) unsigned webkitUserSelect : 2;
+    PREFERRED_TYPE(UserSelect) unsigned usedUserSelect : 2;
     PREFERRED_TYPE(SpeakAs) unsigned speakAs : 4;
     PREFERRED_TYPE(Hyphens) unsigned hyphens : 2;
     PREFERRED_TYPE(TextCombine) unsigned textCombine : 1;

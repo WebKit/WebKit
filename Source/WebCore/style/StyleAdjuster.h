@@ -53,6 +53,7 @@ public:
     static void adjustFromBuilder(Style::ComputedStyle&);
     void adjust(Style::ComputedStyle&) const;
     void adjustAnimatedStyle(Style::ComputedStyle&, OptionSet<AnimationImpact>) const;
+    void adjustUsedUserSelect(Style::ComputedStyle&) const;
 
     static void adjustVisibilityForPseudoElement(Style::ComputedStyle&, const Element& host);
     static void NODELETE adjustFirstLetterStyle(Style::ComputedStyle&);

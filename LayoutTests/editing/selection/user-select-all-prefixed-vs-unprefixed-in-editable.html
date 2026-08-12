@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="prefixedHost" contenteditable>before <span id="prefixedSpan" style="-webkit-user-select: all; font-weight: bold;">ATOMIC</span> after</div>
+<div id="unprefixedHost" contenteditable>before <span id="unprefixedSpan" style="user-select: all; font-weight: bold;">ATOMIC</span> after</div>
+
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("'-webkit-user-select: all' overrides contenteditable, while 'user-select: all' is overridden by it'");
+
+var prefixedAcceptedTyping;
+var unprefixedAcceptedTyping;
+
+// Places the caret immediately before the span, then extends forward by one character:
+function extendIntoSpan(hostId)
+{
+    const leadingText = document.getElementById(hostId).firstChild;
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.setPosition(leadingText, leadingText.length);
+    selection.modify("extend", "forward", "character");
+    const result = selection.toString();
+    selection.removeAllRanges();
+    return result;
+}
+
+// Places the caret inside the span, then types a character there:
+function typedTextLandsInSpan(hostId, spanId)
+{
+    document.getElementById(hostId).focus();
+
+    const span = document.getElementById(spanId);
+    getSelection().setPosition(span.firstChild, 3);
+    document.execCommand("insertText", false, "x");
+    return span.textContent === 'ATOxMIC';
+}
+
+debug("");
+debug("Prefixed: '-webkit-user-select: all' overrides editable behavior - the span is atomic.");
+shouldBeEqualToString('extendIntoSpan("prefixedHost")', "ATOMIC");
+
+debug("");
+debug("Unprefixed: 'user-select: all' is overridden on editable content, so the span is not atomic.");
+shouldBeEqualToString('extendIntoSpan("unprefixedHost")', "A");
+
+debug("");
+debug("Both report isContentEditable.");
+shouldBeTrue('document.getElementById("prefixedSpan").isContentEditable');
+shouldBeTrue('document.getElementById("unprefixedSpan").isContentEditable');
+
+debug("");
+debug("Inserting text at the caret: only the overridden span accepts the character.");
+prefixedAcceptedTyping = typedTextLandsInSpan("prefixedHost", "prefixedSpan");
+unprefixedAcceptedTyping = typedTextLandsInSpan("unprefixedHost", "unprefixedSpan");
+shouldBeFalse('prefixedAcceptedTyping');
+shouldBeTrue('unprefixedAcceptedTyping');
+</script>
+</body>
+</html>

@@ -35,6 +35,7 @@
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
+#import <WebKit/WKString.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -67,6 +68,7 @@ static RetainPtr<NSAttributedString> copyAttributedStringFromHTML(NSString *html
 
     auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
     WKPreferencesSetWriteRichTextDataWhenCopyingOrDragging(preferences, true);
+    WKPreferencesSetBoolValueForKeyForTesting(preferences, true, WKStringCreateWithUTF8CString("CSSUserSelectEnabled"));
 
     if (forceDarkMode)
         [webView forceDarkMode];
@@ -175,6 +177,36 @@ TEST(CopyRTF, StripsUserSelectNone)
         "<div style='-webkit-user-select: none; user-select: none;'>some<br>user-select-none<br>content</div><span inert>foo </span>bar", false);
 
     EXPECT_WK_STREQ([attributedString string].UTF8String, "hello WebKit bar");
+}
+
+TEST(CopyRTF, StripUnprefixedUserSelectInsideNone)
+{
+    auto attributedString = copyAttributedStringFromHTML(@"hello <span style='user-select: none;'>world "
+        "<span style='user-select: auto;'>WebKit </span>really "
+        "<span style='user-select: initial;'>rocks </span></span>bar", false);
+
+    EXPECT_WK_STREQ([attributedString string].UTF8String, "hello bar");
+}
+
+TEST(CopyRTF, DoNotStripExplicitlySetWebkitUserSelectInsideNone)
+{
+    // Unlike the unprefixed version, -webkit-user-select set to auto/initial will not
+    // pick up the surrounding 'none' since inheritance does not occur
+    auto attributedString = copyAttributedStringFromHTML(@"hello <span style='-webkit-user-select: none;'>world "
+        "<span style='-webkit-user-select: auto;'>WebKit </span>really "
+        "<span style='-webkit-user-select: initial;'>rocks </span></span>bar", false);
+
+    EXPECT_WK_STREQ([attributedString string].UTF8String, "hello WebKit rocks bar");
+}
+
+TEST(CopyRTF, StripAccordingToPrefixedWebkitUserSelect)
+{
+    // When both are present, prefixed (-webkit-user-select) behavior wins:
+    auto attributedString = copyAttributedStringFromHTML(@"hello <span style='-webkit-user-select: none; user-select: none;'>world "
+        "<span style='-webkit-user-select: auto; user-select: auto;'>WebKit </span>really "
+        "<span style='-webkit-user-select: initial; user-select: initial;'>rocks </span></span>bar", false);
+
+    EXPECT_WK_STREQ([attributedString string].UTF8String, "hello WebKit rocks bar");
 }
 
 TEST(CopyRTF, StripsUserSelectNoneQuirks)

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="selectable" readonly value="selectable value">
+<input id="unprefixedNone" readonly value="unprefixed value" style="user-select: none">
+<input id="prefixedNone" readonly value="prefixed value" style="-webkit-user-select: none">
+<textarea id="textareaUnprefixedNone" readonly style="user-select: none">unprefixed textarea</textarea>
+<textarea id="textareaPrefixedNone" readonly style="-webkit-user-select: none">prefixed textarea</textarea>
+
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("An author's user-select: none should override -webkit-user-select set on the UA's stylesheet.");
+
+// Selects a control's whole value through the document selection and returns the text that ended up
+// selected. The value lives in a text node inside the control's user agent shadow tree, so internals
+// is needed to reach it. Unselectable endpoints do not survive canonicalization, and unselectable
+// content is skipped when the selection is stringified, so 'none' yields the empty string. Each
+// control has a distinct value so that a canonicalized endpoint landing outside cannot pass.
+function selectValueOfControl(id)
+{
+    const innerText = internals.shadowRoot(document.getElementById(id)).querySelector("div[contenteditable]").firstChild;
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.setBaseAndExtent(innerText, 0, innerText, innerText.length);
+    const result = selection.toString();
+    selection.removeAllRanges();
+    return result;
+}
+
+debug("");
+debug("A read-only control is selectable by default.");
+shouldBeEqualToString('selectValueOfControl("selectable")', "selectable value");
+
+debug("");
+debug("Setting either spelling of 'user-select: none' on the control makes its value unselectable.");
+shouldBeEqualToString('selectValueOfControl("unprefixedNone")', "");
+shouldBeEqualToString('selectValueOfControl("prefixedNone")', "");
+shouldBeEqualToString('selectValueOfControl("textareaUnprefixedNone")', "");
+shouldBeEqualToString('selectValueOfControl("textareaPrefixedNone")', "");
+</script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- A text control's value is rendered by shadow dom elements that do not go through regular
+     style cascade/adjusting. This can cause problems for used user-select, so its behavior
+     is tested independently here. -->
+
+<input id="mutable" value="mutable">
+<input id="readOnly" readonly value="readOnly">
+<textarea id="textarea">textarea</textarea>
+<textarea id="textareaReadOnly" readonly>textareaReadOnly</textarea>
+
+<input id="prefixedNone" value="prefixedNone" style="-webkit-user-select: none">
+<input id="unprefixedNone" value="unprefixedNone" style="user-select: none">
+<textarea id="textareaPrefixedNone" style="-webkit-user-select: none">textareaPrefixedNone</textarea>
+<textarea id="textareaUnprefixedNone" style="user-select: none">textareaUnprefixedNone</textarea>
+
+<input id="readOnlyPrefixedNone" readonly value="readOnlyPrefixedNone" style="-webkit-user-select: none">
+<input id="readOnlyUnprefixedNone" readonly value="readOnlyUnprefixedNone" style="user-select: none">
+<textarea id="textareaReadOnlyPrefixedNone" readonly style="-webkit-user-select: none">textareaReadOnlyPrefixedNone</textarea>
+<textarea id="textareaReadOnlyUnprefixedNone" readonly style="user-select: none">textareaReadOnlyUnprefixedNone</textarea>
+
+<input id="prefixedAll" value="prefixedAll" style="-webkit-user-select: all">
+<input id="unprefixedAll" value="unprefixedAll" style="user-select: all">
+<textarea id="textareaPrefixedAll" style="-webkit-user-select: all">textareaPrefixedAll</textarea>
+<textarea id="textareaUnprefixedAll" style="user-select: all">textareaUnprefixedAll</textarea>
+
+<input id="readOnlyPrefixedAll" readonly value="readOnlyPrefixedAll" style="-webkit-user-select: all">
+<input id="readOnlyUnprefixedAll" readonly value="readOnlyUnprefixedAll" style="user-select: all">
+<textarea id="textareaReadOnlyPrefixedAll" readonly style="-webkit-user-select: all">textareaReadOnlyPrefixedAll</textarea>
+<textarea id="textareaReadOnlyUnprefixedAll" readonly style="user-select: all">textareaReadOnlyUnprefixedAll</textarea>
+
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Verifies the used user-select value for the inner text element of a text control.");
+
+function innerTextElementContentEditableValue(id)
+{
+    return internals.shadowRoot(document.getElementById(id))
+      .querySelector("div[contenteditable]")
+      .getAttribute("contenteditable");
+}
+
+function selectTextIn(id)
+{
+    const innerText = internals.shadowRoot(document.getElementById(id)).querySelector("div[contenteditable]").firstChild;
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.setBaseAndExtent(innerText, 0, innerText, innerText.length);
+    return selection.toString();
+}
+
+function extendOneCharacterIn(id)
+{
+    const innerText = internals.shadowRoot(document.getElementById(id)).querySelector("div[contenteditable]").firstChild;
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.setPosition(innerText, 0);
+    selection.modify("extend", "forward", "character");
+    return selection.toString();
+}
+
+debug("");
+debug("The inner text element is editable in a mutable control and read-only in a read-only one.");
+shouldBeEqualToString('innerTextElementContentEditableValue("mutable")', "plaintext-only");
+shouldBeEqualToString('innerTextElementContentEditableValue("textarea")', "plaintext-only");
+shouldBeEqualToString('innerTextElementContentEditableValue("readOnly")', "false");
+shouldBeEqualToString('innerTextElementContentEditableValue("textareaReadOnly")', "false");
+
+debug("");
+debug("By default, a control's value is selectable.");
+shouldBeEqualToString('selectTextIn("mutable")', "mutable");
+shouldBeEqualToString('selectTextIn("readOnly")', "readOnly");
+shouldBeEqualToString('selectTextIn("textarea")', "textarea");
+shouldBeEqualToString('selectTextIn("textareaReadOnly")', "textareaReadOnly");
+
+debug("");
+debug("'none' makes it unselectable, but it is overridden if text is editable");
+shouldBeEqualToString('selectTextIn("prefixedNone")', "prefixedNone");
+shouldBeEqualToString('selectTextIn("unprefixedNone")', "unprefixedNone");
+shouldBeEqualToString('selectTextIn("textareaPrefixedNone")', "textareaPrefixedNone");
+shouldBeEqualToString('selectTextIn("textareaUnprefixedNone")', "textareaUnprefixedNone");
+shouldBeEqualToString('selectTextIn("readOnlyPrefixedNone")', "");
+shouldBeEqualToString('selectTextIn("readOnlyUnprefixedNone")', "");
+shouldBeEqualToString('selectTextIn("textareaReadOnlyPrefixedNone")', "");
+shouldBeEqualToString('selectTextIn("textareaReadOnlyUnprefixedNone")', "");
+
+debug("");
+debug("By default, a control's value is not atomically selectable (all).");
+shouldBeEqualToString('extendOneCharacterIn("mutable")', 'm');
+shouldBeEqualToString('extendOneCharacterIn("readOnly")', 'r');
+shouldBeEqualToString('extendOneCharacterIn("textarea")', 't');
+shouldBeEqualToString('extendOneCharacterIn("textareaReadOnly")', 't');
+
+debug("");
+debug("'all' is overridden if editable and unprefixed");
+shouldBeEqualToString('extendOneCharacterIn("prefixedAll")', "prefixedAll");
+shouldBeEqualToString('extendOneCharacterIn("unprefixedAll")', "u");
+shouldBeEqualToString('extendOneCharacterIn("textareaPrefixedAll")', "textareaPrefixedAll");
+shouldBeEqualToString('extendOneCharacterIn("textareaUnprefixedAll")', "t");
+shouldBeEqualToString('extendOneCharacterIn("readOnlyPrefixedAll")', "readOnlyPrefixedAll");
+shouldBeEqualToString('extendOneCharacterIn("readOnlyUnprefixedAll")', "readOnlyUnprefixedAll");
+shouldBeEqualToString('extendOneCharacterIn("textareaReadOnlyPrefixedAll")', "textareaReadOnlyPrefixedAll");
+shouldBeEqualToString('extendOneCharacterIn("textareaReadOnlyUnprefixedAll")', "textareaReadOnlyUnprefixedAll");
+
+</script>
+</body>
+</html>
