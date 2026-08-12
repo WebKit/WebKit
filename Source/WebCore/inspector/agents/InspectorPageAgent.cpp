@@ -78,6 +78,7 @@
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/RegularExpression.h>
+#include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -684,12 +685,14 @@ void InspectorPageAgent::searchInResources(const String& text, std::optional<boo
     auto regex = ContentSearchUtilities::createRegularExpressionForString(text, searchType, searchCaseSensitive);
 
     // FIXME: rework this frame tree traversal as it won't work with Site Isolation enabled.
+    HashSet<String> searchedURLs;
     for (RefPtr frame = &m_inspectedPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
         for (RefPtr cachedResource : ResourceUtilities::cachedResourcesForFrame(localFrame.get())) {
             if (auto textContent = ResourceUtilities::textContentForCachedResource(*cachedResource)) {
+                searchedURLs.add(cachedResource->url().string());
                 int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, *textContent);
                 if (matchesCount)
                     result->addItem(buildObjectForSearchResult(frameId(localFrame.get()), cachedResource->url().string(), matchesCount));
@@ -698,7 +701,7 @@ void InspectorPageAgent::searchInResources(const String& text, std::optional<boo
     }
 
     if (CheckedPtr networkAgent = Ref { m_instrumentingAgents.get() }->enabledNetworkAgent())
-        networkAgent->searchOtherRequests(regex, result);
+        networkAgent->searchOtherRequests(regex, result, searchedURLs);
 
     callback->sendSuccess(WTF::move(result));
 }

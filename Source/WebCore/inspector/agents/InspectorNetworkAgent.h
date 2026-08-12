@@ -43,6 +43,7 @@
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -139,7 +140,7 @@ public:
     void interceptResponse(const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
     void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
 
-    void searchOtherRequests(const JSC::Yarr::RegularExpression&, Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&);
+    void searchOtherRequests(const JSC::Yarr::RegularExpression&, Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>&, const HashSet<String>& alreadySearchedURLs);
     void searchInRequest(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::RequestId&, const String& query, bool caseSensitive, bool isRegex, RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>>&);
 
 protected:

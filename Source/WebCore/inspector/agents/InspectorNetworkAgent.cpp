@@ -1385,10 +1385,13 @@ static std::optional<String> textContentForResourceData(const NetworkResourcesDa
     return std::nullopt;
 }
 
-void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpression& regex, Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>& result)
+void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpression& regex, Ref<JSON::ArrayOf<Inspector::Protocol::Page::SearchResult>>& result, const HashSet<String>& alreadySearchedURLs)
 {
     Vector<NetworkResourcesData::ResourceData*> resources = m_resourcesData->resources();
     for (auto* resourceData : resources) {
+        // Skip resources already reported by the page agent's cached-resource search to avoid duplicate results.
+        if (alreadySearchedURLs.contains(resourceData->url()))
+            continue;
         if (auto textContent = textContentForResourceData(*resourceData)) {
             int matchesCount = ContentSearchUtilities::countRegularExpressionMatches(regex, *textContent);
             if (matchesCount)
