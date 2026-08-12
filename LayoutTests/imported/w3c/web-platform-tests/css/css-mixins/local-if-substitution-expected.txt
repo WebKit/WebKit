@@ -13,10 +13,14 @@ PASS if() cycle in condition specified value through local
 PASS if() cycle through function
 PASS if() no cycle in overridden local
 PASS if() no cycle in overridden argument
-FAIL CSS-wide keywords are interpreted locally (initial) assert_equals: expected "PASS" but got "FAIL"
+PASS CSS-wide keywords are interpreted locally (initial)
 PASS CSS-wide keywords are interpreted locally (inherit)
 PASS CSS-wide keywords are interpreted locally (guaranteed-invalid, initial)
 PASS CSS-wide keywords are interpreted locally (guaranteed-invalid, unset)
 PASS CSS-wide keywords are interpreted locally (revert)
 PASS CSS-wide keywords are interpreted locally (revert-layer)
+PASS Local shadows a registered custom property in if() condition
+PASS Parameter shadows a registered custom property in if() condition
+PASS Local shadows a registered custom property left at its initial value
+PASS A name the function does not declare keeps the registration
 

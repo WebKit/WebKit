@@ -46,6 +46,7 @@
 #include "CSSLightDarkImageValue.h"
 #include "CSSNamedImageValue.h"
 #include "CSSPaintImageValue.h"
+#include "CSSParserIdioms.h"
 #include "DocumentInlines.h"
 #include "DocumentView.h"
 #include "ElementInlines.h"
@@ -92,8 +93,17 @@ BuilderState::BuilderState(ComputedStyle& style, BuilderContext&& context)
 
 const CSSRegisteredCustomProperty* BuilderState::registeredProperty(const AtomString& name) const
 {
-    if (m_context.localPropertyRegistry)
-        return m_context.localPropertyRegistry->get(name);
+    // "Only the custom property registrations in registrations are visible" covers the names a custom
+    // function introduces. A name it does not introduce arrives by inheritance carrying the calling
+    // element's computed value, so it keeps the document registration.
+    // https://drafts.csswg.org/css-mixins/#resolve-function-styles
+    if (m_context.localPropertyRegistry) {
+        if (auto* local = m_context.localPropertyRegistry->get(name))
+            return local;
+        // The result descriptor is never registered document-wide.
+        if (!isCustomPropertyName(name))
+            return nullptr;
+    }
     return document().customPropertyRegistry().get(name);
 }
 

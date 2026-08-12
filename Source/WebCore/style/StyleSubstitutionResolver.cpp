@@ -568,6 +568,21 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
         return mutableProperties;
     }();
 
+    // A local is not the document-registered property of the same name, so registering it as universal
+    // keeps it untyped. A parameter keeps its own registration, whose initial value is the argument.
+    for (auto property : bodyProperties.get()) {
+        if (property.id() != CSSPropertyCustom)
+            continue;
+        auto& name = downcast<CSSCustomPropertyValue>(*property.value()).name();
+        if (registrations.get(name))
+            continue;
+        registrations.add({
+            .name = name,
+            .syntax = CSSCustomPropertySyntax::universal(),
+            .inherits = true,
+        });
+    }
+
     auto bodyMatchResult = MatchResult::create();
     bodyMatchResult->authorDeclarations.append({ *resolvedArgumentProperties });
     bodyMatchResult->authorDeclarations.append({ .properties = bodyProperties, .styleScopeOrdinal = foundScopeOrdinal });

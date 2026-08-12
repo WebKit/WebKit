@@ -6,4 +6,5 @@ FAIL A parameter type acts as a local registration (parent stack frame) assert_e
 PASS Universally typed parameter can shadow other parameters
 FAIL Invalid value for typed local becomes IACVT assert_equals: expected "PASS" but got "3"
 PASS if() within @function can query registered custom property
+PASS A local is untyped even where a registration of the same name exists
 

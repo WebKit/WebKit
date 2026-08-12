@@ -56,6 +56,7 @@
 #include "StyleCustomPropertyData.h"
 #include "StyleCustomPropertyRegistry.h"
 #include "StyleFontSizeFunctions.h"
+#include "StyleLocalPropertyRegistry.h"
 #include "StylePropertyShorthand.h"
 #include "StyleSubstitutionResolver.h"
 #include <wtf/SetForScope.h>
@@ -253,7 +254,8 @@ void Builder::applyCustomPropertyFromCallingContext(const AtomString& name)
     auto* callingContextBuilder = m_state->callingContextBuilder();
     ASSERT(callingContextBuilder);
 
-    if (m_state->registeredProperty(name))
+    auto* localRegistry = m_state->localPropertyRegistry();
+    if (localRegistry && localRegistry->get(name))
         applyCustomProperty(name, CSSWideKeyword::Initial);
     else {
         callingContextBuilder->applyCustomProperty(name);

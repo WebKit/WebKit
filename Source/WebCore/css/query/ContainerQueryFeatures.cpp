@@ -49,6 +49,7 @@
 #include "StyleBuilder.h"
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyRegistry.h"
+#include "StyleLocalPropertyRegistry.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleZoomPrimitivesInlines.h"
@@ -270,6 +271,15 @@ struct StyleFeatureSchema : public FeatureSchema {
     {
     }
 
+    // The compared value needs the same registrations as the queried property, or a shadowed
+    // registration compares a token stream against a typed value.
+    // https://drafts.csswg.org/css-mixins/#resolve-function-styles
+    static const Style::LocalPropertyRegistry* localPropertyRegistry(const FeatureEvaluationContext& context)
+    {
+        CheckedPtr builderState = context.conversionData.styleBuilderState();
+        return builderState ? builderState->localPropertyRegistry() : nullptr;
+    }
+
     // FeatureSchema conformance
 
     EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
@@ -294,7 +304,8 @@ struct StyleFeatureSchema : public FeatureSchema {
                 .document = context.document.get(),
                 .parentStyle = context.conversionData.parentStyle(),
                 .rootElementStyle = context.conversionData.rootStyle(),
-                .element = context.conversionData.elementForContainerUnitResolution()
+                .element = context.conversionData.elementForContainerUnitResolution(),
+                .localPropertyRegistry = localPropertyRegistry(context)
             };
 
             auto dummyStyle = Style::ComputedStyle::clone(style);
@@ -329,7 +340,8 @@ struct StyleFeatureSchema : public FeatureSchema {
                     .document = context.document.get(),
                     .parentStyle = context.conversionData.parentStyle(),
                     .rootElementStyle = context.conversionData.rootStyle(),
-                    .element = context.conversionData.elementForContainerUnitResolution()
+                    .element = context.conversionData.elementForContainerUnitResolution(),
+                    .localPropertyRegistry = localPropertyRegistry(context)
                 };
                 dummyStyle = Style::ComputedStyle::clonePtr(style);
                 dummyMatchResult = Style::MatchResult::create();

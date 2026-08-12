@@ -142,6 +142,9 @@ public:
 
     const CSSRegisteredCustomProperty* registeredProperty(const AtomString&) const;
 
+    // The registrations of the custom function being evaluated, if any. These shadow the document's.
+    const LocalPropertyRegistry* localPropertyRegistry() const { return m_context.localPropertyRegistry; }
+
     inline void setZoom(Zoom);
     inline void setUsedZoom(float);
     inline void setWritingMode(StyleWritingMode);
