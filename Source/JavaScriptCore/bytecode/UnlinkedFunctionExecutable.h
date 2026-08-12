@@ -83,9 +83,13 @@ public:
 
     ~UnlinkedFunctionExecutable();
 
-    const Identifier& name() const { return m_name; }
+    const Identifier& name() const;
     const Identifier& ecmaName() const { return m_ecmaName; }
-    void setEcmaName(const Identifier& name) { m_ecmaName = name; }
+    void setEcmaName(const Identifier& name)
+    {
+        ASSERT(!m_hasName || name == m_ecmaName);
+        m_ecmaName = name;
+    }
     unsigned parameterCount() const { return m_parameterCount; }; // Excluding 'this'!
     SourceParseMode parseMode() const { return static_cast<SourceParseMode>(m_sourceParseMode); };
 
@@ -176,12 +180,7 @@ public:
     }
     bool isBuiltinDefaultClassConstructor() const { return m_isBuiltinDefaultClassConstructor; }
 
-    RefPtr<TDZEnvironmentLink> parentScopeTDZVariables() const
-    {
-        if (!m_rareData)
-            return nullptr;
-        return m_rareData->m_parentScopeTDZVariables;
-    }
+    RefPtr<TDZEnvironmentLink> parentScopeTDZVariables() const { return m_parentScopeTDZVariables; }
 
     const FixedVector<Identifier>* generatorOrAsyncWrapperFunctionParameterNames() const
     {
@@ -252,7 +251,6 @@ public:
         SourceCode m_classSource;
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;
-        RefPtr<TDZEnvironmentLink> m_parentScopeTDZVariables;
         FixedVector<Identifier> m_generatorOrAsyncWrapperFunctionParameterNames;
         FixedVector<ClassElementDefinition> m_classElementDefinitions;
         PrivateNameEnvironment m_parentPrivateNameEnvironment;
@@ -319,6 +317,7 @@ private:
     uint8_t m_derivedContextType : 2;
     uint8_t m_inlineAttribute : 1;
     uint8_t m_evalContextType : 2;
+    uint8_t m_hasName : 1;
 
     union {
         WriteBarrier<UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
@@ -333,8 +332,8 @@ private:
         };
     };
 
-    Identifier m_name;
     Identifier m_ecmaName;
+    RefPtr<TDZEnvironmentLink> m_parentScopeTDZVariables;
 
     RareData& ensureRareData()
     {
