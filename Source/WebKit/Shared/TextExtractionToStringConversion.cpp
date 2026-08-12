@@ -2095,6 +2095,98 @@ static bool childTextNodeIsRedundant(const TextExtractionAggregator& aggregator,
     return false;
 }
 
+static bool isUninformativeImage(const TextExtraction::Item& item, const TextExtraction::Item& parent, const TextExtraction::Item* previousSibling, const TextExtractionAggregator& aggregator)
+{
+    if (!aggregator.useTextTreeOutput())
+        return false;
+
+    auto* imageData = std::get_if<TextExtraction::ImageItemData>(&item.data);
+    if (!imageData)
+        return false;
+
+    if (!imageData->altText.isEmpty())
+        return false;
+
+    if (!imageData->completedSource.isEmpty() && aggregator.includeURLs())
+        return false;
+
+    if (!item.children.isEmpty() || !item.accessibilityRole.isEmpty() || !item.title.isEmpty())
+        return false;
+
+    bool hasEmittedAriaAttribute = std::ranges::any_of(item.ariaAttributes, [](auto& entry) {
+        return entry.value != "false"_s;
+    });
+    if (hasEmittedAriaAttribute || !item.clientAttributes.isEmpty())
+        return false;
+
+    if (!item.classNames.isEmpty() || !item.idAttribute.isEmpty())
+        return false;
+
+    if (shouldEmitClickableToken(item))
+        return false;
+
+    static constexpr auto actionableRoles = WTF::toArray({
+        "button"_s,
+        "link"_s,
+        "checkbox"_s,
+        "radio"_s,
+        "switch"_s,
+        "menuitemcheckbox"_s,
+        "menuitemradio"_s,
+        "option"_s,
+    });
+
+    bool parentHasActionableRole = std::ranges::any_of(actionableRoles, [&](const auto& role) {
+        return equalLettersIgnoringASCIICase(parent.accessibilityRole, role);
+    });
+
+    bool parentIsActionable = parent.hasData<TextExtraction::LinkItemData>()
+        || parent.dataAs<TextExtraction::ContainerType>() == TextExtraction::ContainerType::Button
+        || parent.isVisuallyClickable
+        || parent.eventListeners.contains(TextExtraction::EventListenerCategory::Click)
+        || parentHasActionableRole;
+
+    return parentIsActionable || !previousSibling || !previousSibling->hasData<TextExtraction::TextItemData>();
+}
+
+static bool isIdentityFreeContainer(const TextExtraction::Item& item, const std::optional<TextExtraction::ContainerType>& containerType, const TextExtractionAggregator& aggregator)
+{
+    if (!aggregator.useTextTreeOutput() || !containerType || aggregator.includeTagName())
+        return false;
+
+    switch (*containerType) {
+    case TextExtraction::ContainerType::List:
+    case TextExtraction::ContainerType::ListItem:
+    case TextExtraction::ContainerType::Section:
+    case TextExtraction::ContainerType::Generic:
+        break;
+    case TextExtraction::ContainerType::ViewportConstrained:
+    case TextExtraction::ContainerType::BlockQuote:
+    case TextExtraction::ContainerType::Article:
+    case TextExtraction::ContainerType::Nav:
+    case TextExtraction::ContainerType::Button:
+    case TextExtraction::ContainerType::Canvas:
+    case TextExtraction::ContainerType::Subscript:
+    case TextExtraction::ContainerType::Superscript:
+    case TextExtraction::ContainerType::Strikethrough:
+        return false;
+    }
+
+    if (item.nodeIdentifier || !item.accessibilityRole.isEmpty() || !item.title.isEmpty())
+        return false;
+
+    bool hasEmittedAriaAttribute = std::ranges::any_of(item.ariaAttributes, [](auto& entry) {
+        return entry.value != "false"_s;
+    });
+    if (hasEmittedAriaAttribute || !item.clientAttributes.isEmpty())
+        return false;
+
+    if (!item.classNames.isEmpty() || !item.idAttribute.isEmpty())
+        return false;
+
+    return !shouldEmitClickableToken(item);
+}
+
 static void addTextRepresentationRecursive(const TextExtraction::Item& item, std::optional<NodeIdentifier>&& enclosingNode, unsigned depth, TextExtractionAggregator& aggregator, HasAdjacentLinkAfter hasAdjacentLinkAfter = HasAdjacentLinkAfter::No)
 {
     auto identifier = item.nodeIdentifier;
@@ -2148,6 +2240,21 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
 
     if (aggregator.useTextTreeOutput() && containerType == TextExtraction::ContainerType::ListItem && item.children.size() == 1 && !item.nodeIdentifier) {
         addTextRepresentationRecursive(item.children[0], std::optional { identifier }, depth, aggregator, hasAdjacentLinkAfter);
+        return;
+    }
+
+    if (isIdentityFreeContainer(item, containerType, aggregator)) {
+        for (size_t i = 0; i < item.children.size(); ++i) {
+            auto& child = item.children[i];
+            if (isUninformativeImage(child, item, i ? &item.children[i - 1] : nullptr, aggregator))
+                continue;
+
+            auto childHasLinkAfter = i + 1 < item.children.size()
+                ? (item.children[i + 1].hasData<TextExtraction::LinkItemData>() ? HasAdjacentLinkAfter::Yes : HasAdjacentLinkAfter::No)
+                : hasAdjacentLinkAfter;
+
+            addTextRepresentationRecursive(child, std::optional { identifier }, depth, aggregator, childHasLinkAfter);
+        }
         return;
     }
 
@@ -2244,6 +2351,9 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
             continue;
 
         auto& child = item.children[i];
+        if (isUninformativeImage(child, item, i ? &item.children[i - 1] : nullptr, aggregator))
+            continue;
+
         bool childHasLinkAfter = i + 1 < item.children.size() && item.children[i + 1].hasData<TextExtraction::LinkItemData>();
         addTextRepresentationRecursive(child, std::optional { identifier }, depth + 1, aggregator, childHasLinkAfter ? HasAdjacentLinkAfter::Yes : HasAdjacentLinkAfter::No);
     }

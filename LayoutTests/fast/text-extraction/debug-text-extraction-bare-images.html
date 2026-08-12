@@ -1,0 +1,48 @@
+<!-- webkit-test-runner [ useFlexibleViewport=true textExtractionEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<style>
+body {
+    white-space: pre-wrap;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<div aria-label="Inside a control"><button aria-label="Show password"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></button><a href="https://example.com/settings"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></a><div role="button" tabindex="0"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></div><button>Save<svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></button></div>
+
+<div aria-label="No preceding text"><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg><svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></div>
+
+<div aria-label="Mixed case and fallback roles"><div role="BUTTON" tabindex="0">Edit<svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></div><div role="menuitem">Open<svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></div><div role="tab">Details<svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></div></div>
+
+<div aria-label="False valued aria"><svg width="16" height="16" aria-disabled="false"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></div>
+
+<div aria-label="Following plain text">Sign-In Password<svg width="16" height="16"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg></div>
+
+<div aria-label="Self describing"><svg width="16" height="16" aria-label="Edit password"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg><svg width="16" height="16"><title>Delete account</title><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg><svg width="16" height="16" role="img"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg><svg width="16" height="16" style="cursor: pointer;" onclick="console.log('clicked')"><path d="M3 13 L11 5 L13 7 L5 15 Z"></path></svg><img src="../images/resources/green-256x256.jpg" alt="Green square"><img src="../images/resources/green-256x256.jpg"></div>
+
+<script>
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestDebugText({
+        normalize: true,
+        includeURLs: true,
+        shortenURLs: true,
+        nodeIdentifierInclusion: "interactive",
+        includeAccessibilityAttributes: true,
+    });
+
+    testRunner.notifyDone();
+});
+</script>
+</body>
+</html>

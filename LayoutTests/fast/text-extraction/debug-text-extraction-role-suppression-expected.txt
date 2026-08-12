@@ -18,6 +18,8 @@ root
     'Footer content'
     contentEditable uid=… role=textbox 'Editable content'
     role=dialog label='Test dialog' 'Dialog content'
-    list role=tree
-        'Tree item 1'
-        'Tree item 2'
+    'Tree item 1'
+    'Tree item 2'
+    label='Side menu'
+        link uid=… 'Meetings'
+        'Custom tree item'
