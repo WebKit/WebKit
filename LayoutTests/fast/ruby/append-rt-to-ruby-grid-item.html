@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that a ruby that is a grid item stays a grid item when a child is appended to it.</title>
+<style>
+  grid { display: grid; font: 10px/1 monospace; }
+  ruby { display: ruby; background-color: lightblue; }
+</style>
+</head>
+<body>
+<grid id="grid">A<ruby id="ruby">X</ruby>B</grid>
+<pre id="console"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Force layout, then append to the ruby. A ruby is a rebuild root, so its renderer is recreated here.
+document.body.getClientRects();
+var rt = document.createElement("rt");
+rt.textContent = "y";
+document.getElementById("ruby").appendChild(rt);
+document.getElementById("ruby").offsetHeight;
+
+// A grid item is stretched to the grid's width. A ruby left inside an anonymous item is not.
+var gridWidth = document.getElementById("grid").getBoundingClientRect().width;
+var rubyWidth = document.getElementById("ruby").getBoundingClientRect().width;
+document.getElementById("console").textContent = Math.round(rubyWidth) === Math.round(gridWidth)
+    ? "PASS" : "FAIL: the ruby is " + Math.round(rubyWidth) + "px wide, expected the grid's " + Math.round(gridWidth) + "px";
+</script>
+</body>
+</html>

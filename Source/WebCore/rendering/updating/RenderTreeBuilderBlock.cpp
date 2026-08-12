@@ -192,6 +192,10 @@ void RenderTreeBuilder::Block::attach(RenderBlock& parent, RenderPtr<RenderObjec
         };
         if (parentRequiresAnonymousBlockByDisplayValue.contains(parent.style().display().value))
             return true;
+        if (parent.isAnonymousBlock() && (parent.isGridItem() || parent.isFlexItemIncludingDeprecated())) {
+            // An anonymous flex or grid item takes its display value from the box it wraps, not from the flex or grid container it is an item of.
+            return true;
+        }
 #if ENABLE(MATHML)
         if (parent.isRenderMathMLBlock())
             return true;
