@@ -444,19 +444,19 @@ static void testCalendarDateUntil()
 {
     // ISO8601 path only — mirrors temporal_rs: Calendar::date_until + date_until_largest_year
     // 1969-07-24 until 1996-03-03 in days = 9719
-    auto r1 = calendarDateUntil({ 1969, 7, 24 }, { 1996, 3, 3 }, TemporalUnit::Day);
+    auto r1 = diffISODate({ 1969, 7, 24 }, { 1996, 3, 3 }, TemporalUnit::Day);
     TCHECK_EQ(static_cast<int64_t>(r1.days()), 9719LL, "calendarDateUntil: 9719 days");
 
     // Same date -> zero
-    auto r2 = calendarDateUntil({ 2020, 6, 15 }, { 2020, 6, 15 }, TemporalUnit::Day);
+    auto r2 = diffISODate({ 2020, 6, 15 }, { 2020, 6, 15 }, TemporalUnit::Day);
     TCHECK_EQ(static_cast<int64_t>(r2.days()), 0LL, "calendarDateUntil: same date");
 
     // 1969-07-24 until 1969-10-05 in months = 2m11d
-    auto r3 = calendarDateUntil({ 1969, 7, 24 }, { 1969, 10, 5 }, TemporalUnit::Month);
+    auto r3 = diffISODate({ 1969, 7, 24 }, { 1969, 10, 5 }, TemporalUnit::Month);
     TCHECK_EQ(static_cast<int64_t>(r3.months()), 2LL, "calendarDateUntil: 2 months");
 
     // Negative: later until earlier
-    auto r4 = calendarDateUntil({ 1996, 3, 3 }, { 1969, 7, 24 }, TemporalUnit::Day);
+    auto r4 = diffISODate({ 1996, 3, 3 }, { 1969, 7, 24 }, TemporalUnit::Day);
     TCHECK_EQ(static_cast<int64_t>(r4.days()), -9719LL, "calendarDateUntil: -9719 days");
 
     // temporal_rs: date_until_largest_year — full ISO8601 table
@@ -507,7 +507,7 @@ static void testCalendarDateUntil()
         { { 2021, 8, 17 }, { 2021, 7, 16 }, 0, -1, -1 },
     };
     for (auto& c : cases) {
-        auto r = calendarDateUntil(c.one, c.two, TemporalUnit::Year);
+        auto r = diffISODate(c.one, c.two, TemporalUnit::Year);
         TCHECK_EQ(static_cast<int64_t>(r.years()),  c.years,  "dateUntilLargestYear: years");
         TCHECK_EQ(static_cast<int64_t>(r.months()), c.months, "dateUntilLargestYear: months");
         TCHECK_EQ(static_cast<int64_t>(r.days()),   c.days,   "dateUntilLargestYear: days");

@@ -660,7 +660,7 @@ TemporalResult<ISO8601::Duration> differenceYearMonth(CalendarID calendarId, con
             || std::abs(dateToDaysFrom1970(otherDate.year(), static_cast<int>(otherDate.month()) - 1, 1)) > 1e8)
             return makeUnexpected(rangeError("date is outside the representable range for Temporal"_s));
         // Steps 10-14: CalendarDateUntil(thisDate, otherDate, largestUnit).
-        return calendarDateUntil(thisDate, otherDate, largestUnit);
+        return calendarDateUntil(calendarId, thisDate, otherDate, largestUnit);
     }
 
     // Non-ISO: resolve both to day=1 via dateFromFields (matching temporal_rs).

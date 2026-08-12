@@ -197,7 +197,7 @@ static bool isoDateSurpasses(int32_t sign, int32_t y1, int32_t m1, int32_t d1, c
 }
 
 // DiffISODate — temporal_rs: IsoDate::diff_iso_date
-// https://tc39.es/proposal-temporal/#sec-temporal-calendardateuntil (ISO8601 path)
+// https://tc39.es/proposal-temporal/#sec-temporal-calendardateuntil step 3, the iso8601 branch.
 ISO8601::Duration diffISODate(const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit)
 {
     // 1. Let sign be CompareISODate(one, two).

@@ -428,12 +428,8 @@ ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject*
         return ISO8601::Duration();
 
     // Step 6: dateDifference = CalendarDateUntil(calendar, this, other, largestUnit).
-    ISO8601::Duration dateDiff;
-    if (!TemporalCore::calendarIsISO(m_calendarID)) {
-        dateDiff = calendarDateUntil(globalObject, m_calendarID, plainDate(), other->plainDate(), largestUnit);
-        RETURN_IF_EXCEPTION(scope, { });
-    } else
-        dateDiff = TemporalCore::calendarDateUntil(plainDate(), other->plainDate(), largestUnit);
+    ISO8601::Duration dateDiff = calendarDateUntil(globalObject, m_calendarID, plainDate(), other->plainDate(), largestUnit);
+    RETURN_IF_EXCEPTION(scope, { });
 
     // Step 7: duration = CombineDateAndTimeDuration(dateDifference, 0).
     ISO8601::InternalDuration duration = ISO8601::InternalDuration::combineDateAndTimeDuration(dateDiff, 0);

@@ -29,16 +29,6 @@
 namespace JSC {
 namespace TemporalCore {
 
-// CalendarDateUntil (ISO8601 path) — temporal_rs: Calendar::date_until
-// https://tc39.es/proposal-temporal/#sec-temporal-calendardateuntil (ISO8601 path)
-ISO8601::Duration calendarDateUntil(const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit)
-{
-    // 3. If calendar is "iso8601", then
-    //    3.k. Return ! CreateDateDurationRecord(years, months, weeks, days).
-    // (full ISO8601 path implemented in diffISODate)
-    return diffISODate(one, two, largestUnit);
-}
-
 // CalendarDateAdd (ISO8601 path) — temporal_rs: Calendar::date_add
 // https://tc39.es/proposal-temporal/#sec-temporal-calendardateadd (ISO8601 path)
 TemporalResult<ISO8601::PlainDate> calendarDateAdd(const ISO8601::PlainDate& date, const ISO8601::Duration& duration, TemporalOverflow overflow)

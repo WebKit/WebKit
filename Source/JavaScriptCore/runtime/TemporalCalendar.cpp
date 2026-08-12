@@ -509,12 +509,9 @@ ISO8601::PlainDate calendarDateAdd(JSGlobalObject* globalObject, CalendarID cale
     return *result;
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-calendardateuntil
 ISO8601::Duration calendarDateUntil(JSGlobalObject* globalObject, CalendarID calendarId, const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit)
 {
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
-    if (calendarId == iso8601CalendarID())
-        return TemporalCore::calendarDateUntil(one, two, largestUnit);
     auto result = TemporalCore::calendarDateUntil(calendarId, one, two, largestUnit);
     if (!result) [[unlikely]] {
         throwTemporalError(globalObject, scope, result.error());

@@ -2042,26 +2042,12 @@ static std::optional<bool> setMonths(UCalendar* cal, int32_t sourceDay)
     return true;
 }
 
-// calendarDateUntil — temporal_rs: Calendar::date_until (src/builtins/core/calendar.rs)
+// NonISODateUntil — temporal_rs: Calendar::date_until (src/builtins/core/calendar.rs)
 //   temporal_rs delegates to icu4x: AnyCalendar::until -> ArithmeticDate::until + SurpassesChecker (components/calendar/src/calendar_arithmetic.rs)
 //   ICU4C has no equivalent: fixed-solar calendars balance native fields directly; lunisolar calendars walk months with ucal_add.
-// https://tc39.es/proposal-temporal/#sec-temporal-calendardateuntil
-TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID calendarId, const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit)
+// https://tc39.es/proposal-intl-era-monthcode/#sup-temporal-nonisodateuntil
+static TemporalResult<ISO8601::Duration> nonISODateUntil(CalendarID calendarId, const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit)
 {
-    ASSERT(largestUnit == TemporalUnit::Year || largestUnit == TemporalUnit::Month || largestUnit == TemporalUnit::Week || largestUnit == TemporalUnit::Day);
-
-    // Step 3 (iso8601 inline algorithm): ISODateSurpasses-based diff.
-    if (calendarUsesISODateArithmetic(calendarId))
-        return diffISODate(one, two, largestUnit);
-    // Fast path: day/week diff is calendar-independent regardless of largestUnit.
-    if (largestUnit == TemporalUnit::Day || largestUnit == TemporalUnit::Week)
-        return diffISODate(one, two, largestUnit);
-    if (calendarUsesISOFallbackForExtremeYear(calendarId, one.year()) || calendarUsesISOFallbackForExtremeYear(calendarId, two.year()))
-        return diffISODate(one, two, largestUnit);
-
-    // Step 4 (non-ISO tail return): `Return NonISODateUntil(calendar, one, two, largestUnit)`.
-    // https://tc39.es/proposal-intl-era-monthcode/#sup-temporal-nonisodateuntil
-
     // Snapshot source (one) and target (two) fields — separate withCalendar calls for minimal lock scope.
     struct DateSnapshot {
         double epochMs { 0 };
@@ -2135,15 +2121,9 @@ TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID calendarId, const
         return makeUnexpected(sourceOrError.error());
     auto& source = *sourceOrError;
 
-    // CalendarDateUntil Steps 1-2 (deferred from the top): sign compute + zero-return.
-    // +1 (one < two), -1 (one > two), 0 (equal → zero duration).
-    int32_t sign;
-    if (source.epochMs < target.epochMs)
-        sign = 1;
-    else if (source.epochMs > target.epochMs)
-        sign = -1;
-    else
-        return ISO8601::Duration { };
+    // +1 (one < two), -1 (one > two). CalendarDateUntil's steps 1-2 already returned for equal dates.
+    ASSERT(source.epochMs != target.epochMs);
+    int32_t sign = source.epochMs < target.epochMs ? 1 : -1;
 
     // Fixed-solar calendars have a constant month count, so jump directly to the native
     // total-month difference. At most one candidate can surpass because it is already in
@@ -2283,6 +2263,27 @@ TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID calendarId, const
     });
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-calendardateuntil
+TemporalResult<ISO8601::Duration> calendarDateUntil(CalendarID calendarId, const ISO8601::PlainDate& one, const ISO8601::PlainDate& two, TemporalUnit largestUnit)
+{
+    ASSERT(largestUnit == TemporalUnit::Year || largestUnit == TemporalUnit::Month || largestUnit == TemporalUnit::Week || largestUnit == TemporalUnit::Day);
+
+    // Steps 1-2: sign = -CompareISODate(one, two); if sign = 0, return the zero duration.
+    if (!isoDateCompare(one, two))
+        return ISO8601::Duration { };
+
+    // Step 3 (iso8601 inline algorithm): ISODateSurpasses-based diff.
+    if (calendarUsesISODateArithmetic(calendarId))
+        return diffISODate(one, two, largestUnit);
+    // Fast path: day/week diff is calendar-independent regardless of largestUnit.
+    if (largestUnit == TemporalUnit::Day || largestUnit == TemporalUnit::Week)
+        return diffISODate(one, two, largestUnit);
+    if (calendarUsesISOFallbackForExtremeYear(calendarId, one.year()) || calendarUsesISOFallbackForExtremeYear(calendarId, two.year()))
+        return diffISODate(one, two, largestUnit);
+
+    // Step 4: Return NonISODateUntil(calendar, one, two, largestUnit).
+    return nonISODateUntil(calendarId, one, two, largestUnit);
+}
 
 // ecmaReferenceYear — no spec AO, no ICU4C equivalent.
 // Ported line-for-line from icu4x: ecma_reference_year (components/calendar/src/cal/{east_asian_traditional,hijri,hebrew,coptic,persian,indian}.rs).
