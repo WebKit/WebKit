@@ -99,15 +99,10 @@ void JIT::compileSetupFrame(const Op& bytecode)
         // Profile the argument count.
         load32(Address(regT5, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + LowWordOffset), regT2);
         move(TrustedImm32(CallLinkInfo::maxProfiledArgumentCountIncludingThisForVarargs), regT0);
-#if CPU(ARM64) || CPU(X86_64)
         moveConditionally32(Above, regT2, regT0, regT0, regT2, regT2);
-#else
-        auto lower = branch32(BelowOrEqual, regT2, regT0);
-        move(regT0, regT2);
-        lower.link(this);
-#endif
         materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), regT0);
-        Jump notBiggest = branch32(Above, Address(regT0, CallLinkInfo::offsetOfMaxArgumentCountIncludingThisForVarargs()), regT2);
+        load8(Address(regT0, CallLinkInfo::offsetOfMaxArgumentCountIncludingThisForVarargs()), regT1);
+        Jump notBiggest = branch32(Above, regT1, regT2);
         store8(regT2, Address(regT0, CallLinkInfo::offsetOfMaxArgumentCountIncludingThisForVarargs()));
         notBiggest.link(this);
 
