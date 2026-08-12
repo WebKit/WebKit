@@ -206,14 +206,14 @@ PASS Element interface: document.createElement("div") must inherit property "cli
 PASS Element interface: document.createElement("div") must inherit property "clientWidth" with the proper type
 PASS Element interface: document.createElement("div") must inherit property "clientHeight" with the proper type
 PASS Element interface: document.createElement("div") must inherit property "currentCSSZoom" with the proper type
-FAIL Element interface: document.createElement("div") must inherit property "getBoxQuads(optional BoxQuadOptions)" with the proper type assert_inherits: property "getBoxQuads" not found in prototype chain
-FAIL Element interface: calling getBoxQuads(optional BoxQuadOptions) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "getBoxQuads" not found in prototype chain
-FAIL Element interface: document.createElement("div") must inherit property "convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertQuadFromNode" not found in prototype chain
-FAIL Element interface: calling convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "convertQuadFromNode" not found in prototype chain
-FAIL Element interface: document.createElement("div") must inherit property "convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertRectFromNode" not found in prototype chain
-FAIL Element interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "convertRectFromNode" not found in prototype chain
-FAIL Element interface: document.createElement("div") must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertPointFromNode" not found in prototype chain
-FAIL Element interface: calling convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("div") with too few arguments must throw TypeError assert_inherits: property "convertPointFromNode" not found in prototype chain
+PASS Element interface: document.createElement("div") must inherit property "getBoxQuads(optional BoxQuadOptions)" with the proper type
+PASS Element interface: calling getBoxQuads(optional BoxQuadOptions) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Element interface: calling convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Element interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("div") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("div") must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Element interface: calling convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("div") with too few arguments must throw TypeError
 PASS HTMLImageElement interface: attribute x
 PASS HTMLImageElement interface: attribute y
 PASS HTMLImageElement interface: document.createElement("img") must inherit property "x" with the proper type
@@ -251,14 +251,14 @@ PASS Element interface: document.createElement("img") must inherit property "cli
 PASS Element interface: document.createElement("img") must inherit property "clientWidth" with the proper type
 PASS Element interface: document.createElement("img") must inherit property "clientHeight" with the proper type
 PASS Element interface: document.createElement("img") must inherit property "currentCSSZoom" with the proper type
-FAIL Element interface: document.createElement("img") must inherit property "getBoxQuads(optional BoxQuadOptions)" with the proper type assert_inherits: property "getBoxQuads" not found in prototype chain
-FAIL Element interface: calling getBoxQuads(optional BoxQuadOptions) on document.createElement("img") with too few arguments must throw TypeError assert_inherits: property "getBoxQuads" not found in prototype chain
-FAIL Element interface: document.createElement("img") must inherit property "convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertQuadFromNode" not found in prototype chain
-FAIL Element interface: calling convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("img") with too few arguments must throw TypeError assert_inherits: property "convertQuadFromNode" not found in prototype chain
-FAIL Element interface: document.createElement("img") must inherit property "convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertRectFromNode" not found in prototype chain
-FAIL Element interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("img") with too few arguments must throw TypeError assert_inherits: property "convertRectFromNode" not found in prototype chain
-FAIL Element interface: document.createElement("img") must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertPointFromNode" not found in prototype chain
-FAIL Element interface: calling convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("img") with too few arguments must throw TypeError assert_inherits: property "convertPointFromNode" not found in prototype chain
+PASS Element interface: document.createElement("img") must inherit property "getBoxQuads(optional BoxQuadOptions)" with the proper type
+PASS Element interface: calling getBoxQuads(optional BoxQuadOptions) on document.createElement("img") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("img") must inherit property "convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Element interface: calling convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("img") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("img") must inherit property "convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Element interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("img") with too few arguments must throw TypeError
+PASS Element interface: document.createElement("img") must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Element interface: calling convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("img") with too few arguments must throw TypeError
 PASS Window interface: operation matchMedia(CSSOMString)
 PASS Window interface: attribute screen
 PASS Window interface: attribute visualViewport
@@ -326,10 +326,10 @@ PASS Document interface: operation elementFromPoint(double, double)
 PASS Document interface: operation elementsFromPoint(double, double)
 PASS Document interface: operation caretPositionFromPoint(double, double, optional CaretPositionFromPointOptions)
 PASS Document interface: attribute scrollingElement
-FAIL Document interface: operation getBoxQuads(optional BoxQuadOptions) assert_own_property: interface prototype object missing non-static operation expected property "getBoxQuads" missing
-FAIL Document interface: operation convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertQuadFromNode" missing
-FAIL Document interface: operation convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertRectFromNode" missing
-FAIL Document interface: operation convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertPointFromNode" missing
+PASS Document interface: operation getBoxQuads(optional BoxQuadOptions)
+PASS Document interface: operation convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)
+PASS Document interface: operation convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)
+PASS Document interface: operation convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)
 PASS Document interface: document must inherit property "elementFromPoint(double, double)" with the proper type
 PASS Document interface: calling elementFromPoint(double, double) on document with too few arguments must throw TypeError
 PASS Document interface: document must inherit property "elementsFromPoint(double, double)" with the proper type
@@ -337,14 +337,14 @@ PASS Document interface: calling elementsFromPoint(double, double) on document w
 PASS Document interface: document must inherit property "caretPositionFromPoint(double, double, optional CaretPositionFromPointOptions)" with the proper type
 PASS Document interface: calling caretPositionFromPoint(double, double, optional CaretPositionFromPointOptions) on document with too few arguments must throw TypeError
 PASS Document interface: document must inherit property "scrollingElement" with the proper type
-FAIL Document interface: document must inherit property "getBoxQuads(optional BoxQuadOptions)" with the proper type assert_inherits: property "getBoxQuads" not found in prototype chain
-FAIL Document interface: calling getBoxQuads(optional BoxQuadOptions) on document with too few arguments must throw TypeError assert_inherits: property "getBoxQuads" not found in prototype chain
-FAIL Document interface: document must inherit property "convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertQuadFromNode" not found in prototype chain
-FAIL Document interface: calling convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) on document with too few arguments must throw TypeError assert_inherits: property "convertQuadFromNode" not found in prototype chain
-FAIL Document interface: document must inherit property "convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertRectFromNode" not found in prototype chain
-FAIL Document interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) on document with too few arguments must throw TypeError assert_inherits: property "convertRectFromNode" not found in prototype chain
-FAIL Document interface: document must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertPointFromNode" not found in prototype chain
-FAIL Document interface: calling convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) on document with too few arguments must throw TypeError assert_inherits: property "convertPointFromNode" not found in prototype chain
+PASS Document interface: document must inherit property "getBoxQuads(optional BoxQuadOptions)" with the proper type
+PASS Document interface: calling getBoxQuads(optional BoxQuadOptions) on document with too few arguments must throw TypeError
+PASS Document interface: document must inherit property "convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Document interface: calling convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) on document with too few arguments must throw TypeError
+PASS Document interface: document must inherit property "convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Document interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) on document with too few arguments must throw TypeError
+PASS Document interface: document must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Document interface: calling convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) on document with too few arguments must throw TypeError
 PASS Element interface: operation getClientRects()
 PASS Element interface: operation getBoundingClientRect()
 PASS Element interface: operation checkVisibility(optional CheckVisibilityOptions)
@@ -364,10 +364,10 @@ PASS Element interface: attribute clientLeft
 PASS Element interface: attribute clientWidth
 PASS Element interface: attribute clientHeight
 PASS Element interface: attribute currentCSSZoom
-FAIL Element interface: operation getBoxQuads(optional BoxQuadOptions) assert_own_property: interface prototype object missing non-static operation expected property "getBoxQuads" missing
-FAIL Element interface: operation convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertQuadFromNode" missing
-FAIL Element interface: operation convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertRectFromNode" missing
-FAIL Element interface: operation convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertPointFromNode" missing
+PASS Element interface: operation getBoxQuads(optional BoxQuadOptions)
+PASS Element interface: operation convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)
+PASS Element interface: operation convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)
+PASS Element interface: operation convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)
 PASS Element interface: document.createElementNS("x", "y") must inherit property "getClientRects()" with the proper type
 PASS Element interface: document.createElementNS("x", "y") must inherit property "getBoundingClientRect()" with the proper type
 PASS Element interface: document.createElementNS("x", "y") must inherit property "checkVisibility(optional CheckVisibilityOptions)" with the proper type
@@ -395,26 +395,26 @@ PASS Element interface: document.createElementNS("x", "y") must inherit property
 PASS Element interface: document.createElementNS("x", "y") must inherit property "clientWidth" with the proper type
 PASS Element interface: document.createElementNS("x", "y") must inherit property "clientHeight" with the proper type
 PASS Element interface: document.createElementNS("x", "y") must inherit property "currentCSSZoom" with the proper type
-FAIL Element interface: document.createElementNS("x", "y") must inherit property "getBoxQuads(optional BoxQuadOptions)" with the proper type assert_inherits: property "getBoxQuads" not found in prototype chain
-FAIL Element interface: calling getBoxQuads(optional BoxQuadOptions) on document.createElementNS("x", "y") with too few arguments must throw TypeError assert_inherits: property "getBoxQuads" not found in prototype chain
-FAIL Element interface: document.createElementNS("x", "y") must inherit property "convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertQuadFromNode" not found in prototype chain
-FAIL Element interface: calling convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElementNS("x", "y") with too few arguments must throw TypeError assert_inherits: property "convertQuadFromNode" not found in prototype chain
-FAIL Element interface: document.createElementNS("x", "y") must inherit property "convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertRectFromNode" not found in prototype chain
-FAIL Element interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) on document.createElementNS("x", "y") with too few arguments must throw TypeError assert_inherits: property "convertRectFromNode" not found in prototype chain
-FAIL Element interface: document.createElementNS("x", "y") must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertPointFromNode" not found in prototype chain
-FAIL Element interface: calling convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElementNS("x", "y") with too few arguments must throw TypeError assert_inherits: property "convertPointFromNode" not found in prototype chain
-FAIL Text interface: operation getBoxQuads(optional BoxQuadOptions) assert_own_property: interface prototype object missing non-static operation expected property "getBoxQuads" missing
-FAIL Text interface: operation convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertQuadFromNode" missing
-FAIL Text interface: operation convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertRectFromNode" missing
-FAIL Text interface: operation convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) assert_own_property: interface prototype object missing non-static operation expected property "convertPointFromNode" missing
-FAIL Text interface: document.createTextNode("x") must inherit property "getBoxQuads(optional BoxQuadOptions)" with the proper type assert_inherits: property "getBoxQuads" not found in prototype chain
-FAIL Text interface: calling getBoxQuads(optional BoxQuadOptions) on document.createTextNode("x") with too few arguments must throw TypeError assert_inherits: property "getBoxQuads" not found in prototype chain
-FAIL Text interface: document.createTextNode("x") must inherit property "convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertQuadFromNode" not found in prototype chain
-FAIL Text interface: calling convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) on document.createTextNode("x") with too few arguments must throw TypeError assert_inherits: property "convertQuadFromNode" not found in prototype chain
-FAIL Text interface: document.createTextNode("x") must inherit property "convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertRectFromNode" not found in prototype chain
-FAIL Text interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) on document.createTextNode("x") with too few arguments must throw TypeError assert_inherits: property "convertRectFromNode" not found in prototype chain
-FAIL Text interface: document.createTextNode("x") must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type assert_inherits: property "convertPointFromNode" not found in prototype chain
-FAIL Text interface: calling convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) on document.createTextNode("x") with too few arguments must throw TypeError assert_inherits: property "convertPointFromNode" not found in prototype chain
+PASS Element interface: document.createElementNS("x", "y") must inherit property "getBoxQuads(optional BoxQuadOptions)" with the proper type
+PASS Element interface: calling getBoxQuads(optional BoxQuadOptions) on document.createElementNS("x", "y") with too few arguments must throw TypeError
+PASS Element interface: document.createElementNS("x", "y") must inherit property "convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Element interface: calling convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElementNS("x", "y") with too few arguments must throw TypeError
+PASS Element interface: document.createElementNS("x", "y") must inherit property "convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Element interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) on document.createElementNS("x", "y") with too few arguments must throw TypeError
+PASS Element interface: document.createElementNS("x", "y") must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Element interface: calling convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElementNS("x", "y") with too few arguments must throw TypeError
+PASS Text interface: operation getBoxQuads(optional BoxQuadOptions)
+PASS Text interface: operation convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)
+PASS Text interface: operation convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)
+PASS Text interface: operation convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)
+PASS Text interface: document.createTextNode("x") must inherit property "getBoxQuads(optional BoxQuadOptions)" with the proper type
+PASS Text interface: calling getBoxQuads(optional BoxQuadOptions) on document.createTextNode("x") with too few arguments must throw TypeError
+PASS Text interface: document.createTextNode("x") must inherit property "convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Text interface: calling convertQuadFromNode(DOMQuadInit, GeometryNode, optional ConvertCoordinateOptions) on document.createTextNode("x") with too few arguments must throw TypeError
+PASS Text interface: document.createTextNode("x") must inherit property "convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Text interface: calling convertRectFromNode(DOMRectReadOnly, GeometryNode, optional ConvertCoordinateOptions) on document.createTextNode("x") with too few arguments must throw TypeError
+PASS Text interface: document.createTextNode("x") must inherit property "convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions)" with the proper type
+PASS Text interface: calling convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) on document.createTextNode("x") with too few arguments must throw TypeError
 PASS Range interface: operation getClientRects()
 PASS Range interface: operation getBoundingClientRect()
 PASS Range interface: new Range() must inherit property "getClientRects()" with the proper type
