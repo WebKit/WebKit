@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<input id="input" type=password autofocus>
+<script>
+jsTestIsAsync = true;
+
+description("Verify that reloading a page with an autofocused password input ends with secure input state enabled.");
+
+var isReloaded = location.hash === "#reloaded";
+
+window.addEventListener("load", () => {
+    UIHelper.ensurePresentationUpdate().then(() => {
+        if (!isReloaded) {
+            if (document.activeElement !== input || !testRunner.secureEventInputIsEnabled) {
+                testFailed("Initial load: expected password input to be focused with secure input enabled.");
+                finishJSTest();
+                return;
+            }
+            location.hash = "#reloaded";
+            location.reload();
+            return;
+        }
+
+        debug("After reload:");
+        shouldBe("document.activeElement", "input");
+        shouldBe("testRunner.secureEventInputIsEnabled", "true");
+        finishJSTest();
+    });
+});
+</script>
+</body>
+</html>

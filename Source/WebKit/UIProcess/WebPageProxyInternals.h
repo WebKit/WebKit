@@ -432,6 +432,8 @@ public:
     WebCore::CornerRadii scrollbarAvoidanceCornerRadii;
 #endif
 
+    bool forceNeedsSecureInputReevaluation { false };
+
     explicit Internals(WebPageProxy&, bool processInheritedFromOpener);
 
 #if ENABLE(SPEECH_SYNTHESIS)

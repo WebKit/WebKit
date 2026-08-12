@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableProcessSwapOnNavigation=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<input type=password>
+<script>
+    
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var passwordInput = document.getElementsByTagName("input")[0];
+
+passwordInput.focus();
+UIHelper.ensurePresentationUpdate().then(() => {
+    if (testRunner.secureEventInputIsEnabled) {
+        location = "http://localhost:8000/secure-input/resources/reset-state-on-process-swap-navigation-target.html";
+        return;
+    }
+
+    debug("FAIL: Secure event input is not enabled after focusing a password input");
+    testRunner.notifyDone();
+    return;  
+})
+        
+</script>
+</body>
+</html>
