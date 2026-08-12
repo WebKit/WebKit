@@ -2465,3 +2465,6 @@ webkit.org/b/321312 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSyn
 # webkit.org/b/321298 [ Release ] REGRESSION(316423@main): [macOS Release] imported/w3c/web-platform-tests/wasm/serialization/memory/window-success.tentative.https.html is a flaky crash
 [ Release ] imported/w3c/web-platform-tests/wasm/serialization/memory/window-nested-dedicated-worker-failure.tentative.https.html [ Skip ]
 [ Release ] imported/w3c/web-platform-tests/wasm/serialization/memory/window-sharedworker-failure.tentative.https.html [ Skip ]
+
+# rdar://179387373 ([ iOS macOS ] fast/forms/textarea/textarea-state-restore.html is a flaky text failure)
+fast/forms/textarea/textarea-state-restore.html [ Pass Failure ]
