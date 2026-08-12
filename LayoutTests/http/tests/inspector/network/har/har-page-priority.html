@@ -47,6 +47,8 @@ function test()
             if (resources.length) {
                 console.log(`Got ${resources.length} resources`);
                 let har = buildHAR(resources);
+                console.log(`Have ${har.log.entries.length} entries`);
+                console.log(`At |${har.log.pages[0].startedDateTime}|`);
                 let localResources = WI.networkManager.processHAR({json: har});
 
                 localResources?.forEach((entry) => {
