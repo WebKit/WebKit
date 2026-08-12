@@ -12,7 +12,7 @@ EVENT(playing)
 
 ** Starting the second video, the first one should pause.
 RUN(videos[1].play())
-EVENT(playing)
+EVENT(pause)
 
 EXPECTED (videos[0].paused == 'true') OK
 EXPECTED (videos[1].paused == 'false') OK

@@ -3,35 +3,54 @@
         <script src=media-file.js></script>
         <script src=video-test.js></script>
         <script>
-            var playCount = 0;
             var playThroughCount = 0;
             var videos = [];
+            var secondPlaying = false;
+            var firstPaused = false;
 
             function logEvent(evt)
             {
                 consoleWrite("EVENT(" + evt.type + ")");
             }
 
+            function maybeFinish()
+            {
+                if (!secondPlaying || !firstPaused)
+                    return;
+
+                testExpected("videos[0].paused", true);
+                testExpected("videos[1].paused", false);
+
+                consoleWrite("");
+                endTest();
+            }
+
             function playing(evt)
+            {
+                // The second video's 'playing' is required but not logged: whether it is at
+                // HAVE_FUTURE_DATA when play() is called decides whether the event is queued then or
+                // from a later readyState change, so its order against the first video's pause varies.
+                if (evt.target == videos[1]) {
+                    secondPlaying = true;
+                    maybeFinish();
+                    return;
+                }
+
+                logEvent(evt);
+                consoleWrite("");
+
+                consoleWrite("** Starting the second video, the first one should pause.");
+                run("videos[1].play()");
+                failTestIn(500);
+            }
+
+            function pause(evt)
             {
                 logEvent(evt);
                 consoleWrite("");
 
-                switch (++playCount)
-                {
-                case 1:
-                    consoleWrite("** Starting the second video, the first one should pause.");
-                    run("videos[1].play()");
-                    setTimeout(endTest, 100);
-                    break;
-                case 2:
-                    testExpected("videos[0].paused", true);
-                    testExpected("videos[1].paused", false);
-
-                    consoleWrite("");
-                    endTest();
-                    break;
-                }
+                firstPaused = true;
+                maybeFinish();
             }
 
             function canplaythrough(evt)
@@ -57,6 +76,7 @@
                     video = videos[i];
                     video.addEventListener("canplaythrough", canplaythrough);
                     video.addEventListener('playing', playing);
+                    video.addEventListener('pause', pause);
                     video.src = findMediaFile("video", "content/test");
                 }
                 run("internals.setMediaSessionRestrictions('videoaudio', 'ConcurrentPlaybackNotPermitted')");
