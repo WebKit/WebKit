@@ -47,7 +47,7 @@ public:
     WEBCORE_EXPORT void didCreateMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2);
     WEBCORE_EXPORT void didEntangleLocalToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote, ProcessIdentifier);
     WEBCORE_EXPORT void didDisentangleMessagePort(const MessagePortIdentifier& local);
-    WEBCORE_EXPORT void didCloseMessagePort(const MessagePortIdentifier& local);
+    WEBCORE_EXPORT void didCloseMessagePort(const MessagePortIdentifier& local, MessagePortStatus);
     WEBCORE_EXPORT bool didPostMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget);
     WEBCORE_EXPORT void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&);
 

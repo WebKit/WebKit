@@ -85,6 +85,10 @@ void MessagePortChannel::entanglePortWithProcess(const MessagePortIdentifier& po
 
     ASSERT(!m_processes[i] || *m_processes[i] == process);
     m_processes[i] = process;
+
+    if (m_status[i] == MessagePortStatus::Unclaimed)
+        m_status[i] = MessagePortStatus::Open;
+
     m_entangledToProcessProtectors[i] = this;
     m_pendingMessagePortTransfers[i].remove(*this);
 }
@@ -98,7 +102,7 @@ void MessagePortChannel::disentanglePort(const MessagePortIdentifier& port)
     ASSERT(port == m_ports[0] || port == m_ports[1]);
     size_t i = port == m_ports[0] ? 0 : 1;
 
-    ASSERT(m_processes[i] || m_isClosed[i]);
+    ASSERT(m_processes[i] || m_status[i] != MessagePortStatus::Open);
     m_processes[i] = std::nullopt;
     m_pendingMessagePortTransfers[i].add(*this);
 
@@ -107,15 +111,17 @@ void MessagePortChannel::disentanglePort(const MessagePortIdentifier& port)
     auto protectedThis = WTF::move(m_entangledToProcessProtectors[i]);
 }
 
-void MessagePortChannel::closePort(const MessagePortIdentifier& port)
+void MessagePortChannel::closePort(const MessagePortIdentifier& port, MessagePortStatus status)
 {
     ASSERT(isMainThread());
+    ASSERT(status != MessagePortStatus::Open);
 
     ASSERT(port == m_ports[0] || port == m_ports[1]);
     size_t i = port == m_ports[0] ? 0 : 1;
 
     m_processes[i] = std::nullopt;
-    m_isClosed[i] = true;
+    if (m_status[i] != MessagePortStatus::Closed)
+        m_status[i] = status;
 
     m_pendingMessages[i].clear();
     m_pendingMessagePortTransfers[i].clear();
@@ -130,7 +136,7 @@ bool MessagePortChannel::postMessageToRemote(MessageWithMessagePorts&& message, 
     ASSERT(remoteTarget == m_ports[0] || remoteTarget == m_ports[1]);
     size_t i = remoteTarget == m_ports[0] ? 0 : 1;
 
-    if (m_isClosed[i])
+    if (m_status[i] != MessagePortStatus::Open)
         return false;
 
     m_pendingMessages[i].append(WTF::move(message));

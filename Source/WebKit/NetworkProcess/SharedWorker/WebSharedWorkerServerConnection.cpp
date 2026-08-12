@@ -93,6 +93,8 @@ void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerK
 {
     MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorkerKey.origin.topOrigin.host())) != NetworkProcess::AllowCookieAccess::Terminate);
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
+    MESSAGE_CHECK(port.first.processIdentifier == m_webProcessIdentifier);
+    MESSAGE_CHECK(port.second.processIdentifier == m_webProcessIdentifier);
     MESSAGE_CHECK(sharedWorkerKey.name == workerOptions.name);
     CONNECTION_RELEASE_LOG("requestSharedWorker: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
     if (CheckedPtr session = this->session())

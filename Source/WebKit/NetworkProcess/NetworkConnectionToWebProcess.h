@@ -377,6 +377,8 @@ private:
     void postMessageToRemote(WebCore::MessageWithMessagePorts&&, const WebCore::MessagePortIdentifier&);
     void didDeliverMessagePortMessages(MessageBatchIdentifier);
 
+    void closeAllEntangledMessagePorts();
+
 #if PLATFORM(MAC)
     void updateActivePages(String&& name, const Vector<String>& activePagesOrigins, CoreIPCAuditToken&&);
     void getProcessDisplayName(CoreIPCAuditToken&&, CompletionHandler<void(const String&)>&&);

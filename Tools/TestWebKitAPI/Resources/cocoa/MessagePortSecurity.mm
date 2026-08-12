@@ -737,3 +737,130 @@ TEST(MessagePortSecurity, WorkerMessagePortsSurviveNetworkProcessRestart)
     EXPECT_FALSE(webContentTerminated);
     EXPECT_EQ(initialWebProcessPID, [webView _webProcessIdentifier]);
 }
+
+template<typename Predicate> static bool messagePortWaitUntilTrue(Predicate&& predicate, unsigned maxTimeout = 100)
+{
+    for (unsigned i = 0; i < maxTimeout; ++i) {
+        if (predicate())
+            return true;
+        TestWebKitAPI::Util::runFor(0.1_s);
+    }
+    return false;
+}
+
+static pid_t sharedWorkerHostProcessIdentifier()
+{
+    for (_WKWebContentProcessInfo *info in [WKProcessPool _webContentProcessInfoForTesting]) {
+        if (info.runningSharedWorkers)
+            return info.pid;
+    }
+    return 0;
+}
+
+static constexpr auto echoSharedWorkerBytes = R"PORTRESOURCE(
+onconnect = function(e) {
+    var port = e.ports[0];
+    port.onmessage = function(event) {
+        port.postMessage('echo:' + event.data);
+    };
+    port.start();
+    port.postMessage('connected');
+};
+)PORTRESOURCE"_s;
+
+static constexpr auto echoClientBytes = R"PORTRESOURCE(
+<!doctype html>
+<script>
+window.replies = [];
+window.worker = new SharedWorker('/echo-worker.js');
+window.worker.port.onmessage = function(e) { window.replies.push(e.data); };
+window.worker.port.start();
+window.worker.port.postMessage('hello');
+</script>
+)PORTRESOURCE"_s;
+
+// When a SharedWorker's context process dies while one of its clients is in the back/forward cache, the
+// cached client keeps the worker alive, so it is relaunched and its connect port is re-entangled using the
+// same MessagePortIdentifier. The client should still be able to talk to it afterwards.
+TEST(MessagePortSecurity, SharedWorkerPortStillWorksAfterContextProcessDiesWithCachedClient)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/client"_s, { echoClientBytes } },
+        { "/away"_s, { "<!doctype html><body>away</body>"_s } },
+        { "/echo-worker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, echoSharedWorkerBytes } },
+    });
+
+    auto repliesContain = [](TestWKWebView *webView, NSString *reply) {
+        return [[webView stringByEvaluatingJavaScript:@"window.replies ? window.replies.join(',') : ''"] containsString:reply];
+    };
+
+    RetainPtr config = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    // `webViewA` establishes the SharedWorker, so its process is the one the worker is launched into.
+    RetainPtr navDelegateA = adoptNS([TestNavigationDelegate new]);
+    RetainPtr webViewA = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);
+    [webViewA setNavigationDelegate:navDelegateA.get()];
+    [webViewA loadRequest:server.request("/client"_s)];
+    [navDelegateA waitForDidFinishNavigation];
+    EXPECT_TRUE(messagePortWaitUntilTrue([&] { return repliesContain(webViewA.get(), @"echo:hello"); }));
+
+    // `webViewB` is a second client of that same SharedWorker, in its own process.
+    RetainPtr navDelegateB = adoptNS([TestNavigationDelegate new]);
+    RetainPtr webViewB = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);
+    [webViewB setNavigationDelegate:navDelegateB.get()];
+    [webViewB loadRequest:server.request("/client"_s)];
+    [navDelegateB waitForDidFinishNavigation];
+    EXPECT_TRUE(messagePortWaitUntilTrue([&] { return repliesContain(webViewB.get(), @"echo:hello"); }));
+
+    pid_t webProcessPIDB = [webViewB _webProcessIdentifier];
+    EXPECT_NE([webViewA _webProcessIdentifier], webProcessPIDB);
+
+    __block bool webContentTerminatedB = false;
+    navDelegateB.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason) {
+        webContentTerminatedB = true;
+    };
+
+    // The worker must be hosted outside `webViewB`'s process, otherwise killing it below would take the
+    // cached client with it and there would be nothing left to relaunch for.
+    pid_t originalSharedWorkerPID = 0;
+    EXPECT_TRUE(messagePortWaitUntilTrue([&] {
+        originalSharedWorkerPID = sharedWorkerHostProcessIdentifier();
+        return !!originalSharedWorkerPID;
+    }));
+    EXPECT_NE(originalSharedWorkerPID, webProcessPIDB);
+
+    // Lets us tell a back/forward cache restore from a reload.
+    [webViewB evaluateJavaScript:@"window.documentInstanceMarker = 'first-instance';" completionHandler:nil];
+
+    [webViewB loadRequest:server.request("/away"_s)];
+    [navDelegateB waitForDidFinishNavigation];
+
+    // This also takes `webViewA`'s page with it. The relaunch may land in `webViewB`'s own process, since it
+    // is now the only remaining client.
+    kill(originalSharedWorkerPID, SIGKILL);
+
+    pid_t relaunchedSharedWorkerPID = 0;
+    EXPECT_TRUE(messagePortWaitUntilTrue([&] {
+        relaunchedSharedWorkerPID = sharedWorkerHostProcessIdentifier();
+        return relaunchedSharedWorkerPID && relaunchedSharedWorkerPID != originalSharedWorkerPID;
+    }));
+
+    // Re-entangling must not be mistaken for a misbehaving WebContent process.
+    EXPECT_FALSE(webContentTerminatedB);
+    EXPECT_EQ(webProcessPIDB, [webViewB _webProcessIdentifier]);
+
+    [webViewB goBack];
+    [navDelegateB waitForDidFinishNavigation];
+
+    // If this fails the page was reloaded rather than restored, and the rest proves nothing.
+    EXPECT_WK_STREQ([webViewB stringByEvaluatingJavaScript:@"window.documentInstanceMarker || 'reloaded'"], "first-instance");
+
+    EXPECT_TRUE(messagePortWaitUntilTrue([&] { return repliesContain(webViewB.get(), @"connected"); }));
+
+    [webViewB evaluateJavaScript:@"window.replies = []; window.worker.port.postMessage('after-relaunch');" completionHandler:nil];
+    EXPECT_TRUE(messagePortWaitUntilTrue([&] { return repliesContain(webViewB.get(), @"echo:after-relaunch"); }));
+
+    EXPECT_FALSE(webContentTerminatedB);
+    EXPECT_EQ(webProcessPIDB, [webViewB _webProcessIdentifier]);
+}
+
