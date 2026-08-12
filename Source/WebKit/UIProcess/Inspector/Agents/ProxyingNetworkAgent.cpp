@@ -163,7 +163,7 @@ static Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const Ne
 
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
-    if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
+    if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
         metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->initialPriority));
 
         if (additionalMetrics->priority != WebCore::NetworkLoadPriority::Unknown)
@@ -191,7 +191,7 @@ static Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const Ne
     auto connectionPayload = Inspector::Protocol::Security::Connection::create()
         .release();
 
-    if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
+    if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
         if (!additionalMetrics->tlsProtocol.isEmpty())
             connectionPayload->setProtocol(additionalMetrics->tlsProtocol);
         if (!additionalMetrics->tlsCipher.isEmpty())
