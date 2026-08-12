@@ -44,7 +44,7 @@
 #include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProcessQualified.h>
-#include <WebCore/loader/DefaultResourceLoadPriority.h>
+#include <WebCore/DefaultResourceLoadPriority.h>
 #include <tuple>
 #include <utility>
 #include <wtf/Expected.h>
