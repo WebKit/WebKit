@@ -1279,6 +1279,7 @@
 		53F11F41209138D700E411A7 /* JSCellButterfly.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F11F40209138D700E411A7 /* JSCellButterfly.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53F40E851D58F9770099A1B6 /* WasmSections.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E841D58F9770099A1B6 /* WasmSections.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53F40E8B1D5901BB0099A1B6 /* WasmFunctionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */; };
+		E0EA80DE450D471DB60067AE /* WasmByteLoopIdiom.h in Headers */ = {isa = PBXBuildFile; fileRef = 59599FF72E2E412795C8979D /* WasmByteLoopIdiom.h */; };
 		53F40E8D1D5901F20099A1B6 /* WasmParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8C1D5901F20099A1B6 /* WasmParser.h */; };
 		53F40E931D5A4AB30099A1B6 /* WasmOMGIRGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E921D5A4AB30099A1B6 /* WasmOMGIRGenerator.h */; };
 		53F6BF6D1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F6BF6C1C3F060A00F41E5D /* InternalFunctionAllocationProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4703,6 +4704,7 @@
 		53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArrayViewPrototype.cpp; sourceTree = "<group>"; };
 		53F40E841D58F9770099A1B6 /* WasmSections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmSections.h; sourceTree = "<group>"; };
 		53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmFunctionParser.h; sourceTree = "<group>"; };
+		59599FF72E2E412795C8979D /* WasmByteLoopIdiom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmByteLoopIdiom.h; sourceTree = "<group>"; };
 		53F40E8C1D5901F20099A1B6 /* WasmParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmParser.h; sourceTree = "<group>"; };
 		53F40E8E1D5902820099A1B6 /* WasmOMGIRGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmOMGIRGenerator.cpp; sourceTree = "<group>"; };
 		53F40E921D5A4AB30099A1B6 /* WasmOMGIRGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmOMGIRGenerator.h; sourceTree = "<group>"; };
@@ -8374,6 +8376,7 @@
 				37AAC091279F124200D64842 /* WasmBranchHints.h */,
 				37AAC090279F124100D64842 /* WasmBranchHintsSectionParser.cpp */,
 				37AAC092279F124200D64842 /* WasmBranchHintsSectionParser.h */,
+				59599FF72E2E412795C8979D /* WasmByteLoopIdiom.h */,
 				525C0DD71E935847002184CD /* WasmCallee.cpp */,
 				525C0DD81E935847002184CD /* WasmCallee.h */,
 				526AC4B41E977C5D003500E1 /* WasmCalleeGroup.cpp */,
@@ -12826,6 +12829,7 @@
 				37AAC094279F1C0500D64842 /* WasmBranchHints.h in Headers */,
 				37AAC093279F1BFC00D64842 /* WasmBranchHintsSectionParser.h in Headers */,
 				FFB963922E38302B0069A70F /* WasmBreakpointManager.h in Headers */,
+				E0EA80DE450D471DB60067AE /* WasmByteLoopIdiom.h in Headers */,
 				525C0DDA1E935847002184CD /* WasmCallee.h in Headers */,
 				526AC4B71E977C5D003500E1 /* WasmCalleeGroup.h in Headers */,
 				53FD04D41D7AB291003287D3 /* WasmCallingConvention.h in Headers */,

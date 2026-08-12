@@ -71,6 +71,7 @@
 #include "ScratchRegisterAllocator.h"
 #include "WasmBaselineData.h"
 #include "WasmBranchHints.h"
+#include "WasmByteLoopIdiom.h"
 #include "WasmCallProfile.h"
 #include "WasmCallingConvention.h"
 #include "WasmContext.h"
@@ -758,6 +759,8 @@ public:
     [[nodiscard]] PartialResult addCurrentMemory(ExpressionType& result, uint8_t memoryIndex);
     [[nodiscard]] PartialResult addMemoryFill(ExpressionType dstAddress, ExpressionType targetValue, ExpressionType count, uint8_t memoryIndex);
     [[nodiscard]] PartialResult addMemoryCopy(ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex);
+    void emitMemoryFill(Value* dstAddress, Value* targetValue, Value* count, uint8_t memoryIndex);
+    void emitMemoryCopy(Value* dstAddress, Value* srcAddress, Value* count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex);
     [[nodiscard]] PartialResult addMemoryInit(unsigned, ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType length, uint8_t memoryIndex);
     [[nodiscard]] PartialResult addDataDrop(unsigned);
 
@@ -822,6 +825,8 @@ public:
     [[nodiscard]] ControlData addTopLevel(BlockSignature&&);
     [[nodiscard]] PartialResult addBlock(BlockSignature&&, std::span<TypedExpression> args, ControlType& newBlock);
     [[nodiscard]] PartialResult addLoop(BlockSignature&&, std::span<TypedExpression> args, ControlType& block, uint32_t loopIndex);
+    std::optional<ByteLoopIdiom> matchByteLoopIdiom(const BlockSignature&);
+    void emitByteLoopIdiom(const ByteLoopIdiom&, ControlType& loop, BasicBlock* body);
     [[nodiscard]] PartialResult addIf(ExpressionType condition, BlockSignature&&, std::span<TypedExpression> args, ControlType& result);
     [[nodiscard]] PartialResult addElse(ControlData&, std::span<const TypedExpression>);
     [[nodiscard]] PartialResult addElseToUnreachable(ControlData&);
@@ -2114,10 +2119,13 @@ auto OMGIRGenerator::addCurrentMemory(ExpressionType& result, uint8_t memoryInde
 
 auto OMGIRGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType target, ExpressionType count, uint8_t memoryIndex) -> PartialResult
 {
-    auto* dstAddressValue = addressOperand(m_info.memory(memoryIndex).isMemory64(), dstAddress);
-    auto* targetValue = get(target);
-    auto* countValue = addressOperand(m_info.memory(memoryIndex).isMemory64(), count);
+    bool is64Bit = m_info.memory(memoryIndex).isMemory64();
+    emitMemoryFill(addressOperand(is64Bit, dstAddress), get(target), addressOperand(is64Bit, count), memoryIndex);
+    return { };
+}
 
+void OMGIRGenerator::emitMemoryFill(Value* dstAddressValue, Value* targetValue, Value* countValue, uint8_t memoryIndex)
+{
     if (!memoryIndex) {
         auto* memorySize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfCachedMemory0Size()));
         m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_cachedMemory0Size, memorySize);
@@ -2148,8 +2156,6 @@ auto OMGIRGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType tar
             });
         }
     }
-
-    return { };
 }
 
 auto OMGIRGenerator::addMemoryInit(unsigned dataSegmentIndex, ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType length, uint8_t memoryIndex) -> PartialResult
@@ -2178,7 +2184,12 @@ auto OMGIRGenerator::addMemoryCopy(ExpressionType dstAddress, ExpressionType src
     auto* dstAddressValue = addressOperand(m_info.memory(dstMemoryIndex).isMemory64(), dstAddress);
     auto* srcAddressValue = addressOperand(m_info.memory(srcMemoryIndex).isMemory64(), srcAddress);
     auto* countValue = addressOperand(m_info.memory(srcMemoryIndex).isMemory64() && m_info.memory(dstMemoryIndex).isMemory64(), count);
+    emitMemoryCopy(dstAddressValue, srcAddressValue, countValue, dstMemoryIndex, srcMemoryIndex);
+    return { };
+}
 
+void OMGIRGenerator::emitMemoryCopy(Value* dstAddressValue, Value* srcAddressValue, Value* countValue, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex)
+{
     if (!dstMemoryIndex && !srcMemoryIndex) {
         auto* memorySize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfCachedMemory0Size()));
         m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_cachedMemory0Size, memorySize);
@@ -2220,8 +2231,6 @@ auto OMGIRGenerator::addMemoryCopy(ExpressionType dstAddress, ExpressionType src
             });
         }
     }
-
-    return { };
 }
 
 auto OMGIRGenerator::addDataDrop(unsigned dataSegmentIndex) -> PartialResult
@@ -4541,12 +4550,136 @@ void OMGIRGenerator::connectValuesAtEntrypoint(unsigned& indexInBuffer, Value* p
     }
 };
 
+std::optional<ByteLoopIdiom> OMGIRGenerator::matchByteLoopIdiom(const BlockSignature& signature)
+{
+    // An empty signature keeps the loop's continuation free of phis, so the bulk path can jump
+    // straight to it.
+    if (signature.argumentCount() || signature.returnCount())
+        return std::nullopt;
+    if (!m_info.memoryCount() || m_info.memory(0).isMemory64())
+        return std::nullopt;
+
+    auto idiom = ByteLoopIdiom::match(m_parser->source(), m_parser->offset());
+    if (!idiom)
+        return std::nullopt;
+
+    // The matcher reads local indices straight out of the bytecode, ahead of the validation that
+    // would reject them.
+    for (uint32_t local : { idiom->destinationLocal, idiom->operandLocal, idiom->countLocal }) {
+        if (local >= m_locals.size() || !m_parser->typeOfLocal(local).isI32())
+            return std::nullopt;
+    }
+    return idiom;
+}
+
+// Emits the equivalent bulk memory operation for a recognized byte-at-a-time loop, guarded so that
+// the loop itself still runs whenever the bulk form would not be faithful to it. This is emitted
+// into a block that every edge into the loop passes through, so the guard costs one test per entry
+// rather than one per iteration; a loop whose guard fails then runs at exactly its original speed.
+//
+// Only the overlap term can change as the loop runs, and only in the direction that a copy which
+// deliberately replicates bytes forwards eventually stops overlapping. Testing for that would mean
+// paying for the test on every one of the iterations that replicate, so entry is the only place
+// worth asking.
+void OMGIRGenerator::emitByteLoopIdiom(const ByteLoopIdiom& idiom, ControlType& loop, BasicBlock* body)
+{
+    bool isFill = idiom.isFill();
+    bool isBackward = idiom.isBackward();
+
+    Value* destination = get(m_locals[idiom.destinationLocal]);
+    Value* operand = get(m_locals[idiom.operandLocal]);
+    Value* count = get(m_locals[idiom.countLocal]);
+
+    auto* memorySize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfCachedMemory0Size()));
+    m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_cachedMemory0Size, memorySize);
+
+    // Widen to 64 bits so that adding a length to an address cannot wrap.
+    Value* wideDestination = pointerOfInt32(destination);
+    Value* wideCount = pointerOfInt32(count);
+    Value* wideSource = isFill ? nullptr : pointerOfInt32(operand);
+
+    auto binary = [&](B3::Opcode opcode, Value* left, Value* right) {
+        return m_currentBlock->appendNew<Value>(m_proc, opcode, origin(), left, right);
+    };
+    auto all = [&](Value* condition, auto... rest) {
+        ((condition = binary(BitAnd, condition, rest)), ...);
+        return condition;
+    };
+
+    Value* nonEmpty = binary(NotEqual, count, constant(Int32, 0));
+    Value* guard = nullptr;
+    if (isBackward) {
+        // count != 0
+        // && destination >= count && source >= count
+        // && destination <= memorySize && source <= memorySize
+        // && (destination >= source || (destination + count) <= source)
+        //
+        // Copying downwards matches a memmove when the destination is above the source, and either
+        // direction works when the regions do not overlap at all.
+        guard = all(nonEmpty,
+            binary(AboveEqual, wideDestination, wideCount),
+            binary(AboveEqual, wideSource, wideCount),
+            binary(BelowEqual, wideDestination, memorySize),
+            binary(BelowEqual, wideSource, memorySize),
+            binary(BitOr,
+                binary(AboveEqual, wideDestination, wideSource),
+                binary(BelowEqual, binary(Add, wideDestination, wideCount), wideSource)));
+    } else if (isFill) {
+        // count != 0 && (destination + count) <= memorySize
+        guard = all(nonEmpty,
+            binary(BelowEqual, binary(Add, wideDestination, wideCount), memorySize));
+    } else {
+        // count != 0
+        // && (destination + count) <= memorySize && (source + count) <= memorySize
+        // && (destination <= source || destination >= (source + count))
+        //
+        // Copying upwards matches a memmove when the destination is below the source, and either
+        // direction works when the regions do not overlap at all.
+        guard = all(nonEmpty,
+            binary(BelowEqual, binary(Add, wideDestination, wideCount), memorySize),
+            binary(BelowEqual, binary(Add, wideSource, wideCount), memorySize),
+            binary(BitOr,
+                binary(BelowEqual, wideDestination, wideSource),
+                binary(AboveEqual, wideDestination, binary(Add, wideSource, wideCount))));
+    }
+
+    BasicBlock* bulkPath = m_proc.addBlock();
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), guard, FrequentedBlock(bulkPath), FrequentedBlock(body, FrequencyClass::Rare));
+    bulkPath->addPredecessor(m_currentBlock);
+    body->addPredecessor(m_currentBlock);
+
+    m_currentBlock = bulkPath;
+    auto* startOfDestination = isBackward ? binary(Sub, destination, count) : destination;
+    if (isFill)
+        emitMemoryFill(pointerOfInt32(startOfDestination), operand, wideCount, 0);
+    else {
+        auto* startOfSource = isBackward ? binary(Sub, operand, count) : operand;
+        emitMemoryCopy(pointerOfInt32(startOfDestination), pointerOfInt32(startOfSource), wideCount, 0, 0);
+    }
+
+    // Leave the locals holding exactly what the loop would have left in them.
+    B3::Opcode advance = isBackward ? Sub : Add;
+    set(m_locals[idiom.destinationLocal], binary(advance, destination, count));
+    if (!isFill)
+        set(m_locals[idiom.operandLocal], binary(advance, operand, count));
+    set(m_locals[idiom.countLocal], constant(Int32, 0));
+    m_currentBlock->appendNewControlValue(m_proc, B3::Jump, origin(), loop.continuation);
+    loop.continuation->addPredecessor(m_currentBlock);
+}
+
 auto OMGIRGenerator::addLoop(BlockSignature&& signature, std::span<TypedExpression> args, ControlType& block, uint32_t loopIndex) -> PartialResult
 {
     auto enclosingStack = m_parser->expressionStack();
     TRACE_CF("LOOP: entering loop index: ", loopIndex, " signature: ", signature);
     BasicBlock* body = m_proc.addBlock();
     BasicBlock* continuation = m_proc.addBlock();
+
+    auto idiom = matchByteLoopIdiom(signature);
+
+    // Every edge into the loop goes through this block, so a recognized idiom can test its guard
+    // once per entry there instead of once per iteration. Without an idiom it stays empty and the
+    // jump through it folds away.
+    BasicBlock* entry = idiom ? m_proc.addBlock() : body;
 
     block = ControlData(m_proc, origin(), WTF::move(signature), BlockType::Loop, continuation, body);
 
@@ -4559,7 +4692,7 @@ auto OMGIRGenerator::addLoop(BlockSignature&& signature, std::span<TypedExpressi
         args[i] = TypedExpression(block.signature().argumentType(i), phi);
     }
 
-    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), entry);
     if (loopIndex == m_loopIndexForOSREntry) {
         // This must be kept in sync with BBQJIT::makeStackMap.
         dataLogLnIf(WasmOMGIRGeneratorInternal::verbose, "Setting up for OSR entry");
@@ -4599,11 +4732,17 @@ auto OMGIRGenerator::addLoop(BlockSignature&& signature, std::span<TypedExpressi
 
         ASSERT(!m_proc.usesSIMD() || m_compilationMode == CompilationMode::OMGForOSREntryMode);
         *m_osrEntryScratchBufferSize = indexInBuffer;
-        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), body);
-        body->addPredecessor(m_currentBlock);
+        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), entry);
+        entry->addPredecessor(m_currentBlock);
+    }
+
+    if (idiom) {
+        m_currentBlock = entry;
+        emitByteLoopIdiom(*idiom, block, body);
     }
 
     m_currentBlock = body;
+
     return { };
 }
 

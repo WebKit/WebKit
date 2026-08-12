@@ -565,6 +565,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Size, wasmSmallPartialCompileLimit, 5000, Normal, "Limit on the number of bytes a Wasm::Plan::compile should attempt for small wasm binary before checking for other work."_s) \
     v(Size, wasmLargePartialCompileLimit, 20000, Normal, "Limit on the number of bytes a Wasm::Plan::compile should attempt for large wasm binary before checking for other work."_s) \
     v(Unsigned, wasmOMGOptimizationLevel, Options::defaultB3OptLevel(), Normal, "B3 Optimization level for OMG Web Assembly module compilations."_s) \
+    v(Bool, useWasmByteLoopReplacement, true, Normal, "If true, OMG replaces a loop that copies or fills linear memory one byte per iteration with the equivalent bulk memory operation."_s) \
     \
     v(Bool, useBBQTierUpChecks, true, Normal, "Enables tier up checks for our BBQ code."_s) \
     v(Bool, useWasmOSR, true, Normal, nullptr) \
