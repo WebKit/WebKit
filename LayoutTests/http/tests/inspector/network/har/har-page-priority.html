@@ -30,21 +30,10 @@ function test()
                 InspectorTest.reloadPage({ignoreCache: true}),
             ]);
 
-            await new Promise(resolve => setTimeout(resolve, 300)); // Microtask yield
+            await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
 
-            let resources = [];
-            for (let target of WI.targetManager.targets) {
-                if (!target || target.isProvisional)
-                    continue;
-
-                if (target.networkManager && target.networkManager.mainFrame) {
-                    let frame = target.networkManager.mainFrame;
-                    if (frame.mainResource)
-                        resources.push(frame.mainResource);
-                    if (frame.resourceCollection)
-                        resources.push(...frame.resourceCollection);
-                }
-            }
+            let {frameTree} = await PageAgent.getResourceTree(); // wait for all resources
+            let resources = frameTree.resources;
 
             if (resources.length) {
                 console.log(`Got ${resources.length} resources`);
