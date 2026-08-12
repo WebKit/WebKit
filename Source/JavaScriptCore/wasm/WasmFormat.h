@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 the V8 project authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -304,6 +305,37 @@ inline bool isExnref(Type type)
     return isRefType(type) && type.index() == typeIndexFromTypeKind(TypeKind::Exnref);
 }
 
+// Placing a field in WasmGC Struct, but tracking a gap happening due to alignment requirement.
+// We keep one gap slot so far if exists, and attempt to reuse this gap when it is possible.
+inline unsigned placeStructField(size_t fieldSize, unsigned& currentOffset, unsigned& gapPosition, unsigned& gapSize)
+{
+    if (fieldSize <= gapSize) {
+        unsigned alignedGap = WTF::roundUpToMultipleOf(fieldSize, gapPosition);
+        unsigned gapBefore = alignedGap - gapPosition;
+        unsigned alignedGapSize = gapSize - gapBefore;
+        if (fieldSize <= alignedGapSize) {
+            unsigned gapAfter = alignedGapSize - fieldSize;
+            if (gapBefore > gapAfter)
+                gapSize = gapBefore;
+            else {
+                gapPosition = alignedGap + fieldSize;
+                gapSize = gapAfter;
+            }
+            return alignedGap;
+        }
+    }
+
+    unsigned oldOffset = currentOffset;
+    currentOffset = WTF::roundUpToMultipleOf(fieldSize, currentOffset);
+    unsigned gap = currentOffset - oldOffset;
+    if (gap > gapSize) {
+        gapSize = gap;
+        gapPosition = oldOffset;
+    }
+    unsigned offset = currentOffset;
+    currentOffset += fieldSize;
+    return offset;
+}
 inline JSString* typeToJSAPIString(VM& vm, Type type)
 {
     switch (type.kind()) {

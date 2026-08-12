@@ -582,13 +582,13 @@ Ref<const RTT> TypeInformation::typeDefinitionForStruct(const Vector<FieldType>&
     bool hasRefFieldTypes = false;
     bool hasRecursiveReference = false;
     unsigned currentFieldOffset = 0;
+    unsigned gapPosition = 0;
+    unsigned gapSize = 0;
     auto entries = FixedVector<StructFieldEntry>::createWithSizeFromGenerator(fields.size(), [&](size_t i) -> StructFieldEntry {
         const FieldType& fieldType = fields[i];
         hasRefFieldTypes |= isRefType(fieldType.type);
         hasRecursiveReference |= isRefWithRecursiveReference(fieldType.type);
-        currentFieldOffset = WTF::roundUpToMultipleOf(typeAlignmentInBytes(fieldType.type), currentFieldOffset);
-        unsigned offset = currentFieldOffset;
-        currentFieldOffset += typeSizeInBytes(fieldType.type);
+        unsigned offset = placeStructField(typeSizeInBytes(fieldType.type), currentFieldOffset, gapPosition, gapSize);
         // Anchor external RTT ref inline (null for PackedType or non-ref Type).
         RefPtr<const RTT> anchor;
         if (fieldType.type.is<Type>())

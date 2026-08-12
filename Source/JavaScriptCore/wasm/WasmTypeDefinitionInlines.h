@@ -64,14 +64,14 @@ Ref<const RTT> TypeInformation::typeDefinitionForStructFromProvider(StructFieldC
     bool hasRefFieldTypes = false;
     bool hasRecursiveReference = false;
     unsigned currentOffset = 0;
+    unsigned gapPosition = 0;
+    unsigned gapSize = 0;
 
     auto entries = FixedVector<StructFieldEntry>::createWithSizeFromGenerator(fieldCount, [&](size_t i) -> StructFieldEntry {
         FieldType f = provider(i);
         hasRefFieldTypes |= isRefType(f.type);
         hasRecursiveReference |= isRefWithRecursiveReference(f.type);
-        currentOffset = WTF::roundUpToMultipleOf(typeAlignmentInBytes(f.type), currentOffset);
-        unsigned offset = currentOffset;
-        currentOffset += typeSizeInBytes(f.type);
+        unsigned offset = placeStructField(typeSizeInBytes(f.type), currentOffset, gapPosition, gapSize);
         RefPtr<const RTT> anchor;
         if (f.type.is<Type>())
             anchor = extractExternalRTT(f.type.as<Type>());

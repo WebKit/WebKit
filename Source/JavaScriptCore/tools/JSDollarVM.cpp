@@ -97,6 +97,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if ENABLE(WEBASSEMBLY)
 #include "JSWebAssemblyHelpers.h"
+#include "JSWebAssemblyStruct.h"
 #include "WasmModuleInformation.h"
 #include "WasmStreamingCompiler.h"
 #include "WasmStreamingParser.h"
@@ -2220,6 +2221,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionTotalGCTime);
 static JSC_DECLARE_HOST_FUNCTION(functionParseCount);
 static JSC_DECLARE_HOST_FUNCTION(functionIsWasmSupported);
 static JSC_DECLARE_HOST_FUNCTION(functionWasmCanonicalTypeCount);
+static JSC_DECLARE_HOST_FUNCTION(functionWasmStructFieldOffsets);
+static JSC_DECLARE_HOST_FUNCTION(functionWasmStructPayloadSize);
 static JSC_DECLARE_HOST_FUNCTION(functionMake16BitStringIfPossible);
 static JSC_DECLARE_HOST_FUNCTION(functionGetStructureTransitionList);;
 static JSC_DECLARE_HOST_FUNCTION(functionGetConcurrently);
@@ -3996,6 +3999,46 @@ JSC_DEFINE_HOST_FUNCTION(functionWasmCanonicalTypeCount, (JSGlobalObject*, CallF
 #endif
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionWasmStructFieldOffsets, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+#if ENABLE(WEBASSEMBLY)
+    auto* structObject = dynamicDowncast<JSWebAssemblyStruct>(callFrame->argument(0));
+    if (!structObject)
+        return throwVMTypeError(globalObject, scope, "argument is not a WebAssembly GC struct"_s);
+
+    SUPPRESS_UNCOUNTED_LOCAL const auto& rtt = structObject->structType();
+    JSArray* result = constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
+    for (Wasm::StructFieldCount i = 0; i < rtt.fieldCount(); ++i) {
+        result->push(globalObject, jsNumber(rtt.offsetOfFieldInPayload(i)));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return JSValue::encode(result);
+#else
+    UNUSED_PARAM(callFrame);
+    return throwVMTypeError(globalObject, scope, "WebAssembly is not enabled"_s);
+#endif
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionWasmStructPayloadSize, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+#if ENABLE(WEBASSEMBLY)
+    auto* structObject = dynamicDowncast<JSWebAssemblyStruct>(callFrame->argument(0));
+    if (!structObject)
+        return throwVMTypeError(globalObject, scope, "argument is not a WebAssembly GC struct"_s);
+    return JSValue::encode(jsNumber(structObject->structType().instancePayloadSize()));
+#else
+    UNUSED_PARAM(callFrame);
+    return throwVMTypeError(globalObject, scope, "WebAssembly is not enabled"_s);
+#endif
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionMake16BitStringIfPossible, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
@@ -4663,6 +4706,8 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, alwaysAllow, "isWasmSupported"_s, functionIsWasmSupported, 0);
     addFunction(vm, alwaysAllow, "wasmCanonicalTypeCount"_s, functionWasmCanonicalTypeCount, 0);
+    addFunction(vm, alwaysAllow, "wasmStructFieldOffsets"_s, functionWasmStructFieldOffsets, 1);
+    addFunction(vm, alwaysAllow, "wasmStructPayloadSize"_s, functionWasmStructPayloadSize, 1);
     addFunction(vm, alwaysAllow, "make16BitStringIfPossible"_s, functionMake16BitStringIfPossible, 1);
 
     addFunction(vm, allowIfNotFuzz, "getStructureTransitionList"_s, functionGetStructureTransitionList, 1);
