@@ -98,30 +98,34 @@ void NavigationHistoryEntry::eventListenersDidChange()
 const String& NavigationHistoryEntry::url() const
 {
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
+    // https://html.spec.whatwg.org/#dom-navigationhistoryentry-url (Step 2)
     if (!document || !document->isFullyActive())
-        return nullString();
+        return emptyString();
     // https://html.spec.whatwg.org/#dom-navigationhistoryentry-url (Step 4)
     if (document->identifier() != m_originalDocumentState.identifier && (m_originalDocumentState.referrerPolicy == ReferrerPolicy::NoReferrer || m_originalDocumentState.referrerPolicy == ReferrerPolicy::Origin))
         return nullString();
     return m_urlString;
 }
 
+// https://html.spec.whatwg.org/#concept-navigationhistoryentry-key
 String NavigationHistoryEntry::key() const
 {
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
-        return nullString();
+        return emptyString();
     return m_associatedHistoryItem->navigationAPIKey().toString();
 }
 
+// https://html.spec.whatwg.org/#concept-navigationhistoryentry-id
 String NavigationHistoryEntry::id() const
 {
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (!document || !document->isFullyActive())
-        return nullString();
+        return emptyString();
     return m_id.toString();
 }
 
+// https://html.spec.whatwg.org/#concept-navigationhistoryentry-index
 uint64_t NavigationHistoryEntry::index() const
 {
     RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
