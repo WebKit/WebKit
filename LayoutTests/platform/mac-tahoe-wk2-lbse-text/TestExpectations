@@ -61,17 +61,6 @@ svg/filters/filter-specified-on-svg-root.html                                   
 svg/filters/feImage-target-attribute-change-with-use-indirection-2.svg                 [ ImageOnlyFailure ]
 svg/filters/feImage-target-attribute-change-with-use-indirection.svg                   [ ImageOnlyFailure ]
 
-# SVGImage support incomplete
-svg/as-image/image-respects-pageScaleFactor-change.html                   [ ImageOnlyFailure ]
-svg/as-image/img-preserveAspectRatio-support-1.html                       [ ImageOnlyFailure ]
-svg/as-image/same-image-two-instances.html                                [ ImageOnlyFailure ]
-svg/as-image/svg-as-image-with-relative-size.html                         [ ImageOnlyFailure ]
-svg/as-image/svg-image-no-viewbox-preserve-aspect-ratio-none.html         [ ImageOnlyFailure ]
-svg/custom/use-image-in-g.svg                                             [ ImageOnlyFailure ]
-svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html                 [ ImageOnlyFailure ]
-# SVG document w/o viewBox + <img> sizing differs to FF/Chrome
-svg/as-background-image/background-image-preserveaspectRatio-support.html [ ImageOnlyFailure ]
-
 # Precision differences
 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 svg/zoom/zoomed-inline-svg-getscreenctm.html [ Failure ]

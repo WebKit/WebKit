@@ -623,6 +623,14 @@ static bool isEmbeddedThroughSVGImage(const SVGSVGElement& element)
     return element.document().documentElement() == &element && isInSVGImage(&element);
 }
 
+bool SVGSVGElement::hasSynthesizedViewBoxForSVGImage() const
+{
+    // An SVG document embedded through SVGImage is resized to the container size chosen by the
+    // embedder. Without an explicit viewBox the content has to stretch to that size, which is
+    // modelled by synthesizing a viewBox from the intrinsic size, see currentViewBoxRect().
+    return !m_useCurrentView && viewBox().isEmpty() && isEmbeddedThroughSVGImage(*this);
+}
+
 FloatRect SVGSVGElement::currentViewBoxRect() const
 {
     if (m_useCurrentView) {
@@ -635,7 +643,7 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
     if (!viewBox.isEmpty())
         return viewBox;
 
-    if (!isEmbeddedThroughSVGImage(*this))
+    if (!hasSynthesizedViewBoxForSVGImage())
         return { };
 
     // If no viewBox is specified but non-relative width/height values, then we
@@ -725,7 +733,7 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
 
         // If we synthesized a viewBox (no explicit viewBox but embedded through SVGImage),
         // we should also synthesize preserveAspectRatio="none" to allow stretching.
-        if (viewBox().isEmpty() && !currentViewBox.isEmpty() && isEmbeddedThroughSVGImage(*this)) {
+        if (hasSynthesizedViewBoxForSVGImage()) {
             auto preserveAspectRatio = SVGPreserveAspectRatioValue(SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE, SVGPreserveAspectRatioValue::SVG_MEETORSLICE_MEET);
             return SVGFitToViewBox::viewBoxToViewTransform(currentViewBox, preserveAspectRatio, viewWidth, viewHeight);
         }

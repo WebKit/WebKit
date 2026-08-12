@@ -111,6 +111,7 @@ public:
     void invalidateCachedViewportSizeExcludingZoom() const { m_cachedViewportSizeExcludingZoom = std::nullopt; }
 
     FloatRect currentViewBoxRect() const;
+    bool hasSynthesizedViewBoxForSVGImage() const;
 
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;
     bool hasTransformRelatedAttributes() const final;
