@@ -1764,6 +1764,7 @@
 				07C93B2D2F821630003A09D8 /* Resources */,
 				07C907C22F820940003A09D8 /* Runner */,
 				07C913E62F820CF1003A09D8 /* Scripts */,
+				DD7024AE302CE42A009B6CC0 /* Shared */,
 				07C913EF2F820D85003A09D8 /* TestBundle */,
 				07C907D82F820949003A09D8 /* TestWebKitAPILibrary */,
 				07C910F42F820CC7003A09D8 /* Tests */,
@@ -1772,7 +1773,6 @@
 				5C9D921D22D7DBF7008E9266 /* Sources.txt */,
 				5C9D921E22D7DBF8008E9266 /* SourcesCocoa.txt */,
 				07597D7E2F81DD59000C96D0 /* config.h */,
-				0D54DDFD301FFF4C00DEB1E8 /* Recovered References */,
 			);
 			name = TestWebKitAPI;
 			sourceTree = "<group>";
@@ -1787,14 +1787,6 @@
 				C081224813FC1B0300DC39AE /* WebKit.framework */,
 			);
 			name = "External Frameworks and Libraries";
-			sourceTree = "<group>";
-		};
-		0D54DDFD301FFF4C00DEB1E8 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				CC1FEED000000000000FF001 /* WebFoundTextRange.cpp */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
@@ -1955,6 +1947,14 @@
 			);
 			path = InjectedBundle;
 			sourceTree = "<group>";
+		};
+		DD7024AE302CE42A009B6CC0 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				CC1FEED000000000000FF001 /* WebFoundTextRange.cpp */,
+			);
+			name = Shared;
+			sourceTree = SOURCE_ROOT;
 		};
 		DDF3A82A28930475005920CF /* Products */ = {
 			isa = PBXGroup;
