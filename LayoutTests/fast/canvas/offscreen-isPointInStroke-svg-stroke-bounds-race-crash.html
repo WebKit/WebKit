@@ -1,0 +1,119 @@
+<body>
+<p>Ensure Path uses thread-safe context to check strokeContains() and to calculate strokeBoundingBox().</p>
+<p>PASS if this test does not crash.</p>
+<div id="container"></div>
+<script>
+    window.testRunner?.waitUntilDone();
+    window.testRunner?.dumpAsText();
+
+    function createOffscreenCanvasWorkers() {
+        const workerCode = `
+            self.onmessage = function(e) {
+                const ctx = e.data.getContext("2d");
+                let iter = 0;
+                while (true) {
+                    const dashLen = 2 + (iter % 6);
+                    const dashes = [];
+                    for (let d = 0; d < dashLen; d++)
+                        dashes.push(3 + ((iter * 7 + d * 13) % 30));
+
+                    ctx.setLineDash(dashes);
+                    ctx.lineDashOffset = iter % 50;
+                    ctx.lineWidth = 2 + (iter % 15);
+                    ctx.beginPath();
+
+                    for (let j = 0; j < 15; j++) {
+                        const a = j / 15 * Math.PI * 2 + iter * 0.1;
+                        const r = 30 + 20 * Math.sin(j * 0.7 + iter * 0.3);
+                        const x = 64 + r * Math.cos(a);
+                        const y = 64 + r * Math.sin(a);
+                        if (j === 0)
+                            ctx.moveTo(x, y);
+                        else 
+                            ctx.bezierCurveTo(x + 10 * Math.sin(iter + j), y + 10 * Math.cos(iter + j), x - 6 * Math.cos(iter * j), y - 6 * Math.sin(iter * j), x, y);
+                    }
+                    ctx.closePath();
+                    ctx.isPointInStroke(64, 64);
+                    iter++;
+                }
+            };
+        `;
+
+        // Launch 8 workers to hammer strokeContains
+        for (let i = 0; i < 8; i++) {
+            const canvas = document.createElement("canvas");
+            canvas.width = canvas.height = 128;
+            const offscreen = canvas.transferControlToOffscreen();
+            const worker = new Worker(URL.createObjectURL(new Blob([workerCode])));
+            worker.postMessage(offscreen, [offscreen]);
+        }
+    }
+
+    const svgPaths = [];
+
+    function createSVGPaths() {
+        const svgNS = "http://www.w3.org/2000/svg";
+        const container = document.getElementById('container');
+
+        // Create SVG paths with clip-path: circle(100%) stroke-box
+        // This forces strokeBoundingBox() computation during every paint
+        for (let i = 0; i < 20; i++) {
+            const svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute("width", "80");
+            svg.setAttribute("height", "80");
+            svg.style.display = "inline-block";
+
+            const path = document.createElementNS(svgNS, "path");
+            path.setAttribute("d", "M10,10 C50,0 50,80 70,70 L60,20 Q30,60 70,40 Z");
+            path.setAttribute("stroke", "red");
+            path.setAttribute("stroke-width", "4");
+            path.setAttribute("stroke-dasharray", "10,5,3,7");
+            path.setAttribute("fill", "blue");
+            // clip-path with stroke-box reference box forces strokeBoundingBox() on every paint
+            path.style.clipPath = "inset(0) stroke-box";
+
+            svg.appendChild(path);
+            container.appendChild(svg);
+            svgPaths.push(path);
+        }
+    }
+
+    let frameCount = 0;
+
+    function animationLoop() {
+        let generatePath = function (seed) {
+            let d = 'M' + (5 + seed % 40) + ',' + (5 + seed % 30);
+            for (let i = 0; i < 5; i++) {
+                const x1 = 5 + ((seed * 7 + i * 13) % 70);
+                const y1 = 5 + ((seed * 11 + i * 17) % 70);
+                const x2 = 5 + ((seed * 3 + i * 23) % 70);
+                const y2 = 5 + ((seed * 5 + i * 29) % 70);
+                const x = 5 + ((seed * 13 + i * 31) % 70);
+                const y = 5 + ((seed * 17 + i * 37) % 70);
+                d += ' C' + x1 + ',' + y1 + ' ' + x2 + ',' + y2 + ' ' + x + ',' + y;
+            }
+            d += ' Z';
+            return d;
+        };
+
+        // Modify all SVG paths to invalidate their stroke bounding box cache
+        for (let i = 0; i < svgPaths.length; i++) {
+            const seed = frameCount * 20 + i;
+            svgPaths[i].setAttribute('d', generatePath(seed));
+            // Vary dash pattern to ensure CGContextSetLineDash allocates different arrays
+            const d1 = 3 + ((seed * 7) % 20);
+            const d2 = 2 + ((seed * 11) % 12);
+            const d3 = 4 + ((seed * 3) % 15);
+            svgPaths[i].setAttribute('stroke-dasharray', d1 + ',' + d2 + ',' + d3);
+        }
+
+        if (++frameCount <= 10)
+            requestAnimationFrame(animationLoop);
+        else
+             window.testRunner?.notifyDone();
+    }
+
+    createOffscreenCanvasWorkers();
+    createSVGPaths();
+    requestAnimationFrame(animationLoop);
+</script>
