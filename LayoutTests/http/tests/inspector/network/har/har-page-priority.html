@@ -27,8 +27,8 @@ function test()
 
             await Promise.all([
                 InspectorTest.awaitEvent("LoadComplete"),
-                InspectorTest.navigate(window.location.href),
             ]);
+            window.location = window.location.href; // Manually reload page
 
             await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
 
