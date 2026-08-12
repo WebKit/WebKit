@@ -92,6 +92,13 @@ private:
     unsigned m_length { 0 };
 };
 
+struct TextIteratorPosition {
+    Ref<Node> container;
+    RefPtr<Node> offsetBaseNode;
+    unsigned startOffset { 0 };
+    unsigned endOffset { 0 };
+};
+
 // Iterates through the DOM range, returning all the text, and 0-length boundaries
 // at points where replaced elements break up the text flow. The text is delivered in
 // the chunks it's already stored in, to avoid copying any text.
@@ -109,6 +116,7 @@ public:
 
     StringView text() const LIFETIME_BOUND { ASSERT(!atEnd()); return m_text; }
     WEBCORE_EXPORT SimpleRange range() const;
+    WEBCORE_EXPORT TextIteratorPosition position() const;
     WEBCORE_EXPORT Node* node() const;
 
     // Returns true when the current output is a newline emitted from exiting

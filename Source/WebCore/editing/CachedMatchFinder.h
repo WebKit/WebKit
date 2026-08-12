@@ -27,6 +27,7 @@
 
 #include <WebCore/FindOptions.h>
 #include <WebCore/SimpleRange.h>
+#include <WebCore/TextIterator.h>
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
@@ -58,8 +59,12 @@ public:
 
 private:
     struct TextRun {
-        unsigned offset;
-        SimpleRange range;
+        unsigned offset { 0 };
+        mutable TextIteratorPosition textIteratorPosition;
+
+        void resolveOffsets() const;
+        BoundaryPoint start() const;
+        SimpleRange range() const;
     };
 
     struct TextRunCache {

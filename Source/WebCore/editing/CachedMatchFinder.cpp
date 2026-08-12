@@ -305,17 +305,40 @@ Expected<unsigned, CachedMatchFinder::CacheUnusable> CachedMatchFinder::countMat
     return count;
 }
 
+void CachedMatchFinder::TextRun::resolveOffsets() const
+{
+    if (!textIteratorPosition.offsetBaseNode)
+        return;
+    unsigned index = textIteratorPosition.offsetBaseNode->computeNodeIndex();
+    textIteratorPosition.startOffset += index;
+    textIteratorPosition.endOffset += index;
+    textIteratorPosition.offsetBaseNode = nullptr;
+}
+
+BoundaryPoint CachedMatchFinder::TextRun::start() const
+{
+    resolveOffsets();
+    return { textIteratorPosition.container.copyRef(), textIteratorPosition.startOffset };
+}
+
+SimpleRange CachedMatchFinder::TextRun::range() const
+{
+    resolveOffsets();
+    return { { textIteratorPosition.container.copyRef(), textIteratorPosition.startOffset }, { textIteratorPosition.container.copyRef(), textIteratorPosition.endOffset } };
+}
+
 unsigned CachedMatchFinder::bufferOffsetForBoundaryPoint(StringView buffer, const Vector<TextRun>& runs, const BoundaryPoint& point, FindOptions options)
 {
     std::optional<unsigned> lastChunkEnd;
     for (auto [i, run] : indexedRange(runs)) {
-        if (&run.range.start.container.get() != &point.container.get())
+        if (run.textIteratorPosition.container.ptr() != point.container.ptr())
             continue;
-        if (point.offset < run.range.start.offset)
+        run.resolveOffsets();
+        if (point.offset < run.textIteratorPosition.startOffset)
             continue;
 
-        if (point.offset <= run.range.end.offset)
-            return run.offset + (point.offset - run.range.start.offset);
+        if (point.offset <= run.textIteratorPosition.endOffset)
+            return run.offset + (point.offset - run.textIteratorPosition.startOffset);
 
         lastChunkEnd = i + 1 < runs.size() ? runs[i + 1].offset : buffer.length();
     }
@@ -325,8 +348,8 @@ unsigned CachedMatchFinder::bufferOffsetForBoundaryPoint(StringView buffer, cons
 
     for (const auto& run : runs) {
         auto order = options.contains(FindOption::DoNotTraverseFlatTree)
-            ? treeOrder<ShadowIncludingTree>(run.range.start, point)
-            : treeOrder<ComposedTree>(run.range.start, point);
+            ? treeOrder<ShadowIncludingTree>(run.start(), point)
+            : treeOrder<ComposedTree>(run.start(), point);
         if (std::is_gteq(order))
             return run.offset;
     }
@@ -409,8 +432,8 @@ auto CachedMatchFinder::textForScope(ContainerNode& scope, FindOptions options) 
     for (; !it.atEnd(); it.advance()) {
         if (auto limit = maximumRunCountForTesting(); limit && runs.size() >= *limit)
             return std::nullopt;
-        auto textRunRange = it.range();
-        if (!runs.tryAppend(TextRun { static_cast<unsigned>(builder.length()), textRunRange }))
+        auto position = it.position();
+        if (!runs.tryAppend(TextRun { static_cast<unsigned>(builder.length()), TextIteratorPosition { WTF::move(position.container), WTF::move(position.offsetBaseNode), position.startOffset, position.endOffset } }))
             return std::nullopt;
         auto text = it.text();
         if (text.is8Bit()) {
@@ -439,9 +462,10 @@ BoundaryPoint CachedMatchFinder::boundaryForOffset(const Vector<CachedMatchFinde
 
     auto& run = runs[index];
     RELEASE_ASSERT(run.offset <= position);
+    run.resolveOffsets();
     unsigned offsetWithinChunk = static_cast<unsigned>(position - run.offset);
-    unsigned domOffset = std::min(run.range.start.offset + offsetWithinChunk, run.range.end.offset);
-    return { run.range.start.container.copyRef(), domOffset };
+    unsigned domOffset = std::min(run.textIteratorPosition.startOffset + offsetWithinChunk, run.textIteratorPosition.endOffset);
+    return { run.textIteratorPosition.container.copyRef(), domOffset };
 }
 
 SimpleRange CachedMatchFinder::bufferRangeToSimpleRange(const Vector<TextRun>& runs, size_t start, size_t end)

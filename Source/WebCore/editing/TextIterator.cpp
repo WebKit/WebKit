@@ -1370,6 +1370,12 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
     m_hasEmitted = true;
 }
 
+TextIteratorPosition TextIterator::position() const
+{
+    ASSERT(!atEnd());
+    return { *m_positionNode, m_positionOffsetBaseNode, static_cast<unsigned>(m_positionStartOffset), static_cast<unsigned>(m_positionEndOffset) };
+}
+
 SimpleRange TextIterator::range() const
 {
     ASSERT(!atEnd());
