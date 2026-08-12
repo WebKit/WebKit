@@ -1317,17 +1317,17 @@ CSSFunctionAtRuleEnabled:
 
 CSSIdentFunctionEnabled:
   type: bool
-  status: preview
+  status: stable
   category: css
   humanReadableName: "CSS ident() function"
   humanReadableDescription: "Enable the CSS Values 5 ident() function"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSIfFunctionEnabled:
   type: bool
