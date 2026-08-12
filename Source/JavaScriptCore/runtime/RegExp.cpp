@@ -317,7 +317,7 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize, std::optional<StringView> 
     }
 
 #if ENABLE(YARR_JIT)
-    if (!pattern.containsUnsignedLengthPattern() && Options::useRegExpJIT() && !pattern.m_containsLookbehinds) {
+    if (!pattern.containsUnsignedLengthPattern() && Options::useRegExpJIT() && !(pattern.m_containsLookbehinds && eitherUnicode())) {
         auto& jitCode = ensureRegExpJITCode();
         Yarr::jitCompile(pattern, m_patternString, charSize, sampleString, vm, jitCode, Yarr::ExecutionMode::IncludeSubpatterns);
         if (!jitCode.failureReason()) {
@@ -400,7 +400,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize, std::optional<Str
     }
 
 #if ENABLE(YARR_JIT)
-    if (!pattern.containsUnsignedLengthPattern() && Options::useRegExpJIT() && !pattern.m_containsLookbehinds) {
+    if (!pattern.containsUnsignedLengthPattern() && Options::useRegExpJIT() && !(pattern.m_containsLookbehinds && eitherUnicode())) {
         auto& jitCode = ensureRegExpJITCode();
         Yarr::jitCompile(pattern, m_patternString, charSize, sampleString, vm, jitCode, Yarr::ExecutionMode::MatchOnly);
         if (!jitCode.failureReason()) {
