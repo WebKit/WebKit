@@ -1,0 +1,4 @@
+dialog
+
+FAIL Dialog light dismiss should work with touch and not trigger a click event. assert_false: Dialog should be closed by light dismiss. expected false got true
+

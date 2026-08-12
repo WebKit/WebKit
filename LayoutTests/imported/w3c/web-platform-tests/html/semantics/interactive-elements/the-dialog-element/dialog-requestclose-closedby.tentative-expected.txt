@@ -1,0 +1,3 @@
+
+PASS requestClose() should close the dialog even when computed closedby becomes none
+

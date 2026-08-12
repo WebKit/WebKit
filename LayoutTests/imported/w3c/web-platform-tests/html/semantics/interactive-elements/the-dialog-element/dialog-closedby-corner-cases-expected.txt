@@ -5,7 +5,7 @@ PASS Clicking outside, when focusin removes and reinserts, modeless
 PASS Pressing escape, when focusin closes dialog, modeless
 PASS Clicking outside, when focusin closes dialog, modeless
 FAIL Pressing escape, when focusin calls showModal, modeless assert_equals: Dialog should respond to ESC expected true but got false
-FAIL Clicking outside, when focusin calls showModal, modeless assert_true: true expected true got false
+FAIL Clicking outside, when focusin calls showModal, modeless assert_equals: Dialog respond to light dismiss expected true but got false
 PASS Pressing escape, when beforetoggle closes dialog, modeless
 PASS Clicking outside, when beforetoggle closes dialog, modeless
 PASS Pressing escape, when beforetoggle calls showModal, modeless
@@ -15,7 +15,7 @@ PASS Clicking outside, when focusin removes and reinserts, modal
 PASS Pressing escape, when focusin closes dialog, modal
 PASS Clicking outside, when focusin closes dialog, modal
 PASS Pressing escape, when focusin calls showModal, modal
-FAIL Clicking outside, when focusin calls showModal, modal assert_true: expected true got false
+PASS Clicking outside, when focusin calls showModal, modal
 PASS Pressing escape, when beforetoggle closes dialog, modal
 PASS Clicking outside, when beforetoggle closes dialog, modal
 PASS Pressing escape, when beforetoggle calls showModal, modal
