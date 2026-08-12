@@ -431,6 +431,50 @@ TEST(TextExtractionTests, InteractionDescriptionUsesAdjacentTextForUnlabeledIcon
     EXPECT_NULL(error);
 }
 
+TEST(TextExtractionTests, InteractionDescriptionIncludesAssociatedLabelText)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@"<label for='email-field'>Email address</label><input id='email-field'>"
+        "<label>Phone number <input id='p1'></label>"
+        "<label for='city-name'>City</label><input id='city-name' aria-label='Town'>"
+        "<label for='notes-field'>Notes</label><textarea id='notes-field'></textarea>"
+        "<label for='save-button'>Save changes</label><button id='save-button'><img aria-label='Icon'></button>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+
+    NSError *error = nil;
+    NSString *description = nil;
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+
+    [interaction setNodeIdentifier:extractNodeIdentifier(debugText, @"Email address")];
+    description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_WK_STREQ("Click on input labeled “Email address” with id “email-field”", description);
+    EXPECT_NULL(error);
+
+    [interaction setNodeIdentifier:extractNodeIdentifier(debugText, @"Phone number")];
+    description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_WK_STREQ("Click on input labeled “Phone number”", description);
+    EXPECT_NULL(error);
+
+    [interaction setNodeIdentifier:extractNodeIdentifier(debugText, @"Town")];
+    description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_WK_STREQ("Click on input labeled “Town” with id “city-name”", description);
+    EXPECT_NULL(error);
+
+    [interaction setNodeIdentifier:extractNodeIdentifier(debugText, @"Notes")];
+    description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_WK_STREQ("Click on textarea labeled “Notes” with id “notes-field”", description);
+    EXPECT_NULL(error);
+
+    [interaction setNodeIdentifier:extractNodeIdentifier(debugText, @"Icon")];
+    description = [interaction debugDescriptionInWebView:webView error:&error];
+    EXPECT_WK_STREQ("Click on img labeled “Icon” under button labeled “Save changes” with id “save-button”", description);
+    EXPECT_NULL(error);
+}
+
 TEST(TextExtractionTests, InteractionClicksThroughOccludingOverlay)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
