@@ -9,6 +9,7 @@
 
             var addtrackEventCount = 0;
             var seekedCount = 0;
+            var phase = 0;
             var cuesStarts = [];
 
             function trackAdded(event)
@@ -27,14 +28,21 @@
 
             function pollProgress()
             {
-                switch (seekedCount) {
-                case 1:
+                switch (phase) {
+                case 0:
+                    if (!seekedCount)
+                        return;
+
+                    // Do not wait for a 'seeked' to move on: setting currentTime to 0 when playback has
+                    // not advanced past it does not seek, so no event would follow and this would run
+                    // again on the next poll.
                     video.currentTime = 0;
                     run("video.play()");
                     consoleWrite("");
+                    phase = 1;
                     break;
 
-                case 2:
+                case 1:
                     if (video.currentTime < 2 || inbandTrack1.cues.length <= 5)
                         return;
 
@@ -46,31 +54,43 @@
                     video.currentTime = 0;
                     run("video.play()");
                     consoleWrite("");
+                    phase = 2;
                     break;
 
-                case 3:
-                    if (inbandTrack1.cues.length < cuesStarts.length)
-                        break;
-    
+                case 2:
+                    // Wait for the replay to cover the same segment, so a cue that would be added a
+                    // second time has been delivered again by now.
+                    if (video.currentTime < 2)
+                        return;
+
                     run("video.pause()");
+
+                    var newStarts = [];
+                    for (var i = 0; i < inbandTrack1.cues.length; ++i)
+                        newStarts.push(inbandTrack1.cues[i].startTime);
+
+                    // Replaying the same segment must not add a cue twice. The two lists are not
+                    // compared: how far ahead of the playback position cues are delivered varies, so
+                    // each pass sees a different window of the file.
                     var failure = false;
-                    for (var i = 0; i < cuesStarts.length; ++i) {
-                        if (cuesStarts[i] != inbandTrack1.cues[i].startTime) {
-                            failure = true;
-                            break;
+                    for (var i = 0; i < newStarts.length; ++i) {
+                        for (var j = i + 1; j < newStarts.length; ++j) {
+                            if (newStarts[i] == newStarts[j]) {
+                                failure = true;
+                                break;
+                            }
                         }
+                        if (failure)
+                            break;
                     }
-    
+
                     if (failure) {
                         consoleWrite("<br><i>** FAIL<" + "/i>");
-                        for (var i = 0; i < cuesStarts.length; ++i) {
-                            var oldStart = cuesStarts[i];
-                            var newStart = inbandTrack1.cues[i].startTime;
-                            consoleWrite("Cue " + i + " start time was: " + oldStart + ", is now: " + newStart);
-                        }
+                        consoleWrite("Cue start times were: " + cuesStarts.join(", "));
+                        consoleWrite("Cue start times are now: " + newStarts.join(", "));
                         consoleWrite("");
                     }
-    
+
                     endTest();
                     break;
                 }
