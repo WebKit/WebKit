@@ -605,7 +605,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         }
 
         if (typeof json.log !== "object" || typeof json.log.version !== "string") {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR%s").format(' log'));
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR%s").format(" log"));
             return null;
         }
 
