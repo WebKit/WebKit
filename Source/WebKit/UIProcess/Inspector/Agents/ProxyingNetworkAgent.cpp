@@ -164,7 +164,7 @@ static Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const Ne
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
     if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
-        if (static_cast<int>(additionalMetrics->initialPriority) <= 4) // 4 = VeryHigh
+        if (static_cast<int>(additionalMetrics->initialPriority) <= static_cast<int>(WebCore::NetworkLoadPriority::Veryhigh))
             metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->initialPriority));
         if (additionalMetrics->priority != WebCore::NetworkLoadPriority::Unknown)
             metrics->setPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->priority));

@@ -5519,7 +5519,7 @@ class WebCore::NetworkLoadMetrics {
 header: <WebCore/NetworkLoadMetrics.h>
 [RefCounted, CustomHeader] struct WebCore::AdditionalNetworkLoadMetricsForWebInspector {
     WebCore::NetworkLoadPriority priority;
-    WebCore::NetworkLoadPriority initialPriority;
+    WebCore::ResourceLoadPriority initialPriority;
     String remoteAddress;
     String connectionIdentifier;
     String tlsProtocol;

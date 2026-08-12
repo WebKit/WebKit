@@ -84,11 +84,11 @@ ERROR: HAR Import Error: invalid JSON
 PASS: Should fail to import invalid JSON: null.
 ERROR: HAR Import Error: invalid JSON
 PASS: Should fail to import invalid JSON: 123.
-ERROR: HAR Import Error: invalid HAR log
+ERROR: HAR Import Error: invalid HAR log issue
 PASS: Should fail to import invalid JSON: [].
-ERROR: HAR Import Error: invalid HAR log
+ERROR: HAR Import Error: invalid HAR log issue
 PASS: Should fail to import invalid JSON: {}.
-ERROR: HAR Import Error: invalid HAR log
+ERROR: HAR Import Error: invalid HAR log issue
 PASS: Should fail to import invalid JSON: {"pages":[],"entries":[]}.
 
 -- Running test case: HAR.Import.Chromium
