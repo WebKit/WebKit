@@ -37,8 +37,8 @@ namespace WebKit {
 
 void installMemoryPressureHandler()
 {
-    Ref memoryPressureHandler = MemoryPressureHandler::singleton();
-    memoryPressureHandler->setLowMemoryHandler([] (Critical critical, Synchronous) {
+    auto& memoryPressureHandler = MemoryPressureHandler::singleton();
+    memoryPressureHandler.setLowMemoryHandler([] (Critical critical, Synchronous) {
 #if PLATFORM(COCOA) || PLATFORM(GTK)
         ViewSnapshotStore::singleton().discardSnapshotImages();
 #endif
@@ -46,7 +46,7 @@ void installMemoryPressureHandler()
         for (auto& processPool : WebProcessPool::allProcessPools())
             processPool->handleMemoryPressureWarning(critical);
     });
-    memoryPressureHandler->install();
+    memoryPressureHandler.install();
 }
 
 } // namespace WebKit

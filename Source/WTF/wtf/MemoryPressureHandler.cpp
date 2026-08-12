@@ -30,6 +30,7 @@
 #include <atomic>
 #include <functional>
 #include <wtf/Logging.h>
+#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MemoryFootprint.h>
 #include <wtf/NeverDestroyed.h>
@@ -53,7 +54,7 @@ static const double s_strictThresholdFraction = 0.5;
 static const std::optional<double> s_killThresholdFraction;
 static const Seconds s_pollInterval = 30_s;
 
-static std::atomic<bool> s_hasCreatedMemoryPressureHandler { true };
+static std::atomic<bool> s_hasCreatedMemoryPressureHandler;
 
 MemoryPressureHandler& MemoryPressureHandler::singleton()
 {
@@ -61,18 +62,18 @@ MemoryPressureHandler& MemoryPressureHandler::singleton()
     return memoryPressureHandler;
 }
 
-static MemoryPressureHandler* memoryPressureHandlerIfExists()
-{
-    return s_hasCreatedMemoryPressureHandler.load() ? &MemoryPressureHandler::singleton() : nullptr;
-}
-
 MemoryPressureHandler::MemoryPressureHandler()
 #if (OS(LINUX) || OS(FREEBSD) || OS(HAIKU) || OS(QNX)) && !OS(ANDROID)
-    : m_holdOffTimer(RunLoop::mainSingleton(), "MemoryPressureHandler::HoldOffTimer"_s, this, &MemoryPressureHandler::holdOffTimerFired)
+    : m_holdOffTimer(RunLoop::mainSingleton(), "MemoryPressureHandler::HoldOffTimer"_s, [] {
+        MemoryPressureHandler::singleton().holdOffTimerFired();
+    })
 #elif OS(WINDOWS)
-    : m_windowsMeasurementTimer(RunLoop::mainSingleton(), "MemoryPressureHandler::WindowsMeasurementTimer"_s, this, &MemoryPressureHandler::windowsMeasurementTimerFired)
+    : m_windowsMeasurementTimer(RunLoop::mainSingleton(), "MemoryPressureHandler::WindowsMeasurementTimer"_s, [] {
+        MemoryPressureHandler::singleton().windowsMeasurementTimerFired();
+    })
 #endif
 {
+    s_hasCreatedMemoryPressureHandler.store(true);
 #if PLATFORM(COCOA)
     setDispatchQueue(mainDispatchQueueSingleton());
 #endif
@@ -86,7 +87,9 @@ void MemoryPressureHandler::setMemoryFootprintPollIntervalForTesting(Seconds pol
 void MemoryPressureHandler::setShouldUsePeriodicMemoryMonitor(bool use)
 {
     if (use) {
-        m_measurementTimer = makeUnique<RunLoop::Timer>(RunLoop::mainSingleton(), "MemoryPressureHandler::MeasurementTimer"_s, this, &MemoryPressureHandler::measurementTimerFired);
+        m_measurementTimer = makeUnique<RunLoop::Timer>(RunLoop::mainSingleton(), "MemoryPressureHandler::MeasurementTimer"_s, [] {
+            MemoryPressureHandler::singleton().measurementTimerFired();
+        });
         m_measurementTimer->startRepeating(m_configuration.pollInterval);
     } else
         m_measurementTimer = nullptr;
@@ -262,8 +265,8 @@ void MemoryPressureHandler::setProcessState(WebsamProcessState state)
 
 ASCIILiteral MemoryPressureHandler::processStateDescription()
 {
-    if (RefPtr handler = memoryPressureHandlerIfExists()) {
-        switch (handler->processState()) {
+    if (s_hasCreatedMemoryPressureHandler.load()) {
+        switch (singleton().processState()) {
         case WebsamProcessState::Active:
             return "active"_s;
         case WebsamProcessState::Inactive:
