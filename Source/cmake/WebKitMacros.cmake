@@ -1330,7 +1330,7 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # module.modulemap, and Swift's embedded clang already loads the one from
         # /opt/swift/usr/lib/swift/clang/include. Forwarding both makes every
         # _Builtin_* / opencl_c module get defined twice and aborts -emit-module.
-        if (NOT APPLE)
+        if (NOT APPLE AND NOT WIN32)
             foreach (_dir IN LISTS CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
                 if (_dir MATCHES "^/usr/lib/gcc/")
                     continue ()

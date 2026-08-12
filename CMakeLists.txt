@@ -48,11 +48,17 @@ if (SWIFT_REQUIRED)
     endif ()
 
     if (APPLE)
-        WEBKIT_XCRUN(ORIGINAL_Swift_COMPILER --find swiftc)
-    else ()
-        set(ORIGINAL_Swift_COMPILER "${CMAKE_Swift_COMPILER}")
+        WEBKIT_XCRUN(CMAKE_Swift_COMPILER --find swiftc)
     endif ()
-    set(CMAKE_Swift_COMPILER "${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/swiftc-wrapper.sh")
+    set(ORIGINAL_Swift_COMPILER "${CMAKE_Swift_COMPILER}")
+
+    if (WIN32)
+        # Avoid cmd.exe due to command-line length limits.
+        set(CMAKE_Swift_COMPILER "${Python_EXECUTABLE}")
+        set(CMAKE_Swift_COMPILER_ARG1 "${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/swiftc-wrapper.py")
+    else ()
+        set(CMAKE_Swift_COMPILER "${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/swiftc-wrapper.py")
+    endif ()
     add_compile_options($<$<COMPILE_LANGUAGE:Swift>:--original-swift-compiler=${ORIGINAL_Swift_COMPILER}>)
     add_link_options($<$<LINK_LANGUAGE:Swift>:--original-swift-compiler=${ORIGINAL_Swift_COMPILER}>)
     # The static archive rule (<CMAKE_Swift_CREATE_STATIC_LIBRARY>) uses neither
