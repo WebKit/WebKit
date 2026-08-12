@@ -1408,6 +1408,16 @@ void NetworkProcessProxy::isStorageSuspendedForTesting(PAL::SessionID sessionID,
     sendWithAsyncReply(Messages::NetworkProcess::IsStorageSuspendedForTesting(sessionID), WTF::move(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
+void NetworkProcessProxy::canPrefetchDNSForTesting(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::CanPrefetchDNSForTesting(sessionID), WTF::move(completionHandler), 0);
+}
+
+void NetworkProcessProxy::prefetchedDNSHostnameCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::PrefetchedDNSHostnameCountForTesting(), WTF::move(completionHandler), 0);
+}
+
 static bool s_suspensionAllowedForTesting { true };
 void NetworkProcessProxy::setSuspensionAllowedForTesting(bool allowed)
 {

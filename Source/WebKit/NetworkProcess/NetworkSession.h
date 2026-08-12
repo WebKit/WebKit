@@ -321,6 +321,8 @@ public:
     virtual void setProxyConfigData(const Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>&) { };
 #endif
 
+    virtual bool canPrefetchDNS() const { return true; }
+
     void setInspectionForServiceWorkersAllowed(bool);
     void setPersistedDomains(HashSet<WebCore::RegistrableDomain>&&);
 

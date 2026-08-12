@@ -211,6 +211,8 @@ public:
 
     void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
     void isStorageSuspendedForTesting(PAL::SessionID, CompletionHandler<void(bool)>&&);
+    void canPrefetchDNSForTesting(PAL::SessionID, CompletionHandler<void(bool)>&&);
+    void prefetchedDNSHostnameCountForTesting(CompletionHandler<void(uint64_t)>&&) const;
     void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);
     void processDidResume(bool forForegroundActivity);
 
@@ -237,7 +239,9 @@ public:
 
     void findPendingDownloadLocation(NetworkDataTask&, ResponseCompletionHandler&&, const WebCore::ResourceResponse&);
 
+#if USE(SOUP)
     void prefetchDNS(const String&);
+#endif
 
     void addWebsiteDataStore(WebsiteDataStoreParameters&&);
 
