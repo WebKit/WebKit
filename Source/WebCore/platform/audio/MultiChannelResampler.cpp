@@ -34,7 +34,6 @@
 
 #include "AudioBus.h"
 #include "SincResampler.h"
-#include <functional>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -48,7 +47,9 @@ MultiChannelResampler::MultiChannelResampler(double scaleFactor, unsigned number
 {
     // Create each channel's resampler.
     m_kernels = Vector<std::unique_ptr<SincResampler>>(numberOfChannels, [&](size_t channelIndex) {
-        return makeUnique<SincResampler>(scaleFactor, requestFrames, std::bind(&MultiChannelResampler::provideInputForChannel, this, std::placeholders::_1, std::placeholders::_2, channelIndex));
+        return makeUnique<SincResampler>(scaleFactor, requestFrames, [this, channelIndex](std::span<float> buffer, size_t framesToProcess) {
+            provideInputForChannel(buffer, framesToProcess, channelIndex);
+        });
     });
 }
 
