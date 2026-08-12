@@ -180,46 +180,25 @@ Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildOb
         .release();
 }
 
-static Inspector::Protocol::Network::Metrics::Priority NODELETE toProtocol(NetworkLoadPriority priority)
+static Inspector::Protocol::Network::LoadPriority NODELETE toProtocol(NetworkLoadPriority priority)
 {
     switch (priority) {
     case NetworkLoadPriority::Verylow:
-        return Inspector::Protocol::Network::Metrics::Priority::Verylow;
+        return Inspector::Protocol::Network::LoadPriority::Verylow;
     case NetworkLoadPriority::Low:
-        return Inspector::Protocol::Network::Metrics::Priority::Low;
+        return Inspector::Protocol::Network::LoadPriority::Low;
     case NetworkLoadPriority::Medium:
-        return Inspector::Protocol::Network::Metrics::Priority::Medium;
+        return Inspector::Protocol::Network::LoadPriority::Medium;
     case NetworkLoadPriority::High:
-        return Inspector::Protocol::Network::Metrics::Priority::High;
+        return Inspector::Protocol::Network::LoadPriority::High;
     case NetworkLoadPriority::Veryhigh:
-        return Inspector::Protocol::Network::Metrics::Priority::Veryhigh;
+        return Inspector::Protocol::Network::LoadPriority::Veryhigh;
     case NetworkLoadPriority::Unknown:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Network::Metrics::Priority::Medium;
-}
-
-static Inspector::Protocol::Network::Metrics::InitialPriority NODELETE toInitialProtocolValue(NetworkLoadPriority priority)
-{
-    switch (priority) {
-    case NetworkLoadPriority::Verylow:
-        return Inspector::Protocol::Network::Metrics::InitialPriority::Verylow;
-    case NetworkLoadPriority::Low:
-        return Inspector::Protocol::Network::Metrics::InitialPriority::Low;
-    case NetworkLoadPriority::Medium:
-        return Inspector::Protocol::Network::Metrics::InitialPriority::Medium;
-    case NetworkLoadPriority::High:
-        return Inspector::Protocol::Network::Metrics::InitialPriority::High;
-    case NetworkLoadPriority::Veryhigh:
-        return Inspector::Protocol::Network::Metrics::InitialPriority::Veryhigh;
-    case NetworkLoadPriority::Unknown:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Network::Metrics::InitialPriority::Medium;
+    return Inspector::Protocol::Network::LoadPriority::Medium;
 }
 
 Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
@@ -230,7 +209,7 @@ Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectFor
         metrics->setProtocol(networkLoadMetrics.protocol);
     if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
         if (additionalMetrics->initialPriority != NetworkLoadPriority::Unknown)
-            metrics->setInitialPriority(toInitialProtocolValue(additionalMetrics->initialPriority));
+            metrics->setInitialPriority(toProtocol(additionalMetrics->initialPriority));
         if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
             metrics->setPriority(toProtocol(additionalMetrics->priority));
         if (!additionalMetrics->remoteAddress.isNull())

@@ -300,15 +300,15 @@ WI.Resource = class Resource extends WI.SourceCode
     static networkPriorityFromPayload(priority)
     {
         switch (priority) {
-        case InspectorBackend.Enum.Network.MetricsPriority.Verylow:
+        case InspectorBackend.Enum.Network.LoadPriority.Verylow:
             return WI.Resource.NetworkPriority.Verylow;
-        case InspectorBackend.Enum.Network.MetricsPriority.Low:
+        case InspectorBackend.Enum.Network.LoadPriority.Low:
             return WI.Resource.NetworkPriority.Low;
-        case InspectorBackend.Enum.Network.MetricsPriority.Medium:
+        case InspectorBackend.Enum.Network.LoadPriority.Medium:
             return WI.Resource.NetworkPriority.Medium;
-        case InspectorBackend.Enum.Network.MetricsPriority.High:
+        case InspectorBackend.Enum.Network.LoadPriority.High:
             return WI.Resource.NetworkPriority.High;
-        case InspectorBackend.Enum.Network.MetricsPriority.Veryhigh:
+        case InspectorBackend.Enum.Network.LoadPriority.Veryhigh:
             return WI.Resource.NetworkPriority.Veryhigh;
         default:
             console.error("Unknown metrics priority", priority);
