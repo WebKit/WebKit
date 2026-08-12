@@ -44,47 +44,56 @@ function init()
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.BLEND);
 
-    var coordinates = new Float32Array([ -1,1,0, 0,1,0, -1,-1,0, -1,-1,0, 0,1,0, 0,-1,0,
-                                         0,1,0, 1,1,0, 0,-1,0, 0,-1,0, 1,1,0, 1,-1,0 ]);
+    // The first 6 vertices draw the left canvas half, the last 6 the right.
+    const coordinates = new Float32Array([ -1,1,0, 0,1,0, -1,-1,0, -1,-1,0, 0,1,0, 0,-1,0,
+                                           0,1,0, 1,1,0, 0,-1,0, 0,-1,0, 1,1,0, 1,-1,0 ]);
 
-    var vertexObject = gl.createBuffer();
+    // bufferData(target, srcData, usage, srcOffset, length)
+    // bufferSubData(target, dstByteOffset, srcData, srcOffset, length)
+    // srcOffset and length count elements of srcData. Only dstByteOffset counts bytes.
+    const verticesPerHalf = 6;
+    const floatsPerHalf = verticesPerHalf * 3;
+
+    const vertexObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
-    gl.bufferData(gl.ARRAY_BUFFER, coordinates, gl.STATIC_DRAW, 0, 4 * 3 * 6);
+    gl.bufferData(gl.ARRAY_BUFFER, coordinates, gl.STATIC_DRAW, 0, floatsPerHalf);
     shouldBe("gl.getError()", "gl.NO_ERROR");
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
     shouldBe("gl.getError()", "gl.NO_ERROR");
 
-    checkRedValue(10, 10, 0, "Left half of canvas should be filled");
-    checkRedValue(30, 10, 255, "Right half of canvas should be empty");
+    checkRedValue(0, 10, 10, 0, "Left half of canvas should be filled");
+    checkRedValue(0, 30, 10, 255, "Right half of canvas should be empty");
 
-    gl.bufferData(gl.ARRAY_BUFFER, coordinates, gl.STATIC_DRAW, 4 * 3 * 6, 4 * 3 * 6);
+    gl.bufferData(gl.ARRAY_BUFFER, coordinates, gl.STATIC_DRAW, floatsPerHalf, floatsPerHalf);
     shouldBe("gl.getError()", "gl.NO_ERROR");
 
-    checkRedValue(10, 10, 255, "Left half of canvas should be empty");
-    checkRedValue(30, 10, 0, "Right half of canvas should be filled");
+    checkRedValue(0, 10, 10, 255, "Left half of canvas should be empty");
+    checkRedValue(0, 30, 10, 0, "Right half of canvas should be filled");
 
-    gl.bufferData(gl.ARRAY_BUFFER, coordinates, gl.STATIC_DRAW, 0, 2 * 4 * 3 * 6);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, coordinates, 4 * 3 * 6, 4 * 3 * 6);
+    gl.bufferData(gl.ARRAY_BUFFER, coordinates, gl.STATIC_DRAW, 0, 2 * floatsPerHalf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, coordinates, floatsPerHalf, floatsPerHalf);
     shouldBe("gl.getError()", "gl.NO_ERROR");
 
-    checkRedValue(10, 10, 255, "Left half of canvas should be empty");
-    checkRedValue(30, 10, 0, "Right half of canvas should be filled");
+    checkRedValue(0, 10, 10, 255, "Left half of canvas should be empty");
+    checkRedValue(0, 30, 10, 0, "Right half of canvas should be filled");
 
-    gl.bufferData(gl.ARRAY_BUFFER, coordinates, gl.STATIC_DRAW, 0, 2 * 4 * 3 * 6);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 4 * 3 * 6, coordinates, 0, 4 * 3 * 6);
+    const bytesPerHalf = floatsPerHalf * Float32Array.BYTES_PER_ELEMENT;
+    gl.bufferData(gl.ARRAY_BUFFER, coordinates, gl.STATIC_DRAW, 0, 2 * floatsPerHalf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, bytesPerHalf, coordinates, 0, floatsPerHalf);
     shouldBe("gl.getError()", "gl.NO_ERROR");
 
-    checkRedValue(10, 10, 0, "Left half of canvas should be filled");
-    checkRedValue(30, 10, 255, "Right half of canvas should be empty");
+    // Draw the last 6 vertices, where the bufferSubData() above wrote.
+    checkRedValue(verticesPerHalf, 10, 10, 0, "Left half of canvas should be filled");
+    checkRedValue(verticesPerHalf, 30, 10, 255, "Right half of canvas should be empty");
 
     gl.deleteBuffer(vertexObject);
 
-    function checkRedValue(x, y, value, msg) {
+    function checkRedValue(first, x, y, value, msg) {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        gl.drawArrays(gl.TRIANGLES, first, verticesPerHalf);
         gl.flush();
-        var buf = new Uint8Array(4);
+        const buf = new Uint8Array(4);
         gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
         if (buf[0] != value || buf[3] != 255) {
             debug('expected: red channel should = ' + value + ' but was = ' + buf[0] + '.');

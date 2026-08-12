@@ -775,7 +775,6 @@ webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/composite
 webkit.org/b/244474 fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
 webkit.org/b/244476 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 
-webkit.org/b/244489 fast/canvas/webgl/bufferData-offset-length.html [ Failure ]
 webkit.org/b/244491 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 
 webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
