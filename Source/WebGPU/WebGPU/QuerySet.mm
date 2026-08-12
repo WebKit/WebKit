@@ -55,15 +55,11 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
 
     switch (type) {
     case WGPUQueryType_Timestamp: {
-#if !PLATFORM(WATCHOS)
         auto querySetWithOffset = QuerySet::counterSampleBufferWithOffsetForDevice(count, *this);
         if (!querySetWithOffset.buffer)
             return QuerySet::createInvalid(*this);
 
         return QuerySet::create(WTF::move(querySetWithOffset), count, type, *this);
-#else
-        return QuerySet::createInvalid(*this);
-#endif
     } case WGPUQueryType_Occlusion: {
         auto buffer = safeCreateBuffer(sizeof(uint64_t) * count, MTLStorageModePrivate);
         buffer.label = fromAPI(label).createNSString().get();
