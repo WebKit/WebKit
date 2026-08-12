@@ -1,0 +1,20 @@
+<style>
+    .box {
+        width: 100px;
+        height: 100px;
+        margin: 10px;
+        display: inline-block;
+    }
+    .image, .tainted-canvas {
+        background-color: lime;
+    }
+    .image-capture-canvas {
+        background-color: red;
+    }
+</style>
+<body>
+    <h3>The third box has to be red. It is canvas draws an image capture from another tainted canavas.</h3>
+    <div class="image box"></div>
+    <div class="tainted-canvas box"></div>
+    <div class="image-capture-canvas box"></div>
+</body>
