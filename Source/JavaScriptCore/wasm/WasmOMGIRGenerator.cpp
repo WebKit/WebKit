@@ -2501,7 +2501,7 @@ inline Value* OMGIRGenerator::emitCheckAndPreparePointer(Value* pointer, uint64_
             // We're not using signal handling only when the memory is not shared.
             // Regardless of signaling, we must check that no memory access exceeds the current memory size.
             static_assert(GPRInfo::wasmBoundsCheckingSizeRegister != InvalidGPRReg);
-            if (WTF::sumOverflows<uint64_t>(offset, sizeOfOperation)) {
+            if (m_info.memory(memoryIndex).doesAccessOverflow(offset, sizeOfOperation)) {
                 B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
                 throwException->setGenerator([this, origin = this->origin()](CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                     this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsMemoryAccess);
@@ -2543,9 +2543,7 @@ inline Value* OMGIRGenerator::emitCheckAndPreparePointer(Value* pointer, uint64_
 
     // if memoryIndex != 0, force bounds checking
 
-    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).isMemory64()
-        ? sumOverflows<uint64_t>(offset, sizeOfOperation)
-        : sumOverflows<uint32_t>(offset, sizeOfOperation);
+    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).doesAccessOverflow(offset, sizeOfOperation);
 
     if (offsetAndSizeOverflows) [[unlikely]] {
         B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
@@ -2718,9 +2716,7 @@ auto OMGIRGenerator::load(LoadOpType op, ExpressionType pointerVar, ExpressionTy
 {
     Value* pointer = get(pointerVar);
 
-    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).isMemory64()
-        ? sumOverflows<uint64_t>(offset, sizeOfLoadOp(op))
-        : sumOverflows<uint32_t>(offset, sizeOfLoadOp(op));
+    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).doesAccessOverflow(offset, sizeOfLoadOp(op));
 
     if (offsetAndSizeOverflows) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
@@ -2828,9 +2824,8 @@ auto OMGIRGenerator::store(StoreOpType op, ExpressionType pointerVar, Expression
     Value* pointer = get(pointerVar);
     Value* value = get(valueVar);
     ASSERT(pointer->type() == m_info.memory(memoryIndex).addressType());
-    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).isMemory64()
-        ? sumOverflows<uint64_t>(offset, sizeOfStoreOp(op))
-        : sumOverflows<uint32_t>(offset, sizeOfStoreOp(op));
+
+    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).doesAccessOverflow(offset, sizeOfStoreOp(op));
 
     if (offsetAndSizeOverflows) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
@@ -2924,9 +2919,7 @@ auto OMGIRGenerator::atomicLoad(ExtAtomicOpType op, Type valueType, ExpressionTy
 {
     ASSERT(pointer.type().kind() == m_info.memory(memoryIndex).addressType().asB3TypeKind());
 
-    const bool overflows = m_info.memory(memoryIndex).isMemory64()
-        ? sumOverflows<uint64_t>(offset, sizeOfAtomicOpMemoryAccess(op))
-        : sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op));
+    const bool overflows = m_info.memory(memoryIndex).doesAccessOverflow(offset, sizeOfAtomicOpMemoryAccess(op));
 
     if (overflows) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
@@ -2968,9 +2961,7 @@ inline void OMGIRGenerator::emitAtomicStoreOp(ExtAtomicOpType op, Type valueType
 auto OMGIRGenerator::atomicStore(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, uint64_t offset, uint8_t memoryIndex) -> PartialResult
 {
     ASSERT(pointer.type().kind() == m_info.memory(memoryIndex).addressType().asB3TypeKind());
-    const bool overflows = m_info.memory(memoryIndex).isMemory64()
-        ? sumOverflows<uint64_t>(offset, sizeOfAtomicOpMemoryAccess(op))
-        : sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op));
+    const bool overflows = m_info.memory(memoryIndex).doesAccessOverflow(offset, sizeOfAtomicOpMemoryAccess(op));
 
     if (overflows) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
@@ -3064,9 +3055,7 @@ auto OMGIRGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type valueType, Express
 {
     ASSERT(pointer.type().kind() == m_info.memory(memoryIndex).addressType().asB3TypeKind());
 
-    const bool overflows = m_info.memory(memoryIndex).isMemory64()
-        ? sumOverflows<uint64_t>(offset, sizeOfAtomicOpMemoryAccess(op))
-        : sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op));
+    const bool overflows = m_info.memory(memoryIndex).doesAccessOverflow(offset, sizeOfAtomicOpMemoryAccess(op));
 
     if (overflows) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
@@ -3181,9 +3170,7 @@ auto OMGIRGenerator::atomicCompareExchange(ExtAtomicOpType op, Type valueType, E
 {
     ASSERT(pointer.type().kind() == m_info.memory(memoryIndex).addressType().asB3TypeKind());
 
-    const bool overflows = m_info.memory(memoryIndex).isMemory64()
-        ? sumOverflows<uint64_t>(offset, sizeOfAtomicOpMemoryAccess(op))
-        : sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op));
+    const bool overflows = m_info.memory(memoryIndex).doesAccessOverflow(offset, sizeOfAtomicOpMemoryAccess(op));
 
     if (overflows) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it

@@ -42,7 +42,7 @@ namespace JSC { namespace Wasm { namespace BBQJITImpl {
 template<typename Functor>
 auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex, Functor&& functor) -> decltype(auto)
 {
-    if (WTF::sumOverflows<uint64_t>(static_cast<uint64_t>(sizeOfOperation), uoffset)) {
+    if (m_info.memory(memoryIndex).doesAccessOverflow(uoffset, sizeOfOperation)) {
         recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
         return functor(CCallHelpers::Address(wasmBaseMemoryPointer, 0));
     }

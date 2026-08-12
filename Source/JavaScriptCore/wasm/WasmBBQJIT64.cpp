@@ -342,9 +342,7 @@ Value BBQJIT::instanceValue()
 
 [[nodiscard]] PartialResult BBQJIT::load(LoadOpType loadOp, Value pointer, Value& result, uint64_t uoffset, uint8_t memoryIndex)
 {
-    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).isMemory64()
-        ? sumOverflows<uint64_t>(uoffset, sizeOfLoadOp(loadOp))
-        : sumOverflows<uint32_t>(uoffset, sizeOfLoadOp(loadOp));
+    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).doesAccessOverflow(uoffset, sizeOfLoadOp(loadOp));
 
     if (offsetAndSizeOverflows) [[unlikely]] {
         // FIXME: Same issue as in AirIRGenerator::load(): https://bugs.webkit.org/show_bug.cgi?id=166435
@@ -439,9 +437,7 @@ Value BBQJIT::instanceValue()
 [[nodiscard]] PartialResult BBQJIT::store(StoreOpType storeOp, Value pointer, Value value, uint64_t uoffset, uint8_t memoryIndex)
 {
     Location valueLocation = locationOf(value);
-    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).isMemory64()
-        ? sumOverflows<uint64_t>(uoffset, sizeOfStoreOp(storeOp))
-        : sumOverflows<uint32_t>(uoffset, sizeOfStoreOp(storeOp));
+    bool offsetAndSizeOverflows = m_info.memory(memoryIndex).doesAccessOverflow(uoffset, sizeOfStoreOp(storeOp));
 
     if (offsetAndSizeOverflows) [[unlikely]] {
         // FIXME: Same issue as in AirIRGenerator::load(): https://bugs.webkit.org/show_bug.cgi?id=166435

@@ -25,10 +25,12 @@
 
 #include "config.h"
 #include "WasmMemoryInformation.h"
+#include <limits>
 
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmContext.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace JSC { namespace Wasm {
@@ -43,6 +45,14 @@ MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum, bool 
     RELEASE_ASSERT(!!m_initial);
     RELEASE_ASSERT(!m_maximum || m_maximum >= m_initial);
     ASSERT(!!*this);
+}
+
+
+bool MemoryInformation::doesAccessOverflow(uint64_t first, uint64_t second) const
+{
+    if (isMemory64())
+        return WTF::sumOverflows<uint64_t>(first, second);
+    return WTF::sumOverflows<uint32_t>(first, second);
 }
 
 } } // namespace JSC::Wasm
