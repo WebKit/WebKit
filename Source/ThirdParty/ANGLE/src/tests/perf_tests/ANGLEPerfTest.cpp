@@ -796,9 +796,6 @@ std::string RenderTestParams::backend() const
         case EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE:
             strstr << "_d3d11";
             break;
-        case EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE:
-            strstr << "_d3d9";
-            break;
         case EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE:
             strstr << "_gl";
             break;

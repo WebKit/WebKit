@@ -4,13 +4,10 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 // system_utils_posix.cpp: Implementation of POSIX OS-specific functions.
 
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 #include "system_utils.h"
 
 #include <array>
@@ -520,14 +517,14 @@ uint64_t GetProcessMemoryUsageKB()
 
     uint64_t kb = 0;
 
-    while (fgets(line.data(), line.size(), file) != nullptr)
+    while (ANGLE_UNSAFE_TODO(fgets(line.data(), line.size(), file)) != nullptr)
     {
-        if (strncmp(line.data(), kSearchString, strlen(kSearchString)) == 0)
+        if (ANGLE_UNSAFE_TODO(strncmp(line.data(), kSearchString, strlen(kSearchString))) == 0)
         {
             std::vector<std::string> strings;
             SplitStringAlongWhitespace(line.data(), &strings);
 
-            sscanf(strings[1].c_str(), "%" SCNu64, &kb);
+            ANGLE_UNSAFE_TODO(sscanf(strings[1].c_str(), "%" SCNu64, &kb));
             break;
         }
     }

@@ -10,13 +10,10 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_DRIVER_UNIFORMS_H_
 #define LIBANGLE_RENDERER_VULKAN_DRIVER_UNIFORMS_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "GLSLANG/ShaderLang.h"
 #include "common/PackedEnums.h"
 #include "common/angleutils.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/RefCountObject.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
@@ -109,7 +106,7 @@ class GraphicsDriverUniforms
 
     void copyGraphicsDriverUniformsData(const GraphicsDriverUniforms &other)
     {
-        memcpy(&mUniformData, &other.mUniformData, mMaxUniformDataSize);
+        ANGLE_UNSAFE_TODO(memcpy(&mUniformData, &other.mUniformData, mMaxUniformDataSize));
         // By default we should not need to call pushConstants
         mDirtyBits.reset();
     }
@@ -267,7 +264,7 @@ class GraphicsDriverUniforms
         DirtyBitType lastDirtyBit  = mDirtyBits.last();
         uint32_t offset            = kPushConstantOffsets[firstDirtyBit];
         uint32_t size              = kPushConstantOffsets[lastDirtyBit + 1] - offset;
-        void *data                 = reinterpret_cast<uint8_t *>(&mUniformData) + offset;
+        void *data = ANGLE_UNSAFE_TODO(reinterpret_cast<uint8_t *>(&mUniformData) + offset);
 
         commandBuffer->pushConstants(pipelineLayout, renderer->getSupportedVulkanShaderStageMask(),
                                      offset, size, data);

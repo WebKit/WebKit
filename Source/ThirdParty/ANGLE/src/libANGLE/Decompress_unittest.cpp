@@ -5,11 +5,8 @@
 //
 // Decompress_unittest.cpp: Unit tests for the |(Compress/Decompress)*Blob| functions.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <gtest/gtest.h>
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/angletypes.h"
 
@@ -37,8 +34,8 @@ class DecompressTest : public ::testing::Test
     {
         ASSERT(IsLittleEndian());
         ASSERT(mCompressedData.size() > sizeof(value));
-        memcpy(mCompressedData.data() + mCompressedData.size() - sizeof(value), &value,
-               sizeof(value));
+        ANGLE_UNSAFE_TODO(memcpy(mCompressedData.data() + mCompressedData.size() - sizeof(value),
+                                 &value, sizeof(value)));
     }
 
     bool decompress(size_t compressedSize, size_t maxUncompressedDataSize)
@@ -50,7 +47,8 @@ class DecompressTest : public ::testing::Test
     bool checkUncompressedData()
     {
         return (mTestData.size() == mUncompressedData.size()) &&
-               (memcmp(mTestData.data(), mUncompressedData.data(), mTestData.size()) == 0);
+               (ANGLE_UNSAFE_TODO(
+                    memcmp(mTestData.data(), mUncompressedData.data(), mTestData.size())) == 0);
     }
 
     std::vector<uint8_t> mTestData;

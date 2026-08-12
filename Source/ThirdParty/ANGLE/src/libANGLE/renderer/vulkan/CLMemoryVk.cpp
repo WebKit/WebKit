@@ -6,11 +6,8 @@
 // CLMemoryVk.cpp: Implements the class methods for CLMemoryVk.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/log_utils.h"
+#include "common/unsafe_buffers.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -76,7 +73,7 @@ bool GetExternalMemoryHandleInfo(const cl_mem_properties *properties,
             }
             break;
         }
-        propertyIterator++;
+        ANGLE_UNSAFE_TODO(propertyIterator++);
     }
 
     return propertyStatus;
@@ -115,13 +112,13 @@ angle::Result CLMemoryVk::map(uint8_t *&ptrOut, size_t offset)
     {
         // as per spec, the returned pointer for USE_HOST_PTR will be derived from the hostptr...
         ASSERT(mMemory.getHostPtr());
-        ptrOut = static_cast<uint8_t *>(mMemory.getHostPtr()) + offset;
+        ptrOut = ANGLE_UNSAFE_TODO(static_cast<uint8_t *>(mMemory.getHostPtr()) + offset);
     }
     else
     {
         // ...otherwise we just map the VK memory to cpu va space
         ANGLE_TRY(mapBufferHelper(ptrOut));
-        ptrOut += offset;
+        ANGLE_UNSAFE_TODO(ptrOut += offset);
     }
 
     return angle::Result::Continue;
@@ -131,8 +128,10 @@ angle::Result CLMemoryVk::copyTo(void *dst, size_t srcOffset, size_t size)
 {
     uint8_t *src = nullptr;
     ANGLE_TRY(mapBufferHelper(src));
-    src += srcOffset;
-    std::memcpy(dst, src, size);
+    ANGLE_UNSAFE_TODO({
+        src += srcOffset;
+        std::memcpy(dst, src, size);
+    })
     unmapBufferHelper();
     return angle::Result::Continue;
 }
@@ -141,8 +140,10 @@ angle::Result CLMemoryVk::copyFrom(const void *src, size_t srcOffset, size_t siz
 {
     uint8_t *dst = nullptr;
     ANGLE_TRY(mapBufferHelper(dst));
-    dst += srcOffset;
-    std::memcpy(dst, src, size);
+    ANGLE_UNSAFE_TODO({
+        dst += srcOffset;
+        std::memcpy(dst, src, size);
+    })
     unmapBufferHelper();
     return angle::Result::Continue;
 }
@@ -363,9 +364,9 @@ angle::Result CLBufferVk::copyToWithPitch(void *hostPtr,
         {
             size_t stagingBufferOffset = stagingBufferRect.getRowOffset(slice, row);
             size_t hostPtrOffset       = (slice * slicePitch + row * rowPitch);
-            uint8_t *dst               = ptrOutBase + hostPtrOffset;
-            uint8_t *src               = ptrInBase + stagingBufferOffset;
-            memcpy(dst, src, region.width * elementSize);
+            uint8_t *dst               = ANGLE_UNSAFE_TODO(ptrOutBase + hostPtrOffset);
+            uint8_t *src               = ANGLE_UNSAFE_TODO(ptrInBase + stagingBufferOffset);
+            ANGLE_UNSAFE_TODO(memcpy(dst, src, region.width * elementSize));
         }
     }
     return angle::Result::Continue;
@@ -395,7 +396,7 @@ angle::Result CLBufferVk::mapParentBufferHelper(uint8_t *&ptrOut)
     ASSERT(getParent());
 
     ANGLE_TRY(getParent()->mapBufferHelper(ptrOut));
-    ptrOut += getOffset();
+    ANGLE_UNSAFE_TODO(ptrOut += getOffset());
     return angle::Result::Continue;
 }
 
@@ -432,8 +433,10 @@ angle::Result CLBufferVk::updateRect(UpdateRectOperation op,
     {
         for (size_t row = 0; row < bufferRect.mSize.height; row++)
         {
-            uint8_t *offsetDataPtr   = dataUint8Ptr + dataRect.getRowOffset(slice, row);
-            uint8_t *offsetBufferPtr = bufferPtr + bufferRect.getRowOffset(slice, row);
+            uint8_t *offsetDataPtr =
+                ANGLE_UNSAFE_TODO(dataUint8Ptr + dataRect.getRowOffset(slice, row));
+            uint8_t *offsetBufferPtr =
+                ANGLE_UNSAFE_TODO(bufferPtr + bufferRect.getRowOffset(slice, row));
             size_t updateSize        = dataRect.mSize.width * dataRect.mElementSize;
 
             switch (op)
@@ -441,13 +444,13 @@ angle::Result CLBufferVk::updateRect(UpdateRectOperation op,
                 case UpdateRectOperation::Read:
                 {
                     // Read from this buffer
-                    memcpy(offsetDataPtr, offsetBufferPtr, updateSize);
+                    ANGLE_UNSAFE_TODO(memcpy(offsetDataPtr, offsetBufferPtr, updateSize));
                     break;
                 }
                 case UpdateRectOperation::Write:
                 {
                     // Write to this buffer
-                    memcpy(offsetBufferPtr, offsetDataPtr, updateSize);
+                    ANGLE_UNSAFE_TODO(memcpy(offsetBufferPtr, offsetDataPtr, updateSize));
                     break;
                 }
                 default:
@@ -496,7 +499,7 @@ angle::Result CLBufferVk::setDataImpl(const uint8_t *data, size_t size, size_t o
     ANGLE_TRY(mBuffer.mapWithOffset(mContext, &mapPointer, offset));
     ASSERT(mapPointer != nullptr);
 
-    std::memcpy(mapPointer, data, size);
+    ANGLE_UNSAFE_TODO(std::memcpy(mapPointer, data, size));
     mBuffer.unmap(mRenderer);
 
     return angle::Result::Continue;
@@ -598,7 +601,7 @@ angle::Result CLImageVk::copyStagingFrom(void *ptr, size_t offset, size_t size)
     ANGLE_TRY(mapBufferHelper(ptrOut));
     cl::Defer deferUnmap([this]() { unmapBufferHelper(); });
 
-    std::memcpy(ptrOut, ptrIn + offset, size);
+    ANGLE_UNSAFE_TODO(std::memcpy(ptrOut, ptrIn + offset, size));
 
     return angle::Result::Continue;
 }
@@ -610,7 +613,7 @@ angle::Result CLImageVk::copyStagingTo(void *ptr, size_t offset, size_t size)
     ANGLE_TRY(mapBufferHelper(ptrOut));
     cl::Defer deferUnmap([this]() { unmapBufferHelper(); });
 
-    std::memcpy(ptr, ptrOut + offset, size);
+    ANGLE_UNSAFE_TODO(std::memcpy(ptr, ptrOut + offset, size));
 
     return angle::Result::Continue;
 }
@@ -645,12 +648,12 @@ angle::Result CLImageVk::copyStagingToFromWithPitch(void *hostPtr,
             size_t stagingBufferOffset = stagingBufferRect.getRowOffset(slice, row);
             size_t hostPtrOffset       = (slice * slicePitch + row * rowPitch);
             uint8_t *dst               = (copyStagingTo == StagingBufferCopyDirection::ToHost)
-                                             ? ptrOutBase + hostPtrOffset
-                                             : ptrOutBase + stagingBufferOffset;
+                                             ? ANGLE_UNSAFE_TODO(ptrOutBase + hostPtrOffset)
+                                             : ANGLE_UNSAFE_TODO(ptrOutBase + stagingBufferOffset);
             uint8_t *src               = (copyStagingTo == StagingBufferCopyDirection::ToHost)
-                                             ? ptrInBase + stagingBufferOffset
-                                             : ptrInBase + hostPtrOffset;
-            memcpy(dst, src, region.width * getElementSize());
+                                             ? ANGLE_UNSAFE_TODO(ptrInBase + stagingBufferOffset)
+                                             : ANGLE_UNSAFE_TODO(ptrInBase + hostPtrOffset);
+            ANGLE_UNSAFE_TODO(memcpy(dst, src, region.width * getElementSize()));
         }
     }
     return angle::Result::Continue;
@@ -831,19 +834,22 @@ angle::Result CLImageVk::fillImageWithColor(const cl::Offset &origin,
     ANGLE_TRY(mapBufferHelper(imagePtr));
     cl::Defer deferUnmap([this]() { unmapBufferHelper(); });
 
-    uint8_t *ptrBase = imagePtr + (origin.z * stagingBufferRect.getSlicePitch()) +
-                       (origin.y * stagingBufferRect.getRowPitch()) + (origin.x * elementSize);
+    uint8_t *ptrBase =
+        ANGLE_UNSAFE_TODO(imagePtr + (origin.z * stagingBufferRect.getSlicePitch()) +
+                          (origin.y * stagingBufferRect.getRowPitch()) + (origin.x * elementSize));
 
     for (size_t slice = 0; slice < region.depth; slice++)
     {
         for (size_t row = 0; row < region.height; row++)
         {
             size_t stagingBufferOffset = stagingBufferRect.getRowOffset(slice, row);
-            uint8_t *pixelPtr          = ptrBase + stagingBufferOffset;
+            uint8_t *pixelPtr          = ANGLE_UNSAFE_TODO(ptrBase + stagingBufferOffset);
             for (size_t x = 0; x < region.width; x++)
             {
-                memcpy(pixelPtr, &packedColor, elementSize);
-                pixelPtr += elementSize;
+                ANGLE_UNSAFE_TODO({
+                    memcpy(pixelPtr, &packedColor, elementSize);
+                    pixelPtr += elementSize;
+                })
             }
         }
     }
@@ -975,7 +981,7 @@ angle::Result CLImageVk::mapParentBufferHelper(uint8_t *&ptrOut)
     {
         UNREACHABLE();
     }
-    ptrOut += getOffset();
+    ANGLE_UNSAFE_TODO(ptrOut += getOffset());
     return angle::Result::Continue;
 }
 

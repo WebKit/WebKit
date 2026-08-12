@@ -5,10 +5,7 @@
 
 // utilities_unittest.cpp: Unit tests for ANGLE's GL utility functions
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -239,12 +236,17 @@ TEST(Utilities, IndexRanges)
     EXPECT_EQ(ComputeIndexRange(b, vertices1, 15, true), gl::IndexRange(1, 10));
     EXPECT_EQ(ComputeIndexRange(b, vertices1, 15, false), gl::IndexRange(1, 255));
     EXPECT_EQ(ComputeIndexRange(b, vertices1, 15, false), gl::IndexRange(1, 255));
-    EXPECT_EQ(ComputeIndexRange(b, vertices1 + 9, 3, false), gl::IndexRange(255, 255));
-    EXPECT_EQ(ComputeIndexRange(b, vertices1 + 9, 3, true), gl::IndexRange());
-    EXPECT_EQ(ComputeIndexRange(b, vertices1 + 9, 4, false), gl::IndexRange(9, 255));
-    EXPECT_EQ(ComputeIndexRange(b, vertices1 + 9, 4, true), gl::IndexRange(9, 9));
-    EXPECT_EQ(ComputeIndexRange(b, vertices1 + 8, 4, false), gl::IndexRange(10, 255));
-    EXPECT_EQ(ComputeIndexRange(b, vertices1 + 8, 4, true), gl::IndexRange(10, 10));
+    ANGLE_UNSAFE_TODO(
+        EXPECT_EQ(ComputeIndexRange(b, vertices1 + 9, 3, false), gl::IndexRange(255, 255)));
+    ANGLE_UNSAFE_TODO(EXPECT_EQ(ComputeIndexRange(b, vertices1 + 9, 3, true), gl::IndexRange()));
+    ANGLE_UNSAFE_TODO(
+        EXPECT_EQ(ComputeIndexRange(b, vertices1 + 9, 4, false), gl::IndexRange(9, 255)));
+    ANGLE_UNSAFE_TODO(
+        EXPECT_EQ(ComputeIndexRange(b, vertices1 + 9, 4, true), gl::IndexRange(9, 9)));
+    ANGLE_UNSAFE_TODO(
+        EXPECT_EQ(ComputeIndexRange(b, vertices1 + 8, 4, false), gl::IndexRange(10, 255)));
+    ANGLE_UNSAFE_TODO(
+        EXPECT_EQ(ComputeIndexRange(b, vertices1 + 8, 4, true), gl::IndexRange(10, 10)));
     uint8_t vertices2[] = {
         0xff,
         0xff,

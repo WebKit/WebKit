@@ -7,11 +7,8 @@
 //    Implements the class methods for ProgramWgpu.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/wgpu/ProgramWgpu.h"
+#include "common/unsafe_buffers.h"
 
 #include "GLES2/gl2.h"
 #include "common/PackedEnums.h"
@@ -173,7 +170,8 @@ class CreateWGPUShaderModuleTask : public LinkSubTask
                     for (size_t msgIdx = 0;
                          compilationInfo && msgIdx < compilationInfo->messageCount; ++msgIdx)
                     {
-                        const WGPUCompilationMessage &message = compilationInfo->messages[msgIdx];
+                        const WGPUCompilationMessage &message =
+                            ANGLE_UNSAFE_TODO(compilationInfo->messages[msgIdx]);
                         switch (message.type)
                         {
                             case WGPUCompilationMessageType_Error:
@@ -215,7 +213,8 @@ class CreateWGPUShaderModuleTask : public LinkSubTask
                     for (size_t msgIdx = 0;
                          compilationInfo && msgIdx < compilationInfo->messageCount; ++msgIdx)
                     {
-                        const WGPUCompilationMessage &message = compilationInfo->messages[msgIdx];
+                        const WGPUCompilationMessage &message =
+                            ANGLE_UNSAFE_TODO(compilationInfo->messages[msgIdx]);
                         switch (message.type)
                         {
                             case WGPUCompilationMessageType_Error:

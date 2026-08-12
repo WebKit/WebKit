@@ -4,11 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "OSWindow.h"
+#include "common/unsafe_buffers.h"
 
 #include <cstring>
 #include <fstream>
@@ -498,14 +495,14 @@ bool FindTestDataPath(const char *searchPath, char *dataPathOut, size_t maxDataP
 
         if (angle::IsDirectory(candidatePath.c_str()))
         {
-            memcpy(dataPathOut, candidatePath.c_str(), candidatePath.size() + 1);
+            ANGLE_UNSAFE_TODO(memcpy(dataPathOut, candidatePath.c_str(), candidatePath.size() + 1));
             return true;
         }
 
         std::ifstream inFile(candidatePath.c_str());
         if (!inFile.fail())
         {
-            memcpy(dataPathOut, candidatePath.c_str(), candidatePath.size() + 1);
+            ANGLE_UNSAFE_TODO(memcpy(dataPathOut, candidatePath.c_str(), candidatePath.size() + 1));
             return true;
         }
     }

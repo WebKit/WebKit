@@ -7,11 +7,8 @@
 // SystemInfo_vulkan.cpp: Generic vulkan implementation of SystemInfo.h
 // TODO: Use VK_KHR_driver_properties. http://anglebug.com/42263671
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "gpu_info_util/SystemInfo_vulkan.h"
+#include "common/unsafe_buffers.h"
 
 #include <vulkan/vulkan.h>
 #include "gpu_info_util/SystemInfo_internal.h"
@@ -188,8 +185,8 @@ bool HasKhronosValidationLayer(const std::vector<VkLayerProperties> &layerProps)
     for (const auto &layerProp : layerProps)
     {
         ASSERT(strlen(layerProp.layerName) < sizeof(layerProp.layerName));
-        if (strncmp(layerProp.layerName, kVkKhronosValidationLayerName[0],
-                    sizeof(layerProp.layerName)) == 0)
+        if (ANGLE_UNSAFE_TODO(strncmp(layerProp.layerName, kVkKhronosValidationLayerName[0],
+                                      sizeof(layerProp.layerName))) == 0)
         {
             return true;
         }
@@ -505,7 +502,7 @@ std::string FormatString(const char *fmt, ...)
     va_start(vararg, fmt);
 
     std::vector<char> buffer;
-    size_t len = FormatStringIntoVector(fmt, vararg, buffer);
+    size_t len = ANGLE_UNSAFE_TODO(FormatStringIntoVector(fmt, vararg, buffer));
     va_end(vararg);
 
     return std::string(&buffer[0], len);
@@ -582,8 +579,8 @@ bool GetSystemInfoVulkanWithICD(SystemInfo *info, vk::ICD preferredICD)
         gpu.vendorId       = properties.vendorID;
         gpu.deviceId       = properties.deviceID;
         gpu.deviceName     = properties.deviceName;
-        memcpy(gpu.deviceUUID, deviceIDProperties.deviceUUID, VK_UUID_SIZE);
-        memcpy(gpu.driverUUID, deviceIDProperties.driverUUID, VK_UUID_SIZE);
+        ANGLE_UNSAFE_TODO(memcpy(gpu.deviceUUID, deviceIDProperties.deviceUUID, VK_UUID_SIZE));
+        ANGLE_UNSAFE_TODO(memcpy(gpu.driverUUID, deviceIDProperties.driverUUID, VK_UUID_SIZE));
 
         // TODO(http://anglebug.com/42266143): Use driverID instead of the hardware vendorID to
         // detect driveVendor, etc.

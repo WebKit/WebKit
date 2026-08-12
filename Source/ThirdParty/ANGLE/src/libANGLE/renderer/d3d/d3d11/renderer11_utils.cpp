@@ -7,11 +7,8 @@
 // renderer11_utils.cpp: Conversion functions and other utility routines
 // specific to the D3D11 renderer.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
+#include "common/unsafe_buffers.h"
 
 #include <algorithm>
 
@@ -1996,18 +1993,18 @@ void SetPositionLayerTexCoord3DVertex(PositionLayerTexCoord3DVertex *vertex,
 
 BlendStateKey::BlendStateKey()
 {
-    memset(this, 0, sizeof(BlendStateKey));
+    ANGLE_UNSAFE_TODO(memset(this, 0, sizeof(BlendStateKey)));
     blendStateExt = gl::BlendStateExt();
 }
 
 BlendStateKey::BlendStateKey(const BlendStateKey &other)
 {
-    memcpy(this, &other, sizeof(BlendStateKey));
+    ANGLE_UNSAFE_TODO(memcpy(this, &other, sizeof(BlendStateKey)));
 }
 
 bool operator==(const BlendStateKey &a, const BlendStateKey &b)
 {
-    return memcmp(&a, &b, sizeof(BlendStateKey)) == 0;
+    return ANGLE_UNSAFE_TODO(memcmp(&a, &b, sizeof(BlendStateKey))) == 0;
 }
 
 bool operator!=(const BlendStateKey &a, const BlendStateKey &b)
@@ -2017,12 +2014,12 @@ bool operator!=(const BlendStateKey &a, const BlendStateKey &b)
 
 RasterizerStateKey::RasterizerStateKey()
 {
-    memset(this, 0, sizeof(RasterizerStateKey));
+    ANGLE_UNSAFE_TODO(memset(this, 0, sizeof(RasterizerStateKey)));
 }
 
 bool operator==(const RasterizerStateKey &a, const RasterizerStateKey &b)
 {
-    return memcmp(&a, &b, sizeof(RasterizerStateKey)) == 0;
+    return ANGLE_UNSAFE_TODO(memcmp(&a, &b, sizeof(RasterizerStateKey))) == 0;
 }
 
 bool operator!=(const RasterizerStateKey &a, const RasterizerStateKey &b)
@@ -2233,8 +2230,6 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
     // to work around a slow fxc compile performance issue with dynamic uniform indexing.
     ANGLE_FEATURE_CONDITION(features, allowTranslateUniformBlockToStructuredBuffer,
                             IsWindows10OrLater());
-
-    ANGLE_FEATURE_CONDITION(features, supportsNonConstantLoopIndexing, true);
 }
 
 void InitializeFrontendFeatures(const DXGI_ADAPTER_DESC &adapterDesc,

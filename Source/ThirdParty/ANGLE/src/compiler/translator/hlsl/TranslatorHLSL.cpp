@@ -127,16 +127,6 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
         }
     }
 
-    // Work around D3D9 bug that would manifest in vertex shaders with selection blocks which
-    // use a vertex attribute as a condition, and some related computation in the else block.
-    if (getOutputType() == SH_HLSL_3_0_OUTPUT && getShaderType() == GL_VERTEX_SHADER)
-    {
-        if (!sh::RewriteElseBlocks(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
-    }
-
     // Work around an HLSL compiler frontend aliasing optimization bug.
     // TODO(cwallez) The date is 2016-08-25, Microsoft said the bug would be fixed
     // in the next release of d3dcompiler.dll, it would be nice to detect the DLL

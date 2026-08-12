@@ -4,15 +4,12 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <atomic>
 #include <cctype>
 #include <map>
 
 #include "common/system_utils.h"
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/BaseTypes.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/Name.h"
@@ -1684,7 +1681,7 @@ const TConstantUnion *GenMetalTraverser::emitConstantUnionArray(
     const size_t size)
 {
     const TConstantUnion *constUnionIterated = constUnion;
-    for (size_t i = 0; i < size; i++, constUnionIterated++)
+    for (size_t i = 0; i < size; i++, ANGLE_UNSAFE_TODO(constUnionIterated++))
     {
         emitSingleConstant(constUnionIterated);
 
@@ -2864,7 +2861,7 @@ bool sh::EmitMetal(TCompiler &compiler,
 
                 std::vector<char> buff;
                 buff.resize(fileSize + 1);
-                fread(buff.data(), fileSize, 1, file);
+                ANGLE_UNSAFE_TODO(fread(buff.data(), fileSize, 1, file));
                 buff.back() = '\0';
 
                 fclose(file);

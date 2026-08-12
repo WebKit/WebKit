@@ -17,6 +17,7 @@
 #include "libANGLE/Error.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/RefCountObject.h"
+#include "libANGLE/angletypes.h"
 #include "libANGLE/formatutils.h"
 
 namespace rx
@@ -49,6 +50,7 @@ struct ImageSourceAttributes
     gl::SourceImageIndex toSourceIndex(const gl::OwnImageIndex &ownIndex) const;
     gl::SourceLevel toSourceLevel(gl::OwnLevel ownLevel) const;
     gl::SourceLayer toSourceLayer(gl::OwnLayer ownLayer) const;
+    gl::SourceLayer toSourceDepth(const gl::Offset &offset) const;
 };
 
 // Only currently Renderbuffers and Textures can be bound with images. This makes the relationship

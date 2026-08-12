@@ -52,7 +52,6 @@ function generate_Android_bp_file() {
             # Disable all backends except Vulkan
             "angle_enable_vulkan = true"
             "angle_enable_gl = false"
-            "angle_enable_d3d9 = false"
             "angle_enable_d3d11 = false"
             "angle_enable_null = false"
             "angle_enable_metal = false"

@@ -89,6 +89,13 @@ gl::SourceLayer ImageSourceAttributes::toSourceLayer(gl::OwnLayer ownLayer) cons
     return gl::SourceLayer(ownLayer.getUntranslated() + zoffset);
 }
 
+gl::SourceLayer ImageSourceAttributes::toSourceDepth(const gl::Offset &offset) const
+{
+    // zoffset only applies to 3D textures
+    return type == gl::TextureType::_3D ? toSourceLayer(gl::OwnLayer(offset.z))
+                                        : gl::SourceLayer(offset.z);
+}
+
 ImageSibling::ImageSibling() : FramebufferAttachmentObject(), mSourcesOf(), mTargetOf() {}
 
 ImageSibling::~ImageSibling()

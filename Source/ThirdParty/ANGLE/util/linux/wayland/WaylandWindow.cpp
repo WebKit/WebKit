@@ -6,11 +6,8 @@
 
 // WaylandWindow.cpp: Implementation of OSWindow for Wayland
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "util/linux/wayland/WaylandWindow.h"
+#include "common/unsafe_buffers.h"
 
 #include <linux/input-event-codes.h>
 #include <sys/mman.h>
@@ -97,20 +94,20 @@ void WaylandWindow::RegistryHandleGlobal(void *data,
 {
     WaylandWindow *vc = reinterpret_cast<WaylandWindow *>(data);
 
-    if (strcmp(interface, xdg_wm_base_interface.name) == 0)
+    if (ANGLE_UNSAFE_TODO(strcmp(interface, xdg_wm_base_interface.name)) == 0)
     {
         vc->mXdgWmBase = static_cast<xdg_wm_base *>(wl_registry_bind(
             registry, name, &xdg_wm_base_interface, std::min(static_cast<uint32_t>(3), version)));
         xdg_wm_base_add_listener(vc->mXdgWmBase, &xdg_wm_base_listener, data);
     }
-    else if (strcmp(interface, wl_compositor_interface.name) == 0)
+    else if (ANGLE_UNSAFE_TODO(strcmp(interface, wl_compositor_interface.name)) == 0)
     {
         // v4+ is needed for wl_surface.damage_buffer (opcode 9). Cap at 4 since
         // we don't use later additions (v5 offset / v6 preferred_buffer_*).
         vc->mCompositor = static_cast<wl_compositor *>(wl_registry_bind(
             registry, name, &wl_compositor_interface, std::min(static_cast<uint32_t>(4), version)));
     }
-    else if (strcmp(interface, wl_seat_interface.name) == 0)
+    else if (ANGLE_UNSAFE_TODO(strcmp(interface, wl_seat_interface.name)) == 0)
     {
         // v5+ gives us pointer.frame / axis_discrete; clamp to 5 since that
         // covers every common compositor and our pointer listener stops there.
@@ -118,13 +115,13 @@ void WaylandWindow::RegistryHandleGlobal(void *data,
             registry, name, &wl_seat_interface, std::min(static_cast<uint32_t>(5), version)));
         wl_seat_add_listener(vc->mSeat, &seat_listener, vc);
     }
-    else if (strcmp(interface, wl_shm_interface.name) == 0)
+    else if (ANGLE_UNSAFE_TODO(strcmp(interface, wl_shm_interface.name)) == 0)
     {
         // Bound for the setVisible(true) placeholder buffer. Version 1 is
         // sufficient -- we only use create_pool/create_buffer.
         vc->mShm = static_cast<wl_shm *>(wl_registry_bind(registry, name, &wl_shm_interface, 1));
     }
-    else if (strcmp(interface, zxdg_decoration_manager_v1_interface.name) == 0)
+    else if (ANGLE_UNSAFE_TODO(strcmp(interface, zxdg_decoration_manager_v1_interface.name)) == 0)
     {
         // Optional global. Compositors that don't advertise it leave this
         // null; the window is then decorationless.
@@ -509,7 +506,7 @@ bool WaylandWindow::ensureShmBuffer()
     uint8_t *bytes                     = static_cast<uint8_t *>(data);
     for (int32_t i = 0; i < width * height; ++i)
     {
-        std::memcpy(bytes + i * 4, kPixel, sizeof(kPixel));
+        ANGLE_UNSAFE_TODO(std::memcpy(bytes + i * 4, kPixel, sizeof(kPixel)));
     }
     munmap(data, size);
 
@@ -633,7 +630,7 @@ void WaylandWindow::handle_toplevel_configure(void *data,
     w->mActivated           = false;
 
     const uint32_t *state;
-    WL_ARRAY_FOR_EACH(state, states, const uint32_t *)
+    ANGLE_UNSAFE_TODO(WL_ARRAY_FOR_EACH(state, states, const uint32_t *))
     {
         switch (*state)
         {

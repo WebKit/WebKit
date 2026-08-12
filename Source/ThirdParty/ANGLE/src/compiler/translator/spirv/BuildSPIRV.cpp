@@ -6,11 +6,8 @@
 // BuildSPIRV: Helper for OutputSPIRV to build SPIR-V.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/spirv/BuildSPIRV.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/spirv/spirv_instruction_builder_autogen.h"
 #include "compiler/translator/ValidateVaryingLocations.h"
@@ -1093,7 +1090,7 @@ void SPIRVBuilder::predefineCommonTypes()
 
         for (size_t index = 0; index < ArraySize(infos); ++index)
         {
-            const auto &info = infos[index];
+            const auto &info = ANGLE_UNSAFE_TODO(infos[index]);
 
             const spirv::IdRef typeId        = spirv::IdRef(info.typeId);
             const spirv::IdRef typePointerId = spirv::IdRef(info.typePointerId);
@@ -1666,7 +1663,7 @@ spirv::IdRef SPIRVBuilder::getBoolConstant(bool value)
 {
     uint32_t asInt = static_cast<uint32_t>(value);
 
-    spirv::IdRef constantId = mBoolConstants[asInt];
+    spirv::IdRef constantId = ANGLE_UNSAFE_TODO(mBoolConstants[asInt]);
 
     if (!constantId.valid())
     {
@@ -1675,7 +1672,7 @@ spirv::IdRef SPIRVBuilder::getBoolConstant(bool value)
 
         const spirv::IdRef boolTypeId = getSpirvTypeData(boolType, nullptr).id;
 
-        mBoolConstants[asInt] = constantId = getNewId({});
+        ANGLE_UNSAFE_TODO(mBoolConstants[asInt]) = constantId = getNewId({});
         if (value)
         {
             spirv::WriteConstantTrue(&mSpirvTypeAndConstantDecls, boolTypeId, constantId);

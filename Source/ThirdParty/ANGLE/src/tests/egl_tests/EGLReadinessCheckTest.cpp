@@ -74,9 +74,6 @@ TEST_P(EGLReadinessCheckTest, DISABLED_AllowlistMatchesSupport)
     check(ES3_OPENGLES());
     check(ES31_OPENGLES());
 
-    check(ES1_D3D9());
-    check(ES2_D3D9());
-
     check(ES1_D3D11());
     check(ES2_D3D11());
     check(ES3_D3D11());

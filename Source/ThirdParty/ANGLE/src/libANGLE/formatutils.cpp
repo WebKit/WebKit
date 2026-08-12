@@ -6,11 +6,8 @@
 
 // formatutils.cpp: Queries for GL image formats.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "libANGLE/formatutils.h"
+#include "common/unsafe_buffers.h"
 
 #include "anglebase/no_destructor.h"
 #include "common/mathutil.h"
@@ -59,7 +56,7 @@ bool FormatType::operator<(const FormatType &other) const
 
 bool operator<(const Type &a, const Type &b)
 {
-    return memcmp(&a, &b, sizeof(Type)) < 0;
+    return ANGLE_UNSAFE_TODO(memcmp(&a, &b, sizeof(Type))) < 0;
 }
 
 // Information about internal formats

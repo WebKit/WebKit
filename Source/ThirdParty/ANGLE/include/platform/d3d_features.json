@@ -8,13 +8,6 @@
     ],
     "features": [
         {
-            "name": "border_color_srgb",
-            "category": "Workarounds",
-            "description": [
-                "Some drivers expect sRGB border color for sRGB texture formats"
-            ]
-        },
-        {
             "name": "mrt_perf_workaround",
             "category": "Workarounds",
             "description": [
@@ -184,13 +177,6 @@
             "category": "Workarounds",
             "description": [
                 "Enable timestamp on GL_EXT_disjoint_timer_query extension"
-            ]
-        },
-        {
-            "name": "supports_non_constant_loop_indexing",
-            "category": "Workarounds",
-            "description": [
-                "Whether the API supports non-constant loop indexing"
             ]
         }
     ]

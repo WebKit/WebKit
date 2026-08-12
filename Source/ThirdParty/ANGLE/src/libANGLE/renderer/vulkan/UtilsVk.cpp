@@ -7,11 +7,8 @@
 //    Implements the UtilsVk class.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/vulkan/UtilsVk.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/spirv/spirv_instruction_builder_autogen.h"
 
@@ -391,7 +388,8 @@ void CalculateBlitOffset(const UtilsVk::BlitResolveParameters &params, float off
     int srcOffsetFactorY = params.flipY ? -1 : 1;
 
     offset[0] = params.dstOffset[0] * params.stretch[0] - params.srcOffset[0] * srcOffsetFactorX;
-    offset[1] = params.dstOffset[1] * params.stretch[1] - params.srcOffset[1] * srcOffsetFactorY;
+    ANGLE_UNSAFE_TODO(offset[1]) =
+        params.dstOffset[1] * params.stretch[1] - params.srcOffset[1] * srcOffsetFactorY;
 }
 
 void CalculateResolveOffset(const UtilsVk::BlitResolveParameters &params, int32_t offset[2])
@@ -401,7 +399,7 @@ void CalculateResolveOffset(const UtilsVk::BlitResolveParameters &params, int32_
 
     // There's no stretching in resolve.
     offset[0] = params.dstOffset[0] - params.srcOffset[0] * srcOffsetFactorX;
-    offset[1] = params.dstOffset[1] - params.srcOffset[1] * srcOffsetFactorY;
+    ANGLE_UNSAFE_TODO(offset[1]) = params.dstOffset[1] - params.srcOffset[1] * srcOffsetFactorY;
 }
 
 void SetDepthStateForWrite(vk::Renderer *renderer, vk::GraphicsPipelineDesc *desc)
@@ -1429,8 +1427,9 @@ angle::Result UtilsVk::ensureResourcesInitialized(ContextVk *contextVk,
     uint32_t currentBinding = 0;
     for (size_t i = 0; i < setSizesCount; ++i)
     {
-        descriptorSetDesc.addBinding(currentBinding, setSizes[i].type, setSizes[i].descriptorCount,
-                                     descStages, nullptr);
+        descriptorSetDesc.addBinding(currentBinding, ANGLE_UNSAFE_TODO(setSizes[i]).type,
+                                     ANGLE_UNSAFE_TODO(setSizes[i]).descriptorCount, descStages,
+                                     nullptr);
         ++currentBinding;
     }
 
@@ -2010,9 +2009,9 @@ angle::Result UtilsVk::convertIndexBuffer(ContextVk *contextVk,
     vk::ShaderModulePtr shader;
     ANGLE_TRY(contextVk->getShaderLibrary().getConvertIndex_comp(contextVk, flags, &shader));
 
-    ANGLE_TRY(setupComputeProgram(contextVk, Function::ConvertIndexBuffer, shader,
-                                  &mConvertIndex[flags], descriptorSet, &shaderParams,
-                                  sizeof(ConvertIndexShaderParams), commandBufferHelper));
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(setupComputeProgram(
+        contextVk, Function::ConvertIndexBuffer, shader, &mConvertIndex[flags], descriptorSet,
+        &shaderParams, sizeof(ConvertIndexShaderParams), commandBufferHelper)));
 
     constexpr uint32_t kInvocationsPerGroup = 64;
     constexpr uint32_t kInvocationsPerIndex = 2;
@@ -2080,9 +2079,10 @@ angle::Result UtilsVk::convertIndexIndirectBuffer(ContextVk *contextVk,
     vk::ShaderModulePtr shader;
     ANGLE_TRY(contextVk->getShaderLibrary().getConvertIndex_comp(contextVk, flags, &shader));
 
-    ANGLE_TRY(setupComputeProgram(contextVk, Function::ConvertIndexIndirectBuffer, shader,
-                                  &mConvertIndex[flags], descriptorSet, &shaderParams,
-                                  sizeof(ConvertIndexIndirectShaderParams), commandBufferHelper));
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(
+        setupComputeProgram(contextVk, Function::ConvertIndexIndirectBuffer, shader,
+                            &mConvertIndex[flags], descriptorSet, &shaderParams,
+                            sizeof(ConvertIndexIndirectShaderParams), commandBufferHelper)));
 
     constexpr uint32_t kInvocationsPerGroup = 64;
     constexpr uint32_t kInvocationsPerIndex = 2;
@@ -2151,10 +2151,10 @@ angle::Result UtilsVk::convertLineLoopIndexIndirectBuffer(
     ANGLE_TRY(contextVk->getShaderLibrary().getConvertIndexIndirectLineLoop_comp(contextVk, flags,
                                                                                  &shader));
 
-    ANGLE_TRY(setupComputeProgram(contextVk, Function::ConvertIndexIndirectLineLoopBuffer, shader,
-                                  &mConvertIndexIndirectLineLoop[flags], descriptorSet,
-                                  &shaderParams, sizeof(ConvertIndexIndirectLineLoopShaderParams),
-                                  commandBufferHelper));
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(setupComputeProgram(
+        contextVk, Function::ConvertIndexIndirectLineLoopBuffer, shader,
+        &mConvertIndexIndirectLineLoop[flags], descriptorSet, &shaderParams,
+        sizeof(ConvertIndexIndirectLineLoopShaderParams), commandBufferHelper)));
 
     commandBuffer->dispatch(1, 1, 1);
 
@@ -2213,10 +2213,10 @@ angle::Result UtilsVk::convertLineLoopArrayIndirectBuffer(
     ANGLE_TRY(
         contextVk->getShaderLibrary().getConvertIndirectLineLoop_comp(contextVk, flags, &shader));
 
-    ANGLE_TRY(setupComputeProgram(contextVk, Function::ConvertIndirectLineLoopBuffer, shader,
-                                  &mConvertIndirectLineLoop[flags], descriptorSet, &shaderParams,
-                                  sizeof(ConvertIndirectLineLoopShaderParams),
-                                  commandBufferHelper));
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(
+        setupComputeProgram(contextVk, Function::ConvertIndirectLineLoopBuffer, shader,
+                            &mConvertIndirectLineLoop[flags], descriptorSet, &shaderParams,
+                            sizeof(ConvertIndirectLineLoopShaderParams), commandBufferHelper)));
 
     commandBuffer->dispatch(1, 1, 1);
 
@@ -2455,9 +2455,9 @@ angle::Result UtilsVk::convertVertexBufferImpl(
     vk::ShaderModulePtr shader;
     ANGLE_TRY(contextVk->getShaderLibrary().getConvertVertex_comp(contextVk, flags, &shader));
 
-    ANGLE_TRY(setupComputeProgram(contextVk, Function::ConvertVertexBuffer, shader,
-                                  &mConvertVertex[flags], descriptorSet, &shaderParams,
-                                  sizeof(shaderParams), commandBufferHelper));
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(setupComputeProgram(
+        contextVk, Function::ConvertVertexBuffer, shader, &mConvertVertex[flags], descriptorSet,
+        &shaderParams, sizeof(shaderParams), commandBufferHelper)));
 
     commandBuffer->dispatch(UnsignedCeilDivide(shaderParams.outputCount, 64), 1, 1);
 
@@ -2693,7 +2693,7 @@ angle::Result UtilsVk::clearFramebuffer(ContextVk *contextVk,
             GetImageClearFlags(*params.colorFormat, params.colorAttachmentIndexGL,
                                params.clearDepth && !supportsDepthClamp);
         ANGLE_TRY(shaderLibrary.getImageClear_frag(contextVk, flags, &fragmentShader));
-        imageClearProgramAndPipelines = &mImageClear[flags];
+        imageClearProgramAndPipelines = &ANGLE_UNSAFE_TODO(mImageClear[flags]);
     }
 
     // Make sure transform feedback is paused.  Needs to be done before binding the pipeline as
@@ -2846,9 +2846,9 @@ angle::Result UtilsVk::clearImage(ContextVk *contextVk,
     ANGLE_TRY(shaderLibrary.getFullScreenTri_vert(contextVk, 0, &vertexShader));
     ANGLE_TRY(shaderLibrary.getImageClear_frag(contextVk, flags, &fragmentShader));
 
-    ANGLE_TRY(setupGraphicsProgram(contextVk, Function::ImageClear, vertexShader, fragmentShader,
-                                   &mImageClear[flags], &pipelineDesc, VK_NULL_HANDLE,
-                                   &shaderParams, sizeof(shaderParams), commandBuffer));
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(setupGraphicsProgram(
+        contextVk, Function::ImageClear, vertexShader, fragmentShader, &mImageClear[flags],
+        &pipelineDesc, VK_NULL_HANDLE, &shaderParams, sizeof(shaderParams), commandBuffer)));
 
     // Set dynamic state
     VkViewport viewport;
@@ -3005,8 +3005,8 @@ angle::Result UtilsVk::setupBlitResolveGraphicsProgram(ContextVk *contextVk,
     uint32_t writeInfoOffset = blitDepth || blitColor ? 0 : 1;
     uint32_t writeInfoCount  = blitColor + blitDepth + blitStencil;
 
-    vkUpdateDescriptorSets(contextVk->getDevice(), writeInfoCount, writeInfos + writeInfoOffset, 0,
-                           nullptr);
+    vkUpdateDescriptorSets(contextVk->getDevice(), writeInfoCount,
+                           ANGLE_UNSAFE_TODO(writeInfos + writeInfoOffset), 0, nullptr);
     vkUpdateDescriptorSets(contextVk->getDevice(), 1, &writeInfos[2], 0, nullptr);
 
     vk::ShaderLibrary &shaderLibrary                 = contextVk->getShaderLibrary();
@@ -3024,10 +3024,10 @@ angle::Result UtilsVk::setupBlitResolveGraphicsProgram(ContextVk *contextVk,
 
     Function function = Function::BlitResolve;
 
-    ANGLE_TRY(setupGraphicsProgram(contextVk, function, vertexShader, fragmentShader,
-                                   isSrc3D ? &mBlit3DSrc[flags] : &mBlitResolve[flags],
-                                   &pipelineDesc, descriptorSet, &shaderParams,
-                                   sizeof(shaderParams), commandBuffer));
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(
+        setupGraphicsProgram(contextVk, function, vertexShader, fragmentShader,
+                             isSrc3D ? &mBlit3DSrc[flags] : &mBlitResolve[flags], &pipelineDesc,
+                             descriptorSet, &shaderParams, sizeof(shaderParams), commandBuffer)));
 
     return angle::Result::Continue;
 }
@@ -3510,9 +3510,10 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     ANGLE_TRY(contextVk->getShaderLibrary().getBlitResolveStencilNoExport_comp(contextVk, flags,
                                                                                &shader));
 
-    ANGLE_TRY(setupComputeProgram(contextVk, Function::BlitResolveStencilNoExport, shader,
-                                  &mBlitResolveStencilNoExport[flags], descriptorSet, &shaderParams,
-                                  sizeof(shaderParams), commandBufferHelper));
+    ANGLE_UNSAFE_TODO(
+        ANGLE_TRY(setupComputeProgram(contextVk, Function::BlitResolveStencilNoExport, shader,
+                                      &mBlitResolveStencilNoExport[flags], descriptorSet,
+                                      &shaderParams, sizeof(shaderParams), commandBufferHelper)));
     commandBuffer->dispatch(UnsignedCeilDivide(bufferRowLengthInUints, 8),
                             UnsignedCeilDivide(params.blitArea.height, 8), 1);
 
@@ -3854,9 +3855,9 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
         }
 
         ANGLE_TRY(shaderLibrary.getImageCopy_frag(contextVk, flags, &fragmentShader));
-        ANGLE_TRY(setupGraphicsProgram(contextVk, Function::ImageCopy, vertexShader, fragmentShader,
-                                       &mImageCopy[flags], &pipelineDesc, descriptorSet,
-                                       &shaderParams, sizeof(shaderParams), commandBuffer));
+        ANGLE_UNSAFE_TODO(ANGLE_TRY(setupGraphicsProgram(
+            contextVk, Function::ImageCopy, vertexShader, fragmentShader, &mImageCopy[flags],
+            &pipelineDesc, descriptorSet, &shaderParams, sizeof(shaderParams), commandBuffer)));
     }
 
     // Set dynamic state
@@ -4210,9 +4211,9 @@ angle::Result UtilsVk::copyImageToBuffer(ContextVk *contextVk,
     vk::ShaderModulePtr shader;
     ANGLE_TRY(contextVk->getShaderLibrary().getCopyImageToBuffer_comp(contextVk, flags, &shader));
 
-    ANGLE_TRY(setupComputeProgram(contextVk, Function::CopyImageToBuffer, shader,
-                                  &mCopyImageToBuffer[flags], descriptorSet, &shaderParams,
-                                  sizeof(shaderParams), commandBufferHelper));
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(setupComputeProgram(
+        contextVk, Function::CopyImageToBuffer, shader, &mCopyImageToBuffer[flags], descriptorSet,
+        &shaderParams, sizeof(shaderParams), commandBufferHelper)));
 
     commandBuffer->dispatch(UnsignedCeilDivide(params.size[0], 8),
                             UnsignedCeilDivide(params.size[1], 8), 1);
@@ -4410,9 +4411,9 @@ angle::Result UtilsVk::transCodeEtcToBc(ContextVk *contextVk,
         writeDescriptorSet[1].dstSet = descriptorSet;
         vkUpdateDescriptorSets(contextVk->getDevice(), 2, writeDescriptorSet, 0, nullptr);
 
-        ANGLE_TRY(setupComputeProgram(contextVk, Function::TransCodeEtcToBc, shader,
-                                      &mEtcToBc[flags], descriptorSet, &shaderParams,
-                                      sizeof(shaderParams), commandBufferHelper));
+        ANGLE_UNSAFE_TODO(ANGLE_TRY(setupComputeProgram(
+            contextVk, Function::TransCodeEtcToBc, shader, &mEtcToBc[flags], descriptorSet,
+            &shaderParams, sizeof(shaderParams), commandBufferHelper)));
 
         // Work group size is 8 x 8 x 1
         commandBuffer->dispatch(UnsignedCeilDivide(width, 8), UnsignedCeilDivide(height, 8), 1);
@@ -4464,8 +4465,8 @@ angle::Result UtilsVk::generateMipmap(ContextVk *contextVk,
     VkDescriptorImageInfo destImageInfos[kGenerateMipmapMaxLevels] = {};
     for (uint32_t level = 0; level < kGenerateMipmapMaxLevels; ++level)
     {
-        destImageInfos[level].imageView   = destLevelViews[level]->getHandle();
-        destImageInfos[level].imageLayout = dst->getCurrentLayout(renderer);
+        ANGLE_UNSAFE_TODO(destImageInfos[level]).imageView   = destLevelViews[level]->getHandle();
+        ANGLE_UNSAFE_TODO(destImageInfos[level]).imageLayout = dst->getCurrentLayout(renderer);
     }
 
     VkDescriptorImageInfo srcImageInfo = {};
@@ -4498,9 +4499,9 @@ angle::Result UtilsVk::generateMipmap(ContextVk *contextVk,
     vk::OutsideRenderPassCommandBuffer *commandBuffer;
     commandBuffer = &commandBufferHelper->getCommandBuffer();
 
-    ANGLE_TRY(setupComputeProgram(contextVk, Function::GenerateMipmap, shader,
-                                  &mGenerateMipmap[flags], descriptorSet, &shaderParams,
-                                  sizeof(shaderParams), commandBufferHelper));
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(setupComputeProgram(
+        contextVk, Function::GenerateMipmap, shader, &mGenerateMipmap[flags], descriptorSet,
+        &shaderParams, sizeof(shaderParams), commandBufferHelper)));
 
     commandBuffer->dispatch(workGroupX, workGroupY, 1);
 
@@ -4683,9 +4684,9 @@ angle::Result UtilsVk::generateMipmapWithDraw(ContextVk *contextVk,
 
             // Update layer index and create pipeline
             shaderParams.srcLayer = currentLayer;
-            ANGLE_TRY(setupGraphicsProgram(contextVk, function, vertexShader, fragmentShader,
-                                           &mBlitResolve[flags], &pipelineDesc, descriptorSet,
-                                           &shaderParams, sizeof(shaderParams), commandBuffer));
+            ANGLE_UNSAFE_TODO(ANGLE_TRY(setupGraphicsProgram(
+                contextVk, function, vertexShader, fragmentShader, &mBlitResolve[flags],
+                &pipelineDesc, descriptorSet, &shaderParams, sizeof(shaderParams), commandBuffer)));
 
             // Set dynamic state
             commandBuffer->setViewport(0, 1, &viewport);
@@ -5277,7 +5278,7 @@ angle::Result LineLoopHelper::getIndexBufferForDrawArrays(ContextVk *contextVk,
     uint32_t vertexCount         = (clampedVertexCount + unsignedFirstVertex);
     for (uint32_t vertexIndex = unsignedFirstVertex; vertexIndex < vertexCount; vertexIndex++)
     {
-        *indices++ = vertexIndex;
+        *ANGLE_UNSAFE_TODO(indices++) = vertexIndex;
     }
     *indices = unsignedFirstVertex;
 
@@ -5306,9 +5307,10 @@ angle::Result LineLoopHelper::getIndexBufferForElementArrayBuffer(ContextVk *con
 
         void *srcDataMapping = nullptr;
         ANGLE_TRY(elementArrayBufferVk->mapForReadAccessOnly(contextVk, &srcDataMapping));
-        ANGLE_TRY(streamIndices(contextVk, glIndexType, indexCount,
-                                static_cast<const uint8_t *>(srcDataMapping) + elementArrayOffset,
-                                bufferOut, indexCountOut));
+        ANGLE_UNSAFE_TODO(ANGLE_TRY(
+            streamIndices(contextVk, glIndexType, indexCount,
+                          static_cast<const uint8_t *>(srcDataMapping) + elementArrayOffset,
+                          bufferOut, indexCountOut)));
         ANGLE_TRY(elementArrayBufferVk->unmapReadAccessOnly(contextVk));
         return angle::Result::Continue;
     }
@@ -5387,15 +5389,15 @@ angle::Result LineLoopHelper::streamIndices(ContextVk *contextVk,
             uint16_t *indicesDst = reinterpret_cast<uint16_t *>(indices);
             for (int i = 0; i < indexCount; i++)
             {
-                indicesDst[i] = srcPtr[i];
+                ANGLE_UNSAFE_TODO(indicesDst[i] = srcPtr[i]);
             }
 
-            indicesDst[indexCount] = srcPtr[0];
+            ANGLE_UNSAFE_TODO(indicesDst[indexCount]) = srcPtr[0];
         }
         else
         {
-            memcpy(indices, srcPtr, unitSize * indexCount);
-            memcpy(indices + unitSize * indexCount, srcPtr, unitSize);
+            ANGLE_UNSAFE_TODO(memcpy(indices, srcPtr, unitSize * indexCount));
+            ANGLE_UNSAFE_TODO(memcpy(indices + unitSize * indexCount, srcPtr, unitSize));
         }
     }
 

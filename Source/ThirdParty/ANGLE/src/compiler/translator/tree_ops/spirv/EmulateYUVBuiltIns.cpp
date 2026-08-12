@@ -6,11 +6,8 @@
 // EmulateYUVBuiltIns: Adds functions that emulate yuv_2_rgb and rgb_2_yuv built-ins.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/tree_ops/spirv/EmulateYUVBuiltIns.h"
+#include "common/unsafe_buffers.h"
 
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/SymbolTable.h"
@@ -275,12 +272,14 @@ const TFunction *EmulateYUVBuiltInsTraverser::getYUVFunc(TPrecision precision,
     // itu_* constants
     TConstantUnion *ituConstants = new TConstantUnion[3];
     ituConstants[0].setYuvCscStandardEXTConst(EycsItu601);
-    ituConstants[1].setYuvCscStandardEXTConst(EycsItu601FullRange);
-    ituConstants[2].setYuvCscStandardEXTConst(EycsItu709);
+    ANGLE_UNSAFE_TODO(ituConstants[1]).setYuvCscStandardEXTConst(EycsItu601FullRange);
+    ANGLE_UNSAFE_TODO(ituConstants[2]).setYuvCscStandardEXTConst(EycsItu709);
 
     TIntermConstantUnion *itu601          = new TIntermConstantUnion(&ituConstants[0], *yuvCscType);
-    TIntermConstantUnion *itu601FullRange = new TIntermConstantUnion(&ituConstants[1], *yuvCscType);
-    TIntermConstantUnion *itu709          = new TIntermConstantUnion(&ituConstants[2], *yuvCscType);
+    TIntermConstantUnion *itu601FullRange =
+        new TIntermConstantUnion(&ANGLE_UNSAFE_TODO(ituConstants[1]), *yuvCscType);
+    TIntermConstantUnion *itu709 =
+        new TIntermConstantUnion(&ANGLE_UNSAFE_TODO(ituConstants[2]), *yuvCscType);
 
     // case ...: return ...
     TIntermBlock *switchBody = new TIntermBlock;

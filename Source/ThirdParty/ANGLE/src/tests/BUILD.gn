@@ -654,7 +654,7 @@ if (is_win || is_linux || is_chromeos || is_android || is_apple) {
     sources =
         angle_white_box_perf_tests_sources + [ "angle_perftests_main.cpp" ]
 
-    if (angle_enable_d3d11 || angle_enable_d3d9) {
+    if (angle_enable_d3d11) {
       sources += [ "perf_tests/IndexDataManagerTest.cpp" ]
     }
 

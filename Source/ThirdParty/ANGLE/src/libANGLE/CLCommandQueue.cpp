@@ -6,11 +6,8 @@
 // CLCommandQueue.cpp: Implements the cl::CommandQueue class.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/CLCommandQueue.h"
+#include "common/unsafe_buffers.h"
 
 #include "CL/cl.h"
 #include "common/angleutils.h"
@@ -125,7 +122,7 @@ angle::Result CommandQueue::getInfo(CommandQueueInfo name,
         }
         if (copyValue != nullptr)
         {
-            std::memcpy(value, copyValue, copySize);
+            ANGLE_UNSAFE_TODO(std::memcpy(value, copyValue, copySize));
         }
     }
     if (valueSizeRet != nullptr)
@@ -554,7 +551,7 @@ angle::Result CommandQueue::enqueueMigrateMemObjects(cl_uint numMemObjects,
     memories.reserve(numMemObjects);
     while (numMemObjects-- != 0u)
     {
-        memories.emplace_back(&(*memObjects++)->cast<Memory>());
+        memories.emplace_back(&(*ANGLE_UNSAFE_TODO(memObjects++))->cast<Memory>());
     }
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
 
@@ -617,16 +614,16 @@ angle::Result CommandQueue::enqueueNativeKernel(UserFunc userFunc,
     {
         // If argument memory block contains memory objects, make a copy.
         funcArgs.resize(cbArgs);
-        std::memcpy(funcArgs.data(), args, cbArgs);
+        ANGLE_UNSAFE_TODO(std::memcpy(funcArgs.data(), args, cbArgs));
         buffers.reserve(numMemObjects);
         offsets.reserve(numMemObjects);
 
         while (numMemObjects-- != 0u)
         {
-            buffers.emplace_back(&(*memList++)->cast<Buffer>());
+            buffers.emplace_back(&(*ANGLE_UNSAFE_TODO(memList++))->cast<Buffer>());
 
             // Calc memory offset of cl_mem object in args.
-            offsets.emplace_back(static_cast<const char *>(*argsMemLoc++) -
+            offsets.emplace_back(static_cast<const char *>(*ANGLE_UNSAFE_TODO(argsMemLoc++)) -
                                  static_cast<const char *>(args));
 
             // Fetch location of cl_mem object in copied function argument memory block.
@@ -720,7 +717,7 @@ angle::Result CommandQueue::enqueueAcquireExternalMemObjectsKHR(cl_uint numMemOb
     memories.reserve(numMemObjects);
     for (cl_uint index = 0; index < numMemObjects; ++index)
     {
-        memories.emplace_back(&memObjects[index]->cast<Memory>());
+        memories.emplace_back(&ANGLE_UNSAFE_TODO(memObjects[index])->cast<Memory>());
     }
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
 
@@ -743,7 +740,7 @@ angle::Result CommandQueue::enqueueReleaseExternalMemObjectsKHR(cl_uint numMemOb
     memories.reserve(numMemObjects);
     for (cl_uint index = 0; index < numMemObjects; ++index)
     {
-        memories.emplace_back(&memObjects[index]->cast<Memory>());
+        memories.emplace_back(&ANGLE_UNSAFE_TODO(memObjects[index])->cast<Memory>());
     }
     const EventPtrs waitEvents = Event::Cast(numEventsInWaitList, eventWaitList);
 

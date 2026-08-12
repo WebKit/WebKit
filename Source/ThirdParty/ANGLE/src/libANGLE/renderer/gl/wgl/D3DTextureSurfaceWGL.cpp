@@ -9,7 +9,6 @@
 #include "libANGLE/renderer/gl/wgl/D3DTextureSurfaceWGL.h"
 
 #include "libANGLE/Surface.h"
-#include "libANGLE/renderer/d3d_format.h"
 #include "libANGLE/renderer/dxgi_format_map.h"
 #include "libANGLE/renderer/gl/FramebufferGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
@@ -100,86 +99,6 @@ egl::Error GetD3D11TextureInfo(EGLenum buftype,
     return egl::NoError();
 }
 
-egl::Error GetD3D9TextureInfo(EGLenum buftype,
-                              IDirect3DTexture9 *texture9,
-                              size_t *width,
-                              size_t *height,
-                              const angle::Format **angleFormat,
-                              IUnknown **object,
-                              IUnknown **device)
-{
-    D3DSURFACE_DESC surfaceDesc;
-    if (FAILED(texture9->GetLevelDesc(0, &surfaceDesc)))
-    {
-        SafeRelease(texture9);
-        return egl::Error(EGL_BAD_PARAMETER, "Could not query description of the D3D9 surface.");
-    }
-
-    if (buftype == EGL_D3D_TEXTURE_ANGLE)
-    {
-        // From table egl.restrictions in EGL_ANGLE_d3d_texture_client_buffer.
-        switch (surfaceDesc.Format)
-        {
-            case D3DFMT_R8G8B8:
-            case D3DFMT_A8R8G8B8:
-            case D3DFMT_A16B16G16R16F:
-            case D3DFMT_A32B32G32R32F:
-                break;
-
-            default:
-                SafeRelease(texture9);
-                std::ostringstream err;
-                err << "Unknown client buffer texture format: " << surfaceDesc.Format;
-                return egl::Error(EGL_BAD_PARAMETER, err.str());
-        }
-    }
-
-    if (angleFormat)
-    {
-        const auto &d3dFormatInfo = d3d9::GetD3DFormatInfo(surfaceDesc.Format);
-        ASSERT(d3dFormatInfo.info().id != angle::FormatID::NONE);
-        *angleFormat = &d3dFormatInfo.info();
-    }
-
-    if (width)
-    {
-        *width = surfaceDesc.Width;
-    }
-    if (height)
-    {
-        *height = surfaceDesc.Height;
-    }
-
-    IDirect3DDevice9 *d3d9Device = nullptr;
-    HRESULT result               = texture9->GetDevice(&d3d9Device);
-    if (FAILED(result))
-    {
-        SafeRelease(texture9);
-        return egl::Error(EGL_BAD_PARAMETER,
-                          "Could not query the D3D9 device from the client buffer.");
-    }
-
-    if (device)
-    {
-        *device = d3d9Device;
-    }
-    else
-    {
-        SafeRelease(d3d9Device);
-    }
-
-    if (object)
-    {
-        *object = texture9;
-    }
-    else
-    {
-        SafeRelease(texture9);
-    }
-
-    return egl::NoError();
-}
-
 egl::Error GetD3DTextureInfo(EGLenum buftype,
                              EGLClientBuffer clientBuffer,
                              ID3D11Device *d3d11Device,
@@ -192,23 +111,16 @@ egl::Error GetD3DTextureInfo(EGLenum buftype,
 {
     if (buftype == EGL_D3D_TEXTURE_ANGLE)
     {
-        IUnknown *buffer            = static_cast<IUnknown *>(clientBuffer);
-        ID3D11Texture2D *texture11  = nullptr;
-        IDirect3DTexture9 *texture9 = nullptr;
+        IUnknown *buffer           = static_cast<IUnknown *>(clientBuffer);
+        ID3D11Texture2D *texture11 = nullptr;
         if (SUCCEEDED(buffer->QueryInterface<ID3D11Texture2D>(&texture11)))
         {
             return GetD3D11TextureInfo(buftype, texture11, width, height, angleFormat, object,
                                        device);
         }
-        else if (SUCCEEDED(buffer->QueryInterface<IDirect3DTexture9>(&texture9)))
-        {
-            return GetD3D9TextureInfo(buftype, texture9, width, height, angleFormat, object,
-                                      device);
-        }
         else
         {
-            return egl::Error(EGL_BAD_PARAMETER,
-                              "Provided buffer is not a IDirect3DTexture9 or ID3D11Texture2D.");
+            return egl::Error(EGL_BAD_PARAMETER, "Provided buffer is not a ID3D11Texture2D.");
         }
     }
     else if (buftype == EGL_D3D_TEXTURE_2D_SHARE_HANDLE_ANGLE)

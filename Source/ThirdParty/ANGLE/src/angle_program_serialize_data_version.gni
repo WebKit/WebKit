@@ -54,11 +54,6 @@ d3d_backend_dir = "libANGLE/renderer/d3d/"
 angle_code_affecting_program_serialize +=
     rebase_path(d3d_shared_sources, angle_root, d3d_backend_dir)
 
-if (angle_enable_d3d9) {
-  angle_code_affecting_program_serialize +=
-      rebase_path(d3d9_backend_sources, angle_root, d3d_backend_dir)
-}
-
 if (angle_enable_d3d11) {
   angle_code_affecting_program_serialize +=
       rebase_path(d3d11_backend_sources, angle_root, d3d_backend_dir)

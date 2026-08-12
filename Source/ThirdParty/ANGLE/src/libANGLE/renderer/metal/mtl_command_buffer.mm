@@ -8,10 +8,6 @@
 //      MTLCommandEncoder's wrappers.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 
 #include <cassert>
@@ -24,6 +20,7 @@
 #endif
 
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/metal/mtl_occlusion_query_pool.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
@@ -31,12 +28,12 @@
 // Use to compare the new values with the values already set in the command encoder:
 static inline bool operator==(const MTLViewport &lhs, const MTLViewport &rhs)
 {
-    return memcmp(&lhs, &rhs, sizeof(lhs)) == 0;
+    return ANGLE_UNSAFE_TODO(memcmp(&lhs, &rhs, sizeof(lhs))) == 0;
 }
 
 static inline bool operator==(const MTLScissorRect &lhs, const MTLScissorRect &rhs)
 {
-    return memcmp(&lhs, &rhs, sizeof(lhs)) == 0;
+    return ANGLE_UNSAFE_TODO(memcmp(&lhs, &rhs, sizeof(lhs))) == 0;
 }
 
 namespace rx

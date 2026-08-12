@@ -6,10 +6,7 @@
 
 // system_utils_apple.cpp: Implementation of OS-specific functions for Apple platforms
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "system_utils.h"
 
 #include <unistd.h>
@@ -38,7 +35,7 @@ std::string GetExecutablePath()
     _NSGetExecutablePath(buffer.data(), &size);
     buffer[size] = '\0';
 
-    if (!strrchr(buffer.data(), '/'))
+    if (ANGLE_UNSAFE_TODO(!strrchr(buffer.data(), '/')))
     {
         return "";
     }

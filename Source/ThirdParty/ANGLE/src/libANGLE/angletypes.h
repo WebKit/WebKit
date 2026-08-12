@@ -9,10 +9,6 @@
 #ifndef LIBANGLE_ANGLETYPES_H_
 #define LIBANGLE_ANGLETYPES_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <anglebase/sha1.h>
 #include "common/Color.h"
 #include "common/FixedVector.h"
@@ -21,6 +17,7 @@
 #include "common/bitset_utils.h"
 #include "common/hash_utils.h"
 #include "common/span.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/Constants.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/RefCountObject.h"
@@ -152,10 +149,10 @@ struct RectangleImpl
         : x(x_in), y(y_in), width(width_in), height(height_in)
     {}
     explicit constexpr RectangleImpl(const T corners[4])
-        : x(corners[0]),
-          y(corners[1]),
-          width(corners[2] - corners[0]),
-          height(corners[3] - corners[1])
+        : x(ANGLE_UNSAFE_TODO(corners[0])),
+          y(ANGLE_UNSAFE_TODO(corners[1])),
+          width(ANGLE_UNSAFE_TODO(corners[2] - corners[0])),
+          height(ANGLE_UNSAFE_TODO(corners[3] - corners[1]))
     {}
     template <typename S>
     explicit constexpr RectangleImpl(const RectangleImpl<S> rect)
@@ -1372,7 +1369,7 @@ class BlobCacheValue  // To be replaced with std::span when C++20 is required
     const uint8_t &operator[](size_t pos) const
     {
         ASSERT(pos < mSize);
-        return mPtr[pos];
+        return ANGLE_UNSAFE_TODO(mPtr[pos]);
     }
 
   private:

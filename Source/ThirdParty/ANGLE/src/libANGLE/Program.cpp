@@ -7,11 +7,8 @@
 // Program.cpp: Implements the gl::Program class. Implements GL program objects
 // and related functionality. [OpenGL ES 2.0.24] section 2.10.3 page 28.
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/Program.h"
+#include "common/unsafe_buffers.h"
 
 #include <algorithm>
 #include <utility>
@@ -247,10 +244,10 @@ void InfoLog::getLog(GLsizei bufSize, GLsizei *length, char *infoLog) const
         if (!logString.empty())
         {
             index = std::min(static_cast<size_t>(bufSize) - 1, logString.length());
-            memcpy(infoLog, logString.c_str(), index);
+            ANGLE_UNSAFE_TODO(memcpy(infoLog, logString.c_str(), index));
         }
 
-        infoLog[index] = '\0';
+        ANGLE_UNSAFE_TODO(infoLog[index]) = '\0';
     }
 
     if (length)
@@ -1433,7 +1430,8 @@ angle::Result Program::loadBinary(const Context *context,
     ASSERT(mLinkingState);
     unlink();
 
-    BinaryInputStream stream(angle::Span(static_cast<const uint8_t *>(binary), length));
+    BinaryInputStream stream(
+        ANGLE_UNSAFE_TODO(angle::Span(static_cast<const uint8_t *>(binary), length)));
     if (!deserialize(context, stream))
     {
         return angle::Result::Continue;
@@ -1527,10 +1525,10 @@ angle::Result Program::getBinary(Context *context,
     {
         char *ptr = reinterpret_cast<char *>(binary);
 
-        memcpy(ptr, streamState, streamLength);
-        ptr += streamLength;
+        ANGLE_UNSAFE_TODO(memcpy(ptr, streamState, streamLength));
+        ANGLE_UNSAFE_TODO(ptr += streamLength);
 
-        ASSERT(ptr - streamLength == binary);
+        ANGLE_UNSAFE_TODO(ASSERT(ptr - streamLength == binary));
 
         // Once the binary is retrieved, assume the application will never need the binary and
         // release the memory.  Note that implicit caching to blob cache is disabled when the
@@ -1622,7 +1620,7 @@ void Program::getAttachedShaders(GLsizei maxCount, GLsizei *count, ShaderProgram
     {
         if (shader != nullptr && total < maxCount)
         {
-            shaders[total] = shader->getHandle();
+            ANGLE_UNSAFE_TODO(shaders[total]) = shader->getHandle();
             ++total;
         }
     }
@@ -1700,7 +1698,7 @@ void Program::setTransformFeedbackVaryings(const Context *context,
     mState.mTransformFeedbackVaryingNames.resize(count);
     for (GLsizei i = 0; i < count; i++)
     {
-        mState.mTransformFeedbackVaryingNames[i] = varyings[i];
+        mState.mTransformFeedbackVaryingNames[i] = ANGLE_UNSAFE_TODO(varyings[i]);
     }
 
     mState.mTransformFeedbackBufferMode = bufferMode;
@@ -2196,9 +2194,9 @@ angle::Result Program::serialize(const Context *context)
 
     BinaryOutputStream stream;
 
-    stream.writeBytes(
+    stream.writeBytes(ANGLE_UNSAFE_TODO(
         angle::Span(reinterpret_cast<const uint8_t *>(angle::GetANGLEShaderProgramVersion()),
-                    angle::GetANGLEShaderProgramVersionHashSize()));
+                    angle::GetANGLEShaderProgramVersionHashSize())));
 
     stream.writeBool(angle::Is64Bit());
 
@@ -2281,8 +2279,9 @@ bool Program::deserialize(const Context *context, BinaryInputStream &stream)
     std::vector<uint8_t> angleShaderProgramVersionString(
         angle::GetANGLEShaderProgramVersionHashSize());
     stream.readBytes(angleShaderProgramVersionString);
-    if (memcmp(angleShaderProgramVersionString.data(), angle::GetANGLEShaderProgramVersion(),
-               angleShaderProgramVersionString.size()) != 0)
+    if (ANGLE_UNSAFE_TODO(memcmp(angleShaderProgramVersionString.data(),
+                                 angle::GetANGLEShaderProgramVersion(),
+                                 angleShaderProgramVersionString.size())) != 0)
     {
         mState.mInfoLog << "Invalid program binary version.";
         return false;

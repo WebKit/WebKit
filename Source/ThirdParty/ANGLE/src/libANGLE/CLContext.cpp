@@ -6,11 +6,8 @@
 // CLContext.cpp: Implements the cl::Context class.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/CLContext.h"
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLCommandQueue.h"
@@ -75,7 +72,7 @@ angle::Result Context::getInfo(ContextInfo name,
         }
         if (copyValue != nullptr)
         {
-            std::memcpy(value, copyValue, copySize);
+            ANGLE_UNSAFE_TODO(std::memcpy(value, copyValue, copySize));
         }
     }
     if (valueSizeRet != nullptr)
@@ -105,21 +102,21 @@ cl_command_queue Context::createCommandQueueWithProperties(cl_device_id device,
         const cl_queue_properties *propIt = properties;
         while (*propIt != 0)
         {
-            switch (*propIt++)
+            switch (*ANGLE_UNSAFE_TODO(propIt++))
             {
                 case CL_QUEUE_PROPERTIES:
-                    props = static_cast<cl_command_queue_properties>(*propIt++);
+                    props = static_cast<cl_command_queue_properties>(*ANGLE_UNSAFE_TODO(propIt++));
                     break;
                 case CL_QUEUE_SIZE:
-                    size = static_cast<decltype(size)>(*propIt++);
+                    size = static_cast<decltype(size)>(*ANGLE_UNSAFE_TODO(propIt++));
                     break;
                 case CL_QUEUE_PRIORITY_KHR:
-                    priority = static_cast<cl_queue_priority_khr>(*propIt++);
+                    priority = static_cast<cl_queue_priority_khr>(*ANGLE_UNSAFE_TODO(propIt++));
                     break;
             }
         }
         // Include the trailing zero
-        ++propIt;
+        ANGLE_UNSAFE_TODO(++propIt);
         propArray.reserve(propIt - properties);
         propArray.insert(propArray.cend(), properties, propIt);
     }
@@ -148,7 +145,7 @@ cl_mem Context::createBuffer(const cl_mem_properties *properties,
         while (*propIt != 0)
         {
             propArray.push_back(*propIt);
-            ++propIt;
+            ANGLE_UNSAFE_TODO(++propIt);
         }
         // there is at least one property - special property 0
         propArray.push_back(0);
@@ -183,7 +180,7 @@ cl_mem Context::createImage(const cl_mem_properties *properties,
         while (*propIt != 0)
         {
             propArray.push_back(*propIt);
-            ++propIt;
+            ANGLE_UNSAFE_TODO(++propIt);
         }
         // there is at least one property - special property 0
         propArray.push_back(0);
@@ -242,21 +239,24 @@ cl_sampler Context::createSamplerWithProperties(const cl_sampler_properties *pro
         const cl_sampler_properties *propIt = properties;
         while (*propIt != 0)
         {
-            switch (*propIt++)
+            switch (*ANGLE_UNSAFE_TODO(propIt++))
             {
                 case CL_SAMPLER_NORMALIZED_COORDS:
-                    normalizedCoords = static_cast<decltype(normalizedCoords)>(*propIt++);
+                    normalizedCoords =
+                        static_cast<decltype(normalizedCoords)>(*ANGLE_UNSAFE_TODO(propIt++));
                     break;
                 case CL_SAMPLER_ADDRESSING_MODE:
-                    addressingMode = FromCLenum<AddressingMode>(static_cast<CLenum>(*propIt++));
+                    addressingMode = FromCLenum<AddressingMode>(
+                        static_cast<CLenum>(*ANGLE_UNSAFE_TODO(propIt++)));
                     break;
                 case CL_SAMPLER_FILTER_MODE:
-                    filterMode = FromCLenum<FilterMode>(static_cast<CLenum>(*propIt++));
+                    filterMode =
+                        FromCLenum<FilterMode>(static_cast<CLenum>(*ANGLE_UNSAFE_TODO(propIt++)));
                     break;
             }
         }
         // Include the trailing zero
-        ++propIt;
+        ANGLE_UNSAFE_TODO(++propIt);
         propArray.reserve(propIt - properties);
         propArray.insert(propArray.cend(), properties, propIt);
     }
@@ -282,7 +282,7 @@ cl_program Context::createProgramWithSource(cl_uint count,
     {
         while (count-- != 0u)
         {
-            source.append(*strings++);
+            source.append(*ANGLE_UNSAFE_TODO(strings++));
         }
     }
     else
@@ -291,13 +291,13 @@ cl_program Context::createProgramWithSource(cl_uint count,
         {
             if (*lengths != 0u)
             {
-                source.append(*strings++, *lengths);
+                source.append(*ANGLE_UNSAFE_TODO(strings++), *lengths);
             }
             else
             {
-                source.append(*strings++);
+                source.append(*ANGLE_UNSAFE_TODO(strings++));
             }
-            ++lengths;
+            ANGLE_UNSAFE_TODO(++lengths);
         }
     }
     return Object::Create<Program>(*this, std::move(source));
@@ -318,7 +318,7 @@ cl_program Context::createProgramWithBinary(cl_uint numDevices,
     devs.reserve(numDevices);
     while (numDevices-- != 0u)
     {
-        devs.emplace_back(&(*devices++)->cast<Device>());
+        devs.emplace_back(&(*ANGLE_UNSAFE_TODO(devices++))->cast<Device>());
     }
     return Object::Create<Program>(*this, std::move(devs), lengths, binaries, binaryStatus);
 }
@@ -331,7 +331,7 @@ cl_program Context::createProgramWithBuiltInKernels(cl_uint numDevices,
     devs.reserve(numDevices);
     while (numDevices-- != 0u)
     {
-        devs.emplace_back(&(*devices++)->cast<Device>());
+        devs.emplace_back(&(*ANGLE_UNSAFE_TODO(devices++))->cast<Device>());
     }
     return Object::Create<Program>(*this, std::move(devs), kernelNames);
 }
@@ -348,13 +348,13 @@ cl_program Context::linkProgram(cl_uint numDevices,
     devices.reserve(numDevices);
     while (numDevices-- != 0u)
     {
-        devices.emplace_back(&(*deviceList++)->cast<Device>());
+        devices.emplace_back(&(*ANGLE_UNSAFE_TODO(deviceList++))->cast<Device>());
     }
     ProgramPtrs programs;
     programs.reserve(numInputPrograms);
     while (numInputPrograms-- != 0u)
     {
-        programs.emplace_back(&(*inputPrograms++)->cast<Program>());
+        programs.emplace_back(&(*ANGLE_UNSAFE_TODO(inputPrograms++))->cast<Program>());
     }
     return Object::Create<Program>(*this, devices, options, programs, pfnNotify, userData);
 }
@@ -409,7 +409,7 @@ Memory::PropArray Context::ConvertArmMemPropToMemProp(const cl_import_properties
 
     if (propertiesIterator != nullptr)
     {
-        for (; propertiesIterator->name != 0; propertiesIterator++)
+        for (; propertiesIterator->name != 0; ANGLE_UNSAFE_TODO(propertiesIterator++))
         {
             if (propertiesIterator->name == CL_IMPORT_TYPE_ARM)
             {

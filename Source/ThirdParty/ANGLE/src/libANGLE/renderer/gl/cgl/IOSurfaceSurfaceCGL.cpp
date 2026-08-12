@@ -7,10 +7,6 @@
 // PBufferSurfaceCGL.cpp: an implementation of PBuffers created from IOSurfaces using
 //                        EGL_ANGLE_iosurface_client_buffer
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.h"
 
 #include <IOSurface/IOSurface.h>
@@ -19,6 +15,7 @@
 
 #include "common/debug.h"
 #include "common/gl/cgl/FunctionsCGL.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/AttributeMap.h"
 #include "libANGLE/renderer/gl/BlitGL.h"
 #include "libANGLE/renderer/gl/FramebufferGL.h"
@@ -63,7 +60,7 @@ int FindIOSurfaceFormatIndex(GLenum internalFormat, GLenum type)
 {
     for (int i = 0; i < static_cast<int>(ArraySize(kIOSurfaceFormats)); ++i)
     {
-        const auto &formatInfo = kIOSurfaceFormats[i];
+        const auto &formatInfo = ANGLE_UNSAFE_TODO(kIOSurfaceFormats[i]);
         if (formatInfo.internalFormat == internalFormat && formatInfo.type == type)
         {
             return i;
@@ -174,7 +171,7 @@ egl::Error IOSurfaceSurfaceCGL::bindTexImage(const gl::Context *context,
     GLuint textureID           = textureGL->getTextureID();
     stateManager->bindTexture(gl::TextureType::Rectangle, textureID);
 
-    const auto &format = kIOSurfaceFormats[mFormatIndex];
+    const auto &format = ANGLE_UNSAFE_TODO(kIOSurfaceFormats[mFormatIndex]);
     CGLError error     = CGLTexImageIOSurface2D(
         mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeInternalFormat, mWidth, mHeight,
         format.nativeFormat, format.nativeType, mIOSurface, mPlane);
@@ -264,7 +261,7 @@ bool IOSurfaceSurfaceCGL::validateAttributes(EGLClientBuffer buffer,
     // However, the caller might supply us non-public pixel format, which makes exhaustive checks
     // problematic.
     if (IOSurfaceGetBytesPerElementOfPlane(ioSurface, plane) !=
-        kIOSurfaceFormats[formatIndex].componentBytes)
+        ANGLE_UNSAFE_TODO(kIOSurfaceFormats[formatIndex].componentBytes))
     {
         WARN() << "IOSurface bytes per elements does not match the pbuffer internal format.";
     }
@@ -289,7 +286,7 @@ angle::Result IOSurfaceSurfaceCGL::initializeAlphaChannel(const gl::Context *con
 
 bool IOSurfaceSurfaceCGL::hasEmulatedAlphaChannel() const
 {
-    const auto &format = kIOSurfaceFormats[mFormatIndex];
+    const auto &format = ANGLE_UNSAFE_TODO(kIOSurfaceFormats[mFormatIndex]);
     return format.internalFormat == GL_RGB;
 }
 
@@ -302,7 +299,7 @@ egl::Error IOSurfaceSurfaceCGL::attachToFramebuffer(const gl::Context *context,
     {
         GLuint textureID = 0;
         mFunctions->genTextures(1, &textureID);
-        const auto &format = kIOSurfaceFormats[mFormatIndex];
+        const auto &format = ANGLE_UNSAFE_TODO(kIOSurfaceFormats[mFormatIndex]);
         mStateManager->bindTexture(gl::TextureType::Rectangle, textureID);
         CGLError error = CGLTexImageIOSurface2D(
             mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeInternalFormat, mWidth, mHeight,

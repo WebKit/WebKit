@@ -6,11 +6,8 @@
 
 // X11Pixmap.cpp: Implementation of OSPixmap for X11
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "util/linux/x11/X11Pixmap.h"
+#include "common/unsafe_buffers.h"
 
 X11Pixmap::X11Pixmap() : mPixmap(0), mDisplay(nullptr) {}
 
@@ -30,7 +27,7 @@ bool X11Pixmap::initialize(EGLNativeDisplayType display,
     mDisplay = reinterpret_cast<Display *>(display);
 
     int screen  = DefaultScreen(mDisplay);
-    Window root = RootWindow(mDisplay, screen);
+    Window root = ANGLE_UNSAFE_TODO(RootWindow(mDisplay, screen));
     int depth   = 0;
 
     XVisualInfo visualTemplate;

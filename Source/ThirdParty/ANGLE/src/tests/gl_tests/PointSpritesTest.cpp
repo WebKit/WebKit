@@ -139,7 +139,7 @@ TEST_P(PointSpritesTest, UsingPointCoordInsideFunction)
 {
     constexpr char fs[] =
         R"(precision mediump float;
-        void foo() 
+        void foo()
         {
             gl_FragColor = vec4(gl_PointCoord.x, gl_PointCoord.y, 0, 1);
         }
@@ -450,10 +450,6 @@ void main()
 // 3.4.
 TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
 {
-    // Failed on NVIDIA GeForce GTX 1080 - no pixels from the point were detected in the
-    // framebuffer. http://anglebug.com/42260857
-    ANGLE_SKIP_TEST_IF(IsD3D9());
-
     // Failed on AMD OSX and Windows trybots - no pixels from the point were detected in the
     // framebuffer. http://anglebug.com/42260859
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
@@ -534,8 +530,6 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
 
 // Use this to select which configurations (e.g. which renderer, which GLES
 // major version) these tests should be run against.
-//
-// D3D9 and D3D11 are tested to ensure no regressions.
 ANGLE_INSTANTIATE_TEST_ES2_AND(PointSpritesTest,
                                ES2_VULKAN().enable(Feature::EmulatedPrerotation90),
                                ES2_VULKAN().enable(Feature::EmulatedPrerotation180),

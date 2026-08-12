@@ -7,11 +7,8 @@
 //   Helper methods pertaining to the Metal back-end.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/metal/renderermtl_utils.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/renderer_utils.h"
 
 namespace rx
@@ -54,11 +51,11 @@ void ExpandMatrix(T *target, const GLfloat *value)
             int srcIndex = GetFlattenedIndex<colsSrc, rowsSrc, IsSrcColumnMajor>(c, r);
             int dstIndex = GetFlattenedIndex<colsDst, rowsDst, IsDstColumnMajor>(c, r);
 
-            staging[dstIndex] = static_cast<T>(value[srcIndex]);
+            ANGLE_UNSAFE_TODO(staging[dstIndex] = static_cast<T>(value[srcIndex]));
         }
     }
 
-    memcpy(target, staging, kDstFlatSize * sizeof(T));
+    ANGLE_UNSAFE_TODO(memcpy(target, staging, kDstFlatSize * sizeof(T)));
 }
 
 template <bool IsSrcColumMajor,
@@ -78,15 +75,17 @@ void SetFloatUniformMatrix(unsigned int arrayElementOffset,
 
     const unsigned int targetMatrixStride = colsDst * rowsDst;
     GLfloat *target                       = reinterpret_cast<GLfloat *>(
-        targetData + arrayElementOffset * sizeof(GLfloat) * targetMatrixStride);
+        ANGLE_UNSAFE_TODO(targetData + arrayElementOffset * sizeof(GLfloat) * targetMatrixStride));
 
     for (unsigned int i = 0; i < count; i++)
     {
         ExpandMatrix<GLfloat, IsSrcColumMajor, colsSrc, rowsSrc, IsDstColumnMajor, colsDst,
                      rowsDst>(target, value);
 
-        target += targetMatrixStride;
-        value += colsSrc * rowsSrc;
+        ANGLE_UNSAFE_TODO({
+            target += targetMatrixStride;
+            value += colsSrc * rowsSrc;
+        })
     }
 }
 
@@ -101,9 +100,9 @@ void SetFloatUniformMatrixFast(unsigned int arrayElementOffset,
         std::min(elementCount - arrayElementOffset, static_cast<unsigned int>(countIn));
 
     const uint8_t *valueData = reinterpret_cast<const uint8_t *>(value);
-    targetData               = targetData + arrayElementOffset * matrixSize;
+    targetData               = ANGLE_UNSAFE_TODO(targetData + arrayElementOffset * matrixSize);
 
-    memcpy(targetData, valueData, matrixSize * count);
+    ANGLE_UNSAFE_TODO(memcpy(targetData, valueData, matrixSize * count));
 }
 
 }  // anonymous namespace
@@ -246,9 +245,9 @@ void GetMatrixUniformMetal(GLenum type, GLfloat *dataOut, const GLfloat *source,
     {
         for (GLint row = 0; row < rows; ++row)
         {
-            GLfloat *outptr = dataOut + ((col * rows) + row);
-            const GLfloat *inptr =
-                transpose ? source + ((row * columns) + col) : source + ((col * rowsPerCol) + row);
+            GLfloat *outptr      = ANGLE_UNSAFE_TODO(dataOut + ((col * rows) + row));
+            const GLfloat *inptr = ANGLE_UNSAFE_TODO(
+                transpose ? source + ((row * columns) + col) : source + ((col * rowsPerCol) + row));
             *outptr = *inptr;
         }
     }

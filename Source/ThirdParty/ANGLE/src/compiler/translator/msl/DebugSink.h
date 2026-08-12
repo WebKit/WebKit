@@ -4,12 +4,9 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <iostream>
 
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/InfoSink.h"
 
 namespace sh
@@ -65,7 +62,7 @@ class DebugSink : angle::NonCopyable
         {
             const char *p = mOwner.c_str();
             const int end = mOwner.size();
-            mOwner.onWrite(p + mBegin, p + end);
+            ANGLE_UNSAFE_TODO(mOwner.onWrite(p + mBegin, p + end));
         }
 
         TInfoSinkBase &get() { return mOwner.mParent; }
@@ -115,7 +112,7 @@ class DebugSink : angle::NonCopyable
         const size_t end = mParent.size();
 
         const char *p = mParent.c_str();
-        onWrite(p + begin, p + end);
+        ANGLE_UNSAFE_TODO(onWrite(p + begin, p + end));
 
         return *this;
     }
@@ -145,7 +142,7 @@ class DebugSink : angle::NonCopyable
                 }
             }
 
-            ++p;
+            ANGLE_UNSAFE_TODO(++p);
         }
 
         if (mAlsoLogToStdout)

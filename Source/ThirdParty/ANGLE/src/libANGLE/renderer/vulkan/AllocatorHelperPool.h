@@ -10,11 +10,8 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_ALLOCATORHELPERPOOL_H_
 #define LIBANGLE_RENDERER_VULKAN_ALLOCATORHELPERPOOL_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/PoolAlloc.h"
+#include "common/unsafe_buffers.h"
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/vk_command_buffer_utils.h"
 #include "libANGLE/renderer/vulkan/vk_wrapper.h"
@@ -123,7 +120,7 @@ class DedicatedCommandBlockPool final
     {
         mCurrentBytesRemaining -= allocationSize;
         uint8_t *headerPointer = mCurrentWritePointer;
-        mCurrentWritePointer += allocationSize;
+        ANGLE_UNSAFE_TODO(mCurrentWritePointer += allocationSize);
         // Set next cmd header to Invalid (0) so cmd sequence will be terminated
         reinterpret_cast<CommandHeaderIDType &>(*mCurrentWritePointer) = 0;
 

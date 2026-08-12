@@ -4,12 +4,9 @@
 // found in the LICENSE file.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_libc_calls
-#endif
-
 #include "libANGLE/Uniform.h"
 #include "common/BinaryStream.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/ProgramLinkedResources.h"
 
 #include <cstring>
@@ -29,7 +26,7 @@ LinkedUniform::LinkedUniform(GLenum typeIn,
     // arrays are always flattened, which means at most 1D array
     ASSERT(arraySizesIn.size() <= 1);
 
-    memset(this, 0, sizeof(*this));
+    ANGLE_UNSAFE_TODO(memset(this, 0, sizeof(*this)));
     pod.typeIndex = GetUniformTypeIndex(typeIn);
     SetBitField(pod.precision, precisionIn);
     pod.location = locationIn;
@@ -87,7 +84,7 @@ LinkedUniform::LinkedUniform(const UsedUniform &usedUniform)
 
 BufferVariable::BufferVariable()
 {
-    memset(&pod, 0, sizeof(pod));
+    ANGLE_UNSAFE_TODO(memset(&pod, 0, sizeof(pod)));
     pod.bufferIndex       = -1;
     pod.blockInfo         = sh::kDefaultBlockMemberInfo;
     pod.topLevelArraySize = -1;
@@ -102,7 +99,7 @@ BufferVariable::BufferVariable(GLenum type,
                                const sh::BlockMemberInfo &blockInfo)
     : name(name)
 {
-    memset(&pod, 0, sizeof(pod));
+    ANGLE_UNSAFE_TODO(memset(&pod, 0, sizeof(pod)));
     SetBitField(pod.type, type);
     SetBitField(pod.precision, precision);
     SetBitField(pod.bufferIndex, bufferIndex);
@@ -114,7 +111,7 @@ BufferVariable::BufferVariable(GLenum type,
 
 AtomicCounterBuffer::AtomicCounterBuffer()
 {
-    memset(&pod, 0, sizeof(pod));
+    ANGLE_UNSAFE_TODO(memset(&pod, 0, sizeof(pod)));
 }
 
 void AtomicCounterBuffer::unionReferencesWith(const LinkedUniform &other)
@@ -133,7 +130,7 @@ void AtomicCounterBuffer::unionReferencesWith(const LinkedUniform &other)
 
 InterfaceBlock::InterfaceBlock()
 {
-    memset(&pod, 0, sizeof(pod));
+    ANGLE_UNSAFE_TODO(memset(&pod, 0, sizeof(pod)));
 }
 
 InterfaceBlock::InterfaceBlock(const std::string &name,
@@ -145,7 +142,7 @@ InterfaceBlock::InterfaceBlock(const std::string &name,
                                int binding)
     : name(name), mappedName(mappedName)
 {
-    memset(&pod, 0, sizeof(pod));
+    ANGLE_UNSAFE_TODO(memset(&pod, 0, sizeof(pod)));
 
     SetBitField(pod.isArray, isArray);
     SetBitField(pod.isReadOnly, isReadOnly);

@@ -7,11 +7,8 @@
 //    Implements the class methods in MemoryTracking.h.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/renderer/vulkan/MemoryTracking.h"
+#include "common/unsafe_buffers.h"
 
 #include "common/debug.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
@@ -75,7 +72,7 @@ void CheckForCurrentMemoryAllocations(vk::Renderer *renderer, vk::MemoryLogSever
             std::stringstream outStream;
 
             outStream << "Currently allocated size for memory allocation type ("
-                      << vk::kMemoryAllocationTypeMessage[i] << "): "
+                      << ANGLE_UNSAFE_TODO(vk::kMemoryAllocationTypeMessage[i]) << "): "
                       << renderer->getMemoryAllocationTracker()->getActiveMemoryAllocationsSize(i)
                       << " | Count: "
                       << renderer->getMemoryAllocationTracker()->getActiveMemoryAllocationsCount(i)
@@ -121,7 +118,7 @@ void LogPendingMemoryAllocation(vk::Renderer *renderer, vk::MemoryLogSeverity se
         std::stringstream outStream;
 
         outStream << "Pending allocation size for memory allocation type ("
-                  << vk::kMemoryAllocationTypeMessage[ToUnderlying(allocInfo)]
+                  << ANGLE_UNSAFE_TODO(vk::kMemoryAllocationTypeMessage[ToUnderlying(allocInfo)])
                   << ") for heap index " << memoryHeapIndex << " (type index " << memoryTypeIndex
                   << "): " << allocSize;
 
@@ -163,10 +160,11 @@ void LogMemoryHeapStats(vk::Renderer *renderer, vk::MemoryLogSeverity severity)
     outStream << std::endl << "* Available memory heaps:" << std::endl;
     for (uint32_t i = 0; i < memoryProperties.memoryProperties.memoryHeapCount; i++)
     {
-        outStream << std::dec << i
-                  << " | Heap size: " << memoryProperties.memoryProperties.memoryHeaps[i].size
+        outStream << std::dec << i << " | Heap size: "
+                  << ANGLE_UNSAFE_TODO(memoryProperties.memoryProperties.memoryHeaps[i]).size
                   << " | Flags: 0x" << std::hex
-                  << memoryProperties.memoryProperties.memoryHeaps[i].flags << std::endl;
+                  << ANGLE_UNSAFE_TODO(memoryProperties.memoryProperties.memoryHeaps[i]).flags
+                  << std::endl;
     }
 
     if (renderer->getFeatures().supportsMemoryBudget.enabled)
@@ -174,18 +172,22 @@ void LogMemoryHeapStats(vk::Renderer *renderer, vk::MemoryLogSeverity severity)
         outStream << std::endl << "* Available memory budget and usage per heap:" << std::endl;
         for (uint32_t i = 0; i < memoryProperties.memoryProperties.memoryHeapCount; i++)
         {
-            outStream << std::dec << i << " | Heap budget: " << memoryBudgetProperties.heapBudget[i]
-                      << " | Heap usage: " << memoryBudgetProperties.heapUsage[i] << std::endl;
+            outStream << std::dec << i << " | Heap budget: "
+                      << ANGLE_UNSAFE_TODO(memoryBudgetProperties.heapBudget[i])
+                      << " | Heap usage: " << ANGLE_UNSAFE_TODO(memoryBudgetProperties.heapUsage[i])
+                      << std::endl;
         }
     }
 
     outStream << std::endl << "* Available memory types:" << std::endl;
     for (uint32_t i = 0; i < memoryProperties.memoryProperties.memoryTypeCount; i++)
     {
-        outStream << std::dec << i
-                  << " | Heap index: " << memoryProperties.memoryProperties.memoryTypes[i].heapIndex
-                  << " | Property flags: 0x" << std::hex
-                  << memoryProperties.memoryProperties.memoryTypes[i].propertyFlags << std::endl;
+        outStream
+            << std::dec << i << " | Heap index: "
+            << ANGLE_UNSAFE_TODO(memoryProperties.memoryProperties.memoryTypes[i]).heapIndex
+            << " | Property flags: 0x" << std::hex
+            << ANGLE_UNSAFE_TODO(memoryProperties.memoryProperties.memoryTypes[i]).propertyFlags
+            << std::endl;
     }
 
     // Output the log stream based on the level of severity.
@@ -277,7 +279,7 @@ void MemoryAllocationTracker::onMemoryAllocImpl(vk::MemoryAllocationType allocTy
 
         INFO() << "Memory allocation: (id " << memAllocLogInfo.id << ") for object "
                << memAllocLogInfo.handle << " | Size: " << memAllocLogInfo.size
-               << " | Type: " << vk::kMemoryAllocationTypeMessage[allocTypeIndex]
+               << " | Type: " << ANGLE_UNSAFE_TODO(vk::kMemoryAllocationTypeMessage[allocTypeIndex])
                << " | Memory type index: " << memoryTypeIndex
                << " | Heap index: " << memAllocLogInfo.memoryHeapIndex;
 
@@ -340,8 +342,8 @@ void MemoryAllocationTracker::onMemoryDeallocImpl(vk::MemoryAllocationType alloc
                 mActivePerHeapMemoryAllocationsSize[allocTypeIndex][memoryHeapIndex] -= size;
 
                 INFO() << "Memory deallocation: (id " << memInfoEntry->id << ") for object "
-                       << memInfoEntry->handle << " | Size: " << memInfoEntry->size
-                       << " | Type: " << vk::kMemoryAllocationTypeMessage[allocTypeIndex]
+                       << memInfoEntry->handle << " | Size: " << memInfoEntry->size << " | Type: "
+                       << ANGLE_UNSAFE_TODO(vk::kMemoryAllocationTypeMessage[allocTypeIndex])
                        << " | Memory type index: " << memoryTypeIndex
                        << " | Heap index: " << memInfoEntry->memoryHeapIndex;
 

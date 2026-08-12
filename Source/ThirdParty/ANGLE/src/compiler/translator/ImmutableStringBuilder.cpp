@@ -7,11 +7,8 @@
 // the maximum length is known in advance.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "compiler/translator/ImmutableStringBuilder.h"
+#include "common/unsafe_buffers.h"
 
 #include <inttypes.h>
 #include <stdio.h>
@@ -23,7 +20,7 @@ ImmutableStringBuilder &ImmutableStringBuilder::operator<<(const ImmutableString
 {
     ASSERT(mData != nullptr);
     ASSERT(mPos + str.length() <= mMaxLength);
-    memcpy(mData + mPos, str.data(), str.length());
+    ANGLE_UNSAFE_TODO(memcpy(mData + mPos, str.data(), str.length()));
     mPos += str.length();
     return *this;
 }
@@ -32,7 +29,7 @@ ImmutableStringBuilder &ImmutableStringBuilder::operator<<(char c)
 {
     ASSERT(mData != nullptr);
     ASSERT(mPos + 1 <= mMaxLength);
-    mData[mPos++] = c;
+    ANGLE_UNSAFE_TODO(mData[mPos++]) = c;
     return *this;
 }
 
@@ -40,7 +37,7 @@ ImmutableStringBuilder &ImmutableStringBuilder::operator<<(uint64_t v)
 {
     // + 1 is because snprintf writes at most bufsz - 1 and then \0.
     // Our bufsz is mMaxLength + 1.
-    int numChars = snprintf(mData + mPos, mMaxLength - mPos + 1, "%" PRIu64, v);
+    int numChars = ANGLE_UNSAFE_TODO(snprintf(mData + mPos, mMaxLength - mPos + 1, "%" PRIu64, v));
     ASSERT(numChars >= 0);
     ASSERT(mPos + numChars <= mMaxLength);
     mPos += numChars;
@@ -51,7 +48,7 @@ ImmutableStringBuilder &ImmutableStringBuilder::operator<<(int64_t v)
 {
     // + 1 is because snprintf writes at most bufsz - 1 and then \0.
     // Our bufsz is mMaxLength + 1.
-    int numChars = snprintf(mData + mPos, mMaxLength - mPos + 1, "%" PRId64, v);
+    int numChars = ANGLE_UNSAFE_TODO(snprintf(mData + mPos, mMaxLength - mPos + 1, "%" PRId64, v));
     ASSERT(numChars >= 0);
     ASSERT(mPos + numChars <= mMaxLength);
     mPos += numChars;
@@ -60,7 +57,7 @@ ImmutableStringBuilder &ImmutableStringBuilder::operator<<(int64_t v)
 
 ImmutableStringBuilder::operator ImmutableString()
 {
-    mData[mPos] = '\0';
+    ANGLE_UNSAFE_TODO(mData[mPos]) = '\0';
     ImmutableString str(mData, mPos);
 #if defined(ANGLE_ENABLE_ASSERTS)
     // Make sure that nothing is added to the string after it is finalized.

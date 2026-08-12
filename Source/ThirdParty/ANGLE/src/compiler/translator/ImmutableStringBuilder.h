@@ -10,11 +10,8 @@
 #ifndef COMPILER_TRANSLATOR_IMMUTABLESTRINGBUILDER_H_
 #define COMPILER_TRANSLATOR_IMMUTABLESTRINGBUILDER_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <cstring>
+#include "common/unsafe_buffers.h"
 
 #include "compiler/translator/ImmutableString.h"
 
@@ -55,7 +52,7 @@ class ImmutableStringBuilder
         {
             char digit     = static_cast<char>((number >> (index * 4)) & 0xfu);
             char digitChar = (digit < 10) ? (digit + '0') : (digit + ('a' - 10));
-            mData[mPos++]  = digitChar;
+            ANGLE_UNSAFE_TODO(mData[mPos++]) = digitChar;
             --index;
         }
     }

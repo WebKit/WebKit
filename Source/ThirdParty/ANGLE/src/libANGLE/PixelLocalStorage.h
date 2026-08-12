@@ -11,11 +11,8 @@
 #ifndef LIBANGLE_PIXEL_LOCAL_STORAGE_H_
 #define LIBANGLE_PIXEL_LOCAL_STORAGE_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "GLSLANG/ShaderLang.h"
+#include "common/unsafe_buffers.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/ImageIndex.h"
 #include "libANGLE/angletypes.h"
@@ -99,13 +96,31 @@ class PixelLocalStoragePlane : angle::NonCopyable, public angle::ObserverInterfa
     const ImageIndex &getTextureImageIndex() const { return mTextureImageIndex; }
     const Texture *getBackingTexture(const Context *context) const;
 
-    void setClearValuef(const GLfloat value[4]) { memcpy(mClearValuef.data(), value, 4 * 4); }
-    void setClearValuei(const GLint value[4]) { memcpy(mClearValuei.data(), value, 4 * 4); }
-    void setClearValueui(const GLuint value[4]) { memcpy(mClearValueui.data(), value, 4 * 4); }
+    void setClearValuef(const GLfloat value[4])
+    {
+        ANGLE_UNSAFE_TODO(memcpy(mClearValuef.data(), value, 4 * 4));
+    }
+    void setClearValuei(const GLint value[4])
+    {
+        ANGLE_UNSAFE_TODO(memcpy(mClearValuei.data(), value, 4 * 4));
+    }
+    void setClearValueui(const GLuint value[4])
+    {
+        ANGLE_UNSAFE_TODO(memcpy(mClearValueui.data(), value, 4 * 4));
+    }
 
-    void getClearValuef(GLfloat value[4]) const { memcpy(value, mClearValuef.data(), 4 * 4); }
-    void getClearValuei(GLint value[4]) const { memcpy(value, mClearValuei.data(), 4 * 4); }
-    void getClearValueui(GLuint value[4]) const { memcpy(value, mClearValueui.data(), 4 * 4); }
+    void getClearValuef(GLfloat value[4]) const
+    {
+        ANGLE_UNSAFE_TODO(memcpy(value, mClearValuef.data(), 4 * 4));
+    }
+    void getClearValuei(GLint value[4]) const
+    {
+        ANGLE_UNSAFE_TODO(memcpy(value, mClearValuei.data(), 4 * 4));
+    }
+    void getClearValueui(GLuint value[4]) const
+    {
+        ANGLE_UNSAFE_TODO(memcpy(value, mClearValueui.data(), 4 * 4));
+    }
 
     // True if PLS is currently active and this plane is enabled.
     bool isActive() const { return mActive; }

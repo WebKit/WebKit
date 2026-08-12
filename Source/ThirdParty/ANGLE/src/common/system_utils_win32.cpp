@@ -6,11 +6,8 @@
 // system_utils_win32.cpp: Implementation of OS-specific functions for Windows.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "common/FastVector.h"
+#include "common/unsafe_buffers.h"
 #include "system_utils.h"
 
 #include <array>
@@ -61,7 +58,8 @@ void *OpenSystemLibraryWithExtensionAndGetError(const char *libraryName,
                                                 std::string *errorOut)
 {
     char buffer[MAX_PATH];
-    int ret = snprintf(buffer, MAX_PATH, "%s.%s", libraryName, GetSharedLibraryExtension());
+    int ret = ANGLE_UNSAFE_TODO(
+        snprintf(buffer, MAX_PATH, "%s.%s", libraryName, GetSharedLibraryExtension()));
     if (ret <= 0 || ret >= MAX_PATH)
     {
         fprintf(stderr, "Error generating library path: 0x%x", ret);

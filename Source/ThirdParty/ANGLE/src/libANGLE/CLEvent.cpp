@@ -6,11 +6,8 @@
 // CLEvent.cpp: Implements the cl::Event class.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/CLEvent.h"
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/CLCommandQueue.h"
 #include "libANGLE/CLContext.h"
@@ -85,7 +82,7 @@ angle::Result Event::getInfo(EventInfo name,
         }
         if (copyValue != nullptr)
         {
-            std::memcpy(value, copyValue, copySize);
+            ANGLE_UNSAFE_TODO(std::memcpy(value, copyValue, copySize));
         }
     }
     if (valueSizeRet != nullptr)
@@ -170,7 +167,7 @@ EventPtrs Event::Cast(cl_uint numEvents, const cl_event *eventList)
     events.reserve(numEvents);
     while (numEvents-- != 0u)
     {
-        events.emplace_back(&(*eventList++)->cast<Event>());
+        events.emplace_back(&(*ANGLE_UNSAFE_TODO(eventList++))->cast<Event>());
     }
     return events;
 }

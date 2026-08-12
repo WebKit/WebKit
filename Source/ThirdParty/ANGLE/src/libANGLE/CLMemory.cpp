@@ -6,11 +6,8 @@
 // CLMemory.cpp: Implements the cl::Memory class.
 //
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include "libANGLE/CLMemory.h"
+#include "common/unsafe_buffers.h"
 
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLContext.h"
@@ -136,7 +133,7 @@ angle::Result Memory::getInfo(MemInfo name,
         }
         if (copyValue != nullptr)
         {
-            std::memcpy(value, copyValue, copySize);
+            ANGLE_UNSAFE_TODO(std::memcpy(value, copyValue, copySize));
         }
     }
     if (valueSizeRet != nullptr)
@@ -181,8 +178,9 @@ Memory::Memory(const Buffer &buffer,
 Memory::Memory(const Buffer &buffer, Buffer &parent, MemFlags flags, size_t offset, size_t size)
     : mContext(parent.mContext),
       mFlags(InheritMemFlags(flags, &parent)),
-      mHostPtr(parent.mHostPtr != nullptr ? static_cast<char *>(parent.mHostPtr) + offset
-                                          : nullptr),
+      mHostPtr(parent.mHostPtr != nullptr
+                   ? ANGLE_UNSAFE_TODO(static_cast<char *>(parent.mHostPtr) + offset)
+                   : nullptr),
       mParent(&parent),
       mOffset(offset),
       mImpl(nullptr),

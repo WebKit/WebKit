@@ -7,10 +7,7 @@
 #ifndef COMPILER_TRANSLATOR_INTERMREBUILD_H_
 #define COMPILER_TRANSLATOR_INTERMREBUILD_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/NodeType.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 
@@ -118,7 +115,7 @@ class TIntermRebuild : angle::NonCopyable
         static BaseResult Multi(Iter nodesBegin, Iter nodesEnd)
         {
             std::vector<TIntermNode *> nodes;
-            for (Iter nodesCurr = nodesBegin; nodesCurr != nodesEnd; ++nodesCurr)
+            for (Iter nodesCurr = nodesBegin; nodesCurr != nodesEnd; ANGLE_UNSAFE_TODO(++nodesCurr))
             {
                 nodes.push_back(*nodesCurr);
             }

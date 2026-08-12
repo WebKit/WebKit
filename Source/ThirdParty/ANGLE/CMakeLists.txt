@@ -107,12 +107,6 @@ if (WIN32)
         "src/libANGLE/renderer/dxgi_support_table.h"
         "src/libANGLE/renderer/dxgi_support_table_autogen.cpp"
     )
-    if (NOT angle_is_winuwp)
-        list(APPEND ANGLE_SOURCES
-            "src/libANGLE/renderer/d3d_format.cpp"
-            "src/libANGLE/renderer/d3d_format.h"
-        )
-    endif()
 endif ()
 
 set(ANGLEGLESv2_LIBRARIES
@@ -122,11 +116,6 @@ set(ANGLEGLESv2_LIBRARIES
 set(zlib_wrapper_sources
     "third_party/zlib/google/compression_utils_portable.h"
     "third_party/zlib/google/compression_utils_portable.cc"
-)
-
-set(angle_gl_enum_utils
-    "src/libANGLE/gl_enum_utils.cpp"
-    "src/libANGLE/gl_enum_utils_autogen.cpp"
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

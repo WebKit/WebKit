@@ -10,10 +10,7 @@
 #ifndef COMPILER_TRANSLATOR_STATIC_TYPE_H_
 #define COMPILER_TRANSLATOR_STATIC_TYPE_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
+#include "common/unsafe_buffers.h"
 #include "compiler/translator/Types.h"
 
 namespace sh
@@ -54,7 +51,7 @@ constexpr StaticMangledName BuildStaticMangledName(TBasicType basicType,
     char *mangledName = typeName.getName();
     static_assert(TBasicMangledName::mangledNameSize == 2, "Mangled name size is not 2");
     name.name[1] = mangledName[0];
-    name.name[2] = mangledName[1];
+    name.name[2] = ANGLE_UNSAFE_TODO(mangledName[1]);
     name.name[3] = '\0';
     return name;
 }

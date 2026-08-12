@@ -48,11 +48,6 @@
 #        define ANGLE_ENABLE_WINDOWS_UWP 1
 #    endif
 
-#    if defined(ANGLE_ENABLE_D3D9)
-#        include <d3d9.h>
-#        include <d3dcompiler.h>
-#    endif
-
 // Include D3D11 headers when OpenGL is enabled on Windows for interop extensions.
 #    if defined(ANGLE_ENABLE_D3D11) || defined(ANGLE_ENABLE_OPENGL)
 #        include <d3d10_1.h>
@@ -66,7 +61,7 @@
 #        include <dxgi1_4.h>
 #    endif
 
-#    if defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
+#    if defined(ANGLE_ENABLE_D3D11)
 #        include <wrl.h>
 #    endif
 

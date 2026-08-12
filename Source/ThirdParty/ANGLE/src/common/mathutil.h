@@ -9,10 +9,6 @@
 #ifndef COMMON_MATHUTIL_H_
 #define COMMON_MATHUTIL_H_
 
-#ifdef UNSAFE_BUFFERS_BUILD
-#    pragma allow_unsafe_buffers
-#endif
-
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -20,6 +16,7 @@
 #include <algorithm>
 #include <limits>
 #include <ostream>
+#include "common/unsafe_buffers.h"
 
 #include <anglebase/numerics/safe_math.h>
 
@@ -185,7 +182,7 @@ destType bitCast(const sourceType &source)
 {
     size_t copySize = std::min(sizeof(destType), sizeof(sourceType));
     destType output;
-    memcpy(&output, &source, copySize);
+    ANGLE_UNSAFE_TODO(memcpy(&output, &source, copySize));
     return output;
 }
 
@@ -1003,7 +1000,7 @@ inline uint32_t PackUnorm4x8(float f1, float f2, float f3, float f4)
     for (int i = 0; i < 4; ++i)
     {
         int shift = i * 8;
-        result |= (static_cast<uint32_t>(bits[i]) << shift);
+        result |= (static_cast<uint32_t>(ANGLE_UNSAFE_TODO(bits[i])) << shift);
     }
     return result;
 }
@@ -1017,7 +1014,7 @@ inline void UnpackUnorm4x8(uint32_t u, float *f)
     {
         int shift    = i * 8;
         uint8_t bits = static_cast<uint8_t>((u >> shift) & 0xFF);
-        f[i]         = static_cast<float>(bits) / 255.0f;
+        ANGLE_UNSAFE_TODO(f[i]) = static_cast<float>(bits) / 255.0f;
     }
 }
 
@@ -1035,7 +1032,7 @@ inline uint32_t PackSnorm4x8(float f1, float f2, float f3, float f4)
     for (int i = 0; i < 4; ++i)
     {
         int shift = i * 8;
-        result |= ((static_cast<uint32_t>(bits[i]) & 0xFF) << shift);
+        result |= ((static_cast<uint32_t>(ANGLE_UNSAFE_TODO(bits[i])) & 0xFF) << shift);
     }
     return result;
 }
@@ -1049,7 +1046,7 @@ inline void UnpackSnorm4x8(uint32_t u, float *f)
     {
         int shift   = i * 8;
         int8_t bits = static_cast<int8_t>((u >> shift) & 0xFF);
-        f[i]        = clamp(static_cast<float>(bits) / 127.0f, -1.0f, 1.0f);
+        ANGLE_UNSAFE_TODO(f[i]) = clamp(static_cast<float>(bits) / 127.0f, -1.0f, 1.0f);
     }
 }
 
