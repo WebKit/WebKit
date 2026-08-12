@@ -234,19 +234,24 @@ public:
     {
     }
 
+    template<IndexingType indexingShape>
     JSString* tryJoin(JSGlobalObject* globalObject, const WriteBarrier<Unknown>* data, unsigned length)
     {
+        static_assert(indexingShape == Int32Shape || indexingShape == ContiguousShape);
+
         if (length == 1) {
             JSValue value = data[0].get();
             if (!value)
                 return nullptr;
-            if (value.isString())
-                return asString(value);
-            if (value.isInt32()) {
-                m_accumulatedStringsLength = WTF::StringTypeAdapter<int32_t> { value.asInt32() }.length();
-                return joinImpl(globalObject, data, length);
+            if constexpr (indexingShape == ContiguousShape) {
+                if (value.isString())
+                    return asString(value);
+                if (!value.isInt32())
+                    return nullptr;
             }
-            return nullptr;
+            ASSERT(value.isInt32());
+            m_accumulatedStringsLength = WTF::StringTypeAdapter<int32_t> { value.asInt32() }.length();
+            return joinImpl<indexingShape>(globalObject, data, length);
         }
 
         for (size_t i = 0; i < length; ++i) {
@@ -254,25 +259,25 @@ public:
             if (!value)
                 return nullptr;
 
-            if (value.isString()) {
-                JSString* string = asString(value);
-                m_accumulatedStringsLength += string->length();
-                m_isAll8Bit &= string->is8Bit();
-                continue;
+            if constexpr (indexingShape == ContiguousShape) {
+                if (value.isString()) {
+                    JSString* string = asString(value);
+                    m_accumulatedStringsLength += string->length();
+                    m_isAll8Bit &= string->is8Bit();
+                    continue;
+                }
+                if (!value.isInt32())
+                    return nullptr;
             }
-
-            if (value.isInt32()) {
-                m_accumulatedStringsLength += WTF::StringTypeAdapter<int32_t> { value.asInt32() }.length();
-                continue;
-            }
-
-            return nullptr;
+            ASSERT(value.isInt32());
+            m_accumulatedStringsLength += WTF::StringTypeAdapter<int32_t> { value.asInt32() }.length();
         }
 
-        return joinImpl(globalObject, data, length);
+        return joinImpl<indexingShape>(globalObject, data, length);
     }
 
 private:
+    template<IndexingType indexingShape>
     JSString* joinImpl(JSGlobalObject*, const WriteBarrier<Unknown>*, unsigned);
 
     StringView m_separator;
