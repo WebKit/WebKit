@@ -51,26 +51,42 @@
                 case 3:
                     if (inbandTrack1.cues.length < cuesStarts.length)
                         break;
-    
+
+                    // Keep polling until the replay has delivered the last cue collected before it.
+                    // Cues arrive ahead of the playback position, so this does not require playing as
+                    // far as that cue's start time.
+                    var newStarts = [];
+                    for (var i = 0; i < inbandTrack1.cues.length; ++i)
+                        newStarts.push(inbandTrack1.cues[i].startTime);
+
+                    if (!newStarts.includes(cuesStarts[cuesStarts.length - 1]))
+                        break;
+
                     run("video.pause()");
+
+                    // Each collected cue must be there exactly once. Cues are not compared by index:
+                    // the replay can deliver a cue from earlier in the file that playback had not
+                    // reached when the start times were collected.
                     var failure = false;
                     for (var i = 0; i < cuesStarts.length; ++i) {
-                        if (cuesStarts[i] != inbandTrack1.cues[i].startTime) {
+                        var occurrences = 0;
+                        for (var j = 0; j < newStarts.length; ++j) {
+                            if (newStarts[j] == cuesStarts[i])
+                                ++occurrences;
+                        }
+                        if (occurrences != 1) {
                             failure = true;
                             break;
                         }
                     }
-    
+
                     if (failure) {
                         consoleWrite("<br><i>** FAIL<" + "/i>");
-                        for (var i = 0; i < cuesStarts.length; ++i) {
-                            var oldStart = cuesStarts[i];
-                            var newStart = inbandTrack1.cues[i].startTime;
-                            consoleWrite("Cue " + i + " start time was: " + oldStart + ", is now: " + newStart);
-                        }
+                        consoleWrite("Cue start times were: " + cuesStarts.join(", "));
+                        consoleWrite("Cue start times are now: " + newStarts.join(", "));
                         consoleWrite("");
                     }
-    
+
                     endTest();
                     break;
                 }
