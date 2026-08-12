@@ -72,7 +72,6 @@ public:
 #endif
 
 #if ENABLE(VIDEO)
-    virtual void nativeImageFromVideoFrame(const VideoFrame&, CompletionHandler<void(std::optional<RefPtr<NativeImage>>&&)>&&);
     virtual bool canDecodeExtendedType(PlatformMediaDecodingType, const ContentType&) { return false; }
     virtual void ensureCodecsSupportChecksInitialized() { }
 #endif
@@ -95,12 +94,5 @@ private:
     bool m_wirelessPlaybackMediaPlayerEnabled { false };
 #endif
 };
-
-#if ENABLE(VIDEO)
-inline void MediaStrategy::nativeImageFromVideoFrame(const VideoFrame&, CompletionHandler<void(std::optional<RefPtr<NativeImage>>&&)>&& completionHandler)
-{
-    completionHandler(std::nullopt);
-}
-#endif
 
 } // namespace WebCore
