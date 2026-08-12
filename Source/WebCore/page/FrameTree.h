@@ -60,6 +60,9 @@ public:
     LocalFrame* NODELETE nextLocalSibling() const;
 
     WEBCORE_EXPORT bool NODELETE isDescendantOf(const Frame* ancestor) const;
+
+    bool containsRemoteFrame() const;
+    WEBCORE_EXPORT bool hasRemoteFrameAncestor() const;
     
     WEBCORE_EXPORT Frame* NODELETE traverseNext(const Frame* stayWithin = nullptr) const;
     Frame* NODELETE traverseNextSkippingChildren(const Frame* stayWithin = nullptr) const;

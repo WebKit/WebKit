@@ -361,6 +361,24 @@ bool NODELETE FrameTree::isDescendantOf(const Frame* ancestor) const
     return false;
 }
 
+bool FrameTree::containsRemoteFrame() const
+{
+    for (RefPtr frame = m_thisFrame.ptr(); frame; frame = frame->tree().traverseNext(m_thisFrame.ptr())) {
+        if (is<RemoteFrame>(*frame))
+            return true;
+    }
+    return false;
+}
+
+bool FrameTree::hasRemoteFrameAncestor() const
+{
+    for (RefPtr ancestor = parent(); ancestor; ancestor = ancestor->tree().parent()) {
+        if (is<RemoteFrame>(*ancestor))
+            return true;
+    }
+    return false;
+}
+
 Frame* FrameTree::traverseNext(const Frame* stayWithin) const
 {
     auto* child = firstChild();

@@ -821,13 +821,32 @@ void WebPage::getContentsAsAttributedString(CompletionHandler<void(const WebCore
     completionHandler(localFrame ? attributedString(makeRangeSelectingNodeContents(*protect(localFrame->document())), IgnoreUserSelectNone::No) : AttributedString { });
 }
 
-HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> WebPage::attributedStringsForRemoteFrames(WebCore::FrameIdentifier rootFrameIdentifier, const Vector<WebCore::FrameIdentifier>& frameIdentifiers)
+HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> WebPage::attributedStringsForRemoteFrames(WebCore::FrameIdentifier rootFrameIdentifier, const Vector<WebCore::FrameIdentifier>& selectedSubframeIdentifiers)
 {
-    if (frameIdentifiers.isEmpty())
+    if (selectedSubframeIdentifiers.isEmpty())
         return { };
 
-    auto sendResult = sendSync(Messages::WebPageProxy::GetAttributedStringsForRemoteFrames(rootFrameIdentifier, frameIdentifiers));
+    auto sendResult = sendSync(Messages::WebPageProxy::GetAttributedStringsForRemoteFrames(rootFrameIdentifier, selectedSubframeIdentifiers));
     auto [result] = sendResult.takeReplyOr(HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> { });
+
+    // Skip frames in our own process to avoid deadlock.
+    RefPtr rootFrame = WebProcess::singleton().webFrame(rootFrameIdentifier);
+    RefPtr rootCoreFrame = rootFrame ? rootFrame->coreLocalFrame() : nullptr;
+    if (!rootCoreFrame)
+        return result;
+
+    for (RefPtr frame = rootCoreFrame->tree().traverseNext(rootCoreFrame.get()); frame; frame = frame->tree().traverseNext(rootCoreFrame.get())) {
+        RefPtr localFrame = dynamicDowncast<WebCore::LocalFrame>(frame.get());
+        if (!localFrame)
+            continue;
+
+        if (!localFrame->tree().hasRemoteFrameAncestor())
+            continue;
+
+        if (RefPtr document = localFrame->document())
+            result.add(localFrame->frameID(), attributedString(makeRangeSelectingNodeContents(*document), IgnoreUserSelectNone::No, WebCore::MarkRemoteFrameContentPositions::Yes));
+    }
+
     return result;
 }
 
@@ -1788,7 +1807,9 @@ void WebPage::getContentsAsAttributedStringForFrames(const Vector<FrameIdentifie
         if (!document)
             continue;
 
-        result.add(frameIdentifier, attributedString(makeRangeSelectingNodeContents(*document), IgnoreUserSelectNone::No));
+        result.ensure(frameIdentifier, [&] {
+            return attributedString(makeRangeSelectingNodeContents(*document), IgnoreUserSelectNone::No, WebCore::MarkRemoteFrameContentPositions::Yes);
+        });
     }
     completionHandler(WTF::move(result));
 }

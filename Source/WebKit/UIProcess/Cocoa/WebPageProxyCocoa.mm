@@ -2054,15 +2054,37 @@ void WebPageProxy::getAttributedStringsForRemoteFrames(IPC::Connection& connecti
     MESSAGE_CHECK_COMPLETION(rootFrame && rootFrame->page() == this && &rootFrame->process() == WebProcessProxy::fromConnection(connection).ptr(), connection, completionHandler({ }));
     MESSAGE_CHECK_COMPLETION(validateFrameIdentifiersForAttributedStringCollection(rootFrameIdentifier, frameIdentifiers), connection, completionHandler({ }));
 
+    Ref senderProcess = WebProcessProxy::fromConnection(connection);
+
+    unsigned frameCountInRootSubtree = 1;
+    for (RefPtr frame = rootFrame->traverseNext(rootFrame.get()); frame; frame = frame->traverseNext(rootFrame.get()))
+        ++frameCountInRootSubtree;
+
     HashMap<Ref<WebProcessProxy>, Vector<FrameIdentifier>> processFrames;
+    HashSet<FrameIdentifier> expandedSubframes;
+    HashSet<FrameIdentifier> collectedFrames;
     for (auto frameIdentifier : frameIdentifiers) {
-        RefPtr frame = WebFrameProxy::webFrame(frameIdentifier);
-        if (!frame)
+        RefPtr selectedSubframe = WebFrameProxy::webFrame(frameIdentifier);
+        if (!selectedSubframe || selectedSubframe->page() != this)
             continue;
 
-        processFrames.ensure(protect(frame->process()), [] {
-            return Vector<FrameIdentifier> { };
-        }).iterator->value.append(frameIdentifier);
+        if (!expandedSubframes.add(frameIdentifier).isNewEntry)
+            continue;
+
+        if (expandedSubframes.size() > frameCountInRootSubtree)
+            break;
+
+        for (RefPtr frame = selectedSubframe; frame; frame = frame->traverseNext(selectedSubframe.get())) {
+            if (&frame->process() == senderProcess.ptr())
+                continue;
+
+            if (!collectedFrames.add(frame->frameID()).isNewEntry)
+                continue;
+
+            processFrames.ensure(protect(frame->process()), [] {
+                return Vector<FrameIdentifier> { };
+            }).iterator->value.append(frame->frameID());
+        }
     }
 
     if (processFrames.isEmpty()) {
