@@ -13,7 +13,7 @@
 
     var lastRecordedCurrentTime;
 
-    window.addEventListener("pageshow", async () => {
+    window.addEventListener("pageshow", async (event) => {
         assert_equals(document.visibilityState, "visible");
 
         if (!event.persisted)

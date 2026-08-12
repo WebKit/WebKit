@@ -20,13 +20,17 @@ const spreadAssets = ["2x2x2-center.usdz", "2x2x2-at-100x50x200.usdz", "2x2x2-po
 const loadPortalInOrder = async (test, assets, options) => {
     const portal = createPortal(test, options);
 
+    const loaded = [];
     let previous = null;
-    for (const [index, asset] of assets.entries()) {
+    for (const asset of assets) {
         const model = appendModel(portal, asset);
+        loaded.push({ model, asset });
         await model.ready;
         await UIHelper.ensureStablePresentationUpdate();
 
-        assert_equals(internals.numberOfLoadedModelsInSpatialPortal(portal), index + 1, `${index + 1} model(s) loaded after ${asset}`);
+        loaded.forEach(each => {
+            assert_equals(internals.modelElementState(each.model), "Loaded", `${each.asset} is loaded (${loaded.length}/${assets.length} appended)`);
+        });
 
         const transform = await waitForPortalTransform(portal, portalTransformIsResolved, `fit after loading ${asset}`);
         if (previous)

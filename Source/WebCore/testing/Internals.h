@@ -1696,7 +1696,6 @@ public:
 
 #if ENABLE(SPATIAL_PORTAL)
     unsigned NODELETE numberOfHostedModelsInSpatialPortal(Element&);
-    unsigned NODELETE numberOfLoadedModelsInSpatialPortal(Element&);
     bool NODELETE establishesSpatialPortal(Element&);
     std::optional<Vector<double>> NODELETE spatialPortalResolvedTransform(Element&);
 #endif

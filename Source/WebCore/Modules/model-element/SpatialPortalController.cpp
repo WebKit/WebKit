@@ -46,12 +46,14 @@
 #include "ModelPlayerClient.h"
 #include "ModelPlayerProvider.h"
 #include "Page.h"
+#include "PlaceholderModelPlayer.h"
 #include "RenderBox.h"
 #include "RenderBoxInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerModelObject.h"
 #include "ResourceError.h"
+#include "VisibilityChangeClient.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -160,6 +162,31 @@ private:
     const WeakPtr<SpatialPortalController> m_controller;
 };
 
+class PortalVisibilityChangeClient final : public RefCounted<PortalVisibilityChangeClient>, public VisibilityChangeClient {
+public:
+    static Ref<PortalVisibilityChangeClient> create(SpatialPortalController& controller)
+    {
+        return adoptRef(*new PortalVisibilityChangeClient(controller));
+    }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
+    explicit PortalVisibilityChangeClient(SpatialPortalController& controller)
+        : m_controller(controller)
+    {
+    }
+
+    void visibilityStateChanged() final
+    {
+        if (CheckedPtr controller = m_controller.get())
+            controller->documentVisibilityChanged();
+    }
+
+    const WeakPtr<SpatialPortalController> m_controller;
+};
+
 class PortalIntersectionObserverCallback final : public IntersectionObserverCallback {
 public:
     static Ref<PortalIntersectionObserverCallback> create(Document& document, SpatialPortalController& controller)
@@ -205,10 +232,10 @@ SpatialPortalController::SpatialPortalController(Element& element)
 
 SpatialPortalController::~SpatialPortalController()
 {
-    if (RefPtr observer = m_intersectionObserver)
-        observer->disconnect();
-
     ASSERT(!m_handlesGesture);
+
+    m_intersectionObserver = nullptr;
+    m_visibilityChangeClient = nullptr;
 
     deleteModelPlayer();
 }
@@ -217,16 +244,8 @@ void SpatialPortalController::prepareForRemoval()
 {
     m_portalAction = PortalActionKind::None;
     updateGestureHandling();
-}
 
-unsigned SpatialPortalController::numberOfLoadedModels() const
-{
-    unsigned count = 0;
-    for (auto& hostedModel : m_hostedModels.values()) {
-        if (hostedModel.loadedModel)
-            ++count;
-    }
-    return count;
+    stopObservingPortalVisibility();
 }
 
 HTMLModelElement* SpatialPortalController::hostedModelElement(NodeIdentifier nodeID) const
@@ -249,8 +268,11 @@ void SpatialPortalController::unregisterChildModel(HTMLModelElement& model)
     if (RefPtr player = m_modelPlayer)
         player->unload(nodeID);
 
-    if (m_hostedModels.isEmpty())
+    if (m_hostedModels.isEmpty()) {
         deleteModelPlayer();
+        stopObservingPortalVisibility();
+        reconfigurePortalLayer();
+    }
 }
 
 void SpatialPortalController::registerChildModel(HTMLModelElement& model)
@@ -262,7 +284,6 @@ void SpatialPortalController::registerChildModel(HTMLModelElement& model)
     observePortalVisibility();
 
     model.visibilityStateChanged();
-    loadChildModelIfReady(model);
 }
 
 void SpatialPortalController::childModelDidChange(HTMLModelElement& model)
@@ -303,22 +324,52 @@ void SpatialPortalController::loadChildModelIfReady(HTMLModelElement& model)
 
     it->value.loadedModel = modelData;
 
+    if (RefPtr<ModelPlayer> placeholder = std::exchange(it->value.placeholder, nullptr)) {
+        auto animationState = placeholder->currentAnimationState(nodeID);
+        auto transformState = placeholder->currentTransformState(nodeID);
+        if (animationState && transformState) {
+            player->reload(nodeID, *modelData, portalContentSize(), *animationState, WTF::move(*transformState));
+            return;
+        }
+    }
+
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
     model.applyInitialAnimationState(*player);
 #endif
     player->load(nodeID, *modelData, portalContentSize(), false);
 }
 
+bool SpatialPortalController::childIsLoaded(NodeIdentifier nodeID) const
+{
+    auto it = m_hostedModels.find(nodeID);
+    return it != m_hostedModels.end() && !!it->value.loadedModel;
+}
+
+ModelPlayer* SpatialPortalController::playerForChild(NodeIdentifier nodeID) const
+{
+    auto it = m_hostedModels.find(nodeID);
+    if (it != m_hostedModels.end() && it->value.placeholder)
+        return it->value.placeholder.get();
+
+    return m_modelPlayer.get();
+}
+
 void SpatialPortalController::observePortalVisibility()
 {
-    if (m_intersectionObserver)
-        return;
-
     RefPtr element = m_portalElement.get();
     if (!element)
         return;
 
     Ref document = element->document();
+
+    if (!m_visibilityChangeClient) {
+        m_visibilityChangeClient = PortalVisibilityChangeClient::create(*this);
+        document->registerForVisibilityStateChangedCallbacks(*m_visibilityChangeClient);
+    }
+
+    if (m_intersectionObserver)
+        return;
+
     auto callback = PortalIntersectionObserverCallback::create(document, *this);
     IntersectionObserver::Init options { .scrollMargin = "100%"_s };
     auto observer = IntersectionObserver::create(document, WTF::move(callback), WTF::move(options));
@@ -327,6 +378,19 @@ void SpatialPortalController::observePortalVisibility()
 
     m_intersectionObserver = observer.returnValue().ptr();
     m_intersectionObserver->observe(*element);
+}
+
+void SpatialPortalController::stopObservingPortalVisibility()
+{
+    if (RefPtr observer = std::exchange(m_intersectionObserver, nullptr))
+        observer->disconnect();
+
+    if (RefPtr client = std::exchange(m_visibilityChangeClient, nullptr)) {
+        if (RefPtr element = m_portalElement.get())
+            element->document().unregisterForVisibilityStateChangedCallbacks(*client);
+    }
+
+    m_isIntersectingViewport = false;
 }
 
 void SpatialPortalController::viewportIntersectionChanged(bool isIntersecting)
@@ -343,9 +407,18 @@ void SpatialPortalController::viewportIntersectionChanged(bool isIntersecting)
         if (RefPtr element = hostedModel.element.get())
             element->visibilityStateChanged();
     }
+}
 
-    if (isIntersecting)
-        loadChildModelsIfReady();
+void SpatialPortalController::documentVisibilityChanged()
+{
+    if (RefPtr player = m_modelPlayer)
+        player->visibilityStateDidChange();
+}
+
+void SpatialPortalController::childVisibilityStateChanged(HTMLModelElement& child)
+{
+    if (isPortalVisible())
+        loadChildModelIfReady(child);
 }
 
 ModelPlayer* SpatialPortalController::ensureModelPlayer()
@@ -499,13 +572,66 @@ void SpatialPortalController::deleteModelPlayer()
 void SpatialPortalController::unloadChildModel(NodeIdentifier nodeID)
 {
     auto it = m_hostedModels.find(nodeID);
-    if (it == m_hostedModels.end() || !it->value.loadedModel)
+    if (it == m_hostedModels.end())
+        return;
+
+    it->value.placeholder = nullptr;
+
+    if (!it->value.loadedModel)
         return;
 
     it->value.loadedModel = nullptr;
 
     if (RefPtr player = m_modelPlayer)
         player->unload(nodeID);
+}
+
+void SpatialPortalController::saveChildState(NodeIdentifier nodeID, HostedModel& hostedModel, bool onSuspend)
+{
+    RefPtr player = m_modelPlayer;
+    if (!player || !hostedModel.loadedModel)
+        return;
+
+    auto animationState = player->currentAnimationState(nodeID);
+    auto transformState = player->currentTransformState(nodeID);
+    if (!animationState || !transformState)
+        return;
+
+    hostedModel.placeholder = PlaceholderModelPlayer::create(onSuspend, *animationState, WTF::move(*transformState));
+}
+
+void SpatialPortalController::unloadAllChildModels()
+{
+    if (!m_modelPlayer)
+        return;
+
+    for (auto& entry : m_hostedModels)
+        saveChildState(entry.key, entry.value, /* onSuspend */ false);
+
+    deleteModelPlayer();
+}
+
+void SpatialPortalController::childWasSuspended(HTMLModelElement& child)
+{
+    RefPtr player = m_modelPlayer;
+    if (!player)
+        return;
+
+    auto nodeID = child.nodeIdentifier();
+    auto it = m_hostedModels.find(nodeID);
+    if (it == m_hostedModels.end())
+        return;
+
+    saveChildState(nodeID, it->value, /* onSuspend */ true);
+    it->value.loadedModel = nullptr;
+    player->unload(nodeID);
+
+    for (auto& hostedModel : m_hostedModels.values()) {
+        if (hostedModel.loadedModel)
+            return;
+    }
+
+    deleteModelPlayer();
 }
 
 LayoutSize SpatialPortalController::portalContentSize() const
@@ -520,6 +646,11 @@ LayoutSize SpatialPortalController::portalContentSize() const
 
 void SpatialPortalController::configureGraphicsLayer(GraphicsLayer& graphicsLayer, const Color& backgroundColor)
 {
+    if (m_hostedModels.isEmpty()) {
+        graphicsLayer.removeModelContents();
+        return;
+    }
+
     RefPtr player = ensureModelPlayer();
     if (!player)
         return;
@@ -582,7 +713,7 @@ void SpatialPortalController::modelDidUnload(ModelPlayer& player)
     if (m_modelPlayer != &player)
         return;
 
-    deleteModelPlayer();
+    unloadAllChildModels();
     // FIXME: rdar://148027600 Prevent infinite reloading of model.
     loadChildModelsIfReady();
 }
@@ -615,10 +746,15 @@ void SpatialPortalController::logWarning(ModelPlayer& player, const String& warn
 
 void SpatialPortalController::reconfigurePortalLayer()
 {
-    if (RefPtr element = m_portalElement.get()) {
-        if (CheckedPtr renderer = dynamicDowncast<RenderLayerModelObject>(element->renderer()))
-            renderer->contentChanged(ContentChangeType::Model);
-    }
+    RefPtr element = m_portalElement.get();
+    if (!element)
+        return;
+
+    CheckedPtr renderer = dynamicDowncast<RenderLayerModelObject>(element->renderer());
+    if (!renderer || renderer->renderTreeBeingDestroyed())
+        return;
+
+    renderer->contentChanged(ContentChangeType::Model);
 }
 
 RefPtr<GraphicsLayer> SpatialPortalController::portalGraphicsLayer() const

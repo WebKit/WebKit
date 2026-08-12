@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .spacer { height: 500vh; }
+    #portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<div class="spacer"></div>
+<div id="portal"></div>
+<script>
+'use strict';
+
+promise_test(async t => {
+    // Must precede the portal's player: the unload delay is disabled per player at creation.
+    internals.disableModelLoadDelaysForTesting();
+
+    const portal = document.getElementById("portal");
+
+    const model = document.createElement("model");
+    t.add_cleanup(() => model.remove());
+    portal.appendChild(model);
+    const source = document.createElement("source");
+    source.src = "../model-element/resources/cube.usdz";
+    model.appendChild(source);
+
+    portal.scrollIntoView();
+    await model.ready;
+    assert_equals(internals.modelElementState(model), "Loaded", "portal loads the model once scrolled into view");
+
+    // The observer uses a 100% scroll margin, so scroll a full page away.
+    window.scrollTo(0, 0);
+    await waitFor(() => internals.modelElementState(model) != "Loaded", "the model to unload");
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 1, "the portal still hosts the child while unloaded");
+
+    portal.scrollIntoView();
+    await waitFor(() => internals.modelElementState(model) == "Loaded", "the model to reload");
+}, "A <model> in a spatial portal unloads when scrolled out of view and reloads when scrolled back");
+</script>
+</body>
+</html>

@@ -208,7 +208,7 @@ void RenderBox::willBeDestroyed()
     }
 
 #if ENABLE(SPATIAL_PORTAL)
-    if (hasInitializedStyle() && style().spatial() == SpatialType::Portal) {
+    if (hasInitializedStyle() && style().spatial() == SpatialType::Portal && !renderTreeBeingDestroyed()) {
         if (RefPtr element = this->element())
             element->clearSpatialPortalController();
     }

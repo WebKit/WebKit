@@ -23,7 +23,8 @@ promise_test(async t => {
     await valid.ready;
 
     assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 2, "the failed load leaves both models registered with the portal");
-    assert_equals(internals.numberOfLoadedModelsInSpatialPortal(portal), 1, "only the valid model is loaded");
+    assert_equals(internals.modelElementState(valid), "Loaded", "the valid model is loaded");
+    assert_not_equals(internals.modelElementState(invalid), "Loaded", "the undecodable model is not loaded");
 }, "A failing <model> in a spatial portal does not prevent its sibling from loading");
 
 </script>

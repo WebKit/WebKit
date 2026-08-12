@@ -1,0 +1,4 @@
+
+PASS display:none on a spatial portal unloads its models, and restoring it reloads them
+PASS Removing a spatial portal from the document tears down its controller
+

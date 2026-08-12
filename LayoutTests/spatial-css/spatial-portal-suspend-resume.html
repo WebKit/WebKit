@@ -1,0 +1,79 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UsesBackForwardCache=true SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<head>
+<title>&lt;model> state in a spatial portal after suspend and resume</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<style>
+    #portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    window.internals?.disableModelLoadDelaysForTesting();
+
+    var lastRecordedCurrentTimes;
+
+    const models = () => [...document.querySelectorAll("model")];
+
+    window.addEventListener("pageshow", async (event) => {
+        assert_equals(document.visibilityState, "visible");
+
+        if (!event.persisted)
+            return;
+
+        // This page was restored from the page cache.
+        models().forEach((model, index) => {
+            assert_true(model.currentTime < lastRecordedCurrentTimes[index] + 0.2,
+                `Child ${index}'s animation current time shouldn't have progressed much while suspended (go-back-on-load.html takes 0.5 seconds to navigate back)`);
+        });
+        lastRecordedCurrentTimes = models().map(model => model.currentTime);
+
+        // The reload of a suspended model is not synchronous.
+        await sleepForSeconds(0.5);
+
+        models().forEach((model, index) => {
+            assert_false(model.paused, `Child ${index}'s animation should be running after resume`);
+            assert_true(model.currentTime > lastRecordedCurrentTimes[index], `Child ${index}'s animation current time should progress after resume`);
+        });
+
+        assert_equals(internals.numberOfHostedModelsInSpatialPortal(document.getElementById("portal")), 2, "the portal still hosts both children");
+
+        document.getElementById("result").innerText = "PASSED: portal children are resumed after being suspended";
+        testRunner.dumpAsText();
+        testRunner.notifyDone();
+    }, false);
+
+    window.addEventListener("pagehide", function(event) {
+        assert_true(event.persisted, "Page should have entered the page cache");
+    }, false);
+
+    window.addEventListener('load', async () => {
+        assert_equals(models().length, 2, "Both model elements should exist");
+        await Promise.all(models().map(model => model.ready));
+
+        // Distinct rates so a child resuming from a sibling's clock would be visible.
+        models()[0].playbackRate = 2;
+        models()[1].playbackRate = 4;
+
+        await sleepForSeconds(0.5);
+        models().forEach((model, index) => {
+            assert_false(model.paused, `Child ${index} should autoplay`);
+            assert_true(model.currentTime > 0, `Child ${index}'s animation current time should have progressed`);
+        });
+
+        lastRecordedCurrentTimes = models().map(model => model.currentTime);
+
+        window.location.href = "../model-element/resources/go-back-on-load.html";
+    }, false);
+</script>
+<body>
+    <div id="portal">
+        <model autoplay loop><source src='../model-element/resources/stopwatch-60s.usdz'/></model>
+        <model autoplay loop><source src='../model-element/resources/stopwatch-60s.usdz'/></model>
+    </div>
+    <div id="result"></div>
+</body>
+</html>

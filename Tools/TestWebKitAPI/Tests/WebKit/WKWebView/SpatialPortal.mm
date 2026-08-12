@@ -80,6 +80,96 @@ TEST(SpatialPortal, DisabledRendersModelsStandalone)
     EXPECT_EQ([webView modelProcessModelPlayerCount], 2u);
 }
 
+static void enableSpatialPortalPreferences(WKWebViewConfiguration *configuration)
+{
+    [configuration _setAllowTestOnlyIPC:YES];
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)configuration.preferences, true, WKStringCreateWithUTF8CString("ModelElementEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)configuration.preferences, true, WKStringCreateWithUTF8CString("ModelProcessEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)configuration.preferences, true, WKStringCreateWithUTF8CString("SpatialPortalEnabled"));
+}
+
+// A spatial portal shares one player across its children, so a leaked portal leaks the whole group.
+// These mirror ModelProcess.mm's clean-up tests, which cover the same paths for a standalone <model>.
+TEST(SpatialPortal, CleanUpOnNavigate)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    enableSpatialPortalPreferences(configuration.get());
+
+    RetainPtr messageHandler = adoptNS([[ModelLoadingMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"modelLoading"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"spatial-portal-two-models-page"];
+
+    while (![messageHandler modelIsReady])
+        Util::spinRunLoop();
+
+    EXPECT_EQ([webView modelProcessModelPlayerCount], 1u);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ([webView modelProcessModelPlayerCount], 0u);
+}
+
+TEST(SpatialPortal, CleanUpOnReload)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    enableSpatialPortalPreferences(configuration.get());
+
+    RetainPtr messageHandler = adoptNS([[ModelLoadingMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"modelLoading"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"spatial-portal-two-models-page"];
+
+    while (![messageHandler modelIsReady])
+        Util::spinRunLoop();
+
+    EXPECT_EQ([webView modelProcessModelPlayerCount], 1u);
+
+    [messageHandler setModelIsReady:NO];
+    [webView reload];
+
+    while (![messageHandler modelIsReady])
+        Util::spinRunLoop();
+
+    // Still one: the reloaded portal must not leave the previous page's player behind.
+    EXPECT_EQ([webView modelProcessModelPlayerCount], 1u);
+}
+
+TEST(SpatialPortal, CleanUpOnHide)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    enableSpatialPortalPreferences(configuration);
+
+    RetainPtr messageHandler = adoptNS([[ModelLoadingMessageHandler alloc] init]);
+    [configuration.userContentController addScriptMessageHandler:messageHandler.get() name:@"modelLoading"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"spatial-portal-two-models-page"];
+
+    bool isHidden = false;
+    [webView performAfterReceivingMessage:@"hidden" action:[&] { isHidden = true; }];
+    [webView objectByEvaluatingJavaScript:@"document.addEventListener('visibilitychange', event => { if (document.hidden) window.webkit.messageHandlers.testHandler.postMessage('hidden') })"];
+
+    while (![messageHandler modelIsReady])
+        Util::spinRunLoop();
+
+    EXPECT_EQ([webView modelProcessModelPlayerCount], 1u);
+
+    [webView objectByEvaluatingJavaScript:@"window.internals.setPageVisibility(false)"];
+    TestWebKitAPI::Util::run(&isHidden);
+
+    // Hiding reaches the portal's player through its children, and the model process then unloads it.
+    // That is a cross-process round trip, so the count drops shortly after visibilitychange rather
+    // than synchronously with it.
+    while ([webView modelProcessModelPlayerCount])
+        Util::spinRunLoop();
+
+    EXPECT_EQ([webView modelProcessModelPlayerCount], 0u);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(MODEL_PROCESS) && ENABLE(SPATIAL_PORTAL)

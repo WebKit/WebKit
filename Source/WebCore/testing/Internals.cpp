@@ -8755,12 +8755,6 @@ unsigned Internals::numberOfHostedModelsInSpatialPortal(Element& element)
     return controller ? controller->numberOfHostedModels() : 0;
 }
 
-unsigned Internals::numberOfLoadedModelsInSpatialPortal(Element& element)
-{
-    CheckedPtr controller = element.spatialPortalController();
-    return controller ? controller->numberOfLoadedModels() : 0;
-}
-
 bool Internals::establishesSpatialPortal(Element& element)
 {
     return element.establishesSpatialPortal();

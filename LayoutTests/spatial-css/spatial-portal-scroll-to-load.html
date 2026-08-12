@@ -24,11 +24,11 @@ promise_test(async t => {
     model.appendChild(source);
 
     await UIHelper.ensureStablePresentationUpdate();
-    assert_equals(internals.numberOfLoadedModelsInSpatialPortal(portal), 0, "portal does not load its model while off-screen");
+    assert_not_equals(internals.modelElementState(model), "Loaded", "portal does not load its model while off-screen");
 
     portal.scrollIntoView();
     await model.ready;
-    assert_equals(internals.numberOfLoadedModelsInSpatialPortal(portal), 1, "portal loads the model after scrolling into view");
+    assert_equals(internals.modelElementState(model), "Loaded", "portal loads the model after scrolling into view");
 }, "A <model> in a spatial portal loads only once the portal is scrolled into view");
 </script>
 </body>

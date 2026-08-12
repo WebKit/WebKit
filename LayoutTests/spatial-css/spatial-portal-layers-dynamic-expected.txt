@@ -1,0 +1,46 @@
+hosted models after removal: 0
+layer count with model: 6
+layer count after removal: 2
+layer count never hosted: 2
+
+With one hosted model:
+
+(CALayer tree root
+  (layer bounds [x: 0 y: 0 width: 300 height: 150])
+  (layer position [x: 158 y: 83])
+  (sublayers
+    (
+      (layer bounds [x: 0 y: 0 width: 300 height: 150])
+      (layer position [x: 150 y: 75])
+      (sublayers
+        (
+          (layer bounds [x: 0 y: 0 width: 300 height: 150])
+          (layer position [x: 150 y: 75]))
+        (
+          (layer bounds [x: 0 y: 0 width: 300 height: 150])
+          (layer position [x: 150 y: 75])
+          (sublayers
+            (
+              (layer bounds [x: 0 y: 0 width: 300 height: 150])
+              (layer position [x: 150 y: 75]))))))
+    (
+      (layer bounds [x: 0 y: 0 width: 300 height: 150])
+      (layer position [x: 150 y: 75]))))
+After removing it:
+
+(CALayer tree root
+  (layer bounds [x: 0 y: 0 width: 300 height: 150])
+  (layer position [x: 158 y: 83])
+  (sublayers
+    (
+      (layer bounds [x: 0 y: 0 width: 300 height: 150])
+      (layer position [x: 150 y: 75]))))
+Portal that never hosted a model:
+
+(CALayer tree root
+  (layer bounds [x: 0 y: 0 width: 300 height: 150])
+  (layer position [x: 158 y: 233])
+  (sublayers
+    (
+      (layer bounds [x: 0 y: 0 width: 300 height: 150])
+      (layer position [x: 150 y: 75]))))

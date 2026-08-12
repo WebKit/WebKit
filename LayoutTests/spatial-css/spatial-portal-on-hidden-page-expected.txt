@@ -1,0 +1,4 @@
+
+PASS A <model> in a spatial portal keeps its animation running while the page is hidden
+PASS Siblings in a spatial portal resume independently after an unload
+

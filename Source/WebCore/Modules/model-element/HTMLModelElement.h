@@ -351,6 +351,7 @@ private:
     void sourceRequestResource();
     bool shouldDeferLoading() const;
     bool NODELETE isModelDeferred() const;
+    bool hasLiveModelPlayer() const;
     bool isModelLoading() const;
     bool isModelLoaded() const;
     bool isModelUnloading() const;

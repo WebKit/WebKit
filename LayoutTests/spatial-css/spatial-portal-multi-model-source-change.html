@@ -24,7 +24,8 @@ promise_test(async t => {
 
     assert_equals(untouched.ready, untouchedReadyBeforeChange, "the sibling's ready promise was not reset");
     await untouched.ready;
-    assert_equals(internals.numberOfLoadedModelsInSpatialPortal(portal), 2, "both models are loaded after the source swap");
+    assert_equals(internals.modelElementState(changing), "Loaded", "the re-sourced model is loaded");
+    assert_equals(internals.modelElementState(untouched), "Loaded", "its sibling is still loaded");
 }, "Changing the source of one <model> in a spatial portal leaves its sibling loaded");
 
 promise_test(async t => {
@@ -43,7 +44,8 @@ promise_test(async t => {
     assert_not_equals(unloading.ready, unloadingReadyBeforeChange, "the unsourced model's ready promise was replaced");
     assert_equals(untouched.ready, untouchedReadyBeforeChange, "the sibling's ready promise was not reset");
     assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 2, "the unsourced model stays registered with the portal");
-    assert_equals(internals.numberOfLoadedModelsInSpatialPortal(portal), 1, "only the sibling is still loaded");
+    assert_equals(internals.modelElementState(unloading), "Deferred", "the unsourced model has nothing to load");
+    assert_equals(internals.modelElementState(untouched), "Loaded", "only the sibling is still loaded");
     await untouched.ready;
 }, "Clearing the source of one <model> in a spatial portal unloads only that model");
 
