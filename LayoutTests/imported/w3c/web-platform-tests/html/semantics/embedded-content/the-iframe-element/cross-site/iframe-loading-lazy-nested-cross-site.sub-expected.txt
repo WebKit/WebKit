@@ -1,0 +1,8 @@
+
+
+
+PASS In-viewport iframes load eagerly
+PASS Below-viewport iframes load lazily
+PASS In-viewport iframe nested in a cross-site frame loads eagerly
+PASS Below-viewport iframe nested in a cross-site frame loads lazily
+

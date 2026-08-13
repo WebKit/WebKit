@@ -1,0 +1,8 @@
+
+
+
+PASS In-viewport left iframe loads eagerly
+PASS Below-viewport left iframe loads lazily
+PASS In-viewport right iframe loads eagerly
+PASS Below-viewport right iframe loads lazily
+

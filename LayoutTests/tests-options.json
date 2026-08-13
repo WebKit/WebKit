@@ -3974,6 +3974,9 @@
     "imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-webvtt-markup.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross-site/iframe-loading-lazy-nested-cross-site.sub.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads.sub.tentative.html": [
         "slow"
     ],

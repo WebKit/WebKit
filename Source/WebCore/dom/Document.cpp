@@ -10484,6 +10484,9 @@ static void updateAndNotifyIntersectionObservers(const Vector<WeakPtr<Intersecti
 
 void Document::updateRemoteIntersectionObservers()
 {
+    if (m_remoteIntersectionObservers.isEmpty())
+        return;
+
     RefPtr page = this->page();
     if (!page)
         return;
@@ -10491,6 +10494,16 @@ void Document::updateRemoteIntersectionObservers()
     RefPtr mainFrame = this->page()->mainFrame();
     if (!mainFrame)
         return;
+
+    RefPtr frameView = view();
+    if (!frameView)
+        return;
+
+    bool needsLayout = frameView->layoutContext().isLayoutPending() || (renderView() && renderView()->needsLayout());
+    if (needsLayout || hasPendingStyleRecalc()) {
+        scheduleRenderingUpdate(RenderingUpdateStep::IntersectionObservations);
+        return;
+    }
 
     updateAndNotifyIntersectionObservers(m_remoteIntersectionObservers, *mainFrame);
 }
