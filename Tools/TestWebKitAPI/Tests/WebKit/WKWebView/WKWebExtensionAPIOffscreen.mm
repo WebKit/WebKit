@@ -272,6 +272,38 @@ TEST_F(WKWebExtensionAPIOffscreen, SendMessageToDocument)
     }, offscreenConfig);
 }
 
+TEST_F(WKWebExtensionAPIOffscreen, OffscreenDocumentAPIAvailability)
+{
+    auto *script = @[
+        @"browser.test.assertFalse(browser.dom === undefined)",
+        @"browser.test.assertFalse(browser.extension === undefined)",
+        @"browser.test.assertFalse(browser.i18n === undefined)",
+        @"browser.test.assertFalse(browser.runtime === undefined)",
+        @"browser.test.assertFalse(browser.permissions === undefined)",
+        @"browser.test.assertFalse(browser.tabs === undefined)",
+        @"browser.test.assertFalse(browser.windows === undefined)",
+        @"browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
+    ];
+
+    auto *offscreenScript = @[
+        @"browser.test.assertFalse(browser.runtime === undefined)",
+
+        @"browser.test.assertTrue(browser.dom === undefined)",
+        @"browser.test.assertTrue(browser.extension === undefined)",
+        @"browser.test.assertTrue(browser.i18n === undefined)",
+        @"browser.test.assertTrue(browser.permissions === undefined)",
+        @"browser.test.assertTrue(browser.tabs === undefined)",
+        @"browser.test.assertTrue(browser.windows === undefined)",
+        @"browser.test.notifyPass()"
+    ];
+
+    Util::loadAndRunExtension(offscreenManifest, @{
+        @"background.js": Util::constructScript(script),
+        @"offscreen.html": @"<script type='module' src='offscreen.js'></script>",
+        @"offscreen.js": Util::constructScript(offscreenScript),
+    }, offscreenConfig);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)

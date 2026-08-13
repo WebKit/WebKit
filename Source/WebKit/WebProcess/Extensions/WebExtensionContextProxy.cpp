@@ -95,6 +95,18 @@ void WebExtensionContextProxy::setBackgroundPage(WebPage& page)
     m_backgroundPage = page;
 }
 
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+void WebExtensionContextProxy::setOffscreenPage(WebPage& page)
+{
+    m_offscreenPage = page;
+}
+
+bool WebExtensionContextProxy::isOffscreenPage(WebPage& page) const
+{
+    return m_offscreenPage.get() == &page;
+}
+#endif
+
 #if ENABLE(INSPECTOR_EXTENSIONS)
 void WebExtensionContextProxy::addInspectorPage(WebPage& page, std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
 {
@@ -173,6 +185,14 @@ void WebExtensionContextProxy::setBackgroundPageIdentifier(WebCore::PageIdentifi
     if (RefPtr page = WebProcess::singleton().webPage(pageIdentifier))
         setBackgroundPage(*page);
 }
+
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+void WebExtensionContextProxy::setOffscreenPageIdentifier(WebCore::PageIdentifier pageIdentifier)
+{
+    if (RefPtr page = WebProcess::singleton().webPage(pageIdentifier))
+        setOffscreenPage(*page);
+}
+#endif
 
 void WebExtensionContextProxy::addPopupPageIdentifier(WebCore::PageIdentifier pageIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
 {

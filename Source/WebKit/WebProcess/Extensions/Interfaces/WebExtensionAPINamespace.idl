@@ -28,6 +28,10 @@
     ReturnsPromiseWhenCallbackIsOmitted,
     UseCPPAPI,
 ] interface WebExtensionAPINamespace {
+    /*
+    * When adding a new always-present API to the top level namespace, make sure that it is dynamic (so it will be omitted
+    * in the offscreen web view context) - and automatically grant it in WebExtensionAPINamespace::isPropertyAllowed.
+    */
 
     [MainWorldOnly, Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIAction action;
 
@@ -47,13 +51,13 @@
 
     [Dynamic, Platform=COCOA, Conditional=INSPECTOR_EXTENSIONS] readonly attribute WebExtensionAPIDevTools devtools;
 
-    [Platform=COCOA] readonly attribute WebExtensionAPIDOM dom;
+    [Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIDOM dom;
 
-    [Platform=COCOA] readonly attribute WebExtensionAPIExtension extension;
+    [Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIExtension extension;
 
-    [Platform=COCOA] readonly attribute WebExtensionAPILocalization i18n;
+    [Dynamic, Platform=COCOA] readonly attribute WebExtensionAPILocalization i18n;
 
-    [Platform=COCOA] readonly attribute WebExtensionAPIRuntime runtime;
+    [Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIRuntime runtime;
 
     [MainWorldOnly, Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIMenus menus;
 
@@ -63,7 +67,7 @@
 
     [MainWorldOnly, Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIAction pageAction;
 
-    [MainWorldOnly, Platform=COCOA] readonly attribute WebExtensionAPIPermissions permissions;
+    [MainWorldOnly, Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIPermissions permissions;
 
     [MainWorldOnly, Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIScripting scripting;
 
@@ -73,9 +77,9 @@
 
     [Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIStorage storage;
 
-    [MainWorldOnly, Platform=COCOA] readonly attribute WebExtensionAPITabs tabs;
+    [MainWorldOnly, Dynamic, Platform=COCOA] readonly attribute WebExtensionAPITabs tabs;
 
-    [MainWorldOnly, Platform=COCOA] readonly attribute WebExtensionAPIWindows windows;
+    [MainWorldOnly, Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIWindows windows;
 
     [MainWorldOnly, Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIWebNavigation webNavigation;
 

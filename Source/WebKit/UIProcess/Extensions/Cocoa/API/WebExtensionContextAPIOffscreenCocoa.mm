@@ -35,6 +35,7 @@
 #import "WKNavigationDelegate.h"
 #import "WKUIDelegate.h"
 #import "WKWebViewInternal.h"
+#import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionOffscreenDocumentParameters.h"
 
 namespace WebKit {
@@ -76,6 +77,8 @@ void WebExtensionContext::offscreenCreateDocument(const WebExtensionOffscreenDoc
 
     Ref offscreenPage = *m_offscreenWebView.get()._page;
     Ref offscreenProcess = offscreenPage->siteIsolatedProcess();
+
+    offscreenProcess->send(Messages::WebExtensionContextProxy::SetOffscreenPageIdentifier(offscreenPage->webPageIDInMainFrameProcess()), identifier());
 
     constexpr ASCIILiteral activityName = "Web Extension offscreen document"_s;
     if (protect(offscreenPage->preferences())->siteIsolationEnabled())

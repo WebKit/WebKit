@@ -136,6 +136,11 @@ public:
     Vector<Ref<WebPage>> tabPages(std::optional<WebExtensionTabIdentifier> = std::nullopt, std::optional<WebExtensionWindowIdentifier> = std::nullopt) const;
     void addTabPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
 
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    void NODELETE setOffscreenPage(WebPage&);
+    bool NODELETE isOffscreenPage(WebPage&) const;
+#endif
+
     void enumerateFramesAndNamespaceObjects(NOESCAPE const Function<void(WebFrame&, WebExtensionAPINamespace&)>&, Ref<WebCore::DOMWrapperWorld>&& = mainWorldSingleton());
     void enumerateFramesAndWebPageNamespaceObjects(NOESCAPE const Function<void(WebFrame&, WebExtensionAPIWebPageNamespace&)>&);
 
@@ -183,6 +188,11 @@ private:
     void setBackgroundPageIdentifier(WebCore::PageIdentifier);
     void addPopupPageIdentifier(WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
     void addTabPageIdentifier(WebCore::PageIdentifier, WebExtensionTabIdentifier, std::optional<WebExtensionWindowIdentifier>);
+
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    // Offscreen
+    void setOffscreenPageIdentifier(WebCore::PageIdentifier);
+#endif
 
     // Menus
     void dispatchMenusClickedEvent(const WebExtensionMenuItemParameters&, bool wasChecked, const WebExtensionMenuItemContextParameters&, const std::optional<WebExtensionTabParameters>&);
@@ -255,6 +265,9 @@ private:
     RefPtr<WebCore::DOMWrapperWorld> m_contentScriptWorld;
     WeakFrameSet m_extensionContentFrames;
     WeakPtr<WebPage> m_backgroundPage;
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    WeakPtr<WebPage> m_offscreenPage;
+#endif
 #if ENABLE(INSPECTOR_EXTENSIONS)
     WeakPageTabWindowMap m_inspectorPageMap;
     WeakPageTabWindowMap m_inspectorBackgroundPageMap;
