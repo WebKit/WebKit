@@ -61,7 +61,7 @@ public:
         return vm.weakObjectRefSpace<mode>();
     }
 
-    void finalizeUnconditionally(VM&, CollectionScope);
+    void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope);
     DECLARE_VISIT_CHILDREN;
 
 private:

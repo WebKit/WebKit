@@ -123,7 +123,7 @@ public:
         notifyWriteSlow(vm, owner, value, reason);
     }
     
-    void finalizeUnconditionally(VM&, CollectionScope);
+    void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope);
 
 private:
     class InferredValueWatchpointSet final : public WatchpointSet {

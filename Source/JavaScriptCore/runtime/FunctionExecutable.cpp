@@ -94,7 +94,7 @@ void FunctionExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         }
     }
 
-    // Since FunctionExecutable's finalizer always needs to be run, we do not track FunctionExecutable via finalizerSet.
+    // Every live FunctionExecutable needs reconciling, so it is not tracked via weakReconciliationSet.
     auto* codeBlockForCall = thisObject->m_codeBlockForCall.get();
     if (codeBlockForCall)
         visitCodeBlockEdge(visitor, codeBlockForCall);

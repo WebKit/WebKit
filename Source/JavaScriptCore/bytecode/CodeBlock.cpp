@@ -1491,7 +1491,7 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, Visitor& visitor)
 template void CodeBlock::determineLiveness(const ConcurrentJSLocker&, AbstractSlotVisitor&);
 template void CodeBlock::determineLiveness(const ConcurrentJSLocker&, SlotVisitor&);
 
-void CodeBlock::finalizeLLIntInlineCaches()
+void CodeBlock::reconcileLLIntInlineCachesAtGCEnd()
 {
     VM& vm = *m_vm;
 
@@ -1746,7 +1746,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
 }
 
 #if ENABLE(JIT)
-void CodeBlock::finalizeJITInlineCaches()
+void CodeBlock::reconcileJITInlineCachesAtGCEnd()
 {
 #if ENABLE(DFG_JIT)
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
@@ -1769,17 +1769,17 @@ void CodeBlock::finalizeJITInlineCaches()
 }
 #endif
 
-void CodeBlock::finalizeUnconditionally(VM& vm, CollectionScope)
+void CodeBlock::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
 {
     UNUSED_PARAM(vm);
 
-    // CodeBlock::finalizeUnconditionally is called for all live CodeBlocks.
+    // Called for all live CodeBlocks.
     // We do not need to call updateAllPredictions for DFG / FTL since the same thing happens in LLInt / Baseline CodeBlock for them.
     if (JITCode::isBaselineCode(jitType()))
         updateAllPredictions();
 
     if (JITCode::couldBeInterpreted(jitType())) {
-        finalizeLLIntInlineCaches();
+        reconcileLLIntInlineCachesAtGCEnd();
         // If the CodeBlock is DFG or FTL, CallLinkInfo in metadata is not related.
         forEachLLIntOrBaselineCallLinkInfo([&](DataOnlyCallLinkInfo& callLinkInfo) {
             callLinkInfo.visitWeak(vm);
@@ -1788,17 +1788,17 @@ void CodeBlock::finalizeUnconditionally(VM& vm, CollectionScope)
 
 #if ENABLE(JIT)
     if (!!jitCode())
-        finalizeJITInlineCaches();
+        reconcileJITInlineCachesAtGCEnd();
 #endif
 
 #if ENABLE(DFG_JIT)
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
         if (auto* statuses = dfgCommon->recordedStatuses.get())
-            statuses->finalize(vm);
+            statuses->reconcileWeakReferences(vm);
 
         if (auto* jitData = dfgJITData())
-            jitData->finalizeUnconditionally();
+            jitData->reconcileWeakReferencesAtGCEnd();
     }
 #endif // ENABLE(DFG_JIT)
 
@@ -1982,6 +1982,10 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
 #endif
 }
 
+// Runs from visitChildren, so the CodeBlock is already known live. It is live either
+// because something marked it directly, for instance a conservative stack scan finding
+// it running, or because all of its code dependencies are still live. In the former case
+// we need to ensure those dependencies stay alive, and that is what happens here.
 template<typename Visitor>
 void CodeBlock::stronglyVisitWeakReferences(const ConcurrentJSLocker&, Visitor& visitor)
 {
@@ -3097,6 +3101,9 @@ void CodeBlock::updateAllArrayAllocationProfilePredictions()
     });
 }
 
+// Folds each profile's sampled value into a pointer-free SpeculatedType and clears the sample.
+// The samples are untraced JSValues and StructureIDs, so this only runs while they are still
+// readable: after marking, before sweep.
 void CodeBlock::updateAllPredictions()
 {
     {

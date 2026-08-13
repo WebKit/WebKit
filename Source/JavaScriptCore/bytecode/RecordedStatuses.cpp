@@ -123,32 +123,32 @@ void RecordedStatuses::markIfCheap(Visitor& visitor)
 template void RecordedStatuses::markIfCheap(AbstractSlotVisitor&);
 template void RecordedStatuses::markIfCheap(SlotVisitor&);
 
-void RecordedStatuses::finalizeWithoutDeleting(VM& vm)
+void RecordedStatuses::reconcileWeakReferencesWithoutDeleting(VM& vm)
 {
-    // This variant of finalize gets called from within graph safepoints -- so there may be DFG IR in
+    // Called from within graph safepoints -- so there may be DFG IR in
     // some compiler thread that points to the statuses. That thread is stopped at a safepoint so
     // it's OK to edit its data structure, but it's not OK to delete them. Hence we don't remove
     // anything from the vector or delete the unique_ptrs.
-    
-    auto finalize = [&] (auto& vector) {
+
+    auto reconcile = [&] (auto& vector) {
         for (auto& pair : vector) {
             if (!pair.second->finalize(vm))
                 *pair.second = { };
         }
     };
-    forEachVector(finalize);
+    forEachVector(reconcile);
 }
 
-void RecordedStatuses::finalize(VM& vm)
+void RecordedStatuses::reconcileWeakReferences(VM& vm)
 {
-    auto finalize = [&] (auto& vector) {
+    auto reconcile = [&] (auto& vector) {
         vector.removeAllMatching(
             [&] (auto& pair) -> bool {
                 return !*pair.second || !pair.second->finalize(vm);
             });
         vector.shrinkToFit();
     };
-    forEachVector(finalize);
+    forEachVector(reconcile);
 }
 
 void RecordedStatuses::shrinkToFit()

@@ -1742,9 +1742,9 @@ void DeferredStructureTransitionWatchpointFire::fireAllSlow()
     watchpointsToFire().fireAll(m_vm, detail);
 }
 
-void Structure::finalizeUnconditionally(VM& vm, CollectionScope collectionScope)
+void Structure::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope collectionScope)
 {
-    m_transitionTable.finalizeUnconditionally(vm, collectionScope);
+    m_transitionTable.reconcileWeakReferencesAtGCEnd(vm, collectionScope);
 }
 
 void dumpTransitionKind(PrintStream& out, TransitionKind kind)

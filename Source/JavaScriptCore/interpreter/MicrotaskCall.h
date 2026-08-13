@@ -109,7 +109,7 @@ public:
         return result;
     }
 
-    void finalizeUnconditionally(VM& vm)
+    void reconcileWeakReferencesAtGCEnd(VM& vm)
     {
         for (auto& entry : m_entries)
             entry.visitWeak(vm);

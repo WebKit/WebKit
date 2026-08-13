@@ -247,7 +247,7 @@ public:
 
     static size_t estimatedSize(JSCell*, VM&);
     static void destroy(JSCell*);
-    void finalizeUnconditionally(VM&, CollectionScope);
+    void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope);
 
     void notifyLexicalBindingUpdate();
 
@@ -890,9 +890,9 @@ public:
     double optimizationThresholdScalingFactor() const;
 
 protected:
-    void finalizeLLIntInlineCaches();
+    void reconcileLLIntInlineCachesAtGCEnd();
 #if ENABLE(JIT)
-    void finalizeJITInlineCaches();
+    void reconcileJITInlineCachesAtGCEnd();
 #endif
 #if ENABLE(DFG_JIT)
     void tallyFrequentExitSites();

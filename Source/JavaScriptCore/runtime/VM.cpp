@@ -1879,9 +1879,9 @@ void VM::beginMarking()
     });
 }
 
-void VM::finalizeUnconditionally()
+void VM::reconcileWeakReferencesAtGCEnd()
 {
-    m_syncResumeCallCache->finalizeUnconditionally(*this);
+    m_syncResumeCallCache->reconcileWeakReferencesAtGCEnd(*this);
 }
 
 template<typename Visitor>

@@ -44,11 +44,11 @@ void GlobalExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     if (auto* codeBlock = executable->codeBlock()) {
         // If CodeBlocks is not marked yet, we will run output-constraints.
-        // We maintain the invariant that, whenever we see unmarked CodeBlock, then we must run finalizer.
-        // And whenever we set a bit on outputConstraintsSet, we must already set a bit in finalizerSet.
+        // We maintain the invariant that, whenever we see an unmarked CodeBlock, we must reconcile.
+        // And whenever we set a bit on outputConstraintsSet, we must already set a bit in weakReconciliationSet.
         visitCodeBlockEdge(visitor, codeBlock);
         if (!visitor.isMarked(codeBlock)) {
-            Heap::ScriptExecutableSpaceAndSets::finalizerSetFor(*executable->subspace()).add(executable);
+            Heap::ScriptExecutableSpaceAndSets::weakReconciliationSetFor(*executable->subspace()).add(executable);
             Heap::ScriptExecutableSpaceAndSets::outputConstraintsSetFor(*executable->subspace()).add(executable);
         }
     }
@@ -77,11 +77,11 @@ CodeBlock* GlobalExecutable::replaceCodeBlockWith(VM& vm, CodeBlock* newCodeBloc
     return oldCodeBlock;
 }
 
-void GlobalExecutable::finalizeUnconditionally(VM& vm, CollectionScope)
+void GlobalExecutable::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
 {
-    finalizeCodeBlockEdge(vm, m_codeBlock);
+    jettisonCodeBlockEdgeIfDead(vm, m_codeBlock);
     Heap::ScriptExecutableSpaceAndSets::outputConstraintsSetFor(*subspace()).remove(this);
-    Heap::ScriptExecutableSpaceAndSets::finalizerSetFor(*subspace()).remove(this);
+    Heap::ScriptExecutableSpaceAndSets::weakReconciliationSetFor(*subspace()).remove(this);
 }
 
 } // namespace JSC

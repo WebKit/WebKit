@@ -227,7 +227,7 @@ public:
         ensureRareData().m_sourceMappingURLDirective = sourceMappingURL;
     }
 
-    void finalizeUnconditionally(VM&, CollectionScope);
+    void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope);
 
     struct ClassElementDefinition {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(ClassElementDefinition);

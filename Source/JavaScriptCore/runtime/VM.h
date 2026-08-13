@@ -1109,7 +1109,7 @@ public:
 #endif
 
     void beginMarking();
-    void finalizeUnconditionally();
+    void reconcileWeakReferencesAtGCEnd();
     DECLARE_VISIT_AGGREGATE;
 
     void NODELETE addDebugger(Debugger&);

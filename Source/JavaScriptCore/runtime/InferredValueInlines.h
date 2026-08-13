@@ -30,7 +30,7 @@
 namespace JSC {
 
 template<typename JSCellType>
-void InferredValue<JSCellType>::finalizeUnconditionally(VM& vm, CollectionScope)
+void InferredValue<JSCellType>::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
 {
     JSCellType* value = inferredValue();
 

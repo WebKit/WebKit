@@ -312,7 +312,7 @@ UnlinkedFunctionExecutable::RareData& UnlinkedFunctionExecutable::ensureRareData
     return *m_rareData;
 }
 
-void UnlinkedFunctionExecutable::finalizeUnconditionally(VM& vm, CollectionScope)
+void UnlinkedFunctionExecutable::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
 {
     if (codeBlockEdgeMayBeWeak()) {
         bool isCleared = false;

@@ -610,7 +610,7 @@ inline Structure* StructureTransitionTable::get(PointerKey rep, unsigned attribu
     return map()->get(StructureTransitionTable::Hash::createKey(rep, attributes, transitionKind));
 }
 
-inline void StructureTransitionTable::finalizeUnconditionally(VM& vm, CollectionScope)
+inline void StructureTransitionTable::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
 {
     if (auto* transition = trySingleTransition()) {
         if (!vm.heap.isMarked(transition))

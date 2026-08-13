@@ -114,7 +114,7 @@ public:
             m_stackPropertyAlreadyMaterialized = true;
     }
 
-    void finalizeUnconditionally(VM&, CollectionScope);
+    void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope);
 
 protected:
     JS_EXPORT_PRIVATE explicit ErrorInstance(VM&, Structure*, ErrorType);

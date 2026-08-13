@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-inline void ScriptExecutable::finalizeCodeBlockEdge(VM& vm, WriteBarrier<CodeBlock>& codeBlockEdge)
+inline void ScriptExecutable::jettisonCodeBlockEdgeIfDead(VM& vm, WriteBarrier<CodeBlock>& codeBlockEdge)
 {
     for (;;) {
         auto* codeBlock = codeBlockEdge.get();

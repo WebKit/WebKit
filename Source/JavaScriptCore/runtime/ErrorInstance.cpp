@@ -275,7 +275,7 @@ String ErrorInstance::tryGetMessageForDebugging()
     return emptyString();
 }
 
-void ErrorInstance::finalizeUnconditionally(VM& vm, CollectionScope)
+void ErrorInstance::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
 {
     if (!m_stackTrace)
         return;
@@ -283,6 +283,8 @@ void ErrorInstance::finalizeUnconditionally(VM& vm, CollectionScope)
     // We don't want to keep our stack traces alive forever if the user doesn't access the stack trace.
     // If we did, we might end up keeping functions (and their global objects) alive that happened to
     // get caught in a trace.
+    // Since the frames are weak, a dead one means the trace can no longer be reconstructed, so
+    // materialize it into strings while it is still readable.
     for (const auto& frame : *m_stackTrace.get()) {
         if (!frame.isMarked(vm)) {
             computeErrorInfo(vm);

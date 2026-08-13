@@ -36,9 +36,9 @@ inline Structure* SymbolTable::createStructure(VM& vm, JSGlobalObject* globalObj
     return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
 }
 
-inline void SymbolTable::finalizeUnconditionally(VM& vm, CollectionScope collectionScope)
+inline void SymbolTable::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope collectionScope)
 {
-    m_singleton.finalizeUnconditionally(vm, collectionScope);
+    m_singleton.reconcileWeakReferencesAtGCEnd(vm, collectionScope);
 }
 
 inline void SymbolTable::notifyCreation(VM& vm, JSScope* scope, const char* reason)

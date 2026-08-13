@@ -774,65 +774,69 @@ void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
 }
 
 template<typename CellType, typename CellSet>
-void Heap::finalizeMarkedUnconditionalFinalizers(CellSet& cellSet, CollectionScope collectionScope)
+void Heap::reconcileWeakReferencesInMarkedCells(CellSet& cellSet, CollectionScope collectionScope)
 {
     cellSet.forEachMarkedCell(
         [&] (HeapCell* cell, HeapCell::Kind) {
-            static_cast<CellType*>(cell)->finalizeUnconditionally(vm(), collectionScope);
+            static_cast<CellType*>(cell)->reconcileWeakReferencesAtGCEnd(vm(), collectionScope);
         });
 }
 
-void Heap::finalizeUnconditionalFinalizers()
+// Weak reference reconciliation: settle every untraced pointer against the liveness that
+// marking just established. Must run after marking, because isMarked() only means "dead"
+// once the closure is complete, and before sweeping, because a dying referent may still
+// need to be identified or read.
+void Heap::reconcileWeakReferencesAtGCEnd()
 {
     CollectionScope collectionScope = this->collectionScope().value_or(CollectionScope::Full);
 
     {
-        // We run this before CodeBlock's unconditional finalizer since CodeBlock looks at the owner executable's installed CodeBlock in its finalizeUnconditionally.
+        // Executables go before CodeBlock, since CodeBlock::reconcileWeakReferencesAtGCEnd looks at the owner executable's installed CodeBlock.
 
-        // FunctionExecutable requires all live instances to run finalizers. Thus, we do not use finalizer set.
-        finalizeMarkedUnconditionalFinalizers<FunctionExecutable>(functionExecutableSpaceAndSet.space, collectionScope);
+        // FunctionExecutable requires all live instances to be processed, so iterate the whole space rather than a tracking set.
+        reconcileWeakReferencesInMarkedCells<FunctionExecutable>(functionExecutableSpaceAndSet.space, collectionScope);
 
-        finalizeMarkedUnconditionalFinalizers<ProgramExecutable>(programExecutableSpaceAndSet.finalizerSet, collectionScope);
+        reconcileWeakReferencesInMarkedCells<ProgramExecutable>(programExecutableSpaceAndSet.weakReconciliationSet, collectionScope);
         if (m_evalExecutableSpace)
-            finalizeMarkedUnconditionalFinalizers<EvalExecutable>(m_evalExecutableSpace->finalizerSet, collectionScope);
+            reconcileWeakReferencesInMarkedCells<EvalExecutable>(m_evalExecutableSpace->weakReconciliationSet, collectionScope);
         if (m_moduleProgramExecutableSpace)
-            finalizeMarkedUnconditionalFinalizers<ModuleProgramExecutable>(m_moduleProgramExecutableSpace->finalizerSet, collectionScope);
+            reconcileWeakReferencesInMarkedCells<ModuleProgramExecutable>(m_moduleProgramExecutableSpace->weakReconciliationSet, collectionScope);
     }
 
-    finalizeMarkedUnconditionalFinalizers<SymbolTable>(symbolTableSpace, collectionScope);
+    reconcileWeakReferencesInMarkedCells<SymbolTable>(symbolTableSpace, collectionScope);
 
     forEachCodeBlockSpace(
         [&] (auto& space) {
-            this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set, collectionScope);
+            this->reconcileWeakReferencesInMarkedCells<CodeBlock>(space.set, collectionScope);
         });
     if (collectionScope == CollectionScope::Full) {
-        finalizeMarkedUnconditionalFinalizers<Structure>(structureSpace, collectionScope);
-        finalizeMarkedUnconditionalFinalizers<BrandedStructure>(brandedStructureSpace, collectionScope);
+        reconcileWeakReferencesInMarkedCells<Structure>(structureSpace, collectionScope);
+        reconcileWeakReferencesInMarkedCells<BrandedStructure>(brandedStructureSpace, collectionScope);
 #if ENABLE(WEBASSEMBLY)
-        finalizeMarkedUnconditionalFinalizers<WebAssemblyGCStructure>(webAssemblyGCStructureSpace, collectionScope);
+        reconcileWeakReferencesInMarkedCells<WebAssemblyGCStructure>(webAssemblyGCStructureSpace, collectionScope);
 #endif
     }
-    finalizeMarkedUnconditionalFinalizers<StructureRareData>(structureRareDataSpace, collectionScope);
-    finalizeMarkedUnconditionalFinalizers<UnlinkedFunctionExecutable>(unlinkedFunctionExecutableSpaceAndSet.set, collectionScope);
+    reconcileWeakReferencesInMarkedCells<StructureRareData>(structureRareDataSpace, collectionScope);
+    reconcileWeakReferencesInMarkedCells<UnlinkedFunctionExecutable>(unlinkedFunctionExecutableSpaceAndSet.set, collectionScope);
     if (m_weakSetSpace)
-        finalizeMarkedUnconditionalFinalizers<JSWeakSet>(*m_weakSetSpace, collectionScope);
+        reconcileWeakReferencesInMarkedCells<JSWeakSet>(*m_weakSetSpace, collectionScope);
     if (m_weakMapSpace)
-        finalizeMarkedUnconditionalFinalizers<JSWeakMap>(*m_weakMapSpace, collectionScope);
+        reconcileWeakReferencesInMarkedCells<JSWeakMap>(*m_weakMapSpace, collectionScope);
     if (m_weakObjectRefSpace)
-        finalizeMarkedUnconditionalFinalizers<JSWeakObjectRef>(*m_weakObjectRefSpace, collectionScope);
+        reconcileWeakReferencesInMarkedCells<JSWeakObjectRef>(*m_weakObjectRefSpace, collectionScope);
     if (m_errorInstanceSpace)
-        finalizeMarkedUnconditionalFinalizers<ErrorInstance>(*m_errorInstanceSpace, collectionScope);
+        reconcileWeakReferencesInMarkedCells<ErrorInstance>(*m_errorInstanceSpace, collectionScope);
 
     // FinalizationRegistries currently rely on serial finalization because they can post tasks to the deferredWorkTimer, which normally expects tasks to only be posted by the API lock holder.
     if (m_finalizationRegistrySpace)
-        finalizeMarkedUnconditionalFinalizers<JSFinalizationRegistry>(*m_finalizationRegistrySpace, collectionScope);
+        reconcileWeakReferencesInMarkedCells<JSFinalizationRegistry>(*m_finalizationRegistrySpace, collectionScope);
 
 #if ENABLE(WEBASSEMBLY)
     if (m_webAssemblyInstanceSpace)
-        finalizeMarkedUnconditionalFinalizers<JSWebAssemblyInstance>(*m_webAssemblyInstanceSpace, collectionScope);
+        reconcileWeakReferencesInMarkedCells<JSWebAssemblyInstance>(*m_webAssemblyInstanceSpace, collectionScope);
 #endif
 
-    vm().finalizeUnconditionally();
+    vm().reconcileWeakReferencesAtGCEnd();
 }
 
 void Heap::willStartIterating()
@@ -1805,7 +1809,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         pruneStaleEntriesFromWeakGCHashTables();
         sweepArrayBuffers();
         snapshotUnswept();
-        finalizeUnconditionalFinalizers(); // We rely on these unconditional finalizers running before clearCurrentlyExecuting since CodeBlock's finalizer relies on querying currently executing.
+        reconcileWeakReferencesAtGCEnd(); // Must precede clearCurrentlyExecuting: CodeBlock::reconcileWeakReferencesAtGCEnd queries which CodeBlocks are currently executing.
         removeDeadCompilerWorklistEntries();
         deleteUnmarkedCompiledCode();
     }

@@ -356,7 +356,7 @@ public:
     }
 
     template<typename Visitor> static void visitOutputConstraints(JSCell*, Visitor&);
-    void finalizeUnconditionally(VM&, CollectionScope);
+    void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope);
 
 private:
     template<typename Visitor>

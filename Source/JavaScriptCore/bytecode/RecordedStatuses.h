@@ -51,8 +51,8 @@ struct RecordedStatuses {
     DECLARE_VISIT_AGGREGATE;
     template<typename Visitor> void markIfCheap(Visitor&);
     
-    void finalizeWithoutDeleting(VM&);
-    void finalize(VM&);
+    void reconcileWeakReferencesWithoutDeleting(VM&);
+    void reconcileWeakReferences(VM&);
     
     void shrinkToFit();
     

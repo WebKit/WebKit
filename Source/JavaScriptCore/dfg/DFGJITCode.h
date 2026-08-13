@@ -209,7 +209,7 @@ public:
 
     explicit JITData(unsigned propertyCacheSize, unsigned poolSize, const JITCode&, ExitVector&&);
 
-    void finalizeUnconditionally()
+    void reconcileWeakReferencesAtGCEnd()
     {
         m_dummyArrayProfile.clear();
     }

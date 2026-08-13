@@ -782,9 +782,9 @@ private:
     void harvestWeakReferences();
 
     template<typename CellType, typename CellSet>
-    void finalizeMarkedUnconditionalFinalizers(CellSet&, CollectionScope);
+    void reconcileWeakReferencesInMarkedCells(CellSet&, CollectionScope);
 
-    void finalizeUnconditionalFinalizers();
+    void reconcileWeakReferencesAtGCEnd();
 
     void deleteUnmarkedCompiledCode();
     JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);
@@ -1215,14 +1215,14 @@ public:
         IsoSubspace space;
         IsoCellSet clearableCodeSet;
         IsoCellSet outputConstraintsSet;
-        IsoCellSet finalizerSet;
+        IsoCellSet weakReconciliationSet;
 
         template<typename... Arguments>
         ScriptExecutableSpaceAndSets(Arguments&&... arguments)
             : space(std::forward<Arguments>(arguments)...)
             , clearableCodeSet(space)
             , outputConstraintsSet(space)
-            , finalizerSet(space)
+            , weakReconciliationSet(space)
         {
         }
 
@@ -1235,7 +1235,7 @@ public:
 
         static IsoCellSet& clearableCodeSetFor(Subspace& space) { return setAndSpaceFor(space).clearableCodeSet; }
         static IsoCellSet& outputConstraintsSetFor(Subspace& space) { return setAndSpaceFor(space).outputConstraintsSet; }
-        static IsoCellSet& finalizerSetFor(Subspace& space) { return setAndSpaceFor(space).finalizerSet; }
+        static IsoCellSet& weakReconciliationSetFor(Subspace& space) { return setAndSpaceFor(space).weakReconciliationSet; }
     };
 
     DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER(evalExecutableSpace, ScriptExecutableSpaceAndSets)

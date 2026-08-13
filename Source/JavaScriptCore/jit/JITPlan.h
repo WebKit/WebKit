@@ -85,7 +85,7 @@ public:
 
     virtual CompilationResult finalize() = 0;
 
-    virtual void finalizeInGC() { }
+    virtual void reconcileWeakReferencesAtGCEnd() { }
 
     void notifyCompiling();
     virtual void notifyReady();

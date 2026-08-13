@@ -411,7 +411,7 @@ void JSWebAssemblyInstance::clearJSCallICs(VM& vm)
     }
 }
 
-void JSWebAssemblyInstance::finalizeUnconditionally(VM& vm, CollectionScope)
+void JSWebAssemblyInstance::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
 {
     for (unsigned index = 0; index < numImportFunctions(); ++index) {
         auto* info = importFunctionInfo(index);

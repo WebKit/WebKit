@@ -279,7 +279,7 @@ public:
 
     Structure* trySingleTransition() const;
 
-    void finalizeUnconditionally(VM&, CollectionScope);
+    void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope);
 
 private:
     friend class SingleSlotTransitionWeakOwner;

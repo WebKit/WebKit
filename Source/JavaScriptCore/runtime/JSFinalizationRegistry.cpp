@@ -57,8 +57,8 @@ void JSFinalizationRegistry::finishCreation(VM& vm, JSGlobalObject* globalObject
         Base::internalField(index).setWithoutWriteBarrier(values[index]);
     internalField(Field::Callback).setWithoutWriteBarrier(callback);
 
-    // Make sure we init the DOM wrapper for our document since it must be allocated before finalizeUnconditionally is called. finalizeUnconditionally,
-    // is called during the GC flip so no JS objects can be allocated there. This only works because we no longer weakly hold on to DOM wrappers.
+    // Init the DOM wrapper for our document now: reconciliation runs during the GC flip, where no
+    // JS objects can be allocated. This only works because we no longer weakly hold DOM wrappers.
     globalObject->globalObjectMethodTable()->currentScriptExecutionOwner(globalObject);
 }
 
@@ -97,7 +97,7 @@ void JSFinalizationRegistry::destroy(JSCell* table)
     static_cast<JSFinalizationRegistry*>(table)->~JSFinalizationRegistry();
 }
 
-void JSFinalizationRegistry::finalizeUnconditionally(VM& vm, CollectionScope)
+void JSFinalizationRegistry::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
 {
     Locker locker { cellLock() };
 

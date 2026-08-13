@@ -704,7 +704,7 @@ public:
     bool hasScopedWatchpointSet(WatchpointSet*);
 #endif
 
-    void finalizeUnconditionally(VM&, CollectionScope);
+    void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope);
     void dump(PrintStream&) const;
 
     struct SymbolTableRareData {

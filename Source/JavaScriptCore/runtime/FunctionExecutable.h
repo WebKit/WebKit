@@ -262,7 +262,7 @@ public:
 
     TemplateObjectMap& ensureTemplateObjectMap(VM&);
 
-    void finalizeUnconditionally(VM&, CollectionScope);
+    void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope);
 
     JSString* toString(JSGlobalObject*);
     JSString* asStringConcurrently() const

@@ -44,11 +44,11 @@ inline void FunctionExecutable::notifyCreation(VM& vm, JSFunction* function, con
         m_unlinkedExecutable->setSingletonHasBeenInvalidated();
 }
 
-inline void FunctionExecutable::finalizeUnconditionally(VM& vm, CollectionScope collectionScope)
+inline void FunctionExecutable::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope collectionScope)
 {
-    m_singleton.finalizeUnconditionally(vm, collectionScope);
-    finalizeCodeBlockEdge(vm, m_codeBlockForCall);
-    finalizeCodeBlockEdge(vm, m_codeBlockForConstruct);
+    m_singleton.reconcileWeakReferencesAtGCEnd(vm, collectionScope);
+    jettisonCodeBlockEdgeIfDead(vm, m_codeBlockForCall);
+    jettisonCodeBlockEdgeIfDead(vm, m_codeBlockForConstruct);
     vm.heap.functionExecutableSpaceAndSet.outputConstraintsSet.remove(this);
 }
 
