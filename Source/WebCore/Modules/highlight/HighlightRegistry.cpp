@@ -119,12 +119,15 @@ Vector<HighlightHitResult> HighlightRegistry::highlightsFromPoint(Document& docu
 
 void HighlightRegistry::setFromMapLike(AtomString&& key, Ref<Highlight>&& value)
 {
+    if (RefPtr previousHighlight = m_map.get(key))
+        previousHighlight->repaint();
+
     auto addResult = m_map.set(key, WTF::move(value));
     if (addResult.isNewEntry) {
         ASSERT(!m_highlightNames.contains(key));
         m_highlightNames.append(WTF::move(key));
-        protect(addResult.iterator->value)->repaint();
     }
+    protect(addResult.iterator->value)->repaint();
 }
 
 void HighlightRegistry::clear()

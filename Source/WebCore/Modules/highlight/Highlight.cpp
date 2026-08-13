@@ -41,10 +41,17 @@ void Highlight::repaintRange(const AbstractRange& range)
     auto sortedRange = makeSimpleRange(range);
     if (is_gt(treeOrder<ComposedTree>(sortedRange.start, sortedRange.end)))
         std::swap(sortedRange.start, sortedRange.end);
+    // Highlight decorations can paint outside a renderer's ink overflow, so also repaint containing blocks (collected to avoid redundant repaints of shared containers).
+    SingleThreadWeakHashSet<RenderBlock> containingBlocks;
     for (Ref node : intersectingNodes(sortedRange)) {
-        if (CheckedPtr renderer = node->renderer())
+        if (CheckedPtr renderer = node->renderer()) {
             renderer->repaint();
+            if (CheckedPtr containingBlock = renderer->containingBlock())
+                containingBlocks.add(*containingBlock);
+        }
     }
+    for (CheckedRef containingBlock : containingBlocks)
+        containingBlock->repaint();
 }
 
 Ref<Highlight> Highlight::create(FixedVector<std::reference_wrapper<AbstractRange>>&& initialRanges)
