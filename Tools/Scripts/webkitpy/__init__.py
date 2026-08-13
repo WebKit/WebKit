@@ -86,7 +86,7 @@ from webkitcorepy import AutoInstall, Package, Version
 
 # If in a git worktree, share autoinstalled packages with main repo
 autoinstall_base = _get_main_repo_autoinstall_path() or os.path.join(libraries, 'autoinstalled')
-AutoInstall.set_directory(os.path.join(autoinstall_base, 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
+AutoInstall.set_directory(os.path.join(autoinstall_base, 'python-{}.{}-{}'.format(sys.version_info[0], sys.version_info[1], platform.machine())))
 
 AutoInstall.register(Package('pylint', Version(2, 13, 9)))
 AutoInstall.register(
