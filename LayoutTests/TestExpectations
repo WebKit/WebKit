@@ -8205,8 +8205,6 @@ imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-tr
 imported/w3c/web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-none.tentative.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/animation-trigger/timeline-trigger-source-starts-in-trigger-range.tentative.html [ Pass Failure ]
 
-webkit.org/b/314830 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.serviceworker.html [ Failure ]
-
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/path/shape-outside-path-000.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/path/shape-outside-path-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/path/shape-outside-path-002.html [ ImageOnlyFailure ]

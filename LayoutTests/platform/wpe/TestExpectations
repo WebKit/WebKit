@@ -1209,6 +1209,7 @@ webkit.org/b/316418 imported/w3c/web-platform-tests/html/semantics/popovers/popo
 webkit.org/b/316419 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_object_blob.html [ Pass Failure ]
 webkit.org/b/316422 css3/text-decoration/text-decoration-line-spelling-error-2.html [ Pass ImageOnlyFailure ]
 webkit.org/b/316426 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/networkState_during_loadstart.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-source-media-env-change.html [ Pass Failure ]
 
 webkit.org/b/316582 [ arm64 ] imported/w3c/web-platform-tests/wasm/core/simd/simd_f32x4_pmin_pmax.wast.js.html [ Pass Failure Timeout ]
 webkit.org/b/316583 [ arm64 ] css3/filters/filter-animation-from-none-multi-hw.html [ Pass Failure ]
@@ -1308,7 +1309,7 @@ webkit.org/b/321283 [ arm64 ] webaudio/MediaElementAudioSource/mediaelementaudio
 webkit.org/b/309266 [ Release x86_64 ] css3/scroll-snap/scroll-snap-drag-scrollbar-thumb.html [ Pass Failure ]
 webkit.org/b/252878 [ Debug ] fast/frames/exponential-frames.html [ Pass Timeout ]
 
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-inset-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/277912 [ arm64 ] imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-inset-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch-mixed.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-superellipse-negative-100.html [ ImageOnlyFailure ]
 
