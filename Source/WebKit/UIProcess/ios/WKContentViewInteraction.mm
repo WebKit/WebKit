@@ -16110,10 +16110,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (UIImage *)_presentationSnapshotForPreviewItemController:(UIPreviewItemController *)controller
 {
-    if (!_positionInformation.textIndicator->contentImage())
+    RefPtr textIndicator = _positionInformation.textIndicator;
+    if (!textIndicator || !textIndicator->contentImage())
         return nullptr;
 
-    auto nativeImage = protect(_positionInformation.textIndicator->contentImage())->nativeImage();
+    auto nativeImage = protect(textIndicator->contentImage())->nativeImage();
     if (!nativeImage)
         return nullptr;
 
@@ -16122,9 +16123,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSArray *)_presentationRectsForPreviewItemController:(UIPreviewItemController *)controller
 {
-    if (_positionInformation.textIndicator->contentImage()) {
-        auto origin = _positionInformation.textIndicator->textBoundingRectInRootViewCoordinates().location();
-        return createNSArray(_positionInformation.textIndicator->textRectsInBoundingRectCoordinates(), [&] (CGRect rect) {
+    RefPtr textIndicator = _positionInformation.textIndicator;
+    if (textIndicator && textIndicator->contentImage()) {
+        auto origin = textIndicator->textBoundingRectInRootViewCoordinates().location();
+        return createNSArray(textIndicator->textRectsInBoundingRectCoordinates(), [&] (CGRect rect) {
             return [NSValue valueWithCGRect:CGRectOffset(rect, origin.x(), origin.y())];
         }).autorelease();
     } else {

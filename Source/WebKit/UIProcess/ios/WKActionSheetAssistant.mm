@@ -225,7 +225,7 @@ static const CGFloat presentationElementRectPadding = 15;
         return CGRectZero;
 
     RefPtr textIndicator = _positionInformation->textIndicator;
-    if (textIndicator->textRectsInBoundingRectCoordinates().isEmpty())
+    if (!textIndicator || textIndicator->textRectsInBoundingRectCoordinates().isEmpty())
         return CGRectZero;
 
     WebCore::FloatPoint touchLocation = _positionInformation->request.point;
@@ -488,7 +488,8 @@ static bool isJavaScriptURL(NSURL *url)
     if (std::max(leftInset, rightInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetWidth(visibleRect) && std::max(topInset, bottomInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetHeight(visibleRect))
         return WKActionSheetPresentAtTouchLocation;
 
-    if (elementInfo.type == _WKActivatedElementTypeLink && positionInfo.textIndicator->textRectsInBoundingRectCoordinates().size())
+    RefPtr textIndicator = positionInfo.textIndicator;
+    if (elementInfo.type == _WKActivatedElementTypeLink && textIndicator && !textIndicator->textRectsInBoundingRectCoordinates().isEmpty())
         return WKActionSheetPresentAtClosestIndicatorRect;
 
     return WKActionSheetPresentAtElementRect;
