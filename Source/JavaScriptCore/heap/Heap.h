@@ -739,14 +739,14 @@ private:
     JS_EXPORT_PRIVATE void acquireAccessSlow();
     JS_EXPORT_PRIVATE void releaseAccessSlow();
     
-    bool handleNeedFinalize(unsigned);
-    void handleNeedFinalize();
+    bool handleNeedCollectionEpilogue(unsigned);
+    void handleNeedCollectionEpilogue();
     
     bool relinquishConn(unsigned);
     void finishRelinquishingConn();
     
-    void setNeedFinalize();
-    void waitWhileNeedFinalize();
+    void setNeedCollectionEpilogue();
+    void waitWhileNeedCollectionEpilogue();
     
     void setMutatorWaiting();
     void clearMutatorWaiting();
@@ -794,8 +794,8 @@ private:
     void resumeCompilerThreads();
     void gatherExtraHeapData(HeapProfiler&);
     void removeDeadHeapSnapshotNodes(HeapProfiler&);
-    void finalize();
-    void sweepInFinalize();
+    void runCollectionEpilogue();
+    void sweepEagerlyInEpilogue();
     
     void sweepAllLogicallyEmptyWeakBlocks();
     bool sweepNextLogicallyEmptyWeakBlock();
@@ -997,7 +997,7 @@ private:
     static constexpr unsigned mutatorHasConnBit = 1u << 0u; // Must also be protected by threadLock.
     static constexpr unsigned stoppedBit = 1u << 1u; // Only set when !hasAccessBit
     static constexpr unsigned hasAccessBit = 1u << 2u;
-    static constexpr unsigned needFinalizeBit = 1u << 3u;
+    static constexpr unsigned needCollectionEpilogueBit = 1u << 3u;
     static constexpr unsigned mutatorWaitingBit = 1u << 4u; // Allows the mutator to use this as a condition variable.
     Atomic<unsigned> m_worldState;
     bool m_worldIsStopped { false };

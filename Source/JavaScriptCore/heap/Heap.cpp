@@ -1861,7 +1861,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         m_signpostMessage = { };
     }
 
-    setNeedFinalize();
+    setNeedCollectionEpilogue();
 
     MonotonicTime now = MonotonicTime::now();
     if (m_maxEdenSizeForRateLimiting) {
@@ -1908,20 +1908,20 @@ NEVER_INLINE bool Heap::finishChangingPhase(GCConductor conn)
             if (conn == GCConductor::Collector)
                 resumeTheMutator();
             else
-                handleNeedFinalize();
+                handleNeedCollectionEpilogue();
         } else {
             RELEASE_ASSERT(!suspendedBefore);
             RELEASE_ASSERT(suspendedAfter);
             
             if (conn == GCConductor::Collector) {
-                waitWhileNeedFinalize();
+                waitWhileNeedCollectionEpilogue();
                 if (!stopTheMutator()) {
                     dataLogLnIf(HeapInternal::verbose, "Returning false.");
                     return false;
                 }
             } else {
                 sanitizeStackForVM(vm());
-                handleNeedFinalize();
+                handleNeedCollectionEpilogue();
             }
             stopThePeriphery(conn);
         }
@@ -2093,7 +2093,7 @@ void Heap::stopIfNecessarySlow()
     RELEASE_ASSERT(m_worldState.load() & hasAccessBit);
     RELEASE_ASSERT(!(m_worldState.load() & stoppedBit));
     
-    handleNeedFinalize();
+    handleNeedCollectionEpilogue();
     m_mutatorDidRun = true;
 }
 
@@ -2105,9 +2105,9 @@ bool Heap::stopIfNecessarySlow(unsigned oldState)
     RELEASE_ASSERT(oldState & hasAccessBit);
     RELEASE_ASSERT(!(oldState & stoppedBit));
     
-    // It's possible for us to wake up with finalization already requested but the world not yet
-    // resumed. If that happens, we can't run finalization yet.
-    if (handleNeedFinalize(oldState))
+    // It's possible for us to wake up with the epilogue already requested but the world not yet
+    // resumed. If that happens, we can't run the epilogue yet.
+    if (handleNeedCollectionEpilogue(oldState))
         return true;
 
     // FIXME: When entering the concurrent phase, we could arrange for this branch not to fire, and then
@@ -2210,7 +2210,7 @@ void Heap::acquireAccessSlow()
         RELEASE_ASSERT(!(oldState & stoppedBit));
         unsigned newState = oldState | hasAccessBit;
         if (m_worldState.compareExchangeWeak(oldState, newState)) {
-            handleNeedFinalize();
+            handleNeedCollectionEpilogue();
             m_mutatorDidRun = true;
             stopIfNecessary();
             return;
@@ -2231,7 +2231,7 @@ void Heap::releaseAccessSlow()
             RELEASE_ASSERT_NOT_REACHED();
         }
         
-        if (handleNeedFinalize(oldState))
+        if (handleNeedCollectionEpilogue(oldState))
             continue;
         
         unsigned newState = oldState & ~(hasAccessBit | mutatorHasConnBit);
@@ -2288,16 +2288,16 @@ void Heap::relinquishConn()
     while (relinquishConn(m_worldState.load())) { }
 }
 
-NEVER_INLINE bool Heap::handleNeedFinalize(unsigned oldState)
+NEVER_INLINE bool Heap::handleNeedCollectionEpilogue(unsigned oldState)
 {
     RELEASE_ASSERT(oldState & hasAccessBit);
     RELEASE_ASSERT(!(oldState & stoppedBit));
     
-    if (!(oldState & needFinalizeBit))
+    if (!(oldState & needCollectionEpilogueBit))
         return false;
-    if (m_worldState.compareExchangeWeak(oldState, oldState & ~needFinalizeBit)) {
-        finalize();
-        // Wake up anyone waiting for us to finalize. Note that they may have woken up already, in
+    if (m_worldState.compareExchangeWeak(oldState, oldState & ~needCollectionEpilogueBit)) {
+        runCollectionEpilogue();
+        // Wake up anyone waiting for us to run the epilogue. Note that they may have woken up already, in
         // which case they would be waiting for us to release heap access.
         ParkingLot::unparkAll(&m_worldState);
         return true;
@@ -2305,26 +2305,26 @@ NEVER_INLINE bool Heap::handleNeedFinalize(unsigned oldState)
     return true;
 }
 
-void Heap::handleNeedFinalize()
+void Heap::handleNeedCollectionEpilogue()
 {
-    while (handleNeedFinalize(m_worldState.load())) { }
+    while (handleNeedCollectionEpilogue(m_worldState.load())) { }
 }
 
-void Heap::setNeedFinalize()
+void Heap::setNeedCollectionEpilogue()
 {
-    m_worldState.exchangeOr(needFinalizeBit);
+    m_worldState.exchangeOr(needCollectionEpilogueBit);
     ParkingLot::unparkAll(&m_worldState);
     m_stopIfNecessaryTimer->scheduleSoon();
 }
 
-void Heap::waitWhileNeedFinalize()
+void Heap::waitWhileNeedCollectionEpilogue()
 {
     for (;;) {
         unsigned oldState = m_worldState.load();
-        if (!(oldState & needFinalizeBit)) {
-            // This means that either there was no finalize request or the main thread will finalize
+        if (!(oldState & needCollectionEpilogueBit)) {
+            // This means that either there was no epilogue request or the main thread will run it
             // with heap access, so a subsequent call to stopTheWorld() will return only when
-            // finalize finishes.
+            // the epilogue finishes.
             return;
         }
         ParkingLot::compareAndPark(&m_worldState, oldState);
@@ -2347,18 +2347,18 @@ void Heap::notifyThreadStopping(const AbstractLocker&)
     ParkingLot::unparkAll(&m_worldState);
 }
 
-void Heap::finalize()
+void Heap::runCollectionEpilogue()
 {
     MonotonicTime before;
     if (Options::logGC()) [[unlikely]] {
         before = MonotonicTime::now();
-        dataLog("[GC<", RawPointer(this), ">: finalize ");
+        dataLog("[GC<", RawPointer(this), ">: epilogue ");
     }
     
     {
         SweepingScope sweepingScope(*this);
         deleteSourceProviderCaches();
-        sweepInFinalize();
+        sweepEagerlyInEpilogue();
     }
     
     if (HasOwnPropertyCache* cache = vm().hasOwnPropertyCache())
@@ -2427,7 +2427,7 @@ void Heap::waitForCollection(Ticket ticket)
         });
 }
 
-void Heap::sweepInFinalize()
+void Heap::sweepEagerlyInEpilogue()
 {
     m_objectSpace.sweepPreciseAllocations();
 #if ENABLE(WEBASSEMBLY)
