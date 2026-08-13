@@ -46,6 +46,15 @@ TextTrackList::TextTrackList(ScriptExecutionContext* context)
 
 TextTrackList::~TextTrackList() = default;
 
+void TextTrackList::setOpaqueRoot(TrackOpaqueRoot& trackOpaqueRoot)
+{
+    TrackListBase::setOpaqueRoot(trackOpaqueRoot);
+    for (Ref track : m_addTrackTracks)
+        track->setOpaqueRoot(trackOpaqueRoot);
+    for (Ref track : m_elementTracks)
+        track->setOpaqueRoot(trackOpaqueRoot);
+}
+
 unsigned TextTrackList::length() const
 {
     return m_addTrackTracks.size() + m_elementTracks.size() + m_inbandTracks.size();
