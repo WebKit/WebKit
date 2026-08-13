@@ -146,7 +146,7 @@ enum class SDKAlignedBehavior {
     ScrollPocketInFullscreen,
     IgnorePageLocationDuringHardPocketEligibilityCheck,
     AdjustColorExtensionsForHorizontalBannerViewOverlays,
-    NoMediaLayerTeardownOnPageVisibilityChangeQuirk,
+    NetworkProcessInheritsNetworkAccessFromUIProcess,
 
     NumberOfBehaviors
 };
