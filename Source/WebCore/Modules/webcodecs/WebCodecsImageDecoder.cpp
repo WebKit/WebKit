@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "ContextDestructionObserverInlines.h"
 #include "ImageDecoder.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertDictionary.h"
@@ -60,7 +61,7 @@ Ref<WebCodecsImageDecoder> WebCodecsImageDecoder::create(ScriptExecutionContext&
 }
 
 WebCodecsImageDecoder::WebCodecsImageDecoder(ScriptExecutionContext& context, Init&& init)
-    : WebCodecsBase(context)
+    : WebCodecsControlMessageQueue(context)
     , m_completedPromise(makeUniqueRef<CompletedPromise>())
     , m_tracks(WebCodecsImageTrackList::create())
 {
@@ -273,7 +274,7 @@ ExceptionOr<void> WebCodecsImageDecoder::resetDecoder(const Exception& exception
         return Exception { ExceptionCode::InvalidStateError, "ImageDecoder is closed"_s };
 
     // Abort any active decoding operation.
-    clearControlMessageQueueAndMaybeScheduleDequeueEvent();
+    clearControlMessageQueue();
 
     // Reject pendding decoding promises with exception.
     auto pendingDecodePromises = std::exchange(m_pendingDecodePromises, { });

@@ -14565,6 +14565,8 @@
 		724DCF1B284853650026ACF4 /* ImageBufferAllocator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferAllocator.cpp; sourceTree = "<group>"; };
 		724DCF1C284853650026ACF4 /* ImageBufferAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferAllocator.h; sourceTree = "<group>"; };
 		724DCF1D28485C330026ACF4 /* FilterResults.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FilterResults.cpp; sourceTree = "<group>"; };
+		724DD271302D21F200AC38E2 /* WebCodecsControlMessageQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCodecsControlMessageQueue.h; sourceTree = "<group>"; };
+		724DD272302D21F200AC38E2 /* WebCodecsControlMessageQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCodecsControlMessageQueue.cpp; sourceTree = "<group>"; };
 		724E09062901CD27000AF3EB /* GraphicsContextSwitcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextSwitcher.cpp; sourceTree = "<group>"; };
 		724E09072901CD27000AF3EB /* GraphicsContextSwitcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsContextSwitcher.h; sourceTree = "<group>"; };
 		724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTBlendMinMax.cpp; sourceTree = "<group>"; };
@@ -40041,6 +40043,8 @@
 				4110A21128E3440C00321D09 /* WebCodecsCodecState.h */,
 				4110A20F28E3440C00321D09 /* WebCodecsCodecState.idl */,
 				459CBAAA2C7647410003743B /* WebCodecsControlMessage.h */,
+				724DD272302D21F200AC38E2 /* WebCodecsControlMessageQueue.cpp */,
+				724DD271302D21F200AC38E2 /* WebCodecsControlMessageQueue.h */,
 				4183870C2B679AC100AD8881 /* WebCodecsEncodedAudioChunk.cpp */,
 				9A87D9ED2A82967A00EE7A8A /* WebCodecsEncodedAudioChunk.h */,
 				4183870B2B679AC100AD8881 /* WebCodecsEncodedAudioChunk.idl */,

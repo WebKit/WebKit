@@ -75,7 +75,6 @@ WakeLockSentinel
 WebAnimation
 WebCodecsAudioDecoder conditional=WEB_CODECS
 WebCodecsAudioEncoder conditional=WEB_CODECS
-WebCodecsImageDecoder conditional=WEB_CODECS
 WebCodecsVideoDecoder conditional=WEB_CODECS
 WebCodecsVideoEncoder conditional=WEB_CODECS
 WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA

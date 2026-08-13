@@ -28,12 +28,11 @@
 #if ENABLE(WEB_CODECS)
 
 #include "DOMPromiseProxy.h"
-#include "EventTargetInterfaces.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "SharedBuffer.h"
-#include "WebCodecsBase.h"
+#include "WebCodecsControlMessageQueue.h"
 #include "WebCodecsImageTrackList.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
@@ -56,7 +55,7 @@ using ImageBufferSource = Variant
     , Ref<ReadableStream>
 >;
 
-class WebCodecsImageDecoder final : public WebCodecsBase {
+class WebCodecsImageDecoder final : public WebCodecsControlMessageQueue {
     WTF_MAKE_TZONE_ALLOCATED(WebCodecsImageDecoder);
 public:
     ~WebCodecsImageDecoder();
@@ -101,9 +100,6 @@ private:
     void NODELETE suspend(ReasonForSuspension) final;
     void stop() final;
 
-    // EventTarget.
-    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::WebCodecsImageDecoder; }
-
     void sinkStreamToInternalDecoder(const Ref<ReadableStream>&, const String& type);
     void setInternalDecoderData(FragmentedSharedBuffer&, const String& type, bool allDataReceived);
     void establishTrackList();
@@ -134,7 +130,5 @@ private:
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_EVENTTARGET(WebCodecsImageDecoder)
 
 #endif

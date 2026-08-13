@@ -258,14 +258,10 @@ PASS VideoColorSpace interface: new VideoColorSpace({primaries: 'bt709', transfe
 PASS VideoColorSpace interface: new VideoColorSpace({primaries: 'bt709', transfer: 'bt709', matrix: 'bt709', fullRange: true}) must inherit property "fullRange" with the proper type
 PASS VideoColorSpace interface: new VideoColorSpace({primaries: 'bt709', transfer: 'bt709', matrix: 'bt709', fullRange: true}) must inherit property "toJSON()" with the proper type
 PASS VideoColorSpace interface: default toJSON operation on new VideoColorSpace({primaries: 'bt709', transfer: 'bt709', matrix: 'bt709', fullRange: true})
-FAIL ImageDecoder interface: existence and properties of interface object assert_equals: prototype of self's property "ImageDecoder" is not Function.prototype expected function "function () {
-    [native code]
-}" but got function "function EventTarget() {
-    [native code]
-}"
+PASS ImageDecoder interface: existence and properties of interface object
 PASS ImageDecoder interface object length
 PASS ImageDecoder interface object name
-FAIL ImageDecoder interface: existence and properties of interface prototype object assert_equals: prototype of ImageDecoder.prototype is not Object.prototype expected object "[object Object]" but got object "[object EventTarget]"
+PASS ImageDecoder interface: existence and properties of interface prototype object
 PASS ImageDecoder interface: existence and properties of interface prototype object's "constructor" property
 PASS ImageDecoder interface: existence and properties of interface prototype object's @@unscopables property
 PASS ImageDecoder interface: attribute type

@@ -35,7 +35,7 @@
     InterfaceName=ImageDecoder,
     JSCustomMarkFunction,
     SecureContext
-] interface WebCodecsImageDecoder : EventTarget {
+] interface WebCodecsImageDecoder {
     [CallWith=CurrentScriptExecutionContext] constructor(WebCodecsImageDecoderInit init);
 
     readonly attribute DOMString type;

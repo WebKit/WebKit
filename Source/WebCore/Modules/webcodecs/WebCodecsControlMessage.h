@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "WebCodecsBase.h"
+#include "WebCodecsControlMessageQueue.h"
 #include <wtf/Function.h>
 
 namespace WebCore {
@@ -39,8 +39,8 @@ enum class WebCodecsControlMessageOutcome : bool {
 
 class WebCodecsControlMessage final {
 public:
-    WebCodecsControlMessage(WebCodecsBase& codec, Function<WebCodecsControlMessageOutcome()>&& message)
-        : m_pendingActivity(codec.makePendingActivity(codec))
+    WebCodecsControlMessage(WebCodecsControlMessageQueue& codecQueue, Function<WebCodecsControlMessageOutcome()>&& message)
+        : m_pendingActivity(codecQueue.makePendingActivity(codecQueue))
         , m_message(WTF::move(message))
     {
     }
@@ -57,7 +57,7 @@ public:
     }
 
 private:
-    Ref<ActiveDOMObject::PendingActivity<WebCodecsBase>> m_pendingActivity;
+    Ref<ActiveDOMObject::PendingActivity<WebCodecsControlMessageQueue>> m_pendingActivity;
     Function<WebCodecsControlMessageOutcome()> m_message;
 };
 

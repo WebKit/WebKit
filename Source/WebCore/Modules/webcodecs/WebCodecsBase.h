@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,74 +27,40 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "WebCodecsCodecState.h"
-#include <WebCore/ActiveDOMObject.h>
-#include <WebCore/EventTarget.h>
-#include <wtf/Deque.h>
-#include <wtf/TZoneMalloc.h>
-#include <wtf/ThreadSafeWeakPtr.h>
+#include "EventTarget.h"
+#include "WebCodecsControlMessageQueue.h"
 
 namespace WebCore {
 
-class WebCodecsControlMessage;
-
-// WebCodecsBase implements the "Control Message Queue"
-// as per https://w3c.github.io/webcodecs/#control-message-queue-slot
-// And handle "Codec Saturation"
-// as per https://w3c.github.io/webcodecs/#saturated
 class WebCodecsBase
-    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsBase>
-    , public ActiveDOMObject
+    : public WebCodecsControlMessageQueue
     , public EventTarget {
     WTF_MAKE_TZONE_ALLOCATED(WebCodecsBase);
 public:
-    virtual ~WebCodecsBase();
-
-    WebCodecsCodecState state() const { return m_state; }
-
     // ActiveDOMObject.
-    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
-    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
-    bool NODELETE virtualHasPendingActivity() const final;
+    void ref() const final { WebCodecsControlMessageQueue::ref(); }
+    void deref() const final { WebCodecsControlMessageQueue::deref(); }
+
     USING_CAN_MAKE_WEAKPTR(EventTarget);
 
 protected:
-    WebCodecsBase(ScriptExecutionContext&);
+    using WebCodecsControlMessageQueue::WebCodecsControlMessageQueue;
+
     ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
 
-    void setState(WebCodecsCodecState state) { m_state = state; }
-
-    size_t codecQueueSize() const { return m_codecControlMessagesPending; }
-    void queueControlMessageAndProcess(WebCodecsControlMessage&&);
     void queueCodecControlMessageAndProcess(WebCodecsControlMessage&&);
-    void processControlMessageQueue();
-    void clearControlMessageQueue();
     void clearControlMessageQueueAndMaybeScheduleDequeueEvent();
-    void NODELETE blockControlMessageQueue();
-    void unblockControlMessageQueue();
-
-    virtual size_t maximumCodecOperationsEnqueued() const { return 1; }
-    void incrementCodecOperationCount() { m_codecOperationsPending++; };
-    void decrementCodecOperationCountAndMaybeProcessControlMessageQueue();
 
 private:
     // EventTarget
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
+    void refEventTarget() final { WebCodecsControlMessageQueue::ref(); }
+    void derefEventTarget() final { WebCodecsControlMessageQueue::deref(); }
 
-    // Equivalent to spec's "Increment [[encodeQueueSize]]." or "Increment [[decodeQueueSize]]"
-    void NODELETE incrementCodecQueueSize();
     // Equivalent to spec's "Decrement [[encodeQueueSize]] or "Decrement [[decodeQueueSize]]" and run the Schedule Dequeue Event algorithm"
     void decrementCodecQueueSizeAndScheduleDequeueEvent();
-    bool isCodecSaturated() const { return m_codecOperationsPending >= maximumCodecOperationsEnqueued(); }
     void scheduleDequeueEvent();
 
-    bool m_isMessageQueueBlocked { false };
-    size_t m_codecControlMessagesPending { 0 };
-    size_t m_codecOperationsPending { 0 };
     bool m_dequeueEventScheduled { false };
-    Deque<WebCodecsControlMessage> m_controlMessageQueue;
-    WebCodecsCodecState m_state { WebCodecsCodecState::Unconfigured };
 };
 
 } // namespace WebCore

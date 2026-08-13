@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,26 +39,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCodecsBase);
 
-WebCodecsBase::WebCodecsBase(ScriptExecutionContext& context)
-    : ActiveDOMObject(&context)
-{
-}
-
-WebCodecsBase::~WebCodecsBase() = default;
-
 ScriptExecutionContext* WebCodecsBase::scriptExecutionContext() const
 {
-    return ActiveDOMObject::scriptExecutionContext();
-}
-
-void WebCodecsBase::queueControlMessageAndProcess(WebCodecsControlMessage&& message)
-{
-    if (m_isMessageQueueBlocked) {
-        m_controlMessageQueue.append(WTF::move(message));
-        return;
-    }
-    m_controlMessageQueue.append(WTF::move(message));
-    processControlMessageQueue();
+    return WebCodecsControlMessageQueue::scriptExecutionContext();
 }
 
 void WebCodecsBase::queueCodecControlMessageAndProcess(WebCodecsControlMessage&& message)
@@ -73,77 +56,31 @@ void WebCodecsBase::queueCodecControlMessageAndProcess(WebCodecsControlMessage&&
     } });
 }
 
-void WebCodecsBase::scheduleDequeueEvent()
+void WebCodecsBase::clearControlMessageQueueAndMaybeScheduleDequeueEvent()
 {
-    if (m_dequeueEventScheduled)
-        return;
-
-    m_dequeueEventScheduled = true;
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& codecs) mutable {
-        codecs.dispatchEvent(Event::create(eventNames().dequeueEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        codecs.m_dequeueEventScheduled = false;
-    });
-}
-
-void WebCodecsBase::processControlMessageQueue()
-{
-    while (!m_isMessageQueueBlocked && !m_controlMessageQueue.isEmpty()) {
-        auto& frontMessage = m_controlMessageQueue.first();
-        auto outcome = frontMessage();
-        if (outcome == WebCodecsControlMessageOutcome::NotProcessed)
-            break;
-        m_controlMessageQueue.removeFirst();
+    clearControlMessageQueue();
+    if (codecQueueSize()) {
+        resetCodecQueueSize();
+        scheduleDequeueEvent();
     }
-}
-
-void WebCodecsBase::incrementCodecQueueSize()
-{
-    m_codecControlMessagesPending++;
 }
 
 // Equivalent to spec's "Decrement [[encodeQueueSize]] or "Decrement [[decodeQueueSize]]" and run the Schedule Dequeue Event algorithm"
 void WebCodecsBase::decrementCodecQueueSizeAndScheduleDequeueEvent()
 {
-    m_codecControlMessagesPending--;
+    decrementCodecQueueSize();
     scheduleDequeueEvent();
 }
 
-void WebCodecsBase::decrementCodecOperationCountAndMaybeProcessControlMessageQueue()
+void WebCodecsBase::scheduleDequeueEvent()
 {
-    ASSERT(m_codecOperationsPending > 0);
-    m_codecOperationsPending--;
-    if (!isCodecSaturated())
-        processControlMessageQueue();
-}
+    if (std::exchange(m_dequeueEventScheduled, true))
+        return;
 
-void WebCodecsBase::clearControlMessageQueue()
-{
-    m_controlMessageQueue.clear();
-}
-
-void WebCodecsBase::clearControlMessageQueueAndMaybeScheduleDequeueEvent()
-{
-    clearControlMessageQueue();
-    if (m_codecControlMessagesPending) {
-        m_codecControlMessagesPending = 0;
-        scheduleDequeueEvent();
-    }
-}
-
-void WebCodecsBase::blockControlMessageQueue()
-{
-    m_isMessageQueueBlocked = true;
-}
-
-void WebCodecsBase::unblockControlMessageQueue()
-{
-    m_isMessageQueueBlocked = false;
-    processControlMessageQueue();
-}
-
-bool WebCodecsBase::virtualHasPendingActivity() const
-{
-    return m_codecControlMessagesPending || m_isMessageQueueBlocked;
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& codec) mutable {
+        codec.dispatchEvent(Event::create(eventNames().dequeueEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        codec.m_dequeueEventScheduled = false;
+    });
 }
 
 } // namespace WebCore
