@@ -5197,6 +5197,7 @@ ipc/stream-sync-reply-shared-memory.html [ Skip ]
 ipc/convert-to-luminance-mask-float16.html [ Skip ]
 ipc/empty-svgfilterrenderer-expression-crash.html [ Skip ]
 webkit.org/b/297737 ipc/send-gradient.html [ Skip ]
+webkit.org/b/297737 ipc/send-filter.html [ Skip ]
 
 webkit.org/b/314373 media/media-source/media-source-real-webm-fastseek.html [ Failure ]
 webkit.org/b/314373 media/media-source/media-source-real-webm-remove.html [ Failure ]
@@ -5270,8 +5271,6 @@ webkit.org/b/319954 [ arm64 ] imported/w3c/web-platform-tests/css/css-text/white
 webkit.org/b/317966 http/tests/web-locks/web-lock-in-serviceworker.html [ Crash Failure Pass ]
 webkit.org/b/320245 [ x86_64 ] imported/w3c/web-platform-tests/web-locks/bfcache/abort.tentative.https.html [ Pass Failure ]
 webkit.org/b/317968 [ x86_64 ] imported/w3c/web-platform-tests/navigation-timing/nav2-test-redirect-server.html [ Pass Failure ]
-
-webkit.org/b/318434 ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Crash Pass ]
 
 webkit.org/b/319044 imported/w3c/web-platform-tests/html/rendering/widgets/shadow-dom.html [ Failure ]
 webkit.org/b/319045 [ Debug ] accessibility/button-in-deep-dom.html [ Timeout ]
