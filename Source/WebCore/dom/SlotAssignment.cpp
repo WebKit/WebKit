@@ -549,15 +549,19 @@ void ManualSlotAssignment::slotManualAssignmentDidChange(HTMLSlotElement& slot, 
     }
 
     ++m_slottableVersion;
-    auto effectiveCurrent = assignedNodesForSlot(slot, shadowRoot);
+    // Compute effectiveCurrent as a local copy rather than via assignedNodesForSlot, which would
+    // return a raw pointer into m_slots. tearDownRenderersAfterSlotChange below can re-enter
+    // assignedNodesForSlot via ComposedTreeIterator and trigger a WeakHashMap rehash, freeing the
+    // bucket array such a pointer would address.
+    auto effectiveCurrent = effectiveAssignedNodes(shadowRoot, current);
 
     auto scheduleSlotChangeEventIfNeeded = [&]() {
-        if (effectivePrevious.size() != (effectiveCurrent ? effectiveCurrent->size() : 0)) {
+        if (effectivePrevious.size() != effectiveCurrent.size()) {
             slot.enqueueSlotChangeEvent();
             return;
         }
-        for (unsigned i = 0; i < effectivePrevious.size();++i) {
-            if (effectivePrevious[i] != effectiveCurrent->at(i)) {
+        for (unsigned i = 0; i < effectivePrevious.size(); ++i) {
+            if (effectivePrevious[i] != effectiveCurrent[i]) {
                 slot.enqueueSlotChangeEvent();
                 return;
             }
