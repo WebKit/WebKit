@@ -20,3 +20,6 @@ root
         'User Profile'
         'Username:'
         input uid=… label=Username:
+        form autocomplete=on name=signup
+            input uid=… placeholder=Email name=email
+            button uid=… 'Sign up'

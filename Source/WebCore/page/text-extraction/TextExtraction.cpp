@@ -882,7 +882,7 @@ static inline bool shouldIncludeNodeIdentifier(NodeIdentifierInclusion inclusion
     case None:
         return false;
     case AllContainers:
-        return !std::holds_alternative<TextItemData>(data);
+        return !std::holds_alternative<TextItemData>(data) && !std::holds_alternative<FormData>(data);
     default:
         break;
     }
@@ -923,6 +923,9 @@ static inline bool shouldIncludeNodeIdentifier(NodeIdentifierInclusion inclusion
         },
         [](const SelectData&) {
             return true;
+        },
+        [](const FormData&) {
+            return false;
         },
         [inclusion](const ScrollableItemData& scrollableData) {
             if (scrollableData.isRoot)
@@ -1435,6 +1438,42 @@ static void pruneEmptyContainersRecursive(Item& item)
     });
 }
 
+static bool isRedundantFormWrapper(const Item& item)
+{
+    if (!std::holds_alternative<FormData>(item.data))
+        return false;
+
+    if (!std::get<FormData>(item.data).name.isEmpty())
+        return false;
+
+    if (!item.eventListeners.isEmpty() || !item.ariaAttributes.isEmpty() || !item.clientAttributes.isEmpty())
+        return false;
+
+    if (!item.accessibilityRole.isEmpty() || !item.title.isEmpty())
+        return false;
+
+    if (item.children.size() != 1)
+        return false;
+
+    auto& child = item.children.first();
+    if (!std::holds_alternative<ContainerType>(child.data))
+        return false;
+
+    return std::get<ContainerType>(child.data) == ContainerType::Button;
+}
+
+static void collapseRedundantFormWrappersRecursive(Item& item)
+{
+    for (auto& child : item.children) {
+        collapseRedundantFormWrappersRecursive(child);
+        if (!isRedundantFormWrapper(child))
+            continue;
+
+        auto button = WTF::move(child.children.first());
+        child = WTF::move(button);
+    }
+}
+
 static Node* NODELETE nodeFromJSHandle(JSHandleIdentifier identifier)
 {
     auto* object = WebKitJSHandle::objectForIdentifier(identifier);
@@ -1662,6 +1701,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
 
     pruneWhitespaceRecursive(root);
     pruneEmptyContainersRecursive(root);
+    collapseRedundantFormWrappersRecursive(root);
 
     return { WTF::move(root), visibleTextLength };
 }
