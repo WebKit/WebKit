@@ -1823,6 +1823,9 @@
     "imported/w3c/web-platform-tests/css/CSS2/linebox/animations/line-height-interpolation.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-anchor-position/long-anchor-chain-crash.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-animations/CSSAnimation-effect.tentative.html": [
         "slow"
     ],
