@@ -43,6 +43,7 @@ DECLARE_SYSTEM_HEADER
 @class NSColor;
 
 extern NSString *NSTextCheckingInsertionPointKey;
+extern NSString *NSTextCheckingSoftSpaceRangeKey;
 extern NSString *NSTextCheckingSuppressInitialCapitalizationKey;
 #if HAVE(INLINE_PREDICTIONS)
 extern NSString *NSTextCompletionAttributeName;

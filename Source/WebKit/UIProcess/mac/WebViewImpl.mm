@@ -6643,8 +6643,7 @@ void WebViewImpl::showInlinePredictionsForCandidate(NSTextCheckingResult *candid
         if (!weakThis)
             return;
 
-        // FIXME: rdar://105809280 Adopt NSTextCheckingSoftSpaceRangeKey once it is in more builds.
-        RetainPtr<NSValue> softSpaceRangeValue = resultDictionary[@"SoftSpaceRange"];
+        RetainPtr<NSValue> softSpaceRangeValue = resultDictionary[NSTextCheckingSoftSpaceRangeKey];
         if (!softSpaceRangeValue)
             return;
 
