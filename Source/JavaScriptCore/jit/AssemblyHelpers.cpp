@@ -278,11 +278,21 @@ void AssemblyHelpers::callExceptionFuzz(VM& vm, GPRReg exceptionReg)
         storeDouble(FPRInfo::toRegister(i), Address(GPRInfo::regT0));
     }
 
+    // An exception check can be emitted where the caller still holds its return address in the link
+    // register, so the call below has to leave that register as it found it.
+#if CPU(ARM64) || CPU(RISCV64)
+    pushPair(framePointerRegister, linkRegister);
+#endif
+
     // Set up one argument.
     move(TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
     move(TrustedImmPtr(tagCFunction<OperationPtrTag>(operationExceptionFuzzWithCallFrame)), GPRInfo::nonPreservedNonReturnGPR);
     prepareCallOperation(vm);
     call(GPRInfo::nonPreservedNonReturnGPR, OperationPtrTag);
+
+#if CPU(ARM64) || CPU(RISCV64)
+    popPair(framePointerRegister, linkRegister);
+#endif
 
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
