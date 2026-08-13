@@ -163,6 +163,18 @@ WEBKIT_OPTION_END()
 # ---------------------------------------------------------------------------
 set(SWIFT_REQUIRED ON)
 
+# Configure module building
+add_compile_options(
+    "$<$<COMPILE_LANGUAGE:Swift>:-explicit-module-build>"
+    # Needed for compatibility with modules in the (internal) SDK:
+    # https://bugs.webkit.org/show_bug.cgi?id=312083
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fexperimental-bounds-safety-attributes>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -fexperimental-late-parse-attributes>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-module-cache-path ${CMAKE_BINARY_DIR}/SwiftModuleCache>"
+)
+set_property(DIRECTORY "${CMAKE_BINARY_DIR}" APPEND PROPERTY
+    ADDITIONAL_CLEAN_FILES "${CMAKE_BINARY_DIR}/SwiftModuleCache")
+
 if (WEBKIT_SDK_IS_MACOS AND USE_APPLE_INTERNAL_SDK)
     set(WEBKIT_CODE_SIGN_IDENTITY "Safari Engineering")
     WEBKITADDITIONS_FIND_KEYCHAIN()

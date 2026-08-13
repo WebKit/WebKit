@@ -1366,34 +1366,6 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # found". -disable-sandbox skips the inner sandbox; the macros are
         # WebKit's own, so the isolation it provides isn't load-bearing here.
         list(APPEND _swift_options "-disable-sandbox")
-        # Explicit module builds (EMB) pre-build all Clang PCMs once via
-        # libSwiftScan, so each swift-frontend process reuses them rather than
-        # rebuilding from scratch. This is faster when many Swift source files
-        # import the same C++ interop modules. Targets opt in by setting
-        # ${_target}_SWIFT_EXPLICIT_MODULE_BUILD before the macro call.
-        # All Apple targets (PAL/WebGPU/WebKit on iOS and Mac) use EMB;
-        # non-Apple builds rely on -module-cache-path for implicit sharing.
-        if (${_target}_SWIFT_EXPLICIT_MODULE_BUILD)
-            list(APPEND _swift_options "-explicit-module-build")
-            # Force experimental clang attributes ON to match cached SwiftShims
-            # PCM content. SDK swiftinterfaces carry -strict-memory-safety in
-            # their swift-module-flags-ignorable, which on older swift-driver
-            # paths implicitly enables late-parse-attributes and
-            # bounds-safety-attributes when building SwiftShims PCM. Without
-            # the explicit flags here, our consumer's clang has them OFF and
-            # rejects the cached PCM with
-            #   "experimental late parsing of attributes was enabled in
-            #    precompiled file but is currently disabled" (or the
-            #    equivalent for bounds-safety).
-            # https://bugs.webkit.org/show_bug.cgi?id=312083
-            list(APPEND _swift_options
-                "-Xcc" "-fexperimental-bounds-safety-attributes"
-                "-Xcc" "-fexperimental-late-parse-attributes"
-            )
-        endif ()
-        list(APPEND _swift_options "-module-cache-path" "${CMAKE_BINARY_DIR}/SwiftModuleCache")
-        set_property(DIRECTORY "${CMAKE_BINARY_DIR}" APPEND PROPERTY ADDITIONAL_CLEAN_FILES "${CMAKE_BINARY_DIR}/SwiftModuleCache")
-        list(APPEND _swift_options "-track-system-dependencies")
         # We'll use these options both for mainstream cmake invocations of swiftc (here)
         # and for our own invocation to output an interoperability .h file (later).
         # target_compile_options deduplicates repeated tokens, so collapse each

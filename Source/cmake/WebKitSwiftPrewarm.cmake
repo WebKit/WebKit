@@ -13,6 +13,36 @@ function(WEBKIT_ADD_SWIFT_PREWARM _consumer _swift_source)
     list(FILTER _opts EXCLUDE REGEX "(-emit-clang-header-path|-import-underlying-module)")
     target_compile_options(${_prewarm} PRIVATE ${_opts})
 
+    get_target_property(_opts ${_consumer} COMPILE_DEFINITIONS)
+    target_compile_definitions(${_prewarm} PRIVATE ${_opts})
+
+    get_target_property(_opts ${_consumer} INCLUDE_DIRECTORIES)
+    target_include_directories(${_prewarm} PRIVATE ${_opts})
+    target_include_directories(${_prewarm} PRIVATE ${${_consumer}_SYSTEM_INCLUDE_DIRECTORIES})
+
+    get_target_property(_linked_libraries ${_consumer} LINK_LIBRARIES)
+    foreach (_target ${_linked_libraries})
+        if (NOT TARGET ${_target})
+            continue()
+        endif ()
+
+        get_target_property(_opts ${_target} INTERFACE_COMPILE_OPTIONS)
+        if (_opts)
+            list(FILTER _opts EXCLUDE REGEX "(-emit-clang-header-path|-import-underlying-module)")
+            target_compile_options(${_prewarm} PRIVATE ${_opts})
+        endif ()
+
+        get_target_property(_opts ${_target} INTERFACE_COMPILE_DEFINITIONS)
+        if (_opts)
+            target_compile_definitions(${_prewarm} PRIVATE ${_opts})
+        endif ()
+
+        get_target_property(_opts ${_target} INTERFACE_INCLUDE_DIRECTORIES)
+        if (_opts)
+            target_include_directories(${_prewarm} PRIVATE ${_opts})
+        endif ()
+    endforeach ()
+
     get_target_property(_consumer_bindir ${_consumer} BINARY_DIR)
     set_property(SOURCE "${_swift_source}" APPEND PROPERTY OBJECT_DEPENDS
         "${_consumer_bindir}/${_consumer}.platform-swift-args.resp")
