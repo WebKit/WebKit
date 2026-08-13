@@ -43,6 +43,7 @@ class SharedFileHandle;
 }
 
 namespace WebCore {
+struct ClientOrigin;
 enum class FileSystemWriteCloseReason : bool;
 enum class FileSystemWriteCommandType : uint8_t;
 }
@@ -62,6 +63,7 @@ public:
     const String& name() const LIFETIME_BOUND { return m_name; }
     Type type() const { return m_type; }
     uint64_t allocatedUnusedCapacity();
+    std::optional<WebCore::ClientOrigin> origin() const;
 
     const Markable<WebCore::FileSystemHandleGlobalIdentifier>& globalIdentifier() const { return m_globalIdentifier; }
     void setGlobalIdentifier(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier) { m_globalIdentifier = globalIdentifier; }
