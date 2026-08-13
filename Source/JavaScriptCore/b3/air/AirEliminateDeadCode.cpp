@@ -45,7 +45,7 @@ bool eliminateDeadCode(Code& code)
     IndexSet<StackSlot*> liveStackSlots;
     bool changed { false };
     
-    auto isArgLive = [&] (const Arg& arg) -> bool {
+    auto isArgLive = [&](const Arg& arg) -> bool {
         switch (arg.kind()) {
         case Arg::Tmp:
             if (arg.isReg())
@@ -60,7 +60,7 @@ bool eliminateDeadCode(Code& code)
         }
     };
 
-    auto isInstLiveByDefs = [&] (Inst& inst) -> bool {
+    auto isInstLiveByDefs = [&](Inst& inst) -> bool {
         // This instruction should be presumed dead, if its Args are all dead.
         bool storesToLive = false;
         inst.forEachArg(
@@ -74,11 +74,11 @@ bool eliminateDeadCode(Code& code)
         return storesToLive;
     };
 
-    auto isInstLive = [&] (Inst& inst) -> bool {
+    auto isInstLive = [&](Inst& inst) -> bool {
         return inst.hasNonArgEffects() || isInstLiveByDefs(inst);
     };
 
-    auto markArgsLive = [&] (Inst& inst) {
+    auto markArgsLive = [&](Inst& inst) {
         for (Arg& arg : inst.args()) {
             if (arg.isStack() && !arg.stackSlot()->isLocked())
                 changed |= liveStackSlots.add(arg.stackSlot());
@@ -90,7 +90,7 @@ bool eliminateDeadCode(Code& code)
         }
     };
 
-    Vector<Inst*> deadCandidatesInBackwardOrder;
+    Vector<Inst*> backingStore;
 
     for (unsigned blockIndex = code.size(); blockIndex--;) {
         BasicBlock* block = code[blockIndex];
@@ -99,42 +99,44 @@ bool eliminateDeadCode(Code& code)
         for (unsigned instIndex = block->size(); instIndex--;) {
             Inst& inst = block->at(instIndex);
             if (!isInstLive(inst))
-                deadCandidatesInBackwardOrder.append(&inst);
+                backingStore.append(&inst);
             else
                 markArgsLive(inst);
         }
     }
 
+    auto deadCandidatesInBackwardOrder = backingStore.mutableSpan();
+
     // Inst in deadCandidatesInBackwardOrder already have hasNonArgEffects() == false, invariant
     // under live-set growth, so the fixpoint skips that re-check.
-    auto handleInst = [&] (Inst& inst) -> bool {
+    auto handleInst = [&](Inst& inst) -> bool {
         if (!isInstLiveByDefs(inst))
             return false;
         markArgsLive(inst);
         return true;
     };
 
-    auto runBackward = [&] () -> bool {
+    auto runBackward = [&] -> bool {
         changed = false;
-        deadCandidatesInBackwardOrder.removeAllMatching(
+        auto [begin, end] = std::ranges::remove_if(deadCandidatesInBackwardOrder,
             [&] (Inst* inst) -> bool {
                 bool result = handleInst(*inst);
                 changed |= result;
                 return result;
             });
+        deadCandidatesInBackwardOrder = deadCandidatesInBackwardOrder.first(begin - deadCandidatesInBackwardOrder.begin());
         return changed;
     };
 
-    auto runForward = [&] () -> bool {
+    auto runForward = [&] -> bool {
         changed = false;
-        for (unsigned i = deadCandidatesInBackwardOrder.size(); i--;) {
-            bool result = handleInst(*deadCandidatesInBackwardOrder[i]);
-            if (result) {
-                deadCandidatesInBackwardOrder[i] = deadCandidatesInBackwardOrder.last();
-                deadCandidatesInBackwardOrder.removeLast();
-                changed = true;
-            }
-        }
+        auto [begin, end] = std::ranges::remove_if(deadCandidatesInBackwardOrder | std::views::reverse,
+            [&] (Inst* inst) -> bool {
+                bool result = handleInst(*inst);
+                changed |= result;
+                return result;
+            });
+        deadCandidatesInBackwardOrder = deadCandidatesInBackwardOrder.last(deadCandidatesInBackwardOrder.end() - begin.base());
         return changed;
     };
 
@@ -152,7 +154,7 @@ bool eliminateDeadCode(Code& code)
 
     // After the fixpoint, deadCandidatesInBackwardOrder holds exactly the dead Insts. Null them
     // out and sweep with the cheap !inst predicate.
-    if (deadCandidatesInBackwardOrder.isEmpty())
+    if (deadCandidatesInBackwardOrder.empty())
         return false;
 
     for (Inst* inst : deadCandidatesInBackwardOrder)
