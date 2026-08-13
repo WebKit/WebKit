@@ -192,7 +192,8 @@ static String joinProtocolStrings(const Vector<String>& protocols)
     for (size_t i = 0; i < protocols.size(); ++i) {
         if (i)
             builder.append(", "_s);
-        builder.append('\"', protocols[i], '\"');
+        if (!RFC8941::escapeString(protocols[i], builder))
+            return { };
     }
     return builder.toString();
 }

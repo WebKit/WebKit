@@ -87,18 +87,13 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
         return Exception { ExceptionCode::NotSupportedError };
 
     HashSet<String> uniqueProtocols;
-    Vector<String> escapedProtocols;
-    escapedProtocols.reserveInitialCapacity(options.protocols.size());
     for (auto& protocol : options.protocols) {
-        auto escapedProtocol = RFC8941::escapeString(protocol);
-        if (!escapedProtocol || escapedProtocol->isEmpty() || escapedProtocol->length() > 512)
+        auto escapedLength = RFC8941::escapedStringLength(protocol);
+        if (!escapedLength || !*escapedLength || *escapedLength > 512)
             return Exception { ExceptionCode::SyntaxError };
-
-        if (!uniqueProtocols.add(*escapedProtocol).isNewEntry)
+        if (!uniqueProtocols.add(protocol).isNewEntry)
             return Exception { ExceptionCode::SyntaxError };
-        escapedProtocols.append(WTF::move(*escapedProtocol));
     }
-    options.protocols = WTF::move(escapedProtocols);
 
     auto* globalObject = context.globalObject();
     if (!globalObject) {
